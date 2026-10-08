@@ -1,17 +1,15 @@
 import { expect, Locator, Page } from '@playwright/test';
 
-/** Saisie des valeurs depuis la fiche d'un indicateur */
+/** Saisie directe des valeurs depuis la fiche d'un indicateur. */
 export class IndicateurValeursPom {
-  readonly ajouterAnneeButton: Locator;
-  readonly editModal: Locator;
+  readonly table: Locator;
+  readonly ajouterAnneeInput: Locator;
 
   constructor(readonly page: Page) {
-    this.ajouterAnneeButton = page.getByRole('button', {
+    this.table = page.getByTestId('indicateurs.valeurs.table');
+    this.ajouterAnneeInput = this.table.getByRole('textbox', {
       name: 'Ajouter une année',
     });
-    this.editModal = page
-      .getByRole('dialog')
-      .filter({ hasText: 'Compléter le tableau' });
   }
 
   waitForUpsertValeurResponse() {
@@ -24,21 +22,33 @@ export class IndicateurValeursPom {
   }
 
   async addResultat(annee: number, resultat: number) {
-    await this.ajouterAnneeButton.click();
-    await expect(this.editModal).toBeVisible();
-
-    await this.editModal
-      .getByLabel('Année *', { exact: true })
-      .fill(String(annee));
-    await this.editModal
-      .getByLabel('Résultat', { exact: true })
-      .fill(String(resultat));
-
+    const cell = this.table.locator(
+      `td[data-period="${annee}"][data-source="collectivite"]`
+    );
+    if ((await cell.count()) === 0) {
+      await this.ajouterAnneeInput.fill(String(annee));
+      await this.ajouterAnneeInput.press('Enter');
+    }
+    await expect(cell).toBeVisible();
+    const add = cell.getByTestId('indicateurs.valeurs.add');
+    if (await add.count()) {
+      await add.click();
+      await this.page
+        .getByRole('button', { name: 'Résultat', exact: true })
+        .click();
+    } else {
+      await cell
+        .getByRole('button', { name: `Résultat — ${annee}`, exact: true })
+        .click();
+    }
+    const input = cell.getByRole('textbox', {
+      name: `Résultat — ${annee}`,
+      exact: true,
+    });
+    await input.fill(String(resultat));
     const response = this.waitForUpsertValeurResponse();
-    await this.editModal
-      .getByRole('button', { name: 'Valider', exact: true })
-      .click();
+    await input.press('Enter');
     await response;
-    await expect(this.editModal).toBeHidden();
+    await expect(input).toBeHidden();
   }
 }

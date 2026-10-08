@@ -1,14 +1,24 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
-import { appLabels } from '@/app/labels/catalog';
-import { Button, ButtonGroup } from '@tet/ui';
-import { capitalize } from '@tet/ui/labels/plural';
-import { OpenState } from '@tet/ui/utils/types';
+import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import {
+  formatIndicateurPeriod,
+  IndicateurPeriods,
+  type IndicateurPeriod,
+} from '@tet/domain/indicateurs';
+import type { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { IndicateurChartInfo } from '../data/use-indicateur-chart';
-import { SourceType } from '../types';
-import { EditValeursModal } from './edit-valeurs-modal';
+import type { PreparedValue } from '../data/prepare-data';
+import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
+import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import { useGetColorBySourceId } from '../data/use-indicateur-sources';
+import type { SourceType } from '../types';
+import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
+import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
+import { ConfirmDelete } from './confirm-delete';
+import { EditCommentaireModal } from './edit-commentaire-modal';
+import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
+import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
 import { PrivateModeSwitch } from './private-mode-switch';
 
 type IndicateurTableProps = {
@@ -20,95 +30,182 @@ type IndicateurTableProps = {
   openModalState?: OpenState;
 };
 
-/**
- * Affiche les boutons et le tableau des valeurs d'un indicateur
- */
-export const IndicateurTable = (props: IndicateurTableProps) => {
-  const { chartInfo, collectiviteId, definition, readonly, openModalState } =
-    props;
-  const [selectedType, setSelectedType] = useState<SourceType>('resultat');
+export const IndicateurTable = ({
+  chartInfo,
+  collectiviteId,
+  definition,
+  readonly,
+  confidentiel,
+  openModalState,
+}: IndicateurTableProps) => {
   const { resultats, objectifs } = chartInfo.data.valeurs;
-
-  // compte les données disponibles pour chaque type
-  const sourcesCount = {
-    objectif: objectifs.sources.length,
-    resultat: resultats.sources.length,
-  };
-
-  // Si l'onglet préféré n'a aucune donnée, affiche l'autre sans synchroniser
-  // un état dérivé dans un effet. Le choix explicite reste ainsi conservé.
-  const fallbackType = selectedType === 'resultat' ? 'objectif' : 'resultat';
-  const type =
-    !chartInfo.isLoading &&
-    !sourcesCount[selectedType] &&
-    sourcesCount[fallbackType]
-      ? fallbackType
-      : selectedType;
-  const typeInverse = type === 'resultat' ? 'objectif' : 'resultat';
-  const data = type === 'resultat' ? resultats : objectifs;
-
+  const [additionalPeriods, setAdditionalPeriods] = useState<
+    IndicateurPeriod[]
+  >([]);
   const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
+  const [comment, setComment] = useState<{
+    period: IndicateurPeriod;
+    type: SourceType;
+    text: string;
+  } | null>(null);
   const isOpen = openModalState?.isOpen ?? internalIsOpen;
   const setIsOpen = openModalState?.setIsOpen ?? setInternalIsOpen;
-  const periodPresentation = getIndicateurPeriodPresentation(
-    definition.periodicite
+  const { mutateAsync: upsert } = useUpsertIndicateurValeur();
+  const { mutateAsync: deleteValeur } = useDeleteIndicateurValeur();
+  const getColorBySourceId = useGetColorBySourceId();
+  const canWrite =
+    !readonly &&
+    !definition.sansValeurUtilisateur &&
+    chartInfo.sourceFilter.avecDonneesCollectivite;
+  const { periodes } = prepareIndicateurTableData(
+    resultats,
+    objectifs,
+    additionalPeriods
   );
-
-  // n'affiche rien si il n'y a pas de données
-  if (!sourcesCount[type] && !sourcesCount[typeInverse]) return;
-
+  const getExisting = (period: IndicateurPeriod) =>
+    resultats.valeursExistantes.find(
+      (value) =>
+        IndicateurPeriods.key(value.periode) === IndicateurPeriods.key(period)
+    );
+  const getWriteIdentity = (period: IndicateurPeriod) => ({
+    id: getExisting(period)?.id,
+    collectiviteId,
+    indicateurId: definition.id,
+    periodicite: period.periodicite,
+    dateValeur: IndicateurPeriods.toDateValeur(period),
+  });
+  const onAdd = async (periods: IndicateurPeriod[]): Promise<boolean> => {
+    if (!canWrite) return false;
+    // Empty columns are editing drafts. Only entering a value/comment creates
+    // an observation: a missing observation must not become a present null.
+    setAdditionalPeriods((current) => [
+      ...new Map(
+        [...current, ...periods].map((period) => [
+          IndicateurPeriods.key(period),
+          period,
+        ])
+      ).values(),
+    ]);
+    return true;
+  };
+  const removeColumn = (period: IndicateurPeriod) =>
+    setAdditionalPeriods((current) =>
+      current.filter(
+        (candidate) =>
+          IndicateurPeriods.key(candidate) !== IndicateurPeriods.key(period)
+      )
+    );
+  const onDelete = async (period: IndicateurPeriod) => {
+    if (!canWrite) return;
+    const existing = getExisting(period);
+    if (!existing) {
+      removeColumn(period);
+      return;
+    }
+    if (shouldConfirmValueDeletion(existing)) {
+      setToBeDeleted(existing);
+      return;
+    }
+    try {
+      await deleteValeur({
+        id: existing.id,
+        collectiviteId,
+        indicateurId: definition.id,
+      });
+      removeColumn(period);
+    } catch {
+      /* The global mutation subscriber reports the failure. */
+    }
+  };
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex">
-        {/** bascule entre résultats et objectifs */}
-        <ButtonGroup
-          size="sm"
-          activeButtonId={type}
-          buttons={[
-            {
-              id: 'resultat',
-              children: capitalize(
-                appLabels.indicateurResultat({ plural: true })
-              ),
-              disabled: !sourcesCount.resultat,
-              onClick: () => setSelectedType('resultat'),
-            },
-            {
-              id: 'objectif',
-              children: capitalize(
-                appLabels.indicateurObjectif({ plural: true })
-              ),
-              disabled: !sourcesCount.objectif,
-              onClick: () => setSelectedType('objectif'),
-            },
-          ]}
-        />
-        {/** pour ouvrir le dialogue d'édition des valeurs */}
-        {chartInfo.sourceFilter.avecDonneesCollectivite && !readonly && (
-          <Button size="sm" onClick={() => setIsOpen(true)}>
-            {periodPresentation.editor.addLabel}
-          </Button>
-        )}
-      </div>
-      {/** tableau pour le type de valeurs (objectif | résultat) sélectionné */}
       <IndicateurValeursTable
-        {...props}
-        data={data}
-        readonly={readonly}
-        type={type}
-        disableComments={!chartInfo.sourceFilter.avecDonneesCollectivite}
+        definition={definition}
+        resultats={resultats}
+        objectifs={objectifs}
+        additionalPeriods={additionalPeriods}
+        readonly={!canWrite}
+        confidentiel={confidentiel}
+        getColorBySourceId={getColorBySourceId}
+        addPeriod={
+          canWrite ? (
+            <AddIndicateurPeriodeHeader
+              periodicite={definition.periodicite}
+              existingPeriods={periodes}
+              onAdd={onAdd}
+              onOpenModal={() => setIsOpen(true)}
+            />
+          ) : undefined
+        }
+        onSave={async (period, type, value) => {
+          if (!canWrite || period.periodicite !== definition.periodicite)
+            return false;
+          try {
+            await upsert({ ...getWriteIdentity(period), [type]: value });
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+        onDelete={(period) => void onDelete(period)}
+        onComment={(period, type, text) => setComment({ period, type, text })}
       />
-      {/** résultat récent en mode privé */}
-      {type === 'resultat' && !!data.donneesCollectivite?.valeurs.length && (
-        <PrivateModeSwitch definition={definition} isReadOnly={readonly} />
-      )}
-      {/** dialogue d'édition des valeurs */}
-      {isOpen && (
-        <EditValeursModal
-          collectiviteId={collectiviteId}
-          definition={definition}
+      {!!resultats.donneesCollectivite?.valeurs.some(
+        (value) => value.valeur != null
+      ) && <PrivateModeSwitch definition={definition} isReadOnly={!canWrite} />}
+      {isOpen && canWrite && (
+        <AddIndicateurPeriodesModal
+          periodicite={definition.periodicite}
+          existingPeriods={periodes}
           openState={{ isOpen, setIsOpen }}
-          data={data}
+          onAdd={onAdd}
+        />
+      )}
+      {comment && (
+        <EditCommentaireModal
+          definition={definition}
+          periodeLabel={formatIndicateurPeriod(comment.period)}
+          type={comment.type}
+          commentaire={comment.text}
+          openState={{ isOpen: true, setIsOpen: () => setComment(null) }}
+          isReadonly={
+            !canWrite || comment.period.periodicite !== definition.periodicite
+          }
+          onChange={async (text) => {
+            if (
+              !canWrite ||
+              comment.period.periodicite !== definition.periodicite
+            )
+              return false;
+            try {
+              await upsert({
+                ...getWriteIdentity(comment.period),
+                [`${comment.type}Commentaire`]: text,
+              });
+              return true;
+            } catch {
+              return false;
+            }
+          }}
+        />
+      )}
+      {toBeDeleted && (
+        <ConfirmDelete
+          valeur={toBeDeleted}
+          unite={definition.unite}
+          onDismissConfirm={(confirmed) => {
+            if (confirmed) {
+              void deleteValeur({
+                id: toBeDeleted.id,
+                collectiviteId,
+                indicateurId: definition.id,
+              })
+                .then(() => removeColumn(toBeDeleted.periode))
+                .catch(() => undefined);
+            }
+            setToBeDeleted(null);
+          }}
         />
       )}
     </div>

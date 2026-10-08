@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
-import { DEPRECATED_TCell, Icon } from '@tet/ui';
+import { TableHeaderCell, Icon } from '@tet/ui';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';
@@ -29,7 +29,7 @@ export const CellSourceName = ({
   );
 
   return (
-    <DEPRECATED_TCell className="font-bold text-sm">
+    <TableHeaderCell scope="row" className="font-bold text-sm">
       <div className="inline-flex items-center min-w-72 gap-2">
         {type === 'objectif' ? DashedLineSymbol(color) : SolidLineSymbol(color)}
         {source.periodiciteSource
@@ -61,6 +61,6 @@ export const CellSourceName = ({
           </DataSourceTooltip>
         )}
       </div>
-    </DEPRECATED_TCell>
+    </TableHeaderCell>
   );
 };

@@ -16,6 +16,7 @@ type PeriodEditorPresentation = {
   inputMode?: 'numeric';
   addLabel: string;
   validateAndAddLabel: string;
+  subdivisionOptions: { value: string; label: string }[];
 };
 
 type IndicateurPeriodPresentation = {
@@ -37,6 +38,7 @@ const PERIOD_PRESENTATIONS = {
       inputMode: 'numeric',
       addLabel: appLabels.ajouterAnnee,
       validateAndAddLabel: appLabels.validerAjouterAnnee,
+      subdivisionOptions: [],
     },
   },
   [IndicateurPeriodiciteEnum.SEMESTRIELLE]: {
@@ -46,6 +48,10 @@ const PERIOD_PRESENTATIONS = {
       inputType: 'text',
       addLabel: appLabels.ajouterSemestre,
       validateAndAddLabel: appLabels.validerAjouterSemestre,
+      subdivisionOptions: Array.from({ length: 2 }, (_, index) => ({
+        value: String(index + 1),
+        label: String(index + 1),
+      })),
     },
   },
   [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: {
@@ -55,6 +61,10 @@ const PERIOD_PRESENTATIONS = {
       inputType: 'text',
       addLabel: appLabels.ajouterTrimestre,
       validateAndAddLabel: appLabels.validerAjouterTrimestre,
+      subdivisionOptions: Array.from({ length: 4 }, (_, index) => ({
+        value: String(index + 1),
+        label: String(index + 1),
+      })),
     },
   },
   [IndicateurPeriodiciteEnum.MENSUELLE]: {
@@ -64,6 +74,13 @@ const PERIOD_PRESENTATIONS = {
       inputType: 'month',
       addLabel: appLabels.ajouterMois,
       validateAndAddLabel: appLabels.validerAjouterMois,
+      subdivisionOptions: Array.from({ length: 12 }, (_, index) => ({
+        value: String(index + 1),
+        label: new Intl.DateTimeFormat('fr', {
+          month: 'long',
+          timeZone: 'UTC',
+        }).format(Date.UTC(2000, index, 1)),
+      })),
     },
   },
 } satisfies Record<IndicateurPeriodicite, IndicateurPeriodPresentation>;
@@ -104,3 +121,13 @@ export const makeIndicateurPeriodTimeAxis = (
       ),
   };
 };
+
+export const getIndicateurPeriodiciteTooltip = (
+  periodicite: IndicateurPeriodicite,
+  participationScore: boolean
+): string =>
+  participationScore && periodicite === 'annuelle'
+    ? appLabels.indicateurPeriodiciteScoreTooltip
+    : appLabels.indicateurPeriodiciteTooltip(
+        getIndicateurPeriodPresentation(periodicite).label
+      );

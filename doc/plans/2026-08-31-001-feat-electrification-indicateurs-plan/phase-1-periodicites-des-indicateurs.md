@@ -105,7 +105,31 @@ Emplacements : `apps/backend/src/indicateurs/valeurs/`, hooks
 
 ## Task 1.4 — Interfaces de déclaration et détail existantes
 
-Étendre les interfaces existantes ; cette phase n'impose ni grille générique ni remplacement du détail.
+La PR frontend [#5394](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5394) suit #5215 et précède #5312. Elle adapte la fiche indicateur
+aux prototypes [annuel](https://tet-protos.vercel.app/#/indicateurs/realisation-programme-tete)
+et [mensuel](https://tet-protos.vercel.app/#/indicateurs/part-electrique-flotte-collectivite) :
+
+- placer le badge de périodicité et son infobulle sur la ligne de métadonnées, avec
+  la date de modification, les pilotes et les services ; rappeler son caractère immuable
+  et le rôle du suivi annuel pour les indicateurs participant au score TETE ;
+- réunir résultat et objectif dans chaque cellule, supprimer leur bascule et le bouton
+  d'ajout placé au-dessus du tableau ;
+- ouvrir une liste résultat/objectif dans une cellule vide ; permettre la saisie et
+  l'édition directe de chacun des deux champs, identifiés par R et O ;
+- ajouter les périodes depuis la dernière cellule d'en-tête : saisie directe de l'année,
+  ou modale permettant de choisir plusieurs mois, trimestres ou semestres avec leur année ;
+- refuser les périodes invalides et les doublons ; conserver les colonnes vides comme
+  brouillons de saisie jusqu'à l'enregistrement d'une valeur ou d'un commentaire ;
+- enregistrer avec Entrée ou à la sortie du champ, annuler avec Échap et conserver
+  le brouillon si l'enregistrement échoue ;
+- afficher la grille même avant la première valeur et préserver les droits, la lecture
+  des sources externes, les commentaires, la suppression confirmée et la confidentialité.
+
+Le sélecteur de fréquence présent dans le prototype mensuel n'est pas repris :
+la décision du 24 septembre impose la périodicité choisie à la création.
+La grille annuelle du diagnostic PCAET conserve son parcours existant.
+
+Autres adaptations de cette phase :
 
 - adapter le modèle, la navigation, le collage, l'édition et l'ajout de dates aux quatre périodicités ;
 - garder la grille de déclaration aux dates et à la périodicité des observations déclarables,

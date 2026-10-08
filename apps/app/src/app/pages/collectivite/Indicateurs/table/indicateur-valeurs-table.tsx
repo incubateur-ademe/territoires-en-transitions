@@ -1,256 +1,279 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import {
-  Button,
-  DEPRECATED_Table,
-  DEPRECATED_TBody,
-  DEPRECATED_TCell,
-  DEPRECATED_TRow,
-} from '@tet/ui';
+import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import {
   formatIndicateurPeriod,
-  IndicateurPeriod,
   IndicateurPeriods,
+  type IndicateurPeriod,
 } from '@tet/domain/indicateurs';
-import { useState } from 'react';
-import { PreparedData, PreparedValue } from '../data/prepare-data';
-import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
-import { useGetColorBySourceId } from '../data/use-indicateur-sources';
-import { SourceType } from '../types';
-import { CellPeriodeList } from './cell-periode-list';
+import {
+  Button,
+  ButtonMenu,
+  Icon,
+  Table,
+  TableCell,
+  TableHeaderCell,
+  Tooltip,
+} from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
+import { useState, type ReactNode } from 'react';
+import type { PreparedData } from '../data/prepare-data';
+import type { GetColorBySourceId } from '../data/use-indicateur-sources';
+import type { SourceType } from '../types';
 import { CellSourceName } from './cell-source-name';
-import { CellValue } from './cell-value';
-import { ConfirmDelete } from './confirm-delete';
-import { EditCommentaireModal } from './edit-commentaire-modal';
-import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
+import { IndicateurValueSlot } from './indicateur-value-slot';
+import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
 
-// nombre maximum de colonnes vides à afficher
-const MAX_PLACEHOLDERS_COUNT = 5;
-
-type IndicateurValeursTable = {
-  collectiviteId: number;
-  definition: IndicateurDefinition;
+type Props = {
+  definition: Pick<IndicateurDefinition, 'titre' | 'unite' | 'periodicite'>;
+  additionalPeriods?: IndicateurPeriod[];
+  resultats: PreparedData;
+  objectifs: PreparedData;
   readonly?: boolean;
   confidentiel?: boolean;
-  data: PreparedData | null;
-  type: SourceType;
-  disableComments: boolean;
+  addPeriod?: ReactNode;
+  getColorBySourceId: GetColorBySourceId;
+  onSave: (
+    period: IndicateurPeriod,
+    type: SourceType,
+    value: number | null
+  ) => Promise<boolean>;
+  onDelete: (period: IndicateurPeriod) => void;
+  onComment: (
+    period: IndicateurPeriod,
+    type: SourceType,
+    comment: string
+  ) => void;
 };
 
-const isSamePeriod = (
-  left: IndicateurPeriod,
-  right: IndicateurPeriod
-): boolean => IndicateurPeriods.key(left) === IndicateurPeriods.key(right);
-
-/**
- * Affiche le tableau des valeurs d'un indicateur pour un type (objectif | résultat) donné
- */
+/** Results and objectives share a cell, while source versions remain separate. */
 export const IndicateurValeursTable = ({
-  collectiviteId,
   definition,
-  data,
-  type,
+  resultats,
+  objectifs,
+  additionalPeriods = [],
   readonly,
   confidentiel,
-  disableComments,
-}: IndicateurValeursTable) => {
-  const { periodes, sources, donneesCollectivite, valeursExistantes } =
-    data || {};
-  const placeholdersCount = Math.max(
-    0,
-    MAX_PLACEHOLDERS_COUNT - (periodes?.length ?? 0)
+  addPeriod,
+  getColorBySourceId,
+  onSave,
+  onDelete,
+  onComment,
+}: Props) => {
+  const { sources, periodes } = prepareIndicateurTableData(
+    resultats,
+    objectifs,
+    additionalPeriods
   );
-
-  const [commentaireValeur, setCommentaireValeur] = useState<null | {
-    id?: number;
-    periode: IndicateurPeriod;
-    periodeLabel: string;
-    commentaire?: string | null;
-  }>(null);
-  const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
-
-  const { mutate: upsertValeur } = useUpsertIndicateurValeur();
-  const { mutate: deleteValeur } = useDeleteIndicateurValeur();
-
-  const getColorBySourceId = useGetColorBySourceId();
-
+  const localValues = resultats.valeursExistantes;
   return (
-    <>
-      <DEPRECATED_Table>
-        <DEPRECATED_TBody>
-          <DEPRECATED_TRow className="bg-primary-2 border-b-2 border-primary-4">
-            <DEPRECATED_TCell className="bg-white">&nbsp;</DEPRECATED_TCell>
-            {/* colonnes pour chaque période */}
-            {data && (
-              <CellPeriodeList
-                data={data}
-                confidentiel={confidentiel}
-                readonly={readonly}
-                type={type}
-                onDelete={(valeur) => {
-                  // demande confirmation avant de supprimer
-                  if (shouldConfirmValueDeletion(valeur)) {
-                    setToBeDeleted(valeur);
-                  } else {
-                    // sauf pour les lignes n'ayant ni valeur ni commentaire
-                    deleteValeur({
-                      collectiviteId,
-                      indicateurId: definition.id,
-                      id: valeur.id,
-                    });
-                  }
-                }}
-              />
+    <div
+      className="overflow-x-auto rounded-lg border border-grey-3"
+      data-test="indicateurs.valeurs.table"
+    >
+      <Table
+        className="table-auto border-collapse text-sm"
+        aria-label={definition.titre}
+      >
+        <thead className="bg-primary-1">
+          <tr>
+            <TableHeaderCell
+              scope="col"
+              className="min-w-64 font-bold text-primary-9"
+            >
+              {definition.titre} {`(${definition.unite})`}
+            </TableHeaderCell>
+            {periodes.map((period) => {
+              const key = IndicateurPeriods.key(period);
+              const label = formatIndicateurPeriod(period);
+              const localValue = localValues.find(
+                (value) => IndicateurPeriods.key(value.periode) === key
+              );
+              const isPrivate =
+                confidentiel &&
+                resultats.dernierePeriodeModePrive &&
+                IndicateurPeriods.key(resultats.dernierePeriodeModePrive) ===
+                  key;
+              return (
+                <TableHeaderCell
+                  key={key}
+                  scope="col"
+                  className="min-w-52 border-l border-grey-3 text-primary-9 font-bold"
+                  align="center"
+                >
+                  {isPrivate && (
+                    <Tooltip label={appLabels.resultatModePrive}>
+                      <span tabIndex={0}>
+                        <Icon icon="lock-fill" size="sm" />
+                      </span>
+                    </Tooltip>
+                  )}
+                  {label}
+                  {(localValue ||
+                    additionalPeriods.some(
+                      (candidate) => IndicateurPeriods.key(candidate) === key
+                    )) &&
+                    !readonly &&
+                    period.periodicite === definition.periodicite && (
+                      <Button
+                        icon="close-line"
+                        size="xs"
+                        variant="white"
+                        className="!bg-transparent !border-transparent"
+                        title={appLabels.indicateurSupprimerPeriode(label)}
+                        onClick={() => onDelete(period)}
+                        data-test="indicateurs.valeurs.periode.delete"
+                      />
+                    )}
+                </TableHeaderCell>
+              );
+            })}
+            {addPeriod && (
+              <TableHeaderCell
+                scope="col"
+                className="min-w-56 border-l border-grey-3"
+              >
+                {addPeriod}
+              </TableHeaderCell>
             )}
-            {/** placeholders */}
-            {!!placeholdersCount &&
-              Array.from({ length: placeholdersCount }).map((_, i) => (
-                <PlaceholderColumn
-                  key={i}
-                  rowSpan={(sources?.length ?? 0) + 2}
-                />
-              ))}
-          </DEPRECATED_TRow>
-          {/* lignes pour chaque source */}
-          {sources?.map((s) => (
-            <DEPRECATED_TRow key={s.seriesKey ?? s.source}>
-              {/* nom de la source et rappel de l'unité */}
+          </tr>
+        </thead>
+        <tbody>
+          {sources.map((row) => (
+            <tr key={row.key} className="border-t border-grey-3">
               <CellSourceName
-                source={s}
-                type={type}
+                source={row.source}
                 unite={definition.unite}
+                type={row.resultats ? 'resultat' : 'objectif'}
                 getColorBySourceId={getColorBySourceId}
               />
-              {/* cellule pour chaque période */}
-              {periodes?.map((periode) => {
-                const entry = s.valeurs.find((v) =>
-                  isSamePeriod(v.periode, periode)
+              {periodes.map((period) => {
+                const key = IndicateurPeriods.key(period);
+                const resultat = row.resultats?.valeurs.find(
+                  (value) => IndicateurPeriods.key(value.periode) === key
                 );
-                // récupère l'id de la ligne à mettre à jour
-                const id =
-                  (s.source === 'collectivite'
-                    ? valeursExistantes?.find((v) =>
-                        isSamePeriod(v.periode, periode)
-                      )?.id
-                    : undefined) ?? undefined;
+                const objectif = row.objectifs?.valeurs.find(
+                  (value) => IndicateurPeriods.key(value.periode) === key
+                );
+                const isLocal = row.source.source === 'collectivite';
                 return (
-                  <CellValue
-                    key={IndicateurPeriods.key(periode)}
-                    readonly={
-                      readonly ||
-                      s.source !== 'collectivite' ||
-                      periode.periodicite !== definition.periodicite
-                    }
-                    value={entry?.valeur ?? ''}
-                    onChange={(newValue) => {
-                      upsertValeur({
-                        id,
-                        collectiviteId,
-                        indicateurId: definition.id,
-                        periodicite: periode.periodicite,
-                        dateValeur: IndicateurPeriods.toDateValeur(periode),
-                        [type]: newValue,
-                      });
-                    }}
-                  />
+                  <TableCell
+                    key={key}
+                    className="border-l border-grey-3 !px-2"
+                    data-period={IndicateurPeriods.serialize(period)}
+                    data-source={row.source.source}
+                  >
+                    <IndicateurCombinedValue
+                      period={period}
+                      resultat={resultat?.valeur ?? null}
+                      objectif={objectif?.valeur ?? null}
+                      readonly={
+                        readonly ||
+                        !isLocal ||
+                        period.periodicite !== definition.periodicite
+                      }
+                      onSave={(type, value) => onSave(period, type, value)}
+                    />
+                    {isLocal && (
+                      <div className="flex justify-center gap-2">
+                        {(['resultat', 'objectif'] as const).map((type) => {
+                          const comment = (
+                            type === 'resultat' ? resultat : objectif
+                          )?.commentaire;
+                          if (readonly && !comment) return null;
+                          return (
+                            <Button
+                              key={type}
+                              icon="question-answer-line"
+                              variant="white"
+                              size="xs"
+                              className="!border-transparent"
+                              notification={comment ? { number: 1 } : undefined}
+                              title={appLabels.indicateurCommentaireValeur(
+                                type,
+                                formatIndicateurPeriod(period)
+                              )}
+                              onClick={() =>
+                                onComment(period, type, comment ?? '')
+                              }
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </TableCell>
                 );
               })}
-            </DEPRECATED_TRow>
+              {addPeriod && <TableCell className="border-l border-grey-3" />}
+            </tr>
           ))}
-          {/* ligne pour les boutons "commentaire" */}
-          {!disableComments && (
-            <DEPRECATED_TRow>
-              <DEPRECATED_TCell>&nbsp;</DEPRECATED_TCell>
-              {periodes?.map((periode) => {
-                const entry = donneesCollectivite?.valeurs.find((v) =>
-                  isSamePeriod(v.periode, periode)
-                );
-
-                const commentaire = entry?.commentaire ?? '';
-
-                return (
-                  <DEPRECATED_TCell key={IndicateurPeriods.key(periode)}>
-                    <div className="flex justify-center">
-                      <Button
-                        size="xs"
-                        variant="outlined"
-                        icon="question-answer-fill"
-                        disabled={!commentaire && readonly}
-                        notification={commentaire ? { number: 1 } : undefined}
-                        onClick={() =>
-                          setCommentaireValeur(
-                            entry ?? {
-                              periode,
-                              periodeLabel: formatIndicateurPeriod(periode),
-                            }
-                          )
-                        }
-                      />
-                    </div>
-                  </DEPRECATED_TCell>
-                );
-              })}
-            </DEPRECATED_TRow>
-          )}
-        </DEPRECATED_TBody>
-      </DEPRECATED_Table>
-      {commentaireValeur && (
-        <EditCommentaireModal
-          periodeLabel={commentaireValeur.periodeLabel}
-          type={type}
-          definition={definition}
-          commentaire={commentaireValeur.commentaire ?? ''}
-          openState={{
-            isOpen: true,
-            setIsOpen: () => setCommentaireValeur(null),
-          }}
-          onChange={(newComment) => {
-            upsertValeur({
-              id: commentaireValeur?.id,
-              collectiviteId,
-              indicateurId: definition.id,
-              periodicite: commentaireValeur.periode.periodicite,
-              dateValeur: IndicateurPeriods.toDateValeur(
-                commentaireValeur.periode
-              ),
-              [`${type}Commentaire`]: newComment,
-            });
-          }}
-          isReadonly={
-            readonly ||
-            commentaireValeur.periode.periodicite !== definition.periodicite
-          }
-        />
-      )}
-      {toBeDeleted && (
-        <ConfirmDelete
-          valeur={toBeDeleted}
-          unite={definition.unite}
-          onDismissConfirm={(confirmed) => {
-            if (confirmed) {
-              deleteValeur({
-                collectiviteId,
-                indicateurId: definition.id,
-                id: toBeDeleted.id,
-              });
-            }
-            setToBeDeleted(null);
-          }}
-        />
-      )}
-    </>
+        </tbody>
+      </Table>
+    </div>
   );
 };
 
-// affiche une colonne vide
-const PlaceholderColumn = ({ rowSpan }: { rowSpan: number }) => (
-  <td
-    rowSpan={rowSpan}
-    className="min-w-40 bg-primary-0 border-l border-primary-4 text-primary-9 text-xs"
-  >
-    <div className="w-full h-full flex items-center justify-center">
-      <PictoIndicateurVide className="w-16 h-16" />
+export const IndicateurCombinedValue = ({
+  period,
+  resultat,
+  objectif,
+  readonly,
+  onSave,
+}: {
+  period: IndicateurPeriod;
+  resultat: number | null;
+  objectif: number | null;
+  readonly?: boolean;
+  onSave: (type: SourceType, value: number | null) => Promise<boolean>;
+}) => {
+  const [initialField, setInitialField] = useState<SourceType | null>(null);
+  const empty = resultat === null && objectif === null;
+  if (empty && readonly)
+    return <span className="sr-only">{appLabels.indicateurValeurAbsente}</span>;
+  if (empty && !initialField)
+    return (
+      <div className="flex justify-center">
+        <ButtonMenu
+          size="xs"
+          variant="white"
+          icon="add-line"
+          withArrow
+          title={appLabels.indicateurChampValeur(
+            appLabels.indicateurAjouterDonnee,
+            formatIndicateurPeriod(period)
+          )}
+          data-test="indicateurs.valeurs.add"
+          menu={{
+            actions: [
+              {
+                label: capitalize(appLabels.indicateurResultat()),
+                onClick: () => setInitialField('resultat'),
+              },
+              {
+                label: capitalize(appLabels.indicateurObjectif()),
+                onClick: () => setInitialField('objectif'),
+              },
+            ],
+          }}
+        >
+          {appLabels.indicateurAjouterDonnee}
+        </ButtonMenu>
+      </div>
+    );
+  return (
+    <div className="flex items-center justify-center divide-x divide-grey-3">
+      {(['resultat', 'objectif'] as const).map((type) => (
+        <div key={type} className="px-1">
+          <IndicateurValueSlot
+            type={type}
+            periodeLabel={formatIndicateurPeriod(period)}
+            value={type === 'resultat' ? resultat : objectif}
+            readonly={readonly}
+            initiallyEditing={initialField === type}
+            onSave={(value) => onSave(type, value)}
+            onClose={() => setInitialField(null)}
+          />
+        </div>
+      ))}
     </div>
-  </td>
-);
+  );
+};

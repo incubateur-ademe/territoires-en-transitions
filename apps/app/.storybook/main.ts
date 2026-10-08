@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/nextjs-vite';
+import { fileURLToPath } from 'node:url';
 
 // @tet/domain est compilé en CommonJS : Vite n'expose ses exports nommés qu'après
 // pré-bundling. Tout sous-chemin qu'une story atteint, même indirectement, doit
@@ -31,6 +32,9 @@ const config: StorybookConfig = {
   async viteFinal(viteConfig) {
     const { mergeConfig } = await import('vite');
     return mergeConfig(viteConfig, {
+      resolve: {
+        alias: { '@/app': fileURLToPath(new URL('../src', import.meta.url)) },
+      },
       optimizeDeps: {
         include: domainSubpaths,
       },
