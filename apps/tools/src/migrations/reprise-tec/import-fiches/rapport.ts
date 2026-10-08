@@ -5,6 +5,7 @@ import type { Dossier } from './dossiers';
 import type { Ecart } from './ecarts';
 import type { Fiche } from './fiches';
 import type { ListesTet } from './listes-tet';
+import { listSecteursThematiques } from './listes-tec';
 import type { Tags } from './tags';
 
 /** Affiche le bilan par table, les écarts, ce qui est écrit, les classements sans sous-thématique et les cas nommés. */
@@ -30,7 +31,9 @@ export const printRapport = ({
   const liens = (lister: (f: Fiche) => readonly unknown[]) =>
     fiches.reduce((n, f) => n + lister(f).length, 0);
   const classements = dossiers
-    .flatMap((d) => d.actions.flatMap((a) => a.secteurs))
+    .flatMap((d) =>
+      d.actions.flatMap((a) => listSecteursThematiques(a.secteurs))
+    )
     .map(listesTet.getClassement);
 
   console.log('Lignes de T&C, par table : lues = écrites + écartées');
@@ -56,6 +59,13 @@ export const printRapport = ({
   console.log(`  ${liens((f) => f.structures)} structures pilotes`);
   console.log(`  ${liens((f) => f.tagsLibres)} tags personnalisés`);
   console.log(`  ${liens((f) => f.notes)} notes`);
+  console.log(
+    `  ${
+      fiches.filter((f) => f.secteursReglementaires.length > 0).length
+    } fiches avec des secteurs réglementaires (${liens(
+      (f) => f.secteursReglementaires
+    )} secteurs)`
+  );
   console.log(
     `Structures pilotes : ${tags.structure_tag.reutilises} réutilisées, ${tags.structure_tag.crees} créées`
   );
