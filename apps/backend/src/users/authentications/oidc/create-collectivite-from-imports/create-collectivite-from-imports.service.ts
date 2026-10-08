@@ -14,6 +14,7 @@ import { eq, sql } from 'drizzle-orm';
 import {
   CollectiviteRapprochee,
   GetCollectiviteBySiretService,
+  SIRET_PATTERN,
 } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 
 type FicheImports = Pick<
@@ -48,10 +49,16 @@ export class CreateCollectiviteFromImportsService {
     private readonly transactionManager: TransactionManager
   ) {}
 
+  /** `null` : rien à créer — SIREN hors des imports, ou valeur qui n'est pas un SIRET. */
   async createFromSiret(
     siret: string,
     tx?: Transaction
   ): Promise<Result<CollectiviteRapprochee | null, string>> {
+    // Même règle que `getBySiret` : un SIREN seul, que MonCompteAdeme a pu
+    // renvoyer, n'y est pas rapproché et ne doit pas davantage créer.
+    if (!SIRET_PATTERN.test(siret)) {
+      return success(null);
+    }
     const siren = siret.slice(0, 9);
 
     return this.transactionManager.executeSingle<

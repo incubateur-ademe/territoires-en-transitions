@@ -6,7 +6,7 @@ import { CollectiviteType } from '@tet/domain/collectivites';
 import { and, eq } from 'drizzle-orm';
 
 /** Un SIRET : le SIREN de l'entreprise (9) et le NIC de l'établissement (5). */
-const SIRET_PATTERN = /^\d{14}$/;
+export const SIRET_PATTERN = /^\d{14}$/;
 
 export type CollectiviteRapprochee = {
   collectiviteId: number;
