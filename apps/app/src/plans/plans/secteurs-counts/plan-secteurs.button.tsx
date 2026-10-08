@@ -46,31 +46,16 @@ export const PlanSecteursButton = ({
       ),
     });
 
-  const label = appLabels.planSecteursARenseignerBouton({
-    count: aRenseigner,
-  });
-
   return (
-    <>
-      <Button
-        size="sm"
-        variant="secondary"
-        icon="alert-line"
-        onClick={ouvrirVerification}
-        dataTest="plans.secteurs-button.secondary"
-      >
-        {label}
-      </Button>
-      <Button
-        size="sm"
-        variant="outlined"
-        icon="alert-line"
-        className="bg-warning-2 hover:!bg-warning-2 border-warning-3 hover:!border-warning-1 text-warning-1 hover:text-warning-1 [&_svg]:fill-warning-1"
-        onClick={ouvrirVerification}
-        dataTest="plans.secteurs-button.warning"
-      >
-        {label}
-      </Button>
-    </>
+    <Button
+      size="sm"
+      variant="outlined"
+      icon="alert-line"
+      className="bg-warning-2 hover:!bg-warning-2 border-warning-3 hover:!border-warning-1 text-warning-1 hover:text-warning-1 [&_svg]:fill-warning-1"
+      onClick={ouvrirVerification}
+      dataTest="plans.secteurs-button"
+    >
+      {appLabels.planSecteursARenseignerBouton({ count: aRenseigner })}
+    </Button>
   );
 };
