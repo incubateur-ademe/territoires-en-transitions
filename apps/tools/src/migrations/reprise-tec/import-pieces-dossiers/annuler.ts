@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Reprise T&C, étape 6 bis : retire ce que `index.ts` a écrit, d'après `lignes_ecrites`, puis les fichiers du stockage que plus rien ne référence.
+ * Reprise T&C, étape 6 bis : retire ce que `index.ts` a écrit, d'après `lignes_ecrites`, puis, parmi les fichiers qu'il a déposés, ceux que plus rien ne référence.
  * Simulation par défaut (rien n'est retiré du stockage), `--confirm` pour valider.
  *
  *   SUPABASE_DATABASE_URL=… SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… pnpx tsx \
@@ -22,6 +22,7 @@ const main = async () => {
     await client.query('begin');
     let comptes;
     try {
+      const deposes = await listObjetsDeposes(client);
       const avis = await deleteAvis(client);
       const documents = await deleteDocuments(client);
       const fichiersDesFiches = await restoreFichiersDesFiches(client);
@@ -29,7 +30,7 @@ const main = async () => {
       const ecarts = await client.query(
         `delete from reprise_tec.ecarts where table_source = 'demarche_fichier'`
       );
-      const objets = await listObjetsInutilises(client);
+      const objets = await listObjetsInutilises(client, deposes);
       await client.query(isConfirmed ? 'commit' : 'rollback');
       comptes = {
         avis,
@@ -218,29 +219,39 @@ const deleteFichiersInutilises = async (client: PoolClient) => {
   return rows[0];
 };
 
-/** Les fichiers du stockage des collectivités touchées par la reprise qu'aucune ligne de bibliothèque ne référence plus. */
-const listObjetsInutilises = async (client: PoolClient) => {
+type ObjetDepose = { collectiviteId: number; empreinte: string };
+
+/** Les fichiers que la reprise a déposés : les empreintes des lignes de bibliothèque qu'elle a créées (dossiers, avis, fiches), lues avant leur retrait. */
+const listObjetsDeposes = async (
+  client: PoolClient
+): Promise<ObjetDepose[]> => {
+  const { rows } = await client.query<ObjetDepose>(
+    `select distinct b.collectivite_id as "collectiviteId", b.hash as empreinte
+       from labellisation.bibliotheque_fichier b
+       join reprise_tec.lignes_ecrites l
+         on l.ligne_id = b.id and l.table_cible in ($1, 'bibliotheque_fichier')
+      where b.hash ~ '^[0-9a-f]{64}$'`,
+    [TRACE_BIBLIOTHEQUE]
+  );
+  return rows;
+};
+
+/** Parmi les fichiers déposés par la reprise, ceux qu'aucune ligne de bibliothèque ne référence plus ; un fichier que la collectivité a elle-même déposé n'est jamais retiré. */
+const listObjetsInutilises = async (
+  client: PoolClient,
+  deposes: readonly ObjetDepose[]
+) => {
   const { rows } = await client.query<{ bucket: string; nom: string }>(
-    `with touchees as (
-       select d.collectivite_id from reprise_tec.correspondance c
-         join public.demarche d on d.id = c.tet_id where c.table_cible = 'demarche'
-       union
-       select f.collectivite_id from reprise_tec.correspondance c
-         join public.fiche_action f on f.id = c.tet_id where c.table_cible = 'fiche_action'
-       union
-       select instructeur_collectivite_id from public.demarche_pcaet_demande_avis
-        where id in (select ligne_id from reprise_tec.lignes_ecrites
-                      where table_cible = 'demarche_pcaet_demande_avis')
-     )
-     select o.bucket_id as bucket, o.name as nom
-       from storage.objects o
-       join public.collectivite_bucket cb on cb.bucket_id = o.bucket_id
-      where cb.collectivite_id in (select collectivite_id from touchees)
-        and o.name ~ '^[0-9a-f]{64}$'
+    `select cb.bucket_id as bucket, d.empreinte as nom
+       from unnest($1::int[], $2::text[]) as d(collectivite_id, empreinte)
+       join public.collectivite_bucket cb on cb.collectivite_id = d.collectivite_id
+      where exists (select from storage.objects o
+                     where o.bucket_id = cb.bucket_id and o.name = d.empreinte)
         and not exists (select from labellisation.bibliotheque_fichier b
-                         where b.collectivite_id = cb.collectivite_id
-                           and b.hash = o.name)
-      order by 1, 2`
+                         where b.collectivite_id = d.collectivite_id
+                           and b.hash = d.empreinte)
+      order by 1, 2`,
+    [deposes.map((d) => d.collectiviteId), deposes.map((d) => d.empreinte)]
   );
   return rows;
 };
