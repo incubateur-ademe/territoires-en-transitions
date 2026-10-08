@@ -27,7 +27,7 @@ type TitleProps = { children: ReactNode; className?: string };
 const Title = ({ children, className }: TitleProps): JSX.Element => {
   const { titleId, compact } = usePageHeaderContext();
   return (
-    <div className="flex-1">
+    <div className="flex-auto">
       <h1
         id={titleId}
         className={cn(
@@ -183,7 +183,7 @@ export const PageHeader = ({
         )}
       >
         {navigation}
-        <div className="flex flex-row items-center gap-4">
+        <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2">
           {title}
           {actions}
         </div>
