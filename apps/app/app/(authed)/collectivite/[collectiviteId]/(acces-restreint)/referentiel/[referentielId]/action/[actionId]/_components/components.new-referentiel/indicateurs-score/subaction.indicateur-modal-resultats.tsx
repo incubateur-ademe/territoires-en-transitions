@@ -10,9 +10,11 @@ import { CalculScoreIndicatif } from '@tet/domain/referentiels';
 import { Checkbox, Divider } from '@tet/ui';
 import { useGetValeursUtilisables } from '../../score-indicatif/use-get-valeurs-utilisables';
 import {
-  IndicateurResultatsTable,
-  LigneValeur,
-} from './subaction.indicateur-modal-resultats.table';
+  filterLignesFromAnneeReference,
+  getAnneeReference,
+} from './filter-lignes-from-annee-reference.utils';
+import { LigneValeur } from './group-lignes-by-annee.utils';
+import { IndicateurResultatsTable } from './subaction.indicateur-modal-resultats.table';
 import { SubactionIndicateurScore } from './subaction.indicateur-score';
 import { useIsScoreIndicateurEnabled } from './use-is-score-indicateur-enabled';
 import {
@@ -73,14 +75,20 @@ const SubactionIndicateurModalResultatsContent = ({
   const valeurSelectionnee = valeursUtilisables?.selection.fait;
   const selectionneeId = valeurSelectionnee?.id ?? null;
 
-  const lignes: LigneValeur[] = (valeursUtilisables?.sources ?? [])
-    .flatMap((source) =>
-      source.fait.map((valeur) => ({
-        ...valeur,
-        source: source.libelle ?? appLabels.sourceCollectivite,
-      }))
-    )
-    .sort((a, b) => b.annee - a.annee);
+  const anneeReference = getAnneeReference(calcul);
+  const toutesLignes: LigneValeur[] = (
+    valeursUtilisables?.sources ?? []
+  ).flatMap((source) =>
+    source.fait.map((valeur) => ({
+      ...valeur,
+      source: source.libelle ?? appLabels.sourceCollectivite,
+    }))
+  );
+  const lignes = filterLignesFromAnneeReference(
+    toutesLignes,
+    anneeReference,
+    selectionneeId
+  ).sort((a, b) => b.annee - a.annee);
 
   const handleSelect = (indicateurValeurId: number | null) => {
     setScoreFromIndicateur({
@@ -146,6 +154,8 @@ const SubactionIndicateurModalResultatsContent = ({
       <IndicateurResultatsTable
         lignes={lignes}
         unite={unite}
+        anneeReference={anneeReference}
+        hasResultatsAnterieursMasques={lignes.length < toutesLignes.length}
         selectionneeId={selectionneeId}
         isPending={isPending}
         disabled={nonSuivi || isUpdatingNonSuivi}

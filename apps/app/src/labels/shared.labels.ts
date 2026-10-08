@@ -45,6 +45,8 @@ export const sharedLabels = {
   sousThematiqueSelectionTooltip:
     'Sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques',
   historique: 'Historique',
+  source: 'Source',
+  sources: plural({ one: 'source', other: 'sources' }),
 
   modificationsGroupees: 'Modifications groupées',
 
