@@ -2,18 +2,17 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
-import {
-  getYearFromIsoDate,
-  IndicateurValeurType,
-} from '@tet/domain/indicateurs';
-import { cn, Input, TableCell, VisibleWhen } from '@tet/ui';
-import { capitalize } from '@tet/ui/labels/plural';
+import { getYearFromIsoDate } from '@tet/domain/indicateurs';
+import { cn, TableCell, VisibleWhen } from '@tet/ui';
 import { memo, ReactNode, useCallback } from 'react';
 import { IndicateurValeurRequiseMarker } from './indicateur-valeur-requise.marker';
-import { IndicateurValeurTypeBadge } from './indicateur-valeur-type.badge';
+import {
+  IndicateurValeurContent,
+  IndicateurValeurInput,
+} from './indicateur-valeur.field';
 import { parseCellNumber } from './parse-cell-number';
 import { SaveAck } from './save-ack';
-import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
+import { IndicateurTableRow, IndicateurValeurField } from './types';
 import { useCellEdit } from './use-cell-edit';
 import { getTableMeta, IndicateurValeursTableFeatures } from './utils';
 
@@ -23,15 +22,10 @@ type IndicateurValeurCellProps = {
     IndicateurTableRow,
     unknown
   >;
-  indicateurValeurType: Extract<IndicateurValeurType, 'resultat' | 'objectif'>;
+  indicateurValeurType: IndicateurValeurField;
   year: number;
   isReadonly?: boolean;
 };
-
-const fieldAriaLabel = (field: PcaetIndicateurValeurType): string =>
-  field === 'resultat'
-    ? capitalize(appLabels.indicateurResultat())
-    : capitalize(appLabels.indicateurObjectif());
 
 export const IndicateurValeurCell = memo(
   ({
@@ -88,12 +82,12 @@ export const IndicateurValeurCell = memo(
           className={cn(cellClassName, 'bg-grey-1 text-grey-6')}
           canEdit={false}
         >
-          <div className="flex items-center gap-2 text-sm">
-            <IndicateurValeurTypeBadge
-              indicateurValeurType={indicateurValeurType}
-            />
+          <IndicateurValeurContent
+            type={indicateurValeurType}
+            className="text-sm"
+          >
             {appLabels.pcaetDiagnosticValeurNonApplicable}
-          </div>
+          </IndicateurValeurContent>
         </TableCell>
       );
     }
@@ -110,44 +104,24 @@ export const IndicateurValeurCell = memo(
             void edit.save();
           },
           renderOnEdit: ({ openState }) => (
-            <Input
-              type="number"
-              numType="float"
-              inputMode="decimal"
-              autoFocus
-              containerClassname="grow border-none"
-              aria-label={fieldAriaLabel(indicateurValeurType)}
-              aria-invalid={edit.status === 'error'}
-              aria-required={isRequired}
-              value={edit.text}
-              onFocus={(event) => event.currentTarget.select()}
-              onChange={(event) => edit.onChange(event.currentTarget.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  openState.setIsOpen(false);
-                } else if (event.key === 'Escape') {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  edit.cancel();
-                  openState.setIsOpen(false);
-                }
-              }}
+            <IndicateurValeurInput
+              type={indicateurValeurType}
+              edit={edit}
+              isRequired={isRequired}
+              onCommit={() => openState.setIsOpen(false)}
+              onCancel={() => openState.setIsOpen(false)}
             />
           ),
         }}
       >
         {edit.status === 'saved' ? <SaveAck /> : null}
         <div className="flex flex-col ">
-          <div className="flex items-center gap-2">
-            <IndicateurValeurTypeBadge
-              indicateurValeurType={indicateurValeurType}
-            />
+          <IndicateurValeurContent type={indicateurValeurType}>
             {edit.text}
             <VisibleWhen condition={isRequired && displayedValue === null}>
               <IndicateurValeurRequiseMarker />
             </VisibleWhen>
-          </div>
+          </IndicateurValeurContent>
         </div>
       </TableCell>
     );

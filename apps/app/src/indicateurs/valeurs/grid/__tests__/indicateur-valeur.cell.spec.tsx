@@ -1,6 +1,12 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import {
   IndicateurPeriodiciteEnum,
   IndicateurValeur,
@@ -47,10 +53,14 @@ const buildValeur = ({
 const buildCellContext = ({
   resultat,
   objectif,
+  isRequired = true,
+  isApplicable = true,
   updateIndicateurValeurs = vi.fn().mockResolvedValue(true),
 }: {
   resultat: number | null;
   objectif: number | null;
+  isRequired?: boolean;
+  isApplicable?: boolean;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }): {
   cell: CellContext<
@@ -64,6 +74,8 @@ const buildCellContext = ({
     indicateurId,
     indicateurLabel: 'Résidentiel',
     indicateurValeurs: [buildValeur({ resultat, objectif })],
+    optionalYears: isRequired ? undefined : [year],
+    isApplicable,
   });
 
   const meta: IndicateurValeursTableMeta = {
@@ -88,17 +100,22 @@ const renderCell = ({
   indicateurValeurType,
   resultat,
   objectif,
+  isRequired,
+  isApplicable,
   updateIndicateurValeurs,
 }: {
   indicateurValeurType: 'resultat' | 'objectif';
   resultat: number | null;
   objectif: number | null;
   isRequired?: boolean;
+  isApplicable?: boolean;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }) => {
   const { cell, updateIndicateurValeurs: persist } = buildCellContext({
     resultat,
     objectif,
+    isRequired,
+    isApplicable,
     updateIndicateurValeurs,
   });
 
@@ -201,6 +218,109 @@ describe('IndicateurValeurCell', () => {
         screen.queryByLabelText(capitalize(appLabels.indicateurResultat()))
       ).toBeNull()
     );
+    expect(updateIndicateurValeurs).not.toHaveBeenCalled();
+  });
+
+  it('conserve le format numérique français limité à trois décimales', async () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+    });
+
+    fireEvent.click(screen.getByText('10'));
+    const input = screen.getByRole('textbox', { name: 'Résultat' });
+    expect(input.getAttribute('aria-required')).toBe('true');
+    fireEvent.change(input, { target: { value: '1234,5678' } });
+    expect((input as HTMLInputElement).value).toBe('1 234,567');
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() =>
+      expect(updateIndicateurValeurs).toHaveBeenCalledWith({
+        indicateurId,
+        year,
+        field: 'resultat',
+        value: 1234.567,
+      })
+    );
+  });
+
+  it.each([
+    { text: '0', value: 0 },
+    { text: '', value: null },
+  ])('enregistre $value après saisie de "$text"', async ({ text, value }) => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+    });
+
+    editAndCommit('10', text);
+
+    await waitFor(() =>
+      expect(updateIndicateurValeurs).toHaveBeenCalledWith({
+        indicateurId,
+        year,
+        field: 'resultat',
+        value,
+      })
+    );
+  });
+
+  it('ferme avant la réponse serveur et permet de reprendre le brouillon après un échec', async () => {
+    let resolve: (saved: boolean) => void = () => undefined;
+    const promise = new Promise<boolean>((resolveSave) => {
+      resolve = resolveSave;
+    });
+    const persist = vi.fn(() => promise);
+    renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+      updateIndicateurValeurs: persist,
+    });
+
+    editAndCommit('10', '42');
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(persist).toHaveBeenCalledOnce();
+    await act(async () => resolve(false));
+
+    expect(screen.getByRole('cell').getAttribute('aria-invalid')).toBe('true');
+    fireEvent.click(screen.getByText('42'));
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('42');
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
+    expect(screen.getByText('10')).toBeDefined();
+    expect(persist).toHaveBeenCalledOnce();
+  });
+
+  it('laisse une valeur optionnelle vide sans marqueur requis', () => {
+    renderCell({
+      indicateurValeurType: 'objectif',
+      resultat: null,
+      objectif: null,
+      isRequired: false,
+    });
+
+    expect(screen.queryByTitle(appLabels.indicateurValeurRequise)).toBeNull();
+    fireEvent.click(screen.getByRole('cell'));
+    expect(screen.getByRole('textbox').getAttribute('aria-required')).toBe(
+      'false'
+    );
+  });
+
+  it('désactive la saisie et le marqueur requis pour un indicateur non applicable', () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'objectif',
+      resultat: null,
+      objectif: null,
+      isApplicable: false,
+    });
+
+    fireEvent.click(
+      screen.getByText(appLabels.pcaetDiagnosticValeurNonApplicable)
+    );
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByTitle(appLabels.indicateurValeurRequise)).toBeNull();
     expect(updateIndicateurValeurs).not.toHaveBeenCalled();
   });
 });

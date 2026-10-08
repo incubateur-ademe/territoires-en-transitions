@@ -8,7 +8,7 @@ import { IndicateurTable } from '../../table/indicateur-table';
 // un message spécifique doit être affiché pour les indicateurs de la séquestration carbone
 const ID_SEQUESTRATION = 'cae_63.';
 
-/** Affiche les onglets résultats/objectifs */
+/** Affiche la saisie des résultats et objectifs par période */
 export const IndicateurValuesTabs = ({
   definition,
   chartInfo,
@@ -36,6 +36,7 @@ export const IndicateurValuesTabs = ({
         </>
       )}
       <IndicateurTable
+        key={definition.id}
         chartInfo={chartInfo}
         collectiviteId={collectiviteId}
         definition={definition}

@@ -1,4 +1,4 @@
-import { PcaetIndicateurValeurType } from './types';
+import { IndicateurValeurField } from './types';
 
 export const isResultatEditable = (year: number, now: number): boolean =>
   year <= now;
@@ -12,6 +12,6 @@ export const isResultatEditable = (year: number, now: number): boolean =>
 export const valueFieldsForYear = (
   year: number,
   now: number
-): readonly PcaetIndicateurValeurType[] => {
+): readonly IndicateurValeurField[] => {
   return isResultatEditable(year, now) ? ['resultat'] : ['objectif'];
 };

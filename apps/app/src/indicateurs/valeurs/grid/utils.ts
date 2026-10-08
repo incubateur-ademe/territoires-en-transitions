@@ -1,5 +1,5 @@
 import { metaHelper, Table, tableFeatures } from '@tanstack/react-table';
-import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
+import { IndicateurTableRow, IndicateurValeurField } from './types';
 
 export type IndicateurValeursTableMeta = {
   onReferenceYearChange: (year: number) => void;
@@ -25,7 +25,7 @@ export type IndicateurValeursTableMeta = {
 
 export type IndicateurValeursColumnMeta = {
   year: number;
-  indicateurValeurType: PcaetIndicateurValeurType;
+  indicateurValeurType: IndicateurValeurField;
 };
 
 export const indicateurValeursTableFeatures = tableFeatures({

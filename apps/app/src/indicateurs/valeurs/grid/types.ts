@@ -13,7 +13,7 @@ export const UNSET_REFERENCE_YEAR = 0;
 export const isUnsetReferenceYear = (year: number): boolean =>
   year === UNSET_REFERENCE_YEAR;
 
-export type PcaetIndicateurValeurType = Extract<
+export type IndicateurValeurField = Extract<
   IndicateurValeurType,
   'resultat' | 'objectif'
 >;

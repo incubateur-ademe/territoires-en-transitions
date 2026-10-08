@@ -1,12 +1,15 @@
 import { appLabels } from '@/app/labels/catalog';
-import { Badge, cn, TableHeaderCell, Tooltip } from '@tet/ui';
-import { JSX, memo } from 'react';
+import { Badge, cn, Tooltip } from '@tet/ui';
+import { JSX, memo, ReactNode } from 'react';
+import { IndicateurValeurPeriodeHeaderCell } from './indicateur-valeur-periode.header-cell';
 import { ReferenceYearField } from './reference-year/reference-year-field';
 
 type YearColumnHeaderProps = {
   year: number | null;
   colSpan?: number;
-  isReference: boolean;
+  isReference?: boolean;
+  children?: ReactNode;
+  className?: string;
   displayedYears?: readonly number[];
   onReferenceYearChange?: (year: number) => void;
 };
@@ -60,28 +63,27 @@ export const IndicateurValeurYearHeaderCell = memo(
   ({
     year,
     colSpan = 1,
-    isReference,
+    isReference = false,
+    children,
+    className,
     displayedYears,
     onReferenceYearChange,
   }: YearColumnHeaderProps): JSX.Element => {
     return (
-      <TableHeaderCell
+      <IndicateurValeurPeriodeHeaderCell
         colSpan={colSpan}
-        align="center"
-        className={cn(
-          'sticky top-0 z-[2] align-middle border-r border-grey-3 bg-white text-base font-bold',
-          isReference || colSpan === 2 ? 'w-60 min-w-48' : 'w-32 min-w-24'
-        )}
-      >
-        <div className="flex items-center gap-1 justify-center align-middle">
+        className={cn(isReference && 'w-60 min-w-48', className)}
+        label={
           <YearHeaderLabel
             year={year}
             isReference={isReference}
             displayedYears={displayedYears}
             onReferenceYearChange={onReferenceYearChange}
           />
-        </div>
-      </TableHeaderCell>
+        }
+      >
+        {children}
+      </IndicateurValeurPeriodeHeaderCell>
     );
   }
 );

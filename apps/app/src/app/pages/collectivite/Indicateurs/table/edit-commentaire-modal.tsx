@@ -13,13 +13,13 @@ import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
 import { SourceType } from '../types';
 
-export type EditCommentaireModalProps = {
-  annee: number;
+type EditCommentaireModalProps = {
+  periodeLabel: string;
   commentaire: string;
   definition: IndicateurDefinition;
   type: SourceType;
   openState: OpenState;
-  onChange: (commentaire: string) => void;
+  onChange: (commentaire: string) => void | Promise<boolean>;
   isReadonly?: boolean;
 };
 
@@ -29,13 +29,14 @@ export type EditCommentaireModalProps = {
 export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
   const {
     definition,
-    annee,
+    periodeLabel,
     commentaire: commentaireInitial,
     type,
     openState,
     onChange,
     isReadonly = false,
   } = props;
+  const [isSaving, setIsSaving] = useState(false);
   const [commentaire, setCommentaire] = useState<string | null>(
     commentaireInitial
   );
@@ -45,10 +46,9 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
       openState={openState}
       disableDismiss
       title={appLabels.commentaireIndicateurTitre({
-        sourceTypeLabel:
-          getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
+        sourceTypeLabel: getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
         unite: definition.unite,
-        annee,
+        periodeLabel,
       })}
       render={() => {
         return (
@@ -67,12 +67,18 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
         !isReadonly ? (
           <ModalFooterOKCancel
             btnOKProps={{
-              onClick: () => {
-                onChange(commentaire ?? '');
-                close();
+              disabled: isSaving,
+              onClick: async () => {
+                setIsSaving(true);
+                try {
+                  const saved = await onChange(commentaire ?? '');
+                  if (saved !== false) close();
+                } finally {
+                  setIsSaving(false);
+                }
               },
             }}
-            btnCancelProps={{ onClick: close }}
+            btnCancelProps={{ onClick: close, disabled: isSaving }}
           />
         ) : (
           <ModalFooter>
