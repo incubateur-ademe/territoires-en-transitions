@@ -9,6 +9,9 @@ const etatLabels = {
   non_renseigne: appLabels.ficheSecteursNonRenseigne,
 } satisfies Record<Exclude<FicheSecteurs['etat'], 'attribue'>, string>;
 
+export const isARenseigner = (secteurs: FicheSecteurs) =>
+  secteurs.etat === 'non_attribuable' && secteurs.origine === 'automatique';
+
 export const FicheSecteursList = ({
   isLoading,
   secteurs,
@@ -36,7 +39,9 @@ export const FicheSecteursList = ({
               (secteur) => appLabels.ficheSecteurReglementaireLabels[secteur]
             )
             .join(', ')
-        : etatLabels[secteurs.etat]}
+        : isARenseigner(secteurs)
+          ? appLabels.ficheSecteursARenseigner
+          : etatLabels[secteurs.etat]}
     </span>
   );
 };

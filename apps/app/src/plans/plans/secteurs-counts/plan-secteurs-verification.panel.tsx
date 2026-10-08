@@ -21,16 +21,11 @@ import { cn } from '@tet/ui/utils/cn';
 import { useEffect, useState } from 'react';
 import { FicheSecteursAVerifier } from './data/use-list-plan-fiches-secteurs-a-verifier';
 
-const groupes = [
-  { etat: 'a_renseigner', titre: appLabels.planSecteursGroupeARenseigner },
-  {
-    etat: 'non_attribuable',
-    titre: appLabels.planSecteursGroupeNonAttribuables,
-  },
-] as const;
+const isARenseigner = (fiche: FicheSecteursAVerifier) =>
+  fiche.etat === 'a_renseigner' || fiche.etat === 'non_attribuable';
 
 export const toFichesAVerifier = (fiches: FicheSecteursAVerifier[]) =>
-  groupes.flatMap(({ etat }) => fiches.filter((fiche) => fiche.etat === etat));
+  fiches.filter(isARenseigner);
 
 export const PlanSecteursVerificationPanel = ({
   planId,
@@ -100,10 +95,12 @@ const ListeFiches = ({
     className="flex flex-col gap-6 p-4"
     data-test="plans.secteurs-counts-alert.liste"
   >
-    {groupes.map(({ etat, titre }) => {
+    {[
+      { etat: 'a_renseigner', titre: appLabels.planSecteursGroupeARenseigner },
+    ].map(({ etat, titre }) => {
       const fichesDuGroupe = fiches
         .map((fiche, index) => ({ fiche, index }))
-        .filter(({ fiche }) => fiche.etat === etat);
+        .filter(({ fiche }) => isARenseigner(fiche));
       if (fichesDuGroupe.length === 0) {
         return null;
       }
@@ -266,9 +263,7 @@ const RevueFiche = ({
 
       <div className="flex flex-col gap-2">
         <p className="mb-0 text-xs font-medium uppercase text-grey-7">
-          {fiche.etat === 'a_renseigner'
-            ? appLabels.planSecteursGroupeARenseigner
-            : appLabels.planSecteursGroupeNonAttribuables}
+          {appLabels.planSecteursGroupeARenseigner}
           {isVerifiee && (
             <span className="ml-2 normal-case text-success-1">
               {appLabels.planSecteursVerifiee}

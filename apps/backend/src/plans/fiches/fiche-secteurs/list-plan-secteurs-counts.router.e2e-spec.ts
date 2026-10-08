@@ -153,7 +153,7 @@ describe('Comptes des secteurs des fiches d’un plan', () => {
     return planId;
   };
 
-  test('compte les fiches du plan et de ses sous-axes : non attribuables, en cours de calcul, à renseigner', async () => {
+  test('compte les fiches du plan et de ses sous-axes : non attribuables, en cours de calcul, à renseigner, sans les fiches déclarées sans secteur par la collectivité', async () => {
     const planId = await createPlan(pcaetTypeId);
     const axeId = await createAxe(planId);
     const sousAxeId = await createAxe(planId, axeId);
@@ -180,7 +180,7 @@ describe('Comptes des secteurs des fiches d’un plan', () => {
     await attribue(attribuee, 'automatique', ['dechets']);
 
     expect(await listCounts([planId])).toEqual([
-      { planId, enCoursDeCalcul: 2, aRenseigner: 1, nonAttribuables: 2 },
+      { planId, enCoursDeCalcul: 2, aRenseigner: 1, nonAttribuables: 1 },
     ]);
   });
 

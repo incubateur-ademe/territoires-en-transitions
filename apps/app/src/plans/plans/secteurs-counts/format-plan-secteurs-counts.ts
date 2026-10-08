@@ -9,8 +9,8 @@ export const formatPlanSecteursCounts = ({
   [
     enCoursDeCalcul > 0 &&
       appLabels.planSecteursEnCoursDeCalcul({ count: enCoursDeCalcul }),
-    aRenseigner > 0 &&
-      appLabels.planSecteursARenseigner({ count: aRenseigner }),
-    nonAttribuables > 0 &&
-      appLabels.planSecteursNonAttribuables({ count: nonAttribuables }),
+    aRenseigner + nonAttribuables > 0 &&
+      appLabels.planSecteursARenseigner({
+        count: aRenseigner + nonAttribuables,
+      }),
   ].filter((part) => part !== false);
