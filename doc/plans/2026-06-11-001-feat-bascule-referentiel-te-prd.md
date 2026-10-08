@@ -89,7 +89,7 @@ Règle existante (`shouldDisplayReferentielByCriteria`) : un référentiel CAE o
 | 2 | ≥ 150 statuts d'actions |
 | 3 | ≥ 50 explications (`action_commentaire`) |
 | 4 | ≥ 150 explications |
-| 5 | dernière activité (statut ou explication) < 1 an |
+| 5 | dernière activité (statut ou explication) < 2 ans |
 
 Les seuils **50** et **150** sur une même métrique sont **deux critères indépendants** (150 compte pour 2).
 
@@ -97,9 +97,9 @@ Les seuils **50** et **150** sur une même métrique sont **deux critères indé
 |---|---|---|
 | 50 statuts seuls | 1 | Non |
 | 50 explications seules | 1 | Non |
-| activité < 1 an seule | 1 | Non |
-| 50 statuts + activité < 1 an | 2 | Oui |
-| 50 explications + activité < 1 an | 2 | Oui |
+| activité < 2 ans seule | 1 | Non |
+| 50 statuts + activité < 2 ans | 2 | Oui |
+| 50 explications + activité < 2 ans | 2 | Oui |
 | 50 statuts + 50 explications | 2 | Oui |
 | 150 statuts seuls | 2 (≥ 50 + ≥ 150) | Oui |
 | 150 explications seules | 2 (≥ 50 + ≥ 150) | Oui |
