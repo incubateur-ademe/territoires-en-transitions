@@ -107,7 +107,7 @@ const loadMotifsDossiers = async (client: PoolClient) => {
     select tec_id::int, motif
       from reprise_tec.ecarts
      where table_source = 'demarche' and precision = ''
-       and motif in ('doublon', 'coquille_vide', 'sans_etat_invisible', 'elaboration_remplacee', 'dossier_de_test')`);
+       and motif in ('doublon', 'coquille_vide', 'sans_etat_invisible', 'elaboration_remplacee', 'elaboration_doublon', 'dossier_de_test')`);
   const motifs = new Map(rows.map((r) => [r.tecId, r.motif]));
   return (dossier: number) => {
     const motif = motifs.get(dossier);
