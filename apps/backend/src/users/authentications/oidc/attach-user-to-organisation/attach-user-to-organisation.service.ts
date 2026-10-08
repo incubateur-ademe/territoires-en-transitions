@@ -12,6 +12,7 @@ import {
 } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, count, eq, sql } from 'drizzle-orm';
+import { CreateCollectiviteFromImportsService } from '../create-collectivite-from-imports/create-collectivite-from-imports.service';
 import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 import {
   OidcClaims,
@@ -38,7 +39,9 @@ type AutoAttachmentRefus =
 /**
  * Le rattachement d'un agent à sa collectivité ou à son service, sur la foi de
  * l'organisation que son fournisseur d'identité atteste. Le premier arrivé en
- * devient administrateur, les suivants éditeurs — comme `membres.join`.
+ * devient administrateur, les suivants éditeurs — comme `membres.join`. Une
+ * commune ou un EPCI que la base ne connaît pas encore est créé au passage,
+ * depuis les tables `imports`.
  *
  * Le verrou de domaine est volontairement redondant avec le rapprochement par
  * SIRET : en août 2026 MonCompteAdeme renvoyait le SIRET du siège de l'ADEME au
@@ -51,6 +54,7 @@ export class AttachUserToOrganisationService {
 
   constructor(
     private readonly getCollectiviteBySiretService: GetCollectiviteBySiretService,
+    private readonly createCollectiviteFromImportsService: CreateCollectiviteFromImportsService,
     private readonly updateUserRoleService: UpdateUserRoleService,
     private readonly userPreferencesRepository: UserPreferencesRepository,
     private readonly transactionManager: TransactionManager
@@ -89,10 +93,25 @@ export class AttachUserToOrganisationService {
       return this.refuser(userId, 'sans-siret');
     }
 
-    const collectivite = await this.getCollectiviteBySiretService.getBySiret(
+    let collectivite = await this.getCollectiviteBySiretService.getBySiret(
       claims.siret,
       tx
     );
+
+    if (!collectivite) {
+      const creation =
+        await this.createCollectiviteFromImportsService.createFromSiret(
+          claims.siret,
+          tx
+        );
+      if (!creation.success) {
+        return failure(
+          AttachUserToOrganisationErrorEnum.ATTACH_ORGANISATION_ERROR,
+          creation.cause
+        );
+      }
+      collectivite = creation.data;
+    }
 
     // Seule trace permettant de voir qu'un fournisseur d'identité s'est remis à
     // renvoyer la mauvaise organisation.
