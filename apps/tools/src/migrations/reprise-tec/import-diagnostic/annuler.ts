@@ -2,7 +2,7 @@
 /**
  * Reprise T&C, étape 3 : retire de TeT le diagnostic que `index.ts` a écrit, et
  * seulement lui, étiquette par étiquette. Simulation par défaut, `--confirm`
- * pour valider. Aucune tranche ne dépend de celle-ci : pas de garde.
+ * pour valider. Aucune étape ne dépend de celle-ci : pas de garde ; elle ne retire que ses propres écarts.
  *
  *   SUPABASE_DATABASE_URL="postgresql://..." pnpx tsx \
  *     apps/tools/src/migrations/reprise-tec/import-diagnostic/annuler.ts [--confirm]
@@ -71,7 +71,12 @@ const deleteDiagnostics = async (client: PoolClient) => {
   // Les écarts de la tranche 2 visent des dossiers entiers : `demarche`, sans précision.
   const ecarts = await client.query(
     `delete from reprise_tec.ecarts
-      where table_source <> 'demarche' or motif in ('commentaire_sans_place', 'total_melange')`
+      where table_source in ('demarche_consommation', 'demarche_emission_ges', 'demarche_enr',
+                             'demarche_enr_prod_et_conso', 'demarche_enr_reseaux', 'demarche_polluant_total',
+                             'demarche_polluants', 'demarche_sequestration_estimation',
+                             'demarche_sequestration_potentiel', 'demarche_sequestration_production',
+                             'demarche_sequestration_renforcement')
+         or (table_source = 'demarche' and motif in ('commentaire_sans_place', 'total_melange'))`
   );
 
   return {
