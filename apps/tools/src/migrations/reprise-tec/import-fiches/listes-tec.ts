@@ -80,7 +80,6 @@ export const SECTEURS = new Map<number, Classement>([
   // Une sous-thématique qui dit la même chose, et Résidentiel.
   [4, { sousThematique: 'Biodiversité' }], // Biodiversité
   [5, { sousThematique: 'Consommation responsable et achats durables' }], // Consommation responsable
-  [10, { sousThematique: 'Communication, formation et sensibilisation' }], // Communication / formation / sensibilisation
   [
     14,
     {
@@ -98,6 +97,14 @@ export const SECTEURS = new Map<number, Classement>([
   // La seule thématique.
   // Agriculture : la thématique du même nom dit tout (la sous-thématique homonyme est sous « Activités économiques »).
   [1, { thematique: 'Agriculture et alimentation', exacte: true }], // Agriculture
+  [
+    10,
+    {
+      thematique:
+        'Sensibilisation, communication et accompagnement au changement',
+      exacte: true,
+    },
+  ], // Communication / formation / sensibilisation
   [6, { thematique: 'Économie circulaire et déchets' }], // Déchets
   [7, { thematique: 'Activités économiques' }], // Développement économique
   [8, { thematique: 'Eau, milieux aquatiques et assainissement' }], // Eau
