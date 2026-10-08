@@ -1,6 +1,5 @@
 'use client';
 import { EmptyCard, PictoWarning } from '@tet/ui';
-import { redirect } from 'next/navigation';
 
 export default function NotFound() {
   return (
@@ -13,9 +12,7 @@ export default function NotFound() {
       actions={[
         {
           children: "Retourner à la page d'accueil",
-          onClick: () => {
-            redirect('/');
-          },
+          href: '/',
           variant: 'outlined',
         },
       ]}

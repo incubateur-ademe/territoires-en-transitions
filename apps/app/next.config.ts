@@ -84,6 +84,13 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Ancienne page d'accueil collectivité, supprimée : `/` route vers le
+      // bon tableau de bord selon l'utilisateur.
+      {
+        source: '/collectivite/:collectiviteId/accueil',
+        destination: '/',
+        permanent: true,
+      },
       {
         source: '/collectivite/:collectiviteId/plans/fiches/:ficheId*',
         destination: '/collectivite/:collectiviteId/actions/:ficheId*',
