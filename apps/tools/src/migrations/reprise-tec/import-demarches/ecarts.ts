@@ -30,16 +30,45 @@ export const validateBilan = (
   }
 };
 
-/** Écrit chaque ligne écartée dans `reprise_tec.ecarts`, avec son motif. */
+/** Une partie d'un dossier écrit qui n'a pas de place dans TeT. */
+export type PartieEcartee = {
+  id: number;
+  precision: 'population_couverte' | 'commentaire_statut';
+  motif: 'sans_place';
+};
+
+/** Les parties sans place des dossiers écrits : la population couverte et le commentaire de statut, quand T&C les a. */
+export const listPartiesEcartees = async (
+  client: PoolClient,
+  dossiersAImporter: readonly Dossier[]
+): Promise<PartieEcartee[]> => {
+  const { rows } = await client.query<{
+    id: number;
+    precision: PartieEcartee['precision'];
+  }>(
+    `select d.id::int, p.precision
+       from reprise_tec.staging_demarche d
+       cross join lateral (values
+         ('population_couverte', coalesce(d.population_couverte, 0) > 0),
+         ('commentaire_statut', nullif(trim(d.commentaire_statut), '') is not null)
+       ) as p(precision, renseigne)
+      where d.id = any($1) and p.renseigne
+      order by 1, 2`,
+    [dossiersAImporter.map((d) => d.tecId)]
+  );
+  return rows.map((r) => ({ ...r, motif: 'sans_place' }));
+};
+
+/** Écrit chaque ligne écartée, et chaque partie sans place, dans `reprise_tec.ecarts`, avec son motif. */
 export const createEcarts = async (
   client: PoolClient,
-  ecarts: readonly Ecart[]
+  ecarts: readonly (Ecart | PartieEcartee)[]
 ) => {
-  for (const { id, motif } of ecarts) {
+  for (const e of ecarts) {
     await client.query(
-      `insert into reprise_tec.ecarts (table_source, tec_id, motif)
-       values ('demarche', $1, $2)`,
-      [id, motif]
+      `insert into reprise_tec.ecarts (table_source, tec_id, precision, motif)
+       values ('demarche', $1, $2, $3)`,
+      [e.id, 'precision' in e ? e.precision : '', e.motif]
     );
   }
 };

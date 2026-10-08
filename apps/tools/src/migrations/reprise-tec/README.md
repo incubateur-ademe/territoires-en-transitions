@@ -91,6 +91,10 @@ dans sa collectivité et lancé avant l'approbation du suivi, il a été adopté
 hors de T&C : il arrive publié, adopté et publié à la date d'approbation. Le
 rapport nomme chacun.
 
+La population couverte et le commentaire de statut d'un dossier écrit n'ont
+pas de place dans TeT : chacun laisse un écart `sans_place`, `precision` = le
+nom de la colonne.
+
 Un dossier saisi pour essai dans T&C (liste `DOSSIERS_DE_TEST` de
 `perimetre.ts`) est écarté, motif `dossier_de_test`.
 

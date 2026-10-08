@@ -12,7 +12,7 @@ import { getCible } from '../db';
 import { loadCollectivites } from './collectivites';
 import { loadDemarchesTet } from './demarches-tet';
 import { buildDossier } from './dossier';
-import { createEcarts, validateBilan } from './ecarts';
+import { createEcarts, listPartiesEcartees, validateBilan } from './ecarts';
 import { createDossiers } from './ecriture';
 import { calculateElaborations } from './elaborations';
 import { validateGardes } from './gardes';
@@ -47,11 +47,15 @@ const main = async () => {
       dateReference,
     });
     validateBilan(perimetre.lues, dossiersAImporter, ecarts);
+    const partiesEcartees = await listPartiesEcartees(
+      client,
+      dossiersAImporter
+    );
 
     await client.query('begin');
     try {
       await createDossiers(client, dossiersAImporter);
-      await createEcarts(client, ecarts);
+      await createEcarts(client, [...ecarts, ...partiesEcartees]);
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
       await client.query('rollback');
@@ -63,6 +67,7 @@ const main = async () => {
       ecarts,
       ecrits: dossiersAImporter,
       elaborationsAdoptees: elaborations.adoptees,
+      partiesEcartees,
       deuxDossiersEnCours: demarchesTet.listDeuxDossiersEnCours(
         dossiersAImporter,
         collectivites
