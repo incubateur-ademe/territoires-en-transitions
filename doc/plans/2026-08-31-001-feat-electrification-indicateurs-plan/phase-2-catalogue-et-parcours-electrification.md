@@ -3,7 +3,7 @@ title: 'Phase 2 — Catalogue et config Électrification'
 parent: ./README.md
 kind: phase
 phase: 2
-updated: 2026-09-24
+updated: 2026-10-08
 ---
 
 # Phase 2 — Catalogue et configuration Électrification
@@ -39,7 +39,8 @@ garder les vues génériques dans le domaine `indicateurs`. Composer les sous-ro
 - Importer les indicateurs validés par Émeline : définition, unité, périodicité de déclaration
   fixée à la création et association. Couvrir les quatre périodicités : annuelle, semestrielle,
   trimestrielle et mensuelle. Les sources externes conservent leur propre périodicité, sans changer
-  celle de déclaration de l’indicateur. La périodicité de visualisation (affichage) est indépendante.
+  celle de l’indicateur ; leur accès suit le traitement défini en phase 1. La déclaration et la
+  visualisation utilisent la même périodicité, sans agrégation, selon la décision du 24 septembre 2026.
   Inclure les indicateurs macro liés aux 12 engagements et les deux « smart indicateurs »,
   dont les définitions restent à valider ; ne pas inventer leur calcul ou leur correspondance avec les engagements.
 - Refuser toute modification de la périodicité de déclaration après création, même sans valeur :
@@ -97,16 +98,16 @@ Source : [vues personnalisées](https://app.notion.com/p/accelerateur-transition
 - Créer une vue depuis le panneau de filtres, la nommer, la retrouver dans un onglet et la supprimer ;
   persister ses filtres. Le renommage proposé est disponible quand les filtres correspondent
   exactement à une vue existante.
-- Si une vue conserve un réglage de visualisation, préciser sa portée (commune ou par indicateur)
-  et sa persistance. Il permet de visualiser les valeurs à leur périodicité ou à une périodicité
-  plus large, selon l’ADR. Le distinguer des filtres et de la périodicité de déclaration fixe ;
-  ouvrir ou modifier une vue ne modifie aucune valeur enregistrée.
+- Chaque indicateur d'une vue conserve sa périodicité de déclaration et de visualisation fixée
+  dans sa définition. Ne pas proposer ni persister de périodicité d'affichage indépendante,
+  commune à la vue ou propre à un indicateur ; ouvrir ou modifier une vue ne modifie aucune
+  valeur enregistrée et ne produit aucune agrégation entre périodes.
 - Dans ce panneau, remplacer Catégorie par Modèle, retirer le filtre Open Data, ajouter la
   réinitialisation et le nombre de correspondances ; partager la taxonomie avec le sélecteur d'indicateurs.
 - Fournir une vue Électrification par défaut aux lauréats à partir du catalogue applicable ;
   prévoir les états catalogue incomplet, aucun engagement affecté et aucune valeur enregistrée
-  à la date consultée selon la périodicité de déclaration. Un agrégat affiché
-  ne crée pas d’observation ; les échéances et le retard de reporting restent à cadrer en phase 3.
+  à la date consultée selon la périodicité de l'indicateur ; les échéances et le retard de reporting
+  restent à cadrer en phase 3.
 - Définir la propriété des vues (personnelle ou collective), leurs droits d'édition/suppression,
   l'ordre, et le comportement du preset lors d'une mise à jour du catalogue.
 - Garder le mécanisme réutilisable pour de futurs presets, dont Biodiv ; livrer ici Électrification.
@@ -134,7 +135,7 @@ Source : [proposition Notion](https://app.notion.com/p/accelerateur-transition-e
 - Verrouillage testé par les API plan, axe, fiche et indicateur, avec rôles autorisés/interdits,
   champs éditables et fiche présente dans plusieurs plans ; confidentialité vérifiée.
 - Vues retrouvées après reconnexion, droits respectés, preset disponible pour les seuls lauréats
-  prévus ; filtres du sélecteur combinables et sélection conservée ; ouverture d’une vue et
-  affichage agrégé sans modification des valeurs enregistrées ni de la périodicité de déclaration.
+  prévus ; filtres du sélecteur combinables et sélection conservée ; affichage de chaque indicateur
+  à sa périodicité de déclaration, sans agrégation, réglage indépendant ni modification des observations.
 - Hors lot : groupements et heatmap, barrés dans la source ; aucun calcul d'objectif depuis les
   engagements, ni livraison d'un preset Biodiv.

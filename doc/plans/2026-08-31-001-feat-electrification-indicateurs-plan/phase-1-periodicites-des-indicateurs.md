@@ -3,7 +3,7 @@ title: 'Phase 1 — Périodicités des indicateurs'
 parent: ./README.md
 kind: phase
 phase: 1
-updated: 2026-09-24
+updated: 2026-10-08
 ---
 
 # Phase 1 — Périodicités des indicateurs
@@ -11,35 +11,29 @@ updated: 2026-09-24
 [← Index](README.md)
 
 Le socle annuel/mensuel est implémenté. Cette phase l'étend au trimestriel et au semestriel,
-ajoute la visualisation agrégée et rend la périodicité de déclaration fixe dès la création.
+rend la périodicité fixe dès la création et l'applique à la déclaration comme à la visualisation,
+sans agrégation entre périodes, conformément à la décision du 24 septembre 2026.
 Ces évolutions restent à implémenter sur le modèle de valeurs existant.
 
 ## Contrat de déclaration et de visualisation
 
-Le [cadrage](README.md), complété par la décision produit du 24 septembre, distingue :
+Le [cadrage](README.md), corrigé selon la décision produit du 24 septembre 2026, fixe les règles suivantes :
 
-- **Périodicité de déclaration** : définie pour chaque indicateur parmi annuelle, semestrielle,
-  trimestrielle et mensuelle, elle est immuable dès sa création. À la création d'un indicateur
-  personnalisé, la collectivité la choisit ; le défaut reste annuel. Il n'existe plus de mode
-  ni de préférence locale permettant de la modifier.
-- **Périodicité de visualisation (affichage)** : réglage indépendant, qui calcule une projection
-  ou une agrégation à la lecture. Il ne change ni la déclaration ni les valeurs enregistrées.
-  Revenir au détail retrouve les observations intactes.
+- La périodicité est imposée pour chaque indicateur parmi annuelle, semestrielle, trimestrielle
+  et mensuelle. Il n'existe plus de mode forcé ou recommandé ni de préférence locale de périodicité.
+- La déclaration et la visualisation utilisent la même périodicité, sans sélecteur indépendant
+  d'affichage ni agrégation entre périodes.
+- À la création d'un indicateur personnalisé, la collectivité choisit la périodicité ;
+  le défaut reste annuel. Pour un prédéfini, elle est fixée à la création dans le catalogue.
+- La périodicité n'est plus modifiable après création, même sans valeur enregistrée.
 
 Les parcours de conversion ou suppression lors d'un changement de déclaration sont abandonnés.
-Le choix de visualisation est le seul réglage de périodicité après la création.
+Il ne reste aucun réglage de périodicité après la création.
 Chaque valeur conserve son identité : indicateur, collectivité, périodicité, date et source.
 
-| Périodicité des valeurs sources | Visualisations prises en charge                  |
-| ------------------------------- | ------------------------------------------------ |
-| Mensuelle                       | Mensuelle, trimestrielle, semestrielle, annuelle |
-| Trimestrielle                   | Trimestrielle, semestrielle, annuelle            |
-| Semestrielle                    | Semestrielle, annuelle                           |
-| Annuelle                        | Annuelle                                         |
-
-Les regroupements suivent la règle métier de l'indicateur. L'addition mensuel → annuel prévue
-par le cadrage est calculée à la lecture, sans enregistrer de valeurs annuelles. Une visualisation
-plus fine ne répartit jamais une valeur source en observations inventées.
+Douze déclarations mensuelles de `10` restent douze valeurs mensuelles de `10` à l'affichage,
+y compris lorsque la plage consultée couvre une année. Aucune somme, moyenne ou dernière valeur
+n'est calculée pour les convertir à une autre périodicité. Aucune observation plus fine n'est inventée.
 
 Les données historiques et sources externes conservent leur périodicité d'origine. Leur lecture
 ne permet pas de modifier la périodicité de déclaration de l'indicateur.
@@ -47,16 +41,14 @@ L'[ADR 0018](../../adr/0018-periodicite-des-indicateurs.md) précise ce contrat.
 
 ## Précisions nécessaires à l'activation
 
-- Définir les règles d'agrégation pour stocks, pourcentages, objectifs et données incomplètes ;
-  une somme de parts mensuelles ne définit pas une part annuelle.
-- Préciser la restitution des commentaires, références et différentes sources dans la visualisation,
-  sans altérer les observations ni mélanger implicitement les séries.
 - Définir le traitement de migration des préférences locales divergentes et des séries historiques
   du socle existant. Ne pas choisir implicitement une nouvelle périodicité de déclaration.
+- Préciser l'accès aux historiques et aux sources externes dont la périodicité diffère de celle
+  de la définition, sans conversion, perte d'accès implicite ni réglage de visualisation indépendant.
 
 L'extension des contrats et des règles de date peut avancer. Retirer les anciennes préférences
 seulement après inventaire et validation du traitement métier, avec accès aux historiques préservé.
-Activer les agrégations après validation des règles de calcul concernées.
+Les règles d'agrégation de restitution sont hors périmètre et ne conditionnent pas l'activation.
 
 ## Task 1.1 — Extension du domaine et migration du socle
 
@@ -87,9 +79,8 @@ Emplacements : `packages/domain/src/indicateurs/`, tables et services
   aucune préférence ou modification de définition ne permet de la changer ;
 - conserver la périodicité d'origine des sources externes et historiques ; distinguer leur traitement
   des déclarations de la collectivité, sans créer de dérogation utilisateur ;
-- distinguer les lectures d'observations de la projection demandée pour la visualisation ;
-- calculer les agrégats à la lecture selon les règles métier, sans écriture d'observation,
-  suppression ou modification de la définition ;
+- faire utiliser aux lectures de visualisation la même périodicité que la déclaration ;
+  retirer les paramètres de périodicité d'affichage indépendante et les agrégations de restitution ;
 - réutiliser les contrôles de droits et l'écriture tRPC par lot atomique : une erreur annule le lot ;
 - adapter les calculs enregistrés à la périodicité de la définition, en retirant les branches liées
   à l'ancien mode ; préserver l'homogénéité entre formules, dépendances et groupes ;
@@ -99,16 +90,16 @@ Emplacements : `packages/domain/src/indicateurs/`, tables et services
 Emplacements : `apps/backend/src/indicateurs/valeurs/`, hooks
 `apps/app/src/indicateurs/valeurs/`.
 
-## Task 1.3 — Création et choix de visualisation
+## Task 1.3 — Choix à la création et périodicité fixe
 
 - proposer les quatre périodicités à la création personnalisée, y compris depuis une action,
-  annuel par défaut ; expliquer que ce choix fixe la périodicité de déclaration ;
-- après création, afficher la périodicité de déclaration sans sélecteur de modification ;
-- proposer séparément la périodicité de visualisation compatible avec les valeurs sources ;
+  annuel par défaut ; expliquer que ce choix fixe la périodicité de déclaration et de visualisation ;
+- après création, afficher cette périodicité sans sélecteur de modification, y compris dans le détail,
+  les graphiques et les vues enregistrées ;
 - retirer les modes et tags de recommandation, préférences locales de déclaration et parcours
   de conversion ou suppression associés à l'ancien changement de périodicité ;
-- préciser les sources affichables, leur masquage éventuel et leur réapparition lors d'un choix
-  de visualisation, sans modifier leurs données ;
+- appliquer le traitement défini pour l'accès aux sources externes et historiques, sans modifier
+  leurs données ni introduire de choix de périodicité de visualisation ;
 - conserver les fonctions ordinaires de déclaration, modification ou suppression d'une valeur,
   selon les droits existants et la périodicité fixe de l'indicateur.
 
@@ -119,8 +110,8 @@ Emplacements : `apps/backend/src/indicateurs/valeurs/`, hooks
 - adapter le modèle, la navigation, le collage, l'édition et l'ajout de dates aux quatre périodicités ;
 - garder la grille de déclaration aux dates et à la périodicité des observations déclarables,
   avec la variante annuelle PCAET ;
-- distinguer cette grille du tableau de consultation, qui peut présenter une agrégation dynamique ;
-  un agrégat affiché ne devient pas une observation éditable ;
+- aligner le tableau de consultation sur la périodicité de la grille de déclaration,
+  en présentant les observations sans agrégation ;
 - préserver résultats, objectifs, commentaires, sources, segmentations, confidentialité,
   date de référence et date de la dernière valeur renseignée ;
 - utiliser les objectifs propres aux indicateurs, sans projection depuis les candidatures ;
@@ -131,10 +122,11 @@ Emplacements : `apps/app/src/indicateurs/valeurs/grid/`, détail
 
 ## Task 1.5 — Graphiques, imports et exports
 
-- aligner tableau de consultation, graphique, cartes et rendus serveur sur les mêmes règles d'agrégation ;
-- faire reprendre aux téléchargements de graphiques la visualisation choisie ;
+- aligner tableau de consultation, graphique, cartes et rendus serveur sur la périodicité de la définition,
+  commune à la déclaration et à la visualisation, sans agrégation ;
+- faire reprendre aux téléchargements de graphiques les valeurs affichées à cette périodicité ;
 - exporter les observations enregistrées avec périodicité, date et source, sans écraser plusieurs
-  valeurs d'une année ni remplacer les observations par les agrégats d'affichage ;
+  valeurs d'une année ni les convertir à une autre périodicité ;
 - conserver la périodicité et la source à l'import ; un import ne modifie pas la périodicité
   d'une définition existante ;
 - préserver les formats annuels et représenter explicitement les données absentes ; absence n'est pas zéro.
@@ -151,15 +143,17 @@ Points sensibles : `Indicateurs/data/prepare-data.ts`, `ui/charts/echarts/utils.
   métadonnées et accès préservés selon le traitement métier, sans conversion ni suppression implicite.
 - Dates canoniques et unicités vérifiées ; janvier/année/trimestre/semestre ne se confondent pas.
 - Décembre → janvier, T4 → T1 et S2 → S1 franchissent correctement la limite d'année.
-- Pour un indicateur additionnable, douze valeurs mensuelles de `10` produisent à la lecture
-  quatre trimestres de `30`, deux semestres de `60` ou une année de `120`.
-- Tous les regroupements autorisés sont vérifiés ; revenir au détail retrouve les valeurs,
-  objectifs, commentaires, références et sources d'origine sans aucune écriture de valeur ou de définition.
+- Pour chacune des quatre périodicités, la déclaration et la visualisation utilisent celle de la définition ;
+  aucun mode forcé/recommandé, préférence locale ou sélecteur d'affichage indépendant ne subsiste.
+- Douze valeurs mensuelles de `10` restent douze points mensuels de `10` dans le tableau,
+  le graphique et son téléchargement ; consulter une année ne produit aucun agrégat trimestriel,
+  semestriel ou annuel et ne modifie aucune valeur ni définition.
+- Résultats, objectifs, commentaires, références et sources restent attachés aux observations d'origine.
 - Aucune observation plus fine n'est inventée depuis une valeur trimestrielle, semestrielle ou annuelle.
 - Sources externes et historiques conservent leur périodicité sans autoriser de nouvelles déclarations
-  contraires à celle de la définition ; aucun mélange implicite de séries annuelles et d'agrégats mensuels.
+  contraires à celle de la définition ; aucun mélange ni conversion implicite des séries.
 - Droits, atomicité des déclarations par lot et isolation entre collectivités préservés.
 - Formules et groupes restent cohérents avec la périodicité de définition après suppression de l'ancien mode.
-- Stocks, pourcentages, objectifs, zéro, absence et données incomplètes traités selon les règles validées.
+- Zéro, absence et données incomplètes restent distincts, sans valeur de remplacement ni agrégation.
 - Tableau, graphique et graphiques téléchargés concordants ; export fidèle aux observations enregistrées.
 - PCAET, score indicatif et publication GES gèrent explicitement l'absence éventuelle de valeurs annuelles.
