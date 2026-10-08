@@ -59,6 +59,11 @@ export function Consent({
       clientId: consentId,
       userCookiesDomain: 'territoiresentransitions.fr',
     };
+    // File d'attente lue par le SDK au démarrage. Si le SDK est bloqué
+    // (protection anti-pistage de Firefox, bloqueur de pubs), elle n'est
+    // jamais créée par Axeptio et `push` dans `onLoad` planterait.
+    // eslint-disable-next-line react-hooks/immutability
+    window._axcb = window._axcb || [];
   }
 
   return (
