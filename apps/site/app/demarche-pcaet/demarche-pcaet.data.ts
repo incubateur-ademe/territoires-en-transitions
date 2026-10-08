@@ -70,7 +70,7 @@ const ETAPES_BY_KEY = {
       "Vous déposez la délibération : le plan est adopté et accessible au grand public. Vous pouvez utiliser la plateforme pour suivre votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe.",
     actions: [
       'Valider le dépôt final',
-      "Suivre l'avancement des actions et indicateurs",
+      "Pilotez vos actions",
       'Réaliser le bilan à mi-parcours',
       "Réaliser le bilan à l'échéance",
     ],
