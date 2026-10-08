@@ -862,6 +862,39 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       });
     });
 
+    test("une valeur qui n'est pas un SIRET, même si ses 9 premiers chiffres désignent une commune des imports → rien n'est créé", async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-siret-malforme' })
+      );
+      const siren = sirenFictif();
+      await addCommuneDesImports({
+        siren,
+        code: '99903',
+        nom: 'Commune hors de portée',
+      });
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        // Un SIREN seul, comme MonCompteAdeme a pu en renvoyer : pas un SIRET.
+        siret: siren,
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(result.data.rattachement).toBeUndefined();
+      expect(await lireCollectivites(siren)).toHaveLength(0);
+    });
+
     test("deux premières connexions simultanées d'une commune absente → une seule collectivité, un seul administrateur", async () => {
       mockCreateUser();
       vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
