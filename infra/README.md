@@ -482,7 +482,8 @@ terraform apply tfplan
 L'`apply` : (1) enregistre les clés SSH dans Coolify, (2) assigne la clé host au serveur
 localhost, (3) crée ou met à jour les trois serveurs applicatifs et déclenche leur
 validation, (4) authentifie Docker sur `ghcr.io` en `root` sur chacun, (5) crée les
-projets, (6) crée/met à jour le S3 storage Scaleway et le valide.
+projets, (6) crée/met à jour le S3 storage Scaleway et le valide, (7) déclare les
+applications des environnements listés dans `application_environments`.
 
 Vérifier que Coolify voit bien tous ses serveurs :
 
@@ -490,6 +491,25 @@ Vérifier que Coolify voit bien tous ses serveurs :
 curl -sH "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/servers" \
   | jq -r '.[] | "\(.name) \(.ip)"'
 ```
+
+### Applications
+
+[`coolify/applications.tf`](coolify/applications.tf) déclare les applications « image
+Docker » (`app`, `backend`, `site`) de chaque environnement : image, domaines, port,
+healthcheck. Le provider n'a pas de ressource `coolify_application` : elles passent par
+[`scripts/coolify-upsert-application.sh`](scripts/coolify-upsert-application.sh), qui les
+retrouve par le marqueur `[tet-app:<env>/<app>]` de leur description.
+
+Le **tag d'image n'appartient pas à Terraform**, qui ne le pose qu'à la création, sans
+déployer. C'est la CD qui choisit la version :
+
+```sh
+APP_ID=preprod/app IMAGE_TAG=<sha> infra/scripts/coolify-deploy.sh
+```
+
+Les environnements s'ouvrent un par un via `application_environments` (défaut
+`["preprod"]`). Retirer une application du catalogue ne la supprime pas de Coolify. Feuille
+de route complète : [`doc/plans/2026-10-06-001-infra-applications-coolify-as-code-plan.md`](../doc/plans/2026-10-06-001-infra-applications-coolify-as-code-plan.md).
 
 ## Sauvegarde de l'instance Coolify
 

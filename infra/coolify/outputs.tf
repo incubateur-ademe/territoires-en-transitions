@@ -27,3 +27,8 @@ output "s3_bucket" {
   description = "Bucket Object Storage cible des backups Coolify."
   value       = var.s3_bucket
 }
+
+output "application_ids" {
+  description = "Identifiants des applications déclarées (env/app). C'est l'APP_ID attendu par scripts/coolify-deploy.sh."
+  value       = sort(keys(local.applications))
+}

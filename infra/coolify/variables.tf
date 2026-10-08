@@ -178,3 +178,21 @@ variable "instance_backup_prefix" {
   type        = string
   default     = "coolify-instance"
 }
+
+# --- Applications ---
+
+variable "application_environments" {
+  description = "Environnements dont les applications sont déclarées dans Coolify (cf. applications.tf). Ouverture progressive : preprod d'abord, staging quand ses bases conteneurisées existent, prod à la bascule DNS."
+  type        = set(string)
+  default     = ["preprod"]
+  validation {
+    condition     = alltrue([for e in var.application_environments : contains(["preprod", "staging", "prod"], e)])
+    error_message = "application_environments n'accepte que preprod, staging et prod. Les previews sont créées par la CD, pas par Terraform."
+  }
+}
+
+variable "application_initial_image_tag" {
+  description = "Tag posé à la création d'une application, et jamais ensuite : la CD possède la version (scripts/coolify-deploy.sh). Aucun déploiement n'a lieu à la création."
+  type        = string
+  default     = "latest"
+}
