@@ -170,7 +170,7 @@ describe('Fiches d’un plan dont les secteurs sont à vérifier', () => {
       planId,
     });
 
-  test('liste les fiches du plan, de ses axes et leurs sous-actions avec leur état, sans les fiches attribuées ni supprimées', async () => {
+  test('liste les fiches du plan, de ses axes et leurs sous-actions avec leur état, sans les fiches attribuées, déclarées sans secteur par la collectivité ni supprimées', async () => {
     const planId = await createPlan(pcaetTypeId);
     const axeId = await createAxe(planId);
     const sousAxeId = await createAxe(planId, axeId);
@@ -219,13 +219,6 @@ describe('Fiches d’un plan dont les secteurs sont à vérifier', () => {
       {
         ficheId: automatiqueVide,
         titre: 'Automatique vide',
-        parentId: null,
-        parentTitre: null,
-        etat: 'non_attribuable',
-      },
-      {
-        ficheId: manuelleVide,
-        titre: 'Manuelle vide',
         parentId: null,
         parentTitre: null,
         etat: 'non_attribuable',

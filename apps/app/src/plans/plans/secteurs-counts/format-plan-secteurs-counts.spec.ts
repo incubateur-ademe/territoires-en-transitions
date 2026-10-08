@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { formatPlanSecteursCounts } from './format-plan-secteurs-counts';
 
 describe('formatPlanSecteursCounts', () => {
-  it('liste les comptes non nuls dans l’ordre en cours de calcul, à renseigner, non attribuables', () => {
+  it('liste les comptes non nuls, en regroupant à renseigner et non attribuables', () => {
     expect(
       formatPlanSecteursCounts({
         planId: 1,
@@ -10,7 +10,7 @@ describe('formatPlanSecteursCounts', () => {
         aRenseigner: 1,
         nonAttribuables: 3,
       })
-    ).toEqual(['2 en cours de calcul', '1 à renseigner', '3 non attribuables']);
+    ).toEqual(['2 en cours de calcul', '4 à renseigner']);
   });
 
   it('omet les comptes nuls', () => {
@@ -21,7 +21,7 @@ describe('formatPlanSecteursCounts', () => {
         aRenseigner: 0,
         nonAttribuables: 1,
       })
-    ).toEqual(['1 non attribuable']);
+    ).toEqual(['1 à renseigner']);
   });
 
   it('renvoie une liste vide quand les trois comptes sont nuls', () => {

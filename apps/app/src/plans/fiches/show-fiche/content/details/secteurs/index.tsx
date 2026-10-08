@@ -9,7 +9,7 @@ import { useFicheContext } from '../../../context/fiche-context';
 import { useGetFicheSecteurs } from '../../../data/use-get-fiche-secteurs';
 import { useUpsertFicheSecteurs } from '../../../data/use-upsert-fiche-secteurs';
 import { InlineEditableItem } from '../editable-item';
-import { FicheSecteursList } from './fiche-secteurs.list';
+import { FicheSecteursList, isARenseigner } from './fiche-secteurs.list';
 
 const secteurOptions = secteurReglementaireEnumValues.map((secteur) => ({
   value: secteur,
@@ -44,7 +44,7 @@ const SecteursItem = () => {
       small
       icon="stack-line"
       label={
-        secteurs && 'origine' in secteurs ? (
+        secteurs && 'origine' in secteurs && !isARenseigner(secteurs) ? (
           <div className="text-primary-10 text-base flex items-center gap-1">
             {appLabels.ficheSecteursReglementaires}
             <Tooltip

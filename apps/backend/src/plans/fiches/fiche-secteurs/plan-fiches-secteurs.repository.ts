@@ -45,7 +45,7 @@ export class PlanFichesSecteursRepository {
         etat: sql<PlanFicheSecteursEtat>`case
           when ${attribution.ficheId} is null then 'en_cours_de_calcul'
           when ${attribution.origine} = ${OrigineSecteursEnum.INDISPONIBLE} then 'a_renseigner'
-          when cardinality(${attribution.secteurs}) = 0 then 'non_attribuable'
+          when cardinality(${attribution.secteurs}) = 0 and ${attribution.origine} <> ${OrigineSecteursEnum.MANUELLE} then 'non_attribuable'
           else 'attribue'
         end`.as('etat'),
       })
