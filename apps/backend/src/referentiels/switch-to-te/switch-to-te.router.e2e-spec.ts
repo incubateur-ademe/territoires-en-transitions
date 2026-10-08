@@ -666,7 +666,7 @@ describe('SwitchToTeRouter', () => {
       const refs = prefs?.referentiels;
 
       expect(refs?.cae.mode).toBe('archived');
-      // collectivité de test sans activité CAE (< seuils d'engagement) → hors nav
+      // collectivité de test sans aucun statut ni texte CAE → hors nav
       expect(refs?.cae.display).toBe(false);
       expect(refs?.eci.mode).toBe('archived');
       expect(refs?.eci.display).toBe(false);
@@ -864,6 +864,13 @@ describe('SwitchToTeRouter', () => {
       });
       expect(result.status).toBe('switched');
 
+      // un seul statut suffit pour que le CAE archivé reste dans la nav
+      const prefs = await getCollectivitePreferences(collectiviteId);
+      expect(prefs?.referentiels.cae).toEqual({
+        mode: 'archived',
+        display: true,
+      });
+
       // vérifie que le statut TE correspondant (te_1.1.1.2) a été migré
       const teStatuts = await databaseService.db
         .select({
@@ -920,6 +927,13 @@ describe('SwitchToTeRouter', () => {
         collectiviteId,
       });
       expect(result.status).toBe('switched');
+
+      // un seul statut suffit pour que le CAE archivé reste dans la nav
+      const prefs = await getCollectivitePreferences(collectiviteId);
+      expect(prefs?.referentiels.cae).toEqual({
+        mode: 'archived',
+        display: true,
+      });
 
       // le score-courant TE n'est plus figé sur l'état pré-bascule : il a été
       // recalculé et reflète les données te_* fraîchement migrées
