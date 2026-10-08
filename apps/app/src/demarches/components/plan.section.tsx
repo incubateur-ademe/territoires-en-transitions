@@ -12,7 +12,6 @@ import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
-import { BetaLabel } from '@/app/ui/beta.label';
 import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
@@ -297,15 +296,13 @@ const CreatePlanAction = ({
           },
         ]}
       >
-        {!isAiPlanImportEnabled ? (
-          appLabels.demarcheProgrammeImporterPlan
-        ) : isImportOngoing ? (
+        {isImportOngoing ? (
           <span role="status" className="inline-flex items-center gap-2">
             {appLabels.importPlanIaEnCoursCourt}
             <SpinnerLoader className="w-4 h-4" />
           </span>
         ) : (
-          <BetaLabel>{appLabels.demarcheProgrammeImporterPlan}</BetaLabel>
+          appLabels.demarcheProgrammeImporterPlan
         )}
       </SplitButton>
       <DemarcheCreatePlanModal
