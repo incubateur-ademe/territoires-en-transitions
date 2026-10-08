@@ -3,7 +3,8 @@ import { expect, Locator, Page } from '@playwright/test';
 export class DemarchePcaetPom {
   readonly createDemarcheButton: Locator;
   readonly dateLancementInput: Locator;
-  readonly createPlanButton: Locator;
+  readonly importPlanButton: Locator;
+  readonly planMenuButton: Locator;
   readonly planTable: Locator;
   readonly linkPlanButton: Locator;
   readonly linkedPlanRow: Locator;
@@ -22,9 +23,10 @@ export class DemarchePcaetPom {
     this.dateLancementInput = page.locator(
       '#create-demarche-pcaet-date-lancement'
     );
-    this.createPlanButton = page.getByTestId(
-      'demarches.plan.creer-pcaet-button'
+    this.importPlanButton = page.getByTestId(
+      'demarches.plan.importer-plan-button'
     );
+    this.planMenuButton = page.getByTestId('demarches.plan.creer-plan-menu');
     this.planTable = page.getByTestId('demarches.plan.table');
     this.linkPlanButton = page.getByTestId('demarches.plan.link-button');
     this.linkedPlanRow = page.locator(
@@ -94,7 +96,7 @@ export class DemarchePcaetPom {
 
   async expectCreatePlanCta() {
     await this.gotoPlanActions();
-    await expect(this.createPlanButton).toBeVisible();
+    await expect(this.importPlanButton).toBeVisible();
   }
 
   /**
@@ -103,7 +105,8 @@ export class DemarchePcaetPom {
    * rattaché à la démarche.
    */
   async createPlanFromModal(nom: string, typeLabel: string) {
-    await this.createPlanButton.click();
+    await this.planMenuButton.click();
+    await this.page.getByRole('button', { name: 'Créer un plan' }).click();
     const modal = this.page.getByTestId('demarches.plan.create-plan-modal');
     await expect(modal).toBeVisible();
     await expect(modal.locator('[data-test="Type"]')).toContainText(typeLabel);

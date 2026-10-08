@@ -1,9 +1,8 @@
 'use client';
 
+import { PROGRAMME_ACTIONS_DOCUMENT_ID } from '@/app/demarches/pcaet/constants';
 import type { DemarcheDocumentFichier } from '@tet/domain/demarches';
 import { useDemarchePcaetDocumentsSnapshot } from './use-documents';
-
-const PROGRAMME_ACTIONS_DOCUMENT_ID = 'pcaet_plan_actions';
 
 /**
  * Fichier du programme d'actions déposé à l'étape Documents, s'il y en a un.

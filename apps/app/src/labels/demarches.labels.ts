@@ -564,6 +564,20 @@ export const demarchesLabels = {
     other: 'actions',
   }),
   demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan à partir de zéro',
+  demarcheProgrammeImportTitre:
+    'Importer le programme d’actions dans la plateforme ?',
+  demarcheProgrammeImportDescription:
+    'Votre programme d’actions peut devenir un plan structuré, avec ses axes et ses actions, que vous retrouverez à l’étape Programme d’actions.',
+  demarcheProgrammeImportArrierePlan:
+    'L’import se fait en arrière-plan : vous pouvez continuer vos dépôts. Relisez le plan une fois l’import terminé, il a pu manquer ou mal repérer certains éléments.',
+  demarcheProgrammeImportFichierErreur:
+    'Le fichier déposé n’a pas pu être récupéré. Vous pourrez lancer l’import depuis l’étape Programme d’actions.',
+  demarcheProgrammeImportPlusTard: 'Plus tard',
+  demarcheProgrammeImportLancer: 'Importer en arrière-plan',
+  demarcheProgrammeImportLance:
+    'Import lancé : le plan apparaîtra à l’étape Programme d’actions.',
+  demarcheProgrammeImportTermine:
+    'Programme d’actions importé : retrouvez le plan à l’étape Programme d’actions.',
   demarcheHeaderDateLancement: 'Date de lancement',
   demarcheHeaderDemarcheCreatedAt: 'Créé le',
   demarcheHeaderModifieLe: 'Modifié le',
