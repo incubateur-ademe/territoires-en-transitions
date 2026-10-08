@@ -1,6 +1,11 @@
 /** Les listes de T&C qui qualifient une action, absentes de la copie, et ce que chaque valeur devient dans TeT, désignée par son libellé. */
 
-import { CibleEnum, type Cible } from '@tet/domain/plans';
+import {
+  CibleEnum,
+  SecteurReglementaireEnum,
+  type Cible,
+  type SecteurReglementaire,
+} from '@tet/domain/plans';
 import type { Dossier } from './dossiers';
 
 /** La valeur d'un numéro de T&C dans une des listes ci-dessous ; arrête s'il est inconnu. */
@@ -77,7 +82,7 @@ export type Classement =
  * Avec une sous-thématique, la thématique est sa parente : le couple reste d'une même famille.
  */
 export const SECTEURS = new Map<number, Classement>([
-  // Une sous-thématique qui dit la même chose, et Résidentiel.
+  // Une sous-thématique qui dit la même chose.
   [4, { sousThematique: 'Biodiversité' }], // Biodiversité
   [5, { sousThematique: 'Consommation responsable et achats durables' }], // Consommation responsable
   [
@@ -88,15 +93,11 @@ export const SECTEURS = new Map<number, Classement>([
     },
   ], // Coopération / partenariat
   [17, { sousThematique: 'Tourisme' }], // Tourisme
-  [20, { sousThematique: 'Industrie' }], // Industrie hors branche énergie
-  [22, { sousThematique: 'Logement et habitat' }], // Résidentiel
   [23, { sousThematique: 'Santé' }], // Santé
   [27, { sousThematique: 'Espaces verts' }], // Espaces verts
   [28, { sousThematique: 'Forêts' }], // Forêt
 
   // La seule thématique.
-  // Agriculture : la thématique du même nom dit tout (la sous-thématique homonyme est sous « Activités économiques »).
-  [1, { thematique: 'Agriculture et alimentation', exacte: true }], // Agriculture
   [
     10,
     {
@@ -105,17 +106,28 @@ export const SECTEURS = new Map<number, Classement>([
       exacte: true,
     },
   ], // Communication / formation / sensibilisation
-  [6, { thematique: 'Économie circulaire et déchets' }], // Déchets
   [7, { thematique: 'Activités économiques' }], // Développement économique
   [8, { thematique: 'Eau, milieux aquatiques et assainissement' }], // Eau
   [11, { thematique: 'Énergie et climat' }], // Gestion / production / distribution de l'énergie
   [18, { thematique: 'Urbanisme, logement, aménagement, bâtiments' }], // Aménagement / urbanisme
-  [19, { thematique: 'Mobilité et transport' }], // Autres transports
-  [21, { thematique: 'Énergie et climat' }], // Industrie branche énergie
   [24, { thematique: 'Solidarité et lien social' }], // Sécurité civile
-  [25, { thematique: 'Activités économiques' }], // Tertiaire
-  [26, { thematique: 'Mobilité et transport' }], // Transport routier
 ]);
+
+/** Secteur réglementaire (T&C) → le champ secteurs de la fiche, pas une thématique. */
+export const SECTEURS_REGLEMENTAIRES = new Map<number, SecteurReglementaire>([
+  [1, SecteurReglementaireEnum.AGRICULTURE],
+  [6, SecteurReglementaireEnum.DECHETS],
+  [19, SecteurReglementaireEnum.AUTRES_TRANSPORTS],
+  [20, SecteurReglementaireEnum.INDUSTRIE_HORS_BRANCHE_ENERGIE],
+  [21, SecteurReglementaireEnum.BRANCHE_ENERGIE],
+  [22, SecteurReglementaireEnum.RESIDENTIEL],
+  [25, SecteurReglementaireEnum.TERTIAIRE],
+  [26, SecteurReglementaireEnum.TRANSPORT_ROUTIER],
+]);
+
+/** Les secteurs d'une action rangés en thématique : tous sauf les réglementaires. */
+export const listSecteursThematiques = (secteurs: readonly number[]) =>
+  secteurs.filter((s) => !SECTEURS_REGLEMENTAIRES.has(s));
 
 /** Garde, appelée par `gardes.ts` : un numéro de T&C absent des listes ci-dessus, compté par liste. */
 export const listCasBloquantsListesTec = (dossiers: readonly Dossier[]) => {
@@ -123,7 +135,11 @@ export const listCasBloquantsListesTec = (dossiers: readonly Dossier[]) => {
   const listes = [
     ['volet', VOLETS, actions.flatMap((a) => a.volets)],
     ['cible', CIBLES, actions.flatMap((a) => a.cibles)],
-    ['secteur', SECTEURS, actions.flatMap((a) => a.secteurs)],
+    [
+      'secteur',
+      SECTEURS,
+      actions.flatMap((a) => listSecteursThematiques(a.secteurs)),
+    ],
     ['type de porteur', TYPES_PORTEUR, actions.flatMap((a) => a.typesPorteur)],
     ["type d'action", TYPES_ACTION, actions.flatMap((a) => a.typesAction)],
   ] as const;

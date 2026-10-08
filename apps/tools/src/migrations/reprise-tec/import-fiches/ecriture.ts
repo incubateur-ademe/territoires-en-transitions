@@ -124,6 +124,21 @@ export const createFiches = async (
       ]
     );
   }
+  await client.query(
+    `insert into public.fiche_action_secteur_attribution (fiche_id, secteurs, origine, modified_by)
+     select (f->>'fiche')::int,
+            array(select jsonb_array_elements_text(f->'secteurs'))::public.secteur_reglementaire[],
+            'manuelle', $2::uuid
+       from jsonb_array_elements($1::jsonb) as f`,
+    [
+      JSON.stringify(
+        avecId
+          .filter((f) => f.secteursReglementaires.length > 0)
+          .map((f) => ({ fiche: f.id, secteurs: f.secteursReglementaires }))
+      ),
+      COMPTE_SYSTEME,
+    ]
+  );
   await createNotes(client, avecId);
 
   await client.query(

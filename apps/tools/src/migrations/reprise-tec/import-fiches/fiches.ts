@@ -3,20 +3,30 @@
 import { StatutEnum } from '@tet/domain/plans';
 import { decrireDossier, type Action, type Dossier } from './dossiers';
 import type { ListesTet } from './listes-tet';
-import { CIBLES, translate, TYPES_ACTION, TYPES_PORTEUR } from './listes-tec';
+import {
+  CIBLES,
+  listSecteursThematiques,
+  SECTEURS_REGLEMENTAIRES,
+  translate,
+  TYPES_ACTION,
+  TYPES_PORTEUR,
+} from './listes-tec';
 
 export type Fiche = ReturnType<typeof buildFiche>;
 
 /**
  * Règle : la fiche d'une action, dans la collectivité de son dossier, « À venir », datée de sa création dans T&C.
  * Chaque lien n'est gardé qu'une fois : deux secteurs peuvent donner la même thématique.
+ * Un secteur réglementaire va au champ secteurs, les autres en thématique.
  */
 export const buildFiche = (
   action: Action,
   dossier: Dossier,
   listesTet: ListesTet
 ) => {
-  const classements = action.secteurs.map(listesTet.getClassement);
+  const classements = listSecteursThematiques(action.secteurs).map(
+    listesTet.getClassement
+  );
   return {
     tecId: action.tecId,
     dossier,
@@ -39,6 +49,9 @@ export const buildFiche = (
         c.sousThematiqueId === null ? [] : [c.sousThematiqueId]
       )
     ),
+    secteursReglementaires: unique(
+      action.secteurs.flatMap((s) => SECTEURS_REGLEMENTAIRES.get(s) ?? [])
+    ).sort(),
     structures: unique([
       ...action.typesPorteur.map((t) =>
         translate(TYPES_PORTEUR, t, 'type de porteur')
