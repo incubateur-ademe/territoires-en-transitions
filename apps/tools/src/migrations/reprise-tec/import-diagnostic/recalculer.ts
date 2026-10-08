@@ -6,7 +6,7 @@
  *
  *   SUPABASE_DATABASE_URL="postgresql://..." TET_API_URL="https://..." \
  *   TET_API_TOKEN="<service role>" pnpx tsx \
- *     apps/tools/src/migrations/reprise-tec/import-diagnostic/recalculer.ts
+ *     apps/tools/src/migrations/reprise-tec/import-diagnostic/recalculer.ts [--a-partir-de <rang>]
  */
 
 import { getCible } from '../db';
@@ -33,12 +33,28 @@ const main = async () => {
     }
     const dossiers = await loadDossiers(client);
     const { valeurs } = await loadTablesGrille(client, dossiers);
-    const recalcul = await lancerRecalcul(client, dossiers, valeurs);
+    const recalcul = await lancerRecalcul(
+      client,
+      dossiers,
+      valeurs,
+      getAPartirDe()
+    );
     printRecalcul('Constaté après le recalcul', recalcul, dossiers);
   } finally {
     client.release();
     await pool.end();
   }
+};
+
+const getAPartirDe = () => {
+  if (!process.argv.includes('--a-partir-de')) {
+    return 1;
+  }
+  const rang = Number(process.argv[process.argv.indexOf('--a-partir-de') + 1]);
+  if (!Number.isInteger(rang) || rang < 1) {
+    throw new Error('--a-partir-de attend un rang entier, à partir de 1.');
+  }
+  return rang;
 };
 
 main().catch((err) => {
