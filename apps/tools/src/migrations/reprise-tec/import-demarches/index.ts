@@ -62,6 +62,7 @@ const main = async () => {
       lues: perimetre.lues,
       ecarts,
       ecrits: dossiersAImporter,
+      elaborationsAdoptees: elaborations.adoptees,
       deuxDossiersEnCours: demarchesTet.listDeuxDossiersEnCours(
         dossiersAImporter,
         collectivites

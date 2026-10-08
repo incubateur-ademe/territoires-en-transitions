@@ -37,6 +37,8 @@ type SourceAdoption = 'suivi' | 'repli';
 export type Dossier = {
   tecId: number;
   misAJourLe: string | null;
+  /** L'approbation du suivi ADEME de la collectivité, que lit `calculateElaborations`. */
+  approbationSuivi: string | null;
   /** Les dates saisies avant l'an 2000, lues 20AA ou ignorées, pour le rapport. */
   datesRevues: string[];
   /** La transmission que l'avis de l'État du suivi contredit, ramenée ou gardée, pour le rapport. */
@@ -80,6 +82,7 @@ export const buildDossier = (
   return {
     tecId: ligne.id,
     misAJourLe: ligne.misAJourLe,
+    approbationSuivi: approbation,
     datesRevues,
     transmissionRevue: statut === EN_ELABORATION ? null : transmission.revue,
     sources: {
