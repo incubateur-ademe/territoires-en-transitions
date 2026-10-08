@@ -19,6 +19,11 @@ export type ListActionsDeReferenceError = Extract<
   'DATABASE_ERROR'
 >;
 
+export type GetActionDeReferenceError = Extract<
+  ActionsDeReferenceError,
+  'ACTION_DE_REFERENCE_NOT_FOUND' | 'DATABASE_ERROR'
+>;
+
 export type UpdateActionDeReferenceRepositoryError = Extract<
   ActionsDeReferenceError,
   ActionsDeReferenceSpecificError | 'DATABASE_ERROR'

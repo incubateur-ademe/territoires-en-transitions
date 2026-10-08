@@ -3,6 +3,7 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
 import { ActionsDeReferenceTableRepository } from './actions-de-reference-table.repository';
 import { ActionsDeReferenceRepository } from './actions-de-reference.repository';
 import { ActionsDeReferenceRouter } from './actions-de-reference.router';
+import { GetActionDeReferenceService } from './get-action-de-reference/get-action-de-reference.service';
 import { ListActionsDeReferenceService } from './list-actions-de-reference/list-actions-de-reference.service';
 import { UpdateActionDeReferenceService } from './update-action-de-reference/update-action-de-reference.service';
 
@@ -13,6 +14,7 @@ import { UpdateActionDeReferenceService } from './update-action-de-reference/upd
       provide: ActionsDeReferenceRepository,
       useClass: ActionsDeReferenceTableRepository,
     },
+    GetActionDeReferenceService,
     ListActionsDeReferenceService,
     UpdateActionDeReferenceService,
     ActionsDeReferenceRouter,

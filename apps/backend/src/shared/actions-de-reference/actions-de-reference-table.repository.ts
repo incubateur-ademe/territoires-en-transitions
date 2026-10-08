@@ -21,6 +21,14 @@ import {
 import { ActionsDeReferenceRepository } from './actions-de-reference.repository';
 import { actionDeReferenceTable } from './models/action-de-reference.table';
 
+const selectedActionColumns = {
+  id: actionDeReferenceTable.id,
+  titre: actionDeReferenceTable.titre,
+  description: actionDeReferenceTable.description,
+  levier: actionDeReferenceTable.levier,
+  categorie: actionDeReferenceTable.categorie,
+};
+
 const containsSearchedText = (column: PgColumn, searchedText: string): SQL =>
   sql`strpos(lower(unaccent(${column})), lower(unaccent(${searchedText}))) > 0`;
 
@@ -99,13 +107,7 @@ export class ActionsDeReferenceTableRepository extends ActionsDeReferenceReposit
   list: ActionsDeReferenceRepository['list'] = async (input) => {
     try {
       const actions = await this.db
-        .select({
-          id: actionDeReferenceTable.id,
-          titre: actionDeReferenceTable.titre,
-          description: actionDeReferenceTable.description,
-          levier: actionDeReferenceTable.levier,
-          categorie: actionDeReferenceTable.categorie,
-        })
+        .select(selectedActionColumns)
         .from(actionDeReferenceTable)
         .where(toMatchingCondition(input))
         .orderBy(...toOrderBy(input.sortBy));
@@ -113,6 +115,26 @@ export class ActionsDeReferenceTableRepository extends ActionsDeReferenceReposit
     } catch (error) {
       this.logger.error(
         `Could not list the actions de référence: ${getErrorMessage(error)}`
+      );
+      return failure(ActionsDeReferenceErrorEnum.DATABASE_ERROR);
+    }
+  };
+
+  get: ActionsDeReferenceRepository['get'] = async ({ id }) => {
+    try {
+      const [action] = await this.db
+        .select(selectedActionColumns)
+        .from(actionDeReferenceTable)
+        .where(eq(actionDeReferenceTable.id, id));
+      if (action === undefined) {
+        return failure(
+          ActionsDeReferenceErrorEnum.ACTION_DE_REFERENCE_NOT_FOUND
+        );
+      }
+      return success(action);
+    } catch (error) {
+      this.logger.error(
+        `Could not get the action de référence ${id}: ${getErrorMessage(error)}`
       );
       return failure(ActionsDeReferenceErrorEnum.DATABASE_ERROR);
     }

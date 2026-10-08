@@ -182,6 +182,50 @@ describe('list-actions', () => {
   });
 });
 
+describe('get-action', () => {
+  const unknownActionDeReferenceId =
+    actionDeReferenceIdSchema.parse(2147483647);
+
+  it("renvoie l'action demandée à un utilisateur connecté sans rôle", async () => {
+    const { carpoolingAction, atticInsulationAction } = toUniqueActions();
+    const [insertedCarpoolingAction] = await insertActions([
+      carpoolingAction,
+      atticInsulationAction,
+    ]);
+    const caller = router.createCaller({ user: userWithoutRole });
+
+    expect(
+      await caller.shared.actionsDeReference.get({
+        id: insertedCarpoolingAction.id,
+      })
+    ).toEqual(insertedCarpoolingAction);
+  });
+
+  it('refuse en NOT_FOUND un id qui ne correspond à aucune action', async () => {
+    const caller = router.createCaller({ user: userWithoutRole });
+
+    await expect(
+      caller.shared.actionsDeReference.get({ id: unknownActionDeReferenceId })
+    ).rejects.toThrow(expect.objectContaining({ code: 'NOT_FOUND' }));
+  });
+
+  it('refuse un appel sans utilisateur connecté', async () => {
+    const caller = router.createCaller({ user: null });
+
+    await expect(
+      caller.shared.actionsDeReference.get({ id: unknownActionDeReferenceId })
+    ).rejects.toThrow(expect.objectContaining({ code: 'UNAUTHORIZED' }));
+  });
+
+  it("refuse en BAD_REQUEST un id qui n'est pas un entier positif", async () => {
+    const caller = router.createCaller({ user: userWithoutRole });
+
+    await expect(
+      caller.shared.actionsDeReference.get({ id: -1 })
+    ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
+  });
+});
+
 describe('update-action', () => {
   const unknownActionDeReferenceId =
     actionDeReferenceIdSchema.parse(2147483647);
@@ -333,21 +377,24 @@ describe('update-action', () => {
 });
 
 describe('wiring', () => {
-  it('expose list et update sous shared.actionsDeReference', () => {
+  it('expose get, list et update sous shared.actionsDeReference', () => {
     const actionsDeReferencePaths = Object.keys(
       router.appRouter._def.procedures
     ).filter((path) => path.startsWith('shared.actionsDeReference.'));
-    const { list, update } = router.appRouter.shared.actionsDeReference;
+    const { get, list, update } = router.appRouter.shared.actionsDeReference;
 
     expect({
       actionsDeReferencePaths,
+      getType: get._def.type,
       listType: list._def.type,
       updateType: update._def.type,
     }).toEqual({
       actionsDeReferencePaths: [
+        'shared.actionsDeReference.get',
         'shared.actionsDeReference.list',
         'shared.actionsDeReference.update',
       ],
+      getType: 'query',
       listType: 'query',
       updateType: 'mutation',
     });

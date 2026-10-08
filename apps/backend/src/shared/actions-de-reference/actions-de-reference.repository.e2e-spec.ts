@@ -151,6 +151,40 @@ describe('ActionsDeReferenceRepository contract', () => {
       expect(await repository.list(input)).toEqual(toListedActions(expected));
     });
 
+  describe('get-action', () => {
+    it("renvoie l'action dont l'id est demandé, et elle seule", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction, carpoolingAction],
+        async ({ repository, insertedIds }) => {
+          const [atticInsulationActionId] = insertedIds;
+
+          expect(await repository.get({ id: atticInsulationActionId })).toEqual(
+            {
+              success: true,
+              data: { ...atticInsulationAction, id: atticInsulationActionId },
+            }
+          );
+        }
+      );
+    });
+
+    it("renvoie ACTION_DE_REFERENCE_NOT_FOUND quand aucune action n'a cet id", async () => {
+      await checkWithOnlyActions(
+        [atticInsulationAction],
+        async ({ repository }) => {
+          expect(
+            await repository.get({
+              id: actionDeReferenceIdSchema.parse(2147483647),
+            })
+          ).toEqual({
+            success: false,
+            error: ActionsDeReferenceErrorEnum.ACTION_DE_REFERENCE_NOT_FOUND,
+          });
+        }
+      );
+    });
+  });
+
   describe('list-actions', () => {
     it("renvoie toutes les actions quand aucun filtre n'est donné", async () => {
       await expectListed({
