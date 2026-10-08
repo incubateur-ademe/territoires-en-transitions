@@ -97,7 +97,7 @@ const FILIERES = new Map<
   [6, { vecteur: 'electricité', libelle: 'Biogaz' }],
   [7, null], // Géothermie électrique : aucun indicateur
   [8, { vecteur: 'chaleur', libelle: 'Biomasse solide' }],
-  [9, null], // Pompes à chaleur : cae_3.al, hors grille, en attente d'une ligne dans l'onglet EnR
+  [9, { vecteur: 'chaleur', libelle: 'Pompes à chaleur' }],
   [10, { vecteur: 'chaleur', libelle: 'Géothermie' }],
   [11, { vecteur: 'chaleur', libelle: 'Solaire thermique' }],
   [12, { vecteur: 'chaleur', libelle: 'Biogaz' }],
@@ -141,7 +141,7 @@ type LigneGrille = {
   children?: readonly LigneGrille[];
 };
 
-/** Descend dans un volet de la grille, nom après nom, et rend le code trouvé ; arrête si un nom n'y est pas. */
+/** Descend dans un volet de la grille, nom après nom, et rend le code trouvé (parmi des lignes homonymes, celle qui a un indicateur) ; arrête si un nom n'y est pas. */
 const findIdentifiant = (
   volet: string,
   libelles: (string | undefined)[],
@@ -154,10 +154,13 @@ const findIdentifiant = (
     PCAET_DIAGNOSTIC_INDICATEURS.find((v) => v.code === volet)?.children;
   let ligne: LigneGrille | undefined;
   for (const libelle of libelles) {
-    ligne = lignes?.find(
+    const homonymes = lignes?.filter(
       (l) =>
         l.label === libelle && (vecteur === undefined || l.groupBy === vecteur)
     );
+    ligne =
+      homonymes?.find((l) => l.indicateurDefinitionId !== 'TBD') ??
+      homonymes?.[0];
     lignes = ligne?.children;
   }
   if (!ligne) {
