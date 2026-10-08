@@ -1,7 +1,7 @@
 /** Le rapport : ce que l'import a lu, écarté et écrit. Uniquement pour le debug. */
 
 import { decrireDossier, type Dossier } from './dossier';
-import type { Ecart } from './ecarts';
+import type { Ecart, PartieEcartee } from './ecarts';
 
 /** Affiche les comptes (écarts, statuts, sources de l'obligation et de l'adoption), les dates revues, les transmissions que le suivi contredit et les collectivités à deux dossiers en cours. */
 export const printRapport = ({
@@ -9,6 +9,7 @@ export const printRapport = ({
   ecarts,
   ecrits,
   elaborationsAdoptees,
+  partiesEcartees,
   deuxDossiersEnCours,
   isConfirmed,
 }: {
@@ -16,6 +17,7 @@ export const printRapport = ({
   ecarts: Ecart[];
   ecrits: Dossier[];
   elaborationsAdoptees: Dossier[];
+  partiesEcartees: PartieEcartee[];
   deuxDossiersEnCours: string[];
   isConfirmed: boolean;
 }) => {
@@ -30,6 +32,10 @@ export const printRapport = ({
   }
   console.log(`${ecrits.length} dossiers écrits`);
   for (const ligne of compter(ecrits.map((d) => d.colonnes.status))) {
+    console.log(`  ${ligne}`);
+  }
+  console.log('Parties de dossier écrit sans place dans TeT (sans_place)');
+  for (const ligne of compter(partiesEcartees.map((p) => p.precision))) {
     console.log(`  ${ligne}`);
   }
   console.log('Obligation décidée par (A31 / Q23)');
