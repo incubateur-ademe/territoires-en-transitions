@@ -1,6 +1,8 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  indicateurSupprimerPeriode: (periode: string) =>
+    `Supprimer la période ${periode}`,
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
 
   indicateurResultat: plural({ one: 'résultat', other: 'résultats' }),
@@ -79,4 +81,21 @@ export const indicateursLabels = {
    * de copie, pas de rangement.
    */
   aucunIndicateur: 'Aucun indicateur',
+  indicateurAnneeExistante: 'Cette année est déjà présente dans le tableau.',
+  indicateurValeurAjoutee: 'La valeur a été ajoutée',
+  indicateurValeurAjouteeErreur: "La valeur n'a pas pu être ajoutée",
+  indicateurValeurModifieeErreur: "La valeur n'a pas pu être modifiée",
+  indicateurSuppressionDonneesCollectivite: (periodeLabel: string) =>
+    `des données de la collectivité pour la période ${periodeLabel}`,
+  indicateurSuppressionPeriodeAttention: (periodeLabel: string) =>
+    `Attention, les données existantes pour la période ${periodeLabel} seront supprimées.`,
+  commentaireIndicateurTitre: ({
+    sourceTypeLabel,
+    unite,
+    periodeLabel,
+  }: {
+    sourceTypeLabel: string;
+    unite: string;
+    periodeLabel: string;
+  }) => `Mes ${sourceTypeLabel} (${unite}) : ${periodeLabel}`,
 };

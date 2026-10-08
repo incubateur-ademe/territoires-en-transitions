@@ -41,6 +41,14 @@ class IndicateursFactory extends FixtureFactory {
     await trpcClient.indicateurs.indicateurs.update.mutate(indicateur);
   }
 
+  /** Ce flag de définition n'est pas modifiable via l'API utilisateur. */
+  async setSansValeurUtilisateur(indicateurId: number): Promise<void> {
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ sansValeurUtilisateur: true })
+      .where(eq(indicateurDefinitionTable.id, indicateurId));
+  }
+
   /**
    * Supprime un indicateur
    */
