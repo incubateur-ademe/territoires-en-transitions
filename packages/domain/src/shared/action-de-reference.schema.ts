@@ -39,6 +39,14 @@ export const actionDeReferenceSchema = z.object({
 
 export type ActionDeReference = z.infer<typeof actionDeReferenceSchema>;
 
+export const getActionDeReferenceInputSchema = z.pick(actionDeReferenceSchema, {
+  id: true,
+});
+
+export type GetActionDeReferenceInput = z.output<
+  typeof getActionDeReferenceInputSchema
+>;
+
 export const actionDeReferenceSortFieldEnumValues = [
   'titre',
   'levier',
