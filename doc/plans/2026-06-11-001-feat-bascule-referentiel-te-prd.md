@@ -109,11 +109,20 @@ Les seuils **50** et **150** sur une même métrique sont **deux critères indé
 
 #### Masquage CAE/ECI à l'ouverture publique de TE
 
-À l'ouverture publique de TE, le batch `resetAllCollectivitesDisplayPreferences` (cf. [Déploiement](#déploiement-initialisation-en-deux-temps)) évalue **chaque** référentiel CAE et ECI **indépendamment** via `shouldDisplayReferentielByCriteria`. Un référentiel dont le niveau de remplissage est **insuffisant** (< 2 critères sur 5, donc non engagé) est positionné en `mode: archived`, `display: false` :
+À l'ouverture publique de TE, le batch `resetAllCollectivitesDisplayPreferences` (cf. [Déploiement](#déploiement-initialisation-en-deux-temps)) évalue **chaque** référentiel CAE et ECI **indépendamment** et lui attribue un **niveau de remplissage** :
 
-- il disparaît de la navigation EDL ;
-- les données déjà saisies **restent en base** (consultables via URL directe ou lien TdB EDL) ;
+| Niveau | Définition | Préférence |
+|---|---|---|
+| `engage` | ≥ 2 critères sur 5 (`shouldDisplayReferentielByCriteria`) | `mode: write`, `display: true` |
+| `superficiel` | au moins un statut ou une explication non vide, mais < 2 critères sur 5 | `mode: archived`, `display: true` |
+| `vide` | aucun statut ni explication | `mode: archived`, `display: false` |
+
+Un référentiel au remplissage `superficiel` reste donc dans la navigation EDL, en lecture seule avec le libellé « (archivé) » ; seul un référentiel `vide` en disparaît. Dans les deux cas :
+
+- les données déjà saisies **restent en base** ;
 - elles ne sont **pas reprises sur TE via la bascule** pour ce référentiel, faute d'engagement suffisant pour justifier un parcours de bascule sur ce ref.
+
+La bascule applique la même règle de visibilité aux référentiels qu'elle archive (visibles sauf s'ils sont `vide`). L'éligibilité à la bascule reste, elle, conditionnée à l'engagement (au moins un référentiel CAE/ECI en `write`).
 
 Exemples : une CT avec CAE engagé et ECI peu rempli → CAE visible en `write`, ECI masqué ; une CT avec CAE et ECI tous deux sous le seuil → les deux masqués.
 

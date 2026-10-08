@@ -16,7 +16,7 @@ const POPULATED = {
 };
 
 describe('buildPostSwitchPreferences', () => {
-  test('archive CAE engagée en la gardant dans la nav → te en write avec populatedFromCaeEci', () => {
+  test('archive CAE remplie en la gardant dans la nav → te en write avec populatedFromCaeEci', () => {
     const prefs: CollectiviteReferentielPreferences = {
       cae: { display: true, mode: 'write' },
       eci: { display: false, mode: 'archived' },
@@ -24,9 +24,12 @@ describe('buildPostSwitchPreferences', () => {
     };
 
     expect(
-      buildPostSwitchPreferences(prefs, POPULATED, { cae: true, eci: false })
+      buildPostSwitchPreferences(prefs, POPULATED, {
+        cae: 'engage',
+        eci: 'vide',
+      })
     ).toEqual({
-      // CAE engagée (contenait des données) → archivée mais conservée dans la nav
+      // CAE contenait des données → archivée mais conservée dans la nav
       cae: { mode: 'archived', display: true },
       // ECI jamais engagée → inchangée, reste hors nav
       eci: { mode: 'archived', display: false },
@@ -34,7 +37,7 @@ describe('buildPostSwitchPreferences', () => {
     });
   });
 
-  test('archive CAE et ECI en write : display suit l’engagement de chacune', () => {
+  test('archive CAE et ECI en write : display suit le niveau de remplissage de chacune', () => {
     const prefs: CollectiviteReferentielPreferences = {
       cae: { display: true, mode: 'write' },
       eci: { display: true, mode: 'write' },
@@ -42,16 +45,20 @@ describe('buildPostSwitchPreferences', () => {
     };
 
     expect(
-      buildPostSwitchPreferences(prefs, POPULATED, { cae: true, eci: false })
+      buildPostSwitchPreferences(prefs, POPULATED, {
+        cae: 'superficiel',
+        eci: 'vide',
+      })
     ).toEqual({
+      // quelques données suffisent pour rester dans la nav
       cae: { mode: 'archived', display: true },
-      // ECI en write mais sans activité suffisante → archivée ET hors nav
+      // ECI en write mais vide → archivée ET hors nav
       eci: { mode: 'archived', display: false },
       te: { mode: 'write', display: true, populatedFromCaeEci: POPULATED },
     });
   });
 
-  test('une ref en write non engagée est archivée et retirée de la nav', () => {
+  test('une ref en write vide est archivée et retirée de la nav', () => {
     const prefs: CollectiviteReferentielPreferences = {
       cae: { display: true, mode: 'write' },
       eci: { display: true, mode: 'write' },
@@ -59,8 +66,8 @@ describe('buildPostSwitchPreferences', () => {
     };
 
     const result = buildPostSwitchPreferences(prefs, POPULATED, {
-      cae: false,
-      eci: false,
+      cae: 'vide',
+      eci: 'vide',
     });
     expect(result.cae).toEqual({ mode: 'archived', display: false });
     expect(result.eci).toEqual({ mode: 'archived', display: false });
@@ -73,10 +80,10 @@ describe('buildPostSwitchPreferences', () => {
       te: { display: true, mode: 'readonly' },
     };
 
-    // même si l'engagement ECI était "true", une ref déjà archived n'est pas retouchée
+    // même si ECI contient des données, une ref déjà archived n'est pas retouchée
     const result = buildPostSwitchPreferences(prefs, POPULATED, {
-      cae: true,
-      eci: true,
+      cae: 'engage',
+      eci: 'engage',
     });
     expect(result.eci).toEqual({ mode: 'archived', display: false });
   });

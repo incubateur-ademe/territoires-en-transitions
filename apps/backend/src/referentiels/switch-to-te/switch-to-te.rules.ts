@@ -1,7 +1,9 @@
 import {
   CollectiviteSousTypeEnum,
+  isReferentielArchiveDisplayed,
   type CollectiviteAvecType,
   type CollectiviteReferentielPreferences,
+  type NiveauRemplissage,
   type PopulatedFromCaeEci,
   type ReferentielPreference,
 } from '@tet/domain/collectivites';
@@ -10,35 +12,43 @@ import type {
   ReferentielId,
 } from '@tet/domain/referentiels';
 
-/** Un référentiel a été "engagé" si son activité (statuts / commentaires)
- * atteint le seuil `shouldDisplayReferentielByCriteria`. Ce n'est PAS équivalent
- * à `mode === 'write'` : une collectivité sur laquelle le reset des préférences
- * n'a pas encore tourné garde CAE et ECI en `write` par défaut, même vides. */
-export type ReferentielEngagement = { cae: boolean; eci: boolean };
+/** Niveau de remplissage réel (statuts / commentaires) des référentiels CAE et
+ * ECI. Il ne se déduit PAS de `mode === 'write'` : une collectivité sur laquelle
+ * le reset des préférences n'a pas encore tourné garde CAE et ECI en `write`
+ * par défaut, même vides. */
+type ReferentielNiveauxRemplissage = {
+  cae: NiveauRemplissage;
+  eci: NiveauRemplissage;
+};
 
 /**
  * Construit les préférences post-bascule :
  * - refs CAE/ECI en `write` :
- *   - engagées (contenaient des données) → `{ mode: archived, display: true }` :
+ *   - contenant des données → `{ mode: archived, display: true }` :
  *     archivées mais conservées dans la nav en lecture seule, libellé "(archivé)"
- *   - non engagées → `{ mode: archived, display: false }` : archivées et hors nav
+ *   - vides → `{ mode: archived, display: false }` : archivées et hors nav
  * - refs déjà `archived` → inchangées
  * - `te` → `{ mode: write, display: true, populatedFromCaeEci: populated }`
  */
 export function buildPostSwitchPreferences(
   prefs: CollectiviteReferentielPreferences,
   populated: PopulatedFromCaeEci,
-  engagement: ReferentielEngagement
+  niveauxRemplissage: ReferentielNiveauxRemplissage
 ): CollectiviteReferentielPreferences {
   const archiveIfWrite = (
     p: ReferentielPreference,
-    engaged: boolean
+    niveauRemplissage: NiveauRemplissage
   ): ReferentielPreference =>
-    p.mode === 'write' ? { mode: 'archived', display: engaged } : p;
+    p.mode === 'write'
+      ? {
+          mode: 'archived',
+          display: isReferentielArchiveDisplayed(niveauRemplissage),
+        }
+      : p;
 
   return {
-    cae: archiveIfWrite(prefs.cae, engagement.cae),
-    eci: archiveIfWrite(prefs.eci, engagement.eci),
+    cae: archiveIfWrite(prefs.cae, niveauxRemplissage.cae),
+    eci: archiveIfWrite(prefs.eci, niveauxRemplissage.eci),
     te: { mode: 'write', display: true, populatedFromCaeEci: populated },
   };
 }
