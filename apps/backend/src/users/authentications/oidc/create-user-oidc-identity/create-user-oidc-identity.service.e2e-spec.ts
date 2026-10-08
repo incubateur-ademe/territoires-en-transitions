@@ -5,6 +5,10 @@ import {
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { banaticTable } from '@tet/backend/collectivites/shared/models/imports-banatic.table';
+import { importCommuneTable } from '@tet/backend/collectivites/shared/models/imports-commune.table';
 import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
@@ -38,6 +42,7 @@ import { OidcClaims } from '../oidc.models';
 import { utilisateurIdentiteOidcTable } from '../models/utilisateur-identite-oidc.table';
 import { LinkOidcIdentityToUserService } from '../link-oidc-identity-to-user/link-oidc-identity-to-user.service';
 import { AttachUserToOrganisationService } from '../attach-user-to-organisation/attach-user-to-organisation.service';
+import { CreateCollectiviteFromImportsService } from '../create-collectivite-from-imports/create-collectivite-from-imports.service';
 import { GetCollectiviteBySiretService } from '../get-collectivite-by-siret/get-collectivite-by-siret.service';
 import { CreateUserOidcIdentityService } from './create-user-oidc-identity.service';
 
@@ -76,6 +81,7 @@ async function createTestingContext() {
       // création de compte qu'il ouvre le service de l'agent.
       AttachUserToOrganisationService,
       GetCollectiviteBySiretService,
+      CreateCollectiviteFromImportsService,
       UpdateUserRoleService,
       UserPreferencesRepository,
       // Le rattachement émet `auth:oidc:linked`. Le tracker plutôt que
@@ -232,6 +238,102 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
         )
       );
     return droit;
+  }
+
+  /**
+   * Tiré au sort : d'autres specs posent leurs propres collectivités sur des
+   * SIREN fictifs fixes, et vitest les joue en parallèle.
+   */
+  function sirenFictif() {
+    return `999${Math.floor(Math.random() * 1_000_000)
+      .toString()
+      .padStart(6, '0')}`;
+  }
+
+  async function lireCollectivites(siren: string) {
+    return databaseService.db
+      .select()
+      .from(collectiviteTable)
+      .where(eq(collectiviteTable.siren, siren));
+  }
+
+  /**
+   * Défait une collectivité que le rattachement a créée lui-même : elle n'est
+   * pas passée par le fixture, et son trigger d'insertion lui a ouvert un
+   * bucket.
+   */
+  async function supprimerCollectivitesCreees(siren: string) {
+    for (const { id } of await lireCollectivites(siren)) {
+      await supprimerDroits(id);
+      await databaseService.db
+        .delete(collectiviteBucketTable)
+        .where(eq(collectiviteBucketTable.collectiviteId, id));
+      await databaseService.db
+        .delete(collectiviteTable)
+        .where(eq(collectiviteTable.id, id));
+    }
+  }
+
+  /**
+   * Une commune connue des tables `imports` — correspondance SIREN → INSEE et
+   * fiche INSEE — mais absente de `collectivite` : aucun agent n'en est encore
+   * venu. `insee` peut différer de `code` : en base, une partie de la
+   * correspondance a perdu le zéro initial de ses codes.
+   */
+  async function addCommuneDesImports({
+    siren,
+    code,
+    insee = code,
+    nom,
+  }: {
+    siren: string;
+    code: string;
+    insee?: string;
+    nom: string;
+  }) {
+    await databaseService.db.insert(importCommuneTable).values({
+      code,
+      regionCode: '52',
+      departementCode: '44',
+      libelle: nom,
+      population: 1234,
+    });
+    await databaseService.db.execute(
+      sql`insert into imports.code_siren_commune (siren, insee, libelle) values (${siren}, ${insee}, ${nom})`
+    );
+    onTestFinished(async () => {
+      await supprimerCollectivitesCreees(siren);
+      await databaseService.db.execute(
+        sql`delete from imports.code_siren_commune where siren = ${siren}`
+      );
+      await databaseService.db
+        .delete(importCommuneTable)
+        .where(eq(importCommuneTable.code, code));
+    });
+  }
+
+  /** Un EPCI connu de BANATIC mais absent de `collectivite`. */
+  async function addEpciDesImports({
+    siren,
+    nom,
+  }: {
+    siren: string;
+    nom: string;
+  }) {
+    await databaseService.db.insert(banaticTable).values({
+      siren,
+      libelle: nom,
+      regionCode: '52',
+      departementCode: '44',
+      nature: 'CC',
+      population: 5000,
+    });
+    onTestFinished(async () => {
+      await supprimerCollectivitesCreees(siren);
+      await databaseService.db
+        .delete(banaticTable)
+        .where(eq(banaticTable.siren, siren));
+    });
   }
 
   test('ticket valide, aucun compte existant → compte créé, dcp existe, identité liée, session pontée', async () => {
@@ -609,7 +711,7 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       });
     });
 
-    test('un SIRET que rien ne désigne → aucun droit, le compte est créé', async () => {
+    test("un SIRET hors des tables imports — un bureau d'études — → rien n'est créé, aucun droit, le compte est créé", async () => {
       mockCreateUser();
       vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
         success({ hashedToken: 'hashed-token-inconnu' })
@@ -626,12 +728,184 @@ describe('CreateUserOidcIdentityService — création de compte (cas 3-Non, U5)'
       if (!result.success) return;
       expect(result.data.compteCree).toBe(true);
       expect(result.data.rattachement).toBeUndefined();
+      expect(await lireCollectivites('999666000')).toHaveLength(0);
 
       const [identite] = await databaseService.db
         .select()
         .from(utilisateurIdentiteOidcTable)
         .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
       cleanupUser(identite.userId);
+    });
+
+    test('une commune des tables imports encore absente → créée, son premier membre administrateur', async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-commune-creee' })
+      );
+      const siren = sirenFictif();
+      await addCommuneDesImports({
+        siren,
+        code: '99901',
+        nom: 'Commune des imports',
+      });
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        siret: `${siren}00015`,
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(result.data.rattachement).toEqual({
+        collectiviteId: expect.any(Number),
+        nom: 'Commune des imports',
+        type: 'commune',
+      });
+      const [commune] = await lireCollectivites(siren);
+      // Le NIC du jeton peut être celui d'une annexe : on ne le retient pas.
+      expect(commune).toMatchObject({
+        type: 'commune',
+        communeCode: '99901',
+        siren,
+        nic: null,
+        departementCode: '44',
+        regionCode: '52',
+        population: 1234,
+      });
+      expect(await lireDroit(identite.userId, commune.id)).toMatchObject({
+        role: 'admin',
+        isActive: true,
+      });
+    });
+
+    test('un code INSEE tronqué de son zéro initial dans la correspondance → la commune est tout de même retrouvée', async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-commune-zero' })
+      );
+      const siren = sirenFictif();
+      await addCommuneDesImports({
+        siren,
+        code: '09998',
+        insee: '9998',
+        nom: 'Commune au zéro perdu',
+      });
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        siret: `${siren}00015`,
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(result.data.rattachement?.nom).toBe('Commune au zéro perdu');
+      const [commune] = await lireCollectivites(siren);
+      expect(commune?.communeCode).toBe('09998');
+    });
+
+    test('un EPCI de BANATIC encore absent → créé avec sa nature', async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-epci-cree' })
+      );
+      const siren = sirenFictif();
+      await addEpciDesImports({ siren, nom: 'CC des imports' });
+
+      const claims = buildClaims({
+        email: `agent-${crypto.randomUUID()}@cc.fr`,
+        siret: `${siren}00011`,
+      });
+
+      const result = await service.creerCompte('proconnect', claims);
+
+      expect(result.success).toBe(true);
+      if (!result.success) return;
+
+      const [identite] = await databaseService.db
+        .select()
+        .from(utilisateurIdentiteOidcTable)
+        .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+      cleanupUser(identite.userId);
+
+      expect(result.data.rattachement).toEqual({
+        collectiviteId: expect.any(Number),
+        nom: 'CC des imports',
+        type: 'epci',
+      });
+      const [epci] = await lireCollectivites(siren);
+      expect(epci).toMatchObject({
+        type: 'epci',
+        siren,
+        nic: null,
+        natureInsee: 'CC',
+        departementCode: '44',
+        regionCode: '52',
+        population: 5000,
+      });
+    });
+
+    test("deux premières connexions simultanées d'une commune absente → une seule collectivité, un seul administrateur", async () => {
+      mockCreateUser();
+      vi.spyOn(creerSessionService, 'creerSession').mockResolvedValue(
+        success({ hashedToken: 'hashed-token-commune-course' })
+      );
+      const siren = sirenFictif();
+      await addCommuneDesImports({
+        siren,
+        code: '99902',
+        nom: 'Commune convoitée',
+      });
+
+      const premiere = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        siret: `${siren}00015`,
+      });
+      const seconde = buildClaims({
+        email: `agent-${crypto.randomUUID()}@ville.fr`,
+        siret: `${siren}00015`,
+      });
+
+      const resultats = await Promise.all([
+        service.creerCompte('proconnect', premiere),
+        service.creerCompte('proconnect', seconde),
+      ]);
+
+      for (const claims of [premiere, seconde]) {
+        const [identite] = await databaseService.db
+          .select()
+          .from(utilisateurIdentiteOidcTable)
+          .where(eq(utilisateurIdentiteOidcTable.sub, claims.sub));
+        cleanupUser(identite.userId);
+      }
+
+      expect(resultats.map((r) => r.success)).toEqual([true, true]);
+      const communes = await lireCollectivites(siren);
+      expect(communes).toHaveLength(1);
+      const droits = await databaseService.db
+        .select({ role: utilisateurCollectiviteAccessTable.role })
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, communes[0].id)
+        );
+      expect(droits.map((d) => d.role).sort()).toEqual(['admin', 'edition']);
     });
   });
 });
