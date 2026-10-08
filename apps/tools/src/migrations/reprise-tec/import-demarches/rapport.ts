@@ -8,12 +8,14 @@ export const printRapport = ({
   lues,
   ecarts,
   ecrits,
+  elaborationsAdoptees,
   deuxDossiersEnCours,
   isConfirmed,
 }: {
   lues: number;
   ecarts: Ecart[];
   ecrits: Dossier[];
+  elaborationsAdoptees: Dossier[];
   deuxDossiersEnCours: string[];
   isConfirmed: boolean;
 }) => {
@@ -58,6 +60,19 @@ export const printRapport = ({
     );
     for (const d of avecTransmissionRevue) {
       console.log(`  ${decrireDossier(d)} : ${d.transmissionRevue}`);
+    }
+  }
+  if (elaborationsAdoptees.length > 0) {
+    console.log(
+      `\nÉlaborations dans T&C, approuvées au suivi après leur lancement, écrites publiées : ${elaborationsAdoptees.length}`
+    );
+    for (const d of elaborationsAdoptees) {
+      console.log(
+        `  ${decrireDossier(d)} : lancé le ${d.colonnes.launchedAt?.slice(
+          0,
+          10
+        )}, approuvé le ${d.colonnes.adoptedAt}`
+      );
     }
   }
   if (deuxDossiersEnCours.length > 0) {

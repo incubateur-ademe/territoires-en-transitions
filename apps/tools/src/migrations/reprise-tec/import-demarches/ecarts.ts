@@ -6,7 +6,7 @@ import type { Motif } from './perimetre';
 
 export type Ecart = {
   id: number;
-  motif: Motif | 'elaboration_remplacee';
+  motif: Motif | 'elaboration_remplacee' | 'elaboration_doublon';
 };
 
 /**

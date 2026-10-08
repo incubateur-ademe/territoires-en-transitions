@@ -84,6 +84,13 @@ chiffres, de 10 à 99, est lue 20AA (`0023-01-25` devient 2023-01-25) ; les
 autres (`0002-12-01`, `0217-03-02`) sont traitées comme absentes. Le rapport
 nomme chaque dossier concerné.
 
+Un dossier en élaboration dans T&C est revu avec le suivi ADEME et les autres
+dossiers de sa collectivité : créé avant l'adoption d'un PCAET publié de la
+même collectivité, c'en est le doublon, écarté (`elaboration_doublon`) ; seul
+dans sa collectivité et lancé avant l'approbation du suivi, il a été adopté
+hors de T&C : il arrive publié, adopté et publié à la date d'approbation. Le
+rapport nomme chacun.
+
 Un dossier saisi pour essai dans T&C (liste `DOSSIERS_DE_TEST` de
 `perimetre.ts`) est écarté, motif `dossier_de_test`.
 
