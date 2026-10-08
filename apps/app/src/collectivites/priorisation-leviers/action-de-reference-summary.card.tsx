@@ -12,7 +12,7 @@ type ActionDeReferenceSummaryCardProps = {
 const ActionDeReferenceSummaryTitle = ({
   action,
 }: Pick<ActionDeReferenceSummaryCardProps, 'action'>): JSX.Element => (
-  <h4 className="mb-0 text-sm text-primary-9">
+  <h4 className="mb-0 text-sm leading-normal text-primary-9">
     <ActionDeReferenceDetailLink action={action} />
   </h4>
 );
