@@ -74,7 +74,7 @@ export const DossiersInstructionPage = ({
 
       <section className="flex flex-col gap-4 rounded-xl border border-grey-3 bg-white p-6">
         <h2 className="text-lg font-bold text-primary-9 m-0">
-          {appLabels.instructionListeTitre({ deposeAvis })}
+          {appLabels.instructionListeTitre}
         </h2>
 
         {isLoading ? (

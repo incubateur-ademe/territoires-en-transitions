@@ -383,7 +383,7 @@ export const DossiersInstructionTable = ({
     <PilotageContext.Provider value={pilotage}>
       <ReactTable
         table={table}
-        ariaLabel={appLabels.instructionListeIntitule({ deposeAvis })}
+        ariaLabel={appLabels.instructionListeTitre}
         isEmpty={dossiers.length === 0}
         emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
         getRowProps={(row) => ({

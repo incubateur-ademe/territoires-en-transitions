@@ -148,7 +148,7 @@ export const demarchesLabels = {
   accueilRattachementConsulter:
     'Consulter les PCAET transmis pour avis et leurs échéances',
 
-  /** Suit la famille, comme le titre de la liste : seules la DREAL et la région instruisent. */
+  /** Suit la famille : seules la DREAL et la région instruisent. */
   accueilRattachementSuivre: ({ deposeAvis }: { deposeAvis: boolean }) =>
     deposeAvis
       ? 'Suivre l’état d’instruction de chaque dossier'
@@ -608,7 +608,7 @@ export const demarchesLabels = {
    * déposent un avis — la DREAL et le conseil régional. La DDT, la DR ADEME et
    * les services nationaux reçoivent le dossier en lecture : ils n'ont pas de
    * charge à mesurer, et un délai moyen d'instruction qu'ils ne mènent pas ne
-   * dirait rien d'eux. Le titre de la liste, lui, suit toujours la famille.
+   * dirait rien d’eux.
    */
   instructionStatATraiter: 'PCAET à instruire',
   instructionStatInstruits: plural({
@@ -623,10 +623,8 @@ export const demarchesLabels = {
   instructionStatDelaiMoyenPlafonne: ({ plafond }: { plafond: number }) =>
     `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
   instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
-  instructionListeTitre: ({ deposeAvis }: { deposeAvis: boolean }) =>
-    deposeAvis
-      ? 'Instructions dont la DREAL a la charge'
-      : 'Dépôts PCAET que je suis',
+  /** Titre de la liste et nom accessible du tableau, pour toutes les familles. */
+  instructionListeTitre: 'PCAET suivis par mon organisme',
   /**
    * Sans territoire : l'écran sert les cinq familles d'instructeurs, dont les
    * périmètres diffèrent — région pour une DREAL ou un conseil régional,
@@ -634,24 +632,11 @@ export const demarchesLabels = {
    * pas y réintroduire « de votre région ». Et « transmis » plutôt que
    * « à instruire » : seules la DREAL et la région déposent un avis, les autres
    * reçoivent le dossier en lecture.
-   *
-   * Suit la même famille que le titre juste au-dessus : annoncer des dépôts
-   * « transmis » à une DREAL, qui en est l'instructrice, décrirait le travail
-   * d'un autre.
    */
   instructionListeVide: ({ deposeAvis }: { deposeAvis: boolean }) =>
     deposeAvis
       ? 'Les instructions dont vous avez la charge apparaîtront ici.'
       : 'Les dépôts PCAET qui vous sont transmis apparaîtront ici.',
-  /**
-   * Nom accessible du tableau : il suit la même famille que le titre visible
-   * juste au-dessus, sinon un lecteur d'écran annonce à une DREAL la formulation
-   * réservée aux destinataires en lecture.
-   */
-  instructionListeIntitule: ({ deposeAvis }: { deposeAvis: boolean }) =>
-    deposeAvis
-      ? 'Instructions dont la DREAL a la charge'
-      : 'Dépôts PCAET qui vous sont transmis',
   instructionListeColonneCollectivite: 'Collectivité',
   /**
    * « Pilotes » et non « Contact » : les personnes affichées sont les pilotes
