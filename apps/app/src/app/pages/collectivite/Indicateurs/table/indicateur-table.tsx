@@ -1,14 +1,15 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
-import { Button, ButtonGroup } from '@tet/ui';
+import { ButtonGroup } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { prepareIndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { SourceType } from '../types';
-import { EditValeursModal } from './edit-valeurs-modal';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
+import { useIndicateurTableDeclaration } from './use-indicateur-table-declaration';
 
 export type IndicateurTableProps = {
   chartInfo: IndicateurChartInfo;
@@ -26,19 +27,9 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
   const { chartInfo, collectiviteId, definition, readonly, openModalState } =
     props;
   const [typeChoisi, setType] = useState<SourceType>('resultat');
-  const { resultats, objectifs } = chartInfo.data.valeurs;
-
-  const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
-
-  // Suit l'ouverture pilotée par le parent. L'ajuster pendant le rendu, plutôt
-  // que dans un effet, évite un rendu où le dialogue est encore fermé.
-  const ouvertureParente = openModalState?.isOpen ?? false;
-  const [previousOuvertureParente, setPreviousOuvertureParente] =
-    useState(ouvertureParente);
-  if (previousOuvertureParente !== ouvertureParente) {
-    setPreviousOuvertureParente(ouvertureParente);
-    setIsOpen(ouvertureParente);
-  }
+  const annualData = chartInfo.data.valeurs;
+  const resultats = prepareIndicateurPeriodeData(annualData.resultats);
+  const objectifs = prepareIndicateurPeriodeData(annualData.objectifs);
 
   // compte les données disponibles pour chaque type
   const sourcesCount = {
@@ -56,6 +47,22 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
   const type = shouldChange && !chartInfo.isLoading ? typeInverse : typeChoisi;
 
   const data = type === 'resultat' ? resultats : objectifs;
+  const hasFilledCollectiviteResultat = Boolean(
+    resultats.donneesCollectivite?.valeurs.some(
+      ({ valeur }) => typeof valeur === 'number'
+    )
+  );
+  const canWrite =
+    !readonly &&
+    !definition.sansValeurUtilisateur &&
+    chartInfo.sourceFilter.avecDonneesCollectivite;
+  const declaration = useIndicateurTableDeclaration({
+    canWrite,
+    collectiviteId,
+    definition,
+    existingPeriodes: [...resultats.periodes, ...objectifs.periodes],
+    openModalState,
+  });
 
   // n'affiche rien si il n'y a pas de données
   if (!sourcesCount[type] && !sourcesCount[typeInverse]) return;
@@ -86,38 +93,19 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
             },
           ]}
         />
-        {/** pour ouvrir le dialogue d'édition des valeurs */}
-        {chartInfo.sourceFilter.avecDonneesCollectivite && !readonly && (
-          <Button size="sm" onClick={() => setIsOpen(true)}>
-            {appLabels.ajouterAnnee}
-          </Button>
-        )}
       </div>
       {/** tableau pour le type de valeurs (objectif | résultat) sélectionné */}
       <IndicateurValeursTable
         {...props}
         data={data}
         type={type}
+        readonly={!canWrite}
+        addPeriode={declaration.header}
         disableComments={!chartInfo.sourceFilter.avecDonneesCollectivite}
       />
       {/** résultat récent en mode privé */}
-      {type === 'resultat' && !!data.donneesCollectivite?.valeurs.length && (
+      {type === 'resultat' && hasFilledCollectiviteResultat && (
         <PrivateModeSwitch definition={definition} isReadOnly={readonly} />
-      )}
-      {/** dialogue d'édition des valeurs */}
-      {isOpen && (
-        <EditValeursModal
-          collectiviteId={collectiviteId}
-          definition={definition}
-          openState={{
-            isOpen,
-            setIsOpen: (value) => {
-              setIsOpen(value);
-              openModalState?.setIsOpen(value);
-            },
-          }}
-          data={data}
-        />
       )}
     </div>
   );

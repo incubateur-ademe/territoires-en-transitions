@@ -13,7 +13,7 @@ export const CellSourceName = ({
   type,
   getColorBySourceId,
 }: {
-  source: PreparedData['sources'][number];
+  source: Omit<PreparedData['sources'][number], 'valeurs'>;
   unite: string;
   type: SourceType;
   getColorBySourceId: GetColorBySourceId;
