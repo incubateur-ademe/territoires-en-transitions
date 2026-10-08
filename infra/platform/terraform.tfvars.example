@@ -1,0 +1,21 @@
+# Copier en terraform.tfvars (gitignoré) et compléter.
+
+# Projets créés par l'admin de l'organisation (cf. README « Prérequis admin »).
+main_project_id    = "00000000-0000-0000-0000-000000000000"
+prod_project_id    = "11111111-1111-1111-1111-111111111111"
+backups_project_id = "22222222-2222-2222-2222-222222222222"
+
+# Opérateurs autorisés sur le bastion. Ce serveur donne accès SSH à TOUS les
+# serveurs applicatifs : n'y lister que des IP fixes et connues.
+coolify_ssh_allowed_ips = [
+  "203.0.113.10/32",
+]
+
+coolify_ssh_authorized_keys = [
+  "ssh-ed25519 AAAA... prenom.nom@example.org",
+]
+
+# Passer à true une fois territoiresentransitions.fr enregistré comme domaine
+# externe chez Scaleway (cf. commentaire DNS dans main.tf).
+dns_enabled = false
+
