@@ -31,7 +31,7 @@ function isReferentielArchived(
 
 /**
  * Libellé du référentiel dans la nav : suffixé "(archivé)" quand le
- * référentiel a été archivé (post-bascule) tout en restant consultable.
+ * référentiel a été archivé tout en restant consultable.
  */
 function referentielNavLabel(
   baseLabel: string,
@@ -119,23 +119,33 @@ export const generateEdlDropdown = ({
     isVisible: isReferentielDisplayed(referentielsDisplay, 'eci'),
   });
 
-  // Après la bascule vers TE, le référentiel actif (Climat Ressources) passe en
-  // tête, les référentiels CAE/ECI archivés restant listés en dessous pour
-  // consultation. Avant la bascule, on conserve l'ordre historique : CAE, ECI
-  // puis Climat Ressources.
-  const hasSwitchedToTe = Boolean(
-    referentielsPreferences?.te.populatedFromCaeEci
-  );
-  const referentielLinks = hasSwitchedToTe
-    ? [teLink, caeLink, eciLink]
-    : [caeLink, eciLink, teLink];
+  // Les référentiels actifs gardent l'ordre historique (CAE, ECI puis Climat
+  // Ressources). Les référentiels archivés, restés consultables, sont regroupés
+  // à leur suite, avant la démarche PCAET.
+  const referentielLinks = [
+    { referentielId: 'cae', link: caeLink },
+    { referentielId: 'eci', link: eciLink },
+    { referentielId: 'te', link: teLink },
+  ] as const;
+  const activeLinks = referentielLinks
+    .filter(
+      ({ referentielId }) =>
+        !isReferentielArchived(referentielsPreferences, referentielId)
+    )
+    .map(({ link }) => link);
+  const archivedLinks = referentielLinks
+    .filter(({ referentielId }) =>
+      isReferentielArchived(referentielsPreferences, referentielId)
+    )
+    .map(({ link }) => link);
 
   return {
     isVisible: !(collectiviteAccesRestreint && isVisitor),
     children: appLabels.programmesEtDemarches,
     dataTest: 'nav-edl',
     links: [
-      ...referentielLinks,
+      ...activeLinks,
+      ...archivedLinks,
       {
         isVisible: isDemarchePcaetEnabled,
         children: appLabels.navDemarchePcaet,
