@@ -2,18 +2,26 @@ import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indi
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import {
+  IndicateurPeriodes,
+  type IndicateurPeriode,
+} from '@tet/domain/indicateurs';
+import {
   Button,
   DEPRECATED_Table,
-  DEPRECATED_TBody,
   DEPRECATED_TCell,
   DEPRECATED_TRow,
+  TableCell,
+  TableHeaderCell,
 } from '@tet/ui';
-import { useState } from 'react';
-import { PreparedData, PreparedValue } from '../data/prepare-data';
+import { useState, type ReactNode } from 'react';
+import type {
+  IndicateurPeriodeData,
+  IndicateurPeriodeValue,
+} from '../data/prepare-indicateur-periode-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useGetColorBySourceId } from '../data/use-indicateur-sources';
 import { SourceType } from '../types';
-import { CellAnneeList } from './cell-annee-list';
+import { CellPeriodeList } from './cell-periode-list';
 import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
 import { ConfirmDelete } from './confirm-delete';
@@ -27,9 +35,10 @@ type IndicateurValeursTable = {
   definition: IndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
-  data: (PreparedData & { annees: number[] }) | null;
+  data: IndicateurPeriodeData | null;
   type: SourceType;
   disableComments: boolean;
+  addPeriode?: ReactNode;
 };
 
 /**
@@ -43,20 +52,23 @@ export const IndicateurValeursTable = ({
   readonly,
   confidentiel,
   disableComments,
+  addPeriode,
 }: IndicateurValeursTable) => {
-  const { annees, sources, donneesCollectivite, valeursExistantes } =
-    data || {};
+  const periodes = data?.periodes ?? [];
+  const { sources, donneesCollectivite, valeursExistantes } = data || {};
   const placeholdersCount = Math.max(
     0,
-    MAX_PLACEHOLDERS_COUNT - (annees?.length ?? 0)
+    (addPeriode ? 0 : MAX_PLACEHOLDERS_COUNT) - periodes.length
   );
 
   const [commentaireValeur, setCommentaireValeur] = useState<null | {
     id?: number;
-    annee: number;
+    periode: IndicateurPeriode;
     commentaire?: string | null;
   }>(null);
-  const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
+  const [toBeDeleted, setToBeDeleted] = useState<IndicateurPeriodeValue | null>(
+    null
+  );
 
   const { mutate: upsertValeur } = useUpsertIndicateurValeur();
   const { mutate: deleteValeur } = useDeleteIndicateurValeur();
@@ -66,17 +78,37 @@ export const IndicateurValeursTable = ({
   return (
     <>
       <DEPRECATED_Table>
-        <DEPRECATED_TBody>
+        <tbody data-test="indicateurs.valeurs.table">
           <DEPRECATED_TRow className="bg-primary-2 border-b-2 border-primary-4">
             <DEPRECATED_TCell className="bg-white">&nbsp;</DEPRECATED_TCell>
-            {/* colonnes pour chaque année */}
+            {/* colonnes pour chaque période */}
             {data && (
-              <CellAnneeList
-                data={data}
-                confidentiel={confidentiel}
-                readonly={readonly}
-                type={type}
-                onDelete={(valeur) => {
+              <CellPeriodeList
+                columns={periodes.map((periode) => {
+                  const key = IndicateurPeriodes.key(periode);
+                  return {
+                    periode,
+                    label: IndicateurPeriodes.format(periode),
+                    isPrivate: Boolean(
+                      confidentiel &&
+                        type === 'resultat' &&
+                        data.periodeModePrive &&
+                        key === IndicateurPeriodes.key(data.periodeModePrive)
+                    ),
+                    canDelete:
+                      !readonly &&
+                      data.valeursExistantes.some(
+                        (v) => IndicateurPeriodes.key(v.periode) === key
+                      ),
+                  };
+                })}
+                onDelete={(periode) => {
+                  const valeur = data.valeursExistantes.find(
+                    (v) =>
+                      IndicateurPeriodes.key(v.periode) ===
+                      IndicateurPeriodes.key(periode)
+                  );
+                  if (!valeur) return;
                   // demande confirmation avant de supprimer
                   if (
                     (valeur.objectif ?? false) ||
@@ -95,6 +127,11 @@ export const IndicateurValeursTable = ({
                   }
                 }}
               />
+            )}
+            {addPeriode && (
+              <TableHeaderCell scope="col" className="min-w-56 align-middle">
+                {addPeriode}
+              </TableHeaderCell>
             )}
             {/** placeholders */}
             {!!placeholdersCount &&
@@ -115,17 +152,22 @@ export const IndicateurValeursTable = ({
                 unite={definition.unite}
                 getColorBySourceId={getColorBySourceId}
               />
-              {/* cellule pour chaque année */}
-              {annees?.map((annee) => {
-                const entry = s.valeurs.find((v) => v.annee === annee);
+              {/* cellule pour chaque période */}
+              {periodes.map((periode) => {
+                const key = IndicateurPeriodes.key(periode);
+                const entry = s.valeurs.find(
+                  (v) => IndicateurPeriodes.key(v.periode) === key
+                );
                 // récupère l'id de la ligne à mettre à jour
                 const id =
                   (s.source === 'collectivite'
-                    ? valeursExistantes?.find((v) => v.annee === annee)?.id
+                    ? valeursExistantes?.find(
+                        (v) => IndicateurPeriodes.key(v.periode) === key
+                      )?.id
                     : undefined) ?? undefined;
                 return (
                   <CellValue
-                    key={annee}
+                    key={key}
                     readonly={readonly || s.source !== 'collectivite'}
                     value={entry?.valeur ?? ''}
                     onChange={(newValue) => {
@@ -133,28 +175,30 @@ export const IndicateurValeursTable = ({
                         id,
                         collectiviteId,
                         indicateurId: definition.id,
-                        dateValeur: `${annee}-01-01`,
+                        dateValeur: periode.dateDebut,
                         [type]: newValue,
                       });
                     }}
                   />
                 );
               })}
+              {addPeriode && <TableCell />}
             </DEPRECATED_TRow>
           ))}
           {/* ligne pour les boutons "commentaire" */}
           {!disableComments && (
             <DEPRECATED_TRow>
               <DEPRECATED_TCell>&nbsp;</DEPRECATED_TCell>
-              {annees?.map((annee) => {
+              {periodes.map((periode) => {
+                const key = IndicateurPeriodes.key(periode);
                 const entry = donneesCollectivite?.valeurs.find(
-                  (v) => v.annee === annee
+                  (v) => IndicateurPeriodes.key(v.periode) === key
                 );
 
                 const commentaire = entry?.commentaire ?? '';
 
                 return (
-                  <DEPRECATED_TCell key={annee}>
+                  <DEPRECATED_TCell key={key}>
                     <div className="flex justify-center">
                       <Button
                         size="xs"
@@ -162,19 +206,22 @@ export const IndicateurValeursTable = ({
                         icon="question-answer-fill"
                         disabled={!commentaire && readonly}
                         notification={commentaire ? { number: 1 } : undefined}
-                        onClick={() => setCommentaireValeur(entry ?? { annee })}
+                        onClick={() =>
+                          setCommentaireValeur(entry ?? { periode })
+                        }
                       />
                     </div>
                   </DEPRECATED_TCell>
                 );
               })}
+              {addPeriode && <TableCell />}
             </DEPRECATED_TRow>
           )}
-        </DEPRECATED_TBody>
+        </tbody>
       </DEPRECATED_Table>
       {commentaireValeur && (
         <EditCommentaireModal
-          annee={commentaireValeur.annee}
+          periodeLabel={IndicateurPeriodes.format(commentaireValeur.periode)}
           type={type}
           definition={definition}
           commentaire={commentaireValeur.commentaire ?? ''}
@@ -187,7 +234,7 @@ export const IndicateurValeursTable = ({
               id: commentaireValeur?.id,
               collectiviteId,
               indicateurId: definition.id,
-              dateValeur: `${commentaireValeur.annee}-01-01`,
+              dateValeur: commentaireValeur.periode.dateDebut,
               [`${type}Commentaire`]: newComment,
             });
           }}

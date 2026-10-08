@@ -53,6 +53,11 @@ test.describe('Vues personnalisées des indicateurs', () => {
       .click();
     await expect(pom.search).toHaveValue('');
     await expect(pom.createButton).toHaveCount(0);
+    // nuqs updates React state before flushing the filters to the URL.
+    await expect(page).toHaveURL(
+      (url) =>
+        url.searchParams.get('filter') === JSON.stringify({ estFavori: true })
+    );
     await page.reload();
     await expect(pom.filterButton).toBeVisible();
     await expect(pom.createButton).toHaveCount(0);
@@ -82,6 +87,9 @@ test.describe('Vues personnalisées des indicateurs', () => {
     await expect(pom.createButton).toHaveCount(0);
     await pom.closeFilters();
 
+    await expect(page).toHaveURL(
+      (url) => url.searchParams.get('filter') === '{}'
+    );
     await page.reload();
     await expect(pom.filterButton).toBeVisible();
     await expect(pom.createButton).toHaveCount(0);

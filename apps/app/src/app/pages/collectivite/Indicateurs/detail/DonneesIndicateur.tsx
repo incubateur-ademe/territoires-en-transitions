@@ -6,7 +6,6 @@ import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indi
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
-import classNames from 'classnames';
 import { useState } from 'react';
 import { PersonnalisationQuestionsList } from '../../../../../collectivites/personnalisations/personnalisation-questions.list';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -96,15 +95,11 @@ const DonneesIndicateur = ({
         className="mb-6"
         chartInfo={chartInfo}
         definition={definition}
-        isReadonly={!canMutateDefinition}
+        isReadonly={!canMutateValeur || definition.sansValeurUtilisateur}
         onAddValue={() => setIsTableModalOpen(true)}
       />
 
-      <div
-        className={classNames('flex flex-col gap-7', {
-          'invisible h-0': !chartInfo.hasValeur,
-        })}
-      >
+      <div className="flex flex-col gap-7">
         <Divider color="primary" className="mb-6" />
 
         {/* Tableau */}
