@@ -1,6 +1,7 @@
 /** Les pilotes écrits : toujours un personne_tag, jamais un compte (un pilote à compte retirerait aux autres éditeurs le droit de faire avancer le dossier). */
 
 import { PoolClient } from 'pg';
+import { COMPTE_SYSTEME } from '../import-fiches/ecriture';
 import type { PersonneTags } from './personne-tag';
 import type { PiloteDossier, PiloteFiche } from './pilotes';
 
@@ -54,7 +55,7 @@ export const createPilotesDossiers = async (
   return rows[0];
 };
 
-/** Écrit un pilote par (fiche, personne_tag) et la trace des fiches ; « Modifié le » ne bouge pas (aucun déclencheur). */
+/** Écrit un pilote par (fiche, personne_tag), au nom du compte système, et la trace des fiches ; « Modifié le » ne bouge pas (aucun déclencheur). */
 export const createPilotesFiches = async (
   client: PoolClient,
   pilotes: readonly PiloteFiche[],
@@ -70,8 +71,9 @@ export const createPilotesFiches = async (
   ];
   const { rows } = await client.query<{ pilotes: number; fiches: number }>(
     `with ecrits as (
-       insert into public.fiche_action_pilote (fiche_id, tag_id)
-       select * from unnest($1::int[], $2::int[])
+       insert into public.fiche_action_pilote (fiche_id, tag_id, created_by)
+       select fiche_id, tag_id, $3::uuid
+         from unnest($1::int[], $2::int[]) as p(fiche_id, tag_id)
        returning fiche_id
      ), trace as (
        insert into reprise_tec.lignes_ecrites (table_cible, ligne_id)
@@ -79,7 +81,7 @@ export const createPilotesFiches = async (
      )
      select count(*)::int as pilotes, count(distinct fiche_id)::int as fiches
        from ecrits`,
-    [voulus.map((p) => p.ficheId), voulus.map((p) => p.tagId)]
+    [voulus.map((p) => p.ficheId), voulus.map((p) => p.tagId), COMPTE_SYSTEME]
   );
   return rows[0];
 };
