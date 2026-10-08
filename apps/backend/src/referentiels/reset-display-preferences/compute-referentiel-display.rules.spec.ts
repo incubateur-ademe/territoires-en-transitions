@@ -4,15 +4,17 @@ import {
 } from './compute-referentiel-display.rules';
 
 const now = new Date('2025-06-01T12:00:00.000Z');
-const oneYearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-const moreThanOneYearAgo = new Date(now.getTime() - 366 * 24 * 60 * 60 * 1000);
+const DAY_MS = 24 * 60 * 60 * 1000;
+const twoYearsAgo = new Date(now.getTime() - 2 * 365 * DAY_MS);
+const moreThanTwoYearsAgo = new Date(now.getTime() - (2 * 365 + 1) * DAY_MS);
+const betweenOneAndTwoYearsAgo = new Date(now.getTime() - 500 * DAY_MS);
 
 describe('shouldDisplayReferentielByCriteria', () => {
   it('returns false when 0 criteria are met', () => {
     const criteria: ReferentielDisplayCriteria = {
       actionStatutCount: 10,
       actionCommentaireCount: 10,
-      lastActivityAt: moreThanOneYearAgo,
+      lastActivityAt: moreThanTwoYearsAgo,
     };
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
   });
@@ -26,11 +28,11 @@ describe('shouldDisplayReferentielByCriteria', () => {
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
   });
 
-  it('returns false when 1 criterion is met (lastActivity within 1 year only)', () => {
+  it('returns false when 1 criterion is met (lastActivity within 2 years only)', () => {
     const criteria: ReferentielDisplayCriteria = {
       actionStatutCount: 0,
       actionCommentaireCount: 0,
-      lastActivityAt: oneYearAgo,
+      lastActivityAt: twoYearsAgo,
     };
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
   });
@@ -48,16 +50,34 @@ describe('shouldDisplayReferentielByCriteria', () => {
     const criteria: ReferentielDisplayCriteria = {
       actionStatutCount: 50,
       actionCommentaireCount: 0,
-      lastActivityAt: oneYearAgo,
+      lastActivityAt: twoYearsAgo,
     };
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(true);
+  });
+
+  it('counts an activity between 1 and 2 years old as recent', () => {
+    const criteria: ReferentielDisplayCriteria = {
+      actionStatutCount: 50,
+      actionCommentaireCount: 0,
+      lastActivityAt: betweenOneAndTwoYearsAgo,
+    };
+    expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(true);
+  });
+
+  it('does not count an activity more than 2 years old as recent', () => {
+    const criteria: ReferentielDisplayCriteria = {
+      actionStatutCount: 50,
+      actionCommentaireCount: 0,
+      lastActivityAt: moreThanTwoYearsAgo,
+    };
+    expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
   });
 
   it('returns true when all 5 criteria are met', () => {
     const criteria: ReferentielDisplayCriteria = {
       actionStatutCount: 200,
       actionCommentaireCount: 200,
-      lastActivityAt: oneYearAgo,
+      lastActivityAt: twoYearsAgo,
     };
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(true);
   });
@@ -71,11 +91,11 @@ describe('shouldDisplayReferentielByCriteria', () => {
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
   });
 
-  it('returns false when lastActivityAt is more than 1 year old and counts are low', () => {
+  it('returns false when lastActivityAt is more than 2 years old and counts are low', () => {
     const criteria: ReferentielDisplayCriteria = {
       actionStatutCount: 49,
       actionCommentaireCount: 49,
-      lastActivityAt: moreThanOneYearAgo,
+      lastActivityAt: moreThanTwoYearsAgo,
     };
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
   });
