@@ -136,19 +136,19 @@ describe('Documents d’une démarche PCAET', () => {
     ).toEqual([
       'pcaet_diagnostic',
       'pcaet_strategie_territoriale',
-      'pcaet_plan_actions',
       'pcaet_dispositif_suivi_evaluation',
     ]);
-    // L'EES et la délibération d'arrêt, elles, ne s'y retrouvent pas
-    // systématiquement : leur inclusion se déclare, comme celle du dispositif
-    // de suivi dans le programme d'actions.
+    // L'EES et la délibération d'arrêt ne s'y retrouvent pas systématiquement :
+    // leur inclusion se déclare, comme celle du dispositif de suivi dans le
+    // programme d'actions. Le programme d'actions aussi, pour pousser à le
+    // déposer à part : c'est lui qu'on importe dans la plateforme.
     expect(
       sections
         .filter((section) =>
           section.substitutsDeclarables.includes(PCAET_DOCUMENT_GLOBAL_ID)
         )
         .map((section) => section.id)
-    ).toEqual(['pcaet_ees', 'pcaet_deliberation_arret']);
+    ).toEqual(['pcaet_plan_actions', 'pcaet_ees', 'pcaet_deliberation_arret']);
     expect(
       sections
         .filter((section) => !section.requis || section.etape === 'aval')
@@ -589,9 +589,14 @@ describe('Documents d’une démarche PCAET', () => {
       documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
-    // Le global ne regroupe pas d'office l'EES ni la délibération d'arrêt :
-    // sans leur déclaration d'inclusion, le dossier reste incomplet.
-    for (const documentId of ['pcaet_ees', 'pcaet_deliberation_arret']) {
+    // Le global ne regroupe d'office ni le programme d'actions, ni l'EES, ni la
+    // délibération d'arrêt : sans leur déclaration d'inclusion, le dossier
+    // reste incomplet.
+    for (const documentId of [
+      'pcaet_plan_actions',
+      'pcaet_ees',
+      'pcaet_deliberation_arret',
+    ]) {
       await caller.demarches.pcaet.documents.setCouverture({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
