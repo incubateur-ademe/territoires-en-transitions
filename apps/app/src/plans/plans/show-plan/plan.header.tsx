@@ -21,7 +21,7 @@ export const PlanHeader = () => {
         }}
       />
       <PageHeader.Actions>
-        <div className="flex items-center gap-2">
+        <div className="flex items-stretch gap-2">
           <PlanSecteursButton collectiviteId={collectiviteId} planId={id} />
           <PlanMenuButton />
         </div>

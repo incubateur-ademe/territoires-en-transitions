@@ -50,7 +50,7 @@ export const PlanSecteursButton = ({
     <Button
       size="xs"
       variant="outlined"
-      className="bg-warning-2 hover:!bg-warning-2 border-warning-3 hover:!border-warning-1 text-warning-1 hover:text-warning-1"
+      className="!py-0 bg-warning-2 hover:!bg-warning-2 border-warning-3 hover:!border-warning-1 text-warning-1 hover:text-warning-1"
       onClick={ouvrirVerification}
       dataTest="plans.secteurs-button"
     >
