@@ -48,10 +48,9 @@ export const PlanSecteursButton = ({
 
   return (
     <Button
-      size="sm"
+      size="xs"
       variant="outlined"
-      icon="alert-line"
-      className="bg-warning-2 hover:!bg-warning-2 border-warning-3 hover:!border-warning-1 text-warning-1 hover:text-warning-1 [&_svg]:fill-warning-1"
+      className="bg-warning-2 hover:!bg-warning-2 border-warning-3 hover:!border-warning-1 text-warning-1 hover:text-warning-1"
       onClick={ouvrirVerification}
       dataTest="plans.secteurs-button"
     >
