@@ -620,7 +620,7 @@ pnpx tsx $SCRIPT --confirm  # import
 | Dans T&C                                                                            | Dans TeT                                                                                                                                            |
 | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | chef de projet, participant ou coporteur, élu référent rattaché d'un dossier repris | un pilote de la démarche (`demarche_pilote`), sans auteur ; lu sur la ligne reprise du dossier et sur son doublon « définitif »                     |
-| contact d'une action reprise                                                        | un pilote de sa fiche (`fiche_action_pilote`) ; « Modifié le » de la fiche ne bouge pas                                                             |
+| contact d'une action reprise                                                        | un pilote de sa fiche (`fiche_action_pilote`), au nom du compte système ; « Modifié le » de la fiche ne bouge pas                                   |
 | prénom et nom de l'utilisateur                                                      | le nom du `personne_tag`, « Prénom Nom » tel que saisi, espaces en trop réduits ; réutilisé si ce nom existe déjà dans la collectivité, sans auteur |
 
 Une personne est un nom exact dans une collectivité (la règle du produit) :
