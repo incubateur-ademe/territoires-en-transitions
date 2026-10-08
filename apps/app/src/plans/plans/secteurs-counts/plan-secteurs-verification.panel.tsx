@@ -18,7 +18,7 @@ import {
 } from '@tet/domain/plans';
 import { Button, Icon, InlineLink } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FicheSecteursAVerifier } from './data/use-list-plan-fiches-secteurs-a-verifier';
 
 const isARenseigner = (fiche: FicheSecteursAVerifier) =>
@@ -173,11 +173,12 @@ const RevueFiche = ({
   const { mutate: upsertSecteurs, isPending } = useUpsertFicheSecteurs(
     fiche.ficheId
   );
-  const [selection, setSelection] = useState<SecteurReglementaire[]>([]);
-
-  useEffect(() => {
-    setSelection(secteurs?.etat === 'attribue' ? secteurs.secteurs : []);
-  }, [secteurs]);
+  const [selectionModifiee, setSelection] = useState<
+    SecteurReglementaire[] | null
+  >(null);
+  const selection =
+    selectionModifiee ??
+    (secteurs?.etat === 'attribue' ? secteurs.secteurs : []);
 
   const isReadonly =
     !ficheComplete ||
@@ -207,10 +208,10 @@ const RevueFiche = ({
     );
 
   const basculer = (secteur: SecteurReglementaire) =>
-    setSelection((current) =>
-      current.includes(secteur)
-        ? current.filter((value) => value !== secteur)
-        : [...current, secteur]
+    setSelection(
+      selection.includes(secteur)
+        ? selection.filter((value) => value !== secteur)
+        : [...selection, secteur]
     );
 
   const ficheUrl =
