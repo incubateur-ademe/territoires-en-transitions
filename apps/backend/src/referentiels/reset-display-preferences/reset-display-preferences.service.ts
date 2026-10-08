@@ -37,7 +37,8 @@ export type ResetAllCollectivitesDisplayPreferencesOutput = {
 
 /**
  * This service is used to reset the display preferences for a collectivité based on its activities
- * If nothing has been done on ECI, no need to display it but only the new referentiel
+ * A legacy referentiel (CAE/ECI) stays writable only if the collectivité is engaged on it.
+ * Otherwise it is archived, and stays displayed unless no statut nor text has been filled in
  * Syndicats and DROM are not eligible to the new referentiel: they keep their
  * legacy referentiels whatever their activity (see `deriveReferentielPreferences`)
  * Temporary need, must be removed once the new referentiel is released
@@ -59,19 +60,19 @@ export class ResetDisplayPreferencesService {
   async resetCollectiviteDisplayPreferences(
     collectiviteId: number
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
-    // le calcul de l'affichage ne dépend que de l'activité (statuts/commentaires),
-    // pas des préférences : on peut le faire hors transaction pour réduire la durée du verrou
-    const displayResult =
-      await this.computeReferentielEngagementService.computeEngagement(
+    // le niveau de remplissage ne dépend que de l'activité (statuts/commentaires),
+    // pas des préférences : on peut le calculer hors transaction pour réduire la durée du verrou
+    const niveauxRemplissageResult =
+      await this.computeReferentielEngagementService.computeNiveauxRemplissage(
         collectiviteId
       );
-    if (!displayResult.success) {
+    if (!niveauxRemplissageResult.success) {
       return failure(
         CollectivitePreferencesErrorEnum.DATABASE_ERROR,
-        displayResult.cause
+        niveauxRemplissageResult.cause
       );
     }
-    const display = displayResult.data;
+    const niveauxRemplissage = niveauxRemplissageResult.data;
 
     // le type de collectivité (syndicat / DROM) ne dépend pas non plus des
     // préférences : lu hors transaction lui aussi
@@ -110,8 +111,8 @@ export class ResetDisplayPreferencesService {
         {
           referentiels: deriveReferentielPreferences(
             {
-              caeEngaged: display.cae,
-              eciEngaged: display.eci,
+              cae: niveauxRemplissage.cae,
+              eci: niveauxRemplissage.eci,
               isSyndicat,
               isDrom,
             },
