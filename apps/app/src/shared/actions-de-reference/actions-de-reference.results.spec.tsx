@@ -13,6 +13,10 @@ import {
 } from './actions-de-reference.fixture';
 import { ActionsDeReferenceResults } from './actions-de-reference.results';
 
+vi.mock('@tet/api/collectivites', () => ({
+  useCollectiviteId: (): number => 5596,
+}));
+
 const EMPTY_STATE_TITLE =
   'Aucune action de référence ne correspond à votre recherche';
 

@@ -3,6 +3,7 @@ import { type ActionDeReference, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { Badge, Button, Card, cn } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
+import { ActionDeReferenceDetailLink } from './action-de-reference-detail.link';
 import type { ActionDeReferenceCardComponent } from './actions-de-reference.contract';
 
 const UpdateActionDeReferenceButton = ({
@@ -26,12 +27,12 @@ const UpdateActionDeReferenceButton = ({
 };
 
 const ActionDeReferenceTitle = ({
-  children,
+  action,
 }: {
-  readonly children: string;
+  readonly action: ActionDeReference;
 }): JSX.Element => (
   <h2 className="mb-0 text-base font-bold leading-normal text-primary-9">
-    {children}
+    <ActionDeReferenceDetailLink action={action} />
   </h2>
 );
 
@@ -68,7 +69,7 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
     {match(updateAccess)
       .with({ status: 'forbidden' }, () => null)
       .with({ status: 'allowed' }, ({ onUpdate }) => (
-        <div className="absolute right-4 top-4 opacity-0 transition group-focus-within:opacity-100 group-hover:opacity-100">
+        <div className="absolute right-4 top-4 z-10 opacity-0 transition group-focus-within:opacity-100 group-hover:opacity-100">
           <UpdateActionDeReferenceButton action={action} onUpdate={onUpdate} />
         </div>
       ))
@@ -82,7 +83,7 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
         />
       }
     >
-      <ActionDeReferenceTitle>{action.titre}</ActionDeReferenceTitle>
+      <ActionDeReferenceTitle action={action} />
       <p className="mb-0 whitespace-pre-line text-sm font-medium text-grey-8">
         {action.description}
       </p>

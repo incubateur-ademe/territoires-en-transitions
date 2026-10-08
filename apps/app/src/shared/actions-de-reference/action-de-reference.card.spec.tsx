@@ -6,9 +6,46 @@ import {
   longDescriptionAction,
 } from './actions-de-reference.fixture';
 
+vi.mock('@tet/api/collectivites', () => ({
+  useCollectiviteId: (): number => 5596,
+}));
+
 const keepWhitespace = (text: string): string => text;
 
 afterEach(cleanup);
+
+describe('card-mene-au-detail', () => {
+  it("le titre est un lien vers la page détail de l'action", () => {
+    render(
+      <ActionDeReferenceCard
+        action={isolationComblesAction}
+        updateAccess={{ status: 'forbidden' }}
+      />
+    );
+
+    expect(
+      screen
+        .getByRole('link', {
+          name: 'Isoler les combles perdus des bâtiments communaux',
+        })
+        .getAttribute('href')
+    ).toBe('/collectivite/5596/actions-reference/1');
+  });
+
+  it('avec le droit de modification, la card porte le lien du titre et le bouton de modification, sans les confondre', () => {
+    render(
+      <ActionDeReferenceCard
+        action={isolationComblesAction}
+        updateAccess={{ status: 'allowed', onUpdate: vi.fn() }}
+      />
+    );
+
+    const link = screen.getByRole('link');
+    const button = screen.getByRole('button');
+
+    expect(link.contains(button)).toBe(false);
+  });
+});
 
 describe('card-affiche-action-entiere', () => {
   it('montre le titre, la description, le libellé du levier et le libellé de la catégorie', () => {
