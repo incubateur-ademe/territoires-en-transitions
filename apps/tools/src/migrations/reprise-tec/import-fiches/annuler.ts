@@ -108,7 +108,11 @@ const deleteFiches = async (client: PoolClient) => {
                             'fiche_action_note', 'structure_tag', 'libre_tag')`
   );
   const ecarts = await client.query(
-    `delete from reprise_tec.ecarts where table_source like 'action%'`
+    `delete from reprise_tec.ecarts
+      where table_source in ('action', 'action_volet', 'action_cible', 'action_collectivite',
+                             'action_secteur', 'action_secteur_autre', 'action_type_action',
+                             'action_type_porteur', 'action_type_porteur_autre', 'action_historique')
+        and not (table_source = 'action' and precision = 'url_site_web')`
   );
 
   return {
