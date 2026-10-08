@@ -17,7 +17,7 @@ import { NotificationsRouter } from '@tet/backend/utils/notifications/notificati
 import { captureException } from '@tet/backend/utils/error-tracking/capture-exception';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { Response } from 'express';
-import z from 'zod';
+import z, { ZodError } from 'zod';
 import { UsersRouter } from '../../users/users.router';
 import { TrpcService } from './trpc.service';
 
@@ -95,7 +95,19 @@ export class TrpcRouter {
 
           this.logger.error(error);
 
-          captureException(error, this.contextStoreService.getContext());
+          // Une erreur de validation Zod (entrée ou sortie) est levée par tRPC
+          // lui-même : sa stack ne contient que du code tRPC, identique pour
+          // toutes les procédures. On regroupe donc par procédure plutôt que
+          // par stack, sinon PostHog fusionne tout en une seule issue.
+          const isValidationError = error.cause instanceof ZodError;
+
+          captureException(error, this.contextStoreService.getContext(), {
+            trpc_path: opts.path,
+            trpc_type: opts.type,
+            ...(isValidationError && {
+              $exception_fingerprint: `trpc-validation:${error.code}:${opts.path}`,
+            }),
+          });
         },
       })
     );
