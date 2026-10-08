@@ -6,11 +6,15 @@ import { getDemarcheParcours } from '@/app/demarches/steps';
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { AvisDeposesList } from '@/app/demarches/pcaet/components/avis-deposes.list';
+import { PROGRAMME_ACTIONS_DOCUMENT_ID } from '@/app/demarches/pcaet/constants';
+import { useImportProgramme } from '@/app/demarches/pcaet/import-programme/import-programme.context';
+import { ProposeImportProgrammeModal } from '@/app/demarches/pcaet/import-programme/propose-import-programme.modal';
 import { useDemarchePcaetAvisRecus } from '@/app/demarches/pcaet/data/use-avis-recus';
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import { useDownloadDocument } from '@/app/collectivites/documents/data/use-download-document';
+import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-import.form';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
@@ -22,7 +26,7 @@ import type {
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
-import { ComponentProps, PropsWithChildren } from 'react';
+import { ComponentProps, PropsWithChildren, useState } from 'react';
 
 /** Un bloc de l'écran, sous son titre : avis, pièces de l'adoption, dossier transmis. */
 const DocumentsBloc = ({
@@ -82,6 +86,12 @@ export const DemarchePcaetDocumentsPage = () => {
 
   const { mutate: downloadDocument } = useDownloadDocument();
 
+  const { isEnabled: isImportEnabled, isOngoing: isImportOngoing } =
+    useImportProgramme();
+  const [importProposalFichierId, setImportProposalFichierId] = useState<
+    number | null
+  >(null);
+
   if (isLoading) {
     return (
       <div className="flex grow items-center justify-center">
@@ -120,6 +130,30 @@ export const DemarchePcaetDocumentsPage = () => {
     }
   };
 
+  // Le programme d'actions déposé est déjà la source de l'import : on le
+  // propose aussitôt, une fois le dépôt enregistré. Un import en cours
+  // l'emporte (un seul par collectivité), et sans rattachement possible le
+  // plan importé n'aurait pas sa place dans la démarche.
+  const addFichier = (
+    documentId: string,
+    fichierId: number,
+    etape: DemarcheDocumentEtape
+  ) =>
+    addDocument(documentId, fichierId, etape, {
+      onSuccess: (depose) => {
+        if (
+          documentId === PROGRAMME_ACTIONS_DOCUMENT_ID &&
+          isImportEnabled &&
+          !isImportOngoing &&
+          demarche.amontModifiable &&
+          depose.fichier &&
+          isAiImportAcceptedFilename(depose.fichier.filename)
+        ) {
+          setImportProposalFichierId(fichierId);
+        }
+      },
+    });
+
   const tableProps: ComponentProps<typeof DemarcheDocumentsTable> | null =
     snapshot
       ? {
@@ -135,7 +169,7 @@ export const DemarchePcaetDocumentsPage = () => {
           mergeEtapes: parcours.horsPlateforme,
           // Adopté, le dossier ne se complète plus : il se lit.
           hideEmptyRows: isPublieDemarchePcaetStatus(demarche.statut),
-          onAddFichier: addDocument,
+          onAddFichier: addFichier,
           onRemoveDocument: removeDocument,
           onToggleCouverture: setCouverture,
           onCreateAdditional: createDocumentAdditional,
@@ -249,6 +283,13 @@ export const DemarchePcaetDocumentsPage = () => {
           </div>
         )}
       </DemarcheSection>
+      {importProposalFichierId !== null && (
+        <ProposeImportProgrammeModal
+          fichierId={importProposalFichierId}
+          dateLancement={demarche.dateLancement}
+          onClose={() => setImportProposalFichierId(null)}
+        />
+      )}
     </DemarcheShell>
   );
 };

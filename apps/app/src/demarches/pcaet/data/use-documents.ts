@@ -6,6 +6,7 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   computeDemarcheDocumentsCoverage,
+  type DemarcheDocumentDepose,
   type DemarcheDocumentEtape,
 } from '@tet/domain/demarches';
 import { useCallback, useMemo } from 'react';
@@ -151,14 +152,22 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
     // Le temps visé accompagne l'écriture : une pièce de portée `both` a une
     // version par temps, et le serveur ne peut pas le deviner.
     addDocument: useCallback(
-      (documentId: string, fichierId: number, etape: DemarcheDocumentEtape) =>
-        addDocument({
-          collectiviteId,
-          demarcheId,
-          documentId,
-          fichierId,
-          etape,
-        }),
+      (
+        documentId: string,
+        fichierId: number,
+        etape: DemarcheDocumentEtape,
+        options?: { onSuccess?: (depose: DemarcheDocumentDepose) => void }
+      ) =>
+        addDocument(
+          {
+            collectiviteId,
+            demarcheId,
+            documentId,
+            fichierId,
+            etape,
+          },
+          { onSuccess: options?.onSuccess }
+        ),
       [addDocument, collectiviteId, demarcheId]
     ),
     removeDocument: useCallback(

@@ -18,10 +18,12 @@ import { useListPlanTypes } from '../use-list-plan-types';
 // ensuite sur le contenu.
 const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.docx', '.csv', '.xlsx'];
 
-const isAcceptedFile = (file: File) =>
+export const isAiImportAcceptedFilename = (filename: string) =>
   ACCEPTED_FILE_EXTENSIONS.some((extension) =>
-    file.name.toLowerCase().endsWith(extension)
+    filename.toLowerCase().endsWith(extension)
   );
+
+const isAcceptedFile = (file: File) => isAiImportAcceptedFilename(file.name);
 
 const aiImportFormSchema = z.object({
   file: z
@@ -37,6 +39,8 @@ const aiImportFormSchema = z.object({
 });
 
 const PDF_MIME_TYPE = 'application/pdf';
+
+export const isAiImportVerifiable = (file: File) => file.type === PDF_MIME_TYPE;
 
 export type AiImportFormValues = z.infer<typeof aiImportFormSchema>;
 
@@ -95,7 +99,7 @@ export const AiImportForm = ({
         return;
       }
       setValue('file', selectedFile, { shouldValidate: true });
-      setValue('withVerifications', selectedFile.type === PDF_MIME_TYPE);
+      setValue('withVerifications', isAiImportVerifiable(selectedFile));
     },
     [setValue]
   );

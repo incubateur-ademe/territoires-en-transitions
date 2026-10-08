@@ -5,6 +5,7 @@ import { DemarcheShell } from '@/app/demarches/components/shell';
 import { getDemarcheParcours } from '@/app/demarches/steps';
 import {
   findPcaetPlanType,
+  makeProgrammeActionsPlanName,
   PCAET_PLAN_TYPE_LABEL,
 } from '@/app/demarches/pcaet/constants';
 import type { DemarcheCreatePlanPayload } from '@/app/demarches/components/create-plan.modal';
@@ -94,9 +95,8 @@ export const DemarchePcaetPlanActionsPage = () => {
           onCreatePlan={createPlan}
           importDefaults={{
             fichierId: programmeActionsFichier?.id,
-            // AAAA-MM-JJ : l'année se lit sans passer par `Date` (fuseau).
-            planName: appLabels.demarcheProgrammeNomPlanImporte({
-              annee: demarche.dateLancement?.slice(0, 4) ?? null,
+            planName: makeProgrammeActionsPlanName({
+              dateLancement: demarche.dateLancement,
               collectiviteNom,
             }),
           }}

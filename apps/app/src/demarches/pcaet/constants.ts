@@ -10,6 +10,23 @@ import type { DemarchePcaetStatut } from '../types';
 
 export const PCAET_PLAN_TYPE_LABEL = PCAET_PLAN_TYPE_KEY.type;
 
+/** Pièce du dossier qui porte le programme d'actions, importable en plan. */
+export const PROGRAMME_ACTIONS_DOCUMENT_ID = 'pcaet_plan_actions';
+
+/** Nom proposé au plan importé depuis le programme d'actions. */
+export const makeProgrammeActionsPlanName = ({
+  dateLancement,
+  collectiviteNom,
+}: {
+  dateLancement: string | null;
+  collectiviteNom: string;
+}) =>
+  appLabels.demarcheProgrammeNomPlanImporte({
+    // AAAA-MM-JJ : l'année se lit sans passer par `Date` (fuseau).
+    annee: dateLancement?.slice(0, 4) ?? null,
+    collectiviteNom,
+  });
+
 /**
  * Résout le type de plan PCAET par sa clé fonctionnelle (categorie, type),
  * unique en base — l'id n'est pas stable d'un environnement à l'autre.

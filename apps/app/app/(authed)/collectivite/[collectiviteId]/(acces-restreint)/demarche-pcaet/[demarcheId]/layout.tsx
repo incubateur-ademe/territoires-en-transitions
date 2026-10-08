@@ -1,5 +1,6 @@
 import { DemarcheVisitProvider } from '@/app/demarches/components/avance-panel-visit.context';
 import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate';
+import { ImportProgrammeProvider } from '@/app/demarches/pcaet/import-programme/import-programme.context';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import { z } from 'zod';
@@ -29,8 +30,12 @@ export default async function Layout({
   // Le provider dure le temps de la visite de la démarche : il porte l'ouverture
   // du panneau d'avancée à l'arrivée, une seule fois. La `key` le remonte quand
   // on passe d'une démarche à une autre — le layout d'un segment dynamique,
-  // lui, reste monté d'un `demarcheId` au suivant.
+  // lui, reste monté d'un `demarcheId` au suivant. L'import du programme
+  // d'actions se suit au même niveau : lancé depuis une étape, il se termine
+  // souvent sur une autre.
   return (
-    <DemarcheVisitProvider key={demarcheId}>{children}</DemarcheVisitProvider>
+    <DemarcheVisitProvider key={demarcheId}>
+      <ImportProgrammeProvider>{children}</ImportProgrammeProvider>
+    </DemarcheVisitProvider>
   );
 }
