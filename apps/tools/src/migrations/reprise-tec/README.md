@@ -340,19 +340,20 @@ pnpx tsx $SCRIPT            # simulation
 pnpx tsx $SCRIPT --confirm  # import
 ```
 
-| Dans T&C                             | Dans TeT                                                                                      |
-| ------------------------------------ | --------------------------------------------------------------------------------------------- |
-| intitulé, description                | titre, description (vide : rien)                                                              |
-| date de lancement, date de création  | date de début ; créée et modifiée le                                                          |
-| (aucun statut)                       | « À venir » sur toutes les fiches                                                             |
-| commentaires de conclusion et statut | notes de suivi, au nom du compte système « Territoires en Transition », datées de la création |
-| (aucun auteur)                       | plan, thématiques et sous-thématiques liés au nom du compte système : la base exige un auteur |
-| volets du PCAET                      | effets attendus                                                                               |
-| cibles                               | cibles (7 vers 13)                                                                            |
-| secteurs                             | thématique, et sous-thématique quand une dit la même chose (table dans `listes-tec.ts`)       |
-| types de porteur, porteurs libres    | structures pilotes de la collectivité, réutilisées si elles existent                          |
-| types d'action, secteurs libres      | tags personnalisés de la collectivité, réutilisés s'ils existent                              |
-| collectivité de l'action             | celle du dossier (toujours la même)                                                           |
+| Dans T&C                             | Dans TeT                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| intitulé, description                | titre, description (vide : rien)                                                                                   |
+| date de lancement, date de création  | date de début ; créée et modifiée le                                                                               |
+| (aucun statut)                       | « À venir » sur toutes les fiches                                                                                  |
+| commentaires de conclusion et statut | notes de suivi, au nom du compte système « Territoires en Transition », datées de la création                      |
+| (aucun auteur)                       | plan, thématiques et sous-thématiques liés au nom du compte système : la base exige un auteur                      |
+| volets du PCAET                      | effets attendus                                                                                                    |
+| cibles                               | cibles (7 vers 13)                                                                                                 |
+| secteurs réglementaires (8)          | le champ secteurs de la fiche (`fiche_action_secteur_attribution`), origine « manuelle », au nom du compte système |
+| autres secteurs                      | thématique, et sous-thématique quand une dit la même chose (table dans `listes-tec.ts`)                            |
+| types de porteur, porteurs libres    | structures pilotes de la collectivité, réutilisées si elles existent                                               |
+| types d'action, secteurs libres      | tags personnalisés de la collectivité, réutilisés s'ils existent                                                   |
+| collectivité de l'action             | celle du dossier (toujours la même)                                                                                |
 
 Non lus ici : contacts (pilotes), fichiers, images et « site web », repris par
 les étapes suivantes. La classification IA des fiches n'est pas écrite : le
