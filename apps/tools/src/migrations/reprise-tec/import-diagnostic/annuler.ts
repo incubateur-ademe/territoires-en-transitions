@@ -71,7 +71,7 @@ const deleteDiagnostics = async (client: PoolClient) => {
   // Les écarts de la tranche 2 visent des dossiers entiers : `demarche`, sans précision.
   const ecarts = await client.query(
     `delete from reprise_tec.ecarts
-      where table_source <> 'demarche' or precision <> '' or motif = 'total_melange'`
+      where table_source <> 'demarche' or motif in ('commentaire_sans_place', 'total_melange')`
   );
 
   return {
