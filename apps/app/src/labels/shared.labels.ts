@@ -75,6 +75,8 @@ export const sharedLabels = {
   actionsDeReferenceTriTitre: 'Titre',
   actionsDeReferenceTriLevier: 'Levier',
   actionsDeReferenceTriCategorie: 'Catégorie',
+  actionDeReferenceTitre: 'Action de référence',
+  actionDeReferenceIntrouvable: "Cette action de référence n'existe pas",
   actionDeReferenceTitreLabel: 'Titre',
   actionDeReferenceDescriptionLabel: 'Description',
   actionDeReferenceLevierLabel: 'Levier',
