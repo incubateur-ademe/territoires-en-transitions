@@ -3,7 +3,7 @@ title: 'Phase 3 — Reporting ADEME'
 parent: ./README.md
 kind: phase
 phase: 3
-updated: 2026-09-24
+updated: 2026-10-08
 ---
 
 # Phase 3 — Reporting ADEME
@@ -43,27 +43,27 @@ d'accompagnement et d'évolution remontés. **M-2 est un seuil de fraîcheur pro
 nombre d'échéances de déclaration attendues et renseignées / nombre d'échéances de déclaration attendues et applicables
 ```
 
-La périodicité de déclaration est fixée à la création de chaque indicateur : annuelle,
-semestrielle, trimestrielle ou mensuelle. À définir pour le reporting : première date à renseigner,
+La périodicité est fixée à la création de chaque indicateur : annuelle, semestrielle,
+trimestrielle ou mensuelle. Selon la décision du 24 septembre 2026, elle est commune à la
+déclaration et à la visualisation, sans agrégation entre périodes ni réglage indépendant.
+À définir pour le reporting : première date à renseigner,
 échéances closes, délai de grâce,
 `resultat` seul ou objectif aussi, sources admises, indicateur inactif et applicabilité en cours
-de campagne. Les échéances attendues sont fixées pour le reporting ; elles ne dépendent pas
-de la périodicité de visualisation (affichage), qui ne change pas la déclaration.
+de campagne. Les échéances attendues sont fixées pour le reporting à la périodicité de l'indicateur ;
+elles ne dépendent pas de la plage de dates consultée.
 La date de début associée à une valeur et la date limite de déclaration sont distinctes.
 La complétude se calcule sur les déclarations attendues et les observations enregistrées, jamais
-sur le nombre de points affichés. Une projection annuelle de données mensuelles ne remplit
-pas d'échéance supplémentaire et ne change ni leur fraîcheur ni les échéances renseignées.
-La visualisation utilise la périodicité des valeurs ou une périodicité plus large ; revenir
-au détail retrouve les observations d’origine. Les sources externes gardent leur périodicité.
+sur le nombre de points affichés. Consulter une année de données mensuelles conserve les
+observations mensuelles et ne change ni leur fraîcheur ni les échéances renseignées.
+Les sources externes gardent leur périodicité ; leur accès suit le traitement défini en phase 1.
 La reprise des données existantes préserve l’historique : une migration technique ne vaut pas
 nouvelle déclaration et sa date ne suffit pas à attester la fraîcheur des données. Préciser le
 calcul de fraîcheur et la contribution des sources admises. Absence = `null`, `0` = renseigné.
 
-**Progression** : les agrégats sont des restitutions calculées à la lecture, sans modifier
-les observations ni leur périodicité de déclaration. Pas de formule générique définie dans le cadrage.
-Pistes à valider selon l'indicateur : somme de flux / dernière valeur
-de stock / ratio num-dénom / moyenne pondérée / jalon / aucune. Une fois validée, la règle est
-portée par le catalogue et testée par indicateur. **Jamais** de somme ou moyenne générique de pourcentages.
+**Progression** : aucune formule générique n'est définie dans le cadrage. Les règles de suivi
+restent à valider selon l'indicateur, à sa périodicité fixe et sans regrouper les observations
+en périodes plus larges. Ces mesures de reporting ne réintroduisent pas d'agrégation temporelle
+ni de périodicité de visualisation indépendante. **Jamais** de somme ou moyenne générique de pourcentages.
 Utiliser les objectifs des indicateurs ; ne pas les déduire des engagements des candidatures.
 Préciser leur horizon et leur articulation avec la périodicité et les dates des observations.
 
@@ -73,17 +73,16 @@ Décider si le reporting montre l'état courant ou un état historisé à une da
 
 **À engager après validation du cadrage**, avec catalogue et valeurs datées par périodicité disponibles :
 
-- requêtes multi-collectivités côté serveur ; filtres engagement, indicateur, périodicité de
-  déclaration, plage de dates, département et région, selon les usages retenus ; distinguer
-  ces filtres de la périodicité de visualisation demandée ;
-- agrégats calculés à la lecture selon les règles validées, sans les enregistrer comme
-  observations des collectivités ; les exports de valeurs reprennent les observations
-  enregistrées avec leur périodicité, date et source ; les téléchargements de graphiques
-  reprennent l’affichage. Tout autre export de restitution reste à valider dans le cadrage ;
-  s’il est retenu, identifier les agrégats et leur périodicité, sans inventer d’observations plus fines ;
-- vérifier qu'un changement de visualisation ne modifie ni les valeurs sources, ni la périodicité
-  de déclaration, ni la complétude ou la fraîcheur ; couvrir les quatre périodicités et le retour
-  au détail ; aucune fraîcheur ne doit être déduite de la seule date d’une migration technique ;
+- requêtes multi-collectivités côté serveur ; filtres engagement, indicateur, périodicité,
+  plage de dates, département et région, selon les usages retenus ; ces filtres sélectionnent
+  les observations sans changer leur périodicité ;
+- restitutions à la périodicité de chaque indicateur, sans agrégation entre périodes ; les exports
+  de valeurs reprennent les observations enregistrées avec leur périodicité, date et source ;
+  les téléchargements de graphiques reprennent l'affichage. Tout autre export de restitution
+  reste à valider dans le cadrage et respecte cette même périodicité ;
+- vérifier qu'une consultation ne modifie ni les valeurs sources, ni la périodicité, ni la
+  complétude ou la fraîcheur ; couvrir les quatre périodicités avec une déclaration et une
+  visualisation identiques ; aucune fraîcheur ne doit être déduite de la seule date d’une migration technique ;
 - permissions dédiées par rôle et périmètre, tests de cloisonnement et de confidentialité ;
 - si Streamlit est retenu : extraction serveur authentifiée, colonnes et collectivités
   filtrées par permission, sans accès direct à la base ;
