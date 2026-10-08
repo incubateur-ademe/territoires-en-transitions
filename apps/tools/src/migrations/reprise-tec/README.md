@@ -235,11 +235,16 @@ refaisant l'addition de TeT (formules et arrondis lus en base).
 Le recalcul refait aussi les totaux des autres sources des collectivités
 touchées : ceux-là ne s'annulent pas, le rapport les compte à part.
 
-S'il s'arrête en route, l'import est déjà validé ; le relancer seul :
+S'il s'arrête en route, l'import est déjà validé ; le relancer seul, à partir
+du rang que donne le message d'arrêt :
 
 ```bash
-pnpx tsx apps/tools/src/migrations/reprise-tec/import-diagnostic/recalculer.ts
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-diagnostic/recalculer.ts [--a-partir-de <rang>]
 ```
+
+Le backend garde de la mémoire d'une collectivité à l'autre : sur un gros
+volume, il peut tomber en route. Recalculer alors par paquets, en redémarrant
+le backend entre deux.
 
 #### Annuler le diagnostic
 

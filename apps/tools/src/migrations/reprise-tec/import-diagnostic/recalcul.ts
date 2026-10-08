@@ -15,7 +15,8 @@ import type { Valeur } from './tables-grille';
 export const lancerRecalcul = async (
   client: PoolClient,
   dossiers: Dossiers,
-  valeurs: readonly Valeur[]
+  valeurs: readonly Valeur[],
+  aPartirDe = 1
 ) => {
   const {
     rows: [{ debut }],
@@ -23,7 +24,7 @@ export const lancerRecalcul = async (
   const collectivites = [
     ...new Set(valeurs.map((v) => dossiers.get(v.dossier).collectiviteId)),
   ];
-  await recomputeCollectivites(collectivites);
+  await recomputeCollectivites(collectivites, aPartirDe);
 
   const enBase = await loadTotauxEnBase(client, collectivites, valeurs);
   const totauxRecalcules = listTotauxRemplaces(valeurs, (v) =>
@@ -86,16 +87,31 @@ export const listDossiersMelanges = (
 // Recalculer : TeT fait le calcul, le script relit.
 // ---------------------------------------------------------------------------
 
-/** Appelle le recalcul du backend pour chaque collectivité ; un nouvel essai après 5 s si le backend ne répond pas. */
-const recomputeCollectivites = async (collectivites: number[]) => {
+/** Appelle le recalcul du backend pour chaque collectivité à partir du rang donné ; un nouvel essai après 5 s, puis arrêt en donnant le rang de reprise. */
+const recomputeCollectivites = async (
+  collectivites: number[],
+  aPartirDe: number
+) => {
   const api = getApi();
-  for (const [rang, collectiviteId] of collectivites.entries()) {
+  for (const [index, collectiviteId] of collectivites.entries()) {
+    const rang = index + 1;
+    if (rang < aPartirDe) {
+      continue;
+    }
     const recompute = () =>
       api.indicateurs.valeurs.recompute.query({ collectiviteId });
-    await recompute().catch(() => sleep(5_000).then(recompute));
-    if ((rang + 1) % 50 === 0 || rang + 1 === collectivites.length) {
+    await recompute()
+      .catch(() => sleep(5_000).then(recompute))
+      .catch((e) => {
+        throw new Error(
+          `arrêt au rang ${rang} / ${collectivites.length} (${
+            e instanceof Error ? e.message : e
+          }) : relancer recalculer.ts --a-partir-de ${rang}`
+        );
+      });
+    if (rang % 50 === 0 || rang === collectivites.length) {
       console.log(
-        `  recalcul : ${rang + 1} / ${collectivites.length} collectivités`
+        `  recalcul : ${rang} / ${collectivites.length} collectivités`
       );
     }
   }
