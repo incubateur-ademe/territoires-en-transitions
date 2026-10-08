@@ -12,12 +12,13 @@ import {
 } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { useState } from 'react';
-import { PreparedValue } from '../data/prepare-data';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
+import type { IndicateurPeriodeValue } from '../data/prepare-indicateur-periode-data';
 import { CellValue } from './cell-value';
 
 type ConfirmDeleteProps = {
   unite: string;
-  valeur: PreparedValue;
+  valeur: IndicateurPeriodeValue;
   onDismissConfirm: (overwrite: boolean) => void;
 };
 
@@ -31,7 +32,7 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
     objectifCommentaire,
     resultat,
     resultatCommentaire,
-    annee,
+    periode,
   } = valeur;
 
   return (
@@ -40,12 +41,16 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
       noCloseButton
       size="lg"
       title={appLabels.confirmerSuppression}
-      subTitle={appLabels.suppressionDonneesCollectivite({ annee })}
+      subTitle={appLabels.indicateurSuppressionDonneesCollectivite(
+        IndicateurPeriodes.format(periode)
+      )}
       openState={{ isOpen, setIsOpen }}
       render={() => (
         <>
           <p className="text-center mb-0">
-            {appLabels.suppressionAnneeAttention({ annee })}
+            {appLabels.indicateurSuppressionPeriodeAttention(
+              IndicateurPeriodes.format(periode)
+            )}
           </p>
           <DEPRECATED_Table>
             <DEPRECATED_THead>

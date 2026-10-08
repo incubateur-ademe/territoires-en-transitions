@@ -11,18 +11,21 @@ export const useUpsertIndicateurValeur = () => {
 
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
-      onSuccess: (_, variables) => {
+      onSuccess: async (_, variables) => {
+        const invalidations: Promise<unknown>[] = [];
         const { collectiviteId, indicateurId } = variables;
         if (!variables.id) {
           setToast('success', 'La valeur a été ajoutée');
         }
 
         // recharge les infos complémentaires associées à l'indicateur
-        queryClient.invalidateQueries({
-          queryKey: trpc.indicateurs.indicateurs.list.queryKey({
-            collectiviteId,
-          }),
-        });
+        invalidations.push(
+          queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.indicateurs.list.queryKey({
+              collectiviteId,
+            }),
+          })
+        );
 
         queryClient
           .getQueriesData<ListIndicateurValeurOuput>({
@@ -36,15 +39,17 @@ export const useUpsertIndicateurValeur = () => {
                 (indicateur) => indicateur.definition.id === indicateurId
               )
             ) {
-              queryClient.invalidateQueries({ queryKey });
+              invalidations.push(queryClient.invalidateQueries({ queryKey }));
             }
           });
 
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
-            collectiviteId,
-          }),
-        });
+        invalidations.push(
+          queryClient.invalidateQueries({
+            queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
+              collectiviteId,
+            }),
+          })
+        );
 
         // corriger une valeur déjà retenue pour le score d'une action
         // redéclenche son calcul côté backend (cf CrudValeursService /
@@ -62,9 +67,10 @@ export const useUpsertIndicateurValeur = () => {
           trpc.referentiels.actions.getValeursUtilisables.queryKey(),
         ];
         scoreQueryKeys.forEach((queryKey) => {
-          queryClient.invalidateQueries({ queryKey });
+          invalidations.push(queryClient.invalidateQueries({ queryKey }));
         });
         broadcastQueryInvalidation(scoreQueryKeys);
+        await Promise.all(invalidations);
       },
       onError: (_, variables) => {
         setToast(

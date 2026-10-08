@@ -4,15 +4,15 @@ import { appLabels } from '@/app/labels/catalog';
 import { Badge, Tooltip } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { JSX } from 'react';
-import { PcaetIndicateurValeurType } from './types';
+import { IndicateurValeurField } from './types';
 
-const FIELD_BADGE_TITLE: Record<PcaetIndicateurValeurType, string> = {
+const FIELD_BADGE_TITLE: Record<IndicateurValeurField, string> = {
   resultat: 'R',
   objectif: 'O',
 };
 
 type Props = {
-  indicateurValeurType: PcaetIndicateurValeurType;
+  indicateurValeurType: IndicateurValeurField;
 };
 
 export const IndicateurValeurTypeBadge = ({

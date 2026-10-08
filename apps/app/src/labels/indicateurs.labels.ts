@@ -1,6 +1,21 @@
+import type { IndicateurValeurField } from '@/app/indicateurs/valeurs/grid/types';
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  indicateurAjouterObjectif: 'Ajouter un objectif',
+  indicateurAjouterDonnee: 'Ajouter une donnée',
+  indicateurChampValeur: (type: string, periode: string) =>
+    `${type} — ${periode}`,
+  indicateurCommentaireValeur: (type: IndicateurValeurField, periode: string) =>
+    `${
+      type === 'resultat'
+        ? 'Commentaire du résultat'
+        : 'Commentaire de l’objectif'
+    } — ${periode}`,
+  indicateurSupprimerPeriode: (periode: string) =>
+    `Supprimer la période ${periode}`,
+  indicateurValeurAbsente: 'Non renseigné',
+
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
 
   indicateurResultat: plural({ one: 'résultat', other: 'résultats' }),
@@ -79,4 +94,17 @@ export const indicateursLabels = {
    * de copie, pas de rangement.
    */
   aucunIndicateur: 'Aucun indicateur',
+  indicateurSuppressionDonneesCollectivite: (periodeLabel: string) =>
+    `des données de la collectivité pour la période ${periodeLabel}`,
+  indicateurSuppressionPeriodeAttention: (periodeLabel: string) =>
+    `Attention, les données existantes pour la période ${periodeLabel} seront supprimées.`,
+  commentaireIndicateurTitre: ({
+    sourceTypeLabel,
+    unite,
+    periodeLabel,
+  }: {
+    sourceTypeLabel: string;
+    unite: string;
+    periodeLabel: string;
+  }) => `Mes ${sourceTypeLabel} (${unite}) : ${periodeLabel}`,
 };

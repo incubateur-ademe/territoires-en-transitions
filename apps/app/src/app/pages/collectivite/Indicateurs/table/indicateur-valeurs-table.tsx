@@ -1,227 +1,198 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { IndicateurHeaderTitleCell } from '@/app/indicateurs/valeurs/grid/indicateur-title.header-cell';
+import { IndicateurValeurPeriodeHeaderCell } from '@/app/indicateurs/valeurs/grid/indicateur-valeur-periode.header-cell';
+import { IndicateurValeursCombinedCell } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs-combined.cell';
+import { IndicateurValeursTableFrame } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs.table-frame';
+import {
+  IndicateurPeriodes,
+  type IndicateurPeriode,
+} from '@tet/domain/indicateurs';
+import { appLabels } from '@/app/labels/catalog';
 import {
   Button,
-  DEPRECATED_Table,
-  DEPRECATED_TBody,
-  DEPRECATED_TCell,
-  DEPRECATED_TRow,
+  Icon,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  Tooltip,
 } from '@tet/ui';
-import { useState } from 'react';
-import { PreparedData, PreparedValue } from '../data/prepare-data';
-import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
-import { useGetColorBySourceId } from '../data/use-indicateur-sources';
-import { SourceType } from '../types';
-import { CellAnneeList } from './cell-annee-list';
+import type { ReactNode } from 'react';
+import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
+import type { GetColorBySourceId } from '../data/use-indicateur-sources';
+import type { SourceType } from '../types';
 import { CellSourceName } from './cell-source-name';
-import { CellValue } from './cell-value';
-import { ConfirmDelete } from './confirm-delete';
-import { EditCommentaireModal } from './edit-commentaire-modal';
+import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
 
-// nombre maximum de colonnes vides à afficher
-const MAX_PLACEHOLDERS_COUNT = 5;
-
-type IndicateurValeursTable = {
-  collectiviteId: number;
-  definition: IndicateurDefinition;
+type Props = {
+  definition: Pick<IndicateurDefinition, 'titre' | 'unite'>;
+  additionalPeriodes?: readonly IndicateurPeriode[];
+  resultats: IndicateurPeriodeData;
+  objectifs: IndicateurPeriodeData;
   readonly?: boolean;
   confidentiel?: boolean;
-  data: (PreparedData & { annees: number[] }) | null;
-  type: SourceType;
-  disableComments: boolean;
+  addPeriode?: ReactNode;
+  getColorBySourceId: GetColorBySourceId;
+  onSave: (
+    periode: IndicateurPeriode,
+    type: SourceType,
+    value: number | null
+  ) => Promise<boolean>;
+  onDelete: (periode: IndicateurPeriode) => void;
+  onComment: (
+    periode: IndicateurPeriode,
+    type: SourceType,
+    comment: string
+  ) => void;
 };
 
-/**
- * Affiche le tableau des valeurs d'un indicateur pour un type (objectif | résultat) donné
- */
+/** Results and objectives share a cell, while source versions remain separate. */
 export const IndicateurValeursTable = ({
-  collectiviteId,
   definition,
-  data,
-  type,
+  resultats,
+  objectifs,
+  additionalPeriodes = [],
   readonly,
   confidentiel,
-  disableComments,
-}: IndicateurValeursTable) => {
-  const { annees, sources, donneesCollectivite, valeursExistantes } =
-    data || {};
-  const placeholdersCount = Math.max(
-    0,
-    MAX_PLACEHOLDERS_COUNT - (annees?.length ?? 0)
+  addPeriode,
+  getColorBySourceId,
+  onSave,
+  onDelete,
+  onComment,
+}: Props) => {
+  const { sources, periodes } = prepareIndicateurTableData(
+    resultats,
+    objectifs,
+    additionalPeriodes
   );
-
-  const [commentaireValeur, setCommentaireValeur] = useState<null | {
-    id?: number;
-    annee: number;
-    commentaire?: string | null;
-  }>(null);
-  const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
-
-  const { mutate: upsertValeur } = useUpsertIndicateurValeur();
-  const { mutate: deleteValeur } = useDeleteIndicateurValeur();
-
-  const getColorBySourceId = useGetColorBySourceId();
-
+  const additionalPeriodeKeys = new Set(
+    additionalPeriodes.map(IndicateurPeriodes.key)
+  );
+  const localValues = resultats.valeursExistantes;
   return (
-    <>
-      <DEPRECATED_Table>
-        <DEPRECATED_TBody>
-          <DEPRECATED_TRow className="bg-primary-2 border-b-2 border-primary-4">
-            <DEPRECATED_TCell className="bg-white">&nbsp;</DEPRECATED_TCell>
-            {/* colonnes pour chaque année */}
-            {data && (
-              <CellAnneeList
-                data={data}
-                confidentiel={confidentiel}
-                readonly={readonly}
-                type={type}
-                onDelete={(valeur) => {
-                  // demande confirmation avant de supprimer
-                  if (
-                    (valeur.objectif ?? false) ||
-                    (valeur.resultat ?? false) ||
-                    valeur.resultatCommentaire ||
-                    valeur.objectifCommentaire
-                  ) {
-                    setToBeDeleted(valeur);
-                  } else {
-                    // sauf pour les lignes n'ayant ni valeur ni commentaire
-                    deleteValeur({
-                      collectiviteId,
-                      indicateurId: definition.id,
-                      id: valeur.id,
-                    });
-                  }
-                }}
-              />
-            )}
-            {/** placeholders */}
-            {!!placeholdersCount &&
-              Array.from({ length: placeholdersCount }).map((_, i) => (
-                <PlaceholderColumn
-                  key={i}
-                  rowSpan={(sources?.length ?? 0) + 2}
-                />
-              ))}
-          </DEPRECATED_TRow>
-          {/* lignes pour chaque source */}
-          {sources?.map((s) => (
-            <DEPRECATED_TRow key={s.source}>
-              {/* nom de la source et rappel de l'unité */}
-              <CellSourceName
-                source={s}
-                type={type}
-                unite={definition.unite}
-                getColorBySourceId={getColorBySourceId}
-              />
-              {/* cellule pour chaque année */}
-              {annees?.map((annee) => {
-                const entry = s.valeurs.find((v) => v.annee === annee);
-                // récupère l'id de la ligne à mettre à jour
-                const id =
-                  (s.source === 'collectivite'
-                    ? valeursExistantes?.find((v) => v.annee === annee)?.id
-                    : undefined) ?? undefined;
+    <IndicateurValeursTableFrame
+      maxHeight="none"
+      layout="auto"
+      role="table"
+      aria-label={definition.titre}
+      data-test="indicateurs.valeurs.table"
+    >
+      <TableHead className="z-40">
+        <tr>
+          <IndicateurHeaderTitleCell
+            title={definition.titre}
+            unit={definition.unite}
+          />
+          {periodes.map((periode) => {
+            const key = IndicateurPeriodes.key(periode);
+            const label = IndicateurPeriodes.format(periode);
+            const localValue = localValues.find(
+              (value) => IndicateurPeriodes.key(value.periode) === key
+            );
+            const isPrivate =
+              confidentiel &&
+              resultats.periodeModePrive &&
+              IndicateurPeriodes.key(resultats.periodeModePrive) === key;
+            return (
+              <IndicateurValeurPeriodeHeaderCell
+                key={key}
+                label={<span>{label}</span>}
+                className="w-52 min-w-52"
+              >
+                {isPrivate && (
+                  <Tooltip label={appLabels.resultatModePrive}>
+                    <span tabIndex={0}>
+                      <Icon icon="lock-fill" size="sm" />
+                    </span>
+                  </Tooltip>
+                )}
+                {(localValue || additionalPeriodeKeys.has(key)) &&
+                  !readonly && (
+                    <Button
+                      icon="close-line"
+                      size="xs"
+                      variant="white"
+                      className="!bg-transparent !border-transparent"
+                      title={appLabels.indicateurSupprimerPeriode(label)}
+                      aria-label={appLabels.indicateurSupprimerPeriode(label)}
+                      onClick={() => onDelete(periode)}
+                      data-test="indicateurs.valeurs.periode.delete"
+                    />
+                  )}
+              </IndicateurValeurPeriodeHeaderCell>
+            );
+          })}
+          {addPeriode && (
+            <TableHeaderCell scope="col" className="min-w-56 align-middle">
+              {addPeriode}
+            </TableHeaderCell>
+          )}
+        </tr>
+      </TableHead>
+      <tbody>
+        {sources.map((row) => (
+          <tr key={row.key} className="border-t border-grey-3">
+            <CellSourceName
+              source={row.source}
+              unite={definition.unite}
+              type={row.resultats ? 'resultat' : 'objectif'}
+              getColorBySourceId={getColorBySourceId}
+            />
+            {periodes.map((periode) => {
+              const key = IndicateurPeriodes.key(periode);
+              const label = IndicateurPeriodes.format(periode);
+              const resultat = row.resultats?.valeurs.find(
+                (value) => IndicateurPeriodes.key(value.periode) === key
+              );
+              const objectif = row.objectifs?.valeurs.find(
+                (value) => IndicateurPeriodes.key(value.periode) === key
+              );
+              const isLocal = row.source.source === 'collectivite';
+              const renderCommentAction = (type: SourceType) => {
+                const comment = (type === 'resultat' ? resultat : objectif)
+                  ?.commentaire;
+                if (!isLocal || (readonly && !comment)) return null;
                 return (
-                  <CellValue
-                    key={annee}
-                    readonly={readonly || s.source !== 'collectivite'}
-                    value={entry?.valeur ?? ''}
-                    onChange={(newValue) => {
-                      upsertValeur({
-                        id,
-                        collectiviteId,
-                        indicateurId: definition.id,
-                        dateValeur: `${annee}-01-01`,
-                        [type]: newValue,
-                      });
-                    }}
+                  <Button
+                    icon="question-answer-line"
+                    variant="white"
+                    size="xs"
+                    className="!border-transparent"
+                    notification={comment ? { number: 1 } : undefined}
+                    title={appLabels.indicateurCommentaireValeur(type, label)}
+                    aria-label={appLabels.indicateurCommentaireValeur(
+                      type,
+                      label
+                    )}
+                    onClick={() => onComment(periode, type, comment ?? '')}
                   />
                 );
-              })}
-            </DEPRECATED_TRow>
-          ))}
-          {/* ligne pour les boutons "commentaire" */}
-          {!disableComments && (
-            <DEPRECATED_TRow>
-              <DEPRECATED_TCell>&nbsp;</DEPRECATED_TCell>
-              {annees?.map((annee) => {
-                const entry = donneesCollectivite?.valeurs.find(
-                  (v) => v.annee === annee
-                );
-
-                const commentaire = entry?.commentaire ?? '';
-
-                return (
-                  <DEPRECATED_TCell key={annee}>
-                    <div className="flex justify-center">
-                      <Button
-                        size="xs"
-                        variant="outlined"
-                        icon="question-answer-fill"
-                        disabled={!commentaire && readonly}
-                        notification={commentaire ? { number: 1 } : undefined}
-                        onClick={() => setCommentaireValeur(entry ?? { annee })}
-                      />
-                    </div>
-                  </DEPRECATED_TCell>
-                );
-              })}
-            </DEPRECATED_TRow>
-          )}
-        </DEPRECATED_TBody>
-      </DEPRECATED_Table>
-      {commentaireValeur && (
-        <EditCommentaireModal
-          annee={commentaireValeur.annee}
-          type={type}
-          definition={definition}
-          commentaire={commentaireValeur.commentaire ?? ''}
-          openState={{
-            isOpen: true,
-            setIsOpen: () => setCommentaireValeur(null),
-          }}
-          onChange={(newComment) => {
-            upsertValeur({
-              id: commentaireValeur?.id,
-              collectiviteId,
-              indicateurId: definition.id,
-              dateValeur: `${commentaireValeur.annee}-01-01`,
-              [`${type}Commentaire`]: newComment,
-            });
-          }}
-          isReadonly={readonly}
-        />
-      )}
-      {toBeDeleted && (
-        <ConfirmDelete
-          valeur={toBeDeleted}
-          unite={definition.unite}
-          onDismissConfirm={(confirmed) => {
-            if (confirmed) {
-              deleteValeur({
-                collectiviteId,
-                indicateurId: definition.id,
-                id: toBeDeleted.id,
-              });
-            }
-            setToBeDeleted(null);
-          }}
-        />
-      )}
-    </>
+              };
+              return (
+                <TableCell
+                  key={key}
+                  className="border-b border-r border-grey-3 !px-2"
+                  data-period={periode.dateDebut}
+                  data-periodicite={periode.periodicite}
+                  data-source={row.source.source}
+                >
+                  <IndicateurValeursCombinedCell
+                    periodeLabel={label}
+                    resultat={resultat?.valeur ?? null}
+                    objectif={objectif?.valeur ?? null}
+                    actions={{
+                      resultat: renderCommentAction('resultat'),
+                      objectif: renderCommentAction('objectif'),
+                    }}
+                    readonly={readonly || !isLocal}
+                    onSave={(type, value) => onSave(periode, type, value)}
+                  />
+                </TableCell>
+              );
+            })}
+            {addPeriode && <TableCell className="border-b border-grey-3" />}
+          </tr>
+        ))}
+      </tbody>
+    </IndicateurValeursTableFrame>
   );
 };
-
-// affiche une colonne vide
-const PlaceholderColumn = ({ rowSpan }: { rowSpan: number }) => (
-  <td
-    rowSpan={rowSpan}
-    className="min-w-40 bg-primary-0 border-l border-primary-4 text-primary-9 text-xs"
-  >
-    <div className="w-full h-full flex items-center justify-center">
-      <PictoIndicateurVide className="w-16 h-16" />
-    </div>
-  </td>
-);

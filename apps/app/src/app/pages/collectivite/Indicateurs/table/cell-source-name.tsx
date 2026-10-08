@@ -1,5 +1,7 @@
+import { STICKY_LEFT_SHADOW_CLASSNAME } from '@/app/indicateurs/valeurs/grid/scroll-shadow';
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
-import { DEPRECATED_TCell, Icon } from '@tet/ui';
+import { Icon, TableHeaderCell } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';
@@ -13,7 +15,7 @@ export const CellSourceName = ({
   type,
   getColorBySourceId,
 }: {
-  source: PreparedData['sources'][number];
+  source: Omit<PreparedData['sources'][number], 'valeurs'>;
   unite: string;
   type: SourceType;
   getColorBySourceId: GetColorBySourceId;
@@ -22,7 +24,14 @@ export const CellSourceName = ({
   const color = getColorBySourceId(source.source, type);
 
   return (
-    <DEPRECATED_TCell className="font-bold text-sm">
+    <TableHeaderCell
+      scope="row"
+      pinnedLeft
+      className={cn(
+        'border-b border-grey-3 font-bold text-sm',
+        STICKY_LEFT_SHADOW_CLASSNAME
+      )}
+    >
       <div className="inline-flex items-center min-w-72 gap-2">
         {type === 'objectif' ? DashedLineSymbol(color) : SolidLineSymbol(color)}
         {getSourceLabel(
@@ -44,6 +53,6 @@ export const CellSourceName = ({
           </DataSourceTooltip>
         )}
       </div>
-    </DEPRECATED_TCell>
+    </TableHeaderCell>
   );
 };

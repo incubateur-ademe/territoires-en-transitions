@@ -5,6 +5,7 @@ import {
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
 import { useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
@@ -51,6 +52,7 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds: indicateurId ? [indicateurId] : undefined,
         sources: sourceFilter.sources,
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       },
       {
         enabled: !!indicateurId,
@@ -79,6 +81,7 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds,
         sources: sourceFilter.sources,
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       },
       {
         enabled: !!indicateurIds?.length,
