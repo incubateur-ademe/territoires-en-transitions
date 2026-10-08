@@ -4,8 +4,15 @@ import { PoolClient } from 'pg';
 import type { Fiche } from './fiches';
 import type { Tags } from './tags';
 
-/** Le compte système « Territoires en Transition », auteur des notes reprises. */
+/** Le compte système « Territoires en Transition », auteur des notes et des liens repris. */
 export const COMPTE_SYSTEME = '00000000-0000-0000-0000-000000000001';
+
+/** Les liens dont la base exige l'auteur (`created_by`). */
+const TABLES_AVEC_AUTEUR = [
+  'fiche_action_axe',
+  'fiche_action_thematique',
+  'fiche_action_sous_thematique',
+];
 
 /**
  * Réserve des ids dans le compteur de la table, pour savoir quelle ligne de TeT vient de quelle ligne de T&C.
@@ -103,10 +110,18 @@ export const createFiches = async (
   ];
   // Les liens partent avec la fiche à l'annulation : ils ne sont pas tracés.
   for (const [table, colonne, paires] of liens) {
+    const auteur = TABLES_AVEC_AUTEUR.includes(table) ? COMPTE_SYSTEME : null;
     await client.query(
-      `insert into public.${table} (fiche_id, ${colonne})
-       select * from unnest($1::int[], $2::int[])`,
-      [paires.map(([fiche]) => fiche), paires.map(([, autre]) => autre)]
+      `insert into public.${table} (fiche_id, ${colonne}${
+        auteur ? ', created_by' : ''
+      })
+       select l.fiche, l.autre${auteur ? ', $3::uuid' : ''}
+         from unnest($1::int[], $2::int[]) as l(fiche, autre)`,
+      [
+        paires.map(([fiche]) => fiche),
+        paires.map(([, autre]) => autre),
+        ...(auteur ? [auteur] : []),
+      ]
     );
   }
   await createNotes(client, avecId);

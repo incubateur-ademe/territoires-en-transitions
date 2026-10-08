@@ -346,6 +346,7 @@ pnpx tsx $SCRIPT --confirm  # import
 | date de lancement, date de création  | date de début ; créée et modifiée le                                                          |
 | (aucun statut)                       | « À venir » sur toutes les fiches                                                             |
 | commentaires de conclusion et statut | notes de suivi, au nom du compte système « Territoires en Transition », datées de la création |
+| (aucun auteur)                       | plan, thématiques et sous-thématiques liés au nom du compte système : la base exige un auteur |
 | volets du PCAET                      | effets attendus                                                                               |
 | cibles                               | cibles (7 vers 13)                                                                            |
 | secteurs                             | thématique, et sous-thématique quand une dit la même chose (table dans `listes-tec.ts`)       |
@@ -404,7 +405,7 @@ s'il en trouve un :
 | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | aucun dossier repris qui porte des actions                                                    | lancer d'abord l'import des dossiers (étape 2)                                                           |
 | un dossier a déjà un plan                                                                     | l'import a déjà tourné (l'annuler d'abord), ou la collectivité en a rattaché un : décider au cas par cas |
-| le compte système `00000000-0000-0000-0000-000000000001` est absent ou sans nom               | le créer : les notes exigent un auteur                                                                   |
+| le compte système `00000000-0000-0000-0000-000000000001` est absent ou sans nom               | le créer : notes et liens exigent un auteur                                                              |
 | un libellé de TeT introuvable ou en double (type de plan, effet, thématique, sous-thématique) | corriger le libellé dans `listes-tec.ts` ou `listes-tet.ts`, ou la liste de TeT                          |
 | un numéro de T&C inconnu (volet, cible, secteur, type de porteur, type d'action)              | l'ajouter à sa liste dans `listes-tec.ts`                                                                |
 | un titre de plus de 300 caractères, une description de plus de 20 000                         | décider quoi faire du texte : le script ne tronque pas                                                   |
