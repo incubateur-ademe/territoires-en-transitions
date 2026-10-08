@@ -26,7 +26,6 @@ import {
 import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
 import { PlanTree } from './plan-arborescence.view/plan-tree';
 import { PlanHeader } from './plan.header';
-import { PlanSecteursCountsAlert } from '../secteurs-counts/plan-secteurs-counts.alert';
 
 type Props = {
   plan: Plan;
@@ -101,10 +100,6 @@ const PlanViewContent = () => {
           <ImportedPlanBanner planId={plan.id} />
         </div>
       </VisibleWhen>
-      <PlanSecteursCountsAlert
-        collectiviteId={collectivite.collectiviteId}
-        planId={plan.id}
-      />
       <PlanHeader />
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">

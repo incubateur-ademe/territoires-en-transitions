@@ -1,6 +1,7 @@
 'use client';
 
 import { PageHeader } from '@tet/ui';
+import { PlanSecteursButton } from '../secteurs-counts/plan-secteurs.button';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
 import { PlanMenuButton } from './plan-menu.button';
 import { PlanMetadata } from './plan-metadata';
@@ -20,6 +21,7 @@ export const PlanHeader = () => {
         }}
       />
       <PageHeader.Actions>
+        <PlanSecteursButton collectiviteId={collectiviteId} planId={id} />
         <PlanMenuButton />
       </PageHeader.Actions>
       <PageHeader.Metadata>

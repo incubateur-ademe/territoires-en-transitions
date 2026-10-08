@@ -106,14 +106,8 @@ export const plansLabels = {
     one: 'non attribuable',
     other: 'non attribuables',
   }),
-  planSecteursBanniereTitre: 'Secteurs réglementaires des actions à renseigner',
-  planSecteursEnAttente:
-    'Secteurs en cours de récupération, revenez dans quelques minutes',
-  planSecteursRenseigner: 'Renseigner',
-  planSecteursAction: plural({
-    one: 'action',
-    other: 'actions',
-  }),
+  planSecteursARenseignerBouton: ({ count }: { count: number }) =>
+    `Secteurs réglementaires à renseigner (${count})`,
   planSecteursVerifierTitre: 'Vérifier les secteurs',
   planSecteursGroupeARenseigner: 'À renseigner',
   planSecteursGroupeNonAttribuables: 'Non attribuables',
