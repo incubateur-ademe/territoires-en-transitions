@@ -19,7 +19,10 @@ import {
 import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
-import type { MakeCollectiviteActionsDeReferenceUrl } from './paths.contract';
+import type {
+  MakeCollectiviteActionDeReferenceUrl,
+  MakeCollectiviteActionsDeReferenceUrl,
+} from './paths.contract';
 
 export const homePath = '/';
 
@@ -113,7 +116,9 @@ const collectivitePriorisationPath = `${collectivitePath}/priorisation`;
 const collectivitePreselectionPath = `${collectivitePriorisationPath}/actions-preselectionnees`;
 const collectiviteModifierPath = `${collectivitePath}/modifier`;
 const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
+const actionDeReferenceIdParam = 'actionDeReferenceId';
 const collectiviteActionsDeReferencePath = `${collectivitePath}/actions-reference`;
+const collectiviteActionDeReferencePath = `${collectiviteActionsDeReferencePath}/:${actionDeReferenceIdParam}`;
 
 const referentielIdParam = 'referentielId';
 const referentielVueParam = 'referentielVue';
@@ -669,3 +674,9 @@ export const makeCollectiviteActionsDeReferenceUrl: MakeCollectiviteActionsDeRef
       `:${collectiviteParam}`,
       collectiviteId.toString()
     );
+
+export const makeCollectiviteActionDeReferenceUrl: MakeCollectiviteActionDeReferenceUrl =
+  ({ collectiviteId, actionDeReferenceId }) =>
+    collectiviteActionDeReferencePath
+      .replace(`:${collectiviteParam}`, collectiviteId.toString())
+      .replace(`:${actionDeReferenceIdParam}`, actionDeReferenceId.toString());
