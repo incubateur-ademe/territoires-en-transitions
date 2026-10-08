@@ -1,8 +1,4 @@
 import { ENV } from '@tet/api/environmentVariables';
-import {
-  DEMARCHE_PCAET_ETAPES,
-  type DemarchePcaetEtape,
-} from '@tet/domain/demarches';
 
 /**
  * Entrée du parcours de dépôt dans l'app. Le site ignore la collectivité de
@@ -25,12 +21,14 @@ export type DepotEtape = {
 };
 
 /**
- * Mêmes étapes que le panneau « Avancement » de l'app : le typage sur
- * `DemarchePcaetEtape` casse la compilation si le domaine en ajoute une.
- * À n'importer que côté serveur : le domaine n'a rien à faire dans le bundle.
+ * Les étapes du panneau « Avancement » de l'app, à deux écarts près : la mise
+ * en œuvre, fondue dans l'étape « publie » de l'app, est une étape à part
+ * entière ici ; l'archivage n'est pas montré, il n'est pas un temps du dépôt.
+ * Les intitulés sont tous des noms d'action, contrairement aux libellés de
+ * l'app qui décrivent l'état du dossier.
  */
-const ETAPES_BY_KEY = {
-  elaboration: {
+export const DEPOT_ETAPES: DepotEtape[] = [
+  {
     title: 'Élaboration',
     detail:
       "Vous constituez votre dossier directement dans la plateforme. Il est enregistré au fil de l'eau : vous pouvez le compléter en plusieurs fois et à plusieurs.",
@@ -41,8 +39,8 @@ const ETAPES_BY_KEY = {
     ],
     stakeholders: ['Collectivité', 'Équipes projet'],
   },
-  transmis: {
-    title: 'Transmis pour avis',
+  {
+    title: 'Transmission pour avis',
     detail:
       'Une fois le dossier complet, vous le transmettez depuis la plateforme. Le conseil régional et le préfet de région sont informés et accèdent au dossier pour rendre leur avis.',
     actions: ["Suivre l'état de la transmission"],
@@ -53,7 +51,7 @@ const ETAPES_BY_KEY = {
       'Préfet de région',
     ],
   },
-  finalisation: {
+  {
     title: 'Consultation des avis et délibération',
     detail:
       "Les avis reçus sont rattachés à votre dépôt. Vous en prenez connaissance et ajustez des éléments si nécessaire. Puis votre assemblée délibère pour l'adopter.",
@@ -64,27 +62,22 @@ const ETAPES_BY_KEY = {
     ],
     stakeholders: ['Collectivité', 'Élus'],
   },
-  publie: {
-    title: 'Adopté, publié et en cours de mise en œuvre',
+  {
+    title: 'Adoption et publication',
     detail:
-      "Vous déposez la délibération : le plan est adopté et accessible au grand public. Vous pouvez utiliser la plateforme pour suivre votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe.",
+      'Vous déposez la délibération : le plan est adopté et accessible au grand public sur la plateforme.',
+    actions: ['Valider le dépôt final'],
+    stakeholders: ['Collectivité', 'Élus'],
+  },
+  {
+    title: 'Mise en œuvre et suivi',
+    detail:
+      "Le plan adopté vit sur la plateforme : vous suivez votre plan d'actions au quotidien, à l'appui d'indicateurs et en collaboration avec votre équipe, jusqu'aux bilans à mi-parcours et à l'échéance.",
     actions: [
-      'Valider le dépôt final',
-      "Pilotez vos actions",
+      'Piloter vos actions',
       'Réaliser le bilan à mi-parcours',
       "Réaliser le bilan à l'échéance",
     ],
-    stakeholders: ['Collectivité', 'Équipes projet', 'Élus'],
-  },
-  archive: {
-    title: 'Archivé',
-    detail:
-      "À l'échéance du plan ou lors d'un renouvellement, le plan est archivé. Documents, avis et historique restent consultables.",
-    actions: ['Consulter les documents et avis du plan'],
     stakeholders: ['Collectivité', 'Équipes projet'],
   },
-} satisfies Record<DemarchePcaetEtape, DepotEtape>;
-
-export const DEPOT_ETAPES: DepotEtape[] = DEMARCHE_PCAET_ETAPES.map(
-  (etape) => ETAPES_BY_KEY[etape]
-);
+];
