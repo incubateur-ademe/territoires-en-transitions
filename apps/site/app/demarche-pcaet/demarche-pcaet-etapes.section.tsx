@@ -326,8 +326,8 @@ export const DemarchePcaetEtapesSection = ({
         <div className="flex flex-col items-center gap-3 text-center">
           <h2 className="mb-0 text-center">Les étapes de votre dépôt</h2>
           <p className="mb-0 text-primary-10 lg:text-[17px]">
-            Vous retrouverez ces {etapes.length} étapes dans le panneau «
-            Avancement » de votre espace de dépôt.
+            Vous retrouverez ces étapes dans le panneau « Avancement » de votre
+            espace de dépôt.
           </p>
           {/* Toujours rendu (invisible hors pause) pour ne pas décaler la
               frise quand il apparaît. */}
