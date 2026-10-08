@@ -576,10 +576,12 @@ comprises) et les documents additionnels que l'import a écrits ; remet aux
 fichiers des fiches leur nom de stockage T&C (celui qui avait rejoint une pièce
 de dossier retrouve sa propre ligne, sous un nouveau numéro) ; retire les lignes
 de bibliothèque créées auxquelles plus rien ne pointe, les traces et les écarts.
-Après la transaction, retire du stockage les fichiers des collectivités touchées
-par la reprise (dossiers, fiches, émetteurs des avis) qu'aucune ligne de
-bibliothèque ne référence plus, y compris ceux d'un dépôt dont la transaction a
-échoué ; un fichier redéposé à l'identique par la collectivité reste. En
+Après la transaction, retire du stockage les fichiers **que la reprise a
+déposés** (les empreintes des lignes de bibliothèque qu'elle a créées) et
+qu'aucune ligne de bibliothèque ne référence plus ; un fichier que la
+collectivité a déposé elle-même n'est jamais retiré, même sans ligne de
+bibliothèque. Les fichiers d'un dépôt dont la transaction a échoué restent dans
+le stockage, sans ligne. En
 simulation, rien n'est retiré du stockage : le script compte. L'annulation des
 pièces des fiches et celle des saisines refusent tant que cette étape a écrit.
 
