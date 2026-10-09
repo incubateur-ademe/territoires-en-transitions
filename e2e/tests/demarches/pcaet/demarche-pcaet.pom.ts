@@ -352,8 +352,11 @@ export class DemarchePcaetPom {
     await this.page
       .getByTestId('demarches.pcaet.vulnerabilite.ajouter-thematique-button')
       .click();
-    await this.page.getByPlaceholder('Nom de la thématique').fill(label);
-    await this.page.getByRole('button', { name: 'Valider' }).click();
+    const champ = this.page.getByPlaceholder('Nom de la thématique');
+    await champ.fill(label);
+    await champ.press('Enter');
+    // La ligne d'ajout ne se referme qu'une fois la thématique enregistrée.
+    await expect(champ).toHaveCount(0);
   }
 
   /**
@@ -375,7 +378,9 @@ export class DemarchePcaetPom {
 
   async addVulnerabiliteSousThematique(parentLabel: string, label: string) {
     await this.vulnerabiliteAjouterSousThematiqueButton(parentLabel).click();
-    await this.page.getByPlaceholder('Nom de la sous-thématique').fill(label);
-    await this.page.getByRole('button', { name: 'Valider' }).click();
+    const champ = this.page.getByPlaceholder('Nom de la sous-thématique');
+    await champ.fill(label);
+    await champ.press('Enter');
+    await expect(champ).toHaveCount(0);
   }
 }

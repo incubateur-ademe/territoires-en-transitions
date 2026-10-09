@@ -36,7 +36,7 @@ import {
   type TableCellProps,
 } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { useEffect, useId, useRef, useState } from 'react';
+import { Fragment, useEffect, useId, useRef, useState } from 'react';
 import {
   useDemarchePcaetVulnerabilite,
   type AddThematiqueFailure,
@@ -242,118 +242,17 @@ const ObjectifCell = ({
 };
 
 /**
- * Ajout d'une sous-thématique, depuis la case de sa parente. La modale ne se
- * ferme qu'au succès : un libellé refusé doit pouvoir être corrigé sans le
- * ressaisir.
- */
-const AjouterSousThematiqueModal = ({
-  parent,
-  onAdd,
-}: {
-  parent: DemarchePcaetVulnerabiliteThematique;
-  onAdd: (label: string) => Promise<AddThematiqueFailure | null>;
-}) => {
-  const [label, setLabel] = useState('');
-  const [erreur, setErreur] = useState<string | null>(null);
-  const [isPending, setIsPending] = useState(false);
-  // Une modale par racine éligible, plus la globale : un identifiant en dur
-  // ferait pointer `aria-describedby` sur le message d'une autre.
-  const erreurId = useId();
-
-  const titre = appLabels.demarcheVulnerabiliteAjouterSousThematiqueNomme({
-    parent: parent.label,
-  });
-  const nomDuChamp = appLabels.demarcheVulnerabiliteNomSousThematique;
-
-  const soumettre = async (close: () => void) => {
-    const trimmed = label.trim();
-    if (trimmed.length === 0 || isPending) {
-      return;
-    }
-    setIsPending(true);
-    setErreur(null);
-    const echec = await onAdd(trimmed);
-    setIsPending(false);
-    if (echec === null) {
-      close();
-      return;
-    }
-    setErreur(
-      echec === 'THEMATIQUE_DEJA_EXISTANT'
-        ? appLabels.demarcheVulnerabiliteThematiqueDejaExistant
-        : appLabels.mutationError
-    );
-  };
-
-  return (
-    <Modal
-      title={titre}
-      onClose={() => {
-        setLabel('');
-        setErreur(null);
-      }}
-      render={({ close }) => (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void soumettre(close);
-          }}
-        >
-          <Input
-            type="text"
-            value={label}
-            autoFocus
-            maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
-            aria-label={nomDuChamp}
-            placeholder={nomDuChamp}
-            aria-invalid={erreur !== null}
-            aria-describedby={erreur === null ? undefined : erreurId}
-            onChange={(e) => {
-              setLabel(e.target.value);
-              setErreur(null);
-            }}
-          />
-          {erreur !== null && (
-            <p id={erreurId} role="alert" className="mt-2 text-sm text-error-1">
-              {erreur}
-            </p>
-          )}
-          <ModalFooterOKCancel
-            btnCancelProps={{ onClick: close, type: 'button' }}
-            btnOKProps={{
-              type: 'submit',
-              disabled: label.trim().length === 0 || isPending,
-            }}
-          />
-        </form>
-      )}
-    >
-      {/*
-        Dans la case de la parente, le libellé ne tiendrait pas : l'icône
-        porte le nom accessible, comme la corbeille voisine.
-      */}
-      <Button
-        icon="add-line"
-        variant="white"
-        size="xs"
-        className="text-grey-8 opacity-60 transition-opacity hover:text-info-1 group-hover:opacity-100 group-focus-within:opacity-100"
-        aria-label={titre}
-        title={appLabels.demarcheVulnerabiliteAjouterSousThematique}
-        dataTest={`demarches.pcaet.vulnerabilite.ajouter-sous-thematique-button-${parent.id}`}
-      />
-    </Modal>
-  );
-};
-
-/**
- * Ligne ouverte par « Ajouter une thématique » : son nom s'écrit sur place, comme
- * celui d'une pièce additionnelle. Vide, elle disparaît ; saisie, elle s'ajoute au
- * blur ou à Entrée. Un libellé refusé garde la ligne ouverte pour être corrigé.
+ * Ligne d'ajout d'une thématique, ou d'une sous-thématique sous sa parente : son
+ * nom s'écrit sur place, comme celui d'une pièce additionnelle. Vide, elle
+ * disparaît ; saisie, elle s'ajoute au blur ou à Entrée. Un libellé refusé garde
+ * la ligne ouverte pour être corrigé.
  */
 const AjouterThematiqueRow = ({
+  parent,
   onAdd,
   onClose,
 }: {
+  parent: DemarchePcaetVulnerabiliteThematique | null;
   onAdd: (label: string) => Promise<AddThematiqueFailure | null>;
   onClose: () => void;
 }) => {
@@ -391,48 +290,69 @@ const AjouterThematiqueRow = ({
     );
   };
 
+  const isEnfant = parent !== null;
+  const dataTestSuffix = isEnfant ? `-${parent.id}` : '';
+
   return (
-    <TableRow data-test="demarches.pcaet.vulnerabilite.row-brouillon">
+    <TableRow
+      data-test={`demarches.pcaet.vulnerabilite.brouillon${dataTestSuffix}`}
+    >
       <TableCell
         pinnedLeft
         className={cn('pr-2 font-medium', cellBorderClassName)}
       >
-        <Input
-          ref={inputRef}
-          type="text"
-          displaySize="xs"
-          containerClassname="w-full"
-          value={valeur}
-          maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
-          aria-label={appLabels.demarcheVulnerabiliteNomThematique}
-          placeholder={appLabels.demarcheVulnerabiliteNomThematique}
-          aria-invalid={erreur !== null}
-          aria-describedby={erreur === null ? undefined : erreurId}
-          onChange={(e) => {
-            setValeur(e.target.value);
-            setErreur(null);
-          }}
-          onBlur={() => void soumettre()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              void soumettre();
-            }
-            if (e.key === 'Escape') {
-              onClose();
-            }
-          }}
-          data-test="demarches.pcaet.vulnerabilite.thematique-brouillon"
-        />
-        {erreur !== null && (
-          <p
-            id={erreurId}
-            role="alert"
-            className="mt-1 mb-0 text-xs text-error-1"
-          >
-            {erreur}
-          </p>
-        )}
+        {isEnfant && <TableTreeBranch isLast />}
+        <div className={cn({ [tableTreeChildIndentClassName]: isEnfant })}>
+          <div className="flex items-center gap-1">
+            {!isEnfant && <TableTreeTogglePlaceholder />}
+            <Input
+              ref={inputRef}
+              type="text"
+              displaySize="xs"
+              containerClassname="grow"
+              value={valeur}
+              maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
+              aria-label={
+                isEnfant
+                  ? appLabels.demarcheVulnerabiliteAjouterSousThematiqueNomme({
+                      parent: parent.label,
+                    })
+                  : appLabels.demarcheVulnerabiliteNomThematique
+              }
+              placeholder={
+                isEnfant
+                  ? appLabels.demarcheVulnerabiliteNomSousThematique
+                  : appLabels.demarcheVulnerabiliteNomThematique
+              }
+              aria-invalid={erreur !== null}
+              aria-describedby={erreur === null ? undefined : erreurId}
+              onChange={(e) => {
+                setValeur(e.target.value);
+                setErreur(null);
+              }}
+              onBlur={() => void soumettre()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  void soumettre();
+                }
+                if (e.key === 'Escape') {
+                  onClose();
+                }
+              }}
+              data-test={`demarches.pcaet.vulnerabilite.brouillon-input${dataTestSuffix}`}
+            />
+          </div>
+          {erreur !== null && (
+            <p
+              id={erreurId}
+              role="alert"
+              className="mt-1 mb-0 text-xs text-error-1"
+            >
+              {erreur}
+            </p>
+          )}
+        </div>
       </TableCell>
       {NIVEAU_COLUMNS.map((col) => (
         <TableCell key={col.key} className={cellBorderClassName} />
@@ -516,7 +436,7 @@ const ThematiqueCell = ({
   isReadonly: boolean;
   onRename: (label: string) => void;
   onRemove: () => void;
-  onAddEnfant: (label: string) => Promise<AddThematiqueFailure | null>;
+  onAddEnfant: () => void;
   onToggle: () => void;
 }) => {
   const [draft, setDraft] = useState<string | null>(null);
@@ -574,8 +494,8 @@ const ThematiqueCell = ({
         )}
         {/*
           Le clic est arrêté avant la cellule : celle-ci ouvre l'édition du
-          libellé en ligne, qui volerait le focus au champ de la modale — on
-          se retrouvait à taper dans les deux à la fois.
+          libellé en ligne, qui volerait le focus au champ de la ligne d'ajout
+          — on se retrouvait à taper dans les deux à la fois.
         */}
         <span
           className="flex w-12 shrink-0 justify-end"
@@ -583,9 +503,19 @@ const ThematiqueCell = ({
           onKeyDown={(e) => e.stopPropagation()}
         >
           {!isReadonly && peutRecevoirEnfant && (
-            <AjouterSousThematiqueModal
-              parent={thematique}
-              onAdd={onAddEnfant}
+            // Dans la case de la parente, le libellé ne tiendrait pas : l'icône
+            // porte le nom accessible, comme la corbeille voisine.
+            <Button
+              icon="add-line"
+              variant="white"
+              size="xs"
+              className="text-grey-8 opacity-60 transition-opacity hover:text-info-1 group-hover:opacity-100 group-focus-within:opacity-100"
+              aria-label={appLabels.demarcheVulnerabiliteAjouterSousThematiqueNomme(
+                { parent: thematique.label }
+              )}
+              title={appLabels.demarcheVulnerabiliteAjouterSousThematique}
+              onClick={onAddEnfant}
+              dataTest={`demarches.pcaet.vulnerabilite.ajouter-sous-thematique-button-${thematique.id}`}
             />
           )}
           {isEditable && (
@@ -676,8 +606,35 @@ export const VulnerabiliteTable = ({
 
   const rows = toVulnerabiliteRows(vulnerabilite, repliees);
 
-  // Ligne en cours de nommage, ouverte par « Ajouter une thématique ».
-  const [isAjoutOuvert, setIsAjoutOuvert] = useState(false);
+  // Ligne en cours de nommage : `parent` à null pour une thématique de premier
+  // niveau, sa parente pour une sous-thématique.
+  const [ajout, setAjout] = useState<{
+    parent: DemarchePcaetVulnerabiliteThematique | null;
+  } | null>(null);
+
+  const ouvrirAjout = (parent: DemarchePcaetVulnerabiliteThematique | null) => {
+    if (parent !== null) {
+      // La ligne s'ouvre sous la dernière sous-thématique : la grappe repliée
+      // la cacherait.
+      setRepliees((precedent) => {
+        const suivant = new Set(precedent);
+        suivant.delete(parent.id);
+        return suivant;
+      });
+    }
+    setAjout({ parent });
+  };
+
+  // Ne referme que la ligne qui le demande : un ajout qui aboutit après le blur
+  // ne doit pas fermer celle qu'on vient d'ouvrir ailleurs.
+  const fermerAjout = (parentId: number | null) =>
+    setAjout((courant) =>
+      courant !== null && (courant.parent?.id ?? null) === parentId
+        ? null
+        : courant
+    );
+
+  const parentAjout = ajout?.parent ?? null;
 
   return (
     <div>
@@ -741,68 +698,92 @@ export const VulnerabiliteTable = ({
           <tbody>
             {rows.map((row) => {
               const { thematique, ligne } = row;
+              // La ligne d'ajout d'une sous-thématique ferme la grappe de sa
+              // parente : elle prend le coude de la dernière sous-thématique.
+              const precedeAjoutEnfant =
+                parentAjout !== null &&
+                (row.isEnfant
+                  ? row.isDernierEnfant &&
+                    thematique.parentId === parentAjout.id
+                  : thematique.id === parentAjout.id &&
+                    row.nombreEnfants === 0);
               return (
-                <TableRow
-                  key={thematique.id}
-                  className="text-sm"
-                  data-test={`demarches.pcaet.vulnerabilite.row-${
-                    thematique.code ?? thematique.id
-                  }`}
-                >
-                  <ThematiqueCell
-                    row={row}
-                    isReadonly={isReadonly}
-                    onRename={(label) => updateThematique(thematique.id, label)}
-                    onRemove={() => removeThematique(thematique.id)}
-                    onAddEnfant={(label) => addThematique(label, thematique.id)}
-                    onToggle={() => basculerRepli(thematique.id)}
-                  />
-                  {NIVEAU_COLUMNS.map((col) => (
-                    <NiveauCell
-                      key={col.key}
-                      thematiqueLabel={thematique.label}
-                      horizonLabel={col.label}
-                      niveau={ligne[col.key]}
-                      isRequis={thematique.requis && ligne[col.key] === null}
-                      isReadonly={isReadonly}
-                      onChange={(valeur) =>
-                        setLigne({
-                          thematiqueId: thematique.id,
-                          niveau: { horizon: col.horizon, valeur },
-                        })
-                      }
-                    />
-                  ))}
-                  {OBJECTIF_COLUMNS.map((col) => (
-                    <ObjectifCell
-                      key={col.key}
-                      thematiqueLabel={thematique.label}
-                      horizonLabel={col.horizon}
-                      value={ligne[col.key]}
-                      isRequis={
-                        thematique.requis &&
-                        isVulnerabiliteObjectifRequis(ligne[col.niveauKey]) &&
-                        !ligne[col.key]?.trim()
+                <Fragment key={thematique.id}>
+                  <TableRow
+                    className="text-sm"
+                    data-test={`demarches.pcaet.vulnerabilite.row-${
+                      thematique.code ?? thematique.id
+                    }`}
+                  >
+                    <ThematiqueCell
+                      row={
+                        precedeAjoutEnfant && row.isEnfant
+                          ? { ...row, isDernierEnfant: false }
+                          : row
                       }
                       isReadonly={isReadonly}
-                      onCommit={(texte) =>
-                        setLigne({
-                          thematiqueId: thematique.id,
-                          [col.key]: texte,
-                        })
+                      onRename={(label) =>
+                        updateThematique(thematique.id, label)
                       }
+                      onRemove={() => removeThematique(thematique.id)}
+                      onAddEnfant={() => ouvrirAjout(thematique)}
+                      onToggle={() => basculerRepli(thematique.id)}
                     />
-                  ))}
-                </TableRow>
+                    {NIVEAU_COLUMNS.map((col) => (
+                      <NiveauCell
+                        key={col.key}
+                        thematiqueLabel={thematique.label}
+                        horizonLabel={col.label}
+                        niveau={ligne[col.key]}
+                        isRequis={thematique.requis && ligne[col.key] === null}
+                        isReadonly={isReadonly}
+                        onChange={(valeur) =>
+                          setLigne({
+                            thematiqueId: thematique.id,
+                            niveau: { horizon: col.horizon, valeur },
+                          })
+                        }
+                      />
+                    ))}
+                    {OBJECTIF_COLUMNS.map((col) => (
+                      <ObjectifCell
+                        key={col.key}
+                        thematiqueLabel={thematique.label}
+                        horizonLabel={col.horizon}
+                        value={ligne[col.key]}
+                        isRequis={
+                          thematique.requis &&
+                          isVulnerabiliteObjectifRequis(ligne[col.niveauKey]) &&
+                          !ligne[col.key]?.trim()
+                        }
+                        isReadonly={isReadonly}
+                        onCommit={(texte) =>
+                          setLigne({
+                            thematiqueId: thematique.id,
+                            [col.key]: texte,
+                          })
+                        }
+                      />
+                    ))}
+                  </TableRow>
+                  {!isReadonly && precedeAjoutEnfant && (
+                    <AjouterThematiqueRow
+                      parent={parentAjout}
+                      onAdd={(label) => addThematique(label, parentAjout.id)}
+                      onClose={() => fermerAjout(parentAjout.id)}
+                    />
+                  )}
+                </Fragment>
               );
             })}
-            {!isReadonly && isAjoutOuvert && (
+            {!isReadonly && ajout !== null && ajout.parent === null && (
               <AjouterThematiqueRow
+                parent={null}
                 onAdd={(label) => addThematique(label)}
-                onClose={() => setIsAjoutOuvert(false)}
+                onClose={() => fermerAjout(null)}
               />
             )}
-            {!isReadonly && !isAjoutOuvert && (
+            {!isReadonly && !(ajout !== null && ajout.parent === null) && (
               <tr>
                 <td
                   colSpan={1 + NIVEAU_COLUMNS.length + OBJECTIF_COLUMNS.length}
@@ -812,7 +793,7 @@ export const VulnerabiliteTable = ({
                     variant="link"
                     size="xs"
                     icon="add-line"
-                    onClick={() => setIsAjoutOuvert(true)}
+                    onClick={() => ouvrirAjout(null)}
                     dataTest="demarches.pcaet.vulnerabilite.ajouter-thematique-button"
                   >
                     {appLabels.demarcheVulnerabiliteAjouterThematique}
