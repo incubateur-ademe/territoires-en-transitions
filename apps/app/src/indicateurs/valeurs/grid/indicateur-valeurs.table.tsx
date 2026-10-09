@@ -3,8 +3,9 @@
 import { useSetIndicateurApplicable } from '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable';
 import { useUpdateDiagnosticIndicateursValeurs } from '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs';
 import { appLabels } from '@/app/labels/catalog';
+import { useAutosaveStatus } from '@/app/utils/react-query/autosave-status/use-autosave-status';
 import { useTable } from '@tanstack/react-table';
-import { cn, Table } from '@tet/ui';
+import { AutosaveBadge, cn, Table } from '@tet/ui';
 import { CSSProperties, JSX, useMemo, useRef } from 'react';
 import { IndicateurValeursTableBody } from './indicateur-valeurs.table-body';
 import { IndicateurValeursTableHead } from './indicateur-valeurs.table-head';
@@ -24,6 +25,8 @@ import {
 
 type Props = {
   demarcheId: number;
+  /** Regroupe les écritures de la grille sous un même badge d'enregistrement. */
+  autosaveKey: string;
   rows: IndicateurTableRow[];
   years: number[];
   /** Nom de l’indicateur principal affiché en haut à gauche de la grille. */
@@ -56,6 +59,7 @@ const MAX_HEIGHT_CLASSNAME: Record<GridMaxHeight, string | undefined> = {
 
 export const IndicateurValeursTable = ({
   demarcheId,
+  autosaveKey,
   rows,
   years,
   title,
@@ -80,7 +84,7 @@ export const IndicateurValeursTable = ({
   }, [years, referenceYear]);
 
   const { updateIndicateurValeurs: mutateIndicateurValeurs } =
-    useUpdateDiagnosticIndicateursValeurs(demarcheId);
+    useUpdateDiagnosticIndicateursValeurs(demarcheId, autosaveKey);
 
   const updateIndicateurValeurs: IndicateurValeursTableMeta['updateIndicateurValeurs'] =
     async ({ indicateurId, year, field, value }) => {
@@ -95,7 +99,7 @@ export const IndicateurValeursTable = ({
     };
 
   const { setIndicateurApplicable: mutateIndicateurApplicable } =
-    useSetIndicateurApplicable(demarcheId);
+    useSetIndicateurApplicable(demarcheId, autosaveKey);
 
   const setIndicateurApplicable: IndicateurValeursTableMeta['setIndicateurApplicable'] =
     async ({ indicateurId, isApplicable }) => {
@@ -131,13 +135,22 @@ export const IndicateurValeursTable = ({
   const headHeight = useTableHeadHeight(tableRef);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const autosaveStatus = useAutosaveStatus(autosaveKey);
   const { canScrollLeft, canScrollRight } = useHorizontalScrollEdges(scrollRef);
 
   return (
     <div className="flex flex-col gap-2">
-      <IndicateurValeursTableLegend
-        isRequiredValeurLegendVisible={isRequired}
-      />
+      <div className="flex items-center justify-between gap-4">
+        <IndicateurValeursTableLegend
+          isRequiredValeurLegendVisible={isRequired}
+        />
+        {!isReadonly && (
+          <AutosaveBadge
+            status={autosaveStatus}
+            dataTest="indicateurs.valeurs.grille.autosave"
+          />
+        )}
+      </div>
       {/* overflow-auto reste nécessaire pour le défilement horizontal
           (cellules sticky left/right) même sans plafond de hauteur. Le plafond,
           lui, crée la zone de défilement vertical dont l'en-tête collant a

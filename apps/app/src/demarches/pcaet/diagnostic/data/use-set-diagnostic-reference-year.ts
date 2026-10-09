@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { autosaveMeta } from '@/app/utils/react-query/autosave-status/autosave-status';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -14,7 +15,10 @@ export type SetDiagnosticReferenceYearInput =
  * années des résultats saisis. La changer bascule donc les valeurs du tableau
  * sur la nouvelle année, côté serveur et en une seule requête.
  */
-export const useSetDiagnosticReferenceYear = (demarcheId: number) => {
+export const useSetDiagnosticReferenceYear = (
+  demarcheId: number,
+  autosaveKey: string
+) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -30,6 +34,7 @@ export const useSetDiagnosticReferenceYear = (demarcheId: number) => {
         meta: {
           success: appLabels.pcaetDiagnosticAnneeReferenceBasculee,
           error: appLabels.pcaetDiagnosticAnneeReferenceEchec,
+          ...autosaveMeta(autosaveKey),
         },
 
         onSuccess: async (diagnostic) => {

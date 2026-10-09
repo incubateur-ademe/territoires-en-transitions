@@ -22,6 +22,10 @@ vi.mock(
   })
 );
 
+vi.mock('@/app/utils/react-query/autosave-status/use-autosave-status', () => ({
+  useAutosaveStatus: () => 'idle',
+}));
+
 const { setIndicateurApplicable } = vi.hoisted(() => ({
   setIndicateurApplicable: vi.fn().mockResolvedValue(undefined),
 }));
@@ -41,6 +45,7 @@ const gridElement = (
 ): JSX.Element => (
   <IndicateurValeursTable
     demarcheId={1}
+    autosaveKey="grille"
     rows={fakeRows}
     years={fakeYears}
     referenceYear={fakeReferenceYear}

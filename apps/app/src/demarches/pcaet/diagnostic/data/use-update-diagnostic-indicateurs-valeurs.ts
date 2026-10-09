@@ -1,5 +1,6 @@
 'use client';
 
+import { autosaveMeta } from '@/app/utils/react-query/autosave-status/autosave-status';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -8,7 +9,10 @@ import { useCallback } from 'react';
 export type UpdateDiagnosticIndicateursValeursInput =
   RouterInput['demarches']['pcaet']['diagnostic']['indicateurs']['updateValeurs'];
 
-export const useUpdateDiagnosticIndicateursValeurs = (demarcheId: number) => {
+export const useUpdateDiagnosticIndicateursValeurs = (
+  demarcheId: number,
+  autosaveKey: string
+) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -20,7 +24,7 @@ export const useUpdateDiagnosticIndicateursValeurs = (demarcheId: number) => {
 
   const { mutateAsync, isPending } = useMutation(
     trpc.demarches.pcaet.diagnostic.indicateurs.updateValeurs.mutationOptions({
-      meta: { disableToast: true },
+      meta: { disableToast: true, ...autosaveMeta(autosaveKey) },
 
       onSuccess: async (diagnostic) => {
         // La réponse est un instantané complet du diagnostic, lu côté serveur

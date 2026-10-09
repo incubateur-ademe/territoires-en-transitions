@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { autosaveMeta } from '@/app/utils/react-query/autosave-status/autosave-status';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -10,6 +11,7 @@ import {
   type DemarcheDocumentEtape,
 } from '@tet/domain/demarches';
 import { useCallback, useMemo } from 'react';
+import { demarchePcaetAutosaveKeys } from './autosave-keys';
 
 /**
  * Modèle documentaire et pièces déposées d'une démarche PCAET, en lecture seule.
@@ -73,12 +75,16 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
     [queryClient, queryKey, demarcheQueryKey]
   );
 
+  // Le succès s'affiche dans le badge d'enregistrement de l'étape, pas en
+  // toast : seule l'erreur mérite d'interrompre, avec le détail de ce qui a
+  // échoué.
+  const autosave = autosaveMeta(
+    demarchePcaetAutosaveKeys.documents(demarcheId)
+  );
+
   const { mutate: addDocument } = useMutation(
     trpc.demarches.pcaet.documents.add.mutationOptions({
-      meta: {
-        success: appLabels.demarcheDocumentsDeposeSucces,
-        error: appLabels.demarcheDocumentsDeposeErreur,
-      },
+      meta: { error: appLabels.demarcheDocumentsDeposeErreur, ...autosave },
       onSuccess: invalidate,
     })
   );
@@ -86,39 +92,39 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
   const { mutate: removeDocument } = useMutation(
     trpc.demarches.pcaet.documents.remove.mutationOptions({
       meta: {
-        success: appLabels.demarcheDocumentsSuppressionSucces,
         error: appLabels.demarcheDocumentsSuppressionErreur,
+        ...autosave,
       },
       onSuccess: invalidate,
     })
   );
 
-  // L'apparition de la ligne est sa propre confirmation : pas de toast de
-  // succès, seule l'erreur mérite d'être annoncée.
   const { mutate: createAdditional, data: documentAdditionalCree } =
     useMutation(
       trpc.demarches.pcaet.documents.createAdditional.mutationOptions({
-        meta: { error: appLabels.demarcheDocumentsAdditionalCreationErreur },
+        meta: {
+          error: appLabels.demarcheDocumentsAdditionalCreationErreur,
+          ...autosave,
+        },
         onSuccess: invalidate,
       })
     );
 
-  // Nommer une pièce est de la saisie : ça s'enregistre à la sortie du champ,
-  // sans toast, comme n'importe quel champ de formulaire.
+  // Même mutation pour le nom et le fichier d'une pièce additionnelle, mais
+  // deux observateurs : chacun formule son propre échec.
   const { mutate: renameAdditional } = useMutation(
     trpc.demarches.pcaet.documents.updateAdditional.mutationOptions({
-      meta: { error: appLabels.demarcheDocumentsAdditionalTitreErreur },
+      meta: {
+        error: appLabels.demarcheDocumentsAdditionalTitreErreur,
+        ...autosave,
+      },
       onSuccess: invalidate,
     })
   );
 
-  // Le dépôt, lui, se confirme comme celui d'une pièce attendue.
   const { mutate: deposeAdditional } = useMutation(
     trpc.demarches.pcaet.documents.updateAdditional.mutationOptions({
-      meta: {
-        success: appLabels.demarcheDocumentsDeposeSucces,
-        error: appLabels.demarcheDocumentsDeposeErreur,
-      },
+      meta: { error: appLabels.demarcheDocumentsDeposeErreur, ...autosave },
       onSuccess: invalidate,
     })
   );
@@ -126,8 +132,8 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
   const { mutate: removeAdditional } = useMutation(
     trpc.demarches.pcaet.documents.removeAdditional.mutationOptions({
       meta: {
-        success: appLabels.demarcheDocumentsAdditionalSuppressionSucces,
         error: appLabels.demarcheDocumentsAdditionalSuppressionErreur,
+        ...autosave,
       },
       onSuccess: invalidate,
     })
@@ -136,8 +142,8 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
   const { mutate: setCouverture } = useMutation(
     trpc.demarches.pcaet.documents.setCouverture.mutationOptions({
       meta: {
-        success: appLabels.demarcheDocumentsCouvertureSucces,
         error: appLabels.demarcheDocumentsCouvertureErreur,
+        ...autosave,
       },
       onSuccess: invalidate,
     })

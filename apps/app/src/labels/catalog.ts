@@ -1518,7 +1518,6 @@ export const appLabels = {
 
   instructionTitre: 'Suivi des demandes d’avis',
   uneErreurEstSurvenue: 'Une erreur est survenue',
-  indicateurValeurEnregistree: 'Enregistré',
   indicateurValeursGrille: 'Valeurs des indicateurs',
   indicateurCellule: (rowLabel: string, year: number): string =>
     `${rowLabel}, ${year}`,
