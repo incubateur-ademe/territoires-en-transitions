@@ -73,11 +73,14 @@ export const extractedActionToImportActions = (
   action: ExtractedAction
 ): ImportActionOrSousAction[] => {
   const axisPath = toAxisPath(action.axe, action.sousAxe);
+  // Une sous-action relève des secteurs de son action.
+  const secteursProposes = action.secteurs;
   return [
-    actionToImport(action, axisPath),
-    ...action.sousActions.map((sousAction) =>
-      sousActionToImport(sousAction, action.titre, axisPath)
-    ),
+    { ...actionToImport(action, axisPath), secteursProposes },
+    ...action.sousActions.map((sousAction) => ({
+      ...sousActionToImport(sousAction, action.titre, axisPath),
+      secteursProposes,
+    })),
   ];
 };
 

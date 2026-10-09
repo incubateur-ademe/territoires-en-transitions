@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
+import { FicheSecteursAttributionRepository } from '@tet/backend/plans/fiches/fiche-secteurs/fiche-secteurs-attribution.repository';
 import { FicheCreateAuthorization } from '@tet/backend/plans/fiches/create-fiche/fiche-create-authorization';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -81,7 +82,8 @@ export class CreatePlanAggregateService {
     private readonly createFicheService: CreateFicheService,
     private readonly listFichesService: ListFichesService,
     private readonly permissionService: PermissionService,
-    private readonly webhookService: WebhookService
+    private readonly webhookService: WebhookService,
+    private readonly ficheSecteursAttributionRepository: FicheSecteursAttributionRepository
   ) {}
 
   async create(
@@ -400,6 +402,17 @@ export class CreatePlanAggregateService {
       tx: ctx.tx,
     });
     if (!result.success) return failure(PlanErrorType.DATABASE_ERROR);
+
+    if (ficheWithPath.secteursProposes) {
+      await this.ficheSecteursAttributionRepository.createFromImportIa(
+        {
+          ficheId: result.data.id,
+          ...ficheWithPath.secteursProposes,
+          modifiedBy: ctx.user.id,
+        },
+        ctx.tx
+      );
+    }
 
     return success({ id: result.data.id });
   }

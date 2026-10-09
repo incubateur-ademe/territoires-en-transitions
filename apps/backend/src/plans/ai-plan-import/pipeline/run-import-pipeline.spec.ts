@@ -20,6 +20,7 @@ const tokens: TokenUsage = {
 };
 
 const stepOf = (prompt: string): StepName => {
+  if (prompt.includes('agent de classement des actions')) return 'secteurs';
   if (prompt.includes('agent de tri documentaire')) return 'scouting';
   if (prompt.includes('squelette du plan')) return 'scouting';
   if (prompt.includes('agent de mise en cohérence')) return 'hierarchy';
@@ -71,6 +72,9 @@ const responseByStep: Partial<Record<StepName, unknown>> = {
       date_debut: '',
       date_fin: '',
     },
+  ],
+  secteurs: [
+    { index: 0, secteurs: ['tertiaire'], justification: 'Bâtiments publics.' },
   ],
   qualitativeReview: { avis: 'Extraction cohérente' },
 };
@@ -149,6 +153,7 @@ describe('runImportPipeline', () => {
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
+        secteurs: 'skipped',
         qualitativeReview: 'ok',
       });
       expect(outcome.tokens.totalTokens).toBe(tokens.totalTokens * 5);
@@ -213,6 +218,7 @@ describe('runImportPipeline', () => {
         scoring: 'pending',
         consolidation: 'pending',
         enrichment: 'pending',
+        secteurs: 'pending',
         qualitativeReview: 'pending',
       },
       {
@@ -223,6 +229,7 @@ describe('runImportPipeline', () => {
         scoring: 'pending',
         consolidation: 'pending',
         enrichment: 'pending',
+        secteurs: 'pending',
         qualitativeReview: 'pending',
       },
       {
@@ -233,6 +240,7 @@ describe('runImportPipeline', () => {
         scoring: 'pending',
         consolidation: 'pending',
         enrichment: 'pending',
+        secteurs: 'pending',
         qualitativeReview: 'pending',
       },
       {
@@ -243,6 +251,7 @@ describe('runImportPipeline', () => {
         scoring: 'ok',
         consolidation: 'pending',
         enrichment: 'pending',
+        secteurs: 'pending',
         qualitativeReview: 'pending',
       },
       {
@@ -253,6 +262,7 @@ describe('runImportPipeline', () => {
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'pending',
+        secteurs: 'pending',
         qualitativeReview: 'pending',
       },
       {
@@ -263,6 +273,7 @@ describe('runImportPipeline', () => {
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
+        secteurs: 'pending',
         qualitativeReview: 'pending',
       },
       {
@@ -273,6 +284,18 @@ describe('runImportPipeline', () => {
         scoring: 'ok',
         consolidation: 'ok',
         enrichment: 'ok',
+        secteurs: 'skipped',
+        qualitativeReview: 'pending',
+      },
+      {
+        reading: 'ok',
+        scouting: 'skipped',
+        extraction: 'ok',
+        hierarchy: 'skipped',
+        scoring: 'ok',
+        consolidation: 'ok',
+        enrichment: 'ok',
+        secteurs: 'skipped',
         qualitativeReview: 'ok',
       },
     ]);
@@ -385,6 +408,33 @@ describe('runImportPipeline', () => {
       expect(run.endedAt.getTime()).toBeGreaterThanOrEqual(
         run.startedAt.getTime()
       );
+    }
+  });
+
+  it('propose les secteurs de chaque action quand withSecteurs est vrai', async () => {
+    const outcome = await runImportPipeline(
+      routedLlm(),
+      input({ withSecteurs: true })
+    );
+
+    expect(outcome).toMatchObject({
+      status: 'done',
+      stepStates: { secteurs: 'ok' },
+    });
+    if (outcome.status === 'done') {
+      expect(outcome.draft.actions[0].secteurs).toEqual({
+        secteurs: ['tertiaire'],
+        justification: 'Bâtiments publics.',
+      });
+    }
+  });
+
+  it('saute les secteurs par défaut', async () => {
+    const outcome = await runImportPipeline(routedLlm(), input());
+
+    expect(outcome).toMatchObject({ stepStates: { secteurs: 'skipped' } });
+    if (outcome.status === 'done') {
+      expect(outcome.draft.actions[0].secteurs).toBeUndefined();
     }
   });
 });

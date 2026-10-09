@@ -29,6 +29,7 @@ import { z } from 'zod';
 import { ExtractedAction } from '../models/extracted-action';
 import type { ImportStepRun } from '../models/import-step-run';
 import { PlanDraft } from '../models/plan-draft';
+import { classifySecteurs } from './classify-secteurs/classify-secteurs';
 import { consolidateActions } from './consolidate-actions/consolidate-actions';
 import { enrichSousActions } from './enrich-sous-actions/enrich-sous-actions';
 import {
@@ -51,6 +52,7 @@ export const stepStatesSchema = z.object({
   scoring: stepStateSchema,
   consolidation: stepStateSchema,
   enrichment: stepStateSchema,
+  secteurs: stepStateSchema.default('skipped'),
   qualitativeReview: stepStateSchema,
 });
 
@@ -102,6 +104,8 @@ export type RunImportPipelineInput = {
   currentDate: string;
   withVerifications: boolean;
   withSousActions: boolean;
+  /** Secteurs réglementaires proposés pour chaque action : plans PCAET. */
+  withSecteurs?: boolean;
   signal?: AbortSignal;
   onStepStatesChange?: (stepStates: Readonly<StepStates>) => Promise<void>;
   /** Chaque étape terminée, passée ou en échec : durée, appels, comptes. */
@@ -337,9 +341,20 @@ export const runImportPipeline = async (
   if (!enriched.success) return enriched.outcome;
   await reportProgress(enriched.progress.stepStates);
 
-  const reviewed = await runStep({
+  const sectorised = await runStep({
     reportStepRun,
     progress: enriched.progress,
+    name: 'secteurs',
+    skipWhen: !input.withSecteurs,
+    run: (actions) =>
+      classifySecteurs(llm, { actions, source, signal: input.signal }),
+  });
+  if (!sectorised.success) return sectorised.outcome;
+  await reportProgress(sectorised.progress.stepStates);
+
+  const reviewed = await runStep({
+    reportStepRun,
+    progress: sectorised.progress,
     name: 'qualitativeReview',
     run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
   });
@@ -528,6 +543,7 @@ export const initialStepStates = (): StepStates => ({
   scoring: 'pending',
   consolidation: 'pending',
   enrichment: 'pending',
+  secteurs: 'pending',
   qualitativeReview: 'pending',
 });
 

@@ -248,6 +248,7 @@ describe('GenerateImportDraftService', () => {
         scoring: 'skipped',
         consolidation: 'skipped',
         enrichment: 'skipped',
+        secteurs: 'skipped',
         qualitativeReview: 'ok',
       }
     );
@@ -500,6 +501,7 @@ describe('GenerateImportDraftService', () => {
       'scoring',
       'consolidation',
       'enrichment',
+      'secteurs',
       'qualitativeReview',
       'persistence',
     ]);

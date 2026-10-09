@@ -1,3 +1,4 @@
+import { SecteursProposes } from '@tet/backend/plans/fiches/fiche-secteurs/secteurs-proposes';
 import { z } from 'zod';
 import { UpdateFicheInput } from '../../fiches/update-fiche/update-fiche.input';
 
@@ -71,6 +72,8 @@ export interface FicheWithRelationsAndAxisPath {
   axisPath?: string[];
   fiche: Omit<UpdateFicheInput, 'collectiviteId'>;
   parentActionTitre?: string;
+  /** Secteurs réglementaires proposés par l'import IA, enregistrés avec la fiche. */
+  secteursProposes?: SecteursProposes;
 }
 
 export const isSousAction = (
