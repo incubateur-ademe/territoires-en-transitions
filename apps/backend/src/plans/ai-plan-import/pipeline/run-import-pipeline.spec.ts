@@ -1,6 +1,7 @@
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
+import { ImportStepRun } from '../models/import-step-run';
 import { buildDocument, buildPage } from './document/document-page';
 import {
   PipelineLlm,
@@ -358,6 +359,32 @@ describe('runImportPipeline', () => {
     expect(llm.generateStructured).toHaveBeenCalledTimes(2);
     if (outcome.status === 'failed') {
       expect(outcome.partialDraft.actions.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('rend compte de chaque étape : durée, statut, comptes, et étape en échec', async () => {
+    const runs: ImportStepRun[] = [];
+    const onStepRun = vi.fn(async (run: ImportStepRun) => {
+      runs.push(run);
+    });
+
+    await runImportPipeline(routedLlm('consolidation'), input({ onStepRun }));
+
+    expect(
+      runs.map(({ step, status, error }) => ({ step, status, error }))
+    ).toEqual([
+      { step: 'reading', status: 'ok', error: null },
+      { step: 'scouting', status: 'skipped', error: null },
+      { step: 'extraction', status: 'ok', error: null },
+      { step: 'hierarchy', status: 'skipped', error: null },
+      { step: 'scoring', status: 'ok', error: null },
+      { step: 'consolidation', status: 'failed', error: 'rate_limited' },
+    ]);
+    expect(runs[2].details).toMatchObject({ actionsIn: 0, actionsOut: 1 });
+    for (const run of runs) {
+      expect(run.endedAt.getTime()).toBeGreaterThanOrEqual(
+        run.startedAt.getTime()
+      );
     }
   });
 });

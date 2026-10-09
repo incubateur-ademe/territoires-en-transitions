@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LlmError } from './llm.errors';
+import { LlmTier } from './llm-tier';
 import { TokenUsage } from './token-usage';
 
 /** Une tentative d'appel au modèle, réussie ou non. */
 export type LlmCallEvent = {
+  tier: LlmTier;
+  /** Modèle effectivement appelé ; le palier à défaut de modèle configuré. */
+  model: string;
   attempt: number;
   durationMs: number;
   promptChars: number;
