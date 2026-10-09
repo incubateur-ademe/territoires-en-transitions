@@ -29,6 +29,15 @@ runs:
   using: composite
 
   steps:
+    # 54321-54329 fall inside the kernel's ephemeral range (32768-60999): an
+    # outbound connection from a parallel step (pulls, pnpm, Nx Cloud) can take
+    # one as its source port and `supabase start` then fails with "address
+    # already in use". Reserving them keeps them out of automatic assignment.
+    - name: Reserve Supabase host ports
+      if: ${{ !env.ACT }}
+      shell: bash
+      run: sudo sysctl -w net.ipv4.ip_local_reserved_ports=54321-54329
+
     - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
       with:
         version: 2.58.5

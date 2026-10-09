@@ -30,8 +30,19 @@ if [[ -z "${ACT:-}" ]]; then
   prefetch_pid=$!
 fi
 
-start_status=0
-supabase start --exclude "$excluded_containers" --network-id "$network_id" || start_status=$?
+# On failure the CLI removes its containers but keeps the restored db volume, so
+# a new attempt starts from the same backup without restarting the whole job.
+max_attempts=3
+for attempt in $(seq 1 "$max_attempts"); do
+  start_status=0
+  supabase start --exclude "$excluded_containers" --network-id "$network_id" || start_status=$?
+  if [[ "$start_status" -eq 0 || "$attempt" -eq "$max_attempts" ]]; then
+    break
+  fi
+  echo "::warning::supabase start failed (attempt $attempt/$max_attempts), retrying."
+  ss -tanp 2>/dev/null | grep -E ':5432[1-9]\b' || true
+  sleep 15
+done
 
 # Prefetching is optional: the CLI still pulls missing images with its normal
 # retries and checks service health. Always preserve the startup exit status.
