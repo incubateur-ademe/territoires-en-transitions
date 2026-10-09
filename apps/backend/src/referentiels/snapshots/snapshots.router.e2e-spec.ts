@@ -204,6 +204,18 @@ describe('SnapshotsRouter', () => {
     ).rejects.toThrowError(/Vous n'avez pas les permissions nécessaires/i);
   });
 
+  test("Création d'un snapshot: jalon réservé aux sauvegardes automatiques", async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    await expect(() =>
+      caller.referentiels.snapshots.computeAndUpsert({
+        referentielId: ReferentielIdEnum.CAE,
+        collectiviteId: 1,
+        jalon: SnapshotJalonEnum.PRE_AUDIT,
+      })
+    ).rejects.toThrowError(/réservés aux sauvegardes automatiques/);
+  });
+
   test("Création d'un snapshot avec nom et date spécifique", async () => {
     const caller = router.createCaller({ user: testUser });
     const snapshotDate = '2024-09-21';
