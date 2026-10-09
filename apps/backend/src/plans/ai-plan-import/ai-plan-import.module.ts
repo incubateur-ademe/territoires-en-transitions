@@ -10,6 +10,7 @@ import { CompletePlanSecteursModule } from '../fiches/fiche-secteurs/complete-pl
 import { PlanModule } from '../plans/plans.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
+import { AiPlanImportStepRunRepository } from './ai-plan-import-step-run.repository';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
   AI_PLAN_IMPORT_QUEUE_NAME,
@@ -43,6 +44,7 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
   controllers: [EnqueueImportController],
   providers: [
     AiPlanImportJobRepository,
+    AiPlanImportStepRunRepository,
     EnqueueImportService,
     GenerateImportDraftService,
     GenerateImportDraftWorker,

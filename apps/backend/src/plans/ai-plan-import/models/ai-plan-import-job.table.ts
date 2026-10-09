@@ -2,13 +2,18 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
-import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
+import {
+  createdAt,
+  modifiedAt,
+  TIMESTAMP_OPTIONS,
+} from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import {
   integer,
   jsonb,
   pgTable,
   text,
+  timestamp,
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
@@ -17,6 +22,7 @@ import {
   AiPlanImportJobOptions,
   aiPlanImportJobStatusValues,
 } from './ai-plan-import-job';
+import { ImportJobStats } from './import-job-stats';
 import { PlanDraft } from './plan-draft';
 
 export const aiPlanImportJobTable = pgTable(
@@ -42,6 +48,9 @@ export const aiPlanImportJobTable = pgTable(
       () => bibliothequeFichierTable.id,
       { onDelete: 'set null' }
     ),
+    startedAt: timestamp('started_at', TIMESTAMP_OPTIONS),
+    finishedAt: timestamp('finished_at', TIMESTAMP_OPTIONS),
+    stats: jsonb('stats').$type<ImportJobStats>(),
     createdAt,
     modifiedAt,
   },

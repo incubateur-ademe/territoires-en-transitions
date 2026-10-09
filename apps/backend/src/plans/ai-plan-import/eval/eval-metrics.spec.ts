@@ -25,6 +25,8 @@ const anAction = (
   });
 
 const anEvent = (overrides: Partial<LlmCallEvent> = {}): LlmCallEvent => ({
+  tier: 'strong',
+  model: 'test-model',
   attempt: 1,
   durationMs: 100,
   promptChars: 1000,

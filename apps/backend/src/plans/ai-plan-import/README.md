@@ -366,6 +366,48 @@ en page variées (5 à 10), chacun avec sa référence manuelle dans
 [`eval/references/`](eval/references/), et un test hors ligne qui vérifie le
 découpage de chacun, sans appel au modèle.
 
+## Statistiques des imports
+
+Chaque import laisse sa trace, sans appel supplémentaire au modèle :
+
+- `ai_plan_import_step_run` : une ligne par étape exécutée, de `document`
+  (lecture et OCR) à `persistence` (création du plan). Elle donne la durée, le
+  nombre d'appels au modèle (tentatives en échec comprises), les jetons, les
+  modèles appelés et les comptes propres à l'étape (`details`).
+- `ai_plan_import_job.started_at` / `finished_at` : l'écart avec `created_at`
+  est l'attente en file.
+- `ai_plan_import_job.stats` : le résumé de l'import (contenu extrait,
+  document lu, appels au modèle), versionné par `schemaVersion`.
+
+Les appels sont attribués à l'étape par `recordLlmCalls`
+(`utils/llm/llm-call-recorder.ts`), sans que les étapes aient à remonter leurs
+jetons. Les comptes de contenu sont ceux de l'éval
+(`pipeline/compute-import-metrics.ts`) : les deux se comparent.
+
+Durée et jetons moyens par étape et par modèle :
+
+```sql
+SELECT r.step, r.models, count(*) AS imports,
+       round(avg(r.duration_ms) / 1000.0, 1) AS secondes_moyennes,
+       round(avg((r.tokens ->> 'totalTokens')::int)) AS jetons_moyens
+FROM ai_plan_import_step_run r
+WHERE r.status = 'ok'
+GROUP BY r.step, r.models
+ORDER BY r.step, r.models;
+```
+
+Jetons par action importée, import par import :
+
+```sql
+SELECT j.id, j.stats -> 'llm' ->> 'models' AS modeles,
+       (j.stats -> 'content' ->> 'actions')::int AS actions,
+       (j.stats -> 'llm' -> 'tokens' ->> 'totalTokens')::int AS jetons,
+       j.finished_at - j.started_at AS traitement
+FROM ai_plan_import_job j
+WHERE j.status = 'done' AND j.stats IS NOT NULL
+ORDER BY j.created_at DESC;
+```
+
 ## Où regarder
 
 | Sujet | Fichiers |

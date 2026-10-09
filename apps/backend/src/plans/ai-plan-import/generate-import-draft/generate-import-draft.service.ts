@@ -22,6 +22,10 @@ import {
 } from '../ai-plan-import.constants';
 import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
+import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
+import { ImportJobStats } from '../models/import-job-stats';
+import { computeContentMetrics } from '../pipeline/compute-import-metrics';
+import { ImportJobTelemetry } from './import-job-telemetry';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
@@ -59,7 +63,8 @@ export class GenerateImportDraftService {
     private readonly notifyPlanImportedService: NotifyPlanImportedService,
     private readonly transactionManager: TransactionManager,
     private readonly trackingService: TrackingService,
-    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
+    private readonly stepRunRepository: AiPlanImportStepRunRepository
   ) {}
 
   async generate(
@@ -112,10 +117,12 @@ export class GenerateImportDraftService {
       draft,
       stepStates,
       failedStep,
+      stats,
     }: {
       draft?: PlanDraft;
       stepStates?: StepStates;
       failedStep?: StepName;
+      stats?: ImportJobStats;
     } = {}
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     const marked = await this.jobRepository.markFailed({
@@ -123,6 +130,7 @@ export class GenerateImportDraftService {
       error: message,
       stepStates: stepStates ?? initialStepStates(),
       draft,
+      stats,
     });
     if (marked.success) {
       if (marked.data.createdPlanId !== null) {
@@ -146,6 +154,9 @@ export class GenerateImportDraftService {
           failedStep,
           reason,
           durationSeconds: secondsSince(marked.data.createdAt),
+          llmCalls: stats?.llm.calls,
+          totalTokens: stats?.llm.tokens.totalTokens,
+          models: stats?.llm.models.join(','),
         },
       });
     }
@@ -164,19 +175,36 @@ export class GenerateImportDraftService {
       );
     }
 
+    const telemetry = new ImportJobTelemetry(
+      job.id,
+      this.llm.capabilities.strategy,
+      this.stepRunRepository,
+      this.logger
+    );
+
     const ocrPage = buildLlmOcrPage(this.llm);
-    const document = await readDocument(source, {
-      ocr: ocrPage
-        ? { ocrPage, policy: { maxOcrPages: AI_PLAN_IMPORT_MAX_OCR_PAGES } }
-        : undefined,
-    });
+    const document = await telemetry.measure(
+      'document',
+      () =>
+        readDocument(source, {
+          ocr: ocrPage
+            ? { ocrPage, policy: { maxOcrPages: AI_PLAN_IMPORT_MAX_OCR_PAGES } }
+            : undefined,
+        }),
+      (read) =>
+        read.success
+          ? { status: 'ok', details: { ...read.data.stats } }
+          : { status: 'failed', error: read.error.kind }
+    );
     if (!document.success) {
       return this.recordFailure(
         job.id,
         readDocumentErrorMessage(document.error),
-        document.error.kind
+        document.error.kind,
+        { stats: telemetry.stats() }
       );
     }
+    telemetry.setDocument(source, document.data);
 
     const outcome = await runImportPipeline(this.llm, {
       document: document.data,
@@ -188,7 +216,9 @@ export class GenerateImportDraftService {
       onStepStatesChange: async (stepStates) => {
         await this.jobRepository.updateStepStates(job.id, stepStates);
       },
+      onStepRun: (run) => telemetry.record(run),
     });
+    telemetry.addWarnings(outcome.warnings.length);
 
     for (const warning of outcome.warnings) {
       this.logger.warn(`Import ${job.id}: ${warning}`);
@@ -198,17 +228,27 @@ export class GenerateImportDraftService {
         job.id,
         pipelineErrorMessage(outcome.failedStep, outcome.error),
         outcome.error.kind,
-        { stepStates: outcome.stepStates, failedStep: outcome.failedStep }
+        {
+          stepStates: outcome.stepStates,
+          failedStep: outcome.failedStep,
+          stats: telemetry.stats(),
+        }
       );
     }
 
-    return this.persistDraftAsPlan(job, outcome.draft, outcome.stepStates);
+    return this.persistDraftAsPlan(
+      job,
+      outcome.draft,
+      outcome.stepStates,
+      telemetry
+    );
   }
 
   private async persistDraftAsPlan(
     job: AiPlanImportJob,
     draft: PlanDraft,
-    stepStates: StepStates
+    stepStates: StepStates,
+    telemetry: ImportJobTelemetry
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const { actions, truncatedCount, duplicateCount } =
       normalizeExtractedActions(draft.actions);
@@ -233,8 +273,20 @@ export class GenerateImportDraftService {
       planType: job.options.planType,
     });
 
-    const created = await this.transactionManager.executeSingle<number, string>(
-      async (tx) => {
+    telemetry.setContent({
+      ...computeContentMetrics(actions),
+      extracted: draft.actions.length,
+      duplicates: duplicateCount,
+      truncatedTitles: truncatedCount,
+      scored: actions.filter((action) => action.confidence !== null).length,
+      improved: actions.filter((action) => action.confidence?.amelioree).length,
+      fichesCreated: planInput.actions.length,
+      hasQualitativeReview: draft.qualitativeReview !== null,
+    });
+    const stats = telemetry.stats();
+
+    const persist = () =>
+      this.transactionManager.executeSingle<number, string>(async (tx) => {
         const planId = await this.createPlan(planInput, job, tx);
         if (!planId.success) {
           return planId;
@@ -258,17 +310,23 @@ export class GenerateImportDraftService {
           draft: normalizedDraft,
           stepStates,
           createdPlanId: planId.data,
+          stats,
           tx,
         });
         return done.success
           ? success(planId.data)
           : failure('Enregistrement du job terminé impossible');
-      }
+      });
+    const created = await telemetry.measure('persistence', persist, (result) =>
+      result.success
+        ? { status: 'ok', details: { fichesCreated: planInput.actions.length } }
+        : { status: 'failed', error: 'plan_creation_failed' }
     );
 
     if (!created.success) {
       return this.recordFailure(job.id, created.error, 'plan_creation_failed', {
         draft: normalizedDraft,
+        stats,
       });
     }
 
@@ -282,6 +340,12 @@ export class GenerateImportDraftService {
         planId: created.data,
         ...recap,
         durationSeconds: secondsSince(job.createdAt),
+        processingSeconds: job.startedAt
+          ? secondsSince(job.startedAt)
+          : undefined,
+        llmCalls: stats.llm.calls,
+        totalTokens: stats.llm.tokens.totalTokens,
+        models: stats.llm.models.join(','),
       },
     });
 
@@ -330,6 +394,7 @@ export class GenerateImportDraftService {
       draft?: PlanDraft;
       stepStates?: StepStates;
       failedStep?: StepName;
+      stats?: ImportJobStats;
     } = {}
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const marked = await this.markFailed(jobId, message, reason, options);
