@@ -3,7 +3,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, count, desc, eq, gt, inArray, sql } from 'drizzle-orm';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { DocumentHash } from '@tet/domain/collectivites';
+import { PlanStatusEnum } from '@tet/domain/plans';
+import { and, count, desc, eq, gt, inArray, ne, sql } from 'drizzle-orm';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -12,6 +16,7 @@ import {
   AiPlanImportJobStatus,
   AiPlanImportJobStatusEnum,
   AiPlanImportJobStatusView,
+  PreviousAiImport,
 } from './models/ai-plan-import-job';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import {
@@ -31,8 +36,20 @@ export type CreateJobInput = {
   collectiviteId: number;
   createdBy: string;
   sourcePath: string;
+  fichierId: number;
   options: AiPlanImportJobOptions;
 };
+
+/** Le fichier importé, désigné par sa ligne de bibliothèque ou son hash. */
+export type ImportedFichierRef =
+  | { collectiviteId: number; fichierId: number }
+  | { collectiviteId: number; hash: DocumentHash };
+
+class CreatePlanAbortedError<E> extends Error {
+  constructor(readonly result: Result<never, E>) {
+    super('Création du plan du job annulée');
+  }
+}
 
 const statusViewProjection = {
   id: aiPlanImportJobTable.id,
@@ -58,10 +75,17 @@ export class AiPlanImportJobRepository {
    * `limitUserInFlight: false`), si la collectivité reste sous son quota sur
    * 24 heures glissantes et si elle n'a pas déjà un import en cours.
    */
-  async createWithinQuotas(
+  async createWithinQuotas<E>(
     input: CreateJobInput,
-    { limitUserInFlight }: { limitUserInFlight: boolean }
-  ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
+    {
+      limitUserInFlight,
+      createPlan,
+    }: {
+      limitUserInFlight: boolean;
+      /** Crée le plan vide du job, dans la même transaction. */
+      createPlan: (tx: Transaction) => Promise<Result<number, E>>;
+    }
+  ): Promise<Result<AiPlanImportJob, AiPlanImportError | E>> {
     try {
       return await this.db.transaction(async (tx) => {
         if (limitUserInFlight) {
@@ -114,6 +138,7 @@ export class AiPlanImportJobRepository {
             collectiviteId: input.collectiviteId,
             createdBy: input.createdBy,
             sourcePath: input.sourcePath,
+            fichierId: input.fichierId,
             options: input.options,
             status: AiPlanImportJobStatusEnum.PENDING,
             stepStates: initialStepStates(),
@@ -121,15 +146,74 @@ export class AiPlanImportJobRepository {
           .onConflictDoNothing()
           .returning();
 
-        if (created) {
-          return success(created);
+        if (!created) {
+          return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
         }
 
-        return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
+        const plan = await createPlan(tx);
+        if (!plan.success) {
+          // Lever annule l'insertion du job : renvoyer un échec la validerait.
+          throw new CreatePlanAbortedError(plan);
+        }
+
+        const [withPlan] = await tx
+          .update(aiPlanImportJobTable)
+          .set({ createdPlanId: plan.data })
+          .where(eq(aiPlanImportJobTable.id, created.id))
+          .returning();
+        return success(withPlan);
       });
     } catch (error) {
+      if (error instanceof CreatePlanAbortedError) {
+        return error.result as Result<never, E>;
+      }
       this.logger.error(`Création du job d'import: ${getErrorMessage(error)}`);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR, toError(error));
+    }
+  }
+
+  /**
+   * Plan le plus récent, encore présent et non en échec, issu d'un import du
+   * même fichier dans la même collectivité.
+   */
+  async findPreviousImport(
+    ref: ImportedFichierRef
+  ): Promise<Result<PreviousAiImport | null, AiPlanImportError>> {
+    try {
+      const [row] = await this.db
+        .select({
+          planId: axeTable.id,
+          planNom: axeTable.nom,
+          planStatus: axeTable.status,
+          importedAt: aiPlanImportJobTable.createdAt,
+        })
+        .from(aiPlanImportJobTable)
+        .innerJoin(
+          bibliothequeFichierTable,
+          eq(bibliothequeFichierTable.id, aiPlanImportJobTable.fichierId)
+        )
+        .innerJoin(axeTable, eq(axeTable.id, aiPlanImportJobTable.createdPlanId))
+        .where(
+          and(
+            eq(aiPlanImportJobTable.collectiviteId, ref.collectiviteId),
+            eq(bibliothequeFichierTable.collectiviteId, ref.collectiviteId),
+            'fichierId' in ref
+              ? eq(bibliothequeFichierTable.id, ref.fichierId)
+              : eq(bibliothequeFichierTable.hash, ref.hash),
+            ne(axeTable.status, PlanStatusEnum.FAILED)
+          )
+        )
+        .orderBy(desc(aiPlanImportJobTable.createdAt))
+        .limit(1);
+
+      return success(row ?? null);
+    } catch (error) {
+      this.logger.error(
+        `Recherche d'un import antérieur pour la collectivité ${
+          ref.collectiviteId
+        }: ${getErrorMessage(error)}`
+      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
     }
   }
 

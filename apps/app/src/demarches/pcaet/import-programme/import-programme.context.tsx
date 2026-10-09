@@ -22,8 +22,11 @@ import {
 type ImportProgrammeContextValue = {
   isEnabled: boolean;
   isOngoing: boolean;
-  /** À appeler dès l'import lancé depuis la démarche, pour en traiter la fin. */
-  trackImport: (jobId: string) => void;
+  /**
+   * À appeler dès l'import lancé depuis la démarche : le plan, créé au
+   * lancement, y est rattaché d'office, et la fin de l'import est suivie.
+   */
+  trackImport: (jobId: string, planId: number) => void;
   /** Le suivi de l'import est affiché : son échec s'y lit déjà. */
   setIsProgressDisplayed: (isDisplayed: boolean) => void;
 };
@@ -114,14 +117,13 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
         queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
       });
       if (startedHere) {
-        // Le rattachement peut échouer sans compromettre l'import : la ligne
-        // du tableau dit si le plan est rattaché, le toast d'erreur global
-        // dit pourquoi.
-        linkIfFirstPlan(ongoingStatus.createdPlanId).catch(() => undefined);
         setToast('success', appLabels.demarcheProgrammeImportTermine);
       }
     } else if (ongoingStatus?.status === 'failed') {
       handledJobId.current = ongoingJobId;
+      queryClient.invalidateQueries({
+        queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
+      });
       if (startedHere && !isProgressDisplayed.current) {
         setToast('error', appLabels.importPlanIaErreur);
       }
@@ -130,23 +132,33 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     ongoingJobId,
     ongoingStatus,
     startedJobId,
-    linkIfFirstPlan,
     queryClient,
     trpc,
     collectiviteId,
     setToast,
   ]);
 
+  const trackImport = useCallback(
+    (jobId: string, planId: number) => {
+      setStartedJobId(jobId);
+      // Le rattachement peut échouer sans compromettre l'import : la ligne du
+      // tableau dit si le plan est rattaché, le toast d'erreur global dit
+      // pourquoi.
+      linkIfFirstPlan(planId).catch(() => undefined);
+    },
+    [linkIfFirstPlan]
+  );
+
   const value = useMemo(
     () => ({
       isEnabled,
       isOngoing,
-      trackImport: setStartedJobId,
+      trackImport,
       setIsProgressDisplayed: (isDisplayed: boolean) => {
         isProgressDisplayed.current = isDisplayed;
       },
     }),
-    [isEnabled, isOngoing]
+    [isEnabled, isOngoing, trackImport]
   );
 
   return (

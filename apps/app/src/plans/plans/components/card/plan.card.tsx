@@ -3,9 +3,11 @@ import classNames from 'classnames';
 import { appLabels } from '@/app/labels/catalog';
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
-import { Plan, Statut } from '@tet/domain/plans';
+import { Plan, PlanStatusEnum, Statut } from '@tet/domain/plans';
 import { CountByRecordType } from '@tet/domain/utils';
 import { Card, VisibleWhen } from '@tet/ui';
+import { DeleteFailedImportPlanButton } from '../delete-failed-import-plan.button';
+import { PlanImportStatusBadge } from '../plan-import-status.badge';
 import { Statuts } from './statuts';
 
 export type PlanCardDisplay = 'circular' | 'row';
@@ -55,9 +57,12 @@ export const PlanCard = ({
       external={openInNewTab}
       className="gap-2 !p-4 hover:bg-white"
     >
-      <span className="font-bold text-primary-9">
-        {plan.nom ?? appLabels.sansTitre}
-      </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-bold text-primary-9">
+          {plan.nom ?? appLabels.sansTitre}
+        </span>
+        <PlanImportStatusBadge status={plan.status} />
+      </div>
       <span className="text-sm font-medium text-grey-8 uppercase">
         {plan.type?.type ?? appLabels.sansType}
       </span>
@@ -94,6 +99,11 @@ export const PlanCard = ({
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de fiches */}
         <span>{appLabels.actionCount({ count: fichesCount ?? 0 })}</span>
+        {plan.status === PlanStatusEnum.FAILED && (
+          <div className="ml-auto">
+            <DeleteFailedImportPlanButton planId={plan.id} />
+          </div>
+        )}
       </div>
     </Card>
   );

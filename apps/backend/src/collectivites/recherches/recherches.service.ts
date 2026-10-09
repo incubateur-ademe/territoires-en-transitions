@@ -26,6 +26,7 @@ import {
   collectiviteTypeEnum,
   servicesDeconcentresTypes,
 } from '@tet/domain/collectivites';
+import { navigablePlanStatuses } from '@tet/domain/plans';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
@@ -521,7 +522,10 @@ export default class RecherchesService {
     }
              JOIN filteredCollectivites c
                   ON a.${axeTable.collectiviteId.name} = c.collectiviteId
-      WHERE a.${axeTable.parent.name} IS NULL`;
+      WHERE a.${axeTable.parent.name} IS NULL
+        AND a.${axeTable.status.name} IN (${navigablePlanStatuses
+      .map((status) => `'${status}'`)
+      .join(', ')})`;
 
     // Add conditions
     // Condition plan type

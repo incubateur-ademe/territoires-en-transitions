@@ -12,10 +12,16 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import {
-  addAndEnableUserSuperAdminMode,
-  addTestUser,
-} from '@tet/backend/users/users/users.test-fixture';
+import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { calculateDocumentHash } from '@tet/backend/collectivites/documents/store-document/calculate-document-hash.utils';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { DocumentHash } from '@tet/domain/collectivites';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
@@ -149,33 +155,72 @@ const buildInMemoryDocumentStorage = (): DocumentStorageService => {
   } as unknown as DocumentStorageService;
 };
 
-const csvSource = (): Buffer =>
-  Buffer.from('axe,sous-axe,titre\nAxe 1,Sous-axe 1.1,Action 1.1.1', 'utf-8');
-
-const TEST_COLLECTIVITE_ID = 1;
+/** Le suffixe varie le contenu, donc le hash : chaque test a son fichier. */
+const csvSource = (suffix: string): Buffer =>
+  Buffer.from(
+    `axe,sous-axe,titre\nAxe 1,Sous-axe 1.1,Action 1.1.1\n# ${suffix}`,
+    'utf-8'
+  );
 
 describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   let app: INestApplication;
   let db: DatabaseService;
   let router: TrpcRouter;
+  let collectiviteId: number;
   let user: AuthenticatedUser;
   let userEmail: string;
   let userToken: string;
+  let otherCollectiviteId: number;
+  let otherUser: AuthenticatedUser;
+  let otherUserToken: string;
   let cleanupSuperAdmin: () => Promise<void>;
+  const cleanupCollectivites: (() => Promise<void>)[] = [];
   const createdPlanIds: number[] = [];
+  const otherCreatedPlanIds: number[] = [];
   const createdJobIds: string[] = [];
   const completePlanSecteursJobs: unknown[] = [];
-
-  const enqueueUrl = (): string =>
-    `/collectivites/${TEST_COLLECTIVITE_ID}/plans/import-ia`;
 
   const getStatus = (jobId: string) =>
     router.createCaller({ user }).plans.aiImport.getAiImportStatus({ jobId });
 
   const getCurrentImport = () =>
     router.createCaller({ user }).plans.aiImport.getCurrentAiImport({
-      collectiviteId: TEST_COLLECTIVITE_ID,
+      collectiviteId,
     });
+
+  const findPreviousImport = (
+    input: { hash: DocumentHash } | { fichierId: number },
+    { asOther = false }: { asOther?: boolean } = {}
+  ) =>
+    router
+      .createCaller({ user: asOther ? otherUser : user })
+      .plans.aiImport.findPreviousAiImport({
+        collectiviteId: asOther ? otherCollectiviteId : collectiviteId,
+        ...input,
+      });
+
+  const readPlan = async (planId: number) => {
+    const [plan] = await db.db
+      .select({
+        nom: axeTable.nom,
+        collectiviteId: axeTable.collectiviteId,
+        parent: axeTable.parent,
+        source: axeTable.source,
+        status: axeTable.status,
+        verifiedAt: axeTable.verifiedAt,
+      })
+      .from(axeTable)
+      .where(eq(axeTable.id, planId));
+    return plan;
+  };
+
+  const readJob = async (jobId: string) => {
+    const [job] = await db.db
+      .select()
+      .from(aiPlanImportJobTable)
+      .where(eq(aiPlanImportJobTable.id, jobId));
+    return job;
+  };
 
   const fichesByTitreInPlan = async (planId: number, titre: string) => {
     const axeIds = await db.db
@@ -204,7 +249,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       );
   };
 
-  const deletePlan = async (planId: number): Promise<void> => {
+  const deletePlan = async (
+    planId: number,
+    { asOther = false }: { asOther?: boolean } = {}
+  ): Promise<void> => {
     const axeIds = await db.db
       .select({ id: axeTable.id })
       .from(axeTable)
@@ -225,7 +273,9 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         .where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
     }
 
-    await router.createCaller({ user }).plans.plans.delete({ planId });
+    await router
+      .createCaller({ user: asOther ? otherUser : user })
+      .plans.plans.delete({ planId });
   };
 
   beforeAll(async () => {
@@ -258,15 +308,27 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
 
-    const testUser = await addTestUser(db, {
-      collectiviteId: TEST_COLLECTIVITE_ID,
-      role: CollectiviteRole.ADMIN,
+    const testCollectivite = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
     });
-    user = getAuthUserFromUserCredentials(testUser.user);
-    userEmail = testUser.user.email ?? '';
+    cleanupCollectivites.push(testCollectivite.cleanup);
+    collectiviteId = testCollectivite.collectivite.id;
+    user = getAuthUserFromUserCredentials(testCollectivite.user);
+    userEmail = testCollectivite.user.email ?? '';
     userToken = await getAuthToken({
-      email: testUser.user.email ?? '',
-      password: testUser.user.password,
+      email: testCollectivite.user.email ?? '',
+      password: testCollectivite.user.password,
+    });
+
+    const otherCollectivite = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    cleanupCollectivites.push(otherCollectivite.cleanup);
+    otherCollectiviteId = otherCollectivite.collectivite.id;
+    otherUser = getAuthUserFromUserCredentials(otherCollectivite.user);
+    otherUserToken = await getAuthToken({
+      email: otherCollectivite.user.email ?? '',
+      password: otherCollectivite.user.password,
     });
 
     ({ cleanup: cleanupSuperAdmin } = await addAndEnableUserSuperAdminMode({
@@ -285,48 +347,130 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
             notificationTable.notifiedOn,
             NotifiedOnEnum['PLANS.AI_IMPORT.PLAN_IMPORTED']
           ),
-          inArray(notificationTable.entityId, createdPlanIds.map(String))
+          inArray(
+            notificationTable.entityId,
+            [...createdPlanIds, ...otherCreatedPlanIds].map(String)
+          )
         )
       );
     for (const planId of createdPlanIds) {
       await deletePlan(planId);
+    }
+    for (const planId of otherCreatedPlanIds) {
+      await deletePlan(planId, { asOther: true });
     }
     if (createdJobIds.length > 0) {
       await db.db
         .delete(aiPlanImportJobTable)
         .where(inArray(aiPlanImportJobTable.id, createdJobIds));
     }
+    // Un plan supprimé laisse ses fiches, qui retiennent leur auteur, et les
+    // tags créés par l'import retiennent la collectivité.
+    const testCollectiviteIds = [collectiviteId, otherCollectiviteId];
+    await db.db
+      .delete(ficheActionTable)
+      .where(inArray(ficheActionTable.collectiviteId, testCollectiviteIds));
+    for (const tagTable of [
+      serviceTagTable,
+      structureTagTable,
+      partenaireTagTable,
+      financeurTagTable,
+      personneTagTable,
+    ]) {
+      await db.db
+        .delete(tagTable)
+        .where(inArray(tagTable.collectiviteId, testCollectiviteIds));
+    }
     await cleanupSuperAdmin();
+    for (const cleanup of cleanupCollectivites) {
+      await cleanup();
+    }
     await app.close();
   });
 
-  const enqueue = async (
-    fields: Record<string, string>
-  ): Promise<{ jobId: string }> => {
+  const postImport = async ({
+    fields,
+    source,
+    asOther = false,
+  }: {
+    fields: Record<string, string>;
+    source: Buffer;
+    asOther?: boolean;
+  }) => {
     let pending = request(app.getHttpServer())
-      .post(enqueueUrl())
-      .set('Authorization', `Bearer ${userToken}`);
+      .post(
+        `/collectivites/${
+          asOther ? otherCollectiviteId : collectiviteId
+        }/plans/import-ia`
+      )
+      .set('Authorization', `Bearer ${asOther ? otherUserToken : userToken}`);
     for (const [name, value] of Object.entries(fields)) {
       pending = pending.field(name, value);
     }
-    const response = await pending.attach('file', csvSource(), {
+    const response = await pending.attach('file', source, {
       filename: 'plan.csv',
       contentType: 'text/csv',
     });
+    if (response.status === 201) {
+      createdJobIds.push(response.body.jobId);
+      (asOther ? otherCreatedPlanIds : createdPlanIds).push(
+        response.body.planId
+      );
+    }
+    return response;
+  };
+
+  const enqueue = async (
+    fields: Record<string, string>,
+    { source, asOther }: { source: Buffer; asOther?: boolean }
+  ): Promise<{ jobId: string; planId: number }> => {
+    const response = await postImport({ fields, source, asOther });
     expect(response.status).toBe(201);
-    createdJobIds.push(response.body.jobId);
     return response.body;
   };
 
-  test('exécute toutes les étapes puis crée le plan en base', async () => {
-    const { jobId } = await enqueue({
-      planName: 'Plan import IA complet',
-      withVerifications: 'true',
-      withSousActions: 'true',
-    });
+  test('crée le plan en import au lancement, puis le remplit à la fin du job', async () => {
+    const source = csvSource('complet');
+    const { jobId, planId: createdAtEnqueue } = await enqueue(
+      {
+        planName: 'Plan import IA complet',
+        withVerifications: 'true',
+        withSousActions: 'true',
+      },
+      { source }
+    );
 
     const ongoing = await getCurrentImport();
     expect(ongoing).toMatchObject({ jobId, status: 'pending' });
+
+    expect(await readPlan(createdAtEnqueue)).toMatchObject({
+      nom: 'Plan import IA complet',
+      source: 'import_ia',
+      status: 'importing',
+    });
+    const listed = await router
+      .createCaller({ user })
+      .plans.plans.list({ collectiviteId });
+    expect(listed.plans.map((plan) => plan.id)).not.toContain(createdAtEnqueue);
+    const listedWithImporting = await router
+      .createCaller({ user })
+      .plans.plans.list({ collectiviteId, statuses: ['importing'] });
+    expect(listedWithImporting.plans).toEqual([
+      expect.objectContaining({ id: createdAtEnqueue, status: 'importing' }),
+    ]);
+
+    const job = await readJob(jobId);
+    expect(job.createdPlanId).toBe(createdAtEnqueue);
+    expect(job.fichierId).not.toBeNull();
+    const [fichier] = await db.db
+      .select()
+      .from(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.id, job.fichierId ?? 0));
+    expect(fichier).toMatchObject({
+      collectiviteId,
+      filename: 'plan.csv',
+      hash: calculateDocumentHash(source),
+    });
 
     const generated = await app.get(GenerateImportDraftService).generate(jobId);
     expect(generated).toEqual({ success: true });
@@ -349,34 +493,21 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         qualitativeReview: 'ok',
       },
     });
-    expect(status.createdPlanId).toBeGreaterThan(0);
+    expect(status.createdPlanId).toBe(createdAtEnqueue);
 
-    const planId = status.createdPlanId;
-    if (planId === null) {
-      throw new Error('createdPlanId manquant après un import terminé');
-    }
-    createdPlanIds.push(planId);
+    const planId = createdAtEnqueue;
     expect(completePlanSecteursJobs).toContainEqual({
       planId,
-      collectiviteId: TEST_COLLECTIVITE_ID,
+      collectiviteId,
       passage: 1,
     });
 
-    const [plan] = await db.db
-      .select({
-        nom: axeTable.nom,
-        collectiviteId: axeTable.collectiviteId,
-        parent: axeTable.parent,
-        source: axeTable.source,
-        verifiedAt: axeTable.verifiedAt,
-      })
-      .from(axeTable)
-      .where(eq(axeTable.id, planId));
-    expect(plan).toMatchObject({
+    expect(await readPlan(planId)).toMatchObject({
       nom: 'Plan import IA complet',
-      collectiviteId: TEST_COLLECTIVITE_ID,
+      collectiviteId,
       parent: null,
       source: 'import_ia',
+      status: 'to_verify',
       verifiedAt: null,
     });
 
@@ -433,11 +564,14 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   });
 
   test('saute les vérifications et sous-actions quand elles sont désactivées', async () => {
-    const { jobId } = await enqueue({
-      planName: 'Plan import IA minimal',
-      withVerifications: 'false',
-      withSousActions: 'false',
-    });
+    const { jobId } = await enqueue(
+      {
+        planName: 'Plan import IA minimal',
+        withVerifications: 'false',
+        withSousActions: 'false',
+      },
+      { source: csvSource('minimal') }
+    );
 
     const generated = await app.get(GenerateImportDraftService).generate(jobId);
     expect(generated).toEqual({ success: true });
@@ -462,12 +596,96 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     if (planId === null) {
       throw new Error('createdPlanId manquant après un import terminé');
     }
-    createdPlanIds.push(planId);
 
     const actions = await fichesByTitreInPlan(planId, 'Action 1.1.1');
     expect(actions).toHaveLength(1);
 
     const sousActions = await fichesByTitreInPlan(planId, 'Sous-action A');
     expect(sousActions).toHaveLength(0);
+  });
+
+  test('demande confirmation avant de ré-importer un fichier dont le plan existe, dans la même collectivité seulement', async () => {
+    const source = csvSource('doublon');
+    const fields = {
+      planName: 'Plan import IA doublon',
+      withVerifications: 'false',
+      withSousActions: 'false',
+    };
+    const first = await enqueue(fields, { source });
+    await app.get(GenerateImportDraftService).generate(first.jobId);
+
+    const previous = await findPreviousImport({
+      hash: calculateDocumentHash(source),
+    });
+    expect(previous).toMatchObject({
+      planId: first.planId,
+      planNom: 'Plan import IA doublon',
+      planStatus: 'to_verify',
+    });
+    const { fichierId } = await readJob(first.jobId);
+    expect(await findPreviousImport({ fichierId: fichierId ?? 0 })).toEqual(
+      previous
+    );
+
+    const refused = await postImport({ fields, source });
+    expect(refused.status).toBe(409);
+
+    expect(
+      await findPreviousImport(
+        { hash: calculateDocumentHash(source) },
+        { asOther: true }
+      )
+    ).toBeNull();
+    const elsewhere = await enqueue(fields, { source, asOther: true });
+    await app.get(GenerateImportDraftService).generate(elsewhere.jobId);
+
+    const confirmed = await enqueue(
+      { ...fields, confirmReimport: 'true' },
+      { source }
+    );
+    expect(confirmed.planId).not.toBe(first.planId);
+    await app.get(GenerateImportDraftService).generate(confirmed.jobId);
+  });
+
+  test("garde le plan en échec quand l'import échoue, sans demander confirmation ensuite", async () => {
+    const source = csvSource('echec');
+    const fields = {
+      planName: 'Plan import IA en échec',
+      withVerifications: 'false',
+      withSousActions: 'false',
+    };
+    const { jobId, planId } = await enqueue(fields, { source });
+
+    await app
+      .get(GenerateImportDraftService)
+      .recordTerminalFailure(jobId, 'Échec simulé');
+
+    expect(await readPlan(planId)).toMatchObject({ status: 'failed' });
+    expect(
+      await findPreviousImport({ hash: calculateDocumentHash(source) })
+    ).toBeNull();
+
+    const retried = await enqueue(fields, { source });
+    await app.get(GenerateImportDraftService).generate(retried.jobId);
+  });
+
+  test('ne demande plus confirmation une fois le plan importé supprimé', async () => {
+    const source = csvSource('supprime');
+    const fields = {
+      planName: 'Plan import IA supprimé',
+      withVerifications: 'false',
+      withSousActions: 'false',
+    };
+    const { jobId, planId } = await enqueue(fields, { source });
+    await app.get(GenerateImportDraftService).generate(jobId);
+
+    await deletePlan(planId);
+    createdPlanIds.splice(createdPlanIds.indexOf(planId), 1);
+
+    expect(
+      await findPreviousImport({ hash: calculateDocumentHash(source) })
+    ).toBeNull();
+    const again = await enqueue(fields, { source });
+    await app.get(GenerateImportDraftService).generate(again.jobId);
   });
 });

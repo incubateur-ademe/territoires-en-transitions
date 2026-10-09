@@ -14,7 +14,10 @@ import {
   addAndEnableUserSuperAdminMode,
   addTestUser,
 } from '@tet/backend/users/users/users.test-fixture';
+import { seedTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { success } from '@tet/backend/utils/result.type';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, sql, SQL } from 'drizzle-orm';
@@ -325,14 +328,31 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
       createdAt: sql`now() - interval '25 hours'`,
     });
 
+    const fichier = await seedTestDocument({
+      databaseService: db,
+      collectiviteId: freshCollectiviteId,
+      filename: 'plan.csv',
+    });
+    const [plan] = await db.db
+      .insert(axeTable)
+      .values({ collectiviteId: freshCollectiviteId, nom: jobOptions.planName })
+      .returning({ id: axeTable.id });
+    onTestFinished(async () => {
+      await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+    });
+
     const created = await app.get(AiPlanImportJobRepository).createWithinQuotas(
       {
         collectiviteId: freshCollectiviteId,
         createdBy: editorId,
         sourcePath: `${freshCollectiviteId}/e2e`,
+        fichierId: fichier.id,
         options: jobOptions,
       },
-      { limitUserInFlight: true }
+      {
+        limitUserInFlight: true,
+        createPlan: async () => success(plan.id),
+      }
     );
 
     expect(created.success).toBe(true);

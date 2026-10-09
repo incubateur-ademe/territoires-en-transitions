@@ -9,6 +9,7 @@ describe('enqueueImportFormSchema', () => {
       withVerifications: true,
       withSousActions: true,
       disabledFields: [],
+      confirmReimport: false,
     });
   });
 
@@ -38,6 +39,7 @@ describe('enqueueImportFormSchema', () => {
       withVerifications: false,
       withSousActions: true,
       disabledFields: ['budget', 'statut'],
+      confirmReimport: false,
     });
   });
 

@@ -3,7 +3,7 @@ import {
   PlanCard,
   PlanCardDisplay,
 } from '@/app/plans/plans/components/card/plan.card';
-import { Plan } from '@tet/domain/plans';
+import { isPlanNavigable, Plan } from '@tet/domain/plans';
 
 const getPlanURL = ({
   collectiviteId,
@@ -32,7 +32,11 @@ export const PlanCardList = ({
         <PlanCard
           key={plan.id}
           plan={plan}
-          link={getPlanURL({ collectiviteId, planId: plan.id })}
+          link={
+            isPlanNavigable(plan)
+              ? getPlanURL({ collectiviteId, planId: plan.id })
+              : undefined
+          }
           display={display}
         />
       ))}

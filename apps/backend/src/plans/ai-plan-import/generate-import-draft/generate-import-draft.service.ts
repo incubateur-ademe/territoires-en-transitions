@@ -125,6 +125,18 @@ export class GenerateImportDraftService {
       draft,
     });
     if (marked.success) {
+      if (marked.data.createdPlanId !== null) {
+        // Le plan reste visible en échec : la collectivité le supprime.
+        const planFailed =
+          await this.planVerificationRepository.markAsImportFailed(
+            marked.data.createdPlanId
+          );
+        if (!planFailed.success) {
+          this.logger.error(
+            `Import ${jobId}: plan ${marked.data.createdPlanId} non passé en échec (${planFailed.error})`
+          );
+        }
+      }
       this.trackingService.capture({
         distinctId: marked.data.createdBy,
         event: EVENT_AI_PLAN_IMPORT_FAILED,
@@ -227,6 +239,13 @@ export class GenerateImportDraftService {
         if (!planId.success) {
           return planId;
         }
+        // Job lancé avant que le plan ne soit créé à l'enfilement.
+        if (job.createdPlanId === null) {
+          await this.planVerificationRepository.markAsImporting(
+            planId.data,
+            tx
+          );
+        }
         const marked = await this.planVerificationRepository.markAsImportedByAi(
           planId.data,
           tx
@@ -292,6 +311,7 @@ export class GenerateImportDraftService {
         planInput,
         collectiviteId: job.collectiviteId,
         user: buildRequesterUser(job.createdBy),
+        planId: job.createdPlanId ?? undefined,
         tx,
       });
       return saved.success

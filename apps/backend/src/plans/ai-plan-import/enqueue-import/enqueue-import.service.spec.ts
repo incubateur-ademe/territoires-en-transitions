@@ -1,6 +1,9 @@
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
+import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-plan.service';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
@@ -41,29 +44,50 @@ const job: AiPlanImportJob = {
   sourcePath: '10/abc',
   draft: null,
   error: null,
-  createdPlanId: null,
+  createdPlanId: 42,
+  fichierId: 7,
   createdAt: '2026-06-11T00:00:00Z',
   modifiedAt: '2026-06-11T00:00:00Z',
 };
 
 const toCsvFile = () => {
   const buffer = Buffer.from('axe,titre\n1,Action', 'utf-8');
-  return { buffer, mimeType: 'text/csv', size: buffer.length };
+  return {
+    buffer,
+    filename: 'plan.csv',
+    mimeType: 'text/csv',
+    size: buffer.length,
+  };
 };
 
 const toPdfDeclaredAsCsv = () => {
   const buffer = Buffer.from('%PDF-1.7\ncontenu', 'utf-8');
-  return { buffer, mimeType: 'text/csv', size: buffer.length };
+  return {
+    buffer,
+    filename: 'plan.csv',
+    mimeType: 'text/csv',
+    size: buffer.length,
+  };
 };
 
 const toBinaryDeclaredAsCsv = () => {
   const buffer = Buffer.from([0x00, 0x01, 0x02, 0x03]);
-  return { buffer, mimeType: 'text/csv', size: buffer.length };
+  return {
+    buffer,
+    filename: 'plan.csv',
+    mimeType: 'text/csv',
+    size: buffer.length,
+  };
 };
 
 const toTruncatedZip = () => {
   const buffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
-  return { buffer, mimeType: 'application/octet-stream', size: buffer.length };
+  return {
+    buffer,
+    filename: 'plan.xlsx',
+    mimeType: 'application/octet-stream',
+    size: buffer.length,
+  };
 };
 
 const toXlsxBomb = () => {
@@ -88,7 +112,12 @@ const toXlsxBomb = () => {
   endOfDirectory.writeUInt32LE(directory.length, 12);
   endOfDirectory.writeUInt32LE(localStub.length, 16);
   const buffer = Buffer.concat([localStub, directory, endOfDirectory]);
-  return { buffer, mimeType: 'application/octet-stream', size: buffer.length };
+  return {
+    buffer,
+    filename: 'plan.xlsx',
+    mimeType: 'application/octet-stream',
+    size: buffer.length,
+  };
 };
 
 type MockOverrides = {
@@ -97,6 +126,7 @@ type MockOverrides = {
   countInFlight?: number;
   planTypes?: { id: number }[];
   createWithinQuotas?: () => Promise<unknown>;
+  previousImport?: unknown;
   storeDocument?: () => Promise<unknown>;
   queueAdd?: () => Promise<unknown>;
 };
@@ -120,11 +150,24 @@ const buildService = (overrides: MockOverrides = {}) => {
     ) => Promise<unknown>
   >(overrides.createWithinQuotas ?? (async () => success(job)));
   const deleteIfPending = vi.fn(async () => success(undefined));
+  const findPreviousImport = vi.fn(async () =>
+    success(overrides.previousImport ?? null)
+  );
   const jobRepository = {
     countInFlight: vi.fn(async () => success(overrides.countInFlight ?? 0)),
     createWithinQuotas,
     deleteIfPending,
+    findPreviousImport,
   } as unknown as AiPlanImportJobRepository;
+
+  const uploadBuffer = vi.fn(async () => success({ id: 7 }));
+  const storeDocumentService = {
+    uploadBuffer,
+  } as unknown as StoreDocumentService;
+  const deleteImportingPlan = vi.fn(async () => success(undefined));
+  const planVerificationRepository = {
+    deleteImportingPlan,
+  } as unknown as PlanVerificationRepository;
 
   const storeDocument = vi.fn<
     (
@@ -154,6 +197,9 @@ const buildService = (overrides: MockOverrides = {}) => {
     documentStorage,
     listPlanTypesService,
     trackingService,
+    storeDocumentService,
+    {} as UpsertPlanService,
+    planVerificationRepository,
     queue
   );
 
@@ -162,6 +208,9 @@ const buildService = (overrides: MockOverrides = {}) => {
     capture,
     createWithinQuotas,
     deleteIfPending,
+    deleteImportingPlan,
+    findPreviousImport,
+    uploadBuffer,
     storeDocument,
     removeDocument,
     listPlanTypes,
@@ -180,7 +229,10 @@ describe('EnqueueImportService', () => {
       options,
     });
 
-    expect(result).toEqual({ success: true, data: { jobId: 'job-1' } });
+    expect(result).toEqual({
+      success: true,
+      data: { jobId: 'job-1', planId: 42 },
+    });
     expect(add).toHaveBeenCalledWith(
       'generate-import-draft',
       { jobId: 'job-1' },
@@ -229,6 +281,7 @@ describe('EnqueueImportService', () => {
 
       expect(createWithinQuotas.mock.calls[0][1]).toEqual({
         limitUserInFlight,
+        createPlan: expect.any(Function),
       });
     }
   );
@@ -413,7 +466,13 @@ describe('EnqueueImportService', () => {
   });
 
   it("supprime la ligne pending quand l'upload storage échoue", async () => {
-    const { service, deleteIfPending, removeDocument, add } = buildService({
+    const {
+      service,
+      deleteIfPending,
+      deleteImportingPlan,
+      removeDocument,
+      add,
+    } = buildService({
       storeDocument: async () =>
         failure(DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR),
     });
@@ -430,6 +489,7 @@ describe('EnqueueImportService', () => {
       error: AiPlanImportErrorEnum.STORAGE_ERROR,
     });
     expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(deleteImportingPlan).toHaveBeenCalledWith(42);
     expect(removeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
   });
@@ -463,5 +523,73 @@ describe('EnqueueImportService', () => {
       deleteIfPending.mock.invocationCallOrder[0]
     );
     expect(capture).not.toHaveBeenCalled();
+  });
+
+  it('range le fichier dans la bibliothèque et rattache sa ligne au job', async () => {
+    const { service, uploadBuffer, createWithinQuotas } = buildService();
+
+    await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(uploadBuffer).toHaveBeenCalledWith(
+      10,
+      expect.objectContaining({ originalname: 'plan.csv' }),
+      false,
+      user
+    );
+    expect(createWithinQuotas.mock.calls[0][0].fichierId).toBe(7);
+  });
+
+  it('refuse un fichier déjà importé dans un plan existant, sans effet de bord', async () => {
+    const { service, uploadBuffer, createWithinQuotas, add } = buildService({
+      previousImport: {
+        planId: 3,
+        planNom: 'Plan importé',
+        planStatus: 'to_verify',
+        importedAt: '2026-10-01T00:00:00Z',
+      },
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: AiPlanImportErrorEnum.ALREADY_IMPORTED,
+    });
+    expect(uploadBuffer).not.toHaveBeenCalled();
+    expect(createWithinQuotas).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it('relance un fichier déjà importé quand le ré-import est confirmé', async () => {
+    const { service, findPreviousImport, add } = buildService({
+      previousImport: {
+        planId: 3,
+        planNom: 'Plan importé',
+        planStatus: 'to_verify',
+        importedAt: '2026-10-01T00:00:00Z',
+      },
+    });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options,
+      confirmReimport: true,
+    });
+
+    expect(result).toMatchObject({ success: true });
+    expect(findPreviousImport).not.toHaveBeenCalled();
+    expect(add).toHaveBeenCalled();
   });
 });
