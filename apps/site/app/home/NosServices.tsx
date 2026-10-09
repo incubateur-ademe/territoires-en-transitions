@@ -77,7 +77,7 @@ export const NosServices = async () => {
           titre="Votre PCAET, de l’élaboration à l’adoption"
           description="Que votre démarche soit obligatoire ou volontaire, constituez votre dossier en équipe, transmettez-le pour avis et suivez son avancement."
           action={
-            <Button variant="primary" href="/demarche-pcaet">
+            <Button variant="outlined" href="/demarche-pcaet">
               Découvrir la démarche PCAET
             </Button>
           }
