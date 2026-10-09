@@ -1,6 +1,6 @@
-import { getCollectivite } from '@tet/api/collectivites/index.server';
 import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { notFound } from 'next/navigation';
+import { getCollectiviteForRequest } from './get-collectivite-for-request.server';
 import { ReactNode } from 'react';
 import z from 'zod';
 
@@ -28,7 +28,7 @@ export default async function StandardOnlyLayout({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  const collectivite = await getCollectivite(collectiviteId);
+  const { collectivite } = await getCollectiviteForRequest(collectiviteId);
 
   if (isServiceDeconcentre(collectivite.collectiviteType)) {
     notFound();

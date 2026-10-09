@@ -12,11 +12,12 @@ export const CollectiviteProviderStore = async ({
 }: {
   collectiviteId: number;
   /**
-   * Saisine désignée par l'URL d'un dossier. L'omettre rendrait au store — donc
-   * à la bannière — la saisine la plus récente au lieu de celle du dossier ouvert.
+   * Saisine désignée par l'URL d'un dossier ou par le dernier dossier ouvert.
+   * L'omettre rendrait au store — donc à la bannière — la saisine la plus
+   * récente au lieu de celle du dossier ouvert.
    */
   demandeAvisId?: number;
-  /** Démarche désignée par l'URL d'un dépôt en élaboration, sans saisine. */
+  /** Démarche désignée de la même façon pour un dépôt en élaboration. */
   demarcheId?: number;
   children: ReactNode;
 }) => {

@@ -10,6 +10,13 @@ import { useCollectiviteContext } from '@tet/api/collectivites';
 import { PcaetPerimetreSaisineEnum } from '@tet/domain/demarches';
 import { Button, Icon } from '@tet/ui';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+import {
+  clearDossierInstructionCookie,
+  serializeDossierInstructionCookie,
+  writeDossierInstructionCookie,
+} from './dossier-instruction-cookie';
+import { extractDossierInstructionRefFromPath } from './dossier-instruction-path';
 
 /**
  * Rappelle à l'agent d'un service qu'il n'est pas chez lui, et lui rend deux
@@ -24,15 +31,39 @@ import { usePathname } from 'next/navigation';
  *
  * Elle lit le contexte dans le store de collectivité, alimenté par le layout de
  * collectivité — même chemin que le header, qui vit au même niveau. Le contexte
- * est déduit de la saisine à chaque rendu, sans état de session : la bannière
- * survit donc à un rechargement comme à un lien partagé, et disparaît d'elle-même
- * hors des collectivités instruites.
+ * est déduit de la saisine à chaque rendu : la bannière survit donc à un
+ * rechargement comme à un lien partagé, et disparaît d'elle-même hors des
+ * collectivités instruites.
+ *
+ * Sur la route du dossier, elle mémorise celui-ci dans un cookie de session, que
+ * le layout de collectivité relit ailleurs dans la collectivité ; le retour à la
+ * liste des dossiers l'efface (cf. `dossier-instruction-cookie.ts`).
  */
 export const ContexteInstructionBanner = () => {
   const { collectivite } = useCollectiviteContext();
   const pathname = usePathname();
 
   const contexte = collectivite?.contexteInstruction;
+  const collectiviteId = collectivite?.collectiviteId;
+
+  // Sur toute route de dossier — y compris celle d'une démarche dont le
+  // contexte porte déjà une saisine —, c'est le dossier résolu qu'on mémorise.
+  // Une chaîne en dépendance plutôt que l'objet : le store renouvelle le
+  // contexte à chaque navigation sans qu'il change.
+  const dossierToRemember =
+    contexte && extractDossierInstructionRefFromPath(pathname)
+      ? serializeDossierInstructionCookie(
+          contexte.demandeAvisId !== null
+            ? { demandeAvisId: contexte.demandeAvisId }
+            : { demarcheId: contexte.demarcheId }
+        )
+      : null;
+  useEffect(() => {
+    if (collectiviteId !== undefined && dossierToRemember) {
+      writeDossierInstructionCookie(collectiviteId, dossierToRemember);
+    }
+  }, [collectiviteId, dossierToRemember]);
+
   if (!collectivite || !contexte) {
     return null;
   }
@@ -103,6 +134,9 @@ export const ContexteInstructionBanner = () => {
             variant="outlined"
             icon="arrow-left-line"
             dataTest="demarches.pcaet.instruction.contexte-banniere.retour"
+            onClick={() =>
+              clearDossierInstructionCookie(collectivite.collectiviteId)
+            }
             href={makeDemandesAvisUrl({
               collectiviteId: contexte.instructeur.collectiviteId,
             })}

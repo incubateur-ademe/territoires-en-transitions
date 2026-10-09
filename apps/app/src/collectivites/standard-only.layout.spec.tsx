@@ -2,8 +2,8 @@ import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 // `vi.mock` est remonté en tête du module : les doublures doivent l'être aussi.
-const { getCollectivite, notFound } = vi.hoisted(() => ({
-  getCollectivite: vi.fn(),
+const { getCollectiviteForRequest, notFound } = vi.hoisted(() => ({
+  getCollectiviteForRequest: vi.fn(),
   // `notFound()` interrompt le rendu en levant : la doublure doit en faire
   // autant, sinon le layout poursuivrait et rendrait les enfants d'un service.
   notFound: vi.fn(() => {
@@ -11,13 +11,17 @@ const { getCollectivite, notFound } = vi.hoisted(() => ({
   }),
 }));
 
-vi.mock('@tet/api/collectivites/index.server', () => ({ getCollectivite }));
+vi.mock('./get-collectivite-for-request.server', () => ({
+  getCollectiviteForRequest,
+}));
 vi.mock('next/navigation', () => ({ notFound }));
 
 import StandardOnlyLayout from './standard-only.layout';
 
 const rendre = (collectiviteType: string) => {
-  getCollectivite.mockResolvedValue({ collectiviteType });
+  getCollectiviteForRequest.mockResolvedValue({
+    collectivite: { collectiviteType },
+  });
   return StandardOnlyLayout({
     children: 'contenu',
     params: Promise.resolve({ collectiviteId: '42' }),
