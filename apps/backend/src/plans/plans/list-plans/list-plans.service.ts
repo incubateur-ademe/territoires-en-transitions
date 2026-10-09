@@ -86,6 +86,7 @@ export class ListPlansService {
         const verifiedAt = planResult.success
           ? planResult.data.verifiedAt
           : null;
+        const status = rootAxe.status;
 
         return {
           id: planId,
@@ -98,6 +99,7 @@ export class ListPlansService {
           createdAt: rootAxe.createdAt,
           source,
           verifiedAt,
+          status,
         } as Plan;
       })
     );

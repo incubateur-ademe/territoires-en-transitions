@@ -1,5 +1,6 @@
 import { BullModule } from '@nestjs/bullmq';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
+import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
@@ -17,6 +18,8 @@ import { EnqueueImportController } from './enqueue-import/enqueue-import.control
 import { EnqueueImportService } from './enqueue-import/enqueue-import.service';
 import { GenerateImportDraftService } from './generate-import-draft/generate-import-draft.service';
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
+import { FindPreviousImportRouter } from './find-previous-import/find-previous-import.router';
+import { FindPreviousImportService } from './find-previous-import/find-previous-import.service';
 import { GetImportStatusRouter } from './get-import-status/get-import-status.router';
 import { GetImportStatusService } from './get-import-status/get-import-status.service';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
@@ -26,6 +29,7 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
     LlmModule,
     TransactionModule,
     PlanModule,
+    forwardRef(() => CollectivitesModule),
     CompletePlanSecteursModule,
     PlansUtilsModule,
     UsersModule,
@@ -44,8 +48,10 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
     GenerateImportDraftWorker,
     GetImportStatusService,
     GetImportStatusRouter,
+    FindPreviousImportService,
+    FindPreviousImportRouter,
     NotifyPlanImportedService,
   ],
-  exports: [GetImportStatusRouter],
+  exports: [GetImportStatusRouter, FindPreviousImportRouter],
 })
 export class AiPlanImportModule {}

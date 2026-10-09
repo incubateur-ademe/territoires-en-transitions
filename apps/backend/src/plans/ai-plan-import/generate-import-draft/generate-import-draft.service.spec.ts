@@ -35,7 +35,8 @@ const job: AiPlanImportJob = {
   sourcePath: '10/abc',
   draft: null,
   error: null,
-  createdPlanId: null,
+  createdPlanId: 7,
+  fichierId: 3,
   createdAt: '2026-06-10T00:00:00Z',
   modifiedAt: '2026-06-10T00:00:00Z',
 };
@@ -125,8 +126,12 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   const importPlanService = { save } as unknown as ImportPlanService;
 
   const markAsImportedByAi = vi.fn(async () => success(undefined));
+  const markAsImporting = vi.fn(async () => success(undefined));
+  const markAsImportFailed = vi.fn(async () => success(undefined));
   const planVerificationRepository = {
     markAsImportedByAi,
+    markAsImporting,
+    markAsImportFailed,
   } as unknown as PlanVerificationRepository;
 
   const notifyPlanImported = vi.fn(async () => success(undefined));
@@ -157,6 +162,8 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     enqueueCompletePlanSecteursService,
     save,
     markAsImportedByAi,
+    markAsImporting,
+    markAsImportFailed,
     notifyPlanImported,
     removeDocument,
   };
@@ -176,7 +183,7 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
   );
 
 describe('GenerateImportDraftService', () => {
-  it('crée le plan, marque le job done avec le plan créé et supprime la source', async () => {
+  it('remplit le plan créé au lancement, marque le job done et supprime la source', async () => {
     const mocks = buildMocks();
     const service = buildService(mocks);
 
@@ -194,9 +201,11 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.save).toHaveBeenCalledWith(
       expect.objectContaining({
         collectiviteId: 10,
+        planId: 7,
         planInput: expect.objectContaining({ nom: 'Plan importé' }),
       })
     );
+    expect(mocks.markAsImporting).not.toHaveBeenCalled();
     expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'job-1', createdPlanId: 7 })
     );
@@ -430,5 +439,33 @@ describe('GenerateImportDraftService', () => {
     });
     // Rien n'est enregistré : pas d'événement pour un échec qui n'existe pas en base.
     expect(mocks.capture).not.toHaveBeenCalled();
+  });
+
+  it('passe le plan du job en échec quand le job échoue', async () => {
+    const mocks = buildMocks({
+      save: async () => failure({ message: 'Plan invalide' } as never),
+    });
+    const service = buildService(mocks);
+
+    await service.generate('job-1');
+
+    expect(mocks.markAsImportFailed).toHaveBeenCalledWith(7);
+  });
+
+  it("crée le plan d'un job lancé avant la création au lancement", async () => {
+    const legacyJob = { ...job, createdPlanId: null };
+    const mocks = buildMocks();
+    vi.mocked(mocks.jobRepository.transitionToRunning).mockResolvedValue(
+      success(legacyJob)
+    );
+    const service = buildService(mocks);
+
+    await service.generate('job-1');
+
+    expect(mocks.save).toHaveBeenCalledWith(
+      expect.objectContaining({ planId: undefined })
+    );
+    expect(mocks.markAsImporting).toHaveBeenCalledWith(7, {});
+    expect(mocks.markAsImportedByAi).toHaveBeenCalledWith(7, {});
   });
 });

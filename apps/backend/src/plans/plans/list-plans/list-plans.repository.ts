@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
-import { AxeLight } from '@tet/domain/plans';
+import { AxeLight, navigablePlanStatuses, PlanStatus } from '@tet/domain/plans';
 import {
   and,
   asc,
@@ -18,7 +18,7 @@ import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';
 import { ListPlansInput } from './list-plans.input';
 
 export type ListPlansRepositoryOutput = {
-  plans: AxeLight[];
+  plans: (AxeLight & { status: PlanStatus })[];
   totalCount: number;
 };
 
@@ -52,7 +52,7 @@ export class ListPlansRepository {
     tx?: Transaction
   ): Promise<Result<ListPlansRepositoryOutput, ListPlansError>> {
     try {
-      const { collectiviteId, typeIds, limit, page, sort } = input;
+      const { collectiviteId, typeIds, statuses, limit, page, sort } = input;
 
       const db = tx || this.databaseService.db;
 
@@ -66,7 +66,8 @@ export class ListPlansRepository {
           and(
             eq(axeTable.collectiviteId, collectiviteId),
             isNull(axeTable.parent),
-            typeIds?.length ? inArray(axeTable.typeId, typeIds) : undefined
+            typeIds?.length ? inArray(axeTable.typeId, typeIds) : undefined,
+            inArray(axeTable.status, statuses ?? navigablePlanStatuses)
           )
         )
         .orderBy(this.getSortOrderBy(sort))

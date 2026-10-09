@@ -50,6 +50,8 @@ export interface UniqueAxe {
 }
 
 export interface CreatePlanAggregateInput {
+  /** Plan déjà créé (vide) à remplir, plutôt qu'un nouveau plan. */
+  planId?: number;
   collectiviteId: number;
   nom: string;
   typeId?: number;

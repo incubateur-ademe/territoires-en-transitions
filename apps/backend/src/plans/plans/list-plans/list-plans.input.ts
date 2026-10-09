@@ -1,3 +1,4 @@
+import { planStatusValues } from '@tet/domain/plans';
 import { z } from 'zod';
 
 export const listPlansInputSchema = z.object({
@@ -5,6 +6,8 @@ export const listPlansInputSchema = z.object({
     .number()
     .positive("L'ID de la collectivité doit être positif"),
   typeIds: z.array(z.number().int().positive()).optional(),
+  /** Par défaut, les plans en cours d'import ou en échec sont écartés. */
+  statuses: z.array(z.enum(planStatusValues)).min(1).optional(),
   limit: z.number().min(1).max(1000).optional(),
   page: z.number().min(1).optional(),
   sort: z

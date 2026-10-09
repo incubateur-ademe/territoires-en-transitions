@@ -11,8 +11,13 @@ import {
 } from '@/app/plans/plans/show-plan/plan-arborescence.view/plan-axes.context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { useUser } from '@tet/api/users';
-import { isPlanPendingVerification, Plan } from '@tet/domain/plans';
-import { Button, Spacer, VisibleWhen } from '@tet/ui';
+import {
+  isPlanNavigable,
+  isPlanPendingVerification,
+  Plan,
+  PlanStatusEnum,
+} from '@tet/domain/plans';
+import { Alert, Button, Spacer, VisibleWhen } from '@tet/ui';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
@@ -39,6 +44,26 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
 
   if (!plan || !rootAxe) {
     return <div>{appLabels.planNonTrouve}</div>;
+  }
+
+  if (!isPlanNavigable(plan)) {
+    const isFailed = plan.status === PlanStatusEnum.FAILED;
+    return (
+      <Alert
+        className="m-6"
+        state={isFailed ? 'error' : 'info'}
+        title={
+          isFailed
+            ? appLabels.importPlanIaEchecCourt
+            : appLabels.importPlanIaEnCoursCourt
+        }
+        description={
+          isFailed
+            ? appLabels.importPlanIaEchecDescription
+            : appLabels.importPlanIaEnCoursDescription
+        }
+      />
+    );
   }
 
   return (

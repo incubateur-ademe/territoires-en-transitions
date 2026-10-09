@@ -6,8 +6,8 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DEMARCHE_PCAET_EN_COURS_STATUSES } from '@tet/domain/demarches';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { PlanSourceEnum } from '@tet/domain/plans';
-import { and, asc, eq, inArray, isNull, ne } from 'drizzle-orm';
+import { PlanStatusEnum } from '@tet/domain/plans';
+import { and, asc, eq, inArray, ne } from 'drizzle-orm';
 
 /** Autre démarche active tenant déjà un plan que l'on cherche à rattacher. */
 export type DemarcheHoldingPlan = {
@@ -60,9 +60,9 @@ export class DemarchePlanActionsRepository {
   }
 
   /**
-   * Plans rattachés importés par IA et pas encore vérifiés : ils se rattachent
-   * comme les autres, mais le programme d'actions n'est pas complet tant qu'il
-   * en reste.
+   * Plans rattachés importés par IA et pas encore vérifiés (ou encore en cours
+   * d'import) : ils se rattachent comme les autres, mais le programme
+   * d'actions n'est pas complet tant qu'il en reste.
    */
   async listUnverifiedByDemarcheIds(
     demarcheIds: number[],
@@ -83,8 +83,10 @@ export class DemarchePlanActionsRepository {
       .where(
         and(
           inArray(demarchePlanActionTable.demarcheId, demarcheIds),
-          eq(axeTable.source, PlanSourceEnum.IMPORT_IA),
-          isNull(axeTable.verifiedAt)
+          inArray(axeTable.status, [
+            PlanStatusEnum.IMPORTING,
+            PlanStatusEnum.TO_VERIFY,
+          ])
         )
       )
       .orderBy(asc(demarchePlanActionTable.planActionId));

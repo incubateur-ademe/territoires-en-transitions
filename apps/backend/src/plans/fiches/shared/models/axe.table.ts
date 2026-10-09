@@ -5,7 +5,7 @@ import {
   modifiedBy,
   TIMESTAMP_OPTIONS,
 } from '@tet/backend/utils/column.utils';
-import { planSourceValues } from '@tet/domain/plans';
+import { planSourceValues, planStatusValues } from '@tet/domain/plans';
 import {
   AnyPgColumn,
   date,
@@ -39,4 +39,7 @@ export const axeTable = pgTable('axe', {
   verifiedBy: uuid('verified_by').references(() => authUsersTable.id, {
     onDelete: 'set null',
   }),
+  status: text('status', { enum: planStatusValues })
+    .notNull()
+    .default('active'),
 });

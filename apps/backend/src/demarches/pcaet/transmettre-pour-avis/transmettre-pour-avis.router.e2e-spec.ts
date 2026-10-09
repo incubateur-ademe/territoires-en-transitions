@@ -15,7 +15,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { PlanSourceEnum } from '@tet/domain/plans';
+import { PlanSourceEnum, PlanStatusEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
@@ -376,7 +376,10 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
     await db.db
       .update(axeTable)
-      .set({ source: PlanSourceEnum.IMPORT_IA })
+      .set({
+        source: PlanSourceEnum.IMPORT_IA,
+        status: PlanStatusEnum.TO_VERIFY,
+      })
       .where(eq(axeTable.id, imported.id));
 
     const nonVerifie = await caller.demarches.pcaet.get({

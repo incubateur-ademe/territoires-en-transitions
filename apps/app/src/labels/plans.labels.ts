@@ -268,6 +268,22 @@ export const plansLabels = {
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
   importPlanIaEnCoursCourt: 'Import en cours',
+  importPlanIaEchecCourt: "Échec de l'import",
+  importPlanIaEchecDescription:
+    "L'import de ce plan a échoué : supprimez-le, puis relancez l'import.",
+  importPlanIaEnCoursDescription:
+    "Ce plan est en cours d'import : il sera accessible une fois l'import terminé.",
+  importPlanIaSupprimerPlanEchoue: 'Supprimer',
+  importPlanIaDejaImporteTitre: 'Ce fichier a déjà été importé',
+  importPlanIaDejaImporteDescription: ({
+    date,
+    planNom,
+  }: {
+    date: string;
+    planNom: string;
+  }) =>
+    `Il a été importé le ${date} dans le plan « ${planNom} », toujours présent. Relancer l'import créera un second plan.`,
+  importPlanIaRelancerQuandMeme: "Relancer l'import quand même",
   planImporteBanniereTitre: 'Plan importé automatiquement (version bêta)',
   planImporteBanniereAVerifier: 'À vérifier',
   planImporteBanniereDescription:

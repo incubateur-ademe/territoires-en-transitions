@@ -29,6 +29,8 @@ import {
   DemarchePcaetStatusEnum,
   isPublieDemarchePcaetStatus,
 } from '@tet/domain/demarches';
+import { useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { AutosaveBadge, EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { ComponentProps, PropsWithChildren, useState } from 'react';
@@ -98,6 +100,8 @@ export const DemarchePcaetDocumentsPage = () => {
   });
 
   const { mutate: downloadDocument } = useDownloadDocument();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const { isEnabled: isImportEnabled, isOngoing: isImportOngoing } =
     useImportProgramme();
@@ -150,23 +154,35 @@ export const DemarchePcaetDocumentsPage = () => {
 
   // Le programme d'actions déposé est déjà la source de l'import : on le
   // propose aussitôt, une fois le dépôt enregistré. Un import en cours
-  // l'emporte (un seul par collectivité), et sans rattachement possible le
-  // plan importé n'aurait pas sa place dans la démarche.
+  // l'emporte (un seul par collectivité), sans rattachement possible le plan
+  // importé n'aurait pas sa place dans la démarche, et un document déjà
+  // importé ne se re-propose pas.
   const addFichier = (
     documentId: string,
     fichierId: number,
     etape: DemarcheDocumentEtape
   ) =>
     addDocument(documentId, fichierId, etape, {
-      onSuccess: (depose) => {
+      onSuccess: async (depose) => {
         if (
-          documentId === PROGRAMME_ACTIONS_DOCUMENT_ID &&
-          isImportEnabled &&
-          !isImportOngoing &&
-          demarche.amontModifiable &&
-          depose.fichier &&
-          isAiImportAcceptedFilename(depose.fichier.filename)
+          documentId !== PROGRAMME_ACTIONS_DOCUMENT_ID ||
+          !isImportEnabled ||
+          isImportOngoing ||
+          !demarche.amontModifiable ||
+          !depose.fichier ||
+          !isAiImportAcceptedFilename(depose.fichier.filename)
         ) {
+          return;
+        }
+        const previousImport = await queryClient
+          .fetchQuery(
+            trpc.plans.aiImport.findPreviousAiImport.queryOptions(
+              { collectiviteId, fichierId },
+              { staleTime: 0 }
+            )
+          )
+          .catch(() => undefined);
+        if (previousImport === null) {
           setImportProposalFichierId(fichierId);
         }
       },

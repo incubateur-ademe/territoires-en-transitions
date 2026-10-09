@@ -2,6 +2,7 @@ import { Personne } from '../../collectivites';
 import { BudgetWithTotal } from '../fiches/fiche-budget.schema';
 import { PlanNode } from './flat-axe.schema';
 import { PlanSource } from './plan-source.enum.schema';
+import { PlanStatus } from './plan-status.enum.schema';
 import { PlanType } from './plan-type.schema';
 
 export type Plan = {
@@ -19,4 +20,5 @@ export type Plan = {
   totalFiches?: number;
   source?: PlanSource | null;
   verifiedAt?: string | null;
+  status: PlanStatus;
 };

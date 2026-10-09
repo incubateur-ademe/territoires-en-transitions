@@ -15,9 +15,14 @@ export type AiImportEnqueueInput = {
   instructions?: string;
   withVerifications: boolean;
   withSousActions: boolean;
+  /** Relance assumée de l'import d'un fichier déjà importé. */
+  confirmReimport?: boolean;
 };
 
-const enqueueResponseSchema = z.object({ jobId: z.string() });
+const enqueueResponseSchema = z.object({
+  jobId: z.string(),
+  planId: z.number(),
+});
 export type AiImportEnqueueResult = z.infer<typeof enqueueResponseSchema>;
 
 const makeEnqueueImportRoute = (collectiviteId: number): string =>
@@ -45,6 +50,9 @@ export const useEnqueueAiImport = (): UseMutationResult<
       }
       formData.append('withVerifications', String(input.withVerifications));
       formData.append('withSousActions', String(input.withSousActions));
+      if (input.confirmReimport) {
+        formData.append('confirmReimport', 'true');
+      }
 
       const response = await apiClient.postFormData({
         route: makeEnqueueImportRoute(input.collectiviteId),
@@ -52,12 +60,15 @@ export const useEnqueueAiImport = (): UseMutationResult<
       });
       return enqueueResponseSchema.parse(response);
     },
-    onSuccess: (_result, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: trpc.plans.aiImport.getCurrentAiImport.queryKey({
-          collectiviteId: variables.collectiviteId,
-        }),
-      });
+    onSuccess: (_result, { collectiviteId }) => {
+      // Le plan existe dès le lancement, en cours d'import.
+      for (const queryKey of [
+        trpc.plans.aiImport.getCurrentAiImport.queryKey({ collectiviteId }),
+        trpc.plans.aiImport.findPreviousAiImport.queryKey(),
+        trpc.plans.plans.list.queryKey({ collectiviteId }),
+      ]) {
+        queryClient.invalidateQueries({ queryKey });
+      }
     },
   });
 };

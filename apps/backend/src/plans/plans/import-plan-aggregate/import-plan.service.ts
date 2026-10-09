@@ -29,9 +29,11 @@ export class ImportPlanService {
     planInput: ImportPlanInput;
     collectiviteId: number;
     user: AuthenticatedUser;
+    /** Plan déjà créé (vide) à remplir ; un nouveau plan sinon. */
+    planId?: number;
     tx?: Transaction;
   }): Promise<Result<{ planId: number; fichesCount: number }, ImportErrors>> {
-    const { planInput, collectiviteId, user, tx } = args;
+    const { planInput, collectiviteId, user, planId, tx } = args;
 
     // 1. Validate business rules
     const validationResult = validateImportPlanInput(planInput);
@@ -79,7 +81,7 @@ export class ImportPlanService {
 
         // 2c. Create plan aggregate
         const planCreationResult = await this.planAggregate.create(
-          planCreationRequest.data,
+          { ...planCreationRequest.data, planId },
           user,
           transaction
         );
