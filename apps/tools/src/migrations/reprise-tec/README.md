@@ -411,6 +411,199 @@ s'il en trouve un :
 | un numéro de T&C inconnu (volet, cible, secteur, type de porteur, type d'action)              | l'ajouter à sa liste dans `listes-tec.ts`                                                                |
 | un titre de plus de 300 caractères, une description de plus de 20 000                         | décider quoi faire du texte : le script ne tronque pas                                                   |
 
+### 6. Importer les pièces des fiches
+
+Les fichiers et le « site web » de chaque action reprise deviennent
+des annexes de sa fiche. Les fichiers de T&C ne sont pas encore récupérés : un
+fichier est écrit sans son contenu, il s'affiche sur la fiche avec son nom et
+son téléchargement échoue. Les pièces des dossiers et les avis ne sont pas lus
+ici.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-pieces-fiches/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+| Dans T&C                                 | Dans TeT                                                                                                                                                               |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| fichier d'une action (document ou image) | une ligne de la bibliothèque de la collectivité (nom affiché, et nom de stockage T&C comme référence), réutilisée si elle existe ; une annexe de la fiche qui y pointe |
+| « site web » d'une action                | une annexe de la fiche avec un lien : l'adresse complète (`https://` ajouté s'il manque), titrée du nom du site sans `www.`                                            |
+| date de création de l'action             | « Modifié le » de l'annexe                                                                                                                                             |
+| (aucun déposant)                         | le compte « Territoires & Climat » (`00000000-0000-0000-0000-000000000002`), connexion bloquée : « Modifié le … par Territoires & Climat »                             |
+
+Le produit met « Modifié le » d'une fiche au jour même à chaque annexe : le
+script le lit avant d'écrire et le remet après, avec son auteur.
+
+Tout fichier et « site web » de la copie (actions reprises ou non) finit
+soit écrit, soit dans `ecarts`, une seule fois : le script le vérifie table par
+table avant d'écrire. Un « site web » est repéré par son action (`tec_id`) et
+la `precision` `url_site_web`.
+
+| Motif                 | Sens                                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `vitrine`             | fichier ou « site web » d'une action sans dossier (vitrine de T&C), non reprise                                     |
+| `doublon`             | fichier ou « site web » d'une action du doublon « définitif » d'un dossier ; seule la « mise en œuvre » est reprise |
+| `sans_etat_invisible` | fichier ou « site web » d'une action d'un dossier que l'import des dossiers a écarté pour ce motif                  |
+| `orphelin`            | fichier d'une action qui n'existe pas                                                                               |
+| `lien_invalide`       | « site web » d'une action reprise que le produit refuse (adresse qui n'est pas en http(s))                          |
+
+Une ligne d'une action écartée prend le motif que l'import des fiches a donné à
+son action. Le rapport compte les « site web » par collectivité, et nomme les
+fichiers posés sur une ligne de bibliothèque qui existait déjà (la fiche affiche
+alors le nom de cette ligne) et les « site web » refusés, avec leur adresse.
+
+#### Annuler les pièces des fiches
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-pieces-fiches/annuler.ts [--confirm]
+```
+
+Retire, d'après `lignes_ecrites`, les annexes que l'import a écrites, en
+remettant « Modifié le » de leurs fiches tel qu'il était, puis les lignes de
+bibliothèque que l'import a créées et auxquelles plus aucun document ne pointe,
+et enfin les traces et les écarts de l'étape. À lancer avant d'annuler l'import
+des fiches, qui refuse sinon.
+
+**Ce qu'elle laisse** : les lignes de bibliothèque qui existaient avant
+l'import, et celles qu'il a créées mais qu'un autre document utilise depuis
+(preuve, pièce de dossier, autre annexe) ; les lignes que le produit écrit dans
+l'historique des fiches à chaque annexe ajoutée ou retirée (l'annulation des
+fiches les retire). **Ce qu'elle emporte** : ce que la collectivité a changé
+sur les annexes reprises depuis l'import (le rapport les compte).
+
+#### Ce qui arrête l'import des pièces
+
+| Garde                                                               | Quoi faire                                                                   |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| aucune fiche reprise                                                | lancer d'abord l'import des fiches (étape 5)                                 |
+| une fiche qui doit recevoir un fichier ou un « site web » a disparu | décider au cas par cas : la fiche a été supprimée depuis l'import des fiches |
+| des annexes de la reprise existent déjà                             | l'import des pièces a déjà tourné : l'annuler d'abord                        |
+| le compte « Territoires & Climat » est absent ou sans nom           | le créer : une annexe exige un auteur                                        |
+| un nom de stockage T&C refusé comme référence par le produit        | décider quoi faire du fichier : le script ne renomme pas                     |
+
+### 6 bis. Importer les pièces des dossiers
+
+Les fichiers déposés sur chaque dossier repris (sur sa ligne et sur son doublon
+« définitif ») sont lus dans l'archive de T&C, déposés dans le stockage, et
+rangés dans le catalogue du dossier. Les avis rendus sont écrits, validés, avec
+leur PDF chez l'émetteur. Seules les références de la copie sont lues :
+l'archive ne sert qu'aux octets.
+
+```bash
+export SUPABASE_URL="http://..."              # l'API de stockage de TeT
+export SUPABASE_SERVICE_ROLE_KEY="..."        # pour déposer dans les buckets
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-pieces-dossiers/index.ts
+pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv>            # simulation, rien n'est déposé
+pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv> --confirm  # dépôt puis import
+```
+
+`--archive` est le dossier `Uploads/` de T&C (`Uploads/Demarches/…` y est
+`Demarches/…`) ; `--suivi`, le suivi ADEME de l'import des dossiers. Avec
+`--confirm`, les fichiers sont déposés **avant** la transaction, dans le bucket
+de leur collectivité, sous le nom de leur empreinte et en remplaçant l'objet
+existant, comme le produit : relancer après un échec redépose à l'identique.
+
+| Dans T&C                                          | Dans TeT                                                                                                                                      |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| un fichier de dossier                             | une ligne de la bibliothèque de la collectivité, référencée par l'empreinte sha256 de ses octets ; un objet de stockage                       |
+| le même contenu plusieurs fois                    | une seule pièce par dossier, temps et contenu (les copies du doublon « définitif » s'y fondent) ; une seule ligne de bibliothèque par contenu |
+| rubrique « dépôt pour avis »                      | l'amont du dossier, daté de la transmission                                                                                                   |
+| rubrique « dépôt définitif »                      | l'aval du dossier, daté de la publication                                                                                                     |
+| autre rubrique                                    | documents additionnels de l'amont, datés du jour de l'import                                                                                  |
+| fichier absent de l'archive                       | la pièce, avec le nom de stockage T&C comme référence et sans objet de stockage : elle s'affiche, son téléchargement échoue                   |
+| « Avis DREAL », « Avis CR » d'un dossier transmis | un avis validé au titre du préfet de région ou du président de région, sur la saisine principale de la DREAL ou de la région                  |
+| (aucun déposant)                                  | aucun : `modified_by` et `depose_par` vides                                                                                                   |
+
+**Le rangement.** Une case du catalogue ne reçoit qu'un PDF, du temps de la
+pièce, si la pièce concerne la collectivité (catalogue lu par le produit), et
+un seul fichier : le premier déposé. Le premier mot-clé trouvé dans le nom
+décide de la case (diagnostic, stratégie, programme d'actions, EES…). Une
+délibération va dans la case que dit son nom (engagement, arrêt, adoption),
+sinon dans celle de sa rubrique (arrêt pour le dépôt pour avis, adoption pour le
+dépôt définitif). Un nom générique (« PCAET »), seul fichier de son dépôt, va
+dans le PCAET global, et coche les pièces qu'il comprend d'office, comme dans
+l'app. Tout le reste va dans les documents additionnels.
+
+**Les avis.** Le PDF retenu (format lu sur les octets) est le seul PDF de
+l'avis, ou, parmi plusieurs, celui dont le nom dit avis, courrier ou signé (ni
+annexe, ni MRAe, ni réponse), de préférence celui qui nomme l'émetteur du titre,
+puis signé ou courrier, puis le plus ancien. Il va dans la bibliothèque et le
+bucket de l'émetteur, marqué confidentiel ; aucune copie chez la collectivité.
+Sa date : le suivi ADEME s'il tombe dans l'année qui suit la transmission (avis
+du préfet), puis une date écrite dans le nom du fichier, puis la date « envoi »
+de T&C, la première qui ne précède pas la transmission ; sinon, à moins d'un an
+avant, le jour de la transmission. Les autres fichiers de l'avis, et ceux d'un
+avis qui n'est pas écrit, vont aux documents de l'amont du dossier, rangés comme
+les autres pièces, après elles.
+
+Chaque fichier de dossier de la copie finit soit écrit, soit dans `ecarts`, une
+seule fois : le script le vérifie avant d'écrire. Une copie fondue dans une
+pièce ou un avis est écrite. Un avis qui n'est pas écrit laisse sur chacun de
+ses fichiers (écrits au dossier) un écart de `precision` `avis`.
+
+| Motif                    | Sens                                                                                                     |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| motif du dossier         | fichier d'un dossier que l'import des dossiers a écarté (`elaboration_remplacee`, `sans_etat_invisible`) |
+| `avis_sans_transmission` | (avis) dossier jamais transmis : pas de saisine, pas d'avis                                              |
+| `avis_sans_fichier`      | (avis) aucun de ses fichiers n'est dans l'archive                                                        |
+| `avis_sans_pdf`          | (avis) aucun de ses fichiers n'est un PDF (zip, 7z, image)                                               |
+| `avis_sans_courrier`     | (avis) plusieurs PDF, aucun dont le nom dit avis, courrier ou signé : des pièces du PCAET                |
+| `avis_anterieur`         | (avis) toutes ses dates précèdent la transmission de plus d'un an                                        |
+
+Le rapport donne le bilan, les écarts par motif, le rangement par case, les
+délibérations et les documents additionnels nommés, les pièces sans fichier,
+les avis par titre et par origine de leur date, et nomme les avis à plusieurs
+PDF (avec le fichier retenu), à un seul PDF dont le nom ne dit pas un avis, et
+datés du jour de la transmission ; enfin le volume déposé.
+
+**Les fichiers des fiches.** Les fichiers écrits par l'import des pièces des
+fiches (étape 6), avec le nom de stockage T&C pour référence, reçoivent
+l'empreinte de leurs octets et sont déposés dans le bucket de leur collectivité.
+Si la collectivité a déjà une ligne de bibliothèque de ce contenu (une pièce de
+dossier), l'annexe y pointe et la ligne de l'étape 6 est retirée. « Modifié le »
+des fiches est gardé. `correspondance` retient, pour chaque fichier T&C
+(`action_fichier`, `action_image`), sa ligne de bibliothèque.
+
+#### Annuler les pièces des dossiers
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-pieces-dossiers/annuler.ts [--confirm]
+```
+
+Retire, d'après `lignes_ecrites`, les avis, les pièces en case (inclusions
+comprises) et les documents additionnels que l'import a écrits ; remet aux
+fichiers des fiches leur nom de stockage T&C (celui qui avait rejoint une pièce
+de dossier retrouve sa propre ligne, sous un nouveau numéro) ; retire les lignes
+de bibliothèque créées auxquelles plus rien ne pointe, les traces et les écarts.
+Après la transaction, retire du stockage les fichiers **que la reprise a
+déposés** (les empreintes des lignes de bibliothèque qu'elle a créées) et
+qu'aucune ligne de bibliothèque ne référence plus ; un fichier que la
+collectivité a déposé elle-même n'est jamais retiré, même sans ligne de
+bibliothèque. Les fichiers d'un dépôt dont la transaction a échoué restent dans
+le stockage, sans ligne. En
+simulation, rien n'est retiré du stockage : le script compte. L'annulation des
+pièces des fiches et celle des saisines refusent tant que cette étape a écrit.
+
+**Ce qu'elle laisse** : les lignes de bibliothèque qui existaient avant
+l'import, ou qu'il a créées mais qu'un autre document utilise depuis ; la marque
+confidentielle posée sur une ligne d'émetteur déjà là. **Ce qu'elle emporte** :
+ce que les services ont changé sur les avis repris (le script compte les avis
+modifiés).
+
+#### Ce qui arrête l'import des pièces des dossiers
+
+Avant tout dépôt et toute écriture :
+
+| Garde                                                                                                      | Quoi faire                                                                                                |
+| ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris, aucune saisine ou aucune annexe reprise                                              | lancer d'abord l'import des dossiers (étape 2), des saisines (étape 4) et des pièces des fiches (étape 6) |
+| des pièces, avis ou lignes de bibliothèque de cette étape existent déjà                                    | l'import a déjà tourné : l'annuler d'abord                                                                |
+| l'archive n'a pas de dossier `Demarches/`                                                                  | vérifier `--archive` : c'est le dossier `Uploads/` de T&C                                                 |
+| une collectivité ou un émetteur qui doit recevoir un fichier n'a pas de bucket                             | le créer (`private.create_bucket`)                                                                        |
+| un avis à écrire sans saisine principale de la DREAL ou de la région (seulement une secondaire, ou aucune) | corriger les saisines avant l'import                                                                      |
+| une saisine principale qui a déjà un avis                                                                  | un service a déposé depuis l'import des saisines : décider au cas par cas                                 |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
