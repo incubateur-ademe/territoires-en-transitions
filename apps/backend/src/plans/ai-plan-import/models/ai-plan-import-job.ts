@@ -32,6 +32,8 @@ export type AiPlanImportJobOptions = {
   planType?: number;
   withVerifications: boolean;
   withSousActions: boolean;
+  /** Plan PCAET : l'import propose les secteurs réglementaires des actions. */
+  withSecteurs?: boolean;
   disabledFields: DisableableField[];
 };
 

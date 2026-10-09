@@ -8,6 +8,7 @@ import {
 } from '@tet/domain/plans';
 import { isNil } from 'es-toolkit';
 import Fuse from 'fuse.js';
+import { SecteursProposes } from '@tet/backend/plans/fiches/fiche-secteurs/secteurs-proposes';
 import { z } from 'zod';
 import { ParsedRow } from '../parsers/excel-parser';
 import { deduplicateStrings } from '../utils/deduplication.utils';
@@ -184,7 +185,10 @@ const rawParseSchema = z.object({
   indicateurs: z.any(),
 });
 
-type RawParsedAction = z.infer<typeof rawParseSchema>;
+type RawParsedAction = z.infer<typeof rawParseSchema> & {
+  /** Proposés par l'import IA ; jamais lus dans un fichier Excel. */
+  secteursProposes?: SecteursProposes;
+};
 
 export type ImportActionInput = Omit<RawParsedAction, 'sousTitreAction'>;
 

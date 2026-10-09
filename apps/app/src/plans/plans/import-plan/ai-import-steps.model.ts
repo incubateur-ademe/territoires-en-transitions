@@ -32,7 +32,8 @@ const STEP_RANK: Record<ImportStepName, number> = {
   scoring: 4,
   consolidation: 5,
   enrichment: 6,
-  qualitativeReview: 7,
+  secteurs: 7,
+  qualitativeReview: 8,
 };
 
 const STEP_ORDER = (Object.keys(STEP_RANK) as ImportStepName[]).sort(
