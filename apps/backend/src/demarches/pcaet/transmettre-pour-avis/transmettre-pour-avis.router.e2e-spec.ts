@@ -31,8 +31,9 @@ import {
   addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
   cloreTestInstructionPcaet,
-  completeTestDiagnosticPcaet,
+  completeTestDiagnosticIndicateursPcaet,
   completeTestDossierPcaet,
+  completeTestVulnerabilitePcaet,
   coverTestDocumentsPcaet,
 } from '../demarches-pcaet.test-fixture';
 
@@ -335,12 +336,22 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       })
     ).rejects.toThrow('DOSSIER_INCOMPLET');
 
-    // Les trois conditions réunies, la transition s'ouvre : la vulnérabilité
-    // du territoire n'exige rien et ne retient donc pas le dossier.
-    await completeTestDiagnosticPcaet(db, {
+    // Les indicateurs du diagnostic ne suffisent pas davantage : la
+    // vulnérabilité du territoire doit être déclarée pour chaque thématique du
+    // socle.
+    await completeTestDiagnosticIndicateursPcaet(db, {
       collectiviteId: collectivite.id,
       demarcheId: created.id,
     });
+
+    const sansVulnerabilite = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(listEnabledTransitions(sansVulnerabilite.transitions)).toEqual([]);
+
+    // Les quatre conditions réunies, la transition s'ouvre.
+    await completeTestVulnerabilitePcaet(db, { demarcheId: created.id });
 
     const transmise = await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,

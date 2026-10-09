@@ -367,23 +367,29 @@ export const demarchesLabels = {
     thematique,
     horizon,
     niveau,
+    isRequis,
   }: {
     thematique: string;
     horizon: string;
     niveau: string;
-  }) => `${thematique}, ${horizon} : ${niveau}`,
+    isRequis: boolean;
+  }) => `${thematique}, ${horizon} : ${niveau}${isRequis ? ', requis' : ''}`,
   demarcheVulnerabiliteCelluleObjectifs: ({
     thematique,
     horizon,
     renseigne,
+    isRequis,
   }: {
     thematique: string;
     horizon: string;
     renseigne: boolean;
+    isRequis: boolean;
   }) =>
     `${thematique}, objectifs ${horizon} : ${
       renseigne ? 'renseignés' : 'non renseignés'
-    }`,
+    }${isRequis ? ', requis' : ''}`,
+  demarcheVulnerabiliteRequisLegende:
+    'Les cellules marquées d’une étoile sont requises : les trois niveaux de chaque thématique du socle, et un objectif sur chaque horizon où le territoire est concerné.',
   demarcheVulnerabiliteCelluleThematique: ({ label }: { label: string }) =>
     `Renommer la thématique ${label}`,
   demarcheVulnerabiliteAjouterThematique: 'Ajouter une thématique',

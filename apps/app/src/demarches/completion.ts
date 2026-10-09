@@ -4,6 +4,7 @@ import {
   isDemarcheDossierDocumentsComplet,
   isDemarchePcaetDiagnosticComplet,
   isPcaetDiagnosticIndicateurComplet,
+  isPcaetDiagnosticVulnerabiliteComplete,
   type DemarcheDocumentsSnapshot,
   type PcaetDiagnostic,
   type PcaetDiagnosticIndicateurParentConfig,
@@ -52,9 +53,11 @@ export const getDiagnosticIndicateurTopicStatut = (
         })
       );
 
-/** La vulnérabilité n'exige rien : toujours optionnelle. */
-export const getDiagnosticVulnerabiliteTopicStatut =
-  (): DemarcheCompletionStatut => 'optional';
+/** Badge de l'onglet vulnérabilité : chaque thématique du socle renseignée. */
+export const getDiagnosticVulnerabiliteTopicStatut = (
+  vulnerabilite: PcaetDiagnostic['vulnerabilite']
+): DemarcheCompletionStatut =>
+  toStatut(isPcaetDiagnosticVulnerabiliteComplete(vulnerabilite));
 
 /**
  * Avancement du dossier, pour les badges du parcours d'élaboration. Ce qui est

@@ -414,20 +414,38 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
     ).toBe(false);
   });
 
-  it('ignore la vulnérabilité dans le calcul de complétude', () => {
+  it('exige que chaque thématique requise de la vulnérabilité soit renseignée', () => {
+    const eau = {
+      id: 1,
+      code: 'eau',
+      label: 'Eau',
+      parentId: null,
+      requis: true,
+      isSocle: true,
+    };
+
+    expect(
+      isDemarchePcaetDiagnosticComplet(
+        diagnostic({
+          vulnerabilite: { ...vulnerabiliteTopic(), thematiques: [eau] },
+        })
+      )
+    ).toBe(false);
+
     expect(
       isDemarchePcaetDiagnosticComplet(
         diagnostic({
           vulnerabilite: {
             ...vulnerabiliteTopic(),
-            thematiques: [
+            thematiques: [eau],
+            lignes: [
               {
-                id: 1,
-                code: 'eau',
-                label: 'Eau',
-                parentId: null,
-                requis: true,
-                isSocle: true,
+                thematiqueId: 1,
+                niveauMaintenant: 'faible',
+                niveau2050: 'non_concerne',
+                niveau2100: 'non_concerne',
+                objectifs2050: null,
+                objectifs2100: null,
               },
             ],
           },
@@ -442,7 +460,7 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
         diagnostic({
           indicateurParentConfigs: [
             parentConfig(),
-            parentConfig({ code: 'sequestration', optional: true }),
+            parentConfig({ code: 'volet_optionnel', optional: true }),
           ],
         })
       )

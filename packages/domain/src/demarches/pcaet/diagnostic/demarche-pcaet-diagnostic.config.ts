@@ -374,7 +374,6 @@ const SEQUESTRATION_CARBONE = {
   code: 'sequestration',
   label: 'Séquestration carbone',
   icon: 'seedling-line',
-  optional: true,
 
   indicateurDefinitionId: 'cae_63.a',
   referenceYearApplyLevel: 'child',
@@ -382,22 +381,22 @@ const SEQUESTRATION_CARBONE = {
     {
       label: 'Forêt',
       indicateurDefinitionId: 'cae_63.b',
-      optionalYears: 'all',
+      optionalYears: [2050],
     },
     {
       label: 'Sols agricoles (terres cultivées et prairies)',
       indicateurDefinitionId: 'cae_63.c',
-      optionalYears: 'all',
+      optionalYears: [2050],
     },
     {
       label: 'Produits bois',
       indicateurDefinitionId: 'cae_63.e',
-      optionalYears: 'all',
+      optionalYears: [2050],
     },
     {
       label: 'Autres sols',
       indicateurDefinitionId: 'cae_63.d',
-      optionalYears: 'all',
+      optionalYears: [2050],
     },
   ],
 } as const satisfies PcaetDiagnosticIndicateurParentConfig;

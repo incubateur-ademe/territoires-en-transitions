@@ -14,6 +14,7 @@ export * from './pcaet/diagnostic/demarche-pcaet-diagnostic.schema';
 export * from './pcaet/diagnostic/demarche-pcaet-diagnostic.config';
 export * from './pcaet/diagnostic/demarche-pcaet-topic-kind.enum.schema';
 export * from './pcaet/diagnostic/demarche-pcaet-vulnerabilite-niveau.enum.schema';
+export * from './pcaet/diagnostic/demarche-pcaet-vulnerabilite.rules';
 export * from './pcaet/diagnostic/demarche-pcaet-vulnerabilite.schema';
 export * from './pcaet/pcaet-assujettissement.rules';
 export * from './pcaet/pcaet-avis-au-titre-de.enum.schema';

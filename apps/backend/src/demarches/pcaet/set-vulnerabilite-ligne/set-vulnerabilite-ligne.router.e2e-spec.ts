@@ -12,8 +12,9 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import {
   attachTestPlanToDemarchePcaet,
-  completeTestDiagnosticPcaet,
+  completeTestDiagnosticIndicateursPcaet,
   completeTestDossierPcaet,
+  completeTestVulnerabilitePcaet,
   coverTestDocumentsPcaet,
   createDemarche,
 } from '../demarches-pcaet.test-fixture';
@@ -237,7 +238,7 @@ describe('Vulnérabilité du territoire', () => {
     ).rejects.toThrow();
   });
 
-  test('La vulnérabilité ne conditionne pas la complétude du diagnostic', async () => {
+  test('La vulnérabilité conditionne la complétude du diagnostic', async () => {
     const { caller, collectiviteId, demarche } = await createDemarche(db, router);
     await attachTestPlanToDemarchePcaet(db, {
       collectiviteId,
@@ -247,18 +248,27 @@ describe('Vulnérabilité du territoire', () => {
       collectiviteId,
       demarcheId: demarche.id,
     });
-    await completeTestDiagnosticPcaet(db, {
+    await completeTestDiagnosticIndicateursPcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,
     });
 
-    // Rien n'est obligatoire dans ce volet : la transmission s'ouvre sans
-    // qu'une seule thématique ait été renseignée.
+    // Tout est renseigné sauf la vulnérabilité : la transmission reste fermée.
     const sansVulnerabilite = await caller.demarches.pcaet.get({
       collectiviteId,
       demarcheId: demarche.id,
     });
-    expect(listEnabledTransitions(sansVulnerabilite.transitions)).toContain(
+    expect(listEnabledTransitions(sansVulnerabilite.transitions)).not.toContain(
+      'transmettre_pour_avis'
+    );
+
+    await completeTestVulnerabilitePcaet(db, { demarcheId: demarche.id });
+
+    const avecVulnerabilite = await caller.demarches.pcaet.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    expect(listEnabledTransitions(avecVulnerabilite.transitions)).toContain(
       'transmettre_pour_avis'
     );
   });

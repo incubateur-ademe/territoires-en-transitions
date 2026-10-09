@@ -157,6 +157,7 @@ const valeursCompletes = (): PcaetDiagnostic['indicateurValeurs'] => [
   ),
 ];
 
+/** Socle d'une thématique, renseignée « non concerné » : le volet est complet. */
 const topicVulnerabilite = (): PcaetDiagnostic['vulnerabilite'] => ({
   code: 'vulnerabilite_territoire',
   label: 'Vulnérabilité du territoire',
@@ -175,13 +176,23 @@ const topicVulnerabilite = (): PcaetDiagnostic['vulnerabilite'] => ({
   lignes: [
     {
       thematiqueId: 1,
-      niveauMaintenant: null,
-      niveau2050: null,
-      niveau2100: null,
+      niveauMaintenant: 'non_concerne',
+      niveau2050: 'non_concerne',
+      niveau2100: 'non_concerne',
       objectifs2050: null,
       objectifs2100: null,
     },
   ],
+});
+
+const topicVulnerabiliteVierge = (): PcaetDiagnostic['vulnerabilite'] => ({
+  ...topicVulnerabilite(),
+  lignes: topicVulnerabilite().lignes.map((ligne) => ({
+    ...ligne,
+    niveauMaintenant: null,
+    niveau2050: null,
+    niveau2100: null,
+  })),
 });
 
 const completeDiagnostic = (
@@ -279,16 +290,16 @@ describe('getDemarchePcaetCompletion', () => {
     expect(completion.diagnostic).toBe('incomplete');
   });
 
-  it('laisse le diagnostic complet même si la vulnérabilité du territoire est vide : rien n’y est exigé', () => {
+  it('passe le diagnostic en incomplete tant qu’une thématique du socle de la vulnérabilité est vide', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       completeDiagnostic({
-        vulnerabilite: topicVulnerabilite(),
+        vulnerabilite: topicVulnerabiliteVierge(),
       }),
       completeSnapshot
     );
 
-    expect(completion.diagnostic).toBe('complete');
+    expect(completion.diagnostic).toBe('incomplete');
   });
 
   it("passe le plan en incomplete quand aucun plan d'action n'est associé", () => {
@@ -412,7 +423,12 @@ describe('getDiagnosticIndicateurTopicStatut', () => {
 });
 
 describe('getDiagnosticVulnerabiliteTopicStatut', () => {
-  it('annonce toujours optionnel le topic vulnérabilité', () => {
-    expect(getDiagnosticVulnerabiliteTopicStatut()).toBe('optional');
+  it('reprend la saisie des thématiques du socle', () => {
+    expect(getDiagnosticVulnerabiliteTopicStatut(topicVulnerabilite())).toBe(
+      'complete'
+    );
+    expect(
+      getDiagnosticVulnerabiliteTopicStatut(topicVulnerabiliteVierge())
+    ).toBe('incomplete');
   });
 });
