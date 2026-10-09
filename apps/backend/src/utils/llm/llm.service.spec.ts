@@ -1,6 +1,7 @@
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
+import { recordLlmCalls } from './llm-call-recorder';
 import { LlmCallEvent, LlmObserver } from './llm-observer';
 import { LlmService } from './llm.service';
 import {
@@ -177,5 +178,53 @@ describe('LlmService', () => {
     await service.generateText({ prompt: 'p' });
 
     expect(observer.events[0].error?.kind).toBe('truncated');
+  });
+
+  describe('recordLlmCalls', () => {
+    it("rattache chaque tentative, avec palier et modèle, à l'enregistrement en cours", async () => {
+      const repository = new FakeRepository();
+      repository.complete = vi
+        .fn()
+        .mockResolvedValueOnce(failure({ kind: 'rate_limited' }))
+        .mockResolvedValueOnce(success({ completed: true, text: '{}', usage }));
+      const service = new LlmService(repository);
+
+      const { calls } = await recordLlmCalls(() =>
+        service.generateStructured({
+          prompt: 'p',
+          tier: 'light',
+          schema: z.object({}),
+        })
+      );
+
+      expect(calls).toEqual([
+        expect.objectContaining({
+          tier: 'light',
+          model: 'fake',
+          attempt: 1,
+          usage: null,
+          error: { kind: 'rate_limited' },
+        }),
+        expect.objectContaining({ attempt: 2, usage, error: null }),
+      ]);
+    });
+
+    it('sépare deux enregistrements concurrents et ignore les appels hors enregistrement', async () => {
+      const service = new LlmService(new FakeRepository());
+      const call = () =>
+        service.generateStructured({ prompt: 'p', schema: z.object({}) });
+
+      const [first, second] = await Promise.all([
+        recordLlmCalls(async () => {
+          await call();
+          await call();
+        }),
+        recordLlmCalls(() => call()),
+        call(),
+      ]);
+
+      expect(first.calls).toHaveLength(2);
+      expect(second.calls).toHaveLength(1);
+    });
   });
 });

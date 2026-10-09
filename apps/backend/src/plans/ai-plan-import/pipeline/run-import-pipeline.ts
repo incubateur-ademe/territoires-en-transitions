@@ -23,9 +23,11 @@ import {
   sumTokenUsage,
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
+import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
 import { ExtractedAction } from '../models/extracted-action';
+import type { ImportStepRun } from '../models/import-step-run';
 import { PlanDraft } from '../models/plan-draft';
 import { consolidateActions } from './consolidate-actions/consolidate-actions';
 import { enrichSousActions } from './enrich-sous-actions/enrich-sous-actions';
@@ -102,6 +104,8 @@ export type RunImportPipelineInput = {
   withSousActions: boolean;
   signal?: AbortSignal;
   onStepStatesChange?: (stepStates: Readonly<StepStates>) => Promise<void>;
+  /** Chaque étape terminée, passée ou en échec : durée, appels, comptes. */
+  onStepRun?: (run: ImportStepRun) => Promise<void>;
 };
 
 export type PipelineOutcome =
@@ -137,6 +141,8 @@ type StepProduce = {
   review?: string;
   tokens: TokenUsage;
   warnings?: string[];
+  /** Comptes propres à l'étape, pour la télémétrie. */
+  details?: Record<string, number>;
 };
 
 type StepGo =
@@ -150,7 +156,24 @@ export const runImportPipeline = async (
   const reportProgress = (stepStates: StepStates): Promise<void> =>
     input.onStepStatesChange?.(stepStates) ?? Promise.resolve();
 
+  const reportStepRun = (run: ImportStepRun): Promise<void> =>
+    input.onStepRun?.(run) ?? Promise.resolve();
+
+  const readingStartedAt = new Date();
   const read = readSource(llm, input.document);
+  await reportStepRun({
+    step: 'reading',
+    status: read.success ? 'ok' : 'failed',
+    startedAt: readingStartedAt,
+    endedAt: new Date(),
+    calls: [],
+    details: read.success
+      ? read.data.units
+        ? { units: read.data.units.length }
+        : { chunks: read.data.chunks.length }
+      : {},
+    error: read.success ? null : read.error.kind,
+  });
   if (!read.success) {
     return failed(initialProgress(), 'reading', read.error);
   }
@@ -163,6 +186,7 @@ export const runImportPipeline = async (
   // Écarter ce qui ne contient pas d'action et relever le squelette du plan :
   // seulement quand le document est lu par unités.
   const scouted = await runStep({
+    reportStepRun,
     progress: afterReading,
     name: 'scouting',
     skipWhen: units === null,
@@ -179,6 +203,10 @@ export const runImportPipeline = async (
       return success({
         tokens: result.data.tokens,
         warnings: result.data.warnings,
+        details: {
+          keptUnits: result.data.keptUnits.length,
+          discardedUnits: result.data.discardedCount,
+        },
       });
     },
   });
@@ -189,6 +217,7 @@ export const runImportPipeline = async (
   // relevée à l'extraction reste valable pour elles.
   let source: SourceChunks = { chunks, chunkIndexByAction: [] };
   const extracted = await runStep({
+    reportStepRun,
     progress: scouted.progress,
     name: 'extraction',
     run: async () => {
@@ -224,6 +253,7 @@ export const runImportPipeline = async (
   // Rattacher chaque action au squelette et fondre les doublons : des
   // extraits lus séparément ne se coordonnent pas seuls.
   const hierarchized = await runStep({
+    reportStepRun,
     progress: extracted.progress,
     name: 'hierarchy',
     skipWhen: units === null || skeleton === null,
@@ -264,6 +294,7 @@ export const runImportPipeline = async (
   }
 
   const scored = await runStep({
+    reportStepRun,
     progress: structured,
     name: 'scoring',
     skipWhen: !input.withVerifications,
@@ -274,6 +305,7 @@ export const runImportPipeline = async (
   await reportProgress(scored.progress.stepStates);
 
   const consolidated = await runStep({
+    reportStepRun,
     progress: scored.progress,
     name: 'consolidation',
     skipWhen: !input.withVerifications,
@@ -289,6 +321,7 @@ export const runImportPipeline = async (
   await reportProgress(consolidated.progress.stepStates);
 
   const enriched = await runStep({
+    reportStepRun,
     progress: consolidated.progress,
     name: 'enrichment',
     skipWhen: !input.withSousActions,
@@ -305,6 +338,7 @@ export const runImportPipeline = async (
   await reportProgress(enriched.progress.stepStates);
 
   const reviewed = await runStep({
+    reportStepRun,
     progress: enriched.progress,
     name: 'qualitativeReview',
     run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
@@ -316,6 +350,7 @@ export const runImportPipeline = async (
 };
 
 type RunStepArgs = {
+  reportStepRun: (run: ImportStepRun) => Promise<void>;
   progress: Progress;
   name: StepName;
   run: (
@@ -326,17 +361,59 @@ type RunStepArgs = {
 };
 
 const runStep = async ({
+  reportStepRun,
   progress,
   name,
   run,
   skipWhen = false,
   onSkip,
 }: RunStepArgs): Promise<StepGo> => {
+  const startedAt = new Date();
   if (skipWhen) {
     const skipped = onSkip ? onSkip(progress) : progress;
+    await reportStepRun({
+      step: name,
+      status: 'skipped',
+      startedAt,
+      endedAt: startedAt,
+      calls: [],
+      details: {},
+      error: null,
+    });
     return { success: true, progress: markSkipped(skipped, name) };
   }
-  const result = await run(progress.actions);
+
+  const recorded = await recordLlmCalls(() => run(progress.actions)).catch(
+    async (error: unknown) => {
+      await reportStepRun({
+        step: name,
+        status: 'failed',
+        startedAt,
+        endedAt: new Date(),
+        calls: [],
+        details: { actionsIn: progress.actions.length },
+        error: 'interrupted',
+      });
+      throw error;
+    }
+  );
+  const { result, calls } = recorded;
+  await reportStepRun({
+    step: name,
+    status: result.success ? 'ok' : 'failed',
+    startedAt,
+    endedAt: new Date(),
+    calls,
+    details: {
+      actionsIn: progress.actions.length,
+      ...(result.success && {
+        actionsOut: (result.data.actions ?? progress.actions).length,
+        warnings: result.data.warnings?.length ?? 0,
+        ...result.data.details,
+      }),
+    },
+    error: result.success ? null : result.error.kind,
+  });
   if (!result.success) {
     return { success: false, outcome: failed(progress, name, result.error) };
   }

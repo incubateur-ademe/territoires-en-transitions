@@ -8,6 +8,7 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { PlanStatusEnum } from '@tet/domain/plans';
 import { and, count, desc, eq, gt, inArray, ne, sql } from 'drizzle-orm';
+import { ImportJobStats } from './models/import-job-stats';
 import { PlanDraft } from './models/plan-draft';
 import {
   AiPlanImportJob,
@@ -318,6 +319,7 @@ export class AiPlanImportJobRepository {
       patch: {
         status: AiPlanImportJobStatusEnum.RUNNING,
         error: null,
+        startedAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
       },
       allowedFromStatuses: [AiPlanImportJobStatusEnum.PENDING],
@@ -340,6 +342,7 @@ export class AiPlanImportJobRepository {
     draft: PlanDraft;
     stepStates: StepStates;
     createdPlanId: number;
+    stats?: ImportJobStats;
     tx?: Transaction;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.updateAndReturn({
@@ -349,6 +352,8 @@ export class AiPlanImportJobRepository {
         draft: input.draft,
         stepStates: input.stepStates,
         createdPlanId: input.createdPlanId,
+        stats: input.stats,
+        finishedAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
       },
       allowedFromStatuses: [AiPlanImportJobStatusEnum.RUNNING],
@@ -361,6 +366,7 @@ export class AiPlanImportJobRepository {
     error: string;
     stepStates: StepStates;
     draft?: PlanDraft;
+    stats?: ImportJobStats;
   }): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     return this.updateAndReturn({
       id: input.id,
@@ -369,6 +375,8 @@ export class AiPlanImportJobRepository {
         error: input.error,
         stepStates: input.stepStates,
         draft: input.draft,
+        stats: input.stats,
+        finishedAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),
       },
       allowedFromStatuses: [

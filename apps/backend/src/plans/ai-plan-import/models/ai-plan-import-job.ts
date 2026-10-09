@@ -3,6 +3,7 @@ import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
 import { StepStates } from '../pipeline/run-import-pipeline';
 import { DisableableField } from './disableable-field';
+import { ImportJobStats } from './import-job-stats';
 import { PlanDraft } from './plan-draft';
 
 export const aiPlanImportJobStatusValues = [
@@ -46,6 +47,9 @@ export type AiPlanImportJob = {
   error: string | null;
   createdPlanId: number | null;
   fichierId: number | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  stats: ImportJobStats | null;
   createdAt: string;
   modifiedAt: string;
 };
