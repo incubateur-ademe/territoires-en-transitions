@@ -635,6 +635,7 @@ export const VulnerabiliteTable = ({
     );
 
   const parentAjout = ajout?.parent ?? null;
+  const isAjoutRacineOuvert = ajout !== null && ajout.parent === null;
 
   return (
     <div>
@@ -776,14 +777,14 @@ export const VulnerabiliteTable = ({
                 </Fragment>
               );
             })}
-            {!isReadonly && ajout !== null && ajout.parent === null && (
+            {!isReadonly && isAjoutRacineOuvert && (
               <AjouterThematiqueRow
                 parent={null}
                 onAdd={(label) => addThematique(label)}
                 onClose={() => fermerAjout(null)}
               />
             )}
-            {!isReadonly && !(ajout !== null && ajout.parent === null) && (
+            {!isReadonly && !isAjoutRacineOuvert && (
               <tr>
                 <td
                   colSpan={1 + NIVEAU_COLUMNS.length + OBJECTIF_COLUMNS.length}
