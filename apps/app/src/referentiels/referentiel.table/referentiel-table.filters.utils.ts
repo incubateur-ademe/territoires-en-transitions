@@ -1,5 +1,4 @@
 import { Row } from '@tanstack/react-table';
-import { ReferentielTableFeatures } from './utils';
 import {
   ActionTypeEnum,
   getParentId,
@@ -9,6 +8,7 @@ import {
 } from '@tet/domain/referentiels';
 import { ActionListItem } from '../actions/use-list-actions';
 import { scoreRangeBoundaries } from './referentiel-table.score-ranges';
+import { ReferentielTableFeatures } from './utils';
 
 /** Supprime les balises HTML d'un texte riche */
 function stripHtml(html: string): string {
@@ -165,6 +165,99 @@ export function getLabelsFilterFn(
 
   const labels = row.getValue<ReferentielLabel[]>(columnId) ?? [];
   return labels.includes(filterValue[0] as ReferentielLabel);
+}
+
+/**
+ * Cherche une action vérifiant le prédicat en remontant la hiérarchie depuis
+ * l'action donnée (incluse) : une ligne hérite ainsi des valeurs de ses parents.
+ */
+function someActionInLineage(
+  actionId: string,
+  actions: Record<string, ActionListItem>,
+  predicate: (action: ActionListItem) => boolean
+): boolean {
+  let currentId: string | null = actionId;
+  while (currentId) {
+    const action = actions[currentId];
+    if (action && predicate(action)) return true;
+    currentId = getParentId({ actionId: currentId });
+  }
+  return false;
+}
+
+export function getAdaptationFilterFn(actions: Record<string, ActionListItem>) {
+  return (
+    row: Row<ReferentielTableFeatures, ActionListItem>,
+    _columnId: string,
+    filterValue: string[]
+  ) => {
+    if (!filterValue?.length) return true;
+
+    return someActionInLineage(
+      row.original.actionId,
+      actions,
+      ({ adaptationNiveau }) =>
+        !!adaptationNiveau && filterValue.includes(adaptationNiveau)
+    );
+  };
+}
+
+export const LabellisationGoldEnum = {
+  AVEC: 'avec',
+  SANS: 'sans',
+} as const;
+
+export type LabellisationGold =
+  (typeof LabellisationGoldEnum)[keyof typeof LabellisationGoldEnum];
+
+/** Le tag coremeasure est porté par la mesure : pas de valeurs ailleurs. */
+export function getLabellisationGoldValue(
+  action: ActionListItem
+): LabellisationGold | null {
+  if (action.actionType !== ActionTypeEnum.ACTION) return null;
+  return action.isCoremeasure
+    ? LabellisationGoldEnum.AVEC
+    : LabellisationGoldEnum.SANS;
+}
+
+export function getLabellisationGoldFilterFn(
+  actions: Record<string, ActionListItem>
+) {
+  return (
+    row: Row<ReferentielTableFeatures, ActionListItem>,
+    _columnId: string,
+    filterValue: string[]
+  ) => {
+    if (!filterValue?.length) return true;
+
+    const actionData = findNearestActionOfType(
+      row.original.actionId,
+      ActionTypeEnum.ACTION,
+      actions
+    );
+    if (!actionData) return false;
+
+    return filterValue.includes(getLabellisationGoldValue(actionData) ?? '');
+  };
+}
+
+export function getThematiquesFilterFn(
+  actions: Record<string, ActionListItem>
+) {
+  return (
+    row: Row<ReferentielTableFeatures, ActionListItem>,
+    _columnId: string,
+    filterValue: string[]
+  ) => {
+    if (!filterValue?.length) return true;
+
+    return someActionInLineage(
+      row.original.actionId,
+      actions,
+      ({ thematiques }) =>
+        thematiques.some(({ ref }) => filterValue.includes(ref))
+    );
+  };
 }
 
 export function getServicesFilterFn(actions: Record<string, ActionListItem>) {

@@ -42,11 +42,33 @@ const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'fiches', label: 'Actions liées', default: false },
 ] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
-const LABELS_COLUMN_OPTION = {
-  id: 'labels',
-  label: appLabels.referentielTableColonneLabels,
-  default: true,
-} as const satisfies { id: string; label: string; default: boolean };
+// Colonnes propres aux nouveaux référentiels, placées après "Phase".
+const NEW_REFERENTIEL_COLUMN_OPTIONS = [
+  {
+    id: 'labels',
+    label: appLabels.referentielTableColonneLabels,
+    default: true,
+  },
+  {
+    id: 'thematiques',
+    label: appLabels.thematique({ plural: true }),
+    default: false,
+  },
+  {
+    id: 'adaptation',
+    label: appLabels.referentielTableColonneAdaptation,
+    default: false,
+  },
+] as const satisfies readonly { id: string; label: string; default: boolean }[];
+
+// Colonnes propres aux nouveaux référentiels, placées après "Actions liées".
+const NEW_REFERENTIEL_TRAILING_COLUMN_OPTIONS = [
+  {
+    id: 'labellisationGold',
+    label: appLabels.referentielTableColonneLabellisationGold,
+    default: false,
+  },
+] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
 const AUDIT_STATUT_COLUMN_OPTION = {
   id: 'auditStatut',
@@ -80,7 +102,8 @@ function getAuditColumnOptions(
 
 export type ReferentielTableColumnId =
   | (typeof REFERENTIEL_TABLE_COLUMN_OPTIONS)[number]['id']
-  | (typeof LABELS_COLUMN_OPTION)['id']
+  | (typeof NEW_REFERENTIEL_COLUMN_OPTIONS)[number]['id']
+  | (typeof NEW_REFERENTIEL_TRAILING_COLUMN_OPTIONS)[number]['id']
   | (typeof AUDIT_STATUT_COLUMN_OPTION)['id']
   | (typeof AUDIT_CONDUCT_COLUMN_OPTIONS)[number]['id'];
 
@@ -140,14 +163,16 @@ export function useReferentielTableColumnVisibility({
       ];
     }
 
-    // "Volets" doit apparaître juste après "Phase" dans le sélecteur.
+    // "Volets" et les colonnes suivantes doivent apparaître juste après
+    // "Phase" dans le sélecteur.
     const categorieIndex = REFERENTIEL_TABLE_COLUMN_OPTIONS.findIndex(
       ({ id }) => id === 'categorie'
     );
     return [
       ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(0, categorieIndex + 1),
-      LABELS_COLUMN_OPTION,
+      ...NEW_REFERENTIEL_COLUMN_OPTIONS,
       ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(categorieIndex + 1),
+      ...NEW_REFERENTIEL_TRAILING_COLUMN_OPTIONS,
       ...getAuditColumnOptions(auditColumnsScope),
     ];
   }, [auditColumnsScope, referentielId]);

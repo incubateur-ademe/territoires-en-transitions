@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { getServiceRoleUser } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
@@ -19,7 +20,6 @@ import {
   getAnonUser,
   getAuthUserFromUserCredentials,
 } from '../../../test/auth-utils';
-import { getServiceRoleUser } from '@tet/backend/test';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
@@ -133,8 +133,9 @@ describe('ActionStatutListRouter', () => {
       referentielId: 'eci' as const,
     };
 
-    const result =
-      await caller.referentiels.actions.listActionsGroupedById(input);
+    const result = await caller.referentiels.actions.listActionsGroupedById(
+      input
+    );
     const actionsGroupedById = result.actionsById;
 
     const actionTypes: ActionType[] = [
@@ -213,7 +214,7 @@ describe('ActionStatutListRouter', () => {
     });
   });
 
-  test("La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et remonte dans `hiddenActions`", async () => {
+  test('La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et remonte dans `hiddenActions`', async () => {
     const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
       databaseService,
       {
@@ -244,7 +245,9 @@ describe('ActionStatutListRouter', () => {
 
     await caller.referentiels.snapshots.computeAndUpsert(input);
 
-    const result = await caller.referentiels.actions.listActionsGroupedById(input);
+    const result = await caller.referentiels.actions.listActionsGroupedById(
+      input
+    );
     expect(result.actionsById['te_1.1.1']).toBeUndefined();
     expect(result.hiddenActions).toEqual(
       expect.arrayContaining([
@@ -347,6 +350,54 @@ describe('ActionStatutListRouter', () => {
     });
   });
 
+  test('Retourne les labels, le tag coremeasure et les thématiques des mesures du référentiel TE', async () => {
+    const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+
+    const input = {
+      collectiviteId: collectivite.id,
+      referentielId: ReferentielIdEnum.TE,
+    };
+
+    onTestFinished(async () => {
+      await cleanup();
+    });
+
+    await resetDisplayPreferences(collectivite.id);
+
+    await caller.referentiels.snapshots.computeAndUpsert(input);
+
+    const { actionsById } =
+      await caller.referentiels.actions.listActionsGroupedById(input);
+
+    const mesure = actionsById['te_1.1.1'];
+    expect(mesure.labels).toEqual(['te_cae']);
+    expect(mesure.isCoremeasure).toBe(true);
+    expect(mesure.thematiques).toHaveLength(3);
+    expect(mesure.thematiques).toEqual(
+      expect.arrayContaining([
+        { ref: 'biodiversite', nom: 'Biodiversité' },
+        { ref: 'dechets', nom: 'Déchets' },
+        { ref: 'qualite_air', nom: "Qualité de l'air" },
+      ])
+    );
+
+    // les tags sont portés par la mesure, pas par l'axe
+    const axe = actionsById['te_1'];
+    expect(axe.labels).toEqual([]);
+    expect(axe.isCoremeasure).toBe(false);
+    expect(axe.thematiques).toEqual([]);
+  });
+
   test('ECI ne retourne pas de hiddenActions', async () => {
     const caller = router.createCaller({ user: testUser });
 
@@ -355,7 +406,9 @@ describe('ActionStatutListRouter', () => {
       referentielId: 'eci' as const,
     };
 
-    const result = await caller.referentiels.actions.listActionsGroupedById(input);
+    const result = await caller.referentiels.actions.listActionsGroupedById(
+      input
+    );
     expect(result.hiddenActions).toEqual([]);
     expect(Object.keys(result.actionsById).length).toBeGreaterThan(0);
   });
@@ -363,11 +416,10 @@ describe('ActionStatutListRouter', () => {
   test('List CAE action summaries down to tache', async () => {
     const caller = router.createCaller({ user: testUser });
 
-    const result =
-      await caller.referentiels.actions.listActionsGroupedById({
-        collectiviteId: 1,
-        referentielId: ReferentielIdEnum.CAE,
-      });
+    const result = await caller.referentiels.actions.listActionsGroupedById({
+      collectiviteId: 1,
+      referentielId: ReferentielIdEnum.CAE,
+    });
     const actionsGroupedById = result.actionsById;
 
     const entries = Object.entries(actionsGroupedById);

@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { ActionListItem } from '../actions/use-list-actions';
 import { AuditColumnsScope } from './audit-columns-scope';
+import { ReferentielTableAdaptationCell } from './referentiel-table.adaptation.cell';
 import { ReferentielTableAuditNotesCell } from './referentiel-table.audit-notes.cell';
 import { ReferentielTableAuditOrdreDuJourCell } from './referentiel-table.audit-ordre-du-jour.cell';
 import { ReferentielTableAuditStatutCell } from './referentiel-table.audit-statut.cell';
@@ -17,24 +18,32 @@ import { ReferentielTableDocumentsCell } from './referentiel-table.documents.cel
 import { ReferentielTableExplicationCell } from './referentiel-table.explication.cell';
 import { ReferentielTableFichesCell } from './referentiel-table.fiches.cell';
 import {
+  getAdaptationFilterFn,
   getCategorieFilterFn,
   getExplicationFilterFn,
+  getLabellisationGoldFilterFn,
+  getLabellisationGoldValue,
   getLabelsFilterFn,
   getPilotesFilterFn,
   getScoreRangeFilterFn,
   getServicesFilterFn,
   getStatutFilterFn,
+  getThematiquesFilterFn,
 } from './referentiel-table.filters.utils';
 import {
+  AdaptationHeaderFilter,
   CategorieHeaderFilter,
   ExplicationHeaderFilter,
   IntituleHeaderFilter,
+  LabellisationGoldHeaderFilter,
   LabelsHeaderFilter,
   PilotesHeaderFilter,
   ScoreRangeHeaderFilter,
   ServicesHeaderFilter,
   StatutHeaderFilter,
+  ThematiquesHeaderFilter,
 } from './referentiel-table.header-filters';
+import { ReferentielTableLabellisationGoldCell } from './referentiel-table.labellisation-gold.cell';
 import { ReferentielTableLabelsCell } from './referentiel-table.labels.cell';
 import { ReferentielTablePersonnesPilotesCell } from './referentiel-table.personnes-pilotes.cell';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
@@ -42,6 +51,7 @@ import { ReferentielTableProgressionCell } from './referentiel-table.progression
 import { ReferentielTableServicesPilotesCell } from './referentiel-table.services-pilotes.cell';
 import { ReferentielTableStatutDetailleCell } from './referentiel-table.statut-detaille.cell';
 import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
+import { ReferentielTableThematiquesCell } from './referentiel-table.thematiques.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
 import { ReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 import { ReferentielTableFeatures } from './utils';
@@ -94,16 +104,29 @@ const getAuditColumns = (auditColumnsScope: AuditColumnsScope) =>
     .with('all', () => [getAuditStatutColumn(), ...getAuditConductColumns()])
     .exhaustive();
 
+/** Options du filtre "Thématique" : les thématiques portées par les actions */
+const getThematiqueOptions = (actions: Record<string, ActionListItem>) => {
+  const nomByRef = new Map<string, string>();
+  Object.values(actions).forEach(({ thematiques }) =>
+    thematiques?.forEach(({ ref, nom }) => nomByRef.set(ref, nom))
+  );
+  return [...nomByRef.entries()]
+    .map(([value, label]) => ({ value, label }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'fr'));
+};
+
 const getColumns = ({
   actions,
   filtersState,
   auditColumnsScope,
   referentielId,
+  thematiqueOptions,
 }: {
   actions: Record<string, ActionListItem>;
   filtersState: ReferentielTableFiltersState;
   auditColumnsScope: AuditColumnsScope;
   referentielId: ReferentielId;
+  thematiqueOptions: { value: string; label: string }[];
 }) =>
   columnHelper.columns([
     columnHelper.accessor('nom', {
@@ -151,7 +174,7 @@ const getColumns = ({
     }),
 
     ...(isNewReferentiel(referentielId)
-      ? [
+      ? columnHelper.columns([
           columnHelper.accessor('labels', {
             header: () => (
               <TableHeaderCell
@@ -168,7 +191,43 @@ const getColumns = ({
             cell: (info) => <ReferentielTableLabelsCell info={info} />,
             filterFn: getLabelsFilterFn,
           }),
-        ]
+
+          columnHelper.accessor('thematiques', {
+            header: () => (
+              <TableHeaderCell
+                title={appLabels.thematique({ plural: true })}
+                className={cn('w-48')}
+                filter={
+                  <ThematiquesHeaderFilter
+                    filters={filtersState.filters}
+                    setFilters={filtersState.setFilters}
+                    options={thematiqueOptions}
+                  />
+                }
+              />
+            ),
+            cell: (info) => <ReferentielTableThematiquesCell info={info} />,
+            filterFn: getThematiquesFilterFn(actions),
+          }),
+
+          columnHelper.accessor('adaptationNiveau', {
+            id: 'adaptation',
+            header: () => (
+              <TableHeaderCell
+                title={appLabels.referentielTableColonneAdaptation}
+                className={cn('w-40')}
+                filter={
+                  <AdaptationHeaderFilter
+                    filters={filtersState.filters}
+                    setFilters={filtersState.setFilters}
+                  />
+                }
+              />
+            ),
+            cell: (info) => <ReferentielTableAdaptationCell info={info} />,
+            filterFn: getAdaptationFilterFn(actions),
+          }),
+        ])
       : []),
 
     columnHelper.accessor((row) => row.score.pointPotentiel, {
@@ -482,6 +541,30 @@ const getColumns = ({
       cell: (info) => <ReferentielTableFichesCell info={info} />,
     }),
 
+    ...(isNewReferentiel(referentielId)
+      ? columnHelper.columns([
+          columnHelper.accessor(getLabellisationGoldValue, {
+            id: 'labellisationGold',
+            header: () => (
+              <TableHeaderCell
+                title={appLabels.referentielTableColonneLabellisationGold}
+                className={cn('w-40')}
+                filter={
+                  <LabellisationGoldHeaderFilter
+                    filters={filtersState.filters}
+                    setFilters={filtersState.setFilters}
+                  />
+                }
+              />
+            ),
+            cell: (info) => (
+              <ReferentielTableLabellisationGoldCell info={info} />
+            ),
+            filterFn: getLabellisationGoldFilterFn(actions),
+          }),
+        ])
+      : []),
+
     ...getAuditColumns(auditColumnsScope),
   ]);
 
@@ -503,6 +586,7 @@ export function useListReferentielTableColumns({
         filtersState,
         auditColumnsScope,
         referentielId,
+        thematiqueOptions: getThematiqueOptions(actions),
       }),
     [actions, filtersState, auditColumnsScope, referentielId]
   );
