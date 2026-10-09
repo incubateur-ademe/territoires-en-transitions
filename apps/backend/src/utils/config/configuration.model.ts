@@ -220,10 +220,27 @@ export const backendConfigurationSchema = z
       .string()
       .optional()
       .describe('Url du webhook pour les notifications Mattermost'),
+    // Requis sauf si QUEUE_REDIS_URL est fourni (cf. superRefine) : le Redis
+    // managé Scaleway exige utilisateur, mot de passe et TLS, que seule l'URL
+    // porte.
     QUEUE_REDIS_HOST: z
       .string()
-      .min(1)
-      .describe('Host du serveur Redis pour les queues Bull'),
+      .optional()
+      .describe(
+        'Host du serveur Redis pour les queues Bull, sans authentification (dev local, CI)'
+      ),
+    QUEUE_REDIS_URL: z
+      .string()
+      .optional()
+      .describe(
+        'URL Redis complète des queues Bull (redis:// ou rediss://user:password@host:port) ; prime sur QUEUE_REDIS_HOST et QUEUE_REDIS_PORT'
+      ),
+    QUEUE_REDIS_TLS_CA: z
+      .string()
+      .optional()
+      .describe(
+        'Certificat PEM du cluster Redis, épinglé en rediss:// ; requis pour un Redis managé Scaleway, dont le certificat est auto-signé'
+      ),
     QUEUE_REDIS_PORT: z.coerce
       .number()
       .int()
@@ -374,6 +391,14 @@ export const backendConfigurationSchema = z
   // à l'activation, sans impacter les environnements où le provider est désactivé.
   .superRefine((config, ctx) => {
     const values = config as Record<string, unknown>;
+
+    if (!config.QUEUE_REDIS_HOST && !config.QUEUE_REDIS_URL) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['QUEUE_REDIS_HOST'],
+        message: 'QUEUE_REDIS_HOST ou QUEUE_REDIS_URL est requis',
+      });
+    }
     const requisParProvider: Array<[boolean, string[]]> = [
       [
         config.PRO_CONNECT_ENABLED,

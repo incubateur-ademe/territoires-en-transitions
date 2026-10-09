@@ -21,6 +21,7 @@ import { DatabaseModule } from './utils/database/database.module';
 import { EchartsModule } from './utils/echarts/echarts.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
 import { NotificationsModule } from './utils/notifications/notifications.module';
+import { buildQueueRedisConnection } from './utils/config/build-queue-redis-connection';
 import { TrackingModule } from './utils/tracking/tracking.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
@@ -49,10 +50,18 @@ const appLogger = new Logger('AppModule');
     BullModule.forRootAsync({
       imports: [ConfigurationModule],
       useFactory: async (config: ConfigurationService) => {
-        const host = config.get('QUEUE_REDIS_HOST');
-        const port = config.get('QUEUE_REDIS_PORT');
+        const connection = buildQueueRedisConnection({
+          QUEUE_REDIS_HOST: config.get('QUEUE_REDIS_HOST'),
+          QUEUE_REDIS_PORT: config.get('QUEUE_REDIS_PORT'),
+          QUEUE_REDIS_URL: config.get('QUEUE_REDIS_URL'),
+          QUEUE_REDIS_TLS_CA: config.get('QUEUE_REDIS_TLS_CA'),
+        });
 
-        appLogger.log(`Connecting to Redis at ${host}:${port}`);
+        appLogger.log(
+          `Connecting to Redis at ${connection.host}:${connection.port}${
+            connection.tls ? ' (TLS)' : ''
+          }`
+        );
 
         // Under Vitest, several apps can coexist in one worker process (the
         // shared app plus option-built ones) and spin up the same @Processor
@@ -65,7 +74,7 @@ const appLogger = new Logger('AppModule');
           : undefined;
 
         return {
-          connection: { host, port },
+          connection,
           ...(prefix ? { prefix } : {}),
         };
       },
