@@ -36,7 +36,7 @@ import {
   type TableCellProps,
 } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   useDemarchePcaetVulnerabilite,
   type AddThematiqueFailure,
@@ -99,6 +99,9 @@ const NiveauSelect = ({
   />
 );
 
+/** Séparateurs verticaux, comme sur le tableau des pièces attendues. */
+const cellBorderClassName = 'border-r border-grey-4';
+
 /**
  * Cellule de niveau. Vide au repos, avec une affordance atténuée plutôt
  * qu'invisible : au survol seul, seize lignes de cellules paraissaient
@@ -121,7 +124,7 @@ const NiveauCell = ({
   onChange: (next: DemarchePcaetVulnerabiliteNiveau | null) => void;
 }) => (
   <TableCell
-    className="group/niveau"
+    className={cn('group/niveau', cellBorderClassName)}
     canEdit={!isReadonly}
     // Sans nom composé, les 48 cellules du tableau sont homonymes au lecteur
     // d'écran : ni la thématique ni l'horizon ne ressortent du badge seul.
@@ -193,7 +196,7 @@ const ObjectifCell = ({
 
   return (
     <TableCell
-      className="align-top"
+      className={cellBorderClassName}
       canEdit={!isReadonly}
       aria-label={appLabels.demarcheVulnerabiliteCelluleObjectifs({
         thematique: thematiqueLabel,
@@ -223,7 +226,7 @@ const ObjectifCell = ({
     >
       <span
         className={`line-clamp-3 text-sm ${
-          value ? 'text-primary-9' : 'text-grey-8'
+          value ? 'text-primary-9' : 'text-grey-7'
         }`}
       >
         {value || (isReadonly ? '' : appLabels.demarcheVulnerabiliteObjectifs)}
@@ -239,15 +242,15 @@ const ObjectifCell = ({
 };
 
 /**
- * Ajout d'une thématique, ou d'une sous-thématique quand une parente est
- * donnée. La modale ne se ferme qu'au succès : un libellé refusé doit pouvoir
- * être corrigé sans le ressaisir.
+ * Ajout d'une sous-thématique, depuis la case de sa parente. La modale ne se
+ * ferme qu'au succès : un libellé refusé doit pouvoir être corrigé sans le
+ * ressaisir.
  */
-const AjouterThematiqueModal = ({
+const AjouterSousThematiqueModal = ({
   parent,
   onAdd,
 }: {
-  parent?: DemarchePcaetVulnerabiliteThematique;
+  parent: DemarchePcaetVulnerabiliteThematique;
   onAdd: (label: string) => Promise<AddThematiqueFailure | null>;
 }) => {
   const [label, setLabel] = useState('');
@@ -257,14 +260,10 @@ const AjouterThematiqueModal = ({
   // ferait pointer `aria-describedby` sur le message d'une autre.
   const erreurId = useId();
 
-  const titre = parent
-    ? appLabels.demarcheVulnerabiliteAjouterSousThematiqueNomme({
-        parent: parent.label,
-      })
-    : appLabels.demarcheVulnerabiliteAjouterThematique;
-  const nomDuChamp = parent
-    ? appLabels.demarcheVulnerabiliteNomSousThematique
-    : appLabels.demarcheVulnerabiliteNomThematique;
+  const titre = appLabels.demarcheVulnerabiliteAjouterSousThematiqueNomme({
+    parent: parent.label,
+  });
+  const nomDuChamp = appLabels.demarcheVulnerabiliteNomSousThematique;
 
   const soumettre = async (close: () => void) => {
     const trimmed = label.trim();
@@ -329,28 +328,119 @@ const AjouterThematiqueModal = ({
         </form>
       )}
     >
-      {parent ? (
-        // Dans la case de la parente, le libellé ne tiendrait pas : l'icône
-        // porte le nom accessible, comme la corbeille voisine.
-        <Button
-          icon="add-line"
-          variant="white"
-          size="xs"
-          className="text-grey-8 opacity-60 transition-opacity hover:text-info-1 group-hover:opacity-100 group-focus-within:opacity-100"
-          aria-label={titre}
-          title={appLabels.demarcheVulnerabiliteAjouterSousThematique}
-          dataTest={`demarches.pcaet.vulnerabilite.ajouter-sous-thematique-button-${parent.id}`}
-        />
-      ) : (
-        <Button
-          icon="add-line"
-          size="sm"
-          dataTest="demarches.pcaet.vulnerabilite.ajouter-thematique-button"
-        >
-          {appLabels.demarcheVulnerabiliteAjouterThematique}
-        </Button>
-      )}
+      {/*
+        Dans la case de la parente, le libellé ne tiendrait pas : l'icône
+        porte le nom accessible, comme la corbeille voisine.
+      */}
+      <Button
+        icon="add-line"
+        variant="white"
+        size="xs"
+        className="text-grey-8 opacity-60 transition-opacity hover:text-info-1 group-hover:opacity-100 group-focus-within:opacity-100"
+        aria-label={titre}
+        title={appLabels.demarcheVulnerabiliteAjouterSousThematique}
+        dataTest={`demarches.pcaet.vulnerabilite.ajouter-sous-thematique-button-${parent.id}`}
+      />
     </Modal>
+  );
+};
+
+/**
+ * Ligne ouverte par « Ajouter une thématique » : son nom s'écrit sur place, comme
+ * celui d'une pièce additionnelle. Vide, elle disparaît ; saisie, elle s'ajoute au
+ * blur ou à Entrée. Un libellé refusé garde la ligne ouverte pour être corrigé.
+ */
+const AjouterThematiqueRow = ({
+  onAdd,
+  onClose,
+}: {
+  onAdd: (label: string) => Promise<AddThematiqueFailure | null>;
+  onClose: () => void;
+}) => {
+  const [valeur, setValeur] = useState('');
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const erreurId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const soumettre = async () => {
+    const trimmed = valeur.trim();
+    if (trimmed.length === 0) {
+      onClose();
+      return;
+    }
+    if (isPending) {
+      return;
+    }
+    setIsPending(true);
+    setErreur(null);
+    const echec = await onAdd(trimmed);
+    setIsPending(false);
+    if (echec === null) {
+      onClose();
+      return;
+    }
+    setErreur(
+      echec === 'THEMATIQUE_DEJA_EXISTANT'
+        ? appLabels.demarcheVulnerabiliteThematiqueDejaExistant
+        : appLabels.mutationError
+    );
+  };
+
+  return (
+    <TableRow data-test="demarches.pcaet.vulnerabilite.row-brouillon">
+      <TableCell
+        pinnedLeft
+        className={cn('pr-2 font-medium', cellBorderClassName)}
+      >
+        <Input
+          ref={inputRef}
+          type="text"
+          displaySize="xs"
+          containerClassname="w-full"
+          value={valeur}
+          maxLength={VULNERABILITE_THEMATIQUE_LABEL_MAX}
+          aria-label={appLabels.demarcheVulnerabiliteNomThematique}
+          placeholder={appLabels.demarcheVulnerabiliteNomThematique}
+          aria-invalid={erreur !== null}
+          aria-describedby={erreur === null ? undefined : erreurId}
+          onChange={(e) => {
+            setValeur(e.target.value);
+            setErreur(null);
+          }}
+          onBlur={() => void soumettre()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              void soumettre();
+            }
+            if (e.key === 'Escape') {
+              onClose();
+            }
+          }}
+          data-test="demarches.pcaet.vulnerabilite.thematique-brouillon"
+        />
+        {erreur !== null && (
+          <p
+            id={erreurId}
+            role="alert"
+            className="mt-1 mb-0 text-xs text-error-1"
+          >
+            {erreur}
+          </p>
+        )}
+      </TableCell>
+      {NIVEAU_COLUMNS.map((col) => (
+        <TableCell key={col.key} className={cellBorderClassName} />
+      ))}
+      {OBJECTIF_COLUMNS.map((col) => (
+        <TableCell key={col.key} className={cellBorderClassName} />
+      ))}
+    </TableRow>
   );
 };
 
@@ -493,7 +583,10 @@ const ThematiqueCell = ({
           onKeyDown={(e) => e.stopPropagation()}
         >
           {!isReadonly && peutRecevoirEnfant && (
-            <AjouterThematiqueModal parent={thematique} onAdd={onAddEnfant} />
+            <AjouterSousThematiqueModal
+              parent={thematique}
+              onAdd={onAddEnfant}
+            />
           )}
           {isEditable && (
             <SupprimerThematiqueButton
@@ -507,7 +600,7 @@ const ThematiqueCell = ({
     </>
   );
 
-  const className = 'pr-2 font-medium';
+  const className = cn('pr-2 font-medium', cellBorderClassName);
 
   if (!isEditable) {
     return (
@@ -583,6 +676,9 @@ export const VulnerabiliteTable = ({
 
   const rows = toVulnerabiliteRows(vulnerabilite, repliees);
 
+  // Ligne en cours de nommage, ouverte par « Ajouter une thématique ».
+  const [isAjoutOuvert, setIsAjoutOuvert] = useState(false);
+
   return (
     <div>
       {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
@@ -613,14 +709,21 @@ export const VulnerabiliteTable = ({
                 scope="col"
                 title={appLabels.demarcheVulnerabiliteThematiques}
                 pinnedLeft
+                className={cellBorderClassName}
               />
               {NIVEAU_COLUMNS.map((col) => (
-                <TableHeaderCell key={col.key} scope="col" title={col.label} />
+                <TableHeaderCell
+                  key={col.key}
+                  scope="col"
+                  title={col.label}
+                  className={cellBorderClassName}
+                />
               ))}
               {OBJECTIF_COLUMNS.map((col) => (
                 <TableHeaderCell
                   key={col.key}
                   scope="col"
+                  className={cellBorderClassName}
                   title={
                     <span className="inline-flex items-center gap-1">
                       {col.label}
@@ -693,6 +796,30 @@ export const VulnerabiliteTable = ({
                 </TableRow>
               );
             })}
+            {!isReadonly && isAjoutOuvert && (
+              <AjouterThematiqueRow
+                onAdd={(label) => addThematique(label)}
+                onClose={() => setIsAjoutOuvert(false)}
+              />
+            )}
+            {!isReadonly && !isAjoutOuvert && (
+              <tr>
+                <td
+                  colSpan={1 + NIVEAU_COLUMNS.length + OBJECTIF_COLUMNS.length}
+                  className="px-4 py-3 border-t border-grey-4"
+                >
+                  <Button
+                    variant="link"
+                    size="xs"
+                    icon="add-line"
+                    onClick={() => setIsAjoutOuvert(true)}
+                    dataTest="demarches.pcaet.vulnerabilite.ajouter-thematique-button"
+                  >
+                    {appLabels.demarcheVulnerabiliteAjouterThematique}
+                  </Button>
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
       </div>
@@ -701,12 +828,6 @@ export const VulnerabiliteTable = ({
         <IndicateurValeurRequiseMarker />
         {appLabels.demarcheVulnerabiliteRequisLegende}
       </p>
-
-      {!isReadonly && (
-        <div className="m-4">
-          <AjouterThematiqueModal onAdd={addThematique} />
-        </div>
-      )}
     </div>
   );
 };
