@@ -8,6 +8,9 @@ import {
   ficheActionSecteurAttributionTable,
 } from './fiche-action-secteur-attribution.table';
 
+/** Version du prompt de classement de l'import IA, comme Communs date sa méthode. */
+export const IMPORT_IA_METHODE = 'import_ia_v1';
+
 export type FicheSecteursAttributionCreate =
   typeof ficheActionSecteurAttributionTable.$inferInsert;
 
@@ -44,6 +47,32 @@ export class FicheSecteursAttributionRepository {
     return inserted ?? this.findByFicheId(attribution.ficheId, tx);
   }
 
+  /** Fiche tout juste créée par l'import IA : rien à préserver. */
+  async createFromImportIa(
+    {
+      ficheId,
+      secteurs,
+      justification,
+      modifiedBy,
+    }: Pick<FicheSecteursAttributionCreate, 'ficheId' | 'secteurs'> & {
+      justification: string;
+      modifiedBy: string;
+    },
+    tx?: Transaction
+  ): Promise<FicheActionSecteurAttribution | null> {
+    return this.createIfAbsent(
+      {
+        ficheId,
+        secteurs,
+        origine: OrigineSecteursEnum.IMPORT_IA,
+        methode: IMPORT_IA_METHODE,
+        justification: justification || null,
+        modifiedBy,
+      },
+      tx
+    );
+  }
+
   async upsertManuelle(
     {
       ficheId,
@@ -59,6 +88,7 @@ export class FicheSecteursAttributionRepository {
       origine: OrigineSecteursEnum.MANUELLE,
       methode: null,
       reponseCommuns: null,
+      justification: null,
       modifiedAt: sql`now()`,
       modifiedBy,
     };

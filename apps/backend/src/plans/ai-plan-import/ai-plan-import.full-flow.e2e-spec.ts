@@ -43,6 +43,9 @@ import { COMPLETE_PLAN_SECTEURS_QUEUE_NAME } from '@tet/backend/plans/fiches/fic
 import { CompletePlanSecteursWorker } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.worker';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from './ai-plan-import.queue';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
+import { ficheActionSecteurAttributionTable } from '@tet/backend/plans/fiches/fiche-secteurs/fiche-action-secteur-attribution.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import { aiPlanImportStepRunTable } from './models/ai-plan-import-step-run.table';
 import { consolidationResponseSchema } from './pipeline/consolidate-actions/consolidate-actions.schema';
@@ -52,6 +55,7 @@ import { GenerateImportDraftService } from './generate-import-draft/generate-imp
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
 import { qualitativeReviewResponseSchema } from './pipeline/qualitative-review/qualitative-review.schema';
 import { scoringResponseSchema } from './pipeline/score-actions/score-actions.schema';
+import { secteursResponseSchema } from './pipeline/classify-secteurs/classify-secteurs.schema';
 
 const QUALITATIVE_REVIEW_TEXT = 'Plan cohérent et bien structuré.';
 
@@ -120,6 +124,16 @@ const buildFakeLlm = (): LlmService => {
           statut: '',
           date_debut: '',
           date_fin: '',
+        },
+      ],
+    ],
+    [
+      schemaKey(secteursResponseSchema),
+      [
+        {
+          index: 0,
+          secteurs: ['tertiaire'],
+          justification: 'Rénovation des bâtiments publics.',
         },
       ],
     ],
@@ -563,6 +577,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       { step: 'scoring', status: 'ok' },
       { step: 'consolidation', status: 'ok' },
       { step: 'enrichment', status: 'ok' },
+      { step: 'secteurs', status: 'skipped' },
       { step: 'qualitativeReview', status: 'ok' },
       { step: 'persistence', status: 'ok' },
     ]);
@@ -773,5 +788,52 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     ).toBeNull();
     const again = await enqueue(fields, { source });
     await app.get(GenerateImportDraftService).generate(again.jobId);
+  });
+
+  test("propose les secteurs réglementaires d'un plan PCAET, enregistrés avec les fiches", async () => {
+    const [pcaetType] = await db.db
+      .select({ id: planActionTypeTable.id })
+      .from(planActionTypeTable)
+      .where(
+        and(
+          eq(planActionTypeTable.categorie, PCAET_PLAN_TYPE_KEY.categorie),
+          eq(planActionTypeTable.type, PCAET_PLAN_TYPE_KEY.type)
+        )
+      );
+    const { jobId, planId } = await enqueue(
+      {
+        planName: 'Plan import IA PCAET',
+        planType: String(pcaetType.id),
+        withVerifications: 'false',
+        withSousActions: 'true',
+      },
+      { source: csvSource('pcaet') }
+    );
+
+    await app.get(GenerateImportDraftService).generate(jobId);
+
+    expect((await getStatus(jobId)).stepStates).toMatchObject({
+      secteurs: 'ok',
+    });
+    const action = (await fichesByTitreInPlan(planId, 'Action 1.1.1'))[0];
+    const sousAction = (await fichesByTitreInPlan(planId, 'Sous-action A'))[0];
+    const attributions = await db.db
+      .select()
+      .from(ficheActionSecteurAttributionTable)
+      .where(
+        inArray(ficheActionSecteurAttributionTable.ficheId, [
+          action.id,
+          sousAction.id,
+        ])
+      );
+    expect(attributions).toHaveLength(2);
+    for (const attribution of attributions) {
+      expect(attribution).toMatchObject({
+        secteurs: ['tertiaire'],
+        origine: 'import_ia',
+        methode: 'import_ia_v1',
+        justification: 'Rénovation des bâtiments publics.',
+      });
+    }
   });
 });

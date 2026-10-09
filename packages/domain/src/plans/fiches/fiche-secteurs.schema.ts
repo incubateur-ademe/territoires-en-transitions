@@ -7,6 +7,8 @@ export const origineSecteursEnumValues = [
   'manuelle',
   // fiche inconnue de Communs (404)
   'indisponible',
+  // proposé par l'import IA, à partir du document source
+  'import_ia',
 ] as const;
 
 export const OrigineSecteursEnum = createEnumObject(origineSecteursEnumValues);
@@ -38,6 +40,7 @@ export type ReponseSecteursCommuns = z.infer<
 const origineSecteursConnusSchema = z.enum([
   OrigineSecteursEnum.AUTOMATIQUE,
   OrigineSecteursEnum.MANUELLE,
+  OrigineSecteursEnum.IMPORT_IA,
 ]);
 
 export const ficheSecteursSchema = z.discriminatedUnion('etat', [

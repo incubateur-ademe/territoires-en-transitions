@@ -18,6 +18,7 @@ describe('CreatePlanAggregateService', () => {
   let mockListFichesService: any;
   let mockPermissionService: any;
   let mockWebhookService: any;
+  let mockFicheSecteursAttributionRepository: any;
   let mockTransaction: Transaction;
   let mockUser: AuthenticatedUser;
   let nextFicheId: number;
@@ -52,6 +53,10 @@ describe('CreatePlanAggregateService', () => {
       sendWebhookNotifications: vi.fn().mockResolvedValue(undefined),
     };
 
+    mockFicheSecteursAttributionRepository = {
+      createFromImportIa: vi.fn().mockResolvedValue(null),
+    };
+
     mockTransaction = {} as Transaction;
 
     mockUser = {
@@ -67,7 +72,8 @@ describe('CreatePlanAggregateService', () => {
       mockCreateFicheService,
       mockListFichesService,
       mockPermissionService,
-      mockWebhookService
+      mockWebhookService,
+      mockFicheSecteursAttributionRepository
     );
   });
 
@@ -120,6 +126,37 @@ describe('CreatePlanAggregateService', () => {
       expect(mockUpsertPlanService.upsertPlan).toHaveBeenCalledTimes(1);
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
       expect(mockPermissionService.assertAllowed).toHaveBeenCalledTimes(1);
+    });
+
+    it("enregistre les secteurs proposés par l'import IA avec la fiche créée", async () => {
+      const request = createValidRequest();
+      request.fiches[0].secteursProposes = {
+        secteurs: ['residentiel'],
+        justification: 'Rénovation des logements.',
+      };
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Mon Plan Test' })
+      );
+      mockUpsertAxeService.upsertAxe
+        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+
+      await service.create(request, mockUser, mockTransaction);
+
+      expect(
+        mockFicheSecteursAttributionRepository.createFromImportIa
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockFicheSecteursAttributionRepository.createFromImportIa
+      ).toHaveBeenCalledWith(
+        {
+          ficheId: expect.any(Number),
+          secteurs: ['residentiel'],
+          justification: 'Rénovation des logements.',
+          modifiedBy: 'user-123',
+        },
+        mockTransaction
+      );
     });
 
     it('should create axes in correct hierarchical order (parents before children)', async () => {

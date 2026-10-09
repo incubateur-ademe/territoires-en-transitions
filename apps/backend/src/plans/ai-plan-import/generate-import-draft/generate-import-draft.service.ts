@@ -213,6 +213,7 @@ export class GenerateImportDraftService {
       currentDate: new Date().toISOString(),
       withVerifications: job.options.withVerifications,
       withSousActions: job.options.withSousActions,
+      withSecteurs: job.options.withSecteurs ?? false,
       onStepStatesChange: async (stepStates) => {
         await this.jobRepository.updateStepStates(job.id, stepStates);
       },

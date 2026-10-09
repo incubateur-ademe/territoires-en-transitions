@@ -34,6 +34,7 @@ export function importPlanInputToCreatePlanAggregateInput(
           actionImport,
           resolvedEntity
         ),
+        secteursProposes: actionImport.secteursProposes,
       });
     }
 
@@ -43,6 +44,7 @@ export function importPlanInputToCreatePlanAggregateInput(
         actionImport,
         resolvedEntity
       ),
+      secteursProposes: actionImport.secteursProposes,
     });
   });
   const actionsWithPathsResults = combineResults(actionsWithPaths);

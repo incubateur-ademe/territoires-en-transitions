@@ -1,4 +1,5 @@
 import { prioriteEnumValues, statutEnumValues } from '@tet/domain/plans';
+import { secteursProposesSchema } from '@tet/backend/plans/fiches/fiche-secteurs/secteurs-proposes';
 import { z } from 'zod';
 
 export const actionConfidenceSchema = z.object({
@@ -38,6 +39,8 @@ export const extractedActionSchema = z.object({
   statut: z.enum(statutEnumValues).nullable(),
   confidence: actionConfidenceSchema.nullable(),
   sousActions: z.array(extractedSousActionSchema),
+  /** Absent tant que l'étape des secteurs n'a pas classé l'action. */
+  secteurs: secteursProposesSchema.optional(),
 });
 
 export type ActionConfidence = z.output<typeof actionConfidenceSchema>;
