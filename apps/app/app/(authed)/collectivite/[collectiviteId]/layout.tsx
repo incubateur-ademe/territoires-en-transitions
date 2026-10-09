@@ -1,12 +1,9 @@
-import { extractDossierInstructionRefFromPath } from '@/app/demarches/pcaet/instruction/dossier-instruction-path';
+import { getCollectiviteForRequest } from '@/app/collectivites/get-collectivite-for-request.server';
+import { ClearDossierInstructionCookie } from '@/app/demarches/pcaet/instruction/clear-dossier-instruction-cookie';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
-import {
-  CollectiviteProviderStore,
-  getCollectivite,
-} from '@tet/api/collectivites/index.server';
+import { CollectiviteProviderStore } from '@tet/api/collectivites/index.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { hasRole, PlatformRole } from '@tet/domain/users';
-import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 import z from 'zod';
 
@@ -20,23 +17,10 @@ export default async function Layout({
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
-  // Sur la route d'un dossier, le contexte doit porter le dossier que l'URL
-  // désigne — sa saisine, ou sa démarche pour un dépôt en élaboration — et non
-  // le plus récent. Le layout du dossier n'étant rendu qu'après celui-ci, la
-  // seule façon de le connaître ici est le chemin courant, que le proxy réécrit
-  // et qui n'est donc pas falsifiable (cf. `proxy.ts`).
-  const dossier = extractDossierInstructionRefFromPath(
-    (await headers()).get('x-current-path')
-  );
-  const demandeAvisId =
-    dossier && 'demandeAvisId' in dossier ? dossier.demandeAvisId : undefined;
-  const demarcheId =
-    dossier && 'demarcheId' in dossier ? dossier.demarcheId : undefined;
-
-  const [user, collectivite] = await Promise.all([
-    getUser(),
-    getCollectivite(collectiviteId, demandeAvisId, demarcheId),
-  ]);
+  const [
+    user,
+    { collectivite, demandeAvisId, demarcheId, isRememberedDossierStale },
+  ] = await Promise.all([getUser(), getCollectiviteForRequest(collectiviteId)]);
 
   const userIsNotInCollectivite = !user.collectivites.some(
     (collectivite) => collectivite.collectiviteId === Number(collectiviteId)
@@ -64,6 +48,9 @@ export default async function Layout({
       demandeAvisId={demandeAvisId}
       demarcheId={demarcheId}
     >
+      {isRememberedDossierStale && (
+        <ClearDossierInstructionCookie collectiviteId={collectiviteId} />
+      )}
       {userNotAllowedToVisitCollectivite ? <UnverifiedUserCard /> : children}
     </CollectiviteProviderStore>
   );

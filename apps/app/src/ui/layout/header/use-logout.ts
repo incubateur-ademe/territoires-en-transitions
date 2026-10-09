@@ -1,5 +1,6 @@
 'use client';
 
+import { clearAllDossierInstructionCookies } from '@/app/demarches/pcaet/instruction/dossier-instruction-cookie';
 import { signOutUser } from '@tet/api/utils/supabase/sign-out-user.server';
 import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
@@ -12,6 +13,7 @@ export function useLogout() {
   return async (event?: MouseEvent<HTMLAnchorElement>) => {
     event?.preventDefault();
 
+    clearAllDossierInstructionCookies();
     const { oidcLogoutUrl } = await signOutUser();
 
     // Posé avant la navigation : PostHog vide sa file au `pagehide`.
