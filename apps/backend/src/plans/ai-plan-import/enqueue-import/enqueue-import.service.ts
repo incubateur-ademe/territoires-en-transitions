@@ -11,6 +11,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
@@ -82,14 +83,16 @@ export class EnqueueImportService {
       return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
     }
 
+    let withSecteurs = false;
     if (options.planType !== undefined) {
       const planTypes = await this.listPlanTypesService.listPlanTypes();
-      const planTypeExists = planTypes.some(
-        (planType) => planType.id === options.planType
-      );
-      if (!planTypeExists) {
+      const planType = planTypes.find(({ id }) => id === options.planType);
+      if (!planType) {
         return failure(AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE);
       }
+      withSecteurs =
+        planType.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
+        planType.type === PCAET_PLAN_TYPE_KEY.type;
     }
 
     if (file.size > AI_PLAN_IMPORT_MAX_SOURCE_BYTES) {
@@ -171,7 +174,7 @@ export class EnqueueImportService {
         createdBy: user.id,
         sourcePath,
         fichierId: fichier.data.id,
-        options,
+        options: { ...options, withSecteurs },
       },
       {
         limitUserInFlight: !canImportInParallel.success,

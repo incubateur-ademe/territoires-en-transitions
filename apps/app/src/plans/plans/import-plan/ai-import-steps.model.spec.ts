@@ -11,6 +11,7 @@ describe('toImportStepViews', () => {
       { name: 'scoring', status: 'waiting' },
       { name: 'consolidation', status: 'waiting' },
       { name: 'enrichment', status: 'waiting' },
+      { name: 'secteurs', status: 'waiting' },
       { name: 'qualitativeReview', status: 'waiting' },
     ]);
   });
@@ -24,6 +25,7 @@ describe('toImportStepViews', () => {
       scoring: 'pending',
       consolidation: 'pending',
       enrichment: 'pending',
+      secteurs: 'pending',
       qualitativeReview: 'pending',
     };
 
@@ -35,6 +37,7 @@ describe('toImportStepViews', () => {
       { name: 'scoring', status: 'current' },
       { name: 'consolidation', status: 'waiting' },
       { name: 'enrichment', status: 'waiting' },
+      { name: 'secteurs', status: 'waiting' },
       { name: 'qualitativeReview', status: 'waiting' },
     ]);
   });
@@ -48,6 +51,7 @@ describe('toImportStepViews', () => {
       scoring: 'skipped',
       consolidation: 'skipped',
       enrichment: 'pending',
+      secteurs: 'pending',
       qualitativeReview: 'pending',
     };
 
@@ -59,6 +63,7 @@ describe('toImportStepViews', () => {
       { name: 'scoring', status: 'skipped' },
       { name: 'consolidation', status: 'skipped' },
       { name: 'enrichment', status: 'current' },
+      { name: 'secteurs', status: 'waiting' },
       { name: 'qualitativeReview', status: 'waiting' },
     ]);
   });
@@ -72,6 +77,7 @@ describe('toImportStepViews', () => {
       scoring: 'skipped',
       consolidation: 'skipped',
       enrichment: 'ok',
+      secteurs: 'skipped',
       qualitativeReview: 'ok',
     };
 
@@ -83,6 +89,7 @@ describe('toImportStepViews', () => {
       { name: 'scoring', status: 'skipped' },
       { name: 'consolidation', status: 'skipped' },
       { name: 'enrichment', status: 'done' },
+      { name: 'secteurs', status: 'skipped' },
       { name: 'qualitativeReview', status: 'done' },
     ]);
   });

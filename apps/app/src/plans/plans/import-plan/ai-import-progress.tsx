@@ -12,6 +12,7 @@ const stepLabels: Record<ImportStepName, string> = {
   scoring: appLabels.importPlanIaEtapeVerification,
   consolidation: appLabels.importPlanIaEtapeConsolidation,
   enrichment: appLabels.importPlanIaEtapeEnrichissement,
+  secteurs: appLabels.importPlanIaEtapeSecteurs,
   qualitativeReview: appLabels.importPlanIaEtapeRevue,
 };
 

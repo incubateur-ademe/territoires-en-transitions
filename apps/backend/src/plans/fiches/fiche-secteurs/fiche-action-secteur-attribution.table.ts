@@ -24,6 +24,7 @@ export const ficheActionSecteurAttributionTable = pgTable(
     origine: text('origine').$type<OrigineSecteurs>().notNull(),
     methode: text('methode'),
     reponseCommuns: jsonb('reponse_communs'),
+    justification: text('justification'),
     modifiedAt: timestamp('modified_at', TIMESTAMP_OPTIONS)
       .notNull()
       .default(sql`now()`),

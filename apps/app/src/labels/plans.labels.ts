@@ -120,6 +120,7 @@ export const plansLabels = {
   ficheSecteursOrigineLabels: {
     automatique: 'Secteurs proposés automatiquement',
     manuelle: 'Secteurs choisis par la collectivité',
+    import_ia: "Secteurs proposés par l'import du plan, d'après le document",
   } satisfies Record<Exclude<OrigineSecteurs, 'indisponible'>, string>,
   ficheSecteurReglementaireLabels: {
     residentiel: 'Résidentiel',
@@ -268,6 +269,7 @@ export const plansLabels = {
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
   importPlanIaEnCoursCourt: 'Import en cours',
+  importPlanIaEtapeSecteurs: 'Identification des secteurs réglementaires',
   importPlanIaEchecCourt: "Échec de l'import",
   importPlanIaEchecDescription:
     "L'import de ce plan a échoué : supprimez-le, puis relancez l'import.",
