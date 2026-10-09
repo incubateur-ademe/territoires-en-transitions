@@ -9,7 +9,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { PlanSourceEnum } from '@tet/domain/plans';
+import { PlanSourceEnum, PlanStatusEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
@@ -48,11 +48,17 @@ describe('Valider un plan importé', () => {
   const createPlan = async ({ imported }: { imported: boolean }) => {
     const plan = await router
       .createCaller({ user: editor })
-      .plans.plans.create({ nom: 'Plan importé', collectiviteId: collectivite.id });
+      .plans.plans.create({
+        nom: 'Plan importé',
+        collectiviteId: collectivite.id,
+      });
     if (imported) {
       await db.db
         .update(axeTable)
-        .set({ source: PlanSourceEnum.IMPORT_IA })
+        .set({
+          source: PlanSourceEnum.IMPORT_IA,
+          status: PlanStatusEnum.TO_VERIFY,
+        })
         .where(eq(axeTable.id, plan.id));
     }
     return plan.id;
@@ -76,7 +82,11 @@ describe('Valider un plan importé', () => {
       .createCaller({ user: editor })
       .plans.plans.get({ planId });
 
-    expect(plan).toMatchObject({ source: 'import_ia', verifiedAt: null });
+    expect(plan).toMatchObject({
+      source: 'import_ia',
+      status: 'to_verify',
+      verifiedAt: null,
+    });
   });
 
   test('valide un plan importé : date et auteur de la vérification', async () => {
@@ -94,6 +104,20 @@ describe('Valider un plan importé', () => {
       .createCaller({ user: editor })
       .plans.plans.get({ planId });
     expect(plan.verifiedAt).toBeTruthy();
+    expect(plan.status).toBe('active');
+  });
+
+  test("refuse de valider un plan dont l'import n'est pas terminé", async () => {
+    const planId = await createPlan({ imported: true });
+    await db.db
+      .update(axeTable)
+      .set({ status: PlanStatusEnum.IMPORTING })
+      .where(eq(axeTable.id, planId));
+
+    await expect(
+      router.createCaller({ user: editor }).plans.plans.verify({ planId })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    expect((await readVerification(planId)).verifiedAt).toBeNull();
   });
 
   test('une seconde validation ne réécrit pas la première', async () => {

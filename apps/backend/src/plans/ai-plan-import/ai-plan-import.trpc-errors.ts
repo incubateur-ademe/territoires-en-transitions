@@ -54,6 +54,15 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
         code: 'INTERNAL_SERVER_ERROR',
         message: "L'enregistrement du fichier source a échoué",
       },
+      CREATE_PLAN_ERROR: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'La création du plan à importer a échoué',
+      },
+      ALREADY_IMPORTED: {
+        code: 'CONFLICT',
+        message:
+          'Ce fichier a déjà été importé dans un plan de la collectivité',
+      },
       UNAUTHORIZED: {
         code: 'FORBIDDEN',
         message: "Vous n'avez pas le droit de lancer un import sur cette collectivité",

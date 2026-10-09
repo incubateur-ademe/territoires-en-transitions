@@ -125,6 +125,7 @@ export class CreatePlanAggregateService {
 
       const createPlanResult = await this.upsertPlanService.upsertPlan(
         {
+          ...(request.planId !== undefined ? { id: request.planId } : {}),
           collectiviteId: request.collectiviteId,
           nom: request.nom,
           typeId: request.typeId,

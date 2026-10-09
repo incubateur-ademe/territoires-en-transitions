@@ -6,6 +6,7 @@ import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { planStatusValues } from '@tet/domain/plans';
 import { PageHeader, Spacer, VisibleWhen } from '@tet/ui';
 import { isNotNil } from 'es-toolkit';
 import { useQueryStates } from 'nuqs';
@@ -30,7 +31,7 @@ export const AllPlansView = () => {
 
   const { plans, totalCount, isLoading, error, refetch } = useListPlans(
     collectiviteId,
-    { sort: sortParams }
+    { sort: sortParams, statuses: planStatusValues }
   );
 
   const hasFailed = isNotNil(error);

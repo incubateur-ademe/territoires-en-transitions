@@ -17,7 +17,7 @@ type Props = {
    * La fin de l'import est traitée par l'appelant, qui reste monté : la
    * modale peut être fermée pendant l'import.
    */
-  onImportStarted: (jobId: string) => void;
+  onImportStarted: (jobId: string, planId: number) => void;
 };
 
 export const DemarcheImportPlanModal = ({

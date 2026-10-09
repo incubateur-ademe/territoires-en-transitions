@@ -12,7 +12,7 @@ import { toImportStepViews } from './ai-import-steps.model';
 import {
   AiImportDefaults,
   AiImportForm,
-  AiImportFormValues,
+  AiImportSubmission,
 } from './ai-import.form';
 import { useEnqueueAiImport } from './data/use-enqueue-ai-import';
 import { useGetAiImportStatus } from './data/use-get-ai-import-status';
@@ -44,7 +44,7 @@ export const AiImportFlow = ({
    * Import lancé depuis ce formulaire. Le formulaire est démonté à la
    * fermeture d'une modale : c'est au parent de s'en souvenir.
    */
-  onImportStarted?: (jobId: string) => void;
+  onImportStarted?: (jobId: string, planId: number) => void;
   cancelButton: ReactElement;
   lockedPlanTypeId?: number;
   defaults?: AiImportDefaults;
@@ -87,9 +87,9 @@ export const AiImportFlow = ({
     onPlanCreated(createdPlanId, { jobId });
   }, [createdPlanId, jobId, onPlanCreated, queryClient, trpc, collectiviteId]);
 
-  const handleSubmit = async (values: AiImportFormValues) => {
+  const handleSubmit = async (values: AiImportSubmission) => {
     try {
-      const { jobId: newJobId } = await enqueue.mutateAsync({
+      const { jobId: newJobId, planId } = await enqueue.mutateAsync({
         collectiviteId,
         file: values.file,
         planName: values.planName,
@@ -97,9 +97,10 @@ export const AiImportFlow = ({
         instructions: values.instructions.trim() || undefined,
         withVerifications: values.withVerifications,
         withSousActions: values.withSousActions,
+        confirmReimport: values.confirmReimport,
       });
       setJobId(newJobId);
-      onImportStarted?.(newJobId);
+      onImportStarted?.(newJobId, planId);
     } catch (error) {
       setToast('error', getErrorMessage(error));
     }

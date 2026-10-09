@@ -12,6 +12,8 @@ import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
+import { DeleteFailedImportPlanButton } from '@/app/plans/plans/components/delete-failed-import-plan.button';
+import { PlanImportStatusBadge } from '@/app/plans/plans/components/plan-import-status.badge';
 import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
@@ -36,7 +38,12 @@ import {
   SplitButton,
   TableHeaderCell,
 } from '@tet/ui';
-import { isPlanPendingVerification } from '@tet/domain/plans';
+import {
+  isPlanNavigable,
+  isPlanPendingVerification,
+  planStatusValues,
+  PlanStatusEnum,
+} from '@tet/domain/plans';
 import Link from 'next/link';
 import { ReactNode, useEffect, useState } from 'react';
 import { DemarcheSection } from './section';
@@ -141,16 +148,23 @@ const ProgrammeActionsPlanRow = ({
         <div className="flex flex-wrap items-center gap-2">
           {/* Nouvel onglet : le rattachement se fait ici, aller voir le plan ne
               doit pas faire perdre le fil du dépôt. L'icône l'annonçait déjà. */}
-          <Link
-            href={planUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary-9 hover:underline"
-            data-test="demarches.plan.ouvrir-plan-link"
-          >
-            {nom}
-            <Icon icon="external-link-line" className="ml-2" />
-          </Link>
+          {isPlanNavigable(plan) ? (
+            <Link
+              href={planUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-9 hover:underline"
+              data-test="demarches.plan.ouvrir-plan-link"
+            >
+              {nom}
+              <Icon icon="external-link-line" className="ml-2" />
+            </Link>
+          ) : (
+            <span className="text-grey-8" data-test="demarches.plan.nom">
+              {nom}
+            </span>
+          )}
+          <PlanImportStatusBadge status={plan.status} />
           {isPlanPendingVerification(plan) && (
             <Link
               href={planUrl}
@@ -168,9 +182,10 @@ const ProgrammeActionsPlanRow = ({
         </div>
       </td>
       <td className="px-4 py-3 text-grey-7">
-        {appLabels.demarcheProgrammeNombreActions({
-          count: countPlanFiches(plan),
-        })}
+        {plan.status !== PlanStatusEnum.IMPORTING &&
+          appLabels.demarcheProgrammeNombreActions({
+            count: countPlanFiches(plan),
+          })}
       </td>
       {isSecteursColumnVisible && (
         <td
@@ -188,6 +203,9 @@ const ProgrammeActionsPlanRow = ({
       )}
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-2">
+          {plan.status === PlanStatusEnum.FAILED && !isReadonly && (
+            <DeleteFailedImportPlanButton planId={plan.id} />
+          )}
           {isLinked ? (
             <Button
               variant="outlined"
@@ -461,6 +479,7 @@ export const ProgrammeActionsSection = ({
 
   const { plans, isLoading: isLoadingPlans } = useListPlans(collectiviteId, {
     typeIds: planTypeId !== undefined ? [planTypeId] : undefined,
+    statuses: planStatusValues,
     enabled: planTypeId !== undefined,
   });
 

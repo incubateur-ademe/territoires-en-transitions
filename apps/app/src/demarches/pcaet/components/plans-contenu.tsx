@@ -4,6 +4,7 @@ import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import type { RouterOutput } from '@tet/api';
+import { isPlanNavigable } from '@tet/domain/plans';
 import { Accordion, Button, cn, EmptyCard, Icon } from '@tet/ui';
 
 /**
@@ -123,10 +124,15 @@ const LienPlan = ({
     variant="outlined"
     size="xs"
     external
-    href={makeCollectivitePlanActionUrl({
-      collectiviteId,
-      planActionUid: plan.id.toString(),
-    })}
+    href={
+      isPlanNavigable(plan)
+        ? makeCollectivitePlanActionUrl({
+            collectiviteId,
+            planActionUid: plan.id.toString(),
+          })
+        : undefined
+    }
+    disabled={!isPlanNavigable(plan)}
     dataTest={dataTest}
   >
     {appLabels.demarchePlanContenuPlanLien}

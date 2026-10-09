@@ -7,10 +7,3 @@ export const planSourceValues = ['import_ia'] as const;
 export const PlanSourceEnum = createEnumObject(planSourceValues);
 export const planSourceSchema = z.enum(planSourceValues);
 export type PlanSource = z.infer<typeof planSourceSchema>;
-
-/** Un plan importé par IA reste à vérifier tant qu'un humain ne l'a pas validé. */
-export const isPlanPendingVerification = (plan: {
-  source?: PlanSource | null;
-  verifiedAt?: string | null;
-}): boolean =>
-  plan.source === PlanSourceEnum.IMPORT_IA && !plan.verifiedAt;

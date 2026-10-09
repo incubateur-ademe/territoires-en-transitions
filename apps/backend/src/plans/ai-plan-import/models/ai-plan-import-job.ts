@@ -1,3 +1,4 @@
+import { PlanStatus } from '@tet/domain/plans';
 import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
 import { StepStates } from '../pipeline/run-import-pipeline';
@@ -44,8 +45,17 @@ export type AiPlanImportJob = {
   draft: PlanDraft | null;
   error: string | null;
   createdPlanId: number | null;
+  fichierId: number | null;
   createdAt: string;
   modifiedAt: string;
+};
+
+/** Plan encore présent issu d'un import antérieur du même fichier. */
+export type PreviousAiImport = {
+  planId: number;
+  planNom: string | null;
+  planStatus: PlanStatus;
+  importedAt: string;
 };
 
 export type AiPlanImportJobStatusView = {

@@ -5,6 +5,7 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ListAxesRepository } from '@tet/backend/plans/axes/list-axes/list-axes.repository';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { PlanStatus, PlanStatusEnum } from '@tet/domain/plans';
 import { inArray } from 'drizzle-orm';
 import type { DemarchePlanContenu } from './models/demarche-plan-contenu.dto';
 
@@ -41,7 +42,7 @@ export class DemarchePlansContenuRepository {
       return [];
     }
 
-    const noms = await this.getNomsDesPlans(planIds, tx);
+    const racines = await this.getRacinesDesPlans(planIds, tx);
     const plans: DemarchePlanContenu[] = [];
 
     for (const planId of planIds) {
@@ -57,7 +58,8 @@ export class DemarchePlansContenuRepository {
         // son contenu, ce que l'écran sait afficher.
         plans.push({
           id: planId,
-          nom: noms.get(planId) ?? null,
+          nom: racines.get(planId)?.nom ?? null,
+          status: racines.get(planId)?.status ?? PlanStatusEnum.ACTIVE,
           nbFiches: 0,
           fiches: [],
           axes: [],
@@ -78,7 +80,8 @@ export class DemarchePlansContenuRepository {
 
       plans.push({
         id: planId,
-        nom: noms.get(planId) ?? null,
+        nom: racines.get(planId)?.nom ?? null,
+        status: racines.get(planId)?.status ?? PlanStatusEnum.ACTIVE,
         // Compté sur l'arbre, pas en base : une même fiche peut être rangée
         // dans plusieurs axes, et le décompte doit suivre les mêmes exclusions
         // que le contenu affiché.
@@ -96,16 +99,16 @@ export class DemarchePlansContenuRepository {
     return plans;
   }
 
-  private async getNomsDesPlans(
+  private async getRacinesDesPlans(
     planIds: number[],
     tx?: Transaction
-  ): Promise<Map<number, string | null>> {
+  ): Promise<Map<number, { nom: string | null; status: PlanStatus }>> {
     const rows = await (tx ?? this.databaseService.db)
-      .select({ id: axeTable.id, nom: axeTable.nom })
+      .select({ id: axeTable.id, nom: axeTable.nom, status: axeTable.status })
       .from(axeTable)
       .where(inArray(axeTable.id, planIds));
 
-    return new Map(rows.map((row) => [row.id, row.nom]));
+    return new Map(rows.map(({ id, ...racine }) => [id, racine]));
   }
 
   private async getTitresDesFiches(

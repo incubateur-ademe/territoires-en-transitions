@@ -20,4 +20,9 @@ export const enqueueImportFormSchema = z.object({
   withVerifications: booleanFromString,
   withSousActions: booleanFromString,
   disabledFields: disabledFieldsFromForm,
+  /** Relance assumée de l'import d'un fichier déjà importé. */
+  confirmReimport: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
 });
