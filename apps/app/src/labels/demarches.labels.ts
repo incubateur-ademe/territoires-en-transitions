@@ -22,6 +22,11 @@ export type DemarcheTypeLabels = {
   possessif: string;
 };
 
+const demarcheVulnerabiliteSousThematiqueMot = plural({
+  one: 'sous-thématique',
+  other: 'sous-thématiques',
+});
+
 export const demarchesLabels = {
   /**
    * Sans le nom de la collectivité : il est déjà affiché juste au-dessus, dans
@@ -415,7 +420,11 @@ export const demarchesLabels = {
   }: {
     label: string;
     enfants: number;
-  }) => `Déplier les ${enfants} sous-thématiques de ${label}`,
+  }) =>
+    `Déplier les ${enfants} ${demarcheVulnerabiliteSousThematiqueMot({
+      count: enfants,
+      withoutCount: true,
+    })} de ${label}`,
   demarcheVulnerabiliteThematiqueSupprime: 'Thématique supprimée',
   demarcheVulnerabiliteSupprimerThematique: 'Supprimer cette thématique',
   demarcheVulnerabiliteSupprimerThematiqueNomme: ({
@@ -433,8 +442,13 @@ export const demarchesLabels = {
     enfants: number;
   }) =>
     `« ${label} » sera retirée de cette démarche${
-      enfants > 0 ? ` avec ses ${enfants} sous-thématiques` : ''
-    }, avec les niveaux et objectifs qui y ont été saisis. Les autres démarches de la collectivité la conservent.`,
+      enfants > 0
+        ? ` avec ses ${enfants} ${demarcheVulnerabiliteSousThematiqueMot({
+            count: enfants,
+            withoutCount: true,
+          })}`
+        : ''
+    }, avec les niveaux et objectifs qui y ont été saisis.`,
   demarcheVulnerabiliteSupprimerThematiqueConfirmer: 'Retirer',
   demarcheVulnerabiliteThematiqueDejaExistant:
     'Une thématique porte déjà ce nom dans cette démarche',
