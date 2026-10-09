@@ -80,12 +80,16 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     await pom.addVulnerabiliteThematique('Zones humides');
     // Le libellé de la thématique est repris dans les noms accessibles de toute la
     // ligne : on vise le texte, seul porté par la case de la thématique.
-    await expect(page.getByText('Zones humides', { exact: true })).toBeVisible();
+    await expect(
+      page.getByText('Zones humides', { exact: true })
+    ).toBeVisible();
 
     // La corbeille se range dans la case de la thématique : elle est atteignable
     // sans défilement horizontal.
     await expect(
-      page.getByRole('button', { name: 'Supprimer la thématique Zones humides' })
+      page.getByRole('button', {
+        name: 'Supprimer la thématique Zones humides',
+      })
     ).toBeVisible();
   });
 
@@ -162,7 +166,7 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     await pom.expectVulnerabiliteNiveau('risque_secheresse', 0, 'faible');
   });
 
-  test('le champ de la modale garde le focus, la cellule ne passe pas en édition', async ({
+  test("le champ de la ligne d'ajout garde le focus, la cellule ne passe pas en édition", async ({
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     plans, // requis pour cleanup auto
@@ -179,9 +183,7 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     await pom.openVulnerabiliteTopic();
     await pom.addVulnerabiliteThematique('Zones humides');
 
-    await pom
-      .vulnerabiliteAjouterSousThematiqueButton('Zones humides')
-      .click();
+    await pom.vulnerabiliteAjouterSousThematiqueButton('Zones humides').click();
 
     // Le clic sur « + » ne doit pas ouvrir en plus l'édition du libellé de la
     // cellule : son champ volait le focus dès la première frappe.
@@ -189,11 +191,9 @@ test.describe('Démarche PCAET - vulnérabilité du territoire', () => {
     await champ.pressSequentially('Tourbières');
     await expect(champ).toBeFocused();
     await expect(champ).toHaveValue('Tourbières');
-    await expect(
-      page.getByPlaceholder('Nom de la thématique')
-    ).toHaveCount(0);
+    await expect(page.getByPlaceholder('Nom de la thématique')).toHaveCount(0);
 
-    await page.getByRole('button', { name: 'Valider' }).click();
+    await champ.press('Enter');
     await expect(page.getByText('Tourbières', { exact: true })).toBeVisible();
   });
 
