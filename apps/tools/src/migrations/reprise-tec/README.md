@@ -158,6 +158,123 @@ select c.nom, c.siren, d.id, d.status, d.titre
  order by c.nom, d.id;
 ```
 
+### 3. Importer le diagnostic
+
+Écrit le diagnostic de chaque dossier repris (émissions, consommation,
+polluants, énergies renouvelables, séquestration), **rangé dans son dossier** :
+une métadonnée de la source `pcaet-collectivite` par dossier, un lien
+`demarche_pcaet_source_metadonnee` qui la rattache à la démarche, et les
+valeurs de `indicateur_valeur` sous cette métadonnée. C'est ce que l'écran du
+diagnostic d'une démarche affiche. Le diagnostic se lit sur la ligne « mise en
+œuvre » du dossier, jamais sur son doublon « définitif ».
+
+```bash
+export TET_API_URL="https://..."           # le backend TeT
+export TET_API_TOKEN="<service role>"      # jeton service role du backend
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-diagnostic/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import, puis recalcul
+```
+
+Les objectifs 2021 et 2026 ne sont pas écrits : la grille de TeT n'a pas ces
+colonnes.
+
+Toute ligne du diagnostic de T&C (onze tables, dossiers repris ou non) finit
+soit écrite, soit dans `ecarts` avec un motif, une seule fois : le script le
+vérifie table par table avant d'écrire (lues = écrites + écartées). Une ligne
+sans numéro dans T&C est repérée par son dossier (`tec_id`) et sa `precision`
+(`sol 2`, `periode 3`, `cible 4`). Une partie de ligne peut aussi être
+écartée : la consommation EnR (`precision = 'consommation'`), un commentaire
+d'onglet du dossier (`precision` = le nom de la colonne).
+
+Quand plusieurs motifs s'appliquent, le premier de cet ordre gagne : le motif
+du dossier, `valeur_vide`, `sans_indicateur_cible`, puis la colonne.
+
+| Motif                                  | Sens                                                                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `doublon`                              | ligne du doublon « définitif » d'un dossier déposé ; seule la ligne « mise en œuvre » est reprise                                                      |
+| `coquille_vide`, `sans_etat_invisible` | ligne d'un dossier que l'import des dossiers a écarté pour ce motif                                                                                    |
+| `valeur_vide`                          | case vide dans T&C : rien à reprendre                                                                                                                  |
+| `sans_indicateur_cible`                | aucune ligne pour la recevoir dans la grille de TeT : filière sans ligne, potentiels EnR, séquestration hors estimation, consommation EnR, numéro vide |
+| `objectif_sans_colonne`                | objectif 2021 ou 2026 : la grille de TeT n'a pas ces colonnes                                                                                          |
+| `constat_sans_annee`                   | constat sans année, ou à une année impossible (0, 1900, 2900…)                                                                                         |
+| `valeur_sans_periode`                  | valeur sans période dans T&C : ni constat ni objectif connu, ni année                                                                                  |
+| `commentaire_sans_place`               | texte libre (commentaire d'onglet, commentaires sur les réseaux) : TeT ne commente qu'une valeur                                                       |
+| `total_recalcule`                      | total de polluant déclaré, écrit puis remplacé par le calcul de TeT ; seule ligne à la fois écrite et écartée                                          |
+| `total_melange`                        | dossier dont les totaux sont calculés sur un mélange avec un autre dossier de la même collectivité, à la même date (sur le dossier, table `demarche`)  |
+
+Relire les objectifs 2021 et 2026 écartés, par exemple pour les émissions :
+
+```sql
+select e.tec_id, g.demarche_id, g.secteur_obligatoire_id, g.periode_id, g.emission_ges
+  from reprise_tec.ecarts e
+  join reprise_tec.staging_demarche_emission_ges g on g.id = e.tec_id
+ where e.table_source = 'demarche_emission_ges'
+   and e.motif = 'objectif_sans_colonne'
+ order by g.demarche_id, g.secteur_obligatoire_id, g.periode_id;
+```
+
+#### Le recalcul des totaux
+
+L'écriture directe en base ne déclenche pas le calcul des totaux (GES,
+consommation, EnR, séquestration, polluants) que TeT fait à chaque saisie.
+Avec `--confirm`, après le commit, le script appelle donc le recalcul du
+backend (`indicateurs.valeurs.recompute`, service role), une collectivité à la
+fois, puis inscrit :
+
+- `total_recalcule` : chaque total de polluant déclaré que TeT a remplacé (sa
+  formule du PM10 omet le transport routier ; il arrondit à 2 décimales) ;
+- `total_melange` : chaque dossier dont une collectivité a un autre dossier
+  repris à la même date. Le recalcul regroupe par collectivité, date et source,
+  pas par dossier : leurs totaux mélangent les dossiers, et changent d'un
+  recalcul à l'autre.
+
+En simulation, le recalcul ne tourne pas : le script **prévoit** ces écarts en
+refaisant l'addition de TeT (formules et arrondis lus en base).
+
+Le recalcul refait aussi les totaux des autres sources des collectivités
+touchées : ceux-là ne s'annulent pas, le rapport les compte à part.
+
+S'il s'arrête en route, l'import est déjà validé ; le relancer seul, à partir
+du rang que donne le message d'arrêt :
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-diagnostic/recalculer.ts [--a-partir-de <rang>]
+```
+
+Le backend garde de la mémoire d'une collectivité à l'autre : sur un gros
+volume, il peut tomber en route. Recalculer alors par paquets, en redémarrant
+le backend entre deux.
+
+#### Annuler le diagnostic
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-diagnostic/annuler.ts [--confirm]
+```
+
+Retire, étiquette par étiquette, les valeurs écrites et les totaux que le
+recalcul a rangés dans les dossiers, puis les étiquettes et leurs liens, puis
+les traces et les écarts de la tranche. Aucune tranche ne dépend de celle-ci :
+pas de garde. **Non annulable** : les totaux que le recalcul a refaits sur les
+autres sources des collectivités touchées.
+
+#### Ce qui arrête l'import du diagnostic
+
+Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
+s'il en trouve un :
+
+| Garde                                                                     | Quoi faire                                                                                              |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris                                                      | lancer d'abord l'import des dossiers (étape 2)                                                          |
+| un dossier a déjà un diagnostic rangé                                     | l'import a déjà tourné (l'annuler d'abord), ou la collectivité a saisi le sien : décider au cas par cas |
+| un numéro de secteur, de polluant, de filière ou de sol inconnu du script | l'ajouter à sa table dans `emplacement.ts`, avec sa ligne de la grille ou `null`                        |
+| le compteur des métadonnées est en retard sur la table                    | le recaler, après avoir compris pourquoi il l'est (commande ci-dessous)                                 |
+
+```sql
+select setval('public.indicateur_source_metadonnee_id_seq',
+              (select max(id) from public.indicateur_source_metadonnee));
+```
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
