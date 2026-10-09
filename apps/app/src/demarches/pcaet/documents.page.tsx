@@ -23,7 +23,10 @@ import type {
   DemarcheDocumentEtape,
   DemarcheDocumentAdditional,
 } from '@tet/domain/demarches';
-import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
+import {
+  DemarchePcaetStatusEnum,
+  isPublieDemarchePcaetStatus,
+} from '@tet/domain/demarches';
 import { EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { ComponentProps, PropsWithChildren, useState } from 'react';
@@ -70,18 +73,23 @@ export const DemarchePcaetDocumentsPage = () => {
     removeDocumentAdditional,
   } = useDemarchePcaetDocuments(demarcheId);
 
-  // Les avis se lisent dès la clôture de l'instruction, et le restent une fois
-  // le PCAET adopté, quand plus rien ne s'y dépose.
   const instructionClose =
     !!demarche &&
     (demarche.avalModifiable || isPublieDemarchePcaetStatus(demarche.statut));
+
+  // Un avis validé se lit sans attendre l'autre service ni la fin du délai :
+  // le mail « avis reçu » renvoie ici dès la validation.
+  const enInstruction =
+    demarche?.statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS;
 
   const { avisRecus } = useDemarchePcaetAvisRecus({
     collectiviteId,
     demarcheId,
     // Un dépôt hors plateforme n'a aucun avis sur la plateforme : les siens ont
     // été rendus ailleurs, et les demander afficherait « aucun avis déposé ».
-    enabled: instructionClose && demarche?.transmisHorsPlateforme !== true,
+    enabled:
+      (instructionClose || enInstruction) &&
+      demarche?.transmisHorsPlateforme !== true,
   });
 
   const { mutate: downloadDocument } = useDownloadDocument();
@@ -121,6 +129,11 @@ export const DemarchePcaetDocumentsPage = () => {
   // à annoncer « aucun avis déposé » sur un dossier dont les avis ont été rendus
   // ailleurs. C'est justement ce que le drapeau de provenance sait encore dire.
   const montreLesAvis = instructionClose && !demarche.transmisHorsPlateforme;
+
+  // Pendant l'instruction, le bloc n'apparaît qu'avec un premier avis : un
+  // « aucun avis reçu » laisserait croire le délai échu.
+  const montreLesAvisRecus =
+    montreLesAvis || (enInstruction && avisRecus.length > 0);
 
   const downloadDemarcheDocument = ({
     fichier,
@@ -221,7 +234,7 @@ export const DemarchePcaetDocumentsPage = () => {
           <div className="flex flex-col gap-8">
             {/* Les avis d'abord : c'est ce qui commande la reprise du dossier,
                 et la raison d'être de cette étape. */}
-            {montreLesAvis && (
+            {montreLesAvisRecus && (
               <DocumentsBloc titre={appLabels.demarcheDocumentsAvisRecusTitre}>
                 {avisRecus.length > 0 ? (
                   <AvisDeposesList
