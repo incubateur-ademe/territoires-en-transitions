@@ -1,3 +1,4 @@
+import { planStatusValues } from '@tet/domain/plans';
 import { z } from 'zod';
 
 const demarchePlanContenuFicheSchema = z.object({
@@ -17,6 +18,7 @@ const demarchePlanContenuFicheSchema = z.object({
 export const demarchePlanContenuSchema = z.object({
   id: z.number().int(),
   nom: z.string().nullable(),
+  status: z.enum(planStatusValues),
   nbFiches: z.number().int(),
   /** Fiches rattachées au plan sans passer par un axe. */
   fiches: demarchePlanContenuFicheSchema.array(),

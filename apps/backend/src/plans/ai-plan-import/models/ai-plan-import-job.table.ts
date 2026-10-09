@@ -1,3 +1,4 @@
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
@@ -37,6 +38,10 @@ export const aiPlanImportJobTable = pgTable(
     createdPlanId: integer('created_plan_id').references(() => axeTable.id, {
       onDelete: 'set null',
     }),
+    fichierId: integer('fichier_id').references(
+      () => bibliothequeFichierTable.id,
+      { onDelete: 'set null' }
+    ),
     createdAt,
     modifiedAt,
   },

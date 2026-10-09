@@ -49,7 +49,7 @@ export class EnqueueImportController {
     @UploadedFile() file: Express.Multer.File | undefined,
     @TokenInfo() user: AuthenticatedUser,
     @Body() body: unknown
-  ): Promise<{ jobId: string }> {
+  ): Promise<{ jobId: string; planId: number }> {
     const collectiviteId = parseInt(collectiviteIdParam, 10);
     if (Number.isNaN(collectiviteId)) {
       throw new BadRequestException('Identifiant de collectivité invalide');
@@ -63,15 +63,18 @@ export class EnqueueImportController {
       throw new BadRequestException("Champs du formulaire d'import invalides");
     }
 
+    const { confirmReimport, ...options } = parsedForm.data;
     const result = await this.enqueueImportService.enqueue({
       collectiviteId,
       user,
       file: {
         buffer: file.buffer,
+        filename: file.originalname,
         mimeType: file.mimetype,
         size: file.size,
       },
-      options: parsedForm.data,
+      options,
+      confirmReimport,
     });
 
     return this.getResultDataOrThrowError(result);

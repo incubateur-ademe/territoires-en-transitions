@@ -13,6 +13,8 @@ export const AiPlanImportSpecificErrors = [
   'FILE_TOO_LARGE',
   'UNKNOWN_PLAN_TYPE',
   'STORAGE_ERROR',
+  'CREATE_PLAN_ERROR',
+  'ALREADY_IMPORTED',
   'UNAUTHORIZED',
 ] as const;
 

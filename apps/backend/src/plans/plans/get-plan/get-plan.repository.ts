@@ -5,7 +5,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Personne } from '@tet/domain/collectivites';
-import { AxeLight, PlanSource, PlanType } from '@tet/domain/plans';
+import { AxeLight, PlanSource, PlanStatus, PlanType } from '@tet/domain/plans';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
@@ -17,6 +17,7 @@ export type GetPlanOutput = AxeLight & {
   type: PlanType | null;
   source: PlanSource | null;
   verifiedAt: string | null;
+  status: PlanStatus;
 };
 
 @Injectable()
@@ -51,6 +52,7 @@ export class GetPlanRepository {
           modifiedBy: axeTable.modifiedBy,
           source: axeTable.source,
           verifiedAt: axeTable.verifiedAt,
+          status: axeTable.status,
           type: planActionTypeTable,
         })
         .from(axeTable)

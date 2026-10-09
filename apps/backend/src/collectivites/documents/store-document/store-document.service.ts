@@ -135,7 +135,7 @@ export class StoreDocumentService {
 
   async uploadBuffer(
     collectiviteId: number,
-    file: MulterFile,
+    file: Pick<MulterFile, 'buffer' | 'originalname' | 'mimetype'>,
     isConfidentiel: boolean,
     user?: AuthenticatedUser
   ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {

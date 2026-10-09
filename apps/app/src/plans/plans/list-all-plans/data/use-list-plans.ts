@@ -1,21 +1,27 @@
 import { QueryObserverResult, useQuery } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
+import { PlanStatus, PlanStatusEnum } from '@tet/domain/plans';
 
 export type PlanListItem =
   RouterOutput['plans']['plans']['list']['plans'][number];
 
 type ListPlansOutput = RouterOutput['plans']['plans']['list'];
 
+const IMPORTING_PLANS_REFETCH_INTERVAL_MS = 5_000;
+
 export const useListPlans = (
   collectiviteId: number,
   {
     typeIds,
+    statuses,
     limit,
     page,
     sort,
     enabled,
   }: {
     typeIds?: number[];
+    /** Par défaut, les plans en cours d'import ou en échec sont écartés. */
+    statuses?: readonly PlanStatus[];
     limit?: number;
     page?: number;
     sort?: {
@@ -38,11 +44,21 @@ export const useListPlans = (
       {
         collectiviteId,
         typeIds,
+        statuses: statuses ? [...statuses] : undefined,
         limit,
         page,
         sort,
       },
-      { enabled }
+      {
+        enabled,
+        // Un plan en cours d'import change de statut sans action de l'écran.
+        refetchInterval: (query) =>
+          query.state.data?.plans.some(
+            (plan) => plan.status === PlanStatusEnum.IMPORTING
+          )
+            ? IMPORTING_PLANS_REFETCH_INTERVAL_MS
+            : false,
+      }
     )
   );
 

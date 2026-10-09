@@ -4,7 +4,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { PlanSourceEnum } from '@tet/domain/plans';
+import { PlanSourceEnum, PlanStatusEnum } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetPlanRepository } from '../get-plan/get-plan.repository';
 import { PlanVerificationRepository } from './plan-verification.repository';
@@ -46,6 +46,9 @@ export class VerifyPlanService {
     }
     if (plan.data.verifiedAt) {
       return success({ verifiedAt: plan.data.verifiedAt });
+    }
+    if (plan.data.status !== PlanStatusEnum.TO_VERIFY) {
+      return failure(VerifyPlanErrorEnum.PLAN_NOT_IMPORTED);
     }
 
     const verified = await this.planVerificationRepository.markAsVerified(

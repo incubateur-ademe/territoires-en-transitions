@@ -8,6 +8,8 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { isAiImportVerifiable } from '@/app/plans/plans/import-plan/ai-import.form';
 import { useEnqueueAiImport } from '@/app/plans/plans/import-plan/data/use-enqueue-ai-import';
+import { useFindPreviousAiImport } from '@/app/plans/plans/import-plan/data/use-find-previous-ai-import';
+import { PreviousAiImportAlert } from '@/app/plans/plans/import-plan/previous-ai-import.alert';
 import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
 import { BetaLabel } from '@/app/ui/beta.label';
 import { useToastContext } from '@/app/utils/toast/toast-context';
@@ -44,13 +46,15 @@ export const ProposeImportProgrammeModal = ({
     isError: isFileError,
   } = useGetDocumentFile({ collectiviteId, fichierId });
   const { mutateAsync: enqueue, isPending } = useEnqueueAiImport();
+  const { previousImport, isLoading: isCheckingPreviousImport } =
+    useFindPreviousAiImport({ fichierId });
 
   const startImport = async () => {
     if (!file) {
       return;
     }
     try {
-      const { jobId } = await enqueue({
+      const { jobId, planId } = await enqueue({
         collectiviteId,
         file,
         planName: makeProgrammeActionsPlanName({
@@ -60,8 +64,9 @@ export const ProposeImportProgrammeModal = ({
         planType: pcaetPlanType?.id,
         withVerifications: isAiImportVerifiable(file),
         withSousActions: true,
+        confirmReimport: previousImport !== null,
       });
-      trackImport(jobId);
+      trackImport(jobId, planId);
       setToast('info', appLabels.demarcheProgrammeImportLance);
       onClose();
     } catch (error) {
@@ -84,6 +89,9 @@ export const ProposeImportProgrammeModal = ({
         <div className="flex flex-col gap-4">
           <p className="m-0">{appLabels.demarcheProgrammeImportDescription}</p>
           <p className="m-0">{appLabels.demarcheProgrammeImportArrierePlan}</p>
+          {previousImport && (
+            <PreviousAiImportAlert previousImport={previousImport} />
+          )}
           {isFileError && (
             <Alert
               state="error"
@@ -100,10 +108,12 @@ export const ProposeImportProgrammeModal = ({
             dataTest: 'demarches.documents.propose-import-programme.plus-tard',
           }}
           btnOKProps={{
-            children: appLabels.demarcheProgrammeImportLancer,
+            children: previousImport
+              ? appLabels.importPlanIaRelancerQuandMeme
+              : appLabels.demarcheProgrammeImportLancer,
             icon: 'import-line',
             onClick: startImport,
-            loading: isLoadingFile || isPending,
+            loading: isLoadingFile || isCheckingPreviousImport || isPending,
             disabled: !file || pcaetPlanType === undefined || isPending,
             dataTest: 'demarches.documents.propose-import-programme.lancer',
           }}

@@ -9,9 +9,11 @@ import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/s
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement, useCallback, useEffect, useRef } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
+import { PreviousAiImportAlert } from './previous-ai-import.alert';
+import { useFindPreviousAiImport } from './data/use-find-previous-ai-import';
 
 // Filtre sur l'extension : le MIME d'un CSV varie selon l'OS (text/plain,
 // application/vnd.ms-excel sous Windows avec Excel…). Le serveur tranche
@@ -44,6 +46,11 @@ export const isAiImportVerifiable = (file: File) => file.type === PDF_MIME_TYPE;
 
 export type AiImportFormValues = z.infer<typeof aiImportFormSchema>;
 
+export type AiImportSubmission = AiImportFormValues & {
+  /** Le fichier a déjà produit un plan : l'utilisateur relance en connaissance de cause. */
+  confirmReimport: boolean;
+};
+
 /**
  * Valeurs proposées d'office quand l'appelant les connaît déjà (programme
  * d'actions PCAET) : l'utilisateur reste libre de les changer.
@@ -64,7 +71,7 @@ export const AiImportForm = ({
   lockedPlanTypeId,
   defaults,
 }: {
-  onSubmit: (values: AiImportFormValues) => Promise<void>;
+  onSubmit: (submission: AiImportSubmission) => Promise<void>;
   cancelButton: ReactElement;
   /** Type imposé, affiché mais non modifiable (programme d'actions PCAET). */
   lockedPlanTypeId?: number;
@@ -104,8 +111,22 @@ export const AiImportForm = ({
     [setValue]
   );
 
+  // Un document déjà importé n'est pas re-proposé : le relancer par erreur
+  // créerait un second plan.
+  const {
+    previousImport: suggestedFilePreviousImport,
+    isLoading: isCheckingSuggestedFile,
+  } = useFindPreviousAiImport({ fichierId: defaults?.fichierId });
+  const suggestedFichierId =
+    isCheckingSuggestedFile || suggestedFilePreviousImport !== null
+      ? undefined
+      : defaults?.fichierId;
   const { data: suggestedFile, isLoading: isLoadingSuggestedFile } =
-    useGetDocumentFile({ collectiviteId, fichierId: defaults?.fichierId });
+    useGetDocumentFile({ collectiviteId, fichierId: suggestedFichierId });
+
+  const selectedFile = useWatch({ control, name: 'file' });
+  const { previousImport, isLoading: isCheckingSelectedFile } =
+    useFindPreviousAiImport({ file: selectedFile });
   // Une seule fois, et jamais par-dessus un fichier choisi pendant le
   // téléchargement : retiré, le fichier suggéré ne revient pas.
   const hasAppliedSuggestedFile = useRef(false);
@@ -120,7 +141,12 @@ export const AiImportForm = ({
   }, [suggestedFile, getValues, selectFile]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form
+      onSubmit={handleSubmit((values) =>
+        onSubmit({ ...values, confirmReimport: previousImport !== null })
+      )}
+      className="flex flex-col gap-6"
+    >
       <Alert
         state="info"
         description={
@@ -258,10 +284,24 @@ export const AiImportForm = ({
           )}
         />
       </div>
+      {previousImport && (
+        <PreviousAiImportAlert previousImport={previousImport} />
+      )}
       <div className="flex items-center justify-end gap-6 mt-6">
         {cancelButton}
-        <Button type="submit" disabled={isSubmitting} icon="upload-2-line">
-          {isSubmitting ? <SpinnerLoader /> : appLabels.importPlanIaLancer}
+        <Button
+          type="submit"
+          disabled={isSubmitting || isCheckingSelectedFile}
+          icon="upload-2-line"
+          dataTest="ai-import.lancer"
+        >
+          {isSubmitting ? (
+            <SpinnerLoader />
+          ) : previousImport ? (
+            appLabels.importPlanIaRelancerQuandMeme
+          ) : (
+            appLabels.importPlanIaLancer
+          )}
         </Button>
       </div>
     </form>
