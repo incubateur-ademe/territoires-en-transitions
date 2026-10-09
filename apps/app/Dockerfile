@@ -90,7 +90,7 @@ ENV NODE_ENV=production \
 
 # Métadonnées de build, posées dans le runner comme pour apps/backend : elles
 # décrivent l'artefact (commit), jamais l'environnement, et doivent rester
-# lisibles au runtime (/api/version, configuration publique injectée au HTML).
+# lisibles au runtime (/version, configuration publique injectée au HTML).
 ARG GIT_SHORT_HASH
 ARG GIT_COMMIT_TIMESTAMP
 ARG APPLICATION_VERSION

@@ -20,6 +20,7 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - api/ (API routes)
+     * - version (route publique de version)
      * - ingest/ rewrites
      * - _next/static (static files)
      * - _next/image (image optimization files)
@@ -27,7 +28,7 @@ export const config = {
      */
     {
       source:
-        '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|xlsx|docx|pdf|txt|ods|woff2)$).*)',
+        '/((?!api|version$|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|xlsx|docx|pdf|txt|ods|woff2)$).*)',
 
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
