@@ -425,7 +425,6 @@ export const demarchesLabels = {
       count: enfants,
       withoutCount: true,
     })} de ${label}`,
-  demarcheVulnerabiliteThematiqueSupprime: 'Thématique supprimée',
   demarcheVulnerabiliteSupprimerThematique: 'Supprimer cette thématique',
   demarcheVulnerabiliteSupprimerThematiqueNomme: ({
     label,
@@ -515,11 +514,8 @@ export const demarchesLabels = {
     `Déposer un document du dossier ${type.nom}`,
   demarcheDocumentsErreurChargement: ({ type }: { type: DemarcheTypeLabels }) =>
     `Impossible de charger les pièces du dossier ${type.nom}`,
-  demarcheDocumentsDeposeSucces: 'Document déposé',
   demarcheDocumentsDeposeErreur: 'Échec du dépôt du document',
-  demarcheDocumentsSuppressionSucces: 'Document supprimé',
   demarcheDocumentsSuppressionErreur: 'Échec de la suppression du document',
-  demarcheDocumentsCouvertureSucces: 'Couverture de la pièce mise à jour',
   demarcheDocumentsCouvertureErreur:
     'Échec de la mise à jour de la couverture de la pièce',
   demarcheDocumentsAdditionalAjouter: 'Ajouter un document',
@@ -531,7 +527,6 @@ export const demarchesLabels = {
   demarcheDocumentsAdditionalSupprimer: 'Supprimer le document',
   demarcheDocumentsAdditionalCreationErreur: 'Échec de l’ajout du document',
   demarcheDocumentsAdditionalTitreErreur: 'Échec de l’enregistrement du titre',
-  demarcheDocumentsAdditionalSuppressionSucces: 'Document retiré du dossier',
   demarcheDocumentsAdditionalSuppressionErreur: 'Échec du retrait du document',
   demarcheProgrammeTitre: 'Renseigner le programme d’actions',
   demarcheProgrammeChargement:

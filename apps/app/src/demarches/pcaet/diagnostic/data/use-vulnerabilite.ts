@@ -1,10 +1,12 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { autosaveMeta } from '@/app/utils/react-query/autosave-status/autosave-status';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useCallback } from 'react';
+import { demarchePcaetAutosaveKeys } from '../../data/autosave-keys';
 
 type Diagnostic = RouterOutput['demarches']['pcaet']['diagnostic']['get'];
 
@@ -58,17 +60,20 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
     [queryClient, queryKey, trpc, collectiviteId, demarcheId]
   );
 
-  // La saisie d'une cellule est fréquente : son succès n'a pas besoin d'un
-  // toast, seul l'échec doit se voir.
+  // Le succès s'affiche dans le badge d'enregistrement du tableau : seul
+  // l'échec mérite un toast.
   // Toutes les écritures partagent une file : leurs réponses remplacent le
   // cache entier, et deux saisies rapprochées dont les réponses se croisent
   // laisseraient la plus ancienne à l'écran.
   const scope = { id: `demarche-pcaet-vulnerabilite-${demarcheId}` };
+  const autosave = autosaveMeta(
+    demarchePcaetAutosaveKeys.diagnosticVulnerabilite(demarcheId)
+  );
 
   const { mutate: setLigneMutate } = useMutation(
     trpc.demarches.pcaet.diagnostic.setVulnerabiliteLigne.mutationOptions({
       scope,
-      meta: { error: appLabels.mutationError },
+      meta: { error: appLabels.mutationError, ...autosave },
       onSuccess,
       onError: () => queryClient.invalidateQueries({ queryKey }),
     })
@@ -80,7 +85,7 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
     trpc.demarches.pcaet.diagnostic.addVulnerabiliteThematique.mutationOptions({
       scope,
       // L'échec est rendu dans la modale, au plus près du champ fautif.
-      meta: { disableToast: true },
+      meta: { disableToast: true, ...autosave },
       onSuccess,
     })
   );
@@ -89,7 +94,7 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
     trpc.demarches.pcaet.diagnostic.updateVulnerabiliteThematique.mutationOptions(
       {
         scope,
-        meta: { error: appLabels.mutationError },
+        meta: { error: appLabels.mutationError, ...autosave },
         onSuccess,
         onError: () => queryClient.invalidateQueries({ queryKey }),
       }
@@ -100,10 +105,7 @@ export const useDemarchePcaetVulnerabilite = (demarcheId: number) => {
     trpc.demarches.pcaet.diagnostic.removeVulnerabiliteThematique.mutationOptions(
       {
         scope,
-        meta: {
-          success: appLabels.demarcheVulnerabiliteThematiqueSupprime,
-          error: appLabels.mutationError,
-        },
+        meta: { error: appLabels.mutationError, ...autosave },
         onSuccess,
       }
     )

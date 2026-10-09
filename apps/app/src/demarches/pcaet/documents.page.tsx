@@ -1,6 +1,7 @@
 'use client';
 
 import { DemarcheSection } from '@/app/demarches/components/section';
+import { demarchePcaetAutosaveKeys } from '@/app/demarches/pcaet/data/autosave-keys';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { getDemarcheParcours } from '@/app/demarches/steps';
 import { DemarcheDocumentsTable } from '@/app/demarches/components/documents.table';
@@ -18,6 +19,7 @@ import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-imp
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
+import { useAutosaveStatus } from '@/app/utils/react-query/autosave-status/use-autosave-status';
 import type {
   DemarcheDocumentDepose,
   DemarcheDocumentEtape,
@@ -27,7 +29,7 @@ import {
   DemarchePcaetStatusEnum,
   isPublieDemarchePcaetStatus,
 } from '@tet/domain/demarches';
-import { EmptyCard } from '@tet/ui';
+import { AutosaveBadge, EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { ComponentProps, PropsWithChildren, useState } from 'react';
 
@@ -72,6 +74,9 @@ export const DemarchePcaetDocumentsPage = () => {
     addFichierDocumentAdditional,
     removeDocumentAdditional,
   } = useDemarchePcaetDocuments(demarcheId);
+  const autosaveStatus = useAutosaveStatus(
+    demarchePcaetAutosaveKeys.documents(demarcheId)
+  );
 
   const instructionClose =
     !!demarche &&
@@ -216,6 +221,14 @@ export const DemarchePcaetDocumentsPage = () => {
             : parcours.avalOuvert
             ? appLabels.demarcheDetailDocumentsAvalDescription
             : appLabels.demarcheDetailDocumentsAdopteDescription
+        }
+        action={
+          !isEtapeReadonly(etapeCourante) && (
+            <AutosaveBadge
+              status={autosaveStatus}
+              dataTest="demarches.pcaet.documents.autosave"
+            />
+          )
         }
         className="gap-2"
       >

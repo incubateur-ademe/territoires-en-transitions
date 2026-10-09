@@ -71,12 +71,17 @@ export const useDiagnosticIndicateurValeursTable = ({
   demarcheId,
   table,
   isReadonly,
+  autosaveKey,
 }: {
   demarcheId: number;
   table: DiagnosticIndicateurTable;
   isReadonly: boolean;
+  autosaveKey: string;
 }): DiagnosticIndicateurValeursTable => {
-  const { setReferenceYear } = useSetDiagnosticReferenceYear(demarcheId);
+  const { setReferenceYear } = useSetDiagnosticReferenceYear(
+    demarcheId,
+    autosaveKey
+  );
   const rows = useMemo(() => toGridRows(table), [table]);
   const derivedReferenceYear = useMemo(
     () =>

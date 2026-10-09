@@ -1,6 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { autosaveMeta } from '@/app/utils/react-query/autosave-status/autosave-status';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -18,7 +19,10 @@ import { useCallback, useRef } from 'react';
  * pour resynchroniser. `pcaet.get` suit aussi : le badge de complétion du
  * parcours en dépend.
  */
-export const useSetIndicateurApplicable = (demarcheId: number) => {
+export const useSetIndicateurApplicable = (
+  demarcheId: number,
+  autosaveKey: string
+) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -53,7 +57,10 @@ export const useSetIndicateurApplicable = (demarcheId: number) => {
 
   const { mutateAsync, isPending } = useMutation(
     trpc.indicateurs.indicateurs.update.mutationOptions({
-      meta: { error: appLabels.pcaetDiagnosticApplicabiliteEchec },
+      meta: {
+        error: appLabels.pcaetDiagnosticApplicabiliteEchec,
+        ...autosaveMeta(autosaveKey),
+      },
 
       onMutate: async ({ indicateurId, indicateurFields }) => {
         const { isApplicable } = indicateurFields;

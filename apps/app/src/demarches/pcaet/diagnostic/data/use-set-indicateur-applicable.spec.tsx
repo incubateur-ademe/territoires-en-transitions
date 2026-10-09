@@ -97,9 +97,12 @@ const renderSetIndicateurApplicable = () => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
-  const { result } = renderHook(() => useSetIndicateurApplicable(DEMARCHE_ID), {
-    wrapper,
-  });
+  const { result } = renderHook(
+    () => useSetIndicateurApplicable(DEMARCHE_ID, 'grille'),
+    {
+      wrapper,
+    }
+  );
 
   /**
    * Part la bascule sans attendre sa réponse. `mutateAsync` rejette quand la

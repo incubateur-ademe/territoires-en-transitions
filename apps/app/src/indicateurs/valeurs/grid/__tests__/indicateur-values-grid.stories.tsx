@@ -16,6 +16,7 @@ const meta: Meta<typeof IndicateurValeursTable> = {
   component: IndicateurValeursTable,
   args: {
     demarcheId: 1,
+    autosaveKey: 'grille',
     rows: fakeRows,
     years: fakeYears,
     referenceYear: fakeReferenceYear,
@@ -98,6 +99,7 @@ const PolluantSwitchGrid = (): JSX.Element => {
       </div>
       <IndicateurValeursTable
         demarcheId={1}
+        autosaveKey="grille"
         rows={rowsByPolluant[selectedPolluant]}
         years={fakeYears}
         referenceYear={fakeReferenceYear}

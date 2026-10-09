@@ -19,6 +19,7 @@ export * from './components/tracking';
 export * from './components/PageHeader';
 export * from './design-system/Accordion';
 export * from './design-system/Alert';
+export * from './design-system/autosave-badge';
 export * from './design-system/Badge';
 export * from './design-system/BadgeFilters';
 export * from './design-system/BottomOkCancel';
