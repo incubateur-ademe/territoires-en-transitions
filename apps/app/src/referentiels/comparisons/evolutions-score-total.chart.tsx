@@ -292,8 +292,10 @@ const makeSnapshotTooltip = (
   [
     `<strong>${escapeHtml(snapshot.nom ?? '')}</strong>`,
     getTextFormattedDate({ date: snapshot.date }),
-    snapshot.jalon === SnapshotJalonEnum.DATE_PERSONNALISEE &&
-    snapshot.createdByName
+    isAuditOrEMT(snapshot.jalon)
+      ? appLabels.sauvegardeAutomatique
+      : snapshot.jalon === SnapshotJalonEnum.DATE_PERSONNALISEE &&
+        snapshot.createdByName
       ? appLabels.sauvegardeCreeePar(escapeHtml(snapshot.createdByName))
       : null,
     showReferentielVersion && snapshot.referentielVersion
