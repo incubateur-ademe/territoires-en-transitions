@@ -18,6 +18,8 @@ import {
 } from '../models/ai-plan-import-job';
 import { GenerateImportDraftService } from './generate-import-draft.service';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
+import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
+import { ImportStepRun } from '../models/import-step-run';
 
 const job: AiPlanImportJob = {
   id: 'job-1',
@@ -37,6 +39,9 @@ const job: AiPlanImportJob = {
   error: null,
   createdPlanId: 7,
   fichierId: 3,
+  startedAt: null,
+  finishedAt: null,
+  stats: null,
   createdAt: '2026-06-10T00:00:00Z',
   modifiedAt: '2026-06-10T00:00:00Z',
 };
@@ -149,6 +154,13 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     enqueue: vi.fn(async () => undefined),
   } as unknown as EnqueueCompletePlanSecteursService;
 
+  const insertStepRun = vi.fn(async (_jobId: string, _run: ImportStepRun) =>
+    success(undefined)
+  );
+  const stepRunRepository = {
+    insert: insertStepRun,
+  } as unknown as AiPlanImportStepRunRepository;
+
   return {
     jobRepository,
     documentStorage,
@@ -160,6 +172,8 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     trackingService,
     capture,
     enqueueCompletePlanSecteursService,
+    stepRunRepository,
+    insertStepRun,
     save,
     markAsImportedByAi,
     markAsImporting,
@@ -179,7 +193,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.notifyPlanImportedService,
     mocks.transactionManager,
     mocks.trackingService,
-    mocks.enqueueCompletePlanSecteursService
+    mocks.enqueueCompletePlanSecteursService,
+    mocks.stepRunRepository
   );
 
 describe('GenerateImportDraftService', () => {
@@ -467,5 +482,36 @@ describe('GenerateImportDraftService', () => {
     );
     expect(mocks.markAsImporting).toHaveBeenCalledWith(7, {});
     expect(mocks.markAsImportedByAi).toHaveBeenCalledWith(7, {});
+  });
+
+  it('enregistre chaque étape et le résumé chiffré du job', async () => {
+    const mocks = buildMocks();
+    const service = buildService(mocks);
+
+    await service.generate('job-1');
+
+    const steps = mocks.insertStepRun.mock.calls.map(([, run]) => run.step);
+    expect(steps).toEqual([
+      'document',
+      'reading',
+      'scouting',
+      'extraction',
+      'hierarchy',
+      'scoring',
+      'consolidation',
+      'enrichment',
+      'qualitativeReview',
+      'persistence',
+    ]);
+    expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+      expect.objectContaining({
+        stats: expect.objectContaining({
+          schemaVersion: 1,
+          content: expect.objectContaining({ actions: 1, fichesCreated: 1 }),
+          document: expect.objectContaining({ kind: 'csv' }),
+          llm: expect.objectContaining({ strategy: 'whole-document' }),
+        }),
+      })
+    );
   });
 });

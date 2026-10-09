@@ -1,24 +1,16 @@
 import { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
-import {
-  emptyTokenUsage,
-  sumTokenUsage,
-  TokenUsage,
-} from '@tet/backend/utils/llm/token-usage';
+import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { ExtractedAction } from '../models/extracted-action';
 import { PlanDraft } from '../models/plan-draft';
+import {
+  computeContentMetrics,
+  computeLlmCallMetrics,
+  FILL_RATE_FIELDS,
+  FillRateField,
+} from '../pipeline/compute-import-metrics';
 import { titlesMatch } from '../pipeline/extract-actions/similar-titles';
 
-const FILL_RATE_FIELDS = [
-  'description',
-  'objectifs',
-  'structurePilote',
-  'directionServicePilote',
-  'personnePilote',
-  'budget',
-  'statut',
-] as const;
-
-export type FillRateField = (typeof FILL_RATE_FIELDS)[number];
+export type { FillRateField };
 
 export type EvalMetrics = {
   actions: number;
@@ -58,29 +50,14 @@ export const computeEvalMetrics = ({
   events: LlmCallEvent[];
   durationMs: number;
 }): EvalMetrics => {
-  const { actions } = draft;
-  const usages = events.flatMap((event) => (event.usage ? [event.usage] : []));
+  const { calls, rateLimited, failedCalls, tokens } =
+    computeLlmCallMetrics(events);
   return {
-    actions: actions.length,
-    actionsSansAxe: actions.filter((action) => !action.axe.trim()).length,
-    axes: distinctCount(actions.map((action) => action.axe)),
-    sousAxes: distinctCount(
-      actions
-        .filter((action) => action.sousAxe.trim())
-        .map((action) => `${action.axe}|${action.sousAxe}`)
-    ),
-    sousActions: actions.reduce(
-      (total, action) => total + action.sousActions.length,
-      0
-    ),
-    fillRates: Object.fromEntries(
-      FILL_RATE_FIELDS.map((field) => [field, fillRate(actions, field)])
-    ) as Record<FillRateField, number>,
-    calls: events.length,
-    rateLimited: events.filter((event) => event.error?.kind === 'rate_limited')
-      .length,
-    failedCalls: events.filter((event) => event.error !== null).length,
-    tokens: usages.length > 0 ? sumTokenUsage(usages) : emptyTokenUsage(),
+    ...computeContentMetrics(draft.actions),
+    calls,
+    rateLimited,
+    failedCalls,
+    tokens,
     durationMs,
   };
 };
@@ -212,18 +189,3 @@ const unmatchedTitles = (
         !others.some((other) => titlesMatch(action.titre, other.titre))
     )
     .map((action) => action.titre);
-
-const distinctCount = (values: string[]): number =>
-  new Set(values.map((value) => value.trim().toLowerCase()).filter(Boolean))
-    .size;
-
-const fillRate = (actions: ExtractedAction[], field: FillRateField): number => {
-  if (actions.length === 0) {
-    return 0;
-  }
-  const filled = actions.filter((action) => {
-    const value = action[field];
-    return typeof value === 'number' ? true : Boolean(value?.trim());
-  }).length;
-  return filled / actions.length;
-};

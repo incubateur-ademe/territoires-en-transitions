@@ -46,6 +46,9 @@ const job: AiPlanImportJob = {
   error: null,
   createdPlanId: 42,
   fichierId: 7,
+  startedAt: null,
+  finishedAt: null,
+  stats: null,
   createdAt: '2026-06-11T00:00:00Z',
   modifiedAt: '2026-06-11T00:00:00Z',
 };

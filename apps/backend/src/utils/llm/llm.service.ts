@@ -5,7 +5,8 @@ import { z, ZodType } from 'zod';
 import { ConcurrencyLimiter } from '../concurrency-limiter';
 import { estimateRequestTokens } from './estimate-request-tokens';
 import { LlmError } from './llm.errors';
-import { LlmObserver } from './llm-observer';
+import { currentLlmCallRecorder } from './llm-call-recorder';
+import { LlmCallEvent, LlmObserver } from './llm-observer';
 import { ModelRateLimiters } from './model-rate-limiters';
 import {
   LlmCapabilities,
@@ -124,6 +125,7 @@ export class LlmService {
       request.prompt.length + (request.systemInstruction?.length ?? 0);
     const estimatedTokens = estimateRequestTokens(request);
     const model = this.llmRepository.modelFor(request.tier) ?? request.tier;
+    const recorder = currentLlmCallRecorder();
     return this.callWithRetry(
       (attempt) =>
         this.limiter.run(async () => {
@@ -145,13 +147,17 @@ export class LlmService {
           const result = completion.success
             ? toResult(completion.data)
             : completion;
-          this.observer?.onCall({
+          const event: LlmCallEvent = {
+            tier: request.tier,
+            model,
             attempt,
             durationMs: Date.now() - startedAt,
             promptChars,
             usage: completion.success ? completion.data.usage : null,
             error: result.success ? null : result.error,
-          });
+          };
+          this.observer?.onCall(event);
+          recorder?.calls.push(event);
           return result;
         }),
       request.signal

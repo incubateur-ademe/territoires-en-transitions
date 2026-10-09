@@ -24,11 +24,17 @@ import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag
 import { DocumentHash } from '@tet/domain/collectivites';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import {
+  LlmCompletionRequest,
+  LlmRepository,
+} from '@tet/backend/utils/llm/repositories/llm.repository';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
+import { success } from '@tet/backend/utils/result.type';
+import { z, ZodType } from 'zod';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
@@ -38,6 +44,7 @@ import { CompletePlanSecteursWorker } from '@tet/backend/plans/fiches/fiche-sect
 import { AI_PLAN_IMPORT_QUEUE_NAME } from './ai-plan-import.queue';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
+import { aiPlanImportStepRunTable } from './models/ai-plan-import-step-run.table';
 import { consolidationResponseSchema } from './pipeline/consolidate-actions/consolidate-actions.schema';
 import { enrichmentResponseSchema } from './pipeline/enrich-sous-actions/enrich-sous-actions.schema';
 import { extractionResponseSchema } from './pipeline/extract-actions/extract-actions.schema';
@@ -47,14 +54,6 @@ import { qualitativeReviewResponseSchema } from './pipeline/qualitative-review/q
 import { scoringResponseSchema } from './pipeline/score-actions/score-actions.schema';
 
 const QUALITATIVE_REVIEW_TEXT = 'Plan cohérent et bien structuré.';
-
-const noTokens: TokenUsage = {
-  promptTokens: 0,
-  cachedTokens: 0,
-  candidatesTokens: 0,
-  thoughtsTokens: 0,
-  totalTokens: 0,
-};
 
 const extractionAction = {
   axe: 'Axe 1',
@@ -76,26 +75,44 @@ const extractionAction = {
   statut: '',
 };
 
+const FAKE_MODEL = 'modele-factice';
+
+const fakeTokens: TokenUsage = {
+  promptTokens: 100,
+  cachedTokens: 0,
+  candidatesTokens: 20,
+  thoughtsTokens: 5,
+  totalTokens: 125,
+};
+
+const schemaKey = (schema: ZodType): string =>
+  JSON.stringify(z.toJSONSchema(schema));
+
+/**
+ * Un vrai `LlmService` sur un fournisseur factice : les appels traversent la
+ * même chaîne qu'en production (tentatives, jetons, modèle), sans réseau.
+ */
 const buildFakeLlm = (): LlmService => {
-  const respondTo = (schema: unknown): unknown => {
-    if (schema === extractionResponseSchema) {
-      return [extractionAction];
-    }
-    if (schema === scoringResponseSchema) {
-      return [{ index: 0, score: 50, explication: 'À consolider' }];
-    }
-    if (schema === consolidationResponseSchema) {
-      return [
+  const responses = new Map<string, unknown>([
+    [schemaKey(extractionResponseSchema), [extractionAction]],
+    [
+      schemaKey(scoringResponseSchema),
+      [{ index: 0, score: 50, explication: 'À consolider' }],
+    ],
+    [
+      schemaKey(consolidationResponseSchema),
+      [
         {
           index: 0,
           titre: 'Action consolidée 1.1.1',
           description: 'Description consolidée',
           'sous-actions': ['Sous-action A'],
         },
-      ];
-    }
-    if (schema === enrichmentResponseSchema) {
-      return [
+      ],
+    ],
+    [
+      schemaKey(enrichmentResponseSchema),
+      [
         {
           index: 0,
           description: 'Sous-action enrichie',
@@ -104,23 +121,44 @@ const buildFakeLlm = (): LlmService => {
           date_debut: '',
           date_fin: '',
         },
-      ];
-    }
-    if (schema === qualitativeReviewResponseSchema) {
-      return { avis: QUALITATIVE_REVIEW_TEXT };
-    }
-    throw new Error('Schéma LLM inattendu dans le mock');
-  };
+      ],
+    ],
+    [
+      schemaKey(qualitativeReviewResponseSchema),
+      { avis: QUALITATIVE_REVIEW_TEXT },
+    ],
+  ]);
 
-  return {
-    maxInputTokens: 60_000,
-    maxInputTokensFor: () => 60_000,
-    capabilities: { ocr: false, strategy: 'whole-document' },
-    generateStructured: async ({ schema }: { schema: unknown }) => ({
-      success: true,
-      data: { data: respondTo(schema), tokens: noTokens },
-    }),
-  } as unknown as LlmService;
+  class FakeLlmRepository extends LlmRepository {
+    readonly maxConcurrentCalls = 4;
+    readonly maxInputTokensPerMinute = null;
+    readonly maxRequestsPerMinute = null;
+    readonly capabilities = { ocr: false, strategy: 'whole-document' as const };
+
+    maxInputTokensFor(): number {
+      return 60_000;
+    }
+
+    modelFor(): string {
+      return FAKE_MODEL;
+    }
+
+    async complete(request: LlmCompletionRequest) {
+      const response = request.jsonSchema
+        ? responses.get(JSON.stringify(request.jsonSchema))
+        : undefined;
+      if (response === undefined) {
+        throw new Error('Schéma LLM inattendu dans le mock');
+      }
+      return success({
+        completed: true,
+        text: JSON.stringify(response),
+        usage: fakeTokens,
+      });
+    }
+  }
+
+  return new LlmService(new FakeLlmRepository());
 };
 
 const buildInMemoryDocumentStorage = (): DocumentStorageService => {
@@ -509,6 +547,54 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       source: 'import_ia',
       status: 'to_verify',
       verifiedAt: null,
+    });
+
+    const stepRuns = await db.db
+      .select()
+      .from(aiPlanImportStepRunTable)
+      .where(eq(aiPlanImportStepRunTable.jobId, jobId))
+      .orderBy(asc(aiPlanImportStepRunTable.startedAt));
+    expect(stepRuns.map(({ step, status }) => ({ step, status }))).toEqual([
+      { step: 'document', status: 'ok' },
+      { step: 'reading', status: 'ok' },
+      { step: 'scouting', status: 'skipped' },
+      { step: 'extraction', status: 'ok' },
+      { step: 'hierarchy', status: 'skipped' },
+      { step: 'scoring', status: 'ok' },
+      { step: 'consolidation', status: 'ok' },
+      { step: 'enrichment', status: 'ok' },
+      { step: 'qualitativeReview', status: 'ok' },
+      { step: 'persistence', status: 'ok' },
+    ]);
+    const extraction = stepRuns.find((run) => run.step === 'extraction');
+    expect(extraction).toMatchObject({
+      llmCalls: 1,
+      models: [FAKE_MODEL],
+      tokens: fakeTokens,
+      details: { actionsIn: 0, actionsOut: 1 },
+    });
+
+    const finishedJob = await readJob(jobId);
+    expect(finishedJob.startedAt).not.toBeNull();
+    expect(finishedJob.finishedAt).not.toBeNull();
+    expect(finishedJob.stats).toMatchObject({
+      schemaVersion: 1,
+      content: {
+        actions: 1,
+        axes: 1,
+        sousAxes: 1,
+        sousActions: 1,
+        extracted: 1,
+        fichesCreated: 2,
+        hasQualitativeReview: true,
+      },
+      document: { kind: 'csv', mimeType: 'text/csv' },
+      llm: {
+        strategy: 'whole-document',
+        models: [FAKE_MODEL],
+        calls: 5,
+        tokens: { totalTokens: 5 * fakeTokens.totalTokens },
+      },
     });
 
     const [notification] = await db.db
