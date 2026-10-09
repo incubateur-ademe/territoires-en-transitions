@@ -11,6 +11,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { buildQueueRedisConnection } from '@tet/backend/utils/config/build-queue-redis-connection';
 import basicAuth from 'express-basic-auth';
 import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
@@ -36,17 +37,20 @@ const appLogger = new Logger('AppModule');
     BullModule.forRootAsync({
       imports: [ConfigurationModule],
       useFactory: async (config: ConfigurationService) => {
-        const host = config.get('QUEUE_REDIS_HOST');
-        const port = config.get('QUEUE_REDIS_PORT');
+        const connection = buildQueueRedisConnection({
+          QUEUE_REDIS_HOST: config.get('QUEUE_REDIS_HOST'),
+          QUEUE_REDIS_PORT: config.get('QUEUE_REDIS_PORT'),
+          QUEUE_REDIS_URL: config.get('QUEUE_REDIS_URL'),
+          QUEUE_REDIS_TLS_CA: config.get('QUEUE_REDIS_TLS_CA'),
+        });
 
-        appLogger.log(`Connecting to Redis at ${host}:${port}`);
+        appLogger.log(
+          `Connecting to Redis at ${connection.host}:${connection.port}${
+            connection.tls ? ' (TLS)' : ''
+          }`
+        );
 
-        return {
-          connection: {
-            host: host,
-            port: port,
-          },
-        };
+        return { connection };
       },
       inject: [ConfigurationService],
     }),
