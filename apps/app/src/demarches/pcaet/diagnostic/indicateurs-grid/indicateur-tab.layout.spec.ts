@@ -70,7 +70,7 @@ describe('buildIndicateurValeursTableSections', () => {
     ]);
   });
 
-  it('crée une table par puits de séquestration', () => {
+  it('crée une table obligatoire par puits de séquestration', () => {
     const sections = buildIndicateurValeursTableSections(
       byCode('sequestration')
     );
@@ -84,6 +84,7 @@ describe('buildIndicateurValeursTableSections', () => {
     expect(sections[0].tables.every((table) => table.rows.length === 1)).toBe(
       true
     );
+    expect(sections[0].tables.some((table) => table.isOptional)).toBe(false);
   });
 
   it('sépare les ENR par groupBy et écarte les identifiants non résolus', () => {

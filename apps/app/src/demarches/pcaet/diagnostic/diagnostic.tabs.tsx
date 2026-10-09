@@ -94,7 +94,9 @@ export const DiagnosticTabs = ({
                     diagnostic.indicateurValeurs,
                     diagnostic.indicateurDefinitions
                   )
-                : getDiagnosticVulnerabiliteTopicStatut();
+                : getDiagnosticVulnerabiliteTopicStatut(
+                    diagnostic.vulnerabilite
+                  );
               return (
                 <TopicTab
                   key={tab.code}

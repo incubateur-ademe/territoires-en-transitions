@@ -4,9 +4,11 @@ import {
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS,
   DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS,
 } from '@/app/demarches/pcaet/constants';
+import { IndicateurValeurRequiseMarker } from '@/app/indicateurs/valeurs/grid/indicateur-valeur-requise.marker';
 import { appLabels } from '@/app/labels/catalog';
 import {
   demarchePcaetVulnerabiliteNiveauValues,
+  isVulnerabiliteObjectifRequis,
   OBJECTIFS_MAX_LENGTH,
   VULNERABILITE_THEMATIQUE_LABEL_MAX,
   type DemarchePcaetVulnerabilite,
@@ -106,12 +108,15 @@ const NiveauCell = ({
   thematiqueLabel,
   horizonLabel,
   niveau,
+  isRequis,
   isReadonly,
   onChange,
 }: {
   thematiqueLabel: string;
   horizonLabel: string;
   niveau: DemarchePcaetVulnerabiliteNiveau | null;
+  /** Niveau attendu et pas encore saisi. */
+  isRequis: boolean;
   isReadonly: boolean;
   onChange: (next: DemarchePcaetVulnerabiliteNiveau | null) => void;
 }) => (
@@ -127,6 +132,7 @@ const NiveauCell = ({
         niveau === null
           ? appLabels.demarcheVulnerabiliteNiveauNonRenseigne
           : DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS[niveau],
+      isRequis,
     })}
     edit={{
       renderOnEdit: ({ openState }) => (
@@ -144,19 +150,23 @@ const NiveauCell = ({
     {niveau !== null ? (
       <NiveauBadge niveau={niveau} />
     ) : (
-      <span
-        aria-hidden
-        className="text-sm text-grey-8 opacity-60 transition-opacity group-hover/niveau:opacity-100 group-focus-visible/niveau:opacity-100"
-      >
-        {isReadonly ? '' : appLabels.demarcheVulnerabiliteAjouterNiveau}
+      <span className="flex items-center gap-1">
+        <span
+          aria-hidden
+          className="text-sm text-grey-8 opacity-60 transition-opacity group-hover/niveau:opacity-100 group-focus-visible/niveau:opacity-100"
+        >
+          {isReadonly ? '' : appLabels.demarcheVulnerabiliteAjouterNiveau}
+        </span>
+        {isRequis && <IndicateurValeurRequiseMarker />}
       </span>
     )}
   </TableCell>
 );
 
 /**
- * Cellule d'objectif. Rien n'est exigé sur ce volet : toutes les cellules
- * invitent de la même façon, quel que soit le niveau de l'horizon.
+ * Cellule d'objectif. Un horizon « non concerné » n'attend rien : la cellule
+ * reste éditable — la collectivité peut vouloir commenter — mais ne porte pas
+ * le marqueur de saisie requise.
  *
  * Le brouillon vaut `null` tant que rien n'est saisi : l'affichage retombe
  * alors sur la valeur serveur. Sans cela, un brouillon figé au premier rendu
@@ -166,12 +176,15 @@ const ObjectifCell = ({
   thematiqueLabel,
   horizonLabel,
   value,
+  isRequis,
   isReadonly,
   onCommit,
 }: {
   thematiqueLabel: string;
   horizonLabel: string;
   value: string | null;
+  /** Objectif attendu et pas encore saisi. */
+  isRequis: boolean;
   isReadonly: boolean;
   onCommit: (next: string) => void;
 }) => {
@@ -186,6 +199,7 @@ const ObjectifCell = ({
         thematique: thematiqueLabel,
         horizon: horizonLabel,
         renseigne: Boolean(value),
+        isRequis,
       })}
       edit={{
         floatingMatchReferenceHeight: false,
@@ -213,6 +227,12 @@ const ObjectifCell = ({
         }`}
       >
         {value || (isReadonly ? '' : appLabels.demarcheVulnerabiliteObjectifs)}
+        {isRequis && (
+          <>
+            {' '}
+            <IndicateurValeurRequiseMarker />
+          </>
+        )}
       </span>
     </TableCell>
   );
@@ -640,6 +660,7 @@ export const VulnerabiliteTable = ({
                       thematiqueLabel={thematique.label}
                       horizonLabel={col.label}
                       niveau={ligne[col.key]}
+                      isRequis={thematique.requis && ligne[col.key] === null}
                       isReadonly={isReadonly}
                       onChange={(valeur) =>
                         setLigne({
@@ -655,6 +676,11 @@ export const VulnerabiliteTable = ({
                       thematiqueLabel={thematique.label}
                       horizonLabel={col.horizon}
                       value={ligne[col.key]}
+                      isRequis={
+                        thematique.requis &&
+                        isVulnerabiliteObjectifRequis(ligne[col.niveauKey]) &&
+                        !ligne[col.key]?.trim()
+                      }
                       isReadonly={isReadonly}
                       onCommit={(texte) =>
                         setLigne({
@@ -670,6 +696,11 @@ export const VulnerabiliteTable = ({
           </tbody>
         </Table>
       </div>
+
+      <p className="flex items-center gap-2 text-xs text-grey-7 mt-2 mb-0">
+        <IndicateurValeurRequiseMarker />
+        {appLabels.demarcheVulnerabiliteRequisLegende}
+      </p>
 
       {!isReadonly && (
         <div className="m-4">

@@ -11,6 +11,7 @@ import type {
   PcaetDiagnosticIndicateurDefinition,
   PcaetDiagnosticIndicateurParentConfig,
 } from './demarche-pcaet-diagnostic.schema';
+import { isPcaetDiagnosticVulnerabiliteComplete } from './demarche-pcaet-vulnerabilite.rules';
 
 /** Borne basse d'une année saisissable dans le diagnostic. */
 export const REFERENCE_YEAR_MIN = 1990;
@@ -160,10 +161,9 @@ export const isPcaetDiagnosticIndicateurComplet = ({
 
 /**
  * Complétude de l'étape diagnostic du dossier, condition de la transmission
- * pour avis. Seuls comptent les topics indicateurs qui exigent quelque chose :
- * le front et le guard serveur appliquent cette règle au même objet, ils ne
- * peuvent donc pas rendre deux verdicts. La vulnérabilité n'entre pas dans le
- * calcul.
+ * pour avis : les topics indicateurs qui exigent quelque chose, et la
+ * vulnérabilité du territoire. Le front et le guard serveur appliquent cette
+ * règle au même objet, ils ne peuvent donc pas rendre deux verdicts.
  */
 export const isDemarchePcaetDiagnosticComplet = (
   diagnostic: PcaetDiagnostic
@@ -175,4 +175,5 @@ export const isDemarchePcaetDiagnosticComplet = (
       indicateurs: diagnostic.indicateurValeurs,
       definitions: diagnostic.indicateurDefinitions,
     })
-  );
+  ) &&
+  isPcaetDiagnosticVulnerabiliteComplete(diagnostic.vulnerabilite);

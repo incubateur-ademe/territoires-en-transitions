@@ -153,17 +153,27 @@ describe('Récupérer le diagnostic PCAET', () => {
     expect(conso?.children).toHaveLength(8);
   });
 
-  test('La séquestration est optionnelle', async () => {
+  test('La séquestration est obligatoire, hors objectif 2050', async () => {
     const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const sequestration = (
       await getDiagnostic(caller, { collectivite, demarche })
     ).indicateurParentConfigs.find((config) => config.code === 'sequestration');
 
-    expect(sequestration?.optional).toBe(true);
+    expect(sequestration?.optional).toBeUndefined();
     expect(
-      sequestration?.children.map((child) => child.indicateurDefinitionId)
-    ).toEqual(['cae_63.b', 'cae_63.c', 'cae_63.e', 'cae_63.d']);
+      sequestration?.children.map(
+        ({ indicateurDefinitionId, optionalYears }) => [
+          indicateurDefinitionId,
+          optionalYears,
+        ]
+      )
+    ).toEqual([
+      ['cae_63.b', [2050]],
+      ['cae_63.c', [2050]],
+      ['cae_63.e', [2050]],
+      ['cae_63.d', [2050]],
+    ]);
   });
 
   test('Les polluants déclinent chaque total par secteur', async () => {

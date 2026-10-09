@@ -1,5 +1,6 @@
 import {
   ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_VULNERABILITE,
 } from './demarche-pcaet-diagnostic.config';
@@ -21,6 +22,23 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
         (topic) => topic.code === 'emissions_ges'
       )?.label
     ).toBe('Émissions GES');
+  });
+
+  it('exige chaque ligne de la séquestration carbone, hors objectif 2050', () => {
+    const sequestration = PCAET_DIAGNOSTIC_INDICATEURS.find(
+      (topic) => topic.code === 'sequestration'
+    );
+    expect(sequestration).toBeDefined();
+    expect('optional' in (sequestration ?? {})).toBe(false);
+    expect(
+      sequestration &&
+        listPcaetDiagnosticIndicateurRequiredLeaves(sequestration)
+    ).toEqual([
+      { indicateurDefinitionId: 'cae_63.b', optionalYears: [2050] },
+      { indicateurDefinitionId: 'cae_63.c', optionalYears: [2050] },
+      { indicateurDefinitionId: 'cae_63.e', optionalYears: [2050] },
+      { indicateurDefinitionId: 'cae_63.d', optionalYears: [2050] },
+    ]);
   });
 
   it('liste des identifiants référentiel uniques', () => {
