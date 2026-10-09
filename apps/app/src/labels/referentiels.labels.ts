@@ -158,4 +158,5 @@ export const referentielsLabels = {
   sauvegardeVersionReferentiel: (version: string): string =>
     `Référentiel v${version}`,
   sauvegardeCreeePar: (nom: string): string => `Créée par ${nom}`,
+  sauvegardeAutomatique: 'Sauvegarde automatique',
 };
