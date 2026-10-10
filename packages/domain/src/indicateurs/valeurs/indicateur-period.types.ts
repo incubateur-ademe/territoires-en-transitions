@@ -26,6 +26,12 @@ export type IndicateurPeriod<
   readonly [indicateurPeriodBrand]: true;
 }>;
 
+/** Untrusted JSON shape accepted by `indicateurPeriodSchema`. */
+export type IndicateurPeriodJson = Readonly<{
+  periodicite: IndicateurPeriodicite;
+  dateDebut: string;
+}>;
+
 /** Stable identity for maps, sets, DOM attributes and cache keys. */
 export type IndicateurPeriodKey = string & {
   readonly [indicateurPeriodKeyBrand]: true;
@@ -37,3 +43,7 @@ export type LocalCalendarDate = Readonly<{
   month: number;
   day: number;
 }>;
+
+export type IndicateurPeriodParseResult =
+  | Readonly<{ success: true; period: IndicateurPeriod }>
+  | Readonly<{ success: false; error: Error }>;

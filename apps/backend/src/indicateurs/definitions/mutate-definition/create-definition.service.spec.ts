@@ -41,9 +41,9 @@ describe('CreateDefinitionService', () => {
       service.createIndicateurPerso(
         {
           collectiviteId: 1,
-          titre: 'Indicateur annuel',
+          titre: 'Indicateur mensuel',
           unite: 't',
-          periodicite: 'annuelle',
+          periodicite: 'mensuelle',
           thematiques: [],
           estFavori: false,
           estConfidentiel: true,
@@ -64,9 +64,9 @@ describe('CreateDefinitionService', () => {
     expect(repository.createPersonalizedDefinition).toHaveBeenCalledWith(
       {
         collectiviteId: 1,
-        titre: 'Indicateur annuel',
+        titre: 'Indicateur mensuel',
         unite: 't',
-        periodicite: 'annuelle',
+        periodicite: 'mensuelle',
         thematiqueIds: [],
         commentaire: undefined,
         estFavori: false,

@@ -1,6 +1,14 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  periodiciteDeclarationCollectivite:
+    'Périodicité de déclaration de ma collectivité',
+  periodiciteImmuable:
+    'Cette périodicité s’applique à la saisie et à l’affichage. Elle ne peut plus être modifiée après la création de l’indicateur.',
+  indicateurSourceVersion: (id: number) => `Source ${id}`,
+  indicateurSourcePeriodicite: (label: string, cadence: string) =>
+    `${label} · ${cadence}`,
+
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
 
   indicateurResultat: plural({ one: 'résultat', other: 'résultats' }),
@@ -79,4 +87,33 @@ export const indicateursLabels = {
    * de copie, pas de rangement.
    */
   aucunIndicateur: 'Aucun indicateur',
+
+  suppressionDonneesCollectivite: ({ periode }: { periode: string }): string =>
+    `des données de la collectivité pour la période ${periode}`,
+  suppressionPeriodeAttention: ({ periode }: { periode: string }): string =>
+    `Attention, les données existantes pour la période ${periode} seront supprimées.`,
+  commentaireIndicateurTitre: ({
+    sourceTypeLabel,
+    unite,
+    periode,
+  }: {
+    sourceTypeLabel: string;
+    unite: string;
+    periode: string;
+  }): string => `Mes ${sourceTypeLabel} (${unite}) : ${periode}`,
+  champPeriodiciteIndicateur: 'Périodicité de déclaration *',
+  periodiciteAnnuelle: 'Annuelle',
+  periodiciteMensuelle: 'Mensuelle',
+  periodiciteTrimestrielle: 'Trimestrielle',
+  periodiciteSemestrielle: 'Semestrielle',
+  champTrimestre: 'Trimestre (ex. 2026-T1) *',
+  champSemestre: 'Semestre (ex. 2026-S1) *',
+  ajouterTrimestre: 'Ajouter un trimestre',
+  ajouterSemestre: 'Ajouter un semestre',
+  validerAjouterTrimestre: 'Valider et ajouter un trimestre',
+  validerAjouterSemestre: 'Valider et ajouter un semestre',
+  placeholderPeriodiciteIndicateur: 'Sélectionner une périodicité',
+  champMois: 'Mois *',
+  validerAjouterMois: 'Valider et ajouter un mois',
+  ajouterMois: 'Ajouter un mois',
 };

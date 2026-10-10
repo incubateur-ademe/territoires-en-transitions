@@ -27,8 +27,10 @@ BEGIN
     ASSERT to_regclass('public.unique_indicateur_valeur_utilisateur_periode') IS NOT NULL
        AND to_regclass('public.unique_indicateur_valeur_importee_periode') IS NOT NULL,
         'Les nouveaux index doivent être présents';
-    -- Le backend retire les anciens index : accepter aussi ce schéma ultérieur.
-    IF to_regclass('migration.indicateur_valeur_periodicite_audit') IS NULL THEN
+    -- periodicite_obligatoire retire les anciens index et rend la cadence NOT NULL.
+    IF NOT (SELECT attnotnull FROM pg_attribute
+            WHERE attrelid = 'public.indicateur_definition'::regclass
+              AND attname = 'periodicite') THEN
         ASSERT to_regclass('public.unique_indicateur_valeur_utilisateur') IS NOT NULL
            AND to_regclass('public.unique_indicateur_valeur_importee') IS NOT NULL,
             'Les anciens upserts doivent conserver leurs index';

@@ -1,9 +1,9 @@
-import { annualReleasePeriodiciteSchema } from '../../definitions/indicateur-annual-release.input';
+import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
 import { z } from 'zod';
 
 export const getMoyenneCollectivitesRequestSchema = z
   .object({
-    periodicite: z.optional(annualReleasePeriodiciteSchema),
+    periodicite: z.enum(indicateurPeriodiciteValues).optional(),
     collectiviteId: z.coerce
       .number()
       .int()

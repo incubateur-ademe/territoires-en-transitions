@@ -143,8 +143,8 @@ const valeur = ({
   ({
     indicateurValeur: {
       indicateurId: 1,
-      dateValeur: `${year}-01-01`,
       periodicite: 'annuelle',
+      dateValeur: `${year}-01-01`,
       resultat,
       objectif,
     },

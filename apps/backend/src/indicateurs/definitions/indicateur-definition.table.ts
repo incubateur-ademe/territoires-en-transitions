@@ -60,7 +60,7 @@ export const indicateurDefinitionTable = pgTable(
   (table) => [
     check(
       'indicateur_definition_periodicite_check',
-      sql`${table.periodicite} = 'annuelle'`
+      sql`${table.periodicite} IN ('annuelle', 'semestrielle', 'trimestrielle', 'mensuelle')`
     ),
   ]
 );

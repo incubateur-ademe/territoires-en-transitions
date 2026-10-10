@@ -12,6 +12,10 @@ import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs/list
 import { upsertValeurIndicateurSchema } from './write-indicateur-valeurs/upsert-valeur-indicateur.request';
 import ValeursMoyenneService from './get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
 import ValeursReferenceService from './get-valeurs-reference/valeurs-reference.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { upsertGridValeursInputSchema } from './upsert-grid-valeurs.input';
+import { upsertGridValeursErrorConfig } from './upsert-grid-valeurs.errors';
+import { UpsertGridValeursService } from './upsert-grid-valeurs.service';
 
 @Injectable()
 export class IndicateurValeursRouter {
@@ -19,9 +23,14 @@ export class IndicateurValeursRouter {
     private readonly trpc: TrpcService,
     private readonly permissionService: PermissionService,
     private readonly service: IndicateurValeursService,
+    private readonly upsertGridValeursService: UpsertGridValeursService,
     private readonly valeursMoyenne: ValeursMoyenneService,
     private readonly valeursReference: ValeursReferenceService
   ) {}
+
+  private readonly getUpsertGridValeursResultOrThrow = createTrpcErrorHandler(
+    upsertGridValeursErrorConfig
+  );
 
   router = this.trpc.router({
     list: this.trpc.authedOrServiceRoleProcedure
@@ -44,6 +53,15 @@ export class IndicateurValeursRouter {
           }
           throw error;
         }
+      }),
+    upsertMany: this.trpc.authedProcedure
+      .input(upsertGridValeursInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.upsertGridValeursService.upsertGridValeurs(
+          input,
+          { user: ctx.user }
+        );
+        return this.getUpsertGridValeursResultOrThrow(result);
       }),
     delete: this.trpc.authedProcedure
       .input(deleteValeurIndicateurSchema)

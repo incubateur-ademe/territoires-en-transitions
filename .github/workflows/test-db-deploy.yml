@@ -137,7 +137,7 @@ jobs:
           command: 'deploy --mode change --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
-      - name: Test annual periodicity constraints after deployment
+      - name: Test periodicity constraints after deployment
         run: |
           docker run \
             --rm \
@@ -147,4 +147,7 @@ jobs:
             --entrypoint pg_prove \
             "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
             --dbname=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --verbose data_layer/tests/indicateur/periodicite-release.sql
+            --verbose data_layer/tests/indicateur/periodicite-release.sql \
+            data_layer/tests/indicateur/periodicite.sql \
+            data_layer/tests/indicateur/periodicite-formules.sql \
+            data_layer/tests/indicateur/periodicite-collectivite.sql

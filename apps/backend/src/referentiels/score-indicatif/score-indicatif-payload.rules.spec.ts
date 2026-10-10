@@ -31,7 +31,7 @@ describe('score-indicatif-payload.rules', () => {
   });
 
   describe('formatScoreIndicatifForPayload', () => {
-    it('conserve le contrat annuel du score', () => {
+    it('conserve le contrat annuel du score même si la déclaration est mensuelle', () => {
       expect(
         formatScoreIndicatifForPayload({
           actionId: 'cae_1.1.1',
@@ -43,7 +43,7 @@ describe('score-indicatif-payload.rules', () => {
               titre: 'Indicateur de test',
               unite: '%',
               isSuivi: true,
-              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+              periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
             },
           ],
           calcul: null,

@@ -9,7 +9,7 @@ describe.each([
     expect(upsertValeurIndicateurSchema.parse(valeur)).toEqual(valeur);
   });
 
-  it.each(['annuelle'])(
+  it.each(['annuelle', 'semestrielle', 'trimestrielle', 'mensuelle'])(
     'accepte une périodicité %s explicite',
     (periodicite) => {
       const input = { ...valeur, periodicite };
@@ -17,7 +17,7 @@ describe.each([
     }
   );
 
-  it.each(['semestrielle', 'trimestrielle', 'mensuelle', 'hebdomadaire', null])(
+  it.each(['hebdomadaire', null])(
     'refuse une périodicité non prise en charge : %s',
     (periodicite) => {
       const result = upsertValeurIndicateurSchema.safeParse({

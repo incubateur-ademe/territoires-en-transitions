@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { getTestApp, getTestDatabase, signInWith } from '@tet/backend/test';
+import { getTestApp, getTestDatabase, getAuthToken } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import {
   IndicateurDefinition,
@@ -16,11 +16,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
     const db = await getTestDatabase(app);
 
     const testUserResult = await addTestUser(db);
-    const signInResponse = await signInWith({
-      email: testUserResult.user.email,
-      password: testUserResult.user.password,
-    });
-    authToken = signInResponse.data.session?.access_token || '';
+    authToken = await getAuthToken(testUserResult.user);
   });
 
   afterAll(async () => {
@@ -66,6 +62,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
       description: expect.any(String),
       unite: 'GWh',
       periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+
       precision: 2,
       borneMin: null,
       borneMax: null,
