@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
   VALUE_SOURCE_TOKENS,
@@ -28,6 +28,7 @@ import {
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { groupBy, keyBy } from 'es-toolkit';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { BuildEvaluationContextService } from './build-evaluation-context.service';
 import { buildCalculScoreIndicatif } from './calcul-score-indicatif.rules';
 import {
@@ -52,7 +53,7 @@ export class ScoreIndicatifService {
     private readonly repository: ScoreIndicatifRepository,
     private readonly transactionManager: TransactionManager,
     private readonly indicateurExpressionService: IndicateurExpressionService,
-    private readonly indicateurValeursService: CrudValeursService,
+    private readonly indicateurValeursService: ManageIndicateurValeursService,
     private readonly permissionService: PermissionService,
     private readonly getIndicateursAssociesService: GetIndicateursAssociesService,
     private readonly buildEvaluationContextService: BuildEvaluationContextService
@@ -94,8 +95,9 @@ export class ScoreIndicatifService {
         {
           collectiviteId: input.collectiviteId,
           indicateurIds,
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         },
-        user
+        { user }
       );
 
     const valeursUtiliseesResult =

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import { EvaluationContext } from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
-import ValeursReferenceService from '@tet/backend/indicateurs/valeurs/valeurs-reference.service';
+import ValeursReferenceService from '@tet/backend/indicateurs/valeurs/get-valeurs-reference/valeurs-reference.service';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';

@@ -3,8 +3,9 @@ set -euo pipefail
 : "${TO_DB_URL:?Missing TO_DB_URL}"
 [[ "$#" == 1 ]] || { echo 'Usage: TO_DB_URL=... check-restore-compatibility.sh backup.dump' >&2; exit 2; }
 
-# The standalone schema release accepts only the old contract and its additive
-# preparation. Inspect the snapshot registry before restore.sh truncates data.
+# The annual release accepts the old contract and its additive preparation,
+# including the later replacement of the catalogue with CHECK constraints.
+# Inspect the snapshot registry before restore.sh truncates data.
 source_phase=$(pg_restore --data-only --schema=sqitch --table=changes --file=- "$1" | awk -F '\t' '
     $4 == "tet" { seen = 1 }
     $3 == "indicateur/periodicite_schema" && $4 == "tet" { prepared = 1 }
@@ -17,7 +18,10 @@ SELECT CASE
   WHEN EXISTS (SELECT 1 FROM sqitch.changes WHERE project = 'tet' AND change = 'indicateur/periodicite_schema')
    AND (SELECT count(*) = 2 FROM information_schema.columns WHERE table_schema = 'public'
         AND table_name IN ('indicateur_definition', 'indicateur_valeur') AND column_name = 'periodicite')
-   AND to_regclass('public.indicateur_periodicite') IS NOT NULL
+   AND (to_regclass('public.indicateur_periodicite') IS NOT NULL
+        OR (SELECT count(*) = 2 FROM pg_constraint WHERE contype = 'c' AND convalidated
+            AND ((conrelid = 'public.indicateur_definition'::regclass AND conname = 'indicateur_definition_periodicite_check')
+              OR (conrelid = 'public.indicateur_valeur'::regclass AND conname = 'indicateur_valeur_periodicite_check'))))
    AND (SELECT count(*) = 2 FROM pg_constraint WHERE conname IN ('indicateur_definition_schema_annuel','indicateur_valeur_schema_annuel')
         AND conrelid IN ('public.indicateur_definition'::regclass,'public.indicateur_valeur'::regclass)) THEN 'schema'
   WHEN NOT EXISTS (SELECT 1 FROM sqitch.changes WHERE project = 'tet' AND change = 'indicateur/periodicite_schema')

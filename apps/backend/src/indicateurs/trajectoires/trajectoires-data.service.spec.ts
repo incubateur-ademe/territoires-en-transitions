@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { Test } from '@nestjs/testing';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -8,7 +9,6 @@ import {
 } from '@tet/domain/collectivites';
 import {
   getIndicateurTrajectoireForValueInput,
-  IndicateurPeriodiciteEnum,
   IndicateurValeur,
   VerificationTrajectoireStatus,
 } from '@tet/domain/indicateurs';
@@ -16,7 +16,7 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import { AuthUser } from '../../users/models/auth.models';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
-import CrudValeursService from '../valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireRules } from './verification-trajectoire.rules';
 
@@ -36,7 +36,7 @@ describe('TrajectoiresDataService test', () => {
         } else if (
           token === CollectivitesService ||
           token === IndicateurSourcesService ||
-          token === CrudValeursService ||
+          token === ManageIndicateurValeursService ||
           token === ListCollectivitesService
         ) {
           return {};

@@ -3,6 +3,7 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
 import { and, eq } from 'drizzle-orm';
 import { demarchePcaetSourceMetadonneeTable } from './models/demarche-pcaet-source-metadonnee.table';
 
@@ -11,7 +12,7 @@ import { demarchePcaetSourceMetadonneeTable } from './models/demarche-pcaet-sour
  * diagnostic portent une métadonnée, ce qui les distingue des saisies
  * ordinaires de la collectivité sur les mêmes indicateurs.
  */
-export const PCAET_COLLECTIVITE_SOURCE_ID = 'pcaet-collectivite';
+export { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
 const PCAET_COLLECTIVITE_SOURCE_LABEL = 'PCAET collectivité';
 
 /**

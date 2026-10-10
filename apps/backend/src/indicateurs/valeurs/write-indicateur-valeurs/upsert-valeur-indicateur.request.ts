@@ -1,7 +1,5 @@
-import {
-  IndicateurPeriodiciteEnum,
-  indicateurValeurSchemaCreate,
-} from '@tet/domain/indicateurs';
+import { annualReleasePeriodiciteSchema } from '../../definitions/indicateur-annual-release.input';
+import { indicateurValeurSchemaCreate } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 /** Upsert d'une valeur d'indicateur pour une collectivité */
@@ -9,6 +7,7 @@ export const upsertValeurIndicateurSchema = z.object({
   ...z.pick(indicateurValeurSchemaCreate, {
     collectiviteId: true,
     indicateurId: true,
+    periodicite: true,
     id: true,
     resultat: true,
     resultatCommentaire: true,
@@ -16,7 +15,7 @@ export const upsertValeurIndicateurSchema = z.object({
     objectifCommentaire: true,
   }).shape,
 
-  periodicite: z.optional(z.literal(IndicateurPeriodiciteEnum.ANNUELLE)),
+  periodicite: z.optional(annualReleasePeriodiciteSchema),
   dateValeur: z.optional(indicateurValeurSchemaCreate.shape.dateValeur),
 });
 

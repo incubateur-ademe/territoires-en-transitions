@@ -1,3 +1,4 @@
+import { getLegacyIndicateurPeriodicite } from '../indicateur-period.adapter';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -13,14 +14,14 @@ import {
   ne,
   sql,
 } from 'drizzle-orm';
-import { DatabaseService } from '../../utils/database/database.service';
+import { DatabaseService } from '../../../utils/database/database.service';
 
 import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/backend/demarches/pcaet/shared/demarche-pcaet-source-metadonnee.repository';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ResourceType } from '@tet/domain/users';
-import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
+import { indicateurValeurTable } from '../indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 import { ValeursMoyenneDTO } from './valeurs-moyenne.dto';
 
@@ -80,8 +81,8 @@ export default class ValeursMoyenneService {
       .select({
         typeCollectivite: typeCollectiviteExpr,
       })
-      .from(collectiviteTable)
-      .where(eq(collectiviteTable.id, collectiviteId))
+      .from(c)
+      .where(eq(c.id, collectiviteId))
       .limit(1)
       .then((result) => result[0]);
 
@@ -120,6 +121,10 @@ export default class ValeursMoyenneService {
             // collectivité (valeurs de démarche, pas une source ouverte partagée).
             ne(ism.sourceId, 'snbc'),
             ne(ism.sourceId, PCAET_COLLECTIVITE_SOURCE_ID),
+            eq(
+              iv.periodicite,
+              getLegacyIndicateurPeriodicite(options.periodicite)
+            ),
             eq(iv.indicateurId, indicateurId)
           )
         )
