@@ -15,6 +15,7 @@ import VersionService from '@tet/backend/utils/version/version.service';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { IndicateurFormulaReconciliationService } from '../definitions/indicateur-formula-reconciliation.service';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -47,9 +48,19 @@ import { UpsertIndicateurDefinitionsService } from './upsert-indicateur-definiti
 const UNKNOWN_QUESTION_HINT =
   "Si cette question vient d'être créée, importez les questions de personnalisation avant les indicateurs.";
 
-type ImportIndicateurDefinitionsResult = Readonly<{
-  definitions: PlatformDefinitions;
+type FormulaReconciliationResult = Readonly<{
+  status: 'complete' | 'pending' | 'failed';
   identifiantsRecalcules: string[];
+  reconciliationsMisesEnFile: number;
+  reconciliationsRestantes: number | null;
+  reconciliationsEchouees: number | null;
+  message?: string;
+}>;
+
+type ImportIndicateurDefinitionsResult = Readonly<{
+  status: 'committed';
+  definitions: PlatformDefinitions;
+  reconciliation: FormulaReconciliationResult;
 }>;
 
 @Injectable()
@@ -72,6 +83,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
+    private readonly formulaReconciliationService: IndicateurFormulaReconciliationService,
     private readonly versionService: VersionService,
     private readonly upsertService: UpsertIndicateurDefinitionsService,
     sheetService: SheetService
@@ -132,13 +144,86 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     // est illisible ou invalide.
     const importedObjectifs = await this.readObjectifs();
 
-    const { definitions, identifiantsRecalcules } =
-      await this.upsertIndicateurDefinitions(
-        indicateurDefinitionsData.data,
-        importedObjectifs
-      );
+    const {
+      definitions: upsertedIndicateurDefinitions,
+      updatedFormulaDefinitions,
+      importedIndicateurIds,
+      reconciliationWorkItemsCount,
+    } = await this.upsertIndicateurDefinitions(
+      indicateurDefinitionsData.data,
+      importedObjectifs
+    );
 
-    return { definitions, identifiantsRecalcules };
+    this.logger.log(
+      `Found ${updatedFormulaDefinitions.length} updated indicateur definitions formulas and ${reconciliationWorkItemsCount} durable reconciliation work items`
+    );
+    const reconciliation = await this.tryDrainFormulaReconciliations(
+      importedIndicateurIds,
+      reconciliationWorkItemsCount
+    );
+
+    return {
+      status: 'committed',
+      definitions: upsertedIndicateurDefinitions,
+      reconciliation,
+    };
+  }
+
+  private async tryDrainFormulaReconciliations(
+    indicateurIds: number[],
+    enqueuedWorkItemsCount: number
+  ): Promise<FormulaReconciliationResult> {
+    const result = await this.formulaReconciliationService.drain({
+      indicateurIds,
+      // Une reprise explicite ne doit pas attendre le backoff du cron.
+      includeDeferred: true,
+    });
+    if (!result.success) {
+      this.logger.error(
+        'Le catalogue est importé, mais le drain des réconciliations de formules a échoué.',
+        result.cause?.stack
+      );
+      return {
+        status: 'failed',
+        identifiantsRecalcules: [],
+        // Le drain ayant échoué, son état exact est inconnu. On distingue donc
+        // explicitement le nombre mis en file du nombre restant à traiter.
+        reconciliationsMisesEnFile: enqueuedWorkItemsCount,
+        reconciliationsRestantes: null,
+        reconciliationsEchouees: null,
+        message:
+          'Le catalogue est importé, mais la réconciliation des formules reste à reprendre.',
+      };
+    }
+
+    const reconciliation = result.data;
+    if (reconciliation.identifiants.length > 0) {
+      this.logger.log(
+        `Recomputed valeurs for identifiants: ${reconciliation.identifiants.join(
+          ', '
+        )}`
+      );
+    }
+
+    const status =
+      reconciliation.failedCount > 0
+        ? 'failed'
+        : reconciliation.complete
+        ? 'complete'
+        : 'pending';
+    return {
+      status,
+      identifiantsRecalcules: reconciliation.identifiants,
+      reconciliationsMisesEnFile: enqueuedWorkItemsCount,
+      reconciliationsRestantes: reconciliation.remainingCount,
+      reconciliationsEchouees: reconciliation.failedCount,
+      ...(status === 'failed'
+        ? {
+            message:
+              'Le catalogue est importé, mais certaines réconciliations de formules ont échoué.',
+          }
+        : {}),
+    };
   }
 
   // Create a template data to set version & initialize null properties

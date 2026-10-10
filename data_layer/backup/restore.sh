@@ -110,48 +110,6 @@ if [ ! -f "$RESTORE_CONFIG" ]; then
     exit 1
 fi
 
-# Group order: foundations before dependents; truncation uses the reverse order.
-GROUP_ORDER=(
-  technical_group
-  stats_group
-  collectivites_group
-  indicateurs_group
-  referentiels_group
-  pai_group
-  plans_group
-)
-
-# Parse every group and check every target table before the first TRUNCATE.
-# Otherwise a missing table in a later group leaves the database partly emptied.
-GROUP_TABLES=()
-table_values=""
-for group in "${GROUP_ORDER[@]}"; do
-    if ! tables=$(yq -er ".groups.${group}[]" "$RESTORE_CONFIG"); then
-        echo "Could not read $group from $RESTORE_CONFIG. Check the configuration and yq installation."
-        exit 1
-    fi
-    GROUP_TABLES+=("$tables")
-    while IFS= read -r table; do
-        if ! [[ "$table" =~ ^[a-z_][a-z0-9_]*(\.[a-z_][a-z0-9_]*)?$ ]]; then
-            echo "Invalid table name in $group: $table"
-            exit 1
-        fi
-        [[ "$table" == *.* ]] || table="public.$table"
-        table_values+="${table_values:+,}('$table')"
-    done <<< "$tables"
-done
-
-if ! missing_tables=$(PGCONNECT_TIMEOUT="${PGCONNECT_TIMEOUT:-10}" "${PSQL[@]}" -d "$TO_DB_URL" -Atc \
-    "SELECT name FROM (VALUES $table_values) AS requested(name) WHERE to_regclass(name) IS NULL;"); then
-    echo "Cannot query the target database. For local restores, start and migrate it with make db-init."
-    exit 1
-fi
-if [ -n "$missing_tables" ]; then
-    echo "Target database is missing required tables. Apply migrations before restoring (locally: make db-init):"
-    printf '%s\n' "$missing_tables"
-    exit 1
-fi
-
 if [ "$DOWNLOAD_FROM_S3" = true ]; then
     # Vérification des variables d'environnement S3
     missing_vars=()
@@ -249,14 +207,65 @@ if [ ! -s "$DUMP_FILE" ]; then
     exit 1
 fi
 
-# Validate the archive with the installed client BEFORE truncating anything.
-# In particular, older pg_restore versions cannot read newer dump formats.
+# Validate the archive and its schema-contract compatibility before the first
+# destructive statement. Only compatible completed releases can be restored.
 if ! pg_restore --list "$DUMP_FILE" > /dev/null; then
     echo "Cannot read the backup archive. Check the file and pg_restore version; no tables were truncated."
     exit 1
 fi
+PERIODICITE_RESTORE_PHASE=$(TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE")
 
-TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE"
+# Group order: technical → stats → collectivites → indicateurs →
+# referentiels → pai → plans
+# Restores foundational tables before tables that reference them. Truncation
+# runs in the reverse order (see below) so dependents come down first.
+GROUP_ORDER=(
+  technical_group
+  stats_group
+  collectivites_group
+  indicateurs_group
+)
+
+if [[ "$PERIODICITE_RESTORE_PHASE" == reconciliation ]]; then
+    GROUP_ORDER+=(reconciliation_group)
+fi
+
+GROUP_ORDER+=(
+  referentiels_group
+  pai_group
+  plans_group
+)
+
+# Parse every group and check every target table before the first TRUNCATE.
+# Otherwise a missing table in a later group leaves the database partly emptied.
+GROUP_TABLES=()
+table_values=""
+for group in "${GROUP_ORDER[@]}"; do
+    if ! tables=$(yq -er ".groups.${group}[]" "$RESTORE_CONFIG"); then
+        echo "Could not read $group from $RESTORE_CONFIG. Check the configuration and yq installation."
+        exit 1
+    fi
+    GROUP_TABLES+=("$tables")
+    while IFS= read -r table; do
+        if ! [[ "$table" =~ ^[a-z_][a-z0-9_]*(\.[a-z_][a-z0-9_]*)?$ ]]; then
+            echo "Invalid table name in $group: $table"
+            exit 1
+        fi
+        [[ "$table" == *.* ]] || table="public.$table"
+        table_values+="${table_values:+,}('$table')"
+    done <<< "$tables"
+done
+
+if ! missing_tables=$(PGCONNECT_TIMEOUT="${PGCONNECT_TIMEOUT:-10}" "${PSQL[@]}" -d "$TO_DB_URL" -Atc \
+    "SELECT name FROM (VALUES $table_values) AS requested(name) WHERE to_regclass(name) IS NULL;"); then
+    echo "Cannot query the target database. For local restores, start and migrate it with make db-init."
+    exit 1
+fi
+if [ -n "$missing_tables" ]; then
+    echo "Target database is missing required tables. Apply migrations before restoring (locally: make db-init):"
+    printf '%s\n' "$missing_tables"
+    exit 1
+fi
 
 echo "Restoring to $(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|') from $DUMP_FILE"
 if [ -z "${CI:-}" ]; then

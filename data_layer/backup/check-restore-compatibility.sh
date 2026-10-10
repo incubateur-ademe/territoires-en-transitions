@@ -16,10 +16,10 @@ classify_release() {
         $1 == "indicateur/periodicite_activation" { activation = 1 }
         $1 == "indicateur/periodicite_nettoyage" { later = 1 }
         END {
-            if (!seen || later || reconciliation) print "unsupported"
+            if (!seen || later) print "unsupported"
             else if (schema) {
-                if (activation && mandatory && extractor && formulas) print "contract"
-                else if (activation || mandatory || extractor || formulas) print "incomplete"
+                if (activation && mandatory && extractor && formulas) print reconciliation ? "reconciliation" : "contract"
+                else if (activation || mandatory || extractor || formulas || reconciliation) print "incomplete"
                 else print "schema"
             }
             else if (extractor || mandatory || formulas || reconciliation || activation) print "incomplete"
@@ -36,17 +36,26 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|contract:contract) ;;
+    legacy:legacy|legacy:schema|schema:schema|contract:contract|reconciliation:reconciliation) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
+if [[ "$source_phase" == reconciliation ]]; then
+    pg_restore --list "$1" | awk '
+        $4 == "TABLE" && $5 == "DATA" && $6 == "private" && $7 == "indicateur_reconciliation_formule" { found = 1 }
+        END { exit !found }
+    ' || { echo 'Refusing to restore: backup lacks formula reconciliation data.' >&2; exit 1; }
+fi
 # Verify the physical schema before restore.sh truncates any table.
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 verify_changes=()
-if [[ "$target_phase" == schema || "$target_phase" == contract ]]; then
+if [[ "$target_phase" == schema || "$target_phase" == contract || "$target_phase" == reconciliation ]]; then
     verify_changes+=(periodicite_schema)
 fi
-if [[ "$target_phase" == contract ]]; then
+if [[ "$target_phase" == contract || "$target_phase" == reconciliation ]]; then
     verify_changes+=(periodicite_obligatoire periodicite_formules periodicite_activation)
+fi
+if [[ "$target_phase" == reconciliation ]]; then
+    verify_changes+=(reconciliation_formules)
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \

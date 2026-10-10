@@ -117,6 +117,29 @@ Après l’activation, le catalogue, les relations, les objectifs et les recalcu
 sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
 Aucune migration supplémentaire ; déployer le backend imports suspendus.
 
+## File de recalcul — #5379
+
+Suspendre les imports du catalogue. Après migration, déployer le backend et `tools`.
+Adapter l'automatisation à la réponse `status` / `definitions` / `reconciliation` :
+`status: committed` confirme l'enregistrement du catalogue, pas la fin des recalculs.
+
+Activer `drain-indicateur-formula-reconciliations` dans `tools` ; l'ajouter à
+`CRON_JOBS_FILTER` si ce filtre est configuré. Sur un import de validation,
+contrôler les valeurs calculées et la diminution du nombre de travaux en attente :
+
+```sql
+SELECT count(*) AS recalculs_en_attente
+FROM private.indicateur_reconciliation_formule;
+```
+
+Un recalcul en erreur est retenté par cette tâche ; ne pas réimporter la même version.
+Pour revenir à #5418 : suspendre les imports, laisser vider la file, arrêter la tâche,
+puis redéployer son backend et revenir à `@indicateur-periodicite-activee`.
+Le revert refuse une file non vide.
+
+Les sauvegardes de cette étape doivent contenir la file. Elles ne sont pas
+compatibles avec celles prises avant #5379.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
@@ -129,3 +152,7 @@ schéma déjà migré. Utiliser le script du commit correspondant à l'état sau
 et vérifier sa compatibilité avec la cible. Pour une reprise de production,
 restaurer ensemble schéma, données, registre Sqitch et versions applicatives :
 [procédure de sauvegarde et restauration](../doc/adr/0016-strategie-backup-database.md).
+
+## Vérifications locales
+
+- `make db-test-backup-compatibility` : compatibilité des sauvegardes.
