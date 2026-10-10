@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(16);
+SELECT plan(17);
 CREATE TEMP TABLE release_collectivite AS
 WITH inserted AS (
     INSERT INTO public.collectivite (nom, type) VALUES ('Livraison annuelle', 'epci') RETURNING id
@@ -74,5 +74,10 @@ SELECT throws_ok($sql$
     UPDATE public.indicateur_valeur SET periodicite = 'hebdomadaire'
     WHERE indicateur_id = (SELECT id FROM release_indicateur)
 $sql$, '23514', NULL, 'Le CHECK refuse une cadence inconnue sur la valeur');
+SELECT lives_ok($sql$
+    SET LOCAL ROLE authenticated;
+    UPDATE public.indicateur_valeur SET resultat = resultat WHERE false;
+    RESET ROLE;
+$sql$, 'Les intégrations authentifiées conservent leur droit d’écriture avec les verrous SQL');
 SELECT * FROM finish();
 ROLLBACK;
