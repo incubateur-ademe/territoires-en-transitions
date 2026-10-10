@@ -123,7 +123,7 @@ describe('ScoreIndicatifRouter', () => {
                 programme: [
                   {
                     annee: 2025,
-                    dateValeur: '2025-05-29',
+                    dateValeur: '2025-01-01',
                     utilisee: true,
                     valeur: 44,
                   },
@@ -138,7 +138,7 @@ describe('ScoreIndicatifRouter', () => {
                 fait: [
                   {
                     annee: 2025,
-                    dateValeur: '2025-05-29',
+                    dateValeur: '2025-01-01',
                     utilisee: true,
                     valeur: 63,
                   },
@@ -173,7 +173,7 @@ describe('ScoreIndicatifRouter', () => {
       'cae_1.2.3.3.4': [
         {
           actionId: 'cae_1.2.3.3.4',
-          dateValeur: '2025-05-29',
+          dateValeur: '2025-01-01',
           indicateurId: expect.any(Number),
           indicateurValeurId: expect.any(Number),
           sourceLibelle: null,
@@ -183,7 +183,7 @@ describe('ScoreIndicatifRouter', () => {
         },
         {
           actionId: 'cae_1.2.3.3.4',
-          dateValeur: '2025-05-29',
+          dateValeur: '2025-01-01',
           indicateurId: expect.any(Number),
           indicateurValeurId: expect.any(Number),
           sourceLibelle: 'CITEPA',
@@ -519,7 +519,7 @@ describe('ScoreIndicatifRouter', () => {
       collectiviteId: testCollectiviteId,
       actionId: 'cae_1.2.3.3.1',
       identifiantReferentiel: 'cae_6.a',
-      dateValeur: '2025-05-29',
+      dateValeur: '2025-01-01',
       exprScore: `si val(cae_6.a) < limite(cae_6.a) alors 0
         sinon si val(cae_6.a) > cible(cae_6.a) alors 1
         sinon ((val(cae_6.a) - limite(cae_6.a)) * 0.1) / (limite(cae_6.a) - cible(cae_6.a))`,
@@ -565,7 +565,7 @@ describe('ScoreIndicatifRouter', () => {
           score: 0,
           valeursUtilisees: [
             {
-              dateValeur: '2025-05-29',
+              dateValeur: '2025-01-01',
               indicateurId,
               sourceLibelle: 'CITEPA',
               sourceMetadonnee: {
@@ -587,7 +587,7 @@ describe('ScoreIndicatifRouter', () => {
           score: 0,
           valeursUtilisees: [
             {
-              dateValeur: '2025-05-29',
+              dateValeur: '2025-01-01',
               indicateurId,
               sourceLibelle: null,
               sourceMetadonnee: null,
@@ -937,5 +937,142 @@ describe('ScoreIndicatifRouter', () => {
         actionIds: ['cae_1.2.3.3.4', TE_ACTION_ID],
       })
     ).rejects.toThrow(/plusieurs référentiels/);
+  });
+
+  test('setValeursUtilisees annule le remplacement si son insertion échoue', async () => {
+    const caller = router.createCaller({ user: testUser });
+    const request = {
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    };
+    const before = await caller.referentiels.actions.getValeursUtilisees(
+      request
+    );
+    const selected = before[fixturePourScoreIndicatif.actionId] ?? [];
+    const first = selected[0];
+    if (!first) {
+      throw new Error(
+        'La fixture doit contenir une valeur de score sélectionnée'
+      );
+    }
+
+    const duplicate = {
+      indicateurValeurId: first.indicateurValeurId,
+      typeScore: first.typeScore,
+    };
+    await expect(
+      caller.referentiels.actions.setValeursUtilisees({
+        actionId: fixturePourScoreIndicatif.actionId,
+        collectiviteId: testCollectiviteId,
+        indicateurId: indicateurIdCae7,
+        valeurs: [duplicate, duplicate],
+      })
+    ).rejects.toThrow(/erreur de base de données/i);
+
+    const after = await caller.referentiels.actions.getValeursUtilisees(
+      request
+    );
+    const byValeurId = (
+      left: (typeof selected)[number],
+      right: (typeof selected)[number]
+    ) => left.indicateurValeurId - right.indicateurValeurId;
+    expect(
+      [...(after[fixturePourScoreIndicatif.actionId] ?? [])].sort(byValeurId)
+    ).toEqual([...selected].sort(byValeurId));
+  });
+
+  test.each(['collectivite', 'indicateur', 'formule'] as const)(
+    'préserve la sélection si une valeur ne correspond pas à son périmètre (%s)',
+    async (scope) => {
+      const caller = router.createCaller({ user: testUser });
+      const query = {
+        collectiviteId: testCollectiviteId,
+        actionIds: [fixturePourScoreIndicatif.actionId],
+      };
+      const before = await caller.referentiels.actions.getValeursUtilisees(
+        query
+      );
+      const other = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      const otherIndicateurId = await getIndicateurIdByIdentifiant(
+        databaseService,
+        'cae_1.a'
+      );
+      const [foreign] = await databaseService.db
+        .insert(indicateurValeurTable)
+        .values({
+          collectiviteId:
+            scope === 'collectivite'
+              ? other.collectivite.id
+              : testCollectiviteId,
+          indicateurId:
+            scope === 'collectivite' ? indicateurIdCae7 : otherIndicateurId,
+          dateValeur: '2099-01-01',
+          resultat: 0,
+        })
+        .returning();
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurValeurTable)
+          .where(eq(indicateurValeurTable.id, foreign.id));
+        await other.cleanup();
+      });
+
+      await expect(
+        caller.referentiels.actions.setValeursUtilisees({
+          collectiviteId: testCollectiviteId,
+          actionId: fixturePourScoreIndicatif.actionId,
+          indicateurId:
+            scope === 'formule' ? otherIndicateurId : indicateurIdCae7,
+          valeurs: [{ indicateurValeurId: foreign.id, typeScore: 'fait' }],
+        })
+      ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+      expect(
+        await caller.referentiels.actions.getValeursUtilisees(query)
+      ).toEqual(before);
+    }
+  );
+
+  test('vide une sélection sans supprimer ses observations', async () => {
+    const caller = router.createCaller({ user: testUser });
+    const query = {
+      collectiviteId: testCollectiviteId,
+      actionIds: [fixturePourScoreIndicatif.actionId],
+    };
+    const before = await caller.referentiels.actions.getValeursUtilisees(query);
+    const selected = before[fixturePourScoreIndicatif.actionId] ?? [];
+    expect(selected.length).toBeGreaterThan(0);
+    const scope = {
+      collectiviteId: testCollectiviteId,
+      actionId: fixturePourScoreIndicatif.actionId,
+      indicateurId: indicateurIdCae7,
+    };
+    onTestFinished(async () => {
+      await caller.referentiels.actions.setValeursUtilisees({
+        ...scope,
+        valeurs: selected.map(({ indicateurValeurId, typeScore }) => ({
+          indicateurValeurId,
+          typeScore,
+        })),
+      });
+    });
+    await caller.referentiels.actions.setValeursUtilisees({
+      ...scope,
+      valeurs: [
+        { indicateurValeurId: null, typeScore: 'fait' },
+        { indicateurValeurId: null, typeScore: 'programme' },
+      ],
+    });
+    const after = await caller.referentiels.actions.getValeursUtilisees(query);
+    expect(after[fixturePourScoreIndicatif.actionId] ?? []).toEqual([]);
+    for (const { indicateurValeurId } of selected) {
+      expect(
+        await databaseService.db
+          .select()
+          .from(indicateurValeurTable)
+          .where(eq(indicateurValeurTable.id, indicateurValeurId))
+      ).toHaveLength(1);
+    }
   });
 });

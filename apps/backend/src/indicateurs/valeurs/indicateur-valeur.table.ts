@@ -1,3 +1,5 @@
+import { sql } from 'drizzle-orm';
+import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
@@ -7,6 +9,7 @@ import {
 } from '@tet/backend/utils/column.utils';
 import {
   boolean,
+  check,
   date,
   doublePrecision,
   integer,
@@ -17,36 +20,48 @@ import {
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 
-export const indicateurValeurTable = pgTable('indicateur_valeur', {
-  id: serial('id').primaryKey(),
-  collectiviteId: integer('collectivite_id')
-    .notNull()
-    .references(() => collectiviteTable.id, {
-      onDelete: 'cascade',
-    }),
-  indicateurId: integer('indicateur_id')
-    .notNull()
-    .references(() => indicateurDefinitionTable.id, {
-      onDelete: 'cascade',
-    }),
-  dateValeur: date('date_valeur').notNull(),
-  metadonneeId: integer('metadonnee_id').references(
-    () => indicateurSourceMetadonneeTable.id,
-    {
-      onDelete: 'cascade',
-    }
-  ),
-  resultat: doublePrecision('resultat'),
-  resultatCommentaire: text('resultat_commentaire'),
-  objectif: doublePrecision('objectif'),
-  objectifCommentaire: text('objectif_commentaire'),
-  estimation: doublePrecision('estimation'),
-  calculAuto: boolean('calcul_auto').default(false),
-  calculAutoIdentifiantsManquants: text(
-    'calcul_auto_identifiants_manquants'
-  ).array(),
-  createdAt,
-  modifiedAt,
-  createdBy,
-  modifiedBy,
-});
+export const indicateurValeurTable = pgTable(
+  'indicateur_valeur',
+  {
+    id: serial('id').primaryKey(),
+    collectiviteId: integer('collectivite_id')
+      .notNull()
+      .references(() => collectiviteTable.id, {
+        onDelete: 'cascade',
+      }),
+    indicateurId: integer('indicateur_id')
+      .notNull()
+      .references(() => indicateurDefinitionTable.id, {
+        onDelete: 'cascade',
+      }),
+    dateValeur: date('date_valeur').notNull(),
+    periodicite: text('periodicite', { enum: indicateurPeriodiciteValues })
+      .default('annuelle')
+      .notNull(),
+    metadonneeId: integer('metadonnee_id').references(
+      () => indicateurSourceMetadonneeTable.id,
+      {
+        onDelete: 'cascade',
+      }
+    ),
+    resultat: doublePrecision('resultat'),
+    resultatCommentaire: text('resultat_commentaire'),
+    objectif: doublePrecision('objectif'),
+    objectifCommentaire: text('objectif_commentaire'),
+    estimation: doublePrecision('estimation'),
+    calculAuto: boolean('calcul_auto').default(false),
+    calculAutoIdentifiantsManquants: text(
+      'calcul_auto_identifiants_manquants'
+    ).array(),
+    createdAt,
+    modifiedAt,
+    createdBy,
+    modifiedBy,
+  },
+  (table) => [
+    check(
+      'indicateur_valeur_periodicite_check',
+      sql`${table.periodicite} = 'annuelle'`
+    ),
+  ]
+);

@@ -15,6 +15,7 @@ const associe = (
   titre: '',
   unite: '',
   isSuivi: true,
+  periodicite: 'annuelle',
 });
 
 const valeur = (overrides: Partial<ValeurUtilisee>): ValeurUtilisee => ({

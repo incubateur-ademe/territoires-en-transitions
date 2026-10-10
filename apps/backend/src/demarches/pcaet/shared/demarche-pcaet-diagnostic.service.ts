@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
@@ -12,7 +12,7 @@ import {
   type PcaetDiagnosticVulnerabilite,
   type PcaetDiagnosticVulnerabiliteConfig,
 } from '@tet/domain/demarches';
-import type { IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
+import { type IndicateurValeurAvecMetadonnesDefinition } from '@tet/domain/indicateurs';
 import {
   DemarchePcaetSourceMetadonneeRepository,
   PCAET_COLLECTIVITE_SOURCE_ID,
@@ -30,7 +30,7 @@ export class DemarchePcaetDiagnosticService {
 
   constructor(
     private readonly vulnerabiliteReadService: DemarchePcaetVulnerabiliteReadService,
-    private readonly crudValeursService: CrudValeursService,
+    private readonly crudValeursService: ManageIndicateurValeursService,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository
   ) {}
@@ -48,7 +48,8 @@ export class DemarchePcaetDiagnosticService {
           {
             identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
             collectiviteId,
-          }
+          },
+          tx
         ),
         this.loadIndicateurValeursForDemarche(
           { demarcheId, collectiviteId },
@@ -95,6 +96,7 @@ export class DemarchePcaetDiagnosticService {
     return this.crudValeursService.getIndicateursValeurs(
       {
         collectiviteId,
+        periodicite: 'annuelle',
         identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
         sources: [PCAET_COLLECTIVITE_SOURCE_ID],
         metadonneeId,

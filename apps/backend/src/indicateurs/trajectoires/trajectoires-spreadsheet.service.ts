@@ -20,7 +20,7 @@ import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
-import CrudValeursService from '../valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
@@ -39,7 +39,7 @@ export default class TrajectoiresSpreadsheetService {
   constructor(
     private readonly configService: ConfigurationService,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
-    private readonly valeursService: CrudValeursService,
+    private readonly valeursService: ManageIndicateurValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
     private readonly listCollectivitesService: ListCollectivitesService
@@ -282,7 +282,7 @@ export default class TrajectoiresSpreadsheetService {
     const upsertedTrajectoireIndicateurValeurs =
       await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
-        undefined // we don't want to check permission, we have already checked it and it's not the same
+        { isUserTrusted: true } // this use case already checked its dedicated permission
       );
 
     const [
@@ -446,7 +446,7 @@ export default class TrajectoiresSpreadsheetService {
   getIndicateurValeursACreer(
     collectiviteId: number,
     indicateurSourceMetadonneeId: number,
-    donneesSpreadsheet: any[][] | null,
+    donneesSpreadsheet: readonly (readonly unknown[])[] | null,
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinition[],
     donneesCalculTrajectoire: DataInputForTrajectoireCompute
@@ -547,7 +547,12 @@ export default class TrajectoiresSpreadsheetService {
             );
           if (indicateurResultatDefinition) {
             ligne.forEach((valeur, columnIndex) => {
-              const floatValeur = parseFloat(valeur);
+              const floatValeur =
+                typeof valeur === 'number'
+                  ? valeur
+                  : typeof valeur === 'string'
+                  ? Number.parseFloat(valeur)
+                  : Number.NaN;
               if (!isNaN(floatValeur)) {
                 let facteur = 1;
                 const signeInversionSequestration =
@@ -569,7 +574,12 @@ export default class TrajectoiresSpreadsheetService {
                 indicateurValeursResultat.push(indicateurValeur);
               } else {
                 this.logger.warn(
-                  `Valeur non numérique ${valeur} pour la ligne ${ligneIndex} et la colonne ${columnIndex} de la plage ${this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_CELLULES}`
+                  `Valeur non numérique ${String(
+                    valeur
+                  )} pour la ligne ${ligneIndex} et la colonne ${columnIndex} de la plage ${
+                    this.trajectoiresDataService
+                      .SNBC_TRAJECTOIRE_RESULTAT_CELLULES
+                  }`
                 );
               }
             });

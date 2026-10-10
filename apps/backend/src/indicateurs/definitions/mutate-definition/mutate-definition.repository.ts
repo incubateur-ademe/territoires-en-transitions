@@ -65,6 +65,7 @@ export class MutateDefinitionRepository {
         collectiviteId: input.collectiviteId,
         titre: input.titre,
         unite: input.unite,
+        periodicite: input.periodicite,
       })
       .returning({ id: indicateurDefinitionTable.id });
 

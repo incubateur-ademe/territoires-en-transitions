@@ -21,7 +21,10 @@ import {
   indicateurGroupeTable,
 } from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { DEFAULT_ROUNDING_PRECISION } from '../valeurs/valeurs.constants';
+import { hasIndicateurFormulaChanged } from '../definitions/indicateur-formula.rules';
+import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { InvalidExpressionError } from '@tet/backend/utils/expression-parser';
@@ -104,7 +107,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly databaseService: DatabaseService,
-    private readonly crudValeursService: CrudValeursService,
+    private readonly valeursService: ManageIndicateurValeursService,
+    private readonly definitionLocks: IndicateurDefinitionLockRepository,
     private readonly versionService: VersionService,
     sheetService: SheetService
   ) {
@@ -175,10 +179,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             def.identifiantReferentiel ===
             upsertedIndicateurDefinition.identifiantReferentiel
         );
-        return (
-          upsertedIndicateurDefinition.valeurCalcule &&
-          upsertedIndicateurDefinition.valeurCalcule.trim().toLowerCase() !==
-            existingDefinition?.valeurCalcule?.trim().toLowerCase()
+        return hasIndicateurFormulaChanged(
+          existingDefinition?.valeurCalcule,
+          upsertedIndicateurDefinition.valeurCalcule
         );
       });
     this.logger.log(
@@ -187,11 +190,13 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const identifiantsRecalcules: string[] = [];
     if (updatedIndicateurDefinitionFormulas.length) {
       const recomputeResults =
-        await this.crudValeursService.recomputeAllCalculatedIndicateurValeurs(
+        await this.valeursService.recomputeAllCalculatedIndicateurValeurs(
           undefined,
           null,
-          updatedIndicateurDefinitionFormulas,
-          true
+          {
+            definitions: updatedIndicateurDefinitionFormulas,
+            skipPermissionCheck: true,
+          }
         );
       recomputeResults.forEach((result) => {
         result.identifiants.forEach((identifiant) => {
@@ -251,7 +256,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       borneMin: null,
       borneMax: null,
       valeurCalcule: null,
-      precision: CrudValeursService.DEFAULT_ROUNDING_PRECISION,
+      precision: DEFAULT_ROUNDING_PRECISION,
       exprCible: null,
       exprSeuil: null,
       libelleCibleSeuil: null,
@@ -334,6 +339,18 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         indicateur
       );
 
+      for (const parentIdentifiant of indicateur.parents ?? []) {
+        const parent = indicateurDefinitions.find(
+          (definition) =>
+            definition.identifiantReferentiel === parentIdentifiant
+        );
+        if (parent && parent.periodicite !== indicateur.periodicite) {
+          throw new BadRequestException(
+            `Indicateur ${indicateur.identifiantReferentiel} cannot belong to parent ${parentIdentifiant} with a different periodicite`
+          );
+        }
+      }
+
       if (indicateur.valeurCalcule) {
         try {
           const neededSourceIndicateurs =
@@ -362,6 +379,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
               throw new HttpException(
                 `Indicateur ${indicateur.identifiantReferentiel} depends on unknown indicateur ${sourceIndicateur.identifiant}`,
                 HttpStatus.BAD_REQUEST
+              );
+            }
+            if (foundIndicateur.periodicite !== indicateur.periodicite) {
+              throw new BadRequestException(
+                `Indicateur ${indicateur.identifiantReferentiel} cannot depend on ${sourceIndicateur.identifiant} with a different periodicite`
               );
             }
           });
@@ -517,6 +539,27 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     );
 
     await this.databaseService.db.transaction(async (tx) => {
+      await this.definitionLocks.lockForDefinitionMutation(tx);
+      const existingDefinitions =
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitions(
+          {
+            identifiantsReferentiel: indicateurDefinitions.map(
+              ({ identifiantReferentiel }) => identifiantReferentiel
+            ),
+          },
+          tx
+        );
+      for (const existing of existingDefinitions) {
+        const imported = indicateurDefinitions.find(
+          ({ identifiantReferentiel }) =>
+            identifiantReferentiel === existing.identifiantReferentiel
+        );
+        if (imported && imported.periodicite !== existing.periodicite) {
+          throw new BadRequestException(
+            `La périodicité de l'indicateur ${existing.identifiantReferentiel} est fixée à sa création`
+          );
+        }
+      }
       const createdIndicateurs = await tx
         .insert(indicateurDefinitionTable)
         .values(indicateurDefinitionsToCreate)
@@ -535,6 +578,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             'description',
             //'groupementId',
             'valeurCalcule',
+            'periodicite',
             'exprCible',
             'exprSeuil',
             'libelleCibleSeuil',
@@ -593,9 +637,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
         .where(
           inArray(indicateurCategorieTagTable.indicateurId, indicateurIds)
         );
-      await tx
-        .insert(indicateurCategorieTagTable)
-        .values(indicateurCategorieValues);
+      if (indicateurCategorieValues.length) {
+        await tx
+          .insert(indicateurCategorieTagTable)
+          .values(indicateurCategorieValues);
+      }
 
       // Recreate thematiques relationships
       // Add missing thematiques
@@ -640,9 +686,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       await tx
         .delete(indicateurThematiqueTable)
         .where(inArray(indicateurThematiqueTable.indicateurId, indicateurIds));
-      await tx
-        .insert(indicateurThematiqueTable)
-        .values(indicateurThematiqueValues);
+      if (indicateurThematiqueValues.length) {
+        await tx
+          .insert(indicateurThematiqueTable)
+          .values(indicateurThematiqueValues);
+      }
 
       // Recreate parents relationships
       const indicateurGroupeValues: CreateIndicateurGroupe[] = [];
@@ -670,7 +718,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       await tx
         .delete(indicateurGroupeTable)
         .where(inArray(indicateurGroupeTable.enfant, indicateurIds));
-      await tx.insert(indicateurGroupeTable).values(indicateurGroupeValues);
+      if (indicateurGroupeValues.length) {
+        await tx.insert(indicateurGroupeTable).values(indicateurGroupeValues);
+      }
     });
 
     // We query again the db to get indicateurs with parents, etc.

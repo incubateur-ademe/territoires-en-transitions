@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.request';
 import {
   getAuthUserFromUserCredentials,
   getServiceRoleUser,
@@ -56,14 +56,13 @@ describe('Oauth controller test', () => {
 
     const accessToken = (response.body as GenerateTokenResponse).access_token;
 
-    // Try to write an indicateur with the token on the user's collectivite
+    // Try to write a manual valeur with the token on the user's collectivite
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
           collectiviteId: writeCollectiviteId,
           indicateurId: 4,
           dateValeur: '2015-01-01',
-          metadonneeId: 1,
           resultat: 447868,
         },
       ],
@@ -81,7 +80,6 @@ describe('Oauth controller test', () => {
           collectiviteId: 3895,
           indicateurId: 4,
           dateValeur: '2015-01-01',
-          metadonneeId: 1,
           resultat: 54086,
         },
       ],
@@ -163,14 +161,13 @@ describe('Oauth controller test', () => {
 
     const accessToken = (response.body as GenerateTokenResponse).access_token;
 
-    // Try to write an indicateur with the token
+    // Try to write a manual valeur with the limited token
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: 4936,
+          collectiviteId: writeCollectiviteId,
           indicateurId: 4,
           dateValeur: '2015-01-01',
-          metadonneeId: 1,
           resultat: 447868,
         },
       ],

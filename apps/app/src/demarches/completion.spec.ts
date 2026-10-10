@@ -144,10 +144,14 @@ const valeur = ({
     indicateurValeur: {
       indicateurId: 1,
       dateValeur: `${year}-01-01`,
+      periodicite: 'annuelle',
       resultat,
       objectif,
     },
-    indicateurDefinition: { identifiantReferentiel: identifiant },
+    indicateurDefinition: {
+      identifiantReferentiel: identifiant,
+      periodicite: 'annuelle',
+    },
   } as PcaetDiagnostic['indicateurValeurs'][number]);
 
 const valeursCompletes = (): PcaetDiagnostic['indicateurValeurs'] => [

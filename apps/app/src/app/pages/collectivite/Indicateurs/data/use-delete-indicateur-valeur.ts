@@ -25,7 +25,7 @@ export const useDeleteIndicateurValeur = () => {
           });
 
           // supprimer une valeur retenue pour le score d'une action
-          // redéclenche son calcul côté backend (cf CrudValeursService /
+          // redéclenche son calcul côté backend (cf ManageIndicateurValeursService /
           // SetScoreFromIndicateurService) : on ne sait pas ici quel(s)
           // référentiel(s)/action(s) sont concernés, donc on invalide
           // largement plutôt que de laisser un score obsolète affiché

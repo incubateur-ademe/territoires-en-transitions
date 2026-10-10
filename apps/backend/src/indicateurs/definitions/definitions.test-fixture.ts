@@ -2,7 +2,7 @@ import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferRouterInputs } from '@trpc/server';
 import { omit, pick } from 'es-toolkit';
 import { onTestFinished } from 'vitest';
-import { UpsertValeurIndicateur } from '../valeurs/upsert-valeur-indicateur.request';
+import { UpsertValeurIndicateur } from '../valeurs/write-indicateur-valeurs/upsert-valeur-indicateur.request';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition/mutate-definition.input';
 
 type CreateIndicateurDefinitionInput =
@@ -25,6 +25,7 @@ export async function createIndicateurPerso({
     'collectiviteId',
     'titre',
     'unite',
+    'periodicite',
     'thematiques',
     'commentaire',
     'estFavori',

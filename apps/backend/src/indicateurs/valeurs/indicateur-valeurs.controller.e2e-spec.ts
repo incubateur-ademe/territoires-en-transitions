@@ -1,73 +1,122 @@
 import { INestApplication } from '@nestjs/common';
+import {
+  addTestCollectivite,
+  addTestCollectiviteAndUser,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
+import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,
-  getCollectiviteIdBySiren,
+  getServiceRoleUser,
   getIndicateurIdByIdentifiant,
   getTestApp,
   getTestDatabase,
+  signTestAuthToken,
 } from '@tet/backend/test';
+import { AuthRole } from '@tet/backend/users/models/auth.models';
 import {
   addTestUser,
   setUserCollectiviteRole,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, isNull } from 'drizzle-orm';
+import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { randomUUID } from 'node:crypto';
+import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
+import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
-import { UpsertIndicateursValeursRequest } from './upsert-indicateurs-valeurs.request';
-
-const collectiviteId = 3;
+import { UpsertIndicateursValeursRequest } from './write-indicateur-valeurs/upsert-indicateurs-valeurs.request';
 
 describe('Indicateurs', () => {
   let app: INestApplication;
   let authToken: string;
   let testUserId: string;
   let databaseService: DatabaseService;
-  let paysDuLaonCollectiviteId: number;
+  let serviceRoleToken: string;
+  let collectiviteId: number;
+  let calculationCollectiviteId: number;
+  let readOnlyCollectiviteId: number;
+  let rareMetadataId: number;
+  let inseeMetadataId: number;
+  const cleanupFixtures: Array<() => Promise<void>> = [];
 
   beforeAll(async () => {
     app = await getTestApp();
     databaseService = await getTestDatabase(app);
-
-    // Create isolated test user with access to needed collectivites
-    const testUserResult = await addTestUser(databaseService);
-    testUserId = testUserResult.user.id;
-
-    // Give user edition access to collectiviteId 3 (for read tests)
-    await setUserCollectiviteRole(databaseService, {
-      userId: testUserId,
-      collectiviteId,
-      role: CollectiviteRole.EDITION,
-    });
-
-    paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
-      databaseService,
-      '200043495'
+    serviceRoleToken = signTestAuthToken(
+      { role: AuthRole.SERVICE_ROLE },
+      app.get(ConfigurationService).get('SUPABASE_JWT_SECRET')
     );
 
-    // Give user admin access to paysDuLaon (for write/computed tests)
+    const fixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.EDITION },
+      collectivite: { accesRestreint: false },
+    });
+    collectiviteId = fixture.collectivite.id;
+    testUserId = fixture.user.id;
+    cleanupFixtures.push(fixture.cleanup);
+
+    const calculationFixture = await addTestCollectivite(databaseService);
+    calculationCollectiviteId = calculationFixture.collectivite.id;
+    cleanupFixtures.push(calculationFixture.cleanup);
     await setUserCollectiviteRole(databaseService, {
       userId: testUserId,
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       role: CollectiviteRole.ADMIN,
     });
 
-    authToken = await getAuthToken({
-      email: testUserResult.user.email ?? '',
-      password: testUserResult.user.password,
+    const readOnlyFixture = await addTestCollectivite(databaseService);
+    readOnlyCollectiviteId = readOnlyFixture.collectivite.id;
+    cleanupFixtures.push(readOnlyFixture.cleanup);
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserId,
+      collectiviteId: readOnlyCollectiviteId,
+      role: CollectiviteRole.LECTURE,
     });
 
-    await databaseService.db
-      .update(collectiviteTable)
-      .set({ accesRestreint: false })
-      .where(eq(collectiviteTable.id, collectiviteId));
+    const [rareMetadata, inseeMetadata] = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values([
+        { sourceId: 'rare', dateVersion: '2026-01-01' },
+        { sourceId: 'insee', dateVersion: '2026-01-01' },
+      ])
+      .returning();
+    rareMetadataId = rareMetadata.id;
+    inseeMetadataId = inseeMetadata.id;
 
+    authToken = await getAuthToken({
+      email: fixture.user.email ?? '',
+      password: fixture.user.password,
+    });
   });
 
   afterAll(async () => {
+    await databaseService.db
+      .delete(indicateurValeurTable)
+      .where(
+        inArray(indicateurValeurTable.collectiviteId, [
+          collectiviteId,
+          calculationCollectiviteId,
+          readOnlyCollectiviteId,
+        ])
+      );
+    await databaseService.db
+      .delete(indicateurSourceMetadonneeTable)
+      .where(
+        inArray(indicateurSourceMetadonneeTable.id, [
+          rareMetadataId,
+          inseeMetadataId,
+        ])
+      );
+    for (const cleanup of cleanupFixtures) {
+      await cleanup();
+    }
     await app.close();
   });
 
@@ -106,6 +155,7 @@ describe('Indicateurs', () => {
     // The user has edition access, so they should still be able to read even when restricted
     // Let's use a completely different user without any access
     const noAccessUser = await addTestUser(databaseService);
+    onTestFinished(noAccessUser.cleanup);
     const noAccessToken = await getAuthToken({
       email: noAccessUser.user.email ?? '',
       password: noAccessUser.user.password,
@@ -132,20 +182,24 @@ describe('Indicateurs', () => {
   });
 
   it(`Ecriture sans acces (uniquement lecture sur un des deux)`, async () => {
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.a'
+    );
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: 4936,
-          indicateurId: 4,
+          collectiviteId: calculationCollectiviteId,
+          indicateurId,
           dateValeur: '2015-01-01',
-          metadonneeId: 1,
+          metadonneeId: null,
           resultat: 447868,
         },
         {
-          collectiviteId: 3895,
-          indicateurId: 4,
+          collectiviteId: readOnlyCollectiviteId,
+          indicateurId,
           dateValeur: '2015-01-01',
-          metadonneeId: 1,
+          metadonneeId: null,
           resultat: 54086,
         },
       ],
@@ -161,6 +215,52 @@ describe('Indicateurs', () => {
       statusCode: 403,
     });
     expect(response.body.message).toMatch(/Droits insuffisants/);
+  });
+
+  it(`Une intégration service-role peut alimenter une source open-data d'un indicateur sans valeur utilisateur`, async () => {
+    const [protectedDefinition] = await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values({
+        titre: 'Indicateur open-data protégé',
+        unite: 'MWh',
+        periodicite: 'annuelle',
+        sansValeurUtilisateur: true,
+      })
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, protectedDefinition.id));
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, protectedDefinition.id));
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs/valeurs')
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
+      .send({
+        valeurs: [
+          {
+            collectiviteId,
+            indicateurId: protectedDefinition.id,
+            dateValeur: '2026-01-01',
+            metadonneeId: rareMetadataId,
+            resultat: 42,
+          },
+        ],
+      })
+      .expect(201);
+
+    expect(response.body.valeurs).toEqual([
+      expect.objectContaining({
+        collectiviteId,
+        indicateurId: protectedDefinition.id,
+        dateValeur: '2026-01-01',
+        metadonneeId: rareMetadataId,
+        resultat: 42,
+      }),
+    ]);
   });
 
   it(`Ecriture avec accès et calcul d'un autre indicateur pour la collectivité > ok si pas de valeur déja saisie manuellement, sinon pas de valeur calculée`, async () => {
@@ -182,7 +282,7 @@ describe('Indicateurs', () => {
       .delete(indicateurValeurTable)
       .where(
         and(
-          eq(indicateurValeurTable.collectiviteId, paysDuLaonCollectiviteId),
+          eq(indicateurValeurTable.collectiviteId, calculationCollectiviteId),
           eq(indicateurValeurTable.indicateurId, cae1kIndicateurId),
           eq(indicateurValeurTable.dateValeur, '2015-01-01'),
           isNull(indicateurValeurTable.metadonneeId)
@@ -192,14 +292,14 @@ describe('Indicateurs', () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: cae1fIndicateurId,
           dateValeur: '2015-01-01',
           metadonneeId: null,
           resultat: 2.039,
         },
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: cae1eIndicateurId,
           dateValeur: '2015-01-01',
           metadonneeId: null,
@@ -224,7 +324,7 @@ describe('Indicateurs', () => {
       nbUpsertedValues
     );
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1fIndicateurId,
@@ -235,7 +335,7 @@ describe('Indicateurs', () => {
       resultatCommentaire: null,
     });
     expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1eIndicateurId,
@@ -252,7 +352,7 @@ describe('Indicateurs', () => {
     );
 
     expect(cae1kCalculatedValeur).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1kIndicateurId,
@@ -268,7 +368,7 @@ describe('Indicateurs', () => {
     const indicateurValeurCae1kPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: cae1kIndicateurId,
           dateValeur: '2015-01-01',
           metadonneeId: null,
@@ -282,7 +382,7 @@ describe('Indicateurs', () => {
       .send(indicateurValeurCae1kPayload)
       .expect(201);
     expect(responseCae1k.body.valeurs[0]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1kIndicateurId,
@@ -311,7 +411,7 @@ describe('Indicateurs', () => {
     expect(
       upserIndicateurValeursResponseAfterManualInsert.valeurs[0]
     ).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1fIndicateurId,
@@ -324,7 +424,7 @@ describe('Indicateurs', () => {
     expect(
       upserIndicateurValeursResponseAfterManualInsert.valeurs[1]
     ).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1eIndicateurId,
@@ -336,7 +436,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source`, async () => {
+  it(`Import service-role et calcul d'un autre indicateur de la même source`, async () => {
     const indicateurCae1eId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.e'
@@ -348,17 +448,17 @@ describe('Indicateurs', () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: indicateurCae1fId,
           dateValeur: '2015-01-01',
-          metadonneeId: 2,
+          metadonneeId: rareMetadataId,
           resultat: 2.039,
         },
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: indicateurCae1eId,
           dateValeur: '2015-01-01',
-          metadonneeId: 2,
+          metadonneeId: rareMetadataId,
           resultat: 100,
         },
       ],
@@ -366,7 +466,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -376,25 +476,25 @@ describe('Indicateurs', () => {
       upserIndicateurValeursResponse.valeurs.length
     ).toBeGreaterThanOrEqual(3);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: indicateurCae1fId,
       indicateurIdentifiant: 'cae_1.f',
-      metadonneeId: 2,
-      modifiedBy: testUserId,
+      metadonneeId: rareMetadataId,
+      modifiedBy: null,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
     });
     expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: indicateurCae1eId,
       indicateurIdentifiant: 'cae_1.e',
-      metadonneeId: 2,
-      modifiedBy: testUserId,
+      metadonneeId: rareMetadataId,
+      modifiedBy: null,
       resultat: 100,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -408,12 +508,12 @@ describe('Indicateurs', () => {
       (v) => v.indicateurId === cae1kIndicateurId
     );
     expect(cae1kCalculatedValeur).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1kIndicateurId,
       indicateurIdentifiant: 'cae_1.k',
-      metadonneeId: 2,
+      metadonneeId: rareMetadataId,
       resultat: 102.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -421,7 +521,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source ayant des valeurs manquantes`, async () => {
+  it(`Import service-role et calcul d'un autre indicateur de la même source ayant des valeurs manquantes`, async () => {
     const indicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.ca'
@@ -429,10 +529,10 @@ describe('Indicateurs', () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: indicateurId,
           dateValeur: '2015-01-01',
-          metadonneeId: 2,
+          metadonneeId: rareMetadataId,
           resultat: 2.039,
         },
       ],
@@ -440,7 +540,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -450,13 +550,13 @@ describe('Indicateurs', () => {
       upserIndicateurValeursResponse.valeurs.length
     ).toBeGreaterThanOrEqual(2);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.ca',
-      metadonneeId: 2,
-      modifiedBy: testUserId,
+      metadonneeId: rareMetadataId,
+      modifiedBy: null,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -470,12 +570,12 @@ describe('Indicateurs', () => {
       (v) => v.indicateurId === cae1cIndicateurId
     );
     expect(cae1cCalculatedValeur).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: cae1cIndicateurId,
       indicateurIdentifiant: 'cae_1.c',
-      metadonneeId: 2,
+      metadonneeId: rareMetadataId,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -484,7 +584,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur impliquant une autre source avec arrondi`, async () => {
+  it(`Import service-role et calcul d'un autre indicateur impliquant une autre source avec arrondi`, async () => {
     const indicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.a'
@@ -494,17 +594,17 @@ describe('Indicateurs', () => {
       'terr_1'
     );
 
-    // restore the population value
+    // Set the population for the cross-source calculation
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send({
         valeurs: [
           {
-            collectiviteId: paysDuLaonCollectiviteId,
+            collectiviteId: calculationCollectiviteId,
             indicateurId: indicateurPopulationId,
             dateValeur: '2015-01-01',
-            metadonneeId: 5,
+            metadonneeId: inseeMetadataId,
             resultat: 41739,
           },
         ],
@@ -514,10 +614,10 @@ describe('Indicateurs', () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: indicateurId,
           dateValeur: '2015-01-01',
-          metadonneeId: 2,
+          metadonneeId: rareMetadataId,
           resultat: 10000.000002,
         },
       ],
@@ -525,7 +625,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -535,13 +635,13 @@ describe('Indicateurs', () => {
       upserIndicateurValeursResponse.valeurs.length
     ).toBeGreaterThanOrEqual(2);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.a',
-      metadonneeId: 2,
-      modifiedBy: testUserId,
+      metadonneeId: rareMetadataId,
+      modifiedBy: null,
       resultat: 10000,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -555,12 +655,12 @@ describe('Indicateurs', () => {
     );
     // Calculated indicateur
     expect(computedValeur).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: computedIndicateurId,
       indicateurIdentifiant: 'cae_1.b',
-      metadonneeId: 2,
+      metadonneeId: rareMetadataId,
       resultat: 239.58,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -570,10 +670,10 @@ describe('Indicateurs', () => {
     const indicateurPopulationValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: paysDuLaonCollectiviteId,
+          collectiviteId: calculationCollectiviteId,
           indicateurId: indicateurPopulationId,
           dateValeur: '2015-01-01',
-          metadonneeId: 5,
+          metadonneeId: inseeMetadataId,
           resultat: 20000,
         },
       ],
@@ -581,7 +681,7 @@ describe('Indicateurs', () => {
 
     const responseAfterPopulationUpdate = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send(indicateurPopulationValeurPayload)
       .expect(201);
     const upsertIndicateurPopulationValeursResponse: UpsertIndicateursValeursResponse =
@@ -593,13 +693,13 @@ describe('Indicateurs', () => {
       upsertIndicateurPopulationValeursResponse.valeurs.length
     ).toBeGreaterThanOrEqual(2);
     expect(upsertIndicateurPopulationValeursResponse.valeurs[0]).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: indicateurPopulationId,
       indicateurIdentifiant: 'terr_1',
-      metadonneeId: 5,
-      modifiedBy: testUserId,
+      metadonneeId: inseeMetadataId,
+      modifiedBy: null,
       resultat: 20000,
       resultatCommentaire: null,
       sourceId: 'insee',
@@ -610,12 +710,12 @@ describe('Indicateurs', () => {
         (v) => v.indicateurId === computedIndicateurId
       );
     expect(computedValeurAfterPopulation).toMatchObject({
-      collectiviteId: paysDuLaonCollectiviteId,
+      collectiviteId: calculationCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
       indicateurId: computedIndicateurId,
       indicateurIdentifiant: 'cae_1.b',
-      metadonneeId: 2,
+      metadonneeId: rareMetadataId,
       resultat: 500,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -624,18 +724,284 @@ describe('Indicateurs', () => {
     // restore the population value
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${authToken}`)
+      .set('Authorization', `Bearer ${serviceRoleToken}`)
       .send({
         valeurs: [
           {
-            collectiviteId: paysDuLaonCollectiviteId,
+            collectiviteId: calculationCollectiviteId,
             indicateurId: indicateurPopulationId,
             dateValeur: '2015-01-01',
-            metadonneeId: 5,
+            metadonneeId: inseeMetadataId,
             resultat: 41739,
           },
         ],
       })
       .expect(201);
+  });
+
+  async function createCalculationFixture(
+    dates: [string, string],
+    pcaet = false
+  ) {
+    const fixture = await addTestCollectivite(databaseService);
+    const prefix = `calcul_${randomUUID().replaceAll('-', '')}`;
+    const sourceId = pcaet ? PCAET_COLLECTIVITE_SOURCE_ID : prefix;
+    await databaseService.db
+      .insert(indicateurSourceTable)
+      .values({ id: sourceId, libelle: sourceId })
+      .onConflictDoNothing();
+    const metadonnees = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values([
+        ...dates.map((dateVersion) => ({ sourceId, dateVersion })),
+        { sourceId: 'insee', dateVersion: '2026-01-01' },
+      ])
+      .returning();
+    const [source, shared, target, downstream] = await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values([
+        {
+          identifiantReferentiel: `${prefix}_source`,
+          titre: prefix,
+          unite: 'u',
+        },
+        {
+          identifiantReferentiel: `${prefix}_shared`,
+          titre: prefix,
+          unite: 'u',
+        },
+        {
+          identifiantReferentiel: `${prefix}_target`,
+          titre: prefix,
+          unite: 'u',
+          valeurCalcule: pcaet
+            ? `val(${prefix}_source) + val(${prefix}_shared)`
+            : `val(${prefix}_source) * 2`,
+        },
+        {
+          identifiantReferentiel: `${prefix}_downstream`,
+          titre: prefix,
+          unite: 'u',
+          valeurCalcule: `val(${prefix}_target) * 2`,
+        },
+      ])
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(
+          inArray(indicateurDefinitionTable.id, [
+            source.id,
+            shared.id,
+            target.id,
+            downstream.id,
+          ])
+        );
+      await databaseService.db.delete(indicateurSourceMetadonneeTable).where(
+        inArray(
+          indicateurSourceMetadonneeTable.id,
+          metadonnees.map(({ id }) => id)
+        )
+      );
+      if (!pcaet)
+        await databaseService.db
+          .delete(indicateurSourceTable)
+          .where(eq(indicateurSourceTable.id, sourceId));
+      await fixture.cleanup();
+    });
+    const caller = app
+      .get(TrpcRouter)
+      .createCaller({ user: getServiceRoleUser() });
+    const importValeurs = (
+      valeurs: {
+        indicateurId: number;
+        metadonneeId: number;
+        resultat: number;
+      }[]
+    ) =>
+      request(app.getHttpServer())
+        .post('/indicateurs/valeurs')
+        .set('Authorization', `Bearer ${serviceRoleToken}`)
+        .send({
+          valeurs: valeurs.map((valeur) => ({
+            ...valeur,
+            collectiviteId: fixture.collectivite.id,
+            dateValeur: '2025-01-01',
+          })),
+        })
+        .expect(201);
+    const readCalculated = () =>
+      databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(
+          and(
+            eq(indicateurValeurTable.collectiviteId, fixture.collectivite.id),
+            inArray(indicateurValeurTable.indicateurId, [
+              target.id,
+              downstream.id,
+            ])
+          )
+        )
+        .orderBy(
+          indicateurValeurTable.indicateurId,
+          indicateurValeurTable.metadonneeId
+        );
+    return {
+      collectiviteId: fixture.collectivite.id,
+      sourceId,
+      source,
+      shared,
+      target,
+      downstream,
+      metadonnees,
+      caller,
+      importValeurs,
+      readCalculated,
+    };
+  }
+
+  it.each([
+    {
+      dates: ['2026-02-01', '2026-01-01'] as [string, string],
+      latestIndex: 0,
+      reason: 'date de version',
+    },
+    {
+      dates: ['2026-02-01', '2026-02-01'] as [string, string],
+      latestIndex: 1,
+      reason: 'identifiant à dates égales',
+    },
+  ])(
+    'conserve la dernière métadonnée par $reason après un import ancien et un recalcul complet',
+    async ({ dates, latestIndex }) => {
+      const fixture = await createCalculationFixture(dates);
+      const {
+        source,
+        target,
+        downstream,
+        metadonnees,
+        importValeurs,
+        readCalculated,
+        caller,
+      } = fixture;
+      const latest = metadonnees[latestIndex];
+      const older = metadonnees[1 - latestIndex];
+      await importValeurs([
+        { indicateurId: source.id, metadonneeId: latest.id, resultat: 20 },
+      ]);
+      await importValeurs([
+        { indicateurId: source.id, metadonneeId: older.id, resultat: 5 },
+      ]);
+      const expected = [
+        {
+          indicateurId: target.id,
+          metadonneeId: latest.id,
+          resultat: 40,
+          calculAuto: true,
+        },
+        {
+          indicateurId: downstream.id,
+          metadonneeId: latest.id,
+          resultat: 80,
+          calculAuto: true,
+        },
+      ];
+      expect(await readCalculated()).toMatchObject(expected);
+      const listed = await caller.indicateurs.valeurs.list({
+        collectiviteId: fixture.collectiviteId,
+        indicateurIds: [target.id],
+      });
+      expect(
+        listed.indicateurs[0].sources[fixture.sourceId].valeurs
+      ).toMatchObject([{ metadonneeId: latest.id, resultat: 40 }]);
+
+      // A legacy automatic row must disappear when the newest version is recomputed.
+      await databaseService.db.insert(indicateurValeurTable).values({
+        collectiviteId: fixture.collectiviteId,
+        indicateurId: target.id,
+        metadonneeId: older.id,
+        dateValeur: '2025-01-01',
+        resultat: 10,
+        calculAuto: true,
+      });
+      await caller.indicateurs.valeurs.recompute({
+        collectiviteId: fixture.collectiviteId,
+      });
+      expect(await readCalculated()).toMatchObject(expected);
+    }
+  );
+
+  it('isole les calculs de deux démarches PCAET lors des imports, mises à jour et suppressions', async () => {
+    const fixture = await createCalculationFixture(
+      ['2026-01-01', '2026-02-01'],
+      true
+    );
+    const {
+      source,
+      shared,
+      target,
+      downstream,
+      metadonnees: [first, second, insee],
+      importValeurs,
+      readCalculated,
+      caller,
+    } = fixture;
+    await importValeurs([
+      { indicateurId: shared.id, metadonneeId: insee.id, resultat: 5 },
+      { indicateurId: source.id, metadonneeId: first.id, resultat: 10 },
+      { indicateurId: source.id, metadonneeId: second.id, resultat: 100 },
+    ]);
+    const expected = (firstResult: number, secondResult: number) => [
+      {
+        indicateurId: target.id,
+        metadonneeId: first.id,
+        resultat: firstResult,
+      },
+      {
+        indicateurId: target.id,
+        metadonneeId: second.id,
+        resultat: secondResult,
+      },
+      {
+        indicateurId: downstream.id,
+        metadonneeId: first.id,
+        resultat: firstResult * 2,
+      },
+      {
+        indicateurId: downstream.id,
+        metadonneeId: second.id,
+        resultat: secondResult * 2,
+      },
+    ];
+    expect(await readCalculated()).toMatchObject(expected(15, 105));
+    await importValeurs([
+      { indicateurId: source.id, metadonneeId: first.id, resultat: 20 },
+    ]);
+    expect(await readCalculated()).toMatchObject(expected(25, 105));
+    await importValeurs([
+      { indicateurId: shared.id, metadonneeId: insee.id, resultat: 7 },
+    ]);
+    expect(await readCalculated()).toMatchObject(expected(27, 107));
+    await caller.indicateurs.valeurs.recompute({
+      collectiviteId: fixture.collectiviteId,
+    });
+    expect(await readCalculated()).toMatchObject(expected(27, 107));
+
+    // Internal source deletion has no public endpoint; use its real application service.
+    await app.get(ManageIndicateurValeursService).deleteIndicateurValeurs({
+      collectiviteId: fixture.collectiviteId,
+      indicateurId: source.id,
+      metadonneeId: first.id,
+    });
+    const remaining = [
+      { indicateurId: target.id, metadonneeId: second.id, resultat: 107 },
+      { indicateurId: downstream.id, metadonneeId: second.id, resultat: 214 },
+    ];
+    expect(await readCalculated()).toMatchObject(remaining);
+    await caller.indicateurs.valeurs.recompute({
+      collectiviteId: fixture.collectiviteId,
+    });
+    expect(await readCalculated()).toMatchObject(remaining);
   });
 });

@@ -6,16 +6,22 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
+import {
+  UpsertIndicateursValeursResponse,
+  upsertIndicateursValeursResponseSchema,
+} from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.response';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../users/models/auth.models';
-import CrudValeursService from './crud-valeurs.service';
-import { getIndicateursValeursApiRequestSchema } from './get-indicateur-valeurs.api-request';
-import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
-import { UpsertIndicateursValeursRequest } from './upsert-indicateurs-valeurs.request';
+import type {
+  AuthenticatedOrServiceRoleUser,
+  AuthenticatedUser,
+} from '../../users/models/auth.models';
+import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { getIndicateursValeursApiRequestSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.api-request';
+import { getIndicateursValeursResponseSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.response';
+import { UpsertIndicateursValeursRequest } from './write-indicateur-valeurs/upsert-indicateurs-valeurs.request';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -28,11 +34,15 @@ class GetIndicateursValeursResponseClass extends createZodDto(
   getIndicateursValeursResponseSchema
 ) {}
 
+class UpsertIndicateursValeursResponseClass extends createZodDto(
+  upsertIndicateursValeursResponseSchema
+) {}
+
 @ApiTags('Indicateurs')
 @ApiBearerAuth()
 @Controller()
 export class IndicateursValeursController {
-  constructor(private readonly service: CrudValeursService) {}
+  constructor(private readonly service: ManageIndicateurValeursService) {}
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @Get('indicateurs/valeurs')
@@ -51,7 +61,7 @@ export class IndicateursValeursController {
     @Query() request: GetIndicateursValeursApiRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    return this.service.listIndicateurValeurs(request, tokenInfo);
+    return this.service.listIndicateurValeurs(request, { user: tokenInfo });
   }
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
@@ -59,19 +69,19 @@ export class IndicateursValeursController {
   @ApiOperation({
     summary: "Création ou mise à jour des valeurs d'indicateur(s).",
     description:
-      "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**",
+      "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**.",
   })
   @ApiCreatedResponse({
-    type: UpsertIndicateursValeursRequest,
+    type: UpsertIndicateursValeursResponseClass,
     description: 'Les valeurs insérées ou mises à jour.',
   })
   async upsertIndicateurValeurs(
     @Body() request: UpsertIndicateursValeursRequest,
-    @TokenInfo() tokenInfo: AuthenticatedUser
+    @TokenInfo() tokenInfo: AuthenticatedOrServiceRoleUser
   ): Promise<UpsertIndicateursValeursResponse> {
     const upsertedValeurs = await this.service.upsertIndicateurValeurs(
       request.valeurs,
-      tokenInfo
+      { user: tokenInfo }
     );
     return { valeurs: upsertedValeurs };
   }

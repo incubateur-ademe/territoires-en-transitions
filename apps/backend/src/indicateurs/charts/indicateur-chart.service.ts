@@ -26,11 +26,11 @@ import { intersection, isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
-import CrudValeursService from '../valeurs/crud-valeurs.service';
-import { ValeursMoyenneDTO } from '../valeurs/valeurs-moyenne.dto';
-import ValeursMoyenneService from '../valeurs/valeurs-moyenne.service';
-import { ValeursReferenceDTO } from '../valeurs/valeurs-reference.dto';
-import ValeursReferenceService from '../valeurs/valeurs-reference.service';
+import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { ValeursMoyenneDTO } from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.dto';
+import ValeursMoyenneService from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
+import { ValeursReferenceDTO } from '../valeurs/get-valeurs-reference/valeurs-reference.dto';
+import ValeursReferenceService from '../valeurs/get-valeurs-reference/valeurs-reference.service';
 import {
   ChartLineStyle,
   ChartSurfaceStyle,
@@ -67,7 +67,7 @@ export class IndicateurChartService {
 
   constructor(
     private readonly listIndicateursService: ListIndicateursService,
-    private readonly indicateurValeursService: CrudValeursService,
+    private readonly indicateurValeursService: ManageIndicateurValeursService,
     private readonly valeurReferenceService: ValeursReferenceService,
     private readonly valeursMoyenneService: ValeursMoyenneService
   ) {}
@@ -510,10 +510,13 @@ export class IndicateurChartService {
     }
 
     const indicateursEnfantValeurs = (
-      await this.indicateurValeursService.listIndicateurValeurs({
-        collectiviteId,
-        indicateurIds: segmentatedIndicateursEnfantIds,
-      })
+      await this.indicateurValeursService.listIndicateurValeurs(
+        {
+          collectiviteId,
+          indicateurIds: segmentatedIndicateursEnfantIds,
+        },
+        { isUserTrusted: true }
+      )
     ).indicateurs;
 
     const sourceAndValeurType =
@@ -592,11 +595,14 @@ export class IndicateurChartService {
     ] = await Promise.all([
       // Always fetch indicateur valeurs
       this.indicateurValeursService
-        .listIndicateurValeurs({
-          collectiviteId,
-          indicateurIds: [definition.id],
-          sources: sources?.map((s) => s.sourceId),
-        })
+        .listIndicateurValeurs(
+          {
+            collectiviteId,
+            indicateurIds: [definition.id],
+            sources: sources?.map((s) => s.sourceId),
+          },
+          { isUserTrusted: true }
+        )
         .then((result) => result.indicateurs[0]),
       // Conditionally fetch reference valeurs
       includeReferenceValeurs
