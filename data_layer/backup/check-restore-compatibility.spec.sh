@@ -46,14 +46,18 @@ registry() {
 for phase in legacy schema incomplete annual reconciliation contract; do registry "$phase"; done
 cp "$test_dir/contract" "$test_dir/contract-margny"
 printf 'indicateur/margny_indicateurs_mensuels\ttet\n' >> "$test_dir/contract-margny"
+cp "$test_dir/contract-margny" "$test_dir/cleaned"
+printf 'indicateur/periodicite_nettoyage\ttet\n' >> "$test_dir/cleaned"
 cp "$test_dir/contract" "$test_dir/later"
 printf 'indicateur/periodicite_nettoyage\ttet\n' >> "$test_dir/later"
 : > "$test_dir/empty"
 sed 's/tet$/another-project/' "$test_dir/annual" > "$test_dir/wrong-project"
-sed '/indicateur\/dependances_formules/d' "$test_dir/contract" > "$test_dir/contract-no-extractor"
-sed '/indicateur\/periodicite_formules/d' "$test_dir/contract" > "$test_dir/contract-no-formulas"
-sed '/indicateur\/periodicite_activation/d' "$test_dir/contract" > "$test_dir/pending-activation"
-sed '/indicateur\/periodicite_obligatoire/d' "$test_dir/contract" > "$test_dir/contract-no-obligatoire"
+sed '/indicateur\/dependances_formules/d' "$test_dir/cleaned" > "$test_dir/cleaned-no-extractor"
+sed '/indicateur\/periodicite_formules/d' "$test_dir/cleaned" > "$test_dir/cleaned-no-formulas"
+sed '/indicateur\/periodicite_activation/d' "$test_dir/cleaned" > "$test_dir/cleaned-no-activation"
+sed '/indicateur\/periodicite_obligatoire/d' "$test_dir/cleaned" > "$test_dir/cleaned-no-obligatoire"
+cp "$test_dir/cleaned" "$test_dir/cleaned-queue"
+printf 'indicateur/reconciliation_formules\ttet\n' >> "$test_dir/cleaned-queue"
 checks=0
 check() {
     local expected="$1" source="$2" target="$3"
@@ -69,38 +73,21 @@ check() {
     fi
     checks=$((checks + 1))
 }
-check success legacy legacy
-check success legacy schema
-check success schema schema
-check success annual annual
-check success schema annual
-check success annual schema
-check failure annual legacy
-check success incomplete annual
-check success annual incomplete
-check failure later annual
-check failure annual later
-check failure empty annual
-check failure annual empty
-check failure wrong-project annual
-check failure annual annual ARCHIVE_READ_FAILS=true
-check failure annual annual TARGET_QUERY_FAILS=true
-check failure reconciliation reconciliation
-check failure annual reconciliation
-check failure reconciliation annual
-check failure reconciliation reconciliation MISSING_QUEUE=true
-check success contract contract
-check failure contract contract TARGET_SCHEMA_FAILS=true
-check failure schema schema TARGET_SCHEMA_FAILS=true
-check failure annual contract
-check failure contract reconciliation
-check success contract contract MISSING_QUEUE=true
-check success contract-margny contract-margny
-check failure contract contract-margny
-check failure contract-margny contract
-check failure contract-margny contract-margny MISSING_REPAIR=true
-for phase in contract-no-extractor contract-no-formulas pending-activation contract-no-obligatoire; do
-    check failure "$phase" contract
-    check failure contract "$phase"
+check success cleaned cleaned
+for phase in legacy schema incomplete annual reconciliation contract contract-margny later empty wrong-project; do
+    check failure "$phase" cleaned
+    check failure cleaned "$phase"
+done
+check success cleaned cleaned MISSING_QUEUE=true
+check failure cleaned cleaned TARGET_SCHEMA_FAILS=true
+check success cleaned-queue cleaned-queue
+check failure cleaned-queue cleaned
+check failure cleaned cleaned-queue
+check failure cleaned-queue cleaned-queue MISSING_QUEUE=true
+check failure cleaned cleaned ARCHIVE_READ_FAILS=true
+check failure cleaned cleaned TARGET_QUERY_FAILS=true
+for phase in cleaned-no-extractor cleaned-no-formulas cleaned-no-activation cleaned-no-obligatoire; do
+    check failure "$phase" cleaned
+    check failure cleaned "$phase"
 done
 printf 'PASS: %s restore compatibility checks\n' "$checks"

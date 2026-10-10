@@ -107,34 +107,19 @@ jobs:
             --dbname="postgresql://postgres:postgres@127.0.0.1:5432/$SCHEMA_DATABASE_NAME" \
             --ext .psql --verbose data_layer/tests/indicateur/periodicite-schema.assertions.psql
 
-      - name: Sqitch revert to ${{ env.tag }}
+      - name: Sqitch verify final indicator schema (ci)
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
         with:
-          command: 'revert --to @${{ env.tag }} --y'
+          command: 'verify --from-change @indicateur-periodicite-schema'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      - name: Sqitch deploy/verify
-        if: ${{ !env.ACT }}
-        uses: ./.github/actions/sqitch
-        with:
-          command: 'deploy --mode change --verify'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - name: Sqitch revert to ${{ env.tag }} (local)
+      - name: Sqitch verify final indicator schema (local)
         if: ${{ env.ACT }}
         uses: ./.github/actions/sqitch-local
         with:
-          command: 'revert --to @${{ env.tag }} --y'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-
-      - name: Sqitch deploy/verify (local)
-        if: ${{ env.ACT }}
-        uses: ./.github/actions/sqitch-local
-        with:
-          command: 'deploy --mode change --verify'
+          command: 'verify --from-change @indicateur-periodicite-schema'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
       - name: Test periodicity constraints after deployment

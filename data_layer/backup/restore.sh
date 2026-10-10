@@ -227,10 +227,8 @@ GROUP_ORDER=(
   indicateurs_group
 )
 
-
-
-if [[ "$PERIODICITE_RESTORE_PHASE" == contract-margny ]]; then
-    GROUP_ORDER+=(margny_group)
+if [[ "$PERIODICITE_RESTORE_PHASE" == cleaned-queue ]]; then
+    GROUP_ORDER+=(reconciliation_group)
 fi
 
 GROUP_ORDER+=(
