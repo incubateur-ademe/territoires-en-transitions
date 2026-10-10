@@ -1,6 +1,29 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  indicateurPeriodiciteScoreTooltip:
+    'Cet indicateur doit être suivi à la maille annuelle : il participe au score du programme TETE. Sa périodicité ne peut pas être modifiée.',
+  indicateurPeriodiciteTooltip: (periodicite: string) =>
+    `La périodicité ${periodicite.toLowerCase()} s’applique à la saisie et à l’affichage de cet indicateur. Elle est fixée à sa création et ne peut pas être modifiée.`,
+  indicateurAjouterObjectif: 'Ajouter un objectif',
+  indicateurAjouterDonnee: 'Ajouter une donnée',
+  indicateurAjouterColonne: 'Ajouter une autre colonne',
+  indicateurSupprimerColonne: 'Retirer cette colonne',
+  indicateurPeriodeExistante:
+    'Cette période est déjà présente dans le tableau.',
+  indicateurPeriodesInvalides:
+    'Choisissez des périodes valides, distinctes et absentes du tableau.',
+  indicateurMois: 'Mois',
+  indicateurTrimestre: 'Trimestre',
+  indicateurSemestre: 'Semestre',
+  indicateurChampValeur: (type: string, periode: string) =>
+    `${type} — ${periode}`,
+  indicateurCommentaireValeur: (type: string, periode: string) =>
+    `Commentaire du ${type.toLowerCase()} — ${periode}`,
+  indicateurSupprimerPeriode: (periode: string) =>
+    `Supprimer la période ${periode}`,
+  indicateurValeurAbsente: 'Non renseigné',
+
   periodiciteDeclarationCollectivite:
     'Périodicité de déclaration de ma collectivité',
   periodiciteImmuable:

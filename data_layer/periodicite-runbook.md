@@ -23,6 +23,7 @@ l'import), #5379 (file durable de recalcul), #5394 (nouvelle saisie), #5312
 | #5378 | Contrat annuel pour les saisies, imports et calculs | `@indicateur-periodicite-annuelle` |
 | #5215 | Activation des périodicités communes à la déclaration et à l'affichage | `@indicateur-periodicite-activee` |
 | #5379 | File durable de recalcul, secondaire à l'activation | `@indicateur-reconciliation-formules` |
+| #5394 | Saisie résultat/objectif dans les cellules | Aucune migration |
 | #5312 | Six observations de Margny remises au mensuel | `@indicateur-margny-mensuel` |
 | #5296 | Suppression des archives ; fin du retour arrière Sqitch | `@indicateur-periodicite-nettoyee` |
 
@@ -110,6 +111,16 @@ Le retour à `@indicateur-periodicite-annuelle` exige des définitions et valeur
 uniquement annuelles. Sinon, le revert est refusé. Les anciennes colonnes
 d’agrégation sont recréées à NULL pour restaurer le schéma de préparation.
 Après restauration des données, les scripts reconstruisent les dépendances des formules.
+
+## 4. Interface de saisie — #5394
+
+Déployer l'application après l'activation des quatre périodicités. Cette étape
+n'ajoute aucune migration SQL et précède la migration Margny (#5312).
+
+Contrôler le badge et son infobulle, la saisie directe des résultats et objectifs,
+l'ajout de plusieurs mois/trimestres/semestres, les commentaires et la lecture seule.
+Les colonnes vides sont des brouillons locaux : seule une saisie crée une observation.
+Le retour à l'application de #5215 conserve toutes les observations enregistrées.
 
 ## En cas d'échec
 

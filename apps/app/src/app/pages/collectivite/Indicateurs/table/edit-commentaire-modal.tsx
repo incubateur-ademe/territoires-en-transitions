@@ -19,7 +19,7 @@ type EditCommentaireModalProps = {
   definition: IndicateurDefinition;
   type: SourceType;
   openState: OpenState;
-  onChange: (commentaire: string) => void;
+  onChange: (commentaire: string) => void | Promise<boolean>;
   isReadonly?: boolean;
 };
 
@@ -36,6 +36,7 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
     onChange,
     isReadonly = false,
   } = props;
+  const [isSaving, setIsSaving] = useState(false);
   const [commentaire, setCommentaire] = useState<string | null>(
     commentaireInitial
   );
@@ -66,12 +67,18 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
         !isReadonly ? (
           <ModalFooterOKCancel
             btnOKProps={{
-              onClick: () => {
-                onChange(commentaire ?? '');
-                close();
+              disabled: isSaving,
+              onClick: async () => {
+                setIsSaving(true);
+                try {
+                  const saved = await onChange(commentaire ?? '');
+                  if (saved !== false) close();
+                } finally {
+                  setIsSaving(false);
+                }
               },
             }}
-            btnCancelProps={{ onClick: close }}
+            btnCancelProps={{ onClick: close, disabled: isSaving }}
           />
         ) : (
           <ModalFooter>

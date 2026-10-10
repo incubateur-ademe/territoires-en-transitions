@@ -1,5 +1,3 @@
-import { appLabels } from '@/app/labels/catalog';
-import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import {
   canUpdateIndicateurDefinition,
   canUpdateIndicateurValeur,
@@ -7,8 +5,7 @@ import {
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Divider, Field } from '@tet/ui';
-import classNames from 'classnames';
+import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { PersonnalisationQuestionsList } from '../../../../../collectivites/personnalisations/personnalisation-questions.list';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -64,15 +61,6 @@ const DonneesIndicateur = ({
 
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
-      <Field
-        title={appLabels.periodiciteDeclarationCollectivite}
-        hint={appLabels.periodiciteImmuable}
-        small
-      >
-        <span>
-          {getIndicateurPeriodPresentation(definition.periodicite).label}
-        </span>
-      </Field>
       <div className="flex flex-row gap-4">
         {/* Unité personnalisée */}
         {definition.estPerso && (
@@ -107,15 +95,11 @@ const DonneesIndicateur = ({
         className="mb-6"
         chartInfo={chartInfo}
         definition={definition}
-        isReadonly={!canMutateDefinition}
+        isReadonly={!canMutateValeur}
         onAddValue={() => setIsTableModalOpen(true)}
       />
 
-      <div
-        className={classNames('flex flex-col gap-7', {
-          'invisible h-0': !chartInfo.hasValeur,
-        })}
-      >
+      <div className="flex flex-col gap-7">
         <Divider color="primary" className="mb-6" />
 
         {/* Tableau */}

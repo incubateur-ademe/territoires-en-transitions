@@ -318,7 +318,11 @@ describe('getDemarchePcaetCompletion', () => {
 
   it('laisse le plan en incomplete tant qu’un plan importé rattaché n’est pas vérifié', () => {
     const completion = getDemarchePcaetCompletion(
-      { ...completeDemarche, planActionIds: [42, 43], unverifiedPlanActionIds: [43] },
+      {
+        ...completeDemarche,
+        planActionIds: [42, 43],
+        unverifiedPlanActionIds: [43],
+      },
       completeDiagnostic(),
       completeSnapshot
     );

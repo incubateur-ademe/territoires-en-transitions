@@ -2,6 +2,7 @@ import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indi
 import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { cn, Icon } from '@tet/ui';
+import { IndicateurPeriodiciteBadge } from '@/app/indicateurs/valeurs/indicateur-periodicite.badge';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
@@ -28,6 +29,7 @@ export const hasIndicateurInfos = ({
   const pilotes = definition.pilotes ?? [];
   const services = definition.services ?? [];
   return (
+    !composeSansAgregation ||
     pilotes.length > 0 ||
     services.length > 0 ||
     Boolean(participationScore) ||
@@ -72,6 +74,16 @@ export const IndicateurInfos = ({
                 })
               : ''}
           </span>
+        )}
+
+        {!composeSansAgregation && (
+          <>
+            {!!modifiedAt && <div className="w-px h-5 bg-grey-5" />}
+            <IndicateurPeriodiciteBadge
+              periodicite={definition.periodicite}
+              participationScore={Boolean(participationScore)}
+            />
+          </>
         )}
 
         {/* Pilotes */}
