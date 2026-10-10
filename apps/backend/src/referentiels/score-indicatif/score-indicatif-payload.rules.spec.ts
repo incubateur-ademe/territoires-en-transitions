@@ -1,3 +1,5 @@
+import { getLibelleScoreIndicatif } from './score-indicatif.rules';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import {
   ActionScoreIndicatif,
   scoreIndicatifPayloadSchema,
@@ -29,6 +31,34 @@ describe('score-indicatif-payload.rules', () => {
   });
 
   describe('formatScoreIndicatifForPayload', () => {
+    it('conserve le contrat annuel du score', () => {
+      expect(
+        formatScoreIndicatifForPayload({
+          actionId: 'cae_1.1.1',
+          indicateurs: [
+            {
+              actionId: 'cae_1.1.1',
+              indicateurId: 42,
+              identifiantReferentiel: 'ind_test',
+              titre: 'Indicateur de test',
+              unite: '%',
+              isSuivi: true,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            },
+          ],
+          calcul: null,
+          fait: null,
+          programme: null,
+        })
+      ).toEqual({
+        periodicite: 'annuelle',
+        unite: '%',
+        calcul: null,
+        fait: null,
+        programme: null,
+      });
+    });
+
     it('formate le score fait et laisse le score programme à null', () => {
       const scoreIndicatif: ActionScoreIndicatif = {
         actionId: 'cae_1.1.1',
@@ -38,6 +68,7 @@ describe('score-indicatif-payload.rules', () => {
             indicateurId: 42,
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             unite: '%',
             isSuivi: true,
           },
@@ -74,6 +105,7 @@ describe('score-indicatif-payload.rules', () => {
 
       const payload = formatScoreIndicatifForPayload(scoreIndicatif);
 
+      expect(payload.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
       expect(payload.unite).toBe('%');
       expect(payload.calcul).toEqual({
         type: 'valeur_cible_seuil',
@@ -107,6 +139,7 @@ describe('score-indicatif-payload.rules', () => {
             identifiantReferentiel: 'ind_test',
             titre: 'Indicateur de test',
             unite: '%',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             isSuivi: true,
           },
         ],
@@ -165,4 +198,69 @@ describe('score-indicatif-payload.rules', () => {
       expect(result.data?.calcul).toEqual(calcul);
     });
   });
+});
+
+describe('scoreIndicatifPayloadSchema', () => {
+  it('classe explicitement les snapshots antérieurs comme annuels', () => {
+    const snapshot = scoreIndicatifPayloadSchema.parse({
+      unite: 'kg/hab',
+      fait: {
+        score: 0.2,
+        valeursUtilisees: [
+          {
+            valeur: 123,
+            dateValeur: '2025-07-10',
+            identifiantReferentiel: 'eci_1.a',
+            indicateurId: 1,
+            sourceLibelle: 'Données de la collectivité',
+            sourceMetadonnee: null,
+          },
+        ],
+      },
+      programme: null,
+    });
+
+    expect(snapshot.periodicite).toBe('annuelle');
+    expect(snapshot.fait?.valeursUtilisees[0]?.dateValeur).toBe('2025-07-10');
+  });
+
+  it('refuse de présenter un snapshot de score comme mensuel', () => {
+    expect(() =>
+      scoreIndicatifPayloadSchema.parse({
+        periodicite: 'mensuelle',
+        unite: '%',
+        fait: null,
+        programme: null,
+      })
+    ).toThrow();
+  });
+});
+
+describe('getLibelleScoreIndicatif', () => {
+  it.each(['eci', 'te'] as const)(
+    'conserve les dates annuelles historiques pour %s',
+    (referentielId) => {
+      const historique = scoreIndicatifPayloadSchema.parse({
+        unite: 'kg/hab',
+        fait: {
+          score: 0.2,
+          valeursUtilisees: [
+            {
+              valeur: 123,
+              dateValeur: '2025-07-10',
+              identifiantReferentiel: 'eci_1.a',
+              indicateurId: 1,
+              sourceLibelle: 'Données de la collectivité',
+              sourceMetadonnee: null,
+            },
+          ],
+        },
+        programme: null,
+      });
+
+      expect(getLibelleScoreIndicatif(historique, referentielId)).toContain(
+        'en 2025'
+      );
+    }
+  );
 });

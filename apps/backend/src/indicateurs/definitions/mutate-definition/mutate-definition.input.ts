@@ -1,8 +1,6 @@
+import { annualReleasePeriodiciteSchema } from '../indicateur-annual-release.input';
 import { serviceTagSchema } from '@tet/domain/collectivites';
-import {
-  indicateurDefinitionSchemaCreate,
-  IndicateurPeriodiciteEnum,
-} from '@tet/domain/indicateurs';
+import { indicateurDefinitionSchemaCreate } from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
@@ -13,12 +11,9 @@ export const createIndicateurDefinitionInputSchema = z.object({
   unite: z.optional(indicateurDefinitionSchemaCreate.shape.unite),
   // Compatibilité de l'API historique : l'absence de périodicité est
   // interprétée une seule fois à la frontière d'entrée. Le service reçoit
-  // toujours une périodicité explicite. Les autres périodicités nécessitent
-  // d'abord la migration du stockage annuel.
-  periodicite: z
-    .literal(IndicateurPeriodiciteEnum.ANNUELLE)
-    .optional()
-    .default(IndicateurPeriodiciteEnum.ANNUELLE),
+  // toujours une périodicité explicite.
+  periodicite: z.optional(annualReleasePeriodiciteSchema).default('annuelle'),
+  isApplicable: z.boolean().optional().default(true),
   collectiviteId: z.number(),
   thematiques: z
     .array(z.object({ id: thematiqueSchema.shape.id }))
@@ -41,13 +36,6 @@ export const createIndicateurDefinitionInputSchema = z.object({
     .default(false)
     .describe(
       "Si true, la valeur associée à l'indicateur la plus récente n'est pas consultable en mode visite."
-    ),
-  isApplicable: z
-    .boolean()
-    .optional()
-    .default(true)
-    .describe(
-      "Si false, l'indicateur est déclaré non applicable à la collectivité : il ne lui est plus réclamé."
     ),
   ficheId: z
     .number()
@@ -76,11 +64,10 @@ export const updateIndicateurDefinitionInputSchema = z.object({
 
       // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
       // "absent du payload" d'une mise à jour explicite.
-      // La périodicité est immuable dès la création, même sans valeur enregistrée.
       periodicite: z.never().optional(),
+      isApplicable: z.boolean().optional(),
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),
-      isApplicable: z.boolean().optional(),
       isSuivi: z.boolean().optional(),
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),

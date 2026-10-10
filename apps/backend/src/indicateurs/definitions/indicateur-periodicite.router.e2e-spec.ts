@@ -1,3 +1,6 @@
+import { randomUUID } from 'node:crypto';
+import ImportIndicateurDefinitionService from '../import-indicateurs/import-indicateur-definition.service';
+import { sampleImportIndicateurDefinition } from '../import-indicateurs/samples/import-indicateur-definition.sample';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
@@ -47,6 +50,32 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test('conserve le suivi explicite lors des mises à jour partielles', async () => {
+    const indicateurId = await caller.indicateurs.indicateurs.create({
+      collectiviteId,
+      titre: 'Indicateur avec suivi',
+    });
+
+    for (const isSuivi of [false, true]) {
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { isSuivi },
+      });
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { commentaire: 'Mise à jour indépendante du suivi' },
+      });
+
+      const { data } = await caller.indicateurs.indicateurs.list({
+        collectiviteId,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(data).toMatchObject([{ id: indicateurId, isSuivi }]);
+    }
   });
 
   test.each([undefined, 'annuelle'] as const)(
@@ -113,14 +142,14 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   );
 
-  test('conserve les dates historiques distinctes et les valeurs nulles ou zéro', async () => {
+  test('normalise les dates historiques et conserve les valeurs nulles ou zéro', async () => {
     const indicateurId = await caller.indicateurs.indicateurs.create({
       collectiviteId,
       titre: 'Dates historiques',
     });
     const valeurs = [
       { dateValeur: '2024-06-30', resultat: 0, objectif: null },
-      { dateValeur: '2024-12-31', resultat: null, objectif: 42 },
+      { dateValeur: '2025-12-31', resultat: null, objectif: 42 },
     ];
 
     for (const valeur of valeurs) {
@@ -139,8 +168,8 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       periodicite: 'annuelle',
     });
     expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
-      { dateValeur: '2024-06-30', periodicite: 'annuelle', resultat: 0 },
-      { dateValeur: '2024-12-31', periodicite: 'annuelle', objectif: 42 },
+      { dateValeur: '2024-01-01', periodicite: 'annuelle', resultat: 0 },
+      { dateValeur: '2025-01-01', periodicite: 'annuelle', objectif: 42 },
     ]);
     expect(
       result.indicateurs[0].sources.collectivite.valeurs[0]
@@ -193,7 +222,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   );
 
-  test.each(['mensuelle', 'trimestrielle', 'semestrielle'])(
+  test.each(['mensuelle', 'trimestrielle', 'semestrielle', 'hebdomadaire'])(
     'refuse tout le lot HTTP contenant une valeur %s',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
@@ -230,4 +259,190 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       expect(result.indicateurs[0].sources).toEqual({});
     }
   );
+
+  test.each([undefined, 'annuelle'] as const)(
+    'importe les dates annuelles historiques par HTTP avec periodicite=%s',
+    async (periodicite) => {
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId,
+        titre: 'Import annuel historique',
+      });
+      const response = await request(app.getHttpServer())
+        .post('/indicateurs/valeurs')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          valeurs: [
+            {
+              collectiviteId,
+              indicateurId,
+              periodicite,
+              dateValeur: '2024-06-30',
+              resultat: 0,
+              objectif: null,
+            },
+            {
+              collectiviteId,
+              indicateurId,
+              periodicite,
+              dateValeur: '2025-12-31',
+              resultat: null,
+              objectif: 42,
+            },
+          ],
+        })
+        .expect(201);
+
+      expect(response.body.valeurs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            dateValeur: '2024-01-01',
+            periodicite: 'annuelle',
+            resultat: 0,
+            objectif: null,
+          }),
+          expect.objectContaining({
+            dateValeur: '2025-01-01',
+            periodicite: 'annuelle',
+            resultat: null,
+            objectif: 42,
+          }),
+        ])
+      );
+      const result = await caller.indicateurs.valeurs.list({
+        collectiviteId,
+        indicateurIds: [indicateurId],
+      });
+      expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+        { dateValeur: '2024-01-01', resultat: 0 },
+        { dateValeur: '2025-01-01', objectif: 42 },
+      ]);
+    }
+  );
+
+  test('refuse une date impossible sans enregistrer les autres valeurs du lot', async () => {
+    const indicateurId = await caller.indicateurs.indicateurs.create({
+      collectiviteId,
+      titre: 'Date impossible',
+    });
+    await request(app.getHttpServer())
+      .post('/indicateurs/valeurs')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({
+        valeurs: [
+          {
+            collectiviteId,
+            indicateurId,
+            dateValeur: '2024-01-01',
+            resultat: 10,
+          },
+          {
+            collectiviteId,
+            indicateurId,
+            dateValeur: '2025-02-30',
+            resultat: 20,
+          },
+        ],
+      })
+      .expect(400);
+
+    await expect(
+      caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2025-02-30',
+        resultat: 20,
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    const result = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    expect(result.indicateurs[0].sources).toEqual({});
+  });
+
+  test.each(['aggregationResultat', 'aggregationObjectif'])(
+    'ignore le paramètre abandonné %s à la création et à la mise à jour',
+    async (field) => {
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId,
+        titre: 'Sans agrégation',
+        [field]: 'somme',
+      });
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId,
+        indicateurId,
+        indicateurFields: { titre: 'Titre modifié', [field]: 'somme' },
+      });
+      const { data } = await caller.indicateurs.indicateurs.list({
+        collectiviteId,
+        filters: { indicateurIds: [indicateurId] },
+      });
+      expect(data[0]).toMatchObject({
+        titre: 'Titre modifié',
+        periodicite: 'annuelle',
+      });
+      expect(data[0]).not.toHaveProperty(field);
+    }
+  );
+  test('l’import conserve la périodicité et accepte une définition sans relations', async () => {
+    const database = await getTestDatabase(app);
+    const importer = app.get(ImportIndicateurDefinitionService);
+    const identifiantReferentiel = `periode_${randomUUID().replaceAll(
+      '-',
+      ''
+    )}`;
+    const definition = {
+      ...sampleImportIndicateurDefinition,
+      identifiantReferentiel,
+      titre: 'Import annuel',
+      periodicite: 'annuelle' as const,
+      valeurCalcule: null,
+      exprCible: null,
+      exprSeuil: null,
+      categories: [],
+      thematiques: [],
+      parents: null,
+    };
+    onTestFinished(async () => {
+      await database.db
+        .delete(indicateurDefinitionTable)
+        .where(
+          eq(
+            indicateurDefinitionTable.identifiantReferentiel,
+            identifiantReferentiel
+          )
+        );
+    });
+    const imported = await importer.upsertIndicateurDefinitions([definition]);
+    const created = imported.find(
+      (row) => row.identifiantReferentiel === identifiantReferentiel
+    );
+    expect(created).toMatchObject({
+      periodicite: 'annuelle',
+      titre: 'Import annuel',
+    });
+    await importer.upsertIndicateurDefinitions([
+      { ...definition, titre: 'Titre modifié' },
+    ]);
+    await expect(
+      importer.upsertIndicateurDefinitions([
+        // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
+        { ...definition, periodicite: 'mensuelle' },
+      ])
+    ).rejects.toThrow('est fixée à sa création');
+    const [saved] = await database.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(
+        eq(
+          indicateurDefinitionTable.identifiantReferentiel,
+          identifiantReferentiel
+        )
+      );
+    expect(saved).toMatchObject({
+      id: created?.id,
+      periodicite: 'annuelle',
+      titre: 'Titre modifié',
+    });
+  });
 });

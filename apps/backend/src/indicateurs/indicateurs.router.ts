@@ -4,7 +4,7 @@ import { MutateDefinitionRouter } from './definitions/mutate-definition/mutate-d
 import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
-import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
+import { IndicateurValeursRouter } from './valeurs/indicateur-valeurs.router';
 import { IndicateurVuesRouter } from './vues/indicateur-vues.router';
 
 @Injectable()

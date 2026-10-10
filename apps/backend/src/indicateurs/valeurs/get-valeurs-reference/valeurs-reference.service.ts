@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { GetValeursReferenceRequest } from '@tet/backend/indicateurs/valeurs/get-valeurs-reference.request';
+import { GetValeursReferenceRequest } from '@tet/backend/indicateurs/valeurs/get-valeurs-reference/get-valeurs-reference.request';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   CollectiviteAvecType,
@@ -11,11 +11,11 @@ import { inArray } from 'drizzle-orm';
 import { groupBy, isNil } from 'es-toolkit';
 import PersonnalisationsExpressionService, {
   ReferentielContext,
-} from '../../collectivites/personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
-import { DatabaseService } from '../../utils/database/database.service';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
-import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
+} from '../../../collectivites/personnalisations/services/personnalisations-expression.service';
+import PersonnalisationsService from '../../../collectivites/personnalisations/services/personnalisations-service';
+import { DatabaseService } from '../../../utils/database/database.service';
+import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { indicateurObjectifTable } from '../../shared/models/indicateur-objectif.table';
 import { ValeursReferenceDTO } from './valeurs-reference.dto';
 
 @Injectable()
@@ -77,8 +77,9 @@ export default class ValeursReferenceService {
       )}`
     );
 
-    const referentielContext =
-      await this.resolveReferentielContext(providedReferentielContext);
+    const referentielContext = await this.resolveReferentielContext(
+      providedReferentielContext
+    );
 
     // charge les objectifs associés aux indicateurs
     const valeurObjectifsIndicateurs = await this.getValeurObjectifsIndicateurs(

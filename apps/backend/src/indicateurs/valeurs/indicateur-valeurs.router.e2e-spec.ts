@@ -12,13 +12,15 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { and, eq } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
+import { and, eq, inArray } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
-import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
+import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { getIndicateursValeursResponseSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.response';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type InputList = inferProcedureInput<
@@ -252,9 +254,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     if (Array.isArray(after.indicateurs) === false) {
       throw new Error('after.indicateurs is not an array');
     }
-    expect(
-      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
-    ).toBe(10);
+    expect(after.indicateurs[0].sources.collectivite.valeurs[0].resultat).toBe(
+      10
+    );
   });
 
   test('Mettre à jour par id ne peut pas écraser une valeur open-data', async () => {
@@ -402,9 +404,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       throw new Error('after.indicateurs is not an array');
     }
     expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(1);
-    expect(
-      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
-    ).toBe(20);
+    expect(after.indicateurs[0].sources.collectivite.valeurs[0].resultat).toBe(
+      20
+    );
   });
 
   test("Un second upsert sans id ne réinitialise pas l'objectif existant", async () => {
@@ -433,12 +435,12 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       throw new Error('after.indicateurs is not an array');
     }
     expect(after.indicateurs[0].sources.collectivite.valeurs.length).toBe(1);
-    expect(
-      after.indicateurs[0].sources.collectivite.valeurs[0].resultat
-    ).toBe(20);
-    expect(
-      after.indicateurs[0].sources.collectivite.valeurs[0].objectif
-    ).toBe(5);
+    expect(after.indicateurs[0].sources.collectivite.valeurs[0].resultat).toBe(
+      20
+    );
+    expect(after.indicateurs[0].sources.collectivite.valeurs[0].objectif).toBe(
+      5
+    );
   });
 
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
@@ -502,6 +504,127 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       indicateurCalculeValeur.calculAutoIdentifiantsManquants
     ).toStrictEqual(['cae_1.f']);
   });
+
+  test.each([
+    { optional: false, resultat: 10 },
+    { optional: false, resultat: 0 },
+    { optional: true, resultat: 10 },
+    { optional: true, resultat: 0 },
+  ])(
+    'propage les observations nulles puis supprimées (source optionnelle=$optional, autre résultat=$resultat)',
+    async ({ optional, resultat }) => {
+      const prefix = `calcul_${randomUUID().replaceAll('-', '')}`;
+      const identifiants = ['a', 'b', 'total', 'aval'].map(
+        (suffix) => `${prefix}_${suffix}`
+      );
+      const definitions = await databaseService.db
+        .insert(indicateurDefinitionTable)
+        .values(
+          identifiants.map((identifiantReferentiel, index) => ({
+            identifiantReferentiel,
+            titre: identifiantReferentiel,
+            unite: 'test',
+            valeurCalcule:
+              index === 2
+                ? `${optional ? 'opt_val' : 'val'}(${identifiants[0]}) + val(${
+                    identifiants[1]
+                  })`
+                : index === 3
+                ? `val(${identifiants[2]}) * 2`
+                : null,
+          }))
+        )
+        .returning();
+      onTestFinished(async () => {
+        await databaseService.db.delete(indicateurDefinitionTable).where(
+          inArray(
+            indicateurDefinitionTable.id,
+            definitions.map(({ id }) => id)
+          )
+        );
+      });
+      const [sourceA, sourceB, total, aval] = identifiants.map(
+        (identifiant) => {
+          const definition = definitions.find(
+            ({ identifiantReferentiel }) =>
+              identifiantReferentiel === identifiant
+          );
+          if (!definition) throw new Error(`Missing fixture ${identifiant}`);
+          return definition;
+        }
+      );
+      const caller = router.createCaller({ user: authenticatedUser });
+      const sourceValeur = await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId: sourceA.id,
+        dateValeur: '2025-01-01',
+        resultat: 5,
+      });
+      if (!sourceValeur) throw new Error('Missing source observation');
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId: sourceB.id,
+        dateValeur: '2025-01-01',
+        resultat,
+      });
+      const readCalculated = () =>
+        databaseService.db
+          .select()
+          .from(indicateurValeurTable)
+          .where(
+            and(
+              eq(indicateurValeurTable.collectiviteId, collectiviteId),
+              inArray(indicateurValeurTable.indicateurId, [total.id, aval.id])
+            )
+          )
+          .orderBy(indicateurValeurTable.indicateurId);
+      expect(await readCalculated()).toMatchObject([
+        {
+          indicateurId: total.id,
+          resultat: 5 + resultat,
+          calculAuto: true,
+          periodicite: 'annuelle',
+        },
+        {
+          indicateurId: aval.id,
+          resultat: (5 + resultat) * 2,
+          calculAuto: true,
+        },
+      ]);
+
+      // Null keeps the observation and its identity; it is not a deletion.
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId: sourceA.id,
+        id: sourceValeur.id,
+        resultat: null,
+      });
+      expect(await readCalculated()).toMatchObject([
+        { indicateurId: total.id, resultat: optional ? resultat : null },
+        { indicateurId: aval.id, resultat: optional ? resultat * 2 : null },
+      ]);
+
+      await caller.indicateurs.valeurs.delete({
+        collectiviteId,
+        indicateurId: sourceA.id,
+        id: sourceValeur.id,
+      });
+      const afterDeletion = await readCalculated();
+      if (optional) {
+        expect(afterDeletion).toMatchObject([
+          {
+            indicateurId: total.id,
+            resultat,
+            calculAutoIdentifiantsManquants: [identifiants[0]],
+          },
+          { indicateurId: aval.id, resultat: resultat * 2 },
+        ]);
+      } else {
+        // Removing a required observation removes the entire automatic chain.
+        expect(afterDeletion).toEqual([]);
+      }
+    }
+  );
 
   test("Ne permet pas d'insérer une valeur si on n'a pas le droit requis", async () => {
     const caller = router.createCaller({ user: authenticatedUser });

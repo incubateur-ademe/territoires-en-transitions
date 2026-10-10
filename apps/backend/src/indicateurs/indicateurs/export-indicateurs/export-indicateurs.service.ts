@@ -7,7 +7,7 @@ import { Workbook } from 'exceljs';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import IndicateurSourcesService from '../../sources/indicateur-sources.service';
-import CrudValeursService from '../../valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '../../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { ListIndicateursService } from '../list-indicateurs/list-indicateurs.service';
 import { buildConsolidatedSheet } from './export-indicateurs.builder';
 import { ExportIndicateursRequestType } from './export-indicateurs.request';
@@ -25,7 +25,7 @@ export default class ExportIndicateursService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly valeursService: CrudValeursService,
+    private readonly valeursService: ManageIndicateurValeursService,
     private readonly collectiviteService: CollectivitesService,
     private readonly listIndicateursService: ListIndicateursService,
     private readonly sourcesService: IndicateurSourcesService
@@ -163,12 +163,7 @@ export default class ExportIndicateursService {
     // Génère le classeur consolidé (1 onglet, 1 ligne par indicateur + 1 ligne
     // par source open-data disposant de valeurs).
     const workbook = new Workbook();
-    buildConsolidatedSheet(
-      workbook,
-      parents,
-      indicateursValeurs,
-      sourceLabels
-    );
+    buildConsolidatedSheet(workbook, parents, indicateursValeurs, sourceLabels);
 
     const buffer = await workbook.xlsx.writeBuffer();
     return { buffer, filename };

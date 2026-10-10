@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { GetTrajectoireLeviersDataResponse } from './get-trajectoire-leviers-data.response';
 import { TrajectoireLeviersService } from './trajectoire-leviers.service';
@@ -17,7 +17,7 @@ describe('TrajectoireLeviersService', () => {
         if (
           token === ListCollectivitesService ||
           token === PermissionService ||
-          token === CrudValeursService ||
+          token === ManageIndicateurValeursService ||
           token === TrajectoiresDataService
         ) {
           return {};

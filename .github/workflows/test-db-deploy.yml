@@ -89,6 +89,24 @@ jobs:
           echo "database-url=$DATABASE_URL" >> "$GITHUB_OUTPUT"
           echo "sqitch-target=db:pg://${DATABASE_URL#postgresql://}" >> "$GITHUB_OUTPUT"
 
+      - name: Test periodicity catalogue migration in an empty disposable database
+        env:
+          SCHEMA_DATABASE_NAME: periodicite_schema_test_${{ github.run_id }}_${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          docker exec --env PGPASSWORD=postgres supabase_db_tet \
+            createdb --host=127.0.0.1 --username=postgres --owner=postgres "$SCHEMA_DATABASE_NAME"
+          trap 'docker exec --env PGPASSWORD=postgres supabase_db_tet dropdb --host=127.0.0.1 --username=postgres --if-exists --force "$SCHEMA_DATABASE_NAME"' EXIT
+          docker run \
+            --rm \
+            --network container:supabase_db_tet \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --entrypoint pg_prove \
+            "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
+            --dbname="postgresql://postgres:postgres@127.0.0.1:5432/$SCHEMA_DATABASE_NAME" \
+            --ext .psql --verbose data_layer/tests/indicateur/periodicite-schema.assertions.psql
+
       - name: Sqitch revert to ${{ env.tag }}
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
@@ -118,3 +136,15 @@ jobs:
         with:
           command: 'deploy --mode change --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
+
+      - name: Test annual periodicity constraints after deployment
+        run: |
+          docker run \
+            --rm \
+            --network container:supabase_db_tet \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --entrypoint pg_prove \
+            "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
+            --dbname=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
+            --verbose data_layer/tests/indicateur/periodicite-release.sql

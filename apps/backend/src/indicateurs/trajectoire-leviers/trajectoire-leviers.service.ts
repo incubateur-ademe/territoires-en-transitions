@@ -20,8 +20,8 @@ import {
   TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
 } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
-import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
+import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/list-indicateur-valeurs/get-indicateur-valeurs.response';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ResourceType } from '@tet/domain/users';
@@ -37,7 +37,7 @@ export class TrajectoireLeviersService {
   constructor(
     private readonly collectiviteService: ListCollectivitesService,
     private readonly permissionService: PermissionService,
-    private readonly indicateursService: CrudValeursService,
+    private readonly indicateursService: ManageIndicateurValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService
   ) {}
 
@@ -299,25 +299,27 @@ export class TrajectoireLeviersService {
     const indicateurValeursObjectifs2030 =
       await this.indicateursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
           sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
           dateDebut: `${this.TARGET_YEAR}-01-01`,
           dateFin: `${this.TARGET_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     const indicateurValeursObjectifs2019 =
       await this.indicateursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
           sources: [this.trajectoiresDataService.SNBC_SOURCE.id],
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     // On peut extraire la source de données utilisée pour calculer la trajectoire
@@ -336,13 +338,14 @@ export class TrajectoireLeviersService {
     const indicateurValeursResultats2019 =
       await this.indicateursService.listIndicateurValeurs(
         {
+          periodicite: 'annuelle',
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
           sources: getTrajectoireLeviersDataResponse.sourcesResultats,
           dateDebut: `${this.REFERENCE_YEAR}-01-01`,
           dateFin: `${this.REFERENCE_YEAR}-12-31`,
         },
-        user
+        { user }
       );
 
     // On affecte les données aux secteurs à partir de la configuration

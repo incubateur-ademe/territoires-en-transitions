@@ -19,11 +19,8 @@ export class ImportIndicateurDefinitionController {
   ) {}
 
   /**
-   * Protected because the content of the import is not given:
-   * An attacker must have write access to the spreadhsheet to import it.
-   * @param referentielId
-   * @param tokenInfo
-   * @returns
+   * The caller cannot supply definitions or a spreadsheet ID. Import only the
+   * configured catalogue, whose contents are controlled by spreadsheet editors.
    */
   @AllowAnonymousAccess()
   @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])

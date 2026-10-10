@@ -3,9 +3,12 @@ import {
   getDisposableTestApp,
   getTestDatabase,
   parseCsvWithSchema,
+  signTestAuthToken,
   stringFrenchNumberSchema,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { AuthRole } from '@tet/backend/users/models/auth.models';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { sql } from 'drizzle-orm';
 import * as path from 'path';
@@ -26,7 +29,7 @@ function createLocalSheetServiceMock(): Partial<SheetService> {
       .mockImplementation(
         async <T extends Record<string, unknown>>(
           _spreadsheetId: string,
-          schema: any,
+          schema: Parameters<SheetService['getDataFromSheet']>[1],
           range?: string,
           idProperties?: (keyof T)[],
           templateData?: Partial<T>
@@ -89,6 +92,7 @@ function createLocalSheetServiceMock(): Partial<SheetService> {
 describe('import-indicateur-definition.controller.e2e-spec', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
+  let anonymousToken: string;
 
   beforeAll(async () => {
     app = await getDisposableTestApp({
@@ -101,26 +105,42 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
       },
     });
     databaseService = await getTestDatabase(app);
-
+    const jwtSecret = app.get(ConfigurationService).get('SUPABASE_JWT_SECRET');
+    anonymousToken = signTestAuthToken({ role: AuthRole.ANON }, jwtSecret);
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  it(`Import des indicateurs depuis le fichier CSV local`, async () => {
+  it.each(['import', 'verify'])(
+    'refuse GET /%s sans jeton valide',
+    async (route) => {
+      await request(app.getHttpServer())
+        .get(`/indicateur-definitions/${route}`)
+        .expect(401);
+      await request(app.getHttpServer())
+        .get(`/indicateur-definitions/${route}`)
+        .set('Authorization', 'Bearer invalid-token')
+        .expect(401);
+    }
+  );
+
+  it(`Importe le catalogue configuré avec le jeton anonyme de Google Sheets`, async () => {
     // Reset the version
     await databaseService.db
       .update(indicateurDefinitionTable)
       .set({ version: '1.0.0' })
       .where(sql`TRUE`);
 
-    // Import a first time the definitions
+    // Only the configured sheet is imported; a caller cannot select another source.
     const response = await request(app.getHttpServer())
       .get(`/indicateur-definitions/import`)
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
+      .query({ spreadsheetId: 'untrusted-sheet' })
+      .set('Authorization', `Bearer ${anonymousToken}`);
     expect(response.body).toMatchObject({
       definitions: expect.any(Array),
+      identifiantsRecalcules: expect.any(Array),
     });
     expect(response.body.definitions).toBeInstanceOf(Array);
     expect(response.status).toBe(200);
@@ -129,7 +149,7 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
     // Import a second time the definitions, must be refused because the version is the same
     const errorResponse = await request(app.getHttpServer())
       .get(`/indicateur-definitions/import`)
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .set('Authorization', `Bearer ${anonymousToken}`)
       .expect(422);
 
     expect(errorResponse.body).toMatchObject({
@@ -144,9 +164,10 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
   it(`Vérifie les formules des indicateurs depuis le fichier CSV local`, async () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateur-definitions/verify`)
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
+      .set('Authorization', `Bearer ${anonymousToken}`);
     expect(response.body).toMatchObject({
       ok: true,
     });
   }, 10000);
+
 });

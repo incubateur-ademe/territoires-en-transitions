@@ -29,7 +29,7 @@ import { flatten, isNil, maxBy, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
-import CrudValeursService from '../valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
@@ -219,7 +219,7 @@ export default class TrajectoiresDataService {
   constructor(
     private readonly listCollectivitesService: ListCollectivitesService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly valeursService: CrudValeursService,
+    private readonly valeursService: ManageIndicateurValeursService,
     private readonly permissionService: PermissionService,
     private readonly verificationTrajectoireRules: VerificationTrajectoireRules
   ) {}
@@ -329,6 +329,7 @@ export default class TrajectoiresDataService {
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
     const indicateursSourceCollectivite =
       await this.valeursService.getIndicateursValeurs({
+        periodicite: 'annuelle',
         collectiviteId,
         identifiantsReferentiel,
         sources: [sourceId],
@@ -793,6 +794,7 @@ export default class TrajectoiresDataService {
     }
 
     const valeurs = await this.valeursService.getIndicateursValeurs({
+      periodicite: 'annuelle',
       collectiviteId: request.collectiviteId,
       sources: [this.SNBC_SOURCE.id],
     });

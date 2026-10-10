@@ -3,7 +3,8 @@ import { Test } from '@nestjs/testing';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
-import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
@@ -41,7 +42,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           token === ConfigurationService ||
           token === ListPlatformDefinitionsRepository ||
           token === SheetService ||
-          token === CrudValeursService
+          token === ManageIndicateurValeursService ||
+          token === IndicateurDefinitionLockRepository
         ) {
           return {};
         }
@@ -105,6 +107,37 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           indicateurDefinition2,
         ])
       ).resolves.toBeUndefined();
+    });
+
+    test('Rejects a formula mixing annual and monthly definitions', async () => {
+      const annualDefinition = cloneDeep(sampleImportIndicateurDefinition);
+      const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition2);
+      // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
+      monthlyDefinition.periodicite = 'mensuelle';
+      monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+      annualDefinition.valeurCalcule = `val(${monthlyDefinition.identifiantReferentiel}) / 10`;
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          annualDefinition,
+          monthlyDefinition,
+        ])
+      ).rejects.toThrow(/different periodicite/i);
+    });
+
+    test('Rejects a group mixing annual and monthly definitions', async () => {
+      const annualParent = cloneDeep(sampleImportIndicateurDefinition);
+      const monthlyChild = cloneDeep(sampleImportIndicateurDefinition2);
+      // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
+      monthlyChild.periodicite = 'mensuelle';
+      monthlyChild.parents = [annualParent.identifiantReferentiel];
+
+      await expect(
+        importIndicateurDefinitionService.checkIndicateurDefinitions([
+          annualParent,
+          monthlyChild,
+        ])
+      ).rejects.toThrow(/parent.*different periodicite/i);
     });
 
     test('Expression cible avec referentiel(te) valide', async () => {
