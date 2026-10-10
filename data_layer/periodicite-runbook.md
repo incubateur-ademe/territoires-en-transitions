@@ -111,6 +111,12 @@ uniquement annuelles. Sinon, le revert est refusé. Les anciennes colonnes
 d’agrégation sont recréées à NULL pour restaurer le schéma de préparation.
 Après restauration des données, les scripts reconstruisent les dépendances des formules.
 
+## Refactor et atomicité de l’import — #5418
+
+Après l’activation, le catalogue, les relations, les objectifs et les recalculs
+sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
+Aucune migration supplémentaire ; déployer le backend imports suspendus.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement

@@ -534,7 +534,7 @@ describe('Périodicité de déclaration des indicateurs', () => {
         );
     });
     const imported = await importer.upsertIndicateurDefinitions([definition]);
-    const created = imported.find(
+    const created = imported.definitions.find(
       (row) => row.identifiantReferentiel === identifiantReferentiel
     );
     expect(created).toMatchObject({
