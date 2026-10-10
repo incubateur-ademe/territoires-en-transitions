@@ -22,7 +22,8 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
+import { ScoreIndicatifService } from './score-indicatif.service';
 
 /** Action TE présente en seed, utilisée pour les tests referentiel(te_…). */
 const TE_ACTION_ID = 'te_2.2.5';
@@ -73,6 +74,125 @@ describe('ScoreIndicatifRouter', () => {
     }
     await app.close();
   });
+
+  test.each([true, false])(
+    'sérialise deux remplacements concurrents (sélection initialement vide : %s)',
+    async (empty) => {
+      const fixture = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      const user = getAuthUserFromUserCredentials(fixture.user);
+      const caller = router.createCaller({ user });
+      const cleanup = await insertFixturePourScoreIndicatif(databaseService, {
+        ...fixturePourScoreIndicatif,
+        collectiviteId: fixture.collectivite.id,
+      });
+      const [first, second] = await databaseService.db
+        .insert(indicateurValeurTable)
+        .values([
+          {
+            collectiviteId: fixture.collectivite.id,
+            indicateurId: indicateurIdCae7,
+            dateValeur: '2040-01-01',
+            resultat: 10,
+          },
+          {
+            collectiviteId: fixture.collectivite.id,
+            indicateurId: indicateurIdCae7,
+            dateValeur: '2041-01-01',
+            resultat: 20,
+          },
+        ])
+        .returning();
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(indicateurValeurTable)
+          .where(
+            eq(indicateurValeurTable.collectiviteId, fixture.collectivite.id)
+          );
+        await cleanup();
+        await fixture.cleanup();
+      });
+      const scope = {
+        collectiviteId: fixture.collectivite.id,
+        actionId: fixturePourScoreIndicatif.actionId,
+        indicateurId: indicateurIdCae7,
+      };
+      if (empty)
+        await caller.referentiels.actions.setValeursUtilisees({
+          ...scope,
+          valeurs: [],
+        });
+      const service = app.get(ScoreIndicatifService);
+      function deferred<T>() {
+        let resolve!: (value: T | PromiseLike<T>) => void;
+        let reject!: (reason: unknown) => void;
+        const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+          resolve = resolvePromise;
+          reject = rejectPromise;
+        });
+        return { promise, resolve, reject };
+      }
+      const releaseFirst = deferred<void>();
+      const firstStarted = deferred<number>();
+      const secondStarted = deferred<number>();
+      const firstWrite = databaseService.db.transaction(async (tx) => {
+        const { rows } = await tx.execute<{ pid: number }>(
+          sql`SELECT pg_backend_pid() AS pid`
+        );
+        const result = await service.setValeursUtilisees(
+          {
+            ...scope,
+            valeurs: [{ indicateurValeurId: first.id, typeScore: 'fait' }],
+          },
+          { user, tx }
+        );
+        expect(result.success).toBe(true);
+        firstStarted.resolve(rows[0].pid);
+        await releaseFirst.promise;
+      });
+      void firstWrite.catch(firstStarted.reject);
+      let secondWrite: Promise<void> | undefined;
+      try {
+        const firstPid = await firstStarted.promise;
+        secondWrite = databaseService.db.transaction(async (tx) => {
+          const { rows } = await tx.execute<{ pid: number }>(
+            sql`SELECT pg_backend_pid() AS pid`
+          );
+          secondStarted.resolve(rows[0].pid);
+          const result = await service.setValeursUtilisees(
+            {
+              ...scope,
+              valeurs: [{ indicateurValeurId: second.id, typeScore: 'fait' }],
+            },
+            { user, tx }
+          );
+          expect(result.success).toBe(true);
+        });
+        void secondWrite.catch(secondStarted.reject);
+        const secondPid = await secondStarted.promise;
+        await vi.waitFor(
+          async () => {
+            const { rows } = await databaseService.db.execute<{
+              blockers: number[];
+            }>(sql`SELECT pg_blocking_pids(${secondPid}) AS blockers`);
+            expect(rows[0].blockers).toContain(firstPid);
+          },
+          { timeout: 5000, interval: 20 }
+        );
+      } finally {
+        releaseFirst.resolve(undefined);
+        await Promise.all([firstWrite, secondWrite]);
+      }
+      const selected = await caller.referentiels.actions.getValeursUtilisees({
+        collectiviteId: scope.collectiviteId,
+        actionIds: [scope.actionId],
+      });
+      expect(selected[scope.actionId]).toMatchObject([
+        { indicateurValeurId: second.id, typeScore: 'fait' },
+      ]);
+    }
+  );
 
   test('Lire les valeurs utilisables lève une erreur si on est non authentifié', async () => {
     const caller = router.createCaller({ user: null });
