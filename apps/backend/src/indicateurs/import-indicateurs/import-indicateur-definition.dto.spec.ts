@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { importIndicateurDefinitionSchema } from './import-indicateur-definition.dto';
 
-describe('Import de définitions avec le stockage annuel', () => {
+describe('Import de définitions périodiques', () => {
   const definition = {
     version: '1.0.0',
     identifiantReferentiel: 'test_annuel',
@@ -22,13 +22,14 @@ describe('Import de définitions avec le stockage annuel', () => {
   };
 
   it('conserve le contrat historique sans périodicité', () => {
-    expect(importIndicateurDefinitionSchema.parse(definition)).toEqual(
-      definition
-    );
+    expect(importIndicateurDefinitionSchema.parse(definition)).toEqual({
+      ...definition,
+      periodicite: 'annuelle',
+    });
   });
 
-  it('accepte une périodicité annuelle explicite', () => {
-    const input = { ...definition, periodicite: 'annuelle' };
+  it.each(['annuelle'])('accepte la périodicité %s', (periodicite) => {
+    const input = { ...definition, periodicite };
     expect(importIndicateurDefinitionSchema.parse(input)).toEqual(input);
   });
 
@@ -43,6 +44,19 @@ describe('Import de définitions avec le stockage annuel', () => {
       expect(result.error?.issues).toEqual([
         expect.objectContaining({ path: ['periodicite'] }),
       ]);
+    }
+  );
+  it.each(['aggregationResultat', 'aggregationObjectif'])(
+    'strips unsupported %s configuration from the input',
+    (field) => {
+      for (const value of ['moyenne', null]) {
+        const input = importIndicateurDefinitionSchema.parse({
+          ...definition,
+          [field]: value,
+        });
+
+        expect(input).not.toHaveProperty(field);
+      }
     }
   );
 });

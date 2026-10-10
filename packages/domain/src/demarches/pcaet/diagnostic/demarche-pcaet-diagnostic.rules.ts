@@ -1,5 +1,5 @@
 import {
-  getYearFromIsoDate,
+  toAnnualIndicateurYear,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../../../indicateurs';
 import {
@@ -52,6 +52,15 @@ export const isPcaetDiagnosticReferenceYear = (
   year <= currentYear &&
   !PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.includes(year);
 
+const getAnnualYear = ({
+  indicateurValeur,
+}: IndicateurValeurAvecMetadonnesDefinition) =>
+  toAnnualIndicateurYear(
+    indicateurValeur.periodicite,
+    indicateurValeur.dateValeur,
+    'Le diagnostic PCAET'
+  );
+
 const isLeafComplet = ({
   optionalYears,
   valeurs,
@@ -59,8 +68,9 @@ const isLeafComplet = ({
   optionalYears: readonly number[];
   valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
 }): boolean => {
-  const hasReferenceResultat = valeurs.some(({ indicateurValeur }) => {
-    const year = getYearFromIsoDate(indicateurValeur.dateValeur);
+  const hasReferenceResultat = valeurs.some((valeur) => {
+    const { indicateurValeur } = valeur;
+    const year = getAnnualYear(valeur);
     return (
       isPcaetDiagnosticReferenceYear(year) && indicateurValeur.resultat !== null
     );
@@ -76,9 +86,9 @@ const isLeafComplet = ({
 
   return requiredObjectifYears.every((year) =>
     valeurs.some(
-      ({ indicateurValeur }) =>
-        getYearFromIsoDate(indicateurValeur.dateValeur) === year &&
-        indicateurValeur.objectif !== null
+      (valeur) =>
+        getAnnualYear(valeur) === year &&
+        valeur.indicateurValeur.objectif !== null
     )
   );
 };

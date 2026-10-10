@@ -83,3 +83,8 @@ il faut mettre à jour les variables d'environnement :
   - le websocket `wss://{ID}.supabase.co`
   - la clé privée **service_role**
   - l'url postgres `postgresql://postgres:{PASSWORD}@db.{ID}.supabase.co:5432/postgres`
+
+### Périodicité des indicateurs
+
+Le [runbook de déploiement](periodicite-runbook.md) donne l'ordre des PRs,
+les commandes, les contrôles et les conditions de retour arrière.

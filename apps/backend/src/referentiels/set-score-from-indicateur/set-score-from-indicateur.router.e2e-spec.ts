@@ -73,8 +73,8 @@ describe('SetScoreFromIndicateurRouter', () => {
       collectiviteId,
       actionId: ACTION_AVEC_FORMULE,
       valeurs: [
-        { dateValeur: '2024-12-31', resultat: 50 },
-        { dateValeur: '2023-12-31', resultat: 100 },
+        { dateValeur: '2024-01-01', resultat: 50 },
+        { dateValeur: '2023-01-01', resultat: 100 },
       ],
     });
     indicateurId = fixture.indicateurId;
@@ -385,7 +385,7 @@ describe('SetScoreFromIndicateurRouter', () => {
         actionId: ACTION_EST_SUIVI,
         identifiantReferentiel: IDENTIFIANT_EST_SUIVI,
         exprScore: `si est_suivi(${IDENTIFIANT_EST_SUIVI}) alors 1 sinon 0`,
-        valeurs: [{ dateValeur: '2024-12-31', resultat: 100 }],
+        valeurs: [{ dateValeur: '2024-01-01', resultat: 100 }],
       });
 
     const getStatutEstSuivi = () =>

@@ -88,6 +88,7 @@ export class GetSiteCollectiviteService {
               join indicateur_source_metadonnee ism on ism.id = iv.metadonnee_id
               join indicateur_source src on src.id = ism.source_id
               where iv.collectivite_id = sl.collectivite_id
+                and iv.periodicite = 'annuelle'
                 and iv.resultat is not null
                 and src.id = 'citepa'
                 and def.identifiant_referentiel in ${IDENTIFIANTS_GES}

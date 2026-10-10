@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import CrudValeursService, {
+import ManageIndicateurValeursService, {
   IndicateurValeurDeletionListener,
   IndicateurValeurUpsertedEvent,
-} from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+} from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -39,7 +39,7 @@ export class SetScoreFromIndicateurService {
     private readonly scoreIndicatifService: ScoreIndicatifService,
     private readonly updateActionStatutService: UpdateActionStatutService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly indicateurValeursService: CrudValeursService,
+    private readonly indicateurValeursService: ManageIndicateurValeursService,
     private readonly updateDefinitionService: UpdateDefinitionService
   ) {
     // Une valeur d'indicateur retenue pour un score peut être corrigée après

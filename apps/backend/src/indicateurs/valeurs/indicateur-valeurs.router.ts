@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { TRPCError } from '@trpc/server';
 import { collectiviteIdInputSchemaPartial } from '@tet/backend/collectivites/collectivite-id.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ResourceType } from '@tet/domain/users';
-import IndicateurValeursService from './crud-valeurs.service';
-import { deleteValeurIndicateurSchema } from './delete-valeur-indicateur.request';
-import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
-import { getValeursReferenceRequestSchema } from './get-valeurs-reference.request';
-import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs.input';
-import { upsertValeurIndicateurSchema } from './upsert-valeur-indicateur.request';
-import ValeursMoyenneService from './valeurs-moyenne.service';
-import ValeursReferenceService from './valeurs-reference.service';
+import IndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
+import { deleteValeurIndicateurSchema } from './manage-indicateur-valeurs/delete-valeur-indicateur.request';
+import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-indicateur-valeurs/get-moyenne-collectivites.request';
+import { getValeursReferenceRequestSchema } from './get-valeurs-reference/get-valeurs-reference.request';
+import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs/list-indicateur-valeurs.input';
+import { upsertValeurIndicateurSchema } from './write-indicateur-valeurs/upsert-valeur-indicateur.request';
+import ValeursMoyenneService from './get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
+import ValeursReferenceService from './get-valeurs-reference/valeurs-reference.service';
 
 @Injectable()
 export class IndicateurValeursRouter {
@@ -26,12 +27,23 @@ export class IndicateurValeursRouter {
     list: this.trpc.authedOrServiceRoleProcedure
       .input(listIndicateurValeursInputSchema)
       .query(({ ctx, input }) => {
-        return this.service.listIndicateurValeurs(input, ctx.user);
+        return this.service.listIndicateurValeurs(input, { user: ctx.user });
       }),
     upsert: this.trpc.authedProcedure
       .input(upsertValeurIndicateurSchema)
-      .mutation(({ input, ctx }) => {
-        return this.service.upsertValeur(input, ctx.user);
+      .mutation(async ({ input, ctx }) => {
+        try {
+          return await this.service.upsertValeur(input, ctx.user);
+        } catch (error) {
+          if (error instanceof BadRequestException) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: error.message,
+              cause: error,
+            });
+          }
+          throw error;
+        }
       }),
     delete: this.trpc.authedProcedure
       .input(deleteValeurIndicateurSchema)
@@ -58,7 +70,7 @@ export class IndicateurValeursRouter {
       }),
     recompute: this.trpc.serviceRoleProcedure
       .input(collectiviteIdInputSchemaPartial)
-      .query(({ ctx, input }) => {
+      .mutation(({ ctx, input }) => {
         return this.service.recomputeAllCalculatedIndicateurValeurs(
           input.collectiviteId,
           ctx.user
