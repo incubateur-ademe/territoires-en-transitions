@@ -223,6 +223,21 @@ L’activation des trois cadences reste une livraison distincte, après la prép
 applicative #5481 et les deux préparations SQL ci-dessus. Les gardes annuelles
 restent actives jusque-là.
 
+## Verrous SQL — #5417
+
+Le backend requis est déjà déployé avec #5378. Cette migration
+`indicateur/verrouiller-graphe-calcul-indicateur` peut être livrée sur `main`,
+sans attendre #5215. Suspendre les écritures le temps
+d’installer les triggers. Les écritures directes des intégrations existantes
+conservent leurs droits et prennent désormais le verrou du graphe de calcul.
+Tester leurs imports sur la version candidate en préproduction avant réouverture.
+
+Le retrait des droits PostgREST est différé : il casserait les intégrations qui
+écrivent encore avec un compte utilisateur. Elles devront migrer vers les routes
+backend avant une éventuelle restriction. Ces verrous ne déclenchent pas de
+recalcul automatique pour une écriture SQL directe ; ce comportement reste à la
+charge de l’intégration, comme avant cette PR.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
