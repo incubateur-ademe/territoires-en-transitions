@@ -14,11 +14,12 @@ classify_release() {
         $1 == "indicateur/periodicite_formules" { formulas = 1 }
         $1 == "indicateur/reconciliation_formules" { reconciliation = 1 }
         $1 == "indicateur/periodicite_activation" { activation = 1 }
+        $1 == "indicateur/margny_indicateurs_mensuels" { margny = 1 }
         $1 == "indicateur/periodicite_nettoyage" { later = 1 }
         END {
-            if (!seen || later || reconciliation) print "unsupported"
+            if (!seen || later || reconciliation || (margny && !activation)) print "unsupported"
             else if (schema) {
-                if (activation && mandatory && extractor && formulas) print "contract"
+                if (activation && mandatory && extractor && formulas) print margny ? "contract-margny" : "contract"
                 else if (activation || mandatory || extractor || formulas) print "incomplete"
                 else print "schema"
             }
@@ -36,17 +37,26 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|contract:contract) ;;
+    legacy:legacy|legacy:schema|schema:schema|contract:contract|contract-margny:contract-margny) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
+if [[ "$source_phase" == contract-margny ]]; then
+    pg_restore --list "$1" | awk '
+        $4 == "TABLE" && $5 == "DATA" && $6 == "private" && $7 == "indicateur_valeur_date_repair" { found = 1 }
+        END { exit !found }
+    ' || { echo 'Refusing to restore: backup lacks Margny repair archive data.' >&2; exit 1; }
+fi
 # Verify the physical schema before restore.sh truncates any table.
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 verify_changes=()
-if [[ "$target_phase" == schema || "$target_phase" == contract ]]; then
+if [[ "$target_phase" == schema || "$target_phase" == contract || "$target_phase" == contract-margny ]]; then
     verify_changes+=(periodicite_schema)
 fi
-if [[ "$target_phase" == contract ]]; then
+if [[ "$target_phase" == contract || "$target_phase" == contract-margny ]]; then
     verify_changes+=(periodicite_obligatoire periodicite_formules periodicite_activation)
+fi
+if [[ "$target_phase" == contract-margny ]]; then
+    verify_changes+=(margny_indicateurs_mensuels)
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \

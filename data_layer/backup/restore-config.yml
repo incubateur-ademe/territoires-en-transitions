@@ -144,6 +144,9 @@ groups:
     - indicateur_source_metadonnee
     - indicateur_valeur
 
+  margny_group:
+    - private.indicateur_valeur_date_repair
+
   pai_group:
     - action_impact_complexite
     - action_impact_typologie

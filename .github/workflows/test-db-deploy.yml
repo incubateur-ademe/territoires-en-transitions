@@ -151,3 +151,21 @@ jobs:
             data_layer/tests/indicateur/periodicite.sql \
             data_layer/tests/indicateur/periodicite-formules.sql \
             data_layer/tests/indicateur/periodicite-collectivite.sql
+
+      - name: Test Margny deploy, revert and redeploy with archived observations
+        # After cleanup this archive no longer exists; #5312 tests this transition
+        # before #5296 closes rollback. Use only the local CI database schema.
+        if: ${{ hashFiles('data_layer/sqitch/deploy/indicateur/periodicite_nettoyage.sql') == '' }}
+        run: |
+          set -euo pipefail
+          # This is the disposable database pinned by local-supabase above.
+          # Run last: the migration commits its synthetic fixtures here.
+          docker run \
+            --rm \
+            --network container:supabase_db_tet \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --entrypoint pg_prove \
+            "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
+            --dbname=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
+            --ext .psql --verbose data_layer/tests/indicateur/fixtures/margny-monthly.psql

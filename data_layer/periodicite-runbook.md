@@ -122,6 +122,15 @@ l'ajout de plusieurs mois/trimestres/semestres, les commentaires et la lecture s
 Les colonnes vides sont des brouillons locaux : seule une saisie crée une observation.
 Le retour à l'application de #5215 conserve toutes les observations enregistrées.
 
+## 5. Margny — #5312
+
+Arrêter toutes les écritures, imports et tâches. Suivre la
+[procédure Margny](margny-monthly-migration.md) et contrôler les six observations
+mensuelles dans l'application avant réouverture.
+
+Le retour à `@indicateur-periodicite-activee` reste possible tant que les observations
+concernées et leurs dépendances n'ont pas changé, et avant le nettoyage #5296.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement

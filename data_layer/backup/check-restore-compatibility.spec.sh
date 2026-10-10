@@ -18,6 +18,7 @@ cat > "$test_dir/bin/pg_restore" <<'FAKE'
 [[ "${ARCHIVE_READ_FAILS:-false}" != true ]] || exit 1
 if [[ " $* " == *" --list "* ]]; then
     [[ "${MISSING_QUEUE:-false}" == true ]] || printf '1; 0 1 TABLE DATA private indicateur_reconciliation_formule owner\n'
+    [[ "${MISSING_REPAIR:-false}" == true ]] || printf '2; 0 2 TABLE DATA private indicateur_valeur_date_repair owner\n'
     exit 0
 fi
 awk -F '\t' '{ print "id\thash\t" $1 "\t" $2 "\tnote" }' "$SOURCE_REGISTRY"
@@ -43,6 +44,8 @@ registry() {
     fi
 }
 for phase in legacy schema incomplete annual reconciliation contract; do registry "$phase"; done
+cp "$test_dir/contract" "$test_dir/contract-margny"
+printf 'indicateur/margny_indicateurs_mensuels\ttet\n' >> "$test_dir/contract-margny"
 cp "$test_dir/contract" "$test_dir/later"
 printf 'indicateur/periodicite_nettoyage\ttet\n' >> "$test_dir/later"
 : > "$test_dir/empty"
@@ -92,6 +95,10 @@ check failure schema schema TARGET_SCHEMA_FAILS=true
 check failure annual contract
 check failure contract reconciliation
 check success contract contract MISSING_QUEUE=true
+check success contract-margny contract-margny
+check failure contract contract-margny
+check failure contract-margny contract
+check failure contract-margny contract-margny MISSING_REPAIR=true
 for phase in contract-no-extractor contract-no-formulas pending-activation contract-no-obligatoire; do
     check failure "$phase" contract
     check failure contract "$phase"
