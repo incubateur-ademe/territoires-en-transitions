@@ -1,10 +1,23 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { broadcastQueryInvalidation } from '@tet/api/utils/react-query/cross-tab-invalidation';
 import { ListIndicateurValeurOuput } from './use-list-indicateur-valeurs';
 
-export const useUpsertIndicateurValeur = () => {
+type UseUpsertIndicateurValeurOptions = {
+  successMessage?: string;
+  errorMessage?: string;
+  disableCreateToast?: boolean;
+  disableErrorToast?: boolean;
+};
+
+export const useUpsertIndicateurValeur = ({
+  successMessage = appLabels.indicateurValeurAjoutee,
+  errorMessage,
+  disableCreateToast = false,
+  disableErrorToast = false,
+}: UseUpsertIndicateurValeurOptions = {}) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { setToast } = useToastContext();
@@ -13,8 +26,8 @@ export const useUpsertIndicateurValeur = () => {
     trpc.indicateurs.valeurs.upsert.mutationOptions({
       onSuccess: (_, variables) => {
         const { collectiviteId, indicateurId } = variables;
-        if (!variables.id) {
-          setToast('success', 'La valeur a été ajoutée');
+        if (!variables.id && !disableCreateToast) {
+          setToast('success', successMessage);
         }
 
         // recharge les infos complémentaires associées à l'indicateur
@@ -67,10 +80,15 @@ export const useUpsertIndicateurValeur = () => {
         broadcastQueryInvalidation(scoreQueryKeys);
       },
       onError: (_, variables) => {
-        setToast(
-          'error',
-          `La valeur n'a pas pu être ${variables.id ? 'modifiée' : 'ajoutée'}`
-        );
+        if (!disableErrorToast) {
+          setToast(
+            'error',
+            errorMessage ??
+              (variables.id
+                ? appLabels.indicateurValeurModifieeErreur
+                : appLabels.indicateurValeurAjouteeErreur)
+          );
+        }
       },
     })
   );

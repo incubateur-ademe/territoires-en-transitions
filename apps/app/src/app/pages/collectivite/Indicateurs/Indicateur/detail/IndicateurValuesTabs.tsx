@@ -36,6 +36,7 @@ export const IndicateurValuesTabs = ({
         </>
       )}
       <IndicateurTable
+        key={definition.id}
         chartInfo={chartInfo}
         collectiviteId={collectiviteId}
         definition={definition}
