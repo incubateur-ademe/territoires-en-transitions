@@ -378,6 +378,12 @@ export class ScoreIndicatifRepository {
     tx: Transaction
   ): Promise<Result<void, ScoreIndicatifError>> {
     try {
+      // Lock the selection even when it has no rows: concurrent DELETE/INSERT
+      // transactions must replace it in order, never merge their selections.
+      const lockKey = `score-indicatif-selection:${input.actionId}:${input.collectiviteId}:${input.indicateurId}`;
+      await tx.execute(sql`
+        SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))
+      `);
       const { actionId, collectiviteId, indicateurId } = getTableColumns(
         actionScoreIndicateurValeurTable
       );
