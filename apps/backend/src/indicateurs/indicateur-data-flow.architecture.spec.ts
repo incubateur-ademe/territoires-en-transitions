@@ -22,8 +22,6 @@ const additionalBackendScopeFiles = [
  * retirer plutôt que de laisser une exception morte devenir permanente.
  */
 const legacyServicePersistenceAllowlist = new Set([
-  // Le refactor de l’import est livré séparément dans #5418.
-  'apps/backend/src/indicateurs/import-indicateurs/import-indicateur-definition.service.ts',
   'apps/backend/src/indicateurs/valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service.ts',
   'apps/backend/src/indicateurs/valeurs/get-valeurs-reference/valeurs-reference.service.ts',
   'apps/backend/src/indicateurs/vues/indicateur-vues.service.ts',
