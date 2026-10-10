@@ -91,6 +91,20 @@ enregistré avant le recalcul : un échec de recalcul ne l'annule pas. Suspendre
 imports et reprendre le recalcul avant de publier une autre version. Le rollback
 commun du catalogue et des valeurs sera livré séparément dans #5418.
 
+## Verrous SQL — #5417
+
+Déployer le backend #5378 avant la migration
+`indicateur/verrouiller-graphe-calcul-indicateur`. Suspendre les écritures le temps
+d’installer les triggers. Les écritures directes des intégrations existantes
+conservent leurs droits et prennent désormais le verrou du graphe de calcul.
+Tester leurs imports sur la version candidate en préproduction avant réouverture.
+
+Le retrait des droits PostgREST est différé : il casserait les intégrations qui
+écrivent encore avec un compte utilisateur. Elles devront migrer vers les routes
+backend avant une éventuelle restriction. Ces verrous ne déclenchent pas de
+recalcul automatique pour une écriture SQL directe ; ce comportement reste à la
+charge de l’intégration, comme avant cette PR.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement

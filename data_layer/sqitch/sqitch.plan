@@ -1124,3 +1124,5 @@ plan_action/fiche_action_secteur_attribution [plan_action/plan_action] 2026-10-0
 demarche/pcaet_plan_actions_inclusion_declaree [demarche/pcaet_deliberation_arret_revisable] 2026-10-08T16:00:00Z Leny Bernard <leny.bernard.ext@beta.gouv.fr> # Le depot du PCAET global ne coche plus d office l inclusion du programme d actions : on pousse a deposer le programme, importe ensuite dans la plateforme
 indicateur/remplacer-catalogue-periodicites-par-contraintes [indicateur/periodicite_schema] 2026-10-10T08:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Remplace le catalogue inutilise par des contraintes CHECK sans modifier les observations
 @indicateur-periodicite-annuelle 2026-09-29T09:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Première PR déployable indépendamment de l activation
+
+indicateur/verrouiller-graphe-calcul-indicateur [indicateur/periodicite_schema demarche/pcaet_diagnostic_drop_referentiel_tables] 2026-10-10T08:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Synchronise les écritures SQL avec les verrous applicatifs du graphe
