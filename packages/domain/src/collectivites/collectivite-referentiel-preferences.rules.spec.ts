@@ -21,9 +21,7 @@ const postSwitchTePreferences: CollectiviteReferentielPreferences = {
 
 describe('deriveReferentielPreferences', () => {
   it('positionne te en write et masque cae/eci quand aucun référentiel engagé', () => {
-    expect(
-      deriveReferentielPreferences({ caeEngaged: false, eciEngaged: false })
-    ).toEqual({
+    expect(deriveReferentielPreferences({ cae: 'vide', eci: 'vide' })).toEqual({
       cae: { display: false, mode: 'archived' },
       eci: { display: false, mode: 'archived' },
       te: { display: true, mode: 'write' },
@@ -32,7 +30,7 @@ describe('deriveReferentielPreferences', () => {
 
   it('positionne te en readonly quand au moins un référentiel est engagé', () => {
     expect(
-      deriveReferentielPreferences({ caeEngaged: true, eciEngaged: false })
+      deriveReferentielPreferences({ cae: 'engage', eci: 'vide' })
     ).toEqual({
       cae: { display: true, mode: 'write' },
       eci: { display: false, mode: 'archived' },
@@ -40,7 +38,7 @@ describe('deriveReferentielPreferences', () => {
     });
 
     expect(
-      deriveReferentielPreferences({ caeEngaged: false, eciEngaged: true })
+      deriveReferentielPreferences({ cae: 'vide', eci: 'engage' })
     ).toEqual({
       cae: { display: false, mode: 'archived' },
       eci: { display: true, mode: 'write' },
@@ -48,7 +46,7 @@ describe('deriveReferentielPreferences', () => {
     });
 
     expect(
-      deriveReferentielPreferences({ caeEngaged: true, eciEngaged: true })
+      deriveReferentielPreferences({ cae: 'engage', eci: 'engage' })
     ).toEqual({
       cae: { display: true, mode: 'write' },
       eci: { display: true, mode: 'write' },
@@ -59,7 +57,7 @@ describe('deriveReferentielPreferences', () => {
   it('retourne les prefs existantes inchangées si populatedFromCaeEci est renseigné', () => {
     expect(
       deriveReferentielPreferences(
-        { caeEngaged: true, eciEngaged: true },
+        { cae: 'engage', eci: 'engage' },
         postSwitchTePreferences
       )
     ).toBe(postSwitchTePreferences);
@@ -68,8 +66,8 @@ describe('deriveReferentielPreferences', () => {
   it('force te readonly, cae archived et eci write pour un syndicat', () => {
     expect(
       deriveReferentielPreferences({
-        caeEngaged: false,
-        eciEngaged: false,
+        cae: 'vide',
+        eci: 'vide',
         isSyndicat: true,
       })
     ).toEqual({
@@ -82,8 +80,8 @@ describe('deriveReferentielPreferences', () => {
   it('garde le cae archivé d’un syndicat dans la navigation s’il est engagé', () => {
     expect(
       deriveReferentielPreferences({
-        caeEngaged: true,
-        eciEngaged: false,
+        cae: 'engage',
+        eci: 'vide',
         isSyndicat: true,
       })
     ).toEqual({
@@ -96,8 +94,8 @@ describe('deriveReferentielPreferences', () => {
   it('force te readonly, cae et eci write pour un DROM sans référentiel engagé', () => {
     expect(
       deriveReferentielPreferences({
-        caeEngaged: false,
-        eciEngaged: false,
+        cae: 'vide',
+        eci: 'vide',
         isDrom: true,
       })
     ).toEqual({
@@ -110,8 +108,8 @@ describe('deriveReferentielPreferences', () => {
   it('applique la règle syndicat quand la collectivité est aussi en DROM', () => {
     expect(
       deriveReferentielPreferences({
-        caeEngaged: false,
-        eciEngaged: false,
+        cae: 'vide',
+        eci: 'vide',
         isSyndicat: true,
         isDrom: true,
       })
@@ -125,23 +123,42 @@ describe('deriveReferentielPreferences', () => {
   it('ne modifie pas un syndicat ou un DROM déjà basculé', () => {
     expect(
       deriveReferentielPreferences(
-        { caeEngaged: true, eciEngaged: true, isSyndicat: true, isDrom: true },
+        { cae: 'engage', eci: 'engage', isSyndicat: true, isDrom: true },
         postSwitchTePreferences
       )
     ).toBe(postSwitchTePreferences);
   });
 
-  it('respecte l’invariant archived implique display false', () => {
-    const result = deriveReferentielPreferences({
-      caeEngaged: false,
-      eciEngaged: false,
+  it('garde dans la navigation un référentiel archivé au remplissage superficiel', () => {
+    expect(
+      deriveReferentielPreferences({ cae: 'superficiel', eci: 'vide' })
+    ).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
     });
 
-    for (const pref of Object.values(result)) {
-      if (pref.mode === 'archived') {
-        expect(pref.display).toBe(false);
-      }
-    }
+    expect(
+      deriveReferentielPreferences({ cae: 'engage', eci: 'superficiel' })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('garde le cae archivé d’un syndicat dans la navigation dès qu’il contient des données', () => {
+    expect(
+      deriveReferentielPreferences({
+        cae: 'superficiel',
+        eci: 'vide',
+        isSyndicat: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
   });
 });
 
@@ -208,5 +225,85 @@ describe('collectivite-referentiel-preferences.rules', () => {
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
     });
+  });
+
+  it('ne change que la visibilité d’un référentiel archivé', () => {
+    const referentiels: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    };
+
+    const hidden = toggleReferentielDisplayPreference('cae', referentiels);
+    expect(hidden).toEqual({
+      ...referentiels,
+      cae: { display: false, mode: 'archived' },
+    });
+    expect(toggleReferentielDisplayPreference('cae', hidden)).toEqual(
+      referentiels
+    );
+  });
+
+  it('ne désarchive pas un référentiel archivé visible quand on bascule un autre référentiel', () => {
+    const referentiels: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    };
+
+    expect(toggleReferentielDisplayPreference('te', referentiels)).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: false, mode: 'write' },
+    });
+
+    expect(
+      toggleReferentielDisplayPreference('eci', {
+        cae: { display: true, mode: 'archived' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'readonly' },
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
+  it('ne change que la visibilité de te, sans toucher à son mode', () => {
+    const referentiels: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'readonly' },
+    };
+
+    const hidden = toggleReferentielDisplayPreference('te', referentiels);
+    expect(hidden).toEqual({
+      ...referentiels,
+      te: { display: false, mode: 'readonly' },
+    });
+    expect(toggleReferentielDisplayPreference('te', hidden)).toEqual(
+      referentiels
+    );
+  });
+
+  it('conserve la visibilité de te quand on masque un référentiel en écriture', () => {
+    expect(
+      toggleReferentielDisplayPreference('cae', {
+        cae: { display: true, mode: 'write' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: false, mode: 'readonly' },
+      })
+    ).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: false, mode: 'write' },
+    });
+  });
+
+  it('ne modifie pas les préférences d’une collectivité déjà basculée', () => {
+    expect(
+      toggleReferentielDisplayPreference('cae', postSwitchTePreferences)
+    ).toBe(postSwitchTePreferences);
   });
 });

@@ -22,9 +22,8 @@ export const AffichageReferentielsPage = () => {
   const currentCollectivite = useCurrentCollectivite();
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
 
-  const display = getReferentielDisplayMap(
-    currentCollectivite.collectivitePreferences.referentiels
-  );
+  const { referentiels } = currentCollectivite.collectivitePreferences;
+  const display = getReferentielDisplayMap(referentiels);
   const {
     mutate: updateCollectivitePreferences,
     isPending: isUpdatingCollectivitePreferences,
@@ -50,7 +49,7 @@ export const AffichageReferentielsPage = () => {
       preferences: {
         referentiels: toggleReferentielDisplayPreference(
           referentielId,
-          currentCollectivite.collectivitePreferences.referentiels
+          referentiels
         ),
       },
     });
@@ -77,7 +76,13 @@ export const AffichageReferentielsPage = () => {
                 data-test={`preferences-referentiel-${referentielId}`}
                 className="rounded border-grey-4"
               />
-              <span>{referentielToName[referentielId]}</span>
+              <span>
+                {referentiels[referentielId].mode === 'archived'
+                  ? appLabels.referentielArchiveSuffixe(
+                      referentielToName[referentielId]
+                    )
+                  : referentielToName[referentielId]}
+              </span>
             </label>
           )
         )}

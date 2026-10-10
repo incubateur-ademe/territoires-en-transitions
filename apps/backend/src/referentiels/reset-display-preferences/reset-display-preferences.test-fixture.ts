@@ -10,17 +10,20 @@ import { getActionStatusCreateForAction } from '../update-action-statut/referent
 import { ACTION_STATUT_COUNT_THRESHOLD1 } from './compute-referentiel-display.rules';
 
 /**
- * Seed enough referentiel activity on a collectivite to trigger display criteria
- * (e.g. >= 50 statuts + recent modified_at) via a single updateStatuts batch.
+ * Seed referentiel activity on a collectivite via a single updateStatuts batch.
+ * By default, seeds enough statuts to trigger display criteria
+ * (e.g. >= 50 statuts + recent modified_at).
  */
 export async function seedCollectiviteReferentielDisplayActivity({
   trpcClient,
   collectiviteId,
   referentiel,
+  actionStatutCount = ACTION_STATUT_COUNT_THRESHOLD1,
 }: {
   trpcClient: TRPCClient<AppRouter>;
   collectiviteId: number;
   referentiel: ReferentielId;
+  actionStatutCount?: number;
 }): Promise<void> {
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
@@ -34,13 +37,14 @@ export async function seedCollectiviteReferentielDisplayActivity({
     collectiviteId
   )
     .filter(
-      (actionStatut) => getReferentielIdFromActionId(actionStatut.actionId) === referentiel
+      (actionStatut) =>
+        getReferentielIdFromActionId(actionStatut.actionId) === referentiel
     )
-    .slice(0, ACTION_STATUT_COUNT_THRESHOLD1);
+    .slice(0, actionStatutCount);
 
   assert(
-    actionStatusesToCreate.length >= ACTION_STATUT_COUNT_THRESHOLD1,
-    `Expected at least ${ACTION_STATUT_COUNT_THRESHOLD1} actionable ${referentiel} actions, got ${actionStatusesToCreate.length}`
+    actionStatusesToCreate.length >= actionStatutCount,
+    `Expected at least ${actionStatutCount} actionable ${referentiel} actions, got ${actionStatusesToCreate.length}`
   );
 
   await trpcClient.referentiels.actions.updateStatuts.mutate({

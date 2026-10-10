@@ -89,7 +89,7 @@ Règle existante (`shouldDisplayReferentielByCriteria`) : un référentiel CAE o
 | 2 | ≥ 150 statuts d'actions |
 | 3 | ≥ 50 explications (`action_commentaire`) |
 | 4 | ≥ 150 explications |
-| 5 | dernière activité (statut ou explication) < 1 an |
+| 5 | dernière activité (statut ou explication) < 2 ans |
 
 Les seuils **50** et **150** sur une même métrique sont **deux critères indépendants** (150 compte pour 2).
 
@@ -97,9 +97,9 @@ Les seuils **50** et **150** sur une même métrique sont **deux critères indé
 |---|---|---|
 | 50 statuts seuls | 1 | Non |
 | 50 explications seules | 1 | Non |
-| activité < 1 an seule | 1 | Non |
-| 50 statuts + activité < 1 an | 2 | Oui |
-| 50 explications + activité < 1 an | 2 | Oui |
+| activité < 2 ans seule | 1 | Non |
+| 50 statuts + activité < 2 ans | 2 | Oui |
+| 50 explications + activité < 2 ans | 2 | Oui |
 | 50 statuts + 50 explications | 2 | Oui |
 | 150 statuts seuls | 2 (≥ 50 + ≥ 150) | Oui |
 | 150 explications seules | 2 (≥ 50 + ≥ 150) | Oui |
@@ -109,11 +109,20 @@ Les seuils **50** et **150** sur une même métrique sont **deux critères indé
 
 #### Masquage CAE/ECI à l'ouverture publique de TE
 
-À l'ouverture publique de TE, le batch `resetAllCollectivitesDisplayPreferences` (cf. [Déploiement](#déploiement-initialisation-en-deux-temps)) évalue **chaque** référentiel CAE et ECI **indépendamment** via `shouldDisplayReferentielByCriteria`. Un référentiel dont le niveau de remplissage est **insuffisant** (< 2 critères sur 5, donc non engagé) est positionné en `mode: archived`, `display: false` :
+À l'ouverture publique de TE, le batch `resetAllCollectivitesDisplayPreferences` (cf. [Déploiement](#déploiement-initialisation-en-deux-temps)) évalue **chaque** référentiel CAE et ECI **indépendamment** et lui attribue un **niveau de remplissage** :
 
-- il disparaît de la navigation EDL ;
-- les données déjà saisies **restent en base** (consultables via URL directe ou lien TdB EDL) ;
+| Niveau | Définition | Préférence |
+|---|---|---|
+| `engage` | ≥ 2 critères sur 5 (`shouldDisplayReferentielByCriteria`) | `mode: write`, `display: true` |
+| `superficiel` | au moins un statut ou une explication non vide, mais < 2 critères sur 5 | `mode: archived`, `display: true` |
+| `vide` | aucun statut ni explication | `mode: archived`, `display: false` |
+
+Un référentiel au remplissage `superficiel` reste donc dans la navigation EDL, en lecture seule avec le libellé « (archivé) » ; seul un référentiel `vide` en disparaît. Dans les deux cas :
+
+- les données déjà saisies **restent en base** ;
 - elles ne sont **pas reprises sur TE via la bascule** pour ce référentiel, faute d'engagement suffisant pour justifier un parcours de bascule sur ce ref.
+
+La bascule applique la même règle de visibilité aux référentiels qu'elle archive (visibles sauf s'ils sont `vide`). L'éligibilité à la bascule reste, elle, conditionnée à l'engagement (au moins un référentiel CAE/ECI en `write`).
 
 Exemples : une CT avec CAE engagé et ECI peu rempli → CAE visible en `write`, ECI masqué ; une CT avec CAE et ECI tous deux sous le seuil → les deux masqués.
 

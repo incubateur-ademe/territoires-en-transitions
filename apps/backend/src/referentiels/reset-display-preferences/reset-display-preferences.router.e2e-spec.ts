@@ -155,6 +155,36 @@ describe('ResetDisplayPreferencesRouter', () => {
     });
   });
 
+  test('CAE is archived but stays displayed when collectivite has only a few CAE statuts', async () => {
+    const { collectivite: isolatedCollectivite, authenticatedUser } =
+      await setupIsolatedCollectivite();
+    const isolatedEditorCaller = router.createCaller({
+      user: authenticatedUser,
+    });
+    const trpcClient = createTRPCClientFromCaller(isolatedEditorCaller);
+    await seedCollectiviteReferentielDisplayActivity({
+      trpcClient,
+      collectiviteId: isolatedCollectivite.id,
+      referentiel: ReferentielIdEnum.CAE,
+      actionStatutCount: 3,
+    });
+
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        {
+          collectiviteId: isolatedCollectivite.id,
+        }
+      );
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
   test('ECI is displayed when collectivite has enough ECI activity and support user resets display preferences', async () => {
     const { collectivite: isolatedCollectivite, authenticatedUser } =
       await setupIsolatedCollectivite();

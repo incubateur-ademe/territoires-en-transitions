@@ -16,9 +16,37 @@ export function preferenceFromDisplay(
     : { display: false, mode: 'archived' };
 }
 
+/**
+ * Niveau de remplissage d'un référentiel CAE ou ECI par une collectivité :
+ * - `vide` : aucun statut ni texte renseigné ;
+ * - `superficiel` : des données, mais trop peu pour que le référentiel soit engagé ;
+ * - `engage` : activité suffisante pour que le référentiel reste en écriture.
+ */
+export const niveauxRemplissage = ['vide', 'superficiel', 'engage'] as const;
+
+export type NiveauRemplissage = (typeof niveauxRemplissage)[number];
+
+/** Un référentiel archivé reste dans la navigation dès qu'il contient des données */
+export function isReferentielArchiveDisplayed(
+  niveauRemplissage: NiveauRemplissage
+): boolean {
+  return niveauRemplissage !== 'vide';
+}
+
+function caeEciPreferenceFromNiveauRemplissage(
+  niveauRemplissage: NiveauRemplissage
+): ReferentielPreference {
+  return niveauRemplissage === 'engage'
+    ? { display: true, mode: 'write' }
+    : {
+        display: isReferentielArchiveDisplayed(niveauRemplissage),
+        mode: 'archived',
+      };
+}
+
 export type DeriveReferentielPreferencesInput = {
-  caeEngaged: boolean;
-  eciEngaged: boolean;
+  cae: NiveauRemplissage;
+  eci: NiveauRemplissage;
   /** syndicat : non éligible à TE, reste sur ECI (prime sur `isDrom`) */
   isSyndicat?: boolean;
   /** DROM : pas encore éligible à TE, reste sur CAE et ECI */
@@ -33,13 +61,16 @@ export function deriveReferentielPreferences(
     return existing;
   }
 
-  const { caeEngaged, eciEngaged, isSyndicat, isDrom } = input;
+  const { isSyndicat, isDrom } = input;
 
   // collectivités non éligibles à la bascule : valeurs forcées, indépendantes
   // du niveau de remplissage (sauf la visibilité du CAE archivé des syndicats)
   if (isSyndicat) {
     return {
-      cae: { display: caeEngaged, mode: 'archived' },
+      cae: {
+        display: isReferentielArchiveDisplayed(input.cae),
+        mode: 'archived',
+      },
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
     };
@@ -53,20 +84,12 @@ export function deriveReferentielPreferences(
     };
   }
 
-  const collectiviteEngaged = caeEngaged || eciEngaged;
-
-  if (collectiviteEngaged) {
-    return {
-      cae: preferenceFromDisplay(caeEngaged, 'write'),
-      eci: preferenceFromDisplay(eciEngaged, 'write'),
-      te: preferenceFromDisplay(true, 'readonly'),
-    };
-  }
+  const collectiviteEngaged = input.cae === 'engage' || input.eci === 'engage';
 
   return {
-    cae: preferenceFromDisplay(false, 'write'),
-    eci: preferenceFromDisplay(false, 'write'),
-    te: preferenceFromDisplay(true, 'write'),
+    cae: caeEciPreferenceFromNiveauRemplissage(input.cae),
+    eci: caeEciPreferenceFromNiveauRemplissage(input.eci),
+    te: preferenceFromDisplay(true, collectiviteEngaged ? 'readonly' : 'write'),
   };
 }
 
@@ -75,7 +98,10 @@ export function referentielPreferencesFromDisplayMap(
   existing?: CollectiviteReferentielPreferences
 ): CollectiviteReferentielPreferences {
   const derived = deriveReferentielPreferences(
-    { caeEngaged: display.cae, eciEngaged: display.eci },
+    {
+      cae: display.cae ? 'engage' : 'vide',
+      eci: display.eci ? 'engage' : 'vide',
+    },
     existing
   );
 
@@ -96,9 +122,40 @@ export function toggleReferentielDisplayPreference(
   referentielId: CollectiviteReferentielPreferenceId,
   referentiels: CollectiviteReferentielPreferences
 ): CollectiviteReferentielPreferences {
+  if (referentiels.te.populatedFromCaeEci) {
+    return referentiels;
+  }
+
+  // TE et les référentiels CAE/ECI archivés gardent leur mode : on ne change
+  // que leur présence dans la navigation
+  const target = referentiels[referentielId];
+  if (referentielId === 'te' || target.mode === 'archived') {
+    return {
+      ...referentiels,
+      [referentielId]: { ...target, display: !target.display },
+    };
+  }
+
+  // masquer un référentiel CAE/ECI en écriture l'archive, et recalcule le mode
+  // de TE. Un référentiel archivé mais visible ne compte pas comme engagé : il
+  // ne doit pas repasser en écriture quand on bascule l'affichage d'un autre
   const display = getReferentielDisplayMap(referentiels);
-  return referentielPreferencesFromDisplayMap(
-    { ...display, [referentielId]: !display[referentielId] },
+  const isArchived = (id: 'cae' | 'eci') =>
+    id !== referentielId && referentiels[id].mode === 'archived';
+  const derived = referentielPreferencesFromDisplayMap(
+    {
+      cae: display.cae && !isArchived('cae'),
+      eci: display.eci && !isArchived('eci'),
+      te: true,
+      [referentielId]: !display[referentielId],
+    },
     referentiels
   );
+
+  return {
+    // seul le mode de TE est recalculé, sa présence dans la navigation est conservée
+    te: { ...derived.te, display: display.te },
+    cae: isArchived('cae') ? referentiels.cae : derived.cae,
+    eci: isArchived('eci') ? referentiels.eci : derived.eci,
+  };
 }

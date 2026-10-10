@@ -282,21 +282,22 @@ export class SwitchToTeService {
       }
     }
 
-    // Engagement CAE/ECI (activité réelle, indépendant des préférences) : sert à
-    // décider, pour chaque référentiel archivé par la bascule, s'il reste listé
-    // dans la navigation ("(archivé)") ou en disparaît. Calculé hors
-    // transaction, comme le reset des préférences d'affichage.
-    const engagementResult =
-      await this.computeReferentielEngagementService.computeEngagement(
+    // Niveau de remplissage CAE/ECI (activité réelle, indépendant des
+    // préférences) : sert à décider, pour chaque référentiel archivé par la
+    // bascule, s'il reste listé dans la navigation ("(archivé)") ou en disparaît
+    // parce qu'il est vide. Calculé hors transaction, comme le reset des
+    // préférences d'affichage.
+    const niveauxRemplissageResult =
+      await this.computeReferentielEngagementService.computeNiveauxRemplissage(
         collectiviteId
       );
-    if (!engagementResult.success) {
+    if (!niveauxRemplissageResult.success) {
       return failure(
         SwitchToTeErrorEnum.DATABASE_ERROR,
-        engagementResult.cause
+        niveauxRemplissageResult.cause
       );
     }
-    const engagement = engagementResult.data;
+    const niveauxRemplissage = niveauxRemplissageResult.data;
 
     // ── Transaction unique : données SOURCES (rollback total sur échec) ──────
     const populatedAt = new Date().toISOString();
@@ -347,7 +348,7 @@ export class SwitchToTeService {
           buildPostSwitchPreferences(
             lockedPrefs,
             { populatedAt, populatedBy: user.id },
-            engagement
+            niveauxRemplissage
           ),
           tx
         );
