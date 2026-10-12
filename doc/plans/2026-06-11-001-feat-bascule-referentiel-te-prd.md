@@ -130,10 +130,15 @@ Exemples : une CT avec CAE engagé et ECI peu rempli → CAE visible en `write`,
 |---|---|---|---|
 | Au moins un ref. engagé | `mode: readonly`, `display: true` | engagé → `write` + `display: true` ; non engagé → `archived` + `display: false` | Visible (si éligible) |
 | Aucun ref. engagé | `mode: write`, `display: true`, sans `populatedFromCaeEci` | `archived`, `display: false` | Masqué |
-| Syndicat (non éligible à TE) | `mode: readonly`, `display: true` | `cae` → `archived`, `display: true` si engagé (sinon `false`) ; `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_SYNDICAT`) |
+| Bascule bloquée par un COT actif, un audit en cours ou une demande d'audit envoyée | `mode: readonly`, `display: true` | `cae` et `eci` → `write` + `display: true` | Bloqué (`COT_ACTIVE`, `AUDIT_IN_PROGRESS`, `AUDIT_REQUEST_IN_PROGRESS`) |
+| Syndicat (non éligible à TE) | `mode: readonly`, `display: true` | `cae` → selon son niveau de remplissage (`write` s'il est engagé, sinon `archived`, masqué s'il est vide) ; `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_SYNDICAT`) |
 | DROM (pas encore éligible à TE) | `mode: readonly`, `display: true` | `cae` et `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_DROM`) |
 
-Pour les syndicats et les DROM, ces valeurs sont **forcées quel que soit le niveau de remplissage** : ces CT ne peuvent pas basculer et doivent continuer à travailler sur leurs référentiels historiques. Si une CT est à la fois syndicat et DROM, la règle syndicat s'applique.
+Ces trois profils ne peuvent pas basculer et doivent continuer à travailler sur leurs référentiels historiques : TE reste en `readonly`, et les valeurs de `cae` / `eci` ci-dessus priment sur la règle de remplissage générale. La première règle applicable l'emporte, dans l'ordre : blocage COT / audit, puis syndicat, puis DROM.
+
+Un référentiel `archived` est en lecture seule : archivé pendant un COT ou un audit, il ne pourrait plus être complété ni audité avant la levée du blocage. Le batch regarde donc l'audit et la demande d'audit sur CAE **et** ECI, quel que soit leur mode (la bascule, elle, ne les regarde que sur les référentiels en `write`).
+
+Le batch ignore les collectivités de type `test`, dont les préférences sont réglées à la main pour les démos et la recette ; le reset manuel d'une collectivité donnée reste possible sur une collectivité de test.
 
 > **Conséquence produit assumée** : une CT avec un seul critère rempli (ex. 50 statuts CAE seuls) est « non engagée » → démarrage TE direct en `write`, CAE/ECI `archived` masqués, **sans bouton de bascule** ni reprise automatique des données legacy vers TE. Seuil conservé tel quel (règle initialement conçue pour masquer ECI vide dans la nav).
 

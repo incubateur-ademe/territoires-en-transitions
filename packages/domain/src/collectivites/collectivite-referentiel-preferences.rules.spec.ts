@@ -63,7 +63,7 @@ describe('deriveReferentielPreferences', () => {
     ).toBe(postSwitchTePreferences);
   });
 
-  it('force te readonly, cae archived et eci write pour un syndicat', () => {
+  it('force te readonly et eci write, et archive le cae vide d’un syndicat', () => {
     expect(
       deriveReferentielPreferences({
         cae: 'vide',
@@ -77,7 +77,7 @@ describe('deriveReferentielPreferences', () => {
     });
   });
 
-  it('garde le cae archivé d’un syndicat dans la navigation s’il est engagé', () => {
+  it('garde en write le cae engagé d’un syndicat', () => {
     expect(
       deriveReferentielPreferences({
         cae: 'engage',
@@ -85,10 +85,62 @@ describe('deriveReferentielPreferences', () => {
         isSyndicat: true,
       })
     ).toEqual({
-      cae: { display: true, mode: 'archived' },
+      cae: { display: true, mode: 'write' },
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
     });
+  });
+
+  it('n’archive rien quand la bascule est bloquée, même sans référentiel engagé', () => {
+    expect(
+      deriveReferentielPreferences({
+        cae: 'vide',
+        eci: 'vide',
+        hasSwitchToTeBlocker: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('garde en write le référentiel superficiel d’une collectivité engagée dont la bascule est bloquée', () => {
+    expect(
+      deriveReferentielPreferences({
+        cae: 'engage',
+        eci: 'superficiel',
+        hasSwitchToTeBlocker: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('applique la règle de blocage quand la collectivité est aussi un syndicat', () => {
+    expect(
+      deriveReferentielPreferences({
+        cae: 'superficiel',
+        eci: 'vide',
+        hasSwitchToTeBlocker: true,
+        isSyndicat: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('ne modifie pas une collectivité déjà basculée dont la bascule serait bloquée', () => {
+    expect(
+      deriveReferentielPreferences(
+        { cae: 'engage', eci: 'engage', hasSwitchToTeBlocker: true },
+        postSwitchTePreferences
+      )
+    ).toBe(postSwitchTePreferences);
   });
 
   it('force te readonly, cae et eci write pour un DROM sans référentiel engagé', () => {
