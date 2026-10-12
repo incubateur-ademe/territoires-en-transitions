@@ -26,7 +26,9 @@ import {
  * Ce ne sont pas des permissions utilisateur : celles-ci sont portées par
  * `demarches.pcaet.mutate` et répondent à « cette personne a-t-elle le droit
  * d'écrire ici ». Ces règles répondent à « le dossier accepte-t-il encore cette
- * écriture », et la réponse vaut pour tout le monde, quel que soit le rôle.
+ * écriture », et la réponse vaut pour tout le monde, quel que soit le rôle —
+ * à une exception près : les pilotes, qu'un admin peut changer à tout statut
+ * (`demarches.pcaet.mutate_pilotes_any_status`).
  *
  * Hors du workflow, volontairement : aucune de ces écritures ne déplace un
  * statut. Le serveur les vérifie sous verrou dans `assertWritable`, le front lit

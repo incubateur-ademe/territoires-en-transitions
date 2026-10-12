@@ -36,6 +36,19 @@ describe('permissionsByRole', () => {
     ]);
   });
 
+  it("n'accorde le changement des pilotes d'une démarche fermée qu'au super admin et à l'admin de la collectivité", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('demarches.pcaet.mutate_pilotes_any_status')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([
+      PlatformRole.SUPER_ADMIN,
+      CollectiviteRole.ADMIN,
+    ]);
+  });
+
   it('accorde la lecture des documents confidentiels à tout rôle qui dépose des documents', () => {
     const rolesMutatingWithoutConfidentielRead = Object.entries(
       permissionsByRole

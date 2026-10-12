@@ -64,6 +64,7 @@ const collectiviteAdminPermissions: readonly PermissionOperation[] = [
 
   'collectivites.membres.mutate',
   'collectivites.pertinence-leviers.mutate',
+  'demarches.pcaet.mutate_pilotes_any_status',
 ];
 
 export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {

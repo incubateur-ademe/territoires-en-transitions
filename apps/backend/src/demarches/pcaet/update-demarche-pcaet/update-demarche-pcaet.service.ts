@@ -5,6 +5,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { type DemarchePcaet } from '@tet/domain/demarches';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
@@ -16,6 +17,15 @@ import {
 } from './update-demarche-pcaet.errors';
 import { UpdateDemarchePcaetInput } from './update-demarche-pcaet.input';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet.repository';
+
+const isPilotesOnly = ({
+  collectiviteId,
+  demarcheId,
+  pilotes,
+  ...autres
+}: UpdateDemarchePcaetInput): boolean =>
+  pilotes !== undefined &&
+  Object.values(autres).every((value) => value === undefined);
 
 @Injectable()
 export class UpdateDemarchePcaetService {
@@ -38,9 +48,15 @@ export class UpdateDemarchePcaetService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, UpdateDemarchePcaetError>> => {
+      // Les pilotes désignent qui porte la démarche, pas le contenu du dossier :
+      // un admin peut les changer à tout statut, à condition de ne rien toucher
+      // d'autre dans la même requête.
       const access = await this.accessService.assertWritable(input, 'amont', {
         user,
         tx: transaction,
+        bypassEtapeWith: isPilotesOnly(input)
+          ? PermissionOperationEnum['DEMARCHES.PCAET.MUTATE_PILOTES_ANY_STATUS']
+          : undefined,
       });
       if (!access.success) {
         return failure(UpdateDemarchePcaetErrorEnum[access.error]);
