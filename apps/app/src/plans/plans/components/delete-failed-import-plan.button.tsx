@@ -15,6 +15,7 @@ export const DeleteFailedImportPlanButton = ({
       size="xs"
       icon="delete-bin-6-line"
       loading={isPending}
+      disabled={isPending}
       onClick={() => deletePlan()}
       dataTest="plans.plan.supprimer-plan-echoue-button"
     >

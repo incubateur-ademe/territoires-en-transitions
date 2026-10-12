@@ -49,20 +49,22 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   if (!isPlanNavigable(plan)) {
     const isFailed = plan.status === PlanStatusEnum.FAILED;
     return (
-      <Alert
-        className="m-6"
-        state={isFailed ? 'error' : 'info'}
-        title={
-          isFailed
-            ? appLabels.importPlanIaEchecCourt
-            : appLabels.importPlanIaEnCoursCourt
-        }
-        description={
-          isFailed
-            ? appLabels.importPlanIaEchecDescription
-            : appLabels.importPlanIaEnCoursDescription
-        }
-      />
+      <div role="status">
+        <Alert
+          className="m-6"
+          state={isFailed ? 'error' : 'info'}
+          title={
+            isFailed
+              ? appLabels.importPlanIaEchecCourt
+              : appLabels.importPlanIaEnCoursCourt
+          }
+          description={
+            isFailed
+              ? appLabels.importPlanIaEchecDescription
+              : appLabels.importPlanIaEnCoursDescription
+          }
+        />
+      </div>
     );
   }
 
