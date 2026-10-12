@@ -13,7 +13,13 @@ import {
   useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, HTMLAttributes, useState } from 'react';
+import {
+  cloneElement,
+  HTMLAttributes,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
@@ -26,9 +32,48 @@ export type InlineEditWrapperProps = {
     | ((props: React.ComponentProps<'button'>) => React.ReactNode);
   renderOnEdit: ({ openState }: { openState: OpenState }) => React.ReactNode;
   openState?: OpenState;
-  onClose?: () => void;
+  /** Return false (or reject) to keep the editor open; void allows closing. */
+  onClose?: () => void | boolean | Promise<void | boolean>;
   disabled?: boolean;
   floatingMatchReferenceHeight?: boolean;
+};
+
+const useInlineEditOpenState = ({
+  openState,
+  onClose,
+  disabled,
+}: Pick<
+  InlineEditWrapperProps,
+  'openState' | 'onClose' | 'disabled'
+>): OpenState => {
+  const { isOpen, setIsOpen } = useOpenState(openState);
+  const openChangeVersionRef = useRef(0);
+
+  const handleOpenChange = useCallback(
+    async (open: boolean) => {
+      if (disabled) return;
+      const version = ++openChangeVersionRef.current;
+      if (!open && onClose) {
+        try {
+          const result = onClose();
+          // Keep synchronous callers synchronous, including cancellation.
+          const canClose = result instanceof Promise ? await result : result;
+          if (canClose === false) return;
+        } catch {
+          // The caller owns error feedback; a failed save must preserve the draft.
+          return;
+        }
+      }
+
+      // A late save must not close an editor that has since been reopened.
+      if (version === openChangeVersionRef.current) {
+        setIsOpen(open);
+      }
+    },
+    [disabled, onClose, setIsOpen]
+  );
+
+  return { isOpen, setIsOpen: handleOpenChange };
 };
 
 /**
@@ -43,16 +88,11 @@ export const InlineEditWrapper = ({
   openState,
   floatingMatchReferenceHeight = true,
 }: InlineEditWrapperProps) => {
-  const { isOpen, setIsOpen } = useOpenState(openState);
-
-  const handleOpenChange = (open: boolean) => {
-    if (disabled) return;
-    if (!open && onClose) {
-      onClose();
-    }
-
-    setIsOpen(open);
-  };
+  const { isOpen, setIsOpen: handleOpenChange } = useInlineEditOpenState({
+    openState,
+    onClose,
+    disabled,
+  });
 
   const [internalMaxHeight, setInternalMaxHeight] = useState(0);
 

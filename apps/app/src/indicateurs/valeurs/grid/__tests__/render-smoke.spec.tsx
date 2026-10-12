@@ -139,7 +139,7 @@ describe('IndicateurValeursTable smoke', () => {
           ),
           valeurTypes: ['resultat', 'objectif'],
           renderHeader: (colSpan) => (
-            <th colSpan={colSpan}>Période personnalisée</th>
+            <th colSpan={colSpan}>{'Période personnalisée'}</th>
           ),
         },
       ],
