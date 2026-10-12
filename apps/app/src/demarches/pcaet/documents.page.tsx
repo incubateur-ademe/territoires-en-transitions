@@ -181,7 +181,9 @@ export const DemarchePcaetDocumentsPage = () => {
               { staleTime: 0 }
             )
           )
-          .catch(() => undefined);
+          // Recherche en échec : la modale refait la vérification et le
+          // serveur refuse un ré-import non confirmé.
+          .catch(() => null);
         if (previousImport === null) {
           setImportProposalFichierId(fichierId);
         }

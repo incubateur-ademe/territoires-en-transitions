@@ -32,6 +32,11 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
 import { membreTable } from '../membres/membre.table';
 
+/** Les plans en cours d'import ou en échec ne sont ni listés ni comptés. */
+const NAVIGABLE_PLAN_STATUSES_SQL = navigablePlanStatuses
+  .map((status) => `'${status}'`)
+  .join(', ');
+
 /** Type of view */
 const tabEnum = {
   Collectivite: 'collectivite',
@@ -83,6 +88,7 @@ export default class RecherchesService {
               FROM ${getTableName(axeTable)}
               WHERE ${axeTable.collectiviteId.name} = c.collectiviteId
               AND ${axeTable.parent.name} IS NULL
+              AND ${axeTable.status.name} IN (${NAVIGABLE_PLAN_STATUSES_SQL})
             ) AS "nbPlans",
             c.etoilesEci as "etoilesEci",
             c.etoilesCae as "etoilesCae",
@@ -523,9 +529,7 @@ export default class RecherchesService {
              JOIN filteredCollectivites c
                   ON a.${axeTable.collectiviteId.name} = c.collectiviteId
       WHERE a.${axeTable.parent.name} IS NULL
-        AND a.${axeTable.status.name} IN (${navigablePlanStatuses
-      .map((status) => `'${status}'`)
-      .join(', ')})`;
+        AND a.${axeTable.status.name} IN (${NAVIGABLE_PLAN_STATUSES_SQL})`;
 
     // Add conditions
     // Condition plan type
