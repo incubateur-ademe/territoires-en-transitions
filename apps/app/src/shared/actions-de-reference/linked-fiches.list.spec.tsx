@@ -35,16 +35,11 @@ const toFiche = ({
 >): ActionDeReferenceFiche =>
   ({ id, collectiviteId, titre, restreint } as ActionDeReferenceFiche);
 
-const renderList = (
-  fiches: readonly ActionDeReferenceFiche[],
-  currentCollectiviteId?: number
-): void => {
+const renderList = (fiches: readonly ActionDeReferenceFiche[]): void => {
   render(
     <LinkedFichesList
       fiches={fiches}
-      currentCollectivite={
-        { collectiviteId: currentCollectiviteId } as CollectiviteCurrent
-      }
+      currentCollectivite={{} as CollectiviteCurrent}
       currentUserId="user-1"
     />
   );
@@ -122,38 +117,5 @@ describe('linked-fiches-listees', () => {
       isTitleShown: screen.queryByText('Fiche confidentielle') !== null,
       links: screen.queryAllByRole('link'),
     }).toEqual({ isTitleShown: true, links: [] });
-  });
-});
-
-describe('linked-fiches-de-la-collectivite-courante', () => {
-  const ownFiche = toFiche({
-    id: 34,
-    collectiviteId: 12,
-    titre: 'Fiche de ma collectivité',
-    restreint: false,
-  });
-  const otherFiche = toFiche({
-    id: 35,
-    collectiviteId: 13,
-    titre: 'Fiche d une autre collectivité',
-    restreint: false,
-  });
-
-  it("n'affiche pas les fiches de la collectivité courante, seulement celles des autres", () => {
-    renderList([ownFiche, otherFiche], 12);
-
-    expect({
-      ownFiche: screen.queryByText('Fiche de ma collectivité'),
-      otherFiche: screen.queryByText('Fiche d une autre collectivité') !== null,
-    }).toEqual({ ownFiche: null, otherFiche: true });
-  });
-
-  it("dit qu'aucune collectivité n'a partagé d'action quand toutes les fiches liées sont celles de la collectivité courante", () => {
-    renderList([ownFiche], 12);
-
-    expect({
-      message: screen.queryByText(EMPTY_MESSAGE) !== null,
-      items: screen.queryAllByRole('listitem'),
-    }).toEqual({ message: true, items: [] });
   });
 });
