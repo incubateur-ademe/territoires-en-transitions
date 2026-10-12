@@ -11,6 +11,7 @@ import { generateTitle } from '@/app/utils/generate-title';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { htmlToText } from '@tet/domain/utils';
 import { useUser } from '@tet/api/users';
 import {
   SecteurReglementaire,
@@ -276,7 +277,7 @@ const RevueFiche = ({
         </h3>
         {ficheComplete?.description && (
           <p className="mb-0 text-sm text-grey-8 line-clamp-4">
-            {ficheComplete.description}
+            {htmlToText(ficheComplete.description)}
           </p>
         )}
         <InlineLink
