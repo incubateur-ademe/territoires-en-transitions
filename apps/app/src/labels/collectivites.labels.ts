@@ -9,6 +9,10 @@ const pertinenceLabels = {
 
 const unsetPertinenceLabel = 'non renseignée';
 
+const restartTourLabel = 'Comment ça marche ?';
+
+const actionsPreselectionneesLabel = 'Actions pré-sélectionnées';
+
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
   planification: 'Réglementation & planification',
@@ -52,12 +56,18 @@ export const collectivitesLabels = {
 
   outilsDePriorisation: 'Outils de priorisation',
   priorisationLeviersTitre: 'Priorisation des leviers',
-  priorisationFonctionnementTitre: 'Comment ça marche ?',
-  priorisationFonctionnementDescription:
-    "Chaque levier est placé selon son potentiel de réduction de GES sur le territoire et la mobilisation de la collectivité, mesurée par ses actions déjà rattachées. Ouvrez un levier pour consulter ses actions de référence, ajoutez les plus adaptées à votre présélection, puis intégrez-les à l'un de vos plans.",
-  actionsPreselectionneesTitre: 'Actions pré-sélectionnées',
+  priorisationVisiteRelancer: restartTourLabel,
+  priorisationVisiteMetriquesTitre: 'Votre point de départ',
+  priorisationVisiteMetriquesDescription:
+    "Ces trois chiffres résument l'analyse : les actions déjà pré-sélectionnées, les leviers en angle mort et le nombre d'actions analysées.",
+  priorisationVisiteMatriceTitre: 'La matrice des leviers',
+  priorisationVisiteMatriceDescription:
+    'Un point = un levier. Plus il est haut, plus son potentiel de réduction de GES estimé est fort ; plus il est à droite, plus vous le mobilisez déjà.',
+  priorisationVisiteAideTitre: 'Retrouvez la visite ici',
+  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite à tout moment. Vos actions retenues se retrouvent dans « ${actionsPreselectionneesLabel} ».`,
+  actionsPreselectionneesTitre: actionsPreselectionneesLabel,
   actionsPreselectionneesCompte: (count: number): string =>
-    `Actions pré-sélectionnées (${count})`,
+    `${actionsPreselectionneesLabel} (${count})`,
   pertinenceInfo: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
   pertinenceLabel: (pertinence: Pertinence): string =>
