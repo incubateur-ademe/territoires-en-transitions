@@ -1,4 +1,5 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
+import { GuidedTourTargetsProvider } from '@/app/shared/guided-tour/guided-tour-targets.context';
 import { AppLayout } from '@/app/ui/layout/app-layout';
 import { isAllowedWithoutCollectivite } from '@/app/users/data/is-allowed-without-collectivite';
 import { requireOnboardedUser } from '@/app/users/data/require-onboarded-user.server';
@@ -40,15 +41,19 @@ export default async function Layout({ children }: { children: ReactNode }) {
   return (
     <AuthedProviders user={user}>
       <PageHeaderStickyHeightProvider>
-        <SidePanelProvider>
-          <AppLayout
-            belowFooterSlot={
-              canToggleSuperAdmin ? <ToggleSuperAdminModeCheckbox /> : undefined
-            }
-          >
-            {children}
-          </AppLayout>
-        </SidePanelProvider>
+        <GuidedTourTargetsProvider>
+          <SidePanelProvider>
+            <AppLayout
+              belowFooterSlot={
+                canToggleSuperAdmin ? (
+                  <ToggleSuperAdminModeCheckbox />
+                ) : undefined
+              }
+            >
+              {children}
+            </AppLayout>
+          </SidePanelProvider>
+        </GuidedTourTargetsProvider>
       </PageHeaderStickyHeightProvider>
     </AuthedProviders>
   );
