@@ -25,9 +25,11 @@ describe('Mettre à jour une démarche PCAET', () => {
 
   // Une seule démarche « en cours » par collectivité : chaque test qui crée
   // travaille sur sa propre collectivité fraîche.
-  const freshEditor = async () => {
+  const freshEditor = async (
+    role: CollectiviteRole = CollectiviteRole.EDITION
+  ) => {
     const fixture = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.EDITION },
+      user: { role },
     });
     const user = getAuthUserFromUserCredentials(fixture.user);
     return {
@@ -323,6 +325,90 @@ describe('Mettre à jour une démarche PCAET', () => {
         collectiviteId: localCollectivite.id,
         demarcheId: created.id,
         titre: 'Titre interdit',
+      })
+    ).rejects.toThrow('Une démarche transmise pour avis n’est plus modifiable');
+  });
+
+  const transmettreDemarche = async (
+    {
+      caller,
+      collectiviteId,
+    }: {
+      caller: Awaited<ReturnType<typeof freshEditor>>['caller'];
+      collectiviteId: number;
+    },
+    pilotes: { userId: string; tagId: null }[] = []
+  ) => {
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId,
+      pilotes,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId,
+      demarcheId: created.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId,
+      demarcheId: created.id,
+    });
+    return created;
+  };
+
+  test('Un admin change les pilotes d’une démarche transmise pour avis', async () => {
+    const {
+      caller,
+      collectivite: localCollectivite,
+      user,
+    } = await freshEditor(CollectiviteRole.ADMIN);
+    const created = await transmettreDemarche(
+      { caller, collectiviteId: localCollectivite.id },
+      [{ userId: user.id, tagId: null }]
+    );
+
+    const updated = await caller.demarches.pcaet.update({
+      collectiviteId: localCollectivite.id,
+      demarcheId: created.id,
+      pilotes: [],
+    });
+
+    expect(updated.pilotes).toEqual([]);
+  });
+
+  test('Un admin ne profite pas des pilotes pour modifier le reste du dossier', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor(
+      CollectiviteRole.ADMIN
+    );
+    const created = await transmettreDemarche({
+      caller,
+      collectiviteId: localCollectivite.id,
+    });
+
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId: localCollectivite.id,
+        demarcheId: created.id,
+        titre: 'Titre interdit',
+        pilotes: [],
+      })
+    ).rejects.toThrow('Une démarche transmise pour avis n’est plus modifiable');
+  });
+
+  test('Refuser à un éditeur le changement des pilotes d’une démarche transmise', async () => {
+    const {
+      caller,
+      collectivite: localCollectivite,
+      user,
+    } = await freshEditor();
+    const created = await transmettreDemarche(
+      { caller, collectiviteId: localCollectivite.id },
+      [{ userId: user.id, tagId: null }]
+    );
+
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId: localCollectivite.id,
+        demarcheId: created.id,
+        pilotes: [],
       })
     ).rejects.toThrow('Une démarche transmise pour avis n’est plus modifiable');
   });

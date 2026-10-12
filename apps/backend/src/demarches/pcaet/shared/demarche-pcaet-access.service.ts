@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  PermissionService,
+  type NonReferentielPermissionOperation,
+} from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -37,6 +40,9 @@ export type DemarchePcaetAccessError =
  * pendant que la transmission fige la photo du dossier, et devenir invisible
  * aussitôt après puisque l'écran sert alors le snapshot. La règle doit donc être
  * vérifiée là où l'écriture a lieu, pas avant d'y entrer.
+ *
+ * `bypassEtapeWith` lève la règle du temps du dossier pour qui détient cette
+ * permission : c'est à l'appelant de s'assurer que l'écriture s'y prête.
  */
 @Injectable()
 export class DemarchePcaetAccessService {
@@ -51,7 +57,15 @@ export class DemarchePcaetAccessService {
       demarcheId,
     }: { collectiviteId: number; demarcheId: number },
     etape: DemarchePcaetEtapeDossier,
-    { user, tx }: { user: AuthenticatedUser; tx: Transaction }
+    {
+      user,
+      tx,
+      bypassEtapeWith,
+    }: {
+      user: AuthenticatedUser;
+      tx: Transaction;
+      bypassEtapeWith?: NonReferentielPermissionOperation;
+    }
   ): Promise<Result<DemarchePcaetRef, DemarchePcaetAccessError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
@@ -72,10 +86,37 @@ export class DemarchePcaetAccessService {
     if (!ref) {
       return failure('DEMARCHE_PCAET_NOT_FOUND');
     }
-    if (!isDemarchePcaetEtapeModifiable(ref.status, etape)) {
+    if (
+      !isDemarchePcaetEtapeModifiable(ref.status, etape) &&
+      !(await this.isAllowedOnCollectivite(
+        user,
+        bypassEtapeWith,
+        collectiviteId,
+        tx
+      ))
+    ) {
       return failure('DEMARCHE_PCAET_NON_MODIFIABLE');
     }
 
     return success(ref);
+  }
+
+  private async isAllowedOnCollectivite(
+    user: AuthenticatedUser,
+    operation: NonReferentielPermissionOperation | undefined,
+    collectiviteId: number,
+    tx: Transaction
+  ): Promise<boolean> {
+    if (!operation) {
+      return false;
+    }
+    const result = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      { collectiviteId },
+      tx
+    );
+    return result.success;
   }
 }

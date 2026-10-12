@@ -9,6 +9,7 @@ import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PageHeader } from '@tet/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { JSX, ReactNode } from 'react';
 import { DemarcheMenuButton } from '../demarche-menu.button';
 import { DateLancementField } from './date-lancement-field';
@@ -37,6 +38,10 @@ export const DemarchePcaetHeader = ({
 }: Props): JSX.Element => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
   const trpc = useTRPC();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const pilotesModifiables =
+    demarche.amontModifiable ||
+    hasCollectivitePermission('demarches.pcaet.mutate_pilotes_any_status');
 
   // La collectivité porte-t-elle un SCoT ? Sans cela, une déclaration décochée
   // par erreur à l'étape 0 ne serait plus rattrapable : le badge ne s'affiche
@@ -77,7 +82,7 @@ export const DemarchePcaetHeader = ({
             />
             <PilotesField
               pilotes={demarche.pilotes}
-              readOnly={isPublished}
+              readOnly={!pilotesModifiables}
               onChange={(pilotes) => onUpdate({ pilotes })}
             />
             <Separator />
