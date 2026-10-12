@@ -8,9 +8,9 @@ import { Card } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
 import { useListFichesActionDeReference } from './data/use-list-fiches-action-de-reference';
-import { MisesEnOeuvreList } from './mises-en-oeuvre.list';
+import { LinkedFichesList } from './linked-fiches.list';
 
-const MisesEnOeuvreCard = ({
+const LinkedFichesCard = ({
   actionDeReferenceId,
 }: {
   readonly actionDeReferenceId: ActionDeReferenceId;
@@ -22,7 +22,7 @@ const MisesEnOeuvreCard = ({
   return (
     <Card className="gap-4 p-6 font-normal shadow-none">
       <h2 className="mb-0 text-lg font-bold text-primary-10">
-        {appLabels.actionDeReferenceMisesEnOeuvreTitre}
+        {appLabels.actionDeReferenceFichesLieesTitre}
       </h2>
       {match(fiches)
         .with({ status: 'loading' }, () => <LoadingStatus />)
@@ -33,9 +33,9 @@ const MisesEnOeuvreCard = ({
             retryLabel={appLabels.reessayer}
           />
         ))
-        .with({ status: 'loaded' }, (loaded) => (
-          <MisesEnOeuvreList
-            fiches={loaded.fiches}
+        .with({ status: 'loaded' }, ({ fiches }) => (
+          <LinkedFichesList
+            fiches={fiches}
             currentCollectivite={currentCollectivite}
             currentUserId={currentUserId}
           />
@@ -45,4 +45,4 @@ const MisesEnOeuvreCard = ({
   );
 };
 
-export { MisesEnOeuvreCard };
+export { LinkedFichesCard };

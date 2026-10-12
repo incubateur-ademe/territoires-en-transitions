@@ -3,17 +3,17 @@ import type { ActionDeReference } from '@tet/domain/shared';
 
 export class ActionDeReferenceDetailPom {
   readonly interestedButton: Locator;
-  readonly misesEnOeuvreList: Locator;
-  readonly noMiseEnOeuvreMessage: Locator;
+  readonly linkedFichesList: Locator;
+  readonly noLinkedFichesMessage: Locator;
 
   constructor(readonly page: Page) {
     this.interestedButton = page.getByRole('button', {
       name: "Ça m'intéresse",
     });
-    this.misesEnOeuvreList = page
+    this.linkedFichesList = page
       .getByRole('heading', { name: 'Mises en œuvre' })
       .locator('xpath=following-sibling::ul');
-    this.noMiseEnOeuvreMessage = page.getByText(
+    this.noLinkedFichesMessage = page.getByText(
       "Aucune collectivité n'a encore partagé d'action liée."
     );
   }
@@ -43,8 +43,8 @@ export class ActionDeReferenceDetailPom {
     ).toBeVisible();
   }
 
-  miseEnOeuvre(ficheTitre: string): Locator {
-    return this.misesEnOeuvreList
+  linkedFiche(ficheTitre: string): Locator {
+    return this.linkedFichesList
       .getByRole('listitem')
       .filter({ hasText: ficheTitre });
   }

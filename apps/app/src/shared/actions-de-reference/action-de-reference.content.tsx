@@ -9,7 +9,7 @@ import type { JSX, ReactNode } from 'react';
 import { match } from 'ts-pattern';
 import { ActionDeReferenceBadges } from './action-de-reference.badges';
 import type { ActionDeReferenceDetail } from './data/use-get-action-de-reference';
-import { MisesEnOeuvreCard } from './mises-en-oeuvre.card';
+import { LinkedFichesCard } from './linked-fiches.card';
 
 const ActionDeReferenceField = ({
   label,
@@ -67,7 +67,7 @@ const ActionDeReferenceDetails = ({
         <ActionDeReferenceFields action={action} />
       </div>
       <div className="w-full md:flex-[1]">
-        <MisesEnOeuvreCard actionDeReferenceId={action.id} />
+        <LinkedFichesCard actionDeReferenceId={action.id} />
       </div>
     </div>
   </div>

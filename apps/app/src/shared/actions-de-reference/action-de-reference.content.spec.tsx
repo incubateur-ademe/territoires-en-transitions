@@ -4,12 +4,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ActionDeReferenceContent } from './action-de-reference.content';
 import { aireCovoiturageAction } from './actions-de-reference.fixture';
 
-vi.mock('./mises-en-oeuvre.card', () => ({
-  MisesEnOeuvreCard: ({
+vi.mock('./linked-fiches.card', () => ({
+  LinkedFichesCard: ({
     actionDeReferenceId,
   }: {
     actionDeReferenceId: number;
-  }): JSX.Element => <p>{`mises-en-oeuvre-${actionDeReferenceId}`}</p>,
+  }): JSX.Element => <p>{`linked-fiches-${actionDeReferenceId}`}</p>,
 }));
 
 afterEach(cleanup);
@@ -91,7 +91,7 @@ describe('detail-charge', () => {
     renderLoadedAction();
 
     expect(
-      screen.getByText(`mises-en-oeuvre-${aireCovoiturageAction.id}`)
+      screen.getByText(`linked-fiches-${aireCovoiturageAction.id}`)
     ).toBeDefined();
   });
 });

@@ -12,7 +12,7 @@ const toCovoiturageAction = (runToken: string) => ({
   categorie: 'amenagement' as const,
 });
 
-test.describe('mises-en-oeuvre', () => {
+test.describe('linked-fiches', () => {
   test("un utilisateur d'une autre collectivité voit une fiche liée et l'ouvre", async ({
     actionsDeReference,
     collectivites,
@@ -50,7 +50,7 @@ test.describe('mises-en-oeuvre', () => {
       action,
     });
     await actionDeReferenceDetailPom
-      .miseEnOeuvre(ficheTitre)
+      .linkedFiche(ficheTitre)
       .getByRole('link')
       .click();
 
@@ -97,9 +97,9 @@ test.describe('mises-en-oeuvre', () => {
       action,
     });
 
-    const miseEnOeuvre = actionDeReferenceDetailPom.miseEnOeuvre(ficheTitre);
-    await expect(miseEnOeuvre).toBeVisible();
-    await expect(miseEnOeuvre.getByRole('link')).toHaveCount(0);
+    const linkedFiche = actionDeReferenceDetailPom.linkedFiche(ficheTitre);
+    await expect(linkedFiche).toBeVisible();
+    await expect(linkedFiche.getByRole('link')).toHaveCount(0);
   });
 
   test("une action sans fiche liée dit qu'aucune collectivité n'a partagé d'action", async ({
@@ -120,7 +120,7 @@ test.describe('mises-en-oeuvre', () => {
     });
 
     await expect(
-      actionDeReferenceDetailPom.noMiseEnOeuvreMessage
+      actionDeReferenceDetailPom.noLinkedFichesMessage
     ).toBeVisible();
   });
 });

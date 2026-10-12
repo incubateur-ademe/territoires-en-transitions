@@ -5,21 +5,21 @@ import type { JSX } from 'react';
 import type { ActionDeReferenceFiche } from './actions-de-reference.contract';
 import { toFicheLink } from './fiche-link.utils';
 
-type MisesEnOeuvreListProps = {
+type LinkedFichesListProps = {
   readonly fiches: readonly ActionDeReferenceFiche[];
   readonly currentCollectivite: CollectiviteCurrent;
   readonly currentUserId: string;
 };
 
-const MisesEnOeuvreList = ({
+const LinkedFichesList = ({
   fiches,
   currentCollectivite,
   currentUserId,
-}: MisesEnOeuvreListProps): JSX.Element => {
+}: LinkedFichesListProps): JSX.Element => {
   if (fiches.length === 0) {
     return (
       <p className="mb-0 text-grey-8">
-        {appLabels.actionDeReferenceMisesEnOeuvreVide}
+        {appLabels.actionDeReferenceFichesLieesVide}
       </p>
     );
   }
@@ -40,4 +40,4 @@ const MisesEnOeuvreList = ({
   );
 };
 
-export { MisesEnOeuvreList };
+export { LinkedFichesList };

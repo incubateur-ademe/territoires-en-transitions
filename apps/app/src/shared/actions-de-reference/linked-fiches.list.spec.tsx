@@ -3,7 +3,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import type { JSX } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ActionDeReferenceFiche } from './actions-de-reference.contract';
-import { MisesEnOeuvreList } from './mises-en-oeuvre.list';
+import { LinkedFichesList } from './linked-fiches.list';
 
 const EMPTY_MESSAGE = "Aucune collectivité n'a encore partagé d'action liée.";
 
@@ -37,7 +37,7 @@ const toFiche = ({
 
 const renderList = (fiches: readonly ActionDeReferenceFiche[]): void => {
   render(
-    <MisesEnOeuvreList
+    <LinkedFichesList
       fiches={fiches}
       currentCollectivite={{} as CollectiviteCurrent}
       currentUserId="user-1"
@@ -45,7 +45,7 @@ const renderList = (fiches: readonly ActionDeReferenceFiche[]): void => {
   );
 };
 
-describe('mises-en-oeuvre-vides', () => {
+describe('linked-fiches-vides', () => {
   it("dit qu'aucune collectivité n'a partagé d'action liée", () => {
     renderList([]);
 
@@ -53,7 +53,7 @@ describe('mises-en-oeuvre-vides', () => {
   });
 });
 
-describe('mises-en-oeuvre-listees', () => {
+describe('linked-fiches-listees', () => {
   it("n'affiche pas le message d'absence quand une fiche est liée", () => {
     renderList([
       toFiche({
