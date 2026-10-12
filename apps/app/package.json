@@ -45,5 +45,8 @@
         ]
       }
     }
+  },
+  "dependencies": {
+    "react-joyride": "3.2.0"
   }
 }
