@@ -21,8 +21,14 @@ import {
   collectiviteTypeEnum,
   getReferentielDisplayMap,
 } from '@tet/domain/collectivites';
-import { ReferentielIdEnum } from '@tet/domain/referentiels';
+import {
+  ReferentielIdEnum,
+  StatutAvancementEnum,
+  type StatutAvancementCreate,
+} from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
+import { actionStatutTable } from '../models/action-statut.table';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
 import { ResetDisplayPreferencesService } from './reset-display-preferences.service';
 import { seedCollectiviteReferentielDisplayActivity } from './reset-display-preferences.test-fixture';
@@ -186,6 +192,74 @@ describe('ResetDisplayPreferencesRouter', () => {
           collectiviteId: isolatedCollectivite.id,
         }
       );
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
+  const seedFewCaeStatutsThenOverwriteWith = async (
+    statut: Exclude<StatutAvancementCreate, 'detaille'>
+  ) => {
+    const { collectivite, authenticatedUser } =
+      await setupIsolatedCollectivite();
+    const trpcClient = createTRPCClientFromCaller(
+      router.createCaller({ user: authenticatedUser })
+    );
+    await seedCollectiviteReferentielDisplayActivity({
+      trpcClient,
+      collectiviteId: collectivite.id,
+      referentiel: ReferentielIdEnum.CAE,
+      actionStatutCount: 3,
+    });
+    const seededStatuts = await databaseService.db
+      .select({ actionId: actionStatutTable.actionId })
+      .from(actionStatutTable)
+      .where(eq(actionStatutTable.collectiviteId, collectivite.id));
+    await trpcClient.referentiels.actions.updateStatuts.mutate({
+      actionStatuts: seededStatuts.map(({ actionId }) => ({
+        actionId,
+        statut,
+        collectiviteId: collectivite.id,
+      })),
+    });
+    return collectivite;
+  };
+
+  test('CAE is archived and hidden when all its statuts were reset to non renseigné', async () => {
+    const collectivite = await seedFewCaeStatutsThenOverwriteWith(
+      StatutAvancementEnum.NON_RENSEIGNE
+    );
+
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
+    expect(result.referentiels).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
+  test('CAE is archived but stays displayed when its only statuts are non concerné', async () => {
+    const collectivite = await seedFewCaeStatutsThenOverwriteWith(
+      StatutAvancementEnum.NON_CONCERNE
+    );
+
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
     expect(result.referentiels).toEqual({
       cae: { display: true, mode: 'archived' },
       eci: { display: false, mode: 'archived' },
