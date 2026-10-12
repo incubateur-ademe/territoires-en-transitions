@@ -84,7 +84,7 @@ const anneesDifferentesSelectionnees = (
     return toAnnualIndicateurYearFromHistoricalDate(
       IndicateurPeriodiciteEnum.ANNUELLE,
       valeur.dateValeur,
-      `Le score indicatif (${valeur.indicateurId})`
+      appLabels.scoreIndicatifContexteIndicateur(valeur.indicateurId)
     );
   }).length > 1;
 
@@ -105,9 +105,7 @@ const ScoreIndicatifModalIndicateurs = (
       <Alert
         className="border-8 border-info-2 rounded-lg"
         state="info"
-        title={`${
-          nbIndicateurs === 2 ? 'Deux' : nbIndicateurs
-        } indicateurs sont nécessaires au calcul du score de cette tâche.`}
+        title={appLabels.scoreIndicatifIndicateursNecessaires(nbIndicateurs)}
         description={
           <span>
             <span className="font-semibold">{appLabels.memeAnnee}</span>{' '}
@@ -122,7 +120,9 @@ const ScoreIndicatifModalIndicateurs = (
         <Alert
           className="border-8 border-error-2 rounded-lg mt-2"
           state="error"
-          title={`Des années différentes ont été choisies pour les valeurs résultats entre les ${nbIndicateurs} indicateurs`}
+          title={appLabels.scoreIndicatifAnneesResultatsDifferentes(
+            nbIndicateurs
+          )}
         />
       )}
       {anneesDifferentesSelectionnees(
@@ -132,7 +132,9 @@ const ScoreIndicatifModalIndicateurs = (
         <Alert
           className="border-8 border-error-2 rounded-lg mt-2"
           state="error"
-          title={`Des années différentes ont été choisies pour les valeurs objectifs entre les ${nbIndicateurs} indicateurs`}
+          title={appLabels.scoreIndicatifAnneesObjectifsDifferentes(
+            nbIndicateurs
+          )}
         />
       )}
       <div className="grid grid-flow-col gap-4 my-8">
@@ -149,7 +151,7 @@ const ScoreIndicatifModalIndicateurs = (
       <ModalFooterOKCancel
         btnOKProps={{
           onClick: () => openState.setIsOpen(false),
-          children: 'Fermer',
+          children: appLabels.fermer,
         }}
       />
     </div>

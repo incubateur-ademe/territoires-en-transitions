@@ -1449,22 +1449,6 @@ export const appLabels = {
     'pour les valeurs résultat et objectif doit être sélectionnée pour chaque indicateur.',
   renseignerDonneesIndicateurs: 'Renseigner les données des indicateurs',
 
-  scoreIndicatifFait: (percent: string): string =>
-    `Score indicatif Fait de ${percent}, basé sur`,
-  scoreIndicatifProgramme: ({
-    annee,
-    percent,
-  }: {
-    annee: string | number;
-    percent: string;
-  }): string => `Score indicatif Fait en ${annee} de ${percent}, basé sur`,
-  valeurDeLIndicateur: (titre?: string): string =>
-    titre
-      ? `la valeur de l'indicateur "${titre}" de`
-      : "la valeur de l'indicateur de",
-  valeurSelectionneePourPourcentageIndicatif: (avancement: string): string =>
-    `Valeur sélectionnée pour le calcul du pourcentage indicatif ${avancement} :`,
-
   voirContacts: 'Voir les contacts',
   chargementEnCours: 'Chargement en cours...',
   resultatModePrive: 'Le résultat est en mode privé',

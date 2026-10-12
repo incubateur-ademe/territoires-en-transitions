@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import {
   IndicateurPeriodiciteEnum,
@@ -70,15 +71,17 @@ export function texteValeurUtilisee({
   const annee = toAnnualIndicateurYearFromHistoricalDate(
     periodicite,
     dateValeur,
-    `Le score indicatif (${valeurUtilisee.indicateurId})`
+    appLabels.scoreIndicatifContexteIndicateur(valeurUtilisee.indicateurId)
   );
 
   return {
     valeurEtUnite: `${valeur} ${unite}`,
-    annee: noYear ? '' : `en ${annee}`,
+    annee: noYear ? '' : appLabels.scoreIndicatifAnnee(annee),
     source: noSource
       ? ''
-      : ` (source : ${sourceLibelle ?? typeScoreToLabel[typeScore]})`,
+      : appLabels.scoreIndicatifSource(
+          sourceLibelle ?? typeScoreToLabel[typeScore]
+        ),
   };
 }
 

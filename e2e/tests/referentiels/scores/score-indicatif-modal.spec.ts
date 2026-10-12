@@ -99,6 +99,7 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
       exact: false,
     });
     await expect(programme).toContainText(`0 ${unite}`);
+    await expect(programme).toContainText('atteint en 2030');
     await expect(programme).toContainText('(source : CITEPA)');
 
     await tache

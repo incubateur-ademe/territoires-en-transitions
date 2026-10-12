@@ -160,6 +160,38 @@ export const referentielsLabels = {
   scoreIndicatifResultatsAnterieursNonPrisEnCompte: (annee: number): string =>
     `Les résultats antérieurs à l’année de référence ${annee} ne peuvent pas être pris en compte`,
 
+  /** Libellés et saisie du score indicatif */
+  scoreIndicatifFait: (percent: string): string =>
+    `Score indicatif Fait de ${percent}, basé sur`,
+  scoreIndicatifProgramme: ({
+    annee,
+    percent,
+  }: {
+    annee: string | number;
+    percent: string;
+  }): string => `Score indicatif Fait en ${annee} de ${percent}, basé sur`,
+  valeurDeLIndicateur: (titre?: string): string =>
+    titre
+      ? `la valeur de l'indicateur "${titre}" de`
+      : "la valeur de l'indicateur de",
+  valeurSelectionneePourPourcentageIndicatif: (avancement: string): string =>
+    `Valeur sélectionnée pour le calcul du pourcentage indicatif ${avancement} :`,
+
+  scoreIndicatifContexteLibelle: 'Le libellé du score indicatif',
+  scoreIndicatifContexteIndicateur: (indicateurId: number): string =>
+    `Le score indicatif (${indicateurId})`,
+  scoreIndicatifAnnee: (annee: number): string => `en ${annee}`,
+  scoreIndicatifSource: (source: string): string => `(source : ${source})`,
+  scoreIndicatifObjectifAtteint: 'atteint',
+  scoreIndicatifIndicateursNecessaires: (nombre: number): string =>
+    `${
+      nombre === 2 ? 'Deux' : nombre
+    } indicateurs sont nécessaires au calcul du score de cette tâche.`,
+  scoreIndicatifAnneesResultatsDifferentes: (nombre: number): string =>
+    `Des années différentes ont été choisies pour les valeurs résultats entre les ${nombre} indicateurs`,
+  scoreIndicatifAnneesObjectifsDifferentes: (nombre: number): string =>
+    `Des années différentes ont été choisies pour les valeurs objectifs entre les ${nombre} indicateurs`,
+
   /** Sauvegardes */
   sauvegardeVersionReferentiel: (version: string): string =>
     `Référentiel v${version}`,
