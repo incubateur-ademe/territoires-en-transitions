@@ -3,7 +3,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import {
-  getYearFromIsoDate,
+  IndicateurPeriod,
+  IndicateurPeriods,
+  toAnnualIndicateurYear,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
 import { cn, Input, TableCell, VisibleWhen } from '@tet/ui';
@@ -24,7 +26,7 @@ type IndicateurValeurCellProps = {
     unknown
   >;
   indicateurValeurType: Extract<IndicateurValeurType, 'resultat' | 'objectif'>;
-  year: number;
+  period: IndicateurPeriod | null;
   isReadonly?: boolean;
 };
 
@@ -37,20 +39,40 @@ export const IndicateurValeurCell = memo(
   ({
     cell,
     indicateurValeurType,
-    year,
+    period,
     isReadonly = false,
   }: IndicateurValeurCellProps): ReactNode => {
     const { indicateurId, indicateurValeurs, optionalYears, isApplicable } =
       cell.row.original;
     // Un indicateur non applicable ne réclame plus rien : le marqueur de
     // valeur requise disparaît avec la saisie.
-    const isRequired =
-      isApplicable && optionalYears !== 'all' && !optionalYears?.includes(year);
+    const isOptional =
+      optionalYears === 'all' ||
+      (period !== null &&
+        optionalYears?.includes(
+          toAnnualIndicateurYear(
+            period.periodicite,
+            period.dateDebut,
+            'Diagnostic PCAET'
+          )
+        ));
+    const isRequired = isApplicable && !isOptional;
 
-    const indicateurValeur = indicateurValeurs.find(
-      (indicateurValeur) =>
-        getYearFromIsoDate(indicateurValeur.dateValeur) === year
-    );
+    const periodKey = period === null ? null : IndicateurPeriods.key(period);
+    const indicateurValeur =
+      period === null
+        ? undefined
+        : indicateurValeurs.find(
+            (valeur) =>
+              valeur.periodicite === period.periodicite &&
+              // Les dates historiques ne sont pas toutes au premier jour de la période.
+              IndicateurPeriods.key(
+                IndicateurPeriods.containing(
+                  valeur.periodicite,
+                  valeur.dateValeur
+                )
+              ) === periodKey
+          );
 
     const currentValue = indicateurValeur?.[indicateurValeurType] ?? null;
     const updateIndicateurValeurs = getTableMeta(
@@ -58,14 +80,22 @@ export const IndicateurValeurCell = memo(
     ).updateIndicateurValeurs;
 
     const persist = useCallback(
-      (value: number | null) =>
-        updateIndicateurValeurs({
+      (value: number | null) => {
+        if (isReadonly || period === null) return Promise.resolve(false);
+        return updateIndicateurValeurs({
           indicateurId,
-          year,
+          period,
           field: indicateurValeurType,
           value,
-        }),
-      [updateIndicateurValeurs, indicateurId, year, indicateurValeurType]
+        });
+      },
+      [
+        updateIndicateurValeurs,
+        indicateurId,
+        period,
+        indicateurValeurType,
+        isReadonly,
+      ]
     );
 
     const edit = useCellEdit({
@@ -104,7 +134,7 @@ export const IndicateurValeurCell = memo(
         tabIndex={-1}
         className={cellClassName}
         aria-invalid={edit.status === 'error'}
-        canEdit={!isReadonly}
+        canEdit={!isReadonly && period !== null}
         edit={{
           onClose: () => {
             void edit.save();

@@ -1,9 +1,13 @@
 'use client';
 
 import { createColumnHelper } from '@tanstack/react-table';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriods,
+} from '@tet/domain/indicateurs';
 import { cn, TableCell, TableHeaderCell } from '@tet/ui';
 import { ComponentPropsWithoutRef, JSX, useMemo } from 'react';
-import { valueFieldsForYear as indicateurValeurTypesForYear } from './cell-editability';
+import { valueFieldsForPeriod } from './cell-editability';
 import { IndicateurTitleCell } from './indicateur-title.cell';
 import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
 import { IndicateurValeurYearHeaderCell } from './indicateur-valeur-year.header-cell';
@@ -42,7 +46,11 @@ const listColumns = ({
   isReadonly,
   referenceYear,
 }: ListIndicateurValeursTableColumnsParams) => {
-  const now = new Date().getFullYear();
+  // Les horizons PCAET restent annuels ; les cellules manipulent des périodes.
+  const currentPeriod = IndicateurPeriods.parse(
+    IndicateurPeriodiciteEnum.ANNUELLE,
+    String(new Date().getFullYear())
+  );
 
   const titleColumn = columnHelper.display({
     id: 'title',
@@ -73,10 +81,21 @@ const listColumns = ({
   const yearColumns = years.map((year) => {
     const isUnsetReference = isUnsetReferenceYear(year);
     const isReference = isUnsetReference || year === referenceYear;
-    const indicateurValeurTypes = indicateurValeurTypesForYear(year, now);
+    const period = isUnsetReference
+      ? null
+      : IndicateurPeriods.parse(
+          IndicateurPeriodiciteEnum.ANNUELLE,
+          String(year)
+        );
+    const periodId =
+      period === null ? 'reference-unset' : IndicateurPeriods.key(period);
+    const indicateurValeurTypes =
+      period === null
+        ? (['resultat'] as const)
+        : valueFieldsForPeriod(period, currentPeriod);
 
     return columnHelper.group({
-      id: `year-${year}`,
+      id: periodId,
       header: ({ header, table }) => {
         const { onReferenceYearChange } = getTableMeta(table);
 
@@ -96,14 +115,14 @@ const listColumns = ({
       },
       columns: indicateurValeurTypes.map((indicateurValeurType) =>
         columnHelper.display({
-          id: `year-${year}-${indicateurValeurType}`,
-          meta: { year, indicateurValeurType },
+          id: `${periodId}-${indicateurValeurType}`,
+          meta: { period, indicateurValeurType },
           cell: (cellContext) => {
             return (
               <IndicateurValeurCell
                 cell={cellContext}
                 indicateurValeurType={indicateurValeurType}
-                year={year}
+                period={period}
                 isReadonly={isReadonly || isUnsetReference}
               />
             );

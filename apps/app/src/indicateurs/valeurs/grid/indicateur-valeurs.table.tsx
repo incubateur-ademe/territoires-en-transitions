@@ -5,6 +5,7 @@ import { useUpdateDiagnosticIndicateursValeurs } from '@/app/demarches/pcaet/dia
 import { appLabels } from '@/app/labels/catalog';
 import { useAutosaveStatus } from '@/app/utils/react-query/autosave-status/use-autosave-status';
 import { useTable } from '@tanstack/react-table';
+import { toAnnualIndicateurYear } from '@tet/domain/indicateurs';
 import { AutosaveBadge, cn, Table } from '@tet/ui';
 import { CSSProperties, JSX, useMemo, useRef } from 'react';
 import { IndicateurValeursTableBody } from './indicateur-valeurs.table-body';
@@ -87,9 +88,15 @@ export const IndicateurValeursTable = ({
     useUpdateDiagnosticIndicateursValeurs(demarcheId, autosaveKey);
 
   const updateIndicateurValeurs: IndicateurValeursTableMeta['updateIndicateurValeurs'] =
-    async ({ indicateurId, year, field, value }) => {
+    async ({ indicateurId, period, field, value }) => {
       if (isReadonly) return false;
       try {
+        // L'API du diagnostic PCAET conserve son contrat annuel.
+        const year = toAnnualIndicateurYear(
+          period.periodicite,
+          period.dateDebut,
+          'Diagnostic PCAET'
+        );
         await mutateIndicateurValeurs({
           valeurs: [{ indicateurId, year, field, value }],
         });
