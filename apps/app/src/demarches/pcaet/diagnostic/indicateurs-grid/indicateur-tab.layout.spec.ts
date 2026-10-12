@@ -2,7 +2,13 @@ import {
   PCAET_DIAGNOSTIC_INDICATEURS,
   type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriods,
+} from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
+import { fakeRow } from '../../../../indicateurs/valeurs/grid/__tests__/grid-fixtures';
+import { buildDiagnosticIndicateurTableRows } from './diagnostic-indicateur-table.adapter';
 import { buildIndicateurValeursTableSections } from './indicateur-tab.layout';
 
 const byCode = (code: string): PcaetDiagnosticIndicateurParentConfig => {
@@ -37,8 +43,7 @@ describe('buildIndicateurValeursTableSections', () => {
     ]);
     expect(
       sections[0].tables[0].rows.every(
-        (row) =>
-          row.optionalYears !== 'all' && row.optionalYears.includes(2050)
+        (row) => row.optionalYears !== 'all' && row.optionalYears.includes(2050)
       )
     ).toBe(true);
   });
@@ -123,4 +128,63 @@ describe('buildIndicateurValeursTableSections', () => {
 
     expect(sections).toEqual([]);
   });
+});
+
+describe('obligations des valeurs du diagnostic PCAET', () => {
+  const period = (year: number) =>
+    IndicateurPeriods.parse(IndicateurPeriodiciteEnum.ANNUELLE, String(year));
+  const buildRow = (
+    optionalYears: readonly number[] | 'all',
+    isApplicable = true
+  ) => {
+    const fixture = fakeRow({
+      indicateurId: 12,
+      indicateurLabel: 'Résidentiel',
+    });
+    return buildDiagnosticIndicateurTableRows({
+      id: 'emissions_ges',
+      title: 'Émissions GES',
+      isOptional: false,
+      rows: [
+        {
+          label: 'Résidentiel',
+          indicateurDefinitionId: 'cae_63.b',
+          optionalYears,
+        },
+      ],
+      indicateurDefinitions: [
+        {
+          ...fixture.indicateurDefinition,
+          identifiantReferentiel: 'cae_63.b',
+          isApplicable,
+        },
+      ],
+      indicateurValeurs: [],
+    })[0];
+  };
+
+  it.each([
+    { year: 2030, required: true },
+    { year: 2050, required: false },
+  ])('exige la valeur de $year : $required', ({ year, required }) => {
+    expect(buildRow([2050]).isValeurRequired(period(year))).toBe(required);
+  });
+
+  it("réclame la référence tant qu'elle n'est pas choisie", () => {
+    expect(buildRow([2050]).isValeurRequired(null)).toBe(true);
+  });
+
+  it.each([period(2030), null])(
+    'ne réclame aucune valeur pour une ligne facultative',
+    (period) => {
+      expect(buildRow('all').isValeurRequired(period)).toBe(false);
+    }
+  );
+
+  it.each([period(2030), null])(
+    'ne réclame aucune valeur pour un indicateur non applicable',
+    (period) => {
+      expect(buildRow([], false).isValeurRequired(period)).toBe(false);
+    }
+  );
 });

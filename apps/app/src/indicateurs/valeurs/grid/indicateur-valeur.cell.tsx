@@ -5,7 +5,6 @@ import { CellContext } from '@tanstack/react-table';
 import {
   IndicateurPeriod,
   IndicateurPeriods,
-  toAnnualIndicateurYear,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
 import { cn, Input, TableCell, VisibleWhen } from '@tet/ui';
@@ -28,6 +27,7 @@ type IndicateurValeurCellProps = {
   indicateurValeurType: Extract<IndicateurValeurType, 'resultat' | 'objectif'>;
   period: IndicateurPeriod | null;
   isReadonly?: boolean;
+  isRequired: boolean;
 };
 
 const fieldAriaLabel = (field: PcaetIndicateurValeurType): string =>
@@ -41,22 +41,9 @@ export const IndicateurValeurCell = memo(
     indicateurValeurType,
     period,
     isReadonly = false,
+    isRequired,
   }: IndicateurValeurCellProps): ReactNode => {
-    const { indicateurId, indicateurValeurs, optionalYears, isApplicable } =
-      cell.row.original;
-    // Un indicateur non applicable ne réclame plus rien : le marqueur de
-    // valeur requise disparaît avec la saisie.
-    const isOptional =
-      optionalYears === 'all' ||
-      (period !== null &&
-        optionalYears?.includes(
-          toAnnualIndicateurYear(
-            period.periodicite,
-            period.dateDebut,
-            'Diagnostic PCAET'
-          )
-        ));
-    const isRequired = isApplicable && !isOptional;
+    const { indicateurId, indicateurValeurs, isApplicable } = cell.row.original;
 
     const periodKey = period === null ? null : IndicateurPeriods.key(period);
     const indicateurValeur =
@@ -104,7 +91,7 @@ export const IndicateurValeurCell = memo(
     });
 
     // Chaque sous-colonne se referme à droite : sans quoi le résultat et
-    // l'objectif d'une même année, comme l'année de référence qui n'a qu'un
+    // l'objectif d'une même période, comme la référence qui n'a qu'un
     // résultat, se touchaient sans séparateur.
     const cellClassName =
       'relative border-b border-r border-grey-3 whitespace-nowrap';
