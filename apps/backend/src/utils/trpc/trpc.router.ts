@@ -79,8 +79,11 @@ export class TrpcRouter {
   async applyMiddleware(app: INestApplication) {
     this.logger.log(`Applying trpc middleware`);
 
+    // `/api/trpc` : appels navigateur relayés par l'origine de l'app (le proxy
+    // route `app.…/api/*` vers le backend sans réécrire le chemin).
+    // `/trpc` : client serveur de l'app, site et appels directs.
     app.use(
-      `/trpc`,
+      ['/trpc', '/api/trpc'],
       createExpressMiddleware({
         router: this.appRouter,
         createContext: (opts) => this.trpc.createContext(opts),

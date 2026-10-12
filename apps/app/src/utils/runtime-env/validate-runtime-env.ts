@@ -14,6 +14,7 @@ const runtimeEnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
   SUPABASE_ANON_KEY: z.string().min(1),
   BACKEND_URL: z.string().url(),
+  BACKEND_BROWSER_URL: z.string().url().optional(),
   APP_URL: z.string().url(),
   ENV_NAME: z.string().min(1),
 });

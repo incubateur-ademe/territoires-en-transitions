@@ -20,8 +20,8 @@ import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { useEffect, useState } from 'react';
 import { listenForCrossTabQueryInvalidation } from '../react-query/cross-tab-invalidation';
 import {
+  getBrowserTrpcUrl,
   getTrpcLoggerLink,
-  getTrpcUrl,
   setCorrelationIdInContextAndGetHeader,
 } from './trpc.utils';
 export type { AppRouter };
@@ -52,7 +52,7 @@ export type TRPCUseMutationResult<TVariables, TData> = UseMutationResult<
 >;
 
 const CLIENT_HTTP_LINK = httpLink({
-  url: getTrpcUrl(),
+  url: getBrowserTrpcUrl(),
   headers: (opts) => setCorrelationIdInContextAndGetHeader(opts),
   fetch: (url, options) => {
     return fetch(url, {

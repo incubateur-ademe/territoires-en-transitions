@@ -24,6 +24,13 @@ export const ENV = {
   get backend_url() {
     return getPublicEnv().BACKEND_URL;
   },
+  // URL du backend vue par le navigateur (cf. `BACKEND_BROWSER_URL`). Le
+  // serveur Next continue d'appeler `backend_url` directement.
+  get backend_browser_url() {
+    return (
+      getPublicEnv().BACKEND_BROWSER_URL ?? getPublicEnv().BACKEND_URL
+    )?.replace(/\/+$/, '');
+  },
   get crisp_website_id() {
     return getPublicEnv().CRISP_WEBSITE_ID;
   },

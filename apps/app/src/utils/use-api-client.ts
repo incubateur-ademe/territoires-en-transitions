@@ -40,7 +40,7 @@ export const useApiClient = () => {
 
   // construit l'url pour la route et les paramètres donnés
   const makeUrl = ({ route, params }: API_ARGS) => {
-    const url = new URL(`${ENV.backend_url}/api/v1${route}`);
+    const url = new URL(`${ENV.backend_browser_url}/api/v1${route}`);
     if (params) {
       Object.entries(params).forEach(([name, value]) => {
         if (!isNil(value))

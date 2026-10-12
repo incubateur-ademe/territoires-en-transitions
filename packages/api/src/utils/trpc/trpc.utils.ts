@@ -1,9 +1,16 @@
 import { getErrorMessage } from '@tet/domain/utils';
 import { loggerLink, Operation } from '@trpc/client';
 import { ENV } from '../../environmentVariables';
+import { getPublicEnv } from '../../public-env';
 
 export function getTrpcUrl() {
   return `${ENV.backend_url ?? 'http://localhost:8080'}/trpc`;
+}
+
+/** Comme `getTrpcUrl`, mais par l'origine de l'app si `BACKEND_BROWSER_URL` est posée. */
+export function getBrowserTrpcUrl() {
+  const sameOriginUrl = getPublicEnv().BACKEND_BROWSER_URL?.replace(/\/+$/, '');
+  return sameOriginUrl ? `${sameOriginUrl}/api/trpc` : getTrpcUrl();
 }
 
 export const getTrpcLoggerLink = () =>
