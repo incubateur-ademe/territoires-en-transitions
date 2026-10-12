@@ -35,6 +35,10 @@ export const PUBLIC_ENV_KEYS = [
   'SUPABASE_URL',
   'SUPABASE_ANON_KEY',
   'BACKEND_URL',
+  // Base des appels *navigateur* au backend quand ils passent par l'origine de
+  // l'app (proxy `/api/*` → backend), ex. `https://app.preprod.…`. Absente :
+  // le navigateur appelle `BACKEND_URL` directement.
+  'BACKEND_BROWSER_URL',
   'APP_URL',
   'SITE_URL',
   'CRISP_WEBSITE_ID',
