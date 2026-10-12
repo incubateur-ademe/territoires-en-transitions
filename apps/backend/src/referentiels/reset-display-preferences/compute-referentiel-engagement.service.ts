@@ -61,6 +61,9 @@ export class ComputeReferentielEngagementService {
         .select({
           referentiel: actionRelationTable.referentiel,
           actionStatutCount: count(),
+          // une ligne `non_renseigne` ne porte une réponse que si elle encode
+          // le faux statut « non concerné » (`concerne = false`)
+          filledActionStatutCount: sql<number>`count(*) filter (where ${actionStatutTable.avancement} <> 'non_renseigne' or not ${actionStatutTable.concerne})`,
           maxModifiedAt: max(actionStatutTable.modifiedAt),
         })
         .from(actionStatutTable)
@@ -101,6 +104,7 @@ export class ComputeReferentielEngagementService {
           r.referentiel,
           {
             actionStatutCount: Number(r.actionStatutCount ?? 0),
+            filledActionStatutCount: Number(r.filledActionStatutCount ?? 0),
             maxModifiedAt: r.maxModifiedAt,
           },
         ])
@@ -130,7 +134,7 @@ export class ComputeReferentielEngagementService {
           ),
         });
         const hasData =
-          actionStatutCount > 0 ||
+          (statut?.filledActionStatutCount ?? 0) > 0 ||
           (commentaire?.nonEmptyCommentaireCount ?? 0) > 0;
         niveauxRemplissage[ref] = isEngaged
           ? 'engage'
