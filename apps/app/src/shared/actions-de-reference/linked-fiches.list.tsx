@@ -16,12 +16,7 @@ const LinkedFichesList = ({
   currentCollectivite,
   currentUserId,
 }: LinkedFichesListProps): JSX.Element => {
-  const fichesOfOtherCollectivites = fiches.filter(
-    ({ collectiviteId }) =>
-      collectiviteId !== currentCollectivite.collectiviteId
-  );
-
-  if (fichesOfOtherCollectivites.length === 0) {
+  if (fiches.length === 0) {
     return (
       <p className="mb-0 text-grey-8">
         {appLabels.actionDeReferenceFichesLieesVide}
@@ -31,7 +26,7 @@ const LinkedFichesList = ({
 
   return (
     <ul className="m-0 flex list-none flex-col gap-4 p-0">
-      {fichesOfOtherCollectivites.map((fiche) => (
+      {fiches.map((fiche) => (
         <li key={fiche.id}>
           <FicheCard
             ficheAction={fiche}
