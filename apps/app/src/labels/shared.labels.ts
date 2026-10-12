@@ -22,6 +22,21 @@ export const sharedLabels = {
 
   beta: 'Bêta',
 
+  visiteGuideeEtape: ({
+    index,
+    size,
+  }: {
+    index: number;
+    size: number;
+  }): string => `Étape ${index} sur ${size}`,
+  visiteGuidee: 'Visite guidée',
+  visiteGuideePasser: 'Passer la visite',
+  visiteGuideeQuitter: 'Quitter la visite',
+  precedent: 'Précédent',
+  suivant: 'Suivant',
+  terminer: 'Terminer',
+  visiteGuideeProgression: 'Progression de la visite',
+
   /** Filtres */
   filtrer: 'Filtrer',
   filtrerSur: 'Filtrer sur',

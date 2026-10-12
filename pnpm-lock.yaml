@@ -768,7 +768,11 @@ importers:
         specifier: 4.1.11
         version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@24.1.0)(@vitest/browser-playwright@4.1.11)(jsdom@26.1.0(canvas@3.2.0))(vite@8.1.2(@types/node@24.1.0)(esbuild@0.19.12)(jiti@2.7.0)(less@4.5.1)(sass-embedded@1.105.0)(sass@1.105.0)(terser@5.51.2)(yaml@2.9.1))
 
-  apps/app: {}
+  apps/app:
+    dependencies:
+      react-joyride:
+        specifier: 3.2.0
+        version: 3.2.0(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
   apps/backend: {}
 
@@ -1774,11 +1778,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.hirok.io'
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.hirok.io'
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild/aix-ppc64@0.19.12':
     resolution: {integrity: sha512-bmoCYyWdEL3wDQIVbcyzRyeKLgk2WtWLTWz1ZIAZF/EGbNOwSA6ew3PftJ1PqMiOOGu0OyFMzG53L0zqIpPeNA==}
@@ -2416,6 +2420,9 @@ packages:
   '@fast-csv/parse@4.3.6':
     resolution: {integrity: sha512-uRsLYksqpbDmWaSmzvJcuApSEe38+6NQZBUsuAyMZKqHxH0g1wcJgsKUvN3WC8tewaqFjBMMGrkHmC+T7k8LvA==}
 
+  '@fastify/deepmerge@3.2.2':
+    resolution: {integrity: sha512-155eqA/WMQdN6gUD4RrhS2K0Pcz2Ou9pQ86L0sipOpP9ONbTA6oYw/hW4VdBjR4egcDHqmWUK9x80oUX7S1mDQ==}
+
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
 
@@ -2436,6 +2443,17 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@gilbarbara/deep-equal@0.4.1':
+    resolution: {integrity: sha512-QF2BGeQjsa59T59XvFdR3is5jrl28Eg0J6giXAC5919bcqvR8XP4B+07tpbs6Y6/IQd4FBncaL2WVXIBgSxt4w==}
+
+  '@gilbarbara/hooks@0.11.0':
+    resolution: {integrity: sha512-CIVazdxqFRplUfm9wZL3/0X1TURJekhPMWGFdWzEmyJrGPiotX2yxA1KiB8N7VnhawIaMtb2Apnda4Y6DRwi2Q==}
+    peerDependencies:
+      react: 16.8 - 19
+
+  '@gilbarbara/types@0.2.2':
+    resolution: {integrity: sha512-QuQDBRRcm1Q8AbSac2W1YElurOhprj3Iko/o+P1fJxUWS4rOGKMVli98OXS7uo4z+cKAif6a+L9bcZFSyauQpQ==}
 
   '@google/genai@2.8.0':
     resolution: {integrity: sha512-pc2ayxqO5+O7AvnHBqpNHIk7PAZkHZgL31tbyx0gJZBSS9qPYiQoqwK7oYOw/ePmG6QY4EMSu+304vD5QlhXAw==}
@@ -10257,6 +10275,9 @@ packages:
     resolution: {integrity: sha512-qP1vozQRI+BMOPcjFzrjXuQvdak2pHNUMZoeG2eRbiSqyvbEf/wQtEOTOX1guk6E3t36RkaqiSt8A/6YElNxLQ==}
     engines: {node: '>=12'}
 
+  is-lite@2.0.0:
+    resolution: {integrity: sha512-70f2BMIQlbSUXVKaZUd9a9fJH3IH1PDckV0m4BIIO4LjnNYvOh4Ng7vXIXEwpA0KDZknRq+7fHwGTu0jIdx28g==}
+
   is-map@2.0.3:
     resolution: {integrity: sha512-1Qed0/Hr2m+YqxnM09CjA2d/i6YZNfF6R2oRAOj36eUdS6qIV/huPJNSEpKbupewFs+ZsJlxsjjPbc0/afW6Lw==}
     engines: {node: '>= 0.4'}
@@ -12564,6 +12585,12 @@ packages:
     peerDependencies:
       react: '*'
 
+  react-innertext@1.1.5:
+    resolution: {integrity: sha512-PWAqdqhxhHIv80dT9znP2KvS+hfkbRovFp4zFYHFFlOoQLRiawIic81gKb3U1wEyJZgMwgs3JoLtwryASRWP3Q==}
+    peerDependencies:
+      '@types/react': '>=0.0.0 <=99'
+      react: '>=0.0.0 <=99'
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -12575,6 +12602,12 @@ packages:
 
   react-is@19.3.0:
     resolution: {integrity: sha512-UpMYezM4v5/18F28aC66AEsjXIgE02kyEMH6yLdgLXu/UTfa1Ntwck/nNLrbqJsEXW7gPb0coNO9FQse9WTovA==}
+
+  react-joyride@3.2.0:
+    resolution: {integrity: sha512-UrA/XWdWElMLNnjZt2eWmPFmpHl1IZ2CeI9XhS+PuEVvfqHMD9U4tavCq1csDAGVoj0YEGfaCDmhZwgNc9yE2g==}
+    peerDependencies:
+      react: 16.8 - 19
+      react-dom: 16.8 - 19
 
   react-leaflet@5.0.0:
     resolution: {integrity: sha512-CWbTpr5vcHw5bt9i4zSlPEVQdTVcML390TjeDG0cK59z1ylexpqC6M1PJFjV8jD7CF+ACBFsLIDs6DRMoLEofw==}
@@ -13126,6 +13159,12 @@ packages:
   screenfull@5.2.0:
     resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
     engines: {node: '>=0.10.0'}
+
+  scroll@3.0.1:
+    resolution: {integrity: sha512-pz7y517OVls1maEzlirKO5nPYle9AXsFzTMNJrRGmT951mzpIBy7sNHOg5o/0MQd/NqliCiWnAi0kZneMPFLcg==}
+
+  scrollparent@2.1.0:
+    resolution: {integrity: sha512-bnnvJL28/Rtz/kz2+4wpBjHzWoEzXhVg/TE8BeVGJHUqE8THNIRnDxDWMktwM+qahvlRdvlLdsQfYe+cuqfZeA==}
 
   secure-compare@3.0.1:
     resolution: {integrity: sha512-AckIIV90rPDcBcglUwXPF3kg0P0qmPsPXAj6BBEENQE1p5yA1xfmDJzfi1Tappj37Pv2mVbKpL3Z1T+Nn7k1Qw==}
@@ -16465,6 +16504,8 @@ snapshots:
       lodash.isundefined: 3.0.1
       lodash.uniq: 4.5.0
 
+  '@fastify/deepmerge@3.2.2': {}
+
   '@floating-ui/core@1.8.0':
     dependencies:
       '@floating-ui/utils': 0.2.12
@@ -16489,6 +16530,17 @@ snapshots:
       tabbable: 6.5.0
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@gilbarbara/deep-equal@0.4.1': {}
+
+  '@gilbarbara/hooks@0.11.0(react@19.2.3)':
+    dependencies:
+      '@gilbarbara/deep-equal': 0.4.1
+      react: 19.2.3
+
+  '@gilbarbara/types@0.2.2':
+    dependencies:
+      type-fest: 4.41.0
 
   '@google/genai@2.8.0':
     dependencies:
@@ -25523,6 +25575,8 @@ snapshots:
 
   is-interactive@2.0.0: {}
 
+  is-lite@2.0.0: {}
+
   is-map@2.0.3: {}
 
   is-negative-zero@2.0.3: {}
@@ -28644,6 +28698,11 @@ snapshots:
     dependencies:
       react: 19.2.3
 
+  react-innertext@1.1.5(@types/react@19.2.3)(react@19.2.3):
+    dependencies:
+      '@types/react': 19.2.3
+      react: 19.2.3
+
   react-is@16.13.1: {}
 
   react-is@17.0.2: {}
@@ -28651,6 +28710,23 @@ snapshots:
   react-is@18.3.1: {}
 
   react-is@19.3.0: {}
+
+  react-joyride@3.2.0(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+    dependencies:
+      '@fastify/deepmerge': 3.2.2
+      '@floating-ui/react-dom': 2.1.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@gilbarbara/deep-equal': 0.4.1
+      '@gilbarbara/hooks': 0.11.0(react@19.2.3)
+      '@gilbarbara/types': 0.2.2
+      is-lite: 2.0.0
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      react-innertext: 1.1.5(@types/react@19.2.3)(react@19.2.3)
+      scroll: 3.0.1
+      scrollparent: 2.1.0
+      use-sync-external-store: 1.7.0(react@19.2.3)
+    transitivePeerDependencies:
+      - '@types/react'
 
   react-leaflet@5.0.0(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
@@ -29346,6 +29422,10 @@ snapshots:
       ajv-keywords: 5.1.0(ajv@8.20.0)
 
   screenfull@5.2.0: {}
+
+  scroll@3.0.1: {}
+
+  scrollparent@2.1.0: {}
 
   secure-compare@3.0.1: {}
 
