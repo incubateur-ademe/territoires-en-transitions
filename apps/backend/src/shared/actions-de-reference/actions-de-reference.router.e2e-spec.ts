@@ -1,4 +1,6 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -19,6 +21,7 @@ import {
 } from '@tet/domain/shared';
 import { eq, inArray } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
+import { actionDeReferenceFicheTable } from './models/action-de-reference-fiche.table';
 import { actionDeReferenceTable } from './models/action-de-reference.table';
 
 type ActionToInsert = Omit<ActionDeReference, 'id'>;
@@ -373,6 +376,222 @@ describe('update-action', () => {
       })
     ).rejects.toThrow(badRequest);
     expect(await readStoredAction(insertedAction.id)).toEqual([insertedAction]);
+  });
+});
+
+describe('update-action-fiches-liees', () => {
+  let ficheId: number;
+  let otherFicheId: number;
+  let sousActionId: number;
+  const unknownFicheId = 2147483647;
+
+  beforeAll(async () => {
+    const { collectivite } = await addTestCollectivite(db);
+    const [fiche, otherFiche] = await db.db
+      .insert(ficheActionTable)
+      .values([
+        { titre: 'Fiche A', collectiviteId: collectivite.id },
+        { titre: 'Fiche B', collectiviteId: collectivite.id },
+      ])
+      .returning();
+    const [sousAction] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Sous-action',
+        parentId: fiche.id,
+        collectiviteId: collectivite.id,
+      })
+      .returning();
+    ficheId = fiche.id;
+    otherFicheId = otherFiche.id;
+    sousActionId = sousAction.id;
+
+    return async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.collectiviteId, collectivite.id));
+    };
+  });
+
+  const insertLinkedActionTo = async (
+    ficheIds: readonly number[]
+  ): Promise<ActionDeReference> => {
+    const { carpoolingAction } = toUniqueActions();
+    const [insertedAction] = await insertActions([carpoolingAction]);
+    if (ficheIds.length > 0) {
+      await db.db.insert(actionDeReferenceFicheTable).values(
+        ficheIds.map((linkedFicheId) => ({
+          actionDeReferenceId: insertedAction.id,
+          ficheId: linkedFicheId,
+        }))
+      );
+    }
+    return insertedAction;
+  };
+
+  const readLinkedFicheIds = async (
+    id: ActionDeReferenceId
+  ): Promise<number[]> => {
+    const rows = await db.db
+      .select({ ficheId: actionDeReferenceFicheTable.ficheId })
+      .from(actionDeReferenceFicheTable)
+      .where(eq(actionDeReferenceFicheTable.actionDeReferenceId, id));
+    return rows.map(({ ficheId: linkedFicheId }) => linkedFicheId).sort();
+  };
+
+  it("remplace les fiches liées et les champs dans la même modification, et renvoie l'id", async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    expect({
+      updateOutput: await caller.shared.actionsDeReference.update({
+        id: insertedAction.id,
+        titre: `${insertedAction.titre} modifié`,
+        ficheIds: [otherFicheId],
+      }),
+      storedAction: await readStoredAction(insertedAction.id),
+      linkedFicheIds: await readLinkedFicheIds(insertedAction.id),
+    }).toEqual({
+      updateOutput: { id: insertedAction.id },
+      storedAction: [
+        { ...insertedAction, titre: `${insertedAction.titre} modifié` },
+      ],
+      linkedFicheIds: [otherFicheId],
+    });
+  });
+
+  it('lie les fiches envoyées à une action qui n en avait aucune', async () => {
+    const insertedAction = await insertLinkedActionTo([]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await caller.shared.actionsDeReference.update({
+      id: insertedAction.id,
+      ficheIds: [ficheId, otherFicheId],
+    });
+
+    expect(await readLinkedFicheIds(insertedAction.id)).toEqual(
+      [ficheId, otherFicheId].sort()
+    );
+  });
+
+  it('dédoublonne les ids de fiche envoyés', async () => {
+    const insertedAction = await insertLinkedActionTo([]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await caller.shared.actionsDeReference.update({
+      id: insertedAction.id,
+      ficheIds: [ficheId, ficheId, otherFicheId, ficheId],
+    });
+
+    expect(await readLinkedFicheIds(insertedAction.id)).toEqual(
+      [ficheId, otherFicheId].sort()
+    );
+  });
+
+  it("garde les fiches liées quand ficheIds n'est pas envoyé", async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId, otherFicheId]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await caller.shared.actionsDeReference.update({
+      id: insertedAction.id,
+      titre: `${insertedAction.titre} modifié`,
+    });
+
+    expect(await readLinkedFicheIds(insertedAction.id)).toEqual(
+      [ficheId, otherFicheId].sort()
+    );
+  });
+
+  it('retire toutes les fiches liées quand ficheIds est vide', async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId, otherFicheId]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await caller.shared.actionsDeReference.update({
+      id: insertedAction.id,
+      ficheIds: [],
+    });
+
+    expect(await readLinkedFicheIds(insertedAction.id)).toEqual([]);
+  });
+
+  it('refuse en BAD_REQUEST une fiche inconnue, sans modifier les champs ni les fiches liées', async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await expect(
+      caller.shared.actionsDeReference.update({
+        id: insertedAction.id,
+        titre: `${insertedAction.titre} modifié`,
+        ficheIds: [otherFicheId, unknownFicheId],
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+        message: "Une des fiches à lier n'existe pas",
+      })
+    );
+
+    expect({
+      storedAction: await readStoredAction(insertedAction.id),
+      linkedFicheIds: await readLinkedFicheIds(insertedAction.id),
+    }).toEqual({
+      storedAction: [insertedAction],
+      linkedFicheIds: [ficheId],
+    });
+  });
+
+  it('refuse en BAD_REQUEST une sous-action, sans modifier les champs ni les fiches liées', async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await expect(
+      caller.shared.actionsDeReference.update({
+        id: insertedAction.id,
+        titre: `${insertedAction.titre} modifié`,
+        ficheIds: [otherFicheId, sousActionId],
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        code: 'BAD_REQUEST',
+        message: 'Une des fiches à lier est une sous-action',
+      })
+    );
+
+    expect({
+      storedAction: await readStoredAction(insertedAction.id),
+      linkedFicheIds: await readLinkedFicheIds(insertedAction.id),
+    }).toEqual({
+      storedAction: [insertedAction],
+      linkedFicheIds: [ficheId],
+    });
+  });
+
+  it("refuse en FORBIDDEN un utilisateur qui n'est pas super admin, sans modifier les fiches liées", async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId]);
+    const caller = router.createCaller({ user: userWithoutRole });
+
+    await expect(
+      caller.shared.actionsDeReference.update({
+        id: insertedAction.id,
+        ficheIds: [otherFicheId],
+      })
+    ).rejects.toThrow(expect.objectContaining({ code: 'FORBIDDEN' }));
+
+    expect(await readLinkedFicheIds(insertedAction.id)).toEqual([ficheId]);
+  });
+
+  it("refuse en BAD_REQUEST un id de fiche qui n'est pas un entier positif", async () => {
+    const insertedAction = await insertLinkedActionTo([ficheId]);
+    const caller = router.createCaller({ user: superAdmin });
+
+    await expect(
+      caller.shared.actionsDeReference.update({
+        id: insertedAction.id,
+        ficheIds: [0],
+      })
+    ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
+
+    expect(await readLinkedFicheIds(insertedAction.id)).toEqual([ficheId]);
   });
 });
 

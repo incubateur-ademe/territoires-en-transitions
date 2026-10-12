@@ -5,8 +5,11 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { SidePanel } from '../../ui/layout/side-panel/side-panel';
 import { SidePanelProvider } from '../../ui/layout/side-panel/side-panel.context';
 import type {
+  ActionDeReferenceFiche,
+  ActionDeReferenceFiches,
   ActionDeReferenceUpdate,
   UpdateActionDeReferenceFormProps,
+  UseListFichesActionDeReference,
 } from './actions-de-reference.contract';
 import { isolationComblesAction } from './actions-de-reference.fixture';
 import { UpdateActionDeReferenceForm } from './update-action-de-reference.form';
@@ -42,6 +45,24 @@ vi.mock('./data/use-update-action-de-reference', () => ({
     isPending: false,
   }),
 }));
+
+const listFichesMock = vi.hoisted(() =>
+  vi.fn<UseListFichesActionDeReference>()
+);
+
+vi.mock('./data/use-list-fiches-action-de-reference', () => ({
+  useListFichesActionDeReference: listFichesMock,
+}));
+
+const toFicheStub = (id: number): ActionDeReferenceFiche =>
+  ({ id } as ActionDeReferenceFiche);
+
+const toLoadedFiches = (
+  ficheIds: readonly number[]
+): ActionDeReferenceFiches => ({
+  status: 'loaded',
+  fiches: ficheIds.map(toFicheStub),
+});
 
 vi.mock('next/navigation', () => ({
   usePathname: (): string => '/collectivite/1/actions-reference',
@@ -150,6 +171,8 @@ const expectPanelKeptOpenWithTypedTitreAfterRejectedUpdate =
 beforeEach(() => {
   updateActionMock.mockReset();
   updateActionMock.mockImplementation(acceptUpdate);
+  listFichesMock.mockReset();
+  listFichesMock.mockReturnValue(toLoadedFiches([]));
 });
 
 describe('modifier-action', () => {
@@ -317,6 +340,89 @@ describe('modifier-action-validation', () => {
       },
       updateCallbacks
     );
+  });
+});
+
+describe('modifier-action-fiches-liees', () => {
+  const FICHES_LIEES_ERROR_MESSAGE =
+    'Saisissez des identifiants de fiche séparés par des virgules';
+  const RETRY = 'Réessayer';
+
+  const getFichesLieesField = (displayedValue: string): HTMLElement =>
+    screen.getByDisplayValue(displayedValue);
+
+  it('préremplit le champ avec les identifiants des fiches liées', () => {
+    listFichesMock.mockReturnValue(toLoadedFiches([11, 12]));
+
+    renderForm();
+
+    expect(getFichesLieesField('11, 12')).toHaveProperty('tagName', 'INPUT');
+  });
+
+  it('envoie les identifiants saisis dans ficheIds', async () => {
+    listFichesMock.mockReturnValue(toLoadedFiches([11]));
+    renderForm();
+
+    await typeInField(getFichesLieesField('11'), '21, 22');
+    await submitForm();
+
+    expect(updateActionMock).toHaveBeenCalledExactlyOnceWith(
+      { ...isolationComblesAction, ficheIds: [21, 22] },
+      updateCallbacks
+    );
+  });
+
+  it('envoie ficheIds vide quand le champ est vidé', async () => {
+    listFichesMock.mockReturnValue(toLoadedFiches([11]));
+    renderForm();
+
+    await typeInField(getFichesLieesField('11'), '');
+    await submitForm();
+
+    expect(updateActionMock).toHaveBeenCalledExactlyOnceWith(
+      { ...isolationComblesAction, ficheIds: [] },
+      updateCallbacks
+    );
+  });
+
+  it("n'envoie pas ficheIds quand le champ n'a pas changé", async () => {
+    listFichesMock.mockReturnValue(toLoadedFiches([11]));
+    renderForm();
+
+    await typeInField(getTitreField(), TYPED_TITRE);
+    await submitForm();
+
+    expect(updateActionMock).toHaveBeenCalledTimes(1);
+    expect(updateActionMock.mock.calls[0][0]).not.toHaveProperty('ficheIds');
+  });
+
+  it("refuse une saisie qui n'est pas une liste d'identifiants et bloque l'enregistrement", async () => {
+    renderForm();
+
+    await typeInField(getFichesLieesField(''), '21, abc');
+    expect(screen.queryByText(FICHES_LIEES_ERROR_MESSAGE)).not.toBeNull();
+
+    await submitForm();
+    expect(updateActionMock).not.toHaveBeenCalled();
+  });
+
+  it("n'affiche pas le formulaire tant que les fiches liées se chargent", () => {
+    listFichesMock.mockReturnValue({ status: 'loading' });
+
+    renderForm();
+
+    expect(screen.queryByRole('button', { name: SAVE })).toBeNull();
+  });
+
+  it('propose de réessayer quand les fiches liées ne se chargent pas', () => {
+    const retry = vi.fn();
+    listFichesMock.mockReturnValue({ status: 'error', retry });
+    renderForm();
+
+    fireEvent.click(screen.getByRole('button', { name: RETRY }));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: SAVE })).toBeNull();
   });
 });
 

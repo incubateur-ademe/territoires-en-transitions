@@ -81,6 +81,11 @@ export const sharedLabels = {
   actionDeReferenceDescriptionLabel: 'Description',
   actionDeReferenceLevierLabel: 'Levier',
   actionDeReferenceCategorieLabel: 'Catégorie',
+  actionDeReferenceFichesLieesLabel: 'Fiches liées',
+  actionDeReferenceFichesLieesHint:
+    'Identifiants des fiches données en exemple, séparés par des virgules',
+  actionDeReferenceFichesLieesErreur:
+    'Saisissez des identifiants de fiche séparés par des virgules',
   actionDeReferenceModifier: (titre: string): string =>
     `Modifier l'action « ${titre} »`,
   actionDeReferenceModificationTitre: "Modifier l'action de référence",

@@ -1,6 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import type { CloseRequestOutcome } from '@/app/ui/layout/side-panel/side-panel.contract';
+import { LoadingStatus } from '@/app/ui/shared/loading-status';
+import { ErrorCard } from '@/app/utils/error/error.card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   actionDeReferenceSchema,
@@ -15,13 +17,25 @@ import { type JSX, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { match } from 'ts-pattern';
 import * as z from 'zod/mini';
-import type { UpdateActionDeReferenceFormComponent } from './actions-de-reference.contract';
+import type {
+  UpdateActionDeReferenceFormComponent,
+  UpdateActionDeReferenceFormProps,
+} from './actions-de-reference.contract';
+import { useListFichesActionDeReference } from './data/use-list-fiches-action-de-reference';
 import { useUpdateActionDeReference } from './data/use-update-action-de-reference';
 import { DiscardChangesConfirmModal } from './discard-changes-confirm.modal';
+import { isFicheIdsText, toFicheIds, toFicheIdsText } from './fiche-ids.text';
 
-const actionDeReferenceFieldsSchema = z.omit(actionDeReferenceSchema, {
-  id: true,
-});
+const actionDeReferenceFieldsSchema = z.extend(
+  z.omit(actionDeReferenceSchema, { id: true }),
+  {
+    ficheIds: z.string().check(
+      z.refine(isFicheIdsText, {
+        error: appLabels.actionDeReferenceFichesLieesErreur,
+      })
+    ),
+  }
+);
 
 type ActionDeReferenceFields = z.infer<typeof actionDeReferenceFieldsSchema>;
 
@@ -110,17 +124,22 @@ const useDiscardChangesGuard = (
   };
 };
 
-const UpdateActionDeReferenceForm: UpdateActionDeReferenceFormComponent = ({
+type UpdateActionDeReferenceFieldsProps = UpdateActionDeReferenceFormProps & {
+  readonly initialFicheIds: readonly number[];
+};
+
+const UpdateActionDeReferenceFields = ({
   action,
   onUpdated,
-}) => {
+  initialFicheIds,
+}: UpdateActionDeReferenceFieldsProps): JSX.Element => {
   const { updateAction, isPending } = useUpdateActionDeReference();
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
   } = useForm<ActionDeReferenceFields>({
     resolver: zodResolver(actionDeReferenceFieldsSchema, {
       error: toFieldErrorMessage,
@@ -131,14 +150,26 @@ const UpdateActionDeReferenceForm: UpdateActionDeReferenceFormComponent = ({
       description: action.description,
       levier: action.levier,
       categorie: action.categorie,
+      ficheIds: toFicheIdsText(initialFicheIds),
     },
   });
 
   const { isDiscardConfirmationOpen, discardChanges, keepEditing } =
     useDiscardChangesGuard(isDirty);
 
-  const saveFields = (fields: ActionDeReferenceFields): void => {
-    updateAction({ id: action.id, ...fields }, { onUpdated });
+  const saveFields = ({
+    ficheIds,
+    ...actionFields
+  }: ActionDeReferenceFields): void => {
+    const actionChanges = { id: action.id, ...actionFields };
+    if (!dirtyFields.ficheIds) {
+      updateAction(actionChanges, { onUpdated });
+      return;
+    }
+    updateAction(
+      { ...actionChanges, ficheIds: toFicheIds(ficheIds) },
+      { onUpdated }
+    );
   };
 
   return (
@@ -185,6 +216,14 @@ const UpdateActionDeReferenceForm: UpdateActionDeReferenceFormComponent = ({
             />
           )}
         />
+        <Field
+          title={appLabels.actionDeReferenceFichesLieesLabel}
+          hint={appLabels.actionDeReferenceFichesLieesHint}
+          state={errors.ficheIds ? 'error' : 'default'}
+          message={errors.ficheIds?.message}
+        >
+          <Input type="text" {...register('ficheIds')} />
+        </Field>
         <div className="flex justify-end">
           <Button type="submit" disabled={isPending}>
             {appLabels.enregistrer}
@@ -198,6 +237,31 @@ const UpdateActionDeReferenceForm: UpdateActionDeReferenceFormComponent = ({
       />
     </>
   );
+};
+
+const UpdateActionDeReferenceForm: UpdateActionDeReferenceFormComponent = ({
+  action,
+  onUpdated,
+}) => {
+  const fiches = useListFichesActionDeReference(action.id);
+
+  return match(fiches)
+    .with({ status: 'loading' }, () => <LoadingStatus />)
+    .with({ status: 'error' }, ({ retry }) => (
+      <ErrorCard
+        title={appLabels.uneErreurEstSurvenue}
+        retry={retry}
+        retryLabel={appLabels.reessayer}
+      />
+    ))
+    .with({ status: 'loaded' }, ({ fiches: linkedFiches }) => (
+      <UpdateActionDeReferenceFields
+        action={action}
+        onUpdated={onUpdated}
+        initialFicheIds={linkedFiches.map(({ id }) => id)}
+      />
+    ))
+    .exhaustive();
 };
 
 export { UpdateActionDeReferenceForm };
