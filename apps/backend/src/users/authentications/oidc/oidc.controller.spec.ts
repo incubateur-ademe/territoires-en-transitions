@@ -17,10 +17,9 @@ import { PROCONNECT_SCOPES } from './provider-configs/proconnect.config';
 import { LinkOidcIdentityToUserService } from './link-oidc-identity-to-user/link-oidc-identity-to-user.service';
 import { OidcSessionTicketService } from './oidc-session-ticket/oidc-session-ticket.service';
 import { AuthRole } from '../../models/auth.models';
-import { supabaseUrlToAuthCookieName } from '@tet/domain/utils';
 
 const APP_URL = 'https://app.territoiresentransitions.fr';
-const SUPABASE_URL = 'http://127.0.0.1:54321';
+const SUPABASE_AUTH_COOKIE_NAME = 'sb-tet-test-auth-token';
 const ISSUER = 'https://fca.integ.example.gouv.fr/api/v2';
 const REDIRECT_URI =
   'https://api.territoiresentransitions.fr/api/v1/proconnect/callback';
@@ -30,6 +29,7 @@ const POST_LOGOUT_REDIRECT_URI =
 const baseConfiguration: Record<string, unknown> = {
   APP_URL,
   SUPABASE_URL: 'http://127.0.0.1:54321',
+  SUPABASE_AUTH_COOKIE_NAME,
   PRO_CONNECT_ENABLED: true,
   PRO_CONNECT_ISSUER: ISSUER,
   PRO_CONNECT_CLIENT_ID: 'test-client-id',
@@ -152,13 +152,12 @@ function getCookieValue(setCookie: string): string {
  * c'est `ConvertJwtToAuthUserService` (mocké par DI) qui le résout en compte.
  */
 function supabaseAuthCookie(accessToken: string): string {
-  const name = supabaseUrlToAuthCookieName(SUPABASE_URL);
   const value =
     'base64-' +
     Buffer.from(JSON.stringify({ access_token: accessToken }), 'utf8').toString(
       'base64url'
     );
-  return `${name}=${value}`;
+  return `${SUPABASE_AUTH_COOKIE_NAME}=${value}`;
 }
 
 describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue (R13)", () => {

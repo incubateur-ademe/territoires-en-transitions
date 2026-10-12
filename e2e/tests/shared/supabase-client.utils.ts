@@ -57,6 +57,9 @@ export class SupabaseClient {
    * Construit le nom du cookie à partir de l'URL Supabase
    */
   getCookieName(url: string): string {
+    if (process.env.SUPABASE_AUTH_COOKIE_NAME) {
+      return process.env.SUPABASE_AUTH_COOKIE_NAME;
+    }
     const projectRef = this.getSupabaseProjectRef(url);
     return `sb-${projectRef}-auth-token`;
   }

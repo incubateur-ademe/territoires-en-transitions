@@ -15,8 +15,14 @@ export function getCookieOptions(
 
   const rootDomain = `.${getRootDomain(domain)}`;
 
+  // Nom distinct par environnement : avec GoTrue self-hosté, le nom par défaut
+  // (`sb-<1er label de SUPABASE_URL>-auth-token`) est le même partout et les
+  // environnements s'écrasent leurs sessions sur le domaine racine.
+  // Absent : nom par défaut de @supabase/ssr (prod sur Supabase cloud).
+  const name = process.env.SUPABASE_AUTH_COOKIE_NAME;
+
   return {
-    // name: 'sb-tet-auth-token',
+    ...(name && { name }),
     domain: rootDomain,
     maxAge: 100000000,
     path: '/',

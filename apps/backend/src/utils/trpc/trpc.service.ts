@@ -273,7 +273,8 @@ export class TrpcService {
 
     const supabaseJwtFromCookie = await extractAccessTokenFromSupabaseCookie(
       req,
-      supabaseUrl
+      supabaseUrl,
+      this.config.get('SUPABASE_AUTH_COOKIE_NAME')
     );
 
     const supabaseJwt =

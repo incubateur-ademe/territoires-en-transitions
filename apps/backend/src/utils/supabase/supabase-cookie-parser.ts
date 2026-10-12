@@ -16,11 +16,13 @@ const BASE64_PREFIX = 'base64-';
  */
 export async function extractAccessTokenFromSupabaseCookie(
   req: Request,
-  supabaseUrl: string
+  supabaseUrl: string,
+  cookieName?: string
 ): Promise<string | null> {
   const cookies = parseCookieHeader(req.headers.cookie ?? '');
 
-  const supabaseAuthCookieName = supabaseUrlToAuthCookieName(supabaseUrl);
+  const supabaseAuthCookieName =
+    cookieName ?? supabaseUrlToAuthCookieName(supabaseUrl);
 
   const base64CookieValue = await combineChunks(
     supabaseAuthCookieName,

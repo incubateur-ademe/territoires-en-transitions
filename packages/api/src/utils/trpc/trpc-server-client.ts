@@ -15,6 +15,7 @@ import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { supabaseUrlToAuthCookieName } from '@tet/domain/utils';
 import { cookies } from 'next/headers';
 import { ENV } from '../../environmentVariables';
+import { getCookieOptions } from '../supabase/cookie-options';
 import {
   getTrpcLoggerLink,
   getTrpcUrl,
@@ -28,7 +29,8 @@ async function getSupabaseCookieHeader() {
     throw new Error('SUPABASE_URL is not defined');
   }
 
-  const supabaseCookieName = supabaseUrlToAuthCookieName(ENV.supabase_url);
+  const supabaseCookieName =
+    getCookieOptions().name ?? supabaseUrlToAuthCookieName(ENV.supabase_url);
 
   const mainCookie = cookieStore.get(supabaseCookieName);
 
