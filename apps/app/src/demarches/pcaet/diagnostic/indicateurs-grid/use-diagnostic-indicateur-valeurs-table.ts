@@ -6,13 +6,16 @@ import {
 } from '@tet/domain/demarches';
 import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
 import { useCallback, useMemo, useState } from 'react';
-import {
-  isUnsetReferenceYear,
-  type IndicateurTableRow,
-} from '../../../../indicateurs/valeurs/grid/types';
+import { type IndicateurTableRow } from '../../../../indicateurs/valeurs/grid/types';
+import type { IndicateurValeursTableMeta } from '../../../../indicateurs/valeurs/grid/utils';
+import { useSetIndicateurApplicable } from '../data/use-set-indicateur-applicable';
+import { useUpdateDiagnosticIndicateursValeurs } from '../data/use-update-diagnostic-indicateurs-valeurs';
 import { useSetDiagnosticReferenceYear } from '../data/use-set-diagnostic-reference-year';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
-import { buildDiagnosticIndicateurTableRows } from './diagnostic-indicateur-table.adapter';
+import {
+  buildDiagnosticIndicateurTableRows,
+  buildDiagnosticIndicateurValeurInput,
+} from './diagnostic-indicateur-table.adapter';
 
 const OBJECTIF_YEARS = PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS;
 
@@ -23,7 +26,7 @@ type DiagnosticIndicateurValeursTable = {
   unit: string;
 
   onReferenceYearChange?: (year: number) => void;
-};
+} & IndicateurValeursTableMeta;
 
 export const useDiagnosticIndicateurValeursTable = ({
   demarcheId,
@@ -40,6 +43,43 @@ export const useDiagnosticIndicateurValeursTable = ({
     demarcheId,
     autosaveKey
   );
+  const { updateIndicateurValeurs: mutateIndicateurValeurs } =
+    useUpdateDiagnosticIndicateursValeurs(demarcheId, autosaveKey);
+  const { setIndicateurApplicable: mutateIndicateurApplicable } =
+    useSetIndicateurApplicable(demarcheId, autosaveKey);
+
+  const updateIndicateurValeurs = useCallback<
+    IndicateurValeursTableMeta['updateIndicateurValeurs']
+  >(
+    async (input) => {
+      if (isReadonly) return false;
+      try {
+        await mutateIndicateurValeurs({
+          valeurs: [buildDiagnosticIndicateurValeurInput(input)],
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [isReadonly, mutateIndicateurValeurs]
+  );
+
+  const setIndicateurApplicable = useCallback<
+    IndicateurValeursTableMeta['setIndicateurApplicable']
+  >(
+    async (input) => {
+      if (isReadonly) return false;
+      try {
+        await mutateIndicateurApplicable(input);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [isReadonly, mutateIndicateurApplicable]
+  );
+
   const rows = useMemo(
     () => buildDiagnosticIndicateurTableRows(table),
     [table]
@@ -64,7 +104,7 @@ export const useDiagnosticIndicateurValeursTable = ({
     number | null
   >(null);
 
-  const referenceYear = referenceYearOverride ?? derivedReferenceYear ?? 0;
+  const referenceYear = referenceYearOverride ?? derivedReferenceYear ?? null;
 
   /**
    * Référence stable : sinon chaque rendu recrée ce tableau, ce qui invalide
@@ -74,7 +114,10 @@ export const useDiagnosticIndicateurValeursTable = ({
    * neuf = pas d'état précédent depuis lequel transitionner).
    */
   const years = useMemo(
-    () => [referenceYear, ...OBJECTIF_YEARS],
+    () =>
+      referenceYear === null
+        ? [...OBJECTIF_YEARS]
+        : [referenceYear, ...OBJECTIF_YEARS],
     [referenceYear]
   );
 
@@ -91,7 +134,7 @@ export const useDiagnosticIndicateurValeursTable = ({
       if (isReadonly) return;
       setReferenceYearOverride(nextYear);
 
-      if (isUnsetReferenceYear(referenceYear) || referenceYear === nextYear) {
+      if (referenceYear === null || referenceYear === nextYear) {
         return;
       }
 
@@ -105,6 +148,8 @@ export const useDiagnosticIndicateurValeursTable = ({
   );
 
   return {
+    updateIndicateurValeurs,
+    setIndicateurApplicable,
     rows,
     years,
     referenceYear,

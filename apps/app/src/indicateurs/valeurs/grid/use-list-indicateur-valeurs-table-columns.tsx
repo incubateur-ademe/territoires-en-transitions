@@ -1,18 +1,13 @@
 'use client';
 
 import { createColumnHelper } from '@tanstack/react-table';
-import {
-  IndicateurPeriodiciteEnum,
-  IndicateurPeriods,
-} from '@tet/domain/indicateurs';
+import { IndicateurPeriods } from '@tet/domain/indicateurs';
 import { cn, TableCell, TableHeaderCell } from '@tet/ui';
 import { ComponentPropsWithoutRef, JSX, useMemo } from 'react';
-import { valueFieldsForPeriod } from './cell-editability';
 import { IndicateurTitleCell } from './indicateur-title.cell';
 import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
-import { IndicateurValeurYearHeaderCell } from './indicateur-valeur-year.header-cell';
 import { IndicateurValeurCell } from './indicateur-valeur.cell';
-import { IndicateurTableRow, isUnsetReferenceYear } from './types';
+import { IndicateurTableRow, IndicateurPeriodColumn } from './types';
 import { getTableMeta, IndicateurValeursTableFeatures } from './utils';
 
 const columnHelper = createColumnHelper<
@@ -31,27 +26,19 @@ const EmptyValueCell = ({
 );
 
 type ListIndicateurValeursTableColumnsParams = {
-  years: number[];
+  periodColumns: readonly IndicateurPeriodColumn[];
   title: string;
   unit: string;
   isReadonly?: boolean;
-  referenceYear?: number | null;
   showRequirementHint?: boolean;
 };
 
 const listColumns = ({
-  years,
+  periodColumns,
   title,
   unit,
   isReadonly,
-  referenceYear,
 }: ListIndicateurValeursTableColumnsParams) => {
-  // Les horizons PCAET restent annuels ; les cellules manipulent des périodes.
-  const currentPeriod = IndicateurPeriods.parse(
-    IndicateurPeriodiciteEnum.ANNUELLE,
-    String(new Date().getFullYear())
-  );
-
   const titleColumn = columnHelper.display({
     id: 'title',
     header: () => <IndicateurHeaderTitleCell title={title} unit={unit} />,
@@ -78,60 +65,33 @@ const listColumns = ({
     },
   });
 
-  const yearColumns = years.map((year) => {
-    const isUnsetReference = isUnsetReferenceYear(year);
-    const isReference = isUnsetReference || year === referenceYear;
-    const period = isUnsetReference
-      ? null
-      : IndicateurPeriods.parse(
-          IndicateurPeriodiciteEnum.ANNUELLE,
-          String(year)
-        );
-    const periodId =
-      period === null ? 'reference-unset' : IndicateurPeriods.key(period);
-    const indicateurValeurTypes =
-      period === null
-        ? (['resultat'] as const)
-        : valueFieldsForPeriod(period, currentPeriod);
-
-    return columnHelper.group({
-      id: periodId,
-      header: ({ header, table }) => {
-        const { onReferenceYearChange } = getTableMeta(table);
-
-        return (
-          <IndicateurValeurYearHeaderCell
-            year={isUnsetReference ? null : year}
-            colSpan={header.colSpan}
-            isReference={isReference}
-            displayedYears={years.filter(
-              (candidate) => !isUnsetReferenceYear(candidate)
-            )}
-            onReferenceYearChange={
-              isReference && !isReadonly ? onReferenceYearChange : undefined
-            }
-          />
-        );
-      },
-      columns: indicateurValeurTypes.map((indicateurValeurType) =>
-        columnHelper.display({
-          id: `${periodId}-${indicateurValeurType}`,
-          meta: { period, indicateurValeurType },
-          cell: (cellContext) => {
-            return (
-              <IndicateurValeurCell
-                cell={cellContext}
-                indicateurValeurType={indicateurValeurType}
-                period={period}
-                isRequired={cellContext.row.original.isValeurRequired(period)}
-                isReadonly={isReadonly || isUnsetReference}
-              />
-            );
-          },
-        })
-      ),
-    });
-  });
+  const valeurColumns = periodColumns.map(
+    ({ period, valeurTypes, renderHeader }) => {
+      const periodId =
+        period === null ? 'reference-unset' : IndicateurPeriods.key(period);
+      return columnHelper.group({
+        id: periodId,
+        header: ({ header }) => renderHeader(header.colSpan),
+        columns: valeurTypes.map((indicateurValeurType) =>
+          columnHelper.display({
+            id: `${periodId}-${indicateurValeurType}`,
+            meta: { period, indicateurValeurType },
+            cell: (cellContext) => {
+              return (
+                <IndicateurValeurCell
+                  cell={cellContext}
+                  indicateurValeurType={indicateurValeurType}
+                  period={period}
+                  isRequired={cellContext.row.original.isValeurRequired(period)}
+                  isReadonly={isReadonly || period === null}
+                />
+              );
+            },
+          })
+        ),
+      });
+    }
+  );
 
   const widthBufferColumn = columnHelper.display({
     id: 'width-buffer',
@@ -139,26 +99,28 @@ const listColumns = ({
     cell: () => <EmptyValueCell aria-hidden />,
   });
 
-  return columnHelper.columns([titleColumn, ...yearColumns, widthBufferColumn]);
+  return columnHelper.columns([
+    titleColumn,
+    ...valeurColumns,
+    widthBufferColumn,
+  ]);
 };
 
 export function useListIndicateurValeursTableColumns({
-  years,
+  periodColumns,
   title,
   unit,
   isReadonly,
-  referenceYear,
 }: ListIndicateurValeursTableColumnsParams) {
   const columns = useMemo(
     () =>
       listColumns({
-        years,
+        periodColumns,
         title,
         unit,
         isReadonly,
-        referenceYear,
       }),
-    [years, title, unit, isReadonly, referenceYear]
+    [periodColumns, title, unit, isReadonly]
   );
 
   return { columns };

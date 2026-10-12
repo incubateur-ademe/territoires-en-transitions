@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from '@tet/ui';
 import { fn } from 'storybook/test';
 import { JSX, useState } from 'react';
+import { buildDiagnosticIndicateurPeriodColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-period.columns';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
 import {
@@ -11,18 +12,27 @@ import {
   fakeYears,
 } from './grid-fixtures';
 
+const periodColumns = buildDiagnosticIndicateurPeriodColumns({
+  years: fakeYears,
+  referenceYear: fakeReferenceYear,
+  currentYear: fakeReferenceYear,
+  onReferenceYearChange: fn(),
+  isReadonly: false,
+});
+const updateIndicateurValeurs = fn().mockResolvedValue(true);
+const setIndicateurApplicable = fn().mockResolvedValue(true);
+
 const meta: Meta<typeof IndicateurValeursTable> = {
   title: 'Indicateurs/Grille de saisie',
   component: IndicateurValeursTable,
   args: {
-    demarcheId: 1,
     autosaveKey: 'grille',
     rows: fakeRows,
-    years: fakeYears,
-    referenceYear: fakeReferenceYear,
+    periodColumns,
+    updateIndicateurValeurs,
+    setIndicateurApplicable,
     title: 'Polluants atmosphériques',
     unit: 't/an',
-    onReferenceYearChange: fn(),
     isRequired: true,
   },
 };
@@ -36,13 +46,24 @@ export const Polluants: Story = {};
 export const LectureSeule: Story = {
   args: {
     isReadonly: true,
+    periodColumns: buildDiagnosticIndicateurPeriodColumns({
+      years: fakeYears,
+      referenceYear: fakeReferenceYear,
+      currentYear: fakeReferenceYear,
+      isReadonly: true,
+    }),
   },
 };
 
 export const SansAnneeDeReference: Story = {
   args: {
-    referenceYear: null,
-    years: fakeYears.filter((year) => year !== fakeReferenceYear),
+    periodColumns: buildDiagnosticIndicateurPeriodColumns({
+      years: fakeYears.filter((year) => year !== fakeReferenceYear),
+      referenceYear: null,
+      currentYear: fakeReferenceYear,
+      onReferenceYearChange: fn(),
+      isReadonly: false,
+    }),
   },
 };
 
@@ -98,14 +119,13 @@ const PolluantSwitchGrid = (): JSX.Element => {
         })}
       </div>
       <IndicateurValeursTable
-        demarcheId={1}
         autosaveKey="grille"
         rows={rowsByPolluant[selectedPolluant]}
-        years={fakeYears}
-        referenceYear={fakeReferenceYear}
+        periodColumns={periodColumns}
+        updateIndicateurValeurs={updateIndicateurValeurs}
+        setIndicateurApplicable={setIndicateurApplicable}
         title="Polluants atmosphériques"
         unit="t/an"
-        onReferenceYearChange={fn()}
         isRequired
       />
     </div>

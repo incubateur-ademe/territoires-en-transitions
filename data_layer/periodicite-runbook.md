@@ -121,6 +121,9 @@ observations annuelles datées en cours d'année. Les années restent aux fronti
 PCAET (horizons réglementaires et API annuelle), sans conversion des données.
 L'adaptateur PCAET porte aussi la règle des années facultatives et des lignes
 non applicables ; la cellule reçoit uniquement le booléen `isRequired`.
+Le tableau reçoit des colonnes de périodes et des callbacks d'écriture. Les
+mutations PCAET, la conversion vers l'année de l'API et l'en-tête d'année de
+référence restent dans la couche PCAET.
 
 **Déployer uniquement l'application frontend** à partir du commit intégré à
 `main`. Le backend, le moteur de périodes, les schémas d'entrée des API, les

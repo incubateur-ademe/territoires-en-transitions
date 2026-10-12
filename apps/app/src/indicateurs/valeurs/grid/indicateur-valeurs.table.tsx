@@ -1,20 +1,17 @@
 'use client';
 
-import { useSetIndicateurApplicable } from '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable';
-import { useUpdateDiagnosticIndicateursValeurs } from '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs';
 import { appLabels } from '@/app/labels/catalog';
 import { useAutosaveStatus } from '@/app/utils/react-query/autosave-status/use-autosave-status';
 import { useTable } from '@tanstack/react-table';
-import { toAnnualIndicateurYear } from '@tet/domain/indicateurs';
 import { AutosaveBadge, cn, Table } from '@tet/ui';
-import { CSSProperties, JSX, useMemo, useRef } from 'react';
+import { CSSProperties, JSX, useRef } from 'react';
 import { IndicateurValeursTableBody } from './indicateur-valeurs.table-body';
 import { IndicateurValeursTableHead } from './indicateur-valeurs.table-head';
 import { IndicateurValeursTableLegend } from './indicateur-valeurs.table-legend';
 import {
   GridMaxHeight,
   IndicateurTableRow,
-  UNSET_REFERENCE_YEAR,
+  IndicateurPeriodColumn,
 } from './types';
 import { useHorizontalScrollEdges } from './use-horizontal-scroll-edges';
 import { useListIndicateurValeursTableColumns } from './use-list-indicateur-valeurs-table-columns';
@@ -25,11 +22,10 @@ import {
 } from './utils';
 
 type Props = {
-  demarcheId: number;
   /** Regroupe les écritures de la grille sous un même badge d'enregistrement. */
   autosaveKey: string;
   rows: IndicateurTableRow[];
-  years: number[];
+  periodColumns: readonly IndicateurPeriodColumn[];
   /** Nom de l’indicateur principal affiché en haut à gauche de la grille. */
   title: string;
   unit: string;
@@ -41,11 +37,9 @@ type Props = {
    * l'en-tête et les lignes de secteur restent collantes.
    */
   maxHeight?: GridMaxHeight;
-  referenceYear?: number | null;
-  onReferenceYearChange: (year: number) => void;
   showRequirementHint?: boolean;
   isRequired: boolean;
-};
+} & IndicateurValeursTableMeta;
 
 /**
  * `viewport` : tout le chrome au-dessus de la grille (en-tête de page, onglets)
@@ -59,72 +53,22 @@ const MAX_HEIGHT_CLASSNAME: Record<GridMaxHeight, string | undefined> = {
 };
 
 export const IndicateurValeursTable = ({
-  demarcheId,
   autosaveKey,
   rows,
-  years,
+  periodColumns,
   title,
   unit,
   isReadonly = false,
   maxHeight = 'compact',
-  referenceYear,
-  onReferenceYearChange,
+  updateIndicateurValeurs,
+  setIndicateurApplicable,
   isRequired,
 }: Props): JSX.Element => {
-  const displayYears = useMemo(() => {
-    if (referenceYear === null) {
-      return [
-        UNSET_REFERENCE_YEAR,
-        ...years.filter((year) => year !== UNSET_REFERENCE_YEAR),
-      ];
-    }
-    if (referenceYear !== undefined) {
-      return [referenceYear, ...years.filter((year) => year !== referenceYear)];
-    }
-    return years;
-  }, [years, referenceYear]);
-
-  const { updateIndicateurValeurs: mutateIndicateurValeurs } =
-    useUpdateDiagnosticIndicateursValeurs(demarcheId, autosaveKey);
-
-  const updateIndicateurValeurs: IndicateurValeursTableMeta['updateIndicateurValeurs'] =
-    async ({ indicateurId, period, field, value }) => {
-      if (isReadonly) return false;
-      try {
-        // L'API du diagnostic PCAET conserve son contrat annuel.
-        const year = toAnnualIndicateurYear(
-          period.periodicite,
-          period.dateDebut,
-          'Diagnostic PCAET'
-        );
-        await mutateIndicateurValeurs({
-          valeurs: [{ indicateurId, year, field, value }],
-        });
-        return true;
-      } catch {
-        return false;
-      }
-    };
-
-  const { setIndicateurApplicable: mutateIndicateurApplicable } =
-    useSetIndicateurApplicable(demarcheId, autosaveKey);
-
-  const setIndicateurApplicable: IndicateurValeursTableMeta['setIndicateurApplicable'] =
-    async ({ indicateurId, isApplicable }) => {
-      try {
-        await mutateIndicateurApplicable({ indicateurId, isApplicable });
-        return true;
-      } catch {
-        return false;
-      }
-    };
-
   const { columns } = useListIndicateurValeursTableColumns({
-    years: displayYears,
+    periodColumns,
     title,
     unit,
     isReadonly,
-    referenceYear,
   });
 
   const table = useTable({
@@ -132,7 +76,6 @@ export const IndicateurValeursTable = ({
     data: rows,
     columns,
     meta: {
-      onReferenceYearChange: isReadonly ? undefined : onReferenceYearChange,
       updateIndicateurValeurs,
       setIndicateurApplicable,
     },
