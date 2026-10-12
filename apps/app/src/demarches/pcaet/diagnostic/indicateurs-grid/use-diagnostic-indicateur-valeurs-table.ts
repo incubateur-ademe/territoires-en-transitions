@@ -3,8 +3,9 @@
 import {
   deriveReferenceYearFromIndicateurValeurYears,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+  type PcaetDiagnosticIndicateurDefinition,
 } from '@tet/domain/demarches';
-import { toAnnualIndicateurYear } from '@tet/domain/indicateurs';
+import { getYearFromIsoDate, IndicateurValeur } from '@tet/domain/indicateurs';
 import { useCallback, useMemo, useState } from 'react';
 import {
   isUnsetReferenceYear,
@@ -12,9 +13,50 @@ import {
 } from '../../../../indicateurs/valeurs/grid/types';
 import { useSetDiagnosticReferenceYear } from '../data/use-set-diagnostic-reference-year';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
-import { buildDiagnosticIndicateurTableRows } from './diagnostic-indicateur-table.adapter';
 
 const OBJECTIF_YEARS = PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS;
+
+const toGridRows = (table: DiagnosticIndicateurTable): IndicateurTableRow[] => {
+  const definitionByIdentifiant = new Map<
+    string,
+    PcaetDiagnosticIndicateurDefinition
+  >();
+  for (const definition of table.indicateurDefinitions) {
+    const identifiant = definition.identifiantReferentiel;
+    if (identifiant === null || identifiant === undefined) {
+      continue;
+    }
+    definitionByIdentifiant.set(identifiant, definition);
+  }
+
+  const valeursByIndicateurId = new Map<number, IndicateurValeur[]>();
+  for (const { indicateurValeur } of table.indicateurValeurs) {
+    const valeurs =
+      valeursByIndicateurId.get(indicateurValeur.indicateurId) ?? [];
+    valeurs.push(indicateurValeur);
+    valeursByIndicateurId.set(indicateurValeur.indicateurId, valeurs);
+  }
+
+  return table.rows.flatMap((row) => {
+    const indicateurDefinition = definitionByIdentifiant.get(
+      row.indicateurDefinitionId
+    );
+    if (indicateurDefinition === undefined) {
+      return [];
+    }
+    return [
+      {
+        indicateurId: indicateurDefinition.id,
+        indicateurDefinition,
+        indicateurValeurs:
+          valeursByIndicateurId.get(indicateurDefinition.id) ?? [],
+        indicateurLabel: row.label,
+        optionalYears: row.optionalYears,
+        isApplicable: indicateurDefinition.isApplicable,
+      },
+    ];
+  });
+};
 
 type DiagnosticIndicateurValeursTable = {
   rows: IndicateurTableRow[];
@@ -40,20 +82,13 @@ export const useDiagnosticIndicateurValeursTable = ({
     demarcheId,
     autosaveKey
   );
-  const rows = useMemo(
-    () => buildDiagnosticIndicateurTableRows(table),
-    [table]
-  );
+  const rows = useMemo(() => toGridRows(table), [table]);
   const derivedReferenceYear = useMemo(
     () =>
       deriveReferenceYearFromIndicateurValeurYears({
         resultYears: rows.flatMap((row) =>
           row.indicateurValeurs.map((valeur) =>
-            toAnnualIndicateurYear(
-              valeur.periodicite,
-              valeur.dateValeur,
-              'Diagnostic PCAET'
-            )
+            getYearFromIsoDate(valeur.dateValeur)
           )
         ),
       }),

@@ -113,7 +113,9 @@ commun du catalogue et des valeurs sera livré séparément dans #5418.
 Cette livraison extrait de #5215 les corrections indépendantes des nouvelles
 cadences : sauvegardes successives dans les cellules, refus des nombres non
 finis, rafraîchissement des valeurs et scores après une écriture ou suppression,
-et respect de la lecture seule et du contrat annuel dans le diagnostic PCAET.
+et respect de la lecture seule dans le diagnostic PCAET. La lecture des dates
+historiques reste inchangée ; les nouveaux contrôles stricts de périodes sont
+conservés dans #5215.
 
 **Déployer uniquement l'application frontend** à partir du commit intégré à
 `main`. Le backend, le moteur de périodes, les schémas d'entrée des API, les
