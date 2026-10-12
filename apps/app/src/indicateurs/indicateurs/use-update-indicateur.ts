@@ -25,7 +25,7 @@ export const useUpdateIndicateur = (indicateurId: number) => {
       });
     },
 
-    onSuccess: (_, variables) => {
+    onSuccess: async (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.indicateurs.list.queryKey({
           collectiviteId,

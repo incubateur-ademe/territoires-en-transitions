@@ -11,6 +11,7 @@ import {
   fetchCollectivite,
   getStrapiData,
   getStrapiDefaultData,
+  type Indicateurs,
 } from '../../utils';
 import AccesCompte from './AccesCompte';
 import CollectiviteHeader from './CollectiviteHeader';
@@ -18,6 +19,7 @@ import ContenuCollectivite from './ContenuCollectivite';
 import HistoriqueLabellisation from './HistoriqueLabellisation';
 import IndicateursCollectivite from './IndicateursCollectivite';
 import PageContent from './PageContent';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 export async function generateMetadata(
   { params }: { params: Promise<{ code: string }> },
@@ -149,7 +151,15 @@ const DetailCollectivite = async ({
                 artificialisation_sols:
                   collectiviteData.collectivite.indicateurArtificialisation,
                 gaz_effet_serre:
-                  collectiviteData.collectivite.indicateursGazEffetSerre,
+                  collectiviteData.collectivite.indicateursGazEffetSerre?.map(
+                    (indicateur): Indicateurs => ({
+                      date_valeur: indicateur.dateValeur,
+                      resultat: indicateur.resultat,
+                      identifiant: indicateur.identifiant,
+                      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+                      source: indicateur.source,
+                    })
+                  ) ?? null,
               }}
             />
           ) : null

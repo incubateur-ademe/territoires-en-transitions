@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { prepareData } from './prepare-data';
 import fixtureJson from './test/fixture.json';
 
@@ -141,6 +142,7 @@ describe('prepareData', () => {
     expect(objectifs.valeursExistantes).toEqual(resultats.valeursExistantes);
     expect(objectifs.valeursExistantes).toEqual([
       {
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         annee: 2020,
         collectiviteId: 1,
         dateValeur: '2020-01-01',
@@ -150,6 +152,7 @@ describe('prepareData', () => {
         resultatCommentaire: 'commentaire résultat 2020',
       },
       {
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         annee: 2021,
         collectiviteId: 1,
         dateValeur: '2021-01-01',
@@ -159,5 +162,11 @@ describe('prepareData', () => {
         resultat: 12,
       },
     ]);
+  });
+  test('conserve la confidentialité sur la dernière observation annuelle égale à zéro', () => {
+    const indicateur = structuredClone(fixture.indicateurs[0]);
+    indicateur.sources.collectivite.valeurs[1].resultat = 0;
+    const resultats = prepareData(indicateur, 'resultat', false);
+    expect(resultats.anneeModePrive).toBe(2021);
   });
 });

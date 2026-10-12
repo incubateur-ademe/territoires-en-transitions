@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
@@ -583,7 +584,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
           indicateurId: total.id,
           resultat: 5 + resultat,
           calculAuto: true,
-          periodicite: 'annuelle',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         },
         {
           indicateurId: aval.id,

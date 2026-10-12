@@ -85,7 +85,7 @@ describe('valeurs-utilisables.rules', () => {
         buildValeursGroupees(),
         []
       );
-      expect(result?.periodicite).toBe('annuelle');
+      expect(result?.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
       expect(result?.sources[0].fait).toMatchObject([
         { annee: 2023, valeur: 10 },
       ]);

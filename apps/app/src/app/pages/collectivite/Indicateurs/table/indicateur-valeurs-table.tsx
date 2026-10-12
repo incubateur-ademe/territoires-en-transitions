@@ -25,6 +25,7 @@ import { CellPeriodeList } from './cell-periode-list';
 import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
 import { ConfirmDelete } from './confirm-delete';
+import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { EditCommentaireModal } from './edit-commentaire-modal';
 
 // nombre maximum de colonnes vides à afficher
@@ -110,12 +111,7 @@ export const IndicateurValeursTable = ({
                   );
                   if (!valeur) return;
                   // demande confirmation avant de supprimer
-                  if (
-                    (valeur.objectif ?? false) ||
-                    (valeur.resultat ?? false) ||
-                    valeur.resultatCommentaire ||
-                    valeur.objectifCommentaire
-                  ) {
+                  if (shouldConfirmValueDeletion(valeur)) {
                     setToBeDeleted(valeur);
                   } else {
                     // sauf pour les lignes n'ayant ni valeur ni commentaire

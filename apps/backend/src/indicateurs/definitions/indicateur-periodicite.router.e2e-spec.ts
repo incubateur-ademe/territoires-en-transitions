@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { randomUUID } from 'node:crypto';
 import ImportIndicateurDefinitionService from '../import-indicateurs/import-indicateur-definition.service';
 import { sampleImportIndicateurDefinition } from '../import-indicateurs/samples/import-indicateur-definition.sample';
@@ -78,7 +79,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   });
 
-  test.each([undefined, 'annuelle'] as const)(
+  test.each([undefined, IndicateurPeriodiciteEnum.ANNUELLE] as const)(
     'expose les métadonnées annuelles après création avec periodicite=%s',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
@@ -94,7 +95,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       expect(data).toMatchObject([
         {
           id: indicateurId,
-          periodicite: 'annuelle',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         },
       ]);
     }
@@ -165,7 +166,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     expect(result.indicateurs).toHaveLength(1);
     expect(result.indicateurs[0].definition).toMatchObject({
       id: indicateurId,
-      periodicite: 'annuelle',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
     });
     expect(result.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
       { dateValeur: '2024-01-01', periodicite: 'annuelle', resultat: 0 },
@@ -180,7 +181,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     expect(
       await caller.indicateurs.valeurs.list({
         ...input,
-        periodicite: 'annuelle',
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       })
     ).toEqual(result);
 
@@ -260,7 +261,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     }
   );
 
-  test.each([undefined, 'annuelle'] as const)(
+  test.each([undefined, IndicateurPeriodiciteEnum.ANNUELLE] as const)(
     'importe les dates annuelles historiques par HTTP avec periodicite=%s',
     async (periodicite) => {
       const indicateurId = await caller.indicateurs.indicateurs.create({
@@ -296,13 +297,13 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
         expect.arrayContaining([
           expect.objectContaining({
             dateValeur: '2024-01-01',
-            periodicite: 'annuelle',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             resultat: 0,
             objectif: null,
           }),
           expect.objectContaining({
             dateValeur: '2025-01-01',
-            periodicite: 'annuelle',
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             resultat: null,
             objectif: 42,
           }),
@@ -379,7 +380,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       });
       expect(data[0]).toMatchObject({
         titre: 'Titre modifié',
-        periodicite: 'annuelle',
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       });
       expect(data[0]).not.toHaveProperty(field);
     }
@@ -418,7 +419,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       (row) => row.identifiantReferentiel === identifiantReferentiel
     );
     expect(created).toMatchObject({
-      periodicite: 'annuelle',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       titre: 'Import annuel',
     });
     await importer.upsertIndicateurDefinitions([
@@ -427,7 +428,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     await expect(
       importer.upsertIndicateurDefinitions([
         // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
-        { ...definition, periodicite: 'mensuelle' },
+        { ...definition, periodicite: IndicateurPeriodiciteEnum.MENSUELLE },
       ])
     ).rejects.toThrow('est fixée à sa création');
     const [saved] = await database.db
@@ -441,7 +442,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
       );
     expect(saved).toMatchObject({
       id: created?.id,
-      periodicite: 'annuelle',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       titre: 'Titre modifié',
     });
   });

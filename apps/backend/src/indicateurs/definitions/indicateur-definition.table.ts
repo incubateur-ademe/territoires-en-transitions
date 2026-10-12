@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { sql } from 'drizzle-orm';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
@@ -39,7 +40,7 @@ export const indicateurDefinitionTable = pgTable(
     periodicite: text('periodicite', {
       enum: indicateurPeriodiciteValues,
     })
-      .default('annuelle')
+      .default(IndicateurPeriodiciteEnum.ANNUELLE)
       .notNull(),
     precision: integer('precision').default(2).notNull(), // Number of decimal in order to round the value
     borneMin: doublePrecision('borne_min'),

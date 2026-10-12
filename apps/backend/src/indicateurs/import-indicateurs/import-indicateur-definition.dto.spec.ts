@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { importIndicateurDefinitionSchema } from './import-indicateur-definition.dto';
 
@@ -24,7 +25,7 @@ describe('Import de définitions périodiques', () => {
   it('conserve le contrat historique sans périodicité', () => {
     expect(importIndicateurDefinitionSchema.parse(definition)).toEqual({
       ...definition,
-      periodicite: 'annuelle',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
     });
   });
 

@@ -14,6 +14,7 @@ import {
   getDiagnosticVulnerabiliteTopicStatut,
 } from './completion';
 import type { DemarchePcaet } from './types';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 /**
  * Modèle documentaire minimal : une section requise, substituable par le
@@ -143,14 +144,14 @@ const valeur = ({
   ({
     indicateurValeur: {
       indicateurId: 1,
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       dateValeur: `${year}-01-01`,
-      periodicite: 'annuelle',
       resultat,
       objectif,
     },
     indicateurDefinition: {
       identifiantReferentiel: identifiant,
-      periodicite: 'annuelle',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
     },
   } as PcaetDiagnostic['indicateurValeurs'][number]);
 
@@ -318,7 +319,11 @@ describe('getDemarchePcaetCompletion', () => {
 
   it('laisse le plan en incomplete tant qu’un plan importé rattaché n’est pas vérifié', () => {
     const completion = getDemarchePcaetCompletion(
-      { ...completeDemarche, planActionIds: [42, 43], unverifiedPlanActionIds: [43] },
+      {
+        ...completeDemarche,
+        planActionIds: [42, 43],
+        unverifiedPlanActionIds: [43],
+      },
       completeDiagnostic(),
       completeSnapshot
     );
