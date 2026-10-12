@@ -1,8 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
-import { type ActionDeReference, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
-import { Badge, Button, Card, cn } from '@tet/ui';
+import type { ActionDeReference } from '@tet/domain/shared';
+import { Button, Card } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
+import { ActionDeReferenceBadges } from './action-de-reference.badges';
 import { ActionDeReferenceDetailLink } from './action-de-reference-detail.link';
 import type { ActionDeReferenceCardComponent } from './actions-de-reference.contract';
 
@@ -34,31 +35,6 @@ const ActionDeReferenceTitle = ({
   <h2 className="mb-0 text-base font-bold leading-normal text-primary-9">
     <ActionDeReferenceDetailLink action={action} />
   </h2>
-);
-
-const ActionDeReferenceBadges = ({
-  action,
-  hasUpdateButton,
-}: {
-  readonly action: ActionDeReference;
-  readonly hasUpdateButton: boolean;
-}): JSX.Element => (
-  <div className={cn('flex flex-wrap gap-2', hasUpdateButton && 'pr-8')}>
-    <Badge
-      title={LEVIER_NOM_BY_ID[action.levier]}
-      size="sm"
-      type="outlined"
-      trim={false}
-      uppercase={false}
-    />
-    <Badge
-      title={appLabels.categorieActionLabel(action.categorie)}
-      size="sm"
-      variant="info"
-      trim={false}
-      uppercase={false}
-    />
-  </div>
 );
 
 export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({

@@ -154,6 +154,7 @@ export const collectivitesLabels = {
   ajouterALaPreselection: 'Ajouter à la présélection',
   ajouteeALaPreselection: 'Ajoutée',
   pasInteresse: 'Pas intéressé',
+  actionDeReferenceInteresse: "Ça m'intéresse",
   retirerDeLaPreselection: 'Retirer',
   retablirAction: 'Rétablir',
   actionsIgnorees: plural({

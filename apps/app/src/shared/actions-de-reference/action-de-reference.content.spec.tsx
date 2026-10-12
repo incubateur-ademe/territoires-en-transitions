@@ -1,7 +1,16 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import type { JSX } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ActionDeReferenceContent } from './action-de-reference.content';
 import { aireCovoiturageAction } from './actions-de-reference.fixture';
+
+vi.mock('./mises-en-oeuvre.card', () => ({
+  MisesEnOeuvreCard: ({
+    actionDeReferenceId,
+  }: {
+    actionDeReferenceId: number;
+  }): JSX.Element => <p>{`mises-en-oeuvre-${actionDeReferenceId}`}</p>,
+}));
 
 afterEach(cleanup);
 
@@ -47,22 +56,42 @@ describe('detail-introuvable', () => {
 });
 
 describe('detail-charge', () => {
-  it("montre la description, le levier et la catégorie de l'action", () => {
+  const renderLoadedAction = (): void => {
     render(
       <ActionDeReferenceContent
         detail={{ status: 'loaded', action: aireCovoiturageAction }}
       />
     );
+  };
+
+  it("montre la description de l'action", () => {
+    renderLoadedAction();
+
+    expect(
+      screen.getByText(aireCovoiturageAction.description).textContent
+    ).toBe(aireCovoiturageAction.description);
+  });
+
+  it("montre le levier et la catégorie de l'action en badge et en champ", () => {
+    renderLoadedAction();
 
     expect({
-      description: screen.getByText(aireCovoiturageAction.description)
-        .textContent,
-      levier: screen.getByText('Covoiturage').textContent,
-      categorie: screen.getByText('Aménagement & infrastructures').textContent,
-    }).toEqual({
-      description: aireCovoiturageAction.description,
-      levier: 'Covoiturage',
-      categorie: 'Aménagement & infrastructures',
-    });
+      levier: screen.getAllByText('Covoiturage').length,
+      categorie: screen.getAllByText('Aménagement & infrastructures').length,
+    }).toEqual({ levier: 2, categorie: 2 });
+  });
+
+  it("indique que c'est une action de référence de l'ADEME", () => {
+    renderLoadedAction();
+
+    expect(screen.getByText('Action de référence ADEME')).toBeDefined();
+  });
+
+  it("montre les mises en œuvre de l'action", () => {
+    renderLoadedAction();
+
+    expect(
+      screen.getByText(`mises-en-oeuvre-${aireCovoiturageAction.id}`)
+    ).toBeDefined();
   });
 });
