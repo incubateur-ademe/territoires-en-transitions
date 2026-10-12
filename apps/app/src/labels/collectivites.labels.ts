@@ -50,6 +50,7 @@ export const collectivitesLabels = {
   rejoindreUneCollectiviteJeSuisReferent:
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
+  outilsDePriorisation: 'Outils de priorisation',
   priorisationLeviersTitre: 'Priorisation des leviers',
   priorisationFonctionnementTitre: 'Comment ça marche ?',
   priorisationFonctionnementDescription:

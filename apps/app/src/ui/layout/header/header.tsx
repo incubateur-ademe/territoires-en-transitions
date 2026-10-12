@@ -2,6 +2,7 @@ import { usePathname } from 'next/navigation';
 
 import { homePath, makeDemandesAvisUrl } from '@/app/app/paths';
 import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-enabled';
+import { useIsPriorisationEnabled } from '@/app/collectivites/priorisation-leviers/use-is-priorisation-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { useCollectiviteContext } from '@tet/api/collectivites';
@@ -26,6 +27,7 @@ export const Header = () => {
   const { collectivite } = useCollectiviteContext();
   const referentielTeEnabled = useReferentielTeEnabled();
   const isDemarchePcaetEnabled = useIsDemarchePcaetEnabled();
+  const isPriorisationEnabled = useIsPriorisationEnabled();
 
   const rootUrl = collectivite
     ? isServiceDeconcentre(collectivite.collectiviteType)
@@ -47,6 +49,7 @@ export const Header = () => {
           ? REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY
           : undefined,
         isDemarchePcaetEnabled,
+        isPriorisationEnabled,
       })}
       secondaryNav={makeSecondaryNav({
         user,

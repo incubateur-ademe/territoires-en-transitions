@@ -79,6 +79,7 @@ const makeNav = (contexte: ContexteInstruction | null) =>
       agentDreal
     ),
     isDemarchePcaetEnabled: true,
+    isPriorisationEnabled: true,
   });
 
 /**

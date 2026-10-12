@@ -1,3 +1,4 @@
+import { makeCollectivitePriorisationUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { toCollectiviteCurrent } from '@tet/api/collectivites';
 import {
@@ -82,6 +83,7 @@ const toCollectiviteRootLinks = (
         user
       ),
       isDemarchePcaetEnabled: false,
+      isPriorisationEnabled: false,
     })?.startItems
   );
 };
@@ -98,6 +100,7 @@ const toMainRootLinks = (
         user
       ),
       isDemarchePcaetEnabled: false,
+      isPriorisationEnabled: false,
     })?.startItems
   );
 };
@@ -106,6 +109,47 @@ const actionsDeReferenceLink: RootLink = {
   label: appLabels.actionsDeReference,
   href: '/collectivite/20/actions-reference',
 };
+
+const makeStartItemsWithPriorisation = (isPriorisationEnabled: boolean) => {
+  const user = toUser(epciAccess, connectedRoles);
+  return (
+    makeCollectiviteNav({
+      user,
+      currentCollectivite: toCollectiviteCurrent(
+        { ...epciAccess, contexteInstruction: null },
+        user
+      ),
+      isDemarchePcaetEnabled: false,
+      isPriorisationEnabled,
+    })?.startItems ?? []
+  );
+};
+
+const priorisationHref = makeCollectivitePriorisationUrl({
+  collectiviteId: 20,
+});
+
+describe('outils-de-priorisation-dans-la-nav', () => {
+  it('les outils de priorisation sont juste après Programmes & Démarches', () => {
+    const startItems = makeStartItemsWithPriorisation(true);
+
+    const indexProgrammes = startItems.findIndex(
+      (item) => item.children === appLabels.programmesEtDemarches
+    );
+
+    expect(startItems[indexProgrammes + 1]).toMatchObject({
+      href: priorisationHref,
+    });
+  });
+
+  it("sans le feature flag, la nav n'a pas d'entrée vers la priorisation", () => {
+    const hrefs = makeStartItemsWithPriorisation(false).map(
+      (item) => item.href
+    );
+
+    expect(hrefs).not.toContain(priorisationHref);
+  });
+});
 
 describe('entree-nav-reservee-au-super-admin', () => {
   it('un super admin a une entrée à la racine qui mène aux actions de référence de la collectivité', () => {

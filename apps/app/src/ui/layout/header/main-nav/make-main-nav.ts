@@ -12,6 +12,7 @@ export const makeMainNav: MakeMainNav = ({
   currentCollectivite,
   referentielDisplay,
   isDemarchePcaetEnabled,
+  isPriorisationEnabled,
 }) => {
   const hasToCompleteRegistration =
     !hasRole(user, PlatformRole.VERIFIED) && user.collectivites.length === 0;
@@ -44,6 +45,7 @@ export const makeMainNav: MakeMainNav = ({
       currentCollectivite,
       referentielDisplay,
       isDemarchePcaetEnabled,
+      isPriorisationEnabled,
     });
   }
 };
