@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { CardCoverBanner } from '@/app/ui/shared/card-cover.banner';
 import { capitalize } from '@tet/ui/labels/plural';
 import { Acteurs } from './acteurs';
 import { Description } from './description';
@@ -9,7 +10,7 @@ export const DetailsView = () => {
   return (
     <div className="flex gap-6 sm:flex-row flex-col w-full">
       <div className="w-full md:flex-[2]">
-        <div className="rounded-b-none rounded-t-lg top-[-100px] h-[69px] w-full bg-primary-9 bg-[url('/fiche-action-header-bg.jpg')] bg-cover bg-center opacity-60" />
+        <CardCoverBanner />
         <FormSection>
           <Description />
         </FormSection>
