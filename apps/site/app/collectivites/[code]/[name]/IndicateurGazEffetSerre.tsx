@@ -1,15 +1,17 @@
 import { Indicateurs } from '@/site/app/collectivites/utils';
 import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
 import { getFormattedNumber } from '@tet/domain/utils';
-import { secteurIdToLabel } from '@/site/src/utils/labels';
+import { secteurIdToLabel, siteLabels } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
+
+const TOTAL_GES_IDENTIFIANT = 'cae_1.a';
 
 const getYear = (indicateur: Indicateurs): number =>
   toAnnualIndicateurYearFromHistoricalDate(
     indicateur.periodicite,
     indicateur.date_valeur,
-    `La publication GES (${indicateur.identifiant})`
+    siteLabels.indicateurGesPublicationContexte(indicateur.identifiant)
   );
 
 type IndicateurGazEffetSerreProps = {
@@ -29,7 +31,7 @@ const IndicateurGazEffetSerre = ({
   const lastYearData = data.filter(
     (d) =>
       getYear(d) === lastYear &&
-      secteurIdToLabel[d.identifiant] !== 'Total' &&
+      d.identifiant !== TOTAL_GES_IDENTIFIANT &&
       d.source === 'CITEPA'
   );
 
@@ -37,7 +39,7 @@ const IndicateurGazEffetSerre = ({
   const lastYearTotal = data.find(
     (d) =>
       getYear(d) === lastYear &&
-      secteurIdToLabel[d.identifiant] === 'Total' &&
+      d.identifiant === TOTAL_GES_IDENTIFIANT &&
       d.source === 'CITEPA'
   );
 
@@ -55,7 +57,7 @@ const IndicateurGazEffetSerre = ({
           ? `${getFormattedNumber(Math.round(lastYearTotal.resultat ?? 0))} `
           : ''
       }${defaultData.titre_encadre}`}
-      graphTitle={`Répartition des émissions de gaz à effet de serre (hors puits) par secteur en ${lastYear}`}
+      graphTitle={siteLabels.indicateurGesRepartitionParSecteur(lastYear)}
       source={lastYearData?.[0].source ?? ''}
       unit={defaultData.titre_encadre}
       unitSingular={true}

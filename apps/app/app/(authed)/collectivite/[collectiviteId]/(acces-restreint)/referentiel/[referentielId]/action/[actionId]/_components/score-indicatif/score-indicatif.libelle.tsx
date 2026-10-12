@@ -157,7 +157,7 @@ function LibelleScoreProgramme({
   const annee = toAnnualIndicateurYearFromHistoricalDate(
     periodicite,
     dateValeur,
-    'Le libellé du score indicatif'
+    appLabels.scoreIndicatifContexteLibelle
   );
   return (
     <>
@@ -201,8 +201,10 @@ const LibelleValeurUtilisee = ({
   return (
     <span>
       {appLabels.valeurDeLIndicateur(valeurUtilisee.indicateurTitre)}{' '}
-      <b>{segments.valeurEtUnite}</b>
-      {typeScore === scoreIndicatifTypeEnum.FAIT ? ' ' : ' atteint '}
+      <b>{segments.valeurEtUnite}</b>{' '}
+      {typeScore === scoreIndicatifTypeEnum.PROGRAMME && (
+        <>{appLabels.scoreIndicatifObjectifAtteint} </>
+      )}
       {segments.annee} {segments.source}{' '}
     </span>
   );

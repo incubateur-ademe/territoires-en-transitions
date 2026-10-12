@@ -1,3 +1,10 @@
+export const siteLabels = {
+  indicateurGesPublicationContexte: (identifiant: string): string =>
+    `La publication GES (${identifiant})`,
+  indicateurGesRepartitionParSecteur: (annee: number): string =>
+    `Répartition des émissions de gaz à effet de serre (hors puits) par secteur en ${annee}`,
+};
+
 export const secteurIdToLabel: Record<string, string> = {
   'cae_1.a': 'Total',
   'cae_1.d': 'Tertiaire',
