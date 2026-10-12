@@ -4,7 +4,7 @@
 déployées**. Le socle annuel de #5378 est inclus dans `main` ; sa migration
 `indicateur/remplacer-catalogue-periodicites-par-contraintes` est déjà appliquée.
 La [PR de corrections annuelles #5430](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5430) est également fusionnée dans `main`.
-La préparation annuelle restante (`split/indicateurs-annual-preparation`) conserve
+La préparation annuelle restante (#5433) conserve
 ce contrat et ne demande aucune migration. **#5215** vient ensuite et ouvre les
 trois autres cadences.
 
@@ -14,7 +14,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → `split/indicateurs-annual-preparation` (préparation annuelle restante) → #5215 (activation).
+- `main` → #5433 (préparation annuelle restante) → #5215 (activation).
 - #5215 → #5418 (import atomique) → #5379 (file durable de recalcul).
 - #5215 → #5394 (nouvelle saisie) → #5312 (Margny) → #5296 (nettoyage final).
 - `main` → #5417 (verrous SQL) et `main` → #5416 (verrou du score), indépendantes
@@ -27,7 +27,7 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| `split/indicateurs-annual-preparation` | Score, publication GES, fixtures et corrections annuelles restantes | Aucune |
+| #5433 | Score, publication GES, fixtures et corrections annuelles restantes | Aucune |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5418 | Import atomique du catalogue | Aucune |
 | #5379 | File durable de recalcul | `indicateur/reconciliation_formules` |
@@ -149,7 +149,7 @@ En cas de régression, redéployer la version précédente de l'application. Il 
 a aucun revert Sqitch ni aucune conversion de données à effectuer. Les saisies
 annuelles restent lisibles par le backend et le frontend précédents.
 
-## 2 bis. Préparation annuelle restante — `split/indicateurs-annual-preparation`
+## 2 bis. Préparation annuelle restante — #5433
 
 Cette livraison extrait les adaptations annuelles du score indicatif et de la
 publication GES, les fixtures et stories annuelles, les remplacements de littéraux
