@@ -101,6 +101,9 @@ export const sharedLabels = {
     'Identifiants des fiches données en exemple, séparés par des virgules',
   actionDeReferenceFichesLieesErreur:
     'Saisissez des identifiants de fiche séparés par des virgules',
+  actionDeReferenceMisesEnOeuvreTitre: 'Mises en œuvre',
+  actionDeReferenceMisesEnOeuvreVide:
+    "Aucune collectivité n'a encore partagé d'action liée.",
   actionDeReferenceModifier: (titre: string): string =>
     `Modifier l'action « ${titre} »`,
   actionDeReferenceModificationTitre: "Modifier l'action de référence",

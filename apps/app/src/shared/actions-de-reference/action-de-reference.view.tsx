@@ -1,6 +1,7 @@
 'use client';
 
 import { makeCollectiviteActionsDeReferenceUrl } from '@/app/app/paths';
+import { PreselectionToggleButton } from '@/app/collectivites/priorisation-leviers/preselection-toggle.button';
 import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ActionDeReferenceId } from '@tet/domain/shared';
@@ -18,6 +19,15 @@ const toPageTitle = (detail: ActionDeReferenceDetail): string =>
     .with({ status: 'loaded' }, ({ action }) => action.titre)
     .otherwise(() => appLabels.actionDeReferenceTitre);
 
+const toHeaderActions = (detail: ActionDeReferenceDetail): JSX.Element | null =>
+  match(detail)
+    .with({ status: 'loaded' }, ({ action }) => (
+      <PageHeader.Actions>
+        <PreselectionToggleButton action={action} />
+      </PageHeader.Actions>
+    ))
+    .otherwise(() => null);
+
 export const ActionDeReferenceView = ({
   actionDeReferenceId,
 }: {
@@ -31,6 +41,7 @@ export const ActionDeReferenceView = ({
     <>
       <PageHeader>
         <PageHeader.Title>{pageTitle}</PageHeader.Title>
+        {toHeaderActions(detail)}
         <PageHeader.Subtitle>
           <Breadcrumbs
             size="sm"

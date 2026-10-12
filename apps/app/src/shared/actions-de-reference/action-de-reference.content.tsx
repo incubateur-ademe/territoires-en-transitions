@@ -1,12 +1,15 @@
 import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
+import { CardCoverBanner } from '@/app/ui/shared/card-cover.banner';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { type ActionDeReference, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
-import { Card, EmptyCard } from '@tet/ui';
+import { Badge, Card, EmptyCard } from '@tet/ui';
 import type { JSX, ReactNode } from 'react';
 import { match } from 'ts-pattern';
+import { ActionDeReferenceBadges } from './action-de-reference.badges';
 import type { ActionDeReferenceDetail } from './data/use-get-action-de-reference';
+import { MisesEnOeuvreCard } from './mises-en-oeuvre.card';
 
 const ActionDeReferenceField = ({
   label,
@@ -43,6 +46,33 @@ const ActionDeReferenceFields = ({
   </Card>
 );
 
+const ActionDeReferenceDetails = ({
+  action,
+}: {
+  readonly action: ActionDeReference;
+}): JSX.Element => (
+  <div className="flex flex-col gap-6">
+    <div className="flex flex-wrap items-center gap-2">
+      <Badge
+        title={appLabels.actionDeReferenceAdeme}
+        variant="warning"
+        size="sm"
+        className="w-fit"
+      />
+      <ActionDeReferenceBadges action={action} hasUpdateButton={false} />
+    </div>
+    <div className="flex w-full flex-col gap-6 md:flex-row">
+      <div className="w-full md:flex-[2]">
+        <CardCoverBanner />
+        <ActionDeReferenceFields action={action} />
+      </div>
+      <div className="w-full md:flex-[1]">
+        <MisesEnOeuvreCard actionDeReferenceId={action.id} />
+      </div>
+    </div>
+  </div>
+);
+
 export const ActionDeReferenceContent = ({
   detail,
 }: {
@@ -64,6 +94,6 @@ export const ActionDeReferenceContent = ({
       />
     ))
     .with({ status: 'loaded' }, ({ action }) => (
-      <ActionDeReferenceFields action={action} />
+      <ActionDeReferenceDetails action={action} />
     ))
     .exhaustive();

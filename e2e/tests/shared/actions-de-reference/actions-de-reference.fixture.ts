@@ -1,3 +1,4 @@
+import { actionDeReferenceFicheTable } from '@tet/backend/shared/actions-de-reference/models/action-de-reference-fiche.table';
 import { actionDeReferenceTable } from '@tet/backend/shared/actions-de-reference/models/action-de-reference.table';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ActionDeReference, ActionDeReferenceId } from '@tet/domain/shared';
@@ -5,6 +6,7 @@ import { inArray } from 'drizzle-orm';
 import { Collectivites } from 'tests/collectivite/collectivites.fixture';
 import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
+import { ActionDeReferenceDetailPom } from './action-de-reference-detail.pom';
 import { ActionsDeReferencePom } from './actions-de-reference.pom';
 
 export type NewActionDeReference = Omit<ActionDeReference, 'id'>;
@@ -34,6 +36,18 @@ class ActionsDeReferenceFactory {
       ...addedActions.map((action) => action.id),
     ];
     return addedActions;
+  };
+
+  linkFiches = async ({
+    actionDeReferenceId,
+    ficheIds,
+  }: {
+    readonly actionDeReferenceId: ActionDeReferenceId;
+    readonly ficheIds: readonly number[];
+  }): Promise<void> => {
+    await databaseService.db
+      .insert(actionDeReferenceFicheTable)
+      .values(ficheIds.map((ficheId) => ({ actionDeReferenceId, ficheId })));
   };
 
   removeAll = async (): Promise<void> => {
@@ -92,13 +106,18 @@ export { openUpdatePanelAsSuperAdmin, toRunToken, withRunSuffix };
 export const testWithActionsDeReference = test.extend<{
   actionsDeReference: ActionsDeReference;
   actionsDeReferencePom: ActionsDeReferencePom;
+  actionDeReferenceDetailPom: ActionDeReferenceDetailPom;
 }>({
   actionsDeReference: async ({}, use) => {
-    const { add, removeAll, restore } = new ActionsDeReferenceFactory();
-    await use({ add, removeAll });
+    const { add, linkFiches, removeAll, restore } =
+      new ActionsDeReferenceFactory();
+    await use({ add, linkFiches, removeAll });
     await restore();
   },
   actionsDeReferencePom: async ({ page }, use) => {
     await use(new ActionsDeReferencePom(page));
+  },
+  actionDeReferenceDetailPom: async ({ page }, use) => {
+    await use(new ActionDeReferenceDetailPom(page));
   },
 });
