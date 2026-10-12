@@ -4,5 +4,5 @@ export const parseCellNumber = (raw: string): number | null => {
     return null;
   }
   const parsed = Number(normalized);
-  return Number.isNaN(parsed) ? null : parsed;
+  return Number.isFinite(parsed) ? parsed : null;
 };

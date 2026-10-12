@@ -1,29 +1,39 @@
 # Périodicité des indicateurs : déploiement
 
-Prérequis : #5220, #5292 et #5366 déployées. Valider chaque étape avant la suivante.
-Chaque étape doit pouvoir rester seule en production après ses prérequis, sans
-attendre une PR suivante. La livraison annuelle (#5378) conserve le fonctionnement
-annuel ; #5215 suffit à livrer les quatre cadences. Les branches secondaires ne
-sont pas des versions applicatives à redéployer telles quelles par-dessus les autres.
+État au 12 octobre 2026 : #5220, #5292, #5366 et **#5378 sont fusionnées et
+déployées**. Le socle annuel de #5378 est inclus dans `main` ; sa migration
+`indicateur/remplacer-catalogue-periodicites-par-contraintes` est déjà appliquée.
+La première livraison est la [PR de corrections annuelles](https://github.com/incubateur-ademe/territoires-en-transitions/compare/main...split/indicateurs-annual-ui) :
+elle conserve le contrat annuel et ne demande aucune migration. **#5215** vient
+ensuite et ouvre les trois autres cadences.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
 indicateur personnalisé et ne peut plus être modifié ensuite.
 
-Le chemin prioritaire est **#5378 → #5215** : socle de stockage et calcul,
-puis activation de la saisie et de la visualisation par période.
+La chaîne de revue restante est :
 
-Les autres PR peuvent être livrées ensuite : #5418 (refactor et atomicité de
-l'import), #5379 (file durable de recalcul), #5394 (nouvelle saisie), #5312
-(réparation de Margny), #5417 (protections SQL) et #5416 (verrou du score).
-#5296 ferme le retour arrière et reste la dernière étape.
+- `main` → corrections annuelles → #5215 (activation).
+- #5215 → #5418 (import atomique) → #5379 (file durable de recalcul).
+- #5215 → #5394 (nouvelle saisie) → #5312 (Margny) → #5296 (nettoyage final).
+- `main` → #5417 (verrous SQL) et `main` → #5416 (verrou du score), indépendantes
+  de l'activation. Le prérequis backend de #5417 est satisfait par #5378.
 
-| PR | Changement | Migration Sqitch |
+Chaque étape peut rester seule en production après ses prérequis. #5296 reste
+la dernière livraison, après la période d'observation et la fermeture de la
+fenêtre de retour arrière. Les branches de revue ne sont pas des versions à
+redéployer telles quelles par-dessus les autres livraisons.
+
+| PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5378 | Contrat annuel pour les saisies, imports et calculs | `indicateur/remplacer-catalogue-periodicites-par-contraintes` |
-| #5215 | Activation des périodicités communes à la déclaration et à l'affichage | `indicateur/periodicite_activation` |
-| #5379 | File durable de recalcul, secondaire à l'activation | `indicateur/reconciliation_formules` |
+| Corrections annuelles | Saisie, rafraîchissement et grille PCAET annuels | Aucune ; frontend uniquement |
+| #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
+| #5418 | Import atomique du catalogue | Aucune |
+| #5379 | File durable de recalcul | `indicateur/reconciliation_formules` |
+| #5394 | Saisie commune des résultats et objectifs | Aucune |
 | #5312 | Six observations de Margny remises au mensuel | `indicateur/margny_indicateurs_mensuels` |
+| #5417 | Verrous SQL du graphe de calcul | `indicateur/verrouiller-graphe-calcul-indicateur` |
+| #5416 | Verrou de sélection du score | Aucune |
 | #5296 | Suppression des archives ; fin du retour arrière Sqitch | `indicateur/periodicite_nettoyage` |
 
 ## Pour chaque déploiement
@@ -40,14 +50,14 @@ l'import), #5379 (file durable de recalcul), #5394 (nouvelle saisie), #5312
    Tester d’abord ce candidat et ses migrations sur une copie récente et isolée
    de production, puis en préproduction. La CI utilise des données de test : elle
    ne prouve pas que les données réelles passent tous les contrôles de migration.
-2. Pour #5378 et #5215, prévoir une fenêtre de maintenance : fermer le trafic
+2. Pour #5215, prévoir une fenêtre de maintenance : fermer le trafic
    applicatif, arrêter les imports et tâches, puis attendre les transactions en
    cours. Les workflows `cd-backend`, `cd-app`, `cd-site` et `cd-tools` sont
    indépendants et n’orchestrent ni cette maintenance ni les migrations.
 3. Sauvegarder le schéma, les données et le registre Sqitch ; conserver les versions
    applicatives précédentes. Relever le dernier changement appliqué avec
    `sqitch status --target <cible>` pour pouvoir revenir à cet état.
-4. Depuis la racine du dépôt, appliquer les migrations jusqu'à celle indiquée
+4. Si la livraison comporte une migration, depuis la racine du dépôt, l'appliquer jusqu'à celle indiquée
    pour la PR :
 
    ```sh
@@ -69,7 +79,11 @@ nouvelles données pour forcer un rollback : corriger en avant ou appliquer le
 plan de reprise avec récupération des saisies intervenues depuis la sauvegarde.
 #5296 supprime les archives et ferme explicitement le retour arrière Sqitch.
 
-## 1. Contrat annuel — #5378
+## 1. Contrat annuel — #5378 (déjà déployé)
+
+Cette étape est terminée. La procédure ci-dessous reste une référence pour
+comprendre le socle et son retour arrière ; elle ne doit pas être rejouée pour
+livrer les PR restantes.
 
 Arrêter toutes les écritures, imports et tâches. Appliquer la migration indiquée
 dans le tableau, puis déployer le backend, l'application, le site et `tools`.
@@ -93,6 +107,53 @@ par Google Sheets. Les données viennent uniquement du tableur configuré. Lire 
 enregistré avant le recalcul : un échec de recalcul ne l'annule pas. Suspendre les
 imports et reprendre le recalcul avant de publier une autre version. Le rollback
 commun du catalogue et des valeurs sera livré séparément dans #5418.
+
+## 2. Corrections des parcours annuels — déploiement autonome
+
+Cette livraison extrait de #5215 les corrections indépendantes des nouvelles
+cadences : sauvegardes successives dans les cellules, refus des nombres non
+finis, rafraîchissement des valeurs et scores après une écriture ou suppression,
+et respect de la lecture seule et du contrat annuel dans le diagnostic PCAET.
+
+**Déployer uniquement l'application frontend** à partir du commit intégré à
+`main`. Le backend, le moteur de périodes, les schémas d'entrée des API, les
+contraintes SQL, le plan Sqitch et les données restent ceux du socle annuel.
+Aucune migration et aucune activation de cadence ne sont nécessaires. Cette
+version peut rester seule en production sans livrer #5215.
+
+Contrôler avant production puis après déploiement :
+
+- Déclaration, saisie de zéro, commentaires et suppression d'une année ;
+  rafraîchissement des valeurs et du score sans recharger la page.
+- Grille PCAET : saisies successives pendant un enregistrement, échec suivi
+  d'une nouvelle tentative, année de référence et consultation en lecture seule.
+- Refus des créations et imports mensuels, trimestriels et semestriels par les
+  API annuelles existantes ; les contraintes SQL annuelles restent en place.
+
+En cas de régression, redéployer la version précédente de l'application. Il n'y
+a aucun revert Sqitch ni aucune conversion de données à effectuer. Les saisies
+annuelles restent lisibles par le backend et le frontend précédents.
+
+## 3. Activation des cadences — #5215
+
+Arrêter toutes les écritures, imports et tâches, ainsi que les sauvegardes et
+restaurations automatiques. Appliquer `indicateur/periodicite_activation`, puis
+déployer le backend, l'application, le site et `tools`.
+
+Contrôler :
+
+- Création, saisie, commentaire, import et recalcul pour les quatre cadences.
+- Choix de la périodicité à la création d’un indicateur personnalisé, puis refus
+  de toute modification, même sans valeur enregistrée.
+- Même périodicité pour la déclaration et la visualisation, sans sélecteur de
+  restitution ni agrégation temporelle. Les sources et versions de données
+  restent séparées et conservent leurs périodes d’origine.
+- Graphiques, exports, PCAET, trajectoires, score indicatif et fiche publique du site.
+
+Le retour à `indicateur/remplacer-catalogue-periodicites-par-contraintes` exige des définitions et valeurs
+uniquement annuelles. Sinon, le revert est refusé. Les anciennes colonnes
+d’agrégation sont recréées à NULL pour restaurer le schéma de préparation.
+Après restauration des données, les scripts reconstruisent les dépendances des formules.
 
 ## En cas d'échec
 
