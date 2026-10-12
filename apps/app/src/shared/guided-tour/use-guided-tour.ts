@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { designTokens } from '@tet/design-tokens';
-import { JSX, useEffect, useEffectEvent, useMemo } from 'react';
+import { JSX, useCallback, useEffect, useEffectEvent, useMemo } from 'react';
 import { Step, useJoyride } from 'react-joyride';
 import { GuidedTourTooltip } from './guided-tour.tooltip';
 import { useSeenGuidedTourVersion } from './use-seen-guided-tour-version';
@@ -17,12 +17,12 @@ type UseGuidedTourArgs = {
   onSkipped?: () => void;
 };
 
-export type GuidedTour = {
+type GuidedTour = {
   Tour: JSX.Element | null;
   restart: () => void;
 };
 
-export const useGuidedTour = ({
+const useGuidedTour = ({
   id,
   version,
   steps,
@@ -62,6 +62,7 @@ export const useGuidedTour = ({
     },
   });
   const notifySkipped = useEffectEvent(() => onSkipped?.());
+  const restart = useCallback(() => controls.start(), [controls]);
 
   useEffect(
     () =>
@@ -78,5 +79,8 @@ export const useGuidedTour = ({
     [on, markSeen]
   );
 
-  return { Tour, restart: () => controls.start() };
+  return { Tour, restart };
 };
+
+export { useGuidedTour };
+export type { GuidedTour };

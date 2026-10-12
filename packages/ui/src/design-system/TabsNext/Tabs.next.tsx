@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   createContext,
+  forwardRef,
   KeyboardEvent,
   ReactNode,
   useCallback,
@@ -394,17 +395,18 @@ export const TabsTab = (props: TabProps) => {
   );
 };
 
-export const TabsPanel = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => {
+export const TabsPanel = forwardRef<
+  HTMLDivElement,
+  {
+    children: ReactNode;
+    className?: string;
+  }
+>(({ children, className }, ref) => {
   const { activeTabId } = useTabsContext();
 
   return (
     <div
+      ref={ref}
       role="tabpanel"
       id={activeTabId ? getPanelId(activeTabId) : undefined}
       aria-labelledby={activeTabId ?? undefined}
@@ -414,7 +416,8 @@ export const TabsPanel = ({
       {children}
     </div>
   );
-};
+});
+TabsPanel.displayName = 'TabsPanel';
 
 Tabs.Tab = TabsTab;
 Tabs.List = TabsList;

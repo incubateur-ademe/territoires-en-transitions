@@ -14,6 +14,13 @@ type CategorieLabel =
 
 type PertinenceTrafficEvent = 'upsert-response' | 'list-request';
 
+export type TourButtonName =
+  | 'Suivant'
+  | 'Précédent'
+  | 'Terminer'
+  | 'Passer la visite'
+  | 'Quitter la visite';
+
 const UPSERT_URL_PATTERN = /collectivites\.pertinenceLeviers\.upsert/;
 
 export class PriorisationLeviersPom {
@@ -66,6 +73,17 @@ export class PriorisationLeviersPom {
     return this.page.getByText(
       /potentiel de réduction de GES par levier n'est disponible/
     );
+  }
+
+  get matrixTab(): Locator {
+    return this.page.getByRole('tab', {
+      name: 'Leviers à prioriser',
+      exact: true,
+    });
+  }
+
+  get breakdownTab(): Locator {
+    return this.page.getByRole('tab', { name: "Vue d'ensemble" });
   }
 
   get sousLeviersTab(): Locator {
@@ -162,8 +180,27 @@ export class PriorisationLeviersPom {
     return this.page.getByRole('button', { name: 'Comment ça marche ?' });
   }
 
-  get helpModal(): Locator {
-    return this.page.getByRole('dialog', { name: 'Comment ça marche ?' });
+  tourStep(title: string): Locator {
+    return this.page.getByRole('alertdialog', { name: title, exact: true });
+  }
+
+  get tourDialogs(): Locator {
+    return this.page.getByRole('alertdialog');
+  }
+
+  get tourProgress(): Locator {
+    return this.tourDialogs.getByRole('progressbar', {
+      name: 'Progression de la visite',
+    });
+  }
+
+  tourButton(name: TourButtonName): Locator {
+    return this.tourDialogs.getByRole('button', { name });
+  }
+
+  async waitForLeviersLoaded(): Promise<void> {
+    await expect(this.levierButtons.first()).toBeVisible();
+    await expect(this.preselectionLink).toBeVisible();
   }
 
   async openPreselection(): Promise<void> {

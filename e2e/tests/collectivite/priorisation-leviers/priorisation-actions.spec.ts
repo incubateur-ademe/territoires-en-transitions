@@ -60,22 +60,6 @@ test.describe('Priorisation : matrice et volet', () => {
     await expect(pom.emptyPreselectionMessage).toBeVisible();
   });
 
-  test("« Comment ça marche ? » ouvre une modale qui explique l'outil", async ({
-    collectivites,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
-    });
-    const pom = new PriorisationLeviersPom(page);
-    await pom.goto(collectivite.data.id);
-
-    await pom.helpButton.click();
-
-    await expect(pom.helpModal).toBeVisible();
-    await expect(pom.helpModal).toContainText(/potentiel de réduction de GES/);
-  });
-
   test("l'onglet « Sous-leviers à prioriser » affiche l'histogramme des sous-leviers", async ({
     collectivites,
     page,

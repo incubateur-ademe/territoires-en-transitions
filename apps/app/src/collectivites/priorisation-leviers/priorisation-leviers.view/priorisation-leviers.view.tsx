@@ -15,9 +15,11 @@ import {
   TabsTab,
 } from '@tet/ui/design-system/TabsNext/index';
 import { countBy, sumBy } from 'es-toolkit';
-import { JSX, useMemo, useState } from 'react';
+import { JSX, Ref, useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../levier-card-info';
+import { LeviersView } from './leviers-view';
+import { priorisationTargets } from '../priorisation-tour/priorisation-tour.targets';
 import { Preselection, usePreselection } from '../use-preselection';
 import { LeviersMatrixChart } from './charts/leviers-matrix.chart';
 import { LeviersMondrianChart } from './charts/leviers-mondrian.chart';
@@ -43,16 +45,22 @@ import {
 } from './data/use-upsert-pertinence';
 import { useLevierSidePanel } from './levier-panel/use-levier-side-panel';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
-import { PriorisationHelpModal } from './priorisation-help.modal';
 import { PriorisationMetrics } from './priorisation.metrics';
 import { SelectLevier } from './select-levier';
+import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
 
 type PriorisationAlertsProps = {
   hasMobilisation: boolean;
   potentiels: PotentielsReduction;
 };
 
-type LeviersView = 'matrix' | 'sousLeviers' | 'breakdown';
+type LeviersViewState = {
+  view: LeviersView;
+  onViewChange: (view: LeviersView) => void;
+};
+
+type LeviersTabsSectionProps = LeviersSectionProps &
+  LeviersViewState & { ref?: Ref<HTMLDivElement> };
 
 type LeviersSectionProps = {
   leviers: LevierPriorisation[];
@@ -78,12 +86,14 @@ type PriorisationBoardProps = {
   potentiels: PotentielsReduction;
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
+  leviersView: LeviersViewState;
 };
 
 type PriorisationContentProps = {
   leviersQuery: LeviersPriorisationQuery;
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
+  leviersView: LeviersViewState;
 };
 
 const toPreselectedCountByLevier = (
@@ -168,37 +178,42 @@ const SousLeviersView = ({
   </>
 );
 
-const LeviersSection = (props: LeviersSectionProps): JSX.Element => {
-  const [view, setView] = useState<LeviersView>('matrix');
-  return (
-    <Tabs className="flex flex-col gap-4">
-      <TabsList className="justify-start">
-        <TabsTab
-          label={appLabels.leviersAPrioriser}
-          isActive={view === 'matrix'}
-          onClick={() => setView('matrix')}
-        />
-        <TabsTab
-          label={appLabels.vueEnsembleLeviers}
-          isActive={view === 'breakdown'}
-          onClick={() => setView('breakdown')}
-        />
-        <TabsTab
-          label={appLabels.sousLeviersAPrioriser}
-          isActive={view === 'sousLeviers'}
-          onClick={() => setView('sousLeviers')}
-        />
-      </TabsList>
-      <TabsPanel className="gap-4 rounded-xl border border-grey-3 bg-white p-6">
-        {match(view)
-          .with('matrix', () => <MatrixView {...props} />)
-          .with('sousLeviers', () => <SousLeviersView {...props} />)
-          .with('breakdown', () => <BreakdownView {...props} />)
-          .exhaustive()}
-      </TabsPanel>
-    </Tabs>
-  );
-};
+const LeviersSection = ({
+  ref,
+  view,
+  onViewChange,
+  ...props
+}: LeviersTabsSectionProps): JSX.Element => (
+  <Tabs className="flex flex-col gap-4">
+    <TabsList className="justify-start">
+      <TabsTab
+        label={appLabels.leviersAPrioriser}
+        isActive={view === 'matrix'}
+        onClick={() => onViewChange('matrix')}
+      />
+      <TabsTab
+        label={appLabels.vueEnsembleLeviers}
+        isActive={view === 'breakdown'}
+        onClick={() => onViewChange('breakdown')}
+      />
+      <TabsTab
+        label={appLabels.sousLeviersAPrioriser}
+        isActive={view === 'sousLeviers'}
+        onClick={() => onViewChange('sousLeviers')}
+      />
+    </TabsList>
+    <TabsPanel
+      ref={ref}
+      className="gap-4 rounded-xl border border-grey-3 bg-white p-6"
+    >
+      {match(view)
+        .with('matrix', () => <MatrixView {...props} />)
+        .with('sousLeviers', () => <SousLeviersView {...props} />)
+        .with('breakdown', () => <BreakdownView {...props} />)
+        .exhaustive()}
+    </TabsPanel>
+  </Tabs>
+);
 
 const PriorisationBoard = ({
   leviers,
@@ -206,6 +221,7 @@ const PriorisationBoard = ({
   potentiels,
   preselection,
   upsertPertinence,
+  leviersView,
 }: PriorisationBoardProps): JSX.Element => {
   const places = useMemo(() => toLeviersPlaces(leviers), [leviers]);
   const preselectedCountByLevier = useMemo(
@@ -218,9 +234,13 @@ const PriorisationBoard = ({
     upsertPertinence,
   });
 
+  const metricsRef = priorisationTargets.useTarget('metrics');
+  const leviersPanelRef = priorisationTargets.useTarget('leviersPanel');
+
   return (
     <div className="flex flex-col gap-8">
       <PriorisationMetrics
+        ref={metricsRef}
         preselectedActionsCount={preselection.actions.length}
         blindSpotCount={places.filter(isBlindSpot).length}
         analyzedActionsCount={sumBy(leviers, ({ ficheCount }) => ficheCount)}
@@ -230,11 +250,13 @@ const PriorisationBoard = ({
         potentiels={potentiels}
       />
       <LeviersSection
+        ref={leviersPanelRef}
         leviers={leviers}
         places={places}
         preselectedCountByLevier={preselectedCountByLevier}
         selectedLevierId={levierSidePanel.selectedLevierId}
         onLevierSelected={levierSidePanel.select}
+        {...leviersView}
       />
     </div>
   );
@@ -244,6 +266,7 @@ const PriorisationContent = ({
   leviersQuery,
   preselection,
   upsertPertinence,
+  leviersView,
 }: PriorisationContentProps): JSX.Element =>
   match(leviersQuery)
     .with({ status: 'loading' }, () => <LoadingStatus />)
@@ -257,6 +280,7 @@ const PriorisationContent = ({
         potentiels={potentiels}
         preselection={preselection}
         upsertPertinence={upsertPertinence}
+        leviersView={leviersView}
       />
     ))
     .exhaustive();
@@ -266,16 +290,31 @@ export const PriorisationLeviersView = (): JSX.Element => {
   const leviersQuery = useLeviersPriorisation(collectiviteId);
   const upsertPertinence = useUpsertPertinence();
   const preselection = usePreselection();
+  const isTourReady = leviersQuery.status === 'ready' && preselection.isReady;
+  const { Tour, view, setView, restartOnMatrix } = useLeviersViewWithTour({
+    isTourReady,
+  });
+  const tourHelpRef = priorisationTargets.useTarget('tourHelp');
 
   return (
     <>
+      {Tour}
       <PageHeader>
         <PageHeader.Title>
           <BetaLabel>{appLabels.priorisationLeviersTitre}</BetaLabel>
         </PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-wrap gap-4">
-            <PriorisationHelpModal />
+            <VisibleWhen condition={isTourReady}>
+              <Button
+                ref={tourHelpRef}
+                variant="outlined"
+                size="xs"
+                onClick={restartOnMatrix}
+              >
+                {appLabels.priorisationVisiteRelancer}
+              </Button>
+            </VisibleWhen>
             <Button
               size="xs"
               href={makeCollectivitePreselectionUrl({ collectiviteId })}
@@ -293,6 +332,7 @@ export const PriorisationLeviersView = (): JSX.Element => {
         leviersQuery={leviersQuery}
         preselection={preselection}
         upsertPertinence={upsertPertinence}
+        leviersView={{ view, onViewChange: setView }}
       />
     </>
   );

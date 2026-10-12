@@ -15,9 +15,13 @@ import {
   ResolveTarget,
 } from './guided-tour-registry';
 
+type ResolveTargetById<TargetId extends string> = (
+  id: TargetId
+) => ResolveTarget;
+
 type GuidedTourTargets<TargetId extends string> = {
   useTarget: (id: TargetId) => RefCallback<HTMLElement>;
-  useResolve: () => (id: TargetId) => ResolveTarget;
+  useResolve: () => ResolveTargetById<TargetId>;
 };
 
 const GuidedTourTargetsContext = createContext<GuidedTourRegistry | null>(null);
@@ -62,7 +66,7 @@ const createGuidedTourTargets = <TargetId extends string>(
     );
   };
 
-  const useResolve = (): ((id: TargetId) => ResolveTarget) => {
+  const useResolve = (): ResolveTargetById<TargetId> => {
     const registry = useGuidedTourRegistry();
     return useCallback(
       (id: TargetId) => registry.resolve(tourId, id),
@@ -74,4 +78,4 @@ const createGuidedTourTargets = <TargetId extends string>(
 };
 
 export { createGuidedTourTargets, GuidedTourTargetsProvider };
-export type { GuidedTourTargets };
+export type { GuidedTourTargets, ResolveTargetById };
