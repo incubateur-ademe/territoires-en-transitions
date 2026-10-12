@@ -13,5 +13,13 @@ export const actionsDeReferenceErrorConfig: TrpcErrorHandlerConfig<ActionsDeRefe
         message:
           'Une action de référence porte déjà ce titre pour ce levier et cette catégorie',
       },
+      FICHE_NOT_FOUND: {
+        code: 'BAD_REQUEST',
+        message: "Une des fiches à lier n'existe pas",
+      },
+      FICHE_IS_SOUS_ACTION: {
+        code: 'BAD_REQUEST',
+        message: 'Une des fiches à lier est une sous-action',
+      },
     },
   };

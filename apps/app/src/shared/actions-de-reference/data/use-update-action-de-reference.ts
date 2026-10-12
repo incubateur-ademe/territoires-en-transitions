@@ -10,10 +10,16 @@ const useUpdateActionDeReference: UseUpdateActionDeReference = () => {
   const { mutate, isPending } = useMutation(
     trpc.shared.actionsDeReference.update.mutationOptions({
       meta: { success: appLabels.actionDeReferenceModificationSucces },
-      onSuccess: (): Promise<void> =>
-        queryClient.invalidateQueries({
-          queryKey: trpc.shared.actionsDeReference.list.pathKey(),
-        }),
+      onSuccess: async (): Promise<void> => {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: trpc.shared.actionsDeReference.list.pathKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: trpc.shared.actionsDeReference.listFiches.pathKey(),
+          }),
+        ]);
+      },
     })
   );
 

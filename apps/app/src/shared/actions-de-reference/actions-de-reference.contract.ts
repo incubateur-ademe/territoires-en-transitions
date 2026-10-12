@@ -1,5 +1,7 @@
+import type { RouterOutput } from '@tet/api';
 import type {
   ActionDeReference,
+  ActionDeReferenceId,
   CategorieAction,
   LevierId,
   ListActionsDeReferenceInput,
@@ -40,6 +42,21 @@ export type ActionsDeReferenceList =
 export type UseListActionsDeReference = (
   search: ActionsDeReferenceSearch
 ) => ActionsDeReferenceList;
+
+export type ActionDeReferenceFiche =
+  RouterOutput['shared']['actionsDeReference']['listFiches'][number];
+
+export type ActionDeReferenceFiches =
+  | { readonly status: 'loading' }
+  | { readonly status: 'error'; readonly retry: () => void }
+  | {
+      readonly status: 'loaded';
+      readonly fiches: readonly ActionDeReferenceFiche[];
+    };
+
+export type UseListFichesActionDeReference = (
+  actionDeReferenceId: ActionDeReferenceId
+) => ActionDeReferenceFiches;
 
 export type ActionDeReferenceUpdate = {
   readonly updateAction: (

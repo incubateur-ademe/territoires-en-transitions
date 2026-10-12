@@ -89,9 +89,14 @@ export type ActionDeReferenceChanges = z.output<
   typeof actionDeReferenceChangesSchema
 >;
 
+const linkedFicheIdSchema = z.int32().check(z.positive());
+
 export const updateActionDeReferenceInputSchema = z.extend(
   actionDeReferenceChangesSchema,
-  { id: actionDeReferenceIdSchema }
+  {
+    id: actionDeReferenceIdSchema,
+    ficheIds: z.optional(z.array(linkedFicheIdSchema)),
+  }
 );
 
 export type UpdateActionDeReferenceInput = z.output<
