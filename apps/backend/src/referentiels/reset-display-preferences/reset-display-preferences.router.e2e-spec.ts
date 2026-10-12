@@ -1,5 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectiviteAndUser,
+  setCollectiviteCotStatus,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
   createTRPCClientFromCaller,
   getAuthUser,
@@ -13,10 +17,14 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { getReferentielDisplayMap } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  getReferentielDisplayMap,
+} from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
+import { ResetDisplayPreferencesService } from './reset-display-preferences.service';
 import { seedCollectiviteReferentielDisplayActivity } from './reset-display-preferences.test-fixture';
 
 describe('ResetDisplayPreferencesRouter', () => {
@@ -224,7 +232,7 @@ describe('ResetDisplayPreferencesRouter', () => {
     });
   });
 
-  test('Syndicat keeps TE readonly, CAE archived and ECI write whatever its activity', async () => {
+  test('Syndicat keeps TE readonly and ECI write, and its empty CAE is archived', async () => {
     const { collectivite } = await setupIsolatedCollectivite(
       CollectiviteRole.EDITION,
       { natureInsee: 'SIVU' }
@@ -242,6 +250,111 @@ describe('ResetDisplayPreferencesRouter', () => {
       cae: { display: false, mode: 'archived' },
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('Syndicat keeps its CAE in write when it is engaged', async () => {
+    const { collectivite, authenticatedUser } = await setupIsolatedCollectivite(
+      CollectiviteRole.EDITION,
+      { natureInsee: 'SIVU' }
+    );
+    const trpcClient = createTRPCClientFromCaller(
+      router.createCaller({ user: authenticatedUser })
+    );
+    await seedCollectiviteReferentielDisplayActivity({
+      trpcClient,
+      collectiviteId: collectivite.id,
+      referentiel: ReferentielIdEnum.CAE,
+    });
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('Nothing is archived when an active COT blocks the switch to TE', async () => {
+    const { collectivite } = await setupIsolatedCollectivite();
+    await setCollectiviteCotStatus(databaseService, collectivite.id, 'active');
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('Nothing is archived when an audit request blocks the switch to TE', async () => {
+    const { collectivite } = await setupIsolatedCollectivite();
+    const { cleanup } = await createAudit({
+      databaseService,
+      collectiviteId: collectivite.id,
+      referentielId: 'cae',
+      dateDebut: null,
+      valide: false,
+      clos: false,
+      withDemande: true,
+    });
+    onTestFinished(() => cleanup());
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: collectivite.id }
+      );
+
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  test('Test collectivites are left out of the reset of all collectivites, not of a single reset', async () => {
+    const { collectivite } = await setupIsolatedCollectivite();
+    const { collectivite: testCollectivite } = await setupIsolatedCollectivite(
+      CollectiviteRole.EDITION,
+      { type: collectiviteTypeEnum.TEST }
+    );
+
+    // on ne lance pas le reset global : il réécrirait toutes les collectivités
+    // de la base
+    const collectiviteIds = await app
+      .get(ResetDisplayPreferencesService)
+      .listCollectiviteIdsToReset();
+    expect(collectiviteIds).toContain(collectivite.id);
+    expect(collectiviteIds).not.toContain(testCollectivite.id);
+
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        { collectiviteId: testCollectivite.id }
+      );
+    expect(result.referentiels).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
     });
   });
 

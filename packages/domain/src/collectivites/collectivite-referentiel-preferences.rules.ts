@@ -47,6 +47,9 @@ function caeEciPreferenceFromNiveauRemplissage(
 export type DeriveReferentielPreferencesInput = {
   cae: NiveauRemplissage;
   eci: NiveauRemplissage;
+  /** COT actif, audit en cours ou demande d'audit envoyée : la bascule est
+   * bloquée, rien n'est archivé (prime sur `isSyndicat` et `isDrom`) */
+  hasSwitchToTeBlocker?: boolean;
   /** syndicat : non éligible à TE, reste sur ECI (prime sur `isDrom`) */
   isSyndicat?: boolean;
   /** DROM : pas encore éligible à TE, reste sur CAE et ECI */
@@ -61,16 +64,25 @@ export function deriveReferentielPreferences(
     return existing;
   }
 
-  const { isSyndicat, isDrom } = input;
+  const { hasSwitchToTeBlocker, isSyndicat, isDrom } = input;
 
-  // collectivités non éligibles à la bascule : valeurs forcées, indépendantes
-  // du niveau de remplissage (sauf la visibilité du CAE archivé des syndicats)
+  // bascule bloquée (COT, audit ou demande d'audit) : un référentiel archivé
+  // passe en lecture seule, il ne pourrait plus être complété ni audité d'ici
+  // la levée du blocage. On n'archive donc rien, quel que soit le remplissage
+  if (hasSwitchToTeBlocker) {
+    return {
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    };
+  }
+
+  // collectivités non éligibles à la bascule : ECI et TE forcés, indépendants
+  // du niveau de remplissage. Le CAE d'un syndicat n'est archivé que s'il
+  // n'est pas engagé
   if (isSyndicat) {
     return {
-      cae: {
-        display: isReferentielArchiveDisplayed(input.cae),
-        mode: 'archived',
-      },
+      cae: caeEciPreferenceFromNiveauRemplissage(input.cae),
       eci: { display: true, mode: 'write' },
       te: { display: true, mode: 'readonly' },
     };
