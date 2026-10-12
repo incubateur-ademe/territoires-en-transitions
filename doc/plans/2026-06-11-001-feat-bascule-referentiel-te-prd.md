@@ -19,7 +19,7 @@ Sans bascule structurée, les CT existantes devraient tout ressaisir sur TE, ou 
 
 À l'ouverture de TE, les CT engagées sur CAE/ECI conservent leurs référentiels historiques en écriture ; TE est proposé en **lecture seule**. Chaque CT peut ensuite déclencher, **une fois pour toutes et sans retour en arrière**, une bascule manuelle qui fige les anciens référentiels, copie les données vers `te_<id>` via `action_origine`, recalcule les scores et crée des snapshots `pre-switch-te` / `post-switch-te`.
 
-Les CT **sans engagement significatif** sur CAE/ECI démarrent directement sur TE en écriture, sans bouton de bascule (cf. [Profils CT](#profils-ct)). Les référentiels CAE et/ou ECI dont le remplissage est insuffisant sont masqués (`display: false`, `mode: archived`) à l'ouverture publique ; les données saisies restent en base mais ne sont pas reprises automatiquement vers TE.
+Les CT **sans engagement significatif** sur CAE/ECI démarrent directement sur TE en écriture, sans bouton de bascule (cf. [Profils CT](#profils-ct)). Les référentiels CAE et/ou ECI dont le remplissage est insuffisant sont archivés (`mode: archived`) à l'ouverture publique : ils restent visibles dans la navigation s'ils contiennent des données et n'en disparaissent (`display: false`) que s'ils sont vides ; les données saisies restent en base mais ne sont pas reprises automatiquement vers TE.
 
 ### Découpage
 
@@ -67,13 +67,13 @@ referentiels: {
 }
 ```
 
-Invariants Zod : `mode === 'archived'` implique `display === false`.
+`mode` (capacité) et `display` (présence dans la navigation) sont indépendants : un référentiel `archived` reste `display: true` s'il contient des données, et n'est `display: false` que s'il est vide (cf. [niveau de remplissage](#masquage-caeeci-à-louverture-publique-de-te)).
 
 | Mode | Saisie | Navigation | Usage typique |
 |---|---|---|---|
 | `write` | autorisée | `display: true` | CAE/ECI pré-bascule (engagé) ; TE post-bascule |
 | `readonly` | interdite | `display: true` | TE pré-bascule (CT engagée sur CAE/ECI) |
-| `archived` | interdite | `display: false` | CAE/ECI post-bascule ou jamais engagés ; consultable via lien TdB EDL ou URL directe |
+| `archived` | interdite | `display: true` s'il contient des données (libellé « (archivé) ») ; `display: false` s'il est vide | CAE/ECI post-bascule ou non engagés ; consultable via lien TdB EDL ou URL directe |
 
 Les modes non-`write` passent par `ReferentielModeGuard` (backend) — statuts, explications, pilotes, preuves complémentaires, etc. Les **fils de discussion** sont hors périmètre du guard (historique conservé sur CAE/ECI archivés). Seul `archived` déclenche la logique snapshots spécifique (cf. [Snapshots](#snapshots)).
 
@@ -124,12 +124,12 @@ Un référentiel au remplissage `superficiel` reste donc dans la navigation EDL,
 
 La bascule applique la même règle de visibilité aux référentiels qu'elle archive (visibles sauf s'ils sont `vide`). L'éligibilité à la bascule reste, elle, conditionnée à l'engagement (au moins un référentiel CAE/ECI en `write`).
 
-Exemples : une CT avec CAE engagé et ECI peu rempli → CAE visible en `write`, ECI masqué ; une CT avec CAE et ECI tous deux sous le seuil → les deux masqués.
+Exemples : une CT avec CAE engagé et ECI peu rempli (`superficiel`) → CAE visible en `write`, ECI archivé mais visible « (archivé) » ; une CT avec CAE engagé et ECI `vide` → ECI archivé et masqué ; une CT avec CAE et ECI tous deux sous le seuil → les deux archivés, chacun visible sauf s'il est `vide`.
 
 | Profil CT | `te` | `cae` / `eci` (par réf.) | Bouton bascule |
 |---|---|---|---|
-| Au moins un ref. engagé | `mode: readonly`, `display: true` | engagé → `write` + `display: true` ; non engagé → `archived` + `display: false` | Visible (si éligible) |
-| Aucun ref. engagé | `mode: write`, `display: true`, sans `populatedFromCaeEci` | `archived`, `display: false` | Masqué |
+| Au moins un ref. engagé | `mode: readonly`, `display: true` | engagé → `write` + `display: true` ; `superficiel` → `archived` + `display: true` ; `vide` → `archived` + `display: false` | Visible (si éligible) |
+| Aucun ref. engagé | `mode: write`, `display: true`, sans `populatedFromCaeEci` | `superficiel` → `archived` + `display: true` ; `vide` → `archived` + `display: false` | Masqué |
 | Bascule bloquée par un COT actif, un audit en cours ou une demande d'audit envoyée | `mode: readonly`, `display: true` | `cae` et `eci` → `write` + `display: true` | Bloqué (`COT_ACTIVE`, `AUDIT_IN_PROGRESS`, `AUDIT_REQUEST_IN_PROGRESS`) |
 | Syndicat (non éligible à TE) | `mode: readonly`, `display: true` | `cae` → selon son niveau de remplissage (`write` s'il est engagé, sinon `archived`, masqué s'il est vide) ; `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_SYNDICAT`) |
 | DROM (pas encore éligible à TE) | `mode: readonly`, `display: true` | `cae` et `eci` → `write` + `display: true` | Bloqué (`COLLECTIVITE_IS_DROM`) |
@@ -140,9 +140,9 @@ Un référentiel `archived` est en lecture seule : archivé pendant un COT ou un
 
 Le batch ignore les collectivités de type `test`, dont les préférences sont réglées à la main pour les démos et la recette ; le reset manuel d'une collectivité donnée reste possible sur une collectivité de test.
 
-> **Conséquence produit assumée** : une CT avec un seul critère rempli (ex. 50 statuts CAE seuls) est « non engagée » → démarrage TE direct en `write`, CAE/ECI `archived` masqués, **sans bouton de bascule** ni reprise automatique des données legacy vers TE. Seuil conservé tel quel (règle initialement conçue pour masquer ECI vide dans la nav).
+> **Conséquence produit assumée** : une CT avec un seul critère rempli (ex. 50 statuts CAE seuls) est « non engagée » → démarrage TE direct en `write`, CAE/ECI `archived` (visibles « (archivé) » s'ils sont `superficiel`, masqués s'ils sont `vide`), **sans bouton de bascule** ni reprise automatique des données legacy vers TE. Seuil conservé tel quel (règle initialement conçue pour masquer ECI vide dans la nav).
 
-> **Nuance bascule partielle** : si la CT a au moins un ref. engagé, la bascule reste disponible et migre les données des référentiels en `mode: write`. Un ref. CAE/ECI masqué (non engagé) n'est pas source principale de la bascule, mais peut encore contribuer passivement à une fusion `action_origine` lors de la migration depuis l'autre ref. engagé (cf. [Snapshots](#snapshots) — création `pre-switch-te`).
+> **Nuance bascule partielle** : si la CT a au moins un ref. engagé, la bascule reste disponible et migre les données des référentiels en `mode: write`. Un ref. CAE/ECI archivé (non engagé) n'est pas source principale de la bascule, mais peut encore contribuer passivement à une fusion `action_origine` lors de la migration depuis l'autre ref. engagé (cf. [Snapshots](#snapshots) — création `pre-switch-te`).
 
 TE est toujours affiché (`display: true`, modulo feature flag). La règle ne se recalcule pas en continu : uniquement sur reset manuel super-admin ou batch `resetAllCollectivitesDisplayPreferences`. **Guard** : ne pas recalculer si `te.populatedFromCaeEci` est renseigné.
 
@@ -151,7 +151,7 @@ TE est toujours affiché (`display: true`, modulo feature flag). La règle ne se
 | Référentiel | `mode` | `display` | `populatedFromCaeEci` |
 |---|---|---|---|
 | `te` | `write` | `true` | renseigné (`populatedAt`, `populatedBy`) |
-| `cae` / `eci` basculés | `archived` | `false` | — |
+| `cae` / `eci` basculés | `archived` | `true`, sauf s'il est `vide` (`false`) | — |
 
 ### Déploiement (initialisation en deux temps)
 
@@ -276,13 +276,13 @@ En tant que membre d'une CT avec au moins un référentiel CAE/ECI engagé, je v
 
 ### P2 — Démarrage direct TE (CT non engagée)
 
-En tant que membre d'une CT sans engagement significatif sur CAE/ECI, je veux démarrer directement sur TE en écriture comme seul référentiel visible, sans étape de bascule inutile.
+En tant que membre d'une CT sans engagement significatif sur CAE/ECI, je veux démarrer directement sur TE en écriture comme seul référentiel éditable (un CAE/ECI contenant des données reste consultable en « (archivé) »), sans étape de bascule inutile.
 
 → Règles : [Profils CT](#profils-ct) (conséquence produit assumée).
 
 ### P3 — Navigation et archives
 
-En tant qu'utilisateur, je veux comprendre pourquoi un référentiel n'est pas éditable (bandeau), et après bascule accéder à mes anciens CAE/ECI via un lien TdB EDL sans encombrer le menu EDL.
+En tant qu'utilisateur, je veux comprendre pourquoi un référentiel n'est pas éditable (bandeau), et après bascule retrouver mes anciens CAE/ECI en « (archivé) » après les référentiels actifs dans le menu EDL (sauf s'ils sont vides) ou via un lien TdB EDL.
 
 → Règles : [Préférences référentiels](#préférences-référentiels), accès archives.
 
@@ -351,7 +351,7 @@ Objectif de découpage : **PRs reviewables en une session**. Règle générale ~
 | PR3 | `deriveReferentielPreferences` + extension ResetDisplayPreferencesService | PR1 | ~400 | Oui |
 | PR4 | CollectiviteReferentielModeService + ReferentielModeGuard | PR1, PR3 | ~500 | Oui |
 | PR5 | UI bandeaux readonly / archived | PR4 | ~300 | Oui |
-| PR6 | Nav EDL + masquage archived + lien archives TdB | PR4 | ~350 | Oui |
+| PR6 | Nav EDL + archived visibles sauf vides + lien archives TdB | PR4 | ~350 | Oui |
 | PR7 | Désactivation contrôles d'édition côté app | PR4 | ~350 | Oui |
 | PR8 | SwitchToTeService squelette + guards permissions / idempotence | PR4 | ~500 | Non (endpoint) |
 | PR9 | Guards COT/demande/audit | PR8 | ~350 | Non (endpoint) |
@@ -407,7 +407,7 @@ Feedback rapide possible après PR5–PR7 (lecture seule visible).
 
 ### PR6 — Nav EDL + archives
 
-- Nav EDL selon `display` ; masquer `archived`.
+- Nav EDL selon `display` ; référentiels `archived` affichés avec le libellé « (archivé) », masqués seulement s'ils sont vides (`display: false`).
 - Lien « Consulter mes anciens référentiels » sur TdB EDL.
 
 ### PR7 — UI lecture seule (édition)
@@ -600,7 +600,7 @@ Un bon test vérifie le **comportement externe** (entrée → sortie) sans se co
 
 | Module | Type | Cas clés |
 |---|---|---|
-| `deriveReferentielPreferences` | Unitaire | CT avec/sans ref. engagé ; post-bascule figée ; invariant archived → display false |
+| `deriveReferentielPreferences` | Unitaire | CT avec/sans ref. engagé ; post-bascule figée ; archived visible si `superficiel`, masqué si `vide` |
 | `mergeStatuts` / `mergeCommentaires` | Unitaire | Cf. [Annexe A](#a--algorithmes-de-fusion) ; cohérence statut ↔ score PR18 |
 | `mergePilotes` / `mergeServices` | Unitaire pur | Mapping hétérogène (`cae_6.1.3.4.3 + eci_3.3.1.3 → te_6.1.4.4`) ; dédup |
 | `mergeFicheActionLinks` | Unitaire pur | Mesure→mesure ; sous-mesure direct ; fallback parente ; dédup |
