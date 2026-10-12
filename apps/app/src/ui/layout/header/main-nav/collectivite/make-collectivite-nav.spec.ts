@@ -143,9 +143,9 @@ describe('outils-de-priorisation-dans-la-nav', () => {
   });
 
   it("sans le feature flag, la nav n'a pas d'entrée vers la priorisation", () => {
-    const hrefs = makeStartItemsWithPriorisation(false).map(
-      (item) => item.href
-    );
+    const hrefs = makeStartItemsWithPriorisation(false)
+      .filter(isNavLink)
+      .map((item) => item.href);
 
     expect(hrefs).not.toContain(priorisationHref);
   });
