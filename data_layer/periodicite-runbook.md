@@ -164,9 +164,15 @@ Contrôler :
   restent séparées et conservent leurs périodes d’origine.
 - Graphiques, exports, PCAET, trajectoires, score indicatif et fiche publique du site.
 
-Le retour à `indicateur/remplacer-catalogue-periodicites-par-contraintes` exige des définitions et valeurs
-uniquement annuelles. Sinon, le revert est refusé. Les anciennes colonnes
-d’agrégation sont recréées à NULL pour restaurer le schéma de préparation.
+Avant le retour au socle annuel, vérifier que les définitions et valeurs sont
+uniquement annuelles ; interrompre la procédure si des lignes non annuelles existent.
+Ce retour annule **`indicateur/periodicite_activation` (#5215)** : son script de
+revert rétablit les contraintes annuelles et échoue atomiquement si une autre
+cadence est utilisée. Il recrée les anciennes colonnes d’agrégation à NULL.
+**`indicateur/remplacer-catalogue-periodicites-par-contraintes` reste appliquée** :
+c'est l'état cible, pas le script de revert à exécuter. Le propre revert de ce
+socle restaure le catalogue des quatre cadences et ses clés étrangères ; il ne
+constitue pas le garde-fou annuel.
 Après restauration des données, les scripts reconstruisent les dépendances des formules.
 
 ## En cas d'échec
