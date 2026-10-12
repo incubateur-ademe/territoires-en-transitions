@@ -377,25 +377,29 @@ describe('update-action', () => {
 });
 
 describe('wiring', () => {
-  it('expose get, list et update sous shared.actionsDeReference', () => {
+  it('expose get, list, listFiches et update sous shared.actionsDeReference', () => {
     const actionsDeReferencePaths = Object.keys(
       router.appRouter._def.procedures
     ).filter((path) => path.startsWith('shared.actionsDeReference.'));
-    const { get, list, update } = router.appRouter.shared.actionsDeReference;
+    const { get, list, listFiches, update } =
+      router.appRouter.shared.actionsDeReference;
 
     expect({
       actionsDeReferencePaths,
       getType: get._def.type,
       listType: list._def.type,
+      listFichesType: listFiches._def.type,
       updateType: update._def.type,
     }).toEqual({
       actionsDeReferencePaths: [
         'shared.actionsDeReference.get',
         'shared.actionsDeReference.list',
+        'shared.actionsDeReference.listFiches',
         'shared.actionsDeReference.update',
       ],
       getType: 'query',
       listType: 'query',
+      listFichesType: 'query',
       updateType: 'mutation',
     });
   });
