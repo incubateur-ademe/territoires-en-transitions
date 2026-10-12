@@ -163,10 +163,4 @@ describe('prepareData', () => {
       },
     ]);
   });
-  test('conserve la confidentialité sur la dernière observation annuelle égale à zéro', () => {
-    const indicateur = structuredClone(fixture.indicateurs[0]);
-    indicateur.sources.collectivite.valeurs[1].resultat = 0;
-    const resultats = prepareData(indicateur, 'resultat', false);
-    expect(resultats.anneeModePrive).toBe(2021);
-  });
 });

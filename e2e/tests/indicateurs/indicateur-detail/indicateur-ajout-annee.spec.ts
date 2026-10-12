@@ -13,6 +13,89 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+for (const type of ['resultat', 'objectif'] as const) {
+  test(`Confirmer la suppression d'un ${type} annuel égal à zéro`, async ({
+    page,
+    collectivites,
+    indicateurs,
+    indicateurDetailPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    const indicateurId = await indicateurs.create(user, {
+      collectiviteId,
+      titre: `${type} annuel égal à zéro`,
+      unite: '%',
+      estConfidentiel: true,
+    });
+    const trpc = user.getTrpcClient();
+    for (const valeur of [
+      { dateValeur: '2024-01-01', [type]: 12 },
+      { dateValeur: '2025-01-01', [type]: 0 },
+      { dateValeur: '2026-01-01' },
+    ]) {
+      await trpc.indicateurs.valeurs.upsert.mutate({
+        collectiviteId,
+        indicateurId,
+        ...valeur,
+      });
+    }
+
+    await indicateurDetailPom.goto(collectiviteId, indicateurId);
+    const valeurs = new IndicateurValeursPom(page);
+    const tab = page.getByRole('button', {
+      name: type === 'resultat' ? 'Résultats' : 'Objectifs',
+      exact: true,
+    });
+    await tab.click();
+    const header = valeurs.table.getByRole('columnheader').filter({
+      has: page.getByText('2025', { exact: true }),
+    });
+    await expect(header).toBeVisible();
+    if (type === 'resultat') {
+      // Une année vide plus récente ne doit pas déplacer le mode privé du zéro.
+      await header.locator('.ri-lock-fill').hover();
+      await expect(page.getByRole('tooltip')).toHaveText(
+        'Le résultat est en mode privé'
+      );
+    }
+
+    const deleteButton = header.getByRole('button', {
+      name: 'Supprimer la période 2025',
+      exact: true,
+    });
+    const confirmation = page.getByRole('dialog', {
+      name: 'Confirmer la suppression',
+    });
+    await deleteButton.click();
+    await expect(confirmation).toBeVisible();
+    await confirmation
+      .getByRole('button', { name: 'Annuler', exact: true })
+      .click();
+    await page.reload();
+    await tab.click();
+    await expect(header).toBeVisible();
+
+    await deleteButton.click();
+    await confirmation
+      .getByRole('button', { name: 'Confirmer', exact: true })
+      .click();
+    await expect(header).toHaveCount(0);
+    await page.reload();
+    await expect(valeurs.table.getByText('2025', { exact: true })).toHaveCount(
+      0
+    );
+    await expect(
+      valeurs.table.getByText('2024', { exact: true })
+    ).toBeVisible();
+    await expect(
+      valeurs.table.getByText('2026', { exact: true })
+    ).toBeVisible();
+  });
+}
+
 test('Déclarer une année persiste après rafraîchissement', async ({
   page,
   collectivites,
