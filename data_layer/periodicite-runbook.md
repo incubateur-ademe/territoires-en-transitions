@@ -153,7 +153,7 @@ annuelles restent lisibles par le backend et le frontend précédents.
 
 Cette livraison extrait les adaptations annuelles du score indicatif et de la
 publication GES, les fixtures et stories annuelles, les remplacements de littéraux
-par l’enum existante, les règles de lint et les corrections indépendantes de
+par l’enum existante et les corrections indépendantes de
 l’activation. Une valeur zéro reste une observation pour la confidentialité et
 nécessite une confirmation avant suppression. L’édition d’un indicateur du
 catalogue ne transmet plus les thématiques réservées aux indicateurs personnels.
