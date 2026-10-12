@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import {
-  toAnnualIndicateurYear,
+  getYearFromIsoDate,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
 import { cn, Input, TableCell, VisibleWhen } from '@tet/ui';
@@ -42,16 +42,14 @@ export const IndicateurValeurCell = memo(
   }: IndicateurValeurCellProps): ReactNode => {
     const { indicateurId, indicateurValeurs, optionalYears, isApplicable } =
       cell.row.original;
+    // Un indicateur non applicable ne réclame plus rien : le marqueur de
+    // valeur requise disparaît avec la saisie.
     const isRequired =
       isApplicable && optionalYears !== 'all' && !optionalYears?.includes(year);
 
     const indicateurValeur = indicateurValeurs.find(
       (indicateurValeur) =>
-        toAnnualIndicateurYear(
-          indicateurValeur.periodicite,
-          indicateurValeur.dateValeur,
-          'Diagnostic PCAET'
-        ) === year
+        getYearFromIsoDate(indicateurValeur.dateValeur) === year
     );
 
     const currentValue = indicateurValeur?.[indicateurValeurType] ?? null;
