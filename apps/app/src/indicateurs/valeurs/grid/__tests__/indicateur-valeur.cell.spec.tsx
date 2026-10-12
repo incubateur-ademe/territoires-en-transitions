@@ -100,6 +100,7 @@ const renderCell = ({
   objectif,
   dateValeur,
   period = annualPeriod,
+  isRequired = true,
   updateIndicateurValeurs,
 }: {
   indicateurValeurType: 'resultat' | 'objectif';
@@ -127,6 +128,7 @@ const renderCell = ({
               cell={cell}
               indicateurValeurType={indicateurValeurType}
               period={period}
+              isRequired={isRequired}
             />
           </tr>
         </tbody>
@@ -213,6 +215,16 @@ describe('IndicateurValeurCell', () => {
     });
 
     expect(screen.getByTitle(appLabels.indicateurValeurRequise)).toBeDefined();
+  });
+
+  it("n'affiche pas de marqueur lorsque le contexte déclare la cellule facultative", () => {
+    renderCell({
+      indicateurValeurType: 'objectif',
+      resultat: null,
+      objectif: null,
+      isRequired: false,
+    });
+    expect(screen.queryByTitle(appLabels.indicateurValeurRequise)).toBeNull();
   });
 
   it('enregistre la valeur via updateIndicateurValeurs à la fermeture de l’éditeur', async () => {

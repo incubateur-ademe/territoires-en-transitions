@@ -1,4 +1,14 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriods,
+} from '@tet/domain/indicateurs';
 import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -100,6 +110,32 @@ describe('IndicateurValeursTable smoke', () => {
         ],
       })
     );
+  });
+
+  it('transmet aux cellules le caractère obligatoire fourni par leur contexte', () => {
+    const isValeurRequired = vi.fn().mockReturnValue(false);
+    renderGrid({
+      rows: [
+        fakeRow({
+          indicateurId: 12,
+          indicateurLabel: 'Résidentiel',
+          indicateurValeurs: [],
+          isValeurRequired,
+        }),
+      ],
+    });
+
+    expect(isValeurRequired).toHaveBeenCalledWith(
+      IndicateurPeriods.parse(
+        IndicateurPeriodiciteEnum.ANNUELLE,
+        String(fakeReferenceYear)
+      )
+    );
+    expect(
+      within(screen.getByRole('grid')).queryByTitle(
+        appLabels.indicateurValeurRequise
+      )
+    ).toBeNull();
   });
 
   it('rend sans lever', () => {

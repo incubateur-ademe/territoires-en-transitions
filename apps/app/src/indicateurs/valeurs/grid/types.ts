@@ -1,5 +1,6 @@
 import {
   IndicateurDefinition,
+  IndicateurPeriod,
   IndicateurValeur,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
@@ -23,8 +24,8 @@ export type IndicateurTableRow = {
   indicateurLabel: string;
   indicateurDefinition: IndicateurDefinition;
   indicateurValeurs: IndicateurValeur[];
-  /** Années dont la valeur peut rester vide pour cette ligne. */
-  optionalYears?: readonly number[] | 'all';
+  /** Règle métier fournie par le contexte qui construit la grille. */
+  isValeurRequired: (period: IndicateurPeriod | null) => boolean;
   /**
    * `false` quand la collectivité a déclaré l'indicateur non applicable : la
    * ligne n'est plus saisissable et cesse d'être réclamée.

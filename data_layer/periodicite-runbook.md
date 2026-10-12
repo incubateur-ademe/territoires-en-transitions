@@ -119,6 +119,8 @@ conservés dans #5215. Les cellules et leurs identifiants utilisent le service
 `IndicateurPeriods` du socle déjà déployé. `containing` conserve la lecture des
 observations annuelles datées en cours d'année. Les années restent aux frontières
 PCAET (horizons réglementaires et API annuelle), sans conversion des données.
+L'adaptateur PCAET porte aussi la règle des années facultatives et des lignes
+non applicables ; la cellule reçoit uniquement le booléen `isRequired`.
 
 **Déployer uniquement l'application frontend** à partir du commit intégré à
 `main`. Le backend, le moteur de périodes, les schémas d'entrée des API, les

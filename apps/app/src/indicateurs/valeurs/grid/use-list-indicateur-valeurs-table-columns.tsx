@@ -123,6 +123,7 @@ const listColumns = ({
                 cell={cellContext}
                 indicateurValeurType={indicateurValeurType}
                 period={period}
+                isRequired={cellContext.row.original.isValeurRequired(period)}
                 isReadonly={isReadonly || isUnsetReference}
               />
             );
