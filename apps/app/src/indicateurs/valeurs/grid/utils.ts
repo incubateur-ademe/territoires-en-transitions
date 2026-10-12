@@ -1,16 +1,17 @@
 import { metaHelper, Table, tableFeatures } from '@tanstack/react-table';
+import { IndicateurPeriod } from '@tet/domain/indicateurs';
 import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
 
 export type IndicateurValeursTableMeta = {
   onReferenceYearChange?: (year: number) => void;
   updateIndicateurValeurs: ({
     indicateurId,
-    year,
+    period,
     field,
     value,
   }: {
     indicateurId: number;
-    year: number;
+    period: IndicateurPeriod;
     field: 'resultat' | 'objectif';
     value: number | null;
   }) => Promise<boolean>;
@@ -24,7 +25,7 @@ export type IndicateurValeursTableMeta = {
 };
 
 export type IndicateurValeursColumnMeta = {
-  year: number;
+  period: IndicateurPeriod | null;
   indicateurValeurType: PcaetIndicateurValeurType;
 };
 

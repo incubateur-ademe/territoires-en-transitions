@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -16,7 +16,7 @@ vi.mock(
   '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs',
   () => ({
     useUpdateDiagnosticIndicateursValeurs: () => ({
-      updateIndicateurValeurs: vi.fn().mockResolvedValue(undefined),
+      updateIndicateurValeurs,
       isPending: false,
     }),
   })
@@ -26,7 +26,8 @@ vi.mock('@/app/utils/react-query/autosave-status/use-autosave-status', () => ({
   useAutosaveStatus: () => 'idle',
 }));
 
-const { setIndicateurApplicable } = vi.hoisted(() => ({
+const { setIndicateurApplicable, updateIndicateurValeurs } = vi.hoisted(() => ({
+  updateIndicateurValeurs: vi.fn().mockResolvedValue(undefined),
   setIndicateurApplicable: vi.fn().mockResolvedValue(undefined),
 }));
 
@@ -62,6 +63,45 @@ const renderGrid = (
 ): ReturnType<typeof render> => render(gridElement(overrides));
 
 describe('IndicateurValeursTable smoke', () => {
+  it("convertit la période de la cellule en année pour l'API PCAET", async () => {
+    updateIndicateurValeurs.mockClear();
+    const row = fakeRow({ indicateurId: 12, indicateurLabel: 'Résidentiel' });
+    renderGrid({
+      rows: [
+        {
+          ...row,
+          indicateurValeurs: [
+            {
+              ...row.indicateurValeurs[0],
+              dateValeur: `${fakeReferenceYear}-06-15`,
+              resultat: 10,
+            },
+          ],
+        },
+      ],
+    });
+
+    fireEvent.click(screen.getByText('10'));
+    const input = screen.getByLabelText(
+      capitalize(appLabels.indicateurResultat())
+    );
+    fireEvent.change(input, { target: { value: '0' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() =>
+      expect(updateIndicateurValeurs).toHaveBeenCalledWith({
+        valeurs: [
+          {
+            indicateurId: 12,
+            year: fakeReferenceYear,
+            field: 'resultat',
+            value: 0,
+          },
+        ],
+      })
+    );
+  });
+
   it('rend sans lever', () => {
     renderGrid();
   });

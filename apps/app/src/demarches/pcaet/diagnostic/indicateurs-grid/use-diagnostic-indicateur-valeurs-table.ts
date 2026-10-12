@@ -5,7 +5,10 @@ import {
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurDefinition,
 } from '@tet/domain/demarches';
-import { getYearFromIsoDate, IndicateurValeur } from '@tet/domain/indicateurs';
+import {
+  toAnnualIndicateurYearFromHistoricalDate,
+  IndicateurValeur,
+} from '@tet/domain/indicateurs';
 import { useCallback, useMemo, useState } from 'react';
 import {
   isUnsetReferenceYear,
@@ -88,7 +91,11 @@ export const useDiagnosticIndicateurValeursTable = ({
       deriveReferenceYearFromIndicateurValeurYears({
         resultYears: rows.flatMap((row) =>
           row.indicateurValeurs.map((valeur) =>
-            getYearFromIsoDate(valeur.dateValeur)
+            toAnnualIndicateurYearFromHistoricalDate(
+              valeur.periodicite,
+              valeur.dateValeur,
+              'Diagnostic PCAET'
+            )
           )
         ),
       }),

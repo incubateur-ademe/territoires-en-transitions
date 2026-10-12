@@ -2,7 +2,9 @@ import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import {
+  IndicateurPeriod,
   IndicateurPeriodiciteEnum,
+  IndicateurPeriods,
   IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import { capitalize } from '@tet/ui/labels/plural';
@@ -17,19 +19,25 @@ import { fakeRow } from './grid-fixtures';
 
 const indicateurId = 12;
 const year = 2026;
+const annualPeriod = IndicateurPeriods.parse(
+  IndicateurPeriodiciteEnum.ANNUELLE,
+  String(year)
+);
 
 const buildValeur = ({
   resultat,
   objectif,
+  dateValeur,
 }: {
   resultat: number | null;
   objectif: number | null;
+  dateValeur?: string;
 }): IndicateurValeur => ({
   id: 1,
   collectiviteId: 1,
   indicateurId,
   periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-  dateValeur: `${year}-01-01`,
+  dateValeur: dateValeur ?? `${year}-01-01`,
   metadonneeId: null,
   resultat,
   resultatCommentaire: null,
@@ -47,10 +55,12 @@ const buildValeur = ({
 const buildCellContext = ({
   resultat,
   objectif,
+  dateValeur,
   updateIndicateurValeurs = vi.fn().mockResolvedValue(true),
 }: {
   resultat: number | null;
   objectif: number | null;
+  dateValeur?: string;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }): {
   cell: CellContext<
@@ -63,7 +73,7 @@ const buildCellContext = ({
   const row = fakeRow({
     indicateurId,
     indicateurLabel: 'Résidentiel',
-    indicateurValeurs: [buildValeur({ resultat, objectif })],
+    indicateurValeurs: [buildValeur({ resultat, objectif, dateValeur })],
   });
 
   const meta: IndicateurValeursTableMeta = {
@@ -88,17 +98,22 @@ const renderCell = ({
   indicateurValeurType,
   resultat,
   objectif,
+  dateValeur,
+  period = annualPeriod,
   updateIndicateurValeurs,
 }: {
   indicateurValeurType: 'resultat' | 'objectif';
   resultat: number | null;
   objectif: number | null;
+  dateValeur?: string;
   isRequired?: boolean;
+  period?: IndicateurPeriod | null;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }) => {
   const { cell, updateIndicateurValeurs: persist } = buildCellContext({
     resultat,
     objectif,
+    dateValeur,
     updateIndicateurValeurs,
   });
 
@@ -111,7 +126,7 @@ const renderCell = ({
             <IndicateurValeurCell
               cell={cell}
               indicateurValeurType={indicateurValeurType}
-              year={year}
+              period={period}
             />
           </tr>
         </tbody>
@@ -139,6 +154,43 @@ describe('IndicateurValeurCell', () => {
 
     expect(screen.getByText('10')).toBeDefined();
     expect(document.querySelector('[data-field="resultat"]')).not.toBeNull();
+  });
+
+  it.each(['2026-06-15', '2026-12-31'])(
+    'affiche une valeur annuelle historique datée du %s',
+    (dateValeur) => {
+      renderCell({
+        indicateurValeurType: 'resultat',
+        resultat: 10,
+        objectif: null,
+        dateValeur,
+      });
+      expect(screen.getByText('10')).toBeDefined();
+    }
+  );
+
+  it("ne reprend pas une valeur d'une autre période", () => {
+    renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+      dateValeur: '2025-12-31',
+    });
+    expect(screen.queryByText('10')).toBeNull();
+  });
+
+  it("n'ouvre pas d'éditeur tant que la période de référence est absente", () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+      period: null,
+    });
+    fireEvent.click(screen.getByRole('cell'));
+    expect(
+      screen.queryByLabelText(capitalize(appLabels.indicateurResultat()))
+    ).toBeNull();
+    expect(updateIndicateurValeurs).not.toHaveBeenCalled();
   });
 
   it('affiche la valeur objectif', () => {
@@ -175,7 +227,7 @@ describe('IndicateurValeurCell', () => {
     await waitFor(() =>
       expect(updateIndicateurValeurs).toHaveBeenCalledWith({
         indicateurId,
-        year,
+        period: annualPeriod,
         field: 'resultat',
         value: 42,
       })
