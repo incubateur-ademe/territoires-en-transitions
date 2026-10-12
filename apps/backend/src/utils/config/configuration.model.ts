@@ -33,6 +33,13 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé pour la connexion à l'API Supabase en tant qu'utilisateur anonyme, permet de générér des urls d'accès anonyme"
       ),
+    SUPABASE_AUTH_COOKIE_NAME: z
+      .string()
+      .min(1)
+      .optional()
+      .describe(
+        "Nom du cookie de session Supabase, identique à celui de l'app ; par défaut dérivé de SUPABASE_URL (sb-<label>-auth-token)"
+      ),
     GCLOUD_SERVICE_ACCOUNT_KEY: z
       .string()
       .min(1)

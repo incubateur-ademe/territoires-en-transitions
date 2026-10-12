@@ -545,7 +545,11 @@ export class OidcController {
     req: Request
   ): Promise<string | null> {
     const supabaseUrl = this.configurationService.get('SUPABASE_URL');
-    const jwt = await extractAccessTokenFromSupabaseCookie(req, supabaseUrl);
+    const jwt = await extractAccessTokenFromSupabaseCookie(
+      req,
+      supabaseUrl,
+      this.configurationService.get('SUPABASE_AUTH_COOKIE_NAME')
+    );
     if (!jwt) {
       return null;
     }
