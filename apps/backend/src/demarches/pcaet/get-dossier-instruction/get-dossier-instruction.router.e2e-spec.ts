@@ -170,6 +170,7 @@ describe('getDossierInstruction', () => {
       {
         id: plan.id,
         nom: 'Programme d’actions consultable',
+        status: 'active',
         nbFiches: 0,
         fiches: [],
         axes: [],
