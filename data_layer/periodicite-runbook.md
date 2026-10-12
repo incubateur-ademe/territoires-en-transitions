@@ -3,7 +3,7 @@
 État au 12 octobre 2026 : #5220, #5292, #5366 et **#5378 sont fusionnées et
 déployées**. Le socle annuel de #5378 est inclus dans `main` ; sa migration
 `indicateur/remplacer-catalogue-periodicites-par-contraintes` est déjà appliquée.
-La première livraison est la [PR de corrections annuelles](https://github.com/incubateur-ademe/territoires-en-transitions/compare/main...split/indicateurs-annual-ui) :
+La première livraison est la [PR de corrections annuelles #5430](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5430) :
 elle conserve le contrat annuel et ne demande aucune migration. **#5215** vient
 ensuite et ouvre les trois autres cadences.
 
@@ -13,7 +13,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → corrections annuelles → #5215 (activation).
+- `main` → #5430 (corrections annuelles) → #5215 (activation).
 - #5215 → #5418 (import atomique) → #5379 (file durable de recalcul).
 - #5215 → #5394 (nouvelle saisie) → #5312 (Margny) → #5296 (nettoyage final).
 - `main` → #5417 (verrous SQL) et `main` → #5416 (verrou du score), indépendantes
@@ -26,7 +26,7 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| Corrections annuelles | Saisie, rafraîchissement et grille PCAET annuels | Aucune ; frontend uniquement |
+| #5430 | Saisie, rafraîchissement et grille PCAET annuels | Aucune ; frontend uniquement |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5418 | Import atomique du catalogue | Aucune |
 | #5379 | File durable de recalcul | `indicateur/reconciliation_formules` |
@@ -108,7 +108,7 @@ enregistré avant le recalcul : un échec de recalcul ne l'annule pas. Suspendre
 imports et reprendre le recalcul avant de publier une autre version. Le rollback
 commun du catalogue et des valeurs sera livré séparément dans #5418.
 
-## 2. Corrections des parcours annuels — déploiement autonome
+## 2. Corrections des parcours annuels — #5430, déploiement autonome
 
 Cette livraison extrait de #5215 les corrections indépendantes des nouvelles
 cadences : sauvegardes successives dans les cellules, refus des nombres non
