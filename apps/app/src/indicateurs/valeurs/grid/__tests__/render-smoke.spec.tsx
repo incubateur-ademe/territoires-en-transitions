@@ -13,6 +13,7 @@ import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
+import { buildDiagnosticIndicateurPeriodColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-period.columns';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
 import {
@@ -22,58 +23,49 @@ import {
   fakeYears,
 } from './grid-fixtures';
 
-vi.mock(
-  '@/app/demarches/pcaet/diagnostic/data/use-update-diagnostic-indicateurs-valeurs',
-  () => ({
-    useUpdateDiagnosticIndicateursValeurs: () => ({
-      updateIndicateurValeurs,
-      isPending: false,
-    }),
-  })
-);
-
 vi.mock('@/app/utils/react-query/autosave-status/use-autosave-status', () => ({
   useAutosaveStatus: () => 'idle',
 }));
 
-const { setIndicateurApplicable, updateIndicateurValeurs } = vi.hoisted(() => ({
-  updateIndicateurValeurs: vi.fn().mockResolvedValue(undefined),
-  setIndicateurApplicable: vi.fn().mockResolvedValue(undefined),
-}));
+const updateIndicateurValeurs = vi.fn().mockResolvedValue(true);
+const setIndicateurApplicable = vi.fn().mockResolvedValue(true);
 
-vi.mock(
-  '@/app/demarches/pcaet/diagnostic/data/use-set-indicateur-applicable',
-  () => ({
-    useSetIndicateurApplicable: () => ({
-      setIndicateurApplicable,
-      isPending: false,
-    }),
-  })
-);
+type GridTestProps = Partial<ComponentProps<typeof IndicateurValeursTable>> & {
+  years?: readonly number[];
+  referenceYear?: number | null;
+  onReferenceYearChange?: (year: number) => void;
+};
 
-const gridElement = (
-  overrides: Partial<ComponentProps<typeof IndicateurValeursTable>> = {}
-): JSX.Element => (
+const gridElement = ({
+  years = fakeYears,
+  referenceYear = fakeReferenceYear,
+  onReferenceYearChange = vi.fn(),
+  ...overrides
+}: GridTestProps = {}): JSX.Element => (
   <IndicateurValeursTable
-    demarcheId={1}
     autosaveKey="grille"
     rows={fakeRows}
-    years={fakeYears}
-    referenceYear={fakeReferenceYear}
+    periodColumns={buildDiagnosticIndicateurPeriodColumns({
+      years,
+      referenceYear,
+      currentYear: fakeReferenceYear,
+      onReferenceYearChange,
+      isReadonly: overrides.isReadonly ?? false,
+    })}
+    updateIndicateurValeurs={updateIndicateurValeurs}
+    setIndicateurApplicable={setIndicateurApplicable}
     title="Profil énergie CLIMAT"
     unit="kteq CO2"
-    onReferenceYearChange={vi.fn()}
     isRequired
     {...overrides}
   />
 );
 
-const renderGrid = (
-  overrides: Partial<ComponentProps<typeof IndicateurValeursTable>> = {}
-): ReturnType<typeof render> => render(gridElement(overrides));
+const renderGrid = (overrides: GridTestProps = {}): ReturnType<typeof render> =>
+  render(gridElement(overrides));
 
 describe('IndicateurValeursTable smoke', () => {
-  it("convertit la période de la cellule en année pour l'API PCAET", async () => {
+  it("transmet la période de la cellule au callback d'écriture", async () => {
     updateIndicateurValeurs.mockClear();
     const row = fakeRow({ indicateurId: 12, indicateurLabel: 'Résidentiel' });
     renderGrid({
@@ -100,14 +92,13 @@ describe('IndicateurValeursTable smoke', () => {
 
     await waitFor(() =>
       expect(updateIndicateurValeurs).toHaveBeenCalledWith({
-        valeurs: [
-          {
-            indicateurId: 12,
-            year: fakeReferenceYear,
-            field: 'resultat',
-            value: 0,
-          },
-        ],
+        indicateurId: 12,
+        period: IndicateurPeriods.parse(
+          IndicateurPeriodiciteEnum.ANNUELLE,
+          String(fakeReferenceYear)
+        ),
+        field: 'resultat',
+        value: 0,
       })
     );
   });
@@ -136,6 +127,32 @@ describe('IndicateurValeursTable smoke', () => {
         appLabels.indicateurValeurRequise
       )
     ).toBeNull();
+  });
+
+  it('affiche les colonnes et les champs fournis par le contexte', () => {
+    renderGrid({
+      periodColumns: [
+        {
+          period: IndicateurPeriods.parse(
+            IndicateurPeriodiciteEnum.ANNUELLE,
+            String(fakeReferenceYear)
+          ),
+          valeurTypes: ['resultat', 'objectif'],
+          renderHeader: (colSpan) => (
+            <th colSpan={colSpan}>Période personnalisée</th>
+          ),
+        },
+      ],
+      rows: [fakeRow({ indicateurId: 12, indicateurLabel: 'Résidentiel' })],
+    });
+    expect(
+      screen
+        .getByRole('columnheader', { name: 'Période personnalisée' })
+        .getAttribute('colspan')
+    ).toBe('2');
+    expect(
+      screen.getByRole('grid').querySelectorAll('[data-field]')
+    ).toHaveLength(2);
   });
 
   it('rend sans lever', () => {

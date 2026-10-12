@@ -8,7 +8,10 @@ import {
 } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { fakeRow } from '../../../../indicateurs/valeurs/grid/__tests__/grid-fixtures';
-import { buildDiagnosticIndicateurTableRows } from './diagnostic-indicateur-table.adapter';
+import {
+  buildDiagnosticIndicateurTableRows,
+  buildDiagnosticIndicateurValeurInput,
+} from './diagnostic-indicateur-table.adapter';
 import { buildIndicateurValeursTableSections } from './indicateur-tab.layout';
 
 const byCode = (code: string): PcaetDiagnosticIndicateurParentConfig => {
@@ -185,6 +188,25 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     'ne réclame aucune valeur pour un indicateur non applicable',
     (period) => {
       expect(buildRow([], false).isValeurRequired(period)).toBe(false);
+    }
+  );
+});
+
+describe('adaptation des écritures PCAET', () => {
+  it.each([0, null])(
+    'conserve la valeur %s en convertissant la période en année',
+    (value) => {
+      expect(
+        buildDiagnosticIndicateurValeurInput({
+          indicateurId: 12,
+          period: IndicateurPeriods.parse(
+            IndicateurPeriodiciteEnum.ANNUELLE,
+            '2026'
+          ),
+          field: 'resultat',
+          value,
+        })
+      ).toEqual({ indicateurId: 12, year: 2026, field: 'resultat', value });
     }
   );
 });

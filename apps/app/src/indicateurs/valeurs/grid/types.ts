@@ -5,19 +5,18 @@ import {
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
 
-/**
- * Colonne d’année de référence tant que la collectivité n’a pas saisi l’année.
- * Ce n’est pas une année civile : les cellules de cette colonne ne se
- * persistent pas.
- */
-export const UNSET_REFERENCE_YEAR = 0;
-export const isUnsetReferenceYear = (year: number): boolean =>
-  year === UNSET_REFERENCE_YEAR;
+import type { ReactNode } from 'react';
 
 export type PcaetIndicateurValeurType = Extract<
   IndicateurValeurType,
   'resultat' | 'objectif'
 >;
+
+export type IndicateurPeriodColumn = {
+  period: IndicateurPeriod | null;
+  valeurTypes: readonly PcaetIndicateurValeurType[];
+  renderHeader: (colSpan: number) => ReactNode;
+};
 
 export type IndicateurTableRow = {
   indicateurId: number;

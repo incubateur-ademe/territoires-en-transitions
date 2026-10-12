@@ -3,7 +3,6 @@ import { IndicateurPeriod } from '@tet/domain/indicateurs';
 import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
 
 export type IndicateurValeursTableMeta = {
-  onReferenceYearChange?: (year: number) => void;
   updateIndicateurValeurs: ({
     indicateurId,
     period,

@@ -4,6 +4,7 @@ import {
   type IndicateurPeriod,
   type IndicateurValeur,
 } from '@tet/domain/indicateurs';
+import type { IndicateurValeursTableMeta } from '../../../../indicateurs/valeurs/grid/utils';
 import type { IndicateurTableRow } from '../../../../indicateurs/valeurs/grid/types';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
 
@@ -68,3 +69,19 @@ export const buildDiagnosticIndicateurTableRows = (
     ];
   });
 };
+
+export const buildDiagnosticIndicateurValeurInput = ({
+  indicateurId,
+  period,
+  field,
+  value,
+}: Parameters<IndicateurValeursTableMeta['updateIndicateurValeurs']>[0]) => ({
+  indicateurId,
+  year: toAnnualIndicateurYear(
+    period.periodicite,
+    period.dateDebut,
+    'Diagnostic PCAET'
+  ),
+  field,
+  value,
+});

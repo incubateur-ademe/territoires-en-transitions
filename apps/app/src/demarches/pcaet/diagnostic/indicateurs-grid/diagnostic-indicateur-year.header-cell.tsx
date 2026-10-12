@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, cn, TableHeaderCell, Tooltip } from '@tet/ui';
 import { JSX, memo } from 'react';
-import { ReferenceYearField } from './reference-year/reference-year-field';
+import { ReferenceYearField } from '../../../../indicateurs/valeurs/grid/reference-year/reference-year-field';
 
 type YearColumnHeaderProps = {
   year: number | null;
@@ -56,7 +56,7 @@ const YearHeaderLabel = ({
   return <span>{year}</span>;
 };
 
-export const IndicateurValeurYearHeaderCell = memo(
+export const DiagnosticIndicateurYearHeaderCell = memo(
   ({
     year,
     colSpan = 1,
@@ -86,4 +86,4 @@ export const IndicateurValeurYearHeaderCell = memo(
   }
 );
 
-IndicateurValeurYearHeaderCell.displayName = 'YearColumnHeader';
+DiagnosticIndicateurYearHeaderCell.displayName = 'YearColumnHeader';
