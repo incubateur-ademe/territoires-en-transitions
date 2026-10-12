@@ -10,6 +10,7 @@ const FEATURE_FLAGS = [
   'is-ai-plan-import-enabled',
   'is-score-indicateur-enabled',
   'is-fiche-secteurs-enabled',
+  'is-priorisation-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);

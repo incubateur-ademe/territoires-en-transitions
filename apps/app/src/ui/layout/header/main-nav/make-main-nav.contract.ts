@@ -8,6 +8,7 @@ export type MakeMainNavArgs = {
   currentCollectivite: CollectiviteCurrent | null;
   referentielDisplay?: ReferentielDisplayMap;
   isDemarchePcaetEnabled: boolean;
+  isPriorisationEnabled: boolean;
 };
 
 export type MakeMainNav = (args: MakeMainNavArgs) => HeaderProps['mainNav'];

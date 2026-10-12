@@ -15,6 +15,7 @@ import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateEdlDropdown } from './generate-edl-dropdown';
 import { generateIndicateursDropdown } from './generate-indicateurs-dropdown';
+import { generatePriorisationLink } from './generate-priorisation-link';
 import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown';
 import { generateTdbLink } from './generate-tdb-dropdown';
 
@@ -46,6 +47,7 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
   currentCollectivite,
   referentielDisplay,
   isDemarchePcaetEnabled,
+  isPriorisationEnabled,
 }) => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
@@ -91,6 +93,12 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
         ? undefined
         : currentCollectivite.collectivitePreferences.referentiels,
       isDemarchePcaetEnabled,
+    }),
+    generatePriorisationLink({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+      isPriorisationEnabled,
     }),
     {
       isVisible: isSuperAdmin,
