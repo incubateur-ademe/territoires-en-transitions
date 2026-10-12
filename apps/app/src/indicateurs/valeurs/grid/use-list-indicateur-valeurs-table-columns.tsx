@@ -89,7 +89,7 @@ const listColumns = ({
               (candidate) => !isUnsetReferenceYear(candidate)
             )}
             onReferenceYearChange={
-              isReference ? onReferenceYearChange : undefined
+              isReference && !isReadonly ? onReferenceYearChange : undefined
             }
           />
         );

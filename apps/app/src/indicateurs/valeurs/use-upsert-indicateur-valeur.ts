@@ -2,8 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { broadcastQueryInvalidation } from '@tet/api/utils/react-query/cross-tab-invalidation';
-import { ListIndicateurValeurOuput } from './use-list-indicateur-valeurs';
+import { invalidateIndicateurValeursQueries } from './invalidate-indicateur-valeurs-queries';
 
 type UseUpsertIndicateurValeurOptions = {
   successMessage?: string;
@@ -24,60 +23,18 @@ export const useUpsertIndicateurValeur = ({
 
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
-      onSuccess: (_, variables) => {
-        const { collectiviteId, indicateurId } = variables;
+      meta: { disableToast: true },
+      onSuccess: async (_, variables) => {
+        const { collectiviteId } = variables;
         if (!variables.id && !disableCreateToast) {
           setToast('success', successMessage);
         }
 
-        // recharge les infos complémentaires associées à l'indicateur
-        queryClient.invalidateQueries({
-          queryKey: trpc.indicateurs.indicateurs.list.queryKey({
-            collectiviteId,
-          }),
+        await invalidateIndicateurValeursQueries({
+          queryClient,
+          trpc,
+          collectiviteId,
         });
-
-        queryClient
-          .getQueriesData<ListIndicateurValeurOuput>({
-            queryKey: trpc.indicateurs.valeurs.list.queryKey({
-              collectiviteId,
-            }),
-          })
-          .forEach(([queryKey, queryResult]) => {
-            if (
-              queryResult?.indicateurs.some(
-                (indicateur) => indicateur.definition.id === indicateurId
-              )
-            ) {
-              queryClient.invalidateQueries({ queryKey });
-            }
-          });
-
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
-            collectiviteId,
-          }),
-        });
-
-        // corriger une valeur déjà retenue pour le score d'une action
-        // redéclenche son calcul côté backend (cf ManageIndicateurValeursService /
-        // SetScoreFromIndicateurService) : on ne sait pas ici quel(s)
-        // référentiel(s)/action(s) sont concernés, donc on invalide largement
-        // plutôt que de laisser un score obsolète affiché jusqu'au
-        // rechargement de la page. `listActionsGroupedById` est inclus : le
-        // score affiché sur l'action (barre de progression, points) vient de
-        // son champ `score`, pas de `getScoreIndicatif` (cf
-        // `SubactionIndicateurScore`).
-        const scoreQueryKeys = [
-          trpc.referentiels.snapshots.getCurrent.queryKey(),
-          trpc.referentiels.actions.listActionsGroupedById.queryKey(),
-          trpc.referentiels.actions.getScoreIndicatif.queryKey(),
-          trpc.referentiels.actions.getValeursUtilisables.queryKey(),
-        ];
-        scoreQueryKeys.forEach((queryKey) => {
-          queryClient.invalidateQueries({ queryKey });
-        });
-        broadcastQueryInvalidation(scoreQueryKeys);
       },
       onError: (_, variables) => {
         if (!disableErrorToast) {
