@@ -123,9 +123,7 @@ export const IndicateurValeurCell = memo(
         aria-invalid={edit.status === 'error'}
         canEdit={!isReadonly && period !== null}
         edit={{
-          onClose: () => {
-            void edit.save();
-          },
+          onClose: edit.save,
           renderOnEdit: ({ openState }) => (
             <Input
               type="number"

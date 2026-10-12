@@ -149,6 +149,10 @@ export const useCellEdit = ({
     if (activeSave?.editVersion === editVersion) {
       return activeSave.promise;
     }
+    // Après annulation, fermer sans attendre une écriture de l'ancienne édition.
+    if (draftValueRef.current === null) {
+      return Promise.resolve(true);
+    }
 
     // Après Escape, une nouvelle édition doit attendre l'écriture déjà en vol
     // pour conserver l'ordre serveur, tout en ayant sa propre promesse.

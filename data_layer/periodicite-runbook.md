@@ -124,6 +124,9 @@ non applicables ; la cellule reçoit uniquement le booléen `isRequired`.
 Le tableau reçoit des colonnes de périodes et des callbacks d'écriture. Les
 mutations PCAET, la conversion vers l'année de l'API et l'en-tête d'année de
 référence restent dans la couche PCAET.
+L'éditeur partagé attend la sauvegarde avant de se fermer : une saisie invalide
+ou un échec laisse le brouillon ouvert. Échap permet de l'annuler, même pendant
+une requête ; sa réponse tardive ne ferme pas une nouvelle édition.
 
 **Déployer uniquement l'application frontend** à partir du commit intégré à
 `main`. Le backend, le moteur de périodes, les schémas d'entrée des API, les
@@ -136,7 +139,8 @@ Contrôler avant production puis après déploiement :
 - Déclaration, saisie de zéro, commentaires et suppression d'une année ;
   rafraîchissement des valeurs et du score sans recharger la page.
 - Grille PCAET : saisies successives pendant un enregistrement, échec suivi
-  d'une nouvelle tentative, année de référence et consultation en lecture seule.
+  d'une nouvelle tentative sans fermeture du champ, annulation par Échap pendant
+  une requête, année de référence et consultation en lecture seule.
 - Refus des créations et imports mensuels, trimestriels et semestriels par les
   API annuelles existantes ; les contraintes SQL annuelles restent en place.
 

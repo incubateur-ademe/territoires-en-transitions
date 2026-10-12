@@ -1,6 +1,12 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import {
   IndicateurPeriod,
   IndicateurPeriodiciteEnum,
@@ -265,5 +271,88 @@ describe('IndicateurValeurCell', () => {
       ).toBeNull()
     );
     expect(updateIndicateurValeurs).not.toHaveBeenCalled();
+  });
+
+  it.each(['Enter', 'outside'])(
+    'garde le brouillon ouvert après un échec via %s et permet de réessayer',
+    async (closeAction) => {
+      const updateIndicateurValeurs = vi
+        .fn()
+        .mockResolvedValueOnce(false)
+        .mockResolvedValue(true);
+      renderCell({
+        indicateurValeurType: 'resultat',
+        resultat: 10,
+        objectif: null,
+        updateIndicateurValeurs,
+      });
+      fireEvent.click(screen.getByText('10'));
+      const label = capitalize(appLabels.indicateurResultat());
+      const input = screen.getByLabelText(label);
+      fireEvent.change(input, { target: { value: '42' } });
+
+      if (closeAction === 'Enter') {
+        fireEvent.keyDown(input, { key: 'Enter' });
+      } else {
+        fireEvent.pointerDown(document.body);
+      }
+
+      await waitFor(() =>
+        expect(screen.getByLabelText(label).getAttribute('aria-invalid')).toBe(
+          'true'
+        )
+      );
+      expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe(
+        '42'
+      );
+      expect(updateIndicateurValeurs).toHaveBeenCalledTimes(1);
+
+      fireEvent.keyDown(screen.getByLabelText(label), { key: 'Enter' });
+      await waitFor(() => expect(screen.queryByLabelText(label)).toBeNull());
+      expect(updateIndicateurValeurs).toHaveBeenCalledTimes(2);
+    }
+  );
+
+  it('garde une saisie invalide ouverte sans écriture', async () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+    });
+    editAndCommit('10', '-');
+    const label = capitalize(appLabels.indicateurResultat());
+    await waitFor(() =>
+      expect(screen.getByLabelText(label).getAttribute('aria-invalid')).toBe(
+        'true'
+      )
+    );
+    expect(updateIndicateurValeurs).not.toHaveBeenCalled();
+  });
+
+  it('attend la sauvegarde et ignore sa réponse après annulation et réouverture', async () => {
+    let resolve: (result: boolean) => void = () => undefined;
+    const promise = new Promise<boolean>((resolveSave) => {
+      resolve = resolveSave;
+    });
+    const updateIndicateurValeurs = vi.fn().mockReturnValue(promise);
+    renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+      updateIndicateurValeurs,
+    });
+    editAndCommit('10', '42');
+    const label = capitalize(appLabels.indicateurResultat());
+    expect(screen.getByLabelText(label)).toBeDefined();
+
+    fireEvent.keyDown(screen.getByLabelText(label), { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByLabelText(label)).toBeNull());
+    fireEvent.click(screen.getByText('10'));
+    fireEvent.change(screen.getByLabelText(label), { target: { value: '50' } });
+
+    await act(async () => resolve(true));
+
+    expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe('50');
+    expect(updateIndicateurValeurs).toHaveBeenCalledTimes(1);
   });
 });
