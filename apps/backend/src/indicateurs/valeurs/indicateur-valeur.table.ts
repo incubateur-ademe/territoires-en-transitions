@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { sql } from 'drizzle-orm';
 import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -36,7 +37,7 @@ export const indicateurValeurTable = pgTable(
       }),
     dateValeur: date('date_valeur').notNull(),
     periodicite: text('periodicite', { enum: indicateurPeriodiciteValues })
-      .default('annuelle')
+      .default(IndicateurPeriodiciteEnum.ANNUELLE)
       .notNull(),
     metadonneeId: integer('metadonnee_id').references(
       () => indicateurSourceMetadonneeTable.id,

@@ -3,9 +3,10 @@
 État au 12 octobre 2026 : #5220, #5292, #5366 et **#5378 sont fusionnées et
 déployées**. Le socle annuel de #5378 est inclus dans `main` ; sa migration
 `indicateur/remplacer-catalogue-periodicites-par-contraintes` est déjà appliquée.
-La première livraison est la [PR de corrections annuelles #5430](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5430) :
-elle conserve le contrat annuel et ne demande aucune migration. **#5215** vient
-ensuite et ouvre les trois autres cadences.
+La [PR de corrections annuelles #5430](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5430) est également fusionnée dans `main`.
+La préparation annuelle restante (`split/indicateurs-annual-preparation`) conserve
+ce contrat et ne demande aucune migration. **#5215** vient ensuite et ouvre les
+trois autres cadences.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -13,7 +14,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5430 (corrections annuelles) → #5215 (activation).
+- `main` → `split/indicateurs-annual-preparation` (préparation annuelle restante) → #5215 (activation).
 - #5215 → #5418 (import atomique) → #5379 (file durable de recalcul).
 - #5215 → #5394 (nouvelle saisie) → #5312 (Margny) → #5296 (nettoyage final).
 - `main` → #5417 (verrous SQL) et `main` → #5416 (verrou du score), indépendantes
@@ -26,7 +27,7 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5430 | Saisie, rafraîchissement et grille PCAET annuels | Aucune ; frontend uniquement |
+| `split/indicateurs-annual-preparation` | Score, publication GES, fixtures et corrections annuelles restantes | Aucune |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5418 | Import atomique du catalogue | Aucune |
 | #5379 | File durable de recalcul | `indicateur/reconciliation_formules` |
@@ -147,6 +148,32 @@ Contrôler avant production puis après déploiement :
 En cas de régression, redéployer la version précédente de l'application. Il n'y
 a aucun revert Sqitch ni aucune conversion de données à effectuer. Les saisies
 annuelles restent lisibles par le backend et le frontend précédents.
+
+## 2 bis. Préparation annuelle restante — `split/indicateurs-annual-preparation`
+
+Cette livraison extrait les adaptations annuelles du score indicatif et de la
+publication GES, les fixtures et stories annuelles, les remplacements de littéraux
+par l’enum existante, les règles de lint et les corrections indépendantes de
+l’activation. Une valeur zéro reste une observation pour la confidentialité et
+nécessite une confirmation avant suppression. L’édition d’un indicateur du
+catalogue ne transmet plus les thématiques réservées aux indicateurs personnels.
+
+Les libellés du score conservent la lecture des snapshots annuels historiques,
+y compris lorsque leur date n’est pas le 1er janvier. La publication GES conserve
+également la lecture des dates annuelles historiques. Ces lecteurs utilisent
+l’adaptateur historique ; les validations d’écriture ne sont pas assouplies.
+
+Aucune migration, modification d’API ou ouverture de cadence : le moteur de
+périodes et les contraintes SQL restent annuels. Les modifications des tables
+Drizzle ne font que réutiliser l’enum existante pour la valeur par défaut annuelle.
+Déployer l’application et le site ; cette étape peut rester seule en production.
+Le retour arrière consiste à redéployer leurs versions précédentes.
+
+Vérifier les libellés et snapshots du score, la publication GES, la confidentialité
+et la suppression d’une valeur zéro. Les stratégies de période, sélecteurs de
+cadence, adaptations aux séries mixtes, validations API et migrations restent
+dans #5215. Les garde-fous PCAET et les restrictions de saisie annuelle face aux
+nouvelles cadences y restent aussi.
 
 ## 3. Activation des cadences — #5215
 

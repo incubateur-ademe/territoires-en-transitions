@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
@@ -113,7 +114,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       const annualDefinition = cloneDeep(sampleImportIndicateurDefinition);
       const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition2);
       // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
-      monthlyDefinition.periodicite = 'mensuelle';
+      monthlyDefinition.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
       monthlyDefinition.identifiantReferentiel = 'test_mensuel';
       annualDefinition.valeurCalcule = `val(${monthlyDefinition.identifiantReferentiel}) / 10`;
 
@@ -129,7 +130,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       const annualParent = cloneDeep(sampleImportIndicateurDefinition);
       const monthlyChild = cloneDeep(sampleImportIndicateurDefinition2);
       // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
-      monthlyChild.periodicite = 'mensuelle';
+      monthlyChild.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
       monthlyChild.parents = [annualParent.identifiantReferentiel];
 
       await expect(

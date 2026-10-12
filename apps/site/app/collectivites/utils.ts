@@ -7,6 +7,15 @@ import {
   Temoignage,
 } from '@/site/src/strapi/types';
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
+import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
+
+export type Indicateurs = {
+  date_valeur: string;
+  resultat: number;
+  identifiant: string;
+  periodicite: IndicateurPeriodicite;
+  source?: string;
+};
 
 /** Composant `contenu.texte-collectivite` */
 export type TexteCollectivite = StrapiComponent<{

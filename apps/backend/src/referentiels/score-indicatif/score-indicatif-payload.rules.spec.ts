@@ -51,7 +51,7 @@ describe('score-indicatif-payload.rules', () => {
           programme: null,
         })
       ).toEqual({
-        periodicite: 'annuelle',
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         unite: '%',
         calcul: null,
         fait: null,
@@ -220,14 +220,14 @@ describe('scoreIndicatifPayloadSchema', () => {
       programme: null,
     });
 
-    expect(snapshot.periodicite).toBe('annuelle');
+    expect(snapshot.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
     expect(snapshot.fait?.valeursUtilisees[0]?.dateValeur).toBe('2025-07-10');
   });
 
   it('refuse de présenter un snapshot de score comme mensuel', () => {
     expect(() =>
       scoreIndicatifPayloadSchema.parse({
-        periodicite: 'mensuelle',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
         unite: '%',
         fait: null,
         programme: null,

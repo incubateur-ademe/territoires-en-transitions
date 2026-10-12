@@ -15,14 +15,23 @@ type Props = {
   openState: OpenState;
 };
 
-type EtatIndicateur = {
+type IndicateurCardEditState = {
   pilotes: PersonneTagOrUser[];
   services: Tag[];
   thematiques: Thematique[];
 };
 
+export const buildIndicateurCardUpdate = (
+  indicateur: Pick<IndicateurDefinitionListItem, 'estPerso'>,
+  state: IndicateurCardEditState
+) => ({
+  pilotes: state.pilotes,
+  services: state.services,
+  ...(indicateur.estPerso ? { thematiques: state.thematiques } : {}),
+});
+
 const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
-  const valeursEnregistrees: EtatIndicateur = {
+  const valeursEnregistrees: IndicateurCardEditState = {
     pilotes: indicateur.pilotes ?? [],
     services: indicateur.services ?? [],
     thematiques: indicateur.thematiques ?? [],
@@ -34,7 +43,9 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
    * recopiait ces trois champs dans l'état, ce qui écrasait la saisie en cours
    * dès que la liste se rafraîchissait.
    */
-  const [brouillon, setBrouillon] = useState<EtatIndicateur | null>(null);
+  const [brouillon, setBrouillon] = useState<IndicateurCardEditState | null>(
+    null
+  );
   const state = brouillon ?? valeursEnregistrees;
 
   // extrait les userId et les tagId
@@ -94,11 +105,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
             disabled:
               JSON.stringify(valeursEnregistrees) === JSON.stringify(state),
             onClick: () => {
-              updateIndicateur({
-                pilotes: state.pilotes,
-                services: state.services,
-                thematiques: state.thematiques,
-              });
+              updateIndicateur(buildIndicateurCardUpdate(indicateur, state));
               close();
             },
           }}

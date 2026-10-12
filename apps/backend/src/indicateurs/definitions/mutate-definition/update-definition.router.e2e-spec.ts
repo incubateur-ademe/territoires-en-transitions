@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
@@ -587,7 +588,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
           groupementId: groupement.id,
           titre: 'Indicateur partagé historique',
           unite: 't',
-          periodicite: 'annuelle',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         })
         .returning();
       const caller = router.createCaller({ user: authenticatedUser });
@@ -783,7 +784,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
           collectiviteId: h.owner.collectivite.id,
           titre: 'Titre du propriétaire',
           unite: 'kg',
-          periodicite: 'annuelle',
+          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         }),
       ]);
     });
@@ -821,7 +822,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
           ...h.input,
           indicateurFields: {
             estFavori: true,
-            periodicite: 'mensuelle',
+            periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
           } as never,
         })
       ).rejects.toThrow();

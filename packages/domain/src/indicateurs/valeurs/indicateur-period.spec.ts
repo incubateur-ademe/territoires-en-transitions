@@ -1,3 +1,4 @@
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import {
   IndicateurPeriods,
@@ -30,7 +31,7 @@ describe('IndicateurPeriods — contrat annuel', () => {
       IndicateurPeriods.parse('annuelle', '2024')
     );
     expect(IndicateurPeriods.containing('annuelle', '2026-12-31')).toEqual(
-      IndicateurPeriods.parse('annuelle', '2026')
+      IndicateurPeriods.parse(IndicateurPeriodiciteEnum.ANNUELLE, '2026')
     );
   });
 

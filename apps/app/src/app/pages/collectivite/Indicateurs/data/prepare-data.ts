@@ -53,6 +53,7 @@ export const prepareData = (
   // trie les sources par ordre alphabétique
   // et place les données de la collectivité en premier
   const sources = sourcesEtValeursModifiees.sort((a, b) => {
+    if (a.source === b.source) return 0;
     if (a.source === 'collectivite') return -1;
     if (b.source === 'collectivite') return 1;
     return a.source.localeCompare(b.source);
@@ -79,7 +80,7 @@ export const prepareData = (
   let anneeModePrive: number | undefined;
   if (type === 'resultat') {
     anneeModePrive = donneesCollectivite?.valeurs
-      .filter((v) => v.valeur ?? false)
+      .filter((v) => v.valeur !== null && v.valeur !== undefined)
       .map((v) => v.annee)
       .sort()
       .pop();
