@@ -6,6 +6,7 @@ import { demarchesLabels } from './demarches.labels';
 import { indicateursLabels } from './indicateurs.labels';
 import { plansLabels } from './plans.labels';
 import { referentielsLabels } from './referentiels.labels';
+import { repriseTecLabels } from './reprise-tec.labels';
 import { sharedLabels } from './shared.labels';
 import { trajectoiresSnbcLabels } from './trajectoires-snbc.labels';
 import { utilisateursAndEntityLabels } from './utilisateurs-and-entity.labels';
@@ -27,6 +28,7 @@ export const appLabels = {
   ...sharedLabels,
   ...collectivitesLabels,
   ...demarchesLabels,
+  ...repriseTecLabels,
   ...referentielsLabels,
   ...utilisateursAndEntityLabels,
   ...plansLabels,
