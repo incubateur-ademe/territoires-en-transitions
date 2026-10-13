@@ -26,7 +26,9 @@ import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rul
 
 export type PreparedIndicateurValeurs = {
   valeurs: IndicateurValeurCreate[];
-  definitions: Partial<Record<number, IndicateurDefinition>>;
+  definitions: Partial<
+    Record<number, Pick<IndicateurDefinition, 'periodicite'>>
+  >;
 };
 
 @Injectable()

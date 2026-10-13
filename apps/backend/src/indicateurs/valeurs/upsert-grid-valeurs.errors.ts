@@ -8,7 +8,8 @@ export const upsertGridValeursErrorConfig: TrpcErrorHandlerConfig<SpecificError>
     specificErrors: {
       INVALID_GRID_VALEUR: {
         code: 'BAD_REQUEST',
-        message: "Date de valeur non canonique pour l'indicateur",
+        message:
+          'Valeur invalide ou indicateur non disponible pour la collectivité',
       },
       USER_VALUE_NOT_ALLOWED: {
         code: 'BAD_REQUEST',
