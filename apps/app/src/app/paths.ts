@@ -84,6 +84,30 @@ export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
 export const repriseTecUrl = `${adminPath}/reprise-tec`;
+export const makeRepriseTecUrl = ({
+  region,
+  departement,
+}: {
+  region?: string | null;
+  departement?: string | null;
+} = {}) => {
+  const params = new URLSearchParams();
+  if (region) params.set('region', region);
+  if (departement) params.set('departement', departement);
+  const query = params.toString();
+  return query ? `${repriseTecUrl}?${query}` : repriseTecUrl;
+};
+export const makeRepriseTecReglesUrl = () => `${repriseTecUrl}/regles`;
+export const makeRepriseTecCollectiviteUrl = ({
+  collectiviteId,
+  tecDossierId,
+}: {
+  collectiviteId: number;
+  tecDossierId?: number;
+}) =>
+  `${repriseTecUrl}/${collectiviteId}${
+    tecDossierId === undefined ? '' : `?dossier=${tecDossierId}`
+  }`;
 
 const collectiviteParam = 'collectiviteId';
 const indicateurViewParam = 'vue';

@@ -1,7 +1,13 @@
 'use client';
 
-import { appLabels } from '@/app/labels/catalog';
 import {
+  makeRepriseTecCollectiviteUrl,
+  makeRepriseTecUrl,
+} from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
+import Link from 'next/link';
+import {
+  Breadcrumbs,
   EmptyCard,
   Input,
   PageHeader,
@@ -13,7 +19,7 @@ import {
   TableLoading,
   TableRow,
 } from '@tet/ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { filterCollectivites } from './data/filter-collectivites';
 import { useListCollectivites } from './data/use-list-collectivites';
 
@@ -26,12 +32,38 @@ export const RepriseTecView = () => {
     parseAsString.withDefault('').withOptions({ history: 'replace' })
   );
 
-  const collectivites = filterCollectivites(data ?? [], recherche);
+  const [{ region, departement }] = useQueryStates({
+    region: parseAsString,
+    departement: parseAsString,
+  });
+
+  const duTerritoire = (data ?? []).filter(
+    (c) =>
+      (!region || c.region === region) &&
+      (!departement || c.departement === departement)
+  );
+  const collectivites = filterCollectivites(duTerritoire, recherche);
+  const titre = departement ?? region ?? appLabels.repriseTecFranceEntiere;
 
   return (
     <div data-test="admin.reprise-tec.view">
       <PageHeader className="mb-6">
-        <PageHeader.Title>{appLabels.repriseTec}</PageHeader.Title>
+        <PageHeader.Navigation label={appLabels.repriseTecTerritoire}>
+          <Breadcrumbs
+            size="sm"
+            items={[
+              {
+                label: appLabels.repriseTecFrance,
+                href: makeRepriseTecUrl(),
+              },
+              ...(region
+                ? [{ label: region, href: makeRepriseTecUrl({ region }) }]
+                : []),
+              ...(departement ? [{ label: departement }] : []),
+            ]}
+          />
+        </PageHeader.Navigation>
+        <PageHeader.Title>{titre}</PageHeader.Title>
         <PageHeader.Subtitle>
           <p className="mb-0 text-sm leading-[22px] text-grey-8">
             {appLabels.repriseTecSousTitre}
@@ -118,7 +150,14 @@ export const RepriseTecView = () => {
                           </span>
                         ) : (
                           <>
-                            <div>{c.nomTet}</div>
+                            <Link
+                              href={makeRepriseTecCollectiviteUrl({
+                                collectiviteId: c.collectiviteId,
+                              })}
+                              className="font-medium text-primary-9 underline-offset-2 hover:underline"
+                            >
+                              {c.nomTet}
+                            </Link>
                             <div className="text-xs text-grey-7">
                               {appLabels.repriseTecIdTet(c.collectiviteId)}
                             </div>
