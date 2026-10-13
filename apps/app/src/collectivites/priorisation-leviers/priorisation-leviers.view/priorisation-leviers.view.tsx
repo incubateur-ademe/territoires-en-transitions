@@ -15,7 +15,7 @@ import {
   TabsTab,
 } from '@tet/ui/design-system/TabsNext/index';
 import { countBy, sumBy } from 'es-toolkit';
-import { JSX, useMemo } from 'react';
+import { JSX, Ref, useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../levier-card-info';
 import { LeviersView } from './leviers-view';
@@ -176,43 +176,42 @@ const SousLeviersView = ({
 );
 
 const LeviersSection = ({
+  ref,
   view,
   onViewChange,
   ...props
-}: LeviersSectionProps & LeviersViewState): JSX.Element => {
-  const leviersPanelRef = priorisationTargets.useTarget('leviersPanel');
-  return (
-    <Tabs className="flex flex-col gap-4">
-      <TabsList className="justify-start">
-        <TabsTab
-          label={appLabels.leviersAPrioriser}
-          isActive={view === 'matrix'}
-          onClick={() => onViewChange('matrix')}
-        />
-        <TabsTab
-          label={appLabels.vueEnsembleLeviers}
-          isActive={view === 'breakdown'}
-          onClick={() => onViewChange('breakdown')}
-        />
-        <TabsTab
-          label={appLabels.sousLeviersAPrioriser}
-          isActive={view === 'sousLeviers'}
-          onClick={() => onViewChange('sousLeviers')}
-        />
-      </TabsList>
-      <TabsPanel
-        ref={leviersPanelRef}
-        className="gap-4 rounded-xl border border-grey-3 bg-white p-6"
-      >
-        {match(view)
-          .with('matrix', () => <MatrixView {...props} />)
-          .with('sousLeviers', () => <SousLeviersView {...props} />)
-          .with('breakdown', () => <BreakdownView {...props} />)
-          .exhaustive()}
-      </TabsPanel>
-    </Tabs>
-  );
-};
+}: LeviersSectionProps &
+  LeviersViewState & { ref?: Ref<HTMLDivElement> }): JSX.Element => (
+  <Tabs className="flex flex-col gap-4">
+    <TabsList className="justify-start">
+      <TabsTab
+        label={appLabels.leviersAPrioriser}
+        isActive={view === 'matrix'}
+        onClick={() => onViewChange('matrix')}
+      />
+      <TabsTab
+        label={appLabels.vueEnsembleLeviers}
+        isActive={view === 'breakdown'}
+        onClick={() => onViewChange('breakdown')}
+      />
+      <TabsTab
+        label={appLabels.sousLeviersAPrioriser}
+        isActive={view === 'sousLeviers'}
+        onClick={() => onViewChange('sousLeviers')}
+      />
+    </TabsList>
+    <TabsPanel
+      ref={ref}
+      className="gap-4 rounded-xl border border-grey-3 bg-white p-6"
+    >
+      {match(view)
+        .with('matrix', () => <MatrixView {...props} />)
+        .with('sousLeviers', () => <SousLeviersView {...props} />)
+        .with('breakdown', () => <BreakdownView {...props} />)
+        .exhaustive()}
+    </TabsPanel>
+  </Tabs>
+);
 
 const PriorisationBoard = ({
   leviers,
@@ -233,9 +232,13 @@ const PriorisationBoard = ({
     upsertPertinence,
   });
 
+  const metricsRef = priorisationTargets.useTarget('metrics');
+  const leviersPanelRef = priorisationTargets.useTarget('leviersPanel');
+
   return (
     <div className="flex flex-col gap-8">
       <PriorisationMetrics
+        ref={metricsRef}
         preselectedActionsCount={preselection.actions.length}
         blindSpotCount={places.filter(isBlindSpot).length}
         analyzedActionsCount={sumBy(leviers, ({ ficheCount }) => ficheCount)}
@@ -245,6 +248,7 @@ const PriorisationBoard = ({
         potentiels={potentiels}
       />
       <LeviersSection
+        ref={leviersPanelRef}
         leviers={leviers}
         places={places}
         preselectedCountByLevier={preselectedCountByLevier}
@@ -279,15 +283,6 @@ const PriorisationContent = ({
     ))
     .exhaustive();
 
-const TourHelpButton = ({ onClick }: { onClick: () => void }): JSX.Element => {
-  const tourHelpRef = priorisationTargets.useTarget('tourHelp');
-  return (
-    <Button ref={tourHelpRef} variant="outlined" size="xs" onClick={onClick}>
-      {appLabels.priorisationVisiteRelancer}
-    </Button>
-  );
-};
-
 export const PriorisationLeviersView = (): JSX.Element => {
   const { collectiviteId } = useCurrentCollectivite();
   const leviersQuery = useLeviersPriorisation(collectiviteId);
@@ -297,6 +292,7 @@ export const PriorisationLeviersView = (): JSX.Element => {
   const { Tour, view, setView, restartOnMatrix } = useLeviersViewWithTour({
     isTourReady,
   });
+  const tourHelpRef = priorisationTargets.useTarget('tourHelp');
 
   return (
     <>
@@ -308,7 +304,14 @@ export const PriorisationLeviersView = (): JSX.Element => {
         <PageHeader.Actions>
           <div className="flex flex-wrap gap-4">
             <VisibleWhen condition={isTourReady}>
-              <TourHelpButton onClick={restartOnMatrix} />
+              <Button
+                ref={tourHelpRef}
+                variant="outlined"
+                size="xs"
+                onClick={restartOnMatrix}
+              >
+                {appLabels.priorisationVisiteRelancer}
+              </Button>
             </VisibleWhen>
             <Button
               size="xs"

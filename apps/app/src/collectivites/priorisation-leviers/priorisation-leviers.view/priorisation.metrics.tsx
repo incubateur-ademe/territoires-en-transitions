@@ -1,9 +1,9 @@
 import { appLabels } from '@/app/labels/catalog';
 import { VisibleWhen } from '@tet/ui';
-import { JSX } from 'react';
-import { priorisationTargets } from '../priorisation-tour/priorisation-tour.targets';
+import { JSX, Ref } from 'react';
 
 type PriorisationMetricsProps = {
+  ref?: Ref<HTMLDivElement>;
   preselectedActionsCount: number;
   blindSpotCount: number;
   analyzedActionsCount: number;
@@ -31,36 +31,34 @@ const MetricTile = ({ count, label, help }: MetricTileProps): JSX.Element => {
 };
 
 export const PriorisationMetrics = ({
+  ref,
   preselectedActionsCount,
   blindSpotCount,
   analyzedActionsCount,
-}: PriorisationMetricsProps): JSX.Element => {
-  const metricsRef = priorisationTargets.useTarget('metrics');
-  return (
-    <div ref={metricsRef} className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <MetricTile
-        count={preselectedActionsCount}
-        label={appLabels.actionsPreselectionnees({
-          count: preselectedActionsCount,
-          withoutCount: true,
-        })}
-        help={appLabels.actionsPreselectionneesAide}
-      />
-      <MetricTile
-        count={blindSpotCount}
-        label={appLabels.leviersEnAngleMort({
-          count: blindSpotCount,
-          withoutCount: true,
-        })}
-        help={appLabels.leviersEnAngleMortAide}
-      />
-      <MetricTile
-        count={analyzedActionsCount}
-        label={appLabels.actionsAnalysees({
-          count: analyzedActionsCount,
-          withoutCount: true,
-        })}
-      />
-    </div>
-  );
-};
+}: PriorisationMetricsProps): JSX.Element => (
+  <div ref={ref} className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <MetricTile
+      count={preselectedActionsCount}
+      label={appLabels.actionsPreselectionnees({
+        count: preselectedActionsCount,
+        withoutCount: true,
+      })}
+      help={appLabels.actionsPreselectionneesAide}
+    />
+    <MetricTile
+      count={blindSpotCount}
+      label={appLabels.leviersEnAngleMort({
+        count: blindSpotCount,
+        withoutCount: true,
+      })}
+      help={appLabels.leviersEnAngleMortAide}
+    />
+    <MetricTile
+      count={analyzedActionsCount}
+      label={appLabels.actionsAnalysees({
+        count: analyzedActionsCount,
+        withoutCount: true,
+      })}
+    />
+  </div>
+);
