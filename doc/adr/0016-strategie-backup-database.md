@@ -135,10 +135,12 @@ Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow
   explicitement `sslmode=require`, `verify-ca` ou `verify-full` dans son secret de connexion.
 - **Compatibilité avant troncature** : refuser la restauration si les contrôles détectent un schéma
   incompatible ou incomplet, ou des objets attendus absents de la cible. Le registre Sqitch seul
-  ne suffit pas à vérifier l'état physique du schéma. La préparation SQL des formules
-  est une livraison annuelle autonome : ses sauvegardes exigent une cible au même état
-  `formulas`, avec les fonctions et le trigger vérifiés avant toute troncature. La préparation
-  suivante du reporting utilise l’état `reporting` et vérifie également la vue matérialisée.
+  ne suffit pas à vérifier l'état physique du schéma. La cible historique ne doit contenir ni
+  colonne `periodicite` ni catalogue ; la cible annuelle doit conserver ses deux contraintes
+  annuelles validées avant l'exécution du vérificateur Sqitch partagé. La préparation SQL des
+  formules utilise l’état `formulas`, avec les fonctions et le trigger vérifiés avant toute
+  troncature. La préparation suivante du reporting utilise l’état `reporting` et vérifie
+  également la vue matérialisée.
 - **Exclusion mutuelle des maintenances** : les restaurations planifiées et manuelles partagent un
   groupe de concurrence par base ; le backup utilise `database-maintenance-prod`. Ces groupes ne
   bloquent pas une opération lancée ailleurs. Les interventions hors de ces workflows doivent

@@ -45,6 +45,35 @@ case "$source_phase:$target_phase" in
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
 # Verify the physical schema before restore.sh truncates any table.
+if [[ "$target_phase" == legacy ]]; then
+    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
+DO $$
+BEGIN
+    ASSERT NOT EXISTS (SELECT 1 FROM information_schema.columns
+                       WHERE table_schema = 'public'
+                         AND table_name IN ('indicateur_definition', 'indicateur_valeur')
+                         AND column_name = 'periodicite'),
+        'Le schéma historique ne doit pas contenir de colonne periodicite';
+    ASSERT to_regclass('public.indicateur_periodicite') IS NULL,
+        'Le schéma historique ne doit pas contenir de catalogue de périodicités';
+END $$;
+SQL
+else
+    # The shared verifier accepts activated schemas too. This release must
+    # still have both annual-only constraints, whatever the registry says.
+    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
+DO $$
+BEGIN
+    ASSERT (SELECT count(*) = 2 FROM pg_constraint
+        WHERE contype = 'c' AND convalidated
+          AND ((conrelid = 'public.indicateur_definition'::regclass
+                AND conname = 'indicateur_definition_schema_annuel')
+            OR (conrelid = 'public.indicateur_valeur'::regclass
+                AND conname = 'indicateur_valeur_schema_annuel'))),
+        'La restauration annuelle exige les deux contraintes annuelles actives';
+END $$;
+SQL
+fi
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 verify_changes=()
 if [[ "$target_phase" != legacy ]]; then
