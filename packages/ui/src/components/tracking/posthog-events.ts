@@ -174,6 +174,9 @@ export const Event = {
     viewPlan: 'collectivites_onglet_pa:cartes_click',
     viewReferentiel: 'collectivites_onglet_referentiels:cartes_click',
   },
+  surveys: {
+    sent: 'survey sent',
+  },
   referentiels: {
     exportScore: 'export_score',
     exportAuditScore: 'export_audit_score',

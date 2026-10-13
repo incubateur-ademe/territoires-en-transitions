@@ -22,6 +22,7 @@ export const PertinenceToggle = ({
   return (
     <div role="group" aria-label={label} className="w-full">
       <Button
+        size="sm"
         className="w-full justify-center"
         variant={isNonPertinent ? 'primary' : 'outlined'}
         onClick={() => onChange(nextPertinence)}

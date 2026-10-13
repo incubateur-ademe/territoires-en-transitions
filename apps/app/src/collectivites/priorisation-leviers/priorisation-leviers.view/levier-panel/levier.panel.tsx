@@ -6,6 +6,7 @@ import { Preselection } from '../../use-preselection';
 import { LevierPriorisation } from '../data/to-leviers-priorisation';
 import { UpsertPertinence } from '../data/use-upsert-pertinence';
 import { LevierActionsDeReferenceList } from './levier-actions-de-reference.list';
+import { SuggestActionAlert } from './suggest-action.alert';
 import { PertinenceField } from './pertinence-field';
 
 type LevierPanelProps = {
@@ -39,5 +40,6 @@ export const LevierPanel = ({
       initialCategorie={initialCategorie}
       preselection={preselection}
     />
+    <SuggestActionAlert levierId={levier.levierId} />
   </div>
 );
