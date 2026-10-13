@@ -230,6 +230,36 @@ describe('Import des correspondants de service', () => {
 
     });
 
+    it('rattache un correspondant de conseil régional vers son tableau de bord', async () => {
+      const regionCode = await pickFreeRegionCode(
+        db,
+        collectiviteTypeEnum.REGION
+      );
+      const { collectivite: region, cleanup } = await addTestCollectivite(db, {
+        type: collectiviteTypeEnum.REGION,
+        regionCode,
+        nom: `Région ${regionCode}`,
+      });
+      onTestFinished(async () => {
+        await db.db
+          .delete(utilisateurCollectiviteAccessTable)
+          .where(
+            eq(utilisateurCollectiviteAccessTable.collectiviteId, region.id)
+          );
+        await cleanup();
+      });
+      const { user } = await addTestUser(db);
+
+      const rapport = await importer(
+        csv(`region;${regionCode};;;;${user.email};`),
+        { mode: 'envoi' }
+      );
+
+      expect(rapport.resultats[0].statut).toBe('rattache');
+      const html = (sendEmailSpy.mock.calls[0][0] as { html: string }).html;
+      expect(html).toContain(`/collectivite/${region.id}/tableau-de-bord`);
+    });
+
     it("ne renvoie rien au second passage du même fichier", async () => {
       const dreal = await creerDreal();
       const email = `correspondant.rejeu.${Date.now()}@example.com`;

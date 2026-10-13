@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { pickFreeRegionCode } from '@tet/backend/demarches/pcaet/demarches-pcaet.test-fixture';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import {
   getAuthUserFromUserCredentials,
@@ -15,7 +16,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { Collectivite } from '@tet/domain/collectivites';
+import { Collectivite, collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { onTestFinished, vi } from 'vitest';
@@ -730,7 +731,42 @@ describe('Test envoi des emails d’invitation', () => {
     expect(sendEmailSpy).toHaveBeenCalledOnce();
     const [emailArg] = sendEmailSpy.mock.calls[0];
     expect(emailArg.to).toBe(existingUser.email.toLowerCase());
-    expect(emailArg.html).toContain(`/collectivite/${collectivite.id}/accueil`);
+    expect(emailArg.html).toContain(
+      `/collectivite/${collectivite.id}/tableau-de-bord`
+    );
+  });
+
+  test(`Envoie le rattachement à un service déconcentré vers l'instruction`, async () => {
+    const regionCode = await pickFreeRegionCode(
+      databaseService,
+      collectiviteTypeEnum.DREAL
+    );
+    const {
+      collectivite: dreal,
+      user: drealAdmin,
+      cleanup,
+    } = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: collectiviteTypeEnum.DREAL,
+        regionCode,
+        nom: `DREAL ${regionCode}`,
+      },
+    });
+    onTestFinished(cleanup);
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(drealAdmin),
+    });
+    const { user: existingUser } = await addTestUser(databaseService);
+
+    await caller.collectivites.membres.invitations.send({
+      urlType: 'rattachement',
+      collectiviteId: dreal.id,
+      to: existingUser.email,
+    });
+
+    const [emailArg] = sendEmailSpy.mock.calls[0];
+    expect(emailArg.html).toContain(`/collectivite/${dreal.id}/demandes-avis`);
   });
 
   test(`Refuse l'envoi sans droit sur la collectivité`, async () => {
