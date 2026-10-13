@@ -1140,3 +1140,5 @@ indicateur/periodicite_integrite [indicateur/periodicite_obligatoire indicateur/
 indicateur/periodicite_activation [indicateur/periodicite_integrite] 2026-09-29T10:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Deuxième livraison : ouvre les quatre périodicités communes à la déclaration et à la visualisation, sans agrégation temporelle
 indicateur/margny_indicateurs_mensuels [indicateur/periodicite_activation] 2026-10-01T08:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Quatrième livraison : réintègre les six observations de Margny au mensuel sans supprimer les archives
 @indicateur-margny-mensuel 2026-10-01T08:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Migration métier de Margny validée avant nettoyage
+indicateur/periodicite_nettoyage [indicateur/margny_indicateurs_mensuels] 2026-10-01T09:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Cinquième livraison : retire les objets temporaires après validation de Margny
+@indicateur-periodicite-nettoyee 2026-10-01T09:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Schéma final, fenêtre de retour arrière close

@@ -17,21 +17,10 @@ classify_release() {
         $1 == "indicateur/reconciliation_formules" { reconciliation = 1 }
         $1 == "indicateur/periodicite_activation" { activation = 1 }
         $1 == "indicateur/margny_indicateurs_mensuels" { margny = 1 }
-        $1 == "indicateur/periodicite_nettoyage" { later = 1 }
+        $1 == "indicateur/periodicite_nettoyage" { cleaned = 1 }
         END {
-            if (!seen || later || reconciliation || (margny && !activation)) print "unsupported"
-            else if (schema) {
-                if (activation && mandatory && integrity && extractor && formulas && reporting) print margny ? "contract-margny" : "contract"
-                else if (!activation && mandatory && integrity && extractor && formulas && reporting) print "prepared"
-                else if (activation || mandatory || integrity) print "incomplete"
-                else if (extractor && formulas && reporting) print "reporting"
-                else if (reporting) print "incomplete"
-                else if (extractor && formulas) print "formulas"
-                else if (extractor || formulas) print "incomplete"
-                else print "schema"
-            }
-            else if (extractor || mandatory || integrity || formulas || reporting || reconciliation || activation) print "incomplete"
-            else print "legacy"
+            if (!reconciliation && seen && schema && extractor && mandatory && integrity && formulas && reporting && activation && margny && cleaned) print "cleaned"
+            else print "unsupported"
         }
     '
 }
@@ -44,69 +33,21 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting|prepared:prepared|contract:contract|contract-margny:contract-margny) ;;
+    cleaned:cleaned) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
-if [[ "$source_phase" == *-margny ]]; then
-    pg_restore --list "$1" | awk '
-        $4 == "TABLE" && $5 == "DATA" && $6 == "private" && $7 == "indicateur_valeur_date_repair" { found = 1 }
-        END { exit !found }
-    ' || { echo 'Refusing to restore: backup lacks Margny repair archive data.' >&2; exit 1; }
-fi
-# Verify the physical schema before restore.sh truncates any table.
-if [[ "$target_phase" == legacy ]]; then
-    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
-DO $$
-BEGIN
-    ASSERT NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_schema = 'public'
-                         AND table_name IN ('indicateur_definition', 'indicateur_valeur')
-                         AND column_name = 'periodicite'),
-        'Le schéma historique ne doit pas contenir de colonne periodicite';
-    ASSERT to_regclass('public.indicateur_periodicite') IS NULL,
-        'Le schéma historique ne doit pas contenir de catalogue de périodicités';
-END $$;
-SQL
-elif [[ "$target_phase" != contract* ]]; then
-    # The shared verifier accepts activated schemas too. This release must
-    # still have both annual-only constraints, whatever the registry says.
-    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
-DO $$
-BEGIN
-    ASSERT (SELECT count(*) = 2 FROM pg_constraint
-        WHERE contype = 'c' AND convalidated
-          AND ((conrelid = 'public.indicateur_definition'::regclass
-                AND conname = 'indicateur_definition_schema_annuel')
-            OR (conrelid = 'public.indicateur_valeur'::regclass
-                AND conname = 'indicateur_valeur_schema_annuel'))),
-        'La restauration annuelle exige les deux contraintes annuelles actives';
-END $$;
-SQL
-fi
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-verify_changes=()
-if [[ "$target_phase" != legacy ]]; then
-    verify_changes+=(indicateur/periodicite_schema)
-fi
-if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
-    verify_changes+=(
-        indicateur/remplacer-catalogue-periodicites-par-contraintes
-        indicateur/dependances_formules
-        indicateur/periodicite_formules
-    )
-fi
-if [[ "$target_phase" == reporting || "$target_phase" == prepared || "$target_phase" == contract* ]]; then
-    verify_changes+=(stats/report_indicateur_resultat_periode)
-fi
-if [[ "$target_phase" == contract* ]]; then
-    verify_changes+=(indicateur/periodicite_activation)
-fi
-if [[ "$target_phase" == *-margny ]]; then
-    verify_changes+=(indicateur/margny_indicateurs_mensuels)
-fi
-if [[ "$target_phase" == prepared || "$target_phase" == contract* ]]; then
-    verify_changes+=(indicateur/periodicite_obligatoire indicateur/periodicite_integrite)
-fi
+verify_changes=(
+    indicateur/periodicite_schema
+    indicateur/remplacer-catalogue-periodicites-par-contraintes
+    indicateur/periodicite_obligatoire
+    indicateur/periodicite_integrite
+    indicateur/dependances_formules
+    indicateur/periodicite_formules
+    stats/report_indicateur_resultat_periode
+    indicateur/periodicite_activation
+    indicateur/periodicite_nettoyage
+)
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
         --file="$script_dir/../sqitch/verify/$change.sql" >/dev/null

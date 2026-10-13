@@ -10,6 +10,11 @@ SET LOCAL row_security = off;
 -- ensuite évoluer, être supprimées ou recevoir de nouvelles colonnes.
 DO $verify$
 BEGIN
+    IF to_regclass('sqitch.changes') IS NOT NULL THEN
+        IF EXISTS (SELECT FROM sqitch.changes WHERE project = 'tet' AND change = 'indicateur/periodicite_nettoyage') THEN
+            RETURN; -- L'archive temporaire a été retirée dans la dernière livraison.
+        END IF;
+    END IF;
     IF EXISTS (
         WITH expected(id, indicateur_id, collectivite_id, date_avant, date_apres) AS (VALUES
         (24464, 135, 1466, DATE '0001-01-01 BC', DATE '2024-01-01'),

@@ -303,6 +303,17 @@ mensuelles dans l'application avant réouverture.
 Le retour à `indicateur/periodicite_activation` reste possible tant que les observations
 concernées et leurs dépendances n'ont pas changé, et avant le nettoyage #5296.
 
+## 8. Nettoyage — #5296
+
+Après validation de Margny, confirmer la fin de la fenêtre de retour arrière.
+Suivre la [procédure de nettoyage](periodicite-cleanup.md) : arrêter les écritures,
+imports, tâches et sauvegardes/restaurations automatiques ; conserver une sauvegarde
+complète dont la restauration a été vérifiée avant de supprimer les archives.
+
+Après déploiement, vérifier une saisie annuelle et mensuelle, un import et ses recalculs
+synchrones. Tester une sauvegarde du nouvel état et conserver celle d'avant nettoyage.
+**Cette étape interdit tout retour arrière par Sqitch.**
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
@@ -339,3 +350,6 @@ annuelles initiales retrouvées sans différence. Aucun contrôle ne dépend de
 l’ancienne projection des dépendances : les deux définitions doivent déjà être
 sans formule et sans identifiant référentiel. La restauration conserve l’archive
 si elle est présente dans la sauvegarde, y compris avant la conversion mensuelle.
+
+Le nettoyage #5296 supprime également les deux colonnes d’agrégation restées
+à NULL pendant les étapes de préparation et d’activation.
