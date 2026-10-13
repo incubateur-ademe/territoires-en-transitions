@@ -139,6 +139,11 @@ test('Ne pas charger une série annuelle pour une définition mensuelle', async 
     })
   ).toBeVisible();
   expect(valueRequests).toHaveLength(0);
+
+  // Prove that the same filter detects actual requests with our httpLink format.
+  await page.unroute('**/indicateurs.indicateurs.list*');
+  await page.reload();
+  await expect.poll(() => valueRequests.length).toBeGreaterThan(0);
 });
 
 test('Déclarer une année persiste après rafraîchissement', async ({
