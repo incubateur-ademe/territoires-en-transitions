@@ -22,7 +22,8 @@ const PreselectionToggleButton = ({
 
   return (
     <Button
-      icon={isPreselected ? 'check-line' : undefined}
+      size="sm"
+      icon={isPreselected ? 'check-line' : 'bookmark-line'}
       variant={isPreselected ? 'primary' : 'outlined'}
       aria-pressed={isPreselected}
       disabled={!preselection.isReady}
