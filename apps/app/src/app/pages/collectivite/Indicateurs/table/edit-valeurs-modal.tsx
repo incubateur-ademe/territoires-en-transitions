@@ -13,7 +13,7 @@ import {
 } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
@@ -32,6 +32,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { collectiviteId, data, definition, openState, title } = props;
   const { valeursExistantes } = data;
   const fieldId = useId();
+  const isSavingRef = useRef(false);
 
   const { mutateAsync: upsertValeur, isPending } = useUpsertIndicateurValeur();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
@@ -45,6 +46,9 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
     isPending;
 
   const upsert = async (): Promise<boolean> => {
+    if (isSavingRef.current) return false;
+    isSavingRef.current = true;
+
     try {
       await upsertValeur({
         id: valeur.id,
@@ -61,6 +65,8 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       // Le hook de mutation affiche déjà l'erreur. Conserver le formulaire
       // ouvert permet de corriger ou de retenter la saisie.
       return false;
+    } finally {
+      isSavingRef.current = false;
     }
   };
 

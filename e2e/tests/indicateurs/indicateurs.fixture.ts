@@ -1,9 +1,12 @@
 import { RouterInput } from '@tet/api';
+import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
+import { indicateurCategorieTagTable } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
 import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurGroupeTable } from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
@@ -47,6 +50,27 @@ class IndicateursFactory extends FixtureFactory {
       .update(indicateurDefinitionTable)
       .set({ sansValeurUtilisateur: true })
       .where(eq(indicateurDefinitionTable.id, indicateurId));
+  }
+
+  /** Les groupes et catégories ne sont pas modifiables via l'API utilisateur. */
+  async setEnfants(parentId: number, enfantIds: number[]): Promise<void> {
+    const [categorie] = await databaseService.db
+      .select()
+      .from(categorieTagTable)
+      .where(
+        and(
+          eq(categorieTagTable.nom, 'agregation'),
+          isNull(categorieTagTable.collectiviteId)
+        )
+      );
+    if (!categorie) throw new Error('Catégorie agregation introuvable');
+    await databaseService.db.insert(indicateurCategorieTagTable).values({
+      indicateurId: parentId,
+      categorieTagId: categorie.id,
+    });
+    await databaseService.db
+      .insert(indicateurGroupeTable)
+      .values(enfantIds.map((enfant) => ({ parent: parentId, enfant })));
   }
 
   /**

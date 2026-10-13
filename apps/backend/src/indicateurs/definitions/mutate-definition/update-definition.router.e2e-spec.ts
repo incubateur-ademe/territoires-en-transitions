@@ -21,6 +21,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createThematique } from '@tet/backend/shared/shared.test-fixture';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
@@ -246,6 +247,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       const thematique = await createThematique({
         database: databaseService,
         thematiqueData: { nom: 'Thématique linked in atomic update' },
+      });
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(thematiqueTable)
+          .where(eq(thematiqueTable.id, thematique.id));
       });
 
       await caller.indicateurs.indicateurs.update({

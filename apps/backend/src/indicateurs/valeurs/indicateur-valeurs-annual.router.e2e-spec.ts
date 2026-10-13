@@ -1,14 +1,21 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { getAuthUserFromUserCredentials, getTestApp } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { init, type SeriesModel } from 'echarts';
+import type { EChartsOption } from 'echarts/types/dist/echarts';
 import { randomUUID } from 'node:crypto';
+import { IndicateurChartService } from '../charts/indicateur-chart.service';
+import { indicateurCategorieTagTable } from '../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
+import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { indicateurValeurTable } from './indicateur-valeur.table';
@@ -19,6 +26,7 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
   let databaseService: DatabaseService;
   let authenticatedUser: AuthenticatedUser;
   let collectiviteId: number;
+  let cleanupFixture: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -27,12 +35,17 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
     const fixture = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    cleanupFixture = fixture.cleanup;
     collectiviteId = fixture.collectivite.id;
     authenticatedUser = getAuthUserFromUserCredentials(fixture.user);
   });
 
   afterAll(async () => {
-    await app.close();
+    try {
+      await cleanupFixture?.();
+    } finally {
+      await app?.close();
+    }
   });
 
   const insertAnnualIndicateur = async ({
@@ -50,11 +63,249 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       .returning();
     onTestFinished(async () => {
       await databaseService.db
+        .delete(indicateurObjectifTable)
+        .where(eq(indicateurObjectifTable.indicateurId, definition.id));
+      await databaseService.db
         .delete(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, definition.id));
     });
     return definition.id;
   };
+
+  const renderChart = (option: EChartsOption) => {
+    const chart = init(null, null, {
+      renderer: 'svg',
+      ssr: true,
+      width: 600,
+      height: 400,
+    });
+    onTestFinished(() => chart.dispose());
+    chart.setOption({ ...option, animation: false });
+    return (
+      chart as unknown as { getModel(): SeriesModel['ecModel'] }
+    ).getModel();
+  };
+
+  const createSegmentedChart = async (
+    segments: {
+      dateValeur: string;
+      resultat?: number | null;
+      objectif?: number | null;
+    }[][],
+    source?: string
+  ) => {
+    const parentId = await insertAnnualIndicateur();
+    const [categorie] = await databaseService.db
+      .select()
+      .from(categorieTagTable)
+      .where(
+        and(
+          eq(categorieTagTable.nom, 'agregation'),
+          isNull(categorieTagTable.collectiviteId)
+        )
+      );
+    assert.isDefined(categorie);
+    await databaseService.db.insert(indicateurCategorieTagTable).values({
+      indicateurId: parentId,
+      categorieTagId: categorie.id,
+    });
+    const caller = router.createCaller({ user: authenticatedUser });
+    const enfantIds: number[] = [];
+    for (const valeurs of segments) {
+      const enfantId = await insertAnnualIndicateur();
+      enfantIds.push(enfantId);
+      await databaseService.db
+        .insert(indicateurGroupeTable)
+        .values({ parent: parentId, enfant: enfantId });
+      for (const valeur of valeurs) {
+        await caller.indicateurs.valeurs.upsert({
+          collectiviteId,
+          indicateurId: enfantId,
+          ...valeur,
+        });
+      }
+    }
+    const chart = await app
+      .get(IndicateurChartService)
+      .getIndicateurValeursAndChartData(
+        {
+          collectiviteId,
+          indicateurId: parentId,
+          includeSegmentation: { source },
+        },
+        authenticatedUser
+      );
+    return { ...chart, enfantIds };
+  };
+
+  test('Le graphique empile les valeurs enregistrées sur les mêmes années malgré les observations absentes', async () => {
+    const { chartData, enfantIds } = await createSegmentedChart([
+      [
+        { dateValeur: '2024-01-01', resultat: 10 },
+        { dateValeur: '2025-01-01', resultat: null },
+        { dateValeur: '2026-01-01', resultat: 10 },
+      ],
+      [
+        { dateValeur: '2026-01-01', resultat: 20 },
+        { dateValeur: '2024-01-01', resultat: 20 },
+      ],
+    ]);
+    const model = renderChart(chartData);
+    const series = model.getSeries();
+    expect(series).toHaveLength(2);
+    const data = series[1].getData();
+    const lastIndex = data.count() - 1;
+    expect(data.getRawDataItem(lastIndex)).toMatchObject({
+      dateValeur: '2026-01-01',
+    });
+    expect(data.get(data.getCalculationInfo('stackResultDimension'), 0)).toBe(
+      30
+    );
+    expect(
+      data.get(data.getCalculationInfo('stackResultDimension'), lastIndex)
+    ).toBe(30);
+    expect(chartData.dataset).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: [
+            { dateValeur: '2024-01-01', valeur: 20 },
+            { dateValeur: '2025-01-01', valeur: null },
+            { dateValeur: '2026-01-01', valeur: 20 },
+          ],
+        }),
+      ])
+    );
+    // Le trou est ajouté pour l'affichage, sans créer une observation en base.
+    const caller = router.createCaller({ user: authenticatedUser });
+    const saved = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [enfantIds[1]],
+    });
+    expect(saved.indicateurs[0].sources.collectivite.valeurs).toHaveLength(2);
+  });
+
+  test.each([
+    { valeurs: [10, null, 0], visibleIndexes: [0, 2] },
+    { valeurs: [0], visibleIndexes: [0] },
+    { valeurs: [10, 20, null, 0], visibleIndexes: [3] },
+  ])(
+    'Le graphique rend les points isolés enregistrés $valeurs sans masquer zéro',
+    async ({ valeurs, visibleIndexes }) => {
+      const { chartData } = await createSegmentedChart([
+        valeurs.map((resultat, index) => ({
+          dateValeur: `${2024 + index}-01-01`,
+          resultat,
+        })),
+      ]);
+      const serie = renderChart(chartData).getSeriesByIndex(0);
+      const data = serie.getData();
+      expect(
+        valeurs.flatMap((_, index) =>
+          data.getItemGraphicEl(index) ? [index] : []
+        )
+      ).toEqual(visibleIndexes);
+      expect(serie.option).toMatchObject({ connectNulls: false });
+      for (const index of visibleIndexes) {
+        const bounds = data.getItemGraphicEl(index).getBoundingRect();
+        expect(bounds.width).toBeGreaterThan(0);
+        expect(bounds.height).toBeGreaterThan(0);
+      }
+    }
+  );
+
+  test('Le graphique conserve les trous, le seuil zéro et le dernier objectif de chaque année', async () => {
+    const indicateurId = await insertAnnualIndicateur();
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ exprSeuil: '0' })
+      .where(eq(indicateurDefinitionTable.id, indicateurId));
+    const objectifs = [
+      { indicateurId, dateValeur: '2030-12-31', formule: '0' },
+      { indicateurId, dateValeur: '2025-06-01', formule: '5' },
+      { indicateurId, dateValeur: '2030-01-01', formule: '2' },
+    ];
+    await databaseService.db.insert(indicateurObjectifTable).values(objectifs);
+    const caller = router.createCaller({ user: authenticatedUser });
+    for (const [index, resultat] of [10, null, 0].entries()) {
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId,
+        dateValeur: `${2024 + index}-01-01`,
+        resultat,
+      });
+    }
+    const service = app.get(IndicateurChartService);
+    const { chartData } = await service.getIndicateurValeursAndChartData(
+      {
+        collectiviteId,
+        indicateurId,
+        includeReferenceValeurs: true,
+      },
+      authenticatedUser
+    );
+    expect(chartData.dataset).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: [
+            { dateValeur: '2024-01-01', valeur: 10 },
+            { dateValeur: '2025-01-01', valeur: null },
+            { dateValeur: '2026-01-01', valeur: 0 },
+          ],
+        }),
+        expect.objectContaining({
+          id: 'seuil',
+          source: [expect.objectContaining({ valeur: 0 })],
+        }),
+        expect.objectContaining({
+          id: 'cible-objectifs',
+          source: [
+            { date: '2025-01-01', valeur: 5 },
+            { date: '2030-01-01', valeur: 0 },
+          ],
+        }),
+      ])
+    );
+    expect(renderChart(chartData).getSeriesByIndex(0).option).toMatchObject({
+      connectNulls: false,
+    });
+    for (const width of [0, 100, Number.NaN]) {
+      service.adjustOptionsWithWidth(chartData, width);
+      const grid = Array.isArray(chartData.grid)
+        ? chartData.grid[0]
+        : chartData.grid;
+      expect(Number.isFinite(grid?.bottom)).toBe(true);
+      expect(grid?.bottom).toBeGreaterThanOrEqual(0);
+      expect(chartData.title).toMatchObject({
+        textStyle: {
+          width: Number.isFinite(width) ? Math.max(width - 56, 0) : 0,
+        },
+      });
+    }
+    const saved = await databaseService.db
+      .select()
+      .from(indicateurObjectifTable)
+      .where(eq(indicateurObjectifTable.indicateurId, indicateurId));
+    expect(saved).toEqual(expect.arrayContaining(objectifs));
+    expect(saved).toHaveLength(3);
+  });
+
+  test('Le graphique choisit les objectifs les plus renseignés et tolère une source absente', async () => {
+    const segments = [
+      [
+        { dateValeur: '2024-01-01', resultat: 10, objectif: 1 },
+        { dateValeur: '2025-01-01', resultat: null, objectif: 2 },
+        { dateValeur: '2026-01-01', resultat: 0, objectif: 3 },
+      ],
+    ];
+    const { indicateurSegmentation } = await createSegmentedChart(segments);
+    expect(indicateurSegmentation).toMatchObject({
+      source: 'collectivite',
+      valeurType: 'objectif',
+    });
+    const absent = await createSegmentedChart(segments, 'absente');
+    expect(absent.indicateurSegmentation).toMatchObject({ source: 'absente' });
+    expect(absent.chartData.series).toEqual([]);
+  });
 
   test("L'upsert historique applique aussi l'interdiction de saisie utilisateur", async () => {
     const protectedIndicateurId = await insertAnnualIndicateur({

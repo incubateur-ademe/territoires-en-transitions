@@ -108,7 +108,7 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
     await expect(page.getByRole('dialog')).toBeVisible();
   });
   for (const buttonName of ['Valider', 'Valider et ajouter une année']) {
-    test(`Conserver la saisie annuelle du score après un échec de ${buttonName}`, async ({
+    test(`Éviter la double soumission et permettre la reprise après un échec de ${buttonName}`, async ({
       page,
       referentielScoresPom,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,42 +166,88 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
         exact: true,
       });
       await year.fill('2026');
+      await resultat.fill('9'.repeat(400));
+      await expect(
+        editor.getByRole('button', { name: 'Valider', exact: true })
+      ).toBeDisabled();
+      await expect(
+        editor.getByRole('button', {
+          name: 'Valider et ajouter une année',
+          exact: true,
+        })
+      ).toBeDisabled();
       await resultat.fill('0');
       const upsertUrl = /indicateurs\.valeurs\.upsert/;
+      let upsertRequestCount = 0;
+      page.on('request', (request) => {
+        if (upsertUrl.test(request.url())) upsertRequestCount++;
+      });
+      const submit = editor.getByRole('button', {
+        name: buttonName,
+        exact: true,
+      });
+      // Les deux clics précèdent le rendu qui désactive le bouton.
+      const submitTwice = () =>
+        submit.evaluate((button: HTMLButtonElement) => {
+          button.click();
+          button.click();
+        });
       await page.route(upsertUrl, (route) => route.abort('failed'));
       const failedRequest = page.waitForEvent('requestfailed', (request) =>
         upsertUrl.test(request.url())
       );
-      await editor
-        .getByRole('button', { name: buttonName, exact: true })
-        .click();
+      await submitTwice();
       await failedRequest;
       await expect(editor).toBeVisible();
       await expect(year).toHaveValue('2026');
       await expect(resultat).toHaveValue('0');
-      const retry = editor.getByRole('button', {
-        name: 'Valider',
-        exact: true,
-      });
-      await expect(retry).toBeEnabled();
+      await expect(submit).toBeEnabled();
+      expect(upsertRequestCount).toBe(1);
       await page.unroute(upsertUrl);
       const savedResponse = page.waitForResponse(
         (response) => upsertUrl.test(response.url()) && response.ok()
       );
-      await retry.click();
+      await submitTwice();
       const saved = await (await savedResponse).json();
+      const savedValeurs: { id: number; indicateurId: number }[] = [
+        saved.result.data,
+      ];
       try {
         expect(saved.result.data).toMatchObject({
           dateValeur: '2026-01-01',
           resultat: 0,
         });
+        if (buttonName === 'Valider et ajouter une année') {
+          await expect(year).toHaveValue('2027');
+          await expect(resultat).toHaveValue('');
+          expect(upsertRequestCount).toBe(2);
+          // Le succès libère aussi la garde pour la saisie de l'année suivante.
+          await resultat.fill('0');
+          const nextSavedResponse = page.waitForResponse(
+            (response) => upsertUrl.test(response.url()) && response.ok()
+          );
+          await editor
+            .getByRole('button', { name: 'Valider', exact: true })
+            .click();
+          const nextSaved = await (await nextSavedResponse).json();
+          savedValeurs.push(nextSaved.result.data);
+          expect(nextSaved.result.data).toMatchObject({
+            dateValeur: '2027-01-01',
+            resultat: 0,
+          });
+        }
         await expect(editor).toHaveCount(0);
+        expect(upsertRequestCount).toBe(
+          buttonName === 'Valider et ajouter une année' ? 3 : 2
+        );
       } finally {
-        await user.getTrpcClient().indicateurs.valeurs.delete.mutate({
-          collectiviteId,
-          indicateurId: saved.result.data.indicateurId,
-          id: saved.result.data.id,
-        });
+        for (const { id, indicateurId } of savedValeurs) {
+          await user.getTrpcClient().indicateurs.valeurs.delete.mutate({
+            collectiviteId,
+            indicateurId,
+            id,
+          });
+        }
       }
     });
   }
