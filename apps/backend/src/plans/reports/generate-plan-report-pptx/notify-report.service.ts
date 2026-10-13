@@ -88,7 +88,9 @@ export class NotifyReportService {
       NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_COMPLETED']
     );
     if (!ret.success) {
-      this.logger.log(`getReportNotificationTemplateData error: ${ret.error}`);
+      this.logger.error(
+        `getReportNotificationTemplateData error: ${ret.error}`
+      );
       return ret;
     }
     const templateData = ret.data;
@@ -122,7 +124,9 @@ export class NotifyReportService {
       NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_FAILED']
     );
     if (!ret.success) {
-      this.logger.log(`getReportNotificationTemplateData error: ${ret.error}`);
+      this.logger.error(
+        `getReportNotificationTemplateData error: ${ret.error}`
+      );
       return ret;
     }
 
