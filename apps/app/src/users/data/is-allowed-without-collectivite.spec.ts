@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  adminPath,
   collectiviteBasePath,
   finaliserMonInscriptionUrl,
   invitationPath,
@@ -21,6 +22,15 @@ describe('isAllowedWithoutCollectivite', () => {
     expect(isAllowedWithoutCollectivite(`${collectiviteBasePath}/1/plans`)).toBe(
       true
     );
+  });
+
+  it('autorise la zone admin et ses outils', () => {
+    expect(isAllowedWithoutCollectivite(adminPath)).toBe(true);
+    expect(isAllowedWithoutCollectivite(`${adminPath}/recette`)).toBe(true);
+  });
+
+  it('ne confond pas la zone admin avec un chemin qui commence pareil', () => {
+    expect(isAllowedWithoutCollectivite(`${adminPath}istration`)).toBe(false);
   });
 
   it('bloque les autres routes authentifiées', () => {

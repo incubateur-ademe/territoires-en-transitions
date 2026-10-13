@@ -64,6 +64,8 @@ export const profilAssistantPath = `${profilPath}/assistant`;
 export const profilAssistantExemplesUrl = `${profilAssistantPath}#exemples`;
 export const profilAssistantClaudeUrl = `${profilAssistantPath}?onglet=claude`;
 
+export const adminPath = '/admin';
+
 export const recherchesPath = '/recherches';
 const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
