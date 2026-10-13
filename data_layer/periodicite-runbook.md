@@ -238,6 +238,13 @@ backend avant une éventuelle restriction. Ces verrous ne déclenchent pas de
 recalcul automatique pour une écriture SQL directe ; ce comportement reste à la
 charge de l’intégration, comme avant cette PR.
 
+## Refactor et atomicité de l’import — #5418
+
+Avant l’activation, le catalogue, les relations, les objectifs et les recalculs
+sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
+Aucune migration supplémentaire ; déployer le backend imports suspendus. Les
+contrats d’import et les contraintes SQL continuent de refuser les autres cadences.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement

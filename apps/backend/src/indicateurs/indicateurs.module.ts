@@ -26,6 +26,9 @@ import { MutateDefinitionRepository } from './definitions/mutate-definition/muta
 import { UpdateDefinitionService } from './definitions/mutate-definition/update-definition.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
+import { ImportIndicateurDefinitionRepository } from './import-indicateurs/import-indicateur-definition.repository';
+import { ImportIndicateurRelationsService } from './import-indicateurs/import-indicateur-relations.service';
+import { UpsertIndicateurDefinitionsService } from './import-indicateurs/upsert-indicateur-definitions.service';
 import { ExportIndicateursController } from './indicateurs/export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './indicateurs/export-indicateurs/export-indicateurs.service';
 import { HandleDefinitionFichesRepository } from './indicateurs/handle-definition-fiches/handle-definition-fiches.repository';
@@ -122,6 +125,9 @@ const DEFINITIONS_PROVIDERS = [
     UpsertGridValeursRepository,
     UpsertGridValeursService,
     ImportIndicateurDefinitionService,
+    ImportIndicateurDefinitionRepository,
+    ImportIndicateurRelationsService,
+    UpsertIndicateurDefinitionsService,
     ValeursMoyenneService,
     ValeursReferenceService,
 
