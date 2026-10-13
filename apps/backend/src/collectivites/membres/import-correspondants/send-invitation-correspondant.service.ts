@@ -1,11 +1,11 @@
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { Injectable, Logger } from '@nestjs/common';
 import { render } from '@react-email/components';
+import { buildCollectiviteRootUrl } from '../build-collectivite-root-url.utils';
 import { InvitationCorrespondantEmail } from './invitation-correspondant.email';
 import { ServiceResolu } from './resolve-service.repository';
 
@@ -79,11 +79,10 @@ export class SendInvitationCorrespondantService {
       return `${appUrl}/invitation/${cible.invitationId}`;
     }
 
-    // La racine d'un service déconcentré n'est pas `/accueil` : il n'a ni plans
-    // ni référentiels, et les routes standard le renvoient vers l'instruction.
-    // Un conseil régional, lui, garde son tableau de bord.
-    return isServiceDeconcentre(service.type)
-      ? `${appUrl}/collectivite/${service.collectiviteId}/demandes-avis`
-      : `${appUrl}/collectivite/${service.collectiviteId}/accueil`;
+    return buildCollectiviteRootUrl({
+      appUrl,
+      collectiviteId: service.collectiviteId,
+      collectiviteType: service.type,
+    });
   }
 }

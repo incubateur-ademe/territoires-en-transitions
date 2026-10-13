@@ -16,6 +16,7 @@ import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { render } from '@react-email/components';
 import { eq } from 'drizzle-orm';
+import { buildCollectiviteRootUrl } from '../build-collectivite-root-url.utils';
 import { SendInvitationEmail } from './send-invitation.email';
 import {
   SendInvitationError,
@@ -149,6 +150,7 @@ export class SendInvitationService {
       .select({
         id: collectiviteTable.id,
         nom: collectiviteTable.nom,
+        type: collectiviteTable.type,
       })
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, input.collectiviteId))
@@ -162,7 +164,11 @@ export class SendInvitationService {
       to: input.to.toLowerCase(),
       collectiviteId: collectivite.id,
       collectiviteNom: collectivite.nom,
-      invitationUrl: `${appUrl}/collectivite/${collectivite.id}/accueil`,
+      invitationUrl: buildCollectiviteRootUrl({
+        appUrl,
+        collectiviteId: collectivite.id,
+        collectiviteType: collectivite.type,
+      }),
       urlType: 'rattachement',
     });
   }
