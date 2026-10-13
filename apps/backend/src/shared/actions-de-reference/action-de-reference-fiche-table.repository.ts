@@ -3,10 +3,19 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
-import { asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, ne, SQL } from 'drizzle-orm';
 import { ActionDeReferenceFicheRepository } from './action-de-reference-fiche.repository';
 import { ActionsDeReferenceErrorEnum } from './actions-de-reference.errors';
 import { actionDeReferenceFicheTable } from './models/action-de-reference-fiche.table';
+
+const toExcludedCollectiviteCondition = (
+  excludedCollectiviteId: number | undefined
+): SQL | undefined => {
+  if (excludedCollectiviteId === undefined) {
+    return undefined;
+  }
+  return ne(ficheActionTable.collectiviteId, excludedCollectiviteId);
+};
 
 @Injectable()
 export class ActionDeReferenceFicheTableRepository extends ActionDeReferenceFicheRepository {
@@ -20,16 +29,24 @@ export class ActionDeReferenceFicheTableRepository extends ActionDeReferenceFich
 
   listFicheIds: ActionDeReferenceFicheRepository['listFicheIds'] = async ({
     actionDeReferenceId,
+    excludedCollectiviteId,
     tx,
   }) => {
     try {
       const rows = await (tx ?? this.database.db)
         .select({ ficheId: actionDeReferenceFicheTable.ficheId })
         .from(actionDeReferenceFicheTable)
+        .innerJoin(
+          ficheActionTable,
+          eq(ficheActionTable.id, actionDeReferenceFicheTable.ficheId)
+        )
         .where(
-          eq(
-            actionDeReferenceFicheTable.actionDeReferenceId,
-            actionDeReferenceId
+          and(
+            eq(
+              actionDeReferenceFicheTable.actionDeReferenceId,
+              actionDeReferenceId
+            ),
+            toExcludedCollectiviteCondition(excludedCollectiviteId)
           )
         )
         .orderBy(asc(actionDeReferenceFicheTable.ficheId));

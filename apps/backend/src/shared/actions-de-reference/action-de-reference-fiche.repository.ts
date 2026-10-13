@@ -15,6 +15,7 @@ export type FicheParent = {
 export abstract class ActionDeReferenceFicheRepository {
   abstract listFicheIds(input: {
     readonly actionDeReferenceId: ActionDeReferenceId;
+    readonly excludedCollectiviteId?: number;
     readonly tx?: Transaction;
   }): Promise<Result<number[], ListFicheIdsActionDeReferenceError>>;
 

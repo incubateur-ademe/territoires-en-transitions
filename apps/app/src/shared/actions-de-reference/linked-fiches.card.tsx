@@ -7,7 +7,7 @@ import type { ActionDeReferenceId } from '@tet/domain/shared';
 import { Card } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
-import { useListFichesActionDeReference } from './data/use-list-fiches-action-de-reference';
+import { useListFichesOfOtherCollectivites } from './data/use-list-fiches-of-other-collectivites';
 import { LinkedFichesList } from './linked-fiches.list';
 
 const LinkedFichesCard = ({
@@ -15,7 +15,7 @@ const LinkedFichesCard = ({
 }: {
   readonly actionDeReferenceId: ActionDeReferenceId;
 }): JSX.Element => {
-  const fiches = useListFichesActionDeReference(actionDeReferenceId);
+  const fiches = useListFichesOfOtherCollectivites(actionDeReferenceId);
   const currentCollectivite = useCurrentCollectivite();
   const { id: currentUserId } = useUser();
 

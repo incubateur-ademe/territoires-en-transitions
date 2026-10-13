@@ -14,7 +14,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { StatutEnum } from '@tet/domain/plans';
 import { ActionDeReferenceId } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { actionDeReferenceFicheTable } from '../models/action-de-reference-fiche.table';
 import { actionDeReferenceTable } from '../models/action-de-reference.table';
@@ -24,8 +24,10 @@ describe('listFiches d une action de référence', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
   let ownerCollectiviteId: number;
+  let otherCollectiviteId: number;
   let openFicheId: number;
   let restrictedFicheId: number;
+  let otherCollectiviteFicheId: number;
   let ownerCollectiviteMember: AuthenticatedUser;
   let otherCollectiviteMember: AuthenticatedUser;
 
@@ -37,6 +39,7 @@ describe('listFiches d une action de référence', () => {
     const { collectivite: ownerCollectivite } = await addTestCollectivite(db);
     ownerCollectiviteId = ownerCollectivite.id;
     const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+    otherCollectiviteId = otherCollectivite.id;
 
     const { user: ownerMember } = await addTestUser(db, {
       collectiviteId: ownerCollectiviteId,
@@ -72,10 +75,26 @@ describe('listFiches d une action de référence', () => {
     openFicheId = fiches[0].id;
     restrictedFicheId = fiches[1].id;
 
+    const [otherCollectiviteFiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche de l autre collectivité',
+        description: 'Description de l autre collectivité',
+        restreint: false,
+        collectiviteId: otherCollectiviteId,
+      })
+      .returning();
+    otherCollectiviteFicheId = otherCollectiviteFiche.id;
+
     return async () => {
       await db.db
         .delete(ficheActionTable)
-        .where(eq(ficheActionTable.collectiviteId, ownerCollectiviteId));
+        .where(
+          inArray(ficheActionTable.collectiviteId, [
+            ownerCollectiviteId,
+            otherCollectiviteId,
+          ])
+        );
       await app.close();
     };
   });
@@ -108,8 +127,14 @@ describe('listFiches d une action de référence', () => {
     return action.id;
   };
 
-  const listFichesFor = (user: AuthenticatedUser, id: ActionDeReferenceId) =>
-    router.createCaller({ user }).shared.actionsDeReference.listFiches({ id });
+  const listFichesFor = (
+    user: AuthenticatedUser,
+    id: ActionDeReferenceId,
+    excludedCollectiviteId?: number
+  ) =>
+    router
+      .createCaller({ user })
+      .shared.actionsDeReference.listFiches({ id, excludedCollectiviteId });
 
   it('rend une liste vide pour une action de référence sans fiche liée', async () => {
     const id = await insertActionLinkedTo([]);
@@ -165,6 +190,88 @@ describe('listFiches d une action de référence', () => {
     ).toEqual({
       [openFicheId]: 'Description publique',
       [restrictedFicheId]: null,
+    });
+  });
+
+  describe('collectivité exclue', () => {
+    it('rend les fiches de toutes les collectivités quand aucune collectivité n est exclue', async () => {
+      const id = await insertActionLinkedTo([
+        openFicheId,
+        otherCollectiviteFicheId,
+      ]);
+
+      const fiches = await listFichesFor(otherCollectiviteMember, id);
+
+      expect(fiches.map((fiche) => fiche.id).sort()).toEqual(
+        [openFicheId, otherCollectiviteFicheId].sort()
+      );
+    });
+
+    it('écarte les fiches de la collectivité exclue et garde celles des autres', async () => {
+      const id = await insertActionLinkedTo([
+        openFicheId,
+        restrictedFicheId,
+        otherCollectiviteFicheId,
+      ]);
+
+      const fiches = await listFichesFor(
+        ownerCollectiviteMember,
+        id,
+        ownerCollectiviteId
+      );
+
+      expect(fiches.map((fiche) => fiche.id)).toEqual([
+        otherCollectiviteFicheId,
+      ]);
+    });
+
+    it('rend une liste vide quand toutes les fiches liées sont celles de la collectivité exclue', async () => {
+      const id = await insertActionLinkedTo([openFicheId, restrictedFicheId]);
+
+      expect(
+        await listFichesFor(ownerCollectiviteMember, id, ownerCollectiviteId)
+      ).toEqual([]);
+    });
+
+    it("garde masquée la fiche restreinte d'une autre collectivité quand une collectivité est exclue", async () => {
+      const id = await insertActionLinkedTo([
+        restrictedFicheId,
+        otherCollectiviteFicheId,
+      ]);
+
+      const fiches = await listFichesFor(
+        otherCollectiviteMember,
+        id,
+        otherCollectiviteId
+      );
+
+      expect(fiches).toEqual([
+        expect.objectContaining({
+          id: restrictedFicheId,
+          titre: 'Fiche restreinte',
+          description: null,
+        }),
+      ]);
+    });
+
+    it("garde les fiches liées quand la collectivité exclue n'en possède aucune", async () => {
+      const id = await insertActionLinkedTo([openFicheId]);
+
+      const fiches = await listFichesFor(
+        ownerCollectiviteMember,
+        id,
+        otherCollectiviteId
+      );
+
+      expect(fiches.map((fiche) => fiche.id)).toEqual([openFicheId]);
+    });
+
+    it("refuse en BAD_REQUEST un identifiant de collectivité qui n'est pas un entier positif", async () => {
+      const id = await insertActionLinkedTo([openFicheId]);
+
+      await expect(
+        listFichesFor(ownerCollectiviteMember, id, 0)
+      ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
     });
   });
 

@@ -106,6 +106,61 @@ test.describe('linked-fiches', () => {
     await expect(linkedFiche.getByRole('link')).toHaveCount(0);
   });
 
+  test('les fiches de la collectivité courante ne sont pas listées, seulement celles des autres', async ({
+    actionsDeReference,
+    collectivites,
+    fiches,
+    actionDeReferenceDetailPom,
+  }) => {
+    const runToken = toRunToken();
+    const otherFicheTitre = withRunSuffix(
+      "Fiche d'une autre collectivité",
+      runToken
+    );
+    const ownFicheTitre = withRunSuffix('Fiche de ma collectivité', runToken);
+    const [action] = await actionsDeReference.add([
+      toCovoiturageAction(runToken),
+    ]);
+    const { collectivite: otherCollectivite, user: otherUser } =
+      await collectivites.addCollectiviteAndUser({
+        userArgs: { autoLogin: true },
+      });
+    const [otherFicheId] = await fiches.create(otherUser, [
+      {
+        collectiviteId: otherCollectivite.data.id,
+        titre: otherFicheTitre,
+        restreint: false,
+      },
+    ]);
+    const { collectivite: ownCollectivite, user: ownUser } =
+      await collectivites.addCollectiviteAndUser({
+        userArgs: { autoLogin: true },
+      });
+    const [ownFicheId] = await fiches.create(ownUser, [
+      {
+        collectiviteId: ownCollectivite.data.id,
+        titre: ownFicheTitre,
+        restreint: false,
+      },
+    ]);
+    await actionsDeReference.linkFiches({
+      actionDeReferenceId: action.id,
+      ficheIds: [otherFicheId, ownFicheId],
+    });
+
+    await actionDeReferenceDetailPom.open({
+      collectiviteId: ownCollectivite.data.id,
+      action,
+    });
+
+    await expect(
+      actionDeReferenceDetailPom.linkedFiche(otherFicheTitre)
+    ).toBeVisible();
+    await expect(
+      actionDeReferenceDetailPom.linkedFiche(ownFicheTitre)
+    ).toHaveCount(0);
+  });
+
   test("une action sans fiche liée dit qu'aucune collectivité n'a partagé d'action", async ({
     actionsDeReference,
     collectivites,

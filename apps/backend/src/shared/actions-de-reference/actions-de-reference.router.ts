@@ -4,6 +4,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
   getActionDeReferenceInputSchema,
   listActionsDeReferenceInputSchema,
+  listFichesActionDeReferenceInputSchema,
   updateActionDeReferenceInputSchema,
 } from '@tet/domain/shared';
 import { actionsDeReferenceErrorConfig } from './actions-de-reference.trpc-errors';
@@ -44,7 +45,7 @@ export class ActionsDeReferenceRouter {
         return this.getResultDataOrThrowError(listResult);
       }),
     listFiches: this.trpc.authedProcedure
-      .input(getActionDeReferenceInputSchema)
+      .input(listFichesActionDeReferenceInputSchema)
       .query(async ({ input, ctx }) => {
         const listFichesResult =
           await this.listFichesActionDeReferenceService.listFiches(input, {
