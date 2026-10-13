@@ -1,8 +1,9 @@
 # Périodicité des indicateurs : déploiement
 
 État au 14 octobre 2026 : les préparations annuelles applicatives (#5481), SQL
-(#5488) et reporting (#5489) sont fusionnées dans `main`. Les cinq préparations
-ci-dessous restent annuelles et peuvent être déployées sans #5215.
+(#5488), reporting (#5489) et restauration (#5463) sont fusionnées dans `main`.
+Les trois préparations restantes ci-dessous restent annuelles et peuvent être
+déployées sans #5215.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -10,7 +11,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5463 (restauration) → #5417 (verrous SQL) → #5491 (import atomique).
+- `main` → #5491 (import atomique).
 - #5491 → #5492 (file durable annuelle) → #5493 (métadonnées et saisie annuelle).
 - #5493 → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
 
@@ -21,13 +22,11 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5463 | Contrôles de restauration et retour arrière | Aucune |
-| #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5491 | Import atomique du catalogue | Aucune |
 | #5492 | File durable de recalcul | `indicateur/reconciliation_formules` |
 | #5493 | Métadonnées et saisie annuelle | Aucune |
+| #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5312 | Six observations de Margny remises au mensuel | `indicateur/margny_indicateurs_mensuels` |
-| #5417 | Verrous SQL du graphe de calcul | `indicateur/verrouiller-graphe-calcul-indicateur` |
 | #5296 | Suppression des archives ; fin du retour arrière Sqitch | `indicateur/periodicite_nettoyage` |
 
 ## Pour chaque déploiement
@@ -223,6 +222,26 @@ L’activation des trois cadences reste une livraison distincte, après la prép
 applicative #5481 et les deux préparations SQL ci-dessus. Les gardes annuelles
 restent actives jusque-là.
 
+## Verrous SQL différés — #5417
+
+#5417 est hors de cette chaîne de livraison. Les verrous du graphe sont pris
+explicitement par le backend avant les lectures et calculs ; aucun trigger de
+verrouillage supplémentaire n’est requis pour les PR ci-dessus. Les contraintes
+SQL d’intégrité restent en place.
+
+Réexaminer #5417 seulement si un chemin d’écriture supporté qui contourne le
+backend est identifié en production. Les droits SQL conservés et le dump ne
+prouvent pas qu’un tel chemin est utilisé. Les intégrations doivent passer par
+les services backend ; une intervention SQL doit coordonner ses écritures avec
+les transactions applicatives.
+
+## Refactor et atomicité de l’import — #5491
+
+Avant l’activation, le catalogue, les relations, les objectifs et les recalculs
+sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
+Aucune migration supplémentaire ; déployer le backend imports suspendus. Les
+contrats d’import et les contraintes SQL continuent de refuser les autres cadences.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
@@ -242,5 +261,6 @@ Aucune nouvelle migration. Avant toute troncature, le contrôle de restauration
 vérifie aussi l’état physique : absence des colonnes de périodicité sur une cible
 historique, ou présence des deux contraintes annuelles validées sur une cible
 annuelle. Il ne dépend pas d’une ancienne table d’audit temporaire. Le retour
-arrière de `periodicite_schema` exige le retrait préalable des verrous SQL de
-#5417. Les gardes d’activation restent dans #5215.
+arrière de `periodicite_schema` refuse de retirer le schéma si les verrous SQL
+optionnels de #5417 ont été installés. Cette garde est inactive dans la chaîne
+retenue, qui ne déploie pas #5417. Les gardes d’activation restent dans #5215.

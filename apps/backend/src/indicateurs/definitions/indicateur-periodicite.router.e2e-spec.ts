@@ -1,3 +1,4 @@
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { randomUUID } from 'node:crypto';
 import ImportIndicateurDefinitionService from '../import-indicateurs/import-indicateur-definition.service';
@@ -5,7 +6,7 @@ import { sampleImportIndicateurDefinition } from '../import-indicateurs/samples/
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthToken,
+  signTestAuthToken,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
@@ -46,7 +47,10 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
     caller = router.createCaller({
       user: getAuthUserFromUserCredentials(user),
     });
-    authToken = await getAuthToken(user);
+    authToken = signTestAuthToken(
+      { ...getAuthUserFromUserCredentials(user).jwtPayload, sub: user.id },
+      app.get(ConfigurationService).get('SUPABASE_JWT_SECRET')
+    );
   });
 
   afterAll(async () => {
@@ -415,7 +419,7 @@ describe('Périodicité des indicateurs avec le stockage annuel', () => {
         );
     });
     const imported = await importer.upsertIndicateurDefinitions([definition]);
-    const created = imported.find(
+    const created = imported.definitions.find(
       (row) => row.identifiantReferentiel === identifiantReferentiel
     );
     expect(created).toMatchObject({
