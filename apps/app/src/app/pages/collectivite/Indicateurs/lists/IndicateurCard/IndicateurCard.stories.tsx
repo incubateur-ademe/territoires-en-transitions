@@ -53,6 +53,7 @@ const definition = {
 const props = {
   chartInfo: {
     definition,
+    periodicite: definition.periodicite,
     typesSegmentation: [],
     segmentation: undefined,
     setSegmentation: () => undefined,
