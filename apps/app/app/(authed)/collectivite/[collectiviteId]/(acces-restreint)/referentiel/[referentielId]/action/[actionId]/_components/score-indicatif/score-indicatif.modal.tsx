@@ -3,7 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   IndicateurPeriodiciteEnum,
-  toAnnualIndicateurYearFromHistoricalDate,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
@@ -81,7 +81,7 @@ const anneesDifferentesSelectionnees = (
   typeScore: ScoreIndicatifType
 ) =>
   uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (valeur) => {
-    return toAnnualIndicateurYearFromHistoricalDate(
+    return IndicateurPeriodes.toAnnualYearFromHistoricalDate(
       IndicateurPeriodiciteEnum.ANNUELLE,
       valeur.dateValeur,
       appLabels.scoreIndicatifContexteIndicateur(valeur.indicateurId)

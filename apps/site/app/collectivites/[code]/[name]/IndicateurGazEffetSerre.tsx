@@ -1,6 +1,6 @@
 import { IndicateurGes } from '@/site/app/collectivites/utils';
 import { secteurIdToLabel, siteLabels } from '@/site/src/utils/labels';
-import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { getFormattedNumber } from '@tet/domain/utils';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
@@ -8,7 +8,7 @@ import { IndicateurDefaultData } from './IndicateursCollectivite';
 const TOTAL_GES_IDENTIFIANT = 'cae_1.a';
 
 const getYear = (indicateur: IndicateurGes): number =>
-  toAnnualIndicateurYearFromHistoricalDate(
+  IndicateurPeriodes.toAnnualYearFromHistoricalDate(
     indicateur.periodicite,
     indicateur.date_valeur,
     siteLabels.indicateurGesPublicationContexte(indicateur.identifiant)

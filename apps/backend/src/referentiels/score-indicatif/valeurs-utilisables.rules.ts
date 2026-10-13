@@ -1,6 +1,6 @@
 import {
   COLLECTIVITE_SOURCE_ID,
-  toAnnualIndicateurYear,
+  IndicateurPeriodes,
   IndicateurAvecValeursParSource,
   IndicateurValeurGroupee,
 } from '@tet/domain/indicateurs';
@@ -80,7 +80,7 @@ export function mapIndicateurToValeurUtilisable(
     const valeur = (
       typeScore === scoreIndicatifTypeEnum.FAIT ? v.resultat : v.objectif
     ) as number;
-    const annee = toAnnualIndicateurYear(
+    const annee = IndicateurPeriodes.toAnnualYear(
       v.periodicite,
       v.dateValeur,
       `Le score indicatif (${identifiantReferentiel})`

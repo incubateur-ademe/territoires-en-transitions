@@ -1,5 +1,5 @@
 import {
-  toAnnualIndicateurYear,
+  IndicateurPeriodes,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../../../indicateurs';
 import {
@@ -55,7 +55,7 @@ export const isPcaetDiagnosticReferenceYear = (
 const getAnnualYear = ({
   indicateurValeur,
 }: IndicateurValeurAvecMetadonnesDefinition) =>
-  toAnnualIndicateurYear(
+  IndicateurPeriodes.toAnnualYear(
     indicateurValeur.periodicite,
     indicateurValeur.dateValeur,
     'Le diagnostic PCAET'

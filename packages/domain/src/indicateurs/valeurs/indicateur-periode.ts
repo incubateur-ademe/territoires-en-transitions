@@ -32,11 +32,15 @@ export type IndicateurPeriodeAnnuelle = IndicateurPeriode<
 
 /** Canonical period contract shared by storage, calculations and input forms. */
 export class IndicateurPeriodes {
-  private static assertAnnual(periodicite: IndicateurPeriodicite): void {
+  /** Guards capabilities whose business contract requires annual observations. */
+  static assertAnnual(
+    periodicite: IndicateurPeriodicite | null | undefined,
+    capability = 'Le contrat de période annuel'
+  ): asserts periodicite is typeof IndicateurPeriodiciteEnum.ANNUELLE {
     if (periodicite !== IndicateurPeriodiciteEnum.ANNUELLE) {
       throw createIndicateurPeriodeError({
         code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
-        details: { periodicite, capability: 'Le contrat de période annuel' },
+        details: { periodicite, capability },
       });
     }
   }
@@ -138,6 +142,37 @@ export class IndicateurPeriodes {
     );
     if (!periode) throw new RangeError('Invalid annual indicator period');
     return periode;
+  }
+
+  /** Extracts an annual observation's year, requiring a canonical storage date. */
+  static toAnnualYear(
+    periodicite: IndicateurPeriodicite | null | undefined,
+    dateValeur: string,
+    capability: string
+  ): number {
+    IndicateurPeriodes.assertAnnual(periodicite, capability);
+    return Number(
+      IndicateurPeriodes.serialize(
+        IndicateurPeriodes.fromDateValeur(periodicite, dateValeur)
+      )
+    );
+  }
+
+  /**
+   * Reads immutable historical payloads from before annual dates were canonical.
+   * Current records must use `toAnnualYear`; other periodicities remain rejected.
+   */
+  static toAnnualYearFromHistoricalDate(
+    periodicite: IndicateurPeriodicite | null | undefined,
+    dateValeur: string,
+    capability: string
+  ): number {
+    IndicateurPeriodes.assertAnnual(periodicite, capability);
+    return Number(
+      IndicateurPeriodes.serialize(
+        IndicateurPeriodes.containing(periodicite, dateValeur)
+      )
+    );
   }
 
   static format(periode: IndicateurPeriode): string {

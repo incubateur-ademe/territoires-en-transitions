@@ -3,7 +3,7 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import {
   IndicateurPeriodiciteEnum,
   type IndicateurPeriodicite,
-  toAnnualIndicateurYearFromHistoricalDate,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import { ScoreIndicatifType } from '@tet/domain/referentiels';
 import { typeScoreToLabel } from './score-indicatif.labels';
@@ -68,7 +68,7 @@ export function texteValeurUtilisee({
   noYear?: boolean;
 }) {
   const { valeur, dateValeur, sourceLibelle } = valeurUtilisee;
-  const annee = toAnnualIndicateurYearFromHistoricalDate(
+  const annee = IndicateurPeriodes.toAnnualYearFromHistoricalDate(
     periodicite,
     dateValeur,
     appLabels.scoreIndicatifContexteIndicateur(valeurUtilisee.indicateurId)
