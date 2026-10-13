@@ -2,7 +2,7 @@
 
 import {
   makeRepriseTecCollectiviteUrl,
-  makeRepriseTecUrl,
+  makeRepriseTecCollectivitesUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { TableTreeToggle, TableTreeTogglePlaceholder } from '@tet/ui';
@@ -137,7 +137,7 @@ export const ArbreTerritoire = ({
         actif={!courante && regionActive === null && departementActif === null}
       >
         <TableTreeTogglePlaceholder />
-        <Link href={makeRepriseTecUrl()} className={lienClassName}>
+        <Link href={makeRepriseTecCollectivitesUrl()} className={lienClassName}>
           {appLabels.repriseTecFranceEntiere}
         </Link>
         <span className="text-xs text-grey-8">{collectivites.length}</span>
@@ -158,7 +158,7 @@ export const ArbreTerritoire = ({
                 label={appLabels.repriseTecDepartementsDe(region)}
               />
               <Link
-                href={makeRepriseTecUrl({ region })}
+                href={makeRepriseTecCollectivitesUrl({ region })}
                 className={lienClassName}
               >
                 {region}
@@ -188,7 +188,10 @@ export const ArbreTerritoire = ({
                           label={appLabels.repriseTecPorteursDe(departement)}
                         />
                         <Link
-                          href={makeRepriseTecUrl({ region, departement })}
+                          href={makeRepriseTecCollectivitesUrl({
+                            region,
+                            departement,
+                          })}
                           className={lienClassName}
                         >
                           {departement}

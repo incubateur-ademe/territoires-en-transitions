@@ -84,7 +84,11 @@ export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
 export const repriseTecUrl = `${adminPath}/reprise-tec`;
-export const makeRepriseTecUrl = ({
+export const repriseTecCasTypesUrl = `${repriseTecUrl}/cas-types`;
+export const repriseTecDecisionsUrl = `${repriseTecUrl}/decisions`;
+export const repriseTecReglesUrl = `${repriseTecUrl}/regles`;
+export const repriseTecCollectivitesUrl = `${repriseTecUrl}/collectivites`;
+export const makeRepriseTecCollectivitesUrl = ({
   region,
   departement,
 }: {
@@ -95,9 +99,10 @@ export const makeRepriseTecUrl = ({
   if (region) params.set('region', region);
   if (departement) params.set('departement', departement);
   const query = params.toString();
-  return query ? `${repriseTecUrl}?${query}` : repriseTecUrl;
+  return query
+    ? `${repriseTecCollectivitesUrl}?${query}`
+    : repriseTecCollectivitesUrl;
 };
-export const makeRepriseTecReglesUrl = () => `${repriseTecUrl}/regles`;
 export const makeRepriseTecCollectiviteUrl = ({
   collectiviteId,
   tecDossierId,
@@ -105,7 +110,7 @@ export const makeRepriseTecCollectiviteUrl = ({
   collectiviteId: number;
   tecDossierId?: number;
 }) =>
-  `${repriseTecUrl}/${collectiviteId}${
+  `${repriseTecCollectivitesUrl}/${collectiviteId}${
     tecDossierId === undefined ? '' : `?dossier=${tecDossierId}`
   }`;
 
