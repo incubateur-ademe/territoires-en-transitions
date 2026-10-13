@@ -139,8 +139,11 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
       .query({ spreadsheetId: 'untrusted-sheet' })
       .set('Authorization', `Bearer ${anonymousToken}`);
     expect(response.body).toMatchObject({
+      status: 'committed',
       definitions: expect.any(Array),
-      identifiantsRecalcules: expect.any(Array),
+      reconciliation: {
+        status: expect.stringMatching(/complete|pending|failed/),
+      },
     });
     expect(response.body.definitions).toBeInstanceOf(Array);
     expect(response.status).toBe(200);

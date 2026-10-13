@@ -17,6 +17,9 @@ import { TrackingModule } from '../utils/tracking/tracking.module';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
+import { IndicateurFormulaReconciliationRepository } from './definitions/indicateur-formula-reconciliation.repository';
+import { IndicateurFormulaReconciliationRouter } from './definitions/indicateur-formula-reconciliation.router';
+import { IndicateurFormulaReconciliationService } from './definitions/indicateur-formula-reconciliation.service';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
 import { ListPlatformDefinitionsRepository } from './definitions/list-platform-definitions/list-platform-definitions.repository';
@@ -82,6 +85,9 @@ const DEFINITIONS_PROVIDERS = [
   ListPlatformDefinitionsService,
   ListCollectiviteDefinitionsRepository,
   IndicateurDefinitionLockRepository,
+  IndicateurFormulaReconciliationRepository,
+  IndicateurFormulaReconciliationService,
+  IndicateurFormulaReconciliationRouter,
 
   CreateDefinitionService,
   UpdateDefinitionService,

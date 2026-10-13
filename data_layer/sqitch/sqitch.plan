@@ -1135,3 +1135,4 @@ shared/action_de_reference_retire_levier_categorie [shared/action_de_reference_l
 indicateur/dependances_formules [private_schema] 2026-09-03T16:00:25Z Emilien Escalle <emilien.escalle@escemi.com> # Centralise l'extraction des dépendances de formule
 indicateur/periodicite_formules [indicateur/remplacer-catalogue-periodicites-par-contraintes indicateur/dependances_formules] 2026-09-03T16:30:00Z Emilien Escalle <emilien.escalle@escemi.com> # Vérifie directement les dépendances de calcul et leur homogénéité de périodicité
 stats/report_indicateur_resultat_periode [indicateur/periodicite_formules collectivite/fusion] 2026-09-03T17:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Expose la politique et le début de période tout en maintenant l'année
+indicateur/reconciliation_formules [stats/report_indicateur_resultat_periode private_schema] 2026-10-07T14:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Ajoute la file durable en conservant le contrat annuel
