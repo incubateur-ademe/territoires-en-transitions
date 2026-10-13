@@ -1,4 +1,4 @@
-import { getLegacyIndicateurPeriodicite } from '../indicateur-periode.adapter';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -123,7 +123,7 @@ export default class ValeursMoyenneService {
             ne(ism.sourceId, PCAET_COLLECTIVITE_SOURCE_ID),
             eq(
               iv.periodicite,
-              getLegacyIndicateurPeriodicite(options.periodicite)
+              options.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE
             ),
             eq(iv.indicateurId, indicateurId)
           )

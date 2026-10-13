@@ -10,6 +10,7 @@ import {
   IndicateurPeriodicite,
   PCAET_COLLECTIVITE_SOURCE_ID,
   IndicateurValeur,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import {
   and,
@@ -20,10 +21,6 @@ import {
   or,
   sql,
 } from 'drizzle-orm';
-import {
-  dehydrateIndicateurPeriode,
-  hydrateIndicateurPeriode,
-} from '../indicateur-periode.adapter';
 import { indicateurValeurTable } from '../indicateur-valeur.table';
 
 type IndicateurSourceCalcul = {
@@ -123,7 +120,7 @@ export class ComputeValeursRepository {
           eq(indicateurValeurTable.collectiviteId, collectiviteId),
           eq(
             indicateurValeurTable.dateValeur,
-            dehydrateIndicateurPeriode(periode)
+            IndicateurPeriodes.toDateValeur(periode)
           ),
           eq(indicateurValeurTable.periodicite, periode.periodicite),
           inArray(
@@ -167,10 +164,10 @@ export class ComputeValeursRepository {
         ...valeur,
         indicateurIdentifiant: valeur.indicateurIdentifiant,
         deleted: false,
-        periode: hydrateIndicateurPeriode({
-          periodicite: valeur.periodicite,
-          dateValeur: valeur.dateValeur,
-        }),
+        periode: IndicateurPeriodes.fromDateValeur(
+          valeur.periodicite,
+          valeur.dateValeur
+        ),
       };
     });
   }

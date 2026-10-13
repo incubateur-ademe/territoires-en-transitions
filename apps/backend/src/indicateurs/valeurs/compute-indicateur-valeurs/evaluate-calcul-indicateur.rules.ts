@@ -1,11 +1,13 @@
-import { IndicateurValeurCreate } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodes,
+  IndicateurValeurCreate,
+} from '@tet/domain/indicateurs';
 import { isNil, round } from 'es-toolkit';
 import type {
   CalculSourceGroup,
   CalculSourceGroups,
   IndicateurFormula,
 } from './calcul-indicateur.types';
-import { dehydrateIndicateurPeriode } from '../indicateur-periode.adapter';
 import { DEFAULT_ROUNDING_PRECISION } from '../valeurs.constants';
 
 type EvaluateExpression = (
@@ -66,7 +68,7 @@ export const evaluateCalculIndicateur = (
       {
         collectiviteId: group.collectiviteId,
         indicateurId: formula.definition.id,
-        dateValeur: dehydrateIndicateurPeriode(group.periode),
+        dateValeur: IndicateurPeriodes.toDateValeur(group.periode),
         periodicite: group.periode.periodicite,
         resultat: evaluateField('resultat', formula, group, evaluate),
         objectif: evaluateField('objectif', formula, group, evaluate),

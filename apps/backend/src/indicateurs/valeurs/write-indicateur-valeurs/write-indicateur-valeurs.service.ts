@@ -2,6 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   IndicateurDefinition,
   IndicateurPeriodicite,
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriodes,
   IndicateurValeur,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
@@ -12,11 +14,6 @@ import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
 import { captureIndicateurValeursResult } from '../indicateur-valeurs.errors';
-import {
-  hydrateLegacyIndicateurPeriode,
-  getLegacyIndicateurPeriodicite,
-  dehydrateIndicateurPeriode,
-} from '../indicateur-periode.adapter';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
 import {
@@ -44,12 +41,14 @@ export class WriteIndicateurValeursService {
       async (): Promise<IndicateurValeurWithIdentifiant[]> => {
         const valeurs = input.valeurs.map((valeur) => {
           const definition = validation.data[valeur.indicateurId];
+          const periodicite =
+            valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
           return {
             ...valeur,
-            periodicite: getLegacyIndicateurPeriodicite(valeur.periodicite),
+            periodicite,
             dateValeur: this.getCanonicalDateValeur(valeur.dateValeur, {
               id: definition.id,
-              periodicite: valeur.periodicite,
+              periodicite,
             }),
             resultat: !isNil(valeur.resultat)
               ? round(valeur.resultat, definition.precision)
@@ -120,13 +119,14 @@ export class WriteIndicateurValeursService {
             `Indicateur definition not found for id ${indicateurId}`
           );
         assertUserIndicateurValeursAllowed([lockedDefinition]);
-        const periodicite = getLegacyIndicateurPeriodicite(data.periodicite);
+        const periodicite =
+          data.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
         const dateValeur =
           data.dateValeur === undefined
             ? undefined
             : this.getCanonicalDateValeur(data.dateValeur, {
                 id: indicateurId,
-                periodicite: data.periodicite,
+                periodicite,
               });
         const now = new Date().toISOString();
         const fields = {
@@ -196,17 +196,18 @@ export class WriteIndicateurValeursService {
   }
   private getCanonicalDateValeur(
     dateValeur: string,
-    definition: Pick<IndicateurDefinition, 'id'> & {
-      periodicite?: IndicateurPeriodicite;
-    }
+    definition: Pick<IndicateurDefinition, 'id' | 'periodicite'>
   ): string {
     try {
-      return dehydrateIndicateurPeriode(
-        hydrateLegacyIndicateurPeriode({
-          periodicite: definition.periodicite,
-          dateValeur,
-        })
-      );
+      // The annual API accepts any date in the year; storage uses its first day.
+      const periode =
+        definition.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
+          ? IndicateurPeriodes.containing(definition.periodicite, dateValeur)
+          : IndicateurPeriodes.fromDateValeur(
+              definition.periodicite,
+              dateValeur
+            );
+      return IndicateurPeriodes.toDateValeur(periode);
     } catch {
       throw new BadRequestException(
         `Date de valeur ${dateValeur} non canonique pour l'indicateur ${definition.id} (${definition.periodicite})`
