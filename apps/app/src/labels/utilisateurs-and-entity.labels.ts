@@ -98,4 +98,7 @@ export const utilisateursAndEntityLabels = {
   associerCompteTagDescription:
     'Associer cette personne à un ou plusieurs tags afin de lui associer des actions, des indicateurs et des mesures.',
   associerCompteTagChamp: 'Associer cette personne à un ou plusieurs tags',
+
+  /** Administration */
+  administration: 'Administration',
 };

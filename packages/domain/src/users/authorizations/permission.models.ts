@@ -79,6 +79,8 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'referentiels.labellisations.mutate_documents',
     'shared.actions-de-reference.mutate',
     'utils.banner.mutate',
+    'utils.backoffice.read',
+    'utils.backoffice.mutate',
   ],
   [PlatformRole.ADEME]: [
     ...visiteurVerifiePermissions,
