@@ -1,3 +1,4 @@
+import { getPublicEnv } from '@tet/api/public-env';
 import { NextRequest, NextResponse } from 'next/server';
 import { STREAMLIT_IMPACT_IFRAME_SRC } from './app/impact/streamlit.utils';
 import { STREAMLIT_STATS_IFRAME_SRC } from './app/stats/streamlit.utils';
@@ -9,6 +10,8 @@ import { STREAMLIT_STATS_IFRAME_SRC } from './app/stats/streamlit.utils';
  *
  */
 export function proxy(request: NextRequest) {
+  const { STRAPI_URL, BACKEND_URL } = getPublicEnv();
+
   // génère un id à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
@@ -54,7 +57,7 @@ export function proxy(request: NextRequest) {
       https://image.crisp.chat
       https://client.crisp.chat
       https://px4.ads.linkedin.com
-      ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
+      ${STRAPI_URL?.replace(
         'strapiapp',
         'media.strapiapp'
       )}
@@ -62,8 +65,8 @@ export function proxy(request: NextRequest) {
     font-src 'self' client.crisp.chat fonts.axept.io;
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}
-      ${process.env.NEXT_PUBLIC_BACKEND_URL ?? ''}
+      ${STRAPI_URL ?? ''}
+      ${BACKEND_URL ?? ''}
       ws://${request.nextUrl.host}
       ${process.env.POSTHOG_HOST ?? ''}
       *.axept.io
