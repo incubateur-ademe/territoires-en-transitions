@@ -55,12 +55,6 @@ Cette approche garantit que le schéma de la base cible est toujours celui du co
 
 Pour faciliter la vérification de compatibilité, un fichier **metadata** (`backup-YYYY-MM-DD.metadata.json`) est uploadé avec chaque backup. Il contient la version du backend, le commit et l'environnement au moment de la sauvegarde. Cela permet à l'opérateur de vérifier que le backup est compatible avec le code déployé sur l'environnement cible avant de lancer la restauration.
 
-Ces metadata complètent le contrôle automatique de compatibilité du schéma effectué avant toute
-troncature. Ce contrôle s'appuie sur le registre Sqitch de la cible et sur `sqitch.changes`, archivée
-dans le même snapshot que les données. Un catalogue d'archive illisible ou un registre absent ou
-illisible bloque la restauration ; le nom du backup et ses metadata ne suffisent pas à établir sa
-compatibilité.
-
 ### 2. Restauration table par table pilotée par `restore-config.yml`
 
 Le fichier `data_layer/backup/restore-config.yml` définit la liste des tables et leur regroupement logique (groupes : technical, stats, collectivites, indicateurs, referentiels, pai, plans). Il sert d'unique source de vérité consommée par `restore.sh` pour orchestrer la restauration. Les règles d'anonymisation, elles, sont écrites en SQL dans `clean_data.sql` (cf. §7).
@@ -102,18 +96,13 @@ Ce remplacement du job historique `validate-restore` par deux jobs supprime la n
 Chaque job :
 
 1. Télécharge le backup depuis S3 (valide le roundtrip complet : backup → upload → download → restore)
-2. Vérifie la lisibilité du catalogue de l'archive et du registre Sqitch, ainsi que la compatibilité Sqitch du backup avec la cible, avant toute mutation
-3. Tronque les tables cibles dans l'ordre inverse des dépendances
-4. Restaure les tables prévues par `restore-config.yml` à partir du même dump
-5. Réinitialise les séquences PostgreSQL via `reset_sequences.sql`
-6. Exécute `clean_data.sql` (cf. §7) pour anonymiser les colonnes sensibles et asserter la garantie post-scrub
-7. Vérifie les sanity checks de présence de données (`collectivite`, `dcp`, `indicateur_valeur`, `action_statut`, `score_snapshot`)
+2. Tronque les tables cibles dans l'ordre inverse des dépendances
+3. Restaure table par table à partir du dump
+4. Réinitialise les séquences PostgreSQL via `reset_sequences.sql`
+5. Exécute `clean_data.sql` (cf. §7) pour anonymiser les colonnes sensibles et asserter la garantie post-scrub
+6. Vérifie les sanity checks de présence de données (`collectivite`, `dcp`, `indicateur_valeur`, `action_statut`, `score_snapshot`)
 
-Chaque job a son propre groupe de concurrence par base (`database-maintenance-staging` et
-`database-maintenance-preprod`). Les jobs gardent un timeout de 90 minutes pour borner les
-runs runaway et utilisent respectivement `STAGING_DB_URL` et `PREPROD_DB_URL` (les deux secrets
-pré-existants, hérités du fonctionnement pgsync). `clean_data.sql` lit
-`RESTORE_ENCRYPTED_PASSWORD` via `psql -v` pour la mise à jour de `encrypted_password`.
+Chaque job a son propre groupe de concurrence (`database-maintenance-staging` et `database-maintenance-preprod`), un timeout de 90 minutes pour borner les runs runaway, et utilise respectivement `STAGING_DB_URL` et `PREPROD_DB_URL` (les deux secrets pré-existants, hérités du fonctionnement pgsync). `clean_data.sql` lit `RESTORE_ENCRYPTED_PASSWORD` via `psql -v` pour la mise à jour de `encrypted_password`.
 
 Le backup utilise le groupe `database-maintenance-prod`. Les trois jobs nocturnes et la restauration manuelle (§5) configurent `cancel-in-progress: false` et `queue: max` : une seule opération s'exécute par groupe, avec jusqu'à 100 opérations en attente, traitées dans l'ordre de leur entrée dans la file. Une nouvelle demande ne remplace donc pas une demande déjà en attente. [Fonctionnement des files GitHub Actions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
 
@@ -127,32 +116,7 @@ Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow
 
 ### 6. Sécurité
 
-- **Contrôle de la cible (allowlist)** : `restore.sh` accepte `TO_DB_URL` si la chaîne contient
-  `localhost`, `127.0.0.1`, `host.docker.internal` ou l'un des identifiants Supabase de staging ou
-  preprod ; il refuse les autres valeurs. Ce contrôle par sous-chaîne ne vérifie pas l'hôte effectif
-  ni les paramètres libpq pouvant remplacer la cible et n'impose pas de mode SSL. L'opérateur doit
-  donc vérifier la cible effective et la configuration SSL du secret de connexion.
-- **Compatibilité avant troncature** : `restore.sh` vérifie la présence des tables configurées et la
-  lisibilité du catalogue de l'archive. `check-restore-compatibility.sh` lit et compare les registres
-  Sqitch du backup et de la cible et refuse les combinaisons incompatibles, incomplètes ou activées.
-  Il refuse aussi toute cible portant le marqueur `migration.indicateur_valeur_periodicite_audit`.
-  Pour les cibles `legacy`, il vérifie l'absence des colonnes `periodicite` et du catalogue
-  `indicateur_periodicite`. Pour les cibles `schema`, il exécute les contrôles physiques de
-  `verify/indicateur/periodicite_schema.sql`, dont les contraintes et index annuels.
-- **Cohérence des données restaurées** : les tables configurées sont restaurées depuis le même
-  snapshot. Après chargement, le script réinitialise les séquences, anonymise les données sensibles
-  avec des assertions et vérifie la présence de données dans cinq tables (§4). Il ne reconstruit ni
-  ne valide les données dérivées dont les triggers ont été désactivés pendant le chargement.
-- **Exclusion mutuelle des maintenances** : les restaurations planifiées et manuelles partagent un
-  groupe de concurrence par base ; le backup utilise `database-maintenance-prod`. Ces groupes ne
-  bloquent pas une opération lancée ailleurs. Les interventions hors de ces workflows doivent
-  être coordonnées pour éviter une sauvegarde ou une restauration pendant un changement de schéma.
-- **Réactivation des triggers** : après chaque retour de `pg_restore`, même en erreur, le script
-  réactive les triggers USER qu'il a désactivés pour la table, avant de vérifier le code de retour.
-  Un échec de réactivation arrête le script. Une erreur ou une interruption avant cette étape peut
-  laisser les triggers désactivés : le seul trap `EXIT` concerne la remise en place des contraintes
-  `NOT VALID` temporairement supprimées. Après une interruption, l'opérateur doit vérifier l'état
-  des triggers et réactiver ceux restés désactivés avant de réutiliser la cible.
+- **Protection production (allowlist fail-closed)** : `restore.sh` refuse toute restauration sauf si `TO_DB_URL` correspond à une URL en localhost ou à l'un des identifiants de projet Supabase explicitement autorisés (staging, preprod). Toute URL inattendue (y compris production) est rejetée avec un message clair et l'URL masquée. Cette approche remplace l'ancien denylist (un seul identifiant prod) qui était fragile en cas d'ajout d'un second projet de production.
 - **Délai de confirmation** : un `sleep 10` permet à l'opérateur de vérifier l'URL cible avant la restauration (désactivé en CI via `$CI`)
 - **Masquage des credentials** : l'URL de connexion est masquée dans les logs (`postgresql://***@host/db`)
 - **Secrets GitHub** : tous les credentials sont passés via des variables d'environnement (secrets GitHub), jamais en arguments CLI
@@ -164,12 +128,12 @@ Après `reset_sequences.sql` et avant les sanity checks, `restore.sh` exécute `
 
 **Colonnes scrubbées (état actuel)** :
 
-| Cible                                 | Action                                                       |
-| ------------------------------------- | ------------------------------------------------------------ |
-| `auth.users.phone`                    | `NULL`                                                       |
-| `auth.users.encrypted_password`       | `:'pwd'` si non vide, sinon laissé tel quel                  |
-| `public.dcp.telephone`                | `NULL` (cf. interaction trigger ci-dessous)                  |
-| `config.service_configurations.token` | `NULL` — empêche staging/preprod d'avoir des tokens API live |
+| Cible                                       | Action                                                        |
+| ------------------------------------------- | ------------------------------------------------------------- |
+| `auth.users.phone`                          | `NULL`                                                        |
+| `auth.users.encrypted_password`             | `:'pwd'` si non vide, sinon laissé tel quel                   |
+| `public.dcp.telephone`                      | `NULL` (cf. interaction trigger ci-dessous)                   |
+| `config.service_configurations.token`       | `NULL` — empêche staging/preprod d'avoir des tokens API live  |
 
 **Substitution du mot de passe** : `restore.sh` passe `-v pwd="${RESTORE_ENCRYPTED_PASSWORD:-}"` à `psql`. La variable peut être vide (env var non définie en local) — l'`UPDATE` correspondant et son assertion sont alors no-op (clauses `WHERE :'pwd' <> ''`). Le hash bcrypt n'est ainsi jamais stocké dans le repo ; la rotation se fait en mettant à jour le secret GitHub Actions `RESTORE_ENCRYPTED_PASSWORD`.
 
@@ -181,7 +145,7 @@ Après `reset_sequences.sql` et avant les sanity checks, `restore.sh` exécute `
 
 ### Positives
 
-- Backups quotidiens automatisés avec contrôle de lisibilité du catalogue (`pg_restore --list` avant upload)
+- Backups quotidiens automatisés avec vérification d'intégrité (`pg_restore --list` avant upload)
 - Restauration vérifiée automatiquement chaque jour en CI
 - Diagnostic précis des erreurs de restauration grâce à l'approche table par table
 - Compatibilité code/données vérifiable via les métadonnées
@@ -255,17 +219,16 @@ Supabase propose ses propres backups (Point-in-Time Recovery). Non retenu comme 
 
 ## Fichiers et scripts
 
-| Fichier                                                  | Rôle                                                                                              |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `data_layer/backup/backup.sh`                            | Dump production + upload S3 + metadata                                                            |
-| `data_layer/backup/restore.sh`                           | Contrôle de compatibilité + restore ordonné + séquences + anonymisation + sanity                           |
-| `data_layer/backup/check-restore-compatibility.sh`       | Contrôle de compatibilité entre le backup et le schéma cible avant restauration                   |
-| `data_layer/backup/cleanup.sh`                           | Nettoyage des backups obsolètes selon la politique de rétention                                   |
-| `data_layer/backup/reset_sequences.sql`                  | Réinitialisation des séquences après restore data-only                                            |
-| `data_layer/backup/clean_data.sql`                       | Anonymisation des colonnes sensibles (cf. §7) + assertions intégrées                              |
-| `data_layer/backup/restore-config.yml`                   | Source de vérité : liste des tables et groupes restaurés par `restore.sh`                         |
-| `.github/workflows/backup-database.yml`                  | Orchestration CI : backup-production + restore-staging (latest) + restore-preprod (D-1) + cleanup |
-| `.github/workflows/cd-restore-preprod.yml`               | Restauration manuelle à la demande de la preprod (date ISO ou `latest`)                           |
+| Fichier                                    | Rôle                                                                                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `data_layer/backup/backup.sh`              | Dump production + upload S3 + metadata                                                            |
+| `data_layer/backup/restore.sh`             | Download S3 + truncate + restore table/table + reset sequences + clean_data.sql + sanity          |
+| `data_layer/backup/cleanup.sh`             | Nettoyage des backups obsolètes selon la politique de rétention                                  |
+| `data_layer/backup/reset_sequences.sql`    | Réinitialisation des séquences après restore data-only                                            |
+| `data_layer/backup/clean_data.sql`         | Anonymisation des colonnes sensibles (cf. §7) + assertions intégrées                              |
+| `data_layer/backup/restore-config.yml`     | Source de vérité : liste des tables et groupes restaurés par `restore.sh`                         |
+| `.github/workflows/backup-database.yml`    | Orchestration CI : backup-production + restore-staging (latest) + restore-preprod (D-1) + cleanup |
+| `.github/workflows/cd-restore-preprod.yml` | Restauration manuelle à la demande de la preprod (date ISO ou `latest`)                           |
 
 ## Opérations courantes
 

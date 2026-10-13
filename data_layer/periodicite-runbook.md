@@ -1,13 +1,12 @@
 # Périodicité des indicateurs : déploiement
 
-État au 13 octobre 2026 : #5220, #5292, #5366 et **#5378 sont fusionnées et
+État au 12 octobre 2026 : #5220, #5292, #5366 et **#5378 sont fusionnées et
 déployées**. Le socle annuel de #5378 est inclus dans `main` ; sa migration
 `indicateur/remplacer-catalogue-periodicites-par-contraintes` est déjà appliquée.
 La [PR de corrections annuelles #5430](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5430) est également fusionnée dans `main`.
-#5433 est également fusionnée dans `main`. Les corrections annuelles et graphiques
-restantes sont isolées dans #5436, sans nouvelle migration. **#5215** vient ensuite
-et ouvre les trois autres cadences. L'API de saisie en lots (#5437) peut être livrée
-indépendamment sur le contrat annuel ; la grille #5394 combine cette API et #5215.
+La préparation annuelle restante (#5433) conserve
+ce contrat et ne demande aucune migration. **#5215** vient ensuite et ouvre les
+trois autres cadences.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -15,8 +14,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5436 (corrections et graphiques annuels) → #5215 (activation).
-- `main` → #5437 (API de lots annuels), également requise par #5394.
+- `main` → #5433 (préparation annuelle restante) → #5215 (activation).
 - #5215 → #5418 (import atomique) → #5379 (file durable de recalcul).
 - #5215 → #5394 (nouvelle saisie) → #5312 (Margny) → #5296 (nettoyage final).
 - `main` → #5417 (verrous SQL) et `main` → #5416 (verrou du score), indépendantes
@@ -29,8 +27,7 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5436 | Graphiques, saisie et contrôles de restauration annuels | Aucune |
-| #5437 | API transactionnelle de saisie en lots annuels | Aucune |
+| #5433 | Score, publication GES, fixtures et corrections annuelles restantes | Aucune |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5418 | Import atomique du catalogue | Aucune |
 | #5379 | File durable de recalcul | `indicateur/reconciliation_formules` |
@@ -152,7 +149,7 @@ En cas de régression, redéployer la version précédente de l'application. Il 
 a aucun revert Sqitch ni aucune conversion de données à effectuer. Les saisies
 annuelles restent lisibles par le backend et le frontend précédents.
 
-## 2 bis. Préparation annuelle — #5433 (fusionnée)
+## 2 bis. Préparation annuelle restante — #5433
 
 Cette livraison extrait les adaptations annuelles du score indicatif et de la
 publication GES, les fixtures et stories annuelles, les remplacements de littéraux
@@ -177,25 +174,6 @@ et la suppression d’une valeur zéro. Les stratégies de période, sélecteurs
 cadence, adaptations aux séries mixtes, validations API et migrations restent
 dans #5215. Les garde-fous PCAET et les restrictions de saisie annuelle face aux
 nouvelles cadences y restent aussi.
-
-## 2 ter. Corrections annuelles et graphiques — #5436
-
-Déployer le backend et l'application, ainsi que les scripts de sauvegarde et
-restauration. Cette étape peut rester seule en production : le contrat reste
-annuel et aucune nouvelle migration n'est requise. Vérifier les trous et valeurs
-zéro des graphiques, les horizons de référence et la conservation du formulaire
-après un échec de sauvegarde. Les restaurations de sauvegardes activées restent
-refusées tant que l'activation n'est pas livrée.
-
-## 2 quater. API de saisie en lots — #5437
-
-Déployer le backend. Cette PR est indépendante de #5436 et #5215, sans migration
-ni changement de l'interface. Son contrat HTTP accepte uniquement les périodes
-annuelles canoniques. Vérifier l'atomicité, les droits et les valeurs zéro.
-
-La grille #5394 intègre #5437 et #5215 puis élargit la validation JSON aux quatre
-cadences. Livrer d'abord ce backend élargi, puis l'application de #5394. La fusion
-de #5437 seule ne suffit pas à rendre l'API compatible avec les lots mensuels.
 
 ## 3. Activation des cadences — #5215
 
