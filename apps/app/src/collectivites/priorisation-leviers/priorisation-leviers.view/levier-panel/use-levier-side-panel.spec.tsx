@@ -50,6 +50,7 @@ const renderLevierSidePanel = () =>
         preselection: EMPTY_PRESELECTION,
       }),
       panelContent: useSidePanel().panel.content,
+      isPanelOpen: useSidePanel().panel.isOpen,
     }),
     { wrapper: SidePanelWrapper }
   );
@@ -72,5 +73,27 @@ describe('useLevierSidePanel', () => {
 
     expect(firstKey).toBeDefined();
     expect(secondKey).not.toBe(firstKey);
+  });
+
+  it('referme le volet ouvert et oublie le levier sélectionné', () => {
+    const { result } = renderLevierSidePanel();
+    act(() => result.current.levierSidePanel.select('covoiturage'));
+    const whileOpen = {
+      isPanelOpen: result.current.isPanelOpen,
+      selectedLevierId: result.current.levierSidePanel.selectedLevierId,
+    };
+
+    act(() => result.current.levierSidePanel.close());
+
+    expect({
+      whileOpen,
+      afterClose: {
+        isPanelOpen: result.current.isPanelOpen,
+        selectedLevierId: result.current.levierSidePanel.selectedLevierId,
+      },
+    }).toEqual({
+      whileOpen: { isPanelOpen: true, selectedLevierId: 'covoiturage' },
+      afterClose: { isPanelOpen: false, selectedLevierId: undefined },
+    });
   });
 });

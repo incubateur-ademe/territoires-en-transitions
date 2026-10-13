@@ -2,7 +2,7 @@ import type { MatrixPoint } from '@/app/ui/charts/matrix/matrix.chart';
 import type { MatrixTone } from '@/app/ui/charts/matrix/quadrant';
 import { Pertinence } from '@tet/domain/collectivites';
 import { LevierId } from '@tet/domain/shared';
-import { round } from 'es-toolkit';
+import { maxBy, minBy, round } from 'es-toolkit';
 import { LevierPriorisation } from './to-leviers-priorisation';
 
 export const MATRIX_SCALE = 100;
@@ -74,9 +74,32 @@ export const toQuadrant = ({
   return 'low_impact_low_mobilisation';
 };
 
+const isPertinent = (levier: LevierPlace): boolean =>
+  levier.pertinence !== 'non_pertinent';
+
 export const isBlindSpot = (levier: LevierPlace): boolean =>
-  levier.pertinence !== 'non_pertinent' &&
-  toQuadrant(levier) === 'high_impact_low_mobilisation';
+  isPertinent(levier) && toQuadrant(levier) === 'high_impact_low_mobilisation';
+
+export const findTopBlindSpot = (
+  places: LevierPlace[]
+): LevierPlace | undefined =>
+  maxBy(places.filter(isBlindSpot), ({ potentielScore }) => potentielScore);
+
+const distanceToTopLeftCorner = ({
+  mobilisationScore,
+  potentielScore,
+}: Pick<LevierPlace, 'mobilisationScore' | 'potentielScore'>): number =>
+  Math.hypot(mobilisationScore, MATRIX_SCALE - potentielScore);
+
+const findClosestToTopLeftCorner = (
+  places: LevierPlace[]
+): LevierPlace | undefined =>
+  minBy(places.filter(isPertinent), distanceToTopLeftCorner);
+
+export const findLevierToPrioritize = (
+  places: LevierPlace[]
+): LevierPlace | undefined =>
+  findTopBlindSpot(places) ?? findClosestToTopLeftCorner(places);
 
 export type PreselectedCountByLevier = ReadonlyMap<LevierId, number>;
 

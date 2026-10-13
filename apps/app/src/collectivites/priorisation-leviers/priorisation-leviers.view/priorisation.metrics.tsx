@@ -1,9 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { VisibleWhen } from '@tet/ui';
-import { JSX, Ref } from 'react';
+import { JSX } from 'react';
 
 type PriorisationMetricsProps = {
-  ref?: Ref<HTMLDivElement>;
   preselectedActionsCount: number;
   blindSpotCount: number;
   analyzedActionsCount: number;
@@ -31,12 +30,11 @@ const MetricTile = ({ count, label, help }: MetricTileProps): JSX.Element => {
 };
 
 export const PriorisationMetrics = ({
-  ref,
   preselectedActionsCount,
   blindSpotCount,
   analyzedActionsCount,
 }: PriorisationMetricsProps): JSX.Element => (
-  <div ref={ref} className="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
     <MetricTile
       count={preselectedActionsCount}
       label={appLabels.actionsPreselectionnees({

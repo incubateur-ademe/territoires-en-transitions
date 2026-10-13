@@ -2,10 +2,11 @@ import { appLabels } from '@/app/labels/catalog';
 import { ActionDeReferenceDetailLink } from '@/app/shared/actions-de-reference/action-de-reference-detail.link';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { Badge, Card } from '@tet/ui';
-import { JSX, ReactNode } from 'react';
+import { JSX, ReactNode, RefCallback } from 'react';
 
 type ActionDeReferenceSummaryCardProps = {
   action: Pick<ActionDeReference, 'id' | 'titre' | 'description'>;
+  actionsRef?: RefCallback<HTMLDivElement>;
   children: ReactNode;
 };
 
@@ -19,6 +20,7 @@ const ActionDeReferenceSummaryTitle = ({
 
 export const ActionDeReferenceSummaryCard = ({
   action,
+  actionsRef,
   children,
 }: ActionDeReferenceSummaryCardProps): JSX.Element => (
   <Card className="relative h-full gap-3 font-normal">
@@ -32,7 +34,10 @@ export const ActionDeReferenceSummaryCard = ({
     <p className="mb-0 whitespace-pre-line text-xs text-grey-8">
       {action.description}
     </p>
-    <div className="relative mt-auto flex w-fit flex-wrap items-center gap-3">
+    <div
+      ref={actionsRef}
+      className="relative mt-auto flex w-fit flex-wrap items-center gap-3"
+    >
       {children}
     </div>
   </Card>

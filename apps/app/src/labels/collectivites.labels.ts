@@ -13,6 +13,10 @@ const restartTourLabel = 'Comment ça marche ?';
 
 const actionsPreselectionneesLabel = 'Actions pré-sélectionnées';
 
+const saveActionLabel = 'Sauvegarder';
+
+const notInterestedActionLabel = 'Pas intéressé';
+
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
   planification: 'Réglementation & planification',
@@ -57,14 +61,32 @@ export const collectivitesLabels = {
   outilsDePriorisation: 'Outils de priorisation',
   priorisationLeviersTitre: 'Priorisation des leviers',
   priorisationVisiteRelancer: restartTourLabel,
-  priorisationVisiteMetriquesTitre: 'Votre point de départ',
-  priorisationVisiteMetriquesDescription:
-    "Ces trois chiffres résument l'analyse : les actions déjà pré-sélectionnées, les leviers en angle mort et le nombre d'actions analysées.",
+  priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
+  priorisationVisiteParcoursDescription:
+    "L'outil se parcourt en trois temps, du repérage des leviers à la sauvegarde des actions qui vous intéressent.",
+  priorisationVisiteReperageTitre: 'Repérer',
+  priorisationVisiteReperageDescription:
+    'Visualisez les leviers à prioriser pour votre collectivité : la zone rouge de la matrice.',
+  priorisationVisiteExplorationTitre: 'Explorer',
+  priorisationVisiteExplorationDescription:
+    'Cliquez un point pour ouvrir le levier et voir les actions de référence qui y répondent.',
+  priorisationVisiteSauvegardeTitre: 'Sauvegarder',
+  priorisationVisiteSauvegardeDescription:
+    'Sélectionnez les actions qui vous intéressent pour les sauvegarder',
   priorisationVisiteMatriceTitre: 'La matrice des leviers',
   priorisationVisiteMatriceDescription:
     'Un point = un levier. Plus il est haut, plus son potentiel de réduction de GES estimé est fort ; plus il est à droite, plus vous le mobilisez déjà.',
+  priorisationVisiteLevierAPrioriserTitre: 'Commencez par le rouge',
+  priorisationVisiteLevierAPrioriserDescription:
+    'La zone rouge regroupe les leviers à fort impact que vous mobilisez encore peu. Ouvrez celui-ci pour voir les actions qui y répondent.',
+  priorisationVisiteOuvrirLevier: 'Ouvrir ce levier',
+  priorisationVisiteDetailLevierTitre: 'Le détail du levier',
+  priorisationVisiteDetailLevierDescription:
+    'Secteur, impact potentiel estimé et actions de référence, regroupées par catégorie. Si le levier ne concerne pas votre territoire, marquez-le non pertinent.',
+  priorisationVisiteActionsTitre: 'Retenez ce qui est pertinent',
+  priorisationVisiteActionsDescription: `« ${saveActionLabel} » ajoute l'action à votre liste. « ${notInterestedActionLabel} » la retire des suggestions ; vous pourrez la restaurer.`,
   priorisationVisiteAideTitre: 'Retrouvez la visite ici',
-  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite à tout moment. Vos actions retenues se retrouvent dans « ${actionsPreselectionneesLabel} ».`,
+  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite. Votre liste apparaîtra à côté dès la première action sauvegardée.`,
   actionsPreselectionneesTitre: actionsPreselectionneesLabel,
   actionsPreselectionneesCompte: (count: number): string =>
     `${actionsPreselectionneesLabel} (${count})`,
@@ -164,7 +186,7 @@ export const collectivitesLabels = {
     "Nous n'avons pas de recommandation sur ce levier.",
   ajouterALaPreselection: 'Ajouter à la présélection',
   ajouteeALaPreselection: 'Ajoutée',
-  pasInteresse: 'Pas intéressé',
+  pasInteresse: notInterestedActionLabel,
   actionDeReferenceInteresse: "Ça m'intéresse",
   retirerDeLaPreselection: 'Retirer',
   retablirAction: 'Rétablir',

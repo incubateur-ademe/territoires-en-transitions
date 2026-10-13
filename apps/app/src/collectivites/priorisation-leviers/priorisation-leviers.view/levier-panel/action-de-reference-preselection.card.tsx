@@ -1,7 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { Button } from '@tet/ui';
-import { JSX } from 'react';
+import { JSX, RefCallback } from 'react';
 import { match } from 'ts-pattern';
 import { ActionDeReferenceSummaryCard } from '../../action-de-reference-summary.card';
 import { Preselection, PreselectionStatus } from '../../use-preselection';
@@ -10,6 +10,7 @@ type ActionDeReferencePreselectionCardProps = {
   action: ActionDeReference;
   status: PreselectionStatus;
   preselection: Pick<Preselection, 'add' | 'remove' | 'ignore' | 'restore'>;
+  actionsRef?: RefCallback<HTMLDivElement>;
 };
 
 const IgnoreActionButton = ({
@@ -26,7 +27,7 @@ const PreselectionButtons = ({
   action,
   status,
   preselection,
-}: ActionDeReferencePreselectionCardProps): JSX.Element =>
+}: Omit<ActionDeReferencePreselectionCardProps, 'actionsRef'>): JSX.Element =>
   match(status)
     .with('disponible', () => (
       <>
@@ -67,8 +68,9 @@ export const ActionDeReferencePreselectionCard = ({
   action,
   status,
   preselection,
+  actionsRef,
 }: ActionDeReferencePreselectionCardProps): JSX.Element => (
-  <ActionDeReferenceSummaryCard action={action}>
+  <ActionDeReferenceSummaryCard action={action} actionsRef={actionsRef}>
     <PreselectionButtons
       action={action}
       status={status}

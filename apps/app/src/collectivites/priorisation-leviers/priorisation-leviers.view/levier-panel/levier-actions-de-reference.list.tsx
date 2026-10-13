@@ -11,7 +11,7 @@ import {
 } from '@tet/domain/shared';
 import { Accordion, Select, VisibleWhen } from '@tet/ui';
 import { groupBy, partition } from 'es-toolkit';
-import { JSX, ReactNode, useState } from 'react';
+import { JSX, ReactNode, RefCallback, useState } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../../levier-card-info';
 import {
@@ -24,6 +24,7 @@ import { ActionDeReferencePreselectionCard } from './action-de-reference-presele
 import { keepCategorie } from './keep-categorie';
 
 type LevierActionsDeReferenceListProps = {
+  actionsRef?: RefCallback<HTMLDivElement>;
   levierId: LevierId;
   initialCategorie?: CategorieAction;
   preselection: Preselection;
@@ -32,6 +33,7 @@ type LevierActionsDeReferenceListProps = {
 type ActionCardsProps = {
   actions: readonly ActionDeReference[];
   preselection: Preselection;
+  actionsRef?: RefCallback<HTMLDivElement>;
 };
 
 type CategorieGroupProps = ActionCardsProps & {
@@ -41,6 +43,7 @@ type CategorieGroupProps = ActionCardsProps & {
 const ActionCards = ({
   actions,
   preselection,
+  actionsRef,
 }: ActionCardsProps): JSX.Element => (
   <ul role="list" className="m-0 flex list-none flex-col gap-3 p-0">
     {actions.map((action) => (
@@ -49,6 +52,7 @@ const ActionCards = ({
           action={action}
           status={preselection.statusOf(action.id)}
           preselection={preselection}
+          actionsRef={actionsRef}
         />
       </li>
     ))}
@@ -63,17 +67,22 @@ const CategorieGroup = ({
   categorie,
   actions,
   preselection,
+  actionsRef,
 }: CategorieGroupProps): JSX.Element => (
   <section className="flex flex-col gap-3">
     <CategorieTitle>{appLabels.categorieActionLabel(categorie)}</CategorieTitle>
-    <ActionCards actions={actions} preselection={preselection} />
+    <ActionCards
+      actions={actions}
+      preselection={preselection}
+      actionsRef={actionsRef}
+    />
   </section>
 );
 
 const IgnoredActionsAccordion = ({
   actions,
   preselection,
-}: ActionCardsProps): JSX.Element => (
+}: Omit<ActionCardsProps, 'actionsRef'>): JSX.Element => (
   <Accordion
     title={appLabels.actionsIgnorees({ count: actions.length })}
     containerClassname="border-y-0"
@@ -91,6 +100,7 @@ const FoundActionsCount = ({ count }: { count: number }): JSX.Element => (
 const GroupedActions = ({
   actions,
   preselection,
+  actionsRef,
 }: ActionCardsProps): JSX.Element => {
   const [ignored, visible] = partition(
     actions,
@@ -110,6 +120,7 @@ const GroupedActions = ({
           categorie={categorie}
           actions={byCategorie[categorie]}
           preselection={preselection}
+          actionsRef={actionsRef}
         />
       ))}
       <VisibleWhen condition={hasIgnoredActions}>
@@ -125,6 +136,7 @@ const GroupedActions = ({
 const CATEGORIE_OPTIONS = categorieActionEnumValues.map(toCategorieOption);
 
 export const LevierActionsDeReferenceList = ({
+  actionsRef,
   levierId,
   initialCategorie,
   preselection,
@@ -177,7 +189,11 @@ export const LevierActionsDeReferenceList = ({
             <VisibleWhen condition={isFiltering}>
               <FoundActionsCount count={actions.length} />
             </VisibleWhen>
-            <GroupedActions actions={actions} preselection={preselection} />
+            <GroupedActions
+              actions={actions}
+              preselection={preselection}
+              actionsRef={actionsRef}
+            />
           </>
         ))
         .exhaustive()}

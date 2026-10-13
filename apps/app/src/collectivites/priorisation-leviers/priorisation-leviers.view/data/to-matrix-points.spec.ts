@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { LevierPriorisation, NO_MOBILISATION } from './to-leviers-priorisation';
 import {
+  findLevierToPrioritize,
+  findTopBlindSpot,
   isBlindSpot,
   LevierPlace,
   LevierTooltip,
@@ -125,6 +127,115 @@ describe('isBlindSpot', () => {
         })
       )
     ).toBe(false);
+  });
+});
+
+describe('findTopBlindSpot', () => {
+  it("retient l'angle mort au plus fort potentiel, en ignorant les leviers hors angle mort", () => {
+    const top = findTopBlindSpot([
+      toPlace({ levierId: 'covoiturage', potentielScore: 60 }),
+      toPlace({ levierId: 'biogaz', potentielScore: 90 }),
+      toPlace({
+        levierId: 'velo_transport_commun',
+        potentielScore: 85,
+        mobilisationScore: 60,
+      }),
+      toPlace({
+        levierId: 'efficacite_sobriete_logistique',
+        potentielScore: 80,
+        pertinence: 'non_pertinent',
+      }),
+    ]);
+
+    expect(top?.levierId).toBe('biogaz');
+  });
+
+  it('garde le premier levier quand plusieurs angles morts ont le même potentiel', () => {
+    const top = findTopBlindSpot([
+      toPlace({ levierId: 'covoiturage', potentielScore: 70 }),
+      toPlace({ levierId: 'biogaz', potentielScore: 70 }),
+    ]);
+
+    expect(top?.levierId).toBe('covoiturage');
+  });
+
+  it("ne retient rien quand aucun levier n'est en angle mort", () => {
+    const top = findTopBlindSpot([
+      toPlace({ levierId: 'covoiturage', potentielScore: 20 }),
+      toPlace({
+        levierId: 'biogaz',
+        potentielScore: 80,
+        mobilisationScore: 70,
+      }),
+    ]);
+
+    expect(top).toBeUndefined();
+  });
+});
+
+describe('findLevierToPrioritize', () => {
+  it('préfère un angle mort à un levier de plus fort impact déjà bien mobilisé', () => {
+    const levier = findLevierToPrioritize([
+      toPlace({
+        levierId: 'biogaz',
+        potentielScore: 90,
+        mobilisationScore: 80,
+      }),
+      toPlace({ levierId: 'covoiturage', potentielScore: 60 }),
+    ]);
+
+    expect(levier?.levierId).toBe('covoiturage');
+  });
+
+  it("retient, sans angle mort, le levier le plus proche du coin haut gauche, même moins impactant qu'un levier bien mobilisé", () => {
+    const levier = findLevierToPrioritize([
+      toPlace({
+        levierId: 'velo_transport_commun',
+        potentielScore: 90,
+        mobilisationScore: 70,
+      }),
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 40,
+        mobilisationScore: 10,
+      }),
+    ]);
+
+    expect(levier?.levierId).toBe('covoiturage');
+  });
+
+  it('retient, à impact égal et sans angle mort, le levier le moins mobilisé', () => {
+    const levier = findLevierToPrioritize([
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 40,
+        mobilisationScore: 30,
+      }),
+      toPlace({
+        levierId: 'biogaz',
+        potentielScore: 40,
+        mobilisationScore: 10,
+      }),
+    ]);
+
+    expect(levier?.levierId).toBe('biogaz');
+  });
+
+  it('ignore les leviers non pertinents, même au plus fort impact', () => {
+    const levier = findLevierToPrioritize([
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 90,
+        pertinence: 'non_pertinent',
+      }),
+      toPlace({ levierId: 'biogaz', potentielScore: 20 }),
+    ]);
+
+    expect(levier?.levierId).toBe('biogaz');
+  });
+
+  it("ne retient rien quand aucun levier n'est placé dans la matrice", () => {
+    expect(findLevierToPrioritize([])).toBeUndefined();
   });
 });
 

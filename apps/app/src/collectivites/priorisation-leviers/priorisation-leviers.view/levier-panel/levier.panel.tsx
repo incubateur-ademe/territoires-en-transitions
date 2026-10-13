@@ -1,6 +1,6 @@
 import { CategorieAction } from '@tet/domain/shared';
 import { Divider } from '@tet/ui';
-import { JSX, ReactNode } from 'react';
+import { JSX, ReactNode, Ref, RefCallback } from 'react';
 import { LevierCardInfo } from '../../levier-card-info';
 import { Preselection } from '../../use-preselection';
 import { LevierPriorisation } from '../data/to-leviers-priorisation';
@@ -13,31 +13,40 @@ type LevierPanelProps = {
   initialCategorie?: CategorieAction;
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
+  headerRef?: Ref<HTMLElement>;
+  actionsRef?: RefCallback<HTMLDivElement>;
 };
 
 const LevierTitle = ({ children }: { children: ReactNode }): JSX.Element => (
   <h2 className="mb-0 text-base">{children}</h2>
 );
 
-export const LevierPanel = ({
+const LevierPanel = ({
   levier,
   initialCategorie,
   preselection,
   upsertPertinence,
+  headerRef,
+  actionsRef,
 }: LevierPanelProps): JSX.Element => (
   <div className="flex flex-col gap-4 p-6">
-    <LevierTitle>{levier.nom}</LevierTitle>
-    <LevierCardInfo>{levier.secteur}</LevierCardInfo>
-    <PertinenceField
-      levier={levier}
-      pertinence={levier.pertinence}
-      upsertPertinence={upsertPertinence}
-    />
+    <header ref={headerRef} className="flex flex-col gap-4">
+      <LevierTitle>{levier.nom}</LevierTitle>
+      <LevierCardInfo>{levier.secteur}</LevierCardInfo>
+      <PertinenceField
+        levier={levier}
+        pertinence={levier.pertinence}
+        upsertPertinence={upsertPertinence}
+      />
+    </header>
     <Divider />
     <LevierActionsDeReferenceList
+      actionsRef={actionsRef}
       levierId={levier.levierId}
       initialCategorie={initialCategorie}
       preselection={preselection}
     />
   </div>
 );
+
+export { LevierPanel };

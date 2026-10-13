@@ -16,12 +16,16 @@ type PertinenceTrafficEvent = 'upsert-response' | 'list-request';
 
 export type TourButtonName =
   | 'Suivant'
+  | 'Ouvrir ce levier'
   | 'Précédent'
   | 'Terminer'
   | 'Passer la visite'
   | 'Quitter la visite';
 
 const UPSERT_URL_PATTERN = /collectivites\.pertinenceLeviers\.upsert/;
+
+const TRAJECTOIRE_LEVIERS_URL_PATTERN =
+  /\/trpc\/indicateurs\.trajectoires\.leviers\.getData/;
 
 export class PriorisationLeviersPom {
   readonly title: Locator;
@@ -55,6 +59,21 @@ export class PriorisationLeviersPom {
 
   levierPanel(nom: Levier): Locator {
     return this.page.getByRole('complementary', { name: nom, exact: true });
+  }
+
+  async stubLevierWithPotentiel(nom: Levier): Promise<void> {
+    await this.page.route(TRAJECTOIRE_LEVIERS_URL_PATTERN, (route) =>
+      route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          result: {
+            data: {
+              secteurs: [{ leviers: [{ nom, objectifReduction: -100 }] }],
+            },
+          },
+        }),
+      })
+    );
   }
 
   metricCount(label: RegExp): Locator {

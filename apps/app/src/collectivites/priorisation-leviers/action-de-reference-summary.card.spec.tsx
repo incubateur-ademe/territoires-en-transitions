@@ -46,4 +46,30 @@ describe('card-resume-mene-au-detail', () => {
       buttonsInsideLink: [],
     });
   });
+
+  it('expose le conteneur des boutons, sans le titre ni la description', () => {
+    const actionsElements: HTMLElement[] = [];
+    render(
+      <ActionDeReferenceSummaryCard
+        action={aireCovoiturageAction}
+        actionsRef={(element) => {
+          if (element !== null) {
+            actionsElements.push(element);
+          }
+        }}
+      >
+        <button type="button">{ADD_LABEL}</button>
+        <button type="button">{REMOVE_LABEL}</button>
+      </ActionDeReferenceSummaryCard>
+    );
+
+    const [actionsElement] = actionsElements;
+
+    expect({
+      buttonLabels: Array.from(actionsElement.querySelectorAll('button')).map(
+        (button) => button.textContent
+      ),
+      hasTitle: actionsElement.contains(screen.getByRole('link')),
+    }).toEqual({ buttonLabels: [ADD_LABEL, REMOVE_LABEL], hasTitle: false });
+  });
 });
