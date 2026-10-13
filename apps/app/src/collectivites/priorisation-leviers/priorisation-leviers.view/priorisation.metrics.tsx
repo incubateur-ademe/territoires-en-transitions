@@ -39,11 +39,11 @@ export const PriorisationMetrics = ({
   <div ref={ref} className="grid grid-cols-1 gap-4 md:grid-cols-3">
     <MetricTile
       count={preselectedActionsCount}
-      label={appLabels.actionsPreselectionnees({
+      label={appLabels.actionsSauvegardees({
         count: preselectedActionsCount,
         withoutCount: true,
       })}
-      help={appLabels.actionsPreselectionneesAide}
+      help={appLabels.actionsSauvegardeesAide}
     />
     <MetricTile
       count={blindSpotCount}

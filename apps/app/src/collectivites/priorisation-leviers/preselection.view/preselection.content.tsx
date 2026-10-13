@@ -92,7 +92,7 @@ const PreselectedActionCard = ({
             variant="underlined"
             onClick={() => preselection.remove(action.id)}
           >
-            {appLabels.retirerDeLaPreselection}
+            {appLabels.retirerDeMaListe}
           </Button>
         </>
       )}

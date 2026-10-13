@@ -11,7 +11,7 @@ const unsetPertinenceLabel = 'non renseignée';
 
 const restartTourLabel = 'Comment ça marche ?';
 
-const actionsPreselectionneesLabel = 'Actions pré-sélectionnées';
+const savedActionsAccessLabel = 'Voir mes actions sauvegardées';
 
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
@@ -59,15 +59,18 @@ export const collectivitesLabels = {
   priorisationVisiteRelancer: restartTourLabel,
   priorisationVisiteMetriquesTitre: 'Votre point de départ',
   priorisationVisiteMetriquesDescription:
-    "Ces trois chiffres résument l'analyse : les actions déjà pré-sélectionnées, les leviers en angle mort et le nombre d'actions analysées.",
+    "Ces trois chiffres résument l'analyse : les actions déjà sauvegardées, les leviers à prioriser et le nombre d'actions analysées.",
   priorisationVisiteMatriceTitre: 'La matrice des leviers',
   priorisationVisiteMatriceDescription:
     'Un point = un levier. Plus il est haut, plus son potentiel de réduction de GES estimé est fort ; plus il est à droite, plus vous le mobilisez déjà.',
   priorisationVisiteAideTitre: 'Retrouvez la visite ici',
-  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite à tout moment. Vos actions retenues se retrouvent dans « ${actionsPreselectionneesLabel} ».`,
-  actionsPreselectionneesTitre: actionsPreselectionneesLabel,
-  actionsPreselectionneesCompte: (count: number): string =>
-    `${actionsPreselectionneesLabel} (${count})`,
+  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite à tout moment. Vos actions retenues se retrouvent dans « ${savedActionsAccessLabel} ».`,
+  actionsSauvegardeesTitre: 'Mes actions sauvegardées',
+  voirActionsSauvegardees: plural({
+    zero: savedActionsAccessLabel,
+    one: 'Voir mon action sauvegardée',
+    other: savedActionsAccessLabel,
+  }),
   pertinenceInfo: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
   pertinenceLabel: (pertinence: Pertinence): string =>
@@ -111,19 +114,20 @@ export const collectivitesLabels = {
   cliquerPourVoirLesActions: 'Cliquez sur le point pour voir les actions',
   voirLesDonneesDuGraphique: 'Voir les données du graphique',
   levier: 'Levier',
-  legendePreselection: 'Au moins une action dans la présélection',
+  legendeActionSauvegardee: 'Au moins une action sauvegardée',
 
-  actionsPreselectionnees: plural({
-    one: 'action à potentiel de réduction de GES présélectionnée',
-    other: 'actions à potentiel de réduction de GES présélectionnées',
+  actionsSauvegardees: plural({
+    one: 'action sauvegardée',
+    other: 'actions sauvegardées',
   }),
-  actionsPreselectionneesAide: 'À choisir depuis les leviers de la matrice.',
+  actionsSauvegardeesAide:
+    'Pour alimenter vos discussions lors de comités de pilotage.',
   leviersEnAngleMort: plural({
-    one: 'levier en angle mort',
-    other: 'leviers en angle mort',
+    one: 'levier à prioriser',
+    other: 'leviers à prioriser',
   }),
   leviersEnAngleMortAide:
-    'Leviers pertinents à fort potentiel et encore peu mobilisés.',
+    "Fort impact, encore peu mobilisés : c'est par là que vous pouvez commencer.",
   actionsAnalysees: plural({
     one: 'action de la collectivité rattachée à un levier',
     other: 'actions de la collectivité rattachées à un levier',
@@ -162,11 +166,11 @@ export const collectivitesLabels = {
   filtrerParCategorie: 'Toutes les catégories',
   aucuneActionDeReferenceDuLevier:
     "Nous n'avons pas de recommandation sur ce levier.",
-  ajouterALaPreselection: 'Ajouter à la présélection',
+  sauvegarderAction: 'Sauvegarder',
   ajouteeALaPreselection: 'Ajoutée',
   pasInteresse: 'Pas intéressé',
   actionDeReferenceInteresse: "Ça m'intéresse",
-  retirerDeLaPreselection: 'Retirer',
+  retirerDeMaListe: 'Retirer de ma liste',
   retablirAction: 'Rétablir',
   ilManqueUneAction: 'Il manque une action ?',
   listeNonExhaustiveSignalerAction:
@@ -188,8 +192,8 @@ export const collectivitesLabels = {
   ajoutAuPlanAnnuleSucces: 'Ajout au plan annulé',
   ajoutAuPlanAnnuleErreur: "Échec de l'annulation de l'ajout au plan",
   actionAjouteeAuPlanInfo:
-    "Une action ajoutée à un plan y reste même si elle est retirée de la présélection. Le potentiel qu'elle couvre sera recalculé au prochain passage d'analyse, le tableau de bord de la priorisation ne le compte pas encore.",
+    "Une action ajoutée à un plan y reste même si elle est retirée de cette liste. Le potentiel qu'elle couvre sera recalculé au prochain passage d'analyse, le tableau de bord de la priorisation ne le compte pas encore.",
   preselectionVide: "Aucune action dans la présélection pour l'instant",
   preselectionVideDescription:
-    'Cliquez sur un levier de la matrice puis sur « Ajouter à la présélection » pour retrouver une action ici.',
+    'Cliquez sur un levier de la matrice puis sur « Sauvegarder » pour retrouver une action ici.',
 };

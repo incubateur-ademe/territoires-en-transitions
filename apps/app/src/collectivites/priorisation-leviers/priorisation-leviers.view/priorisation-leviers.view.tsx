@@ -291,6 +291,9 @@ export const PriorisationLeviersView = (): JSX.Element => {
   const upsertPertinence = useUpsertPertinence();
   const preselection = usePreselection();
   const isTourReady = leviersQuery.status === 'ready' && preselection.isReady;
+  const savedActionsCount = preselection.isReady
+    ? preselection.actions.length
+    : 0;
   const { Tour, view, setView, restartOnMatrix } = useLeviersViewWithTour({
     isTourReady,
   });
@@ -319,11 +322,10 @@ export const PriorisationLeviersView = (): JSX.Element => {
               size="xs"
               href={makeCollectivitePreselectionUrl({ collectiviteId })}
             >
-              {preselection.isReady
-                ? appLabels.actionsPreselectionneesCompte(
-                    preselection.actions.length
-                  )
-                : appLabels.actionsPreselectionneesTitre}
+              {appLabels.voirActionsSauvegardees({
+                count: savedActionsCount,
+                withoutCount: true,
+              })}
             </Button>
           </div>
         </PageHeader.Actions>

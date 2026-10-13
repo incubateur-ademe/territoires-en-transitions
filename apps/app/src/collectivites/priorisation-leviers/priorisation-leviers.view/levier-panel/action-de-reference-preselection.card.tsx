@@ -35,7 +35,7 @@ const PreselectionButtons = ({
           variant="outlined"
           onClick={() => preselection.add(action)}
         >
-          {appLabels.ajouterALaPreselection}
+          {appLabels.sauvegarderAction}
         </Button>
         <IgnoreActionButton onIgnore={() => preselection.ignore(action.id)} />
       </>

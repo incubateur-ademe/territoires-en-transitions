@@ -17,7 +17,7 @@ export const PreselectionView = (): JSX.Element => {
     <>
       <PageHeader>
         <PageHeader.Title>
-          {appLabels.actionsPreselectionneesTitre}
+          {appLabels.actionsSauvegardeesTitre}
         </PageHeader.Title>
         <PageHeader.Subtitle>
           <Breadcrumbs
@@ -27,7 +27,7 @@ export const PreselectionView = (): JSX.Element => {
                 label: appLabels.priorisationLeviersTitre,
                 href: makeCollectivitePriorisationUrl({ collectiviteId }),
               },
-              { label: appLabels.actionsPreselectionneesTitre },
+              { label: appLabels.actionsSauvegardeesTitre },
             ]}
           />
         </PageHeader.Subtitle>
