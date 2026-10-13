@@ -1,46 +1,33 @@
 import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateurPeriodes,
-  IndicateurPeriodiciteEnum,
-  type IndicateurPeriodeAnnuelle,
+  type IndicateurPeriode,
+  type SupportedIndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { Button, Field, Input, Tooltip } from '@tet/ui';
-import { type ComponentProps, useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
-const editorOptions = {
-  [IndicateurPeriodiciteEnum.ANNUELLE]: {
-    add: appLabels.ajouterAnnee,
-    duplicate: appLabels.indicateurAnneeExistante,
-    submit: appLabels.validerAjouterAnnee,
-    inputMode: 'numeric',
-  },
-} satisfies Record<
-  IndicateurPeriodeAnnuelle['periodicite'],
-  {
-    add: string;
-    duplicate: string;
-    submit: string;
-    inputMode: ComponentProps<'input'>['inputMode'];
-  }
->;
+import { getIndicateurPeriodeInputOptions } from './indicateur-periode-input.options';
 
-export const AddIndicateurPeriodeHeader = ({
+export const AddIndicateurPeriodeHeader = <
+  K extends SupportedIndicateurPeriodicite
+>({
   periodicite,
   existingPeriodes,
   onAdd,
   focusRequested = false,
   onFocusHandled,
 }: {
-  periodicite: IndicateurPeriodeAnnuelle['periodicite'];
-  existingPeriodes: readonly IndicateurPeriodeAnnuelle[];
-  onAdd: (periode: IndicateurPeriodeAnnuelle) => Promise<boolean>;
+  periodicite: K;
+  existingPeriodes: readonly IndicateurPeriode[];
+  onAdd: (periode: IndicateurPeriode<K>) => Promise<boolean>;
   focusRequested?: boolean;
   onFocusHandled?: () => void;
 }) => {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const isSubmittingRef = useRef(false);
-  const editor = editorOptions[periodicite];
+  const editor = getIndicateurPeriodeInputOptions(periodicite);
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
   const [draft, setDraft] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

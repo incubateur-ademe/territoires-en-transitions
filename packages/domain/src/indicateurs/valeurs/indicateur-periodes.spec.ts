@@ -5,6 +5,26 @@ import type { IndicateurPeriode } from './indicateur-periode.types';
 import { IndicateurPeriodes } from './indicateur-periodes';
 
 describe('IndicateurPeriodes', () => {
+  it('exposes the supported periodicities to input consumers', () => {
+    expect(IndicateurPeriodes.supportedPeriodicites).toEqual(['annuelle']);
+    for (const periodicite of IndicateurPeriodes.supportedPeriodicites) {
+      expect(IndicateurPeriodes.isSupported(periodicite)).toBe(true);
+      const draft = IndicateurPeriodes.normalizeDraft(periodicite, '2026');
+      expect(
+        IndicateurPeriodes.tryParse(periodicite, draft ?? '')
+      ).not.toBeNull();
+    }
+    for (const periodicite of [
+      null,
+      undefined,
+      'mensuelle',
+      'trimestrielle',
+      'semestrielle',
+    ] as const) {
+      expect(IndicateurPeriodes.isSupported(periodicite)).toBe(false);
+    }
+  });
+
   it.each<[string, string | null]>([
     ['', ''],
     ['2', '2'],
@@ -163,7 +183,7 @@ describe('IndicateurPeriodes — contrat annuel', () => {
 
       for (const operation of operations) {
         expect(operation).toThrow(
-          IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
+          IndicateurPeriodeErrorEnum.INDICATEUR_PERIODICITE_UNSUPPORTED
         );
       }
     }

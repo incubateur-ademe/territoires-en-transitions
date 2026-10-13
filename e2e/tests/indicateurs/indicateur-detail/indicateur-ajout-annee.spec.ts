@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, type Request } from '@playwright/test';
 import { testWithIndicateurs as test } from '../indicateurs.fixture';
 import { IndicateurValeursPom } from './indicateur-valeurs.pom';
 
@@ -133,13 +133,13 @@ test('Déclarer une année persiste après rafraîchissement', async ({
   ).toHaveCount(0);
   await page.getByRole('button', { name: 'Ajouter une valeur' }).click();
   await expect(input).toBeFocused();
-  const writes: string[] = [];
+  const writes: Request[] = [];
   page.on('request', (request) => {
     if (
       request.method() === 'POST' &&
       request.url().includes('indicateurs.valeurs.upsert')
     )
-      writes.push(request.url());
+      writes.push(request);
   });
   await input.fill('2026');
   await expect(submit).toBeVisible();
@@ -157,6 +157,12 @@ test('Déclarer une année persiste après rafraîchissement', async ({
   await expect(input).toHaveValue('');
   await expect(resultatsTab).toBeFocused();
   expect(writes).toHaveLength(1);
+  expect(writes[0].postDataJSON()).toMatchObject({
+    collectiviteId,
+    indicateurId,
+    periodicite: 'annuelle',
+    dateValeur: '2026-01-01',
+  });
   const objectifsTab = page.getByRole('button', {
     name: 'Objectifs',
     exact: true,

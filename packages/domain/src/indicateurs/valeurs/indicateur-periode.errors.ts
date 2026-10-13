@@ -4,6 +4,7 @@ import type { LocalCalendarDate } from './indicateur-periode.types';
 
 const indicateurPeriodeErrorCodes = [
   'INDICATEUR_PERIODE_INVALID',
+  'INDICATEUR_PERIODICITE_UNSUPPORTED',
   'INDICATEUR_PERIODE_DATE_NON_CANONICAL',
   'INDICATEUR_CALENDAR_DATE_INVALID',
   'INDICATEUR_LOCAL_DATE_INVALID',
@@ -18,6 +19,9 @@ export type IndicateurPeriodeErrorCode =
   (typeof indicateurPeriodeErrorCodes)[number];
 
 type IndicateurPeriodeErrorDetails = {
+  INDICATEUR_PERIODICITE_UNSUPPORTED: {
+    periodicite: IndicateurPeriodicite;
+  };
   INDICATEUR_PERIODE_INVALID: {
     periodicite: IndicateurPeriodicite;
     value: string;

@@ -58,6 +58,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
     chartInfo.sourceFilter.avecDonneesCollectivite;
   const declaration = useIndicateurTableDeclaration({
     canWrite,
+    periodicite: chartInfo.periodicite,
     collectiviteId,
     definition,
     existingPeriodes: [...resultats.periodes, ...objectifs.periodes],

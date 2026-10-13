@@ -25,13 +25,40 @@ export {
   localDateBrand,
 } from './indicateur-periode.types';
 
-/** Only annual periods currently have supported input and storage rules. */
+/** Periodicities currently implemented by the period helpers and input forms. */
+export type SupportedIndicateurPeriodicite =
+  (typeof IndicateurPeriodes.supportedPeriodicites)[number];
+
+/** For capabilities whose business contract specifically requires a year. */
 export type IndicateurPeriodeAnnuelle = IndicateurPeriode<
   typeof IndicateurPeriodiciteEnum.ANNUELLE
 >;
 
 /** Canonical period contract shared by storage, calculations and input forms. */
 export class IndicateurPeriodes {
+  static readonly supportedPeriodicites = Object.freeze([
+    IndicateurPeriodiciteEnum.ANNUELLE,
+  ] as const);
+
+  static isSupported(
+    periodicite: IndicateurPeriodicite | null | undefined
+  ): periodicite is SupportedIndicateurPeriodicite {
+    return IndicateurPeriodes.supportedPeriodicites.some(
+      (supported) => supported === periodicite
+    );
+  }
+
+  private static assertSupported(
+    periodicite: IndicateurPeriodicite
+  ): asserts periodicite is SupportedIndicateurPeriodicite {
+    if (!IndicateurPeriodes.isSupported(periodicite)) {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODICITE_UNSUPPORTED,
+        details: { periodicite },
+      });
+    }
+  }
+
   /** Guards capabilities whose business contract requires annual observations. */
   static assertAnnual(
     periodicite: IndicateurPeriodicite | null | undefined,
@@ -49,7 +76,7 @@ export class IndicateurPeriodes {
     periodicite: K,
     date: string
   ): IndicateurPeriode<K> {
-    IndicateurPeriodes.assertAnnual(periodicite);
+    IndicateurPeriodes.assertSupported(periodicite);
     const { year } = parseLocalDate(date);
     return Object.freeze({
       periodicite,
@@ -62,7 +89,7 @@ export class IndicateurPeriodes {
     periodicite: K,
     value: string
   ): IndicateurPeriode<K> {
-    IndicateurPeriodes.assertAnnual(periodicite);
+    IndicateurPeriodes.assertSupported(periodicite);
     if (!/^\d{4}$/.test(value) || value === '0000') {
       throw createIndicateurPeriodeError({
         code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_INVALID,
@@ -123,9 +150,10 @@ export class IndicateurPeriodes {
 
   /** Keeps partial drafts intact; null rejects an edit without replacing the draft. */
   static normalizeDraft(
-    periodicite: IndicateurPeriodeAnnuelle['periodicite'],
+    periodicite: SupportedIndicateurPeriodicite,
     value: string
   ): string | null {
+    IndicateurPeriodes.assertSupported(periodicite);
     switch (periodicite) {
       case IndicateurPeriodiciteEnum.ANNUELLE: {
         const digits = value.replace(/\D/g, '');

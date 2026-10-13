@@ -5,6 +5,7 @@ import {
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
 import { useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
@@ -37,6 +38,8 @@ export const useIndicateurChartInfo = ({
   externalCollectiviteId?: number;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
+  // Le modèle du graphe et son adaptateur de périodes restent annuels.
+  const periodicite = IndicateurPeriodiciteEnum.ANNUELLE;
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
@@ -51,6 +54,7 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds: indicateurId ? [indicateurId] : undefined,
         sources: sourceFilter.sources,
+        periodicite,
       },
       {
         enabled: !!indicateurId,
@@ -79,6 +83,7 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds,
         sources: sourceFilter.sources,
+        periodicite,
       },
       {
         enabled: !!indicateurIds?.length,
@@ -215,6 +220,7 @@ export const useIndicateurChartInfo = ({
 
   return {
     definition,
+    periodicite,
     typesSegmentation,
     segmentation,
     setSegmentation,

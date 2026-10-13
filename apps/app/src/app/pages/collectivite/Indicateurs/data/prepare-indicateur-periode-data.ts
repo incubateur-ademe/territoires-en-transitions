@@ -1,25 +1,25 @@
 import {
   IndicateurPeriodes,
-  type IndicateurPeriodeAnnuelle,
+  type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
 import { getAnneesDistinctes, type PreparedData } from './prepare-data';
 
 type PreparedSource = PreparedData['sources'][number];
 type IndicateurPeriodeSource = Omit<PreparedSource, 'valeurs'> & {
   valeurs: (Omit<PreparedSource['valeurs'][number], 'annee' | 'anneeISO'> & {
-    periode: IndicateurPeriodeAnnuelle;
+    periode: IndicateurPeriode;
   })[];
 };
 
 export type IndicateurPeriodeValue = Omit<
   PreparedData['valeursExistantes'][number],
   'annee'
-> & { periode: IndicateurPeriodeAnnuelle };
+> & { periode: IndicateurPeriode };
 
 export type IndicateurPeriodeData = {
   indicateurId: PreparedData['indicateurId'];
-  periodes: IndicateurPeriodeAnnuelle[];
-  periodeModePrive: IndicateurPeriodeAnnuelle | undefined;
+  periodes: IndicateurPeriode[];
+  periodeModePrive: IndicateurPeriode | undefined;
   sources: IndicateurPeriodeSource[];
   donneesCollectivite: IndicateurPeriodeSource | undefined;
   valeursExistantes: IndicateurPeriodeValue[];
