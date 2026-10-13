@@ -2,11 +2,13 @@
 #
 # Build with the repo root as context:
 #   docker build -f apps/site/Dockerfile \
-#     --build-arg STRAPI_KEY=... --build-arg STRAPI_URL=... \
-#     --build-arg ANON_KEY=... --build-arg API_URL=... \
-#     --build-arg AXEPTIO_ID=... --build-arg APP_URL=... \
 #     --secret id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 #     -t site .
+#
+# Aucune configuration d'environnement au build : la même image sert preprod,
+# staging et prod. STRAPI_URL, STRAPI_KEY, BACKEND_URL, APP_URL, AXEPTIO_ID,
+# CRISP_WEBSITE_ID, POSTHOG_HOST et POSTHOG_KEY sont lues au runtime (cf.
+# packages/api/src/public-env.ts).
 #
 # See apps/app/Dockerfile for the rationale behind this structure (adapted
 # from the official Next.js Docker example for a pnpm/Nx monorepo where
@@ -35,24 +37,7 @@ RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
 
 COPY . .
 
-ARG STRAPI_KEY
-ARG STRAPI_URL
-ARG AXEPTIO_ID
-ARG APP_URL
-ARG POSTHOG_HOST
-ARG POSTHOG_KEY
-ARG CRISP_WEBSITE_ID
-ARG BACKEND_URL
-
-ENV NEXT_TELEMETRY_DISABLED=1 \
-    NEXT_PUBLIC_STRAPI_KEY=$STRAPI_KEY \
-    NEXT_PUBLIC_STRAPI_URL=$STRAPI_URL \
-    NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST \
-    NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY \
-    NEXT_PUBLIC_AXEPTIO_ID=$AXEPTIO_ID \
-    NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID \
-    NEXT_PUBLIC_APP_URL=$APP_URL \
-    NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # The secret mount here just silences pnpm's harmless "can't resolve
 # ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).

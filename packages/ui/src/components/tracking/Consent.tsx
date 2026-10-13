@@ -1,3 +1,4 @@
+import { getPublicEnv } from '@tet/api/public-env';
 import { JSX } from 'react';
 
 declare global {
@@ -19,7 +20,7 @@ export type ScriptLikeProps = {
  * Renvoi les vars d'env. pour le tracking depuis un module next js
  */
 export const getNextConsentEnvId = (): string => {
-  const id = process.env.NEXT_PUBLIC_AXEPTIO_ID;
+  const id = getPublicEnv().AXEPTIO_ID;
 
   const is_dev = process.env.NODE_ENV === 'development';
   if (!id) {
@@ -29,7 +30,7 @@ export const getNextConsentEnvId = (): string => {
       );
       return '';
     }
-    throw `La variable NEXT_PUBLIC_AXEPTIO_ID n'est pas définie`;
+    throw `La variable AXEPTIO_ID n'est pas définie`;
   }
 
   return id;
