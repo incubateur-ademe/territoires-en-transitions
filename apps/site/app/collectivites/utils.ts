@@ -1,15 +1,15 @@
 import { toOpenGraphImage } from '@/site/src/strapi/media';
 import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
 import {
-  Seo,
-  StrapiComponent,
-  StrapiMedia,
-  Temoignage,
+    Seo,
+    StrapiComponent,
+    StrapiMedia,
+    Temoignage,
 } from '@/site/src/strapi/types';
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 
-export type Indicateurs = {
+export type IndicateurGes = {
   date_valeur: string;
   resultat: number;
   identifiant: string;

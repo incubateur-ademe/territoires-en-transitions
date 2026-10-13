@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { getTestApp, getTestDatabase, getAuthToken } from '@tet/backend/test';
+import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import {
-  IndicateurDefinition,
-  IndicateurPeriodiciteEnum,
+    IndicateurDefinition,
+    IndicateurPeriodiciteEnum,
 } from '@tet/domain/indicateurs';
 import request from 'supertest';
 
@@ -62,7 +62,6 @@ describe("Api pour lister les définitions d'indicateur", () => {
       description: expect.any(String),
       unite: 'GWh',
       periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-
       precision: 2,
       borneMin: null,
       borneMax: null,

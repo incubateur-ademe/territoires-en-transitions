@@ -1,7 +1,7 @@
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import { SiteIndicateurArtificialisation } from '@/site/src/trpc/trpc-client';
+import type { Indicateur, IndicateurGes } from '../../utils';
 import IndicateurArtificialisationSols from './IndicateurArtificialisationSols';
-import type { Indicateur, Indicateurs } from '../../utils';
 import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
 
 export type IndicateurDefaultData = Indicateur;
@@ -13,7 +13,7 @@ type IndicateursCollectiviteProps = {
   };
   indicateurs: {
     artificialisation_sols: SiteIndicateurArtificialisation | null;
-    gaz_effet_serre: Indicateurs[] | null;
+    gaz_effet_serre: IndicateurGes[] | null;
   };
 };
 

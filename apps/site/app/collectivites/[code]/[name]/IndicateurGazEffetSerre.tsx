@@ -1,13 +1,13 @@
-import { Indicateurs } from '@/site/app/collectivites/utils';
+import { IndicateurGes } from '@/site/app/collectivites/utils';
+import { secteurIdToLabel, siteLabels } from '@/site/src/utils/labels';
 import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
 import { getFormattedNumber } from '@tet/domain/utils';
-import { secteurIdToLabel, siteLabels } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
 
 const TOTAL_GES_IDENTIFIANT = 'cae_1.a';
 
-const getYear = (indicateur: Indicateurs): number =>
+const getYear = (indicateur: IndicateurGes): number =>
   toAnnualIndicateurYearFromHistoricalDate(
     indicateur.periodicite,
     indicateur.date_valeur,
@@ -16,7 +16,7 @@ const getYear = (indicateur: Indicateurs): number =>
 
 type IndicateurGazEffetSerreProps = {
   defaultData?: IndicateurDefaultData;
-  data: Indicateurs[] | null;
+  data: IndicateurGes[] | null;
 };
 
 const IndicateurGazEffetSerre = ({
