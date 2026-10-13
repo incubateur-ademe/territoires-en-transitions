@@ -103,6 +103,7 @@ const HeaderDesktopDropdown = ({
         <Icon
           icon="arrow-down-s-line"
           size="sm"
+          aria-hidden="true"
           className={cn('transition', { 'rotate-180': isOpen })}
         />
       </button>

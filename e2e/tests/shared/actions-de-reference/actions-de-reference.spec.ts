@@ -1259,7 +1259,7 @@ test.describe('action-modifiee-sort-des-filtres', () => {
 });
 
 test.describe('entree-nav-reservee-au-super-admin', () => {
-  test("un super admin a l'entrée « Actions de référence » à la racine de la navigation, qui mène à la vue", async ({
+  test("un super admin a l'entrée « Actions de référence » dans le menu Super Admin, qui mène à la vue", async ({
     collectivites,
     actionsDeReferencePom,
     page,
@@ -1280,8 +1280,10 @@ test.describe('entree-nav-reservee-au-super-admin', () => {
         );
         return collectiviteAndUser;
       });
-    await test.step('When : il clique le lien « Actions de référence » de la navigation principale', () =>
-      actionsDeReferencePom.navEntry.click());
+    await test.step('When : il ouvre le menu Super Admin puis clique le lien « Actions de référence »', async () => {
+      await actionsDeReferencePom.superAdminMenuButton.click();
+      await actionsDeReferencePom.navEntry.click();
+    });
     await test.step("Then : l'URL est /collectivite/:id/actions-reference et le titre de page « Actions de référence » est visible", async () => {
       await expect(page).toHaveURL(
         (url) =>
