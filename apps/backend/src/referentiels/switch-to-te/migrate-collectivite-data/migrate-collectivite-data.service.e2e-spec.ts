@@ -76,7 +76,9 @@ describe('MigrateCollectiviteDataService', () => {
     router = await getTestRouter(app);
     createPreSwitchSnapshotsService = app.get(CreatePreSwitchSnapshotsService);
     migrateCollectiviteDataService = app.get(MigrateCollectiviteDataService);
-    migrateCollectiviteDataRepository = app.get(MigrateCollectiviteDataRepository);
+    migrateCollectiviteDataRepository = app.get(
+      MigrateCollectiviteDataRepository
+    );
 
     const fixture = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
@@ -126,10 +128,15 @@ describe('MigrateCollectiviteDataService', () => {
     snapshots: ScoreSnapshot[]
   ) {
     return databaseService.db.transaction((tx) =>
-      migrateCollectiviteDataService.migrate(collectivite.id, prefs, snapshots, {
-        user,
-        tx,
-      })
+      migrateCollectiviteDataService.migrate(
+        collectivite.id,
+        prefs,
+        snapshots,
+        {
+          user,
+          tx,
+        }
+      )
     );
   }
 
@@ -257,9 +264,9 @@ describe('MigrateCollectiviteDataService', () => {
       ])
     );
     expect(
-      teCommentaires.find((row) => row.actionId === teActionId)?.commentaire.startsWith(
-        MERGE_COMMENTAIRES_PREFIX
-      )
+      teCommentaires
+        .find((row) => row.actionId === teActionId)
+        ?.commentaire.startsWith(MERGE_COMMENTAIRES_PREFIX)
     ).toBe(true);
   });
 
@@ -307,15 +314,26 @@ describe('MigrateCollectiviteDataService', () => {
       SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
     const serviceTag = await createServiceTag({
       database: databaseService,
-      tagData: { collectiviteId: collectivite.id, nom: 'Service fixture migrate' },
+      tagData: {
+        collectiviteId: collectivite.id,
+        nom: 'Service fixture migrate',
+      },
     });
 
-    await upsertPilotesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
-      { userId },
-    ]);
-    await upsertServicesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
-      serviceTag.id,
-    ]);
+    await upsertPilotesOnMesure(
+      router,
+      user,
+      collectivite.id,
+      caeMesureSourceId,
+      [{ userId }]
+    );
+    await upsertServicesOnMesure(
+      router,
+      user,
+      collectivite.id,
+      caeMesureSourceId,
+      [serviceTag.id]
+    );
 
     const result = await migrateFromPrefs(prefsEligibleCaeOnly);
     expect(result.success).toBe(true);
@@ -531,12 +549,20 @@ describe('MigrateCollectiviteDataService', () => {
       caeOrigineActionId,
       StatutAvancementEnum.FAIT
     );
-    await upsertPilotesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
-      { userId },
-    ]);
-    await upsertServicesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
-      serviceTag.id,
-    ]);
+    await upsertPilotesOnMesure(
+      router,
+      user,
+      collectivite.id,
+      caeMesureSourceId,
+      [{ userId }]
+    );
+    await upsertServicesOnMesure(
+      router,
+      user,
+      collectivite.id,
+      caeMesureSourceId,
+      [serviceTag.id]
+    );
     const { ficheId } = await createFicheWithLinkOnAction(
       databaseService,
       collectivite.id,

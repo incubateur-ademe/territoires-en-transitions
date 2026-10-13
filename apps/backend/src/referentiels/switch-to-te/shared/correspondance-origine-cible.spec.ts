@@ -300,10 +300,7 @@ describe('resolveCiblesTeDepuisOrigine', () => {
         'te_2.2.2.1',
         { actionId: 'te_2.2.2.1', concerne: false } as ActionScore,
       ],
-      [
-        'te_2.2.2.2',
-        { actionId: 'te_2.2.2.2', concerne: true } as ActionScore,
-      ],
+      ['te_2.2.2.2', { actionId: 'te_2.2.2.2', concerne: true } as ActionScore],
     ]);
 
     expect(
@@ -415,14 +412,8 @@ describe('resolveCiblesTeDepuisOrigine', () => {
     });
 
     const scoreMap = new Map<string, ActionScore>([
-      [
-        'te_2.2.2.1',
-        { actionId: 'te_2.2.2.1', concerne: true } as ActionScore,
-      ],
-      [
-        'te_2.2.2.2',
-        { actionId: 'te_2.2.2.2', concerne: true } as ActionScore,
-      ],
+      ['te_2.2.2.1', { actionId: 'te_2.2.2.1', concerne: true } as ActionScore],
+      ['te_2.2.2.2', { actionId: 'te_2.2.2.2', concerne: true } as ActionScore],
     ]);
 
     expect(

@@ -46,7 +46,9 @@ export const mergeServicesForCible = (
   return dedupeServiceTagIds(accumulated);
 };
 
-export const mergeServices = (ctx: SwitchToTeContext): ActionServiceCreate[] => {
+export const mergeServices = (
+  ctx: SwitchToTeContext
+): ActionServiceCreate[] => {
   const rows: ActionServiceCreate[] = [];
 
   // les mesures TE désactivées le jour de la bascule sont reprises aussi : elles

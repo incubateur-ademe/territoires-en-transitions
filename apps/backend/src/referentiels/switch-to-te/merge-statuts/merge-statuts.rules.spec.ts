@@ -179,9 +179,7 @@ describe('merge-statuts.rules', () => {
 });
 
 describe('mergeStatuts', () => {
-  const origineFait = (
-    actionId = 'cae_x'
-  ): CorrelatedActionWithScore => ({
+  const origineFait = (actionId = 'cae_x'): CorrelatedActionWithScore => ({
     referentielId: ReferentielIdEnum.CAE,
     actionId,
     ponderation: 1,
@@ -502,13 +500,14 @@ describe('mergeStatuts', () => {
       const [statut] = mergeStatuts(ctx);
 
       expect(statut.statut).toBe(StatutAvancementEnum.DETAILLE_AU_POURCENTAGE);
-      const [fait, programme, pasFait] = statut.statutDetailleAuPourcentage ?? [];
+      const [fait, programme, pasFait] =
+        statut.statutDetailleAuPourcentage ?? [];
       expect(fait).toBeCloseTo(0.45);
       expect(programme).toBeCloseTo(0.25);
       expect(pasFait).toBeCloseTo(0.3);
     });
 
-    it('émet NON_CONCERNE si aucune origine n\'est concernée', () => {
+    it("émet NON_CONCERNE si aucune origine n'est concernée", () => {
       const ctx = createCtx(
         [
           createCible({
