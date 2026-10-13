@@ -1,6 +1,11 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ComponentProps, useState } from 'react';
+import { expect, fn, waitFor, within } from 'storybook/test';
 
+import { Field } from '../Field';
 import { Icon } from '../Icon';
+import { Input } from '../Input';
+import { Button } from './Button';
 import { ButtonMenu, MenuSeparator } from './button-menu';
 
 const actions = [
@@ -103,5 +108,227 @@ export const WithSeparator: Story = {
       className: 'max-w-none p-0',
       actions: [actions[0], MenuSeparator, actions[1]],
     },
+  },
+};
+
+const selectResultat = fn();
+const selectObjectif = fn();
+
+export const KeyboardSelection: Story = {
+  name: 'Sélection au clavier et retour au bouton',
+  args: {
+    icon: undefined,
+    children: 'Ajouter une donnée',
+    menu: {
+      actions: [
+        { label: 'Action indisponible', disabled: true },
+        { label: 'Résultat', onClick: selectResultat },
+        MenuSeparator,
+        { label: 'Autre action indisponible', disabled: true },
+        { label: 'Action masquée', isVisible: false },
+        { label: 'Lien indisponible', href: '/', disabled: true },
+        { label: 'Objectif', onClick: selectObjectif },
+      ],
+    },
+  },
+  play: async ({ canvas, canvasElement, userEvent, step }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Ajouter une donnée' });
+    trigger.focus();
+
+    await step(
+      'Les flèches parcourent les actions disponibles et Entrée choisit Résultat',
+      async () => {
+        await userEvent.keyboard('{Enter}');
+        const resultat = await body.findByRole('button', { name: 'Résultat' });
+        await waitFor(() => expect(resultat).toHaveFocus());
+        await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+        await expect(trigger).toHaveAttribute('aria-controls');
+        await expect(
+          body.getByRole('button', { name: 'Action indisponible' })
+        ).toBeDisabled();
+        await expect(
+          body.queryByRole('button', { name: 'Action masquée' })
+        ).toBeNull();
+        await expect(
+          body.queryByRole('link', { name: 'Lien indisponible' })
+        ).toBeNull();
+
+        await userEvent.keyboard('{ArrowDown}');
+        await expect(
+          body.getByRole('button', { name: 'Objectif' })
+        ).toHaveFocus();
+        await userEvent.keyboard('{ArrowDown}');
+        await expect(resultat).toHaveFocus();
+        await userEvent.keyboard('{ArrowUp}');
+        await expect(
+          body.getByRole('button', { name: 'Objectif' })
+        ).toHaveFocus();
+        await userEvent.keyboard('{ArrowUp}');
+        await expect(resultat).toHaveFocus();
+
+        await userEvent.keyboard('{Enter}');
+        await expect(selectResultat).toHaveBeenCalledOnce();
+        await expect(selectObjectif).not.toHaveBeenCalled();
+        await waitFor(() => expect(trigger).toHaveFocus());
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        await expect(trigger).not.toHaveAttribute('aria-controls');
+      }
+    );
+
+    await step(
+      'Espace ouvre le menu, Tab puis Entrée choisissent Objectif',
+      async () => {
+        await userEvent.keyboard(' ');
+        await waitFor(() =>
+          expect(body.getByRole('button', { name: 'Résultat' })).toHaveFocus()
+        );
+        await userEvent.tab();
+        await expect(
+          body.getByRole('button', { name: 'Objectif' })
+        ).toHaveFocus();
+        await userEvent.keyboard('{Enter}');
+
+        await expect(selectObjectif).toHaveBeenCalledOnce();
+        await waitFor(() => expect(trigger).toHaveFocus());
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        await expect(
+          body.queryByRole('button', { name: 'Objectif' })
+        ).toBeNull();
+      }
+    );
+  },
+};
+
+export const KeyboardDismissal: Story = {
+  name: 'Échap, tabulation et clic à l’extérieur',
+  args: {
+    icon: undefined,
+    children: 'Ajouter une donnée',
+    menu: { actions: [{ label: 'Résultat' }, { label: 'Objectif' }] },
+  },
+  render: (args) => (
+    <div className="flex items-center gap-4">
+      <Button variant="outlined">Avant le menu</Button>
+      <ButtonMenu {...args} />
+      <Button variant="outlined">Après le menu</Button>
+    </div>
+  ),
+  play: async ({ canvas, canvasElement, userEvent, step }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const before = canvas.getByRole('button', { name: 'Avant le menu' });
+    const trigger = canvas.getByRole('button', { name: 'Ajouter une donnée' });
+    const after = canvas.getByRole('button', { name: 'Après le menu' });
+    before.focus();
+    await userEvent.tab();
+    await expect(trigger).toHaveFocus();
+
+    await step('Échap referme le menu et revient au bouton', async () => {
+      await userEvent.keyboard('{Enter}');
+      await waitFor(() =>
+        expect(body.getByRole('button', { name: 'Résultat' })).toHaveFocus()
+      );
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(trigger).toHaveFocus());
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await expect(body.queryByRole('button', { name: 'Résultat' })).toBeNull();
+    });
+
+    await step(
+      'Tab quitte le menu et poursuit dans l’ordre de la page',
+      async () => {
+        await userEvent.keyboard('{Enter}');
+        await waitFor(() =>
+          expect(body.getByRole('button', { name: 'Résultat' })).toHaveFocus()
+        );
+        await userEvent.tab();
+        await expect(
+          body.getByRole('button', { name: 'Objectif' })
+        ).toHaveFocus();
+        await userEvent.tab();
+        await waitFor(() => expect(after).toHaveFocus());
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        await userEvent.tab({ shift: true });
+        await expect(trigger).toHaveFocus();
+      }
+    );
+
+    await step(
+      'Un clic à l’extérieur conserve le focus sur sa cible',
+      async () => {
+        await userEvent.click(trigger);
+        await waitFor(() =>
+          expect(body.getByRole('button', { name: 'Résultat' })).toHaveFocus()
+        );
+        await userEvent.click(after);
+        await expect(after).toHaveFocus();
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        await expect(
+          body.queryByRole('button', { name: 'Résultat' })
+        ).toBeNull();
+      }
+    );
+  },
+};
+
+const RenderMenuWithEditor = (args: ComponentProps<typeof ButtonMenu>) => {
+  const [field, setField] = useState<string | null>(null);
+  return (
+    <div className="flex max-w-sm flex-col gap-4">
+      {field ? (
+        <Field title={field}>
+          <Input
+            type="text"
+            aria-label={field}
+            autoFocus
+            onBlur={() => setField(null)}
+          />
+        </Field>
+      ) : (
+        <ButtonMenu
+          {...args}
+          menu={{
+            ...args.menu,
+            actions: ['Résultat', 'Objectif'].map((label) => ({
+              label,
+              onClick: () => setField(label),
+            })),
+          }}
+        />
+      )}
+      <Button variant="outlined" onClick={() => setField(null)}>
+        Réinitialiser
+      </Button>
+    </div>
+  );
+};
+
+export const OpensEditor: Story = {
+  name: 'Le champ ouvert par une action conserve le focus',
+  args: {
+    icon: undefined,
+    children: 'Ajouter une donnée',
+  },
+  render: (args) => <RenderMenuWithEditor {...args} />,
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    canvas.getByRole('button', { name: 'Ajouter une donnée' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Résultat' })).toHaveFocus()
+    );
+    await userEvent.tab();
+    await expect(body.getByRole('button', { name: 'Objectif' })).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+
+    const input = await canvas.findByRole('textbox', { name: 'Objectif' });
+    await waitFor(() => expect(input).toHaveFocus());
+    // Typing without clicking catches focus being stolen when the menu unmounts.
+    await userEvent.keyboard('42');
+    await expect(input).toHaveValue('42');
+    await expect(input).toHaveFocus();
+    await expect(
+      canvas.queryByRole('button', { name: 'Ajouter une donnée' })
+    ).toBeNull();
   },
 };

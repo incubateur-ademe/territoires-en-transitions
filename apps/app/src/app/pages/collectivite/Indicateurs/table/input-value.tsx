@@ -1,11 +1,9 @@
 import { Input } from '@tet/ui';
-import classNames from 'classnames';
 
 type InputValueProps = {
   id?: string;
   className?: string;
   value: number | '';
-  displaySize?: 'sm' | 'md';
   disabled?: boolean;
   onChange?: (value: number | null) => void;
 };
@@ -14,16 +12,12 @@ type InputValueProps = {
  * Affiche un champ pour la saisie d'une valeur numérique
  */
 export const InputValue = (props: InputValueProps) => {
-  const { id, className, disabled, displaySize, value, onChange } = props;
+  const { id, className, disabled, value, onChange } = props;
   return (
     <Input
       id={id}
-      className={classNames(
-        { 'max-w-[8.5rem]': displaySize === 'sm' },
-        className
-      )}
+      className={className}
       disabled={disabled}
-      displaySize={displaySize}
       type="number"
       numType="float"
       value={value?.toString() ?? ''}

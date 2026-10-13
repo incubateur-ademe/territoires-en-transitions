@@ -1,0 +1,124 @@
+'use client';
+
+import { appLabels } from '@/app/labels/catalog';
+import { Button, ButtonMenu } from '@tet/ui';
+import { capitalize } from '@tet/ui/labels/plural';
+import { useState } from 'react';
+import { IndicateurValeurSlot } from './indicateur-valeur.slot';
+import type { IndicateurValeurField } from './types';
+import { useCellEdit } from './use-cell-edit';
+
+export const IndicateurValeursCombinedCell = ({
+  periodeLabel,
+  resultat,
+  objectif,
+  readonly,
+  isFuture,
+  onSave,
+}: {
+  periodeLabel: string;
+  resultat: number | null;
+  objectif: number | null;
+  readonly?: boolean;
+  isFuture: boolean;
+  onSave: (
+    type: IndicateurValeurField,
+    value: number | null
+  ) => Promise<boolean>;
+}) => {
+  // Keep pending writes alive while the empty-state menu replaces the slots.
+  const resultatEdit = useCellEdit({
+    currentValue: resultat,
+    onSave: (value) => onSave('resultat', value),
+  });
+  const objectifEdit = useCellEdit({
+    currentValue: objectif,
+    onSave: (value) => onSave('objectif', value),
+  });
+  const [editingFields, setEditingFields] = useState<
+    Record<IndicateurValeurField, boolean>
+  >({ resultat: false, objectif: false });
+  const setEditing = (type: IndicateurValeurField, isEditing: boolean) => {
+    setEditingFields((fields) => ({ ...fields, [type]: isEditing }));
+  };
+  const isEditing = editingFields.resultat || editingFields.objectif;
+  const empty = resultat === null && objectif === null;
+  if (empty && readonly)
+    return (
+      <div className="text-center text-sm text-grey-7">
+        {appLabels.indicateurValeurAbsente}
+      </div>
+    );
+  if (empty && !isEditing)
+    return (
+      <div className="flex items-center justify-center gap-1">
+        {isFuture ? (
+          <Button
+            className="whitespace-nowrap"
+            size="xs"
+            variant="white"
+            title={appLabels.indicateurChampValeur(
+              appLabels.indicateurAjouterObjectif,
+              periodeLabel
+            )}
+            aria-label={appLabels.indicateurChampValeur(
+              appLabels.indicateurAjouterObjectif,
+              periodeLabel
+            )}
+            data-test="indicateurs.valeurs.objectif.add"
+            onClick={() => setEditing('objectif', true)}
+          >
+            {appLabels.indicateurAjouterObjectif}
+          </Button>
+        ) : (
+          <ButtonMenu
+            className="whitespace-nowrap"
+            size="xs"
+            variant="white"
+            withArrow
+            title={appLabels.indicateurChampValeur(
+              appLabels.indicateurAjouterDonnee,
+              periodeLabel
+            )}
+            data-test="indicateurs.valeurs.add"
+            menu={{
+              actions: [
+                {
+                  label: capitalize(appLabels.indicateurResultat()),
+                  onClick: () => setEditing('resultat', true),
+                },
+                {
+                  label: capitalize(appLabels.indicateurObjectif()),
+                  onClick: () => setEditing('objectif', true),
+                },
+              ],
+            }}
+          >
+            {appLabels.indicateurAjouterDonnee}
+          </ButtonMenu>
+        )}
+      </div>
+    );
+  return (
+    <div className="flex items-center justify-center divide-x divide-grey-3">
+      {(['resultat', 'objectif'] as const).map((type) => {
+        const value = type === 'resultat' ? resultat : objectif;
+        const isReadonly = readonly || (isFuture && type === 'resultat');
+        if (isReadonly && value === null) return null;
+        return (
+          <div key={type} className="flex items-center gap-1 px-1">
+            <IndicateurValeurSlot
+              type={type}
+              periodeLabel={periodeLabel}
+              value={value}
+              readonly={isReadonly}
+              isEditing={editingFields[type]}
+              onEditingChange={(isEditing) => setEditing(type, isEditing)}
+              edit={type === 'resultat' ? resultatEdit : objectifEdit}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+};

@@ -7,6 +7,7 @@ import {
   parseAsString,
   useQueryStates,
 } from 'nuqs';
+import { useMemo } from 'react';
 
 const referentielFiltersBaseParsers = {
   identifiantAndTitre: parseAsString,
@@ -84,7 +85,11 @@ export function useGetReferentielTableFiltersState() {
     filters.labellisationGold.length > 0 ||
     filters.thematiques.length > 0;
 
-  return { filters, setFilters, hasActiveFilters };
+  // Keep column headers mounted when only column visibility changes.
+  return useMemo(
+    () => ({ filters, setFilters, hasActiveFilters }),
+    [filters, setFilters, hasActiveFilters]
+  );
 }
 
 export type ReferentielTableFiltersState = ReturnType<

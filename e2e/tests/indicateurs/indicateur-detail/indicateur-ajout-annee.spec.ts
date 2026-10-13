@@ -138,11 +138,6 @@ for (const type of ['resultat', 'objectif'] as const) {
 
     await indicateurDetailPom.goto(collectiviteId, indicateurId);
     const valeurs = new IndicateurValeursPom(page);
-    const tab = page.getByRole('button', {
-      name: type === 'resultat' ? 'Résultats' : 'Objectifs',
-      exact: true,
-    });
-    await tab.click();
     const header = valeurs.table.getByRole('columnheader').filter({
       has: page.getByText('2025', { exact: true }),
     });
@@ -168,7 +163,6 @@ for (const type of ['resultat', 'objectif'] as const) {
       .getByRole('button', { name: 'Annuler', exact: true })
       .click();
     await page.reload();
-    await tab.click();
     await expect(header).toBeVisible();
 
     await deleteButton.click();
@@ -262,8 +256,8 @@ test('Déclarer une année persiste après rafraîchissement', async ({
   const submit = valeurs.table.getByRole('button', {
     name: 'Valider et ajouter une année',
   });
-  const resultatsTab = page.getByRole('button', {
-    name: 'Résultats',
+  const uniteInput = page.getByRole('textbox', {
+    name: 'Unité',
     exact: true,
   });
   await expect(input).toBeVisible();
@@ -294,26 +288,34 @@ test('Déclarer une année persiste après rafraîchissement', async ({
 
   // Leaving the input and its validation button saves once, without stealing focus.
   const blurSave = valeurs.waitForUpsertValeurResponse();
-  await resultatsTab.click();
-  await blurSave;
-  await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
-  await expect(input).toHaveValue('');
-  await expect(resultatsTab).toBeFocused();
-  expect(writes).toHaveLength(1);
-  expect(writes[0].postDataJSON()).toMatchObject({
+  await uniteInput.click();
+  const blurResponse = await blurSave;
+  expect(blurResponse.request().postDataJSON()).toMatchObject({
     collectiviteId,
     indicateurId,
     periodicite: 'annuelle',
     dateValeur: '2026-01-01',
   });
-  const objectifsTab = page.getByRole('button', {
-    name: 'Objectifs',
+  await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
+  await expect(input).toHaveValue('');
+  await expect(uniteInput).toBeFocused();
+  expect(writes).toHaveLength(1);
+  const cell = valeurs.cell(2026);
+  await cell.getByTestId('indicateurs.valeurs.add').click();
+  const objectifOption = page.getByRole('button', {
+    name: 'Objectif',
     exact: true,
   });
-  await expect(objectifsTab).toBeEnabled();
-  await objectifsTab.click();
-  await expect(objectifsTab).toHaveAttribute('aria-pressed', 'true');
-  await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
+  await expect(objectifOption).toBeEnabled();
+  await objectifOption.click();
+  const objectifInput = cell.getByRole('textbox', {
+    name: 'Objectif — 2026',
+    exact: true,
+  });
+  await expect(objectifInput).toBeVisible();
+  await objectifInput.press('Escape');
+  await expect(objectifInput).toHaveCount(0);
+  expect(writes).toHaveLength(1);
   await valeurs.table
     .getByRole('button', { name: 'Supprimer la période 2026', exact: true })
     .click();
@@ -325,7 +327,7 @@ test('Déclarer une année persiste après rafraîchissement', async ({
   await valeurs.table
     .getByRole('row')
     .first()
-    .getByRole('cell')
+    .getByRole('columnheader')
     .first()
     .click();
   await outsideSave;
@@ -343,7 +345,9 @@ test('Déclarer une année persiste après rafraîchissement', async ({
   expect(writes.length).toBeGreaterThan(0);
 
   // Deleting a saved value also removes its persisted period column.
-  await valeurs.addResultat(2027, 5);
+  await input.fill('2027');
+  await input.press('Enter');
+  await valeurs.editValeur(2027, 'Objectif', '5');
   await valeurs.table
     .getByRole('button', { name: 'Supprimer la période 2027', exact: true })
     .click();
@@ -390,8 +394,8 @@ test('Valider les années et refuser les doublons avant et après enregistrement
   const submit = valeurs.table.getByRole('button', {
     name: 'Valider et ajouter une année',
   });
-  const resultatsTab = page.getByRole('button', {
-    name: 'Résultats',
+  const uniteInput = page.getByRole('textbox', {
+    name: 'Unité',
     exact: true,
   });
 
@@ -428,7 +432,7 @@ test('Valider les années et refuser les doublons avant et après enregistrement
       await expect(submit).toHaveCount(0);
       await input.press('Enter');
       const draft = await input.inputValue();
-      await resultatsTab.click();
+      await uniteInput.click();
       await expect(input).toHaveValue(draft);
       await expect(
         valeurs.table.getByText(
@@ -451,7 +455,7 @@ test('Valider les années et refuser les doublons avant et après enregistrement
   await expect(submit).toHaveCount(0);
 
   await input.fill('2026');
-  await resultatsTab.click();
+  await uniteInput.click();
   await expect(submit).toHaveCount(0);
   await expect(input).toHaveValue('2026');
   await expect(
@@ -480,7 +484,7 @@ test('Valider les années et refuser les doublons avant et après enregistrement
   await page.reload();
   await expect(periodeHeaders).toHaveText(['2025', '2026', '2027']);
   await input.fill('2026');
-  await resultatsTab.click();
+  await uniteInput.click();
   await expect(submit).toHaveCount(0);
   await expect(
     valeurs.table.getByText('Cette année est déjà présente dans le tableau.')
@@ -508,15 +512,15 @@ test('Conserver une année après un échec au clic extérieur et permettre de r
   const input = valeurs.table.getByRole('textbox', {
     name: 'Ajouter une année',
   });
-  const resultatsTab = page.getByRole('button', {
-    name: 'Résultats',
+  const uniteInput = page.getByRole('textbox', {
+    name: 'Unité',
     exact: true,
   });
   const upsertUrl = /indicateurs\.valeurs\.upsert/;
   await page.route(upsertUrl, (route) => route.abort('failed'));
 
   await input.fill('2026');
-  await resultatsTab.click();
+  await uniteInput.click();
 
   await expect(
     valeurs.table.getByText("Erreur lors de l'enregistrement", { exact: true })
@@ -528,11 +532,11 @@ test('Conserver une année après un échec au clic extérieur et permettre de r
   await page.unroute(upsertUrl);
   await input.click();
   const retrySave = valeurs.waitForUpsertValeurResponse();
-  await resultatsTab.click();
+  await uniteInput.click();
   await retrySave;
 
   await expect(input).toHaveValue('');
-  await expect(resultatsTab).toBeFocused();
+  await expect(uniteInput).toBeFocused();
   await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
   await page.reload();
   await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
@@ -558,9 +562,10 @@ test('Ne pas proposer un ajout pour un indicateur sans valeur utilisateur', asyn
   await indicateurDetailPom.goto(collectiviteId, indicateurId);
 
   await expect(
-    page.getByText(
-      "Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
-    )
+    new IndicateurValeursPom(page).table.getByRole('cell', {
+      name: 'Non renseigné',
+      exact: true,
+    })
   ).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Ajouter une valeur', exact: true })

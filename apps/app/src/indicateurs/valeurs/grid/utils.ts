@@ -1,6 +1,6 @@
 import { metaHelper, Table, tableFeatures } from '@tanstack/react-table';
 import { IndicateurPeriode } from '@tet/domain/indicateurs';
-import { IndicateurTableRow, PcaetIndicateurValeurType } from './types';
+import { IndicateurTableRow, IndicateurValeurField } from './types';
 
 export type IndicateurValeursTableMeta = {
   updateIndicateurValeurs: ({
@@ -25,7 +25,7 @@ export type IndicateurValeursTableMeta = {
 
 export type IndicateurValeursColumnMeta = {
   periode: IndicateurPeriode | null;
-  indicateurValeurType: PcaetIndicateurValeurType;
+  indicateurValeurType: IndicateurValeurField;
 };
 
 export const indicateurValeursTableFeatures = tableFeatures({

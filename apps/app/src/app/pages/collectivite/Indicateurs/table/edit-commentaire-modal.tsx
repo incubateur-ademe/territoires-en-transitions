@@ -1,77 +1,91 @@
 import { appLabels } from '@/app/labels/catalog';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import {
   Button,
   Field,
   Modal,
   ModalFooter,
   ModalFooterOKCancel,
+  Tab,
+  Tabs,
   Textarea,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { getSourceTypeLabel } from '../constants';
+import { capitalize } from '@tet/ui/labels/plural';
 import { SourceType } from '../types';
 
 export type EditCommentaireModalProps = {
   periodeLabel: string;
-  commentaire: string;
-  definition: IndicateurDefinition;
-  type: SourceType;
+  commentaires: Record<SourceType, string>;
   openState: OpenState;
-  onChange: (commentaire: string) => void;
+  onChange: (commentaires: Record<SourceType, string>) => Promise<boolean>;
   isReadonly?: boolean;
 };
 
 /**
- * Affiche la modale d'édition d'un commentaire d'une valeur d'un indicateur
+ * Édite ensemble les commentaires du résultat et de l'objectif d'une période.
  */
 export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
   const {
-    definition,
     periodeLabel,
-    commentaire: commentaireInitial,
-    type,
+    commentaires: commentairesInitiaux,
     openState,
     onChange,
     isReadonly = false,
   } = props;
-  const [commentaire, setCommentaire] = useState<string | null>(
-    commentaireInitial
-  );
+  const [isSaving, setIsSaving] = useState(false);
+  const [commentaires, setCommentaires] = useState(commentairesInitiaux);
 
   return (
     <Modal
       openState={openState}
       disableDismiss
-      title={appLabels.commentaireIndicateurTitre({
-        sourceTypeLabel: getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
-        unite: definition.unite,
-        periodeLabel,
-      })}
-      render={() => {
-        return (
-          <Field title={appLabels.commentaire}>
-            <Textarea
-              rows={10}
-              value={commentaire ?? ''}
-              onChange={(e) => setCommentaire(e.target.value)}
-              disabled={isReadonly}
-              autoFocus
-            />
-          </Field>
-        );
-      }}
+      title={appLabels.indicateurCommentairesPeriode(periodeLabel)}
+      render={() => (
+        <Tabs>
+          {(['resultat', 'objectif'] as const).map((type) => (
+            <Tab
+              key={type}
+              label={capitalize(
+                type === 'resultat'
+                  ? appLabels.indicateurResultat({ plural: true })
+                  : appLabels.indicateurObjectif({ plural: true })
+              )}
+            >
+              <Field title={appLabels.commentaire}>
+                <Textarea
+                  rows={10}
+                  value={commentaires[type]}
+                  onChange={(event) =>
+                    setCommentaires((previous) => ({
+                      ...previous,
+                      [type]: event.target.value,
+                    }))
+                  }
+                  disabled={isReadonly || isSaving}
+                  autoFocus
+                />
+              </Field>
+            </Tab>
+          ))}
+        </Tabs>
+      )}
       renderFooter={({ close }) =>
         !isReadonly ? (
           <ModalFooterOKCancel
             btnOKProps={{
-              onClick: () => {
-                onChange(commentaire ?? '');
-                close();
+              disabled: isSaving,
+              onClick: async () => {
+                setIsSaving(true);
+                try {
+                  const saved = await onChange(commentaires);
+                  if (saved !== false) close();
+                } finally {
+                  setIsSaving(false);
+                }
               },
             }}
-            btnCancelProps={{ onClick: close }}
+            btnCancelProps={{ onClick: close, disabled: isSaving }}
           />
         ) : (
           <ModalFooter>

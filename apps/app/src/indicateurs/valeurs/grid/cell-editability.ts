@@ -1,5 +1,5 @@
 import { IndicateurPeriode } from '@tet/domain/indicateurs';
-import { PcaetIndicateurValeurType } from './types';
+import { IndicateurValeurField } from './types';
 
 export const isResultatEditable = (
   periode: IndicateurPeriode,
@@ -10,5 +10,5 @@ export const isResultatEditable = (
 export const valueFieldsForPeriode = (
   periode: IndicateurPeriode,
   currentPeriode: IndicateurPeriode
-): readonly PcaetIndicateurValeurType[] =>
+): readonly IndicateurValeurField[] =>
   isResultatEditable(periode, currentPeriode) ? ['resultat'] : ['objectif'];

@@ -1,19 +1,16 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 
 /** Saisie des valeurs depuis la fiche d'un indicateur */
 export class IndicateurValeursPom {
   readonly table: Locator;
-  readonly ajouterAnneeButton: Locator;
-  readonly editModal: Locator;
+  readonly ajouterAnneeInput: Locator;
 
   constructor(readonly page: Page) {
     this.table = page.getByTestId('indicateurs.valeurs.table');
-    this.ajouterAnneeButton = page.getByRole('button', {
+    this.ajouterAnneeInput = this.table.getByRole('textbox', {
       name: 'Ajouter une année',
     });
-    this.editModal = page
-      .getByRole('dialog')
-      .filter({ hasText: 'Compléter le tableau' });
   }
 
   waitForUpsertValeurResponse() {
@@ -25,95 +22,101 @@ export class IndicateurValeursPom {
     );
   }
 
-  async addResultat(annee: number, resultat: number) {
-    const ajouterAnnee = this.table.getByRole('textbox', {
-      name: 'Ajouter une année',
-    });
-    // A newly opened tab may still be loading the indicator data.
-    await expect(ajouterAnnee.or(this.ajouterAnneeButton)).toBeVisible();
-    if (await ajouterAnnee.isVisible()) {
-      await this.addResultatFromTable(annee, resultat, ajouterAnnee);
-      return;
-    }
-    await this.ajouterAnneeButton.click();
-    await expect(this.editModal).toBeVisible();
-
-    await this.editModal
-      .getByLabel('Année *', { exact: true })
-      .fill(String(annee));
-    await this.editModal
-      .getByLabel('Résultat', { exact: true })
-      .fill(String(resultat));
-
-    const response = this.waitForUpsertValeurResponse();
-    await this.editModal
-      .getByRole('button', { name: 'Valider', exact: true })
-      .click();
-    await response;
-    await expect(this.editModal).toBeHidden();
+  cell(annee: number, source = 'collectivite') {
+    const periode = IndicateurPeriodes.fromYear(annee);
+    return this.table.locator(
+      `td[data-periode="${periode.dateDebut}"][data-periodicite="${periode.periodicite}"][data-source="${source}"]`
+    );
   }
 
-  private async addResultatFromTable(
-    annee: number,
-    resultat: number,
-    ajouterAnnee: Locator
-  ) {
-    const resultatsTab = this.page.getByRole('button', {
-      name: 'Résultats',
+  valueButton(annee: number, type: 'Résultat' | 'Objectif') {
+    return this.cell(annee).getByRole('button', {
+      name: `${type} — ${annee}`,
       exact: true,
     });
-    if (await resultatsTab.count()) await resultatsTab.click();
-    if (!(await this.table.getByText(String(annee), { exact: true }).count())) {
-      await ajouterAnnee.fill(String(annee));
-      await ajouterAnnee.press('Enter');
-    }
-    await expect(
-      this.table.getByText(String(annee), { exact: true })
-    ).toBeVisible();
+  }
 
-    const combinedCell = this.table.locator(
-      `td[data-periode="${annee}"][data-source="collectivite"]`
+  valueInput(annee: number, type: 'Résultat' | 'Objectif') {
+    return this.cell(annee).getByRole('textbox', {
+      name: `${type} — ${annee}`,
+      exact: true,
+    });
+  }
+
+  deletePeriodeButton(annee: number) {
+    return this.table.getByRole('button', {
+      name: `Supprimer la période ${annee}`,
+      exact: true,
+    });
+  }
+
+  commentaireButton(annee: number) {
+    return this.table.getByRole('button', {
+      name: `Commentaires — ${annee}`,
+      exact: true,
+    });
+  }
+
+  waitForDeleteValeurResponse() {
+    return this.page.waitForResponse(
+      (res) =>
+        res.request().method() === 'POST' &&
+        res.url().includes('indicateurs.valeurs.delete') &&
+        res.ok()
     );
-    if (await combinedCell.count()) {
-      const add = combinedCell.getByTestId('indicateurs.valeurs.add');
-      if (await add.count()) {
-        await add.click();
-        await this.page
-          .getByRole('button', { name: 'Résultat', exact: true })
-          .click();
-      } else {
-        await combinedCell
-          .getByRole('button', { name: `Résultat — ${annee}`, exact: true })
-          .click();
-      }
-      const input = combinedCell.getByRole('textbox', {
-        name: `Résultat — ${annee}`,
-        exact: true,
-      });
-      await input.fill(String(resultat));
-      const response = this.waitForUpsertValeurResponse();
-      await input.press('Enter');
-      await response;
-      await expect(input).toBeHidden();
-      return;
-    }
+  }
 
-    // The original table saves inputs automatically; it keeps the two tabs.
-    const column = await this.table
-      .getByText(String(annee), { exact: true })
-      .evaluate(
-        (element) =>
-          (element.closest('td, th') as HTMLTableCellElement).cellIndex
-      );
-    const input = this.table
-      .getByRole('row')
-      .nth(1)
-      .getByRole('cell')
-      .nth(column)
-      .getByRole('textbox');
+  async editValeur(
+    annee: number,
+    type: 'Résultat' | 'Objectif',
+    value: string
+  ) {
+    const cell = this.cell(annee);
+    await expect(cell).toBeVisible();
+    const add = cell.getByTestId('indicateurs.valeurs.add');
+    const addObjectif = cell.getByTestId('indicateurs.valeurs.objectif.add');
+    if (await add.count()) {
+      await add.click();
+      await this.page.getByRole('button', { name: type, exact: true }).click();
+    } else if (type === 'Objectif' && (await addObjectif.count())) {
+      await addObjectif.click();
+    } else {
+      await this.valueButton(annee, type).click();
+    }
+    const input = this.valueInput(annee, type);
+    await input.fill(value);
     const response = this.waitForUpsertValeurResponse();
-    await input.fill(String(resultat));
+    await input.press('Enter');
     await response;
-    await expect(input).toHaveValue(String(resultat));
+    await expect(input).toHaveCount(0);
+  }
+
+  async editCommentaire(
+    annee: number,
+    type: 'résultat' | 'objectif',
+    value: string
+  ) {
+    await this.commentaireButton(annee).click();
+    const modal = this.page.getByRole('dialog');
+    await modal
+      .getByRole('tab', {
+        name: type === 'résultat' ? 'Résultats' : 'Objectifs',
+        exact: true,
+      })
+      .click();
+    await modal.getByRole('textbox').fill(value);
+    const response = this.waitForUpsertValeurResponse();
+    await modal.getByRole('button', { name: 'Valider', exact: true }).click();
+    await response;
+    await expect(modal).toBeHidden();
+  }
+
+  async addResultat(annee: number, resultat: number) {
+    await expect(this.ajouterAnneeInput).toBeVisible();
+    if (!(await this.cell(annee).count())) {
+      await this.ajouterAnneeInput.fill(String(annee));
+      await this.ajouterAnneeInput.press('Enter');
+    }
+    await this.editValeur(annee, 'Résultat', String(resultat));
   }
 }
