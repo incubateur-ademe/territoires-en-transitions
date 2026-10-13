@@ -1,10 +1,34 @@
-import { IndicateurPeriodes } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodes,
+  type IndicateurPeriodeAnnuelle,
+} from '@tet/domain/indicateurs';
 import { getAnneesDistinctes, type PreparedData } from './prepare-data';
+
+type PreparedSource = PreparedData['sources'][number];
+type IndicateurPeriodeSource = Omit<PreparedSource, 'valeurs'> & {
+  valeurs: (Omit<PreparedSource['valeurs'][number], 'annee' | 'anneeISO'> & {
+    periode: IndicateurPeriodeAnnuelle;
+  })[];
+};
+
+export type IndicateurPeriodeValue = Omit<
+  PreparedData['valeursExistantes'][number],
+  'annee'
+> & { periode: IndicateurPeriodeAnnuelle };
+
+export type IndicateurPeriodeData = {
+  indicateurId: PreparedData['indicateurId'];
+  periodes: IndicateurPeriodeAnnuelle[];
+  periodeModePrive: IndicateurPeriodeAnnuelle | undefined;
+  sources: IndicateurPeriodeSource[];
+  donneesCollectivite: IndicateurPeriodeSource | undefined;
+  valeursExistantes: IndicateurPeriodeValue[];
+};
 
 /** Adapts the annual chart model once, before data reaches the period tables. */
 export const prepareIndicateurPeriodeData = (
   data: PreparedData & { annees?: readonly number[] }
-) => {
+): IndicateurPeriodeData => {
   const sources = data.sources.map((source) => ({
     ...source,
     valeurs: source.valeurs.map(({ annee, anneeISO, ...value }) => ({
@@ -33,9 +57,3 @@ export const prepareIndicateurPeriodeData = (
     })),
   };
 };
-
-export type IndicateurPeriodeData = ReturnType<
-  typeof prepareIndicateurPeriodeData
->;
-export type IndicateurPeriodeValue =
-  IndicateurPeriodeData['valeursExistantes'][number];
