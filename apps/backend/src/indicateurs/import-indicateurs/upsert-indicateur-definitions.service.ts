@@ -7,8 +7,11 @@ import {
 } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { omit } from 'es-toolkit';
 import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
-import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
-import { hasIndicateurFormulaChanged } from '../definitions/indicateur-formula.rules';
+import { IndicateurFormulaReconciliationRepository } from '../definitions/indicateur-formula-reconciliation.repository';
+import {
+  hasIndicateurFormulaChanged,
+  normalizeIndicateurFormula,
+} from '../definitions/indicateur-formula.rules';
 import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import type { ImportIndicateurDefinitionType } from './import-indicateur-definition.dto';
@@ -26,7 +29,7 @@ import {
   validateObjectifIdentifiants,
 } from './validate-indicateur-definitions.rules';
 
-/** Updates the catalogue and recalculates changed formulas in the same transaction. */
+/** Owns the atomic catalog update, including its durable reconciliation intents. */
 @Injectable()
 export class UpsertIndicateurDefinitionsService {
   constructor(
@@ -35,7 +38,7 @@ export class UpsertIndicateurDefinitionsService {
     private readonly transactionManager: TransactionManager,
     private readonly locks: IndicateurDefinitionLockRepository,
     private readonly relations: ImportIndicateurRelationsService,
-    private readonly valeurs: ReconcileIndicateurValeursService,
+    private readonly reconciliations: IndicateurFormulaReconciliationRepository,
     private readonly expressions: IndicateurExpressionService,
     private readonly personnalisations: PersonnalisationsExpressionService
   ) {}
@@ -167,6 +170,27 @@ export class UpsertIndicateurDefinitionsService {
           const updatedFormulaDefinitions = definitions.filter(({ id }) =>
             changedIds.has(id)
           );
+          let reconciliationWorkItemsCount = 0;
+          for (const definition of updatedFormulaDefinitions) {
+            const sourceIdentifiants = definition.valeurCalcule
+              ? this.expressions
+                  .extractNeededSourceIndicateursFromFormula(
+                    definition.valeurCalcule
+                  )
+                  .map(({ identifiant }) => identifiant)
+              : [];
+            const enqueued = await this.reconciliations.enqueueForDefinition(
+              {
+                indicateurId: definition.id,
+                expectedFormula: normalizeIndicateurFormula(
+                  definition.valeurCalcule
+                ),
+                sourceIdentifiants,
+              },
+              tx
+            );
+            reconciliationWorkItemsCount += enqueued.workItemsCount;
+          }
           const mapped = mapIndicateurObjectifs(objectifs, definitions);
           if (!mapped.success) return mapped;
           if (mapped.data.length) {
@@ -183,28 +207,11 @@ export class UpsertIndicateurDefinitionsService {
               );
             }
           }
-          // An import is successful only after its calculated values are up to date.
-          // A failure rolls the catalogue, its version and every recalculation back.
-          const recalculated = updatedFormulaDefinitions.length
-            ? await this.valeurs.recomputeAll(
-                { definitions: updatedFormulaDefinitions },
-                { isUserTrusted: true, tx }
-              )
-            : success([]);
-          if (!recalculated.success) {
-            return failure(
-              'DATABASE_ERROR',
-              recalculated.cause ?? new Error(recalculated.error)
-            );
-          }
           return success({
             definitions,
             updatedFormulaDefinitions,
-            identifiantsRecalcules: [
-              ...new Set(
-                recalculated.data.flatMap(({ identifiants }) => identifiants)
-              ),
-            ],
+            importedIndicateurIds: created.map(({ id }) => id),
+            reconciliationWorkItemsCount,
           });
         } catch (error) {
           return failure(

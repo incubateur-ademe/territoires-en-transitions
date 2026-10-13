@@ -245,6 +245,36 @@ sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
 Aucune migration supplémentaire ; déployer le backend imports suspendus. Les
 contrats d’import et les contraintes SQL continuent de refuser les autres cadences.
 
+## File de recalcul — #5379
+
+Après #5418, suspendre les imports du catalogue. Appliquer
+`indicateur/reconciliation_formules`, puis déployer le backend, `tools` et la
+configuration de sauvegarde incluant `private.indicateur_reconciliation_formule`.
+Cette migration dépend du reporting annuel, sans ouvrir de cadence.
+Adapter l'automatisation à la réponse `status` / `definitions` / `reconciliation` :
+`status: committed` confirme l'enregistrement du catalogue, pas la fin des recalculs.
+
+Activer `drain-indicateur-formula-reconciliations` dans `tools` ; l'ajouter à
+`CRON_JOBS_FILTER` si ce filtre est configuré. Sur un import de validation,
+contrôler les valeurs calculées et la diminution du nombre de travaux en attente :
+
+```sql
+SELECT count(*) AS recalculs_en_attente
+FROM private.indicateur_reconciliation_formule;
+```
+
+Un recalcul en erreur est retenté par cette tâche ; ne pas réimporter la même version.
+Pour revenir à #5418 : suspendre les imports, laisser vider la file, arrêter la tâche,
+puis redéployer son backend et revenir au dernier changement Sqitch relevé
+avant #5379, en conservant les autres livraisons.
+Le revert refuse une file non vide.
+
+Les sauvegardes de cette étape doivent contenir la file. Elles ne sont pas
+compatibles avec celles prises avant #5379. Leur état est `annual-reconciliation` :
+la cible doit conserver ses deux contraintes annuelles validées et le dump doit
+contenir la table de réconciliation, même vide. Après #5215, l’état devient
+`reconciliation` et exige aussi les vérificateurs de l’activation.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
@@ -266,3 +296,7 @@ historique, ou présence des deux contraintes annuelles validées sur une cible
 annuelle. Il ne dépend pas d’une ancienne table d’audit temporaire. Le retour
 arrière de `periodicite_schema` exige le retrait préalable des verrous SQL de
 #5417. Les gardes d’activation restent dans #5215.
+## Vérifications
+
+Le workflow `test-db-deploy` vérifie le cycle de vie de la file et refuse une
+sauvegarde qui omet la table de réconciliation.

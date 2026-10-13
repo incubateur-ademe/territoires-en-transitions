@@ -10,7 +10,6 @@ import { AuthRole } from '@tet/backend/users/models/auth.models';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { failure } from '@tet/backend/utils/result.type';
 import { randomUUID } from 'crypto';
 import { eq, inArray } from 'drizzle-orm';
 import { default as request } from 'supertest';
@@ -19,7 +18,8 @@ import { indicateurCategorieTagTable } from '../definitions/indicateur-categorie
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 import TrajectoiresXlsxService from '../trajectoires/trajectoires-xlsx.service';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
-import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
+import { IndicateurFormulaReconciliationRepository } from '../definitions/indicateur-formula-reconciliation.repository';
+import { indicateurFormulaReconciliationTable } from '../definitions/indicateur-formula-reconciliation.table';
 import { sampleImportIndicateurDefinition } from './samples/import-indicateur-definition.sample';
 
 // Runs after database seeding: disposable collectivités must not consume IDs
@@ -52,7 +52,7 @@ describe('import-indicateur-definition atomicity', () => {
     await app.close();
   });
 
-  it('importe les catégories publiques et annule catalogue et recalculs ensemble en cas d’échec', async () => {
+  it('importe les catégories publiques et annule catalogue et mise en file ensemble en cas d’échec', async () => {
     const collectivites = [
       await addTestCollectivite(databaseService),
       await addTestCollectivite(databaseService),
@@ -204,32 +204,31 @@ describe('import-indicateur-definition atomicity', () => {
 
     version = '999.0.1';
     factor = 3;
-    const reconciliation = app.get(ReconcileIndicateurValeursService);
-    const recompute = reconciliation.recomputeAll.bind(reconciliation);
-    let recalculatedCollectiviteIds: number[] = [];
-    const failureAfterRecompute = vi
-      .spyOn(reconciliation, 'recomputeAll')
+    const queue = app.get(IndicateurFormulaReconciliationRepository);
+    const enqueue = queue.enqueueForDefinition.bind(queue);
+    let enqueuedCount = 0;
+    const failureAfterEnqueue = vi
+      .spyOn(queue, 'enqueueForDefinition')
       .mockImplementation(async (...args) => {
-        const result = await recompute(...args);
-        if (!result.success) return result;
-        recalculatedCollectiviteIds = result.data.map(
-          ({ collectiviteId }) => collectiviteId
-        );
-        return failure(
-          'DATABASE_ERROR',
-          new Error('Injected failure after real recalculation')
-        );
+        const result = await enqueue(...args);
+        enqueuedCount += result.workItemsCount;
+        throw new Error('Injected failure after real enqueue');
       });
-    onTestFinished(() => failureAfterRecompute.mockRestore());
+    onTestFinished(() => failureAfterEnqueue.mockRestore());
     await importCatalogue().expect(500);
-    failureAfterRecompute.mockRestore();
+    failureAfterEnqueue.mockRestore();
+    expect(enqueuedCount).toBe(2);
     expect(
-      recalculatedCollectiviteIds.sort((left, right) => left - right)
-    ).toEqual(
-      collectivites
-        .map(({ collectivite }) => collectivite.id)
-        .sort((left, right) => left - right)
-    );
+      await databaseService.db
+        .select()
+        .from(indicateurFormulaReconciliationTable)
+        .where(
+          inArray(indicateurFormulaReconciliationTable.indicateurId, [
+            source.id,
+            target.id,
+          ])
+        )
+    ).toEqual([]);
 
     expect(await readValeurs()).toEqual(before);
     expect(

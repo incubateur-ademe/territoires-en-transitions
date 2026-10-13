@@ -17,12 +17,12 @@ classify_release() {
         $1 == "indicateur/periodicite_activation" { activation = 1 }
         $1 == "indicateur/periodicite_nettoyage" { later = 1 }
         END {
-            if (!seen || later || reconciliation) print "unsupported"
+            if (!seen || later) print "unsupported"
             else if (schema) {
-                if (activation && mandatory && extractor && formulas && reporting) print "contract"
+                if (activation && mandatory && extractor && formulas && reporting) print reconciliation ? "reconciliation" : "contract"
                 else if (activation || mandatory) print "incomplete"
-                else if (extractor && formulas && reporting) print "reporting"
-                else if (reporting) print "incomplete"
+                else if (extractor && formulas && reporting) print reconciliation ? "annual-reconciliation" : "reporting"
+                else if (reporting || reconciliation) print "incomplete"
                 else if (extractor && formulas) print "formulas"
                 else if (extractor || formulas) print "incomplete"
                 else print "schema"
@@ -41,9 +41,15 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting) ;;
+    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting|annual-reconciliation:annual-reconciliation) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
+if [[ "$source_phase" == annual-reconciliation ]]; then
+    pg_restore --list "$1" | awk '
+        $4 == "TABLE" && $5 == "DATA" && $6 == "private" && $7 == "indicateur_reconciliation_formule" { found = 1 }
+        END { exit !found }
+    ' || { echo 'Refusing to restore: backup lacks formula reconciliation data.' >&2; exit 1; }
+fi
 # Verify the physical schema before restore.sh truncates any table.
 if [[ "$target_phase" == legacy ]]; then
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
@@ -86,8 +92,11 @@ if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
         indicateur/periodicite_formules
     )
 fi
-if [[ "$target_phase" == reporting || "$target_phase" == contract ]]; then
+if [[ "$target_phase" == reporting || "$target_phase" == annual-reconciliation ]]; then
     verify_changes+=(stats/report_indicateur_resultat_periode)
+fi
+if [[ "$target_phase" == annual-reconciliation ]]; then
+    verify_changes+=(indicateur/reconciliation_formules)
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
