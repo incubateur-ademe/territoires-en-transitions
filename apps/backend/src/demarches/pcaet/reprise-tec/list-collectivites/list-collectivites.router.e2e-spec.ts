@@ -6,15 +6,13 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import {
-  addAndEnableUserSuperAdminMode,
-  addTestUser,
-} from '@tet/backend/users/users/users.test-fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { sql } from 'drizzle-orm';
 import {
-  addTestRecetteCollectivite,
+  addTestRecette,
+  addTestSuperAdmin,
   createTestRecetteTables,
 } from '../reprise-tec.test-fixture';
 import { ListCollectivitesErrorEnum } from './list-collectivites.errors';
@@ -37,27 +35,22 @@ describe('demarches.pcaet.repriseTec.listCollectivites', () => {
   });
 
   const addSuperAdmin = async () => {
-    const { user } = await addTestUser(databaseService);
-    const authUser = getAuthUserFromUserCredentials(user);
-    const caller = router.createCaller({ user: authUser });
-    const { cleanup } = await addAndEnableUserSuperAdminMode({
-      app,
-      caller,
-      userId: authUser.id,
-    });
+    const { cleanup, ...superAdmin } = await addTestSuperAdmin(app, router);
     onTestFinished(cleanup);
-    return { authUser, caller };
+    return superAdmin;
   };
 
   test('un super admin lit la collectivité T&C et sa collectivité TeT', async () => {
     const { collectivite } = await addTestCollectivite(databaseService);
     const tecCollectiviteId = 900_000_000 + collectivite.id;
-    const { cleanup } = await addTestRecetteCollectivite(databaseService, {
-      tecCollectiviteId,
-      tetCollectiviteId: collectivite.id,
-      nom: 'Collectivité de T&C',
-      siren: '123456789',
-      population: 1000,
+    const { cleanup } = await addTestRecette(databaseService, {
+      collectivite: {
+        tecCollectiviteId,
+        tetCollectiviteId: collectivite.id,
+        nom: 'Collectivité de T&C',
+        siren: '123456789',
+        population: 1000,
+      },
     });
     onTestFinished(cleanup);
     const { caller } = await addSuperAdmin();
@@ -73,6 +66,7 @@ describe('demarches.pcaet.repriseTec.listCollectivites', () => {
       siren: '123456789',
       population: 1000,
       nomTet: collectivite.nom,
+      dossiers: [],
     });
   });
 
