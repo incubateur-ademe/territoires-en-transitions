@@ -6,7 +6,7 @@ import {
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
 } from '@tet/domain/referentiels';
-import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 
 const typeScoreToLabel: Record<ScoreIndicatifType, string> = {
   fait: 'Résultats de la collectivité',
@@ -166,7 +166,7 @@ function getSegmentsValeurUtilisee({
   periodicite,
 }: LibelleValeurUtiliseeArgs) {
   const { valeur, dateValeur, sourceLibelle } = valeurUtilisee;
-  const annee = toAnnualIndicateurYearFromHistoricalDate(
+  const annee = IndicateurPeriodes.toAnnualYearFromHistoricalDate(
     periodicite,
     dateValeur,
     'Le libellé du score indicatif'
@@ -193,7 +193,7 @@ function getLibelleScoreProgramme({
   dateValeur: string;
   periodicite: ScoreIndicatifPayload['periodicite'];
 }) {
-  const annee = toAnnualIndicateurYearFromHistoricalDate(
+  const annee = IndicateurPeriodes.toAnnualYearFromHistoricalDate(
     periodicite,
     dateValeur,
     'Le libellé du score indicatif'

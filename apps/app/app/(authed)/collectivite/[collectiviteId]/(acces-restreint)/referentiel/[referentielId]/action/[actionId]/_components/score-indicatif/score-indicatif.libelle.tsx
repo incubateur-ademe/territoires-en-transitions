@@ -5,7 +5,7 @@ import { toPercentString } from '@/app/utils/to-percent-string';
 import {
   IndicateurPeriodiciteEnum,
   type IndicateurPeriodicite,
-  toAnnualIndicateurYearFromHistoricalDate,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import {
   ScoreIndicatifType,
@@ -154,7 +154,7 @@ function LibelleScoreProgramme({
   dateValeur: string;
   periodicite: IndicateurPeriodicite | null | undefined;
 }) {
-  const annee = toAnnualIndicateurYearFromHistoricalDate(
+  const annee = IndicateurPeriodes.toAnnualYearFromHistoricalDate(
     periodicite,
     dateValeur,
     appLabels.scoreIndicatifContexteLibelle

@@ -1,6 +1,6 @@
 import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import {
-  toAnnualIndicateurYear,
+  IndicateurPeriodes,
   type IndicateurPeriode,
   type IndicateurValeur,
 } from '@tet/domain/indicateurs';
@@ -56,7 +56,7 @@ export const buildDiagnosticIndicateurTableRows = (
           return (
             periode === null ||
             !row.optionalYears.includes(
-              toAnnualIndicateurYear(
+              IndicateurPeriodes.toAnnualYear(
                 periode.periodicite,
                 periode.dateDebut,
                 'Diagnostic PCAET'
@@ -77,7 +77,7 @@ export const buildDiagnosticIndicateurValeurInput = ({
   value,
 }: Parameters<IndicateurValeursTableMeta['updateIndicateurValeurs']>[0]) => ({
   indicateurId,
-  year: toAnnualIndicateurYear(
+  year: IndicateurPeriodes.toAnnualYear(
     periode.periodicite,
     periode.dateDebut,
     'Diagnostic PCAET'

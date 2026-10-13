@@ -4,7 +4,7 @@ import {
   deriveReferenceYearFromIndicateurValeurYears,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
 } from '@tet/domain/demarches';
-import { toAnnualIndicateurYearFromHistoricalDate } from '@tet/domain/indicateurs';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { useCallback, useMemo, useState } from 'react';
 import { type IndicateurTableRow } from '../../../../indicateurs/valeurs/grid/types';
 import type { IndicateurValeursTableMeta } from '../../../../indicateurs/valeurs/grid/utils';
@@ -89,7 +89,7 @@ export const useDiagnosticIndicateurValeursTable = ({
       deriveReferenceYearFromIndicateurValeurYears({
         resultYears: rows.flatMap((row) =>
           row.indicateurValeurs.map((valeur) =>
-            toAnnualIndicateurYearFromHistoricalDate(
+            IndicateurPeriodes.toAnnualYearFromHistoricalDate(
               valeur.periodicite,
               valeur.dateValeur,
               'Diagnostic PCAET'

@@ -169,3 +169,68 @@ describe('IndicateurPeriodes — contrat annuel', () => {
     }
   );
 });
+
+describe('IndicateurPeriodes — capacités annuelles historiques', () => {
+  it('extrait une année depuis une date annuelle canonique', () => {
+    expect(
+      IndicateurPeriodes.toAnnualYear('annuelle', '2026-01-01', 'test annuel')
+    ).toBe(2026);
+  });
+
+  it('refuse même janvier quand la définition est mensuelle', () => {
+    expect(() =>
+      IndicateurPeriodes.toAnnualYear('mensuelle', '2026-01-01', 'test annuel')
+    ).toThrow(
+      expect.objectContaining({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+        details: { periodicite: 'mensuelle', capability: 'test annuel' },
+      })
+    );
+  });
+
+  it.each([null, undefined])(
+    'refuse une définition dont la périodicité est %s',
+    (periodicite) => {
+      expect(() =>
+        IndicateurPeriodes.assertAnnual(periodicite, 'test annuel')
+      ).toThrow(
+        expect.objectContaining({
+          code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+          details: { periodicite, capability: 'test annuel' },
+        })
+      );
+    }
+  );
+
+  it('classe une ancienne date annuelle non canonique sans assouplir le contrat courant', () => {
+    expect(
+      IndicateurPeriodes.toAnnualYearFromHistoricalDate(
+        'annuelle',
+        '2025-07-10',
+        'Un ancien snapshot'
+      )
+    ).toBe(2025);
+    expect(() =>
+      IndicateurPeriodes.toAnnualYear(
+        'annuelle',
+        '2025-07-10',
+        'Une valeur courante'
+      )
+    ).toThrow(IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_DATE_NON_CANONICAL);
+  });
+
+  it('refuse une cadence mensuelle même à la frontière historique', () => {
+    expect(() =>
+      IndicateurPeriodes.toAnnualYearFromHistoricalDate(
+        'mensuelle',
+        '2025-01-01',
+        'Un ancien snapshot'
+      )
+    ).toThrow(
+      expect.objectContaining({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+        details: { periodicite: 'mensuelle', capability: 'Un ancien snapshot' },
+      })
+    );
+  });
+});

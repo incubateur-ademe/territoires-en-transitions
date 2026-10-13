@@ -1,6 +1,6 @@
 import {
   IndicateurPeriodiciteEnum,
-  toAnnualIndicateurYearFromHistoricalDate,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import { isNil } from 'es-toolkit';
 
@@ -20,7 +20,7 @@ const SOURCE_SNBC = 'snbc';
 
 /** Les valeurs de progression sont filtrées sur la cadence annuelle en lecture. */
 export const getAnnee = (dateValeur: string) =>
-  toAnnualIndicateurYearFromHistoricalDate(
+  IndicateurPeriodes.toAnnualYearFromHistoricalDate(
     IndicateurPeriodiciteEnum.ANNUELLE,
     dateValeur,
     'La progression du score indicatif'

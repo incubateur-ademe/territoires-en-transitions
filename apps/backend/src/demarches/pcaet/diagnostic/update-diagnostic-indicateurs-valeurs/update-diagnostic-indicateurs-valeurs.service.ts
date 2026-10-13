@@ -12,7 +12,7 @@ import {
   type PcaetDiagnostic,
 } from '@tet/domain/demarches';
 import {
-  assertAnnualIndicateurPeriodicite,
+  IndicateurPeriodes,
   type IndicateurValeurCreate,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -95,7 +95,7 @@ export class UpdateDiagnosticIndicateursValeursService {
     }
     try {
       for (const definition of definitions.data) {
-        assertAnnualIndicateurPeriodicite(
+        IndicateurPeriodes.assertAnnual(
           definition.periodicite,
           'Le diagnostic PCAET'
         );
