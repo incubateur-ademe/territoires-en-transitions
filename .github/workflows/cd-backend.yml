@@ -18,6 +18,10 @@ on:
       is-test-backend:
         type: boolean
         description: Backend de test
+      force-rebuild:
+        type: boolean
+        description: Reconstruire l'image même si ce commit est déjà publié
+        default: false
 
 jobs:
   build-backend:
@@ -51,7 +55,9 @@ jobs:
         with:
           username: incubateur-ademe
           image: tet-backend
-          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+          # Une image par commit, pas par (commit, environnement) : c'est ce qui
+          # rend la promotion preprod -> prod possible sans rebuild.
+          tag: ${{ steps.meta.outputs.git-short-hash }}
 
       - name: Build et push de l'image backend
         uses: ./.github/actions/docker-build-push
@@ -62,6 +68,7 @@ jobs:
           image: ${{ steps.image.outputs.path }}
           cache-scope: tet-backend
           push: ${{ !env.ACT }}
+          reuse-image: ${{ github.event.inputs.force-rebuild != 'true' }}
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
           build-args: |

@@ -135,5 +135,10 @@ USER node
 
 EXPOSE ${PORT}
 
+# Pas de curl/wget dans l'image slim : le check HTTP de Coolify échouerait.
+# Même approche que apps/app/Dockerfile, via le fetch natif de Node.
+HEALTHCHECK --interval=5s --timeout=5s --start-period=10s --retries=5 \
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "dist/main.js"]
