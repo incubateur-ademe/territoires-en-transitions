@@ -246,7 +246,7 @@ describe('mergeFicheActionLinks', () => {
     expect(data).toEqual([]);
   });
 
-  test('mesure TE cible non concernée absente du résultat', async () => {
+  test('mesure TE désactivée (personnalisation) présente dans le résultat', async () => {
     await setupTest();
 
     const { teMesureId, caeMesureSourceId } =
@@ -262,7 +262,7 @@ describe('mergeFicheActionLinks', () => {
 
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(data.some((row) => row.actionId === teMesureId)).toBe(false);
+    expect(data.some((row) => row.actionId === teMesureId)).toBe(true);
   });
 
   test('fiche sans lien source : aucune ligne', async () => {

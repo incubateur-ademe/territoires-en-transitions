@@ -544,6 +544,10 @@ Pour chaque action TE avec correspondance d'origine :
 
 > Statut UI « non concerné » = `avancement = non_renseigne` + `concerne = false` (cf. `actionStatutCreateToActionStatutInDatabase`).
 
+**Action TE désactivée le jour de la bascule** (personnalisation, ex. question sans réponse) : elle est reprise comme une action active. Tant qu'elle reste désactivée, le statut repris ne pèse pas dans le score ; si elle s'active plus tard (la collectivité répond à la question), le statut repris apparaît. Son potentiel personnalisé valant 0, la projection s'appuie sur ses points référentiel (le triplet est un rapport, il n'en dépend pas).
+
+**Jamais de statut repris**, que l'action TE soit active ou désactivée : tâche, sous-mesure porteuse de tâches, sous-mesure à score calculé (`exprScore`).
+
 | Cas | Résultat |
 |---|---|
 | 1→1 discret, `ponderation = 1` | Copie directe si triplet pur |
@@ -554,6 +558,8 @@ Pour chaque action TE avec correspondance d'origine :
 | Fusion CAE + ECI → même TE | Toutes sources concernées via `action_origine` |
 | Toutes sources `non concerne` | `non_renseigne` + `concerne = false` |
 | Action TE native | Pas de statut migré |
+| Action TE désactivée à la bascule | Même projection qu'une action active, sur les points référentiel |
+| Tâche, sous-mesure porteuse de tâches ou à `exprScore` | Pas de statut migré, même si aucune source n'est concernée |
 | `detaille_a_la_tache` source | Conversion proportion tâches → arrondi ou discret |
 
 #### `mergeCommentaires`
@@ -582,6 +588,8 @@ Saisie uniquement au niveau mesure (`ActionTypeEnum.ACTION`). Correspondances d'
 
 Pour chaque mesure TE `te_m` : lister correspondances sur `te_m` et descendants ; exclure `non concerne` ; remonter à mesure ancêtre source ; collecter pilotes/services ; fusionner CAE+ECI ; dédupliquer (`user_id`/`tag_id`, `service_tag_id`) ; insérer sur `te_m` uniquement.
 
+Les mesures TE désactivées le jour de la bascule reçoivent aussi leurs pilotes et services (une mesure et sa mesure alternative reçoivent donc les mêmes).
+
 Fonctions pures : `mergePilotes`, `mergeServices`.
 
 #### Liens fiches plan d'action
@@ -591,6 +599,8 @@ Fonctions pures : `mergePilotes`, `mergeServices`.
 | Mesure | Mesure TE (correspondance mesure → mesure) |
 | Sous-mesure + correspondance directe | Sous-mesure TE |
 | Sous-mesure sans correspondance directe | Remontée mesure TE parente |
+
+Les cibles TE désactivées le jour de la bascule reçoivent aussi le lien. La résolution est l'union de deux passes du tableau ci-dessus : l'une limitée aux cibles actives, l'autre sans filtre d'activation. Une fiche se retrouve ainsi liée à la mesure et à sa mesure alternative ; et quand seule la sous-mesure TE directe est désactivée, le lien vers la mesure parente active est conservé en plus du lien vers la sous-mesure.
 
 Dédupliquer sur `(fiche_id, te_action_id)`. Fonction pure : `mergeFicheActionLinks`.
 

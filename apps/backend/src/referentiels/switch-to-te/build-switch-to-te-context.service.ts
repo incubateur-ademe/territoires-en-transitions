@@ -106,14 +106,12 @@ export class BuildSwitchToTeContextService {
       hierarchiesByReferentielId,
     });
     const mesureSourceIds = collectMesureOrigineIds(
-      mesures
-        .filter((cible) => cible.concernee)
-        .flatMap((cible) =>
-          cible.originesConcernees.map((origine) => ({
-            referentielId: origine.referentielId as ReferentielId,
-            actionId: origine.actionId,
-          }))
-        ),
+      mesures.flatMap((cible) =>
+        cible.originesConcernees.map((origine) => ({
+          referentielId: origine.referentielId as ReferentielId,
+          actionId: origine.actionId,
+        }))
+      ),
       hierarchiesByReferentielId
     );
     const pilotesByMesureActionId = await this.loadPilotesByMesureActionId(

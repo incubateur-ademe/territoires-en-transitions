@@ -75,40 +75,44 @@ const freezeMesureIndex = (
     ])
   );
 
-const resolveConcernedTeActionIds = (
+/**
+ * Filtre d'activation appliqué aux cibles TE candidates : `null` pour les
+ * retenir toutes, y compris celles désactivées le jour de la bascule.
+ */
+type CibleFilter = ((teActionId: string) => boolean) | null;
+
+const resolveTeActionIds = (
   candidates: readonly string[] | undefined,
-  teScoreMap: Map<string, ActionScore>
+  filter: CibleFilter
 ): readonly string[] => {
   if (!candidates?.length) {
     return [];
   }
 
-  return candidates
-    .filter((teActionId) => isCibleConcernee(teScoreMap, teActionId))
-    .toSorted();
+  return (filter ? candidates.filter(filter) : candidates).toSorted();
 };
 
-const resolveConcernedMesureTeActionIds = (
+const resolveMesureTeActionIds = (
   mappings: readonly MesureOrigineMapping[] | undefined,
-  teScoreMap: Map<string, ActionScore>
+  filter: CibleFilter
 ): readonly string[] => {
   if (!mappings?.length) {
     return [];
   }
 
-  const concernedMappings = mappings.filter((mapping) =>
-    isCibleConcernee(teScoreMap, mapping.teActionId)
-  );
+  const retainedMappings = filter
+    ? mappings.filter((mapping) => filter(mapping.teActionId))
+    : mappings;
 
-  if (concernedMappings.length === 0) {
+  if (retainedMappings.length === 0) {
     return [];
   }
 
-  const directMappings = concernedMappings.filter(
+  const directMappings = retainedMappings.filter(
     (mapping) => mapping.kind === 'direct'
   );
   const candidateMappings =
-    directMappings.length > 0 ? directMappings : concernedMappings;
+    directMappings.length > 0 ? directMappings : retainedMappings;
 
   return [
     ...new Set(candidateMappings.map((mapping) => mapping.teActionId)),
@@ -136,6 +140,10 @@ const isSourceSousMesure = (
   );
 };
 
+/**
+ * Indexe toutes les cibles TE, y compris celles désactivées le jour de la
+ * bascule : le filtre d'activation est appliqué à la résolution.
+ */
 export const buildCorrespondanceIndexes = (input: {
   sousActionsEtTaches: ActionCible[];
   mesures: ActionCible[];
@@ -145,10 +153,6 @@ export const buildCorrespondanceIndexes = (input: {
   const mesureByOrigineId = new Map<string, Map<string, MesureMappingKind>>();
 
   for (const cible of input.sousActionsEtTaches) {
-    if (!cible.concernee) {
-      continue;
-    }
-
     for (const origine of cible.originesConcernees) {
       registerDirectSousActionMapping(
         directSousActionByOrigineId,
@@ -159,10 +163,6 @@ export const buildCorrespondanceIndexes = (input: {
   }
 
   for (const cible of input.mesures) {
-    if (!cible.concernee) {
-      continue;
-    }
-
     for (const origine of cible.originesConcernees) {
       registerMesureMapping(
         mesureByOrigineId,
@@ -196,19 +196,16 @@ export const buildCorrespondanceIndexes = (input: {
   };
 };
 
-export const resolveCiblesTeDepuisOrigine = (input: {
-  sourceActionId: string;
-  indexes: CorrespondanceOrigineCibleIndexes;
-  hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
-  teScoreMap: Map<string, ActionScore>;
-}): readonly string[] => {
-  const { sourceActionId, indexes, hierarchiesByReferentielId, teScoreMap } =
-    input;
-
+const resolveCibles = (
+  sourceActionId: string,
+  indexes: CorrespondanceOrigineCibleIndexes,
+  hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>,
+  filter: CibleFilter
+): readonly string[] => {
   if (isSourceSousMesure(sourceActionId, hierarchiesByReferentielId)) {
-    const directSousActions = resolveConcernedTeActionIds(
+    const directSousActions = resolveTeActionIds(
       indexes.directSousActionByOrigineId.get(sourceActionId),
-      teScoreMap
+      filter
     );
 
     if (directSousActions.length > 0) {
@@ -221,23 +218,60 @@ export const resolveCiblesTeDepuisOrigine = (input: {
       hierarchiesByReferentielId
     );
 
-    const mesureFromSource = resolveConcernedMesureTeActionIds(
+    const mesureFromSource = resolveMesureTeActionIds(
       indexes.mesureByOrigineId.get(sourceActionId),
-      teScoreMap
+      filter
     );
 
     if (mesureFromSource.length > 0) {
       return mesureFromSource;
     }
 
-    return resolveConcernedMesureTeActionIds(
+    return resolveMesureTeActionIds(
       indexes.mesureByOrigineId.get(mesureOrigineId),
-      teScoreMap
+      filter
     );
   }
 
-  return resolveConcernedMesureTeActionIds(
+  return resolveMesureTeActionIds(
     indexes.mesureByOrigineId.get(sourceActionId),
-    teScoreMap
+    filter
   );
+};
+
+/**
+ * Cibles TE d'une action source : union de deux résolutions.
+ *
+ * 1. Limitée aux cibles actives le jour de la bascule.
+ * 2. Sans filtre d'activation, pour reprendre aussi le lien sur les cibles
+ *    désactivées, qui peuvent s'activer plus tard (réponse à une question de
+ *    personnalisation).
+ *
+ * La seconde ne remplace pas la première : une sous-mesure TE désactivée dont
+ * la mesure parente est active ferait sinon perdre le lien vers la mesure
+ * parente, seule visible à la bascule.
+ */
+export const resolveCiblesTeDepuisOrigine = (input: {
+  sourceActionId: string;
+  indexes: CorrespondanceOrigineCibleIndexes;
+  hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>;
+  teScoreMap: Map<string, ActionScore>;
+}): readonly string[] => {
+  const { sourceActionId, indexes, hierarchiesByReferentielId, teScoreMap } =
+    input;
+
+  const ciblesActives = resolveCibles(
+    sourceActionId,
+    indexes,
+    hierarchiesByReferentielId,
+    (teActionId) => isCibleConcernee(teScoreMap, teActionId)
+  );
+  const ciblesToutes = resolveCibles(
+    sourceActionId,
+    indexes,
+    hierarchiesByReferentielId,
+    null
+  );
+
+  return [...new Set([...ciblesActives, ...ciblesToutes])].toSorted();
 };

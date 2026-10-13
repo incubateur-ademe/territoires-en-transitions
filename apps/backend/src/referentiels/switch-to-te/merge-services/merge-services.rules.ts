@@ -49,11 +49,9 @@ export const mergeServicesForCible = (
 export const mergeServices = (ctx: SwitchToTeContext): ActionServiceCreate[] => {
   const rows: ActionServiceCreate[] = [];
 
+  // les mesures TE désactivées le jour de la bascule sont reprises aussi : elles
+  // peuvent s'activer plus tard
   for (const cible of ctx.cibles.mesures) {
-    if (!cible.concernee) {
-      continue;
-    }
-
     const serviceTagIds = mergeServicesForCible({
       originesConcernees: cible.originesConcernees,
       hierarchiesByReferentielId: ctx.hierarchiesByReferentielId,

@@ -186,7 +186,7 @@ describe('mergeServices', () => {
     },
   });
 
-  it('ignore les mesures non concernées', () => {
+  it('reprend les services sur une mesure désactivée le jour de la bascule', () => {
     const ctx = createCtx([
       createCible({
         actionId: 'te_1.1.1',
@@ -197,7 +197,13 @@ describe('mergeServices', () => {
       }),
     ]);
 
-    expect(mergeServices(ctx)).toEqual([]);
+    expect(mergeServices(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1',
+        serviceTagId: 10,
+      },
+    ]);
   });
 
   it('agrège les services des mesures concernées', () => {

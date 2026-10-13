@@ -220,7 +220,7 @@ describe('mergePilotes', () => {
     },
   });
 
-  it('ignore les mesures non concernées', () => {
+  it('reprend les pilotes sur une mesure désactivée le jour de la bascule', () => {
     const ctx = createCtx([
       createCible({
         actionId: 'te_1.1.1',
@@ -231,7 +231,14 @@ describe('mergePilotes', () => {
       }),
     ]);
 
-    expect(mergePilotes(ctx)).toEqual([]);
+    expect(mergePilotes(ctx)).toEqual([
+      {
+        collectiviteId: 1,
+        actionId: 'te_1.1.1',
+        userId: 'user-cae',
+        tagId: null,
+      },
+    ]);
   });
 
   it('agrège les pilotes des mesures concernées', () => {
