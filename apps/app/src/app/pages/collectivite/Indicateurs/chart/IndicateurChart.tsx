@@ -5,7 +5,6 @@ import {
   makeLineSeries,
   makeOption,
   makeReferenceSeries,
-  makeStackedSeries,
 } from '@/app/ui/charts/echarts/utils';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { getAnnee } from '@/app/ui/charts/echarts/utils';
@@ -25,6 +24,7 @@ import { SourceType } from '../types';
 import { LAYERS } from './layer-parameters';
 import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
 import { prepareReferenceObjectifsDataset } from './prepare-reference-objectifs-dataset';
+import { makeSegmentSeries } from './make-segment-series';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
@@ -51,7 +51,6 @@ const TooltipContainerClassname =
 
 type IndicateurDataset = Dataset & {
   calculAuto: boolean;
-  stackKey?: string;
   metadonnee?: PreparedData['sources'][number]['metadonnees'][number] | null;
   nomSource?: string | null;
 };
@@ -87,9 +86,7 @@ const prepareDataset = (
 
 // prépare les données pour l'affichage des surfaces superposées pour
 // les segments (sous-indicateurs d'un indicateur composé avec agrégation)
-const prepareSegmentsDataset = (
-  chartInfo: IndicateurChartInfo
-): IndicateurDataset[] => {
+const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
   const { data, segmentItemParId } = chartInfo;
   const { segments } = data.valeurs;
 
@@ -107,17 +104,17 @@ const prepareSegmentsDataset = (
 
     return {
       id,
-      stackKey: 'total',
       name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}`,
       color,
       calculAuto: Boolean(source.valeurs.some((value) => value.calculAuto)),
       source: annees.map((annee) => {
         const valeur = source.valeurs.find((value) => value.annee === annee);
         // Une année absente reste un trou : zéro est une donnée métier valide.
-        return (
-          valeur ?? { anneeISO: `${annee}-01-01T00:00:00.000Z`, valeur: null }
-        );
-      }) as Dataset['source'],
+        return {
+          anneeISO: valeur?.anneeISO ?? `${annee}-01-01T00:00:00.000Z`,
+          valeur: valeur?.valeur ?? null,
+        };
+      }),
       dimensions: ['anneeISO', 'valeur'],
       metadonnee,
       nomSource: source.libelle,
@@ -199,7 +196,7 @@ type IndicateurChartProps = {
 type PreparedChartProps = Pick<IndicateurChartProps, 'title' | 'variant'> & {
   data: IndicateurChartInfo['data'];
   donneesResultatObjectif: IndicateurDataset[];
-  donneesSegments: IndicateurDataset[];
+  donneesSegments: ReturnType<typeof prepareSegmentsDataset>;
   references: IndicateurDataset[];
 };
 
@@ -229,10 +226,7 @@ const PreparedChart = memo(
       }
       const series = [
         ...makeLineSeries(donneesResultatObjectif),
-        ...makeStackedSeries(donneesSegments).map((series, index) => ({
-          ...series,
-          stack: donneesSegments[index].stackKey,
-        })),
+        ...makeSegmentSeries(donneesSegments),
         ...makeReferenceSeries(references, variant !== 'thumbnail'),
       ];
 

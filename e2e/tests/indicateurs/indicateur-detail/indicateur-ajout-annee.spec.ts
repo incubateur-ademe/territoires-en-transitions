@@ -13,6 +13,99 @@ test.beforeEach(async ({ page }) => {
   );
 });
 
+for (const { resultats, pointsVisibles } of [
+  { resultats: [10, null, 0], pointsVisibles: 2 },
+  { resultats: [0], pointsVisibles: 1 },
+  { resultats: [10, 20, null, 0], pointsVisibles: 1 },
+]) {
+  test(`Afficher les points isolés du segment annuel ${JSON.stringify(
+    resultats
+  )}`, async ({ page, collectivites, indicateurs, indicateurDetailPom }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    const parentId = await indicateurs.create(user, {
+      collectiviteId,
+      titre: 'Agrégation annuelle',
+      unite: 'MWh',
+    });
+    const enfantId = await indicateurs.create(user, {
+      collectiviteId,
+      titre: 'Segment annuel',
+      unite: 'MWh',
+    });
+    await indicateurs.setEnfants(parentId, [enfantId]);
+    for (const [index, resultat] of resultats.entries()) {
+      await user.getTrpcClient().indicateurs.valeurs.upsert.mutate({
+        collectiviteId,
+        indicateurId: enfantId,
+        dateValeur: `${2024 + index}-01-01`,
+        resultat,
+      });
+    }
+
+    await indicateurDetailPom.goto(collectiviteId, parentId);
+    const canvas = page.locator('canvas').first();
+    await expect(canvas).toBeVisible();
+    // Vérifie les points réellement peints : une infobulle peut exister même
+    // quand le point est invisible. Exclut la légende et les surfaces translucides.
+    const getVisiblePoints = () =>
+      canvas.evaluate((element: HTMLCanvasElement, color) => {
+        const context = element.getContext('2d');
+        if (!context) throw new Error('Canvas 2D indisponible');
+        const ratio = element.height / element.clientHeight;
+        const plotHeight = Math.floor(element.height - 80 * ratio);
+        const { data } = context.getImageData(0, 0, element.width, plotHeight);
+        const rgb = [1, 3, 5].map((offset) =>
+          parseInt(color.slice(offset, offset + 2), 16)
+        );
+        const points: { width: number; minY: number; maxY: number }[] = [];
+        let previousX = -2;
+        for (let x = 0; x < element.width; x++) {
+          const ys: number[] = [];
+          for (let y = 0; y < plotHeight; y++) {
+            const offset = (y * element.width + x) * 4;
+            if (
+              data[offset + 3] > 240 &&
+              rgb.every(
+                (value, index) => Math.abs(data[offset + index] - value) <= 1
+              )
+            )
+              ys.push(y);
+          }
+          if (!ys.length) continue;
+          if (x !== previousX + 1)
+            points.push({ width: 0, minY: plotHeight, maxY: 0 });
+          const point = points[points.length - 1];
+          point.width++;
+          point.minY = Math.min(point.minY, ...ys);
+          point.maxY = Math.max(point.maxY, ...ys);
+          previousX = x;
+        }
+        return points;
+      }, '#E1E1FD'); // Première couleur de la palette des segments.
+
+    await expect
+      .poll(
+        async () =>
+          (
+            await getVisiblePoints()
+          ).filter((point) => point.width > 1 && point.maxY - point.minY > 1)
+            .length
+      )
+      .toBe(pointsVisibles);
+    for (const point of await getVisiblePoints()) {
+      expect(point.width).toBeGreaterThan(1);
+      expect(point.maxY - point.minY).toBeGreaterThan(1);
+    }
+    if (pointsVisibles === 2) {
+      const [first, zero] = await getVisiblePoints();
+      expect(zero.minY).toBeGreaterThan(first.maxY);
+    }
+  });
+}
+
 for (const type of ['resultat', 'objectif'] as const) {
   test(`Confirmer la suppression d'un ${type} annuel égal à zéro`, async ({
     page,
