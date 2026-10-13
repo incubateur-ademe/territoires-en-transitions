@@ -49,10 +49,10 @@ test.describe('Priorisation : matrice et volet', () => {
 
     await expect(pom.missingPotentielsMessage).toBeVisible();
     await expect(pom.levierButtons).toHaveCount(29);
-    await expect(pom.metricCount(/^actions? à potentiel/)).toHaveText('0');
-    await expect(pom.metricCount(/leviers? en angle mort/)).toHaveText('0');
+    await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('0');
+    await expect(pom.metricCount(/^leviers? à prioriser$/)).toHaveText('0');
     await expect(pom.preselectionLink).toHaveText(
-      'Actions pré-sélectionnées (0)'
+      'Voir mes actions sauvegardées'
     );
 
     await pom.openPreselection();
@@ -220,20 +220,18 @@ test.describe('Priorisation : présélection', () => {
     await pom.openLevier(LEVIER_NOM);
     const card = pom.actionCardInPanel(LEVIER_NOM, amenagement.titre);
 
-    await card
-      .getByRole('button', { name: 'Ajouter à la présélection' })
-      .click();
+    await card.getByRole('button', { name: 'Sauvegarder' }).click();
 
     await expect(card.getByRole('button', { name: 'Ajoutée' })).toBeVisible();
-    await expect(pom.metricCount(/^actions? à potentiel/)).toHaveText('1');
+    await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
     await expect(pom.preselectionLink).toHaveText(
-      'Actions pré-sélectionnées (1)'
+      'Voir mon action sauvegardée'
     );
 
     await page.reload();
     await expect(pom.title).toBeVisible();
 
-    await expect(pom.metricCount(/^actions? à potentiel/)).toHaveText('1');
+    await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
     await pom.openPreselection();
     await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
   });
@@ -274,7 +272,7 @@ test.describe('Priorisation : présélection', () => {
     await expect(
       pom
         .actionCardInPanel(LEVIER_NOM, amenagement.titre)
-        .getByRole('button', { name: 'Ajouter à la présélection' })
+        .getByRole('button', { name: 'Sauvegarder' })
     ).toBeVisible();
   });
 
@@ -294,26 +292,26 @@ test.describe('Priorisation : présélection', () => {
     await pom.openLevier(LEVIER_NOM);
     await pom
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
-      .getByRole('button', { name: 'Ajouter à la présélection' })
+      .getByRole('button', { name: 'Sauvegarder' })
       .click();
     await pom.openPreselection();
     await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
 
     await pom
       .preselectedCard(amenagement.titre)
-      .getByRole('button', { name: 'Retirer' })
+      .getByRole('button', { name: 'Retirer de ma liste' })
       .click();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
     await pom.backToPriorisation();
     await expect(pom.preselectionLink).toHaveText(
-      'Actions pré-sélectionnées (0)'
+      'Voir mes actions sauvegardées'
     );
     await pom.openLevier(LEVIER_NOM);
     await expect(
       pom
         .actionCardInPanel(LEVIER_NOM, amenagement.titre)
-        .getByRole('button', { name: 'Ajouter à la présélection' })
+        .getByRole('button', { name: 'Sauvegarder' })
     ).toBeVisible();
   });
 
@@ -335,13 +333,13 @@ test.describe('Priorisation : présélection', () => {
     for (const action of [amenagement, financement]) {
       await pom
         .actionCardInPanel(LEVIER_NOM, action.titre)
-        .getByRole('button', { name: 'Ajouter à la présélection' })
+        .getByRole('button', { name: 'Sauvegarder' })
         .click();
     }
     await pom.openLevier(AUTRE_LEVIER_NOM);
     await pom
       .actionCardInPanel(AUTRE_LEVIER_NOM, biogaz.titre)
-      .getByRole('button', { name: 'Ajouter à la présélection' })
+      .getByRole('button', { name: 'Sauvegarder' })
       .click();
     await pom.openPreselection();
     await expect(pom.preselectedCards).toHaveCount(3);
@@ -380,7 +378,7 @@ test.describe('Priorisation : ajout à un plan', () => {
     await pom.openLevier(LEVIER_NOM);
     await pom
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
-      .getByRole('button', { name: 'Ajouter à la présélection' })
+      .getByRole('button', { name: 'Sauvegarder' })
       .click();
     await pom.openPreselection();
     await expect(pom.addToPlanButton(amenagement.titre)).toHaveText(
@@ -453,7 +451,7 @@ test.describe('Priorisation : ajout à un plan', () => {
     await pom.openLevier(LEVIER_NOM);
     await pom
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
-      .getByRole('button', { name: 'Ajouter à la présélection' })
+      .getByRole('button', { name: 'Sauvegarder' })
       .click();
     await pom.openPreselection();
 

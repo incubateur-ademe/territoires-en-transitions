@@ -8,7 +8,7 @@ const { colors } = preset.theme.extend;
 const LEGEND_ITEMS: ChartLegendItem[] = [
   { name: appLabels.pertinenceLabel('non_pertinent'), color: colors.grey[4] },
   { name: appLabels.pertinenceLabel('pertinent'), color: colors.grey[7] },
-  { name: appLabels.legendePreselection, color: colors.primary[9] },
+  { name: appLabels.legendeActionSauvegardee, color: colors.primary[9] },
 ];
 
 export const LeviersMatrixLegend = (): JSX.Element => (

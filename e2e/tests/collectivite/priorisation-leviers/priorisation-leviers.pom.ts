@@ -165,14 +165,14 @@ export class PriorisationLeviersPom {
 
   get preselectionLink(): Locator {
     return this.page.getByRole('link', {
-      name: /^Actions pré-sélectionnées \(\d+\)$/,
+      name: /^Voir (mes actions|mon action) sauvegardées?$/,
     });
   }
 
   get preselectionTitle(): Locator {
     return this.page.getByRole('heading', {
       level: 1,
-      name: 'Actions pré-sélectionnées',
+      name: 'Mes actions sauvegardées',
     });
   }
 

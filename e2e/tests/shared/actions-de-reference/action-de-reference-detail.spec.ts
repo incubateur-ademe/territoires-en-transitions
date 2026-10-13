@@ -242,7 +242,7 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     await priorisationPom.goto(collectivite.data.id);
 
     await expect(priorisationPom.preselectionLink).toHaveText(
-      'Actions pré-sélectionnées (1)'
+      'Voir mon action sauvegardée'
     );
     await priorisationPom.openPreselection();
     await expect(priorisationPom.preselectedCard(action.titre)).toBeVisible();
@@ -264,9 +264,7 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     await priorisationPom.goto(collectivite.data.id);
     await priorisationPom.openLevier(LEVIER_NOM);
     const card = priorisationPom.actionCardInPanel(LEVIER_NOM, action.titre);
-    await card
-      .getByRole('button', { name: 'Ajouter à la présélection' })
-      .click();
+    await card.getByRole('button', { name: 'Sauvegarder' }).click();
     await expect(card.getByRole('button', { name: 'Ajoutée' })).toBeVisible();
 
     await actionDeReferenceDetailPom.open({
