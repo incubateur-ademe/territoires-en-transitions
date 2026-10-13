@@ -11,6 +11,7 @@ import { AxeModule } from '@tet/backend/plans/axes/axe.module';
 import { CompletePlanSecteursModule } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
+import { RepriseTecModule } from './reprise-tec/reprise-tec.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
@@ -123,6 +124,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
 @Module({
   imports: [
     UsersModule,
+    RepriseTecModule,
     // Le catalogue documentaire est conditionné à l'identité de la collectivité
     // et à ses réponses de personnalisation.
     CollectivitesCoreModule,
