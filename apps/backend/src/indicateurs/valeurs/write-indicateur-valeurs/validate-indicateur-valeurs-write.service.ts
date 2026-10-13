@@ -1,4 +1,3 @@
-import { getLegacyIndicateurPeriodicite } from '../indicateur-periode.adapter';
 import {
   BadRequestException,
   ForbiddenException,
@@ -8,6 +7,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   IndicateurDefinition,
+  IndicateurPeriodiciteEnum,
   IndicateurValeurCreate,
   PCAET_COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
@@ -165,7 +165,7 @@ export class ValidateIndicateurValeursWriteService {
           (valeur.metadonneeId == null ||
             localMetadataIds.has(valeur.metadonneeId)) &&
           definition.periodicite !==
-            getLegacyIndicateurPeriodicite(valeur.periodicite)
+            (valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE)
         ) {
           throw new BadRequestException(
             'La valeur doit respecter la périodicité de déclaration'

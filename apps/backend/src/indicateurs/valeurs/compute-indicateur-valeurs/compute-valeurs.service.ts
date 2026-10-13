@@ -5,6 +5,7 @@ import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurDefinition,
   IndicateurValeur,
+  IndicateurPeriodes,
   IndicateurValeurCreate,
 } from '@tet/domain/indicateurs';
 import type {
@@ -25,10 +26,6 @@ import {
   normalizeCalculSourceId,
 } from './group-calcul-indicateur-sources.rules';
 import IndicateurExpressionService from '../indicateur-expression.service';
-import {
-  dehydrateIndicateurPeriode,
-  hydrateIndicateurPeriode,
-} from '../indicateur-periode.adapter';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { LoadIndicateurCalculGraphService } from './load-indicateur-calcul-graph.service';
 
@@ -119,7 +116,9 @@ export default class ComputeValeursService {
         ],
         dateValeurs: [
           ...new Set(
-            groups.map(({ periode }) => dehydrateIndicateurPeriode(periode))
+            groups.map(({ periode }) =>
+              IndicateurPeriodes.toDateValeur(periode)
+            )
           ),
         ],
       },
@@ -128,10 +127,10 @@ export default class ComputeValeursService {
     const expected = new Set(valeursToUpsert.map(getCalculatedValeurIdentity));
     const valeurIdsToDelete = stored.flatMap((valeur) => {
       if (!valeur.periodicite) return [];
-      const periode = hydrateIndicateurPeriode({
-        periodicite: valeur.periodicite,
-        dateValeur: valeur.dateValeur,
-      });
+      const periode = IndicateurPeriodes.fromDateValeur(
+        valeur.periodicite,
+        valeur.dateValeur
+      );
       const key = getCalculSourceGroupKey(
         valeur.collectiviteId,
         periode,
@@ -178,10 +177,10 @@ export default class ComputeValeursService {
           sourceId: normalizeCalculSourceId(metadonnee?.sourceId),
           metadonneeDateVersion: metadonnee?.dateVersion ?? null,
           deleted: deletedIds.has(valeur.id),
-          periode: hydrateIndicateurPeriode({
-            periodicite: valeur.periodicite,
-            dateValeur: valeur.dateValeur,
-          }),
+          periode: IndicateurPeriodes.fromDateValeur(
+            valeur.periodicite,
+            valeur.dateValeur
+          ),
         },
       ];
     });
@@ -283,10 +282,10 @@ export default class ComputeValeursService {
           indicateurIdentifiant: valeur.indicateurIdentifiant,
           sourceId: normalizeCalculSourceId(valeur.sourceId),
           deleted: false,
-          periode: hydrateIndicateurPeriode({
-            periodicite: valeur.periodicite,
-            dateValeur: valeur.dateValeur,
-          }),
+          periode: IndicateurPeriodes.fromDateValeur(
+            valeur.periodicite,
+            valeur.dateValeur
+          ),
         };
       });
     const policies = await this.getSourcesCalcul(tx);

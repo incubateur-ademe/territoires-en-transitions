@@ -136,6 +136,39 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     );
   });
 
+  test.each([undefined, IndicateurPeriodiciteEnum.ANNUELLE])(
+    'Normalise les dates annuelles avec une périodicité %s',
+    async (periodicite) => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const input = { collectiviteId, indicateurId, periodicite };
+
+      const created = await caller.indicateurs.valeurs.upsert({
+        ...input,
+        dateValeur: '2021-06-15',
+        resultat: 0,
+      });
+
+      expect(created).toMatchObject({
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        dateValeur: '2021-01-01',
+        resultat: 0,
+      });
+
+      const updated = await caller.indicateurs.valeurs.upsert({
+        ...input,
+        dateValeur: '2021-12-31',
+        objectif: 50,
+      });
+
+      expect(updated).toMatchObject({
+        id: created?.id,
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        dateValeur: '2021-01-01',
+        objectif: 50,
+      });
+    }
+  );
+
   test('Permet de mettre à jour une valeur', async () => {
     const caller = router.createCaller({ user: authenticatedUser });
 
