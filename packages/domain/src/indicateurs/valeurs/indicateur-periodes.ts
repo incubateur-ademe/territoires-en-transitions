@@ -16,6 +16,7 @@ import { parseLocalDate, toLocalDate } from './local-calendar';
 
 export type {
   IndicateurPeriode,
+  IndicateurPeriodeJson,
   IndicateurPeriodeKey,
   LocalDate,
 } from './indicateur-periode.types';

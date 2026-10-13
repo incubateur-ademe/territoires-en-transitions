@@ -62,6 +62,8 @@ import { ReconcileIndicateurValeursService } from './valeurs/reconcile-indicateu
 import { IndicateurValeurLockRepository } from './valeurs/indicateur-valeur-lock.repository';
 import ValeursMoyenneService from './valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs/get-valeurs-reference/valeurs-reference.service';
+import { UpsertGridValeursRepository } from './valeurs/upsert-grid-valeurs.repository';
+import { UpsertGridValeursService } from './valeurs/upsert-grid-valeurs.service';
 import { IndicateurVuesRepository } from './vues/indicateur-vues.repository';
 import { IndicateurVuesRouter } from './vues/indicateur-vues.router';
 import { IndicateurVuesService } from './vues/indicateur-vues.service';
@@ -116,6 +118,8 @@ const DEFINITIONS_PROVIDERS = [
     WriteIndicateurValeursService,
     ReconcileIndicateurValeursService,
     IndicateurValeurLockRepository,
+    UpsertGridValeursRepository,
+    UpsertGridValeursService,
     ImportIndicateurDefinitionService,
     ValeursMoyenneService,
     ValeursReferenceService,
