@@ -101,11 +101,6 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
       isPriorisationEnabled,
     }),
     {
-      isVisible: isSuperAdmin,
-      children: appLabels.actionsDeReference,
-      href: makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
-    },
-    {
       // Une collectivité qui instruit sans être un service déconcentré — le
       // conseil régional — garde cette nav et atteint l'instruction par ici.
       // Une DREAL ou une DDT n'a pas cette nav du tout.
@@ -146,6 +141,10 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
         {
           children: 'Bannière',
           href: bannerInfoUrl,
+        },
+        {
+          children: appLabels.actionsDeReference,
+          href: makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
         },
       ],
     },
