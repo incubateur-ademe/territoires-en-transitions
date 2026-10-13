@@ -1,0 +1,14 @@
+# Copier en terraform.tfvars (gitignoré) et compléter.
+# Ces valeurs se récupère après l'apply de infra/platform :
+#   terraform -chdir=../platform output -raw main_project_id
+#   terraform -chdir=../platform output -json private_network_ids | jq -r .preview
+
+project_id = "00000000-0000-0000-0000-000000000000"
+private_network_id  = "fr-par/00000000-0000-0000-0000-000000000000"
+
+server_ssh_authorized_keys = [
+  "ssh-ed25519 AAAA... prenom.nom@example.org",
+]
+
+# Passer à true une fois la zone créée par infra/platform et déléguée.
+dns_enabled = false
