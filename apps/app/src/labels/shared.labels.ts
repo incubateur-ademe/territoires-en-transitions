@@ -73,6 +73,8 @@ export const sharedLabels = {
 
   preferences: 'Préférences',
 
+  vueListe: 'Liste',
+
   champObligatoireErreur: 'Ce champ est obligatoire',
   champTropLongErreur: (maximum: number | bigint): string =>
     `${maximum} caractères maximum`,
