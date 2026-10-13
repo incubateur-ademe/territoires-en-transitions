@@ -168,6 +168,13 @@ export const collectivitesLabels = {
   actionDeReferenceInteresse: "Ça m'intéresse",
   retirerDeLaPreselection: 'Retirer',
   retablirAction: 'Rétablir',
+  ilManqueUneAction: 'Il manque une action ?',
+  listeNonExhaustiveSignalerAction:
+    "Cette liste n'est pas exhaustive. Signalez-nous une action utile pour ce levier.",
+  suggererUneAction: 'Suggérer une action',
+  decrireLAction: "Décrivez l'action en quelques mots",
+  suggestionEnvoyee: 'Merci, votre suggestion a bien été envoyée.',
+  actionDescriptionRequise: "Décrivez l'action pour l'envoyer.",
   actionsIgnorees: plural({
     one: 'action marquée « Pas intéressé »',
     other: 'actions marquées « Pas intéressé »',

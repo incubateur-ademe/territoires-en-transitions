@@ -5,6 +5,7 @@ export const sharedLabels = {
   valider: 'Valider',
   ajouter: 'Ajouter',
   annuler: 'Annuler',
+  envoyer: 'Envoyer',
   confirmer: 'Confirmer',
   selectionner: 'Sélectionner',
   fermer: 'Fermer',

@@ -3,3 +3,4 @@ export * from './posthog-events';
 export * from './posthog-pageview';
 export * from './posthog-provider';
 export * from './use-event-tracker';
+export * from './use-survey-response';
