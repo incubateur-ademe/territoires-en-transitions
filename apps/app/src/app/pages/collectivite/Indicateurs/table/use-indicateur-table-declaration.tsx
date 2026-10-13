@@ -1,21 +1,21 @@
 import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
-import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateurPeriodes,
-  IndicateurPeriodiciteEnum,
-  type IndicateurPeriodeAnnuelle,
+  type IndicateurPeriode,
+  type SupportedIndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import type { OpenState } from '@tet/ui/utils/types';
 import type { ReactNode } from 'react';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
+import { getIndicateurPeriodeInputOptions } from './indicateur-periode-input.options';
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
-  periodicite?: IndicateurPeriodeAnnuelle['periodicite'];
+  periodicite: SupportedIndicateurPeriodicite;
   collectiviteId: number;
   definition: Pick<IndicateurDefinition, 'id'>;
-  existingPeriodes: readonly IndicateurPeriodeAnnuelle[];
+  existingPeriodes: readonly IndicateurPeriode[];
   openModalState?: OpenState;
 };
 
@@ -26,20 +26,20 @@ export type IndicateurTableDeclaration = {
 /** Keeps period declaration independent from the table used to edit values. */
 export const useIndicateurTableDeclaration = ({
   canWrite,
-  periodicite = IndicateurPeriodiciteEnum.ANNUELLE,
+  periodicite,
   collectiviteId,
   definition,
   existingPeriodes,
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
   const { mutateAsync: upsertValeur } = useUpsertIndicateurValeur({
-    successMessage: appLabels.indicateurAnneeAjoutee,
+    successMessage: getIndicateurPeriodeInputOptions(periodicite).success,
     disableErrorToast: true,
   });
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
 
   const addPeriode = async (
-    periode: IndicateurPeriodeAnnuelle
+    periode: IndicateurPeriode<SupportedIndicateurPeriodicite>
   ): Promise<boolean> => {
     const key = IndicateurPeriodes.key(periode);
     if (
@@ -53,6 +53,7 @@ export const useIndicateurTableDeclaration = ({
       await upsertValeur({
         collectiviteId,
         indicateurId: definition.id,
+        periodicite: periode.periodicite,
         dateValeur: periode.dateDebut,
       });
       return true;
