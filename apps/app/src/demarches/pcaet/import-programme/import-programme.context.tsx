@@ -130,6 +130,9 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
       if (startedHere && !isProgressDisplayed.current) {
         setToast('error', appLabels.importPlanIaErreur);
       }
+    } else if (ongoingStatus) {
+      // Import repris : sa prochaine issue, même un nouvel échec, est traitée.
+      handledOutcome.current = outcome;
     }
   }, [
     ongoingJobId,
