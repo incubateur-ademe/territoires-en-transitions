@@ -107,4 +107,102 @@ test.describe("Modale de saisie des données d'indicateur du score indicatif", (
       .click();
     await expect(page.getByRole('dialog')).toBeVisible();
   });
+  for (const buttonName of ['Valider', 'Valider et ajouter une année']) {
+    test(`Conserver la saisie annuelle du score après un échec de ${buttonName}`, async ({
+      page,
+      referentielScoresPom,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      referentiels,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      indicateurs,
+    }) => {
+      await page.addLocatorHandler(
+        page
+          .getByRole('dialog')
+          .filter({ hasText: 'Rattachez ProConnect à votre compte' }),
+        async (dialog) => {
+          await dialog.getByRole('button', { name: 'Plus tard' }).click();
+        }
+      );
+      await referentielScoresPom.goto('cae');
+      await referentielScoresPom.goToActionPage('4.1.1');
+      await referentielScoresPom.expandSousAction('4.1.1.6');
+      const tache = page.locator(
+        referentielScoresPom.getTacheLocationExpression('4.1.1.6.2')
+      );
+      await tache
+        .getByRole('button', { name: "Renseigner les données de l'indicateur" })
+        .click();
+      const scoreDialog = page.getByRole('dialog');
+      await scoreDialog
+        .getByRole('button', { name: 'ouvrir le menu' })
+        .filter({ hasText: 'Sélectionnez la source à utiliser' })
+        .first()
+        .click();
+      await page
+        .getByRole('button', {
+          name: 'Résultats de la collectivité',
+          exact: true,
+        })
+        .click();
+      await scoreDialog
+        .getByRole('button', { name: 'ouvrir le menu' })
+        .filter({ hasText: 'Sélectionnez une année' })
+        .first()
+        .click();
+      await page
+        .getByRole('button', { name: 'Ajouter une année', exact: true })
+        .click();
+      const editor = page.getByRole('dialog', {
+        name: 'Ajouter une année',
+        exact: true,
+      });
+      const year = editor.getByRole('textbox', {
+        name: 'Année *',
+        exact: true,
+      });
+      const resultat = editor.getByRole('textbox', {
+        name: 'Résultat',
+        exact: true,
+      });
+      await year.fill('2026');
+      await resultat.fill('0');
+      const upsertUrl = /indicateurs\.valeurs\.upsert/;
+      await page.route(upsertUrl, (route) => route.abort('failed'));
+      const failedRequest = page.waitForEvent('requestfailed', (request) =>
+        upsertUrl.test(request.url())
+      );
+      await editor
+        .getByRole('button', { name: buttonName, exact: true })
+        .click();
+      await failedRequest;
+      await expect(editor).toBeVisible();
+      await expect(year).toHaveValue('2026');
+      await expect(resultat).toHaveValue('0');
+      const retry = editor.getByRole('button', {
+        name: 'Valider',
+        exact: true,
+      });
+      await expect(retry).toBeEnabled();
+      await page.unroute(upsertUrl);
+      const savedResponse = page.waitForResponse(
+        (response) => upsertUrl.test(response.url()) && response.ok()
+      );
+      await retry.click();
+      const saved = await (await savedResponse).json();
+      try {
+        expect(saved.result.data).toMatchObject({
+          dateValeur: '2026-01-01',
+          resultat: 0,
+        });
+        await expect(editor).toHaveCount(0);
+      } finally {
+        await user.getTrpcClient().indicateurs.valeurs.delete.mutate({
+          collectiviteId,
+          indicateurId: saved.result.data.indicateurId,
+          id: saved.result.data.id,
+        });
+      }
+    });
+  }
 });

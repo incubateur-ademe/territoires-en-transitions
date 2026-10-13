@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIndicateurMoyenne } from './use-indicateur-moyenne';
 import {
   hasValeurCible,
@@ -53,91 +53,81 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
 
   const { data: references, isLoading: isLoadingReference } =
     useIndicateurReference(input);
-  const avecValeurCible = hasValeurCible(references);
-  const avecValeurSeuil = hasValeurSeuil(references);
 
-  const options: FiltresSource[] = [];
-  if (data?.length) {
-    const availableSourceIds = data.map((s) => s.id);
-    if (availableSourceIds.includes('snbc')) {
-      options.push('snbc');
-    }
-    if (availableSourceIds.includes('pcaet')) {
-      options.push('pcaet');
-    }
-    if (availableSourceIds.length > options.length) {
-      options.push('opendata');
-    }
-  }
-  options.push('collectivite');
-  if (moyenne?.valeurs?.length) {
-    options.push('moyenne');
-  }
-  if (avecValeurCible) {
-    options.push('cible');
-  }
-  if (avecValeurSeuil) {
-    options.push('seuil');
-  }
+  return useMemo(() => {
+    const avecValeurCible = hasValeurCible(references);
+    const avecValeurSeuil = hasValeurSeuil(references);
+    const options: FiltresSource[] = [];
 
-  const availableOptions = options.map((value) => ({
-    value,
-    label: filtreToLabel(value),
-  }));
+    if (data?.length) {
+      const availableSourceIds = data.map((source) => source.id);
+      if (availableSourceIds.includes('snbc')) options.push('snbc');
+      if (availableSourceIds.includes('pcaet')) options.push('pcaet');
+      if (availableSourceIds.length > options.length) options.push('opendata');
+    }
+    options.push('collectivite');
+    if (moyenne?.valeurs?.length) options.push('moyenne');
+    if (avecValeurCible) options.push('cible');
+    if (avecValeurSeuil) options.push('seuil');
 
-  const sources: Array<string> = [];
-  if (filtresSource.length) {
+    const sources: string[] = [];
     if (filtresSource.includes('opendata')) {
       if (data?.length) {
-        const openSourcesId = data
-          .filter((s) => !FILTRES_SOURCE.includes(s.id as FiltresSource))
-          .map((s) => s.id);
         sources.push(
-          ...openSourcesId,
-          ...filtresSource.filter((s) => s !== 'opendata')
+          ...data
+            .filter(
+              (source) => !FILTRES_SOURCE.includes(source.id as FiltresSource)
+            )
+            .map((source) => source.id),
+          ...filtresSource.filter((source) => source !== 'opendata')
         );
       }
     } else {
       sources.push(...filtresSource);
     }
-  }
 
-  const avecDonneesCollectivite =
-    !sources.length || sources.includes('collectivite');
-
-  const avecSecteursSNBC =
-    filtresSource.length === 1 && filtresSource[0] === 'snbc';
-
-  const valeursReference = !filtresSource.length
-    ? references
-    : {
-        cible: filtresSource.includes('cible')
-          ? references?.cible ?? null
-          : null,
-        objectifs: filtresSource.includes('cible')
-          ? references?.objectifs ?? null
-          : null,
-        seuil: filtresSource.includes('seuil')
-          ? references?.seuil ?? null
-          : null,
-        libelle: references?.libelle ?? null,
-        drom: references?.drom ?? false,
-      };
-
-  return {
-    isLoading: isLoadingSources || isLoadingMoyenne || isLoadingReference,
-    availableOptions,
+    return {
+      isLoading: isLoadingSources || isLoadingMoyenne || isLoadingReference,
+      availableOptions: options.map((value) => ({
+        value,
+        label: filtreToLabel(value),
+      })),
+      filtresSource,
+      setFiltresSource,
+      sources: sources.length ? sources : undefined,
+      avecDonneesCollectivite:
+        !sources.length || sources.includes('collectivite'),
+      avecSecteursSNBC:
+        filtresSource.length === 1 && filtresSource[0] === 'snbc',
+      moyenne:
+        !filtresSource.length || filtresSource.includes('moyenne')
+          ? moyenne
+          : undefined,
+      valeursReference: !filtresSource.length
+        ? references
+        : {
+            cible: filtresSource.includes('cible')
+              ? references?.cible ?? null
+              : null,
+            objectifs: filtresSource.includes('cible')
+              ? references?.objectifs ?? null
+              : null,
+            seuil: filtresSource.includes('seuil')
+              ? references?.seuil ?? null
+              : null,
+            libelle: references?.libelle ?? null,
+            drom: references?.drom ?? false,
+          },
+    };
+  }, [
+    data,
     filtresSource,
-    setFiltresSource,
-    sources: sources.length ? sources : undefined,
-    avecDonneesCollectivite,
-    avecSecteursSNBC,
-    moyenne:
-      !filtresSource.length || filtresSource.includes('moyenne')
-        ? moyenne
-        : undefined,
-    valeursReference,
-  };
+    isLoadingMoyenne,
+    isLoadingReference,
+    isLoadingSources,
+    moyenne,
+    references,
+  ]);
 };
 
 export type SourceFilter = ReturnType<typeof useSourceFilter>;

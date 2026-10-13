@@ -33,7 +33,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { valeursExistantes } = data;
   const fieldId = useId();
 
-  const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur();
+  const { mutateAsync: upsertValeur, isPending } = useUpsertIndicateurValeur();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
   const [annee, setAnnee] = useState<number | null>(null);
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
@@ -44,17 +44,25 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
     !(typeof objectif === 'number' || typeof resultat === 'number') ||
     isPending;
 
-  const upsert = () =>
-    upsertValeur({
-      id: valeur.id,
-      collectiviteId,
-      indicateurId: definition.id,
-      dateValeur: `${annee}-01-01`,
-      resultat,
-      resultatCommentaire,
-      objectif,
-      objectifCommentaire,
-    });
+  const upsert = async (): Promise<boolean> => {
+    try {
+      await upsertValeur({
+        id: valeur.id,
+        collectiviteId,
+        indicateurId: definition.id,
+        dateValeur: `${annee}-01-01`,
+        resultat,
+        resultatCommentaire,
+        objectif,
+        objectifCommentaire,
+      });
+      return true;
+    } catch {
+      // Le hook de mutation affiche déjà l'erreur. Conserver le formulaire
+      // ouvert permet de corriger ou de retenter la saisie.
+      return false;
+    }
+  };
 
   // cherche si il existe déjà une valeur
   const getValeurExistante = (a: number | null) => {
@@ -62,8 +70,8 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
     return valeursExistantes.find((v) => v.annee === a);
   };
 
-  const validateAndAddNewValue = () => {
-    upsert();
+  const validateAndAddNewValue = async () => {
+    if (!(await upsert())) return;
     // pré-rempli le champ avec l'année suivante
     const anneeSuivante = annee ? annee + 1 : null;
     setAnnee(anneeSuivante);
@@ -159,14 +167,20 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
           <Button variant="outlined" onClick={close}>
             {appLabels.annuler}
           </Button>
-          <Button disabled={disabled} onClick={validateAndAddNewValue}>
+          <Button
+            disabled={disabled}
+            onClick={() => void validateAndAddNewValue()}
+          >
             {appLabels.validerAjouterAnnee}
           </Button>
           <Button
             disabled={disabled}
             onClick={() => {
-              upsert();
-              close();
+              void upsert().then((saved) => {
+                if (saved) {
+                  close();
+                }
+              });
             }}
           >
             {appLabels.valider}
