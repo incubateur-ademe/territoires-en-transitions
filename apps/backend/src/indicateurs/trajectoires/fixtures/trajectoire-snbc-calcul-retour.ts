@@ -1,16 +1,14 @@
 import type { IndicateurAvecValeurs } from '@tet/domain/indicateurs';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { CalculTrajectoireResultatMode } from '../calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from '../calcul-trajectoire.response';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 // This historical fixture contains annual series.
 const annualIndicateur = (data: {
   definition: IndicateurAvecValeurs['definition'];
   valeurs: Omit<IndicateurAvecValeurs['valeurs'][number], 'periodicite'>[];
 }): IndicateurAvecValeurs => ({
-  definition: {
-    ...data.definition,
-  },
+  definition: data.definition,
   valeurs: data.valeurs.map((valeur) => ({
     ...valeur,
     periodicite: IndicateurPeriodiciteEnum.ANNUELLE,

@@ -4,14 +4,15 @@ import LabellisationLogo from '@/site/components/labellisation/LabellisationLogo
 import Section from '@/site/components/sections/Section';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { natureCollectiviteToLabel } from '@/site/src/utils/labels';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import classNames from 'classnames';
 import { Metadata, ResolvingMetadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import {
-  fetchCollectivite,
-  getStrapiData,
-  getStrapiDefaultData,
-  type Indicateurs,
+    fetchCollectivite,
+    getStrapiData,
+    getStrapiDefaultData,
+    type IndicateurGes,
 } from '../../utils';
 import AccesCompte from './AccesCompte';
 import CollectiviteHeader from './CollectiviteHeader';
@@ -19,7 +20,6 @@ import ContenuCollectivite from './ContenuCollectivite';
 import HistoriqueLabellisation from './HistoriqueLabellisation';
 import IndicateursCollectivite from './IndicateursCollectivite';
 import PageContent from './PageContent';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 export async function generateMetadata(
   { params }: { params: Promise<{ code: string }> },
@@ -152,7 +152,7 @@ const DetailCollectivite = async ({
                   collectiviteData.collectivite.indicateurArtificialisation,
                 gaz_effet_serre:
                   collectiviteData.collectivite.indicateursGazEffetSerre?.map(
-                    (indicateur): Indicateurs => ({
+                    (indicateur): IndicateurGes => ({
                       date_valeur: indicateur.dateValeur,
                       resultat: indicateur.resultat,
                       identifiant: indicateur.identifiant,
