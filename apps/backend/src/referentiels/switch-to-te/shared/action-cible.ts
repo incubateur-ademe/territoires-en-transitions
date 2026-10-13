@@ -40,7 +40,13 @@ export type ActionCible = {
    * depuis les origines concernées.
    */
   hasExprScore: boolean;
-  /** false si désactivée / non concernée par personnalisation TE */
+  /**
+   * false si désactivée / non concernée par personnalisation TE le jour de la
+   * bascule. N'empêche pas la reprise (statuts, pilotes, services, liens
+   * fiches) : la cible peut s'activer plus tard, quand la collectivité répond
+   * à la question de personnalisation. Lu par mergeStatuts (base de
+   * projection) et par la résolution des liens fiches.
+   */
   concernee: boolean;
   /**
    * true si cette sous-mesure TE porte des tâches enfant : mergeStatuts n'émet
@@ -83,6 +89,11 @@ export const getPointPotentiel = (
   const score = scoreMap.get(actionId);
   return score?.pointPotentiel ?? score?.pointReferentiel ?? 0;
 };
+
+export const getPointReferentiel = (
+  scoreMap: Map<string, ActionScore>,
+  actionId: string
+): number => scoreMap.get(actionId)?.pointReferentiel ?? 0;
 
 const buildActionCible = (
   actionId: string,

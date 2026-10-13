@@ -7,6 +7,8 @@ import { actionCommentaireTable } from '@tet/backend/referentiels/models/action-
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { actionServiceTable } from '@tet/backend/referentiels/models/action-service.table';
 import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
+import { buildScoreMapByActionId } from '@tet/backend/referentiels/compute-score/score-map.rules';
+import ScoresService from '@tet/backend/referentiels/compute-score/scores.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -21,6 +23,7 @@ import {
   type CollectiviteReferentielPreferences,
 } from '@tet/domain/collectivites';
 import {
+  ReferentielIdEnum,
   StatutAvancementEnum,
   type ScoreSnapshot,
 } from '@tet/domain/referentiels';
@@ -502,5 +505,105 @@ describe('MigrateCollectiviteDataService', () => {
     });
 
     expect(await listTeStatuts()).toEqual([]);
+  });
+
+  // dernier test du fichier : il répond à une question de personnalisation,
+  // ce qui modifie le score TE de la collectivité pour la suite
+  test('mesure TE désactivée à la bascule : statut, pilote, service et lien fiche repris, visibles dans le score une fois la mesure activée', async () => {
+    onTestFinished(cleanupCollectiviteReferentielData);
+    await setupTest();
+
+    const { teMesureId, caeMesureSourceId, caeOrigineActionId } =
+      SWITCH_TE_CORRESPONDANCES_FIXTURE.teMesureCae1to1;
+    const teSousActionId = MIGRATE_FIXTURE.teActionCae1to1.teActionId;
+    const serviceTag = await createServiceTag({
+      database: databaseService,
+      tagData: {
+        collectiviteId: collectivite.id,
+        nom: 'Service fixture mesure désactivée',
+      },
+    });
+
+    await setActionStatutForCollectivite(
+      router,
+      user,
+      collectivite.id,
+      caeOrigineActionId,
+      StatutAvancementEnum.FAIT
+    );
+    await upsertPilotesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      { userId },
+    ]);
+    await upsertServicesOnMesure(router, user, collectivite.id, caeMesureSourceId, [
+      serviceTag.id,
+    ]);
+    const { ficheId } = await createFicheWithLinkOnAction(
+      databaseService,
+      collectivite.id,
+      caeMesureSourceId
+    );
+
+    const caller = router.createCaller({ user });
+    const setPcaet = (reponse: boolean) =>
+      caller.collectivites.personnalisations.setReponse({
+        collectiviteId: collectivite.id,
+        questionId: 'PCAET_1',
+        reponse,
+      });
+    const getTeScore = async (actionId: string) => {
+      const { scoresPayload } = await app
+        .get(ScoresService)
+        .computeScoreForCollectivite(
+          ReferentielIdEnum.TE,
+          collectivite.id,
+          { avecReferentielsOrigine: false },
+          user
+        );
+      return buildScoreMapByActionId(scoresPayload.scores).get(actionId);
+    };
+
+    // la mesure TE est désactivée le jour de la bascule
+    await setPcaet(false);
+    expect((await getTeScore(teMesureId))?.desactive).toBe(true);
+
+    const result = await migrateFromPrefs(prefsEligibleCaeOnly);
+    expect(result.success).toBe(true);
+
+    expect(await listTeStatuts()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          actionId: teSousActionId,
+          avancement: StatutAvancementEnum.FAIT,
+          concerne: true,
+        }),
+      ])
+    );
+    expect(await listTePilotes()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ actionId: teMesureId, userId, tagId: null }),
+      ])
+    );
+    expect(await listTeServices()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          actionId: teMesureId,
+          serviceTagId: serviceTag.id,
+        }),
+      ])
+    );
+    expect(await listTeFicheLinks()).toEqual(
+      expect.arrayContaining([{ ficheId, actionId: teMesureId }])
+    );
+
+    // tant que la mesure reste désactivée, le statut repris ne pèse pas dans le score
+    const scoreDesactive = await getTeScore(teSousActionId);
+    expect(scoreDesactive?.desactive).toBe(true);
+    expect(scoreDesactive?.pointFait ?? 0).toBe(0);
+
+    // la collectivité répond à la question : la mesure s'active, le score repris apparaît
+    await setPcaet(true);
+    const scoreActive = await getTeScore(teSousActionId);
+    expect(scoreActive?.desactive).toBe(false);
+    expect(scoreActive?.pointFait).toBeGreaterThan(0);
   });
 });

@@ -8,6 +8,7 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import {
+  getPointReferentiel,
   isCibleConcernee,
   listCommentaireCibles,
   listMesuresCibles,
@@ -580,5 +581,22 @@ describe('isCibleConcernee', () => {
     ]);
 
     expect(isCibleConcernee(scoreMap, 'te_1')).toBe(false);
+  });
+});
+
+describe('getPointReferentiel', () => {
+  it("retourne les points référentiel d'une action désactivée (potentiel à 0)", () => {
+    const scoreMap = new Map<string, ActionScore>([
+      [
+        'te_1',
+        { concerne: false, pointPotentiel: 0, pointReferentiel: 1.2 } as ActionScore,
+      ],
+    ]);
+
+    expect(getPointReferentiel(scoreMap, 'te_1')).toBe(1.2);
+  });
+
+  it('retourne 0 si le score est absent', () => {
+    expect(getPointReferentiel(new Map(), 'te_1')).toBe(0);
   });
 });

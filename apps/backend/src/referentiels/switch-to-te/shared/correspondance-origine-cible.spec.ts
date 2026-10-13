@@ -114,7 +114,7 @@ describe('buildCorrespondanceIndexes', () => {
     ]);
   });
 
-  it('exclut les cibles non concernées des index', () => {
+  it('indexe aussi les cibles désactivées le jour de la bascule', () => {
     const indexes = buildIndexes({
       sousActionsEtTaches: [
         createCible({
@@ -136,8 +136,12 @@ describe('buildCorrespondanceIndexes', () => {
       ],
     });
 
-    expect(indexes.directSousActionByOrigineId.size).toBe(0);
-    expect(indexes.mesureByOrigineId.size).toBe(0);
+    expect(indexes.directSousActionByOrigineId.get('cae_2.2.2.1')).toEqual([
+      'te_2.2.2.1',
+    ]);
+    expect(indexes.mesureByOrigineId.get('cae_6.1.3')).toEqual([
+      { teActionId: 'te_6.1.4', kind: 'direct' },
+    ]);
   });
 
   it('accepte plusieurs origines distinctes vers la même cible TE', () => {
@@ -254,7 +258,7 @@ describe('resolveCiblesTeDepuisOrigine', () => {
     ).toEqual(['te_6.1.4']);
   });
 
-  it('retourne une liste vide si la cible TE est non concernée', () => {
+  it('retourne aussi la cible TE désactivée le jour de la bascule', () => {
     const scoreMap = new Map<string, ActionScore>([
       [
         'te_6.1.4',
@@ -265,14 +269,14 @@ describe('resolveCiblesTeDepuisOrigine', () => {
       ],
     ]);
 
-    expect(resolve('cae_6.1.3', scoreMap)).toEqual([]);
+    expect(resolve('cae_6.1.3', scoreMap)).toEqual(['te_6.1.4']);
   });
 
   it('retourne une liste vide si l origine est absente des index', () => {
     expect(resolve('cae_99.99')).toEqual([]);
   });
 
-  it('résout vers la seule cible TE concernée quand plusieurs candidates existent', () => {
+  it('résout vers la cible TE active et la cible TE désactivée (mesure et mesure alternative)', () => {
     const indexes = buildIndexes({
       sousActionsEtTaches: [
         createCible({
@@ -309,7 +313,86 @@ describe('resolveCiblesTeDepuisOrigine', () => {
         hierarchiesByReferentielId: hierarchies,
         teScoreMap: scoreMap,
       })
-    ).toEqual(['te_2.2.2.2']);
+    ).toEqual(['te_2.2.2.1', 'te_2.2.2.2']);
+  });
+
+  it('résout vers la sous-mesure TE directe quand la mesure et son alternative sont désactivées', () => {
+    const indexes = buildIndexes({
+      sousActionsEtTaches: [
+        createCible({
+          actionId: 'te_2.2.2.1',
+          concernee: false,
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.CAE, 'cae_2.2.2.1'),
+          ],
+        }),
+      ],
+      mesures: [
+        createCible({
+          actionId: 'te_2.2.2',
+          concernee: false,
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.CAE, 'cae_2.2.2.1'),
+          ],
+        }),
+      ],
+    });
+
+    const scoreMap = new Map<string, ActionScore>([
+      ['te_2.2.2', { actionId: 'te_2.2.2', concerne: false } as ActionScore],
+      [
+        'te_2.2.2.1',
+        { actionId: 'te_2.2.2.1', concerne: false } as ActionScore,
+      ],
+    ]);
+
+    expect(
+      resolveCiblesTeDepuisOrigine({
+        sourceActionId: 'cae_2.2.2.1',
+        indexes,
+        hierarchiesByReferentielId: hierarchies,
+        teScoreMap: scoreMap,
+      })
+    ).toEqual(['te_2.2.2.1']);
+  });
+
+  it('conserve le lien vers la mesure parente active quand seule la sous-mesure TE directe est désactivée', () => {
+    const indexes = buildIndexes({
+      sousActionsEtTaches: [
+        createCible({
+          actionId: 'te_2.2.2.1',
+          concernee: false,
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.CAE, 'cae_2.2.2.1'),
+          ],
+        }),
+      ],
+      mesures: [
+        createCible({
+          actionId: 'te_2.2.2',
+          originesConcernees: [
+            createOrigine(ReferentielIdEnum.CAE, 'cae_2.2.2.1'),
+          ],
+        }),
+      ],
+    });
+
+    const scoreMap = new Map<string, ActionScore>([
+      ['te_2.2.2', { actionId: 'te_2.2.2', concerne: true } as ActionScore],
+      [
+        'te_2.2.2.1',
+        { actionId: 'te_2.2.2.1', concerne: false } as ActionScore,
+      ],
+    ]);
+
+    expect(
+      resolveCiblesTeDepuisOrigine({
+        sourceActionId: 'cae_2.2.2.1',
+        indexes,
+        hierarchiesByReferentielId: hierarchies,
+        teScoreMap: scoreMap,
+      })
+    ).toEqual(['te_2.2.2', 'te_2.2.2.1']);
   });
 
   it('retourne toutes les cibles TE directes concernées pour une même origine', () => {

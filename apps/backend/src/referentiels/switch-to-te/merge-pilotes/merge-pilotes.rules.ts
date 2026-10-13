@@ -52,11 +52,9 @@ export const mergePilotesForCible = (
 export const mergePilotes = (ctx: SwitchToTeContext): ActionPiloteCreate[] => {
   const rows: ActionPiloteCreate[] = [];
 
+  // les mesures TE désactivées le jour de la bascule sont reprises aussi : elles
+  // peuvent s'activer plus tard
   for (const cible of ctx.cibles.mesures) {
-    if (!cible.concernee) {
-      continue;
-    }
-
     const pilotes = mergePilotesForCible({
       originesConcernees: cible.originesConcernees,
       hierarchiesByReferentielId: ctx.hierarchiesByReferentielId,

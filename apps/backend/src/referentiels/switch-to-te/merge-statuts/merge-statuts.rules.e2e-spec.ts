@@ -263,7 +263,7 @@ describe('mergeStatuts', () => {
     });
   });
 
-  test('action TE non concernée (personnalisation) : NON_CONCERNE malgré sources CAE concernées', async () => {
+  test('action TE désactivée (personnalisation) : statut repris depuis les sources CAE concernées', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
@@ -282,7 +282,7 @@ describe('mergeStatuts', () => {
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
     const teStatut = data.find((statut) => statut.actionId === teActionId);
-    expect(teStatut?.statut).toBe(StatutAvancementEnum.NON_CONCERNE);
+    expect(teStatut?.statut).toBe(StatutAvancementEnum.FAIT);
   });
 
   test('sans pre-switch-te : failure PRE_SWITCH_SNAPSHOT_MISSING', async () => {

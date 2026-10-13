@@ -9,7 +9,7 @@ import {
   type ActionStatutCreate,
   type StatutDetailleAuPourcentage,
 } from '@tet/domain/referentiels';
-import { getPointPotentiel } from '../shared/action-cible';
+import { getPointPotentiel, getPointReferentiel } from '../shared/action-cible';
 import { type SwitchToTeContext } from '../shared/switch-to-te-context';
 
 /** aligné sur ScoresService.DEFAULT_ROUNDING_DIGITS (3 décimales) */
@@ -154,22 +154,30 @@ export const mergeStatuts = (ctx: SwitchToTeContext): ActionStatutCreate[] => {
   const actionStatuts: ActionStatutCreate[] = [];
 
   for (const cible of ctx.cibles.sousActionsEtTaches) {
-    const tePointPotentiel = getPointPotentiel(ctx.teScoreMap, cible.actionId);
+    // Une action TE désactivée le jour de la bascule est reprise comme les
+    // autres : son statut ne pèse pas dans le score tant qu'elle reste
+    // désactivée, et apparaît si elle s'active plus tard (réponse à une question
+    // de personnalisation). Son potentiel vaut 0, la projection s'appuie donc
+    // sur ses points référentiel.
+    const tePointPotentiel = cible.concernee
+      ? getPointPotentiel(ctx.teScoreMap, cible.actionId)
+      : getPointReferentiel(ctx.teScoreMap, cible.actionId);
 
     let derivedStatut: DerivedMergeStatut;
 
-    // l'action TE désactivée/non concernée prime sur la projection des sources
-    if (!cible.concernee) {
-      derivedStatut = { statut: StatutAvancementEnum.NON_CONCERNE };
-    } else if (cible.aDesTachesEnfant) {
-      // sous-mesure concernée porteuse de tâches : le lien de la colonne `origine`
-      // du parent est ignoré, pas de reprise de score sur le parent — les tâches
+    if (cible.aDesTachesEnfant) {
+      // sous-mesure porteuse de tâches : le lien de la colonne `origine` du
+      // parent est ignoré, pas de reprise de score sur le parent — les tâches
       // sont utilisées uniquement pour le calcul de score à partir des indicateurs.
       continue;
-    } else if (cible.actionType === ActionTypeEnum.TACHE) {
-      // tâche concernée (case à cocher manuelle) : aucun statut déduit des
-      // origines, même NON_CONCERNE si aucune origine n'est concernée, et pas
-      // de ligne écrite en base.
+    } else if (
+      cible.actionType === ActionTypeEnum.TACHE ||
+      cible.hasExprScore
+    ) {
+      // tâche ou action avec formule `exprScore` (score calculé depuis les indicateurs) :
+      // pas de projection depuis les points des origines (même 1→1), pas de
+      // NON_CONCERNE si aucune origine n'est concernée, et pas de ligne écrite
+      // en base.
       continue;
     } else if (cible.originesConcernees.length === 0) {
       derivedStatut = deriveStatutFromProjection({
@@ -179,11 +187,6 @@ export const mergeStatuts = (ctx: SwitchToTeContext): ActionStatutCreate[] => {
         pointPasFait: 0,
         pointPotentiel: tePointPotentiel,
       });
-    } else if (cible.hasExprScore) {
-      // action avec formule `exprScore` (score calculé depuis les indicateurs) :
-      // pas de projection depuis les points des origines (même 1→1) et pas de
-      // ligne écrite en base.
-      continue;
     } else {
       const ratio = getRatioFromOrigineActions(
         cible.originesConcernees,

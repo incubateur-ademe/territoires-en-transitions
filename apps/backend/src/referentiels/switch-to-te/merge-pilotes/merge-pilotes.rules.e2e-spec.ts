@@ -245,7 +245,7 @@ describe('mergePilotes', () => {
     ]);
   });
 
-  test('mesure TE non concernée absente du résultat', async () => {
+  test('mesure TE désactivée (personnalisation) présente dans le résultat', async () => {
     onTestFinished(cleanupCollectiviteReferentielData);
     await setupTest();
 
@@ -263,7 +263,7 @@ describe('mergePilotes', () => {
 
     const data = await mergeFromPrefs(prefsEligibleCaeOnly);
 
-    expect(data.some((row) => row.actionId === teMesureId)).toBe(false);
+    expect(data.some((row) => row.actionId === teMesureId)).toBe(true);
   });
 
   test('mesure sans pilote source : aucune ligne', async () => {

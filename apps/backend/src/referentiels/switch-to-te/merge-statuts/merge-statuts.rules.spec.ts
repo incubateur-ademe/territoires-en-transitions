@@ -237,6 +237,23 @@ describe('mergeStatuts', () => {
   const tePotentiel5 = (actionId: string): Map<string, ActionScore> =>
     new Map([[actionId, { pointPotentiel: 5 } as ActionScore]]);
 
+  /** action TE désactivée par la personnalisation : potentiel à 0 */
+  const teDesactivee = (
+    actionId: string,
+    pointReferentiel = 5
+  ): Map<string, ActionScore> =>
+    new Map([
+      [
+        actionId,
+        {
+          pointPotentiel: 0,
+          pointReferentiel,
+          concerne: false,
+          desactive: true,
+        } as ActionScore,
+      ],
+    ]);
+
   it("n'émet aucune ligne pour une cible concernée porteuse de tâches", () => {
     const ctx = createCtx(
       [
@@ -275,23 +292,20 @@ describe('mergeStatuts', () => {
     ]);
   });
 
-  it('émet NON_CONCERNE sur le parent porteur de tâches si concernee=false', () => {
-    const ctx = createCtx([
-      createCible({
-        actionId: 'te_1.1.1.1',
-        concernee: false,
-        aDesTachesEnfant: true,
-        originesConcernees: [origineFait()],
-      }),
-    ]);
+  it("n'émet aucune ligne pour une cible désactivée porteuse de tâches", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: false,
+          aDesTachesEnfant: true,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      teDesactivee('te_1.1.1.1')
+    );
 
-    expect(mergeStatuts(ctx)).toEqual([
-      {
-        collectiviteId: 1,
-        actionId: 'te_1.1.1.1',
-        statut: StatutAvancementEnum.NON_CONCERNE,
-      },
-    ]);
+    expect(mergeStatuts(ctx)).toEqual([]);
   });
 
   it('ne saute que la cible marquée aDesTachesEnfant', () => {
@@ -354,23 +368,36 @@ describe('mergeStatuts', () => {
     expect(mergeStatuts(ctx)).toEqual([]);
   });
 
-  it('émet NON_CONCERNE pour une sous-action avec exprScore désactivée côté TE', () => {
-    const ctx = createCtx([
-      createCible({
-        actionId: 'te_1.1.1.1',
-        concernee: false,
-        hasExprScore: true,
-        originesConcernees: [origineFait()],
-      }),
-    ]);
+  it("n'émet aucune ligne pour une sous-action avec exprScore désactivée côté TE", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: false,
+          hasExprScore: true,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      teDesactivee('te_1.1.1.1')
+    );
 
-    expect(mergeStatuts(ctx)).toEqual([
-      {
-        collectiviteId: 1,
-        actionId: 'te_1.1.1.1',
-        statut: StatutAvancementEnum.NON_CONCERNE,
-      },
-    ]);
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  it("n'émet aucune ligne pour une sous-action avec exprScore désactivée côté TE sans origine concernée", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: false,
+          hasExprScore: true,
+          originesConcernees: [],
+        }),
+      ],
+      teDesactivee('te_1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([]);
   });
 
   it("n'émet aucune ligne pour une tâche sans origine concernée", () => {
@@ -389,7 +416,7 @@ describe('mergeStatuts', () => {
     expect(mergeStatuts(ctx)).toEqual([]);
   });
 
-  it('émet NON_CONCERNE pour une sous-action avec exprScore sans origine concernée', () => {
+  it("n'émet aucune ligne pour une sous-action avec exprScore sans origine concernée", () => {
     const ctx = createCtx(
       [
         createCible({
@@ -402,30 +429,129 @@ describe('mergeStatuts', () => {
       tePotentiel5('te_1.1.1.1')
     );
 
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  it("n'émet aucune ligne pour une tâche désactivée côté TE malgré une origine concernée", () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1.1',
+          actionType: ActionTypeEnum.TACHE,
+          concernee: false,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      teDesactivee('te_1.1.1.1.1')
+    );
+
+    expect(mergeStatuts(ctx)).toEqual([]);
+  });
+
+  describe('sous-action désactivée côté TE le jour de la bascule', () => {
+    it('reprend le statut des origines, projeté sur les points référentiel', () => {
+      const ctx = createCtx(
+        [
+          createCible({
+            actionId: 'te_1.2.4.1',
+            concernee: false,
+            originesConcernees: [origineFait('cae_1.3.3.1')],
+          }),
+        ],
+        teDesactivee('te_1.2.4.1')
+      );
+
+      expect(mergeStatuts(ctx)).toEqual([
+        {
+          collectiviteId: 1,
+          actionId: 'te_1.2.4.1',
+          statut: StatutAvancementEnum.FAIT,
+        },
+      ]);
+    });
+
+    it('reprend un statut détaillé arrondi à 5 % (46 % fait, 28 % programmé → 45 / 25 / 30)', () => {
+      const ctx = createCtx(
+        [
+          createCible({
+            actionId: 'te_1.2.4.1',
+            concernee: false,
+            originesConcernees: [
+              {
+                ...origineFait('cae_1.3.3.1'),
+                score: {
+                  pointFait: 0.552,
+                  pointProgramme: 0.336,
+                  pointPasFait: 0.312,
+                  pointNonRenseigne: 0,
+                  pointPotentiel: 1.2,
+                  pointReferentiel: 1.2,
+                  totalTachesCount: 5,
+                  faitTachesAvancement: 2.3,
+                  programmeTachesAvancement: 1.4,
+                  pasFaitTachesAvancement: 1.3,
+                  pasConcerneTachesAvancement: 0,
+                },
+              },
+            ],
+          }),
+        ],
+        teDesactivee('te_1.2.4.1', 1.2)
+      );
+
+      const [statut] = mergeStatuts(ctx);
+
+      expect(statut.statut).toBe(StatutAvancementEnum.DETAILLE_AU_POURCENTAGE);
+      const [fait, programme, pasFait] = statut.statutDetailleAuPourcentage ?? [];
+      expect(fait).toBeCloseTo(0.45);
+      expect(programme).toBeCloseTo(0.25);
+      expect(pasFait).toBeCloseTo(0.3);
+    });
+
+    it('émet NON_CONCERNE si aucune origine n\'est concernée', () => {
+      const ctx = createCtx(
+        [
+          createCible({
+            actionId: 'te_1.2.4.1',
+            concernee: false,
+            originesConcernees: [],
+          }),
+        ],
+        teDesactivee('te_1.2.4.1')
+      );
+
+      expect(mergeStatuts(ctx)).toEqual([
+        {
+          collectiviteId: 1,
+          actionId: 'te_1.2.4.1',
+          statut: StatutAvancementEnum.NON_CONCERNE,
+        },
+      ]);
+    });
+  });
+
+  it('émet NON_RENSEIGNE pour une sous-action active dont le potentiel est réduit à 0 (non-régression)', () => {
+    const ctx = createCtx(
+      [
+        createCible({
+          actionId: 'te_1.1.1.1',
+          concernee: true,
+          originesConcernees: [origineFait()],
+        }),
+      ],
+      new Map([
+        [
+          'te_1.1.1.1',
+          { pointPotentiel: 0, pointReferentiel: 5 } as ActionScore,
+        ],
+      ])
+    );
+
     expect(mergeStatuts(ctx)).toEqual([
       {
         collectiviteId: 1,
         actionId: 'te_1.1.1.1',
-        statut: StatutAvancementEnum.NON_CONCERNE,
-      },
-    ]);
-  });
-
-  it('émet NON_CONCERNE pour une tâche désactivée côté TE malgré une origine concernée', () => {
-    const ctx = createCtx([
-      createCible({
-        actionId: 'te_1.1.1.1.1',
-        actionType: ActionTypeEnum.TACHE,
-        concernee: false,
-        originesConcernees: [origineFait()],
-      }),
-    ]);
-
-    expect(mergeStatuts(ctx)).toEqual([
-      {
-        collectiviteId: 1,
-        actionId: 'te_1.1.1.1.1',
-        statut: StatutAvancementEnum.NON_CONCERNE,
+        statut: StatutAvancementEnum.NON_RENSEIGNE,
       },
     ]);
   });
