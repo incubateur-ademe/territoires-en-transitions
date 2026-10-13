@@ -2,7 +2,7 @@
 
 import {
   makeRepriseTecCollectiviteUrl,
-  makeRepriseTecUrl,
+  makeRepriseTecCollectivitesUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import Link from 'next/link';
@@ -20,12 +20,12 @@ import {
   TableRow,
 } from '@tet/ui';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
-import { filterCollectivites } from './data/filter-collectivites';
-import { useListCollectivites } from './data/use-list-collectivites';
+import { filterCollectivites } from '../data/filter-collectivites';
+import { useListCollectivites } from '../data/use-list-collectivites';
 
 const COLUMN_IDS = ['tec', 'tet', 'siren', 'territoire', 'population'];
 
-export const RepriseTecView = () => {
+export const CollectivitesView = () => {
   const { data, isLoading, error } = useListCollectivites();
   const [recherche, setRecherche] = useQueryState(
     'q',
@@ -54,10 +54,15 @@ export const RepriseTecView = () => {
             items={[
               {
                 label: appLabels.repriseTecFrance,
-                href: makeRepriseTecUrl(),
+                href: makeRepriseTecCollectivitesUrl(),
               },
               ...(region
-                ? [{ label: region, href: makeRepriseTecUrl({ region }) }]
+                ? [
+                    {
+                      label: region,
+                      href: makeRepriseTecCollectivitesUrl({ region }),
+                    },
+                  ]
                 : []),
               ...(departement ? [{ label: departement }] : []),
             ]}
@@ -134,6 +139,11 @@ export const RepriseTecView = () => {
                     <TableRow
                       key={c.tecCollectiviteId}
                       data-test={`admin.reprise-tec.collectivite-${c.tecCollectiviteId}`}
+                      className={
+                        c.collectiviteId === null
+                          ? undefined
+                          : 'cursor-pointer hover:!bg-primary-1'
+                      }
                     >
                       <TableCell>
                         <div className="font-medium text-primary-10">
@@ -154,7 +164,7 @@ export const RepriseTecView = () => {
                               href={makeRepriseTecCollectiviteUrl({
                                 collectiviteId: c.collectiviteId,
                               })}
-                              className="font-medium text-primary-9 underline-offset-2 hover:underline"
+                              className="font-medium text-primary-9 after:absolute after:inset-0"
                             >
                               {c.nomTet}
                             </Link>

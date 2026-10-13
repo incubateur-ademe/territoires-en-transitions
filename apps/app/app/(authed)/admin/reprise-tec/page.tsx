@@ -1,5 +1,5 @@
-import { RepriseTecView } from '@/app/demarches/pcaet/reprise-tec/reprise-tec.view';
+import { VueEnsembleView } from '@/app/demarches/pcaet/reprise-tec/vue-ensemble/vue-ensemble.view';
 
 export default function Page() {
-  return <RepriseTecView />;
+  return <VueEnsembleView />;
 }

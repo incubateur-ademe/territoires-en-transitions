@@ -2,7 +2,7 @@
 
 import {
   makeRepriseTecCollectiviteUrl,
-  makeRepriseTecUrl,
+  makeRepriseTecCollectivitesUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, Icon } from '@tet/ui';
@@ -15,9 +15,9 @@ import { rechercher, type Suggestion } from './rechercher';
 const toUrl = (s: Suggestion) => {
   switch (s.type) {
     case 'region':
-      return makeRepriseTecUrl({ region: s.region });
+      return makeRepriseTecCollectivitesUrl({ region: s.region });
     case 'departement':
-      return makeRepriseTecUrl({
+      return makeRepriseTecCollectivitesUrl({
         region: s.region,
         departement: s.departement,
       });

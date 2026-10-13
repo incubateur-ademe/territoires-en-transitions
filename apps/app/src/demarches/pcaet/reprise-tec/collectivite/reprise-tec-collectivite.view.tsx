@@ -1,6 +1,6 @@
 'use client';
 
-import { makeRepriseTecUrl } from '@/app/app/paths';
+import { makeRepriseTecCollectivitesUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Breadcrumbs, EmptyCard, PageHeader } from '@tet/ui';
@@ -58,12 +58,17 @@ export const RepriseTecCollectiviteView = ({
           <Breadcrumbs
             size="sm"
             items={[
-              { label: appLabels.repriseTecFrance, href: makeRepriseTecUrl() },
+              {
+                label: appLabels.repriseTecFrance,
+                href: makeRepriseTecCollectivitesUrl(),
+              },
               ...(collectivite.region
                 ? [
                     {
                       label: collectivite.region,
-                      href: makeRepriseTecUrl({ region: collectivite.region }),
+                      href: makeRepriseTecCollectivitesUrl({
+                        region: collectivite.region,
+                      }),
                     },
                   ]
                 : []),
@@ -71,7 +76,7 @@ export const RepriseTecCollectiviteView = ({
                 ? [
                     {
                       label: collectivite.departement,
-                      href: makeRepriseTecUrl({
+                      href: makeRepriseTecCollectivitesUrl({
                         region: collectivite.region,
                         departement: collectivite.departement,
                       }),
