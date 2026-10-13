@@ -23,6 +23,26 @@ describe('permissionsByRole', () => {
     expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
   });
 
+  it("n'accorde l'entrée dans la zone admin qu'au super admin", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('utils.backoffice.read')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+  });
+
+  it("n'accorde l'écriture dans la zone admin qu'au super admin", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('utils.backoffice.mutate')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+  });
+
   it("n'accorde la reprise d'un import IA en échec qu'au super admin", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>

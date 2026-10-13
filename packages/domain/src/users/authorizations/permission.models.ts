@@ -86,6 +86,8 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'shared.actions-de-reference.mutate',
     'utils.banner.mutate',
     'utils.mcp.read',
+    'utils.backoffice.read',
+    'utils.backoffice.mutate',
   ],
   [PlatformRole.ADEME]: [
     ...visiteurVerifiePermissions,

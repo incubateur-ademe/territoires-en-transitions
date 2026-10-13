@@ -1,4 +1,5 @@
 import {
+  adminPath,
   getRechercheViewUrl,
   profilAssistantPath,
   profilPath,
@@ -8,6 +9,7 @@ import { canUseAssistant } from '@/app/users/assistant/can-use-assistant';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { Badge } from '@tet/ui';
 import {
+  hasPermission,
   hasRole,
   PlatformRole,
   UserWithRolesAndPermissions,
@@ -74,6 +76,15 @@ export const makeSecondaryNav = ({
                     />
                   </span>
                 ),
+              },
+            ]
+          : []),
+        ...(hasPermission(user, 'utils.backoffice.read')
+          ? [
+              {
+                dataTest: 'user-admin',
+                href: adminPath,
+                children: appLabels.administration,
               },
             ]
           : []),
