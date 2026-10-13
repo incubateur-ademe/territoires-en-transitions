@@ -110,6 +110,16 @@ describe('canSwitchToTe', () => {
     expect(canSwitchToTe(prefs)).toBe(false);
   });
 
+  it('retourne false pour un référentiel gardé en écriture sans être engagé (TE en write)', () => {
+    const prefs: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    };
+
+    expect(canSwitchToTe(prefs)).toBe(false);
+  });
+
   it('retourne false quand TE readonly mais aucune source à migrer', () => {
     const prefs: CollectiviteReferentielPreferences = {
       cae: { display: false, mode: 'archived' },

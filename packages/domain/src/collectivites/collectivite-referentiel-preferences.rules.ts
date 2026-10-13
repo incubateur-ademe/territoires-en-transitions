@@ -20,9 +20,17 @@ export function preferenceFromDisplay(
  * Niveau de remplissage d'un référentiel CAE ou ECI par une collectivité :
  * - `vide` : aucun statut ni texte renseigné ;
  * - `superficiel` : des données, mais trop peu pour que le référentiel soit engagé ;
+ * - `actif` : trop peu de données pour être engagé, mais une saisie récente :
+ *   le référentiel reste en écriture sans rendre la collectivité éligible à la
+ *   bascule vers TE ;
  * - `engage` : activité suffisante pour que le référentiel reste en écriture.
  */
-export const niveauxRemplissage = ['vide', 'superficiel', 'engage'] as const;
+export const niveauxRemplissage = [
+  'vide',
+  'superficiel',
+  'actif',
+  'engage',
+] as const;
 
 export type NiveauRemplissage = (typeof niveauxRemplissage)[number];
 
@@ -36,7 +44,7 @@ export function isReferentielArchiveDisplayed(
 function caeEciPreferenceFromNiveauRemplissage(
   niveauRemplissage: NiveauRemplissage
 ): ReferentielPreference {
-  return niveauRemplissage === 'engage'
+  return niveauRemplissage === 'engage' || niveauRemplissage === 'actif'
     ? { display: true, mode: 'write' }
     : {
         display: isReferentielArchiveDisplayed(niveauRemplissage),
@@ -96,6 +104,8 @@ export function deriveReferentielPreferences(
     };
   }
 
+  // un référentiel `actif` reste en écriture mais n'engage pas la collectivité :
+  // TE reste en écriture, la bascule n'est donc pas proposée
   const collectiviteEngaged = input.cae === 'engage' || input.eci === 'engage';
 
   return {
@@ -165,8 +175,14 @@ export function toggleReferentielDisplayPreference(
   );
 
   return {
-    // seul le mode de TE est recalculé, sa présence dans la navigation est conservée
-    te: { ...derived.te, display: display.te },
+    // seul le mode de TE est recalculé, sa présence dans la navigation est conservée.
+    // TE déjà en écriture le reste : un référentiel CAE/ECI en écriture n'est pas
+    // forcément engagé (niveau `actif`), le masquage d'un autre ne doit pas
+    // rendre la collectivité éligible à la bascule
+    te:
+      referentiels.te.mode === 'write'
+        ? referentiels.te
+        : { ...derived.te, display: display.te },
     cae: isArchived('cae') ? referentiels.cae : derived.cae,
     eci: isArchived('eci') ? referentiels.eci : derived.eci,
   };

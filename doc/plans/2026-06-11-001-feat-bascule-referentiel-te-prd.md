@@ -114,8 +114,11 @@ Les seuils **50** et **150** sur une même métrique sont **deux critères indé
 | Niveau | Définition | Préférence |
 |---|---|---|
 | `engage` | ≥ 2 critères sur 5 (`shouldDisplayReferentielByCriteria`) | `mode: write`, `display: true` |
-| `superficiel` | au moins un statut ou une explication non vide, mais < 2 critères sur 5 | `mode: archived`, `display: true` |
+| `actif` | < 2 critères sur 5, mais un statut renseigné ou une explication non vide saisi depuis moins de 2 ans | `mode: write`, `display: true` |
+| `superficiel` | au moins un statut ou une explication non vide, mais < 2 critères sur 5 et aucune saisie depuis 2 ans | `mode: archived`, `display: true` |
 | `vide` | aucun statut ni explication | `mode: archived`, `display: false` |
+
+Un référentiel `actif` reste en écriture pour ne pas couper une saisie en cours, mais il n'engage pas la collectivité : sans autre référentiel `engage`, TE reste en `write` et la bascule n'est pas proposée.
 
 Un référentiel au remplissage `superficiel` reste donc dans la navigation EDL, en lecture seule avec le libellé « (archivé) » ; seul un référentiel `vide` en disparaît. Dans les deux cas :
 

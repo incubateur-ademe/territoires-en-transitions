@@ -45,7 +45,8 @@ export type ResetAllCollectivitesDisplayPreferencesOutput = {
 
 /**
  * This service is used to reset the display preferences for a collectivité based on its activities
- * A legacy referentiel (CAE/ECI) stays writable only if the collectivité is engaged on it.
+ * A legacy referentiel (CAE/ECI) stays writable only if the collectivité is engaged on it,
+ * or filled it in recently (which does not make it eligible to the switch to TE).
  * Otherwise it is archived, and stays displayed unless no statut nor text has been filled in
  * Syndicats and DROM are not eligible to the new referentiel, and a collectivité
  * with an active COT, an audit or an audit request cannot switch yet: they keep
