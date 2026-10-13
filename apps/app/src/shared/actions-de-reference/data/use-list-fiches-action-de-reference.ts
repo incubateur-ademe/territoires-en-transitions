@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import type { UseListFichesActionDeReference } from '../actions-de-reference.contract';
+import { toActionDeReferenceFiches } from './to-action-de-reference-fiches';
 
 export const useListFichesActionDeReference: UseListFichesActionDeReference = (
   actionDeReferenceId
@@ -12,16 +13,5 @@ export const useListFichesActionDeReference: UseListFichesActionDeReference = (
     })
   );
 
-  if (listFichesQuery.data) {
-    return { status: 'loaded', fiches: listFichesQuery.data };
-  }
-  if (listFichesQuery.isLoadingError) {
-    return {
-      status: 'error',
-      retry: (): void => {
-        void listFichesQuery.refetch();
-      },
-    };
-  }
-  return { status: 'loading' };
+  return toActionDeReferenceFiches(listFichesQuery);
 };

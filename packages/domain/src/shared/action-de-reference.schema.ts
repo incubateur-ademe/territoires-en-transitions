@@ -47,6 +47,15 @@ export type GetActionDeReferenceInput = z.output<
   typeof getActionDeReferenceInputSchema
 >;
 
+export const listFichesActionDeReferenceInputSchema = z.extend(
+  getActionDeReferenceInputSchema,
+  { excludedCollectiviteId: z.optional(z.int32().check(z.positive())) }
+);
+
+export type ListFichesActionDeReferenceInput = z.output<
+  typeof listFichesActionDeReferenceInputSchema
+>;
+
 export const actionDeReferenceSortFieldEnumValues = [
   'titre',
   'levier',

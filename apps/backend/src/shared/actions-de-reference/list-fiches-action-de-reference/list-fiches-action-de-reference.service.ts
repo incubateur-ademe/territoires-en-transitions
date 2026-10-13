@@ -4,7 +4,7 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { GetActionDeReferenceInput } from '@tet/domain/shared';
+import { ListFichesActionDeReferenceInput } from '@tet/domain/shared';
 import { uniq } from 'es-toolkit';
 import { ActionDeReferenceFicheRepository } from '../action-de-reference-fiche.repository';
 import { ListFichesActionDeReferenceError } from '../actions-de-reference.errors';
@@ -12,7 +12,7 @@ import { ActionsDeReferenceRepository } from '../actions-de-reference.repository
 import { maskFichesNotReadableBy } from './list-fiches-action-de-reference.rules';
 
 type ListFichesActionDeReference = (
-  input: GetActionDeReferenceInput,
+  input: ListFichesActionDeReferenceInput,
   secondArg: ServiceSecondArg
 ) => Promise<Result<FicheWithRelations[], ListFichesActionDeReferenceError>>;
 
@@ -25,7 +25,10 @@ export class ListFichesActionDeReferenceService {
     private readonly fichePermissions: FicheActionPermissionsService
   ) {}
 
-  listFiches: ListFichesActionDeReference = async ({ id }, { user, tx }) => {
+  listFiches: ListFichesActionDeReference = async (
+    { id, excludedCollectiviteId },
+    { user, tx }
+  ) => {
     const actionResult = await this.actionsRepository.get({ id });
     if (!actionResult.success) {
       return failure(actionResult.error);
@@ -33,6 +36,7 @@ export class ListFichesActionDeReferenceService {
 
     const ficheIdsResult = await this.fichesRepository.listFicheIds({
       actionDeReferenceId: id,
+      excludedCollectiviteId,
       tx,
     });
     if (!ficheIdsResult.success) {
