@@ -12,7 +12,7 @@ import { getIndicateurPeriodeInputOptions } from './indicateur-periode-input.opt
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
-  periodicite: SupportedIndicateurPeriodicite;
+  periodicite: SupportedIndicateurPeriodicite | undefined;
   collectiviteId: number;
   definition: Pick<IndicateurDefinition, 'id'>;
   existingPeriodes: readonly IndicateurPeriode[];
@@ -33,7 +33,10 @@ export const useIndicateurTableDeclaration = ({
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
   const { mutateAsync: upsertValeur } = useUpsertIndicateurValeur({
-    successMessage: getIndicateurPeriodeInputOptions(periodicite).success,
+    successMessage:
+      periodicite === undefined
+        ? undefined
+        : getIndicateurPeriodeInputOptions(periodicite).success,
     disableErrorToast: true,
   });
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
@@ -63,7 +66,7 @@ export const useIndicateurTableDeclaration = ({
   };
 
   return {
-    header: canWrite && (
+    header: canWrite && periodicite !== undefined && (
       <AddIndicateurPeriodeHeader
         periodicite={periodicite}
         existingPeriodes={existingPeriodes}

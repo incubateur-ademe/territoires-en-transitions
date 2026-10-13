@@ -96,6 +96,51 @@ for (const type of ['resultat', 'objectif'] as const) {
   });
 }
 
+test('Ne pas charger une série annuelle pour une définition mensuelle', async ({
+  page,
+  collectivites,
+  indicateurs,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Périodicité du graphique',
+    unite: '%',
+  });
+
+  // The public write API currently creates annual indicators only.
+  await page.route('**/indicateurs.indicateurs.list*', async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    for (const definition of body.result.data.data) {
+      if (definition.id === indicateurId) definition.periodicite = 'mensuelle';
+    }
+    await route.fulfill({ response, json: body });
+  });
+  const valueRequests: Request[] = [];
+  page.on('request', (request) => {
+    if (!request.url().includes('indicateurs.valeurs.list')) return;
+    const input = new URL(request.url()).searchParams.get('input');
+    if (input && JSON.parse(input).indicateurIds?.includes(indicateurId)) {
+      valueRequests.push(request);
+    }
+  });
+
+  await page.goto(
+    `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
+  );
+
+  await expect(
+    page.getByText('Erreur : INDICATEUR_ANNUAL_PERIODICITE_REQUIRED', {
+      exact: true,
+    })
+  ).toBeVisible();
+  expect(valueRequests).toHaveLength(0);
+});
+
 test('Déclarer une année persiste après rafraîchissement', async ({
   page,
   collectivites,

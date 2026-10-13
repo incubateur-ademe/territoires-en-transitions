@@ -5,7 +5,7 @@ import {
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
 import { useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
@@ -37,9 +37,20 @@ export const useIndicateurChartInfo = ({
   definition?: IndicateurDefinitionListItem;
   externalCollectiviteId?: number;
 }) => {
-  const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
-  // Le modèle du graphe et son adaptateur de périodes restent annuels.
-  const periodicite = IndicateurPeriodiciteEnum.ANNUELLE;
+  const {
+    id: indicateurId,
+    estAgregation,
+    enfants,
+    unite,
+    periodicite,
+  } = definition ?? {};
+  if (periodicite !== undefined) {
+    // prepareData groups values by year; reject other cadences before querying.
+    IndicateurPeriodes.assertAnnual(
+      periodicite,
+      'Le modèle annuel du graphique'
+    );
+  }
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
@@ -57,7 +68,7 @@ export const useIndicateurChartInfo = ({
         periodicite,
       },
       {
-        enabled: !!indicateurId,
+        enabled: !!indicateurId && periodicite !== undefined,
       }
     );
 
@@ -86,7 +97,7 @@ export const useIndicateurChartInfo = ({
         periodicite,
       },
       {
-        enabled: !!indicateurIds?.length,
+        enabled: !!indicateurIds?.length && periodicite !== undefined,
       }
     );
 
