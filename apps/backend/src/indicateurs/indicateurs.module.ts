@@ -14,6 +14,7 @@ import { UsersModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
+import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
@@ -126,6 +127,7 @@ const DEFINITIONS_PROVIDERS = [
 
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
+    IndicateurChartBuilder,
     IndicateurChartService,
     VerificationTrajectoireRules,
     TrajectoiresDataService,
@@ -159,6 +161,7 @@ const DEFINITIONS_PROVIDERS = [
     ValeursReferenceService,
 
     IndicateursRouter,
+    IndicateurChartBuilder,
     IndicateurChartService,
   ],
   controllers: [
