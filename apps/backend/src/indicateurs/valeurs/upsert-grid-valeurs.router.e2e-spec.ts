@@ -1,6 +1,8 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
+import { createGroupement } from '@tet/backend/collectivites/shared/models/groupement.test-fixture';
 import { getAuthUserFromUserCredentials, getTestApp } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -18,6 +20,8 @@ import { indicateurCollectiviteTable } from '../definitions/indicateur-collectiv
 import { inferProcedureInput } from '@trpc/server';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { indicateurValeurTable } from './indicateur-valeur.table';
+import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.service';
+import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 
 type InputUpsertMany = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['upsertMany']
@@ -29,6 +33,7 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
   let databaseService: DatabaseService;
   let authenticatedUser: AuthenticatedUser;
   let collectiviteId: number;
+  let cleanupFixture: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -37,12 +42,17 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     const fixture = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    cleanupFixture = fixture.cleanup;
     collectiviteId = fixture.collectivite.id;
     authenticatedUser = getAuthUserFromUserCredentials(fixture.user);
   });
 
   afterAll(async () => {
-    await app.close();
+    try {
+      await cleanupFixture?.();
+    } finally {
+      await app.close();
+    }
   });
 
   const insertAnnualIndicateur = async ({
@@ -107,6 +117,94 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
         )
       );
     expect(collectiviteMetadata?.modifiedBy).toBe(authenticatedUser.id);
+  });
+
+  test('Retourne le succès et conserve les valeurs si la publication échoue après le commit', async () => {
+    const indicateurId = await insertAnnualIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+    const publishEvents = vi
+      .spyOn(
+        app.get(ManageIndicateurValeursService),
+        'publishValeurUpsertedEvents'
+      )
+      .mockRejectedValueOnce(new Error('Publication indisponible'));
+    const logError = vi.spyOn(Logger.prototype, 'error');
+    onTestFinished(() => {
+      publishEvents.mockRestore();
+      logError.mockRestore();
+    });
+
+    const saved = await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [
+        {
+          indicateurId,
+          period: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.ANNUELLE,
+            '2026'
+          ),
+          resultat: 42,
+        },
+      ],
+    });
+
+    expect(saved).toMatchObject([{ indicateurId, resultat: 42 }]);
+    expect(
+      await databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+    ).toMatchObject([{ id: saved[0].id, resultat: 42 }]);
+    expect(publishEvents).toHaveBeenCalledExactlyOnceWith(
+      saved,
+      authenticatedUser
+    );
+    expect(logError).toHaveBeenCalledWith(
+      expect.stringContaining('Publication indisponible')
+    );
+  });
+
+  test('Annule les écritures et ne publie rien si le recalcul échoue avant le commit', async () => {
+    const indicateurId = await insertAnnualIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+    const calculateValeurs = vi
+      .spyOn(
+        app.get(ComputeValeursService),
+        'updateCalculatedIndicateurValeurs'
+      )
+      .mockRejectedValueOnce(new Error('Recalcul indisponible'));
+    const publishEvents = vi.spyOn(
+      app.get(ManageIndicateurValeursService),
+      'publishValeurUpsertedEvents'
+    );
+    onTestFinished(() => {
+      calculateValeurs.mockRestore();
+      publishEvents.mockRestore();
+    });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertMany({
+        collectiviteId,
+        valeurs: [
+          {
+            indicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.ANNUELLE,
+              '2026'
+            ),
+            resultat: 42,
+          },
+        ],
+      })
+    ).rejects.toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
+
+    expect(
+      await databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+    ).toHaveLength(0);
+    expect(publishEvents).not.toHaveBeenCalled();
   });
 
   test('Fusionne résultat et objectif de la même année et applique la précision sans perdre les commentaires', async () => {
@@ -330,6 +428,98 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     expect(saved).toHaveLength(0);
   });
 
+  test("Rejette tout le lot après le retrait du groupement, même pour la collectivité propriétaire d'un indicateur historique", async () => {
+    const groupement = await createGroupement({
+      database: databaseService,
+      groupementData: { collectiviteIds: [collectiviteId] },
+    });
+    onTestFinished(groupement.cleanup);
+    const writableIndicateurId = await insertAnnualIndicateur();
+    const sharedIndicateurId = await insertAnnualIndicateur();
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ groupementId: groupement.id })
+      .where(eq(indicateurDefinitionTable.id, sharedIndicateurId));
+    await databaseService.db
+      .delete(groupementCollectiviteTable)
+      .where(
+        and(
+          eq(groupementCollectiviteTable.groupementId, groupement.id),
+          eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      );
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertMany({
+        collectiviteId,
+        valeurs: [writableIndicateurId, sharedIndicateurId].map(
+          (indicateurId) => ({
+            indicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.ANNUELLE,
+              '2026'
+            ),
+            resultat: 42,
+          })
+        ),
+      })
+    ).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+      cause: expect.objectContaining({
+        message: expect.stringContaining('non disponible pour la collectivité'),
+      }),
+    });
+
+    expect(
+      await databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(
+          inArray(indicateurValeurTable.indicateurId, [
+            writableIndicateurId,
+            sharedIndicateurId,
+          ])
+        )
+    ).toHaveLength(0);
+  });
+
+  test("Autorise un lot pour un indicateur historique si sa collectivité appartient au groupement", async () => {
+    const groupement = await createGroupement({
+      database: databaseService,
+      groupementData: { collectiviteIds: [collectiviteId] },
+    });
+    onTestFinished(groupement.cleanup);
+    const indicateurId = await insertAnnualIndicateur();
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ groupementId: groupement.id })
+      .where(eq(indicateurDefinitionTable.id, indicateurId));
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertMany({
+        collectiviteId,
+        valeurs: [
+          {
+            indicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.ANNUELLE,
+              '2026'
+            ),
+            resultat: 0,
+          },
+        ],
+      })
+    ).resolves.toMatchObject([{ indicateurId, resultat: 0 }]);
+    expect(
+      await databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+    ).toMatchObject([{ collectiviteId, resultat: 0 }]);
+  });
+
   test("Une clé d'API en lecture seule ne peut pas écrire un lot de grille avec les droits de son propriétaire", async () => {
     const annualIndicateurId = await insertAnnualIndicateur();
     const readOnlyApiKeyUser: AuthenticatedUser = {
@@ -423,11 +613,13 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     });
   });
   test('Autorise un utilisateur en édition limitée uniquement après son affectation comme pilote', async () => {
-    const indicateurId = await insertAnnualIndicateur();
-    const { user } = await addTestUser(databaseService, {
+    const { user, cleanup } = await addTestUser(databaseService, {
       collectiviteId,
       role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
+    onTestFinished(cleanup);
+    // Cleanup runs in reverse order: remove the indicateur before its author.
+    const indicateurId = await insertAnnualIndicateur();
     const limitedUser = getAuthUserFromUserCredentials(user);
     const caller = router.createCaller({ user: limitedUser });
     const input: InputUpsertMany = {

@@ -19,7 +19,6 @@ import {
 } from '@tet/domain/indicateurs';
 import { getErrorMessage } from '@tet/domain/utils';
 import { isNotNil, keyBy, round } from 'es-toolkit';
-import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.service';
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
@@ -28,7 +27,7 @@ import { UpsertGridValeursError } from './upsert-grid-valeurs.errors';
 import { UpsertGridValeursInput } from './upsert-grid-valeurs.input';
 import { UpsertGridValeursRepository } from './upsert-grid-valeurs.repository';
 import { UserIndicateurValeurNotAllowedException } from './write-indicateur-valeurs/user-indicateur-valeur.errors';
-import { assertUserIndicateurValeursAllowed } from './write-indicateur-valeurs/user-indicateur-valeur.rules';
+import { ValidateIndicateurValeursWriteService } from './write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 
 type UpsertGridValeursContext = { user: AuthenticatedUser };
 
@@ -64,7 +63,7 @@ export class UpsertGridValeursService {
     private readonly updateDefinitionService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService,
     private readonly lockRepository: IndicateurValeurLockRepository,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository,
+    private readonly validationService: ValidateIndicateurValeursWriteService,
     private readonly repository: UpsertGridValeursRepository
   ) {}
 
@@ -117,43 +116,13 @@ export class UpsertGridValeursService {
         UpsertGridValeursError
       >(async (tx) => {
         try {
-          // Validate the catalogue policy again under the definition lock.
-          const lockedDefinitions =
-            await this.definitionLockRepository.lockDefinitions(
-              indicateurIds,
-              tx
-            );
-          if (lockedDefinitions.length !== indicateurIds.length) {
-            return failure('NOT_FOUND');
-          }
-          assertUserIndicateurValeursAllowed(lockedDefinitions);
-          const lockedDefinitionsById = keyBy(
-            lockedDefinitions,
-            (definition) => definition.id
-          );
           const now = new Date().toISOString();
-          const valeursToWrite: IndicateurValeurCreate[] = [];
-          for (const valeur of mergedValeurs) {
-            const definition = lockedDefinitionsById[valeur.indicateurId];
-            if (!definition) {
-              return failure('NOT_FOUND');
-            }
-            if (valeur.period.periodicite !== definition.periodicite) {
-              return failure('INVALID_GRID_VALEUR');
-            }
-            const resultat = isNotNil(valeur.resultat)
-              ? round(valeur.resultat, definition.precision)
-              : valeur.resultat;
-            const objectif = isNotNil(valeur.objectif)
-              ? round(valeur.objectif, definition.precision)
-              : valeur.objectif;
-            valeursToWrite.push({
+          const valeursToValidate: IndicateurValeurCreate[] =
+            mergedValeurs.map(({ period, ...valeur }) => ({
+              ...valeur,
               collectiviteId,
-              indicateurId: valeur.indicateurId,
-              dateValeur: IndicateurPeriodes.toDateValeur(valeur.period),
-              periodicite: valeur.period.periodicite,
-              ...(resultat !== undefined && { resultat }),
-              ...(objectif !== undefined && { objectif }),
+              dateValeur: IndicateurPeriodes.toDateValeur(period),
+              periodicite: period.periodicite,
               metadonneeId: null,
               calculAuto: false,
               calculAutoIdentifiantsManquants: null,
@@ -161,8 +130,32 @@ export class UpsertGridValeursService {
               modifiedBy: user.id,
               createdAt: now,
               modifiedAt: now,
-            });
+            }));
+          // Recheck catalogue policy and availability under transaction locks.
+          const validation = await this.validationService.validate(
+            { valeurs: valeursToValidate, definitions: indicateursById },
+            { user, tx }
+          );
+          if (!validation.success) {
+            return failure(
+              validation.error === 'INVALID_VALUE'
+                ? 'INVALID_GRID_VALEUR'
+                : validation.error,
+              validation.cause
+            );
           }
+          const valeursToWrite = valeursToValidate.map((valeur) => {
+            const definition = validation.data[valeur.indicateurId];
+            return {
+              ...valeur,
+              resultat: isNotNil(valeur.resultat)
+                ? round(valeur.resultat, definition.precision)
+                : valeur.resultat,
+              objectif: isNotNil(valeur.objectif)
+                ? round(valeur.objectif, definition.precision)
+                : valeur.objectif,
+            };
+          });
 
           await this.lockRepository.lock(valeursToWrite, tx);
           const saved = await this.repository.upsert(valeursToWrite, tx);
@@ -172,7 +165,7 @@ export class UpsertGridValeursService {
           );
           const calculated =
             await this.computeValeursService.updateCalculatedIndicateurValeurs(
-              saved.map((valeur) => ({ ...valeur })),
+              saved,
               tx
             );
           changed.push(...saved);
@@ -202,10 +195,17 @@ export class UpsertGridValeursService {
       if (!transactionResult.success) {
         return transactionResult;
       }
-      await this.manageIndicateurValeursService.publishValeurUpsertedEvents(
-        changed,
-        user
-      );
+      // The transaction is committed: publication failures cannot undo it.
+      try {
+        await this.manageIndicateurValeursService.publishValeurUpsertedEvents(
+          changed,
+          user
+        );
+      } catch (error) {
+        this.logger.error(
+          `Échec de publication des événements d'upsert : ${getErrorMessage(error)}`
+        );
+      }
       return success(transactionResult.data);
     } catch (error) {
       if (error instanceof UserIndicateurValeurNotAllowedException) {
