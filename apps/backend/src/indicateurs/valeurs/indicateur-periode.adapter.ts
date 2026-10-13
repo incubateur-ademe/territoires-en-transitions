@@ -1,42 +1,42 @@
 import {
-  IndicateurPeriod,
+  IndicateurPeriode,
   IndicateurPeriodicite,
   IndicateurPeriodiciteEnum,
-  IndicateurPeriods,
+  IndicateurPeriodes,
   LocalDate,
 } from '@tet/domain/indicateurs';
 
-type StoredIndicateurPeriod = Readonly<{
+type StoredIndicateurPeriode = Readonly<{
   periodicite: IndicateurPeriodicite;
   dateValeur: string;
 }>;
 
 /** PostgreSQL boundary: persisted dates must already be canonical. */
-export const hydrateIndicateurPeriod = ({
+export const hydrateIndicateurPeriode = ({
   periodicite,
   dateValeur,
-}: StoredIndicateurPeriod): IndicateurPeriod =>
-  IndicateurPeriods.fromDateValeur(periodicite, dateValeur);
+}: StoredIndicateurPeriode): IndicateurPeriode =>
+  IndicateurPeriodes.fromDateValeur(periodicite, dateValeur);
 
 /** Preserve historical annual clients; new cadences use canonical dates. */
-export const hydrateLegacyIndicateurPeriod = ({
+export const hydrateLegacyIndicateurPeriode = ({
   periodicite,
   dateValeur,
 }: Readonly<{
   periodicite?: IndicateurPeriodicite;
   dateValeur: string;
-}>): IndicateurPeriod =>
+}>): IndicateurPeriode =>
   periodicite === undefined ||
   periodicite === IndicateurPeriodiciteEnum.ANNUELLE
-    ? IndicateurPeriods.containing(
+    ? IndicateurPeriodes.containing(
         IndicateurPeriodiciteEnum.ANNUELLE,
         dateValeur
       )
-    : hydrateIndicateurPeriod({ periodicite, dateValeur });
+    : hydrateIndicateurPeriode({ periodicite, dateValeur });
 
-export const dehydrateIndicateurPeriod = (
-  period: IndicateurPeriod
-): LocalDate => IndicateurPeriods.toDateValeur(period);
+export const dehydrateIndicateurPeriode = (
+  periode: IndicateurPeriode
+): LocalDate => IndicateurPeriodes.toDateValeur(periode);
 
 /** Legacy date-only write contracts have always represented annual data. */
 export const getLegacyIndicateurPeriodicite = (

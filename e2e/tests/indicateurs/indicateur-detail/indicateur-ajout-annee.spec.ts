@@ -319,17 +319,17 @@ test('Valider les années et refuser les doublons avant et après enregistrement
   await input.fill('2025');
   await expect(submit).toBeVisible();
   await submit.click();
-  const periodHeaders = valeurs.table.getByRole('columnheader').filter({
+  const periodeHeaders = valeurs.table.getByRole('columnheader').filter({
     has: page.getByRole('button', { name: /Supprimer la période/ }),
   });
-  await expect(periodHeaders).toHaveText(['2025', '2026', '2027']);
+  await expect(periodeHeaders).toHaveText(['2025', '2026', '2027']);
 
   await valeurs.addResultat(2026, 0);
-  await expect(periodHeaders).toHaveText(['2025', '2026', '2027']);
+  await expect(periodeHeaders).toHaveText(['2025', '2026', '2027']);
   await expect(valeurs.table.getByText('2026', { exact: true })).toHaveCount(1);
   await expect(valeurs.table.getByText('2027', { exact: true })).toBeVisible();
   await page.reload();
-  await expect(periodHeaders).toHaveText(['2025', '2026', '2027']);
+  await expect(periodeHeaders).toHaveText(['2025', '2026', '2027']);
   await input.fill('2026');
   await resultatsTab.click();
   await expect(submit).toHaveCount(0);

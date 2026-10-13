@@ -72,7 +72,7 @@ export class IndicateurValeursPom {
     ).toBeVisible();
 
     const combinedCell = this.table.locator(
-      `td[data-period="${annee}"][data-source="collectivite"]`
+      `td[data-periode="${annee}"][data-source="collectivite"]`
     );
     if (await combinedCell.count()) {
       const add = combinedCell.getByTestId('indicateurs.valeurs.add');

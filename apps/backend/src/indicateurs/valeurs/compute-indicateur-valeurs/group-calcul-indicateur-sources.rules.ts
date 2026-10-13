@@ -1,8 +1,8 @@
 import {
   COLLECTIVITE_SOURCE_ID,
   PCAET_COLLECTIVITE_SOURCE_ID,
-  IndicateurPeriod,
-  IndicateurPeriods,
+  IndicateurPeriode,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import type {
   CalculSourceGroup,
@@ -22,11 +22,11 @@ export const normalizeCalculSourceId = (
 
 export const getCalculSourceGroupKey = (
   collectiviteId: number,
-  period: IndicateurPeriod,
+  periode: IndicateurPeriode,
   sourceId?: string | null,
   metadonneeId?: number | null
 ): string =>
-  `${collectiviteId}_${IndicateurPeriods.key(period)}_${
+  `${collectiviteId}_${IndicateurPeriodes.key(periode)}_${
     normalizeCalculSourceId(sourceId) ?? COLLECTIVITE_SOURCE_ID
   }${
     sourceId === PCAET_COLLECTIVITE_SOURCE_ID ? `_${metadonneeId ?? -1}` : ''
@@ -99,7 +99,7 @@ export const fillCalculSourceGroups = (
   for (const valeur of valeurs) {
     if (!neededIdentifiants.has(valeur.indicateurIdentifiant)) continue;
     // Stored calculations always follow the target definition's cadence.
-    if (valeur.period.periodicite !== definition.periodicite) continue;
+    if (valeur.periode.periodicite !== definition.periodicite) continue;
     const sourceId = normalizeCalculSourceId(valeur.sourceId);
     const sources = [
       sourceId,
@@ -114,13 +114,13 @@ export const fillCalculSourceGroups = (
         groupSourceId === sourceId ? valeur.metadonneeId : -1;
       const key = getCalculSourceGroupKey(
         valeur.collectiviteId,
-        valeur.period,
+        valeur.periode,
         groupSourceId,
         metadonneeId
       );
       const discoveryKey = getCalculSourceGroupKey(
         valeur.collectiviteId,
-        valeur.period,
+        valeur.periode,
         groupSourceId,
         -1
       );
@@ -131,7 +131,7 @@ export const fillCalculSourceGroups = (
       if (!groups[key] && (allowCreation || discoversPcaetGroup)) {
         groups[key] = {
           collectiviteId: valeur.collectiviteId,
-          period: valeur.period,
+          periode: valeur.periode,
           sourceId: groupSourceId,
           metadonneeId,
           valeurs: [],
@@ -148,8 +148,8 @@ export const fillCalculSourceGroups = (
     for (const group of Object.values(groups)) {
       if (
         group.collectiviteId !== valeur.collectiviteId ||
-        IndicateurPeriods.key(group.period) !==
-          IndicateurPeriods.key(valeur.period)
+        IndicateurPeriodes.key(group.periode) !==
+          IndicateurPeriodes.key(valeur.periode)
       )
         continue;
       const isDirect = group.sourceId === sourceId;

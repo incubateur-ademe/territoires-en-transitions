@@ -1,6 +1,6 @@
 import {
   IndicateurDefinition,
-  IndicateurPeriod,
+  IndicateurPeriode,
   IndicateurValeur,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
@@ -12,8 +12,8 @@ export type PcaetIndicateurValeurType = Extract<
   'resultat' | 'objectif'
 >;
 
-export type IndicateurPeriodColumn = {
-  period: IndicateurPeriod | null;
+export type IndicateurPeriodeColumn = {
+  periode: IndicateurPeriode | null;
   valeurTypes: readonly PcaetIndicateurValeurType[];
   renderHeader: (colSpan: number) => ReactNode;
 };
@@ -24,7 +24,7 @@ export type IndicateurTableRow = {
   indicateurDefinition: IndicateurDefinition;
   indicateurValeurs: IndicateurValeur[];
   /** Règle métier fournie par le contexte qui construit la grille. */
-  isValeurRequired: (period: IndicateurPeriod | null) => boolean;
+  isValeurRequired: (periode: IndicateurPeriode | null) => boolean;
   /**
    * `false` quand la collectivité a déclaré l'indicateur non applicable : la
    * ligne n'est plus saisissable et cesse d'être réclamée.

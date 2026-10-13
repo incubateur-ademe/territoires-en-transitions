@@ -117,7 +117,7 @@ finis, rafraîchissement des valeurs et scores après une écriture ou suppressi
 et respect de la lecture seule dans le diagnostic PCAET. La lecture des dates
 historiques reste inchangée ; les nouveaux contrôles stricts de périodes sont
 conservés dans #5215. Les cellules et leurs identifiants utilisent le service
-`IndicateurPeriods` du socle déjà déployé. `containing` conserve la lecture des
+`IndicateurPeriodes` du socle déjà déployé. `containing` conserve la lecture des
 observations annuelles datées en cours d'année. Les années restent aux frontières
 PCAET (horizons réglementaires et API annuelle), sans conversion des données.
 L'adaptateur PCAET porte aussi la règle des années facultatives et des lignes

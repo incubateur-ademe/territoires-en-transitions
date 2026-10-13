@@ -2,9 +2,9 @@ import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { appLabels } from '@/app/labels/catalog';
 import {
-    IndicateurPeriodes,
-    IndicateurPeriodiciteEnum,
-    type IndicateurPeriode,
+  IndicateurPeriodes,
+  IndicateurPeriodiciteEnum,
+  type IndicateurPeriodeAnnuelle,
 } from '@tet/domain/indicateurs';
 import type { OpenState } from '@tet/ui/utils/types';
 import type { ReactNode } from 'react';
@@ -12,10 +12,10 @@ import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
 
 export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
-  periodicite?: IndicateurPeriode['periodicite'];
+  periodicite?: IndicateurPeriodeAnnuelle['periodicite'];
   collectiviteId: number;
   definition: Pick<IndicateurDefinition, 'id'>;
-  existingPeriodes: readonly IndicateurPeriode[];
+  existingPeriodes: readonly IndicateurPeriodeAnnuelle[];
   openModalState?: OpenState;
 };
 
@@ -38,7 +38,9 @@ export const useIndicateurTableDeclaration = ({
   });
   const existingKeys = new Set(existingPeriodes.map(IndicateurPeriodes.key));
 
-  const addPeriode = async (periode: IndicateurPeriode): Promise<boolean> => {
+  const addPeriode = async (
+    periode: IndicateurPeriodeAnnuelle
+  ): Promise<boolean> => {
     const key = IndicateurPeriodes.key(periode);
     if (
       !canWrite ||

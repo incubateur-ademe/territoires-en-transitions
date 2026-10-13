@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from '@tet/ui';
 import { fn } from 'storybook/test';
 import { JSX, useState } from 'react';
-import { buildDiagnosticIndicateurPeriodColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-period.columns';
+import { buildDiagnosticIndicateurPeriodeColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-periode.columns';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
 import {
@@ -12,7 +12,7 @@ import {
   fakeYears,
 } from './grid-fixtures';
 
-const periodColumns = buildDiagnosticIndicateurPeriodColumns({
+const periodeColumns = buildDiagnosticIndicateurPeriodeColumns({
   years: fakeYears,
   referenceYear: fakeReferenceYear,
   currentYear: fakeReferenceYear,
@@ -28,7 +28,7 @@ const meta: Meta<typeof IndicateurValeursTable> = {
   args: {
     autosaveKey: 'grille',
     rows: fakeRows,
-    periodColumns,
+    periodeColumns,
     updateIndicateurValeurs,
     setIndicateurApplicable,
     title: 'Polluants atmosphériques',
@@ -46,7 +46,7 @@ export const Polluants: Story = {};
 export const LectureSeule: Story = {
   args: {
     isReadonly: true,
-    periodColumns: buildDiagnosticIndicateurPeriodColumns({
+    periodeColumns: buildDiagnosticIndicateurPeriodeColumns({
       years: fakeYears,
       referenceYear: fakeReferenceYear,
       currentYear: fakeReferenceYear,
@@ -57,7 +57,7 @@ export const LectureSeule: Story = {
 
 export const SansAnneeDeReference: Story = {
   args: {
-    periodColumns: buildDiagnosticIndicateurPeriodColumns({
+    periodeColumns: buildDiagnosticIndicateurPeriodeColumns({
       years: fakeYears.filter((year) => year !== fakeReferenceYear),
       referenceYear: null,
       currentYear: fakeReferenceYear,
@@ -121,7 +121,7 @@ const PolluantSwitchGrid = (): JSX.Element => {
       <IndicateurValeursTable
         autosaveKey="grille"
         rows={rowsByPolluant[selectedPolluant]}
-        periodColumns={periodColumns}
+        periodeColumns={periodeColumns}
         updateIndicateurValeurs={updateIndicateurValeurs}
         setIndicateurApplicable={setIndicateurApplicable}
         title="Polluants atmosphériques"

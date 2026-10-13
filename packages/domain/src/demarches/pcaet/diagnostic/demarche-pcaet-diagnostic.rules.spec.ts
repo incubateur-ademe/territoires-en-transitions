@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { IndicateurPeriodErrorEnum } from '../../../indicateurs/valeurs/indicateur-period.errors';
+import { IndicateurPeriodeErrorEnum } from '../../../indicateurs/valeurs/indicateur-periode.errors';
 import { PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS } from './demarche-pcaet-diagnostic.config';
 import {
   deriveReferenceYearFromIndicateurValeurYears,
@@ -482,6 +482,8 @@ describe('PCAET annual boundary', () => {
         indicateurs: [monthlyValeur],
         definitions: [],
       })
-    ).toThrow(IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED);
+    ).toThrow(
+      IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
+    );
   });
 });

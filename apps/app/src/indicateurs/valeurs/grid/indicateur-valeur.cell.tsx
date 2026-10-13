@@ -3,8 +3,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { CellContext } from '@tanstack/react-table';
 import {
-  IndicateurPeriod,
-  IndicateurPeriods,
+  IndicateurPeriode,
+  IndicateurPeriodes,
   IndicateurValeurType,
 } from '@tet/domain/indicateurs';
 import { cn, Input, TableCell, VisibleWhen } from '@tet/ui';
@@ -25,7 +25,7 @@ type IndicateurValeurCellProps = {
     unknown
   >;
   indicateurValeurType: Extract<IndicateurValeurType, 'resultat' | 'objectif'>;
-  period: IndicateurPeriod | null;
+  periode: IndicateurPeriode | null;
   isReadonly?: boolean;
   isRequired: boolean;
 };
@@ -39,26 +39,27 @@ export const IndicateurValeurCell = memo(
   ({
     cell,
     indicateurValeurType,
-    period,
+    periode,
     isReadonly = false,
     isRequired,
   }: IndicateurValeurCellProps): ReactNode => {
     const { indicateurId, indicateurValeurs, isApplicable } = cell.row.original;
 
-    const periodKey = period === null ? null : IndicateurPeriods.key(period);
+    const periodeKey =
+      periode === null ? null : IndicateurPeriodes.key(periode);
     const indicateurValeur =
-      period === null
+      periode === null
         ? undefined
         : indicateurValeurs.find(
             (valeur) =>
-              valeur.periodicite === period.periodicite &&
+              valeur.periodicite === periode.periodicite &&
               // Les dates historiques ne sont pas toutes au premier jour de la période.
-              IndicateurPeriods.key(
-                IndicateurPeriods.containing(
+              IndicateurPeriodes.key(
+                IndicateurPeriodes.containing(
                   valeur.periodicite,
                   valeur.dateValeur
                 )
-              ) === periodKey
+              ) === periodeKey
           );
 
     const currentValue = indicateurValeur?.[indicateurValeurType] ?? null;
@@ -68,10 +69,10 @@ export const IndicateurValeurCell = memo(
 
     const persist = useCallback(
       (value: number | null) => {
-        if (isReadonly || period === null) return Promise.resolve(false);
+        if (isReadonly || periode === null) return Promise.resolve(false);
         return updateIndicateurValeurs({
           indicateurId,
-          period,
+          periode,
           field: indicateurValeurType,
           value,
         });
@@ -79,7 +80,7 @@ export const IndicateurValeurCell = memo(
       [
         updateIndicateurValeurs,
         indicateurId,
-        period,
+        periode,
         indicateurValeurType,
         isReadonly,
       ]
@@ -121,7 +122,7 @@ export const IndicateurValeurCell = memo(
         tabIndex={-1}
         className={cellClassName}
         aria-invalid={edit.status === 'error'}
-        canEdit={!isReadonly && period !== null}
+        canEdit={!isReadonly && periode !== null}
         edit={{
           onClose: edit.save,
           renderOnEdit: ({ openState }) => (

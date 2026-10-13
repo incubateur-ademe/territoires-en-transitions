@@ -2218,7 +2218,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       };
       const lockRepository = {
         lock: vi.fn(async () => {
-          events.push('lock-periods');
+          events.push('lock-periodes');
         }),
       };
       const definitionLockRepository = {
@@ -2253,7 +2253,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       expect(events).toEqual([
         'lock-graph',
         'discover-values',
-        'lock-periods',
+        'lock-periodes',
         'delete-values',
         'recalculate',
       ]);

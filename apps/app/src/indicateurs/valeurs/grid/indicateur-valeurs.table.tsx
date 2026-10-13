@@ -11,7 +11,7 @@ import { IndicateurValeursTableLegend } from './indicateur-valeurs.table-legend'
 import {
   GridMaxHeight,
   IndicateurTableRow,
-  IndicateurPeriodColumn,
+  IndicateurPeriodeColumn,
 } from './types';
 import { useHorizontalScrollEdges } from './use-horizontal-scroll-edges';
 import { useListIndicateurValeursTableColumns } from './use-list-indicateur-valeurs-table-columns';
@@ -25,7 +25,7 @@ type Props = {
   /** Regroupe les écritures de la grille sous un même badge d'enregistrement. */
   autosaveKey: string;
   rows: IndicateurTableRow[];
-  periodColumns: readonly IndicateurPeriodColumn[];
+  periodeColumns: readonly IndicateurPeriodeColumn[];
   /** Nom de l’indicateur principal affiché en haut à gauche de la grille. */
   title: string;
   unit: string;
@@ -55,7 +55,7 @@ const MAX_HEIGHT_CLASSNAME: Record<GridMaxHeight, string | undefined> = {
 export const IndicateurValeursTable = ({
   autosaveKey,
   rows,
-  periodColumns,
+  periodeColumns,
   title,
   unit,
   isReadonly = false,
@@ -65,7 +65,7 @@ export const IndicateurValeursTable = ({
   isRequired,
 }: Props): JSX.Element => {
   const { columns } = useListIndicateurValeursTableColumns({
-    periodColumns,
+    periodeColumns,
     title,
     unit,
     isReadonly,

@@ -1,4 +1,4 @@
-import { getLegacyIndicateurPeriodicite } from '../indicateur-period.adapter';
+import { getLegacyIndicateurPeriodicite } from '../indicateur-periode.adapter';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';

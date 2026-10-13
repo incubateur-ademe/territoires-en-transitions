@@ -5,7 +5,7 @@ import type {
   CalculSourceGroups,
   IndicateurFormula,
 } from './calcul-indicateur.types';
-import { dehydrateIndicateurPeriod } from '../indicateur-period.adapter';
+import { dehydrateIndicateurPeriode } from '../indicateur-periode.adapter';
 import { DEFAULT_ROUNDING_PRECISION } from '../valeurs.constants';
 
 type EvaluateExpression = (
@@ -50,7 +50,7 @@ export const evaluateCalculIndicateur = (
 ): IndicateurValeurCreate[] => {
   if (!formula.definition.valeurCalcule) return [];
   return Object.values(groups).flatMap((group) => {
-    if (group.period.periodicite !== formula.definition.periodicite) return [];
+    if (group.periode.periodicite !== formula.definition.periodicite) return [];
     if (group.metadonneeId !== null && group.metadonneeId < 0) return [];
     const present = new Set(
       group.valeurs.map(({ indicateurIdentifiant }) => indicateurIdentifiant)
@@ -66,8 +66,8 @@ export const evaluateCalculIndicateur = (
       {
         collectiviteId: group.collectiviteId,
         indicateurId: formula.definition.id,
-        dateValeur: dehydrateIndicateurPeriod(group.period),
-        periodicite: group.period.periodicite,
+        dateValeur: dehydrateIndicateurPeriode(group.periode),
+        periodicite: group.periode.periodicite,
         resultat: evaluateField('resultat', formula, group, evaluate),
         objectif: evaluateField('objectif', formula, group, evaluate),
         metadonneeId: group.metadonneeId,

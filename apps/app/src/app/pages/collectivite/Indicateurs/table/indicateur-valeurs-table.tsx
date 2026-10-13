@@ -3,7 +3,7 @@ import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import {
   IndicateurPeriodes,
-  type IndicateurPeriode,
+  type IndicateurPeriodeAnnuelle,
 } from '@tet/domain/indicateurs';
 import {
   Button,
@@ -64,7 +64,7 @@ export const IndicateurValeursTable = ({
 
   const [commentaireValeur, setCommentaireValeur] = useState<null | {
     id?: number;
-    periode: IndicateurPeriode;
+    periode: IndicateurPeriodeAnnuelle;
     commentaire?: string | null;
   }>(null);
   const [toBeDeleted, setToBeDeleted] = useState<IndicateurPeriodeValue | null>(

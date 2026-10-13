@@ -3,10 +3,11 @@ import type { IndicateurPeriodicite } from '../definitions/indicateur-periodicit
 /** @internal Publicly nameable so downstream declaration emit preserves the brand. */
 export const localDateBrand: unique symbol = Symbol('LocalDate');
 /** @internal Publicly nameable so downstream declaration emit preserves the brand. */
-export const indicateurPeriodBrand: unique symbol = Symbol('IndicateurPeriod');
+export const indicateurPeriodeBrand: unique symbol =
+  Symbol('IndicateurPeriode');
 /** @internal Publicly nameable so downstream declaration emit preserves the brand. */
-export const indicateurPeriodKeyBrand: unique symbol = Symbol(
-  'IndicateurPeriodKey'
+export const indicateurPeriodeKeyBrand: unique symbol = Symbol(
+  'IndicateurPeriodeKey'
 );
 
 /** A calendar date without time or timezone, serialized as `YYYY-MM-DD`. */
@@ -18,17 +19,17 @@ export type LocalDate = string & { readonly [localDateBrand]: true };
  * The brand has no runtime representation: periods remain plain serializable
  * objects across tRPC and React Server Component boundaries.
  */
-export type IndicateurPeriod<
+export type IndicateurPeriode<
   K extends IndicateurPeriodicite = IndicateurPeriodicite
 > = Readonly<{
   periodicite: K;
   dateDebut: LocalDate;
-  readonly [indicateurPeriodBrand]: true;
+  readonly [indicateurPeriodeBrand]: true;
 }>;
 
 /** Stable identity for maps, sets, DOM attributes and cache keys. */
-export type IndicateurPeriodKey = string & {
-  readonly [indicateurPeriodKeyBrand]: true;
+export type IndicateurPeriodeKey = string & {
+  readonly [indicateurPeriodeKeyBrand]: true;
 };
 
 /** Local calendar values captured by the caller, without an implicit clock. */

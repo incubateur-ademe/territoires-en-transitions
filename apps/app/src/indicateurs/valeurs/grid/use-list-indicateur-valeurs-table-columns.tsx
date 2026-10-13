@@ -1,13 +1,13 @@
 'use client';
 
 import { createColumnHelper } from '@tanstack/react-table';
-import { IndicateurPeriods } from '@tet/domain/indicateurs';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { cn, TableCell, TableHeaderCell } from '@tet/ui';
 import { ComponentPropsWithoutRef, JSX, useMemo } from 'react';
 import { IndicateurTitleCell } from './indicateur-title.cell';
 import { IndicateurHeaderTitleCell } from './indicateur-title.header-cell';
 import { IndicateurValeurCell } from './indicateur-valeur.cell';
-import { IndicateurTableRow, IndicateurPeriodColumn } from './types';
+import { IndicateurTableRow, IndicateurPeriodeColumn } from './types';
 import { getTableMeta, IndicateurValeursTableFeatures } from './utils';
 
 const columnHelper = createColumnHelper<
@@ -26,7 +26,7 @@ const EmptyValueCell = ({
 );
 
 type ListIndicateurValeursTableColumnsParams = {
-  periodColumns: readonly IndicateurPeriodColumn[];
+  periodeColumns: readonly IndicateurPeriodeColumn[];
   title: string;
   unit: string;
   isReadonly?: boolean;
@@ -34,7 +34,7 @@ type ListIndicateurValeursTableColumnsParams = {
 };
 
 const listColumns = ({
-  periodColumns,
+  periodeColumns,
   title,
   unit,
   isReadonly,
@@ -65,25 +65,27 @@ const listColumns = ({
     },
   });
 
-  const valeurColumns = periodColumns.map(
-    ({ period, valeurTypes, renderHeader }) => {
-      const periodId =
-        period === null ? 'reference-unset' : IndicateurPeriods.key(period);
+  const valeurColumns = periodeColumns.map(
+    ({ periode, valeurTypes, renderHeader }) => {
+      const periodeId =
+        periode === null ? 'reference-unset' : IndicateurPeriodes.key(periode);
       return columnHelper.group({
-        id: periodId,
+        id: periodeId,
         header: ({ header }) => renderHeader(header.colSpan),
         columns: valeurTypes.map((indicateurValeurType) =>
           columnHelper.display({
-            id: `${periodId}-${indicateurValeurType}`,
-            meta: { period, indicateurValeurType },
+            id: `${periodeId}-${indicateurValeurType}`,
+            meta: { periode, indicateurValeurType },
             cell: (cellContext) => {
               return (
                 <IndicateurValeurCell
                   cell={cellContext}
                   indicateurValeurType={indicateurValeurType}
-                  period={period}
-                  isRequired={cellContext.row.original.isValeurRequired(period)}
-                  isReadonly={isReadonly || period === null}
+                  periode={periode}
+                  isRequired={cellContext.row.original.isValeurRequired(
+                    periode
+                  )}
+                  isReadonly={isReadonly || periode === null}
                 />
               );
             },
@@ -107,7 +109,7 @@ const listColumns = ({
 };
 
 export function useListIndicateurValeursTableColumns({
-  periodColumns,
+  periodeColumns,
   title,
   unit,
   isReadonly,
@@ -115,12 +117,12 @@ export function useListIndicateurValeursTableColumns({
   const columns = useMemo(
     () =>
       listColumns({
-        periodColumns,
+        periodeColumns,
         title,
         unit,
         isReadonly,
       }),
-    [periodColumns, title, unit, isReadonly]
+    [periodeColumns, title, unit, isReadonly]
   );
 
   return { columns };

@@ -4,7 +4,7 @@ import {
 } from '@tet/domain/demarches';
 import {
   IndicateurPeriodiciteEnum,
-  IndicateurPeriods,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { fakeRow } from '../../../../indicateurs/valeurs/grid/__tests__/grid-fixtures';
@@ -134,8 +134,8 @@ describe('buildIndicateurValeursTableSections', () => {
 });
 
 describe('obligations des valeurs du diagnostic PCAET', () => {
-  const period = (year: number) =>
-    IndicateurPeriods.parse(IndicateurPeriodiciteEnum.ANNUELLE, String(year));
+  const periode = (year: number) =>
+    IndicateurPeriodes.parse(IndicateurPeriodiciteEnum.ANNUELLE, String(year));
   const buildRow = (
     optionalYears: readonly number[] | 'all',
     isApplicable = true
@@ -170,24 +170,24 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     { year: 2030, required: true },
     { year: 2050, required: false },
   ])('exige la valeur de $year : $required', ({ year, required }) => {
-    expect(buildRow([2050]).isValeurRequired(period(year))).toBe(required);
+    expect(buildRow([2050]).isValeurRequired(periode(year))).toBe(required);
   });
 
   it("réclame la référence tant qu'elle n'est pas choisie", () => {
     expect(buildRow([2050]).isValeurRequired(null)).toBe(true);
   });
 
-  it.each([period(2030), null])(
+  it.each([periode(2030), null])(
     'ne réclame aucune valeur pour une ligne facultative',
-    (period) => {
-      expect(buildRow('all').isValeurRequired(period)).toBe(false);
+    (periode) => {
+      expect(buildRow('all').isValeurRequired(periode)).toBe(false);
     }
   );
 
-  it.each([period(2030), null])(
+  it.each([periode(2030), null])(
     'ne réclame aucune valeur pour un indicateur non applicable',
-    (period) => {
-      expect(buildRow([], false).isValeurRequired(period)).toBe(false);
+    (periode) => {
+      expect(buildRow([], false).isValeurRequired(periode)).toBe(false);
     }
   );
 });
@@ -199,7 +199,7 @@ describe('adaptation des écritures PCAET', () => {
       expect(
         buildDiagnosticIndicateurValeurInput({
           indicateurId: 12,
-          period: IndicateurPeriods.parse(
+          periode: IndicateurPeriodes.parse(
             IndicateurPeriodiciteEnum.ANNUELLE,
             '2026'
           ),

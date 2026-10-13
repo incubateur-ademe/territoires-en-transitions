@@ -1,4 +1,4 @@
-import { getLegacyIndicateurPeriodicite } from '../indicateur-period.adapter';
+import { getLegacyIndicateurPeriodicite } from '../indicateur-periode.adapter';
 import {
   BadRequestException,
   ForbiddenException,
