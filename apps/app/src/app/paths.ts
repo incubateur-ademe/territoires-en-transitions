@@ -83,6 +83,7 @@ export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
+export const repriseTecUrl = `${adminPath}/reprise-tec`;
 
 const collectiviteParam = 'collectiviteId';
 const indicateurViewParam = 'vue';

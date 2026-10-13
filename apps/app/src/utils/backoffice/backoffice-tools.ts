@@ -2,6 +2,7 @@ import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
   importerPlanUrl,
+  repriseTecUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
@@ -43,6 +44,13 @@ const backofficeTools: BackofficeTool[] = [
     icon: 'megaphone-line',
     href: bannerInfoUrl,
     permission: 'utils.banner.mutate',
+  },
+  {
+    id: 'reprise-tec',
+    label: appLabels.repriseTec,
+    description: appLabels.repriseTecDescription,
+    icon: 'git-merge-line',
+    href: repriseTecUrl,
   },
 ];
 
