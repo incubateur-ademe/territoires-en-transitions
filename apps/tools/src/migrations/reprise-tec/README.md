@@ -783,20 +783,27 @@ avec.
 ### Après l'import : construire la recette
 
 Les tables `recette_*` de `reprise_tec` : le côté T&C que lit l'outil
-`/admin/reprise-tec`. Elles lisent `reprise_tec` et, comme l'étape 2,
-`public.collectivite` pour retrouver la collectivité TeT. Elles sont refaites
-à chaque passage et n'écrivent rien d'autre. À lancer une fois après la
-dernière étape, et à relancer si une étape est annulée puis refaite.
+`/admin/reprise-tec`. Elles lisent `reprise_tec`, le suivi ADEME (le même CSV
+qu'à l'étape 2) et, comme l'étape 2, `public.collectivite` pour retrouver la
+collectivité TeT. Elles sont refaites à chaque passage et n'écrivent rien
+d'autre. À lancer une fois après la dernière étape, et à relancer si une étape
+est annulée puis refaite.
 
 ```bash
 SCRIPT=apps/tools/src/migrations/reprise-tec/construire-recette/index.ts
-pnpx tsx $SCRIPT            # simulation
-pnpx tsx $SCRIPT --confirm  # construction
+pnpx tsx $SCRIPT --suivi <csv>            # simulation
+pnpx tsx $SCRIPT --suivi <csv> --confirm  # construction
 ```
 
-| Table                  | Une ligne par                        | Contenu                                                                                                                             |
-| ---------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `recette_collectivite` | collectivité principale d'un dossier | nom, SIREN et population dans T&C ; la collectivité TeT retrouvée comme à l'étape 2 (vide si introuvable ou trouvée plusieurs fois) |
+| Table                  | Une ligne par                          | Contenu                                                                                                                                                       |
+| ---------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `recette_collectivite` | collectivité principale d'un dossier   | nom, SIREN et population dans T&C ; la collectivité TeT retrouvée comme à l'étape 2 (vide si introuvable ou trouvée plusieurs fois) ; sa ligne du suivi ADEME |
+| `recette_dossier`      | dossier T&C, repris ou non             | ses champs et ses dates dans T&C ; son motif s'il est écarté ; le dossier « mise en œuvre » qu'il rejoint s'il est sa copie « définitif » ; sa démarche TeT   |
+| `recette_ecart`        | dossier, table T&C, motif et précision | le nombre de lignes de `ecarts` : chaque écart est rattaché au dossier de sa ligne (par `demarche_id`, ou par l'action)                                       |
+
+Le rapport compte les écarts qui n'ont pas de dossier : les actions sans
+dossier (`vitrine`) et ce qui en dépend, les volets `orphelin`, et les tables
+sans lien à un dossier (`utilisateur`, `organisation_regionale`).
 
 ## Le schéma de travail `reprise_tec`
 
