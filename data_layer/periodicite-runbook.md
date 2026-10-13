@@ -1,12 +1,8 @@
 # Périodicité des indicateurs : déploiement
 
-État au 12 octobre 2026 : #5220, #5292, #5366 et **#5378 sont fusionnées et
-déployées**. Le socle annuel de #5378 est inclus dans `main` ; sa migration
-`indicateur/remplacer-catalogue-periodicites-par-contraintes` est déjà appliquée.
-La [PR de corrections annuelles #5430](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5430) est également fusionnée dans `main`.
-La préparation annuelle restante (#5433) conserve
-ce contrat et ne demande aucune migration. **#5215** vient ensuite et ouvre les
-trois autres cadences.
+État au 14 octobre 2026 : les préparations annuelles applicatives (#5481), SQL
+(#5488) et reporting (#5489) sont fusionnées dans `main`. Les cinq préparations
+ci-dessous restent annuelles et peuvent être déployées sans #5215.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -14,11 +10,9 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5433 (préparation annuelle restante) → #5215 (activation).
-- #5215 → #5418 (import atomique) → #5379 (file durable de recalcul).
-- #5215 → #5394 (nouvelle saisie) → #5312 (Margny) → #5296 (nettoyage final).
-- `main` → #5417 (verrous SQL) et `main` → #5416 (verrou du score), indépendantes
-  de l'activation. Le prérequis backend de #5417 est satisfait par #5378.
+- `main` → #5463 (restauration) → #5417 (verrous SQL) → #5418 (import atomique).
+- #5418 → #5379 (file durable annuelle) → #5394 (métadonnées et saisie annuelle).
+- #5394 → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
 
 Chaque étape peut rester seule en production après ses prérequis. #5296 reste
 la dernière livraison, après la période d'observation et la fermeture de la
@@ -27,14 +21,13 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5433 | Score, publication GES, fixtures et corrections annuelles restantes | Aucune |
+| #5463 | Contrôles de restauration et retour arrière | Aucune |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5418 | Import atomique du catalogue | Aucune |
 | #5379 | File durable de recalcul | `indicateur/reconciliation_formules` |
-| #5394 | Saisie commune des résultats et objectifs | Aucune |
+| #5394 | Métadonnées et saisie annuelle | Aucune |
 | #5312 | Six observations de Margny remises au mensuel | `indicateur/margny_indicateurs_mensuels` |
 | #5417 | Verrous SQL du graphe de calcul | `indicateur/verrouiller-graphe-calcul-indicateur` |
-| #5416 | Verrou de sélection du score | Aucune |
 | #5296 | Suppression des archives ; fin du retour arrière Sqitch | `indicateur/periodicite_nettoyage` |
 
 ## Pour chaque déploiement
@@ -242,3 +235,12 @@ schéma déjà migré. Utiliser le script du commit correspondant à l'état sau
 et vérifier sa compatibilité avec la cible. Pour une reprise de production,
 restaurer ensemble schéma, données, registre Sqitch et versions applicatives :
 [procédure de sauvegarde et restauration](../doc/adr/0016-strategie-backup-database.md).
+
+## Contrôles indépendants de restauration — #5463
+
+Aucune nouvelle migration. Avant toute troncature, le contrôle de restauration
+vérifie aussi l’état physique : absence des colonnes de périodicité sur une cible
+historique, ou présence des deux contraintes annuelles validées sur une cible
+annuelle. Il ne dépend pas d’une ancienne table d’audit temporaire. Le retour
+arrière de `periodicite_schema` exige le retrait préalable des verrous SQL de
+#5417. Les gardes d’activation restent dans #5215.
