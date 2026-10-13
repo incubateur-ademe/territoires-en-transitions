@@ -20,7 +20,7 @@ export * from './trajectoires/trajectoire-secteurs';
 export * from './trajectoires/trajectoires-carbon-sequestration-properties';
 export * from './trajectoires/types';
 export * from './trajectoires/verification-trajectoire.rules';
-export * from './valeurs/indicateur-periode';
+export * from './valeurs/indicateur-periodes';
 export * from './valeurs/indicateur-valeur-type.enum';
 export * from './valeurs/indicateur-periode.errors';
 export * from './valeurs/indicateur-valeur.schema';

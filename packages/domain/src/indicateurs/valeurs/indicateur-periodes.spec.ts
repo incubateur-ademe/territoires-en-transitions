@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { IndicateurPeriodiciteEnum } from '../definitions/indicateur-periodicite.schema';
 import { IndicateurPeriodeErrorEnum } from './indicateur-periode.errors';
 import type { IndicateurPeriode } from './indicateur-periode.types';
-import { IndicateurPeriodes } from './indicateur-periode';
+import { IndicateurPeriodes } from './indicateur-periodes';
 
 describe('IndicateurPeriodes', () => {
   it.each<[string, string | null]>([
