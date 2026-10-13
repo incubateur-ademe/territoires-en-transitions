@@ -14,6 +14,10 @@ on:
         options:
           - staging
           - prod
+      force-rebuild:
+        type: boolean
+        description: Reconstruire l'image même si ce commit est déjà publié
+        default: false
 
 jobs:
   build-tools:
@@ -50,7 +54,9 @@ jobs:
         with:
           username: incubateur-ademe
           image: tet-tools
-          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+          # Une image par commit, pas par (commit, environnement) : c'est ce qui
+          # rend la promotion staging -> prod possible sans rebuild.
+          tag: ${{ steps.meta.outputs.git-short-hash }}
 
       - name: Build et push de l'image tools
         uses: ./.github/actions/docker-build-push
@@ -61,6 +67,7 @@ jobs:
           image: ${{ steps.image.outputs.path }}
           cache-scope: tet-tools
           push: ${{ !env.ACT }}
+          reuse-image: ${{ github.event.inputs.force-rebuild != 'true' }}
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
           build-args: |
