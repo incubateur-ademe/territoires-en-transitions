@@ -119,6 +119,20 @@ import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
 import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
 import { ValiderAvisService } from './valider-avis/valider-avis.service';
+import { GetCollectiviteRouter } from './reprise-tec/get-collectivite/get-collectivite.router';
+import { GetCollectiviteService } from './reprise-tec/get-collectivite/get-collectivite.service';
+import { GetDossierRouter } from './reprise-tec/get-dossier/get-dossier.router';
+import { GetDossierService } from './reprise-tec/get-dossier/get-dossier.service';
+import { ListCollectivitesRouter } from './reprise-tec/list-collectivites/list-collectivites.router';
+import { ListCollectivitesService } from './reprise-tec/list-collectivites/list-collectivites.service';
+import { GetEntonnoirRouter } from './reprise-tec/get-entonnoir/get-entonnoir.router';
+import { GetEntonnoirService } from './reprise-tec/get-entonnoir/get-entonnoir.service';
+import { ListCasTypesRouter } from './reprise-tec/list-cas-types/list-cas-types.router';
+import { ListCasTypesService } from './reprise-tec/list-cas-types/list-cas-types.service';
+import { ListDecisionsRouter } from './reprise-tec/list-decisions/list-decisions.router';
+import { ListDecisionsService } from './reprise-tec/list-decisions/list-decisions.service';
+import { RepriseTecRouter } from './reprise-tec/reprise-tec.router';
+import { DossiersRecetteRepository } from './reprise-tec/shared/dossiers-recette.repository';
 
 @Module({
   imports: [
@@ -137,6 +151,20 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
   ],
   controllers: [DownloadDossierDocumentsController],
   providers: [
+    ListCollectivitesService,
+    ListCollectivitesRouter,
+    GetCollectiviteService,
+    GetCollectiviteRouter,
+    GetDossierService,
+    GetDossierRouter,
+    DossiersRecetteRepository,
+    GetEntonnoirService,
+    GetEntonnoirRouter,
+    ListCasTypesService,
+    ListCasTypesRouter,
+    ListDecisionsService,
+    ListDecisionsRouter,
+    RepriseTecRouter,
     DownloadDossierDocumentsService,
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,

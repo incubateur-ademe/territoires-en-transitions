@@ -83,6 +83,36 @@ export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 export const importerPlanUrl = `/plans/import`;
 export const bannerInfoUrl = `/banniere`;
+export const repriseTecUrl = `${adminPath}/reprise-tec`;
+export const repriseTecCasTypesUrl = `${repriseTecUrl}/cas-types`;
+export const repriseTecDecisionsUrl = `${repriseTecUrl}/decisions`;
+export const repriseTecReglesUrl = `${repriseTecUrl}/regles`;
+export const repriseTecCollectivitesUrl = `${repriseTecUrl}/collectivites`;
+export const makeRepriseTecCollectivitesUrl = ({
+  region,
+  departement,
+}: {
+  region?: string | null;
+  departement?: string | null;
+} = {}) => {
+  const params = new URLSearchParams();
+  if (region) params.set('region', region);
+  if (departement) params.set('departement', departement);
+  const query = params.toString();
+  return query
+    ? `${repriseTecCollectivitesUrl}?${query}`
+    : repriseTecCollectivitesUrl;
+};
+export const makeRepriseTecCollectiviteUrl = ({
+  collectiviteId,
+  tecDossierId,
+}: {
+  collectiviteId: number;
+  tecDossierId?: number;
+}) =>
+  `${repriseTecCollectivitesUrl}/${collectiviteId}${
+    tecDossierId === undefined ? '' : `?dossier=${tecDossierId}`
+  }`;
 
 const collectiviteParam = 'collectiviteId';
 const indicateurViewParam = 'vue';

@@ -1,0 +1,32 @@
+import { bigint, boolean, date, integer, text } from 'drizzle-orm/pg-core';
+import { repriseTecSchema } from './reprise-tec.schema';
+
+export const recetteDossierTable = repriseTecSchema.table('recette_dossier', {
+  tecDossierId: bigint('tec_dossier_id', { mode: 'number' }).primaryKey(),
+  tecCollectiviteId: bigint('tec_collectivite_id', { mode: 'number' }),
+  definitifDe: bigint('definitif_de', { mode: 'number' }),
+  nom: text('nom'),
+  etat: text('etat'),
+  types: integer('types').array(),
+  publie: boolean('publie'),
+  oblige: boolean('oblige'),
+  version: text('version'),
+  creeLe: date('cree_le'),
+  lanceLe: date('lance_le'),
+  lanceBrut: text('lance_brut'),
+  receptionProjetLe: date('reception_projet_le'),
+  avisDrealLe: date('avis_dreal_le'),
+  avisCrLe: date('avis_cr_le'),
+  depotDefinitifLe: date('depot_definitif_le'),
+  misAJourLe: date('mis_a_jour_le'),
+  eluReferent: text('elu_referent'),
+  description: text('description'),
+  populationCouverte: bigint('population_couverte', { mode: 'number' }),
+  commentaireStatut: text('commentaire_statut'),
+  premierPlanClimat: boolean('premier_plan_climat'),
+  verifieAdeme: boolean('verifie_ademe'),
+  motif: text('motif'),
+  melange: boolean('melange').notNull(),
+  tetDemarcheId: integer('tet_demarche_id'),
+  adoptionDecideePar: text('adoption_decidee_par'),
+});
