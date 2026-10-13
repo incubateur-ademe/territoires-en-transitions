@@ -22,6 +22,7 @@ import {
   AiPlanImportJobOptions,
   aiPlanImportJobStatusValues,
 } from './ai-plan-import-job';
+import { ImportCheckpoint } from './import-checkpoint';
 import { ImportJobStats } from './import-job-stats';
 import { PlanDraft } from './plan-draft';
 
@@ -51,6 +52,8 @@ export const aiPlanImportJobTable = pgTable(
     startedAt: timestamp('started_at', TIMESTAMP_OPTIONS),
     finishedAt: timestamp('finished_at', TIMESTAMP_OPTIONS),
     stats: jsonb('stats').$type<ImportJobStats>(),
+    checkpoint: jsonb('checkpoint').$type<ImportCheckpoint>(),
+    attempt: integer('attempt').notNull().default(0),
     createdAt,
     modifiedAt,
   },

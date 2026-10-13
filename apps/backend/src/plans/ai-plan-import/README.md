@@ -54,7 +54,7 @@ sequenceDiagram
     W->>S: télécharge la source
     W->>W: lecture du document
     W->>LLM: pipeline d'étapes
-    W->>DB: met à jour les étapes au fil de l'eau
+    W->>DB: met à jour les étapes et le point de reprise au fil de l'eau
     W->>DB: crée le plan, les axes, les fiches (transaction)
     W->>S: supprime la source
     W-->>U: e-mail « plan importé »
@@ -366,6 +366,46 @@ en page variées (5 à 10), chacun avec sa référence manuelle dans
 [`eval/references/`](eval/references/), et un test hors ligne qui vérifie le
 découpage de chacun, sans appel au modèle.
 
+## Reprise d'un import
+
+Un import peut durer une demi-heure : tout arrêt du backend en cours de route
+(redéploiement, redémarrage, crash) le coupait, et il fallait le relancer, au
+prix de tous les appels au modèle. Il reprend désormais à sa dernière étape
+terminée.
+
+- **Point de reprise** (`ai_plan_import_job.checkpoint`) : après chaque étape
+  terminée, la pipeline écrit son état (`pipeline/pipeline-checkpoint.ts`) :
+  actions, texte découpé, squelette, avancement, le modèle pour lequel le texte
+  a été découpé, et ce que le service avait relevé du document. Une étape faite
+  n'est ni rejouée ni rappelée au modèle.
+- **Reprise automatique** : le worker accepte une reprise d'un job « bloqué »
+  (`maxStalledCount: 1`) ; une seule, pour qu'un document qui fait tomber le
+  processus ne le relance pas en boucle. Après un arrêt, BullMQ le redistribue
+  une fois son verrou expiré (dix minutes au plus), et `transitionToRunning`
+  accepte un job déjà `running`. Un arrêt avant le premier point de reprise
+  repart du document, encore présent dans le stockage.
+- **Passage** (`ai_plan_import_job.attempt`) : 0 au premier, un de plus à
+  chaque reprise. Toutes les écritures d'une exécution portent son passage :
+  une exécution remplacée (verrou BullMQ perdu, job redistribué) n'écrit plus
+  rien.
+- **Reprise par l'équipe** (`resume-import/`) : un import en échec qui a un
+  point de reprise se relance par `plans.aiImport.resumeAiImport`, réservé au
+  super admin (`plans.fiches.import_resume`), depuis le bouton « Reprendre
+  l'import » de la page du plan en échec ou de l'écran d'échec de l'import. Le
+  job repasse `pending` et son plan `importing`. Un échec à la création du
+  plan se reprend sans aucun appel au modèle.
+- **Point de reprise inutilisable** (autre format, autre modèle configuré) :
+  l'import repart du document s'il est encore là, sinon il échoue en le disant
+  et n'est plus reprenable.
+- **Rétention** : le point de reprise porte le texte du document, débarrassé
+  des caractères que Postgres refuse en jsonb (`normalize-pages.ts`). Il est
+  vidé à la réussite ; ceux des échecs ne sont plus reprenables après sept
+  jours et sont purgés au démarrage du backend et au prochain import de la
+  collectivité.
+
+Un échec métier (document trop long, modèle en erreur) reste définitif
+(`attempts: 1`) : seule l'équipe peut le reprendre.
+
 ## Statistiques des imports
 
 Chaque import laisse sa trace, sans appel supplémentaire au modèle :
@@ -373,11 +413,14 @@ Chaque import laisse sa trace, sans appel supplémentaire au modèle :
 - `ai_plan_import_step_run` : une ligne par étape exécutée, de `document`
   (lecture et OCR) à `persistence` (création du plan). Elle donne la durée, le
   nombre d'appels au modèle (tentatives en échec comprises), les jetons, les
-  modèles appelés et les comptes propres à l'étape (`details`).
+  modèles appelés et les comptes propres à l'étape (`details`). `attempt`
+  numérote le passage : une étape rejouée après une reprise garde la trace du
+  passage précédent.
 - `ai_plan_import_job.started_at` / `finished_at` : l'écart avec `created_at`
   est l'attente en file.
 - `ai_plan_import_job.stats` : le résumé de l'import (contenu extrait,
-  document lu, appels au modèle), versionné par `schemaVersion`.
+  document lu, appels au modèle de tous les passages, nombre de reprises),
+  versionné par `schemaVersion`.
 
 Les appels sont attribués à l'étape par `recordLlmCalls`
 (`utils/llm/llm-call-recorder.ts`), sans que les étapes aient à remonter leurs
@@ -415,6 +458,7 @@ ORDER BY j.created_at DESC;
 | Entrée HTTP, quotas, type de fichier | `enqueue-import/` |
 | Worker, persistance, e-mail | `generate-import-draft/`, `notify-plan-imported/` |
 | Suivi de progression | `get-import-status/`, frontend `apps/app/src/plans/plans/import-plan/` |
+| Reprise d'un import | `pipeline/pipeline-checkpoint.ts`, `resume-import/` |
 | Orchestration des étapes | `pipeline/run-import-pipeline.ts` |
 | Lecture, OCR, normalisation | `pipeline/read-document/`, `pipeline/normalize-text/` |
 | Segmentation (Albert) | `pipeline/segment-document/` |

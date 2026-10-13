@@ -54,6 +54,7 @@ export const PermissionOperations = [
   'plans.fiches.delete',
   'plans.fiches.import',
   'plans.fiches.import_in_parallel',
+  'plans.fiches.import_resume',
 
   // Indicateurs
   'indicateurs.indicateurs.read',

@@ -64,7 +64,9 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   } = useGetOngoingAiImport(collectiviteId, { enabled: isEnabled });
 
   const [startedJobId, setStartedJobId] = useState<string | null>(null);
-  const handledJobId = useRef<string | null>(null);
+  // L'issue traitée, pas seulement le job : un import repris par l'équipe
+  // aboutit après avoir échoué, sous le même identifiant.
+  const handledOutcome = useRef<string | null>(null);
   const isProgressDisplayed = useRef(false);
 
   const { mutateAsync: updateDemarche } = useMutation(
@@ -102,7 +104,8 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   );
 
   useEffect(() => {
-    if (ongoingJobId === null || handledJobId.current === ongoingJobId) {
+    const outcome = `${ongoingJobId}:${ongoingStatus?.status}`;
+    if (ongoingJobId === null || handledOutcome.current === outcome) {
       return;
     }
     // Le suivi est à la maille de la collectivité : un import lancé par
@@ -112,7 +115,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
       ongoingStatus?.status === 'done' &&
       ongoingStatus.createdPlanId !== null
     ) {
-      handledJobId.current = ongoingJobId;
+      handledOutcome.current = outcome;
       queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
       });
@@ -120,7 +123,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
         setToast('success', appLabels.demarcheProgrammeImportTermine);
       }
     } else if (ongoingStatus?.status === 'failed') {
-      handledJobId.current = ongoingJobId;
+      handledOutcome.current = outcome;
       queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
       });

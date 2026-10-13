@@ -49,6 +49,7 @@ const job: AiPlanImportJob = {
   startedAt: null,
   finishedAt: null,
   stats: null,
+  attempt: 0,
   createdAt: '2026-06-11T00:00:00Z',
   modifiedAt: '2026-06-11T00:00:00Z',
 };
@@ -161,6 +162,7 @@ const buildService = (overrides: MockOverrides = {}) => {
     createWithinQuotas,
     deleteIfPending,
     findPreviousImport,
+    purgeFailedCheckpoints: vi.fn(async () => success(undefined)),
   } as unknown as AiPlanImportJobRepository;
 
   const uploadBuffer = vi.fn(async () => success({ id: 7 }));

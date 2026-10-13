@@ -52,6 +52,8 @@ export type AiPlanImportJob = {
   startedAt: string | null;
   finishedAt: string | null;
   stats: ImportJobStats | null;
+  /** Passage en cours : 0 au premier, un de plus à chaque reprise. */
+  attempt: number;
   createdAt: string;
   modifiedAt: string;
 };
@@ -72,4 +74,6 @@ export type AiPlanImportJobStatusView = {
   error: string | null;
   createdPlanId: number | null;
   qualitativeReview: string | null;
+  /** En échec, avec un point de reprise : l'équipe peut le reprendre. */
+  resumable: boolean;
 };

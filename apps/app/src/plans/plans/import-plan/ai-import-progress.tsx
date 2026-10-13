@@ -19,9 +19,13 @@ const stepLabels: Record<ImportStepName, string> = {
 const ImportFailedAlert = ({
   errorMessage,
   onRetry,
+  onResume,
+  isResuming,
 }: {
   errorMessage: string | null;
   onRetry: () => void;
+  onResume?: () => void;
+  isResuming: boolean;
 }) => (
   <div role="alert" className="flex flex-col items-center gap-6">
     <Alert
@@ -29,9 +33,20 @@ const ImportFailedAlert = ({
       title={appLabels.importPlanIaErreur}
       description={errorMessage ?? undefined}
     />
-    <Button variant="outlined" onClick={onRetry}>
-      {appLabels.reessayer}
-    </Button>
+    <div className="flex flex-wrap justify-center gap-4">
+      <Button variant="outlined" onClick={onRetry}>
+        {appLabels.reessayer}
+      </Button>
+      {onResume ? (
+        <Button
+          onClick={onResume}
+          disabled={isResuming}
+          data-test="plans.import-ia.reprendre-button"
+        >
+          {appLabels.importPlanIaReprendre}
+        </Button>
+      ) : null}
+    </div>
   </div>
 );
 
@@ -79,6 +94,9 @@ type AiImportProgressProps = {
   failed: boolean;
   errorMessage: string | null;
   onRetry: () => void;
+  /** Reprise depuis la dernière étape terminée : réservée à l'équipe. */
+  onResume?: () => void;
+  isResuming?: boolean;
   steps: ImportStepView[];
 };
 
@@ -86,11 +104,18 @@ export const AiImportProgress = ({
   failed,
   errorMessage,
   onRetry,
+  onResume,
+  isResuming = false,
   steps,
 }: AiImportProgressProps) => (
   <div className="flex flex-col gap-6 py-10">
     <VisibleWhen condition={failed}>
-      <ImportFailedAlert errorMessage={errorMessage} onRetry={onRetry} />
+      <ImportFailedAlert
+        errorMessage={errorMessage}
+        onRetry={onRetry}
+        onResume={onResume}
+        isResuming={isResuming}
+      />
     </VisibleWhen>
     <VisibleWhen condition={!failed}>
       <ImportStepProgress steps={steps} />

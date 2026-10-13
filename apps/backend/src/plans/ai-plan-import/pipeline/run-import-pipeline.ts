@@ -38,7 +38,12 @@ import {
 } from './extract-actions/extract-actions';
 import { reviewQuality } from './qualitative-review/qualitative-review';
 import { scoreActions } from './score-actions/score-actions';
-import { SourceChunks } from './source-chunks/source-chunks';
+import {
+  PIPELINE_CHECKPOINT_SCHEMA_VERSION,
+  type PipelineCheckpoint,
+  type PipelineProgress,
+  type PipelineState,
+} from './pipeline-checkpoint';
 
 const stepStateSchema = z.enum(['ok', 'skipped', 'pending']);
 
@@ -98,7 +103,6 @@ export const MAX_DOCUMENT_UNITS = 300;
 const VERIFICATION_WINDOW_TOKENS = 12_000;
 
 export type RunImportPipelineInput = {
-  document: ReadDocument;
   instructions: string;
   disabledFields: DisableableField[];
   currentDate: string;
@@ -110,7 +114,13 @@ export type RunImportPipelineInput = {
   onStepStatesChange?: (stepStates: Readonly<StepStates>) => Promise<void>;
   /** Chaque étape terminée, passée ou en échec : durée, appels, comptes. */
   onStepRun?: (run: ImportStepRun) => Promise<void>;
-};
+  /** Après chaque étape terminée : de quoi reprendre l'import à cet endroit. */
+  onCheckpoint?: (checkpoint: PipelineCheckpoint) => Promise<void>;
+} & (
+  | { document: ReadDocument; resumeFrom?: undefined }
+  // Reprise : la lecture est faite, le document n'est pas relu.
+  | { document?: undefined; resumeFrom: PipelineCheckpoint }
+);
 
 export type PipelineOutcome =
   | {
@@ -132,13 +142,7 @@ export type PipelineOutcome =
       tokens: TokenUsage;
     };
 
-type Progress = {
-  actions: ExtractedAction[];
-  review: string | null;
-  tokens: TokenUsage;
-  stepStates: StepStates;
-  warnings: string[];
-};
+type Progress = PipelineProgress;
 
 type StepProduce = {
   actions?: ExtractedAction[];
@@ -153,6 +157,21 @@ type StepGo =
   | { success: true; progress: Progress }
   | { success: false; outcome: PipelineOutcome };
 
+/** Les étapes après la lecture, dans l'ordre où elles s'exécutent. */
+type PipelineStep = {
+  name: StepName;
+  /** Évalué au moment de l'étape : il dépend de ce qu'ont produit les précédentes. */
+  skipWhen?: () => boolean;
+  onSkip?: (progress: Progress) => Progress;
+  run: (
+    actions: ExtractedAction[]
+  ) => Promise<Result<StepProduce, PipelineError>>;
+  /** Appliqué au résultat, passé ou non, avant le point de reprise. */
+  finalize?: (progress: Progress) => Progress;
+};
+
+const STEP_ORDER = stepStatesSchema.keyof().options;
+
 export const runImportPipeline = async (
   llm: PipelineLlm,
   input: RunImportPipelineInput
@@ -163,205 +182,231 @@ export const runImportPipeline = async (
   const reportStepRun = (run: ImportStepRun): Promise<void> =>
     input.onStepRun?.(run) ?? Promise.resolve();
 
-  const readingStartedAt = new Date();
-  const read = readSource(llm, input.document);
-  await reportStepRun({
-    step: 'reading',
-    status: read.success ? 'ok' : 'failed',
-    startedAt: readingStartedAt,
-    endedAt: new Date(),
-    calls: [],
-    details: read.success
-      ? read.data.units
-        ? { units: read.data.units.length }
-        : { chunks: read.data.chunks.length }
-      : {},
-    error: read.success ? null : read.error.kind,
-  });
-  if (!read.success) {
-    return failed(initialProgress(), 'reading', read.error);
+  let state: PipelineState;
+  if (input.resumeFrom) {
+    const { progress, chunks, units, skeleton, source } = input.resumeFrom;
+    state = { progress, chunks, units, skeleton, source };
+  } else {
+    const readingStartedAt = new Date();
+    const read = readSource(llm, input.document);
+    await reportStepRun({
+      step: 'reading',
+      status: read.success ? 'ok' : 'failed',
+      startedAt: readingStartedAt,
+      endedAt: new Date(),
+      calls: [],
+      details: read.success
+        ? read.data.units
+          ? { units: read.data.units.length }
+          : { chunks: read.data.chunks.length }
+        : {},
+      error: read.success ? null : read.error.kind,
+    });
+    if (!read.success) {
+      return failed(initialProgress(), 'reading', read.error);
+    }
+    state = {
+      progress: markOk(initialProgress(), 'reading'),
+      chunks: read.data.chunks,
+      units: read.data.units,
+      skeleton: null,
+      source: { chunks: read.data.chunks, chunkIndexByAction: [] },
+    };
   }
-  let { chunks } = read.data;
-  let { units } = read.data;
-  let skeleton: PlanSkeleton | null = null;
-  const afterReading = markOk(initialProgress(), 'reading');
-  await reportProgress(afterReading.stepStates);
 
-  // Écarter ce qui ne contient pas d'action et relever le squelette du plan :
-  // seulement quand le document est lu par unités.
-  const scouted = await runStep({
-    reportStepRun,
-    progress: afterReading,
-    name: 'scouting',
-    skipWhen: units === null,
-    run: async () => {
-      const result = await scoutUnits(llm, {
-        units: units as DocumentUnit[],
-        signal: input.signal,
-      });
-      if (!result.success) {
-        return result;
-      }
-      units = result.data.keptUnits;
-      skeleton = result.data.skeleton;
-      return success({
-        tokens: result.data.tokens,
-        warnings: result.data.warnings,
-        details: {
-          keptUnits: result.data.keptUnits.length,
-          discardedUnits: result.data.discardedCount,
-        },
-      });
+  const checkpoint = (completedStep: StepName): Promise<void> =>
+    input.onCheckpoint?.({
+      schemaVersion: PIPELINE_CHECKPOINT_SCHEMA_VERSION,
+      completedStep,
+      currentDate: input.currentDate,
+      llm: {
+        strategy: llm.capabilities.strategy,
+        maxInputTokens: llm.maxInputTokens,
+      },
+      ...state,
+    }) ?? Promise.resolve();
+
+  if (!input.resumeFrom) {
+    await checkpoint('reading');
+  }
+  await reportProgress(state.progress.stepStates);
+
+  const steps: PipelineStep[] = [
+    // Écarter ce qui ne contient pas d'action et relever le squelette du plan :
+    // seulement quand le document est lu par unités.
+    {
+      name: 'scouting',
+      skipWhen: () => state.units === null,
+      run: async () => {
+        const result = await scoutUnits(llm, {
+          units: state.units as DocumentUnit[],
+          signal: input.signal,
+        });
+        if (!result.success) {
+          return result;
+        }
+        state.units = result.data.keptUnits;
+        state.skeleton = result.data.skeleton;
+        return success({
+          tokens: result.data.tokens,
+          warnings: result.data.warnings,
+          details: {
+            keptUnits: result.data.keptUnits.length,
+            discardedUnits: result.data.discardedCount,
+          },
+        });
+      },
     },
-  });
-  if (!scouted.success) return scouted.outcome;
-  await reportProgress(scouted.progress.stepStates);
-
-  // Les étapes suivantes conservent l'ordre des actions : la tranche d'origine
-  // relevée à l'extraction reste valable pour elles.
-  let source: SourceChunks = { chunks, chunkIndexByAction: [] };
-  const extracted = await runStep({
-    reportStepRun,
-    progress: scouted.progress,
-    name: 'extraction',
-    run: async () => {
-      const extraction = {
-        instructions: input.instructions,
-        disabledFields: input.disabledFields,
-        currentDate: input.currentDate,
-        signal: input.signal,
-      };
-      if (units) {
-        const result = await structureUnits(llm, {
-          units,
-          skeleton,
+    // Les étapes suivantes conservent l'ordre des actions : la tranche
+    // d'origine relevée à l'extraction reste valable pour elles.
+    {
+      name: 'extraction',
+      run: async () => {
+        const extraction = {
+          instructions: input.instructions,
+          disabledFields: input.disabledFields,
+          currentDate: input.currentDate,
+          signal: input.signal,
+        };
+        if (state.units) {
+          const result = await structureUnits(llm, {
+            units: state.units,
+            skeleton: state.skeleton,
+            ...extraction,
+          });
+          if (result.success) {
+            state.chunks = result.data.chunks;
+            state.source = {
+              chunks: state.chunks,
+              chunkIndexByAction: result.data.chunkIndexByAction,
+            };
+          }
+          return result;
+        }
+        const result = await extractActions(llm, {
+          chunks: state.chunks,
           ...extraction,
         });
         if (result.success) {
-          chunks = result.data.chunks;
-          source = {
-            chunks,
+          state.source = {
+            chunks: state.chunks,
             chunkIndexByAction: result.data.chunkIndexByAction,
           };
         }
         return result;
-      }
-      const result = await extractActions(llm, { chunks, ...extraction });
-      if (result.success) {
-        source = { chunks, chunkIndexByAction: result.data.chunkIndexByAction };
-      }
-      return result;
+      },
     },
-  });
-  if (!extracted.success) return extracted.outcome;
-  // Rattacher chaque action au squelette et fondre les doublons : des
-  // extraits lus séparément ne se coordonnent pas seuls.
-  const hierarchized = await runStep({
-    reportStepRun,
-    progress: extracted.progress,
-    name: 'hierarchy',
-    skipWhen: units === null || skeleton === null,
-    run: async (actions) => {
-      const result = await consolidateHierarchy(llm, {
-        actions,
-        skeleton: skeleton as PlanSkeleton,
-        signal: input.signal,
-      });
-      if (!result.success) {
-        return result;
-      }
-      source = {
-        chunks: source.chunks,
-        chunkIndexByAction: result.data.keptIndexes.map(
-          (index) => source.chunkIndexByAction[index]
-        ),
-      };
-      return success({
-        actions: result.data.actions,
-        tokens: result.data.tokens,
-        warnings: result.data.warnings,
-      });
+    // Rattacher chaque action au squelette et fondre les doublons : des
+    // extraits lus séparément ne se coordonnent pas seuls.
+    {
+      name: 'hierarchy',
+      skipWhen: () => state.units === null || state.skeleton === null,
+      run: async (actions) => {
+        const result = await consolidateHierarchy(llm, {
+          actions,
+          skeleton: state.skeleton as PlanSkeleton,
+          signal: input.signal,
+        });
+        if (!result.success) {
+          return result;
+        }
+        const { source } = state;
+        state.source = {
+          chunks: source.chunks,
+          chunkIndexByAction: result.data.keptIndexes.map(
+            (index) => source.chunkIndexByAction[index]
+          ),
+        };
+        return success({
+          actions: result.data.actions,
+          tokens: result.data.tokens,
+          warnings: result.data.warnings,
+        });
+      },
+      // Lus par morceaux, le sommaire et la fiche se répondent : une fiche peut
+      // s'y retrouver sous-axe d'elle-même.
+      finalize: (progress) => {
+        if (!state.units) {
+          return progress;
+        }
+        state.source = coalesceChunks(state.source, VERIFICATION_WINDOW_TOKENS);
+        return {
+          ...progress,
+          actions: dropRedundantSousAxes(progress.actions),
+        };
+      },
     },
-  });
-  if (!hierarchized.success) return hierarchized.outcome;
-  await reportProgress(hierarchized.progress.stepStates);
-  // Lus par morceaux, le sommaire et la fiche se répondent : une fiche peut
-  // s'y retrouver sous-axe d'elle-même.
-  const structured = units
-    ? {
-        ...hierarchized.progress,
-        actions: dropRedundantSousAxes(hierarchized.progress.actions),
-      }
-    : hierarchized.progress;
-  if (units) {
-    source = coalesceChunks(source, VERIFICATION_WINDOW_TOKENS);
+    {
+      name: 'scoring',
+      skipWhen: () => !input.withVerifications,
+      run: (actions) =>
+        scoreActions(llm, {
+          actions,
+          source: state.source,
+          signal: input.signal,
+        }),
+    },
+    {
+      name: 'consolidation',
+      skipWhen: () => !input.withVerifications,
+      run: (actions) =>
+        consolidateActions(llm, {
+          actions,
+          source: state.source,
+          disabledFields: input.disabledFields,
+          signal: input.signal,
+        }),
+    },
+    {
+      name: 'enrichment',
+      skipWhen: () => !input.withSousActions,
+      onSkip: clearSousActions,
+      run: (actions) =>
+        enrichSousActions(llm, {
+          actions,
+          source: state.source,
+          disabledFields: input.disabledFields,
+          signal: input.signal,
+        }),
+    },
+    {
+      name: 'secteurs',
+      skipWhen: () => !input.withSecteurs,
+      run: (actions) =>
+        classifySecteurs(llm, {
+          actions,
+          source: state.source,
+          signal: input.signal,
+        }),
+    },
+    {
+      name: 'qualitativeReview',
+      run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
+    },
+  ];
+
+  const lastCompleted = STEP_ORDER.indexOf(
+    input.resumeFrom?.completedStep ?? 'reading'
+  );
+  for (const { name, skipWhen, onSkip, run, finalize } of steps) {
+    if (STEP_ORDER.indexOf(name) <= lastCompleted) {
+      continue;
+    }
+    const go = await runStep({
+      reportStepRun,
+      progress: state.progress,
+      name,
+      run,
+      skipWhen: skipWhen?.() ?? false,
+      onSkip,
+    });
+    if (!go.success) return go.outcome;
+    state.progress = finalize ? finalize(go.progress) : go.progress;
+    await checkpoint(name);
+    await reportProgress(state.progress.stepStates);
   }
 
-  const scored = await runStep({
-    reportStepRun,
-    progress: structured,
-    name: 'scoring',
-    skipWhen: !input.withVerifications,
-    run: (actions) =>
-      scoreActions(llm, { actions, source, signal: input.signal }),
-  });
-  if (!scored.success) return scored.outcome;
-  await reportProgress(scored.progress.stepStates);
-
-  const consolidated = await runStep({
-    reportStepRun,
-    progress: scored.progress,
-    name: 'consolidation',
-    skipWhen: !input.withVerifications,
-    run: (actions) =>
-      consolidateActions(llm, {
-        actions,
-        source,
-        disabledFields: input.disabledFields,
-        signal: input.signal,
-      }),
-  });
-  if (!consolidated.success) return consolidated.outcome;
-  await reportProgress(consolidated.progress.stepStates);
-
-  const enriched = await runStep({
-    reportStepRun,
-    progress: consolidated.progress,
-    name: 'enrichment',
-    skipWhen: !input.withSousActions,
-    onSkip: clearSousActions,
-    run: (actions) =>
-      enrichSousActions(llm, {
-        actions,
-        source,
-        disabledFields: input.disabledFields,
-        signal: input.signal,
-      }),
-  });
-  if (!enriched.success) return enriched.outcome;
-  await reportProgress(enriched.progress.stepStates);
-
-  const sectorised = await runStep({
-    reportStepRun,
-    progress: enriched.progress,
-    name: 'secteurs',
-    skipWhen: !input.withSecteurs,
-    run: (actions) =>
-      classifySecteurs(llm, { actions, source, signal: input.signal }),
-  });
-  if (!sectorised.success) return sectorised.outcome;
-  await reportProgress(sectorised.progress.stepStates);
-
-  const reviewed = await runStep({
-    reportStepRun,
-    progress: sectorised.progress,
-    name: 'qualitativeReview',
-    run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
-  });
-  if (!reviewed.success) return reviewed.outcome;
-  await reportProgress(reviewed.progress.stepStates);
-
-  return done(reviewed.progress);
+  return done(state.progress);
 };
 
 type RunStepArgs = {

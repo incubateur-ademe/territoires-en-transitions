@@ -36,6 +36,10 @@ BEGIN
         WHERE table_schema = 'public'
           AND table_name = 'ai_plan_import_job'
           AND is_nullable = 'NO'
+          AND column_name IN (
+              'id', 'collectivite_id', 'created_by', 'status', 'options',
+              'step_states', 'source_path', 'created_at', 'modified_at'
+          )
     ), 'Toutes les colonnes sauf draft et error doivent être NOT NULL';
 
     ASSERT (

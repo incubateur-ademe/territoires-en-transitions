@@ -19,7 +19,12 @@ import {
 import { GenerateImportDraftService } from './generate-import-draft.service';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
+import { ImportCheckpoint } from '../models/import-checkpoint';
 import { ImportStepRun } from '../models/import-step-run';
+import {
+  LlmCallMetrics,
+  sumLlmCallMetrics,
+} from '../pipeline/compute-import-metrics';
 
 const job: AiPlanImportJob = {
   id: 'job-1',
@@ -42,6 +47,7 @@ const job: AiPlanImportJob = {
   startedAt: null,
   finishedAt: null,
   stats: null,
+  attempt: 0,
   createdAt: '2026-06-10T00:00:00Z',
   modifiedAt: '2026-06-10T00:00:00Z',
 };
@@ -82,30 +88,43 @@ type MockOverrides = {
   markDone?: () => Promise<Result<AiPlanImportJob, string>>;
   markFailed?: () => Promise<Result<AiPlanImportJob, string>>;
   getById?: () => Promise<Result<AiPlanImportJob, string>>;
+  checkpoint?: Result<ImportCheckpoint | null, string>;
+  /** Passage du job : au-delà de 0, une reprise. */
+  attempt?: number;
+  previousLlm?: LlmCallMetrics;
+  sourceAvailable?: boolean;
 };
 
 const buildMocks = (overrides: MockOverrides = {}) => {
   const markDone = vi.fn(overrides.markDone ?? (async () => success(job)));
   const markFailed = vi.fn(overrides.markFailed ?? (async () => success(job)));
   const updateStepStates = vi.fn(async () => success(job));
+  const runningJob = { ...job, attempt: overrides.attempt ?? 0 };
   const jobRepository = {
-    transitionToRunning: vi.fn(async () => success(job)),
+    transitionToRunning: vi.fn(async () => success(runningJob)),
     markFailed,
     markDone,
     updateStepStates,
     getById: vi.fn(overrides.getById ?? (async () => success(job))),
+    getCheckpoint: vi.fn(async () => overrides.checkpoint ?? success(null)),
+    saveCheckpoint: vi.fn(
+      async (_id: string, _attempt: number, _checkpoint: ImportCheckpoint) =>
+        success(undefined)
+    ),
   } as unknown as AiPlanImportJobRepository;
 
   const removeDocument = vi.fn(async () => success(undefined));
   const documentStorage = {
     downloadDocument: vi.fn(async () =>
-      success({
-        buffer: Buffer.from(
-          overrides.sourceContent ?? 'axe,titre\n1,Action',
-          'utf-8'
-        ),
-        mimeType: 'text/csv',
-      })
+      overrides.sourceAvailable === false
+        ? failure('READ_DOCUMENT_ERROR')
+        : success({
+            buffer: Buffer.from(
+              overrides.sourceContent ?? 'axe,titre\n1,Action',
+              'utf-8'
+            ),
+            mimeType: 'text/csv',
+          })
     ),
     removeDocument,
   } as unknown as DocumentStorageService;
@@ -154,11 +173,15 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     enqueue: vi.fn(async () => undefined),
   } as unknown as EnqueueCompletePlanSecteursService;
 
-  const insertStepRun = vi.fn(async (_jobId: string, _run: ImportStepRun) =>
-    success(undefined)
+  const insertStepRun = vi.fn(
+    async (_jobId: string, _run: ImportStepRun, _attempt: number) =>
+      success(undefined)
   );
   const stepRunRepository = {
     insert: insertStepRun,
+    sumPreviousLlmCalls: vi.fn(async () =>
+      success(overrides.previousLlm ?? sumLlmCallMetrics([]))
+    ),
   } as unknown as AiPlanImportStepRunRepository;
 
   return {
@@ -240,6 +263,7 @@ describe('GenerateImportDraftService', () => {
     });
     expect(mocks.jobRepository.updateStepStates).toHaveBeenLastCalledWith(
       'job-1',
+      0,
       {
         reading: 'ok',
         scouting: 'skipped',
@@ -342,7 +366,8 @@ describe('GenerateImportDraftService', () => {
       expect.objectContaining({
         id: 'job-1',
         error: 'Création du plan impossible : Plan invalide',
-        stepStates: initialStepStates(),
+        // L'avancement reste celui de la dernière étape, pas remis à zéro.
+        stepStates: undefined,
         draft: expect.objectContaining({
           actions: expect.arrayContaining([
             expect.objectContaining({ titre: 'Action' }),
@@ -367,7 +392,7 @@ describe('GenerateImportDraftService', () => {
       expect.objectContaining({
         id: 'job-1',
         error: 'Création du plan impossible : insert en conflit',
-        stepStates: initialStepStates(),
+        stepStates: undefined,
         draft: expect.objectContaining({
           actions: expect.arrayContaining([
             expect.objectContaining({ titre: 'Action' }),
@@ -397,8 +422,8 @@ describe('GenerateImportDraftService', () => {
     });
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
       id: 'job-1',
+      attempt: 0,
       error: 'Import interrompu: boom réseau',
-      stepStates: initialStepStates(),
     });
     expect(mocks.removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',
@@ -415,7 +440,6 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
       id: 'job-1',
       error: 'Import interrompu: stall',
-      stepStates: initialStepStates(),
     });
     expect(mocks.removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',
@@ -515,5 +539,196 @@ describe('GenerateImportDraftService', () => {
         }),
       })
     );
+  });
+
+  describe('reprise', () => {
+    /** Les points de reprise d'un import mené jusqu'au bout. */
+    const checkpointsOfFullRun = async (): Promise<ImportCheckpoint[]> => {
+      const mocks = buildMocks();
+      await buildService(mocks).generate('job-1');
+      return vi
+        .mocked(mocks.jobRepository.saveCheckpoint)
+        .mock.calls.map(([, , checkpoint]) =>
+          JSON.parse(JSON.stringify(checkpoint))
+        );
+    };
+
+    it('enregistre un point de reprise après chaque étape, avec le document lu', async () => {
+      const checkpoints = await checkpointsOfFullRun();
+
+      expect(checkpoints.map(({ completedStep }) => completedStep)).toEqual([
+        'reading',
+        'scouting',
+        'extraction',
+        'hierarchy',
+        'scoring',
+        'consolidation',
+        'enrichment',
+        'secteurs',
+        'qualitativeReview',
+      ]);
+      for (const checkpoint of checkpoints) {
+        expect(checkpoint.documentStats).toMatchObject({ kind: 'csv' });
+      }
+    });
+
+    it('reprend après la dernière étape sans relire le document ni rappeler le modèle', async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const mocks = buildMocks({
+        checkpoint: success(checkpoints[checkpoints.length - 1]),
+        attempt: 1,
+        previousLlm: {
+          calls: 2,
+          failedCalls: 0,
+          rateLimited: 0,
+          tokens,
+          models: ['gemini-test'],
+        },
+      });
+
+      const result = await buildService(mocks).generate('job-1');
+
+      expect(result).toMatchObject({ success: true });
+      expect(mocks.documentStorage.downloadDocument).not.toHaveBeenCalled();
+      expect(mocks.llm.generateStructured).not.toHaveBeenCalled();
+      expect(mocks.save).toHaveBeenCalledWith(
+        expect.objectContaining({ planId: 7 })
+      );
+      expect(mocks.insertStepRun.mock.calls).toEqual([
+        ['job-1', expect.objectContaining({ step: 'persistence' }), 1],
+      ]);
+      expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+        expect.objectContaining({
+          stats: expect.objectContaining({
+            document: expect.objectContaining({ kind: 'csv' }),
+            llm: expect.objectContaining({
+              calls: 2,
+              models: ['gemini-test'],
+            }),
+            resumes: 1,
+          }),
+        })
+      );
+      expect(mocks.removeDocument).toHaveBeenCalled();
+    });
+
+    it("reprend après l'extraction en ne rappelant le modèle que pour la suite", async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const afterExtraction = checkpoints.find(
+        ({ completedStep }) => completedStep === 'extraction'
+      );
+      const generateStructured = vi.fn(async () =>
+        success({ data: { avis: 'Extraction ok' }, tokens })
+      );
+      const mocks = buildMocks({
+        checkpoint: success(afterExtraction ?? null),
+        attempt: 1,
+        generateStructured: generateStructured as never,
+      });
+
+      const result = await buildService(mocks).generate('job-1');
+
+      expect(result).toMatchObject({ success: true });
+      // Seule la revue qualitative reste à faire : l'extraction est acquise.
+      expect(generateStructured).toHaveBeenCalledTimes(1);
+      expect(mocks.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          planInput: expect.objectContaining({ nom: 'Plan importé' }),
+        })
+      );
+      expect(mocks.jobRepository.markDone).toHaveBeenCalled();
+    });
+
+    it.each([
+      ['un autre format', { schemaVersion: 99 }],
+      [
+        'un autre modèle',
+        { llm: { strategy: 'segmented', maxInputTokens: 100_000 } },
+      ],
+    ])(
+      'repart du document quand le point de reprise vient d’%s et que la source est là',
+      async (_label, change) => {
+        const checkpoints = await checkpointsOfFullRun();
+        const mocks = buildMocks({
+          checkpoint: success({
+            ...checkpoints[0],
+            ...change,
+          } as unknown as ImportCheckpoint),
+          attempt: 1,
+        });
+
+        const result = await buildService(mocks).generate('job-1');
+
+        expect(result).toMatchObject({ success: true });
+        expect(mocks.documentStorage.downloadDocument).toHaveBeenCalled();
+        expect(mocks.llm.generateStructured).toHaveBeenCalledTimes(2);
+      }
+    );
+
+    it("rend l'import non reprenable quand le point de reprise est inutilisable et la source supprimée", async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const mocks = buildMocks({
+        checkpoint: success({
+          ...checkpoints[0],
+          llm: { strategy: 'segmented', maxInputTokens: 100_000 },
+        }),
+        attempt: 1,
+        sourceAvailable: false,
+      });
+
+      const result = await buildService(mocks).generate('job-1');
+
+      expect(result).toMatchObject({ success: true });
+      expect(mocks.llm.generateStructured).not.toHaveBeenCalled();
+      expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'job-1',
+          attempt: 1,
+          error: expect.stringContaining('point de reprise'),
+          dropCheckpoint: true,
+        })
+      );
+    });
+
+    it('échoue sans relire le document quand le point de reprise est illisible', async () => {
+      const mocks = buildMocks({
+        checkpoint: failure(AiPlanImportErrorEnum.GET_JOB_ERROR),
+        attempt: 1,
+      });
+
+      const result = await buildService(mocks).generate('job-1');
+
+      expect(result).toMatchObject({ success: true });
+      expect(mocks.documentStorage.downloadDocument).not.toHaveBeenCalled();
+      expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'job-1', attempt: 1 })
+      );
+      // Le point de reprise reste en place : une nouvelle reprise le relira.
+      expect(
+        vi.mocked(mocks.jobRepository.markFailed).mock.calls[0][0]
+      ).not.toHaveProperty('dropCheckpoint', true);
+    });
+
+    it("n'écrit qu'au nom du passage en cours", async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const mocks = buildMocks({
+        checkpoint: success(checkpoints[1]),
+        attempt: 2,
+      });
+
+      await buildService(mocks).generate('job-1');
+
+      for (const [, attempt] of vi.mocked(mocks.jobRepository.saveCheckpoint)
+        .mock.calls) {
+        expect(attempt).toBe(2);
+      }
+      for (const [, attempt] of vi.mocked(mocks.jobRepository.updateStepStates)
+        .mock.calls as unknown as [string, number][]) {
+        expect(attempt).toBe(2);
+      }
+      expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+        expect.objectContaining({ attempt: 2 })
+      );
+    });
   });
 });

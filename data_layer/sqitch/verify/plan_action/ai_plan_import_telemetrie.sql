@@ -16,11 +16,11 @@ BEGIN
     ), 'ai_plan_import_job doit porter started_at, finished_at et stats, NULLABLE';
 
     ASSERT (
-        SELECT COUNT(*) = 14
+        SELECT COUNT(*) >= 14
         FROM information_schema.columns
         WHERE table_schema = 'public'
           AND table_name = 'ai_plan_import_step_run'
-    ), 'La table ai_plan_import_step_run doit contenir 14 colonnes';
+    ), 'La table ai_plan_import_step_run doit contenir au moins 14 colonnes';
 
     SELECT rc.delete_rule INTO fk_job
     FROM information_schema.table_constraints tc

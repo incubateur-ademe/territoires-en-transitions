@@ -23,6 +23,16 @@ describe('permissionsByRole', () => {
     expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
   });
 
+  it("n'accorde la reprise d'un import IA en échec qu'au super admin", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('plans.fiches.import_resume')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+  });
+
   it("n'accorde la qualification de la pertinence des leviers qu'au super admin et à l'admin de la collectivité", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>

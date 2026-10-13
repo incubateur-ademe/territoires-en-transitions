@@ -29,6 +29,7 @@ import {
 } from '../ai-plan-import.errors';
 import {
   AI_PLAN_IMPORT_QUEUE_NAME,
+  GENERATE_IMPORT_DRAFT_JOB_NAME,
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
@@ -39,8 +40,6 @@ import {
   XLSX_MIME,
 } from './detect-source-mime-type';
 import { validateOoxmlArchive } from './validate-ooxml-archive';
-
-const GENERATE_IMPORT_DRAFT_JOB_NAME = 'generate-import-draft';
 
 export type EnqueueImportInput = {
   collectiviteId: number;
@@ -216,6 +215,17 @@ export class EnqueueImportService {
       });
       await this.cleanupPendingJob(jobId, planId);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
+    }
+
+    // Le nouvel import remplace ceux qui ont échoué : leur point de reprise
+    // ne sert plus.
+    const purged = await this.jobRepository.purgeFailedCheckpoints(
+      collectiviteId
+    );
+    if (!purged.success) {
+      this.logger.warn(
+        `Points de reprise de la collectivité ${collectiviteId} non purgés (${purged.error})`
+      );
     }
 
     this.trackingService.capture({
