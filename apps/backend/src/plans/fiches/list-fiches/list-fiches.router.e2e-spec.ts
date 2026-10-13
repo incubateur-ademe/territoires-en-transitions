@@ -485,6 +485,71 @@ describe('ListFichesRouter', () => {
       }
     });
 
+    test('Fetch avec filtre sur un service et noServicePilote à false (filtre enregistré par un module du tableau de bord)', async () => {
+      const caller = router.createCaller({ user: testUser });
+
+      const [serviceTag, autreServiceTag] = await db.db
+        .insert(serviceTagTable)
+        .values([
+          { nom: 'Service cliqué', collectiviteId: testCollectiviteId },
+          { nom: 'Autre service', collectiviteId: testCollectiviteId },
+        ])
+        .returning();
+
+      const [ficheAvecService, ficheAvecAutreService] = await db.db
+        .insert(ficheActionTable)
+        .values([
+          {
+            titre: 'Fiche du service cliqué',
+            collectiviteId: testCollectiviteId,
+          },
+          {
+            titre: 'Fiche d un autre service',
+            collectiviteId: testCollectiviteId,
+          },
+        ])
+        .returning();
+
+      await db.db.insert(ficheActionServiceTagTable).values([
+        { ficheId: ficheAvecService.id, serviceTagId: serviceTag.id },
+        { ficheId: ficheAvecAutreService.id, serviceTagId: autreServiceTag.id },
+      ]);
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionServiceTagTable)
+          .where(
+            inArray(ficheActionServiceTagTable.ficheId, [
+              ficheAvecService.id,
+              ficheAvecAutreService.id,
+            ])
+          );
+        await db.db
+          .delete(ficheActionTable)
+          .where(
+            inArray(ficheActionTable.id, [
+              ficheAvecService.id,
+              ficheAvecAutreService.id,
+            ])
+          );
+        await db.db
+          .delete(serviceTagTable)
+          .where(
+            inArray(serviceTagTable.id, [serviceTag.id, autreServiceTag.id])
+          );
+      });
+
+      const { data: fiches } = await caller.plans.fiches.listFiches({
+        collectiviteId: testCollectiviteId,
+        filters: {
+          noServicePilote: false,
+          servicePiloteIds: [serviceTag.id],
+        },
+      });
+
+      expect(fiches.map((f) => f.id)).toEqual([ficheAvecService.id]);
+    });
+
     test('Fetch avec filtre sur un plan', async () => {
       const caller = router.createCaller({ user: testUser });
 

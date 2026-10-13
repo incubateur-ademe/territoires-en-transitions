@@ -1402,16 +1402,23 @@ export default class ListFichesService {
     return or(...planConditions);
   }
 
+  /**
+   * `noX` est une case à cocher « sans X » : seule la valeur `true` filtre.
+   * `false` (case décochée, tel qu'enregistré par les modules du tableau de
+   * bord) ne doit pas devenir « avec au moins un X », sinon le OU avec le
+   * filtre par identifiants (`servicePiloteIds`, `personnePiloteIds`…)
+   * renvoie toutes les fiches liées à n'importe quel X.
+   */
   private getHasNoLinkedEntityCondition<T extends TableConfig>(
     noLinkedEntity: boolean | undefined,
     linkedTable: Table<T>,
     ficheIdColumn: T['columns'][keyof T['columns']]
   ): SQLWrapper | undefined {
-    if (isNil(noLinkedEntity)) {
+    if (!noLinkedEntity) {
       return;
     }
     return this.getHasAnyLinkedEntityCondition(
-      !noLinkedEntity,
+      false,
       linkedTable,
       ficheIdColumn
     );
