@@ -4,13 +4,13 @@ import { departementTable } from '@tet/backend/collectivites/shared/models/impor
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { getErrorCode } from '@tet/backend/utils/nest/errors.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { PgSyntaxErrorOrAccessRuleViolation } from '@tet/backend/utils/postgresql-error-codes.enum';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { recetteCollectiviteTable } from '../models/recette-collectivite.table';
+import { recetteDossierTable } from '../models/recette-dossier.table';
+import { isRecetteNonConstruite } from '../shared/is-recette-non-construite';
 import {
   ListCollectivitesError,
   ListCollectivitesErrorEnum,
@@ -53,8 +53,12 @@ export class ListCollectivitesService {
           siren: recetteCollectiviteTable.siren,
           population: recetteCollectiviteTable.population,
           nomTet: collectiviteTable.nom,
+          typeTet: collectiviteTable.type,
+          natureTet: collectiviteTable.natureInsee,
           region: regionTable.libelle,
-          departement: departementTable.libelle,
+          departement: sql<
+            string | null
+          >`${departementTable.code} || ' - ' || ${departementTable.libelle}`,
         })
         .from(recetteCollectiviteTable)
         .leftJoin(
@@ -70,12 +74,42 @@ export class ListCollectivitesService {
           eq(departementTable.code, collectiviteTable.departementCode)
         )
         .orderBy(asc(recetteCollectiviteTable.nom));
-      return success(rows);
+      const dossiers = await db
+        .select({
+          tecDossierId: recetteDossierTable.tecDossierId,
+          tecCollectiviteId: recetteDossierTable.tecCollectiviteId,
+          definitifDe: recetteDossierTable.definitifDe,
+          demarcheId: recetteDossierTable.tetDemarcheId,
+        })
+        .from(recetteDossierTable)
+        .orderBy(asc(recetteDossierTable.tecDossierId));
+
+      const copieParDossier = new Map(
+        dossiers.flatMap((d) =>
+          d.definitifDe === null ? [] : [[d.definitifDe, d.tecDossierId]]
+        )
+      );
+      const dossiersParCollectivite = new Map<number | null, typeof dossiers>();
+      for (const d of dossiers.filter((d) => d.definitifDe === null)) {
+        dossiersParCollectivite.set(d.tecCollectiviteId, [
+          ...(dossiersParCollectivite.get(d.tecCollectiviteId) ?? []),
+          d,
+        ]);
+      }
+      return success(
+        rows.map((c) => ({
+          ...c,
+          dossiers: (
+            dossiersParCollectivite.get(c.tecCollectiviteId) ?? []
+          ).map((d) => ({
+            tecDossierId: d.tecDossierId,
+            demarcheId: d.demarcheId,
+            copieId: copieParDossier.get(d.tecDossierId) ?? null,
+          })),
+        }))
+      );
     } catch (error) {
-      if (
-        getErrorCode(error) ===
-        PgSyntaxErrorOrAccessRuleViolation.UndefinedTable
-      ) {
+      if (isRecetteNonConstruite(error)) {
         return failure(ListCollectivitesErrorEnum.RECETTE_NON_CONSTRUITE);
       }
       this.logger.error(error);

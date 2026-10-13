@@ -11,7 +11,6 @@ import { AxeModule } from '@tet/backend/plans/axes/axe.module';
 import { CompletePlanSecteursModule } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
-import { RepriseTecModule } from './reprise-tec/reprise-tec.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
@@ -120,11 +119,17 @@ import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
 import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
 import { ValiderAvisService } from './valider-avis/valider-avis.service';
+import { GetCollectiviteRouter } from './reprise-tec/get-collectivite/get-collectivite.router';
+import { GetCollectiviteService } from './reprise-tec/get-collectivite/get-collectivite.service';
+import { GetDossierRouter } from './reprise-tec/get-dossier/get-dossier.router';
+import { GetDossierService } from './reprise-tec/get-dossier/get-dossier.service';
+import { ListCollectivitesRouter } from './reprise-tec/list-collectivites/list-collectivites.router';
+import { ListCollectivitesService } from './reprise-tec/list-collectivites/list-collectivites.service';
+import { RepriseTecRouter } from './reprise-tec/reprise-tec.router';
 
 @Module({
   imports: [
     UsersModule,
-    RepriseTecModule,
     // Le catalogue documentaire est conditionné à l'identité de la collectivité
     // et à ses réponses de personnalisation.
     CollectivitesCoreModule,
@@ -139,6 +144,13 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
   ],
   controllers: [DownloadDossierDocumentsController],
   providers: [
+    ListCollectivitesService,
+    ListCollectivitesRouter,
+    GetCollectiviteService,
+    GetCollectiviteRouter,
+    GetDossierService,
+    GetDossierRouter,
+    RepriseTecRouter,
     DownloadDossierDocumentsService,
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
