@@ -1,9 +1,9 @@
 # Périodicité des indicateurs : déploiement
 
 État au 14 octobre 2026 : les préparations annuelles applicatives (#5481), SQL
-(#5488), reporting (#5489) et restauration (#5463) sont fusionnées dans `main`.
-Les trois préparations restantes ci-dessous restent annuelles et peuvent être
-déployées sans #5215.
+(#5488), reporting (#5489), restauration (#5463) et import atomique (#5491) sont
+fusionnées dans `main`. La préparation d’interface #5493 reste annuelle et peut
+être déployée sans #5215. #5417 et #5492 sont différées hors de cette chaîne.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -11,8 +11,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5491 (import atomique).
-- #5491 → #5492 (file durable annuelle) → #5493 (métadonnées et saisie annuelle).
+- `main` → #5493 (métadonnées et saisie annuelle).
 - #5493 → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
 
 Chaque étape peut rester seule en production après ses prérequis. #5296 reste
@@ -22,8 +21,6 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5491 | Import atomique du catalogue | Aucune |
-| #5492 | File durable de recalcul | `indicateur/reconciliation_formules` |
 | #5493 | Métadonnées et saisie annuelle | Aucune |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5312 | Six observations de Margny remises au mensuel | `indicateur/margny_indicateurs_mensuels` |
@@ -96,10 +93,8 @@ Contrôler :
 Le catalogue conserve `GET /indicateur-definitions/verify` et
 `GET /indicateur-definitions/import`, accessibles avec le jeton anonyme utilisé
 par Google Sheets. Les données viennent uniquement du tableur configuré. Lire `definitions` et
-`identifiantsRecalcules` dans la réponse. Comme sur `main`, le catalogue est
-enregistré avant le recalcul : un échec de recalcul ne l'annule pas. Suspendre les
-imports et reprendre le recalcul avant de publier une autre version. Le rollback
-commun du catalogue et des valeurs sera livré séparément dans #5491.
+`identifiantsRecalcules` dans la réponse. Depuis #5491, fusionnée dans `main`, le catalogue et les valeurs recalculées
+sont enregistrés dans une même transaction : un échec annule l’ensemble.
 
 ## 2. Corrections des parcours annuels — #5430, déploiement autonome
 
@@ -241,6 +236,26 @@ Avant l’activation, le catalogue, les relations, les objectifs et les recalcul
 sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
 Aucune migration supplémentaire ; déployer le backend imports suspendus. Les
 contrats d’import et les contraintes SQL continuent de refuser les autres cadences.
+
+## File de recalcul différée — #5492
+
+#5492 est hors de cette chaîne de livraison. L’import conserve le recalcul
+synchrone et la transaction atomique de #5491, y compris après #5215. Aucune
+file persistante, tâche de reprise ou migration de réconciliation n’est requise.
+Réexaminer ce changement si les mesures en production montrent que la durée
+des imports ou des recalculs nécessite un traitement en arrière-plan.
+
+## 6. Interface de saisie — #5493
+
+Avant #5215, déployer l’application de cette branche. La grille commune et l’API
+annuelle restent celles de `main`. Cette étape ajoute le badge de périodicité,
+son explication au clavier (notamment pour le score TETE) et la lecture seule
+pour les indicateurs sans valeur utilisateur, sans migration SQL.
+
+Contrôler le badge, son infobulle, la saisie annuelle des résultats et objectifs
+avec zéro, les commentaires et la lecture seule. Les scénarios mensuels,
+trimestriels et semestriels seront exécutés avec #5215.
+Le retour à l’application précédente conserve toutes les observations annuelles.
 
 ## En cas d'échec
 

@@ -52,6 +52,14 @@ class IndicateursFactory extends FixtureFactory {
       .where(eq(indicateurDefinitionTable.id, indicateurId));
   }
 
+  /** La participation au score n'est pas modifiable via l'API utilisateur. */
+  async setParticipationScore(indicateurId: number): Promise<void> {
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ participationScore: true })
+      .where(eq(indicateurDefinitionTable.id, indicateurId));
+  }
+
   /** Les groupes et catégories ne sont pas modifiables via l'API utilisateur. */
   async setEnfants(parentId: number, enfantIds: number[]): Promise<void> {
     const [categorie] = await databaseService.db

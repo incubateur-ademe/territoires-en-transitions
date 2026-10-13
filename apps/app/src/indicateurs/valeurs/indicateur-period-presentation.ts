@@ -101,3 +101,13 @@ export const makeIndicateurPeriodTimeAxis = (
     axisPointerFormatter: formatter,
   };
 };
+
+export const getIndicateurPeriodiciteTooltip = (
+  periodicite: IndicateurPeriodicite,
+  participationScore: boolean
+): string =>
+  participationScore && periodicite === 'annuelle'
+    ? appLabels.indicateurPeriodiciteScoreTooltip
+    : appLabels.indicateurPeriodiciteTooltip(
+        getIndicateurPeriodPresentation(periodicite).label
+      );
