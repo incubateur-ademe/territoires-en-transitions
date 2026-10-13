@@ -62,3 +62,29 @@ test.describe("Détail d'un indicateur personnalisé", () => {
     await indicateurDetailPom.expectIsFavori();
   });
 });
+
+test('Expliquer au clavier le suivi annuel d’un indicateur du score TETE', async ({
+  page,
+  collectivites,
+  indicateurs,
+  indicateurDetailPom,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Indicateur annuel du score',
+    unite: '%',
+    periodicite: 'annuelle',
+  });
+  await indicateurs.setParticipationScore(indicateurId);
+  await indicateurDetailPom.goto(collectiviteId, indicateurId);
+  const badge = page.getByTestId('indicateurs.periodicite.badge');
+  await expect(badge).toContainText('Annuelle');
+  await badge.focus();
+  await expect(page.getByRole('tooltip')).toContainText(
+    'il participe au score du programme TETE'
+  );
+});

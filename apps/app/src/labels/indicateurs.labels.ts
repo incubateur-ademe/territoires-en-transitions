@@ -1,6 +1,10 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  indicateurPeriodiciteScoreTooltip:
+    'Cet indicateur doit être suivi à la maille annuelle : il participe au score du programme TETE. Sa périodicité ne peut pas être modifiée.',
+  indicateurPeriodiciteTooltip: (periodicite: string) =>
+    `La périodicité ${periodicite.toLowerCase()} s’applique à la saisie et à l’affichage de cet indicateur. Elle est fixée à sa création et ne peut pas être modifiée.`,
   indicateurAjouterObjectif: 'Ajouter un objectif',
   indicateurAjouterDonnee: 'Ajouter une donnée',
   indicateurChampValeur: (type: string, periode: string) =>

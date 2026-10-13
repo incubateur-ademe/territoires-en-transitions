@@ -275,6 +275,18 @@ la cible doit conserver ses deux contraintes annuelles validées et le dump doit
 contenir la table de réconciliation, même vide. Après #5215, l’état devient
 `reconciliation` et exige aussi les vérificateurs de l’activation.
 
+## 6. Interface de saisie — #5394
+
+Avant #5215, déployer l’application de cette branche. La grille commune et l’API
+annuelle restent celles de `main`. Cette étape ajoute le badge de périodicité,
+son explication au clavier (notamment pour le score TETE) et la lecture seule
+pour les indicateurs sans valeur utilisateur, sans migration SQL.
+
+Contrôler le badge, son infobulle, la saisie annuelle des résultats et objectifs
+avec zéro, les commentaires et la lecture seule. Les scénarios mensuels,
+trimestriels et semestriels seront exécutés avec #5215.
+Le retour à l’application précédente conserve toutes les observations annuelles.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
