@@ -4,6 +4,7 @@ import { AxesRouter } from './axes/axes.router';
 import { FichesRouter } from './fiches/fiches.router';
 import { FindPreviousImportRouter } from './ai-plan-import/find-previous-import/find-previous-import.router';
 import { GetImportStatusRouter } from './ai-plan-import/get-import-status/get-import-status.router';
+import { ResumeImportRouter } from './ai-plan-import/resume-import/resume-import.router';
 import { PlanRouter } from './plans/plans.router';
 import { GenerateReportsRouter } from './reports/generate-plan-report-pptx/generate-reports.router';
 
@@ -16,7 +17,8 @@ export class PlanMainRouter {
     private readonly axesRouter: AxesRouter,
     private readonly generateReportsRouter: GenerateReportsRouter,
     private readonly getImportStatusRouter: GetImportStatusRouter,
-    private readonly findPreviousImportRouter: FindPreviousImportRouter
+    private readonly findPreviousImportRouter: FindPreviousImportRouter,
+    private readonly resumeImportRouter: ResumeImportRouter
   ) {}
 
   router = this.trpc.router({
@@ -26,7 +28,8 @@ export class PlanMainRouter {
     reports: this.generateReportsRouter.router,
     aiImport: this.trpc.mergeRouters(
       this.getImportStatusRouter.router,
-      this.findPreviousImportRouter.router
+      this.findPreviousImportRouter.router,
+      this.resumeImportRouter.router
     ),
   });
 

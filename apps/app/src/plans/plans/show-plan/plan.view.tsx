@@ -21,6 +21,7 @@ import { Alert, Button, Spacer, VisibleWhen } from '@tet/ui';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
+import { ResumeAiImportButton } from '@/app/plans/plans/import-plan/resume-ai-import.button';
 import { ImportedPlanBanner } from './imported-plan.banner';
 import { FilteredResults } from './filters/filtered-results';
 import { FiltersMenuButton } from './filters/filters.button-menu';
@@ -64,6 +65,11 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
               : appLabels.importPlanIaEnCoursDescription
           }
         />
+        {isFailed ? (
+          <div className="mx-6">
+            <ResumeAiImportButton planId={plan.id} />
+          </div>
+        ) : null}
       </div>
     );
   }

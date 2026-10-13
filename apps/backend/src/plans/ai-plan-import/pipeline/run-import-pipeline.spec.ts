@@ -2,14 +2,22 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { ImportStepRun } from '../models/import-step-run';
-import { buildDocument, buildPage } from './document/document-page';
+import {
+  buildDocument,
+  buildPage,
+  type ReadDocument,
+} from './document/document-page';
+import type { PipelineCheckpoint } from './pipeline-checkpoint';
 import {
   PipelineLlm,
   RunImportPipelineInput,
   runImportPipeline,
   StepName,
   StepStates,
+  stepStatesSchema,
 } from './run-import-pipeline';
+
+const stepOrder = stepStatesSchema.keyof().options;
 
 const tokens: TokenUsage = {
   promptTokens: 10,
@@ -119,9 +127,9 @@ const routedLlm = (failingStep?: StepName): PipelineLlm =>
 const documentOf = (text: string) =>
   buildDocument('pdf', [buildPage(0, [{ text }])]);
 
-const input = (
-  overrides: Partial<RunImportPipelineInput> = {}
-): RunImportPipelineInput => ({
+type FreshInput = Extract<RunImportPipelineInput, { document: ReadDocument }>;
+
+const input = (overrides: Partial<FreshInput> = {}): FreshInput => ({
   document: documentOf('texte source'),
   instructions: '',
   disabledFields: [],
@@ -225,6 +233,17 @@ describe('runImportPipeline', () => {
         reading: 'ok',
         scouting: 'skipped',
         extraction: 'pending',
+        hierarchy: 'pending',
+        scoring: 'pending',
+        consolidation: 'pending',
+        enrichment: 'pending',
+        secteurs: 'pending',
+        qualitativeReview: 'pending',
+      },
+      {
+        reading: 'ok',
+        scouting: 'skipped',
+        extraction: 'ok',
         hierarchy: 'pending',
         scoring: 'pending',
         consolidation: 'pending',
@@ -436,5 +455,128 @@ describe('runImportPipeline', () => {
     if (outcome.status === 'done') {
       expect(outcome.draft.actions[0].secteurs).toBeUndefined();
     }
+  });
+
+  describe('reprise', () => {
+    const prompts = (llm: PipelineLlm): string[] =>
+      vi
+        .mocked(llm.generateStructured)
+        .mock.calls.map(([args]) => (args as { prompt: string }).prompt);
+
+    const segmentedLlm = (): PipelineLlm => {
+      const llm = routedLlm();
+      (llm as { capabilities: unknown }).capabilities = {
+        ocr: false,
+        strategy: 'segmented',
+      };
+      return llm;
+    };
+
+    const segmentedDocument = buildDocument('pdf', [
+      buildPage(0, [
+        { text: 'Axe 1 : Bâtiments' },
+        { text: 'Action 1.1.1 : Isoler' },
+        { text: 'Pilote : Service' },
+      ]),
+      buildPage(1, [
+        { text: 'Action 1.1.2 : Rénover' },
+        { text: 'Budget : 10' },
+      ]),
+    ]);
+
+    const strategies = [
+      { label: 'document entier', llm: routedLlm, document: undefined },
+      {
+        label: 'segmentée',
+        llm: segmentedLlm,
+        document: segmentedDocument,
+      },
+    ];
+
+    it.each(strategies)(
+      'enregistre un point de reprise JSON après chaque étape ($label)',
+      async ({ llm, document }) => {
+        const checkpoints: PipelineCheckpoint[] = [];
+
+        await runImportPipeline(
+          llm(),
+          input({
+            ...(document ? { document } : {}),
+            withSecteurs: true,
+            onCheckpoint: async (checkpoint) => {
+              checkpoints.push(checkpoint);
+            },
+          })
+        );
+
+        expect(checkpoints.map(({ completedStep }) => completedStep)).toEqual([
+          'reading',
+          'scouting',
+          'extraction',
+          'hierarchy',
+          'scoring',
+          'consolidation',
+          'enrichment',
+          'secteurs',
+          'qualitativeReview',
+        ]);
+        for (const checkpoint of checkpoints) {
+          expect(JSON.parse(JSON.stringify(checkpoint))).toEqual(checkpoint);
+          expect(checkpoint.currentDate).toBe('2026-06-10');
+        }
+      }
+    );
+
+    it.each(strategies)(
+      'reprend après chaque étape sans rappeler le modèle pour ce qui est fait ($label)',
+      async ({ llm, document }) => {
+        const checkpoints: PipelineCheckpoint[] = [];
+        const referenceRuns: StepName[] = [];
+        const firstLlm = llm();
+        const reference = await runImportPipeline(
+          firstLlm,
+          input({
+            ...(document ? { document } : {}),
+            withSecteurs: true,
+            onStepRun: async ({ step }) => {
+              referenceRuns.push(step as StepName);
+            },
+            onCheckpoint: async (checkpoint) => {
+              // Comme en base : un JSON, pas les objets de la pipeline.
+              checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+            },
+          })
+        );
+        const referencePrompts = prompts(firstLlm);
+        expect(reference.status).toBe('done');
+
+        for (const checkpoint of checkpoints) {
+          const resumedLlm = llm();
+          const runs: StepName[] = [];
+          const { document: _document, ...base } = input({
+            withSecteurs: true,
+          });
+
+          const resumed = await runImportPipeline(resumedLlm, {
+            ...base,
+            resumeFrom: checkpoint,
+            onStepRun: async ({ step }) => {
+              runs.push(step as StepName);
+            },
+          });
+
+          const completed = stepOrder.indexOf(checkpoint.completedStep);
+          const remaining = (step: StepName) =>
+            stepOrder.indexOf(step) > completed;
+          expect(resumed).toEqual(reference);
+          // Mêmes prompts au caractère près : l'état restauré (unités gardées,
+          // squelette, extraits) est bien celui du premier passage.
+          expect(prompts(resumedLlm)).toEqual(
+            referencePrompts.filter((prompt) => remaining(stepOf(prompt)))
+          );
+          expect(runs).toEqual(referenceRuns.filter(remaining));
+        }
+      }
+    );
   });
 });

@@ -4,6 +4,8 @@ import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { hasPermission } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReactElement, useEffect, useRef, useState } from 'react';
@@ -17,6 +19,7 @@ import {
 import { useEnqueueAiImport } from './data/use-enqueue-ai-import';
 import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
+import { useResumeAiImport } from './data/use-resume-ai-import';
 
 const CheckingOngoingImport = () => (
   <div className="flex justify-center py-10">
@@ -69,6 +72,10 @@ export const AiImportFlow = ({
 
   const enqueue = useEnqueueAiImport();
   const { data: status } = useGetAiImportStatus(jobId);
+  const resume = useResumeAiImport();
+  const canResume =
+    hasPermission(useUser(), 'plans.fiches.import_resume') &&
+    status?.resumable === true;
 
   const createdPlanId = status?.status === 'done' ? status.createdPlanId : null;
   const notifiedPlanId = useRef<number | null>(null);
@@ -115,6 +122,8 @@ export const AiImportFlow = ({
         failed={status?.status === 'failed'}
         errorMessage={status?.error ?? null}
         onRetry={() => setJobId(null)}
+        onResume={canResume ? () => resume.mutate({ jobId }) : undefined}
+        isResuming={resume.isPending}
         steps={toImportStepViews(status?.stepStates)}
       />
     );

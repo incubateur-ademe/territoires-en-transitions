@@ -15,6 +15,7 @@ export const AiPlanImportSpecificErrors = [
   'STORAGE_ERROR',
   'CREATE_PLAN_ERROR',
   'ALREADY_IMPORTED',
+  'JOB_NOT_RESUMABLE',
   'UNAUTHORIZED',
 ] as const;
 

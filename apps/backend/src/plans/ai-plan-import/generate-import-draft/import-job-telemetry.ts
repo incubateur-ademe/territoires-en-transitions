@@ -7,7 +7,11 @@ import {
   ImportStepRunStatus,
   ImportTrackedStep,
 } from '../models/import-step-run';
-import { computeLlmCallMetrics } from '../pipeline/compute-import-metrics';
+import {
+  computeLlmCallMetrics,
+  LlmCallMetrics,
+  sumLlmCallMetrics,
+} from '../pipeline/compute-import-metrics';
 import { ReadDocument } from '../pipeline/document/document-page';
 
 type StepOutcome = {
@@ -19,7 +23,8 @@ type StepOutcome = {
 /**
  * Déroulé d'un import : chaque étape est enregistrée dès qu'elle se termine,
  * et le résumé chiffré s'assemble au fil du traitement. Une étape non
- * enregistrée ne fait pas échouer l'import.
+ * enregistrée ne fait pas échouer l'import. Une reprise ajoute ses appels à
+ * ceux des passages précédents.
  */
 export class ImportJobTelemetry {
   private readonly runs: ImportStepRun[] = [];
@@ -31,12 +36,20 @@ export class ImportJobTelemetry {
     private readonly jobId: string,
     private readonly strategy: string,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
-    private readonly logger: Logger
+    private readonly logger: Logger,
+    private readonly resumed: {
+      attempt: number;
+      previousLlm: LlmCallMetrics;
+    } = { attempt: 0, previousLlm: sumLlmCallMetrics([]) }
   ) {}
 
   async record(run: ImportStepRun): Promise<void> {
     this.runs.push(run);
-    const saved = await this.stepRunRepository.insert(this.jobId, run);
+    const saved = await this.stepRunRepository.insert(
+      this.jobId,
+      run,
+      this.resumed.attempt
+    );
     if (!saved.success) {
       this.logger.warn(
         `Import ${this.jobId}: étape ${run.step} non enregistrée (${saved.error})`
@@ -79,6 +92,15 @@ export class ImportJobTelemetry {
     };
   }
 
+  /** Reprise : le document a été lu au premier passage. */
+  restoreDocument(document: ImportJobStats['document']): void {
+    this.document = document;
+  }
+
+  documentStats(): ImportJobStats['document'] {
+    return this.document;
+  }
+
   setContent(content: NonNullable<ImportJobStats['content']>): void {
     this.content = content;
   }
@@ -89,7 +111,10 @@ export class ImportJobTelemetry {
 
   stats(): ImportJobStats {
     const { calls, failedCalls, rateLimited, tokens, models } =
-      computeLlmCallMetrics(this.runs.flatMap((run) => run.calls));
+      sumLlmCallMetrics([
+        this.resumed.previousLlm,
+        computeLlmCallMetrics(this.runs.flatMap((run) => run.calls)),
+      ]);
     return {
       schemaVersion: 1,
       content: this.content,
@@ -103,6 +128,7 @@ export class ImportJobTelemetry {
         tokens,
       },
       warnings: this.warnings,
+      resumes: this.resumed.attempt,
     };
   }
 }

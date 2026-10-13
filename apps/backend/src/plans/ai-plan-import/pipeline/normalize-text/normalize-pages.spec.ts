@@ -17,6 +17,15 @@ describe('normalizePages', () => {
     expect(page.text).toBe('Efficacité énergétique');
   });
 
+  it('retire les caractères de contrôle et les demi-paires que Postgres refuse en jsonb', () => {
+    const [page] = normalizePages([
+      pageOf(0, 'Iso\u0000ler\tles\u001Fbâtiments\uD800 publics \uD83C\uDF31'),
+    ]);
+
+    expect(page.text).toBe('Isoler\tlesbâtiments\uFFFD publics \uD83C\uDF31');
+    expect(() => JSON.parse(JSON.stringify(page.text))).not.toThrow();
+  });
+
   it('recolle un mot coupé en fin de ligne, pas un tiret de liste', () => {
     const [page] = normalizePages([
       pageOf(0, 'Le dévelop-', 'pement durable', '- Saint-', 'Martin'),

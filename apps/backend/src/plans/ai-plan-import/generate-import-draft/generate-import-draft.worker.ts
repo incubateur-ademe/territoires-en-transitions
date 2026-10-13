@@ -3,6 +3,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { Job, UnrecoverableError } from 'bullmq';
 import {
   AI_PLAN_IMPORT_LOCK_DURATION_MS,
+  AI_PLAN_IMPORT_MAX_STALLED_RESUMES,
   AI_PLAN_IMPORT_QUEUE_NAME,
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
@@ -11,10 +12,13 @@ import {
   GenerateImportDraftService,
 } from './generate-import-draft.service';
 
+// Un processus arrêté en cours d'import (redémarrage, déploiement) laisse son
+// job sans verrou : BullMQ le redistribue, et l'import reprend à son dernier
+// point de reprise. Un échec métier, lui, reste définitif (`attempts: 1`).
 @Processor(AI_PLAN_IMPORT_QUEUE_NAME, {
   lockDuration: AI_PLAN_IMPORT_LOCK_DURATION_MS,
   concurrency: 1,
-  maxStalledCount: 0,
+  maxStalledCount: AI_PLAN_IMPORT_MAX_STALLED_RESUMES,
 })
 export class GenerateImportDraftWorker extends WorkerHost {
   constructor(private readonly service: GenerateImportDraftService) {

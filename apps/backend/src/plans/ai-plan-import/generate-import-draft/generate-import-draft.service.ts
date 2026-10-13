@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import {
   MAX_FICHE_TITLE_LENGTH,
   normalizeExtractedActions,
@@ -24,9 +24,13 @@ import { type AiPlanImportError } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
 import { ImportJobStats } from '../models/import-job-stats';
-import { computeContentMetrics } from '../pipeline/compute-import-metrics';
+import {
+  computeContentMetrics,
+  sumLlmCallMetrics,
+} from '../pipeline/compute-import-metrics';
 import { ImportJobTelemetry } from './import-job-telemetry';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import { ImportCheckpoint } from '../models/import-checkpoint';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { countPlanContent } from './count-plan-content';
@@ -37,13 +41,24 @@ import {
   ReadDocumentError,
 } from '../pipeline/read-document/read-document';
 import { AI_PLAN_IMPORT_MAX_OCR_PAGES } from '../ai-plan-import.constants';
+import { ReadDocument } from '../pipeline/document/document-page';
+import { isCheckpointUsableBy } from '../pipeline/pipeline-checkpoint';
 import {
-  initialStepStates,
   PipelineError,
   runImportPipeline,
   StepName,
   StepStates,
 } from '../pipeline/run-import-pipeline';
+
+type FailureOptions = {
+  /** Passage de l'exécution : une exécution remplacée n'écrit plus rien. */
+  attempt?: number;
+  draft?: PlanDraft;
+  stepStates?: StepStates;
+  failedStep?: StepName;
+  stats?: ImportJobStats;
+  dropCheckpoint?: boolean;
+};
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
@@ -51,7 +66,7 @@ export type GenerateImportDraftError =
   | { kind: 'interrupted'; jobId: string; message: string };
 
 @Injectable()
-export class GenerateImportDraftService {
+export class GenerateImportDraftService implements OnApplicationBootstrap {
   private readonly logger = new Logger(GenerateImportDraftService.name);
 
   constructor(
@@ -66,6 +81,11 @@ export class GenerateImportDraftService {
     private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository
   ) {}
+
+  /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
+  async onApplicationBootstrap(): Promise<void> {
+    await this.jobRepository.purgeFailedCheckpoints();
+  }
 
   async generate(
     jobId: string
@@ -84,7 +104,9 @@ export class GenerateImportDraftService {
       return await this.runPipeline(job);
     } catch (error) {
       const message = `Import interrompu: ${getErrorMessage(error)}`;
-      await this.markFailed(jobId, message, 'interrupted');
+      await this.markFailed(jobId, message, 'interrupted', {
+        attempt: job.attempt,
+      });
       return failure({ kind: 'interrupted', jobId, message });
     } finally {
       await this.documentStorage.removeDocument({
@@ -114,23 +136,22 @@ export class GenerateImportDraftService {
     message: string,
     reason: string,
     {
+      attempt,
       draft,
       stepStates,
       failedStep,
       stats,
-    }: {
-      draft?: PlanDraft;
-      stepStates?: StepStates;
-      failedStep?: StepName;
-      stats?: ImportJobStats;
-    } = {}
+      dropCheckpoint,
+    }: FailureOptions = {}
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     const marked = await this.jobRepository.markFailed({
       id: jobId,
+      attempt,
       error: message,
-      stepStates: stepStates ?? initialStepStates(),
+      stepStates,
       draft,
       stats,
+      dropCheckpoint,
     });
     if (marked.success) {
       if (marked.data.createdPlanId !== null) {
@@ -166,58 +187,111 @@ export class GenerateImportDraftService {
   private async runPipeline(
     job: AiPlanImportJob
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const source = await this.tryDownloadSource(job.sourcePath);
-    if (source === null) {
+    const { attempt } = job;
+    const telemetry = await this.buildTelemetry(job);
+    const checkpoint = await this.jobRepository.getCheckpoint(job.id);
+    if (!checkpoint.success) {
       return this.recordFailure(
         job.id,
-        'Document source illisible depuis le stockage',
-        'source_unreadable'
+        "Lecture du point de reprise impossible : l'import n'a pas pu reprendre",
+        'checkpoint_unreadable',
+        { attempt }
       );
     }
+    const usable =
+      checkpoint.data && isCheckpointUsableBy(checkpoint.data, this.llm)
+        ? checkpoint.data
+        : null;
 
-    const telemetry = new ImportJobTelemetry(
-      job.id,
-      this.llm.capabilities.strategy,
-      this.stepRunRepository,
-      this.logger
-    );
-
-    const ocrPage = buildLlmOcrPage(this.llm);
-    const document = await telemetry.measure(
-      'document',
-      () =>
-        readDocument(source, {
-          ocr: ocrPage
-            ? { ocrPage, policy: { maxOcrPages: AI_PLAN_IMPORT_MAX_OCR_PAGES } }
-            : undefined,
-        }),
-      (read) =>
-        read.success
-          ? { status: 'ok', details: { ...read.data.stats } }
-          : { status: 'failed', error: read.error.kind }
-    );
-    if (!document.success) {
-      return this.recordFailure(
-        job.id,
-        readDocumentErrorMessage(document.error),
-        document.error.kind,
-        { stats: telemetry.stats() }
+    let start:
+      | { document: ReadDocument; currentDate: string }
+      | { resumeFrom: ImportCheckpoint; currentDate: string };
+    if (usable) {
+      this.logger.log(
+        `Import ${job.id}: reprise après l'étape ${usable.completedStep}`
       );
+      telemetry.restoreDocument(usable.documentStats);
+      start = { resumeFrom: usable, currentDate: usable.currentDate };
+    } else {
+      const source = await this.tryDownloadSource(job.sourcePath);
+      if (source === null) {
+        // Le document est supprimé dès le premier échec : un point de reprise
+        // d'un autre format ou d'un autre modèle ne peut plus servir.
+        return checkpoint.data
+          ? this.recordFailure(
+              job.id,
+              "Ce point de reprise ne correspond plus au modèle configuré : relancez l'import",
+              'checkpoint_unusable',
+              { attempt, dropCheckpoint: true }
+            )
+          : this.recordFailure(
+              job.id,
+              'Document source illisible depuis le stockage',
+              'source_unreadable',
+              { attempt }
+            );
+      }
+      if (checkpoint.data) {
+        this.logger.warn(
+          `Import ${job.id}: point de reprise inutilisable par le modèle configuré, reprise du document`
+        );
+      }
+
+      const ocrPage = buildLlmOcrPage(this.llm);
+      const document = await telemetry.measure(
+        'document',
+        () =>
+          readDocument(source, {
+            ocr: ocrPage
+              ? {
+                  ocrPage,
+                  policy: { maxOcrPages: AI_PLAN_IMPORT_MAX_OCR_PAGES },
+                }
+              : undefined,
+          }),
+        (read) =>
+          read.success
+            ? { status: 'ok', details: { ...read.data.stats } }
+            : { status: 'failed', error: read.error.kind }
+      );
+      if (!document.success) {
+        return this.recordFailure(
+          job.id,
+          readDocumentErrorMessage(document.error),
+          document.error.kind,
+          { attempt, stats: telemetry.stats() }
+        );
+      }
+      telemetry.setDocument(source, document.data);
+      start = {
+        document: document.data,
+        currentDate: new Date().toISOString(),
+      };
     }
-    telemetry.setDocument(source, document.data);
 
     const outcome = await runImportPipeline(this.llm, {
-      document: document.data,
+      ...start,
       instructions: job.options.instructions,
       disabledFields: job.options.disabledFields,
-      currentDate: new Date().toISOString(),
       withVerifications: job.options.withVerifications,
       withSousActions: job.options.withSousActions,
       withSecteurs: job.options.withSecteurs ?? false,
       onStepStatesChange: async (stepStates) => {
-        await this.jobRepository.updateStepStates(job.id, stepStates);
+        await this.jobRepository.updateStepStates(job.id, attempt, stepStates);
       },
       onStepRun: (run) => telemetry.record(run),
+      onCheckpoint: async (pipelineCheckpoint) => {
+        const saved = await this.jobRepository.saveCheckpoint(job.id, attempt, {
+          ...pipelineCheckpoint,
+          documentStats: telemetry.documentStats(),
+        });
+        if (!saved.success) {
+          // L'import continue, mais ne pourra pas reprendre à cette étape.
+          this.logger.error(
+            `Import ${job.id}: point de reprise après ${pipelineCheckpoint.completedStep} non enregistré (${saved.error})`
+          );
+        }
+      },
     });
     telemetry.addWarnings(outcome.warnings.length);
 
@@ -230,6 +304,7 @@ export class GenerateImportDraftService {
         pipelineErrorMessage(outcome.failedStep, outcome.error),
         outcome.error.kind,
         {
+          attempt,
           stepStates: outcome.stepStates,
           failedStep: outcome.failedStep,
           stats: telemetry.stats(),
@@ -242,6 +317,33 @@ export class GenerateImportDraftService {
       outcome.draft,
       outcome.stepStates,
       telemetry
+    );
+  }
+
+  /** Les passages précédents d'un import repris comptent dans son résumé. */
+  private async buildTelemetry(
+    job: AiPlanImportJob
+  ): Promise<ImportJobTelemetry> {
+    const previousLlm =
+      job.attempt > 0
+        ? await this.stepRunRepository.sumPreviousLlmCalls(job.id, job.attempt)
+        : null;
+    if (previousLlm && !previousLlm.success) {
+      this.logger.warn(
+        `Import ${job.id}: appels des passages précédents illisibles (${previousLlm.error})`
+      );
+    }
+    return new ImportJobTelemetry(
+      job.id,
+      this.llm.capabilities.strategy,
+      this.stepRunRepository,
+      this.logger,
+      {
+        attempt: job.attempt,
+        previousLlm: previousLlm?.success
+          ? previousLlm.data
+          : sumLlmCallMetrics([]),
+      }
     );
   }
 
@@ -308,6 +410,7 @@ export class GenerateImportDraftService {
         }
         const done = await this.jobRepository.markDone({
           id: job.id,
+          attempt: job.attempt,
           draft: normalizedDraft,
           stepStates,
           createdPlanId: planId.data,
@@ -326,6 +429,7 @@ export class GenerateImportDraftService {
 
     if (!created.success) {
       return this.recordFailure(job.id, created.error, 'plan_creation_failed', {
+        attempt: job.attempt,
         draft: normalizedDraft,
         stats,
       });
@@ -391,12 +495,7 @@ export class GenerateImportDraftService {
     jobId: string,
     message: string,
     reason: string,
-    options: {
-      draft?: PlanDraft;
-      stepStates?: StepStates;
-      failedStep?: StepName;
-      stats?: ImportJobStats;
-    } = {}
+    options: FailureOptions = {}
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const marked = await this.markFailed(jobId, message, reason, options);
     return marked.success

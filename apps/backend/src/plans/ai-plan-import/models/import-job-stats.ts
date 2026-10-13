@@ -42,4 +42,6 @@ export type ImportJobStats = {
     tokens: TokenUsage;
   };
   warnings: number;
+  /** Reprises de l'import, après un arrêt du processus ou un échec. */
+  resumes?: number;
 };

@@ -63,6 +63,11 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
         message:
           'Ce fichier a déjà été importé dans un plan de la collectivité',
       },
+      JOB_NOT_RESUMABLE: {
+        code: 'CONFLICT',
+        message:
+          "Cet import ne peut pas être repris : il n'est pas en échec, ou son point de reprise a expiré",
+      },
       UNAUTHORIZED: {
         code: 'FORBIDDEN',
         message: "Vous n'avez pas le droit de lancer un import sur cette collectivité",

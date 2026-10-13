@@ -34,11 +34,13 @@ export const aiPlanImportStepRunTable = pgTable(
       .$type<Record<string, number>>()
       .default({}),
     error: text('error'),
+    attempt: integer('attempt').notNull().default(0),
   },
   (table) => [
-    unique('ai_plan_import_step_run_job_step_unique').on(
+    unique('ai_plan_import_step_run_job_step_attempt_unique').on(
       table.jobId,
-      table.step
+      table.step,
+      table.attempt
     ),
   ]
 );

@@ -23,6 +23,7 @@ const toView = (
   error: null,
   createdPlanId: null,
   qualitativeReview: null,
+  resumable: false,
   ...overrides,
 });
 

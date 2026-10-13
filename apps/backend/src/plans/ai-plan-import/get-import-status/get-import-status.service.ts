@@ -80,4 +80,5 @@ const toOutput = (view: AiPlanImportJobStatusView): GetImportStatusOutput => ({
   qualitativeReview: view.qualitativeReview,
   error: view.error,
   createdPlanId: view.createdPlanId,
+  resumable: view.resumable,
 });

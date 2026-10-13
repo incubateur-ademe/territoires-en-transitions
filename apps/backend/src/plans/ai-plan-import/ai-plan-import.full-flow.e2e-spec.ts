@@ -29,7 +29,7 @@ import {
   LlmRepository,
 } from '@tet/backend/utils/llm/repositories/llm.repository';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { z, ZodType } from 'zod';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -41,7 +41,11 @@ import { notificationTable } from '@tet/backend/utils/notifications/models/notif
 import { NotifiedOnEnum } from '@tet/domain/utils';
 import { COMPLETE_PLAN_SECTEURS_QUEUE_NAME } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.queue';
 import { CompletePlanSecteursWorker } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.worker';
-import { AI_PLAN_IMPORT_QUEUE_NAME } from './ai-plan-import.queue';
+import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
+import {
+  AI_PLAN_IMPORT_QUEUE_NAME,
+  GENERATE_IMPORT_DRAFT_JOB_NAME,
+} from './ai-plan-import.queue';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { ficheActionSecteurAttributionTable } from '@tet/backend/plans/fiches/fiche-secteurs/fiche-action-secteur-attribution.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
@@ -91,6 +95,12 @@ const fakeTokens: TokenUsage = {
 
 const schemaKey = (schema: ZodType): string =>
   JSON.stringify(z.toJSONSchema(schema));
+
+/** Ce que le fournisseur factice a reçu, et l'étape qu'il fait échouer. */
+const fakeLlmControl: { calls: string[]; failing: string | null } = {
+  calls: [],
+  failing: null,
+};
 
 /**
  * Un vrai `LlmService` sur un fournisseur factice : les appels traversent la
@@ -143,6 +153,15 @@ const buildFakeLlm = (): LlmService => {
     ],
   ]);
 
+  const stepBySchema = new Map<string, string>([
+    [schemaKey(extractionResponseSchema), 'extraction'],
+    [schemaKey(scoringResponseSchema), 'scoring'],
+    [schemaKey(consolidationResponseSchema), 'consolidation'],
+    [schemaKey(enrichmentResponseSchema), 'enrichment'],
+    [schemaKey(secteursResponseSchema), 'secteurs'],
+    [schemaKey(qualitativeReviewResponseSchema), 'qualitativeReview'],
+  ]);
+
   class FakeLlmRepository extends LlmRepository {
     readonly maxConcurrentCalls = 4;
     readonly maxInputTokensPerMinute = null;
@@ -158,9 +177,16 @@ const buildFakeLlm = (): LlmService => {
     }
 
     async complete(request: LlmCompletionRequest) {
-      const response = request.jsonSchema
-        ? responses.get(JSON.stringify(request.jsonSchema))
-        : undefined;
+      const key = request.jsonSchema ? JSON.stringify(request.jsonSchema) : '';
+      const step = stepBySchema.get(key);
+      if (step !== undefined) {
+        fakeLlmControl.calls.push(step);
+        if (step === fakeLlmControl.failing) {
+          // Erreur non passagère : pas de nouvelle tentative.
+          return failure({ kind: 'api_error' as const, httpStatus: 400 });
+        }
+      }
+      const response = responses.get(key);
       if (response === undefined) {
         throw new Error('Schéma LLM inattendu dans le mock');
       }
@@ -231,6 +257,11 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   const otherCreatedPlanIds: number[] = [];
   const createdJobIds: string[] = [];
   const completePlanSecteursJobs: unknown[] = [];
+  const aiImportQueueJobs: {
+    name: string;
+    data: unknown;
+    opts: { jobId?: string };
+  }[] = [];
 
   const getStatus = (jobId: string) =>
     router.createCaller({ user }).plans.aiImport.getAiImportStatus({ jobId });
@@ -338,7 +369,16 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
           .useValue({ onModuleInit: () => undefined });
         moduleBuilder
           .overrideProvider(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME))
-          .useValue({ add: async () => ({ id: 'fake-job' }) });
+          .useValue({
+            add: async (
+              name: string,
+              data: unknown,
+              opts: { jobId?: string }
+            ) => {
+              aiImportQueueJobs.push({ name, data, opts });
+              return { id: 'fake-job' };
+            },
+          });
         moduleBuilder
           .overrideProvider(CompletePlanSecteursWorker)
           .useValue({ onModuleInit: () => undefined });
@@ -835,5 +875,215 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         justification: 'Rénovation des bâtiments publics.',
       });
     }
+  });
+
+  describe('reprise', () => {
+    // La collectivité principale a déjà consommé son quota quotidien : ces
+    // imports passent par l'autre, et l'équipe (super admin) les reprend.
+    const generate = (jobId: string) =>
+      app.get(GenerateImportDraftService).generate(jobId);
+
+    const resume = (jobId: string, { asOther = false } = {}) =>
+      router
+        .createCaller({ user: asOther ? otherUser : user })
+        .plans.aiImport.resumeAiImport({ jobId });
+
+    const stepRuns = (jobId: string) =>
+      db.db
+        .select({
+          step: aiPlanImportStepRunTable.step,
+          status: aiPlanImportStepRunTable.status,
+          attempt: aiPlanImportStepRunTable.attempt,
+        })
+        .from(aiPlanImportStepRunTable)
+        .where(eq(aiPlanImportStepRunTable.jobId, jobId))
+        .orderBy(asc(aiPlanImportStepRunTable.startedAt));
+
+    const fields = (planName: string) => ({
+      planName,
+      withVerifications: 'true',
+      withSousActions: 'true',
+    });
+
+    /** Un import en échec à la vérification, extraction faite. */
+    const failAtScoring = async (suffix: string) => {
+      const enqueued = await enqueue(fields(`Plan import IA ${suffix}`), {
+        source: csvSource(suffix),
+        asOther: true,
+      });
+      fakeLlmControl.failing = 'scoring';
+      try {
+        await generate(enqueued.jobId);
+      } finally {
+        fakeLlmControl.failing = null;
+      }
+      return enqueued;
+    };
+
+    test("l'équipe reprend un import en échec depuis sa dernière étape terminée", async () => {
+      const { jobId, planId } = await failAtScoring('reprise-manuelle');
+
+      const failed = await readJob(jobId);
+      expect(failed).toMatchObject({ status: 'failed' });
+      expect(failed.checkpoint?.completedStep).toBe('hierarchy');
+      // L'avancement reste celui de la dernière étape, pas remis à zéro.
+      expect(failed.stepStates).toMatchObject({
+        extraction: 'ok',
+        scoring: 'pending',
+      });
+      expect(await readPlan(planId)).toMatchObject({ status: 'failed' });
+
+      await expect(resume(jobId, { asOther: true })).rejects.toMatchObject({
+        code: 'FORBIDDEN',
+      });
+      // Depuis la page du plan en échec : l'import qui peut le reprendre.
+      expect(
+        await router
+          .createCaller({ user })
+          .plans.aiImport.findResumableAiImport({ planId })
+      ).toEqual({ jobId });
+      await expect(
+        router
+          .createCaller({ user: otherUser })
+          .plans.aiImport.findResumableAiImport({ planId })
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+
+      fakeLlmControl.calls = [];
+      expect(await resume(jobId)).toEqual({ jobId });
+      expect(await readJob(jobId)).toMatchObject({
+        status: 'pending',
+        error: null,
+        // Le temps passé en échec ne compte pas dans le traitement.
+        startedAt: null,
+        attempt: 1,
+      });
+      expect(await readPlan(planId)).toMatchObject({ status: 'importing' });
+      // BullMQ garde le job en échec : le même identifiant serait ignoré.
+      const requeued = aiImportQueueJobs.at(-1);
+      expect(requeued).toMatchObject({
+        name: GENERATE_IMPORT_DRAFT_JOB_NAME,
+        data: { jobId },
+      });
+      expect(requeued?.opts.jobId).toEqual(expect.any(String));
+      expect(requeued?.opts.jobId).not.toBe(jobId);
+
+      await generate(jobId);
+
+      // L'extraction est acquise : seule la suite rappelle le modèle.
+      expect(fakeLlmControl.calls).toEqual([
+        'scoring',
+        'consolidation',
+        'enrichment',
+        'qualitativeReview',
+      ]);
+      const done = await readJob(jobId);
+      expect(done).toMatchObject({ status: 'done', checkpoint: null });
+      expect(done.stats).toMatchObject({
+        resumes: 1,
+        llm: expect.objectContaining({ calls: 6 }),
+      });
+      expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
+      expect(await stepRuns(jobId)).toEqual(
+        expect.arrayContaining([
+          { step: 'extraction', status: 'ok', attempt: 0 },
+          { step: 'scoring', status: 'failed', attempt: 0 },
+          { step: 'scoring', status: 'ok', attempt: 1 },
+          { step: 'persistence', status: 'ok', attempt: 1 },
+        ])
+      );
+
+      await expect(resume(jobId)).rejects.toMatchObject({ code: 'CONFLICT' });
+    });
+
+    test("reprend seul un import dont le processus s'est arrêté", async () => {
+      const { jobId, planId } = await failAtScoring('reprise-auto');
+      // Un processus tué n'a pas le temps de marquer l'échec : le job reste
+      // en cours et son plan en import, avec le point de reprise, quand
+      // BullMQ le redistribue.
+      await db.db
+        .update(aiPlanImportJobTable)
+        .set({ status: 'running', error: null, finishedAt: null })
+        .where(eq(aiPlanImportJobTable.id, jobId));
+      await db.db
+        .update(axeTable)
+        .set({ status: 'importing' })
+        .where(eq(axeTable.id, planId));
+      fakeLlmControl.calls = [];
+
+      await generate(jobId);
+
+      expect(fakeLlmControl.calls).not.toContain('extraction');
+      const done = await readJob(jobId);
+      expect(done).toMatchObject({
+        status: 'done',
+        checkpoint: null,
+        attempt: 1,
+      });
+      expect(done.stats).toMatchObject({ resumes: 1 });
+      expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
+    });
+
+    test("une exécution remplacée par une reprise n'écrit plus rien", async () => {
+      const { jobId } = await failAtScoring('execution-remplacee');
+      const jobRepository = app.get(AiPlanImportJobRepository);
+      const { checkpoint } = await readJob(jobId);
+      if (!checkpoint) {
+        throw new Error('Point de reprise attendu');
+      }
+      // Le verrou BullMQ perdu, le job a été redistribué : passage 1.
+      await db.db
+        .update(aiPlanImportJobTable)
+        .set({ status: 'running', attempt: 1 })
+        .where(eq(aiPlanImportJobTable.id, jobId));
+
+      expect(
+        await jobRepository.saveCheckpoint(jobId, 0, checkpoint)
+      ).toMatchObject({ success: false });
+      expect(
+        await jobRepository.saveCheckpoint(jobId, 1, checkpoint)
+      ).toMatchObject({ success: true });
+
+      await jobRepository.markFailed({ id: jobId, error: 'Fin du test' });
+    });
+
+    test("un échec plus vieux que la rétention n'est plus reprenable, et le démarrage le purge", async () => {
+      const { jobId } = await failAtScoring('reprise-expiree');
+      await db.db
+        .update(aiPlanImportJobTable)
+        .set({ modifiedAt: '2026-01-01T00:00:00Z' })
+        .where(eq(aiPlanImportJobTable.id, jobId));
+
+      expect(
+        await router
+          .createCaller({ user: otherUser })
+          .plans.aiImport.getAiImportStatus({ jobId })
+      ).toMatchObject({ resumable: false });
+      await expect(resume(jobId)).rejects.toMatchObject({ code: 'CONFLICT' });
+
+      await app.get(GenerateImportDraftService).onApplicationBootstrap();
+
+      expect((await readJob(jobId)).checkpoint).toBeNull();
+    });
+
+    test('un nouvel import efface le point de reprise des échecs de la collectivité', async () => {
+      const failed = await failAtScoring('reprise-purgee');
+      expect((await readJob(failed.jobId)).checkpoint).not.toBeNull();
+      expect(
+        await router
+          .createCaller({ user: otherUser })
+          .plans.aiImport.getAiImportStatus({ jobId: failed.jobId })
+      ).toMatchObject({ resumable: true });
+
+      const next = await enqueue(fields('Plan import IA après échec'), {
+        source: csvSource('apres-echec'),
+        asOther: true,
+      });
+
+      expect((await readJob(failed.jobId)).checkpoint).toBeNull();
+      await expect(resume(failed.jobId)).rejects.toMatchObject({
+        code: 'CONFLICT',
+      });
+      await generate(next.jobId);
+    });
   });
 });

@@ -271,6 +271,8 @@ export const plansLabels = {
   importPlanIaEnCoursCourt: 'Import en cours',
   importPlanIaEtapeSecteurs: 'Identification des secteurs réglementaires',
   importPlanIaEchecCourt: "Échec de l'import",
+  importPlanIaReprendre: "Reprendre l'import",
+  importPlanIaRepriseLancee: 'Import repris depuis sa dernière étape terminée',
   importPlanIaEchecDescription:
     "L'import de ce plan a échoué : supprimez-le, puis relancez l'import.",
   importPlanIaEnCoursDescription:

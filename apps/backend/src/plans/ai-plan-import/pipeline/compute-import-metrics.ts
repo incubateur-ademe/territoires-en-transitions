@@ -75,6 +75,26 @@ export const computeLlmCallMetrics = (
   };
 };
 
+/** Cumule les appels de passages successifs d'un même import. */
+export const sumLlmCallMetrics = (
+  metrics: LlmCallMetrics[]
+): LlmCallMetrics => ({
+  calls: metrics.reduce((total, { calls }) => total + calls, 0),
+  rateLimited: metrics.reduce(
+    (total, { rateLimited }) => total + rateLimited,
+    0
+  ),
+  failedCalls: metrics.reduce(
+    (total, { failedCalls }) => total + failedCalls,
+    0
+  ),
+  tokens:
+    metrics.length > 0
+      ? sumTokenUsage(metrics.map(({ tokens }) => tokens))
+      : emptyTokenUsage(),
+  models: [...new Set(metrics.flatMap(({ models }) => models))],
+});
+
 const distinctCount = (values: string[]): number =>
   new Set(values.map((value) => value.trim().toLowerCase()).filter(Boolean))
     .size;

@@ -10,6 +10,9 @@ export const AI_PLAN_IMPORT_MAX_IN_FLIGHT_JOBS_PER_USER = 1;
 
 export const AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY = 10;
 
+/** Délai pendant lequel l'équipe peut reprendre un import en échec. */
+export const AI_PLAN_IMPORT_CHECKPOINT_RETENTION_DAYS = 7;
+
 /**
  * Pages scannées lues par l'OCR, au plus. Au-delà, on refuse plutôt que de
  * lire une partie du document en silence.

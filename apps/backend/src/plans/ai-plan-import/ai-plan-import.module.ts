@@ -24,6 +24,8 @@ import { FindPreviousImportService } from './find-previous-import/find-previous-
 import { GetImportStatusRouter } from './get-import-status/get-import-status.router';
 import { GetImportStatusService } from './get-import-status/get-import-status.service';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
+import { ResumeImportRouter } from './resume-import/resume-import.router';
+import { ResumeImportService } from './resume-import/resume-import.service';
 
 @Module({
   imports: [
@@ -53,7 +55,13 @@ import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-im
     FindPreviousImportService,
     FindPreviousImportRouter,
     NotifyPlanImportedService,
+    ResumeImportService,
+    ResumeImportRouter,
   ],
-  exports: [GetImportStatusRouter, FindPreviousImportRouter],
+  exports: [
+    GetImportStatusRouter,
+    FindPreviousImportRouter,
+    ResumeImportRouter,
+  ],
 })
 export class AiPlanImportModule {}
