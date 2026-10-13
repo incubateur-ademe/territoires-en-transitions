@@ -408,10 +408,7 @@ describe('listSousActionsEtTachesCibles', () => {
           ReferentielIdEnum.CAE,
           new Map([
             ['cae_sous_action', createActionScore()],
-            [
-              'cae_non_concernee_texte',
-              createActionScore({ concerne: false }),
-            ],
+            ['cae_non_concernee_texte', createActionScore({ concerne: false })],
           ]),
         ],
         [ReferentielIdEnum.ECI, new Map([['eci_tache', createActionScore()]])],
@@ -556,7 +553,9 @@ describe('listCommentaireCibles', () => {
 });
 
 describe('isCibleConcernee', () => {
-  const createActionScore = (overrides: Partial<ActionScore> = {}): ActionScore =>
+  const createActionScore = (
+    overrides: Partial<ActionScore> = {}
+  ): ActionScore =>
     ({
       concerne: true,
       pointReferentiel: 1,
@@ -589,7 +588,11 @@ describe('getPointReferentiel', () => {
     const scoreMap = new Map<string, ActionScore>([
       [
         'te_1',
-        { concerne: false, pointPotentiel: 0, pointReferentiel: 1.2 } as ActionScore,
+        {
+          concerne: false,
+          pointPotentiel: 0,
+          pointReferentiel: 1.2,
+        } as ActionScore,
       ],
     ]);
 
