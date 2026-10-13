@@ -32,11 +32,17 @@ inputs:
     default: 'true'
   reuse-image:
     description: >
-      Réutilise l'image si son tag existe déjà dans le registre. À activer
-      uniquement pour les images dont tous les inputs sont fixés par le
-      commit (sans configuration d'environnement au build).
+      Réutilise l'image si son tag existe déjà dans le registre et que son
+      attestation de provenance prouve qu'elle a été construite par ce même
+      workflow, à ce même commit. À activer uniquement pour les images dont
+      tous les inputs sont fixés par le commit (sans configuration
+      d'environnement au build).
     required: false
     default: 'false'
+
+# Le job appelant doit avoir les permissions `id-token: write` et
+# `attestations: write` (signature de l'attestation de provenance), en plus de
+# `packages: write`.
 
 runs:
   using: composite
@@ -49,6 +55,7 @@ runs:
       run: docker buildx create --use --name ci-builder --driver docker-container 2>/dev/null || docker buildx use ci-builder
 
     - name: Build (et push) de l'image
+      id: build
       shell: bash
       # Les inputs passent par `env:` (plutôt que d'être interpolés via ${{ }}
       # directement dans le script) pour éviter qu'une valeur contenant des
@@ -61,16 +68,31 @@ runs:
         SECRETS_INPUT: ${{ inputs.secrets }}
         PUSH: ${{ inputs.push }}
         REUSE_IMAGE: ${{ inputs.reuse-image }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         set -euo pipefail
 
         # Une promotion ou un redéploiement du même commit n'a pas besoin de
         # recompiler ni de réexporter le cache. Un registre indisponible ou un
         # tag absent laisse le build normal prendre le relais.
+        #
+        # Un tag GHCR est mutable : tout workflow du repo ayant
+        # `packages: write` (y compris depuis une branche au workflow modifié)
+        # peut pousser une autre image sous le tag d'un commit de main. On ne
+        # réutilise donc l'image que si son attestation, signée via l'OIDC de
+        # GitHub, a été émise par ce workflow au commit déployé. Sinon on
+        # reconstruit, ce qui réécrit le tag.
         if [ "$PUSH" = "true" ] && [ "$REUSE_IMAGE" = "true" ] \
           && docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
-          echo "Image $IMAGE déjà publiée, réutilisation sans build."
-          exit 0
+          if gh attestation verify "oci://$IMAGE" \
+            --repo "$GITHUB_REPOSITORY" \
+            --signer-workflow "${GITHUB_WORKFLOW_REF%@*}" \
+            --source-digest "$GITHUB_SHA" \
+            --deny-self-hosted-runners >/dev/null; then
+            echo "Image $IMAGE déjà publiée et attestée pour $GITHUB_SHA, réutilisation sans build."
+            exit 0
+          fi
+          echo "::warning::Image $IMAGE sans attestation valide pour $GITHUB_SHA : reconstruction."
         fi
 
         build_args=()
@@ -144,5 +166,20 @@ runs:
           "${secret_args[@]}" \
           "${cache_args[@]}" \
           -t "$IMAGE" \
+          --metadata-file "$RUNNER_TEMP/build-metadata.json" \
           "${output_args[@]}" \
           .
+
+        if [ "$PUSH" = "true" ]; then
+          echo "name=${IMAGE%:*}" >> "$GITHUB_OUTPUT"
+          echo "digest=$(jq -r '."containerimage.digest"' "$RUNNER_TEMP/build-metadata.json")" >> "$GITHUB_OUTPUT"
+        fi
+
+    # Prouve que l'image a été construite par ce workflow, à ce commit : c'est
+    # ce que vérifie la réutilisation ci-dessus.
+    - name: Atteste la provenance de l'image
+      if: steps.build.outputs.digest != ''
+      uses: actions/attest-build-provenance@v4.2.2
+      with:
+        subject-name: ${{ steps.build.outputs.name }}
+        subject-digest: ${{ steps.build.outputs.digest }}

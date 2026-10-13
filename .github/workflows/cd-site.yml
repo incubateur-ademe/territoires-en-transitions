@@ -3,6 +3,9 @@ name: Déploiement du site
 permissions:
   contents: read
   packages: write
+  # Signature de l'attestation de provenance (cf. docker-build-push).
+  id-token: write
+  attestations: write
 
 run-name: Déploiement du site sur ${{ github.event.inputs.target }}
 

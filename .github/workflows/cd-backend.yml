@@ -32,6 +32,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+      # Signature de l'attestation de provenance (cf. docker-build-push).
+      id-token: write
+      attestations: write
     outputs:
       image: ${{ steps.image.outputs.path }}
 
