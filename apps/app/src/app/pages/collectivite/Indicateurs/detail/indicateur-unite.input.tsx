@@ -1,5 +1,5 @@
 import { Field, Input } from '@tet/ui';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 type Props = {
   unite: string;
@@ -13,10 +13,12 @@ export const IndicateurUniteInput = ({
   updateUnite,
 }: Props) => {
   const [uniteInput, setUniteInput] = useState(unite);
+  const inputId = useId();
 
   return (
-    <Field title="Unité" className="max-w-72" small>
+    <Field title="Unité" htmlFor={inputId} className="max-w-72" small>
       <Input
+        id={inputId}
         type="text"
         displaySize="sm"
         value={uniteInput}

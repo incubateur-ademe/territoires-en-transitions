@@ -69,14 +69,14 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
                 <DEPRECATED_TCell className="font-medium">
                   {`${capitalize(appLabels.indicateurResultat())} (${unite})`}
                 </DEPRECATED_TCell>
-                <CellValue readonly value={resultat ?? ''} />
+                <CellValue value={resultat ?? ''} />
                 <DEPRECATED_TCell>{resultatCommentaire}</DEPRECATED_TCell>
               </DEPRECATED_TRow>
               <DEPRECATED_TRow>
                 <DEPRECATED_TCell className="font-medium">
                   {`${capitalize(appLabels.indicateurObjectif())} (${unite})`}
                 </DEPRECATED_TCell>
-                <CellValue readonly value={objectif ?? ''} />
+                <CellValue value={objectif ?? ''} />
                 <DEPRECATED_TCell>{objectifCommentaire}</DEPRECATED_TCell>
               </DEPRECATED_TRow>
             </DEPRECATED_TBody>

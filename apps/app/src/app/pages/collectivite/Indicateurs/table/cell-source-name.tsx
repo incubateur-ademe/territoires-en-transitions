@@ -1,36 +1,43 @@
+import { appLabels } from '@/app/labels/catalog';
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
-import { DEPRECATED_TCell, Icon } from '@tet/ui';
+import { Icon, TableHeaderCell } from '@tet/ui';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';
 import { DataSourceTooltip } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
 
-/** Affiche le nom d'une source de données et un rappel de l'unité */
+/** Affiche le nom d'une source de données. */
 export const CellSourceName = ({
   source,
-  unite,
   type,
   getColorBySourceId,
 }: {
   source: Omit<PreparedData['sources'][number], 'valeurs'>;
-  unite: string;
   type: SourceType;
   getColorBySourceId: GetColorBySourceId;
 }) => {
   const metadonnee = source.metadonnees?.[0];
   const color = getColorBySourceId(source.source, type);
+  const isLocal = source.source === 'collectivite';
 
   return (
-    <DEPRECATED_TCell className="font-bold text-sm">
+    <TableHeaderCell
+      scope="row"
+      className="border-b border-r border-primary-4 align-middle font-bold text-sm"
+    >
       <div className="inline-flex items-center min-w-72 gap-2">
-        {type === 'objectif' ? DashedLineSymbol(color) : SolidLineSymbol(color)}
-        {getSourceLabel(
-          source.source,
-          metadonnee?.producteur || source.libelle,
-          type
-        )}
-        <sup className="text-primary-9 leading-tight">{`(${unite})`}</sup>
+        {!isLocal &&
+          (type === 'objectif'
+            ? DashedLineSymbol(color)
+            : SolidLineSymbol(color))}
+        {isLocal
+          ? appLabels.sourceCollectivite
+          : getSourceLabel(
+              source.source,
+              metadonnee?.producteur || source.libelle,
+              type
+            )}
         {!!metadonnee && (
           <DataSourceTooltip
             nomSource={source.libelle}
@@ -44,6 +51,6 @@ export const CellSourceName = ({
           </DataSourceTooltip>
         )}
       </div>
-    </DEPRECATED_TCell>
+    </TableHeaderCell>
   );
 };

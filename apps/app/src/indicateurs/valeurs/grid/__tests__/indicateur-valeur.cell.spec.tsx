@@ -62,11 +62,13 @@ const buildCellContext = ({
   resultat,
   objectif,
   dateValeur,
+  isApplicable = true,
   updateIndicateurValeurs = vi.fn().mockResolvedValue(true),
 }: {
   resultat: number | null;
   objectif: number | null;
   dateValeur?: string;
+  isApplicable?: boolean;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }): {
   cell: CellContext<
@@ -80,6 +82,7 @@ const buildCellContext = ({
     indicateurId,
     indicateurLabel: 'Résidentiel',
     indicateurValeurs: [buildValeur({ resultat, objectif, dateValeur })],
+    isApplicable,
   });
 
   const meta: IndicateurValeursTableMeta = {
@@ -106,6 +109,7 @@ const renderCell = ({
   dateValeur,
   periode = annualPeriode,
   isRequired = true,
+  isApplicable,
   updateIndicateurValeurs,
 }: {
   indicateurValeurType: 'resultat' | 'objectif';
@@ -113,6 +117,7 @@ const renderCell = ({
   objectif: number | null;
   dateValeur?: string;
   isRequired?: boolean;
+  isApplicable?: boolean;
   periode?: IndicateurPeriode | null;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }) => {
@@ -120,6 +125,7 @@ const renderCell = ({
     resultat,
     objectif,
     dateValeur,
+    isApplicable,
     updateIndicateurValeurs,
   });
 
@@ -251,6 +257,39 @@ describe('IndicateurValeurCell', () => {
     );
   });
 
+  it('ne ferme pas l’éditeur ni ne sauvegarde une composition IME avec Entrée', async () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: 20,
+    });
+    fireEvent.click(screen.getByText('10'));
+    const input = screen.getByRole('textbox', { name: 'Résultat' });
+    fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: '4' } });
+
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+
+    expect(updateIndicateurValeurs).not.toHaveBeenCalled();
+    expect(screen.getByRole('textbox')).toBe(input);
+    expect((input as HTMLInputElement).value).toBe('4');
+
+    fireEvent.compositionEnd(input);
+    fireEvent.change(input, { target: { value: '42' } });
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: false });
+
+    await waitFor(() =>
+      expect(updateIndicateurValeurs).toHaveBeenCalledWith({
+        indicateurId,
+        periode: annualPeriode,
+        field: 'resultat',
+        value: 42,
+      })
+    );
+    await waitFor(() => expect(screen.queryByRole('textbox')).toBeNull());
+    expect(updateIndicateurValeurs).toHaveBeenCalledOnce();
+  });
+
   it('n’enregistre pas quand l’édition est annulée', async () => {
     const { updateIndicateurValeurs } = renderCell({
       indicateurValeurType: 'resultat',
@@ -354,5 +393,82 @@ describe('IndicateurValeurCell', () => {
 
     expect((screen.getByLabelText(label) as HTMLInputElement).value).toBe('50');
     expect(updateIndicateurValeurs).toHaveBeenCalledTimes(1);
+  });
+
+  it('conserve le format numérique français limité à trois décimales', async () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+    });
+
+    fireEvent.click(screen.getByText('10'));
+    const input = screen.getByRole('textbox', { name: 'Résultat' });
+    expect(input.getAttribute('aria-required')).toBe('true');
+    fireEvent.change(input, { target: { value: '1234,5678' } });
+    expect((input as HTMLInputElement).value).toBe('1 234,567');
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() =>
+      expect(updateIndicateurValeurs).toHaveBeenCalledWith({
+        indicateurId,
+        periode: annualPeriode,
+        field: 'resultat',
+        value: 1234.567,
+      })
+    );
+  });
+
+  it.each([
+    { text: '0', value: 0 },
+    { text: '', value: null },
+  ])('enregistre $value après saisie de "$text"', async ({ text, value }) => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'resultat',
+      resultat: 10,
+      objectif: null,
+    });
+
+    editAndCommit('10', text);
+
+    await waitFor(() =>
+      expect(updateIndicateurValeurs).toHaveBeenCalledWith({
+        indicateurId,
+        periode: annualPeriode,
+        field: 'resultat',
+        value,
+      })
+    );
+  });
+
+  it('laisse une valeur optionnelle vide sans marqueur requis', () => {
+    renderCell({
+      indicateurValeurType: 'objectif',
+      resultat: null,
+      objectif: null,
+      isRequired: false,
+    });
+
+    expect(screen.queryByTitle(appLabels.indicateurValeurRequise)).toBeNull();
+    fireEvent.click(screen.getByRole('cell'));
+    expect(screen.getByRole('textbox').getAttribute('aria-required')).toBe(
+      'false'
+    );
+  });
+
+  it('désactive la saisie et le marqueur requis pour un indicateur non applicable', () => {
+    const { updateIndicateurValeurs } = renderCell({
+      indicateurValeurType: 'objectif',
+      resultat: null,
+      objectif: null,
+      isApplicable: false,
+    });
+
+    fireEvent.click(
+      screen.getByText(appLabels.pcaetDiagnosticValeurNonApplicable)
+    );
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.queryByTitle(appLabels.indicateurValeurRequise)).toBeNull();
+    expect(updateIndicateurValeurs).not.toHaveBeenCalled();
   });
 });

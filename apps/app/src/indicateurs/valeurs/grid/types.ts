@@ -7,14 +7,14 @@ import {
 
 import type { ReactNode } from 'react';
 
-export type PcaetIndicateurValeurType = Extract<
+export type IndicateurValeurField = Extract<
   IndicateurValeurType,
   'resultat' | 'objectif'
 >;
 
 export type IndicateurPeriodeColumn = {
   periode: IndicateurPeriode | null;
-  valeurTypes: readonly PcaetIndicateurValeurType[];
+  valeurTypes: readonly IndicateurValeurField[];
   renderHeader: (colSpan: number) => ReactNode;
 };
 

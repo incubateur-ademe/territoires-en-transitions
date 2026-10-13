@@ -1,6 +1,7 @@
 import {
   autoUpdate,
   flip,
+  FloatingFocusManager,
   FloatingPortal,
   offset,
   Placement,
@@ -13,7 +14,7 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import Link, { LinkProps } from 'next/link';
-import { cloneElement, useState } from 'react';
+import { cloneElement, KeyboardEventHandler, useState } from 'react';
 
 import { flushSync } from 'react-dom';
 import { useOpenState } from '../../hooks/use-open-state';
@@ -92,6 +93,30 @@ type Props = {
   withArrow?: boolean;
 } & ButtonProps;
 
+const handleActionNavigation: KeyboardEventHandler<HTMLDivElement> = (
+  event
+) => {
+  if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+    return;
+  }
+
+  const items = Array.from(
+    event.currentTarget.querySelectorAll<HTMLElement>(
+      ':scope > button:enabled, :scope > a[href]:not([aria-disabled="true"])'
+    )
+  );
+  const currentIndex = items.findIndex((item) => item === event.target);
+  if (currentIndex < 0) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  const direction = event.key === 'ArrowDown' ? 1 : -1;
+  const nextIndex = (currentIndex + direction + items.length) % items.length;
+  items[nextIndex].focus();
+};
+
 export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
   const {
     openState,
@@ -105,13 +130,18 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     itemSize,
     offset: menuOffset = 8,
   } = menu;
-  const { isOpen, toggleIsOpen } = useOpenState(openState);
+  const { isOpen, setIsOpen } = useOpenState(openState);
 
   const [maxHeight, setMaxHeight] = useState(0);
 
-  const { refs, context, x, y, strategy } = useFloating({
+  const { refs, context, x, y, strategy } = useFloating<HTMLElement>({
     open: isOpen,
-    onOpenChange: toggleIsOpen,
+    onOpenChange: (open, _event, reason) => {
+      setIsOpen(open);
+      if (!open && reason === 'escape-key') {
+        refs.domReference.current?.focus();
+      }
+    },
     whileElementsMounted: autoUpdate,
     placement: placement ?? 'bottom-end',
     middleware: [
@@ -153,56 +183,71 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
         </Button>,
         getReferenceProps({
           ref: refs.setReference,
+          'aria-expanded': isOpen,
+          'aria-controls': isOpen ? context.floatingId : undefined,
         })
       )}
       {isOpen && (
         <FloatingPortal>
-          <div
-            {...getFloatingProps({
-              ref: refs.setFloating,
-              style: {
-                position: strategy,
-                top: y,
-                left: x,
-                maxHeight: maxHeight - 16,
-              },
-              className: cn(
-                'max-w-64 relative overflow-y-auto flex flex-col gap-2 p-2 border border-grey-2 rounded-md bg-white shadow z-[1]',
-                menuClassName
-              ),
-            })}
+          <FloatingFocusManager
+            context={context}
+            modal={false}
+            returnFocus={false}
           >
-            {startContent}
-            {actions && (
-              <div className="flex flex-col">
-                {actions.map((action, index) =>
-                  action === MenuSeparator ? (
-                    <MenuActionSeparator key={index} />
-                  ) : (
-                    <MenuActionItem
-                      key={
-                        typeof action.label === 'string'
-                          ? action.label
-                          : index.toString()
-                      }
-                      {...action}
-                      size={itemSize}
-                      onClick={(e) => {
-                        toggleIsOpen();
-                        action.onClick?.(e);
-                      }}
-                    />
-                  )
-                )}
-              </div>
-            )}
-            {endContent && (
-              <>
-                <div className="h-px mx-2 bg-grey-3 last:hidden" />
-                {endContent}
-              </>
-            )}
-          </div>
+            <div
+              {...getFloatingProps({
+                ref: refs.setFloating,
+                id: context.floatingId,
+                style: {
+                  position: strategy,
+                  top: y,
+                  left: x,
+                  maxHeight: maxHeight - 16,
+                },
+                className: cn(
+                  'max-w-64 relative overflow-y-auto flex flex-col gap-2 p-2 border border-grey-2 rounded-md bg-white shadow z-[1]',
+                  menuClassName
+                ),
+              })}
+            >
+              {startContent}
+              {actions && (
+                <div
+                  className="flex flex-col"
+                  onKeyDown={handleActionNavigation}
+                >
+                  {actions.map((action, index) =>
+                    action === MenuSeparator ? (
+                      <MenuActionSeparator key={index} />
+                    ) : (
+                      <MenuActionItem
+                        key={
+                          typeof action.label === 'string'
+                            ? action.label
+                            : index.toString()
+                        }
+                        {...action}
+                        size={itemSize}
+                        onClick={(e) => {
+                          // Restore focus before the action so an editor or dialog
+                          // opened by it can take focus without losing it again.
+                          refs.domReference.current?.focus();
+                          setIsOpen(false);
+                          action.onClick?.(e);
+                        }}
+                      />
+                    )
+                  )}
+                </div>
+              )}
+              {endContent && (
+                <>
+                  <div className="h-px mx-2 bg-grey-3 last:hidden" />
+                  {endContent}
+                </>
+              )}
+            </div>
+          </FloatingFocusManager>
         </FloatingPortal>
       )}
     </>

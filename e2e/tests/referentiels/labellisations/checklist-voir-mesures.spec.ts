@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { testWithReferentiels as test } from '../referentiels.fixture';
+import { test } from 'tests/main.fixture';
 
 const referentielId: ReferentielId = 'eci';
 
@@ -58,12 +58,27 @@ test.describe('Checklist audit-labellisation — accès aux mesures non renseign
       name: STATUT_COLUMN,
       exact: true,
     });
+    const descriptionColumnCheckbox = page.getByRole('checkbox', {
+      name: 'Description',
+      exact: true,
+    });
 
     await page.goto(progressionUrl);
     await expect(statutColumnHeader).toBeVisible();
 
     await page.getByRole('button', { name: 'Colonnes' }).click();
     await statutColumnCheckbox.uncheck();
+    await expect(statutColumnCheckbox).not.toBeChecked();
+    await expect(statutColumnCheckbox).toBeFocused();
+    await descriptionColumnCheckbox.check();
+    await expect(descriptionColumnCheckbox).toBeChecked();
+    await expect(descriptionColumnCheckbox).toBeFocused();
+    await expect(
+      page.getByRole('columnheader', { name: 'Description', exact: true })
+    ).toBeVisible();
+    await descriptionColumnCheckbox.uncheck();
+    await expect(descriptionColumnCheckbox).not.toBeChecked();
+    await expect(descriptionColumnCheckbox).toBeFocused();
     await page.keyboard.press('Escape');
     await page.reload();
     await expect(statutColumnHeader).toBeHidden();
