@@ -8,8 +8,10 @@ import { Badge, Card, EmptyCard } from '@tet/ui';
 import type { JSX, ReactNode } from 'react';
 import { match } from 'ts-pattern';
 import { ActionDeReferenceBadges } from './action-de-reference.badges';
+import { ActionDeReferenceUsefulnessCard } from './action-de-reference.usefulness.card';
 import type { ActionDeReferenceDetail } from './data/use-get-action-de-reference';
 import { LinkedFichesCard } from './linked-fiches.card';
+import { useSendUsefulnessResponse } from './use-send-usefulness-response';
 
 const ActionDeReferenceField = ({
   label,
@@ -50,28 +52,37 @@ const ActionDeReferenceDetails = ({
   action,
 }: {
   readonly action: ActionDeReference;
-}): JSX.Element => (
-  <div className="flex flex-col gap-6">
-    <div className="flex flex-wrap items-center gap-2">
-      <Badge
-        title={appLabels.actionDeReferenceAdeme}
-        variant="warning"
-        size="sm"
-        className="w-fit"
-      />
-      <ActionDeReferenceBadges action={action} hasUpdateButton={false} />
-    </div>
-    <div className="flex w-full flex-col gap-6 md:flex-row">
-      <div className="w-full md:flex-[2]">
-        <CardCoverBanner />
-        <ActionDeReferenceFields action={action} />
+}): JSX.Element => {
+  const sendUsefulnessResponse = useSendUsefulnessResponse(action.id);
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge
+          title={appLabels.actionDeReferenceAdeme}
+          variant="warning"
+          size="sm"
+          className="w-fit"
+        />
+        <ActionDeReferenceBadges action={action} hasUpdateButton={false} />
       </div>
-      <div className="w-full md:flex-[1]">
-        <LinkedFichesCard actionDeReferenceId={action.id} />
+      <div className="flex w-full flex-col gap-6 md:flex-row">
+        <div className="w-full md:flex-[2]">
+          <CardCoverBanner />
+          <div className="flex flex-col gap-6">
+            <ActionDeReferenceFields action={action} />
+            <ActionDeReferenceUsefulnessCard
+              onAnswer={sendUsefulnessResponse}
+            />
+          </div>
+        </div>
+        <div className="w-full md:flex-[1]">
+          <LinkedFichesCard actionDeReferenceId={action.id} />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const ActionDeReferenceContent = ({
   detail,

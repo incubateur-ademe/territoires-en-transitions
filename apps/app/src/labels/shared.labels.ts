@@ -115,4 +115,9 @@ export const sharedLabels = {
     'Les modifications apportées à cette action seront perdues.',
   actionDeReferenceAbandonnerModifications: 'Fermer sans enregistrer',
   actionDeReferencePoursuivreModification: 'Poursuivre la modification',
+  actionDeReferenceUtileQuestion:
+    'Cette action de référence vous a-t-elle été utile ?',
+  actionDeReferenceUtileOui: 'Oui',
+  actionDeReferenceUtileNon: 'Non',
+  actionDeReferenceUtileMerci: 'Merci pour votre retour',
 };
