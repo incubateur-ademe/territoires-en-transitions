@@ -1,12 +1,12 @@
 import {
   IndicateurPeriodiciteEnum,
-  IndicateurPeriods,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import { valueFieldsForPeriod } from '../../../../indicateurs/valeurs/grid/cell-editability';
-import type { IndicateurPeriodColumn } from '../../../../indicateurs/valeurs/grid/types';
+import { valueFieldsForPeriode } from '../../../../indicateurs/valeurs/grid/cell-editability';
+import type { IndicateurPeriodeColumn } from '../../../../indicateurs/valeurs/grid/types';
 import { DiagnosticIndicateurYearHeaderCell } from './diagnostic-indicateur-year.header-cell';
 
-export const buildDiagnosticIndicateurPeriodColumns = ({
+export const buildDiagnosticIndicateurPeriodeColumns = ({
   years,
   referenceYear,
   currentYear,
@@ -18,8 +18,8 @@ export const buildDiagnosticIndicateurPeriodColumns = ({
   currentYear: number;
   onReferenceYearChange?: (year: number) => void;
   isReadonly: boolean;
-}): IndicateurPeriodColumn[] => {
-  const currentPeriod = IndicateurPeriods.parse(
+}): IndicateurPeriodeColumn[] => {
+  const currentPeriode = IndicateurPeriodes.parse(
     IndicateurPeriodiciteEnum.ANNUELLE,
     String(currentYear)
   );
@@ -28,20 +28,20 @@ export const buildDiagnosticIndicateurPeriodColumns = ({
     ...years.filter((year) => year !== referenceYear),
   ];
   return displayYears.map((year) => {
-    const period =
+    const periode =
       year === null
         ? null
-        : IndicateurPeriods.parse(
+        : IndicateurPeriodes.parse(
             IndicateurPeriodiciteEnum.ANNUELLE,
             String(year)
           );
     const isReference = year === referenceYear;
     return {
-      period,
+      periode,
       valeurTypes:
-        period === null
+        periode === null
           ? ['resultat']
-          : valueFieldsForPeriod(period, currentPeriod),
+          : valueFieldsForPeriode(periode, currentPeriode),
       renderHeader: (colSpan) => (
         <DiagnosticIndicateurYearHeaderCell
           year={year}

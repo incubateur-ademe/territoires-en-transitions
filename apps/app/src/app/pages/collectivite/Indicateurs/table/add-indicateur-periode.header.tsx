@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateurPeriodes,
   IndicateurPeriodiciteEnum,
-  type IndicateurPeriode,
+  type IndicateurPeriodeAnnuelle,
 } from '@tet/domain/indicateurs';
 import { Button, Field, Input, Tooltip } from '@tet/ui';
 import { type ComponentProps, useEffect, useId, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ const editorOptions = {
     inputMode: 'numeric',
   },
 } satisfies Record<
-  IndicateurPeriode['periodicite'],
+  IndicateurPeriodeAnnuelle['periodicite'],
   {
     add: string;
     duplicate: string;
@@ -31,9 +31,9 @@ export const AddIndicateurPeriodeHeader = ({
   focusRequested = false,
   onFocusHandled,
 }: {
-  periodicite: IndicateurPeriode['periodicite'];
-  existingPeriodes: readonly IndicateurPeriode[];
-  onAdd: (periode: IndicateurPeriode) => Promise<boolean>;
+  periodicite: IndicateurPeriodeAnnuelle['periodicite'];
+  existingPeriodes: readonly IndicateurPeriodeAnnuelle[];
+  onAdd: (periode: IndicateurPeriodeAnnuelle) => Promise<boolean>;
   focusRequested?: boolean;
   onFocusHandled?: () => void;
 }) => {
@@ -46,7 +46,7 @@ export const AddIndicateurPeriodeHeader = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const parsedPeriode = IndicateurPeriodes.parse(periodicite, draft);
+  const parsedPeriode = IndicateurPeriodes.tryParse(periodicite, draft);
   const hasDuplicate = parsedPeriode
     ? existingKeys.has(IndicateurPeriodes.key(parsedPeriode))
     : false;

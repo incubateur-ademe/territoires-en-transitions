@@ -13,10 +13,10 @@ import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.reposi
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
 import { captureIndicateurValeursResult } from '../indicateur-valeurs.errors';
 import {
-  hydrateLegacyIndicateurPeriod,
+  hydrateLegacyIndicateurPeriode,
   getLegacyIndicateurPeriodicite,
-  dehydrateIndicateurPeriod,
-} from '../indicateur-period.adapter';
+  dehydrateIndicateurPeriode,
+} from '../indicateur-periode.adapter';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
 import {
@@ -201,8 +201,8 @@ export class WriteIndicateurValeursService {
     }
   ): string {
     try {
-      return dehydrateIndicateurPeriod(
-        hydrateLegacyIndicateurPeriod({
+      return dehydrateIndicateurPeriode(
+        hydrateLegacyIndicateurPeriode({
           periodicite: definition.periodicite,
           dateValeur,
         })

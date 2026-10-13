@@ -1,5 +1,5 @@
 import {
-  IndicateurPeriodErrorEnum,
+  IndicateurPeriodeErrorEnum,
   IndicateurPeriodiciteEnum,
 } from '@tet/domain/indicateurs';
 import { IndicateurAvecValeursParSource } from '@tet/domain/indicateurs';
@@ -75,7 +75,7 @@ describe('valeurs-utilisables.rules', () => {
       expect(() =>
         mapIndicateurToValeurUtilisable(indicateurAssocie, valeurs, [])
       ).toThrow(
-        IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
+        IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
       );
     });
 

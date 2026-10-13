@@ -1,8 +1,8 @@
-import type { LocalCalendarDate, LocalDate } from './indicateur-period.types';
+import type { LocalCalendarDate, LocalDate } from './indicateur-periode.types';
 import {
-  createIndicateurPeriodError,
-  IndicateurPeriodErrorEnum,
-} from './indicateur-period.errors';
+  createIndicateurPeriodeError,
+  IndicateurPeriodeErrorEnum,
+} from './indicateur-periode.errors';
 
 const MIN_YEAR = 1;
 const MAX_YEAR = 9999;
@@ -48,8 +48,8 @@ const assertCalendarDate = ({ year, month, day }: LocalCalendarDate): void => {
     day >= 1 &&
     day <= daysInMonth(year, month);
   if (!isValid) {
-    throw createIndicateurPeriodError({
-      code: IndicateurPeriodErrorEnum.INDICATEUR_CALENDAR_DATE_INVALID,
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_CALENDAR_DATE_INVALID,
       details: { year, month, day },
     });
   }
@@ -58,8 +58,8 @@ const assertCalendarDate = ({ year, month, day }: LocalCalendarDate): void => {
 export const parseLocalDate = (value: string): ParsedLocalDate => {
   const match = LOCAL_DATE_PATTERN.exec(value);
   if (!match) {
-    throw createIndicateurPeriodError({
-      code: IndicateurPeriodErrorEnum.INDICATEUR_LOCAL_DATE_INVALID,
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_LOCAL_DATE_INVALID,
       details: { value },
     });
   }

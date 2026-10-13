@@ -1,19 +1,19 @@
 import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateurPeriodes,
-  type IndicateurPeriode,
+  type IndicateurPeriodeAnnuelle,
 } from '@tet/domain/indicateurs';
 import { Button, Notification, TableHeaderCell, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 
 type CellPeriodeListProps = {
   columns: readonly {
-    periode: IndicateurPeriode;
+    periode: IndicateurPeriodeAnnuelle;
     label: string;
     isPrivate: boolean;
     canDelete: boolean;
   }[];
-  onDelete: (periode: IndicateurPeriode) => void;
+  onDelete: (periode: IndicateurPeriodeAnnuelle) => void;
 };
 
 /** Displays period headers independently of the annual value storage. */

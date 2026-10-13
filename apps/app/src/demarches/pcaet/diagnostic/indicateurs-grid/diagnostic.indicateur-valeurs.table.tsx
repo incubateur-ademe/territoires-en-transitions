@@ -5,7 +5,7 @@ import { IndicateurValeursTable } from '../../../../indicateurs/valeurs/grid';
 import type { GridMaxHeight } from '../../../../indicateurs/valeurs/grid/types';
 import { demarchePcaetAutosaveKeys } from '../../data/autosave-keys';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
-import { buildDiagnosticIndicateurPeriodColumns } from './diagnostic-indicateur-period.columns';
+import { buildDiagnosticIndicateurPeriodeColumns } from './diagnostic-indicateur-periode.columns';
 import { useDiagnosticIndicateurValeursTable } from './use-diagnostic-indicateur-valeurs-table';
 
 type Props = {
@@ -41,9 +41,9 @@ export const DiagnosticIndicateurValeursTable = ({
   });
 
   const currentYear = new Date().getFullYear();
-  const periodColumns = useMemo(
+  const periodeColumns = useMemo(
     () =>
-      buildDiagnosticIndicateurPeriodColumns({
+      buildDiagnosticIndicateurPeriodeColumns({
         years,
         referenceYear,
         currentYear,
@@ -57,7 +57,7 @@ export const DiagnosticIndicateurValeursTable = ({
     <IndicateurValeursTable
       autosaveKey={autosaveKey}
       rows={rows}
-      periodColumns={periodColumns}
+      periodeColumns={periodeColumns}
       updateIndicateurValeurs={updateIndicateurValeurs}
       setIndicateurApplicable={setIndicateurApplicable}
       title={table.title}

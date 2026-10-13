@@ -6,7 +6,7 @@ import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/in
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
-  IndicateurPeriod,
+  IndicateurPeriode,
   IndicateurPeriodicite,
   PCAET_COLLECTIVITE_SOURCE_ID,
   IndicateurValeur,
@@ -21,9 +21,9 @@ import {
   sql,
 } from 'drizzle-orm';
 import {
-  dehydrateIndicateurPeriod,
-  hydrateIndicateurPeriod,
-} from '../indicateur-period.adapter';
+  dehydrateIndicateurPeriode,
+  hydrateIndicateurPeriode,
+} from '../indicateur-periode.adapter';
 import { indicateurValeurTable } from '../indicateur-valeur.table';
 
 type IndicateurSourceCalcul = {
@@ -40,7 +40,7 @@ export type CalculSourceValeurQuery = {
   sourceId?: string | null;
   metadonneeId?: number | null;
   extraSourceCalculIds: string[];
-  period: IndicateurPeriod;
+  periode: IndicateurPeriode;
 };
 
 type StoredCalculatedValeur = IndicateurValeur & {
@@ -53,7 +53,7 @@ type StoredRelevantValeur = StoredCalculatedValeur & {
   metadonneeDateVersion: string | null;
 };
 
-type IndicateurValeurPeriodKey = Pick<
+type IndicateurValeurPeriodeKey = Pick<
   IndicateurValeur,
   'collectiviteId' | 'dateValeur'
 >;
@@ -93,7 +93,7 @@ export class ComputeValeursRepository {
         sourceId,
         metadonneeId,
         extraSourceCalculIds,
-        period,
+        periode,
       }) => {
         const sourceCondition = sourceId
           ? or(
@@ -123,9 +123,9 @@ export class ComputeValeursRepository {
           eq(indicateurValeurTable.collectiviteId, collectiviteId),
           eq(
             indicateurValeurTable.dateValeur,
-            dehydrateIndicateurPeriod(period)
+            dehydrateIndicateurPeriode(periode)
           ),
-          eq(indicateurValeurTable.periodicite, period.periodicite),
+          eq(indicateurValeurTable.periodicite, periode.periodicite),
           inArray(
             indicateurDefinitionTable.identifiantReferentiel,
             identifiants
@@ -167,7 +167,7 @@ export class ComputeValeursRepository {
         ...valeur,
         indicateurIdentifiant: valeur.indicateurIdentifiant,
         deleted: false,
-        period: hydrateIndicateurPeriod({
+        periode: hydrateIndicateurPeriode({
           periodicite: valeur.periodicite,
           dateValeur: valeur.dateValeur,
         }),
@@ -223,13 +223,13 @@ export class ComputeValeursRepository {
       );
   }
 
-  async listPeriodKeys(
+  async listPeriodeKeys(
     {
       collectiviteId,
       indicateurIds,
     }: { collectiviteId: number; indicateurIds: number[] },
     tx: Transaction
-  ): Promise<IndicateurValeurPeriodKey[]> {
+  ): Promise<IndicateurValeurPeriodeKey[]> {
     if (indicateurIds.length === 0) return [];
     return tx
       .select({

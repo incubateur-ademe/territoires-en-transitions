@@ -2,11 +2,11 @@ import {
   IndicateurPeriodiciteEnum,
   type IndicateurPeriodicite,
 } from '../definitions/indicateur-periodicite.schema';
-import { IndicateurPeriods } from './indicateur-period';
+import { IndicateurPeriodes } from './indicateur-periode';
 import {
-  createIndicateurPeriodError,
-  IndicateurPeriodErrorEnum,
-} from './indicateur-period.errors';
+  createIndicateurPeriodeError,
+  IndicateurPeriodeErrorEnum,
+} from './indicateur-periode.errors';
 
 /**
  * Explicit boundary for legacy capabilities whose business contract is an
@@ -18,8 +18,8 @@ export function assertAnnualIndicateurPeriodicite(
   capability: string
 ): asserts periodicite is typeof IndicateurPeriodiciteEnum.ANNUELLE {
   if (periodicite !== IndicateurPeriodiciteEnum.ANNUELLE) {
-    throw createIndicateurPeriodError({
-      code: IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
       details: { periodicite, capability },
     });
   }
@@ -32,8 +32,8 @@ export const toAnnualIndicateurYear = (
 ): number => {
   assertAnnualIndicateurPeriodicite(periodicite, capability);
   return Number(
-    IndicateurPeriods.serialize(
-      IndicateurPeriods.fromDateValeur(periodicite, dateValeur)
+    IndicateurPeriodes.serialize(
+      IndicateurPeriodes.fromDateValeur(periodicite, dateValeur)
     )
   );
 };
@@ -50,8 +50,8 @@ export const toAnnualIndicateurYearFromHistoricalDate = (
 ): number => {
   assertAnnualIndicateurPeriodicite(periodicite, capability);
   return Number(
-    IndicateurPeriods.serialize(
-      IndicateurPeriods.containing(periodicite, dateValeur)
+    IndicateurPeriodes.serialize(
+      IndicateurPeriodes.containing(periodicite, dateValeur)
     )
   );
 };

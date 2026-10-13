@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { IndicateurPeriodErrorEnum } from './indicateur-period.errors';
+import { IndicateurPeriodeErrorEnum } from './indicateur-periode.errors';
 import {
   assertAnnualIndicateurPeriodicite,
   toAnnualIndicateurYear,
   toAnnualIndicateurYearFromHistoricalDate,
-} from './annual-indicateur-period.adapter';
+} from './annual-indicateur-periode.adapter';
 
 describe('adaptateur des capacités annuelles historiques', () => {
   it('extrait une année depuis une date annuelle canonique', () => {
@@ -18,7 +18,7 @@ describe('adaptateur des capacités annuelles historiques', () => {
       toAnnualIndicateurYear('mensuelle', '2026-01-01', 'test annuel')
     ).toThrow(
       expect.objectContaining({
-        code: IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
         details: { periodicite: 'mensuelle', capability: 'test annuel' },
       })
     );
@@ -29,7 +29,7 @@ describe('adaptateur des capacités annuelles historiques', () => {
       assertAnnualIndicateurPeriodicite(null, 'test annuel')
     ).toThrow(
       expect.objectContaining({
-        code: IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
         details: { periodicite: null, capability: 'test annuel' },
       })
     );
@@ -45,7 +45,7 @@ describe('adaptateur des capacités annuelles historiques', () => {
     ).toBe(2025);
     expect(() =>
       toAnnualIndicateurYear('annuelle', '2025-07-10', 'Une valeur courante')
-    ).toThrow(IndicateurPeriodErrorEnum.INDICATEUR_PERIOD_DATE_NON_CANONICAL);
+    ).toThrow(IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_DATE_NON_CANONICAL);
   });
 
   it('refuse une cadence mensuelle même à la frontière historique', () => {
@@ -57,7 +57,7 @@ describe('adaptateur des capacités annuelles historiques', () => {
       )
     ).toThrow(
       expect.objectContaining({
-        code: IndicateurPeriodErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED,
         details: { periodicite: 'mensuelle', capability: 'Un ancien snapshot' },
       })
     );

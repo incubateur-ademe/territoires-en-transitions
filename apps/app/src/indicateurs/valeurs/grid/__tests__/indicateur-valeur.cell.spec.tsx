@@ -8,9 +8,9 @@ import {
   waitFor,
 } from '@testing-library/react';
 import {
-  IndicateurPeriod,
+  IndicateurPeriode,
   IndicateurPeriodiciteEnum,
-  IndicateurPeriods,
+  IndicateurPeriodes,
   IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import { capitalize } from '@tet/ui/labels/plural';
@@ -25,7 +25,7 @@ import { fakeRow } from './grid-fixtures';
 
 const indicateurId = 12;
 const year = 2026;
-const annualPeriod = IndicateurPeriods.parse(
+const annualPeriode = IndicateurPeriodes.parse(
   IndicateurPeriodiciteEnum.ANNUELLE,
   String(year)
 );
@@ -104,7 +104,7 @@ const renderCell = ({
   resultat,
   objectif,
   dateValeur,
-  period = annualPeriod,
+  periode = annualPeriode,
   isRequired = true,
   updateIndicateurValeurs,
 }: {
@@ -113,7 +113,7 @@ const renderCell = ({
   objectif: number | null;
   dateValeur?: string;
   isRequired?: boolean;
-  period?: IndicateurPeriod | null;
+  periode?: IndicateurPeriode | null;
   updateIndicateurValeurs?: IndicateurValeursTableMeta['updateIndicateurValeurs'];
 }) => {
   const { cell, updateIndicateurValeurs: persist } = buildCellContext({
@@ -132,7 +132,7 @@ const renderCell = ({
             <IndicateurValeurCell
               cell={cell}
               indicateurValeurType={indicateurValeurType}
-              period={period}
+              periode={periode}
               isRequired={isRequired}
             />
           </tr>
@@ -191,7 +191,7 @@ describe('IndicateurValeurCell', () => {
       indicateurValeurType: 'resultat',
       resultat: 10,
       objectif: null,
-      period: null,
+      periode: null,
     });
     fireEvent.click(screen.getByRole('cell'));
     expect(
@@ -244,7 +244,7 @@ describe('IndicateurValeurCell', () => {
     await waitFor(() =>
       expect(updateIndicateurValeurs).toHaveBeenCalledWith({
         indicateurId,
-        period: annualPeriod,
+        periode: annualPeriode,
         field: 'resultat',
         value: 42,
       })

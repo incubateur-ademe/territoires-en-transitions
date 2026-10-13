@@ -97,9 +97,11 @@ des nouvelles déclarations locales. Leur reprise et leur accès relèvent d'un 
 migration explicite, sans conversion ni suppression implicite et sans introduire de réglage
 de périodicité de visualisation.
 
-Le domaine utilise un objet immuable et sérialisable, `IndicateurPeriod`, qui associe explicitement
+Le domaine utilise un objet immuable et sérialisable, `IndicateurPeriode`, qui associe explicitement
 la périodicité et la date de début. Les données reçues par l’API ou lues en base sont validées
 avant de construire cet objet : périodicité connue et date de début conforme à celle-ci.
+Dans les noms de types, variables et fichiers, `periode` désigne cet intervalle précis,
+tandis que `periodicite` désigne sa fréquence. Les opérations techniques restent nommées en anglais.
 
 | Périodicité   | Date de début canonique                | Libellé de déclaration       |
 | ------------- | -------------------------------------- | ---------------------------- |

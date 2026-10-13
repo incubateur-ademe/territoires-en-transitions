@@ -26,9 +26,9 @@ import {
 } from './group-calcul-indicateur-sources.rules';
 import IndicateurExpressionService from '../indicateur-expression.service';
 import {
-  dehydrateIndicateurPeriod,
-  hydrateIndicateurPeriod,
-} from '../indicateur-period.adapter';
+  dehydrateIndicateurPeriode,
+  hydrateIndicateurPeriode,
+} from '../indicateur-periode.adapter';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { LoadIndicateurCalculGraphService } from './load-indicateur-calcul-graph.service';
 
@@ -119,7 +119,7 @@ export default class ComputeValeursService {
         ],
         dateValeurs: [
           ...new Set(
-            groups.map(({ period }) => dehydrateIndicateurPeriod(period))
+            groups.map(({ periode }) => dehydrateIndicateurPeriode(periode))
           ),
         ],
       },
@@ -128,13 +128,13 @@ export default class ComputeValeursService {
     const expected = new Set(valeursToUpsert.map(getCalculatedValeurIdentity));
     const valeurIdsToDelete = stored.flatMap((valeur) => {
       if (!valeur.periodicite) return [];
-      const period = hydrateIndicateurPeriod({
+      const periode = hydrateIndicateurPeriode({
         periodicite: valeur.periodicite,
         dateValeur: valeur.dateValeur,
       });
       const key = getCalculSourceGroupKey(
         valeur.collectiviteId,
-        period,
+        periode,
         valeur.sourceId,
         valeur.metadonneeId
       );
@@ -178,7 +178,7 @@ export default class ComputeValeursService {
           sourceId: normalizeCalculSourceId(metadonnee?.sourceId),
           metadonneeDateVersion: metadonnee?.dateVersion ?? null,
           deleted: deletedIds.has(valeur.id),
-          period: hydrateIndicateurPeriod({
+          periode: hydrateIndicateurPeriode({
             periodicite: valeur.periodicite,
             dateValeur: valeur.dateValeur,
           }),
@@ -196,7 +196,7 @@ export default class ComputeValeursService {
     const sourceQueries = formulasWithGroups.flatMap(({ formula, groups }) =>
       Object.values(groups).map((group) => ({
         collectiviteId: group.collectiviteId,
-        period: group.period,
+        periode: group.periode,
         sourceId: group.sourceId,
         metadonneeId: group.metadonneeId,
         identifiants: formula.references.map(({ identifiant }) => identifiant),
@@ -251,15 +251,15 @@ export default class ComputeValeursService {
         .map(({ id }) => id)
     );
     const relevantIds = [...new Set([...indicateurIds, ...sourceIds])];
-    const discoveredPeriods = await this.repository.listPeriodKeys(
+    const discoveredPeriodes = await this.repository.listPeriodeKeys(
       { collectiviteId, indicateurIds: relevantIds },
       tx
     );
     // Discover keys, acquire all period locks, then re-read the values used by
     // calculation. Writers arriving after discovery perform their own refresh.
-    await this.valeurLockRepository.lock(discoveredPeriods, tx);
+    await this.valeurLockRepository.lock(discoveredPeriodes, tx);
     const lockedDates = new Set(
-      discoveredPeriods.map(({ dateValeur }) => dateValeur)
+      discoveredPeriodes.map(({ dateValeur }) => dateValeur)
     );
     const stored = (
       await this.repository.listRelevantValeurs(
@@ -283,7 +283,7 @@ export default class ComputeValeursService {
           indicateurIdentifiant: valeur.indicateurIdentifiant,
           sourceId: normalizeCalculSourceId(valeur.sourceId),
           deleted: false,
-          period: hydrateIndicateurPeriod({
+          periode: hydrateIndicateurPeriode({
             periodicite: valeur.periodicite,
             dateValeur: valeur.dateValeur,
           }),

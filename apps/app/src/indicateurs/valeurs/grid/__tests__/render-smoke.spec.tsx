@@ -7,13 +7,13 @@ import {
 } from '@testing-library/react';
 import {
   IndicateurPeriodiciteEnum,
-  IndicateurPeriods,
+  IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
 import { capitalize } from '@tet/ui/labels/plural';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../labels/catalog';
-import { buildDiagnosticIndicateurPeriodColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-period.columns';
+import { buildDiagnosticIndicateurPeriodeColumns } from '../../../../demarches/pcaet/diagnostic/indicateurs-grid/diagnostic-indicateur-periode.columns';
 import { IndicateurValeursTable } from '../indicateur-valeurs.table';
 import { IndicateurTableRow } from '../types';
 import {
@@ -45,7 +45,7 @@ const gridElement = ({
   <IndicateurValeursTable
     autosaveKey="grille"
     rows={fakeRows}
-    periodColumns={buildDiagnosticIndicateurPeriodColumns({
+    periodeColumns={buildDiagnosticIndicateurPeriodeColumns({
       years,
       referenceYear,
       currentYear: fakeReferenceYear,
@@ -93,7 +93,7 @@ describe('IndicateurValeursTable smoke', () => {
     await waitFor(() =>
       expect(updateIndicateurValeurs).toHaveBeenCalledWith({
         indicateurId: 12,
-        period: IndicateurPeriods.parse(
+        periode: IndicateurPeriodes.parse(
           IndicateurPeriodiciteEnum.ANNUELLE,
           String(fakeReferenceYear)
         ),
@@ -117,7 +117,7 @@ describe('IndicateurValeursTable smoke', () => {
     });
 
     expect(isValeurRequired).toHaveBeenCalledWith(
-      IndicateurPeriods.parse(
+      IndicateurPeriodes.parse(
         IndicateurPeriodiciteEnum.ANNUELLE,
         String(fakeReferenceYear)
       )
@@ -131,9 +131,9 @@ describe('IndicateurValeursTable smoke', () => {
 
   it('affiche les colonnes et les champs fournis par le contexte', () => {
     renderGrid({
-      periodColumns: [
+      periodeColumns: [
         {
-          period: IndicateurPeriods.parse(
+          periode: IndicateurPeriodes.parse(
             IndicateurPeriodiciteEnum.ANNUELLE,
             String(fakeReferenceYear)
           ),

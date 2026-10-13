@@ -1,6 +1,6 @@
 import type {
   IndicateurDefinition,
-  IndicateurPeriod,
+  IndicateurPeriode,
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
@@ -8,7 +8,7 @@ import type { ReferencedIndicateur } from '../referenced-indicateur.dto';
 
 export type CalculSourceValeur = IndicateurValeurWithIdentifiant & {
   indicateurIdentifiant: string;
-  period: IndicateurPeriod;
+  periode: IndicateurPeriode;
   deleted: boolean;
   metadonneeDateVersion: string | null;
 };
@@ -25,7 +25,7 @@ export type SourceCalculPolicy = {
 
 export type CalculSourceGroup = {
   collectiviteId: number;
-  period: IndicateurPeriod;
+  periode: IndicateurPeriode;
   sourceId: string | null;
   metadonneeId: number | null;
   valeurs: CalculSourceValeur[];
