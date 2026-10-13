@@ -147,14 +147,23 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/workspace:ro" \
             --workdir /workspace \
             --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=contract \
+            --env EXPECTED_RESTORE_PHASE=contract-margny \
             --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
           archive="$(mktemp)"
           trap 'rm -f "$archive"' EXIT
           pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
-            --table=sqitch.changes --file="$archive"
+            --table=sqitch.changes --schema=private \
+            --table=private.indicateur_valeur_date_repair --file="$archive"
           phase="$(bash data_layer/backup/check-restore-compatibility.sh "$archive")"
           [[ "$phase" == "$EXPECTED_RESTORE_PHASE" ]]
+
+          # A migrated snapshot must preserve the original Margny observations.
+          pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
+            --table=sqitch.changes --file="$archive"
+          if bash data_layer/backup/check-restore-compatibility.sh "$archive"; then
+            echo 'Backup preflight accepted an archive without the Margny originals.' >&2
+            exit 1
+          fi
           BASH
 
       - name: Test periodicity constraints after deployment
