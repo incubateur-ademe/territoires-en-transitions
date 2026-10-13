@@ -23,6 +23,7 @@ export * from './trajectoires/verification-trajectoire.rules';
 export * from './valeurs/indicateur-periodes';
 export * from './valeurs/indicateur-valeur-type.enum';
 export * from './valeurs/indicateur-periode.errors';
+export * from './valeurs/indicateur-periode.schema';
 export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/iso-date.utils';
 export * from './valeurs/values.constants';

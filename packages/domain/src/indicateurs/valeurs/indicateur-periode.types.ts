@@ -27,6 +27,12 @@ export type IndicateurPeriode<
   readonly [indicateurPeriodeBrand]: true;
 }>;
 
+/** Untrusted JSON shape accepted by `indicateurPeriodeSchema`. */
+export type IndicateurPeriodeJson = Readonly<{
+  periodicite: IndicateurPeriodicite;
+  dateDebut: string;
+}>;
+
 /** Stable identity for maps, sets, DOM attributes and cache keys. */
 export type IndicateurPeriodeKey = string & {
   readonly [indicateurPeriodeKeyBrand]: true;
