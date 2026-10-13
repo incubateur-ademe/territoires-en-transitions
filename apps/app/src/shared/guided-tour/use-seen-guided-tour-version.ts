@@ -13,7 +13,7 @@ type SeenGuidedTourVersion = {
   markSeen: () => void;
 };
 
-export const useSeenGuidedTourVersion = ({
+const useSeenGuidedTourVersion = ({
   id,
   version,
 }: UseSeenGuidedTourVersionArgs): SeenGuidedTourVersion => {
@@ -29,3 +29,5 @@ export const useSeenGuidedTourVersion = ({
 
   return { hasSeen: seenVersion === version, markSeen };
 };
+
+export { useSeenGuidedTourVersion };

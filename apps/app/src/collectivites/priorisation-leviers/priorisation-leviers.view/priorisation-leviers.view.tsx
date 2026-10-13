@@ -15,11 +15,11 @@ import {
   TabsTab,
 } from '@tet/ui/design-system/TabsNext/index';
 import { countBy, sumBy } from 'es-toolkit';
-import { JSX, useMemo, useState } from 'react';
+import { JSX, useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../levier-card-info';
+import { LeviersView } from './leviers-view';
 import { priorisationTargets } from '../priorisation-tour/priorisation-tour.targets';
-import { usePriorisationTour } from '../priorisation-tour/use-priorisation-tour';
 import { Preselection, usePreselection } from '../use-preselection';
 import { LeviersMatrixChart } from './charts/leviers-matrix.chart';
 import { LeviersMondrianChart } from './charts/leviers-mondrian.chart';
@@ -47,13 +47,12 @@ import { useLevierSidePanel } from './levier-panel/use-levier-side-panel';
 import { LeviersWithoutPotentielList } from './leviers-without-potentiel.list';
 import { PriorisationMetrics } from './priorisation.metrics';
 import { SelectLevier } from './select-levier';
+import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
 
 type PriorisationAlertsProps = {
   hasMobilisation: boolean;
   potentiels: PotentielsReduction;
 };
-
-type LeviersView = 'matrix' | 'sousLeviers' | 'breakdown';
 
 type LeviersViewState = {
   view: LeviersView;
@@ -295,12 +294,9 @@ export const PriorisationLeviersView = (): JSX.Element => {
   const upsertPertinence = useUpsertPertinence();
   const preselection = usePreselection();
   const isTourReady = leviersQuery.status === 'ready' && preselection.isReady;
-  const { Tour, restart } = usePriorisationTour({ isReady: isTourReady });
-  const [view, setView] = useState<LeviersView>('matrix');
-  const restartOnMatrix = (): void => {
-    setView('matrix');
-    restart();
-  };
+  const { Tour, view, setView, restartOnMatrix } = useLeviersViewWithTour({
+    isTourReady,
+  });
 
   return (
     <>

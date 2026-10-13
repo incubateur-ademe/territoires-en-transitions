@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import type { ResolveTarget } from '@/app/shared/guided-tour/guided-tour-registry';
+import type { ResolveTargetById } from '@/app/shared/guided-tour/guided-tour-targets.context';
 import { insideTopEnd } from '@/app/shared/guided-tour/inside-top-end.middleware';
 import type { Step } from 'react-joyride';
 import type { PriorisationTargetId } from './priorisation-tour.targets';
@@ -9,7 +9,7 @@ const INSIDE_TARGET_MARGIN = 20;
 const toPriorisationTourSteps = ({
   resolve,
 }: {
-  resolve: (id: PriorisationTargetId) => ResolveTarget;
+  resolve: ResolveTargetById<PriorisationTargetId>;
 }): Step[] => [
   {
     target: resolve('metrics'),
