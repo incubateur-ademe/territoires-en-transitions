@@ -27,9 +27,10 @@ import {
   type StatutAvancementCreate,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { actionStatutTable } from '../models/action-statut.table';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
+import { RECENT_ACTIVITY_AGE_MS_THRESHOLD } from './compute-referentiel-display.rules';
 import { ResetDisplayPreferencesService } from './reset-display-preferences.service';
 import { seedCollectiviteReferentielDisplayActivity } from './reset-display-preferences.test-fixture';
 
@@ -77,6 +78,22 @@ describe('ResetDisplayPreferencesRouter', () => {
       user,
       authenticatedUser: getAuthUserFromUserCredentials(user),
     };
+  };
+
+  // antidate les statuts au-delà de la fenêtre d'activité récente. Le trigger
+  // `update_modified_at` réécrit `modified_at` à chaque update : on le neutralise
+  // le temps de la transaction
+  const backdateActionStatuts = async (collectiviteId: number) => {
+    const ageMs = RECENT_ACTIVITY_AGE_MS_THRESHOLD + 24 * 60 * 60 * 1000;
+    await databaseService.db.transaction(async (tx) => {
+      await tx.execute(sql`set local session_replication_role = 'replica'`);
+      await tx
+        .update(actionStatutTable)
+        .set({
+          modifiedAt: sql`now() - ${ageMs} * interval '1 millisecond'`,
+        })
+        .where(eq(actionStatutTable.collectiviteId, collectiviteId));
+    });
   };
 
   test('Service role can reset collectivite referentiels display preferences', async () => {
@@ -169,7 +186,37 @@ describe('ResetDisplayPreferencesRouter', () => {
     });
   });
 
-  test('CAE is archived but stays displayed when collectivite has only a few CAE statuts', async () => {
+  test('CAE stays in write without making TE readonly when its few statuts are recent', async () => {
+    const { collectivite: isolatedCollectivite, authenticatedUser } =
+      await setupIsolatedCollectivite();
+    const trpcClient = createTRPCClientFromCaller(
+      router.createCaller({ user: authenticatedUser })
+    );
+    await seedCollectiviteReferentielDisplayActivity({
+      trpcClient,
+      collectiviteId: isolatedCollectivite.id,
+      referentiel: ReferentielIdEnum.CAE,
+      actionStatutCount: 3,
+    });
+
+    const serviceRoleCaller = router.createCaller({
+      user: getServiceRoleUser(),
+    });
+    const result =
+      await serviceRoleCaller.referentiels.preferences.resetCollectiviteDisplayPreferences(
+        {
+          collectiviteId: isolatedCollectivite.id,
+        }
+      );
+    // TE reste en écriture : la collectivité n'est pas éligible à la bascule
+    expect(result.referentiels).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: false, mode: 'archived' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
+  test('CAE is archived but stays displayed when collectivite has only a few old CAE statuts', async () => {
     const { collectivite: isolatedCollectivite, authenticatedUser } =
       await setupIsolatedCollectivite();
     const isolatedEditorCaller = router.createCaller({
@@ -182,6 +229,7 @@ describe('ResetDisplayPreferencesRouter', () => {
       referentiel: ReferentielIdEnum.CAE,
       actionStatutCount: 3,
     });
+    await backdateActionStatuts(isolatedCollectivite.id);
 
     const serviceRoleCaller = router.createCaller({
       user: getServiceRoleUser(),
@@ -247,10 +295,11 @@ describe('ResetDisplayPreferencesRouter', () => {
     });
   });
 
-  test('CAE is archived but stays displayed when its only statuts are non concerné', async () => {
+  test('CAE is archived but stays displayed when its only statuts are old non concerné', async () => {
     const collectivite = await seedFewCaeStatutsThenOverwriteWith(
       StatutAvancementEnum.NON_CONCERNE
     );
+    await backdateActionStatuts(collectivite.id);
 
     const serviceRoleCaller = router.createCaller({
       user: getServiceRoleUser(),

@@ -4,6 +4,7 @@ export const ACTION_STATUT_COUNT_THRESHOLD2 = 150;
 export const ACTION_COMMENTAIRE_COUNT_THRESHOLD2 = 150;
 export const LAST_ACTIVITY_AGE_MS_THRESHOLD = 2 * 365 * 24 * 60 * 60 * 1000;
 export const MIN_CRITERIA_COUNT_TO_DISPLAY = 2;
+export const RECENT_ACTIVITY_AGE_MS_THRESHOLD = 2 * 365 * 24 * 60 * 60 * 1000;
 
 export interface ReferentielDisplayCriteria {
   actionStatutCount: number;
@@ -33,4 +34,20 @@ export function shouldDisplayReferentielByCriteria(
   ].filter(Boolean);
 
   return criteriaMet.length >= MIN_CRITERIA_COUNT_TO_DISPLAY;
+}
+
+/**
+ * Returns true if the last filled statut or commentaire is recent enough to keep
+ * the referentiel writable at reset, even when it is not engaged.
+ * Does not count towards the eligibility to the switch to TE.
+ */
+export function hasRecentActivity(
+  lastFilledActivityAt: Date | null,
+  now: Date = new Date()
+): boolean {
+  return (
+    lastFilledActivityAt !== null &&
+    now.getTime() - lastFilledActivityAt.getTime() <=
+      RECENT_ACTIVITY_AGE_MS_THRESHOLD
+  );
 }

@@ -10,7 +10,10 @@ import type {
   NiveauRemplissage,
 } from '@tet/domain/collectivites';
 import { and, count, eq, inArray, max, sql } from 'drizzle-orm';
-import { shouldDisplayReferentielByCriteria } from './compute-referentiel-display.rules';
+import {
+  hasRecentActivity,
+  shouldDisplayReferentielByCriteria,
+} from './compute-referentiel-display.rules';
 
 const CAE_ECI_REFERENTIELS = [
   'cae',
@@ -29,8 +32,10 @@ export type ReferentielNiveauRemplissageMap = Record<
  * collectivité :
  * - `engage` : l'activité (statuts / commentaires) atteint le seuil de
  *   `shouldDisplayReferentielByCriteria` ;
+ * - `actif` : sous ce seuil, mais un statut ou un commentaire non vide a été
+ *   saisi récemment (`hasRecentActivity`) ;
  * - `superficiel` : au moins un statut ou un commentaire non vide, sans
- *   atteindre ce seuil ;
+ *   atteindre ce seuil ni avoir de saisie récente ;
  * - `vide` : aucun statut ni commentaire renseigné.
  *
  * Ce calcul ne dépend que de l'activité, jamais des préférences : il peut donc
@@ -65,6 +70,9 @@ export class ComputeReferentielEngagementService {
           // le faux statut « non concerné » (`concerne = false`)
           filledActionStatutCount: sql<number>`count(*) filter (where ${actionStatutTable.avancement} <> 'non_renseigne' or not ${actionStatutTable.concerne})`,
           maxModifiedAt: max(actionStatutTable.modifiedAt),
+          maxFilledModifiedAt: sql<
+            string | null
+          >`max(${actionStatutTable.modifiedAt}) filter (where ${actionStatutTable.avancement} <> 'non_renseigne' or not ${actionStatutTable.concerne})`,
         })
         .from(actionStatutTable)
         .innerJoin(
@@ -85,6 +93,9 @@ export class ComputeReferentielEngagementService {
           actionCommentaireCount: count(),
           nonEmptyCommentaireCount: sql<number>`count(*) filter (where trim(${actionCommentaireTable.commentaire}) <> '')`,
           maxModifiedAt: max(actionCommentaireTable.modifiedAt),
+          maxFilledModifiedAt: sql<
+            string | null
+          >`max(${actionCommentaireTable.modifiedAt}) filter (where trim(${actionCommentaireTable.commentaire}) <> '')`,
         })
         .from(actionCommentaireTable)
         .innerJoin(
@@ -106,6 +117,7 @@ export class ComputeReferentielEngagementService {
             actionStatutCount: Number(r.actionStatutCount ?? 0),
             filledActionStatutCount: Number(r.filledActionStatutCount ?? 0),
             maxModifiedAt: r.maxModifiedAt,
+            maxFilledModifiedAt: r.maxFilledModifiedAt,
           },
         ])
       );
@@ -116,6 +128,7 @@ export class ComputeReferentielEngagementService {
             actionCommentaireCount: Number(r.actionCommentaireCount ?? 0),
             nonEmptyCommentaireCount: Number(r.nonEmptyCommentaireCount ?? 0),
             maxModifiedAt: r.maxModifiedAt,
+            maxFilledModifiedAt: r.maxFilledModifiedAt,
           },
         ])
       );
@@ -136,8 +149,18 @@ export class ComputeReferentielEngagementService {
         const hasData =
           (statut?.filledActionStatutCount ?? 0) > 0 ||
           (commentaire?.nonEmptyCommentaireCount ?? 0) > 0;
+        // seules les lignes portant une réponse comptent : remettre un statut à
+        // « non renseigné » ne maintient pas le référentiel en écriture
+        const isActif = hasRecentActivity(
+          this.mostRecentDate(
+            statut?.maxFilledModifiedAt,
+            commentaire?.maxFilledModifiedAt
+          )
+        );
         niveauxRemplissage[ref] = isEngaged
           ? 'engage'
+          : isActif
+          ? 'actif'
           : hasData
           ? 'superficiel'
           : 'vide';

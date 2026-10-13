@@ -199,6 +199,48 @@ describe('deriveReferentielPreferences', () => {
     });
   });
 
+  it('garde en écriture un référentiel actif sans passer TE en lecture seule', () => {
+    expect(deriveReferentielPreferences({ cae: 'actif', eci: 'vide' })).toEqual(
+      {
+        cae: { display: true, mode: 'write' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: true, mode: 'write' },
+      }
+    );
+
+    expect(
+      deriveReferentielPreferences({ cae: 'actif', eci: 'actif' })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'write' },
+    });
+  });
+
+  it('garde en écriture un référentiel actif à côté d’un référentiel engagé', () => {
+    expect(
+      deriveReferentielPreferences({ cae: 'engage', eci: 'actif' })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
+  it('garde en écriture le cae actif d’un syndicat', () => {
+    expect(
+      deriveReferentielPreferences({
+        cae: 'actif',
+        eci: 'vide',
+        isSyndicat: true,
+      })
+    ).toEqual({
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    });
+  });
+
   it('garde le cae archivé d’un syndicat dans la navigation dès qu’il contient des données', () => {
     expect(
       deriveReferentielPreferences({
@@ -350,6 +392,20 @@ describe('collectivite-referentiel-preferences.rules', () => {
       cae: { display: false, mode: 'archived' },
       eci: { display: false, mode: 'archived' },
       te: { display: false, mode: 'write' },
+    });
+  });
+
+  it('garde te en écriture quand on masque un référentiel actif à côté d’un autre', () => {
+    expect(
+      toggleReferentielDisplayPreference('cae', {
+        cae: { display: true, mode: 'write' },
+        eci: { display: true, mode: 'write' },
+        te: { display: true, mode: 'write' },
+      })
+    ).toEqual({
+      cae: { display: false, mode: 'archived' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'write' },
     });
   });
 

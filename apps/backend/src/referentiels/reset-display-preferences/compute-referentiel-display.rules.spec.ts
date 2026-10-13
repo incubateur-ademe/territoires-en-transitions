@@ -1,4 +1,5 @@
 import {
+  hasRecentActivity,
   ReferentielDisplayCriteria,
   shouldDisplayReferentielByCriteria,
 } from './compute-referentiel-display.rules';
@@ -98,5 +99,23 @@ describe('shouldDisplayReferentielByCriteria', () => {
       lastActivityAt: moreThanTwoYearsAgo,
     };
     expect(shouldDisplayReferentielByCriteria(criteria, now)).toBe(false);
+  });
+});
+
+describe('hasRecentActivity', () => {
+  it('returns false when there is no filled activity', () => {
+    expect(hasRecentActivity(null, now)).toBe(false);
+  });
+
+  it('returns true when the last filled activity is exactly 2 years old', () => {
+    expect(hasRecentActivity(twoYearsAgo, now)).toBe(true);
+  });
+
+  it('returns true when the last filled activity is between 1 and 2 years old', () => {
+    expect(hasRecentActivity(betweenOneAndTwoYearsAgo, now)).toBe(true);
+  });
+
+  it('returns false when the last filled activity is more than 2 years old', () => {
+    expect(hasRecentActivity(moreThanTwoYearsAgo, now)).toBe(false);
   });
 });
