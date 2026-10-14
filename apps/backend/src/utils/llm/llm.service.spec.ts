@@ -319,6 +319,38 @@ describe('LlmService', () => {
       await rejection;
       expect(repository.complete).toHaveBeenCalledTimes(1);
     });
+
+    it('ne relance pas un appel annulé en cours et libère sa place', async () => {
+      const repository = new FakeRepository();
+      const controller = new AbortController();
+      repository.complete = vi.fn(async (request: LlmCompletionRequest) =>
+        request.signal
+          ? new Promise<Result<LlmRawCompletion, LlmError>>((resolve) =>
+              request.signal?.addEventListener('abort', () =>
+                resolve(failure({ kind: 'api_error', httpStatus: null }))
+              )
+            )
+          : success({ completed: true, text: 'ok', usage })
+      );
+      const service = new LlmService(repository);
+      const aborted = [1, 2].map(() =>
+        service.generateText({ prompt: 'p', signal: controller.signal })
+      );
+      await vi.waitFor(() =>
+        expect(repository.complete).toHaveBeenCalledTimes(2)
+      );
+
+      controller.abort();
+
+      expect(await Promise.all(aborted)).toEqual([
+        failure({ kind: 'api_error', httpStatus: null }),
+        failure({ kind: 'api_error', httpStatus: null }),
+      ]);
+      expect(await service.generateText({ prompt: 'p' })).toMatchObject({
+        success: true,
+      });
+      expect(repository.complete).toHaveBeenCalledTimes(3);
+    });
   });
 
   describe('recordLlmCalls', () => {

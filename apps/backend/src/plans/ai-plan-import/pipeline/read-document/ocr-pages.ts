@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
@@ -22,6 +23,8 @@ export type OcrPagesOptions = {
   pageTimeoutMs?: number;
   /** Part des pages en échec tolérée, pour un document scanné. */
   maxFailedRatio?: number;
+  /** Hors scan intégral : au-delà, les pages restantes ne sont plus tentées. */
+  maxConsecutiveFailures?: number;
 };
 
 export type OcrFailure = { pageIndex: number; reason: string };
@@ -44,6 +47,12 @@ const SCAN_PAGE_TIMEOUT_MS = 90_000;
 // une photo : elle ne vaut pas d'attendre.
 const SPARSE_PAGE_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_FAILED_RATIO = 0.2;
+// Des échecs qui s'enchaînent viennent du fournisseur, pas des pages : les
+// pages suivantes échoueraient pareil, chacune après son délai.
+const DEFAULT_MAX_CONSECUTIVE_FAILURES = 3;
+const SKIPPED_REASON = 'non tentée après des échecs consécutifs';
+
+const logger = new Logger('OcrPages');
 
 type PageOutcome =
   | { kind: 'transcribed'; page: DocumentPage }
@@ -62,15 +71,27 @@ export const ocrPages = async ({
   concurrency = DEFAULT_CONCURRENCY,
   pageTimeoutMs = fullScan ? SCAN_PAGE_TIMEOUT_MS : SPARSE_PAGE_TIMEOUT_MS,
   maxFailedRatio = DEFAULT_MAX_FAILED_RATIO,
+  maxConsecutiveFailures = DEFAULT_MAX_CONSECUTIVE_FAILURES,
 }: OcrPagesOptions): Promise<Result<OcrPagesResult, OcrPagesError>> => {
-  const outcomes = await mapWithConcurrency(pageIndexes, concurrency, (index) =>
-    transcribePage({
-      page: pages[index],
-      renderPage,
-      ocrPage,
-      pageTimeoutMs,
-      signal,
-    })
+  let consecutiveFailures = 0;
+  const outcomes = await mapWithConcurrency(
+    pageIndexes,
+    concurrency,
+    async (index): Promise<PageOutcome> => {
+      if (!fullScan && consecutiveFailures >= maxConsecutiveFailures) {
+        return { kind: 'failed', reason: SKIPPED_REASON };
+      }
+      const outcome = await transcribePage({
+        page: pages[index],
+        renderPage,
+        ocrPage,
+        pageTimeoutMs,
+        signal,
+      });
+      consecutiveFailures =
+        outcome.kind === 'failed' ? consecutiveFailures + 1 : 0;
+      return outcome;
+    }
   );
 
   const failures = pageIndexes.flatMap((pageIndex, position) => {
@@ -79,6 +100,12 @@ export const ocrPages = async ({
       ? [{ pageIndex, reason: outcome.reason }]
       : [];
   });
+  const skipped = failures.filter((f) => f.reason === SKIPPED_REASON).length;
+  if (skipped > 0) {
+    logger.warn(
+      `OCR interrompu après ${maxConsecutiveFailures} échecs consécutifs : ${skipped} page(s) gardée(s) telles que lues`
+    );
+  }
   if (
     fullScan &&
     failures.length > Math.floor(pageIndexes.length * maxFailedRatio)
@@ -117,10 +144,17 @@ const transcribePage = async ({
   pageTimeoutMs: number;
   signal?: AbortSignal;
 }): Promise<PageOutcome> => {
+  // Sans annulation, l'appel expiré poursuivrait ses relances en gardant une
+  // place du limiteur de LlmService, et les pages suivantes expireraient à
+  // leur tour en attendant.
+  const pageAbort = new AbortController();
+  const callSignal = signal
+    ? AbortSignal.any([signal, pageAbort.signal])
+    : pageAbort.signal;
   try {
     return await withTimeout(async (): Promise<PageOutcome> => {
       const image = await renderPage(page.index);
-      const result = await ocrPage(image, signal);
+      const result = await ocrPage(image, callSignal);
       if (!result.success) {
         return { kind: 'failed', reason: describeLlmError(result.error) };
       }
@@ -139,6 +173,7 @@ const transcribePage = async ({
     }, pageTimeoutMs);
   } catch (error) {
     if (error instanceof TimeoutError) {
+      pageAbort.abort(error);
       return { kind: 'failed', reason: 'délai dépassé' };
     }
     if (signal?.aborted) {

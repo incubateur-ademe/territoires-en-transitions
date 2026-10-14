@@ -1,7 +1,13 @@
 import sharp from 'sharp';
-import { describe, expect, it } from 'vitest';
+import * as unpdf from 'unpdf';
+import { describe, expect, it, vi } from 'vitest';
 import { buildTestPdf } from '../__fixtures__/build-test-pdf';
-import { renderPageImage } from './render-page-image';
+import { openPdfPageRenderer, renderPageImage } from './render-page-image';
+
+vi.mock('unpdf', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('unpdf')>();
+  return { ...actual, getDocumentProxy: vi.fn(actual.getDocumentProxy) };
+});
 
 const scannedPageJpeg = () =>
   sharp(
@@ -36,5 +42,33 @@ describe('renderPageImage', () => {
       format: 'jpeg',
       width: image.width,
     });
+  });
+});
+
+describe('openPdfPageRenderer', () => {
+  it('charge le PDF une seule fois pour toutes les pages rendues', async () => {
+    const page = {
+      kind: 'image' as const,
+      jpeg: await scannedPageJpeg(),
+      width: 1240,
+      height: 1754,
+    };
+    const renderer = openPdfPageRenderer(buildTestPdf([page, page, page]));
+    vi.mocked(unpdf.getDocumentProxy).mockClear();
+
+    const images = await Promise.all([
+      renderer.renderPage(0),
+      renderer.renderPage(1),
+    ]);
+    images.push(await renderer.renderPage(2));
+    await renderer.close();
+
+    expect(unpdf.getDocumentProxy).toHaveBeenCalledTimes(1);
+    expect(images.map((image) => image.pageIndex)).toEqual([0, 1, 2]);
+    for (const image of images) {
+      expect(image.data.subarray(0, 3)).toEqual(
+        Buffer.from([0xff, 0xd8, 0xff])
+      );
+    }
   });
 });
