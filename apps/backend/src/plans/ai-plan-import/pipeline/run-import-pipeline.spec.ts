@@ -442,14 +442,57 @@ describe('runImportPipeline', () => {
     });
 
     await runImportPipeline(
-      routedLlm('scoring', { kind: 'api_error', httpStatus: 503 }),
+      routedLlm('extraction', { kind: 'api_error', httpStatus: 503 }),
       input({ onStepRun })
     );
 
     expect(runs.at(-1)).toMatchObject({
-      step: 'scoring',
+      step: 'extraction',
       status: 'failed',
       error: 'api_error 503',
+    });
+  });
+
+  it.each([
+    'scoring',
+    'consolidation',
+    'enrichment',
+    'qualitativeReview',
+  ] as const)(
+    "va au bout quand l'étape %s échoue sur autre chose que le quota",
+    async (failingStep) => {
+      const runs: ImportStepRun[] = [];
+
+      const outcome = await runImportPipeline(
+        routedLlm(failingStep, { kind: 'api_error', httpStatus: 503 }),
+        input({
+          onStepRun: async (run) => {
+            runs.push(run);
+          },
+        })
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'done',
+        stepStates: { [failingStep]: 'ok' },
+        warnings: [expect.stringContaining('api_error 503')],
+      });
+      expect(runs.find(({ step }) => step === failingStep)).toMatchObject({
+        status: 'ok',
+        details: { failedBatches: 1 },
+      });
+    }
+  );
+
+  it('rend un brouillon sans relecture quand la relecture échoue', async () => {
+    const outcome = await runImportPipeline(
+      routedLlm('qualitativeReview', { kind: 'truncated' }),
+      input()
+    );
+
+    expect(outcome).toMatchObject({
+      status: 'done',
+      draft: { qualitativeReview: null },
     });
   });
 

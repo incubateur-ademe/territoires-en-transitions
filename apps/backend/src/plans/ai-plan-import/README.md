@@ -306,6 +306,12 @@ modèle une fois par fiche.
 - **enrichment** : les sous-actions, par lots de 30 actions.
 - **qualitativeReview** : un avis d'ensemble sur le brouillon, sans la source.
 
+Ces étapes améliorent le brouillon sans en être une condition : un lot en
+échec laisse ses actions telles quelles, avec un avertissement et le compte
+`failedBatches` dans la télémétrie de l'étape. Seul un quota épuisé sur tous
+les lots d'une étape fait échouer l'import, pour qu'il se reprenne plutôt que
+de rendre en silence un brouillon sans vérification.
+
 ## Couche LLM (`utils/llm/`)
 
 ```mermaid

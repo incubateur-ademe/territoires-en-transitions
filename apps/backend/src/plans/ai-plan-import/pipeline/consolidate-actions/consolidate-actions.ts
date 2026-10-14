@@ -7,9 +7,10 @@ import {
   sumTokenUsage,
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
-import { combineResults, Result, success } from '@tet/backend/utils/result.type';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
+import { keepSucceededBatches } from '../keep-succeeded-batches';
 import { groupByChunk, SourceChunks } from '../source-chunks/source-chunks';
 import { buildConsolidationPrompt } from './consolidate-actions.prompt';
 import {
@@ -35,6 +36,8 @@ export type ConsolidateActionsInput = {
 export type ConsolidateActionsResult = {
   actions: ExtractedAction[];
   tokens: TokenUsage;
+  warnings: string[];
+  details: Record<string, number>;
 };
 
 type BatchOutcome = { entries: ConsolidationEntry[]; tokens: TokenUsage };
@@ -45,7 +48,12 @@ export const consolidateActions = async (
 ): Promise<Result<ConsolidateActionsResult, LlmError>> => {
   const lowScoreActions = selectLowScoreActions(actions);
   if (lowScoreActions.length === 0) {
-    return success({ actions, tokens: emptyTokenUsage() });
+    return success({
+      actions,
+      tokens: emptyTokenUsage(),
+      warnings: [],
+      details: {},
+    });
   }
 
   // Un lot ne mêle pas deux tranches : il n'envoie que la sienne.
@@ -63,18 +71,28 @@ export const consolidateActions = async (
       consolidateBatch(llm, { batch, text, disabledFields, signal })
   );
 
-  const combined = combineResults(outcomes);
-  if (!combined.success) {
-    return combined;
+  // Les actions d'un lot en échec restent telles qu'extraites.
+  const kept = keepSucceededBatches(
+    batches,
+    outcomes,
+    ({ batch }) => `Actions non corrigées pour ${batch.length} action(s)`
+  );
+  if (!kept.success) {
+    return kept;
   }
 
-  const succeeded = combined.data;
+  const succeeded = kept.data.outcomes;
   return success({
     actions: updateActionsWithConsolidatedEntries(
       actions,
       succeeded.flatMap((outcome) => outcome.entries)
     ),
     tokens: sumTokenUsage(succeeded.map((outcome) => outcome.tokens)),
+    warnings: kept.data.warnings,
+    details: {
+      batches: batches.length,
+      failedBatches: kept.data.failedBatches,
+    },
   });
 };
 
