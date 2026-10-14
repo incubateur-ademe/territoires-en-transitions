@@ -2,9 +2,12 @@ import { color as echartsColor } from 'echarts/core';
 import type { HexColor, IntensityScale } from './treemap-group';
 
 const WHITE = '#FFFFFF';
-const WEAKEST_TINT = 0.2;
+const FULL_TINT = 1;
+const WEAKEST_TINT = 0.1;
+const REACHED_TINT = 0.42;
+const HEADER_TINT = 0.55;
 
-const toIntensityRatio = <TIntensity extends string>({
+const toTint = <TIntensity extends string>({
   intensity,
   intensityScale,
 }: {
@@ -13,9 +16,10 @@ const toIntensityRatio = <TIntensity extends string>({
 }): number => {
   const hasSingleIntensity = intensityScale.length === 1;
   if (hasSingleIntensity) {
-    return 1;
+    return FULL_TINT;
   }
-  return intensityScale.indexOf(intensity) / (intensityScale.length - 1);
+  const isWeakest = intensityScale.indexOf(intensity) === 0;
+  return isWeakest ? WEAKEST_TINT : REACHED_TINT;
 };
 
 const toTileColor = <TIntensity extends string>({
@@ -26,10 +30,10 @@ const toTileColor = <TIntensity extends string>({
   color: HexColor;
   intensity: NoInfer<TIntensity>;
   intensityScale: IntensityScale<TIntensity>;
-}): string => {
-  const ratio = toIntensityRatio({ intensity, intensityScale });
-  const tint = WEAKEST_TINT + (1 - WEAKEST_TINT) * ratio;
-  return echartsColor.lerp(tint, [WHITE, color]);
-};
+}): string =>
+  echartsColor.lerp(toTint({ intensity, intensityScale }), [WHITE, color]);
 
-export { toTileColor };
+const toHeaderColor = (color: HexColor): string =>
+  echartsColor.lerp(HEADER_TINT, [WHITE, color]);
+
+export { toHeaderColor, toTileColor };

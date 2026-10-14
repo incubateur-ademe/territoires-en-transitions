@@ -8,6 +8,7 @@ import {
   LevierTooltipInput,
   toLevierToPrioritizeId,
   toLeviersPlaces,
+  toLeviersToPrioritizeIds,
   toLeviersWithoutPotentiel,
   toMatrixPoints,
   toQuadrant,
@@ -90,6 +91,31 @@ describe('toQuadrant', () => {
       expect(toQuadrant({ potentielScore, mobilisationScore })).toBe(quadrant);
     }
   );
+});
+
+describe('toLeviersToPrioritizeIds', () => {
+  it('retient les deux angles morts au plus fort potentiel, du plus fort au moins fort', () => {
+    const places = [
+      toPlace({ levierId: 'covoiturage', potentielScore: 70 }),
+      toPlace({ levierId: 'biogaz', potentielScore: 90 }),
+      toPlace({ levierId: 'bus_cars_decarbones', potentielScore: 60 }),
+    ];
+
+    expect(toLeviersToPrioritizeIds(places)).toEqual(['biogaz', 'covoiturage']);
+  });
+
+  it('ignore les leviers bien mobilisés, même à fort potentiel', () => {
+    const places = [
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 95,
+        mobilisationScore: 60,
+      }),
+      toPlace({ levierId: 'biogaz', potentielScore: 60 }),
+    ];
+
+    expect(toLeviersToPrioritizeIds(places)).toEqual(['biogaz']);
+  });
 });
 
 describe('toLevierToPrioritizeId', () => {

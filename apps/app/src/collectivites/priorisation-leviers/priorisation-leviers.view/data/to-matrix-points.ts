@@ -2,7 +2,7 @@ import type { MatrixPoint } from '@/app/ui/charts/matrix/matrix.chart';
 import type { MatrixTone } from '@/app/ui/charts/matrix/quadrant';
 import { Pertinence } from '@tet/domain/collectivites';
 import { LevierId } from '@tet/domain/shared';
-import { maxBy, minBy, round } from 'es-toolkit';
+import { maxBy, minBy, orderBy, round } from 'es-toolkit';
 import { LevierPriorisation } from './to-leviers-priorisation';
 
 export const MATRIX_SCALE = 100;
@@ -103,6 +103,13 @@ export const findLevierToPrioritizeId = (
 ): LevierId | undefined =>
   toLevierToPrioritizeId(places) ??
   findClosestToTopLeftCorner(places)?.levierId;
+
+const LEVIERS_TO_PRIORITIZE_COUNT = 2;
+
+export const toLeviersToPrioritizeIds = (places: LevierPlace[]): LevierId[] =>
+  orderBy(places.filter(isBlindSpot), ['potentielScore'], ['desc'])
+    .slice(0, LEVIERS_TO_PRIORITIZE_COUNT)
+    .map(({ levierId }) => levierId);
 
 export type PreselectedCountByLevier = ReadonlyMap<LevierId, number>;
 

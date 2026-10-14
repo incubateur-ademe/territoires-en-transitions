@@ -182,14 +182,11 @@ const BreakdownView = ({
   selectedLevierId,
   onLevierSelected,
 }: BreakdownViewProps): JSX.Element => (
-  <>
-    <LevierCardInfo>{appLabels.repartitionPotentielInfo}</LevierCardInfo>
-    <LeviersMondrianChart
-      places={places}
-      selectedLevierId={selectedLevierId}
-      onLevierSelected={onLevierSelected}
-    />
-  </>
+  <LeviersMondrianChart
+    places={places}
+    selectedLevierId={selectedLevierId}
+    onLevierSelected={onLevierSelected}
+  />
 );
 
 const SousLeviersView = ({
