@@ -26,6 +26,14 @@ import { actionDeReferenceTable } from './models/action-de-reference.table';
 
 type ActionToInsert = Omit<ActionDeReference, 'id'>;
 
+const actionDeReferenceColumns = {
+  id: actionDeReferenceTable.id,
+  titre: actionDeReferenceTable.titre,
+  description: actionDeReferenceTable.description,
+  levier: actionDeReferenceTable.levier,
+  categorie: actionDeReferenceTable.categorie,
+};
+
 let app: INestApplication;
 let router: TrpcRouter;
 let db: DatabaseService;
@@ -84,7 +92,7 @@ const insertActions = async (
   const insertedActions = await db.db
     .insert(actionDeReferenceTable)
     .values([...actions])
-    .returning();
+    .returning(actionDeReferenceColumns);
   onTestFinished(async () => {
     await db.db.delete(actionDeReferenceTable).where(
       inArray(
@@ -100,7 +108,7 @@ const readStoredAction = async (
   id: ActionDeReferenceId
 ): Promise<ActionDeReference[]> =>
   db.db
-    .select()
+    .select(actionDeReferenceColumns)
     .from(actionDeReferenceTable)
     .where(eq(actionDeReferenceTable.id, id));
 
