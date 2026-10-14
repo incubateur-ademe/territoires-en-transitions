@@ -319,4 +319,59 @@ describe('Publication d’une démarche PCAET', () => {
     });
     expect(enVigueur.status).toBe('publie');
   });
+
+  test('Laisser un seul PCAET en vigueur quand deux publications de la même collectivité se croisent', async () => {
+    const { caller, collectivite } = await freshEditor();
+
+    // Deux dossiers instruits côte à côte : la plateforme ne les produit pas
+    // d'elle-même, mais une reprise de données ou un dépôt hors plateforme le
+    // peuvent. Ce qui est testé est la succession, pas leur instruction.
+    const instruits = await db.db
+      .insert(demarcheTable)
+      .values(
+        ['PCAET A', 'PCAET B'].map((titre) => ({
+          collectiviteId: collectivite.id,
+          type: 'pcaet' as const,
+          titre,
+          status: 'instruit' as const,
+          transmittedAt: new Date().toISOString(),
+        }))
+      )
+      .returning({ id: demarcheTable.id });
+    for (const { id } of instruits) {
+      const deliberation = await addTestBibliothequeFichier(db, {
+        collectiviteId: collectivite.id,
+        filename: 'deliberation-adoption.pdf',
+      });
+      await caller.demarches.pcaet.documents.add({
+        collectiviteId: collectivite.id,
+        demarcheId: id,
+        documentId: 'pcaet_deliberation_adoption',
+        fichierId: deliberation.id,
+      });
+    }
+
+    const [ancien, recent] = instruits;
+    await Promise.all([
+      caller.demarches.pcaet.publier({
+        collectiviteId: collectivite.id,
+        demarcheId: ancien.id,
+        dateAdoption: '2019-06-20',
+      }),
+      caller.demarches.pcaet.publier({
+        collectiviteId: collectivite.id,
+        demarcheId: recent.id,
+        dateAdoption: '2026-01-15',
+      }),
+    ]);
+
+    const statuts = await Promise.all(
+      instruits.map(({ id }) =>
+        caller.demarches.pcaet
+          .get({ collectiviteId: collectivite.id, demarcheId: id })
+          .then(({ status }) => status)
+      )
+    );
+    expect(statuts).toEqual(['archive', 'publie']);
+  });
 });

@@ -17,6 +17,7 @@ import {
   isNull,
   ne,
   or,
+  sql,
 } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
@@ -58,6 +59,21 @@ const existsSuivantAdopte = (db: DatabaseService['db'] | Transaction) =>
 @Injectable()
 export class DemarchePcaetSuivantRepository {
   constructor(private readonly databaseService: DatabaseService) {}
+
+  /**
+   * Sérialise, jusqu'à la fin de la transaction, les publications d'une même
+   * collectivité. Sans lui, deux publications simultanées liraient chacune la
+   * collectivité avant que l'autre ne soit validée : aucune n'archiverait
+   * l'autre, et deux PCAET resteraient en vigueur.
+   */
+  async lockSuccession(
+    { collectiviteId }: { collectiviteId: number },
+    tx: Transaction
+  ): Promise<void> {
+    await tx.execute(
+      sql`select pg_advisory_xact_lock(hashtext('demarche_pcaet_succession'), ${collectiviteId})`
+    );
+  }
 
   async isSuivantAdopte(
     { demarcheId }: { demarcheId: number },

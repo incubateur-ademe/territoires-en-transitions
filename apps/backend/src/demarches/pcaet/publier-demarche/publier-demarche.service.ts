@@ -9,6 +9,7 @@ import {
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { ArchiverDemarchePcaetService } from '../archiver-demarche/archiver-demarche.service';
+import { DemarchePcaetSuivantRepository } from '../shared/demarche-pcaet-suivant.repository';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import {
   PublierDemarchePcaetError,
@@ -21,7 +22,8 @@ export class PublierDemarchePcaetService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly transitionService: DemarchePcaetTransitionService,
-    private readonly archiverService: ArchiverDemarchePcaetService
+    private readonly archiverService: ArchiverDemarchePcaetService,
+    private readonly suivantRepository: DemarchePcaetSuivantRepository
   ) {}
 
   /**
@@ -51,6 +53,11 @@ export class PublierDemarchePcaetService {
     }
 
     return this.transactionManager.executeSingle(async (transaction) => {
+      await this.suivantRepository.lockSuccession(
+        { collectiviteId: input.collectiviteId },
+        transaction
+      );
+
       const publication = await this.transitionService.apply(
         input,
         DemarchePcaetTransitionEnum.PUBLIER,
