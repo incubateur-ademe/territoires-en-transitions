@@ -265,7 +265,9 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     await priorisationPom.openLevier(LEVIER_NOM);
     const card = priorisationPom.actionCardInPanel(LEVIER_NOM, action.titre);
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
-    await expect(card.getByRole('button', { name: 'Ajoutée' })).toBeVisible();
+    await expect(
+      card.getByRole('button', { name: 'Sauvegarder' })
+    ).toHaveAttribute('aria-pressed', 'true');
 
     await actionDeReferenceDetailPom.open({
       collectiviteId: collectivite.data.id,
