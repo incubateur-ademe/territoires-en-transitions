@@ -120,6 +120,7 @@ const enrichBatch = async (
       disabledFields,
     }),
     schema: enrichmentResponseSchema,
+    thinkingLevel: 'low',
     signal,
   });
   if (!completion.success) {

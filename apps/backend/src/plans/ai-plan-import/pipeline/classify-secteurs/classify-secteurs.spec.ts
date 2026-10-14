@@ -63,7 +63,7 @@ describe('classifySecteurs', () => {
       },
     });
     expect(generateStructured).toHaveBeenCalledWith(
-      expect.objectContaining({ tier: 'light' })
+      expect.objectContaining({ tier: 'light', thinkingLevel: 'low' })
     );
   });
 
