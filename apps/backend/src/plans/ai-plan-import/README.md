@@ -262,7 +262,7 @@ flowchart LR
     subgraph Albert["segmented (Albert)"]
         direction TB
         U[unités retenues] --> PK[paquets d'unités consécutives<br/>jusqu'à ~6 000 tokens]
-        PK --> SX[structuration, 4 paquets en parallèle<br/>prompt condensé + squelette]
+        PK --> SX[structuration, 5 paquets en parallèle<br/>prompt condensé + squelette]
         SX --> TR{réponse tronquée<br/>ou JSON invalide ?}
         TR -- "oui, plusieurs unités" --> HV[paquet coupé en deux,<br/>chaque moitié structurée à part]
         HV --> SX
@@ -353,7 +353,7 @@ Configuration (`utils/config/configuration.model.ts`) :
 | `ALBERT_MODEL_OCR` | `lightonocr-2-1b` | OCR ; vide : désactivé |
 | `ALBERT_MAX_INPUT_TOKENS_PER_MINUTE` | 128 000 | quota de tokens, par modèle |
 | `ALBERT_MAX_REQUESTS_PER_MINUTE` | 10 | quota de requêtes, par modèle |
-| `ALBERT_MAX_CONCURRENT_CALLS` | 2 | appels simultanés, tous imports confondus |
+| `ALBERT_MAX_CONCURRENT_CALLS` | 2 | appels simultanés, tous imports confondus (une étape en demande jusqu'à 5) |
 | `ALBERT_REASONING_EFFORT` | — | effort de raisonnement du modèle fort |
 | `GEMINI_MODEL` | — | modèle Gemini |
 
