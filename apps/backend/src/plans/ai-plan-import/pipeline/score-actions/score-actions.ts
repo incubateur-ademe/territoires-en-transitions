@@ -2,12 +2,9 @@ import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
-import {
-  combineResults,
-  Result,
-  success,
-} from '@tet/backend/utils/result.type';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { ExtractedAction } from '../../models/extracted-action';
+import { keepSucceededBatches } from '../keep-succeeded-batches';
 import {
   ChunkGroup,
   groupByChunk,
@@ -29,6 +26,8 @@ export type ScoreActionsInput = {
 export type ScoreActionsResult = {
   actions: ExtractedAction[];
   tokens: TokenUsage;
+  warnings: string[];
+  details: Record<string, number>;
 };
 
 type IndexedAction = { index: number; action: ExtractedAction };
@@ -50,16 +49,28 @@ export const scoreActions = async (
     (group) => scoreGroup(llm, { group, signal })
   );
 
-  const combined = combineResults(outcomes);
-  if (!combined.success) {
-    return combined;
+  // Une action d'un groupe en échec reste sans score : la consolidation,
+  // qui ne reprend que les scores faibles, la laisse telle quelle.
+  const kept = keepSucceededBatches(
+    groups,
+    outcomes,
+    (group) => `Actions non contrôlées pour ${group.items.length} action(s)`
+  );
+  if (!kept.success) {
+    return kept;
   }
+  const succeeded = kept.data.outcomes;
   return success({
     actions: applyScores(
       actions,
-      combined.data.flatMap((outcome) => outcome.scores)
+      succeeded.flatMap((outcome) => outcome.scores)
     ),
-    tokens: sumTokenUsage(combined.data.map((outcome) => outcome.tokens)),
+    tokens: sumTokenUsage(succeeded.map((outcome) => outcome.tokens)),
+    warnings: kept.data.warnings,
+    details: {
+      batches: groups.length,
+      failedBatches: kept.data.failedBatches,
+    },
   });
 };
 

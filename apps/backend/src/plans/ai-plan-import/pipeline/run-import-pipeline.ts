@@ -153,7 +153,7 @@ type Progress = PipelineProgress;
 
 type StepProduce = {
   actions?: ExtractedAction[];
-  review?: string;
+  review?: string | null;
   tokens: TokenUsage;
   warnings?: string[];
   /** Comptes propres à l'étape, pour la télémétrie. */

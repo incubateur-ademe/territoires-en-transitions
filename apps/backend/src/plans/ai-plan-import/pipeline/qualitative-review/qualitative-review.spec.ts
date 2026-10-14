@@ -37,7 +37,7 @@ describe('reviewQuality', () => {
     });
   });
 
-  it("propage l'échec de l'appel LLM", async () => {
+  it("rend un avis absent et un avertissement quand l'appel échoue", async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'truncated' }),
     } as unknown as Pick<LlmService, 'generateStructured'>;
@@ -45,8 +45,25 @@ describe('reviewQuality', () => {
     const result = await reviewQuality(llm, { actions: [action] });
 
     expect(result).toMatchObject({
+      success: true,
+      data: {
+        review: null,
+        warnings: ['Relecture finale non faite : truncated'],
+        details: { failedBatches: 1 },
+      },
+    });
+  });
+
+  it('échoue quand le quota est épuisé', async () => {
+    const llm = {
+      generateStructured: async () => failure({ kind: 'rate_limited' }),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await reviewQuality(llm, { actions: [action] });
+
+    expect(result).toMatchObject({
       success: false,
-      error: { kind: 'truncated' },
+      error: { kind: 'rate_limited' },
     });
   });
 });
