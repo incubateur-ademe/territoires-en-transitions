@@ -3,6 +3,7 @@ import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisa
 import { LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
+import { addMobilisationAvecFiche } from './priorisation-leviers.fixture';
 import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_COUNT = 29;
@@ -128,6 +129,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
@@ -158,6 +160,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
@@ -200,6 +203,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     const biogazMarquerPertinent = priorisationLeviersPom.pertinenceButton(
@@ -248,6 +252,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
@@ -289,6 +294,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     await expect(priorisationLeviersPom.levierButtons).toHaveCount(
@@ -337,6 +343,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
@@ -367,6 +374,7 @@ test.describe('Priorisation des leviers', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.EDITION },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
     await priorisationLeviersPom.goto(collectivite.data.id);
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
