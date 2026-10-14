@@ -3,6 +3,14 @@ import type { IndicateurPeriodicite } from '../definitions/indicateur-periodicit
 import type { LocalCalendarDate } from './indicateur-periode.types';
 
 const indicateurPeriodeErrorCodes = [
+  'INDICATEUR_PERIODICITE_MISMATCH',
+  'INDICATEUR_PERIODICITE_UNKNOWN',
+  'INDICATEUR_PERIODE_KEY_INVALID',
+  'INDICATEUR_PERIODE_OFFSET_INVALID',
+  'INDICATEUR_CALENDAR_STEP_INVALID',
+  'INDICATEUR_CALENDAR_ANCHOR_INVALID',
+  'INDICATEUR_PERIODE_SERIALIZATION_INCOMPATIBLE',
+  'INDICATEUR_CALENDAR_OUT_OF_RANGE',
   'INDICATEUR_PERIODE_INVALID',
   'INDICATEUR_PERIODICITE_UNSUPPORTED',
   'INDICATEUR_PERIODE_DATE_NON_CANONICAL',
@@ -19,6 +27,28 @@ export type IndicateurPeriodeErrorCode =
   (typeof indicateurPeriodeErrorCodes)[number];
 
 type IndicateurPeriodeErrorDetails = {
+  INDICATEUR_PERIODICITE_MISMATCH: {
+    expected: IndicateurPeriodicite;
+    actual: IndicateurPeriodicite;
+  };
+  INDICATEUR_PERIODICITE_UNKNOWN: { periodicite: string };
+  INDICATEUR_PERIODE_KEY_INVALID: { value: string };
+  INDICATEUR_PERIODE_OFFSET_INVALID: { amount: number };
+  INDICATEUR_CALENDAR_STEP_INVALID: {
+    periodicite: IndicateurPeriodicite;
+    monthsPerPeriod: number;
+  };
+  INDICATEUR_CALENDAR_ANCHOR_INVALID: {
+    periodicite: IndicateurPeriodicite;
+    anchorDate: string;
+  };
+  INDICATEUR_PERIODE_SERIALIZATION_INCOMPATIBLE: {
+    periodicite: IndicateurPeriodicite;
+    monthsPerPeriod: number;
+    anchorDate: string;
+    serialization: string;
+  };
+  INDICATEUR_CALENDAR_OUT_OF_RANGE: { index: number };
   INDICATEUR_PERIODICITE_UNSUPPORTED: {
     periodicite: IndicateurPeriodicite;
   };

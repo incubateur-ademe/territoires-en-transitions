@@ -380,11 +380,14 @@ function prepareEnfantsParSegmentation(
     const data = dataParId[enfant.id];
 
     // sélectionne les données pour la source voulue
-    const sourceValeursEnfant = data?.sources.find(
-      (s) => s.source === bestSource
-    );
+    const sourcesValeursEnfant =
+      data?.sources.filter(
+        (source) =>
+          source.source === bestSource &&
+          source.valeurs.some((value) => value.valeur != null)
+      ) ?? [];
 
-    if (sourceValeursEnfant?.valeurs?.length) {
+    for (const sourceValeursEnfant of sourcesValeursEnfant) {
       // segmentations auxquelles est rattaché l'indicateur
       const categorieNames = enfant.categories?.map((c) => c.nom) ?? [];
       const segmentations = intersection(categorieNames, SEGMENTATIONS);

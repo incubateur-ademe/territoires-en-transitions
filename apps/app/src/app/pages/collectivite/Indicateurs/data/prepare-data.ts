@@ -31,6 +31,8 @@ type PreparedSource = Omit<IndicateurValeursGroupeeParSource, 'valeurs'> & {
   calculAuto: boolean;
   valeurs: PreparedSourceValue[];
   type: SourceType;
+  seriesKey?: string;
+  periodiciteSource?: IndicateurPeriode['periodicite'];
 };
 
 export type PreparedValue = IndicateurValeurGroupee & {
@@ -66,31 +68,55 @@ export const prepareData = (
   }
 
   // transforme les valeurs de chaque source
-  const sourcesEtValeursModifiees: PreparedSource[] = sourcesFiltrees.map(
-    (sourceData) => ({
-      ...sourceData,
-      calculAuto: sourceData.valeurs.some((v) => v.calculAuto) || false,
-      valeurs: sourceData.valeurs.map((value) => {
-        // Preserve the annual reading of historical dates within the year.
-        const periode = IndicateurPeriodes.containing(
-          value.periodicite,
-          value.dateValeur
-        );
-        return {
-          id: value.id,
-          calculAuto: Boolean(value.calculAuto),
-          periode,
-          periodeLabel: IndicateurPeriodes.format(periode),
-          dateValeurISO: `${IndicateurPeriodes.toDateValeur(
-            periode
-          )}T00:00:00.000Z`,
-          valeur: value[type],
-          commentaire: value[`${type}Commentaire`],
-        };
-      }),
-      metadonnees: sourceData.metadonnees || [],
-      type,
-    })
+  const sourcesEtValeursModifiees: PreparedSource[] = sourcesFiltrees.flatMap(
+    (sourceData) => {
+      if (!data) return [];
+      const groups = new Map<string, IndicateurSourceValeur[]>();
+      for (const value of sourceData.valeurs.toSorted((a, b) =>
+        a.dateValeur.localeCompare(b.dateValeur)
+      )) {
+        const key = `${value.periodicite}:${value.metadonneeId ?? 'local'}`;
+        const group = groups.get(key);
+        if (group) group.push(value);
+        else groups.set(key, [value]);
+      }
+      // Keep an empty local source visible for declaration.
+      if (!groups.size) groups.set('empty', []);
+      return Array.from(groups, ([key, values]) => ({
+        ...sourceData,
+        ...(groups.size > 1 ||
+        (values[0] && values[0].periodicite !== data.definition.periodicite)
+          ? {
+              seriesKey: `${sourceData.source}:${key}`,
+              periodiciteSource: values[0]?.periodicite,
+            }
+          : {}),
+        calculAuto: sourceData.valeurs.some((v) => v.calculAuto) || false,
+        valeurs: values.map((value): PreparedSourceValue => {
+          const periode = IndicateurPeriodes.containing(
+            value.periodicite,
+            value.dateValeur
+          );
+          return {
+            id: value.id,
+            calculAuto: Boolean(value.calculAuto),
+            periode,
+            periodeLabel: IndicateurPeriodes.format(periode),
+            dateValeurISO: `${IndicateurPeriodes.toDateValeur(
+              periode
+            )}T00:00:00.000Z`,
+            valeur: value[type],
+            commentaire: value[`${type}Commentaire`],
+          };
+        }),
+        metadonnees: (sourceData.metadonnees || []).filter(
+          (metadata) =>
+            !values.length ||
+            values.some((value) => value.metadonneeId === metadata.id)
+        ),
+        type,
+      }));
+    }
   );
 
   // trie les sources par ordre alphabétique
@@ -107,7 +133,13 @@ export const prepareData = (
   // ajoute une source vide pour les données de la collectivité si elles n'existent pas
   // afin que la ligne soit toujours affichée dans le tableau
   // (sauf si le flag `avecDonneesCollectiviteVides` n'est pas activé)
-  let donneesCollectivite = sources.find((s) => s.source === 'collectivite');
+  let donneesCollectivite =
+    sources.find(
+      (source) =>
+        source.source === 'collectivite' &&
+        (!source.periodiciteSource ||
+          source.periodiciteSource === data?.definition.periodicite)
+    ) ?? sources.find((source) => source.source === 'collectivite');
   if (!donneesCollectivite && avecDonneesCollectiviteVides) {
     donneesCollectivite = {
       source: 'collectivite',
