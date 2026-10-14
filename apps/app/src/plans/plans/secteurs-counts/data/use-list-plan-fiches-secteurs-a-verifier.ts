@@ -12,12 +12,12 @@ export const useListPlanFichesSecteursAVerifier = (
   const trpc = useTRPC();
   const isEnabled = useIsFeatureFlagEnabled('is-fiche-secteurs-enabled');
 
-  const { data } = useQuery(
+  const { data, isPending, isError } = useQuery(
     trpc.plans.fiches.listPlanFichesSecteursAVerifier.queryOptions(
       { collectiviteId, planId },
       { enabled: isEnabled }
     )
   );
 
-  return data ?? [];
+  return { fiches: data ?? [], isPending, isError };
 };

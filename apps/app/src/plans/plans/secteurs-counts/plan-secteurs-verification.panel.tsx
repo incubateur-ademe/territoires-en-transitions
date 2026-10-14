@@ -7,6 +7,7 @@ import {
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useGetFicheSecteurs } from '@/app/plans/fiches/show-fiche/data/use-get-fiche-secteurs';
 import { useUpsertFicheSecteurs } from '@/app/plans/fiches/show-fiche/data/use-upsert-fiche-secteurs';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { generateTitle } from '@/app/utils/generate-title';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -17,7 +18,7 @@ import {
   SecteurReglementaire,
   secteurReglementaireEnumValues,
 } from '@tet/domain/plans';
-import { Button, Icon, InlineLink } from '@tet/ui';
+import { Alert, Button, Icon, InlineLink } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
 import {
@@ -44,13 +45,31 @@ export const PlanSecteursVerificationPanel = ({
   planId: number;
 }) => {
   const [vue, setVue] = usePlanSecteursVue();
-  const fiches = useListPlanFichesSecteursAVerifier(
-    collectiviteId,
-    planId
-  ).filter(isARenseigner);
+  const {
+    fiches: toutesLesFiches,
+    isPending,
+    isError,
+  } = useListPlanFichesSecteursAVerifier(collectiviteId, planId);
+  const fiches = toutesLesFiches.filter(isARenseigner);
   const index = fiches.findIndex(({ ficheId }) => String(ficheId) === vue);
   const ouvrir = (fiche: FicheSecteursAVerifier | undefined) =>
     void setVue(fiche ? String(fiche.ficheId) : PLAN_SECTEURS_LISTE);
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center py-10">
+        <SpinnerLoader className="h-8 w-8" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-4">
+        <Alert state="error" title={appLabels.planSecteursErreurChargement} />
+      </div>
+    );
+  }
 
   if (index === -1) {
     return <ListeFiches fiches={fiches} onSelect={ouvrir} />;
