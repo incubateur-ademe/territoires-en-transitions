@@ -105,9 +105,12 @@ Emplacements : `apps/backend/src/indicateurs/valeurs/`, hooks
 
 ## Task 1.4 — Interfaces de déclaration et détail existantes
 
-La grille commune est déjà livrée par #5395 et l’ajout de périodes est porté par #5215.
-La PR frontend [#5394](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5394) suit #5215 et précède #5312. Elle complète la fiche indicateur
-aux prototypes [annuel](https://tet-protos.vercel.app/#/indicateurs/realisation-programme-tete)
+La grille commune et l’ajout d’années sont déjà livrés dans le socle annuel.
+La préparation frontend [#5493](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5493),
+fusionnée dans `main` avant #5215, ajoute le badge de périodicité et sa lecture
+au clavier, ainsi que la lecture seule des indicateurs sans valeur utilisateur.
+#5215 ouvre les nouvelles cadences et l’ajout de périodes non annuelles ;
+#5312 reste la migration métier suivante. L’ensemble correspond aux prototypes [annuel](https://tet-protos.vercel.app/#/indicateurs/realisation-programme-tete)
 et [mensuel](https://tet-protos.vercel.app/#/indicateurs/part-electrique-flotte-collectivite) :
 
 - placer le badge de périodicité et son infobulle sur la ligne de métadonnées, avec
@@ -182,3 +185,7 @@ Points sensibles : `Indicateurs/data/prepare-data.ts`, `ui/charts/echarts/utils.
 - Zéro, absence et données incomplètes restent distincts, sans valeur de remplacement ni agrégation.
 - Tableau, graphique et graphiques téléchargés concordants ; export fidèle aux observations enregistrées.
 - PCAET, score indicatif et publication GES gèrent explicitement l'absence éventuelle de valeurs annuelles.
+
+La préparation SQL restante est isolée dans #5494 : cadence obligatoire, index par
+période et règles de cohérence, avec maintien du contrat annuel. #5215 lui succède
+pour ouvrir les trois nouvelles cadences dans les contraintes, API et interface.

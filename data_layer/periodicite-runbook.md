@@ -1,9 +1,10 @@
 # Périodicité des indicateurs : déploiement
 
 État au 14 octobre 2026 : les préparations annuelles applicatives (#5481), SQL
-(#5488), reporting (#5489), restauration (#5463) et import atomique (#5491) sont
-fusionnées dans `main`. La préparation d’interface #5493 reste annuelle et peut
-être déployée sans #5215. #5417 et #5492 sont différées hors de cette chaîne.
+(#5488), reporting (#5489), restauration (#5463), import atomique (#5491) et
+interface annuelle (#5493) sont fusionnées dans `main`. La prochaine livraison
+est la préparation d’intégrité annuelle #5494,
+puis l’activation #5215. #5417 et #5492 sont différées hors de cette chaîne.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -11,8 +12,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5493 (métadonnées et saisie annuelle).
-- #5493 → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
+`main` → #5494 (préparation annuelle) → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
 
 Chaque étape peut rester seule en production après ses prérequis. #5296 reste
 la dernière livraison, après la période d'observation et la fermeture de la
@@ -21,7 +21,7 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5493 | Métadonnées et saisie annuelle | Aucune |
+| #5494 | Cadence obligatoire, index par période et règles de cohérence ; annuel uniquement | `indicateur/periodicite_integrite` |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5312 | Six observations de Margny remises au mensuel | `indicateur/margny_indicateurs_mensuels` |
 | #5296 | Suppression des archives ; fin du retour arrière Sqitch | `indicateur/periodicite_nettoyage` |
@@ -40,7 +40,7 @@ redéployer telles quelles par-dessus les autres livraisons.
    Tester d’abord ce candidat et ses migrations sur une copie récente et isolée
    de production, puis en préproduction. La CI utilise des données de test : elle
    ne prouve pas que les données réelles passent tous les contrôles de migration.
-2. Pour #5215, prévoir une fenêtre de maintenance : fermer le trafic
+2. Pour la préparation d’intégrité annuelle et #5215, prévoir une fenêtre de maintenance : fermer le trafic
    applicatif, arrêter les imports et tâches, puis attendre les transactions en
    cours. Les workflows `cd-backend`, `cd-app`, `cd-site` et `cd-tools` sont
    indépendants et n’orchestrent ni cette maintenance ni les migrations.
@@ -211,11 +211,48 @@ Vérifier les résultats annuels avec `periodicite-release.sql`. Le retour arri�
 recrée la vue à six colonnes. Les sauvegardes exigent une cible au même état
 `reporting`, dont la vue et les contrôles de formule sont vérifiés avant restauration.
 
-## 5. Activation des cadences — #5215
+## 5. Préparation d’intégrité annuelle — #5494
 
-L’activation des trois cadences reste une livraison distincte, après la préparation
-applicative #5481 et les deux préparations SQL ci-dessus. Les gardes annuelles
-restent actives jusque-là.
+Cette étape est déployable seule avec l’application annuelle. Appliquer
+`indicateur/periodicite_obligatoire`, puis `indicateur/periodicite_integrite`.
+La première rend la cadence explicitement obligatoire et retire les deux anciens
+index d’unicité, déjà remplacés dans les upserts applicatifs par les index incluant
+la périodicité. La seconde installe les règles de cohérence des définitions,
+groupes et valeurs locales. Les observations importées conservent leur identité.
+Les quatre contraintes annuelles restent actives ; les API, imports et le
+formulaire de création n’ouvrent aucune nouvelle cadence.
+
+Arrêter les écritures et imports pendant les migrations : elles prennent des
+verrous sur les tables. Déployer le frontend pour le libellé accessible du bouton
+de retrait de colonne et le code de restauration de cette version. Le backend
+annuel courant reste compatible. Vérifier la saisie annuelle (zéro, objectif,
+commentaire et lot), les droits de l’utilisateur pilote, les moyennes, un import
+et le refus des trois autres cadences. Aucune observation n’est réécrite.
+
+Pour revenir à l’état précédent, arrêter les écritures et exécuter :
+
+```sh
+sqitch revert --target <cible> --to-change stats/report_indicateur_resultat_periode
+```
+
+Le revert retire les règles préparées et recrée les anciens index. Les données
+restent annuelles ; prévoir le temps de reconstruction des index. Utiliser les
+versions applicatives et le code de restauration correspondant à l’état revenu.
+Les sauvegardes de la préparation exigent l’état `prepared`, vérifié physiquement ;
+un état contenant seulement une des deux migrations est refusé.
+
+## 5 bis. Activation des cadences — #5215
+
+Après la préparation d’intégrité annuelle, appliquer seulement
+`indicateur/periodicite_activation`. Cette migration élargit les CHECK aux quatre
+cadences et retire les gardes annuelles. Les règles de cohérence sont déjà en place.
+Déployer ensemble backend, application, site et tools, avant de rouvrir le trafic.
+La création, saisie, lecture, import et visualisation des nouvelles cadences
+sont ouvertes par cette PR. PCAET et score TETE conservent leur contrat annuel.
+
+Le retour annuel cible `indicateur/periodicite_integrite` et conserve la préparation.
+Il échoue atomiquement si une définition ou observation non annuelle existe.
+Les sauvegardes activées exigent l’état `contract`, distinct de `prepared`.
 
 ## Verrous SQL différés — #5417
 
@@ -245,10 +282,10 @@ file persistante, tâche de reprise ou migration de réconciliation n’est requ
 Réexaminer ce changement si les mesures en production montrent que la durée
 des imports ou des recalculs nécessite un traitement en arrière-plan.
 
-## 6. Interface de saisie — #5493
+## 6. Interface de saisie — #5493 (fusionnée)
 
-Avant #5215, déployer l’application de cette branche. La grille commune et l’API
-annuelle restent celles de `main`. Cette étape ajoute le badge de périodicité,
+Cette préparation annuelle est fusionnée dans `main`. Déployer le commit
+d’intégration annuel avant #5215 si ce n’est pas déjà fait. Elle ajoute le badge de périodicité,
 son explication au clavier (notamment pour le score TETE) et la lecture seule
 pour les indicateurs sans valeur utilisateur, sans migration SQL.
 

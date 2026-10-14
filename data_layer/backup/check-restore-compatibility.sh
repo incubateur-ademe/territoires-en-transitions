@@ -11,6 +11,7 @@ classify_release() {
         $1 == "indicateur/periodicite_schema" { schema = 1 }
         $1 == "indicateur/dependances_formules" { extractor = 1 }
         $1 == "indicateur/periodicite_obligatoire" { mandatory = 1 }
+        $1 == "indicateur/periodicite_integrite" { integrity = 1 }
         $1 == "indicateur/periodicite_formules" { formulas = 1 }
         $1 == "stats/report_indicateur_resultat_periode" { reporting = 1 }
         $1 == "indicateur/reconciliation_formules" { reconciliation = 1 }
@@ -19,15 +20,16 @@ classify_release() {
         END {
             if (!seen || later || reconciliation) print "unsupported"
             else if (schema) {
-                if (activation && mandatory && extractor && formulas && reporting) print "contract"
-                else if (activation || mandatory) print "incomplete"
+                if (activation && mandatory && integrity && extractor && formulas && reporting) print "contract"
+                else if (!activation && mandatory && integrity && extractor && formulas && reporting) print "prepared"
+                else if (activation || mandatory || integrity) print "incomplete"
                 else if (extractor && formulas && reporting) print "reporting"
                 else if (reporting) print "incomplete"
                 else if (extractor && formulas) print "formulas"
                 else if (extractor || formulas) print "incomplete"
                 else print "schema"
             }
-            else if (extractor || mandatory || formulas || reporting || reconciliation || activation) print "incomplete"
+            else if (extractor || mandatory || integrity || formulas || reporting || reconciliation || activation) print "incomplete"
             else print "legacy"
         }
     '
@@ -41,7 +43,7 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting) ;;
+    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting|prepared:prepared) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
 # Verify the physical schema before restore.sh truncates any table.
@@ -86,8 +88,11 @@ if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
         indicateur/periodicite_formules
     )
 fi
-if [[ "$target_phase" == reporting || "$target_phase" == contract ]]; then
+if [[ "$target_phase" == reporting || "$target_phase" == prepared ]]; then
     verify_changes+=(stats/report_indicateur_resultat_periode)
+fi
+if [[ "$target_phase" == prepared ]]; then
+    verify_changes+=(indicateur/periodicite_obligatoire indicateur/periodicite_integrite)
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
