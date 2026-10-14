@@ -20,15 +20,15 @@ type NewActionDeReference = Parameters<ActionsDeReference['add']>[0][number];
 const toCovoiturageAction = (runToken: string): NewActionDeReference => ({
   titre: withRunSuffix('Aménager des aires de covoiturage', runToken),
   description: 'Créer des points de rencontre pour les covoitureurs.',
-  levier: 'covoiturage',
-  categorie: 'amenagement',
+  leviers: ['covoiturage'],
+  categories: ['amenagement'],
 });
 
 const toReseauxChaleurAction = (runToken: string): NewActionDeReference => ({
   titre: withRunSuffix('Développer les réseaux de chaleur', runToken),
   description: 'Raccorder les bâtiments publics à une chaufferie bois.',
-  levier: 'reseaux_chaleur_decarbones',
-  categorie: 'amenagement',
+  leviers: ['reseaux_chaleur_decarbones'],
+  categories: ['amenagement'],
 });
 
 test.describe('rechercher-actions', () => {
@@ -47,15 +47,15 @@ test.describe('rechercher-actions', () => {
         {
           titre: isolationTitre,
           description: 'Réduire les pertes de chaleur par la toiture.',
-          levier: 'sobriete_batiments_residentiel',
-          categorie: 'amenagement',
+          leviers: ['sobriete_batiments_residentiel'],
+          categories: ['amenagement'],
         },
         {
           titre: ecolesTitre,
           description:
             "Planifier l'isolation des COMBLES des groupes scolaires.",
-          levier: 'sobriete_batiments_residentiel',
-          categorie: 'planification',
+          leviers: ['sobriete_batiments_residentiel'],
+          categories: ['planification'],
         },
         covoiturageAction,
       ]));
@@ -133,14 +133,14 @@ test.describe('filtrer-leviers-categories', () => {
           {
             titre: haiesTitre,
             description: 'Replanter les linéaires de haies arrachés.',
-            levier: 'gestion_haies',
-            categorie: 'amenagement',
+            leviers: ['gestion_haies'],
+            categories: ['amenagement'],
           },
           {
             titre: financementTitre,
             description: 'Abonder les aides locales à la rénovation.',
-            levier: 'sobriete_batiments_residentiel',
-            categorie: 'financement',
+            leviers: ['sobriete_batiments_residentiel'],
+            categories: ['financement'],
           },
           unfilteredAction,
         ]);
@@ -185,14 +185,14 @@ test.describe('filtrer-leviers-categories', () => {
             ),
             description:
               'Mettre en relation conducteurs et passagers du territoire.',
-            levier: 'covoiturage',
-            categorie: 'sensibilisation',
+            leviers: ['covoiturage'],
+            categories: ['sensibilisation'],
           },
           {
             titre: withRunSuffix('Créer des aires de compostage', runToken),
             description: 'Valoriser les tailles de haies en paillage.',
-            levier: 'gestion_haies',
-            categorie: 'amenagement',
+            leviers: ['gestion_haies'],
+            categories: ['amenagement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -228,15 +228,15 @@ test.describe('trier-actions', () => {
           {
             titre: vegetaliserTitre,
             description: "Planter des arbres dans les cours d'école.",
-            levier: 'gestion_haies',
-            categorie: 'amenagement',
+            leviers: ['gestion_haies'],
+            categories: ['amenagement'],
           },
           { ...toCovoiturageAction(runToken), titre: amenagerTitre },
           {
             titre: isolerTitre,
             description: 'Réduire les pertes de chaleur par la toiture.',
-            levier: 'sobriete_batiments_residentiel',
-            categorie: 'amenagement',
+            leviers: ['sobriete_batiments_residentiel'],
+            categories: ['amenagement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -270,14 +270,14 @@ test.describe('trier-actions', () => {
           {
             titre: amenagerTitre,
             description: 'Replanter les linéaires de haies arrachés.',
-            levier: 'gestion_haies',
-            categorie: 'sensibilisation',
+            leviers: ['gestion_haies'],
+            categories: ['sensibilisation'],
           },
           { ...toReseauxChaleurAction(runToken), titre: isolerTitre },
           {
             ...toCovoiturageAction(runToken),
             titre: vegetaliserTitre,
-            categorie: 'financement',
+            categories: ['financement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -291,7 +291,7 @@ test.describe('trier-actions', () => {
           actionsDeReferencePom.cardTitlesContaining(runToken)
         ).toHaveText([amenagerTitre, isolerTitre, vegetaliserTitre]);
         const listResponse =
-          actionsDeReferencePom.waitForListResponseSortedBy('levier');
+          actionsDeReferencePom.waitForListResponseSortedBy('leviers');
         await actionsDeReferencePom.chooseSort('Levier');
         return listResponse;
       });
@@ -311,7 +311,7 @@ test.describe('trier-actions', () => {
     const categorieSortedListResponse =
       await test.step('When : il choisit « Catégorie » dans la liste nommée « Trier par »', async () => {
         const listResponse =
-          actionsDeReferencePom.waitForListResponseSortedBy('categorie');
+          actionsDeReferencePom.waitForListResponseSortedBy('categories');
         await actionsDeReferencePom.chooseSort('Catégorie');
         return listResponse;
       });
@@ -349,8 +349,8 @@ test.describe('aucune-action-trouvee', () => {
           {
             titre: haiesTitre,
             description: 'Replanter les linéaires de haies arrachés.',
-            levier: 'gestion_haies',
-            categorie: 'financement',
+            leviers: ['gestion_haies'],
+            categories: ['financement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -431,8 +431,8 @@ test.describe('card-affiche-action-entiere', () => {
           {
             titre,
             description,
-            levier: 'gestion_haies',
-            categorie: 'financement',
+            leviers: ['gestion_haies'],
+            categories: ['financement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -468,8 +468,8 @@ test.describe('liste-en-chargement', () => {
           {
             titre,
             description: 'Action insérée pour le parcours de chargement.',
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         ]);
         const { collectivite } = await collectivites.addCollectiviteAndUser({
@@ -511,8 +511,8 @@ test.describe('liste-en-erreur', () => {
           {
             titre,
             description: "Action insérée pour le parcours d'erreur.",
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         ]);
         await actionsDeReferencePom.failListResponses();
@@ -559,25 +559,25 @@ test.describe('recherche-partageable-par-url', () => {
         {
           titre: isolationTitre,
           description: 'Réduire les pertes de chaleur par la toiture.',
-          levier: 'sobriete_batiments_residentiel',
-          categorie: 'amenagement',
+          leviers: ['sobriete_batiments_residentiel'],
+          categories: ['amenagement'],
         },
         {
           titre: financementTitre,
           description: 'Abonder les aides locales à la rénovation.',
-          levier: 'covoiturage',
-          categorie: 'financement',
+          leviers: ['covoiturage'],
+          categories: ['financement'],
         },
         {
           titre: withRunSuffix('Isoler les combles aménagés', runToken),
           description: 'Isoler les rampants des combles habités.',
-          levier: 'gestion_haies',
-          categorie: 'amenagement',
+          leviers: ['gestion_haies'],
+          categories: ['amenagement'],
         },
         {
           ...toCovoiturageAction(runToken),
-          levier: 'sobriete_batiments_residentiel',
-          categorie: 'financement',
+          leviers: ['sobriete_batiments_residentiel'],
+          categories: ['financement'],
         },
       ],
     };
@@ -754,14 +754,14 @@ test.describe('modification-reservee-super-admin', () => {
           {
             titre: firstTitre,
             description: 'Première action insérée pour le parcours en lecture.',
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
           {
             titre: secondTitre,
             description: 'Seconde action insérée pour le parcours en lecture.',
-            levier: 'gestion_haies',
-            categorie: 'financement',
+            leviers: ['gestion_haies'],
+            categories: ['financement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -791,14 +791,14 @@ test.describe('modification-reservee-super-admin', () => {
           {
             titre: isolationTitre,
             description: 'Réduire les pertes de chaleur par la toiture.',
-            levier: 'sobriete_batiments_residentiel',
-            categorie: 'amenagement',
+            leviers: ['sobriete_batiments_residentiel'],
+            categories: ['amenagement'],
           },
           {
             titre: covoiturageTitre,
             description: 'Créer des points de rencontre pour les covoitureurs.',
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -840,8 +840,8 @@ test.describe('modifier-action', () => {
           {
             titre: covoiturageTitre,
             description: covoiturageDescription,
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -873,11 +873,19 @@ test.describe('modifier-action', () => {
     await test.step('When : il change les quatre champs et clique le bouton « Enregistrer »', async () => {
       await actionsDeReferencePom.titreField.fill(updatedTitre);
       await actionsDeReferencePom.descriptionField.fill(updatedDescription);
-      await actionsDeReferencePom.chooseOption({
+      await actionsDeReferencePom.toggleOption({
+        select: actionsDeReferencePom.levierSelect,
+        optionLabel: 'Covoiturage',
+      });
+      await actionsDeReferencePom.toggleOption({
         select: actionsDeReferencePom.levierSelect,
         optionLabel: 'Gestion des haies',
       });
-      await actionsDeReferencePom.chooseOption({
+      await actionsDeReferencePom.toggleOption({
+        select: actionsDeReferencePom.categorieSelect,
+        optionLabel: 'Aménagement & infrastructures',
+      });
+      await actionsDeReferencePom.toggleOption({
         select: actionsDeReferencePom.categorieSelect,
         optionLabel: 'Financement & fiscalité',
       });
@@ -916,14 +924,14 @@ test.describe('modifier-action-conflit', () => {
           {
             titre: actionATitre,
             description: 'Première action insérée pour le conflit.',
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
           {
             titre: actionBTitre,
             description: actionBDescription,
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         ]);
         return collectivites.addCollectiviteAndUser({
@@ -973,8 +981,8 @@ test.describe('modifier-action-validation', () => {
           action: {
             titre: withRunSuffix('Action de référence e2e à valider'),
             description: 'Action insérée pour le parcours de validation.',
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         });
         return actionsDeReferencePom.countUpdateRequests();
@@ -1044,8 +1052,8 @@ test.describe('modifier-action-en-erreur', () => {
         action: {
           titre: withRunSuffix('Action de référence e2e en échec'),
           description: "Action insérée pour le parcours d'erreur à l'envoi.",
-          levier: 'covoiturage',
-          categorie: 'amenagement',
+          leviers: ['covoiturage'],
+          categories: ['amenagement'],
         },
       });
       await actionsDeReferencePom.failUpdateResponses();
@@ -1082,8 +1090,8 @@ test.describe('fermer-volet-modifications-non-enregistrees', () => {
         action: {
           titre: withRunSuffix('Action de référence e2e à poursuivre'),
           description: 'Action insérée pour le parcours de poursuite.',
-          levier: 'covoiturage',
-          categorie: 'amenagement',
+          leviers: ['covoiturage'],
+          categories: ['amenagement'],
         },
       });
       await actionsDeReferencePom.titreField.fill(typedTitre);
@@ -1118,8 +1126,8 @@ test.describe('fermer-volet-modifications-non-enregistrees', () => {
         action: {
           titre,
           description: "Action insérée pour le parcours d'abandon.",
-          levier: 'covoiturage',
-          categorie: 'amenagement',
+          leviers: ['covoiturage'],
+          categories: ['amenagement'],
         },
       });
       await actionsDeReferencePom.titreField.fill(typedTitre);
@@ -1154,8 +1162,8 @@ test.describe('fermer-volet-modifications-non-enregistrees', () => {
         action: {
           titre: withRunSuffix('Action de référence e2e fermée sans saisie'),
           description: 'Action insérée pour le parcours de fermeture directe.',
-          levier: 'covoiturage',
-          categorie: 'amenagement',
+          leviers: ['covoiturage'],
+          categories: ['amenagement'],
         },
       }));
     await test.step('When : il clique le bouton « Fermer » du volet', () =>
@@ -1181,8 +1189,8 @@ test.describe('fermer-volet-modifications-non-enregistrees', () => {
           action: {
             titre: withRunSuffix('Action de référence e2e quittée'),
             description: 'Action insérée pour le parcours de sortie de page.',
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         });
         await actionsDeReferencePom.titreField.fill(
@@ -1219,8 +1227,8 @@ test.describe('action-modifiee-sort-des-filtres', () => {
         {
           titre: covoiturageTitre,
           description: 'Créer des points de rencontre pour les covoitureurs.',
-          levier: 'covoiturage',
-          categorie: 'amenagement',
+          leviers: ['covoiturage'],
+          categories: ['amenagement'],
         },
       ]);
       const { collectivite } = await collectivites.addCollectiviteAndUser({
@@ -1238,7 +1246,11 @@ test.describe('action-modifiee-sort-des-filtres', () => {
     });
     await test.step('When : il ouvre le volet de cette action, choisit « Gestion des haies » dans le champ « Levier » et clique le bouton « Enregistrer »', async () => {
       await actionsDeReferencePom.openUpdatePanel(covoiturageTitre);
-      await actionsDeReferencePom.chooseOption({
+      await actionsDeReferencePom.toggleOption({
+        select: actionsDeReferencePom.levierSelect,
+        optionLabel: 'Covoiturage',
+      });
+      await actionsDeReferencePom.toggleOption({
         select: actionsDeReferencePom.levierSelect,
         optionLabel: 'Gestion des haies',
       });
@@ -1329,8 +1341,8 @@ test.describe('page-accessible-par-url-en-prod', () => {
           {
             titre,
             description: "Action insérée pour le parcours d'accès par URL.",
-            levier: 'covoiturage',
-            categorie: 'amenagement',
+            leviers: ['covoiturage'],
+            categories: ['amenagement'],
           },
         ]);
         await collectivites.addCollectiviteAndUser({

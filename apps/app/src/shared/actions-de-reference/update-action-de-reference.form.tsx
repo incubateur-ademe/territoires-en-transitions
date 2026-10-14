@@ -75,6 +75,7 @@ type MultiChoiceFieldProps<Value extends string> = {
   readonly options: readonly ChoiceOption<Value>[];
   readonly values: readonly Value[];
   readonly onChange: (values: readonly Value[]) => void;
+  readonly errorMessage?: string;
 };
 
 const MultiChoiceField = <Value extends string>({
@@ -82,8 +83,13 @@ const MultiChoiceField = <Value extends string>({
   options,
   values,
   onChange,
+  errorMessage,
 }: MultiChoiceFieldProps<Value>): JSX.Element => (
-  <Field title={title}>
+  <Field
+    title={title}
+    state={errorMessage ? 'error' : 'default'}
+    message={errorMessage}
+  >
     <SelectMultiple
       options={[...options]}
       values={[...values]}
@@ -194,24 +200,26 @@ const UpdateActionDeReferenceFields = ({
         <Controller
           name="leviers"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <MultiChoiceField
               title={appLabels.actionDeReferenceLevierLabel}
               options={levierOptions}
               values={field.value}
               onChange={field.onChange}
+              errorMessage={fieldState.error?.message}
             />
           )}
         />
         <Controller
           name="categories"
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <MultiChoiceField
               title={appLabels.actionDeReferenceCategorieLabel}
               options={categorieOptions}
               values={field.value}
               onChange={field.onChange}
+              errorMessage={fieldState.error?.message}
             />
           )}
         />

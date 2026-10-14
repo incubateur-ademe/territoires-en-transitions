@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { Levier, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { PriorisationLeviersPom } from 'tests/collectivite/priorisation-leviers/priorisation-leviers.pom';
 import {
+  type NewActionDeReference,
   testWithActionsDeReference as test,
   toRunToken,
   withRunSuffix,
@@ -9,11 +10,11 @@ import {
 
 const LEVIER_NOM: Levier = LEVIER_NOM_BY_ID.covoiturage;
 
-const toCovoiturageAction = (runToken: string) => ({
+const toCovoiturageAction = (runToken: string): NewActionDeReference => ({
   titre: withRunSuffix('Aménager des aires de covoiturage', runToken),
   description: 'Créer des points de rencontre pour les covoitureurs.',
-  levier: 'covoiturage' as const,
-  categorie: 'amenagement' as const,
+  leviers: ['covoiturage'],
+  categories: ['amenagement'],
 });
 
 test.describe('linked-fiches', () => {

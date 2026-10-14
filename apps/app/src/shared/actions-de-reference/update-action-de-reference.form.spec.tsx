@@ -243,6 +243,20 @@ describe('modifier-action', () => {
     );
   });
 
+  it("affiche l'erreur et n'envoie rien quand le seul levier est retiré", async () => {
+    renderForm();
+    const levierLabel = LEVIER_NOM_BY_ID.sobriete_isolation_batiments_tertiaire;
+
+    await chooseOption({
+      selectedLabel: levierLabel,
+      optionLabel: levierLabel,
+    });
+    await submitForm();
+
+    expect(updateActionMock).not.toHaveBeenCalled();
+    expect(screen.queryByText(REQUIRED_FIELD_MESSAGE)).not.toBeNull();
+  });
+
   it('signale la mise à jour quand la modification est acceptée', async () => {
     const onUpdated = renderForm();
     await typeInField(getTitreField(), TYPED_TITRE);
