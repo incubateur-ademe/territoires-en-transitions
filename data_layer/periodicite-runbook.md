@@ -1,8 +1,8 @@
 # Périodicité des indicateurs : déploiement
 
 État au 14 octobre 2026 : les préparations annuelles applicatives (#5481), SQL
-(#5488), reporting (#5489) et restauration (#5463) sont fusionnées dans `main`.
-Les trois préparations restantes ci-dessous restent annuelles et peuvent être
+(#5488), reporting (#5489), restauration (#5463) et import atomique (#5491) sont
+fusionnées dans `main`. Les deux préparations restantes restent annuelles et peuvent être
 déployées sans #5215.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
@@ -11,8 +11,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-- `main` → #5491 (import atomique).
-- #5491 → #5492 (file durable annuelle) → #5493 (métadonnées et saisie annuelle).
+- `main` → #5492 (file durable annuelle) → #5493 (métadonnées et saisie annuelle).
 - #5493 → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
 
 Chaque étape peut rester seule en production après ses prérequis. #5296 reste
@@ -22,7 +21,6 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5491 | Import atomique du catalogue | Aucune |
 | #5492 | File durable de recalcul | `indicateur/reconciliation_formules` |
 | #5493 | Métadonnées et saisie annuelle | Aucune |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
@@ -242,6 +240,36 @@ sont enregistrés dans une seule transaction. Un échec annule l’ensemble.
 Aucune migration supplémentaire ; déployer le backend imports suspendus. Les
 contrats d’import et les contraintes SQL continuent de refuser les autres cadences.
 
+## File de recalcul — #5492
+
+Après #5491, suspendre les imports du catalogue. Appliquer
+`indicateur/reconciliation_formules`, puis déployer le backend, `tools` et la
+configuration de sauvegarde incluant `private.indicateur_reconciliation_formule`.
+Cette migration dépend du reporting annuel, sans ouvrir de cadence.
+Adapter l'automatisation à la réponse `status` / `definitions` / `reconciliation` :
+`status: committed` confirme l'enregistrement du catalogue, pas la fin des recalculs.
+
+Activer `drain-indicateur-formula-reconciliations` dans `tools` ; l'ajouter à
+`CRON_JOBS_FILTER` si ce filtre est configuré. Sur un import de validation,
+contrôler les valeurs calculées et la diminution du nombre de travaux en attente :
+
+```sql
+SELECT count(*) AS recalculs_en_attente
+FROM private.indicateur_reconciliation_formule;
+```
+
+Un recalcul en erreur est retenté par cette tâche ; ne pas réimporter la même version.
+Pour revenir à #5491 : suspendre les imports, laisser vider la file, arrêter la tâche,
+puis redéployer son backend et revenir au dernier changement Sqitch relevé
+avant #5492, en conservant les autres livraisons.
+Le revert refuse une file non vide.
+
+Les sauvegardes de cette étape doivent contenir la file. Elles ne sont pas
+compatibles avec celles prises avant #5492. Leur état est `annual-reconciliation` :
+la cible doit conserver ses deux contraintes annuelles validées et le dump doit
+contenir la table de réconciliation, même vide. Après #5215, l’état devient
+`reconciliation` et exige aussi les vérificateurs de l’activation.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
@@ -264,3 +292,8 @@ annuelle. Il ne dépend pas d’une ancienne table d’audit temporaire. Le reto
 arrière de `periodicite_schema` refuse de retirer le schéma si les verrous SQL
 optionnels de #5417 ont été installés. Cette garde est inactive dans la chaîne
 retenue, qui ne déploie pas #5417. Les gardes d’activation restent dans #5215.
+
+## Vérifications
+
+Le workflow `test-db-deploy` vérifie le cycle de vie de la file et refuse une
+sauvegarde qui omet la table de réconciliation.

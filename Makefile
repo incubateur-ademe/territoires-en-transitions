@@ -77,7 +77,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         infra-up services-scoped-up worktree worktree-env worktree-prune guard-main warn-shared-db \
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
-        db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
+        db-init db-migrate db-test-backup-compatibility db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
         cms-pull cms-pull-local gcloud ai-import-eval
 
 help: ## Affiche cette aide

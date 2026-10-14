@@ -23,6 +23,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Test backup compatibility
+        run: make db-test-backup-compatibility
+
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
@@ -107,6 +110,17 @@ jobs:
             --dbname="postgresql://postgres:postgres@127.0.0.1:5432/$SCHEMA_DATABASE_NAME" \
             --ext .psql --verbose data_layer/tests/indicateur/periodicite-schema.assertions.psql
 
+      - name: Test formula reconciliation lifecycle
+        env:
+          DATABASE_URL: ${{ steps.local-supabase.outputs.database-url }}
+          SUPABASE_NETWORK: ${{ vars.SUPABASE_NETWORK }}
+        run: |
+          docker run --rm --network "$SUPABASE_NETWORK" \
+            --env "FORMULA_RECONCILIATION_TEST_DATABASE_URL=$DATABASE_URL" \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" --workdir /workspace \
+            --entrypoint bash "$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)" \
+            data_layer/tests/indicateur/formula-reconciliation-lifecycle.spec.sh
+
       - name: Sqitch revert to ${{ env.tag }}
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
@@ -147,14 +161,23 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/workspace:ro" \
             --workdir /workspace \
             --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=reporting \
+            --env EXPECTED_RESTORE_PHASE=annual-reconciliation \
             --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
           archive="$(mktemp)"
           trap 'rm -f "$archive"' EXIT
           pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
-            --table=sqitch.changes --file="$archive"
+            --table=sqitch.changes --schema=private \
+            --table=private.indicateur_reconciliation_formule --file="$archive"
           phase="$(bash data_layer/backup/check-restore-compatibility.sh "$archive")"
           [[ "$phase" == "$EXPECTED_RESTORE_PHASE" ]]
+
+          # The registry alone must never allow a restore that loses pending work.
+          pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
+            --table=sqitch.changes --file="$archive"
+          if bash data_layer/backup/check-restore-compatibility.sh "$archive"; then
+            echo 'Backup preflight accepted an archive without the reconciliation queue.' >&2
+            exit 1
+          fi
           BASH
 
       - name: Test periodicity constraints after deployment
