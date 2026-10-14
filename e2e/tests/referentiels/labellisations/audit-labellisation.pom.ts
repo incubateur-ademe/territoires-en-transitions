@@ -156,6 +156,10 @@ export class AuditLabellisationPom {
       `/collectivite/${collectiviteId}/referentiel/${referentielId}/audit-labellisation`
     );
     await expect(this.title).toBeVisible({ timeout: 15_000 });
+    // The score loads separately and shifts the audit controls when it appears.
+    await expect(
+      this.page.getByTestId(`scoreRatio-${referentielId}`)
+    ).toBeVisible();
   }
 
   async uploadActeEngagement(): Promise<void> {
@@ -188,12 +192,9 @@ export class AuditLabellisationPom {
     await expect(this.auditModal).toBeVisible();
   }
 
-  /**
-   * Survole le CTA pour faire apparaitre son tooltip. `force` est necessaire :
-   * le bouton est desactive dans les cas ou le motif nous interesse.
-   */
+  /** Attend un bouton stable avant le survol, même s'il est désactivé. */
   async hoverDemanderAudit(): Promise<void> {
-    await this.demanderAuditButton.hover({ force: true });
+    await this.demanderAuditButton.hover();
   }
 
   async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {
