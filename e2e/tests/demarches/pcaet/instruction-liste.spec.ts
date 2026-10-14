@@ -258,4 +258,32 @@ test.describe('Démarche PCAET - liste d’instruction', () => {
     await page.reload();
     await expect(pom.rowSansDepot(sansDepot.data.id)).toBeVisible();
   });
+
+  test('le lien Collectivités du sur-menu ouvre l’annuaire depuis l’espace du service', async ({
+    collectivites,
+    page,
+  }) => {
+    const REGION = await pickFreeRegionCode(databaseService, 'dreal');
+
+    const { collectivite: dreal } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: {
+        type: 'dreal',
+        regionCode: REGION,
+        nom: 'DREAL e2e sur-menu',
+      },
+      userArgs: { role: CollectiviteRole.ADMIN, autoLogin: true },
+    });
+
+    const pom = new InstructionPom(page);
+    await pom.goToDemandesAvis(dreal.data.id);
+
+    await page.getByTestId('nav-collectivites').first().click();
+
+    await expect(page).toHaveURL(
+      `/collectivite/${dreal.data.id}/recherches/collectivites`
+    );
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Collectivités' })
+    ).toBeVisible();
+  });
 });

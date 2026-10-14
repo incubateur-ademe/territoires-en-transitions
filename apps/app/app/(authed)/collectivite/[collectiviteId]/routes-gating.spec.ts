@@ -29,6 +29,8 @@ const segmentsHorsGardeStandard: Record<string, string> = {
     'actions de référence communes à tous les contextes, service déconcentré compris',
   instruction:
     'dossier consulté par un service sur la collectivité instruite — gardé par la saisine, pas par le type de collectivité',
+  recherches:
+    'annuaire des collectivités engagées, lié depuis le sur-menu de tous les contextes, service déconcentré compris',
 };
 
 describe('garde standard des routes de collectivité', () => {
