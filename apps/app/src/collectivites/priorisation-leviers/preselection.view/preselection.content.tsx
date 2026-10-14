@@ -9,7 +9,7 @@ import type { ActionDeReference } from '@tet/domain/shared';
 import { Button, EmptyCard, Icon, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 import { ActionDeReferenceCard } from '@/app/shared/actions-de-reference/action-de-reference.card';
-import { toInterestControl } from '@/app/shared/actions-de-reference/to-action-de-reference-interest-control';
+import { toActionDeReferenceInterestControl } from '@/app/shared/actions-de-reference/to-action-de-reference-interest-control';
 import { LevierCardInfo } from '../levier-card-info';
 import {
   PreselectionFilters,
@@ -27,10 +27,45 @@ type PreselectionContentProps = {
 };
 
 type PreselectedActionCardProps = {
-  action: ActionDeReference;
-  plans: PlanListItem[];
-  preselection: Preselection;
-  planAdditions: ActionsDeReferencePlanAdditions;
+  readonly action: ActionDeReference;
+  readonly plans: PlanListItem[];
+  readonly preselection: Preselection;
+  readonly planAdditions: ActionsDeReferencePlanAdditions;
+};
+
+type PlanActionsProps = {
+  readonly action: ActionDeReference;
+  readonly plans: PlanListItem[];
+  readonly addedToPlan: ActionAddedToPlan | undefined;
+  readonly planAdditions: ActionsDeReferencePlanAdditions;
+};
+
+const PlanActions = ({
+  action,
+  plans,
+  addedToPlan,
+  planAdditions,
+}: PlanActionsProps): JSX.Element | null => {
+  if (addedToPlan) {
+    return (
+      <AddedToPlanFooter
+        addedToPlan={addedToPlan}
+        onUndo={() => planAdditions.undo(action.id)}
+      />
+    );
+  }
+  const [firstPlan] = plans;
+  if (firstPlan === undefined) {
+    return null;
+  }
+  return (
+    <AddToPlanSplitButton
+      firstPlan={firstPlan}
+      isAdding={planAdditions.isAdding(action.id)}
+      plans={plans}
+      onAddToPlan={(target) => planAdditions.add({ action, ...target })}
+    />
+  );
 };
 
 type AddedToPlanFooterProps = {
@@ -69,35 +104,22 @@ const PreselectedActionCard = ({
   planAdditions,
 }: PreselectedActionCardProps): JSX.Element => {
   const addedToPlan = preselection.addedToPlanOf(action.id);
-  const [firstPlan] = plans;
-  const hasPlan = firstPlan !== undefined;
   return (
     <ActionDeReferenceCard
       action={action}
       updateAccess={{ status: 'forbidden' }}
-      interest={toInterestControl(action, 'preselectionnee', preselection)}
+      interest={toActionDeReferenceInterestControl(
+        action,
+        'preselectionnee',
+        preselection
+      )}
       actions={
-        <>
-          {addedToPlan ? (
-            <AddedToPlanFooter
-              addedToPlan={addedToPlan}
-              onUndo={() => planAdditions.undo(action.id)}
-            />
-          ) : (
-            <>
-              {hasPlan && (
-                <AddToPlanSplitButton
-                  firstPlan={firstPlan}
-                  isAdding={planAdditions.isAdding(action.id)}
-                  plans={plans}
-                  onAddToPlan={(target) =>
-                    planAdditions.add({ action, ...target })
-                  }
-                />
-              )}
-            </>
-          )}
-        </>
+        <PlanActions
+          action={action}
+          plans={plans}
+          addedToPlan={addedToPlan}
+          planAdditions={planAdditions}
+        />
       }
     />
   );
