@@ -12,17 +12,20 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { mockTrajectoireSnbcSheetService } from '../trajectoires/trajectoires.test-fixture';
 
 describe('Route de récupération des données Trajectoire Leviers', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let anonUser: AuthUser<AuthRole.ANON>;
   let authenticatedUser: AuthenticatedUser;
+  let restoreSheetService: () => void;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
     const db = await getTestDatabase(app);
+    restoreSheetService = mockTrajectoireSnbcSheetService(app);
 
     anonUser = getAnonUser();
 
@@ -31,6 +34,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
   });
 
   afterAll(async () => {
+    restoreSheetService();
     await app.close();
   });
 

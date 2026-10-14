@@ -9,14 +9,17 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import request from 'supertest';
 import { expect } from 'vitest';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { mockTrajectoireSnbcSheetService } from '../trajectoires/trajectoires.test-fixture';
 
 describe('Trajectoire Leviers Controller', () => {
   let app: INestApplication;
   let authToken: string;
+  let restoreSheetService: () => void;
 
   beforeAll(async () => {
     app = await getTestApp();
     const db = await getTestDatabase(app);
+    restoreSheetService = mockTrajectoireSnbcSheetService(app);
     const testUserResult = await addTestUser(db);
     authToken = await getAuthToken({
       email: testUserResult.user.email ?? '',
@@ -45,6 +48,7 @@ describe('Trajectoire Leviers Controller', () => {
   });
 
   afterAll(async () => {
+    restoreSheetService();
     await app.close();
   });
 });
