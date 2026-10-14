@@ -35,6 +35,7 @@ const useGuidedTour = ({
     () =>
       steps.map((step) => ({
         skipBeacon: true,
+        blockTargetInteraction: true,
         targetWaitTimeout: TARGET_WAIT_TIMEOUT,
         ...step,
       })),
