@@ -1,4 +1,5 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { appLabels } from '@/app/labels/catalog';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard } from '@tet/ui';
@@ -82,7 +83,9 @@ const IndicateurDetailChart = ({
           ? !isReadonly && onAddValue
             ? [
                 {
-                  children: appLabels.ajouterValeur,
+                  children: getIndicateurPeriodPresentation(
+                    definition.periodicite
+                  ).editor.addLabel,
                   onClick: () => onAddValue(),
                 },
               ]

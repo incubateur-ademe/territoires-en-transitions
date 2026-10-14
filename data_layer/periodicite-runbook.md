@@ -1,10 +1,10 @@
 # Périodicité des indicateurs : déploiement
 
 État au 14 octobre 2026 : les préparations annuelles applicatives (#5481), SQL
-(#5488), reporting (#5489), restauration (#5463), import atomique (#5491) et
-interface annuelle (#5493) sont fusionnées dans `main`. La prochaine livraison
-est la préparation d’intégrité annuelle #5494,
-puis l’activation #5215. #5417 et #5492 sont différées hors de cette chaîne.
+(#5488), reporting (#5489), restauration (#5463), import atomique (#5491),
+interface annuelle (#5493) et intégrité annuelle (#5494) sont fusionnées dans `main`.
+La prochaine étape de revue est l’activation #5215. Vérifier le déploiement effectif
+de ces préparations sur la cible avant activation. #5417 et #5492 restent différées.
 
 La décision du 24 septembre 2026 impose une même périodicité pour la déclaration
 et la visualisation, sans agrégation. Le choix est possible à la création d'un
@@ -12,7 +12,7 @@ indicateur personnalisé et ne peut plus être modifié ensuite.
 
 La chaîne de revue restante est :
 
-`main` → #5494 (préparation annuelle) → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
+`main` → #5215 (activation) → #5312 (Margny) → #5296 (nettoyage final).
 
 Chaque étape peut rester seule en production après ses prérequis. #5296 reste
 la dernière livraison, après la période d'observation et la fermeture de la
@@ -21,7 +21,6 @@ redéployer telles quelles par-dessus les autres livraisons.
 
 | PR restante | Changement | Migration Sqitch |
 | --- | --- | --- |
-| #5494 | Cadence obligatoire, index par période et règles de cohérence ; annuel uniquement | `indicateur/periodicite_integrite` |
 | #5215 | Activation des quatre périodicités | `indicateur/periodicite_activation` |
 | #5312 | Six observations de Margny remises au mensuel | `indicateur/margny_indicateurs_mensuels` |
 | #5296 | Suppression des archives ; fin du retour arrière Sqitch | `indicateur/periodicite_nettoyage` |
@@ -211,9 +210,10 @@ Vérifier les résultats annuels avec `periodicite-release.sql`. Le retour arri�
 recrée la vue à six colonnes. Les sauvegardes exigent une cible au même état
 `reporting`, dont la vue et les contrôles de formule sont vérifiés avant restauration.
 
-## 5. Préparation d’intégrité annuelle — #5494
+## 5. Préparation d’intégrité annuelle — #5494 (fusionnée)
 
-Cette étape est déployable seule avec l’application annuelle. Appliquer
+Cette étape est fusionnée dans `main` et reste déployable seule avec l’application
+annuelle. Si elle n’est pas encore déployée sur la cible, appliquer
 `indicateur/periodicite_obligatoire`, puis `indicateur/periodicite_integrite`.
 La première rend la cadence explicitement obligatoire et retire les deux anciens
 index d’unicité, déjà remplacés dans les upserts applicatifs par les index incluant

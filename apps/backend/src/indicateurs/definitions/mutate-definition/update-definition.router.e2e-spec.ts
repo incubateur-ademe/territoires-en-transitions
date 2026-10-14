@@ -394,6 +394,26 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       expect(localDefinition.commentaire).toBe('Updated by the pilot');
     });
 
+    test('rejects local values at a different cadence from the definition', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Fixed annual cadence',
+        },
+      });
+      await expect(
+        caller.indicateurs.valeurs.upsert({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+          dateValeur: '2026-02-01',
+          resultat: 10,
+        })
+      ).rejects.toThrow(/périodicité de déclaration/);
+    });
+
     test('should update multiple fields at once for perso indicator', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
 

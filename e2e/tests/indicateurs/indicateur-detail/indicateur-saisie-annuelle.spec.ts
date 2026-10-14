@@ -368,7 +368,10 @@ test('Saisir résultat et objectif dans la même période annuelle', async ({
     page.getByRole('button', { name: 'Objectifs', exact: true })
   ).toHaveCount(0);
 
-  const valueHalves = valeurs.cell(2025).locator(':scope > div > div');
+  const valueHalves = valeurs
+    .cell(2025)
+    .getByTestId('indicateurs.valeurs.slots')
+    .locator(':scope > div');
   const expectCenteredSeparator = async () => {
     await expect(valueHalves).toHaveCount(2);
     await expect
@@ -387,13 +390,38 @@ test('Saisir résultat et objectif dans la même période annuelle', async ({
       .toEqual({ centered: true, noOverflow: true });
   };
   await expectCenteredSeparator();
-  for (const type of ['Résultat', 'Objectif'] as const) {
-    await valeurs.valueButton(2025, type).click();
-    const input = valeurs.valueInput(2025, type);
-    await expect(input).toBeFocused();
-    await expectCenteredSeparator();
-    await input.press('Escape');
-    await expect(input).toHaveCount(0);
+  const getTableDimensions = () =>
+    valeurs.table.getByRole('table').evaluate((table) => ({
+      width: table.getBoundingClientRect().width,
+      height: table.getBoundingClientRect().height,
+      columns: Array.from(
+        table.querySelectorAll('thead th'),
+        (cell) => cell.getBoundingClientRect().width
+      ),
+    }));
+  for (const annee of [2025, 2026]) {
+    for (const type of ['Résultat', 'Objectif'] as const) {
+      const dimensions = await getTableDimensions();
+      await valeurs.valueButton(annee, type).click();
+      const input = valeurs.valueInput(annee, type);
+      await expect(input).toBeFocused();
+      await expectCenteredSeparator();
+      await expect.poll(getTableDimensions).toEqual(dimensions);
+      await expect
+        .poll(() =>
+          input.evaluate(
+            (element) => element.scrollWidth <= element.clientWidth + 1
+          )
+        )
+        .toBe(true);
+      if (annee === 2026) {
+        const bounds = await input.boundingBox();
+        expect(bounds?.width).toBeLessThanOrEqual(100);
+      }
+      await input.press('Escape');
+      await expect(input).toHaveCount(0);
+      await expect.poll(getTableDimensions).toEqual(dimensions);
+    }
   }
 
   const saved = await user.getTrpcClient().indicateurs.valeurs.list.query({

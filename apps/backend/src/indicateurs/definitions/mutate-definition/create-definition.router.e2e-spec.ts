@@ -49,7 +49,13 @@ describe('createIndicateurPerso', () => {
     await app.close();
   });
 
-  test.each([undefined, IndicateurPeriodiciteEnum.ANNUELLE] as const)(
+  test.each([
+    undefined,
+    IndicateurPeriodiciteEnum.ANNUELLE,
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    IndicateurPeriodiciteEnum.MENSUELLE,
+  ] as const)(
     'creates, writes and reads an indicator with periodicite=%s',
     async (periodicite) => {
       const caller = router.createCaller({ user: authenticatedUser });

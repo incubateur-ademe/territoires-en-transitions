@@ -26,7 +26,7 @@ export const IndicateurValeursTableCommentairesFooter = ({
   showAddPeriodeColumn,
   onComment,
 }: Props) => {
-  if (!resultats && !objectifs) return null;
+  if (periodes.length === 0 || (!resultats && !objectifs)) return null;
 
   const commentCounts = periodes.map(
     (periode) =>

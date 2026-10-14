@@ -50,7 +50,10 @@ export type SelectCustomization = {
   };
 };
 
-export type SelectProps = Pick<DropdownFloaterProps, 'inlineEdit'> & {
+export type SelectProps = Pick<
+  DropdownFloaterProps,
+  'inlineEdit' | 'containerMaxHeight' | 'renderInPortal'
+> & {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Liste des options */
@@ -122,6 +125,8 @@ export const SelectBase = (props: SelectProps) => {
     custom,
     dropdownZindex,
     inlineEdit,
+    containerMaxHeight,
+    renderInPortal,
     buttonClassName,
     disabled = false,
     small = false,
@@ -220,6 +225,8 @@ export const SelectBase = (props: SelectProps) => {
       dropdownZindex={dropdownZindex}
       disabled={disabled}
       inlineEdit={inlineEdit}
+      containerMaxHeight={containerMaxHeight}
+      renderInPortal={renderInPortal}
       containerWidthMatchButton={!hasTriggerButton}
       hasTriggerButton={hasTriggerButton}
       containerMaxWidth={custom?.triggerButton?.containerMaxWidth}
@@ -277,7 +284,7 @@ export const SelectBase = (props: SelectProps) => {
             createProps={createProps}
             renderOptionItem={renderOptionItem}
             uppercase={optionsAreCaseSensitive === false}
-            autoFocusOnOpen={inlineEdit === false}
+            autoFocusOnOpen={renderInPortal || inlineEdit === false}
           />
         </div>
       )}

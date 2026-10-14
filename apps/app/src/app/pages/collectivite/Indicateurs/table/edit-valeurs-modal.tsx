@@ -15,10 +15,7 @@ import {
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useId, useRef, useState } from 'react';
-import {
-  IndicateurPeriodeAnnuelle,
-  IndicateurPeriodes,
-} from '@tet/domain/indicateurs';
+import { IndicateurPeriode, IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
@@ -45,18 +42,14 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
     valeur || {};
   const periodicite = definition.periodicite;
-  IndicateurPeriodes.assertAnnual(
-    periodicite,
-    'La saisie annuelle des valeurs'
-  );
   const presentation = getIndicateurPeriodPresentation(periodicite);
-  let periodeValide: IndicateurPeriodeAnnuelle | null = null;
+  let periodeValide: IndicateurPeriode | null = null;
   try {
     periodeValide = IndicateurPeriodes.parse(periodicite, periode);
   } catch {
     // L'erreur est reflétée par l'état désactivé des boutons de validation.
   }
-  let periodeSuivante: IndicateurPeriodeAnnuelle | null = null;
+  let periodeSuivante: IndicateurPeriode | null = null;
   if (periodeValide) {
     try {
       periodeSuivante = IndicateurPeriodes.next(periodeValide);

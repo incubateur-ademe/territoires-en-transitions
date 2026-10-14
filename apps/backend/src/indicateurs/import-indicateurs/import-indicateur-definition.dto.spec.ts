@@ -1,6 +1,6 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { importIndicateurDefinitionSchema } from './import-indicateur-definition.dto';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 describe('Import de définitions périodiques', () => {
   const definition = {
@@ -29,12 +29,31 @@ describe('Import de définitions périodiques', () => {
     });
   });
 
-  it.each(['annuelle'])('accepte la périodicité %s', (periodicite) => {
+  it('écarte les anciennes règles d’agrégation temporelle', () => {
+    const input = {
+      ...definition,
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+    };
+    expect(
+      importIndicateurDefinitionSchema.parse({
+        ...input,
+        aggregationResultat: 'somme',
+        aggregationObjectif: 'moyenne',
+      })
+    ).toEqual(input);
+  });
+
+  it.each([
+    IndicateurPeriodiciteEnum.ANNUELLE,
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    IndicateurPeriodiciteEnum.MENSUELLE,
+  ])('accepte la périodicité %s', (periodicite) => {
     const input = { ...definition, periodicite };
     expect(importIndicateurDefinitionSchema.parse(input)).toEqual(input);
   });
 
-  it.each(['semestrielle', 'trimestrielle', 'mensuelle', 'hebdomadaire', null])(
+  it.each(['hebdomadaire', null])(
     'refuse une périodicité non prise en charge : %s',
     (periodicite) => {
       const result = importIndicateurDefinitionSchema.safeParse({
@@ -45,19 +64,6 @@ describe('Import de définitions périodiques', () => {
       expect(result.error?.issues).toEqual([
         expect.objectContaining({ path: ['periodicite'] }),
       ]);
-    }
-  );
-  it.each(['aggregationResultat', 'aggregationObjectif'])(
-    'strips unsupported %s configuration from the input',
-    (field) => {
-      for (const value of ['moyenne', null]) {
-        const input = importIndicateurDefinitionSchema.parse({
-          ...definition,
-          [field]: value,
-        });
-
-        expect(input).not.toHaveProperty(field);
-      }
     }
   );
 });

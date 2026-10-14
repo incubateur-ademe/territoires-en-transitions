@@ -1,3 +1,4 @@
+import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { useMemo, useState } from 'react';
 import { useIndicateurMoyenne } from './use-indicateur-moyenne';
@@ -42,7 +43,9 @@ const filtreToLabel = (filtre: FiltresSource): string => {
   }
 };
 
-export const useSourceFilter = (input: GetAvailableSourcesInput) => {
+export const useSourceFilter = (
+  input: GetAvailableSourcesInput & { periodicite?: IndicateurPeriodicite }
+) => {
   const [filtresSource, setFiltresSource] = useState<FiltresSource[]>([]);
 
   const { data, isLoading: isLoadingSources } =

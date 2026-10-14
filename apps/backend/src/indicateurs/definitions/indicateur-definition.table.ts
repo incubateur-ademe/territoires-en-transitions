@@ -1,5 +1,4 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
-import { sql } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
@@ -8,7 +7,10 @@ import {
   modifiedBy,
   version,
 } from '@tet/backend/utils/column.utils';
-import { indicateurPeriodiciteValues } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodiciteEnum,
+  indicateurPeriodiciteValues,
+} from '@tet/domain/indicateurs';
 import {
   boolean,
   check,
@@ -61,7 +63,7 @@ export const indicateurDefinitionTable = pgTable(
   (table) => [
     check(
       'indicateur_definition_periodicite_check',
-      sql`${table.periodicite} = 'annuelle'`
+      inArray(table.periodicite, indicateurPeriodiciteValues).inlineParams()
     ),
   ]
 );
