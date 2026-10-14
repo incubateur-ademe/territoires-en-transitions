@@ -8,12 +8,14 @@ export const IndicateurValeursScrollbar = ({
   contentWidth,
   controls,
   onScroll,
+  onScrollStart,
 }: {
   scrollLeft: number;
   viewportWidth: number;
   contentWidth: number;
   controls: string;
   onScroll: (left: number) => void;
+  onScrollStart: () => void;
 }) => {
   const maxScrollLeft = contentWidth - viewportWidth;
   if (maxScrollLeft <= 1) return null;
@@ -30,7 +32,8 @@ export const IndicateurValeursScrollbar = ({
       aria-valuetext={`${Math.round((scrollLeft / maxScrollLeft) * 100)} %`}
       data-test="indicateurs.valeurs.scrollbar"
       // Taking control interrupts any automatic scroll toward a new period.
-      onFocus={() => onScroll(scrollLeft)}
+      onFocus={onScrollStart}
+      onPointerDown={onScrollStart}
       onChange={(event) => onScroll(event.currentTarget.valueAsNumber)}
       style={
         {

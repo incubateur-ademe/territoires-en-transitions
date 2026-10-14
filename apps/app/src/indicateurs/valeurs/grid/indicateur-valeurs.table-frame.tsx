@@ -90,6 +90,15 @@ export const IndicateurValeursTableFrame = ({
         <IndicateurValeursScrollbar
           {...scrollPosition}
           controls={scrollId}
+          onScrollStart={() => {
+            const viewport = scrollRef.current;
+            // Read the native position: React's last scroll event may lag behind
+            // an animation, including when the control is already focused.
+            viewport?.scrollTo({
+              left: viewport.scrollLeft,
+              behavior: 'instant',
+            });
+          }}
           onScroll={(left) =>
             scrollRef.current?.scrollTo({ left, behavior: 'instant' })
           }
