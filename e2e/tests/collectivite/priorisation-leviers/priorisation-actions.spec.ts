@@ -222,7 +222,9 @@ test.describe('Priorisation : présélection', () => {
 
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
 
-    await expect(card.getByRole('button', { name: 'Ajoutée' })).toBeVisible();
+    await expect(
+      card.getByRole('button', { name: 'Sauvegarder' })
+    ).toHaveAttribute('aria-pressed', 'true');
     await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
     await expect(pom.preselectionLink).toHaveText(
       'Voir mon action sauvegardée'
@@ -236,7 +238,7 @@ test.describe('Priorisation : présélection', () => {
     await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
   });
 
-  test("« Pas intéressé » range l'action dans un accordéon, « Rétablir » la ressort", async ({
+  test("« Pas intéressé » range l'action dans un accordéon, « Restaurer » la ressort", async ({
     collectivites,
     actionsDeReference,
     page,
@@ -265,7 +267,7 @@ test.describe('Priorisation : présélection', () => {
     await accordion.click();
     await pom
       .actionCardInPanel(LEVIER_NOM, amenagement.titre)
-      .getByRole('button', { name: 'Rétablir' })
+      .getByRole('button', { name: 'Restaurer' })
       .click();
 
     await expect(accordion).toBeHidden();
@@ -299,7 +301,7 @@ test.describe('Priorisation : présélection', () => {
 
     await pom
       .preselectedCard(amenagement.titre)
-      .getByRole('button', { name: 'Retirer de ma liste' })
+      .getByRole('button', { name: 'Sauvegarder' })
       .click();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
