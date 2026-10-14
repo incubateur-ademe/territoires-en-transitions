@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { categorieActionEnumValues } from '@tet/domain/shared';
+import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
 import {
   PriorisationLeviersPom,
@@ -13,7 +14,7 @@ const POINT_STEP = 'Commencez par le rouge';
 const LEVIER_STEP = 'Le détail du levier';
 const ACTIONS_STEP = 'Retenez ce qui est pertinent';
 const HELP_STEP = 'Retrouvez la visite ici';
-const LEVIER_TO_PRIORITIZE = 'Biogaz';
+const LEVIER_TO_PRIORITIZE = 'Véhicules électriques';
 const FULL_MOBILISATION_NOTE = 3;
 
 type TourEnding = {
@@ -224,6 +225,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await collectivites.setUserCollectiviteRole(CollectiviteRole.ADMIN);
     const pom = new PriorisationLeviersPom(page);
     await startTourWithLevierToPrioritize({
       pom,
@@ -259,7 +261,7 @@ test.describe('Priorisation : visite guidée sans levier en angle mort', () => {
       collectiviteId: collectivite.data.id,
       leviers: [
         {
-          levierId: 'biogaz',
+          levierId: 'vehicules_electriques',
           volets: categorieActionEnumValues.map((categorie) => ({
             categorie,
             note: FULL_MOBILISATION_NOTE,
