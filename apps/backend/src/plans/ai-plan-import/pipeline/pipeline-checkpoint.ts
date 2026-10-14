@@ -43,11 +43,3 @@ export type PipelineCheckpoint = PipelineState & {
     maxInputTokens: number;
   };
 };
-
-export const isCheckpointUsableBy = (
-  checkpoint: Pick<PipelineCheckpoint, 'schemaVersion' | 'llm'>,
-  llm: PipelineLlm
-): boolean =>
-  checkpoint.schemaVersion === PIPELINE_CHECKPOINT_SCHEMA_VERSION &&
-  checkpoint.llm?.strategy === llm.capabilities.strategy &&
-  checkpoint.llm?.maxInputTokens === llm.maxInputTokens;

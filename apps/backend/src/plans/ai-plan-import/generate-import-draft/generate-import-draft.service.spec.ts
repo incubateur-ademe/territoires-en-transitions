@@ -1,5 +1,6 @@
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -402,6 +403,36 @@ describe('GenerateImportDraftService', () => {
     );
   });
 
+  it('donne la vraie cause quand la création du plan échoue en transaction partagée', async () => {
+    const mocks = buildMocks();
+    // Forme relancée par le TransactionManager quand `tx` est partagé.
+    mocks.save.mockImplementation(() => {
+      throw failure(
+        new PlanCreationError(new Error('valeur trop longue pour le titre'))
+      );
+    });
+    const service = buildService(mocks);
+
+    await service.generate('job-1');
+
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error:
+          'Création du plan impossible : Erreur lors de la création du plan : valeur trop longue pour le titre',
+      })
+    );
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({
+          reason: 'plan_creation_failed',
+        }),
+      })
+    );
+    expect(JSON.stringify(mocks.capture.mock.calls)).not.toContain(
+      'valeur trop longue'
+    );
+  });
+
   it('marque le job failed et supprime la source quand la pipeline lève une exception', async () => {
     const mocks = buildMocks({
       generateStructured: async () => {
@@ -610,6 +641,28 @@ describe('GenerateImportDraftService', () => {
         })
       );
       expect(mocks.removeDocument).toHaveBeenCalled();
+    });
+
+    it('reprend après la dernière étape même quand le modèle a changé, sans la source', async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const mocks = buildMocks({
+        checkpoint: success({
+          ...checkpoints[checkpoints.length - 1],
+          llm: { strategy: 'segmented', maxInputTokens: 100_000 },
+        }),
+        attempt: 1,
+        sourceAvailable: false,
+      });
+
+      const result = await buildService(mocks).generate('job-1');
+
+      expect(result).toMatchObject({ success: true });
+      expect(mocks.documentStorage.downloadDocument).not.toHaveBeenCalled();
+      expect(mocks.llm.generateStructured).not.toHaveBeenCalled();
+      expect(mocks.jobRepository.markFailed).not.toHaveBeenCalled();
+      expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+        expect.objectContaining({ attempt: 1, createdPlanId: 7 })
+      );
     });
 
     it("reprend après l'extraction en ne rappelant le modèle que pour la suite", async () => {

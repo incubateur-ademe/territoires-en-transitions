@@ -204,6 +204,50 @@ describe('CreatePlanAggregateService', () => {
       }
     });
 
+    it("remonte l'erreur Postgres comme cause quand la création d'une fiche échoue", async () => {
+      const request = createValidRequest();
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValue(
+        success({ id: 1, nom: 'Test' })
+      );
+      mockUpsertAxeService.upsertAxe
+        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+
+      const pgError = new Error('value too long for type character varying');
+      const drizzleError = new Error('Failed query: insert … params: …', {
+        cause: pgError,
+      });
+      mockCreateFicheService.createFicheWithAuthorization.mockReset();
+      mockCreateFicheService.createFicheWithAuthorization
+        .mockResolvedValueOnce(success({ id: 101 }))
+        .mockResolvedValueOnce(failure('SERVER_ERROR', drizzleError));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result).toMatchObject({
+        success: false,
+        error: PlanErrorType.DATABASE_ERROR,
+        cause: pgError,
+      });
+    });
+
+    it("remonte l'exception comme cause quand la création lève", async () => {
+      const request = createValidRequest();
+
+      mockUpsertPlanService.upsertPlan.mockRejectedValue(
+        new Error('connexion perdue')
+      );
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result).toMatchObject({
+        success: false,
+        error: PlanErrorType.DATABASE_ERROR,
+        cause: expect.objectContaining({ message: 'connexion perdue' }),
+      });
+    });
+
     it('should fail when plan creation fails', async () => {
       const request = createValidRequest();
 

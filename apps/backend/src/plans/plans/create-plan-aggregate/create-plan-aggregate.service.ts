@@ -12,6 +12,7 @@ import {
   Result,
   success,
 } from '@tet/backend/utils/result.type';
+import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { FicheCreate } from '@tet/domain/plans';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
@@ -66,6 +67,21 @@ function buildFicheCreate(
     tempsDeMiseEnOeuvre: fiche.tempsDeMiseEnOeuvre?.id ?? null,
     ...(parentId !== undefined ? { parentId } : {}),
   };
+}
+
+/**
+ * La cause à remonter avec un échec, pour que l'appelant l'affiche. Une erreur
+ * Drizzle cite la requête et ses paramètres : l'erreur Postgres qu'elle
+ * enveloppe suffit.
+ */
+function toFailureCause(error: unknown): Error {
+  if (isFailedResult(error)) {
+    return error.cause ?? toFailureCause(error.error);
+  }
+  if (error instanceof Error) {
+    return error.cause instanceof Error ? error.cause : error;
+  }
+  return new Error(String(error));
 }
 
 /**
@@ -204,7 +220,7 @@ export class CreatePlanAggregateService {
       return success(createPlanResult.data.id);
     } catch (error) {
       this.logger.error(`Error creating plan:`, error);
-      return failure(PlanErrorType.DATABASE_ERROR);
+      return failure(PlanErrorType.DATABASE_ERROR, toFailureCause(error));
     }
   }
 
@@ -321,7 +337,8 @@ export class CreatePlanAggregateService {
     );
 
     const combined = combineResults(results);
-    if (!combined.success) return failure(PlanErrorType.DATABASE_ERROR);
+    if (!combined.success)
+      return failure(PlanErrorType.DATABASE_ERROR, combined.cause);
 
     const parentIdByKey = combined.data.reduce((acc, { ficheWithPath, id }) => {
       if (ficheWithPath.fiche.titre) {
@@ -354,7 +371,12 @@ export class CreatePlanAggregateService {
           getActionKey(ficheWithPath.parentActionTitre, ficheWithPath.axisPath)
         );
         if (parentId === undefined)
-          return failure(PlanErrorType.DATABASE_ERROR);
+          return failure(
+            PlanErrorType.DATABASE_ERROR,
+            new Error(
+              `Action parente introuvable : « ${ficheWithPath.parentActionTitre} »`
+            )
+          );
         const result = await this.createOneFiche({
           ficheWithPath,
           ctx,
@@ -367,7 +389,8 @@ export class CreatePlanAggregateService {
     );
 
     const combined = combineResults(results);
-    if (!combined.success) return failure(PlanErrorType.DATABASE_ERROR);
+    if (!combined.success)
+      return failure(PlanErrorType.DATABASE_ERROR, combined.cause);
     const ficheIds = combined.data.map((entry) => entry.id);
     return success({ ficheIds });
   }
@@ -401,7 +424,11 @@ export class CreatePlanAggregateService {
       },
       tx: ctx.tx,
     });
-    if (!result.success) return failure(PlanErrorType.DATABASE_ERROR);
+    if (!result.success)
+      return failure(
+        PlanErrorType.DATABASE_ERROR,
+        toFailureCause(result.cause ?? result.error)
+      );
 
     if (ficheWithPath.secteursProposes) {
       await this.ficheSecteursAttributionRepository.createFromImportIa(

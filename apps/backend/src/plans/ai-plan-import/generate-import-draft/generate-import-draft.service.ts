@@ -5,6 +5,7 @@ import {
 } from '../adapters/extracted-action-to-import-action';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
+import { ImportErrors } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
@@ -13,7 +14,10 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  isFailedResult,
+  TransactionManager,
+} from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
@@ -42,8 +46,8 @@ import {
 } from '../pipeline/read-document/read-document';
 import { AI_PLAN_IMPORT_MAX_OCR_PAGES } from '../ai-plan-import.constants';
 import { ReadDocument } from '../pipeline/document/document-page';
-import { isCheckpointUsableBy } from '../pipeline/pipeline-checkpoint';
 import {
+  isCheckpointUsableBy,
   PipelineError,
   runImportPipeline,
   StepName,
@@ -487,7 +491,12 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         ? success(saved.data.planId)
         : failure(`Création du plan impossible : ${saved.error.message}`);
     } catch (error) {
-      return failure(`Création du plan impossible : ${getErrorMessage(error)}`);
+      // Avec `tx` partagé, le TransactionManager relance son échec en
+      // exception : un Result, sans `message`.
+      const message = isFailedResult<ImportErrors>(error)
+        ? error.error?.message ?? String(error.error)
+        : getErrorMessage(error);
+      return failure(`Création du plan impossible : ${message}`);
     }
   }
 

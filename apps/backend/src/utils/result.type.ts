@@ -26,7 +26,7 @@ export const combineResults = <Data, ServiceError>(
 ): Result<Data[], ServiceError> => {
   const firstFailure = results.find(isFailure);
   if (firstFailure) {
-    return failure(firstFailure.error);
+    return failure(firstFailure.error, firstFailure.cause);
   }
   return success(results.filter(isSuccess).map((result) => result.data));
 };
