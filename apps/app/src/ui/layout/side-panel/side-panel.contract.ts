@@ -7,6 +7,7 @@ export type SidePanelTitleProps = {
 export type Panel = {
   isPersistentWithNextPath?: (path: string) => boolean;
   title?: string;
+  header?: ReactNode;
   content?: ReactNode;
 };
 

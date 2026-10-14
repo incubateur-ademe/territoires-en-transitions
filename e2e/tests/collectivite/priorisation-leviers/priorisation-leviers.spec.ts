@@ -133,7 +133,7 @@ test.describe('Priorisation des leviers', () => {
       pertinence: 'non_pertinent',
     });
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Levier non pertinent')
       .click();
     await pertinenceSaved;
     await page.reload();
@@ -142,7 +142,7 @@ test.describe('Priorisation des leviers', () => {
     await expect(
       priorisationLeviersPom.pertinenceButton(
         LEVIER_NOM_BY_ID.biogaz,
-        'Marquer pertinent'
+        'Levier pertinent'
       )
     ).toBeVisible();
   });
@@ -159,11 +159,11 @@ test.describe('Priorisation des leviers', () => {
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
     const marquerPertinentButton = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Marquer pertinent'
+      'Levier pertinent'
     );
 
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Levier non pertinent')
       .focus();
     const nonPertinentSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
@@ -184,7 +184,7 @@ test.describe('Priorisation des leviers', () => {
     await expect(
       priorisationLeviersPom.pertinenceButton(
         LEVIER_NOM_BY_ID.biogaz,
-        'Marquer non pertinent'
+        'Levier non pertinent'
       )
     ).toBeVisible();
   });
@@ -200,11 +200,11 @@ test.describe('Priorisation des leviers', () => {
     await priorisationLeviersPom.goto(collectivite.data.id);
     const biogazMarquerPertinent = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Marquer pertinent'
+      'Levier pertinent'
     );
     const covoiturageMarquerPertinent = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.covoiturage,
-      'Marquer pertinent'
+      'Levier pertinent'
     );
 
     const pertinencesSaved = Promise.all([
@@ -219,12 +219,12 @@ test.describe('Priorisation des leviers', () => {
     ]);
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Levier non pertinent')
       .click();
     await expect(biogazMarquerPertinent).toBeVisible();
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.covoiturage);
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Levier non pertinent')
       .click();
     await expect(covoiturageMarquerPertinent).toBeVisible();
     await pertinencesSaved;
@@ -253,7 +253,7 @@ test.describe('Priorisation des leviers', () => {
     });
     const marquerNonPertinentButton = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Marquer non pertinent'
+      'Levier non pertinent'
     );
 
     const pertinencesSaved = Promise.all([
@@ -268,7 +268,7 @@ test.describe('Priorisation des leviers', () => {
     ]);
     await marquerNonPertinentButton.click();
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Levier pertinent')
       .click();
     await expect(marquerNonPertinentButton).toBeVisible();
     await pertinencesSaved;
@@ -310,11 +310,11 @@ test.describe('Priorisation des leviers', () => {
       priorisationLeviersPom.waitForPertinencesReloaded();
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Levier non pertinent')
       .click();
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.covoiturage);
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.covoiturage, 'Levier non pertinent')
       .click();
     await pertinencesSaved;
     await pertinencesReloaded;
@@ -338,14 +338,14 @@ test.describe('Priorisation des leviers', () => {
     await priorisationLeviersPom.openLevier(LEVIER_NOM_BY_ID.biogaz);
     const marquerPertinentButton = priorisationLeviersPom.pertinenceButton(
       LEVIER_NOM_BY_ID.biogaz,
-      'Marquer pertinent'
+      'Levier pertinent'
     );
     const pertinenceSaved = priorisationLeviersPom.waitForPertinenceSaved({
       levierId: 'biogaz',
       pertinence: 'non_pertinent',
     });
     await priorisationLeviersPom
-      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Marquer non pertinent')
+      .pertinenceButton(LEVIER_NOM_BY_ID.biogaz, 'Levier non pertinent')
       .click();
     await pertinenceSaved;
 
