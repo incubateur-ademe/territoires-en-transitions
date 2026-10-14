@@ -108,7 +108,9 @@ l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET.
 
 Les secteurs tournent en parallèle de l'enrichissement puis de la revue : ils
 ne lisent rien de ce que l'enrichissement écrit, et la revue ne lit pas les
-secteurs. Un seul point de reprise suit la jointure des deux branches.
+secteurs. Un seul point de reprise suit la jointure des deux branches, et
+il ne va pas au-delà d'une étape qui reste à faire : une branche en échec
+annule donc l'autre, dont la reprise referait de toute façon les appels.
 
 Avant la création du plan, le brouillon est normalisé
 (`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un

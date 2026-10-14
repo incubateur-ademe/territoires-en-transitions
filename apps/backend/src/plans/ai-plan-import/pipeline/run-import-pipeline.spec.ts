@@ -817,25 +817,79 @@ describe('runImportPipeline', () => {
       );
     });
 
-    it("n'écrit pas de point de reprise au-delà d'un enrichissement en échec", async () => {
-      const { outcome, lastCheckpoint } = await runWithCheckpoints(
-        routedLlm('enrichment'),
-        { withSecteurs: true }
-      );
+    // L'étape en suspens ne répond qu'à son annulation, comme un appel en vol :
+    // par une erreur, ou en levant comme l'attente d'une relance.
+    const llmWithPendingStep = (
+      failingStep: StepName,
+      pendingStep: StepName,
+      onAbort: 'fail' | 'throw'
+    ): PipelineLlm => {
+      const llm = routedLlm(failingStep);
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      let startPending = () => undefined as void;
+      const pendingStarted = new Promise<void>((resolve) => {
+        startPending = resolve;
+      });
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+        signal?: AbortSignal;
+      }) => {
+        const step = stepOf(args.prompt);
+        if (step === pendingStep) {
+          startPending();
+          return new Promise((resolve, reject) => {
+            args.signal?.addEventListener('abort', () =>
+              onAbort === 'throw'
+                ? reject(args.signal?.reason)
+                : resolve(failure({ kind: 'api_error', httpStatus: null }))
+            );
+          });
+        }
+        if (step === failingStep) await pendingStarted;
+        return route?.(args as never);
+      }) as never);
+      return llm;
+    };
+
+    it("arrête les secteurs quand l'enrichissement échoue, sans point de reprise au-delà", async () => {
+      const llm = llmWithPendingStep('enrichment', 'secteurs', 'fail');
+
+      const { outcome, lastCheckpoint } = await runWithCheckpoints(llm, {
+        withSecteurs: true,
+      });
 
       expect(outcome).toMatchObject({
         status: 'failed',
         failedStep: 'enrichment',
+        error: { kind: 'rate_limited' },
         stepStates: {
           enrichment: 'pending',
-          secteurs: 'ok',
+          secteurs: 'pending',
           qualitativeReview: 'pending',
         },
       });
-      if (outcome.status === 'failed') {
-        expect(outcome.partialDraft.actions[0].secteurs).toBeDefined();
-      }
+      expect(prompts(llm).map(stepOf)).not.toContain('qualitativeReview');
       expect(lastCheckpoint?.completedStep).toBe('consolidation');
+    });
+
+    it("arrête les secteurs quand la revue échoue, et garde l'enrichissement pour la reprise", async () => {
+      const llm = llmWithPendingStep('qualitativeReview', 'secteurs', 'throw');
+
+      const { outcome, lastCheckpoint } = await runWithCheckpoints(llm, {
+        withSecteurs: true,
+      });
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: 'qualitativeReview',
+        error: { kind: 'rate_limited' },
+        stepStates: {
+          enrichment: 'ok',
+          secteurs: 'pending',
+          qualitativeReview: 'pending',
+        },
+      });
+      expect(lastCheckpoint?.completedStep).toBe('enrichment');
     });
 
     it("reprend un point de reprise d'avant la mise en parallèle, arrêté après l'enrichissement", async () => {
