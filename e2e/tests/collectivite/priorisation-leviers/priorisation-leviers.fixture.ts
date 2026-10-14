@@ -3,6 +3,21 @@ import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisa
 import { databaseService } from 'tests/shared/database.service';
 import { testWithCollectivites } from '../collectivites.fixture';
 
+const MOBILISATION_AVEC_FICHE: LevierMobilisation[] = [
+  {
+    levierId: 'velo_transport_commun',
+    volets: [{ categorie: 'amenagement', note: 2, ficheIds: [1] }],
+  },
+];
+
+export const addMobilisationAvecFiche = (
+  collectiviteId: number
+): Promise<void> =>
+  addTestMobilisation(databaseService, {
+    collectiviteId,
+    leviers: MOBILISATION_AVEC_FICHE,
+  });
+
 class MobilisationsFactory {
   async add(input: {
     collectiviteId: number;

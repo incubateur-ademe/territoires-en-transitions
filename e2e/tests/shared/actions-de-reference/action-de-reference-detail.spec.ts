@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { Levier, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
+import { addMobilisationAvecFiche } from 'tests/collectivite/priorisation-leviers/priorisation-leviers.fixture';
 import { PriorisationLeviersPom } from 'tests/collectivite/priorisation-leviers/priorisation-leviers.pom';
 import {
   testWithActionsDeReference as test,
@@ -228,6 +229,7 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationPom = new PriorisationLeviersPom(page);
     await actionDeReferenceDetailPom.open({
       collectiviteId: collectivite.data.id,
@@ -260,6 +262,7 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationPom = new PriorisationLeviersPom(page);
     await priorisationPom.goto(collectivite.data.id);
     await priorisationPom.openLevier(LEVIER_NOM);
