@@ -68,7 +68,10 @@ export const AddIndicateurPeriodeHeader = <
       setIsSubmitting(false);
 
       if (shouldRefocus) {
-        window.setTimeout(() => inputRef.current?.focus(), 0);
+        window.setTimeout(
+          () => inputRef.current?.focus({ preventScroll: true }),
+          0
+        );
       }
     }
     setSubmitError(appLabels.mutationError);

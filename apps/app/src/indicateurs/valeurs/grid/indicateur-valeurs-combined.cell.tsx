@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button, ButtonMenu } from '@tet/ui';
+import { Button, ButtonMenu, cn } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { useState } from 'react';
 import { IndicateurValeurSlot } from './indicateur-valeur.slot';
@@ -14,6 +14,7 @@ export const IndicateurValeursCombinedCell = ({
   objectif,
   readonly,
   isFuture,
+  emptyLabel = appLabels.indicateurValeurAbsente,
   onSave,
 }: {
   periodeLabel: string;
@@ -21,6 +22,7 @@ export const IndicateurValeursCombinedCell = ({
   objectif: number | null;
   readonly?: boolean;
   isFuture: boolean;
+  emptyLabel?: string;
   onSave: (
     type: IndicateurValeurField,
     value: number | null
@@ -44,11 +46,7 @@ export const IndicateurValeursCombinedCell = ({
   const isEditing = editingFields.resultat || editingFields.objectif;
   const empty = resultat === null && objectif === null;
   if (empty && readonly)
-    return (
-      <div className="text-center text-sm text-grey-7">
-        {appLabels.indicateurValeurAbsente}
-      </div>
-    );
+    return <div className="text-center text-sm text-grey-7">{emptyLabel}</div>;
   if (empty && !isEditing)
     return (
       <div className="flex items-center justify-center gap-1">
@@ -100,13 +98,20 @@ export const IndicateurValeursCombinedCell = ({
       </div>
     );
   return (
-    <div className="flex items-center justify-center divide-x divide-grey-3">
+    <div className="grid min-w-max grid-cols-2 items-center divide-x divide-grey-3">
       {(['resultat', 'objectif'] as const).map((type) => {
         const value = type === 'resultat' ? resultat : objectif;
         const isReadonly = readonly || (isFuture && type === 'resultat');
         if (isReadonly && value === null) return null;
         return (
-          <div key={type} className="flex items-center gap-1 px-1">
+          <div
+            key={type}
+            className={cn(
+              'flex min-w-0 items-center justify-center gap-1 px-1',
+              // Reserve the same half for each type, even with unequal values.
+              type === 'objectif' && 'col-start-2'
+            )}
+          >
             <IndicateurValeurSlot
               type={type}
               periodeLabel={periodeLabel}
