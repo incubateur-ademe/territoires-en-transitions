@@ -186,6 +186,6 @@ Points sensibles : `Indicateurs/data/prepare-data.ts`, `ui/charts/echarts/utils.
 - Tableau, graphique et graphiques téléchargés concordants ; export fidèle aux observations enregistrées.
 - PCAET, score indicatif et publication GES gèrent explicitement l'absence éventuelle de valeurs annuelles.
 
-La préparation SQL restante est isolée dans #5494 : cadence obligatoire, index par
+La préparation SQL #5494 est fusionnée dans `main` : cadence obligatoire, index par
 période et règles de cohérence, avec maintien du contrat annuel. #5215 lui succède
 pour ouvrir les trois nouvelles cadences dans les contraintes, API et interface.

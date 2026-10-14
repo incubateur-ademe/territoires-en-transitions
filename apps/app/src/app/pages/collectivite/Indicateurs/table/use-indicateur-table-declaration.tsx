@@ -55,10 +55,6 @@ export const useIndicateurTableDeclaration = ({
       return false;
 
     try {
-      IndicateurPeriodes.assertAnnual(
-        periode.periodicite,
-        'La déclaration annuelle des périodes'
-      );
       await upsertValeur({
         collectiviteId,
         indicateurId: definition.id,

@@ -49,6 +49,7 @@ type InputProps = {
     { type: 'number' }
   >['displaySize'];
   containerClassname?: string;
+  className?: string;
   'data-test'?: string;
   onCommit: () => void;
   onCancel: () => void;
@@ -64,6 +65,7 @@ export const IndicateurValeurInput = ({
   inputType = 'number',
   displaySize,
   containerClassname = 'grow border-none',
+  className,
   'data-test': dataTest,
   onCommit,
   onCancel,
@@ -77,6 +79,7 @@ export const IndicateurValeurInput = ({
     autoFocus
     displaySize={displaySize}
     containerClassname={containerClassname}
+    className={className}
     aria-label={getIndicateurValeurFieldLabel(type, periodeLabel)}
     aria-invalid={edit.status === 'error'}
     aria-busy={edit.status === 'saving'}

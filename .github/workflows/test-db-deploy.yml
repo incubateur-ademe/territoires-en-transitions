@@ -147,7 +147,7 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/workspace:ro" \
             --workdir /workspace \
             --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=prepared \
+            --env EXPECTED_RESTORE_PHASE=contract \
             --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
           archive="$(mktemp)"
           trap 'rm -f "$archive"' EXIT
@@ -168,4 +168,6 @@ jobs:
             "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
             --dbname=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
             --verbose data_layer/tests/indicateur/periodicite-release.sql \
-            data_layer/tests/indicateur/periodicite-formules.sql
+            data_layer/tests/indicateur/periodicite.sql \
+            data_layer/tests/indicateur/periodicite-formules.sql \
+            data_layer/tests/indicateur/periodicite-collectivite.sql

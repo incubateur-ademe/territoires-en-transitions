@@ -18,13 +18,7 @@ export const IndicateurPeriodiciteBadge = ({
       label={getIndicateurPeriodiciteTooltip(periodicite, participationScore)}
     >
       <span tabIndex={0} data-test="indicateurs.periodicite.badge">
-        <Badge
-          title={label}
-          variant="standard"
-          type="outlined"
-          size="sm"
-          className="rounded-full"
-        />
+        <Badge title={label} variant="standard" type="outlined" size="sm" />
       </span>
     </Tooltip>
   );

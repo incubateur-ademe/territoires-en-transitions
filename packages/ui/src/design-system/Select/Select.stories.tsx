@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ComponentProps, useState } from 'react';
 import { action } from 'storybook/actions';
+import { expect, waitFor, within } from 'storybook/test';
 
 import { Select, SelectMultiple } from '.';
 import { Badge } from '../Badge';
@@ -512,4 +513,113 @@ const RenderSeparateValueAndOptionRendering = (
 export const SeparateValueAndOptionRendering: Story = {
   args: { options: singleOptions },
   render: (args) => <RenderSeparateValueAndOptionRendering {...args} />,
+};
+
+const scrollableOptions: SelectOption[] = Array.from(
+  { length: 12 },
+  (_, index) => ({
+    value: index + 1,
+    label: `Option ${index + 1}`,
+  })
+);
+
+export const ConstrainedDropdownHeight: Story = {
+  args: {
+    options: scrollableOptions,
+    dataTest: 'ui.select.constrained-height',
+    // Six complete options and half of the next one, plus the bottom border.
+    containerMaxHeight: 'calc(6.5 * 2.5rem + 1px)',
+  },
+  render: (args) => <RenderDefault {...args} />,
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'ouvrir le menu' });
+    await userEvent.click(trigger);
+    const seventhOption = body.getByRole('button', { name: 'Option 7' });
+    const viewport = canvasElement.ownerDocument.querySelector(
+      '[data-test="ui.select.constrained-height-options"]'
+    )?.parentElement;
+    if (!viewport) throw new Error('Expected an open dropdown');
+
+    await waitFor(() => {
+      const menuBounds = viewport.getBoundingClientRect();
+      const optionBounds = seventhOption.getBoundingClientRect();
+      expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight);
+      expect(menuBounds.bottom).toBeGreaterThan(optionBounds.top);
+      expect(menuBounds.bottom).toBeLessThan(optionBounds.bottom);
+    });
+
+    const lastOption = body.getByRole('button', { name: 'Option 12' });
+    lastOption.scrollIntoView({ block: 'nearest' });
+    await expect(viewport.scrollTop).toBeGreaterThan(0);
+    await userEvent.click(lastOption);
+    await expect(trigger).toHaveTextContent('Option 12');
+    await expect(body.queryByRole('button', { name: 'Option 12' })).toBeNull();
+  },
+};
+
+const RenderPortalInScrollableModal = (args: ComponentProps<typeof Select>) => (
+  <Modal
+    title="Sélecteur dans une modale défilante"
+    scrollableContent
+    render={() => (
+      <div
+        role="group"
+        aria-label="Contenu défilant"
+        className="h-28 overflow-y-auto"
+      >
+        <RenderDefault {...args} />
+        <div aria-hidden className="h-64" />
+      </div>
+    )}
+  >
+    <Button variant="outlined">Ouvrir la modale</Button>
+  </Modal>
+);
+
+export const PortalInScrollableModal: Story = {
+  args: {
+    options: scrollableOptions,
+    containerMaxHeight: 262,
+    renderInPortal: true,
+  },
+  render: (args) => <RenderPortalInScrollableModal {...args} />,
+  play: async ({ canvas, canvasElement, userEvent }) => {
+    const document = canvasElement.ownerDocument;
+    const body = within(document.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Ouvrir la modale' })
+    );
+    const dialog = body.getByRole('dialog');
+    const trigger = within(dialog).getByRole('button', {
+      name: 'ouvrir le menu',
+    });
+    await userEvent.click(trigger);
+    const firstOption = body.getByRole('button', { name: 'Option 1' });
+    await expect(dialog).not.toContainElement(firstOption);
+    await waitFor(() => {
+      const bounds = firstOption.getBoundingClientRect();
+      expect(
+        firstOption.contains(
+          document.elementFromPoint(
+            bounds.x + bounds.width / 2,
+            bounds.y + bounds.height / 2
+          )
+        )
+      ).toBe(true);
+    });
+
+    const lastOption = body.getByRole('button', { name: 'Option 12' });
+    lastOption.scrollIntoView({ block: 'nearest' });
+    await userEvent.click(lastOption);
+    await expect(trigger).toHaveTextContent('Option 12');
+    await expect(dialog).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.keyboard('{Escape}');
+    await expect(body.queryByRole('button', { name: 'Option 1' })).toBeNull();
+    await expect(dialog).toBeVisible();
+    // Leave the portal open so its position can also be inspected visually.
+    await userEvent.click(trigger);
+  },
 };

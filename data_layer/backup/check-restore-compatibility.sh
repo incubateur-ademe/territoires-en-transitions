@@ -43,7 +43,7 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting|prepared:prepared) ;;
+    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting|prepared:prepared|contract:contract) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
 # Verify the physical schema before restore.sh truncates any table.
@@ -60,7 +60,7 @@ BEGIN
         'Le schéma historique ne doit pas contenir de catalogue de périodicités';
 END $$;
 SQL
-else
+elif [[ "$target_phase" != contract ]]; then
     # The shared verifier accepts activated schemas too. This release must
     # still have both annual-only constraints, whatever the registry says.
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
@@ -88,11 +88,14 @@ if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
         indicateur/periodicite_formules
     )
 fi
-if [[ "$target_phase" == reporting || "$target_phase" == prepared ]]; then
+if [[ "$target_phase" == reporting || "$target_phase" == prepared || "$target_phase" == contract ]]; then
     verify_changes+=(stats/report_indicateur_resultat_periode)
 fi
-if [[ "$target_phase" == prepared ]]; then
+if [[ "$target_phase" == prepared || "$target_phase" == contract ]]; then
     verify_changes+=(indicateur/periodicite_obligatoire indicateur/periodicite_integrite)
+fi
+if [[ "$target_phase" == contract ]]; then
+    verify_changes+=(indicateur/periodicite_activation)
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \

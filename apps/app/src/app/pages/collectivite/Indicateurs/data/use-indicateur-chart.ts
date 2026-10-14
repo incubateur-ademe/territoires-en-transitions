@@ -80,6 +80,7 @@ export const useIndicateurChartInfo = ({
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
+    periodicite: definition?.periodicite,
     collectiviteId: dataCollectiviteId,
     indicateurId: indicateurId ?? 0,
   });

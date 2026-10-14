@@ -1,8 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Field, FieldMessage, Icon } from '@tet/ui';
-import { useRef } from 'react';
+import { Button, cn, Field, FieldMessage, Icon } from '@tet/ui';
+import { useEffect, useRef } from 'react';
 import type { IndicateurValeurField } from './types';
 import {
   getIndicateurValeurFieldLabel,
@@ -35,6 +35,10 @@ export const IndicateurValeurSlot = ({
 }: Props) => {
   const canceled = useRef(false);
   const editingSession = useRef(0);
+  useEffect(() => {
+    // The empty-cell menu can reopen this mounted slot without clicking its button.
+    if (isEditing) canceled.current = false;
+  }, [isEditing]);
   const fieldLabel = getIndicateurValeurFieldLabel(type, periodeLabel);
   const close = () => {
     canceled.current = true;
@@ -52,36 +56,6 @@ export const IndicateurValeurSlot = ({
     }
   };
 
-  if (isEditing && !readonly) {
-    return (
-      <div className="min-w-24 grow">
-        <Field>
-          <IndicateurValeurInput
-            type={type}
-            periodeLabel={periodeLabel}
-            edit={edit}
-            inputType="text"
-            containerClassname=""
-            displaySize="sm"
-            onBlur={() => void save()}
-            onCommit={() => void save()}
-            onCancel={close}
-            data-test={`indicateurs.valeurs.${type}.input`}
-          />
-        </Field>
-        {edit.error && (
-          <FieldMessage
-            state="error"
-            message={
-              edit.error === 'invalid'
-                ? appLabels.champValeurInvalideErreur
-                : appLabels.mutationError
-            }
-          />
-        )}
-      </div>
-    );
-  }
   const content =
     value === null ? null : (
       <IndicateurValeurContent type={type} className="gap-1 text-base">
@@ -95,30 +69,62 @@ export const IndicateurValeurSlot = ({
       </span>
     );
   return (
-    <Button
-      size="xs"
-      variant="white"
-      className="font-normal !border-transparent whitespace-nowrap"
-      title={fieldLabel}
-      aria-label={fieldLabel}
-      data-test={`indicateurs.valeurs.${type}.edit`}
-      onClick={() => {
-        canceled.current = false;
-        onEditingChange(true);
-      }}
-    >
-      {value === null ? (
-        <IndicateurValeurContent type={type} className="gap-1 text-base">
-          <Icon icon="add-line" size="xs" />
-          <span className="sr-only">
-            {type === 'resultat'
-              ? appLabels.indicateurAjouterResultat
-              : appLabels.indicateurAjouterObjectif}
-          </span>
-        </IndicateurValeurContent>
-      ) : (
-        content
+    <div className="min-w-24">
+      <div className="relative">
+        {/* Keep the displayed value's dimensions while the input overlays it. */}
+        <Button
+          size="xs"
+          variant="white"
+          className={cn(
+            'h-10 min-w-full font-normal !border-transparent whitespace-nowrap',
+            isEditing && 'invisible'
+          )}
+          title={fieldLabel}
+          aria-label={fieldLabel}
+          data-test={`indicateurs.valeurs.${type}.edit`}
+          onClick={() => onEditingChange(true)}
+        >
+          {value === null ? (
+            <IndicateurValeurContent type={type} className="gap-1 text-base">
+              <Icon icon="add-line" size="xs" />
+              <span className="sr-only">
+                {type === 'resultat'
+                  ? appLabels.indicateurAjouterResultat
+                  : appLabels.indicateurAjouterObjectif}
+              </span>
+            </IndicateurValeurContent>
+          ) : (
+            content
+          )}
+        </Button>
+        {isEditing && (
+          <Field className="absolute inset-0">
+            <IndicateurValeurInput
+              type={type}
+              periodeLabel={periodeLabel}
+              edit={edit}
+              inputType="text"
+              containerClassname="h-10"
+              className="min-w-0 w-full"
+              displaySize="sm"
+              onBlur={() => void save()}
+              onCommit={() => void save()}
+              onCancel={close}
+              data-test={`indicateurs.valeurs.${type}.input`}
+            />
+          </Field>
+        )}
+      </div>
+      {isEditing && edit.error && (
+        <FieldMessage
+          state="error"
+          message={
+            edit.error === 'invalid'
+              ? appLabels.champValeurInvalideErreur
+              : appLabels.mutationError
+          }
+        />
       )}
-    </Button>
+    </div>
   );
 };

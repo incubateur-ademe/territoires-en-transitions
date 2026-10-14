@@ -107,11 +107,10 @@ export const indicateursLabels = {
     `${label} · ${cadence}`,
   indicateurSourceVersion: (id: number) => `Source ${id}`,
   periodiciteAnnuelle: 'Annuelle',
-  periodiciteDeclarationCollectivite:
-    'Périodicité de déclaration de ma collectivité',
+  periodiciteDeclarationCollectivite: 'Périodicité de suivi de ma collectivité',
   periodiciteImmuable:
     'Cette périodicité s’applique à la saisie et à l’affichage. Elle ne peut plus être modifiée après la création de l’indicateur.',
-  champPeriodiciteIndicateur: 'Périodicité de déclaration *',
+  champPeriodiciteIndicateur: 'Périodicité de suivi *',
   periodiciteMensuelle: 'Mensuelle',
   periodiciteTrimestrielle: 'Trimestrielle',
   periodiciteSemestrielle: 'Semestrielle',

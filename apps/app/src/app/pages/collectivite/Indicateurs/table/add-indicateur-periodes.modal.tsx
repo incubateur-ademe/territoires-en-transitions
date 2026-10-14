@@ -159,9 +159,13 @@ export const AddIndicateurPeriodesModal = ({
               aria-label={appLabels.indicateurColonne(index + 1)}
             >
               <div className="flex items-start gap-3">
-                <Field className="w-36 min-w-0 flex-none !grow-0">
+                <Field className="w-44 min-w-0 flex-none !grow-0">
                   <Select
+                    dataTest="indicateurs.periodes.select"
                     options={options}
+                    renderInPortal
+                    // Six full month rows and half of the next one signal scrolling.
+                    containerMaxHeight="calc(6.5 * 2.5rem + 2px)"
                     values={column.sousPeriode || undefined}
                     onChange={(value) => {
                       if (value !== undefined) {
@@ -179,7 +183,6 @@ export const AddIndicateurPeriodesModal = ({
                             iconPosition="right"
                             className="h-12 w-full justify-between px-3 font-normal text-sm"
                             aria-label={label}
-                            dataTest="indicateurs.periodes.select"
                             disabled={isSaving}
                           >
                             {options.find(

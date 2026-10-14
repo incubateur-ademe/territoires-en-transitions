@@ -1,5 +1,6 @@
 import {
   autoUpdate,
+  flip,
   FloatingFocusManager,
   FloatingNode,
   FloatingPortal,
@@ -55,6 +56,10 @@ export type DropdownFloaterProps = {
   hasTriggerButton?: boolean;
   /** Largeur maximale du container d'options */
   containerMaxWidth?: CSSProperties['maxWidth'];
+  /** Hauteur maximale, limitée également par l'espace disponible à l'écran. */
+  containerMaxHeight?: CSSProperties['maxHeight'];
+  /** Affiche le dropdown hors d'un parent scrollable, même dans une modale. */
+  renderInPortal?: boolean;
 };
 
 /** Affiche un élement volant (dropdown, modal...) avec une configuration floating-ui prédéfinie */
@@ -70,11 +75,13 @@ export const DropdownFloater = ({
   inlineEdit = false,
   hasTriggerButton = false,
   containerMaxWidth,
+  containerMaxHeight,
+  renderInPortal = false,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
-  const [maxHeight, setMaxHeight] = useState(0);
+  const [maxHeight, setMaxHeight] = useState<number>();
   const [minHeight, setMinHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
@@ -91,6 +98,7 @@ export const DropdownFloater = ({
     whileElementsMounted: autoUpdate,
     middleware: [
       offset(offsetValue),
+      renderInPortal && flip(),
       shift(),
       size({
         apply({ rects, elements, availableHeight }) {
@@ -136,7 +144,18 @@ export const DropdownFloater = ({
       position: strategy,
       top: y,
       left: x,
-      maxHeight: maxHeight - 16,
+      // Let flip measure the requested height before constraining it to the
+      // available space; a zero-height first render can falsely fit below.
+      maxHeight:
+        maxHeight === undefined
+          ? containerMaxHeight
+          : containerMaxHeight
+          ? `min(${
+              typeof containerMaxHeight === 'number'
+                ? `${containerMaxHeight}px`
+                : containerMaxHeight
+            }, ${Math.max(0, maxHeight - 16)}px)`
+          : maxHeight - 16,
       minHeight,
       borderWidth: 1,
       borderColor: preset.theme.extend.colors.grey[4],
@@ -159,6 +178,7 @@ export const DropdownFloater = ({
           <FloaterContent
             parentNodeId={parentNodeId}
             isInlineEdit={isInlineEdit}
+            renderInPortal={renderInPortal}
           >
             <FloatingFocusManager
               context={context}
@@ -171,13 +191,14 @@ export const DropdownFloater = ({
                   ref: refs.setFloating,
                   style: {
                     ...getFloatingStyle(isInlineEdit),
-                    // Applique uniquement le z-index quand le dropdown
-                    // n'est pas contenu dans un autre floater (ex. modale)
-                    zIndex: dropdownZindex
-                      ? dropdownZindex
-                      : parentNodeId
-                      ? preset.theme.extend.zIndex.dropdown
-                      : 1,
+                    // A nested portal leaves the modal's stacking context.
+                    zIndex:
+                      dropdownZindex ??
+                      (parentNodeId
+                        ? renderInPortal
+                          ? Number(preset.theme.extend.zIndex.modal) + 1
+                          : preset.theme.extend.zIndex.dropdown
+                        : 1),
                   },
                   className: cn(
                     'overflow-y-auto bg-white',
@@ -202,11 +223,17 @@ type Props = {
   children: JSX.Element;
   parentNodeId: string | null;
   isInlineEdit: boolean;
+  renderInPortal: boolean;
 };
 
 /** Permet de rendre le dropdown dans un portal ou non si un parent existe déjà */
-const FloaterContent = ({ children, parentNodeId, isInlineEdit }: Props) => {
-  if (parentNodeId || isInlineEdit) {
+const FloaterContent = ({
+  children,
+  parentNodeId,
+  isInlineEdit,
+  renderInPortal,
+}: Props) => {
+  if (isInlineEdit || (parentNodeId && !renderInPortal)) {
     return children;
   } else {
     return <FloatingPortal>{children}</FloatingPortal>;

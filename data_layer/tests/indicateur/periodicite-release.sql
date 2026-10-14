@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(19);
+SELECT plan(13);
 CREATE TEMP TABLE release_collectivite AS
 WITH inserted AS (
     INSERT INTO public.collectivite (nom, type) VALUES ('Livraison annuelle', 'epci') RETURNING id
@@ -19,34 +19,31 @@ SELECT lives_ok($sql$
     ON CONFLICT (indicateur_id, collectivite_id, periodicite, date_valeur)
         WHERE metadonnee_id IS NULL
     DO UPDATE SET resultat = EXCLUDED.resultat
-$sql$, 'L upsert annuel fonctionne après suppression des anciens index');
-SELECT throws_ok($sql$
+$sql$, 'L upsert annuel utilise l index incluant la périodicité');
+SELECT lives_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Mensuel', 'kWh', 'mensuelle')
-$sql$, '23514', NULL, 'La première livraison refuse les définitions mensuelles');
-SELECT throws_ok($sql$
+$sql$, 'La seconde livraison accepte les définitions mensuelles');
+SELECT lives_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Trimestriel', 'kWh', 'trimestrielle')
-$sql$, '23514', NULL, 'La première livraison refuse les définitions trimestrielles');
-SELECT throws_ok($sql$
+$sql$, 'La seconde livraison accepte les définitions trimestrielles');
+SELECT lives_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Semestriel', 'kWh', 'semestrielle')
-$sql$, '23514', NULL, 'La première livraison refuse les définitions semestrielles');
+$sql$, 'La seconde livraison accepte les définitions semestrielles');
 SELECT throws_ok($sql$
     INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, date_valeur, periodicite, metadonnee_id, resultat)
     SELECT c.id, i.id, DATE '2024-01-01', 'mensuelle', NULL, 42 FROM release_collectivite c CROSS JOIN release_indicateur i
-$sql$, '23514', NULL, 'Les écritures directes ne peuvent pas ouvrir une série mensuelle');
+$sql$, '23514', NULL, 'Une valeur locale doit toujours respecter la cadence de sa définition');
 SELECT throws_ok($sql$
     UPDATE public.indicateur_definition SET aggregation_resultat = 'somme' WHERE id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'L agrégation reste fermée');
+$sql$, '23514', NULL, 'L agrégation reste fermée jusqu au nettoyage des colonnes');
 SELECT is(
     (SELECT array_agg(attname::text ORDER BY attnum)
      FROM pg_attribute
      WHERE attrelid = 'stats.report_indicateur_resultat'::regclass
        AND attnum > 0 AND NOT attisdropped),
     ARRAY['collectivite_id', 'code_siren_insee', 'nom', 'indicateur_id', 'annee', 'resultat', 'periodicite', 'periode_debut']::text[],
-    'Le reporting ajoute les périodes après les colonnes historiques'
+    'L activation ajoute les périodes après les colonnes historiques du reporting'
 );
-SELECT ok(to_regclass('public.indicateur_periodicite') IS NULL,
-    'La livraison annuelle ne conserve pas de catalogue de configuration inutilisé');
-
 SELECT lives_ok($sql$
     REFRESH MATERIALIZED VIEW stats.collectivite;
     REFRESH MATERIALIZED VIEW stats.report_indicateur_resultat
@@ -60,45 +57,23 @@ SELECT results_eq(
     'Le reporting conserve le résultat annuel et expose son début de période'
 );
 
--- Vérifie que les trois règles préparées sont effectivement installées.
-SELECT ok(NOT EXISTS (
-    SELECT FROM (VALUES
-        ('public.indicateur_definition'::regclass, 'empecher_changement_periodicite_indicateur'),
-        ('public.indicateur_groupe'::regclass, 'verifier_periodicite_groupe_indicateur'),
-        ('public.indicateur_valeur'::regclass, 'verifier_periodicite_valeur_indicateur')
-    ) AS attendu(relation, nom)
-    WHERE NOT EXISTS (SELECT FROM pg_trigger WHERE tgrelid = attendu.relation
-        AND tgname = attendu.nom AND tgenabled = 'O' AND NOT tgisinternal)
-), 'Les règles de cohérence sont installées avant l activation');
-
--- Isole les nouveaux CHECK des garde-fous annuels : ce bloc est annulé au ROLLBACK.
-ALTER TABLE public.indicateur_definition DISABLE TRIGGER empecher_changement_periodicite_indicateur;
-ALTER TABLE public.indicateur_valeur DISABLE TRIGGER verifier_periodicite_valeur_indicateur;
-ALTER TABLE public.indicateur_definition DROP CONSTRAINT indicateur_definition_schema_annuel;
-ALTER TABLE public.indicateur_valeur DROP CONSTRAINT indicateur_valeur_schema_annuel;
+CREATE TEMP TABLE release_metadata AS
+WITH source AS (
+    INSERT INTO public.indicateur_source (id, libelle)
+    VALUES ('release-cadences', 'Cadences de la source') RETURNING id
+), metadata AS (
+    INSERT INTO public.indicateur_source_metadonnee (source_id, date_version)
+    SELECT id, TIMESTAMP '2026-01-01' FROM source RETURNING id
+) SELECT id FROM metadata;
 SELECT lives_ok($sql$
-    UPDATE public.indicateur_definition SET periodicite = 'annuelle'
-    WHERE id = (SELECT id FROM release_indicateur)
-$sql$, 'Le CHECK de définition accepte la cadence annuelle');
-SELECT lives_ok($sql$
-    UPDATE public.indicateur_valeur SET periodicite = 'annuelle'
-    WHERE indicateur_id = (SELECT id FROM release_indicateur)
-$sql$, 'Le CHECK de valeur accepte la cadence annuelle');
-SELECT throws_ok($sql$
-    UPDATE public.indicateur_definition SET periodicite = 'mensuelle'
-    WHERE id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'Le nouveau CHECK refuse seul une définition non annuelle');
-SELECT throws_ok($sql$
-    UPDATE public.indicateur_valeur SET periodicite = 'mensuelle'
-    WHERE indicateur_id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'Le nouveau CHECK refuse seul une valeur non annuelle');
-SELECT throws_ok($sql$
-    UPDATE public.indicateur_definition SET periodicite = 'hebdomadaire'
-    WHERE id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'Le CHECK refuse une cadence inconnue sur la définition');
-SELECT throws_ok($sql$
-    UPDATE public.indicateur_valeur SET periodicite = 'hebdomadaire'
-    WHERE indicateur_id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'Le CHECK refuse une cadence inconnue sur la valeur');
+    INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, metadonnee_id, periodicite, date_valeur, resultat)
+    SELECT c.id, i.id, m.id, cadence, DATE '2024-01-01', 1
+    FROM release_collectivite c CROSS JOIN release_indicateur i CROSS JOIN release_metadata m
+    CROSS JOIN (VALUES ('annuelle'), ('mensuelle')) AS cadences(cadence)
+    ON CONFLICT (indicateur_id, collectivite_id, periodicite, date_valeur, metadonnee_id)
+        WHERE metadonnee_id IS NOT NULL DO UPDATE SET resultat = EXCLUDED.resultat
+$sql$, 'Une source conserve deux cadences au même début de période après retrait des anciens index');
+SELECT ok(to_regclass('public.indicateur_periodicite') IS NULL,
+    'Le contrat utilise les CHECK sans catalogue de configuration');
 SELECT * FROM finish();
 ROLLBACK;
