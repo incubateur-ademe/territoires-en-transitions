@@ -103,6 +103,24 @@ export const DEMARCHE_PCAET_ABOUTIES_STATUSES = [
 ] as const satisfies readonly DemarchePcaetStatus[];
 
 /**
+ * Statuts qu'un lecteur de la collectivité peut consulter sans en éditer les
+ * démarches : un visiteur, un membre en lecture. Étendre la liste ouvre le
+ * statut à la liste et à la consultation publiques, rien d'autre.
+ *
+ * Distinct de `DEMARCHE_PCAET_ABOUTIES_STATUSES` bien qu'égal aujourd'hui : l'un
+ * dit qui peut lire, l'autre ce qui fait un renouvellement.
+ */
+export const DEMARCHE_PCAET_PUBLIC_STATUSES = [
+  DemarchePcaetStatusEnum.PUBLIE,
+  DemarchePcaetStatusEnum.ARCHIVE,
+] as const satisfies readonly DemarchePcaetStatus[];
+
+export const isDemarchePcaetPublic = (status: DemarchePcaetStatus): boolean =>
+  (DEMARCHE_PCAET_PUBLIC_STATUSES as readonly DemarchePcaetStatus[]).includes(
+    status
+  );
+
+/**
  * Statuts d'une démarche « en cours » : une collectivité ne peut pas démarrer
  * un nouveau dépôt, ni réutiliser le plan d'action rattaché, tant qu'une
  * démarche est dans l'un de ces statuts.

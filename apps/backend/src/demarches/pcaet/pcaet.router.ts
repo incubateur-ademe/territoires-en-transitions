@@ -17,6 +17,9 @@ import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossi
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
+import { ListPublicDemarchesPcaetRouter } from './list-public-demarches-pcaet/list-public-demarches-pcaet.router';
+import { GetPublicDemarchePcaetRouter } from './get-public-demarche-pcaet/get-public-demarche-pcaet.router';
+import { GetPublicDiagnosticRouter } from './get-public-diagnostic/get-public-diagnostic.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
@@ -29,6 +32,9 @@ export class PcaetRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
+    private readonly listPublicDemarchesPcaetRouter: ListPublicDemarchesPcaetRouter,
+    private readonly getPublicDemarchePcaetRouter: GetPublicDemarchePcaetRouter,
+    private readonly getPublicDiagnosticRouter: GetPublicDiagnosticRouter,
     private readonly listDossiersInstructionRouter: ListDossiersInstructionRouter,
     private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
     private readonly getContexteInstructionRouter: GetContexteInstructionRouter,
@@ -55,6 +61,9 @@ export class PcaetRouter {
 
   router = this.trpc.mergeRouters(
     this.listDemarchesPcaetRouter.router,
+    this.listPublicDemarchesPcaetRouter.router,
+    this.getPublicDemarchePcaetRouter.router,
+    this.getPublicDiagnosticRouter.router,
     this.listDossiersInstructionRouter.router,
     this.getDossierInstructionRouter.router,
     this.getContexteInstructionRouter.router,

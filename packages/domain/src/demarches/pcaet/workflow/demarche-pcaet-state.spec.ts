@@ -4,6 +4,7 @@ import {
   getDemarchePcaetInitialStatus,
   getEtapeDemarchePcaet,
   isDemarchePcaetEnCours,
+  isDemarchePcaetPublic,
   isDepotAvisOuvrable,
 } from './demarche-pcaet-state';
 
@@ -93,5 +94,16 @@ describe('suppression d’une démarche', () => {
     ] as const) {
       expect(canDeleteDemarchePcaet({ status })).toBe(false);
     }
+  });
+});
+
+describe('statuts lisibles par le public', () => {
+  it('seuls l’adoption et l’archivage ouvrent la démarche à qui n’édite pas', () => {
+    expect(isDemarchePcaetPublic('publie')).toBe(true);
+    expect(isDemarchePcaetPublic('archive')).toBe(true);
+    expect(isDemarchePcaetPublic('en_elaboration')).toBe(false);
+    expect(isDemarchePcaetPublic('transmis_pour_avis')).toBe(false);
+    expect(isDemarchePcaetPublic('instruit')).toBe(false);
+    expect(isDemarchePcaetPublic('instruit_hors_plateforme')).toBe(false);
   });
 });

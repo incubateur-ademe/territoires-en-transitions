@@ -31,7 +31,23 @@ export class DemarchePlansContenuRepository {
     {
       demarcheId,
       collectiviteId,
-    }: { demarcheId: number; collectiviteId: number },
+      hideFichesRestreintes = false,
+      activePlansOnly = false,
+    }: {
+      demarcheId: number;
+      collectiviteId: number;
+      /**
+       * Écarte les fiches restreintes, pour un lecteur sans
+       * `plans.fiches.read_confidentiel`. Les instructeurs et la déposante les
+       * voient : le dossier transmis les comprend.
+       */
+      hideFichesRestreintes?: boolean;
+      /**
+       * Écarte, avant toute traversée, les plans encore en import ou à
+       * vérifier : la lecture publique ne montre que des plans aboutis.
+       */
+      activePlansOnly?: boolean;
+    },
     tx?: Transaction
   ): Promise<DemarchePlanContenu[]> {
     const planIds = await this.planActionsRepository.listPlanActionIds(
@@ -44,8 +60,13 @@ export class DemarchePlansContenuRepository {
 
     const racines = await this.getRacinesDesPlans(planIds, tx);
     const plans: DemarchePlanContenu[] = [];
+    const plansToRead = activePlansOnly
+      ? planIds.filter(
+          (planId) => racines.get(planId)?.status === PlanStatusEnum.ACTIVE
+        )
+      : planIds;
 
-    for (const planId of planIds) {
+    for (const planId of plansToRead) {
       // La traversée récursive des axes est celle des écrans « plans » : même
       // tri naturel, mêmes fiches écartées (supprimées, ou rangées sous une
       // fiche mère). La dupliquer serait s'exposer à ce qu'elles divergent.
@@ -67,12 +88,16 @@ export class DemarchePlansContenuRepository {
         continue;
       }
 
-      const titres = await this.getTitresDesFiches(
+      const fiches = await this.getFiches(
         axesResult.data.flatMap((axe) => axe.fiches),
         tx
       );
+      const isReadable = (id: number) =>
+        !hideFichesRestreintes || fiches.get(id)?.restreint !== true;
       const toFiches = (ficheIds: number[]) =>
-        ficheIds.map((id) => ({ id, titre: titres.get(id) ?? null }));
+        ficheIds
+          .filter(isReadable)
+          .map((id) => ({ id, titre: fiches.get(id)?.titre ?? null }));
 
       // La racine de l'arbre est le plan lui-même : ses fiches sont rattachées
       // au plan sans passer par un axe, et l'écran les présente comme telles.
@@ -85,7 +110,9 @@ export class DemarchePlansContenuRepository {
         // Compté sur l'arbre, pas en base : une même fiche peut être rangée
         // dans plusieurs axes, et le décompte doit suivre les mêmes exclusions
         // que le contenu affiché.
-        nbFiches: new Set(axesResult.data.flatMap((axe) => axe.fiches)).size,
+        nbFiches: new Set(
+          axesResult.data.flatMap((axe) => axe.fiches).filter(isReadable)
+        ).size,
         fiches: toFiches(racine?.fiches ?? []),
         axes: sousAxes.map((axe) => ({
           id: axe.id,
@@ -111,20 +138,29 @@ export class DemarchePlansContenuRepository {
     return new Map(rows.map(({ id, ...racine }) => [id, racine]));
   }
 
-  private async getTitresDesFiches(
+  private async getFiches(
     ficheIds: number[],
     tx?: Transaction
-  ): Promise<Map<number, string | null>> {
+  ): Promise<Map<number, { titre: string | null; restreint: boolean }>> {
     const uniques = [...new Set(ficheIds)];
     if (uniques.length === 0) {
       return new Map();
     }
 
     const rows = await (tx ?? this.databaseService.db)
-      .select({ id: ficheActionTable.id, titre: ficheActionTable.titre })
+      .select({
+        id: ficheActionTable.id,
+        titre: ficheActionTable.titre,
+        restreint: ficheActionTable.restreint,
+      })
       .from(ficheActionTable)
       .where(inArray(ficheActionTable.id, uniques));
 
-    return new Map(rows.map((row) => [row.id, row.titre]));
+    return new Map(
+      rows.map(({ id, titre, restreint }) => [
+        id,
+        { titre, restreint: restreint === true },
+      ])
+    );
   }
 }
