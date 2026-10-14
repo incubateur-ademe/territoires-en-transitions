@@ -41,7 +41,7 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|formulas:formulas) ;;
+    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
 # Verify the physical schema before restore.sh truncates any table.
@@ -56,6 +56,9 @@ if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
         indicateur/dependances_formules
         indicateur/periodicite_formules
     )
+fi
+if [[ "$target_phase" == reporting || "$target_phase" == contract ]]; then
+    verify_changes+=(stats/report_indicateur_resultat_periode)
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
