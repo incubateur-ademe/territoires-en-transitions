@@ -1,7 +1,98 @@
 import { expect } from '@playwright/test';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { eq, inArray } from 'drizzle-orm';
 import { test } from 'tests/main.fixture';
+import { databaseService } from 'tests/shared/database.service';
 import { DropdownPom } from 'tests/shared/dropdown.pom';
 import { IndicateurValeursPom } from './indicateur-valeurs.pom';
+
+test('Distinguer deux versions annuelles de la même source après rechargement', async ({
+  page,
+  collectivites,
+  indicateurs,
+  indicateurDetailPom,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Versions de l’inventaire annuel',
+    unite: 'kg',
+  });
+  // L'API utilisateur ne permet pas de créer des données externes.
+  const sourceId = `test-versions-${collectiviteId}-${indicateurId}`;
+  await databaseService.db.insert(indicateurSourceTable).values({
+    id: sourceId,
+    libelle: 'Inventaire annuel',
+  });
+  try {
+    const versions = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values(
+        [2025, 2026].map((year) => ({
+          sourceId,
+          dateVersion: `${year}-01-01`,
+          nomDonnees: `Inventaire ${year}`,
+        }))
+      )
+      .returning();
+    await databaseService.db.insert(indicateurValeurTable).values(
+      versions.map(({ id }, index) => ({
+        collectiviteId,
+        indicateurId,
+        periodicite: 'annuelle' as const,
+        dateValeur: '2026-01-01',
+        resultat: index === 0 ? 0 : 20,
+        metadonneeId: id,
+      }))
+    );
+    await indicateurDetailPom.goto(collectiviteId, indicateurId);
+    const valeurs = new IndicateurValeursPom(page);
+    const expectVersions = async () => {
+      await expect(valeurs.cell(2026, sourceId)).toHaveCount(2);
+      for (const [index, version] of versions.entries()) {
+        const row = valeurs.table.getByRole('row').filter({
+          has: page
+            .getByRole('rowheader')
+            .filter({ hasText: `Inventaire ${2025 + index}` }),
+        });
+        await expect(row.getByRole('rowheader')).toContainText('Annuelle');
+        await expect(row.getByRole('rowheader')).toContainText(
+          `Source ${version.id}`
+        );
+        await expect(row.locator('td[data-periode="2026-01-01"]')).toHaveText(
+          index === 0 ? 'R0' : 'R20'
+        );
+        await expect(row.getByRole('button')).toHaveCount(0);
+      }
+    };
+    await expectVersions();
+    await page.reload();
+    await expectVersions();
+  } finally {
+    await databaseService.db
+      .delete(indicateurValeurTable)
+      .where(
+        inArray(
+          indicateurValeurTable.metadonneeId,
+          databaseService.db
+            .select({ id: indicateurSourceMetadonneeTable.id })
+            .from(indicateurSourceMetadonneeTable)
+            .where(eq(indicateurSourceMetadonneeTable.sourceId, sourceId))
+        )
+      );
+    await databaseService.db
+      .delete(indicateurSourceMetadonneeTable)
+      .where(eq(indicateurSourceMetadonneeTable.sourceId, sourceId));
+    await databaseService.db
+      .delete(indicateurSourceTable)
+      .where(eq(indicateurSourceTable.id, sourceId));
+  }
+});
 
 test('Choisir un résultat ou un objectif et quitter le menu au clavier', async ({
   page,

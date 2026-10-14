@@ -8,7 +8,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
-import { init, type SeriesModel } from 'echarts';
+import { init, type LineSeriesOption, type SeriesModel } from 'echarts';
 import type { EChartsOption } from 'echarts/types/dist/echarts';
 import { randomUUID } from 'node:crypto';
 import { IndicateurChartService } from '../charts/indicateur-chart.service';
@@ -91,6 +91,7 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       dateValeur: string;
       resultat?: number | null;
       objectif?: number | null;
+      metadonneeId?: number;
     }[][],
     source?: string
   ) => {
@@ -118,11 +119,13 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
         .insert(indicateurGroupeTable)
         .values({ parent: parentId, enfant: enfantId });
       for (const valeur of valeurs) {
-        await caller.indicateurs.valeurs.upsert({
-          collectiviteId,
-          indicateurId: enfantId,
-          ...valeur,
-        });
+        const input = { collectiviteId, indicateurId: enfantId, ...valeur };
+        if (valeur.metadonneeId !== undefined) {
+          // Les données externes sont importées, pas saisies par l'utilisateur.
+          await databaseService.db.insert(indicateurValeurTable).values(input);
+        } else {
+          await caller.indicateurs.valeurs.upsert(input);
+        }
       }
     }
     const chart = await app
@@ -182,6 +185,142 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       indicateurIds: [enfantIds[1]],
     });
     expect(saved.indicateurs[0].sources.collectivite.valeurs).toHaveLength(2);
+  });
+
+  test('Le graphique sépare les versions annuelles importées et leurs trous sans perdre les zéros', async () => {
+    const sourceId = `test-versions-${randomUUID()}`;
+    await databaseService.db.insert(indicateurSourceTable).values({
+      id: sourceId,
+      libelle: 'Inventaire annuel',
+    });
+    onTestFinished(async () => {
+      const metadonnees = await databaseService.db
+        .select({ id: indicateurSourceMetadonneeTable.id })
+        .from(indicateurSourceMetadonneeTable)
+        .where(eq(indicateurSourceMetadonneeTable.sourceId, sourceId));
+      if (metadonnees.length) {
+        await databaseService.db.delete(indicateurValeurTable).where(
+          inArray(
+            indicateurValeurTable.metadonneeId,
+            metadonnees.map(({ id }) => id)
+          )
+        );
+      }
+      await databaseService.db
+        .delete(indicateurSourceMetadonneeTable)
+        .where(eq(indicateurSourceMetadonneeTable.sourceId, sourceId));
+      await databaseService.db
+        .delete(indicateurSourceTable)
+        .where(eq(indicateurSourceTable.id, sourceId));
+    });
+    const [ancienneVersion, nouvelleVersion] = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values(
+        ['2025-01-01', '2026-01-01'].map((dateVersion) => ({
+          sourceId,
+          dateVersion,
+        }))
+      )
+      .returning();
+    const { chartData, enfantIds } = await createSegmentedChart(
+      [
+        [
+          {
+            dateValeur: '2024-01-01',
+            resultat: 0,
+            metadonneeId: ancienneVersion.id,
+          },
+          {
+            dateValeur: '2026-01-01',
+            resultat: 3,
+            metadonneeId: ancienneVersion.id,
+          },
+          {
+            dateValeur: '2024-01-01',
+            resultat: 100,
+            metadonneeId: nouvelleVersion.id,
+          },
+        ],
+        [
+          {
+            dateValeur: '2025-01-01',
+            resultat: 2,
+            metadonneeId: ancienneVersion.id,
+          },
+          {
+            dateValeur: '2027-01-01',
+            resultat: 200,
+            metadonneeId: nouvelleVersion.id,
+          },
+        ],
+      ],
+      sourceId
+    );
+    const series = renderChart(chartData).getSeries();
+    expect(series).toHaveLength(4);
+    for (const { version, observations } of [
+      {
+        version: ancienneVersion,
+        observations: [
+          { dateValeur: '2024-01-01', valeur: 0 },
+          { dateValeur: '2025-01-01', valeur: null },
+          { dateValeur: '2026-01-01', valeur: 3 },
+        ],
+      },
+      {
+        version: nouvelleVersion,
+        observations: [
+          { dateValeur: '2024-01-01', valeur: 100 },
+          { dateValeur: '2027-01-01', valeur: null },
+        ],
+      },
+    ]) {
+      const stack = `${sourceId}:annuelle:${version.id}`;
+      const versionSeries = series.filter(
+        (serie) => (serie.option as LineSeriesOption).stack === stack
+      );
+      expect(versionSeries).toHaveLength(2);
+      const firstSegment = versionSeries.find(
+        (serie) =>
+          (serie.option as LineSeriesOption).datasetId ===
+          `${enfantIds[0]}-resultat-${sourceId}-annuelle-${version.id}`
+      );
+      assert.isDefined(firstSegment);
+      expect(firstSegment.option).toMatchObject({ connectNulls: false });
+      const data = firstSegment.getData();
+      expect(
+        Array.from({ length: data.count() }, (_, index) =>
+          data.getRawDataItem(index)
+        )
+      ).toEqual(observations);
+      // Le zéro et le point de la seconde version sont effectivement dessinés.
+      const point = data.getItemGraphicEl(0).getBoundingRect();
+      expect(point.width).toBeGreaterThan(0);
+      expect(point.height).toBeGreaterThan(0);
+    }
+    const saved = await router
+      .createCaller({ user: authenticatedUser })
+      .indicateurs.valeurs.list({
+        collectiviteId,
+        indicateurIds: [enfantIds[0]],
+      });
+    const source = saved.indicateurs[0].sources[sourceId];
+    expect(source.metadonnees.map(({ id }) => id).sort()).toEqual(
+      [ancienneVersion.id, nouvelleVersion.id].sort()
+    );
+    expect(source.valeurs).toHaveLength(3);
+    expect(source.valeurs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          metadonneeId: ancienneVersion.id,
+          resultat: 0,
+        }),
+        expect.objectContaining({
+          metadonneeId: nouvelleVersion.id,
+          resultat: 100,
+        }),
+      ])
+    );
   });
 
   test.each([
