@@ -116,7 +116,8 @@ titre d'action (« 2.1.3 », « Action 3 - ») est retiré, car il ne sert qu'au
 rattachement pendant l'import, sauf s'il est seul à distinguer deux fiches ;
 un même axe ou sous-axe libellé de deux façons (mêmes mots aux accents et à
 la casse près) prend une seule graphie, en casse normale de préférence, et un
-numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro ; les
+numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro, et les
+espaces multiples d'un libellé d'axe ou de sous-axe sont écrasés ; les
 doublons exacts sont écartés.
 
 La lecture (étape 1) porte aussi un garde-fou déterministe,
@@ -260,7 +261,7 @@ flowchart LR
         direction TB
         G1[tranche 1] --> GX[prompt d'extraction complet<br/>+ contexte des tranches précédentes]
         G2[tranche 2] --> GX
-        GX --> GM[fusion des actions<br/>par titre normalisé]
+        GX --> GM[fusion des actions<br/>par titre normalisé,<br/>sur tout le document]
     end
     subgraph Albert["segmented (Albert)"]
         direction TB
@@ -309,6 +310,10 @@ d'origine.
 Cette étape améliore le résultat sans en être une condition : un lot tronqué
 est coupé en deux, et un lot qui échoue encore garde les rattachements de
 l'extraction, avec un avertissement. Elle ne fait jamais échouer l'import.
+
+Passée ou non, l'étape se termine en retirant un sous-axe qui ne contient
+qu'une action de même titre (`drop-redundant-sous-axes.ts`) : le sommaire et la
+fiche se répondent, quelle que soit la stratégie.
 
 ## 5 à 8. Vérifications, sous-actions, avis
 
