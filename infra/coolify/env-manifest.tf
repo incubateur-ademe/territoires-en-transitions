@@ -29,7 +29,7 @@ locals {
       app_url           = local.application_environments_catalog.preprod.domains.app[0]
       backend_url       = local.application_environments_catalog.preprod.domains.backend[0]
       site_url          = local.application_environments_catalog.preprod.domains.site[0]
-      supabase_url      = "https://supabase-api.preprod.territoiresentransitions.fr"
+      supabase_url      = "https://${local.service_environments_catalog.preprod.supabase_api_host}"
       # Nom propre à l'environnement : avec GoTrue self-hosté, le nom par défaut
       # (sb-supabase-api-auth-token) est le même partout, et les sessions des
       # environnements s'écrasent sur le domaine racine.
@@ -42,7 +42,10 @@ locals {
 
   # Secrets écrits par le stack du tier (infra/nonprod/coolify-env-secrets.tf) :
   # ce stack ne crée pas leur coquille.
-  coolify_env_derived_secrets = ["supabase-database-url", "queue-redis-url", "queue-redis-tls-ca"]
+  coolify_env_derived_secrets = [
+    "supabase-database-url", "gotrue-db-database-url", "storage-db-database-url",
+    "queue-redis-url", "queue-redis-tls-ca",
+  ]
 
   # Fournies par l'image ou par le déploiement : les poser dans Coolify
   # écraserait le ENV de l'image (/version figé sur un vieux SHA, healthcheck
@@ -134,16 +137,58 @@ locals {
         PCAET_LAUNCHED = { value = "true" }
         DB_STATS_URL   = { secret = "db-stats-url" }
       }
+
+      # Variables du compose infra/nonprod/supabase-api/docker-compose.yml :
+      # toutes ses ${VAR}, rien d'autre (le manifeste fait autorité).
+      supabase-api = {
+        STACK_ENV         = { value = local.coolify_env_settings.preprod.env_name }
+        SUPABASE_API_HOST = { value = local.service_environments_catalog.preprod.supabase_api_host }
+
+        # Aussi {{ .SiteURL }} des templates d'email : liens vers /login et
+        # /signup de l'app.
+        GOTRUE_SITE_URL = { value = local.coolify_env_settings.preprod.app_url }
+        GOTRUE_URI_ALLOW_LIST = { value = join(",", [
+          local.coolify_env_settings.preprod.app_url,
+          local.coolify_env_settings.preprod.backend_url,
+          local.coolify_env_settings.preprod.site_url,
+        ]) }
+
+        # Le même secret que le backend : un JWT signé par GoTrue doit passer
+        # chez Storage et chez le backend.
+        SUPABASE_JWT_SECRET       = { secret = "supabase-jwt-secret" }
+        SUPABASE_ANON_KEY         = { secret = "supabase-anon-key" }
+        SUPABASE_SERVICE_ROLE_KEY = { secret = "supabase-service-role-key" }
+
+        GOTRUE_DB_DATABASE_URL  = { secret = "gotrue-db-database-url" }
+        STORAGE_DB_DATABASE_URL = { secret = "storage-db-database-url" }
+
+        # 2525 tant que Scaleway n'a pas débloqué 25/465/587 sur le projet.
+        BREVO_SMTP_HOST         = { value = "smtp-relay.brevo.com" }
+        BREVO_SMTP_PORT         = { value = "2525" }
+        BREVO_SMTP_USER         = { secret = "brevo-smtp-user" }
+        BREVO_SMTP_PASS         = { secret = "brevo-smtp-pass" }
+        BREVO_SMTP_SENDER_EMAIL = { value = "notifications@territoiresentransitions.fr" }
+        BREVO_SMTP_SENDER_NAME  = { value = "Territoires en Transitions" }
+
+        # Bucket de infra/nonprod/storage.tf, clé IAM de storage.tf, rangée à la main.
+        SCW_S3_BUCKET         = { value = "tet-preprod-storage" }
+        SCW_ACCESS_KEY_ID     = { secret = "supabase-storage-s3-access-key-id" }
+        SCW_SECRET_ACCESS_KEY = { secret = "supabase-storage-s3-secret-access-key" }
+      }
     }
   }
 
-  # Une entrée par application déclarée (applications.tf) dont l'environnement
-  # a un manifeste. Les entrées sont mises sous la forme attendue par
+  # Une entrée par application (applications.tf) ou service (services.tf)
+  # déclaré dont l'environnement a un manifeste. Les entrées sont mises sous la forme attendue par
   # scripts/coolify-push-env.sh, noms de secrets complets.
   coolify_env_pushes = {
-    for id, a in local.applications : id => {
+    for id, a in merge(
+      { for k, v in local.applications : k => merge(v, { resource = "applications" }) },
+      { for k, v in local.services : k => merge(v, { resource = "services" }) },
+      ) : id => {
       env               = a.env
       app               = a.app
+      resource          = a.resource
       secret_project_id = local.coolify_env_settings[a.env].secret_project_id
       secret_path       = "/coolify-env/${a.env}"
       entries           = local.coolify_env_manifests[a.env][a.app]

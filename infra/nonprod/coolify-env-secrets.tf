@@ -1,6 +1,7 @@
 # --- Secrets des variables d'environnement Coolify, dérivés de l'infra ---
 #
-# Les valeurs que ce stack connaît déjà (URI Postgres, URI et CA Redis) sont
+# Les valeurs que ce stack connaît déjà (URI Postgres du backend, de GoTrue et
+# de Storage, URI et CA Redis) sont
 # rangées dans Secret Manager, d'où infra/coolify les pousse dans Coolify
 # (env-push.tf). Elles sont déjà dans le state de ce stack (random_password) :
 # les ranger ici n'expose rien de plus.
@@ -15,6 +16,20 @@ locals {
     "supabase-database-url" = {
       description = "SUPABASE_DATABASE_URL du backend preprod : RDB managé, réseau privé, sslmode=require."
       value       = module.postgres.private_connection_uri
+    }
+    # Mots de passe restreints à -_.!*~ (main.tf) : injectables sans
+    # percent-encoding.
+    "gotrue-db-database-url" = {
+      description = "GOTRUE_DB_DATABASE_URL de supabase-api preprod : rôle supabase_auth_admin, réseau privé, schéma auth."
+      value = format("postgres://%s:%s@%s:%d/%s?sslmode=require&search_path=auth",
+        scaleway_rdb_user.supabase_auth_admin.name, random_password.supabase_auth_admin.result,
+      module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
+    }
+    "storage-db-database-url" = {
+      description = "STORAGE_DB_DATABASE_URL de supabase-api preprod : rôle supabase_storage_admin, réseau privé."
+      value = format("postgres://%s:%s@%s:%d/%s?sslmode=require",
+        scaleway_rdb_user.supabase_storage_admin.name, random_password.supabase_storage_admin.result,
+      module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
     }
     "queue-redis-url" = {
       description = "QUEUE_REDIS_URL du backend preprod : Redis managé, réseau privé, TLS et authentification."

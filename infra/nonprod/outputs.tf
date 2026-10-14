@@ -120,3 +120,14 @@ output "redis_private_connection_uri" {
   value       = module.redis.private_connection_uri
   sensitive   = true
 }
+
+output "storage_s3_access_key_ids" {
+  description = "Access key S3 de Storage API, par environnement. À ranger dans le secret supabase-storage-s3-access-key-id (cf. storage.tf)."
+  value       = { for env, k in scaleway_iam_api_key.storage : env => k.access_key }
+}
+
+output "storage_s3_secret_keys" {
+  description = "Secret key S3 de Storage API, par environnement. À ranger dans le secret supabase-storage-s3-secret-access-key (cf. storage.tf)."
+  value       = { for env, k in scaleway_iam_api_key.storage : env => k.secret_key }
+  sensitive   = true
+}

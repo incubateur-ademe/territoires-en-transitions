@@ -101,7 +101,7 @@ infra/
 ├── platform/          Socle transverse : VPC, ACL, DNS, VM Coolify, buckets
 ├── prod/              Serveur prod + RDB prod + Redis prod
 ├── nonprod/           Serveur mutualisé + RDB preprod + Redis preprod
-│   ├── supabase-api/  Stack Docker Compose GoTrue + Storage (collée dans Coolify)
+│   ├── supabase-api/  Stack Docker Compose GoTrue + Storage (déployée par coolify/services.tf)
 │   └── Makefile       Bootstrap SQL des rôles GoTrue
 ├── preview/           Serveur preview + wildcard DNS
 └── coolify/           Coolify-as-code : clés, serveurs, projet et environnements, S3 storage
