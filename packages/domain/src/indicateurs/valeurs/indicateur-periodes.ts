@@ -40,7 +40,25 @@ const periodStrategies = Object.freeze({
     anchorDate: '2000-01-01',
     serialization: 'year',
   }),
-}) satisfies Partial<PeriodStrategyRegistry>;
+  [IndicateurPeriodiciteEnum.SEMESTRIELLE]: createCalendarMonthStrategy({
+    periodicite: IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    monthsPerPeriod: 6,
+    anchorDate: '2000-01-01',
+    serialization: 'year-semester',
+  }),
+  [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: createCalendarMonthStrategy({
+    periodicite: IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    monthsPerPeriod: 3,
+    anchorDate: '2000-01-01',
+    serialization: 'year-quarter',
+  }),
+  [IndicateurPeriodiciteEnum.MENSUELLE]: createCalendarMonthStrategy({
+    periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+    monthsPerPeriod: 1,
+    anchorDate: '2000-01-01',
+    serialization: 'year-month',
+  }),
+}) satisfies PeriodStrategyRegistry;
 
 const strategyFor = <K extends IndicateurPeriodicite>(
   periodicite: K
@@ -69,7 +87,7 @@ export type IndicateurPeriodeAnnuelle = IndicateurPeriode<
 /** Canonical period contract shared by storage, calculations and input forms. */
 export class IndicateurPeriodes {
   static readonly supportedPeriodicites = Object.freeze([
-    IndicateurPeriodiciteEnum.ANNUELLE,
+    ...indicateurPeriodiciteValues,
   ] as const);
 
   static isSupported(
@@ -169,6 +187,17 @@ export class IndicateurPeriodes {
         const digits = value.replace(/\D/g, '');
         return digits.length <= 4 ? digits : null;
       }
+      case IndicateurPeriodiciteEnum.MENSUELLE:
+        return /^\d{0,4}(?:-\d{0,2})?$/.test(value) ? value : null;
+      case IndicateurPeriodiciteEnum.TRIMESTRIELLE:
+      case IndicateurPeriodiciteEnum.SEMESTRIELLE: {
+        const normalized = value.toUpperCase();
+        const pattern =
+          periodicite === IndicateurPeriodiciteEnum.TRIMESTRIELLE
+            ? /^\d{0,4}(?:-T?[1-4]?)?$/
+            : /^\d{0,4}(?:-S?[1-2]?)?$/;
+        return pattern.test(normalized) ? normalized : null;
+      }
     }
   }
 
@@ -213,8 +242,25 @@ export class IndicateurPeriodes {
     );
   }
 
-  static format(periode: IndicateurPeriode): string {
-    return String(Number(IndicateurPeriodes.serialize(periode)));
+  /** Formats a display label; serialize remains the canonical storage format. */
+  static format(periode: IndicateurPeriode, locale = 'fr-FR'): string {
+    switch (periode.periodicite) {
+      case IndicateurPeriodiciteEnum.ANNUELLE:
+        return String(Number(IndicateurPeriodes.serialize(periode)));
+      case IndicateurPeriodiciteEnum.SEMESTRIELLE:
+      case IndicateurPeriodiciteEnum.TRIMESTRIELLE: {
+        const [year, period] = IndicateurPeriodes.serialize(periode).split('-');
+        return `${period} ${year}`;
+      }
+      case IndicateurPeriodiciteEnum.MENSUELLE:
+        return new Intl.DateTimeFormat(locale, {
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'UTC',
+        }).format(
+          new Date(`${IndicateurPeriodes.toDateValeur(periode)}T00:00:00.000Z`)
+        );
+    }
   }
 
   /** Compares periods at the requested periodicity, using the local calendar. */

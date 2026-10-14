@@ -8,14 +8,16 @@ import { isNull, sql } from 'drizzle-orm';
 import { groupBy } from 'es-toolkit';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
-type ValeurFields = 'both' | 'objectif' | 'resultat';
+type ValeurFields = 'both' | 'objectif' | 'resultat' | 'none';
 
 const valeurFields = (valeur: IndicateurValeurCreate): ValeurFields =>
   valeur.resultat !== undefined && valeur.objectif !== undefined
     ? 'both'
     : valeur.resultat !== undefined
     ? 'resultat'
-    : 'objectif';
+    : valeur.objectif !== undefined
+    ? 'objectif'
+    : 'none';
 
 @Injectable()
 export class UpsertGridValeursRepository {

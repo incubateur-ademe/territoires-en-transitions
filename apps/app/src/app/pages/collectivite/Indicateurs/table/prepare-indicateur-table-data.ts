@@ -16,6 +16,7 @@ export type IndicateurTableSource = {
 const sourceKey = (source: PreparedSource) =>
   JSON.stringify([
     source.source,
+    source.periodiciteSource ?? source.valeurs[0]?.periode.periodicite,
     source.metadonnees.map(({ id }) => id).toSorted((a, b) => a - b),
   ]);
 

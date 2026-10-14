@@ -79,9 +79,12 @@ describe('valeurs-utilisables.rules', () => {
       );
     });
 
-    it('consulte la série annuelle de l’indicateur', () => {
+    it('consulte la série annuelle d’un indicateur déclaré mensuellement', () => {
       const result = mapIndicateurToValeurUtilisable(
-        indicateurAssocie,
+        {
+          ...indicateurAssocie,
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        },
         buildValeursGroupees(),
         []
       );

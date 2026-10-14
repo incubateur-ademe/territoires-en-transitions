@@ -1,6 +1,10 @@
 import { expect, type Request } from '@playwright/test';
 import { testWithIndicateurs as test } from '../indicateurs.fixture';
 import { IndicateurValeursPom } from './indicateur-valeurs.pom';
+import {
+  IndicateurPeriodes,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 
 test.beforeEach(async ({ page }) => {
   await page.addLocatorHandler(
@@ -182,56 +186,6 @@ for (const type of ['resultat', 'objectif'] as const) {
     ).toBeVisible();
   });
 }
-
-test('Ne pas charger une série annuelle pour une définition mensuelle', async ({
-  page,
-  collectivites,
-  indicateurs,
-}) => {
-  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-    userArgs: { autoLogin: true },
-  });
-  const collectiviteId = collectivite.data.id;
-  const indicateurId = await indicateurs.create(user, {
-    collectiviteId,
-    titre: 'Périodicité du graphique',
-    unite: '%',
-  });
-
-  // The public write API currently creates annual indicators only.
-  await page.route('**/indicateurs.indicateurs.list*', async (route) => {
-    const response = await route.fetch();
-    const body = await response.json();
-    for (const definition of body.result.data.data) {
-      if (definition.id === indicateurId) definition.periodicite = 'mensuelle';
-    }
-    await route.fulfill({ response, json: body });
-  });
-  const valueRequests: Request[] = [];
-  page.on('request', (request) => {
-    if (!request.url().includes('indicateurs.valeurs.list')) return;
-    const input = new URL(request.url()).searchParams.get('input');
-    if (input && JSON.parse(input).indicateurIds?.includes(indicateurId)) {
-      valueRequests.push(request);
-    }
-  });
-
-  await page.goto(
-    `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
-  );
-
-  await expect(
-    page.getByText('Erreur : INDICATEUR_ANNUAL_PERIODICITE_REQUIRED', {
-      exact: true,
-    })
-  ).toBeVisible();
-  expect(valueRequests).toHaveLength(0);
-
-  // Prove that the same filter detects actual requests with our httpLink format.
-  await page.unroute('**/indicateurs.indicateurs.list*');
-  await page.reload();
-  await expect.poll(() => valueRequests.length).toBeGreaterThan(0);
-});
 
 test('Déclarer une année persiste après rafraîchissement', async ({
   page,
@@ -690,36 +644,46 @@ test('Ne pas proposer un ajout pour un indicateur sans valeur utilisateur', asyn
   ).toHaveCount(0);
 });
 
-test('Ne pas proposer la déclaration ni la suppression des années en lecture seule', async ({
-  page,
-  collectivites,
-  indicateurs,
-}) => {
-  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-    userArgs: { autoLogin: true },
+for (const { periodicite, label } of [
+  { periodicite: IndicateurPeriodiciteEnum.ANNUELLE, label: '2026' },
+] as const) {
+  test(`Ne pas proposer la saisie ni la suppression ${periodicite} en lecture seule`, async ({
+    page,
+    collectivites,
+    indicateurs,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    const indicateurId = await indicateurs.create(user, {
+      collectiviteId,
+      titre: 'Périodes en lecture seule',
+      unite: '%',
+      periodicite,
+    });
+    await user.getTrpcClient().indicateurs.valeurs.upsert.mutate({
+      collectiviteId,
+      indicateurId,
+      periodicite,
+      dateValeur: '2026-01-01',
+      resultat: 0,
+    });
+    await collectivite.addUser({ role: 'lecture', autoLogin: true });
+    await page.goto(
+      `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
+    );
+    const valeurs = new IndicateurValeursPom(page);
+    await expect(valeurs.table.getByText(label, { exact: true })).toBeVisible();
+    await expect(valeurs.table.getByRole('textbox')).toHaveCount(0);
+    await expect(
+      valeurs.table.getByRole('button', { name: /^Ajouter un/ })
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: 'Ajouter une valeur', exact: true })
+    ).toHaveCount(0);
+    await expect(
+      valeurs.table.getByRole('button', { name: /Supprimer la période/ })
+    ).toHaveCount(0);
   });
-  const collectiviteId = collectivite.data.id;
-  const indicateurId = await indicateurs.create(user, {
-    collectiviteId,
-    titre: 'Années en lecture seule',
-    unite: '%',
-  });
-  await user.getTrpcClient().indicateurs.valeurs.upsert.mutate({
-    collectiviteId,
-    indicateurId,
-    dateValeur: '2026-01-01',
-    resultat: 0,
-  });
-  await collectivite.addUser({ role: 'lecture', autoLogin: true });
-  await page.goto(
-    `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
-  );
-  const valeurs = new IndicateurValeursPom(page);
-  await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
-  await expect(
-    valeurs.table.getByRole('textbox', { name: 'Ajouter une année' })
-  ).toHaveCount(0);
-  await expect(
-    valeurs.table.getByRole('button', { name: /Supprimer la période/ })
-  ).toHaveCount(0);
-});
+}

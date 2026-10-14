@@ -19,6 +19,7 @@ import { indicateurThematiqueTable } from '../../shared/models/indicateur-themat
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { createIndicateurDefinitionInputSchema } from './mutate-definition.input';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 // On prend le typage en entrée, avant parsing zod du router trpc
 type CreateIndicateurDefinitionInput = z.input<
@@ -47,6 +48,56 @@ describe('createIndicateurPerso', () => {
   afterAll(async () => {
     await app.close();
   });
+
+  test.each([undefined, IndicateurPeriodiciteEnum.ANNUELLE] as const)(
+    'creates, writes and reads an indicator with periodicite=%s',
+    async (periodicite) => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Périodicité de bout en bout',
+        periodicite,
+      });
+      onTestFinished(async () => {
+        await caller.indicateurs.indicateurs.delete({
+          collectiviteId: collectivite.id,
+          indicateurId,
+        });
+      });
+      const dateValeur =
+        periodicite === undefined ? '2024-12-31' : '2024-01-01';
+
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        periodicite,
+        dateValeur,
+        resultat: 0,
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        indicateurFields: { titre: 'Titre modifié sans changer la cadence' },
+      });
+
+      const { indicateurs } = await caller.indicateurs.valeurs.list({
+        collectiviteId: collectivite.id,
+        indicateurIds: [indicateurId],
+      });
+      expect(indicateurs[0].definition).toMatchObject({
+        titre: 'Titre modifié sans changer la cadence',
+        periodicite: periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE,
+      });
+      expect(indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+        {
+          periodicite: periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE,
+          dateValeur: '2024-01-01',
+          resultat: 0,
+        },
+      ]);
+    }
+  );
 
   test('should create a personal indicator with all fields', async () => {
     const caller = router.createCaller({ user: authenticatedUser });

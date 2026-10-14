@@ -15,6 +15,7 @@ type Props = {
   row: IndicateurTableSource;
   periodes: readonly IndicateurPeriode[];
   readonly?: boolean;
+  periodicite: IndicateurPeriode['periodicite'];
   showAddPeriodeColumn: boolean;
   getColorBySourceId: GetColorBySourceId;
   onSave: (
@@ -28,6 +29,7 @@ export const IndicateurValeursTableSourceRow = ({
   row,
   periodes,
   readonly,
+  periodicite,
   showAddPeriodeColumn,
   getColorBySourceId,
   onSave,
@@ -61,7 +63,9 @@ export const IndicateurValeursTableSourceRow = ({
               periodeLabel={IndicateurPeriodes.format(periode)}
               resultat={resultat?.valeur ?? null}
               objectif={objectif?.valeur ?? null}
-              readonly={readonly || !isLocal}
+              readonly={
+                readonly || !isLocal || periode.periodicite !== periodicite
+              }
               emptyLabel={
                 isLocal
                   ? appLabels.indicateurValeurAbsente

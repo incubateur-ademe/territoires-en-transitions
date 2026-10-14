@@ -13,7 +13,11 @@ import {
 } from './local-calendar';
 import { createPeriod, type PeriodStrategy } from './period-strategy';
 
-type CalendarMonthSerialization = 'year';
+type CalendarMonthSerialization =
+  | 'year'
+  | 'year-month'
+  | 'year-quarter'
+  | 'year-semester';
 
 type CalendarMonthStrategyConfiguration<K extends IndicateurPeriodicite> =
   Readonly<{
@@ -27,6 +31,9 @@ const serializationPatterns: Readonly<
   Record<CalendarMonthSerialization, RegExp>
 > = {
   year: /^(\d{4})$/,
+  'year-quarter': /^(\d{4})-T([1-4])$/,
+  'year-semester': /^(\d{4})-S([1-2])$/,
+  'year-month': /^(\d{4})-(0[1-9]|1[0-2])$/,
 };
 
 /**
@@ -57,7 +64,14 @@ export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
       details: { periodicite, anchorDate },
     });
   }
-  if (monthsPerPeriod !== monthsPerYear || anchor.month !== 1) {
+  if (
+    (serialization === 'year' &&
+      (monthsPerPeriod !== monthsPerYear || anchor.month !== 1)) ||
+    (serialization === 'year-quarter' &&
+      (monthsPerPeriod !== 3 || anchor.month !== 1)) ||
+    (serialization === 'year-semester' &&
+      (monthsPerPeriod !== 6 || anchor.month !== 1))
+  ) {
     throw createIndicateurPeriodeError({
       code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_SERIALIZATION_INCOMPATIBLE,
       details: { periodicite, monthsPerPeriod, anchorDate, serialization },
@@ -101,14 +115,31 @@ export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
       });
     }
     const year = Number(match[1]);
-    const dateDebut = toLocalDate({ year, month: 1, day: 1 });
+    const month =
+      match[2] === undefined
+        ? 1
+        : serialization === 'year-quarter' || serialization === 'year-semester'
+        ? (Number(match[2]) - 1) * monthsPerPeriod + 1
+        : Number(match[2]);
+    const dateDebut = toLocalDate({ year, month, day: 1 });
     return fromDateValeur(dateDebut);
   };
 
   const serialize = (period: IndicateurPeriode<K>): string => {
     const validatedPeriod = fromDateValeur(period.dateDebut);
-    const { year } = parseLocalDate(validatedPeriod.dateDebut);
-    return String(year).padStart(4, '0');
+    const { year, month } = parseLocalDate(validatedPeriod.dateDebut);
+    const serializers: Readonly<
+      Record<CalendarMonthSerialization, () => string>
+    > = {
+      year: () => String(year).padStart(4, '0'),
+      'year-quarter': () =>
+        `${String(year).padStart(4, '0')}-T${Math.floor((month - 1) / 3) + 1}`,
+      'year-semester': () =>
+        `${String(year).padStart(4, '0')}-S${Math.floor((month - 1) / 6) + 1}`,
+      'year-month': () =>
+        `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}`,
+    };
+    return serializers[serialization]();
   };
 
   const toDateValeur = (period: IndicateurPeriode<K>) =>

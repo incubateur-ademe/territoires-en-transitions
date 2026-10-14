@@ -5,8 +5,8 @@ import {
   IndicateurPeriodicite,
   IndicateurPeriodiciteEnum,
   IndicateurPeriodes,
+  indicateurPeriodiciteValues,
   type LocalCalendarDate,
-  type SupportedIndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 
 type PeriodEditorPresentation = {
@@ -38,26 +38,45 @@ const PERIOD_PRESENTATIONS = {
       validateAndAddLabel: appLabels.validerAjouterAnnee,
     },
   },
-} satisfies Record<
-  SupportedIndicateurPeriodicite,
-  IndicateurPeriodPresentation
->;
+  [IndicateurPeriodiciteEnum.SEMESTRIELLE]: {
+    label: appLabels.periodiciteSemestrielle,
+    editor: {
+      fieldLabel: appLabels.champSemestre,
+      inputType: 'text',
+      addLabel: appLabels.ajouterSemestre,
+      validateAndAddLabel: appLabels.validerAjouterSemestre,
+    },
+  },
+  [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: {
+    label: appLabels.periodiciteTrimestrielle,
+    editor: {
+      fieldLabel: appLabels.champTrimestre,
+      inputType: 'text',
+      addLabel: appLabels.ajouterTrimestre,
+      validateAndAddLabel: appLabels.validerAjouterTrimestre,
+    },
+  },
+  [IndicateurPeriodiciteEnum.MENSUELLE]: {
+    label: appLabels.periodiciteMensuelle,
+    editor: {
+      fieldLabel: appLabels.champMois,
+      inputType: 'month',
+      addLabel: appLabels.ajouterMois,
+      validateAndAddLabel: appLabels.validerAjouterMois,
+    },
+  },
+} satisfies Record<IndicateurPeriodicite, IndicateurPeriodPresentation>;
 
-export const INDICATEUR_PERIODICITE_OPTIONS =
-  IndicateurPeriodes.supportedPeriodicites.map((periodicite) => ({
+export const INDICATEUR_PERIODICITE_OPTIONS = indicateurPeriodiciteValues.map(
+  (periodicite) => ({
     value: periodicite,
     label: PERIOD_PRESENTATIONS[periodicite].label,
-  }));
+  })
+);
 
 export const getIndicateurPeriodPresentation = (
   periodicite: IndicateurPeriodicite
-): IndicateurPeriodPresentation => {
-  IndicateurPeriodes.assertAnnual(
-    periodicite,
-    'Les contrôles annuels des périodes'
-  );
-  return PERIOD_PRESENTATIONS[periodicite];
-};
+): IndicateurPeriodPresentation => PERIOD_PRESENTATIONS[periodicite];
 
 const utcCalendarDate = (value: number): LocalCalendarDate => {
   const date = new Date(value);

@@ -1,9 +1,13 @@
 import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { useDeclareIndicateurPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
 import {
   IndicateurPeriodes,
+  IndicateurPeriodiciteEnum,
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
+import { Button } from '@tet/ui';
 import type { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import {
@@ -15,6 +19,7 @@ import type { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { useGetColorBySourceId } from '../data/use-indicateur-sources';
 import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
+import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
 import { useIndicateurTableDeclaration } from './use-indicateur-table-declaration';
 import { shouldConfirmValueDeletion } from './indicateur-valeur-deletion.rules';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
@@ -43,6 +48,11 @@ export const IndicateurTable = ({
   const objectifs = prepareIndicateurPeriodeData(
     chartInfo.data.valeurs.objectifs
   );
+  const isAnnual =
+    definition.periodicite === IndicateurPeriodiciteEnum.ANNUELLE;
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = openModalState?.isOpen ?? internalIsOpen;
+  const setIsOpen = openModalState?.setIsOpen ?? setInternalIsOpen;
   const [toBeDeleted, setToBeDeleted] = useState<IndicateurPeriodeValue | null>(
     null
   );
@@ -51,22 +61,27 @@ export const IndicateurTable = ({
     commentaires: { resultat: string; objectif: string };
   } | null>(null);
   const { mutateAsync: upsert } = useUpsertIndicateurValeur();
+  const declarePeriodes = useDeclareIndicateurPeriodes(
+    collectiviteId,
+    definition.id
+  );
   const { mutateAsync: deleteValeur } = useDeleteIndicateurValeur();
   const getColorBySourceId = useGetColorBySourceId();
   const canWrite =
     !readonly &&
     !definition.sansValeurUtilisateur &&
     chartInfo.sourceFilter.avecDonneesCollectivite;
+  const existingPeriodes = IndicateurPeriodes.merge(
+    resultats.periodes,
+    objectifs.periodes
+  );
   const declaration = useIndicateurTableDeclaration({
-    canWrite,
-    periodicite: chartInfo.data.periodicite,
+    canWrite: canWrite && isAnnual,
+    periodicite: definition.periodicite,
     collectiviteId,
     definition,
-    existingPeriodes: IndicateurPeriodes.merge(
-      resultats.periodes,
-      objectifs.periodes
-    ),
-    openModalState,
+    existingPeriodes,
+    openModalState: isAnnual ? openModalState : undefined,
   });
   const getExisting = (periode: IndicateurPeriode) =>
     resultats.valeursExistantes.find(
@@ -75,7 +90,11 @@ export const IndicateurTable = ({
         IndicateurPeriodes.key(periode)
     );
   const getWriteIdentity = (periode: IndicateurPeriode) => {
-    if (periode.periodicite !== chartInfo.data.periodicite) {
+    IndicateurPeriodes.assertAnnual(
+      periode.periodicite,
+      'La saisie annuelle des valeurs'
+    );
+    if (periode.periodicite !== definition.periodicite) {
       throw new Error('La périodicité doit correspondre à celle du tableau');
     }
     return {
@@ -110,7 +129,18 @@ export const IndicateurTable = ({
         definition={definition}
         resultats={resultats}
         objectifs={objectifs}
-        addPeriode={declaration.header}
+        addPeriode={
+          isAnnual ? (
+            declaration.header
+          ) : canWrite ? (
+            <Button size="sm" onClick={() => setIsOpen(true)}>
+              {
+                getIndicateurPeriodPresentation(definition.periodicite).editor
+                  .addLabel
+              }
+            </Button>
+          ) : undefined
+        }
         periodeToReveal={declaration.periodeToReveal}
         readonly={!canWrite}
         confidentiel={confidentiel}
@@ -144,7 +174,9 @@ export const IndicateurTable = ({
           periodeLabel={IndicateurPeriodes.format(comment.periode)}
           commentaires={comment.commentaires}
           openState={{ isOpen: true, setIsOpen: () => setComment(null) }}
-          isReadonly={!canWrite}
+          isReadonly={
+            !canWrite || comment.periode.periodicite !== definition.periodicite
+          }
           onChange={async (commentaires) => {
             if (!canWrite) return false;
             try {
@@ -176,6 +208,16 @@ export const IndicateurTable = ({
           }}
         />
       )}
+      {definition.periodicite !== IndicateurPeriodiciteEnum.ANNUELLE &&
+        canWrite &&
+        isOpen && (
+          <AddIndicateurPeriodesModal
+            periodicite={definition.periodicite}
+            openState={{ isOpen, setIsOpen }}
+            existingPeriodes={existingPeriodes}
+            onAdd={declarePeriodes}
+          />
+        )}
     </div>
   );
 };

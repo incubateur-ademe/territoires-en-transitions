@@ -6,18 +6,18 @@ import {
   indicateurPeriodeSchema,
 } from '..';
 
-describe('Validation JSON des périodes annuelles', () => {
+describe('Validation JSON des périodes', () => {
   it.each([
     IndicateurPeriodiciteEnum.MENSUELLE,
     IndicateurPeriodiciteEnum.TRIMESTRIELLE,
     IndicateurPeriodiciteEnum.SEMESTRIELLE,
-  ])('rejette la périodicité non prise en charge %s', (periodicite) => {
+  ])('accepte la périodicité %s', (periodicite) => {
     expect(
       indicateurPeriodeSchema.safeParse({
         periodicite,
         dateDebut: '2026-01-01',
       }).success
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('valide et réhydrate la représentation JSON', () => {
