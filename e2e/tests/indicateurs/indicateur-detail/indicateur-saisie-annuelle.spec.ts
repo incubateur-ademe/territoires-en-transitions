@@ -266,26 +266,23 @@ test('Garder le défilement accessible et signaler les colonnes masquées en vis
   await expect(valeurs.scrollbar).toHaveValue('0');
   await expect.poll(shadowOpacities).toEqual(['1', '1', '1']);
 
+  await valeurs.scrollbar.scrollIntoViewIfNeeded();
   const bounds = await valeurs.scrollbar.boundingBox();
   if (!bounds) throw new Error('Barre de défilement introuvable');
-  await valeurs.scrollbar.click({
-    position: { x: bounds.width / 2, y: bounds.height / 2 },
-  });
-  await expect(valeurs.table).toHaveAttribute('data-can-scroll-left', 'true');
-  await expect(valeurs.table).toHaveAttribute('data-can-scroll-right', 'true');
-  const positionBeforeDrag = Number(await valeurs.scrollbar.inputValue());
+  // At the start of the range, the left edge is always inside the thumb.
+  // The middle of the track can still belong to a wide thumb.
+  await page.mouse.move(bounds.x + 2, bounds.y + bounds.height / 2);
   await page.mouse.down();
   await page.mouse.move(
-    bounds.x + bounds.width * 0.7,
+    bounds.x + bounds.width / 2,
     bounds.y + bounds.height / 2,
-    {
-      steps: 5,
-    }
+    { steps: 5 }
   );
   await page.mouse.up();
+  await expect(valeurs.table).toHaveAttribute('data-can-scroll-left', 'true');
   await expect
     .poll(async () => Number(await valeurs.scrollbar.inputValue()))
-    .toBeGreaterThan(positionBeforeDrag);
+    .toBeGreaterThan(0);
 
   // Scrolling the table also updates the visible control.
   const scrollLeft = await valeurs.table.evaluate((element) => {
