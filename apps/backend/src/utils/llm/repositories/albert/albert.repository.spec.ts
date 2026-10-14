@@ -301,6 +301,31 @@ describe('AlbertRepository', () => {
     });
   });
 
+  it("interrompt la requête en cours quand l'appel est annulé", async () => {
+    const fetchMock = vi.fn(
+      (_url: string, init: RequestInit) =>
+        new Promise<Response>((_resolve, reject) =>
+          init.signal?.addEventListener('abort', () =>
+            reject(new DOMException('aborted', 'AbortError'))
+          )
+        )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const controller = new AbortController();
+
+    const pending = buildRepository().complete({
+      ...request,
+      signal: controller.signal,
+    });
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    controller.abort();
+
+    expect(await pending).toMatchObject({
+      success: false,
+      error: { kind: 'api_error', httpStatus: null },
+    });
+  });
+
   it("n'appelle rien sans clé d'API", async () => {
     const fetchMock = stubFetch(sseResponse());
 
