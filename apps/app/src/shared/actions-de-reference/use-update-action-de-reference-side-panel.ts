@@ -3,7 +3,7 @@ import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { createElement, useCallback } from 'react';
 import type { UseUpdateActionDeReferenceSidePanel } from './actions-de-reference.contract';
-import { UpdateActionDeReferenceForm } from './update-action-de-reference.form';
+import { UpdateActionDeReferenceContainer } from './update-action-de-reference.container';
 
 const useUpdateActionDeReferenceSidePanel: UseUpdateActionDeReferenceSidePanel =
   () => {
@@ -14,7 +14,7 @@ const useUpdateActionDeReferenceSidePanel: UseUpdateActionDeReferenceSidePanel =
         setPanel({
           type: 'open',
           title: appLabels.actionDeReferenceModificationTitre,
-          content: createElement(UpdateActionDeReferenceForm, {
+          content: createElement(UpdateActionDeReferenceContainer, {
             key: action.id,
             action,
             onUpdated: () => setPanel({ type: 'close' }),

@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ActionDeReferenceCard } from './action-de-reference.card';
 import {
+  noInterest,
   isolationComblesAction,
   longDescriptionAction,
 } from './actions-de-reference.fixture';
@@ -20,6 +21,7 @@ describe('card-mene-au-detail', () => {
       <ActionDeReferenceCard
         action={isolationComblesAction}
         updateAccess={{ status: 'forbidden' }}
+        interest={noInterest}
       />
     );
 
@@ -37,11 +39,12 @@ describe('card-mene-au-detail', () => {
       <ActionDeReferenceCard
         action={isolationComblesAction}
         updateAccess={{ status: 'allowed', onUpdate: vi.fn() }}
+        interest={noInterest}
       />
     );
 
     const link = screen.getByRole('link');
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /Modifier l'action/ });
 
     expect(link.contains(button)).toBe(false);
   });
@@ -53,6 +56,7 @@ describe('card-affiche-action-entiere', () => {
       <ActionDeReferenceCard
         action={isolationComblesAction}
         updateAccess={{ status: 'forbidden' }}
+        interest={noInterest}
       />
     );
 
@@ -77,6 +81,7 @@ describe('card-affiche-action-entiere', () => {
       <ActionDeReferenceCard
         action={longDescriptionAction}
         updateAccess={{ status: 'forbidden' }}
+        interest={noInterest}
       />
     );
 
@@ -89,11 +94,12 @@ describe('card-affiche-action-entiere', () => {
 });
 
 describe('modification-reservee-super-admin', () => {
-  it('sans droit de modification, la card ne porte aucun bouton', () => {
+  it('sans droit de modification, la card ne porte aucun bouton de modification', () => {
     render(
       <ActionDeReferenceCard
         action={isolationComblesAction}
         updateAccess={{ status: 'forbidden' }}
+        interest={noInterest}
       />
     );
 
@@ -102,7 +108,9 @@ describe('modification-reservee-super-admin', () => {
         name: 'Isoler les combles perdus des bâtiments communaux',
       })
     ).toBeDefined();
-    expect(screen.queryByRole('button')).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: /Modifier l'action/ })
+    ).toBeNull();
   });
 
   it("avec le droit de modification, le bouton « Modifier l'action » transmet l'action de la card", () => {
@@ -111,6 +119,7 @@ describe('modification-reservee-super-admin', () => {
       <ActionDeReferenceCard
         action={isolationComblesAction}
         updateAccess={{ status: 'allowed', onUpdate }}
+        interest={noInterest}
       />
     );
 

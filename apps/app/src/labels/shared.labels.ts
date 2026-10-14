@@ -120,4 +120,24 @@ export const sharedLabels = {
   actionDeReferenceUtileOui: 'Oui',
   actionDeReferenceUtileNon: 'Non',
   actionDeReferenceUtileMerci: 'Merci pour votre retour',
+  actionDeReferenceCollectivitesLiees: (count: number): string =>
+    count === 1
+      ? '1 collectivité a des actions liées'
+      : `${count} collectivités ont des actions liées`,
+  actionDeReferenceSauvegarder: 'Sauvegarder',
+  actionDeReferencePasInteresse: 'Pas intéressé',
+  actionDeReferenceRestaurer: 'Restaurer',
+  actionDeReferenceMarqueesPasInteresse: (count: number): string =>
+    count === 1
+      ? '1 action marquée « Pas intéressé »'
+      : `${count} actions marquées « Pas intéressé »`,
+  actionDeReferenceToutesMarquees:
+    'Toutes les actions affichées sont marquées « Pas intéressé »',
+  actionDeReferenceMarqueesReplier: 'Replier',
+  actionDeReferenceMarqueesDeplier: 'Déplier',
+  actionDeReferenceCollectivitesVoir: 'Voir',
+  actionDeReferenceCollectivitesMasquer: 'Masquer',
+  actionDeReferenceCollectivitesReplier: 'Replier les actions liées',
+  actionDeReferenceCollectivitesErreur:
+    "Les actions liées n'ont pas pu être chargées",
 };

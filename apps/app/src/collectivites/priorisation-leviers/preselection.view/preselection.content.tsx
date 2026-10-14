@@ -8,7 +8,8 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { Button, EmptyCard, Icon, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
-import { ActionDeReferenceSummaryCard } from '../action-de-reference-summary.card';
+import { ActionDeReferenceCard } from '@/app/shared/actions-de-reference/action-de-reference.card';
+import { toInterestControl } from '@/app/shared/actions-de-reference/to-action-de-reference-interest-control';
 import { LevierCardInfo } from '../levier-card-info';
 import {
   PreselectionFilters,
@@ -71,32 +72,34 @@ const PreselectedActionCard = ({
   const [firstPlan] = plans;
   const hasPlan = firstPlan !== undefined;
   return (
-    <ActionDeReferenceSummaryCard action={action}>
-      {addedToPlan ? (
-        <AddedToPlanFooter
-          addedToPlan={addedToPlan}
-          onUndo={() => planAdditions.undo(action.id)}
-        />
-      ) : (
+    <ActionDeReferenceCard
+      action={action}
+      updateAccess={{ status: 'forbidden' }}
+      interest={toInterestControl(action, 'preselectionnee', preselection)}
+      actions={
         <>
-          {hasPlan && (
-            <AddToPlanSplitButton
-              firstPlan={firstPlan}
-              isAdding={planAdditions.isAdding(action.id)}
-              plans={plans}
-              onAddToPlan={(target) => planAdditions.add({ action, ...target })}
+          {addedToPlan ? (
+            <AddedToPlanFooter
+              addedToPlan={addedToPlan}
+              onUndo={() => planAdditions.undo(action.id)}
             />
+          ) : (
+            <>
+              {hasPlan && (
+                <AddToPlanSplitButton
+                  firstPlan={firstPlan}
+                  isAdding={planAdditions.isAdding(action.id)}
+                  plans={plans}
+                  onAddToPlan={(target) =>
+                    planAdditions.add({ action, ...target })
+                  }
+                />
+              )}
+            </>
           )}
-          <Button
-            size="xs"
-            variant="underlined"
-            onClick={() => preselection.remove(action.id)}
-          >
-            {appLabels.retirerDeMaListe}
-          </Button>
         </>
-      )}
-    </ActionDeReferenceSummaryCard>
+      }
+    />
   );
 };
 

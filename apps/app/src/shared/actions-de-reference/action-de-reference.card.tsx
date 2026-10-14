@@ -3,8 +3,9 @@ import type { ActionDeReference } from '@tet/domain/shared';
 import { Button, Card } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
-import { ActionDeReferenceBadges } from './action-de-reference.badges';
 import { ActionDeReferenceDetailLink } from './action-de-reference-detail.link';
+import { ActionDeReferenceInterestButtons } from './action-de-reference-interest.buttons';
+import { ActionDeReferenceBadges } from './action-de-reference.badges';
 import type { ActionDeReferenceCardComponent } from './actions-de-reference.contract';
 
 const UpdateActionDeReferenceButton = ({
@@ -40,6 +41,10 @@ const ActionDeReferenceTitle = ({
 export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
   action,
   updateAccess,
+  interest,
+  showAdemeBadge = false,
+  actions,
+  children,
 }) => (
   <div className="group relative h-full">
     {match(updateAccess)
@@ -56,13 +61,21 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
         <ActionDeReferenceBadges
           action={action}
           hasUpdateButton={updateAccess.status === 'allowed'}
+          showAdemeBadge={showAdemeBadge}
         />
+      }
+      footer={
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <ActionDeReferenceInterestButtons interest={interest} />
+          {actions}
+        </div>
       }
     >
       <ActionDeReferenceTitle action={action} />
       <p className="mb-0 whitespace-pre-line text-sm font-medium text-grey-8">
         {action.description}
       </p>
+      {children}
     </Card>
   </div>
 );

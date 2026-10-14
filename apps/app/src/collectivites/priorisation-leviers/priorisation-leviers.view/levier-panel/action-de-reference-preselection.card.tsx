@@ -1,78 +1,34 @@
-import { appLabels } from '@/app/labels/catalog';
+import { ActionDeReferenceCollectivitesPanel } from '@/app/shared/actions-de-reference/action-de-reference-collectivites.panel';
+import { ActionDeReferenceCard } from '@/app/shared/actions-de-reference/action-de-reference.card';
+import { toInterestControl } from '@/app/shared/actions-de-reference/to-action-de-reference-interest-control';
+import { useActionDeReferenceUpdateAccess } from '@/app/shared/actions-de-reference/use-action-de-reference-update-access';
 import type { ActionDeReference } from '@tet/domain/shared';
-import { Button } from '@tet/ui';
 import { JSX } from 'react';
-import { match } from 'ts-pattern';
-import { ActionDeReferenceSummaryCard } from '../../action-de-reference-summary.card';
 import { Preselection, PreselectionStatus } from '../../use-preselection';
 
 type ActionDeReferencePreselectionCardProps = {
   action: ActionDeReference;
   status: PreselectionStatus;
-  preselection: Pick<Preselection, 'add' | 'remove' | 'ignore' | 'restore'>;
+  preselection: Pick<
+    Preselection,
+    'add' | 'remove' | 'ignore' | 'restore' | 'statusOf'
+  >;
 };
-
-const IgnoreActionButton = ({
-  onIgnore,
-}: {
-  onIgnore: () => void;
-}): JSX.Element => (
-  <Button size="xs" variant="underlined" onClick={onIgnore}>
-    {appLabels.pasInteresse}
-  </Button>
-);
-
-const PreselectionButtons = ({
-  action,
-  status,
-  preselection,
-}: ActionDeReferencePreselectionCardProps): JSX.Element =>
-  match(status)
-    .with('disponible', () => (
-      <>
-        <Button
-          size="xs"
-          variant="outlined"
-          onClick={() => preselection.add(action)}
-        >
-          {appLabels.sauvegarderAction}
-        </Button>
-        <IgnoreActionButton onIgnore={() => preselection.ignore(action.id)} />
-      </>
-    ))
-    .with('preselectionnee', () => (
-      <>
-        <Button
-          size="xs"
-          icon="check-line"
-          onClick={() => preselection.remove(action.id)}
-        >
-          {appLabels.ajouteeALaPreselection}
-        </Button>
-        <IgnoreActionButton onIgnore={() => preselection.ignore(action.id)} />
-      </>
-    ))
-    .with('ignoree', () => (
-      <Button
-        size="xs"
-        variant="underlined"
-        onClick={() => preselection.restore(action.id)}
-      >
-        {appLabels.retablirAction}
-      </Button>
-    ))
-    .exhaustive();
 
 export const ActionDeReferencePreselectionCard = ({
   action,
   status,
   preselection,
-}: ActionDeReferencePreselectionCardProps): JSX.Element => (
-  <ActionDeReferenceSummaryCard action={action}>
-    <PreselectionButtons
+}: ActionDeReferencePreselectionCardProps): JSX.Element => {
+  const updateAccess = useActionDeReferenceUpdateAccess();
+  return (
+    <ActionDeReferenceCard
       action={action}
-      status={status}
-      preselection={preselection}
-    />
-  </ActionDeReferenceSummaryCard>
-);
+      updateAccess={updateAccess}
+      interest={toInterestControl(action, status, preselection)}
+      showAdemeBadge
+    >
+      <ActionDeReferenceCollectivitesPanel actionDeReferenceId={action.id} />
+    </ActionDeReferenceCard>
+  );
+};
