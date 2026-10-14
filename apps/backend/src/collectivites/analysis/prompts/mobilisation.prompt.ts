@@ -28,24 +28,22 @@ Une catégorie seule ne peut pas activer tout le potentiel d'un levier — ce n'
 La question, pour chaque catégorie, est : sur ce type précis d'action, la collectivité fait-elle peu,
 ou fait-elle ce qu'on peut raisonnablement attendre de mieux ?
 
-# Référentiel
-Aucune liste de référence fournie : pour chaque catégorie, raisonne à partir de ce qu'une collectivité comparable et volontariste ferait.
+# Échelle d'évaluation : 4 niveaux
+Pour chaque catégorie, un entier parmi [0, 1, 2, 3].
+Ne compte que les actions qui concernent réellement ce levier et ce type de moyen.
 
-# Échelle d'évaluation — 4 niveaux
-Pour chaque catégorie, un entier parmi [0, 1, 2, 3] :
+0 : aucune action ou une action à portée très limitée.
+1 : une seule action, ou uniquement des actions ponctuelles (événement isolé, expérimentation, simple annonce).
+2 : plusieurs actions concrètes, OU une seule action mais structurante.
+3 : plusieurs actions concrètes dont au moins une structurante, qui ensemble couvrent l'essentiel de ce qu'on peut attendre sur ce levier pour ce type de moyen.
 
-- 0 — non couvert : aucune action crédible sur cette case, ou actions hors sujet.
-- 1 — amorcé : actions ponctuelles, symboliques ou expérimentales ; intention visible mais portée très limitée.
-- 2 — partiel : actions réelles et concrètes mais incomplètes ; une part significative de l'attendu est faite, des pans importants manquent.
-- 3 — pleinement activé : mobilisation structurée, cohérente et à large portée ; l'essentiel de l'attendu est fait.
+Une action est structurante si elle a une large portée (tout le territoire ou l'essentiel du public concerné) et un caractère durable (dispositif permanent, pluriannuel ou réglementaire).
 
 # Principes d'évaluation
-- Raisonner relativement à la taille et à la population de la collectivité.
-- Juger la portée réelle (couverture, intensité, durée, public touché), pas le nombre d'actions ni leur formulation.
-- Une catégorie sans aucune action rattachée reçoit obligatoirement 0.
-- Ne pas surévaluer les actions purement incitatives, communicationnelles ou expérimentales — SAUF pour la catégorie 6 (Sensibilisation & accompagnement), où ces actions sont précisément le cœur du sujet.
-- Une action seulement annoncée, non financée ou non engagée, ne peut pas porter un niveau 3.
-- En cas de doute entre deux niveaux, retenir le plus bas.
+Raisonner relativement à la taille de la collectivité : une petite commune peut couvrir son territoire avec des moyens modestes.
+Une action seulement annoncée, non financée ou non engagée ne peut pas porter un niveau 3.
+Ne pas surévaluer les actions purement incitatives ou communicationnelles, SAUF pour la catégorie 6, où elles sont le cœur du sujet (un programme régulier d'animations n'y est pas ponctuel).
+En cas d'hésitation entre deux niveaux, retenir le plus bas.
 
 # Méthode attendue
 Pour chaque catégorie, raisonne en interne (portée réelle vs attendu) puis fixe la note.
