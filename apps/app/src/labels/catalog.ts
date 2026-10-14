@@ -478,7 +478,8 @@ export const appLabels = {
       'Cette partie du dossier n’est plus modifiable au statut actuel de la démarche.',
     JOB_NOT_RESUMABLE:
       'Cet import ne peut plus être repris : il n’est plus en échec, ou son point de reprise a expiré.',
-    IN_FLIGHT_JOB_EXISTS: 'Un import est déjà en cours pour cette collectivité.',
+    IN_FLIGHT_JOB_EXISTS:
+      'Un import est déjà en cours pour cette collectivité.',
     ACTION_DE_REFERENCE_CONFLICT:
       'Une action de référence identique existe déjà.',
   } as Record<string, string | undefined>,
@@ -1051,11 +1052,6 @@ export const appLabels = {
   invitationsEnAttente: 'Invitations en attente',
   adresseMail: 'Adresse mail',
   affichageDesReferentiels: 'Affichage des référentiels',
-  choisirReferentielsAffichesEtatDesLieux:
-    'Choisir les référentiels affichés dans le menu « État des lieux » pour cette collectivité.',
-  reinitialiserSelonRemplissage: 'Réinitialiser selon le remplissage',
-  reinitialiserSelonRemplissageDescription:
-    'Affiche/cache automatiquement les référentiels CAE et ECI en fonction de leur remplissage.',
   annee: 'Année',
   total: 'TOTAL',
   uniteHt: 'HT',
