@@ -119,6 +119,8 @@ export const plansLabels = {
   planSecteursToutRenseigneTitre: 'Tout est traité',
   planSecteursToutRenseigne:
     'Les secteurs réglementaires de toutes les actions de ce plan sont renseignés.',
+  planSecteursErreurChargement:
+    'Impossible de charger les actions à renseigner',
   planSecteursLectureSeule: 'Vous ne pouvez pas modifier cette action',
   planSecteursOuvrirFiche: "Ouvrir l'action",
   ficheSecteursOrigineLabels: {
