@@ -46,13 +46,13 @@ const ActionCards = ({
   actionsRef,
 }: ActionCardsProps): JSX.Element => (
   <ul role="list" className="m-0 flex list-none flex-col gap-3 p-0">
-    {actions.map((action) => (
+    {actions.map((action, index) => (
       <li key={action.id} className="p-0">
         <ActionDeReferencePreselectionCard
           action={action}
           status={preselection.statusOf(action.id)}
           preselection={preselection}
-          actionsRef={actionsRef}
+          actionsRef={index === 0 ? actionsRef : undefined}
         />
       </li>
     ))}
@@ -118,13 +118,13 @@ const GroupedActions = ({
       ref={hasVisibleActions ? undefined : actionsRef}
       className="flex flex-col gap-6"
     >
-      {categoriesWithActions.map((categorie) => (
+      {categoriesWithActions.map((categorie, index) => (
         <CategorieGroup
           key={categorie}
           categorie={categorie}
           actions={byCategorie[categorie]}
           preselection={preselection}
-          actionsRef={actionsRef}
+          actionsRef={index === 0 ? actionsRef : undefined}
         />
       ))}
       <VisibleWhen condition={hasIgnoredActions}>
