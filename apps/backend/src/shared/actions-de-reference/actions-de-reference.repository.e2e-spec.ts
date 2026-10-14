@@ -946,7 +946,7 @@ describe('ActionsDeReferenceRepository contract', () => {
   describe('colonnes tableau', () => {
     it('stocke plusieurs leviers et plusieurs catégories pour une même action', async () => {
       await checkWithOnlyActions([carpoolingAction], async ({ tx }) => {
-        const [inserted] = await tx
+        const [insertedAction] = await tx
           .insert(actionDeReferenceTable)
           .values({
             titre: 'Installer des haies le long des parcelles',
@@ -958,14 +958,14 @@ describe('ActionsDeReferenceRepository contract', () => {
             categories: ['amenagement', 'sensibilisation'],
           })
           .returning({ id: actionDeReferenceTable.id });
-        const [stored] = await tx
+        const [storedAction] = await tx
           .select({
             leviers: actionDeReferenceTable.leviers,
             categories: actionDeReferenceTable.categories,
           })
           .from(actionDeReferenceTable)
-          .where(eq(actionDeReferenceTable.id, inserted.id));
-        expect(stored).toEqual({
+          .where(eq(actionDeReferenceTable.id, insertedAction.id));
+        expect(storedAction).toEqual({
           leviers: ['gestion_haies', 'pratiques_stockantes'],
           categories: ['amenagement', 'sensibilisation'],
         });
