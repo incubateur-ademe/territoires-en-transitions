@@ -33,9 +33,8 @@ SELECT throws_ok($sql$
     INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, date_valeur, periodicite, metadonnee_id, resultat)
     SELECT c.id, i.id, DATE '2024-01-01', 'mensuelle', NULL, 42 FROM release_collectivite c CROSS JOIN release_indicateur i
 $sql$, '23514', NULL, 'Une valeur locale doit toujours respecter la cadence de sa définition');
-SELECT throws_ok($sql$
-    UPDATE public.indicateur_definition SET aggregation_resultat = 'somme' WHERE id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'L agrégation reste fermée jusqu au nettoyage des colonnes');
+SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_resultat',
+    'Le nettoyage supprime la colonne inutilisée d’agrégation');
 SELECT is(
     (SELECT array_agg(attname::text ORDER BY attnum)
      FROM pg_attribute

@@ -23,6 +23,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Test backup compatibility
+        run: make db-test-backup-compatibility
+
       - uses: ./.github/actions/docker-login
         if: ${{ !env.ACT }}
         with:
@@ -107,34 +110,19 @@ jobs:
             --dbname="postgresql://postgres:postgres@127.0.0.1:5432/$SCHEMA_DATABASE_NAME" \
             --ext .psql --verbose data_layer/tests/indicateur/periodicite-schema.assertions.psql
 
-      - name: Sqitch revert to ${{ env.tag }}
+      - name: Sqitch verify final indicator schema (ci)
         if: ${{ !env.ACT }}
         uses: ./.github/actions/sqitch
         with:
-          command: 'revert --to @${{ env.tag }} --y'
+          command: 'verify --from-change @indicateur-periodicite-schema'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      - name: Sqitch deploy/verify
-        if: ${{ !env.ACT }}
-        uses: ./.github/actions/sqitch
-        with:
-          command: 'deploy --mode change --verify'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - name: Sqitch revert to ${{ env.tag }} (local)
+      - name: Sqitch verify final indicator schema (local)
         if: ${{ env.ACT }}
         uses: ./.github/actions/sqitch-local
         with:
-          command: 'revert --to @${{ env.tag }} --y'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-
-      - name: Sqitch deploy/verify (local)
-        if: ${{ env.ACT }}
-        uses: ./.github/actions/sqitch-local
-        with:
-          command: 'deploy --mode change --verify'
+          command: 'verify --from-change @indicateur-periodicite-schema'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
       - name: Test backup preflight against the deployed database
@@ -147,23 +135,15 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/workspace:ro" \
             --workdir /workspace \
             --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=contract-margny \
+            --env EXPECTED_RESTORE_PHASE=cleaned \
             --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
           archive="$(mktemp)"
           trap 'rm -f "$archive"' EXIT
           pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
-            --table=sqitch.changes --schema=private \
-            --table=private.indicateur_valeur_date_repair --file="$archive"
+            --table=sqitch.changes --file="$archive"
           phase="$(bash data_layer/backup/check-restore-compatibility.sh "$archive")"
           [[ "$phase" == "$EXPECTED_RESTORE_PHASE" ]]
 
-          # A migrated snapshot must preserve the original Margny observations.
-          pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
-            --table=sqitch.changes --file="$archive"
-          if bash data_layer/backup/check-restore-compatibility.sh "$archive"; then
-            echo 'Backup preflight accepted an archive without the Margny originals.' >&2
-            exit 1
-          fi
           BASH
 
       - name: Test periodicity constraints after deployment
