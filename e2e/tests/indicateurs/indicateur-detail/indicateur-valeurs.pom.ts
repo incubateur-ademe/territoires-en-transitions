@@ -5,11 +5,15 @@ import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 export class IndicateurValeursPom {
   readonly table: Locator;
   readonly ajouterAnneeInput: Locator;
+  readonly scrollbar: Locator;
 
   constructor(readonly page: Page) {
     this.table = page.getByTestId('indicateurs.valeurs.table');
     this.ajouterAnneeInput = this.table.getByRole('textbox', {
       name: 'Ajouter une année',
+    });
+    this.scrollbar = page.getByRole('slider', {
+      name: 'Défilement horizontal du tableau',
     });
   }
 
@@ -27,6 +31,33 @@ export class IndicateurValeursPom {
     return this.table.locator(
       `td[data-periode="${periode.dateDebut}"][data-periodicite="${periode.periodicite}"][data-source="${source}"]`
     );
+  }
+
+  async expectPeriodeInView(annee: number) {
+    const periode = IndicateurPeriodes.fromYear(annee);
+    // Check geometry before any interaction can scroll the cell into view.
+    // Playwright's toBeVisible also accepts cells hidden behind sticky columns.
+    await expect
+      .poll(() =>
+        this.table.evaluate((viewport, dateDebut) => {
+          const cell = viewport.querySelector(
+            `td[data-periode="${dateDebut}"][data-source="collectivite"]`
+          );
+          if (!cell) return false;
+          const bounds = viewport.getBoundingClientRect();
+          const cellBounds = cell.getBoundingClientRect();
+          const pinned = viewport.querySelector('[data-pinned="right"]');
+          const visibleLeft = bounds.left + viewport.clientLeft;
+          const visibleRight = pinned
+            ? pinned.getBoundingClientRect().left
+            : visibleLeft + viewport.clientWidth;
+          return (
+            cellBounds.left >= visibleLeft - 1 &&
+            cellBounds.right <= visibleRight + 1
+          );
+        }, periode.dateDebut)
+      )
+      .toBe(true);
   }
 
   valueButton(annee: number, type: 'Résultat' | 'Objectif') {

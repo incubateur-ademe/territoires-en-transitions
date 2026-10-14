@@ -590,6 +590,73 @@ test('Conserver une année après un échec au clic extérieur et permettre de r
   await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
 });
 
+for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+  test(`Afficher la nouvelle année au début, au milieu et à la fin du tableau (animations : ${reducedMotion})`, async ({
+    page,
+    collectivites,
+    indicateurs,
+    indicateurDetailPom,
+  }) => {
+    test.setTimeout(60_000);
+    await page.emulateMedia({ reducedMotion });
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    const indicateurId = await indicateurs.create(user, {
+      collectiviteId,
+      titre: 'Navigation entre les années',
+      unite: '%',
+    });
+    const years = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
+    for (const year of years) {
+      await user.getTrpcClient().indicateurs.valeurs.upsert.mutate({
+        collectiviteId,
+        indicateurId,
+        periodicite: 'annuelle',
+        dateValeur: `${year}-01-01`,
+        resultat: 10,
+      });
+    }
+    await indicateurDetailPom.goto(collectiviteId, indicateurId);
+    const valeurs = new IndicateurValeursPom(page);
+    await expect(valeurs.scrollbar).toBeVisible();
+
+    for (const year of [2028, 2015, 2012]) {
+      await test.step(`Créer et compléter ${year}`, async () => {
+        await valeurs.ajouterAnneeInput.fill(String(year));
+        const saved = valeurs.waitForUpsertValeurResponse();
+        await valeurs.ajouterAnneeInput.press('Enter');
+        await saved;
+        await expect(valeurs.ajouterAnneeInput).toHaveValue('');
+        await expect(valeurs.ajouterAnneeInput).toBeFocused();
+        await valeurs.expectPeriodeInView(year);
+        await valeurs.editValeur(year, 'Objectif', '25');
+        await expect(valeurs.valueButton(year, 'Objectif')).toContainText('25');
+        years.push(year);
+      });
+    }
+
+    await expect(
+      valeurs.table.locator('thead th').filter({ hasText: /^20\d{2}/ })
+    ).toHaveText(
+      years.sort((a, b) => a - b).map((year) => new RegExp(`^${year}`))
+    );
+    // Editing another value must not reveal the last declared year again.
+    await valeurs.scrollbar.press('End');
+    await valeurs.expectPeriodeInView(2028);
+    await valeurs.editValeur(2028, 'Objectif', '30');
+    await expect(valeurs.valueButton(2028, 'Objectif')).toContainText('30');
+    await valeurs.expectPeriodeInView(2028);
+    await page.reload();
+    for (const year of [2012, 2015, 2028]) {
+      await expect(valeurs.valueButton(year, 'Objectif')).toContainText(
+        year === 2028 ? '30' : '25'
+      );
+    }
+  });
+}
+
 test('Ne pas proposer un ajout pour un indicateur sans valeur utilisateur', async ({
   page,
   collectivites,
@@ -611,7 +678,7 @@ test('Ne pas proposer un ajout pour un indicateur sans valeur utilisateur', asyn
 
   await expect(
     new IndicateurValeursPom(page).table.getByRole('cell', {
-      name: 'Non renseigné',
+      name: 'Aucune donnée disponible',
       exact: true,
     })
   ).toBeVisible();

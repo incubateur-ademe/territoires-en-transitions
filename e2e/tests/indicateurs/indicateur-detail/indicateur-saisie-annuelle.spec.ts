@@ -217,7 +217,7 @@ test('Choisir un résultat ou un objectif et quitter le menu au clavier', async 
   await expect(valeurs.valueButton(2026, 'Objectif')).toContainText('20');
 });
 
-test('Signaler les colonnes masquées et masquer les commentaires vides en visite', async ({
+test('Garder le défilement accessible et signaler les colonnes masquées en visite', async ({
   page,
   collectivites,
   indicateurs,
@@ -253,15 +253,50 @@ test('Signaler les colonnes masquées et masquer les commentaires vides en visit
   await expect(
     valeurs.deletePeriodeButton(2020).locator('.ri-delete-bin-6-line')
   ).toBeVisible();
-  await valeurs.table.evaluate((element) => {
-    element.scrollLeft = element.scrollWidth;
-  });
+  // The control remains visible without hovering the table, including on macOS.
+  await page.mouse.move(0, 0);
+  await expect(valeurs.scrollbar).toBeVisible();
+  await valeurs.scrollbar.press('End');
   await expect(valeurs.table).toHaveAttribute('data-can-scroll-right', 'false');
+  await expect(valeurs.scrollbar).toHaveAttribute('aria-valuetext', '100 %');
+  await valeurs.expectPeriodeInView(2026);
   await expect.poll(shadowOpacities).toEqual(['0', '0', '0']);
-  await valeurs.table.evaluate((element) => {
-    element.scrollLeft = 0;
-  });
+  await valeurs.scrollbar.press('Home');
+  await expect(valeurs.table).toHaveAttribute('data-can-scroll-left', 'false');
+  await expect(valeurs.scrollbar).toHaveValue('0');
   await expect.poll(shadowOpacities).toEqual(['1', '1', '1']);
+
+  const bounds = await valeurs.scrollbar.boundingBox();
+  if (!bounds) throw new Error('Barre de défilement introuvable');
+  await valeurs.scrollbar.click({
+    position: { x: bounds.width / 2, y: bounds.height / 2 },
+  });
+  await expect(valeurs.table).toHaveAttribute('data-can-scroll-left', 'true');
+  await expect(valeurs.table).toHaveAttribute('data-can-scroll-right', 'true');
+  const positionBeforeDrag = Number(await valeurs.scrollbar.inputValue());
+  await page.mouse.down();
+  await page.mouse.move(
+    bounds.x + bounds.width * 0.7,
+    bounds.y + bounds.height / 2,
+    {
+      steps: 5,
+    }
+  );
+  await page.mouse.up();
+  await expect
+    .poll(async () => Number(await valeurs.scrollbar.inputValue()))
+    .toBeGreaterThan(positionBeforeDrag);
+
+  // Scrolling the table also updates the visible control.
+  const scrollLeft = await valeurs.table.evaluate((element) => {
+    element.scrollLeft = element.scrollWidth / 4;
+    return element.scrollLeft;
+  });
+  await expect
+    .poll(async () =>
+      Math.abs(Number(await valeurs.scrollbar.inputValue()) - scrollLeft)
+    )
+    .toBeLessThanOrEqual(1);
 
   await collectivite.addUser({ role: 'lecture', autoLogin: true });
   await page.reload();
@@ -269,6 +304,9 @@ test('Signaler les colonnes masquées et masquer les commentaires vides en visit
   await expect(valeurs.table.getByRole('row')).toHaveCount(2);
   await expect(valeurs.table.locator('tfoot')).toHaveCount(0);
   await expect(valeurs.table.getByRole('button')).toHaveCount(0);
+  await expect(valeurs.scrollbar).toBeVisible();
+  await valeurs.scrollbar.press('End');
+  await valeurs.expectPeriodeInView(2026);
 });
 
 test('Saisir résultat et objectif dans la même période annuelle', async ({
@@ -293,7 +331,8 @@ test('Saisir résultat et objectif dans la même période annuelle', async ({
 
   await valeurs.addResultat(2026, 0);
   await valeurs.editValeur(2026, 'Objectif', '20,12345');
-  await valeurs.addResultat(2025, 12);
+  await valeurs.addResultat(2025, 12345678);
+  await valeurs.editValeur(2025, 'Objectif', '1');
   await page.reload();
 
   await expect(valeurs.valueButton(2026, 'Résultat')).toContainText('0');
@@ -308,7 +347,10 @@ test('Saisir résultat et objectif dans la même période annuelle', async ({
     0
   );
   await expect(sourceName).toHaveCSS('vertical-align', 'middle');
-  const legend = valeurs.table.locator('..').getByRole('list');
+  const legend = page
+    .getByRole('list')
+    .filter({ hasText: 'Résultat' })
+    .filter({ hasText: 'Objectif' });
   for (const container of [legend, valeurs.cell(2026)]) {
     await expect(container.getByText('R', { exact: true })).toHaveCSS(
       'color',
@@ -329,6 +371,34 @@ test('Saisir résultat et objectif dans la même période annuelle', async ({
     page.getByRole('button', { name: 'Objectifs', exact: true })
   ).toHaveCount(0);
 
+  const valueHalves = valeurs.cell(2025).locator(':scope > div > div');
+  const expectCenteredSeparator = async () => {
+    await expect(valueHalves).toHaveCount(2);
+    await expect
+      .poll(() =>
+        valueHalves.evaluateAll((halves) => ({
+          centered:
+            Math.abs(
+              halves[0].getBoundingClientRect().width -
+                halves[1].getBoundingClientRect().width
+            ) <= 1,
+          noOverflow: halves.every(
+            (half) => half.scrollWidth <= half.clientWidth + 1
+          ),
+        }))
+      )
+      .toEqual({ centered: true, noOverflow: true });
+  };
+  await expectCenteredSeparator();
+  for (const type of ['Résultat', 'Objectif'] as const) {
+    await valeurs.valueButton(2025, type).click();
+    const input = valeurs.valueInput(2025, type);
+    await expect(input).toBeFocused();
+    await expectCenteredSeparator();
+    await input.press('Escape');
+    await expect(input).toHaveCount(0);
+  }
+
   const saved = await user.getTrpcClient().indicateurs.valeurs.list.query({
     collectiviteId,
     indicateurIds: [indicateurId],
@@ -346,7 +416,7 @@ test('Saisir résultat et objectif dans la même période annuelle', async ({
   );
 });
 
-test('Afficher les données non renseignées en lecture seule', async ({
+test('Distinguer les données locales non renseignées des données externes indisponibles', async ({
   page,
   collectivites,
   indicateurs,
@@ -365,6 +435,7 @@ test('Afficher les données non renseignées en lecture seule', async ({
     collectiviteId,
     identifiantReferentiel: 'cae_8',
     valeurs: [
+      { dateValeur: '2024-01-01', resultat: 5 },
       { dateValeur: '2025-01-01', resultat: 10, sourceId: 'citepa' },
       { dateValeur: '2026-01-01', resultat: 0, sourceId: 'citepa' },
     ],
@@ -376,9 +447,16 @@ test('Afficher les données non renseignées en lecture seule', async ({
       filters: { identifiantsReferentiel: ['cae_8'] },
     });
   await indicateurDetailPom.goto(collectiviteId, definitions[0].id);
+  const valeurs = new IndicateurValeursPom(page);
+  const missingExternal = valeurs.cell(2024, 'citepa');
+  await expect(missingExternal).toHaveText('Donnée indisponible');
+  await expect(missingExternal.getByRole('button')).toHaveCount(0);
+  await expect(
+    valeurs.cell(2025).getByTestId('indicateurs.valeurs.add')
+  ).toBeVisible();
   await collectivite.addUser({ role: 'lecture', autoLogin: true });
   await page.reload();
-  const valeurs = new IndicateurValeursPom(page);
+  await expect(missingExternal).toHaveText('Donnée indisponible');
   await expect(
     valeurs.table.getByRole('rowheader', {
       name: 'Données de la collectivité',
@@ -399,7 +477,10 @@ test('Afficher les données non renseignées en lecture seule', async ({
   await page.goto(
     `/collectivite/${collectiviteId}/indicateurs/perso/${emptyIndicateurId}`
   );
-  await expect(valeurs.table.getByRole('cell')).toHaveText('Non renseigné');
+  await expect(valeurs.table.getByRole('cell')).toHaveText(
+    'Aucune donnée disponible'
+  );
+  await expect(valeurs.scrollbar).toHaveCount(0);
   await expect(valeurs.table.getByRole('button')).toHaveCount(0);
 });
 
