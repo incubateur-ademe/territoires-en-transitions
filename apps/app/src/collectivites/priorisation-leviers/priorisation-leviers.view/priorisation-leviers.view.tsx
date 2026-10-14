@@ -71,6 +71,7 @@ type LeviersSectionProps = {
   leviers: LevierPriorisation[];
   places: LevierPlace[];
   preselectedCountByLevier: PreselectedCountByLevier;
+  preselectedActions: Preselection['actions'];
   selectedLevierId?: LevierId;
   onLevierSelected: SelectLevier;
   anchor?: MatrixAnchor;
@@ -83,7 +84,7 @@ type BreakdownViewProps = Pick<
 
 type SousLeviersViewProps = Pick<
   LeviersSectionProps,
-  'places' | 'onLevierSelected'
+  'places' | 'preselectedActions' | 'onLevierSelected'
 >;
 
 type PriorisationBoardProps = {
@@ -191,12 +192,14 @@ const BreakdownView = ({
 
 const SousLeviersView = ({
   places,
+  preselectedActions,
   onLevierSelected,
 }: SousLeviersViewProps): JSX.Element => (
-  <>
-    <LevierCardInfo>{appLabels.sousLeviersInfo}</LevierCardInfo>
-    <SousLeviersChart places={places} onLevierSelected={onLevierSelected} />
-  </>
+  <SousLeviersChart
+    places={places}
+    preselectedActions={preselectedActions}
+    onLevierSelected={onLevierSelected}
+  />
 );
 
 const LeviersSection = ({
@@ -274,6 +277,7 @@ const PriorisationBoard = ({
         leviers={leviers}
         places={places}
         preselectedCountByLevier={preselectedCountByLevier}
+        preselectedActions={preselection.actions}
         selectedLevierId={levierSidePanel.selectedLevierId}
         onLevierSelected={levierSidePanel.select}
         anchor={toAnchor({

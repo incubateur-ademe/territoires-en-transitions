@@ -1,3 +1,4 @@
+import { actionDeReferenceIdSchema } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
 import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LevierPlace } from '../data/to-matrix-points';
@@ -18,13 +19,16 @@ const toPlace = (
 
 describe('toSousLevierBars', () => {
   it('fait une barre par catégorie du levier, nommée levier · catégorie et colorée par sa mobilisation', () => {
-    const bars = toSousLevierBars([
-      toPlace({
-        levierId: 'production_industrielle',
-        potentielReduction: 20,
-        noteByCategorie: { ...NO_MOBILISATION, financement: 2 },
-      }),
-    ]);
+    const bars = toSousLevierBars(
+      [
+        toPlace({
+          levierId: 'production_industrielle',
+          potentielReduction: 20,
+          noteByCategorie: { ...NO_MOBILISATION, financement: 2 },
+        }),
+      ],
+      []
+    );
 
     expect(bars).toEqual([
       {
@@ -55,14 +59,20 @@ describe('toSousLevierBars', () => {
   });
 
   it('trie les sous-leviers de tous les leviers par potentiel décroissant', () => {
-    const bars = toSousLevierBars([
-      toPlace({ levierId: 'production_industrielle', potentielReduction: 20 }),
-      toPlace({
-        levierId: 'covoiturage',
-        nom: 'Covoiturage',
-        potentielReduction: 100,
-      }),
-    ]);
+    const bars = toSousLevierBars(
+      [
+        toPlace({
+          levierId: 'production_industrielle',
+          potentielReduction: 20,
+        }),
+        toPlace({
+          levierId: 'covoiturage',
+          nom: 'Covoiturage',
+          potentielReduction: 100,
+        }),
+      ],
+      []
+    );
 
     const values = bars.map(({ value }) => value);
     expect(values).toEqual([...values].sort((first, second) => second - first));
@@ -70,10 +80,41 @@ describe('toSousLevierBars', () => {
   });
 
   it('écarte les leviers sans potentiel de réduction', () => {
-    const bars = toSousLevierBars([
-      toPlace({ levierId: 'covoiturage', potentielReduction: 0 }),
-    ]);
+    const bars = toSousLevierBars(
+      [toPlace({ levierId: 'covoiturage', potentielReduction: 0 })],
+      []
+    );
 
     expect(bars).toEqual([]);
+  });
+
+  it("passe en Ajoutée la barre de la catégorie d'une action sauvegardée, sans toucher aux autres catégories du levier", () => {
+    const bars = toSousLevierBars(
+      [
+        toPlace({
+          levierId: 'production_industrielle',
+          potentielReduction: 20,
+          noteByCategorie: { ...NO_MOBILISATION, financement: 2 },
+        }),
+      ],
+      [
+        {
+          id: actionDeReferenceIdSchema.parse(1),
+          titre: 'Subventionner les entreprises',
+          description: 'Aides financières',
+          levier: 'production_industrielle',
+          categorie: 'financement',
+        },
+      ]
+    );
+
+    const statusById = Object.fromEntries(
+      bars.map(({ id, status }) => [id, status])
+    );
+    expect(statusById).toEqual({
+      'production_industrielle/financement': 'Ajoutée',
+      'production_industrielle/gouvernance': 'Non mobilisé',
+      'production_industrielle/sensibilisation': 'Non mobilisé',
+    });
   });
 });

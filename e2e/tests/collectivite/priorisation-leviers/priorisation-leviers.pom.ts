@@ -109,7 +109,7 @@ export class PriorisationLeviersPom {
 
   get sousLeviersCaption(): Locator {
     return this.page.getByText(
-      /^Sous-leviers \(levier × catégorie d'action\) par potentiel/
+      /^Un sous-levier \(levier × catégorie\) par barre/
     );
   }
 

@@ -1,10 +1,11 @@
 import ChartLegend from '@/app/ui/charts/ChartLegend';
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
+import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
 import { readCaption } from '@/app/ui/charts/matrix/read-children';
 import { preset } from '@tet/ui';
 import type { BarSeriesOption } from 'echarts/charts';
-import { useMemo, type JSX, type ReactNode } from 'react';
+import { useMemo, useRef, type JSX, type ReactNode } from 'react';
 import type { StatusBar, StatusScale } from './status-bar';
 import { StatusBarTooltip } from './status-bar.tooltip';
 
@@ -22,6 +23,12 @@ type StatusBarChartProps<TStatus extends string> = {
 const DIMMED_OPACITY = 0.3;
 const BAR_GAP = '30%';
 const PLOT_TOP_MARGIN = 16;
+const SPLIT_COUNT = 2;
+const BAR_TOP_RADIUS: [number, number, number, number] = [2, 2, 0, 0];
+
+const SquareSymbol = (color: string): JSX.Element => (
+  <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: color }} />
+);
 
 const carriesDataIndex = (
   candidate: unknown
@@ -92,6 +99,7 @@ const buildOption = <TStatus extends string>({
   },
   yAxis: {
     type: 'value',
+    splitNumber: SPLIT_COUNT,
     axisLabel: { show: false },
     splitLine: { lineStyle: { color: colors.grey[4], type: 'dashed' } },
   },
@@ -99,6 +107,7 @@ const buildOption = <TStatus extends string>({
     {
       type: 'bar',
       barCategoryGap: BAR_GAP,
+      itemStyle: { borderRadius: BAR_TOP_RADIUS },
       data: toSeriesData({ data, statusScale, selectedBarId }),
     },
   ],
@@ -141,6 +150,8 @@ const StatusBarChart = <TStatus extends string>({
   onBarSelected,
   children,
 }: StatusBarChartProps<TStatus>): JSX.Element => {
+  const plotRef = useRef<HTMLDivElement>(null);
+  useResizeGraphOnContainerSizeUpdate({ containerRef: plotRef });
   const caption = readCaption(children);
   const option = useMemo(
     () => buildOption({ data, statusScale, formatValue, selectedBarId }),
@@ -163,11 +174,12 @@ const StatusBarChart = <TStatus extends string>({
   const legendItems = statusScale.map(({ status, color }) => ({
     name: status,
     color,
+    symbole: SquareSymbol,
   }));
 
   return (
     <figure className="m-0 flex h-full w-full flex-col">
-      <div aria-hidden className="min-h-0 w-full grow">
+      <div ref={plotRef} aria-hidden className="min-h-0 w-full grow">
         <ReactECharts
           renderer="svg"
           style={{ width: '100%', height: '100%' }}
@@ -175,7 +187,12 @@ const StatusBarChart = <TStatus extends string>({
           onEvents={onEvents}
         />
       </div>
-      <ChartLegend isOpen size="sm" className="mt-4" items={legendItems} />
+      <ChartLegend
+        isOpen
+        size="sm"
+        className="mt-4 w-full !justify-start"
+        items={legendItems}
+      />
       <figcaption className="mt-2 text-sm text-grey-8">{caption}</figcaption>
       <BarsList
         data={data}

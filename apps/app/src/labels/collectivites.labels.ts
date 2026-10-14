@@ -201,10 +201,9 @@ export const collectivitesLabels = {
     levierNom: string;
     categorie: CategorieAction;
   }): string => `${levierNom} · ${categorieActionLabels[categorie]}`,
-  sousLeviersInfo:
-    "Chaque barre est un sous-levier, c'est-à-dire la part du potentiel de réduction de GES d'un levier qui revient à une catégorie d'action, colorée selon la mobilisation de la collectivité. Cliquez sur une barre pour consulter les actions de référence du levier.",
+  sousLevier: 'Sous-levier',
   sousLeviersLegende:
-    "Sous-leviers (levier × catégorie d'action) par potentiel de réduction de GES décroissant",
+    'Un sous-levier (levier × catégorie) par barre, triés par potentiel de réduction estimé décroissant. Cliquez une barre pour ouvrir le levier sur cette catégorie.',
   repartitionPotentielLegende:
     'Taille du rectangle = potentiel de réduction de GES estimé. Un drapeau signale un levier à prioriser. Cliquez une zone pour ouvrir le levier.',
   impactPotentielDuTerritoire: (score: number): string =>
