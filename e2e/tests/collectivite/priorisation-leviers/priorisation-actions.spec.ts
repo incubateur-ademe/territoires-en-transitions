@@ -380,6 +380,7 @@ test.describe('Priorisation : ajout à un plan', () => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const planNom = `Plan climat ${runToken}`;
     await plans.create(user, {
       nom: planNom,
@@ -448,6 +449,7 @@ test.describe('Priorisation : ajout à un plan', () => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const premierPlan = `A ${runToken}`;
     const secondPlan = `B ${runToken}`;
     await plans.create(user, {

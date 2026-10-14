@@ -91,6 +91,7 @@ test.describe('Priorisation : visite guidée à la première visite', () => {
       const { collectivite } = await collectivites.addCollectiviteAndUser({
         userArgs: { autoLogin: true },
       });
+      await addMobilisationAvecFiche(collectivite.data.id);
       const pom = new PriorisationLeviersPom(page);
       await pom.goto(collectivite.data.id);
       await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
@@ -146,6 +147,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await startTourWithLevierToPrioritize({
       pom,
@@ -183,6 +185,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await startTourWithLevierToPrioritize({
       pom,
@@ -204,6 +207,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await startTourWithLevierToPrioritize({
       pom,
@@ -228,6 +232,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     await collectivite.setUserCollectiviteRole(CollectiviteRole.ADMIN);
     const pom = new PriorisationLeviersPom(page);
     await startTourWithLevierToPrioritize({
