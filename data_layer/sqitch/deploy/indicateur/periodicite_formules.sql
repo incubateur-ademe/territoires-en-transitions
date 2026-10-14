@@ -36,7 +36,7 @@ BEGIN
         cible.valeur_calcule
     ) AS dependance
     LEFT JOIN public.indicateur_definition source
-      ON source.identifiant_referentiel = dependance.source_identifiant
+      ON lower(source.identifiant_referentiel) = dependance.source_identifiant
     WHERE cible.valeur_calcule IS NOT NULL
       AND btrim(cible.valeur_calcule) <> ''
       AND (
