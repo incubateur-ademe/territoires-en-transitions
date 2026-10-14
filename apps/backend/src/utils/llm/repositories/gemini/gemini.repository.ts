@@ -16,6 +16,7 @@ import {
   LlmCompletionRequest,
   LlmRawCompletion,
   LlmRepository,
+  LlmRetryOptions,
 } from '../llm.repository';
 import { TokenUsage } from '../../token-usage';
 
@@ -29,6 +30,13 @@ export class GeminiRepository extends LlmRepository {
   readonly maxConcurrentCalls = 20;
   readonly maxInputTokensPerMinute = null;
   readonly maxRequestsPerMinute = null;
+  // Quota partagé et inconnu : une saturation peut durer plusieurs minutes,
+  // qu'on attend (environ 7 min cumulées) plutôt que de perdre l'étape.
+  readonly rateLimitedRetryOptions: LlmRetryOptions = {
+    retries: 8,
+    minTimeout: 5_000,
+    maxTimeout: 90_000,
+  };
   // Un seul modèle, capable de lire un document entier : pas de paliers.
   readonly capabilities: LlmCapabilities = {
     ocr: false,

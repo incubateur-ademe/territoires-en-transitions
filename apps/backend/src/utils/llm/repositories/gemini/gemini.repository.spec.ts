@@ -59,6 +59,14 @@ describe('GeminiRepository', () => {
     expect(repository.maxInputTokensFor('ocr')).toBe(repository.maxInputTokens);
   });
 
+  it('attend plus longtemps après un 429 que pour une autre erreur passagère', () => {
+    expect(buildRepository().rateLimitedRetryOptions).toEqual({
+      retries: 8,
+      minTimeout: 5_000,
+      maxTimeout: 90_000,
+    });
+  });
+
   it('refuse les images sans appeler le modèle', async () => {
     const result = await buildRepository().complete({
       prompt: 'Transcris',

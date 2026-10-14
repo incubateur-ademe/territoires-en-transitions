@@ -330,7 +330,7 @@ flowchart TD
     REP -- gemini --> GR[GeminiRepository<br/>@google/genai, Vertex AI]
     AR --> OB[LlmObserver<br/>une trace par tentative]
     GR --> OB
-    SV -. "429 ou 503" .-> PEN[modèle mis en pause 15 s,<br/>jusqu'à 6 relances]
+    SV -. "429 ou 503" .-> PEN[modèle mis en pause 15 s,<br/>6 relances, 8 sur ~7 min chez Gemini]
 ```
 
 - La réservation de quota se fait au moment de l'envoi : le fournisseur compte
@@ -339,6 +339,7 @@ flowchart TD
   retombe sur le modèle fort, et l'OCR est désactivé sans modèle image-texte.
 - Sur Gemini, tous les paliers utilisent `GEMINI_MODEL`, et une image renvoie
   une erreur `unsupported`.
+- La pause qui suit un 429 vaut aussi sans quota déclaré, donc chez Gemini.
 
 Configuration (`utils/config/configuration.model.ts`) :
 

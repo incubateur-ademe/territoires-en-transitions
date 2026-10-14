@@ -64,6 +64,18 @@ describe('TokenRateLimiter', () => {
     expect(await settled(next)).toBe('settled');
   });
 
+  it('gèle aussi les réservations sans budget', async () => {
+    const limiter = new TokenRateLimiter(null);
+    limiter.penalize(15_000);
+
+    const next = limiter.acquire(1);
+    expect(await settled(next)).toBe('pending');
+    await vi.advanceTimersByTimeAsync(14_999);
+    expect(await settled(next)).toBe('pending');
+    await vi.advanceTimersByTimeAsync(1);
+    expect(await settled(next)).toBe('settled');
+  });
+
   it("abandonne l'attente quand le signal est levé", async () => {
     const limiter = new TokenRateLimiter(100);
     await limiter.acquire(100);
