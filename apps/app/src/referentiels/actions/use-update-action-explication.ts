@@ -31,24 +31,28 @@ export const useUpdateActionExplication = () => {
           (old) => patchActionExplicationInCache(old, actionId, commentaire)
         );
 
-        return { previousQueries };
+        return { previousQueries, listActionsFilter };
       },
-      onError: (_err, _variables, context) => {
+      onError: async (_err, _variables, context) => {
         context?.previousQueries?.forEach(([queryKey, data]) => {
           queryClient.setQueryData(queryKey, data);
         });
+        // Le commentaire peut avoir été enregistré malgré l'erreur (échec
+        // du recalcul du snapshot) : on se recale sur l'état serveur.
+        if (context?.listActionsFilter) {
+          await queryClient.invalidateQueries(context.listActionsFilter);
+        }
       },
-      onSuccess: async (_data, { actionId, collectiviteId }) => {
-        // refetchType 'all' : la page mesure peut être démontée (navigation
-        // « mesure suivante ») ; avec DISABLE_AUTO_REFETCH, sans ça le cache
-        // reste stale au retour sur la mesure.
-        await queryClient.invalidateQueries({
-          ...trpc.referentiels.actions.listActionsGroupedById.queryFilter({
-            collectiviteId,
-            referentielId: getReferentielIdFromActionId(actionId),
-          }),
-          refetchType: 'all',
-        });
+      // Pas de refetch de listActionsGroupedById : le commentaire n'a pas
+      // d'effet sur les scores, et le patch couvre aussi les queries
+      // inactives (page mesure démontée). On réaligne juste le cache sur la
+      // valeur enregistrée.
+      onSuccess: (data, { actionId }, context) => {
+        if (!context?.listActionsFilter) return;
+        queryClient.setQueriesData<ListActionsDynamicStateResult>(
+          context.listActionsFilter,
+          (old) => patchActionExplicationInCache(old, actionId, data.commentaire)
+        );
       },
       // On rafraîchit l'historique dans `onSettled` plutôt que `onSuccess`
       // pour rester cohérent avec le pattern de
