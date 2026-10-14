@@ -175,32 +175,35 @@ cadence, adaptations aux séries mixtes, validations API et migrations restent
 dans #5215. Les garde-fous PCAET et les restrictions de saisie annuelle face aux
 nouvelles cadences y restent aussi.
 
-## 3. Activation des cadences — #5215
+## 3. Validation SQL des formules — `fix/indicateurs-formula-validation`
 
-Arrêter toutes les écritures, imports et tâches, ainsi que les sauvegardes et
-restaurations automatiques. Appliquer `indicateur/periodicite_activation`, puis
-déployer le backend, l'application, le site et `tools`.
+Cette préparation se déploie avec l’application annuelle. Appliquer
+`indicateur/dependances_formules`, puis `indicateur/periodicite_formules` : les
+références sont lues directement dans les expressions, sans table dérivée ni
+reconstruction après restauration. Les références absentes et les cadences
+incompatibles sont refusées, y compris lors d’une écriture SQL directe.
+Les restrictions annuelles, les index et le reporting restent inchangés.
 
-Contrôler :
+Le dump de production du **14 octobre 2026 à 00:44 UTC** contient 26 991
+définitions et 4 771 525 valeurs, toutes annuelles et cohérentes. Les 78 formules
+ont 295 dépendances existantes de même cadence : aucune réparation n’est requise.
+Sur cette copie, le contrôle global prend environ 27 ms ; les contrôles successifs
+des 896 définitions du catalogue prennent 7,6 s. Ce coût porte sur les mutations
+du catalogue. Refaire le contrôle sur une sauvegarde récente avant déploiement.
 
-- Création, saisie, commentaire, import et recalcul pour les quatre cadences.
-- Choix de la périodicité à la création d’un indicateur personnalisé, puis refus
-  de toute modification, même sans valeur enregistrée.
-- Même périodicité pour la déclaration et la visualisation, sans sélecteur de
-  restitution ni agrégation temporelle. Les sources et versions de données
-  restent séparées et conservent leurs périodes d’origine.
-- Graphiques, exports, PCAET, trajectoires, score indicatif et fiche publique du site.
+Vérifier la suite SQL `periodicite-formules.sql` et le maintien du contrat annuel
+avec `periodicite-release.sql`. Une transaction peut différer la contrainte pour
+renommer une source et mettre à jour ses formules avant le COMMIT.
 
-Avant le retour au socle annuel, vérifier que les définitions et valeurs sont
-uniquement annuelles ; interrompre la procédure si des lignes non annuelles existent.
-Ce retour annule **`indicateur/periodicite_activation` (#5215)** : son script de
-revert rétablit les contraintes annuelles et échoue atomiquement si une autre
-cadence est utilisée. Il recrée les anciennes colonnes d’agrégation à NULL.
-**`indicateur/remplacer-catalogue-periodicites-par-contraintes` reste appliquée** :
-c'est l'état cible, pas le script de revert à exécuter. Le propre revert de ce
-socle restaure le catalogue des quatre cadences et ses clés étrangères ; il ne
-constitue pas le garde-fou annuel.
-Après restauration des données, les scripts reconstruisent les dépendances des formules.
+Le retour arrière annule ces deux migrations sans modifier les données. Les
+sauvegardes de cette étape se restaurent dans une cible au même état `formulas` ;
+le contrôle vérifie aussi les fonctions et le trigger avant toute troncature.
+
+## 4. Activation des cadences — #5215
+
+L’activation des trois cadences reste une livraison distincte, après la préparation
+applicative #5481 et la validation SQL des formules ci-dessus. Les gardes annuelles
+restent actives jusque-là.
 
 ## En cas d'échec
 
