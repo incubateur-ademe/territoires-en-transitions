@@ -371,6 +371,54 @@ test('Déclarer une année persiste après rafraîchissement', async ({
   await expect(valeurs.table.getByText('2026', { exact: true })).toBeVisible();
 });
 
+test('Conserver les bornes du calendrier annuel sans décalage après enregistrement', async ({
+  page,
+  collectivites,
+  indicateurs,
+  indicateurDetailPom,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Bornes du calendrier annuel',
+    unite: 'kg',
+  });
+  await indicateurDetailPom.goto(collectiviteId, indicateurId);
+  const valeurs = new IndicateurValeursPom(page);
+  for (const year of ['9999', '0001']) {
+    await valeurs.ajouterAnneeInput.fill(year);
+    const saved = valeurs.waitForUpsertValeurResponse();
+    await valeurs.ajouterAnneeInput.press('Enter');
+    expect((await saved).request().postDataJSON()).toMatchObject({
+      periodicite: 'annuelle',
+      dateValeur: `${year}-01-01`,
+    });
+    await expect(valeurs.ajouterAnneeInput).toHaveValue('');
+  }
+  await page.reload();
+  await expect(valeurs.cell(1)).toBeVisible();
+  await expect(valeurs.cell(9999)).toBeVisible();
+  const saved = await user.getTrpcClient().indicateurs.valeurs.list.query({
+    collectiviteId,
+    indicateurIds: [indicateurId],
+    periodicite: 'annuelle',
+  });
+  expect(
+    saved.indicateurs[0].sources.collectivite.valeurs
+      .map(({ dateValeur }) => dateValeur)
+      .sort()
+  ).toEqual(['0001-01-01', '9999-01-01']);
+  await valeurs.ajouterAnneeInput.fill('0001');
+  await valeurs.ajouterAnneeInput.press('Enter');
+  await expect(
+    valeurs.table.getByText('Cette année est déjà présente dans le tableau.')
+  ).toBeVisible();
+  await expect(valeurs.cell(1)).toHaveCount(1);
+});
+
 test('Valider les années et refuser les doublons avant et après enregistrement', async ({
   page,
   collectivites,
