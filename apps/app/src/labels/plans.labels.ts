@@ -26,7 +26,9 @@ export const plansLabels = {
   planBudgetCalculSansFichesRestreintesInfo: (
     args: PlanBudgetCalculArgs
   ): string =>
-    `${planBudgetCalculInfo(args)}\nLes actions en accès restreint ne sont pas incluses non plus.`,
+    `${planBudgetCalculInfo(
+      args
+    )}\nLes actions en accès restreint ne sont pas incluses non plus.`,
   planBudgetACompleterInfo:
     'Complétez les budgets dépensés HT dans les actions pour voir le total ici.',
   planBudgetAucunVisibleInfo:
@@ -114,7 +116,9 @@ export const plansLabels = {
   planSecteursNonAttribuable: 'Non attribuable',
   planSecteursEnregistrerEtSuivante: 'Enregistrer et passer à la suivante',
   planSecteursEnregistrer: 'Enregistrer',
-  planSecteursVerifiee: 'Vérifiée',
+  planSecteursToutRenseigneTitre: 'Tout est traité',
+  planSecteursToutRenseigne:
+    'Les secteurs réglementaires de toutes les actions de ce plan sont renseignés.',
   planSecteursLectureSeule: 'Vous ne pouvez pas modifier cette action',
   planSecteursOuvrirFiche: "Ouvrir l'action",
   ficheSecteursOrigineLabels: {
