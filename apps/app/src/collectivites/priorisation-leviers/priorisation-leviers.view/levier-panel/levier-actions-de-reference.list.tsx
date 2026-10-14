@@ -111,9 +111,13 @@ const GroupedActions = ({
     (categorie) => (byCategorie[categorie] ?? []).length > 0
   );
   const hasIgnoredActions = ignored.length > 0;
+  const hasVisibleActions = categoriesWithActions.length > 0;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div
+      ref={hasVisibleActions ? undefined : actionsRef}
+      className="flex flex-col gap-6"
+    >
       {categoriesWithActions.map((categorie) => (
         <CategorieGroup
           key={categorie}
