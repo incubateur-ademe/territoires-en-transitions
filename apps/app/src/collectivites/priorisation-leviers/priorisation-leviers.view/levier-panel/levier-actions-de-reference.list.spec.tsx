@@ -3,6 +3,7 @@ import {
   aireCovoiturageAction,
   isolationComblesAction,
 } from '@/app/shared/actions-de-reference/actions-de-reference.fixture';
+import type { ActionDeReferenceId } from '@tet/domain/shared';
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Preselection, PreselectionStatus } from '../../use-preselection';
@@ -37,7 +38,7 @@ vi.mock(
 );
 
 const buildPreselection = (
-  statusOf: (actionId: string) => PreselectionStatus
+  statusOf: (actionId: ActionDeReferenceId) => PreselectionStatus
 ): Preselection => ({
   isReady: true,
   actions: [],
@@ -52,7 +53,7 @@ const buildPreselection = (
 });
 
 const renderActionsTarget = (
-  statusOf: (actionId: string) => PreselectionStatus
+  statusOf: (actionId: ActionDeReferenceId) => PreselectionStatus
 ): HTMLDivElement[] => {
   const targetElements: HTMLDivElement[] = [];
   render(
