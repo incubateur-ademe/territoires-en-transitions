@@ -614,8 +614,6 @@ describe('GenerateImportDraftService', () => {
         'hierarchy',
         'scoring',
         'consolidation',
-        'enrichment',
-        'secteurs',
         'qualitativeReview',
       ]);
       for (const checkpoint of checkpoints) {

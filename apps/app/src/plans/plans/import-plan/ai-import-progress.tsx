@@ -54,13 +54,14 @@ const toProgressPercent = (steps: ImportStepView[]) => {
   const finished = steps.filter(
     (step) => step.status === 'done' || step.status === 'skipped'
   ).length;
-  // L'étape en cours compte pour moitié : la barre bouge dès le lancement.
-  const current = steps.some((step) => step.status === 'current') ? 0.5 : 0;
+  // Une étape en cours compte pour moitié : la barre bouge dès le lancement.
+  const current =
+    steps.filter((step) => step.status === 'current').length * 0.5;
   return Math.round(((finished + current) / steps.length) * 100);
 };
 
 const ImportStepProgress = ({ steps }: { steps: ImportStepView[] }) => {
-  const currentStep = steps.find((step) => step.status === 'current');
+  const currentSteps = steps.filter((step) => step.status === 'current');
   const percent = toProgressPercent(steps);
   return (
     <div className="flex flex-col items-center gap-4">
@@ -69,7 +70,7 @@ const ImportStepProgress = ({ steps }: { steps: ImportStepView[] }) => {
         aria-live="polite"
         className="mb-0 text-lg font-bold text-primary-9"
       >
-        {currentStep ? `${stepLabels[currentStep.name]}…` : ''}
+        {currentSteps.map((step) => `${stepLabels[step.name]}…`).join(' ')}
       </p>
       <div
         role="progressbar"
