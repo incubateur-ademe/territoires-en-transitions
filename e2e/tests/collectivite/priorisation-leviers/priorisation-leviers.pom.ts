@@ -302,7 +302,6 @@ export class PriorisationLeviersPom {
   pertinenceButton(nom: Levier, action: PertinenceToggleLabel): Locator {
     return this.pertinenceToggle(nom).getByRole('button', {
       name: action,
-      exact: true,
     });
   }
 
