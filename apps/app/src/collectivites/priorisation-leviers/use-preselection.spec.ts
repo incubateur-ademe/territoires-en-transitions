@@ -22,8 +22,8 @@ const toAction = (id: number): ActionDeReference => ({
   id: toActionId(id),
   titre: `Action ${id}`,
   description: `Description ${id}`,
-  levier: 'covoiturage',
-  categorie: 'amenagement',
+  leviers: ['covoiturage'],
+  categories: ['amenagement'],
 });
 
 const {

@@ -20,8 +20,8 @@ const toAction = ({
   id: id as ActionDeReferenceId,
   titre: `Action ${id}`,
   description: `Description ${id}`,
-  levier,
-  categorie,
+  leviers: [levier],
+  categories: [categorie],
 });
 
 const covoiturageAmenagement = toAction({

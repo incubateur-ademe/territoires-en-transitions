@@ -107,8 +107,8 @@ describe('listFiches d une action de référence', () => {
       .values({
         titre: `e2e-fiches-action-de-reference-${Date.now()}-${Math.random()}`,
         description: 'Action de référence pour le test',
-        levier: 'covoiturage',
-        categorie: 'gouvernance',
+        leviers: ['covoiturage'],
+        categories: ['gouvernance'],
       })
       .returning();
     onTestFinished(async () => {

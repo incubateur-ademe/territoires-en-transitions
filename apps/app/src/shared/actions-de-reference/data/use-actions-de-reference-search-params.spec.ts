@@ -84,14 +84,14 @@ const renderSearchParamsAt = (
 describe('recherche-partageable-par-url', () => {
   it("lit le texte, les leviers, les catégories et le tri depuis les paramètres de l'URL", () => {
     const { readSearch } = renderSearchParamsAt(
-      '?searchedText=combles&leviers=covoiturage,gestion_haies&categories=financement,gouvernance&sortBy=levier'
+      '?searchedText=combles&leviers=covoiturage,gestion_haies&categories=financement,gouvernance&sortBy=leviers'
     );
 
     expect(readSearch()).toEqual({
       searchedText: 'combles',
       leviers: ['covoiturage', 'gestion_haies'],
       categories: ['financement', 'gouvernance'],
-      sortBy: 'levier',
+      sortBy: 'leviers',
     });
   });
 
@@ -115,7 +115,7 @@ describe('recherche-partageable-par-url', () => {
     changeSearch({
       leviers: ['covoiturage', 'gestion_haies'],
       categories: ['financement'],
-      sortBy: 'categorie',
+      sortBy: 'categories',
     });
     const secondWrite = await waitForUrlWriteCount(2);
 
@@ -129,7 +129,7 @@ describe('recherche-partageable-par-url', () => {
           searchedText: 'Combles isolés',
           leviers: 'covoiturage,gestion_haies',
           categories: 'financement',
-          sortBy: 'categorie',
+          sortBy: 'categories',
         },
         history: 'replace',
       },
@@ -137,14 +137,14 @@ describe('recherche-partageable-par-url', () => {
         searchedText: 'Combles isolés',
         leviers: ['covoiturage', 'gestion_haies'],
         categories: ['financement'],
-        sortBy: 'categorie',
+        sortBy: 'categories',
       },
     });
   });
 
   it('cumule deux changements demandés coup sur coup', async () => {
     const { readSearch, changeSearchWithinSameRender, waitForUrlWriteCount } =
-      renderSearchParamsAt('?sortBy=levier');
+      renderSearchParamsAt('?sortBy=leviers');
 
     changeSearchWithinSameRender([
       { searchedText: 'combles' },
@@ -157,7 +157,7 @@ describe('recherche-partageable-par-url', () => {
         query: {
           searchedText: 'combles',
           leviers: 'covoiturage',
-          sortBy: 'levier',
+          sortBy: 'leviers',
         },
         history: 'replace',
       },
@@ -165,14 +165,14 @@ describe('recherche-partageable-par-url', () => {
         searchedText: 'combles',
         leviers: ['covoiturage'],
         categories: [],
-        sortBy: 'levier',
+        sortBy: 'leviers',
       },
     });
   });
 
   it('cumule des changements de plusieurs filtres demandés coup sur coup', async () => {
     const { readSearch, changeSearchWithinSameRender, waitForUrlWriteCount } =
-      renderSearchParamsAt('?view=grid&sortBy=levier');
+      renderSearchParamsAt('?view=grid&sortBy=leviers');
 
     changeSearchWithinSameRender([
       { searchedText: 'combles', leviers: ['covoiturage'] },
@@ -202,7 +202,7 @@ describe('recherche-partageable-par-url', () => {
 
   it("laisse dans l'URL un filtre passé sans valeur", async () => {
     const { readSearch, changeSearch, waitForUrlWriteCount } =
-      renderSearchParamsAt('?searchedText=combles&sortBy=levier');
+      renderSearchParamsAt('?searchedText=combles&sortBy=leviers');
 
     changeSearch({ searchedText: undefined, leviers: ['covoiturage'] });
     const write = await waitForUrlWriteCount(1);
@@ -212,7 +212,7 @@ describe('recherche-partageable-par-url', () => {
         query: {
           searchedText: 'combles',
           leviers: 'covoiturage',
-          sortBy: 'levier',
+          sortBy: 'leviers',
         },
         history: 'replace',
       },
@@ -220,7 +220,7 @@ describe('recherche-partageable-par-url', () => {
         searchedText: 'combles',
         leviers: ['covoiturage'],
         categories: [],
-        sortBy: 'levier',
+        sortBy: 'leviers',
       },
     });
   });
@@ -228,7 +228,7 @@ describe('recherche-partageable-par-url', () => {
   it("retire de l'URL un filtre vidé et le tri par titre", async () => {
     const { readSearch, changeSearch, waitForUrlWriteCount } =
       renderSearchParamsAt(
-        '?searchedText=combles&leviers=covoiturage&categories=financement&sortBy=levier'
+        '?searchedText=combles&leviers=covoiturage&categories=financement&sortBy=leviers'
       );
 
     changeSearch({ leviers: [], categories: [], sortBy: 'titre' });
@@ -276,7 +276,7 @@ describe('filtre-url-inconnu-ignore', () => {
 
   it('ne réécrit pas une URL dont toutes les valeurs sont connues', async () => {
     const { readUrlWriteCount } = renderSearchParamsAt(
-      '?view=grid&searchedText=combles&leviers=covoiturage,gestion_haies&categories=financement&sortBy=levier',
+      '?view=grid&searchedText=combles&leviers=covoiturage,gestion_haies&categories=financement&sortBy=leviers',
       { hasUrlMemory: false }
     );
 
@@ -290,7 +290,7 @@ describe('aucune-action-trouvee', () => {
   it('resetSearch efface le texte, les leviers et les catégories et ramène le tri au titre', async () => {
     const { readSearch, resetSearch, waitForUrlWriteCount } =
       renderSearchParamsAt(
-        '?searchedText=combles&leviers=covoiturage&categories=financement&sortBy=levier'
+        '?searchedText=combles&leviers=covoiturage&categories=financement&sortBy=leviers'
       );
 
     resetSearch();

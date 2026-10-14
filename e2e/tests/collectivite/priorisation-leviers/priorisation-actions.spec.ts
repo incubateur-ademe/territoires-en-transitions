@@ -18,22 +18,22 @@ const toCovoiturageActions = (
   {
     titre: withRunSuffix('Voie réservée au covoiturage', runToken),
     description: 'Réserver une voie aux véhicules à plusieurs occupants.',
-    levier: 'covoiturage',
-    categorie: 'amenagement',
+    leviers: ['covoiturage'],
+    categories: ['amenagement'],
   },
   {
     titre: withRunSuffix('Prime au covoiturage domicile-travail', runToken),
     description: 'Verser une prime aux salariés qui covoiturent.',
-    levier: 'covoiturage',
-    categorie: 'financement',
+    leviers: ['covoiturage'],
+    categories: ['financement'],
   },
 ];
 
 const toBiogazAction = (runToken: string): NewActionDeReference => ({
   titre: withRunSuffix('Unité de méthanisation territoriale', runToken),
   description: 'Accompagner un projet de méthanisation agricole.',
-  levier: 'biogaz',
-  categorie: 'gouvernance',
+  leviers: ['biogaz'],
+  categories: ['gouvernance'],
 });
 
 test.describe('Priorisation : matrice et volet', () => {
@@ -130,8 +130,9 @@ test.describe('Priorisation : matrice et volet', () => {
   test(
     'un levier sans action de référence le dit',
     { tag: '@serial' },
-    async ({ collectivites, actionsDeReference, page }) => {
-      await actionsDeReference.removeAll();
+    async ({ collectivites, page }) => {
+      const levierSansAction: Levier =
+        LEVIER_NOM_BY_ID.batiments_machines_agricoles;
       const { collectivite } = await collectivites.addCollectiviteAndUser({
         userArgs: { autoLogin: true },
       });
@@ -139,9 +140,9 @@ test.describe('Priorisation : matrice et volet', () => {
       const pom = new PriorisationLeviersPom(page);
       await pom.goto(collectivite.data.id);
 
-      await pom.openLevier(LEVIER_NOM);
+      await pom.openLevier(levierSansAction);
 
-      await expect(pom.noActionMessage(LEVIER_NOM)).toBeVisible();
+      await expect(pom.noActionMessage(levierSansAction)).toBeVisible();
     }
   );
 

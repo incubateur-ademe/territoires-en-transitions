@@ -10,7 +10,7 @@ import {
   UpdateActionDeReferenceOutput,
 } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, asc, eq, inArray, or, SQL, sql } from 'drizzle-orm';
+import { and, asc, eq, or, SQL, sql } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import { isUndefined, omitBy } from 'es-toolkit';
 import { match } from 'ts-pattern';
@@ -25,15 +25,27 @@ const selectedActionColumns = {
   id: actionDeReferenceTable.id,
   titre: actionDeReferenceTable.titre,
   description: actionDeReferenceTable.description,
-  levier: actionDeReferenceTable.levier,
-  categorie: actionDeReferenceTable.categorie,
+  leviers: actionDeReferenceTable.leviers,
+  categories: actionDeReferenceTable.categories,
 };
 
 const containsSearchedText = (column: PgColumn, searchedText: string): SQL =>
   sql`strpos(lower(unaccent(${column})), lower(unaccent(${searchedText}))) > 0`;
 
-const ascendingByIdentifier = (column: PgColumn): SQL =>
-  asc(sql`${column}::text collate "C"`);
+const ascendingByFirstElement = (column: PgColumn): SQL =>
+  asc(sql`(${column}[1])::text collate "C"`);
+
+const leviersLiteral = (leviers: readonly string[]): SQL =>
+  sql`ARRAY[${sql.join(
+    leviers.map((levier) => sql`${levier}`),
+    sql`, `
+  )}]::levier_ges_id[]`;
+
+const categoriesLiteral = (categories: readonly string[]): SQL =>
+  sql`ARRAY[${sql.join(
+    categories.map((categorie) => sql`${categorie}`),
+    sql`, `
+  )}]::volet_categorie[]`;
 
 const toMatchingCondition = (
   input: ListActionsDeReferenceInput
@@ -54,11 +66,15 @@ const toMatchingCondition = (
   const leviersCondition =
     input.leviers === undefined
       ? undefined
-      : inArray(actionDeReferenceTable.levier, input.leviers);
+      : sql`${actionDeReferenceTable.leviers} && ${leviersLiteral(
+          input.leviers
+        )}`;
   const categoriesCondition =
     input.categories === undefined
       ? undefined
-      : inArray(actionDeReferenceTable.categorie, input.categories);
+      : sql`${actionDeReferenceTable.categories} && ${categoriesLiteral(
+          input.categories
+        )}`;
 
   return and(searchedTextCondition, or(leviersCondition, categoriesCondition));
 };
@@ -67,18 +83,18 @@ const toOrderBy = (sortBy: ListActionsDeReferenceInput['sortBy']): SQL[] =>
   match(sortBy)
     .with('titre', () => [
       asc(actionDeReferenceTable.titre),
-      ascendingByIdentifier(actionDeReferenceTable.levier),
-      ascendingByIdentifier(actionDeReferenceTable.categorie),
+      ascendingByFirstElement(actionDeReferenceTable.leviers),
+      ascendingByFirstElement(actionDeReferenceTable.categories),
     ])
-    .with('levier', () => [
-      ascendingByIdentifier(actionDeReferenceTable.levier),
+    .with('leviers', () => [
+      ascendingByFirstElement(actionDeReferenceTable.leviers),
       asc(actionDeReferenceTable.titre),
-      ascendingByIdentifier(actionDeReferenceTable.categorie),
+      ascendingByFirstElement(actionDeReferenceTable.categories),
     ])
-    .with('categorie', () => [
-      ascendingByIdentifier(actionDeReferenceTable.categorie),
+    .with('categories', () => [
+      ascendingByFirstElement(actionDeReferenceTable.categories),
       asc(actionDeReferenceTable.titre),
-      ascendingByIdentifier(actionDeReferenceTable.levier),
+      ascendingByFirstElement(actionDeReferenceTable.leviers),
     ])
     .exhaustive();
 

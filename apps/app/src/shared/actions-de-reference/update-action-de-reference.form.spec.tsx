@@ -217,8 +217,8 @@ describe('modifier-action', () => {
         id: isolationComblesAction.id,
         titre: TYPED_TITRE,
         description: TYPED_DESCRIPTION,
-        levier: 'covoiturage',
-        categorie: 'amenagement',
+        leviers: ['sobriete_isolation_batiments_tertiaire', 'covoiturage'],
+        categories: ['amenagement', 'exemplarite'],
       },
       updateCallbacks
     );
@@ -236,14 +236,14 @@ describe('modifier-action', () => {
         id: isolationComblesAction.id,
         titre: TYPED_TITRE,
         description: TYPED_DESCRIPTION,
-        levier: isolationComblesAction.levier,
-        categorie: isolationComblesAction.categorie,
+        leviers: isolationComblesAction.leviers,
+        categories: isolationComblesAction.categories,
       },
       updateCallbacks
     );
   });
 
-  it('garde le levier quand sa valeur en cours est choisie à nouveau', async () => {
+  it("affiche l'erreur et n'envoie rien quand le seul levier est retiré", async () => {
     renderForm();
     const levierLabel = LEVIER_NOM_BY_ID.sobriete_isolation_batiments_tertiaire;
 
@@ -251,8 +251,10 @@ describe('modifier-action', () => {
       selectedLabel: levierLabel,
       optionLabel: levierLabel,
     });
+    await submitForm();
 
-    expect(listSelectedLabels()).toEqual([levierLabel, CATEGORIE_EXEMPLARITE]);
+    expect(updateActionMock).not.toHaveBeenCalled();
+    expect(screen.queryByText(REQUIRED_FIELD_MESSAGE)).not.toBeNull();
   });
 
   it('signale la mise à jour quand la modification est acceptée', async () => {
