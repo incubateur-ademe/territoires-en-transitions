@@ -9,6 +9,7 @@ import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/de
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { AxeModule } from '@tet/backend/plans/axes/axe.module';
 import { CompletePlanSecteursModule } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
+import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
@@ -138,6 +139,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     IndicateursModule,
     PlanModule,
     CompletePlanSecteursModule,
+    FichesModule,
     AxeModule,
     NotificationsModule,
     TrackingModule,

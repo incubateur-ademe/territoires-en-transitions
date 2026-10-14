@@ -6,6 +6,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { createFicheAndCleanupFunction } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -94,6 +95,45 @@ describe('Lister les plans', () => {
       expect(Array.isArray(plan?.referents)).toBe(true);
       expect(plan?.pilotes).toBeDefined();
       expect(Array.isArray(plan?.pilotes)).toBe(true);
+    });
+
+    test('Le total des actions compte les sous-actions, comme l’en-tête du plan', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const { id: planId } = await caller.plans.plans.create({
+        nom: 'Plan avec sous-action',
+        collectiviteId: collectivite.id,
+      });
+      const mere = await createFicheAndCleanupFunction({
+        caller,
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Action mère',
+          axeId: planId,
+        },
+      });
+      const sousAction = await createFicheAndCleanupFunction({
+        caller,
+        ficheInput: {
+          collectiviteId: collectivite.id,
+          titre: 'Sous-action',
+          parentId: mere.ficheId,
+          axeId: planId,
+        },
+      });
+      onTestFinished(async () => {
+        await sousAction.ficheCleanup();
+        await mere.ficheCleanup();
+        await caller.plans.plans.delete({ planId });
+      });
+
+      const result = await caller.plans.plans.list({
+        collectiviteId: collectivite.id,
+      });
+
+      const plan = result.plans.find((p) => p.id === planId);
+      expect(plan?.totalFiches).toBe(2);
+      expect((await caller.plans.plans.get({ planId })).totalFiches).toBe(2);
     });
 
     test('Lister avec succès plusieurs plans', async () => {

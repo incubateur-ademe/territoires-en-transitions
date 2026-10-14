@@ -155,6 +155,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     ListFichesService,
     ListFichesRouter,
     ListFichesBudgetRepository,
+    ListFichesBelongingToPlansRepository,
     CountByService,
     CreateFicheService,
     CreateFicheRouter,

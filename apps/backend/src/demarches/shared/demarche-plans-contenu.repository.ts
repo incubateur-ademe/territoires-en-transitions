@@ -3,6 +3,7 @@ import { DemarchePlanActionsRepository } from './demarche-plan-actions.repositor
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ListAxesRepository } from '@tet/backend/plans/axes/list-axes/list-axes.repository';
+import { ListFichesBelongingToPlansRepository } from '@tet/backend/plans/fiches/list-fiches/list-fiches-belonging-to-plans.repository';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { PlanStatus, PlanStatusEnum } from '@tet/domain/plans';
@@ -24,7 +25,8 @@ export class DemarchePlansContenuRepository {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
-    private readonly listAxesRepository: ListAxesRepository
+    private readonly listAxesRepository: ListAxesRepository,
+    private readonly listFichesBelongingToPlansRepository: ListFichesBelongingToPlansRepository
   ) {}
 
   async listPlansAvecContenu(
@@ -88,8 +90,17 @@ export class DemarchePlansContenuRepository {
         continue;
       }
 
+      // L'arbre écarte les sous-fiches, que l'en-tête du plan compte : le
+      // décompte reprend la même source que lui pour afficher le même chiffre.
+      const fichesDuPlan =
+        await this.listFichesBelongingToPlansRepository.listFichesBelongingToPlans(
+          { planIds: [planId] },
+          { tx }
+        );
+      const ficheIdsDuPlan = fichesDuPlan.map(({ ficheId }) => ficheId);
+
       const fiches = await this.getFiches(
-        axesResult.data.flatMap((axe) => axe.fiches),
+        [...axesResult.data.flatMap((axe) => axe.fiches), ...ficheIdsDuPlan],
         tx
       );
       const isReadable = (id: number) =>
@@ -107,12 +118,8 @@ export class DemarchePlansContenuRepository {
         id: planId,
         nom: racines.get(planId)?.nom ?? null,
         status: racines.get(planId)?.status ?? PlanStatusEnum.ACTIVE,
-        // Compté sur l'arbre, pas en base : une même fiche peut être rangée
-        // dans plusieurs axes, et le décompte doit suivre les mêmes exclusions
-        // que le contenu affiché.
-        nbFiches: new Set(
-          axesResult.data.flatMap((axe) => axe.fiches).filter(isReadable)
-        ).size,
+        // Une même fiche peut être rangée dans plusieurs axes.
+        nbFiches: new Set(ficheIdsDuPlan.filter(isReadable)).size,
         fiches: toFiches(racine?.fiches ?? []),
         axes: sousAxes.map((axe) => ({
           id: axe.id,

@@ -3,6 +3,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
+import { ListFichesBelongingToPlansRepository } from '../../fiches/list-fiches/list-fiches-belonging-to-plans.repository';
 import { GetPlanRepository } from '../get-plan/get-plan.repository';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';
@@ -18,7 +19,8 @@ export class ListPlansService {
     private readonly listPlansRepository: ListPlansRepository,
     private readonly getPlanService: GetPlanService,
     private readonly listAxesService: ListAxesService,
-    private readonly getPlanRepository: GetPlanRepository
+    private readonly getPlanRepository: GetPlanRepository,
+    private readonly listFichesBelongingToPlansRepository: ListFichesBelongingToPlansRepository
   ) {}
 
   async listPlans(
@@ -88,6 +90,14 @@ export class ListPlansService {
           : null;
         const status = rootAxe.status;
 
+        // Les axes écartent les sous-fiches : le total suit l'en-tête du plan,
+        // qui les compte.
+        const fiches =
+          await this.listFichesBelongingToPlansRepository.listFichesBelongingToPlans(
+            { planIds: [planId] },
+            { tx }
+          );
+
         return {
           id: planId,
           nom: rootAxe.nom,
@@ -100,6 +110,7 @@ export class ListPlansService {
           source,
           verifiedAt,
           status,
+          totalFiches: new Set(fiches.map(({ ficheId }) => ficheId)).size,
         } as Plan;
       })
     );
