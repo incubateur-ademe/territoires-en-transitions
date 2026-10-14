@@ -98,13 +98,13 @@ describe('load-data', () => {
   const insertRawAction = (values: {
     titre: SQL;
     description: SQL;
-    levier: SQL;
-    categorie: SQL;
+    leviers: SQL;
+    categories: SQL;
   }): Promise<void> =>
     db.db.transaction(async (tx) => {
       await tx.execute(
-        sql`insert into action_de_reference (titre, description, levier, categorie)
-            values (${values.titre}, ${values.description}, ${values.levier}, ${values.categorie})`
+        sql`insert into action_de_reference (titre, description, leviers, categories)
+            values (${values.titre}, ${values.description}, ${values.leviers}, ${values.categories})`
       );
       tx.rollback();
     });
@@ -112,8 +112,8 @@ describe('load-data', () => {
   const validRawValues = {
     titre: sql`${toTestTitre('valide')}`,
     description: sql`${'une description'}`,
-    levier: sql`'sobriete_batiments_residentiel'`,
-    categorie: sql`'amenagement'`,
+    leviers: sql`'{sobriete_batiments_residentiel}'::levier_ges_id[]`,
+    categories: sql`'{amenagement}'::volet_categorie[]`,
   };
 
   const runLoadFileWithPsql = async (searchedSchema: string): Promise<void> => {
@@ -166,7 +166,7 @@ describe('load-data', () => {
 
   const listActionsOf = async (table: SQL): Promise<LoadedAction[]> => {
     const { rows } = await db.db.execute(
-      sql`select titre, description, levier, categorie from ${table}`
+      sql`select titre, description, leviers::text[] as leviers, categories::text[] as categories from ${table}`
     );
     return loadedActionsSchema.parse(rows);
   };
@@ -180,8 +180,8 @@ describe('load-data', () => {
       .select({
         titre: actionDeReferenceTable.titre,
         description: actionDeReferenceTable.description,
-        levier: actionDeReferenceTable.levier,
-        categorie: actionDeReferenceTable.categorie,
+        leviers: actionDeReferenceTable.leviers,
+        categories: actionDeReferenceTable.categories,
       })
       .from(actionDeReferenceTable);
 
@@ -189,13 +189,13 @@ describe('load-data', () => {
     expect(seededActions).toEqual(expect.arrayContaining(loadedActions));
   });
 
-  it('la table refuse une seconde action avec le même levier, la même catégorie et le même titre', async () => {
-    const action = {
+  it('la table refuse une seconde action avec le même titre', async () => {
+    const action: typeof actionDeReferenceTable.$inferInsert = {
       titre: toTestTitre('doublon'),
       description: 'une description',
-      levier: 'sobriete_batiments_residentiel',
-      categorie: 'amenagement',
-    } as const;
+      leviers: ['sobriete_batiments_residentiel'],
+      categories: ['amenagement'],
+    };
 
     await runInRolledBackTransaction(async (tx) => {
       await tx.insert(actionDeReferenceTable).values(action);
@@ -207,7 +207,7 @@ describe('load-data', () => {
       ).rejects.toMatchObject({
         cause: {
           code: PgIntegrityConstraintViolation.UniqueViolation,
-          constraint: 'action_de_reference_unique',
+          constraint: 'action_de_reference_titre_unique',
         },
       });
     });
@@ -301,8 +301,8 @@ describe('load-data', () => {
           .values({
             titre: '😀'.repeat(300),
             description: 'une description',
-            levier: 'sobriete_batiments_residentiel',
-            categorie: 'amenagement',
+            leviers: ['sobriete_batiments_residentiel'],
+            categories: ['amenagement'],
           })
           .returning({ id: actionDeReferenceTable.id })
       ).resolves.toEqual([{ id: expect.any(Number) }]);
@@ -311,14 +311,17 @@ describe('load-data', () => {
 
   it('la table refuse un levier ou une catégorie hors liste', async () => {
     await expect(
-      insertRawAction({ ...validRawValues, levier: sql`'levier_inconnu'` })
+      insertRawAction({
+        ...validRawValues,
+        leviers: sql`'{levier_inconnu}'::levier_ges_id[]`,
+      })
     ).rejects.toMatchObject({
       cause: { code: PgDataException.InvalidTextRepresentation },
     });
     await expect(
       insertRawAction({
         ...validRawValues,
-        categorie: sql`'categorie_inconnue'`,
+        categories: sql`'{categorie_inconnue}'::volet_categorie[]`,
       })
     ).rejects.toMatchObject({
       cause: { code: PgDataException.InvalidTextRepresentation },

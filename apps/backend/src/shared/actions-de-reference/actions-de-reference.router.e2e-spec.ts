@@ -30,8 +30,8 @@ const actionDeReferenceColumns = {
   id: actionDeReferenceTable.id,
   titre: actionDeReferenceTable.titre,
   description: actionDeReferenceTable.description,
-  levier: actionDeReferenceTable.levier,
-  categorie: actionDeReferenceTable.categorie,
+  leviers: actionDeReferenceTable.leviers,
+  categories: actionDeReferenceTable.categories,
 };
 
 let app: INestApplication;
@@ -74,14 +74,14 @@ const toUniqueActions = (): {
     carpoolingAction: {
       titre: `Organiser le covoiturage ${searchedTitre}`,
       description: "Mettre en relation les salariés des zones d'activité",
-      levier: 'covoiturage',
-      categorie: 'gouvernance',
+      leviers: ['covoiturage'],
+      categories: ['gouvernance'],
     },
     atticInsulationAction: {
       titre: `Isoler les combles ${searchedTitre}`,
       description: 'Réduire les pertes de chaleur par la toiture',
-      levier: 'sobriete_batiments_residentiel',
-      categorie: 'amenagement',
+      leviers: ['sobriete_batiments_residentiel'],
+      categories: ['amenagement'],
     },
   };
 };
@@ -247,8 +247,8 @@ describe('update-action', () => {
     const changes = {
       titre: `Développer l'autopartage ${searchedTitre}`,
       description: 'Mettre des véhicules partagés à disposition',
-      levier: 'sobriete_batiments_residentiel',
-      categorie: 'financement',
+      leviers: ['sobriete_batiments_residentiel'],
+      categories: ['financement'],
     } satisfies ActionToInsert;
     const caller = router.createCaller({ user: superAdmin });
 
@@ -324,7 +324,7 @@ describe('update-action', () => {
     );
   });
 
-  it('refuse en CONFLICT un triplet levier, catégorie, titre déjà porté par une autre action', async () => {
+  it('refuse en CONFLICT un titre déjà porté par une autre action', async () => {
     const { carpoolingAction, atticInsulationAction } = toUniqueActions();
     const [, insertedAtticInsulationAction] = await insertActions([
       carpoolingAction,
@@ -336,14 +336,11 @@ describe('update-action', () => {
       caller.shared.actionsDeReference.update({
         id: insertedAtticInsulationAction.id,
         titre: carpoolingAction.titre,
-        levier: carpoolingAction.levier,
-        categorie: carpoolingAction.categorie,
       })
     ).rejects.toThrow(
       expect.objectContaining({
         code: 'CONFLICT',
-        message:
-          'Une action de référence porte déjà ce titre pour ce levier et cette catégorie',
+        message: 'Une action de référence porte déjà ce titre',
       })
     );
     expect(await readStoredAction(insertedAtticInsulationAction.id)).toEqual([
@@ -373,14 +370,14 @@ describe('update-action', () => {
       caller.shared.actionsDeReference.update({
         id: insertedAction.id,
         // @ts-expect-error levier hors liste envoyé exprès
-        levier: 'levier_inconnu',
+        leviers: ['levier_inconnu'],
       })
     ).rejects.toThrow(badRequest);
     await expect(
       caller.shared.actionsDeReference.update({
         id: insertedAction.id,
         // @ts-expect-error catégorie hors liste envoyée exprès
-        categorie: 'categorie_inconnue',
+        categories: ['categorie_inconnue'],
       })
     ).rejects.toThrow(badRequest);
     expect(await readStoredAction(insertedAction.id)).toEqual([insertedAction]);

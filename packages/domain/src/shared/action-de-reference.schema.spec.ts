@@ -13,16 +13,16 @@ describe('list-actions', () => {
 
   it('accepte un tri par levier ou par catégorie', () => {
     const byLevier = listActionsDeReferenceInputSchema.safeParse({
-      sortBy: 'levier',
+      sortBy: 'leviers',
     });
     const byCategorie = listActionsDeReferenceInputSchema.safeParse({
-      sortBy: 'categorie',
+      sortBy: 'categories',
     });
 
-    expect(byLevier).toEqual({ success: true, data: { sortBy: 'levier' } });
+    expect(byLevier).toEqual({ success: true, data: { sortBy: 'leviers' } });
     expect(byCategorie).toEqual({
       success: true,
-      data: { sortBy: 'categorie' },
+      data: { sortBy: 'categories' },
     });
   });
 
@@ -51,7 +51,7 @@ describe('list-actions', () => {
       searchedText: 'vélo',
       leviers: ['velo_transport_commun'],
       categories: ['amenagement', 'financement'],
-      sortBy: 'levier',
+      sortBy: 'leviers',
     });
 
     expect(result).toEqual({
@@ -60,7 +60,7 @@ describe('list-actions', () => {
         searchedText: 'vélo',
         leviers: ['velo_transport_commun'],
         categories: ['amenagement', 'financement'],
-        sortBy: 'levier',
+        sortBy: 'leviers',
       },
     });
   });
@@ -136,8 +136,8 @@ describe('update-action', () => {
       id: 12,
       titre: 'Créer des pistes cyclables',
       description: 'Relier les communes du territoire',
-      levier: 'velo_transport_commun',
-      categorie: 'amenagement',
+      leviers: ['velo_transport_commun'],
+      categories: ['amenagement'],
     });
 
     expect(result).toEqual({
@@ -146,8 +146,8 @@ describe('update-action', () => {
         id: 12,
         titre: 'Créer des pistes cyclables',
         description: 'Relier les communes du territoire',
-        levier: 'velo_transport_commun',
-        categorie: 'amenagement',
+        leviers: ['velo_transport_commun'],
+        categories: ['amenagement'],
       },
     });
   });
@@ -260,24 +260,24 @@ describe('update-action', () => {
   it('refuse un levier hors liste', () => {
     const result = updateActionDeReferenceInputSchema.safeParse({
       id: 12,
-      levier: 'teletravail',
+      leviers: ['teletravail'],
     });
 
     expect(result).toMatchObject({
       success: false,
-      error: { issues: [{ path: ['levier'], code: 'invalid_value' }] },
+      error: { issues: [{ path: ['leviers', 0], code: 'invalid_value' }] },
     });
   });
 
   it('refuse une catégorie hors liste', () => {
     const result = updateActionDeReferenceInputSchema.safeParse({
       id: 12,
-      categorie: 'communication',
+      categories: ['communication'],
     });
 
     expect(result).toMatchObject({
       success: false,
-      error: { issues: [{ path: ['categorie'], code: 'invalid_value' }] },
+      error: { issues: [{ path: ['categories', 0], code: 'invalid_value' }] },
     });
   });
 

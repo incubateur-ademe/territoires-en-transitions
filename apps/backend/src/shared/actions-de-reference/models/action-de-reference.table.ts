@@ -17,8 +17,6 @@ export const actionDeReferenceTable = pgTable(
       .$type<ActionDeReferenceId>(),
     titre: text('titre').notNull(),
     description: text('description').notNull(),
-    levier: levierGesIdPgEnum('levier').notNull(),
-    categorie: voletCategoriePgEnum('categorie').notNull(),
     leviers: levierGesIdPgEnum('leviers').array().notNull().default([]),
     categories: voletCategoriePgEnum('categories')
       .array()
@@ -26,11 +24,7 @@ export const actionDeReferenceTable = pgTable(
       .default([]),
   },
   (table) => [
-    unique('action_de_reference_unique').on(
-      table.levier,
-      table.categorie,
-      table.titre
-    ),
+    unique('action_de_reference_titre_unique').on(table.titre),
     check(
       'action_de_reference_titre_non_vide',
       sql`${table.titre} <> '' AND ${table.titre} = btrim(${table.titre}, ${whitespaceTrimmedByJsLiteral})`

@@ -14,8 +14,8 @@ export const isolationComblesAction: ActionDeReference =
     titre: 'Isoler les combles perdus des bâtiments communaux',
     description:
       "Programmer l'isolation des combles perdus des écoles et des équipements sportifs.",
-    levier: 'sobriete_isolation_batiments_tertiaire',
-    categorie: 'exemplarite',
+    leviers: ['sobriete_isolation_batiments_tertiaire'],
+    categories: ['exemplarite'],
   });
 
 export const aireCovoiturageAction: ActionDeReference =
@@ -24,8 +24,8 @@ export const aireCovoiturageAction: ActionDeReference =
     titre: 'Aménager des aires de covoiturage',
     description:
       'Créer des aires de covoiturage aux entrées du territoire et les signaler.',
-    levier: 'covoiturage',
-    categorie: 'amenagement',
+    leviers: ['covoiturage'],
+    categories: ['amenagement'],
   });
 
 export const longDescriptionAction: ActionDeReference =
@@ -38,8 +38,8 @@ export const longDescriptionAction: ActionDeReference =
       'Accompagner la valorisation du bois de taille en plaquettes pour les chaufferies collectives.',
       'Suivre chaque année le linéaire planté, le taux de reprise et le carbone stocké.',
     ].join('\n\n'),
-    levier: 'gestion_haies',
-    categorie: 'financement',
+    leviers: ['gestion_haies'],
+    categories: ['financement'],
   });
 
 type FicheFixtureInput = Pick<

@@ -296,7 +296,7 @@ describe('trier-actions', () => {
   });
 
   it('affiche le tri en cours', () => {
-    renderFilters({ sortBy: 'levier' });
+    renderFilters({ sortBy: 'leviers' });
 
     expect(
       within(screen.getByRole('group', { name: SORT_GROUP })).getByRole(
@@ -313,12 +313,12 @@ describe('trier-actions', () => {
     chooseOption('Catégorie');
 
     expect(onSearchChange).toHaveBeenCalledExactlyOnceWith({
-      sortBy: 'categorie',
+      sortBy: 'categories',
     });
   });
 
   it('ne transmet rien quand le tri en cours est choisi à nouveau', () => {
-    const { onSearchChange } = renderFilters({ sortBy: 'levier' });
+    const { onSearchChange } = renderFilters({ sortBy: 'leviers' });
 
     openMenuOf(SORT_GROUP);
     chooseOption('Levier');

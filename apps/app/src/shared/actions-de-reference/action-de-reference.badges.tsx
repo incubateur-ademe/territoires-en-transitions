@@ -15,20 +15,26 @@ const ActionDeReferenceBadges = ({
 }): JSX.Element => (
   <div className={cn('flex flex-wrap gap-2', hasUpdateButton && 'pr-8')}>
     {showAdemeBadge && <ActionDeReferenceAdemeBadge />}
-    <Badge
-      title={LEVIER_NOM_BY_ID[action.levier]}
-      size="sm"
-      type="outlined"
-      trim={false}
-      uppercase={false}
-    />
-    <Badge
-      title={appLabels.categorieActionLabel(action.categorie)}
-      size="sm"
-      variant="info"
-      trim={false}
-      uppercase={false}
-    />
+    {action.leviers.map((levier) => (
+      <Badge
+        key={levier}
+        title={LEVIER_NOM_BY_ID[levier]}
+        size="sm"
+        type="outlined"
+        trim={false}
+        uppercase={false}
+      />
+    ))}
+    {action.categories.map((categorie) => (
+      <Badge
+        key={categorie}
+        title={appLabels.categorieActionLabel(categorie)}
+        size="sm"
+        variant="info"
+        trim={false}
+        uppercase={false}
+      />
+    ))}
   </div>
 );
 

@@ -10,8 +10,7 @@ export const actionsDeReferenceErrorConfig: TrpcErrorHandlerConfig<ActionsDeRefe
       },
       ACTION_DE_REFERENCE_CONFLICT: {
         code: 'CONFLICT',
-        message:
-          'Une action de référence porte déjà ce titre pour ce levier et cette catégorie',
+        message: 'Une action de référence porte déjà ce titre',
       },
       FICHE_NOT_FOUND: {
         code: 'BAD_REQUEST',

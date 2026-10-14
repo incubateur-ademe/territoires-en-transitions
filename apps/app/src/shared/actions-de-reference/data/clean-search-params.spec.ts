@@ -70,7 +70,7 @@ describe('invariants', () => {
         searchedText: 'combles',
         leviers: 'covoiturage,gestion_haies',
         categories: 'financement,gouvernance',
-        sortBy: 'levier',
+        sortBy: 'leviers',
       })
     );
 
@@ -78,7 +78,7 @@ describe('invariants', () => {
       searchedText: 'combles',
       leviers: 'covoiturage,gestion_haies',
       categories: 'financement,gouvernance',
-      sortBy: 'levier',
+      sortBy: 'leviers',
     });
   });
 
@@ -116,10 +116,10 @@ describe('invariants', () => {
 
   it('retire un texte cherché vide', () => {
     const cleaned = cleanSearchParams(
-      new URLSearchParams({ searchedText: '', sortBy: 'levier' })
+      new URLSearchParams({ searchedText: '', sortBy: 'leviers' })
     );
 
-    expect(toRecord(cleaned)).toEqual({ sortBy: 'levier' });
+    expect(toRecord(cleaned)).toEqual({ sortBy: 'leviers' });
   });
 
   it('ne modifie pas les paramètres reçus', () => {

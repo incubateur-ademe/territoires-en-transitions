@@ -23,50 +23,50 @@ type ActionToInsert = Omit<ActionDeReference, 'id'>;
 const atticInsulationAction: ActionToInsert = {
   titre: 'Isoler les combles',
   description: 'Réduire les pertes de chaleur par la toiture',
-  levier: 'sobriete_batiments_residentiel',
-  categorie: 'amenagement',
+  leviers: ['sobriete_batiments_residentiel'],
+  categories: ['amenagement'],
 };
 
 const carpoolingAction: ActionToInsert = {
   titre: 'Organiser le covoiturage domicile-travail',
   description: "Mettre en relation les salariés des zones d'activité",
-  levier: 'covoiturage',
-  categorie: 'gouvernance',
+  leviers: ['covoiturage'],
+  categories: ['gouvernance'],
 };
 
 const streetLightingAction: ActionToInsert = {
   titre: "Éteindre l'éclairage public la nuit",
   description: 'Couper les lampadaires entre 23 h et 5 h',
-  levier: 'electricite_renouvelable',
-  categorie: 'exemplarite',
+  leviers: ['electricite_renouvelable'],
+  categories: ['exemplarite'],
 };
 
 const heatNetworkAction: ActionToInsert = {
   titre: 'Raccorder les ecoles au reseau de chaleur',
   description: 'Raccorder les batiments communaux',
-  levier: 'reseaux_chaleur_decarbones',
-  categorie: 'sensibilisation',
+  leviers: ['reseaux_chaleur_decarbones'],
+  categories: ['sensibilisation'],
 };
 
 const greenElectricityAction: ActionToInsert = {
   titre: 'Acheter une électricité 100% renouvelable',
   description: "Contrat de fourniture à garantie d'origine",
-  levier: 'electricite_renouvelable',
-  categorie: 'financement',
+  leviers: ['electricite_renouvelable'],
+  categories: ['financement'],
 };
 
 const withWildcardCharactersAction: ActionToInsert = {
   titre: 'Atteindre 100% de LED',
   description: 'Suivre la consommation par code_insee',
-  levier: 'electricite_renouvelable',
-  categorie: 'planification',
+  leviers: ['electricite_renouvelable'],
+  categories: ['planification'],
 };
 
 const withUnderscoreOnlyInDescriptionAction: ActionToInsert = {
   titre: 'Raccorder les gymnases au reseau de chaleur',
   description: 'Raccorder via le code_insee',
-  levier: 'reseaux_chaleur_decarbones',
-  categorie: 'sensibilisation',
+  leviers: ['reseaux_chaleur_decarbones'],
+  categories: ['sensibilisation'],
 };
 
 const allActions: readonly ActionToInsert[] = [
@@ -366,7 +366,7 @@ describe('ActionsDeReferenceRepository contract', () => {
       const publicBuildingsInsulationAction: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'Isoler les combles des bâtiments publics',
-        levier: 'electricite_renouvelable',
+        leviers: ['electricite_renouvelable'],
       };
 
       await expectListed({
@@ -500,61 +500,21 @@ describe('ActionsDeReferenceRepository contract', () => {
       });
     });
 
-    it('à titre égal, trie par identifiant de levier croissant', async () => {
-      const withCovoiturageLevier: ActionToInsert = {
-        ...carpoolingAction,
-        titre: 'Même action',
-        levier: 'covoiturage',
-        categorie: 'amenagement',
-      };
-      const withBiogazLevier: ActionToInsert = {
-        ...carpoolingAction,
-        titre: 'Même action',
-        levier: 'biogaz',
-        categorie: 'sensibilisation',
-      };
-
-      await expectListed({
-        actions: [withCovoiturageLevier, withBiogazLevier],
-        input: { sortBy: 'titre' },
-        expected: [withBiogazLevier, withCovoiturageLevier],
-      });
-    });
-
-    it('à titre et levier égaux, trie par identifiant de catégorie croissant', async () => {
-      const withPlanificationCategorie: ActionToInsert = {
-        ...carpoolingAction,
-        titre: 'Même action',
-        categorie: 'planification',
-      };
-      const withExemplariteCategorie: ActionToInsert = {
-        ...carpoolingAction,
-        titre: 'Même action',
-        categorie: 'exemplarite',
-      };
-
-      await expectListed({
-        actions: [withPlanificationCategorie, withExemplariteCategorie],
-        input: { sortBy: 'titre' },
-        expected: [withExemplariteCategorie, withPlanificationCategorie],
-      });
-    });
-
     it('trie par levier croissant quand le tri demandé est le levier', async () => {
       const withVeloLevier: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'A action',
-        levier: 'velo_transport_commun',
+        leviers: ['velo_transport_commun'],
       };
       const withCovoiturageLevier: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'B action',
-        levier: 'covoiturage',
+        leviers: ['covoiturage'],
       };
 
       await expectListed({
         actions: [withVeloLevier, withCovoiturageLevier],
-        input: { sortBy: 'levier' },
+        input: { sortBy: 'leviers' },
         expected: [withCovoiturageLevier, withVeloLevier],
       });
     });
@@ -563,17 +523,17 @@ describe('ActionsDeReferenceRepository contract', () => {
       const withVeloLevier: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'A action',
-        levier: 'velo_transport_commun',
+        leviers: ['velo_transport_commun'],
       };
       const withBiogazLevier: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'B action',
-        levier: 'biogaz',
+        leviers: ['biogaz'],
       };
 
       await expectListed({
         actions: [withVeloLevier, withBiogazLevier],
-        input: { sortBy: 'levier' },
+        input: { sortBy: 'leviers' },
         expected: [withBiogazLevier, withVeloLevier],
       });
     });
@@ -582,37 +542,18 @@ describe('ActionsDeReferenceRepository contract', () => {
       const withTitreB: ActionToInsert = {
         ...carpoolingAction,
         titre: 'B action',
-        categorie: 'amenagement',
+        categories: ['amenagement'],
       };
       const withTitreA: ActionToInsert = {
         ...carpoolingAction,
         titre: 'A action',
-        categorie: 'sensibilisation',
+        categories: ['sensibilisation'],
       };
 
       await expectListed({
         actions: [withTitreB, withTitreA],
-        input: { sortBy: 'levier' },
+        input: { sortBy: 'leviers' },
         expected: [withTitreA, withTitreB],
-      });
-    });
-
-    it('à levier et titre égaux, trie par identifiant de catégorie croissant', async () => {
-      const withPlanificationCategorie: ActionToInsert = {
-        ...carpoolingAction,
-        titre: 'Même action',
-        categorie: 'planification',
-      };
-      const withExemplariteCategorie: ActionToInsert = {
-        ...carpoolingAction,
-        titre: 'Même action',
-        categorie: 'exemplarite',
-      };
-
-      await expectListed({
-        actions: [withPlanificationCategorie, withExemplariteCategorie],
-        input: { sortBy: 'levier' },
-        expected: [withExemplariteCategorie, withPlanificationCategorie],
       });
     });
 
@@ -620,17 +561,17 @@ describe('ActionsDeReferenceRepository contract', () => {
       const withSensibilisationCategorie: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'A action',
-        categorie: 'sensibilisation',
+        categories: ['sensibilisation'],
       };
       const withAmenagementCategorie: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'B action',
-        categorie: 'amenagement',
+        categories: ['amenagement'],
       };
 
       await expectListed({
         actions: [withSensibilisationCategorie, withAmenagementCategorie],
-        input: { sortBy: 'categorie' },
+        input: { sortBy: 'categories' },
         expected: [withAmenagementCategorie, withSensibilisationCategorie],
       });
     });
@@ -639,17 +580,17 @@ describe('ActionsDeReferenceRepository contract', () => {
       const withPlanificationCategorie: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'A action',
-        categorie: 'planification',
+        categories: ['planification'],
       };
       const withExemplariteCategorie: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'B action',
-        categorie: 'exemplarite',
+        categories: ['exemplarite'],
       };
 
       await expectListed({
         actions: [withPlanificationCategorie, withExemplariteCategorie],
-        input: { sortBy: 'categorie' },
+        input: { sortBy: 'categories' },
         expected: [withExemplariteCategorie, withPlanificationCategorie],
       });
     });
@@ -658,37 +599,18 @@ describe('ActionsDeReferenceRepository contract', () => {
       const withTitreB: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'B action',
-        levier: 'biogaz',
+        leviers: ['biogaz'],
       };
       const withTitreA: ActionToInsert = {
         ...atticInsulationAction,
         titre: 'A action',
-        levier: 'velo_transport_commun',
+        leviers: ['velo_transport_commun'],
       };
 
       await expectListed({
         actions: [withTitreB, withTitreA],
-        input: { sortBy: 'categorie' },
+        input: { sortBy: 'categories' },
         expected: [withTitreA, withTitreB],
-      });
-    });
-
-    it('à catégorie et titre égaux, trie par identifiant de levier croissant', async () => {
-      const withCovoiturageLevier: ActionToInsert = {
-        ...atticInsulationAction,
-        titre: 'Même action',
-        levier: 'covoiturage',
-      };
-      const withBiogazLevier: ActionToInsert = {
-        ...atticInsulationAction,
-        titre: 'Même action',
-        levier: 'biogaz',
-      };
-
-      await expectListed({
-        actions: [withCovoiturageLevier, withBiogazLevier],
-        input: { sortBy: 'categorie' },
-        expected: [withBiogazLevier, withCovoiturageLevier],
       });
     });
 
@@ -718,16 +640,16 @@ describe('ActionsDeReferenceRepository contract', () => {
         .select({
           titre: actionDeReferenceTable.titre,
           description: actionDeReferenceTable.description,
-          levier: actionDeReferenceTable.levier,
-          categorie: actionDeReferenceTable.categorie,
+          leviers: actionDeReferenceTable.leviers,
+          categories: actionDeReferenceTable.categories,
         })
         .from(actionDeReferenceTable)
         .orderBy(asc(actionDeReferenceTable.id));
 
-    const atticTripletChanges: ActionDeReferenceChanges = {
+    const atticChanges: ActionDeReferenceChanges = {
       titre: atticInsulationAction.titre,
-      levier: atticInsulationAction.levier,
-      categorie: atticInsulationAction.categorie,
+      leviers: atticInsulationAction.leviers,
+      categories: atticInsulationAction.categories,
     };
 
     const toRepositoryWithoutOwnDatabase = (): ActionsDeReferenceRepository =>
@@ -758,12 +680,12 @@ describe('ActionsDeReferenceRepository contract', () => {
         }
       );
 
-    it("modifie le titre, la description, le levier et la catégorie donnés et renvoie l'id", async () => {
+    it("modifie le titre, la description, les leviers et les catégories donnés et renvoie l'id", async () => {
       const lostAtticInsulationAction: ActionToInsert = {
         titre: 'Isoler les combles perdus',
         description: 'Souffler de la ouate de cellulose',
-        levier: 'chaudieres_gaz_renovation_residentiel',
-        categorie: 'financement',
+        leviers: ['chaudieres_gaz_renovation_residentiel'],
+        categories: ['financement'],
       };
 
       await checkWithOnlyActions(
@@ -834,8 +756,8 @@ describe('ActionsDeReferenceRepository contract', () => {
             changes: {
               titre: undefined,
               description: undefined,
-              levier: undefined,
-              categorie: undefined,
+              leviers: undefined,
+              categories: undefined,
             },
           });
           expect({
@@ -857,14 +779,14 @@ describe('ActionsDeReferenceRepository contract', () => {
       await expectUnknownIdUpdate({});
     });
 
-    it('renvoie ACTION_DE_REFERENCE_CONFLICT quand le triplet levier, catégorie, titre existe déjà sur une autre action', async () => {
+    it('renvoie ACTION_DE_REFERENCE_CONFLICT quand le titre existe déjà sur une autre action', async () => {
       await checkWithOnlyActions(
         [atticInsulationAction, carpoolingAction],
         async ({ repository, insertedIds: [, carpoolingId] }) => {
           expect(
             await repository.update({
               id: carpoolingId,
-              changes: atticTripletChanges,
+              changes: atticChanges,
             })
           ).toEqual({
             success: false,
@@ -880,7 +802,7 @@ describe('ActionsDeReferenceRepository contract', () => {
         async ({ repository, tx, insertedIds: [, carpoolingId] }) => {
           const updateResult = await repository.update({
             id: carpoolingId,
-            changes: atticTripletChanges,
+            changes: atticChanges,
           });
           expect({
             updateResult,
@@ -925,7 +847,7 @@ describe('ActionsDeReferenceRepository contract', () => {
         async ({ tx, insertedIds: [, carpoolingId] }) => {
           const updateResult = await toRepositoryWithoutOwnDatabase().update({
             id: carpoolingId,
-            changes: atticTripletChanges,
+            changes: atticChanges,
             tx,
           });
           expect({
@@ -952,8 +874,6 @@ describe('ActionsDeReferenceRepository contract', () => {
             titre: 'Installer des haies le long des parcelles',
             description:
               'Planter des haies pour fixer le carbone et abriter la faune',
-            levier: 'gestion_haies',
-            categorie: 'amenagement',
             leviers: ['gestion_haies', 'pratiques_stockantes'],
             categories: ['amenagement', 'sensibilisation'],
           })

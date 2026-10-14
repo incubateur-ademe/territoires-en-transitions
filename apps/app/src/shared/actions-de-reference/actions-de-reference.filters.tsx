@@ -33,8 +33,8 @@ const categorieOptions: readonly FilterOption<CategorieAction>[] =
 
 const sortOptions: readonly FilterOption<ActionDeReferenceSortField>[] = [
   { value: 'titre', label: appLabels.actionsDeReferenceTriTitre },
-  { value: 'levier', label: appLabels.actionsDeReferenceTriLevier },
-  { value: 'categorie', label: appLabels.actionsDeReferenceTriCategorie },
+  { value: 'leviers', label: appLabels.actionsDeReferenceTriLevier },
+  { value: 'categories', label: appLabels.actionsDeReferenceTriCategorie },
 ];
 
 const renderSortOption = (option: Option): JSX.Element => (

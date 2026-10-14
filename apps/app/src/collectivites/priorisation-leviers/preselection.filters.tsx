@@ -43,8 +43,8 @@ const matchesFilter = (
   action: ActionDeReference,
   { levierId, categorie }: PreselectionFilter
 ): boolean =>
-  (levierId === undefined || action.levier === levierId) &&
-  (categorie === undefined || action.categorie === categorie);
+  (levierId === undefined || action.leviers.includes(levierId)) &&
+  (categorie === undefined || action.categories.includes(categorie));
 
 const toEffectiveFilter = ({
   chosenFilter,
@@ -54,10 +54,14 @@ const toEffectiveFilter = ({
   actions: readonly ActionDeReference[];
 }): PreselectionFilter => {
   const hasChosenLevier = actions.some(
-    (action) => action.levier === chosenFilter.levierId
+    (action) =>
+      chosenFilter.levierId !== undefined &&
+      action.leviers.includes(chosenFilter.levierId)
   );
   const hasChosenCategorie = actions.some(
-    (action) => action.categorie === chosenFilter.categorie
+    (action) =>
+      chosenFilter.categorie !== undefined &&
+      action.categories.includes(chosenFilter.categorie)
   );
   return {
     levierId: hasChosenLevier ? chosenFilter.levierId : undefined,
@@ -95,7 +99,9 @@ export const usePreselectionFiltering = (
 
 const toLevierOptions = (actions: readonly ActionDeReference[]): Option[] =>
   levierIdEnumValues
-    .filter((levierId) => actions.some((action) => action.levier === levierId))
+    .filter((levierId) =>
+      actions.some((action) => action.leviers.includes(levierId))
+    )
     .map((levierId) => ({
       value: levierId,
       label: LEVIER_NOM_BY_ID[levierId],
@@ -109,7 +115,7 @@ export const toCategorieOption = (categorie: CategorieAction): Option => ({
 const toCategorieOptions = (actions: readonly ActionDeReference[]): Option[] =>
   categorieActionEnumValues
     .filter((categorie) =>
-      actions.some((action) => action.categorie === categorie)
+      actions.some((action) => action.categories.includes(categorie))
     )
     .map(toCategorieOption);
 

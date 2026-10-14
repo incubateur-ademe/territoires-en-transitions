@@ -39,10 +39,12 @@ const ActionDeReferenceFields = ({
         {action.description}
       </ActionDeReferenceField>
       <ActionDeReferenceField label={appLabels.actionDeReferenceLevierLabel}>
-        {LEVIER_NOM_BY_ID[action.levier]}
+        {action.leviers.map((levier) => LEVIER_NOM_BY_ID[levier]).join(', ')}
       </ActionDeReferenceField>
       <ActionDeReferenceField label={appLabels.actionDeReferenceCategorieLabel}>
-        {appLabels.categorieActionLabel(action.categorie)}
+        {action.categories
+          .map((categorie) => appLabels.categorieActionLabel(categorie))
+          .join(', ')}
       </ActionDeReferenceField>
     </dl>
   </Card>

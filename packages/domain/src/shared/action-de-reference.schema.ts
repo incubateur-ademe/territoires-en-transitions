@@ -33,8 +33,8 @@ export const actionDeReferenceSchema = z.object({
   id: actionDeReferenceIdSchema,
   titre: titreSchema,
   description: nonBlankTextSchema,
-  levier: z.enum(levierIdEnumValues),
-  categorie: z.enum(categorieActionEnumValues),
+  leviers: z.array(z.enum(levierIdEnumValues)).check(z.minLength(1)),
+  categories: z.array(z.enum(categorieActionEnumValues)).check(z.minLength(1)),
 });
 
 export type ActionDeReference = z.infer<typeof actionDeReferenceSchema>;
@@ -58,8 +58,8 @@ export type ListFichesActionDeReferenceInput = z.output<
 
 export const actionDeReferenceSortFieldEnumValues = [
   'titre',
-  'levier',
-  'categorie',
+  'leviers',
+  'categories',
 ] as const;
 
 const searchedTextSchema = z.optional(

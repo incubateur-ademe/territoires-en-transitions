@@ -12,7 +12,14 @@ import {
   type LevierId,
   levierIdEnumValues,
 } from '@tet/domain/shared';
-import { Button, Field, Input, type Option, Select, Textarea } from '@tet/ui';
+import {
+  Button,
+  Field,
+  Input,
+  type Option,
+  SelectMultiple,
+  Textarea,
+} from '@tet/ui';
 import { type JSX, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { match } from 'ts-pattern';
@@ -63,33 +70,30 @@ const categorieOptions: readonly ChoiceOption<CategorieAction>[] =
     label: appLabels.categorieActionLabel(categorie),
   }));
 
-type SingleChoiceFieldProps<Value extends string> = {
+type MultiChoiceFieldProps<Value extends string> = {
   readonly title: string;
   readonly options: readonly ChoiceOption<Value>[];
-  readonly value: Value;
-  readonly onChange: (value: Value) => void;
+  readonly values: readonly Value[];
+  readonly onChange: (values: readonly Value[]) => void;
 };
 
-const SingleChoiceField = <Value extends string>({
+const MultiChoiceField = <Value extends string>({
   title,
   options,
-  value,
+  values,
   onChange,
-}: SingleChoiceFieldProps<Value>): JSX.Element => (
+}: MultiChoiceFieldProps<Value>): JSX.Element => (
   <Field title={title}>
-    <Select
+    <SelectMultiple
       options={[...options]}
-      values={value}
-      onChange={(chosenValue) => {
-        const chosenOption = options.find(
-          (option) => option.value === chosenValue
-        );
-        const isUnknownChoice = chosenOption === undefined;
-        if (isUnknownChoice) {
-          return;
-        }
-        onChange(chosenOption.value);
-      }}
+      values={[...values]}
+      onChange={({ values: chosenValues }) =>
+        onChange(
+          options
+            .map((option) => option.value)
+            .filter((knownValue) => chosenValues?.includes(knownValue))
+        )
+      }
     />
   </Field>
 );
@@ -143,8 +147,8 @@ const UpdateActionDeReferenceFields = ({
     defaultValues: {
       titre: action.titre,
       description: action.description,
-      levier: action.levier,
-      categorie: action.categorie,
+      leviers: action.leviers,
+      categories: action.categories,
       ficheIds: toFicheIdsText(initialFicheIds),
     },
   });
@@ -188,25 +192,25 @@ const UpdateActionDeReferenceFields = ({
           <Textarea {...register('description')} />
         </Field>
         <Controller
-          name="levier"
+          name="leviers"
           control={control}
           render={({ field }) => (
-            <SingleChoiceField
+            <MultiChoiceField
               title={appLabels.actionDeReferenceLevierLabel}
               options={levierOptions}
-              value={field.value}
+              values={field.value}
               onChange={field.onChange}
             />
           )}
         />
         <Controller
-          name="categorie"
+          name="categories"
           control={control}
           render={({ field }) => (
-            <SingleChoiceField
+            <MultiChoiceField
               title={appLabels.actionDeReferenceCategorieLabel}
               options={categorieOptions}
-              value={field.value}
+              values={field.value}
               onChange={field.onChange}
             />
           )}
