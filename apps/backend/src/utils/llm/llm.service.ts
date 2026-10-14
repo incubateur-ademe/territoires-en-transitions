@@ -1,8 +1,8 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { Options, default as retry } from 'async-retry';
 import { z, ZodType } from 'zod';
 import { ConcurrencyLimiter } from '../concurrency-limiter';
+import { sleep } from '../sleep.utils';
 import { estimateRequestTokens } from './estimate-request-tokens';
 import { describeLlmError, LlmError } from './llm.errors';
 import { currentLlmCallRecorder } from './llm-call-recorder';
@@ -18,6 +18,7 @@ import {
   LlmCompletionRequest,
   LlmRawCompletion,
   LlmRepository,
+  LlmRetryOptions,
 } from './repositories/llm.repository';
 import { TokenUsage } from './token-usage';
 import { isTransientError } from './is-transient-error';
@@ -31,13 +32,12 @@ const DEFAULT_THINKING_BUDGET = 8192;
 const RATE_LIMIT_PENALTY_MS = 15_000;
 const MAX_ATTEMPTS_WITHOUT_HTTP_STATUS = 3;
 // Jusqu'à une minute d'attente cumulée : les quotas se comptent souvent par
-// minute (Albert API : requêtes et tokens par minute).
-const RETRY_OPTIONS: Options = {
+// minute (Albert API : requêtes et tokens par minute). Un fournisseur peut
+// attendre plus longtemps après un 429 (`rateLimitedRetryOptions`).
+const RETRY_OPTIONS: LlmRetryOptions = {
   retries: 6,
-  factor: 2,
   minTimeout: 1000,
   maxTimeout: 30000,
-  randomize: true,
 };
 
 type CommonArgs = {
@@ -75,6 +75,7 @@ export class LlmService {
   private readonly logger = new Logger(LlmService.name);
   private readonly limiter: ConcurrencyLimiter;
   private readonly rateLimiters: ModelRateLimiters;
+  private readonly rateLimitedRetryOptions: LlmRetryOptions;
 
   constructor(
     private readonly llmRepository: LlmRepository,
@@ -85,6 +86,8 @@ export class LlmService {
       llmRepository.maxInputTokensPerMinute,
       llmRepository.maxRequestsPerMinute
     );
+    this.rateLimitedRetryOptions =
+      llmRepository.rateLimitedRetryOptions ?? RETRY_OPTIONS;
   }
 
   get capabilities(): LlmCapabilities {
@@ -172,63 +175,71 @@ export class LlmService {
     signal?: AbortSignal
   ): Promise<Result<T, LlmError>> {
     let lastRetryableResult: Result<T, LlmError> | null = null;
-    let attempt = 0;
     let attemptsWithoutHttpStatus = 0;
-    try {
-      return await retry(async (bail) => {
-        attempt += 1;
-        let result: Result<T, LlmError>;
-        try {
-          result = await call(attempt);
-        } catch (error) {
-          // L'attente du limiteur rejette quand l'appel est annulé : ne pas
-          // rejouer, et laisser l'annulation visible de l'appelant.
-          if (signal?.aborted) {
-            bail(error instanceof Error ? error : new Error(String(error)));
-            return undefined as never;
-          }
-          throw error;
-        }
+    for (let attempt = 1; ; attempt += 1) {
+      let options = RETRY_OPTIONS;
+      try {
+        const result = await call(attempt);
         if (
-          !result.success &&
-          isTransientError(result.error) &&
-          !signal?.aborted
+          result.success ||
+          !isTransientError(result.error) ||
+          signal?.aborted
         ) {
-          lastRetryableResult = result;
-          if (hasNoHttpStatus(result.error)) {
-            attemptsWithoutHttpStatus += 1;
-          }
-          if (attemptsWithoutHttpStatus >= MAX_ATTEMPTS_WITHOUT_HTTP_STATUS) {
-            this.logger.warn(
-              `LLM call abandoned after ${attempt} attempts, ${attemptsWithoutHttpStatus} without HTTP status (${describeLlmError(
-                result.error
-              )})`
-            );
-            bail(new Error(result.error.kind));
-            return undefined as never;
-          }
+          return result;
+        }
+        lastRetryableResult = result;
+        if (result.error.kind === 'rate_limited') {
+          options = this.rateLimitedRetryOptions;
+        }
+        if (hasNoHttpStatus(result.error)) {
+          attemptsWithoutHttpStatus += 1;
+        }
+        if (attemptsWithoutHttpStatus >= MAX_ATTEMPTS_WITHOUT_HTTP_STATUS) {
+          this.logger.warn(
+            `LLM call abandoned after ${attempt} attempts, ${attemptsWithoutHttpStatus} without HTTP status (${describeLlmError(
+              result.error
+            )})`
+          );
+          return result;
+        }
+        if (attempt <= options.retries) {
           this.logger.warn(
             `LLM call attempt ${attempt} failed (${describeLlmError(
               result.error
             )}), retrying`
           );
-          throw new Error(result.error.kind);
         }
-        return result;
-      }, RETRY_OPTIONS);
-    } catch (error) {
-      if (signal?.aborted) {
-        throw error;
+      } catch (error) {
+        // L'attente du limiteur rejette quand l'appel est annulé : ne pas
+        // rejouer, et laisser l'annulation visible de l'appelant.
+        if (signal?.aborted) {
+          throw error;
+        }
       }
-      return (
-        lastRetryableResult ?? failure({ kind: 'api_error', httpStatus: null })
-      );
+      if (attempt > options.retries) {
+        return (
+          lastRetryableResult ??
+          failure({ kind: 'api_error', httpStatus: null })
+        );
+      }
+      await sleep(retryDelayMs(options, attempt), signal);
     }
   }
 }
 
 const hasNoHttpStatus = (error: LlmError): boolean =>
   error.kind === 'api_error' && error.httpStatus === null;
+
+// Backoff exponentiel aléatoire, à la manière d'async-retry : les appels
+// refusés ensemble ne reviennent pas ensemble.
+const retryDelayMs = (
+  { minTimeout, maxTimeout }: LlmRetryOptions,
+  attempt: number
+): number =>
+  Math.min(
+    Math.round((1 + Math.random()) * minTimeout * 2 ** (attempt - 1)),
+    maxTimeout
+  );
 
 const toRequest = (args: CommonArgs): LlmCompletionRequest => ({
   prompt: args.prompt,

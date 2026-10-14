@@ -1,3 +1,5 @@
+import { sleep } from './sleep.utils';
+
 const WINDOW_MS = 60_000;
 
 type Reservation = { at: number; tokens: number };
@@ -5,7 +7,8 @@ type Reservation = { at: number; tokens: number };
 /**
  * Budget de tokens par fenêtre glissante d'une minute. Un appel attend que la
  * place se libère plutôt que d'essuyer un 429 ; un appel plus gros que le
- * budget passe seul, fenêtre vide. Sans budget (null), tout passe.
+ * budget passe seul, fenêtre vide. Sans budget (null), seule la pause qui
+ * suit un 429 fait attendre.
  */
 export class TokenRateLimiter {
   private reservations: Reservation[] = [];
@@ -24,9 +27,6 @@ export class TokenRateLimiter {
     estimatedTokens: number,
     signal?: AbortSignal
   ): Promise<(actualTokens?: number) => void> {
-    if (this.budgetPerMinute === null) {
-      return () => undefined;
-    }
     for (;;) {
       signal?.throwIfAborted();
       const waitMs = this.waitBeforeReserving(estimatedTokens);
@@ -34,6 +34,9 @@ export class TokenRateLimiter {
         break;
       }
       await sleep(waitMs, signal);
+    }
+    if (this.budgetPerMinute === null) {
+      return () => undefined;
     }
     const reservation: Reservation = {
       at: this.now(),
@@ -57,6 +60,9 @@ export class TokenRateLimiter {
     if (now < this.frozenUntil) {
       return this.frozenUntil - now;
     }
+    if (this.budgetPerMinute === null) {
+      return 0;
+    }
     this.reservations = this.reservations.filter(
       (reservation) => now - reservation.at < WINDOW_MS
     );
@@ -64,22 +70,9 @@ export class TokenRateLimiter {
       (total, reservation) => total + reservation.tokens,
       0
     );
-    if (used === 0 || used + tokens <= (this.budgetPerMinute as number)) {
+    if (used === 0 || used + tokens <= this.budgetPerMinute) {
       return 0;
     }
     return this.reservations[0].at + WINDOW_MS - now;
   }
 }
-
-const sleep = (ms: number, signal?: AbortSignal): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      signal?.removeEventListener('abort', onAbort);
-      resolve();
-    }, ms);
-    const onAbort = () => {
-      clearTimeout(timer);
-      reject(signal?.reason ?? new Error('aborted'));
-    };
-    signal?.addEventListener('abort', onAbort, { once: true });
-  });

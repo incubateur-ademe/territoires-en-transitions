@@ -1,13 +1,15 @@
-import { failure, success } from '@tet/backend/utils/result.type';
-import { describe, expect, it, vi } from 'vitest';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { recordLlmCalls } from './llm-call-recorder';
+import { LlmError } from './llm.errors';
 import { LlmCallEvent, LlmObserver } from './llm-observer';
 import { LlmService } from './llm.service';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
   LlmRepository,
+  LlmRetryOptions,
 } from './repositories/llm.repository';
 
 const usage = {
@@ -22,6 +24,7 @@ class FakeRepository extends LlmRepository {
   readonly maxConcurrentCalls = 2;
   readonly maxInputTokensPerMinute = null;
   readonly maxRequestsPerMinute = null;
+  rateLimitedRetryOptions: LlmRetryOptions | null = null;
   readonly capabilities = { ocr: true, strategy: 'segmented' as const };
   readonly requests: LlmCompletionRequest[] = [];
   private readonly responses: LlmRawCompletion[];
@@ -39,7 +42,9 @@ class FakeRepository extends LlmRepository {
     return 'fake';
   }
 
-  async complete(request: LlmCompletionRequest) {
+  async complete(
+    request: LlmCompletionRequest
+  ): Promise<Result<LlmRawCompletion, LlmError>> {
     this.requests.push(request);
     return success(
       this.responses.shift() ?? { completed: true, text: '{}', usage }
@@ -54,7 +59,18 @@ class CollectingObserver extends LlmObserver {
   }
 }
 
+// La pause qui suit un 429 et les relances se jouent sous horloge factice.
+const settleWithFakeTimers = async <T>(promise: Promise<T>): Promise<T> => {
+  await vi.runAllTimersAsync();
+  return promise;
+};
+
 describe('LlmService', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
   it('appelle le palier fort par défaut, avec le schéma JSON du zod', async () => {
     const repository = new FakeRepository({
       completed: true,
@@ -114,6 +130,7 @@ describe('LlmService', () => {
   });
 
   it("prévient l'observateur à chaque tentative", async () => {
+    vi.useFakeTimers();
     const repository = new FakeRepository();
     repository.complete = vi
       .fn()
@@ -122,7 +139,9 @@ describe('LlmService', () => {
     const observer = new CollectingObserver();
     const service = new LlmService(repository, observer);
 
-    await service.generateStructured({ prompt: 'p', schema: z.object({}) });
+    await settleWithFakeTimers(
+      service.generateStructured({ prompt: 'p', schema: z.object({}) })
+    );
 
     expect(
       observer.events.map((event) => [event.attempt, event.error?.kind ?? null])
@@ -219,8 +238,92 @@ describe('LlmService', () => {
     expect(observer.events[0].error?.kind).toBe('truncated');
   });
 
+  describe('relances', () => {
+    const failingRepository = (error: LlmError) => {
+      const repository = new FakeRepository();
+      const callTimes: number[] = [];
+      repository.complete = vi.fn(async () => {
+        callTimes.push(Date.now());
+        return failure(error);
+      });
+      return { repository, callTimes };
+    };
+
+    it('relance un 429 selon les options du fournisseur, après la pause du modèle', async () => {
+      vi.useFakeTimers();
+      vi.spyOn(Math, 'random').mockReturnValue(0);
+      const { repository, callTimes } = failingRepository({
+        kind: 'rate_limited',
+      });
+      repository.rateLimitedRetryOptions = {
+        retries: 8,
+        minTimeout: 5_000,
+        maxTimeout: 90_000,
+      };
+      const startedAt = Date.now();
+
+      const result = await settleWithFakeTimers(
+        new LlmService(repository).generateStructured({
+          prompt: 'p',
+          schema: z.object({}),
+        })
+      );
+
+      expect(result).toEqual(failure({ kind: 'rate_limited' }));
+      // Les deux premiers écarts sont ceux de la pause de 15 s, pas du délai.
+      expect(callTimes.map((time) => (time - startedAt) / 1000)).toEqual([
+        0, 15, 30, 50, 90, 170, 260, 350, 440,
+      ]);
+    });
+
+    it('garde les relances par défaut pour les autres erreurs passagères', async () => {
+      vi.useFakeTimers();
+      vi.spyOn(Math, 'random').mockReturnValue(0);
+      const { repository, callTimes } = failingRepository({
+        kind: 'api_error',
+        httpStatus: 500,
+      });
+      repository.rateLimitedRetryOptions = {
+        retries: 8,
+        minTimeout: 5_000,
+        maxTimeout: 90_000,
+      };
+      const startedAt = Date.now();
+
+      await settleWithFakeTimers(
+        new LlmService(repository).generateStructured({
+          prompt: 'p',
+          schema: z.object({}),
+        })
+      );
+
+      expect(callTimes.map((time) => (time - startedAt) / 1000)).toEqual([
+        0, 1, 3, 7, 15, 31, 61,
+      ]);
+    });
+
+    it("arrête d'attendre une relance quand l'appel est annulé", async () => {
+      vi.useFakeTimers();
+      const { repository } = failingRepository({ kind: 'rate_limited' });
+      const controller = new AbortController();
+
+      const pending = new LlmService(repository).generateStructured({
+        prompt: 'p',
+        schema: z.object({}),
+        signal: controller.signal,
+      });
+      const rejection = expect(pending).rejects.toThrow('stop');
+      await vi.advanceTimersByTimeAsync(0);
+      controller.abort(new Error('stop'));
+
+      await rejection;
+      expect(repository.complete).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('recordLlmCalls', () => {
     it("rattache chaque tentative, avec palier et modèle, à l'enregistrement en cours", async () => {
+      vi.useFakeTimers();
       const repository = new FakeRepository();
       repository.complete = vi
         .fn()
@@ -228,12 +331,14 @@ describe('LlmService', () => {
         .mockResolvedValueOnce(success({ completed: true, text: '{}', usage }));
       const service = new LlmService(repository);
 
-      const { calls } = await recordLlmCalls(() =>
-        service.generateStructured({
-          prompt: 'p',
-          tier: 'light',
-          schema: z.object({}),
-        })
+      const { calls } = await settleWithFakeTimers(
+        recordLlmCalls(() =>
+          service.generateStructured({
+            prompt: 'p',
+            tier: 'light',
+            schema: z.object({}),
+          })
+        )
       );
 
       expect(calls).toEqual([
