@@ -127,7 +127,7 @@ const valeurPeriod = (
       `La valeur ${valeur.indicateurValeur.id} n'a pas de définition d'indicateur`
     );
   }
-  return IndicateurPeriodes.fromDateValeur(
+  return IndicateurPeriodes.containing(
     valeur.indicateurValeur.periodicite,
     valeur.indicateurValeur.dateValeur
   );

@@ -295,7 +295,7 @@ function prepareMoyenne(
     ordreAffichage: null,
     source: 'moyenne',
     valeurs: moyenne.valeurs.map((value) => {
-      const periode = IndicateurPeriodes.fromDateValeur(
+      const periode = IndicateurPeriodes.containing(
         periodicite,
         value.dateValeur
       );
