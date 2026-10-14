@@ -10,6 +10,7 @@ import { aiPlanImportStepRunTable } from './models/ai-plan-import-step-run.table
 import { ImportStepRun } from './models/import-step-run';
 import { and, asc, eq, lt } from 'drizzle-orm';
 import {
+  computeLlmCallDetails,
   computeLlmCallMetrics,
   LlmCallMetrics,
   sumLlmCallMetrics,
@@ -45,7 +46,7 @@ export class AiPlanImportStepRunRepository {
           rateLimitedCalls: rateLimited,
           tokens,
           models,
-          details: run.details,
+          details: { ...run.details, ...computeLlmCallDetails(run.calls) },
           error: run.error,
           attempt,
         })

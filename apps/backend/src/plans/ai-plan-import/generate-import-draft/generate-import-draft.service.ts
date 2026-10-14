@@ -47,6 +47,7 @@ import {
 import { AI_PLAN_IMPORT_MAX_OCR_PAGES } from '../ai-plan-import.constants';
 import { ReadDocument } from '../pipeline/document/document-page';
 import {
+  describePipelineError,
   isCheckpointUsableBy,
   PipelineError,
   runImportPipeline,
@@ -563,6 +564,6 @@ const pipelineErrorMessage = (
         error.evidence
       } »), pas un programme d'actions : déposez le document qui contient les fiches actions`;
     default:
-      return `Étape ${failedStep} en échec (${error.kind})`;
+      return `Étape ${failedStep} en échec (${describePipelineError(error)})`;
   }
 };

@@ -1,3 +1,4 @@
+import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
@@ -9,6 +10,7 @@ import {
 } from './document/document-page';
 import type { PipelineCheckpoint } from './pipeline-checkpoint';
 import {
+  isCheckpointUsableBy,
   PipelineLlm,
   RunImportPipelineInput,
   runImportPipeline,
@@ -87,14 +89,17 @@ const responseByStep: Partial<Record<StepName, unknown>> = {
   qualitativeReview: { avis: 'Extraction cohérente' },
 };
 
-const routedLlm = (failingStep?: StepName): PipelineLlm =>
+const routedLlm = (
+  failingStep?: StepName,
+  error: LlmError = { kind: 'rate_limited' }
+): PipelineLlm =>
   ({
     maxInputTokens: 900_000,
     capabilities: { ocr: false, strategy: 'whole-document' },
     generateStructured: vi.fn(async ({ prompt }: { prompt: string }) => {
       const step = stepOf(prompt);
       if (step === failingStep) {
-        return failure({ kind: 'rate_limited' });
+        return failure(error);
       }
       if (step === 'hierarchy') {
         return success({
@@ -430,6 +435,24 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it("décrit l'erreur de l'étape en échec avec son statut HTTP", async () => {
+    const runs: ImportStepRun[] = [];
+    const onStepRun = vi.fn(async (run: ImportStepRun) => {
+      runs.push(run);
+    });
+
+    await runImportPipeline(
+      routedLlm('scoring', { kind: 'api_error', httpStatus: 503 }),
+      input({ onStepRun })
+    );
+
+    expect(runs.at(-1)).toMatchObject({
+      step: 'scoring',
+      status: 'failed',
+      error: 'api_error 503',
+    });
+  });
+
   it('propose les secteurs de chaque action quand withSecteurs est vrai', async () => {
     const outcome = await runImportPipeline(
       routedLlm(),
@@ -458,6 +481,22 @@ describe('runImportPipeline', () => {
   });
 
   describe('reprise', () => {
+    it.each([
+      ['scoring', false],
+      ['qualitativeReview', true],
+    ] as const)(
+      'après %s, un point de reprise découpé pour un autre modèle sert : %s',
+      (completedStep, usable) => {
+        const checkpoint = {
+          schemaVersion: 1,
+          completedStep,
+          llm: { strategy: 'segmented', maxInputTokens: 100_000 },
+        } as const;
+
+        expect(isCheckpointUsableBy(checkpoint, routedLlm())).toBe(usable);
+      }
+    );
+
     const prompts = (llm: PipelineLlm): string[] =>
       vi
         .mocked(llm.generateStructured)
