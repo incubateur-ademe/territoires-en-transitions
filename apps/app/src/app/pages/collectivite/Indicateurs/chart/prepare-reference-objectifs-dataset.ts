@@ -20,7 +20,7 @@ const getObjectifReferenceName = (
 ) => {
   if (objectifs.length === 1) {
     const { horizon, valeur } = objectifs[0];
-    return `Objectif ${IndicateurPeriodes.serialize(
+    return `Objectif ${IndicateurPeriodes.format(
       horizon
     )} : ${valeur} ${unite}`;
   }

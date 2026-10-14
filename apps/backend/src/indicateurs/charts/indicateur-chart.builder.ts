@@ -4,6 +4,7 @@ import { CHART_FONT_FAMILY } from '@tet/backend/utils/echarts/get-horizontal-sta
 import {
   INDICATEUR_VALEUR_TYPE_LABEL,
   IndicateurAvecValeursParSource,
+  IndicateurPeriodicite,
   IndicateurPeriodes,
   IndicateurValeurType,
   IndicateurValeurTypeEnum,
@@ -16,7 +17,7 @@ import {
   EChartsOption,
   LineSeriesOption,
 } from 'echarts/types/dist/echarts';
-import { isNil } from 'es-toolkit';
+import { groupBy, isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { ValeursMoyenneDTO } from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.dto';
 import { ValeursReferenceDTO } from '../valeurs/get-valeurs-reference/valeurs-reference.dto';
@@ -33,6 +34,7 @@ import {
   IndicateurChartSegmentationWithValeurs,
   IndicateurChartSourceFilter,
 } from './indicateur-chart.input';
+import { getIndicateurChartPeriodAdapter } from './indicateur-chart-period.adapter';
 
 const { colors } = preset.theme.extend;
 const numberFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
@@ -40,6 +42,7 @@ const numberFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 type DatasetSeries = Readonly<{
   dataset: DatasetComponentOption;
   serie: LineSeriesOption;
+  stackId?: string;
 }>;
 
 type ChartPoint = { dateValeur: string; valeur: number | null };
@@ -123,6 +126,8 @@ export class IndicateurChartBuilder {
     const sources = sourcesFilter
       ? sourcesFilter.map(({ sourceId }) => sourceId)
       : Object.keys(indicateurValeurs.sources);
+    const periodicite = indicateurValeurs.definition.periodicite;
+    const chartPeriod = getIndicateurChartPeriodAdapter(periodicite);
 
     const valeursDatasetsAndSeries = sources.flatMap((sourceId) => {
       const valeurTypes = sourcesFilter?.find(
@@ -135,34 +140,44 @@ export class IndicateurChartBuilder {
         this.makeIndicateurDatasetSeries(
           indicateurValeurs,
           sourceId,
-          valeurType
+          valeurType,
+          periodicite
         )
       );
     });
 
-    // ECharts stacks time series by index, so every segment needs the same dates.
-    const segmentDates = [
-      ...new Set(
-        segmentation?.indicateursEnfantValeurs?.flatMap(
-          (indicateur) =>
-            indicateur.sources[segmentation.source]?.valeurs.map(
-              ({ dateValeur }) => dateValeur
-            ) ?? []
-        )
-      ),
-    ].sort();
+    // ECharts stacks by index: align dates within each cadence/source version.
+    const segmentDatesByIdentity = new Map<string, Set<string>>();
+    if (segmentation) {
+      for (const indicateur of segmentation.indicateursEnfantValeurs ?? []) {
+        for (const valeur of indicateur.sources[segmentation.source]?.valeurs ??
+          []) {
+          const identity = `${valeur.periodicite}-${
+            valeur.metadonneeId ?? 'local'
+          }`;
+          const dates =
+            segmentDatesByIdentity.get(identity) ?? new Set<string>();
+          dates.add(valeur.dateValeur);
+          segmentDatesByIdentity.set(identity, dates);
+        }
+      }
+    }
     const segmentDatasetsAndSeries = segmentation?.indicateursEnfantValeurs
-      ? segmentation.indicateursEnfantValeurs.flatMap(
-          (indicateur, indicateurIndex) =>
+      ? segmentation.indicateursEnfantValeurs
+          .flatMap((indicateur, indicateurIndex) =>
             this.makeSegmentationDatasetSeries(
               indicateur,
               indicateurIndex,
               segmentation.source,
               segmentation.valeurType,
               PALETTE_LIGHT,
-              segmentDates
+              periodicite,
+              segmentDatesByIdentity
             )
-        )
+          )
+          .filter((datasetSeries): datasetSeries is DatasetSeries =>
+            Boolean(datasetSeries)
+          )
       : [];
 
     const referenceDatasetsAndSeries = valeursReference
@@ -194,7 +209,7 @@ export class IndicateurChartBuilder {
     const series = allDatasetsAndSeries.map((item) => item.serie);
 
     return {
-      useUTC: true,
+      useUTC: chartPeriod.useUTC,
       textStyle: { fontFamily: CHART_FONT_FAMILY },
       dataset,
       series,
@@ -224,11 +239,11 @@ export class IndicateurChartBuilder {
       xAxis: {
         type: 'time',
         splitLine: { show: true, lineStyle: { opacity: 0.5 } },
-        maxInterval: 5 * 365 * 24 * 60 * 60 * 1000,
-        minInterval: 365 * 24 * 60 * 60 * 1000,
+        maxInterval: chartPeriod.maxInterval,
+        minInterval: chartPeriod.minInterval,
         axisLabel: {
           fontFamily: CHART_FONT_FAMILY,
-          formatter: '{yyyy}',
+          formatter: chartPeriod.formatTick,
           color: colors.primary['9'],
           showMinLabel: true,
           showMaxLabel: true,
@@ -308,21 +323,22 @@ export class IndicateurChartBuilder {
     sourceId: string,
     valeurType: IndicateurValeurWithoutReferenceType,
     palette: string[],
-    dates: string[]
+    periodicite: IndicateurPeriodicite,
+    datesByIdentity: ReadonlyMap<string, ReadonlySet<string>>
   ): DatasetSeries[] {
     return this.makeIndicateurDatasetSeries(
       indicateurAvecValeurs,
       sourceId,
       valeurType,
+      periodicite,
       indicateurAvecValeurs.definition.titreCourt ??
         indicateurAvecValeurs.definition.titre,
-      dates
-    ).map(({ dataset, serie }) => ({
+      datesByIdentity
+    ).map(({ dataset, serie, stackId }) => ({
       dataset,
       serie: {
         ...serie,
         ...this.getSurfaceStyle(valeurType),
-        // An isolated observation has no area, but still needs a visible point.
         symbol: (_value, { dataIndex }) =>
           dataset.source[dataIndex - 1]?.valeur == null &&
           dataset.source[dataIndex + 1]?.valeur == null
@@ -330,7 +346,7 @@ export class IndicateurChartBuilder {
             : 'none',
         symbolSize: 6,
         color: palette[indicateurIndex % palette.length],
-        stack: 'total',
+        stack: stackId,
       },
     }));
   }
@@ -339,8 +355,9 @@ export class IndicateurChartBuilder {
     indicateurAvecValeurs: IndicateurAvecValeursParSource,
     sourceId: string,
     valeurType: IndicateurValeurWithoutReferenceType,
+    periodicite: IndicateurPeriodicite,
     segmentationLabel?: string,
-    dates?: string[]
+    datesByIdentity?: ReadonlyMap<string, ReadonlySet<string>>
   ): LineDatasetSeries[] {
     const source = indicateurAvecValeurs.sources[sourceId];
     if (!source) return [];
@@ -348,32 +365,71 @@ export class IndicateurChartBuilder {
     const sourceLabel = source.metadonnees?.length
       ? source.metadonnees[0]?.producteur || source.libelle
       : source.libelle;
-    const sourcePoints = source.valeurs
-      .toSorted((left, right) =>
-        left.dateValeur.localeCompare(right.dateValeur)
+    const valeurs = source.valeurs.toSorted((a, b) =>
+      a.dateValeur.localeCompare(b.dateValeur)
+    );
+    const groups = Object.entries(
+      groupBy(
+        valeurs,
+        (valeur) => `${valeur.periodicite}-${valeur.metadonneeId ?? 'local'}`
       )
-      .map((valeur) => ({
+    );
+    return groups.flatMap(([identity, group]) => {
+      const sourcePoints = group.map((valeur) => ({
         dateValeur: valeur.dateValeur,
         valeur: valeur[valeurType] ?? null,
       }));
-    const pointsByDate = new Map(
-      sourcePoints.map((point) => [point.dateValeur, point])
-    );
-    const points = dates
-      ? dates.map(
-          (dateValeur) =>
-            pointsByDate.get(dateValeur) ?? { dateValeur, valeur: null }
-        )
-      : sourcePoints;
-    const datasetSeries = this.makeLineDatasetSeries(
-      indicateurAvecValeurs.definition.id,
-      points,
-      valeurType,
-      sourceId,
-      sourceLabel,
-      segmentationLabel
-    );
-    return datasetSeries ? [datasetSeries] : [];
+      const pointsByDate = new Map(
+        sourcePoints.map((point) => [point.dateValeur, point])
+      );
+      const dates = datesByIdentity?.get(identity);
+      const points = dates
+        ? [...dates]
+            .sort()
+            .map(
+              (dateValeur) =>
+                pointsByDate.get(dateValeur) ?? { dateValeur, valeur: null }
+            )
+        : sourcePoints;
+      if (!points.some(({ valeur }) => valeur !== null)) return [];
+      const metadonnee = source.metadonnees?.find(
+        ({ id }) => id === group[0].metadonneeId
+      );
+      const showSourceCadence =
+        groups.length > 1 || group[0].periodicite !== periodicite;
+      const label = showSourceCadence
+        ? `${metadonnee?.producteur || sourceLabel || sourceId} (${
+            group[0].periodicite
+          }${metadonnee ? `, ${metadonnee.dateVersion}` : ''}${
+            group[0].metadonneeId != null ? `, #${group[0].metadonneeId}` : ''
+          })`
+        : sourceLabel;
+      const datasetSeries = this.makeLineDatasetSeries(
+        indicateurAvecValeurs.definition.id,
+        points,
+        valeurType,
+        sourceId,
+        label,
+        showSourceCadence && this.forcedSourceLabels[sourceId]
+          ? `${segmentationLabel ?? ''} (${group[0].periodicite}${
+              metadonnee ? `, ${metadonnee.dateVersion}` : ''
+            }${
+              group[0].metadonneeId != null ? `, #${group[0].metadonneeId}` : ''
+            })`.trim()
+          : segmentationLabel,
+        groups.length > 1 ? identity : undefined
+      );
+      return datasetSeries
+        ? [
+            {
+              ...datasetSeries,
+              stackId: `${sourceId}:${group[0].periodicite}:${
+                group[0].metadonneeId ?? 'local'
+              }`,
+            },
+          ]
+        : [];
+    });
   }
 
   private makeLineDatasetSeries(
@@ -382,11 +438,12 @@ export class IndicateurChartBuilder {
     valeurType: IndicateurValeurType,
     sourceId: string,
     sourceLabel?: string,
-    segmentationLabel?: string
+    segmentationLabel?: string,
+    identitySuffix?: string
   ): LineDatasetSeries | null {
     const datasetId = `${indicateurId}-${valeurType}${
       sourceId ? `-${sourceId}` : ''
-    }`;
+    }${identitySuffix ? `-${identitySuffix}` : ''}`;
     const datasetName = this.getDatasetLabel(
       valeurType,
       sourceId,
@@ -482,7 +539,7 @@ export class IndicateurChartBuilder {
     }));
     const datasetName =
       objectifsByHorizon.length === 1
-        ? `Objectif ${IndicateurPeriodes.serialize(
+        ? `Objectif ${IndicateurPeriodes.format(
             objectifsByHorizon[0].horizon
           )} : ${objectifsByHorizon[0].valeur} ${unite}`
         : libelle ?? 'Objectifs';

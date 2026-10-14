@@ -1,5 +1,6 @@
 import {
   IndicateurPeriodiciteEnum,
+  indicateurPeriodiciteValues,
   type IndicateurPeriodicite,
 } from '../definitions/indicateur-periodicite.schema';
 import {
@@ -10,14 +11,20 @@ import {
 import type {
   IndicateurPeriode,
   IndicateurPeriodeKey,
+  IndicateurPeriodeParseResult,
+  LocalCalendarDate,
   LocalDate,
 } from './indicateur-periode.types';
-import { parseLocalDate, toLocalDate } from './local-calendar';
+import { toLocalDate } from './local-calendar';
+import { createCalendarMonthStrategy } from './calendar-month-period.strategy';
+import type { PeriodStrategy, PeriodStrategyRegistry } from './period-strategy';
 
 export type {
   IndicateurPeriode,
   IndicateurPeriodeJson,
   IndicateurPeriodeKey,
+  IndicateurPeriodeParseResult,
+  LocalCalendarDate,
   LocalDate,
 } from './indicateur-periode.types';
 export {
@@ -25,6 +32,30 @@ export {
   indicateurPeriodeKeyBrand,
   localDateBrand,
 } from './indicateur-periode.types';
+
+const periodStrategies = Object.freeze({
+  [IndicateurPeriodiciteEnum.ANNUELLE]: createCalendarMonthStrategy({
+    periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+    monthsPerPeriod: 12,
+    anchorDate: '2000-01-01',
+    serialization: 'year',
+  }),
+}) satisfies Partial<PeriodStrategyRegistry>;
+
+const strategyFor = <K extends IndicateurPeriodicite>(
+  periodicite: K
+): PeriodStrategy<K> => {
+  const strategy = (periodStrategies as Partial<PeriodStrategyRegistry>)[
+    periodicite
+  ];
+  if (!strategy) {
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODICITE_UNSUPPORTED,
+      details: { periodicite },
+    });
+  }
+  return strategy as PeriodStrategy<K>;
+};
 
 /** Periodicities currently implemented by the period helpers and input forms. */
 export type SupportedIndicateurPeriodicite =
@@ -77,12 +108,7 @@ export class IndicateurPeriodes {
     periodicite: K,
     date: string
   ): IndicateurPeriode<K> {
-    IndicateurPeriodes.assertSupported(periodicite);
-    const { year } = parseLocalDate(date);
-    return Object.freeze({
-      periodicite,
-      dateDebut: toLocalDate({ year, month: 1, day: 1 }),
-    }) as IndicateurPeriode<K>;
+    return strategyFor(periodicite).containing(date);
   }
 
   /** Parses serialized periods, throwing a typed domain error on invalid input. */
@@ -90,14 +116,7 @@ export class IndicateurPeriodes {
     periodicite: K,
     value: string
   ): IndicateurPeriode<K> {
-    IndicateurPeriodes.assertSupported(periodicite);
-    if (!/^\d{4}$/.test(value) || value === '0000') {
-      throw createIndicateurPeriodeError({
-        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_INVALID,
-        details: { periodicite, value },
-      });
-    }
-    return IndicateurPeriodes.containing(periodicite, `${value}-01-01`);
+    return strategyFor(periodicite).parse(value);
   }
 
   /** Incomplete or invalid form drafts are not yet periods. */
@@ -122,25 +141,15 @@ export class IndicateurPeriodes {
     periodicite: K,
     dateValeur: string
   ): IndicateurPeriode<K> {
-    const periode = IndicateurPeriodes.containing(periodicite, dateValeur);
-    if (periode.dateDebut !== dateValeur) {
-      throw createIndicateurPeriodeError({
-        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_DATE_NON_CANONICAL,
-        details: { periodicite, dateValeur },
-      });
-    }
-    return periode;
+    return strategyFor(periodicite).fromDateValeur(dateValeur);
   }
 
   static toDateValeur(periode: IndicateurPeriode): LocalDate {
-    return IndicateurPeriodes.fromDateValeur(
-      periode.periodicite,
-      periode.dateDebut
-    ).dateDebut;
+    return strategyFor(periode.periodicite).toDateValeur(periode);
   }
 
   static serialize(periode: IndicateurPeriode): string {
-    return IndicateurPeriodes.toDateValeur(periode).slice(0, 4);
+    return strategyFor(periode.periodicite).serialize(periode);
   }
 
   static key(periode: IndicateurPeriode): IndicateurPeriodeKey {
@@ -234,10 +243,104 @@ export class IndicateurPeriodes {
         periodes.set(IndicateurPeriodes.key(periode), periode);
       }
     }
-    return [...periodes.values()].sort(
-      (a, b) =>
-        a.dateDebut.localeCompare(b.dateDebut) ||
-        a.periodicite.localeCompare(b.periodicite)
+    return [...periodes.values()].sort(IndicateurPeriodes.compareTotal);
+  }
+
+  static fromKey(value: string): IndicateurPeriode {
+    const separatorIndex = value.indexOf(':');
+    if (separatorIndex < 1) {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_KEY_INVALID,
+        details: { value },
+      });
+    }
+    const periodicite = value.slice(0, separatorIndex);
+    if (
+      !indicateurPeriodiciteValues.some(
+        (supported) => supported === periodicite
+      )
+    ) {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODICITE_UNKNOWN,
+        details: { periodicite },
+      });
+    }
+    return IndicateurPeriodes.parse(
+      periodicite as IndicateurPeriodicite,
+      value.slice(separatorIndex + 1)
     );
+  }
+
+  static safeFromKey(value: string): IndicateurPeriodeParseResult {
+    try {
+      return { success: true, period: IndicateurPeriodes.fromKey(value) };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
+    }
+  }
+
+  static add<K extends IndicateurPeriodicite>(
+    periode: IndicateurPeriode<K>,
+    amount: number
+  ): IndicateurPeriode<K> {
+    return strategyFor(periode.periodicite).add(periode, amount);
+  }
+
+  static next<K extends IndicateurPeriodicite>(
+    periode: IndicateurPeriode<K>
+  ): IndicateurPeriode<K> {
+    return IndicateurPeriodes.add(periode, 1);
+  }
+
+  static compare<K extends IndicateurPeriodicite>(
+    left: IndicateurPeriode<K>,
+    right: IndicateurPeriode<K>
+  ): number {
+    if (left.periodicite !== right.periodicite) {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODICITE_MISMATCH,
+        details: { expected: left.periodicite, actual: right.periodicite },
+      });
+    }
+    return strategyFor(left.periodicite).compare(left, right);
+  }
+
+  static compareTotal(
+    left: IndicateurPeriode,
+    right: IndicateurPeriode
+  ): number {
+    return (
+      IndicateurPeriodes.toDateValeur(left).localeCompare(
+        IndicateurPeriodes.toDateValeur(right)
+      ) ||
+      indicateurPeriodiciteValues.indexOf(left.periodicite) -
+        indicateurPeriodiciteValues.indexOf(right.periodicite)
+    );
+  }
+
+  static current<K extends IndicateurPeriodicite>(
+    periodicite: K,
+    calendarDate: LocalCalendarDate
+  ): IndicateurPeriode<K> {
+    return IndicateurPeriodes.containing(
+      periodicite,
+      toLocalDate(calendarDate)
+    );
+  }
+
+  static isStarted(
+    periode: IndicateurPeriode,
+    calendarDate: LocalCalendarDate
+  ): boolean {
+    return (
+      IndicateurPeriodes.toDateValeur(periode) <= toLocalDate(calendarDate)
+    );
+  }
+
+  static endExclusive(periode: IndicateurPeriode): LocalDate {
+    return strategyFor(periode.periodicite).endExclusive(periode);
   }
 }

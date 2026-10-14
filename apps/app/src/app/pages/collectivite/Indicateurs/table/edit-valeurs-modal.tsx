@@ -1,6 +1,7 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { appLabels } from '@/app/labels/catalog';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import {
   Button,
   Divider,
@@ -14,13 +15,16 @@ import {
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useId, useRef, useState } from 'react';
-import { IndicateurPeriodes } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodeAnnuelle,
+  IndicateurPeriodes,
+} from '@tet/domain/indicateurs';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
-export type EditValeursModalProps = {
+type EditValeursModalProps = {
   collectiviteId: number;
-  definition: Pick<IndicateurDefinition, 'id'>;
+  definition: Pick<IndicateurDefinition, 'id' | 'periodicite'>;
   openState: OpenState;
   data: PreparedData;
   title?: string;
@@ -37,25 +41,46 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
   const { mutateAsync: upsertValeur, isPending } = useUpsertIndicateurValeur();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
-  const [annee, setAnnee] = useState<number | null>(null);
+  const [periode, setPeriode] = useState('');
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
     valeur || {};
+  const periodicite = definition.periodicite;
+  IndicateurPeriodes.assertAnnual(
+    periodicite,
+    'La saisie annuelle des valeurs'
+  );
+  const presentation = getIndicateurPeriodPresentation(periodicite);
+  let periodeValide: IndicateurPeriodeAnnuelle | null = null;
+  try {
+    periodeValide = IndicateurPeriodes.parse(periodicite, periode);
+  } catch {
+    // L'erreur est reflétée par l'état désactivé des boutons de validation.
+  }
+  let periodeSuivante: IndicateurPeriodeAnnuelle | null = null;
+  if (periodeValide) {
+    try {
+      periodeSuivante = IndicateurPeriodes.next(periodeValide);
+    } catch {
+      // La dernière période du calendrier reste enregistrable, mais aucune
+      // nouvelle saisie ne peut être préparée au-delà de cette borne.
+    }
+  }
 
   const disabled =
-    !annee ||
+    !periodeValide ||
     !(typeof objectif === 'number' || typeof resultat === 'number') ||
     isPending;
 
   const upsert = async (): Promise<boolean> => {
-    if (isSavingRef.current) return false;
+    if (!periodeValide || isSavingRef.current) return false;
     isSavingRef.current = true;
-
     try {
       await upsertValeur({
         id: valeur.id,
         collectiviteId,
         indicateurId: definition.id,
-        dateValeur: `${annee}-01-01`,
+        periodicite: periodeValide.periodicite,
+        dateValeur: IndicateurPeriodes.toDateValeur(periodeValide),
         resultat,
         resultatCommentaire,
         objectif,
@@ -72,21 +97,29 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   };
 
   // cherche si il existe déjà une valeur
-  const getValeurExistante = (a: number | null) => {
-    if (!a) return null;
-    return valeursExistantes.find(
-      (v) => Number(IndicateurPeriodes.serialize(v.periode)) === a
-    );
+  const getValeurExistante = (candidate: string) => {
+    try {
+      const validCandidate = IndicateurPeriodes.parse(periodicite, candidate);
+      const candidateKey = IndicateurPeriodes.key(validCandidate);
+      return valeursExistantes.find(
+        (v) => IndicateurPeriodes.key(v.periode) === candidateKey
+      );
+    } catch {
+      return undefined;
+    }
+  };
+
+  const changePeriode = (candidate: string) => {
+    setPeriode(candidate);
+    setValeur(getValeurExistante(candidate) ?? {});
   };
 
   const validateAndAddNewValue = async () => {
+    if (!periodeValide || !periodeSuivante) return;
     if (!(await upsert())) return;
-    // pré-rempli le champ avec l'année suivante
-    const anneeSuivante = annee ? annee + 1 : null;
-    setAnnee(anneeSuivante);
-    // pré-rempli (ou reset) les autres champs avec les valeurs existantes
-    const valeurExistante = getValeurExistante(anneeSuivante);
-    setValeur(valeurExistante ? valeurExistante : {});
+    // pré-remplit le champ avec la période suivante
+    const periodeSuivanteInput = IndicateurPeriodes.serialize(periodeSuivante);
+    changePeriode(periodeSuivanteInput);
   };
 
   return (
@@ -97,19 +130,16 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       render={() => {
         return (
           <div className="flex flex-col gap-8">
-            <Field title={appLabels.champAnnee} htmlFor={`${fieldId}-annee`}>
+            <Field
+              title={presentation.editor.fieldLabel}
+              htmlFor={`${fieldId}-periode`}
+            >
               <Input
-                id={`${fieldId}-annee`}
-                type="text"
-                value={annee?.toString() ?? ''}
-                onChange={(e) => {
-                  const a = parseInt(e.target.value, 10);
-                  setAnnee(isNaN(a) ? null : a);
-                }}
-                onBlur={() => {
-                  const valeurExistante = getValeurExistante(annee);
-                  if (valeurExistante) setValeur(valeurExistante);
-                }}
+                id={`${fieldId}-periode`}
+                type={presentation.editor.inputType}
+                inputMode={presentation.editor.inputMode}
+                value={periode}
+                onChange={(e) => changePeriode(e.target.value)}
               />
             </Field>
 
@@ -177,10 +207,10 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
             {appLabels.annuler}
           </Button>
           <Button
-            disabled={disabled}
+            disabled={disabled || !periodeSuivante}
             onClick={() => void validateAndAddNewValue()}
           >
-            {appLabels.validerAjouterAnnee}
+            {presentation.editor.validateAndAddLabel}
           </Button>
           <Button
             disabled={disabled}

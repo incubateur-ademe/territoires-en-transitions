@@ -97,4 +97,8 @@ export const indicateursLabels = {
     `des données de la collectivité pour la période ${periodeLabel}`,
   indicateurSuppressionPeriodeAttention: (periodeLabel: string) =>
     `Attention, les données existantes pour la période ${periodeLabel} seront supprimées.`,
+  indicateurSourcePeriodicite: (label: string, cadence: string) =>
+    `${label} · ${cadence}`,
+  indicateurSourceVersion: (id: number) => `Source ${id}`,
+  periodiciteAnnuelle: 'Annuelle',
 };

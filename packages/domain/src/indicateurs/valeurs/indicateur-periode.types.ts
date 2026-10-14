@@ -44,3 +44,7 @@ export type LocalCalendarDate = Readonly<{
   month: number;
   day: number;
 }>;
+
+export type IndicateurPeriodeParseResult =
+  | Readonly<{ success: true; period: IndicateurPeriode }>
+  | Readonly<{ success: false; error: Error }>;

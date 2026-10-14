@@ -1,0 +1,161 @@
+import type { IndicateurPeriodicite } from '../definitions/indicateur-periodicite.schema';
+import type { IndicateurPeriode } from './indicateur-periode.types';
+import {
+  createIndicateurPeriodeError,
+  IndicateurPeriodeErrorEnum,
+} from './indicateur-periode.errors';
+import {
+  monthFromIndex,
+  monthIndex,
+  monthsPerYear,
+  parseLocalDate,
+  toLocalDate,
+} from './local-calendar';
+import { createPeriod, type PeriodStrategy } from './period-strategy';
+
+type CalendarMonthSerialization = 'year';
+
+type CalendarMonthStrategyConfiguration<K extends IndicateurPeriodicite> =
+  Readonly<{
+    periodicite: K;
+    monthsPerPeriod: number;
+    anchorDate: string;
+    serialization: CalendarMonthSerialization;
+  }>;
+
+const serializationPatterns: Readonly<
+  Record<CalendarMonthSerialization, RegExp>
+> = {
+  year: /^(\d{4})$/,
+};
+
+/**
+ * Creates a stateless strategy for a cadence aligned on calendar months.
+ * Calendar cadences differ only through this configuration.
+ */
+export const createCalendarMonthStrategy = <K extends IndicateurPeriodicite>({
+  periodicite,
+  monthsPerPeriod,
+  anchorDate,
+  serialization,
+}: CalendarMonthStrategyConfiguration<K>): PeriodStrategy<K> => {
+  if (
+    !Number.isInteger(monthsPerPeriod) ||
+    monthsPerPeriod < 1 ||
+    monthsPerYear % monthsPerPeriod !== 0
+  ) {
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_CALENDAR_STEP_INVALID,
+      details: { periodicite, monthsPerPeriod },
+    });
+  }
+
+  const anchor = parseLocalDate(anchorDate);
+  if (anchor.day !== 1) {
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_CALENDAR_ANCHOR_INVALID,
+      details: { periodicite, anchorDate },
+    });
+  }
+  if (monthsPerPeriod !== monthsPerYear || anchor.month !== 1) {
+    throw createIndicateurPeriodeError({
+      code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_SERIALIZATION_INCOMPATIBLE,
+      details: { periodicite, monthsPerPeriod, anchorDate, serialization },
+    });
+  }
+  const anchorIndex = monthIndex(anchor.year, anchor.month);
+
+  const containing = (dateValue: string): IndicateurPeriode<K> => {
+    const date = parseLocalDate(dateValue);
+    const startIndex =
+      anchorIndex +
+      Math.floor(
+        (monthIndex(date.year, date.month) - anchorIndex) / monthsPerPeriod
+      ) *
+        monthsPerPeriod;
+    const start = monthFromIndex(startIndex);
+    return createPeriod(
+      periodicite,
+      toLocalDate({ year: start.year, month: start.month, day: 1 })
+    );
+  };
+
+  const fromDateValeur = (dateValeur: string): IndicateurPeriode<K> => {
+    const date = parseLocalDate(dateValeur);
+    const period = containing(dateValeur);
+    if (date.day !== 1 || period.dateDebut !== dateValeur) {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_DATE_NON_CANONICAL,
+        details: { periodicite, dateValeur },
+      });
+    }
+    return period;
+  };
+
+  const parse = (value: string): IndicateurPeriode<K> => {
+    const match = serializationPatterns[serialization].exec(value);
+    if (!match || match[1] === '0000') {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_INVALID,
+        details: { periodicite, value },
+      });
+    }
+    const year = Number(match[1]);
+    const dateDebut = toLocalDate({ year, month: 1, day: 1 });
+    return fromDateValeur(dateDebut);
+  };
+
+  const serialize = (period: IndicateurPeriode<K>): string => {
+    const validatedPeriod = fromDateValeur(period.dateDebut);
+    const { year } = parseLocalDate(validatedPeriod.dateDebut);
+    return String(year).padStart(4, '0');
+  };
+
+  const toDateValeur = (period: IndicateurPeriode<K>) =>
+    fromDateValeur(period.dateDebut).dateDebut;
+
+  const add = (
+    period: IndicateurPeriode<K>,
+    amount: number
+  ): IndicateurPeriode<K> => {
+    if (!Number.isInteger(amount)) {
+      throw createIndicateurPeriodeError({
+        code: IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_OFFSET_INVALID,
+        details: { amount },
+      });
+    }
+    const validatedPeriod = fromDateValeur(period.dateDebut);
+    const start = parseLocalDate(validatedPeriod.dateDebut);
+    const target = monthFromIndex(
+      monthIndex(start.year, start.month) + amount * monthsPerPeriod
+    );
+    return createPeriod(
+      periodicite,
+      toLocalDate({ year: target.year, month: target.month, day: 1 })
+    );
+  };
+
+  const compare = (
+    left: IndicateurPeriode<K>,
+    right: IndicateurPeriode<K>
+  ): number => {
+    const leftDate = fromDateValeur(left.dateDebut).dateDebut;
+    const rightDate = fromDateValeur(right.dateDebut).dateDebut;
+    return leftDate.localeCompare(rightDate);
+  };
+
+  const endExclusive = (period: IndicateurPeriode<K>) =>
+    add(period, 1).dateDebut;
+
+  return Object.freeze({
+    periodicite,
+    parse,
+    serialize,
+    fromDateValeur,
+    toDateValeur,
+    containing,
+    add,
+    compare,
+    endExclusive,
+  });
+};

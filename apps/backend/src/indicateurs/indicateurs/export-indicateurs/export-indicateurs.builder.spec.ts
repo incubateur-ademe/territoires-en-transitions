@@ -17,11 +17,12 @@ function makeValeur(params: {
   const { indicateurId, annee, resultat, objectif, sourceId } = params;
   return {
     indicateurValeur: {
+      periodicite: 'annuelle',
       dateValeur: `${annee}-01-01`,
       resultat: resultat ?? null,
       objectif: objectif ?? null,
     },
-    indicateurDefinition: { id: indicateurId },
+    indicateurDefinition: { id: indicateurId, periodicite: 'annuelle' },
     indicateurSourceMetadonnee: sourceId
       ? { id: 1, sourceId, dateVersion: `${annee}-01-01` }
       : null,
@@ -58,7 +59,12 @@ describe('buildConsolidatedSheet — sources open-data', () => {
   it('ajoute une ligne par source open-data en plus de la ligne collectivité', () => {
     const ws = getSheet([
       // saisie collectivité
-      makeValeur({ indicateurId: 1, annee: 2022, resultat: 100, objectif: 120 }),
+      makeValeur({
+        indicateurId: 1,
+        annee: 2022,
+        resultat: 100,
+        objectif: 120,
+      }),
       // open-data (source "rare")
       makeValeur({
         indicateurId: 1,
@@ -101,7 +107,7 @@ describe('buildConsolidatedSheet — sources open-data', () => {
     expect(headerValues).toContain('2030 Objectif');
   });
 
-  it("ne crée pas de colonne pour un type/année sans aucune valeur", () => {
+  it('ne crée pas de colonne pour un type/année sans aucune valeur', () => {
     const ws = getSheet([
       // Uniquement des résultats (aucun objectif nulle part) → aucune colonne Objectif.
       makeValeur({ indicateurId: 1, annee: 2020, resultat: 10 }),
@@ -124,5 +130,15 @@ describe('buildConsolidatedSheet — sources open-data', () => {
     // 1 en-tête + 1 ligne collectivité uniquement
     expect(ws.rowCount).toBe(2);
     expect((ws.getRow(2).values as unknown[])[SOURCE_COL]).toBe('Collectivité');
+  });
+  it("refuse une valeur orpheline au lieu d'inventer une périodicité annuelle", () => {
+    const valeur = makeValeur({
+      indicateurId: 1,
+      annee: 2026,
+      resultat: 10,
+    });
+    valeur.indicateurDefinition = null;
+
+    expect(() => getSheet([valeur])).toThrow(/pas de définition/);
   });
 });
