@@ -26,7 +26,7 @@ export const HomePage = async () => {
       <AccueilHeroSection />
       <Section>
         <EmbededVideo
-          url="https://www.youtube.com/embed/fFyxb7M4Wio"
+          url="https://tube.numerique.gouv.fr/w/9QfiUGr3fXiwHRCndgbwBt"
           className="xl:w-4/6 lg:w-4/5"
         />
       </Section>
