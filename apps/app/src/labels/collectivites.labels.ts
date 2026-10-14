@@ -111,9 +111,6 @@ export const collectivitesLabels = {
     categorieActionLabels[categorie],
   categorieActionShortLabel: (categorie: CategorieAction): string =>
     categorieActionShortLabels[categorie],
-  mobilisationAbsente:
-    "Aucune action de la collectivité n'est encore rattachée à un levier",
-
   potentielsIndisponibles:
     "Le potentiel de réduction de GES par levier n'est disponible que pour les EPCI dont la trajectoire SNBC a été calculée.",
   leviersSansPotentiel: plural({
@@ -171,6 +168,10 @@ export const collectivitesLabels = {
   leviersAPrioriserDescription:
     "Fort impact, encore peu mobilisés : c'est par là que vous pouvez commencer.",
   ouvrirLevierLePlusImportant: 'Ouvrir le levier le plus important',
+  priorisationVueBloqueeTitre: 'Ajoutez des actions pour accéder à cette vue',
+  priorisationVueBloqueeDescription:
+    "La matrice repose sur les actions de vos plans : elle montre où votre collectivité mobilise déjà chaque levier. Sans action, elle ne peut pas être calculée.",
+  ajouterDesActions: 'Ajouter des actions',
   priorisationAnalyse: ({
     actionsCount,
     plansCount,
