@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toTileColor } from './to-tile-color';
+import { toHeaderColor, toTileColor } from './to-tile-color';
 
 const MOBILISATION = [
   'Non mobilisé',
@@ -9,35 +9,28 @@ const MOBILISATION = [
 ] as const;
 
 describe('toTileColor', () => {
-  it('gives the strongest intensity the full group color', () => {
-    expect(
-      toTileColor({
-        color: '#404092',
-        intensity: 'Très mobilisé',
-        intensityScale: MOBILISATION,
-      })
-    ).toBe('rgba(64,64,146,1)');
-  });
-
-  it('gives the weakest intensity a 20 % tint of the group color over white', () => {
+  it('gives the weakest intensity a 10 % tint of the group color over white', () => {
     expect(
       toTileColor({
         color: '#404092',
         intensity: 'Non mobilisé',
         intensityScale: MOBILISATION,
       })
-    ).toBe('rgba(217,217,233,1)');
+    ).toBe('rgba(236,236,244,1)');
   });
 
-  it('spreads the intermediate intensities evenly between the two ends', () => {
-    expect(
-      toTileColor({
-        color: '#404092',
-        intensity: 'Peu mobilisé',
-        intensityScale: MOBILISATION,
-      })
-    ).toBe('rgba(166,166,204,1)');
-  });
+  it.each(['Peu mobilisé', 'Bien mobilisé', 'Très mobilisé'] as const)(
+    'gives %s a 42 % tint of the group color over white',
+    (intensity) => {
+      expect(
+        toTileColor({
+          color: '#404092',
+          intensity,
+          intensityScale: MOBILISATION,
+        })
+      ).toBe('rgba(175,175,209,1)');
+    }
+  );
 
   it('gives the full group color when the scale has a single intensity', () => {
     expect(
@@ -47,5 +40,11 @@ describe('toTileColor', () => {
         intensityScale: ['Mobilisé'],
       })
     ).toBe('rgba(64,64,146,1)');
+  });
+});
+
+describe('toHeaderColor', () => {
+  it('gives a 55 % tint of the group color over white', () => {
+    expect(toHeaderColor('#404092')).toBe('rgba(150,150,195,1)');
   });
 });

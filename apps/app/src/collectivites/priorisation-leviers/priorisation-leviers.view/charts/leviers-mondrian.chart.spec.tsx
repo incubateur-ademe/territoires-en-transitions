@@ -72,7 +72,7 @@ describe('LeviersMondrianChart', () => {
 
     expect(
       screen.getByText(
-        'Financement & fiscalité, Peu mobilisé, Impact potentiel : 38/100 du territoire'
+        'Financement, Peu mobilisé, Impact potentiel : 38/100 du territoire'
       )
     ).toBeTruthy();
   });

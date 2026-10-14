@@ -24,6 +24,7 @@ type TreemapGroup<
   id: TGroupId;
   label: string;
   color: HexColor;
+  isFlagged?: boolean;
   tiles: readonly TreemapTile<TIntensity, TTileId>[];
 };
 

@@ -1,4 +1,3 @@
-import ChartLegend from '@/app/ui/charts/ChartLegend';
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
@@ -6,7 +5,7 @@ import { readCaption } from '@/app/ui/charts/matrix/read-children';
 import { cn, preset } from '@tet/ui';
 import type { TreemapSeriesOption } from 'echarts/charts';
 import { useMemo, useRef, type JSX, type ReactNode } from 'react';
-import { toTileColor } from './to-tile-color';
+import { toHeaderColor, toTileColor } from './to-tile-color';
 import {
   type HoveredNode,
   toGroupKey,
@@ -34,6 +33,7 @@ type TreemapChartProps<
   toIntensityLabel?: (intensity: TIntensity) => string;
   toIntensityVariant?: (intensity: TIntensity) => IntensityVariant;
   tooltipHint?: string;
+  details?: ReactNode;
   selectedGroupId?: TGroupId;
   onGroupSelected?: (groupId: TGroupId, tileId?: TTileId) => void;
   children?: ReactNode;
@@ -60,7 +60,9 @@ type TilesListProps<
   onGroupSelected?: (groupId: TGroupId) => void;
 };
 
-const LEGEND_COLOR: HexColor = colors.primary[9];
+const FLAG_GLYPH = '⚑';
+
+const WHITE: HexColor = '#FFFFFF';
 
 const SELECTED_GROUP_COLOR: HexColor = colors.primary[7];
 
@@ -71,10 +73,11 @@ const SELECTED_GROUP_LABEL_COLOR: HexColor = colors.grey[1];
 const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
   { itemStyle: { borderWidth: 0, gapWidth: 4 } },
   {
-    itemStyle: { borderWidth: 2, gapWidth: 2 },
+    itemStyle: { borderWidth: 0, gapWidth: 0 },
     upperLabel: {
       show: true,
       height: 24,
+      padding: [0, 0, 0, 6],
       color: GROUP_LABEL_COLOR,
       fontSize: 12,
       fontWeight: 'bold',
@@ -82,7 +85,7 @@ const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
     },
   },
   {
-    itemStyle: { borderWidth: 0 },
+    itemStyle: { borderWidth: 1, borderColor: WHITE },
     label: {
       position: 'insideTopLeft',
       color: colors.grey[9],
@@ -107,6 +110,10 @@ const carriesNodeKey = (
   'id' in candidate.data &&
   typeof candidate.data.id === 'string';
 
+const toGroupName = <TIntensity extends string, TGroupId extends string>(
+  group: TreemapGroup<TIntensity, TGroupId>
+): string => (group.isFlagged ? `${FLAG_GLYPH} ${group.label}` : group.label);
+
 const toSeriesData = <TIntensity extends string, TGroupId extends string>({
   data,
   intensityScale,
@@ -123,9 +130,11 @@ const toSeriesData = <TIntensity extends string, TGroupId extends string>({
       : GROUP_LABEL_COLOR;
     return {
       id: toGroupKey(group),
-      name: group.label,
+      name: toGroupName(group),
       itemStyle: {
-        borderColor: isSelectedGroup ? SELECTED_GROUP_COLOR : group.color,
+        borderColor: isSelectedGroup
+          ? SELECTED_GROUP_COLOR
+          : toHeaderColor(group.color),
       },
       upperLabel: { color: groupLabelColor },
       children: group.tiles.map((tile) => ({
@@ -261,6 +270,7 @@ const TreemapChart = <
   toIntensityLabel = toIdentityLabel,
   toIntensityVariant = toGreyVariant,
   tooltipHint,
+  details,
   selectedGroupId,
   onGroupSelected,
   children,
@@ -309,14 +319,10 @@ const TreemapChart = <
     }),
     [hoveredNodeByKey, onGroupSelected]
   );
-  const legendItems = intensityScale.map((intensity) => ({
-    name: toIntensityLabel(intensity),
-    color: toTileColor({ color: LEGEND_COLOR, intensity, intensityScale }),
-  }));
 
   return (
-    <figure className={cn('m-0 flex h-96 w-full flex-col', className)}>
-      <div ref={plotRef} aria-hidden className="min-h-0 w-full grow">
+    <figure className="m-0 flex w-full flex-col">
+      <div ref={plotRef} aria-hidden className={cn('h-96 w-full', className)}>
         <ReactECharts
           renderer="svg"
           style={{ width: '100%', height: '100%' }}
@@ -324,8 +330,9 @@ const TreemapChart = <
           onEvents={onEvents}
         />
       </div>
-      <ChartLegend isOpen size="sm" className="mt-4" items={legendItems} />
-      <figcaption className="sr-only">{caption}</figcaption>
+      <figcaption className="mt-4 text-xs font-normal text-grey-8">
+        {caption}
+      </figcaption>
       <TilesList
         data={data}
         formatValue={formatValue}
@@ -333,6 +340,7 @@ const TreemapChart = <
         selectedGroupId={selectedGroupId}
         onGroupSelected={onGroupSelected}
       />
+      {details}
     </figure>
   );
 };

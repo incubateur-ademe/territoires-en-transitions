@@ -28,6 +28,15 @@ const categorieActionLabels = {
   sensibilisation: 'Sensibilisation & accompagnement',
 } satisfies Record<CategorieAction, string>;
 
+const categorieActionShortLabels = {
+  amenagement: 'Aménagement',
+  planification: 'Planification',
+  financement: 'Financement',
+  gouvernance: 'Gouvernance',
+  exemplarite: 'Exemplarité',
+  sensibilisation: 'Sensibilisation',
+} satisfies Record<CategorieAction, string>;
+
 const toPertinenceLabel = (pertinence?: Pertinence): string => {
   if (pertinence === undefined) {
     return unsetPertinenceLabel;
@@ -100,6 +109,8 @@ export const collectivitesLabels = {
     `Pertinence du levier ${levierNom}`,
   categorieActionLabel: (categorie: CategorieAction): string =>
     categorieActionLabels[categorie],
+  categorieActionShortLabel: (categorie: CategorieAction): string =>
+    categorieActionShortLabels[categorie],
   mobilisationAbsente:
     "Aucune action de la collectivité n'est encore rattachée à un levier",
 
@@ -122,6 +133,17 @@ export const collectivitesLabels = {
   quadrantFortImpactBienMobilise: 'Fort impact, bien mobilisés',
   quadrantFaibleImpactPeuMobilise: 'Faible impact, peu mobilisés',
   quadrantFaibleImpactBienMobilise: 'Faible impact, bien mobilisés',
+  levierQuadrantLecture: {
+    high_impact_low_mobilisation:
+      'Levier à prioriser : fort impact, peu mobilisé',
+    high_impact_high_mobilisation: 'Fort impact, bien mobilisé',
+    low_impact_low_mobilisation: 'Faible impact, peu mobilisé',
+    low_impact_high_mobilisation: 'Faible impact, bien mobilisé',
+  },
+  levierSecteur: 'Secteur',
+  levierImpactPotentielEstime: 'Impact potentiel estimé (/100)',
+  levierMobilisationEstimee: 'Mobilisation estimée',
+  levierLecture: 'Lecture',
   levierActionsDeMaCollectivite: plural({
     one: 'action de ma collectivité',
     other: 'actions de ma collectivité',
@@ -183,10 +205,8 @@ export const collectivitesLabels = {
     "Chaque barre est un sous-levier, c'est-à-dire la part du potentiel de réduction de GES d'un levier qui revient à une catégorie d'action, colorée selon la mobilisation de la collectivité. Cliquez sur une barre pour consulter les actions de référence du levier.",
   sousLeviersLegende:
     "Sous-leviers (levier × catégorie d'action) par potentiel de réduction de GES décroissant",
-  repartitionPotentielInfo:
-    "Chaque case montre la part du potentiel de réduction de GES d'un levier qui revient à une catégorie d'action ; plus sa couleur est soutenue, plus la collectivité y est mobilisée. Cliquez sur un levier pour consulter ses actions de référence.",
   repartitionPotentielLegende:
-    "Potentiel de réduction de GES par levier et par catégorie d'action, nuancé par la mobilisation de la collectivité",
+    'Taille du rectangle = potentiel de réduction de GES estimé. Un drapeau signale un levier à prioriser. Cliquez une zone pour ouvrir le levier.',
   impactPotentielDuTerritoire: (score: number): string =>
     `Impact potentiel : ${score}/100 du territoire`,
   impactPotentielEstime: (score: number): string =>
