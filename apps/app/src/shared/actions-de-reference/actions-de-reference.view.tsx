@@ -1,38 +1,75 @@
 'use client';
 
+import { usePreselection } from '@/app/collectivites/priorisation-leviers/use-preselection';
 import { appLabels } from '@/app/labels/catalog';
-import { useUser } from '@tet/api/users';
-import { hasPermission } from '@tet/domain/users';
-import { PageHeader } from '@tet/ui';
+import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import type {
-  ActionDeReferenceUpdateAccess,
+  ActionDeReference,
+  ActionDeReferenceId,
+} from '@tet/domain/shared';
+import { EmptyCard, PageHeader } from '@tet/ui';
+import { partition } from 'es-toolkit';
+import type { JSX } from 'react';
+import { ActionDeReferenceCollectivitesPanel } from './action-de-reference-collectivites.panel';
+import { ActionDeReferenceDismissedList } from './action-de-reference-dismissed.list';
+import type {
+  ActionsDeReferenceList,
   ActionsDeReferenceViewComponent,
 } from './actions-de-reference.contract';
 import { ActionsDeReferenceFilters } from './actions-de-reference.filters';
 import { ActionsDeReferenceResults } from './actions-de-reference.results';
 import { useActionsDeReferenceSearchParams } from './data/use-actions-de-reference-search-params';
 import { useListActionsDeReference } from './data/use-list-actions-de-reference';
-import { useUpdateActionDeReferenceSidePanel } from './use-update-action-de-reference-side-panel';
+import { toInterestControl } from './to-action-de-reference-interest-control';
+import { useActionDeReferenceUpdateAccess } from './use-action-de-reference-update-access';
 
-const useActionDeReferenceUpdateAccess = (): ActionDeReferenceUpdateAccess => {
-  const user = useUser();
-  const { open } = useUpdateActionDeReferenceSidePanel();
-  const canUpdateActionsDeReference = hasPermission(
-    user,
-    'shared.actions-de-reference.mutate'
-  );
+const renderActionDeReferenceCollectivites = (
+  action: ActionDeReference
+): JSX.Element => (
+  <ActionDeReferenceCollectivitesPanel actionDeReferenceId={action.id} />
+);
 
-  if (!canUpdateActionsDeReference) {
-    return { status: 'forbidden' };
+const splitDismissed = (
+  list: ActionsDeReferenceList,
+  isDismissed: (actionId: ActionDeReferenceId) => boolean
+): {
+  readonly visible: ActionsDeReferenceList;
+  readonly dismissed: readonly ActionDeReference[];
+} => {
+  if (list.status !== 'loaded') {
+    return { visible: list, dismissed: [] };
   }
-  return { status: 'allowed', onUpdate: open };
+  const [dismissed, visible] = partition(list.actions, ({ id }) =>
+    isDismissed(id)
+  );
+  return { visible: { status: 'loaded', actions: visible }, dismissed };
 };
+
+const AllActionsDismissedEmpty = (): JSX.Element => (
+  <EmptyCard
+    picto={(props) => <PictoDashboard {...props} />}
+    title={appLabels.actionDeReferenceToutesMarquees}
+  />
+);
 
 export const ActionsDeReferenceView: ActionsDeReferenceViewComponent = () => {
   const { search, changeSearch, resetSearch } =
     useActionsDeReferenceSearchParams();
   const actionsDeReferenceList = useListActionsDeReference(search);
   const updateAccess = useActionDeReferenceUpdateAccess();
+  const preselection = usePreselection();
+  const isDismissed = (actionId: ActionDeReferenceId): boolean =>
+    preselection.statusOf(actionId) === 'ignoree';
+
+  const { visible: visibleList, dismissed: dismissedActions } = splitDismissed(
+    actionsDeReferenceList,
+    isDismissed
+  );
+  const hasDismissedActions = dismissedActions.length > 0;
+  const isEveryActionDismissed =
+    hasDismissedActions &&
+    visibleList.status === 'loaded' &&
+    visibleList.actions.length === 0;
 
   return (
     <>
@@ -44,11 +81,29 @@ export const ActionsDeReferenceView: ActionsDeReferenceViewComponent = () => {
           search={search}
           onSearchChange={changeSearch}
         />
-        <ActionsDeReferenceResults
-          list={actionsDeReferenceList}
-          updateAccess={updateAccess}
-          onResetSearch={resetSearch}
-        />
+        {isEveryActionDismissed ? (
+          <AllActionsDismissedEmpty />
+        ) : (
+          <ActionsDeReferenceResults
+            list={visibleList}
+            updateAccess={updateAccess}
+            onResetSearch={resetSearch}
+            renderCollectivites={renderActionDeReferenceCollectivites}
+            interestOf={(action) =>
+              toInterestControl(
+                action,
+                preselection.statusOf(action.id),
+                preselection
+              )
+            }
+          />
+        )}
+        {hasDismissedActions && (
+          <ActionDeReferenceDismissedList
+            actions={dismissedActions}
+            onRestore={preselection.restore}
+          />
+        )}
       </div>
     </>
   );

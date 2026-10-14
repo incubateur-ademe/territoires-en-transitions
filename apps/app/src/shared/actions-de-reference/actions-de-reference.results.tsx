@@ -10,6 +10,7 @@ import { ActionDeReferenceCard } from './action-de-reference.card';
 import type {
   ActionDeReferenceUpdateAccess,
   ActionsDeReferenceResultsComponent,
+  ActionsDeReferenceResultsProps,
 } from './actions-de-reference.contract';
 
 const ActionsDeReferenceEmpty = ({
@@ -31,20 +32,32 @@ const ActionsDeReferenceEmpty = ({
   />
 );
 
+type ActionsDeReferenceGridProps = {
+  readonly actions: readonly ActionDeReference[];
+  readonly updateAccess: ActionDeReferenceUpdateAccess;
+  readonly renderCollectivites: ActionsDeReferenceResultsProps['renderCollectivites'];
+  readonly interestOf: ActionsDeReferenceResultsProps['interestOf'];
+};
+
 const ActionsDeReferenceGrid = ({
   actions,
   updateAccess,
-}: {
-  readonly actions: readonly ActionDeReference[];
-  readonly updateAccess: ActionDeReferenceUpdateAccess;
-}): JSX.Element => (
+  renderCollectivites,
+  interestOf,
+}: ActionsDeReferenceGridProps): JSX.Element => (
   <ul
     role="list"
     className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3"
   >
     {actions.map((action) => (
       <li key={action.id} className="p-0">
-        <ActionDeReferenceCard action={action} updateAccess={updateAccess} />
+        <ActionDeReferenceCard
+          action={action}
+          updateAccess={updateAccess}
+          interest={interestOf(action)}
+        >
+          {renderCollectivites(action)}
+        </ActionDeReferenceCard>
       </li>
     ))}
   </ul>
@@ -54,6 +67,8 @@ export const ActionsDeReferenceResults: ActionsDeReferenceResultsComponent = ({
   list,
   updateAccess,
   onResetSearch,
+  renderCollectivites,
+  interestOf,
 }) =>
   match(list)
     .with({ status: 'loading' }, () => <LoadingStatus />)
@@ -68,6 +83,11 @@ export const ActionsDeReferenceResults: ActionsDeReferenceResultsComponent = ({
       <ActionsDeReferenceEmpty onResetSearch={onResetSearch} />
     ))
     .with({ status: 'loaded' }, ({ actions }) => (
-      <ActionsDeReferenceGrid actions={actions} updateAccess={updateAccess} />
+      <ActionsDeReferenceGrid
+        actions={actions}
+        updateAccess={updateAccess}
+        renderCollectivites={renderCollectivites}
+        interestOf={interestOf}
+      />
     ))
     .exhaustive();

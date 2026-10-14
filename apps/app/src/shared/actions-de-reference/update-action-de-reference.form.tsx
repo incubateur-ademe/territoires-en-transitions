@@ -18,10 +18,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { match } from 'ts-pattern';
 import * as z from 'zod/mini';
 import type {
+  UpdateActionDeReferenceFieldsProps,
   UpdateActionDeReferenceFormComponent,
-  UpdateActionDeReferenceFormProps,
 } from './actions-de-reference.contract';
-import { useListFichesActionDeReference } from './data/use-list-fiches-action-de-reference';
 import { useUpdateActionDeReference } from './data/use-update-action-de-reference';
 import { DiscardChangesConfirmModal } from './discard-changes-confirm.modal';
 import { isFicheIdsText, toFicheIds, toFicheIdsText } from './fiche-ids.text';
@@ -122,10 +121,6 @@ const useDiscardChangesGuard = (
     discardChanges: () => setPanel({ type: 'close' }),
     keepEditing: () => setIsDiscardConfirmationOpen(false),
   };
-};
-
-type UpdateActionDeReferenceFieldsProps = UpdateActionDeReferenceFormProps & {
-  readonly initialFicheIds: readonly number[];
 };
 
 const UpdateActionDeReferenceFields = ({
@@ -242,10 +237,9 @@ const UpdateActionDeReferenceFields = ({
 const UpdateActionDeReferenceForm: UpdateActionDeReferenceFormComponent = ({
   action,
   onUpdated,
+  fichesList,
 }) => {
-  const fiches = useListFichesActionDeReference(action.id);
-
-  return match(fiches)
+  return match(fichesList)
     .with({ status: 'loading' }, () => <LoadingStatus />)
     .with({ status: 'error' }, ({ retry }) => (
       <ErrorCard

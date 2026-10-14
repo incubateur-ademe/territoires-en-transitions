@@ -11,8 +11,11 @@ import type {
   UpdateActionDeReferenceFormProps,
   UseListFichesActionDeReference,
 } from './actions-de-reference.contract';
-import { isolationComblesAction } from './actions-de-reference.fixture';
-import { UpdateActionDeReferenceForm } from './update-action-de-reference.form';
+import {
+  isolationComblesAction,
+  toFicheFixture,
+} from './actions-de-reference.fixture';
+import { UpdateActionDeReferenceContainer } from './update-action-de-reference.container';
 import { useUpdateActionDeReferenceSidePanel } from './use-update-action-de-reference-side-panel';
 
 const PANEL_TITLE = "Modifier l'action de référence";
@@ -55,7 +58,14 @@ vi.mock('./data/use-list-fiches-action-de-reference', () => ({
 }));
 
 const toFicheStub = (id: number): ActionDeReferenceFiche =>
-  ({ id } as ActionDeReferenceFiche);
+  toFicheFixture({
+    id,
+    titre: '',
+    description: null,
+    restreint: false,
+    collectiviteId: 0,
+    collectiviteNom: null,
+  });
 
 const toLoadedFiches = (
   ficheIds: readonly number[]
@@ -72,7 +82,7 @@ const renderForm = (): Mock<OnUpdated> => {
   const onUpdated = vi.fn<OnUpdated>();
   render(
     <SidePanelProvider>
-      <UpdateActionDeReferenceForm
+      <UpdateActionDeReferenceContainer
         action={isolationComblesAction}
         onUpdated={onUpdated}
       />

@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ActionDeReferenceCollectivitesView } from './action-de-reference-collectivites.panel';
 import {
   aireCovoiturageAction,
+  noInterest,
+  linkedFichesFixture,
   isolationComblesAction,
   longDescriptionAction,
 } from './actions-de-reference.fixture';
@@ -11,6 +14,8 @@ const meta: Meta<typeof ActionsDeReferenceResults> = {
   args: {
     updateAccess: { status: 'forbidden' },
     onResetSearch: () => undefined,
+    renderCollectivites: () => null,
+    interestOf: () => noInterest,
   },
 };
 
@@ -37,6 +42,17 @@ export const Vide: Story = {
 
 export const Grille: Story = {
   args: { list: { status: 'loaded', actions: loadedActions } },
+};
+
+export const GrilleAvecCollectivitesLiees: Story = {
+  args: {
+    list: { status: 'loaded', actions: loadedActions },
+    renderCollectivites: () => (
+      <ActionDeReferenceCollectivitesView
+        fichesList={{ status: 'loaded', fiches: linkedFichesFixture }}
+      />
+    ),
+  },
 };
 
 export const GrilleModifiable: Story = {

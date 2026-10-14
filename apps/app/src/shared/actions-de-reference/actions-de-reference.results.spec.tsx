@@ -11,6 +11,8 @@ import {
   isolationComblesAction,
   longDescriptionAction,
 } from './actions-de-reference.fixture';
+import type { ActionDeReferenceInterestControl } from './actions-de-reference.contract';
+import { noInterest } from './actions-de-reference.fixture';
 import { ActionsDeReferenceResults } from './actions-de-reference.results';
 
 vi.mock('@tet/api/collectivites', () => ({
@@ -22,6 +24,10 @@ const EMPTY_STATE_TITLE =
 
 const ignoreResetSearch = (): void => undefined;
 
+const ignoreRenderCollectivites = (): null => null;
+
+const ignoreInterest = (): ActionDeReferenceInterestControl => noInterest;
+
 afterEach(cleanup);
 
 describe('liste-en-chargement', () => {
@@ -31,6 +37,8 @@ describe('liste-en-chargement', () => {
         list={{ status: 'loading' }}
         updateAccess={{ status: 'forbidden' }}
         onResetSearch={ignoreResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -48,6 +56,8 @@ describe('liste-en-erreur', () => {
         list={{ status: 'error', retry: vi.fn() }}
         updateAccess={{ status: 'forbidden' }}
         onResetSearch={ignoreResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -64,6 +74,8 @@ describe('liste-en-erreur', () => {
         list={{ status: 'error', retry }}
         updateAccess={{ status: 'forbidden' }}
         onResetSearch={ignoreResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -80,6 +92,8 @@ describe('aucune-action-trouvee', () => {
         list={{ status: 'loaded', actions: [] }}
         updateAccess={{ status: 'forbidden' }}
         onResetSearch={ignoreResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -99,6 +113,8 @@ describe('aucune-action-trouvee', () => {
         list={{ status: 'loaded', actions: [] }}
         updateAccess={{ status: 'forbidden' }}
         onResetSearch={onResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -118,6 +134,8 @@ describe('aucune-action-en-base', () => {
         list={{ status: 'loaded', actions: [] }}
         updateAccess={{ status: 'allowed', onUpdate: vi.fn() }}
         onResetSearch={onResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -147,6 +165,8 @@ describe('card-affiche-action-entiere', () => {
         }}
         updateAccess={{ status: 'forbidden' }}
         onResetSearch={ignoreResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 
@@ -173,6 +193,8 @@ describe('modification-reservee-super-admin', () => {
         }}
         updateAccess={{ status: 'allowed', onUpdate }}
         onResetSearch={ignoreResetSearch}
+        renderCollectivites={ignoreRenderCollectivites}
+        interestOf={ignoreInterest}
       />
     );
 

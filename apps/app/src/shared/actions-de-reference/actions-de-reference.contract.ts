@@ -7,7 +7,7 @@ import type {
   ListActionsDeReferenceInput,
   UpdateActionDeReferenceInput,
 } from '@tet/domain/shared';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 export type ActionDeReferenceSortField = ListActionsDeReferenceInput['sortBy'];
 
@@ -45,6 +45,16 @@ export type UseListActionsDeReference = (
 
 export type ActionDeReferenceFiche =
   RouterOutput['shared']['actionsDeReference']['listFiches'][number];
+
+export type ActionDeReferenceFicheLiee = Pick<
+  ActionDeReferenceFiche,
+  | 'id'
+  | 'titre'
+  | 'description'
+  | 'restreint'
+  | 'collectiviteId'
+  | 'collectiviteNom'
+>;
 
 export type ActionDeReferenceFiches =
   | { readonly status: 'loading' }
@@ -90,15 +100,39 @@ export type ActionsDeReferenceResultsProps = {
   readonly list: ActionsDeReferenceList;
   readonly updateAccess: ActionDeReferenceUpdateAccess;
   readonly onResetSearch: () => void;
+  readonly renderCollectivites: (action: ActionDeReference) => ReactNode;
+  readonly interestOf: (
+    action: ActionDeReference
+  ) => ActionDeReferenceInterestControl;
 };
 
 export type ActionsDeReferenceResultsComponent = (
   props: ActionsDeReferenceResultsProps
 ) => JSX.Element;
 
+export type ActionDeReferenceInterestStatus =
+  | 'disponible'
+  | 'preselectionnee'
+  | 'ignoree';
+
+export type ActionDeReferenceInterestControl =
+  | {
+      readonly status: 'disponible' | 'preselectionnee';
+      readonly onToggleSaved: () => void;
+      readonly onDismiss: () => void;
+    }
+  | {
+      readonly status: 'ignoree';
+      readonly onRestore: () => void;
+    };
+
 export type ActionDeReferenceCardProps = {
   readonly action: ActionDeReference;
   readonly updateAccess: ActionDeReferenceUpdateAccess;
+  readonly interest: ActionDeReferenceInterestControl;
+  readonly showAdemeBadge?: boolean;
+  readonly actions?: ReactNode;
+  readonly children?: ReactNode;
 };
 
 export type ActionDeReferenceCardComponent = (
@@ -115,7 +149,18 @@ export type UseUpdateActionDeReferenceSidePanel =
 export type UpdateActionDeReferenceFormProps = {
   readonly action: ActionDeReference;
   readonly onUpdated: () => void;
+  readonly fichesList: ActionDeReferenceFiches;
 };
+
+export type UpdateActionDeReferenceWithoutFichesProps = Omit<
+  UpdateActionDeReferenceFormProps,
+  'fichesList'
+>;
+
+export type UpdateActionDeReferenceFieldsProps =
+  UpdateActionDeReferenceWithoutFichesProps & {
+    readonly initialFicheIds: readonly number[];
+  };
 
 export type UpdateActionDeReferenceFormComponent = (
   props: UpdateActionDeReferenceFormProps
