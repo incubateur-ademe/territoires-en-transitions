@@ -4,6 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { Button } from '@tet/ui';
 import { useCallback, useEffect } from 'react';
+import { countPlanSecteursARenseigner } from './count-plan-secteurs-a-renseigner';
 import { useListPlanSecteursCounts } from './data/use-list-plan-secteurs-counts';
 import { PlanSecteursVerificationPanel } from './plan-secteurs-verification.panel';
 import {
@@ -48,7 +49,7 @@ export const PlanSecteursButton = ({
     return null;
   }
 
-  const aRenseigner = counts.aRenseigner + counts.nonAttribuables;
+  const aRenseigner = countPlanSecteursARenseigner(counts);
   if (aRenseigner === 0) {
     return null;
   }
