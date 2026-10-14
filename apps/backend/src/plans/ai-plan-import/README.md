@@ -332,9 +332,10 @@ modèle une fois par fiche.
 
 Ces étapes améliorent le brouillon sans en être une condition : un lot en
 échec laisse ses actions telles quelles, avec un avertissement et le compte
-`failedBatches` dans la télémétrie de l'étape. Seul un quota épuisé sur tous
-les lots d'une étape fait échouer l'import, pour qu'il se reprenne plutôt que
-de rendre en silence un brouillon sans vérification.
+`failedBatches` dans la télémétrie de l'étape. Seule une erreur passagère
+(quota, panne 5xx, coupure ou délai dépassé) sur tous les lots d'une étape,
+relances épuisées, fait échouer l'import, pour qu'il se reprenne plutôt que de
+rendre en silence un brouillon sans vérification.
 
 ## Couche LLM (`utils/llm/`)
 

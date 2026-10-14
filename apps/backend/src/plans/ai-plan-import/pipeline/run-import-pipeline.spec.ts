@@ -486,12 +486,12 @@ describe('runImportPipeline', () => {
     'enrichment',
     'qualitativeReview',
   ] as const)(
-    "va au bout quand l'étape %s échoue sur autre chose que le quota",
+    "va au bout quand l'étape %s échoue sur une erreur qu'une reprise ne corrigerait pas",
     async (failingStep) => {
       const runs: ImportStepRun[] = [];
 
       const outcome = await runImportPipeline(
-        routedLlm(failingStep, { kind: 'api_error', httpStatus: 503 }),
+        routedLlm(failingStep, { kind: 'api_error', httpStatus: 400 }),
         input({
           onStepRun: async (run) => {
             runs.push(run);
@@ -502,11 +502,30 @@ describe('runImportPipeline', () => {
       expect(outcome).toMatchObject({
         status: 'done',
         stepStates: { [failingStep]: 'ok' },
-        warnings: [expect.stringContaining('api_error 503')],
+        warnings: [expect.stringContaining('api_error 400')],
       });
       expect(runs.find(({ step }) => step === failingStep)).toMatchObject({
         status: 'ok',
         details: { failedBatches: 1 },
+      });
+    }
+  );
+
+  it.each([
+    ['enrichment', 500],
+    ['qualitativeReview', null],
+  ] as const)(
+    "échoue, pour être repris, quand tous les lots de l'étape %s échouent sur une panne (%s)",
+    async (failingStep, httpStatus) => {
+      const outcome = await runImportPipeline(
+        routedLlm(failingStep, { kind: 'api_error', httpStatus }),
+        input()
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: failingStep,
+        error: { kind: 'api_error', httpStatus },
       });
     }
   );
