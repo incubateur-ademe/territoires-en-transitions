@@ -1,6 +1,5 @@
 'use client';
 
-import { makeCollectiviteDemarchePcaetRootUrl } from '@/app/app/paths';
 import {
   DEMARCHE_PCAET_STATUT_VARIANTS,
   formatDemarcheStatut,
@@ -9,10 +8,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { HeaderFilterButton } from '@/app/demarches/components/header-filter.button';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
-import {
-  demarchePcaetStatusValues,
-  type DemarchePcaetStatus,
-} from '@tet/domain/demarches';
+import { type DemarchePcaetStatus } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
 import {
   Badge,
@@ -29,10 +25,9 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
-import { DemarchePcaetActionsButton } from './demarche-pcaet-actions.button';
 import type {
   ColonneTriable,
-  Demarche,
+  DemarcheListItem,
   DirectionTri,
 } from './use-filter-demarches-pcaet';
 
@@ -44,14 +39,23 @@ type Pilotage = {
   setStatuts: (statuts: DemarchePcaetStatus[]) => void;
 };
 
+/** Ce qui distingue la liste d'édition de la liste publique. */
+type Variant = {
+  /** Les statuts que propose le filtre : ceux que la liste peut contenir. */
+  statutOptions: readonly DemarchePcaetStatus[];
+  getDetailUrl: (demarche: DemarcheListItem) => string;
+  /** Sans actions, la colonne disparaît. */
+  renderActions?: (demarche: DemarcheListItem) => ReactNode;
+};
+
 /**
  * Le tri et le filtre atteignent les en-têtes par le contexte, et non par une
  * fermeture : des colonnes reconstruites à chaque rendu remonteraient leurs
  * en-têtes, et le menu du filtre se refermerait entre deux clics.
  */
-const PilotageContext = createContext<Pilotage | null>(null);
+const PilotageContext = createContext<(Pilotage & Variant) | null>(null);
 
-const usePilotage = (): Pilotage => {
+const usePilotage = (): Pilotage & Variant => {
   const pilotage = useContext(PilotageContext);
   if (pilotage === null) {
     throw new Error(
@@ -87,13 +91,13 @@ const SortableHeader = ({
 
 /** Les statuts, dans l'ordre du cycle de vie — celui de l'enum du domaine. */
 const StatutHeaderFilter = () => {
-  const { statuts, setStatuts } = usePilotage();
+  const { statuts, setStatuts, statutOptions } = usePilotage();
 
   return (
     <SelectFilter
       dataTest="demarches.pcaet.liste.filtre-statut"
       dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
-      options={demarchePcaetStatusValues.map((value) => ({
+      options={statutOptions.map((value) => ({
         value,
         label: formatDemarcheStatut(value),
       }))}
@@ -121,12 +125,6 @@ const StatutHeaderFilter = () => {
   );
 };
 
-const getDetailUrl = (demarche: Demarche) =>
-  makeCollectiviteDemarchePcaetRootUrl({
-    collectiviteId: demarche.collectiviteId,
-    demarcheId: demarche.id,
-  });
-
 const DateCell = ({ date }: { date: string | null }) =>
   date ? (
     <span className="text-primary-9">{getTextFormattedDate({ date })}</span>
@@ -136,7 +134,24 @@ const DateCell = ({ date }: { date: string | null }) =>
 
 const features = tableFeatures({ columnVisibilityFeature });
 
-const columnHelper = createColumnHelper<typeof features, Demarche>();
+const columnHelper = createColumnHelper<typeof features, DemarcheListItem>();
+
+const TitreCell = ({ demarche }: { demarche: DemarcheListItem }) => {
+  const { getDetailUrl } = usePilotage();
+  return (
+    <Link
+      href={getDetailUrl(demarche)}
+      className="font-bold text-primary-9 hover:underline"
+    >
+      {demarche.titre}
+    </Link>
+  );
+};
+
+const ActionsCell = ({ demarche }: { demarche: DemarcheListItem }) => {
+  const { renderActions } = usePilotage();
+  return <div className="flex justify-end">{renderActions?.(demarche)}</div>;
+};
 
 /**
  * Mêmes conventions que la liste d'instruction des services : largeurs posées
@@ -154,12 +169,7 @@ const columns = [
     ),
     cell: ({ row }) => (
       <TableCell>
-        <Link
-          href={getDetailUrl(row.original)}
-          className="font-bold text-primary-9 hover:underline"
-        >
-          {row.original.titre}
-        </Link>
+        <TitreCell demarche={row.original} />
       </TableCell>
     ),
   }),
@@ -265,24 +275,28 @@ const columns = [
     ),
     cell: ({ row }) => (
       <TableCell>
-        <div className="flex justify-end">
-          <DemarchePcaetActionsButton demarche={row.original} />
-        </div>
+        <ActionsCell demarche={row.original} />
       </TableCell>
     ),
   }),
 ];
 
-export const DemarchesPcaetTable = ({
+export const DemarchesPcaetTable = <T extends DemarcheListItem>({
   demarches,
   sort,
   direction,
   trierPar,
   statuts,
   setStatuts,
+  statutOptions,
+  getDetailUrl,
+  renderActions,
   etatVide,
 }: Pilotage & {
-  demarches: Demarche[];
+  demarches: T[];
+  statutOptions: Variant['statutOptions'];
+  getDetailUrl: (demarche: T) => string;
+  renderActions?: (demarche: T) => ReactNode;
   /**
    * Ce qu'affiche le corps du tableau quand le filtre ne laisse rien : dans le
    * tableau et non à sa place, pour que l'en-tête qui porte le filtre reste à
@@ -290,9 +304,31 @@ export const DemarchesPcaetTable = ({
    */
   etatVide: EmptyCardProps;
 }) => {
+  // Les lignes rendues sont celles reçues : la fermeture rend aux rappels le
+  // type qu'ils attendent, que les colonnes stables ne peuvent pas porter.
   const pilotage = useMemo(
-    () => ({ sort, direction, trierPar, statuts, setStatuts }),
-    [sort, direction, trierPar, statuts, setStatuts]
+    () => ({
+      sort,
+      direction,
+      trierPar,
+      statuts,
+      setStatuts,
+      statutOptions,
+      getDetailUrl: (demarche: DemarcheListItem) => getDetailUrl(demarche as T),
+      renderActions:
+        renderActions &&
+        ((demarche: DemarcheListItem) => renderActions(demarche as T)),
+    }),
+    [
+      sort,
+      direction,
+      trierPar,
+      statuts,
+      setStatuts,
+      statutOptions,
+      getDetailUrl,
+      renderActions,
+    ]
   );
 
   const table = useTable({
@@ -300,6 +336,7 @@ export const DemarchesPcaetTable = ({
     columns,
     data: demarches,
     getRowId: (demarche) => demarche.id.toString(),
+    state: { columnVisibility: { actions: renderActions !== undefined } },
   });
 
   return (

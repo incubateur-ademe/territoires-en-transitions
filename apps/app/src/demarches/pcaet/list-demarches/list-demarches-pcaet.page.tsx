@@ -1,23 +1,43 @@
 'use client';
 
-import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
+import {
+  makeCollectiviteDemarchePcaetNouveauUrl,
+  makeCollectiviteDemarchePcaetRootUrl,
+} from '@/app/app/paths';
 import { useListDemarchesPcaet } from '@/app/demarches/pcaet/data/use-list-demarches-pcaet';
-import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
+import {
+  DemarcheTypeEnum,
+  demarchePcaetStatusValues,
+  isDemarchePcaetEnCours,
+} from '@tet/domain/demarches';
 import { Button } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { DemarchePcaetActionsButton } from './demarche-pcaet-actions.button';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
-import { useFilterDemarchesPcaet } from './use-filter-demarches-pcaet';
+import {
+  useFilterDemarchesPcaet,
+  type Demarche,
+} from './use-filter-demarches-pcaet';
 
 /** Ces écrans sont propres au PCAET : le type est connu. */
 const PCAET_TYPE = {
   type: appLabels.demarcheTypeLabels[DemarcheTypeEnum.PCAET],
 };
+
+const getDetailUrl = (demarche: Demarche) =>
+  makeCollectiviteDemarchePcaetRootUrl({
+    collectiviteId: demarche.collectiviteId,
+    demarcheId: demarche.id,
+  });
+
+const renderActions = (demarche: Demarche) => (
+  <DemarchePcaetActionsButton demarche={demarche} />
+);
 
 export const ListDemarchesPcaetPage = () => {
   const router = useRouter();
@@ -82,6 +102,9 @@ export const ListDemarchesPcaetPage = () => {
         <DemarchesPcaetTable
           demarches={items}
           {...pilotage}
+          statutOptions={demarchePcaetStatusValues}
+          getDetailUrl={getDetailUrl}
+          renderActions={renderActions}
           etatVide={{
             picto: (props) => <PictoDashboard {...props} />,
             title: appLabels.demarcheListeAucunResultat,

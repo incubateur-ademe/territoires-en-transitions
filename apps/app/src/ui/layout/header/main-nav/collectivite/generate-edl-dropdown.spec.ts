@@ -25,6 +25,31 @@ const toVisibleLinks = (
 };
 
 describe('generateEdlDropdown', () => {
+  it('montre la démarche PCAET au visiteur, sauf sur une collectivité en accès restreint', () => {
+    const preferences: CollectiviteReferentielPreferences = {
+      cae: { display: true, mode: 'write' },
+      eci: { display: true, mode: 'write' },
+      te: { display: true, mode: 'readonly' },
+    };
+    const visibleFor = (collectiviteAccesRestreint: boolean) =>
+      filterNavItems([
+        generateEdlDropdown({
+          collectiviteId: 20,
+          collectiviteAccesRestreint,
+          isVisitor: true,
+          referentielsDisplay: getReferentielDisplayMap(preferences),
+          referentielsPreferences: preferences,
+          isDemarchePcaetEnabled: true,
+        }),
+      ]);
+
+    const [ouverte] = visibleFor(false);
+    expect(
+      isNavDropdown(ouverte) && ouverte.links.map((link) => link.dataTest)
+    ).toContain('edl-demarche-pcaet');
+    expect(visibleFor(true)).toEqual([]);
+  });
+
   it("garde l'ordre historique quand aucun référentiel n'est archivé", () => {
     expect(
       toVisibleLinks({
