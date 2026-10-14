@@ -11,7 +11,7 @@ import { getAnnee } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import type { GridComponentOption } from 'echarts/components';
 import { memo, useMemo, useRef } from 'react';
-import { uniq } from 'es-toolkit';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -74,11 +74,11 @@ const prepareDataset = (
         id: `${type}-${source}`,
         calculAuto: Boolean(valeurs.some((value) => value.calculAuto)),
         name: getSourceLabel(source, metadonnee?.producteur || libelle, type),
-        source: valeurs.map(({ anneeISO, valeur }) => ({
-          anneeISO,
+        source: valeurs.map(({ dateValeurISO, valeur }) => ({
+          dateValeurISO,
           valeur: valeur ?? null,
         })) as Dataset['source'],
-        dimensions: ['anneeISO', 'valeur'],
+        dimensions: ['dateValeurISO', 'valeur'],
         metadonnee,
         nomSource: libelle,
       };
@@ -92,9 +92,11 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
 
   if (!segments?.length) return [];
 
-  const annees = uniq(
-    segments.flatMap(({ source }) => source.valeurs.map(({ annee }) => annee))
-  ).sort();
+  const periodes = IndicateurPeriodes.merge(
+    ...segments.map(({ source }) =>
+      source.valeurs.map(({ periode }) => periode)
+    )
+  );
 
   return segments.map(({ definition, source }) => {
     const metadonnee = source.metadonnees?.find(
@@ -107,15 +109,20 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
       name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}`,
       color,
       calculAuto: Boolean(source.valeurs.some((value) => value.calculAuto)),
-      source: annees.map((annee) => {
-        const valeur = source.valeurs.find((value) => value.annee === annee);
-        // Une année absente reste un trou : zéro est une donnée métier valide.
+      source: periodes.map((periode) => {
+        const periodKey = IndicateurPeriodes.key(periode);
+        const valeur = source.valeurs.find(
+          (value) => IndicateurPeriodes.key(value.periode) === periodKey
+        );
+        // Une période absente reste un trou : zéro est une donnée métier valide.
         return {
-          anneeISO: valeur?.anneeISO ?? `${annee}-01-01T00:00:00.000Z`,
+          dateValeurISO: `${IndicateurPeriodes.toDateValeur(
+            periode
+          )}T00:00:00.000Z`,
           valeur: valeur?.valeur ?? null,
         };
       }),
-      dimensions: ['anneeISO', 'valeur'],
+      dimensions: ['dateValeurISO', 'valeur'],
       metadonnee,
       nomSource: source.libelle,
       typeSource: source.type,
@@ -130,15 +137,15 @@ const makeReferenceDataset = (
   id: 'cible' | 'seuil',
   valeur: number,
   unite: string,
-  anneeISO: string,
+  dateValeurISO: string,
   libelle: string | null
 ) => ({
   color: LAYERS[id].color,
   id,
   calculAuto: false,
   name: `Valeur ${id === 'seuil' ? 'limite' : id} : ${valeur} ${unite}`,
-  source: [{ anneeISO, valeur }],
-  dimensions: ['anneeISO', 'valeur'],
+  source: [{ dateValeurISO, valeur }],
+  dimensions: ['dateValeurISO', 'valeur'],
   metadonnee: null,
   nomSource: libelle,
 });
@@ -152,19 +159,31 @@ const prepareReferenceDataset = (chartInfo: IndicateurChartInfo) => {
   if (!valeursReference) return [];
 
   const { cible, seuil, objectifs, libelle } = valeursReference;
-  const { anneeISO } = getAnnee();
+  const { anneeISO: dateValeurISO } = getAnnee();
   const dataset = [];
 
   // les valeurs cible/seuil n'ont pas d'année
   // alors on ajoute un point uniquement pour l'année courante
   if (cible !== null) {
     dataset.push(
-      makeReferenceDataset('cible', cible, data.unite ?? '', anneeISO, libelle)
+      makeReferenceDataset(
+        'cible',
+        cible,
+        data.unite ?? '',
+        dateValeurISO,
+        libelle
+      )
     );
   }
   if (seuil !== null) {
     dataset.push(
-      makeReferenceDataset('seuil', seuil, data.unite ?? '', anneeISO, libelle)
+      makeReferenceDataset(
+        'seuil',
+        seuil,
+        data.unite ?? '',
+        dateValeurISO,
+        libelle
+      )
     );
   }
   if (objectifs?.length) {

@@ -117,8 +117,8 @@ export class UpsertGridValeursService {
       >(async (tx) => {
         try {
           const now = new Date().toISOString();
-          const valeursToValidate: IndicateurValeurCreate[] =
-            mergedValeurs.map(({ period, ...valeur }) => ({
+          const valeursToValidate: IndicateurValeurCreate[] = mergedValeurs.map(
+            ({ period, ...valeur }) => ({
               ...valeur,
               collectiviteId,
               dateValeur: IndicateurPeriodes.toDateValeur(period),
@@ -130,7 +130,8 @@ export class UpsertGridValeursService {
               modifiedBy: user.id,
               createdAt: now,
               modifiedAt: now,
-            }));
+            })
+          );
           // Recheck catalogue policy and availability under transaction locks.
           const validation = await this.validationService.validate(
             { valeurs: valeursToValidate, definitions: indicateursById },
@@ -203,7 +204,9 @@ export class UpsertGridValeursService {
         );
       } catch (error) {
         this.logger.error(
-          `Échec de publication des événements d'upsert : ${getErrorMessage(error)}`
+          `Échec de publication des événements d'upsert : ${getErrorMessage(
+            error
+          )}`
         );
       }
       return success(transactionResult.data);

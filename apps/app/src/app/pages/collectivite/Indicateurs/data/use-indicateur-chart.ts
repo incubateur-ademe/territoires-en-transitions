@@ -4,7 +4,6 @@ import {
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { PALETTE_LIGHT } from '@/app/ui/charts/echarts/constants';
-import { getAnnee } from '@/app/ui/charts/echarts/utils';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   IndicateurPeriodes,
@@ -14,7 +13,6 @@ import { intersection } from 'es-toolkit';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import {
-  getAnneesDistinctes,
   ListIndicateurValeursOutput,
   prepareData,
   PreparedData,
@@ -36,18 +34,23 @@ type PreparedSegment = {
   source: PreparedData['sources'][number];
 };
 
+type PreparedSegmentation = {
+  segmentation: string;
+  indicateurs: PreparedSegment[];
+};
+
 type IndicateurChartData = {
   unite: string | undefined;
+  periodicite: SupportedIndicateurPeriodicite | undefined;
   valeurs: {
-    objectifs: PreparedData & { annees: number[] };
-    resultats: PreparedData & { annees: number[] };
+    objectifs: PreparedData;
+    resultats: PreparedData;
     segments: PreparedSegment[];
   };
 };
 
 export type IndicateurChartInfo = {
   definition: IndicateurDefinitionListItem | undefined;
-  periodicite: SupportedIndicateurPeriodicite | undefined;
   typesSegmentation: string[];
   segmentation: string | undefined;
   setSegmentation: Dispatch<SetStateAction<string | undefined>>;
@@ -75,7 +78,6 @@ export const useIndicateurChartInfo = ({
     periodicite,
   } = definition ?? {};
   if (periodicite !== undefined) {
-    // prepareData groups values by year; reject other cadences before querying.
     IndicateurPeriodes.assertAnnual(
       periodicite,
       'Le modèle annuel du graphique'
@@ -204,13 +206,15 @@ export const useIndicateurChartInfo = ({
         })
       );
 
-    const moyenne = prepareMoyenne(sourceFilter.moyenne);
+    const moyenne = periodicite
+      ? prepareMoyenne(sourceFilter.moyenne, periodicite)
+      : null;
     const resultats = prepareData(
       rawData,
       'resultat',
-      sourceFilter.avecDonneesCollectivite
+      sourceFilter.avecDonneesCollectivite,
+      moyenne ? [moyenne] : []
     );
-    if (moyenne) resultats.sources.push(moyenne);
     const hasValeurCollectivite =
       (objectifs.donneesCollectivite?.valeurs.length ?? 0) +
         (resultats.donneesCollectivite?.valeurs.length ?? 0) >
@@ -225,11 +229,8 @@ export const useIndicateurChartInfo = ({
       segmentItemParId,
       data: {
         unite,
-        valeurs: {
-          objectifs: { ...objectifs, annees: getAnneesDistinctes(objectifs) },
-          resultats: { ...resultats, annees: getAnneesDistinctes(resultats) },
-          segments,
-        },
+        periodicite,
+        valeurs: { objectifs, resultats, segments },
       },
       hasValeurCollectivite,
       hasValeur: Boolean(
@@ -243,6 +244,7 @@ export const useIndicateurChartInfo = ({
       ),
     };
   }, [
+    periodicite,
     definitionEnfants,
     rawData,
     selectedSegmentation,
@@ -259,17 +261,19 @@ export const useIndicateurChartInfo = ({
   return useMemo(
     () => ({
       definition,
-      periodicite,
       ...preparedChart,
       setSegmentation,
       sourceFilter,
       isLoading,
     }),
-    [definition, periodicite, isLoading, preparedChart, sourceFilter]
+    [definition, isLoading, preparedChart, sourceFilter]
   );
 };
 
-function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
+function prepareMoyenne(
+  moyenne: IndicateurMoyenneOutput | undefined,
+  periodicite: SupportedIndicateurPeriodicite
+): PreparedData['sources'][number] | null {
   if (!moyenne?.valeurs?.length) return null;
 
   const libelleType =
@@ -298,15 +302,21 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
     ],
     ordreAffichage: null,
     source: 'moyenne',
-    valeurs: moyenne.valeurs.map((v) => {
-      const { annee, anneeISO } = getAnnee(v.dateValeur);
+    valeurs: moyenne.valeurs.map((value) => {
+      const periode = IndicateurPeriodes.containing(
+        periodicite,
+        value.dateValeur
+      );
       return {
-        id: -1,
+        id: undefined,
         commentaire: null,
         calculAuto: true,
-        annee,
-        anneeISO,
-        valeur: v.valeur,
+        periode,
+        periodeLabel: IndicateurPeriodes.format(periode),
+        dateValeurISO: `${IndicateurPeriodes.toDateValeur(
+          periode
+        )}T00:00:00.000Z`,
+        valeur: value.valeur,
       };
     }),
   };
@@ -318,14 +328,10 @@ function prepareEnfantsParSegmentation(
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
   avecSecteursSNBC: boolean
-) {
-  const enfantsParSegmentation: Record<
-    string,
-    {
-      definition: IndicateurDefinitionListItem;
-      source: PreparedData['sources'][number];
-    }[]
-  > = { [SEGMENTATION_PAR_DEFAUT]: [] };
+): PreparedSegmentation[] {
+  const enfantsParSegmentation: Record<string, PreparedSegment[]> = {
+    [SEGMENTATION_PAR_DEFAUT]: [],
+  };
 
   const dataParId: Record<number, PreparedData> = {};
   const sources: Array<{ source: string; ordreAffichage: number | null }> = [];
@@ -352,7 +358,6 @@ function prepareEnfantsParSegmentation(
         a === null ? 1 : b === null ? -1 : a - b
       )
       .find(
-        // il faut au moins une valeur renseignée, y compris zéro
         (s) =>
           s.valeurs.some((value) => value.valeur != null) &&
           // et on n'affiche pas les objectifs de la SNBC à part si le filtre

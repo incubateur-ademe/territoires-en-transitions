@@ -16,6 +16,7 @@ export const buildDiagnosticIndicateurTableRows = (
     PcaetDiagnosticIndicateurDefinition
   >();
   for (const definition of table.indicateurDefinitions) {
+    IndicateurPeriodes.assertAnnual(definition.periodicite, 'Diagnostic PCAET');
     const identifiant = definition.identifiantReferentiel;
     if (identifiant === null || identifiant === undefined) {
       continue;
@@ -37,6 +38,14 @@ export const buildDiagnosticIndicateurTableRows = (
     );
     if (indicateurDefinition === undefined) {
       return [];
+    }
+    for (const valeur of valeursByIndicateurId.get(indicateurDefinition.id) ??
+      []) {
+      IndicateurPeriodes.toAnnualYearFromHistoricalDate(
+        valeur.periodicite,
+        valeur.dateValeur,
+        'Diagnostic PCAET'
+      );
     }
     return [
       {

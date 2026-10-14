@@ -47,10 +47,12 @@ export const prepareReferenceObjectifsDataset = ({
     id: 'cible-objectifs',
     name: getObjectifReferenceName(objectifs, unite, libelle),
     source: objectifs.map(({ horizon, valeur }) => ({
-      anneeISO: `${IndicateurPeriodes.toDateValeur(horizon)}T00:00:00.000Z`,
+      dateValeurISO: `${IndicateurPeriodes.toDateValeur(
+        horizon
+      )}T00:00:00.000Z`,
       valeur,
     })),
-    dimensions: ['anneeISO', 'valeur'],
+    dimensions: ['dateValeurISO', 'valeur'],
     calculAuto: false,
     metadonnee: null,
     nomSource: libelle,

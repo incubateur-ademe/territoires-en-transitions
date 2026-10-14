@@ -12,6 +12,8 @@ const options = {
     submit: appLabels.validerAjouterAnnee,
     success: appLabels.indicateurAnneeAjoutee,
     inputMode: 'numeric',
+    inputType: 'text',
+    placeholder: appLabels.ajouterAnnee,
   },
 } satisfies Record<
   SupportedIndicateurPeriodicite,
@@ -21,6 +23,8 @@ const options = {
     submit: string;
     success: string;
     inputMode: ComponentProps<'input'>['inputMode'];
+    inputType: 'text' | 'month';
+    placeholder: string;
   }
 >;
 

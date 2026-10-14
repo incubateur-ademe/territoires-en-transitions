@@ -37,9 +37,12 @@ export const IndicateurTable = ({
   confidentiel,
   openModalState,
 }: IndicateurTableProps) => {
-  const annualData = chartInfo.data.valeurs;
-  const resultats = prepareIndicateurPeriodeData(annualData.resultats);
-  const objectifs = prepareIndicateurPeriodeData(annualData.objectifs);
+  const resultats = prepareIndicateurPeriodeData(
+    chartInfo.data.valeurs.resultats
+  );
+  const objectifs = prepareIndicateurPeriodeData(
+    chartInfo.data.valeurs.objectifs
+  );
   const [toBeDeleted, setToBeDeleted] = useState<IndicateurPeriodeValue | null>(
     null
   );
@@ -56,7 +59,7 @@ export const IndicateurTable = ({
     chartInfo.sourceFilter.avecDonneesCollectivite;
   const declaration = useIndicateurTableDeclaration({
     canWrite,
-    periodicite: chartInfo.periodicite,
+    periodicite: chartInfo.data.periodicite,
     collectiviteId,
     definition,
     existingPeriodes: IndicateurPeriodes.merge(
@@ -72,7 +75,7 @@ export const IndicateurTable = ({
         IndicateurPeriodes.key(periode)
     );
   const getWriteIdentity = (periode: IndicateurPeriode) => {
-    if (periode.periodicite !== chartInfo.periodicite) {
+    if (periode.periodicite !== chartInfo.data.periodicite) {
       throw new Error('La périodicité doit correspondre à celle du tableau');
     }
     return {
