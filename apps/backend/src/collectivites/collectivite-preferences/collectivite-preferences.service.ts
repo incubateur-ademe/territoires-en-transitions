@@ -11,7 +11,7 @@ import {
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import type { CollectivitePreferencesError } from './collectivite-preferences.errors';
-import type { UpdateCollectivitePreferencesInput } from './collectivite-preferences.repository';
+import type { UpdateCollectivitePreferencesPublicInput } from './collectivite-preferences.repository';
 import { CollectivitePreferencesRepository } from './collectivite-preferences.repository';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class CollectivitePreferencesService {
 
   async updatePreferences(
     collectiviteId: number,
-    preferences: UpdateCollectivitePreferencesInput,
+    preferences: UpdateCollectivitePreferencesPublicInput,
     user: AuthenticatedUser
   ): Promise<Result<CollectivitePreferences, CollectivitePreferencesError>> {
     await this.permission.assertAllowed(

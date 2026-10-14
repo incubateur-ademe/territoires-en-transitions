@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import {
   addTestCollectiviteAndUser,
   setCollectiviteCotStatus,
@@ -528,10 +529,12 @@ describe('ResetDisplayPreferencesRouter', () => {
       },
     };
 
-    await caller.collectivites.preferences.update({
-      collectiviteId: isolatedCollectivite.id,
-      preferences: { referentiels: postSwitchPreferences },
-    });
+    // `populatedFromCaeEci` n'est pas modifiable par la mutation publique
+    await app
+      .get(CollectivitePreferencesRepository)
+      .updatePreferences(isolatedCollectivite.id, {
+        referentiels: postSwitchPreferences,
+      });
 
     const result =
       await caller.referentiels.preferences.resetCollectiviteDisplayPreferences(

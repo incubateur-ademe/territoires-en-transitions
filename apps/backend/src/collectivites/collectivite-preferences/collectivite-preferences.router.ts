@@ -3,7 +3,7 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { z } from 'zod';
 import { collectivitePreferencesErrorConfig } from './collectivite-preferences.errors';
-import { updateCollectivitePreferencesInputSchema } from './collectivite-preferences.repository';
+import { updateCollectivitePreferencesPublicInputSchema } from './collectivite-preferences.repository';
 import { CollectivitePreferencesService } from './collectivite-preferences.service';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class CollectivitePreferencesRouter {
       .input(
         z.object({
           collectiviteId: z.number(),
-          preferences: updateCollectivitePreferencesInputSchema,
+          preferences: updateCollectivitePreferencesPublicInputSchema,
         })
       )
       .mutation(async ({ ctx, input }) => {

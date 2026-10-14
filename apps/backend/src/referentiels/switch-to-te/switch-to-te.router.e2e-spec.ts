@@ -3,6 +3,7 @@ import {
   addTestCollectiviteAndUsers,
   setCollectiviteCotStatus,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
@@ -44,6 +45,7 @@ describe('SwitchToTeRouter', () => {
   let router: TrpcRouter;
   let databaseService: DatabaseService;
   let snapshotsService: SnapshotsService;
+  let preferencesRepository: CollectivitePreferencesRepository;
   let supportCaller: ReturnType<TrpcRouter['createCaller']>;
   let adminUser: AuthenticatedUser;
   let lectureUser: AuthenticatedUser;
@@ -56,6 +58,7 @@ describe('SwitchToTeRouter', () => {
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
     snapshotsService = app.get(SnapshotsService);
+    preferencesRepository = app.get(CollectivitePreferencesRepository);
 
     const supportUserResult = await addTestUser(databaseService);
     cleanupSupportUser = supportUserResult.cleanup;
@@ -171,9 +174,11 @@ describe('SwitchToTeRouter', () => {
       switchedFixture.users[0]
     );
 
-    await supportCaller.collectivites.preferences.update({
-      collectiviteId: switchedFixture.collectivite.id,
-      preferences: {
+    // `populatedFromCaeEci` n'est pas modifiable par la mutation publique :
+    // on prépare l'état « déjà basculé » directement via le repository
+    await preferencesRepository.updatePreferences(
+      switchedFixture.collectivite.id,
+      {
         referentiels: {
           cae: { display: false, mode: 'archived' },
           eci: { display: false, mode: 'archived' },
@@ -186,8 +191,8 @@ describe('SwitchToTeRouter', () => {
             },
           },
         },
-      },
-    });
+      }
+    );
 
     // snapshot post-switch-te présent : simule une bascule pleinement aboutie
     const computeResult = await snapshotsService.computeAndUpsert(
@@ -219,9 +224,11 @@ describe('SwitchToTeRouter', () => {
     );
     const populatedAt = '2026-06-01T00:00:00.000Z';
 
-    await supportCaller.collectivites.preferences.update({
-      collectiviteId: switchedFixture.collectivite.id,
-      preferences: {
+    // `populatedFromCaeEci` n'est pas modifiable par la mutation publique :
+    // on prépare l'état « déjà basculé » directement via le repository
+    await preferencesRepository.updatePreferences(
+      switchedFixture.collectivite.id,
+      {
         referentiels: {
           cae: { display: false, mode: 'archived' },
           eci: { display: false, mode: 'archived' },
@@ -234,8 +241,8 @@ describe('SwitchToTeRouter', () => {
             },
           },
         },
-      },
-    });
+      }
+    );
 
     // snapshot post-switch-te volontairement absent : simule un recompute
     // best-effort échoué lors de la bascule initiale

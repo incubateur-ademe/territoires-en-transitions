@@ -7,6 +7,7 @@ import {
   CollectivitePreferences,
   collectivitePreferencesSchema,
   defaultCollectivitePreferences,
+  referentielModeValues,
 } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { toMerged } from 'es-toolkit';
@@ -21,6 +22,29 @@ export const updateCollectivitePreferencesInputSchema = z
   .partial();
 export type UpdateCollectivitePreferencesInput = z.infer<
   typeof updateCollectivitePreferencesInputSchema
+>;
+
+const referentielPreferenceInputSchema = z.object({
+  display: z.boolean(),
+  mode: z.enum(referentielModeValues),
+});
+
+/**
+ * Entrée de la mutation publique : `te.populatedFromCaeEci` n'en fait pas
+ * partie (zod retire la clé si elle est envoyée). Seule la bascule vers TE
+ * pose ce marqueur, en passant directement par le repository.
+ */
+export const updateCollectivitePreferencesPublicInputSchema = z
+  .object({
+    referentiels: z.object({
+      cae: referentielPreferenceInputSchema,
+      eci: referentielPreferenceInputSchema,
+      te: referentielPreferenceInputSchema,
+    }),
+  })
+  .partial();
+export type UpdateCollectivitePreferencesPublicInput = z.infer<
+  typeof updateCollectivitePreferencesPublicInputSchema
 >;
 
 @Injectable()
