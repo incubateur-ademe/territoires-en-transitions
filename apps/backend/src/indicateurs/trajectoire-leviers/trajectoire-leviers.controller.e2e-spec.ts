@@ -1,50 +1,50 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  getAuthToken,
-  getAuthUserFromUserCredentials,
-  getTestApp,
-  getTestDatabase,
-} from '@tet/backend/test';
+import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import request from 'supertest';
 import { expect } from 'vitest';
-import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { addTestTrajectoireLeviers } from './trajectoire-leviers.test-fixture';
 
 describe('Trajectoire Leviers Controller', () => {
   let app: INestApplication;
   let authToken: string;
+  let fixture: Awaited<ReturnType<typeof addTestTrajectoireLeviers>>;
+  let cleanupUser: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
     const db = await getTestDatabase(app);
     const testUserResult = await addTestUser(db);
+    cleanupUser = testUserResult.cleanup;
     authToken = await getAuthToken({
       email: testUserResult.user.email ?? '',
       password: testUserResult.user.password,
     });
 
-    // Ensure the SNBC trajectory exists before testing the HTTP endpoint,
-    // as a parallel test may delete and recompute it (race condition).
-    const router = app.get(TrpcRouter);
-    const authenticatedUser = getAuthUserFromUserCredentials(
-      testUserResult.user
-    );
-    const caller = router.createCaller({ user: authenticatedUser });
-    await caller.indicateurs.trajectoires.snbc.getOrCompute({
-      siren: '246700488',
-    });
+    fixture = await addTestTrajectoireLeviers(db);
   }, 30000);
 
-  test('Get data for collectivite with siren 246700488', async () => {
+  test('Lit les objectifs et résultats annuels par SIREN', async () => {
     const response = await request(app.getHttpServer())
-      .get('/trajectoires/snbc/leviers?siren=246700488')
+      .get(`/trajectoires/snbc/leviers?siren=${fixture.collectivite.siren}`)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
-    // We don't check the full response here because trajectoire may be needed, already done in router e2e spec
-    expect(response.body).toBeDefined();
+    expect(response.body).toMatchObject({
+      sourcesResultats: ['rare'],
+      secteurs: expect.arrayContaining([
+        expect.objectContaining({
+          nom: 'Résidentiel',
+          resultat2019: 100,
+          objectif2019: 100,
+          objectif2030: 60,
+        }),
+      ]),
+    });
   });
 
   afterAll(async () => {
+    await fixture?.cleanup();
+    await cleanupUser?.();
     await app.close();
   });
 });
