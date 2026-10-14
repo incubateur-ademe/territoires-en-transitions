@@ -80,7 +80,7 @@ const prepareDataset = (
         seriesKey,
         periodiciteSource,
       }) => {
-        const metadonnee = metadonnees?.find((m) => m.sourceId === source);
+        const metadonnee = metadonnees?.[0];
         const label = getSourceLabel(
           source,
           metadonnee?.producteur || libelle,
@@ -131,9 +131,7 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
   );
 
   return segments.map(({ definition, source }) => {
-    const metadonnee = source.metadonnees?.find(
-      (m) => m.sourceId === source.source
-    );
+    const metadonnee = source.metadonnees?.[0];
     const { id, name, color } = segmentItemParId.get(definition.id) || {};
 
     return {

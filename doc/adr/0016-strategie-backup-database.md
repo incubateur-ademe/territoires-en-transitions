@@ -101,7 +101,7 @@ Ce remplacement du job historique `validate-restore` par deux jobs supprime la n
 Chaque job :
 
 1. Télécharge le backup depuis S3 (valide le roundtrip complet : backup → upload → download → restore)
-2. Vérifie l'intégrité de l'archive et sa compatibilité Sqitch avec la cible, avant toute mutation
+2. Vérifie la lisibilité de la table des matières et du registre Sqitch de l'archive, puis la compatibilité Sqitch avec la cible, avant toute mutation ; ce contrôle ne valide pas l'intégrité de toutes les données de l'archive
 3. Tronque les tables cibles dans l'ordre inverse des dépendances
 4. Restaure les tables prévues par `restore-config.yml` à partir du même dump
 5. Réinitialise les séquences PostgreSQL via `reset_sequences.sql`
@@ -173,7 +173,7 @@ Après `reset_sequences.sql` et avant les sanity checks, `restore.sh` exécute `
 
 ### Positives
 
-- Backups quotidiens automatisés avec vérification d'intégrité (`pg_restore --list` avant upload)
+- Backups quotidiens automatisés avec vérification de la lisibilité de la table des matières (`pg_restore --list` avant upload)
 - Restauration vérifiée automatiquement chaque jour en CI
 - Diagnostic précis des erreurs de restauration grâce à l'approche table par table
 - Compatibilité code/données vérifiable via les métadonnées
