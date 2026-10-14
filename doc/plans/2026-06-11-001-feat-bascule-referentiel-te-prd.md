@@ -147,7 +147,9 @@ Le batch ignore les collectivités de type `test`, dont les préférences sont r
 
 > **Nuance bascule partielle** : si la CT a au moins un ref. engagé, la bascule reste disponible et migre les données des référentiels en `mode: write`. Un ref. CAE/ECI archivé (non engagé) n'est pas source principale de la bascule, mais peut encore contribuer passivement à une fusion `action_origine` lors de la migration depuis l'autre ref. engagé (cf. [Snapshots](#snapshots) — création `pre-switch-te`).
 
-TE est toujours affiché (`display: true`, modulo feature flag). La règle ne se recalcule pas en continu : uniquement sur reset manuel super-admin ou batch `resetAllCollectivitesDisplayPreferences`. **Guard** : ne pas recalculer si `te.populatedFromCaeEci` est renseigné.
+TE est toujours affiché (`display: true`, modulo feature flag). La règle ne se recalcule pas en continu : uniquement sur le batch `resetAllCollectivitesDisplayPreferences` (ou la procédure unitaire `resetCollectiviteDisplayPreferences`, qui n'est plus exposée dans l'UI). **Guard** : ne pas recalculer si `te.populatedFromCaeEci` est renseigné.
+
+> **Écran super-admin « Affichage des référentiels »** : le support peut y choisir librement, pour CAE, ECI et TE, le `mode` (`write` / `readonly` / `archived`) et le flag `display`, sans vérification de niveau de remplissage, d'engagement ni de date de dernière modification, et sans recalcul de l'état d'affichage d'un référentiel à partir de celui d'un autre. L'écran reste modifiable après bascule. `te.populatedFromCaeEci` n'est pas modifiable par cette voie : la mutation `collectivites.preferences.update` l'ignore, seule la bascule le pose.
 
 **Après bascule** (`te.populatedFromCaeEci` renseigné) :
 

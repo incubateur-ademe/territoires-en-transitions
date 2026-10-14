@@ -1,11 +1,8 @@
 import type {
-  CollectiviteReferentielPreferenceId,
   CollectiviteReferentielPreferences,
-  ReferentielDisplayMap,
   ReferentielMode,
   ReferentielPreference,
 } from './collectivite-preferences.schema';
-import { getReferentielDisplayMap } from './collectivite-preferences.schema';
 
 export function preferenceFromDisplay(
   display: boolean,
@@ -112,78 +109,5 @@ export function deriveReferentielPreferences(
     cae: caeEciPreferenceFromNiveauRemplissage(input.cae),
     eci: caeEciPreferenceFromNiveauRemplissage(input.eci),
     te: preferenceFromDisplay(true, collectiviteEngaged ? 'readonly' : 'write'),
-  };
-}
-
-export function referentielPreferencesFromDisplayMap(
-  display: ReferentielDisplayMap,
-  existing?: CollectiviteReferentielPreferences
-): CollectiviteReferentielPreferences {
-  const derived = deriveReferentielPreferences(
-    {
-      cae: display.cae ? 'engage' : 'vide',
-      eci: display.eci ? 'engage' : 'vide',
-    },
-    existing
-  );
-
-  if (existing?.te.populatedFromCaeEci) {
-    return derived;
-  }
-
-  return {
-    ...derived,
-    te: preferenceFromDisplay(
-      display.te,
-      derived.te.mode as Exclude<ReferentielMode, 'archived'>
-    ),
-  };
-}
-
-export function toggleReferentielDisplayPreference(
-  referentielId: CollectiviteReferentielPreferenceId,
-  referentiels: CollectiviteReferentielPreferences
-): CollectiviteReferentielPreferences {
-  if (referentiels.te.populatedFromCaeEci) {
-    return referentiels;
-  }
-
-  // TE et les référentiels CAE/ECI archivés gardent leur mode : on ne change
-  // que leur présence dans la navigation
-  const target = referentiels[referentielId];
-  if (referentielId === 'te' || target.mode === 'archived') {
-    return {
-      ...referentiels,
-      [referentielId]: { ...target, display: !target.display },
-    };
-  }
-
-  // masquer un référentiel CAE/ECI en écriture l'archive, et recalcule le mode
-  // de TE. Un référentiel archivé mais visible ne compte pas comme engagé : il
-  // ne doit pas repasser en écriture quand on bascule l'affichage d'un autre
-  const display = getReferentielDisplayMap(referentiels);
-  const isArchived = (id: 'cae' | 'eci') =>
-    id !== referentielId && referentiels[id].mode === 'archived';
-  const derived = referentielPreferencesFromDisplayMap(
-    {
-      cae: display.cae && !isArchived('cae'),
-      eci: display.eci && !isArchived('eci'),
-      te: true,
-      [referentielId]: !display[referentielId],
-    },
-    referentiels
-  );
-
-  return {
-    // seul le mode de TE est recalculé, sa présence dans la navigation est conservée.
-    // TE déjà en écriture le reste : un référentiel CAE/ECI en écriture n'est pas
-    // forcément engagé (niveau `actif`), le masquage d'un autre ne doit pas
-    // rendre la collectivité éligible à la bascule
-    te:
-      referentiels.te.mode === 'write'
-        ? referentiels.te
-        : { ...derived.te, display: display.te },
-    cae: isArchived('cae') ? referentiels.cae : derived.cae,
-    eci: isArchived('eci') ? referentiels.eci : derived.eci,
   };
 }

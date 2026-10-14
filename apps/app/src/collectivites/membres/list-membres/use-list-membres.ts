@@ -8,7 +8,9 @@ export type Membre =
 /**
  * Donne accès à la liste des membres de la collectivité courante.
  */
-export const useListMembres = () => {
+export const useListMembres = ({
+  enabled = true,
+}: { enabled?: boolean } = {}) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
 
@@ -16,7 +18,7 @@ export const useListMembres = () => {
     trpc.collectivites.membres.list.queryOptions(
       { collectiviteId },
       {
-        enabled: !!collectiviteId,
+        enabled: enabled && !!collectiviteId,
         select(result) {
           return result.membres;
         },

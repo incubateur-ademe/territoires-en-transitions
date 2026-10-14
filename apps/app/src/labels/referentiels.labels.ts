@@ -9,6 +9,52 @@ export const referentielsLabels = {
   referentielTe: 'Climat Ressources',
   referentielTeTest: 'Climat Ressources (test)',
 
+  /** Préférences d'affichage (écran super-admin) */
+  choisirReferentielsAffichesEtatDesLieux:
+    'Choisir le mode de chaque référentiel et sa présence dans le menu « Programmes & Démarches » pour cette collectivité.',
+  referentielPreferenceReferentiel: 'Référentiel',
+  referentielPreferenceMode: 'Mode',
+  referentielPreferenceModeWrite: 'Écriture',
+  referentielPreferenceModeReadonly: 'Lecture seule',
+  referentielPreferenceModeArchived: 'Archivé',
+  referentielPreferenceDisplay: 'Visible',
+  referentielPreferenceAlerteTitle:
+    'Ces réglages s’appliquent immédiatement et sans contrôle',
+  referentielPreferenceAlerteIntro:
+    'Chaque modification est enregistrée dès la sélection, sans vérification du remplissage ni de l’activité de la collectivité, et sans ajustement automatique des autres référentiels.',
+  referentielPreferenceAlerteConsequences: [
+    {
+      titre: 'Mode',
+      description:
+        ' : en « Écriture », les membres peuvent modifier le référentiel. En « Lecture seule » ou « Archivé », il n’est plus modifiable ; un référentiel archivé est signalé « (archivé) » dans le menu et n’est plus pris en compte dans la personnalisation.',
+    },
+    {
+      titre: 'Visible',
+      description:
+        ' : retire ou ajoute le référentiel dans le menu « Programmes & Démarches », sans changer son mode.',
+    },
+    {
+      titre: 'Bascule vers Climat Ressources',
+      description:
+        ' : elle n’est proposée à la collectivité que si Climat Ressources est en « Lecture seule » et que CAE ou ECi est en « Écriture ». Modifier ces modes peut donc faire apparaître ou disparaître la possibilité de faire la bascule.',
+    },
+    {
+      titre: 'Après la bascule',
+      description:
+        ' : elle ne peut pas être rejouée. Les données saisies dans un référentiel CAE ou ECi repassé en « Écriture » ne seront pas reprises dans Climat Ressources.',
+    },
+  ],
+  referentielPreferenceBasculeRealisee: ({
+    date,
+    heure,
+    auteur,
+  }: {
+    date: string;
+    heure: string;
+    auteur?: string;
+  }): string =>
+    `Bascule réalisée le ${date} à ${heure}${auteur ? ` par ${auteur}` : ''}`,
+
   /** Statuts */
   nonRenseigne: 'Non renseigné',
   nonRenseignable: 'Non renseignable',

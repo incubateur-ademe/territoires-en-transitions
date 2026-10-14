@@ -1,5 +1,26 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { test } from 'tests/main.fixture';
+
+const getReferentielRow = (page: Page, nom: string) =>
+  page.getByRole('row').filter({ hasText: nom });
+
+const getVisibleCheckbox = (page: Page, nom: string) =>
+  getReferentielRow(page, nom).getByRole('checkbox', { name: 'Visible' });
+
+const getModeSelect = (page: Page, nom: string) =>
+  getReferentielRow(page, nom).getByRole('button', { name: 'ouvrir le menu' });
+
+const selectMode = async (page: Page, nom: string, mode: string) => {
+  await getModeSelect(page, nom).click();
+  await page.getByRole('button', { name: mode, exact: true }).click();
+  await page.keyboard.press('Escape');
+};
+
+const openProgrammesEtDemarches = (page: Page) =>
+  page.getByRole('button', { name: 'Programmes & Démarches' }).click();
+
+const getNavLink = (page: Page, name: string) =>
+  page.getByRole('link', { name, exact: true });
 
 test.describe('Préférences référentiels (support)', () => {
   test("Changer les préférences et vérifier l'impact sur les menus", async ({
@@ -28,71 +49,86 @@ test.describe('Préférences référentiels (support)', () => {
       page.getByRole('heading', { name: 'Affichage des référentiels' })
     ).toBeVisible();
     await expect(
-      page.getByRole('checkbox', { name: 'Climat Air Énergie' })
-    ).toBeVisible();
-    await expect(
-      page.getByRole('checkbox', { name: 'Économie Circulaire' })
-    ).toBeVisible();
-    await expect(
-      page.getByRole('checkbox', { name: 'Climat Ressources' })
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Réinitialiser selon le remplissage' })
+      page.getByText('Ces réglages s’appliquent immédiatement et sans contrôle')
     ).toBeVisible();
 
-    await page.getByRole('button', { name: 'Programmes & Démarches' }).click();
+    // préférences par défaut d'une nouvelle collectivité
+    await expect(getVisibleCheckbox(page, 'Climat Air Énergie')).toBeChecked();
+    await expect(getVisibleCheckbox(page, 'Économie Circulaire')).toBeChecked();
+    await expect(getVisibleCheckbox(page, 'Climat Ressources')).toBeChecked();
+    await expect(getModeSelect(page, 'Climat Air Énergie')).toContainText(
+      'Écriture'
+    );
+    await expect(getModeSelect(page, 'Économie Circulaire')).toContainText(
+      'Écriture'
+    );
+    await expect(getModeSelect(page, 'Climat Ressources')).toContainText(
+      'Lecture seule'
+    );
+
+    await openProgrammesEtDemarches(page);
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat Air Énergie' })
+      getNavLink(page, 'Référentiel Climat Air Énergie')
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
+      getNavLink(page, 'Référentiel Économie Circulaire')
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat Ressources' })
+      getNavLink(page, 'Référentiel Climat Ressources')
     ).toBeVisible();
 
-    await page.getByRole('checkbox', { name: 'Climat Air Énergie' }).click();
+    // masquer CAE le retire du menu
+    await getVisibleCheckbox(page, 'Climat Air Énergie').click();
     await expect(
-      page.getByRole('checkbox', { name: 'Climat Air Énergie' })
-    ).toBeEnabled();
-
-    await page.getByRole('button', { name: 'Programmes & Démarches' }).click();
-    await expect(
-      page.getByRole('link', { name: 'Référentiel Climat Air Énergie' })
-    ).toHaveCount(0);
-    await expect(
-      page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
-    ).toBeVisible();
-    await expect(
-      page.getByRole('link', { name: 'Référentiel Climat Ressources' })
-    ).toBeVisible();
-
-    await page
-      .getByRole('button', { name: 'Réinitialiser selon le remplissage' })
-      .click();
-    await expect(
-      page.getByRole('button', { name: 'Réinitialiser selon le remplissage' })
-    ).toBeEnabled();
-    await expect(
-      page.getByRole('checkbox', { name: 'Climat Air Énergie' })
+      getVisibleCheckbox(page, 'Climat Air Énergie')
     ).not.toBeChecked();
-    await expect(
-      page.getByRole('checkbox', { name: 'Économie Circulaire' })
-    ).not.toBeChecked();
-    await expect(
-      page.getByRole('checkbox', { name: 'Climat Ressources' })
-    ).toBeChecked();
+    await expect(getVisibleCheckbox(page, 'Climat Air Énergie')).toBeEnabled();
 
-    await page.getByRole('checkbox', { name: 'Climat Air Énergie' }).click();
-    await page.getByRole('button', { name: 'Programmes & Démarches' }).click();
+    await openProgrammesEtDemarches(page);
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat Air Énergie' })
+      getNavLink(page, 'Référentiel Climat Air Énergie')
     ).toHaveCount(0);
     await expect(
-      page.getByRole('link', { name: 'Référentiel Économie Circulaire' })
+      getNavLink(page, 'Référentiel Économie Circulaire')
+    ).toBeVisible();
+    await expect(
+      getNavLink(page, 'Référentiel Climat Ressources')
+    ).toBeVisible();
+
+    // archiver ECI le garde visible dans le menu, suffixé « (archivé) »
+    await selectMode(page, 'Économie Circulaire', 'Archivé');
+    await expect(getModeSelect(page, 'Économie Circulaire')).toContainText(
+      'Archivé'
+    );
+    await expect(getModeSelect(page, 'Économie Circulaire')).toBeEnabled();
+    await expect(getVisibleCheckbox(page, 'Économie Circulaire')).toBeChecked();
+
+    await openProgrammesEtDemarches(page);
+    await expect(
+      getNavLink(page, 'Référentiel Économie Circulaire')
     ).toHaveCount(0);
     await expect(
-      page.getByRole('link', { name: 'Référentiel Climat Ressources' })
+      getNavLink(page, 'Référentiel Économie Circulaire (archivé)')
+    ).toBeVisible();
+    await expect(
+      getNavLink(page, 'Référentiel Climat Ressources')
+    ).toBeVisible();
+
+    // réafficher CAE, sans dépendance avec les autres référentiels
+    await getVisibleCheckbox(page, 'Climat Air Énergie').click();
+    await expect(getVisibleCheckbox(page, 'Climat Air Énergie')).toBeChecked();
+    await expect(getVisibleCheckbox(page, 'Économie Circulaire')).toBeChecked();
+    await expect(getVisibleCheckbox(page, 'Climat Ressources')).toBeChecked();
+
+    await openProgrammesEtDemarches(page);
+    await expect(
+      getNavLink(page, 'Référentiel Climat Air Énergie')
+    ).toBeVisible();
+    await expect(
+      getNavLink(page, 'Référentiel Économie Circulaire (archivé)')
+    ).toBeVisible();
+    await expect(
+      getNavLink(page, 'Référentiel Climat Ressources')
     ).toBeVisible();
   });
 });
