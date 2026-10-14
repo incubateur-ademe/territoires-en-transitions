@@ -184,20 +184,26 @@ reconstruction après restauration. Les références absentes et les cadences
 incompatibles sont refusées, y compris lors d’une écriture SQL directe.
 Les restrictions annuelles, les index et le reporting restent inchangés.
 
-Le dump de production du **14 octobre 2026 à 00:44 UTC** contient 26 991
+Le dump de production du **14 octobre 2026 à 00:44:26 UTC** contient 26 991
 définitions et 4 771 525 valeurs, toutes annuelles et cohérentes. Les 78 formules
 ont 295 dépendances existantes de même cadence : aucune réparation n’est requise.
 Le contrôle de #5488 a restauré les 26 991 définitions depuis ce dump dans une
 base isolée : les 78 formules et leurs 295 dépendances correspondent au parseur
 applicatif. Les sept fonctions de référence sont couvertes, y compris `est_suivi`,
-`progression_snbc` et `reduction`. Les 34 assertions SQL passent ; les empreintes
+`progression_snbc` et `reduction`. La recherche des sources ignore la casse, comme
+l’extraction des références. Les 36 assertions SQL passent (20 dans
+`periodicite-formules.sql`, 16 dans `periodicite-release.sql`) ; les empreintes
 des définitions restent identiques après déploiement, tests et retour arrière.
 
-Le contrôle global prend environ 43 ms et l’upsert des 896 définitions du catalogue
-prend 13 s sur cette machine. Ce coût porte sur les mutations du catalogue, pas
-sur les saisies de valeurs. Le test reproduit l’upsert SQL de l’import, sans appeler
-Google Sheets ni lancer de recalcul. Refaire le contrôle sur une sauvegarde récente
-avant déploiement.
+Mesures du 14 octobre 2026 sur ce catalogue restauré : environ 55 ms pour un
+contrôle global et 14 s pour un upsert des 896 définitions, dans une transaction
+annulée. Les durées sont mesurées avec `clock_timestamp()` sous PostgreSQL 15.14
+(`supabase/postgres:15.14.1.159`), dans Docker local sur un poste Linux x86_64,
+Intel Core i7-10750H (12 threads), 30 Gio de RAM, sans quota Docker explicite.
+Ce coût porte sur les mutations du catalogue, pas sur les saisies de valeurs.
+Le test reproduit l’upsert SQL de l’import, sans appeler Google Sheets ni lancer
+de recalcul ; ces mesures locales ne prédisent pas la latence en production.
+Refaire le contrôle sur une sauvegarde récente avant déploiement.
 
 Vérifier la suite SQL `periodicite-formules.sql` et le maintien du contrat annuel
 avec `periodicite-release.sql`. Une transaction peut différer la contrainte pour

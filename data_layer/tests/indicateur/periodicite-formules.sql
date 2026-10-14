@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(18);
+SELECT plan(20);
 
 SELECT has_function(
     'private',
@@ -35,7 +35,7 @@ WITH definitions AS (
         (identifiant_referentiel, titre, unite, periodicite)
     VALUES
         ('test-formule-source-annuelle', 'Source annuelle de formule', 'kWh', 'annuelle'),
-        ('test-formule-source-secondaire', 'Source secondaire de formule', 'kWh', 'annuelle'),
+        ('Test-Formule-Source-Secondaire', 'Source secondaire de formule', 'kWh', 'annuelle'),
         ('test-formule-cible', 'Cible de formule', 'kWh', 'annuelle')
     RETURNING id, identifiant_referentiel
 )
@@ -159,9 +159,28 @@ SELECT lives_ok(
             (identifiant_referentiel, titre, unite, periodicite, valeur_calcule)
         VALUES
             ('test-formule-cible-secondaire', 'Formule secondaire', 'kWh', 'annuelle',
-             'val(test-formule-source-secondaire)')
+             'val(TEST-formule-source-secondaire)')
     $$,
-    'Une nouvelle formule annuelle peut référencer une seconde source annuelle'
+    'Une formule retrouve une source annuelle indépendamment de la casse de son identifiant'
+);
+
+SELECT throws_ok(
+    $$
+        DELETE FROM public.indicateur_definition
+        WHERE identifiant_referentiel = 'Test-Formule-Source-Secondaire'
+    $$,
+    23503,
+    NULL,
+    'Supprimer une source référencée avec une casse différente est refusé'
+);
+
+SELECT lives_ok(
+    $$
+        UPDATE public.indicateur_definition
+        SET identifiant_referentiel = 'test-formule-source-secondaire'
+        WHERE identifiant_referentiel = 'Test-Formule-Source-Secondaire'
+    $$,
+    'Changer uniquement la casse d une source conserve ses références'
 );
 
 SELECT lives_ok(
