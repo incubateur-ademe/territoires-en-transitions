@@ -117,7 +117,7 @@ export type ActionDeReferenceInterestStatus =
 
 export type ActionDeReferenceInterestControl =
   | {
-      readonly status: 'disponible' | 'preselectionnee';
+      readonly status: Exclude<ActionDeReferenceInterestStatus, 'ignoree'>;
       readonly onToggleSaved: () => void;
       readonly onDismiss: () => void;
     }

@@ -1,23 +1,14 @@
-import type {
-  ActionDeReference,
-  ActionDeReferenceId,
-} from '@tet/domain/shared';
+import type { Preselection } from '@/app/collectivites/priorisation-leviers/use-preselection';
+import type { ActionDeReference } from '@tet/domain/shared';
 import type {
   ActionDeReferenceInterestControl,
   ActionDeReferenceInterestStatus,
 } from './actions-de-reference.contract';
 
-type InterestActions = {
-  readonly add: (action: ActionDeReference) => void;
-  readonly remove: (actionId: ActionDeReferenceId) => void;
-  readonly ignore: (actionId: ActionDeReferenceId) => void;
-  readonly restore: (actionId: ActionDeReferenceId) => void;
-};
-
-export const toInterestControl = (
+export const toActionDeReferenceInterestControl = (
   action: ActionDeReference,
   status: ActionDeReferenceInterestStatus,
-  actions: InterestActions
+  actions: Pick<Preselection, 'add' | 'remove' | 'ignore' | 'restore'>
 ): ActionDeReferenceInterestControl => {
   if (status === 'ignoree') {
     return { status, onRestore: () => actions.restore(action.id) };

@@ -13,6 +13,7 @@ import type { JSX } from 'react';
 import { ActionDeReferenceCollectivitesPanel } from './action-de-reference-collectivites.panel';
 import { ActionDeReferenceDismissedList } from './action-de-reference-dismissed.list';
 import type {
+  ActionDeReferenceInterestControl,
   ActionsDeReferenceList,
   ActionsDeReferenceViewComponent,
 } from './actions-de-reference.contract';
@@ -20,7 +21,7 @@ import { ActionsDeReferenceFilters } from './actions-de-reference.filters';
 import { ActionsDeReferenceResults } from './actions-de-reference.results';
 import { useActionsDeReferenceSearchParams } from './data/use-actions-de-reference-search-params';
 import { useListActionsDeReference } from './data/use-list-actions-de-reference';
-import { toInterestControl } from './to-action-de-reference-interest-control';
+import { toActionDeReferenceInterestControl } from './to-action-de-reference-interest-control';
 import { useActionDeReferenceUpdateAccess } from './use-action-de-reference-update-access';
 
 const renderActionDeReferenceCollectivites = (
@@ -60,6 +61,14 @@ export const ActionsDeReferenceView: ActionsDeReferenceViewComponent = () => {
   const preselection = usePreselection();
   const isDismissed = (actionId: ActionDeReferenceId): boolean =>
     preselection.statusOf(actionId) === 'ignoree';
+  const interestOf = (
+    action: ActionDeReference
+  ): ActionDeReferenceInterestControl =>
+    toActionDeReferenceInterestControl(
+      action,
+      preselection.statusOf(action.id),
+      preselection
+    );
 
   const { visible: visibleList, dismissed: dismissedActions } = splitDismissed(
     actionsDeReferenceList,
@@ -89,13 +98,7 @@ export const ActionsDeReferenceView: ActionsDeReferenceViewComponent = () => {
             updateAccess={updateAccess}
             onResetSearch={resetSearch}
             renderCollectivites={renderActionDeReferenceCollectivites}
-            interestOf={(action) =>
-              toInterestControl(
-                action,
-                preselection.statusOf(action.id),
-                preselection
-              )
-            }
+            interestOf={interestOf}
           />
         )}
         {hasDismissedActions && (
