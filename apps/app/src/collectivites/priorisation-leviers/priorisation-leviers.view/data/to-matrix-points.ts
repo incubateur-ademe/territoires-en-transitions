@@ -2,7 +2,7 @@ import type { MatrixPoint } from '@/app/ui/charts/matrix/matrix.chart';
 import type { MatrixTone } from '@/app/ui/charts/matrix/quadrant';
 import { Pertinence } from '@tet/domain/collectivites';
 import { LevierId } from '@tet/domain/shared';
-import { round } from 'es-toolkit';
+import { maxBy, round } from 'es-toolkit';
 import { LevierPriorisation } from './to-leviers-priorisation';
 
 export const MATRIX_SCALE = 100;
@@ -77,6 +77,12 @@ export const toQuadrant = ({
 export const isBlindSpot = (levier: LevierPlace): boolean =>
   levier.pertinence !== 'non_pertinent' &&
   toQuadrant(levier) === 'high_impact_low_mobilisation';
+
+export const toLevierToPrioritizeId = (
+  places: LevierPlace[]
+): LevierId | undefined =>
+  maxBy(places.filter(isBlindSpot), ({ potentielScore }) => potentielScore)
+    ?.levierId;
 
 export type PreselectedCountByLevier = ReadonlyMap<LevierId, number>;
 
