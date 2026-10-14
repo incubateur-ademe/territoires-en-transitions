@@ -141,7 +141,11 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
       stackKey: `total:${source.source}:${
         source.periodiciteSource ?? source.valeurs[0]?.periode.periodicite
       }:${metadonnee?.id ?? 'local'}`,
-      name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}${
+      name: `${name}${
+        source.type === 'objectif'
+          ? ` (${appLabels.indicateurObjectif({ plural: true })})`
+          : ''
+      }${
         source.periodiciteSource
           ? ` · ${
               getIndicateurPeriodPresentation(source.periodiciteSource).label
