@@ -5,6 +5,7 @@ import {
   LevierPlace,
   LevierTooltip,
   LevierTooltipInput,
+  toLevierToPrioritizeId,
   toLeviersPlaces,
   toLeviersWithoutPotentiel,
   toMatrixPoints,
@@ -88,6 +89,43 @@ describe('toQuadrant', () => {
       expect(toQuadrant({ potentielScore, mobilisationScore })).toBe(quadrant);
     }
   );
+});
+
+describe('toLevierToPrioritizeId', () => {
+  it("retient l'angle mort au plus fort potentiel", () => {
+    const places = [
+      toPlace({ levierId: 'covoiturage', potentielScore: 70 }),
+      toPlace({ levierId: 'biogaz', potentielScore: 90 }),
+      toPlace({ levierId: 'bus_cars_decarbones', potentielScore: 60 }),
+    ];
+
+    expect(toLevierToPrioritizeId(places)).toBe('biogaz');
+  });
+
+  it('ignore les leviers qui ne sont pas des angles morts, même à fort potentiel', () => {
+    const places = [
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 95,
+        mobilisationScore: 60,
+      }),
+      toPlace({ levierId: 'biogaz', potentielScore: 60 }),
+    ];
+
+    expect(toLevierToPrioritizeId(places)).toBe('biogaz');
+  });
+
+  it("renvoie undefined quand aucun levier n'est un angle mort", () => {
+    expect(
+      toLevierToPrioritizeId([
+        toPlace({
+          levierId: 'covoiturage',
+          potentielScore: 95,
+          mobilisationScore: 60,
+        }),
+      ])
+    ).toBeUndefined();
+  });
 });
 
 describe('isBlindSpot', () => {

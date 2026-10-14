@@ -13,6 +13,12 @@ const restartTourLabel = 'Comment ça marche ?';
 
 const savedActionsAccessLabel = 'Voir mes actions sauvegardées';
 
+const actionsAnalyseesLabel = plural({ one: 'action', other: 'actions' });
+
+const plansAnalysesLabel = plural({ one: 'plan', other: 'plans' });
+
+const issuesLabel = plural({ one: 'issue', other: 'issues' });
+
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
   planification: 'Réglementation & planification',
@@ -55,7 +61,7 @@ export const collectivitesLabels = {
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
   outilsDePriorisation: 'Outils de priorisation',
-  priorisationLeviersTitre: 'Priorisation des leviers',
+  priorisationLeviersTitre: 'Outil de priorisation',
   priorisationVisiteRelancer: restartTourLabel,
   priorisationVisiteMetriquesTitre: 'Votre point de départ',
   priorisationVisiteMetriquesDescription:
@@ -66,11 +72,6 @@ export const collectivitesLabels = {
   priorisationVisiteAideTitre: 'Retrouvez la visite ici',
   priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite à tout moment. Vos actions retenues se retrouvent dans « ${savedActionsAccessLabel} ».`,
   actionsSauvegardeesTitre: 'Mes actions sauvegardées',
-  voirActionsSauvegardees: plural({
-    zero: savedActionsAccessLabel,
-    one: 'Voir mon action sauvegardée',
-    other: savedActionsAccessLabel,
-  }),
   pertinenceInfo: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
   pertinenceLabel: (pertinence: Pertinence): string =>
@@ -120,22 +121,37 @@ export const collectivitesLabels = {
     one: 'action sauvegardée',
     other: 'actions sauvegardées',
   }),
-  actionsSauvegardeesAide:
-    'Pour alimenter vos discussions lors de comités de pilotage.',
-  leviersEnAngleMort: plural({
+  actionsSauvegardeesDescription:
+    "Pour alimenter vos discussions lors de comités de pilotage. Elles pourront alimenter l'évolution de vos plans d'action, être discutées avec vos collègues, élus, partenaires.",
+  voirMesActionsSauvegardees: savedActionsAccessLabel,
+  leviersAPrioriser: plural({
     one: 'levier à prioriser',
     other: 'leviers à prioriser',
   }),
-  leviersEnAngleMortAide:
+  leviersAPrioriserDescription:
     "Fort impact, encore peu mobilisés : c'est par là que vous pouvez commencer.",
-  actionsAnalysees: plural({
-    one: 'action de la collectivité rattachée à un levier',
-    other: 'actions de la collectivité rattachées à un levier',
-  }),
+  ouvrirLevierLePlusImportant: 'Ouvrir le levier le plus important',
+  priorisationAnalyse: ({
+    actionsCount,
+    plansCount,
+  }: {
+    actionsCount: number;
+    plansCount: number;
+  }): string =>
+    `Analyse de ${actionsAnalyseesLabel({
+      count: actionsCount,
+    })} ${issuesLabel({
+      count: actionsCount,
+      withoutCount: true,
+    })} de vos ${plansAnalysesLabel({
+      count: plansCount,
+    })}. Les impacts et la mobilisation sont des estimations.`,
 
   selectionnerUnLevier:
     'Cliquez sur un levier de la matrice pour consulter ses actions de référence.',
-  leviersAPrioriser: 'Leviers à prioriser',
+  matriceDePriorisation: 'Matrice de priorisation',
+  carteDesLeviers: 'Carte',
+  classementSousLeviers: 'Classement',
   vueEnsembleLeviers: "Vue d'ensemble",
   sousLeviersAPrioriser: 'Sous-leviers à prioriser',
   sousLevierLabel: ({

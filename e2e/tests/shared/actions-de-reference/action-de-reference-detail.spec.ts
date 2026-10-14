@@ -241,9 +241,9 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     );
     await priorisationPom.goto(collectivite.data.id);
 
-    await expect(priorisationPom.preselectionLink).toHaveText(
-      'Voir mon action sauvegardée'
-    );
+    await expect(
+      priorisationPom.metricCount(/^actions? sauvegardées?$/)
+    ).toHaveText('1');
     await priorisationPom.openPreselection();
     await expect(priorisationPom.preselectedCard(action.titre)).toBeVisible();
   });

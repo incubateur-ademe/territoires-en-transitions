@@ -60,7 +60,7 @@ test.describe('Priorisation : matrice et volet', () => {
     await expect(pom.emptyPreselectionMessage).toBeVisible();
   });
 
-  test("l'onglet « Sous-leviers à prioriser » affiche l'histogramme des sous-leviers", async ({
+  test("l'onglet « Classement » affiche l'histogramme des sous-leviers", async ({
     collectivites,
     page,
   }) => {
@@ -224,9 +224,6 @@ test.describe('Priorisation : présélection', () => {
 
     await expect(card.getByRole('button', { name: 'Ajoutée' })).toBeVisible();
     await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
-    await expect(pom.preselectionLink).toHaveText(
-      'Voir mon action sauvegardée'
-    );
 
     await page.reload();
     await expect(pom.title).toBeVisible();
@@ -304,6 +301,7 @@ test.describe('Priorisation : présélection', () => {
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
     await pom.backToPriorisation();
+    await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('0');
     await expect(pom.preselectionLink).toHaveText(
       'Voir mes actions sauvegardées'
     );

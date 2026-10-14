@@ -91,7 +91,9 @@ test.describe('Priorisation des leviers', () => {
 
     await priorisationLeviersPom.goto(collectivite.data.id);
 
-    await expect(priorisationLeviersPom.actionsRattacheesCount).toHaveText('2');
+    await expect(priorisationLeviersPom.analyzedActionsText).toContainText(
+      'Analyse de 2 actions'
+    );
     await expect(
       priorisationLeviersPom.missingMobilisationMessage
     ).toBeHidden();
@@ -114,7 +116,9 @@ test.describe('Priorisation des leviers', () => {
 
     await priorisationLeviersPom.goto(collectivite.data.id);
 
-    await expect(priorisationLeviersPom.actionsRattacheesCount).toHaveText('2');
+    await expect(priorisationLeviersPom.analyzedActionsText).toContainText(
+      'Analyse de 2 actions'
+    );
   });
 
   test('un admin qualifie un levier, et la valeur survit au rechargement', async ({

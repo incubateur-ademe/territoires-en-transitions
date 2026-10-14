@@ -33,7 +33,7 @@ export class PriorisationLeviersPom {
   constructor(readonly page: Page) {
     this.title = page.getByRole('heading', {
       level: 1,
-      name: 'Priorisation des leviers',
+      name: 'Outil de priorisation',
     });
     const leviersInMatrix = page
       .getByRole('figure')
@@ -63,10 +63,8 @@ export class PriorisationLeviersPom {
       .locator('xpath=preceding-sibling::span[1]');
   }
 
-  get actionsRattacheesCount(): Locator {
-    return this.metricCount(
-      /^actions? de la collectivité rattachées? à un levier$/
-    );
+  get analyzedActionsText(): Locator {
+    return this.page.getByText(/^Analyse de \d+ actions? issues? de vos/);
   }
 
   get missingPotentielsMessage(): Locator {
@@ -77,17 +75,17 @@ export class PriorisationLeviersPom {
 
   get matrixTab(): Locator {
     return this.page.getByRole('tab', {
-      name: 'Leviers à prioriser',
+      name: 'Matrice de priorisation',
       exact: true,
     });
   }
 
   get breakdownTab(): Locator {
-    return this.page.getByRole('tab', { name: "Vue d'ensemble" });
+    return this.page.getByRole('tab', { name: 'Carte', exact: true });
   }
 
   get sousLeviersTab(): Locator {
-    return this.page.getByRole('tab', { name: 'Sous-leviers à prioriser' });
+    return this.page.getByRole('tab', { name: 'Classement', exact: true });
   }
 
   get sousLeviersCaption(): Locator {
@@ -165,7 +163,7 @@ export class PriorisationLeviersPom {
 
   get preselectionLink(): Locator {
     return this.page.getByRole('link', {
-      name: /^Voir (mes actions|mon action) sauvegardées?$/,
+      name: /Voir (mes actions|mon action) sauvegardées?$/,
     });
   }
 
@@ -210,7 +208,7 @@ export class PriorisationLeviersPom {
 
   async backToPriorisation(): Promise<void> {
     await this.page
-      .getByRole('link', { name: 'Priorisation des leviers' })
+      .getByRole('link', { name: 'Outil de priorisation' })
       .click();
     await expect(this.title).toBeVisible();
   }
