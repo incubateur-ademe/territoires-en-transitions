@@ -20,31 +20,40 @@ import {
 import { Button, Icon, InlineLink } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
-import { FicheSecteursAVerifier } from './data/use-list-plan-fiches-secteurs-a-verifier';
+import {
+  FicheSecteursAVerifier,
+  useListPlanFichesSecteursAVerifier,
+} from './data/use-list-plan-fiches-secteurs-a-verifier';
+import {
+  PLAN_SECTEURS_LISTE,
+  usePlanSecteursVue,
+} from './use-plan-secteurs-vue';
+
+const NON_ATTRIBUABLE = 'non_attribuable';
+
+type Selection = SecteurReglementaire[] | typeof NON_ATTRIBUABLE;
 
 const isARenseigner = (fiche: FicheSecteursAVerifier) =>
   fiche.etat === 'a_renseigner' || fiche.etat === 'non_attribuable';
 
-export const toFichesAVerifier = (fiches: FicheSecteursAVerifier[]) =>
-  fiches.filter(isARenseigner);
-
 export const PlanSecteursVerificationPanel = ({
+  collectiviteId,
   planId,
-  fiches,
 }: {
+  collectiviteId: number;
   planId: number;
-  fiches: FicheSecteursAVerifier[];
 }) => {
-  const [index, setIndex] = useState<number | null>(null);
-  const [verifiees, setVerifiees] = useState<Set<number>>(new Set());
+  const [vue, setVue] = usePlanSecteursVue();
+  const fiches = useListPlanFichesSecteursAVerifier(
+    collectiviteId,
+    planId
+  ).filter(isARenseigner);
+  const index = fiches.findIndex(({ ficheId }) => String(ficheId) === vue);
+  const ouvrir = (fiche: FicheSecteursAVerifier | undefined) =>
+    void setVue(fiche ? String(fiche.ficheId) : PLAN_SECTEURS_LISTE);
 
-  const marquerVerifiee = (ficheId: number) =>
-    setVerifiees((current) => new Set(current).add(ficheId));
-
-  if (index === null) {
-    return (
-      <ListeFiches fiches={fiches} verifiees={verifiees} onSelect={setIndex} />
-    );
+  if (index === -1) {
+    return <ListeFiches fiches={fiches} onSelect={ouvrir} />;
   }
 
   return (
@@ -54,13 +63,9 @@ export const PlanSecteursVerificationPanel = ({
       fiche={fiches[index]}
       index={index}
       total={fiches.length}
-      isVerifiee={verifiees.has(fiches[index].ficheId)}
-      onNavigate={setIndex}
-      onRetour={() => setIndex(null)}
-      onEnregistree={() => {
-        marquerVerifiee(fiches[index].ficheId);
-        setIndex(index + 1 < fiches.length ? index + 1 : null);
-      }}
+      onNavigate={(next) => ouvrir(fiches[next])}
+      onRetour={() => ouvrir(undefined)}
+      onEnregistree={() => ouvrir(fiches[index + 1])}
     />
   );
 };
@@ -85,65 +90,92 @@ const TitreFiche = ({
 
 const ListeFiches = ({
   fiches,
-  verifiees,
   onSelect,
 }: {
   fiches: FicheSecteursAVerifier[];
-  verifiees: Set<number>;
-  onSelect: (index: number) => void;
+  onSelect: (fiche: FicheSecteursAVerifier) => void;
 }) => (
   <div
     className="flex flex-col gap-6 p-4"
     data-test="plans.secteurs-counts-alert.liste"
   >
-    {[
-      { etat: 'a_renseigner', titre: appLabels.planSecteursGroupeARenseigner },
-    ].map(({ etat, titre }) => {
-      const fichesDuGroupe = fiches
-        .map((fiche, index) => ({ fiche, index }))
-        .filter(({ fiche }) => isARenseigner(fiche));
-      if (fichesDuGroupe.length === 0) {
-        return null;
-      }
-      return (
-        <section key={etat} className="flex flex-col gap-2">
-          <h3 className="mb-0 text-sm font-bold text-primary-10">
-            {titre}
-            <span className="ml-2 font-normal text-grey-7">
-              {fichesDuGroupe.length}
-            </span>
-          </h3>
-          <ul className="mb-0 pl-0 list-none border-t border-grey-3">
-            {fichesDuGroupe.map(({ fiche, index }) => (
-              <li key={fiche.ficheId} className="border-b border-grey-3">
-                <button
-                  type="button"
-                  className="w-full flex items-center justify-between gap-3 py-3 text-left text-sm text-primary-10 hover:bg-primary-1"
-                  onClick={() => onSelect(index)}
-                  data-test="plans.secteurs-counts-alert.fiche"
-                >
-                  <TitreFiche fiche={fiche} />
-                  {verifiees.has(fiche.ficheId) ? (
-                    <Icon
-                      icon="check-line"
-                      size="sm"
-                      className="shrink-0 text-success-1"
-                    />
-                  ) : (
-                    <Icon
-                      icon="arrow-right-s-line"
-                      size="sm"
-                      className="shrink-0 text-grey-6"
-                    />
-                  )}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      );
-    })}
+    {fiches.length === 0 ? (
+      <div
+        className="flex flex-col items-center gap-2 py-10 text-center"
+        data-test="plans.secteurs-counts-alert.tout-renseigne"
+      >
+        <Icon
+          icon="checkbox-circle-line"
+          size="2xl"
+          className="text-success-1"
+        />
+        <p className="mb-0 text-base font-bold text-primary-10">
+          {appLabels.planSecteursToutRenseigneTitre}
+        </p>
+        <p className="mb-0 text-sm text-grey-8">
+          {appLabels.planSecteursToutRenseigne}
+        </p>
+      </div>
+    ) : (
+      <section className="flex flex-col gap-2">
+        <h3 className="mb-0 text-sm font-bold text-primary-10">
+          {appLabels.planSecteursGroupeARenseigner}
+          <span className="ml-2 font-normal text-grey-7">{fiches.length}</span>
+        </h3>
+        <ul className="mb-0 pl-0 list-none border-t border-grey-3">
+          {fiches.map((fiche) => (
+            <li key={fiche.ficheId} className="border-b border-grey-3">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between gap-3 py-3 text-left text-sm text-primary-10 hover:bg-primary-1"
+                onClick={() => onSelect(fiche)}
+                data-test="plans.secteurs-counts-alert.fiche"
+              >
+                <TitreFiche fiche={fiche} />
+                <Icon
+                  icon="arrow-right-s-line"
+                  size="sm"
+                  className="shrink-0 text-grey-6"
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
   </div>
+);
+
+const Pastille = ({
+  label,
+  isSelected,
+  isReadonly,
+  onClick,
+  dataTest,
+}: {
+  label: string;
+  isSelected: boolean;
+  isReadonly: boolean;
+  onClick: () => void;
+  dataTest: string;
+}) => (
+  <button
+    type="button"
+    aria-pressed={isSelected}
+    disabled={isReadonly}
+    onClick={onClick}
+    className={cn(
+      'flex items-center gap-1 rounded-full border px-3 py-1 text-sm transition-colors',
+      isSelected
+        ? 'border-primary-9 bg-primary-9 text-white'
+        : 'border-grey-4 bg-white text-primary-10 hover:border-primary-9',
+      isReadonly && 'cursor-not-allowed opacity-60'
+    )}
+    data-test={dataTest}
+  >
+    {isSelected && <Icon icon="check-line" size="xs" />}
+    {label}
+  </button>
 );
 
 const RevueFiche = ({
@@ -151,7 +183,6 @@ const RevueFiche = ({
   fiche,
   index,
   total,
-  isVerifiee,
   onNavigate,
   onRetour,
   onEnregistree,
@@ -160,7 +191,6 @@ const RevueFiche = ({
   fiche: FicheSecteursAVerifier;
   index: number;
   total: number;
-  isVerifiee: boolean;
   onNavigate: (index: number) => void;
   onRetour: () => void;
   onEnregistree: () => void;
@@ -174,19 +204,23 @@ const RevueFiche = ({
   const { mutate: upsertSecteurs, isPending } = useUpsertFicheSecteurs(
     fiche.ficheId
   );
-  const [selectionModifiee, setSelection] = useState<
-    SecteurReglementaire[] | null
-  >(null);
-  const selection =
+  const [selectionModifiee, setSelection] = useState<Selection | null>(null);
+  const selection: Selection =
     selectionModifiee ??
-    (secteurs?.etat === 'attribue' ? secteurs.secteurs : []);
+    (secteurs?.etat === 'attribue'
+      ? secteurs.secteurs
+      : secteurs?.etat === 'non_attribuable'
+      ? NON_ATTRIBUABLE
+      : []);
+  const isNonAttribuable = selection === NON_ATTRIBUABLE;
+  const secteursChoisis = isNonAttribuable ? [] : selection;
 
   const isReadonly =
     !ficheComplete ||
     !isFicheEditableByCollectiviteUser(ficheComplete, collectivite, user.id) ||
     isFicheSharedWithCollectivite(ficheComplete, collectivite.collectiviteId);
 
-  const enregistrer = (secteursChoisis: SecteurReglementaire[]) =>
+  const enregistrer = () =>
     upsertSecteurs(
       {
         ficheId: fiche.ficheId,
@@ -210,9 +244,9 @@ const RevueFiche = ({
 
   const basculer = (secteur: SecteurReglementaire) =>
     setSelection(
-      selection.includes(secteur)
-        ? selection.filter((value) => value !== secteur)
-        : [...selection, secteur]
+      secteursChoisis.includes(secteur)
+        ? secteursChoisis.filter((value) => value !== secteur)
+        : [...secteursChoisis, secteur]
     );
 
   const ficheUrl =
@@ -266,11 +300,6 @@ const RevueFiche = ({
       <div className="flex flex-col gap-2">
         <p className="mb-0 text-xs font-medium uppercase text-grey-7">
           {appLabels.planSecteursGroupeARenseigner}
-          {isVerifiee && (
-            <span className="ml-2 normal-case text-success-1">
-              {appLabels.planSecteursVerifiee}
-            </span>
-          )}
         </p>
         <h3 className="mb-0 text-base font-bold text-primary-10">
           <TitreFiche fiche={fiche} />
@@ -293,29 +322,25 @@ const RevueFiche = ({
           {appLabels.ficheSecteursReglementaires}
         </legend>
         <div className="flex flex-wrap gap-2">
-          {secteurReglementaireEnumValues.map((secteur) => {
-            const isSelected = selection.includes(secteur);
-            return (
-              <button
-                key={secteur}
-                type="button"
-                aria-pressed={isSelected}
-                disabled={isReadonly}
-                onClick={() => basculer(secteur)}
-                className={cn(
-                  'flex items-center gap-1 rounded-full border px-3 py-1 text-sm transition-colors',
-                  isSelected
-                    ? 'border-primary-9 bg-primary-9 text-white'
-                    : 'border-grey-4 bg-white text-primary-10 hover:border-primary-9',
-                  isReadonly && 'cursor-not-allowed opacity-60'
-                )}
-                data-test={`plans.secteurs-counts-alert.secteur.${secteur}`}
-              >
-                {isSelected && <Icon icon="check-line" size="xs" />}
-                {appLabels.ficheSecteurReglementaireLabels[secteur]}
-              </button>
-            );
-          })}
+          {secteurReglementaireEnumValues.map((secteur) => (
+            <Pastille
+              key={secteur}
+              label={appLabels.ficheSecteurReglementaireLabels[secteur]}
+              isSelected={secteursChoisis.includes(secteur)}
+              isReadonly={isReadonly}
+              onClick={() => basculer(secteur)}
+              dataTest={`plans.secteurs-counts-alert.secteur.${secteur}`}
+            />
+          ))}
+          <Pastille
+            label={appLabels.planSecteursNonAttribuable}
+            isSelected={isNonAttribuable}
+            isReadonly={isReadonly}
+            onClick={() =>
+              setSelection(isNonAttribuable ? [] : NON_ATTRIBUABLE)
+            }
+            dataTest="plans.secteurs-counts-alert.non-attribuable"
+          />
         </div>
         {isReadonly && (
           <p className="mb-0 text-xs text-grey-7">
@@ -325,20 +350,13 @@ const RevueFiche = ({
       </fieldset>
 
       {!isReadonly && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-grey-3 pt-4">
+        <div className="flex justify-end border-t border-grey-3 pt-4">
           <Button
             size="sm"
-            variant="outlined"
-            disabled={isPending}
-            onClick={() => enregistrer([])}
-            dataTest="plans.secteurs-counts-alert.non-attribuable"
-          >
-            {appLabels.planSecteursNonAttribuable}
-          </Button>
-          <Button
-            size="sm"
-            disabled={isPending || selection.length === 0}
-            onClick={() => enregistrer(selection)}
+            disabled={
+              isPending || (!isNonAttribuable && secteursChoisis.length === 0)
+            }
+            onClick={enregistrer}
             dataTest="plans.secteurs-counts-alert.enregistrer"
           >
             {index + 1 < total
