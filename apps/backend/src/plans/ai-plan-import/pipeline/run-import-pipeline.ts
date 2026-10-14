@@ -353,13 +353,15 @@ export const runImportPipeline = async (
           warnings: result.data.warnings,
         });
       },
-      // Lus par morceaux, le sommaire et la fiche se répondent : une fiche peut
-      // s'y retrouver sous-axe d'elle-même.
+      // Passée ou non : le sommaire et la fiche se répondent, une fiche peut
+      // s'y retrouver sous-axe d'elle-même, quelle que soit la lecture.
       finalize: (progress) => {
-        if (!state.units) {
-          return progress;
+        if (state.units) {
+          state.source = coalesceChunks(
+            state.source,
+            VERIFICATION_WINDOW_TOKENS
+          );
         }
-        state.source = coalesceChunks(state.source, VERIFICATION_WINDOW_TOKENS);
         return {
           ...progress,
           actions: dropRedundantSousAxes(progress.actions),

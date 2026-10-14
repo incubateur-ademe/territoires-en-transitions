@@ -213,6 +213,41 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it("retire en lecture entière le sous-axe qui ne porte que l'action du même titre", async () => {
+    const [extracted] = responseByStep.extraction as object[];
+    const llm = {
+      maxInputTokens: 900_000,
+      capabilities: { ocr: false, strategy: 'whole-document' },
+      generateStructured: vi.fn(async ({ prompt }: { prompt: string }) => {
+        const step = stepOf(prompt);
+        return success({
+          data:
+            step === 'extraction'
+              ? [
+                  {
+                    ...extracted,
+                    'sous-axe': '1.1 Rénover les écoles',
+                    titre: 'Rénover les écoles',
+                  },
+                ]
+              : responseByStep[step],
+          tokens,
+        });
+      }),
+    } as unknown as PipelineLlm;
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({ withVerifications: false, withSousActions: false })
+    );
+
+    expect(outcome.status).toBe('done');
+    if (outcome.status === 'done') {
+      expect(outcome.stepStates.hierarchy).toBe('skipped');
+      expect(outcome.draft.actions[0].sousAxe).toBe('');
+    }
+  });
+
   it('émet la progression cumulée après chaque étape', async () => {
     const llm = routedLlm();
     const onStepStatesChange = vi.fn<(stepStates: StepStates) => Promise<void>>(

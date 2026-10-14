@@ -70,6 +70,19 @@ describe('unifyAxisLabels', () => {
     ]);
   });
 
+  it('écrase les espaces multiples des libellés d’axe et de sous-axe', () => {
+    const actions = unifyAxisLabels([
+      action(
+        'Axe 2  :  Agir pour la mobilité',
+        '2.2  Développer  les modes actifs '
+      ),
+    ]);
+
+    expect(actions.map(({ axe, sousAxe }) => [axe, sousAxe])).toEqual([
+      ['Axe 2 : Agir pour la mobilité', '2.2 Développer les modes actifs'],
+    ]);
+  });
+
   it('rapproche des libellés sans numéro aux accents et à la casse près, sans toucher aux autres', () => {
     const actions = unifyAxisLabels([
       action('MOBILITE DURABLE'),

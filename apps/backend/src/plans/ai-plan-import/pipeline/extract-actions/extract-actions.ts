@@ -9,7 +9,11 @@ import {
 } from './extract-actions.prompt';
 import { extractionResponseSchema } from './extract-actions.schema';
 import { extractionResponseToExtractedActions } from './extraction-response-to-extracted-actions';
-import { ChunkedActions, mergeChunkActions } from './merge-chunk-actions';
+import {
+  ChunkedActions,
+  dedupeByTitle,
+  mergeChunkActions,
+} from './merge-chunk-actions';
 
 export type ExtractActionsInput = Omit<ExtractionPromptInput, 'text'> & {
   chunks: string[];
@@ -62,5 +66,8 @@ export const extractActions = async (
   if (extracted.actions.length === 0) {
     return failure({ kind: 'no_actions_extracted' });
   }
-  return success({ ...extracted, tokens: sumTokenUsage(usages) });
+  return success({
+    ...dedupeByTitle(extracted),
+    tokens: sumTokenUsage(usages),
+  });
 };
