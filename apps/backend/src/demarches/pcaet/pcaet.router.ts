@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
 import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
@@ -50,7 +49,6 @@ export class PcaetRouter {
     private readonly transmettrePourAvisRouter: TransmettrePourAvisDemarchePcaetRouter,
     private readonly cloreInstructionRouter: CloreInstructionRouter,
     private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
-    private readonly archiverDemarchePcaetRouter: ArchiverDemarchePcaetRouter,
     private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter
   ) {}
@@ -77,7 +75,6 @@ export class PcaetRouter {
     this.transmettrePourAvisRouter.router,
     this.cloreInstructionRouter.router,
     this.publierDemarchePcaetRouter.router,
-    this.archiverDemarchePcaetRouter.router,
 
     this.trpc.router({
       diagnostic: this.pcaetDiagnosticRouter.router,

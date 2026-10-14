@@ -28,7 +28,6 @@ import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import {
-  addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
   cloreTestInstructionPcaet,
   completeTestDiagnosticIndicateursPcaet,
@@ -155,59 +154,6 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     expect(derniere?.transition).toBe('delai_avis_echu');
     // Personne ne l'a demandée : le journal ne l'impute à aucun utilisateur.
     expect(derniere?.createdBy).toBeNull();
-  });
-
-  test('Archiver reste fermé tant que l’évaluation finale n’est pas modélisée (fail-closed)', async () => {
-    const { caller, collectivite } = await freshEditor();
-    const created = await caller.demarches.pcaet.create({
-      collectiviteId: collectivite.id,
-    });
-    await completeTestDossierPcaet(db, {
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    await caller.demarches.pcaet.transmettrePourAvis({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-    await cloreTestInstructionPcaet(app, db, {
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-    });
-
-    // On n'archive qu'un dossier publié : avant la publication, ce n'est pas
-    // une condition qui manque, c'est la transition qui n'existe pas.
-    await expect(
-      caller.demarches.pcaet.archiver({
-        collectiviteId: collectivite.id,
-        demarcheId: created.id,
-      })
-    ).rejects.toThrow('TRANSITION_NOT_ALLOWED');
-
-    const deliberation = await addTestBibliothequeFichier(db, {
-      collectiviteId: collectivite.id,
-      filename: 'deliberation-adoption.pdf',
-    });
-    await caller.demarches.pcaet.documents.add({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-      documentId: 'pcaet_deliberation_adoption',
-      fichierId: deliberation.id,
-    });
-    await caller.demarches.pcaet.publier({
-      collectiviteId: collectivite.id,
-      demarcheId: created.id,
-      dateAdoption: '2026-01-15',
-    });
-
-    // Le dossier est publié : la transition est atteignable, c'est son guard
-    // qui la bloque, faute de source pour l'évaluation finale.
-    await expect(
-      caller.demarches.pcaet.archiver({
-        collectiviteId: collectivite.id,
-        demarcheId: created.id,
-      })
-    ).rejects.toThrow('EVALUATION_FINALE_MANQUANTE');
   });
 
   test('Le guard estPilote réserve les transitions pilotées aux pilotes', async () => {

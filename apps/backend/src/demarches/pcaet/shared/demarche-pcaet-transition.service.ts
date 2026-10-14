@@ -88,7 +88,8 @@ export class DemarchePcaetTransitionService {
 
   /**
    * Même socle, mais sans acteur : les transitions constatées par le système
-   * (`avis_tous_rendus`, `delai_avis_echu`) n'ont personne à autoriser. La
+   * (`avis_tous_rendus`, `delai_avis_echu`, `pcaet_suivant_adopte`) n'ont
+   * personne à autoriser. La
    * permission n'est donc pas vérifiée — ce sont leurs guards métier qui font
    * autorité — et le journal enregistre `created_by = null` plutôt que
    * d'imputer la bascule à un utilisateur qui ne l'a pas demandée.

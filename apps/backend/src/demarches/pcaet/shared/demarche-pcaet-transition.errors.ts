@@ -18,7 +18,7 @@ export const demarchePcaetTransitionErrors = [
   'DOSSIER_INCOMPLET',
   'AVIS_NON_TOUS_RENDUS',
   'DELAI_AVIS_NON_ECOULE',
-  'EVALUATION_FINALE_MANQUANTE',
+  'PCAET_SUIVANT_NON_ADOPTE',
   'DOCUMENTS_AVAL_INCOMPLETS',
 ] as const;
 
@@ -46,7 +46,7 @@ export const demarchePcaetTransitionErrorConfig: NonNullable<
     DOSSIER_INCOMPLET: { code: 'PRECONDITION_FAILED' },
     AVIS_NON_TOUS_RENDUS: { code: 'PRECONDITION_FAILED' },
     DELAI_AVIS_NON_ECOULE: { code: 'PRECONDITION_FAILED' },
-    EVALUATION_FINALE_MANQUANTE: { code: 'PRECONDITION_FAILED' },
+    PCAET_SUIVANT_NON_ADOPTE: { code: 'PRECONDITION_FAILED' },
     DOCUMENTS_AVAL_INCOMPLETS: { code: 'PRECONDITION_FAILED' },
   };
 
@@ -60,7 +60,7 @@ const GUARD_ERRORS = {
   dossierComplet: 'DOSSIER_INCOMPLET',
   avisTousRendus: 'AVIS_NON_TOUS_RENDUS',
   delaiAvisEcoule: 'DELAI_AVIS_NON_ECOULE',
-  evaluationFinaleDeposee: 'EVALUATION_FINALE_MANQUANTE',
+  pcaetSuivantAdopte: 'PCAET_SUIVANT_NON_ADOPTE',
   documentsAvalComplets: 'DOCUMENTS_AVAL_INCOMPLETS',
 } as const satisfies Record<DemarchePcaetGuardId, DemarchePcaetTransitionError>;
 

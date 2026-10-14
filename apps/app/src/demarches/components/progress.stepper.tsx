@@ -220,7 +220,7 @@ const buildSteps = (
   },
   {
     label: appLabels.demarcheAvanceEtapeArchiveLabel,
-    description: appLabels.demarcheAvanceEtapeArchiveDescription,
+    description: appLabels.demarcheAvanceEtapeArchiveDescription({ type }),
   },
 ];
 

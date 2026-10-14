@@ -397,7 +397,7 @@ stateDiagram-v2
   transmis_pour_avis --> instruit : delai_avis_echu [delaiAvisEcoule]
   instruit --> publie : publier [estPilote, dossierComplet, documentsAvalComplets]
   instruit_hors_plateforme --> publie : publier [estPilote, dossierComplet, documentsAvalComplets]
-  publie --> archive : archiver [estPilote, evaluationFinaleDeposee]
+  publie --> archive : pcaet_suivant_adopte [pcaetSuivantAdopte]
 ```
 
 `instruit_hors_plateforme` n'a pas de flèche entrante : c'est un statut de
@@ -440,10 +440,13 @@ Le dépôt PCAET, dans l'ordre où on le lit :
   le préambule d'écriture sous verrou.
 - `apps/backend/src/demarches/pcaet/shared/demarche-pcaet-transition.service.ts` :
   le socle des transitions (verrou, guards, journal), avec ou sans acteur.
-- les dossiers d'opération (`transmettre-pour-avis/`, `publier-demarche/`,
-  `archiver-demarche/`) : les routes, leurs effets et leurs codes d'erreur.
+- les dossiers d'opération (`transmettre-pour-avis/`, `publier-demarche/`) : les
+  routes, leurs effets et leurs codes d'erreur.
 - `apps/backend/src/demarches/pcaet/clore-instruction/` : les deux transitions
-  sans acteur, appliquées à la validation d'un avis ou par une passe planifiée.
+  sans acteur vers `instruit`, appliquées à la validation d'un avis ou par une
+  passe planifiée.
+- `apps/backend/src/demarches/pcaet/archiver-demarche/` : l'archivage, sans
+  acteur lui aussi, appliqué à la publication du PCAET suivant.
 
 ## Références
 

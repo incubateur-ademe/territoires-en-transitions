@@ -470,8 +470,8 @@ export const appLabels = {
       'Le dossier doit être complet (pièces requises, diagnostic et programme d’actions) pour être transmis.',
     DELAI_AVIS_NON_ECOULE:
       'Le délai légal de remise des avis n’est pas écoulé : la démarche ne peut pas encore être adoptée.',
-    EVALUATION_FINALE_MANQUANTE:
-      'L’évaluation finale du PCAET doit être déposée pour archiver la démarche.',
+    PCAET_SUIVANT_NON_ADOPTE:
+      'La démarche ne peut être archivée qu’à l’adoption du PCAET suivant.',
     DOCUMENTS_AVAL_INCOMPLETS:
       'Les pièces attendues après les avis (délibération d’adoption…) doivent être déposées pour publier la démarche.',
     DEMARCHE_PCAET_NON_MODIFIABLE:

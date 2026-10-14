@@ -40,7 +40,11 @@ describe('définition du cycle de vie', () => {
   // Deux familles, et le nom dit laquelle : infinitif pour un acte de la
   // collectivité, participe passé pour un événement constaté par le système.
   it('seules les transitions système sont sans acteur', () => {
-    const SANS_ACTEUR = ['avis_tous_rendus', 'delai_avis_echu'];
+    const SANS_ACTEUR = [
+      'avis_tous_rendus',
+      'delai_avis_echu',
+      'pcaet_suivant_adopte',
+    ];
 
     for (const [nom, def] of Object.entries(DEMARCHE_PCAET_TRANSITIONS)) {
       if (SANS_ACTEUR.includes(nom)) {
@@ -77,8 +81,9 @@ describe('définition du cycle de vie', () => {
     // L'autre entrée de la finalisation rejoint la même suite, et une seule :
     // rien ne ramène un dépôt hors plateforme dans le circuit d'avis.
     expect(chemin('instruit_hors_plateforme')).toEqual(['publier → publie']);
-    // Un dossier publié vaut adopté : il ne se reprend pas, il s'archive.
-    expect(chemin('publie')).toEqual(['archiver → archive']);
+    // Un dossier publié vaut adopté : il ne se reprend pas, seul le suivant
+    // l'archive.
+    expect(chemin('publie')).toEqual(['pcaet_suivant_adopte → archive']);
     expect(chemin('archive')).toEqual([]);
   });
 

@@ -6,14 +6,15 @@
  * - **infinitif** — un acte de la collectivité, donc gardé par `estPilote` et
  *   proposé dans l'interface ;
  * - **participe passé** — un événement constaté par le système, sans acteur ni
- *   entrée de menu (`avis_tous_rendus`, `delai_avis_echu`).
+ *   entrée de menu (`avis_tous_rendus`, `delai_avis_echu`,
+ *   `pcaet_suivant_adopte`).
  */
 export const DemarchePcaetTransitionEnum = {
   TRANSMETTRE_POUR_AVIS: 'transmettre_pour_avis',
   AVIS_TOUS_RENDUS: 'avis_tous_rendus',
   DELAI_AVIS_ECHU: 'delai_avis_echu',
-  ARCHIVER: 'archiver',
   PUBLIER: 'publier',
+  PCAET_SUIVANT_ADOPTE: 'pcaet_suivant_adopte',
 } as const;
 
 export type DemarchePcaetTransition =

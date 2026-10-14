@@ -28,7 +28,7 @@ describe('evaluateTransitions', () => {
     expect(evaluation.publier.reachable).toBe(true);
     expect(evaluation.publier.blockedBy).toEqual(['documentsAvalComplets']);
     // L'archivage attend la publication.
-    expect(evaluation.archiver.reachable).toBe(false);
+    expect(evaluation.pcaet_suivant_adopte.reachable).toBe(false);
   });
 
   // L'autre entrée de la finalisation : le dossier y démarre, donc rien n'a
@@ -125,7 +125,7 @@ describe('applyTransition', () => {
   });
 
   it('refuse une transition hors du statut courant', () => {
-    expect(applyTransition('en_elaboration', 'archiver')).toEqual({
+    expect(applyTransition('en_elaboration', 'pcaet_suivant_adopte')).toEqual({
       success: false,
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],
@@ -138,7 +138,7 @@ describe('applyTransition', () => {
       blockedBy: [],
     });
     // Ni un dossier non publié archivable.
-    expect(applyTransition('instruit', 'archiver')).toEqual({
+    expect(applyTransition('instruit', 'pcaet_suivant_adopte')).toEqual({
       success: false,
       error: 'TRANSITION_NOT_ALLOWED',
       blockedBy: [],
@@ -151,10 +151,10 @@ describe('applyTransition', () => {
       error: 'GUARD_NOT_SATISFIED',
       blockedBy: ['estPilote', 'dossierComplet'],
     });
-    expect(applyTransition('publie', 'archiver')).toEqual({
+    expect(applyTransition('publie', 'pcaet_suivant_adopte')).toEqual({
       success: false,
       error: 'GUARD_NOT_SATISFIED',
-      blockedBy: ['estPilote', 'evaluationFinaleDeposee'],
+      blockedBy: ['pcaetSuivantAdopte'],
     });
     // Le délai non échu bloque son propre chemin, sans rien dire de l'autre.
     expect(
