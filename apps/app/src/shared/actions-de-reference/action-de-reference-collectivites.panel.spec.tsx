@@ -5,10 +5,10 @@ import {
   isolationComblesAction,
   toFicheFixture,
 } from './actions-de-reference.fixture';
-import { useListFichesActionDeReference } from './data/use-list-fiches-action-de-reference';
+import { useListFichesOfOtherCollectivites } from './data/use-list-fiches-of-other-collectivites';
 
-vi.mock('./data/use-list-fiches-action-de-reference', () => ({
-  useListFichesActionDeReference: vi.fn(),
+vi.mock('./data/use-list-fiches-of-other-collectivites', () => ({
+  useListFichesOfOtherCollectivites: vi.fn(),
 }));
 
 const twoCollectivitiesFiches = [
@@ -33,9 +33,9 @@ const twoCollectivitiesFiches = [
 afterEach(cleanup);
 
 const mockFichesList = (
-  list: ReturnType<typeof useListFichesActionDeReference>
+  list: ReturnType<typeof useListFichesOfOtherCollectivites>
 ): void => {
-  vi.mocked(useListFichesActionDeReference).mockReturnValue(list);
+  vi.mocked(useListFichesOfOtherCollectivites).mockReturnValue(list);
 };
 
 const renderPanel = (): void => {
@@ -147,6 +147,28 @@ describe('panneau-collectivites-liees', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Masquer' }));
 
     expect(screen.queryByText('Fonds de concours rénovation')).toBeNull();
+  });
+
+  it('compte les collectivités des seules fiches des autres collectivités', () => {
+    mockFichesList({
+      status: 'loaded',
+      fiches: [
+        toFicheFixture({
+          id: 2,
+          titre: 'Fonds de concours rénovation',
+          description: null,
+          collectiviteId: 20,
+          collectiviteNom: 'Métropole de Lyon',
+          restreint: false,
+        }),
+      ],
+    });
+
+    renderPanel();
+
+    expect(
+      screen.getByText('1 collectivité a des actions liées')
+    ).toBeDefined();
   });
 
   it('sans aucune fiche liée, ne rend rien', () => {
