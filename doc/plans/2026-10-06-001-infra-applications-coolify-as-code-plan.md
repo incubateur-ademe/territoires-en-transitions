@@ -95,7 +95,7 @@ avec ces écarts :
 Restent à faire : le contrôle manifeste ↔ code en CI (`scripts/check-env-manifest.mts`),
 et les manifestes staging et prod.
 
-## Étape 3 — Premier déploiement preprod, à la main
+## Étape 3 — Premier déploiement preprod, à la main (fait)
 
 Choisir un SHA déjà publié sur GHCR par `cd-app.yml` / `cd-backend.yml` / `cd-site.yml`,
 puis :
@@ -111,7 +111,20 @@ Le script échoue si le déploiement échoue ou dépasse 15 minutes. Vérifs : `
 backend, `/api/version` de l'app (SHA attendu, pas une valeur figée), CSP de l'app qui
 contient les URL Supabase et backend (étape 0 du plan des variables).
 
-## Étape 4 — supabase-api en service Coolify
+## Étape 4 — supabase-api en service Coolify (fait, à appliquer)
+
+Mis en œuvre par `infra/coolify/services.tf` (`coolify_service`, compose réencodé par
+`yamldecode`/`yamlencode` plutôt que `templatefile()`, qui buterait sur les `${VAR}` du
+compose), l'entrée `supabase-api` du manifeste, et `RESOURCE=services` dans
+`coolify-push-env.sh`. URL de base des templates : `{{ .SiteURL }}`. Les templates ne
+passent pas par la clé `content:` du compose (Coolify l'extrait du compose stocké, et le
+provider échoue en « inconsistent result after apply ») : ce sont des file storages créés par
+l'API (`coolify-upsert-service-files.sh`). Ordre d'application :
+`infra/nonprod` (URL Postgres de GoTrue et Storage), puis `infra/coolify`, dépôt des quatre
+secrets manuels (`brevo-smtp-user`, `brevo-smtp-pass`, `supabase-storage-s3-access-key-id`,
+`supabase-storage-s3-secret-access-key`), `apply` à nouveau, puis déploiement depuis l'UI.
+
+Plan d'origine :
 
 La stack `infra/nonprod/supabase-api/docker-compose.yml` est aujourd'hui « à coller dans
 l'UI ». Pour la coder :

@@ -1,6 +1,6 @@
 # --- Push des variables d'environnement vers Coolify ---
 #
-# Un terraform_data par application : rejoué quand son manifeste change, ou
+# Un terraform_data par application ou service : rejoué quand son manifeste change, ou
 # quand var.coolify_env_revision est incrémenté (rotation d'un secret, dont la
 # valeur n'est pas dans le state). Le script résout toutes les valeurs avant
 # d'écrire quoi que ce soit (cf. scripts/coolify-push-env.sh).
@@ -16,8 +16,11 @@ resource "terraform_data" "env_push" {
     var.coolify_env_revision,
     var.coolify_env_prune,
     filesha256("${path.module}/../scripts/coolify-push-env.sh"),
-    # Une application recréée repart sans variables.
-    coolify_application_docker_image.app[each.key].uuid,
+    # Une ressource recréée repart sans variables.
+    merge(
+      { for k, v in coolify_application_docker_image.app : k => v.uuid },
+      { for k, v in coolify_service.supabase_api : k => v.uuid },
+    )[each.key],
   ]
 
   # Les coquilles doivent exister pour que le script distingue « secret
@@ -56,6 +59,7 @@ resource "terraform_data" "env_push" {
     environment = {
       COOLIFY_ENDPOINT  = var.coolify_endpoint
       APP_ID            = each.key
+      RESOURCE          = each.value.resource
       SECRET_PROJECT_ID = each.value.secret_project_id
       SECRET_PATH       = each.value.secret_path
       ENV_MANIFEST      = jsonencode(each.value.manifest)
