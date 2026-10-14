@@ -25,11 +25,12 @@ type DemarchePcaetTransitionDef = WorkflowTransitionDef<
  * il entre en mise en œuvre, et c'est le plan d'actions qui vit ensuite, pas le
  * dépôt.
  *
- * Deux transitions n'ont **pas d'acteur** : `avis_tous_rendus` et
+ * Trois transitions n'ont **pas d'acteur**. `avis_tous_rendus` et
  * `delai_avis_echu` mènent toutes deux à `instruit`, appliquées par le système
- * (validation du dernier avis, ou passage du cron). D'où l'absence de guard
- * `estPilote`, et deux noms au participe passé plutôt qu'un seul verbe : le
- * journal des statuts garde ainsi la raison de la bascule.
+ * (validation du dernier avis, ou passage du cron) : deux noms au participe
+ * passé plutôt qu'un seul verbe, pour que le journal des statuts garde la
+ * raison de la bascule. `pcaet_suivant_adopte` archive un PCAET quand le
+ * suivant est publié. D'où l'absence de guard `estPilote` sur les trois.
  *
  * L'ordre des guards est significatif : c'est celui dans lequel les refus sont
  * rapportés, donc la priorité des messages affichés — l'acteur avant l'état du
@@ -69,9 +70,12 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
     to: DemarchePcaetStatusEnum.PUBLIE,
     guards: ['estPilote', 'dossierComplet', 'documentsAvalComplets'],
   },
-  [DemarchePcaetTransitionEnum.ARCHIVER]: {
+  // Un PCAET reste en vigueur au-delà de ses six ans tant que le suivant n'est
+  // pas adopté : les calendriers glissent souvent d'un an ou plus. C'est donc
+  // l'adoption du suivant qui l'archive, jamais une durée ni la collectivité.
+  [DemarchePcaetTransitionEnum.PCAET_SUIVANT_ADOPTE]: {
     from: [DemarchePcaetStatusEnum.PUBLIE],
     to: DemarchePcaetStatusEnum.ARCHIVE,
-    guards: ['estPilote', 'evaluationFinaleDeposee'],
+    guards: ['pcaetSuivantAdopte'],
   },
 } as const satisfies Record<string, DemarchePcaetTransitionDef>;

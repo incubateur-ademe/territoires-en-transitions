@@ -46,9 +46,6 @@ export const DemarchePcaetActionsButton = ({
   const publier = useMutation(
     trpc.demarches.pcaet.publier.mutationOptions(transitionOptions)
   );
-  const archiver = useMutation(
-    trpc.demarches.pcaet.archiver.mutationOptions(transitionOptions)
-  );
 
   const ids = {
     collectiviteId: demarche.collectiviteId,
@@ -67,7 +64,6 @@ export const DemarchePcaetActionsButton = ({
   const menuActions: MenuAction[] = [
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
     ...transitionAction('publier', () => setIsPublicationOuverte(true)),
-    ...transitionAction('archiver', () => archiver.mutate(ids)),
     ...(canDeleteDemarchePcaet(demarche)
       ? [
           {

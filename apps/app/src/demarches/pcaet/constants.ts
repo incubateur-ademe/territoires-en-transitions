@@ -98,13 +98,10 @@ export const DEMARCHE_PCAET_OUVERTURE_ACTIONS: Record<
  * Entrées de menu des transitions : une transition sans entrée ici n'est pas
  * affichée. N'y figurent ni la transmission ni la publication — chacune a son
  * bouton dans le parcours — ni les transitions système, qui ne sont l'acte de
- * personne.
+ * personne (l'archivage en est une : c'est l'adoption du PCAET suivant qui le
+ * déclenche).
  */
 export const DEMARCHE_PCAET_TRANSITION_ACTIONS = {
-  archiver: {
-    label: appLabels.demarcheTransitionArchiver,
-    icon: 'archive-line',
-  },
   publier: { label: appLabels.demarcheTransitionPublier, icon: 'eye-line' },
 } as const satisfies Partial<
   Record<DemarchePcaetTransition, { label: string; icon: string }>

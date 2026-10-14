@@ -9,8 +9,9 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { getDateCivileFrance } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   addTestBibliothequeFichier,
   cloreTestInstructionPcaet,
@@ -183,12 +184,16 @@ describe('Publication d’une démarche PCAET', () => {
     // ligne : elle est conservée telle quelle.
     expect(publiee.adoptedAt).toBe('2026-01-15');
     expect(publiee.transitions.publier.reachable).toBe(false);
-    // Publier vaut adopter : la seule suite d'un dossier publié est l'archivage.
+    // Publier vaut adopter : la seule suite d'un dossier publié est l'archivage,
+    // fermé tant qu'aucun PCAET suivant n'est adopté.
     expect(
       Object.entries(publiee.transitions)
         .filter(([, evaluation]) => evaluation.reachable)
         .map(([transition]) => transition)
-    ).toEqual(['archiver']);
+    ).toEqual(['pcaet_suivant_adopte']);
+    expect(publiee.transitions.pcaet_suivant_adopte.blockedBy).toEqual([
+      'pcaetSuivantAdopte',
+    ]);
 
     const history = await db.db
       .select()
@@ -203,5 +208,115 @@ describe('Publication d’une démarche PCAET', () => {
       'delai_avis_echu',
       'publier',
     ]);
+  });
+
+  /**
+   * Un PCAET en vigueur, inséré tel quel — ce qui est testé ici est sa
+   * succession, pas sa propre publication —, puis son renouvellement mené
+   * jusqu'au seuil de la publication.
+   */
+  const publierPuisRenouveler = async (dateAdoptionPrecedent: string) => {
+    const { caller, collectivite } = await freshEditor();
+    const [precedent] = await db.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: collectivite.id,
+        type: 'pcaet',
+        titre: 'PCAET précédent',
+        status: 'publie',
+        publishedAt: new Date().toISOString(),
+        adoptedAt: dateAdoptionPrecedent,
+      })
+      .returning({ id: demarcheTable.id });
+
+    const suivant = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    // Un renouvellement doit le bilan du PCAET qu'il remplace.
+    const bilan = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'bilan-pcaet-precedent.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId: collectivite.id,
+      demarcheId: suivant.id,
+      documentId: 'pcaet_bilan_pcaet_precedent',
+      fichierId: bilan.id,
+    });
+    await instruireDemarche(caller, collectivite.id, suivant.id);
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId: collectivite.id,
+      demarcheId: suivant.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+
+    return { caller, collectivite, precedent, suivant };
+  };
+
+  test('Archiver le PCAET précédent à l’adoption du suivant, et seulement là', async () => {
+    const { caller, collectivite, precedent, suivant } =
+      await publierPuisRenouveler('2019-06-20');
+
+    // Le renouvellement en cours ne remplace rien : au-delà de ses six ans, le
+    // précédent reste en vigueur tant que le suivant n'est pas adopté.
+    const enVigueur = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: precedent.id,
+    });
+    expect(enVigueur.status).toBe('publie');
+
+    const publiee = await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: suivant.id,
+      dateAdoption: '2026-01-15',
+    });
+    expect(publiee.status).toBe('publie');
+
+    const archivee = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: precedent.id,
+    });
+    expect(archivee.status).toBe('archive');
+    // L'archivage ne réécrit rien de ce qui a été adopté.
+    expect(archivee.adoptedAt).toBe('2019-06-20');
+
+    const [entree] = await db.db
+      .select()
+      .from(demarcheStatusHistoryTable)
+      .where(eq(demarcheStatusHistoryTable.demarcheId, precedent.id))
+      .orderBy(desc(demarcheStatusHistoryTable.id))
+      .limit(1);
+    // L'acte de personne : le journal le nomme sans l'imputer à l'utilisateur
+    // qui a publié le suivant.
+    expect(entree).toMatchObject({
+      fromStatus: 'publie',
+      toStatus: 'archive',
+      transition: 'pcaet_suivant_adopte',
+      createdBy: null,
+    });
+  });
+
+  test('Archiver le dépôt publié lui-même quand son adoption précède celle du PCAET en vigueur', async () => {
+    const { caller, collectivite, precedent, suivant } =
+      await publierPuisRenouveler('2026-01-15');
+
+    // Saisi après, adopté avant : c'est la délibération qui ordonne.
+    const publiee = await caller.demarches.pcaet.publier({
+      collectiviteId: collectivite.id,
+      demarcheId: suivant.id,
+      dateAdoption: '2019-06-20',
+    });
+    expect(publiee.status).toBe('archive');
+
+    const enVigueur = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: precedent.id,
+    });
+    expect(enVigueur.status).toBe('publie');
   });
 });

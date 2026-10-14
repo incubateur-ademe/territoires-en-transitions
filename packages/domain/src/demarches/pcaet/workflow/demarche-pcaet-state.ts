@@ -19,9 +19,9 @@ import {
  *    verse aussi bien ses pièces amont que ses pièces aval.
  * 4. `publie` — la délibération d'adoption est déposée : PCAET en vigueur et
  *    mis à disposition du public, piloté pendant 6 ans (bilan à mi-parcours
- *    puis évaluation finale).
- * 5. `archive` — l'évaluation finale est déposée, le cycle est clos ; un
- *    nouveau dépôt (renouvellement) peut démarrer.
+ *    puis évaluation finale). Un renouvellement peut démarrer dès ce statut.
+ * 5. `archive` — le PCAET suivant est adopté : celui-ci est remplacé, le cycle
+ *    est clos.
  */
 export const DEMARCHE_PCAET_INITIAL_STATUS =
   DemarchePcaetStatusEnum.EN_ELABORATION;

@@ -292,10 +292,13 @@ export const demarchesLabels = {
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `${type.nom} en vigueur et mis à disposition du public, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.`,
+    `${type.nom} en vigueur jusqu’à l’adoption du suivant et mis à disposition du public, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.`,
   demarcheAvanceEtapeArchiveLabel: 'Archivé',
-  demarcheAvanceEtapeArchiveDescription:
-    'Évaluation finale déposée, cycle clos.',
+  demarcheAvanceEtapeArchiveDescription: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) => `Remplacé par le ${type.nom} suivant, adopté depuis.`,
   demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
   demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
   demarcheTransmettreConfirmationTitre:
@@ -339,8 +342,8 @@ export const demarchesLabels = {
       'Les instances consultatives n’ont pas encore rendu tous leurs avis.',
     delaiAvisEcoule:
       'Le délai légal de remise des avis n’est pas encore écoulé.',
-    evaluationFinaleDeposee:
-      'Déposez l’évaluation finale pour archiver la démarche.',
+    pcaetSuivantAdopte:
+      'La démarche sera archivée à l’adoption du PCAET suivant.',
     documentsAvalComplets:
       'Complétez les pièces attendues après les avis (délibération d’adoption…) pour publier votre démarche.',
   } satisfies Record<DemarchePcaetGuardId, string>,
@@ -626,7 +629,6 @@ export const demarchesLabels = {
   demarcheSupprimerModaleTitre: 'Supprimer la démarche',
   demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>
     `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
-  demarcheTransitionArchiver: 'Archiver',
   demarcheTransitionPublier: 'Valider le dépôt final',
   erreurAccesTitre: 'Accès non autorisé',
   erreurAccesMessage: 'Vous n’avez pas accès à cette page.',

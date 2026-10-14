@@ -14,7 +14,8 @@ import type { WorkflowGuardResults } from '../../../../utils/workflow/workflow.t
  * - `delaiAvisEcoule` : le délai légal laissé aux instances consultatives est
  *   écoulé. Ne dit rien des avis eux-mêmes : c'est `avisTousRendus` qui s'en
  *   charge, et les deux ouvrent chacune leur transition vers `instruit`.
- * - `evaluationFinaleDeposee` : l'évaluation finale du PCAET est déposée.
+ * - `pcaetSuivantAdopte` : la collectivité a publié un PCAET adopté après
+ *   celui-ci.
  * - `documentsAvalComplets` : les pièces attendues après les avis
  *   (délibération d'adoption…) sont déposées.
  *
@@ -26,7 +27,7 @@ export type DemarchePcaetGuardId =
   | 'dossierComplet'
   | 'avisTousRendus'
   | 'delaiAvisEcoule'
-  | 'evaluationFinaleDeposee'
+  | 'pcaetSuivantAdopte'
   | 'documentsAvalComplets';
 
 export type DemarchePcaetGuardResults =

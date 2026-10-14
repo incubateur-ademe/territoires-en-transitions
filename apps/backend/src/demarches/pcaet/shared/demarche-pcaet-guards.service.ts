@@ -25,6 +25,7 @@ import {
 } from '@tet/domain/demarches';
 import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
 import { DemarchePcaetPilotesRepository } from './demarche-pcaet-pilotes.repository';
+import { DemarchePcaetSuivantRepository } from './demarche-pcaet-suivant.repository';
 import { PcaetAvisRepository } from './pcaet-avis.repository';
 
 /** Démarche dont les guards doivent être évalués. */
@@ -63,8 +64,8 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   documentsAvalComplets?: boolean;
   /** Demandes d'avis du dossier et titres déjà validés sur chacune. */
   demandesAvis?: readonly DemandeAvisAchevement[];
-  /** L'évaluation finale du PCAET n'est pas encore modélisée en base. */
-  evaluationFinaleDeposee?: boolean;
+  /** Un PCAET de la collectivité, adopté après celui-ci, est publié. */
+  pcaetSuivantAdopte?: boolean;
 };
 
 /**
@@ -125,9 +126,7 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
       ? undefined
       : new Date(context.avisDeadlineAt).getTime() <= Date.now(),
 
-  // Les évaluations de PCAET ne sont pas encore modélisées : le guard reste
-  // sans résultat, et `archiver` donc fermée.
-  evaluationFinaleDeposee: (context) => context.evaluationFinaleDeposee,
+  pcaetSuivantAdopte: (context) => context.pcaetSuivantAdopte,
 
   documentsAvalComplets: (context) => context.documentsAvalComplets,
 };
@@ -146,6 +145,7 @@ export class DemarchePcaetGuardsService {
     private readonly documentsRepository: DemarcheDocumentsRepository,
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly avisRepository: PcaetAvisRepository,
+    private readonly suivantRepository: DemarchePcaetSuivantRepository,
     private readonly trackingService: TrackingService,
     private readonly configurationService: ConfigurationService
   ) {}
@@ -208,6 +208,7 @@ export class DemarchePcaetGuardsService {
       demarche.transmittedAt === null;
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
     const needsAvisRendus = requiredGuards.includes('avisTousRendus');
+    const needsSuivant = requiredGuards.includes('pcaetSuivantAdopte');
 
     const [
       pilotes,
@@ -216,6 +217,7 @@ export class DemarchePcaetGuardsService {
       planActionIds,
       unverifiedPlanActionIds,
       demandesAvis,
+      pcaetSuivantAdopte,
     ] = await Promise.all([
       needsPilotes
         ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
@@ -251,6 +253,12 @@ export class DemarchePcaetGuardsService {
       needsAvisRendus
         ? this.avisRepository.listAchevementDemandes(demarche.id, tx)
         : Promise.resolve(undefined),
+      needsSuivant
+        ? this.suivantRepository.isSuivantAdopte(
+            { demarcheId: demarche.id },
+            tx
+          )
+        : Promise.resolve(undefined),
     ]);
 
     return {
@@ -259,6 +267,7 @@ export class DemarchePcaetGuardsService {
       planActionIds,
       unverifiedPlanActionIds,
       demandesAvis,
+      pcaetSuivantAdopte,
       isDiagnosticBypassed: needsDossier
         ? await this.isDiagnosticBypassed(user, demarche.collectiviteId)
         : false,

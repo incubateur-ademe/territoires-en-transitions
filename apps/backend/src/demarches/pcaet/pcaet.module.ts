@@ -16,7 +16,6 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { AddVulnerabiliteThematiqueRouter } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.router';
 import { AddVulnerabiliteThematiqueService } from './add-vulnerabilite-thematique/add-vulnerabilite-thematique.service';
-import { ArchiverDemarchePcaetRouter } from './archiver-demarche/archiver-demarche.router';
 import { ArchiverDemarchePcaetService } from './archiver-demarche/archiver-demarche.service';
 import GetDemarcheUrlService from '@tet/backend/demarches/shared/get-demarche-url.service';
 import { ListDestinatairesDemarcheService } from './notifications/list-destinataires-demarche.service';
@@ -98,6 +97,7 @@ import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.servi
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
 import { DemarchePcaetSourceMetadonneeRepository } from './shared/demarche-pcaet-source-metadonnee.repository';
+import { DemarchePcaetSuivantRepository } from './shared/demarche-pcaet-suivant.repository';
 import { DemarchePcaetTransitionRepository } from './shared/demarche-pcaet-transition.repository';
 import { DemarchePcaetTransitionService } from './shared/demarche-pcaet-transition.service';
 import { DemarchePcaetVulnerabiliteReadService } from './shared/demarche-pcaet-vulnerabilite-read.service';
@@ -150,7 +150,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     PublierDemarchePcaetService,
     PublierDemarchePcaetRouter,
     ArchiverDemarchePcaetService,
-    ArchiverDemarchePcaetRouter,
+    DemarchePcaetSuivantRepository,
     DepotPermissionsService,
     DemarchePcaetRefRepository,
     DemarcheDocumentApplicabiliteService,
