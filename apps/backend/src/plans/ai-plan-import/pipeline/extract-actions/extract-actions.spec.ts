@@ -113,6 +113,41 @@ describe('extractActions', () => {
     }
   });
 
+  it('fond une action reprise ailleurs dans le document (sommaire, rappel)', async () => {
+    const llm = llmReturning(
+      success({
+        data: [
+          anExtractionAction({ titre: 'Rénover les écoles' }),
+          anExtractionAction({ titre: 'Isoler la mairie' }),
+          anExtractionAction({
+            titre: 'RENOVER LES ECOLES',
+            description: 'Programme pluriannuel de rénovation',
+          }),
+        ],
+        tokens,
+      })
+    );
+
+    const result = await extractActions(llm, promptInput);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(
+        result.data.actions.map(({ titre, description }) => ({
+          titre,
+          description,
+        }))
+      ).toEqual([
+        {
+          titre: 'RENOVER LES ECOLES',
+          description: 'Programme pluriannuel de rénovation',
+        },
+        { titre: 'Isoler la mairie', description: null },
+      ]);
+      expect(result.data.chunkIndexByAction).toEqual([0, 0]);
+    }
+  });
+
   it("échoue quand aucune tranche ne contient d'action", async () => {
     const llm = llmReturning(success({ data: [], tokens }));
 
