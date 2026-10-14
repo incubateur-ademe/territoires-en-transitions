@@ -80,13 +80,6 @@ type Props = {
   importDefaults?: AiImportDefaults;
 };
 
-/**
- * Actions du plan, tous axes confondus. Une même fiche peut être rangée dans
- * plusieurs axes : on compte les identifiants distincts, pas les rattachements.
- */
-const countPlanFiches = (plan: PlanListItem): number =>
-  new Set(plan.axes.flatMap((axe) => axe.fiches)).size;
-
 const makePlanUrl = (collectiviteId: number, planId: number) =>
   makeCollectivitePlanActionUrl({
     collectiviteId,
@@ -184,7 +177,7 @@ const ProgrammeActionsPlanRow = ({
       <td className="px-4 py-3 text-grey-7">
         {plan.status !== PlanStatusEnum.IMPORTING &&
           appLabels.demarcheProgrammeNombreActions({
-            count: countPlanFiches(plan),
+            count: plan.totalFiches ?? 0,
           })}
       </td>
       {isSecteursColumnVisible && (

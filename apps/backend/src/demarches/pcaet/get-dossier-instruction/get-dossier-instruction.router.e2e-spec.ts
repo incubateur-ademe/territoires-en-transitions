@@ -14,6 +14,7 @@ import { PcaetDemandeAvisEtatEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { createFicheAndCleanupFunction } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { onTestFinished } from 'vitest';
 import { attachTestPlanToDemarchePcaet } from '../demarches-pcaet.test-fixture';
@@ -175,6 +176,51 @@ describe('getDossierInstruction', () => {
         fiches: [],
         axes: [],
       },
+    ]);
+  });
+
+  it('compte les sous-actions dans le nombre d’actions, comme l’en-tête du plan', async () => {
+    const plan = await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: deposanteCollectiviteId,
+      demarcheId,
+      nom: 'Programme d’actions avec sous-action',
+    });
+    const deposanteCaller = router.createCaller({ user: marie });
+    const mere = await createFicheAndCleanupFunction({
+      caller: deposanteCaller,
+      ficheInput: {
+        collectiviteId: deposanteCollectiviteId,
+        titre: 'Action mère',
+        axeId: plan.id,
+      },
+    });
+    const sousAction = await createFicheAndCleanupFunction({
+      caller: deposanteCaller,
+      ficheInput: {
+        collectiviteId: deposanteCollectiviteId,
+        titre: 'Sous-action',
+        parentId: mere.ficheId,
+        axeId: plan.id,
+      },
+    });
+    onTestFinished(async () => {
+      await sousAction.ficheCleanup();
+      await mere.ficheCleanup();
+      await db.db
+        .delete(demarchePlanActionTable)
+        .where(eq(demarchePlanActionTable.planActionId, plan.id));
+      await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+    });
+
+    const dossier = await router
+      .createCaller({ user: camille })
+      .demarches.pcaet.getDossierInstruction({ demandeAvisId });
+
+    const [contenu] = dossier.plans;
+    expect(contenu.nbFiches).toBe(2);
+    // La sous-action reste rangée sous sa mère : elle n'apparaît pas à part.
+    expect(contenu.fiches).toEqual([
+      { id: mere.ficheId, titre: 'Action mère' },
     ]);
   });
 
