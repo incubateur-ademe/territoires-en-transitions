@@ -58,7 +58,6 @@ const createManageIndicateurValeursService = (
   const validation = new ValidateIndicateurValeursWriteService(
     repository,
     permissions,
-    definitions,
     definitionLocks
   );
   const writer = new WriteIndicateurValeursService(
@@ -1538,14 +1537,14 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
   });
 
   describe('upsertValeur', () => {
-    it('refuse une périodicité modifiée avant le verrou de transaction', async () => {
+    it('refuse une valeur annuelle pour une définition mensuelle immuable', async () => {
       const tx = { insert: vi.fn(), update: vi.fn(), select: vi.fn() };
       const repository = {};
       const transactionManager = createTransactionManager(tx);
       const listIndicateursService = {
         getIndicateur: vi.fn().mockResolvedValue({
           id: 10,
-          periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
           precision: 2,
           sansValeurUtilisateur: false,
         }),
@@ -1583,8 +1582,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           {
             collectiviteId: 3,
             indicateurId: 10,
-            // Janvier est canonique pour les deux périodicités : seule la
-            // comparaison de la définition verrouillée révèle la course.
+            // Une date canonique commune ne permet pas de changer la cadence.
             periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
             dateValeur: '2026-01-01',
             resultat: 42,
@@ -1849,13 +1847,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       expect(repository.upsertValeursWithoutMetadata).toHaveBeenCalledOnce();
     });
 
-    it('refuse une périodicité modifiée avant le verrou de transaction', async () => {
+    it('refuse une valeur annuelle pour une définition mensuelle immuable', async () => {
       const tx = { insert: vi.fn() };
       const repository = {};
       const transactionManager = createTransactionManager(tx);
       const definitionLockRepository = {
-        // Simule une définition passée d'annuelle à mensuelle juste avant le
-        // début de la transaction d'écriture.
         lockDefinitions: vi.fn().mockResolvedValue([
           {
             id: 10,
@@ -1867,23 +1863,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           },
         ]),
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi.fn().mockResolvedValue([
-          {
-            id: 10,
-            identifiantReferentiel: null,
-            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-            precision: 2,
-            sansValeurUtilisateur: false,
-          },
-        ]),
-      };
       const service = createManageIndicateurValeursService(
         repository as never,
         {} as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        {} as never,
         {} as never,
         {} as never,
         {} as never,
@@ -1899,8 +1884,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
             {
               collectiviteId: 3,
               indicateurId: 10,
-              // Janvier est une date SQL canonique pour les deux périodicités :
-              // seule la comparaison des définitions détecte la course.
+              // Une date canonique commune ne permet pas de changer la cadence.
               periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
               dateValeur: '2026-01-01',
               resultat: 42,
@@ -1909,7 +1893,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           { isUserTrusted: true }
         )
       ).rejects.toThrow(
-        "La périodicité de l'indicateur 10 a changé de annuelle à mensuelle pendant l'écriture"
+        'La valeur doit respecter la périodicité de déclaration'
       );
 
       expect(definitionLockRepository.lockDefinitions).toHaveBeenCalledWith(

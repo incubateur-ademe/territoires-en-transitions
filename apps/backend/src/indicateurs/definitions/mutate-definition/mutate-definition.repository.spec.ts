@@ -31,9 +31,7 @@ describe('MutateDefinitionRepository', () => {
   it("verrouille et retourne le propriétaire stocké de la définition avant l'écriture", async () => {
     const forUpdate = vi
       .fn()
-      .mockResolvedValue([
-        { collectiviteId: 42, groupementId: 99, periodicite: 'annuelle' },
-      ]);
+      .mockResolvedValue([{ collectiviteId: 42, groupementId: 99 }]);
     const limit = vi.fn(() => ({ for: forUpdate }));
     const where = vi.fn((_condition: SQL) => ({ limit }));
     const from = vi.fn(() => ({ where }));
@@ -47,7 +45,6 @@ describe('MutateDefinitionRepository', () => {
     ).resolves.toEqual({
       collectiviteId: 42,
       groupementId: 99,
-      periodicite: 'annuelle',
     });
 
     expect(select).toHaveBeenCalledWith(
@@ -68,7 +65,6 @@ describe('MutateDefinitionRepository — groupement', () => {
     const definition = {
       collectiviteId: 42,
       groupementId: 99,
-      periodicite: 'annuelle',
     };
     const limit = vi.fn().mockResolvedValue([definition]);
     const select = vi.fn(() => ({
