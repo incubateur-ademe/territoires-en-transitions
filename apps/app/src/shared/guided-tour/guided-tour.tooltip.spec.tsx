@@ -1,7 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import type { TooltipRenderProps } from 'react-joyride';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GuidedTourTooltip } from './guided-tour.tooltip';
 
 type ButtonProps = TooltipRenderProps['backProps'];
@@ -12,6 +13,8 @@ const STEP_CONTENT = "Contenu de l'étape";
 
 const TOTAL_STEPS = 3;
 
+const CUSTOM_NEXT_LABEL = 'Ouvrir ce levier';
+
 const toButtonProps = (ariaLabel: string): ButtonProps => ({
   'aria-label': ariaLabel,
   'data-action': ariaLabel,
@@ -20,15 +23,27 @@ const toButtonProps = (ariaLabel: string): ButtonProps => ({
   title: ariaLabel,
 });
 
-const toStep = (title?: string): TooltipRenderProps['step'] =>
-  ({ title, content: STEP_CONTENT } as TooltipRenderProps['step']);
+const toStep = ({
+  title,
+  content = STEP_CONTENT,
+  data,
+}: {
+  title?: string;
+  content?: ReactNode;
+  data?: object;
+}): TooltipRenderProps['step'] =>
+  ({ title, content, data } as TooltipRenderProps['step']);
 
 const toTooltipProps = ({
   index,
   title = STEP_TITLE,
+  content,
+  data,
 }: {
   index: number;
   title?: string;
+  content?: ReactNode;
+  data?: object;
 }): TooltipRenderProps => ({
   backProps: toButtonProps(''),
   closeProps: toButtonProps(appLabels.visiteGuideeQuitter),
@@ -36,10 +51,12 @@ const toTooltipProps = ({
   continuous: true,
   index,
   isLastStep: index === TOTAL_STEPS - 1,
-  primaryProps: toButtonProps(''),
+  primaryProps: toButtonProps(
+    index === TOTAL_STEPS - 1 ? appLabels.terminer : appLabels.suivant
+  ),
   size: TOTAL_STEPS,
   skipProps: toButtonProps(''),
-  step: toStep(title),
+  step: toStep({ title, content, data }),
   tooltipProps: { 'aria-modal': true, role: 'alertdialog' },
 });
 
@@ -71,6 +88,10 @@ const toProgress = (): {
 
 const hasButton = (name: string): boolean =>
   screen.queryByRole('button', { name }) !== null;
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('GuidedTourTooltip', () => {
   it('affiche le compteur et une progression à un tiers, sans « Précédent » à la première étape', () => {
@@ -134,7 +155,7 @@ describe('GuidedTourTooltip', () => {
 
   it("nomme la boîte de dialogue par un libellé de repli quand l'étape n'a pas de titre", () => {
     render(
-      <GuidedTourTooltip {...toTooltipProps({ index: 0 })} step={toStep()} />
+      <GuidedTourTooltip {...toTooltipProps({ index: 0 })} step={toStep({})} />
     );
 
     expect({
@@ -169,5 +190,60 @@ describe('GuidedTourTooltip', () => {
       back: vi.mocked(props.backProps.onClick).mock.calls.length,
       primary: vi.mocked(props.primaryProps.onClick).mock.calls.length,
     }).toEqual({ skip: 1, close: 1, back: 1, primary: 1 });
+  });
+
+  it("affiche le libellé du bouton principal propre à l'étape à la place de « Suivant »", () => {
+    render(
+      <GuidedTourTooltip
+        {...toTooltipProps({
+          index: 1,
+          data: { nextLabel: CUSTOM_NEXT_LABEL },
+        })}
+      />
+    );
+
+    expect({
+      hasStepLabel: hasButton(CUSTOM_NEXT_LABEL),
+      hasDefaultLabel: hasButton(appLabels.suivant),
+    }).toEqual({ hasStepLabel: true, hasDefaultLabel: false });
+  });
+
+  it('garde « Terminer » à la dernière étape même quand elle porte un libellé propre', () => {
+    render(
+      <GuidedTourTooltip
+        {...toTooltipProps({
+          index: 2,
+          data: { nextLabel: CUSTOM_NEXT_LABEL },
+        })}
+      />
+    );
+
+    expect({
+      hasFinishLabel: hasButton(appLabels.terminer),
+      hasStepLabel: hasButton(CUSTOM_NEXT_LABEL),
+    }).toEqual({ hasFinishLabel: true, hasStepLabel: false });
+  });
+
+  it('accepte un contenu fait de blocs sans imbriquer un bloc dans un paragraphe', () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    render(
+      <GuidedTourTooltip
+        {...toTooltipProps({
+          index: 0,
+          content: (
+            <div>
+              <ul>
+                <li>{STEP_CONTENT}</li>
+              </ul>
+            </div>
+          ),
+        })}
+      />
+    );
+
+    expect(consoleError).not.toHaveBeenCalled();
   });
 });

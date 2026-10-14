@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { XAxis, YAxis } from '@/app/ui/charts/matrix/axis';
 import { Caption } from '@/app/ui/charts/matrix/caption';
 import { DataTable } from '@/app/ui/charts/matrix/data-table';
-import { MatrixChart } from '@/app/ui/charts/matrix/matrix.chart';
+import { MatrixAnchor, MatrixChart } from '@/app/ui/charts/matrix/matrix.chart';
 import { Quadrant } from '@/app/ui/charts/matrix/quadrant';
 import { LevierId, levierIdEnumValues } from '@tet/domain/shared';
 import { JSX, useMemo } from 'react';
@@ -25,6 +25,7 @@ type LeviersMatrixChartProps = {
   preselectedCountByLevier: PreselectedCountByLevier;
   selectedLevierId?: LevierId;
   onLevierSelected: SelectLevier;
+  anchor?: MatrixAnchor;
 };
 
 const levierIdSchema = z.enum(levierIdEnumValues);
@@ -54,6 +55,7 @@ export const LeviersMatrixChart = ({
   preselectedCountByLevier,
   selectedLevierId,
   onLevierSelected,
+  anchor,
 }: LeviersMatrixChartProps): JSX.Element => {
   const points = useMemo(
     () => toMatrixPoints({ places, preselectedCountByLevier, toTooltip }),
@@ -74,6 +76,7 @@ export const LeviersMatrixChart = ({
       legend={<LeviersMatrixLegend />}
       selectedPointId={selectedLevierId}
       onPointSelected={selectLevier}
+      anchor={anchor}
     >
       <Caption>{appLabels.matriceLegende}</Caption>
       <DataTable

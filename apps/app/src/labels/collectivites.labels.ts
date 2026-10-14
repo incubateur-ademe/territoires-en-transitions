@@ -63,14 +63,32 @@ export const collectivitesLabels = {
   outilsDePriorisation: 'Outils de priorisation',
   priorisationLeviersTitre: 'Outil de priorisation',
   priorisationVisiteRelancer: restartTourLabel,
-  priorisationVisiteMetriquesTitre: 'Votre point de départ',
-  priorisationVisiteMetriquesDescription:
-    "Ces trois chiffres résument l'analyse : les actions déjà sauvegardées, les leviers à prioriser et le nombre d'actions analysées.",
+  priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
+  priorisationVisiteParcoursDescription:
+    "L'outil se parcourt en trois temps, du repérage des leviers à la sauvegarde des actions qui vous intéressent.",
+  priorisationVisiteReperageTitre: 'Repérer',
+  priorisationVisiteReperageDescription:
+    'Visualisez les leviers à prioriser pour votre collectivité : la zone rouge de la matrice.',
+  priorisationVisiteExplorationTitre: 'Explorer',
+  priorisationVisiteExplorationDescription:
+    'Cliquez un point pour ouvrir le levier et voir les actions de référence qui y répondent.',
+  priorisationVisiteSauvegardeTitre: 'Sauvegarder',
+  priorisationVisiteSauvegardeDescription:
+    'Sélectionnez les actions qui vous intéressent pour les sauvegarder',
   priorisationVisiteMatriceTitre: 'La matrice des leviers',
   priorisationVisiteMatriceDescription:
     'Un point = un levier. Plus il est haut, plus son potentiel de réduction de GES estimé est fort ; plus il est à droite, plus vous le mobilisez déjà.',
+  priorisationVisiteLevierAPrioriserTitre: 'Commencez par le rouge',
+  priorisationVisiteLevierAPrioriserDescription:
+    'La zone rouge regroupe les leviers à fort impact que vous mobilisez encore peu. Ouvrez celui-ci pour voir les actions qui y répondent.',
+  priorisationVisiteOuvrirLevier: 'Ouvrir ce levier',
+  priorisationVisiteDetailLevierTitre: 'Le détail du levier',
+  priorisationVisiteDetailLevierDescription:
+    'Secteur, impact potentiel estimé et actions de référence, regroupées par catégorie. Si le levier ne concerne pas votre territoire, marquez-le non pertinent.',
+  priorisationVisiteActionsTitre: 'Retenez ce qui est pertinent',
+  priorisationVisiteActionsDescription: `« Sauvegarder » ajoute l'action à votre liste. « Pas intéressé » la retire des suggestions ; vous pourrez la restaurer.`,
   priorisationVisiteAideTitre: 'Retrouvez la visite ici',
-  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite à tout moment. Vos actions retenues se retrouvent dans « ${savedActionsAccessLabel} ».`,
+  priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite. Votre liste apparaîtra à côté dès la première action sauvegardée.`,
   actionsSauvegardeesTitre: 'Mes actions sauvegardées',
   pertinenceInfo: (pertinence?: Pertinence): string =>
     `Pertinence : ${toPertinenceLabel(pertinence)}`,

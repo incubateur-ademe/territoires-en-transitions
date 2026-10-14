@@ -1,6 +1,13 @@
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CategorieAction, LevierId } from '@tet/domain/shared';
-import { createElement, useCallback, useEffect, useState } from 'react';
+import {
+  createElement,
+  Ref,
+  RefCallback,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Preselection } from '../../use-preselection';
 import { LevierPriorisation } from '../data/to-leviers-priorisation';
 import { LevierPlace } from '../data/to-matrix-points';
@@ -19,6 +26,7 @@ type LevierSelection = {
 type LevierSidePanel = {
   selectedLevierId?: LevierId;
   select: SelectLevier;
+  close: () => void;
 };
 
 type UseLevierSidePanelArgs = {
@@ -26,6 +34,8 @@ type UseLevierSidePanelArgs = {
   places: LevierPlace[];
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
+  headerRef?: Ref<HTMLDivElement>;
+  actionsRef?: RefCallback<HTMLDivElement>;
 };
 
 export const useLevierSidePanel = ({
@@ -33,6 +43,8 @@ export const useLevierSidePanel = ({
   places,
   preselection,
   upsertPertinence,
+  headerRef,
+  actionsRef,
 }: UseLevierSidePanelArgs): LevierSidePanel => {
   const [selection, setSelection] = useState<LevierSelection>();
   const onClose = useCallback(() => setSelection(undefined), []);
@@ -46,6 +58,10 @@ export const useLevierSidePanel = ({
       })),
     []
   );
+  const close = useCallback(() => {
+    setSelection(undefined);
+    setPanel({ type: 'close' });
+  }, [setPanel]);
 
   const selectedLevier = leviers.find(
     ({ levierId }) => levierId === selection?.levierId
@@ -70,6 +86,7 @@ export const useLevierSidePanel = ({
           potentielScore,
         }),
         upsertPertinence,
+        headerRef,
       }),
       content: createElement(LevierPanel, {
         key: `${selectedLevier.levierId}/${
@@ -78,6 +95,7 @@ export const useLevierSidePanel = ({
         levier: selectedLevier,
         initialCategorie,
         preselection,
+        actionsRef,
       }),
     });
   }, [
@@ -87,8 +105,14 @@ export const useLevierSidePanel = ({
     preselection,
     upsertPertinence,
     potentielScore,
+    headerRef,
+    actionsRef,
     setPanel,
   ]);
 
-  return { selectedLevierId: selection?.levierId, select };
+  return { selectedLevierId: selection?.levierId, select, close };
 };
+
+type LevierSidePanelControls = Pick<LevierSidePanel, 'select' | 'close'>;
+
+export type { LevierSidePanel, LevierSidePanelControls };

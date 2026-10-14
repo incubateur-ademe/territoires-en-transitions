@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LevierPriorisation, NO_MOBILISATION } from './to-leviers-priorisation';
 import {
+  findLevierToPrioritizeId,
   isBlindSpot,
   LevierPlace,
   LevierTooltip,
@@ -125,6 +126,56 @@ describe('toLevierToPrioritizeId', () => {
         }),
       ])
     ).toBeUndefined();
+  });
+});
+
+describe('findLevierToPrioritizeId', () => {
+  it("retient l'angle mort quand il en existe un", () => {
+    const places = [
+      toPlace({ levierId: 'covoiturage', potentielScore: 60 }),
+      toPlace({ levierId: 'biogaz', potentielScore: 80 }),
+    ];
+
+    expect(findLevierToPrioritizeId(places)).toBe('biogaz');
+  });
+
+  it("à défaut d'angle mort, retient le levier pertinent le plus proche du coin haut gauche", () => {
+    const places = [
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 80,
+        mobilisationScore: 60,
+      }),
+      toPlace({
+        levierId: 'biogaz',
+        potentielScore: 40,
+        mobilisationScore: 10,
+      }),
+    ];
+
+    expect(findLevierToPrioritizeId(places)).toBe('biogaz');
+  });
+
+  it('écarte les leviers non pertinents du repli sur le coin haut gauche', () => {
+    const places = [
+      toPlace({
+        levierId: 'covoiturage',
+        potentielScore: 80,
+        mobilisationScore: 60,
+      }),
+      toPlace({
+        levierId: 'biogaz',
+        potentielScore: 40,
+        mobilisationScore: 10,
+        pertinence: 'non_pertinent',
+      }),
+    ];
+
+    expect(findLevierToPrioritizeId(places)).toBe('covoiturage');
+  });
+
+  it("renvoie undefined quand aucun levier n'est placé", () => {
+    expect(findLevierToPrioritizeId([])).toBeUndefined();
   });
 });
 

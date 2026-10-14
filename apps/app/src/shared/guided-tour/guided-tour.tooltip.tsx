@@ -4,7 +4,8 @@ import { appLabels } from '@/app/labels/catalog';
 import { Button, VisibleWhen } from '@tet/ui';
 import { pick } from 'es-toolkit';
 import { JSX, useId } from 'react';
-import type { TooltipRenderProps } from 'react-joyride';
+import type { Step, TooltipRenderProps } from 'react-joyride';
+import { z } from 'zod';
 
 type GuidedTourProgressBarProps = {
   current: number;
@@ -16,11 +17,34 @@ type GuidedTourHeaderProps = Pick<TooltipRenderProps, 'closeProps'> & {
   total: number;
 };
 
+const guidedTourStepDataSchema = z.object({ nextLabel: z.string().optional() });
+
+type GuidedTourStepData = z.output<typeof guidedTourStepDataSchema>;
+
+type GuidedTourStep = Omit<Step, 'data'> & { data?: GuidedTourStepData };
+
 type GuidedTourFooterProps = Pick<
   TooltipRenderProps,
-  'backProps' | 'primaryProps' | 'skipProps' | 'isLastStep'
+  'backProps' | 'primaryProps' | 'skipProps'
 > & {
   hasPreviousStep: boolean;
+  primaryLabel: string;
+};
+
+const toPrimaryLabel = ({
+  data,
+  isLastStep,
+}: Pick<TooltipRenderProps, 'isLastStep'> & {
+  data: unknown;
+}): string => {
+  if (isLastStep) {
+    return appLabels.terminer;
+  }
+  const parsedData = guidedTourStepDataSchema.safeParse(data);
+  const customLabel = parsedData.success
+    ? parsedData.data.nextLabel
+    : undefined;
+  return customLabel ?? appLabels.suivant;
 };
 
 const GuidedTourProgressBar = ({
@@ -73,7 +97,7 @@ const GuidedTourHeader = ({
 const GuidedTourFooter = ({
   backProps,
   hasPreviousStep,
-  isLastStep,
+  primaryLabel,
   primaryProps,
   skipProps,
 }: GuidedTourFooterProps): JSX.Element => (
@@ -87,8 +111,13 @@ const GuidedTourFooter = ({
           {appLabels.precedent}
         </Button>
       </VisibleWhen>
-      <Button {...primaryProps} size="xs">
-        {isLastStep ? appLabels.terminer : appLabels.suivant}
+      <Button
+        {...primaryProps}
+        aria-label={primaryLabel}
+        title={primaryLabel}
+        size="xs"
+      >
+        {primaryLabel}
       </Button>
     </div>
   </div>
@@ -131,14 +160,14 @@ const GuidedTourTooltip = ({
           {step.title}
         </h2>
       </VisibleWhen>
-      <p id={contentId} className="mb-0 text-sm">
+      <div id={contentId} className="text-sm">
         {step.content}
-      </p>
+      </div>
       <GuidedTourProgressBar current={current} total={size} />
       <GuidedTourFooter
         backProps={backProps}
         hasPreviousStep={hasPreviousStep}
-        isLastStep={isLastStep}
+        primaryLabel={toPrimaryLabel({ data: step.data, isLastStep })}
         primaryProps={primaryProps}
         skipProps={skipProps}
       />
@@ -147,3 +176,4 @@ const GuidedTourTooltip = ({
 };
 
 export { GuidedTourTooltip };
+export type { GuidedTourStep, GuidedTourStepData };

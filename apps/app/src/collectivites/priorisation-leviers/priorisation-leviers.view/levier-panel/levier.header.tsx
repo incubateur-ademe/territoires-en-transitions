@@ -2,7 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { useRequestSidePanelClose } from '@/app/ui/layout/side-panel/side-panel.context';
 import { Badge, Button } from '@tet/ui';
 import { uiLabels } from '@tet/ui/labels/catalog';
-import { JSX } from 'react';
+import { JSX, Ref } from 'react';
 import { LevierPriorisation } from '../data/to-leviers-priorisation';
 import { UpsertPertinence } from '../data/use-upsert-pertinence';
 import { PertinenceField } from './pertinence-field';
@@ -11,16 +11,18 @@ type LevierHeaderProps = {
   levier: LevierPriorisation;
   subtitle: string;
   upsertPertinence?: UpsertPertinence;
+  headerRef?: Ref<HTMLDivElement>;
 };
 
 export const LevierHeader = ({
   levier,
   subtitle,
   upsertPertinence,
+  headerRef,
 }: LevierHeaderProps): JSX.Element => {
   const requestClose = useRequestSidePanelClose();
   return (
-    <div className="flex flex-col gap-3 py-2">
+    <div ref={headerRef} className="flex flex-col gap-3 py-2">
       <div className="flex items-start gap-2">
         <Button
           variant="unstyled"
