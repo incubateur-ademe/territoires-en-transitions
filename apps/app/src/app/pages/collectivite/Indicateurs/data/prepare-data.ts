@@ -91,7 +91,7 @@ export const prepareData = (
               periodiciteSource: values[0]?.periodicite,
             }
           : {}),
-        calculAuto: sourceData.valeurs.some((v) => v.calculAuto) || false,
+        calculAuto: values.some((v) => v.calculAuto),
         valeurs: values.map((value): PreparedSourceValue => {
           const periode = IndicateurPeriodes.containing(
             value.periodicite,

@@ -37,6 +37,8 @@ test('Distinguer deux versions annuelles de la même source après rechargement'
           sourceId,
           dateVersion: `${year}-01-01`,
           nomDonnees: `Inventaire ${year}`,
+          methodologie: `Méthode de l’inventaire ${year}`,
+          limites: `Limites de l’inventaire ${year}`,
         }))
       )
       .returning();
@@ -47,6 +49,7 @@ test('Distinguer deux versions annuelles de la même source après rechargement'
         periodicite: 'annuelle' as const,
         dateValeur: '2026-01-01',
         resultat: index === 0 ? 0 : 20,
+        calculAuto: index === 1,
         metadonneeId: id,
       }))
     );
@@ -68,6 +71,23 @@ test('Distinguer deux versions annuelles de la même source après rechargement'
           index === 0 ? 'R0' : 'R20'
         );
         await expect(row.getByRole('button')).toHaveCount(0);
+        await row.locator('.ri-information-line').hover();
+        const tooltip = page.getByRole('tooltip');
+        await expect(tooltip).toContainText(`Inventaire ${2025 + index}`);
+        const automaticCalculationMessage =
+          'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.';
+        if (index === 0) {
+          await expect(tooltip).toContainText('Méthode de l’inventaire 2025');
+          await expect(tooltip).toContainText('Limites de l’inventaire 2025');
+          await expect(tooltip).not.toContainText(automaticCalculationMessage);
+        } else {
+          await expect(tooltip).toContainText(automaticCalculationMessage);
+          await expect(tooltip).not.toContainText(
+            'Limites de l’inventaire 2026'
+          );
+        }
+        await page.mouse.move(0, 0);
+        await expect(tooltip).toBeHidden();
       }
     };
     await expectVersions();
