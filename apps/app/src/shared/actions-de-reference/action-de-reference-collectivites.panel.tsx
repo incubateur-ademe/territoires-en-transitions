@@ -14,7 +14,7 @@ import type {
   ActionDeReferenceFicheLiee,
   ActionDeReferenceFiches,
 } from './actions-de-reference.contract';
-import { useListFichesActionDeReference } from './data/use-list-fiches-action-de-reference';
+import { useListFichesOfOtherCollectivites } from './data/use-list-fiches-of-other-collectivites';
 import { toFicheLink } from './fiche-link.utils';
 
 const DESCRIPTION_MAX_LENGTH = 150;
@@ -213,6 +213,6 @@ export const ActionDeReferenceCollectivitesPanel = ({
 }: {
   readonly actionDeReferenceId: ActionDeReferenceId;
 }): JSX.Element | null => {
-  const fichesList = useListFichesActionDeReference(actionDeReferenceId);
+  const fichesList = useListFichesOfOtherCollectivites(actionDeReferenceId);
   return <ActionDeReferenceCollectivitesView fichesList={fichesList} />;
 };
