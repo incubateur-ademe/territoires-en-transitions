@@ -63,9 +63,46 @@ describe('toImportStepViews', () => {
       { name: 'scoring', status: 'skipped' },
       { name: 'consolidation', status: 'skipped' },
       { name: 'enrichment', status: 'current' },
-      { name: 'secteurs', status: 'waiting' },
+      { name: 'secteurs', status: 'current' },
       { name: 'qualitativeReview', status: 'waiting' },
     ]);
+  });
+
+  it("met les secteurs en cours avec l'enrichissement, puis avec la relecture", () => {
+    const afterConsolidation: ImportStepStates = {
+      reading: 'ok',
+      scouting: 'skipped',
+      extraction: 'ok',
+      hierarchy: 'skipped',
+      scoring: 'ok',
+      consolidation: 'ok',
+      enrichment: 'pending',
+      secteurs: 'pending',
+      qualitativeReview: 'pending',
+    };
+    const current = (stepStates: ImportStepStates) =>
+      toImportStepViews(stepStates)
+        .filter(({ status }) => status === 'current')
+        .map(({ name }) => name);
+
+    expect(
+      current({ ...afterConsolidation, consolidation: 'pending' })
+    ).toEqual(['consolidation']);
+    expect(current(afterConsolidation)).toEqual(['enrichment', 'secteurs']);
+    expect(current({ ...afterConsolidation, enrichment: 'ok' })).toEqual([
+      'secteurs',
+      'qualitativeReview',
+    ]);
+    expect(current({ ...afterConsolidation, secteurs: 'ok' })).toEqual([
+      'enrichment',
+    ]);
+    expect(
+      current({
+        ...afterConsolidation,
+        enrichment: 'ok',
+        qualitativeReview: 'ok',
+      })
+    ).toEqual(['secteurs']);
   });
 
   it('ne designe aucune etape en cours quand tout est termine', () => {

@@ -70,7 +70,7 @@ Garde-fous à l'entrée (`enqueue-import/`, `ai-plan-import.constants.ts`) :
 
 ## Le pipeline
 
-`pipeline/run-import-pipeline.ts` enchaîne huit étapes. Chacune se termine en
+`pipeline/run-import-pipeline.ts` enchaîne neuf étapes. Chacune se termine en
 `ok`, `skipped` ou échoue, et son état est écrit en base pour la barre de
 progression du frontend. Les deux stratégies partagent la lecture et les
 étapes de vérification ; elles diffèrent sur la façon de découper et de
@@ -97,12 +97,18 @@ flowchart TD
 
     V[5. scoring<br/>note de confiance par action] --> C[6. consolidation<br/>relecture des actions mal notées]
     C --> E[7. enrichment<br/>sous-actions]
-    E --> Q[8. qualitativeReview<br/>avis d'ensemble]
+    C --> SE[8. secteurs<br/>secteurs réglementaires, PCAET]
+    E --> Q[9. qualitativeReview<br/>avis d'ensemble]
     Q --> P[Brouillon → plan en base]
+    SE --> P
 ```
 
-Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications, et
-l'étape 7 s'il désactive les sous-actions.
+Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications,
+l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET.
+
+Les secteurs tournent en parallèle de l'enrichissement puis de la revue : ils
+ne lisent rien de ce que l'enrichissement écrit, et la revue ne lit pas les
+secteurs. Un seul point de reprise suit la jointure des deux branches.
 
 Avant la création du plan, le brouillon est normalisé
 (`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un

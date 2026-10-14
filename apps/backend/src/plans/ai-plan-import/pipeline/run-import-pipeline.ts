@@ -162,9 +162,15 @@ type StepProduce = {
 
 type StepGo =
   | { success: true; progress: Progress }
-  | { success: false; outcome: PipelineOutcome };
+  | { success: false; error: PipelineError };
 
-/** Les étapes après la lecture, dans l'ordre où elles s'exécutent. */
+type BranchOutcome = {
+  /** Jetons et avertissements de la seule branche. */
+  progress: Progress;
+  failure: { step: StepName; error: PipelineError } | null;
+};
+
+/** Une étape après la lecture. */
 type PipelineStep = {
   name: StepName;
   /** Évalué au moment de l'étape : il dépend de ce qu'ont produit les précédentes. */
@@ -177,6 +183,10 @@ type PipelineStep = {
   finalize?: (progress: Progress) => Progress;
 };
 
+/**
+ * Un point de reprise vaut pour toutes les étapes jusqu'à la sienne dans cet
+ * ordre, y compris celles qui tournent en parallèle.
+ */
 const STEP_ORDER = stepStatesSchema.keyof().options;
 
 /** Après la dernière étape, plus rien ne lit le découpage : tout modèle convient. */
@@ -251,7 +261,7 @@ export const runImportPipeline = async (
   }
   await reportProgress(state.progress.stepStates);
 
-  const steps: PipelineStep[] = [
+  const sequentialSteps: PipelineStep[] = [
     // Écarter ce qui ne contient pas d'action et relever le squelette du plan :
     // seulement quand le document est lu par unités.
     {
@@ -377,6 +387,12 @@ export const runImportPipeline = async (
           signal: input.signal,
         }),
     },
+  ];
+
+  // Deux branches en parallèle après la consolidation, qui recrée les
+  // sous-actions : les secteurs ne lisent rien de ce qu'écrit l'enrichissement
+  // et n'écrivent que `action.secteurs`, que la revue ne lit pas.
+  const enrichmentBranch: PipelineStep[] = [
     {
       name: 'enrichment',
       skipWhen: () => !input.withSousActions,
@@ -390,6 +406,12 @@ export const runImportPipeline = async (
         }),
     },
     {
+      name: 'qualitativeReview',
+      run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
+    },
+  ];
+  const secteursBranch: PipelineStep[] = [
+    {
       name: 'secteurs',
       skipWhen: () => !input.withSecteurs,
       run: (actions) =>
@@ -399,57 +421,118 @@ export const runImportPipeline = async (
           signal: input.signal,
         }),
     },
-    {
-      name: 'qualitativeReview',
-      run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
-    },
   ];
 
+  // Un point de reprise d'avant la mise en parallèle peut s'arrêter entre
+  // l'enrichissement et la revue : chaque branche saute ce qui est fait.
   const lastCompleted = STEP_ORDER.indexOf(
     input.resumeFrom?.completedStep ?? 'reading'
   );
-  for (const { name, skipWhen, onSkip, run, finalize } of steps) {
-    if (STEP_ORDER.indexOf(name) <= lastCompleted) {
+  const isCompleted = (name: StepName): boolean =>
+    STEP_ORDER.indexOf(name) <= lastCompleted;
+
+  for (const step of sequentialSteps) {
+    if (isCompleted(step.name)) {
       continue;
     }
-    const go = await runStep({
-      reportStepRun,
-      progress: state.progress,
-      name,
-      run,
-      skipWhen: skipWhen?.() ?? false,
-      onSkip,
-    });
-    if (!go.success) return go.outcome;
-    state.progress = finalize ? finalize(go.progress) : go.progress;
-    await checkpoint(name);
+    const go = await runStep(reportStepRun, state.progress, step);
+    if (!go.success) return failed(state.progress, step.name, go.error);
+    state.progress = go.progress;
+    await checkpoint(step.name);
     await reportProgress(state.progress.stepStates);
   }
 
+  const forked = state.progress;
+  const stepStates = { ...forked.stepStates };
+  // Les deux branches rendent compte chacune de leur côté : en série, pour
+  // qu'un état plus ancien n'en écrase pas un plus récent.
+  let reported = Promise.resolve();
+  const runBranch = async (branch: PipelineStep[]): Promise<BranchOutcome> => {
+    let progress: Progress = {
+      ...forked,
+      tokens: emptyTokenUsage(),
+      warnings: [],
+    };
+    for (const step of branch) {
+      if (isCompleted(step.name)) {
+        continue;
+      }
+      const go = await runStep(reportStepRun, progress, step);
+      if (!go.success) {
+        return { progress, failure: { step: step.name, error: go.error } };
+      }
+      progress = go.progress;
+      stepStates[step.name] = progress.stepStates[step.name];
+      const snapshot = { ...stepStates };
+      reported = reported.then(() => reportProgress(snapshot));
+      await reported;
+    }
+    return { progress, failure: null };
+  };
+  const [enriched, classified] = await settleAll([
+    runBranch(enrichmentBranch),
+    runBranch(secteursBranch),
+  ]);
+
+  state.progress = {
+    actions: enriched.progress.actions.map((action, index) => {
+      const secteurs = classified.progress.actions[index]?.secteurs;
+      return secteurs === undefined ? action : { ...action, secteurs };
+    }),
+    review: enriched.progress.review,
+    tokens: sumTokenUsage([
+      forked.tokens,
+      enriched.progress.tokens,
+      classified.progress.tokens,
+    ]),
+    stepStates,
+    warnings: [
+      ...forked.warnings,
+      ...enriched.progress.warnings,
+      ...classified.progress.warnings,
+    ],
+  };
+
+  // Une branche en échec ne laisse écrire un point de reprise que si rien
+  // n'est fait au-delà de lui.
+  const firstPending = STEP_ORDER.findIndex(
+    (name) => stepStates[name] === 'pending'
+  );
+  const lastDone =
+    firstPending === -1 ? STEP_ORDER.length - 1 : firstPending - 1;
+  const doneBeyond = STEP_ORDER.slice(lastDone + 1).some(
+    (name) => stepStates[name] !== 'pending'
+  );
+  if (lastDone > lastCompleted && !doneBeyond) {
+    await checkpoint(STEP_ORDER[lastDone]);
+  }
+
+  const failure = enriched.failure ?? classified.failure;
+  if (failure) {
+    return failed(state.progress, failure.step, failure.error);
+  }
   return done(state.progress);
 };
 
-type RunStepArgs = {
-  reportStepRun: (run: ImportStepRun) => Promise<void>;
-  progress: Progress;
-  name: StepName;
-  run: (
-    actions: ExtractedAction[]
-  ) => Promise<Result<StepProduce, PipelineError>>;
-  skipWhen?: boolean;
-  onSkip?: (progress: Progress) => Progress;
+/** Attend chaque branche, même quand l'autre lève : aucun appel ne reste en vol. */
+const settleAll = async <T>(promises: Promise<T>[]): Promise<T[]> => {
+  const settled = await Promise.allSettled(promises);
+  const rejected = settled.find(
+    (result): result is PromiseRejectedResult => result.status === 'rejected'
+  );
+  if (rejected) {
+    throw rejected.reason;
+  }
+  return settled.map((result) => (result as PromiseFulfilledResult<T>).value);
 };
 
-const runStep = async ({
-  reportStepRun,
-  progress,
-  name,
-  run,
-  skipWhen = false,
-  onSkip,
-}: RunStepArgs): Promise<StepGo> => {
+const runStep = async (
+  reportStepRun: (run: ImportStepRun) => Promise<void>,
+  progress: Progress,
+  { name, skipWhen, onSkip, run, finalize = (done) => done }: PipelineStep
+): Promise<StepGo> => {
   const startedAt = new Date();
-  if (skipWhen) {
+  if (skipWhen?.()) {
     const skipped = onSkip ? onSkip(progress) : progress;
     await reportStepRun({
       step: name,
@@ -460,7 +543,7 @@ const runStep = async ({
       details: {},
       error: null,
     });
-    return { success: true, progress: markSkipped(skipped, name) };
+    return { success: true, progress: finalize(markSkipped(skipped, name)) };
   }
 
   const recorded = await recordLlmCalls(() => run(progress.actions)).catch(
@@ -495,11 +578,11 @@ const runStep = async ({
     error: result.success ? null : describePipelineError(result.error),
   });
   if (!result.success) {
-    return { success: false, outcome: failed(progress, name, result.error) };
+    return { success: false, error: result.error };
   }
   return {
     success: true,
-    progress: mergeStepResult(progress, name, result.data),
+    progress: finalize(mergeStepResult(progress, name, result.data)),
   };
 };
 
