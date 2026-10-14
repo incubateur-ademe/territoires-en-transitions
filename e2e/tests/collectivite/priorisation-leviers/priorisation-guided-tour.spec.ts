@@ -231,11 +231,11 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     });
     await openLevierFromTour(pom);
 
-    const receivesClicks = await pom.pertinenceToggles
-      .getByRole('button')
-      .evaluate((toggle) => {
-        const { x, y, width, height } = toggle.getBoundingClientRect();
-        return toggle.contains(
+    const receivesClicks = await pom
+      .pertinenceButton(LEVIER_TO_PRIORITIZE, 'Levier non pertinent')
+      .evaluate((button) => {
+        const { x, y, width, height } = button.getBoundingClientRect();
+        return button.contains(
           document.elementFromPoint(x + width / 2, y + height / 2)
         );
       });
