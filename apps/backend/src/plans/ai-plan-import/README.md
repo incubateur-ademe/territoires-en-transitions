@@ -276,6 +276,13 @@ flowchart LR
     end
 ```
 
+Le prompt d'extraction (Gemini) et celui de structuration (Albert) partagent
+leurs règles de contenu (`prompts/field-rules.ts`) : description reprise sans
+résumé, objectifs chiffrés en lignes « - », pilotes tirés d'un schéma
+d'acteurs, statut déduit du seul calendrier de l'action, et ni évaluation, ni
+mesures ERC, ni engagements de partenaires lus comme des actions. Aucun ne
+numérote une action que le document ne numérote pas.
+
 Une réponse tronquée vient d'un paquet trop riche : le couper donne des
 réponses plus courtes, là où un budget plus large laisserait le modèle écrire
 plus longtemps. Sur Albert, un import échoue si plus de 20 % des paquets
