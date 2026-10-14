@@ -38,25 +38,10 @@ test('Saisir résultat et objectif dans la même cellule annuelle', async ({
     page.getByRole('button', { name: 'Ajouter une année', exact: true })
   ).toHaveCount(0);
   await valeurs.addResultat(2026, 0);
-  const cell = valeurs.table.locator(
-    'td[data-periode="2026-01-01"][data-source="collectivite"]'
-  );
-  await cell.getByTestId('indicateurs.valeurs.objectif.add').click();
-  const input = cell.getByRole('textbox', {
-    name: 'Objectif — 2026',
-    exact: true,
-  });
-  await input.fill('20');
-  const response = valeurs.waitForUpsertValeurResponse();
-  await input.press('Enter');
-  await response;
+  await valeurs.editValeur(2026, 'Objectif', '20');
   await page.reload();
-  await expect(
-    cell.getByRole('button', { name: 'Résultat — 2026', exact: true })
-  ).toContainText('0');
-  await expect(
-    cell.getByRole('button', { name: 'Objectif — 2026', exact: true })
-  ).toContainText('20');
+  await expect(valeurs.valueButton(2026, 'Résultat')).toContainText('0');
+  await expect(valeurs.valueButton(2026, 'Objectif')).toContainText('20');
   await expect(
     page.getByRole('button', { name: 'Résultats', exact: true })
   ).toHaveCount(0);
