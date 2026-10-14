@@ -1,3 +1,4 @@
+import { isTransientError } from '@tet/backend/utils/llm/is-transient-error';
 import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 
@@ -9,9 +10,9 @@ export type SucceededBatches<Outcome> = {
 
 /**
  * Une étape d'amélioration garde ce qu'un lot en échec n'a pas amélioré, avec
- * un avertissement. Sauf quand tous ses lots butent sur le quota : le
- * brouillon perdrait l'étape sans que personne le sache, mieux vaut un échec
- * qu'on reprend une fois le quota rétabli.
+ * un avertissement. Sauf quand tous ses lots échouent sur une erreur passagère
+ * (quota, panne, coupure) malgré les relances : le brouillon perdrait l'étape
+ * sans que personne le sache, mieux vaut un échec qu'on reprend ensuite.
  */
 export const keepSucceededBatches = <Batch, Outcome>(
   batches: readonly Batch[],
@@ -24,9 +25,9 @@ export const keepSucceededBatches = <Batch, Outcome>(
   if (
     failures.length > 0 &&
     failures.length === results.length &&
-    failures.every(({ error }) => error.kind === 'rate_limited')
+    failures.every(({ error }) => isTransientError(error))
   ) {
-    return failure({ kind: 'rate_limited' });
+    return failure(failures[0].error);
   }
   return success({
     outcomes: results.flatMap((result) =>

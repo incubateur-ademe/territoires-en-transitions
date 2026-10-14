@@ -26,7 +26,7 @@ describe('keepSucceededBatches', () => {
     });
   });
 
-  it("n'échoue pas quand tous les lots échouent pour une autre raison que le quota", () => {
+  it("n'échoue pas quand un lot échoue sur une erreur qu'une reprise ne corrigerait pas", () => {
     const result = keepSucceededBatches(
       [['a'], ['b']],
       [failure({ kind: 'truncated' }), failure({ kind: 'rate_limited' })],
@@ -49,6 +49,23 @@ describe('keepSucceededBatches', () => {
     expect(result).toEqual({
       success: false,
       error: { kind: 'rate_limited' },
+    });
+  });
+
+  it('échoue quand tous les lots échouent sur une panne ou une coupure, mêlées au quota', () => {
+    const result = keepSucceededBatches(
+      [['a'], ['b'], ['c']],
+      [
+        failure({ kind: 'api_error', httpStatus: 500 }),
+        failure({ kind: 'rate_limited' }),
+        failure({ kind: 'api_error', httpStatus: null }),
+      ],
+      describeBatch
+    );
+
+    expect(result).toEqual({
+      success: false,
+      error: { kind: 'api_error', httpStatus: 500 },
     });
   });
 
