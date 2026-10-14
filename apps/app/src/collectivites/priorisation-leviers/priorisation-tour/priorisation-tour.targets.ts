@@ -1,6 +1,11 @@
 import { createGuidedTourTargets } from '@/app/shared/guided-tour/guided-tour-targets.context';
 
-type PriorisationTargetId = 'metrics' | 'leviersPanel' | 'tourHelp';
+type PriorisationTargetId =
+  | 'leviersPanel'
+  | 'levierToPrioritize'
+  | 'levierHeader'
+  | 'firstActionDeReference'
+  | 'tourHelp';
 
 const PRIORISATION_TOUR_ID = 'priorisation';
 

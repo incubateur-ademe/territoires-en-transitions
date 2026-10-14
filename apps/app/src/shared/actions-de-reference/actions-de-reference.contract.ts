@@ -7,7 +7,7 @@ import type {
   ListActionsDeReferenceInput,
   UpdateActionDeReferenceInput,
 } from '@tet/domain/shared';
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode, RefCallback } from 'react';
 
 export type ActionDeReferenceSortField = ListActionsDeReferenceInput['sortBy'];
 
@@ -132,6 +132,7 @@ export type ActionDeReferenceCardProps = {
   readonly interest: ActionDeReferenceInterestControl;
   readonly showAdemeBadge?: boolean;
   readonly actions?: ReactNode;
+  readonly actionsRef?: RefCallback<HTMLDivElement>;
   readonly children?: ReactNode;
 };
 

@@ -44,6 +44,7 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
   interest,
   showAdemeBadge = false,
   actions,
+  actionsRef,
   children,
 }) => (
   <div className="group relative h-full">
@@ -65,7 +66,10 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
         />
       }
       footer={
-        <div className="flex flex-wrap items-center gap-3 pt-1">
+        <div
+          ref={actionsRef}
+          className="flex flex-wrap items-center gap-3 pt-1"
+        >
           <ActionDeReferenceInterestButtons interest={interest} />
           {actions}
         </div>

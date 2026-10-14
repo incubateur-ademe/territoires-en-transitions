@@ -53,6 +53,7 @@ const renderLevierSidePanel = (places: LevierPlace[] = []) =>
       }),
       panelContent: useSidePanel().panel.content,
       panelHeader: useSidePanel().panel.header,
+      isPanelOpen: useSidePanel().panel.isOpen,
     }),
     { wrapper: SidePanelWrapper }
   );
@@ -91,6 +92,28 @@ describe('useLevierSidePanel', () => {
     ).toMatchObject({
       levier: { nom: 'Covoiturage' },
       subtitle: 'Transports · Impact potentiel estimé : 19/100',
+    });
+  });
+
+  it('referme le volet ouvert et oublie le levier sélectionné', () => {
+    const { result } = renderLevierSidePanel();
+    act(() => result.current.levierSidePanel.select('covoiturage'));
+    const whileOpen = {
+      isPanelOpen: result.current.isPanelOpen,
+      selectedLevierId: result.current.levierSidePanel.selectedLevierId,
+    };
+
+    act(() => result.current.levierSidePanel.close());
+
+    expect({
+      whileOpen,
+      afterClose: {
+        isPanelOpen: result.current.isPanelOpen,
+        selectedLevierId: result.current.levierSidePanel.selectedLevierId,
+      },
+    }).toEqual({
+      whileOpen: { isPanelOpen: true, selectedLevierId: 'covoiturage' },
+      afterClose: { isPanelOpen: false, selectedLevierId: undefined },
     });
   });
 });

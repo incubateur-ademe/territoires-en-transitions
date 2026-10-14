@@ -4,7 +4,9 @@ import {
   GuidedTour,
   useGuidedTour,
 } from '@/app/shared/guided-tour/use-guided-tour';
+import type { LevierId } from '@tet/domain/shared';
 import { useMemo } from 'react';
+import type { LevierSidePanelControls } from '../priorisation-leviers.view/levier-panel/use-levier-side-panel';
 import { toPriorisationTourSteps } from './priorisation-tour.steps';
 import {
   PRIORISATION_TOUR_ID,
@@ -13,18 +15,30 @@ import {
 
 const TOUR_VERSION = '2026-10';
 
-export const usePriorisationTour = ({
-  isReady,
-}: {
+type UsePriorisationTourArgs = {
   isReady: boolean;
-}): GuidedTour => {
+  levierToPrioritizeId?: LevierId;
+  levierSidePanel: LevierSidePanelControls;
+};
+
+const usePriorisationTour = ({
+  isReady,
+  levierToPrioritizeId,
+  levierSidePanel: { select, close },
+}: UsePriorisationTourArgs): GuidedTour => {
   const resolve = priorisationTargets.useResolve();
-  const steps = useMemo(() => toPriorisationTourSteps({ resolve }), [resolve]);
+  const steps = useMemo(
+    () => toPriorisationTourSteps({ resolve, levierToPrioritizeId, select }),
+    [resolve, levierToPrioritizeId, select]
+  );
 
   return useGuidedTour({
     id: PRIORISATION_TOUR_ID,
     version: TOUR_VERSION,
     steps,
     isReady,
+    onSkipped: close,
   });
 };
+
+export { usePriorisationTour };

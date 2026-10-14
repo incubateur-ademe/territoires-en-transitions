@@ -23,6 +23,9 @@ export type TourButtonName =
 
 const UPSERT_URL_PATTERN = /collectivites\.pertinenceLeviers\.upsert/;
 
+const TRAJECTOIRE_LEVIERS_URL_PATTERN =
+  /\/trpc\/indicateurs\.trajectoires\.leviers\.getData/;
+
 export class PriorisationLeviersPom {
   readonly title: Locator;
   readonly levierButtons: Locator;
@@ -51,6 +54,21 @@ export class PriorisationLeviersPom {
       name: /^Pertinence du levier /,
     });
     this.saveErrorToast = page.getByText("Erreur lors de l'enregistrement");
+  }
+
+  async stubLevierWithPotentiel(nom: Levier): Promise<void> {
+    await this.page.route(TRAJECTOIRE_LEVIERS_URL_PATTERN, (route) =>
+      route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          result: {
+            data: {
+              secteurs: [{ leviers: [{ nom, objectifReduction: -100 }] }],
+            },
+          },
+        }),
+      })
+    );
   }
 
   levierPanel(nom: Levier): Locator {

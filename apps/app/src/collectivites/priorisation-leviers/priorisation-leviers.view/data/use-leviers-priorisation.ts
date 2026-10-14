@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import { useMemo } from 'react';
 import { hasMobilisation } from './to-levier-cards';
 import {
   LevierPriorisation,
@@ -48,6 +49,25 @@ export const useLeviersPriorisation = (
     )
   );
 
+  const pertinences = pertinencesQuery.data;
+  const mobilisation = mobilisationQuery.data;
+  const trajectoire = trajectoireQuery.data;
+  const potentiels = useMemo(
+    () =>
+      trajectoire ? toPotentielsReduction(trajectoire) : UNAVAILABLE_POTENTIELS,
+    [trajectoire]
+  );
+  const leviers = useMemo(() => {
+    if (pertinences === undefined || mobilisation === undefined) {
+      return undefined;
+    }
+    return toLeviersPriorisation({
+      pertinences: pertinences.pertinences,
+      mobilisation,
+      potentiels,
+    });
+  }, [pertinences, mobilisation, potentiels]);
+
   const retryFailedQueries = (): void => {
     if (pertinencesQuery.isLoadingError) {
       void pertinencesQuery.refetch();
@@ -64,27 +84,18 @@ export const useLeviersPriorisation = (
   }
 
   const isTrajectoireSettled =
-    trajectoireQuery.data !== undefined || trajectoireQuery.isLoadingError;
-  const pertinences = pertinencesQuery.data;
-  const mobilisation = mobilisationQuery.data;
+    trajectoire !== undefined || trajectoireQuery.isLoadingError;
   const isStillLoading =
-    pertinences === undefined ||
+    leviers === undefined ||
     mobilisation === undefined ||
     !isTrajectoireSettled;
   if (isStillLoading) {
     return { status: 'loading' };
   }
 
-  const potentiels = trajectoireQuery.data
-    ? toPotentielsReduction(trajectoireQuery.data)
-    : UNAVAILABLE_POTENTIELS;
   return {
     status: 'ready',
-    leviers: toLeviersPriorisation({
-      pertinences: pertinences.pertinences,
-      mobilisation,
-      potentiels,
-    }),
+    leviers,
     hasMobilisation: hasMobilisation(mobilisation),
     potentiels,
   };

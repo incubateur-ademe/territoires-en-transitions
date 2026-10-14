@@ -22,6 +22,7 @@ import {
   useState,
   type JSX,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { computeBounds } from './compute-bounds';
 import { MATRIX_GRID } from './matrix-grid';
@@ -56,6 +57,11 @@ type MatrixPoint = MatrixCoord & {
   isLabelled?: boolean;
 };
 
+type MatrixAnchor = {
+  pointId: string;
+  elementRef: Ref<HTMLSpanElement>;
+};
+
 type MatrixChartProps = {
   data: readonly MatrixPoint[];
   children?: ReactNode;
@@ -64,6 +70,7 @@ type MatrixChartProps = {
   labelMaxWidth?: number;
   selectedPointId?: string;
   onPointSelected?: (pointId: string) => void;
+  anchor?: MatrixAnchor;
 };
 
 const TONE_PALETTE: Record<MatrixTone, { strong: string; soft: string }> = {
@@ -643,6 +650,49 @@ const toLabelObstacles = ({
   }),
 ];
 
+type AnchorTarget = {
+  box: Box;
+  elementRef: Ref<HTMLSpanElement>;
+};
+
+const toAnchorTarget = ({
+  anchor,
+  points,
+  bounds,
+  size,
+}: {
+  anchor?: MatrixAnchor;
+  points: readonly MatrixPoint[];
+  bounds: MatrixCoord;
+  size: PlotSize;
+}): AnchorTarget | undefined => {
+  if (anchor === undefined) {
+    return undefined;
+  }
+  const point = points.find(({ id }) => id === anchor.pointId);
+  if (point === undefined) {
+    return undefined;
+  }
+  const [box] = toPointBoxes({ points: [point], bounds, size });
+  if (box === undefined) {
+    return undefined;
+  }
+  return { box, elementRef: anchor.elementRef };
+};
+
+const AnchorSpot = ({ box, elementRef }: AnchorTarget): JSX.Element => (
+  <span
+    ref={elementRef}
+    className="pointer-events-none absolute"
+    style={{
+      left: box.left,
+      top: box.top,
+      width: box.right - box.left,
+      height: box.bottom - box.top,
+    }}
+  />
+);
+
 const MatrixChart = ({
   data,
   children,
@@ -651,6 +701,7 @@ const MatrixChart = ({
   labelMaxWidth = DEFAULT_LABEL_MAX_WIDTH,
   selectedPointId,
   onPointSelected,
+  anchor,
 }: MatrixChartProps): JSX.Element => {
   const plotRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<PlotSize>({ width: 0, height: 0 });
@@ -720,18 +771,30 @@ const MatrixChart = ({
     [data, onPointSelected]
   );
 
+  const anchorTarget = toAnchorTarget({
+    anchor,
+    points: data,
+    bounds,
+    size,
+  });
+  const hasAnchor = anchorTarget !== undefined;
   const hasDataTable =
     dataTable !== undefined && xAxis !== undefined && yAxis !== undefined;
 
   return (
     <figure className="m-0 flex w-full flex-col gap-4">
-      <div ref={plotRef} aria-hidden className={cn('h-96 w-full', className)}>
+      <div
+        ref={plotRef}
+        aria-hidden
+        className={cn('relative h-96 w-full', className)}
+      >
         <ReactECharts
           renderer="svg"
           style={{ width: '100%', height: '100%' }}
           option={option}
           onEvents={onEvents}
         />
+        {hasAnchor ? <AnchorSpot {...anchorTarget} /> : null}
       </div>
       <figcaption className="sr-only">{caption}</figcaption>
       <PointsList
@@ -754,4 +817,4 @@ const MatrixChart = ({
 };
 
 export { MatrixChart };
-export type { MatrixPoint };
+export type { MatrixAnchor, MatrixPoint };
