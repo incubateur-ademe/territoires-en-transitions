@@ -10,7 +10,7 @@ import {
   ListActionsDeReferenceInput,
   listActionsDeReferenceInputSchema,
 } from '@tet/domain/shared';
-import { asc, sql } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { TransactionRollbackError } from 'drizzle-orm/errors';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { ActionsDeReferenceTableRepository } from './actions-de-reference-table.repository';
@@ -940,6 +940,36 @@ describe('ActionsDeReferenceRepository contract', () => {
           });
         }
       );
+    });
+  });
+
+  describe('colonnes tableau', () => {
+    it('stocke plusieurs leviers et plusieurs catégories pour une même action', async () => {
+      await checkWithOnlyActions([carpoolingAction], async ({ tx }) => {
+        const [inserted] = await tx
+          .insert(actionDeReferenceTable)
+          .values({
+            titre: 'Installer des haies le long des parcelles',
+            description:
+              'Planter des haies pour fixer le carbone et abriter la faune',
+            levier: 'gestion_haies',
+            categorie: 'amenagement',
+            leviers: ['gestion_haies', 'pratiques_stockantes'],
+            categories: ['amenagement', 'sensibilisation'],
+          })
+          .returning({ id: actionDeReferenceTable.id });
+        const [stored] = await tx
+          .select({
+            leviers: actionDeReferenceTable.leviers,
+            categories: actionDeReferenceTable.categories,
+          })
+          .from(actionDeReferenceTable)
+          .where(eq(actionDeReferenceTable.id, inserted.id));
+        expect(stored).toEqual({
+          leviers: ['gestion_haies', 'pratiques_stockantes'],
+          categories: ['amenagement', 'sensibilisation'],
+        });
+      });
     });
   });
 });

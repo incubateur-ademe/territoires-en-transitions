@@ -19,6 +19,11 @@ export const actionDeReferenceTable = pgTable(
     description: text('description').notNull(),
     levier: levierGesIdPgEnum('levier').notNull(),
     categorie: voletCategoriePgEnum('categorie').notNull(),
+    leviers: levierGesIdPgEnum('leviers').array().notNull().default([]),
+    categories: voletCategoriePgEnum('categories')
+      .array()
+      .notNull()
+      .default([]),
   },
   (table) => [
     unique('action_de_reference_unique').on(
