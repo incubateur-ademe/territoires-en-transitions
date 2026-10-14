@@ -12,7 +12,7 @@ import { ocrPages, OcrPagesResult } from './ocr-pages';
 import { readDocxPages } from './read-docx';
 import { PdfReader, readPdf } from './read-pdf';
 import { readCsvPages, readXlsxPages } from './read-tabular';
-import { buildPdfPageRenderer, RenderPage } from './render-page-image';
+import { openPdfPageRenderer, RenderPage } from './render-page-image';
 
 export type ReadDocumentError =
   | { kind: 'unsupported_mime'; mimeType: string }
@@ -111,14 +111,32 @@ const transcribeScannedPages = (
         })
       );
     case 'ocr':
-      return ocrPages({
-        pages,
-        pageIndexes: decision.pageIndexes,
-        fullScan: decision.fullScan,
-        renderPage: renderPage ?? buildPdfPageRenderer(buffer),
-        ocrPage: ocr.ocrPage,
-        signal,
-      });
+      return withPageRenderer(buffer, renderPage, (render) =>
+        ocrPages({
+          pages,
+          pageIndexes: decision.pageIndexes,
+          fullScan: decision.fullScan,
+          renderPage: render,
+          ocrPage: ocr.ocrPage,
+          signal,
+        })
+      );
+  }
+};
+
+const withPageRenderer = async <T>(
+  buffer: Buffer,
+  injected: RenderPage | undefined,
+  run: (renderPage: RenderPage) => Promise<T>
+): Promise<T> => {
+  if (injected) {
+    return run(injected);
+  }
+  const renderer = openPdfPageRenderer(buffer);
+  try {
+    return await run(renderer.renderPage);
+  } finally {
+    await renderer.close();
   }
 };
 
