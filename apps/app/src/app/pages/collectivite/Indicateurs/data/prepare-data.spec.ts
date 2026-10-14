@@ -286,11 +286,36 @@ describe('prepareData', () => {
     expect(annual.sources.collectivite.valeurs).toEqual(valeurs);
   });
 
-  test('refuse une date non canonique dans le modèle de périodes activé', () => {
+  test('affiche une date annuelle historique dans son année sans modifier la valeur', () => {
     const annual = structuredClone(fixture.indicateurs[0]);
     annual.sources.collectivite.valeurs[0].dateValeur = '2020-06-15';
 
-    expect(() => prepareData(annual, 'resultat', false)).toThrow(
+    const resultats = prepareData(annual, 'resultat', false);
+
+    expect(resultats.donneesCollectivite?.valeurs[0]).toMatchObject({
+      periode: IndicateurPeriodes.fromYear(2020),
+      periodeLabel: '2020',
+      dateValeurISO: '2020-01-01T00:00:00.000Z',
+    });
+    expect(resultats.valeursExistantes[0]).toMatchObject({
+      periode: IndicateurPeriodes.fromYear(2020),
+      dateValeur: '2020-06-15',
+    });
+    expect(annual.sources.collectivite.valeurs[0].dateValeur).toBe(
+      '2020-06-15'
+    );
+  });
+
+  test.each([
+    IndicateurPeriodiciteEnum.MENSUELLE,
+    IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
+  ])('refuse une date non canonique pour la cadence %s', (periodicite) => {
+    const data = structuredClone(fixture.indicateurs[0]);
+    data.sources.collectivite.valeurs[0].periodicite = periodicite;
+    data.sources.collectivite.valeurs[0].dateValeur = '2020-06-15';
+
+    expect(() => prepareData(data, 'resultat', false)).toThrow(
       'INDICATEUR_PERIODE_DATE_NON_CANONICAL'
     );
   });

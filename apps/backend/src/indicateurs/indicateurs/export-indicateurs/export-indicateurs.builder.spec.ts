@@ -78,6 +78,35 @@ function getSheet(valeurs: IndicateurValeurAvecMetadonnesDefinition[]) {
 }
 
 describe('buildConsolidatedSheet — sources open-data', () => {
+  it('exporte les dates annuelles historiques dans leur année sans les modifier', () => {
+    const local = makeValeur({ indicateurId: 1, annee: 2024, resultat: 0 });
+    local.indicateurValeur.dateValeur = '2024-06-30';
+    const external = makeValeur({
+      indicateurId: 1,
+      annee: 2024,
+      objectif: 20,
+      sourceId: 'rare',
+    });
+    external.indicateurValeur.dateValeur = '2024-12-31';
+
+    const ws = getSheet([local, external]);
+    const headers = ws.getRow(1).values as unknown[];
+    expect(headers.filter((header) => header === '2024 Résultat')).toHaveLength(
+      1
+    );
+    expect(headers.filter((header) => header === '2024 Objectif')).toHaveLength(
+      1
+    );
+    expect(ws.getRow(2).getCell(headers.indexOf('2024 Résultat')).value).toBe(
+      0
+    );
+    expect(ws.getRow(3).getCell(headers.indexOf('2024 Objectif')).value).toBe(
+      20
+    );
+    expect(local.indicateurValeur.dateValeur).toBe('2024-06-30');
+    expect(external.indicateurValeur.dateValeur).toBe('2024-12-31');
+  });
+
   it('ajoute une ligne par source open-data en plus de la ligne collectivité', () => {
     const ws = getSheet([
       // saisie collectivité

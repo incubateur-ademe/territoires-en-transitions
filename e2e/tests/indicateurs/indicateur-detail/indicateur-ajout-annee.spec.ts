@@ -1,10 +1,7 @@
 import { expect, type Request } from '@playwright/test';
 import { testWithIndicateurs as test } from '../indicateurs.fixture';
 import { IndicateurValeursPom } from './indicateur-valeurs.pom';
-import {
-  IndicateurPeriodes,
-  IndicateurPeriodiciteEnum,
-} from '@tet/domain/indicateurs';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 test.beforeEach(async ({ page }) => {
   await page.addLocatorHandler(
@@ -371,6 +368,62 @@ test('Conserver les bornes du calendrier annuel sans décalage après enregistre
     valeurs.table.getByText('Cette année est déjà présente dans le tableau.')
   ).toBeVisible();
   await expect(valeurs.cell(1)).toHaveCount(1);
+});
+
+test("Ne pas signaler de doublon pendant le rafraîchissement après l'ajout d'une année", async ({
+  page,
+  collectivites,
+  indicateurs,
+  indicateurDetailPom,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Ajout annuel pendant le rafraîchissement',
+    unite: '%',
+  });
+  await indicateurDetailPom.goto(collectiviteId, indicateurId);
+  const valeurs = new IndicateurValeursPom(page);
+  const input = valeurs.ajouterAnneeInput;
+  await expect(input).toBeVisible();
+
+  // Let the new column load while another invalidated query keeps the save pending.
+  let releaseRefresh = () => {};
+  const pendingRefresh = new Promise<void>((resolve) => {
+    releaseRefresh = resolve;
+  });
+  await page.route('**/trpc/indicateurs.indicateurs.list?*', async (route) => {
+    const response = await route.fetch();
+    await pendingRefresh;
+    await route.fulfill({ response });
+  });
+
+  try {
+    await input.fill('2026');
+    await input.press('Enter');
+    await expect(
+      valeurs.table.getByText('2026', { exact: true })
+    ).toBeVisible();
+    await expect(input).toBeDisabled();
+    await expect(input).toHaveValue('2026');
+    await expect(input).toHaveAttribute('aria-invalid', 'false');
+    await expect(
+      valeurs.table.getByText('Cette année est déjà présente dans le tableau.')
+    ).toHaveCount(0);
+  } finally {
+    releaseRefresh();
+  }
+
+  await expect(input).toBeEnabled();
+  await expect(input).toHaveValue('');
+  await input.fill('2026');
+  await expect(input).toHaveAttribute('aria-invalid', 'true');
+  await expect(
+    valeurs.table.getByText('Cette année est déjà présente dans le tableau.')
+  ).toBeVisible();
 });
 
 test('Valider les années et refuser les doublons avant et après enregistrement', async ({

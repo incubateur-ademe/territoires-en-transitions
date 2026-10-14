@@ -4,6 +4,7 @@ import { RouterOutput } from '@tet/api';
 import {
   IndicateurPeriode,
   IndicateurPeriodes,
+  IndicateurPeriodiciteEnum,
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
 } from '@tet/domain/indicateurs';
@@ -93,16 +94,17 @@ export const prepareData = (
           : {}),
         calculAuto: values.some((v) => v.calculAuto),
         valeurs: values.map((value): PreparedSourceValue => {
-          const periode = IndicateurPeriodes.fromDateValeur(
-            value.periodicite,
-            value.dateValeur
-          );
+          const periode = getValeurPeriode(value);
+          const chartDate =
+            value.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
+              ? IndicateurPeriodes.toDateValeur(periode)
+              : value.dateValeur;
           return {
             id: value.id,
             calculAuto: Boolean(value.calculAuto),
             periode,
             periodeLabel: IndicateurPeriodes.format(periode),
-            dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
+            dateValeurISO: `${chartDate}T00:00:00.000Z`,
             valeur: value[type],
             commentaire: value[`${type}Commentaire`],
           };
@@ -164,10 +166,7 @@ export const prepareData = (
   // tableau des valeurs existantes (permet de vérifier s'il existe déjà une ligne pour une année)
   const valeursExistantes: PreparedValue[] =
     data?.sources?.collectivite?.valeurs?.map((v) => {
-      const periode = IndicateurPeriodes.fromDateValeur(
-        v.periodicite,
-        v.dateValeur
-      );
+      const periode = getValeurPeriode(v);
       return {
         ...v,
         periode,
@@ -184,6 +183,13 @@ export const prepareData = (
     valeursExistantes,
   };
 };
+
+function getValeurPeriode(value: IndicateurSourceValeur): IndicateurPeriode {
+  // Historical annual observations were not necessarily dated January 1.
+  return value.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
+    ? IndicateurPeriodes.containing(value.periodicite, value.dateValeur)
+    : IndicateurPeriodes.fromDateValeur(value.periodicite, value.dateValeur);
+}
 
 function getPeriodesDistinctes(sources: PreparedSource[]): IndicateurPeriode[] {
   const toutesValeurs = sources.flatMap((sourceData) => sourceData.valeurs);

@@ -38,8 +38,9 @@ export const AddIndicateurPeriodeHeader = <
     ? existingKeys.has(IndicateurPeriodes.key(parsedPeriode))
     : false;
   const canSubmit = Boolean(parsedPeriode) && !hasDuplicate && !isSubmitting;
-  const errorMessage = hasDuplicate ? editor.duplicate : submitError;
-  const isInvalid = hasDuplicate;
+  // Refetches can expose the saved period before onAdd resolves and clears the draft.
+  const isInvalid = hasDuplicate && !isSubmitting;
+  const errorMessage = isInvalid ? editor.duplicate : submitError;
 
   useEffect(() => {
     if (focusRequested) {
