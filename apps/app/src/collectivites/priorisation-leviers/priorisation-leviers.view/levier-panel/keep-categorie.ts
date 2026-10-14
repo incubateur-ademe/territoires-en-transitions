@@ -15,6 +15,8 @@ export const keepCategorie = ({
   }
   return {
     ...list,
-    actions: list.actions.filter((action) => action.categorie === categorie),
+    actions: list.actions.filter((action) =>
+      action.categories.includes(categorie)
+    ),
   };
 };

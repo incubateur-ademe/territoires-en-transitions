@@ -27,8 +27,10 @@ export const toSousLevierBars = (
   preselectedActions: readonly ActionDeReference[]
 ): SousLevierBar[] => {
   const preselectedIds = new Set(
-    preselectedActions.map(({ levier, categorie }) =>
-      toSousLevierId(levier, categorie)
+    preselectedActions.flatMap(({ leviers, categories }) =>
+      leviers.flatMap((levier) =>
+        categories.map((categorie) => toSousLevierId(levier, categorie))
+      )
     )
   );
   return toMondrianTiles(places)

@@ -23,7 +23,7 @@ export const RechercheFiltreeEtTriee: Story = {
       searchedText: 'combles',
       leviers: ['sobriete_isolation_batiments_tertiaire', 'covoiturage'],
       categories: ['exemplarite', 'amenagement'],
-      sortBy: 'levier',
+      sortBy: 'leviers',
     },
   },
 };

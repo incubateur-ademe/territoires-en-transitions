@@ -218,6 +218,20 @@ export class ActionsDeReferencePom {
     await expect(select).toContainText(optionLabel);
   }
 
+  async toggleOption({
+    select,
+    optionLabel,
+  }: {
+    readonly select: Locator;
+    readonly optionLabel: string;
+  }): Promise<void> {
+    await select.click();
+    await this.page
+      .getByRole('button', { name: optionLabel, exact: true })
+      .click();
+    await this.page.keyboard.press('Escape');
+  }
+
   async chooseLevierFilter(levierLabel: string): Promise<void> {
     await this.chooseFilterOption({
       filter: this.leviersFilter,

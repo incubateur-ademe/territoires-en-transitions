@@ -109,7 +109,10 @@ type PriorisationContentProps = Omit<
 const toPreselectedCountByLevier = (
   preselection: Preselection
 ): PreselectedCountByLevier => {
-  const countByLevier = countBy(preselection.actions, ({ levier }) => levier);
+  const countByLevier = countBy(
+    preselection.actions.flatMap(({ leviers }) => leviers),
+    (levier) => levier
+  );
   return new Map(
     levierIdEnumValues.map((levierId) => [
       levierId,

@@ -10,7 +10,7 @@ import {
   type LevierId,
 } from '@tet/domain/shared';
 import { Accordion, Select, VisibleWhen } from '@tet/ui';
-import { groupBy, partition } from 'es-toolkit';
+import { partition } from 'es-toolkit';
 import { JSX, ReactNode, RefCallback, useState } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../../levier-card-info';
@@ -106,9 +106,12 @@ const GroupedActions = ({
     actions,
     (action) => preselection.statusOf(action.id) === 'ignoree'
   );
-  const byCategorie = groupBy(visible, (action) => action.categorie);
+  const actionsOfCategorie = (
+    categorie: CategorieAction
+  ): ActionDeReference[] =>
+    visible.filter((action) => action.categories.includes(categorie));
   const categoriesWithActions = categorieActionEnumValues.filter(
-    (categorie) => (byCategorie[categorie] ?? []).length > 0
+    (categorie) => actionsOfCategorie(categorie).length > 0
   );
   const hasIgnoredActions = ignored.length > 0;
   const hasVisibleActions = categoriesWithActions.length > 0;
@@ -122,7 +125,7 @@ const GroupedActions = ({
         <CategorieGroup
           key={categorie}
           categorie={categorie}
-          actions={byCategorie[categorie]}
+          actions={actionsOfCategorie(categorie)}
           preselection={preselection}
           actionsRef={index === 0 ? actionsRef : undefined}
         />
@@ -151,7 +154,7 @@ export const LevierActionsDeReferenceList = ({
     searchedText,
     leviers: [levierId],
     categories: [],
-    sortBy: 'categorie',
+    sortBy: 'categories',
   });
   const actionsQuery = keepCategorie({ list: levierActions, categorie });
   const isFiltering = searchedText !== '' || categorie !== undefined;

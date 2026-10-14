@@ -102,8 +102,8 @@ describe('toSousLevierBars', () => {
           id: actionDeReferenceIdSchema.parse(1),
           titre: 'Subventionner les entreprises',
           description: 'Aides financières',
-          levier: 'production_industrielle',
-          categorie: 'financement',
+          leviers: ['production_industrielle'],
+          categories: ['financement'],
         },
       ]
     );
@@ -114,6 +114,40 @@ describe('toSousLevierBars', () => {
     expect(statusById).toEqual({
       'production_industrielle/financement': 'Ajoutée',
       'production_industrielle/gouvernance': 'Non mobilisé',
+      'production_industrielle/sensibilisation': 'Non mobilisé',
+    });
+  });
+
+  it("passe en Ajoutée chaque couple levier × catégorie d'une action qui en porte plusieurs", () => {
+    const bars = toSousLevierBars(
+      [
+        toPlace({
+          levierId: 'production_industrielle',
+          potentielReduction: 20,
+          noteByCategorie: {
+            ...NO_MOBILISATION,
+            financement: 2,
+            gouvernance: 1,
+          },
+        }),
+      ],
+      [
+        {
+          id: actionDeReferenceIdSchema.parse(1),
+          titre: 'Subventionner et gouverner les entreprises',
+          description: 'Aides financières et pilotage',
+          leviers: ['production_industrielle', 'biogaz'],
+          categories: ['financement', 'gouvernance'],
+        },
+      ]
+    );
+
+    const statusById = Object.fromEntries(
+      bars.map(({ id, status }) => [id, status])
+    );
+    expect(statusById).toEqual({
+      'production_industrielle/financement': 'Ajoutée',
+      'production_industrielle/gouvernance': 'Ajoutée',
       'production_industrielle/sensibilisation': 'Non mobilisé',
     });
   });
