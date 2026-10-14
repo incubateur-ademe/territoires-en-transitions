@@ -575,7 +575,6 @@ export const demarchesLabels = {
   demarcheProgrammeImporterPlan: 'Importer un plan',
   demarcheProgrammeColonneNom: 'Nom du plan',
   demarcheProgrammeColonneNombreActions: 'Nombre d’actions',
-  demarcheProgrammeColonneSecteurs: 'Secteurs réglementaires',
   demarcheProgrammeNombreActions: plural({
     zero: 'Aucune action',
     one: 'action',

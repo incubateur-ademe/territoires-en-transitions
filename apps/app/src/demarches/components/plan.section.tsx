@@ -20,11 +20,8 @@ import {
   PlanListItem,
   useListPlans,
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import {
-  PlanSecteursCounts,
-  useListPlanSecteursCounts,
-} from '@/app/plans/plans/secteurs-counts/data/use-list-plan-secteurs-counts';
-import { formatPlanSecteursCounts } from '@/app/plans/plans/secteurs-counts/format-plan-secteurs-counts';
+import { countPlanSecteursARenseigner } from '@/app/plans/plans/secteurs-counts/count-plan-secteurs-a-renseigner';
+import { useListPlanSecteursCounts } from '@/app/plans/plans/secteurs-counts/data/use-list-plan-secteurs-counts';
 import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -107,8 +104,7 @@ const ProgrammeActionsPlanRow = ({
   collectiviteId,
   isLinked,
   heldByTitre,
-  isSecteursColumnVisible,
-  secteursCounts,
+  hasSecteursARenseigner,
   isReadonly,
   onLinkPlan,
   onUnlinkPlan,
@@ -116,8 +112,7 @@ const ProgrammeActionsPlanRow = ({
   plan: PlanListItem;
   collectiviteId: number;
   isLinked: boolean;
-  isSecteursColumnVisible: boolean;
-  secteursCounts: PlanSecteursCounts | undefined;
+  hasSecteursARenseigner: boolean;
   /** Titre de l'autre démarche active qui tient déjà ce plan. */
   heldByTitre?: string;
   isReadonly: boolean;
@@ -158,7 +153,9 @@ const ProgrammeActionsPlanRow = ({
             </span>
           )}
           <PlanImportStatusBadge status={plan.status} />
-          {isPlanPendingVerification(plan) && (
+          {/* Import pas encore relu ou secteurs réglementaires à compléter :
+              dans les deux cas, le plan est à vérifier. */}
+          {(isPlanPendingVerification(plan) || hasSecteursARenseigner) && (
             <Link
               href={planUrl}
               target="_blank"
@@ -180,20 +177,6 @@ const ProgrammeActionsPlanRow = ({
             count: plan.totalFiches ?? 0,
           })}
       </td>
-      {isSecteursColumnVisible && (
-        <td
-          className="px-4 py-3 text-sm text-grey-7"
-          data-test="demarches.plan.secteurs-counts"
-        >
-          {secteursCounts && (
-            <div className="flex flex-col gap-1">
-              {formatPlanSecteursCounts(secteursCounts).map((count) => (
-                <span key={count}>{count}</span>
-              ))}
-            </div>
-          )}
-        </td>
-      )}
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-2">
           {plan.status === PlanStatusEnum.FAILED && !isReadonly && (
@@ -366,11 +349,14 @@ const ListEligiblePlansTable = ({
   onUnlinkPlan: (planId: number) => void;
 }) => {
   const hasPlans = plans.length > 0;
-  const { isEnabled: isSecteursColumnVisible, countsByPlanId } =
-    useListPlanSecteursCounts(
-      collectiviteId,
-      plans.map((plan) => plan.id)
-    );
+  const { countsByPlanId } = useListPlanSecteursCounts(
+    collectiviteId,
+    plans.map((plan) => plan.id)
+  );
+  const hasSecteursARenseigner = (planId: number) => {
+    const counts = countsByPlanId.get(planId);
+    return counts !== undefined && countPlanSecteursARenseigner(counts) > 0;
+  };
 
   return (
     <ProgrammeActionsColumn>
@@ -398,12 +384,6 @@ const ListEligiblePlansTable = ({
                   title={appLabels.demarcheProgrammeColonneNombreActions}
                   className="w-48"
                 />
-                {isSecteursColumnVisible && (
-                  <TableHeaderCell
-                    title={appLabels.demarcheProgrammeColonneSecteurs}
-                    className="w-56 whitespace-nowrap"
-                  />
-                )}
                 <TableHeaderCell className="w-48" />
               </tr>
             </thead>
@@ -416,8 +396,7 @@ const ListEligiblePlansTable = ({
                     collectiviteId={collectiviteId}
                     isLinked={linkedPlanIds.includes(plan.id)}
                     heldByTitre={heldTitresByPlanId.get(plan.id)}
-                    isSecteursColumnVisible={isSecteursColumnVisible}
-                    secteursCounts={countsByPlanId.get(plan.id)}
+                    hasSecteursARenseigner={hasSecteursARenseigner(plan.id)}
                     isReadonly={isReadonly}
                     onLinkPlan={onLinkPlan}
                     onUnlinkPlan={onUnlinkPlan}
@@ -425,10 +404,7 @@ const ListEligiblePlansTable = ({
                 ))
               ) : (
                 <tr data-test="demarches.plan.table-empty">
-                  <td
-                    colSpan={isSecteursColumnVisible ? 4 : 3}
-                    className="px-4 py-10 text-center"
-                  >
+                  <td colSpan={3} className="px-4 py-10 text-center">
                     <p className="m-0 text-sm font-medium text-grey-8">
                       {appLabels.demarcheProgrammeNoPlanIntro({
                         typeLabel: planTypeLabel,

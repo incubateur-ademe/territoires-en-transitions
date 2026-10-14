@@ -96,14 +96,6 @@ export const plansLabels = {
   ficheSecteursARenseigner: 'À renseigner',
   ficheSecteursNonRenseigne: 'Non renseigné',
   ficheSecteursChargement: 'Chargement des secteurs',
-  planSecteursEnCoursDeCalcul: plural({
-    one: 'en cours de calcul',
-    other: 'en cours de calcul',
-  }),
-  planSecteursARenseigner: plural({
-    one: 'à renseigner',
-    other: 'à renseigner',
-  }),
   planSecteursARenseignerBouton: ({ count }: { count: number }) =>
     `Secteurs réglementaires à renseigner (${count})`,
   planSecteursVerifierTitre: 'Vérifier les secteurs',
