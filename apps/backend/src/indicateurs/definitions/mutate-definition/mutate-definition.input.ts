@@ -55,6 +55,7 @@ export const updateIndicateurDefinitionInputSchema = z.object({
     .object({
       ...createIndicateurDefinitionInputSchema.omit({
         collectiviteId: true,
+        periodicite: true,
         ficheId: true,
         thematiques: true,
         estFavori: true,
@@ -62,9 +63,11 @@ export const updateIndicateurDefinitionInputSchema = z.object({
         isApplicable: true,
       }).shape,
 
+      // La périodicité appartient uniquement au contrat de création.
+      // Refuser aussi sa présence dans un payload externe de mise à jour.
+      periodicite: z.never().optional(),
       // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
       // "absent du payload" d'une mise à jour explicite.
-      periodicite: z.never().optional(),
       isApplicable: z.boolean().optional(),
       estFavori: z.boolean().optional(),
       estConfidentiel: z.boolean().optional(),

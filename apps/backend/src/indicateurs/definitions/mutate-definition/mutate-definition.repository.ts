@@ -1,4 +1,3 @@
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable } from '@nestjs/common';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
@@ -35,7 +34,6 @@ type CreatePersonalizedDefinition = Readonly<{
 export type DefinitionOwnership = Readonly<{
   collectiviteId: number | null;
   groupementId: number | null;
-  periodicite: IndicateurPeriodicite;
 }>;
 
 type UpdateCollectiviteFields = PersonalizedDefinitionKey &
@@ -122,7 +120,6 @@ export class MutateDefinitionRepository {
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         groupementId: indicateurDefinitionTable.groupementId,
-        periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
       })
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.id, indicateurId))
@@ -139,7 +136,6 @@ export class MutateDefinitionRepository {
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         groupementId: indicateurDefinitionTable.groupementId,
-        periodicite: indicateurDefinitionPeriodiciteSelection.periodicite,
       })
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.id, indicateurId))

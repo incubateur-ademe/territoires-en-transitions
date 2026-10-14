@@ -134,7 +134,7 @@ export class UpsertGridValeursService {
           );
           // Recheck catalogue policy and availability under transaction locks.
           const validation = await this.validationService.validate(
-            { valeurs: valeursToValidate, definitions: indicateursById },
+            { valeurs: valeursToValidate },
             { user, tx }
           );
           if (!validation.success) {

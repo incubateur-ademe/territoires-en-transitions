@@ -15,7 +15,6 @@ import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { isNil, isNotNil, keyBy } from 'es-toolkit';
 import { AuthRole } from '../../../users/models/auth.models';
 import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
-import { ListCollectiviteDefinitionsRepository } from '../../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import {
   IndicateurValeursContext,
@@ -26,9 +25,6 @@ import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rul
 
 export type PreparedIndicateurValeurs = {
   valeurs: IndicateurValeurCreate[];
-  definitions: Partial<
-    Record<number, Pick<IndicateurDefinition, 'periodicite'>>
-  >;
 };
 
 @Injectable()
@@ -36,7 +32,6 @@ export class ValidateIndicateurValeursWriteService {
   constructor(
     private readonly repository: IndicateurValeursRepository,
     private readonly permissionService: PermissionService,
-    private readonly definitionsRepository: ListCollectiviteDefinitionsRepository,
     private readonly definitionLockRepository: IndicateurDefinitionLockRepository
   ) {}
 
@@ -46,7 +41,7 @@ export class ValidateIndicateurValeursWriteService {
   ) {
     return captureIndicateurValeursResult(
       async (): Promise<PreparedIndicateurValeurs> => {
-        const { user, isUserTrusted = false, tx } = context;
+        const { user, isUserTrusted = false } = context;
         if (!isUserTrusted && user) {
           for (const collectiviteId of new Set(
             valeurs.map((v) => v.collectiviteId)
@@ -63,23 +58,7 @@ export class ValidateIndicateurValeursWriteService {
             'Un contexte utilisateur ou une capacité interne explicite est requis pour écrire des valeurs'
           );
         }
-        const indicateurIds = [...new Set(valeurs.map((v) => v.indicateurId))];
-        // Capture the client's interpretation before entering the transaction.
-        const definitions = keyBy(
-          await this.definitionsRepository.listCollectiviteDefinitions(
-            { indicateurIds },
-            tx
-          ),
-          (d) => d.id
-        );
-        for (const id of indicateurIds) {
-          if (!definitions[id])
-            throw new BadRequestException(
-              `Indicateur definition not found for id ${id}`
-            );
-        }
         return {
-          definitions,
           valeurs: valeurs.map((valeur) =>
             !isUserTrusted && user?.role === AuthRole.AUTHENTICATED && user.id
               ? {
@@ -119,19 +98,6 @@ export class ValidateIndicateurValeursWriteService {
         enforceUserRules,
         tx
       );
-      for (const id of indicateurIds) {
-        const definition = definitionsById[id];
-        const requested = input.definitions[id];
-        if (!definition || !requested)
-          throw new BadRequestException(
-            `Indicateur definition not found for id ${id}`
-          );
-        if (definition.periodicite !== requested.periodicite) {
-          throw new BadRequestException(
-            `La périodicité de l'indicateur ${id} a changé de ${requested.periodicite} à ${definition.periodicite} pendant l'écriture`
-          );
-        }
-      }
       const metadataIds = [
         ...new Set(
           input.valeurs.flatMap(({ metadonneeId }) =>

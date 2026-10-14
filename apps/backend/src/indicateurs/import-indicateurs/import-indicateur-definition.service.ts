@@ -578,7 +578,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             'description',
             //'groupementId',
             'valeurCalcule',
-            'periodicite',
             'exprCible',
             'exprSeuil',
             'libelleCibleSeuil',
