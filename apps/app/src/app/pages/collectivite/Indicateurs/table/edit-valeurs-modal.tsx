@@ -14,6 +14,7 @@ import {
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useId, useRef, useState } from 'react';
+import { IndicateurPeriodes } from '@tet/domain/indicateurs';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
@@ -73,7 +74,9 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   // cherche si il existe déjà une valeur
   const getValeurExistante = (a: number | null) => {
     if (!a) return null;
-    return valeursExistantes.find((v) => v.annee === a);
+    return valeursExistantes.find(
+      (v) => Number(IndicateurPeriodes.serialize(v.periode)) === a
+    );
   };
 
   const validateAndAddNewValue = async () => {

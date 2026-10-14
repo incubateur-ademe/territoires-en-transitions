@@ -13,12 +13,12 @@ import {
 import { capitalize } from '@tet/ui/labels/plural';
 import { useState } from 'react';
 import { IndicateurPeriodes } from '@tet/domain/indicateurs';
-import type { IndicateurPeriodeValue } from '../data/prepare-indicateur-periode-data';
+import type { PreparedValue } from '../data/prepare-data';
 import { CellValue } from './cell-value';
 
 type ConfirmDeleteProps = {
   unite: string;
-  valeur: IndicateurPeriodeValue;
+  valeur: PreparedValue;
   onDismissConfirm: (overwrite: boolean) => void;
 };
 

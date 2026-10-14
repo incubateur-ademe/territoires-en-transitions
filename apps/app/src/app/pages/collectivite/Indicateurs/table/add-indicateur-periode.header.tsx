@@ -95,7 +95,7 @@ export const AddIndicateurPeriodeHeader = <
         <div className="flex items-stretch gap-2">
           <Input
             ref={inputRef}
-            type="text"
+            type={editor.inputType}
             displaySize="sm"
             containerClassname="max-w-[8.5rem]"
             value={draft}
@@ -111,7 +111,7 @@ export const AddIndicateurPeriodeHeader = <
             id={id}
             inputMode={editor.inputMode}
             aria-label={editor.add}
-            placeholder={editor.add}
+            placeholder={editor.placeholder}
             disabled={isSubmitting}
             aria-invalid={isInvalid}
             data-test="indicateurs.periodes.input"

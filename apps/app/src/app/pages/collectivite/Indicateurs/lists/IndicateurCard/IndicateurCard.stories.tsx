@@ -1,10 +1,17 @@
 import { Meta, type StoryObj } from '@storybook/nextjs-vite';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriodes,
+} from '@tet/domain/indicateurs';
 import type { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 
 import { IndicateurCardBase } from './IndicateurCard';
 import type { IndicateurCardBaseProps } from './IndicateurCard';
 
+const periode = IndicateurPeriodes.parse(
+  IndicateurPeriodiciteEnum.ANNUELLE,
+  '2021'
+);
 const definition = {
   id: 768,
   version: '1.0.0',
@@ -53,7 +60,6 @@ const definition = {
 const props = {
   chartInfo: {
     definition,
-    periodicite: definition.periodicite,
     typesSegmentation: [],
     segmentation: undefined,
     setSegmentation: () => undefined,
@@ -80,10 +86,11 @@ const props = {
     },
     data: {
       unite: 'm2/hab',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
       valeurs: {
         objectifs: {
           indicateurId: 768,
-          anneeModePrive: undefined,
+          dernierePeriodeModePrive: undefined,
           sources: [
             {
               source: 'collectivite',
@@ -92,8 +99,9 @@ const props = {
                 {
                   id: 3,
                   calculAuto: false,
-                  annee: 2021,
-                  anneeISO: '2021-01-01T00:00:00.000Z',
+                  periode,
+                  periodeLabel: '2021',
+                  dateValeurISO: '2021-01-01T00:00:00.000Z',
                   valeur: 23.33,
                   commentaire: null,
                 },
@@ -114,14 +122,15 @@ const props = {
               resultat: 22.33,
               objectif: 23.33,
               confidentiel: false,
-              annee: 2021,
+              periode,
+              periodeLabel: '2021',
             },
           ],
-          annees: [2021],
+          periodes: [periode],
         },
         resultats: {
           indicateurId: 768,
-          anneeModePrive: 2021,
+          dernierePeriodeModePrive: periode,
           sources: [
             {
               source: 'collectivite',
@@ -130,8 +139,9 @@ const props = {
                 {
                   id: 3,
                   calculAuto: false,
-                  annee: 2021,
-                  anneeISO: '2021-01-01T00:00:00.000Z',
+                  periode,
+                  periodeLabel: '2021',
+                  dateValeurISO: '2021-01-01T00:00:00.000Z',
                   valeur: 22.33,
                   commentaire: null,
                 },
@@ -152,10 +162,11 @@ const props = {
               resultat: 22.33,
               objectif: 23.33,
               confidentiel: false,
-              annee: 2021,
+              periode,
+              periodeLabel: '2021',
             },
           ],
-          annees: [2021],
+          periodes: [periode],
         },
         segments: [],
       },

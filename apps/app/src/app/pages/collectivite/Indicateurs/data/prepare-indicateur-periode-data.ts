@@ -2,19 +2,12 @@ import {
   IndicateurPeriodes,
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
-import { getAnneesDistinctes, type PreparedData } from './prepare-data';
+import type { PreparedData } from './prepare-data';
 
 type PreparedSource = PreparedData['sources'][number];
-type IndicateurPeriodeSource = Omit<PreparedSource, 'valeurs'> & {
-  valeurs: (Omit<PreparedSource['valeurs'][number], 'annee' | 'anneeISO'> & {
-    periode: IndicateurPeriode;
-  })[];
-};
+type IndicateurPeriodeSource = PreparedSource;
 
-export type IndicateurPeriodeValue = Omit<
-  PreparedData['valeursExistantes'][number],
-  'annee'
-> & { periode: IndicateurPeriode };
+export type IndicateurPeriodeValue = PreparedData['valeursExistantes'][number];
 
 export type IndicateurPeriodeData = {
   indicateurId: PreparedData['indicateurId'];
@@ -25,35 +18,16 @@ export type IndicateurPeriodeData = {
   valeursExistantes: IndicateurPeriodeValue[];
 };
 
-/** Adapts the annual chart model once, before data reaches the period tables. */
+/** Shares the prepared periods with the combined results/objectives table. */
 export const prepareIndicateurPeriodeData = (
-  data: PreparedData & { annees?: readonly number[] }
+  data: PreparedData
 ): IndicateurPeriodeData => {
-  const sources = data.sources.map((source) => ({
-    ...source,
-    valeurs: source.valeurs.map(({ annee, anneeISO, ...value }) => ({
-      ...value,
-      periode: IndicateurPeriodes.fromYear(annee),
-    })),
-  }));
   return {
     indicateurId: data.indicateurId,
-    periodes: IndicateurPeriodes.merge(
-      (data.annees ?? getAnneesDistinctes(data)).map(
-        IndicateurPeriodes.fromYear
-      )
-    ),
-    periodeModePrive:
-      data.anneeModePrive === undefined
-        ? undefined
-        : IndicateurPeriodes.fromYear(data.anneeModePrive),
-    sources,
-    donneesCollectivite: sources.find(
-      (source) => source.source === 'collectivite'
-    ),
-    valeursExistantes: data.valeursExistantes.map(({ annee, ...value }) => ({
-      ...value,
-      periode: IndicateurPeriodes.fromYear(annee),
-    })),
+    periodes: IndicateurPeriodes.merge(data.periodes),
+    periodeModePrive: data.dernierePeriodeModePrive,
+    sources: data.sources,
+    donneesCollectivite: data.donneesCollectivite,
+    valeursExistantes: data.valeursExistantes,
   };
 };

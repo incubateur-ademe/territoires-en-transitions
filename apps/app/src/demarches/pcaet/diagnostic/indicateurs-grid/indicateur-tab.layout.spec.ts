@@ -5,6 +5,7 @@ import {
 import {
   IndicateurPeriodiciteEnum,
   IndicateurPeriodes,
+  type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { fakeRow } from '../../../../indicateurs/valeurs/grid/__tests__/grid-fixtures';
@@ -138,7 +139,8 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     IndicateurPeriodes.parse(IndicateurPeriodiciteEnum.ANNUELLE, String(year));
   const buildRow = (
     optionalYears: readonly number[] | 'all',
-    isApplicable = true
+    isApplicable = true,
+    periodicite: IndicateurPeriodicite = IndicateurPeriodiciteEnum.ANNUELLE
   ) => {
     const fixture = fakeRow({
       indicateurId: 12,
@@ -160,11 +162,22 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
           ...fixture.indicateurDefinition,
           identifiantReferentiel: 'cae_63.b',
           isApplicable,
+          periodicite,
         },
       ],
       indicateurValeurs: [],
     })[0];
   };
+
+  it.each([
+    IndicateurPeriodiciteEnum.MENSUELLE,
+    IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    IndicateurPeriodiciteEnum.SEMESTRIELLE,
+  ])('refuse une définition %s dans le diagnostic annuel', (periodicite) => {
+    expect(() => buildRow([], true, periodicite)).toThrow(
+      'INDICATEUR_ANNUAL_PERIODICITE_REQUIRED'
+    );
+  });
 
   it.each([
     { year: 2030, required: true },
