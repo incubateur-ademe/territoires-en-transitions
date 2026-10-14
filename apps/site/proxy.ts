@@ -75,7 +75,7 @@ export function proxy(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net
+    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com tube.numerique.gouv.fr *.adform.net
     ${googleWithFloodlight.frameSrc}
     ${new URL(STREAMLIT_STATS_IFRAME_SRC).origin}
     ${new URL(STREAMLIT_IMPACT_IFRAME_SRC).origin};

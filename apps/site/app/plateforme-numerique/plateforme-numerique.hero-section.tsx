@@ -35,7 +35,7 @@ export const PlateformeNumeriqueHeroSection = () => {
             <Button
               className="after:hidden"
               variant="outlined"
-              href="https://www.youtube.com/watch?v=fFyxb7M4Wio"
+              href="https://tube.numerique.gouv.fr/w/9QfiUGr3fXiwHRCndgbwBt"
               external
             >
               Voir une démo (2 min)

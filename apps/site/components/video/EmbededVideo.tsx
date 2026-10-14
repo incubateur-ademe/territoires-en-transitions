@@ -16,6 +16,10 @@ const EmbededVideo = ({url, title, className}: EmbededVideoProps) => {
     } else {
       embedLink = url.split('youtu.be').join('www.youtube.com/embed');
     }
+  } else if (url.includes('tube.numerique.gouv.fr')) {
+    embedLink = url.includes('/videos/embed/')
+      ? url
+      : url.replace('/w/', '/videos/embed/');
   } else if (url.includes('dailymotion') || url.includes('dai.ly')) {
     if (url.includes('embed')) embedLink = url;
     else {
