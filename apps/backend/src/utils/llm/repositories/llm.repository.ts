@@ -19,7 +19,10 @@ export type LlmCompletionRequest = {
   maxOutputTokens?: number;
   thinkingBudget?: number;
   timeoutMs?: number;
-  /** Pour une tâche mécanique (tri, rattachement), où raisonner ne sert à rien. */
+  /**
+   * Pour une tâche mécanique (tri, rattachement), où raisonner ne sert à rien.
+   * Chez Gemini, il remplace `thinkingBudget`.
+   */
   reasoningEffort?: LlmReasoningEffort;
   signal?: AbortSignal;
 };

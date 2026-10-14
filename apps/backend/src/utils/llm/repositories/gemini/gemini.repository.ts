@@ -3,12 +3,14 @@ import {
   FinishReason,
   GenerateContentResponseUsageMetadata,
   GoogleGenAI,
+  ThinkingConfig,
+  ThinkingLevel,
 } from '@google/genai';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { describeError } from '../describe-error';
 import { LlmError } from '../../llm.errors';
-import { LlmCapabilities, LlmTier } from '../../llm-tier';
+import { LlmCapabilities, LlmReasoningEffort, LlmTier } from '../../llm-tier';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
@@ -19,6 +21,11 @@ import { TokenUsage } from '../../token-usage';
 
 const CALL_TIMEOUT_MS = 9 * 60 * 1000;
 const RATE_LIMITED_STATUSES = new Set([429, 503]);
+const THINKING_LEVELS: Record<LlmReasoningEffort, ThinkingLevel> = {
+  low: ThinkingLevel.LOW,
+  medium: ThinkingLevel.MEDIUM,
+  high: ThinkingLevel.HIGH,
+};
 
 @Injectable()
 export class GeminiRepository extends LlmRepository {
@@ -91,10 +98,7 @@ export class GeminiRepository extends LlmRepository {
           systemInstruction: request.systemInstruction,
           temperature: request.temperature,
           maxOutputTokens: request.maxOutputTokens,
-          thinkingConfig:
-            request.thinkingBudget === undefined
-              ? undefined
-              : { thinkingBudget: request.thinkingBudget },
+          thinkingConfig: toThinkingConfig(request),
           httpOptions: { timeout: request.timeoutMs ?? CALL_TIMEOUT_MS },
           abortSignal: request.signal,
         },
@@ -166,6 +170,18 @@ export class GeminiRepository extends LlmRepository {
     return this.client;
   }
 }
+
+// Gemini 3 refuse un niveau et un budget ensemble (400), et ne tient pas le
+// budget : le niveau, quand il est demandé, l'emporte.
+const toThinkingConfig = ({
+  reasoningEffort,
+  thinkingBudget,
+}: LlmCompletionRequest): ThinkingConfig | undefined => {
+  if (reasoningEffort) {
+    return { thinkingLevel: THINKING_LEVELS[reasoningEffort] };
+  }
+  return thinkingBudget === undefined ? undefined : { thinkingBudget };
+};
 
 const toTokenUsage = (
   usage: GenerateContentResponseUsageMetadata | undefined

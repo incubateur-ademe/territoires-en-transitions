@@ -84,6 +84,9 @@ describe('enrichSousActions', () => {
     });
 
     expect(llm.generateStructured).toHaveBeenCalledTimes(2);
+    expect(llm.generateStructured).toHaveBeenCalledWith(
+      expect.objectContaining({ reasoningEffort: 'low' })
+    );
     expect(result.success).toBe(true);
     if (result.success) {
       result.data.actions[0].sousActions.forEach((sousAction, index) => {

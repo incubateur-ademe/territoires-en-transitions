@@ -122,6 +122,7 @@ const classifyBatch = async (
     }),
     tier: 'light',
     schema: secteursResponseSchema,
+    reasoningEffort: 'low',
     signal,
   });
   if (!completion.success) {

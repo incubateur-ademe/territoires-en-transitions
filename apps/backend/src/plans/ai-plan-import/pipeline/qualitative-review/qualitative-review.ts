@@ -32,6 +32,7 @@ export const reviewQuality = async (
       renderedActions: renderActionsCompact(actions),
     }),
     schema: qualitativeReviewResponseSchema,
+    reasoningEffort: 'low',
     signal,
   });
   // Un seul lot : la règle des étapes par lots s'applique telle quelle.

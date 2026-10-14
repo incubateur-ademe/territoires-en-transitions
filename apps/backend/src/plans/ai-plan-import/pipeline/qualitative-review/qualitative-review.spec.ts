@@ -1,7 +1,7 @@
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   createEmptyExtractedAction,
   ExtractedAction,
@@ -25,8 +25,9 @@ const action: ExtractedAction = createEmptyExtractedAction({
 describe('reviewQuality', () => {
   it("renvoie l'avis textuel et les tokens", async () => {
     const llm = {
-      generateStructured: async () =>
-        success({ data: { avis: 'Extraction cohérente' }, tokens }),
+      generateStructured: vi.fn(async () =>
+        success({ data: { avis: 'Extraction cohérente' }, tokens })
+      ),
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await reviewQuality(llm, { actions: [action] });
@@ -35,6 +36,9 @@ describe('reviewQuality', () => {
       success: true,
       data: { review: 'Extraction cohérente', tokens },
     });
+    expect(llm.generateStructured).toHaveBeenCalledWith(
+      expect.objectContaining({ reasoningEffort: 'low' })
+    );
   });
 
   it("rend un avis absent et un avertissement quand l'appel échoue", async () => {

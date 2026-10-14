@@ -283,8 +283,8 @@ Le budget de réponse est large (32 000 tokens) parce que `gpt-oss-120b`
 raisonne avant de répondre : ses tokens de raisonnement se prennent sur la
 même limite, sans apparaître dans l'usage retourné. `ALBERT_REASONING_EFFORT`
 (`low`, `medium`, `high`) règle cet effort pour tout le modèle fort ; une
-étape peut aussi le demander bas pour ses propres appels, ce que font le tri
-et la mise en cohérence.
+étape peut aussi le demander bas pour ses propres appels, ce que font le tri,
+la mise en cohérence, l'enrichissement et la relecture finale.
 
 ## 4. Mise en cohérence (Albert seulement, `pipeline/consolidate-hierarchy/`)
 
@@ -338,7 +338,9 @@ flowchart TD
 - Sur Albert, chaque palier a son modèle et son quota ; un palier sans modèle
   retombe sur le modèle fort, et l'OCR est désactivé sans modèle image-texte.
 - Sur Gemini, tous les paliers utilisent `GEMINI_MODEL`, et une image renvoie
-  une erreur `unsupported`.
+  une erreur `unsupported`. Un effort de raisonnement demandé devient un
+  `thinkingLevel` et remplace le budget de réflexion, que Gemini 3 ne tient
+  pas : l'enrichissement, les secteurs et la relecture finale raisonnent bas.
 - La pause qui suit un 429 vaut aussi sans quota déclaré, donc chez Gemini.
 
 Configuration (`utils/config/configuration.model.ts`) :
