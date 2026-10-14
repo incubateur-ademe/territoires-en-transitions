@@ -338,7 +338,9 @@ flowchart TD
 - Sur Albert, chaque palier a son modèle et son quota ; un palier sans modèle
   retombe sur le modèle fort, et l'OCR est désactivé sans modèle image-texte.
 - Sur Gemini, tous les paliers utilisent `GEMINI_MODEL`, et une image renvoie
-  une erreur `unsupported`.
+  une erreur `unsupported`. L'enrichissement, les secteurs et la relecture
+  finale demandent un `thinkingLevel` bas, propre à Gemini : Albert garde
+  `ALBERT_REASONING_EFFORT`.
 - La pause qui suit un 429 vaut aussi sans quota déclaré, donc chez Gemini.
 
 Configuration (`utils/config/configuration.model.ts`) :
