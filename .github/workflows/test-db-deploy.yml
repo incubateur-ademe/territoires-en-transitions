@@ -137,7 +137,27 @@ jobs:
           command: 'deploy --mode change --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
-      - name: Test annual periodicity constraints after deployment
+      - name: Test backup preflight against the deployed database
+        run: |
+          set -euo pipefail
+          postgres_image="$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)"
+          docker run \
+            --rm --interactive \
+            --network container:supabase_db_tet \
+            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --workdir /workspace \
+            --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
+            --env EXPECTED_RESTORE_PHASE=formulas \
+            --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
+          archive="$(mktemp)"
+          trap 'rm -f "$archive"' EXIT
+          pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
+            --table=sqitch.changes --file="$archive"
+          phase="$(bash data_layer/backup/check-restore-compatibility.sh "$archive")"
+          [[ "$phase" == "$EXPECTED_RESTORE_PHASE" ]]
+          BASH
+
+      - name: Test periodicity constraints after deployment
         run: |
           docker run \
             --rm \
@@ -147,4 +167,5 @@ jobs:
             --entrypoint pg_prove \
             "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
             --dbname=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --verbose data_layer/tests/indicateur/periodicite-release.sql
+            --verbose data_layer/tests/indicateur/periodicite-release.sql \
+            data_layer/tests/indicateur/periodicite-formules.sql

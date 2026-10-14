@@ -12,17 +12,22 @@ classify_release() {
         $1 == "indicateur/dependances_formules" { extractor = 1 }
         $1 == "indicateur/periodicite_obligatoire" { mandatory = 1 }
         $1 == "indicateur/periodicite_formules" { formulas = 1 }
+        $1 == "stats/report_indicateur_resultat_periode" { reporting = 1 }
         $1 == "indicateur/reconciliation_formules" { reconciliation = 1 }
         $1 == "indicateur/periodicite_activation" { activation = 1 }
         $1 == "indicateur/periodicite_nettoyage" { later = 1 }
         END {
             if (!seen || later || reconciliation) print "unsupported"
             else if (schema) {
-                if (activation && mandatory && extractor && formulas) print "contract"
-                else if (activation || mandatory || extractor || formulas) print "incomplete"
+                if (activation && mandatory && extractor && formulas && reporting) print "contract"
+                else if (activation || mandatory) print "incomplete"
+                else if (extractor && formulas && reporting) print "reporting"
+                else if (reporting) print "incomplete"
+                else if (extractor && formulas) print "formulas"
+                else if (extractor || formulas) print "incomplete"
                 else print "schema"
             }
-            else if (extractor || mandatory || formulas || reconciliation || activation) print "incomplete"
+            else if (extractor || mandatory || formulas || reporting || reconciliation || activation) print "incomplete"
             else print "legacy"
         }
     '
@@ -36,17 +41,24 @@ target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
     --command="SELECT change, project FROM sqitch.changes" | classify_release)
 
 case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema) ;;
+    legacy:legacy|legacy:schema|schema:schema|formulas:formulas) ;;
     *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
 esac
 # Verify the physical schema before restore.sh truncates any table.
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 verify_changes=()
-if [[ "$target_phase" == schema ]]; then
-    verify_changes+=(periodicite_schema)
+if [[ "$target_phase" != legacy ]]; then
+    verify_changes+=(indicateur/periodicite_schema)
+fi
+if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
+    verify_changes+=(
+        indicateur/remplacer-catalogue-periodicites-par-contraintes
+        indicateur/dependances_formules
+        indicateur/periodicite_formules
+    )
 fi
 for change in "${verify_changes[@]}"; do
     psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
-        --file="$script_dir/../sqitch/verify/indicateur/$change.sql" >/dev/null
+        --file="$script_dir/../sqitch/verify/$change.sql" >/dev/null
 done
 printf '%s\n' "$target_phase"
