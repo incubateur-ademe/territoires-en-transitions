@@ -53,25 +53,32 @@ if [ -z "${_s3_key}" ] || [ -z "${_s3_secret}" ] || [ "${_s3_key}" = "${_creds_r
   exit 1
 fi
 
-auth=(-H "Authorization: Bearer ${COOLIFY_TOKEN}" -H "Accept: application/json" -H "Content-Type: application/json")
+# Token et payload (qui porte la clé S3) passent par des fichiers 0600, jamais
+# par argv : la ligne de commande de curl est lisible de tout utilisateur de la
+# machine (ps, /proc/<pid>/cmdline).
+umask 077
+_tmp="$(mktemp -d)"
+trap 'rm -rf "$_tmp"' EXIT
+printf 'Authorization: Bearer %s\nAccept: application/json\nContent-Type: application/json\n' \
+  "${COOLIFY_TOKEN}" >"$_tmp/headers"
+auth=(-H "@$_tmp/headers")
 
-_payload="$(jq -n \
+# Clé et secret par l'environnement de jq (env.*), pas par --arg : même raison.
+S3_KEY="${_s3_key}" S3_SECRET="${_s3_secret}" jq -n \
   --arg name "${S3_STORAGE_NAME}" \
   --arg description "${_DESCRIPTION}" \
   --arg endpoint "${S3_ENDPOINT}" \
   --arg bucket "${S3_BUCKET}" \
   --arg region "${S3_REGION}" \
-  --arg key "${_s3_key}" \
-  --arg secret "${_s3_secret}" \
   '{
     name: $name,
     description: $description,
     endpoint: $endpoint,
     bucket: $bucket,
     region: $region,
-    key: $key,
-    secret: $secret
-  }')"
+    key: env.S3_KEY,
+    secret: env.S3_SECRET
+  }' >"$_tmp/payload.json"
 
 echo "→ Recherche du S3 storage « ${S3_STORAGE_NAME} » sur ${COOLIFY_ENDPOINT}…"
 _storages="$(curl -fsS "${auth[@]}" "${COOLIFY_ENDPOINT}/s3-storages")"
@@ -82,16 +89,16 @@ if [ -n "${_uuid}" ] && [ "${_uuid}" != "null" ]; then
   echo "  trouvé uuid=${_uuid} → PATCH…"
   curl -fsS -X PATCH "${auth[@]}" \
     "${COOLIFY_ENDPOINT}/s3-storages/${_uuid}" \
-    -d "${_payload}" >/dev/null
+    --data-binary "@$_tmp/payload.json" >/dev/null
 else
   echo "  absent → POST…"
   _created="$(curl -fsS -X POST "${auth[@]}" \
     "${COOLIFY_ENDPOINT}/s3-storages" \
-    -d "${_payload}")"
+    --data-binary "@$_tmp/payload.json")"
   _uuid="$(printf '%s' "${_created}" | jq -r '.uuid // empty')"
   if [ -z "${_uuid}" ] || [ "${_uuid}" = "null" ]; then
-    echo "✗ Création S3 storage sans uuid. Réponse :" >&2
-    printf '%s\n' "${_created}" >&2
+    # Pas la réponse brute : elle peut citer le payload, donc le secret.
+    echo "✗ Création S3 storage sans uuid : $(printf '%s' "${_created}" | jq -r '.message // "réponse inattendue"' 2>/dev/null)" >&2
     exit 1
   fi
   echo "  créé uuid=${_uuid}"
