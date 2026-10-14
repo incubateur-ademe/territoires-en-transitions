@@ -37,12 +37,14 @@ export const SousActionDescriptionCell = ({ sousAction }: Props) => {
       canEdit={canUpdate}
       edit={{
         floatingMatchReferenceHeight: false,
-        onClose: () =>
-          hasChanged &&
-          updateSousAction({
-            ficheId: sousAction.id,
-            ficheFields: { description: value?.trim() },
-          }),
+        onClose: () => {
+          if (hasChanged) {
+            updateSousAction({
+              ficheId: sousAction.id,
+              ficheFields: { description: value?.trim() },
+            });
+          }
+        },
         renderOnEdit: ({ openState }) => (
           <TableCellTextarea
             value={value ?? undefined}
