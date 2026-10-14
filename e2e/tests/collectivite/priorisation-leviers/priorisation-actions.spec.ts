@@ -6,6 +6,7 @@ import {
   testWithActionsDeReference as test,
   withRunSuffix,
 } from 'tests/shared/actions-de-reference/actions-de-reference.fixture';
+import { addMobilisationAvecFiche } from './priorisation-leviers.fixture';
 import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_NOM: Levier = LEVIER_NOM_BY_ID.covoiturage;
@@ -43,6 +44,7 @@ test.describe('Priorisation : matrice et volet', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
 
     await pom.goto(collectivite.data.id);
@@ -67,6 +69,7 @@ test.describe('Priorisation : matrice et volet', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
 
@@ -82,6 +85,7 @@ test.describe('Priorisation : matrice et volet', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
 
@@ -103,6 +107,7 @@ test.describe('Priorisation : matrice et volet', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
 
@@ -130,6 +135,7 @@ test.describe('Priorisation : matrice et volet', () => {
       const { collectivite } = await collectivites.addCollectiviteAndUser({
         userArgs: { autoLogin: true },
       });
+      await addMobilisationAvecFiche(collectivite.data.id);
       const pom = new PriorisationLeviersPom(page);
       await pom.goto(collectivite.data.id);
 
@@ -150,6 +156,7 @@ test.describe('Priorisation : matrice et volet', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
@@ -175,6 +182,7 @@ test.describe('Priorisation : matrice et volet', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
@@ -215,6 +223,7 @@ test.describe('Priorisation : présélection', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
@@ -246,6 +255,7 @@ test.describe('Priorisation : présélection', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
@@ -286,6 +296,7 @@ test.describe('Priorisation : présélection', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
@@ -327,6 +338,7 @@ test.describe('Priorisation : présélection', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);

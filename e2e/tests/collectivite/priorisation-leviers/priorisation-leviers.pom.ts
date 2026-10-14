@@ -49,7 +49,7 @@ export class PriorisationLeviersPom {
       .getByRole('button');
     this.levierButtons = leviersInMatrix.or(leviersOutsideMatrix);
     this.missingMobilisationMessage = page.getByText(
-      "Aucune action de la collectivité n'est encore rattachée à un levier"
+      'Ajoutez des actions pour accéder à cette vue'
     );
     this.pertinenceToggles = page.getByRole('group', {
       name: /^Pertinence du levier /,

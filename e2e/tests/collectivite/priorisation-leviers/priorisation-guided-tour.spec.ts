@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { categorieActionEnumValues } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
+import { addMobilisationAvecFiche } from './priorisation-leviers.fixture';
 import {
   PriorisationLeviersPom,
   TourButtonName,
@@ -47,6 +48,7 @@ test.describe('Priorisation : visite guidée à la première visite', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
 
     await pom.goto(collectivite.data.id);
@@ -66,6 +68,7 @@ test.describe('Priorisation : visite guidée à la première visite', () => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
@@ -294,6 +297,7 @@ test.describe('Priorisation : « Comment ça marche ? » relance la visite', () 
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.waitForLeviersLoaded();
@@ -315,6 +319,7 @@ test.describe('Priorisation : « Comment ça marche ? » relance la visite', () 
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.waitForLeviersLoaded();
@@ -336,6 +341,7 @@ test.describe('Priorisation : « Comment ça marche ? » relance la visite', () 
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
     await pom.waitForLeviersLoaded();
