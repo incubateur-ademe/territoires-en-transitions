@@ -96,3 +96,27 @@ export type DemarchePcaet = DemarcheBase & {
   amontModifiable: boolean;
   avalModifiable: boolean;
 };
+
+/**
+ * Démarche PCAET telle que la lit qui consulte la collectivité sans en éditer
+ * les démarches — un visiteur, un membre en lecture.
+ *
+ * Réduite à ce que la page publique affiche : ni capacités du workflow, ni
+ * plans en cours de vérification, ni identifiants des pilotes.
+ */
+export type DemarchePcaetPublic = Pick<
+  DemarchePcaet,
+  | 'id'
+  | 'collectiviteId'
+  | 'titre'
+  | 'status'
+  | 'obligation'
+  | 'launchedAt'
+  | 'publishedAt'
+  | 'adoptedAt'
+  | 'transmittedOffPlatform'
+  | 'createdAt'
+  | 'modifiedAt'
+> & {
+  pilotes: { nom: string }[];
+};

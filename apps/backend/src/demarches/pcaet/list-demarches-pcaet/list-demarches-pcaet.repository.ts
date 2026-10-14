@@ -2,8 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { DemarcheTypeEnum, type DemarchePcaet } from '@tet/domain/demarches';
-import { and, desc, eq } from 'drizzle-orm';
+import {
+  DemarcheTypeEnum,
+  type DemarchePcaet,
+  type DemarchePcaetStatus,
+} from '@tet/domain/demarches';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
 import {
   demarchePcaetSelectColumns,
@@ -27,7 +31,14 @@ export class ListDemarchesPcaetRepository {
   ) {}
 
   async listDemarchesPcaet(
-    { collectiviteId }: { collectiviteId: number },
+    {
+      collectiviteId,
+      statuses,
+    }: {
+      collectiviteId: number;
+      /** Restreint la liste à ces statuts ; tous sans précision. */
+      statuses?: readonly DemarchePcaetStatus[];
+    },
     tx?: Transaction
   ): Promise<Result<DemarchePcaet[], ListDemarchesPcaetError>> {
     const db = tx || this.databaseService.db;
@@ -38,7 +49,8 @@ export class ListDemarchesPcaetRepository {
         .where(
           and(
             eq(demarcheTable.collectiviteId, collectiviteId),
-            eq(demarcheTable.type, DemarcheTypeEnum.PCAET)
+            eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
+            statuses ? inArray(demarcheTable.status, [...statuses]) : undefined
           )
         )
         .orderBy(desc(demarcheTable.createdAt));

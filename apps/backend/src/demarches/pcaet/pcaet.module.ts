@@ -79,6 +79,13 @@ import { ListDossiersInstructionRepository } from './list-dossiers-instruction/l
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDossiersInstructionService } from './list-dossiers-instruction/list-dossiers-instruction.service';
 import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarches-pcaet.repository';
+import { ListPublicDemarchesPcaetRouter } from './list-public-demarches-pcaet/list-public-demarches-pcaet.router';
+import { ListPublicDemarchesPcaetService } from './list-public-demarches-pcaet/list-public-demarches-pcaet.service';
+import { GetPublicDemarchePcaetRouter } from './get-public-demarche-pcaet/get-public-demarche-pcaet.router';
+import { GetPublicDemarchePcaetService } from './get-public-demarche-pcaet/get-public-demarche-pcaet.service';
+import { GetPublicDiagnosticRouter } from './get-public-diagnostic/get-public-diagnostic.router';
+import { GetPublicDiagnosticService } from './get-public-diagnostic/get-public-diagnostic.service';
+import { DemarchePcaetPublicAccessService } from './shared/demarche-pcaet-public-access.service';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListDemarchesPcaetService } from './list-demarches-pcaet/list-demarches-pcaet.service';
 import { ListPlansRouter } from './list-plans/list-plans.router';
@@ -184,6 +191,13 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     ListDemarchesPcaetRepository,
     ListDemarchesPcaetService,
     ListDemarchesPcaetRouter,
+    DemarchePcaetPublicAccessService,
+    ListPublicDemarchesPcaetService,
+    ListPublicDemarchesPcaetRouter,
+    GetPublicDemarchePcaetService,
+    GetPublicDemarchePcaetRouter,
+    GetPublicDiagnosticService,
+    GetPublicDiagnosticRouter,
     ListDossiersInstructionRepository,
     ListDossiersInstructionService,
     ListDossiersInstructionRouter,

@@ -41,6 +41,7 @@ export const PermissionOperations = [
   'plans.export',
 
   // Démarches
+  'demarches.pcaet.read',
   'demarches.pcaet.mutate',
   'demarches.pcaet.mutate_pilotes_any_status',
 

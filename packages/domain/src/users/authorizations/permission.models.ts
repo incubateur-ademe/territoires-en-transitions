@@ -16,6 +16,7 @@ const visiteurVerifiePermissions: readonly PermissionOperation[] = [
   'plans.fiches.read',
   'indicateurs.indicateurs.read',
   'indicateurs.valeurs.read',
+  'demarches.pcaet.read',
 ];
 
 const collectiviteLecturePermissions: readonly PermissionOperation[] = [

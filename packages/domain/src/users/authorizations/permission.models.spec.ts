@@ -59,6 +59,15 @@ describe('permissionsByRole', () => {
     ]);
   });
 
+  it('accorde la lecture publique des démarches à tout utilisateur vérifié', () => {
+    expect(permissionsByRole[PlatformRole.VERIFIED]).toContain(
+      'demarches.pcaet.read'
+    );
+    expect(permissionsByRole[CollectiviteRole.LECTURE]).toContain(
+      'demarches.pcaet.read'
+    );
+  });
+
   it('accorde la lecture des documents confidentiels à tout rôle qui dépose des documents', () => {
     const rolesMutatingWithoutConfidentielRead = Object.entries(
       permissionsByRole
