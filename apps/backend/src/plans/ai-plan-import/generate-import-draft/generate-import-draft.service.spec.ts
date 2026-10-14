@@ -433,6 +433,26 @@ describe('GenerateImportDraftService', () => {
     );
   });
 
+  it("cite le statut HTTP d'une étape en échec, mais n'envoie que le type à PostHog", async () => {
+    const mocks = buildMocks({
+      generateStructured: async () =>
+        failure({ kind: 'api_error', httpStatus: 503 }),
+    });
+
+    await buildService(mocks).generate('job-1');
+
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Étape extraction en échec (api_error 503)',
+      })
+    );
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({ reason: 'api_error' }),
+      })
+    );
+  });
+
   it('marque le job failed et supprime la source quand la pipeline lève une exception', async () => {
     const mocks = buildMocks({
       generateStructured: async () => {
