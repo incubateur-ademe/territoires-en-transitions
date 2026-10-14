@@ -16,11 +16,14 @@ export const useDeleteIndicateurDefinition = (indicateurId: number) => {
 
   return useMutation({
     mutationKey: mutationOptions.mutationKey,
-    mutationFn: async () => {
-      return mutationOptions.mutationFn?.({
-        indicateurId,
-        collectiviteId,
-      });
+    mutationFn: async (_variables: void, context) => {
+      return mutationOptions.mutationFn?.(
+        {
+          indicateurId,
+          collectiviteId,
+        },
+        context
+      );
     },
     meta: {
       success: "L'indicateur personnalisé a été supprimé",

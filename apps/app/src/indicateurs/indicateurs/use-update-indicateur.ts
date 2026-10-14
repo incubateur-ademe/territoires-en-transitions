@@ -17,12 +17,15 @@ export const useUpdateIndicateur = (indicateurId: number) => {
   return useMutation({
     mutationKey: mutationOptions.mutationKey,
 
-    mutationFn: async (indicateurFields: DefinitionFieldsInput) => {
-      return mutationOptions.mutationFn?.({
-        indicateurId,
-        collectiviteId,
-        indicateurFields,
-      });
+    mutationFn: async (indicateurFields: DefinitionFieldsInput, context) => {
+      return mutationOptions.mutationFn?.(
+        {
+          indicateurId,
+          collectiviteId,
+          indicateurFields,
+        },
+        context
+      );
     },
 
     onSuccess: (_, variables) => {

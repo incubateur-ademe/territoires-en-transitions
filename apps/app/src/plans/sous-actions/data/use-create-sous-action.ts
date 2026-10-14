@@ -17,10 +17,11 @@ export const useCreateSousAction = (
   return useMutation({
     mutationKey: mutationOptions.mutationKey,
 
-    mutationFn: async () => {
-      return mutationOptions.mutationFn?.({
-        fiche: { collectiviteId, parentId, statut: null },
-      });
+    mutationFn: async (_variables: void, context) => {
+      return mutationOptions.mutationFn?.(
+        { fiche: { collectiviteId, parentId, statut: null } },
+        context
+      );
     },
 
     onSuccess: (createdFiche) => {

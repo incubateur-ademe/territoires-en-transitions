@@ -104,8 +104,9 @@ describe('useRemovePreuveFromDemande', () => {
       result.current.removePreuve(PREUVE_ID);
     });
 
-    expect(mutationFn.mock.calls).toEqual([
-      [{ preuveId: PREUVE_ID, preuveType: 'labellisation' }],
+    // 2e argument : le contexte de mutation passé par React Query
+    expect(mutationFn.mock.calls.map(([variables]) => variables)).toEqual([
+      { preuveId: PREUVE_ID, preuveType: 'labellisation' },
     ]);
   });
 
