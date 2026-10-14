@@ -2,6 +2,8 @@ import { appLabels } from '@/app/labels/catalog';
 import { Caption } from '@/app/ui/charts/matrix/caption';
 import type { StatusScale } from '@/app/ui/charts/status-bar/status-bar';
 import { StatusBarChart } from '@/app/ui/charts/status-bar/status-bar.chart';
+import { StatusBarDataTable } from '@/app/ui/charts/status-bar/status-bar.data-table';
+import { ActionDeReference } from '@tet/domain/shared';
 import { preset } from '@tet/ui';
 import { sumBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
@@ -13,23 +15,36 @@ import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
 
 type SousLeviersChartProps = {
   places: LevierPlace[];
+  preselectedActions: readonly ActionDeReference[];
   onLevierSelected: SelectLevier;
 };
 
 const { colors } = preset.theme.extend;
 
 const STATUS_SCALE: StatusScale<string> = [
-  { status: toMobilisationLabel('none'), color: colors.grey[5] },
-  { status: toMobilisationLabel('partial'), color: colors.info[2] },
-  { status: toMobilisationLabel('good'), color: colors.info[3] },
-  { status: toMobilisationLabel('full'), color: colors.info[1] },
+  { status: toMobilisationLabel('none'), color: colors.grey[3] },
+  { status: toMobilisationLabel('partial'), color: colors.info[3] },
+  { status: toMobilisationLabel('good'), color: colors.info[1] },
+  { status: toMobilisationLabel('full'), color: colors.primary[9] },
+  { status: appLabels.ajouteeALaPreselection, color: colors.warning[1] },
 ];
+
+const DATA_TABLE_LABELS = {
+  toggle: appLabels.voirLesDonneesDuGraphique,
+  barHeader: appLabels.sousLevier,
+  valueHeader: appLabels.axePotentiel,
+  statusHeader: appLabels.axeMobilisation,
+};
 
 export const SousLeviersChart = ({
   places,
+  preselectedActions,
   onLevierSelected,
 }: SousLeviersChartProps): JSX.Element => {
-  const bars = useMemo(() => toSousLevierBars(places), [places]);
+  const bars = useMemo(
+    () => toSousLevierBars(places, preselectedActions),
+    [places, preselectedActions]
+  );
   const formatValue = useFormatImpactPotentiel(
     sumBy(bars, ({ value }) => value)
   );
@@ -42,15 +57,22 @@ export const SousLeviersChart = ({
   };
 
   return (
-    <div className="h-matrix-chart">
-      <StatusBarChart
+    <div className="flex flex-col gap-4">
+      <div className="h-matrix-chart">
+        <StatusBarChart
+          data={bars}
+          statusScale={STATUS_SCALE}
+          formatValue={formatValue}
+          onBarSelected={selectBar}
+        >
+          <Caption>{appLabels.sousLeviersLegende}</Caption>
+        </StatusBarChart>
+      </div>
+      <StatusBarDataTable
         data={bars}
-        statusScale={STATUS_SCALE}
         formatValue={formatValue}
-        onBarSelected={selectBar}
-      >
-        <Caption>{appLabels.sousLeviersLegende}</Caption>
-      </StatusBarChart>
+        labels={DATA_TABLE_LABELS}
+      />
     </div>
   );
 };

@@ -1,6 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { StatusBar } from '@/app/ui/charts/status-bar/status-bar';
-import { CategorieAction, LevierId } from '@tet/domain/shared';
+import {
+  ActionDeReference,
+  CategorieAction,
+  LevierId,
+} from '@tet/domain/shared';
 import { LevierPlace } from '../data/to-matrix-points';
 import { toMobilisationLabel, toMobilisationLevel } from './mobilisation-level';
 import { toMondrianTiles } from './to-mondrian-tiles';
@@ -18,19 +22,33 @@ const toSousLevierId = (
   categorie: CategorieAction
 ): SousLevierId => `${levierId}/${categorie}`;
 
-export const toSousLevierBars = (places: LevierPlace[]): SousLevierBar[] =>
-  toMondrianTiles(places)
+export const toSousLevierBars = (
+  places: LevierPlace[],
+  preselectedActions: readonly ActionDeReference[]
+): SousLevierBar[] => {
+  const preselectedIds = new Set(
+    preselectedActions.map(({ levier, categorie }) =>
+      toSousLevierId(levier, categorie)
+    )
+  );
+  return toMondrianTiles(places)
     .flatMap((levierTile) =>
-      levierTile.categories.map((categorieTile) => ({
-        id: toSousLevierId(levierTile.levierId, categorieTile.categorie),
-        label: appLabels.sousLevierLabel({
-          levierNom: levierTile.nom,
+      levierTile.categories.map((categorieTile) => {
+        const id = toSousLevierId(levierTile.levierId, categorieTile.categorie);
+        return {
+          id,
+          label: appLabels.sousLevierLabel({
+            levierNom: levierTile.nom,
+            categorie: categorieTile.categorie,
+          }),
+          value: categorieTile.potentielReduction,
+          status: preselectedIds.has(id)
+            ? appLabels.ajouteeALaPreselection
+            : toMobilisationLabel(toMobilisationLevel(categorieTile.note)),
+          levierId: levierTile.levierId,
           categorie: categorieTile.categorie,
-        }),
-        value: categorieTile.potentielReduction,
-        status: toMobilisationLabel(toMobilisationLevel(categorieTile.note)),
-        levierId: levierTile.levierId,
-        categorie: categorieTile.categorie,
-      }))
+        };
+      })
     )
     .sort((first, second) => second.value - first.value);
+};
