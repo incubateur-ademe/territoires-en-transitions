@@ -187,7 +187,7 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
     expect(saved.indicateurs[0].sources.collectivite.valeurs).toHaveLength(2);
   });
 
-  test('Le graphique sépare les versions annuelles importées et leurs trous sans perdre les zéros', async () => {
+  test('Le graphique sépare les versions annuelles retenues et leurs trous sans perdre les zéros', async () => {
     const sourceId = `test-versions-${randomUUID()}`;
     await databaseService.db.insert(indicateurSourceTable).values({
       id: sourceId,
@@ -236,7 +236,13 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
             metadonneeId: ancienneVersion.id,
           },
           {
-            dateValeur: '2024-01-01',
+            dateValeur: '2027-01-01',
+            resultat: 999,
+            metadonneeId: ancienneVersion.id,
+          },
+          // Pour une même année, seule la version la plus récente est lue.
+          {
+            dateValeur: '2027-01-01',
             resultat: 100,
             metadonneeId: nouvelleVersion.id,
           },
@@ -248,7 +254,7 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
             metadonneeId: ancienneVersion.id,
           },
           {
-            dateValeur: '2027-01-01',
+            dateValeur: '2028-01-01',
             resultat: 200,
             metadonneeId: nouvelleVersion.id,
           },
@@ -270,8 +276,8 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       {
         version: nouvelleVersion,
         observations: [
-          { dateValeur: '2024-01-01', valeur: 100 },
-          { dateValeur: '2027-01-01', valeur: null },
+          { dateValeur: '2027-01-01', valeur: 100 },
+          { dateValeur: '2028-01-01', valeur: null },
         ],
       },
     ]) {
