@@ -24,7 +24,7 @@ import {
 } from './merge-chunk-actions';
 
 // Le limiteur du service borne les appels réels ; ceci borne le travail en vol.
-export const STRUCTURATION_CONCURRENCY = 4;
+export const STRUCTURATION_CONCURRENCY = 5;
 /**
  * Unités voisines regroupées par appel. Albert compte aussi les requêtes par
  * minute (10) : des paquets de cette taille remplissent le quota de tokens

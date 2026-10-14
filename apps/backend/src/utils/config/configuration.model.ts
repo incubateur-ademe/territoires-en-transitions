@@ -110,7 +110,7 @@ export const backendConfigurationSchema = z
       .positive()
       .prefault(2)
       .describe(
-        "Appels simultanés vers Albert API, tous imports confondus : 10 à 50 requêtes par minute selon l'offre"
+        "Appels simultanés vers Albert API, tous imports confondus ; une étape en demande jusqu'à 5, mais la vraie limite reste le quota de requêtes par minute de la clé (ALBERT_MAX_REQUESTS_PER_MINUTE)"
       ),
     ALBERT_MODEL: z
       .string()
