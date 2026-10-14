@@ -10,6 +10,7 @@ import {
   LevierPriorisation,
   NO_MOBILISATION,
 } from '../data/to-leviers-priorisation';
+import { LevierPlace } from '../data/to-matrix-points';
 import { useLevierSidePanel } from './use-levier-side-panel';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/' }));
@@ -42,14 +43,16 @@ const SidePanelWrapper = ({ children }: { children: ReactNode }) => (
   <SidePanelProvider>{children}</SidePanelProvider>
 );
 
-const renderLevierSidePanel = () =>
+const renderLevierSidePanel = (places: LevierPlace[] = []) =>
   renderHook(
     () => ({
       levierSidePanel: useLevierSidePanel({
         leviers: [COVOITURAGE],
+        places,
         preselection: EMPTY_PRESELECTION,
       }),
       panelContent: useSidePanel().panel.content,
+      panelHeader: useSidePanel().panel.header,
     }),
     { wrapper: SidePanelWrapper }
   );
@@ -72,5 +75,22 @@ describe('useLevierSidePanel', () => {
 
     expect(firstKey).toBeDefined();
     expect(secondKey).not.toBe(firstKey);
+  });
+
+  it("l'en-tête du volet porte le secteur et l'impact potentiel estimé du levier sélectionné", () => {
+    const { result } = renderLevierSidePanel([
+      { ...COVOITURAGE, potentielReduction: 10, potentielScore: 19 },
+    ]);
+
+    act(() => result.current.levierSidePanel.select('covoiturage'));
+
+    expect(isValidElement(result.current.panelHeader)).toBe(true);
+    expect(
+      isValidElement(result.current.panelHeader) &&
+        result.current.panelHeader.props
+    ).toMatchObject({
+      levier: { nom: 'Covoiturage' },
+      subtitle: 'Transports · Impact potentiel estimé : 19/100',
+    });
   });
 });

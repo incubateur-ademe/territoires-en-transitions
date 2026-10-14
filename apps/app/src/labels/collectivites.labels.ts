@@ -75,8 +75,8 @@ export const collectivitesLabels = {
     `Pertinence : ${toPertinenceLabel(pertinence)}`,
   pertinenceLabel: (pertinence: Pertinence): string =>
     capitalize(pertinenceLabels[pertinence]),
-  marquerPertinence: (pertinence: Pertinence): string =>
-    `Marquer ${pertinenceLabels[pertinence]}`,
+  levierPertinence: (pertinence: Pertinence): string =>
+    `Levier ${pertinenceLabels[pertinence]}`,
   pertinenceLevierLabel: (levierNom: Levier): string =>
     `Pertinence du levier ${levierNom}`,
   categorieActionLabel: (categorie: CategorieAction): string =>
@@ -155,6 +155,8 @@ export const collectivitesLabels = {
     "Potentiel de réduction de GES par levier et par catégorie d'action, nuancé par la mobilisation de la collectivité",
   impactPotentielDuTerritoire: (score: number): string =>
     `Impact potentiel : ${score}/100 du territoire`,
+  impactPotentielEstime: (score: number): string =>
+    `Impact potentiel estimé : ${score}/100`,
   cliquerPourVoirLesActionsDuLevier: 'Cliquez pour voir les actions du levier',
   mobilisationNulle: 'Non mobilisé',
   mobilisationFaible: 'Peu mobilisé',
@@ -174,7 +176,7 @@ export const collectivitesLabels = {
   retablirAction: 'Rétablir',
   ilManqueUneAction: 'Il manque une action ?',
   listeNonExhaustiveSignalerAction:
-    "Cette liste n'est pas exhaustive. Signalez-nous une action utile pour ce levier.",
+    "Cette liste n'est pas (encore) exhaustive. Proposez-nous une action que vous jugez pertinente pour ce levier.",
   suggererUneAction: 'Suggérer une action',
   decrireLAction: "Décrivez l'action en quelques mots",
   suggestionEnvoyee: 'Merci, votre suggestion a bien été envoyée.',

@@ -26,7 +26,7 @@ describe('PertinenceToggle', () => {
     const onChange = clickToggle(value);
 
     expect(
-      screen.getByRole('button', { name: 'Marquer non pertinent' })
+      screen.getByRole('button', { name: 'Levier non pertinent' })
     ).toBeDefined();
     expect(onChange).toHaveBeenCalledWith('non_pertinent');
   });
@@ -35,7 +35,7 @@ describe('PertinenceToggle', () => {
     const onChange = clickToggle('non_pertinent');
 
     expect(
-      screen.getByRole('button', { name: 'Marquer pertinent' })
+      screen.getByRole('button', { name: 'Levier pertinent' })
     ).toBeDefined();
     expect(onChange).toHaveBeenCalledWith('pertinent');
   });

@@ -230,6 +230,7 @@ const PriorisationBoard = ({
   );
   const levierSidePanel = useLevierSidePanel({
     leviers,
+    places,
     preselection,
     upsertPertinence,
   });

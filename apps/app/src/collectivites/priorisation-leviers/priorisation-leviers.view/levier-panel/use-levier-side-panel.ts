@@ -3,9 +3,12 @@ import { CategorieAction, LevierId } from '@tet/domain/shared';
 import { createElement, useCallback, useEffect, useState } from 'react';
 import { Preselection } from '../../use-preselection';
 import { LevierPriorisation } from '../data/to-leviers-priorisation';
+import { LevierPlace } from '../data/to-matrix-points';
 import { UpsertPertinence } from '../data/use-upsert-pertinence';
 import { SelectLevier } from '../select-levier';
+import { LevierHeader } from './levier.header';
 import { LevierPanel } from './levier.panel';
+import { toLevierSubtitle } from './to-levier-subtitle';
 
 type LevierSelection = {
   levierId: LevierId;
@@ -20,12 +23,14 @@ type LevierSidePanel = {
 
 type UseLevierSidePanelArgs = {
   leviers: LevierPriorisation[];
+  places: LevierPlace[];
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
 };
 
 export const useLevierSidePanel = ({
   leviers,
+  places,
   preselection,
   upsertPertinence,
 }: UseLevierSidePanelArgs): LevierSidePanel => {
@@ -45,6 +50,9 @@ export const useLevierSidePanel = ({
   const selectedLevier = leviers.find(
     ({ levierId }) => levierId === selection?.levierId
   );
+  const potentielScore = places.find(
+    ({ levierId }) => levierId === selection?.levierId
+  )?.potentielScore;
   const initialCategorie = selection?.categorie;
   const clickCount = selection?.clickCount;
 
@@ -55,6 +63,14 @@ export const useLevierSidePanel = ({
     setPanel({
       type: 'open',
       title: selectedLevier.nom,
+      header: createElement(LevierHeader, {
+        levier: selectedLevier,
+        subtitle: toLevierSubtitle({
+          secteur: selectedLevier.secteur,
+          potentielScore,
+        }),
+        upsertPertinence,
+      }),
       content: createElement(LevierPanel, {
         key: `${selectedLevier.levierId}/${
           initialCategorie ?? ''
@@ -62,7 +78,6 @@ export const useLevierSidePanel = ({
         levier: selectedLevier,
         initialCategorie,
         preselection,
-        upsertPertinence,
       }),
     });
   }, [
@@ -71,6 +86,7 @@ export const useLevierSidePanel = ({
     clickCount,
     preselection,
     upsertPertinence,
+    potentielScore,
     setPanel,
   ]);
 
