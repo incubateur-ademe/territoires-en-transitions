@@ -5,7 +5,7 @@ SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 
 .DEFAULT_GOAL := help
-.PHONY: help bootstrap-supabase-auth-roles-sql bootstrap-supabase-roles-sql bootstrap-storage-sql
+.PHONY: help bootstrap-supabase-auth-roles-sql bootstrap-supabase-roles-sql bootstrap-storage-sql restore-preprod-db
 
 help:
 	@echo "Cibles disponibles :"
@@ -19,6 +19,10 @@ help:
 	@echo "                        propriété et droits du schéma storage. APRÈS la"
 	@echo "                        restauration, et à rejouer après chaque démarrage de"
 	@echo "                        Storage API qui a créé de nouvelles tables."
+	@echo "  restore-preprod-db d=<dump> [list=true]"
+	@echo "                        Remplace la base preprod par un dump complet de prod"
+	@echo "                        (schéma + données, anonymisé). list=true : tri du dump"
+	@echo "                        seulement. Runbook : infra/README.md « Restauration »."
 	@echo ""
 	@echo "Prérequis : psql installé (brew install libpq), terraform output disponible,"
 	@echo "et IP du poste dans pg_allowed_ips (terraform.tfvars)."
@@ -88,3 +92,10 @@ bootstrap-storage-sql:
 	echo "STORAGE_DB_DATABASE_URL pour Storage API (IP privée du VPC, dans Coolify) :"; \
 	echo ""; \
 	echo "    postgres://supabase_storage_admin:$$storage_pwd@$$pg_private_ip:$$pg_port/$$pg_dbname?sslmode=require"
+
+# Export plutôt qu'interpolation shell : d peut contenir des espaces.
+restore-preprod-db: export DUMP = $(d)
+restore-preprod-db: export LIST_ONLY = $(if $(list),true,false)
+restore-preprod-db:
+	@test -n "$(d)" || { echo "Usage : make restore-preprod-db d=backup-AAAA-MM-JJ.dump [list=true]"; exit 1; }
+	@../scripts/restore-preprod-db.sh
