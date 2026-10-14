@@ -216,6 +216,32 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     await expect(pom.tourDialogs).toHaveCount(0);
     await expect(pom.levierPanel(LEVIER_TO_PRIORITIZE)).toBeVisible();
   });
+
+  test('pendant la visite, le champ de pertinence du levier ouvert ne reçoit pas les clics', async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const pom = new PriorisationLeviersPom(page);
+    await startTourWithLevierToPrioritize({
+      pom,
+      collectiviteId: collectivite.data.id,
+    });
+    await openLevierFromTour(pom);
+
+    const receivesClicks = await pom.pertinenceToggles
+      .getByRole('button')
+      .evaluate((toggle) => {
+        const { x, y, width, height } = toggle.getBoundingClientRect();
+        return toggle.contains(
+          document.elementFromPoint(x + width / 2, y + height / 2)
+        );
+      });
+
+    expect(receivesClicks).toBe(false);
+  });
 });
 
 test.describe('Priorisation : visite guidée sans levier en angle mort', () => {
