@@ -122,6 +122,7 @@ export const PlanMetadata = ({
           icon="git-commit-line"
           label={plural({ one: 'Axe', other: 'Axes' })({
             count: axesCountByType.axe || 0,
+            withoutCount: true,
           })}
           value={axesCountByType.axe || 0}
         />
@@ -130,6 +131,7 @@ export const PlanMetadata = ({
           icon="git-merge-line"
           label={plural({ one: 'Sous-axe', other: 'Sous-axes' })({
             count: axesCountByType.sousAxe || 0,
+            withoutCount: true,
           })}
           value={axesCountByType.sousAxe || 0}
         />
@@ -139,6 +141,7 @@ export const PlanMetadata = ({
           icon="file-text-line"
           label={plural({ one: 'Action', other: 'Actions' })({
             count: plan.totalFiches ?? 0,
+            withoutCount: true,
           })}
           value={plan.totalFiches}
         />
