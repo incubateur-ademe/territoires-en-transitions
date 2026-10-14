@@ -225,7 +225,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
-    await collectivites.setUserCollectiviteRole(CollectiviteRole.ADMIN);
+    await collectivite.setUserCollectiviteRole(CollectiviteRole.ADMIN);
     const pom = new PriorisationLeviersPom(page);
     await startTourWithLevierToPrioritize({
       pom,
