@@ -1,4 +1,5 @@
 import { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
+import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import {
   emptyTokenUsage,
   sumTokenUsage,
@@ -74,6 +75,36 @@ export const computeLlmCallMetrics = (
     models: [...new Set(events.map((event) => event.model))],
   };
 };
+
+/**
+ * Le détail des appels d'une étape, gardé dans son `details` : durées,
+ * tentatives et un compteur par type d'erreur. Une erreur d'API compte sous
+ * son statut HTTP quand il est connu (`errors_http_503`).
+ */
+export const computeLlmCallDetails = (
+  events: LlmCallEvent[]
+): Record<string, number> => {
+  if (events.length === 0) {
+    return {};
+  }
+  const details: Record<string, number> = {
+    maxCallMs: Math.max(...events.map((event) => event.durationMs)),
+    sumCallMs: events.reduce((total, event) => total + event.durationMs, 0),
+    maxAttempt: Math.max(...events.map((event) => event.attempt)),
+  };
+  for (const { error } of events) {
+    if (error) {
+      const key = `errors_${llmErrorKey(error)}`;
+      details[key] = (details[key] ?? 0) + 1;
+    }
+  }
+  return details;
+};
+
+const llmErrorKey = (error: LlmError): string =>
+  error.kind === 'api_error' && error.httpStatus !== null
+    ? `http_${error.httpStatus}`
+    : error.kind;
 
 /** Cumule les appels de passages successifs d'un même import. */
 export const sumLlmCallMetrics = (

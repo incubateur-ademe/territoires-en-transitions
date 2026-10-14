@@ -24,6 +24,7 @@ import {
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
+import { describeLlmError } from '@tet/backend/utils/llm/llm.errors';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
 import { ExtractedAction } from '../models/extracted-action';
@@ -81,6 +82,12 @@ export type ReadingError =
     };
 
 export type PipelineError = ExtractActionsError | ReadingError;
+
+/** L'erreur en une ligne : le statut HTTP ou la règle violée quand il y en a. */
+export const describePipelineError = (error: PipelineError): string =>
+  error.kind === 'api_error' || error.kind === 'invalid_json'
+    ? describeLlmError(error)
+    : error.kind;
 
 export type PipelineLlm = Pick<
   LlmService,
@@ -485,7 +492,7 @@ const runStep = async ({
         ...result.data.details,
       }),
     },
-    error: result.success ? null : result.error.kind,
+    error: result.success ? null : describePipelineError(result.error),
   });
   if (!result.success) {
     return { success: false, outcome: failed(progress, name, result.error) };
