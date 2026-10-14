@@ -80,9 +80,10 @@ describe('LevierActionsDeReferenceList', () => {
     );
   });
 
-  it('expose la cible de la visite sur les boutons de la première action visible', () => {
-    const [targetElement] = renderActionsTarget(() => 'disponible');
+  it('expose la cible de la visite sur une seule action visible, pas sur chacune', () => {
+    const targetElements = renderActionsTarget(() => 'disponible');
 
-    expect(targetElement?.querySelectorAll('button')).toHaveLength(2);
+    expect(targetElements).toHaveLength(1);
+    expect(targetElements[0]?.querySelectorAll('button')).toHaveLength(2);
   });
 });
