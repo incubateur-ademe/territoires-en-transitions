@@ -193,6 +193,7 @@ export class IndicateurChartService {
             {
               collectiviteId,
               indicateurId: definition.id,
+              periodicite: definition.periodicite,
             },
             user
           )

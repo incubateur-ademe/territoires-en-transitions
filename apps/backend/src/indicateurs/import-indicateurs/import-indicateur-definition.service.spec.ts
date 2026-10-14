@@ -210,6 +210,90 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     ).rejects.toThrow('commit failed');
   });
 
+  test('accepte une nouvelle cadence mensuelle après activation', async () => {
+    const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    monthlyDefinition.periodicite = 'mensuelle';
+    monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      []
+    );
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        monthlyDefinition,
+      ])
+    ).resolves.toBeDefined();
+    expect(importRepository.upsertDefinitions).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ periodicite: 'mensuelle' }),
+      ]),
+      transaction
+    );
+  });
+
+  test("refuse un import dont l'instantané de périodicité a changé avant le verrou exclusif", async () => {
+    const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    monthlyDefinition.periodicite = 'mensuelle';
+    monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      [{ ...monthlyDefinition, id: 42 }]
+    );
+
+    importRepository.listDefinitionSnapshots.mockResolvedValue([
+      {
+        identifiantReferentiel: monthlyDefinition.identifiantReferentiel,
+        periodicite: 'annuelle',
+        valeurCalcule: monthlyDefinition.valeurCalcule,
+      },
+    ]);
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        monthlyDefinition,
+      ])
+    ).rejects.toThrow(/a changé pendant l'import/i);
+    expect(
+      definitionLockRepository.lockForDefinitionMutation
+    ).toHaveBeenCalledWith(transaction);
+    expect(
+      importRepository.deleteGroupRelationsByChildIds
+    ).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
+  test('refuse de changer la périodicité même sans valeur enregistrée', async () => {
+    const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
+    monthlyDefinition.periodicite = 'mensuelle';
+    monthlyDefinition.identifiantReferentiel = 'test_mensuel';
+    const existingDefinition = {
+      ...monthlyDefinition,
+      id: 42,
+      periodicite: 'annuelle' as const,
+    };
+    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+      [existingDefinition]
+    );
+    importRepository.listDefinitionSnapshots.mockResolvedValue([
+      {
+        identifiantReferentiel: existingDefinition.identifiantReferentiel,
+        periodicite: existingDefinition.periodicite,
+
+        valeurCalcule: existingDefinition.valeurCalcule,
+      },
+    ]);
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        monthlyDefinition,
+      ])
+    ).rejects.toThrow(/fixée à sa création/i);
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+    expect(
+      importRepository.deleteGroupRelationsByChildIds
+    ).not.toHaveBeenCalled();
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
   test('refuse un import dont la formule a changé avant le verrou exclusif', async () => {
     const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
     importedDefinition.valeurCalcule = '1';
@@ -447,7 +531,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     test('Rejects a formula mixing annual and monthly definitions', async () => {
       const annualDefinition = cloneDeep(sampleImportIndicateurDefinition);
       const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition2);
-      // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
       monthlyDefinition.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
       monthlyDefinition.identifiantReferentiel = 'test_mensuel';
       annualDefinition.valeurCalcule = `val(${monthlyDefinition.identifiantReferentiel}) / 10`;
@@ -463,7 +546,6 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     test('Rejects a group mixing annual and monthly definitions', async () => {
       const annualParent = cloneDeep(sampleImportIndicateurDefinition);
       const monthlyChild = cloneDeep(sampleImportIndicateurDefinition2);
-      // @ts-expect-error Vérifie le refus d’une cadence exclue du contrat annuel.
       monthlyChild.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
       monthlyChild.parents = [annualParent.identifiantReferentiel];
 

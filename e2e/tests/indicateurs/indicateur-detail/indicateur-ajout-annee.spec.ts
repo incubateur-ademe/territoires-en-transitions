@@ -1,7 +1,10 @@
 import { expect, type Request } from '@playwright/test';
 import { testWithIndicateurs as test } from '../indicateurs.fixture';
 import { IndicateurValeursPom } from './indicateur-valeurs.pom';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodes,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 
 test.beforeEach(async ({ page }) => {
   await page.addLocatorHandler(
@@ -183,6 +186,46 @@ for (const type of ['resultat', 'objectif'] as const) {
     ).toBeVisible();
   });
 }
+
+test('Charger les périodes sans imposer une cadence annuelle à une définition mensuelle', async ({
+  page,
+  collectivites,
+  indicateurs,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Périodicité du graphique',
+    unite: '%',
+    periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+  });
+
+  const valueRequests: Request[] = [];
+  page.on('request', (request) => {
+    if (!request.url().includes('indicateurs.valeurs.list')) return;
+    const input = new URL(request.url()).searchParams.get('input');
+    if (input && JSON.parse(input).indicateurIds?.includes(indicateurId)) {
+      valueRequests.push(request);
+    }
+  });
+
+  await page.goto(
+    `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
+  );
+
+  await expect.poll(() => valueRequests.length).toBeGreaterThan(0);
+  for (const request of valueRequests) {
+    const input = new URL(request.url()).searchParams.get('input');
+    if (!input) throw new Error('Paramètre input manquant');
+    expect(JSON.parse(input)).not.toHaveProperty('periodicite');
+  }
+  await expect(
+    page.getByRole('button', { name: 'Ajouter un mois', exact: true })
+  ).toBeVisible();
+});
 
 test('Déclarer une année persiste après rafraîchissement', async ({
   page,
@@ -699,6 +742,9 @@ test('Ne pas proposer un ajout pour un indicateur sans valeur utilisateur', asyn
 
 for (const { periodicite, label } of [
   { periodicite: IndicateurPeriodiciteEnum.ANNUELLE, label: '2026' },
+  { periodicite: IndicateurPeriodiciteEnum.SEMESTRIELLE, label: 'S1 2026' },
+  { periodicite: IndicateurPeriodiciteEnum.TRIMESTRIELLE, label: 'T1 2026' },
+  { periodicite: IndicateurPeriodiciteEnum.MENSUELLE, label: 'janvier 2026' },
 ] as const) {
   test(`Ne pas proposer la saisie ni la suppression ${periodicite} en lecture seule`, async ({
     page,
@@ -740,3 +786,261 @@ for (const { periodicite, label } of [
     ).toHaveCount(0);
   });
 }
+
+// Results can only be entered in periods that have already started.
+const pastYear = new Date().getFullYear() - 2;
+
+for (const {
+  periodicite,
+  addLabel,
+  fieldLabel,
+  option,
+  nextOption,
+  period,
+  nextPeriod,
+} of [
+  {
+    periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+    addLabel: 'Ajouter un mois',
+    fieldLabel: 'Mois',
+    option: 'Décembre',
+    nextOption: 'Janvier',
+    period: `${pastYear}-12`,
+    nextPeriod: `${pastYear + 1}-01`,
+  },
+  {
+    periodicite: IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+    addLabel: 'Ajouter un trimestre',
+    fieldLabel: 'Trimestre',
+    option: 'T4',
+    nextOption: 'T1',
+    period: `${pastYear}-T4`,
+    nextPeriod: `${pastYear + 1}-T1`,
+  },
+  {
+    periodicite: IndicateurPeriodiciteEnum.SEMESTRIELLE,
+    addLabel: 'Ajouter un semestre',
+    fieldLabel: 'Semestre',
+    option: 'S2',
+    nextOption: 'S1',
+    period: `${pastYear}-S2`,
+    nextPeriod: `${pastYear + 1}-S1`,
+  },
+] as const) {
+  test(`Colonnes ${periodicite} : ajouter un lot vide puis saisir les valeurs et commentaires`, async ({
+    page,
+    collectivites,
+    indicateurs,
+    indicateurDetailPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const collectiviteId = collectivite.data.id;
+    const indicateurId = await indicateurs.create(user, {
+      collectiviteId,
+      titre: `Saisie ${periodicite}`,
+      unite: 'kg',
+      periodicite,
+    });
+    await indicateurDetailPom.goto(collectiviteId, indicateurId);
+    const valeurs = new IndicateurValeursPom(page);
+    const add = valeurs.table.getByRole('button', {
+      name: addLabel,
+      exact: true,
+    });
+    const modal = page.getByRole('dialog', { name: addLabel, exact: true });
+    const save = modal.getByRole('button', { name: 'Ajouter', exact: true });
+    const first = IndicateurPeriodes.parse(periodicite, period);
+    const second = IndicateurPeriodes.parse(periodicite, nextPeriod);
+    const label = IndicateurPeriodes.format(first);
+    const nextLabel = IndicateurPeriodes.format(second);
+
+    await add.click();
+    await expect(save).toBeDisabled();
+    await modal.getByRole('button', { name: fieldLabel, exact: true }).click();
+    await page.getByRole('button', { name: option, exact: true }).click();
+    const firstYear = modal.getByRole('textbox', {
+      name: 'Année',
+      exact: true,
+    });
+    for (const year of ['0000', '10000']) {
+      await firstYear.fill(year);
+      await save.click();
+      await expect(
+        modal.getByText('Saisissez une année entre 1 et 9999.')
+      ).toBeVisible();
+    }
+    await firstYear.fill(String(pastYear));
+    await modal
+      .getByRole('button', { name: 'Ajouter une autre colonne' })
+      .click();
+    await expect(save).toBeDisabled();
+    const nextRow = modal.getByRole('group', { name: 'Colonne 2' });
+    await nextRow
+      .getByRole('button', { name: fieldLabel, exact: true })
+      .click();
+    await page.getByRole('button', { name: option, exact: true }).click();
+    await nextRow
+      .getByRole('textbox', { name: 'Année', exact: true })
+      .fill(String(pastYear));
+    await save.click();
+    await expect(
+      modal.getByText(`La période ${label} est déjà présente.`)
+    ).toHaveCount(2);
+    await nextRow
+      .getByRole('button', { name: fieldLabel, exact: true })
+      .click();
+    await page.getByRole('button', { name: nextOption, exact: true }).click();
+    await nextRow
+      .getByRole('textbox', { name: 'Année', exact: true })
+      .fill(String(pastYear + 1));
+    await modal
+      .getByRole('button', { name: 'Ajouter une autre colonne' })
+      .click();
+    await modal
+      .getByRole('group', { name: 'Colonne 3' })
+      .getByRole('button', { name: 'Retirer cette colonne' })
+      .click();
+    await expect(
+      modal.getByRole('group', { name: /^Colonne \d+$/ })
+    ).toHaveCount(2);
+    const declaration = valeurs.waitForUpsertValeurResponse();
+    await save.click();
+    await declaration;
+    await expect(modal).toBeHidden();
+
+    await page.reload();
+    await expect(valeurs.table.getByText(label, { exact: true })).toBeVisible();
+    await expect(
+      valeurs.table.getByText(nextLabel, { exact: true })
+    ).toBeVisible();
+    await expect(
+      valeurs.cell(first).getByTestId('indicateurs.valeurs.add')
+    ).toBeVisible();
+    await expect(
+      valeurs.cell(second).getByTestId('indicateurs.valeurs.add')
+    ).toBeVisible();
+
+    await add.click();
+    await modal.getByRole('button', { name: fieldLabel, exact: true }).click();
+    await page.getByRole('button', { name: option, exact: true }).click();
+    await modal
+      .getByRole('textbox', { name: 'Année', exact: true })
+      .fill(String(pastYear));
+    await save.click();
+    await expect(
+      modal.getByText(`La période ${label} est déjà présente.`)
+    ).toBeVisible();
+    await modal
+      .getByRole('textbox', { name: 'Année', exact: true })
+      .fill(String(pastYear + 2));
+    await expect(save).toBeEnabled();
+    await modal.getByRole('button', { name: 'Annuler', exact: true }).click();
+    await page.reload();
+    const cancelled = IndicateurPeriodes.parse(
+      periodicite,
+      period.replace(String(pastYear), String(pastYear + 2))
+    );
+    await expect(
+      valeurs.table.getByText(IndicateurPeriodes.format(cancelled), {
+        exact: true,
+      })
+    ).toHaveCount(0);
+
+    await valeurs.editValeur(first, 'Résultat', '0');
+    await valeurs.editValeur(first, 'Objectif', '12');
+    await valeurs.editCommentaire(first, 'résultat', 'Aucune émission mesurée');
+    await valeurs.editCommentaire(first, 'objectif', 'Plafond visé');
+    await valeurs.editValeur(second, 'Résultat', '5');
+    await page.reload();
+    await expect(valeurs.valueButton(first, 'Résultat')).toContainText('0');
+    await expect(valeurs.valueButton(first, 'Objectif')).toContainText('12');
+
+    const remove = valeurs.deletePeriodeButton(first);
+    await remove.click();
+    const confirmation = page.getByRole('dialog', {
+      name: 'Confirmer la suppression',
+    });
+    await expect(
+      confirmation.getByText(
+        `Attention, les données existantes pour la période ${label} seront supprimées.`
+      )
+    ).toBeVisible();
+    await expect(
+      confirmation.getByText('Aucune émission mesurée')
+    ).toBeVisible();
+    await expect(confirmation.getByText('Plafond visé')).toBeVisible();
+    await confirmation
+      .getByRole('button', { name: 'Annuler', exact: true })
+      .click();
+    await expect(remove).toBeVisible();
+    await remove.click();
+    await confirmation
+      .getByRole('button', { name: 'Confirmer', exact: true })
+      .click();
+    await expect(valeurs.table.getByText(label, { exact: true })).toHaveCount(
+      0
+    );
+    await page.reload();
+    await expect(
+      valeurs.table.getByText(nextLabel, { exact: true })
+    ).toBeVisible();
+    await expect(valeurs.table.getByText(label, { exact: true })).toHaveCount(
+      0
+    );
+  });
+}
+
+test('Conserver le lot de colonnes mensuelles après un échec et permettre de réessayer', async ({
+  page,
+  collectivites,
+  indicateurs,
+  indicateurDetailPom,
+}) => {
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Nouvelle tentative mensuelle',
+    unite: 'kg',
+    periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+  });
+  await indicateurDetailPom.goto(collectiviteId, indicateurId);
+  const valeurs = new IndicateurValeursPom(page);
+  await valeurs.table
+    .getByRole('button', { name: 'Ajouter un mois', exact: true })
+    .click();
+  const modal = page.getByRole('dialog', {
+    name: 'Ajouter un mois',
+    exact: true,
+  });
+  await modal.getByRole('button', { name: 'Mois', exact: true }).click();
+  await page.getByRole('button', { name: 'Février', exact: true }).click();
+  await modal.getByRole('textbox', { name: 'Année', exact: true }).fill('2026');
+  const save = modal.getByRole('button', { name: 'Ajouter', exact: true });
+  const upsertUrl = /indicateurs\.valeurs\.upsertMany/;
+  await page.route(upsertUrl, (route) => route.abort('failed'));
+  await save.click();
+  await expect(
+    modal.getByText("Les colonnes n'ont pas pu être ajoutées", { exact: true })
+  ).toBeVisible();
+  await expect(
+    modal.getByRole('textbox', { name: 'Année', exact: true })
+  ).toHaveValue('2026');
+  await expect(
+    modal.getByRole('button', { name: 'Mois', exact: true })
+  ).toContainText('Février');
+  await expect(save).toBeEnabled();
+  await page.unroute(upsertUrl);
+  const retrySave = valeurs.waitForUpsertValeurResponse();
+  await save.click();
+  await retrySave;
+  await expect(modal).toBeHidden();
+  await page.reload();
+  await expect(
+    valeurs.table.getByText('février 2026', { exact: true })
+  ).toBeVisible();
+});

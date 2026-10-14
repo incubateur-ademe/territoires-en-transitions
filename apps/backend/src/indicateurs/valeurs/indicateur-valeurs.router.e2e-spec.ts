@@ -1,7 +1,3 @@
-import {
-  IndicateurPeriodiciteEnum,
-  IndicateurPeriodes,
-} from '@tet/domain/indicateurs';
 import { INestApplication } from '@nestjs/common';
 import {
   addTestCollectivite,
@@ -17,13 +13,20 @@ import {
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
+import {
+  IndicateurPeriodiciteEnum,
+  IndicateurPeriodeErrorEnum,
+  IndicateurPeriodes,
+  MAX_GRID_VALEURS_BATCH_SIZE,
+} from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { randomUUID } from 'node:crypto';
 import { and, eq, inArray } from 'drizzle-orm';
+import { randomUUID } from 'node:crypto';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
+import { indicateurCollectiviteTable } from '../definitions/indicateur-collectivite.table';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
@@ -36,6 +39,9 @@ type InputList = inferProcedureInput<
 
 type InputUpsert = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['upsert']
+>;
+type InputUpsertMany = inferProcedureInput<
+  AppRouter['indicateurs']['valeurs']['upsertMany']
 >;
 
 // Platform indicateur (shared across all collectivites)
@@ -77,6 +83,698 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
           eq(indicateurValeurTable.indicateurId, indicateurId)
         )
       );
+  });
+
+  const insertMonthlyIndicateur = async ({
+    sansValeurUtilisateur = false,
+  }: { sansValeurUtilisateur?: boolean } = {}) => {
+    const [definition] = await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values({
+        collectiviteId,
+        titre: 'Indicateur mensuel de test',
+        unite: 'MWh',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        sansValeurUtilisateur,
+      })
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, definition.id));
+    });
+    return definition.id;
+  };
+
+  test('Écrit douze mois indépendants et conserve zéro comme valeur', async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+    const valeurs: InputUpsertMany['valeurs'] = Array.from(
+      { length: 12 },
+      (_, index) => ({
+        indicateurId: monthlyIndicateurId,
+        period: IndicateurPeriodes.parse(
+          IndicateurPeriodiciteEnum.MENSUELLE,
+          `2026-${String(index + 1).padStart(2, '0')}`
+        ),
+        resultat: index,
+      })
+    );
+
+    await caller.indicateurs.valeurs.upsertMany({ collectiviteId, valeurs });
+
+    const result = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [monthlyIndicateurId],
+    });
+    const saved = result.indicateurs[0].sources.collectivite.valeurs;
+    expect(saved).toHaveLength(12);
+    expect(saved[0]).toMatchObject({
+      dateValeur: '2026-01-01',
+      resultat: 0,
+    });
+    expect(saved[11]).toMatchObject({
+      dateValeur: '2026-12-01',
+      resultat: 11,
+    });
+    const [collectiviteMetadata] = await databaseService.db
+      .select()
+      .from(indicateurCollectiviteTable)
+      .where(
+        and(
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId),
+          eq(indicateurCollectiviteTable.indicateurId, monthlyIndicateurId)
+        )
+      );
+    expect(collectiviteMetadata?.modifiedBy).toBe(authenticatedUser.id);
+  });
+
+  test('Déclare plusieurs colonnes vides et préserve les valeurs concurrentes dans un lot mixte', async () => {
+    const indicateurId = await insertMonthlyIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+    const period = (month: string) =>
+      IndicateurPeriodes.parse(
+        IndicateurPeriodiciteEnum.MENSUELLE,
+        `2026-${month}`
+      );
+    const existing = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      dateValeur: '2026-02-01',
+      resultat: 0,
+      objectif: 9,
+      resultatCommentaire: 'Commentaire conservé',
+    });
+    if (!existing) throw new Error('La valeur initiale doit être enregistrée');
+    const valeurs = [
+      { indicateurId, period: period('01') },
+      { indicateurId, period: period('02') },
+      { indicateurId, period: period('03'), objectif: 7 },
+    ];
+    await caller.indicateurs.valeurs.upsertMany({ collectiviteId, valeurs });
+    await caller.indicateurs.valeurs.upsertMany({ collectiviteId, valeurs });
+    const saved = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+      .orderBy(indicateurValeurTable.dateValeur);
+    expect(saved).toMatchObject([
+      { dateValeur: '2026-01-01', resultat: null, objectif: null },
+      {
+        id: existing.id,
+        dateValeur: '2026-02-01',
+        resultat: 0,
+        objectif: 9,
+        resultatCommentaire: 'Commentaire conservé',
+      },
+      { dateValeur: '2026-03-01', resultat: null, objectif: 7 },
+    ]);
+    const listed = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    expect(listed.indicateurs[0].sources.collectivite.valeurs).toHaveLength(3);
+  });
+
+  test('Fusionne résultat et objectif du même mois et applique la précision sans perdre les commentaires', async () => {
+    const indicateurId = await insertMonthlyIndicateur();
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ precision: 2 })
+      .where(eq(indicateurDefinitionTable.id, indicateurId));
+    const caller = router.createCaller({ user: authenticatedUser });
+    const saved = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      dateValeur: '2026-01-01',
+      resultat: 4,
+      resultatCommentaire: 'Commentaire conservé',
+    });
+    assert.isDefined(saved);
+    const period = {
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      dateDebut: '2026-01-01',
+    } as const;
+    await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [
+        { indicateurId, period, resultat: 1.2345 },
+        { indicateurId, period, objectif: 9.8765 },
+      ],
+    });
+    const readValues = () =>
+      databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.indicateurId, indicateurId));
+    expect(await readValues()).toMatchObject([
+      {
+        id: saved.id,
+        dateValeur: '2026-01-01',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        resultat: 1.23,
+        objectif: 9.88,
+        resultatCommentaire: 'Commentaire conservé',
+        calculAuto: false,
+      },
+    ]);
+    await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [{ indicateurId, period, resultat: null }],
+    });
+    expect(await readValues()).toMatchObject([
+      {
+        id: saved.id,
+        resultat: null,
+        objectif: 9.88,
+        resultatCommentaire: 'Commentaire conservé',
+      },
+    ]);
+  });
+
+  test.each(['périodicité incompatible', 'indicateur inexistant'] as const)(
+    'Refuse le lot entier avec %s',
+    async (invalidCase) => {
+      const indicateurId = await insertMonthlyIndicateur();
+      const caller = router.createCaller({ user: authenticatedUser });
+      await expect(
+        caller.indicateurs.valeurs.upsertMany({
+          collectiviteId,
+          valeurs: [
+            {
+              indicateurId,
+              period: {
+                periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+                dateDebut: '2026-01-01',
+              },
+              resultat: 1,
+            },
+            {
+              indicateurId:
+                invalidCase === 'indicateur inexistant'
+                  ? 2147483647
+                  : indicateurId,
+              period: {
+                periodicite:
+                  invalidCase === 'périodicité incompatible'
+                    ? IndicateurPeriodiciteEnum.ANNUELLE
+                    : IndicateurPeriodiciteEnum.MENSUELLE,
+                dateDebut: '2026-01-01',
+              },
+              resultat: 2,
+            },
+          ],
+        })
+      ).rejects.toMatchObject({
+        code:
+          invalidCase === 'indicateur inexistant' ? 'NOT_FOUND' : 'BAD_REQUEST',
+      });
+      expect(
+        await databaseService.db
+          .select()
+          .from(indicateurValeurTable)
+          .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+      ).toHaveLength(0);
+    }
+  );
+
+  test.each(['vide', 'trop volumineux'] as const)(
+    'Refuse un lot %s à la frontière tRPC sans écrire',
+    async (invalidCase) => {
+      const indicateurId = await insertMonthlyIndicateur();
+      const caller = router.createCaller({ user: authenticatedUser });
+      const valeur = {
+        indicateurId,
+        period: {
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+          dateDebut: '2026-01-01',
+        },
+      } as const;
+      const valeurs =
+        invalidCase === 'vide'
+          ? []
+          : Array.from({ length: MAX_GRID_VALEURS_BATCH_SIZE + 1 }, () => ({
+              ...valeur,
+              resultat: 1,
+            }));
+      await expect(
+        caller.indicateurs.valeurs.upsertMany({ collectiviteId, valeurs })
+      ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+      expect(
+        await databaseService.db
+          .select()
+          .from(indicateurValeurTable)
+          .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+      ).toHaveLength(0);
+    }
+  );
+
+  test('Rejette atomiquement le lot si une période mensuelle est non canonique', async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertMany({
+        collectiviteId,
+        valeurs: [
+          {
+            indicateurId: monthlyIndicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.MENSUELLE,
+              '2026-01'
+            ),
+            resultat: 1,
+          },
+          {
+            indicateurId: monthlyIndicateurId,
+            period: {
+              periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+              dateDebut: '2026-02-02',
+            } as never,
+            resultat: 2,
+          },
+        ],
+      })
+    ).rejects.toThrow(
+      IndicateurPeriodeErrorEnum.INDICATEUR_PERIODE_DATE_NON_CANONICAL
+    );
+
+    const saved = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          eq(indicateurValeurTable.indicateurId, monthlyIndicateurId)
+        )
+      );
+    expect(saved).toHaveLength(0);
+  });
+
+  test("Rejette tout le lot si un indicateur n'accepte pas de valeur utilisateur", async () => {
+    const writableIndicateurId = await insertMonthlyIndicateur();
+    const protectedIndicateurId = await insertMonthlyIndicateur({
+      sansValeurUtilisateur: true,
+    });
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertMany({
+        collectiviteId,
+        valeurs: [
+          {
+            indicateurId: writableIndicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.MENSUELLE,
+              '2026-01'
+            ),
+            resultat: 1,
+          },
+          {
+            indicateurId: protectedIndicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.MENSUELLE,
+              '2026-01'
+            ),
+            resultat: 2,
+          },
+        ],
+      })
+    ).rejects.toThrow(/n'accepte pas de valeur utilisateur/);
+
+    const saved = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(
+        inArray(indicateurValeurTable.indicateurId, [
+          writableIndicateurId,
+          protectedIndicateurId,
+        ])
+      );
+    expect(saved).toHaveLength(0);
+  });
+
+  test("Une clé d'API en lecture seule ne peut pas écrire un lot de grille avec les droits de son propriétaire", async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const readOnlyApiKeyUser: AuthenticatedUser = {
+      ...authenticatedUser,
+      jwtPayload: {
+        ...authenticatedUser.jwtPayload,
+        client_id: 'test-read-only-grid-key',
+        permissions: [
+          'indicateurs.indicateurs.read',
+          'indicateurs.valeurs.read',
+        ],
+      },
+    };
+    const caller = router.createCaller({ user: readOnlyApiKeyUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsertMany({
+        collectiviteId,
+        valeurs: [
+          {
+            indicateurId: monthlyIndicateurId,
+            period: IndicateurPeriodes.parse(
+              IndicateurPeriodiciteEnum.MENSUELLE,
+              '2026-01'
+            ),
+            resultat: 1,
+          },
+        ],
+      })
+    ).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+      cause: expect.objectContaining({
+        message: expect.stringMatching(
+          /clé d'api.*indicateurs\.valeurs\.mutate/i
+        ),
+      }),
+    });
+
+    const saved = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          eq(indicateurValeurTable.indicateurId, monthlyIndicateurId)
+        )
+      );
+    expect(saved).toHaveLength(0);
+  });
+
+  test('Une saisie manuelle efface le résultat sans perdre l objectif et remplace le calcul automatique', async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const [existing] = await databaseService.db
+      .insert(indicateurValeurTable)
+      .values({
+        indicateurId: monthlyIndicateurId,
+        collectiviteId,
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-01-01',
+        resultat: 10,
+        objectif: 12,
+        calculAuto: true,
+        calculAutoIdentifiantsManquants: ['source_manquante'],
+      })
+      .returning();
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [
+        {
+          indicateurId: monthlyIndicateurId,
+          period: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-01'
+          ),
+          resultat: null,
+        },
+      ],
+    });
+
+    const [saved] = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.id, existing.id));
+    expect(saved).toMatchObject({
+      resultat: null,
+      objectif: 12,
+      calculAuto: false,
+      calculAutoIdentifiantsManquants: null,
+    });
+  });
+
+  test("L'upsert historique applique aussi l'interdiction de saisie utilisateur", async () => {
+    const protectedIndicateurId = await insertMonthlyIndicateur({
+      sansValeurUtilisateur: true,
+    });
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId: protectedIndicateurId,
+        dateValeur: '2026-01-01',
+        resultat: 1,
+      })
+    ).rejects.toThrow(/n'accepte.*pas de valeur utilisateur/);
+  });
+
+  test("L'upsert historique remplace un calcul automatique par une saisie manuelle", async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const [existing] = await databaseService.db
+      .insert(indicateurValeurTable)
+      .values({
+        indicateurId: monthlyIndicateurId,
+        collectiviteId,
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-01-01',
+        resultat: 10,
+        objectif: 12,
+        calculAuto: true,
+        calculAutoIdentifiantsManquants: ['source_manquante'],
+      })
+      .returning();
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId: monthlyIndicateurId,
+      id: existing.id,
+      resultat: null,
+    });
+
+    const [saved] = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.id, existing.id));
+    expect(saved).toMatchObject({
+      resultat: null,
+      objectif: 12,
+      calculAuto: false,
+      calculAutoIdentifiantsManquants: null,
+    });
+  });
+
+  test('La suppression refuse une valeur open-data', async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const sourceId = `test-${randomUUID()}`;
+    await databaseService.db.insert(indicateurSourceTable).values({
+      id: sourceId,
+      libelle: 'Source de test',
+    });
+    const [metadonnee] = await databaseService.db
+      .insert(indicateurSourceMetadonneeTable)
+      .values({
+        sourceId,
+        dateVersion: '2026-01-01T00:00:00.000Z',
+      })
+      .returning();
+    const [openDataValeur] = await databaseService.db
+      .insert(indicateurValeurTable)
+      .values({
+        indicateurId: monthlyIndicateurId,
+        collectiviteId,
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-01-01',
+        resultat: 10,
+        metadonneeId: metadonnee.id,
+      })
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurValeurTable)
+        .where(eq(indicateurValeurTable.id, openDataValeur.id));
+      await databaseService.db
+        .delete(indicateurSourceMetadonneeTable)
+        .where(eq(indicateurSourceMetadonneeTable.id, metadonnee.id));
+      await databaseService.db
+        .delete(indicateurSourceTable)
+        .where(eq(indicateurSourceTable.id, sourceId));
+    });
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await caller.indicateurs.valeurs.delete({
+      collectiviteId,
+      indicateurId: monthlyIndicateurId,
+      id: openDataValeur.id,
+    });
+
+    const [saved] = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.id, openDataValeur.id));
+    expect(saved).toMatchObject({ id: openDataValeur.id, resultat: 10 });
+  });
+
+  test('La suppression propage la disparition des lignes calculées A → B → C', async () => {
+    const suffix = randomUUID().replaceAll('-', '');
+    const [sourceA, calculatedB, calculatedC] = await databaseService.db
+      .insert(indicateurDefinitionTable)
+      .values([
+        {
+          collectiviteId: null,
+          identifiantReferentiel: `test_${suffix}_a`,
+          titre: 'Source A',
+          unite: 'MWh',
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        },
+        {
+          collectiviteId: null,
+          identifiantReferentiel: `test_${suffix}_b`,
+          titre: 'Calcul B',
+          unite: 'MWh',
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+          // Les formules sont insensibles à la casse : la découverte SQL des
+          // dépendants doit suivre le même contrat que le parseur/évaluateur.
+          valeurCalcule: `val(TEST_${suffix.toUpperCase()}_A)`,
+          sansValeurUtilisateur: true,
+        },
+        {
+          collectiviteId: null,
+          identifiantReferentiel: `test_${suffix}_c`,
+          titre: 'Calcul C',
+          unite: 'MWh',
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+          valeurCalcule: `val(test_${suffix}_b)`,
+          sansValeurUtilisateur: true,
+        },
+      ])
+      .returning();
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(indicateurDefinitionTable)
+        .where(
+          inArray(indicateurDefinitionTable.id, [
+            sourceA.id,
+            calculatedB.id,
+            calculatedC.id,
+          ])
+        );
+    });
+    const caller = router.createCaller({ user: authenticatedUser });
+    const [savedA] = await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [
+        {
+          indicateurId: sourceA.id,
+          period: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-01'
+          ),
+          resultat: 1,
+        },
+      ],
+    });
+
+    const calculatedBeforeDeletion = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          inArray(indicateurValeurTable.indicateurId, [
+            calculatedB.id,
+            calculatedC.id,
+          ]),
+          eq(indicateurValeurTable.dateValeur, '2026-01-01')
+        )
+      );
+    expect(calculatedBeforeDeletion).toHaveLength(2);
+    expect(calculatedBeforeDeletion).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          indicateurId: calculatedB.id,
+          resultat: 1,
+          calculAuto: true,
+        }),
+        expect.objectContaining({
+          indicateurId: calculatedC.id,
+          resultat: 1,
+          calculAuto: true,
+        }),
+      ])
+    );
+
+    await caller.indicateurs.valeurs.delete({
+      collectiviteId,
+      indicateurId: sourceA.id,
+      id: savedA.id,
+    });
+
+    const persistedValeurs = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          inArray(indicateurValeurTable.indicateurId, [
+            sourceA.id,
+            calculatedB.id,
+            calculatedC.id,
+          ]),
+          eq(indicateurValeurTable.dateValeur, '2026-01-01')
+        )
+      );
+    expect(persistedValeurs).toEqual([]);
+  });
+
+  test('Met à jour et supprime la période mensuelle ciblée', async () => {
+    const monthlyIndicateurId = await insertMonthlyIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+    const [january, february] = await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [
+        {
+          indicateurId: monthlyIndicateurId,
+          period: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-01'
+          ),
+          resultat: 1,
+        },
+        {
+          indicateurId: monthlyIndicateurId,
+          period: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-02'
+          ),
+          resultat: 2,
+        },
+      ],
+    });
+
+    await caller.indicateurs.valeurs.upsertMany({
+      collectiviteId,
+      valeurs: [
+        {
+          indicateurId: monthlyIndicateurId,
+          period: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-02'
+          ),
+          resultat: 20,
+        },
+      ],
+    });
+    await caller.indicateurs.valeurs.delete({
+      collectiviteId,
+      indicateurId: monthlyIndicateurId,
+      id: january.id,
+    });
+
+    const result = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [monthlyIndicateurId],
+    });
+    expect(result.indicateurs[0].sources.collectivite.valeurs).toEqual([
+      expect.objectContaining({ id: february.id, resultat: 20 }),
+    ]);
   });
 
   test(`Renvoi des valeurs`, async () => {
@@ -797,6 +1495,14 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
           metadonneeId: metadata.id,
           periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         })),
+      {
+        collectiviteId: fixture.collectivite.id,
+        indicateurId: definition.id,
+        metadonneeId: metadata.id,
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2014-01-01',
+        resultat: 100,
+      },
     ]);
 
     const caller = router.createCaller({

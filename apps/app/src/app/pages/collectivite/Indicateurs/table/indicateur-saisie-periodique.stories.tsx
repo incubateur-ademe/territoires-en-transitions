@@ -2,9 +2,12 @@ import { IndicateurPeriodiciteBadge } from '@/app/indicateurs/valeurs/indicateur
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import {
   IndicateurPeriodes,
+  type IndicateurPeriodicite,
   type IndicateurPeriode,
 } from '@tet/domain/indicateurs';
 import { useState } from 'react';
+import { Button } from '@tet/ui';
+import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { prepareIndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
 import {
   prepareData,
@@ -13,15 +16,17 @@ import {
 } from '../data/prepare-data';
 import type { SourceType } from '../types';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
+import { AddIndicateurPeriodesModal } from './add-indicateur-periodes.modal';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 
 const SaisiePeriodique = ({
   periodicite,
   readonly = false,
 }: {
-  periodicite: 'annuelle';
+  periodicite: IndicateurPeriodicite;
   readonly?: boolean;
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [periods, setPeriods] = useState<IndicateurPeriode[]>(() => {
     const first = IndicateurPeriodes.containing(periodicite, '2026-01-01');
     return [first, IndicateurPeriodes.next(first)];
@@ -83,13 +88,18 @@ const SaisiePeriodique = ({
         readonly={readonly}
         getColorBySourceId={() => '#6a6af4'}
         addPeriode={
-          !readonly && (
+          !readonly &&
+          (periodicite === 'annuelle' ? (
             <AddIndicateurPeriodeHeader
               periodicite={periodicite}
               existingPeriodes={periods}
               onAdd={(periode) => add([periode])}
             />
-          )
+          ) : (
+            <Button size="sm" onClick={() => setIsOpen(true)}>
+              {getIndicateurPeriodPresentation(periodicite).editor.addLabel}
+            </Button>
+          ))
         }
         onSave={async (period, type, value) => {
           const key = IndicateurPeriodes.key(period);
@@ -113,6 +123,16 @@ const SaisiePeriodique = ({
         }
         onComment={() => undefined}
       />
+      {isOpen && periodicite !== 'annuelle' && (
+        <AddIndicateurPeriodesModal
+          periodicite={periodicite}
+          existingPeriodes={periods}
+          onAdd={async (periodes) => {
+            await add(periodes);
+          }}
+          openState={{ isOpen, setIsOpen }}
+        />
+      )}
     </div>
   );
 };
@@ -125,6 +145,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Annuelle: Story = { args: { periodicite: 'annuelle' } };
+export const Mensuelle: Story = { args: { periodicite: 'mensuelle' } };
+export const Trimestrielle: Story = { args: { periodicite: 'trimestrielle' } };
+export const Semestrielle: Story = { args: { periodicite: 'semestrielle' } };
 export const LectureSeule: Story = {
-  args: { periodicite: 'annuelle', readonly: true },
+  args: { periodicite: 'mensuelle', readonly: true },
 };

@@ -90,10 +90,6 @@ export const IndicateurTable = ({
         IndicateurPeriodes.key(periode)
     );
   const getWriteIdentity = (periode: IndicateurPeriode) => {
-    IndicateurPeriodes.assertAnnual(
-      periode.periodicite,
-      'La saisie annuelle des valeurs'
-    );
     if (periode.periodicite !== definition.periodicite) {
       throw new Error('La périodicité doit correspondre à celle du tableau');
     }

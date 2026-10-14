@@ -1,6 +1,7 @@
 import { AuthRole } from '@tet/backend/users/models/auth.models';
 import { describe, expect, it, vi } from 'vitest';
 import CreateDefinitionService from './create-definition.service';
+import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
 describe('CreateDefinitionService', () => {
   it('verrouille le graphe avant toute insertion de définition', async () => {
@@ -41,9 +42,9 @@ describe('CreateDefinitionService', () => {
       service.createIndicateurPerso(
         {
           collectiviteId: 1,
-          titre: 'Indicateur annuel',
+          titre: 'Indicateur mensuel',
           unite: 't',
-          periodicite: 'annuelle',
+          periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
           thematiques: [],
           estFavori: false,
           estConfidentiel: true,
@@ -64,9 +65,9 @@ describe('CreateDefinitionService', () => {
     expect(repository.createPersonalizedDefinition).toHaveBeenCalledWith(
       {
         collectiviteId: 1,
-        titre: 'Indicateur annuel',
+        titre: 'Indicateur mensuel',
         unite: 't',
-        periodicite: 'annuelle',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
         thematiqueIds: [],
         commentaire: undefined,
         estFavori: false,
