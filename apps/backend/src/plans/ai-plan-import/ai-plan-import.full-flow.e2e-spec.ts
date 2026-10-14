@@ -608,19 +608,24 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       .from(aiPlanImportStepRunTable)
       .where(eq(aiPlanImportStepRunTable.jobId, jobId))
       .orderBy(asc(aiPlanImportStepRunTable.startedAt));
-    expect(stepRuns.map(({ step, status }) => ({ step, status }))).toEqual([
-      { step: 'document', status: 'ok' },
-      { step: 'reading', status: 'ok' },
-      { step: 'scouting', status: 'skipped' },
-      { step: 'extraction', status: 'ok' },
-      { step: 'hierarchy', status: 'skipped' },
-      { step: 'scoring', status: 'ok' },
-      { step: 'consolidation', status: 'ok' },
-      { step: 'enrichment', status: 'ok' },
-      { step: 'secteurs', status: 'skipped' },
-      { step: 'qualitativeReview', status: 'ok' },
-      { step: 'persistence', status: 'ok' },
-    ]);
+    // Les secteurs tournent à côté de l'enrichissement : l'ordre de départ
+    // des deux n'est pas fixé.
+    expect(stepRuns).toHaveLength(11);
+    expect(stepRuns.map(({ step, status }) => ({ step, status }))).toEqual(
+      expect.arrayContaining([
+        { step: 'document', status: 'ok' },
+        { step: 'reading', status: 'ok' },
+        { step: 'scouting', status: 'skipped' },
+        { step: 'extraction', status: 'ok' },
+        { step: 'hierarchy', status: 'skipped' },
+        { step: 'scoring', status: 'ok' },
+        { step: 'consolidation', status: 'ok' },
+        { step: 'enrichment', status: 'ok' },
+        { step: 'secteurs', status: 'skipped' },
+        { step: 'qualitativeReview', status: 'ok' },
+        { step: 'persistence', status: 'ok' },
+      ])
+    );
     const extraction = stepRuns.find((run) => run.step === 'extraction');
     expect(extraction).toMatchObject({
       llmCalls: 1,

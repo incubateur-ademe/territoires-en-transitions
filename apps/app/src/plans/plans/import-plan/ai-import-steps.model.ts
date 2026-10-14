@@ -40,16 +40,34 @@ const STEP_ORDER = (Object.keys(STEP_RANK) as ImportStepName[]).sort(
   (a, b) => STEP_RANK[a] - STEP_RANK[b]
 );
 
+// Les secteurs démarrent avec l'enrichissement et tournent à côté de lui puis
+// de la revue : deux étapes peuvent être en cours ensemble.
+const STARTS_WITH: Partial<Record<ImportStepName, ImportStepName>> = {
+  secteurs: 'enrichment',
+};
+
 export const toImportStepViews = (
   stepStates?: ImportStepStates
 ): ImportStepView[] => {
+  const isPending = (name: ImportStepName) =>
+    stateOf(stepStates, name) === 'pending';
   const currentStepName = STEP_ORDER.find(
-    (name) => stateOf(stepStates, name) === 'pending'
+    (name) => STARTS_WITH[name] === undefined && isPending(name)
   );
+  const currentRank = currentStepName
+    ? STEP_RANK[currentStepName]
+    : Number.POSITIVE_INFINITY;
+
+  const isCurrent = (name: ImportStepName) => {
+    const startsWith = STARTS_WITH[name];
+    return startsWith === undefined
+      ? name === currentStepName
+      : isPending(name) && STEP_RANK[startsWith] <= currentRank;
+  };
 
   return STEP_ORDER.map((name) => ({
     name,
-    status: toDisplayStatus(stateOf(stepStates, name), name === currentStepName),
+    status: toDisplayStatus(stateOf(stepStates, name), isCurrent(name)),
   }));
 };
 
