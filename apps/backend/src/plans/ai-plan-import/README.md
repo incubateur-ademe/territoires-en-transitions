@@ -247,7 +247,10 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   les fiches détaillent.
 - Après la structuration, les actions de même titre (à la casse, aux accents,
   à la ponctuation et à la numérotation près : « ACTION 3 - » et « 2.1.3 »)
-  sont fondues sur tout le document, sur la version la plus complète.
+  sont fondues sur tout le document, sur la version la plus complète. Deux
+  actions qui ont chacune du contenu restent distinctes quand leur axe, leur
+  sous-axe ou leur numéro (« 2.1.3 » et « 2.2.4 », « Fiche 3 » et « Fiche 7 »)
+  diffèrent.
 - **Squelette** (palier fort, un appel) : les axes et sous-axes du plan, tirés
   des titres relevés et des extraits de structure (sommaire, tableau
   récapitulatif). Il sert ensuite de référence à la structuration et à la mise

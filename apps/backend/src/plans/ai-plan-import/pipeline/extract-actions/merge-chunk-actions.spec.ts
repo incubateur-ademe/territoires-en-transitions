@@ -168,6 +168,64 @@ describe('dedupeByTitle', () => {
     ]);
   });
 
+  it('garde distinctes deux actions de même titre riches dans deux sous-axes du même axe', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('2.1.3 Sensibiliser les habitants', {
+          axe: 'Axe 2 : Habitat',
+          sousAxe: '2.1 Parc social',
+          description: 'Ateliers avec les bailleurs.',
+        }),
+        anAction('2.2.4 Sensibiliser les habitants', {
+          axe: 'Axe 2 : Habitat',
+          sousAxe: '2.2 Parc privé',
+          description: 'Permanences info-énergie.',
+        }),
+      ],
+      chunkIndexByAction: [0, 0],
+    });
+
+    expect(deduped.actions.map((a) => a.sousAxe)).toEqual([
+      '2.1 Parc social',
+      '2.2 Parc privé',
+    ]);
+  });
+
+  it('garde distinctes deux fiches riches de même intitulé et de numéros différents', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Fiche 3 : Sensibiliser les habitants', {
+          description: 'Ateliers avec les bailleurs.',
+        }),
+        anAction('Fiche 7 : Sensibiliser les habitants', {
+          description: 'Permanences info-énergie.',
+        }),
+      ],
+      chunkIndexByAction: [0, 0],
+    });
+
+    expect(deduped.actions).toHaveLength(2);
+  });
+
+  it('fond deux actions riches dont seule la graphie du sous-axe ou la forme du numéro change', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('2.1.3 Sensibiliser les habitants', {
+          sousAxe: '2.1',
+          description: 'Ateliers.',
+        }),
+        anAction('ACTION 3 - Sensibiliser les habitants', {
+          sousAxe: '2.1 Parc social',
+          description: 'Ateliers avec les bailleurs.',
+        }),
+      ],
+      chunkIndexByAction: [0, 2],
+    });
+
+    expect(deduped.actions).toHaveLength(1);
+    expect(deduped.actions[0].description).toBe('Ateliers avec les bailleurs.');
+  });
+
   it("fond l'écho sans contenu d'un titre même venu d'un autre axe", () => {
     const deduped = dedupeByTitle({
       actions: [
