@@ -80,6 +80,7 @@ export const IndicateurValeursTableHeader = ({
         {addPeriode && (
           <TableHeaderCell
             scope="col"
+            data-pinned="right"
             className={`${ADD_PERIODE_CELL_CLASSNAME} align-middle border-b border-primary-4 bg-primary-2`}
           >
             {addPeriode}

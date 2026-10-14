@@ -4,7 +4,7 @@ import { IndicateurValeursTableFrame } from '@/app/indicateurs/valeurs/grid/indi
 import { appLabels } from '@/app/labels/catalog';
 import type { IndicateurPeriode } from '@tet/domain/indicateurs';
 import { TableCell } from '@tet/ui';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
 import type { GetColorBySourceId } from '../data/use-indicateur-sources';
 import type { SourceType } from '../types';
@@ -12,6 +12,7 @@ import { IndicateurValeursTableCommentairesFooter } from './indicateur-valeurs-t
 import { IndicateurValeursTableSourceRow } from './indicateur-valeurs-table-source.row';
 import { IndicateurValeursTableHeader } from './indicateur-valeurs-table.header';
 import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
+import { useRevealIndicateurPeriode } from './use-reveal-indicateur-periode';
 
 type Props = {
   definition: Pick<IndicateurDefinition, 'titre' | 'unite'>;
@@ -20,6 +21,7 @@ type Props = {
   readonly?: boolean;
   confidentiel?: boolean;
   addPeriode?: ReactNode;
+  periodeToReveal?: IndicateurPeriode;
   getColorBySourceId: GetColorBySourceId;
   onSave: (
     periode: IndicateurPeriode,
@@ -38,6 +40,7 @@ export const IndicateurValeursTable = ({
   readonly,
   confidentiel,
   addPeriode,
+  periodeToReveal,
   getColorBySourceId,
   onSave,
   onDelete,
@@ -48,11 +51,15 @@ export const IndicateurValeursTable = ({
     objectifs
   );
   const showAddPeriodeColumn = Boolean(addPeriode);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useRevealIndicateurPeriode(scrollRef, periodeToReveal, periodes);
 
   return (
     <div className="flex flex-col gap-2">
       <IndicateurValeursTableLegend />
       <IndicateurValeursTableFrame
+        scrollRef={scrollRef}
+        persistentScrollbar
         className="border-primary-3"
         maxHeight="none"
         layout="auto"
@@ -73,7 +80,7 @@ export const IndicateurValeursTable = ({
           {readonly && periodes.length === 0 ? (
             <tr>
               <TableCell className="text-center text-sm text-grey-7">
-                {appLabels.indicateurValeurAbsente}
+                {appLabels.aucuneDonneeDisponible}
               </TableCell>
             </tr>
           ) : (

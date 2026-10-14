@@ -1,4 +1,5 @@
 import { IndicateurValeursCombinedCell } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs-combined.cell';
+import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
@@ -61,6 +62,11 @@ export const IndicateurValeursTableSourceRow = ({
               resultat={resultat?.valeur ?? null}
               objectif={objectif?.valeur ?? null}
               readonly={readonly || !isLocal}
+              emptyLabel={
+                isLocal
+                  ? appLabels.indicateurValeurAbsente
+                  : appLabels.indicateurDonneeIndisponible
+              }
               isFuture={IndicateurPeriodes.isFuture(periode)}
               onSave={(type, value) => onSave(periode, type, value)}
             />

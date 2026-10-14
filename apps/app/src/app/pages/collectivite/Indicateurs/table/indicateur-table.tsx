@@ -111,6 +111,7 @@ export const IndicateurTable = ({
         resultats={resultats}
         objectifs={objectifs}
         addPeriode={declaration.header}
+        periodeToReveal={declaration.periodeToReveal}
         readonly={!canWrite}
         confidentiel={confidentiel}
         getColorBySourceId={getColorBySourceId}

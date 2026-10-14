@@ -6,7 +6,7 @@ import {
   type SupportedIndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import type { OpenState } from '@tet/ui/utils/types';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { AddIndicateurPeriodeHeader } from './add-indicateur-periode.header';
 import { getIndicateurPeriodeInputOptions } from './indicateur-periode-input.options';
 
@@ -21,6 +21,7 @@ export type IndicateurTableDeclarationProps = {
 
 export type IndicateurTableDeclaration = {
   header?: ReactNode;
+  periodeToReveal?: IndicateurPeriode;
 };
 
 /** Keeps period declaration independent from the table used to edit values. */
@@ -32,6 +33,7 @@ export const useIndicateurTableDeclaration = ({
   existingPeriodes,
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
+  const [periodeToReveal, setPeriodeToReveal] = useState<IndicateurPeriode>();
   const { mutateAsync: upsertValeur } = useUpsertIndicateurValeur({
     successMessage:
       periodicite === undefined
@@ -59,6 +61,7 @@ export const useIndicateurTableDeclaration = ({
         periodicite: periode.periodicite,
         dateValeur: periode.dateDebut,
       });
+      setPeriodeToReveal(periode);
       return true;
     } catch {
       return false;
@@ -66,6 +69,7 @@ export const useIndicateurTableDeclaration = ({
   };
 
   return {
+    periodeToReveal,
     header: canWrite && periodicite !== undefined && (
       <AddIndicateurPeriodeHeader
         periodicite={periodicite}

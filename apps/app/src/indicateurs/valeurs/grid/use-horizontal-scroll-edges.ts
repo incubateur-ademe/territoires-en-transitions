@@ -10,6 +10,9 @@ export type HorizontalScrollEdges = {
   canScrollLeft: boolean;
   /** Du contenu est masqué à droite. */
   canScrollRight: boolean;
+  scrollLeft: number;
+  viewportWidth: number;
+  contentWidth: number;
 };
 
 /**
@@ -27,6 +30,9 @@ export const useHorizontalScrollEdges = (
   const [edges, setEdges] = useState<HorizontalScrollEdges>({
     canScrollLeft: false,
     canScrollRight: false,
+    scrollLeft: 0,
+    viewportWidth: 0,
+    contentWidth: 0,
   });
 
   useEffect(() => {
@@ -38,6 +44,9 @@ export const useHorizontalScrollEdges = (
       setEdges({
         canScrollLeft: node.scrollLeft > SCROLL_EPSILON,
         canScrollRight: node.scrollLeft < maxScrollLeft - SCROLL_EPSILON,
+        scrollLeft: Math.max(0, Math.min(node.scrollLeft, maxScrollLeft)),
+        viewportWidth: node.clientWidth,
+        contentWidth: node.scrollWidth,
       });
     };
 

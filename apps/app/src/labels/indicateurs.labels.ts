@@ -10,6 +10,8 @@ export const indicateursLabels = {
   indicateurSupprimerPeriode: (periode: string) =>
     `Supprimer la période ${periode}`,
   indicateurValeurAbsente: 'Non renseigné',
+  indicateurDonneeIndisponible: 'Donnée indisponible',
+  indicateurTableDefilement: 'Défilement horizontal du tableau',
 
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
 
