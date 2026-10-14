@@ -172,6 +172,19 @@ type PipelineStep = {
 
 const STEP_ORDER = stepStatesSchema.keyof().options;
 
+/** Après la dernière étape, plus rien ne lit le découpage : tout modèle convient. */
+export const isCheckpointUsableBy = (
+  checkpoint: Pick<
+    PipelineCheckpoint,
+    'schemaVersion' | 'llm' | 'completedStep'
+  >,
+  llm: PipelineLlm
+): boolean =>
+  checkpoint.schemaVersion === PIPELINE_CHECKPOINT_SCHEMA_VERSION &&
+  (checkpoint.completedStep === STEP_ORDER[STEP_ORDER.length - 1] ||
+    (checkpoint.llm?.strategy === llm.capabilities.strategy &&
+      checkpoint.llm?.maxInputTokens === llm.maxInputTokens));
+
 export const runImportPipeline = async (
   llm: PipelineLlm,
   input: RunImportPipelineInput
