@@ -219,6 +219,7 @@ export const AddIndicateurPeriodesModal = ({
                   icon="close-line"
                   className="h-12 px-2 text-grey-6 disabled:invisible"
                   title={appLabels.indicateurRetirerColonne}
+                  aria-label={appLabels.indicateurRetirerColonne}
                   disabled={isSaving || columns.length === 1}
                   dataTest="indicateurs.periodes.remove"
                   onClick={() =>

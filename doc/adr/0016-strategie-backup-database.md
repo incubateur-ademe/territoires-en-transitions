@@ -139,7 +139,11 @@ Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow
   colonne `periodicite` ni catalogue ; la cible annuelle doit conserver ses deux contraintes
   annuelles validées avant l'exécution du vérificateur Sqitch partagé. La préparation SQL des
   formules utilise l’état `formulas`, avec les fonctions et le trigger vérifiés avant toute
-  troncature. La préparation suivante du reporting utilise l’état `reporting` et vérifie
+  troncature. La préparation d’intégrité annuelle utilise l’état `prepared` :
+  elle exige les migrations de cadence obligatoire et de cohérence, leurs contrôles
+  physiques et les restrictions annuelles. Les états intermédiaires sont refusés.
+  L’activation utilise ensuite `contract`, avec les quatre cadences autorisées.
+  La préparation précédente du reporting utilise l’état `reporting` et vérifie
   également la vue matérialisée.
 - **Exclusion mutuelle des maintenances** : les restaurations planifiées et manuelles partagent un
   groupe de concurrence par base ; le backup utilise `database-maintenance-prod`. Ces groupes ne

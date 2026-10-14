@@ -228,6 +228,31 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       expect(dbIndicateur[0].unite).toBe(updateData.indicateurFields.unite);
     });
 
+    test('rejects a periodicity change before the first value', async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const indicateurId = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Fixed declaration cadence',
+        },
+      });
+      await expect(
+        caller.indicateurs.indicateurs.update({
+          indicateurId,
+          collectiviteId: collectivite.id,
+          indicateurFields: {
+            periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+          } as never,
+        })
+      ).rejects.toThrow();
+      const [definition] = await databaseService.db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId));
+      expect(definition.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
+    });
+
     test('should atomically update fiches and thematiques', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const indicateurId = await createIndicateurPerso({

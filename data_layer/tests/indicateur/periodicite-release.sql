@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(18);
+SELECT plan(19);
 CREATE TEMP TABLE release_collectivite AS
 WITH inserted AS (
     INSERT INTO public.collectivite (nom, type) VALUES ('Livraison annuelle', 'epci') RETURNING id
@@ -19,7 +19,7 @@ SELECT lives_ok($sql$
     ON CONFLICT (indicateur_id, collectivite_id, periodicite, date_valeur)
         WHERE metadonnee_id IS NULL
     DO UPDATE SET resultat = EXCLUDED.resultat
-$sql$, 'Le nouvel upsert annuel fonctionne avec les anciens et nouveaux index présents');
+$sql$, 'L upsert annuel fonctionne après suppression des anciens index');
 SELECT throws_ok($sql$
     INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Mensuel', 'kWh', 'mensuelle')
 $sql$, '23514', NULL, 'La première livraison refuse les définitions mensuelles');
@@ -60,7 +60,20 @@ SELECT results_eq(
     'Le reporting conserve le résultat annuel et expose son début de période'
 );
 
+-- Vérifie que les trois règles préparées sont effectivement installées.
+SELECT ok(NOT EXISTS (
+    SELECT FROM (VALUES
+        ('public.indicateur_definition'::regclass, 'empecher_changement_periodicite_indicateur'),
+        ('public.indicateur_groupe'::regclass, 'verifier_periodicite_groupe_indicateur'),
+        ('public.indicateur_valeur'::regclass, 'verifier_periodicite_valeur_indicateur')
+    ) AS attendu(relation, nom)
+    WHERE NOT EXISTS (SELECT FROM pg_trigger WHERE tgrelid = attendu.relation
+        AND tgname = attendu.nom AND tgenabled = 'O' AND NOT tgisinternal)
+), 'Les règles de cohérence sont installées avant l activation');
+
 -- Isole les nouveaux CHECK des garde-fous annuels : ce bloc est annulé au ROLLBACK.
+ALTER TABLE public.indicateur_definition DISABLE TRIGGER empecher_changement_periodicite_indicateur;
+ALTER TABLE public.indicateur_valeur DISABLE TRIGGER verifier_periodicite_valeur_indicateur;
 ALTER TABLE public.indicateur_definition DROP CONSTRAINT indicateur_definition_schema_annuel;
 ALTER TABLE public.indicateur_valeur DROP CONSTRAINT indicateur_valeur_schema_annuel;
 SELECT lives_ok($sql$
