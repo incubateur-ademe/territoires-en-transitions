@@ -19,7 +19,8 @@ export type TourButtonName =
   | 'Précédent'
   | 'Terminer'
   | 'Passer la visite'
-  | 'Quitter la visite';
+  | 'Quitter la visite'
+  | 'Ouvrir ce levier';
 
 const UPSERT_URL_PATTERN = /collectivites\.pertinenceLeviers\.upsert/;
 
