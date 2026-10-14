@@ -147,7 +147,7 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/workspace:ro" \
             --workdir /workspace \
             --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=formulas \
+            --env EXPECTED_RESTORE_PHASE=reporting \
             --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
           archive="$(mktemp)"
           trap 'rm -f "$archive"' EXIT

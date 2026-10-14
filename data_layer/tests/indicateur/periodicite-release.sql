@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(16);
+SELECT plan(18);
 CREATE TEMP TABLE release_collectivite AS
 WITH inserted AS (
     INSERT INTO public.collectivite (nom, type) VALUES ('Livraison annuelle', 'epci') RETURNING id
@@ -41,11 +41,24 @@ SELECT is(
      FROM pg_attribute
      WHERE attrelid = 'stats.report_indicateur_resultat'::regclass
        AND attnum > 0 AND NOT attisdropped),
-    ARRAY['collectivite_id', 'code_siren_insee', 'nom', 'indicateur_id', 'annee', 'resultat']::text[],
-    'La livraison annuelle conserve le contrat historique du reporting'
+    ARRAY['collectivite_id', 'code_siren_insee', 'nom', 'indicateur_id', 'annee', 'resultat', 'periodicite', 'periode_debut']::text[],
+    'Le reporting ajoute les périodes après les colonnes historiques'
 );
 SELECT ok(to_regclass('public.indicateur_periodicite') IS NULL,
     'La livraison annuelle ne conserve pas de catalogue de configuration inutilisé');
+
+SELECT lives_ok($sql$
+    REFRESH MATERIALIZED VIEW stats.collectivite;
+    REFRESH MATERIALIZED VIEW stats.report_indicateur_resultat
+$sql$, 'Le reporting annuel reste rafraîchissable');
+SELECT results_eq(
+    $$ SELECT annee, resultat, periodicite, periode_debut
+       FROM stats.report_indicateur_resultat
+       WHERE collectivite_id = (SELECT id FROM release_collectivite)
+         AND indicateur_id = (SELECT id FROM release_indicateur) $$,
+    $$ VALUES (2024::numeric, 1::double precision, 'annuelle'::text, DATE '2024-01-01') $$,
+    'Le reporting conserve le résultat annuel et expose son début de période'
+);
 
 -- Isole les nouveaux CHECK des garde-fous annuels : ce bloc est annulé au ROLLBACK.
 ALTER TABLE public.indicateur_definition DROP CONSTRAINT indicateur_definition_schema_annuel;

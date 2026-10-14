@@ -213,10 +213,21 @@ Le retour arrière annule ces deux migrations sans modifier les données. Les
 sauvegardes de cette étape se restaurent dans une cible au même état `formulas` ;
 le contrôle vérifie aussi les fonctions et le trigger avant toute troncature.
 
-## 4. Activation des cadences — #5215
+## 4. Reporting par période — `refactor/indicateurs-period-reporting`
+
+Après la validation SQL des formules, appliquer
+`stats/report_indicateur_resultat_periode` avec l’application annuelle. La vue
+conserve ses six colonnes historiques et ajoute `periodicite` et `periode_debut`.
+Aucune nouvelle cadence n’est autorisée et aucune observation n’est modifiée.
+
+Vérifier les résultats annuels avec `periodicite-release.sql`. Le retour arrière
+recrée la vue à six colonnes. Les sauvegardes exigent une cible au même état
+`reporting`, dont la vue et les contrôles de formule sont vérifiés avant restauration.
+
+## 5. Activation des cadences — #5215
 
 L’activation des trois cadences reste une livraison distincte, après la préparation
-applicative #5481 et la validation SQL des formules ci-dessus. Les gardes annuelles
+applicative #5481 et les deux préparations SQL ci-dessus. Les gardes annuelles
 restent actives jusque-là.
 
 ## En cas d'échec
