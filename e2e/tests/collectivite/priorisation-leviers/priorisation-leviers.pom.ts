@@ -128,7 +128,7 @@ export class PriorisationLeviersPom {
     return this.levierPanel(nom)
       .getByRole('listitem')
       .filter({
-        has: this.page.getByRole('heading', { name: titre }),
+        has: this.page.getByRole('heading', { level: 2, name: titre }),
       });
   }
 
@@ -223,13 +223,13 @@ export class PriorisationLeviersPom {
 
   get preselectedCards(): Locator {
     return this.page.getByRole('listitem').filter({
-      has: this.page.getByRole('heading'),
+      has: this.page.getByRole('heading', { level: 2 }),
     });
   }
 
   preselectedCard(titre: string): Locator {
     return this.preselectedCards.filter({
-      has: this.page.getByRole('heading', { name: titre }),
+      has: this.page.getByRole('heading', { level: 2, name: titre }),
     });
   }
 
