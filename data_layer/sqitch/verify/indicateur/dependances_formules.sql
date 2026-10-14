@@ -25,8 +25,19 @@ BEGIN
                )
         FROM private.extraire_dependances_formule_indicateur(
             'val(Source-A) + cible(source_b) + val(source-a)'
+            || ' + EST_SUIVI(source-a) + PROGRESSION_SNBC(source_b)'
+            || ' + REDUCTION(source-a, 2019, 2030, 40)'
         )
     ), 'L extraction doit normaliser et dédupliquer les dépendances';
+
+    ASSERT (
+        SELECT array_agg(source_identifiant ORDER BY source_identifiant)
+            = ARRAY['progression-source', 'reduction-source', 'suivi-source']::text[]
+        FROM private.extraire_dependances_formule_indicateur(
+            'EST_SUIVI(Suivi-Source) + PROGRESSION_SNBC(Progression-Source, 2019)'
+            || ' + REDUCTION(Reduction-Source, 2019, 2030, 40)'
+        )
+    ), 'Les fonctions de suivi et de progression doivent aussi exposer leurs dépendances';
 
     ASSERT NOT has_function_privilege(
         'anon',

@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(14);
+SELECT plan(18);
 
 SELECT has_function(
     'private',
@@ -14,14 +14,19 @@ SELECT set_eq(
         SELECT source_identifiant
         FROM private.extraire_dependances_formule_indicateur(
             'val(Test-Formule-Source) + opt_val(test-formule-source, citepa) + cible(test.formule.cible) + limite(test-formule-limite)'
+            || ' + EST_SUIVI(test-formule-suivi) + PROGRESSION_SNBC(test-formule-progression, 2019)'
+            || ' + REDUCTION(test-formule-reduction, 2019, 2030, 40)'
         )
     $$,
     $$ VALUES
         ('test-formule-limite'::text),
         ('test-formule-source'::text),
+        ('test-formule-suivi'::text),
+        ('test-formule-progression'::text),
+        ('test-formule-reduction'::text),
         ('test.formule.cible'::text)
     $$,
-    'L extraction suit les quatre appels de la grammaire, normalise la casse et déduplique'
+    'L extraction suit les sept appels de la grammaire, normalise la casse et déduplique'
 );
 
 CREATE TEMPORARY TABLE test_indicateur_periodicite_formule AS
@@ -66,6 +71,51 @@ SELECT throws_ok(
     23503,
     NULL,
     'Une formule ne peut pas référencer une définition absente'
+);
+
+SELECT throws_ok(
+    $$
+        UPDATE public.indicateur_definition
+        SET valeur_calcule = 'EST_SUIVI(test-formule-source-inconnue)'
+        WHERE identifiant_referentiel = 'test-formule-cible'
+    $$,
+    23503,
+    NULL,
+    'EST_SUIVI ne peut pas référencer une définition absente'
+);
+
+SELECT throws_ok(
+    $$
+        UPDATE public.indicateur_definition
+        SET valeur_calcule = 'PROGRESSION_SNBC(test-formule-source-inconnue, 2019)'
+        WHERE identifiant_referentiel = 'test-formule-cible'
+    $$,
+    23503,
+    NULL,
+    'PROGRESSION_SNBC ne peut pas référencer une définition absente'
+);
+
+SELECT throws_ok(
+    $$
+        UPDATE public.indicateur_definition
+        SET valeur_calcule = 'REDUCTION(test-formule-source-inconnue, 2019, 2030, 40)'
+        WHERE identifiant_referentiel = 'test-formule-cible'
+    $$,
+    23503,
+    NULL,
+    'REDUCTION ne peut pas référencer une définition absente'
+);
+
+SELECT lives_ok(
+    $$
+        UPDATE public.indicateur_definition
+        SET valeur_calcule =
+            'EST_SUIVI(test-formule-source-annuelle)'
+            || ' + PROGRESSION_SNBC(test-formule-source-annuelle, 2019)'
+            || ' + REDUCTION(test-formule-source-annuelle, 2019, 2030, 40)'
+        WHERE identifiant_referentiel = 'test-formule-cible'
+    $$,
+    'Les fonctions de suivi et de progression acceptent une source annuelle existante'
 );
 
 SELECT throws_ok(

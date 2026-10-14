@@ -4,7 +4,7 @@
 BEGIN;
 
 -- La grammaire applicative interdit chaînes et commentaires. Un identifiant
--- est [a-zA-Z_][a-zA-Z_0-9.-]* et les quatre appels ci-dessous sont les seuls
+-- est [a-zA-Z_][a-zA-Z_0-9.-]* et les sept appels ci-dessous sont les seuls
 -- qui référencent un indicateur. Cette extraction ne prétend pas valider
 -- l'expression complète : elle projette exhaustivement les références de
 -- toute formule acceptée par le parseur applicatif.
@@ -21,8 +21,8 @@ AS $$
     SELECT DISTINCT lower(captures[3])
     FROM regexp_matches(
         formule,
-        '(^|[^[:alnum:]_.-])(opt_val|val|cible|limite)[[:space:]]*[(][[:space:]]*([[:alpha:]_][[:alnum:]_.-]*)',
-        'g'
+        '(^|[^[:alnum:]_.-])(opt_val|val|cible|limite|est_suivi|progression_snbc|reduction)[[:space:]]*[(][[:space:]]*([[:alpha:]_][[:alnum:]_.-]*)',
+        'gi'
     ) AS captures;
 $$;
 

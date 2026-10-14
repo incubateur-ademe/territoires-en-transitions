@@ -187,9 +187,17 @@ Les restrictions annuelles, les index et le reporting restent inchangés.
 Le dump de production du **14 octobre 2026 à 00:44 UTC** contient 26 991
 définitions et 4 771 525 valeurs, toutes annuelles et cohérentes. Les 78 formules
 ont 295 dépendances existantes de même cadence : aucune réparation n’est requise.
-Sur cette copie, le contrôle global prend environ 27 ms ; les contrôles successifs
-des 896 définitions du catalogue prennent 7,6 s. Ce coût porte sur les mutations
-du catalogue. Refaire le contrôle sur une sauvegarde récente avant déploiement.
+Le contrôle de #5488 a restauré les 26 991 définitions depuis ce dump dans une
+base isolée : les 78 formules et leurs 295 dépendances correspondent au parseur
+applicatif. Les sept fonctions de référence sont couvertes, y compris `est_suivi`,
+`progression_snbc` et `reduction`. Les 34 assertions SQL passent ; les empreintes
+des définitions restent identiques après déploiement, tests et retour arrière.
+
+Le contrôle global prend environ 43 ms et l’upsert des 896 définitions du catalogue
+prend 13 s sur cette machine. Ce coût porte sur les mutations du catalogue, pas
+sur les saisies de valeurs. Le test reproduit l’upsert SQL de l’import, sans appeler
+Google Sheets ni lancer de recalcul. Refaire le contrôle sur une sauvegarde récente
+avant déploiement.
 
 Vérifier la suite SQL `periodicite-formules.sql` et le maintien du contrat annuel
 avec `periodicite-release.sql`. Une transaction peut différer la contrainte pour
