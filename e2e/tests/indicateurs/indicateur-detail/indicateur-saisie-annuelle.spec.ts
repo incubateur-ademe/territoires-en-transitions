@@ -42,17 +42,35 @@ test('Distinguer deux versions annuelles de la même source après rechargement'
         }))
       )
       .returning();
-    await databaseService.db.insert(indicateurValeurTable).values(
-      versions.map(({ id }, index) => ({
+    await databaseService.db.insert(indicateurValeurTable).values([
+      ...versions.map(({ id }, index) => ({
         collectiviteId,
         indicateurId,
         periodicite: 'annuelle' as const,
-        dateValeur: '2026-01-01',
+        dateValeur: `${2025 + index}-01-01`,
         resultat: index === 0 ? 0 : 20,
         calculAuto: index === 1,
         metadonneeId: id,
-      }))
-    );
+      })),
+      // La version récente remplace l'ancienne pour une même année.
+      {
+        collectiviteId,
+        indicateurId,
+        periodicite: 'annuelle',
+        dateValeur: '2026-01-01',
+        resultat: 10,
+        metadonneeId: versions[0].id,
+      },
+    ]);
+    const saved = await user.getTrpcClient().indicateurs.valeurs.list.query({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+      periodicite: 'annuelle',
+    });
+    expect(saved.indicateurs[0].sources[sourceId].valeurs).toMatchObject([
+      { dateValeur: '2025-01-01', resultat: 0, metadonneeId: versions[0].id },
+      { dateValeur: '2026-01-01', resultat: 20, metadonneeId: versions[1].id },
+    ]);
     await indicateurDetailPom.goto(collectiviteId, indicateurId);
     const valeurs = new IndicateurValeursPom(page);
     const expectVersions = async () => {
@@ -67,9 +85,9 @@ test('Distinguer deux versions annuelles de la même source après rechargement'
         await expect(row.getByRole('rowheader')).toContainText(
           `Source ${version.id}`
         );
-        await expect(row.locator('td[data-periode="2026-01-01"]')).toHaveText(
-          index === 0 ? 'R0' : 'R20'
-        );
+        await expect(
+          row.locator(`td[data-periode="${2025 + index}-01-01"]`)
+        ).toHaveText(index === 0 ? 'R0' : 'R20');
         await expect(row.getByRole('button')).toHaveCount(0);
         await row.locator('.ri-information-line').hover();
         const tooltip = page.getByRole('tooltip');
