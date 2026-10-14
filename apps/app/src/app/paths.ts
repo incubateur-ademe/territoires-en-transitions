@@ -139,6 +139,7 @@ const collectiviteDemarchePcaetRootPath = `${collectiviteDemarchePcaetPath}/:${d
 const collectiviteDemarchePcaetDiagnosticPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/indicateurs`;
 const collectiviteDemarchePcaetPlanActionsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/plan`;
 const collectiviteDemarchePcaetDocumentsPath = `${collectiviteDemarchePcaetPath}/:${demarcheIdParam}/documents`;
+const collectiviteDemarchePcaetConsultationPath = `${collectiviteDemarchePcaetPath}/consultation/:${demarcheIdParam}`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
@@ -612,6 +613,18 @@ export const makeCollectiviteDemarchePcaetRootUrl = ({
   demarcheId: number;
 }) =>
   collectiviteDemarchePcaetRootPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${demarcheIdParam}`, demarcheId.toString());
+
+/** Lecture seule d'une démarche publique, pour qui n'en édite pas. */
+export const makeCollectiviteDemarchePcaetConsultationUrl = ({
+  collectiviteId,
+  demarcheId,
+}: {
+  collectiviteId: number;
+  demarcheId: number;
+}) =>
+  collectiviteDemarchePcaetConsultationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${demarcheIdParam}`, demarcheId.toString());
 

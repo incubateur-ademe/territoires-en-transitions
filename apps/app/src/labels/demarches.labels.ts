@@ -622,6 +622,18 @@ export const demarchesLabels = {
   demarcheListeColonneModification: 'Modifiée le',
   demarcheListeColonneActions: 'Actions',
   demarcheListeAucunResultat: 'Aucune démarche ne correspond à ces filtres',
+  /** Liste publique : ce que voit qui consulte la collectivité sans l'éditer. */
+  demarcheListePubliqueDescription:
+    'Les démarches adoptées ou archivées de la collectivité, en lecture seule.',
+  demarcheListePubliqueAucune: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Aucune démarche ${type.nom} adoptée ou archivée`,
+  demarcheConsultationRetourListe: 'Toutes les démarches',
+  demarcheConsultationAdopteLe: 'Adopté le',
+  demarcheConsultationDocumentsDescription:
+    'Les pièces du PCAET adopté : celles de l’adoption, puis le dossier soumis aux avis.',
+  /** Sans circuit d'avis sur la plateforme : un seul dossier, rien n'a été « soumis aux avis » ici. */
+  demarcheConsultationDocumentsHorsPlateformeDescription:
+    'Les pièces du PCAET adopté, transmis pour avis hors de la plateforme.',
   demarcheActionContinuer: 'Continuer',
   demarcheActionConsulter: 'Consulter',
   demarcheActionFinaliserDepot: 'Finaliser le dépôt',

@@ -1,7 +1,7 @@
 import { usePathname } from 'next/navigation';
 
 import { homePath, makeDemandesAvisUrl } from '@/app/app/paths';
-import { useIsDemarchePcaetEnabled } from '@/app/demarches/pcaet/use-is-enabled';
+import { useCanReadDemarchesPcaet } from '@/app/demarches/pcaet/use-is-enabled';
 import { useIsPriorisationEnabled } from '@/app/collectivites/priorisation-leviers/use-is-priorisation-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
@@ -26,7 +26,7 @@ export const Header = () => {
 
   const { collectivite } = useCollectiviteContext();
   const referentielTeEnabled = useReferentielTeEnabled();
-  const isDemarchePcaetEnabled = useIsDemarchePcaetEnabled();
+  const isDemarchePcaetEnabled = useCanReadDemarchesPcaet();
   const isPriorisationEnabled = useIsPriorisationEnabled();
 
   const rootUrl = collectivite

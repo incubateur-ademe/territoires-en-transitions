@@ -1,6 +1,7 @@
 'use client';
 
 import { DemarcheSection } from '@/app/demarches/components/section';
+import { DocumentsBloc } from '@/app/demarches/components/documents-bloc';
 import { demarchePcaetAutosaveKeys } from '@/app/demarches/pcaet/data/autosave-keys';
 import { DemarcheShell } from '@/app/demarches/components/shell';
 import { getDemarcheParcours } from '@/app/demarches/steps';
@@ -33,22 +34,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { AutosaveBadge, EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
-import { ComponentProps, PropsWithChildren, useState } from 'react';
-
-/** Un bloc de l'écran, sous son titre : avis, pièces de l'adoption, dossier transmis. */
-const DocumentsBloc = ({
-  titre,
-  description,
-  children,
-}: PropsWithChildren<{ titre: string; description?: string }>) => (
-  <section className="flex flex-col gap-3">
-    <div className="flex flex-col gap-1">
-      <h3 className="m-0 text-base font-bold text-primary-9">{titre}</h3>
-      {description && <p className="m-0 text-sm text-grey-7">{description}</p>}
-    </div>
-    {children}
-  </section>
-);
+import { ComponentProps, useState } from 'react';
 
 export const DemarchePcaetDocumentsPage = () => {
   const demarcheId = useDemarcheId();

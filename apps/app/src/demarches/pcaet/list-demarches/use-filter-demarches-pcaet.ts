@@ -3,12 +3,29 @@
 import { RouterOutput } from '@tet/api';
 import {
   demarchePcaetStatusValues,
+  type DemarchePcaetPublic,
   type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
 import { parseAsArrayOf, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 
 export type Demarche = RouterOutput['demarches']['pcaet']['list'][number];
+
+/**
+ * Ce que la liste affiche d'une démarche : commun à la liste d'édition et à la
+ * liste publique, dont les lignes ne portent rien de plus.
+ */
+export type DemarcheListItem = Pick<
+  DemarchePcaetPublic,
+  | 'id'
+  | 'collectiviteId'
+  | 'titre'
+  | 'status'
+  | 'createdAt'
+  | 'launchedAt'
+  | 'modifiedAt'
+  | 'pilotes'
+>;
 
 const SORT_VALUES = [
   'titre',
@@ -40,7 +57,7 @@ const collator = new Intl.Collator('fr', { sensitivity: 'base' });
  * sans pilote ni date se range toujours en fin de liste, quel que soit le sens.
  */
 const sortValue = (
-  demarche: Demarche,
+  demarche: DemarcheListItem,
   colonne: ColonneTriable
 ): string | number | null => {
   switch (colonne) {
@@ -74,7 +91,9 @@ const compare = (
  * compte qu'une poignée, la liste arrive entière. L'état vit dans l'URL, comme
  * sur la liste d'instruction des services.
  */
-export const useFilterDemarchesPcaet = (demarches: Demarche[] | undefined) => {
+export const useFilterDemarchesPcaet = <T extends DemarcheListItem>(
+  demarches: T[] | undefined
+) => {
   const [{ sort, direction, statuts }, setParams] = useQueryStates(parsers, {
     urlKeys: { sort: '$s', direction: '$d', statuts: '$st' },
     // Un tri ou un filtre n'est pas une étape de navigation.
