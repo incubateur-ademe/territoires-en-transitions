@@ -394,6 +394,12 @@ export const runImportPipeline = async (
   // Deux branches en parallèle après la consolidation, qui recrée les
   // sous-actions : les secteurs ne lisent rien de ce qu'écrit l'enrichissement
   // et n'écrivent que `action.secteurs`, que la revue ne lit pas.
+  // Une branche en échec arrête l'autre : la reprise repartira d'avant les
+  // deux, et chaque appel de plus y serait payé deux fois.
+  const branchAbort = new AbortController();
+  const branchSignal = input.signal
+    ? AbortSignal.any([input.signal, branchAbort.signal])
+    : branchAbort.signal;
   const enrichmentBranch: PipelineStep[] = [
     {
       name: 'enrichment',
@@ -404,12 +410,12 @@ export const runImportPipeline = async (
           actions,
           source: state.source,
           disabledFields: input.disabledFields,
-          signal: input.signal,
+          signal: branchSignal,
         }),
     },
     {
       name: 'qualitativeReview',
-      run: (actions) => reviewQuality(llm, { actions, signal: input.signal }),
+      run: (actions) => reviewQuality(llm, { actions, signal: branchSignal }),
     },
   ];
   const secteursBranch: PipelineStep[] = [
@@ -420,7 +426,7 @@ export const runImportPipeline = async (
         classifySecteurs(llm, {
           actions,
           source: state.source,
-          signal: input.signal,
+          signal: branchSignal,
         }),
     },
   ];
@@ -455,12 +461,30 @@ export const runImportPipeline = async (
       tokens: emptyTokenUsage(),
       warnings: [],
     };
+    // Arrêtée par l'autre branche : ce qu'elle a fait depuis ne compte pas.
+    const cancelled = (): BranchOutcome => ({ progress, failure: null });
     for (const step of branch) {
       if (isCompleted(step.name)) {
         continue;
       }
-      const go = await runStep(reportStepRun, progress, step);
+      if (branchAbort.signal.aborted) {
+        return cancelled();
+      }
+      let go: StepGo;
+      try {
+        go = await runStep(reportStepRun, progress, step);
+      } catch (error) {
+        if (branchAbort.signal.aborted && !input.signal?.aborted) {
+          return cancelled();
+        }
+        branchAbort.abort();
+        throw error;
+      }
+      if (branchAbort.signal.aborted) {
+        return cancelled();
+      }
       if (!go.success) {
+        branchAbort.abort();
         return { progress, failure: { step: step.name, error: go.error } };
       }
       progress = go.progress;
