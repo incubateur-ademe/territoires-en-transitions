@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Pousse les variables d'environnement d'une application Coolify depuis un
-# manifeste, en lisant les valeurs secrètes dans Scaleway Secret Manager.
+# Pousse les variables d'environnement d'une application ou d'un service
+# Coolify depuis un manifeste, en lisant les valeurs secrètes dans Scaleway Secret Manager.
 #
 # Invoqué par terraform_data.env_push (infra/coolify/env-push.tf), ou
 # manuellement. Idempotent : n'écrit que ce qui diffère.
@@ -24,6 +24,8 @@
 #   COOLIFY_ENDPOINT    URL de base (…/api/v1)
 #   COOLIFY_TOKEN       token Bearer (via scripts/coolify-env.sh)
 #   APP_ID              ex. preprod/backend ; marqueur [tet-app:<APP_ID>]
+#                       (applications) ou [tet-service:<APP_ID>] (services)
+#   RESOURCE            (optionnel) applications (défaut) ou services
 #   SECRET_PROJECT_ID   projet Scaleway des secrets de l'environnement
 #   SECRET_PATH         path Secret Manager, ex. /coolify-env/preprod
 #   ENV_MANIFEST        JSON : [{key, value?, secret?, multiline}], secret = nom
@@ -52,7 +54,15 @@ for bin in curl jq scw base64; do
   }
 done
 
-_marker="[tet-app:${APP_ID}]"
+_resource="${RESOURCE:-applications}"
+case "$_resource" in
+applications) _marker="[tet-app:${APP_ID}]" ;;
+services) _marker="[tet-service:${APP_ID}]" ;;
+*)
+  echo "✗ RESOURCE invalide : ${_resource} (applications ou services)." >&2
+  exit 1
+  ;;
+esac
 _prune="${PRUNE:-false}"
 
 umask 077
@@ -88,10 +98,10 @@ jq -e 'type == "array" and all(.[]; (.key | type == "string")
 
 echo "→ ${APP_ID} : résolution de $(jq length "$_tmp/manifest.json") variables…"
 
-app_uuid="$(api GET /applications | jq -r --arg m "$_marker" \
+app_uuid="$(api GET "/${_resource}" | jq -r --arg m "$_marker" \
   '[.[] | select((.description // "") | contains($m))] | first | .uuid // empty')"
 if [ -z "$app_uuid" ]; then
-  echo "✗ Aucune application ne porte ${_marker}. Appliquer d'abord infra/coolify (applications.tf)." >&2
+  echo "✗ Aucune ressource ${_resource} ne porte ${_marker}. Appliquer d'abord infra/coolify." >&2
   exit 1
 fi
 
@@ -131,14 +141,16 @@ fi
 
 # --- Phase 2 : réconciliation ---
 
-api GET "/applications/${app_uuid}/envs" \
-  | jq '[.[] | select(.is_preview == false)]' >"$_tmp/current.json"
+api GET "/${_resource}/${app_uuid}/envs" \
+  | jq '[.[] | select((.is_preview // false) == false)]' >"$_tmp/current.json"
 
 _created=0 _updated=0 _unchanged=0 _deleted=0
 while IFS=$'\t' read -r _key _multiline; do
+  # Les services n'ont pas de previews : pas de is_preview pour eux.
   jq -n --arg k "$_key" --rawfile v "$_tmp/values/$_key" --argjson ml "$_multiline" \
-    '{key: $k, value: $v, is_literal: true, is_multiline: $ml, is_preview: false,
-      is_shown_once: false}' >"$_tmp/payload.json"
+    --arg r "$_resource" \
+    '{key: $k, value: $v, is_literal: true, is_multiline: $ml, is_shown_once: false}
+      + (if $r == "applications" then {is_preview: false} else {} end)' >"$_tmp/payload.json"
 
   _state="$(jq -r --arg k "$_key" --rawfile v "$_tmp/values/$_key" --argjson ml "$_multiline" '
     [.[] | select(.key == $k)] | first
@@ -149,12 +161,12 @@ while IFS=$'\t' read -r _key _multiline; do
 
   case "$_state" in
   absent)
-    api POST "/applications/${app_uuid}/envs" "$_tmp/payload.json" >/dev/null
+    api POST "/${_resource}/${app_uuid}/envs" "$_tmp/payload.json" >/dev/null
     echo "  + ${_key}"
     _created=$((_created + 1))
     ;;
   different)
-    api PATCH "/applications/${app_uuid}/envs" "$_tmp/payload.json" >/dev/null
+    api PATCH "/${_resource}/${app_uuid}/envs" "$_tmp/payload.json" >/dev/null
     echo "  ~ ${_key}"
     _updated=$((_updated + 1))
     ;;
@@ -164,7 +176,7 @@ done < <(jq -r '.[] | [.key, (.multiline // false | tostring)] | @tsv' "$_tmp/ma
 
 while IFS=$'\t' read -r _key _uuid; do
   if [ "$_prune" = "true" ]; then
-    api DELETE "/applications/${app_uuid}/envs/${_uuid}" >/dev/null
+    api DELETE "/${_resource}/${app_uuid}/envs/${_uuid}" >/dev/null
     echo "  - ${_key} (hors manifeste, supprimée)"
     _deleted=$((_deleted + 1))
   else

@@ -13,11 +13,11 @@
 #                      (minuscules, chiffres, tirets : preprod, staging…)
 #   SUPABASE_API_HOST  sous-domaine servi, sans schéma
 #
-# Import dans Coolify : Resources → New → Docker Compose, coller ce fichier.
-# Les variables ${...} sont déclarées dans l'onglet "Environment Variables" du
-# service (ou dans un fichier .env importé). Cf. .env.example à côté. Laisser
-# vides les domaines des services dans Coolify : le routage est porté par les
-# labels ci-dessous, et un domaine Coolify ajouterait un second routeur.
+# Déployé dans Coolify par infra/coolify/services.tf, qui embarque les
+# templates d'email (clé `content:` des volumes). Les variables ${...} viennent
+# du manifeste infra/coolify/env-manifest.tf (entrée supabase-api). Pas de
+# domaine Coolify sur les services : le routage est porté par les labels
+# ci-dessous, et un domaine Coolify ajouterait un second routeur.
 
 services:
   gotrue:
