@@ -669,6 +669,96 @@ l'installeur. Ne pas utiliser `APP_PREVIOUS_KEYS`.
 Tester cette restauration sur une VM jetable après chaque montée de version de Coolify :
 un backup jamais restauré n'est pas un backup.
 
+## Base de données : restauration complète et bascule
+
+`data_layer/backup/restore.sh` ne convient pas pour passer de Supabase Cloud à la RDB
+Scaleway : il restaure les données seules dans un schéma posé par Sqitch (ADR 0016), et le
+rejeu de toutes les migrations bute sur des extensions absentes de Scaleway ; il ne reprend
+qu'`auth.users` (tout le monde serait déconnecté) ; et il anonymise. On restaure donc le dump
+**complet** (schéma + données, schéma `sqitch` compris : les déploiements suivants repartent
+de là) avec [`scripts/restore-preprod-db.sh`](scripts/restore-preprod-db.sh) :
+
+- les schémas internes de Supabase (`net`, `vault`, `graphql`, `realtime`…), les
+  publications, event triggers et extensions indisponibles sont écartés, ainsi que `cron` :
+  les jobs `pg_cron`, dépréciés, ne sont pas repris ;
+- `auth` est restauré en `supabase_auth_admin` (GoTrue reste propriétaire de son schéma), le
+  reste en `tet_admin`, dans l'ordre qu'imposent les FK vers `auth.users` ;
+- `extensions` est ajouté au `search_path` des rôles, comme sur Supabase ;
+- en preprod : `clean_data.sql`, plus la purge des sessions, refresh tokens et facteurs MFA.
+
+La cible est lue dans les outputs de `infra/nonprod` : le script ne sait pas viser la prod.
+
+### Répétition sur preprod
+
+Prérequis : IP du poste dans `pg_allowed_ips` (`nonprod/terraform.tfvars`), `psql` et
+`pg_restore` 15+, `rclone`.
+
+```sh
+source infra/scripts/tf-env.sh && source infra/scripts/coolify-env.sh
+
+# 1. Arrêter supabase-api et backend preprod dans Coolify : le script refuse de
+#    tourner tant que GoTrue ou Storage sont connectés.
+
+# 2. Télécharger le dernier backup de prod (données personnelles : hors du repo,
+#    à supprimer après usage).
+mkdir -p ~/tet-dumps && chmod 700 ~/tet-dumps
+node_modules/.bin/dotenvx run -q --env-keys-file=.env.keys -f .env -- bash -c '
+  AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
+  aws s3 cp "s3://$BACKUP_BUCKET/backup-AAAA-MM-JJ.dump" ~/tet-dumps/ \
+    --endpoint-url "$BACKUP_ENDPOINT_URL" --region "$BACKUP_REGION"'
+
+# 3. Relire le tri du sommaire : ce qui est écarté, et les triggers sur auth.
+make -C infra/nonprod restore-preprod-db d=$HOME/tet-dumps/backup-AAAA-MM-JJ.dump list=true
+
+# 4. Restaurer (≈ remplace toute la base preprod). Hash bcrypt entre quotes simples.
+RESTORE_ENCRYPTED_PASSWORD='$2a$10$…' \
+  make -C infra/nonprod restore-preprod-db d=$HOME/tet-dumps/backup-AAAA-MM-JJ.dump
+```
+
+Le script refuse de continuer si le dump vient d'un GoTrue plus récent que l'image déployée
+(`auth.schema_migrations`). Il s'arrête en échec s'il a rencontré des erreurs : le journal,
+indiqué en fin de sortie, les liste (`grep -n 'error:'`). Une entrée du sommaire à écarter en
+plus : `EXCLUDE_REGEX='…'`. Rejouable : chaque passage repart de zéro.
+
+5. **Démarrer supabase-api** : GoTrue applique ses migrations au-delà de celles du dump,
+   Storage les siennes. Puis `make -C infra/nonprod bootstrap-storage-sql` (propriété et
+   droits des tables que Storage vient de créer).
+
+6. **Fichiers** : Storage API range un objet sous `<tenant>/<bucket>/<name>/<version>`
+   (tenant `tet-preprod`), l'endpoint S3 de Supabase l'expose sous `<bucket>/<name>`. Copie
+   objet par objet à partir de `storage.objects`, avec deux remotes rclone : `supa` (endpoint
+   S3 du projet Supabase prod, clés « S3 access keys » du dashboard) et `scw`
+   (`tet-preprod-storage`, clés du secret `supabase-storage-s3-*`) :
+
+   ```sh
+   psql "…tet_admin@<pg_endpoint_ip>…" -AtF $'\t' -c \
+     "select bucket_id, name, coalesce(version, '') from storage.objects" > objects.tsv
+   while IFS=$'\t' read -r b n v; do
+     printf 'supa:%s/%s\0scw:tet-preprod-storage/tet-preprod/%s/%s%s\0' \
+       "$b" "$n" "$b" "$n" "${v:+/$v}"
+   done < objects.tsv | xargs -0 -n2 -P16 rclone copyto
+   ```
+
+7. **Redéployer le backend**, puis vérifier : `/auth/v1/health`, `/storage/v1/status`, login
+   avec le mot de passe de `RESTORE_ENCRYPTED_PASSWORD`, téléchargement d'une preuve,
+   export d'un indicateur, chaîne JWT (étape 8 du plan
+   `doc/plans/2026-09-25-001-…`). Noter la durée totale : c'est le RTO de la bascule.
+
+**Point à vérifier** — **droits** : le dump est pris en `--no-acl`. Le backend, propriétaire de tout, n'en souffre
+  pas ; une politique RLS de `storage.objects` qui lit une table applicative sans
+  `security definer` échouerait pour `authenticated`. C'est ce que vérifie le téléchargement
+  d'une preuve à l'étape 7.
+
+### Bascule de production
+
+Même chemin, avec trois différences : un dump **frais** pris une fois l'application en
+lecture seule (`data_layer/backup/backup.sh`, pas celui de la nuit), **aucune**
+anonymisation (les sessions et refresh tokens restent valides grâce au même `JWT_SECRET`), et
+une cible lue dans `infra/prod`. La variante prod du script s'écrit une fois la répétition
+preprod passée sans erreur. Séquence complète (TTL DNS, fenêtre de maintenance, garde de
+Supabase Cloud en lecture seule pendant 14 jours, rollback) : section « Stratégie de
+bascule » de `doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md`.
+
 ## State backend : locking natif
 
 Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque `plan` ou `apply`, Terraform écrit un fichier `.tflock` dans le bucket via un **conditional write S3** (`If-None-Match: *`) : si le fichier existe déjà, l'opération échoue immédiatement avec un message d'erreur explicite, ce qui empêche deux applies simultanés.
