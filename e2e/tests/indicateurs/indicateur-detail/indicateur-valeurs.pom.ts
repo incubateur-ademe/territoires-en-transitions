@@ -1,5 +1,8 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { IndicateurPeriodes } from '@tet/domain/indicateurs';
+import { IndicateurPeriode, IndicateurPeriodes } from '@tet/domain/indicateurs';
+
+const toPeriode = (value: number | IndicateurPeriode) =>
+  typeof value === 'number' ? IndicateurPeriodes.fromYear(value) : value;
 
 /** Saisie des valeurs depuis la fiche d'un indicateur */
 export class IndicateurValeursPom {
@@ -26,8 +29,8 @@ export class IndicateurValeursPom {
     );
   }
 
-  cell(annee: number, source = 'collectivite') {
-    const periode = IndicateurPeriodes.fromYear(annee);
+  cell(annee: number | IndicateurPeriode, source = 'collectivite') {
+    const periode = toPeriode(annee);
     return this.table.locator(
       `td[data-periode="${periode.dateDebut}"][data-periodicite="${periode.periodicite}"][data-source="${source}"]`
     );
@@ -60,30 +63,35 @@ export class IndicateurValeursPom {
       .toBe(true);
   }
 
-  valueButton(annee: number, type: 'Résultat' | 'Objectif') {
+  valueButton(
+    annee: number | IndicateurPeriode,
+    type: 'Résultat' | 'Objectif'
+  ) {
     return this.cell(annee).getByRole('button', {
-      name: `${type} — ${annee}`,
+      name: `${type} — ${IndicateurPeriodes.format(toPeriode(annee))}`,
       exact: true,
     });
   }
 
-  valueInput(annee: number, type: 'Résultat' | 'Objectif') {
+  valueInput(annee: number | IndicateurPeriode, type: 'Résultat' | 'Objectif') {
     return this.cell(annee).getByRole('textbox', {
-      name: `${type} — ${annee}`,
+      name: `${type} — ${IndicateurPeriodes.format(toPeriode(annee))}`,
       exact: true,
     });
   }
 
-  deletePeriodeButton(annee: number) {
+  deletePeriodeButton(annee: number | IndicateurPeriode) {
     return this.table.getByRole('button', {
-      name: `Supprimer la période ${annee}`,
+      name: `Supprimer la période ${IndicateurPeriodes.format(
+        toPeriode(annee)
+      )}`,
       exact: true,
     });
   }
 
-  commentaireButton(annee: number) {
+  commentaireButton(annee: number | IndicateurPeriode) {
     return this.table.getByRole('button', {
-      name: `Commentaires — ${annee}`,
+      name: `Commentaires — ${IndicateurPeriodes.format(toPeriode(annee))}`,
       exact: true,
     });
   }
@@ -98,7 +106,7 @@ export class IndicateurValeursPom {
   }
 
   async editValeur(
-    annee: number,
+    annee: number | IndicateurPeriode,
     type: 'Résultat' | 'Objectif',
     value: string
   ) {
@@ -123,7 +131,7 @@ export class IndicateurValeursPom {
   }
 
   async editCommentaire(
-    annee: number,
+    annee: number | IndicateurPeriode,
     type: 'résultat' | 'objectif',
     value: string
   ) {

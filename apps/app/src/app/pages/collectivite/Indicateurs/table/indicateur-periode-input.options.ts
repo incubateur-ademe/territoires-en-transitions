@@ -15,6 +15,33 @@ const options = {
     inputType: 'text',
     placeholder: appLabels.ajouterAnnee,
   },
+  [IndicateurPeriodiciteEnum.MENSUELLE]: {
+    add: appLabels.ajouterMois,
+    duplicate: appLabels.indicateurPeriodeExistante,
+    submit: appLabels.validerAjouterMois,
+    success: appLabels.indicateurPeriodeAjoutee,
+    inputMode: undefined,
+    inputType: 'month',
+    placeholder: appLabels.champMois,
+  },
+  [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: {
+    add: appLabels.ajouterTrimestre,
+    duplicate: appLabels.indicateurPeriodeExistante,
+    submit: appLabels.validerAjouterTrimestre,
+    success: appLabels.indicateurPeriodeAjoutee,
+    inputMode: undefined,
+    inputType: 'text',
+    placeholder: appLabels.champTrimestre,
+  },
+  [IndicateurPeriodiciteEnum.SEMESTRIELLE]: {
+    add: appLabels.ajouterSemestre,
+    duplicate: appLabels.indicateurPeriodeExistante,
+    submit: appLabels.validerAjouterSemestre,
+    success: appLabels.indicateurPeriodeAjoutee,
+    inputMode: undefined,
+    inputType: 'text',
+    placeholder: appLabels.champSemestre,
+  },
 } satisfies Record<
   SupportedIndicateurPeriodicite,
   {

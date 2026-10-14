@@ -93,7 +93,7 @@ export const prepareData = (
           : {}),
         calculAuto: values.some((v) => v.calculAuto),
         valeurs: values.map((value): PreparedSourceValue => {
-          const periode = IndicateurPeriodes.containing(
+          const periode = IndicateurPeriodes.fromDateValeur(
             value.periodicite,
             value.dateValeur
           );
@@ -102,9 +102,7 @@ export const prepareData = (
             calculAuto: Boolean(value.calculAuto),
             periode,
             periodeLabel: IndicateurPeriodes.format(periode),
-            dateValeurISO: `${IndicateurPeriodes.toDateValeur(
-              periode
-            )}T00:00:00.000Z`,
+            dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
             valeur: value[type],
             commentaire: value[`${type}Commentaire`],
           };
@@ -166,7 +164,7 @@ export const prepareData = (
   // tableau des valeurs existantes (permet de vérifier s'il existe déjà une ligne pour une année)
   const valeursExistantes: PreparedValue[] =
     data?.sources?.collectivite?.valeurs?.map((v) => {
-      const periode = IndicateurPeriodes.containing(
+      const periode = IndicateurPeriodes.fromDateValeur(
         v.periodicite,
         v.dateValeur
       );

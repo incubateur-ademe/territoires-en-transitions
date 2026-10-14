@@ -1,4 +1,5 @@
 import {
+  IndicateurPeriodiciteEnum,
   IndicateurPeriode,
   IndicateurPeriodeJson,
   IndicateurValeurCreate,
@@ -28,13 +29,16 @@ const upsertGridValeurInputSchema: z.ZodType<
   .object({
     indicateurId: indicateurValeurSchemaCreate.shape.indicateurId,
     period: indicateurPeriodeSchema,
+    // Omitting both cells declares an empty column without clearing existing data.
     resultat: indicateurValeurSchemaCreate.shape.resultat,
     objectif: indicateurValeurSchemaCreate.shape.objectif,
   })
   .refine(
-    ({ resultat, objectif }) =>
-      resultat !== undefined || objectif !== undefined,
-    { message: 'Une cellule résultat ou objectif est requise' }
+    ({ period }) => period.periodicite === IndicateurPeriodiciteEnum.ANNUELLE,
+    {
+      path: ['period', 'periodicite'],
+      message: 'Seule la périodicité annuelle est disponible.',
+    }
   );
 
 export type UpsertGridValeursInput = {

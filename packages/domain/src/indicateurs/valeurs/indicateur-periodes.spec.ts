@@ -1,26 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import { IndicateurPeriodiciteEnum } from '../definitions/indicateur-periodicite.schema';
 import { IndicateurPeriodeErrorEnum } from './indicateur-periode.errors';
-import type { IndicateurPeriode } from './indicateur-periode.types';
 import { IndicateurPeriodes } from './indicateur-periodes';
 
 describe('IndicateurPeriodes', () => {
   it('exposes the supported periodicities to input consumers', () => {
-    expect(IndicateurPeriodes.supportedPeriodicites).toEqual(['annuelle']);
+    expect(IndicateurPeriodes.supportedPeriodicites).toEqual([
+      'annuelle',
+      'semestrielle',
+      'trimestrielle',
+      'mensuelle',
+    ]);
     for (const periodicite of IndicateurPeriodes.supportedPeriodicites) {
       expect(IndicateurPeriodes.isSupported(periodicite)).toBe(true);
-      const draft = IndicateurPeriodes.normalizeDraft(periodicite, '2026');
+      const value = IndicateurPeriodes.serialize(
+        IndicateurPeriodes.containing(periodicite, '2026-01-01')
+      );
+      const draft = IndicateurPeriodes.normalizeDraft(periodicite, value);
       expect(
         IndicateurPeriodes.tryParse(periodicite, draft ?? '')
       ).not.toBeNull();
     }
-    for (const periodicite of [
-      null,
-      undefined,
-      'mensuelle',
-      'trimestrielle',
-      'semestrielle',
-    ] as const) {
+    for (const periodicite of [null, undefined] as const) {
       expect(IndicateurPeriodes.isSupported(periodicite)).toBe(false);
     }
   });
@@ -63,8 +64,12 @@ describe('IndicateurPeriodes', () => {
       'annuelle:2026',
       'annuelle:2027',
     ]);
-    expect(persisted.map(IndicateurPeriodes.format)).toEqual(['2027', '2025']);
-    expect(drafts.map(IndicateurPeriodes.format)).toEqual(['2026', '2025']);
+    expect(
+      persisted.map((periode) => IndicateurPeriodes.format(periode))
+    ).toEqual(['2027', '2025']);
+    expect(drafts.map((periode) => IndicateurPeriodes.format(periode))).toEqual(
+      ['2026', '2025']
+    );
   });
 
   it('preserves the canonical start date through merging and formatting', () => {
@@ -110,6 +115,29 @@ describe('IndicateurPeriodes', () => {
         new Date(2026, 0, 1)
       )
     ).toBe(false);
+  });
+});
+
+describe('IndicateurPeriodes.format', () => {
+  it.each([
+    ['annuelle', '2026', '2026'],
+    ['semestrielle', '2026-S2', 'S2 2026'],
+    ['trimestrielle', '2026-T1', 'T1 2026'],
+    ['mensuelle', '2026-02', 'février 2026'],
+  ] as const)(
+    'formats %s periods in French by default',
+    (periodicite, value, label) => {
+      const periode = IndicateurPeriodes.parse(periodicite, value);
+
+      expect(IndicateurPeriodes.format(periode)).toBe(label);
+      expect(IndicateurPeriodes.serialize(periode)).toBe(value);
+    }
+  );
+
+  it('localizes monthly labels without changing the calendar month', () => {
+    const periode = IndicateurPeriodes.parse('mensuelle', '2026-02');
+
+    expect(IndicateurPeriodes.format(periode, 'en-US')).toBe('February 2026');
   });
 });
 
@@ -162,28 +190,23 @@ describe('IndicateurPeriodes — contrat annuel', () => {
   });
 
   it.each(['semestrielle', 'trimestrielle', 'mensuelle'] as const)(
-    'refuse %s dans toutes les opérations du contrat annuel',
+    'refuse %s dans les capacités réservées aux observations annuelles',
     (periodicite) => {
-      const periode = {
-        ...IndicateurPeriodes.parse('annuelle', '2026'),
-        periodicite,
-      } as IndicateurPeriode;
       const operations = [
-        () => IndicateurPeriodes.parse(periodicite, '2026'),
-        () => IndicateurPeriodes.tryParse(periodicite, '2026'),
-        () => IndicateurPeriodes.fromDateValeur(periodicite, '2026-01-01'),
-        () => IndicateurPeriodes.containing(periodicite, '2026-01-01'),
-        () => IndicateurPeriodes.serialize(periode),
-        () => IndicateurPeriodes.toDateValeur(periode),
-        () => IndicateurPeriodes.key(periode),
-        () => IndicateurPeriodes.format(periode),
-        () => IndicateurPeriodes.isFuture(periode),
-        () => IndicateurPeriodes.merge([periode]),
+        () => IndicateurPeriodes.assertAnnual(periodicite),
+        () =>
+          IndicateurPeriodes.toAnnualYear(periodicite, '2026-01-01', 'test'),
+        () =>
+          IndicateurPeriodes.toAnnualYearFromHistoricalDate(
+            periodicite,
+            '2026-01-01',
+            'test'
+          ),
       ];
 
       for (const operation of operations) {
         expect(operation).toThrow(
-          IndicateurPeriodeErrorEnum.INDICATEUR_PERIODICITE_UNSUPPORTED
+          IndicateurPeriodeErrorEnum.INDICATEUR_ANNUAL_PERIODICITE_REQUIRED
         );
       }
     }

@@ -7,7 +7,7 @@ import { PALETTE_LIGHT } from '@/app/ui/charts/echarts/constants';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   IndicateurPeriodes,
-  type SupportedIndicateurPeriodicite,
+  type IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
@@ -41,7 +41,7 @@ type PreparedSegmentation = {
 
 type IndicateurChartData = {
   unite: string | undefined;
-  periodicite: SupportedIndicateurPeriodicite | undefined;
+  periodicite: IndicateurPeriodicite | undefined;
   valeurs: {
     objectifs: PreparedData;
     resultats: PreparedData;
@@ -77,12 +77,6 @@ export const useIndicateurChartInfo = ({
     unite,
     periodicite,
   } = definition ?? {};
-  if (periodicite !== undefined) {
-    IndicateurPeriodes.assertAnnual(
-      periodicite,
-      'Le modèle annuel du graphique'
-    );
-  }
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
@@ -97,7 +91,6 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds: indicateurId ? [indicateurId] : undefined,
         sources: sourceFilter.sources,
-        periodicite,
       },
       {
         enabled: !!indicateurId && periodicite !== undefined,
@@ -117,7 +110,6 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds,
         sources: sourceFilter.sources,
-        periodicite,
       },
       {
         enabled: !!indicateurIds?.length && periodicite !== undefined,
@@ -272,7 +264,7 @@ export const useIndicateurChartInfo = ({
 
 function prepareMoyenne(
   moyenne: IndicateurMoyenneOutput | undefined,
-  periodicite: SupportedIndicateurPeriodicite
+  periodicite: IndicateurPeriodicite
 ): PreparedData['sources'][number] | null {
   if (!moyenne?.valeurs?.length) return null;
 
@@ -303,7 +295,7 @@ function prepareMoyenne(
     ordreAffichage: null,
     source: 'moyenne',
     valeurs: moyenne.valeurs.map((value) => {
-      const periode = IndicateurPeriodes.containing(
+      const periode = IndicateurPeriodes.fromDateValeur(
         periodicite,
         value.dateValeur
       );
@@ -313,9 +305,7 @@ function prepareMoyenne(
         calculAuto: true,
         periode,
         periodeLabel: IndicateurPeriodes.format(periode),
-        dateValeurISO: `${IndicateurPeriodes.toDateValeur(
-          periode
-        )}T00:00:00.000Z`,
+        dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
         valeur: value.valeur,
       };
     }),

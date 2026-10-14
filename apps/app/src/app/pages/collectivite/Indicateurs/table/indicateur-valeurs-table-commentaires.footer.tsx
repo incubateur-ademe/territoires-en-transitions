@@ -12,6 +12,7 @@ type Props = {
   resultats: IndicateurPeriodeData['donneesCollectivite'];
   objectifs: IndicateurPeriodeData['donneesCollectivite'];
   readonly?: boolean;
+  periodicite: IndicateurPeriode['periodicite'];
   showAddPeriodeColumn: boolean;
   onComment: (periode: IndicateurPeriode) => void;
 };
@@ -21,6 +22,7 @@ export const IndicateurValeursTableCommentairesFooter = ({
   resultats,
   objectifs,
   readonly,
+  periodicite,
   showAddPeriodeColumn,
   onComment,
 }: Props) => {
@@ -54,7 +56,8 @@ export const IndicateurValeursTableCommentairesFooter = ({
               key={IndicateurPeriodes.key(periode)}
               className="border-r border-primary-4 text-center"
             >
-              {(!readonly || commentCount > 0) && (
+              {((!readonly && periode.periodicite === periodicite) ||
+                commentCount > 0) && (
                 <Button
                   icon="question-answer-line"
                   variant="outlined"

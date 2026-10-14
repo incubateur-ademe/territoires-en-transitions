@@ -15,7 +15,7 @@ import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
 import { useRevealIndicateurPeriode } from './use-reveal-indicateur-periode';
 
 type Props = {
-  definition: Pick<IndicateurDefinition, 'titre' | 'unite'>;
+  definition: Pick<IndicateurDefinition, 'titre' | 'unite' | 'periodicite'>;
   resultats: IndicateurPeriodeData;
   objectifs: IndicateurPeriodeData;
   readonly?: boolean;
@@ -90,6 +90,7 @@ export const IndicateurValeursTable = ({
                 row={row}
                 periodes={periodes}
                 readonly={readonly}
+                periodicite={definition.periodicite}
                 showAddPeriodeColumn={showAddPeriodeColumn}
                 getColorBySourceId={getColorBySourceId}
                 onSave={onSave}
@@ -102,6 +103,7 @@ export const IndicateurValeursTable = ({
           resultats={resultats.donneesCollectivite}
           objectifs={objectifs.donneesCollectivite}
           readonly={readonly}
+          periodicite={definition.periodicite}
           showAddPeriodeColumn={showAddPeriodeColumn}
           onComment={onComment}
         />

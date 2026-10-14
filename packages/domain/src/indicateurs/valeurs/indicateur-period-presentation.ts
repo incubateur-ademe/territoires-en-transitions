@@ -3,11 +3,6 @@ import {
   type IndicateurPeriodicite,
 } from '../definitions/indicateur-periodicite.schema';
 
-import {
-  IndicateurPeriodes,
-  type SupportedIndicateurPeriodicite,
-} from './indicateur-periodes';
-
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 export type IndicateurPeriodChartTimeAxis = Readonly<{
@@ -26,7 +21,7 @@ export type IndicateurPeriodPresentation = Readonly<{
  * in the frontend adapter layered on top of this registry.
  */
 type IndicateurPeriodPresentationRegistry = Readonly<
-  Record<SupportedIndicateurPeriodicite, IndicateurPeriodPresentation>
+  Record<IndicateurPeriodicite, IndicateurPeriodPresentation>
 >;
 
 const presentationByPeriodicite: IndicateurPeriodPresentationRegistry =
@@ -38,14 +33,29 @@ const presentationByPeriodicite: IndicateurPeriodPresentationRegistry =
         maxInterval: 5 * 365 * DAY_IN_MILLISECONDS,
       },
     },
+    [IndicateurPeriodiciteEnum.SEMESTRIELLE]: {
+      chartTimeAxis: {
+        useUTC: true,
+        minInterval: 181 * DAY_IN_MILLISECONDS,
+        maxInterval: 365 * DAY_IN_MILLISECONDS,
+      },
+    },
+    [IndicateurPeriodiciteEnum.TRIMESTRIELLE]: {
+      chartTimeAxis: {
+        useUTC: true,
+        minInterval: 90 * DAY_IN_MILLISECONDS,
+        maxInterval: 365 * DAY_IN_MILLISECONDS,
+      },
+    },
+    [IndicateurPeriodiciteEnum.MENSUELLE]: {
+      chartTimeAxis: {
+        useUTC: true,
+        minInterval: 28 * DAY_IN_MILLISECONDS,
+        maxInterval: 365 * DAY_IN_MILLISECONDS,
+      },
+    },
   });
 
 export const getIndicateurPeriodPresentation = (
   periodicite: IndicateurPeriodicite
-): IndicateurPeriodPresentation => {
-  IndicateurPeriodes.assertAnnual(
-    periodicite,
-    'La présentation annuelle des périodes'
-  );
-  return presentationByPeriodicite[periodicite];
-};
+): IndicateurPeriodPresentation => presentationByPeriodicite[periodicite];

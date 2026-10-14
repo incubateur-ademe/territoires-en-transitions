@@ -1,4 +1,3 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-indicateur-valeurs/compute-valeurs.service';
@@ -11,6 +10,7 @@ import {
   ServiceRoleUser,
 } from '@tet/backend/users/models/auth.models';
 import {
+  IndicateurPeriodiciteEnum,
   IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
   IndicateurDefinition,
@@ -2075,13 +2075,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         id: 3,
         identifiantReferentiel: 'target',
         valeurCalcule: 'val(source_a)',
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
       } as IndicateurDefinition;
       const computedValeur = {
         indicateurId: target.id,
         collectiviteId: 1,
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-        dateValeur: '2026-01-01',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-02-01',
         resultat: 5,
         objectif: null,
         calculAuto: true,
@@ -2173,8 +2173,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         id: 7,
         indicateurId: 10,
         collectiviteId: 1,
-        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-        dateValeur: '2026-01-01',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-02-01',
         resultat: 5,
         objectif: 6,
         metadonneeId: 2,

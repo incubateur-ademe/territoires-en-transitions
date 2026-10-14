@@ -286,23 +286,123 @@ describe('prepareData', () => {
     expect(annual.sources.collectivite.valeurs).toEqual(valeurs);
   });
 
-  test('conserve la lecture annuelle des observations historiques datées en cours d’année', () => {
+  test('refuse une date non canonique dans le modèle de périodes activé', () => {
     const annual = structuredClone(fixture.indicateurs[0]);
     annual.sources.collectivite.valeurs[0].dateValeur = '2020-06-15';
 
-    const resultats = prepareData(annual, 'resultat', false);
-
-    expect(resultats.donneesCollectivite?.valeurs[0]).toMatchObject({
-      periode: IndicateurPeriodes.fromYear(2020),
-      periodeLabel: '2020',
-      dateValeurISO: '2020-01-01T00:00:00.000Z',
-    });
-    expect(resultats.valeursExistantes[0]).toMatchObject({
-      dateValeur: '2020-06-15',
-      periode: IndicateurPeriodes.fromYear(2020),
-    });
-    expect(annual.sources.collectivite.valeurs[0].dateValeur).toBe(
-      '2020-06-15'
+    expect(() => prepareData(annual, 'resultat', false)).toThrow(
+      'INDICATEUR_PERIODE_DATE_NON_CANONICAL'
     );
+  });
+
+  test('conserve deux mois de la même année et la valeur zéro', () => {
+    const monthly = structuredClone(fixture.indicateurs[0]);
+    monthly.definition.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
+    monthly.sources.collectivite.valeurs = [
+      {
+        ...monthly.sources.collectivite.valeurs[0],
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-01-01',
+        resultat: 0,
+      },
+      {
+        ...monthly.sources.collectivite.valeurs[1],
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+        dateValeur: '2026-02-01',
+        resultat: 2,
+      },
+    ];
+
+    const resultats = prepareData(monthly, 'resultat', false);
+
+    expect(resultats.donneesCollectivite?.valeurs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          periode: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-01'
+          ),
+          valeur: 0,
+        }),
+        expect.objectContaining({
+          periode: IndicateurPeriodes.parse(
+            IndicateurPeriodiciteEnum.MENSUELLE,
+            '2026-02'
+          ),
+          valeur: 2,
+        }),
+      ])
+    );
+    expect(resultats.dernierePeriodeModePrive).toEqual(
+      IndicateurPeriodes.parse(IndicateurPeriodiciteEnum.MENSUELLE, '2026-02')
+    );
+  });
+
+  test('conserve douze observations mensuelles avec leurs identifiants et commentaires', () => {
+    const monthly = structuredClone(fixture.indicateurs[0]);
+    monthly.definition.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
+    const valeurs = Array.from({ length: 12 }, (_, index) => ({
+      ...monthly.sources.collectivite.valeurs[0],
+      id: index + 1,
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+      resultat: 10,
+      resultatCommentaire: index === 0 ? 'Relevé de janvier' : null,
+    }));
+    monthly.sources = {
+      collectivite: { ...monthly.sources.collectivite, valeurs },
+    };
+    const displayed = prepareData(monthly, 'resultat', false);
+    expect(displayed.donneesCollectivite?.valeurs).toEqual(
+      valeurs.map((value) =>
+        expect.objectContaining({
+          id: value.id,
+          valeur: value.resultat,
+          dateValeurISO: `${value.dateValeur}T00:00:00.000Z`,
+          commentaire: value.resultatCommentaire,
+        })
+      )
+    );
+    expect(displayed.valeursExistantes).toHaveLength(12);
+    expect(
+      displayed.valeursExistantes.every((value) => value.resultat === 10)
+    ).toBe(true);
+    expect(monthly.sources.collectivite.valeurs).toEqual(valeurs);
+  });
+
+  test('sépare la série annuelle des douze observations mensuelles', () => {
+    const mixed = structuredClone(fixture.indicateurs[0]);
+    mixed.definition.periodicite = IndicateurPeriodiciteEnum.MENSUELLE;
+    const original = mixed.sources.collectivite.valeurs[0];
+    const monthly = Array.from({ length: 12 }, (_, index) => ({
+      ...original,
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      dateValeur: `2026-${String(index + 1).padStart(2, '0')}-01`,
+      resultat: 10,
+    }));
+    mixed.sources = {
+      collectivite: {
+        ...mixed.sources.collectivite,
+        valeurs: [
+          ...monthly,
+          {
+            ...original,
+            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+            dateValeur: '2026-01-01',
+            resultat: 900,
+          },
+        ],
+      },
+    };
+    const displayed = prepareData(mixed, 'resultat', false);
+    expect(displayed.sources).toHaveLength(2);
+    expect(
+      new Set(displayed.sources.map((source) => source.seriesKey)).size
+    ).toBe(2);
+    expect(
+      displayed.sources.flatMap((source) =>
+        source.valeurs.map((value) => value.valeur)
+      )
+    ).toEqual(expect.arrayContaining([900, ...Array(12).fill(10)]));
   });
 });

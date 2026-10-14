@@ -119,6 +119,51 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     expect(collectiviteMetadata?.modifiedBy).toBe(authenticatedUser.id);
   });
 
+  test('Déclare plusieurs colonnes vides et préserve les valeurs concurrentes dans un lot mixte', async () => {
+    const indicateurId = await insertAnnualIndicateur();
+    const caller = router.createCaller({ user: authenticatedUser });
+    const period = (year: string) =>
+      IndicateurPeriodes.parse(IndicateurPeriodiciteEnum.ANNUELLE, year);
+    const existing = await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      dateValeur: '2025-01-01',
+      resultat: 0,
+      objectif: 9,
+      resultatCommentaire: 'Commentaire conservé',
+    });
+    if (!existing) throw new Error('La valeur initiale doit être enregistrée');
+    const valeurs = [
+      { indicateurId, period: period('2024') },
+      { indicateurId, period: period('2025') },
+      { indicateurId, period: period('2026'), objectif: 7 },
+    ];
+    await caller.indicateurs.valeurs.upsertMany({ collectiviteId, valeurs });
+    await caller.indicateurs.valeurs.upsertMany({ collectiviteId, valeurs });
+    const saved = await databaseService.db
+      .select()
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.indicateurId, indicateurId))
+      .orderBy(indicateurValeurTable.dateValeur);
+    expect(saved).toMatchObject([
+      { dateValeur: '2024-01-01', resultat: null, objectif: null },
+      {
+        id: existing.id,
+        dateValeur: '2025-01-01',
+        resultat: 0,
+        objectif: 9,
+        resultatCommentaire: 'Commentaire conservé',
+      },
+      { dateValeur: '2026-01-01', resultat: null, objectif: 7 },
+    ]);
+    const listed = await caller.indicateurs.valeurs.list({
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    });
+    expect(listed.indicateurs[0].sources.collectivite.valeurs).toHaveLength(3);
+  });
+
   test('Retourne le succès et conserve les valeurs si la publication échoue après le commit', async () => {
     const indicateurId = await insertAnnualIndicateur();
     const caller = router.createCaller({ user: authenticatedUser });
@@ -264,9 +309,30 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     ]);
   });
 
-  test.each(['périodicité incompatible', 'indicateur inexistant'] as const)(
-    'Refuse le lot entier avec %s',
-    async (invalidCase) => {
+  test.each([
+    {
+      invalidCase: 'une période mensuelle',
+      periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      missingIndicateur: false,
+    },
+    {
+      invalidCase: 'une période trimestrielle',
+      periodicite: IndicateurPeriodiciteEnum.TRIMESTRIELLE,
+      missingIndicateur: false,
+    },
+    {
+      invalidCase: 'une période semestrielle',
+      periodicite: IndicateurPeriodiciteEnum.SEMESTRIELLE,
+      missingIndicateur: false,
+    },
+    {
+      invalidCase: 'un indicateur inexistant',
+      periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      missingIndicateur: true,
+    },
+  ])(
+    'Refuse le lot entier avec $invalidCase',
+    async ({ periodicite, missingIndicateur }) => {
       const indicateurId = await insertAnnualIndicateur();
       const caller = router.createCaller({ user: authenticatedUser });
       await expect(
@@ -282,24 +348,16 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
               resultat: 1,
             },
             {
-              indicateurId:
-                invalidCase === 'indicateur inexistant'
-                  ? 2147483647
-                  : indicateurId,
+              indicateurId: missingIndicateur ? 2147483647 : indicateurId,
               period: {
-                periodicite:
-                  invalidCase === 'périodicité incompatible'
-                    ? IndicateurPeriodiciteEnum.MENSUELLE
-                    : IndicateurPeriodiciteEnum.ANNUELLE,
+                periodicite,
                 dateDebut: '2026-01-01',
               },
-              resultat: 2,
             },
           ],
         })
       ).rejects.toMatchObject({
-        code:
-          invalidCase === 'indicateur inexistant' ? 'NOT_FOUND' : 'BAD_REQUEST',
+        code: missingIndicateur ? 'NOT_FOUND' : 'BAD_REQUEST',
       });
       expect(
         await databaseService.db
@@ -310,7 +368,7 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     }
   );
 
-  test.each(['vide', 'trop volumineux', 'sans valeur'] as const)(
+  test.each(['vide', 'trop volumineux'] as const)(
     'Refuse un lot %s à la frontière tRPC sans écrire',
     async (invalidCase) => {
       const indicateurId = await insertAnnualIndicateur();
@@ -325,8 +383,6 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
       const valeurs =
         invalidCase === 'vide'
           ? []
-          : invalidCase === 'sans valeur'
-          ? [valeur]
           : Array.from({ length: MAX_GRID_VALEURS_BATCH_SIZE + 1 }, () => ({
               ...valeur,
               resultat: 1,
@@ -484,7 +540,7 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
     ).toHaveLength(0);
   });
 
-  test("Autorise un lot pour un indicateur historique si sa collectivité appartient au groupement", async () => {
+  test('Autorise un lot pour un indicateur historique si sa collectivité appartient au groupement', async () => {
     const groupement = await createGroupement({
       database: databaseService,
       groupementData: { collectiviteIds: [collectiviteId] },
