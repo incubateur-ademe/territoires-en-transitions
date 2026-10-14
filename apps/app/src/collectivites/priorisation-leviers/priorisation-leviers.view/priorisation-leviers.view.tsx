@@ -16,7 +16,7 @@ import {
   TabsTab,
 } from '@tet/ui/design-system/TabsNext/index';
 import { countBy, sumBy } from 'es-toolkit';
-import { JSX, Ref, useMemo } from 'react';
+import { JSX, ReactNode, Ref, useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../levier-card-info';
 import { LeviersView } from './leviers-view';
@@ -51,11 +51,11 @@ import {
   PriorisationAnalyse,
   PriorisationSummary,
 } from './priorisation.summary';
+import { PriorisationEmptyCard } from './priorisation-empty.card';
 import { SelectLevier } from './select-levier';
 import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
 
 type PriorisationAlertsProps = {
-  hasMobilisation: boolean;
   potentiels: PotentielsReduction;
 };
 
@@ -92,7 +92,6 @@ type PriorisationBoardProps = {
   leviers: LevierPriorisation[];
   places: LevierPlace[];
   levierToPrioritizeId?: LevierId;
-  hasMobilisation: boolean;
   potentiels: PotentielsReduction;
   preselection: Preselection;
   levierSidePanel: LevierSidePanel;
@@ -101,9 +100,15 @@ type PriorisationBoardProps = {
 
 type PriorisationContentProps = Omit<
   PriorisationBoardProps,
-  'leviers' | 'hasMobilisation' | 'potentiels'
+  'leviers' | 'potentiels'
 > & {
   leviersQuery: LeviersPriorisationQuery;
+};
+
+type PriorisationBoardGateProps = {
+  collectiviteId: number;
+  hasMobilisation: boolean;
+  children: ReactNode;
 };
 
 const toPreselectedCountByLevier = (
@@ -132,15 +137,11 @@ const toAnchor = ({
 };
 
 const PriorisationAlerts = ({
-  hasMobilisation,
   potentiels,
 }: PriorisationAlertsProps): JSX.Element => {
   const isPotentielUnavailable = potentiels.status === 'indisponible';
   return (
     <div className="flex flex-col gap-4">
-      <VisibleWhen condition={!hasMobilisation}>
-        <Alert title={appLabels.mobilisationAbsente} />
-      </VisibleWhen>
       <VisibleWhen condition={isPotentielUnavailable}>
         <Alert state="warning" title={appLabels.potentielsIndisponibles} />
       </VisibleWhen>
@@ -239,12 +240,31 @@ const LeviersSection = ({
   </Tabs>
 );
 
+const PriorisationBoardGate = ({
+  collectiviteId,
+  hasMobilisation,
+  children,
+}: PriorisationBoardGateProps): JSX.Element => {
+  if (hasMobilisation) {
+    return <>{children}</>;
+  }
+  return (
+    <div className="relative">
+      <div inert className="pointer-events-none select-none blur-sm">
+        {children}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <PriorisationEmptyCard collectiviteId={collectiviteId} />
+      </div>
+    </div>
+  );
+};
+
 const PriorisationBoard = ({
   collectiviteId,
   leviers,
   places,
   levierToPrioritizeId,
-  hasMobilisation,
   potentiels,
   preselection,
   levierSidePanel,
@@ -268,10 +288,7 @@ const PriorisationBoard = ({
         preselectedActionsCount={preselection.actions.length}
         onLevierSelected={levierSidePanel.select}
       />
-      <PriorisationAlerts
-        hasMobilisation={hasMobilisation}
-        potentiels={potentiels}
-      />
+      <PriorisationAlerts potentiels={potentiels} />
       <LeviersSection
         ref={leviersPanelRef}
         leviers={leviers}
@@ -305,17 +322,21 @@ const PriorisationContent = ({
       <ErrorCard title={appLabels.uneErreurEstSurvenue} retry={retry} />
     ))
     .with({ status: 'ready' }, ({ leviers, hasMobilisation, potentiels }) => (
-      <PriorisationBoard
+      <PriorisationBoardGate
         collectiviteId={collectiviteId}
-        leviers={leviers}
-        places={places}
-        levierToPrioritizeId={levierToPrioritizeId}
         hasMobilisation={hasMobilisation}
-        potentiels={potentiels}
-        preselection={preselection}
-        levierSidePanel={levierSidePanel}
-        leviersView={leviersView}
-      />
+      >
+        <PriorisationBoard
+          collectiviteId={collectiviteId}
+          leviers={leviers}
+          places={places}
+          levierToPrioritizeId={levierToPrioritizeId}
+          potentiels={potentiels}
+          preselection={preselection}
+          levierSidePanel={levierSidePanel}
+          leviersView={leviersView}
+        />
+      </PriorisationBoardGate>
     ))
     .exhaustive();
 
@@ -336,7 +357,8 @@ export const PriorisationLeviersView = (): JSX.Element => {
     actionsRef: priorisationTargets.useTarget('firstActionDeReference'),
   });
   const isLeviersReady = leviersQuery.status === 'ready';
-  const isTourReady = isLeviersReady && preselection.isReady;
+  const hasMobilisation = isLeviersReady && leviersQuery.hasMobilisation;
+  const isTourReady = hasMobilisation && preselection.isReady;
   const { Tour, view, setView, restartOnMatrix } = useLeviersViewWithTour({
     isTourReady,
     levierToPrioritizeId,
