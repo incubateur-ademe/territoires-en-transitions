@@ -163,6 +163,6 @@ describe('AddAnnexeRouter', () => {
         ficheId,
         lien: { url: 'https://example.com', titre: 'X' },
       })
-    ).rejects.toThrowError(/Droits insuffisants/i);
+    ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
   });
 });
