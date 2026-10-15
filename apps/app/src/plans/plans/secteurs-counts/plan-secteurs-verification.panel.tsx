@@ -7,7 +7,6 @@ import {
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useGetFicheSecteurs } from '@/app/plans/fiches/show-fiche/data/use-get-fiche-secteurs';
 import { useUpsertFicheSecteurs } from '@/app/plans/fiches/show-fiche/data/use-upsert-fiche-secteurs';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { generateTitle } from '@/app/utils/generate-title';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -56,11 +55,7 @@ export const PlanSecteursVerificationPanel = ({
     void setVue(fiche ? String(fiche.ficheId) : PLAN_SECTEURS_LISTE);
 
   if (isPending) {
-    return (
-      <div className="flex justify-center py-10">
-        <SpinnerLoader className="h-8 w-8" />
-      </div>
-    );
+    return <ListeFichesSkeleton />;
   }
 
   if (isError) {
@@ -105,6 +100,30 @@ const TitreFiche = ({
     )}
     {generateTitle(fiche.titre)}
   </span>
+);
+
+const ListeFichesSkeleton = () => (
+  <div className="flex flex-col gap-2 p-4 animate-pulse">
+    <div className="h-5 w-32 rounded-md bg-grey-3" />
+    <ul className="mb-0 pl-0 list-none border-t border-grey-3">
+      {[1, 2, 3, 4, 5].map((ligne) => (
+        <li key={ligne} className="py-3 border-b border-grey-3">
+          <div className="h-5 w-4/5 rounded-md bg-grey-3" />
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+const DescriptionSkeleton = () => (
+  <div className="flex flex-col animate-pulse">
+    <div className="flex h-[1lh] items-center text-sm">
+      <div className="h-3.5 w-full rounded-md bg-grey-3" />
+    </div>
+    <div className="flex h-[1lh] items-center text-sm">
+      <div className="h-3.5 w-3/5 rounded-md bg-grey-3" />
+    </div>
+  </div>
 );
 
 const ListeFiches = ({
@@ -169,26 +188,29 @@ const Pastille = ({
   label,
   isSelected,
   isReadonly,
+  isLoading,
   onClick,
   dataTest,
 }: {
   label: string;
   isSelected: boolean;
   isReadonly: boolean;
+  isLoading: boolean;
   onClick: () => void;
   dataTest: string;
 }) => (
   <button
     type="button"
     aria-pressed={isSelected}
-    disabled={isReadonly}
+    disabled={isReadonly || isLoading}
     onClick={onClick}
     className={cn(
       'flex items-center gap-1 rounded-full border px-3 py-1 text-sm transition-colors',
       isSelected
         ? 'border-primary-9 bg-primary-9 text-white'
         : 'border-grey-4 bg-white text-primary-10 hover:border-primary-9',
-      isReadonly && 'cursor-not-allowed opacity-60'
+      isLoading && 'animate-pulse cursor-wait text-grey-6',
+      !isLoading && isReadonly && 'cursor-not-allowed opacity-60'
     )}
     data-test={dataTest}
   >
@@ -218,8 +240,12 @@ const RevueFiche = ({
   const user = useUser();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { data: ficheComplete } = useGetFiche({ id: fiche.ficheId });
-  const { data: secteurs } = useGetFicheSecteurs(fiche.ficheId);
+  const { data: ficheComplete, isPending: isFicheLoading } = useGetFiche({
+    id: fiche.ficheId,
+  });
+  const { data: secteurs, isPending: isSecteursLoading } = useGetFicheSecteurs(
+    fiche.ficheId
+  );
   const { mutate: upsertSecteurs, isPending } = useUpsertFicheSecteurs(
     fiche.ficheId
   );
@@ -233,6 +259,8 @@ const RevueFiche = ({
       : []);
   const isNonAttribuable = selection === NON_ATTRIBUABLE;
   const secteursChoisis = isNonAttribuable ? [] : selection;
+
+  const isLoading = isFicheLoading || isSecteursLoading;
 
   const isReadonly =
     !ficheComplete ||
@@ -323,10 +351,17 @@ const RevueFiche = ({
         <h3 className="mb-0 text-base font-bold text-primary-10">
           <TitreFiche fiche={fiche} />
         </h3>
-        {ficheComplete?.description && (
-          <p className="mb-0 text-sm text-grey-8 line-clamp-4">
-            {htmlToText(ficheComplete.description)}
-          </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {isLoading ? (
+          <DescriptionSkeleton />
+        ) : (
+          ficheComplete?.description && (
+            <p className="mb-0 text-sm text-grey-8 line-clamp-4">
+              {htmlToText(ficheComplete.description)}
+            </p>
+          )
         )}
         <InlineLink
           href={ficheUrl}
@@ -345,35 +380,39 @@ const RevueFiche = ({
             <Pastille
               key={secteur}
               label={appLabels.ficheSecteurReglementaireLabels[secteur]}
-              isSelected={secteursChoisis.includes(secteur)}
+              isSelected={!isLoading && secteursChoisis.includes(secteur)}
               isReadonly={isReadonly}
+              isLoading={isLoading}
               onClick={() => basculer(secteur)}
               dataTest={`plans.secteurs-counts-alert.secteur.${secteur}`}
             />
           ))}
           <Pastille
             label={appLabels.planSecteursNonAttribuable}
-            isSelected={isNonAttribuable}
+            isSelected={!isLoading && isNonAttribuable}
             isReadonly={isReadonly}
+            isLoading={isLoading}
             onClick={() =>
               setSelection(isNonAttribuable ? [] : NON_ATTRIBUABLE)
             }
             dataTest="plans.secteurs-counts-alert.non-attribuable"
           />
         </div>
-        {isReadonly && (
+        {!isLoading && isReadonly && (
           <p className="mb-0 text-xs text-grey-7">
             {appLabels.planSecteursLectureSeule}
           </p>
         )}
       </fieldset>
 
-      {!isReadonly && (
+      {(isLoading || !isReadonly) && (
         <div className="flex justify-end border-t border-grey-3 pt-4">
           <Button
             size="sm"
             disabled={
-              isPending || (!isNonAttribuable && secteursChoisis.length === 0)
+              isLoading ||
+              isPending ||
+              (!isNonAttribuable && secteursChoisis.length === 0)
             }
             onClick={enregistrer}
             dataTest="plans.secteurs-counts-alert.enregistrer"
