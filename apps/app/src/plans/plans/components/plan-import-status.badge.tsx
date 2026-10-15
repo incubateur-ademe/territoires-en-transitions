@@ -12,6 +12,7 @@ export const PlanImportStatusBadge = ({ status }: { status: PlanStatus }) => {
             title={appLabels.importPlanIaEnCoursCourt}
             icon="loader-4-line"
             iconPosition="left"
+            iconClassname="animate-spin"
             variant="info"
             size="sm"
             dataTest="plans.plan.import-en-cours-badge"
