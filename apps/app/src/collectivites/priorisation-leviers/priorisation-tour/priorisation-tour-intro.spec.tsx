@@ -38,11 +38,16 @@ describe('PriorisationTourIntro', () => {
     );
   });
 
-  it('annonce le parcours avant de le détailler', () => {
+  it("prévient que l'analyse repose sur de l'intelligence artificielle", () => {
     render(<PriorisationTourIntro />);
 
     expect(
-      screen.queryByText(appLabels.priorisationVisiteParcoursDescription)
+      screen.queryByText(appLabels.priorisationVisiteIaTitre)
+    ).not.toBeNull();
+    expect(
+      screen.queryByText(appLabels.priorisationVisiteIaDescription, {
+        exact: false,
+      })
     ).not.toBeNull();
   });
 });

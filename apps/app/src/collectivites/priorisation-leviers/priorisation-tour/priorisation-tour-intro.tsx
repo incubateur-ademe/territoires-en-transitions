@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { Alert } from '@tet/ui';
 import { JSX } from 'react';
 
 type IntroPart = {
@@ -46,12 +47,22 @@ const IntroPartItem = ({
 
 const PriorisationTourIntro = (): JSX.Element => (
   <div className="flex flex-col gap-3">
-    <p className="mb-0">{appLabels.priorisationVisiteParcoursDescription}</p>
     <ol role="list" className="m-0 flex list-none flex-col gap-2 p-0">
       {INTRO_PARTS.map((part, index) => (
         <IntroPartItem key={part.title} position={index + 1} {...part} />
       ))}
     </ol>
+    <Alert
+      state="info"
+      description={
+        <p className="mb-0 text-sm text-grey-9">
+          <strong className="text-info-1">
+            {appLabels.priorisationVisiteIaTitre}
+          </strong>{' '}
+          {appLabels.priorisationVisiteIaDescription}
+        </p>
+      }
+    />
   </div>
 );
 
