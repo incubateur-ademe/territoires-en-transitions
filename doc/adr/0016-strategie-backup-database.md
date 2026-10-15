@@ -120,9 +120,9 @@ Le backup utilise le groupe `database-maintenance-prod`. Les trois jobs nocturne
 
 ### 5. Restauration manuelle à la demande
 
-En complément de la restauration nocturne, un workflow GitHub Actions séparé (`cd-restore-preprod.yml`) permet de restaurer **à la demande** la preprod à partir d'un backup S3 de prod. Déclenchable manuellement via `workflow_dispatch`, il accepte un paramètre optionnel `backup_date` au format ISO (`YYYY-MM-DD`) : si une date est fournie, le backup correspondant (`backup-YYYY-MM-DD.dump`) est téléchargé et restauré ; si le champ est laissé vide, le workflow délègue à `restore.sh latest` qui liste le bucket S3 et sélectionne automatiquement le backup le plus récent disponible.
+En complément de la restauration nocturne, un workflow GitHub Actions séparé (`cd-restore-preprod.yml`) permet de restaurer **à la demande** la preprod ou la staging à partir d'un backup S3 de prod. Déclenchable manuellement via `workflow_dispatch`, il accepte un paramètre `target` (`preprod` par défaut, ou `staging`) qui choisit la base cible, et un paramètre optionnel `backup_date` au format ISO (`YYYY-MM-DD`) : si une date est fournie, le backup correspondant (`backup-YYYY-MM-DD.dump`) est téléchargé et restauré ; si le champ est laissé vide, le workflow délègue à `restore.sh latest` qui liste le bucket S3 et sélectionne automatiquement le backup le plus récent disponible.
 
-Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow) pour rester utilisable en local (`./restore.sh latest`). Le workflow manuel utilise le secret `PREPROD_DB_URL` (consolidé avec celui du job `restore-preprod` nocturne) et partage le même verrou de concurrence (`database-maintenance-preprod`), sérialisant les restaurations concurrentes (manuelles ou planifiées) sur la preprod partagée. La politique de file et de reprise en cas de saturation décrite au §4 s'applique également à ce workflow. `clean_data.sql` (§7) s'applique automatiquement, comme pour le job nocturne. Le garde-fou de protection production (allowlist, §6) reste actif puisqu'il est implémenté dans `restore.sh` et donc commun à tous les appelants.
+Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow) pour rester utilisable en local (`./restore.sh latest`). Le workflow manuel utilise le secret `PREPROD_DB_URL` ou `STAGING_DB_URL` selon la cible (les mêmes que les jobs nocturnes `restore-preprod` et `restore-staging`) et partage le verrou de concurrence de la cible (`database-maintenance-preprod` ou `database-maintenance-staging`), sérialisant les restaurations concurrentes (manuelles ou planifiées) sur chaque environnement partagé. La politique de file et de reprise en cas de saturation décrite au §4 s'applique également à ce workflow. `clean_data.sql` (§7) s'applique automatiquement, comme pour le job nocturne. Le garde-fou de protection production (allowlist, §6) reste actif puisqu'il est implémenté dans `restore.sh` et donc commun à tous les appelants.
 
 ### 6. Sécurité
 
@@ -266,7 +266,7 @@ Supabase propose ses propres backups (Point-in-Time Recovery). Non retenu comme 
 | `data_layer/backup/clean_data.sql`                 | Anonymisation des colonnes sensibles (cf. §7) + assertions intégrées                              |
 | `data_layer/backup/restore-config.yml`             | Source de vérité : liste des tables et groupes restaurés par `restore.sh`                         |
 | `.github/workflows/backup-database.yml`            | Orchestration CI : backup-production + restore-staging (latest) + restore-preprod (D-1) + cleanup |
-| `.github/workflows/cd-restore-preprod.yml`         | Restauration manuelle à la demande de la preprod (date ISO ou `latest`)                           |
+| `.github/workflows/cd-restore-preprod.yml`         | Restauration manuelle à la demande de la preprod ou de la staging (date ISO ou `latest`)          |
 
 ## Opérations courantes
 
