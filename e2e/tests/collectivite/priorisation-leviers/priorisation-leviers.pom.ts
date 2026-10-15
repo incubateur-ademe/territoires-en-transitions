@@ -227,7 +227,7 @@ export class PriorisationLeviersPom {
 
   async backToPriorisation(): Promise<void> {
     await this.page
-      .getByRole('link', { name: 'Aide à la priorisation' })
+      .getByRole('link', { name: 'Aide à la priorisation', exact: true })
       .click();
     await expect(this.title).toBeVisible();
   }
