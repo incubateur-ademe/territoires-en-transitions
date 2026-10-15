@@ -24,6 +24,12 @@ if [ ${#missing_vars[@]} -gt 0 ]; then
     exit 1
 fi
 
+# Isole la CLI AWS de ~/.aws/config et force le client de transfert S3 classique
+# (cf. aws-config). AWS_PROFILE est retiré : un profil absent de ce fichier ferait
+# échouer la CLI.
+export AWS_CONFIG_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/aws-config"
+unset AWS_PROFILE AWS_DEFAULT_PROFILE
+
 # Fonction utilitaire pour les appels AWS S3
 s3cmd() {
   AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
