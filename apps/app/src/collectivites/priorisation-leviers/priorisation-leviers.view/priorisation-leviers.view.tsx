@@ -387,6 +387,9 @@ export const PriorisationLeviersView = (): JSX.Element => {
                 {appLabels.priorisationVisiteRelancer}
               </Button>
             </VisibleWhen>
+            <Button variant="outlined" disabled>
+              {appLabels.priorisationMethodologie}
+            </Button>
           </div>
         </PageHeader.Actions>
         {isLeviersReady && !plansQuery.isLoading && (
