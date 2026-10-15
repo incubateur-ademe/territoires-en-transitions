@@ -7,7 +7,11 @@ import type { MatrixAnchor } from '@/app/ui/charts/matrix/matrix.chart';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { LevierId, levierIdEnumValues } from '@tet/domain/shared';
+import {
+  CategorieAction,
+  LevierId,
+  levierIdEnumValues,
+} from '@tet/domain/shared';
 import { Alert, Button, PageHeader, VisibleWhen } from '@tet/ui';
 import {
   Tabs,
@@ -73,13 +77,14 @@ type LeviersSectionProps = {
   preselectedCountByLevier: PreselectedCountByLevier;
   preselectedActions: Preselection['actions'];
   selectedLevierId?: LevierId;
+  selectedCategorie?: CategorieAction;
   onLevierSelected: SelectLevier;
   anchor?: MatrixAnchor;
 };
 
 type BreakdownViewProps = Pick<
   LeviersSectionProps,
-  'places' | 'selectedLevierId' | 'onLevierSelected'
+  'places' | 'selectedLevierId' | 'selectedCategorie' | 'onLevierSelected'
 >;
 
 type SousLeviersViewProps = Pick<
@@ -185,11 +190,13 @@ const MatrixView = ({
 const BreakdownView = ({
   places,
   selectedLevierId,
+  selectedCategorie,
   onLevierSelected,
 }: BreakdownViewProps): JSX.Element => (
   <LeviersMondrianChart
     places={places}
     selectedLevierId={selectedLevierId}
+    selectedCategorie={selectedCategorie}
     onLevierSelected={onLevierSelected}
   />
 );
@@ -299,6 +306,7 @@ const PriorisationBoard = ({
         preselectedCountByLevier={preselectedCountByLevier}
         preselectedActions={preselection.actions}
         selectedLevierId={levierSidePanel.selectedLevierId}
+        selectedCategorie={levierSidePanel.selectedCategorie}
         onLevierSelected={levierSidePanel.select}
         anchor={toAnchor({
           levierToPrioritizeId,

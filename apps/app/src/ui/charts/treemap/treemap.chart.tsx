@@ -35,6 +35,7 @@ type TreemapChartProps<
   tooltipHint?: string;
   details?: ReactNode;
   selectedGroupId?: TGroupId;
+  selectedTileId?: TTileId;
   onGroupSelected?: (groupId: TGroupId, tileId?: TTileId) => void;
   children?: ReactNode;
   className?: string;
@@ -70,6 +71,10 @@ const GROUP_LABEL_COLOR: HexColor = colors.primary[9];
 
 const SELECTED_GROUP_LABEL_COLOR: HexColor = colors.grey[1];
 
+const TILE_BORDER_WIDTH = 1;
+
+const SELECTED_TILE_BORDER_WIDTH = 3;
+
 const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
   { itemStyle: { borderWidth: 0, gapWidth: 4 } },
   {
@@ -85,7 +90,7 @@ const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
     },
   },
   {
-    itemStyle: { borderWidth: 1, borderColor: WHITE },
+    itemStyle: { borderWidth: TILE_BORDER_WIDTH, borderColor: WHITE },
     label: {
       position: 'insideTopLeft',
       color: colors.grey[9],
@@ -114,45 +119,72 @@ const toGroupName = <TIntensity extends string, TGroupId extends string>(
   group: TreemapGroup<TIntensity, TGroupId>
 ): string => (group.isFlagged ? `${FLAG_GLYPH} ${group.label}` : group.label);
 
-const toSeriesData = <TIntensity extends string, TGroupId extends string>({
+const toTileBorder = (
+  isSelected: boolean
+): { borderColor: HexColor; borderWidth: number } => {
+  if (isSelected) {
+    return {
+      borderColor: SELECTED_GROUP_COLOR,
+      borderWidth: SELECTED_TILE_BORDER_WIDTH,
+    };
+  }
+  return { borderColor: WHITE, borderWidth: TILE_BORDER_WIDTH };
+};
+
+const toSeriesData = <
+  TIntensity extends string,
+  TGroupId extends string,
+  TTileId extends string
+>({
   data,
   intensityScale,
   selectedGroupId,
+  selectedTileId,
 }: {
-  data: readonly TreemapGroup<NoInfer<TIntensity>, TGroupId>[];
+  data: readonly TreemapGroup<NoInfer<TIntensity>, TGroupId, TTileId>[];
   intensityScale: IntensityScale<TIntensity>;
   selectedGroupId?: TGroupId;
+  selectedTileId?: TTileId;
 }): TreemapSeriesOption['data'] =>
   data.map((group) => {
     const isSelectedGroup = group.id === selectedGroupId;
-    const groupLabelColor = isSelectedGroup
+    const isGroupHighlighted = isSelectedGroup && selectedTileId === undefined;
+    const groupLabelColor = isGroupHighlighted
       ? SELECTED_GROUP_LABEL_COLOR
       : GROUP_LABEL_COLOR;
     return {
       id: toGroupKey(group),
       name: toGroupName(group),
       itemStyle: {
-        borderColor: isSelectedGroup
+        borderColor: isGroupHighlighted
           ? SELECTED_GROUP_COLOR
           : toHeaderColor(group.color),
       },
       upperLabel: { color: groupLabelColor },
-      children: group.tiles.map((tile) => ({
-        id: toTileKey({ group, tile }),
-        name: tile.label,
-        value: tile.value,
-        itemStyle: {
-          color: toTileColor({
-            color: group.color,
-            intensity: tile.intensity,
-            intensityScale,
-          }),
-        },
-      })),
+      children: group.tiles.map((tile) => {
+        const isSelectedTile = isSelectedGroup && tile.id === selectedTileId;
+        return {
+          id: toTileKey({ group, tile }),
+          name: tile.label,
+          value: tile.value,
+          itemStyle: {
+            color: toTileColor({
+              color: group.color,
+              intensity: tile.intensity,
+              intensityScale,
+            }),
+            ...toTileBorder(isSelectedTile),
+          },
+        };
+      }),
     };
   });
 
-const buildOption = <TIntensity extends string, TGroupId extends string>({
+const buildOption = <
+  TIntensity extends string,
+  TGroupId extends string,
+  TTileId extends string
+>({
   data,
   intensityScale,
   formatValue,
@@ -160,13 +192,15 @@ const buildOption = <TIntensity extends string, TGroupId extends string>({
   toIntensityVariant,
   tooltipHint,
   selectedGroupId,
+  selectedTileId,
   hoveredNodeByKey,
 }: TreemapLabels<TIntensity> & {
-  data: readonly TreemapGroup<NoInfer<TIntensity>, TGroupId>[];
+  data: readonly TreemapGroup<NoInfer<TIntensity>, TGroupId, TTileId>[];
   intensityScale: IntensityScale<TIntensity>;
   toIntensityVariant: (intensity: TIntensity) => IntensityVariant;
   tooltipHint?: string;
   selectedGroupId?: TGroupId;
+  selectedTileId?: TTileId;
   hoveredNodeByKey: ReadonlyMap<string, HoveredNode<TIntensity, TGroupId>>;
 }): EChartsOption => ({
   tooltip: {
@@ -204,7 +238,12 @@ const buildOption = <TIntensity extends string, TGroupId extends string>({
       nodeClick: false,
       breadcrumb: { show: false },
       levels: TREEMAP_LEVELS,
-      data: toSeriesData({ data, intensityScale, selectedGroupId }),
+      data: toSeriesData({
+        data,
+        intensityScale,
+        selectedGroupId,
+        selectedTileId,
+      }),
     },
   ],
 });
@@ -272,6 +311,7 @@ const TreemapChart = <
   tooltipHint,
   details,
   selectedGroupId,
+  selectedTileId,
   onGroupSelected,
   children,
   className,
@@ -290,6 +330,7 @@ const TreemapChart = <
         toIntensityVariant,
         tooltipHint,
         selectedGroupId,
+        selectedTileId,
         hoveredNodeByKey,
       }),
     [
@@ -300,6 +341,7 @@ const TreemapChart = <
       toIntensityVariant,
       tooltipHint,
       selectedGroupId,
+      selectedTileId,
       hoveredNodeByKey,
     ]
   );
@@ -345,4 +387,4 @@ const TreemapChart = <
   );
 };
 
-export { TreemapChart };
+export { toSeriesData, TreemapChart };
