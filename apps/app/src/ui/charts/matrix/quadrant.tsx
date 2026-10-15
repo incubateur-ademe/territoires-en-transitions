@@ -19,6 +19,7 @@ type QuadrantProps = {
   from: MatrixCoord;
   to: MatrixCoord;
   title?: string;
+  badge?: string;
   tone?: MatrixTone;
   titleAnchor?: TitleAnchor;
   colors?: QuadrantColors;

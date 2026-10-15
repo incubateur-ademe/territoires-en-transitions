@@ -1,7 +1,5 @@
 type AxisProps = {
   name: string;
-  minLabel: string;
-  maxLabel: string;
   toValueLabel?: (value: number) => string;
 };
 

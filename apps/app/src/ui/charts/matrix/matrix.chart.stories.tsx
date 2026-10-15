@@ -98,12 +98,8 @@ export const OnlyTheAlertZoneIsNamed: Story = {
     children: (
       <>
         <Caption>{'Leviers par potentiel et part déjà mobilisée'}</Caption>
-        <XAxis
-          name="Mobilisation"
-          minLabel="Peu mobilisé"
-          maxLabel="Très mobilisé"
-        />
-        <YAxis name="Potentiel" minLabel="Faible" maxLabel="Fort" />
+        <XAxis name="Mobilisation" />
+        <YAxis name="Potentiel" />
         <Quadrant
           from={{ x: 0, y: Y_THRESHOLD }}
           to={{ x: CUT_AT_GAP, y: Y_TOP }}
@@ -132,12 +128,8 @@ export const FourNamedQuadrants: Story = {
     children: (
       <>
         <Caption>{'Leviers par potentiel et part déjà mobilisée'}</Caption>
-        <XAxis
-          name="Mobilisation"
-          minLabel="Peu mobilisé"
-          maxLabel="Très mobilisé"
-        />
-        <YAxis name="Potentiel" minLabel="Faible" maxLabel="Fort" />
+        <XAxis name="Mobilisation" />
+        <YAxis name="Potentiel" />
         <Quadrant
           from={{ x: 0, y: Y_THRESHOLD }}
           to={{ x: CUT_AT_GAP, y: Y_TOP }}
@@ -172,12 +164,8 @@ export const CutInTheMiddleOfThePack: Story = {
     children: (
       <>
         <Caption>{'Leviers par potentiel et part déjà mobilisée'}</Caption>
-        <XAxis
-          name="Mobilisation"
-          minLabel="Peu mobilisé"
-          maxLabel="Très mobilisé"
-        />
-        <YAxis name="Potentiel" minLabel="Faible" maxLabel="Fort" />
+        <XAxis name="Mobilisation" />
+        <YAxis name="Potentiel" />
         <Quadrant
           from={{ x: 0, y: Y_THRESHOLD }}
           to={{ x: CUT_MID_PACK, y: Y_TOP }}
@@ -217,12 +205,8 @@ export const WithPointTones: Story = {
     children: (
       <>
         <Caption>{'Leviers par potentiel et part déjà mobilisée'}</Caption>
-        <XAxis
-          name="Mobilisation"
-          minLabel="Peu mobilisé"
-          maxLabel="Très mobilisé"
-        />
-        <YAxis name="Potentiel" minLabel="Faible" maxLabel="Fort" />
+        <XAxis name="Mobilisation" />
+        <YAxis name="Potentiel" />
         <Quadrant
           from={{ x: 0, y: Y_THRESHOLD }}
           to={{ x: CUT_AT_GAP, y: Y_TOP }}
@@ -239,12 +223,8 @@ export const OverriddenQuadrantColors: Story = {
     children: (
       <>
         <Caption>{'Leviers par potentiel et part déjà mobilisée'}</Caption>
-        <XAxis
-          name="Mobilisation"
-          minLabel="Peu mobilisé"
-          maxLabel="Très mobilisé"
-        />
-        <YAxis name="Potentiel" minLabel="Faible" maxLabel="Fort" />
+        <XAxis name="Mobilisation" />
+        <YAxis name="Potentiel" />
         <Quadrant
           from={{ x: 0, y: Y_THRESHOLD }}
           to={{ x: CUT_AT_GAP, y: Y_TOP }}

@@ -120,17 +120,15 @@ export const collectivitesLabels = {
   }),
   matriceLegende:
     'Leviers par potentiel de réduction de GES et mobilisation de la collectivité',
-  axeMobilisation: 'Mobilisation',
-  axeMobilisationMin: 'Peu mobilisé',
-  axeMobilisationMax: 'Bien mobilisé',
-  axePotentiel: 'Potentiel de réduction de GES',
+  axeMobilisation: 'Mobilisation actuelle (estimée)',
+  axePotentiel: 'Potentiel de réduction de GES (estimé)',
   axePotentielMin: 'Faible',
   axePotentielMax: 'Fort',
-  quadrantFortImpactPeuMobilise:
-    'Leviers à prioriser : fort impact, peu mobilisés',
-  quadrantFortImpactBienMobilise: 'Fort impact, bien mobilisés',
-  quadrantFaibleImpactPeuMobilise: 'Faible impact, peu mobilisés',
-  quadrantFaibleImpactBienMobilise: 'Faible impact, bien mobilisés',
+  quadrantLevierAPrioriser: 'Levier à prioriser',
+  quadrantFortImpactPeuMobilise: 'Fort impact, peu mobilisé',
+  quadrantFortImpactBienMobilise: 'Fort impact, bien mobilisé',
+  quadrantFaibleImpactPeuMobilise: 'Faible impact, peu mobilisé',
+  quadrantFaibleImpactBienMobilise: 'Faible impact, bien mobilisé',
   levierQuadrantLecture: {
     high_impact_low_mobilisation:
       'Levier à prioriser : fort impact, peu mobilisé',

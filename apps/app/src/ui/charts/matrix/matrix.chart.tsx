@@ -5,6 +5,7 @@ import type {
   ScatterSeriesOption,
 } from 'echarts/charts';
 import { getInstanceByDom } from 'echarts/core';
+import { uniq } from 'es-toolkit';
 import {
   cn,
   Icon,
@@ -98,6 +99,10 @@ const LABEL_CHAR_WIDTH = 6;
 const POINT_SIZE = 14;
 const SELECTION_RING_WIDTH = 4;
 const AXIS_FONT_SIZE = 11;
+const AXIS_NAME_ARROW = ' →';
+const X_AXIS_NAME_GAP = 16;
+const Y_AXIS_NAME_GAP = 24;
+const QUADRANT_BADGE_GLYPH = '⚐';
 const LABEL_GAP_TO_POINT = 12;
 const LABEL_RIGHT_MARGIN = 4;
 const DEFAULT_LABEL_MAX_WIDTH = 220;
@@ -166,6 +171,10 @@ type MarkAreaData = NonNullable<
 
 type MarkAreaZone = MarkAreaData[number];
 
+type MarkLineData = NonNullable<
+  NonNullable<ScatterSeriesOption['markLine']>['data']
+>;
+
 const toQuadrantTitleWidth = ({
   quadrant,
   bounds,
@@ -196,6 +205,7 @@ const buildArea = ({
     from,
     to,
     title,
+    badge,
     tone,
     titleAnchor = 'topLeft',
     colors: override,
@@ -206,25 +216,74 @@ const buildArea = ({
       coord: [from.x, from.y],
       itemStyle: {
         color: override?.background ?? palette?.soft ?? TRANSPARENT,
-        borderColor: colors.grey[5],
-        borderWidth: 1,
-        borderType: 'dashed' as const,
+        borderWidth: 0,
       },
       label: {
-        show: title !== undefined,
-        formatter: title?.toLocaleUpperCase('fr-FR'),
+        show: title !== undefined || badge !== undefined,
+        formatter: toQuadrantLabel({ badge, title }),
         position: TITLE_POSITION[titleAnchor],
-        color: override?.title ?? palette?.strong ?? colors.grey[7],
+        color: override?.title ?? colors.grey[10],
         fontSize: 11,
-        fontWeight: 'bold' as const,
+        fontWeight: 'normal' as const,
         width: titleWidth,
         overflow: 'break' as const,
         lineHeight: QUADRANT_TITLE_LINE_HEIGHT,
+        rich: {
+          badge: {
+            color: palette?.strong ?? colors.grey[7],
+            fontSize: 11,
+            fontWeight: 'bold' as const,
+          },
+        },
       },
     },
     { coord: [to.x, to.y] },
   ];
 };
+
+const toQuadrantLabel = ({
+  badge,
+  title,
+}: Pick<QuadrantProps, 'badge' | 'title'>): string => {
+  if (badge === undefined) {
+    return title ?? '';
+  }
+  const richBadge = `{badge|${QUADRANT_BADGE_GLYPH} ${badge.toLocaleUpperCase(
+    'fr-FR'
+  )}}`;
+  if (title === undefined) {
+    return richBadge;
+  }
+  return `${richBadge}  ${title}`;
+};
+
+const toDividerValues = ({
+  quadrants,
+  axis,
+  bound,
+}: {
+  quadrants: readonly QuadrantProps[];
+  axis: keyof MatrixCoord;
+  bound: number;
+}): number[] =>
+  uniq(quadrants.flatMap(({ from, to }) => [from[axis], to[axis]])).filter(
+    (value) => value > 0 && value < bound
+  );
+
+const buildDividers = ({
+  quadrants,
+  bounds,
+}: {
+  quadrants: readonly QuadrantProps[];
+  bounds: MatrixCoord;
+}): MarkLineData => [
+  ...toDividerValues({ quadrants, axis: 'x', bound: bounds.x }).map(
+    (value) => ({ xAxis: value })
+  ),
+  ...toDividerValues({ quadrants, axis: 'y', bound: bounds.y }).map(
+    (value) => ({ yAxis: value })
+  ),
+];
 
 type MatrixAxis = {
   type: 'value';
@@ -234,25 +293,14 @@ type MatrixAxis = {
   nameLocation: 'middle';
   nameGap: number;
   nameTextStyle: { fontSize: number };
+  axisLine: { show: boolean };
   axisTick: { show: boolean };
   splitLine: { show: boolean };
-  axisLabel: { formatter: (value: number) => string; fontSize: number };
+  axisLabel: { show: boolean };
 };
 
-const axisLabelFormatter =
-  (markers: AxisProps | undefined, bound: number) =>
-  (value: number): string => {
-    if (!markers) {
-      return '';
-    }
-    if (value === 0) {
-      return markers.minLabel;
-    }
-    if (value === bound) {
-      return markers.maxLabel;
-    }
-    return '';
-  };
+const toAxisName = (markers: AxisProps | undefined): string =>
+  markers ? `${markers.name}${AXIS_NAME_ARROW}` : '';
 
 const buildAxis = ({
   markers,
@@ -266,16 +314,14 @@ const buildAxis = ({
   type: 'value' as const,
   min: 0,
   max: bound,
-  name: markers?.name ?? '',
+  name: toAxisName(markers),
   nameLocation: 'middle' as const,
   nameGap,
   nameTextStyle: { fontSize: AXIS_FONT_SIZE },
+  axisLine: { show: false },
   axisTick: { show: false },
   splitLine: { show: false },
-  axisLabel: {
-    formatter: axisLabelFormatter(markers, bound),
-    fontSize: AXIS_FONT_SIZE,
-  },
+  axisLabel: { show: false },
 });
 
 type LabelLayout = {
@@ -395,8 +441,16 @@ const buildOption = ({
     },
   },
   grid: MATRIX_GRID,
-  xAxis: buildAxis({ markers: xAxis, bound: bounds.x, nameGap: 40 }),
-  yAxis: buildAxis({ markers: yAxis, bound: bounds.y, nameGap: 76 }),
+  xAxis: buildAxis({
+    markers: xAxis,
+    bound: bounds.x,
+    nameGap: X_AXIS_NAME_GAP,
+  }),
+  yAxis: buildAxis({
+    markers: yAxis,
+    bound: bounds.y,
+    nameGap: Y_AXIS_NAME_GAP,
+  }),
   series: [
     {
       type: 'effectScatter',
@@ -431,6 +485,13 @@ const buildOption = ({
             titleWidth: toQuadrantTitleWidth({ quadrant, bounds, size }),
           })
         ),
+      },
+      markLine: {
+        silent: true,
+        symbol: 'none',
+        label: { show: false },
+        lineStyle: { type: 'dashed', color: colors.grey[7], width: 1 },
+        data: buildDividers({ quadrants, bounds }),
       },
     },
     ...buildSelectedPointPulse({ points, selectedPointId }),
@@ -601,6 +662,13 @@ const toQuadrantBox = ({
   };
 };
 
+const toQuadrantLabelLength = ({
+  badge,
+  title,
+}: Pick<QuadrantProps, 'badge' | 'title'>): number =>
+  (badge === undefined ? 0 : QUADRANT_BADGE_GLYPH.length + 1 + badge.length) +
+  (title?.length ?? 0);
+
 const toQuadrantTitleBox = ({
   quadrant,
   bounds,
@@ -611,10 +679,11 @@ const toQuadrantTitleBox = ({
   size: PlotSize;
 }): Box | undefined => {
   const quadrantBox = toQuadrantBox({ quadrant, bounds, size });
-  if (quadrant.title === undefined || quadrantBox === undefined) {
+  const labelLength = toQuadrantLabelLength(quadrant);
+  if (labelLength === 0 || quadrantBox === undefined) {
     return undefined;
   }
-  const titleTextWidth = quadrant.title.length * QUADRANT_TITLE_CHAR_WIDTH;
+  const titleTextWidth = labelLength * QUADRANT_TITLE_CHAR_WIDTH;
   const titleMaxWidth =
     toQuadrantTitleWidth({ quadrant, bounds, size }) ?? titleTextWidth;
   const width = Math.min(titleTextWidth, titleMaxWidth);
@@ -816,5 +885,5 @@ const MatrixChart = ({
   );
 };
 
-export { MatrixChart };
+export { buildDividers, MatrixChart, toQuadrantLabel };
 export type { MatrixAnchor, MatrixPoint };

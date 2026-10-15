@@ -14,13 +14,13 @@ describe('projectPoints', () => {
 
   it('puts the origin at the bottom left of the plot area', () => {
     expect(project([{ x: 0, y: 0 }])).toEqual([
-      { dataIndex: 0, x: 96, y: 436 },
+      { dataIndex: 0, x: 48, y: 468 },
     ]);
   });
 
   it('puts the upper bound at the top right of the plot area', () => {
     expect(project([{ x: 100, y: 100 }])).toEqual([
-      { dataIndex: 0, x: 960, y: 40 },
+      { dataIndex: 0, x: 984, y: 12 },
     ]);
   });
 
@@ -50,7 +50,7 @@ describe('projectPoints', () => {
         points: [{ x: 50, y: 50 }],
         bounds: { x: 100, y: 100 },
         grid: MATRIX_GRID,
-        size: { width: 100, height: 500 },
+        size: { width: 60, height: 500 },
       })
     ).toEqual([]);
   });
