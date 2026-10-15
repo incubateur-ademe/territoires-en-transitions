@@ -27,7 +27,7 @@ type TitleProps = { children: ReactNode; className?: string };
 const Title = ({ children, className }: TitleProps): JSX.Element => {
   const { titleId, compact } = usePageHeaderContext();
   return (
-    <div className="flex-auto">
+    <div className="flex-auto lg:flex-1">
       <h1
         id={titleId}
         className={cn(
@@ -56,7 +56,7 @@ const EditableTitle = (props: EditableTitleSlotProps): JSX.Element => {
 EditableTitle.displayName = 'PageHeader.EditableTitle';
 
 const Actions = ({ children }: { children: ReactNode }): JSX.Element => (
-  <div>{children}</div>
+  <div className="lg:shrink-0">{children}</div>
 );
 Actions.displayName = 'PageHeader.Actions';
 
@@ -183,7 +183,7 @@ export const PageHeader = ({
         )}
       >
         {navigation}
-        <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 lg:flex-nowrap">
           {title}
           {actions}
         </div>
