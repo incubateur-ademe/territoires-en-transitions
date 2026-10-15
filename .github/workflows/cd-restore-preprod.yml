@@ -1,9 +1,17 @@
-name: Restore manuel de la base de données prod sur l'environnement preprod
-run-name: Restore prod backup sur preprod ${{ inputs.backup_date && format('← {0}', inputs.backup_date) || '← dernier backup' }}
+name: Restore manuel de la base de données prod sur l'environnement preprod ou staging
+run-name: Restore prod backup sur ${{ inputs.target }} ${{ inputs.backup_date && format('← {0}', inputs.backup_date) || '← dernier backup' }}
 
 on:
   workflow_dispatch:
     inputs:
+      target:
+        type: choice
+        description: 'Environnement cible de la restauration.'
+        required: true
+        default: preprod
+        options:
+          - preprod
+          - staging
       backup_date:
         type: string
         description: 'Date ISO du backup (YYYY-MM-DD). Laisser vide pour utiliser le backup le plus récent.'
@@ -14,13 +22,13 @@ permissions:
   contents: read
 
 jobs:
-  restore-preprod:
-    name: Restore manuel sur preprod
+  restore:
+    name: Restore manuel sur ${{ inputs.target }}
     environment: prod
     runs-on: ubuntu-latest
     timeout-minutes: 120
     concurrency:
-      group: database-maintenance-preprod
+      group: database-maintenance-${{ inputs.target }}
       cancel-in-progress: false
       queue: max
 
@@ -50,6 +58,7 @@ jobs:
         id: restore_arg
         env:
           BACKUP_DATE_INPUT: ${{ inputs.backup_date }}
+          TARGET: ${{ inputs.target }}
         run: |
           trimmed="$(echo -n "$BACKUP_DATE_INPUT" | tr -d '[:space:]')"
           if [ -z "$trimmed" ]; then
@@ -64,14 +73,14 @@ jobs:
           fi
           echo "restore_arg=$restore_arg" >> "$GITHUB_OUTPUT"
           {
-            echo "### Restore preprod"
+            echo "### Restore $TARGET"
             echo ""
             echo "Argument transmis à \`restore.sh\` : \`$restore_arg\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Restore backup to preprod
+      - name: Restore backup to ${{ inputs.target }}
         env:
-          TO_DB_URL: ${{ secrets.PREPROD_DB_URL }}
+          TO_DB_URL: ${{ inputs.target == 'staging' && secrets.STAGING_DB_URL || secrets.PREPROD_DB_URL }}
           RESTORE_ENCRYPTED_PASSWORD: ${{ secrets.RESTORE_ENCRYPTED_PASSWORD }}
           BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
           BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
