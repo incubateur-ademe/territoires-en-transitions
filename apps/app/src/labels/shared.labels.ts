@@ -97,6 +97,19 @@ export const sharedLabels = {
   actionDeReferenceDescriptionLabel: 'Description',
   actionDeReferenceLevierLabel: 'Levier',
   actionDeReferenceCategorieLabel: 'Catégorie',
+  actionDeReferenceSecteurInfo: 'Secteur :',
+  actionDeReferenceLevierInfo: 'Levier :',
+  actionDeReferenceCategorieInfo: 'Catégorie :',
+  actionDeReferenceImpactInfo: 'Impact potentiel du levier :',
+  actionDeReferenceImpactValeur: (score: number): string =>
+    `${score}/100 du territoire (estimé)`,
+  actionDeReferenceImpactValeurDuLevier: ({
+    levierNom,
+    score,
+  }: {
+    levierNom: string;
+    score: number;
+  }): string => `${levierNom} : ${score}/100 du territoire (estimé)`,
   actionDeReferenceFichesLieesLabel: 'Fiches liées',
   actionDeReferenceFichesLieesHint:
     'Identifiants des fiches données en exemple, séparés par des virgules',

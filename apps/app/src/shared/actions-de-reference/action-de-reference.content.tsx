@@ -3,50 +3,31 @@ import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { CardCoverBanner } from '@/app/ui/shared/card-cover.banner';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { type ActionDeReference, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
+import type { ActionDeReference } from '@tet/domain/shared';
 import { Badge, Card, EmptyCard } from '@tet/ui';
-import type { JSX, ReactNode } from 'react';
+import type { JSX } from 'react';
 import { match } from 'ts-pattern';
-import { ActionDeReferenceBadges } from './action-de-reference.badges';
+import { ActionDeReferenceInfos } from './action-de-reference.infos';
 import { ActionDeReferenceUsefulnessCard } from './action-de-reference.usefulness.card';
 import type { ActionDeReferenceDetail } from './data/use-get-action-de-reference';
 import { LinkedFichesCard } from './linked-fiches.card';
 import { useSendUsefulnessResponse } from './use-send-usefulness-response';
 
-const ActionDeReferenceField = ({
-  label,
-  children,
-}: {
-  readonly label: string;
-  readonly children: ReactNode;
-}): JSX.Element => (
-  <div className="flex flex-col gap-1">
-    <dt className="text-sm font-bold text-primary-9">{label}</dt>
-    <dd className="m-0 whitespace-pre-line text-grey-8">{children}</dd>
-  </div>
-);
-
-const ActionDeReferenceFields = ({
+const ActionDeReferenceDescription = ({
   action,
 }: {
   readonly action: ActionDeReference;
 }): JSX.Element => (
-  <Card className="gap-6 p-6 font-normal shadow-none">
-    <dl className="m-0 flex flex-col gap-6">
-      <ActionDeReferenceField
-        label={appLabels.actionDeReferenceDescriptionLabel}
-      >
+  <Card className="gap-6 p-8 font-normal shadow-none">
+    <section className="flex flex-col gap-1">
+      <h2 className="m-0 text-base font-bold text-primary-9">
+        {appLabels.actionDeReferenceDescriptionLabel}
+      </h2>
+      <p className="m-0 max-w-[70ch] whitespace-pre-line text-sm text-primary-9">
         {action.description}
-      </ActionDeReferenceField>
-      <ActionDeReferenceField label={appLabels.actionDeReferenceLevierLabel}>
-        {action.leviers.map((levier) => LEVIER_NOM_BY_ID[levier]).join(', ')}
-      </ActionDeReferenceField>
-      <ActionDeReferenceField label={appLabels.actionDeReferenceCategorieLabel}>
-        {action.categories
-          .map((categorie) => appLabels.categorieActionLabel(categorie))
-          .join(', ')}
-      </ActionDeReferenceField>
-    </dl>
+      </p>
+    </section>
+    <ActionDeReferenceInfos action={action} />
   </Card>
 );
 
@@ -59,20 +40,17 @@ const ActionDeReferenceDetails = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge
-          title={appLabels.actionDeReferenceAdeme}
-          variant="warning"
-          size="sm"
-          className="w-fit"
-        />
-        <ActionDeReferenceBadges action={action} hasUpdateButton={false} />
-      </div>
+      <Badge
+        title={appLabels.actionDeReferenceAdeme}
+        variant="warning"
+        size="sm"
+        className="w-fit"
+      />
       <div className="flex w-full flex-col gap-6 md:flex-row">
         <div className="w-full md:flex-[2]">
           <CardCoverBanner />
           <div className="flex flex-col gap-6">
-            <ActionDeReferenceFields action={action} />
+            <ActionDeReferenceDescription action={action} />
             <ActionDeReferenceUsefulnessCard
               onAnswer={sendUsefulnessResponse}
             />
