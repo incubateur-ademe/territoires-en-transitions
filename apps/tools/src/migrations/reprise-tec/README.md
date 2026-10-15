@@ -325,6 +325,92 @@ s'il en trouve un :
 | un dossier transmis dont l'échéance d'avis n'est pas passée, jour compris, ou absente | vérifier la date de transmission ; si elle est juste, attendre la fin de la consultation                         |
 | un dossier transmis sans DREAL ou sans région qui couvre son siège                    | créer le service, ou corriger son périmètre, avant l'import                                                      |
 
+### 5. Importer les fiches
+
+Chaque action d'un dossier repris devient une fiche, rangée dans un plan
+« PCAET <année de lancement> (repris de Territoires & Climat) » rattaché au
+dossier : un plan par dossier qui porte des actions, aucun plan vide. Les
+actions se lisent sur la ligne « mise en œuvre » du dossier, jamais sur son
+doublon « définitif ». Le plan est un plan ordinaire : il compte pour l'étape
+« Programme d'actions » du dossier.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-fiches/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+| Dans T&C                             | Dans TeT                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| intitulé, description                | titre, description (vide : rien)                                                                                   |
+| date de lancement, date de création  | date de début ; créée et modifiée le                                                                               |
+| (aucun statut)                       | « À venir » sur toutes les fiches                                                                                  |
+| commentaires de conclusion et statut | notes de suivi, au nom du compte système « Territoires en Transition », datées de la création                      |
+| (aucun auteur)                       | plan, thématiques et sous-thématiques liés au nom du compte système : la base exige un auteur                      |
+| volets du PCAET                      | effets attendus                                                                                                    |
+| cibles                               | cibles (7 vers 13)                                                                                                 |
+| secteurs réglementaires (8)          | le champ secteurs de la fiche (`fiche_action_secteur_attribution`), origine « manuelle », au nom du compte système |
+| autres secteurs                      | thématique, et sous-thématique quand une dit la même chose (table dans `listes-tec.ts`)                            |
+| types de porteur, porteurs libres    | structures pilotes de la collectivité, réutilisées si elles existent                                               |
+| types d'action, secteurs libres      | tags personnalisés de la collectivité, réutilisés s'ils existent                                                   |
+| collectivité de l'action             | celle du dossier (toujours la même)                                                                                |
+
+Non lus ici : contacts (pilotes), fichiers, images et « site web », repris par
+les étapes suivantes. La classification IA des fiches n'est pas écrite : le
+passage quotidien du produit la fera.
+
+Toute ligne des tables d'action (dossiers repris ou non) finit soit écrite,
+soit dans `ecarts`, une seule fois : le script le vérifie table par table
+avant d'écrire. Une ligne sans numéro dans T&C est repérée par son action
+(`tec_id`) et sa `precision` (`volet 2`, `cible 4`, `type_porteur 1`).
+
+| Motif                   | Sens                                                                                                                   |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `doublon`               | action (ou sa ligne satellite) du doublon « définitif » d'un dossier ; seule la « mise en œuvre » est reprise          |
+| `sans_etat_invisible`   | action d'un dossier que l'import des dossiers a écarté pour ce motif                                                   |
+| `vitrine`               | action sans dossier : exemple de la vitrine de T&C, non reprise                                                        |
+| `orphelin`              | volet d'une action qui n'existe pas (la table n'a pas de clé étrangère dans T&C)                                       |
+| `historique_non_repris` | ligne du journal des modifications d'une action reprise : TeT tient son propre historique                              |
+| `sans_place`            | partie d'une action reprise sans place dans une fiche : `precision` = `population_couverte` ou `fiche_action_associee` |
+
+Le rapport compte aussi les classements sans sous-thématique (filtre perdu, ou
+thématique du même sens), nomme les dossiers dont le doublon « définitif »
+portait plus d'actions, et les collectivités qui reçoivent deux plans du même
+nom (deux dossiers lancés la même année).
+
+#### Annuler les fiches
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-fiches/annuler.ts [--confirm]
+```
+
+Retire, d'après `lignes_ecrites`, les fiches que l'import a écrites avec leurs
+liens et leurs notes, puis les lignes d'historique que TeT a écrites pour
+elles, puis les plans et leur lien au dossier, puis les tags que l'import a
+créés et que plus aucune fiche ne porte, et enfin les traces et les écarts de
+l'étape. Refuse de tourner si les étapes des pièces ou des contacts ont écrit
+sur les fiches : les annuler d'abord.
+
+**Ce qu'elle laisse** : les tags qui existaient avant l'import (réutilisés),
+et ceux que l'import a créés mais qu'une autre fiche porte depuis. **Ce
+qu'elle emporte** : tout ce que la collectivité a changé sur les fiches
+reprises depuis l'import (le rapport compte les fiches modifiées). Un axe
+ajouté par la collectivité dans un plan repris bloque l'annulation.
+
+#### Ce qui arrête l'import des fiches
+
+Avant toute écriture, le script vérifie ces cas, les liste tous, et s'arrête
+s'il en trouve un :
+
+| Garde                                                                                         | Quoi faire                                                                                               |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| aucun dossier repris qui porte des actions                                                    | lancer d'abord l'import des dossiers (étape 2)                                                           |
+| un dossier a déjà un plan                                                                     | l'import a déjà tourné (l'annuler d'abord), ou la collectivité en a rattaché un : décider au cas par cas |
+| le compte système `00000000-0000-0000-0000-000000000001` est absent ou sans nom               | le créer : notes et liens exigent un auteur                                                              |
+| un libellé de TeT introuvable ou en double (type de plan, effet, thématique, sous-thématique) | corriger le libellé dans `listes-tec.ts` ou `listes-tet.ts`, ou la liste de TeT                          |
+| un numéro de T&C inconnu (volet, cible, secteur, type de porteur, type d'action)              | l'ajouter à sa liste dans `listes-tec.ts`                                                                |
+| un titre de plus de 300 caractères, une description de plus de 20 000                         | décider quoi faire du texte : le script ne tronque pas                                                   |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
