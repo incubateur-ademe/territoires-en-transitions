@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { match } from 'ts-pattern';
+import { AnalysisLlmService } from '../analysis-llm.service';
 import { LevierMobilisation } from '../mobilisation.repository';
 import { calculateMobilisation } from '../pipeline/calculate-mobilisation/calculate-mobilisation';
 import { groupVoletsByLevier } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
@@ -23,7 +23,7 @@ export type MobilisationScore = {
 export class ScoreMobilisationService {
   constructor(
     private readonly collectiviteIdentityRepository: CollectiviteIdentityRepository,
-    private readonly llm: LlmService
+    private readonly llm: AnalysisLlmService
   ) {}
 
   async calculateCollectiviteMobilisation({
