@@ -25,6 +25,7 @@ type LevierSelection = {
 
 type LevierSidePanel = {
   selectedLevierId?: LevierId;
+  selectedCategorie?: CategorieAction;
   select: SelectLevier;
   close: () => void;
 };
@@ -110,7 +111,12 @@ export const useLevierSidePanel = ({
     setPanel,
   ]);
 
-  return { selectedLevierId: selection?.levierId, select, close };
+  return {
+    selectedLevierId: selection?.levierId,
+    selectedCategorie: selection?.categorie,
+    select,
+    close,
+  };
 };
 
 type LevierSidePanelControls = Pick<LevierSidePanel, 'select' | 'close'>;

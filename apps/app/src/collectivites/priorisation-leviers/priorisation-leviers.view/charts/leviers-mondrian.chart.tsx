@@ -28,6 +28,7 @@ import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
 type LeviersMondrianChartProps = {
   places: LevierPlace[];
   selectedLevierId?: LevierId;
+  selectedCategorie?: CategorieAction;
   onLevierSelected: SelectLevier;
 };
 
@@ -99,6 +100,7 @@ const toTreemapGroup = ({
 export const LeviersMondrianChart = ({
   places,
   selectedLevierId,
+  selectedCategorie,
   onLevierSelected,
 }: LeviersMondrianChartProps): JSX.Element => {
   const tiles = useMemo(() => toMondrianTiles(places), [places]);
@@ -126,6 +128,7 @@ export const LeviersMondrianChart = ({
       toIntensityVariant={toMobilisationVariant}
       tooltipHint={appLabels.cliquerPourVoirLesActionsDuLevier}
       selectedGroupId={selectedLevierId}
+      selectedTileId={selectedCategorie}
       onGroupSelected={onLevierSelected}
       details={<LeviersDataDetails places={places} />}
       className="h-matrix-chart"
