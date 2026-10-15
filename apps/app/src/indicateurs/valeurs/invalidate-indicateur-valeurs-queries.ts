@@ -22,7 +22,6 @@ export const invalidateIndicateurValeursQueries = async ({
   // Une valeur retenue pour un score peut affecter plusieurs actions :
   // rafraîchir leurs scores dans cet onglet et dans les autres onglets ouverts.
   const scoreQueryKeys = [
-    trpc.referentiels.snapshots.getCurrent.queryKey(),
     trpc.referentiels.actions.listActionsGroupedById.queryKey(),
     trpc.referentiels.actions.getScoreIndicatif.queryKey(),
     trpc.referentiels.actions.getValeursUtilisables.queryKey(),

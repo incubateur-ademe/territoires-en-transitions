@@ -7,6 +7,8 @@ import {
   ActionCategorieEnum,
   ActionType,
   ActionTypeEnum,
+  mergeActionDefinitionsAndState,
+  ReferentielId,
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -28,6 +30,21 @@ describe('ActionStatutListRouter', () => {
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+
+  /** Reconstitue les actions complètes comme le fait le front */
+  async function listMergedActions(input: {
+    collectiviteId: number;
+    referentielId: ReferentielId;
+  }) {
+    const caller = router.createCaller({ user: testUser });
+    const [definitions, state] = await Promise.all([
+      caller.referentiels.actions.listActionDefinitions({
+        referentielId: input.referentielId,
+      }),
+      caller.referentiels.actions.listActionsGroupedById(input),
+    ]);
+    return mergeActionDefinitionsAndState(definitions, state);
+  }
 
   async function resetDisplayPreferences(collectiviteId: number) {
     const serviceRoleCaller = router.createCaller({
@@ -78,7 +95,7 @@ describe('ActionStatutListRouter', () => {
     ).rejects.toThrow();
   });
 
-  test('List actions', async () => {
+  test('List actions : ne renvoie que la partie dynamique', async () => {
     const caller = router.createCaller({ user: testUser });
 
     const input = {
@@ -86,9 +103,14 @@ describe('ActionStatutListRouter', () => {
       referentielId: ReferentielIdEnum.CAE,
     };
 
-    const result = await caller.referentiels.actions.listActionsGroupedById(
-      input
-    );
+    const [result, definitions] = await Promise.all([
+      caller.referentiels.actions.listActionsGroupedById(input),
+      caller.referentiels.actions.listActionDefinitions({
+        referentielId: input.referentielId,
+      }),
+    ]);
+
+    expect(result.referentielVersion).toBe(definitions.referentielVersion);
 
     const entries = Object.entries(result.actionsById);
 
@@ -97,15 +119,44 @@ describe('ActionStatutListRouter', () => {
     for (const [actionId, action] of entries) {
       expect(actionId).toContain(input.referentielId);
 
-      expect(action.referentielId).toBeDefined();
-      expect(action.nom).toBeDefined();
-      expect(action.identifiant).toBeDefined();
-      expect(action.depth).toBeDefined();
-      expect(action.actionType).toBeDefined();
+      // seuls les champs dynamiques sont renvoyés : les définitions viennent
+      // de `listActionDefinitions`
+      expect(Object.keys(action)).toEqual(
+        expect.arrayContaining([
+          'actionId',
+          'childrenIds',
+          'nextId',
+          'parentId',
+          'pilotes',
+          'previousId',
+          'score',
+          'scoresTag',
+          'services',
+        ])
+      );
+      for (const definitionField of [
+        'nom',
+        'identifiant',
+        'description',
+        'categorie',
+        'points',
+        'exprScore',
+        'actionType',
+        'tags',
+        'level',
+        'preuves',
+      ]) {
+        expect(action).not.toHaveProperty(definitionField);
+      }
 
+      // TODO: compatibilité temporaire avec l'ancien bundle front, à retirer
+      // avec `withLegacyCompatFields`
+      expect(action).toHaveProperty('childrenIdsWithExprScore', []);
+
+      const { actionType } = definitions.definitionsById[actionId];
       const statutApplicableSurScore =
-        action.actionType === ActionTypeEnum.SOUS_ACTION ||
-        action.actionType === ActionTypeEnum.TACHE;
+        actionType === ActionTypeEnum.SOUS_ACTION ||
+        actionType === ActionTypeEnum.TACHE;
       if (statutApplicableSurScore) {
         expect(action.score.statut).toBeDefined();
       } else {
@@ -116,26 +167,14 @@ describe('ActionStatutListRouter', () => {
 
       expect(Array.isArray(action.pilotes)).toBe(true);
       expect(Array.isArray(action.services)).toBe(true);
-      expect(Array.isArray(action.childrenIdsWithExprScore)).toBe(true);
-      for (const childId of action.childrenIdsWithExprScore) {
-        expect(action.childrenIds).toContain(childId);
-        const child = result.actionsById[childId];
-        expect(child?.exprScore?.trim()).toBeTruthy();
-      }
     }
   });
 
-  test('List action summaries', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const input = {
+  test('List actions : généalogie ECI', async () => {
+    const result = await listMergedActions({
       collectiviteId: 1,
-      referentielId: 'eci' as const,
-    };
-
-    const result = await caller.referentiels.actions.listActionsGroupedById(
-      input
-    );
+      referentielId: ReferentielIdEnum.ECI,
+    });
     const actionsGroupedById = result.actionsById;
 
     const actionTypes: ActionType[] = [
@@ -173,29 +212,16 @@ describe('ActionStatutListRouter', () => {
     ).toMatchObject({
       actionId: 'eci_1.1',
       referentielId: ReferentielIdEnum.ECI,
-      referentiel: ReferentielIdEnum.ECI,
-      childrenIds: [
-        'eci_1.1.1',
-        'eci_1.1.2',
-        'eci_1.1.3',
-        'eci_1.1.4',
-        'eci_1.1.5',
-      ],
-      depth: 2,
-      actionType: ActionTypeEnum.ACTION,
-      identifiant: '1.1',
-      nom: 'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort',
-      description: expect.any(String),
-      exemples: expect.any(String),
-      questionIds: [],
-      categorie: null,
     });
 
-    expect(
-      filteredActions.find((action) => action.actionId === 'eci_1.1.1')
-    ).toMatchObject({
+    expect(result.actionsById['eci_1']).toMatchObject({
+      actionId: 'eci_1',
+      parentId: 'eci',
+      childrenIds: ['eci_1.1', 'eci_1.2', 'eci_1.3'],
+    });
+    expect(result.actionsById['eci_1.1.1']).toMatchObject({
       actionId: 'eci_1.1.1',
-      referentiel: 'eci',
+      parentId: 'eci_1.1',
       childrenIds: [
         'eci_1.1.1.1',
         'eci_1.1.1.2',
@@ -203,18 +229,12 @@ describe('ActionStatutListRouter', () => {
         'eci_1.1.1.4',
         'eci_1.1.1.5',
       ],
-      depth: 3,
-      actionType: ActionTypeEnum.SOUS_ACTION,
-      identifiant: '1.1.1',
-      nom: "S'engager politiquement et mettre en place des moyens",
-      description: expect.any(String),
-      exemples: expect.any(String),
-      questionIds: [],
-      categorie: ActionCategorieEnum.BASES,
+      previousId: null,
+      nextId: 'eci_1.1.2',
     });
   });
 
-  test('La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et remonte dans `hiddenActions`', async () => {
+  test('La mesure te_1.1.1 est désactivée quand PCAET_1 est NON, et remonte dans `hiddenActionIds`', async () => {
     const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
       databaseService,
       {
@@ -249,13 +269,7 @@ describe('ActionStatutListRouter', () => {
       input
     );
     expect(result.actionsById['te_1.1.1']).toBeUndefined();
-    expect(result.hiddenActions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          actionId: 'te_1.1.1',
-        }),
-      ])
-    );
+    expect(result.hiddenActionIds).toContain('te_1.1.1');
   });
 
   test('Les liens précédents/suivants sautent les mesures désactivées pour le référentiel TE', async () => {
@@ -350,34 +364,13 @@ describe('ActionStatutListRouter', () => {
     });
   });
 
-  test('Retourne les labels, le tag coremeasure et les thématiques des mesures du référentiel TE', async () => {
-    const { collectivite, cleanup, user } = await addTestCollectiviteAndUser(
-      databaseService,
-      {
-        user: {
-          role: CollectiviteRole.EDITION,
-        },
-      }
-    );
-    const caller = router.createCaller({
-      user: getAuthUserFromUserCredentials(user),
-    });
+  test('Les définitions portent les labels, le tag coremeasure et les thématiques des mesures du référentiel TE', async () => {
+    const caller = router.createCaller({ user: testUser });
 
-    const input = {
-      collectiviteId: collectivite.id,
-      referentielId: ReferentielIdEnum.TE,
-    };
-
-    onTestFinished(async () => {
-      await cleanup();
-    });
-
-    await resetDisplayPreferences(collectivite.id);
-
-    await caller.referentiels.snapshots.computeAndUpsert(input);
-
-    const { actionsById } =
-      await caller.referentiels.actions.listActionsGroupedById(input);
+    const { definitionsById: actionsById } =
+      await caller.referentiels.actions.listActionDefinitions({
+        referentielId: ReferentielIdEnum.TE,
+      });
 
     const mesure = actionsById['te_1.1.1'];
     expect(mesure.labels).toEqual(['te_cae']);
@@ -398,7 +391,7 @@ describe('ActionStatutListRouter', () => {
     expect(axe.thematiques).toEqual([]);
   });
 
-  test('ECI ne retourne pas de hiddenActions', async () => {
+  test('ECI ne retourne pas de hiddenActionIds', async () => {
     const caller = router.createCaller({ user: testUser });
 
     const input = {
@@ -409,14 +402,12 @@ describe('ActionStatutListRouter', () => {
     const result = await caller.referentiels.actions.listActionsGroupedById(
       input
     );
-    expect(result.hiddenActions).toEqual([]);
+    expect(result.hiddenActionIds).toEqual([]);
     expect(Object.keys(result.actionsById).length).toBeGreaterThan(0);
   });
 
   test('List CAE action summaries down to tache', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const result = await caller.referentiels.actions.listActionsGroupedById({
+    const result = await listMergedActions({
       collectiviteId: 1,
       referentielId: ReferentielIdEnum.CAE,
     });

@@ -20,6 +20,7 @@ import { RequestLabellisationRouter } from './labellisations/request-labellisati
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { UpdateAuditReportRouter } from './labellisations/update-audit-report/update-audit-report.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
+import { ListActionDefinitionsRouter } from './list-actions/list-action-definitions.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
 import { ListPreuvesArchiveRouter } from './preuves-archive/list-preuves-archive/list-preuves-archive.router';
@@ -41,6 +42,7 @@ export class ReferentielsRouter {
     private readonly updateActionCommentaireRouter: UpdateActionCommentaireRouter,
     private readonly updateActionFichesRouter: UpdateActionFichesRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
+    private readonly listActionDefinitionsRouter: ListActionDefinitionsRouter,
     private readonly countPreuvesRouter: CountPreuvesRouter,
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
     private readonly getLabellisation: GetLabellisationRouter,
@@ -74,7 +76,8 @@ export class ReferentielsRouter {
     this.setScoreFromIndicateurRouter.router,
     this.updateActionCommentaireRouter.router,
     this.updateActionFichesRouter.router,
-    this.listActionStatutRouter.router
+    this.listActionStatutRouter.router,
+    this.listActionDefinitionsRouter.router
   );
 
   private readonly actionsSupportRouter = this.trpc.mergeRouters(

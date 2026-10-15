@@ -147,6 +147,10 @@ describe('SetScoreFromIndicateurRouter', () => {
       collectiviteId,
       referentielId: ReferentielIdEnum.TE,
     });
+    // le front recharge les scores via `listActionsGroupedById` : la réponse
+    // ne transporte pas les payloads du snapshot
+    expect(snapshot).not.toHaveProperty('scoresPayload');
+    expect(snapshot).not.toHaveProperty('personnalisationReponses');
   });
 
   test('Le statut correspond à la valeur qui vient d’être enregistrée', async () => {

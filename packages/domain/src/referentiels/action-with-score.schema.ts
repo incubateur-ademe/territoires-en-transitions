@@ -82,3 +82,33 @@ export type ListActionsGroupedByIdResult = {
   actionsById: ActionsGroupedById;
   hiddenActions: HiddenActionSummary[];
 };
+
+/**
+ * Partie statique d'une action : ne change qu'à la publication d'une nouvelle
+ * version du référentiel. Indépendante de la collectivité.
+ */
+export const actionStaticDefinitionSchema = z.object({
+  ...actionDefinitionSchema.shape,
+  ...actionLabelsSchema.shape,
+  ...actionTagsSchema.shape,
+});
+
+export type ActionStaticDefinition = z.infer<
+  typeof actionStaticDefinitionSchema
+>;
+
+/**
+ * Partie dynamique d'une action pour une collectivité : scores, pilotes et
+ * services, et généalogie (qui dépend des mesures désactivées en TE).
+ */
+export type ActionDynamicState = Pick<ActionDefinition, 'actionId'> &
+  ActionPilotes &
+  ActionGenealogy &
+  ScoreFinalFields;
+
+export type ListActionsDynamicStateResult = {
+  /** Version publiée courante du référentiel (pas celle du snapshot) */
+  referentielVersion: string;
+  actionsById: Record<ActionId, ActionDynamicState>;
+  hiddenActionIds: ActionId[];
+};

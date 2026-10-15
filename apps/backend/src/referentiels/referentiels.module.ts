@@ -77,6 +77,8 @@ import { UpdateAuditReportRouter } from './labellisations/update-audit-report/up
 import { UpdateAuditReportService } from './labellisations/update-audit-report/update-audit-report.service';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
+import { ListActionDefinitionsRouter } from './list-actions/list-action-definitions.router';
+import { ListActionDefinitionsService } from './list-actions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
 import { DeletePreuvesArchiveService } from './preuves-archive/delete-preuves-archive/delete-preuves-archive.service';
@@ -150,6 +152,8 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ListActionsService,
     ListActionsRouter,
+    ListActionDefinitionsService,
+    ListActionDefinitionsRouter,
 
     CountPreuvesService,
     CountPreuvesRouter,

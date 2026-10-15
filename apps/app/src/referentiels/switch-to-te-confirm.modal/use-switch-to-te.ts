@@ -41,9 +41,6 @@ export const useSwitchToTe = () => {
         queryKey: trpc.referentiels.actions.listActionsGroupedById.pathKey(),
       }),
       queryClient.invalidateQueries({
-        queryKey: trpc.referentiels.snapshots.getCurrent.pathKey(),
-      }),
-      queryClient.invalidateQueries({
         queryKey: trpc.referentiels.snapshots.list.pathKey(),
       }),
       queryClient.invalidateQueries({
