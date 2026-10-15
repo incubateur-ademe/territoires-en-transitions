@@ -25,7 +25,7 @@ import {
 } from './volet-categories';
 
 export const MOBILISATION_THINKING_BUDGET = 512;
-const MOBILISATION_TIMEOUT_MS = 120_000;
+const MOBILISATION_TIMEOUT_MS = 45_000;
 
 export type ScoredVolet = {
   categorie: CategorieAction;

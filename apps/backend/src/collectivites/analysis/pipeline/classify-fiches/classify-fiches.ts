@@ -12,7 +12,7 @@ import {
 import { FicheToClassify, renderFichesText } from './render-fiches-text';
 
 const CLASSIFICATION_THINKING_BUDGET = 512;
-const CLASSIFICATION_TIMEOUT_MS = 120_000;
+const CLASSIFICATION_TIMEOUT_MS = 60_000;
 
 export const MAX_FICHES_PER_BATCH = 50;
 
