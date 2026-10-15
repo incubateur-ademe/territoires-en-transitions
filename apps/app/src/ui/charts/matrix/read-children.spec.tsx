@@ -61,10 +61,10 @@ describe('reading matrix children', () => {
       readXAxis(
         <>
           <Quadrant {...zone} />
-          <XAxis name="Mobilisation" minLabel="Peu" maxLabel="Beaucoup" />
+          <XAxis name="Mobilisation" />
         </>
       )
-    ).toEqual({ name: 'Mobilisation', minLabel: 'Peu', maxLabel: 'Beaucoup' });
+    ).toEqual({ name: 'Mobilisation' });
   });
 
   it('reads no axis when none was declared', () => {

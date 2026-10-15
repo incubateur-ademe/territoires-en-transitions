@@ -83,20 +83,12 @@ export const LeviersMatrixChart = ({
         toggleLabel={appLabels.voirLesDonneesDuGraphique}
         pointHeader={appLabels.levier}
       />
-      <XAxis
-        name={appLabels.axeMobilisation}
-        minLabel={appLabels.axeMobilisationMin}
-        maxLabel={appLabels.axeMobilisationMax}
-      />
-      <YAxis
-        name={appLabels.axePotentiel}
-        minLabel={appLabels.axePotentielMin}
-        maxLabel={appLabels.axePotentielMax}
-        toValueLabel={toPotentielLabel}
-      />
+      <XAxis name={appLabels.axeMobilisation} />
+      <YAxis name={appLabels.axePotentiel} toValueLabel={toPotentielLabel} />
       <Quadrant
         from={{ x: 0, y: MATRIX_CUT }}
         to={{ x: MATRIX_CUT, y: MATRIX_SCALE }}
+        badge={appLabels.quadrantLevierAPrioriser}
         title={appLabels.quadrantFortImpactPeuMobilise}
         tone="error"
       />

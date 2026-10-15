@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { toAxisValueLabel } from './axis';
 
-const axis = { name: 'Potentiel', minLabel: 'Faible', maxLabel: 'Fort' };
+const axis = { name: 'Potentiel' };
 
 describe('toAxisValueLabel', () => {
   it("affiche la valeur brute d'un axe sans format", () => {

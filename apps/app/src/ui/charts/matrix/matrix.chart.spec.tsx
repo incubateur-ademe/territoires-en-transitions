@@ -65,13 +65,13 @@ describe('MatrixChart anchor', () => {
   it("pose l'ancre invisible sur le point demandé", () => {
     const largeAnchor = renderAnchoredTo('large');
 
-    expect(largeAnchor && toCenter(largeAnchor)).toEqual({ x: 496, y: 40 });
+    expect(largeAnchor && toCenter(largeAnchor)).toEqual({ x: 520, y: 12 });
   });
 
   it('suit le point demandé, pas le premier de la liste', () => {
     const smallAnchor = renderAnchoredTo('small');
 
-    expect(smallAnchor && toCenter(smallAnchor)).toEqual({ x: 136, y: 310 });
+    expect(smallAnchor && toCenter(smallAnchor)).toEqual({ x: 95.2, y: 336 });
   });
 
   it("ne rend aucune ancre quand le point demandé n'existe pas", () => {

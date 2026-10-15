@@ -5,7 +5,7 @@ type MatrixGrid = {
   bottom: number;
 };
 
-const MATRIX_GRID: MatrixGrid = { left: 96, right: 40, top: 40, bottom: 64 };
+const MATRIX_GRID: MatrixGrid = { left: 48, right: 16, top: 12, bottom: 32 };
 
 export { MATRIX_GRID };
 export type { MatrixGrid };
