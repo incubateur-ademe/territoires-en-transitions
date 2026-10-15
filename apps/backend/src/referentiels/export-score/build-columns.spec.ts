@@ -9,7 +9,11 @@ import {
   SnapshotJalonEnum,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { formatActionStatut } from './build-columns';
+import {
+  buildColumns,
+  formatActionStatut,
+  getColumnIndex,
+} from './build-columns';
 import {
   ExportMode,
   ScoreComparisonData,
@@ -385,4 +389,52 @@ describe('formatActionStatut', () => {
       expect(result).toBe('Programmé');
     });
   });
+});
+
+describe('buildColumns', () => {
+  const getTitles = (columns: ReturnType<typeof buildColumns>) =>
+    columns.map((col) => col.title);
+
+  it('inclut "Potentiel max" et "Potentiel personnalisé" pour les anciens référentiels', () => {
+    const titles = getTitles(buildColumns(ExportMode.COMPARISON, 'eci'));
+
+    expect(titles).toContain('Potentiel max');
+    expect(titles.filter((t) => t === 'Potentiel personnalisé')).toHaveLength(
+      2
+    );
+    expect(titles).not.toContain('Points potentiels');
+  });
+
+  it.each([ExportMode.SINGLE_SNAPSHOT, ExportMode.COMPARISON])(
+    'exclut "Potentiel max" et renomme le potentiel en "Points potentiels" pour le référentiel CR (%s)',
+    (exportMode) => {
+      const titles = getTitles(buildColumns(exportMode, 'te'));
+
+      expect(titles).not.toContain('Potentiel max');
+      expect(titles).not.toContain('Potentiel personnalisé');
+      expect(titles.filter((t) => t === 'Points potentiels')).toHaveLength(
+        exportMode === ExportMode.SINGLE_SNAPSHOT ? 1 : 2
+      );
+    }
+  );
+
+  it.each([
+    { referentielId: 'eci' as const, formula: 'IFERROR(G8/F8,"")' },
+    { referentielId: 'te' as const, formula: 'IFERROR(F8/E8,"")' },
+  ])(
+    'référence la bonne colonne de potentiel dans les formules ($referentielId)',
+    ({ referentielId, formula }) => {
+      const columns = buildColumns(ExportMode.SINGLE_SNAPSHOT, referentielId);
+      const row = createScoreRow(`${referentielId}_1`, ActionTypeEnum.ACTION, {
+        pointPotentiel: 10,
+        pointFait: 5,
+      });
+      const data = createScoreComparisonData(undefined, [row]);
+      const colFait = columns[getColumnIndex(columns, 'Fait1')];
+
+      expect(
+        colFait.getValue({ data, scoreRow: row, scoreRowIndex: 0, rowIndex: 8 })
+      ).toEqual({ result: 0.5, formula });
+    }
+  );
 });
