@@ -16,7 +16,7 @@ export const generatePriorisationLink = ({
 }): CollectiviteNavLink => ({
   isVisible:
     isPriorisationEnabled && !(collectiviteAccesRestreint && isVisitor),
-  children: <BetaLabel>{appLabels.outilsDePriorisation}</BetaLabel>,
+  children: <BetaLabel>{appLabels.priorisationLeviersTitre}</BetaLabel>,
   href: makeCollectivitePriorisationUrl({ collectiviteId }),
   urlPrefix: [makeCollectivitePriorisationUrl({ collectiviteId })],
 });

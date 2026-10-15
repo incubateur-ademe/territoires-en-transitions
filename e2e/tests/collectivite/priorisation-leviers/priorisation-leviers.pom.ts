@@ -37,7 +37,7 @@ export class PriorisationLeviersPom {
   constructor(readonly page: Page) {
     this.title = page.getByRole('heading', {
       level: 1,
-      name: 'Outil de priorisation',
+      name: 'Aide à la priorisation',
     });
     const leviersInMatrix = page
       .getByRole('figure')
@@ -227,7 +227,7 @@ export class PriorisationLeviersPom {
 
   async backToPriorisation(): Promise<void> {
     await this.page
-      .getByRole('link', { name: 'Outil de priorisation' })
+      .getByRole('link', { name: 'Aide à la priorisation' })
       .click();
     await expect(this.title).toBeVisible();
   }

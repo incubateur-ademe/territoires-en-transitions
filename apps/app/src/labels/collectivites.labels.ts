@@ -69,8 +69,7 @@ export const collectivitesLabels = {
   rejoindreUneCollectiviteJeSuisReferent:
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
-  outilsDePriorisation: 'Outils de priorisation',
-  priorisationLeviersTitre: 'Outil de priorisation',
+  priorisationLeviersTitre: 'Aide à la priorisation',
   priorisationVisiteRelancer: restartTourLabel,
   priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
   priorisationVisiteParcoursDescription:
