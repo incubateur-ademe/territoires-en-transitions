@@ -70,6 +70,7 @@ export const collectivitesLabels = {
     'Je suis la personne référente dans le programme Territoire Engagé Transition Ecologique',
 
   priorisationLeviersTitre: 'Aide à la priorisation',
+  priorisationMethodologie: 'Méthodologie',
   priorisationVisiteRelancer: restartTourLabel,
   priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
   priorisationVisiteParcoursDescription:
