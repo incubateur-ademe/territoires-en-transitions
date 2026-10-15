@@ -22,7 +22,9 @@ type Quadrant =
   | 'low_impact_low_mobilisation'
   | 'low_impact_high_mobilisation';
 
-const TONE_BY_PERTINENCE: Record<Pertinence, MatrixTone> = {
+export const PRESELECTED_TONE: MatrixTone = 'default';
+
+export const TONE_BY_PERTINENCE: Record<Pertinence, MatrixTone> = {
   pertinent: 'grey',
   non_pertinent: 'light',
 };
@@ -128,7 +130,7 @@ const toTone = ({
   preselectedCount,
 }: LevierTooltipInput): MatrixTone => {
   if (preselectedCount > 0) {
-    return 'default';
+    return PRESELECTED_TONE;
   }
   return TONE_BY_PERTINENCE[levier.pertinence ?? 'pertinent'];
 };

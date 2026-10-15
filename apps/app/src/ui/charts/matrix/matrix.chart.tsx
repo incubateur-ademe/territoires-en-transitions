@@ -98,6 +98,14 @@ const LABEL_HEIGHT = 15;
 const LABEL_CHAR_WIDTH = 6;
 const POINT_SIZE = 14;
 const SELECTION_RING_WIDTH = 4;
+const DASHED_POINT_BORDER_WIDTH = 2;
+const DASHED_POINT_DASH_COUNT = 5;
+const DASHED_POINT_DASH_SHARE = 0.6;
+const DASHED_POINT_PERIOD = (Math.PI * POINT_SIZE) / DASHED_POINT_DASH_COUNT;
+const DASHED_POINT_PATTERN = [
+  DASHED_POINT_PERIOD * DASHED_POINT_DASH_SHARE,
+  DASHED_POINT_PERIOD * (1 - DASHED_POINT_DASH_SHARE),
+];
 const AXIS_FONT_SIZE = 11;
 const AXIS_NAME_ARROW = ' →';
 const X_AXIS_NAME_GAP = 16;
@@ -362,10 +370,15 @@ type PointStyle = {
   color: string;
   borderColor: string;
   borderWidth: number;
+  borderType: 'solid' | number[];
 };
 
 const toPointColor = (point: MatrixPoint): string =>
-  point.color ?? TONE_PALETTE[point.tone].strong;
+  point.color ?? toToneColor(point.tone);
+
+const toToneColor = (tone: MatrixTone): string => TONE_PALETTE[tone].strong;
+
+const isHollowPoint = (point: MatrixPoint): boolean => point.tone === 'light';
 
 const toPointStyle = ({
   point,
@@ -373,11 +386,23 @@ const toPointStyle = ({
 }: {
   point: MatrixPoint;
   isSelected: boolean;
-}): PointStyle => ({
-  color: toPointColor(point),
-  borderColor: isSelected ? colors.grey[5] : TRANSPARENT,
-  borderWidth: isSelected ? SELECTION_RING_WIDTH : 0,
-});
+}): PointStyle => {
+  const color = toPointColor(point);
+  if (isHollowPoint(point)) {
+    return {
+      color: TRANSPARENT,
+      borderColor: color,
+      borderWidth: DASHED_POINT_BORDER_WIDTH,
+      borderType: DASHED_POINT_PATTERN,
+    };
+  }
+  return {
+    color,
+    borderColor: isSelected ? colors.grey[5] : TRANSPARENT,
+    borderWidth: isSelected ? SELECTION_RING_WIDTH : 0,
+    borderType: 'solid',
+  };
+};
 
 const buildSelectedPointPulse = ({
   points,
@@ -390,6 +415,7 @@ const buildSelectedPointPulse = ({
   if (selectedPoint === undefined) {
     return [];
   }
+  const pointColor = toPointColor(selectedPoint);
   return [
     {
       type: 'effectScatter',
@@ -397,11 +423,13 @@ const buildSelectedPointPulse = ({
       z: 1,
       symbolSize: POINT_SIZE,
       showEffectOn: 'render',
-      rippleEffect: PULSE_RIPPLE,
+      rippleEffect: { ...PULSE_RIPPLE, color: pointColor },
       data: [
         {
           value: [selectedPoint.x, selectedPoint.y],
-          itemStyle: { color: toPointColor(selectedPoint) },
+          itemStyle: {
+            color: isHollowPoint(selectedPoint) ? TRANSPARENT : pointColor,
+          },
         },
       ],
     },
@@ -885,5 +913,13 @@ const MatrixChart = ({
   );
 };
 
-export { buildDividers, MatrixChart, toQuadrantLabel };
+export {
+  buildDividers,
+  buildSelectedPointPulse,
+  MatrixChart,
+  POINT_SIZE,
+  toPointStyle,
+  toQuadrantLabel,
+  toToneColor,
+};
 export type { MatrixAnchor, MatrixPoint };
