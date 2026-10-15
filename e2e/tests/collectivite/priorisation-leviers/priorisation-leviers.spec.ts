@@ -367,7 +367,7 @@ test.describe('Priorisation des leviers', () => {
     await expect(marquerPertinentButton).toBeVisible();
   });
 
-  test('un membre en édition lit la pertinence en texte, sans bouton de pertinence', async ({
+  test('un membre en édition ne voit ni bouton ni texte de pertinence', async ({
     collectivites,
     page,
   }) => {
@@ -381,7 +381,7 @@ test.describe('Priorisation des leviers', () => {
 
     await expect(
       priorisationLeviersPom.levierPanel(LEVIER_NOM_BY_ID.biogaz)
-    ).toContainText('Pertinence : non renseignée');
+    ).not.toContainText('Pertinence');
     await expect(priorisationLeviersPom.pertinenceToggles).toHaveCount(0);
   });
 });

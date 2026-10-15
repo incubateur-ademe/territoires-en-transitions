@@ -51,13 +51,15 @@ export const LevierHeader = ({
           />
         </div>
       )}
-      <div className="pl-11">
-        <PertinenceField
-          levier={levier}
-          pertinence={levier.pertinence}
-          upsertPertinence={upsertPertinence}
-        />
-      </div>
+      {upsertPertinence !== undefined && (
+        <div className="pl-11">
+          <PertinenceField
+            levier={levier}
+            pertinence={levier.pertinence}
+            upsertPertinence={upsertPertinence}
+          />
+        </div>
+      )}
     </div>
   );
 };
