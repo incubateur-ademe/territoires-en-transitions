@@ -1,14 +1,31 @@
 import { appLabels } from '@/app/labels/catalog';
 import ChartLegend, { ChartLegendItem } from '@/app/ui/charts/ChartLegend';
-import { preset } from '@tet/ui';
+import { toToneColor } from '@/app/ui/charts/matrix/matrix.chart';
 import { JSX } from 'react';
+import { PRESELECTED_TONE, TONE_BY_PERTINENCE } from '../data/to-matrix-points';
 
-const { colors } = preset.theme.extend;
+const NonPertinentSymbol = (color: string): JSX.Element => (
+  <span
+    aria-hidden
+    className="size-3 rounded-full border-2 border-dashed"
+    style={{ borderColor: color }}
+  />
+);
 
 const LEGEND_ITEMS: ChartLegendItem[] = [
-  { name: appLabels.pertinenceLabel('non_pertinent'), color: colors.grey[4] },
-  { name: appLabels.pertinenceLabel('pertinent'), color: colors.grey[7] },
-  { name: appLabels.legendeActionSauvegardee, color: colors.primary[9] },
+  {
+    name: appLabels.pertinenceLabel('non_pertinent'),
+    color: toToneColor(TONE_BY_PERTINENCE.non_pertinent),
+    symbole: NonPertinentSymbol,
+  },
+  {
+    name: appLabels.pertinenceLabel('pertinent'),
+    color: toToneColor(TONE_BY_PERTINENCE.pertinent),
+  },
+  {
+    name: appLabels.legendeActionSauvegardee,
+    color: toToneColor(PRESELECTED_TONE),
+  },
 ];
 
 export const LeviersMatrixLegend = (): JSX.Element => (

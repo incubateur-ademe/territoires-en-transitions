@@ -1,5 +1,52 @@
 import { describe, expect, it } from 'vitest';
-import { buildDividers, toQuadrantLabel } from './matrix.chart';
+import {
+  buildDividers,
+  buildSelectedPointPulse,
+  POINT_SIZE,
+  toPointStyle,
+  toQuadrantLabel,
+  toToneColor,
+  type MatrixPoint,
+} from './matrix.chart';
+
+const NON_PERTINENT_POINT: MatrixPoint = {
+  id: 'non-pertinent',
+  label: 'Non pertinent',
+  description: 'Description',
+  tone: 'light',
+  x: 20,
+  y: 30,
+};
+
+describe('point non pertinent', () => {
+  it('reste un cercle creux en pointillés, de la même couleur, une fois sélectionné', () => {
+    expect(
+      toPointStyle({ point: NON_PERTINENT_POINT, isSelected: true })
+    ).toMatchObject({
+      color: 'transparent',
+      borderColor: toToneColor('light'),
+    });
+  });
+
+  it('découpe son contour en cinq pointillés', () => {
+    const { borderType } = toPointStyle({
+      point: NON_PERTINENT_POINT,
+      isSelected: false,
+    });
+    const [dash, gap] = Array.isArray(borderType) ? borderType : [];
+
+    expect((dash + gap) * 5).toBeCloseTo(Math.PI * POINT_SIZE);
+  });
+
+  it("n'est pas rempli par l'impulsion de sélection", () => {
+    expect(
+      buildSelectedPointPulse({
+        points: [NON_PERTINENT_POINT],
+        selectedPointId: NON_PERTINENT_POINT.id,
+      })
+    ).toMatchObject([{ data: [{ itemStyle: { color: 'transparent' } }] }]);
+  });
+});
 
 describe('toQuadrantLabel', () => {
   it('place le badge en majuscules avant le titre, qui garde sa casse', () => {
