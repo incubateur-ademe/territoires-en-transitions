@@ -12,6 +12,7 @@ import {
   LlmCapabilities,
   LlmImage,
   LlmReasoningEffort,
+  LlmThinkingLevel,
   LlmTier,
 } from './llm-tier';
 import {
@@ -25,7 +26,6 @@ import { parseStructuredResponse } from './parse-json-response';
 
 const DEFAULT_TEMPERATURE = 0.2;
 const DEFAULT_MAX_OUTPUT_TOKENS = 64000;
-const DEFAULT_THINKING_BUDGET = 8192;
 // Un 429 malgré le lissage : le quota est compté autrement que prévu, on
 // laisse la minute se vider un peu avant de réserver à nouveau.
 const RATE_LIMIT_PENALTY_MS = 15_000;
@@ -48,7 +48,7 @@ type CommonArgs = {
   systemInstruction?: string;
   temperature?: number;
   maxOutputTokens?: number;
-  thinkingBudget?: number;
+  thinkingLevel?: LlmThinkingLevel;
   timeoutMs?: number;
   reasoningEffort?: LlmReasoningEffort;
   signal?: AbortSignal;
@@ -237,7 +237,7 @@ const toRequest = (args: CommonArgs): LlmCompletionRequest => ({
   systemInstruction: args.systemInstruction,
   temperature: args.temperature ?? DEFAULT_TEMPERATURE,
   maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
-  thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
+  thinkingLevel: args.thinkingLevel,
   timeoutMs: args.timeoutMs,
   reasoningEffort: args.reasoningEffort,
   signal: args.signal,

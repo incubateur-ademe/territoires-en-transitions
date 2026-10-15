@@ -21,3 +21,6 @@ export type LlmImage = {
 
 /** Effort de raisonnement demandé à un modèle qui raisonne avant de répondre. */
 export type LlmReasoningEffort = 'low' | 'medium' | 'high';
+
+/** Niveau de réflexion d'un modèle Gemini 3, du plus court au plus long. */
+export type LlmThinkingLevel = 'minimal' | 'low' | 'medium' | 'high';

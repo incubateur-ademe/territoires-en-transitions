@@ -103,10 +103,10 @@ describe('classifyFiches', () => {
     );
   });
 
-  it('demande un budget de raisonnement de 512 jetons', async () => {
+  it('demande le niveau de raisonnement minimal', async () => {
     const { llm, calls } = classifying(classifications);
     await classifyFiches(llm, input);
-    expect(calls[0].thinkingBudget).toBe(512);
+    expect(calls[0].thinkingLevel).toBe('minimal');
   });
 
   it("transmet le signal d'annulation au modèle", async () => {

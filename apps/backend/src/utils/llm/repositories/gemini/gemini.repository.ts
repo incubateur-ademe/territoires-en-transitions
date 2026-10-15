@@ -3,12 +3,14 @@ import {
   FinishReason,
   GenerateContentResponseUsageMetadata,
   GoogleGenAI,
+  ThinkingConfig,
+  ThinkingLevel,
 } from '@google/genai';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { describeError } from '../describe-error';
 import { LlmError } from '../../llm.errors';
-import { LlmCapabilities, LlmTier } from '../../llm-tier';
+import { LlmCapabilities, LlmThinkingLevel, LlmTier } from '../../llm-tier';
 import {
   LlmCompletionRequest,
   LlmRawCompletion,
@@ -81,12 +83,8 @@ export class GeminiRepository extends LlmRepository {
               }
             : {}),
           systemInstruction: request.systemInstruction,
-          temperature: request.temperature,
           maxOutputTokens: request.maxOutputTokens,
-          thinkingConfig:
-            request.thinkingBudget === undefined
-              ? undefined
-              : { thinkingBudget: request.thinkingBudget },
+          thinkingConfig: toThinkingConfig(request.thinkingLevel),
           httpOptions: { timeout: request.timeoutMs ?? CALL_TIMEOUT_MS },
           abortSignal: request.signal,
         },
@@ -158,6 +156,20 @@ export class GeminiRepository extends LlmRepository {
     return this.client;
   }
 }
+
+const THINKING_LEVELS: Record<LlmThinkingLevel, ThinkingLevel> = {
+  minimal: ThinkingLevel.MINIMAL,
+  low: ThinkingLevel.LOW,
+  medium: ThinkingLevel.MEDIUM,
+  high: ThinkingLevel.HIGH,
+};
+
+const toThinkingConfig = (
+  thinkingLevel: LlmThinkingLevel | undefined
+): ThinkingConfig | undefined =>
+  thinkingLevel === undefined
+    ? undefined
+    : { thinkingLevel: THINKING_LEVELS[thinkingLevel] };
 
 const toTokenUsage = (
   usage: GenerateContentResponseUsageMetadata | undefined

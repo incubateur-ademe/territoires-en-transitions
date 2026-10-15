@@ -4,6 +4,7 @@ import {
   LlmCapabilities,
   LlmImage,
   LlmReasoningEffort,
+  LlmThinkingLevel,
   LlmTier,
 } from '../llm-tier';
 import { TokenUsage } from '../token-usage';
@@ -17,7 +18,7 @@ export type LlmCompletionRequest = {
   systemInstruction?: string;
   temperature?: number;
   maxOutputTokens?: number;
-  thinkingBudget?: number;
+  thinkingLevel?: LlmThinkingLevel;
   timeoutMs?: number;
   /** Pour une tâche mécanique (tri, rattachement), où raisonner ne sert à rien. */
   reasoningEffort?: LlmReasoningEffort;

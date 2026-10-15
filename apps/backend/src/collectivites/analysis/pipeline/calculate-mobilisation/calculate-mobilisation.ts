@@ -1,6 +1,7 @@
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { LlmThinkingLevel } from '@tet/backend/utils/llm/llm-tier';
 import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { CategorieAction, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
@@ -24,7 +25,7 @@ import {
   CATEGORIES_IN_PROMPT_ORDER,
 } from './volet-categories';
 
-export const MOBILISATION_THINKING_BUDGET = 512;
+export const MOBILISATION_THINKING_LEVEL: LlmThinkingLevel = 'minimal';
 const MOBILISATION_TIMEOUT_MS = 45_000;
 
 export type ScoredVolet = {
@@ -76,7 +77,7 @@ export const calculateMobilisation = async (
     }),
     systemInstruction: MOBILISATION_SYSTEM_INSTRUCTION,
     schema: mobilisationResponseSchema,
-    thinkingBudget: MOBILISATION_THINKING_BUDGET,
+    thinkingLevel: MOBILISATION_THINKING_LEVEL,
     timeoutMs: MOBILISATION_TIMEOUT_MS,
   });
   if (!completion.success) {
