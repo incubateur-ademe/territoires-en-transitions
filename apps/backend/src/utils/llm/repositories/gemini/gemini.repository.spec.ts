@@ -1,12 +1,27 @@
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { GeminiRepository } from './gemini.repository';
+
+const NINE_MINUTES_MS = 9 * 60 * 1000;
 
 const buildRepository = () =>
   new GeminiRepository({
     get: (key: string) =>
       ({ GEMINI_MODEL: 'gemini-3.5-flash' }[key as 'GEMINI_MODEL']),
   } as unknown as ConfigurationService);
+
+const buildRepositoryWithFakeClient = () => {
+  const generateContentStream = vi.fn().mockResolvedValue(emptyStream());
+  const repository = buildRepository();
+  Object.assign(repository, {
+    client: { models: { generateContentStream } },
+  });
+  return { repository, generateContentStream };
+};
+
+const emptyStream = async function* () {
+  yield { text: '{}', candidates: [{ finishReason: 'STOP' }] };
+};
 
 describe('GeminiRepository', () => {
   it('lit un document entier avec un seul modèle, sans OCR', () => {
@@ -32,5 +47,39 @@ describe('GeminiRepository', () => {
       success: false,
       error: { kind: 'unsupported', feature: 'images' },
     });
+  });
+
+  it("abandonne un appel au bout du délai demandé plutôt qu'après 9 minutes", async () => {
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+
+    await repository.complete({
+      prompt: 'Classe',
+      tier: 'strong',
+      timeoutMs: 120_000,
+    });
+
+    expect(generateContentStream).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        config: expect.objectContaining({
+          httpOptions: { timeout: 120_000 },
+        }),
+      })
+    );
+  });
+
+  it('garde 9 minutes quand aucun délai n’est demandé', async () => {
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+
+    await repository.complete({ prompt: 'Lis', tier: 'strong' });
+
+    expect(generateContentStream).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        config: expect.objectContaining({
+          httpOptions: { timeout: NINE_MINUTES_MS },
+        }),
+      })
+    );
   });
 });

@@ -1,10 +1,10 @@
-import { Injectable, Optional } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Options, default as retry } from 'async-retry';
 import { z, ZodType } from 'zod';
 import { ConcurrencyLimiter } from '../concurrency-limiter';
 import { estimateRequestTokens } from './estimate-request-tokens';
-import { LlmError } from './llm.errors';
+import { describeLlmError, LlmError } from './llm.errors';
 import { currentLlmCallRecorder } from './llm-call-recorder';
 import { LlmCallEvent, LlmObserver } from './llm-observer';
 import { ModelRateLimiters } from './model-rate-limiters';
@@ -29,6 +29,7 @@ const DEFAULT_THINKING_BUDGET = 8192;
 // Un 429 malgré le lissage : le quota est compté autrement que prévu, on
 // laisse la minute se vider un peu avant de réserver à nouveau.
 const RATE_LIMIT_PENALTY_MS = 15_000;
+const MAX_ATTEMPTS_WITHOUT_HTTP_STATUS = 3;
 // Jusqu'à une minute d'attente cumulée : les quotas se comptent souvent par
 // minute (Albert API : requêtes et tokens par minute).
 const RETRY_OPTIONS: Options = {
@@ -48,6 +49,7 @@ type CommonArgs = {
   temperature?: number;
   maxOutputTokens?: number;
   thinkingBudget?: number;
+  timeoutMs?: number;
   reasoningEffort?: LlmReasoningEffort;
   signal?: AbortSignal;
 };
@@ -70,6 +72,7 @@ export type TextCompletion = {
 
 @Injectable()
 export class LlmService {
+  private readonly logger = new Logger(LlmService.name);
   private readonly limiter: ConcurrencyLimiter;
   private readonly rateLimiters: ModelRateLimiters;
 
@@ -170,6 +173,7 @@ export class LlmService {
   ): Promise<Result<T, LlmError>> {
     let lastRetryableResult: Result<T, LlmError> | null = null;
     let attempt = 0;
+    let attemptsWithoutHttpStatus = 0;
     try {
       return await retry(async (bail) => {
         attempt += 1;
@@ -191,6 +195,23 @@ export class LlmService {
           !signal?.aborted
         ) {
           lastRetryableResult = result;
+          if (hasNoHttpStatus(result.error)) {
+            attemptsWithoutHttpStatus += 1;
+          }
+          if (attemptsWithoutHttpStatus >= MAX_ATTEMPTS_WITHOUT_HTTP_STATUS) {
+            this.logger.warn(
+              `LLM call abandoned after ${attempt} attempts, ${attemptsWithoutHttpStatus} without HTTP status (${describeLlmError(
+                result.error
+              )})`
+            );
+            bail(new Error(result.error.kind));
+            return undefined as never;
+          }
+          this.logger.warn(
+            `LLM call attempt ${attempt} failed (${describeLlmError(
+              result.error
+            )}), retrying`
+          );
           throw new Error(result.error.kind);
         }
         return result;
@@ -206,6 +227,9 @@ export class LlmService {
   }
 }
 
+const hasNoHttpStatus = (error: LlmError): boolean =>
+  error.kind === 'api_error' && error.httpStatus === null;
+
 const toRequest = (args: CommonArgs): LlmCompletionRequest => ({
   prompt: args.prompt,
   tier: args.tier ?? 'strong',
@@ -214,6 +238,7 @@ const toRequest = (args: CommonArgs): LlmCompletionRequest => ({
   temperature: args.temperature ?? DEFAULT_TEMPERATURE,
   maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
   thinkingBudget: args.thinkingBudget ?? DEFAULT_THINKING_BUDGET,
+  timeoutMs: args.timeoutMs,
   reasoningEffort: args.reasoningEffort,
   signal: args.signal,
 });
