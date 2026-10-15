@@ -2,6 +2,7 @@ import { Badge } from '@tet/ui';
 import { sumBy } from 'es-toolkit';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
+import { TooltipHint } from '../tooltip-hint';
 import type { HoveredNode } from './to-hovered-node-by-key';
 import type { IntensityVariant } from './treemap-group';
 
@@ -12,20 +13,6 @@ type TreemapTooltipProps<TIntensity extends string, TGroupId extends string> = {
   toIntensityVariant: (intensity: TIntensity) => IntensityVariant;
   hint?: string;
 };
-
-const TooltipHint = ({ hint }: { hint: string }): JSX.Element => (
-  <Badge
-    title={hint}
-    variant="info"
-    type="outlined"
-    size="sm"
-    icon="information-fill"
-    iconPosition="left"
-    uppercase={false}
-    trim={false}
-    className="mt-1"
-  />
-);
 
 const TreemapTooltip = <TIntensity extends string, TGroupId extends string>({
   hovered,

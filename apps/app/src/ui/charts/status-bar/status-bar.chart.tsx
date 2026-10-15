@@ -15,6 +15,7 @@ type StatusBarChartProps<TStatus extends string> = {
   data: readonly StatusBar<NoInfer<TStatus>>[];
   statusScale: StatusScale<TStatus>;
   formatValue: (value: number) => string;
+  tooltipHint?: string;
   selectedBarId?: string;
   onBarSelected?: (barId: string) => void;
   children?: ReactNode;
@@ -67,11 +68,13 @@ const buildOption = <TStatus extends string>({
   data,
   statusScale,
   formatValue,
+  tooltipHint,
   selectedBarId,
 }: {
   data: readonly StatusBar<TStatus>[];
   statusScale: StatusScale<TStatus>;
   formatValue: (value: number) => string;
+  tooltipHint?: string;
   selectedBarId: string | undefined;
 }): EChartsOption => ({
   tooltip: {
@@ -84,7 +87,11 @@ const buildOption = <TStatus extends string>({
       const bar = carriesDataIndex(params) ? data[params.dataIndex] : undefined;
       return bar
         ? renderToString(
-            <StatusBarTooltip bar={bar} formatValue={formatValue} />
+            <StatusBarTooltip
+              bar={bar}
+              formatValue={formatValue}
+              hint={tooltipHint}
+            />
           )
         : '';
     },
@@ -146,6 +153,7 @@ const StatusBarChart = <TStatus extends string>({
   data,
   statusScale,
   formatValue,
+  tooltipHint,
   selectedBarId,
   onBarSelected,
   children,
@@ -154,8 +162,14 @@ const StatusBarChart = <TStatus extends string>({
   useResizeGraphOnContainerSizeUpdate({ containerRef: plotRef });
   const caption = readCaption(children);
   const option = useMemo(
-    () => buildOption({ data, statusScale, formatValue, selectedBarId }),
-    [data, statusScale, formatValue, selectedBarId]
+    () => buildOption({
+        data,
+        statusScale,
+        formatValue,
+        tooltipHint,
+        selectedBarId,
+      }),
+    [data, statusScale, formatValue, tooltipHint, selectedBarId]
   );
   const onEvents = useMemo(
     () => ({

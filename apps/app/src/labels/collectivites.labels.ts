@@ -148,7 +148,7 @@ export const collectivitesLabels = {
     one: 'action ajoutée à la présélection',
     other: 'actions ajoutées à la présélection',
   }),
-  cliquerPourVoirLesActions: 'Cliquez sur le point pour voir les actions',
+  cliquerPourVoirLesActions: 'Cliquer pour voir les actions',
   voirLesDonneesDuGraphique: 'Voir les données du graphique',
   levier: 'Levier',
   legendeActionSauvegardee: 'Au moins une action sauvegardée',
@@ -210,7 +210,6 @@ export const collectivitesLabels = {
     `Impact potentiel : ${score}/100 du territoire`,
   impactPotentielEstime: (score: number): string =>
     `Impact potentiel estimé : ${score}/100`,
-  cliquerPourVoirLesActionsDuLevier: 'Cliquez pour voir les actions du levier',
   mobilisationNulle: 'Non mobilisé',
   mobilisationFaible: 'Peu mobilisé',
   mobilisationMoyenne: 'Bien mobilisé',
