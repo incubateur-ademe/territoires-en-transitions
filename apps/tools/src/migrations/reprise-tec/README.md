@@ -604,6 +604,93 @@ Avant tout dépôt et toute écriture :
 | un avis à écrire sans saisine principale de la DREAL ou de la région (seulement une secondaire, ou aucune) | corriger les saisines avant l'import                                                                      |
 | une saisine principale qui a déjà un avis                                                                  | un service a déposé depuis l'import des saisines : décider au cas par cas                                 |
 
+### 7. Importer les pilotes
+
+Les pilotes des dossiers et des fiches de T&C deviennent des `personne_tag` :
+un nom sans compte dans la collectivité TeT du dossier, le « tag » que le
+produit propose pour une personne qui ne se connecte pas. Aucun compte n'est
+créé : le script n'écrit ni dans `auth.users` ni dans `dcp`.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-pilotes/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+| Dans T&C                                                                            | Dans TeT                                                                                                                                            |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| chef de projet, participant ou coporteur, élu référent rattaché d'un dossier repris | un pilote de la démarche (`demarche_pilote`), sans auteur ; lu sur la ligne reprise du dossier et sur son doublon « définitif »                     |
+| contact d'une action reprise                                                        | un pilote de sa fiche (`fiche_action_pilote`), au nom du compte système ; « Modifié le » de la fiche ne bouge pas                                   |
+| prénom et nom de l'utilisateur                                                      | le nom du `personne_tag`, « Prénom Nom » tel que saisi, espaces en trop réduits ; réutilisé si ce nom existe déjà dans la collectivité, sans auteur |
+
+Une personne est un nom exact dans une collectivité (la règle du produit) :
+deux utilisateurs T&C de même nom y font un seul `personne_tag`, une casse ou
+un accent différent en fait deux. Un utilisateur rattaché dans T&C à une autre
+collectivité que le dossier est créé dans celle du dossier. Toujours un nom
+sans compte, jamais un compte TeT existant, même à courriel identique : un
+pilote à compte retirerait aux autres éditeurs de la collectivité le droit de
+faire avancer le dossier.
+
+Le rôle (chef de projet, participant, élu) n'a pas de place dans TeT : il
+n'est pas écrit. Une personne qui cumule des rôles fait un seul pilote ; les
+chefs de projet sont écrits en premier, l'écran montre les pilotes dans
+l'ordre où ils sont écrits.
+
+Tout utilisateur, lien de dossier, contact d'action, ligne d'historique de
+dossier et organisation régionale de la copie finit soit écrit, soit dans
+`ecarts`, une seule fois, et le texte de l'élu référent des dossiers repris
+aussi : le script le vérifie table par table avant d'écrire. Un lien de
+dossier est repéré par sa ligne T&C du dossier (`tec_id`) et la `precision`
+`utilisateur <id> role <n>`, un contact d'action par son action et
+`utilisateur <id>`, le texte de l'élu par son dossier et `elu_referent`.
+
+| Motif                                                         | Sens                                                                                                                                                                                         |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `contact_instructeur`                                         | lien « contact ADEME DR », « contact DREAL » ou « contact CR » d'un dossier repris, ou utilisateur agent d'une organisation régionale : TeT désigne un service instructeur, pas une personne |
+| `sans_role_repris`                                            | utilisateur qui n'est pilote d'aucun dossier ni d'aucune fiche repris                                                                                                                        |
+| `elu_referent_texte_libre`                                    | texte de l'élu référent tapé à la main dans un dossier repris : texte libre (fonction, plusieurs noms), aucun pilote n'en est tiré                                                           |
+| `historique_non_repris`                                       | ligne de l'historique d'un dossier : TeT n'a pas de place pour l'historique d'un dossier                                                                                                     |
+| `service_de_tet`                                              | organisation régionale de T&C : TeT a ses services instructeurs, saisis à l'étape 4                                                                                                          |
+| `vitrine`, `doublon`, `sans_etat_invisible`, `coquille_vide`… | lien d'un dossier ou contact d'une action que les imports des dossiers ou des fiches ont écartés pour ce motif                                                                               |
+| `orphelin`                                                    | lien ou contact vers un utilisateur, un dossier ou une action qui n'existe pas                                                                                                               |
+
+Les **30 705 alertes** de T&C (notifications envoyées aux utilisateurs) ne
+sont pas copiées à l'étape 1 : elles ne sont ni lues ni reprises.
+
+Le rapport nomme les `personne_tag` de même nom à la casse ou aux accents
+près, les utilisateurs T&C réunis sous un même nom, les pilotes rattachés dans
+T&C à une autre collectivité, les dossiers repris sans pilote, et les textes
+d'élu référent qui ne sont qu'un nom.
+
+#### Annuler les pilotes
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-pilotes/annuler.ts [--confirm]
+```
+
+Retire les pilotes des démarches et des fiches notées dans `lignes_ecrites`
+dont le `personne_tag` est noté dans `correspondance`, puis les
+`personne_tag` créés par l'import que plus rien n'utilise (aucune clé
+étrangère vers `personne_tag` ni invitation ne les vise), et enfin les traces
+et les écarts de l'étape. À lancer avant d'annuler l'import des fiches ou des
+dossiers, qui refusent sinon.
+
+**Ce qu'elle laisse** : les `personne_tag` qui existaient avant l'import
+(l'import les a réutilisés, il ne les a pas créés) ; ceux qu'il a créés mais
+qu'une fiche, un indicateur, un plan ou une invitation a pris depuis ; les
+pilotes à compte. **Ce qu'elle emporte** : un pilote identique (même démarche
+ou fiche, même `personne_tag`) ajouté à la main après l'import.
+
+#### Ce qui arrête l'import des pilotes
+
+| Garde                                                              | Quoi faire                                                      |
+| ------------------------------------------------------------------ | --------------------------------------------------------------- |
+| aucun dossier repris                                               | lancer d'abord l'import des dossiers (étape 2)                  |
+| aucune fiche reprise alors que des actions reprises ont un contact | lancer d'abord l'import des fiches (étape 5)                    |
+| une démarche ou une fiche qui doit recevoir un pilote a disparu    | décider au cas par cas : elle a été supprimée depuis son import |
+| un utilisateur T&C à nommer sans prénom ni nom                     | décider quoi écrire : le script n'invente pas de nom            |
+| l'import des pilotes a déjà tourné (traces présentes)              | l'annuler d'abord                                               |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
