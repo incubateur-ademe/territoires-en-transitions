@@ -13,6 +13,7 @@ const toPlace = (
   noteByCategorie: NO_MOBILISATION,
   potentielReduction: 10,
   potentielScore: 90,
+  impactIndex: 100,
   ...overrides,
 });
 
@@ -30,10 +31,26 @@ describe('toMondrianTiles', () => {
       levierId: 'production_industrielle',
       nom: 'Production industrielle',
       potentielReduction: 20,
+      impactIndex: 100,
       categories: [
-        { categorie: 'financement', potentielReduction: 10, note: 2 },
-        { categorie: 'gouvernance', potentielReduction: 8, note: 0 },
-        { categorie: 'sensibilisation', potentielReduction: 2, note: 0 },
+        {
+          categorie: 'financement',
+          potentielReduction: 10,
+          impactIndex: 50,
+          note: 2,
+        },
+        {
+          categorie: 'gouvernance',
+          potentielReduction: 8,
+          impactIndex: 40,
+          note: 0,
+        },
+        {
+          categorie: 'sensibilisation',
+          potentielReduction: 2,
+          impactIndex: 10,
+          note: 0,
+        },
       ],
     });
   });

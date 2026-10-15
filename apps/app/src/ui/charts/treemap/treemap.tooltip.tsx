@@ -27,7 +27,9 @@ const TreemapTooltip = <TIntensity extends string, TGroupId extends string>({
         <>
           <p className="m-0 text-sm font-bold text-primary-9">{group.label}</p>
           <p className="m-0 text-xs font-normal leading-5 text-grey-8">
-            {formatValue(sumBy(group.tiles, (tile) => tile.value))}
+            {formatValue(
+              group.displayedValue ?? sumBy(group.tiles, (tile) => tile.value)
+            )}
           </p>
         </>
       ))
@@ -36,7 +38,7 @@ const TreemapTooltip = <TIntensity extends string, TGroupId extends string>({
           <p className="m-0 text-sm font-bold text-primary-9">{group.label}</p>
           <p className="m-0 text-xs font-normal text-grey-8">{tile.label}</p>
           <p className="m-0 text-xs font-normal leading-5 text-grey-8">
-            {formatValue(tile.value)}
+            {formatValue(tile.displayedValue ?? tile.value)}
           </p>
           <Badge
             title={toIntensityLabel(tile.intensity)}

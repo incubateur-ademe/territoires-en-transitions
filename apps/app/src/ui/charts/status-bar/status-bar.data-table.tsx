@@ -50,7 +50,7 @@ const StatusBarDataTable = <TStatus extends string>({
           <TableRow key={bar.id}>
             <TableCell>{bar.label}</TableCell>
             <TableCell className="text-right">
-              {formatValue(bar.value)}
+              {formatValue(bar.displayedValue ?? bar.value)}
             </TableCell>
             <TableCell className="text-right">{bar.status}</TableCell>
           </TableRow>

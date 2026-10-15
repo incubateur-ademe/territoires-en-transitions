@@ -2,13 +2,13 @@ import { appLabels } from '@/app/labels/catalog';
 
 type LevierSubtitleInput = {
   secteur: string;
-  potentielScore?: number;
+  impactIndex?: number;
 };
 
 export const toLevierSubtitle = ({
   secteur,
-  potentielScore,
+  impactIndex,
 }: LevierSubtitleInput): string =>
-  potentielScore === undefined
+  impactIndex === undefined
     ? secteur
-    : `${secteur} · ${appLabels.impactPotentielEstime(potentielScore)}`;
+    : `${secteur} · ${appLabels.impactPotentielEstime(impactIndex)}`;

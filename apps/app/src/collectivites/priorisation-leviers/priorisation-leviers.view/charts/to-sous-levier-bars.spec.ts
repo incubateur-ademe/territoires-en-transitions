@@ -17,6 +17,7 @@ const toPlace = (
   noteByCategorie: NO_MOBILISATION,
   potentielReduction: 10,
   potentielScore: 90,
+  impactIndex: 100,
   ...overrides,
 });
 
@@ -38,6 +39,7 @@ describe('toSousLevierBars', () => {
         id: 'production_industrielle/financement',
         label: 'Production industrielle · Financement & fiscalité',
         value: 10,
+        displayedValue: 50,
         status: 'Bien mobilisé',
         levierId: 'production_industrielle',
         categorie: 'financement',
@@ -46,6 +48,7 @@ describe('toSousLevierBars', () => {
         id: 'production_industrielle/gouvernance',
         label: 'Production industrielle · Gouvernance & partenariats',
         value: 8,
+        displayedValue: 40,
         status: 'Non mobilisé',
         levierId: 'production_industrielle',
         categorie: 'gouvernance',
@@ -54,6 +57,7 @@ describe('toSousLevierBars', () => {
         id: 'production_industrielle/sensibilisation',
         label: 'Production industrielle · Sensibilisation & accompagnement',
         value: 2,
+        displayedValue: 10,
         status: 'Non mobilisé',
         levierId: 'production_industrielle',
         categorie: 'sensibilisation',

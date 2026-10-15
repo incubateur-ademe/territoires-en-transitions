@@ -1,4 +1,3 @@
-import { toImpactPotentielScore } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/charts/to-impact-potentiel-label';
 import type { LevierPlace } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/data/to-matrix-points';
 import { appLabels } from '@/app/labels/catalog';
 import { LEVIER_NOM_BY_ID, type LevierId } from '@tet/domain/shared';
@@ -10,7 +9,10 @@ type LevierImpact = {
   score: number;
 };
 
-type LevierImpactPlace = Pick<LevierPlace, 'levierId' | 'potentielReduction'>;
+type LevierImpactPlace = Pick<
+  LevierPlace,
+  'levierId' | 'potentielReduction' | 'impactIndex'
+>;
 
 const toLevierImpacts = ({
   places,
@@ -35,10 +37,7 @@ const toLevierImpacts = ({
       {
         levierId,
         levierNom: LEVIER_NOM_BY_ID[levierId],
-        score: toImpactPotentielScore({
-          potentielReduction: place.potentielReduction,
-          potentielTotal,
-        }),
+        score: place.impactIndex,
       },
     ];
   });

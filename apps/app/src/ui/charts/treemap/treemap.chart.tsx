@@ -288,7 +288,7 @@ const TilesList = <TIntensity extends string, TGroupId extends string>({
               {[
                 tile.label,
                 toIntensityLabel(tile.intensity),
-                formatValue(tile.value),
+                formatValue(tile.displayedValue ?? tile.value),
               ].join(', ')}
             </li>
           ))}

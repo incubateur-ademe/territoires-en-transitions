@@ -67,9 +67,9 @@ export const useLevierSidePanel = ({
   const selectedLevier = leviers.find(
     ({ levierId }) => levierId === selection?.levierId
   );
-  const potentielScore = places.find(
+  const impactIndex = places.find(
     ({ levierId }) => levierId === selection?.levierId
-  )?.potentielScore;
+  )?.impactIndex;
   const initialCategorie = selection?.categorie;
   const clickCount = selection?.clickCount;
 
@@ -84,7 +84,7 @@ export const useLevierSidePanel = ({
         levier: selectedLevier,
         subtitle: toLevierSubtitle({
           secteur: selectedLevier.secteur,
-          potentielScore,
+          impactIndex,
         }),
         upsertPertinence,
         headerRef,
@@ -105,7 +105,7 @@ export const useLevierSidePanel = ({
     clickCount,
     preselection,
     upsertPertinence,
-    potentielScore,
+    impactIndex,
     headerRef,
     actionsRef,
     setPanel,

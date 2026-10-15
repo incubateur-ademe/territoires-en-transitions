@@ -39,6 +39,7 @@ const toPlace = (
   ...toLevier(overrides),
   potentielReduction: 10,
   potentielScore: 100,
+  impactIndex: 100,
   ...overrides,
 });
 
@@ -56,6 +57,16 @@ describe('toLeviersPlaces', () => {
       ['covoiturage', 90],
       ['velo_transport_commun', 23],
     ]);
+  });
+
+  it('donne à chaque levier sa part du potentiel total, sur un total de 100', () => {
+    const places = toLeviersPlaces([
+      toLevier({ levierId: 'covoiturage', potentielReduction: 1 }),
+      toLevier({ levierId: 'velo_transport_commun', potentielReduction: 1 }),
+      toLevier({ levierId: 'biogaz', potentielReduction: 1 }),
+    ]);
+
+    expect(places.map(({ impactIndex }) => impactIndex)).toEqual([34, 33, 33]);
   });
 
   it("place tout à 0 quand aucun levier n'a de potentiel positif", () => {

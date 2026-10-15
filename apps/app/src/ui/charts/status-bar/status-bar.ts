@@ -9,6 +9,7 @@ type StatusBar<TStatus extends string> = {
   id: string;
   label: string;
   value: number;
+  displayedValue?: number;
   status: TStatus;
 };
 

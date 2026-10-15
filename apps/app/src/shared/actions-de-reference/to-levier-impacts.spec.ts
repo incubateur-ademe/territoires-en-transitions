@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { toLevierImpactLines, toLevierImpacts } from './to-levier-impacts';
 
 const PLACES = [
-  { levierId: 'covoiturage', potentielReduction: 7 },
-  { levierId: 'biogaz', potentielReduction: 93 },
+  { levierId: 'covoiturage', potentielReduction: 7, impactIndex: 7 },
+  { levierId: 'biogaz', potentielReduction: 93, impactIndex: 93 },
 ] as const;
 
 describe('toLevierImpacts', () => {
@@ -31,7 +31,9 @@ describe('toLevierImpacts', () => {
   it("ne donne aucun impact quand le territoire n'a aucun potentiel", () => {
     expect(
       toLevierImpacts({
-        places: [{ levierId: 'covoiturage', potentielReduction: 0 }],
+        places: [
+          { levierId: 'covoiturage', potentielReduction: 0, impactIndex: 0 },
+        ],
         levierIds: ['covoiturage'],
       })
     ).toEqual([]);

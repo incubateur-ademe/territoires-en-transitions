@@ -4,6 +4,7 @@ import { Pertinence } from '@tet/domain/collectivites';
 import { LevierId } from '@tet/domain/shared';
 import { maxBy, minBy, orderBy, round } from 'es-toolkit';
 import { LevierPriorisation } from './to-leviers-priorisation';
+import { toSharesOf100 } from './to-shares-of-100';
 
 export const MATRIX_SCALE = 100;
 
@@ -14,6 +15,7 @@ const POTENTIEL_MAX_SCORE = 90;
 export type LevierPlace = LevierPriorisation & {
   potentielReduction: number;
   potentielScore: number;
+  impactIndex: number;
 };
 
 type Quadrant =
@@ -44,14 +46,22 @@ export const toLeviersPlaces = (
     0,
     ...places.map(({ potentielReduction }) => potentielReduction)
   );
+  const impactIndexes = toSharesOf100(
+    places.map(({ potentielReduction }) => potentielReduction)
+  );
   if (potentielMax === 0) {
-    return places.map((levier) => ({ ...levier, potentielScore: 0 }));
+    return places.map((levier, index) => ({
+      ...levier,
+      potentielScore: 0,
+      impactIndex: impactIndexes[index],
+    }));
   }
-  return places.map((levier) => ({
+  return places.map((levier, index) => ({
     ...levier,
     potentielScore: round(
       (levier.potentielReduction / potentielMax) * POTENTIEL_MAX_SCORE
     ),
+    impactIndex: impactIndexes[index],
   }));
 };
 
