@@ -130,4 +130,24 @@ describe('toImportStepViews', () => {
       { name: 'qualitativeReview', status: 'done' },
     ]);
   });
+
+  it("met en echec les etapes en cours quand l'import a echoue", () => {
+    const stepStates: ImportStepStates = {
+      reading: 'ok',
+      scouting: 'skipped',
+      extraction: 'ok',
+      hierarchy: 'skipped',
+      scoring: 'ok',
+      consolidation: 'ok',
+      enrichment: 'pending',
+      secteurs: 'pending',
+      qualitativeReview: 'pending',
+    };
+
+    expect(toImportStepViews(stepStates, { failed: true }).slice(-3)).toEqual([
+      { name: 'enrichment', status: 'failed' },
+      { name: 'secteurs', status: 'failed' },
+      { name: 'qualitativeReview', status: 'waiting' },
+    ]);
+  });
 });

@@ -12,6 +12,7 @@ export const importStepDisplayStatusValues = [
   'skipped',
   'current',
   'waiting',
+  'failed',
 ] as const;
 
 type ImportStepDisplayStatus =
@@ -46,8 +47,11 @@ const STARTS_WITH: Partial<Record<ImportStepName, ImportStepName>> = {
   secteurs: 'enrichment',
 };
 
+// Le serveur ne garde pas l'étape qui a échoué : c'est celle qui était en
+// cours quand l'import est tombé.
 export const toImportStepViews = (
-  stepStates?: ImportStepStates
+  stepStates?: ImportStepStates,
+  { failed = false }: { failed?: boolean } = {}
 ): ImportStepView[] => {
   const isPending = (name: ImportStepName) =>
     stateOf(stepStates, name) === 'pending';
@@ -67,7 +71,7 @@ export const toImportStepViews = (
 
   return STEP_ORDER.map((name) => ({
     name,
-    status: toDisplayStatus(stateOf(stepStates, name), isCurrent(name)),
+    status: toDisplayStatus(stateOf(stepStates, name), isCurrent(name), failed),
   }));
 };
 
@@ -78,9 +82,11 @@ const stateOf = (
 
 const toDisplayStatus = (
   state: ImportStepState,
-  isCurrent: boolean
+  isCurrent: boolean,
+  failed: boolean
 ): ImportStepDisplayStatus => {
   if (state === 'ok') return 'done';
   if (state === 'skipped') return 'skipped';
-  return isCurrent ? 'current' : 'waiting';
+  if (!isCurrent) return 'waiting';
+  return failed ? 'failed' : 'current';
 };
