@@ -1,3 +1,4 @@
+import type { ChartTooltipContent } from '../chart-tooltip';
 import type { HexColor } from '../treemap/treemap-group';
 
 type StatusScale<TStatus extends string> = readonly [
@@ -10,6 +11,7 @@ type StatusBar<TStatus extends string> = {
   label: string;
   value: number;
   displayedValue?: number;
+  tooltip?: ChartTooltipContent;
   status: TStatus;
 };
 

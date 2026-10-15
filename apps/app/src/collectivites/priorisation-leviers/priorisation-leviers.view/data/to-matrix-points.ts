@@ -1,8 +1,14 @@
 import type { MatrixPoint } from '@/app/ui/charts/matrix/matrix.chart';
+import type { ChartTooltipBadge } from '@/app/ui/charts/chart-tooltip';
 import type { MatrixTone } from '@/app/ui/charts/matrix/quadrant';
 import { Pertinence } from '@tet/domain/collectivites';
-import { LevierId } from '@tet/domain/shared';
-import { maxBy, minBy, orderBy, round } from 'es-toolkit';
+import {
+  CategorieAction,
+  categorieActionEnumValues,
+  LevierId,
+  POTENTIEL_SHARE_BY_LEVIER,
+} from '@tet/domain/shared';
+import { chunk, maxBy, minBy, orderBy, round, sum } from 'es-toolkit';
 import { LevierPriorisation } from './to-leviers-priorisation';
 import { toSharesOf100 } from './to-shares-of-100';
 
@@ -16,6 +22,7 @@ export type LevierPlace = LevierPriorisation & {
   potentielReduction: number;
   potentielScore: number;
   impactIndex: number;
+  impactIndexByCategorie: ReadonlyMap<CategorieAction, number>;
 };
 
 type Quadrant =
@@ -38,6 +45,30 @@ export const toLeviersWithoutPotentiel = (
   leviers: LevierPriorisation[]
 ): LevierPriorisation[] => leviers.filter((levier) => !hasPotentiel(levier));
 
+const toImpactIndexesByLevier = (
+  places: (LevierPriorisation & { potentielReduction: number })[]
+): ReadonlyMap<CategorieAction, number>[] => {
+  const categorieReductions = places.flatMap((levier) =>
+    categorieActionEnumValues.map(
+      (categorie) =>
+        levier.potentielReduction *
+        POTENTIEL_SHARE_BY_LEVIER[levier.levierId][categorie]
+    )
+  );
+  return chunk(
+    toSharesOf100(categorieReductions),
+    categorieActionEnumValues.length
+  ).map(
+    (impactIndexes) =>
+      new Map(
+        categorieActionEnumValues.map((categorie, index) => [
+          categorie,
+          impactIndexes[index],
+        ])
+      )
+  );
+};
+
 export const toLeviersPlaces = (
   leviers: LevierPriorisation[]
 ): LevierPlace[] => {
@@ -46,23 +77,21 @@ export const toLeviersPlaces = (
     0,
     ...places.map(({ potentielReduction }) => potentielReduction)
   );
-  const impactIndexes = toSharesOf100(
-    places.map(({ potentielReduction }) => potentielReduction)
-  );
-  if (potentielMax === 0) {
-    return places.map((levier, index) => ({
+  const impactIndexesByLevier = toImpactIndexesByLevier(places);
+  return places.map((levier, index) => {
+    const impactIndexByCategorie = impactIndexesByLevier[index];
+    return {
       ...levier,
-      potentielScore: 0,
-      impactIndex: impactIndexes[index],
-    }));
-  }
-  return places.map((levier, index) => ({
-    ...levier,
-    potentielScore: round(
-      (levier.potentielReduction / potentielMax) * POTENTIEL_MAX_SCORE
-    ),
-    impactIndex: impactIndexes[index],
-  }));
+      potentielScore:
+        potentielMax === 0
+          ? 0
+          : round(
+              (levier.potentielReduction / potentielMax) * POTENTIEL_MAX_SCORE
+            ),
+      impactIndex: sum([...impactIndexByCategorie.values()]),
+      impactIndexByCategorie,
+    };
+  });
 };
 
 export const isHighPotentiel = (potentielScore: number): boolean =>
@@ -132,6 +161,7 @@ export type LevierTooltipInput = {
 
 export type LevierTooltip = {
   description: readonly string[];
+  badge: ChartTooltipBadge;
   hint: string;
 };
 

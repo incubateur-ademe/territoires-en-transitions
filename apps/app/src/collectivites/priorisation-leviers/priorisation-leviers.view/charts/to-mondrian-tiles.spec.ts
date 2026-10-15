@@ -1,3 +1,4 @@
+import { CategorieAction } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
 import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LevierPlace } from '../data/to-matrix-points';
@@ -14,6 +15,11 @@ const toPlace = (
   potentielReduction: 10,
   potentielScore: 90,
   impactIndex: 100,
+  impactIndexByCategorie: new Map<CategorieAction, number>([
+    ['financement', 50],
+    ['gouvernance', 40],
+    ['sensibilisation', 10],
+  ]),
   ...overrides,
 });
 
@@ -32,6 +38,8 @@ describe('toMondrianTiles', () => {
       nom: 'Production industrielle',
       potentielReduction: 20,
       impactIndex: 100,
+      potentielScore: 90,
+      mobilisationScore: 0,
       categories: [
         {
           categorie: 'financement',

@@ -1,4 +1,4 @@
-import { actionDeReferenceIdSchema } from '@tet/domain/shared';
+import { actionDeReferenceIdSchema, CategorieAction } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
 import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LevierPlace } from '../data/to-matrix-points';
@@ -18,6 +18,11 @@ const toPlace = (
   potentielReduction: 10,
   potentielScore: 90,
   impactIndex: 100,
+  impactIndexByCategorie: new Map<CategorieAction, number>([
+    ['financement', 50],
+    ['gouvernance', 40],
+    ['sensibilisation', 10],
+  ]),
   ...overrides,
 });
 
@@ -40,6 +45,12 @@ describe('toSousLevierBars', () => {
         label: 'Production industrielle · Financement & fiscalité',
         value: 10,
         displayedValue: 50,
+        tooltip: {
+          title: 'Production industrielle · Financement & fiscalité',
+          lines: ['Impact potentiel estimé : 50/100'],
+          badge: { label: 'Bien mobilisé', variant: 'success' },
+          hint: 'Cliquer pour voir les actions',
+        },
         status: 'Bien mobilisé',
         levierId: 'production_industrielle',
         categorie: 'financement',
@@ -49,6 +60,12 @@ describe('toSousLevierBars', () => {
         label: 'Production industrielle · Gouvernance & partenariats',
         value: 8,
         displayedValue: 40,
+        tooltip: {
+          title: 'Production industrielle · Gouvernance & partenariats',
+          lines: ['Impact potentiel estimé : 40/100'],
+          badge: { label: 'Non mobilisé', variant: 'grey' },
+          hint: 'Cliquer pour voir les actions',
+        },
         status: 'Non mobilisé',
         levierId: 'production_industrielle',
         categorie: 'gouvernance',
@@ -58,6 +75,12 @@ describe('toSousLevierBars', () => {
         label: 'Production industrielle · Sensibilisation & accompagnement',
         value: 2,
         displayedValue: 10,
+        tooltip: {
+          title: 'Production industrielle · Sensibilisation & accompagnement',
+          lines: ['Impact potentiel estimé : 10/100'],
+          badge: { label: 'Non mobilisé', variant: 'grey' },
+          hint: 'Cliquer pour voir les actions',
+        },
         status: 'Non mobilisé',
         levierId: 'production_industrielle',
         categorie: 'sensibilisation',

@@ -18,6 +18,7 @@ import {
   toMatrixPoints,
 } from '../data/to-matrix-points';
 import { SelectLevier } from '../select-levier';
+import { toLevierTooltip } from './to-levier-tooltip';
 import { LeviersMatrixLegend } from './leviers-matrix.legend';
 
 type LeviersMatrixChartProps = {
@@ -37,18 +38,10 @@ const toPotentielLabel = (potentielScore: number): string => {
   return appLabels.axePotentielMin;
 };
 
-const toTooltip = ({
-  levier,
-  preselectedCount,
-}: LevierTooltipInput): LevierTooltip => ({
-  description: [
-    levier.secteur,
-    appLabels.levierActionsDeMaCollectivite({ count: levier.ficheCount }),
-    appLabels.levierActionsPreselectionnees({ count: preselectedCount }),
-    appLabels.pertinenceInfo(levier.pertinence),
-  ],
-  hint: appLabels.cliquerPourVoirLesActions,
-});
+const toTooltip = ({ levier }: LevierTooltipInput): LevierTooltip => {
+  const { lines, badge, hint } = toLevierTooltip(levier);
+  return { description: lines, badge, hint };
+};
 
 export const LeviersMatrixChart = ({
   places,

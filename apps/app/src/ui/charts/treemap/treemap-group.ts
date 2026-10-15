@@ -1,4 +1,5 @@
 import type { BadgeProps } from '@tet/ui';
+import type { ChartTooltipContent } from '../chart-tooltip';
 
 type HexColor = `#${string}`;
 
@@ -14,6 +15,7 @@ type TreemapTile<TIntensity extends string, TTileId extends string = string> = {
   label: string;
   value: number;
   displayedValue?: number;
+  tooltip?: ChartTooltipContent;
   intensity: TIntensity;
 };
 
@@ -27,6 +29,7 @@ type TreemapGroup<
   color: HexColor;
   isFlagged?: boolean;
   displayedValue?: number;
+  tooltip?: ChartTooltipContent;
   tiles: readonly TreemapTile<TIntensity, TTileId>[];
 };
 

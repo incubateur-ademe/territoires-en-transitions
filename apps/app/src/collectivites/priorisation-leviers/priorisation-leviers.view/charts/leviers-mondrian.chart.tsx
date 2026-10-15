@@ -2,7 +2,6 @@ import { appLabels } from '@/app/labels/catalog';
 import { Caption } from '@/app/ui/charts/matrix/caption';
 import type {
   HexColor,
-  IntensityVariant,
   TreemapGroup,
 } from '@/app/ui/charts/treemap/treemap-group';
 import { TreemapChart } from '@/app/ui/charts/treemap/treemap.chart';
@@ -21,7 +20,9 @@ import {
   MobilisationLevel,
   toMobilisationLabel,
   toMobilisationLevel,
+  toMobilisationVariant,
 } from './mobilisation-level';
+import { toCategorieTooltip, toLevierTooltip } from './to-levier-tooltip';
 import { LevierTile, toMondrianTiles } from './to-mondrian-tiles';
 
 type LeviersMondrianChartProps = {
@@ -48,19 +49,6 @@ const LEVIER_PALETTE: readonly HexColor[] = [
   '#F4C447',
   '#F55B5B',
 ];
-
-const VARIANT_BY_MOBILISATION_LEVEL: Record<
-  MobilisationLevel,
-  IntensityVariant
-> = {
-  none: 'grey',
-  partial: 'warning',
-  good: 'success',
-  full: 'success',
-};
-
-const toMobilisationVariant = (level: MobilisationLevel): IntensityVariant =>
-  VARIANT_BY_MOBILISATION_LEVEL[level];
 
 const toLevierColor = ({
   levier,
@@ -89,11 +77,19 @@ const toTreemapGroup = ({
   color: toLevierColor({ levier, rank }),
   isFlagged,
   displayedValue: levier.impactIndex,
+  tooltip: toLevierTooltip(levier),
   tiles: levier.categories.map((categorieTile) => ({
     id: categorieTile.categorie,
     label: appLabels.categorieActionShortLabel(categorieTile.categorie),
     value: categorieTile.potentielReduction,
     displayedValue: categorieTile.impactIndex,
+    tooltip: toCategorieTooltip({
+      levierNom: levier.nom,
+      categorie: categorieTile.categorie,
+      impactIndex: categorieTile.impactIndex,
+      note: categorieTile.note,
+      pertinence: levier.pertinence,
+    }),
     intensity: toMobilisationLevel(categorieTile.note),
   })),
 });
@@ -123,7 +119,6 @@ export const LeviersMondrianChart = ({
       formatValue={appLabels.impactPotentielEstime}
       toIntensityLabel={toMobilisationLabel}
       toIntensityVariant={toMobilisationVariant}
-      tooltipHint={appLabels.cliquerPourVoirLesActions}
       selectedGroupId={selectedLevierId}
       selectedTileId={selectedCategorie}
       onGroupSelected={onLevierSelected}
