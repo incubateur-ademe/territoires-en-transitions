@@ -52,7 +52,7 @@ const renderLevierSidePanel = (places: LevierPlace[] = []) =>
         preselection: EMPTY_PRESELECTION,
       }),
       panelContent: useSidePanel().panel.content,
-      panelHeader: useSidePanel().panel.header,
+      panelHeaderExtra: useSidePanel().panel.headerExtra,
       isPanelOpen: useSidePanel().panel.isOpen,
     }),
     { wrapper: SidePanelWrapper }
@@ -85,10 +85,10 @@ describe('useLevierSidePanel', () => {
 
     act(() => result.current.levierSidePanel.select('covoiturage'));
 
-    expect(isValidElement(result.current.panelHeader)).toBe(true);
+    expect(isValidElement(result.current.panelHeaderExtra)).toBe(true);
     expect(
-      isValidElement(result.current.panelHeader) &&
-        result.current.panelHeader.props
+      isValidElement(result.current.panelHeaderExtra) &&
+        result.current.panelHeaderExtra.props
     ).toMatchObject({
       levier: { nom: 'Covoiturage' },
       subtitle: 'Transports · Impact potentiel estimé : 19/100',

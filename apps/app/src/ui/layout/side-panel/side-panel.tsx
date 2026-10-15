@@ -74,13 +74,12 @@ export const SidePanel = (): JSX.Element => {
       )}
     >
       <div className="shrink-0 bg-white p-4 border-b border-primary-3">
-        {panel.header ?? (
-          <div className="flex items-start gap-2">
-            <CloseButton onClick={requestClose} />
-            <Divider />
-            {panel.title && <DefaultSidePanelTitle title={panel.title} />}
-          </div>
-        )}
+        <div className="flex items-start gap-2">
+          <CloseButton onClick={requestClose} />
+          <Divider />
+          {panel.title && <DefaultSidePanelTitle title={panel.title} />}
+        </div>
+        {panel.headerExtra}
       </div>
 
       <div className="grow flex flex-col overflow-y-auto">{panel.content}</div>

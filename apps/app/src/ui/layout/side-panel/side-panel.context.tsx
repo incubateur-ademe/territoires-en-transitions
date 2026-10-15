@@ -39,7 +39,7 @@ const panelReducer = (state: PanelState, action: PanelAction): PanelState => {
       return {
         ...state,
         ...action,
-        header: action.header,
+        headerExtra: action.headerExtra,
         isOpen: true,
       };
     case 'close':

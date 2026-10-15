@@ -80,7 +80,7 @@ export const useLevierSidePanel = ({
     setPanel({
       type: 'open',
       title: selectedLevier.nom,
-      header: createElement(LevierHeader, {
+      headerExtra: createElement(LevierHeader, {
         levier: selectedLevier,
         subtitle: toLevierSubtitle({
           secteur: selectedLevier.secteur,
