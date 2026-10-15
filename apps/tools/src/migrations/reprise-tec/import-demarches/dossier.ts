@@ -117,24 +117,29 @@ const DATES_SAISIES = [
  * Règle : une date saisie avant 2000 est une faute de frappe, une année de 10
  * à 99 est lue 20AA (« 0023 » pour 2023), les autres sont ignorées.
  */
+export const correctDateSaisie = (date: string | null) => {
+  if (date === null || date >= '2000') {
+    return date;
+  }
+  const annee = Number(date.slice(0, 4));
+  return annee >= 10 && annee <= 99 ? `20${date.slice(2)}` : null;
+};
+
 const correctDatesSaisies = (ligne: LigneDemarche) => {
   const corrigee = { ...ligne };
   const datesRevues: string[] = [];
   for (const colonne of DATES_SAISIES) {
     const date = ligne[colonne];
-    if (date === null || date >= '2000') {
+    const lue = correctDateSaisie(date);
+    if (lue === date) {
       continue;
     }
-    const annee = Number(date.slice(0, 4));
-    if (annee >= 10 && annee <= 99) {
-      corrigee[colonne] = `20${date.slice(2)}`;
-      datesRevues.push(
-        `${colonne} ${jour(date)} lue ${jour(corrigee[colonne])}`
-      );
-    } else {
-      corrigee[colonne] = null;
-      datesRevues.push(`${colonne} ${jour(date)} ignorée`);
-    }
+    corrigee[colonne] = lue;
+    datesRevues.push(
+      lue === null
+        ? `${colonne} ${jour(date)} ignorée`
+        : `${colonne} ${jour(date)} lue ${jour(lue)}`
+    );
   }
   return { ligne: corrigee, datesRevues };
 };
