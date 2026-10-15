@@ -48,6 +48,17 @@ const toHighlightedGroups = (
     .map((group) => String(group.name));
 
 describe('toSeriesData', () => {
+  it('trace la tuile choisie avec un contour de 2 px', () => {
+    const series = toSeriesData({
+      data: GROUPS,
+      intensityScale: INTENSITY_SCALE,
+      selectedGroupId: 'biogaz',
+      selectedTileId: 'financement',
+    });
+
+    expect(series?.[0].children?.[0].itemStyle?.borderWidth).toBe(2);
+  });
+
   it('ne met en avant que la tuile choisie quand une catégorie est sélectionnée', () => {
     const series = toSeriesData({
       data: GROUPS,

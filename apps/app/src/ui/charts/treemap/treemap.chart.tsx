@@ -73,7 +73,7 @@ const SELECTED_GROUP_LABEL_COLOR: HexColor = colors.grey[1];
 
 const TILE_BORDER_WIDTH = 1;
 
-const SELECTED_TILE_BORDER_WIDTH = 3;
+const SELECTED_TILE_BORDER_WIDTH = 2;
 
 const TREEMAP_LEVELS: TreemapSeriesOption['levels'] = [
   { itemStyle: { borderWidth: 0, gapWidth: 4 } },
@@ -230,6 +230,7 @@ const buildOption = <
   series: [
     {
       type: 'treemap',
+      animationDurationUpdate: 0,
       left: 0,
       right: 0,
       top: 0,
