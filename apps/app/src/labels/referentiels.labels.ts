@@ -85,6 +85,7 @@ export const referentielsLabels = {
   referentielTableThematiquesViewsAxes: 'Axes',
   referentielTableColonneLabels: 'Volets',
   referentielTableColonneAdaptation: 'Adaptation',
+  referentielTableColonnePointsPotentiels: 'Points potentiels',
   referentielTableAdaptationExpositionForte: 'Exposition forte',
   referentielTableAdaptationExpositionPartielle: 'Exposition partielle',
   referentielTableColonneLabellisationGold: 'Labellisation Gold',

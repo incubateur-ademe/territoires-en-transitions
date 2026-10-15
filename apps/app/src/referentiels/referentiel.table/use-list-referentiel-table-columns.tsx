@@ -234,7 +234,11 @@ const getColumns = ({
       id: 'pointPotentiel',
       header: () => (
         <TableHeaderCell
-          title="Potentiel personnalisé"
+          title={
+            isNewReferentiel(referentielId)
+              ? appLabels.referentielTableColonnePointsPotentiels
+              : 'Potentiel personnalisé'
+          }
           className={cn('w-32')}
           titleClassName="m-auto text-center"
         />
@@ -248,23 +252,28 @@ const getColumns = ({
       ),
     }),
 
-    columnHelper.accessor((row) => row.score.pointReferentiel, {
-      id: 'pointReferentiel',
-      header: () => (
-        <TableHeaderCell
-          title="Potentiel max"
-          className={cn('w-32')}
-          titleClassName="m-auto text-center"
-        />
-      ),
-      cell: (info) => (
-        <ReferentielTablePointsCell
-          value={info.getValue()}
-          statut={info.row.original.score.statut}
-          cellId={info.cell.id}
-        />
-      ),
-    }),
+    // le potentiel max n'a pas de sens pour les nouveaux référentiels (mesures alternatives)
+    ...(isNewReferentiel(referentielId)
+      ? []
+      : columnHelper.columns([
+          columnHelper.accessor((row) => row.score.pointReferentiel, {
+            id: 'pointReferentiel',
+            header: () => (
+              <TableHeaderCell
+                title="Potentiel max"
+                className={cn('w-32')}
+                titleClassName="m-auto text-center"
+              />
+            ),
+            cell: (info) => (
+              <ReferentielTablePointsCell
+                value={info.getValue()}
+                statut={info.row.original.score.statut}
+                cellId={info.cell.id}
+              />
+            ),
+          }),
+        ])),
 
     columnHelper.display({
       id: 'progression',

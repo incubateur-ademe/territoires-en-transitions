@@ -25,7 +25,7 @@ export function buildRows(data: ScoreComparisonData, worksheet: Worksheet) {
   } = data;
 
   // génère la configuration des colonnes
-  const columns = buildColumns(exportMode);
+  const columns = buildColumns(exportMode, referentielId);
 
   // ajoute les lignes d'en-tête du tableau des scores
   let rowIndex = addHeaderRows(worksheet, collectiviteName, auditeurs, 1);
