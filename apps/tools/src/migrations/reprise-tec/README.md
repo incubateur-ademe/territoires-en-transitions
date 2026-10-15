@@ -691,6 +691,95 @@ ou fiche, même `personne_tag`) ajouté à la main après l'import.
 | un utilisateur T&C à nommer sans prénom ni nom                     | décider quoi écrire : le script n'invente pas de nom            |
 | l'import des pilotes a déjà tourné (traces présentes)              | l'annuler d'abord                                               |
 
+### 8. Importer la vulnérabilité
+
+Le volet Vulnérabilité de chaque dossier repris, thématique par thématique,
+dans `demarche_pcaet_vulnerabilite_valeur`. Seule la ligne reprise du dossier
+est lue, pas son doublon « définitif ». Les valeurs sont écrites sans auteur.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-vulnerabilite/index.ts
+pnpx tsx $SCRIPT            # simulation
+pnpx tsx $SCRIPT --confirm  # import
+```
+
+| Dans T&C                         | Dans TeT                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| libellé du domaine (texte libre) | la thématique du socle, désignée par son `code`, trouvée dans la table des libellés (`libelles.ts`) : minuscules, espaces réduits, apostrophe typographique ramenée à l'apostrophe droite ; Résidentiel et Tertiaire → Bâtiments, Industrie et Tourisme → Économie, Espaces verts → Biodiversité, Littoral et Sécurité civile → Risques naturels, un aléa → la sous-thématique de même nom ou Risques naturels, « un domaine puis un aléa » → le domaine |
+| « Déchets »                      | la thématique « Déchets » de la collectivité (hors socle), créée seulement si la ligne a un contenu (niveau fort, moyen ou faible, ou objectif) : non requise, sans auteur, rangée après les autres ; réutilisée si la collectivité en a déjà une à la racine (casse ignorée)                                                                                                                                                                            |
+| « vulnérable »                   | le niveau d'aujourd'hui (`niveau_maintenant`), lu dans le mot en tête : fortes, forte, fort, très forte, élevée, très élevée → fort ; moyenne, moyen, modérée → moyen ; faible, très faible → faible ; nulle, « Non » → non concerné ; « Oui », « moyenne à forte », « niveau 2 », une phrase → aucun niveau                                                                                                                                             |
+| « objectif fixé »                | les objectifs 2050 (`objectifs_2050`), tels que saisis, sauf « Oui », « Non », vide, « - », « / », « 0 », « RAS », « Néant »                                                                                                                                                                                                                                                                                                                             |
+|                                  | niveaux 2050 et 2100, objectifs 2100 : toujours vides                                                                                                                                                                                                                                                                                                                                                                                                    |
+
+Plusieurs libellés T&C qui tombent sur la même thématique font **une seule**
+ligne TeT. Le niveau retenu est le plus haut : fort > moyen > faible > « Oui »
+sans niveau > non concerné > rien ; un « Oui » l'emporte sur un « Non », et la
+ligne n'a alors pas de niveau. Les objectifs sont collés, chacun précédé de
+son libellé T&C (« Industrie : … / Tourisme : … ») quand il y en a plusieurs ;
+un texte identique n'est collé qu'une fois.
+
+**Aucune ligne vide n'est écrite** : une ligne TeT sans niveau ni objectif
+n'est pas écrite (le socle s'affiche sans elle). Une ligne T&C n'est dite
+écrite que si quelque chose d'elle apparaît dans TeT : son niveau, s'il est
+celui retenu, ou son objectif.
+
+Toute ligne de la copie finit soit écrite, soit dans `ecarts`, une seule fois
+(`table_source` `demarche_domaine_vulnerabilite`, `precision` vide) ; le
+script le vérifie avant d'écrire. Ce qu'une ligne écrite perd est noté à part,
+`precision` = la colonne T&C (`vulnerable` ou `objectif_fixe`).
+
+| Motif                             | Sens                                                                                                                          |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `doublon`, `sans_etat_invisible`… | ligne d'un dossier que l'import des dossiers a écarté pour ce motif (le doublon « définitif » d'un dossier repris, notamment) |
+| `libelle_non_normalise`           | libellé absent de la table des libellés ; le rapport liste chaque texte avec son nombre                                       |
+| `oui_sans_niveau`                 | « Oui » sans niveau ni objectif : TeT n'a pas de niveau « concerné, sans précision »                                          |
+| `niveau_non_intelligible`         | texte sans mot de niveau (« Augmentation des sécheresses », « Niveau 2 »)                                                     |
+| `non_masque_par_oui`              | « Non » sur une ligne TeT où un « Oui » l'emporte                                                                             |
+| `niveau_masque`                   | niveau plus bas qu'un autre niveau de la même ligne TeT                                                                       |
+| `non_concerne_hors_socle`         | « Non » sous « Déchets » : pas de thématique de la collectivité pour un « non concerné »                                      |
+| `valeur_vide`                     | cellule vide, ou objectif vide ou marque de vide                                                                              |
+| `objectif_oui_non`                | (`objectif_fixe`) « Oui » ou « Non » à la place d'un objectif                                                                 |
+| `texte_sans_place`                | (`vulnerable`) texte qui suit le mot de niveau (« Moyenne : Années les plus touchées… »)                                      |
+
+Le commentaire du volet (`commentaire_vulnerabilite`) n'a pas de place dans
+TeT : il reste en écart de l'étape 3.
+
+Le rapport donne le bilan, les écarts par motif, les lignes écrites par
+niveau, les « Déchets » créées et réutilisées, chaque fusion (libellés
+d'origine, niveau retenu, objectifs collés), les libellés non reconnus, le
+texte après le mot de niveau, et les dossiers repris qui avaient une
+vulnérabilité et n'en montrent rien. Les collectivités y sont nommées avec
+leur id : deux collectivités peuvent porter le même nom.
+
+#### Annuler la vulnérabilité
+
+```bash
+pnpx tsx apps/tools/src/migrations/reprise-tec/import-vulnerabilite/annuler.ts [--confirm]
+```
+
+Retire toutes les lignes de `demarche_pcaet_vulnerabilite_valeur` des
+démarches notées dans `lignes_ecrites`, puis les « Déchets » créées par
+l'import qu'aucune ligne de valeur ne vise plus, et enfin les traces et les
+écarts de l'étape. À lancer avant d'annuler l'import des dossiers, qui refuse
+sinon.
+
+**Ce qu'elle laisse** : une « Déchets » qui existait avant l'import (l'import
+l'a réutilisée, il ne l'a pas créée) ; une « Déchets » créée par l'import
+qu'une autre démarche de la collectivité a reçue depuis (un nouveau PCAET la
+reçoit à sa création). **Ce qu'elle emporte** : la table des valeurs n'a pas
+d'id, la trace note la démarche ; une valeur saisie par la collectivité après
+l'import sur un dossier repris (possible tant qu'il est en élaboration) part
+avec.
+
+#### Ce qui arrête l'import de la vulnérabilité
+
+| Garde                                                         | Quoi faire                                                      |
+| ------------------------------------------------------------- | --------------------------------------------------------------- |
+| aucun dossier repris                                          | lancer d'abord l'import des dossiers (étape 2)                  |
+| la démarche d'un dossier qui a une vulnérabilité a disparu    | décider au cas par cas : elle a été supprimée depuis son import |
+| un code de la table des libellés n'est plus au socle          | reprendre `libelles.ts` : le socle a bougé                      |
+| l'import de la vulnérabilité a déjà tourné (traces présentes) | l'annuler d'abord                                               |
+
 ## Le schéma de travail `reprise_tec`
 
 | Table             | Rôle                                                                                                                            |
