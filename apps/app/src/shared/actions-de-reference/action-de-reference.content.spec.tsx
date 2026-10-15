@@ -12,6 +12,10 @@ vi.mock('./linked-fiches.card', () => ({
   }): JSX.Element => <p>{`linked-fiches-${actionDeReferenceId}`}</p>,
 }));
 
+vi.mock('./action-de-reference.impact', () => ({
+  ActionDeReferenceImpactInfo: (): JSX.Element => <p>{'impact-du-levier'}</p>,
+}));
+
 afterEach(cleanup);
 
 describe('detail-en-chargement', () => {
@@ -72,13 +76,14 @@ describe('detail-charge', () => {
     ).toBe(aireCovoiturageAction.description);
   });
 
-  it("montre le levier et la catégorie de l'action en badge et en champ", () => {
+  it("montre le secteur, le levier et la catégorie de l'action une seule fois, sans badge dans l'en-tête", () => {
     renderLoadedAction();
 
     expect({
+      secteur: screen.getAllByText('Transports').length,
       levier: screen.getAllByText('Covoiturage').length,
       categorie: screen.getAllByText('Aménagement & infrastructures').length,
-    }).toEqual({ levier: 2, categorie: 2 });
+    }).toEqual({ secteur: 1, levier: 1, categorie: 1 });
   });
 
   it("indique que c'est une action de référence de l'ADEME", () => {
