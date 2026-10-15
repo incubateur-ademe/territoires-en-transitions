@@ -4,7 +4,7 @@ import {
   collectiviteReferentielPreferenceIds,
   CollectiviteReferentielPreferences,
 } from '@tet/domain/collectivites';
-import { isNewReferentiel, ReferentielId } from '@tet/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 const MESURE_ID_REGEXP =
   /(^((cae?|cr|ca|c|eci?|ec|e)(\s*\d+)*|\d+)(\s|\.\d*|[\s\d.])*$)/;
@@ -35,11 +35,6 @@ export function filterSelectableMesures(
       writableReferentielIds.includes(mesure.referentiel) ||
       linkedMesureIds.includes(mesure.actionId)
   );
-}
-
-/** Préfixe affiché et saisi pour désigner le référentiel d'une mesure. */
-export function getReferentielPrefix(referentielId: ReferentielId): string {
-  return isNewReferentiel(referentielId) ? 'CR' : referentielId;
 }
 
 const startsWithIdentifiant = (

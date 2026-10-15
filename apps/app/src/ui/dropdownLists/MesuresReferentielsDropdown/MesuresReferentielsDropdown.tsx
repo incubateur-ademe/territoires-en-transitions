@@ -1,3 +1,4 @@
+import { formatMesureLabel } from '@/app/referentiels/actions/format-mesure-label';
 import {
   ActionListItem,
   useListActions,
@@ -13,7 +14,6 @@ import Fuse, { FuseResult } from 'fuse.js';
 import { useMemo, useState } from 'react';
 import {
   filterSelectableMesures,
-  getReferentielPrefix,
   listWritableReferentielIds,
   searchMesuresByIdentifiant,
 } from './filter-mesures';
@@ -76,7 +76,7 @@ const MesuresReferentielsDropdown = ({
 
     return mesureListeFiltered.map((mesure) => ({
       value: mesure.actionId,
-      label: `${getReferentielPrefix(mesure.referentiel)} ${mesure.identifiant} - ${mesure.nom}`,
+      label: formatMesureLabel(mesure),
     }));
   }, [searchValue, mesureListe, fuse]);
 
