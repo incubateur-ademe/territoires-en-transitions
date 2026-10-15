@@ -1,5 +1,6 @@
+import { Logger } from '@nestjs/common';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GeminiRepository } from './gemini.repository';
 
 const NINE_MINUTES_MS = 9 * 60 * 1000;
@@ -22,6 +23,28 @@ const buildRepositoryWithFakeClient = () => {
 const emptyStream = async function* () {
   yield { text: '{}', candidates: [{ finishReason: 'STOP' }] };
 };
+
+const spyOnLogs = () => ({
+  log: vi.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined),
+  debug: vi
+    .spyOn(Logger.prototype, 'debug')
+    .mockImplementation(() => undefined),
+  warn: vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined),
+  error: vi
+    .spyOn(Logger.prototype, 'error')
+    .mockImplementation(() => undefined),
+});
+
+const loggedMessages = (spy: {
+  mock: { calls: readonly unknown[][] };
+}): string[] => spy.mock.calls.map(([message]) => String(message));
+
+const abortError = () =>
+  new DOMException('This operation was aborted', 'AbortError');
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('GeminiRepository', () => {
   it('lit un document entier avec un seul modèle, sans OCR', () => {
@@ -104,6 +127,102 @@ describe('GeminiRepository', () => {
 
     const [{ config }] = generateContentStream.mock.calls[0];
     expect(config).not.toHaveProperty('temperature');
+  });
+
+  it("nomme un appel resté sans réponse un délai dépassé, pas une erreur de l'API", async () => {
+    const logs = spyOnLogs();
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+    generateContentStream.mockRejectedValue(abortError());
+
+    const result = await repository.complete({
+      prompt: 'Classe',
+      tier: 'strong',
+      timeoutMs: 45_000,
+    });
+
+    expect(result).toEqual({
+      success: false,
+      error: { kind: 'api_error', httpStatus: null },
+    });
+    expect(loggedMessages(logs.warn)).toEqual([
+      expect.stringMatching(
+        /^Gemini call [0-9a-f]{8} timed out after \d+ ms \(limit 45000 ms, no response received\)$/
+      ),
+    ]);
+    expect(logs.error).not.toHaveBeenCalled();
+  });
+
+  it('distingue un flux interrompu en cours de route', async () => {
+    const logs = spyOnLogs();
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+    generateContentStream.mockResolvedValue(
+      (async function* () {
+        yield { text: '{"a"' };
+        throw abortError();
+      })()
+    );
+
+    await repository.complete({ prompt: 'Classe', tier: 'strong' });
+
+    expect(loggedMessages(logs.warn)).toEqual([
+      expect.stringMatching(/timed out after \d+ ms .*stalled after 1 chunk/),
+    ]);
+  });
+
+  it("nomme un appel annulé par l'appelant, sans parler de délai", async () => {
+    const logs = spyOnLogs();
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+    generateContentStream.mockRejectedValue(abortError());
+
+    await repository.complete({
+      prompt: 'Classe',
+      tier: 'strong',
+      signal: AbortSignal.abort(),
+    });
+
+    expect(loggedMessages(logs.warn)).toEqual([
+      expect.stringMatching(
+        /^Gemini call [0-9a-f]{8} cancelled by caller after \d+ ms$/
+      ),
+    ]);
+  });
+
+  it("relie le début et la fin d'un appel par un identifiant, et mesure le premier octet", async () => {
+    const logs = spyOnLogs();
+    const { repository } = buildRepositoryWithFakeClient();
+
+    await repository.complete({ prompt: 'Classe', tier: 'strong' });
+
+    const [start] = loggedMessages(logs.log);
+    const [end] = loggedMessages(logs.debug);
+    const callId = /^Gemini call ([0-9a-f]{8}) /.exec(start)?.[1];
+    expect(callId).toBeDefined();
+    expect(end).toMatch(
+      new RegExp(
+        `^Gemini response ${callId} \\(first chunk after \\d+ ms, total \\d+ ms, 1 chunk, finishReason STOP\\)$`
+      )
+    );
+  });
+
+  it("identifie un prompt par une empreinte stable, sans l'écrire dans les logs", async () => {
+    const logs = spyOnLogs();
+    const { repository } = buildRepositoryWithFakeClient();
+    const prompt = 'Texte confidentiel de la fiche';
+
+    await repository.complete({ prompt, tier: 'strong' });
+    await repository.complete({ prompt, tier: 'strong' });
+    await repository.complete({ prompt: 'Un autre prompt', tier: 'strong' });
+
+    const fingerprints = loggedMessages(logs.log).map(
+      (message) => /prompt \d+ chars #([0-9a-f]{8})/.exec(message)?.[1]
+    );
+    expect(fingerprints[0]).toBeDefined();
+    expect(fingerprints[1]).toBe(fingerprints[0]);
+    expect(fingerprints[2]).not.toBe(fingerprints[0]);
+    expect(loggedMessages(logs.log).join('\n')).not.toContain('confidentiel');
   });
 
   it('garde 9 minutes quand aucun délai n’est demandé', async () => {
