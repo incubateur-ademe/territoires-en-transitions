@@ -1,7 +1,9 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Alert, Button, VisibleWhen } from '@tet/ui';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { ImportStepName, ImportStepView } from './ai-import-steps.model';
 
 const stepLabels: Record<ImportStepName, string> = {
@@ -50,44 +52,81 @@ const ImportFailedAlert = ({
   </div>
 );
 
-const toProgressPercent = (steps: ImportStepView[]) => {
-  const finished = steps.filter(
-    (step) => step.status === 'done' || step.status === 'skipped'
-  ).length;
-  // Une étape en cours compte pour moitié : la barre bouge dès le lancement.
-  const current =
-    steps.filter((step) => step.status === 'current').length * 0.5;
-  return Math.round(((finished + current) / steps.length) * 100);
+const statusLabels: Record<VisibleStepStatus, string> = {
+  done: appLabels.importPlanIaEtapeTerminee,
+  current: appLabels.importPlanIaEtapeEnCours,
+  waiting: appLabels.importPlanIaEtapeEnAttente,
+  failed: appLabels.importPlanIaEtapeEnEchec,
 };
 
-const ImportStepProgress = ({ steps }: { steps: ImportStepView[] }) => {
+type VisibleStepStatus = Exclude<ImportStepView['status'], 'skipped'>;
+
+type VisibleStep = ImportStepView & { status: VisibleStepStatus };
+
+const StepStatusIcon = ({ status }: { status: VisibleStepStatus }) => {
+  switch (status) {
+    case 'done':
+      return (
+        <Icon
+          icon="checkbox-circle-fill"
+          size="lg"
+          className="text-success-1"
+        />
+      );
+    case 'failed':
+      return (
+        <Icon icon="close-circle-fill" size="lg" className="text-error-1" />
+      );
+    case 'current':
+      return <SpinnerLoader className="w-6 h-6 shrink-0" />;
+    case 'waiting':
+      return (
+        <span className="w-6 h-6 shrink-0 p-0.5">
+          <span className="block w-full h-full rounded-full border-2 border-grey-4" />
+        </span>
+      );
+  }
+};
+
+// Une étape sautée ne se fait pas : la lister ferait croire à du travail.
+const isVisible = (step: ImportStepView): step is VisibleStep =>
+  step.status !== 'skipped';
+
+const ImportStepList = ({ steps }: { steps: ImportStepView[] }) => {
   const currentSteps = steps.filter((step) => step.status === 'current');
-  const percent = toProgressPercent(steps);
   return (
-    <div className="flex flex-col items-center gap-4">
-      <p
-        role="status"
-        aria-live="polite"
-        className="mb-0 text-lg font-bold text-primary-9"
-      >
+    <>
+      <p role="status" aria-live="polite" className="sr-only">
         {currentSteps.map((step) => `${stepLabels[step.name]}…`).join(' ')}
       </p>
-      <div
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={percent}
-        className="w-full h-2 overflow-hidden rounded-full bg-grey-3"
+      <ol
+        aria-label={appLabels.importPlanIaEtapesTitre}
+        className="flex flex-col gap-3 mx-auto mb-0 p-0 list-none"
+        data-test="plans.import-ia.etapes"
       >
-        <div
-          className="h-full rounded-full bg-primary-6 transition-[width] duration-500"
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-      <p className="mb-0 text-sm text-grey-7">
-        {appLabels.importPlanIaEnCours}
-      </p>
-    </div>
+        {steps.filter(isVisible).map((step) => (
+          <li
+            key={step.name}
+            data-status={step.status}
+            className="flex items-center gap-3 p-0"
+          >
+            <StepStatusIcon status={step.status} />
+            <span
+              className={cn('text-base', {
+                'font-bold text-primary-9': step.status === 'current',
+                'text-grey-6': step.status === 'waiting',
+                'text-error-1': step.status === 'failed',
+              })}
+            >
+              {stepLabels[step.name]}
+              <span className="sr-only">
+                {` (${statusLabels[step.status]})`}
+              </span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </>
   );
 };
 
@@ -109,7 +148,8 @@ export const AiImportProgress = ({
   isResuming = false,
   steps,
 }: AiImportProgressProps) => (
-  <div className="flex flex-col gap-6 py-10">
+  <div className="flex flex-col gap-8 py-10">
+    <ImportStepList steps={steps} />
     <VisibleWhen condition={failed}>
       <ImportFailedAlert
         errorMessage={errorMessage}
@@ -119,7 +159,9 @@ export const AiImportProgress = ({
       />
     </VisibleWhen>
     <VisibleWhen condition={!failed}>
-      <ImportStepProgress steps={steps} />
+      <p className="mb-0 text-sm text-center text-grey-7">
+        {appLabels.importPlanIaEnCours}
+      </p>
     </VisibleWhen>
   </div>
 );

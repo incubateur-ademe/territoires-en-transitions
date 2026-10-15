@@ -117,14 +117,15 @@ export const AiImportFlow = ({
     return <CheckingOngoingImport />;
   }
   if (jobId !== null) {
+    const failed = status?.status === 'failed';
     return (
       <AiImportProgress
-        failed={status?.status === 'failed'}
+        failed={failed}
         errorMessage={status?.error ?? null}
         onRetry={() => setJobId(null)}
         onResume={canResume ? () => resume.mutate({ jobId }) : undefined}
         isResuming={resume.isPending}
-        steps={toImportStepViews(status?.stepStates)}
+        steps={toImportStepViews(status?.stepStates, { failed })}
       />
     );
   }
