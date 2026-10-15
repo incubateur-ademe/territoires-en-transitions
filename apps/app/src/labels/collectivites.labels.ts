@@ -73,8 +73,9 @@ export const collectivitesLabels = {
   priorisationMethodologie: 'Méthodologie',
   priorisationVisiteRelancer: restartTourLabel,
   priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
-  priorisationVisiteParcoursDescription:
-    "L'outil se parcourt en trois temps, du repérage des leviers à la sauvegarde des actions qui vous intéressent.",
+  priorisationVisiteIaTitre: 'Intelligence artificielle.',
+  priorisationVisiteIaDescription:
+    "L'analyse est basée sur des algorithmes utilisant de l'intelligence artificielle. Les résultats de cette version alpha sont donc à prendre avec prudence.",
   priorisationVisiteReperageTitre: 'Repérer',
   priorisationVisiteReperageDescription:
     'Visualisez les leviers à prioriser pour votre collectivité : la zone rouge de la matrice.',
