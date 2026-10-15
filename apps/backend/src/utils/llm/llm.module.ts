@@ -3,6 +3,7 @@ import ConfigurationService from '@tet/backend/utils/config/configuration.servic
 import { AlbertRepository } from './repositories/albert/albert.repository';
 import { GeminiRepository } from './repositories/gemini/gemini.repository';
 import { LlmRepository } from './repositories/llm.repository';
+import { MistralRepository } from './repositories/mistral/mistral.repository';
 import { LlmService } from './llm.service';
 import { LlmObserver, LoggingLlmObserver } from './llm-observer';
 
@@ -12,6 +13,7 @@ import { LlmObserver, LoggingLlmObserver } from './llm-observer';
     { provide: LlmObserver, useClass: LoggingLlmObserver },
     GeminiRepository,
     AlbertRepository,
+    MistralRepository,
     {
       provide: LlmRepository,
       inject: [ConfigurationService, GeminiRepository, AlbertRepository],
@@ -23,6 +25,6 @@ import { LlmObserver, LoggingLlmObserver } from './llm-observer';
         configService.get('LLM_PROVIDER') === 'albert' ? albert : gemini,
     },
   ],
-  exports: [LlmService],
+  exports: [LlmService, LlmObserver, MistralRepository],
 })
 export class LlmModule {}

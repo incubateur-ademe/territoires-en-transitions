@@ -11,8 +11,8 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { AnalysisLlmService } from '@tet/backend/collectivites/analysis/analysis-llm.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { success, type Result } from '@tet/backend/utils/result.type';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { categorieActionEnumValues } from '@tet/domain/shared';
@@ -147,7 +147,7 @@ const fakeLlm = {
       tokens: TOKENS,
     });
   },
-} as unknown as LlmService;
+} as unknown as AnalysisLlmService;
 
 const keepCollectivitesOfDailyRuns = <Failure>(
   collectiviteIdsResult: Result<number[], Failure>
@@ -316,7 +316,7 @@ beforeAll(async () => {
   const analysisModule = await Test.createTestingModule({
     imports: [AnalyzeFichesModule],
   })
-    .overrideProvider(LlmService)
+    .overrideProvider(AnalysisLlmService)
     .useValue(fakeLlm)
     .overrideProvider(FicheCandidateRepository)
     .useFactory({

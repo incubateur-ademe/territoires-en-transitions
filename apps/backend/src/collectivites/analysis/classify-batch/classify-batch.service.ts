@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
-import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { DECLARED_ENJEUX, isDeclaredEnjeu } from '../analysis-enjeux';
+import { AnalysisLlmService } from '../analysis-llm.service';
 import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
 import { classifyFiches } from '../pipeline/classify-fiches/classify-fiches';
 import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
@@ -17,7 +17,7 @@ export type ClassifyBatchOutcome = {
 
 @Injectable()
 export class ClassifyBatchService {
-  constructor(private readonly llm: LlmService) {}
+  constructor(private readonly llm: AnalysisLlmService) {}
 
   async classify({
     enjeu,

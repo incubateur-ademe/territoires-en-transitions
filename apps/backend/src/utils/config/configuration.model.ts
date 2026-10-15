@@ -157,6 +157,12 @@ export const backendConfigurationSchema = z
       .describe(
         'Effort de raisonnement du modèle Albert du palier fort (low, medium, high) ; vide : celui du modèle'
       ),
+    MISTRAL_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        "Clé d'API Mistral AI (La Plateforme) de l'analyse des fiches ; sans elle, les appels Mistral échouent"
+      ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
       .min(1)

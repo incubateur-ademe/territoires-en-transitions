@@ -3,6 +3,7 @@ import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.re
 import { ConfigurationModule } from '@tet/backend/utils/config/configuration.module';
 import { DatabaseModule } from '@tet/backend/utils/database/database.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
+import { AnalysisLlmService } from '../analysis-llm.service';
 import { AnalysisRunTableRepository } from '../analysis-run-table.repository';
 import { ClassifyBatchService } from '../classify-batch/classify-batch.service';
 import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
@@ -20,6 +21,7 @@ import { FicheTextRepository } from './fiche-text.repository';
 @Module({
   imports: [ConfigurationModule, DatabaseModule, LlmModule],
   providers: [
+    AnalysisLlmService,
     AnalyzeFichesService,
     ClassifyBatchService,
     ScoreMobilisationService,
