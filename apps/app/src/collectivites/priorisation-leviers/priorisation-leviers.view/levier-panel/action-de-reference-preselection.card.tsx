@@ -33,6 +33,7 @@ export const ActionDeReferencePreselectionCard = ({
         preselection
       )}
       showAdemeBadge
+      showLevierAndCategorieBadges={false}
       actionsRef={actionsRef}
     >
       <ActionDeReferenceCollectivitesPanel actionDeReferenceId={action.id} />

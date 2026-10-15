@@ -76,6 +76,31 @@ describe('card-affiche-action-entiere', () => {
     expect(screen.getByText('Exemplarité interne')).toBeDefined();
   });
 
+  it('masque les badges de levier et de catégorie sur demande, en gardant le titre', () => {
+    render(
+      <ActionDeReferenceCard
+        action={isolationComblesAction}
+        updateAccess={{ status: 'forbidden' }}
+        interest={noInterest}
+        showLevierAndCategorieBadges={false}
+      />
+    );
+
+    expect({
+      titre: screen.queryByRole('heading', {
+        name: 'Isoler les combles perdus des bâtiments communaux',
+      }),
+      levier: screen.queryByText(
+        'Sobriété et isolation des bâtiments (tertiaire)'
+      ),
+      categorie: screen.queryByText('Exemplarité interne'),
+    }).toEqual({
+      titre: expect.anything(),
+      levier: null,
+      categorie: null,
+    });
+  });
+
   it('montre une description longue en entier, sans la tronquer', () => {
     render(
       <ActionDeReferenceCard
