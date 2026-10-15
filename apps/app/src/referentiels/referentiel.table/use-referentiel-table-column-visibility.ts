@@ -85,6 +85,23 @@ const AUDIT_CONDUCT_COLUMN_OPTIONS = [
   { id: 'auditNotes', label: appLabels.auditColonneNotes, default: true },
 ] as const satisfies readonly { id: string; label: string; default: boolean }[];
 
+// Le potentiel max n'a pas de sens pour les nouveaux référentiels (mesures
+// alternatives) et le potentiel personnalisé y est appelé "Points potentiels".
+function adaptOptionsForNewReferentiel(
+  options: readonly ReferentielTableColumnOption[]
+): ReferentielTableColumnOption[] {
+  return options
+    .filter(({ id }) => id !== 'pointReferentiel')
+    .map((option) =>
+      option.id === 'pointPotentiel'
+        ? {
+            ...option,
+            label: appLabels.referentielTableColonnePointsPotentiels,
+          }
+        : option
+    );
+}
+
 function getAuditColumnOptions(
   auditColumnsScope: AuditColumnsScope
 ): ReferentielTableColumnOption[] {
@@ -171,7 +188,9 @@ export function useReferentielTableColumnVisibility({
     return [
       ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(0, categorieIndex + 1),
       ...NEW_REFERENTIEL_COLUMN_OPTIONS,
-      ...REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(categorieIndex + 1),
+      ...adaptOptionsForNewReferentiel(
+        REFERENTIEL_TABLE_COLUMN_OPTIONS.slice(categorieIndex + 1)
+      ),
       ...NEW_REFERENTIEL_TRAILING_COLUMN_OPTIONS,
       ...getAuditColumnOptions(auditColumnsScope),
     ];

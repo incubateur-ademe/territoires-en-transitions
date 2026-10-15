@@ -9,6 +9,8 @@ import {
   ActionTypeEnum,
   getIdentifiantFromActionId,
   getParentId,
+  isNewReferentiel,
+  ReferentielId,
   ScoreComputeModeEnum,
   StatutAvancementCreate,
   StatutAvancementEnum,
@@ -98,8 +100,31 @@ const AVANCEMENT_TO_LABEL: Record<StatutAvancementCreate, string> = {
   [StatutAvancementEnum.NON_CONCERNE]: 'Non concerné',
 };
 
+/** Colonne "Potentiel max" (anciens référentiels uniquement) */
+const POTENTIEL_MAX_COLUMN: Column = {
+  title: 'Potentiel max',
+  cellProps: {
+    style: { alignment: Utils.ALIGN_CENTER, font: Utils.ITALIC },
+    format: 'number',
+  },
+  colProps: {
+    style: { alignment: Utils.ALIGN_CENTER, font: Utils.ITALIC },
+    width: WIDTH_SMALL,
+  },
+  headCellProps: {
+    style: toMerged(Utils.HEADING2, { font: Utils.ITALIC }),
+  },
+  getValue: ({ scoreRow: row }) =>
+    row.score1.score.pointReferentiel || row.score2?.score.pointReferentiel,
+};
+
 /** Génère la liste des colonnes */
-export function buildColumns(exportMode: ExportMode): Column[] {
+export function buildColumns(
+  exportMode: ExportMode,
+  referentielId: ReferentielId
+): Column[] {
+  const isNewRef = isNewReferentiel(referentielId);
+
   // va contenir la table de correspondances entre clé de colonne et lettre associée
   // pour pouvoir les utiliser dans les formules
   const columnLetterByKey: ColumnLetterByKey = {};
@@ -153,30 +178,16 @@ export function buildColumns(exportMode: ExportMode): Column[] {
       getValue: ({ scoreRow: row }) =>
         Utils.capitalize(row.score1.categorie || row.score2?.categorie),
     },
-    {
-      title: 'Potentiel max',
-      cellProps: {
-        style: { alignment: Utils.ALIGN_CENTER, font: Utils.ITALIC },
-        format: 'number',
-      },
-      colProps: {
-        style: { alignment: Utils.ALIGN_CENTER, font: Utils.ITALIC },
-        width: WIDTH_SMALL,
-      },
-      headCellProps: {
-        style: toMerged(Utils.HEADING2, { font: Utils.ITALIC }),
-      },
-      getValue: ({ scoreRow: row }) =>
-        row.score1.score.pointReferentiel || row.score2?.score.pointReferentiel,
-    },
+    // le potentiel max n'a pas de sens pour les nouveaux référentiels (mesures alternatives)
+    ...(isNewRef ? [] : [POTENTIEL_MAX_COLUMN]),
 
     // 1er groupe de colonnes "points/scores"
-    ...buildScoreColumns(1, columnLetterByKey),
+    ...buildScoreColumns(1, columnLetterByKey, isNewRef),
   ];
 
   // ajoute le 2ème de groupe de colonnes "points/scores" quand il y a 2 snapshots dans l'export
   if (exportMode !== ExportMode.SINGLE_SNAPSHOT) {
-    columns.push(...buildScoreColumns(2, columnLetterByKey));
+    columns.push(...buildScoreColumns(2, columnLetterByKey, isNewRef));
   }
 
   // puis les colonnes de fin du tableau
@@ -239,7 +250,8 @@ type SnapshotIndex = 1 | 2;
 /** Génère la liste des colonnes points/score/statut/état d'avancement */
 function buildScoreColumns(
   snapshotIndex: SnapshotIndex,
-  columnLetterByKey: ColumnLetterByKey
+  columnLetterByKey: ColumnLetterByKey,
+  isNewRef: boolean
 ): Column[] {
   const {
     getScoreByIndex,
@@ -269,7 +281,7 @@ function buildScoreColumns(
   const columns: Column[] = [
     {
       key: `potentiel${snapshotIndex}`,
-      title: 'Potentiel personnalisé',
+      title: isNewRef ? 'Points potentiels' : 'Potentiel personnalisé',
       colProps,
       cellProps: cellPropsPoints,
       headCellProps,
