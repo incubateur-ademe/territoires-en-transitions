@@ -20,10 +20,9 @@ export const PertinenceToggle = ({
     : 'non_pertinent';
 
   return (
-    <div role="group" aria-label={label} className="w-full">
+    <div role="group" aria-label={label}>
       <Button
-        size="md"
-        className="w-full justify-center"
+        size="xs"
         variant="outlined"
         icon={isNonPertinent ? 'eye-line' : 'eye-off-line'}
         onClick={() => onChange(nextPertinence)}
