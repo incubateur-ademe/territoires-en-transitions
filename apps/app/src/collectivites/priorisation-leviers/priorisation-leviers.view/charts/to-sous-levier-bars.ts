@@ -7,6 +7,7 @@ import {
 } from '@tet/domain/shared';
 import { LevierPlace } from '../data/to-matrix-points';
 import { toMobilisationLabel, toMobilisationLevel } from './mobilisation-level';
+import { toCategorieTooltip } from './to-levier-tooltip';
 import { toMondrianTiles } from './to-mondrian-tiles';
 
 type SousLevierId = `${LevierId}/${CategorieAction}`;
@@ -58,6 +59,13 @@ export const toSousLevierBars = (
           }),
           value: categorieTile.potentielReduction,
           displayedValue: categorieTile.impactIndex,
+          tooltip: toCategorieTooltip({
+            levierNom: levierTile.nom,
+            categorie: categorieTile.categorie,
+            impactIndex: categorieTile.impactIndex,
+            note: categorieTile.note,
+            pertinence: levierTile.pertinence,
+          }),
           status: preselectedIds.has(id)
             ? appLabels.ajouteeALaPreselection
             : toMobilisationLabel(toMobilisationLevel(categorieTile.note)),

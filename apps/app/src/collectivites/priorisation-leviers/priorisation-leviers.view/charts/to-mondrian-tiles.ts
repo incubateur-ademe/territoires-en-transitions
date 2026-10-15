@@ -5,7 +5,6 @@ import {
 } from '@tet/domain/shared';
 import { pick } from 'es-toolkit';
 import { LevierPlace } from '../data/to-matrix-points';
-import { toSharesOf100 } from '../data/to-shares-of-100';
 
 export type CategorieTile = {
   categorie: CategorieAction;
@@ -16,25 +15,28 @@ export type CategorieTile = {
 
 export type LevierTile = Pick<
   LevierPlace,
-  'levierId' | 'nom' | 'pertinence' | 'potentielReduction' | 'impactIndex'
+  | 'levierId'
+  | 'nom'
+  | 'pertinence'
+  | 'potentielReduction'
+  | 'impactIndex'
+  | 'potentielScore'
+  | 'mobilisationScore'
 > & {
   categories: CategorieTile[];
 };
 
 const toCategorieTiles = (levier: LevierPlace): CategorieTile[] => {
   const shareByCategorie = POTENTIEL_SHARE_BY_LEVIER[levier.levierId];
-  const categories = categorieActionEnumValues.filter(
-    (categorie) => shareByCategorie[categorie] > 0
-  );
-  const impactIndexes = toSharesOf100(
-    categories.map((categorie) => shareByCategorie[categorie])
-  );
-  return categories.map((categorie, index) => ({
-    categorie,
-    potentielReduction: levier.potentielReduction * shareByCategorie[categorie],
-    impactIndex: impactIndexes[index],
-    note: levier.noteByCategorie[categorie],
-  }));
+  return categorieActionEnumValues
+    .filter((categorie) => shareByCategorie[categorie] > 0)
+    .map((categorie) => ({
+      categorie,
+      potentielReduction:
+        levier.potentielReduction * shareByCategorie[categorie],
+      impactIndex: levier.impactIndexByCategorie.get(categorie) ?? 0,
+      note: levier.noteByCategorie[categorie],
+    }));
 };
 
 export const toMondrianTiles = (places: LevierPlace[]): LevierTile[] =>
@@ -47,6 +49,8 @@ export const toMondrianTiles = (places: LevierPlace[]): LevierTile[] =>
         'pertinence',
         'potentielReduction',
         'impactIndex',
+        'potentielScore',
+        'mobilisationScore',
       ]),
       categories: toCategorieTiles(levier),
     }));

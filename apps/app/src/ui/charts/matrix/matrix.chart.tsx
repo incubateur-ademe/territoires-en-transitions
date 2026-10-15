@@ -22,7 +22,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { TooltipHint } from '../tooltip-hint';
+import { ChartTooltip, type ChartTooltipBadge } from '../chart-tooltip';
 import { computeBounds } from './compute-bounds';
 import { MATRIX_GRID } from './matrix-grid';
 import { type AxisProps, toAxisValueLabel } from './axis';
@@ -50,6 +50,7 @@ type MatrixPoint = MatrixCoord & {
   id: string;
   label: string;
   description: string | readonly string[];
+  badge?: ChartTooltipBadge;
   hint?: string;
   tone: MatrixTone;
   color?: string;
@@ -159,15 +160,12 @@ const toDescriptionLines = (
   typeof description === 'string' ? [description] : description;
 
 const PointTooltip = ({ point }: { point: MatrixPoint }): JSX.Element => (
-  <div className="flex max-w-64 flex-col items-start gap-1 whitespace-normal font-sans">
-    <p className="m-0 text-sm font-bold text-primary-9">{point.label}</p>
-    {toDescriptionLines(point.description).map((line) => (
-      <p key={line} className="m-0 text-xs font-normal leading-5 text-grey-8">
-        {line}
-      </p>
-    ))}
-    {point.hint !== undefined ? <TooltipHint hint={point.hint} /> : null}
-  </div>
+  <ChartTooltip
+    title={point.label}
+    lines={toDescriptionLines(point.description)}
+    badge={point.badge}
+    hint={point.hint}
+  />
 );
 
 type MarkAreaData = NonNullable<

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { CategorieAction } from '@tet/domain/shared';
 import { describe, expect, it, vi } from 'vitest';
 import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LevierPlace } from '../data/to-matrix-points';
@@ -14,6 +15,11 @@ const PRODUCTION_INDUSTRIELLE: LevierPlace = {
   potentielReduction: 30,
   potentielScore: 90,
   impactIndex: 75,
+  impactIndexByCategorie: new Map<CategorieAction, number>([
+    ['financement', 38],
+    ['gouvernance', 30],
+    ['sensibilisation', 8],
+  ]),
 };
 
 const BIOGAZ: LevierPlace = {
@@ -26,6 +32,7 @@ const BIOGAZ: LevierPlace = {
   potentielReduction: 10,
   potentielScore: 30,
   impactIndex: 25,
+  impactIndexByCategorie: new Map<CategorieAction, number>(),
 };
 
 const renderMondrian = ({
@@ -69,12 +76,12 @@ describe('LeviersMondrianChart', () => {
     ).toBeTruthy();
   });
 
-  it('donne pour chaque catégorie son niveau de mobilisation et son impact sur 100 du potentiel de son levier', () => {
+  it('donne pour chaque catégorie son niveau de mobilisation et son impact sur 100 du potentiel du territoire', () => {
     renderMondrian();
 
     expect(
       screen.getByText(
-        'Financement, Peu mobilisé, Impact potentiel estimé : 50/100'
+        'Financement, Peu mobilisé, Impact potentiel estimé : 38/100'
       )
     ).toBeTruthy();
   });

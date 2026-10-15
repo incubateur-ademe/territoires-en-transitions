@@ -2,6 +2,7 @@ import { Badge } from '@tet/ui';
 import { sumBy } from 'es-toolkit';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
+import { ChartTooltip } from '../chart-tooltip';
 import { TooltipHint } from '../tooltip-hint';
 import type { HoveredNode } from './to-hovered-node-by-key';
 import type { IntensityVariant } from './treemap-group';
@@ -20,37 +21,48 @@ const TreemapTooltip = <TIntensity extends string, TGroupId extends string>({
   toIntensityLabel,
   toIntensityVariant,
   hint,
-}: TreemapTooltipProps<TIntensity, TGroupId>): JSX.Element => (
-  <div className="flex max-w-64 flex-col items-start gap-1 whitespace-normal font-sans">
-    {match(hovered)
-      .with({ kind: 'group' }, ({ group }) => (
-        <>
-          <p className="m-0 text-sm font-bold text-primary-9">{group.label}</p>
-          <p className="m-0 text-xs font-normal leading-5 text-grey-8">
-            {formatValue(
-              group.displayedValue ?? sumBy(group.tiles, (tile) => tile.value)
-            )}
-          </p>
-        </>
-      ))
-      .with({ kind: 'tile' }, ({ group, tile }) => (
-        <>
-          <p className="m-0 text-sm font-bold text-primary-9">{group.label}</p>
-          <p className="m-0 text-xs font-normal text-grey-8">{tile.label}</p>
-          <p className="m-0 text-xs font-normal leading-5 text-grey-8">
-            {formatValue(tile.displayedValue ?? tile.value)}
-          </p>
-          <Badge
-            title={toIntensityLabel(tile.intensity)}
-            variant={toIntensityVariant(tile.intensity)}
-            type="outlined"
-            size="xs"
-          />
-        </>
-      ))
-      .exhaustive()}
-    {hint !== undefined && <TooltipHint hint={hint} />}
-  </div>
-);
+}: TreemapTooltipProps<TIntensity, TGroupId>): JSX.Element => {
+  const content =
+    hovered.kind === 'group' ? hovered.group.tooltip : hovered.tile.tooltip;
+  if (content !== undefined) {
+    return <ChartTooltip {...content} hint={content.hint ?? hint} />;
+  }
+  return (
+    <div className="flex max-w-64 flex-col items-start gap-1 whitespace-normal font-sans">
+      {match(hovered)
+        .with({ kind: 'group' }, ({ group }) => (
+          <>
+            <p className="m-0 text-sm font-bold text-primary-9">
+              {group.label}
+            </p>
+            <p className="m-0 text-xs font-normal leading-5 text-grey-8">
+              {formatValue(
+                group.displayedValue ?? sumBy(group.tiles, (tile) => tile.value)
+              )}
+            </p>
+          </>
+        ))
+        .with({ kind: 'tile' }, ({ group, tile }) => (
+          <>
+            <p className="m-0 text-sm font-bold text-primary-9">
+              {group.label}
+            </p>
+            <p className="m-0 text-xs font-normal text-grey-8">{tile.label}</p>
+            <p className="m-0 text-xs font-normal leading-5 text-grey-8">
+              {formatValue(tile.displayedValue ?? tile.value)}
+            </p>
+            <Badge
+              title={toIntensityLabel(tile.intensity)}
+              variant={toIntensityVariant(tile.intensity)}
+              type="outlined"
+              size="xs"
+            />
+          </>
+        ))
+        .exhaustive()}
+      {hint !== undefined && <TooltipHint hint={hint} />}
+    </div>
+  );
+};
 
 export { TreemapTooltip };

@@ -1,3 +1,4 @@
+import { sum } from 'es-toolkit';
 import { describe, expect, it } from 'vitest';
 import { LevierPriorisation, NO_MOBILISATION } from './to-leviers-priorisation';
 import {
@@ -19,6 +20,7 @@ const toTooltip = ({
   preselectedCount,
 }: LevierTooltipInput): LevierTooltip => ({
   description: [levier.levierId, `${preselectedCount} présélectionnée`],
+  badge: { label: 'Non mobilisé', variant: 'grey' },
   hint: 'indice',
 });
 
@@ -40,6 +42,7 @@ const toPlace = (
   potentielReduction: 10,
   potentielScore: 100,
   impactIndex: 100,
+  impactIndexByCategorie: new Map(),
   ...overrides,
 });
 
@@ -59,14 +62,29 @@ describe('toLeviersPlaces', () => {
     ]);
   });
 
-  it('donne à chaque levier sa part du potentiel total, sur un total de 100', () => {
+  it('répartit le potentiel total sur 100 entre toutes les catégories, un levier valant la somme de ses catégories', () => {
     const places = toLeviersPlaces([
       toLevier({ levierId: 'covoiturage', potentielReduction: 1 }),
       toLevier({ levierId: 'velo_transport_commun', potentielReduction: 1 }),
       toLevier({ levierId: 'biogaz', potentielReduction: 1 }),
     ]);
 
-    expect(places.map(({ impactIndex }) => impactIndex)).toEqual([34, 33, 33]);
+    expect({
+      categoriesTotal: sum(
+        places.flatMap(({ impactIndexByCategorie }) => [
+          ...impactIndexByCategorie.values(),
+        ])
+      ),
+      leviersTotal: sum(places.map(({ impactIndex }) => impactIndex)),
+      leviersMatchTheirCategories: places.every(
+        ({ impactIndex, impactIndexByCategorie }) =>
+          impactIndex === sum([...impactIndexByCategorie.values()])
+      ),
+    }).toEqual({
+      categoriesTotal: 100,
+      leviersTotal: 100,
+      leviersMatchTheirCategories: true,
+    });
   });
 
   it("place tout à 0 quand aucun levier n'a de potentiel positif", () => {
@@ -300,6 +318,7 @@ describe('toMatrixPoints', () => {
       id: 'covoiturage',
       label: 'Covoiturage',
       description: ['covoiturage', '1 présélectionnée'],
+      badge: { label: 'Non mobilisé', variant: 'grey' },
       hint: 'indice',
       x: 33,
       y: 75,

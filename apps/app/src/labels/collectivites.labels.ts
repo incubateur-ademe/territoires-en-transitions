@@ -7,8 +7,6 @@ const pertinenceLabels = {
   pertinent: 'pertinent',
 } satisfies Record<Pertinence, string>;
 
-const unsetPertinenceLabel = 'non renseignée';
-
 const restartTourLabel = 'Comment ça marche ?';
 
 const savedActionsAccessLabel = 'Voir mes actions sauvegardées';
@@ -36,13 +34,6 @@ const categorieActionShortLabels = {
   exemplarite: 'Exemplarité',
   sensibilisation: 'Sensibilisation',
 } satisfies Record<CategorieAction, string>;
-
-const toPertinenceLabel = (pertinence?: Pertinence): string => {
-  if (pertinence === undefined) {
-    return unsetPertinenceLabel;
-  }
-  return pertinenceLabels[pertinence];
-};
 
 export const collectivitesLabels = {
   collectivite: plural({ one: 'collectivité', other: 'collectivités' }),
@@ -100,8 +91,6 @@ export const collectivitesLabels = {
   priorisationVisiteAideTitre: 'Retrouvez la visite ici',
   priorisationVisiteAideDescription: `« ${restartTourLabel} » relance cette visite. Votre liste apparaîtra à côté dès la première action sauvegardée.`,
   actionsSauvegardeesTitre: 'Mes actions sauvegardées',
-  pertinenceInfo: (pertinence?: Pertinence): string =>
-    `Pertinence : ${toPertinenceLabel(pertinence)}`,
   pertinenceLabel: (pertinence: Pertinence): string =>
     capitalize(pertinenceLabels[pertinence]),
   levierPertinence: (pertinence: Pertinence): string =>
@@ -140,15 +129,9 @@ export const collectivitesLabels = {
   levierImpactPotentielEstime: 'Impact potentiel estimé (/100)',
   levierMobilisationEstimee: 'Mobilisation estimée',
   levierLecture: 'Lecture',
-  levierActionsDeMaCollectivite: plural({
-    one: 'action de ma collectivité',
-    other: 'actions de ma collectivité',
-  }),
-  levierActionsPreselectionnees: plural({
-    one: 'action ajoutée à la présélection',
-    other: 'actions ajoutées à la présélection',
-  }),
   cliquerPourVoirLesActions: 'Cliquer pour voir les actions',
+  levierNonPertinentCliquerPourOuvrir:
+    'Marqué non pertinent. Cliquer pour ouvrir',
   voirLesDonneesDuGraphique: 'Voir les données du graphique',
   levier: 'Levier',
   legendeActionSauvegardee: 'Au moins une action sauvegardée',
