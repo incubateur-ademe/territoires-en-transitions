@@ -137,8 +137,8 @@ const priorisationHref = makeCollectivitePriorisationUrl({
   collectiviteId: 20,
 });
 
-describe('outils-de-priorisation-dans-la-nav', () => {
-  it('les outils de priorisation sont juste après Programmes & Démarches', () => {
+describe('aide-a-la-priorisation-dans-la-nav', () => {
+  it("l'aide à la priorisation est juste après Programmes & Démarches", () => {
     const startItems = makeStartItemsWithPriorisation(true);
 
     const indexProgrammes = startItems.findIndex(
