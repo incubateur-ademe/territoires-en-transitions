@@ -13,6 +13,7 @@ type TreemapTile<TIntensity extends string, TTileId extends string = string> = {
   id: TTileId;
   label: string;
   value: number;
+  displayedValue?: number;
   intensity: TIntensity;
 };
 
@@ -25,6 +26,7 @@ type TreemapGroup<
   label: string;
   color: HexColor;
   isFlagged?: boolean;
+  displayedValue?: number;
   tiles: readonly TreemapTile<TIntensity, TTileId>[];
 };
 

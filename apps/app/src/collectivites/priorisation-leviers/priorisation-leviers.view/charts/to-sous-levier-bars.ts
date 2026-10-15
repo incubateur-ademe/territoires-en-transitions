@@ -57,6 +57,7 @@ export const toSousLevierBars = (
             categorie: categorieTile.categorie,
           }),
           value: categorieTile.potentielReduction,
+          displayedValue: categorieTile.impactIndex,
           status: preselectedIds.has(id)
             ? appLabels.ajouteeALaPreselection
             : toMobilisationLabel(toMobilisationLevel(categorieTile.note)),

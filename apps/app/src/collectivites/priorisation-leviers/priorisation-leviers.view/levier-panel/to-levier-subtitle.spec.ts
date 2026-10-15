@@ -3,7 +3,7 @@ import { toLevierSubtitle } from './to-levier-subtitle';
 
 describe('toLevierSubtitle', () => {
   it("ajoute l'impact potentiel estimé au secteur quand le levier a un potentiel", () => {
-    expect(toLevierSubtitle({ secteur: 'Bâtiment', potentielScore: 19 })).toBe(
+    expect(toLevierSubtitle({ secteur: 'Bâtiment', impactIndex: 19 })).toBe(
       'Bâtiment · Impact potentiel estimé : 19/100'
     );
   });

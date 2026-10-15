@@ -13,6 +13,7 @@ const PRODUCTION_INDUSTRIELLE: LevierPlace = {
   noteByCategorie: { ...NO_MOBILISATION, financement: 1 },
   potentielReduction: 30,
   potentielScore: 90,
+  impactIndex: 75,
 };
 
 const BIOGAZ: LevierPlace = {
@@ -24,6 +25,7 @@ const BIOGAZ: LevierPlace = {
   noteByCategorie: NO_MOBILISATION,
   potentielReduction: 10,
   potentielScore: 30,
+  impactIndex: 25,
 };
 
 const renderMondrian = ({
@@ -67,12 +69,12 @@ describe('LeviersMondrianChart', () => {
     ).toBeTruthy();
   });
 
-  it('donne pour chaque catégorie son niveau de mobilisation et son impact sur 100 du potentiel du territoire', () => {
+  it('donne pour chaque catégorie son niveau de mobilisation et son impact sur 100 du potentiel de son levier', () => {
     renderMondrian();
 
     expect(
       screen.getByText(
-        'Financement, Peu mobilisé, Impact potentiel : 38/100 du territoire'
+        'Financement, Peu mobilisé, Impact potentiel estimé : 50/100'
       )
     ).toBeTruthy();
   });

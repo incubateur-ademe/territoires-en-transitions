@@ -9,7 +9,6 @@ import {
   LevierId,
 } from '@tet/domain/shared';
 import { preset } from '@tet/ui';
-import { sumBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
 import { LevierPlace } from '../data/to-matrix-points';
 import { SelectLevier } from '../select-levier';
@@ -18,7 +17,6 @@ import {
   toSelectedSousLevierId,
   toSousLevierBars,
 } from './to-sous-levier-bars';
-import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
 
 type SousLeviersChartProps = {
   places: LevierPlace[];
@@ -56,9 +54,6 @@ export const SousLeviersChart = ({
     () => toSousLevierBars(places, preselectedActions),
     [places, preselectedActions]
   );
-  const formatValue = useFormatImpactPotentiel(
-    sumBy(bars, ({ value }) => value)
-  );
 
   const selectBar = (barId: string): void => {
     const bar = bars.find(({ id }) => id === barId);
@@ -73,7 +68,7 @@ export const SousLeviersChart = ({
         <StatusBarChart
           data={bars}
           statusScale={STATUS_SCALE}
-          formatValue={formatValue}
+          formatValue={appLabels.impactPotentielEstime}
           tooltipHint={appLabels.cliquerPourVoirLesActions}
           selectedBarId={toSelectedSousLevierId({
             levierId: selectedLevierId,
@@ -86,7 +81,7 @@ export const SousLeviersChart = ({
       </div>
       <StatusBarDataTable
         data={bars}
-        formatValue={formatValue}
+        formatValue={appLabels.impactPotentielEstime}
         labels={DATA_TABLE_LABELS}
       />
     </div>

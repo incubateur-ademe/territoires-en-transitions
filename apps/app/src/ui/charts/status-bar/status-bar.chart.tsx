@@ -131,9 +131,11 @@ const BarsList = <TStatus extends string>({
 }): JSX.Element => (
   <ul className="sr-only">
     {data.map((bar) => {
-      const description = [bar.label, bar.status, formatValue(bar.value)].join(
-        ', '
-      );
+      const description = [
+        bar.label,
+        bar.status,
+        formatValue(bar.displayedValue ?? bar.value),
+      ].join(', ');
       return (
         <li key={bar.id}>
           {onBarSelected ? (

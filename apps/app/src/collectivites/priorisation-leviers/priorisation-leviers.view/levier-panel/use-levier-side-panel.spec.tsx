@@ -80,7 +80,7 @@ describe('useLevierSidePanel', () => {
 
   it("l'en-tête du volet porte le secteur et l'impact potentiel estimé du levier sélectionné", () => {
     const { result } = renderLevierSidePanel([
-      { ...COVOITURAGE, potentielReduction: 10, potentielScore: 19 },
+      { ...COVOITURAGE, potentielReduction: 10, potentielScore: 50, impactIndex: 19 },
     ]);
 
     act(() => result.current.levierSidePanel.select('covoiturage'));

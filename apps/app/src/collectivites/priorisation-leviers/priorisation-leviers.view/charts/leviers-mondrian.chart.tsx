@@ -8,7 +8,7 @@ import type {
 import { TreemapChart } from '@/app/ui/charts/treemap/treemap.chart';
 import { CategorieAction, LevierId } from '@tet/domain/shared';
 import { preset } from '@tet/ui';
-import { orderBy, sumBy } from 'es-toolkit';
+import { orderBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
 import {
   LevierPlace,
@@ -23,7 +23,6 @@ import {
   toMobilisationLevel,
 } from './mobilisation-level';
 import { LevierTile, toMondrianTiles } from './to-mondrian-tiles';
-import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
 
 type LeviersMondrianChartProps = {
   places: LevierPlace[];
@@ -89,10 +88,12 @@ const toTreemapGroup = ({
   label: levier.nom,
   color: toLevierColor({ levier, rank }),
   isFlagged,
+  displayedValue: levier.impactIndex,
   tiles: levier.categories.map((categorieTile) => ({
     id: categorieTile.categorie,
     label: appLabels.categorieActionShortLabel(categorieTile.categorie),
     value: categorieTile.potentielReduction,
+    displayedValue: categorieTile.impactIndex,
     intensity: toMobilisationLevel(categorieTile.note),
   })),
 });
@@ -115,15 +116,11 @@ export const LeviersMondrianChart = ({
         })
     );
   }, [places, tiles]);
-  const formatValue = useFormatImpactPotentiel(
-    sumBy(tiles, (levier) => levier.potentielReduction)
-  );
-
   return (
     <TreemapChart
       data={groups}
       intensityScale={MOBILISATION_SCALE}
-      formatValue={formatValue}
+      formatValue={appLabels.impactPotentielEstime}
       toIntensityLabel={toMobilisationLabel}
       toIntensityVariant={toMobilisationVariant}
       tooltipHint={appLabels.cliquerPourVoirLesActions}

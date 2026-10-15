@@ -45,12 +45,12 @@ export const LeviersDataDetails = ({
         </TableRow>
       </TableHead>
       <tbody>
-        {orderBy(places, ['potentielScore'], ['desc']).map((levier) => (
+        {orderBy(places, ['impactIndex'], ['desc']).map((levier) => (
           <TableRow key={levier.levierId}>
             <TableCell>{levier.nom}</TableCell>
             <TableCell>{levier.secteur}</TableCell>
             <TableCell className="text-right">
-              {levier.potentielScore}
+              {levier.impactIndex}
             </TableCell>
             <TableCell className="text-right">{`${levier.mobilisationScore} %`}</TableCell>
             <TableCell>

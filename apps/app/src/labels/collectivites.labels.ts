@@ -206,8 +206,6 @@ export const collectivitesLabels = {
     'Un sous-levier (levier × catégorie) par barre, triés par potentiel de réduction estimé décroissant. Cliquez une barre pour ouvrir le levier sur cette catégorie.',
   repartitionPotentielLegende:
     'Taille du rectangle = potentiel de réduction de GES estimé. Un drapeau signale un levier à prioriser. Cliquez une zone pour ouvrir le levier.',
-  impactPotentielDuTerritoire: (score: number): string =>
-    `Impact potentiel : ${score}/100 du territoire`,
   impactPotentielEstime: (score: number): string =>
     `Impact potentiel estimé : ${score}/100`,
   mobilisationNulle: 'Non mobilisé',
