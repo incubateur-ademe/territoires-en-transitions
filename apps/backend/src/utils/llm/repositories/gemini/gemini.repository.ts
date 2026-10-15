@@ -8,6 +8,7 @@ import {
 } from '@google/genai';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { createHash, randomUUID } from 'node:crypto';
 import { describeError } from '../describe-error';
 import { LlmError } from '../../llm.errors';
 import { LlmCapabilities, LlmThinkingLevel, LlmTier } from '../../llm-tier';
@@ -20,6 +21,8 @@ import { TokenUsage } from '../../token-usage';
 
 const CALL_TIMEOUT_MS = 9 * 60 * 1000;
 const RATE_LIMITED_STATUSES = new Set([429, 503]);
+const CALL_ID_LENGTH = 8;
+const PROMPT_FINGERPRINT_LENGTH = 8;
 
 @Injectable()
 export class GeminiRepository extends LlmRepository {
@@ -67,8 +70,14 @@ export class GeminiRepository extends LlmRepository {
       return failure({ kind: 'api_error', httpStatus: null });
     }
 
+    const callId = randomUUID().slice(0, CALL_ID_LENGTH);
+    const timeoutMs = request.timeoutMs ?? CALL_TIMEOUT_MS;
+    const startedAt = Date.now();
+    let firstChunkAfterMs: number | undefined;
+    let chunkCount = 0;
+
     this.logger.log(
-      `Gemini call (model ${this.model}, prompt ${request.prompt.length} chars, instruction ${request.systemInstruction?.length ?? 0} chars, timeout ${request.timeoutMs ?? CALL_TIMEOUT_MS} ms)`
+      `Gemini call ${callId} (model ${this.model}, prompt ${request.prompt.length} chars #${toPromptFingerprint(request.prompt)}, instruction ${request.systemInstruction?.length ?? 0} chars, timeout ${timeoutMs} ms)`
     );
 
     try {
@@ -85,7 +94,7 @@ export class GeminiRepository extends LlmRepository {
           systemInstruction: request.systemInstruction,
           maxOutputTokens: request.maxOutputTokens,
           thinkingConfig: toThinkingConfig(request.thinkingLevel),
-          httpOptions: { timeout: request.timeoutMs ?? CALL_TIMEOUT_MS },
+          httpOptions: { timeout: timeoutMs },
           abortSignal: request.signal,
         },
       });
@@ -95,6 +104,10 @@ export class GeminiRepository extends LlmRepository {
       let usageMetadata: GenerateContentResponseUsageMetadata | undefined;
 
       for await (const chunk of stream) {
+        if (firstChunkAfterMs === undefined) {
+          firstChunkAfterMs = Date.now() - startedAt;
+        }
+        chunkCount += 1;
         if (chunk.text !== undefined) {
           text += chunk.text;
         }
@@ -107,10 +120,18 @@ export class GeminiRepository extends LlmRepository {
         }
       }
 
+      this.logger.debug(
+        `Gemini response ${callId} (first chunk after ${
+          firstChunkAfterMs ?? 'n/a'
+        } ms, total ${Date.now() - startedAt} ms, ${chunkCount} ${
+          chunkCount === 1 ? 'chunk' : 'chunks'
+        }, finishReason ${finishReason ?? 'unknown'})`
+      );
+
       const usage = toTokenUsage(usageMetadata);
       if (finishReason !== FinishReason.STOP) {
         this.logger.warn(
-          `Incomplete Gemini response (model ${this.model}, finishReason ${
+          `Incomplete Gemini response ${callId} (model ${this.model}, finishReason ${
             finishReason ?? 'unknown'
           }, ${usage.candidatesTokens} tokens generated of ${
             request.maxOutputTokens
@@ -124,9 +145,22 @@ export class GeminiRepository extends LlmRepository {
         usage,
       });
     } catch (error) {
+      const elapsedMs = Date.now() - startedAt;
+      if (isAbortError(error)) {
+        this.logger.warn(
+          toAbortMessage({
+            callId,
+            elapsedMs,
+            timeoutMs,
+            cancelledByCaller: request.signal?.aborted === true,
+            chunkCount,
+          })
+        );
+        return failure({ kind: 'api_error', httpStatus: null });
+      }
       const httpStatus = extractHttpStatus(error);
       this.logger.error(
-        `Gemini API error (model ${this.model}, status ${httpStatus}): ${describeError(
+        `Gemini API error (model ${this.model}, status ${httpStatus}, call ${callId}, after ${elapsedMs} ms): ${describeError(
           error
         )}`
       );
@@ -180,6 +214,40 @@ const toTokenUsage = (
   thoughtsTokens: usage?.thoughtsTokenCount ?? 0,
   totalTokens: usage?.totalTokenCount ?? 0,
 });
+
+const toPromptFingerprint = (prompt: string): string =>
+  createHash('sha256')
+    .update(prompt)
+    .digest('hex')
+    .slice(0, PROMPT_FINGERPRINT_LENGTH);
+
+const isAbortError = (error: unknown): boolean =>
+  error instanceof Error && error.name === 'AbortError';
+
+const toAbortMessage = ({
+  callId,
+  elapsedMs,
+  timeoutMs,
+  cancelledByCaller,
+  chunkCount,
+}: {
+  callId: string;
+  elapsedMs: number;
+  timeoutMs: number;
+  cancelledByCaller: boolean;
+  chunkCount: number;
+}): string => {
+  if (cancelledByCaller) {
+    return `Gemini call ${callId} cancelled by caller after ${elapsedMs} ms`;
+  }
+  const progress =
+    chunkCount === 0
+      ? 'no response received'
+      : `stream stalled after ${chunkCount} ${
+          chunkCount === 1 ? 'chunk' : 'chunks'
+        }`;
+  return `Gemini call ${callId} timed out after ${elapsedMs} ms (limit ${timeoutMs} ms, ${progress})`;
+};
 
 const extractHttpStatus = (error: unknown): number | null => {
   if (
