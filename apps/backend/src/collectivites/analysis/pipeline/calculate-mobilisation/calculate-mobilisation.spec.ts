@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ZodType } from 'zod';
 import {
   calculateMobilisation,
-  MOBILISATION_THINKING_BUDGET,
+  MOBILISATION_THINKING_LEVEL,
   UNKNOWN_POPULATION_LABEL,
 } from './calculate-mobilisation';
 import { LevierVolets } from './group-volets-by-levier';
@@ -119,7 +119,7 @@ describe('calculateMobilisation', () => {
     expect(prompt).toContain('Levier évalué : Vélo et transport en commun');
   });
 
-  it("garde le budget de raisonnement de l'étape 1", async () => {
+  it('demande le niveau de raisonnement minimal', async () => {
     const llm = toScoringLlm(allNotesAtThree);
 
     await calculateMobilisation(llm as never, {
@@ -129,8 +129,9 @@ describe('calculateMobilisation', () => {
       population: 3000,
     });
 
-    const [{ thinkingBudget }] = llm.generateStructured.mock.calls[0];
+    const [{ thinkingLevel }] = llm.generateStructured.mock.calls[0];
 
-    expect(thinkingBudget).toBe(MOBILISATION_THINKING_BUDGET);
+    expect(thinkingLevel).toBe(MOBILISATION_THINKING_LEVEL);
+    expect(thinkingLevel).toBe('minimal');
   });
 });

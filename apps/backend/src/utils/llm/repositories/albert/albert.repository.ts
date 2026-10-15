@@ -29,7 +29,7 @@ const OCR_MAX_INPUT_TOKENS = 8_000;
 /**
  * Albert API, l'inférence du socle interministériel d'IA générative (DINUM),
  * appelée par le SDK OpenAI comme le recommande sa documentation. Aucun
- * équivalent de `thinkingBudget` : les tokens de raisonnement se prennent sur
+ * équivalent de `thinkingLevel` : les tokens de raisonnement se prennent sur
  * `max_completion_tokens`.
  */
 @Injectable()

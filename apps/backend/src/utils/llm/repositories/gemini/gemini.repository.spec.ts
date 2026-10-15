@@ -68,6 +68,44 @@ describe('GeminiRepository', () => {
     );
   });
 
+  it('demande le niveau de réflexion et jamais un budget de tokens', async () => {
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+
+    await repository.complete({
+      prompt: 'Classe',
+      tier: 'strong',
+      thinkingLevel: 'minimal',
+    });
+
+    const [{ config }] = generateContentStream.mock.calls[0];
+    expect(config.thinkingConfig).toEqual({ thinkingLevel: 'MINIMAL' });
+  });
+
+  it("laisse le modèle choisir son niveau de réflexion quand aucun n'est demandé", async () => {
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+
+    await repository.complete({ prompt: 'Lis', tier: 'strong' });
+
+    const [{ config }] = generateContentStream.mock.calls[0];
+    expect(config.thinkingConfig).toBeUndefined();
+  });
+
+  it("n'envoie pas de température, ignorée par Gemini 3", async () => {
+    const { repository, generateContentStream } =
+      buildRepositoryWithFakeClient();
+
+    await repository.complete({
+      prompt: 'Classe',
+      tier: 'strong',
+      temperature: 0.2,
+    });
+
+    const [{ config }] = generateContentStream.mock.calls[0];
+    expect(config).not.toHaveProperty('temperature');
+  });
+
   it('garde 9 minutes quand aucun délai n’est demandé', async () => {
     const { repository, generateContentStream } =
       buildRepositoryWithFakeClient();

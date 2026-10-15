@@ -10,7 +10,7 @@ const request: LlmCompletionRequest = {
   jsonSchema: { type: 'array' },
   temperature: 0.2,
   maxOutputTokens: 64000,
-  thinkingBudget: 8192,
+  thinkingLevel: 'medium',
 };
 
 const buildRepository = (overrides: Record<string, unknown> = {}) => {

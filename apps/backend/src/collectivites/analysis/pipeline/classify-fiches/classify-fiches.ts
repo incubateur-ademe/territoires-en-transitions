@@ -1,6 +1,7 @@
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { LlmThinkingLevel } from '@tet/backend/utils/llm/llm-tier';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { randomUUID } from 'node:crypto';
 import { ClassificationEnjeu } from '../classification-enjeu';
@@ -11,7 +12,7 @@ import {
 } from './apply-classification';
 import { FicheToClassify, renderFichesText } from './render-fiches-text';
 
-const CLASSIFICATION_THINKING_BUDGET = 512;
+const CLASSIFICATION_THINKING_LEVEL: LlmThinkingLevel = 'minimal';
 const CLASSIFICATION_TIMEOUT_MS = 60_000;
 
 export const MAX_FICHES_PER_BATCH = 50;
@@ -52,7 +53,7 @@ export const classifyFiches = async (
     prompt: enjeu.buildPrompt({ actions: text }),
     systemInstruction: enjeu.systemInstruction,
     schema: enjeu.responseSchema,
-    thinkingBudget: CLASSIFICATION_THINKING_BUDGET,
+    thinkingLevel: CLASSIFICATION_THINKING_LEVEL,
     timeoutMs: CLASSIFICATION_TIMEOUT_MS,
     signal,
   });
