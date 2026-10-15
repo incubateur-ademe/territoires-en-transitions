@@ -2,9 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { ListPersonneTagsOutput } from '@tet/backend/collectivites/tags/personnes/list-personne-tags.output';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { planPiloteTable } from '@tet/backend/plans/fiches/shared/models/plan-pilote.table';
+import { planReferentTable } from '@tet/backend/plans/fiches/shared/models/plan-referent.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
@@ -16,12 +19,24 @@ import { PgTable } from 'drizzle-orm/pg-core';
 import { invitationTable } from '../../membres/invitation.table';
 import { invitationPersonneTagTable } from '../../membres/mutate-invitations/invitation-personne-tag.table';
 
+type PersonneTable = PgTable & { tagId: AnyColumn; userId: AnyColumn };
+
+const transferredTable = <T extends PersonneTable>(
+  table: T,
+  targetColumns: (keyof T['$inferSelect'] & string)[]
+) => ({ table, targetColumns });
+
+type TransferredTable = { table: PersonneTable; targetColumns: string[] };
+
 /** Liste des tables ayant une référence vers personne_tag */
-const tables = [
-  ficheActionPiloteTable,
-  ficheActionReferentTable,
-  indicateurPiloteTable,
-  actionPiloteTable,
+export const transferredTables: TransferredTable[] = [
+  transferredTable(ficheActionPiloteTable, ['ficheId']),
+  transferredTable(ficheActionReferentTable, ['ficheId']),
+  transferredTable(indicateurPiloteTable, ['indicateurId', 'collectiviteId']),
+  transferredTable(actionPiloteTable, ['collectiviteId', 'actionId']),
+  transferredTable(demarchePiloteTable, ['demarcheId']),
+  transferredTable(planPiloteTable, ['planId']),
+  transferredTable(planReferentTable, ['planId']),
 ];
 
 @Injectable()
@@ -162,8 +177,8 @@ export class PersonneTagService {
     userId: string,
     authorId: string
   ) {
-    for (const table of tables) {
-      await this.changeTagToUser(trx, tagId, userId, authorId, table);
+    for (const transferred of transferredTables) {
+      await this.changeTagToUser(trx, tagId, userId, authorId, transferred);
     }
     // Supprime le tag
     await trx.delete(personneTagTable).where(eq(personneTagTable.id, tagId));
@@ -175,7 +190,7 @@ export class PersonneTagService {
    * @param tagId
    * @param userId
    * @param authorId
-   * @param table
+   * @param transferred
    * @private
    */
   private async changeTagToUser(
@@ -183,14 +198,25 @@ export class PersonneTagService {
     tagId: number,
     userId: string,
     authorId: string,
-    table: PgTable & { tagId: AnyColumn }
+    { table, targetColumns }: TransferredTable
   ) {
     // Récupère les enregistrements de la table
     const tags = await trx.select().from(table).where(eq(table.tagId, tagId));
 
     if (tags.length > 0) {
+      const heldByUser = await trx
+        .select()
+        .from(table)
+        .where(eq(table.userId, userId));
+      const isHeldByUser = (tag: Record<string, unknown>) =>
+        heldByUser.some((held: Record<string, unknown>) =>
+          targetColumns.every((key) => held[key] === tag[key])
+        );
+
+      const tagsToTransfer = tags.filter((tag) => !isHeldByUser(tag));
+
       // Transforme les enregistrements pour mettre userId au lieu de tagId
-      const pilotesToAdd = tags.map(({ id, ...tag }) => {
+      const pilotesToAdd = tagsToTransfer.map(({ id, ...tag }) => {
         this.logger.log(
           `- Tag ${
             tag.tagId
@@ -211,7 +237,9 @@ export class PersonneTagService {
       });
 
       // Ajoute les lignes transformées
-      await trx.insert(table).values(pilotesToAdd).onConflictDoNothing(); // Plusieurs tags peuvent être attribués à la même personne
+      if (pilotesToAdd.length > 0) {
+        await trx.insert(table).values(pilotesToAdd).onConflictDoNothing();
+      }
 
       // Supprime les anciens enregistrements ayant les tags
       await trx.delete(table).where(eq(table.tagId, tagId));

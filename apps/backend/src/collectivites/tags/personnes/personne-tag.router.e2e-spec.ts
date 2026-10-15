@@ -1,9 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { transferredTables } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { createPlan } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { planPiloteTable } from '@tet/backend/plans/fiches/shared/models/plan-pilote.table';
+import { planReferentTable } from '@tet/backend/plans/fiches/shared/models/plan-referent.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -14,8 +20,9 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, TagEnum } from '@tet/domain/collectivites';
+import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, getTableName, inArray, sql } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { invitationTable } from '../../membres/invitation.table';
 
@@ -324,5 +331,116 @@ describe('Test PersonneTagService', () => {
         console.error('Erreur lors de la suppression:', error);
       }
     });
+  });
+
+  test('convertToUser transfère les pilotes de démarche et les pilotes et référents de plan', async () => {
+    const caller = router.createCaller({ user: adminUser });
+
+    const [tag, otherTag] = await Promise.all(
+      ['Convert Tag démarche plan', 'Convert Tag démarche plan bis'].map(
+        (nom) =>
+          caller.collectivites.tags.create({
+            tagType: TagEnum.Personne,
+            nom,
+            collectiviteId: collectivite.id,
+          })
+      )
+    );
+    const [demarche] = await databaseService.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: collectivite.id,
+        type: DemarcheTypeEnum.PCAET,
+        titre: 'PCAET convert',
+      })
+      .returning();
+    const [plan1, plan2] = await Promise.all(
+      ['Plan convert 1', 'Plan convert 2'].map((nom) =>
+        createPlan({
+          caller,
+          planData: { nom, collectiviteId: collectivite.id },
+        })
+      )
+    );
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(demarcheTable)
+        .where(eq(demarcheTable.id, demarche.id));
+      await databaseService.db
+        .delete(personneTagTable)
+        .where(inArray(personneTagTable.id, [tag.id, otherTag.id]));
+    });
+
+    await databaseService.db.insert(demarchePiloteTable).values({
+      demarcheId: demarche.id,
+      tagId: tag.id,
+      createdBy: adminUserId,
+    });
+    await databaseService.db.insert(planPiloteTable).values([
+      { planId: plan1.id, tagId: tag.id, createdBy: adminUserId },
+      { planId: plan1.id, tagId: otherTag.id, createdBy: adminUserId },
+      { planId: plan2.id, tagId: tag.id, createdBy: adminUserId },
+      { planId: plan2.id, userId: adminUserId, createdBy: adminUserId },
+    ]);
+    await databaseService.db.insert(planReferentTable).values({
+      planId: plan1.id,
+      tagId: tag.id,
+      createdBy: adminUserId,
+    });
+
+    await caller.collectivites.tags.personnes.convertToUser({
+      collectiviteId: collectivite.id,
+      userId: adminUserId,
+      tagIds: [tag.id, otherTag.id],
+    });
+
+    const demarchePilotes = await databaseService.db
+      .select({
+        userId: demarchePiloteTable.userId,
+        tagId: demarchePiloteTable.tagId,
+      })
+      .from(demarchePiloteTable)
+      .where(eq(demarchePiloteTable.demarcheId, demarche.id));
+    expect(demarchePilotes).toEqual([{ userId: adminUserId, tagId: null }]);
+
+    const planPilotes = await databaseService.db
+      .select({
+        planId: planPiloteTable.planId,
+        userId: planPiloteTable.userId,
+        tagId: planPiloteTable.tagId,
+      })
+      .from(planPiloteTable)
+      .where(inArray(planPiloteTable.planId, [plan1.id, plan2.id]));
+    expect(planPilotes).toHaveLength(2);
+    expect(planPilotes).toEqual(
+      expect.arrayContaining([
+        { planId: plan1.id, userId: adminUserId, tagId: null },
+        { planId: plan2.id, userId: adminUserId, tagId: null },
+      ])
+    );
+
+    const planReferents = await databaseService.db
+      .select({
+        userId: planReferentTable.userId,
+        tagId: planReferentTable.tagId,
+      })
+      .from(planReferentTable)
+      .where(eq(planReferentTable.planId, plan1.id));
+    expect(planReferents).toEqual([{ userId: adminUserId, tagId: null }]);
+  });
+
+  test('Toutes les tables qui référencent personne_tag sont transférées', async () => {
+    const referencingTables = await databaseService.db.execute<{
+      table_name: string;
+    }>(sql`
+      select conrelid::regclass::text as table_name
+      from pg_constraint
+      where contype = 'f' and confrelid = 'public.personne_tag'::regclass
+    `);
+
+    expect(referencingTables.rows.map((row) => row.table_name).sort()).toEqual(
+      transferredTables.map(({ table }) => getTableName(table)).sort()
+    );
   });
 });
