@@ -19,9 +19,9 @@ const NON_PERTINENT_POINT: MatrixPoint = {
 };
 
 describe('point non pertinent', () => {
-  it('est un cercle creux de la couleur du ton non pertinent', () => {
+  it('est un cercle à fond blanc, bordé de la couleur du ton non pertinent', () => {
     expect(toPointStyle(NON_PERTINENT_POINT)).toMatchObject({
-      color: 'transparent',
+      color: '#FFFFFF',
       borderColor: toToneColor('light'),
     });
   });

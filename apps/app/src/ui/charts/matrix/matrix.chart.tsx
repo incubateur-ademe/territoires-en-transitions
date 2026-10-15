@@ -117,6 +117,7 @@ const QUADRANT_TITLE_DISTANCE = 5;
 const QUADRANT_TITLE_CHAR_WIDTH = 8;
 const QUADRANT_TITLE_LINE_HEIGHT = 14;
 const TRANSPARENT = 'transparent';
+const WHITE = '#FFFFFF';
 const DESCRIPTION_SEPARATOR = ' · ';
 const SELECTION_OUTLINE_TONE: MatrixTone = 'default';
 
@@ -382,7 +383,7 @@ const toPointStyle = (point: MatrixPoint): PointStyle => {
   const color = toPointColor(point);
   if (isHollowPoint(point)) {
     return {
-      color: TRANSPARENT,
+      color: WHITE,
       borderColor: color,
       borderWidth: DASHED_POINT_BORDER_WIDTH,
       borderType: DASHED_POINT_PATTERN,
