@@ -1,0 +1,27 @@
+name: aws-cli
+description: Installe une version épinglée et vérifiée de la CLI AWS
+
+runs:
+  using: composite
+
+  steps:
+    - name: Installe la CLI AWS (version épinglée, checksum vérifié)
+      shell: bash
+      # Pour monter de version : changer ces deux valeurs ensemble. Le sha256
+      # se calcule sur l'archive après avoir vérifié à la main sa signature GPG
+      # (fichier .sig publié à côté, clé « AWS CLI Team » FB5D B77F D5C1 18B8
+      # 0511 ADA8 A631 0ACC 4672 475C, cf.
+      # https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+      # On ne revérifie pas la signature à chaque run : le sha256 épinglé ici
+      # suffit à détecter une archive modifiée.
+      env:
+        AWS_CLI_VERSION: "2.38.1"
+        AWS_CLI_SHA256: "b11ed416d91f4251da363a17706938eeaf0e520745754c104c0c1890dd8363c7"
+      run: |
+        set -euo pipefail
+        archive="awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip"
+        curl -fsSL -o "$archive" "https://awscli.amazonaws.com/$archive"
+        echo "${AWS_CLI_SHA256}  ${archive}" | sha256sum -c -
+        unzip -q "$archive"
+        sudo ./aws/install --update
+        rm -rf "$archive" aws/

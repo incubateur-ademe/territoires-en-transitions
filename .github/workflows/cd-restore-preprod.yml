@@ -48,11 +48,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install --update
-          rm -rf awscliv2.zip aws/
+        uses: ./.github/actions/aws-cli
 
       - name: Compute restore argument
         id: restore_arg
@@ -80,7 +76,9 @@ jobs:
 
       - name: Restore backup to ${{ inputs.target }}
         env:
-          TO_DB_URL: ${{ inputs.target == 'staging' && secrets.STAGING_DB_URL || secrets.PREPROD_DB_URL }}
+          TARGET: ${{ inputs.target }}
+          STAGING_DB_URL: ${{ secrets.STAGING_DB_URL }}
+          PREPROD_DB_URL: ${{ secrets.PREPROD_DB_URL }}
           RESTORE_ENCRYPTED_PASSWORD: ${{ secrets.RESTORE_ENCRYPTED_PASSWORD }}
           BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
           BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
@@ -88,4 +86,16 @@ jobs:
           BACKUP_REGION: ${{ vars.BACKUP_REGION }}
           BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
           RESTORE_ARGUMENT: ${{ steps.restore_arg.outputs.restore_arg }}
-        run: bash data_layer/backup/restore.sh "$RESTORE_ARGUMENT"
+        run: |
+          case "$TARGET" in
+            staging) TO_DB_URL="$STAGING_DB_URL" ;;
+            preprod) TO_DB_URL="$PREPROD_DB_URL" ;;
+            *) echo "::error::Unknown target '$TARGET'"; exit 1 ;;
+          esac
+          if [ -z "$TO_DB_URL" ]; then
+            echo "::error::Empty DB URL for target '$TARGET'"
+            exit 1
+          fi
+          unset STAGING_DB_URL PREPROD_DB_URL
+          export TO_DB_URL
+          bash data_layer/backup/restore.sh "$RESTORE_ARGUMENT"

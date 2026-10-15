@@ -1,0 +1,10 @@
+# Config AWS CLI utilisée par backup.sh, restore.sh et cleanup.sh (via AWS_CONFIG_FILE),
+# à la place de ~/.aws/config : les identifiants passent par les variables d'env.
+# et l'endpoint / la région par les options de chaque commande.
+#
+# Le client de transfert CRT, choisi par défaut par les versions récentes de la
+# CLI pour `aws s3 cp`, signe mal les requêtes vers l'endpoint S3 de Supabase
+# (403 SignatureDoesNotMatch sur HeadObject) : on force le client classique.
+[default]
+s3 =
+  preferred_transfer_client = classic

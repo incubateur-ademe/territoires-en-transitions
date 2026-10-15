@@ -166,6 +166,12 @@ if [ "$DOWNLOAD_FROM_S3" = true ]; then
         exit 1
     fi
 
+    # Isole la CLI AWS de ~/.aws/config et force le client de transfert S3 classique
+    # (cf. aws-config). AWS_PROFILE est retiré : un profil absent de ce fichier ferait
+    # échouer la CLI.
+    export AWS_CONFIG_FILE="$SCRIPT_DIR/aws-config"
+    unset AWS_PROFILE AWS_DEFAULT_PROFILE
+
     # Mode "latest" : lister le bucket et choisir le backup avec la date la plus récente.
     # Le pattern ancré (^...$) rejette les noms non-standards tels que backup-2026-04-18-partial.dump.
     if [ "$RESOLVE_LATEST" = true ]; then

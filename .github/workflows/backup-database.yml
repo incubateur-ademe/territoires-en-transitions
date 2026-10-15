@@ -36,11 +36,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install --update
-          rm -rf awscliv2.zip aws/
+        uses: ./.github/actions/aws-cli
 
       - name: Run backup
         env:
@@ -89,11 +85,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install --update
-          rm -rf awscliv2.zip aws/
+        uses: ./.github/actions/aws-cli
 
       - name: Restore latest backup to staging
         env:
@@ -133,11 +125,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip -q awscliv2.zip
-          sudo ./aws/install --update
-          rm -rf awscliv2.zip aws/
+        uses: ./.github/actions/aws-cli
 
       - name: Compute D-1 backup date
         id: dminus1
