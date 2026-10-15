@@ -1,5 +1,6 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { formatMesureLabel } from '@/app/referentiels/actions/format-mesure-label';
 import {
   ResolvedActionSummary,
   useResolveActionsByIds,
@@ -7,7 +8,6 @@ import {
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonnalisationRegle } from '@tet/domain/collectivites';
-import { isNewReferentiel } from '@tet/domain/referentiels';
 import { AccordionControlled, InfoTooltip } from '@tet/ui';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
@@ -82,9 +82,7 @@ const ActionsLiees = ({
         return (
           <div key={actionId} className="flex flex-row gap-2 items-center">
             <Link href={url} className="underline">
-              {`${
-                isNewReferentiel(referentiel) ? 'CR' : referentiel
-              } ${identifiant} - ${nom}`}
+              {formatMesureLabel({ referentiel, identifiant, nom })}
             </Link>
             {!!reglesActions.length && (
               <InfoTooltip

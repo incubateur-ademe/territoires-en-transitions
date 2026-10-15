@@ -41,6 +41,8 @@ export const MesuresLieesModal = ({
       render={() => (
         <Field title={appLabels.mesuresDesReferentiels}>
           <MesuresReferentielsDropdown
+            dataTest="fiches.mesures-liees.mesures-dropdown"
+            linkedMesureIds={ficheMesureIds}
             values={editedMesureIds}
             onChange={({ values }) =>
               setEditedMesureIds((values as string[]) ?? [])

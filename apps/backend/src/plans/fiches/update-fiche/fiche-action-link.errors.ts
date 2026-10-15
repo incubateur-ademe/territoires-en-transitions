@@ -1,4 +1,8 @@
 import {
+  collectivitePreferencesSpecificErrors,
+  collectivitePreferencesTrpcErrorEntries,
+} from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.errors';
+import {
   referentielModeGuardSpecificErrors,
   referentielNotWritableTrpcErrorEntry,
 } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
@@ -13,6 +17,7 @@ const specificErrors = [
   'FICHE_COLLECTIVITE_MISMATCH',
   'INVALID_ACTION_ID',
   ...referentielModeGuardSpecificErrors,
+  ...collectivitePreferencesSpecificErrors,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -37,6 +42,7 @@ export const updateActionFichesErrorConfig: TrpcErrorHandlerConfig<SpecificError
         message: "L'identifiant d'action référentiel est invalide",
       },
       ...referentielNotWritableTrpcErrorEntry,
+      ...collectivitePreferencesTrpcErrorEntries,
     },
   };
 
