@@ -78,7 +78,7 @@ const TONE_PALETTE: Record<MatrixTone, { strong: string; soft: string }> = {
   error: { strong: colors.error[1], soft: colors.error[2] },
   info: { strong: colors.info[1], soft: colors.info[2] },
   grey: { strong: colors.grey[7], soft: colors.grey[2] },
-  light: { strong: colors.grey[4], soft: colors.grey[1] },
+  light: { strong: colors.grey[7], soft: colors.grey[1] },
 };
 
 const TITLE_POSITION: Record<
@@ -94,6 +94,7 @@ const TITLE_POSITION: Record<
 const LABEL_HEIGHT = 15;
 const LABEL_CHAR_WIDTH = 6;
 const POINT_SIZE = 14;
+const HOLLOW_POINT_HALO_SIZE = POINT_SIZE + 6;
 const SELECTION_OUTLINE_WIDTH = 2;
 const SELECTION_OUTLINE_SIZE = POINT_SIZE + 10;
 const DASHED_POINT_BORDER_WIDTH = 2;
@@ -117,6 +118,7 @@ const QUADRANT_TITLE_DISTANCE = 5;
 const QUADRANT_TITLE_CHAR_WIDTH = 8;
 const QUADRANT_TITLE_LINE_HEIGHT = 14;
 const TRANSPARENT = 'transparent';
+const WHITE = '#FFFFFF';
 const DESCRIPTION_SEPARATOR = ' · ';
 const SELECTION_OUTLINE_TONE: MatrixTone = 'default';
 
@@ -382,7 +384,7 @@ const toPointStyle = (point: MatrixPoint): PointStyle => {
   const color = toPointColor(point);
   if (isHollowPoint(point)) {
     return {
-      color: TRANSPARENT,
+      color: WHITE,
       borderColor: color,
       borderWidth: DASHED_POINT_BORDER_WIDTH,
       borderType: DASHED_POINT_PATTERN,
@@ -394,6 +396,27 @@ const toPointStyle = (point: MatrixPoint): PointStyle => {
     borderWidth: 0,
     borderType: 'solid',
   };
+};
+
+const buildHollowPointHalos = (
+  points: readonly MatrixPoint[]
+): ScatterSeriesOption[] => {
+  const hollowPoints = points.filter(isHollowPoint);
+  if (hollowPoints.length === 0) {
+    return [];
+  }
+  return [
+    {
+      type: 'scatter',
+      silent: true,
+      z: 1,
+      symbolSize: HOLLOW_POINT_HALO_SIZE,
+      data: hollowPoints.map((point) => ({
+        value: [point.x, point.y],
+        itemStyle: { color: WHITE },
+      })),
+    },
+  ];
 };
 
 const buildSelectedPointOutline = ({
@@ -508,6 +531,7 @@ const buildOption = ({
         data: buildDividers({ quadrants, bounds }),
       },
     },
+    ...buildHollowPointHalos(points),
     ...buildSelectedPointOutline({ points, selectedPointId }),
   ],
 });
@@ -901,6 +925,7 @@ const MatrixChart = ({
 
 export {
   buildDividers,
+  buildHollowPointHalos,
   buildSelectedPointOutline,
   MatrixChart,
   POINT_SIZE,
