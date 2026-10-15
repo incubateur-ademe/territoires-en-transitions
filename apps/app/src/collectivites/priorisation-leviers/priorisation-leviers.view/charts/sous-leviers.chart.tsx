@@ -74,6 +74,7 @@ export const SousLeviersChart = ({
           data={bars}
           statusScale={STATUS_SCALE}
           formatValue={formatValue}
+          tooltipHint={appLabels.cliquerPourVoirLesActions}
           selectedBarId={toSelectedSousLevierId({
             levierId: selectedLevierId,
             categorie: selectedCategorie,

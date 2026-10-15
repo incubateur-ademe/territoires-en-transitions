@@ -22,6 +22,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
+import { TooltipHint } from '../tooltip-hint';
 import { computeBounds } from './compute-bounds';
 import { MATRIX_GRID } from './matrix-grid';
 import { type AxisProps, toAxisValueLabel } from './axis';
@@ -158,18 +159,14 @@ const toDescriptionLines = (
   typeof description === 'string' ? [description] : description;
 
 const PointTooltip = ({ point }: { point: MatrixPoint }): JSX.Element => (
-  <div className="flex max-w-64 flex-col gap-1 whitespace-normal font-sans">
+  <div className="flex max-w-64 flex-col items-start gap-1 whitespace-normal font-sans">
     <p className="m-0 text-sm font-bold text-primary-9">{point.label}</p>
     {toDescriptionLines(point.description).map((line) => (
       <p key={line} className="m-0 text-xs font-normal leading-5 text-grey-8">
         {line}
       </p>
     ))}
-    {point.hint !== undefined ? (
-      <p className="m-0 mt-1 text-xs font-normal italic text-grey-7">
-        {point.hint}
-      </p>
-    ) : null}
+    {point.hint !== undefined ? <TooltipHint hint={point.hint} /> : null}
   </div>
 );
 
