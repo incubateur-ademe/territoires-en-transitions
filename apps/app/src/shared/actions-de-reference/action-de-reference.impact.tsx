@@ -8,23 +8,7 @@ import type { ActionDeReference } from '@tet/domain/shared';
 import { VisibleWhen } from '@tet/ui';
 import { JSX, useMemo } from 'react';
 import { ActionDeReferenceInfoItem } from './action-de-reference-info.item';
-import { type LevierImpact, toLevierImpacts } from './to-levier-impacts';
-
-const toImpactText = ({
-  impact,
-  hasSeveralLeviers,
-}: {
-  impact: LevierImpact;
-  hasSeveralLeviers: boolean;
-}): string => {
-  if (hasSeveralLeviers) {
-    return appLabels.actionDeReferenceImpactValeurDuLevier({
-      levierNom: impact.levierNom,
-      score: impact.score,
-    });
-  }
-  return appLabels.actionDeReferenceImpactValeur(impact.score);
-};
+import { toLevierImpactLines, toLevierImpacts } from './to-levier-impacts';
 
 const ActionDeReferenceImpactInfo = ({
   action,
@@ -34,20 +18,24 @@ const ActionDeReferenceImpactInfo = ({
   const { collectiviteId } = useCurrentCollectivite();
   const leviersQuery = useLeviersPriorisation(collectiviteId);
   const { places } = useLeviersPlaces(leviersQuery);
-  const impacts = useMemo(
-    () => toLevierImpacts({ places, levierIds: action.leviers }),
+  const lines = useMemo(
+    () =>
+      toLevierImpactLines({
+        impacts: toLevierImpacts({ places, levierIds: action.leviers }),
+        actionLevierCount: action.leviers.length,
+      }),
     [places, action.leviers]
   );
 
   return (
-    <VisibleWhen condition={impacts.length > 0}>
+    <VisibleWhen condition={lines.length > 0}>
       <ActionDeReferenceInfoItem
         icon="line-chart-line"
         label={appLabels.actionDeReferenceImpactInfo}
       >
-        {impacts.map((impact) => (
-          <span key={impact.levierId} className="block">
-            {toImpactText({ impact, hasSeveralLeviers: impacts.length > 1 })}
+        {lines.map(({ levierId, text }) => (
+          <span key={levierId} className="block">
+            {text}
           </span>
         ))}
       </ActionDeReferenceInfoItem>

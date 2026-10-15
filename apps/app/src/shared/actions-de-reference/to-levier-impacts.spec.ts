@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toLevierImpacts } from './to-levier-impacts';
+import { toLevierImpactLines, toLevierImpacts } from './to-levier-impacts';
 
 const PLACES = [
   { levierId: 'covoiturage', potentielReduction: 7 },
@@ -35,5 +35,38 @@ describe('toLevierImpacts', () => {
         levierIds: ['covoiturage'],
       })
     ).toEqual([]);
+  });
+});
+
+describe('toLevierImpactLines', () => {
+  const COVOITURAGE_IMPACT = {
+    levierId: 'covoiturage',
+    levierNom: 'Covoiturage',
+    score: 7,
+  } as const;
+
+  it("n'ajoute pas le nom du levier quand l'action n'en porte qu'un", () => {
+    expect(
+      toLevierImpactLines({
+        impacts: [COVOITURAGE_IMPACT],
+        actionLevierCount: 1,
+      })
+    ).toEqual([
+      { levierId: 'covoiturage', text: '7/100 du territoire (estimé)' },
+    ]);
+  });
+
+  it("ajoute le nom du levier dès que l'action en porte plusieurs, même si un seul a un impact connu", () => {
+    expect(
+      toLevierImpactLines({
+        impacts: [COVOITURAGE_IMPACT],
+        actionLevierCount: 2,
+      })
+    ).toEqual([
+      {
+        levierId: 'covoiturage',
+        text: 'Covoiturage : 7/100 du territoire (estimé)',
+      },
+    ]);
   });
 });
