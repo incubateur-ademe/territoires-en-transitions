@@ -6,8 +6,7 @@ import {
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 
-const MESURE_ID_REGEXP =
-  /(^((cae?|cr|ca|c|eci?|ec|e)(\s*\d+)*|\d+)(\s|\.\d*|[\s\d.])*$)/;
+const MESURE_ID_REGEXP = /^(?:c(?:ae?|r)?|e(?:ci?)?|\d)[\s\d.]*$/;
 
 /** Référentiels dans lesquels la collectivité peut créer de nouveaux liens. */
 export function listWritableReferentielIds(
