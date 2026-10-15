@@ -22,6 +22,19 @@ const toSousLevierId = (
   categorie: CategorieAction
 ): SousLevierId => `${levierId}/${categorie}`;
 
+export const toSelectedSousLevierId = ({
+  levierId,
+  categorie,
+}: {
+  levierId?: LevierId;
+  categorie?: CategorieAction;
+}): SousLevierId | undefined => {
+  if (levierId === undefined || categorie === undefined) {
+    return undefined;
+  }
+  return toSousLevierId(levierId, categorie);
+};
+
 export const toSousLevierBars = (
   places: LevierPlace[],
   preselectedActions: readonly ActionDeReference[]
