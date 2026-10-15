@@ -43,7 +43,10 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const canEditLinks = canEditFiches && isReferentielWritable;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div
+      data-test="referentiels.action.fiches-liees"
+      className="flex flex-col gap-8"
+    >
       <Field title={capitalize(appLabels.actionLiee({ plural: true }))} small>
         {isReferentielWritable ? (
           <FichesActionsDropdown
