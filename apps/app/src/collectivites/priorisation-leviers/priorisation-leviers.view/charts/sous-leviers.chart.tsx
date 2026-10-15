@@ -3,19 +3,28 @@ import { Caption } from '@/app/ui/charts/matrix/caption';
 import type { StatusScale } from '@/app/ui/charts/status-bar/status-bar';
 import { StatusBarChart } from '@/app/ui/charts/status-bar/status-bar.chart';
 import { StatusBarDataTable } from '@/app/ui/charts/status-bar/status-bar.data-table';
-import { ActionDeReference } from '@tet/domain/shared';
+import {
+  ActionDeReference,
+  CategorieAction,
+  LevierId,
+} from '@tet/domain/shared';
 import { preset } from '@tet/ui';
 import { sumBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
 import { LevierPlace } from '../data/to-matrix-points';
 import { SelectLevier } from '../select-levier';
 import { toMobilisationLabel } from './mobilisation-level';
-import { toSousLevierBars } from './to-sous-levier-bars';
+import {
+  toSelectedSousLevierId,
+  toSousLevierBars,
+} from './to-sous-levier-bars';
 import { useFormatImpactPotentiel } from './use-format-impact-potentiel';
 
 type SousLeviersChartProps = {
   places: LevierPlace[];
   preselectedActions: readonly ActionDeReference[];
+  selectedLevierId?: LevierId;
+  selectedCategorie?: CategorieAction;
   onLevierSelected: SelectLevier;
 };
 
@@ -39,6 +48,8 @@ const DATA_TABLE_LABELS = {
 export const SousLeviersChart = ({
   places,
   preselectedActions,
+  selectedLevierId,
+  selectedCategorie,
   onLevierSelected,
 }: SousLeviersChartProps): JSX.Element => {
   const bars = useMemo(
@@ -63,6 +74,10 @@ export const SousLeviersChart = ({
           data={bars}
           statusScale={STATUS_SCALE}
           formatValue={formatValue}
+          selectedBarId={toSelectedSousLevierId({
+            levierId: selectedLevierId,
+            categorie: selectedCategorie,
+          })}
           onBarSelected={selectBar}
         >
           <Caption>{appLabels.sousLeviersLegende}</Caption>

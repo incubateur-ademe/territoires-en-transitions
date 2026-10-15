@@ -2,7 +2,10 @@ import { actionDeReferenceIdSchema } from '@tet/domain/shared';
 import { describe, expect, it } from 'vitest';
 import { NO_MOBILISATION } from '../data/to-leviers-priorisation';
 import { LevierPlace } from '../data/to-matrix-points';
-import { toSousLevierBars } from './to-sous-levier-bars';
+import {
+  toSelectedSousLevierId,
+  toSousLevierBars,
+} from './to-sous-levier-bars';
 
 const toPlace = (
   overrides: Partial<LevierPlace> & Pick<LevierPlace, 'levierId'>
@@ -150,5 +153,27 @@ describe('toSousLevierBars', () => {
       'production_industrielle/gouvernance': 'Ajoutée',
       'production_industrielle/sensibilisation': 'Non mobilisé',
     });
+  });
+});
+
+describe('toSelectedSousLevierId', () => {
+  it('désigne la barre du couple levier × catégorie ouvert dans le volet', () => {
+    const barIds = toSousLevierBars(
+      [toPlace({ levierId: 'production_industrielle' })],
+      []
+    ).map(({ id }) => id);
+
+    const selectedId = toSelectedSousLevierId({
+      levierId: 'production_industrielle',
+      categorie: 'gouvernance',
+    });
+
+    expect(barIds).toContain(selectedId);
+  });
+
+  it('ne désigne aucune barre quand le levier est ouvert sans catégorie', () => {
+    expect(
+      toSelectedSousLevierId({ levierId: 'production_industrielle' })
+    ).toBeUndefined();
   });
 });

@@ -89,7 +89,11 @@ type BreakdownViewProps = Pick<
 
 type SousLeviersViewProps = Pick<
   LeviersSectionProps,
-  'places' | 'preselectedActions' | 'onLevierSelected'
+  | 'places'
+  | 'preselectedActions'
+  | 'selectedLevierId'
+  | 'selectedCategorie'
+  | 'onLevierSelected'
 >;
 
 type PriorisationBoardProps = {
@@ -204,11 +208,15 @@ const BreakdownView = ({
 const SousLeviersView = ({
   places,
   preselectedActions,
+  selectedLevierId,
+  selectedCategorie,
   onLevierSelected,
 }: SousLeviersViewProps): JSX.Element => (
   <SousLeviersChart
     places={places}
     preselectedActions={preselectedActions}
+    selectedLevierId={selectedLevierId}
+    selectedCategorie={selectedCategorie}
     onLevierSelected={onLevierSelected}
   />
 );
