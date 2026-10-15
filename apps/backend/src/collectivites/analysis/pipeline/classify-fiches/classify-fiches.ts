@@ -12,6 +12,7 @@ import {
 import { FicheToClassify, renderFichesText } from './render-fiches-text';
 
 const CLASSIFICATION_THINKING_BUDGET = 512;
+const CLASSIFICATION_TIMEOUT_MS = 120_000;
 
 export const MAX_FICHES_PER_BATCH = 50;
 
@@ -52,6 +53,7 @@ export const classifyFiches = async (
     systemInstruction: enjeu.systemInstruction,
     schema: enjeu.responseSchema,
     thinkingBudget: CLASSIFICATION_THINKING_BUDGET,
+    timeoutMs: CLASSIFICATION_TIMEOUT_MS,
     signal,
   });
   if (!completion.success) {

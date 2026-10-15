@@ -25,6 +25,7 @@ import {
 } from './volet-categories';
 
 export const MOBILISATION_THINKING_BUDGET = 512;
+const MOBILISATION_TIMEOUT_MS = 120_000;
 
 export type ScoredVolet = {
   categorie: CategorieAction;
@@ -76,6 +77,7 @@ export const calculateMobilisation = async (
     systemInstruction: MOBILISATION_SYSTEM_INSTRUCTION,
     schema: mobilisationResponseSchema,
     thinkingBudget: MOBILISATION_THINKING_BUDGET,
+    timeoutMs: MOBILISATION_TIMEOUT_MS,
   });
   if (!completion.success) {
     return completion;

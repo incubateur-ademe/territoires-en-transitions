@@ -133,6 +133,45 @@ describe('LlmService', () => {
     expect(observer.events[1].usage).toEqual(usage);
   });
 
+  it('abandonne après 3 tentatives un appel qui expire sans statut HTTP', async () => {
+    vi.useFakeTimers();
+    const repository = new FakeRepository();
+    repository.complete = vi
+      .fn()
+      .mockResolvedValue(failure({ kind: 'api_error', httpStatus: null }));
+    const service = new LlmService(repository);
+
+    const pending = service.generateStructured({
+      prompt: 'p',
+      schema: z.object({}),
+    });
+    await vi.runAllTimersAsync();
+    const result = await pending;
+    vi.useRealTimers();
+
+    expect(result).toEqual(failure({ kind: 'api_error', httpStatus: null }));
+    expect(repository.complete).toHaveBeenCalledTimes(3);
+  });
+
+  it('réessaie jusqu’à 7 fois un 503', async () => {
+    vi.useFakeTimers();
+    const repository = new FakeRepository();
+    repository.complete = vi
+      .fn()
+      .mockResolvedValue(failure({ kind: 'rate_limited' }));
+    const service = new LlmService(repository);
+
+    const pending = service.generateStructured({
+      prompt: 'p',
+      schema: z.object({}),
+    });
+    await vi.runAllTimersAsync();
+    await pending;
+    vi.useRealTimers();
+
+    expect(repository.complete).toHaveBeenCalledTimes(7);
+  });
+
   it("signale à l'observateur une réponse tronquée, avec son usage", async () => {
     const observer = new CollectingObserver();
     const service = new LlmService(

@@ -66,7 +66,7 @@ export class GeminiRepository extends LlmRepository {
     }
 
     this.logger.log(
-      `Gemini call (model ${this.model}, prompt ${request.prompt.length} chars, instruction ${request.systemInstruction?.length ?? 0} chars)`
+      `Gemini call (model ${this.model}, prompt ${request.prompt.length} chars, instruction ${request.systemInstruction?.length ?? 0} chars, timeout ${request.timeoutMs ?? CALL_TIMEOUT_MS} ms)`
     );
 
     try {
@@ -87,7 +87,7 @@ export class GeminiRepository extends LlmRepository {
             request.thinkingBudget === undefined
               ? undefined
               : { thinkingBudget: request.thinkingBudget },
-          httpOptions: { timeout: CALL_TIMEOUT_MS },
+          httpOptions: { timeout: request.timeoutMs ?? CALL_TIMEOUT_MS },
           abortSignal: request.signal,
         },
       });

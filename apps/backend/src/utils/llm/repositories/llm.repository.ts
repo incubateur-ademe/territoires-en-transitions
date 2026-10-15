@@ -18,6 +18,7 @@ export type LlmCompletionRequest = {
   temperature?: number;
   maxOutputTokens?: number;
   thinkingBudget?: number;
+  timeoutMs?: number;
   /** Pour une tâche mécanique (tri, rattachement), où raisonner ne sert à rien. */
   reasoningEffort?: LlmReasoningEffort;
   signal?: AbortSignal;
