@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildDividers,
-  buildSelectedPointPulse,
+  buildSelectedPointOutline,
   POINT_SIZE,
   toPointStyle,
   toQuadrantLabel,
@@ -19,32 +19,50 @@ const NON_PERTINENT_POINT: MatrixPoint = {
 };
 
 describe('point non pertinent', () => {
-  it('reste un cercle creux en pointillés, de la même couleur, une fois sélectionné', () => {
-    expect(
-      toPointStyle({ point: NON_PERTINENT_POINT, isSelected: true })
-    ).toMatchObject({
+  it('est un cercle creux de la couleur du ton non pertinent', () => {
+    expect(toPointStyle(NON_PERTINENT_POINT)).toMatchObject({
       color: 'transparent',
       borderColor: toToneColor('light'),
     });
   });
 
   it('découpe son contour en cinq pointillés', () => {
-    const { borderType } = toPointStyle({
-      point: NON_PERTINENT_POINT,
-      isSelected: false,
-    });
+    const { borderType } = toPointStyle(NON_PERTINENT_POINT);
     const [dash, gap] = Array.isArray(borderType) ? borderType : [];
 
     expect((dash + gap) * 5).toBeCloseTo(Math.PI * POINT_SIZE);
   });
+});
 
-  it("n'est pas rempli par l'impulsion de sélection", () => {
+describe('buildSelectedPointOutline', () => {
+  it('trace un contour primary vide autour du point sélectionné, sans le remplir', () => {
     expect(
-      buildSelectedPointPulse({
+      buildSelectedPointOutline({
         points: [NON_PERTINENT_POINT],
         selectedPointId: NON_PERTINENT_POINT.id,
       })
-    ).toMatchObject([{ data: [{ itemStyle: { color: 'transparent' } }] }]);
+    ).toMatchObject([
+      {
+        data: [
+          {
+            value: [NON_PERTINENT_POINT.x, NON_PERTINENT_POINT.y],
+            itemStyle: {
+              color: 'transparent',
+              borderColor: toToneColor('default'),
+            },
+          },
+        ],
+      },
+    ]);
+  });
+
+  it("ne trace rien quand aucun point n'est sélectionné", () => {
+    expect(
+      buildSelectedPointOutline({
+        points: [NON_PERTINENT_POINT],
+        selectedPointId: undefined,
+      })
+    ).toEqual([]);
   });
 });
 

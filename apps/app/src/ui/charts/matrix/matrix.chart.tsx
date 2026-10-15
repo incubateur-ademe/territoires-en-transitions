@@ -1,9 +1,6 @@
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
-import type {
-  EffectScatterSeriesOption,
-  ScatterSeriesOption,
-} from 'echarts/charts';
+import type { ScatterSeriesOption } from 'echarts/charts';
 import { getInstanceByDom } from 'echarts/core';
 import { uniq } from 'es-toolkit';
 import {
@@ -97,7 +94,8 @@ const TITLE_POSITION: Record<
 const LABEL_HEIGHT = 15;
 const LABEL_CHAR_WIDTH = 6;
 const POINT_SIZE = 14;
-const SELECTION_RING_WIDTH = 4;
+const SELECTION_OUTLINE_WIDTH = 2;
+const SELECTION_OUTLINE_SIZE = POINT_SIZE + 10;
 const DASHED_POINT_BORDER_WIDTH = 2;
 const DASHED_POINT_DASH_COUNT = 5;
 const DASHED_POINT_DASH_SHARE = 0.6;
@@ -120,7 +118,7 @@ const QUADRANT_TITLE_CHAR_WIDTH = 8;
 const QUADRANT_TITLE_LINE_HEIGHT = 14;
 const TRANSPARENT = 'transparent';
 const DESCRIPTION_SEPARATOR = ' · ';
-const PULSE_RIPPLE = { brushType: 'stroke', scale: 2.5, period: 2 } as const;
+const SELECTION_OUTLINE_TONE: MatrixTone = 'default';
 
 const resizeChartIn = (plot: HTMLDivElement): void => {
   const chartContainer = plot.firstElementChild;
@@ -380,13 +378,7 @@ const toToneColor = (tone: MatrixTone): string => TONE_PALETTE[tone].strong;
 
 const isHollowPoint = (point: MatrixPoint): boolean => point.tone === 'light';
 
-const toPointStyle = ({
-  point,
-  isSelected,
-}: {
-  point: MatrixPoint;
-  isSelected: boolean;
-}): PointStyle => {
+const toPointStyle = (point: MatrixPoint): PointStyle => {
   const color = toPointColor(point);
   if (isHollowPoint(point)) {
     return {
@@ -398,37 +390,36 @@ const toPointStyle = ({
   }
   return {
     color,
-    borderColor: isSelected ? colors.grey[5] : TRANSPARENT,
-    borderWidth: isSelected ? SELECTION_RING_WIDTH : 0,
+    borderColor: TRANSPARENT,
+    borderWidth: 0,
     borderType: 'solid',
   };
 };
 
-const buildSelectedPointPulse = ({
+const buildSelectedPointOutline = ({
   points,
   selectedPointId,
 }: {
   points: readonly MatrixPoint[];
   selectedPointId: string | undefined;
-}): EffectScatterSeriesOption[] => {
+}): ScatterSeriesOption[] => {
   const selectedPoint = points.find((point) => point.id === selectedPointId);
   if (selectedPoint === undefined) {
     return [];
   }
-  const pointColor = toPointColor(selectedPoint);
   return [
     {
-      type: 'effectScatter',
+      type: 'scatter',
       silent: true,
       z: 1,
-      symbolSize: POINT_SIZE,
-      showEffectOn: 'render',
-      rippleEffect: { ...PULSE_RIPPLE, color: pointColor },
+      symbolSize: SELECTION_OUTLINE_SIZE,
       data: [
         {
           value: [selectedPoint.x, selectedPoint.y],
           itemStyle: {
-            color: isHollowPoint(selectedPoint) ? TRANSPARENT : pointColor,
+            color: TRANSPARENT,
+            borderColor: toToneColor(SELECTION_OUTLINE_TONE),
+            borderWidth: SELECTION_OUTLINE_WIDTH,
           },
         },
       ],
@@ -481,17 +472,12 @@ const buildOption = ({
   }),
   series: [
     {
-      type: 'effectScatter',
+      type: 'scatter',
       symbolSize: POINT_SIZE,
-      showEffectOn: 'emphasis',
-      rippleEffect: PULSE_RIPPLE,
       data: points.map((point, dataIndex) => ({
         name: point.label,
         value: [point.x, point.y],
-        itemStyle: toPointStyle({
-          point,
-          isSelected: point.id === selectedPointId,
-        }),
+        itemStyle: toPointStyle(point),
         label: { show: placements[dataIndex] !== undefined },
       })),
       label: {
@@ -522,7 +508,7 @@ const buildOption = ({
         data: buildDividers({ quadrants, bounds }),
       },
     },
-    ...buildSelectedPointPulse({ points, selectedPointId }),
+    ...buildSelectedPointOutline({ points, selectedPointId }),
   ],
 });
 
@@ -915,7 +901,7 @@ const MatrixChart = ({
 
 export {
   buildDividers,
-  buildSelectedPointPulse,
+  buildSelectedPointOutline,
   MatrixChart,
   POINT_SIZE,
   toPointStyle,
