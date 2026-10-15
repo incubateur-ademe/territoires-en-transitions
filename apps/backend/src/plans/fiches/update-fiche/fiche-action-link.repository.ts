@@ -54,6 +54,26 @@ export class FicheActionLinkRepository {
     );
   }
 
+  async listFicheIdsLinkedToAction(
+    { actionId, collectiviteId }: { actionId: string; collectiviteId: number },
+    tx?: Transaction
+  ): Promise<number[]> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ ficheId: ficheActionActionTable.ficheId })
+      .from(ficheActionActionTable)
+      .innerJoin(
+        ficheActionTable,
+        eq(ficheActionActionTable.ficheId, ficheActionTable.id)
+      )
+      .where(
+        and(
+          eq(ficheActionTable.collectiviteId, collectiviteId),
+          eq(ficheActionActionTable.actionId, actionId)
+        )
+      );
+    return rows.flatMap((row) => (row.ficheId != null ? [row.ficheId] : []));
+  }
+
   async findFichesByIds(
     ficheIds: number[],
     tx?: Transaction
@@ -70,38 +90,38 @@ export class FicheActionLinkRepository {
       .where(inArray(ficheActionTable.id, ficheIds));
   }
 
-  async replaceLinksForActionInCollectivite(
+  /** Sérialise les mises à jour des liens d'une même action. */
+  async lockActionLinks(actionId: string, tx: Transaction): Promise<void> {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${actionId}))`);
+  }
+
+  async updateLinksForAction(
     {
       actionId,
-      collectiviteId,
-      ficheIds,
+      addedFicheIds,
+      removedFicheIds,
     }: {
       actionId: string;
-      collectiviteId: number;
-      ficheIds: number[];
+      addedFicheIds: number[];
+      removedFicheIds: number[];
     },
     tx: Transaction
   ): Promise<void> {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${actionId}))`);
+    if (removedFicheIds.length > 0) {
+      await tx
+        .delete(ficheActionActionTable)
+        .where(
+          and(
+            eq(ficheActionActionTable.actionId, actionId),
+            inArray(ficheActionActionTable.ficheId, removedFicheIds)
+          )
+        );
+    }
 
-    const fichesInCollectivite = tx
-      .select({ id: ficheActionTable.id })
-      .from(ficheActionTable)
-      .where(eq(ficheActionTable.collectiviteId, collectiviteId));
-
-    await tx
-      .delete(ficheActionActionTable)
-      .where(
-        and(
-          inArray(ficheActionActionTable.ficheId, fichesInCollectivite),
-          eq(ficheActionActionTable.actionId, actionId)
-        )
-      );
-
-    if (ficheIds.length > 0) {
+    if (addedFicheIds.length > 0) {
       await tx
         .insert(ficheActionActionTable)
-        .values(ficheIds.map((ficheId) => ({ ficheId, actionId })))
+        .values(addedFicheIds.map((ficheId) => ({ ficheId, actionId })))
         .onConflictDoNothing();
     }
   }

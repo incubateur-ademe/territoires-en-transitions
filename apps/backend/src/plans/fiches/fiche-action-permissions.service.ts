@@ -115,7 +115,8 @@ export default class FicheActionPermissionsService {
     fiche: Pick<Fiche, 'id' | 'collectiviteId'>,
     operation: NonReferentielPermissionOperation,
     tokenInfo: AuthUser,
-    tx?: Transaction
+    tx?: Transaction,
+    doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
     const sharings = await this.shareFicheService.listFicheSharings(
       fiche.id,
@@ -137,7 +138,7 @@ export default class FicheActionPermissionsService {
       ficheWithSharings,
       operation,
       tokenInfo,
-      undefined,
+      doNotThrow,
       tx
     );
   }
@@ -360,7 +361,8 @@ export default class FicheActionPermissionsService {
       fiche,
       'plans.fiches.update',
       user,
-      tx
+      tx,
+      doNotThrow
     );
   }
 }

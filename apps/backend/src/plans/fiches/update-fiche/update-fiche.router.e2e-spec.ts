@@ -1,4 +1,6 @@
 import { INestApplication } from '@nestjs/common';
+import { REFERENTIEL_NOT_WRITABLE_MESSAGE } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import { CollectiviteReferentielModeService } from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
@@ -20,6 +22,10 @@ import {
   setUserCollectiviteRole,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import {
+  CollectiviteReferentielPreferences,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
@@ -1590,6 +1596,122 @@ describe('UpdateFicheService', () => {
     await db.db
       .delete(instanceGouvernanceTagTable)
       .where(eq(instanceGouvernanceTagTable.id, tag.id));
+  });
+
+  describe('Mesures liées et mode des référentiels', () => {
+    const setReferentielModes = async (
+      referentiels: CollectiviteReferentielPreferences
+    ) => {
+      await app
+        .get(CollectiviteReferentielModeService)
+        .updateReferentielPreferences(collectiviteId, referentiels);
+    };
+
+    const ficheBasculeeVersTe = async () => {
+      await updateFiche({ mesures: [{ id: 'cae_1.1.1' }] });
+      await setReferentielModes({
+        cae: { display: true, mode: 'archived' },
+        eci: { display: false, mode: 'archived' },
+        te: { display: true, mode: 'write' },
+      });
+      onTestFinished(async () => {
+        await setReferentielModes(defaultCollectivitePreferences.referentiels);
+        await db.db
+          .delete(ficheActionActionTable)
+          .where(eq(ficheActionActionTable.ficheId, ficheId));
+      });
+    };
+
+    test("Ajoute une mesure d'un référentiel modifiable en conservant un lien vers un référentiel archivé", async () => {
+      await ficheBasculeeVersTe();
+
+      const fiche = await updateFiche({
+        mesures: [{ id: 'cae_1.1.1' }, { id: 'te_1.1.1' }],
+      });
+
+      expect(fiche.mesures?.map((m) => m.id)).toEqual(
+        expect.arrayContaining(['cae_1.1.1', 'te_1.1.1'])
+      );
+    });
+
+    test("Retire un lien vers une mesure d'un référentiel archivé", async () => {
+      await ficheBasculeeVersTe();
+
+      const fiche = await updateFiche({ mesures: [] });
+
+      expect(fiche.mesures ?? []).toHaveLength(0);
+    });
+
+    test("Refuse l'ajout d'une mesure d'un référentiel archivé", async () => {
+      await ficheBasculeeVersTe();
+
+      await expect(
+        updateFiche({ mesures: [{ id: 'cae_1.1.1' }, { id: 'cae_1.1.2' }] })
+      ).rejects.toThrow(REFERENTIEL_NOT_WRITABLE_MESSAGE);
+    });
+
+    test("Refuse l'ajout d'une mesure d'un référentiel en lecture seule", async () => {
+      // TE est en lecture seule dans les préférences par défaut
+      await expect(
+        updateFiche({ mesures: [{ id: 'te_1.1.1' }] })
+      ).rejects.toThrow(REFERENTIEL_NOT_WRITABLE_MESSAGE);
+    });
+
+    test('Un membre en lecture ne peut pas lier de mesure', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId,
+        role: CollectiviteRole.LECTURE,
+      });
+      onTestFinished(cleanup);
+      const lectureCaller = fichesRouter.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+
+      await expect(
+        lectureCaller.update({
+          ficheId,
+          ficheFields: { mesures: [{ id: 'cae_1.1.1' }] },
+        })
+      ).rejects.toThrow('Droits insuffisants');
+    });
+
+    test('Un pilote en édition limitée peut lier une mesure à sa fiche', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      });
+      await db.db.insert(ficheActionPiloteTable).values({
+        ficheId,
+        userId: user.id,
+        createdBy: testUser.id,
+      });
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionActionTable)
+          .where(eq(ficheActionActionTable.ficheId, ficheId));
+        await db.db
+          .delete(ficheActionPiloteTable)
+          .where(eq(ficheActionPiloteTable.userId, user.id));
+        // La fiche référence son dernier auteur : on le réattribue avant de
+        // supprimer l'utilisateur.
+        await db.db
+          .update(ficheActionTable)
+          .set({ modifiedBy: testUser.id })
+          .where(eq(ficheActionTable.id, ficheId));
+        await cleanup();
+      });
+
+      const piloteCaller = fichesRouter.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+      await piloteCaller.update({
+        ficheId,
+        ficheFields: { mesures: [{ id: 'cae_1.1.1' }] },
+      });
+
+      const fiche = await piloteCaller.get({ id: ficheId });
+      expect(fiche.mesures?.map((m) => m.id)).toEqual(['cae_1.1.1']);
+    });
   });
 
   async function updateFiche(data: UpdateFicheInput) {

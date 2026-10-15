@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { CollectiviteReferentielModeService } from '@tet/backend/collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ficheActionLienTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-lien.table';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -16,7 +16,6 @@ import {
   getReferentielIdFromActionId,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
@@ -37,7 +36,7 @@ export default class UpdateFicheService {
     private readonly notificationsFicheService: NotifyPiloteService,
     private readonly ficheActionRepository: FicheActionRepository,
     private readonly transactionManager: TransactionManager,
-    private readonly permissionService: PermissionService,
+    private readonly collectiviteReferentielModeService: CollectiviteReferentielModeService,
     private readonly databaseService: DatabaseService
   ) {}
 
@@ -74,7 +73,12 @@ export default class UpdateFicheService {
     }
   }
 
-  private async assertMesuresWritable(
+  /**
+   * Retirer un lien vers une mesure reste toujours possible ; seul l'ajout
+   * exige que le référentiel de la mesure soit modifiable (mode `write`).
+   * Le droit de l'utilisateur est couvert par `canWriteFiche`.
+   */
+  private async assertAddedMesuresWritable(
     ficheId: number,
     mesures: Array<{ id: string }>,
     user: AuthenticatedUser,
@@ -98,12 +102,15 @@ export default class UpdateFicheService {
       return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
     }
 
-    const oldActionIds = (existingFiche.data.mesures ?? []).map((m) => m.id);
-    const newActionIds = mesures.map((m) => m.id);
-    const affectedActionIds = [...new Set([...oldActionIds, ...newActionIds])];
+    const oldActionIds = new Set(
+      (existingFiche.data.mesures ?? []).map((m) => m.id)
+    );
+    const addedActionIds = mesures
+      .map((m) => m.id)
+      .filter((id) => !oldActionIds.has(id));
 
     const referentielIds = new Set<ReferentielId>();
-    for (const actionId of affectedActionIds) {
+    for (const actionId of addedActionIds) {
       try {
         referentielIds.add(getReferentielIdFromActionId(actionId));
       } catch {
@@ -111,20 +118,11 @@ export default class UpdateFicheService {
       }
     }
 
-    for (const referentielId of referentielIds) {
-      const permissionResult = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['REFERENTIELS.MUTATE'],
-        ResourceType.REFERENTIEL,
-        { collectiviteId: ficheRow.collectiviteId, referentielId },
-        tx
-      );
-      if (!permissionResult.success) {
-        return failure(permissionResult.error);
-      }
-    }
-
-    return success(undefined);
+    return this.collectiviteReferentielModeService.assertReferentielsWritable(
+      ficheRow.collectiviteId,
+      [...referentielIds],
+      tx
+    );
   }
 
   async updateFiche({
@@ -153,7 +151,7 @@ export default class UpdateFicheService {
     }
 
     if (ficheFields.mesures !== undefined) {
-      const mesuresGuardResult = await this.assertMesuresWritable(
+      const mesuresGuardResult = await this.assertAddedMesuresWritable(
         ficheId,
         ficheFields.mesures ?? [],
         user,
