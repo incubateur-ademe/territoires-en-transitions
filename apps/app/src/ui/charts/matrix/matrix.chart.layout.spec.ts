@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildDividers,
+  buildHollowPointHalos,
   buildSelectedPointOutline,
   POINT_SIZE,
   toPointStyle,
@@ -31,6 +32,37 @@ describe('point non pertinent', () => {
     const [dash, gap] = Array.isArray(borderType) ? borderType : [];
 
     expect((dash + gap) * 5).toBeCloseTo(Math.PI * POINT_SIZE);
+  });
+});
+
+describe('buildHollowPointHalos', () => {
+  const PERTINENT_POINT: MatrixPoint = {
+    ...NON_PERTINENT_POINT,
+    id: 'pertinent',
+    tone: 'grey',
+    x: 60,
+    y: 80,
+  };
+
+  it('pose un fond blanc plus large que le point sous chaque point non pertinent seulement', () => {
+    const [series] = buildHollowPointHalos([
+      NON_PERTINENT_POINT,
+      PERTINENT_POINT,
+    ]);
+
+    expect(series).toMatchObject({
+      symbolSize: POINT_SIZE + 6,
+      data: [
+        {
+          value: [NON_PERTINENT_POINT.x, NON_PERTINENT_POINT.y],
+          itemStyle: { color: '#FFFFFF' },
+        },
+      ],
+    });
+  });
+
+  it("ne trace rien quand aucun point n'est non pertinent", () => {
+    expect(buildHollowPointHalos([PERTINENT_POINT])).toEqual([]);
   });
 });
 

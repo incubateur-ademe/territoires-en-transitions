@@ -94,6 +94,7 @@ const TITLE_POSITION: Record<
 const LABEL_HEIGHT = 15;
 const LABEL_CHAR_WIDTH = 6;
 const POINT_SIZE = 14;
+const HOLLOW_POINT_HALO_SIZE = POINT_SIZE + 6;
 const SELECTION_OUTLINE_WIDTH = 2;
 const SELECTION_OUTLINE_SIZE = POINT_SIZE + 10;
 const DASHED_POINT_BORDER_WIDTH = 2;
@@ -397,6 +398,27 @@ const toPointStyle = (point: MatrixPoint): PointStyle => {
   };
 };
 
+const buildHollowPointHalos = (
+  points: readonly MatrixPoint[]
+): ScatterSeriesOption[] => {
+  const hollowPoints = points.filter(isHollowPoint);
+  if (hollowPoints.length === 0) {
+    return [];
+  }
+  return [
+    {
+      type: 'scatter',
+      silent: true,
+      z: 1,
+      symbolSize: HOLLOW_POINT_HALO_SIZE,
+      data: hollowPoints.map((point) => ({
+        value: [point.x, point.y],
+        itemStyle: { color: WHITE },
+      })),
+    },
+  ];
+};
+
 const buildSelectedPointOutline = ({
   points,
   selectedPointId,
@@ -509,6 +531,7 @@ const buildOption = ({
         data: buildDividers({ quadrants, bounds }),
       },
     },
+    ...buildHollowPointHalos(points),
     ...buildSelectedPointOutline({ points, selectedPointId }),
   ],
 });
@@ -902,6 +925,7 @@ const MatrixChart = ({
 
 export {
   buildDividers,
+  buildHollowPointHalos,
   buildSelectedPointOutline,
   MatrixChart,
   POINT_SIZE,
