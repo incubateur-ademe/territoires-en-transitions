@@ -1,5 +1,6 @@
 import { toImpactPotentielScore } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/charts/to-impact-potentiel-label';
 import type { LevierPlace } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/data/to-matrix-points';
+import { appLabels } from '@/app/labels/catalog';
 import { LEVIER_NOM_BY_ID, type LevierId } from '@tet/domain/shared';
 import { sumBy } from 'es-toolkit';
 
@@ -43,5 +44,26 @@ const toLevierImpacts = ({
   });
 };
 
-export { toLevierImpacts };
-export type { LevierImpact };
+type LevierImpactLine = {
+  levierId: LevierId;
+  text: string;
+};
+
+const toLevierImpactLines = ({
+  impacts,
+  actionLevierCount,
+}: {
+  impacts: readonly LevierImpact[];
+  actionLevierCount: number;
+}): LevierImpactLine[] => {
+  const hasSeveralLeviers = actionLevierCount > 1;
+  return impacts.map(({ levierId, levierNom, score }) => ({
+    levierId,
+    text: hasSeveralLeviers
+      ? appLabels.actionDeReferenceImpactValeurDuLevier({ levierNom, score })
+      : appLabels.actionDeReferenceImpactValeur(score),
+  }));
+};
+
+export { toLevierImpactLines, toLevierImpacts };
+export type { LevierImpact, LevierImpactLine };
