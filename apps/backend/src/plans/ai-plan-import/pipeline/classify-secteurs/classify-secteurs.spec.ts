@@ -67,7 +67,7 @@ describe('classifySecteurs', () => {
     );
   });
 
-  it("laisse sans secteur les actions d'un lot en échec, sans faire échouer l'étape", async () => {
+  it("laisse sans secteur les actions de lots tous en échec, sans faire échouer l'étape, et le signale", async () => {
     const generateStructured = vi
       .fn()
       .mockResolvedValue(failure({ kind: 'rate_limited' }));
@@ -83,8 +83,33 @@ describe('classifySecteurs', () => {
         undefined,
         undefined,
       ]);
-      expect(result.data.warnings).toHaveLength(1);
+      expect(result.data.warnings).toEqual([
+        'Secteurs non proposés pour 2 action(s) : rate_limited',
+        'Aucun secteur proposé : les 1 lot(s) ont échoué, la complétion par Communs prendra le relais',
+      ]);
     }
+  });
+
+  it("ne signale qu'un lot quand un autre a abouti", async () => {
+    const many = Array.from({ length: 31 }, (_, index) =>
+      createEmptyExtractedAction({ axe: 'Habitat', titre: `Action ${index}` })
+    );
+    const generateStructured = vi
+      .fn()
+      .mockResolvedValueOnce(failure({ kind: 'rate_limited' }))
+      .mockResolvedValueOnce(success({ data: [], tokens }));
+
+    const result = await classifySecteurs(
+      { generateStructured },
+      { actions: many, source: wholeDocument('texte source', many.length) }
+    );
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        warnings: ['Secteurs non proposés pour 30 action(s) : rate_limited'],
+      },
+    });
   });
 
   it('ignore un index hors du lot', async () => {
