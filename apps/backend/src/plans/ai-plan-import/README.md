@@ -70,7 +70,7 @@ Garde-fous à l'entrée (`enqueue-import/`, `ai-plan-import.constants.ts`) :
 
 ## Le pipeline
 
-`pipeline/run-import-pipeline.ts` enchaîne huit étapes. Chacune se termine en
+`pipeline/run-import-pipeline.ts` enchaîne neuf étapes. Chacune se termine en
 `ok`, `skipped` ou échoue, et son état est écrit en base pour la barre de
 progression du frontend. Les deux stratégies partagent la lecture et les
 étapes de vérification ; elles diffèrent sur la façon de découper et de
@@ -97,12 +97,23 @@ flowchart TD
 
     V[5. scoring<br/>note de confiance par action] --> C[6. consolidation<br/>relecture des actions mal notées]
     C --> E[7. enrichment<br/>sous-actions]
-    E --> Q[8. qualitativeReview<br/>avis d'ensemble]
+    C --> SE[8. secteurs<br/>secteurs réglementaires, PCAET]
+    E --> Q[9. qualitativeReview<br/>avis d'ensemble]
     Q --> P[Brouillon → plan en base]
+    SE --> P
 ```
 
-Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications, et
-l'étape 7 s'il désactive les sous-actions.
+Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications,
+l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET.
+
+Les secteurs tournent en parallèle de l'enrichissement puis de la revue : ils
+ne lisent rien de ce que l'enrichissement écrit, et la revue ne lit pas les
+secteurs. Sans sous-actions demandées, celles de la consolidation sont vidées
+avant les deux branches. Un point de reprise s'écrit dès que la suite des
+étapes faites, dans l'ordre 7, 8, 9, s'allonge : la revue faite avant les
+secteurs n'en écrit pas, et le point de reprise après l'enrichissement ne
+contient ni la revue ni les secteurs. Une branche en échec, ou qui lève,
+annule l'autre : la reprise referait de toute façon ses appels.
 
 Avant la création du plan, le brouillon est normalisé
 (`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un
@@ -110,7 +121,8 @@ titre d'action (« 2.1.3 », « Action 3 - ») est retiré, car il ne sert qu'au
 rattachement pendant l'import, sauf s'il est seul à distinguer deux fiches ;
 un même axe ou sous-axe libellé de deux façons (mêmes mots aux accents et à
 la casse près) prend une seule graphie, en casse normale de préférence, et un
-numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro ; les
+numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro, et les
+espaces multiples d'un libellé d'axe ou de sous-axe sont écrasés ; les
 doublons exacts sont écartés.
 
 La lecture (étape 1) porte aussi un garde-fou déterministe,
@@ -162,11 +174,17 @@ flowchart LR
   refusé avec un message qui propose d'exporter le seul programme d'actions.
 - Une page blanche ou une photo n'est pas un échec d'OCR. Un échec sur un
   document qui a du texte laisse la page telle que pdf.js l'a lue ; seul un
-  scan intégral échoue au-delà de 20 % de pages en échec.
+  scan intégral échoue au-delà de 20 % de pages en échec. Sur un document qui
+  a du texte, après 3 erreurs du fournisseur d'affilée (quota, panne, requête
+  refusée), les pages restantes ne sont plus tentées et restent telles que
+  pdf.js les a lues. Un délai dépassé ou une réponse tronquée vient de la page,
+  le modèle bouclant sur une photo : il ne compte pas, sans remettre le compte
+  à zéro.
 - La réponse de l'OCR est plafonnée à 3 500 tokens par page, au-delà desquels
   le modèle répète en boucle ce qu'il voit sur une photo. Une page presque
   vide d'un document qui a du texte a 30 secondes pour être transcrite, une
-  page d'un scan intégral 90 secondes.
+  page d'un scan intégral 90 secondes. Le délai dépassé annule l'appel et ses
+  relances, qui libèrent leur place auprès du modèle.
 - Gemini n'a pas d'OCR branché : un scan intégral y aboutit à « document sans
   texte ».
 
@@ -237,7 +255,13 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   les fiches détaillent.
 - Après la structuration, les actions de même titre (à la casse, aux accents,
   à la ponctuation et à la numérotation près : « ACTION 3 - » et « 2.1.3 »)
-  sont fondues sur tout le document, sur la version la plus complète.
+  sont fondues sur tout le document, sur la version la plus complète. Deux
+  actions qui ont chacune du contenu restent distinctes quand leur axe, leur
+  sous-axe ou leur numéro (« 2.1.3 » et « 2.2.4 », « Fiche 3 » et « Fiche 7 »)
+  diffèrent ; deux sous-axes se comparent par leur numéro, par leur libellé
+  quand aucun n'en a, et un sous-axe numéroté d'un seul côté ne distingue
+  rien. Un tableur n'est pas dédoublonné, quelle que soit la stratégie :
+  chaque ligne y est une fiche, aucune n'est l'écho d'une autre.
 - **Squelette** (palier fort, un appel) : les axes et sous-axes du plan, tirés
   des titres relevés et des extraits de structure (sommaire, tableau
   récapitulatif). Il sert ensuite de référence à la structuration et à la mise
@@ -251,12 +275,12 @@ flowchart LR
         direction TB
         G1[tranche 1] --> GX[prompt d'extraction complet<br/>+ contexte des tranches précédentes]
         G2[tranche 2] --> GX
-        GX --> GM[fusion des actions<br/>par titre normalisé]
+        GX --> GM[fusion des actions<br/>par titre normalisé,<br/>sur tout le document]
     end
     subgraph Albert["segmented (Albert)"]
         direction TB
         U[unités retenues] --> PK[paquets d'unités consécutives<br/>jusqu'à ~6 000 tokens]
-        PK --> SX[structuration, 4 paquets en parallèle<br/>prompt condensé + squelette]
+        PK --> SX[structuration, 5 paquets en parallèle<br/>prompt condensé + squelette]
         SX --> TR{réponse tronquée<br/>ou JSON invalide ?}
         TR -- "oui, plusieurs unités" --> HV[paquet coupé en deux,<br/>chaque moitié structurée à part]
         HV --> SX
@@ -266,6 +290,13 @@ flowchart LR
         RT -- réussie --> AM
     end
 ```
+
+Le prompt d'extraction (Gemini) et celui de structuration (Albert) partagent
+leurs règles de contenu (`prompts/field-rules.ts`) : description reprise sans
+résumé, objectifs chiffrés en lignes « - », pilotes tirés d'un schéma
+d'acteurs, statut déduit du seul calendrier de l'action, et ni évaluation, ni
+mesures ERC, ni engagements de partenaires lus comme des actions. Aucun ne
+numérote une action que le document ne numérote pas.
 
 Une réponse tronquée vient d'un paquet trop riche : le couper donne des
 réponses plus courtes, là où un budget plus large laisserait le modèle écrire
@@ -294,6 +325,10 @@ Cette étape améliore le résultat sans en être une condition : un lot tronqu�
 est coupé en deux, et un lot qui échoue encore garde les rattachements de
 l'extraction, avec un avertissement. Elle ne fait jamais échouer l'import.
 
+Passée ou non, l'étape se termine en retirant un sous-axe qui ne contient
+qu'une action de même titre (`drop-redundant-sous-axes.ts`) : le sommaire et la
+fiche se répondent, quelle que soit la stratégie.
+
 ## 5 à 8. Vérifications, sous-actions, avis
 
 Communs aux deux stratégies. Sur Albert, les unités voisines sont regroupées
@@ -305,6 +340,18 @@ modèle une fois par fiche.
   par lots de 5.
 - **enrichment** : les sous-actions, par lots de 30 actions.
 - **qualitativeReview** : un avis d'ensemble sur le brouillon, sans la source.
+
+Ces étapes améliorent le brouillon sans en être une condition : un lot en
+échec laisse ses actions telles quelles, avec un avertissement et le compte
+`failedBatches` dans la télémétrie de l'étape. Seule une erreur passagère
+(quota, panne 5xx, coupure ou délai dépassé) sur tous les lots d'une étape,
+relances épuisées, fait échouer l'import, pour qu'il se reprenne plutôt que de
+rendre en silence un brouillon sans vérification.
+
+Les secteurs (étape 8) font exception : même tous leurs lots en échec, ils ne
+font jamais échouer l'import. Ils sont optionnels, et la complétion par Communs
+propose ensuite les secteurs des fiches qui n'en ont pas. Un avertissement
+signale alors qu'aucun secteur n'a été proposé.
 
 ## Couche LLM (`utils/llm/`)
 
@@ -318,7 +365,7 @@ flowchart TD
     REP -- gemini --> GR[GeminiRepository<br/>@google/genai, Vertex AI]
     AR --> OB[LlmObserver<br/>une trace par tentative]
     GR --> OB
-    SV -. "429 ou 503" .-> PEN[modèle mis en pause 15 s,<br/>jusqu'à 6 relances]
+    SV -. "429 ou 503" .-> PEN[modèle mis en pause 15 s,<br/>6 relances, 8 sur ~7 min chez Gemini]
 ```
 
 - La réservation de quota se fait au moment de l'envoi : le fournisseur compte
@@ -326,7 +373,10 @@ flowchart TD
 - Sur Albert, chaque palier a son modèle et son quota ; un palier sans modèle
   retombe sur le modèle fort, et l'OCR est désactivé sans modèle image-texte.
 - Sur Gemini, tous les paliers utilisent `GEMINI_MODEL`, et une image renvoie
-  une erreur `unsupported`.
+  une erreur `unsupported`. L'enrichissement, les secteurs et la relecture
+  finale demandent un `thinkingLevel` bas, propre à Gemini : Albert garde
+  `ALBERT_REASONING_EFFORT`.
+- La pause qui suit un 429 vaut aussi sans quota déclaré, donc chez Gemini.
 
 Configuration (`utils/config/configuration.model.ts`) :
 
@@ -338,7 +388,7 @@ Configuration (`utils/config/configuration.model.ts`) :
 | `ALBERT_MODEL_OCR` | `lightonocr-2-1b` | OCR ; vide : désactivé |
 | `ALBERT_MAX_INPUT_TOKENS_PER_MINUTE` | 128 000 | quota de tokens, par modèle |
 | `ALBERT_MAX_REQUESTS_PER_MINUTE` | 10 | quota de requêtes, par modèle |
-| `ALBERT_MAX_CONCURRENT_CALLS` | 2 | appels simultanés, tous imports confondus |
+| `ALBERT_MAX_CONCURRENT_CALLS` | 2 | appels simultanés, tous imports confondus (une étape en demande jusqu'à 5) |
 | `ALBERT_REASONING_EFFORT` | — | effort de raisonnement du modèle fort |
 | `GEMINI_MODEL` | — | modèle Gemini |
 

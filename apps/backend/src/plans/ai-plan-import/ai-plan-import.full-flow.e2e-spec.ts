@@ -23,6 +23,7 @@ import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.tab
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import {
   LlmCompletionRequest,
@@ -96,10 +97,18 @@ const fakeTokens: TokenUsage = {
 const schemaKey = (schema: ZodType): string =>
   JSON.stringify(z.toJSONSchema(schema));
 
+// Erreur non passagère : pas de nouvelle tentative.
+const NON_TRANSIENT_ERROR: LlmError = { kind: 'api_error', httpStatus: 400 };
+
 /** Ce que le fournisseur factice a reçu, et l'étape qu'il fait échouer. */
-const fakeLlmControl: { calls: string[]; failing: string | null } = {
+const fakeLlmControl: {
+  calls: string[];
+  failing: string | null;
+  failingError: LlmError;
+} = {
   calls: [],
   failing: null,
+  failingError: NON_TRANSIENT_ERROR,
 };
 
 /**
@@ -182,8 +191,7 @@ const buildFakeLlm = (): LlmService => {
       if (step !== undefined) {
         fakeLlmControl.calls.push(step);
         if (step === fakeLlmControl.failing) {
-          // Erreur non passagère : pas de nouvelle tentative.
-          return failure({ kind: 'api_error' as const, httpStatus: 400 });
+          return failure(fakeLlmControl.failingError);
         }
       }
       const response = responses.get(key);
@@ -608,19 +616,24 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       .from(aiPlanImportStepRunTable)
       .where(eq(aiPlanImportStepRunTable.jobId, jobId))
       .orderBy(asc(aiPlanImportStepRunTable.startedAt));
-    expect(stepRuns.map(({ step, status }) => ({ step, status }))).toEqual([
-      { step: 'document', status: 'ok' },
-      { step: 'reading', status: 'ok' },
-      { step: 'scouting', status: 'skipped' },
-      { step: 'extraction', status: 'ok' },
-      { step: 'hierarchy', status: 'skipped' },
-      { step: 'scoring', status: 'ok' },
-      { step: 'consolidation', status: 'ok' },
-      { step: 'enrichment', status: 'ok' },
-      { step: 'secteurs', status: 'skipped' },
-      { step: 'qualitativeReview', status: 'ok' },
-      { step: 'persistence', status: 'ok' },
-    ]);
+    // Les secteurs tournent à côté de l'enrichissement : l'ordre de départ
+    // des deux n'est pas fixé.
+    expect(stepRuns).toHaveLength(11);
+    expect(stepRuns.map(({ step, status }) => ({ step, status }))).toEqual(
+      expect.arrayContaining([
+        { step: 'document', status: 'ok' },
+        { step: 'reading', status: 'ok' },
+        { step: 'scouting', status: 'skipped' },
+        { step: 'extraction', status: 'ok' },
+        { step: 'hierarchy', status: 'skipped' },
+        { step: 'scoring', status: 'ok' },
+        { step: 'consolidation', status: 'ok' },
+        { step: 'enrichment', status: 'ok' },
+        { step: 'secteurs', status: 'skipped' },
+        { step: 'qualitativeReview', status: 'ok' },
+        { step: 'persistence', status: 'ok' },
+      ])
+    );
     const extraction = stepRuns.find((run) => run.step === 'extraction');
     expect(extraction).toMatchObject({
       llmCalls: 1,
@@ -905,13 +918,16 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       withSousActions: 'true',
     });
 
-    /** Un import en échec à la vérification, extraction faite. */
-    const failAtScoring = async (suffix: string) => {
+    /**
+     * Un import en échec à l'extraction, lecture faite : les étapes suivantes
+     * gardent ce qu'un lot en échec n'a pas amélioré, sans échouer.
+     */
+    const failAtExtraction = async (suffix: string) => {
       const enqueued = await enqueue(fields(`Plan import IA ${suffix}`), {
         source: csvSource(suffix),
         asOther: true,
       });
-      fakeLlmControl.failing = 'scoring';
+      fakeLlmControl.failing = 'extraction';
       try {
         await generate(enqueued.jobId);
       } finally {
@@ -920,16 +936,74 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       return enqueued;
     };
 
-    test("l'équipe reprend un import en échec depuis sa dernière étape terminée", async () => {
-      const { jobId, planId } = await failAtScoring('reprise-manuelle');
+    /**
+     * Un import en échec à la vérification, extraction faite : seule une
+     * erreur passagère sur tous les lots fait échouer une étape d'amélioration.
+     */
+    const failAtScoring = async (suffix: string) => {
+      const enqueued = await enqueue(fields(`Plan import IA ${suffix}`), {
+        source: csvSource(suffix),
+        asOther: true,
+      });
+      fakeLlmControl.failing = 'scoring';
+      // Une coupure, sans statut HTTP : abandonnée après trois tentatives,
+      // là où un 429 ou un 503 attendrait de longues relances.
+      fakeLlmControl.failingError = { kind: 'api_error', httpStatus: null };
+      try {
+        await generate(enqueued.jobId);
+      } finally {
+        fakeLlmControl.failing = null;
+        fakeLlmControl.failingError = NON_TRANSIENT_ERROR;
+      }
+      return enqueued;
+    };
+
+    test("reprend un import en échec après l'extraction sans la refaire", async () => {
+      const { jobId, planId } = await failAtScoring('reprise-apres-extraction');
 
       const failed = await readJob(jobId);
       expect(failed).toMatchObject({ status: 'failed' });
       expect(failed.checkpoint?.completedStep).toBe('hierarchy');
-      // L'avancement reste celui de la dernière étape, pas remis à zéro.
       expect(failed.stepStates).toMatchObject({
         extraction: 'ok',
         scoring: 'pending',
+      });
+
+      fakeLlmControl.calls = [];
+      expect(await resume(jobId)).toEqual({ jobId });
+      await generate(jobId);
+
+      expect(fakeLlmControl.calls).not.toContain('extraction');
+      expect(fakeLlmControl.calls).toEqual([
+        'scoring',
+        'consolidation',
+        'enrichment',
+        'qualitativeReview',
+      ]);
+      expect(await readJob(jobId)).toMatchObject({
+        status: 'done',
+        checkpoint: null,
+      });
+      expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
+      expect(await stepRuns(jobId)).toEqual(
+        expect.arrayContaining([
+          { step: 'extraction', status: 'ok', attempt: 0 },
+          { step: 'scoring', status: 'failed', attempt: 0 },
+          { step: 'scoring', status: 'ok', attempt: 1 },
+        ])
+      );
+    });
+
+    test("l'équipe reprend un import en échec depuis sa dernière étape terminée", async () => {
+      const { jobId, planId } = await failAtExtraction('reprise-manuelle');
+
+      const failed = await readJob(jobId);
+      expect(failed).toMatchObject({ status: 'failed' });
+      expect(failed.checkpoint?.completedStep).toBe('scouting');
+      // L'avancement reste celui de la dernière étape, pas remis à zéro.
+      expect(failed.stepStates).toMatchObject({
+        reading: 'ok',
+        extraction: 'pending',
       });
       expect(await readPlan(planId)).toMatchObject({ status: 'failed' });
 
@@ -969,8 +1043,9 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
       await generate(jobId);
 
-      // L'extraction est acquise : seule la suite rappelle le modèle.
+      // La lecture est acquise : seule la suite rappelle le modèle.
       expect(fakeLlmControl.calls).toEqual([
+        'extraction',
         'scoring',
         'consolidation',
         'enrichment',
@@ -985,9 +1060,9 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
       expect(await stepRuns(jobId)).toEqual(
         expect.arrayContaining([
-          { step: 'extraction', status: 'ok', attempt: 0 },
-          { step: 'scoring', status: 'failed', attempt: 0 },
-          { step: 'scoring', status: 'ok', attempt: 1 },
+          { step: 'reading', status: 'ok', attempt: 0 },
+          { step: 'extraction', status: 'failed', attempt: 0 },
+          { step: 'extraction', status: 'ok', attempt: 1 },
           { step: 'persistence', status: 'ok', attempt: 1 },
         ])
       );
@@ -996,7 +1071,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     });
 
     test("reprend seul un import dont le processus s'est arrêté", async () => {
-      const { jobId, planId } = await failAtScoring('reprise-auto');
+      const { jobId, planId } = await failAtExtraction('reprise-auto');
       // Un processus tué n'a pas le temps de marquer l'échec : le job reste
       // en cours et son plan en import, avec le point de reprise, quand
       // BullMQ le redistribue.
@@ -1012,7 +1087,9 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
       await generate(jobId);
 
-      expect(fakeLlmControl.calls).not.toContain('extraction');
+      expect(await stepRuns(jobId)).not.toContainEqual(
+        expect.objectContaining({ step: 'reading', attempt: 1 })
+      );
       const done = await readJob(jobId);
       expect(done).toMatchObject({
         status: 'done',
@@ -1024,7 +1101,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     });
 
     test("une exécution remplacée par une reprise n'écrit plus rien", async () => {
-      const { jobId } = await failAtScoring('execution-remplacee');
+      const { jobId } = await failAtExtraction('execution-remplacee');
       const jobRepository = app.get(AiPlanImportJobRepository);
       const { checkpoint } = await readJob(jobId);
       if (!checkpoint) {
@@ -1047,7 +1124,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     });
 
     test("un échec plus vieux que la rétention n'est plus reprenable, et le démarrage le purge", async () => {
-      const { jobId } = await failAtScoring('reprise-expiree');
+      const { jobId } = await failAtExtraction('reprise-expiree');
       await db.db
         .update(aiPlanImportJobTable)
         .set({ modifiedAt: '2026-01-01T00:00:00Z' })
@@ -1066,7 +1143,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     });
 
     test('un nouvel import efface le point de reprise des échecs de la collectivité', async () => {
-      const failed = await failAtScoring('reprise-purgee');
+      const failed = await failAtExtraction('reprise-purgee');
       expect((await readJob(failed.jobId)).checkpoint).not.toBeNull();
       expect(
         await router

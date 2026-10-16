@@ -1,4 +1,12 @@
+import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { describe, expect, it } from 'vitest';
+import {
+  NON_ACTION_PASSAGES_RULE,
+  OBJECTIFS_RULE,
+  PARTNER_COMMITMENTS_RULE,
+  PILOTES_RULE,
+} from '../../prompts/field-rules';
+import { STRUCTURATION_SYSTEM_PROMPT } from '../../prompts/structuration.prompt';
 import { buildExtractionPrompt } from './extract-actions.prompt';
 
 describe('buildExtractionPrompt', () => {
@@ -43,5 +51,29 @@ describe('buildExtractionPrompt', () => {
     expect(prompt.indexOf('INSTRUCTION PRIORITAIRE')).toBeLessThan(
       prompt.indexOf('agent d’extraction documentaire')
     );
+  });
+
+  it('suit les règles de contenu de la structuration, sans numéroter les actions', () => {
+    const extraction = buildExtractionPrompt({
+      text: 'texte',
+      instructions: '',
+      disabledFields: [],
+      currentDate: '08/06/2026',
+    });
+    const structuration = generatePrompt(STRUCTURATION_SYSTEM_PROMPT, {
+      dateDuJour: '08/06/2026',
+    });
+
+    for (const rule of [
+      NON_ACTION_PASSAGES_RULE,
+      PARTNER_COMMITMENTS_RULE,
+      OBJECTIFS_RULE,
+      PILOTES_RULE,
+    ]) {
+      expect(extraction).toContain(rule);
+      expect(structuration).toContain(rule);
+    }
+    expect(extraction).not.toContain('n.X.Y');
+    expect(extraction).not.toContain('{date_du_jour}');
   });
 });

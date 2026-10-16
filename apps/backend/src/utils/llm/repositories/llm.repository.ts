@@ -31,6 +31,12 @@ export type LlmRawCompletion = {
   usage: TokenUsage;
 };
 
+export type LlmRetryOptions = {
+  retries: number;
+  minTimeout: number;
+  maxTimeout: number;
+};
+
 export abstract class LlmRepository {
   /** Appels simultanés tolérés par les quotas du fournisseur. */
   abstract readonly maxConcurrentCalls: number;
@@ -39,6 +45,8 @@ export abstract class LlmRepository {
   /** Requêtes par minute accordées par modèle ; null sans quota connu. */
   abstract readonly maxRequestsPerMinute: number | null;
   abstract readonly capabilities: LlmCapabilities;
+  /** Relances d'un appel en 429 ; null : celles de toute erreur passagère. */
+  readonly rateLimitedRetryOptions: LlmRetryOptions | null = null;
 
   /** Tokens d'entrée au-delà desquels le modèle du palier n'a plus la place de répondre. */
   abstract maxInputTokensFor(tier: LlmTier): number;

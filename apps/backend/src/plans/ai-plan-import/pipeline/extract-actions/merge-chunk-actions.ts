@@ -97,18 +97,56 @@ export const dedupeByTitle = (merged: ChunkedActions): ChunkedActions => {
 };
 
 /**
- * Un même titre dans deux axes différents est deux actions réelles quand
- * chacune porte son propre contenu (« Sensibiliser le grand public » existe
- * dans plusieurs axes) ; un écho sans contenu (sommaire, rappel) se fond,
- * lui, quel que soit son rattachement.
+ * Un même titre est deux actions réelles quand chacune porte son propre
+ * contenu et que leur axe, leur sous-axe ou leur numéro les distingue
+ * (« Sensibiliser les habitants » en 2.1.3 et en 2.2.4) ; un écho sans contenu
+ * (sommaire, rappel) se fond, lui, quel que soit son rattachement.
  */
 const isSameOrEcho = (a: ExtractedAction, b: ExtractedAction): boolean => {
   if (contentLength(a) === 0 || contentLength(b) === 0) {
     return true;
   }
-  const axeA = normalizeTitle(a.axe);
-  const axeB = normalizeTitle(b.axe);
-  return axeA === '' || axeB === '' || axeA === axeB;
+  return (
+    !bothSetAndDiffer(normalizeTitle(a.axe), normalizeTitle(b.axe)) &&
+    !sousAxesDiffer(a.sousAxe, b.sousAxe) &&
+    !actionNumbersDiffer(a.titre, b.titre)
+  );
+};
+
+const bothSetAndDiffer = (a: string, b: string): boolean =>
+  a !== '' && b !== '' && a !== b;
+
+const SOUS_AXE_NUMBER = /^\s*(\d{1,2}(?:\.\d{1,2})+)/u;
+
+// « 2.1 » et « 2.1 Parc social » sont le même sous-axe : le numéro prime sur
+// le libellé quand les deux en ont un. Quand un seul en a, le libellé de
+// l'autre peut être une variante du même sous-axe : rien ne les distingue.
+const sousAxesDiffer = (a: string, b: string): boolean => {
+  const numberA = a.match(SOUS_AXE_NUMBER)?.[1];
+  const numberB = b.match(SOUS_AXE_NUMBER)?.[1];
+  if (numberA && numberB) {
+    return numberA !== numberB;
+  }
+  if (numberA || numberB) {
+    return false;
+  }
+  return bothSetAndDiffer(normalizeTitle(a), normalizeTitle(b));
+};
+
+const ACTION_NUMBER =
+  /^\s*(?:(?:fiche(?:[\s-]*actions?)?|action|mesure)\b\s*(?:n[°º]\s*)?)?(\d{1,3}(?:[.-]\d{1,3})*)(?!\d)/iu;
+
+// Seuls deux numéros de même forme se comparent : « ACTION 3 » dans la fiche
+// et « 2.1.3 » dans le tableau récapitulatif désignent la même action.
+const actionNumbersDiffer = (a: string, b: string): boolean => {
+  const segmentsA = a.match(ACTION_NUMBER)?.[1].split(/[.-]/);
+  const segmentsB = b.match(ACTION_NUMBER)?.[1].split(/[.-]/);
+  return (
+    segmentsA !== undefined &&
+    segmentsB !== undefined &&
+    segmentsA.length === segmentsB.length &&
+    segmentsA.join('.') !== segmentsB.join('.')
+  );
 };
 
 const contentLength = (action: ExtractedAction): number =>

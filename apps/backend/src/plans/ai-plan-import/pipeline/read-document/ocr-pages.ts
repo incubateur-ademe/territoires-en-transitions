@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
@@ -22,6 +23,8 @@ export type OcrPagesOptions = {
   pageTimeoutMs?: number;
   /** Part des pages en échec tolérée, pour un document scanné. */
   maxFailedRatio?: number;
+  /** Hors scan intégral : au-delà, les pages restantes ne sont plus tentées. */
+  maxConsecutiveFailures?: number;
 };
 
 export type OcrFailure = { pageIndex: number; reason: string };
@@ -44,12 +47,19 @@ const SCAN_PAGE_TIMEOUT_MS = 90_000;
 // une photo : elle ne vaut pas d'attendre.
 const SPARSE_PAGE_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_FAILED_RATIO = 0.2;
+// Des erreurs du fournisseur qui s'enchaînent ne viennent pas des pages : les
+// suivantes échoueraient pareil. Un délai dépassé, lui, vient de la page (le
+// modèle boucle sur une photo) et ne compte pas.
+const DEFAULT_MAX_CONSECUTIVE_FAILURES = 3;
+const SKIPPED_REASON = 'non tentée après des échecs consécutifs';
+
+const logger = new Logger('OcrPages');
 
 type PageOutcome =
   | { kind: 'transcribed'; page: DocumentPage }
   // Une photo, un intercalaire : l'OCR n'y trouve rien, et c'est normal.
   | { kind: 'blank' }
-  | { kind: 'failed'; reason: string };
+  | { kind: 'failed'; reason: string; fromProvider?: boolean };
 
 /** Transcrit les pages désignées et les remplace dans le document. */
 export const ocrPages = async ({
@@ -62,15 +72,30 @@ export const ocrPages = async ({
   concurrency = DEFAULT_CONCURRENCY,
   pageTimeoutMs = fullScan ? SCAN_PAGE_TIMEOUT_MS : SPARSE_PAGE_TIMEOUT_MS,
   maxFailedRatio = DEFAULT_MAX_FAILED_RATIO,
+  maxConsecutiveFailures = DEFAULT_MAX_CONSECUTIVE_FAILURES,
 }: OcrPagesOptions): Promise<Result<OcrPagesResult, OcrPagesError>> => {
-  const outcomes = await mapWithConcurrency(pageIndexes, concurrency, (index) =>
-    transcribePage({
-      page: pages[index],
-      renderPage,
-      ocrPage,
-      pageTimeoutMs,
-      signal,
-    })
+  let consecutiveFailures = 0;
+  const outcomes = await mapWithConcurrency(
+    pageIndexes,
+    concurrency,
+    async (index): Promise<PageOutcome> => {
+      if (!fullScan && consecutiveFailures >= maxConsecutiveFailures) {
+        return { kind: 'failed', reason: SKIPPED_REASON };
+      }
+      const outcome = await transcribePage({
+        page: pages[index],
+        renderPage,
+        ocrPage,
+        pageTimeoutMs,
+        signal,
+      });
+      if (outcome.kind !== 'failed') {
+        consecutiveFailures = 0;
+      } else if (outcome.fromProvider) {
+        consecutiveFailures += 1;
+      }
+      return outcome;
+    }
   );
 
   const failures = pageIndexes.flatMap((pageIndex, position) => {
@@ -79,6 +104,12 @@ export const ocrPages = async ({
       ? [{ pageIndex, reason: outcome.reason }]
       : [];
   });
+  const skipped = failures.filter((f) => f.reason === SKIPPED_REASON).length;
+  if (skipped > 0) {
+    logger.warn(
+      `OCR interrompu après ${maxConsecutiveFailures} erreurs consécutives du fournisseur : ${skipped} page(s) gardée(s) telles que lues`
+    );
+  }
   if (
     fullScan &&
     failures.length > Math.floor(pageIndexes.length * maxFailedRatio)
@@ -117,12 +148,24 @@ const transcribePage = async ({
   pageTimeoutMs: number;
   signal?: AbortSignal;
 }): Promise<PageOutcome> => {
+  // Sans annulation, l'appel expiré poursuivrait ses relances en gardant une
+  // place du limiteur de LlmService, et les pages suivantes expireraient à
+  // leur tour en attendant.
+  const pageAbort = new AbortController();
+  const callSignal = signal
+    ? AbortSignal.any([signal, pageAbort.signal])
+    : pageAbort.signal;
   try {
     return await withTimeout(async (): Promise<PageOutcome> => {
       const image = await renderPage(page.index);
-      const result = await ocrPage(image, signal);
+      const result = await ocrPage(image, callSignal);
       if (!result.success) {
-        return { kind: 'failed', reason: describeLlmError(result.error) };
+        return {
+          kind: 'failed',
+          reason: describeLlmError(result.error),
+          // Une réponse tronquée est la boucle sur une photo, comme le délai.
+          fromProvider: result.error.kind !== 'truncated',
+        };
       }
       const text = result.data.trim();
       if (text.length === 0 || text.length <= page.text.trim().length) {
@@ -139,6 +182,7 @@ const transcribePage = async ({
     }, pageTimeoutMs);
   } catch (error) {
     if (error instanceof TimeoutError) {
+      pageAbort.abort(error);
       return { kind: 'failed', reason: 'délai dépassé' };
     }
     if (signal?.aborted) {

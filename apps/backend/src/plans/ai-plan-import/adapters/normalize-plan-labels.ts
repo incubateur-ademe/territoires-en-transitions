@@ -49,8 +49,13 @@ const SOUS_AXE_PREFIX = /^(\d{1,2}(?:\.\d{1,2})+)\.?\s*/u;
  * titres différents de même numéro restent deux axes.
  */
 export const unifyAxisLabels = (
-  actions: ExtractedAction[]
+  extracted: ExtractedAction[]
 ): ExtractedAction[] => {
+  const actions = extracted.map((action) => ({
+    ...action,
+    axe: collapseSpaces(action.axe),
+    sousAxe: collapseSpaces(action.sousAxe),
+  }));
   const axes = unifyLabels(
     actions.map((action) => action.axe),
     AXE_PREFIX
@@ -78,6 +83,9 @@ export const unifyAxisLabels = (
     };
   });
 };
+
+const collapseSpaces = (label: string): string =>
+  label.replace(/\s+/g, ' ').trim();
 
 const unifyLabels = (
   labels: string[],

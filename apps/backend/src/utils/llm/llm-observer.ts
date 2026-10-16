@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { LlmError } from './llm.errors';
+import { describeLlmError, LlmError } from './llm.errors';
 import { LlmTier } from './llm-tier';
 import { TokenUsage } from './token-usage';
 
@@ -28,11 +28,17 @@ export class LoggingLlmObserver extends LlmObserver {
   private readonly logger = new Logger(LlmObserver.name);
 
   onCall(event: LlmCallEvent): void {
-    const outcome = event.error
-      ? `error ${event.error.kind}`
-      : `${event.usage?.totalTokens ?? 0} tokens`;
+    const timing = `in ${event.durationMs} ms (prompt ${event.promptChars} chars)`;
+    if (event.error) {
+      const error = describeLlmError(event.error);
+      this.logger.warn(
+        `LLM call attempt ${event.attempt} to ${event.model}: error ${error} ${timing}`
+      );
+      return;
+    }
+    const tokens = event.usage?.totalTokens ?? 0;
     this.logger.debug(
-      `LLM call attempt ${event.attempt}: ${outcome} in ${event.durationMs} ms (prompt ${event.promptChars} chars)`
+      `LLM call attempt ${event.attempt}: ${tokens} tokens ${timing}`
     );
   }
 }

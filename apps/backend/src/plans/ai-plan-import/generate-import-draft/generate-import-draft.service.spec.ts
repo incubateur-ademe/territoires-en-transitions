@@ -1,5 +1,6 @@
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -9,6 +10,7 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { Logger } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
@@ -380,24 +382,85 @@ describe('GenerateImportDraftService', () => {
   it('marque le job failed quand la création du plan lève une exception (seam en transaction partagée)', async () => {
     const mocks = buildMocks();
     mocks.save.mockImplementation(() => {
-      throw new Error('insert en conflit');
+      throw new Error('Failed query: insert into "axe"', {
+        cause: new Error('duplicate key value violates unique constraint'),
+      });
     });
+    const logged = vi.spyOn(Logger.prototype, 'error');
     const service = buildService(mocks);
 
     const result = await service.generate('job-1');
 
     expect(result).toMatchObject({ success: true });
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
+    expect(logged).toHaveBeenCalledWith(
+      expect.stringContaining('duplicate key value violates unique constraint')
+    );
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'job-1',
-        error: 'Création du plan impossible : insert en conflit',
+        error: 'Création du plan impossible : erreur inattendue',
         stepStates: undefined,
         draft: expect.objectContaining({
           actions: expect.arrayContaining([
             expect.objectContaining({ titre: 'Action' }),
           ]),
         }),
+      })
+    );
+  });
+
+  it("journalise l'erreur Postgres d'une création en échec, sans la montrer à l'utilisateur", async () => {
+    const mocks = buildMocks();
+    // Forme relancée par le TransactionManager quand `tx` est partagé.
+    mocks.save.mockImplementation(() => {
+      throw failure(
+        new PlanCreationError('DATABASE_ERROR'),
+        new Error('valeur trop longue pour le titre')
+      );
+    });
+    const logged = vi.spyOn(Logger.prototype, 'error');
+    const service = buildService(mocks);
+
+    await service.generate('job-1');
+
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error:
+          'Création du plan impossible : Erreur lors de la création du plan : DATABASE_ERROR',
+      })
+    );
+    expect(logged).toHaveBeenCalledWith(
+      expect.stringContaining('valeur trop longue pour le titre')
+    );
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({
+          reason: 'plan_creation_failed',
+        }),
+      })
+    );
+    expect(JSON.stringify(mocks.capture.mock.calls)).not.toContain(
+      'valeur trop longue'
+    );
+  });
+
+  it("cite le statut HTTP d'une étape en échec, mais n'envoie que le type à PostHog", async () => {
+    const mocks = buildMocks({
+      generateStructured: async () =>
+        failure({ kind: 'api_error', httpStatus: 503 }),
+    });
+
+    await buildService(mocks).generate('job-1');
+
+    expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: 'Étape extraction en échec (api_error 503)',
+      })
+    );
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({ reason: 'api_error' }),
       })
     );
   });
@@ -612,6 +675,28 @@ describe('GenerateImportDraftService', () => {
       expect(mocks.removeDocument).toHaveBeenCalled();
     });
 
+    it('reprend après la dernière étape même quand le modèle a changé, sans la source', async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const mocks = buildMocks({
+        checkpoint: success({
+          ...checkpoints[checkpoints.length - 1],
+          llm: { strategy: 'segmented', maxInputTokens: 100_000 },
+        }),
+        attempt: 1,
+        sourceAvailable: false,
+      });
+
+      const result = await buildService(mocks).generate('job-1');
+
+      expect(result).toMatchObject({ success: true });
+      expect(mocks.documentStorage.downloadDocument).not.toHaveBeenCalled();
+      expect(mocks.llm.generateStructured).not.toHaveBeenCalled();
+      expect(mocks.jobRepository.markFailed).not.toHaveBeenCalled();
+      expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+        expect.objectContaining({ attempt: 1, createdPlanId: 7 })
+      );
+    });
+
     it("reprend après l'extraction en ne rappelant le modèle que pour la suite", async () => {
       const checkpoints = await checkpointsOfFullRun();
       const afterExtraction = checkpoints.find(
@@ -637,6 +722,43 @@ describe('GenerateImportDraftService', () => {
         })
       );
       expect(mocks.jobRepository.markDone).toHaveBeenCalled();
+    });
+
+    it("reconnaît un tableur à la reprise d'un point de reprise antérieur au type du document", async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const { documentKind: _kind, ...afterReading } = checkpoints[0];
+      const generateStructured = vi
+        .fn()
+        .mockResolvedValueOnce(
+          success({
+            data: [
+              { ...extractionAction, axe: 'Axe 1' },
+              { ...extractionAction, axe: 'Axe 2' },
+            ],
+            tokens,
+          })
+        )
+        .mockResolvedValue(
+          success({ data: { avis: 'Extraction ok' }, tokens })
+        );
+      const mocks = buildMocks({
+        checkpoint: success(afterReading),
+        attempt: 1,
+        generateStructured: generateStructured as never,
+      });
+
+      await buildService(mocks).generate('job-1');
+
+      expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+        expect.objectContaining({
+          draft: expect.objectContaining({
+            actions: [
+              expect.objectContaining({ axe: 'Axe 1' }),
+              expect.objectContaining({ axe: 'Axe 2' }),
+            ],
+          }),
+        })
+      );
     });
 
     it.each([

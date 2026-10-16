@@ -84,6 +84,9 @@ describe('enrichSousActions', () => {
     });
 
     expect(llm.generateStructured).toHaveBeenCalledTimes(2);
+    expect(llm.generateStructured).toHaveBeenCalledWith(
+      expect.objectContaining({ thinkingLevel: 'low' })
+    );
     expect(result.success).toBe(true);
     if (result.success) {
       result.data.actions[0].sousActions.forEach((sousAction, index) => {
@@ -133,7 +136,47 @@ describe('enrichSousActions', () => {
     }
   });
 
-  it('échoue si un lot échoue', async () => {
+  it("garde telles qu'extraites les sous-actions d'un lot en échec, avec un avertissement", async () => {
+    const echoing = echoingLlm();
+    const llm = {
+      generateStructured: vi
+        .fn()
+        .mockResolvedValueOnce(failure({ kind: 'api_error', httpStatus: 503 }))
+        .mockImplementation(echoing.generateStructured),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+    const sousActionTitres = Array.from(
+      { length: ENRICHMENT_BATCH_SIZE + 2 },
+      (_, index) => `sa ${index}`
+    );
+
+    const result = await enrichSousActions(llm, {
+      ...inWholeDocument([toAction('Action A', sousActionTitres)]),
+      disabledFields: [],
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        warnings: [
+          `Sous-actions non enrichies pour ${ENRICHMENT_BATCH_SIZE} sous-action(s) : api_error 503`,
+        ],
+        details: { batches: 2, failedBatches: 1 },
+        tokens: { totalTokens: tokens.totalTokens },
+      },
+    });
+    if (result.success) {
+      const { sousActions } = result.data.actions[0];
+      expect(sousActions[0]).toMatchObject({
+        titre: 'sa 0',
+        description: null,
+      });
+      expect(sousActions[ENRICHMENT_BATCH_SIZE].description).toBe(
+        `enrichie ${ENRICHMENT_BATCH_SIZE}`
+      );
+    }
+  });
+
+  it('échoue quand tous les lots butent sur le quota', async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'rate_limited' }),
     } as unknown as Pick<LlmService, 'generateStructured'>;

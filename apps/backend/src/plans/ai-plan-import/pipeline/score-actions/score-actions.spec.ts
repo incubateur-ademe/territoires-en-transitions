@@ -57,7 +57,26 @@ describe('scoreActions', () => {
     }
   });
 
-  it('propage l erreur du LLM', async () => {
+  it("laisse sans score les actions d'un groupe en échec, avec un avertissement", async () => {
+    const llm = {
+      generateStructured: async () => failure({ kind: 'truncated' }),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await scoreActions(llm, {
+      ...inWholeDocument([anAction('A')]),
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        actions: [{ titre: 'A', confidence: null }],
+        warnings: ['Actions non contrôlées pour 1 action(s) : truncated'],
+        details: { batches: 1, failedBatches: 1 },
+      },
+    });
+  });
+
+  it('échoue quand tous les groupes butent sur le quota', async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'rate_limited' }),
     } as unknown as Pick<LlmService, 'generateStructured'>;

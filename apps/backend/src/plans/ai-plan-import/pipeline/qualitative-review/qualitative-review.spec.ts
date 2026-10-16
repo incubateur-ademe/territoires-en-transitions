@@ -1,7 +1,7 @@
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success } from '@tet/backend/utils/result.type';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   createEmptyExtractedAction,
   ExtractedAction,
@@ -25,8 +25,9 @@ const action: ExtractedAction = createEmptyExtractedAction({
 describe('reviewQuality', () => {
   it("renvoie l'avis textuel et les tokens", async () => {
     const llm = {
-      generateStructured: async () =>
-        success({ data: { avis: 'Extraction cohérente' }, tokens }),
+      generateStructured: vi.fn(async () =>
+        success({ data: { avis: 'Extraction cohérente' }, tokens })
+      ),
     } as unknown as Pick<LlmService, 'generateStructured'>;
 
     const result = await reviewQuality(llm, { actions: [action] });
@@ -35,9 +36,12 @@ describe('reviewQuality', () => {
       success: true,
       data: { review: 'Extraction cohérente', tokens },
     });
+    expect(llm.generateStructured).toHaveBeenCalledWith(
+      expect.objectContaining({ thinkingLevel: 'low' })
+    );
   });
 
-  it("propage l'échec de l'appel LLM", async () => {
+  it("rend un avis absent et un avertissement quand l'appel échoue", async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'truncated' }),
     } as unknown as Pick<LlmService, 'generateStructured'>;
@@ -45,8 +49,25 @@ describe('reviewQuality', () => {
     const result = await reviewQuality(llm, { actions: [action] });
 
     expect(result).toMatchObject({
+      success: true,
+      data: {
+        review: null,
+        warnings: ['Relecture finale non faite : truncated'],
+        details: { failedBatches: 1 },
+      },
+    });
+  });
+
+  it('échoue quand le quota est épuisé', async () => {
+    const llm = {
+      generateStructured: async () => failure({ kind: 'rate_limited' }),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+
+    const result = await reviewQuality(llm, { actions: [action] });
+
+    expect(result).toMatchObject({
       success: false,
-      error: { kind: 'truncated' },
+      error: { kind: 'rate_limited' },
     });
   });
 });

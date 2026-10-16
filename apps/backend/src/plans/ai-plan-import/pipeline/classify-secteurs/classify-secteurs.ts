@@ -49,8 +49,9 @@ type BatchOutcome = {
 
 /**
  * Secteurs réglementaires de chaque action, lus avec la tranche du document
- * qui la décrit. Un lot en échec n'arrête pas l'import : ses actions restent
- * sans secteur proposé, et la complétion par Communs s'en chargera.
+ * qui la décrit. Un lot en échec n'arrête pas l'import, même quand tous
+ * échouent : ses actions restent sans secteur proposé, et la complétion par
+ * Communs s'en chargera.
  */
 export const classifySecteurs = async (
   llm: Pick<LlmService, 'generateStructured'>,
@@ -86,12 +87,19 @@ export const classifySecteurs = async (
       : action;
   });
 
+  const warnings = outcomes.flatMap((outcome) =>
+    outcome.warning ? [outcome.warning] : []
+  );
+  if (batches.length > 0 && warnings.length === batches.length) {
+    warnings.push(
+      `Aucun secteur proposé : les ${batches.length} lot(s) ont échoué, la complétion par Communs prendra le relais`
+    );
+  }
+
   return success({
     actions: classified,
     tokens: sumTokenUsage(outcomes.map((outcome) => outcome.tokens)),
-    warnings: outcomes.flatMap((outcome) =>
-      outcome.warning ? [outcome.warning] : []
-    ),
+    warnings,
     details: {
       batches: batches.length,
       classified: secteursByIndex.size,
@@ -122,6 +130,7 @@ const classifyBatch = async (
     }),
     tier: 'light',
     schema: secteursResponseSchema,
+    thinkingLevel: 'low',
     signal,
   });
   if (!completion.success) {

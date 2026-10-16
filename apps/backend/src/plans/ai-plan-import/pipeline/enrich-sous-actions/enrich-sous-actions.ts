@@ -7,9 +7,10 @@ import {
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
-import { combineResults, Result, success } from '@tet/backend/utils/result.type';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
+import { keepSucceededBatches } from '../keep-succeeded-batches';
 import { groupByChunk, SourceChunks } from '../source-chunks/source-chunks';
 import { applyEnrichments } from './apply-enrichments';
 import { buildEnrichmentPrompt } from './enrich-sous-actions.prompt';
@@ -36,6 +37,8 @@ export type EnrichSousActionsInput = {
 export type EnrichSousActionsResult = {
   actions: ExtractedAction[];
   tokens: TokenUsage;
+  warnings: string[];
+  details: Record<string, number>;
 };
 
 type BatchOutcome = { entries: EnrichmentEntry[]; tokens: TokenUsage };
@@ -46,7 +49,12 @@ export const enrichSousActions = async (
 ): Promise<Result<EnrichSousActionsResult, LlmError>> => {
   const indexed = indexSousActions(actions);
   if (indexed.length === 0) {
-    return success({ actions, tokens: emptyTokenUsage() });
+    return success({
+      actions,
+      tokens: emptyTokenUsage(),
+      warnings: [],
+      details: {},
+    });
   }
 
   // Un lot ne mêle pas deux tranches : il n'envoie que celle des actions parentes.
@@ -64,12 +72,18 @@ export const enrichSousActions = async (
       enrichBatch(llm, { batch, text, disabledFields, signal })
   );
 
-  const combined = combineResults(outcomes);
-  if (!combined.success) {
-    return combined;
+  // Les sous-actions d'un lot en échec restent telles qu'extraites.
+  const kept = keepSucceededBatches(
+    batches,
+    outcomes,
+    ({ batch }) =>
+      `Sous-actions non enrichies pour ${batch.length} sous-action(s)`
+  );
+  if (!kept.success) {
+    return kept;
   }
 
-  const succeeded = combined.data;
+  const succeeded = kept.data.outcomes;
   return success({
     actions: applyEnrichments(
       actions,
@@ -77,6 +91,11 @@ export const enrichSousActions = async (
       succeeded.flatMap((outcome) => outcome.entries)
     ),
     tokens: sumTokenUsage(succeeded.map((outcome) => outcome.tokens)),
+    warnings: kept.data.warnings,
+    details: {
+      batches: batches.length,
+      failedBatches: kept.data.failedBatches,
+    },
   });
 };
 
@@ -101,6 +120,7 @@ const enrichBatch = async (
       disabledFields,
     }),
     schema: enrichmentResponseSchema,
+    thinkingLevel: 'low',
     signal,
   });
   if (!completion.success) {

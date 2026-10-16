@@ -5,6 +5,11 @@ import {
 } from '../adapters/extracted-action-to-import-action';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
+import {
+  ImportErrors,
+  isClientError,
+  isImportError,
+} from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
@@ -13,7 +18,10 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  isFailedResult,
+  TransactionManager,
+} from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
@@ -42,8 +50,9 @@ import {
 } from '../pipeline/read-document/read-document';
 import { AI_PLAN_IMPORT_MAX_OCR_PAGES } from '../ai-plan-import.constants';
 import { ReadDocument } from '../pipeline/document/document-page';
-import { isCheckpointUsableBy } from '../pipeline/pipeline-checkpoint';
 import {
+  describePipelineError,
+  isCheckpointUsableBy,
   PipelineError,
   runImportPipeline,
   StepName,
@@ -211,7 +220,13 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         `Import ${job.id}: reprise après l'étape ${usable.completedStep}`
       );
       telemetry.restoreDocument(usable.documentStats);
-      start = { resumeFrom: usable, currentDate: usable.currentDate };
+      start = {
+        resumeFrom: {
+          ...usable,
+          documentKind: usable.documentKind ?? usable.documentStats?.kind,
+        },
+        currentDate: usable.currentDate,
+      };
     } else {
       const source = await this.tryDownloadSource(job.sourcePath);
       if (source === null) {
@@ -485,10 +500,38 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       });
       return saved.success
         ? success(saved.data.planId)
-        : failure(`Création du plan impossible : ${saved.error.message}`);
+        : this.planCreationFailed(job.id, saved.error, saved.cause);
     } catch (error) {
-      return failure(`Création du plan impossible : ${getErrorMessage(error)}`);
+      // Avec `tx` partagé, le TransactionManager relance son échec en
+      // exception : un Result, sans `message`.
+      return isFailedResult<ImportErrors>(error)
+        ? this.planCreationFailed(job.id, error.error, error.cause)
+        : this.planCreationFailed(job.id, null, error);
     }
+  }
+
+  /**
+   * Le message du job est montré à l'utilisateur : il reste métier. La cause
+   * technique, noms de tables et de contraintes compris, ne va qu'aux journaux.
+   */
+  private planCreationFailed(
+    jobId: string,
+    error: ImportErrors | null,
+    cause: unknown
+  ): Result<never, string> {
+    const message = `Création du plan impossible : ${
+      error === null
+        ? 'erreur inattendue'
+        : isImportError(error) && !isClientError(error)
+        ? error._tag
+        : error.message ?? String(error)
+    }`;
+    this.logger.error(
+      `Import ${jobId}: ${message} (${getErrorMessage(
+        rootCause(cause ?? error)
+      )})`
+    );
+    return failure(message);
   }
 
   private async recordFailure(
@@ -533,6 +576,15 @@ const readDocumentErrorMessage = (error: ReadDocumentError): string => {
   }
 };
 
+/** Sous une erreur Drizzle, qui cite la requête, l'erreur Postgres. */
+const rootCause = (error: unknown): unknown => {
+  let current = error;
+  while (current instanceof Error && current.cause instanceof Error) {
+    current = current.cause;
+  }
+  return current;
+};
+
 const secondsSince = (isoDate: string): number =>
   Math.max(0, Math.round((Date.now() - new Date(isoDate).getTime()) / 1000));
 
@@ -554,6 +606,6 @@ const pipelineErrorMessage = (
         error.evidence
       } »), pas un programme d'actions : déposez le document qui contient les fiches actions`;
     default:
-      return `Étape ${failedStep} en échec (${error.kind})`;
+      return `Étape ${failedStep} en échec (${describePipelineError(error)})`;
   }
 };

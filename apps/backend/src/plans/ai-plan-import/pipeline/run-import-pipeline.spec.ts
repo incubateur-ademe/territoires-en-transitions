@@ -1,3 +1,6 @@
+import { currentLlmCallRecorder } from '@tet/backend/utils/llm/llm-call-recorder';
+import { LlmError } from '@tet/backend/utils/llm/llm.errors';
+import type { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
@@ -9,6 +12,7 @@ import {
 } from './document/document-page';
 import type { PipelineCheckpoint } from './pipeline-checkpoint';
 import {
+  isCheckpointUsableBy,
   PipelineLlm,
   RunImportPipelineInput,
   runImportPipeline,
@@ -87,14 +91,17 @@ const responseByStep: Partial<Record<StepName, unknown>> = {
   qualitativeReview: { avis: 'Extraction cohérente' },
 };
 
-const routedLlm = (failingStep?: StepName): PipelineLlm =>
+const routedLlm = (
+  failingStep?: StepName,
+  error: LlmError = { kind: 'rate_limited' }
+): PipelineLlm =>
   ({
     maxInputTokens: 900_000,
     capabilities: { ocr: false, strategy: 'whole-document' },
     generateStructured: vi.fn(async ({ prompt }: { prompt: string }) => {
       const step = stepOf(prompt);
       if (step === failingStep) {
-        return failure({ kind: 'rate_limited' });
+        return failure(error);
       }
       if (step === 'hierarchy') {
         return success({
@@ -206,6 +213,107 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it('ne cite aux secteurs aucune sous-action quand withSousActions est faux', async () => {
+    const llm = routedLlm();
+
+    await runImportPipeline(
+      llm,
+      input({ withSousActions: false, withSecteurs: true })
+    );
+
+    const secteursPrompts = vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+      .filter((prompt) => stepOf(prompt) === 'secteurs');
+    expect(secteursPrompts).toHaveLength(1);
+    expect(secteursPrompts[0]).not.toContain('Sous action A');
+  });
+
+  it("retire en lecture entière le sous-axe qui ne porte que l'action du même titre", async () => {
+    const [extracted] = responseByStep.extraction as object[];
+    const llm = {
+      maxInputTokens: 900_000,
+      capabilities: { ocr: false, strategy: 'whole-document' },
+      generateStructured: vi.fn(async ({ prompt }: { prompt: string }) => {
+        const step = stepOf(prompt);
+        return success({
+          data:
+            step === 'extraction'
+              ? [
+                  {
+                    ...extracted,
+                    'sous-axe': '1.1 Rénover les écoles',
+                    titre: 'Rénover les écoles',
+                  },
+                ]
+              : responseByStep[step],
+          tokens,
+        });
+      }),
+    } as unknown as PipelineLlm;
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({ withVerifications: false, withSousActions: false })
+    );
+
+    expect(outcome.status).toBe('done');
+    if (outcome.status === 'done') {
+      expect(outcome.stepStates.hierarchy).toBe('skipped');
+      expect(outcome.draft.actions[0].sousAxe).toBe('');
+    }
+  });
+
+  it("garde deux lignes de même titre d'un tableur, y compris à la reprise", async () => {
+    const [extracted] = responseByStep.extraction as object[];
+    const row = { ...extracted, description: '', 'sous-actions': [] };
+    const llm = routedLlm();
+    const route = vi.mocked(llm.generateStructured).getMockImplementation();
+    vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+      prompt: string;
+    }) =>
+      stepOf(args.prompt) === 'extraction'
+        ? success({
+            data: [
+              { ...row, axe: 'Axe 1' },
+              { ...row, axe: 'Axe 2' },
+            ],
+            tokens,
+          })
+        : route?.(args as never)) as never);
+    const options = { withVerifications: false, withSousActions: false };
+    const checkpoints: PipelineCheckpoint[] = [];
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        ...options,
+        document: buildDocument('csv', [
+          buildPage(0, [{ text: 'Titre;Axe' }, { text: '1.1.1 Action;Axe 1' }]),
+        ]),
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+        },
+      })
+    );
+
+    expect(outcome.status).toBe('done');
+    if (outcome.status === 'done') {
+      expect(outcome.draft.actions.map(({ axe }) => axe)).toEqual([
+        'Axe 1',
+        'Axe 2',
+      ]);
+    }
+    expect(checkpoints[0]).toMatchObject({
+      completedStep: 'reading',
+      documentKind: 'csv',
+    });
+    const { document: _document, ...base } = input(options);
+    expect(
+      await runImportPipeline(llm, { ...base, resumeFrom: checkpoints[0] })
+    ).toEqual(outcome);
+  });
+
   it('émet la progression cumulée après chaque étape', async () => {
     const llm = routedLlm();
     const onStepStatesChange = vi.fn<(stepStates: StepStates) => Promise<void>>(
@@ -217,7 +325,7 @@ describe('runImportPipeline', () => {
     const reportedStates = onStepStatesChange.mock.calls.map(
       ([states]) => states
     );
-    expect(reportedStates).toEqual([
+    expect(reportedStates.slice(0, 6)).toEqual([
       {
         reading: 'ok',
         scouting: 'pending',
@@ -284,40 +392,30 @@ describe('runImportPipeline', () => {
         secteurs: 'pending',
         qualitativeReview: 'pending',
       },
-      {
-        reading: 'ok',
-        scouting: 'skipped',
-        extraction: 'ok',
-        hierarchy: 'skipped',
-        scoring: 'ok',
-        consolidation: 'ok',
-        enrichment: 'ok',
-        secteurs: 'pending',
-        qualitativeReview: 'pending',
-      },
-      {
-        reading: 'ok',
-        scouting: 'skipped',
-        extraction: 'ok',
-        hierarchy: 'skipped',
-        scoring: 'ok',
-        consolidation: 'ok',
-        enrichment: 'ok',
-        secteurs: 'skipped',
-        qualitativeReview: 'pending',
-      },
-      {
-        reading: 'ok',
-        scouting: 'skipped',
-        extraction: 'ok',
-        hierarchy: 'skipped',
-        scoring: 'ok',
-        consolidation: 'ok',
-        enrichment: 'ok',
-        secteurs: 'skipped',
-        qualitativeReview: 'ok',
-      },
     ]);
+    // Après la consolidation, les deux branches avancent chacune de leur
+    // côté : une étape de plus à chaque fois, jusqu'à l'état final.
+    const parallel = reportedStates.slice(6);
+    expect(parallel).toHaveLength(3);
+    parallel.forEach((states, index) => {
+      const previous = reportedStates[5 + index];
+      const changed = stepOrder.filter(
+        (name) => states[name] !== previous[name]
+      );
+      expect(changed).toHaveLength(1);
+      expect(previous[changed[0]]).toBe('pending');
+    });
+    expect(parallel.at(-1)).toEqual({
+      reading: 'ok',
+      scouting: 'skipped',
+      extraction: 'ok',
+      hierarchy: 'skipped',
+      scoring: 'ok',
+      consolidation: 'ok',
+      enrichment: 'ok',
+      secteurs: 'skipped',
+      qualitativeReview: 'ok',
+    });
   });
 
   it('structure chaque fiche à part avec la stratégie segmentée, puis vérifie par fenêtres', async () => {
@@ -430,6 +528,86 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it("décrit l'erreur de l'étape en échec avec son statut HTTP", async () => {
+    const runs: ImportStepRun[] = [];
+    const onStepRun = vi.fn(async (run: ImportStepRun) => {
+      runs.push(run);
+    });
+
+    await runImportPipeline(
+      routedLlm('extraction', { kind: 'api_error', httpStatus: 503 }),
+      input({ onStepRun })
+    );
+
+    expect(runs.at(-1)).toMatchObject({
+      step: 'extraction',
+      status: 'failed',
+      error: 'api_error 503',
+    });
+  });
+
+  it.each([
+    'scoring',
+    'consolidation',
+    'enrichment',
+    'qualitativeReview',
+  ] as const)(
+    "va au bout quand l'étape %s échoue sur une erreur qu'une reprise ne corrigerait pas",
+    async (failingStep) => {
+      const runs: ImportStepRun[] = [];
+
+      const outcome = await runImportPipeline(
+        routedLlm(failingStep, { kind: 'api_error', httpStatus: 400 }),
+        input({
+          onStepRun: async (run) => {
+            runs.push(run);
+          },
+        })
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'done',
+        stepStates: { [failingStep]: 'ok' },
+        warnings: [expect.stringContaining('api_error 400')],
+      });
+      expect(runs.find(({ step }) => step === failingStep)).toMatchObject({
+        status: 'ok',
+        details: { failedBatches: 1 },
+      });
+    }
+  );
+
+  it.each([
+    ['enrichment', 500],
+    ['qualitativeReview', null],
+  ] as const)(
+    "échoue, pour être repris, quand tous les lots de l'étape %s échouent sur une panne (%s)",
+    async (failingStep, httpStatus) => {
+      const outcome = await runImportPipeline(
+        routedLlm(failingStep, { kind: 'api_error', httpStatus }),
+        input()
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: failingStep,
+        error: { kind: 'api_error', httpStatus },
+      });
+    }
+  );
+
+  it('rend un brouillon sans relecture quand la relecture échoue', async () => {
+    const outcome = await runImportPipeline(
+      routedLlm('qualitativeReview', { kind: 'truncated' }),
+      input()
+    );
+
+    expect(outcome).toMatchObject({
+      status: 'done',
+      draft: { qualitativeReview: null },
+    });
+  });
+
   it('propose les secteurs de chaque action quand withSecteurs est vrai', async () => {
     const outcome = await runImportPipeline(
       routedLlm(),
@@ -457,7 +635,80 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it("classe les secteurs pendant l'enrichissement, chaque appel compté à son étape", async () => {
+    const llm = routedLlm();
+    const route = vi.mocked(llm.generateStructured).getMockImplementation();
+    let startSecteurs = () => undefined as void;
+    const secteursStarted = new Promise<void>((resolve) => {
+      startSecteurs = resolve;
+    });
+    vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+      prompt: string;
+    }) => {
+      const step = stepOf(args.prompt);
+      if (step === 'secteurs') startSecteurs();
+      // En série, l'enrichissement attendrait les secteurs sans fin.
+      if (step === 'enrichment') await secteursStarted;
+      currentLlmCallRecorder()?.calls.push({ model: step } as LlmCallEvent);
+      return route?.(args as never);
+    }) as never);
+    const runs: ImportStepRun[] = [];
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        withSecteurs: true,
+        onStepRun: async (run) => {
+          runs.push(run);
+        },
+      })
+    );
+
+    expect(outcome).toMatchObject({
+      status: 'done',
+      stepStates: { enrichment: 'ok', secteurs: 'ok', qualitativeReview: 'ok' },
+      draft: {
+        qualitativeReview: 'Extraction cohérente',
+        actions: [
+          {
+            secteurs: { secteurs: ['tertiaire'] },
+            sousActions: [{ description: 'desc enrichie' }],
+          },
+        ],
+      },
+      tokens: { totalTokens: tokens.totalTokens * 6 },
+    });
+    expect(
+      Object.fromEntries(
+        runs.map(({ step, calls }) => [step, calls.map(({ model }) => model)])
+      )
+    ).toMatchObject({
+      extraction: ['extraction'],
+      scoring: ['scoring'],
+      consolidation: ['consolidation'],
+      enrichment: ['enrichment'],
+      secteurs: ['secteurs'],
+      qualitativeReview: ['qualitativeReview'],
+    });
+  });
+
   describe('reprise', () => {
+    it.each([
+      ['scoring', false],
+      ['qualitativeReview', true],
+    ] as const)(
+      'après %s, un point de reprise découpé pour un autre modèle sert : %s',
+      (completedStep, usable) => {
+        const checkpoint = {
+          schemaVersion: 1,
+          completedStep,
+          llm: { strategy: 'segmented', maxInputTokens: 100_000 },
+        } as const;
+
+        expect(isCheckpointUsableBy(checkpoint, routedLlm())).toBe(usable);
+      }
+    );
+
     const prompts = (llm: PipelineLlm): string[] =>
       vi
         .mocked(llm.generateStructured)
@@ -509,6 +760,8 @@ describe('runImportPipeline', () => {
           })
         );
 
+        // Les secteurs tournent à côté de l'enrichissement et de la revue : un
+        // point de reprise chaque fois que la suite des étapes faites s'allonge.
         expect(checkpoints.map(({ completedStep }) => completedStep)).toEqual([
           'reading',
           'scouting',
@@ -570,13 +823,339 @@ describe('runImportPipeline', () => {
             stepOrder.indexOf(step) > completed;
           expect(resumed).toEqual(reference);
           // Mêmes prompts au caractère près : l'état restauré (unités gardées,
-          // squelette, extraits) est bien celui du premier passage.
-          expect(prompts(resumedLlm)).toEqual(
-            referencePrompts.filter((prompt) => remaining(stepOf(prompt)))
+          // squelette, extraits) est bien celui du premier passage. Les
+          // branches parallèles ne gardent pas leur ordre d'une fois à l'autre.
+          expect(prompts(resumedLlm).sort()).toEqual(
+            referencePrompts
+              .filter((prompt) => remaining(stepOf(prompt)))
+              .sort()
           );
-          expect(runs).toEqual(referenceRuns.filter(remaining));
+          expect(runs.sort()).toEqual(referenceRuns.filter(remaining).sort());
         }
       }
     );
+
+    const resumeInput = (
+      resumeFrom: PipelineCheckpoint
+    ): RunImportPipelineInput => {
+      const { document: _document, ...base } = input({ withSecteurs: true });
+      return { ...base, resumeFrom };
+    };
+
+    const runWithCheckpoints = async (
+      llm: PipelineLlm,
+      overrides: Partial<FreshInput>
+    ) => {
+      const checkpoints: PipelineCheckpoint[] = [];
+      const outcome = await runImportPipeline(
+        llm,
+        input({
+          ...overrides,
+          onCheckpoint: async (checkpoint) => {
+            checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+          },
+        })
+      );
+      return { outcome, lastCheckpoint: checkpoints.at(-1) };
+    };
+
+    it("après une revue en échec, reprend sans refaire l'enrichissement ni les secteurs", async () => {
+      const { outcome, lastCheckpoint } = await runWithCheckpoints(
+        routedLlm('qualitativeReview'),
+        { withSecteurs: true }
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: 'qualitativeReview',
+        stepStates: {
+          enrichment: 'ok',
+          secteurs: 'ok',
+          qualitativeReview: 'pending',
+        },
+      });
+      expect(lastCheckpoint?.completedStep).toBe('secteurs');
+
+      const resumedLlm = routedLlm();
+      const resumed = await runImportPipeline(
+        resumedLlm,
+        resumeInput(lastCheckpoint as PipelineCheckpoint)
+      );
+
+      expect(prompts(resumedLlm).map(stepOf)).toEqual(['qualitativeReview']);
+      expect(resumed).toEqual(
+        await runImportPipeline(routedLlm(), input({ withSecteurs: true }))
+      );
+    });
+
+    // L'étape en suspens ne répond qu'à son annulation, comme un appel en vol :
+    // par une erreur, ou en levant comme l'attente d'une relance.
+    const llmWithPendingStep = (
+      failingStep: StepName,
+      pendingStep: StepName,
+      onAbort: 'fail' | 'throw'
+    ): PipelineLlm => {
+      const llm = routedLlm(failingStep);
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      let startPending = () => undefined as void;
+      const pendingStarted = new Promise<void>((resolve) => {
+        startPending = resolve;
+      });
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+        signal?: AbortSignal;
+      }) => {
+        const step = stepOf(args.prompt);
+        if (step === pendingStep) {
+          startPending();
+          return new Promise((resolve, reject) => {
+            args.signal?.addEventListener('abort', () =>
+              onAbort === 'throw'
+                ? reject(args.signal?.reason)
+                : resolve(failure({ kind: 'api_error', httpStatus: null }))
+            );
+          });
+        }
+        if (step === failingStep) await pendingStarted;
+        return route?.(args as never);
+      }) as never);
+      return llm;
+    };
+
+    it("arrête les secteurs quand l'enrichissement échoue, sans point de reprise au-delà", async () => {
+      const llm = llmWithPendingStep('enrichment', 'secteurs', 'fail');
+
+      const { outcome, lastCheckpoint } = await runWithCheckpoints(llm, {
+        withSecteurs: true,
+      });
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: 'enrichment',
+        error: { kind: 'rate_limited' },
+        stepStates: {
+          enrichment: 'pending',
+          secteurs: 'pending',
+          qualitativeReview: 'pending',
+        },
+      });
+      expect(prompts(llm).map(stepOf)).not.toContain('qualitativeReview');
+      expect(lastCheckpoint?.completedStep).toBe('consolidation');
+    });
+
+    it("arrête les secteurs quand la revue échoue, et garde l'enrichissement pour la reprise", async () => {
+      const llm = llmWithPendingStep('qualitativeReview', 'secteurs', 'throw');
+
+      const { outcome, lastCheckpoint } = await runWithCheckpoints(llm, {
+        withSecteurs: true,
+      });
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: 'qualitativeReview',
+        error: { kind: 'rate_limited' },
+        stepStates: {
+          enrichment: 'ok',
+          secteurs: 'pending',
+          qualitativeReview: 'pending',
+        },
+      });
+      expect(lastCheckpoint?.completedStep).toBe('enrichment');
+    });
+
+    it.each([
+      ['enrichment', 'secteurs'],
+      ['secteurs', 'enrichment'],
+    ] as const)(
+      "arrête l'autre branche quand la progression de %s ne s'enregistre pas",
+      async (reportedStep, pendingStep) => {
+        const llm = routedLlm();
+        const route = vi.mocked(llm.generateStructured).getMockImplementation();
+        let startPending = () => undefined as void;
+        const pendingStarted = new Promise<void>((resolve) => {
+          startPending = resolve;
+        });
+        vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+          prompt: string;
+          signal?: AbortSignal;
+        }) => {
+          const step = stepOf(args.prompt);
+          if (step === pendingStep) {
+            startPending();
+            return new Promise((resolve) => {
+              args.signal?.addEventListener('abort', () =>
+                resolve(failure({ kind: 'api_error', httpStatus: null }))
+              );
+            });
+          }
+          if (step === reportedStep) await pendingStarted;
+          return route?.(args as never);
+        }) as never);
+        const reportError = new Error('progression non enregistrée');
+
+        const outcome = runImportPipeline(
+          llm,
+          input({
+            withSecteurs: true,
+            onStepStatesChange: async (stepStates) => {
+              if (stepStates[reportedStep] !== 'pending') throw reportError;
+            },
+          })
+        );
+
+        await expect(outcome).rejects.toBe(reportError);
+        expect(prompts(llm).map(stepOf)).not.toContain('qualitativeReview');
+      }
+    );
+
+    it("écrit un point de reprise pendant les branches, sans ce que l'autre a fait au-delà", async () => {
+      const llm = routedLlm();
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      const release: Partial<Record<StepName, () => void>> = {};
+      const held = (step: StepName) =>
+        new Promise<void>((resolve) => {
+          release[step] = resolve;
+        });
+      const gates: Partial<Record<StepName, Promise<void>>> = {
+        secteurs: held('secteurs'),
+        qualitativeReview: held('qualitativeReview'),
+      };
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+      }) => {
+        await gates[stepOf(args.prompt)];
+        return route?.(args as never);
+      }) as never);
+      const checkpoints: PipelineCheckpoint[] = [];
+      const reports: StepStates[] = [];
+      const last = () => checkpoints.at(-1) as PipelineCheckpoint;
+
+      const outcome = runImportPipeline(
+        llm,
+        input({
+          withSecteurs: true,
+          onCheckpoint: async (checkpoint) => {
+            checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+          },
+          onStepStatesChange: async (stepStates) => {
+            reports.push(stepStates);
+          },
+        })
+      );
+
+      await vi.waitFor(() => expect(last().completedStep).toBe('enrichment'));
+      const afterEnrichment = last();
+      expect(afterEnrichment.progress).toMatchObject({
+        review: null,
+        stepStates: {
+          enrichment: 'ok',
+          secteurs: 'pending',
+          qualitativeReview: 'pending',
+        },
+        actions: [{ sousActions: [{ description: 'desc enrichie' }] }],
+      });
+      expect(afterEnrichment.progress.actions[0].secteurs).toBeUndefined();
+
+      // La revue faite, les secteurs encore en cours : rien de plus à écrire.
+      release.qualitativeReview?.();
+      await vi.waitFor(() =>
+        expect(reports.at(-1)?.qualitativeReview).toBe('ok')
+      );
+      expect(last()).toEqual(afterEnrichment);
+
+      release.secteurs?.();
+      expect(await outcome).toMatchObject({ status: 'done' });
+      expect(last().completedStep).toBe('qualitativeReview');
+
+      const resumedLlm = routedLlm();
+      const resumed = await runImportPipeline(
+        resumedLlm,
+        resumeInput(afterEnrichment)
+      );
+      expect(prompts(resumedLlm).map(stepOf).sort()).toEqual([
+        'qualitativeReview',
+        'secteurs',
+      ]);
+      expect(resumed).toEqual(
+        await runImportPipeline(routedLlm(), input({ withSecteurs: true }))
+      );
+    });
+
+    it("n'écrit un point de reprise qu'une fois le précédent enregistré", async () => {
+      const llm = routedLlm();
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      let startSecteurs = () => undefined as void;
+      const secteursMayStart = new Promise<void>((resolve) => {
+        startSecteurs = resolve;
+      });
+      let secteursAnswered = () => undefined as void;
+      const secteursDone = new Promise<void>((resolve) => {
+        secteursAnswered = resolve;
+      });
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+      }) => {
+        if (stepOf(args.prompt) !== 'secteurs') return route?.(args as never);
+        await secteursMayStart;
+        const answer = await route?.(args as never);
+        secteursAnswered();
+        return answer;
+      }) as never);
+      const saved: StepName[] = [];
+
+      await runImportPipeline(
+        llm,
+        input({
+          withSecteurs: true,
+          onCheckpoint: async ({ completedStep }) => {
+            if (completedStep === 'enrichment') {
+              // Les secteurs finissent pendant que ce point de reprise s'écrit.
+              startSecteurs();
+              await secteursDone;
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
+            saved.push(completedStep);
+          },
+        })
+      );
+
+      expect(saved.slice(-3)).toEqual([
+        'enrichment',
+        'secteurs',
+        'qualitativeReview',
+      ]);
+    });
+
+    it("reprend un point de reprise d'avant la mise en parallèle, arrêté après l'enrichissement", async () => {
+      // Sans secteurs, la revue en échec laisse l'état d'un ancien point de
+      // reprise « enrichment » : il ne reste qu'à marquer les secteurs à faire.
+      const { lastCheckpoint } = await runWithCheckpoints(
+        routedLlm('qualitativeReview'),
+        { withSecteurs: false }
+      );
+      const last = lastCheckpoint as PipelineCheckpoint;
+      const afterEnrichment: PipelineCheckpoint = {
+        ...last,
+        completedStep: 'enrichment',
+        progress: {
+          ...last.progress,
+          stepStates: { ...last.progress.stepStates, secteurs: 'pending' },
+        },
+      };
+
+      const resumedLlm = routedLlm();
+      const resumed = await runImportPipeline(
+        resumedLlm,
+        resumeInput(afterEnrichment)
+      );
+
+      expect(prompts(resumedLlm).map(stepOf).sort()).toEqual([
+        'qualitativeReview',
+        'secteurs',
+      ]);
+      expect(resumed).toEqual(
+        await runImportPipeline(routedLlm(), input({ withSecteurs: true }))
+      );
+    });
   });
 });

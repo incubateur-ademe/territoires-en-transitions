@@ -149,6 +149,179 @@ describe('ocrPages', () => {
     );
   });
 
+  it("annule l'appel d'une page qui dépasse le délai", async () => {
+    const signals: AbortSignal[] = [];
+    const ocrPage: OcrPageFn = (_image, signal) => {
+      if (signal) {
+        signals.push(signal);
+      }
+      return new Promise<never>(() => undefined);
+    };
+
+    await ocrPages({
+      pages,
+      pageIndexes: [1, 2],
+      renderPage,
+      ocrPage,
+      fullScan: false,
+      pageTimeoutMs: 20,
+    });
+
+    expect(signals).toHaveLength(2);
+    expect(signals.every((signal) => signal.aborted)).toBe(true);
+  });
+
+  it("transmet à l'appel l'interruption de l'import", async () => {
+    const job = new AbortController();
+    let callSignal: AbortSignal | undefined;
+    const ocrPage: OcrPageFn = (_image, signal) => {
+      callSignal = signal;
+      job.abort();
+      return Promise.resolve(failure({ kind: 'api_error', httpStatus: null }));
+    };
+
+    await ocrPages({
+      pages,
+      pageIndexes: [1],
+      renderPage,
+      ocrPage,
+      fullScan: false,
+      signal: job.signal,
+    });
+
+    expect(callSignal?.aborted).toBe(true);
+  });
+
+  it("dans un PDF texte, ne tente plus les pages restantes après trois échecs d'affilée", async () => {
+    const ocrPage = vi.fn<OcrPageFn>(async () =>
+      failure({ kind: 'api_error', httpStatus: 503 })
+    );
+    const many = Array.from({ length: 6 }, (_, index) => buildPage(index, []));
+
+    const result = await ocrPages({
+      pages: many,
+      pageIndexes: many.map((page) => page.index),
+      renderPage,
+      ocrPage,
+      fullScan: false,
+      concurrency: 1,
+    });
+
+    expect(ocrPage).toHaveBeenCalledTimes(3);
+    expect(result).toEqual(
+      success({
+        pages: many,
+        failures: [
+          { pageIndex: 0, reason: 'api_error 503' },
+          { pageIndex: 1, reason: 'api_error 503' },
+          { pageIndex: 2, reason: 'api_error 503' },
+          ...[3, 4, 5].map((pageIndex) => ({
+            pageIndex,
+            reason: 'non tentée après des échecs consécutifs',
+          })),
+        ],
+      })
+    );
+  });
+
+  it.each([
+    ['dépassent le délai', () => new Promise<never>(() => undefined)],
+    [
+      'reviennent tronquées',
+      async () => failure({ kind: 'truncated' as const }),
+    ],
+  ])(
+    'dans un PDF texte, tente toutes les pages qui %s : le modèle boucle sur des photos',
+    async (_label, answer) => {
+      const ocrPage = vi.fn<OcrPageFn>(answer);
+      const many = Array.from({ length: 5 }, (_, index) =>
+        buildPage(index, [])
+      );
+
+      await ocrPages({
+        pages: many,
+        pageIndexes: many.map((page) => page.index),
+        renderPage,
+        ocrPage,
+        fullScan: false,
+        concurrency: 1,
+        pageTimeoutMs: 20,
+      });
+
+      expect(ocrPage).toHaveBeenCalledTimes(5);
+    }
+  );
+
+  it('ne remet pas le compte des erreurs du fournisseur à zéro sur un délai dépassé', async () => {
+    const ocrPage = vi.fn<OcrPageFn>(({ pageIndex }) =>
+      pageIndex === 2
+        ? new Promise<never>(() => undefined)
+        : Promise.resolve(failure({ kind: 'api_error', httpStatus: 503 }))
+    );
+    const many = Array.from({ length: 6 }, (_, index) => buildPage(index, []));
+
+    const result = await ocrPages({
+      pages: many,
+      pageIndexes: many.map((page) => page.index),
+      renderPage,
+      ocrPage,
+      fullScan: false,
+      concurrency: 1,
+      pageTimeoutMs: 20,
+    });
+
+    expect(ocrPage).toHaveBeenCalledTimes(4);
+    expect(result.success && result.data.failures.map((f) => f.reason)).toEqual(
+      [
+        'api_error 503',
+        'api_error 503',
+        'délai dépassé',
+        'api_error 503',
+        'non tentée après des échecs consécutifs',
+        'non tentée après des échecs consécutifs',
+      ]
+    );
+  });
+
+  it('continue après des échecs entrecoupés de pages transcrites', async () => {
+    const ocrPage = vi.fn<OcrPageFn>(async ({ pageIndex }) =>
+      pageIndex % 3 === 2
+        ? success('Transcrit')
+        : failure({ kind: 'api_error', httpStatus: 500 })
+    );
+    const many = Array.from({ length: 6 }, (_, index) => buildPage(index, []));
+
+    await ocrPages({
+      pages: many,
+      pageIndexes: many.map((page) => page.index),
+      renderPage,
+      ocrPage,
+      fullScan: false,
+      concurrency: 1,
+    });
+
+    expect(ocrPage).toHaveBeenCalledTimes(6);
+  });
+
+  it("tente toutes les pages d'un document scanné, même après des échecs d'affilée", async () => {
+    const ocrPage = vi.fn<OcrPageFn>(async () =>
+      failure({ kind: 'rate_limited' })
+    );
+    const many = Array.from({ length: 5 }, (_, index) => buildPage(index, []));
+
+    const result = await ocrPages({
+      pages: many,
+      pageIndexes: many.map((page) => page.index),
+      renderPage,
+      ocrPage,
+      fullScan: true,
+      concurrency: 1,
+    });
+
+    expect(ocrPage).toHaveBeenCalledTimes(5);
+    expect(result.success).toBe(false);
+  });
+
   it('signale un rendu impossible comme un échec de la page', async () => {
     const result = await ocrPages({
       pages,

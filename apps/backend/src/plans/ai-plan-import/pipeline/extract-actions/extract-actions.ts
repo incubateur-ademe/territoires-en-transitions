@@ -9,10 +9,16 @@ import {
 } from './extract-actions.prompt';
 import { extractionResponseSchema } from './extract-actions.schema';
 import { extractionResponseToExtractedActions } from './extraction-response-to-extracted-actions';
-import { ChunkedActions, mergeChunkActions } from './merge-chunk-actions';
+import {
+  ChunkedActions,
+  dedupeByTitle,
+  mergeChunkActions,
+} from './merge-chunk-actions';
 
 export type ExtractActionsInput = Omit<ExtractionPromptInput, 'text'> & {
   chunks: string[];
+  /** Un tableur : chaque ligne est une fiche, un titre repris n'y est pas un écho. */
+  tabular?: boolean;
   signal?: AbortSignal;
 };
 
@@ -28,7 +34,7 @@ export type ExtractActionsError = LlmError | { kind: 'no_actions_extracted' };
  */
 export const extractActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { chunks, signal, ...promptInput }: ExtractActionsInput
+  { chunks, tabular = false, signal, ...promptInput }: ExtractActionsInput
 ): Promise<Result<ExtractActionsResult, ExtractActionsError>> => {
   let extracted: ChunkedActions = { actions: [], chunkIndexByAction: [] };
   const usages: TokenUsage[] = [];
@@ -62,5 +68,8 @@ export const extractActions = async (
   if (extracted.actions.length === 0) {
     return failure({ kind: 'no_actions_extracted' });
   }
-  return success({ ...extracted, tokens: sumTokenUsage(usages) });
+  return success({
+    ...(tabular ? extracted : dedupeByTitle(extracted)),
+    tokens: sumTokenUsage(usages),
+  });
 };

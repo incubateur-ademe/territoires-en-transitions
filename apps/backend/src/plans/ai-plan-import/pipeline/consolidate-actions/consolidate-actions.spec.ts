@@ -136,7 +136,41 @@ describe('consolidateActions', () => {
     }
   });
 
-  it('échoue si un lot échoue', async () => {
+  it("garde telles qu'extraites les actions d'un lot en échec, avec un avertissement", async () => {
+    const echoing = echoingLlm();
+    const llm = {
+      generateStructured: vi
+        .fn()
+        .mockImplementationOnce(echoing.generateStructured)
+        .mockResolvedValueOnce(failure({ kind: 'rate_limited' })),
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+    const actions = Array.from(
+      { length: CONSOLIDATION_BATCH_SIZE + 2 },
+      (_, index) => anAction(`Action ${index}`, 50)
+    );
+
+    const result = await consolidateActions(llm, {
+      ...inWholeDocument(actions),
+      disabledFields: [],
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        warnings: ['Actions non corrigées pour 2 action(s) : rate_limited'],
+        details: { batches: 2, failedBatches: 1 },
+      },
+    });
+    if (result.success) {
+      expect(result.data.actions[0].titre).toBe('consolidée 0');
+      expect(result.data.actions.at(-1)).toMatchObject({
+        titre: `Action ${CONSOLIDATION_BATCH_SIZE + 1}`,
+        confidence: { amelioree: false },
+      });
+    }
+  });
+
+  it('échoue quand tous les lots butent sur le quota', async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'rate_limited' }),
     } as unknown as Pick<LlmService, 'generateStructured'>;

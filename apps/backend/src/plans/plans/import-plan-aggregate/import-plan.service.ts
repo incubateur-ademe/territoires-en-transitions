@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreatePlanAggregateService } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.service';
+import { PlanErrorType } from '@tet/backend/plans/plans/plans.errors';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -86,11 +87,18 @@ export class ImportPlanService {
           transaction
         );
 
+        // Le message est montré à l'utilisateur : seul le détail d'une
+        // validation y a sa place. La cause d'un échec en base cite tables et
+        // contraintes, elle suit à part pour les journaux.
         if (!planCreationResult.success) {
+          const { error, cause } = planCreationResult;
           return failure(
             new PlanCreationError(
-              planCreationResult.cause?.message ?? planCreationResult.error
-            )
+              error === PlanErrorType.INVALID_DATA
+                ? cause?.message ?? error
+                : error
+            ),
+            cause
           );
         }
 
