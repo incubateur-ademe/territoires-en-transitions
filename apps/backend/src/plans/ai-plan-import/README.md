@@ -175,8 +175,11 @@ flowchart LR
 - Une page blanche ou une photo n'est pas un échec d'OCR. Un échec sur un
   document qui a du texte laisse la page telle que pdf.js l'a lue ; seul un
   scan intégral échoue au-delà de 20 % de pages en échec. Sur un document qui
-  a du texte, après 3 échecs d'affilée, les pages restantes ne sont plus
-  tentées et restent telles que pdf.js les a lues.
+  a du texte, après 3 erreurs du fournisseur d'affilée (quota, panne, requête
+  refusée), les pages restantes ne sont plus tentées et restent telles que
+  pdf.js les a lues. Un délai dépassé ou une réponse tronquée vient de la page,
+  le modèle bouclant sur une photo : il ne compte pas, sans remettre le compte
+  à zéro.
 - La réponse de l'OCR est plafonnée à 3 500 tokens par page, au-delà desquels
   le modèle répète en boucle ce qu'il voit sur une photo. Une page presque
   vide d'un document qui a du texte a 30 secondes pour être transcrite, une

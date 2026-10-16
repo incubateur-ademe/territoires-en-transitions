@@ -224,6 +224,65 @@ describe('ocrPages', () => {
     );
   });
 
+  it.each([
+    ['dépassent le délai', () => new Promise<never>(() => undefined)],
+    [
+      'reviennent tronquées',
+      async () => failure({ kind: 'truncated' as const }),
+    ],
+  ])(
+    'dans un PDF texte, tente toutes les pages qui %s : le modèle boucle sur des photos',
+    async (_label, answer) => {
+      const ocrPage = vi.fn<OcrPageFn>(answer);
+      const many = Array.from({ length: 5 }, (_, index) =>
+        buildPage(index, [])
+      );
+
+      await ocrPages({
+        pages: many,
+        pageIndexes: many.map((page) => page.index),
+        renderPage,
+        ocrPage,
+        fullScan: false,
+        concurrency: 1,
+        pageTimeoutMs: 20,
+      });
+
+      expect(ocrPage).toHaveBeenCalledTimes(5);
+    }
+  );
+
+  it('ne remet pas le compte des erreurs du fournisseur à zéro sur un délai dépassé', async () => {
+    const ocrPage = vi.fn<OcrPageFn>(({ pageIndex }) =>
+      pageIndex === 2
+        ? new Promise<never>(() => undefined)
+        : Promise.resolve(failure({ kind: 'api_error', httpStatus: 503 }))
+    );
+    const many = Array.from({ length: 6 }, (_, index) => buildPage(index, []));
+
+    const result = await ocrPages({
+      pages: many,
+      pageIndexes: many.map((page) => page.index),
+      renderPage,
+      ocrPage,
+      fullScan: false,
+      concurrency: 1,
+      pageTimeoutMs: 20,
+    });
+
+    expect(ocrPage).toHaveBeenCalledTimes(4);
+    expect(result.success && result.data.failures.map((f) => f.reason)).toEqual(
+      [
+        'api_error 503',
+        'api_error 503',
+        'délai dépassé',
+        'api_error 503',
+        'non tentée après des échecs consécutifs',
+        'non tentée après des échecs consécutifs',
+      ]
+    );
+  });
+
   it('continue après des échecs entrecoupés de pages transcrites', async () => {
     const ocrPage = vi.fn<OcrPageFn>(async ({ pageIndex }) =>
       pageIndex % 3 === 2
