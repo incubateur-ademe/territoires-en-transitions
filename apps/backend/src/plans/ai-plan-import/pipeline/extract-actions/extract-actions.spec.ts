@@ -148,6 +148,28 @@ describe('extractActions', () => {
     }
   });
 
+  it("garde chaque ligne d'un tableur, même de titre répété et sans description", async () => {
+    const llm = llmReturning(
+      success({
+        data: [
+          anExtractionAction({ axe: 'Axe 1 Mobilité', titre: 'Sensibiliser' }),
+          anExtractionAction({ axe: 'Axe 2 Énergie', titre: 'Sensibiliser' }),
+        ],
+        tokens,
+      })
+    );
+
+    const result = await extractActions(llm, { ...promptInput, tabular: true });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions.map(({ axe }) => axe)).toEqual([
+        'Axe 1 Mobilité',
+        'Axe 2 Énergie',
+      ]);
+    }
+  });
+
   it("échoue quand aucune tranche ne contient d'action", async () => {
     const llm = llmReturning(success({ data: [], tokens }));
 

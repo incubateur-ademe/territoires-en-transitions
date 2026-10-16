@@ -44,6 +44,8 @@ export type StructureUnitsInput = {
   instructions: string;
   disabledFields: DisableableField[];
   currentDate: string;
+  /** Un tableur : chaque ligne est une fiche, un titre repris n'y est pas un écho. */
+  tabular?: boolean;
   signal?: AbortSignal;
 };
 
@@ -67,6 +69,7 @@ export const structureUnits = async (
     instructions,
     disabledFields,
     currentDate,
+    tabular = false,
     signal,
   }: StructureUnitsInput
 ): Promise<Result<StructureUnitsResult, ExtractActionsError>> => {
@@ -116,7 +119,7 @@ export const structureUnits = async (
     return failure(failures[0]?.error ?? { kind: 'no_actions_extracted' });
   }
   return success({
-    ...dedupeByTitle(merged),
+    ...(tabular ? merged : dedupeByTitle(merged)),
     chunks,
     tokens: sumTokenUsage(outcomes.flatMap(({ tokens }) => tokens)),
     warnings: failures.map(

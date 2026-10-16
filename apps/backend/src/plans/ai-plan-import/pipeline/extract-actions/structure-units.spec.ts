@@ -130,6 +130,23 @@ describe('structureUnits', () => {
     }
   });
 
+  it("garde chaque ligne d'un tableur, même de titre répété et sans description", async () => {
+    const { llm } = llmAnswering(() => [
+      anExtractionAction('Sensibiliser', 'Axe 1 : Mobilité'),
+      anExtractionAction('Sensibiliser', 'Axe 2 : Énergie'),
+    ]);
+
+    const result = await structureUnits(llm, { ...input, tabular: true });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.actions.map(({ axe }) => axe)).toEqual([
+        'Axe 1 : Mobilité',
+        'Axe 2 : Énergie',
+      ]);
+    }
+  });
+
   it('cite le squelette quand il est connu', async () => {
     const { llm, calls } = llmAnswering(() => [anExtractionAction('A')]);
 

@@ -244,11 +244,17 @@ export const runImportPipeline = async (
     };
   }
 
+  const documentKind = input.resumeFrom
+    ? input.resumeFrom.documentKind
+    : input.document.kind;
+  const tabular = documentKind !== undefined && isTabularKind(documentKind);
+
   const checkpoint = (completedStep: StepName): Promise<void> =>
     input.onCheckpoint?.({
       schemaVersion: PIPELINE_CHECKPOINT_SCHEMA_VERSION,
       completedStep,
       currentDate: input.currentDate,
+      documentKind,
       llm: {
         strategy: llm.capabilities.strategy,
         maxInputTokens: llm.maxInputTokens,
@@ -296,6 +302,7 @@ export const runImportPipeline = async (
           instructions: input.instructions,
           disabledFields: input.disabledFields,
           currentDate: input.currentDate,
+          tabular,
           signal: input.signal,
         };
         if (state.units) {
