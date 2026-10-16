@@ -119,12 +119,16 @@ const bothSetAndDiffer = (a: string, b: string): boolean =>
 const SOUS_AXE_NUMBER = /^\s*(\d{1,2}(?:\.\d{1,2})+)/u;
 
 // « 2.1 » et « 2.1 Parc social » sont le même sous-axe : le numéro prime sur
-// le libellé quand les deux en ont un.
+// le libellé quand les deux en ont un. Quand un seul en a, le libellé de
+// l'autre peut être une variante du même sous-axe : rien ne les distingue.
 const sousAxesDiffer = (a: string, b: string): boolean => {
   const numberA = a.match(SOUS_AXE_NUMBER)?.[1];
   const numberB = b.match(SOUS_AXE_NUMBER)?.[1];
   if (numberA && numberB) {
     return numberA !== numberB;
+  }
+  if (numberA || numberB) {
+    return false;
   }
   return bothSetAndDiffer(normalizeTitle(a), normalizeTitle(b));
 };
