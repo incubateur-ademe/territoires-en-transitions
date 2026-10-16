@@ -70,9 +70,9 @@ function buildFicheCreate(
 }
 
 /**
- * La cause à remonter avec un échec, pour que l'appelant l'affiche. Une erreur
- * Drizzle cite la requête et ses paramètres : l'erreur Postgres qu'elle
- * enveloppe suffit.
+ * La cause à remonter avec un échec, pour les journaux de l'appelant, jamais
+ * pour l'utilisateur. Une erreur Drizzle cite la requête et ses paramètres :
+ * l'erreur Postgres qu'elle enveloppe suffit.
  */
 function toFailureCause(error: unknown): Error {
   if (isFailedResult(error)) {

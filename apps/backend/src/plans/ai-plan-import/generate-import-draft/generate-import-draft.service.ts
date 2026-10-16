@@ -5,7 +5,11 @@ import {
 } from '../adapters/extracted-action-to-import-action';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
-import { ImportErrors } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
+import {
+  ImportErrors,
+  isClientError,
+  isImportError,
+} from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
@@ -496,15 +500,38 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       });
       return saved.success
         ? success(saved.data.planId)
-        : failure(`Création du plan impossible : ${saved.error.message}`);
+        : this.planCreationFailed(job.id, saved.error, saved.cause);
     } catch (error) {
       // Avec `tx` partagé, le TransactionManager relance son échec en
       // exception : un Result, sans `message`.
-      const message = isFailedResult<ImportErrors>(error)
-        ? error.error?.message ?? String(error.error)
-        : getErrorMessage(error);
-      return failure(`Création du plan impossible : ${message}`);
+      return isFailedResult<ImportErrors>(error)
+        ? this.planCreationFailed(job.id, error.error, error.cause)
+        : this.planCreationFailed(job.id, null, error);
     }
+  }
+
+  /**
+   * Le message du job est montré à l'utilisateur : il reste métier. La cause
+   * technique, noms de tables et de contraintes compris, ne va qu'aux journaux.
+   */
+  private planCreationFailed(
+    jobId: string,
+    error: ImportErrors | null,
+    cause: unknown
+  ): Result<never, string> {
+    const message = `Création du plan impossible : ${
+      error === null
+        ? 'erreur inattendue'
+        : isImportError(error) && !isClientError(error)
+        ? error._tag
+        : error.message ?? String(error)
+    }`;
+    this.logger.error(
+      `Import ${jobId}: ${message} (${getErrorMessage(
+        rootCause(cause ?? error)
+      )})`
+    );
+    return failure(message);
   }
 
   private async recordFailure(
@@ -547,6 +574,15 @@ const readDocumentErrorMessage = (error: ReadDocumentError): string => {
         error.failedPages.length
       } page(s) en échec : ${error.reasons.join(', ')})`;
   }
+};
+
+/** Sous une erreur Drizzle, qui cite la requête, l'erreur Postgres. */
+const rootCause = (error: unknown): unknown => {
+  let current = error;
+  while (current instanceof Error && current.cause instanceof Error) {
+    current = current.cause;
+  }
+  return current;
 };
 
 const secondsSince = (isoDate: string): number =>
