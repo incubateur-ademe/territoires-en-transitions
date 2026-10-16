@@ -958,6 +958,51 @@ describe('runImportPipeline', () => {
       expect(lastCheckpoint?.completedStep).toBe('enrichment');
     });
 
+    it.each([
+      ['enrichment', 'secteurs'],
+      ['secteurs', 'enrichment'],
+    ] as const)(
+      "arrête l'autre branche quand la progression de %s ne s'enregistre pas",
+      async (reportedStep, pendingStep) => {
+        const llm = routedLlm();
+        const route = vi.mocked(llm.generateStructured).getMockImplementation();
+        let startPending = () => undefined as void;
+        const pendingStarted = new Promise<void>((resolve) => {
+          startPending = resolve;
+        });
+        vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+          prompt: string;
+          signal?: AbortSignal;
+        }) => {
+          const step = stepOf(args.prompt);
+          if (step === pendingStep) {
+            startPending();
+            return new Promise((resolve) => {
+              args.signal?.addEventListener('abort', () =>
+                resolve(failure({ kind: 'api_error', httpStatus: null }))
+              );
+            });
+          }
+          if (step === reportedStep) await pendingStarted;
+          return route?.(args as never);
+        }) as never);
+        const reportError = new Error('progression non enregistrée');
+
+        const outcome = runImportPipeline(
+          llm,
+          input({
+            withSecteurs: true,
+            onStepStatesChange: async (stepStates) => {
+              if (stepStates[reportedStep] !== 'pending') throw reportError;
+            },
+          })
+        );
+
+        await expect(outcome).rejects.toBe(reportError);
+        expect(prompts(llm).map(stepOf)).not.toContain('qualitativeReview');
+      }
+    );
+
     it("reprend un point de reprise d'avant la mise en parallèle, arrêté après l'enrichissement", async () => {
       // Sans secteurs, la revue en échec laisse l'état d'un ancien point de
       // reprise « enrichment » : il ne reste qu'à marquer les secteurs à faire.

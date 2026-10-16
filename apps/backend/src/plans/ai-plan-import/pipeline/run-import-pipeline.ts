@@ -462,8 +462,14 @@ export const runImportPipeline = async (
     : clearSousActions(state.progress);
   const stepStates = { ...forked.stepStates };
   // Les deux branches rendent compte chacune de leur côté : en série, pour
-  // qu'un état plus ancien n'en écrase pas un plus récent.
-  let reported = Promise.resolve();
+  // qu'un état plus ancien n'en écrase pas un plus récent. Une écriture en
+  // échec ne fait lever que la branche qui l'a demandée.
+  let published = Promise.resolve();
+  const publish = (write: () => Promise<void>): Promise<void> => {
+    const written = published.then(write);
+    published = written.catch(() => undefined);
+    return written;
+  };
   const runBranch = async (branch: PipelineStep[]): Promise<BranchOutcome> => {
     let progress: Progress = {
       ...forked,
@@ -479,28 +485,27 @@ export const runImportPipeline = async (
       if (branchAbort.signal.aborted) {
         return cancelled();
       }
-      let go: StepGo;
       try {
-        go = await runStep(reportStepRun, progress, step);
+        const go = await runStep(reportStepRun, progress, step);
+        if (branchAbort.signal.aborted) {
+          return cancelled();
+        }
+        if (!go.success) {
+          branchAbort.abort();
+          return { progress, failure: { step: step.name, error: go.error } };
+        }
+        progress = go.progress;
+        stepStates[step.name] = progress.stepStates[step.name];
+        const snapshot = { ...stepStates };
+        await publish(() => reportProgress(snapshot));
       } catch (error) {
+        // Arrêtée par l'autre branche : c'est son échec qui compte.
         if (branchAbort.signal.aborted && !input.signal?.aborted) {
           return cancelled();
         }
         branchAbort.abort();
         throw error;
       }
-      if (branchAbort.signal.aborted) {
-        return cancelled();
-      }
-      if (!go.success) {
-        branchAbort.abort();
-        return { progress, failure: { step: step.name, error: go.error } };
-      }
-      progress = go.progress;
-      stepStates[step.name] = progress.stepStates[step.name];
-      const snapshot = { ...stepStates };
-      reported = reported.then(() => reportProgress(snapshot));
-      await reported;
     }
     return { progress, failure: null };
   };
