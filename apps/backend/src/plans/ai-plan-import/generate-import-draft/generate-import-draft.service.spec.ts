@@ -10,6 +10,7 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { Logger } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
@@ -381,18 +382,24 @@ describe('GenerateImportDraftService', () => {
   it('marque le job failed quand la création du plan lève une exception (seam en transaction partagée)', async () => {
     const mocks = buildMocks();
     mocks.save.mockImplementation(() => {
-      throw new Error('insert en conflit');
+      throw new Error('Failed query: insert into "axe"', {
+        cause: new Error('duplicate key value violates unique constraint'),
+      });
     });
+    const logged = vi.spyOn(Logger.prototype, 'error');
     const service = buildService(mocks);
 
     const result = await service.generate('job-1');
 
     expect(result).toMatchObject({ success: true });
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
+    expect(logged).toHaveBeenCalledWith(
+      expect.stringContaining('duplicate key value violates unique constraint')
+    );
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'job-1',
-        error: 'Création du plan impossible : insert en conflit',
+        error: 'Création du plan impossible : erreur inattendue',
         stepStates: undefined,
         draft: expect.objectContaining({
           actions: expect.arrayContaining([
@@ -403,14 +410,16 @@ describe('GenerateImportDraftService', () => {
     );
   });
 
-  it('donne la vraie cause quand la création du plan échoue en transaction partagée', async () => {
+  it("journalise l'erreur Postgres d'une création en échec, sans la montrer à l'utilisateur", async () => {
     const mocks = buildMocks();
     // Forme relancée par le TransactionManager quand `tx` est partagé.
     mocks.save.mockImplementation(() => {
       throw failure(
-        new PlanCreationError(new Error('valeur trop longue pour le titre'))
+        new PlanCreationError('DATABASE_ERROR'),
+        new Error('valeur trop longue pour le titre')
       );
     });
+    const logged = vi.spyOn(Logger.prototype, 'error');
     const service = buildService(mocks);
 
     await service.generate('job-1');
@@ -418,8 +427,11 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith(
       expect.objectContaining({
         error:
-          'Création du plan impossible : Erreur lors de la création du plan : valeur trop longue pour le titre',
+          'Création du plan impossible : Erreur lors de la création du plan : DATABASE_ERROR',
       })
+    );
+    expect(logged).toHaveBeenCalledWith(
+      expect.stringContaining('valeur trop longue pour le titre')
     );
     expect(mocks.capture).toHaveBeenCalledWith(
       expect.objectContaining({
