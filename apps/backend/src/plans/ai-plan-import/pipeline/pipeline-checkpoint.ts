@@ -1,6 +1,7 @@
 import type { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import type { ExtractedAction } from '../models/extracted-action';
 import type { PlanSkeleton } from '../models/plan-skeleton';
+import type { DocumentKind } from './document/document-page';
 import type {
   PipelineLlm,
   StepName,
@@ -37,6 +38,8 @@ export type PipelineCheckpoint = PipelineState & {
   completedStep: StepName;
   /** Date passée aux prompts : une reprise garde celle du premier passage. */
   currentDate: string;
+  /** Absent des points de reprise enregistrés avant son ajout. */
+  documentKind?: DocumentKind;
   /** Le texte est découpé pour ce modèle : un autre ne le reprend pas. */
   llm: {
     strategy: PipelineLlm['capabilities']['strategy'];

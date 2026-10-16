@@ -216,7 +216,13 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         `Import ${job.id}: reprise après l'étape ${usable.completedStep}`
       );
       telemetry.restoreDocument(usable.documentStats);
-      start = { resumeFrom: usable, currentDate: usable.currentDate };
+      start = {
+        resumeFrom: {
+          ...usable,
+          documentKind: usable.documentKind ?? usable.documentStats?.kind,
+        },
+        currentDate: usable.currentDate,
+      };
     } else {
       const source = await this.tryDownloadSource(job.sourcePath);
       if (source === null) {

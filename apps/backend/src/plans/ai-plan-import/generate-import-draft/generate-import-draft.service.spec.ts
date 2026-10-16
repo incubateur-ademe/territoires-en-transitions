@@ -710,6 +710,43 @@ describe('GenerateImportDraftService', () => {
       expect(mocks.jobRepository.markDone).toHaveBeenCalled();
     });
 
+    it("reconnaît un tableur à la reprise d'un point de reprise antérieur au type du document", async () => {
+      const checkpoints = await checkpointsOfFullRun();
+      const { documentKind: _kind, ...afterReading } = checkpoints[0];
+      const generateStructured = vi
+        .fn()
+        .mockResolvedValueOnce(
+          success({
+            data: [
+              { ...extractionAction, axe: 'Axe 1' },
+              { ...extractionAction, axe: 'Axe 2' },
+            ],
+            tokens,
+          })
+        )
+        .mockResolvedValue(
+          success({ data: { avis: 'Extraction ok' }, tokens })
+        );
+      const mocks = buildMocks({
+        checkpoint: success(afterReading),
+        attempt: 1,
+        generateStructured: generateStructured as never,
+      });
+
+      await buildService(mocks).generate('job-1');
+
+      expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
+        expect.objectContaining({
+          draft: expect.objectContaining({
+            actions: [
+              expect.objectContaining({ axe: 'Axe 1' }),
+              expect.objectContaining({ axe: 'Axe 2' }),
+            ],
+          }),
+        })
+      );
+    });
+
     it.each([
       ['un autre format', { schemaVersion: 99 }],
       [

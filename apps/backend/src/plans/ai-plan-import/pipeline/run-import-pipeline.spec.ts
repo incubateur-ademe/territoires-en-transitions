@@ -248,6 +248,56 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it("garde deux lignes de même titre d'un tableur, y compris à la reprise", async () => {
+    const [extracted] = responseByStep.extraction as object[];
+    const row = { ...extracted, description: '', 'sous-actions': [] };
+    const llm = routedLlm();
+    const route = vi.mocked(llm.generateStructured).getMockImplementation();
+    vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+      prompt: string;
+    }) =>
+      stepOf(args.prompt) === 'extraction'
+        ? success({
+            data: [
+              { ...row, axe: 'Axe 1' },
+              { ...row, axe: 'Axe 2' },
+            ],
+            tokens,
+          })
+        : route?.(args as never)) as never);
+    const options = { withVerifications: false, withSousActions: false };
+    const checkpoints: PipelineCheckpoint[] = [];
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        ...options,
+        document: buildDocument('csv', [
+          buildPage(0, [{ text: 'Titre;Axe' }, { text: '1.1.1 Action;Axe 1' }]),
+        ]),
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+        },
+      })
+    );
+
+    expect(outcome.status).toBe('done');
+    if (outcome.status === 'done') {
+      expect(outcome.draft.actions.map(({ axe }) => axe)).toEqual([
+        'Axe 1',
+        'Axe 2',
+      ]);
+    }
+    expect(checkpoints[0]).toMatchObject({
+      completedStep: 'reading',
+      documentKind: 'csv',
+    });
+    const { document: _document, ...base } = input(options);
+    expect(
+      await runImportPipeline(llm, { ...base, resumeFrom: checkpoints[0] })
+    ).toEqual(outcome);
+  });
+
   it('émet la progression cumulée après chaque étape', async () => {
     const llm = routedLlm();
     const onStepStatesChange = vi.fn<(stepStates: StepStates) => Promise<void>>(
