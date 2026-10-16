@@ -59,7 +59,20 @@ export const openPdfPageRenderer = (buffer: Buffer): PdfPageRenderer => {
     return loading;
   };
   return {
-    renderPage: async (pageIndex) => renderPageImage(await load(), pageIndex),
+    renderPage: async (pageIndex) => {
+      const document = await load();
+      try {
+        return await renderPageImage(document, pageIndex);
+      } finally {
+        // unpdf ne libère pas la page rendue : pdf.js en garderait les images
+        // décodées jusqu'à la fermeture, de quoi saturer la mémoire sur un
+        // scan intégral. getPage rend la page déjà chargée, sans la relire.
+        const page = await document
+          .getPage(pageIndex + 1)
+          .catch(() => undefined);
+        page?.cleanup();
+      }
+    },
     close: async () => {
       const document = await loading?.catch(() => undefined);
       // Le PDFDocumentProxy d'unpdf 1.8 n'a plus de destroy() : seule la tâche de chargement libère le worker.
