@@ -71,4 +71,36 @@ describe('openPdfPageRenderer', () => {
       );
     }
   });
+
+  it('libère chaque page une fois rendue', async () => {
+    const page = {
+      kind: 'image' as const,
+      jpeg: await scannedPageJpeg(),
+      width: 1240,
+      height: 1754,
+    };
+    const renderer = openPdfPageRenderer(buildTestPdf([page, page, page]));
+    vi.mocked(unpdf.getDocumentProxy).mockClear();
+    await renderer.renderPage(0);
+    const document = await vi.mocked(unpdf.getDocumentProxy).mock.results[0]
+      .value;
+    const cleanup = vi.spyOn(
+      Object.getPrototypeOf(await document.getPage(1)),
+      'cleanup'
+    );
+
+    try {
+      await renderer.renderPage(1);
+      await renderer.renderPage(2);
+
+      expect(
+        cleanup.mock.contexts.map(
+          (released) => (released as { _pageIndex: number })._pageIndex
+        )
+      ).toEqual([1, 2]);
+    } finally {
+      cleanup.mockRestore();
+      await renderer.close();
+    }
+  });
 });
