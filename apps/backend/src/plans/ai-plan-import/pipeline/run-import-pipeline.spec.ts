@@ -761,7 +761,7 @@ describe('runImportPipeline', () => {
         );
 
         // Les secteurs tournent à côté de l'enrichissement et de la revue : un
-        // seul point de reprise après les deux branches.
+        // point de reprise chaque fois que la suite des étapes faites s'allonge.
         expect(checkpoints.map(({ completedStep }) => completedStep)).toEqual([
           'reading',
           'scouting',
@@ -769,6 +769,8 @@ describe('runImportPipeline', () => {
           'hierarchy',
           'scoring',
           'consolidation',
+          'enrichment',
+          'secteurs',
           'qualitativeReview',
         ]);
         for (const checkpoint of checkpoints) {
@@ -821,11 +823,14 @@ describe('runImportPipeline', () => {
             stepOrder.indexOf(step) > completed;
           expect(resumed).toEqual(reference);
           // Mêmes prompts au caractère près : l'état restauré (unités gardées,
-          // squelette, extraits) est bien celui du premier passage.
-          expect(prompts(resumedLlm)).toEqual(
-            referencePrompts.filter((prompt) => remaining(stepOf(prompt)))
+          // squelette, extraits) est bien celui du premier passage. Les
+          // branches parallèles ne gardent pas leur ordre d'une fois à l'autre.
+          expect(prompts(resumedLlm).sort()).toEqual(
+            referencePrompts
+              .filter((prompt) => remaining(stepOf(prompt)))
+              .sort()
           );
-          expect(runs).toEqual(referenceRuns.filter(remaining));
+          expect(runs.sort()).toEqual(referenceRuns.filter(remaining).sort());
         }
       }
     );
@@ -1002,6 +1007,124 @@ describe('runImportPipeline', () => {
         expect(prompts(llm).map(stepOf)).not.toContain('qualitativeReview');
       }
     );
+
+    it("écrit un point de reprise pendant les branches, sans ce que l'autre a fait au-delà", async () => {
+      const llm = routedLlm();
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      const release: Partial<Record<StepName, () => void>> = {};
+      const held = (step: StepName) =>
+        new Promise<void>((resolve) => {
+          release[step] = resolve;
+        });
+      const gates: Partial<Record<StepName, Promise<void>>> = {
+        secteurs: held('secteurs'),
+        qualitativeReview: held('qualitativeReview'),
+      };
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+      }) => {
+        await gates[stepOf(args.prompt)];
+        return route?.(args as never);
+      }) as never);
+      const checkpoints: PipelineCheckpoint[] = [];
+      const reports: StepStates[] = [];
+      const last = () => checkpoints.at(-1) as PipelineCheckpoint;
+
+      const outcome = runImportPipeline(
+        llm,
+        input({
+          withSecteurs: true,
+          onCheckpoint: async (checkpoint) => {
+            checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+          },
+          onStepStatesChange: async (stepStates) => {
+            reports.push(stepStates);
+          },
+        })
+      );
+
+      await vi.waitFor(() => expect(last().completedStep).toBe('enrichment'));
+      const afterEnrichment = last();
+      expect(afterEnrichment.progress).toMatchObject({
+        review: null,
+        stepStates: {
+          enrichment: 'ok',
+          secteurs: 'pending',
+          qualitativeReview: 'pending',
+        },
+        actions: [{ sousActions: [{ description: 'desc enrichie' }] }],
+      });
+      expect(afterEnrichment.progress.actions[0].secteurs).toBeUndefined();
+
+      // La revue faite, les secteurs encore en cours : rien de plus à écrire.
+      release.qualitativeReview?.();
+      await vi.waitFor(() =>
+        expect(reports.at(-1)?.qualitativeReview).toBe('ok')
+      );
+      expect(last()).toEqual(afterEnrichment);
+
+      release.secteurs?.();
+      expect(await outcome).toMatchObject({ status: 'done' });
+      expect(last().completedStep).toBe('qualitativeReview');
+
+      const resumedLlm = routedLlm();
+      const resumed = await runImportPipeline(
+        resumedLlm,
+        resumeInput(afterEnrichment)
+      );
+      expect(prompts(resumedLlm).map(stepOf).sort()).toEqual([
+        'qualitativeReview',
+        'secteurs',
+      ]);
+      expect(resumed).toEqual(
+        await runImportPipeline(routedLlm(), input({ withSecteurs: true }))
+      );
+    });
+
+    it("n'écrit un point de reprise qu'une fois le précédent enregistré", async () => {
+      const llm = routedLlm();
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      let startSecteurs = () => undefined as void;
+      const secteursMayStart = new Promise<void>((resolve) => {
+        startSecteurs = resolve;
+      });
+      let secteursAnswered = () => undefined as void;
+      const secteursDone = new Promise<void>((resolve) => {
+        secteursAnswered = resolve;
+      });
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+      }) => {
+        if (stepOf(args.prompt) !== 'secteurs') return route?.(args as never);
+        await secteursMayStart;
+        const answer = await route?.(args as never);
+        secteursAnswered();
+        return answer;
+      }) as never);
+      const saved: StepName[] = [];
+
+      await runImportPipeline(
+        llm,
+        input({
+          withSecteurs: true,
+          onCheckpoint: async ({ completedStep }) => {
+            if (completedStep === 'enrichment') {
+              // Les secteurs finissent pendant que ce point de reprise s'écrit.
+              startSecteurs();
+              await secteursDone;
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
+            saved.push(completedStep);
+          },
+        })
+      );
+
+      expect(saved.slice(-3)).toEqual([
+        'enrichment',
+        'secteurs',
+        'qualitativeReview',
+      ]);
+    });
 
     it("reprend un point de reprise d'avant la mise en parallèle, arrêté après l'enrichissement", async () => {
       // Sans secteurs, la revue en échec laisse l'état d'un ancien point de
