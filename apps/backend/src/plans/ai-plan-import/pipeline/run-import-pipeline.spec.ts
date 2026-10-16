@@ -213,6 +213,22 @@ describe('runImportPipeline', () => {
     }
   });
 
+  it('ne cite aux secteurs aucune sous-action quand withSousActions est faux', async () => {
+    const llm = routedLlm();
+
+    await runImportPipeline(
+      llm,
+      input({ withSousActions: false, withSecteurs: true })
+    );
+
+    const secteursPrompts = vi
+      .mocked(llm.generateStructured)
+      .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+      .filter((prompt) => stepOf(prompt) === 'secteurs');
+    expect(secteursPrompts).toHaveLength(1);
+    expect(secteursPrompts[0]).not.toContain('Sous action A');
+  });
+
   it("retire en lecture entière le sous-axe qui ne porte que l'action du même titre", async () => {
     const [extracted] = responseByStep.extraction as object[];
     const llm = {
