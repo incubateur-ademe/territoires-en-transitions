@@ -226,6 +226,43 @@ describe('dedupeByTitle', () => {
     expect(deduped.actions[0].description).toBe('Ateliers avec les bailleurs.');
   });
 
+  it("fond deux actions riches dont le sous-axe n'est numéroté que d'un côté, même libellé autrement", () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Sensibiliser les habitants', {
+          sousAxe: '2.1 Parc social',
+          description: 'Ateliers.',
+        }),
+        anAction('Sensibiliser les habitants', {
+          sousAxe: 'Logement social',
+          description: 'Ateliers avec les bailleurs.',
+        }),
+      ],
+      chunkIndexByAction: [0, 2],
+    });
+
+    expect(deduped.actions).toHaveLength(1);
+    expect(deduped.actions[0].description).toBe('Ateliers avec les bailleurs.');
+  });
+
+  it('garde distinctes deux actions riches de sous-axes non numérotés différents', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        anAction('Sensibiliser les habitants', {
+          sousAxe: 'Parc social',
+          description: 'Ateliers avec les bailleurs.',
+        }),
+        anAction('Sensibiliser les habitants', {
+          sousAxe: 'Parc privé',
+          description: 'Permanences info-énergie.',
+        }),
+      ],
+      chunkIndexByAction: [0, 0],
+    });
+
+    expect(deduped.actions).toHaveLength(2);
+  });
+
   it("fond l'écho sans contenu d'un titre même venu d'un autre axe", () => {
     const deduped = dedupeByTitle({
       actions: [

@@ -258,7 +258,9 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   sont fondues sur tout le document, sur la version la plus complète. Deux
   actions qui ont chacune du contenu restent distinctes quand leur axe, leur
   sous-axe ou leur numéro (« 2.1.3 » et « 2.2.4 », « Fiche 3 » et « Fiche 7 »)
-  diffèrent. Un tableur n'est pas dédoublonné, quelle que soit la stratégie :
+  diffèrent ; deux sous-axes se comparent par leur numéro, par leur libellé
+  quand aucun n'en a, et un sous-axe numéroté d'un seul côté ne distingue
+  rien. Un tableur n'est pas dédoublonné, quelle que soit la stratégie :
   chaque ligne y est une fiche, aucune n'est l'écho d'une autre.
 - **Squelette** (palier fort, un appel) : les axes et sous-axes du plan, tirés
   des titres relevés et des extraits de structure (sommaire, tableau
