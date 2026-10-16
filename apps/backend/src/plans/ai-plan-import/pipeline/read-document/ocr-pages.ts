@@ -47,8 +47,9 @@ const SCAN_PAGE_TIMEOUT_MS = 90_000;
 // une photo : elle ne vaut pas d'attendre.
 const SPARSE_PAGE_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_FAILED_RATIO = 0.2;
-// Des échecs qui s'enchaînent viennent du fournisseur, pas des pages : les
-// pages suivantes échoueraient pareil, chacune après son délai.
+// Des erreurs du fournisseur qui s'enchaînent ne viennent pas des pages : les
+// suivantes échoueraient pareil. Un délai dépassé, lui, vient de la page (le
+// modèle boucle sur une photo) et ne compte pas.
 const DEFAULT_MAX_CONSECUTIVE_FAILURES = 3;
 const SKIPPED_REASON = 'non tentée après des échecs consécutifs';
 
@@ -58,7 +59,7 @@ type PageOutcome =
   | { kind: 'transcribed'; page: DocumentPage }
   // Une photo, un intercalaire : l'OCR n'y trouve rien, et c'est normal.
   | { kind: 'blank' }
-  | { kind: 'failed'; reason: string };
+  | { kind: 'failed'; reason: string; fromProvider?: boolean };
 
 /** Transcrit les pages désignées et les remplace dans le document. */
 export const ocrPages = async ({
@@ -88,8 +89,11 @@ export const ocrPages = async ({
         pageTimeoutMs,
         signal,
       });
-      consecutiveFailures =
-        outcome.kind === 'failed' ? consecutiveFailures + 1 : 0;
+      if (outcome.kind !== 'failed') {
+        consecutiveFailures = 0;
+      } else if (outcome.fromProvider) {
+        consecutiveFailures += 1;
+      }
       return outcome;
     }
   );
@@ -103,7 +107,7 @@ export const ocrPages = async ({
   const skipped = failures.filter((f) => f.reason === SKIPPED_REASON).length;
   if (skipped > 0) {
     logger.warn(
-      `OCR interrompu après ${maxConsecutiveFailures} échecs consécutifs : ${skipped} page(s) gardée(s) telles que lues`
+      `OCR interrompu après ${maxConsecutiveFailures} erreurs consécutives du fournisseur : ${skipped} page(s) gardée(s) telles que lues`
     );
   }
   if (
@@ -156,7 +160,12 @@ const transcribePage = async ({
       const image = await renderPage(page.index);
       const result = await ocrPage(image, callSignal);
       if (!result.success) {
-        return { kind: 'failed', reason: describeLlmError(result.error) };
+        return {
+          kind: 'failed',
+          reason: describeLlmError(result.error),
+          // Une réponse tronquée est la boucle sur une photo, comme le délai.
+          fromProvider: result.error.kind !== 'truncated',
+        };
       }
       const text = result.data.trim();
       if (text.length === 0 || text.length <= page.text.trim().length) {
