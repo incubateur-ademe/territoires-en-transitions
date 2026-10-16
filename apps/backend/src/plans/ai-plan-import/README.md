@@ -348,6 +348,11 @@ Ces étapes améliorent le brouillon sans en être une condition : un lot en
 relances épuisées, fait échouer l'import, pour qu'il se reprenne plutôt que de
 rendre en silence un brouillon sans vérification.
 
+Les secteurs (étape 8) font exception : même tous leurs lots en échec, ils ne
+font jamais échouer l'import. Ils sont optionnels, et la complétion par Communs
+propose ensuite les secteurs des fiches qui n'en ont pas. Un avertissement
+signale alors qu'aucun secteur n'a été proposé.
+
 ## Couche LLM (`utils/llm/`)
 
 ```mermaid
