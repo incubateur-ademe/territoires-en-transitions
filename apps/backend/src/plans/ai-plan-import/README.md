@@ -108,9 +108,12 @@ l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET.
 
 Les secteurs tournent en parallèle de l'enrichissement puis de la revue : ils
 ne lisent rien de ce que l'enrichissement écrit, et la revue ne lit pas les
-secteurs. Un seul point de reprise suit la jointure des deux branches, et
-il ne va pas au-delà d'une étape qui reste à faire : une branche en échec
-annule donc l'autre, dont la reprise referait de toute façon les appels.
+secteurs. Sans sous-actions demandées, celles de la consolidation sont vidées
+avant les deux branches. Un point de reprise s'écrit dès que la suite des
+étapes faites, dans l'ordre 7, 8, 9, s'allonge : la revue faite avant les
+secteurs n'en écrit pas, et le point de reprise après l'enrichissement ne
+contient ni la revue ni les secteurs. Une branche en échec, ou qui lève,
+annule l'autre : la reprise referait de toute façon ses appels.
 
 Avant la création du plan, le brouillon est normalisé
 (`adapters/extracted-action-to-import-action.ts`) : le numéro qui précède un

@@ -164,11 +164,10 @@ type StepGo =
   | { success: true; progress: Progress }
   | { success: false; error: PipelineError };
 
-type BranchOutcome = {
-  /** Jetons et avertissements de la seule branche. */
-  progress: Progress;
-  failure: { step: StepName; error: PipelineError } | null;
-};
+type BranchFailure = { step: StepName; error: PipelineError };
+
+/** Une étape d'une branche, et la progression de la branche après elle. */
+type BranchStep = { name: StepName; progress: Progress };
 
 /** Une étape après la lecture. */
 type PipelineStep = {
@@ -248,7 +247,10 @@ export const runImportPipeline = async (
     : input.document.kind;
   const tabular = documentKind !== undefined && isTabularKind(documentKind);
 
-  const checkpoint = (completedStep: StepName): Promise<void> =>
+  const checkpoint = (
+    completedStep: StepName,
+    progress: Progress = state.progress
+  ): Promise<void> =>
     input.onCheckpoint?.({
       schemaVersion: PIPELINE_CHECKPOINT_SCHEMA_VERSION,
       completedStep,
@@ -259,6 +261,7 @@ export const runImportPipeline = async (
         maxInputTokens: llm.maxInputTokens,
       },
       ...state,
+      progress,
     }) ?? Promise.resolve();
 
   if (!input.resumeFrom) {
@@ -461,97 +464,123 @@ export const runImportPipeline = async (
     ? state.progress
     : clearSousActions(state.progress);
   const stepStates = { ...forked.stepStates };
-  // Les deux branches rendent compte chacune de leur côté : en série, pour
-  // qu'un état plus ancien n'en écrase pas un plus récent. Une écriture en
-  // échec ne fait lever que la branche qui l'a demandée.
+  // Jetons et avertissements comptés à part dans chaque branche.
+  const branchStart: Progress = {
+    ...forked,
+    tokens: emptyTokenUsage(),
+    warnings: [],
+  };
+  const enrichmentSteps: BranchStep[] = [];
+  const secteursSteps: BranchStep[] = [];
+  const branchProgressUpTo = (steps: BranchStep[], upTo: number): Progress =>
+    steps.filter(({ name }) => STEP_ORDER.indexOf(name) <= upTo).at(-1)
+      ?.progress ?? branchStart;
+  // L'état vrai jusqu'à l'étape `upTo` incluse : ce que l'autre branche a fait
+  // au-delà n'y figure pas, la reprise le refera.
+  const joinUpTo = (upTo: number): Progress => {
+    const enriched = branchProgressUpTo(enrichmentSteps, upTo);
+    const classified = branchProgressUpTo(secteursSteps, upTo);
+    const states = { ...stepStates };
+    for (const name of STEP_ORDER.slice(upTo + 1)) {
+      states[name] = forked.stepStates[name];
+    }
+    return {
+      actions: enriched.actions.map((action, index) => {
+        const secteurs = classified.actions[index]?.secteurs;
+        return secteurs === undefined ? action : { ...action, secteurs };
+      }),
+      review: enriched.review,
+      tokens: sumTokenUsage([
+        forked.tokens,
+        enriched.tokens,
+        classified.tokens,
+      ]),
+      stepStates: states,
+      warnings: [
+        ...forked.warnings,
+        ...enriched.warnings,
+        ...classified.warnings,
+      ],
+    };
+  };
+  let checkpointed = lastDoneIndex(stepStates);
+  // Les deux branches écrivent chacune de leur côté : en série, pour qu'un
+  // état plus ancien n'en écrase pas un plus récent. Une écriture en échec ne
+  // fait lever que la branche qui l'a demandée.
   let published = Promise.resolve();
   const publish = (write: () => Promise<void>): Promise<void> => {
     const written = published.then(write);
     published = written.catch(() => undefined);
     return written;
   };
-  const runBranch = async (branch: PipelineStep[]): Promise<BranchOutcome> => {
-    let progress: Progress = {
-      ...forked,
-      tokens: emptyTokenUsage(),
-      warnings: [],
-    };
-    // Arrêtée par l'autre branche : ce qu'elle a fait depuis ne compte pas.
-    const cancelled = (): BranchOutcome => ({ progress, failure: null });
+  const runBranch = async (
+    branch: PipelineStep[],
+    ranSteps: BranchStep[]
+  ): Promise<BranchFailure | null> => {
     for (const step of branch) {
       if (isCompleted(step.name)) {
         continue;
       }
       if (branchAbort.signal.aborted) {
-        return cancelled();
+        return null;
       }
       try {
-        const go = await runStep(reportStepRun, progress, step);
+        const go = await runStep(
+          reportStepRun,
+          ranSteps.at(-1)?.progress ?? branchStart,
+          step
+        );
+        // Arrêtée par l'autre branche : ce qu'elle a fait depuis ne compte pas.
         if (branchAbort.signal.aborted) {
-          return cancelled();
+          return null;
         }
         if (!go.success) {
           branchAbort.abort();
-          return { progress, failure: { step: step.name, error: go.error } };
+          return { step: step.name, error: go.error };
         }
-        progress = go.progress;
-        stepStates[step.name] = progress.stepStates[step.name];
+        ranSteps.push({ name: step.name, progress: go.progress });
+        stepStates[step.name] = go.progress.stepStates[step.name];
+        // Un point de reprise dès que la suite des étapes faites s'allonge.
+        const reached = lastDoneIndex(stepStates);
+        const saved = reached > checkpointed ? joinUpTo(reached) : null;
+        checkpointed = Math.max(checkpointed, reached);
         const snapshot = { ...stepStates };
-        await publish(() => reportProgress(snapshot));
+        await publish(async () => {
+          if (saved) {
+            await checkpoint(STEP_ORDER[reached], saved);
+          }
+          await reportProgress(snapshot);
+        });
       } catch (error) {
         // Arrêtée par l'autre branche : c'est son échec qui compte.
         if (branchAbort.signal.aborted && !input.signal?.aborted) {
-          return cancelled();
+          return null;
         }
         branchAbort.abort();
         throw error;
       }
     }
-    return { progress, failure: null };
+    return null;
   };
-  const [enriched, classified] = await settleAll([
-    runBranch(enrichmentBranch),
-    runBranch(secteursBranch),
+  const failures = await settleAll([
+    runBranch(enrichmentBranch, enrichmentSteps),
+    runBranch(secteursBranch, secteursSteps),
   ]);
 
-  state.progress = {
-    actions: enriched.progress.actions.map((action, index) => {
-      const secteurs = classified.progress.actions[index]?.secteurs;
-      return secteurs === undefined ? action : { ...action, secteurs };
-    }),
-    review: enriched.progress.review,
-    tokens: sumTokenUsage([
-      forked.tokens,
-      enriched.progress.tokens,
-      classified.progress.tokens,
-    ]),
-    stepStates,
-    warnings: [
-      ...forked.warnings,
-      ...enriched.progress.warnings,
-      ...classified.progress.warnings,
-    ],
-  };
-
-  // Une branche en échec ne laisse écrire un point de reprise que si rien
-  // n'est fait au-delà de lui.
-  const firstPending = STEP_ORDER.findIndex(
-    (name) => stepStates[name] === 'pending'
-  );
-  const lastDone =
-    firstPending === -1 ? STEP_ORDER.length - 1 : firstPending - 1;
-  const doneBeyond = STEP_ORDER.slice(lastDone + 1).some(
-    (name) => stepStates[name] !== 'pending'
-  );
-  if (lastDone > lastCompleted && !doneBeyond) {
-    await checkpoint(STEP_ORDER[lastDone]);
-  }
-
-  const failure = enriched.failure ?? classified.failure;
+  state.progress = joinUpTo(STEP_ORDER.length - 1);
+  const failure = failures.find((branch) => branch !== null);
   if (failure) {
     return failed(state.progress, failure.step, failure.error);
   }
   return done(state.progress);
+};
+
+/** L'étape avant la première qui reste à faire. */
+const lastDoneIndex = (stepStates: StepStates): number => {
+  const firstPending = STEP_ORDER.findIndex(
+    (name) => stepStates[name] === 'pending'
+  );
+  return firstPending === -1 ? STEP_ORDER.length - 1 : firstPending - 1;
 };
 
 /** Attend chaque branche, même quand l'autre lève : aucun appel ne reste en vol. */
