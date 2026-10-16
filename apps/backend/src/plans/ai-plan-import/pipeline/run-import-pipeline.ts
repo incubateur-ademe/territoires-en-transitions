@@ -175,7 +175,6 @@ type PipelineStep = {
   name: StepName;
   /** Évalué au moment de l'étape : il dépend de ce qu'ont produit les précédentes. */
   skipWhen?: () => boolean;
-  onSkip?: (progress: Progress) => Progress;
   run: (
     actions: ExtractedAction[]
   ) => Promise<Result<StepProduce, PipelineError>>;
@@ -411,7 +410,6 @@ export const runImportPipeline = async (
     {
       name: 'enrichment',
       skipWhen: () => !input.withSousActions,
-      onSkip: clearSousActions,
       run: (actions) =>
         enrichSousActions(llm, {
           actions,
@@ -457,7 +455,11 @@ export const runImportPipeline = async (
     await reportProgress(state.progress.stepStates);
   }
 
-  const forked = state.progress;
+  // Sans enrichissement, les secteurs ne doivent pas citer des sous-actions
+  // absentes du plan.
+  const forked = input.withSousActions
+    ? state.progress
+    : clearSousActions(state.progress);
   const stepStates = { ...forked.stepStates };
   // Les deux branches rendent compte chacune de leur côté : en série, pour
   // qu'un état plus ancien n'en écrase pas un plus récent.
@@ -562,11 +564,10 @@ const settleAll = async <T>(promises: Promise<T>[]): Promise<T[]> => {
 const runStep = async (
   reportStepRun: (run: ImportStepRun) => Promise<void>,
   progress: Progress,
-  { name, skipWhen, onSkip, run, finalize = (done) => done }: PipelineStep
+  { name, skipWhen, run, finalize = (done) => done }: PipelineStep
 ): Promise<StepGo> => {
   const startedAt = new Date();
   if (skipWhen?.()) {
-    const skipped = onSkip ? onSkip(progress) : progress;
     await reportStepRun({
       step: name,
       status: 'skipped',
@@ -576,7 +577,7 @@ const runStep = async (
       details: {},
       error: null,
     });
-    return { success: true, progress: finalize(markSkipped(skipped, name)) };
+    return { success: true, progress: finalize(markSkipped(progress, name)) };
   }
 
   const recorded = await recordLlmCalls(() => run(progress.actions)).catch(
