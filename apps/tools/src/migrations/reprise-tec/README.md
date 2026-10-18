@@ -398,7 +398,7 @@ avant d'écrire. Une ligne sans numéro dans T&C est repérée par son action
 | Motif                   | Sens                                                                                                                   |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `doublon`               | action (ou sa ligne satellite) du doublon « définitif » d'un dossier ; seule la « mise en œuvre » est reprise          |
-| `sans_etat_invisible`   | action d'un dossier que l'import des dossiers a écarté pour ce motif                                                   |
+| `pas_un_pcaet`   | action d'un dossier que l'import des dossiers a écarté pour ce motif                                                   |
 | `vitrine`               | action sans dossier : exemple de la vitrine de T&C, non reprise                                                        |
 | `orphelin`              | volet d'une action qui n'existe pas (la table n'a pas de clé étrangère dans T&C)                                       |
 | `historique_non_repris` | ligne du journal des modifications d'une action reprise : TeT tient son propre historique                              |
