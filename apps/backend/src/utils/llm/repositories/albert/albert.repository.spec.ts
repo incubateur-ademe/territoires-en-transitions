@@ -32,6 +32,21 @@ const buildRepository = (overrides: Record<string, unknown> = {}) => {
   return new AlbertRepository(configService);
 };
 
+describe('quotas lus depuis l’environnement', () => {
+  it('convertit en nombre les limites lues sous forme de chaîne', () => {
+    const repository = buildRepository({
+      ALBERT_MAX_CONCURRENT_CALLS: '10',
+      ALBERT_MAX_INPUT_TOKENS: '60000',
+      ALBERT_MAX_INPUT_TOKENS_PER_MINUTE: '128000',
+      ALBERT_MAX_REQUESTS_PER_MINUTE: '10',
+    });
+
+    expect(repository.maxConcurrentCalls).toBe(10);
+    expect(repository.maxInputTokensPerMinute).toBe(128000);
+    expect(repository.maxRequestsPerMinute).toBe(10);
+  });
+});
+
 const sseBody = (...parts: string[]) =>
   new ReadableStream<Uint8Array>({
     start(controller) {

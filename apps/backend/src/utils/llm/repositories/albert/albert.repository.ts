@@ -46,13 +46,19 @@ export class AlbertRepository extends LlmRepository {
 
   constructor(configService: ConfigurationService) {
     super();
-    this.strongMaxInputTokens = configService.get('ALBERT_MAX_INPUT_TOKENS');
-    this.maxConcurrentCalls = configService.get('ALBERT_MAX_CONCURRENT_CALLS');
-    this.maxInputTokensPerMinute = configService.get(
-      'ALBERT_MAX_INPUT_TOKENS_PER_MINUTE'
+    // ConfigurationService renvoie parfois la valeur brute de l'environnement,
+    // sous forme de chaîne : les nombres sont convertis ici.
+    this.strongMaxInputTokens = Number(
+      configService.get('ALBERT_MAX_INPUT_TOKENS')
     );
-    this.maxRequestsPerMinute = configService.get(
-      'ALBERT_MAX_REQUESTS_PER_MINUTE'
+    this.maxConcurrentCalls = Number(
+      configService.get('ALBERT_MAX_CONCURRENT_CALLS')
+    );
+    this.maxInputTokensPerMinute = Number(
+      configService.get('ALBERT_MAX_INPUT_TOKENS_PER_MINUTE')
+    );
+    this.maxRequestsPerMinute = Number(
+      configService.get('ALBERT_MAX_REQUESTS_PER_MINUTE')
     );
     // Un palier sans modèle propre retombe sur le palier fort ; l'OCR, lui,
     // exige un modèle image-texte : vide, il est désactivé.
