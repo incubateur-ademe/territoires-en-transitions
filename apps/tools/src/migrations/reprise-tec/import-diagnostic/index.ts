@@ -20,6 +20,7 @@ import { prevoirRecalcul } from './prevision';
 import { lancerRecalcul } from './recalcul';
 import { printRapport, printRecalcul } from './rapport';
 import { loadTablesHorsGrille } from './tables-hors-grille';
+import { convertirUnites } from './unites';
 
 const main = async () => {
   const isConfirmed = process.argv.includes('--confirm');
@@ -30,23 +31,25 @@ const main = async () => {
     const dossiers = await loadDossiers(client);
     const tablesGrille = await loadTablesGrille(client, dossiers);
     const tablesHorsGrille = await loadTablesHorsGrille(client, dossiers);
-    const ecarts = [...tablesGrille.ecarts, ...tablesHorsGrille.ecarts];
+    const unites = convertirUnites(tablesGrille.valeurs, dossiers);
+    const valeurs = unites.valeurs;
+    const ecarts = [
+      ...tablesGrille.ecarts,
+      ...tablesHorsGrille.ecarts,
+      ...unites.ecarts,
+    ];
 
     await validateGardes(client, dossiers, tablesGrille.lignes);
     const bilan = validateBilan(
       [...tablesGrille.lignes, ...tablesHorsGrille.lignes],
-      tablesGrille.valeurs,
+      valeurs,
       ecarts
     );
 
     await client.query('begin');
     let dossiersEcrits: number;
     try {
-      dossiersEcrits = await createDiagnostics(
-        client,
-        dossiers,
-        tablesGrille.valeurs
-      );
+      dossiersEcrits = await createDiagnostics(client, dossiers, valeurs);
       await createEcarts(client, ecarts);
       await client.query(isConfirmed ? 'commit' : 'rollback');
     } catch (e) {
@@ -57,28 +60,22 @@ const main = async () => {
     printRapport({
       bilan,
       ecarts,
-      valeursEcrites: tablesGrille.valeurs.length,
+      valeursEcrites: valeurs.length,
       dossiersEcrits,
       isConfirmed,
     });
     if (isConfirmed) {
-      const recalcul = await lancerRecalcul(
-        client,
-        dossiers,
-        tablesGrille.valeurs
-      ).catch((e) => {
-        throw new Error(
-          `Recalcul interrompu (${e instanceof Error ? e.message : e}). ` +
-            "L'import est validé : lancer recalculer.ts pour finir le recalcul."
-        );
-      });
+      const recalcul = await lancerRecalcul(client, dossiers, valeurs).catch(
+        (e) => {
+          throw new Error(
+            `Recalcul interrompu (${e instanceof Error ? e.message : e}). ` +
+              "L'import est validé : lancer recalculer.ts pour finir le recalcul."
+          );
+        }
+      );
       printRecalcul('Constaté après le recalcul', recalcul, dossiers);
     } else {
-      const prevu = await prevoirRecalcul(
-        client,
-        dossiers,
-        tablesGrille.valeurs
-      );
+      const prevu = await prevoirRecalcul(client, dossiers, valeurs);
       printRecalcul(
         'Prévu au recalcul (simulation : le recalcul ne tourne pas)',
         prevu,

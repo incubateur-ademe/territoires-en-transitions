@@ -192,6 +192,16 @@ pnpx tsx $SCRIPT --confirm  # import, puis recalcul
 Les objectifs 2021 et 2026 ne sont pas écrits : la grille de TeT n'a pas ces
 colonnes.
 
+Les émissions de GES et la séquestration étaient saisies dans T&C, le plus
+souvent, en tonnes ; la grille de TeT les attend en kilotonnes. Pour chaque
+dossier et chacune de ces deux tables, le script retient l'unité qui donne,
+par habitant, l'ordre de grandeur le plus vraisemblable (entre 0,5 et
+40 t/hab pour le GES, 0,01 et 40 t/hab pour la séquestration), lue sur le
+constat le plus récent. En tonnes, toutes les valeurs de la table pour ce
+dossier sont divisées par 1 000 (écart `unite_convertie`, précision `unite`) ;
+sans population ou sans constat non nul, rien n'est converti (écart
+`unite_indeterminee`).
+
 Toute ligne du diagnostic de T&C (onze tables, dossiers repris ou non) finit
 soit écrite, soit dans `ecarts` avec un motif, une seule fois : le script le
 vérifie table par table avant d'écrire (lues = écrites + écartées). Une ligne
@@ -215,6 +225,8 @@ du dossier, `valeur_vide`, `sans_indicateur_cible`, puis la colonne.
 | `commentaire_sans_place`               | texte libre (commentaire d'onglet, commentaires sur les réseaux) : TeT ne commente qu'une valeur                                                       |
 | `total_recalcule`                      | total de polluant déclaré, écrit puis remplacé par le calcul de TeT ; seule ligne à la fois écrite et écartée                                          |
 | `total_melange`                        | dossier dont les totaux sont calculés sur un mélange avec un autre dossier de la même collectivité, à la même date (sur le dossier, table `demarche`)  |
+| `unite_convertie`                      | GES ou séquestration d'un dossier saisis en tonnes : valeurs écrites divisées par 1 000 (identifiant : le dossier, précision `unite`)                |
+| `unite_indeterminee`                   | GES ou séquestration d'un dossier dont l'unité ne se lit pas (sans population, constat nul) : valeurs écrites telles quelles                          |
 
 Relire les objectifs 2021 et 2026 écartés, par exemple pour les émissions :
 

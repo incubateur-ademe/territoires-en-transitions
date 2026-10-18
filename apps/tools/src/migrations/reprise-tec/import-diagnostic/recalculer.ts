@@ -14,6 +14,7 @@ import { loadDossiers } from './dossiers';
 import { lancerRecalcul } from './recalcul';
 import { printRecalcul } from './rapport';
 import { loadTablesGrille } from './tables-grille';
+import { convertirUnites } from './unites';
 
 const main = async () => {
   const pool = getCible('reprise-tec-recalculer-diagnostic');
@@ -32,7 +33,10 @@ const main = async () => {
       );
     }
     const dossiers = await loadDossiers(client);
-    const { valeurs } = await loadTablesGrille(client, dossiers);
+    const { valeurs } = convertirUnites(
+      (await loadTablesGrille(client, dossiers)).valeurs,
+      dossiers
+    );
     const recalcul = await lancerRecalcul(
       client,
       dossiers,

@@ -7,6 +7,7 @@ export type Dossier = {
   demarcheId: number;
   collectiviteId: number;
   collectivite: string;
+  population: number | null;
 };
 
 export type Dossiers = Awaited<ReturnType<typeof loadDossiers>>;
@@ -20,6 +21,7 @@ export const loadDossiers = async (client: PoolClient) => {
            d.id                  as "demarcheId",
            d.collectivite_id     as "collectiviteId",
            co.nom                as collectivite,
+           co.population,
            exists (select from public.demarche_pcaet_source_metadonnee l
                     where l.demarche_id = d.id) as "aDejaUnDiagnostic"
       from reprise_tec.correspondance c
