@@ -8,7 +8,7 @@ est marqué « importé par l'IA » et reste à relire.
 Deux fournisseurs de modèles sont branchés derrière `LlmService`, au choix par
 `LLM_PROVIDER` :
 
-| | Albert API | Gemini (défaut) |
+| | Albert API (défaut) | Gemini |
 |---|---|---|
 | Opérateur | DINUM, socle interministériel | Google, via Vertex AI |
 | Modèles | un par palier : `gpt-oss-120b` (fort), `ministral-3-8b` (léger), `lightonocr-2-1b` (OCR) | `GEMINI_MODEL` pour tout |
@@ -382,7 +382,7 @@ Configuration (`utils/config/configuration.model.ts`) :
 
 | Variable | Défaut | Rôle |
 |---|---|---|
-| `LLM_PROVIDER` | `gemini` | `gemini` ou `albert` |
+| `LLM_PROVIDER` | `albert` | `albert` ou `gemini` |
 | `ALBERT_MODEL` | — | modèle fort, requis avec Albert |
 | `ALBERT_MODEL_LIGHT` | `ministral-3-8b-instruct-2512` | tri ; vide : le modèle fort |
 | `ALBERT_MODEL_OCR` | `lightonocr-2-1b` | OCR ; vide : désactivé |
