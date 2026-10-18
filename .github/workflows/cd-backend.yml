@@ -118,7 +118,9 @@ jobs:
           --env GOOGLE_CLOUD_PROJECT=tet-gcloud
           --env GOOGLE_CLOUD_LOCATION=eu
           --env GEMINI_MODEL=gemini-3.5-flash
-          --env LLM_PROVIDER=gemini
+          --env LLM_PROVIDER=albert
+          --env ALBERT_API_KEY=@ALBERT_API_KEY
+          --env ALBERT_MAX_CONCURRENT_CALLS=5
           --env ALBERT_MODEL=gpt-oss-120b
           --env ALBERT_MODEL_LIGHT=ministral-3-8b-instruct-2512
           --env ALBERT_MODEL_OCR=lightonocr-2-1b
@@ -188,7 +190,9 @@ jobs:
           --env GOOGLE_CLOUD_PROJECT=tet-gcloud
           --env GOOGLE_CLOUD_LOCATION=eu
           --env GEMINI_MODEL=gemini-3.5-flash
-          --env LLM_PROVIDER=gemini
+          --env LLM_PROVIDER=albert
+          --env ALBERT_API_KEY=@ALBERT_API_KEY
+          --env ALBERT_MAX_CONCURRENT_CALLS=5
           --env ALBERT_MODEL=gpt-oss-120b
           --env ALBERT_MODEL_LIGHT=ministral-3-8b-instruct-2512
           --env ALBERT_MODEL_OCR=lightonocr-2-1b
