@@ -98,6 +98,10 @@ nom de la colonne.
 Un dossier saisi pour essai dans T&C (liste `DOSSIERS_DE_TEST` de
 `perimetre.ts`) est écarté, motif `dossier_de_test`.
 
+Un dossier dont le type, dans T&C, n'est pas PCAET (ancien PCET, Cit'ergie,
+TEPOS, CTE) n'est pas repris, motif `pas_un_pcaet`. Ce sont aussi tous les
+dossiers sans état de T&C.
+
 Un second `--confirm` échoue sur `correspondance` : les dossiers sont déjà là.
 
 Pour retirer l'import (simulation par défaut) :

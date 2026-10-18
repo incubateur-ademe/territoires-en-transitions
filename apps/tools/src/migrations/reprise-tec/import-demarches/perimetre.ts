@@ -7,7 +7,7 @@ export type LigneDemarche = {
   nom: string;
   description: string;
   etat: string | null;
-  publie: boolean | null;
+  estPcaet: boolean;
   pcaetDefinitif: number | null;
   contenu: number;
   oblige: boolean | null;
@@ -23,7 +23,7 @@ export type LigneDemarche = {
 export type Motif =
   | 'dossier_de_test'
   | 'coquille_vide'
-  | 'sans_etat_invisible'
+  | 'pas_un_pcaet'
   | 'doublon';
 
 /** Dossiers de T&C saisis pour essai : 2414 « TEST », CA de Sophia Antipolis. */
@@ -53,7 +53,8 @@ const listLignesDemarche = async (
            d.nom,
            coalesce(d.description_rapide, '') as description,
            d.demarche_etat_code               as etat,
-           d.publie,
+           exists (select from reprise_tec.staging_demarche_type_demarche t
+                    where t.demarche_id = d.id and t.type_demarche_id = 1) as "estPcaet",
            d.pcaet_definitif::int             as "pcaetDefinitif",
            d.oblige,
            d.date_lancement::text             as "lanceLe",
@@ -74,7 +75,7 @@ const listLignesDemarche = async (
   return rows;
 };
 
-/** Règle : écarte les dossiers de test, les dossiers vides, les sans-état jamais visibles et les doublons. */
+/** Règle : écarte les dossiers de test, les dossiers vides, ceux qui ne sont pas des PCAET (type T&C) et les doublons. */
 const calculatePerimetre = (lignes: readonly LigneDemarche[]) => {
   const doublons = listDoublons(lignes);
   const contenuParDossier = calculateContenuParDossier(lignes, doublons);
@@ -87,8 +88,8 @@ const calculatePerimetre = (lignes: readonly LigneDemarche[]) => {
     if (contenuParDossier.get(dossier) === 0) {
       return 'coquille_vide';
     }
-    if (l.etat === null && !l.publie) {
-      return 'sans_etat_invisible';
+    if (!l.estPcaet) {
+      return 'pas_un_pcaet';
     }
     if (doublons.has(l.id)) {
       return 'doublon';

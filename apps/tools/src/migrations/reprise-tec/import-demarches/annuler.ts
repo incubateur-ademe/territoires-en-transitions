@@ -84,7 +84,7 @@ const deleteDossiersRepris = async (client: PoolClient) => {
   const ecarts = await client.query(
     `delete from reprise_tec.ecarts
       where table_source = 'demarche'
-        and ((precision = '' and motif in ('coquille_vide', 'sans_etat_invisible', 'doublon',
+        and ((precision = '' and motif in ('coquille_vide', 'pas_un_pcaet', 'doublon',
                                            'elaboration_remplacee', 'elaboration_doublon', 'dossier_de_test'))
              or (motif = 'sans_place' and precision in ('population_couverte', 'commentaire_statut')))`
   );
