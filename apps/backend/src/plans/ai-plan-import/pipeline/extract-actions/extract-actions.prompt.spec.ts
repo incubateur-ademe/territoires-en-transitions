@@ -74,6 +74,8 @@ describe('buildExtractionPrompt', () => {
       expect(structuration).toContain(rule);
     }
     expect(extraction).not.toContain('n.X.Y');
+    expect(structuration).not.toContain(`"titre" : "n.X.Y`);
+    expect(structuration).toContain('même si son sous-axe est numéroté');
     expect(extraction).not.toContain('{date_du_jour}');
   });
 });
