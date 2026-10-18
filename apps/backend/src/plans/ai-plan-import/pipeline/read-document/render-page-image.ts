@@ -48,11 +48,16 @@ export type PdfPageRenderer = {
 };
 
 /** Charge le PDF au premier rendu et le garde pour les pages suivantes. */
-export const openPdfPageRenderer = (buffer: Buffer): PdfPageRenderer => {
+export const openPdfPageRenderer = (
+  buffer: Buffer,
+  loadDocument: (
+    pdf: Uint8Array
+  ) => Promise<PdfDocumentProxy> = getDocumentProxy
+): PdfPageRenderer => {
   let loading: Promise<PdfDocumentProxy> | undefined;
   const load = () => {
     // Un chargement en échec n'est pas gardé : la page suivante le retente.
-    loading ??= getDocumentProxy(new Uint8Array(buffer)).catch((error) => {
+    loading ??= loadDocument(new Uint8Array(buffer)).catch((error) => {
       loading = undefined;
       throw error;
     });
