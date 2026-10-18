@@ -780,7 +780,7 @@ script le vérifie avant d'écrire. Ce qu'une ligne écrite perd est noté à pa
 
 | Motif                             | Sens                                                                                                                          |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `doublon`, `sans_etat_invisible`… | ligne d'un dossier que l'import des dossiers a écarté pour ce motif (le doublon « définitif » d'un dossier repris, notamment) |
+| `doublon`, `pas_un_pcaet`… | ligne d'un dossier que l'import des dossiers a écarté pour ce motif (le doublon « définitif » d'un dossier repris, notamment) |
 | `libelle_non_normalise`           | libellé absent de la table des libellés ; le rapport liste chaque texte avec son nombre                                       |
 | `oui_sans_niveau`                 | « Oui » sans niveau ni objectif : TeT n'a pas de niveau « concerné, sans précision »                                          |
 | `niveau_non_intelligible`         | texte sans mot de niveau (« Augmentation des sécheresses », « Niveau 2 »)                                                     |
