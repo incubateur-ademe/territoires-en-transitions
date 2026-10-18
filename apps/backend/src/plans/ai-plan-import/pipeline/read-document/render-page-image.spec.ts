@@ -1,13 +1,12 @@
 import sharp from 'sharp';
-import * as unpdf from 'unpdf';
+import { getDocumentProxy } from 'unpdf';
 import { describe, expect, it, vi } from 'vitest';
 import { buildTestPdf } from '../__fixtures__/build-test-pdf';
 import { openPdfPageRenderer, renderPageImage } from './render-page-image';
 
-vi.mock('unpdf', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('unpdf')>();
-  return { ...actual, getDocumentProxy: vi.fn(actual.getDocumentProxy) };
-});
+// Un espion injecté plutôt qu'un vi.mock('unpdf') : le projet shared-app tourne
+// sans isolation, et le module peut déjà être chargé par une autre spec.
+const spiedLoader = () => vi.fn(getDocumentProxy);
 
 const scannedPageJpeg = () =>
   sharp(
@@ -53,8 +52,11 @@ describe('openPdfPageRenderer', () => {
       width: 1240,
       height: 1754,
     };
-    const renderer = openPdfPageRenderer(buildTestPdf([page, page, page]));
-    vi.mocked(unpdf.getDocumentProxy).mockClear();
+    const loadDocument = spiedLoader();
+    const renderer = openPdfPageRenderer(
+      buildTestPdf([page, page, page]),
+      loadDocument
+    );
 
     const images = await Promise.all([
       renderer.renderPage(0),
@@ -63,7 +65,7 @@ describe('openPdfPageRenderer', () => {
     images.push(await renderer.renderPage(2));
     await renderer.close();
 
-    expect(unpdf.getDocumentProxy).toHaveBeenCalledTimes(1);
+    expect(loadDocument).toHaveBeenCalledTimes(1);
     expect(images.map((image) => image.pageIndex)).toEqual([0, 1, 2]);
     for (const image of images) {
       expect(image.data.subarray(0, 3)).toEqual(
@@ -79,11 +81,13 @@ describe('openPdfPageRenderer', () => {
       width: 1240,
       height: 1754,
     };
-    const renderer = openPdfPageRenderer(buildTestPdf([page, page, page]));
-    vi.mocked(unpdf.getDocumentProxy).mockClear();
+    const loadDocument = spiedLoader();
+    const renderer = openPdfPageRenderer(
+      buildTestPdf([page, page, page]),
+      loadDocument
+    );
     await renderer.renderPage(0);
-    const document = await vi.mocked(unpdf.getDocumentProxy).mock.results[0]
-      .value;
+    const document = await loadDocument.mock.results[0].value;
     const cleanup = vi.spyOn(
       Object.getPrototypeOf(await document.getPage(1)),
       'cleanup'
