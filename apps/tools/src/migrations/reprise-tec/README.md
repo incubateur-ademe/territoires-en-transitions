@@ -701,7 +701,7 @@ dossier est repéré par sa ligne T&C du dossier (`tec_id`) et la `precision`
 | `elu_referent_texte_libre`                                    | texte de l'élu référent tapé à la main dans un dossier repris : texte libre (fonction, plusieurs noms), aucun pilote n'en est tiré                                                           |
 | `historique_non_repris`                                       | ligne de l'historique d'un dossier : TeT n'a pas de place pour l'historique d'un dossier                                                                                                     |
 | `service_de_tet`                                              | organisation régionale de T&C : TeT a ses services instructeurs, saisis à l'étape 4                                                                                                          |
-| `vitrine`, `doublon`, `sans_etat_invisible`, `coquille_vide`… | lien d'un dossier ou contact d'une action que les imports des dossiers ou des fiches ont écartés pour ce motif                                                                               |
+| `vitrine`, `doublon`, `pas_un_pcaet`, `coquille_vide`… | lien d'un dossier ou contact d'une action que les imports des dossiers ou des fiches ont écartés pour ce motif                                                                               |
 | `orphelin`                                                    | lien ou contact vers un utilisateur, un dossier ou une action qui n'existe pas                                                                                                               |
 
 Les **30 705 alertes** de T&C (notifications envoyées aux utilisateurs) ne
