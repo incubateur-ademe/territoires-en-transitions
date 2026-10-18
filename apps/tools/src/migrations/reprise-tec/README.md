@@ -216,7 +216,7 @@ du dossier, `valeur_vide`, `sans_indicateur_cible`, puis la colonne.
 | Motif                                  | Sens                                                                                                                                                   |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `doublon`                              | ligne du doublon « définitif » d'un dossier déposé ; seule la ligne « mise en œuvre » est reprise                                                      |
-| `coquille_vide`, `sans_etat_invisible` | ligne d'un dossier que l'import des dossiers a écarté pour ce motif                                                                                    |
+| `coquille_vide`, `pas_un_pcaet` | ligne d'un dossier que l'import des dossiers a écarté pour ce motif                                                                                    |
 | `valeur_vide`                          | case vide dans T&C : rien à reprendre                                                                                                                  |
 | `sans_indicateur_cible`                | aucune ligne pour la recevoir dans la grille de TeT : filière sans ligne, potentiels EnR, séquestration hors estimation, consommation EnR, numéro vide |
 | `objectif_sans_colonne`                | objectif 2021 ou 2026 : la grille de TeT n'a pas ces colonnes                                                                                          |
