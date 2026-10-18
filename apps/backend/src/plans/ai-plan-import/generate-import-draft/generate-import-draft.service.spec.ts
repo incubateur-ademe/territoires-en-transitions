@@ -11,7 +11,7 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { Logger } from '@nestjs/common';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import {
@@ -387,6 +387,7 @@ describe('GenerateImportDraftService', () => {
       });
     });
     const logged = vi.spyOn(Logger.prototype, 'error');
+    onTestFinished(() => logged.mockRestore());
     const service = buildService(mocks);
 
     const result = await service.generate('job-1');
@@ -420,6 +421,7 @@ describe('GenerateImportDraftService', () => {
       );
     });
     const logged = vi.spyOn(Logger.prototype, 'error');
+    onTestFinished(() => logged.mockRestore());
     const service = buildService(mocks);
 
     await service.generate('job-1');
