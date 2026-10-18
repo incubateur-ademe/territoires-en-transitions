@@ -476,7 +476,7 @@ la `precision` `url_site_web`.
 | --------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `vitrine`             | fichier ou « site web » d'une action sans dossier (vitrine de T&C), non reprise                                     |
 | `doublon`             | fichier ou « site web » d'une action du doublon « définitif » d'un dossier ; seule la « mise en œuvre » est reprise |
-| `sans_etat_invisible` | fichier ou « site web » d'une action d'un dossier que l'import des dossiers a écarté pour ce motif                  |
+| `pas_un_pcaet` | fichier ou « site web » d'une action d'un dossier que l'import des dossiers a écarté pour ce motif                  |
 | `orphelin`            | fichier d'une action qui n'existe pas                                                                               |
 | `lien_invalide`       | « site web » d'une action reprise que le produit refuse (adresse qui n'est pas en http(s))                          |
 
@@ -576,7 +576,7 @@ ses fichiers (écrits au dossier) un écart de `precision` `avis`.
 
 | Motif                    | Sens                                                                                                     |
 | ------------------------ | -------------------------------------------------------------------------------------------------------- |
-| motif du dossier         | fichier d'un dossier que l'import des dossiers a écarté (`elaboration_remplacee`, `sans_etat_invisible`) |
+| motif du dossier         | fichier d'un dossier que l'import des dossiers a écarté (`elaboration_remplacee`, `pas_un_pcaet`) |
 | `avis_sans_transmission` | (avis) dossier jamais transmis : pas de saisine, pas d'avis                                              |
 | `avis_sans_fichier`      | (avis) aucun de ses fichiers n'est dans l'archive                                                        |
 | `avis_sans_pdf`          | (avis) aucun de ses fichiers n'est un PDF (zip, 7z, image)                                               |

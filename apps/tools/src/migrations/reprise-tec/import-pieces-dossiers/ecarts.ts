@@ -25,7 +25,7 @@ export const loadEcarts = async (
             (select e.motif from reprise_tec.ecarts e
               where e.table_source = 'demarche' and e.tec_id = f.demarche_id
                 and e.precision = ''
-                and e.motif in ('doublon', 'coquille_vide', 'sans_etat_invisible', 'elaboration_remplacee',
+                and e.motif in ('doublon', 'coquille_vide', 'pas_un_pcaet', 'elaboration_remplacee',
                                 'elaboration_doublon', 'dossier_de_test')) as "motifDossier"
        from reprise_tec.staging_demarche_fichier f
       order by f.id`
