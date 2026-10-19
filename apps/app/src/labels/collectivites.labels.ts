@@ -147,8 +147,6 @@ export const collectivitesLabels = {
     one: 'action sauvegardée',
     other: 'actions sauvegardées',
   }),
-  actionsSauvegardeesDescription:
-    "Pour alimenter vos discussions lors de comités de pilotage. Elles pourront alimenter l'évolution de vos plans d'action, être discutées avec vos collègues, élus, partenaires.",
   voirMesActionsSauvegardees: savedActionsAccessLabel,
   leviersAPrioriser: plural({
     one: 'levier à prioriser',
@@ -156,7 +154,7 @@ export const collectivitesLabels = {
   }),
   leviersAPrioriserDescription:
     "Fort impact, encore peu mobilisés : c'est par là que vous pouvez commencer.",
-  ouvrirLevierLePlusImportant: 'Ouvrir le levier le plus important',
+  afficherLevierLePlusImportant: 'Afficher le levier le plus important',
   priorisationVueBloqueeTitre: 'Ajoutez des actions pour accéder à cette vue',
   priorisationVueBloqueeDescription:
     'La matrice repose sur les actions de vos plans : elle montre où votre collectivité mobilise déjà chaque levier. Sans action, elle ne peut pas être calculée.',

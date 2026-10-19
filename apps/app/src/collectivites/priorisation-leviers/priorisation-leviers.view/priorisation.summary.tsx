@@ -21,7 +21,7 @@ type PriorisationSummaryProps = {
 type SummaryCardProps = {
   count: number;
   label: string;
-  description: string;
+  description?: string;
   children: ReactNode;
 };
 
@@ -38,7 +38,7 @@ const SummaryCard = ({
       </span>
       <span className="font-bold text-primary-9">{label}</span>
     </div>
-    <p className="m-0 text-sm text-grey-8">{description}</p>
+    {description && <p className="m-0 text-sm text-grey-8">{description}</p>}
     {children}
   </div>
 );
@@ -77,7 +77,7 @@ export const PriorisationSummary = ({
             className="mt-auto self-start"
             onClick={() => onLevierSelected(levierToPrioritizeId)}
           >
-            {appLabels.ouvrirLevierLePlusImportant}
+            {appLabels.afficherLevierLePlusImportant}
           </Button>
         )}
       </SummaryCard>
@@ -87,7 +87,6 @@ export const PriorisationSummary = ({
           count: preselectedActionsCount,
           withoutCount: true,
         })}
-        description={appLabels.actionsSauvegardeesDescription}
       >
         <Button
           size="sm"
