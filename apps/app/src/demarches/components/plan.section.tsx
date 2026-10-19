@@ -153,22 +153,23 @@ const ProgrammeActionsPlanRow = ({
             </span>
           )}
           <PlanImportStatusBadge status={plan.status} />
-          {/* Import pas encore relu ou secteurs réglementaires à compléter :
-              dans les deux cas, le plan est à vérifier. */}
-          {(isPlanPendingVerification(plan) || hasSecteursARenseigner) && (
-            <Link
-              href={planUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-test="demarches.plan.a-verifier-badge"
-            >
-              <Badge
-                title={appLabels.demarcheProgrammePlanAVerifier}
-                variant="warning"
-                size="sm"
-              />
-            </Link>
-          )}
+          {/* Seul le plan rattaché à la démarche porte le badge : un import pas
+              encore relu ou des secteurs à compléter le rendent à vérifier. */}
+          {isLinked &&
+            (isPlanPendingVerification(plan) || hasSecteursARenseigner) && (
+              <Link
+                href={planUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-test="demarches.plan.a-verifier-badge"
+              >
+                <Badge
+                  title={appLabels.demarcheProgrammePlanAVerifier}
+                  variant="warning"
+                  size="sm"
+                />
+              </Link>
+            )}
         </div>
       </td>
       <td className="px-4 py-3 text-grey-7">
@@ -419,7 +420,7 @@ const ListEligiblePlansTable = ({
         {!isReadonly && (
           <div data-test="demarches.plan.verifier-plans-info">
             <Alert
-              state="info"
+              state="warning"
               title={appLabels.demarcheProgrammeVerifierPlansTitre}
               description={appLabels.demarcheProgrammeVerifierPlansDescription}
             />
