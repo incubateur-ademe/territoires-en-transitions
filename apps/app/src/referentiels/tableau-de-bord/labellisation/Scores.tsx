@@ -7,7 +7,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useReferentielModeById } from '@/app/referentiels/referentiel-mode/use-referentiel-mode';
-import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
+import { ReactECharts } from '@/app/ui/charts/echarts';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -16,7 +16,7 @@ import Image from 'next/image';
 import { JSX } from 'react';
 import { AccueilCard } from '../AccueilCard';
 import { getAggregatedScore } from '../utils';
-import { buildScoreDonutTooltip } from './build-score-donut-tooltip';
+import { buildScoreDonutOption } from './build-score-donut-option';
 import LabellisationInfo from './LabellisationInfo';
 
 type ScoreRempliProps = {
@@ -44,57 +44,7 @@ export const ScoreRempli = ({
   // référentiel archivé (post-bascule) : plus aucune action de labellisation
   const isArchived = useReferentielModeById(referentiel) === 'archived';
 
-  const chartOption: EChartsOption = {
-    tooltip: {
-      trigger: 'item',
-      formatter: (params) => {
-        if (Array.isArray(params)) return '';
-        const { marker, name, value, percent } = params;
-        if (
-          typeof marker !== 'string' ||
-          typeof value !== 'number' ||
-          percent === undefined
-        ) {
-          return '';
-        }
-        return buildScoreDonutTooltip({ marker, name, points: value, percent });
-      },
-      textStyle: {
-        color: '#222',
-      },
-    },
-    series: [
-      {
-        type: 'pie',
-        radius: ['40%', '80%'],
-        padAngle: 1,
-        minAngle: 0,
-        minShowLabelAngle: 10,
-        percentPrecision: 0,
-
-        itemStyle: {
-          borderRadius: 4,
-          borderWidth: 4,
-        },
-        label: {
-          position: 'inside',
-          formatter: '{d}%',
-          opacity: 0.7,
-          fontSize: '0.9rem',
-        },
-        emphasis: {
-          itemStyle: {
-            color: 'inherit',
-          },
-        },
-        data: data.array.map((d) => ({
-          name: d.id,
-          value: d.value,
-          itemStyle: { color: d.color },
-        })),
-      },
-    ],
-  };
+  const chartOption = buildScoreDonutOption(data);
 
   return (
     <AccueilCard className="flex flex-col items-center xl:flex-row xl:justify-around">

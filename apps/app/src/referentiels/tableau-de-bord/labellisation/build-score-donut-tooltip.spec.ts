@@ -4,6 +4,23 @@ import { buildScoreDonutTooltip } from './build-score-donut-tooltip';
 const MARKER = '<span></span>';
 
 describe('buildScoreDonutTooltip', () => {
+  it.each([
+    { percent: 37.449, expected: /\(37[.,]4%\)/ },
+    { percent: 37.45, expected: /\(37[.,]5%\)/ },
+  ])(
+    'arrondit $percent à une décimale sans arrondi intermédiaire',
+    ({ percent, expected }) => {
+      expect(
+        buildScoreDonutTooltip({
+          marker: MARKER,
+          name: 'Fait',
+          points: 158.7,
+          percent,
+        })
+      ).toMatch(expected);
+    }
+  );
+
   it('affiche 128 points pour une somme de 128.00000000000003', () => {
     expect(
       buildScoreDonutTooltip({
