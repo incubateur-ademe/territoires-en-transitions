@@ -5,7 +5,7 @@ import {
   useGuidedTour,
 } from '@/app/shared/guided-tour/use-guided-tour';
 import type { LevierId } from '@tet/domain/shared';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { LevierSidePanelControls } from '../priorisation-leviers.view/levier-panel/use-levier-side-panel';
 import { toPriorisationTourSteps } from './priorisation-tour.steps';
 import {
@@ -34,13 +34,17 @@ const usePriorisationTour = ({
     [resolve, levierToPrioritizeId, select]
   );
 
+  const endTour = useCallback(() => {
+    close();
+    onEnded();
+  }, [close, onEnded]);
+
   return useGuidedTour({
     id: PRIORISATION_TOUR_ID,
     version: TOUR_VERSION,
     steps,
     isReady,
-    onSkipped: close,
-    onEnded,
+    onEnded: endTour,
   });
 };
 
