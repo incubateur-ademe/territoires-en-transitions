@@ -57,7 +57,7 @@ export class MigrateCollectiviteDataService {
 
     const ctxResult = await this.buildSwitchToTeContextService.build(
       collectiviteId,
-      prefs,
+      BuildSwitchToTeContextService.getSourceReferentiels(prefs),
       preSwitchSnapshots,
       { user }
     );

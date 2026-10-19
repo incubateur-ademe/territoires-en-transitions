@@ -949,7 +949,15 @@ export default class ScoresService {
   async computeScoreForCollectivite(
     referentielId: ReferentielId,
     collectiviteId: number,
-    parameters: GetReferentielScoresRequestType,
+    parameters: GetReferentielScoresRequestType & {
+      /**
+       * Usage interne : modifie les statuts lus en base avant le calcul, pour
+       * simuler un score sans rien écrire (ex. dry-run d'un rattrapage).
+       */
+      patchActionStatuts?: (
+        actionStatuts: ActionStatutsByActionId
+      ) => ActionStatutsByActionId;
+    },
     user?: InternalAuthUser,
     referentiel?: ReferentielResponse,
     noCheck?: boolean
@@ -1107,12 +1115,15 @@ export default class ScoresService {
       );
 
     if (!parameters.avecReferentielsOrigine) {
-      const actionStatuts =
+      const actionStatutsEnBase =
         await this.listActionStatutsRepository.listByActionIds({
           referentielId,
           collectiviteId,
           date: parameters.date,
         });
+      const actionStatuts = parameters.patchActionStatuts
+        ? parameters.patchActionStatuts(actionStatutsEnBase)
+        : actionStatutsEnBase;
 
       const actionStatutExplications =
         await this.listActionExplicationsRepository.execute({
