@@ -36,6 +36,7 @@ export const designTokens = {
       1: '#F55B5B',
       2: '#FFD8D8',
       3: '#FF9789',
+      4: '#FFEFEF',
     },
     warning: {
       1: '#FFA903',
