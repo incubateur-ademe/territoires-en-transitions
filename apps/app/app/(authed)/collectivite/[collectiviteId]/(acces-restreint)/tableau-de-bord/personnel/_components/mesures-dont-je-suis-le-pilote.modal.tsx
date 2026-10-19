@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { appLabels } from '@/app/labels/catalog';
+import { useMesuresModuleFiltre } from '@/app/tableaux-de-bord/referentiels/use-mesures-module-filtre';
 import { useUser } from '@tet/api/users';
 import { ModuleMesuresSelect } from '@tet/domain/metrics';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
@@ -37,8 +38,19 @@ const MesuresDontJeSuisLePiloteModal = ({
 
   const { id: userId } = useUser();
 
+  const { displayedReferentielIds, referentielOptions } =
+    useMesuresModuleFiltre(module.options.filtre);
+
   const [filtreState, setFiltreState] = useState<ListActionsInput>(
     module.options.filtre
+  );
+
+  // Filtré au rendu et non dans l'état initial : le feature flag TE peut
+  // encore être en chargement au montage. Sans référentiel sélectionné, le
+  // module affiche les référentiels par défaut (cf. resolveMesuresReferentielIds) :
+  // on ne les pré-remplit pas pour ne pas figer un choix qui doit suivre la bascule.
+  const selectedReferentielIds = filtreState.referentielIds?.filter((id) =>
+    displayedReferentielIds.includes(id)
   );
 
   return (
@@ -52,17 +64,8 @@ const MesuresDontJeSuisLePiloteModal = ({
         >
           <Field title={capitalize(appLabels.referentiel({ plural: true }))}>
             <SelectFilter
-              values={filtreState?.referentielIds}
-              options={[
-                {
-                  label: 'Climat, air, énergie',
-                  value: 'cae',
-                },
-                {
-                  label: 'Économie circulaire',
-                  value: 'eci',
-                },
-              ]}
+              values={selectedReferentielIds}
+              options={referentielOptions}
               onChange={({ values }) =>
                 setFiltreState({
                   ...filtreState,

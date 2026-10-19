@@ -6,6 +6,7 @@ import Module from '@/app/tableaux-de-bord/modules/module/module';
 import { PictoEtatDesLieuxMonochrome } from '@/app/ui/pictogrammes/PictoEtatDesLieuxMonochrome';
 import { ModuleMesuresSelect } from '@tet/domain/metrics';
 import { ButtonProps, MenuAction } from '@tet/ui';
+import { useMesuresModuleFiltre } from './use-mesures-module-filtre';
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -16,7 +17,8 @@ type Props = {
 };
 
 export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
-  const { data, isPending } = useListActions(module.options.filtre);
+  const { filtre } = useMesuresModuleFiltre(module.options.filtre);
+  const { data, isPending } = useListActions(filtre);
 
   const mesures = data || [];
   const totalCount = mesures?.length || 0;
@@ -24,7 +26,7 @@ export const MesuresModule = ({ module, menuActions, emptyButtons }: Props) => {
   return (
     <Module
       title={PERSONAL_MODULE_TITRES[module.defaultKey]}
-      filters={module.options.filtre}
+      filters={filtre}
       menuActions={menuActions}
       symbole={<PictoEtatDesLieuxMonochrome className="w-16 h-16" />}
       isLoading={isPending}
