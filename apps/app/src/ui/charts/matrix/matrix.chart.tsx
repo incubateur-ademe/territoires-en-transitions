@@ -466,6 +466,7 @@ const buildOption = ({
   size: PlotSize;
   selectedPointId: string | undefined;
 }): EChartsOption => ({
+  animationDuration: 0,
   textStyle: { fontFamily: FONT_FAMILY },
   tooltip: {
     trigger: 'item',
