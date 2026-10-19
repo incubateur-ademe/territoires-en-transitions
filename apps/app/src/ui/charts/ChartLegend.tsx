@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { cn } from '@tet/ui';
 
 /** Élement représentatif d'une donnée dans la légende */
 export type ChartLegendItem = {
@@ -35,7 +35,7 @@ const ChartLegend = ({
 
   return (
     <div
-      className={classNames(
+      className={cn(
         'flex items-center justify-center flex-wrap gap-x-8 gap-y-4 mx-auto',
         {
           'gap-x-4 gap-y-2 text-sm': size === 'sm',
