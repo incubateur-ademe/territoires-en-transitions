@@ -212,7 +212,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     await expect(pom.levierPanel(LEVIER_TO_PRIORITIZE)).toHaveCount(0);
   });
 
-  test('« Terminer » à la dernière étape laisse le levier ouvert', async ({
+  test('« Terminer » à la dernière étape referme le levier', async ({
     collectivites,
     page,
   }) => {
@@ -234,7 +234,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     await pom.tourButton('Terminer').click();
 
     await expect(pom.tourDialogs).toHaveCount(0);
-    await expect(pom.levierPanel(LEVIER_TO_PRIORITIZE)).toBeVisible();
+    await expect(pom.levierPanel(LEVIER_TO_PRIORITIZE)).toHaveCount(0);
   });
 
   test('pendant la visite, le champ de pertinence du levier ouvert ne reçoit pas les clics', async ({

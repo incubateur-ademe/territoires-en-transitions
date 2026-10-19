@@ -19,7 +19,6 @@ type UseGuidedTourArgs = {
   version: string;
   steps: readonly GuidedTourStep[];
   isReady: boolean;
-  onSkipped?: () => void;
   onEnded?: () => void;
 };
 
@@ -34,7 +33,6 @@ const useGuidedTour = ({
   version,
   steps,
   isReady,
-  onSkipped,
   onEnded,
 }: UseGuidedTourArgs): GuidedTour => {
   const { hasSeen, markSeen } = useSeenGuidedTourVersion({ id, version });
@@ -72,7 +70,6 @@ const useGuidedTour = ({
       zIndex: Number(designTokens.zIndex.modal),
     },
   });
-  const notifySkipped = useEffectEvent(() => onSkipped?.());
   const notifyEnded = useEffectEvent(() => onEnded?.());
   const restart = useCallback(() => controls.start(), [controls]);
 
@@ -84,9 +81,6 @@ const useGuidedTour = ({
         if (isEndedByUser) {
           markSeen();
           notifyEnded();
-        }
-        if (isSkipped) {
-          notifySkipped();
         }
       }),
     [on, markSeen]
