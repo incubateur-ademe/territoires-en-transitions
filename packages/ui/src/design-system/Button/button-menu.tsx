@@ -205,7 +205,7 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
                   maxHeight: maxHeight - 16,
                 },
                 className: cn(
-                  'max-w-64 relative overflow-y-auto flex flex-col gap-2 p-2 border border-grey-2 rounded-md bg-white shadow z-[1]',
+                  'max-w-64 relative overflow-y-auto flex flex-col gap-2 p-2 border border-grey-2 rounded-md bg-white shadow z-dropdown',
                   menuClassName
                 ),
               })}
