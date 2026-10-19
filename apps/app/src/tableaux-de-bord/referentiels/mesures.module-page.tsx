@@ -15,6 +15,7 @@ import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, EmptyCard } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { useMesuresModuleFiltre } from './use-mesures-module-filtre';
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -27,19 +28,19 @@ export const MesuresModulePage = ({
   parentPage,
   filtersModal,
 }: Props) => {
-  const { options } = module;
+  const { filtre } = useMesuresModuleFiltre(module.options.filtre);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isPending } = useListActions({
-    ...options.filtre,
+    ...filtre,
     actionTypes: [ActionTypeEnum.ACTION],
   });
 
   const mesures = data || [];
 
   const filterCategories = useActionFilterCategories({
-    filters: options.filtre,
+    filters: filtre,
     includeReferentielIds: true,
   });
 

@@ -4,6 +4,7 @@ import {
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { listWritableReferentielIds } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
   getReferentielIdFromActionId,
@@ -14,7 +15,6 @@ import Fuse, { FuseResult } from 'fuse.js';
 import { useMemo, useState } from 'react';
 import {
   filterSelectableMesures,
-  listWritableReferentielIds,
   searchMesuresByIdentifiant,
 } from './filter-mesures';
 

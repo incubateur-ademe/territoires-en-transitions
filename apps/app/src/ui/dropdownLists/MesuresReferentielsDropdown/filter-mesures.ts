@@ -1,21 +1,7 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import {
-  canMutateReferentielData,
-  collectiviteReferentielPreferenceIds,
-  CollectiviteReferentielPreferences,
-} from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 const MESURE_ID_REGEXP = /^(?:c(?:ae?|r)?|e(?:ci?)?|\d)[\s\d.]*$/;
-
-/** Référentiels dans lesquels la collectivité peut créer de nouveaux liens. */
-export function listWritableReferentielIds(
-  referentiels: CollectiviteReferentielPreferences
-): ReferentielId[] {
-  return collectiviteReferentielPreferenceIds.filter((referentielId) =>
-    canMutateReferentielData(referentiels[referentielId].mode)
-  );
-}
 
 /**
  * Mesures proposées : celles des référentiels modifiables, plus celles déjà

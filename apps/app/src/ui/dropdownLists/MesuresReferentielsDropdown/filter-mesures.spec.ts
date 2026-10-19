@@ -1,10 +1,8 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { describe, expect, test } from 'vitest';
 import {
   filterSelectableMesures,
-  listWritableReferentielIds,
   searchMesuresByIdentifiant,
 } from './filter-mesures';
 
@@ -23,22 +21,6 @@ const mesures = ['cae_1.1.1', 'cae_1.2', 'eci_1.1', 'te_1.1.1', 'te_2.1'].map(
 );
 
 const ids = (list: ActionListItem[] | null) => list?.map((m) => m.actionId);
-
-describe('listWritableReferentielIds', () => {
-  test('ne garde que les référentiels en mode write', () => {
-    expect(
-      listWritableReferentielIds(defaultCollectivitePreferences.referentiels)
-    ).toEqual(['cae', 'eci']);
-
-    expect(
-      listWritableReferentielIds({
-        cae: { display: true, mode: 'archived' },
-        eci: { display: false, mode: 'archived' },
-        te: { display: true, mode: 'write' },
-      })
-    ).toEqual(['te']);
-  });
-});
 
 describe('filterSelectableMesures', () => {
   test('propose les mesures des référentiels modifiables', () => {
