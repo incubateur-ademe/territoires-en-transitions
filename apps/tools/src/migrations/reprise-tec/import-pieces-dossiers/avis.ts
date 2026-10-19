@@ -52,7 +52,7 @@ export type AvisEcrit = Avis & {
   retenu: Fichier & { contenu: Contenu };
   pdfs: number;
   date: string;
-  dateVenueDe: 'suivi ADEME' | 'nom du fichier' | 'envoi T&C' | 'transmission';
+  dateVenueDe: 'suivi SGPE' | 'nom du fichier' | 'envoi T&C' | 'transmission';
 };
 
 export type AvisEcarte = Avis & { motif: string };
@@ -164,7 +164,7 @@ export const readDateDuNom = (nom: string) => {
 const ajouterUnAn = (jour: string) =>
   `${Number(jour.slice(0, 4)) + 1}${jour.slice(4, 10)}`;
 
-/** Règle : suivi ADEME dans l'année, puis date du nom, puis date « envoi », la première qui ne précède pas la transmission ; sinon, à moins d'un an avant, la transmission. */
+/** Règle : suivi SGPE dans l'année, puis date du nom, puis date « envoi », la première qui ne précède pas la transmission ; sinon, à moins d'un an avant, la transmission. */
 export const decideDate = (
   avis: Avis,
   retenu: Fichier,
@@ -184,7 +184,7 @@ export const decideDate = (
     {
       date:
         dansSuivi && dansSuivi <= ajouterUnAn(transmission) ? dansSuivi : null,
-      dateVenueDe: 'suivi ADEME' as const,
+      dateVenueDe: 'suivi SGPE' as const,
     },
     { date: readDateDuNom(retenu.nom), dateVenueDe: 'nom du fichier' as const },
     { date: envoi ?? null, dateVenueDe: 'envoi T&C' as const },

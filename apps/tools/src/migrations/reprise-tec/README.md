@@ -531,7 +531,7 @@ pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv> --confirm  # dépôt 
 ```
 
 `--archive` est le dossier `Uploads/` de T&C (`Uploads/Demarches/…` y est
-`Demarches/…`) ; `--suivi`, le suivi ADEME de l'import des dossiers. Avec
+`Demarches/…`) ; `--suivi`, le suivi SGPE de l'import des dossiers. Avec
 `--confirm`, les fichiers sont déposés **avant** la transaction, dans le bucket
 de leur collectivité, sous le nom de leur empreinte et en remplaçant l'objet
 existant, comme le produit : relancer après un échec redépose à l'identique.
@@ -562,7 +562,7 @@ l'avis, ou, parmi plusieurs, celui dont le nom dit avis, courrier ou signé (ni
 annexe, ni MRAe, ni réponse), de préférence celui qui nomme l'émetteur du titre,
 puis signé ou courrier, puis le plus ancien. Il va dans la bibliothèque et le
 bucket de l'émetteur, marqué confidentiel ; aucune copie chez la collectivité.
-Sa date : le suivi ADEME s'il tombe dans l'année qui suit la transmission (avis
+Sa date : le suivi SGPE s'il tombe dans l'année qui suit la transmission (avis
 du préfet), puis une date écrite dans le nom du fichier, puis la date « envoi »
 de T&C, la première qui ne précède pas la transmission ; sinon, à moins d'un an
 avant, le jour de la transmission. Les autres fichiers de l'avis, et ceux d'un
