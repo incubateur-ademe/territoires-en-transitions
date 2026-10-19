@@ -1,6 +1,5 @@
 /** La fiche : ce que devient une action de T&C dans TeT, et tout ce qui s'y rattache. */
 
-import { StatutEnum } from '@tet/domain/plans';
 import { decrireDossier, type Action, type Dossier } from './dossiers';
 import type { ListesTet } from './listes-tet';
 import {
@@ -15,7 +14,7 @@ import {
 export type Fiche = ReturnType<typeof buildFiche>;
 
 /**
- * Règle : la fiche d'une action, dans la collectivité de son dossier, « À venir », datée de sa création dans T&C.
+ * Règle : la fiche d'une action, dans la collectivité de son dossier, sans statut, datée de sa création dans T&C.
  * Chaque lien n'est gardé qu'une fois : deux secteurs peuvent donner la même thématique.
  * Un secteur réglementaire va au champ secteurs, les autres en thématique.
  */
@@ -33,7 +32,7 @@ export const buildFiche = (
     colonnes: {
       titre: action.titre,
       description: action.description,
-      statut: StatutEnum.A_VENIR,
+      statut: null,
       dateDebut: correctDateSaisie(action.lanceeLe),
       cibles:
         action.cibles.length > 0

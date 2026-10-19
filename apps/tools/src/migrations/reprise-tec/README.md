@@ -375,7 +375,7 @@ pnpx tsx $SCRIPT --confirm  # import
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | intitulé, description                | titre, description (vide : rien)                                                                                   |
 | date de lancement, date de création  | date de début ; créée et modifiée le                                                                               |
-| (aucun statut)                       | « À venir » sur toutes les fiches                                                                                  |
+| (aucun statut)                       | aucun statut sur les fiches, la valeur par défaut « À venir » n'est pas prise                                      |
 | commentaires de conclusion et statut | notes de suivi, au nom du compte système « Territoires en Transition », datées de la création                      |
 | (aucun auteur)                       | plan, thématiques et sous-thématiques liés au nom du compte système : la base exige un auteur                      |
 | volets du PCAET                      | effets attendus                                                                                                    |

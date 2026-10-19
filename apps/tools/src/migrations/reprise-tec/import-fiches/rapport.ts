@@ -52,7 +52,7 @@ export const printRapport = ({
   console.log(
     `\n${dossiers.length} plans, un par dossier repris qui porte des actions`
   );
-  console.log(`${fiches.length} fiches, toutes « À venir »`);
+  console.log(`${fiches.length} fiches, toutes sans statut`);
   console.log(`  ${liens((f) => f.effetIds)} effets attendus`);
   console.log(`  ${liens((f) => f.thematiqueIds)} thématiques`);
   console.log(`  ${liens((f) => f.sousThematiqueIds)} sous-thématiques`);
