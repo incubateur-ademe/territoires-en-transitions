@@ -39,7 +39,9 @@ const IntroPartItem = ({
       {position}
     </span>
     <div className="flex flex-col gap-0.5">
-      <h3 className="mb-0 text-sm font-bold text-primary-9">{title}</h3>
+      <h3 className="mb-0 text-sm font-bold leading-5 text-primary-9">
+        {title}
+      </h3>
       <p className="mb-0 text-xs text-grey-8">{description}</p>
     </div>
   </li>

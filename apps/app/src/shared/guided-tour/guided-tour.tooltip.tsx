@@ -241,7 +241,10 @@ const GuidedTourTooltip = ({
         total={total}
       />
       <VisibleWhen condition={hasTitle}>
-        <h2 id={titleId} className="mb-0 text-base font-bold text-primary-9">
+        <h2
+          id={titleId}
+          className="mb-0 text-base font-bold leading-6 text-primary-9"
+        >
           {step.title}
         </h2>
       </VisibleWhen>
