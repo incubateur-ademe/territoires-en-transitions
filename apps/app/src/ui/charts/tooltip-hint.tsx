@@ -11,7 +11,7 @@ const TooltipHint = ({ hint }: { hint: string }): JSX.Element => (
     iconPosition="left"
     uppercase={false}
     trim={false}
-    className="mt-1 w-full max-w-full justify-end"
+    className="w-full max-w-full justify-end"
   />
 );
 
