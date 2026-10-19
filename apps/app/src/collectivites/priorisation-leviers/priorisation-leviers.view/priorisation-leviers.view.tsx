@@ -394,7 +394,13 @@ export const PriorisationLeviersView = (): JSX.Element => {
         </PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-wrap gap-4">
-            <Button variant="link" size="sm" disabled>
+            <Button
+              variant="link"
+              size="sm"
+              icon="external-link-line"
+              iconPosition="right"
+              disabled
+            >
               {appLabels.priorisationMethodologie}
             </Button>
             <VisibleWhen condition={isTourReady}>
