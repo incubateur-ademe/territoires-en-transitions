@@ -6,7 +6,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { GetDemarchePcaetService } from '../../get-demarche-pcaet/get-demarche-pcaet.service';
+import { GetDemarchePcaetRepository } from '../../get-demarche-pcaet/get-demarche-pcaet.repository';
 import { recetteCollectiviteTable } from '../models/recette-collectivite.table';
 import { recetteDossierTable } from '../models/recette-dossier.table';
 import { recetteEcartTable } from '../models/recette-ecart.table';
@@ -24,7 +24,7 @@ export class GetDossierService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
-    private readonly getDemarchePcaetService: GetDemarchePcaetService
+    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository
   ) {}
 
   async getDossier(
@@ -51,21 +51,17 @@ export class GetDossierService {
     let demarche: RecetteDossierDetail['demarche'] = null;
     if (dossier.tetDemarcheId !== null) {
       const demarcheResult =
-        await this.getDemarchePcaetService.getDemarchePcaet(
+        await this.getDemarchePcaetRepository.getDemarchePcaet(
           {
             collectiviteId: input.collectiviteId,
             demarcheId: dossier.tetDemarcheId,
           },
-          { user, tx }
+          tx
         );
       if (demarcheResult.success) {
         demarche = demarcheResult.data;
       } else if (demarcheResult.error !== 'DEMARCHE_PCAET_NOT_FOUND') {
-        return failure(
-          demarcheResult.error === 'UNAUTHORIZED'
-            ? GetDossierErrorEnum.UNAUTHORIZED
-            : GetDossierErrorEnum.SERVER_ERROR
-        );
+        return failure(GetDossierErrorEnum.SERVER_ERROR);
       }
     }
 

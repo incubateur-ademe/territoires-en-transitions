@@ -11,6 +11,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { sql } from 'drizzle-orm';
 import {
+  addTestLecteurRepriseTec,
   addTestRecette,
   addTestSuperAdmin,
   createTestRecetteTables,
@@ -68,6 +69,31 @@ describe('demarches.pcaet.repriseTec.listCollectivites', () => {
       nomTet: collectivite.nom,
       dossiers: [],
     });
+  });
+
+  test('un compte avec le rôle de lecture de la reprise lit les collectivités', async () => {
+    const { collectivite } = await addTestCollectivite(databaseService);
+    const tecCollectiviteId = 900_000_000 + collectivite.id;
+    const { cleanup } = await addTestRecette(databaseService, {
+      collectivite: {
+        tecCollectiviteId,
+        tetCollectiviteId: collectivite.id,
+        nom: 'Collectivité de T&C',
+      },
+    });
+    onTestFinished(cleanup);
+    const { caller, cleanup: cleanupLecteur } = await addTestLecteurRepriseTec(
+      app,
+      router
+    );
+    onTestFinished(cleanupLecteur);
+
+    const collectivites =
+      await caller.demarches.pcaet.repriseTec.listCollectivites();
+
+    expect(collectivites.map((c) => c.tecCollectiviteId)).toContain(
+      tecCollectiviteId
+    );
   });
 
   test('un compte sans la permission reçoit un refus', async () => {

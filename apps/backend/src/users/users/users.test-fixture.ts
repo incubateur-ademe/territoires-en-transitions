@@ -8,12 +8,14 @@ import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-s
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
+  BackofficeRole,
   CollectiviteRole,
   Dcp,
   defaultUserPreferences,
 } from '@tet/domain/users';
 import assert from 'assert';
 import { and, eq, sql } from 'drizzle-orm';
+import { utilisateurRoleBackofficeTable } from '../authorizations/roles/utilisateur-role-backoffice.table';
 import { utilisateurSupportTable } from '../authorizations/roles/utilisateur-support.table';
 import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
 
@@ -171,6 +173,35 @@ export async function addUserRoleSupport({
       .update(utilisateurSupportTable)
       .set({ isSupport: false, isSuperAdminRoleEnabled: false })
       .where(eq(utilisateurSupportTable.userId, userId));
+  };
+
+  return {
+    cleanup,
+  };
+}
+
+export async function addUserRoleBackoffice({
+  databaseService,
+  userId,
+  role,
+}: {
+  databaseService: DatabaseServiceInterface;
+  userId: string;
+  role: BackofficeRole;
+}) {
+  await databaseService.db
+    .insert(utilisateurRoleBackofficeTable)
+    .values({ userId, role, createdBy: userId });
+
+  const cleanup = async () => {
+    await databaseService.db
+      .delete(utilisateurRoleBackofficeTable)
+      .where(
+        and(
+          eq(utilisateurRoleBackofficeTable.userId, userId),
+          eq(utilisateurRoleBackofficeTable.role, role)
+        )
+      );
   };
 
   return {

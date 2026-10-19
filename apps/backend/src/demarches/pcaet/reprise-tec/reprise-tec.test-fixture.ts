@@ -3,10 +3,12 @@ import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import {
   addAndEnableUserSuperAdminMode,
   addTestUser,
+  addUserRoleBackoffice,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { PlatformRole } from '@tet/domain/users';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { recetteCollectiviteTable } from './models/recette-collectivite.table';
 import { recetteDossierTable } from './models/recette-dossier.table';
@@ -119,6 +121,22 @@ export async function addTestSuperAdmin(
     app,
     caller,
     userId: authUser.id,
+  });
+  return { authUser, caller, cleanup };
+}
+
+export async function addTestLecteurRepriseTec(
+  app: INestApplication,
+  router: TrpcRouter
+) {
+  const databaseService = app.get(DatabaseService);
+  const { user } = await addTestUser(databaseService);
+  const authUser = getAuthUserFromUserCredentials(user);
+  const caller = router.createCaller({ user: authUser });
+  const { cleanup } = await addUserRoleBackoffice({
+    databaseService,
+    userId: authUser.id,
+    role: PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE,
   });
   return { authUser, caller, cleanup };
 }

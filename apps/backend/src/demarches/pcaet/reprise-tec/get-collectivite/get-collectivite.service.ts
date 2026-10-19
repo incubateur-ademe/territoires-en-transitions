@@ -8,7 +8,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { asc, eq, inArray, sql } from 'drizzle-orm';
-import { ListDemarchesPcaetService } from '../../list-demarches-pcaet/list-demarches-pcaet.service';
+import { ListDemarchesPcaetRepository } from '../../list-demarches-pcaet/list-demarches-pcaet.repository';
 import { recetteCollectiviteTable } from '../models/recette-collectivite.table';
 import { recetteDossierTable } from '../models/recette-dossier.table';
 import { isRecetteNonConstruite } from '../shared/is-recette-non-construite';
@@ -26,7 +26,7 @@ export class GetCollectiviteService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
-    private readonly listDemarchesPcaetService: ListDemarchesPcaetService
+    private readonly listDemarchesPcaetRepository: ListDemarchesPcaetRepository
   ) {}
 
   async getCollectivite(
@@ -51,16 +51,12 @@ export class GetCollectiviteService {
     const { collectivite, tec, dossiers, copies } = recetteResult.data;
 
     const demarchesResult =
-      await this.listDemarchesPcaetService.listDemarchesPcaet(
+      await this.listDemarchesPcaetRepository.listDemarchesPcaet(
         { collectiviteId },
-        { user, tx }
+        tx
       );
     if (!demarchesResult.success) {
-      return failure(
-        demarchesResult.error === 'UNAUTHORIZED'
-          ? GetCollectiviteErrorEnum.UNAUTHORIZED
-          : GetCollectiviteErrorEnum.SERVER_ERROR
-      );
+      return failure(GetCollectiviteErrorEnum.SERVER_ERROR);
     }
     const statutParDemarche = new Map(
       demarchesResult.data.map((d) => [d.id, d.status])

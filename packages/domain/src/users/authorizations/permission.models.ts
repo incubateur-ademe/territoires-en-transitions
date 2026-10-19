@@ -90,6 +90,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'indicateurs.indicateurs.read_confidentiel',
     'indicateurs.valeurs.read_confidentiel',
   ],
+  [PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE]: ['demarches.reprise-tec.read'],
   [CollectiviteRole.LECTURE]: [
     ...collectiviteLecturePermissions,
     'indicateurs.vues.read',

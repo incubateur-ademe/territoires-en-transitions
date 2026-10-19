@@ -4,6 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createDemarche } from '../../demarches-pcaet.test-fixture';
 import {
+  addTestLecteurRepriseTec,
   addTestRecette,
   addTestSuperAdmin,
   createTestRecetteTables,
@@ -117,6 +118,19 @@ describe('demarches.pcaet.repriseTec.getDossier', () => {
         tecDossierId,
       })
     ).rejects.toThrow("La ressource demandée n'existe pas");
+  });
+
+  test('un compte avec le rôle de lecture de la reprise lit le dossier', async () => {
+    const { collectiviteId, tecDossierId } = await addRecette();
+    const { caller, cleanup } = await addTestLecteurRepriseTec(app, router);
+    onTestFinished(cleanup);
+
+    await expect(
+      caller.demarches.pcaet.repriseTec.getDossier({
+        collectiviteId,
+        tecDossierId,
+      })
+    ).resolves.toMatchObject({ dossier: { tecDossierId } });
   });
 
   test('un compte sans la permission reçoit un refus', async () => {

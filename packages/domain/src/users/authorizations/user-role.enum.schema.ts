@@ -1,12 +1,23 @@
 import { z } from 'zod/mini';
 import { createEnumObject } from '../../utils';
 
+export const backofficeRoleEnumValues = [
+  'BACKOFFICE_REPRISE_TEC_LECTURE',
+] as const;
+
+export type BackofficeRole = (typeof backofficeRoleEnumValues)[number];
+
+export function isBackofficeRole(role: string): role is BackofficeRole {
+  return backofficeRoleEnumValues.includes(role as BackofficeRole);
+}
+
 export const platformRoleEnumValues = [
   'CONNECTED',
   'VERIFIED',
   'SUPPORT',
   'SUPER_ADMIN',
   'ADEME',
+  ...backofficeRoleEnumValues,
 ] as const;
 
 export const PlatformRole = createEnumObject(platformRoleEnumValues);

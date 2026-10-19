@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { utilisateurRoleBackofficeTable } from '@tet/backend/users/authorizations/roles/utilisateur-role-backoffice.table';
 import { utilisateurSupportTable } from '@tet/backend/users/authorizations/roles/utilisateur-support.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
@@ -74,6 +75,22 @@ export class GetUserRolesAndPermissionsRepository {
       .limit(1);
 
     return user ?? null;
+  }
+
+  async getBackofficeRoles({
+    userId,
+    tx,
+  }: {
+    userId: string;
+    tx?: Transaction;
+  }): Promise<string[]> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ role: utilisateurRoleBackofficeTable.role })
+      .from(utilisateurRoleBackofficeTable)
+      .where(eq(utilisateurRoleBackofficeTable.userId, userId))
+      .orderBy(utilisateurRoleBackofficeTable.role);
+
+    return rows.map(({ role }) => role);
   }
 
   async getCollectiviteRoles({

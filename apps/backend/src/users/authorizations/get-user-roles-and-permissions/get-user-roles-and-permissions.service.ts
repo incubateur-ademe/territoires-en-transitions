@@ -28,13 +28,15 @@ export class GetUserRolesAndPermissionsService {
       };
     }
 
-    const [collectiviteRoles, auditRoles] = await Promise.all([
+    const [backofficeRoles, collectiviteRoles, auditRoles] = await Promise.all([
+      this.getUserPermissionsRepository.getBackofficeRoles({ userId, tx }),
       this.getUserPermissionsRepository.getCollectiviteRoles({ userId, tx }),
       this.getUserPermissionsRepository.getAuditRoles({ userId, tx }),
     ]);
 
     const userPermissions = toUserRolesAndPermissions({
       platformRolesRow: platformRoles,
+      backofficeRoles,
       collectiviteRolesRows: collectiviteRoles,
       auditRolesRows: auditRoles,
     });

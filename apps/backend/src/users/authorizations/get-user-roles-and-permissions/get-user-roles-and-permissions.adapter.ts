@@ -3,6 +3,7 @@ import {
   AuditRolesAndPermissions,
   CollectiviteRole,
   CollectiviteRolesAndPermissions,
+  isBackofficeRole,
   PermissionOperation,
   permissionsByRole,
   PlatformRole,
@@ -99,10 +100,12 @@ function toCollectiviteRolesAndPermissions(
 
 export function toUserRolesAndPermissions({
   platformRolesRow,
+  backofficeRoles,
   collectiviteRolesRows,
   auditRolesRows,
 }: {
   platformRolesRow: PlatformRolesRow;
+  backofficeRoles: string[];
   collectiviteRolesRows: CollectiviteRolesRow[];
   auditRolesRows: AuditRolesRow[];
 }): UserRolesAndPermissions {
@@ -119,6 +122,8 @@ export function toUserRolesAndPermissions({
     ...optionalPlatformRoles
       .filter(([isEnabled]) => isEnabled)
       .map(([, role]) => role),
+
+    ...backofficeRoles.filter(isBackofficeRole),
   ];
 
   const userPermissions: UserRolesAndPermissions = {

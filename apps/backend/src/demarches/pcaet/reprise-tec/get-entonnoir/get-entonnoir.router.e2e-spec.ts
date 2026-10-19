@@ -4,6 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createDemarche } from '../../demarches-pcaet.test-fixture';
 import {
+  addTestLecteurRepriseTec,
   addTestRecette,
   addTestSuperAdmin,
   createTestRecetteTables,
@@ -82,6 +83,16 @@ describe('demarches.pcaet.repriseTec.getEntonnoir', () => {
       ])
     );
     expect(tecDossierId).toBeGreaterThan(0);
+  });
+
+  test('un compte avec le rôle de lecture de la reprise lit la recette', async () => {
+    await addRecette();
+    const { caller, cleanup } = await addTestLecteurRepriseTec(app, router);
+    onTestFinished(cleanup);
+
+    const resultat = await caller.demarches.pcaet.repriseTec.getEntonnoir();
+
+    expect(resultat.total).toBeGreaterThanOrEqual(2);
   });
 
   test('un compte sans la permission reçoit un refus', async () => {

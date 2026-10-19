@@ -4,6 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createDemarche } from '../../demarches-pcaet.test-fixture';
 import {
+  addTestLecteurRepriseTec,
   addTestRecette,
   addTestSuperAdmin,
   createTestRecetteTables,
@@ -99,6 +100,16 @@ describe('demarches.pcaet.repriseTec.getCollectivite', () => {
     await expect(
       caller.demarches.pcaet.repriseTec.getCollectivite({ collectiviteId })
     ).rejects.toThrow("La ressource demandée n'existe pas");
+  });
+
+  test('un compte avec le rôle de lecture de la reprise lit la collectivité', async () => {
+    const { collectiviteId } = await addRecette();
+    const { caller, cleanup } = await addTestLecteurRepriseTec(app, router);
+    onTestFinished(cleanup);
+
+    await expect(
+      caller.demarches.pcaet.repriseTec.getCollectivite({ collectiviteId })
+    ).resolves.toMatchObject({ collectivite: { id: collectiviteId } });
   });
 
   test('un compte sans la permission reçoit un refus', async () => {

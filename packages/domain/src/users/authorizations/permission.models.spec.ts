@@ -33,14 +33,23 @@ describe('permissionsByRole', () => {
     expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
   });
 
-  it("n'accorde la lecture de la reprise T&C qu'au super admin", () => {
+  it("n'accorde la lecture de la reprise T&C qu'au super admin et au rôle backoffice de la reprise", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>
         permissions.includes('demarches.reprise-tec.read')
       )
       .map(([role]) => role);
 
-    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+    expect(rolesGranting).toEqual([
+      PlatformRole.SUPER_ADMIN,
+      PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE,
+    ]);
+  });
+
+  it('le rôle backoffice de la reprise T&C ne donne que sa lecture', () => {
+    expect(
+      permissionsByRole[PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE]
+    ).toEqual(['demarches.reprise-tec.read']);
   });
 
   it("n'accorde la qualification de la pertinence des leviers qu'au super admin et à l'admin de la collectivité", () => {

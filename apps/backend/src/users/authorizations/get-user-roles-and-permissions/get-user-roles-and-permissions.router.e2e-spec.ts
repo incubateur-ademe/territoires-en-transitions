@@ -3,7 +3,16 @@ import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectiv
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
-import { getAuthUser, getTestApp } from '@tet/backend/test';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+} from '@tet/backend/test';
+import { utilisateurRoleBackofficeTable } from '@tet/backend/users/authorizations/roles/utilisateur-role-backoffice.table';
+import {
+  addTestUser,
+  addUserRoleBackoffice,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
@@ -14,7 +23,7 @@ import {
   permissionsByRole,
   PlatformRole,
 } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 describe('GetUserPermissions', () => {
   let app: INestApplication;
@@ -271,5 +280,53 @@ describe('GetUserPermissions', () => {
       (c) => c.collectiviteId === collectivite.id
     );
     expect(auditeeCollectivite?.audits).toEqual([]);
+  });
+
+  test('Retourne le rôle backoffice attribué et ses permissions', async () => {
+    const { user } = await addTestUser(databaseService);
+    const { cleanup } = await addUserRoleBackoffice({
+      databaseService,
+      userId: user.id,
+      role: PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE,
+    });
+    onTestFinished(cleanup);
+
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+    const result = await caller.users.users.get();
+
+    expect(result.roles).toEqual([
+      PlatformRole.CONNECTED,
+      PlatformRole.VERIFIED,
+      PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE,
+    ]);
+    expect(result.permissions).toContain('demarches.reprise-tec.read');
+    expect(result.collectivites).toEqual([]);
+  });
+
+  test("Ne retourne aucun rôle backoffice à un compte qui n'en a pas", async () => {
+    const { user } = await addTestUser(databaseService);
+
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+    const result = await caller.users.users.get();
+
+    expect(result.roles).not.toContain(
+      PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE
+    );
+    expect(result.permissions).not.toContain('demarches.reprise-tec.read');
+  });
+
+  test('La base refuse un rôle backoffice inconnu', async () => {
+    const { user } = await addTestUser(databaseService);
+
+    await expect(
+      databaseService.db.execute(
+        sql`insert into ${utilisateurRoleBackofficeTable} (user_id, role, created_by)
+            values (${user.id}, 'BACKOFFICE_INCONNU_LECTURE', ${user.id})`
+      )
+    ).rejects.toMatchObject({ cause: { code: '23514' } });
   });
 });

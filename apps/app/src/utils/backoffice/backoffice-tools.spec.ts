@@ -25,6 +25,17 @@ describe('listAllowedBackofficeTools', () => {
     ]);
   });
 
+  it('ne rend que la reprise T&C au rôle backoffice de la reprise', () => {
+    expect(
+      toIds(
+        toUser([
+          PlatformRole.VERIFIED,
+          PlatformRole.BACKOFFICE_REPRISE_TEC_LECTURE,
+        ])
+      )
+    ).toEqual(['reprise-tec']);
+  });
+
   it("ne rend aucun outil à un compte qui n'en a aucun", () => {
     expect(toIds(toUser([PlatformRole.VERIFIED]))).toEqual([]);
   });
