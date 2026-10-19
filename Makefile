@@ -362,12 +362,17 @@ install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
 		pnpm install && pnpm rebuild canvas supabase'
 
+# Chemins cités un à un : les routes Next ont des parenthèses et des crochets
+# (`(authed)/[collectiviteId]`) que le shell interpréterait. Les guillemets
+# doubles tiennent aussi dans le `sh -lc '…'` de run_node.
+quoted_files = $(foreach f,$(files),"$(f)")
+
 lint: preflight-env-keys ## Lance le lint : make lint [project=<nx-project>] [files="..."] [fix=1]
 	@if [ -n "$(files)" ] && [ -n "$(project)" ]; then \
 		echo "✗ choisissez soit files= soit project=, pas les deux"; \
 		exit 1; \
 	elif [ -n "$(files)" ]; then \
-		$(call run_node,node scripts/lint-files.mts $(if $(filter 1 true yes,$(fix)),--fix) $(files)); \
+		$(call run_node,node scripts/lint-files.mts $(if $(filter 1 true yes,$(fix)),--fix) $(quoted_files)); \
 	elif [ -n "$(project)" ]; then \
 		$(call run_node,pnpm exec nx lint "$(project)" $(if $(filter 1 true yes,$(fix)),--fix) --quiet); \
 	else \
