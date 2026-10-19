@@ -33,6 +33,6 @@ export const LeviersMatrixLegend = (): JSX.Element => (
     isOpen
     items={LEGEND_ITEMS}
     size="sm"
-    className="justify-start text-xs"
+    className="w-full justify-start text-xs"
   />
 );
