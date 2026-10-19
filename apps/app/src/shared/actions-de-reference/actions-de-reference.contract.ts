@@ -120,6 +120,7 @@ export type ActionDeReferenceInterestControl =
       readonly status: Exclude<ActionDeReferenceInterestStatus, 'ignoree'>;
       readonly onToggleSaved: () => void;
       readonly onDismiss: () => void;
+      readonly savedActionLabel?: string;
     }
   | {
       readonly status: 'ignoree';

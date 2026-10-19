@@ -111,7 +111,8 @@ const PreselectedActionCard = ({
       interest={toActionDeReferenceInterestControl(
         action,
         'preselectionnee',
-        preselection
+        preselection,
+        appLabels.actionDeReferenceRetirer
       )}
       actions={
         <PlanActions

@@ -15,17 +15,20 @@ export const ActionDeReferenceInterestButtons = ({
         {appLabels.actionDeReferenceRestaurer}
       </Button>
     ))
-    .with({ status: 'preselectionnee' }, ({ onToggleSaved }) => (
-      <Button
-        variant="primary"
-        size="xs"
-        icon="bookmark-fill"
-        aria-pressed
-        onClick={onToggleSaved}
-      >
-        {appLabels.actionDeReferenceSauvegarder}
-      </Button>
-    ))
+    .with(
+      { status: 'preselectionnee' },
+      ({ onToggleSaved, savedActionLabel }) => (
+        <Button
+          variant="primary"
+          size="xs"
+          icon="bookmark-fill"
+          aria-pressed
+          onClick={onToggleSaved}
+        >
+          {savedActionLabel ?? appLabels.actionDeReferenceSauvegarder}
+        </Button>
+      )
+    )
     .with({ status: 'disponible' }, ({ onToggleSaved, onDismiss }) => (
       <>
         <Button

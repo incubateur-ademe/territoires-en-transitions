@@ -234,9 +234,7 @@ export class PriorisationLeviersPom {
   }
 
   get emptyPreselectionMessage(): Locator {
-    return this.page.getByText(
-      "Aucune action dans la présélection pour l'instant"
-    );
+    return this.page.getByText("Aucune action sauvegardée pour l'instant");
   }
 
   get preselectedCards(): Locator {

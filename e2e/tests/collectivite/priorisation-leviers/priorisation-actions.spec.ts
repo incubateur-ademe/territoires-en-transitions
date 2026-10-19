@@ -310,7 +310,7 @@ test.describe('Priorisation : présélection', () => {
 
     await pom
       .preselectedCard(amenagement.titre)
-      .getByRole('button', { name: 'Sauvegarder' })
+      .getByRole('button', { name: 'Retirer' })
       .click();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();

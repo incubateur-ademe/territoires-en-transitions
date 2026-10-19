@@ -235,7 +235,7 @@ export const collectivitesLabels = {
   ajoutAuPlanAnnuleErreur: "Échec de l'annulation de l'ajout au plan",
   actionAjouteeAuPlanInfo:
     "Une action ajoutée à un plan y reste même si elle est retirée de cette liste. Le potentiel qu'elle couvre sera recalculé au prochain passage d'analyse, le tableau de bord de la priorisation ne le compte pas encore.",
-  preselectionVide: "Aucune action dans la présélection pour l'instant",
+  preselectionVide: "Aucune action sauvegardée pour l'instant",
   preselectionVideDescription:
     'Cliquez sur un levier de la matrice puis sur « Sauvegarder » pour retrouver une action ici.',
 };
