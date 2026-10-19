@@ -1,14 +1,16 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { useUser } from '@tet/api/users';
 import { ButtonGroup, PageHeader } from '@tet/ui';
-import { backofficeTools } from './backoffice-tools';
+import { listAllowedBackofficeTools } from './backoffice-tools';
 import { BackofficeToolsGrid } from './backoffice-tools.grid';
 import { BackofficeToolsList } from './backoffice-tools.list';
 import { useBackofficeDisplay } from './use-backoffice-display';
 
 export const BackofficeView = () => {
   const [display, setDisplay] = useBackofficeDisplay();
+  const tools = listAllowedBackofficeTools(useUser());
 
   return (
     <div data-test="backoffice.view">
@@ -45,9 +47,9 @@ export const BackofficeView = () => {
         </PageHeader.Subtitle>
       </PageHeader>
       {display === 'grille' ? (
-        <BackofficeToolsGrid tools={backofficeTools} />
+        <BackofficeToolsGrid tools={tools} />
       ) : (
-        <BackofficeToolsList tools={backofficeTools} />
+        <BackofficeToolsList tools={tools} />
       )}
     </div>
   );

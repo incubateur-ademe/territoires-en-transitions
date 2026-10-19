@@ -1,8 +1,8 @@
 import { adminPath, getRechercheViewUrl, profilPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { listAllowedBackofficeTools } from '@/app/utils/backoffice/backoffice-tools';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
-  hasPermission,
   hasRole,
   PlatformRole,
   UserWithRolesAndPermissions,
@@ -54,7 +54,7 @@ export const makeSecondaryNav = ({
           href: profilPath,
           children: appLabels.preferences,
         },
-        ...(hasPermission(user, 'utils.backoffice.read')
+        ...(listAllowedBackofficeTools(user).length > 0
           ? [
               {
                 dataTest: 'user-admin',
