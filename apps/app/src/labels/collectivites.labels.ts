@@ -152,7 +152,7 @@ export const collectivitesLabels = {
   ouvrirLevierLePlusImportant: 'Ouvrir le levier le plus important',
   priorisationVueBloqueeTitre: 'Ajoutez des actions pour accéder à cette vue',
   priorisationVueBloqueeDescription:
-    "La matrice repose sur les actions de vos plans : elle montre où votre collectivité mobilise déjà chaque levier. Sans action, elle ne peut pas être calculée.",
+    'La matrice repose sur les actions de vos plans : elle montre où votre collectivité mobilise déjà chaque levier. Sans action, elle ne peut pas être calculée.',
   ajouterDesActions: 'Ajouter des actions',
   priorisationAnalyse: ({
     actionsCount,
@@ -168,7 +168,7 @@ export const collectivitesLabels = {
       withoutCount: true,
     })} de vos ${plansAnalysesLabel({
       count: plansCount,
-    })}. Les impacts et la mobilisation sont des estimations.`,
+    })}. L'impact GES et la mobilisation sont des estimations.`,
 
   selectionnerUnLevier:
     'Cliquez sur un levier de la matrice pour consulter ses actions de référence.',

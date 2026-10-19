@@ -9,7 +9,7 @@ describe('priorisationAnalyse', () => {
         plansCount: 1,
       })
     ).toBe(
-      'Analyse de 1 action issue de vos 1 plan. Les impacts et la mobilisation sont des estimations.'
+      "Analyse de 1 action issue de vos 1 plan. L'impact GES et la mobilisation sont des estimations."
     );
   });
 
@@ -20,7 +20,7 @@ describe('priorisationAnalyse', () => {
         plansCount: 0,
       })
     ).toBe(
-      'Analyse de 2 actions issues de vos 0 plan. Les impacts et la mobilisation sont des estimations.'
+      "Analyse de 2 actions issues de vos 0 plan. L'impact GES et la mobilisation sont des estimations."
     );
   });
 });
