@@ -77,7 +77,7 @@ const TONE_PALETTE: Record<MatrixTone, { strong: string; soft: string }> = {
   default: { strong: colors.primary[9], soft: colors.primary[2] },
   success: { strong: colors.success[1], soft: colors.success[2] },
   warning: { strong: colors.warning[1], soft: colors.warning[2] },
-  error: { strong: colors.error[1], soft: colors.error[2] },
+  error: { strong: colors.error[1], soft: colors.error[4] },
   info: { strong: colors.info[1], soft: colors.info[2] },
   grey: { strong: colors.grey[7], soft: colors.grey[2] },
   light: { strong: colors.grey[7], soft: colors.grey[1] },
