@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildDividers,
   buildHollowPointHalos,
-  buildSelectedPointOutline,
+  buildPointRings,
   POINT_SIZE,
   toPointStyle,
   toQuadrantLabel,
@@ -87,35 +87,34 @@ describe('buildHollowPointHalos', () => {
   });
 });
 
-describe('buildSelectedPointOutline', () => {
-  it('trace un contour primary vide autour du point sélectionné, sans le remplir', () => {
-    expect(
-      buildSelectedPointOutline({
-        points: [NON_PERTINENT_POINT],
-        selectedPointId: NON_PERTINENT_POINT.id,
-      })
-    ).toMatchObject([
+describe('buildPointRings', () => {
+  it('trace un anneau primary autour du point sélectionné seulement', () => {
+    const other: MatrixPoint = { ...NON_PERTINENT_POINT, id: 'autre' };
+    const { data } = buildPointRings({
+      points: [NON_PERTINENT_POINT, other],
+      selectedPointId: NON_PERTINENT_POINT.id,
+    });
+
+    expect(data).toMatchObject([
       {
-        data: [
-          {
-            value: [NON_PERTINENT_POINT.x, NON_PERTINENT_POINT.y],
-            itemStyle: {
-              color: 'transparent',
-              borderColor: toToneColor('default'),
-            },
-          },
-        ],
+        itemStyle: {
+          color: 'transparent',
+          borderColor: toToneColor('default'),
+        },
       },
+      { itemStyle: { color: 'transparent', borderColor: 'transparent' } },
     ]);
   });
 
-  it("ne trace rien quand aucun point n'est sélectionné", () => {
-    expect(
-      buildSelectedPointOutline({
-        points: [NON_PERTINENT_POINT],
-        selectedPointId: undefined,
-      })
-    ).toEqual([]);
+  it("colore l'anneau en gris au survol d'un point non sélectionné", () => {
+    const { data } = buildPointRings({
+      points: [NON_PERTINENT_POINT],
+      selectedPointId: undefined,
+    });
+
+    expect(data).toMatchObject([
+      { emphasis: { itemStyle: { borderColor: toToneColor('grey') } } },
+    ]);
   });
 });
 

@@ -97,8 +97,9 @@ const LABEL_HEIGHT = 15;
 const LABEL_CHAR_WIDTH = 6;
 const POINT_SIZE = 14;
 const HOLLOW_POINT_HALO_SIZE = POINT_SIZE + 6;
-const SELECTION_OUTLINE_WIDTH = 2;
-const SELECTION_OUTLINE_SIZE = POINT_SIZE + 10;
+const POINT_BORDER_WIDTH = 2;
+const RING_WIDTH = 2;
+const RING_SIZE = POINT_SIZE + 10;
 const DASHED_POINT_BORDER_WIDTH = 2;
 const DASHED_POINT_DASH_COUNT = 5;
 const DASHED_POINT_DASH_SHARE = 0.6;
@@ -122,8 +123,9 @@ const QUADRANT_TITLE_CHAR_WIDTH = 8;
 const QUADRANT_TITLE_LINE_HEIGHT = 14;
 const TRANSPARENT = 'transparent';
 const WHITE = '#FFFFFF';
+const RING_SELECTED_COLOR = colors.primary[9];
+const RING_HOVER_COLOR = colors.grey[7];
 const DESCRIPTION_SEPARATOR = ' · ';
-const SELECTION_OUTLINE_TONE: MatrixTone = 'default';
 
 const resizeChartIn = (plot: HTMLDivElement): void => {
   const chartContainer = plot.firstElementChild;
@@ -388,8 +390,8 @@ const toPointStyle = (point: MatrixPoint): PointStyle => {
   }
   return {
     color,
-    borderColor: TRANSPARENT,
-    borderWidth: 0,
+    borderColor: WHITE,
+    borderWidth: POINT_BORDER_WIDTH,
     borderType: 'solid',
   };
 };
@@ -415,36 +417,33 @@ const buildHollowPointHalos = (
   ];
 };
 
-const buildSelectedPointOutline = ({
+const buildPointRings = ({
   points,
   selectedPointId,
 }: {
   points: readonly MatrixPoint[];
   selectedPointId: string | undefined;
-}): ScatterSeriesOption[] => {
-  const selectedPoint = points.find((point) => point.id === selectedPointId);
-  if (selectedPoint === undefined) {
-    return [];
-  }
-  return [
-    {
-      type: 'scatter',
-      silent: true,
-      z: 1,
-      symbolSize: SELECTION_OUTLINE_SIZE,
-      data: [
-        {
-          value: [selectedPoint.x, selectedPoint.y],
-          itemStyle: {
-            color: TRANSPARENT,
-            borderColor: toToneColor(SELECTION_OUTLINE_TONE),
-            borderWidth: SELECTION_OUTLINE_WIDTH,
-          },
+}): ScatterSeriesOption => ({
+  type: 'scatter',
+  z: 3,
+  symbolSize: RING_SIZE,
+  data: points.map((point) => {
+    const isSelected = point.id === selectedPointId;
+    return {
+      value: [point.x, point.y],
+      itemStyle: {
+        color: TRANSPARENT,
+        borderWidth: RING_WIDTH,
+        borderColor: isSelected ? RING_SELECTED_COLOR : TRANSPARENT,
+      },
+      emphasis: {
+        itemStyle: {
+          borderColor: isSelected ? RING_SELECTED_COLOR : RING_HOVER_COLOR,
         },
-      ],
-    },
-  ];
-};
+      },
+    };
+  }),
+});
 
 const buildOption = ({
   points,
@@ -529,7 +528,7 @@ const buildOption = ({
       },
     },
     ...buildHollowPointHalos(points),
-    ...buildSelectedPointOutline({ points, selectedPointId }),
+    buildPointRings({ points, selectedPointId }),
   ],
 });
 
@@ -923,7 +922,7 @@ const MatrixChart = ({
 export {
   buildDividers,
   buildHollowPointHalos,
-  buildSelectedPointOutline,
+  buildPointRings,
   MatrixChart,
   POINT_SIZE,
   toPointStyle,
