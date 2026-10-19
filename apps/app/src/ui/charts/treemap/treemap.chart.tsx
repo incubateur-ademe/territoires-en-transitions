@@ -1,4 +1,8 @@
-import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
+import {
+  CHART_FONT_FAMILY,
+  EChartsOption,
+  ReactECharts,
+} from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
 import { readCaption } from '@/app/ui/charts/matrix/read-children';
@@ -119,6 +123,15 @@ const toGroupName = <TIntensity extends string, TGroupId extends string>(
   group: TreemapGroup<TIntensity, TGroupId>
 ): string => (group.isFlagged ? `${FLAG_GLYPH} ${group.label}` : group.label);
 
+const toSeriesId = ({
+  selectedGroupId,
+  selectedTileId,
+}: {
+  selectedGroupId?: string;
+  selectedTileId?: string;
+}): string =>
+  JSON.stringify(['treemap', selectedGroupId ?? null, selectedTileId ?? null]);
+
 const toTileBorder = (
   isSelected: boolean
 ): { borderColor: HexColor; borderWidth: number } => {
@@ -203,6 +216,7 @@ const buildOption = <
   selectedTileId?: TTileId;
   hoveredNodeByKey: ReadonlyMap<string, HoveredNode<TIntensity, TGroupId>>;
 }): EChartsOption => ({
+  textStyle: { fontFamily: CHART_FONT_FAMILY },
   tooltip: {
     trigger: 'item',
     confine: true,
@@ -229,13 +243,15 @@ const buildOption = <
   },
   series: [
     {
+      id: toSeriesId({ selectedGroupId, selectedTileId }),
       type: 'treemap',
-      animationDurationUpdate: 0,
       left: 0,
       right: 0,
       top: 0,
       bottom: 0,
       roam: false,
+      animationDuration: 0,
+      animationDurationUpdate: 0,
       nodeClick: false,
       breadcrumb: { show: false },
       levels: TREEMAP_LEVELS,
@@ -388,4 +404,4 @@ const TreemapChart = <
   );
 };
 
-export { toSeriesData, TreemapChart };
+export { toSeriesData, toSeriesId, TreemapChart };
