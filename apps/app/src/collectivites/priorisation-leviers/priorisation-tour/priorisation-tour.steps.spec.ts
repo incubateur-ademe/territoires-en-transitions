@@ -122,6 +122,14 @@ describe('toPriorisationTourSteps', () => {
     ]);
   });
 
+  it("ne laisse cliquer à travers le spotlight que sur l'étape du détail du levier", () => {
+    const steps = toSteps({ levierToPrioritizeId: LEVIER_TO_PRIORITIZE_ID });
+
+    expect(
+      steps.map(({ blockTargetInteraction }) => blockTargetInteraction)
+    ).toEqual([undefined, undefined, undefined, undefined, false, undefined, undefined]);
+  });
+
   it("n'ouvre le levier à prioriser qu'avant l'étape de son détail", async () => {
     const select = vi.fn<SelectLevier>();
     const steps = toSteps({
