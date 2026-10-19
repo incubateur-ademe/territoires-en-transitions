@@ -1,5 +1,8 @@
 import { UploadFileResult } from '@/app/collectivites/documents/upload/use-upload-file';
-import { DocumentHash } from '@tet/domain/collectivites';
+import {
+  DocumentHash,
+  UploadDecisionKindEnum,
+} from '@tet/domain/collectivites';
 import { match } from 'ts-pattern';
 import {
   UploadStatusCode,
@@ -14,7 +17,7 @@ export const uploadFileResultToStatus = (
 ): ValidUploadStatus =>
   match(uploadResult)
     .with(
-      { kind: 'alreadyInBibliotheque' },
+      { kind: UploadDecisionKindEnum.ALREADY_IN_BIBLIOTHEQUE },
       ({ fichierId, filename }): UploadStatusDuplicated => ({
         code: UploadStatusCode.duplicated,
         fichierId,

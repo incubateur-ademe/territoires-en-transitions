@@ -23,7 +23,8 @@ function buildServiceWithBucket(
     permissionService as never,
     { saveInStorage } as never,
     {} as never,
-    collectiviteBucketRepository as never
+    collectiviteBucketRepository as never,
+    {} as never
   );
 
   return { service, saveInStorage };

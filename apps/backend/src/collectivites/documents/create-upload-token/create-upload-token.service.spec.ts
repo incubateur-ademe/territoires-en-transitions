@@ -2,7 +2,11 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { type DocumentStorageError } from '@tet/backend/utils/supabase/document-storage.errors';
-import { BibliothequeFichier, toDocumentHash } from '@tet/domain/collectivites';
+import {
+  BibliothequeFichier,
+  toDocumentHash,
+  UploadDecisionKindEnum,
+} from '@tet/domain/collectivites';
 import { describe, expect, it, vi, type Mock } from 'vitest';
 import { CreateUploadTokenService } from './create-upload-token.service';
 
@@ -20,12 +24,14 @@ type SignedUploadResult = Result<
 type ServiceUnderTest = {
   service: CreateUploadTokenService;
   documentStorage: { createSignedUpload: Mock };
+  storageObjectRepository: { existsInBucket: Mock };
 };
 
 function buildService({
   isAllowed = true,
   hasBucket = true,
   fichier,
+  hasStorageObject = false,
   signedUploadResult = success({
     token: 'jeton-signe',
     path: HASH,
@@ -34,6 +40,7 @@ function buildService({
   isAllowed?: boolean;
   hasBucket?: boolean;
   fichier?: Pick<BibliothequeFichier, 'id' | 'filename'>;
+  hasStorageObject?: boolean;
   signedUploadResult?: SignedUploadResult;
 } = {}): ServiceUnderTest {
   const permissions = {
@@ -60,19 +67,27 @@ function buildService({
     createSignedUpload: vi.fn().mockResolvedValue(signedUploadResult),
   };
 
+  const storageObjectRepository = {
+    existsInBucket: vi.fn().mockResolvedValue(hasStorageObject),
+  };
+
   const service = new CreateUploadTokenService(
     permissions as never,
     bibliothequeFichierRepository as never,
     collectiviteBucket as never,
-    documentStorage as never
+    documentStorage as never,
+    storageObjectRepository as never
   );
 
-  return { service, documentStorage };
+  return { service, documentStorage, storageObjectRepository };
 }
 
 describe('CreateUploadTokenService', () => {
   it('refuse un utilisateur sans droit de mutation sur la collectivite, sans signer', async () => {
-    const { service, documentStorage } = buildService({ isAllowed: false });
+    const { service, documentStorage, storageObjectRepository } = buildService({
+      isAllowed: false,
+      hasStorageObject: true,
+    });
 
     const result = await service.createUploadToken(
       { collectiviteId: 1, hash: HASH },
@@ -81,6 +96,7 @@ describe('CreateUploadTokenService', () => {
 
     expect(result).toEqual({ success: false, error: 'UNAUTHORIZED' });
     expect(documentStorage.createSignedUpload).not.toHaveBeenCalled();
+    expect(storageObjectRepository.existsInBucket).not.toHaveBeenCalled();
   });
 
   it('rend COLLECTIVITE_BUCKET_NOT_FOUND quand la collectivite na pas de bucket', async () => {
@@ -111,7 +127,7 @@ describe('CreateUploadTokenService', () => {
     expect(result).toEqual({
       success: true,
       data: {
-        kind: 'alreadyInBibliotheque',
+        kind: UploadDecisionKindEnum.ALREADY_IN_BIBLIOTHEQUE,
         fichierId: 42,
         filename: 'rapport.pdf',
       },
@@ -130,7 +146,7 @@ describe('CreateUploadTokenService', () => {
     expect(result).toEqual({
       success: true,
       data: {
-        kind: 'readyToUpload',
+        kind: UploadDecisionKindEnum.READY_TO_UPLOAD,
         token: 'jeton-signe',
         bucketId: 'bucket-collectivite-1',
         path: HASH,
@@ -140,6 +156,26 @@ describe('CreateUploadTokenService', () => {
       bucketId: 'bucket-collectivite-1',
       key: HASH,
     });
+  });
+
+  it('réutilise un objet stocké sans entrée en bibliothèque, sans signer un nouvel envoi', async () => {
+    const { service, documentStorage } = buildService({
+      hasStorageObject: true,
+      signedUploadResult: failure(
+        DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR
+      ),
+    });
+
+    const result = await service.createUploadToken(
+      { collectiviteId: 1, hash: HASH },
+      { user }
+    );
+
+    expect(result).toEqual({
+      success: true,
+      data: { kind: UploadDecisionKindEnum.ALREADY_IN_STORAGE },
+    });
+    expect(documentStorage.createSignedUpload).not.toHaveBeenCalled();
   });
 
   it('remonte SIGN_UPLOAD_ERROR quand la signature echoue', async () => {

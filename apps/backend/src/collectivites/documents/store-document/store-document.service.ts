@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -11,13 +10,12 @@ import {
 } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
 import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
 import { CollectiviteBucketRepository } from '../collectivite-bucket.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
-import { storageObjectTable } from '../models/storage-object.table';
+import { StorageObjectRepository } from '../storage-object.repository';
 import { calculateDocumentHash } from './calculate-document-hash.utils';
 import {
   StoreDocumentError,
@@ -38,7 +36,8 @@ export class StoreDocumentService {
     private readonly permissionService: PermissionService,
     private readonly supabaseService: SupabaseService,
     private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
-    private readonly collectiviteBucketRepository: CollectiviteBucketRepository
+    private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
+    private readonly storageObjectRepository: StorageObjectRepository
   ) {}
 
   private async getCollectiviteBucketId(
@@ -220,22 +219,12 @@ export class StoreDocumentService {
       }
     }
 
-    const existingStorageObject = await this.databaseService.db
-      .select({ id: storageObjectTable.id })
-      .from(storageObjectTable)
-      .innerJoin(
-        collectiviteBucketTable,
-        eq(collectiviteBucketTable.bucketId, storageObjectTable.bucketId)
-      )
-      .where(
-        and(
-          eq(collectiviteBucketTable.collectiviteId, document.collectiviteId),
-          eq(storageObjectTable.name, document.hash)
-        )
-      )
-      .limit(1);
+    const isStored = await this.storageObjectRepository.existsForCollectivite({
+      collectiviteId: document.collectiviteId,
+      hash: document.hash,
+    });
 
-    if (!existingStorageObject.length) {
+    if (!isStored) {
       return {
         success: false,
         error: 'STORAGE_OBJECT_NOT_FOUND',
