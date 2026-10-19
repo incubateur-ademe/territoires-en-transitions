@@ -6,10 +6,10 @@ import {
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { canUseAssistant } from '@/app/users/assistant/can-use-assistant';
+import { listAllowedBackofficeTools } from '@/app/utils/backoffice/backoffice-tools';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { Badge } from '@tet/ui';
 import {
-  hasPermission,
   hasRole,
   PlatformRole,
   UserWithRolesAndPermissions,
@@ -79,7 +79,7 @@ export const makeSecondaryNav = ({
               },
             ]
           : []),
-        ...(hasPermission(user, 'utils.backoffice.read')
+        ...(listAllowedBackofficeTools(user).length > 0
           ? [
               {
                 dataTest: 'user-admin',

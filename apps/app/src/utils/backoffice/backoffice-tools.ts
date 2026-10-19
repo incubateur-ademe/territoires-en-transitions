@@ -4,6 +4,11 @@ import {
   importerPlanUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import {
+  hasPermission,
+  PermissionOperation,
+  UserRolesAndPermissions,
+} from '@tet/domain/users';
 
 export type BackofficeTool = {
   id: string;
@@ -11,15 +16,17 @@ export type BackofficeTool = {
   description: string;
   icon: string;
   href: string;
+  permission: PermissionOperation;
 };
 
-export const backofficeTools: BackofficeTool[] = [
+const backofficeTools: BackofficeTool[] = [
   {
     id: 'importer-plan',
     label: appLabels.importerUnPlan,
     description: appLabels.administrationImporterPlanDescription,
     icon: 'file-excel-2-line',
     href: importerPlanUrl,
+    permission: 'plans.import.mutate',
   },
   {
     id: 'ajouter-collectivite',
@@ -27,6 +34,7 @@ export const backofficeTools: BackofficeTool[] = [
     description: appLabels.administrationAjouterCollectiviteDescription,
     icon: 'community-line',
     href: ajouterCollectiviteUrl,
+    permission: 'collectivites.mutate',
   },
   {
     id: 'banniere',
@@ -34,5 +42,11 @@ export const backofficeTools: BackofficeTool[] = [
     description: appLabels.administrationBanniereDescription,
     icon: 'megaphone-line',
     href: bannerInfoUrl,
+    permission: 'utils.banner.mutate',
   },
 ];
+
+export const listAllowedBackofficeTools = (
+  user: UserRolesAndPermissions | null
+): BackofficeTool[] =>
+  backofficeTools.filter((tool) => hasPermission(user, tool.permission));
