@@ -34,12 +34,12 @@ const IntroPartItem = ({
   <li className="flex items-start gap-3 rounded-xl border border-grey-3 bg-grey-1 p-3">
     <span
       aria-hidden
-      className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-9 text-sm font-bold text-white"
+      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-9 text-xs font-bold text-white"
     >
       {position}
     </span>
-    <div className="flex flex-col gap-1">
-      <h3 className="mb-0 text-base font-bold text-primary-9">{title}</h3>
+    <div className="flex flex-col gap-0.5">
+      <h3 className="mb-0 text-sm font-bold text-primary-9">{title}</h3>
       <p className="mb-0 text-xs text-grey-8">{description}</p>
     </div>
   </li>
@@ -55,7 +55,7 @@ const PriorisationTourIntro = (): JSX.Element => (
     <Alert
       state="info"
       description={
-        <p className="mb-0 text-sm text-grey-9">
+        <p className="mb-0 text-xs text-grey-9">
           <strong className="text-info-1">
             {appLabels.priorisationVisiteIaTitre}
           </strong>{' '}
