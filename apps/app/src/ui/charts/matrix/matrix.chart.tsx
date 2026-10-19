@@ -107,6 +107,7 @@ const DASHED_POINT_PATTERN = [
   DASHED_POINT_PERIOD * DASHED_POINT_DASH_SHARE,
   DASHED_POINT_PERIOD * (1 - DASHED_POINT_DASH_SHARE),
 ];
+const FONT_FAMILY = preset.theme.extend.fontFamily.sans.join(', ');
 const AXIS_FONT_SIZE = 11;
 const AXIS_NAME_ARROW = ' →';
 const X_AXIS_NAME_GAP = 16;
@@ -466,6 +467,7 @@ const buildOption = ({
   size: PlotSize;
   selectedPointId: string | undefined;
 }): EChartsOption => ({
+  textStyle: { fontFamily: FONT_FAMILY },
   tooltip: {
     trigger: 'item',
     confine: true,
