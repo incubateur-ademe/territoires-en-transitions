@@ -833,7 +833,7 @@ avec.
 ### Après l'import : construire la recette
 
 Les tables `recette_*` de `reprise_tec` : le côté T&C que lit l'outil
-`/admin/reprise-tec`. Elles lisent `reprise_tec`, le suivi ADEME (le même CSV
+`/admin/reprise-tec`. Elles lisent `reprise_tec`, le suivi SGPE (le même CSV
 qu'à l'étape 2) et, comme l'étape 2, `public.collectivite` pour retrouver la
 collectivité TeT. Elles sont refaites à chaque passage et n'écrivent rien
 d'autre. À lancer une fois après la dernière étape, et à relancer si une étape
@@ -847,7 +847,7 @@ pnpx tsx $SCRIPT --suivi <csv> --confirm  # construction
 
 | Table                  | Une ligne par                          | Contenu                                                                                                                                                       |
 | ---------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `recette_collectivite` | collectivité principale d'un dossier   | nom, SIREN et population dans T&C ; la collectivité TeT retrouvée comme à l'étape 2 (vide si introuvable ou trouvée plusieurs fois) ; sa ligne du suivi ADEME |
+| `recette_collectivite` | collectivité principale d'un dossier   | nom, SIREN et population dans T&C ; la collectivité TeT retrouvée comme à l'étape 2 (vide si introuvable ou trouvée plusieurs fois) ; sa ligne du suivi SGPE |
 | `recette_dossier`      | dossier T&C, repris ou non             | ses champs et ses dates dans T&C ; son motif s'il est écarté ; le dossier « mise en œuvre » qu'il rejoint s'il est sa copie « définitif » ; sa démarche TeT   |
 | `recette_ecart`        | dossier, table T&C, motif et précision | le nombre de lignes de `ecarts` : chaque écart est rattaché au dossier de sa ligne (par `demarche_id`, ou par l'action)                                       |
 

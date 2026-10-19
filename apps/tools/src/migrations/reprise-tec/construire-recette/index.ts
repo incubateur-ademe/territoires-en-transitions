@@ -34,7 +34,7 @@ const main = async () => {
       console.log(
         `recette_collectivite : ${collectivites.ecrites} collectivités, ` +
           `dont ${collectivites.sansTet} sans collectivité TeT ` +
-          `et ${collectivites.sansSuivi} absentes du suivi ADEME`
+          `et ${collectivites.sansSuivi} absentes du suivi SGPE`
       );
       console.log(`recette_dossier : ${dossiers.ecrites} dossiers`);
       console.log(
