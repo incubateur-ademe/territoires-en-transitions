@@ -3,16 +3,9 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { versionResponseSchema } from '@tet/domain/utils';
-import { createZodDto } from 'nestjs-zod';
 import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
 import VersionService from './version.service';
-
-/**
- * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
- */
-
-export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
 
 @ApiTags('Application')
 @Controller()
@@ -35,7 +28,7 @@ export class VersionController {
   @ApiUsage([ApiUsageEnum.DEBUG])
   @Get('version')
   @ApiOkResponse({
-    type: VersionResponseClass,
+    standardSchema: versionResponseSchema.meta({ id: 'VersionResponseClass' }),
     description:
       'Informations de version (commit, version, environnement, date de déploiement, date du commit)',
   })

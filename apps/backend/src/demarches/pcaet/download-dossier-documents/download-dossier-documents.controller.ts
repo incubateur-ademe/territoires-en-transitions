@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Controller, Get, Logger, Query, Res } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
@@ -7,7 +8,6 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { ARCHIVE_ZIP_CONTENT_TYPE } from '@tet/backend/utils/archive/archive-assembly.service';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import type { Response } from 'express';
-import { createZodDto } from 'nestjs-zod';
 import { downloadDossierDocumentsErrorConfig } from './download-dossier-documents.errors';
 import {
   downloadDossierDocumentsQuerySchema,
@@ -15,9 +15,9 @@ import {
 } from './download-dossier-documents.input';
 import { DownloadDossierDocumentsService } from './download-dossier-documents.service';
 
-class DownloadDossierDocumentsQueryClass extends createZodDto(
-  downloadDossierDocumentsQuerySchema
-) {}
+type DownloadDossierDocumentsQuery = z.infer<
+  typeof downloadDossierDocumentsQuerySchema
+>;
 
 const toExtValue = (filename: string): string =>
   encodeURIComponent(filename).replace(
@@ -45,7 +45,8 @@ export class DownloadDossierDocumentsController {
   @Get('archive')
   @ApiUsage([ApiUsageEnum.APP])
   async downloadArchive(
-    @Query() query: DownloadDossierDocumentsQueryClass,
+    @Query({ schema: downloadDossierDocumentsQuerySchema })
+    query: DownloadDossierDocumentsQuery,
     @TokenInfo() user: AuthenticatedUser,
     @Res() response: Response
   ): Promise<void> {

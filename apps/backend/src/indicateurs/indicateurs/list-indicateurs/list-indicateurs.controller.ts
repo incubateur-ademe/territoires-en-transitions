@@ -8,7 +8,6 @@ import {
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { omit } from 'es-toolkit';
-import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
 import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
@@ -20,13 +19,9 @@ import {
 } from './list-indicateurs.output';
 import { ListIndicateursService } from './list-indicateurs.service';
 
-class ListIndicateursApiRequestClass extends createZodDto(
-  listIndicateursApiRequestSchema
-) {}
-
-class ListIndicateursApiResponseClass extends createZodDto(
-  z.array(indicateurListItemSchema)
-) {}
+type ListIndicateursApiRequest = z.infer<
+  typeof listIndicateursApiRequestSchema
+>;
 
 @ApiTags('Indicateurs')
 @ApiBearerAuth()
@@ -44,10 +39,13 @@ export class ListIndicateursController {
       'Les indicateurs comprennent les indicateurs prédéfinis dans la plateforme avec leurs propriétés spécifiques à la collectivité (pilotes, services, etc.), plus les indicateurs personnalisés créés par la collectivité.',
   })
   @ApiCreatedResponse({
-    type: ListIndicateursApiResponseClass,
+    standardSchema: z
+      .array(indicateurListItemSchema)
+      .meta({ id: 'ListIndicateursApiResponseClass' }),
   })
   async listIndicateurs(
-    @Query() request: ListIndicateursApiRequestClass,
+    @Query({ schema: listIndicateursApiRequestSchema })
+    request: ListIndicateursApiRequest,
     @TokenInfo() user: AuthenticatedUser
   ) {
     const input = listIndicateursInputSchema.parse({

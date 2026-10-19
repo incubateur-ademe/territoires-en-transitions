@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Controller, Get, UnauthorizedException } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -9,11 +10,10 @@ import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
 import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
 import { userWithRolesAndPermissionsSchema } from '@tet/domain/users';
-import { createZodDto } from 'nestjs-zod';
 
-class UserWithRolesAndPermissionsClass extends createZodDto(
-  userWithRolesAndPermissionsSchema
-) {}
+type UserWithRolesAndPermissions = z.infer<
+  typeof userWithRolesAndPermissionsSchema
+>;
 
 @ApiBearerAuth()
 @ApiTags('Authentification & permissions')
@@ -29,11 +29,13 @@ export class ListUsersController {
   @ApiOkResponse({
     description:
       "Les informations de l'utilisateur connecté, y compris ses rôles et permissions.",
-    type: UserWithRolesAndPermissionsClass,
+    standardSchema: userWithRolesAndPermissionsSchema.meta({
+      id: 'UserWithRolesAndPermissionsClass',
+    }),
   })
   async getUserWithRolesAndPermissions(
     @TokenInfo() user: AuthUser
-  ): Promise<UserWithRolesAndPermissionsClass> {
+  ): Promise<UserWithRolesAndPermissions> {
     if (!user.id) {
       throw new UnauthorizedException('Utilisateur non authentifié');
     }

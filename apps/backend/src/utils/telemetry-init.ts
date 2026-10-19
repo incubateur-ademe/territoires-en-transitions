@@ -6,7 +6,8 @@ import { initErrorTracking } from './error-tracking/error-tracking.client';
  * Traces et logs OpenTelemetry, envoyés en OTLP à PostHog.
  *
  * À importer avant tout autre module : l'auto-instrumentation (http, express,
- * NestJS, pg, pino…) patche les modules au moment de leur chargement. Les
+ * pg, pino…) patche les modules au moment de leur chargement. Les contrôleurs
+ * Nest sont tracés par NestTelemetryInterceptor. Les
  * logs pino partent via @opentelemetry/instrumentation-pino, qui y ajoute
  * aussi trace_id et span_id.
  *
@@ -38,6 +39,8 @@ if (process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
       getNodeAutoInstrumentations({
         // Une span par accès disque : bruit sans valeur, et coûteux
         '@opentelemetry/instrumentation-fs': { enabled: false },
+        // Les spans Nest sont créées via les API publiques de l'application.
+        '@opentelemetry/instrumentation-nestjs-core': { enabled: false },
       }),
     ],
   });

@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   HttpException,
+  type HttpExceptionOptions,
   HttpStatus,
   InternalServerErrorException,
   MethodNotAllowedException,
@@ -22,69 +23,80 @@ import { TrpcErrorHandlerConfig } from '../trpc/trpc-error-handler';
 
 function getHttpErrorFromTrpcErrorCode(
   code: TRPCError['code'],
+  options: HttpExceptionOptions,
   errorMessage?: string
 ): HttpException {
   switch (code) {
     case 'PARSE_ERROR':
-      return new BadRequestException(errorMessage);
+      return new BadRequestException(errorMessage, options);
     case 'UNAUTHORIZED':
-      return new UnauthorizedException(errorMessage);
+      return new UnauthorizedException(errorMessage, options);
     case 'FORBIDDEN':
-      return new ForbiddenException(errorMessage);
+      return new ForbiddenException(errorMessage, options);
     case 'NOT_FOUND':
-      return new NotFoundException(errorMessage);
+      return new NotFoundException(errorMessage, options);
     case 'BAD_REQUEST':
-      return new BadRequestException(errorMessage);
+      return new BadRequestException(errorMessage, options);
     case 'METHOD_NOT_SUPPORTED':
-      return new MethodNotAllowedException(errorMessage);
+      return new MethodNotAllowedException(errorMessage, options);
     case 'TIMEOUT':
-      return new RequestTimeoutException(errorMessage);
+      return new RequestTimeoutException(errorMessage, options);
     case 'CONFLICT':
-      return new ConflictException(errorMessage);
+      return new ConflictException(errorMessage, options);
     case 'PRECONDITION_FAILED':
-      return new PreconditionFailedException(errorMessage);
+      return new PreconditionFailedException(errorMessage, options);
     case 'PAYLOAD_TOO_LARGE':
-      return new PayloadTooLargeException(errorMessage);
+      return new PayloadTooLargeException(errorMessage, options);
     case 'UNPROCESSABLE_CONTENT':
-      return new UnprocessableEntityException(errorMessage);
+      return new UnprocessableEntityException(errorMessage, options);
     case 'NOT_IMPLEMENTED':
-      return new NotImplementedException(errorMessage);
+      return new NotImplementedException(errorMessage, options);
     case 'UNSUPPORTED_MEDIA_TYPE':
       return new HttpException(
         errorMessage || 'Unsupported Media Type',
-        HttpStatus.UNSUPPORTED_MEDIA_TYPE
+        HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        options
       );
     case 'PRECONDITION_REQUIRED':
       return new HttpException(
         errorMessage || 'Precondition Required',
-        HttpStatus.PRECONDITION_REQUIRED
+        HttpStatus.PRECONDITION_REQUIRED,
+        options
       );
     case 'TOO_MANY_REQUESTS':
       return new HttpException(
         errorMessage || 'Too Many Requests',
-        HttpStatus.TOO_MANY_REQUESTS
+        HttpStatus.TOO_MANY_REQUESTS,
+        options
       );
     case 'CLIENT_CLOSED_REQUEST':
-      return new HttpException(errorMessage || 'Client Closed Request', 499);
+      return new HttpException(
+        errorMessage || 'Client Closed Request',
+        499,
+        options
+      );
     case 'BAD_GATEWAY':
       return new HttpException(
         errorMessage || 'Bad Gateway',
-        HttpStatus.BAD_GATEWAY
+        HttpStatus.BAD_GATEWAY,
+        options
       );
     case 'SERVICE_UNAVAILABLE':
       return new HttpException(
         errorMessage || 'Service Unavailable',
-        HttpStatus.SERVICE_UNAVAILABLE
+        HttpStatus.SERVICE_UNAVAILABLE,
+        options
       );
     case 'GATEWAY_TIMEOUT':
       return new HttpException(
         errorMessage || 'Gateway Timeout',
-        HttpStatus.GATEWAY_TIMEOUT
+        HttpStatus.GATEWAY_TIMEOUT,
+        options
       );
     case 'INTERNAL_SERVER_ERROR':
-      return new InternalServerErrorException(errorMessage);
+      return new InternalServerErrorException(errorMessage, options);
     default:
-      return new InternalServerErrorException(errorMessage);
+      return new InternalServerErrorException(errorMessage, options);
   }
 }
 /**
@@ -123,7 +135,7 @@ export function createControllerErrorHandler<SpecificError extends string>(
   } as ErrorConfigMap<HandledError>;
 
   /**
-   * Renvoi les données résultat ou lance la TRPCError appropriée
+   * Renvoie les données résultat ou lance l'erreur HTTP appropriée.
    */
   return function getResultDataOrThrowError<Data>(
     result: Result<Data, HandledError>
@@ -135,9 +147,16 @@ export function createControllerErrorHandler<SpecificError extends string>(
     const errorConfig = allErrors[result.error];
 
     if (!errorConfig) {
-      throw new InternalServerErrorException(result.error);
+      throw new InternalServerErrorException(result.error, {
+        errorCode: result.error,
+        cause: result.cause,
+      });
     }
 
-    throw getHttpErrorFromTrpcErrorCode(errorConfig.code, errorConfig.message);
+    throw getHttpErrorFromTrpcErrorCode(
+      errorConfig.code,
+      { errorCode: result.error, cause: result.cause },
+      errorConfig.message
+    );
   };
 }

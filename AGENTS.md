@@ -2,7 +2,7 @@
 
 For side-specific conventions, see:
 - `@apps/app/CLAUDE.md` — frontend (Next.js 16 + tRPC client + DSFR)
-- `@apps/backend/CLAUDE.md` — backend (NestJS 11 + tRPC + Drizzle)
+- `@apps/backend/CLAUDE.md` — backend (NestJS 12 + tRPC + Drizzle)
 
 ## Project Overview
 

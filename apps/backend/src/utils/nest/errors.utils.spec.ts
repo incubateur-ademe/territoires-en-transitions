@@ -3,10 +3,53 @@ import {
   PgIntegrityConstraintViolation,
   PgSuccessfulCompletion,
 } from '../postgresql-error-codes.enum';
-import { isUniqueViolation } from './errors.utils';
+import { getErrorCode, isUniqueViolation } from './errors.utils';
 
 const toErrorCausedByPgCode = (code: string): Error =>
   new Error('Failed query', { cause: Object.assign(new Error(), { code }) });
+
+describe('getErrorCode', () => {
+  it('prefers the public HTTP error code over underlying error codes', () => {
+    const error = Object.assign(
+      new BadRequestException('La fiche existe déjà', {
+        errorCode: 'FICHE_ALREADY_EXISTS',
+        cause: Object.assign(new Error('Database failure'), {
+          code: PgIntegrityConstraintViolation.UniqueViolation,
+        }),
+      }),
+      { code: 'WRAPPER_ERROR' }
+    );
+
+    expect(getErrorCode(error)).toBe('FICHE_ALREADY_EXISTS');
+  });
+
+  it('preserves database cause codes ahead of wrapper codes', () => {
+    const error = Object.assign(
+      toErrorCausedByPgCode(PgIntegrityConstraintViolation.UniqueViolation),
+      { code: 'QUERY_FAILED' }
+    );
+
+    expect(getErrorCode(error)).toBe(
+      PgIntegrityConstraintViolation.UniqueViolation
+    );
+  });
+
+  it('reads the direct code when the cause has no code', () => {
+    const error = Object.assign(
+      new Error('Failure', { cause: new Error('Original failure') }),
+      { code: 'REQUEST_FAILED' }
+    );
+
+    expect(getErrorCode(error)).toBe('REQUEST_FAILED');
+  });
+
+  it.each([undefined, null, 'failure', new Error('Failure'), { code: 500 }])(
+    'handles unknown values without a string code: %s',
+    (error) => {
+      expect(getErrorCode(error)).toBeUndefined();
+    }
+  );
+});
 
 describe('isUniqueViolation', () => {
   it("reconnaît une erreur causée par une violation d'unicité (23505)", () => {
@@ -53,3 +96,4 @@ describe('isUniqueViolation', () => {
     ).toBe(false);
   });
 });
+import { BadRequestException } from '@nestjs/common';

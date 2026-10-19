@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -12,7 +13,6 @@ import {
 } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.response';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
-import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type {
   AuthenticatedOrServiceRoleUser,
@@ -21,22 +21,18 @@ import type {
 import ManageIndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { getIndicateursValeursApiRequestSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.api-request';
 import { getIndicateursValeursResponseSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.response';
-import { UpsertIndicateursValeursRequest } from './write-indicateur-valeurs/upsert-indicateurs-valeurs.request';
+import {
+  upsertIndicateursValeursRequestSchema,
+  type UpsertIndicateursValeursRequest,
+} from './write-indicateur-valeurs/upsert-indicateurs-valeurs.request';
 
-/**
- * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
- */
-class GetIndicateursValeursApiRequestClass extends createZodDto(
-  getIndicateursValeursApiRequestSchema
-) {}
+type GetIndicateursValeursApiRequest = z.infer<
+  typeof getIndicateursValeursApiRequestSchema
+>;
 
-class GetIndicateursValeursResponseClass extends createZodDto(
-  getIndicateursValeursResponseSchema
-) {}
-
-class UpsertIndicateursValeursResponseClass extends createZodDto(
-  upsertIndicateursValeursResponseSchema
-) {}
+type GetIndicateursValeursResponse = z.infer<
+  typeof getIndicateursValeursResponseSchema
+>;
 
 @ApiTags('Indicateurs')
 @ApiBearerAuth()
@@ -55,12 +51,15 @@ export class IndicateursValeursController {
   @ApiResponse({
     description:
       "Les valeurs d'une collectivité pour un ou plusieurs indicateurs organisées par indicateur et par source.",
-    type: GetIndicateursValeursResponseClass,
+    standardSchema: getIndicateursValeursResponseSchema.meta({
+      id: 'GetIndicateursValeursResponseClass',
+    }),
   })
   async getIndicateurValeurs(
-    @Query() request: GetIndicateursValeursApiRequestClass,
+    @Query({ schema: getIndicateursValeursApiRequestSchema })
+    request: GetIndicateursValeursApiRequest,
     @TokenInfo() tokenInfo: AuthenticatedUser
-  ): Promise<GetIndicateursValeursResponseClass> {
+  ): Promise<GetIndicateursValeursResponse> {
     return this.service.listIndicateurValeurs(request, { user: tokenInfo });
   }
 
@@ -72,11 +71,18 @@ export class IndicateursValeursController {
       "Les valeurs peuvent concerner une ou plusieurs collectivités. A noter également que des valeurs dérivées (ex: indicateur aggrégé) peuvent être calculées lors de l'opération et seront donc également retournées.\n\nCette opération nécessite un **droit d'écriture sur toutes les collectivités affectées**.",
   })
   @ApiCreatedResponse({
-    type: UpsertIndicateursValeursResponseClass,
+    standardSchema: upsertIndicateursValeursResponseSchema.meta({
+      id: 'UpsertIndicateursValeursResponseClass',
+    }),
     description: 'Les valeurs insérées ou mises à jour.',
   })
   async upsertIndicateurValeurs(
-    @Body() request: UpsertIndicateursValeursRequest,
+    @Body({
+      schema: upsertIndicateursValeursRequestSchema.meta({
+        id: 'UpsertIndicateursValeursRequest',
+      }),
+    })
+    request: UpsertIndicateursValeursRequest,
     @TokenInfo() tokenInfo: AuthenticatedOrServiceRoleUser
   ): Promise<UpsertIndicateursValeursResponse> {
     const upsertedValeurs = await this.service.upsertIndicateurValeurs(

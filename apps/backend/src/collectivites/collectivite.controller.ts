@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { listCollectiviteApiRequestSchema } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-request';
 import { listCollectiviteApiResponseSchema } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-response';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
@@ -11,18 +12,10 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { createZodDto } from 'nestjs-zod';
 
-/**
- * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
- */
-export class ListCollectivitesApiRequestClass extends createZodDto(
-  listCollectiviteApiRequestSchema
-) {}
-
-export class ListCollectivitesApiResponseClass extends createZodDto(
-  listCollectiviteApiResponseSchema
-) {}
+export type ListCollectivitesApiRequest = z.infer<
+  typeof listCollectiviteApiRequestSchema
+>;
 
 @ApiTags('Collectivités')
 @ApiBearerAuth()
@@ -41,10 +34,15 @@ export class CollectiviteController {
       "Récupération des informations (siren, etc.) d'une ou plusieurs collectivités. \n\nLes données sont publiques et donc accessibles **quelque soit les droits de l'utilisateur**.",
   })
   @ApiOkResponse({
-    type: ListCollectivitesApiResponseClass,
+    standardSchema: listCollectiviteApiResponseSchema.meta({
+      id: 'ListCollectivitesApiResponseClass',
+    }),
     description: "Informations d'une ou plusieurs collectivités",
   })
-  async getCollectivites(@Query() request: ListCollectivitesApiRequestClass) {
+  async getCollectivites(
+    @Query({ schema: listCollectiviteApiRequestSchema })
+    request: ListCollectivitesApiRequest
+  ) {
     if (!request.fieldsMode) {
       request.fieldsMode = 'public';
     }

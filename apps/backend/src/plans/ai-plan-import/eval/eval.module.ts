@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import configuration from '@tet/backend/utils/config/configuration';
+import { backendConfigurationSchema } from '@tet/backend/utils/config/configuration.model';
 import { ConfigurationModule } from '@tet/backend/utils/config/configuration.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 
@@ -11,7 +11,7 @@ import { LlmModule } from '@tet/backend/utils/llm/llm.module';
  */
 @Module({
   imports: [
-    ConfigModule.forRoot({ load: [configuration] }),
+    ConfigModule.forRoot({ validationSchema: backendConfigurationSchema }),
     ConfigurationModule,
     LlmModule,
   ],

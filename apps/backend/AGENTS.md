@@ -1,6 +1,6 @@
 # apps/backend — Backend conventions
 
-NestJS 11 + tRPC + Drizzle + BullMQ.
+NestJS 12 + tRPC + Drizzle + BullMQ.
 
 ## DDD layout (ADR 0011)
 

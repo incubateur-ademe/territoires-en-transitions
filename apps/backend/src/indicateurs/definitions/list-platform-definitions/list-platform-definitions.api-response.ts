@@ -36,9 +36,18 @@ const platformDefinitionAggregateSchema = z.object({
   ),
 });
 
-export const listPlatformDefinitionsApiResponseSchema = z.array(
-  platformDefinitionAggregateSchema
-);
+const platformDefinitionsSchema = z
+  .array(platformDefinitionAggregateSchema)
+  .register(z.globalRegistry, {
+    id: 'ListPlatformDefinitionsApiResponseClass',
+  });
+
+export const listPlatformDefinitionsApiResponseSchema = z
+  .object({
+    count: z.number().check(z.int(), z.nonnegative()),
+    data: platformDefinitionsSchema,
+  })
+  .register(z.globalRegistry, { id: 'ListPlatformDefinitionsApiResponse' });
 
 export type ListPlatformDefinitionsApiResponse = z.infer<
   typeof listPlatformDefinitionsApiResponseSchema

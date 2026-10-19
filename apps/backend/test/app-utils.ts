@@ -3,7 +3,8 @@ import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { AppModule } from '@tet/backend/app.module';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
+import { httpApplicationOptions } from '@tet/backend/utils/nest/http-application.options';
+import { SchemaValidationPipe } from '@tet/backend/utils/nest/schema-validation.pipe';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { createTRPCClient, TRPCClient } from '@trpc/client';
@@ -35,9 +36,9 @@ const buildTestApp = async (
 
   const moduleRef = await moduleBuilder.compile();
 
-  const app = moduleRef.createNestApplication();
+  const app = moduleRef.createNestApplication(httpApplicationOptions);
   const contextStoreService = app.get(ContextStoreService);
-  app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+  app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
   await app.init();
 

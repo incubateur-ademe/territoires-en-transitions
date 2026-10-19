@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Controller, Get, Logger, Param, Res } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
@@ -7,15 +8,14 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import type { Response } from 'express';
 import { ARCHIVE_ZIP_CONTENT_TYPE } from '@tet/backend/utils/archive/archive-assembly.service';
-import { createZodDto } from 'nestjs-zod';
 
 import { downloadDocumentsMesureErrorConfig } from './download-documents-mesure.errors';
 import { downloadDocumentsMesureInputSchema } from './download-documents-mesure.input';
 import { DownloadDocumentsMesureService } from './download-documents-mesure.service';
 
-class DownloadDocumentsMesureParamsClass extends createZodDto(
-  downloadDocumentsMesureInputSchema
-) {}
+type DownloadDocumentsMesureParams = z.infer<
+  typeof downloadDocumentsMesureInputSchema
+>;
 
 const toExtValue = (filename: string): string =>
   encodeURIComponent(filename).replace(
@@ -39,7 +39,8 @@ export class DownloadDocumentsMesureController {
   @Get('archive')
   @ApiUsage([ApiUsageEnum.APP])
   async downloadArchive(
-    @Param() params: DownloadDocumentsMesureParamsClass,
+    @Param({ schema: downloadDocumentsMesureInputSchema })
+    params: DownloadDocumentsMesureParams,
     @TokenInfo() user: AuthenticatedUser,
     @Res() response: Response
   ): Promise<void> {

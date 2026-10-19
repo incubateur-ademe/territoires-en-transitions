@@ -1,7 +1,15 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { z } from 'zod';
+import {
+  Controller,
+  Get,
+  Query,
+  SerializeOptions,
+  StandardSchemaSerializerInterceptor,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -11,18 +19,16 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
 import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
-import { createZodDto } from 'nestjs-zod';
 import { listPlatformDefinitionsApiRequestSchema } from './list-platform-definitions.api-request';
-import { listPlatformDefinitionsApiResponseSchema } from './list-platform-definitions.api-response';
+import {
+  listPlatformDefinitionsApiResponseSchema,
+  type ListPlatformDefinitionsApiResponse,
+} from './list-platform-definitions.api-response';
 import { ListPlatformDefinitionsService } from './list-platform-definitions.service';
 
-class ListPlatformDefinitionsApiRequestClass extends createZodDto(
-  listPlatformDefinitionsApiRequestSchema
-) {}
-
-class ListPlatformDefinitionsApiResponseClass extends createZodDto(
-  listPlatformDefinitionsApiResponseSchema
-) {}
+type ListPlatformDefinitionsApiRequest = z.infer<
+  typeof listPlatformDefinitionsApiRequestSchema
+>;
 
 @ApiTags('Indicateurs')
 @ApiBearerAuth()
@@ -42,28 +48,27 @@ export class ListPlatformDefinitionsController {
     description:
       "Les indicateurs prédéfinis sont disponibles à l'ensemble des collectivités.",
   })
-  @ApiCreatedResponse({
-    type: ListPlatformDefinitionsApiResponseClass,
+  @UseInterceptors(StandardSchemaSerializerInterceptor)
+  @SerializeOptions({ schema: listPlatformDefinitionsApiResponseSchema })
+  @ApiOkResponse({
+    standardSchema: listPlatformDefinitionsApiResponseSchema,
   })
   async listDefinitions(
-    @Query() input: ListPlatformDefinitionsApiRequestClass,
+    @Query({ schema: listPlatformDefinitionsApiRequestSchema })
+    input: ListPlatformDefinitionsApiRequest,
     @TokenInfo() user: AuthUser | null
-  ) {
+  ): Promise<ListPlatformDefinitionsApiResponse> {
     const result =
       await this.listPlatformDefinitionsService.listPlatformDefinitionAggregates(
         input,
         { user }
       );
 
-    // Parsing will strip keys that are not in the schema
-    // ensuring consistent API response format
-    const parsedResult = listPlatformDefinitionsApiResponseSchema.parse(
-      this.getResultDataOrThrowError(result)
-    );
+    const definitions = this.getResultDataOrThrowError(result);
 
     return {
-      count: parsedResult.length,
-      data: parsedResult,
+      count: definitions.length,
+      data: definitions,
     };
   }
 }

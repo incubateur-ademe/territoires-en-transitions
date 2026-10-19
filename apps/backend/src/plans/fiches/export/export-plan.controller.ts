@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -14,9 +15,8 @@ import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import type { Response } from 'express';
-import { createZodDto } from 'nestjs-zod';
 
-class GetExportRequestClass extends createZodDto(exportRequestSchema) {}
+type GetExportRequest = z.infer<typeof exportRequestSchema>;
 
 @ApiExcludeController()
 @ApiTags('Plan')
@@ -31,7 +31,8 @@ export class ExportPlanController {
     type: Response,
   })
   async exportPlan(
-    @Body() request: GetExportRequestClass,
+    @Body({ schema: exportRequestSchema.meta({ id: 'GetExportRequestClass' }) })
+    request: GetExportRequest,
     @TokenInfo() user: AuthenticatedUser,
     @Res() res: Response
   ) {

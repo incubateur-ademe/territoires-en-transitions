@@ -15,9 +15,17 @@ import {
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import React from 'react';
-import { afterEach, beforeEach, describe, expect, Mock, test, vi } from 'vitest';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  Mock,
+  test,
+  vi,
+} from 'vitest';
 import { ContextStoreService } from '../context/context.service';
-import { CustomZodValidationPipe } from '../nest/custom-zod-validation.pipe';
+import { SchemaValidationPipe } from '../nest/schema-validation.pipe';
 import { NotificationContentGenerator } from './models/notification-template.dto';
 import { notificationTable } from './models/notification.table';
 import { NotificationsService } from './notifications.service';
@@ -144,7 +152,7 @@ describe('NotificationsService', () => {
 
     app = moduleRef.createNestApplication();
     const contextStoreService = app.get(ContextStoreService);
-    app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+    app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
     await app.init();
 
     databaseService = await getTestDatabase(app);

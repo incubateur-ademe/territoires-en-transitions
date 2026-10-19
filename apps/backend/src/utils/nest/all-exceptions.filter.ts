@@ -10,6 +10,7 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Request, Response } from 'express';
+import { STATUS_CODES } from 'node:http';
 import { getErrorCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
 
@@ -22,14 +23,29 @@ export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
   };
 
   if (exception instanceof HttpException) {
-    const reponse = exception.getResponse();
-    if (typeof reponse === 'object') {
-      // @ts-expect-error `reponse` type is not precise enough
-      const { statusCode, ...responseWithoutCode } = reponse;
-      httpErrorResponse.details = responseWithoutCode;
+    const response = exception.getResponse();
+    if (typeof response === 'object' && response !== null) {
+      httpErrorResponse.details = Object.fromEntries(
+        Object.entries(response).filter(([key]) => key !== 'statusCode')
+      );
     }
 
     httpErrorResponse.status = exception.getStatus();
+  } else if (
+    exception instanceof Error &&
+    'expose' in exception &&
+    exception.expose === false &&
+    'statusCode' in exception &&
+    typeof exception.statusCode === 'number' &&
+    Number.isInteger(exception.statusCode) &&
+    exception.statusCode >= 500 &&
+    exception.statusCode < 600 &&
+    'status' in exception &&
+    exception.status === exception.statusCode
+  ) {
+    httpErrorResponse.status = exception.statusCode;
+    httpErrorResponse.message =
+      STATUS_CODES[exception.statusCode] ?? 'Internal server error';
   }
   return httpErrorResponse;
 };

@@ -9,7 +9,6 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { PermissionRepository } from '@tet/backend/users/authorizations/permission.repository';
 import { ListUsersController } from '@tet/backend/users/users/list-users/list-users.controller';
 import { EmailService } from '@tet/backend/utils/email/email.service';
-import { NestjsFormDataModule } from 'nestjs-form-data';
 import { GetUserRolesAndPermissionsRepository } from './authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.repository';
 import { GetUserRolesAndPermissionsService } from './authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { UpdateUserRoleRouter } from './authorizations/update-user-role/update-user-role.router';
@@ -54,7 +53,6 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
 @Global()
 @Module({
   imports: [
-    NestjsFormDataModule,
     TransactionModule,
     TrackingModule,
     JwtModule.register({

@@ -122,7 +122,7 @@ export class ListPlatformDefinitionsRepository {
       indicateurIds?: number[];
     } = {},
     tx?: Transaction
-  ): Promise<IndicateurDefinition[]> {
+  ) {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,

@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Controller, Get, Logger, Param, Query, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
@@ -12,14 +13,13 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import type { Response } from 'express';
-import { createZodDto } from 'nestjs-zod';
 import { REFERENTIEL_ID_PARAM_KEY } from '../models/referentiel-api.constants';
 import { exportScoreComparisonErrorConfig } from './export-score-comparison.errors';
 import { ExportScoreComparisonService } from './export-score-comparison.service';
 
-export class ExportScoreComparisonApiQueryClass extends createZodDto(
-  exportScoreComparisonRequestSchema
-) {}
+export type ExportScoreComparisonApiQuery = z.infer<
+  typeof exportScoreComparisonRequestSchema
+>;
 
 @ApiTags('Referentiels')
 @ApiExcludeController()
@@ -42,7 +42,8 @@ export class ExportScoreComparisonController {
   async exportAuditScore(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
-    @Query() query: ExportScoreComparisonApiQueryClass,
+    @Query({ schema: exportScoreComparisonRequestSchema })
+    query: ExportScoreComparisonApiQuery,
     @Res() res: Response,
     @TokenInfo() user: AuthUser
   ) {

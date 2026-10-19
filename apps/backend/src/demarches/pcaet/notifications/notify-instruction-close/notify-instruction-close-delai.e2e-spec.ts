@@ -9,7 +9,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
-import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
+import { SchemaValidationPipe } from '@tet/backend/utils/nest/schema-validation.pipe';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -56,9 +56,7 @@ describe("Notification de clôture sur délai d'avis échu", () => {
       .useValue({ sendEmail })
       .compile();
     app = moduleRef.createNestApplication();
-    app.useGlobalPipes(
-      new CustomZodValidationPipe(app.get(ContextStoreService))
-    );
+    app.useGlobalPipes(new SchemaValidationPipe(app.get(ContextStoreService)));
     await app.init();
 
     const router = app.get(TrpcRouter);

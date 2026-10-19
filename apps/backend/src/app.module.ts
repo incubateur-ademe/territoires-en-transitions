@@ -13,7 +13,7 @@ import { PlanMainModule } from './plans/plans-main.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
-import configuration from './utils/config/configuration';
+import { backendConfigurationSchema } from './utils/config/configuration.model';
 import { BannerModule } from './utils/banner/banner.module';
 import { ConfigurationModule } from './utils/config/configuration.module';
 import ConfigurationService from './utils/config/configuration.service';
@@ -33,8 +33,7 @@ const appLogger = new Logger('AppModule');
   imports: [
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
-      // validate: validateBackendConfiguration,
-      load: [configuration],
+      validationSchema: backendConfigurationSchema,
     }),
     ConfigurationModule,
     ThrottlerModule.forRootAsync({

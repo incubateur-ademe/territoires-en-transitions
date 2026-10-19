@@ -3,6 +3,7 @@ import '@tet/backend/utils/telemetry-init';
 // Other imports
 import { Logger } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import {
@@ -10,12 +11,23 @@ import {
   getDefaultLoggerOptions,
 } from '@tet/backend/utils/log/custom-logger.service';
 import { AllExceptionsFilter } from '@tet/backend/utils/nest/all-exceptions.filter';
-import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
-import { json, NextFunction, Request, Response } from 'express';
+import { httpApplicationOptions } from '@tet/backend/utils/nest/http-application.options';
+import {
+  NestTelemetryInterceptor,
+  traceNestBootstrap,
+} from '@tet/backend/utils/nest/nest-telemetry';
+import { SchemaValidationPipe } from '@tet/backend/utils/nest/schema-validation.pipe';
+import { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await traceNestBootstrap(AppModule.name, () =>
+    NestFactory.create<NestExpressApplication>(
+      AppModule,
+      httpApplicationOptions
+    )
+  );
+  app.useGlobalInterceptors(new NestTelemetryInterceptor());
   const contextStoreService = app.get(ContextStoreService);
   const logger = new CustomLogger(
     contextStoreService,
@@ -35,7 +47,7 @@ async function bootstrap() {
   const { httpAdapter } = app.get(HttpAdapterHost);
 
   app.enableCors();
-  app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+  app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix, {
@@ -46,7 +58,7 @@ async function bootstrap() {
     new AllExceptionsFilter(contextStoreService, httpAdapter)
   );
 
-  app.use(json({ limit: '10mb' })); // Sentry payload can be large
+  app.useBodyParser('json', { limit: '10mb' });
   // TOOLS_PORT prime sur PORT : en dev multi-apps (worktrees), PORT est
   // ambigu — backend et tools le lisent tous les deux dans un env partagé.
   const port = process.env.TOOLS_PORT || process.env.PORT || 8081;

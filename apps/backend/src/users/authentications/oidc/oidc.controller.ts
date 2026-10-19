@@ -1,5 +1,6 @@
 import {
   Controller,
+  Cookies,
   Get,
   Logger,
   NotFoundException,
@@ -24,11 +25,7 @@ import {
   OidcErrorCode,
   RattachementAutomatique,
 } from './oidc.models';
-import {
-  getRequestCookies,
-  getRootDomainFromUrl,
-  sanitizeNextPath,
-} from './oidc.utils';
+import { getRootDomainFromUrl, sanitizeNextPath } from './oidc.utils';
 import { OidcClientService } from './oidc-client.service';
 import { OidcProviderRuntimeConfig } from './provider-configs/oidc-provider.config';
 import { LinkOidcIdentityToUserService } from './link-oidc-identity-to-user/link-oidc-identity-to-user.service';
@@ -125,13 +122,13 @@ export class OidcController {
   @Get(':provider/callback')
   async callback(
     @Param('provider') provider: string,
+    @Cookies() cookies: Record<string, string | undefined>,
     @Req() req: Request,
     @Res() res: Response
   ): Promise<void> {
     const providerConfig = this.getProviderConfigOrThrow(provider);
 
-    const cookies = getRequestCookies(req);
-    const nextPath = sanitizeNextPath(cookies.get(OIDC_COOKIES.next));
+    const nextPath = sanitizeNextPath(cookies[OIDC_COOKIES.next]);
 
     // Les cookies du flux sont à usage unique : purgés quoi qu'il arrive.
     this.clearFlowCookies(res, providerConfig);
@@ -153,8 +150,8 @@ export class OidcController {
         return;
       }
 
-      const expectedState = cookies.get(OIDC_COOKIES.state);
-      const expectedNonce = cookies.get(OIDC_COOKIES.nonce);
+      const expectedState = cookies[OIDC_COOKIES.state];
+      const expectedNonce = cookies[OIDC_COOKIES.nonce];
       if (
         !expectedState ||
         !expectedNonce ||
@@ -195,7 +192,7 @@ export class OidcController {
         this.providerCookieOptions()
       );
 
-      if (cookies.get(OIDC_COOKIES.linkMode)) {
+      if (cookies[OIDC_COOKIES.linkMode]) {
         // Liaison volontaire depuis le profil. Le compte cible est
         // re-résolu depuis la session Supabase (jamais depuis un cookie
         // forgeable — anti prise de contrôle de compte). On rattache
@@ -261,7 +258,7 @@ export class OidcController {
         // Parcours de création de compte : on sait déjà que l'utilisateur
         // voulait s'inscrire, on crée directement le compte sans passer par la
         // dialog de bienvenue « avez-vous déjà un compte ? ».
-        if (cookies.get(OIDC_COOKIES.signupIntent)) {
+        if (cookies[OIDC_COOKIES.signupIntent]) {
           const creation = await this.creerCompteOidcService.creerCompte(
             providerConfig.provider,
             claims
@@ -392,16 +389,13 @@ export class OidcController {
   @Get(':provider/logout')
   async logout(
     @Param('provider') provider: string,
-    @Req() req: Request,
+    @Cookies(OIDC_COOKIES.idToken) idToken: string | undefined,
     @Res() res: Response
   ): Promise<void> {
     const providerConfig = this.getProviderConfigOrThrow(provider);
     const appUrl = this.configurationService.get('APP_URL');
 
     try {
-      const cookies = getRequestCookies(req);
-      const idToken = cookies.get(OIDC_COOKIES.idToken);
-
       res.clearCookie(OIDC_COOKIES.idToken, this.idTokenCookieOptions());
       res.clearCookie(OIDC_COOKIES.provider, this.providerCookieOptions());
 
@@ -437,6 +431,7 @@ export class OidcController {
   @Get(':provider/logout/callback')
   async logoutCallback(
     @Param('provider') provider: string,
+    @Cookies(OIDC_COOKIES.logoutState) expectedState: string | undefined,
     @Req() req: Request,
     @Res() res: Response
   ): Promise<void> {
@@ -444,8 +439,6 @@ export class OidcController {
     const appUrl = this.configurationService.get('APP_URL');
 
     try {
-      const cookies = getRequestCookies(req);
-      const expectedState = cookies.get(OIDC_COOKIES.logoutState);
       const query = req.query as Record<string, string | undefined>;
       if (expectedState && query.state && query.state !== expectedState) {
         this.logger.warn(

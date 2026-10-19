@@ -2,7 +2,6 @@ import {
   indicateurPeriodiciteSchema,
   indicateurValeurSchemaCreate,
 } from '@tet/domain/indicateurs';
-import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const upsertIndicateursValeursRequestSchema = z
@@ -25,10 +24,6 @@ export const upsertIndicateursValeursRequestSchema = z
   })
   .describe('Valeurs des indicateurs à insérer ou mettre à jour');
 
-export type UpsertIndicateursValeursRequestType = z.infer<
+export type UpsertIndicateursValeursRequest = z.infer<
   typeof upsertIndicateursValeursRequestSchema
 >;
-
-export class UpsertIndicateursValeursRequest extends createZodDto(
-  upsertIndicateursValeursRequestSchema
-) {}

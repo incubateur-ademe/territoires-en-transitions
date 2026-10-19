@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -14,22 +15,12 @@ import { ListSnapshotsService } from '@tet/backend/referentiels/snapshots/list-s
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
-import { createZodDto } from 'nestjs-zod';
 
-/**
- * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
- */
-export class ListSnapshotsApiParamsClass extends createZodDto(
-  listSnapshotsApiParamsSchema
-) {}
+export type ListSnapshotsApiParams = z.infer<
+  typeof listSnapshotsApiParamsSchema
+>;
 
-export class ListSnapshotsApiQueryClass extends createZodDto(
-  listSnapshotsApiQuerySchema
-) {}
-
-export class ListSnapshotsApiResponseClass extends createZodDto(
-  listSnapshotsApiResponseSchema
-) {}
+export type ListSnapshotsApiQuery = z.infer<typeof listSnapshotsApiQuerySchema>;
 
 @ApiTags('Referentiels')
 @ApiBearerAuth()
@@ -49,12 +40,16 @@ export class ListSnapshotsController {
   })
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @ApiOkResponse({
-    type: ListSnapshotsApiResponseClass,
+    standardSchema: listSnapshotsApiResponseSchema.meta({
+      id: 'ListSnapshotsApiResponseClass',
+    }),
     description: "Les snapshots de score d'une collectivité.",
   })
   async getCollectiviteReferentielScoreSnapshots(
-    @Param() param: ListSnapshotsApiParamsClass,
-    @Query() query: ListSnapshotsApiQueryClass
+    @Param({ schema: listSnapshotsApiParamsSchema })
+    param: ListSnapshotsApiParams,
+    @Query({ schema: listSnapshotsApiQuerySchema })
+    query: ListSnapshotsApiQuery
   ) {
     return this.listSnapshotsService.list({
       collectiviteId: param.collectiviteId,

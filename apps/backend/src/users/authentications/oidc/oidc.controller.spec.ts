@@ -251,6 +251,28 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
       );
     });
 
+    test.each([
+      'oidc-state=; oidc-nonce=un-nonce',
+      'oidc-state=un-state',
+      'oidc-state=un-state; oidc-nonce=',
+      'oidc-state=%E0%A4%A; oidc-nonce=un-nonce',
+    ])('cookies invalides (%s) → aucun échange de code', async (cookies) => {
+      const exchange = vi.spyOn(
+        app.get(OidcClientService),
+        'exchangeCodeAndFetchClaims'
+      );
+
+      const response = await request(app.getHttpServer())
+        .get('/api/v1/proconnect/callback?code=un-code&state=un-state')
+        .set('Cookie', cookies)
+        .expect(303);
+
+      expect(response.headers.location).toBe(
+        `${APP_URL}/login?erreur=oidc-state-invalide`
+      );
+      expect(exchange).not.toHaveBeenCalled();
+    });
+
     test('error=access_denied du provider → code dédié', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/v1/proconnect/callback?error=access_denied&state=un-state')
@@ -416,44 +438,72 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
       expect(creerSessionMock.creerSession).not.toHaveBeenCalled();
     });
 
-    test('statut connexion → pont session puis 303 vers /auth/verify avec token_hash et next', async () => {
-      vi.spyOn(
-        app.get(LoginUserWithOidcProviderService),
-        'authentifier'
-      ).mockResolvedValue({
-        statut: 'connexion',
-        userId: 'user-1',
-        email: 'agent@collectivite.fr',
-      });
+    test.each([
+      {
+        name: 'cookies simples',
+        state: 'un-state',
+        nonce: 'un-nonce',
+        cookies:
+          'oidc-state=un-state; oidc-nonce=un-nonce; oidc-next=%2Fplans%2F123',
+      },
+      {
+        name: 'cookies encodés',
+        state: 'state/avec=caracteres',
+        nonce: 'nonce/avec=caracteres',
+        cookies:
+          'oidc-state=state%2Favec%3Dcaracteres; oidc-nonce=nonce%2Favec%3Dcaracteres; oidc-next=%2Fplans%2F123',
+      },
+      {
+        name: 'cookies dupliqués : le premier chemin prévaut',
+        state: 'un-state',
+        nonce: 'un-nonce',
+        cookies:
+          'oidc-state=un-state; oidc-state=autre-state; oidc-nonce=un-nonce; oidc-nonce=autre-nonce; oidc-next=%2Fplans%2F123; oidc-next=%2Fautre-chemin',
+      },
+    ])(
+      '$name → pont session avec token_hash et next',
+      async ({ state, nonce, cookies }) => {
+        vi.spyOn(
+          app.get(LoginUserWithOidcProviderService),
+          'authentifier'
+        ).mockResolvedValue({
+          statut: 'connexion',
+          userId: 'user-1',
+          email: 'agent@collectivite.fr',
+        });
 
-      const response = await request(app.getHttpServer())
-        .get('/api/v1/proconnect/callback?code=un-code&state=un-state')
-        .set('Cookie', [
-          'oidc-state=un-state',
-          'oidc-nonce=un-nonce',
-          `oidc-next=${encodeURIComponent('/plans/123')}`,
-        ])
-        .expect(303);
+        const response = await request(app.getHttpServer())
+          .get('/api/v1/proconnect/callback')
+          .query({ code: 'un-code', state })
+          .set('Cookie', cookies)
+          .expect(303);
 
-      expect(creerSessionMock.creerSession).toHaveBeenCalledWith(
-        'agent@collectivite.fr'
-      );
+        expect(
+          app.get(OidcClientService).exchangeCodeAndFetchClaims
+        ).toHaveBeenCalledWith(expect.anything(), expect.any(URL), {
+          expectedState: state,
+          expectedNonce: nonce,
+        });
+        expect(creerSessionMock.creerSession).toHaveBeenCalledWith(
+          'agent@collectivite.fr'
+        );
 
-      const location = new URL(response.headers.location);
-      expect(location.origin).toBe(APP_URL);
-      expect(location.pathname).toBe('/auth/verify');
-      expect(location.searchParams.get('token_hash')).toBe(
-        'hashed-token-du-spike'
-      );
-      expect(location.searchParams.get('next')).toBe('/plans/123');
-      expect(location.searchParams.get('liaison')).toBeNull();
+        const location = new URL(response.headers.location);
+        expect(location.origin).toBe(APP_URL);
+        expect(location.pathname).toBe('/auth/verify');
+        expect(location.searchParams.get('token_hash')).toBe(
+          'hashed-token-du-spike'
+        );
+        expect(location.searchParams.get('next')).toBe('/plans/123');
+        expect(location.searchParams.get('liaison')).toBeNull();
 
-      // les cookies du flux sont purgés
-      const purgedState = getSetCookie(response, 'oidc-state');
-      const purgedNext = getSetCookie(response, 'oidc-next');
-      expect(purgedState).toContain('Expires=Thu, 01 Jan 1970');
-      expect(purgedNext).toContain('Expires=Thu, 01 Jan 1970');
-    });
+        // les cookies du flux sont purgés
+        const purgedState = getSetCookie(response, 'oidc-state');
+        const purgedNext = getSetCookie(response, 'oidc-next');
+        expect(purgedState).toContain('Expires=Thu, 01 Jan 1970');
+        expect(purgedNext).toContain('Expires=Thu, 01 Jan 1970');
+      }
+    );
 
     test('statut connexion avec nouvelleLiaison (cas 2) → /auth/verify porte `liaison=1` (toast one-shot)', async () => {
       vi.spyOn(
@@ -557,24 +607,37 @@ describe("Contrôleur OIDC (déclinaison ProConnect) — jamais d'erreur 500 nue
       expect(response.headers.location).toBe(APP_URL);
     });
 
-    test('avec id_token en cookie → redirection session/end avec id_token_hint, state et post_logout_redirect_uri', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/api/v1/proconnect/logout')
-        .set('Cookie', ['oidc-id-token=id-token-brut'])
-        .expect(302);
+    test.each([
+      ['oidc-id-token=id-token-brut', 'id-token-brut'],
+      ['oidc-id-token=id%2Ftoken%3Dbrut', 'id/token=brut'],
+      ['oidc-id-token=%E0%A4%A', '%E0%A4%A'],
+      [
+        'oidc-id-token=id-token-brut; oidc-id-token=autre-token',
+        'id-token-brut',
+      ],
+    ])(
+      'cookie %s → redirection session/end avec id_token_hint',
+      async (cookie, idToken) => {
+        const response = await request(app.getHttpServer())
+          .get('/api/v1/proconnect/logout')
+          .set('Cookie', cookie)
+          .expect(302);
 
-      const location = new URL(response.headers.location);
-      expect(location.origin + location.pathname).toBe(`${ISSUER}/session/end`);
-      expect(location.searchParams.get('id_token_hint')).toBe('id-token-brut');
-      expect(location.searchParams.get('post_logout_redirect_uri')).toBe(
-        POST_LOGOUT_REDIRECT_URI
-      );
-      expect(location.searchParams.get('state')).toBeTruthy();
+        const location = new URL(response.headers.location);
+        expect(location.origin + location.pathname).toBe(
+          `${ISSUER}/session/end`
+        );
+        expect(location.searchParams.get('id_token_hint')).toBe(idToken);
+        expect(location.searchParams.get('post_logout_redirect_uri')).toBe(
+          POST_LOGOUT_REDIRECT_URI
+        );
+        expect(location.searchParams.get('state')).toBeTruthy();
 
-      // le cookie id_token est purgé immédiatement (fail-safe)
-      const purgedIdToken = getSetCookie(response, 'oidc-id-token');
-      expect(purgedIdToken).toContain('Expires=Thu, 01 Jan 1970');
-    });
+        // le cookie id_token est purgé immédiatement (fail-safe)
+        const purgedIdToken = getSetCookie(response, 'oidc-id-token');
+        expect(purgedIdToken).toContain('Expires=Thu, 01 Jan 1970');
+      }
+    );
 
     test("logout/callback → purge des cookies et redirection vers l'app", async () => {
       const response = await request(app.getHttpServer())

@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -11,20 +12,16 @@ import { getTrajectoireLeviersDataResponseSchema } from '@tet/backend/indicateur
 import { TrajectoireLeviersService } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
-import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';
 
-/**
- * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
- */
-export class GetTrajectoireLeviersDataRequestClass extends createZodDto(
-  getTrajectoireLeviersDataRequestSchema
-) {}
+export type GetTrajectoireLeviersDataRequest = z.infer<
+  typeof getTrajectoireLeviersDataRequestSchema
+>;
 
-export class GetTrajectoireLeviersDataResponseClass extends createZodDto(
-  getTrajectoireLeviersDataResponseSchema
-) {}
+export type GetTrajectoireLeviersDataResponse = z.infer<
+  typeof getTrajectoireLeviersDataResponseSchema
+>;
 
 @ApiTags('Trajectoires')
 @ApiBearerAuth()
@@ -46,14 +43,17 @@ export class TrajectoireLeviersController {
     description: `La collectivité est une commune (trajectoire seulement supportée pour les EPCI)`,
   })
   @ApiOkResponse({
-    type: GetTrajectoireLeviersDataResponseClass,
+    standardSchema: getTrajectoireLeviersDataResponseSchema.meta({
+      id: 'GetTrajectoireLeviersDataResponseClass',
+    }),
     description:
       'Récupération des leviers SGPE et des objectifs de réduction associés pour la collectivité',
   })
   async calculeTrajectoireSnbc(
-    @Query() request: GetTrajectoireLeviersDataRequestClass,
+    @Query({ schema: getTrajectoireLeviersDataRequestSchema })
+    request: GetTrajectoireLeviersDataRequest,
     @TokenInfo() tokenInfo: AuthenticatedUser
-  ): Promise<GetTrajectoireLeviersDataResponseClass> {
+  ): Promise<GetTrajectoireLeviersDataResponse> {
     return this.trajectoireLeviersService.getData(request, tokenInfo);
   }
 }

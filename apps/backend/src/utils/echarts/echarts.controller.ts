@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
@@ -6,9 +7,8 @@ import { Body, Controller, Next, Post, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { chartRenderRequestSchema } from '@tet/domain/utils';
 import type { NextFunction, Response } from 'express';
-import { createZodDto } from 'nestjs-zod';
 
-class ChartRenderRequestClass extends createZodDto(chartRenderRequestSchema) {}
+type ChartRenderRequest = z.infer<typeof chartRenderRequestSchema>;
 
 @ApiTags('Application')
 @ApiExcludeController()
@@ -23,7 +23,10 @@ export class EchartsController {
     description: 'The rendered chart either in svg or png format',
   })
   async renderChart(
-    @Body() request: ChartRenderRequestClass,
+    @Body({
+      schema: chartRenderRequestSchema.meta({ id: 'ChartRenderRequestClass' }),
+    })
+    request: ChartRenderRequest,
     @Res() res: Response,
     @Next() next: NextFunction
   ) {

@@ -7,7 +7,7 @@ import { referentielDefinitionTable } from '@tet/backend/referentiels/models/ref
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
-import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
+import { SchemaValidationPipe } from '@tet/backend/utils/nest/schema-validation.pipe';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { eq, ilike, like } from 'drizzle-orm';
@@ -117,7 +117,7 @@ describe.skip('ImportReferentielRepository e2e - question-action from expression
 
     app = moduleRef.createNestApplication();
     const contextStoreService = app.get(ContextStoreService);
-    app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+    app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
     await app.init();
 
@@ -209,7 +209,7 @@ describe.skip('ImportReferentielRepository e2e - import with no expressions', ()
 
     app = moduleRef.createNestApplication();
     const contextStoreService = app.get(ContextStoreService);
-    app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+    app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
     await app.init();
 

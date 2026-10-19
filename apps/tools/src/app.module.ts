@@ -13,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { buildQueueRedisConnection } from '@tet/backend/utils/config/build-queue-redis-connection';
 import basicAuth from 'express-basic-auth';
-import configuration from './config/configuration';
+import { toolsAutomationApiConfigurationSchema } from './config/configuration.model';
 import { ConfigurationModule } from './config/configuration.module';
 import ConfigurationService from './config/configuration.service';
 import { ConnectModule } from './connect/connect.module';
@@ -30,7 +30,7 @@ const appLogger = new Logger('AppModule');
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
-      load: [configuration],
+      validationSchema: toolsAutomationApiConfigurationSchema,
     }),
     ConfigurationModule,
     CronModule,

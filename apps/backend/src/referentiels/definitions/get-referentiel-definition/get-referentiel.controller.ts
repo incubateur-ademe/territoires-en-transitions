@@ -21,7 +21,6 @@ import {
   type ReferentielId,
 } from '@tet/domain/referentiels';
 import { omit } from 'es-toolkit';
-import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
 import * as zm from 'zod/mini';
 import { CorrelatedActionsFields } from '../../correlated-actions/correlated-actions.dto';
@@ -48,9 +47,9 @@ const listReferentielsResponseSchema = z.array(
   })
 );
 
-export class ListReferentielsResponseClass extends createZodDto(
-  listReferentielsResponseSchema
-) {}
+export type ListReferentielsResponse = z.infer<
+  typeof listReferentielsResponseSchema
+>;
 
 @ApiTags('Referentiels')
 @ApiBearerAuth()
@@ -84,8 +83,12 @@ export class GetReferentielController {
     description:
       "Récupère la liste des référentiels définis sur la plateforme. Les référentiels permettent de réaliser les états des lieux d'une collectivité afin d'évaluer le niveau d'avancement dans la transition écologique.\n\nLa route est accessible à tous les utilisateurs quel que soit leurs droits.",
   })
-  @ApiResponse({ type: ListReferentielsResponseClass })
-  async getReferentielDefinitions(): Promise<ListReferentielsResponseClass> {
+  @ApiResponse({
+    standardSchema: listReferentielsResponseSchema.meta({
+      id: 'ListReferentielsResponseClass',
+    }),
+  })
+  async getReferentielDefinitions(): Promise<ListReferentielsResponse> {
     const definitions =
       await this.getReferentielDefinitionService.getReferentielDefinitions();
 

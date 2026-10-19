@@ -1,11 +1,21 @@
+import { HttpException } from '@nestjs/common';
 import { PgIntegrityConstraintViolation } from '@tet/backend/utils/postgresql-error-codes.enum';
 
-export function getErrorCode(error: unknown) {
-  if (isErrorWithCause(error)) {
+export function getErrorCode(error: unknown): string | undefined {
+  if (error instanceof HttpException && error.errorCode !== undefined) {
+    return error.errorCode;
+  }
+
+  if (isErrorWithCause(error) && typeof error.cause.code === 'string') {
     return error.cause.code;
   }
 
-  return (error as any).code;
+  return typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    typeof error.code === 'string'
+    ? error.code
+    : undefined;
 }
 
 // It's not always a database error

@@ -2,8 +2,9 @@
 import './utils/telemetry-init';
 // Other imports
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { json, NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import v8 from 'v8';
 import { AppModule } from './app.module';
 import { ContextRouteParametersInterceptor } from './utils/context/context-route-parameters.interceptor';
@@ -14,7 +15,13 @@ import {
   getDefaultLoggerOptions,
 } from './utils/log/custom-logger.service';
 import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
-import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
+import { httpApplicationOptions } from './utils/nest/http-application.options';
+import {
+  NestTelemetryInterceptor,
+  traceNestBootstrap,
+} from './utils/nest/nest-telemetry';
+import { SchemaValidationPipe } from './utils/nest/schema-validation.pipe';
+import { swaggerDocumentOptions } from './utils/nest/swagger-document.options';
 import { ApiTrackingInterceptor } from './utils/tracking/api-tracking.interceptor';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 
@@ -25,8 +32,13 @@ const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 async function bootstrap() {
   initGoogleCloudCredentials();
 
-  const app = await NestFactory.create(AppModule);
-  app.use(json({ limit: '5mb' }));
+  const app = await traceNestBootstrap(AppModule.name, () =>
+    NestFactory.create<NestExpressApplication>(
+      AppModule,
+      httpApplicationOptions
+    )
+  );
+  app.useBodyParser('json', { limit: '5mb' });
   const contextStoreService = app.get(ContextStoreService);
 
   const logger = new CustomLogger(
@@ -48,6 +60,7 @@ async function bootstrap() {
   };
   app.use(withContextMiddleWare);
   app.useGlobalInterceptors(
+    new NestTelemetryInterceptor(),
     new ContextRouteParametersInterceptor(contextStoreService),
     app.get(ApiTrackingInterceptor)
   );
@@ -61,7 +74,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+  app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
   // Seulement une v1 pour l'instant
   app.setGlobalPrefix('api/v1', {
@@ -94,7 +107,11 @@ async function bootstrap() {
     })
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(
+    app,
+    config,
+    swaggerDocumentOptions
+  );
   SwaggerModule.setup('api-docs/v1', app, document, {
     swaggerOptions: {
       tagsSorter: 'alpha',
