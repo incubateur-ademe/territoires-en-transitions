@@ -98,3 +98,46 @@ export function computeMaskedQuestionIds(
     [...maskedById.entries()].filter(([, masked]) => masked).map(([id]) => id)
   );
 }
+
+/**
+ * Cherche un cycle de dépendances entre expressions `exprVisible` et le
+ * renvoie sous forme de chemin (`[A, B, A]`), ou `null` s'il n'y en a pas.
+ * Les dépendances vers des questions absentes de la liste sont ignorées.
+ */
+export function findExprVisibleCycle(
+  questions: { id: string; dependencies: string[] }[]
+): string[] | null {
+  const dependenciesById = new Map(
+    questions.map((q) => [q.id, q.dependencies] as const)
+  );
+  const visited = new Set<string>();
+  const stack: string[] = [];
+
+  const visit = (questionId: string): string[] | null => {
+    const cycleStart = stack.indexOf(questionId);
+    if (cycleStart !== -1) {
+      return [...stack.slice(cycleStart), questionId];
+    }
+    if (visited.has(questionId) || !dependenciesById.has(questionId)) {
+      return null;
+    }
+    visited.add(questionId);
+    stack.push(questionId);
+    for (const dependencyId of dependenciesById.get(questionId) ?? []) {
+      const cycle = visit(dependencyId);
+      if (cycle) {
+        return cycle;
+      }
+    }
+    stack.pop();
+    return null;
+  };
+
+  for (const { id } of questions) {
+    const cycle = visit(id);
+    if (cycle) {
+      return cycle;
+    }
+  }
+  return null;
+}

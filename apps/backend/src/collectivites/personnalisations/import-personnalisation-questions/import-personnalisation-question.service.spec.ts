@@ -474,6 +474,28 @@ describe('ImportPersonnalisationQuestionService', () => {
         ).toThrow(/question_choix_z[\s\S]*\n[\s\S]*touristqiue/);
       });
 
+      it('refuse une dépendance circulaire entre expressions de visibilité', () => {
+        expect(() =>
+          service.verifyPersonnalisationQuestionsAndChoix(
+            [
+              {
+                ...buildQuestion('reponse(question_visible, OUI)'),
+                id: 'question_a',
+              },
+              buildQuestion(
+                'si reponse(question_a, OUI) alors FAUX sinon VRAI'
+              ),
+            ],
+            [],
+            [],
+            [],
+            []
+          )
+        ).toThrow(
+          'Les expressions de visibilité forment une dépendance circulaire : question_a → question_visible → question_a'
+        );
+      });
+
       it("signale une erreur de syntaxe par un extrait, sans recopier l'expression", () => {
         expect(() =>
           service.verifyPersonnalisationQuestionsAndChoix(
