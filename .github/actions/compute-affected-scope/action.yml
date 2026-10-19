@@ -37,6 +37,9 @@ outputs:
   run-app-storybook:
     description: Whether the app Storybook build check should run
     value: ${{ steps.compute.outputs.run-app-storybook }}
+  run-runtime-integrations:
+    description: Whether isolated Redis and transactional webhook tests should run
+    value: ${{ steps.compute.outputs.run-runtime-integrations }}
   run-prepare-test-db:
     description: Whether the test database should be prepared
     value: ${{ steps.compute.outputs.run-prepare-test-db }}
@@ -96,6 +99,12 @@ runs:
           run_db_deploy=true
         fi
 
+        run_runtime_integrations=false
+        if has_affected_project backend || has_affected_project tools ||
+          grep -Eq '^(data_layer/sqitch/([^/]+/)?webhooks/|\.github/workflows/(ci|test-runtime-integrations)\.yml$|\.github/actions/(compute-affected-scope|pnpm-prepare|cache/node-modules)/)' <<<"$changed_files"; then
+          run_runtime_integrations=true
+        fi
+
         run_prepare_test_db=false
         if [[ "$run_backend_api" == 'true' || "$run_e2e" == 'true' || "$run_db_deploy" == 'true' ]]; then
           run_prepare_test_db=true
@@ -115,6 +124,7 @@ runs:
         echo "run-e2e=$run_e2e" >> "$GITHUB_OUTPUT"
         echo "run-ui-storybook=$run_ui_storybook" >> "$GITHUB_OUTPUT"
         echo "run-app-storybook=$run_app_storybook" >> "$GITHUB_OUTPUT"
+        echo "run-runtime-integrations=$run_runtime_integrations" >> "$GITHUB_OUTPUT"
         echo "run-prepare-test-db=$run_prepare_test_db" >> "$GITHUB_OUTPUT"
         echo "nx-cloud-token-secret-type=$nx_cloud_token_secret_type" >> "$GITHUB_OUTPUT"
         {

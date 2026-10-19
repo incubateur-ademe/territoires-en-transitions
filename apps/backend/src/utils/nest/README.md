@@ -44,4 +44,6 @@ Les specs `http-security.spec.ts` et `trpc.service.spec.ts` vérifient les origi
 
 La spec `../throttling/rate-limit-storage.service.spec.ts` s'active uniquement avec `RATE_LIMIT_ISOLATED_REDIS_URL`. Cette URL doit désigner un Redis jetable dédié : un test met volontairement ce serveur en pause. Ne pas utiliser le Redis applicatif. Elle vérifie les replicas concurrents, les expirations, l'isolation, la fermeture et la récupération après timeout.
 
+En CI, le workflow `test-runtime-integrations.yml` exécute ces tests Redis puis les tests outbox sur PostgreSQL et Redis propres à ce job. Il ne charge aucun environnement applicatif, secret métier ou fournisseur IA. Les conteneurs sont supprimés à la fin du job. Le job s'active pour les changements backend/tools, les migrations webhooks et sa configuration CI.
+
 Sources : [sécurité HTTP Nest](https://docs.nestjs.com/security/helmet), [CSRF Nest](https://docs.nestjs.com/security/csrf), [frontière proxy Koyeb](https://www.koyeb.com/docs/reference/edge-network), [health checks Koyeb](https://www.koyeb.com/docs/run-and-scale/health-checks).
