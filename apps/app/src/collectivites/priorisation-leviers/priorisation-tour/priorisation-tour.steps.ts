@@ -47,7 +47,8 @@ const toLevierSteps = ({
       title: appLabels.priorisationVisiteDetailLevierTitre,
       content: appLabels.priorisationVisiteDetailLevierDescription,
       placement: 'left',
-      before: async () => select(levierToPrioritizeId),    },
+      before: async () => select(levierToPrioritizeId),
+      blockTargetInteraction: false,    },
     {
       target: resolve('firstActionDeReference'),
       title: appLabels.priorisationVisiteActionsTitre,
