@@ -33,6 +33,7 @@ export const sharedLabels = {
   visiteGuidee: 'Visite guidée',
   visiteGuideePasser: 'Passer la visite',
   visiteGuideeQuitter: 'Quitter la visite',
+  visiteGuideeCommencer: 'Commencer la visite',
   precedent: 'Précédent',
   suivant: 'Suivant',
   terminer: 'Terminer',

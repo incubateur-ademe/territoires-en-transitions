@@ -11,6 +11,8 @@ const STEP_TITLE = "Titre de l'étape";
 
 const STEP_CONTENT = "Contenu de l'étape";
 
+const WELCOME_BADGE = 'Visite guidée · 2 min';
+
 const TOTAL_STEPS = 3;
 
 const CUSTOM_NEXT_LABEL = 'Ouvrir ce levier';
@@ -222,6 +224,58 @@ describe('GuidedTourTooltip', () => {
       hasFinishLabel: hasButton(appLabels.terminer),
       hasStepLabel: hasButton(CUSTOM_NEXT_LABEL),
     }).toEqual({ hasFinishLabel: true, hasStepLabel: false });
+  });
+
+  it("présente l'étape de bienvenue avec son badge, sans compteur ni progression, et un bouton principal propre", () => {
+    render(
+      <GuidedTourTooltip
+        {...toTooltipProps({
+          index: 0,
+          data: {
+            nextLabel: appLabels.visiteGuideeCommencer,
+            welcome: { badge: WELCOME_BADGE },
+          },
+        })}
+      />
+    );
+
+    expect({
+      hasBadge: screen.queryByText(WELCOME_BADGE) !== null,
+      hasCounter: screen.queryByText(toStepLabel(1)) !== null,
+      hasProgress: screen.queryByRole('progressbar') !== null,
+      hasCloseButton: hasButton(appLabels.visiteGuideeQuitter),
+      hasSkipButton: hasButton(appLabels.visiteGuideePasser),
+      hasStartButton: hasButton(appLabels.visiteGuideeCommencer),
+      hasNamedDialog:
+        screen.queryByRole('alertdialog', {
+          name: STEP_TITLE,
+          description: STEP_CONTENT,
+        }) !== null,
+    }).toEqual({
+      hasBadge: true,
+      hasCounter: false,
+      hasProgress: false,
+      hasCloseButton: false,
+      hasSkipButton: true,
+      hasStartButton: true,
+      hasNamedDialog: true,
+    });
+  });
+
+  it("ne compte pas l'étape de bienvenue dans le compteur ni dans la progression", () => {
+    render(
+      <GuidedTourTooltip
+        {...toTooltipProps({ index: 1, data: { welcomeStepCount: 1 } })}
+      />
+    );
+
+    expect({
+      counter: screen.queryByText(
+        appLabels.visiteGuideeEtape({ index: 1, size: TOTAL_STEPS - 1 })
+      ) !== null,
+      progress: toProgress().now,
+      max: toProgress().max,
+    }).toEqual({ counter: true, progress: '1', max: '2' });
   });
 
   it('accepte un contenu fait de blocs sans imbriquer un bloc dans un paragraphe', () => {
