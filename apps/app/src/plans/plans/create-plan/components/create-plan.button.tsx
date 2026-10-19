@@ -6,7 +6,7 @@ import { CreatePlanModal } from '../create-plan.modal';
 
 export const CreatePlanButton = ({
   collectiviteId,
-  size = 'xs',
+  size = 'sm',
 }: {
   collectiviteId: number;
   size?: ButtonSize;
