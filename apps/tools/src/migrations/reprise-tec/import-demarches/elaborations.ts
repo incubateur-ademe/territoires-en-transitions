@@ -10,7 +10,7 @@ const { EN_ELABORATION, INSTRUIT, PUBLIE } = DemarchePcaetStatusEnum;
  * Règles, dans l'ordre :
  * - un seul dossier en élaboration par collectivité, le plus récent ; les autres sont écartés ;
  * - une élaboration créée avant l'adoption d'un PCAET publié de sa collectivité en est le doublon : écartée ;
- * - une élaboration seule, lancée avant l'approbation du suivi ADEME, arrive publiée, datée par le suivi.
+ * - une élaboration seule, lancée avant l'approbation du suivi SGPE, arrive publiée, datée par le suivi.
  */
 export const calculateElaborations = (dossiers: readonly Dossier[]) => {
   const parCollectivite = new Map<number, Dossier[]>();

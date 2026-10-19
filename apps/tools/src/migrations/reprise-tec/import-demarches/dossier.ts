@@ -21,7 +21,7 @@ type Statut = typeof EN_ELABORATION | typeof INSTRUIT | typeof PUBLIE;
 /**
  * Qui a décidé l'obligation, dans l'ordre de la règle :
  * - `declaration` : le dossier T&C le dit lui-même ;
- * - `suivi` : le suivi ADEME le dit ;
+ * - `suivi` : le suivi SGPE le dit ;
  * - `seuil` : absent du suivi, le seuil de population du domaine tranche ;
  * - `defaut` : rien de tout ça, volontaire.
  */
@@ -29,7 +29,7 @@ type SourceObligation = 'declaration' | 'suivi' | 'seuil' | 'defaut';
 
 /**
  * D'où vient la date d'adoption d'un dossier publié :
- * - `suivi` : la date d'approbation du suivi ADEME ;
+ * - `suivi` : la date d'approbation du suivi SGPE ;
  * - `repli` : faute de mieux, la date de publication.
  */
 type SourceAdoption = 'suivi' | 'repli';
@@ -37,7 +37,7 @@ type SourceAdoption = 'suivi' | 'repli';
 export type Dossier = {
   tecId: number;
   misAJourLe: string | null;
-  /** L'approbation du suivi ADEME de la collectivité, que lit `calculateElaborations`. */
+  /** L'approbation du suivi SGPE de la collectivité, que lit `calculateElaborations`. */
   approbationSuivi: string | null;
   /** Les dates saisies avant l'an 2000, lues 20AA ou ignorées, pour le rapport. */
   datesRevues: string[];
@@ -251,7 +251,7 @@ const calculateDates = (
 
 /**
  * La date de transmission pour avis, contrôlée par l'avis de l'État du suivi
- * ADEME : un avis ne précède pas la transmission.
+ * SGPE : un avis ne précède pas la transmission.
  * - l'avis du suivi est à moins d'un an avant la date de T&C : la transmission
  *   est ramenée à la plus précoce des dates de T&C qui ne le suit pas, à défaut
  *   au jour de l'avis ;
@@ -341,7 +341,7 @@ const calculateAdoptedAt = (
 };
 
 /**
- * Règle : la déclaration du dossier, sinon le suivi ADEME, sinon le seuil de
+ * Règle : la déclaration du dossier, sinon le suivi SGPE, sinon le seuil de
  * population du domaine. Une valeur inconnue dans le suivi arrête le script.
  */
 const calculateObligation = (
@@ -364,7 +364,7 @@ const calculateObligation = (
   }
   if (valeur !== '') {
     throw new Error(
-      `Obligation inconnue dans le suivi ADEME : « ${valeur} » (SIREN ${porteur?.siren}).`
+      `Obligation inconnue dans le suivi SGPE : « ${valeur} » (SIREN ${porteur?.siren}).`
     );
   }
 

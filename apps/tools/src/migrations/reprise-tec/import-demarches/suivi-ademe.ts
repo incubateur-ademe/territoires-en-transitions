@@ -1,4 +1,4 @@
-/** Le suivi ADEME : l'obligation, l'avis de l'État et l'approbation de chaque collectivité, par SIREN. */
+/** Le suivi SGPE : l'obligation, l'avis de l'État et l'approbation de chaque collectivité, par SIREN. */
 
 import { parse } from 'csv-parse/sync';
 import { readFileSync } from 'fs';
@@ -11,7 +11,7 @@ export type LigneSuivi = {
 
 export type SuiviAdeme = ReturnType<typeof readSuiviAdeme>;
 
-/** Lit le suivi ADEME (CSV). */
+/** Lit le suivi SGPE (CSV). */
 export const readSuiviAdeme = (chemin: string) => {
   const lignes = parse(readFileSync(chemin, 'utf8'), {
     columns: true,

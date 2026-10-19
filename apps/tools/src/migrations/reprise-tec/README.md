@@ -48,8 +48,8 @@ Rejouable : chaque table de copie est recréée à neuf. `correspondance` et
 
 ### 2. Importer les dossiers
 
-Écrit une ligne de `demarche` par dossier repris. Lit la copie et le suivi de
-l'obligation PCAET tenu par l'ADEME, un export CSV qui n'est pas dans le dépôt.
+Écrit une ligne de `demarche` par dossier repris. Lit la copie et le suivi SGPE
+de l'obligation PCAET, un export CSV qui n'est pas dans le dépôt.
 Chaque dossier écrit laisse une ligne dans `correspondance` et dans
 `lignes_ecrites` ; chaque dossier écarté, une ligne dans `ecarts` avec son motif.
 Avant toute écriture, le script vérifie que chaque ligne lue finit écrite ou
@@ -71,7 +71,7 @@ des avis rendus (elles tombent le jour du courrier d'avis déposé), pas celles
 de l'envoi du dossier. Un dossier en élaboration n'a jamais de date de
 transmission : la clôture de nuit le passerait en instruit.
 
-Le suivi ADEME contrôle cette date : l'avis de l'État qu'il porte ne peut pas
+Le suivi SGPE contrôle cette date : l'avis de l'État qu'il porte ne peut pas
 la précéder. S'il la précède de moins d'un an, la transmission est ramenée à la
 plus précoce des dates de T&C qui ne suit pas l'avis, à défaut au jour de
 l'avis. S'il la précède de plus d'un an, la date de T&C est gardée : le suivi
@@ -84,7 +84,7 @@ chiffres, de 10 à 99, est lue 20AA (`0023-01-25` devient 2023-01-25) ; les
 autres (`0002-12-01`, `0217-03-02`) sont traitées comme absentes. Le rapport
 nomme chaque dossier concerné.
 
-Un dossier en élaboration dans T&C est revu avec le suivi ADEME et les autres
+Un dossier en élaboration dans T&C est revu avec le suivi SGPE et les autres
 dossiers de sa collectivité : créé avant l'adoption d'un PCAET publié de la
 même collectivité, c'en est le doublon, écarté (`elaboration_doublon`) ; seul
 dans sa collectivité et lancé avant l'approbation du suivi, il a été adopté
