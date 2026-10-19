@@ -80,14 +80,13 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     ...collectiviteAdminPermissions,
 
     'collectivites.mutate',
+    'plans.import.mutate',
     'plans.fiches.import_in_parallel',
     'plans.fiches.import_resume',
     'referentiels.labellisations.mutate_documents',
     'shared.actions-de-reference.mutate',
     'utils.banner.mutate',
     'utils.mcp.read',
-    'utils.backoffice.read',
-    'utils.backoffice.mutate',
   ],
   [PlatformRole.ADEME]: [
     ...visiteurVerifiePermissions,
