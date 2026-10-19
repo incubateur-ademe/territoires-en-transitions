@@ -1,7 +1,12 @@
 import { z } from 'zod';
+import {
+  httpSecurityConfiguration,
+  httpUrlSchema,
+} from '@tet/backend/utils/config/http-security.configuration';
 
 export const toolsAutomationApiConfigurationSchema = z
   .object({
+    ...httpSecurityConfiguration,
     CRISP_TOKEN_IDENTIFIER: z
       .string()
       .min(1)
@@ -35,7 +40,7 @@ export const toolsAutomationApiConfigurationSchema = z
       .min(1)
       .describe("Token pour l'authentification à l'API TeT"),
     APP_URL: z
-      .preprocess((value) => value || undefined, z.url().optional())
+      .preprocess((value) => value || undefined, httpUrlSchema.optional())
       .describe("URL de l'app, pour les liens envoyés dans Crisp"),
     TET_API_URL: z.string().min(1).describe("Url de l'API TeT"),
     // Requis sauf si QUEUE_REDIS_URL est fourni (cf. refine), comme côté backend.

@@ -1,6 +1,8 @@
 // WARNING: Do these imports first
 import './utils/telemetry-init';
 // Other imports
+import { configureHttpSecurity } from './utils/nest/http-security';
+import ConfigurationService from './utils/config/configuration.service';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -38,6 +40,19 @@ async function bootstrap() {
       httpApplicationOptions
     )
   );
+  const configuration = app.get(ConfigurationService);
+  configureHttpSecurity(
+    app,
+    {
+      APP_URL: configuration.get('APP_URL'),
+      SITE_URL: configuration.get('SITE_URL'),
+      HTTP_ALLOWED_ORIGINS: configuration.get('HTTP_ALLOWED_ORIGINS'),
+      TRUST_PROXY_HOPS: configuration.get('TRUST_PROXY_HOPS'),
+    },
+    process.env.NODE_ENV === 'production'
+  );
+  app.enableShutdownHooks(['SIGTERM', 'SIGINT']);
+
   app.useBodyParser('json', { limit: '5mb' });
   const contextStoreService = app.get(ContextStoreService);
 
@@ -67,18 +82,11 @@ async function bootstrap() {
 
   const { httpAdapter } = app.get(HttpAdapterHost);
 
-  // When credentials: 'include' is used in the tRPC client, CORS requires a specific
-  // origin (not '*'). origin: true reflects the request's Origin header.
-  app.enableCors({
-    origin: true, // Reflect request origin (e.g. http://localhost:3000)
-    credentials: true,
-  });
-
   app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
   // Seulement une v1 pour l'instant
   app.setGlobalPrefix('api/v1', {
-    exclude: ['version', 'throw'],
+    exclude: ['version', 'throw', 'health/live', 'health/ready'],
   });
 
   app.useGlobalFilters(

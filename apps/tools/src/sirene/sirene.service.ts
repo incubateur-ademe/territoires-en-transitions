@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { HttpClient, InjectHttpClient } from '@nestjs/http-client';
 import { chunk, flatten } from 'es-toolkit';
-import { ZodSchema } from 'zod';
-import ConfigurationService from '../config/configuration.service';
+import { ZodType } from 'zod';
 import { GetNICResponse, getNICResponseSchema } from './sirene.model';
 
 // l'API autorise au maximum 1000 éléments par réponse
@@ -11,28 +11,18 @@ const MAX_RESULTS = 1000;
 export class SireneService {
   private logger = new Logger(SireneService.name);
 
-  constructor(private readonly configurationService: ConfigurationService) {}
+  constructor(@InjectHttpClient('sirene') private readonly http: HttpClient) {}
 
   /** Fait un appel POST à l'API */
   private async post<T>(
     endpoint: string,
     body: Record<string, string>,
-    schema: ZodSchema
+    schema: ZodType<T>
   ) {
-    const response = await fetch(
-      `${this.configurationService.get('SIRENE_API_URL')}/${endpoint}`,
-      {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded',
-          accept: 'application/json',
-          'accept-encoding': 'gzip',
-          'X-INSEE-Api-Key-Integration':
-            this.configurationService.get('SIRENE_API_KEY'),
-        },
-        body: new URLSearchParams(body).toString(),
-      }
-    );
+    const response = await this.http.post(endpoint, {
+      body: new URLSearchParams(body),
+      responseType: 'json',
+    });
 
     if (!response.ok) {
       this.logger.log(
@@ -41,8 +31,7 @@ export class SireneService {
       return null;
     }
 
-    const content = await response.json();
-    return schema.parse(content) as T;
+    return schema.parse(response.data);
   }
 
   /**

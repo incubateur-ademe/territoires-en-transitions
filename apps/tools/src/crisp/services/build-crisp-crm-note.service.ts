@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDrizzle } from '@nestjs/drizzle';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
@@ -14,7 +15,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
-import { DatabaseService } from '../../utils/database/database.service';
+import type { Database } from '../../utils/database/database.type';
 
 const REFERENTIELS = ['cae', 'eci', 'te'] as const;
 type Referentiel = (typeof REFERENTIELS)[number];
@@ -154,7 +155,7 @@ export class BuildCrispCrmNoteService {
   private readonly logger = new Logger(BuildCrispCrmNoteService.name);
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    @InjectDrizzle() private readonly db: Database,
     private readonly airtableService: AirtableService,
     private readonly configurationService: ConfigurationService
   ) {}
@@ -165,7 +166,7 @@ export class BuildCrispCrmNoteService {
   }
 
   private async getCrmNoteData(email: string): Promise<CrmNoteData> {
-    const db = this.databaseService.db;
+    const db = this.db;
 
     const [user] = await db
       .select({

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDrizzle } from '@nestjs/drizzle';
 import { membreTable } from '@tet/backend/collectivites/membres/membre.table';
 import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -12,7 +13,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { and, desc, eq, ne, sql } from 'drizzle-orm';
 import { ToolsAutomationApiConfigurationType } from '../config/configuration.model';
 import ConfigurationService from '../config/configuration.service';
-import { DatabaseService } from '../utils/database/database.service';
+import type { Database } from '../utils/database/database.type';
 import { AirtableRowInsertDto } from './airtable-row-insert.dto';
 import { AirtableService } from './airtable.service';
 
@@ -168,7 +169,7 @@ export class AirtableCrmSyncService {
   constructor(
     private readonly configurationService: ConfigurationService,
     private readonly airtableService: AirtableService,
-    private readonly databaseService: DatabaseService
+    @InjectDrizzle() private readonly db: Database
   ) {}
 
   /**
@@ -265,7 +266,7 @@ export class AirtableCrmSyncService {
    * sur `dcp`, sans `utilisateur.dcp_display` ni `is_service_role() et avec `created_at` en plus`.
    */
   private async fetchPersonnesRows(): Promise<CrmSyncRow[]> {
-    const rows = await this.databaseService.db
+    const rows = await this.db
       .select({
         key: sql<string>`${dcpTable.prenom} || ' ' || ${dcpTable.nom}`,
         user_id: dcpTable.id,
@@ -310,7 +311,7 @@ export class AirtableCrmSyncService {
     statsViewName: 'stats.crm_indicateurs' | 'stats.crm_plans',
     mergeFields: readonly string[]
   ): Promise<CrmSyncRow[]> {
-    const result = await this.databaseService.db.execute<CrmSyncRow>(
+    const result = await this.db.execute<CrmSyncRow>(
       sql.raw(`select * from ${statsViewName}`)
     );
     return coerceNumericColumns(result.rows, result.fields, mergeFields);
@@ -330,7 +331,7 @@ export class AirtableCrmSyncService {
    * labellisation par référentiel.
    */
   private async fetchCollectivitesRows(): Promise<CrmSyncRow[]> {
-    const db = this.databaseService.db;
+    const db = this.db;
 
     const lastLabellisation = (referentiel: 'cae' | 'eci') =>
       db
@@ -425,7 +426,7 @@ export class AirtableCrmSyncService {
    * retourne 0 ligne en contexte worker dans cet env Supabase.
    */
   private async fetchLabellisationsRows(): Promise<CrmSyncRow[]> {
-    const rows = await this.databaseService.db
+    const rows = await this.db
       .select({
         id: labellisationTable.id,
         collectivite_key: sql<string>`${collectiviteTable.nom} || ' (' || ${collectiviteTable.id} || ')'`,
@@ -455,7 +456,7 @@ export class AirtableCrmSyncService {
    * invisibles côté CRM.
    */
   private async fetchDroitsRows(): Promise<CrmSyncRow[]> {
-    const rows = await this.databaseService.db
+    const rows = await this.db
       .select({
         key: sql<string>`${utilisateurCollectiviteAccessTable.collectiviteId} || ' ' || ${utilisateurCollectiviteAccessTable.userId}`,
         user_id: utilisateurCollectiviteAccessTable.userId,

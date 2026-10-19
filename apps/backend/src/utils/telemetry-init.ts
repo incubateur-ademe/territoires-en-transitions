@@ -1,6 +1,12 @@
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { initErrorTracking } from './error-tracking/error-tracking.client';
+import {
+  initErrorTracking,
+  shutdownErrorTracking,
+} from './error-tracking/error-tracking.client';
+import { registerTelemetryShutdown } from './nest/telemetry-shutdown';
+
+let sdk: NodeSDK | undefined;
 
 /**
  * Traces et logs OpenTelemetry, envoyés en OTLP à PostHog.
@@ -34,7 +40,7 @@ if (process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
     process.env.OTEL_EXPORTER_OTLP_HEADERS = `Authorization=Bearer ${process.env.POSTHOG_KEY}`;
   }
 
-  const sdk = new NodeSDK({
+  sdk = new NodeSDK({
     instrumentations: [
       getNodeAutoInstrumentations({
         // Une span par accès disque : bruit sans valeur, et coûteux
@@ -45,20 +51,22 @@ if (process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
     ],
   });
   sdk.start();
-
-  // Les traces et logs partent par lots : sans flush à l'arrêt (redéploiement),
-  // le dernier lot, souvent celui qui entoure une erreur, serait perdu. Le
-  // signal est ensuite relancé pour garder l'arrêt par défaut du process.
-  for (const signal of ['SIGTERM', 'SIGINT'] as const) {
-    process.once(signal, () => {
-      sdk
-        .shutdown()
-        .catch(() => undefined)
-        .finally(() => process.kill(process.pid, signal));
-    });
-  }
 }
 
 // Error tracking PostHog, avec autocapture des erreurs non gérées : à créer
 // avant le bootstrap pour couvrir aussi un échec au démarrage.
 initErrorTracking();
+
+registerTelemetryShutdown(async () => {
+  const results = await Promise.allSettled([
+    sdk?.shutdown(),
+    shutdownErrorTracking(),
+  ]);
+  const failures = results.filter((result) => result.status === 'rejected');
+  if (failures.length) {
+    throw new AggregateError(
+      failures.map((result) => result.reason),
+      'Telemetry shutdown failed'
+    );
+  }
+});

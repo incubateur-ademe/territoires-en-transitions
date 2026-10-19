@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseService } from '../utils/database/database.service';
+import { getDrizzleToken } from '@nestjs/drizzle';
 import { PostHogClientService } from './posthog-client.service';
 import { PostHogCollectivitesSyncService } from './posthog-collectivites-sync.service';
 
@@ -45,7 +45,7 @@ describe('PostHogCollectivitesSyncService', () => {
     groupIdentify: ReturnType<typeof vi.fn>;
     flush: ReturnType<typeof vi.fn>;
   };
-  let databaseService: { db: { select: ReturnType<typeof vi.fn> } };
+  let db: { select: ReturnType<typeof vi.fn> };
   let selectRows: unknown[];
   let whereCalls: unknown[][];
 
@@ -75,8 +75,8 @@ describe('PostHogCollectivitesSyncService', () => {
       groupIdentify: vi.fn(),
       flush: vi.fn().mockResolvedValue(undefined),
     };
-    databaseService = {
-      db: { select: vi.fn().mockImplementation(() => buildDrizzleChain()) },
+    db = {
+      select: vi.fn().mockImplementation(() => buildDrizzleChain()),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -84,7 +84,7 @@ describe('PostHogCollectivitesSyncService', () => {
     })
       .useMocker((token) => {
         if (token === PostHogClientService) return posthogClient;
-        if (token === DatabaseService) return databaseService;
+        if (token === getDrizzleToken()) return db;
       })
       .compile();
 
@@ -102,7 +102,7 @@ describe('PostHogCollectivitesSyncService', () => {
     const result = await service.process();
 
     expect(result).toEqual({ synced: 0, skipped: true });
-    expect(databaseService.db.select).not.toHaveBeenCalled();
+    expect(db.select).not.toHaveBeenCalled();
     expect(posthogClient.groupIdentify).not.toHaveBeenCalled();
   });
 

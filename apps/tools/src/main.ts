@@ -1,6 +1,8 @@
 // WARNING: Do these imports first
 import '@tet/backend/utils/telemetry-init';
 // Other imports
+import { configureHttpSecurity } from '@tet/backend/utils/nest/http-security';
+import ConfigurationService from './config/configuration.service';
 import { Logger } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
@@ -27,6 +29,19 @@ async function bootstrap() {
       httpApplicationOptions
     )
   );
+  const configuration = app.get(ConfigurationService);
+  configureHttpSecurity(
+    app,
+    {
+      APP_URL: configuration.get('APP_URL'),
+      SITE_URL: configuration.get('SITE_URL'),
+      HTTP_ALLOWED_ORIGINS: configuration.get('HTTP_ALLOWED_ORIGINS'),
+      TRUST_PROXY_HOPS: configuration.get('TRUST_PROXY_HOPS'),
+    },
+    process.env.NODE_ENV === 'production'
+  );
+  app.enableShutdownHooks(['SIGTERM', 'SIGINT']);
+
   app.useGlobalInterceptors(new NestTelemetryInterceptor());
   const contextStoreService = app.get(ContextStoreService);
   const logger = new CustomLogger(
@@ -46,12 +61,11 @@ async function bootstrap() {
 
   const { httpAdapter } = app.get(HttpAdapterHost);
 
-  app.enableCors();
   app.useGlobalPipes(new SchemaValidationPipe(contextStoreService));
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix, {
-    exclude: ['version'],
+    exclude: ['version', 'health/live', 'health/ready'],
   });
 
   app.useGlobalFilters(

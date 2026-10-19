@@ -9,7 +9,7 @@ date: 2026-10-19
 
 Faire fonctionner le backend et tools avec NestJS 12.2, adopter les API natives adaptées à leurs usages et retirer les intégrations dont la compatibilité déclarée ne couvre pas cette version. Les contrats REST, les schémas Zod métier et le fonctionnement du monorepo restent les points de référence.
 
-Les décisions D01 à D14 sont implémentées dans la [PR 5529](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5529) et soumises à revue. Les propositions d’adoption de packages officiels constituent des suites à arbitrer ; elles ne sont pas implémentées dans cette PR. Le déploiement reste à effectuer après validation de la PR.
+La [PR 5529](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5529) porte les décisions D01 à D14. La branche empilée `feat/nestjs-official-integrations`, basée sur `chore/nestjs-12.2`, porte D15 à D19 : disponibilité, sécurité HTTP, clients HTTP, Drizzle dans tools et outbox. Les packages différés restent des décisions explicites ; ils ne sont pas ajoutés aux dépendances. Le déploiement nécessite la migration SQL et la configuration des origines décrites ci-dessous.
 
 ## Périmètre et références
 
@@ -17,7 +17,7 @@ Les décisions D01 à D14 sont implémentées dans la [PR 5529](https://github.c
 - Cible demandée : NestJS **12.2.0**. Les versions exactes des dépendances associées sont maintenues dans [package.json](../../package.json) et [pnpm-lock.yaml](../../pnpm-lock.yaml).
 - Applications : [backend](../../apps/backend) et [tools](../../apps/tools), leurs contrôleurs, configuration, tests et outils de compilation.
 - Recherche de compatibilité : 19 octobre 2026, sur les publications officielles et les API des versions installées. Le guide et les déclarations de compatibilité peuvent évoluer après cette date.
-- La migration ne change ni le schéma PostgreSQL, ni les données, ni l’architecture tRPC, ni les domaines métier. Elle ne déclenche aucun traitement IA réel.
+- La pile conserve tRPC et les domaines métier. L’outbox ajoute le schéma PostgreSQL `nest_outbox` via Sqitch et reprend les webhooks en attente. Les validations automatisées ne déclenchent aucun traitement IA réel.
 
 La branche 11 reste maintenue en parallèle de la branche 12. Le correctif 11.2.7 ne demande pas d’étape intermédiaire pour ces applications : ses changements concernent la robustesse WebSocket. Le parcours utile couvre les changements de 12.0, 12.1 et 12.2. Voir le [diff 11.2.6 → 11.2.7](https://github.com/nestjs/nest/compare/v11.2.6...v11.2.7), le [guide de migration](https://docs.nestjs.com/migration-guide) et les publications [12.0](https://github.com/nestjs/nest/releases/tag/v12.0.0), [12.1](https://github.com/nestjs/nest/releases/tag/v12.1.0), [12.2](https://github.com/nestjs/nest/releases/tag/v12.2.0).
 
@@ -167,37 +167,48 @@ Pour les erreurs de forme `http-errors` qui sont des `Error`, le filtre conserve
 | Nouvel ordre des hooks de cycle de vie                    | Audit des initialisations PDF, des files et checkpoints, et des hooks de fermeture DB/PostHog. Aucun correctif d’ordre identifié dans ces usages ; le démarrage en environnement reste un contrôle de déploiement.       |
 | Héritage de `@Optional()`                                 | La correction livrée en 12.1 est prise en compte. Le sous-type LLM concerné redéclare déjà son paramètre optionnel ; aucun contournement fondé sur l’avertissement initial du guide n’est ajouté.                        |
 | Nouveaux paramètres structurés de ConsoleLogger           | Le logger pino personnalisé reste utilisé. Aucun changement de format de logs imposé par migration vers ConsoleLogger.                                                                                                   |
-| GraphQL, NATS, WebSockets et autres intégrations absentes | Pas d’ajout de dépendance ou de configuration sans besoin identifié. Terminus fait l’objet d’une proposition ci-dessous pour améliorer les sondes existantes.                                                            |
+| GraphQL, NATS, WebSockets et autres intégrations absentes | Pas d’ajout de dépendance ou de configuration sans besoin identifié. Terminus fournit les sondes de disponibilité décrites dans D15.                                                                                     |
 | Tests et évaluations IA                                   | Toute vérification automatisée conserve un faux LLM. Aucun endpoint, job ou script n’est lancé avec un fournisseur payant réel.                                                                                          |
 
-## Propositions d’adoption des packages officiels
+## Adoption des packages officiels
 
-**Priorités proposées : sondes et arrêt du service, sécurité HTTP, puis pilotes du client HTTP, de Drizzle et de l’outbox.** L’objectif est de réduire des risques observables et la maintenance des intégrations. Un package officiel apporte un point d’intégration maintenu par Nest ; son ancienneté, ses garanties et son adéquation aux contrats du projet restent déterminantes.
+L’inventaire du 19 octobre 2026 couvre les intégrations de données, HTTP, sécurité, fiabilité, mail, stockage et observabilité des [dépôts officiels Nest](https://github.com/orgs/nestjs/repositories). Les versions exactes et leur résolution sont maintenues dans [package.json](../../package.json) et [pnpm-lock.yaml](../../pnpm-lock.yaml). Les nouvelles intégrations `0.x` ne sont pas des prereleases, mais leur faible ancienneté justifie des périmètres limités et des tests de panne.
 
-L’inventaire du 19 octobre 2026 couvre les intégrations de données, HTTP, sécurité, fiabilité, mail, stockage et observabilité des [dépôts officiels Nest](https://github.com/orgs/nestjs/repositories). Les versions citées sont celles évaluées, à revérifier avant adoption. Le projet utilise Node 24 et Nest 12.2 : les candidats ci-dessous couvrent cette combinaison dans leurs contraintes déclarées. Les nouvelles intégrations `0.x` ne portent pas de suffixe prerelease, mais disposent de quelques semaines de recul seulement.
+### D15 Disponibilité et arrêt coordonné
 
-### Priorités et périmètres
+**Choix.** `@nestjs/terminus` fournit `/health/live` sans accès réseau et `/health/ready` avec PostgreSQL et Redis. Chaque indicateur dispose d’une seconde ; les vérifications simultanées partagent la même opération en cours. Une requête SQL expirée détruit sa connexion ; une acquisition tardive la restitue sans lancer de requête. Les réponses restent minimales et n’exposent pas les erreurs des pilotes.
 
-| Proposition                                         | Gain dans le projet                                                                                                                                                                     | Périmètre recommandé et coût relatif                                                                                                                                                                                                                                                                                                                                                                     |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P1 — `@nestjs/terminus`**                         | Les `HEALTHCHECK` de backend et tools interrogent `/version` : HTTP peut répondre alors que PostgreSQL ou Redis est indisponible.                                                       | Ajouter une sonde de disponibilité avec délais bornés et une sonde de vie indépendante des services externes. Coût moyen, car l’arrêt et la configuration du déploiement font partie du travail. [Documentation](https://docs.nestjs.com/recipes/terminus), [version évaluée 12.1.0](https://registry.npmjs.org/@nestjs/terminus/12.1.0).                                                                |
-| **P1 — renforcer `@nestjs/throttler` déjà présent** | Les compteurs sont en mémoire, donc propres à chaque instance. L’extraction d’IP tRPC lit le premier `X-Forwarded-For`, que le code décrit comme falsifiable.                           | Définir les proxies de confiance et partager les compteurs si plusieurs instances servent le trafic. Vérifier REST et tRPC séparément. L’adaptateur Redis cité par Nest est communautaire et doit être évalué. Coût moyen. [Documentation](https://docs.nestjs.com/security/rate-limiting), [code actuel](../../apps/backend/src/utils/trpc/trpc.service.ts).                                            |
-| **P2 — pilote `@nestjs/http-client`**               | Plusieurs intégrations utilisent `fetch` directement sans délai explicite. Des clients nommés peuvent centraliser origine, authentification, annulation et erreurs réseau.              | Commencer par Calendly et Sirene, garder les validations Zod et les résultats métier. Configurer explicitement le délai : sa valeur par défaut est zéro. Vérifier la politique de retry par méthode ; un POST n’est pas relancé par défaut. Coût moyen. [Documentation](https://docs.nestjs.com/application/http-client), [version évaluée 0.0.2](https://registry.npmjs.org/@nestjs/http-client/0.0.2). |
-| **P2 — pilote `@nestjs/drizzle`**                   | Les deux `DatabaseService` créent et ferment manuellement leur pool. Le module ajoute notamment des listeners d’erreurs des connexions et évite la fermeture multiple d’un même client. | Migrer d’abord tools, puis backend. Retirer la couche de simple délégation dans chaque application migrée, en gardant le `TransactionManager` métier. Coût moyen pour tools, plus élevé pour backend en raison des nombreuses injections et fixtures. [Documentation](https://docs.nestjs.com/data/drizzle), [version évaluée 0.0.2](https://registry.npmjs.org/@nestjs/drizzle/0.0.2).                  |
-| **P2 — prototype `@nestjs/outbox`**                 | L’enregistrement PostgreSQL des webhooks et leur publication Redis sont deux opérations distinctes. Une panne intermédiaire peut laisser un message sans job.                           | Écrire l’événement dans la transaction métier, puis le publier vers BullMQ par un relais. Conserver BullMQ. Coût moyen à élevé : transactions appelantes, schéma Sqitch, reprise et suivi des échecs. [Documentation](https://docs.nestjs.com/reliability/outbox), [version évaluée 0.1.2](https://registry.npmjs.org/@nestjs/outbox/0.1.2).                                                             |
-| **P3 — `@nestjs/resilience` ciblé**                 | Un circuit breaker et une limite de concurrence peuvent protéger les workers d’un fournisseur durablement indisponible.                                                                 | Après le pilote HTTP, ajouter uniquement les politiques manquantes aux destinations qui en ont besoin. Éviter de cumuler retries HTTP, resilience et les dix tentatives BullMQ des webhooks. Coût moyen. [Documentation](https://docs.nestjs.com/reliability/resilience), [version évaluée 0.0.2](https://registry.npmjs.org/@nestjs/resilience/0.0.2).                                                  |
+Les hooks SIGTERM/SIGINT de Nest pilotent l’arrêt : refus des nouvelles requêtes par `return503OnClosing`, arrêt du relais outbox, drainage des workers, fin des requêtes HTTP, fermeture des connexions puis flush OpenTelemetry/PostHog. Le module de cycle de vie est importé en premier pour que son hook global de télémétrie s’exécute en dernier.
 
-P1 désigne les premiers travaux proposés ; P2 demande un pilote avant généralisation ; P3 dépend d’un besoin plus ciblé. La priorité du problème peut être élevée même lorsque l’adoption du package reste conditionnelle.
+**Exploitation.** Docker et Koyeb interrogent `/health/live`. Koyeb utilise le même contrôle au démarrage et pour décider des redémarrages : lui donner une dépendance PostgreSQL provoquerait des redémarrages pendant une panne partagée. `/health/ready` sert au contrôle après déploiement et à la supervision des dépendances. [Code](../../apps/backend/src/utils/health/runtime-health.module.ts), [Terminus](https://docs.nestjs.com/recipes/terminus), [contrôles Koyeb](https://www.koyeb.com/docs/run-and-scale/health-checks).
 
-### Conditions des premiers lots
+### D16 Protections HTTP natives et quotas partagés
 
-**Sondes et arrêt.** Réutiliser les connexions PostgreSQL et Redis pour la disponibilité, sans ajouter un autre ORM. Les indicateurs personnalisés de Terminus suffisent. Borner aussi l’acquisition de connexion et la requête DB : le timeout d’une sonde ne garantit pas l’annulation effective de l’I/O. Conserver une réponse minimale, sans exposer les détails de connexion. Le [bootstrap](../../apps/backend/src/main.ts) n’active pas les hooks de signaux, et [OpenTelemetry](../../apps/backend/src/utils/telemetry-init.ts) gère déjà SIGTERM/SIGINT avec réémission : coordonner la mise hors trafic, le drainage HTTP/BullMQ, la fermeture des pools et le flush des traces. Adapter les sondes à la sémantique du déploiement ; une panne DB ne doit pas provoquer une boucle de redémarrages inutile.
+**Choix.** Les deux applications configurent `useSecurityHeaders()` et `enableCsrfProtection()` avant leurs middlewares, y compris tRPC. CORS et CSRF partagent la liste explicite des origines `APP_URL`, `SITE_URL` et `HTTP_ALLOWED_ORIGINS`. Les appels serveur sans `Origin` restent possibles ; les requêtes navigateur avec cookies provenant d’une origine non autorisée sont refusées. Swagger et Bull Board utilisent les en-têtes natifs sans désactiver globalement la CSP.
 
-**Sécurité HTTP native.** Prévoir un lot dédié à `useSecurityHeaders()` et `enableCsrfProtection()`, disponibles dans Nest 12.1 sans nouvelle dépendance. Le [CORS actuel](../../apps/backend/src/main.ts) reflète toutes les origines avec `credentials: true` : définir les origines navigateur autorisées et les clients API attendus avant de le restreindre. Tester tRPC avec cookies, OIDC, Swagger, Bull Board et les domaines de prévisualisation. Les origines CORS ne deviennent pas automatiquement des origines CSRF de confiance ; le contrôle CSRF ignore `X-Forwarded-Host`. Ces contraintes imposent de vérifier les en-têtes réellement transmis par le proxy. [En-têtes de sécurité](https://docs.nestjs.com/security/helmet), [CSRF](https://docs.nestjs.com/security/csrf).
+`TRUST_PROXY_HOPS` vaut zéro en connexion directe et un derrière Koyeb, qui certifie la dernière adresse `X-Forwarded-For`. tRPC utilise `req.ip` et la normalisation IPv6 de throttler, puis le verdict `isBlocked`. Les compteurs REST et tRPC sont partagés entre instances via Redis avec des clés distinctes par contrat de quota. Une indisponibilité Redis ne permet pas de contourner un quota ; les opérations sont bornées et ne sont pas stockées dans une file hors ligne.
 
-**Drizzle.** Le package a été publié pour la première fois le 23 septembre 2026 ; sa version évaluée accepte Drizzle `>=0.35.0`, donc le `0.45.2` du dépôt convient. Les exemples de documentation utilisant Drizzle 1 RC n’imposent pas cette montée de version. Conserver les options `pg` existantes : taille des pools, délais, `application_name` et connexion/TLS. Garder Sqitch, les schémas, les droits SQL/RLS et le [contrat transactionnel `Result`](../../apps/backend/src/utils/transaction/transaction-manager.service.ts). Vérifier l’isolation des pools entre applications de test et les déconnexions pendant une transaction. La [gestion des erreurs de connexion](https://github.com/nestjs/drizzle/blob/0.0.2/lib/common/drizzle.utils.ts) est un gain concret, sans garantie de réussite des requêtes pendant une panne. Retirer aussi des deux `DatabaseService` le log de l’URL PostgreSQL complète hors production : cette valeur peut contenir des identifiants, indépendamment du choix d’adaptateur.
+**Dépendances.** `@nestjs/throttler` est conservé. Son adaptateur `@nestjs-redis/throttler-storage` est **communautaire**, avec compatibilité déclarée Nest 12 et node-redis 6 ; il est validé avec Redis réel. Aucun package Helmet/CSRF supplémentaire n’est nécessaire. Les paramètres TLS et certificat CA réutilisent ceux des files existantes. [Configuration et exploitation](../../apps/backend/src/utils/nest/README.md), [rate limiting](https://docs.nestjs.com/security/rate-limiting), [sécurité native](https://docs.nestjs.com/security/helmet), [CSRF](https://docs.nestjs.com/security/csrf), [proxy Koyeb](https://www.koyeb.com/docs/reference/edge-network).
 
-**Outbox et webhooks.** Le [service de webhooks](../../apps/backend/src/utils/webhooks/webhook.service.ts) fait un `INSERT` puis `addBulk`. Certains appels métier notifient après commit, d’autres depuis une transaction externe qui n’est pas transmise au service. Le prototype doit donc couvrir la transaction métier entière. La livraison demeure « au moins une fois » : identifiant stable, dédoublonnage et reprise sont nécessaires, même après la purge des jobs BullMQ terminés. `@nestjs/webhooks` peut ensuite simplifier émission, signature et protection des destinations, en s’appuyant sur cette même outbox. Son format natif diffère du payload actuel : démontrer que l’adaptation conserve le contrat des destinataires Communs, leurs authentifications Basic/Bearer et les protections du transport ; sinon différer ce package. Éviter deux mécanismes de livraison concurrents. [Webhooks Nest](https://docs.nestjs.com/http/webhooks), [version évaluée 0.0.2](https://registry.npmjs.org/@nestjs/webhooks/0.0.2).
+### D17 Clients HTTP nommés pour Calendly et Sirene
+
+**Choix.** `@nestjs/http-client` centralise l’origine, les en-têtes d’authentification et un délai de dix secondes. Les retries sont explicitement désactivés : aucun nouvel essai automatique n’est ajouté aux traitements existants. Les URL et redirections sont bornées à l’origine du client ; les jetons ne sont pas transmis à une autre origine. La conversion snake/camel de Calendly, les schémas Zod Sirene, le découpage des requêtes et les résultats métier sont conservés.
+
+**Limite.** Le pilote couvre ces deux intégrations. `@nestjs/resilience` reste différé tant qu’un contrat de concurrence ou de circuit breaker propre à un fournisseur n’est pas défini. Cela évite de multiplier les politiques de retry, notamment pour les webhooks déjà gérés par BullMQ. [Calendly](../../apps/tools/src/calendly/calendly-http-client.module.ts), [Sirene](../../apps/tools/src/sirene/sirene-http-client.module.ts), [documentation](https://docs.nestjs.com/application/http-client).
+
+### D18 Injection Drizzle native dans tools
+
+**Choix.** `@nestjs/drizzle` possède le pool de tools et fournit `@InjectDrizzle()`. Les consommateurs injectent directement le client typé ; le service de simple délégation est retiré. Le module gère les erreurs de connexion et la fermeture du pool. Un délai de cinq secondes borne l’acquisition d’une connexion.
+
+**Périmètre.** Le backend conserve son `DatabaseService` et son `TransactionManager`, qui portent des contrats partagés par ses services et fixtures. Son pool possède un listener d’erreur sans journalisation des secrets. La généralisation de l’injection native au backend constitue un lot distinct. Drizzle ORM, Sqitch, les schémas et les politiques RLS restent leurs sources de vérité. Le module accepte la version de Drizzle du dépôt sans imposer Drizzle 1 RC. [Module tools](../../apps/tools/src/utils/database/database.module.ts), [documentation](https://docs.nestjs.com/data/drizzle).
+
+### D19 Outbox transactionnelle pour les webhooks
+
+**Choix.** `@nestjs/outbox` enregistre l’intention de publication avec `webhook_message` dans la transaction de modification de fiche ou de création de plan. Le backend produit ; tools relaie vers la file BullMQ existante. Les migrations automatiques du module sont désactivées : Sqitch possède le schéma `nest_outbox` et la reprise des messages en attente.
+
+La publication utilise l’UUID du message comme identifiant BullMQ. Le statut PostgreSQL `success` permet d’ignorer un événement déjà livré même après purge du job Redis. Les requêtes sortantes conservent leurs corps et authentifications Basic/Bearer/Communs, avec un délai de dix secondes et un en-tête `Idempotency-Key` stable. Les retries du relais couvrent la publication Redis ; les dix tentatives BullMQ couvrent la livraison HTTP.
+
+**Garantie.** La livraison est « au moins une fois ». Un arrêt entre la réception par le partenaire et l’écriture du succès local peut produire un doublon ; le destinataire doit utiliser la clé d’idempotence pour éviter de répéter ses effets. `@nestjs/webhooks` est différé car son enveloppe Standard Webhooks et ses signatures changeraient les contrats des partenaires. [Exploitation et reprise](../../apps/tools/src/webhooks/README.md), [outbox](https://docs.nestjs.com/reliability/outbox), [webhooks natifs](https://docs.nestjs.com/http/webhooks).
 
 ### Packages à différer ou à conserver en veille
 
@@ -214,63 +225,37 @@ P1 désigne les premiers travaux proposés ; P2 demande un pilote avant généra
 | `@nestjs/observe`                                             | Conserver OpenTelemetry/PostHog. Le SDK cible le collecteur Observe hébergé ; ce n’est pas un remplacement transparent de notre export OTLP. Son adoption demanderait une décision sur la destination des données, le coût et la suppression des instrumentations redondantes. [Documentation](https://docs.nestjs.com/observability/sdk), [version 0.3.15](https://registry.npmjs.org/@nestjs/observe/0.3.15).                                                                                                                                       |
 | `@nestjs/i18n`, CQRS, event-emitter, autres ORM et transports | Pas de besoin identifié justifiant leur ajout. Une internationalisation, une architecture CQRS ou un nouveau transport relève d’un besoin produit ou architectural distinct. Un bus d’événements en mémoire ne remplace pas une livraison persistante. `@nestjs/store-kit` peut servir les modules de persistance retenus, sans devenir un nouvel ORM du projet.                                                                                                                                                                                      |
 
-### Découpage et preuves attendues
+### Périmètres différés
 
-1. **Disponibilité et sécurité** : PR séparées pour les sondes/arrêt et les protections HTTP. Tester les réponses aux pannes DB/Redis, l’arrêt pendant une requête ou un job, les origines autorisées/refusées, les parcours OIDC et les quotas entre instances.
-2. **Client HTTP** : pilote sur des API externes simulées. Vérifier timeout avec annulation, redirections, confidentialité des en-têtes, erreurs et politique de retry. Préserver les contrats Zod et métier.
-3. **Drizzle** : pilote tools, puis backend. Vérifier les options de connexion, les injections de test, la fermeture unique et les transactions partagées avec rollback.
-4. **Outbox** : prototype avec PostgreSQL et Redis locaux. Vérifier rollback sans émission, commit pendant une panne Redis, arrêt après publication avant acquittement et dédoublonnage. Évaluer ensuite le module webhooks et les politiques resilience utiles.
-
-Ces critères sont des conditions d’adoption, distinctes des vérifications de migration ci-dessous. Les tests automatisés utilisent des fournisseurs simulés ; aucune validation n’appelle un modèle IA réel.
+La généralisation Drizzle au backend, les autres clients HTTP et une politique resilience restent des lots distincts. L’adoption de nouveaux modules de mail, stockage, authentification ou workflows demande un besoin propre et une validation de leurs contrats. Aucun package n’est ajouté seulement pour être officiel.
 
 ## Validation et critères d’acceptation
 
-### Vérifications locales réalisées
+### Validation reproductible
 
-Les vérifications suivantes portent sur le code de migration publié dans le commit `5c04c2113d262c87dfa28fb0842e139e45f0f7c0` ; les résultats ne valent pas validation d’un déploiement.
-
-| Vérification                         | Résultat et portée                                                                                                                                         |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Installation pnpm avec lockfile figé | Réussite avec la version de pnpm du dépôt et l’accès habituel au registre Bryntum.                                                                         |
-| Tests ciblés                         | 89 tests passent dans 10 fichiers, avec dépendances externes simulées.                                                                                     |
-| Enregistrement des routes            | Audit temporaire non conservé dans le dépôt : initialisation des 25 contrôleurs backend, avec diagnostics de routes et dépendances métier/canvas simulées. |
-| TypeScript                           | Compilation des sources et tests de backend et tools réussie avec `tsc --build`.                                                                           |
-| Builds Nx                            | Builds backend et tools réussis, avec leurs dépendances de build.                                                                                          |
-| ESLint                               | Aucun échec sur les 56 fichiers TypeScript modifiés ; trois avertissements `any` préexistants dans `apps/backend/test/app-utils.ts`.                       |
-| Diff                                 | `git diff --check` réussi. Aucun secret ni fichier d’environnement ajouté.                                                                                 |
-
-Depuis la racine, après l’installation habituelle des dépendances et de l’environnement local :
+Les résultats effectivement obtenus sont consignés dans la description de chaque PR. Les tests ciblés couvrent les contrats HTTP, les erreurs et annulations, la résolution des providers, le cycle de vie, les quotas Redis et les transactions outbox. Ils utilisent des fournisseurs simulés et des instances PostgreSQL/Redis isolées ; aucun test ne doit appeler un modèle IA réel.
 
 ```sh
-pnpm exec vitest run --config apps/backend/vitest.config.mts \
-  apps/backend/src/users/apikeys/apikeys.controller.spec.ts \
-  apps/backend/src/users/authentications/oidc/oidc.controller.spec.ts \
-  apps/backend/src/indicateurs/definitions/list-platform-definitions/list-platform-definitions.controller.spec.ts \
-  apps/backend/src/utils/config/configuration.module.spec.ts \
-  apps/backend/src/utils/nest/schema-validation.pipe.spec.ts \
-  apps/backend/src/utils/nest/swagger-document.options.spec.ts \
-  apps/backend/src/utils/nest/nest-telemetry.spec.ts \
-  apps/backend/src/utils/nest/errors.utils.spec.ts \
-  apps/backend/src/utils/nest/controller-error-handler.spec.ts \
-  apps/backend/src/utils/nest/all-exceptions.filter.spec.ts
-
 pnpm exec nx run-many -t build -p backend tools
 pnpm exec tsc --build apps/backend/tsconfig.json apps/tools/tsconfig.json --pretty false
 git diff --check
 ```
 
-La commande Nx de typecheck a rencontré **localement** un problème préexistant de `@nx/js:typescript-sync` sur les références de `apps/app/tsconfig.json`, reproduit sur la base de comparaison. Cela ne constitue pas une erreur de compilation de la migration et ne doit pas être présenté comme un échec CI : le job de validation des projets affectés a depuis réussi sur la PR. Les références frontend ne sont pas modifiées dans ce travail.
+Les commandes ciblées et paramètres des tests Redis/outbox figurent dans les README d’exploitation liés ci-dessus. La validation du monorepo et les suites avec base de données restent requises dans la CI du commit à fusionner.
 
 ### Vérifications avant fusion
 
 - [ ] Relire et accepter les conséquences D04, D09, D10, D11, D13 et D14, dont les générateurs Nx et les changements observables par les clients.
-- [ ] Vérifier l’état final de tous les checks sur le commit à fusionner dans la [CI de la PR](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5529/checks). Les 89 tests locaux ne remplacent pas les suites avec base de données.
+- [ ] Vérifier l’état final de tous les checks sur le commit à fusionner dans la [CI de la PR](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5529/checks). Les tests ciblés ne remplacent pas les suites avec base de données.
 - [ ] Vérifier les parcours OAuth/OIDC et un export de fichier dans l’environnement de validation, ainsi que la page OpenAPI et le tableau Bull Board de tools.
 - [ ] Vérifier l’enregistrement des tâches planifiées de tools et l’absence de doublons de noms, sans déclencher de traitement IA.
 - [ ] Confirmer que les logs et traces restent exploitables, notamment pour les erreurs, les requêtes asynchrones et les réponses longues.
 
 ## Déploiement et retour arrière
 
-Utiliser le processus de déploiement existant pour backend et tools, après les vérifications précédentes. Contrôler le démarrage, les diagnostics de routes, l’authentification, les réponses REST et l’accès aux files. Une vérification de l’import IA ne doit jamais lancer un appel payant réel automatiquement.
+1. Fusionner la PR de migration NestJS puis la PR empilée. Appliquer `webhooks/outbox` via le processus Sqitch habituel **avant** de démarrer les nouveaux backend/tools. Les identités SQL des applications doivent pouvoir utiliser le schéma outbox ; aucun accès navigateur anonyme n’est accordé.
+2. Vérifier `APP_URL`, `SITE_URL`, les éventuelles origines de prévisualisation dans `HTTP_ALLOWED_ORIGINS` et `TRUST_PROXY_HOPS`. Les valeurs désignent des origines HTTP(S) exactes, pas des domaines avec wildcard. Les workflows Koyeb transmettent cette configuration.
+3. Déployer backend et tools via leurs workflows habituels, puis contrôler `/health/live` et `/health/ready`, les parcours OIDC avec cookies, Swagger, Bull Board et une livraison webhook sur un destinataire de validation. Observer les messages en attente et les lettres mortes. Ne pas déclencher de traitement IA payant.
+4. Pour revenir aux artefacts applicatifs précédents, arrêter d’abord les producteurs, laisser tools vider le relais et la file HTTP, puis suivre la procédure outbox avant toute suppression SQL. Le revert refuse une outbox non vide ou contenant des lettres mortes. Ne pas supprimer des événements en attente pour forcer un retour arrière.
 
-La migration ne contient aucune migration SQL ni conversion de données. En cas de régression, redéployer les artefacts applicatifs précédents via le processus habituel, ou annuler le changement complet de code et de dépendances puis reconstruire. Éviter un retour arrière limité à `package.json` : le code utilise des API absentes de Nest 11, et le lockfile doit rester cohérent avec les sources.
+Conserver code et lockfile ensemble : les API utilisées ne sont pas toutes disponibles dans Nest 11. Une restauration de données relève du processus habituel et ne doit pas écraser des écritures métier effectuées depuis le déploiement.

@@ -43,3 +43,7 @@ export function getErrorTrackingClient(): PostHog | null {
   }
   return posthogClient;
 }
+
+export async function shutdownErrorTracking() {
+  await posthogClient?.shutdown();
+}

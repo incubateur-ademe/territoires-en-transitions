@@ -1,0 +1,75 @@
+# Fault-injection suites own these services; never use the shared Supabase stack.
+name: Test isolated runtime integrations
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      pnpm-cache-key:
+        required: true
+        type: string
+
+jobs:
+  test-runtime-integrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NX_NO_CLOUD: 'true'
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: tet_webhook_outbox_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: isolated-test-password
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U postgres -d tet_webhook_outbox_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:8.2-alpine
+        ports:
+          - 6379/tcp
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      # analyze-affected prepared this cache with the private registry token.
+      # This job requires no application credentials or external API keys.
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          cache-key: ${{ inputs.pnpm-cache-key }}
+          install-canvas-deps: 'true'
+
+      - name: Build backend and tools test dependencies
+        run: pnpm nx run-many -t build --projects=backend,tools --parallel=2
+
+      # Keep these suites sequential: the Redis timeout test pauses its server.
+      - name: Test shared quotas and Redis failure recovery
+        env:
+          RATE_LIMIT_ISOLATED_REDIS_URL: redis://127.0.0.1:${{ job.services.redis.ports['6379'] }}
+        run: >-
+          pnpm exec vitest run --config apps/backend/vitest.config.mts
+          apps/backend/src/utils/throttling/rate-limit-storage.service.spec.ts
+          --maxWorkers=1
+
+      - name: Test transactional webhook delivery and SQL recovery
+        env:
+          WEBHOOK_TEST_DATABASE_URL: postgres://postgres:isolated-test-password@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/tet_webhook_outbox_test
+          WEBHOOK_TEST_REDIS_URL: redis://127.0.0.1:${{ job.services.redis.ports['6379'] }}
+        run: >-
+          pnpm exec vitest run --config apps/tools/vitest.config.mts
+          apps/tools/src/webhooks/webhook-outbox.e2e-spec.ts
+          --maxWorkers=1

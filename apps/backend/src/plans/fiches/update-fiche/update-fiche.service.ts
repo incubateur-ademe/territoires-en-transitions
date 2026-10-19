@@ -262,27 +262,25 @@ export default class UpdateFicheService {
           });
         }
 
+        try {
+          await this.webhookService.sendWebhookNotification(
+            ApplicationSousScopesEnum.FICHES,
+            `${ficheId}`,
+            updatedFiche.data,
+            transaction
+          );
+        } catch (error) {
+          return failure(
+            UpdateFicheErrorEnum.DATABASE_ERROR,
+            error instanceof Error ? error : new Error(String(error))
+          );
+        }
+
         return success(updatedFiche.data);
       },
       tx
     );
 
-    if (!txResult.success) return txResult;
-    const updatedFiche = txResult.data;
-
-    try {
-      await this.webhookService.sendWebhookNotification(
-        ApplicationSousScopesEnum.FICHES,
-        `${ficheId}`,
-        updatedFiche
-      );
-    } catch (webhookError) {
-      this.logger.error(
-        `Webhook notification failed for fiche ${ficheId}`,
-        webhookError instanceof Error ? webhookError.stack : webhookError
-      );
-    }
-
-    return success(updatedFiche);
+    return txResult;
   }
 }

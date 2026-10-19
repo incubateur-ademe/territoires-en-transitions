@@ -205,7 +205,6 @@ export class CreatePlanAggregateService {
       ];
       await this.notifyWebhooksBatched({
         ficheIds: allFicheIds,
-        planId: createPlanResult.data.id,
         tx,
       });
 
@@ -241,60 +240,48 @@ export class CreatePlanAggregateService {
 
     return axesToCreate.reduce<
       Promise<Result<Map<string, number>, PlanError | UpsertAxeError>>
-    >(async (accPromise, axe) => {
-      const acc = await accPromise;
-      if (!acc.success) return acc;
+    >(
+      async (accPromise, axe) => {
+        const acc = await accPromise;
+        if (!acc.success) return acc;
 
-      const parentIdResult = findParentAxeId(axe.path, acc.data, planId);
-      if (!parentIdResult.success) return parentIdResult;
+        const parentIdResult = findParentAxeId(axe.path, acc.data, planId);
+        if (!parentIdResult.success) return parentIdResult;
 
-      const nom = axe.path[axe.path.length - 1];
-      const createdAxe = await this.upsertAxeService.upsertAxe(
-        { planId, parent: parentIdResult.data, collectiviteId, nom },
-        { user, tx }
-      );
-      if (!createdAxe.success) return createdAxe;
+        const nom = axe.path[axe.path.length - 1];
+        const createdAxe = await this.upsertAxeService.upsertAxe(
+          { planId, parent: parentIdResult.data, collectiviteId, nom },
+          { user, tx }
+        );
+        if (!createdAxe.success) return createdAxe;
 
-      acc.data.set(axe.fullPath, createdAxe.data.id);
-      return acc;
-    }, Promise.resolve(success(new Map<string, number>())));
+        acc.data.set(axe.fullPath, createdAxe.data.id);
+        return acc;
+      },
+      Promise.resolve(success(new Map<string, number>()))
+    );
   }
 
-  /**
-   * Recharge les fiches créées en une seule passe (1 query) et envoie un
-   * webhook batched. Remplace les 209 refetch + 209 webhooks unitaires par
-   * 1 + 1, ce qui élimine le N+1 de fin d'import.
-   */
+  /** Recharge les fiches en une passe et persiste les webhooks dans leur transaction. */
   private async notifyWebhooksBatched({
     ficheIds,
-    planId,
     tx,
   }: {
     ficheIds: number[];
-    planId: number;
     tx: Transaction;
   }): Promise<void> {
     if (ficheIds.length === 0) return;
-    try {
-      const { data: fiches } = await this.listFichesService.listFichesQuery(
-        null,
-        { ficheIds, withChildren: true },
-        undefined,
-        tx
-      );
-      await this.webhookService.sendWebhookNotifications(
-        ApplicationSousScopesEnum.FICHES,
-        fiches.map((fiche) => ({
-          entityId: `${fiche.id}`,
-          payload: fiche,
-        }))
-      );
-    } catch (error) {
-      this.logger.error(
-        `[Import plan ${planId}] Webhook batch notification failed`,
-        error instanceof Error ? error.stack : error
-      );
-    }
+    const { data: fiches } = await this.listFichesService.listFichesQuery(
+      null,
+      { ficheIds, withChildren: true },
+      undefined,
+      tx
+    );
+    await this.webhookService.sendWebhookNotifications(
+      ApplicationSousScopesEnum.FICHES,
+      fiches.map((fiche) => ({ entityId: `${fiche.id}`, payload: fiche })),
+      tx
+    );
   }
 
   private logProgress(

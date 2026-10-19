@@ -1,10 +1,11 @@
+import { SireneHttpClientModule } from './sirene-http-client.module';
 import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../config/configuration.module';
 import { UtilsModule } from '../utils/utils.module';
 import { SireneService } from './sirene.service';
 
 @Module({
-  imports: [ConfigurationModule, UtilsModule],
+  imports: [SireneHttpClientModule, ConfigurationModule, UtilsModule],
   providers: [SireneService],
   exports: [SireneService],
 })
