@@ -306,6 +306,13 @@ const PriorisationBoard = ({
 
   const selectLevier: SelectLevier = (levierId, categorie) => {
     levierNudge.dismiss();
+    const isSelectionRepeated =
+      levierId === levierSidePanel.selectedLevierId &&
+      categorie === levierSidePanel.selectedCategorie;
+    if (isSelectionRepeated) {
+      levierSidePanel.close();
+      return;
+    }
     levierSidePanel.select(levierId, categorie);
   };
 
