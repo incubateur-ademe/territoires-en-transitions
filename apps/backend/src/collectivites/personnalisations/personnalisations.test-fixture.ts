@@ -800,6 +800,97 @@ export async function addTestQuestionsExprVisible(
   };
 }
 
+/**
+ * Ajoute une chaîne de questions conditionnelles A → B → C (B visible si
+ * A = OUI, C visible si B = OUI), plus une question E (liée au référentiel TE)
+ * visible si P = OUI, P étant liée au seul référentiel CAE et elle-même visible
+ * si G = OUI (G également liée au seul référentiel CAE).
+ */
+export async function addTestQuestionsExprVisibleCascade(
+  databaseService: DatabaseServiceInterface,
+  data: { thematiqueId: string }
+): Promise<{
+  questionAId: string;
+  questionBId: string;
+  questionCId: string;
+  questionGrandParenteAutreReferentielId: string;
+  questionParenteAutreReferentielId: string;
+  questionEnfantId: string;
+  cleanup: () => Promise<void>;
+}> {
+  const addQuestion = (formulation: string, exprVisible?: string) =>
+    addTestQuestions(databaseService, [
+      {
+        thematiqueId: data.thematiqueId,
+        type: 'binaire',
+        description: 'Question pour tests expr_visible en cascade',
+        formulation,
+        exprVisible,
+      },
+    ]);
+
+  const a = await addQuestion('Cascade A');
+  const [questionAId] = a.ids;
+  const b = await addQuestion(
+    'Cascade B',
+    `Si reponse(${questionAId}, OUI) alors VRAI`
+  );
+  const [questionBId] = b.ids;
+  const c = await addQuestion(
+    'Cascade C',
+    `Si reponse(${questionBId}, OUI) alors VRAI`
+  );
+  const [questionCId] = c.ids;
+
+  const g = await addQuestion('Grand-parente autre référentiel');
+  const [questionGrandParenteAutreReferentielId] = g.ids;
+  const p = await addQuestion(
+    'Parente autre référentiel',
+    `Si reponse(${questionGrandParenteAutreReferentielId}, OUI) alors VRAI`
+  );
+  const [questionParenteAutreReferentielId] = p.ids;
+  const e = await addQuestion(
+    'Enfant',
+    `Si reponse(${questionParenteAutreReferentielId}, OUI) alors VRAI`
+  );
+  const [questionEnfantId] = e.ids;
+
+  const actionTeId = generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX);
+  const { cleanup: cleanupLinksTe } =
+    await insertReferentielActionQuestionLinks(databaseService, {
+      referentielId: REFERENTIEL_ID,
+      links: [questionAId, questionBId, questionCId, questionEnfantId].map(
+        (questionId) => ({ actionId: actionTeId, questionId })
+      ),
+    });
+
+  const actionCaeId = generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX);
+  const { cleanup: cleanupLinksCae } =
+    await insertReferentielActionQuestionLinks(databaseService, {
+      referentielId: ReferentielIdEnum.CAE,
+      links: [
+        questionGrandParenteAutreReferentielId,
+        questionParenteAutreReferentielId,
+      ].map((questionId) => ({ actionId: actionCaeId, questionId })),
+    });
+
+  return {
+    questionAId,
+    questionBId,
+    questionCId,
+    questionGrandParenteAutreReferentielId,
+    questionParenteAutreReferentielId,
+    questionEnfantId,
+    cleanup: async () => {
+      await cleanupLinksCae();
+      await cleanupLinksTe();
+      for (const { cleanup } of [e, p, g, c, b, a]) {
+        await cleanup();
+      }
+    },
+  };
+}
+
 /** Crée une collectivité, une thématique et des questions de test */
 export async function addTestPersonnalisationData(
   databaseService: DatabaseServiceInterface
