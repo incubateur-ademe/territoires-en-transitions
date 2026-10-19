@@ -1,3 +1,7 @@
+import { preset } from '@tet/ui';
+
+export const CHART_FONT_FAMILY = preset.theme.extend.fontFamily.sans.join(', ');
+
 export const PALETTE = [
   '#1CC272',
   '#91B2EE',

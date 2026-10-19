@@ -1,4 +1,8 @@
-import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
+import {
+  CHART_FONT_FAMILY,
+  EChartsOption,
+  ReactECharts,
+} from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { PointCallout } from './point-callout';
 import type { ScatterSeriesOption } from 'echarts/charts';
@@ -110,7 +114,6 @@ const DASHED_POINT_PATTERN = [
   DASHED_POINT_PERIOD * DASHED_POINT_DASH_SHARE,
   DASHED_POINT_PERIOD * (1 - DASHED_POINT_DASH_SHARE),
 ];
-const FONT_FAMILY = preset.theme.extend.fontFamily.sans.join(', ');
 const AXIS_FONT_SIZE = 11;
 const AXIS_NAME_ARROW = ' →';
 const X_AXIS_NAME_GAP = 16;
@@ -469,7 +472,7 @@ const buildOption = ({
   selectedPointId: string | undefined;
 }): EChartsOption => ({
   animationDuration: 0,
-  textStyle: { fontFamily: FONT_FAMILY },
+  textStyle: { fontFamily: CHART_FONT_FAMILY },
   tooltip: {
     trigger: 'item',
     confine: true,

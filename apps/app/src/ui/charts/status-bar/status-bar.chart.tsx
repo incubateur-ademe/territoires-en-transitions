@@ -1,5 +1,9 @@
 import ChartLegend from '@/app/ui/charts/ChartLegend';
-import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
+import {
+  CHART_FONT_FAMILY,
+  EChartsOption,
+  ReactECharts,
+} from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use-resize-graph-on-container-size-update';
 import { readCaption } from '@/app/ui/charts/matrix/read-children';
@@ -77,6 +81,7 @@ const buildOption = <TStatus extends string>({
   tooltipHint?: string;
   selectedBarId: string | undefined;
 }): EChartsOption => ({
+  textStyle: { fontFamily: CHART_FONT_FAMILY },
   tooltip: {
     trigger: 'item',
     confine: true,

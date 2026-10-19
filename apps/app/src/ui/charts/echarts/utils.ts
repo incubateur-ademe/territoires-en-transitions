@@ -4,6 +4,7 @@ import type {
   DatasetComponentOption,
   LegendComponentOption,
 } from 'echarts/components';
+import { CHART_FONT_FAMILY } from './constants';
 import { EChartsOption } from './ReactECharts';
 
 const { colors } = preset.theme.extend;
@@ -226,7 +227,7 @@ export const makeOption = ({
   return {
     ...(timeAxis?.useUTC !== undefined && { useUTC: timeAxis.useUTC }),
     textStyle: {
-      fontFamily: '"Marianne", arial, sans-serif',
+      fontFamily: CHART_FONT_FAMILY,
     },
     grid: {
       left: '1%',

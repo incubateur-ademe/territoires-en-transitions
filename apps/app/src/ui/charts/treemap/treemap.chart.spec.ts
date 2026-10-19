@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { toHeaderColor } from './to-tile-color';
 import type { IntensityScale, TreemapGroup } from './treemap-group';
-import { toSeriesData } from './treemap.chart';
+import { toSeriesData, toSeriesId } from './treemap.chart';
 
 type Intensity = 'low' | 'high';
 
@@ -84,5 +84,25 @@ describe('toSeriesData', () => {
       tiles: toHighlightedTiles(series),
       groups: toHighlightedGroups(series),
     }).toEqual({ tiles: [], groups: ['biogaz'] });
+  });
+});
+
+describe('toSeriesId', () => {
+  it('donne un id différent à chaque sélection pour que ECharts recrée la série', () => {
+    const ids = [
+      toSeriesId({}),
+      toSeriesId({ selectedGroupId: 'biogaz' }),
+      toSeriesId({ selectedGroupId: 'biogaz', selectedTileId: 'financement' }),
+      toSeriesId({ selectedGroupId: 'biogaz', selectedTileId: 'ingenierie' }),
+      toSeriesId({ selectedGroupId: 'velos', selectedTileId: 'financement' }),
+    ];
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('ne confond pas un groupe « a/b » et une tuile « c » avec un groupe « a » et une tuile « b/c »', () => {
+    expect(
+      toSeriesId({ selectedGroupId: 'a/b', selectedTileId: 'c' })
+    ).not.toBe(toSeriesId({ selectedGroupId: 'a', selectedTileId: 'b/c' }));
   });
 });
