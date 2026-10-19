@@ -185,6 +185,71 @@ describe('Indicateurs', () => {
     expect(selectionWb.getWorksheet(1)?.rowCount).toBe(selectionIds.length + 1);
   });
 
+  test.each([true, false])(
+    'Exporte les parents et enfants correspondant à participationScore=%s une seule fois',
+    async (participationScore) => {
+      const { collectivite, user } = await addTestCollectiviteAndUser(
+        databaseService,
+        { user: { role: CollectiviteRole.ADMIN } }
+      );
+      const [parentExclu, enfant, parentInclus, autreEnfant, enfantExclu] =
+        await databaseService.db
+          .insert(indicateurDefinitionTable)
+          .values(
+            [
+              {
+                titre: 'Parent hors filtre',
+                participationScore: !participationScore,
+              },
+              { titre: 'Enfant du parent hors filtre', participationScore },
+              { titre: 'Parent correspondant', participationScore },
+              { titre: 'Enfant du parent correspondant', participationScore },
+              {
+                titre: 'Enfant hors filtre',
+                participationScore: !participationScore,
+              },
+            ].map((definition) => ({
+              ...definition,
+              collectiviteId: collectivite.id,
+              unite: '%',
+            }))
+          )
+          .returning();
+      await databaseService.db.insert(indicateurGroupeTable).values([
+        { parent: parentExclu.id, enfant: enfant.id },
+        { parent: parentInclus.id, enfant: autreEnfant.id },
+        { parent: parentInclus.id, enfant: enfantExclu.id },
+      ]);
+      const collectiviteAuthToken = await getAuthToken({
+        email: user.email ?? '',
+        password: user.password,
+      });
+
+      const response = await request(app.getHttpServer())
+        .post('/indicateur-definitions/xlsx')
+        .set('Authorization', `Bearer ${collectiviteAuthToken}`)
+        .send({
+          mode: 'all',
+          collectiviteId: collectivite.id,
+          filters: { estPerso: true, participationScore },
+          sort: [{ field: 'titre', direction: 'asc' }],
+        })
+        .expect(201)
+        .responseType('blob');
+
+      const workbook = new Workbook();
+      await workbook.xlsx.load(response.body as ArrayBuffer);
+      expect(workbook.worksheets).toHaveLength(1);
+      const worksheet = workbook.getWorksheet(1);
+      if (!worksheet) throw new Error('Worksheet not found');
+
+      expect(worksheet.rowCount).toBe(4);
+      expect(
+        [2, 3, 4].map((row) => worksheet.getRow(row).getCell(2).value)
+      ).toEqual([autreEnfant.titre, enfant.titre, parentInclus.titre]);
+    }
+  );
+
   test('Format consolidé : 1 onglet, 1 ligne par indicateur avec lien parent/enfant', async () => {
     const { collectivite, user } = await addTestCollectiviteAndUser(
       databaseService,

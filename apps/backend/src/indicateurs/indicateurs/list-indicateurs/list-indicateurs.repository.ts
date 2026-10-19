@@ -492,6 +492,7 @@ export class ListIndicateursRepository {
       filters.mesureId !== undefined ||
       filters.estFavori ||
       filters.isApplicable !== undefined ||
+      filters.participationScore !== undefined ||
       filters.ficheIds?.length ||
       filters.axeIds?.length ||
       filters.utilisateurPiloteIds?.length;
