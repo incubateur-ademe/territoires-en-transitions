@@ -22,6 +22,10 @@ const specificErrors = [
   'REFERENTIEL_TE_NOT_EMPTY',
   'MIGRATION_FAILED',
   'POST_SWITCH_RECOMPUTE_FAILED',
+  'NOT_SWITCHED',
+  'POST_SWITCH_SNAPSHOT_MISSING',
+  'REPAIR_FAILED',
+  'REPAIR_SCORE_RECOMPUTE_FAILED',
   ...collectivitePreferencesSpecificErrors,
 ] as const;
 
@@ -90,6 +94,23 @@ export const switchToTeTrpcErrorEntries = {
     code: 'INTERNAL_SERVER_ERROR',
     message:
       'La bascule a réussi mais le recalcul des projections post-bascule a échoué',
+  },
+  NOT_SWITCHED: {
+    code: 'PRECONDITION_FAILED',
+    message: "Cette collectivité n'a pas basculé vers TE",
+  },
+  POST_SWITCH_SNAPSHOT_MISSING: {
+    code: 'PRECONDITION_FAILED',
+    message: 'Snapshot post-switch-te manquant pour cette collectivité',
+  },
+  REPAIR_FAILED: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'Le rattrapage des statuts TE a échoué',
+  },
+  REPAIR_SCORE_RECOMPUTE_FAILED: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message:
+      'Les statuts TE ont été rattrapés mais le recalcul du score courant a échoué (relancer le rattrapage pour le refaire)',
   },
 } as const;
 

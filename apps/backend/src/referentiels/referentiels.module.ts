@@ -108,6 +108,8 @@ import { BuildSwitchToTeContextService } from './switch-to-te/build-switch-to-te
 import { CreatePreSwitchSnapshotsService } from './switch-to-te/create-pre-switch-snapshots.service';
 import { MigrateCollectiviteDataRepository } from './switch-to-te/migrate-collectivite-data/migrate-collectivite-data.repository';
 import { MigrateCollectiviteDataService } from './switch-to-te/migrate-collectivite-data/migrate-collectivite-data.service';
+import { RepairSwitchToTeStatutsRepository } from './switch-to-te/repair-switch-to-te-statuts/repair-switch-to-te-statuts.repository';
+import { RepairSwitchToTeStatutsService } from './switch-to-te/repair-switch-to-te-statuts/repair-switch-to-te-statuts.service';
 import { SwitchToTeRouter } from './switch-to-te/switch-to-te.router';
 import { SwitchToTeService } from './switch-to-te/switch-to-te.service';
 import { UpdateActionCommentaireHistoriqueRepository } from './update-action-commentaire/update-action-commentaire-historique.repository';
@@ -244,6 +246,8 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     BuildSwitchToTeContextService,
     MigrateCollectiviteDataRepository,
     MigrateCollectiviteDataService,
+    RepairSwitchToTeStatutsRepository,
+    RepairSwitchToTeStatutsService,
 
     HistoriqueRouter,
     ListHistoriqueRepository,

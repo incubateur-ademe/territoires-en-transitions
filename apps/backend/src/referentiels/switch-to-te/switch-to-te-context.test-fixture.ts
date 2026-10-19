@@ -14,7 +14,7 @@ import { type Result } from '@tet/backend/utils/result.type';
 import { type CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import { type ScoreSnapshot } from '@tet/domain/referentiels';
 import { and, eq, inArray } from 'drizzle-orm';
-import { type BuildSwitchToTeContextService } from './build-switch-to-te-context.service';
+import { BuildSwitchToTeContextService } from './build-switch-to-te-context.service';
 import { type CreatePreSwitchSnapshotsService } from './create-pre-switch-snapshots.service';
 import { type SwitchToTeContext } from './shared/switch-to-te-context';
 import { type SwitchToTeError } from './switch-to-te.errors';
@@ -254,7 +254,7 @@ export async function buildSwitchToTeContextForTest(
 
   return services.buildSwitchToTeContextService.build(
     collectiviteId,
-    prefs,
+    BuildSwitchToTeContextService.getSourceReferentiels(prefs),
     preSwitchSnapshots,
     { user: options.user }
   );

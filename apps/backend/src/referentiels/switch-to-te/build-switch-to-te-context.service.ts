@@ -7,7 +7,7 @@ import { GetReferentielService } from '@tet/backend/referentiels/get-referentiel
 import { HandleMesurePilotesService } from '@tet/backend/referentiels/handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { SNAPSHOTS } from '@tet/backend/referentiels/snapshots/snapshots.constants';
-import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import {
   type CollectiviteReferentielPreferences,
@@ -50,17 +50,28 @@ export class BuildSwitchToTeContextService {
     private readonly ficheActionLinkRepository: FicheActionLinkRepository
   ) {}
 
+  /**
+   * Référentiels sources de la bascule : CAE/ECI encore en `mode: write`.
+   */
+  static getSourceReferentiels(
+    prefs: CollectiviteReferentielPreferences
+  ): ReferentielId[] {
+    return BuildSwitchToTeContextService.SOURCE_REFERENTIELS.filter(
+      (referentielId) => prefs[referentielId].mode === 'write'
+    );
+  }
+
+  /**
+   * `sourceReferentiels` est passé explicitement : à la bascule, il vient des
+   * préférences (`getSourceReferentiels`) ; au rattrapage d'une collectivité
+   * déjà basculée (CAE/ECI archivés), des snapshots `pre-switch-te` existants.
+   */
   async build(
     collectiviteId: number,
-    prefs: CollectiviteReferentielPreferences,
+    sourceReferentiels: ReferentielId[],
     preSwitchSnapshots: ScoreSnapshot[],
-    { user }: ServiceSecondArg
+    { user }: { user?: AuthUser }
   ): Promise<Result<SwitchToTeContext, SwitchToTeError>> {
-    const sourceReferentiels =
-      BuildSwitchToTeContextService.SOURCE_REFERENTIELS.filter(
-        (referentielId) => prefs[referentielId].mode === 'write'
-      );
-
     const scoreMapsResult = this.buildScoreMapsFromPreSwitchSnapshots(
       collectiviteId,
       sourceReferentiels,
