@@ -19,12 +19,14 @@ type UsePriorisationTourArgs = {
   isReady: boolean;
   levierToPrioritizeId?: LevierId;
   levierSidePanel: LevierSidePanelControls;
+  onEnded: () => void;
 };
 
 const usePriorisationTour = ({
   isReady,
   levierToPrioritizeId,
   levierSidePanel: { select, close },
+  onEnded,
 }: UsePriorisationTourArgs): GuidedTour => {
   const resolve = priorisationTargets.useResolve();
   const steps = useMemo(
@@ -38,6 +40,7 @@ const usePriorisationTour = ({
     steps,
     isReady,
     onSkipped: close,
+    onEnded,
   });
 };
 

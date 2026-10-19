@@ -11,23 +11,27 @@ type UseLeviersViewWithTourArgs = {
   isTourReady: boolean;
   levierToPrioritizeId?: LevierId;
   levierSidePanel: LevierSidePanelControls;
+  onTourEnded: () => void;
 };
 
 type LeviersViewWithTour = Pick<GuidedTour, 'Tour'> & {
   view: LeviersView;
   setView: (view: LeviersView) => void;
   restartOnMatrix: () => void;
+  isTourOver: boolean;
 };
 
 const useLeviersViewWithTour = ({
   isTourReady,
   levierToPrioritizeId,
   levierSidePanel,
+  onTourEnded,
 }: UseLeviersViewWithTourArgs): LeviersViewWithTour => {
-  const { Tour, restart } = usePriorisationTour({
+  const { Tour, isOver, restart } = usePriorisationTour({
     isReady: isTourReady,
     levierToPrioritizeId,
     levierSidePanel,
+    onEnded: onTourEnded,
   });
   const [view, setView] = useState<LeviersView>('matrix');
   const restartOnMatrix = useCallback(() => {
@@ -35,7 +39,7 @@ const useLeviersViewWithTour = ({
     restart();
   }, [restart]);
 
-  return { Tour, view, setView, restartOnMatrix };
+  return { Tour, view, setView, restartOnMatrix, isTourOver: isOver };
 };
 
 export { useLeviersViewWithTour };

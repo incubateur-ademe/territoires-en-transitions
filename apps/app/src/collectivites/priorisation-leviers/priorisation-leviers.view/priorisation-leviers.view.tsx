@@ -57,6 +57,7 @@ import {
 } from './priorisation.summary';
 import { PriorisationEmptyCard } from './priorisation-empty.card';
 import { SelectLevier } from './select-levier';
+import { LevierNudge, useLevierNudge } from './use-levier-nudge';
 import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
 
 type PriorisationAlertsProps = {
@@ -105,6 +106,8 @@ type PriorisationBoardProps = {
   preselection: Preselection;
   levierSidePanel: LevierSidePanel;
   leviersView: LeviersViewState;
+  isTourOver: boolean;
+  levierNudge: LevierNudge;
 };
 
 type PriorisationContentProps = Omit<
@@ -138,14 +141,20 @@ const toPreselectedCountByLevier = (
 const toAnchor = ({
   levierToPrioritizeId,
   elementRef,
+  isCalloutVisible,
 }: {
   levierToPrioritizeId?: LevierId;
   elementRef: MatrixAnchor['elementRef'];
+  isCalloutVisible: boolean;
 }): MatrixAnchor | undefined => {
   if (levierToPrioritizeId === undefined) {
     return undefined;
   }
-  return { pointId: levierToPrioritizeId, elementRef };
+  const anchor: MatrixAnchor = { pointId: levierToPrioritizeId, elementRef };
+  if (!isCalloutVisible) {
+    return anchor;
+  }
+  return { ...anchor, callout: appLabels.priorisationLevierADebuterConsigne };
 };
 
 const PriorisationAlerts = ({
@@ -287,11 +296,23 @@ const PriorisationBoard = ({
   preselection,
   levierSidePanel,
   leviersView,
+  isTourOver,
+  levierNudge,
 }: PriorisationBoardProps): JSX.Element => {
   const preselectedCountByLevier = useMemo(
     () => toPreselectedCountByLevier(preselection),
     [preselection]
   );
+
+  const selectLevier: SelectLevier = (levierId, categorie) => {
+    levierNudge.dismiss();
+    levierSidePanel.select(levierId, categorie);
+  };
+
+  const isLevierNudgeVisible =
+    isTourOver &&
+    !levierNudge.isDismissed &&
+    levierSidePanel.selectedLevierId === undefined;
 
   const leviersPanelRef = priorisationTargets.useTarget('leviersPanel');
   const levierToPrioritizeRef =
@@ -304,7 +325,7 @@ const PriorisationBoard = ({
         blindSpotCount={places.filter(isBlindSpot).length}
         levierToPrioritizeId={toLevierToPrioritizeId(places)}
         preselectedActionsCount={preselection.actions.length}
-        onLevierSelected={levierSidePanel.select}
+        onLevierSelected={selectLevier}
       />
       <PriorisationAlerts potentiels={potentiels} />
       <LeviersSection
@@ -315,10 +336,11 @@ const PriorisationBoard = ({
         preselectedActions={preselection.actions}
         selectedLevierId={levierSidePanel.selectedLevierId}
         selectedCategorie={levierSidePanel.selectedCategorie}
-        onLevierSelected={levierSidePanel.select}
+        onLevierSelected={selectLevier}
         anchor={toAnchor({
           levierToPrioritizeId,
           elementRef: levierToPrioritizeRef,
+          isCalloutVisible: isLevierNudgeVisible,
         })}
         {...leviersView}
       />
@@ -334,6 +356,8 @@ const PriorisationContent = ({
   preselection,
   levierSidePanel,
   leviersView,
+  isTourOver,
+  levierNudge,
 }: PriorisationContentProps): JSX.Element =>
   match(leviersQuery)
     .with({ status: 'loading' }, () => <LoadingStatus />)
@@ -354,6 +378,8 @@ const PriorisationContent = ({
           preselection={preselection}
           levierSidePanel={levierSidePanel}
           leviersView={leviersView}
+          isTourOver={isTourOver}
+          levierNudge={levierNudge}
         />
       </PriorisationBoardGate>
     ))
@@ -378,11 +404,14 @@ export const PriorisationLeviersView = (): JSX.Element => {
   const isLeviersReady = leviersQuery.status === 'ready';
   const hasMobilisation = isLeviersReady && leviersQuery.hasMobilisation;
   const isTourReady = hasMobilisation && preselection.isReady;
-  const { Tour, view, setView, restartOnMatrix } = useLeviersViewWithTour({
-    isTourReady,
-    levierToPrioritizeId,
-    levierSidePanel,
-  });
+  const levierNudge = useLevierNudge();
+  const { Tour, view, setView, restartOnMatrix, isTourOver } =
+    useLeviersViewWithTour({
+      isTourReady,
+      levierToPrioritizeId,
+      levierSidePanel,
+      onTourEnded: levierNudge.reset,
+    });
   const tourHelpRef = priorisationTargets.useTarget('tourHelp');
 
   return (
@@ -435,6 +464,8 @@ export const PriorisationLeviersView = (): JSX.Element => {
         preselection={preselection}
         levierSidePanel={levierSidePanel}
         leviersView={{ view, onViewChange: setView }}
+        isTourOver={isTourOver}
+        levierNudge={levierNudge}
       />
     </>
   );
