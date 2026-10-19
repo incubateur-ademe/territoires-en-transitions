@@ -59,6 +59,10 @@ export const useUploadFile = (): UploadFile => {
     const uploadDecision = await createUploadToken({ collectiviteId, hash });
 
     const createBibliothequeEntry = async (): Promise<UploadFileResult> => {
+      if (signal?.aborted) {
+        throw new DOMException('Upload aborted', 'AbortError');
+      }
+
       const fichier = await createDocument({
         collectiviteId,
         filename: file.name,

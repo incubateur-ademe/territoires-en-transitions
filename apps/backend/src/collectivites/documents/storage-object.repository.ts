@@ -13,6 +13,7 @@ import { storageObjectTable } from './models/storage-object.table';
 export class StorageObjectRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  /** Vérifie le hash dans le bucket choisi pour le téléversement. */
   async existsInBucket(
     { bucketId, hash }: { bucketId: string; hash: StoredDocumentHash },
     tx?: Transaction
@@ -31,6 +32,10 @@ export class StorageObjectRepository {
     return storageObject !== undefined;
   }
 
+  /**
+   * Vérifie le hash dans tous les buckets rattachés à la collectivité,
+   * y compris ceux qui ne sont pas utilisés pour les nouveaux téléversements.
+   */
   async existsForCollectivite(
     {
       collectiviteId,
