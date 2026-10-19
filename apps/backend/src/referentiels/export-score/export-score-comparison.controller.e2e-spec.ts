@@ -174,7 +174,7 @@ describe('Referentiels scoring routes', () => {
       .split(';')[0];
 
     expect(exportFileName).toBe(
-      `"Export_ECI_Amberieu-en-Bugey_${currentDate}.xlsx"`
+      `Export_ECI_Amberieu-en-Bugey_${currentDate}.xlsx`
     );
     const body = responseSnapshotExport.body as ArrayBuffer;
     const wb = new Workbook();
@@ -380,7 +380,7 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
       .split('filename=')[1]
       .split(';')[0];
 
-    expect(exportFileName).toBe(`"Export_CAE_Arbent_${currentDate}.xlsx"`);
+    expect(exportFileName).toBe(`Export_CAE_Arbent_${currentDate}.xlsx`);
     // borne basse : feuille des scores + feuille "Personnalisation"
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
