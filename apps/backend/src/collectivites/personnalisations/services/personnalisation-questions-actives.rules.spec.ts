@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
   computeMaskedQuestionIds,
+  findExprVisibleCycle,
   QuestionVisibiliteNode,
 } from './personnalisation-questions-actives.rules';
 
@@ -100,5 +101,34 @@ describe('computeMaskedQuestionIds', () => {
 
     expect(onCycle).toHaveBeenCalledTimes(1);
     expect(masked).toEqual(new Set(['X', 'Y']));
+  });
+});
+
+describe('findExprVisibleCycle', () => {
+  test('renvoie null sans cycle, y compris avec une dépendance hors liste', () => {
+    expect(
+      findExprVisibleCycle([
+        { id: 'A', dependencies: [] },
+        { id: 'B', dependencies: ['A', 'externe'] },
+        { id: 'C', dependencies: ['A', 'B'] },
+      ])
+    ).toBeNull();
+  });
+
+  test('renvoie le chemin du cycle', () => {
+    expect(
+      findExprVisibleCycle([
+        { id: 'A', dependencies: [] },
+        { id: 'B', dependencies: ['C'] },
+        { id: 'C', dependencies: ['A', 'B'] },
+      ])
+    ).toEqual(['B', 'C', 'B']);
+  });
+
+  test("détecte une question qui dépend d'elle-même", () => {
+    expect(findExprVisibleCycle([{ id: 'A', dependencies: ['A'] }])).toEqual([
+      'A',
+      'A',
+    ]);
   });
 });

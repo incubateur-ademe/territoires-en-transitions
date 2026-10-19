@@ -26,6 +26,7 @@ import { upperFirst } from 'es-toolkit';
 import { QuestionForVerification } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
 import { extractReferencesFromExpression } from '../services/personnalisation-expression-reference-extractor';
 import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
+import { findExprVisibleCycle } from '../services/personnalisation-questions-actives.rules';
 import { verifyPersonnalisationExpressionReferences } from '../services/verify-personnalisation-expression-references';
 import {
   ImportPersonnalisationChoix,
@@ -309,7 +310,7 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       })
     );
 
-    return questions.flatMap((question) => {
+    const errors = questions.flatMap((question) => {
       if (!question.exprVisible) {
         return [];
       }
@@ -326,6 +327,31 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
         { label, questions: questionsForVerification }
       );
     });
+    if (errors.length) {
+      return errors;
+    }
+
+    // une dépendance circulaire rendrait la visibilité dépendante de l'ordre
+    // d'évaluation des questions
+    const cycle = findExprVisibleCycle(
+      questions.map((question) => ({
+        id: question.id,
+        dependencies: question.exprVisible
+          ? Object.keys(
+              this.personnalisationsExpressionService.extractNeededQuestionsFromExpression(
+                question.exprVisible
+              )
+            )
+          : [],
+      }))
+    );
+    return cycle
+      ? [
+          `Les expressions de visibilité forment une dépendance circulaire : ${cycle.join(
+            ' → '
+          )}`,
+        ]
+      : [];
   }
 
   private async upsertPersonnalisationQuestionsAndChoix(
