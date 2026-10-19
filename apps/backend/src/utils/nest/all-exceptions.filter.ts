@@ -33,19 +33,19 @@ export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
     httpErrorResponse.status = exception.getStatus();
   } else if (
     exception instanceof Error &&
-    'expose' in exception &&
-    exception.expose === false &&
     'statusCode' in exception &&
     typeof exception.statusCode === 'number' &&
     Number.isInteger(exception.statusCode) &&
-    exception.statusCode >= 500 &&
+    exception.statusCode >= 400 &&
     exception.statusCode < 600 &&
     'status' in exception &&
     exception.status === exception.statusCode
   ) {
     httpErrorResponse.status = exception.statusCode;
-    httpErrorResponse.message =
-      STATUS_CODES[exception.statusCode] ?? 'Internal server error';
+    if (!('expose' in exception) || exception.expose !== true) {
+      httpErrorResponse.message =
+        STATUS_CODES[exception.statusCode] ?? 'Internal server error';
+    }
   }
   return httpErrorResponse;
 };

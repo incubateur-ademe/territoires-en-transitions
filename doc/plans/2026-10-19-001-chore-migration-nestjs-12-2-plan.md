@@ -104,6 +104,8 @@ Prettier passe à la branche 3, requise par le peer optionnel des schematics lor
 
 **Choix.** Utiliser `standardSchema` et un [convertisseur Swagger](../../apps/backend/src/utils/nest/swagger-document.options.ts) fondé sur `z.toJSONSchema`, compatible avec les schémas Zod classiques et Mini. Le convertisseur demande OpenAPI 3.0, respecte le sens entrée/sortie transmis par Swagger et conserve les composants nommés et leurs références.
 
+`GET /indicateurs` décrit une réponse HTTP 200 avec `count`, `pageCount`, `pageSize`, `page` et `data`. Son schéma public utilise `favoris`, `confidentiel`, `ficheActions` et `parents`, conformément au mapper du contrôleur.
+
 **Raison.** Les identifiants de composants font partie de la documentation consommée à l’extérieur. Les requêtes avec transformations doivent décrire ce que le client envoie. Une vérification parcourt les références locales du document généré et confirme qu’elles se résolvent.
 
 **Alternative non retenue.** Ajouter une autre dépendance de conversion Zod/OpenAPI ou conserver des classes DTO servant uniquement de support à Swagger. Le convertisseur ne prend pas en charge la validation des requêtes.
@@ -142,7 +144,7 @@ Prettier passe à la branche 3, requise par le peer optionnel des schematics lor
 
 **Choix.** Transmettre `result.error` comme `HttpExceptionOptions.errorCode`, ainsi que la cause pour le diagnostic. Le champ `code` de l’enveloppe HTTP privilégie ce code natif, puis conserve les codes de cause/base de données lorsqu’aucun code natif n’est défini.
 
-Pour les erreurs de forme `http-errors` qui sont des `Error`, portent `expose: false`, un `statusCode` entier 5xx et un `status` identique, le filtre utilise le libellé HTTP standard et conserve ce statut. Les autres politiques de messages ne sont pas réécrites globalement.
+Pour les erreurs de forme `http-errors` qui sont des `Error`, le filtre conserve un `statusCode` entier de 400 à 599 lorsque `status` lui est identique. Le message est conservé seulement si `expose` vaut `true` ; sinon, le filtre utilise le libellé HTTP standard ou le message générique. Les erreurs du parseur Express gardent ainsi leurs statuts 400, 413 et 415. Les autres politiques de messages ne sont pas réécrites globalement.
 
 **Raison.** Le [filtre personnalisé](../../apps/backend/src/utils/nest/all-exceptions.filter.ts) doit tenir compte des fonctions natives de Nest 12 tout en gardant l’enveloppe existante. Cette adaptation concerne aussi les échecs métier sans configuration de mapping.
 

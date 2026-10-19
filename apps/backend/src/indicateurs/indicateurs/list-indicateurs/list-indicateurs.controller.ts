@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -12,11 +12,12 @@ import z from 'zod';
 import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
 import { listIndicateursApiRequestSchema } from './list-indicateurs.api-request';
-import { listIndicateursInputSchema } from './list-indicateurs.input';
 import {
-  indicateurListItemSchema,
-  ListIndicateursOutput,
-} from './list-indicateurs.output';
+  ListIndicateursApiResponse,
+  listIndicateursApiResponseSchema,
+} from './list-indicateurs.api-response';
+import { listIndicateursInputSchema } from './list-indicateurs.input';
+import { ListIndicateursOutput } from './list-indicateurs.output';
 import { ListIndicateursService } from './list-indicateurs.service';
 
 type ListIndicateursApiRequest = z.infer<
@@ -38,16 +39,12 @@ export class ListIndicateursController {
     description:
       'Les indicateurs comprennent les indicateurs prédéfinis dans la plateforme avec leurs propriétés spécifiques à la collectivité (pilotes, services, etc.), plus les indicateurs personnalisés créés par la collectivité.',
   })
-  @ApiCreatedResponse({
-    standardSchema: z
-      .array(indicateurListItemSchema)
-      .meta({ id: 'ListIndicateursApiResponseClass' }),
-  })
+  @ApiOkResponse({ standardSchema: listIndicateursApiResponseSchema })
   async listIndicateurs(
     @Query({ schema: listIndicateursApiRequestSchema })
     request: ListIndicateursApiRequest,
     @TokenInfo() user: AuthenticatedUser
-  ) {
+  ): Promise<ListIndicateursApiResponse> {
     const input = listIndicateursInputSchema.parse({
       collectiviteId: request.collectiviteId,
       filters: {
