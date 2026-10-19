@@ -3,8 +3,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { designTokens } from '@tet/design-tokens';
 import { JSX, useCallback, useEffect, useEffectEvent, useMemo } from 'react';
-import { Step, useJoyride } from 'react-joyride';
-import { GuidedTourTooltip } from './guided-tour.tooltip';
+import { useJoyride } from 'react-joyride';
+import { GuidedTourStep, GuidedTourTooltip } from './guided-tour.tooltip';
 import { useSeenGuidedTourVersion } from './use-seen-guided-tour-version';
 
 const TARGET_WAIT_TIMEOUT = 5000;
@@ -12,7 +12,7 @@ const TARGET_WAIT_TIMEOUT = 5000;
 type UseGuidedTourArgs = {
   id: string;
   version: string;
-  steps: readonly Step[];
+  steps: readonly GuidedTourStep[];
   isReady: boolean;
   onSkipped?: () => void;
 };
@@ -31,16 +31,18 @@ const useGuidedTour = ({
 }: UseGuidedTourArgs): GuidedTour => {
   const { hasSeen, markSeen } = useSeenGuidedTourVersion({ id, version });
   const shouldRun = isReady && !hasSeen;
-  const stepsWithDefaults = useMemo(
-    () =>
-      steps.map((step) => ({
-        skipBeacon: true,
-        blockTargetInteraction: true,
-        targetWaitTimeout: TARGET_WAIT_TIMEOUT,
-        ...step,
-      })),
-    [steps]
-  );
+  const stepsWithDefaults = useMemo(() => {
+    const welcomeStepCount = steps.filter(
+      ({ data }) => data?.welcome !== undefined
+    ).length;
+    return steps.map((step) => ({
+      skipBeacon: true,
+      blockTargetInteraction: true,
+      targetWaitTimeout: TARGET_WAIT_TIMEOUT,
+      ...step,
+      data: { ...step.data, welcomeStepCount },
+    }));
+  }, [steps]);
   const { controls, on, Tour } = useJoyride({
     continuous: true,
     steps: stepsWithDefaults,
