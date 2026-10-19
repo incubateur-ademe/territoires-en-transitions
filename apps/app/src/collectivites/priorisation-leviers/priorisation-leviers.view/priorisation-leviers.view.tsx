@@ -398,12 +398,13 @@ export const PriorisationLeviersView = (): JSX.Element => {
               <Button
                 ref={tourHelpRef}
                 variant="outlined"
+                size="sm"
                 onClick={restartOnMatrix}
               >
                 {appLabels.priorisationVisiteRelancer}
               </Button>
             </VisibleWhen>
-            <Button variant="outlined" disabled>
+            <Button variant="outlined" size="sm" disabled>
               {appLabels.priorisationMethodologie}
             </Button>
           </div>
