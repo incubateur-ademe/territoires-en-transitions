@@ -5,6 +5,7 @@ import {
   createPersonneTag,
   createServiceTag,
 } from '@tet/backend/collectivites/collectivites.test-fixture';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   createAxe,
   createFiche,
@@ -943,6 +944,77 @@ describe('ListIndicateursRouter', () => {
         expect(indicateur.mesures.length).toBeGreaterThan(0);
       });
     });
+
+    test.each([true, false])(
+      'inclut les enfants correspondant à participationScore=%s dans la pagination',
+      async (participationScore) => {
+        const { collectivite, user } = await addTestCollectiviteAndUser(
+          database,
+          { user: { role: CollectiviteRole.ADMIN } }
+        );
+        const caller = router.createCaller({
+          user: getAuthUserFromUserCredentials(user),
+        });
+        const [parent, enfant, autreEnfant, racine] = await database.db
+          .insert(indicateurDefinitionTable)
+          .values(
+            [
+              { titre: 'Parent', participationScore: !participationScore },
+              { titre: 'Enfant correspondant', participationScore },
+              {
+                titre: 'Enfant hors filtre',
+                participationScore: !participationScore,
+              },
+              { titre: 'Racine correspondante', participationScore },
+            ].map((definition) => ({
+              ...definition,
+              collectiviteId: collectivite.id,
+              unite: '%',
+            }))
+          )
+          .returning();
+        await database.db.insert(indicateurGroupeTable).values([
+          { parent: parent.id, enfant: enfant.id },
+          { parent: parent.id, enfant: autreEnfant.id },
+        ]);
+
+        const input: Input = {
+          collectiviteId: collectivite.id,
+          filters: { estPerso: true, participationScore },
+          queryOptions: {
+            page: 1,
+            limit: 1,
+            sort: [{ field: 'titre', direction: 'asc' }],
+          },
+        };
+        const firstPage = await caller.indicateurs.indicateurs.list(input);
+        const secondPage = await caller.indicateurs.indicateurs.list({
+          ...input,
+          queryOptions: { ...input.queryOptions, page: 2 },
+        });
+
+        expect(firstPage.count).toBe(2);
+        expect(firstPage.pageCount).toBe(2);
+        expect(firstPage.data).toEqual([
+          expect.objectContaining({
+            id: enfant.id,
+            participationScore,
+            parent: expect.objectContaining({ id: parent.id }),
+          }),
+        ]);
+        expect(secondPage.count).toBe(2);
+        expect(secondPage.data.map(({ id }) => id)).toEqual([racine.id]);
+
+        const unfiltered = await caller.indicateurs.indicateurs.list({
+          collectiviteId: collectivite.id,
+          filters: { estPerso: true },
+        });
+        expect(unfiltered.count).toBe(2);
+        expect(unfiltered.data.map(({ id }) => id)).toEqual(
+          expect.arrayContaining([parent.id, racine.id])
+        );
+      }
+    );
 
     test('filtre par estConfidentiel', async () => {
       const caller = router.createCaller({ user: testUser });

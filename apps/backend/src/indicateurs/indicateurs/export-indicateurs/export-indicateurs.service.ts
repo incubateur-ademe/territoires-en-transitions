@@ -104,6 +104,14 @@ export default class ExportIndicateursService {
       (a, b) => (orderById.get(a.id) ?? 0) - (orderById.get(b.id) ?? 0)
     );
 
+    // Le filtre de participation renvoie déjà chaque enfant correspondant.
+    // Les développer à nouveau ajouterait des doublons et des enfants hors filtre.
+    if (filters.participationScore !== undefined) {
+      for (const parent of parents) {
+        parent.enfants = [];
+      }
+    }
+
     // Les enfants proviennent de la projection de ListIndicateursService qui
     // n'applique pas le filtrage de confidentialité. On les repasse donc par le
     // même service (mêmes droits + gate estConfidentiel) pour exclure à la source
