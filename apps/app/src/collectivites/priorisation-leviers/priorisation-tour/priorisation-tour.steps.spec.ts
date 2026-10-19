@@ -44,6 +44,7 @@ describe('toPriorisationTourSteps', () => {
     const steps = toSteps({});
 
     expect(steps.map(({ title }) => title)).toEqual([
+      appLabels.priorisationVisiteBienvenueTitre,
       appLabels.priorisationVisiteParcoursTitre,
       appLabels.priorisationVisiteMatriceTitre,
       appLabels.priorisationVisiteAideTitre,
@@ -54,6 +55,7 @@ describe('toPriorisationTourSteps', () => {
     const steps = toSteps({ levierToPrioritizeId: LEVIER_TO_PRIORITIZE_ID });
 
     expect(steps.map(({ title }) => title)).toEqual([
+      appLabels.priorisationVisiteBienvenueTitre,
       appLabels.priorisationVisiteParcoursTitre,
       appLabels.priorisationVisiteMatriceTitre,
       appLabels.priorisationVisiteLevierAPrioriserTitre,
@@ -68,21 +70,26 @@ describe('toPriorisationTourSteps', () => {
 
     expect(steps.map(resolveTarget)).toEqual([
       'body',
+      'body',
       elements.leviersPanel,
       elements.tourHelp,
     ]);
   });
 
-  it('présente le parcours au centre de la page', () => {
-    const [introStep] = toSteps({});
+  it("présente la bienvenue puis le parcours au centre de la page", () => {
+    const [welcomeStep, introStep] = toSteps({});
 
-    expect(introStep.placement).toBe('center');
+    expect([welcomeStep.placement, introStep.placement]).toEqual([
+      'center',
+      'center',
+    ]);
   });
 
   it("vise le point, l'en-tête et les boutons de la première action avec un levier à prioriser", () => {
     const steps = toSteps({ levierToPrioritizeId: LEVIER_TO_PRIORITIZE_ID });
 
     expect(steps.map(resolveTarget)).toEqual([
+      'body',
       'body',
       elements.leviersPanel,
       elements.levierToPrioritize,
@@ -93,7 +100,7 @@ describe('toPriorisationTourSteps', () => {
   });
 
   it('place le popover de la matrice dans le coin de son panneau', () => {
-    const [, matrixStep] = toSteps({});
+    const [, , matrixStep] = toSteps({});
 
     expect(matrixStep.floatingOptions).toBe(insideTopEndFloatingOptions);
   });
@@ -102,6 +109,10 @@ describe('toPriorisationTourSteps', () => {
     const steps = toSteps({ levierToPrioritizeId: LEVIER_TO_PRIORITIZE_ID });
 
     expect(steps.map(({ data }) => data)).toEqual([
+      {
+        nextLabel: appLabels.visiteGuideeCommencer,
+        welcome: { badge: appLabels.priorisationVisiteBienvenueBadge },
+      },
       undefined,
       undefined,
       { nextLabel: appLabels.priorisationVisiteOuvrirLevier },
@@ -119,10 +130,10 @@ describe('toPriorisationTourSteps', () => {
     });
     const hasBeforeHook = steps.map(({ before }) => before !== undefined);
 
-    await steps[3].before?.({} as StepData);
+    await steps[4].before?.({} as StepData);
 
     expect({ hasBeforeHook, selected: select.mock.calls }).toEqual({
-      hasBeforeHook: [false, false, false, true, false, false],
+      hasBeforeHook: [false, false, false, false, true, false, false],
       selected: [['biogaz']],
     });
   });

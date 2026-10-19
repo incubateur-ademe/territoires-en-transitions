@@ -63,6 +63,10 @@ export const collectivitesLabels = {
   priorisationLeviersTitre: 'Aide à la priorisation',
   priorisationMethodologie: 'Méthodologie',
   priorisationVisiteRelancer: restartTourLabel,
+  priorisationVisiteBienvenueBadge: 'Visite guidée · 2 min',
+  priorisationVisiteBienvenueTitre: "Bienvenue dans l'aide à la priorisation",
+  priorisationVisiteBienvenueDescription:
+    'En une minute, identifiez où votre collectivité peut le plus réduire ses émissions de GES, puis retenez les actions à discuter avec vos élus. Vous pourrez relancer cette visite à tout moment.',
   priorisationVisiteParcoursTitre: 'Votre parcours en 3 étapes',
   priorisationVisiteIaTitre: 'Intelligence artificielle.',
   priorisationVisiteIaDescription:

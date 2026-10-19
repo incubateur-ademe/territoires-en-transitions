@@ -9,6 +9,7 @@ import {
 } from './priorisation-leviers.pom';
 import { PRIORISATION_TOUR_STORAGE } from './priorisation-tour.storage';
 
+const WELCOME_STEP = "Bienvenue dans l'aide à la priorisation";
 const INTRO_STEP = 'Votre parcours en 3 étapes';
 const MATRIX_STEP = 'La matrice des leviers';
 const POINT_STEP = 'Commencez par le rouge';
@@ -22,6 +23,14 @@ type TourEnding = {
   name: string;
   button: TourButtonName;
   nextClicksBefore: number;
+};
+
+const startTourFromWelcome = async (
+  pom: PriorisationLeviersPom
+): Promise<void> => {
+  await expect(pom.tourStep(WELCOME_STEP)).toBeVisible();
+  await pom.tourButton('Commencer la visite').click();
+  await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
 };
 
 const tourEndings: TourEnding[] = [
@@ -53,12 +62,15 @@ test.describe('Priorisation : visite guidée à la première visite', () => {
 
     await pom.goto(collectivite.data.id);
 
+    await expect(pom.tourStep(WELCOME_STEP)).toBeVisible();
+    await expect(pom.tourProgress).toHaveCount(0);
+    await pom.tourButton('Commencer la visite').click();
+
     await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
     await expect(pom.tourProgress).toHaveAttribute(
       'aria-valuetext',
       'Étape 1 sur 3'
     );
-    await expect(pom.tourButton('Précédent')).toHaveCount(0);
   });
 
   test('« Suivant » enchaîne les trois étapes et « Précédent » revient en arrière', async ({
@@ -71,7 +83,7 @@ test.describe('Priorisation : visite guidée à la première visite', () => {
     await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
     await pom.goto(collectivite.data.id);
-    await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
+    await startTourFromWelcome(pom);
 
     await pom.tourButton('Suivant').click();
     await expect(pom.tourStep(MATRIX_STEP)).toBeVisible();
@@ -94,7 +106,7 @@ test.describe('Priorisation : visite guidée à la première visite', () => {
       await addMobilisationAvecFiche(collectivite.data.id);
       const pom = new PriorisationLeviersPom(page);
       await pom.goto(collectivite.data.id);
-      await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
+      await startTourFromWelcome(pom);
       for (let click = 0; click < ending.nextClicksBefore; click++) {
         await pom.tourButton('Suivant').click();
       }
@@ -123,7 +135,7 @@ const startTourWithLevierToPrioritize = async ({
 }): Promise<void> => {
   await pom.stubLevierWithPotentiel(LEVIER_TO_PRIORITIZE);
   await pom.goto(collectiviteId);
-  await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
+  await startTourFromWelcome(pom);
 };
 
 const openLevierFromTour = async (
@@ -310,6 +322,8 @@ test.describe('Priorisation : « Comment ça marche ? » relance la visite', () 
 
     await pom.helpButton.click();
 
+    await expect(pom.tourStep(WELCOME_STEP)).toBeVisible();
+    await pom.tourButton('Commencer la visite').click();
     await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
     await expect(pom.tourProgress).toHaveAttribute(
       'aria-valuetext',
@@ -332,7 +346,7 @@ test.describe('Priorisation : « Comment ça marche ? » relance la visite', () 
     await expect(pom.breakdownTab).toHaveAttribute('aria-selected', 'true');
 
     await pom.helpButton.click();
-    await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
+    await startTourFromWelcome(pom);
     await pom.tourButton('Suivant').click();
 
     await expect(pom.tourStep(MATRIX_STEP)).toBeVisible();
@@ -352,13 +366,13 @@ test.describe('Priorisation : « Comment ça marche ? » relance la visite', () 
     await pom.waitForLeviersLoaded();
 
     await pom.helpButton.click();
-    await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
+    await startTourFromWelcome(pom);
     await pom.tourButton('Suivant').click();
     await pom.tourButton('Passer la visite').click();
     await expect(pom.tourDialogs).toHaveCount(0);
     await pom.helpButton.click();
 
-    await expect(pom.tourStep(INTRO_STEP)).toBeVisible();
+    await expect(pom.tourStep(WELCOME_STEP)).toBeVisible();
     await expect(pom.tourDialogs).toHaveCount(1);
   });
 });
