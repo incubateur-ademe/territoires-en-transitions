@@ -52,6 +52,7 @@ export const preset = {
           1: '#F55B5B',
           2: '#FFD8D8',
           3: '#FF9789',
+          4: '#FFEFEF',
         },
         // Couleurs warning
         warning: {
