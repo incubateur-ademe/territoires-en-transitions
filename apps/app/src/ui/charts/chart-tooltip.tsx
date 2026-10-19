@@ -22,9 +22,9 @@ const ChartTooltip = ({
   hint,
 }: ChartTooltipContent): JSX.Element => (
   <div className="flex max-w-64 flex-col items-start gap-1 whitespace-normal font-sans">
-    <p className="m-0 text-sm font-bold text-primary-9">{title}</p>
+    <p className="m-0 text-sm font-bold leading-4 text-primary-9">{title}</p>
     {lines.map((line) => (
-      <p key={line} className="m-0 text-xs font-normal leading-5 text-grey-8">
+      <p key={line} className="m-0 text-xs font-normal leading-4 text-grey-8">
         {line}
       </p>
     ))}
