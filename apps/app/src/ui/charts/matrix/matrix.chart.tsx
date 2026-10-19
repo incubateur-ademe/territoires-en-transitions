@@ -1,5 +1,6 @@
 import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
+import { PointCallout } from './point-callout';
 import type { ScatterSeriesOption } from 'echarts/charts';
 import { getInstanceByDom } from 'echarts/core';
 import { uniq } from 'es-toolkit';
@@ -60,6 +61,7 @@ type MatrixPoint = MatrixCoord & {
 type MatrixAnchor = {
   pointId: string;
   elementRef: Ref<HTMLSpanElement>;
+  callout?: string;
 };
 
 type MatrixChartProps = {
@@ -757,6 +759,8 @@ const toLabelObstacles = ({
 type AnchorTarget = {
   box: Box;
   elementRef: Ref<HTMLSpanElement>;
+  callout?: string;
+  pointId: string;
 };
 
 const toAnchorTarget = ({
@@ -781,10 +785,25 @@ const toAnchorTarget = ({
   if (box === undefined) {
     return undefined;
   }
-  return { box, elementRef: anchor.elementRef };
+  return {
+    box,
+    elementRef: anchor.elementRef,
+    callout: anchor.callout,
+    pointId: anchor.pointId,
+  };
 };
 
-const AnchorSpot = ({ box, elementRef }: AnchorTarget): JSX.Element => (
+type AnchorSpotProps = AnchorTarget & {
+  onPointSelected?: (pointId: string) => void;
+};
+
+const AnchorSpot = ({
+  box,
+  elementRef,
+  callout,
+  pointId,
+  onPointSelected,
+}: AnchorSpotProps): JSX.Element => (
   <span
     ref={elementRef}
     className="pointer-events-none absolute"
@@ -794,7 +813,14 @@ const AnchorSpot = ({ box, elementRef }: AnchorTarget): JSX.Element => (
       width: box.right - box.left,
       height: box.bottom - box.top,
     }}
-  />
+  >
+    {callout === undefined ? null : (
+      <PointCallout
+        label={callout}
+        onClick={() => onPointSelected?.(pointId)}
+      />
+    )}
+  </span>
 );
 
 const MatrixChart = ({
@@ -898,7 +924,9 @@ const MatrixChart = ({
           option={option}
           onEvents={onEvents}
         />
-        {hasAnchor ? <AnchorSpot {...anchorTarget} /> : null}
+        {hasAnchor ? (
+          <AnchorSpot {...anchorTarget} onPointSelected={onPointSelected} />
+        ) : null}
       </div>
       <figcaption className="sr-only">{caption}</figcaption>
       <PointsList

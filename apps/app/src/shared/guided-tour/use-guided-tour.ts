@@ -3,11 +3,16 @@
 import { appLabels } from '@/app/labels/catalog';
 import { designTokens } from '@tet/design-tokens';
 import { JSX, useCallback, useEffect, useEffectEvent, useMemo } from 'react';
-import { useJoyride } from 'react-joyride';
+import { Status, useJoyride } from 'react-joyride';
 import { GuidedTourStep, GuidedTourTooltip } from './guided-tour.tooltip';
 import { useSeenGuidedTourVersion } from './use-seen-guided-tour-version';
 
 const TARGET_WAIT_TIMEOUT = 5000;
+const ACTIVE_STATUSES: ReadonlySet<Status> = new Set<Status>([
+  'waiting',
+  'running',
+  'paused',
+]);
 
 type UseGuidedTourArgs = {
   id: string;
@@ -15,10 +20,12 @@ type UseGuidedTourArgs = {
   steps: readonly GuidedTourStep[];
   isReady: boolean;
   onSkipped?: () => void;
+  onEnded?: () => void;
 };
 
 type GuidedTour = {
   Tour: JSX.Element | null;
+  isOver: boolean;
   restart: () => void;
 };
 
@@ -28,6 +35,7 @@ const useGuidedTour = ({
   steps,
   isReady,
   onSkipped,
+  onEnded,
 }: UseGuidedTourArgs): GuidedTour => {
   const { hasSeen, markSeen } = useSeenGuidedTourVersion({ id, version });
   const shouldRun = isReady && !hasSeen;
@@ -43,7 +51,7 @@ const useGuidedTour = ({
       data: { ...step.data, welcomeStepCount },
     }));
   }, [steps]);
-  const { controls, on, Tour } = useJoyride({
+  const { controls, on, state, Tour } = useJoyride({
     continuous: true,
     steps: stepsWithDefaults,
     run: shouldRun,
@@ -65,6 +73,7 @@ const useGuidedTour = ({
     },
   });
   const notifySkipped = useEffectEvent(() => onSkipped?.());
+  const notifyEnded = useEffectEvent(() => onEnded?.());
   const restart = useCallback(() => controls.start(), [controls]);
 
   useEffect(
@@ -74,6 +83,7 @@ const useGuidedTour = ({
         const isEndedByUser = isSkipped || status === 'finished';
         if (isEndedByUser) {
           markSeen();
+          notifyEnded();
         }
         if (isSkipped) {
           notifySkipped();
@@ -82,7 +92,9 @@ const useGuidedTour = ({
     [on, markSeen]
   );
 
-  return { Tour, restart };
+  const isRunning = ACTIVE_STATUSES.has(state.status);
+
+  return { Tour, isOver: hasSeen && !isRunning, restart };
 };
 
 export { useGuidedTour };

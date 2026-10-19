@@ -89,6 +89,8 @@ export const collectivitesLabels = {
   priorisationVisiteLevierAPrioriserTitre: 'Commencez par le rouge',
   priorisationVisiteLevierAPrioriserDescription:
     'La zone rouge regroupe les leviers à fort impact que vous mobilisez encore peu. Ouvrez celui-ci pour voir les actions qui y répondent.',
+  priorisationLevierADebuterConsigne:
+    'Commencez ici : cliquez sur un point gris',
   priorisationVisiteOuvrirLevier: 'Ouvrir ce levier',
   priorisationVisiteDetailLevierTitre: 'Le détail du levier',
   priorisationVisiteDetailLevierDescription:
