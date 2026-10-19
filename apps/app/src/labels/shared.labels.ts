@@ -138,6 +138,7 @@ export const sharedLabels = {
       ? '1 collectivité a des actions liées'
       : `${count} collectivités ont des actions liées`,
   actionDeReferenceSauvegarder: 'Sauvegarder',
+  actionDeReferenceRetirer: 'Retirer',
   actionDeReferencePasInteresse: 'Pas intéressé',
   actionDeReferenceRestaurer: 'Restaurer',
   actionDeReferenceMarqueesPasInteresse: (count: number): string =>

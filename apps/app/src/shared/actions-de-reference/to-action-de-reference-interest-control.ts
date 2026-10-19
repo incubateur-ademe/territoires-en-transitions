@@ -8,7 +8,8 @@ import type {
 export const toActionDeReferenceInterestControl = (
   action: ActionDeReference,
   status: ActionDeReferenceInterestStatus,
-  actions: Pick<Preselection, 'add' | 'remove' | 'ignore' | 'restore'>
+  actions: Pick<Preselection, 'add' | 'remove' | 'ignore' | 'restore'>,
+  savedActionLabel?: string
 ): ActionDeReferenceInterestControl => {
   if (status === 'ignoree') {
     return { status, onRestore: () => actions.restore(action.id) };
@@ -20,5 +21,6 @@ export const toActionDeReferenceInterestControl = (
         ? actions.remove(action.id)
         : actions.add(action),
     onDismiss: () => actions.ignore(action.id),
+    savedActionLabel,
   };
 };
