@@ -119,6 +119,7 @@ export const designTokens = {
     '80vh': '80vh',
   },
   zIndex: {
+    header: '100',
     modal: '1000',
     dropdown: '999',
     tooltip: '1001',

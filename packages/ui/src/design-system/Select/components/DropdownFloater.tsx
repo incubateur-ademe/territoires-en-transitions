@@ -194,11 +194,9 @@ export const DropdownFloater = ({
                     // A nested portal leaves the modal's stacking context.
                     zIndex:
                       dropdownZindex ??
-                      (parentNodeId
-                        ? renderInPortal
-                          ? Number(preset.theme.extend.zIndex.modal) + 1
-                          : preset.theme.extend.zIndex.dropdown
-                        : 1),
+                      (parentNodeId && renderInPortal
+                        ? Number(preset.theme.extend.zIndex.modal) + 1
+                        : preset.theme.extend.zIndex.dropdown),
                   },
                   className: cn(
                     'overflow-y-auto bg-white',

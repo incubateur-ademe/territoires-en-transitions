@@ -26,7 +26,7 @@ export const Header = ({
   return (
     <header
       id={id}
-      className="relative w-full bg-white border-b border-primary-3 z-modal"
+      className="relative w-full bg-white border-b border-primary-3 z-header"
     >
       <HeaderDesktop
         className="max-lg:hidden"
