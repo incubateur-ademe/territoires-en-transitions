@@ -1,13 +1,19 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { seedTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { Collectivite, toDocumentHash } from '@tet/domain/collectivites';
+import {
+  Collectivite,
+  toDocumentHash,
+  UploadDecisionKindEnum,
+} from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import {
   getTestApp,
   getTestDatabase,
@@ -104,7 +110,7 @@ describe('CreateUploadTokenRouter', () => {
     });
 
     expect(result).toEqual({
-      kind: 'readyToUpload',
+      kind: UploadDecisionKindEnum.READY_TO_UPLOAD,
       token: expect.any(String),
       bucketId: expect.any(String),
       path: HASH,
@@ -127,9 +133,54 @@ describe('CreateUploadTokenRouter', () => {
     });
 
     expect(result).toEqual({
-      kind: 'alreadyInBibliotheque',
+      kind: UploadDecisionKindEnum.ALREADY_IN_BIBLIOTHEQUE,
       fichierId: document.id,
       filename: 'rapport-confidentiel.pdf',
+    });
+  });
+
+  test('termine un dépôt dont seul le fichier est présent dans le stockage', async () => {
+    const document = await seedTestDocument({
+      databaseService,
+      collectiviteId: collectivite.id,
+      filename: 'rapport.pdf',
+    });
+    await databaseService.db
+      .delete(bibliothequeFichierTable)
+      .where(eq(bibliothequeFichierTable.id, document.id));
+    const caller = router.createCaller({ user: editorUser });
+
+    const decision = await caller.collectivites.documents.createUploadToken({
+      collectiviteId: collectivite.id,
+      hash: document.hash,
+    });
+
+    expect(decision).toEqual({
+      kind: UploadDecisionKindEnum.ALREADY_IN_STORAGE,
+    });
+
+    const recoveredDocument = await caller.collectivites.documents.create({
+      collectiviteId: collectivite.id,
+      hash: document.hash,
+      filename: 'rapport-renomme.pdf',
+      confidentiel: true,
+    });
+
+    expect(recoveredDocument).toMatchObject({
+      collectiviteId: collectivite.id,
+      hash: document.hash,
+      filename: 'rapport-renomme.pdf',
+      confidentiel: true,
+    });
+    await expect(
+      caller.collectivites.documents.createUploadToken({
+        collectiviteId: collectivite.id,
+        hash: document.hash,
+      })
+    ).resolves.toEqual({
+      kind: UploadDecisionKindEnum.ALREADY_IN_BIBLIOTHEQUE,
+      fichierId: recoveredDocument.id,
+      filename: recoveredDocument.filename,
     });
   });
 
@@ -150,7 +201,7 @@ describe('CreateUploadTokenRouter', () => {
     });
 
     expect(result).toEqual({
-      kind: 'readyToUpload',
+      kind: UploadDecisionKindEnum.READY_TO_UPLOAD,
       token: expect.any(String),
       bucketId: expect.any(String),
       path: HASH_IN_OTHER_COLLECTIVITE,

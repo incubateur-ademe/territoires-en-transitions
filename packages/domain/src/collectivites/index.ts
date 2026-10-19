@@ -25,6 +25,7 @@ export * from './documents/preuve-reglementaire-definition.schema';
 export * from './documents/preuve-reglementaire.schema';
 export * from './documents/preuve-type.enum.schema';
 export * from './documents/preuve.schema';
+export * from './documents/upload-decision-kind.enum';
 export * from './export-connect.schema';
 export * from './financeur-tag.schema';
 export * from './identite-collectivite.schema';

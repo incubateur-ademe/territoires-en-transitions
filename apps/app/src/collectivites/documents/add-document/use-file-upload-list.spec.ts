@@ -1,5 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
-import { toDocumentHash } from '@tet/domain/collectivites';
+import {
+  toDocumentHash,
+  UploadDecisionKindEnum,
+} from '@tet/domain/collectivites';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UploadErrorCode, UploadStatus, UploadStatusCode } from './types';
 import { useFileUploadList } from './use-file-upload-list';
@@ -39,7 +42,7 @@ describe('useFileUploadList', () => {
 
   it('signale en doublon, sous son nom enregistré, un fichier que la demande de jeton trouve déjà dans la bibliothèque', async () => {
     uploadFile.mockResolvedValue({
-      kind: 'alreadyInBibliotheque',
+      kind: UploadDecisionKindEnum.ALREADY_IN_BIBLIOTHEQUE,
       fichierId: 42,
       filename: 'rapport-existant.pdf',
     });

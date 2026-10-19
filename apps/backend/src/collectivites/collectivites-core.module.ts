@@ -10,6 +10,7 @@ import { BibliothequeFichierRepository } from './documents/bibliotheque-fichier.
 import { LabellisationDocumentsPermissionService } from './documents/labellisation-documents-permission.service';
 import { CollectiviteBucketRepository } from './documents/collectivite-bucket.repository';
 import { ListDocumentsByScopeRepository } from './documents/list-documents-by-scope/list-documents-by-scope.repository';
+import { StorageObjectRepository } from './documents/storage-object.repository';
 import CollectivitesService from './services/collectivites.service';
 
 /**
@@ -27,6 +28,7 @@ import CollectivitesService from './services/collectivites.service';
     BibliothequeFichierRepository,
     LabellisationDocumentsPermissionService,
     CollectiviteBucketRepository,
+    StorageObjectRepository,
     CollectiviteCompetencesRepository,
     CollectiviteCommunesMembresRepository,
     ListDocumentsByScopeRepository,
@@ -38,6 +40,7 @@ import CollectivitesService from './services/collectivites.service';
     BibliothequeFichierRepository,
     LabellisationDocumentsPermissionService,
     CollectiviteBucketRepository,
+    StorageObjectRepository,
     CollectiviteCompetencesRepository,
     CollectiviteCommunesMembresRepository,
     ListDocumentsByScopeRepository,
