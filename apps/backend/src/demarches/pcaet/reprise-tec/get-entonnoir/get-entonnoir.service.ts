@@ -23,7 +23,7 @@ export class GetEntonnoirService {
   }: ServiceSecondArg): Promise<Result<Entonnoir, GetEntonnoirError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['UTILS.BACKOFFICE.READ'],
+      PermissionOperationEnum['DEMARCHES.REPRISE-TEC.READ'],
       ResourceType.PLATEFORME,
       null,
       tx

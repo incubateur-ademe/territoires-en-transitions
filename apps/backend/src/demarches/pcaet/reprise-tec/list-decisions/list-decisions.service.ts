@@ -27,7 +27,7 @@ export class ListDecisionsService {
   }: ServiceSecondArg): Promise<Result<Decisions, ListDecisionsError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['UTILS.BACKOFFICE.READ'],
+      PermissionOperationEnum['DEMARCHES.REPRISE-TEC.READ'],
       ResourceType.PLATEFORME,
       null,
       tx

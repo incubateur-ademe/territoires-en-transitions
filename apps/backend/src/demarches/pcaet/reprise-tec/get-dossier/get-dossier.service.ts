@@ -33,7 +33,7 @@ export class GetDossierService {
   ): Promise<Result<RecetteDossierDetail, GetDossierError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['UTILS.BACKOFFICE.READ'],
+      PermissionOperationEnum['DEMARCHES.REPRISE-TEC.READ'],
       ResourceType.PLATEFORME,
       null,
       tx

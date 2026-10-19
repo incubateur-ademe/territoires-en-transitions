@@ -51,6 +51,7 @@ const backofficeTools: BackofficeTool[] = [
     description: appLabels.repriseTecDescription,
     icon: 'git-merge-line',
     href: repriseTecUrl,
+    permission: 'demarches.reprise-tec.read',
   },
 ];
 

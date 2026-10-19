@@ -21,6 +21,7 @@ describe('listAllowedBackofficeTools', () => {
       'importer-plan',
       'ajouter-collectivite',
       'banniere',
+      'reprise-tec',
     ]);
   });
 

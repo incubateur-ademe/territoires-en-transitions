@@ -32,7 +32,7 @@ export class ListCasTypesService {
   }: ServiceSecondArg): Promise<Result<CasTypes, ListCasTypesError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['UTILS.BACKOFFICE.READ'],
+      PermissionOperationEnum['DEMARCHES.REPRISE-TEC.READ'],
       ResourceType.PLATEFORME,
       null,
       tx

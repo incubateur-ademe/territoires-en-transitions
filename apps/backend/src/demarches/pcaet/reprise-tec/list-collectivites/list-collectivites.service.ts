@@ -34,7 +34,7 @@ export class ListCollectivitesService {
   > {
     const permissionResult = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['UTILS.BACKOFFICE.READ'],
+      PermissionOperationEnum['DEMARCHES.REPRISE-TEC.READ'],
       ResourceType.PLATEFORME,
       null,
       tx
