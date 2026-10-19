@@ -122,7 +122,9 @@ describe('CreatePlanAggregateService', () => {
         expect(result.data).toBe(1);
       }
 
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(2);
+      expect(
+        mockCreateFicheService.createFicheWithAuthorization
+      ).toHaveBeenCalledTimes(2);
       expect(mockUpsertPlanService.upsertPlan).toHaveBeenCalledTimes(1);
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
       expect(mockPermissionService.assertAllowed).toHaveBeenCalledTimes(1);
@@ -263,7 +265,9 @@ describe('CreatePlanAggregateService', () => {
       }
 
       expect(mockUpsertAxeService.upsertAxe).not.toHaveBeenCalled();
-      expect(mockCreateFicheService.createFicheWithAuthorization).not.toHaveBeenCalled();
+      expect(
+        mockCreateFicheService.createFicheWithAuthorization
+      ).not.toHaveBeenCalled();
     });
 
     it('should fail when axe creation fails', async () => {
@@ -443,7 +447,9 @@ describe('CreatePlanAggregateService', () => {
 
       expect(result.success).toBe(true);
       // 3 fiches total: 1 normal + 1 parent (dedicated) + 1 sous-action
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(3);
+      expect(
+        mockCreateFicheService.createFicheWithAuthorization
+      ).toHaveBeenCalledTimes(3);
 
       // Le mock alloue les ids dans l'ordre d'appel à createFicheWithAuthorization :
       // 101 (Action normale), 102 (Action parente), 103 (Sous-action 1.1).
@@ -486,11 +492,14 @@ describe('CreatePlanAggregateService', () => {
 
       expect(result.success).toBe(true);
       // 3 fiches: 1 parent + 2 sous-actions
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(3);
+      expect(
+        mockCreateFicheService.createFicheWithAuthorization
+      ).toHaveBeenCalledTimes(3);
 
       // Le mock alloue : 101 (Action parente), 102 (Sous 1.1), 103 (Sous 1.2).
       // Les 2 sous-actions pointent sur la même parente = 101.
-      const calls = mockCreateFicheService.createFicheWithAuthorization.mock.calls;
+      const calls =
+        mockCreateFicheService.createFicheWithAuthorization.mock.calls;
       expect(calls[1][0].fiche.parentId).toBe(101);
       expect(calls[2][0].fiche.parentId).toBe(101);
     });
@@ -531,11 +540,14 @@ describe('CreatePlanAggregateService', () => {
       const result = await service.create(request, mockUser, mockTransaction);
 
       expect(result.success).toBe(true);
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(4);
+      expect(
+        mockCreateFicheService.createFicheWithAuthorization
+      ).toHaveBeenCalledTimes(4);
 
       // Le mock alloue : 101 (Action parente Axe 1), 102 (Action parente Axe 2),
       // 103 (Sous-action A → axe 1), 104 (Sous-action B → axe 2).
-      const calls = mockCreateFicheService.createFicheWithAuthorization.mock.calls;
+      const calls =
+        mockCreateFicheService.createFicheWithAuthorization.mock.calls;
       expect(calls[2][0].fiche.parentId).toBe(101);
       expect(calls[3][0].fiche.parentId).toBe(102);
     });
@@ -640,7 +652,9 @@ describe('CreatePlanAggregateService', () => {
       // One axe should be created for "Axe 1"
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(1);
 
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(4);
+      expect(
+        mockCreateFicheService.createFicheWithAuthorization
+      ).toHaveBeenCalledTimes(4);
     });
 
     describe('webhook batching', () => {
@@ -671,13 +685,17 @@ describe('CreatePlanAggregateService', () => {
         ).toHaveBeenCalledTimes(1);
         expect(
           mockWebhookService.sendWebhookNotifications
-        ).toHaveBeenCalledWith(ApplicationSousScopesEnum.FICHES, [
-          { entityId: '101', payload: refetchedFiches[0] },
-          { entityId: '102', payload: refetchedFiches[1] },
-        ]);
+        ).toHaveBeenCalledWith(
+          ApplicationSousScopesEnum.FICHES,
+          [
+            { entityId: '101', payload: refetchedFiches[0] },
+            { entityId: '102', payload: refetchedFiches[1] },
+          ],
+          mockTransaction
+        );
       });
 
-      it("ne casse pas l'import si l'envoi du webhook échoue", async () => {
+      it("retourne un échec si l'écriture du webhook échoue", async () => {
         const request = createValidRequest();
 
         mockUpsertPlanService.upsertPlan.mockResolvedValue(
@@ -692,12 +710,15 @@ describe('CreatePlanAggregateService', () => {
           count: 1,
         });
         mockWebhookService.sendWebhookNotifications.mockRejectedValueOnce(
-          new Error('webhook endpoint down')
+          new Error('outbox write failed')
         );
 
         const result = await service.create(request, mockUser, mockTransaction);
 
-        expect(result.success).toBe(true);
+        expect(result).toMatchObject({
+          success: false,
+          error: PlanErrorType.DATABASE_ERROR,
+        });
       });
     });
   });

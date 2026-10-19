@@ -1,3 +1,9 @@
+import { getDrizzleToken } from '@nestjs/drizzle';
+import type { Queue } from 'bullmq';
+import { RuntimeLifecycleModule } from '@tet/backend/utils/nest/runtime-lifecycle.module';
+import { RuntimeHealthModule } from '@tet/backend/utils/health/runtime-health.module';
+import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@tet/backend/utils/bullmq/queue-names.constants';
+import type { Database } from './utils/database/database.type';
 import { Logger, Module } from '@nestjs/common';
 
 import { AirtableModule } from './airtable/airtable.module';
@@ -8,7 +14,7 @@ import { SireneModule } from './sirene/sirene.module';
 import { WebhookModule } from './webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
-import { BullModule } from '@nestjs/bullmq';
+import { BullModule, getQueueToken } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { buildQueueRedisConnection } from '@tet/backend/utils/config/build-queue-redis-connection';
@@ -27,6 +33,18 @@ const appLogger = new Logger('AppModule');
 
 @Module({
   imports: [
+    RuntimeLifecycleModule,
+    RuntimeHealthModule.registerAsync({
+      imports: [DatabaseModule, WebhookModule],
+      inject: [
+        getDrizzleToken(),
+        getQueueToken(WEBHOOK_NOTIFICATIONS_QUEUE_NAME),
+      ],
+      useFactory: (database: Database, queue: Queue) => ({
+        database: database.$client,
+        redis: () => queue.getJobCounts('waiting'),
+      }),
+    }),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment

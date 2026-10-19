@@ -1,3 +1,4 @@
+import { CalendlyHttpClientModule } from './calendly-http-client.module';
 import { AirtableModule } from '../airtable/airtable.module';
 import { CalendlySynchroService } from './calendly-synchro.service';
 import { Module } from '@nestjs/common';
@@ -6,7 +7,12 @@ import { UtilsModule } from '../utils/utils.module';
 import { CalendlyApiService } from './calendly-api.service';
 
 @Module({
-  imports: [ConfigurationModule, UtilsModule, AirtableModule],
+  imports: [
+    CalendlyHttpClientModule,
+    ConfigurationModule,
+    UtilsModule,
+    AirtableModule,
+  ],
   providers: [CalendlyApiService, CalendlySynchroService],
   exports: [CalendlySynchroService],
 })

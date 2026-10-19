@@ -1,8 +1,13 @@
 import { z } from 'zod';
+import {
+  httpSecurityConfiguration,
+  httpUrlSchema,
+} from './http-security.configuration';
 
 export const backendConfigurationSchema = z
   .object({
-    APP_URL: z.string().min(1).describe('Main front app URL'),
+    ...httpSecurityConfiguration,
+    APP_URL: httpUrlSchema.describe('Main front app URL'),
     SUPABASE_DATABASE_URL: z
       .string()
       .min(1)

@@ -1,9 +1,14 @@
+import { RuntimeLifecycleModule } from './utils/nest/runtime-lifecycle.module';
+import { RuntimeHealthModule } from './utils/health/runtime-health.module';
+import { DatabaseService } from './utils/database/database.service';
+import { ThrottlingModule } from './utils/throttling/throttling.module';
+import { RateLimitStorageService } from './utils/throttling/rate-limit-storage.service';
 import { BullModule } from '@nestjs/bullmq';
 import { Logger, Module } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { PersonnalisationsModule } from './collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
@@ -31,20 +36,23 @@ const appLogger = new Logger('AppModule');
 
 @Module({
   imports: [
+    RuntimeLifecycleModule,
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
       validationSchema: backendConfigurationSchema,
     }),
     ConfigurationModule,
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigurationModule],
-      inject: [ConfigurationService],
-      useFactory: (config: ConfigurationService) => [
-        {
-          ttl: config.get('PUBLIC_API_THROTTLE_TTL'),
-          limit: config.get('PUBLIC_API_THROTTLE_LIMIT'),
-        },
-      ],
+    ThrottlingModule,
+    RuntimeHealthModule.registerAsync({
+      imports: [DatabaseModule, ThrottlingModule],
+      inject: [DatabaseService, RateLimitStorageService],
+      useFactory: (
+        database: DatabaseService,
+        redis: RateLimitStorageService
+      ) => ({
+        database: database.db.$client,
+        redis: () => redis.ping(),
+      }),
     }),
     BullModule.forRootAsync({
       imports: [ConfigurationModule],

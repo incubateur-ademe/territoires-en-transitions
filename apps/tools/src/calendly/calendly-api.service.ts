@@ -1,8 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { HttpClient, InjectHttpClient } from '@nestjs/http-client';
 import { keyBy } from 'es-toolkit';
 import { DateTime, DurationLike } from 'luxon';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
-import ConfigurationService from '../config/configuration.service';
 import {
   CalendlyEventTypesResponse,
   CalendlyInviteesResponse,
@@ -16,16 +16,11 @@ const NextSessionInOneHour: DurationLike = { hours: 1 };
 
 @Injectable()
 export class CalendlyApiService {
-  private readonly API_URL = 'https://api.calendly.com';
   private readonly logger = new Logger(CalendlyApiService.name);
-  private readonly headers = {
-    'content-type': 'application/json',
-    authorization: `Bearer ${this.configurationService.get(
-      'CALENDLY_ACCESS_TOKEN'
-    )}`,
-  };
 
-  constructor(private readonly configurationService: ConfigurationService) {}
+  constructor(
+    @InjectHttpClient('calendly') private readonly http: HttpClient
+  ) {}
 
   /**
    * Récupère les sessions de démo sur le point de démarrer (d'ici 1h par
@@ -149,26 +144,18 @@ export class CalendlyApiService {
     endpoint: string,
     params?: Record<string, string>
   ) {
-    const url = endpoint.startsWith('https://')
-      ? endpoint
-      : `${this.API_URL}/${endpoint}`;
-    const searchParams = params
-      ? `?${new URLSearchParams(objectToSnake(params)).toString()}`
-      : '';
-    this.logger.log(`Calendly: GET ${endpoint}${searchParams}`);
-
-    const response = await fetch(url + searchParams, { headers: this.headers });
-    const body = await response.json();
+    const response = await this.http.get<Record<string, unknown>>(endpoint, {
+      query: params ? objectToSnake(params) : undefined,
+      responseType: 'json',
+    });
     if (!response.ok) {
-      this.logger.log(
-        `Calendly: erreur ${JSON.stringify(body)} (${response.status}: ${
-          response.statusText
-        })`
+      this.logger.warn(
+        `Calendly: erreur HTTP ${response.status} (${response.statusText})`
       );
       return null;
     }
 
-    return objectToCamel(body) as ResponseType;
+    return objectToCamel(response.data) as ResponseType;
   }
 
   /**

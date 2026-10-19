@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AirtableService } from '../../airtable/airtable.service';
-import { DatabaseService } from '../../utils/database/database.service';
+import { getDrizzleToken } from '@nestjs/drizzle';
 import {
   BuildCrispUserDataService,
   resolveConnexionMode,
@@ -36,7 +36,7 @@ describe('BuildCrispUserDataService', () => {
     const module = await Test.createTestingModule({
       providers: [
         BuildCrispUserDataService,
-        { provide: DatabaseService, useValue: { db: { select: () => chain } } },
+        { provide: getDrizzleToken(), useValue: { select: () => chain } },
         { provide: AirtableService, useValue: { getUsersByEmail } },
       ],
     }).compile();

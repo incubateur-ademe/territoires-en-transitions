@@ -48,13 +48,13 @@ importers:
         version: 6.3.1
       '@bull-board/api':
         specifier: 9.10.4
-        version: 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
+        version: 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
       '@bull-board/express':
         specifier: 9.10.4
-        version: 9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
+        version: 9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
       '@bull-board/nestjs':
         specifier: 9.10.4
-        version: 9.10.4(@bull-board/api@9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@nestjs/bull-shared@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0))(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+        version: 9.10.4(@bull-board/api@9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@nestjs/bull-shared@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0))(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@codegouvfr/react-dsfr':
         specifier: 1.26.0
         version: 1.26.0
@@ -88,9 +88,12 @@ importers:
       '@napi-rs/canvas':
         specifier: 0.1.98
         version: 0.1.98
+      '@nestjs-redis/throttler-storage':
+        specifier: 2.0.1
+        version: 2.0.1(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/throttler@6.7.1(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14))(redis@6.3.0(@opentelemetry/api@1.9.1))
       '@nestjs/bullmq':
         specifier: 12.0.0
-        version: 12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(bullmq@5.81.5)
+        version: 12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
       '@nestjs/common':
         specifier: 12.2.0
         version: 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -100,9 +103,18 @@ importers:
       '@nestjs/core':
         specifier: 12.2.0
         version: 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/drizzle':
+        specifier: 0.0.2
+        version: 0.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4))(reflect-metadata@0.1.14)
+      '@nestjs/http-client':
+        specifier: 0.0.2
+        version: 0.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)
       '@nestjs/jwt':
         specifier: 12.0.3
         version: 12.0.3(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))
+      '@nestjs/outbox':
+        specifier: 0.1.2
+        version: 0.1.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4))(pg@8.16.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/platform-express':
         specifier: 12.2.0
         version: 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)
@@ -112,6 +124,9 @@ importers:
       '@nestjs/swagger':
         specifier: 12.0.2
         version: 12.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@typescript/typescript6@6.0.2)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)
+      '@nestjs/terminus':
+        specifier: 12.1.0
+        version: 12.1.0(@grpc/grpc-js@1.14.5)(@grpc/proto-loader@0.8.1)(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@nestjs/swagger@12.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@typescript/typescript6@6.0.2)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14))(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/throttler':
         specifier: 6.7.1
         version: 6.7.1(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)
@@ -234,7 +249,7 @@ importers:
         version: 1.20.0
       bullmq:
         specifier: 5.81.5
-        version: 5.81.5
+        version: 5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))
       canvas:
         specifier: 3.2.0
         version: 3.2.0
@@ -412,6 +427,9 @@ importers:
       react-use:
         specifier: 17.6.1
         version: 17.6.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      redis:
+        specifier: 6.3.0
+        version: 6.3.0(@opentelemetry/api@1.9.1)
       reflect-metadata:
         specifier: 0.1.14
         version: 0.1.14
@@ -1526,6 +1544,7 @@ packages:
 
   '@bryntum/scheduler-lib@1.0.0':
     resolution: {integrity: sha512-3Bd95kUaPsEJL+M7X2G5iV+7eNeSEPiFDX/U6Aucy5VeZDIuFFW+YTq4NVCVrzfs2wxeh5IRwW7fJC2mKv/hFw==}
+    engines: {node: '>=0.10.0'}
 
   '@bryntum/scheduler-react@6.3.1':
     resolution: {integrity: sha512-tqdu0Zz2wk7ou7vmM4g1m6xSNYrrtiMaBxd8v/DInVRsVGM2ZO9F6X6jisjF29CzUGAak+nI6H+GH02AkXBPYw==}
@@ -3374,6 +3393,14 @@ packages:
       '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
       '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
 
+  '@nestjs-redis/throttler-storage@2.0.1':
+    resolution: {integrity: sha512-DWgoe/d7SFIhuVjb8u2mg6EcTTMDhv3+A9ckviGbtHGjQyT0AKU3axWI8C5m+KN9egerGnBK3/C0HEl0O0Veog==}
+    engines: {node: ^20.19.0 || >=22.12.0, npm: '>=8.0.0'}
+    peerDependencies:
+      '@nestjs/common': ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      '@nestjs/throttler': ^6.0.0
+      redis: ^5.0.0 || ^6.0.0
+
   '@nestjs/bull-shared@12.0.0':
     resolution: {integrity: sha512-OShKmwIt00oK2DIqKP4mjh9C2RQsoHPZbBsQwbnETPmK/+Ld1xyYQa1WOrYKKA8qoSzZJvxQaA6/4sV5SfAIyA==}
     peerDependencies:
@@ -3455,6 +3482,23 @@ packages:
       '@nestjs/websockets':
         optional: true
 
+  '@nestjs/drizzle@0.0.2':
+    resolution: {integrity: sha512-9jBMBcqxPLV7BNuqoOQ/6boSH7z1cA6psKKiArHgJgDefBqniQExYjVNhE/GrqJd3vBEwCXkWXwpEvCi8qRIZg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@nestjs/common': ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^11.0.0 || ^12.0.0
+      drizzle-orm: '>=0.35.0 || >=1.0.0-0'
+      reflect-metadata: ^0.1.13 || ^0.2.0
+
+  '@nestjs/http-client@0.0.2':
+    resolution: {integrity: sha512-NcZZFQtdfOYB0Xb6az9xAxHtvOmKZJUyXMpNpbnX0nwduCBT6so5f87xSOBo9ItSF9fX/H4zwHkhR8MzdX/G7Q==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@nestjs/common': ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^11.0.0 || ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
+
   '@nestjs/jwt@12.0.3':
     resolution: {integrity: sha512-Gr/lpj1pu5Lfn8b+6WeZZzj4J+Ggm1d4ImgrYLhiWahpJHoc/hhfQ9h9AAVVQ9vM+VskPrlngMu0RZwBIRsx3g==}
     peerDependencies:
@@ -3473,6 +3517,16 @@ packages:
         optional: true
       class-validator:
         optional: true
+
+  '@nestjs/outbox@0.1.2':
+    resolution: {integrity: sha512-jspCRXpQokuPrK6OraQ8qsTBUN+fOccICcmVxgACp220WLDprUJ+VWiI3cSkVP3BnxB/wGjIBzPcW9u6yc/1+w==}
+    engines: {node: '>=20.19.0'}
+    hasBin: true
+    peerDependencies:
+      '@nestjs/common': ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^11.0.0 || ^12.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
+      rxjs: ^7.1.0
 
   '@nestjs/platform-express@12.2.0':
     resolution: {integrity: sha512-ZG4nRgFicwfFKnzz9CfmX6GhSL1Ov6ch25L+7yDFoPeOBZ0EoytsttyURQaDJPRigcIJXQ1E+Z5zWDwUGc9Yyg==}
@@ -3497,6 +3551,24 @@ packages:
       prettier:
         optional: true
 
+  '@nestjs/store-kit@0.1.0':
+    resolution: {integrity: sha512-gNDt5j/aXa3vuWx2Jsxy0mUsOiEWniPavO7CKMr/54f5lhtuyRDDQYzk6+Qos1fhbZNPLQE9o96DARg4jdqH+A==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      drizzle-orm: '>=0.29.0 || >=1.0.0-0'
+      kysely: '>=0.27.0'
+      mysql2: ^3.0.0
+      pg: ^8.0.0
+    peerDependenciesMeta:
+      drizzle-orm:
+        optional: true
+      kysely:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+
   '@nestjs/swagger@12.0.2':
     resolution: {integrity: sha512-/IDj6o2k1wqZybhIkMaJp58YNrAos/4TwTf3zBn/j1flKpMb5Tyfbj9sP6rpLucQ7PzHHu7n4ucmeHWEisfn6A==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3516,6 +3588,58 @@ packages:
       class-validator:
         optional: true
       typescript:
+        optional: true
+
+  '@nestjs/terminus@12.1.0':
+    resolution: {integrity: sha512-bag1KT1Pk2KpDhXh6fhf3F7IpRGs8IMSdPaD1+9hclP3hSAIkCYN/YUhkAY+2G7OuoUmyDuKVb7MgNw+L5ZBbQ==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
+    peerDependencies:
+      '@grpc/grpc-js': '*'
+      '@grpc/proto-loader': '*'
+      '@mikro-orm/core': '*'
+      '@mikro-orm/nestjs': '*'
+      '@nestjs/axios': ^4.0.0 || ^12.0.0
+      '@nestjs/common': ^11.0.0 || ^12.0.0
+      '@nestjs/core': ^11.0.0 || ^12.0.0
+      '@nestjs/microservices': ^11.0.0 || ^12.0.0
+      '@nestjs/mongoose': ^11.0.0 || ^12.0.0
+      '@nestjs/sequelize': ^11.0.0 || ^12.0.0
+      '@nestjs/swagger': ^11.0.0 || ^12.0.0
+      '@nestjs/typeorm': ^11.0.0 || ^12.0.0
+      '@prisma/client': '*'
+      mongoose: '*'
+      reflect-metadata: ^0.1.12 || ^0.2.0
+      rxjs: ^7.1.0
+      sequelize: '*'
+      typeorm: '*'
+    peerDependenciesMeta:
+      '@grpc/grpc-js':
+        optional: true
+      '@grpc/proto-loader':
+        optional: true
+      '@mikro-orm/core':
+        optional: true
+      '@mikro-orm/nestjs':
+        optional: true
+      '@nestjs/axios':
+        optional: true
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/mongoose':
+        optional: true
+      '@nestjs/sequelize':
+        optional: true
+      '@nestjs/swagger':
+        optional: true
+      '@nestjs/typeorm':
+        optional: true
+      '@prisma/client':
+        optional: true
+      mongoose:
+        optional: true
+      sequelize:
+        optional: true
+      typeorm:
         optional: true
 
   '@nestjs/testing@12.2.0':
@@ -5394,6 +5518,42 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@redis/bloom@6.3.0':
+    resolution: {integrity: sha512-NQ5poYpZr0jv6zazN1cy6JY5kIipKFZ3R9GTL4kOUTX3a9YAfY29U8bsE4lWhVQEM+G4V0BXVC57mubIdDijeA==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.3.0
+
+  '@redis/client@6.3.0':
+    resolution: {integrity: sha512-fHrjwGCBvAANGi+TuRuwKi83sIOzgHr8eh+Uf48w3fSX7Hhrz174NrWqfJhAC2vnN0d/tfaZpdr6+o6JC3QHwg==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@node-rs/xxhash': ^1.1.0
+      '@opentelemetry/api': '>=1 <2'
+    peerDependenciesMeta:
+      '@node-rs/xxhash':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+
+  '@redis/json@6.3.0':
+    resolution: {integrity: sha512-yt6vRfPBXtW/3qm53cF81TSQpLMjWdW4/2E9WQ2GgbvsKkuCKCFQIcMiKlil1ZMnezK+IQuS795xKU5psbaegw==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.3.0
+
+  '@redis/search@6.3.0':
+    resolution: {integrity: sha512-RPXAZmKjZZG7Tm7m1w9keFdXzbL91PiSHQBfQRe9xwW40jNsTRbG0FwhIz4QlHPU4gKDAsCy8IQHj4yZl4H9rw==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.3.0
+
+  '@redis/time-series@6.3.0':
+    resolution: {integrity: sha512-+fJOB8mN1z5WRakCJNh5lVdz1KqvHGSOistsKeitD24QsCtPwyRQXWC0iq6T/i/ubLE/YcguZqPm8F598MKk4A==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.3.0
 
   '@remirror/core-constants@3.0.0':
     resolution: {integrity: sha512-42aWfPrimMfDKDi4YegyS7x+/0tlzaqwPQCULLanv3DMIlu96KTJR0fM5isWX2UViOqlGnX6YFgqWepcX+XMNg==}
@@ -12646,6 +12806,10 @@ packages:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
 
+  redis@6.3.0:
+    resolution: {integrity: sha512-XFQbPie1lGpKeUZ8ySYY43yLnQy/iIQtHNvIr/1XdaABpb96rUSdm3Mfl+98FEVbv9ZJIzINMno5s0Nh8E5LEw==}
+    engines: {node: '>= 20.0.0'}
+
   reflect-metadata@0.1.14:
     resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
 
@@ -15720,20 +15884,20 @@ snapshots:
   '@bufbuild/protobuf@2.16.0':
     optional: true
 
-  '@bull-board/api@9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5)':
+  '@bull-board/api@9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))':
     dependencies:
-      '@bull-board/ui': 9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
+      '@bull-board/ui': 9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
       redis-info: 3.1.0
       valibot: 1.5.0(@typescript/typescript6@6.0.2)
     optionalDependencies:
-      bullmq: 5.81.5
+      bullmq: 5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))
     transitivePeerDependencies:
       - typescript
 
-  '@bull-board/express@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5)':
+  '@bull-board/express@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))':
     dependencies:
-      '@bull-board/api': 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
-      '@bull-board/ui': 9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
+      '@bull-board/api': 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
+      '@bull-board/ui': 9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
       ejs: 6.0.1
       express: 5.3.0
     transitivePeerDependencies:
@@ -15742,18 +15906,18 @@ snapshots:
       - supports-color
       - typescript
 
-  '@bull-board/nestjs@9.10.4(@bull-board/api@9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@nestjs/bull-shared@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0))(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
+  '@bull-board/nestjs@9.10.4(@bull-board/api@9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@nestjs/bull-shared@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0))(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
     dependencies:
-      '@bull-board/api': 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
+      '@bull-board/api': 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
       '@nestjs/bull-shared': 12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)
       '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       reflect-metadata: 0.1.14
       rxjs: 7.8.2
 
-  '@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5)':
+  '@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))':
     dependencies:
-      '@bull-board/api': 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5))(@typescript/typescript6@6.0.2)(bullmq@5.81.5)
+      '@bull-board/api': 9.10.4(@bull-board/ui@9.10.4(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))))(@typescript/typescript6@6.0.2)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))
     transitivePeerDependencies:
       - bull
       - bullmq
@@ -17352,18 +17516,25 @@ snapshots:
       '@tybys/wasm-util': 0.10.4
     optional: true
 
+  '@nestjs-redis/throttler-storage@2.0.1(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/throttler@6.7.1(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14))(redis@6.3.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/throttler': 6.7.1(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)
+      redis: 6.3.0(@opentelemetry/api@1.9.1)
+      tslib: 2.8.1
+
   '@nestjs/bull-shared@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)':
     dependencies:
       '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       tslib: 2.8.1
 
-  '@nestjs/bullmq@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(bullmq@5.81.5)':
+  '@nestjs/bullmq@12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)))':
     dependencies:
       '@nestjs/bull-shared': 12.0.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)
       '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
-      bullmq: 5.81.5
+      bullmq: 5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1))
       tslib: 2.8.1
 
   '@nestjs/cli@12.0.8(@swc/cli@0.8.1(@swc/core@1.15.43(@swc/helpers@0.5.23))(chokidar@5.0.0))(@swc/core@1.15.43(@swc/helpers@0.5.23))(@types/node@24.1.0)(fork-ts-checker-webpack-plugin@9.1.0(@typescript/typescript6@6.0.2)(webpack@5.105.4(@swc/core@1.15.43(@swc/helpers@0.5.23))(esbuild@0.19.12)(postcss@8.5.28)))(prettier@3.9.10)(tsconfig-paths-webpack-plugin@4.2.0)(webpack-node-externals@3.0.0)(webpack@5.105.4(@swc/core@1.15.43(@swc/helpers@0.5.23))(esbuild@0.19.12)(postcss@8.5.28))':
@@ -17432,6 +17603,19 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)
 
+  '@nestjs/drizzle@0.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4))(reflect-metadata@0.1.14)':
+    dependencies:
+      '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      drizzle-orm: 0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4)
+      reflect-metadata: 0.1.14
+
+  '@nestjs/http-client@0.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(reflect-metadata@0.1.14)':
+    dependencies:
+      '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      reflect-metadata: 0.1.14
+
   '@nestjs/jwt@12.0.3(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))':
     dependencies:
       '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -17445,6 +17629,19 @@ snapshots:
     optionalDependencies:
       class-transformer: 0.5.1
       class-validator: 0.14.2
+
+  '@nestjs/outbox@0.1.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4))(pg@8.16.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/store-kit': 0.1.0(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4))(pg@8.16.3)
+      reflect-metadata: 0.1.14
+      rxjs: 7.8.2
+    transitivePeerDependencies:
+      - drizzle-orm
+      - kysely
+      - mysql2
+      - pg
 
   '@nestjs/platform-express@12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)':
     dependencies:
@@ -17490,6 +17687,11 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
+  '@nestjs/store-kit@0.1.0(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4))(pg@8.16.3)':
+    optionalDependencies:
+      drizzle-orm: 0.45.2(@opentelemetry/api@1.9.1)(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.4)
+      pg: 8.16.3
+
   '@nestjs/swagger@12.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@typescript/typescript6@6.0.2)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)':
     dependencies:
       '@microsoft/tsdoc': 0.17.0
@@ -17506,6 +17708,17 @@ snapshots:
       class-transformer: 0.5.1
       class-validator: 0.14.2
       typescript: '@typescript/typescript6@6.0.2'
+
+  '@nestjs/terminus@12.1.0(@grpc/grpc-js@1.14.5)(@grpc/proto-loader@0.8.1)(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@nestjs/swagger@12.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@typescript/typescript6@6.0.2)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14))(reflect-metadata@0.1.14)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@12.2.0)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      reflect-metadata: 0.1.14
+      rxjs: 7.8.2
+    optionalDependencies:
+      '@grpc/grpc-js': 1.14.5
+      '@grpc/proto-loader': 0.8.1
+      '@nestjs/swagger': 12.0.2(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@typescript/typescript6@6.0.2)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)
 
   '@nestjs/testing@12.2.0(@nestjs/common@12.2.0(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@12.2.0)(@nestjs/platform-express@12.2.0)':
     dependencies:
@@ -19858,6 +20071,26 @@ snapshots:
       '@react-spring/types': 9.7.5
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
+
+  '@redis/bloom@6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.3.0(@opentelemetry/api@1.9.1)
+
+  '@redis/client@6.3.0(@opentelemetry/api@1.9.1)':
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+
+  '@redis/json@6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.3.0(@opentelemetry/api@1.9.1)
+
+  '@redis/search@6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.3.0(@opentelemetry/api@1.9.1)
+
+  '@redis/time-series@6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.3.0(@opentelemetry/api@1.9.1)
 
   '@remirror/core-constants@3.0.0': {}
 
@@ -22303,7 +22536,7 @@ snapshots:
 
   buffers@0.1.1: {}
 
-  bullmq@5.81.5:
+  bullmq@5.81.5(redis@6.3.0(@opentelemetry/api@1.9.1)):
     dependencies:
       cron-parser: 4.9.0
       ioredis: 5.11.1
@@ -22311,6 +22544,8 @@ snapshots:
       node-abort-controller: 3.1.1
       semver: 7.8.5
       tslib: 2.8.1
+    optionalDependencies:
+      redis: 6.3.0(@opentelemetry/api@1.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -28597,6 +28832,17 @@ snapshots:
   redis-parser@3.0.0:
     dependencies:
       redis-errors: 1.2.0
+
+  redis@6.3.0(@opentelemetry/api@1.9.1):
+    dependencies:
+      '@redis/bloom': 6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))
+      '@redis/client': 6.3.0(@opentelemetry/api@1.9.1)
+      '@redis/json': 6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))
+      '@redis/search': 6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))
+      '@redis/time-series': 6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))
+    transitivePeerDependencies:
+      - '@node-rs/xxhash'
+      - '@opentelemetry/api'
 
   reflect-metadata@0.1.14: {}
 

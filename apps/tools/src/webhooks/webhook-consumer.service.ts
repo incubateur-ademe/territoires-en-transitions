@@ -16,16 +16,17 @@ import {
   WebhookAuthenticationMethod,
   WebhookAuthenticationMethodEnum,
   WebhookConfiguration,
-  WebhookMessage,
   WebhookPayloadFormat,
   WebhookPayloadFormatEnum,
   WebhookStatus,
 } from '@tet/domain/utils';
 import { Job } from 'bullmq';
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import { DateTime } from 'luxon';
+import { z } from 'zod';
 import ConfigurationService from '../config/configuration.service';
-import { DatabaseService } from '../utils/database/database.service';
+import { InjectDrizzle } from '@nestjs/drizzle';
+import type { Database } from '../utils/database/database.type';
 import { IEntityMapper } from './mappers/AbstractEntityMapper';
 import { CommunsFicheActionMapper } from './mappers/communs/communs-fiche-action.mapper';
 
@@ -39,7 +40,7 @@ export class WebhookConsumerService extends WorkerHost {
   private readonly entityMappers: Map<string, IEntityMapper> = new Map();
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    @InjectDrizzle() private readonly db: Database,
     private readonly configurationService: ConfigurationService,
     private readonly contextStoreService: ContextStoreService
   ) {
@@ -101,7 +102,7 @@ export class WebhookConsumerService extends WorkerHost {
 
   async getWebhookConfiguration(ref: string): Promise<WebhookConfiguration> {
     this.logger.log(`Getting webhook configuration for ref: ${ref}`);
-    const webhookConfigurations = await this.databaseService.db
+    const webhookConfigurations = await this.db
       .select()
       .from(webhookConfigurationTable)
       .where(eq(webhookConfigurationTable.ref, ref));
@@ -148,7 +149,7 @@ export class WebhookConsumerService extends WorkerHost {
     secretKey: string;
     payload: any;
     retryCount: number;
-    jobId: string | undefined;
+    jobId: string;
   }): Promise<any> {
     const secretMap = this.getSecretMap();
 
@@ -165,11 +166,13 @@ export class WebhookConsumerService extends WorkerHost {
       secret
     );
     headers['Content-Type'] = 'application/json';
+    headers['Idempotency-Key'] = jobId;
 
     const response = await fetch(url, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(10_000),
     });
     const responseText = await response.text();
     let externalId: string | null = null;
@@ -192,7 +195,7 @@ export class WebhookConsumerService extends WorkerHost {
 
     if (jobId) {
       this.logger.log(`Updating job ${jobId} in database to status ${status}`);
-      await this.databaseService.db
+      await this.db
         .update(webhookMessageTable)
         .set({
           status: status,
@@ -212,7 +215,17 @@ export class WebhookConsumerService extends WorkerHost {
   }
 
   async process(job: Job<any, any, string>): Promise<any> {
-    const jobData = job.data as WebhookMessage;
+    const messageId = z.uuid().parse(job.data.id);
+    if (messageId !== job.id)
+      throw new Error('Webhook job id does not match its message');
+    const [jobData] = await this.db
+      .select()
+      .from(webhookMessageTable)
+      .where(eq(webhookMessageTable.id, messageId));
+    if (!jobData) throw new NotFoundException('Webhook message not found');
+    // Redis may have purged a completed job before a relay retries its acknowledgement.
+    if (jobData.status === 'success') return jobData.response;
+
     try {
       this.logger.log(
         `Processing job ${job.id} (retry ${job.attemptsStarted})`
@@ -257,6 +270,14 @@ export class WebhookConsumerService extends WorkerHost {
         return response;
       } else {
         this.logger.log(`No payload to send, event has been filtered out`);
+        await this.db
+          .update(webhookMessageTable)
+          .set({
+            status: 'success',
+            retryCount: job.attemptsStarted,
+            modifiedAt: DateTime.now().toISO(),
+          })
+          .where(eq(webhookMessageTable.id, jobData.id));
       }
 
       return {};
@@ -270,15 +291,14 @@ export class WebhookConsumerService extends WorkerHost {
         )}`
       );
 
-      captureException(error, this.contextStoreService.getContext(),
-          {
-            jobId: job.id,
-            jobName: job.name,
-            queueName: WEBHOOK_NOTIFICATIONS_QUEUE_NAME,
-          });
+      captureException(error, this.contextStoreService.getContext(), {
+        jobId: job.id,
+        jobName: job.name,
+        queueName: WEBHOOK_NOTIFICATIONS_QUEUE_NAME,
+      });
 
       if (job.id) {
-        await this.databaseService.db
+        await this.db
           .update(webhookMessageTable)
           .set({
             status: 'error',
@@ -286,7 +306,12 @@ export class WebhookConsumerService extends WorkerHost {
             retryCount: job.attemptsStarted,
             modifiedAt: DateTime.now().toISO(),
           })
-          .where(eq(webhookMessageTable.id, jobData.id));
+          .where(
+            and(
+              eq(webhookMessageTable.id, jobData.id),
+              ne(webhookMessageTable.status, 'success')
+            )
+          );
       }
 
       // Throw is triggering the retry

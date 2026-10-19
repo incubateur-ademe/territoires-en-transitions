@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
-import { DatabaseService } from '../../utils/database/database.service';
+import type { Database } from '../../utils/database/database.type';
 import {
   BuildCrispCrmNoteService,
   CrmNoteData,
@@ -135,8 +135,8 @@ describe('BuildCrispCrmNoteService', () => {
       return chain;
     };
     return {
-      db: { select: () => buildChain(queue.shift() ?? []) },
-    } as unknown as DatabaseService;
+      select: () => buildChain(queue.shift() ?? []),
+    } as unknown as Database;
   };
 
   test('construit la note sans fiche CRM si Airtable est indisponible', async () => {

@@ -96,39 +96,60 @@ jobs:
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
+      - id: site-origin
+        uses: ./.github/actions/get-koyeb-app-url
+        with:
+          app-name: ${{ github.event.inputs.target }}-site
+          # Origine canonique déjà déclarée dans les métadonnées du site en production.
+          public-url: ${{ vars.SITE_URL || (github.event.inputs.target == 'prod' && 'https://www.territoiresentransitions.fr' || '') }}
+
       - name: Déploie l'api d'automatisation technique sur Koyeb
         env:
           ENV_NAME: ${{ github.event.inputs.target }}
           IMAGE: ${{ needs.build-tools.outputs.image }}
           APP_URL: ${{ vars.APP_URL }}
+          SITE_URL: ${{ steps.site-origin.outputs.url }}
+          HTTP_ALLOWED_ORIGINS: ${{ vars.HTTP_ALLOWED_ORIGINS }}
           DEPLOYMENT_TIMESTAMP: ${{ steps.meta.outputs.deployment-timestamp }}
-        run: >
-          koyeb services update $ENV_NAME-tools-autom-api/tools
-          --debug
-          --docker "$IMAGE"
-          --docker-private-registry-secret ghcr
-          --docker-skip-verify
-          --env ENV_NAME=$ENV_NAME
-          --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
-          --env CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_$ENV_NAME
-          --env CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_$ENV_NAME
-          --env NOTION_TOKEN=@NOTION_TOKEN_$ENV_NAME
-          --env NOTION_BUG_SUPPORT_DATABASE_ID=@NOTION_BUG_SUPPORT_DATABASE_ID_$ENV_NAME
-          --env NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME
-          --env NOTION_SUPPORT_TEMPLATE_ID=@NOTION_SUPPORT_TEMPLATE_ID_$ENV_NAME
-          --env TET_API_URL=@TET_API_URL_$ENV_NAME
-          --env TET_API_TOKEN=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
-          --env EXTERNAL_SYSTEM_SECRET_MAP=@EXTERNAL_SYSTEM_SECRET_MAP_$ENV_NAME
-          --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME
-          --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
-          --env AIRTABLE_PERSONAL_ACCESS_TOKEN=@AIRTABLE_PERSONAL_ACCESS_TOKEN
-          --env AIRTABLE_IMPORT_DATABASE_ID=@AIRTABLE_IMPORT_DATABASE_ID
-          --env AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID
-          --env AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID
-          --env AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID
-          --env APP_URL=$APP_URL
-          --env OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i
-          --env OTEL_SERVICE_NAME=tools
+        # Koyeb certifie la dernière IP X-Forwarded-For (un saut de confiance).
+        # --env utilise un parseur CSV : conserver les guillemets autour de la liste d’origines.
+        run: |
+          set -euo pipefail
+          security_env=()
+          if [[ -n "$HTTP_ALLOWED_ORIGINS" ]]; then
+            security_env+=(--env "\"HTTP_ALLOWED_ORIGINS=$HTTP_ALLOWED_ORIGINS\"")
+          fi
+          koyeb services update $ENV_NAME-tools-autom-api/tools \
+          "${security_env[@]}" \
+          --debug \
+          --docker "$IMAGE" \
+          --docker-private-registry-secret ghcr \
+          --docker-skip-verify \
+          --checks 3000:http:/health/live \
+          --checks-grace-period 3000=30 \
+          --env "APP_URL=$APP_URL" \
+          --env "SITE_URL=$SITE_URL" \
+          --env TRUST_PROXY_HOPS=1 \
+          --env ENV_NAME=$ENV_NAME \
+          --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP \
+          --env CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_$ENV_NAME \
+          --env CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_$ENV_NAME \
+          --env NOTION_TOKEN=@NOTION_TOKEN_$ENV_NAME \
+          --env NOTION_BUG_SUPPORT_DATABASE_ID=@NOTION_BUG_SUPPORT_DATABASE_ID_$ENV_NAME \
+          --env NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME \
+          --env NOTION_SUPPORT_TEMPLATE_ID=@NOTION_SUPPORT_TEMPLATE_ID_$ENV_NAME \
+          --env TET_API_URL=@TET_API_URL_$ENV_NAME \
+          --env TET_API_TOKEN=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME \
+          --env EXTERNAL_SYSTEM_SECRET_MAP=@EXTERNAL_SYSTEM_SECRET_MAP_$ENV_NAME \
+          --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME \
+          --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME \
+          --env AIRTABLE_PERSONAL_ACCESS_TOKEN=@AIRTABLE_PERSONAL_ACCESS_TOKEN \
+          --env AIRTABLE_IMPORT_DATABASE_ID=@AIRTABLE_IMPORT_DATABASE_ID \
+          --env AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID \
+          --env AIRTABLE_CRM_FEEDBACKS_TABLE_ID=@AIRTABLE_CRM_FEEDBACKS_TABLE_ID \
+          --env AIRTABLE_CRM_USERS_TABLE_ID=@AIRTABLE_CRM_USERS_TABLE_ID \
+          --env OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i \
+          --env OTEL_SERVICE_NAME=tools \
           --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
 
       - id: deployment-url

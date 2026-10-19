@@ -18,6 +18,7 @@ describe('Backend configuration validation', () => {
       );
     }
     vi.stubEnv('QUEUE_REDIS_HOST', '127.0.0.1');
+    vi.stubEnv('APP_URL', 'https://app.example.test');
   });
 
   afterEach(async () => {

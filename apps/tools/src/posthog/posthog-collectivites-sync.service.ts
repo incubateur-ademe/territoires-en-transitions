@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDrizzle } from '@nestjs/drizzle';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { chunk } from 'es-toolkit';
-import { DatabaseService } from '../utils/database/database.service';
+import type { Database } from '../utils/database/database.type';
 import { sleep } from '../utils/sleep.utils';
-import { GroupProperties, PostHogClientService } from './posthog-client.service';
+import {
+  GroupProperties,
+  PostHogClientService,
+} from './posthog-client.service';
 
 /**
  * Group type PostHog (index 0) — aligné sur
@@ -32,7 +36,7 @@ export class PostHogCollectivitesSyncService {
 
   constructor(
     private readonly posthogClient: PostHogClientService,
-    private readonly databaseService: DatabaseService
+    @InjectDrizzle() private readonly db: Database
   ) {}
 
   async process(): Promise<{ synced: number; skipped: boolean }> {
@@ -89,7 +93,7 @@ export class PostHogCollectivitesSyncService {
    * transaction ouverte pendant l'envoi à PostHog.
    */
   private async fetchCollectivites() {
-    return this.databaseService.db
+    return this.db
       .select({
         collectivite_id: collectiviteTable.id,
         created_at: collectiviteTable.createdAt,

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ToolsAutomationApiConfigurationType } from '../config/configuration.model';
 import ConfigurationService from '../config/configuration.service';
-import { DatabaseService } from '../utils/database/database.service';
+import { getDrizzleToken } from '@nestjs/drizzle';
 import {
   AirtableCrmSyncService,
   CRM_SYNC_JOBS,
@@ -24,19 +24,12 @@ const EXECUTE_PATH_JOBS: CrmSyncJobName[] = [
   'crm-plans-sync',
 ];
 
-const ALL_CRM_JOBS: CrmSyncJobName[] = [
-  ...SELECT_PATH_JOBS,
-  ...EXECUTE_PATH_JOBS,
-];
-
 describe('AirtableCrmSyncService', () => {
   let service: AirtableCrmSyncService;
   let airtableService: { insertRecords: ReturnType<typeof vi.fn> };
-  let databaseService: {
-    db: {
-      select: ReturnType<typeof vi.fn>;
-      execute: ReturnType<typeof vi.fn>;
-    };
+  let db: {
+    select: ReturnType<typeof vi.fn>;
+    execute: ReturnType<typeof vi.fn>;
   };
   let drizzleSelectRows: unknown[];
   let executeResult: {
@@ -65,13 +58,9 @@ describe('AirtableCrmSyncService', () => {
     executeResult = { rows: [] };
 
     airtableService = { insertRecords: vi.fn().mockResolvedValue([]) };
-    databaseService = {
-      db: {
-        select: vi.fn().mockImplementation(() => buildDrizzleChain()),
-        execute: vi
-          .fn()
-          .mockImplementation(() => Promise.resolve(executeResult)),
-      },
+    db = {
+      select: vi.fn().mockImplementation(() => buildDrizzleChain()),
+      execute: vi.fn().mockImplementation(() => Promise.resolve(executeResult)),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -88,8 +77,8 @@ describe('AirtableCrmSyncService', () => {
         if (token === AirtableService) {
           return airtableService;
         }
-        if (token === DatabaseService) {
-          return databaseService;
+        if (token === getDrizzleToken()) {
+          return db;
         }
       })
       .compile();
@@ -151,40 +140,40 @@ describe('AirtableCrmSyncService', () => {
   });
 
   describe('syncTable — chemin Drizzle `.select()`', () => {
-    test('crm-collectivites-sync passe par databaseService.db.select', async () => {
+    test('crm-collectivites-sync passe par db.select', async () => {
       drizzleSelectRows = [{ collectivite_id: 1, nom: 'Demo' }];
 
       await service.syncTable('crm-collectivites-sync');
 
-      expect(databaseService.db.select).toHaveBeenCalled();
-      expect(databaseService.db.execute).not.toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
+      expect(db.execute).not.toHaveBeenCalled();
     });
 
-    test('crm-personnes-sync passe par databaseService.db.select', async () => {
+    test('crm-personnes-sync passe par db.select', async () => {
       drizzleSelectRows = [{ user_id: 'u1', prenom: 'Ada', nom: 'Lovelace' }];
 
       await service.syncTable('crm-personnes-sync');
 
-      expect(databaseService.db.select).toHaveBeenCalled();
-      expect(databaseService.db.execute).not.toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
+      expect(db.execute).not.toHaveBeenCalled();
     });
 
-    test('crm-droits-sync passe par databaseService.db.select', async () => {
+    test('crm-droits-sync passe par db.select', async () => {
       drizzleSelectRows = [
         { collectivite_id: 7, user_id: 'abcd-1234', niveau_acces: 'admin' },
       ];
 
       await service.syncTable('crm-droits-sync');
 
-      expect(databaseService.db.select).toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
     });
 
-    test('crm-labellisations-sync passe par databaseService.db.select', async () => {
+    test('crm-labellisations-sync passe par db.select', async () => {
       drizzleSelectRows = [{ id: 1, referentiel: 'cae', etoiles: 3 }];
 
       await service.syncTable('crm-labellisations-sync');
 
-      expect(databaseService.db.select).toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalled();
     });
 
     test('passe la base id et le table id depuis ConfigurationService à insertRecords', async () => {
@@ -263,8 +252,8 @@ describe('AirtableCrmSyncService', () => {
 
       await service.syncTable('crm-indicateurs-sync');
 
-      expect(databaseService.db.execute).toHaveBeenCalled();
-      expect(databaseService.db.select).not.toHaveBeenCalled();
+      expect(db.execute).toHaveBeenCalled();
+      expect(db.select).not.toHaveBeenCalled();
     });
 
     test('stringifie `id` pour crm-indicateurs-sync (int4 PG → string Airtable)', async () => {
@@ -334,9 +323,7 @@ describe('AirtableCrmSyncService', () => {
     });
 
     test("propage l'erreur si db.execute échoue, sans appeler Airtable", async () => {
-      databaseService.db.execute.mockRejectedValue(
-        new Error('DB connection lost')
-      );
+      db.execute.mockRejectedValue(new Error('DB connection lost'));
 
       await expect(service.syncTable('crm-plans-sync')).rejects.toThrow(
         'DB connection lost'
@@ -391,9 +378,5 @@ describe('AirtableCrmSyncService', () => {
         });
       }
     );
-
-    test('aucun job ne dépend de withServiceRole sur DatabaseService', () => {
-      expect(ALL_CRM_JOBS).toHaveLength(6);
-    });
   });
 });

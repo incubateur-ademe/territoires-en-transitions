@@ -1,5 +1,5 @@
 import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
-import { ThrottlerStorage } from '@nestjs/throttler';
+import { normalizeIp, ThrottlerStorage } from '@nestjs/throttler';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import type { Request } from 'express';
@@ -28,7 +28,7 @@ export type RateLimitOptions = {
   name: string;
   /** Nombre d'appels autorisés par `ttl`. */
   limit: number;
-  /** Fenêtre glissante, en millisecondes. */
+  /** Durée de la fenêtre de comptage, en millisecondes. */
   ttl: number;
 };
 
@@ -44,22 +44,9 @@ export type TrpcContext = {
   clientIp?: string;
 };
 
-/**
- * Adresse de l'appelant, pour les limites par IP.
- *
- * Le backend tourne derrière le proxy Koyeb et `trust proxy` n'est pas
- * positionné : `req.ip` vaut alors l'adresse du proxy, ce qui mettrait tout le
- * trafic dans un même seau. On lit donc `x-forwarded-for` en priorité, dont la
- * première entrée est le client (les suivantes sont les proxies traversés).
- *
- * Cet en-tête est falsifiable — la limite décourage les abus grossiers, elle
- * n'est pas une protection anti-abus sérieuse.
- */
-export function getClientIp(req: Request): string | undefined {
-  const forwarded = req.headers['x-forwarded-for'];
-  const raw = Array.isArray(forwarded) ? forwarded[0] : forwarded;
-  const first = raw?.split(',')[0]?.trim();
-  return first || req.ip;
+/** Address selected by Express using the configured trusted proxy boundary. */
+export function getClientIp(req: Pick<Request, 'ip'>): string | undefined {
+  return req.ip ? normalizeIp(req.ip) : undefined;
 }
 
 @Injectable()
@@ -123,21 +110,20 @@ export class TrpcService {
    * `app.use('/trpc', createExpressMiddleware(...))` (cf. `trpc.router.ts`),
    * un middleware Express brut que les guards ne traversent pas.
    *
-   * Le compteur est celui de `@nestjs/throttler`, en mémoire par défaut : les
-   * quotas sont donc par instance, et la limite effective est multipliée par
-   * le nombre de replicas. Même comportement que les `@Throttle` REST.
+   * Le stockage Redis est partagé avec les guards REST : les quotas sont
+   * communs aux replicas. Les adresses IPv6 partagent un compteur par /64.
    *
    * @example
    * this.trpc.publicProcedure.use(this.trpc.rateLimit({ name: 'contact', limit: 5, ttl: 60_000 }))
    */
   rateLimit({ name, limit, ttl }: RateLimitOptions) {
     return this.trpc.middleware(async ({ next, ctx }) => {
-      const key = `trpc:${name}:${ctx.clientIp ?? 'unknown'}`;
+      const key = `trpc:${name}:${ctx.clientIp ? normalizeIp(ctx.clientIp) : 'unknown'}`;
 
       // `blockDuration` doit être non nul : à 0, le stockage remet le compteur
       // à zéro dès qu'il dépasse la limite, et plus rien n'est jamais bloqué.
       // On bloque donc pour la durée d'une fenêtre.
-      const { totalHits } = await this.throttlerStorage.increment(
+      const { isBlocked } = await this.throttlerStorage.increment(
         key,
         ttl,
         limit,
@@ -145,7 +131,7 @@ export class TrpcService {
         name
       );
 
-      if (totalHits > limit) {
+      if (isBlocked) {
         this.logger.warn(`Limite d'appels atteinte pour ${key}`);
         throw new TRPCError({
           code: 'TOO_MANY_REQUESTS',
@@ -285,9 +271,10 @@ export class TrpcService {
     }
 
     try {
-      const user = await this.convertJwtToAuthUserService.convertJwtToAuthUser(
-        supabaseJwt
-      );
+      const user =
+        await this.convertJwtToAuthUserService.convertJwtToAuthUser(
+          supabaseJwt
+        );
 
       this.contextStoreService.updateContext({
         userId: user.id || undefined,
