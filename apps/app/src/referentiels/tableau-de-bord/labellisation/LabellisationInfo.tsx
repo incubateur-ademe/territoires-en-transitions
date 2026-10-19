@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ParcoursLabellisation } from '@tet/domain/referentiels';
+import { divisionOrZero } from '@tet/domain/utils';
 import { Tooltip } from '@tet/ui';
 import { JSX } from 'react';
 import ScoreShow from '../../scores/score.show';
@@ -68,14 +69,14 @@ const LabellisationInfo = ({
       {/** Score */}
       <div className="flex flex-col 2xl:flex-row gap-4">
         <ScoreShow
-          score={score.realises / score.max_personnalise}
+          score={divisionOrZero(score.realises, score.max_personnalise)}
           percent
           legend={appLabels.scoreRealise}
           size="sm"
           bold="value"
         />
         <ScoreShow
-          score={score.programmes / score.max_personnalise}
+          score={divisionOrZero(score.programmes, score.max_personnalise)}
           percent
           icon="calendar-line"
           legend={appLabels.scoreProgramme}

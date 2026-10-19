@@ -22,5 +22,5 @@ export const buildScoreDonutTooltip = ({
   return `${marker} ${name}: <b>${appLabels.pointsFormates({
     formattedValue: toLocaleFixed(roundedPoints, POINTS_PRECISION),
     count: roundedPoints,
-  })} (${percent}%)</b>`;
+  })} (${toLocaleFixed(percent, 1)}%)</b>`;
 };

@@ -66,10 +66,7 @@ const ScoreShow = ({
           })}
         >
           {percent
-            ? `${toLocaleFixed(
-                Math.round((score ?? 0) * 10000) / 100,
-                (score ?? 0) < 0.01 ? 2 : 0
-              )}\u00A0%`
+            ? `${toLocaleFixed((score ?? 0) * 100, 1)}\u00A0%`
             : `${toLocaleFixed(score ?? 0, 2)} / ${toLocaleFixed(
                 scoreMax ?? 0,
                 2
