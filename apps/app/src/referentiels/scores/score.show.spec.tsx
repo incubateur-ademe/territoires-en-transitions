@@ -2,7 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ScoreShow from './score.show';
 
-vi.mock('@tet/ui', async () => import('@tet/ui/design-system/Icon/index'));
+vi.mock('@tet/ui', () => ({ Icon: () => null }));
 
 afterEach(cleanup);
 
