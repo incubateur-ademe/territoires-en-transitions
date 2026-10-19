@@ -1023,7 +1023,6 @@ export const appLabels = {
     "Ce fichier ne peut pas être téléversé car son format n'est pas supporté",
   fichierErreurFormatEtTailleMax:
     "Ce fichier ne peut pas être téléversé car son format n'est pas supporté et il dépasse la taille maximale autorisée",
-  fichierErreurTeleversement: "Ce fichier n'a pas pu être téléversé",
   listeReferentsProgrammeTete: 'Liste des référents du programme T.E.T.E',
   listeContacts: 'Liste des contacts',
   contact: 'Contact',

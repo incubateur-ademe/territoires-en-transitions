@@ -36,6 +36,9 @@ const categorieActionShortLabels = {
 } satisfies Record<CategorieAction, string>;
 
 export const collectivitesLabels = {
+  fichierErreurTeleversement:
+    "L'ajout de ce fichier n'a pas pu être terminé. Fermez cette fenêtre, puis rouvrez-la et sélectionnez le même fichier pour réessayer.",
+
   collectivite: plural({ one: 'collectivité', other: 'collectivités' }),
   collectivitesActives: plural({
     one: 'collectivité active',
