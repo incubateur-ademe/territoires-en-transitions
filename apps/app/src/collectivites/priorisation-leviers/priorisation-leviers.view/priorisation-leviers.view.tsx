@@ -394,6 +394,9 @@ export const PriorisationLeviersView = (): JSX.Element => {
         </PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-wrap gap-4">
+            <Button variant="link" size="sm" disabled>
+              {appLabels.priorisationMethodologie}
+            </Button>
             <VisibleWhen condition={isTourReady}>
               <Button
                 ref={tourHelpRef}
@@ -404,9 +407,6 @@ export const PriorisationLeviersView = (): JSX.Element => {
                 {appLabels.priorisationVisiteRelancer}
               </Button>
             </VisibleWhen>
-            <Button variant="outlined" size="sm" disabled>
-              {appLabels.priorisationMethodologie}
-            </Button>
           </div>
         </PageHeader.Actions>
         {isLeviersReady && !plansQuery.isLoading && (
