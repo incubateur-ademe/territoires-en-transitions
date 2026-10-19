@@ -19,6 +19,7 @@ export type TourButtonName =
   | 'Précédent'
   | 'Terminer'
   | 'Passer la visite'
+  | 'Commencer la visite'
   | 'Quitter la visite'
   | 'Ouvrir ce levier';
 

@@ -21,6 +21,11 @@ const OPEN_LEVIER_STEP_DATA: GuidedTourStepData = {
   nextLabel: appLabels.priorisationVisiteOuvrirLevier,
 };
 
+const WELCOME_STEP_DATA: GuidedTourStepData = {
+  nextLabel: appLabels.visiteGuideeCommencer,
+  welcome: { badge: appLabels.priorisationVisiteBienvenueBadge },
+};
+
 const toLevierSteps = ({
   resolve,
   levierToPrioritizeId,
@@ -42,8 +47,7 @@ const toLevierSteps = ({
       title: appLabels.priorisationVisiteDetailLevierTitre,
       content: appLabels.priorisationVisiteDetailLevierDescription,
       placement: 'left',
-      before: async () => select(levierToPrioritizeId),
-    },
+      before: async () => select(levierToPrioritizeId),    },
     {
       target: resolve('firstActionDeReference'),
       title: appLabels.priorisationVisiteActionsTitre,
@@ -58,6 +62,13 @@ const toPriorisationTourSteps = ({
   levierToPrioritizeId,
   select,
 }: PriorisationTourStepsInput): GuidedTourStep[] => [
+  {
+    target: 'body',
+    title: appLabels.priorisationVisiteBienvenueTitre,
+    content: appLabels.priorisationVisiteBienvenueDescription,
+    placement: 'center',
+    data: WELCOME_STEP_DATA,
+  },
   {
     target: 'body',
     title: appLabels.priorisationVisiteParcoursTitre,
