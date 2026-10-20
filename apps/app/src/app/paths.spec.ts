@@ -3,6 +3,7 @@ import {
   makeCollectiviteActionDeReferenceUrl,
   makeCollectiviteActionsDeReferenceUrl,
   makeCollectivitePreselectionUrl,
+  makeCollectivitePriorisationLevierUrl,
   makeCollectivitePriorisationUrl,
   makeReferentielTacheUrl,
   makeSignInUrl,
@@ -123,6 +124,15 @@ describe('priorisation', () => {
     expect(makeCollectivitePriorisationUrl({ collectiviteId: 4322 })).toBe(
       '/collectivite/4322/priorisation'
     );
+  });
+
+  it("la priorisation s'ouvre sur un levier précis avec le paramètre levier", () => {
+    expect(
+      makeCollectivitePriorisationLevierUrl({
+        collectiviteId: 4322,
+        levierId: 'covoiturage',
+      })
+    ).toBe('/collectivite/4322/priorisation?levier=covoiturage');
   });
 
   it('les actions pré-sélectionnées ont leur URL sous la priorisation', () => {

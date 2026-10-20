@@ -1,16 +1,24 @@
+import { makeCollectivitePriorisationLevierUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
   PlanListItem,
   useListPlans,
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import type { ActionDeReference } from '@tet/domain/shared';
-import { Button, EmptyCard, Icon, VisibleWhen } from '@tet/ui';
+import type { ActionDeReference, LevierId } from '@tet/domain/shared';
+import {
+  Button,
+  EmptyCard,
+  type EmptyCardAction,
+  Icon,
+  VisibleWhen,
+} from '@tet/ui';
 import { JSX } from 'react';
 import { ActionDeReferenceCard } from '@/app/shared/actions-de-reference/action-de-reference.card';
 import { toActionDeReferenceInterestControl } from '@/app/shared/actions-de-reference/to-action-de-reference-interest-control';
 import { LevierCardInfo } from '../levier-card-info';
+import { useLeviersPlaces } from '../priorisation-leviers.view/data/use-leviers-places';
+import { useLeviersPriorisation } from '../priorisation-leviers.view/data/use-leviers-priorisation';
 import {
   PreselectionFilters,
   usePreselectionFiltering,
@@ -73,14 +81,48 @@ type AddedToPlanFooterProps = {
   onUndo: () => void;
 };
 
-const EmptyPreselection = (): JSX.Element => (
-  <EmptyCard
-    picto={(props) => <PictoDashboard {...props} />}
-    title={appLabels.preselectionVide}
-    description={appLabels.preselectionVideDescription}
-    size="xs"
-  />
-);
+const toMostImportantLevierActions = ({
+  collectiviteId,
+  levierId,
+}: {
+  collectiviteId: number;
+  levierId?: LevierId;
+}): EmptyCardAction[] => {
+  if (levierId === undefined) {
+    return [];
+  }
+  return [
+    {
+      children: appLabels.afficherLevierLePlusImportant,
+      href: makeCollectivitePriorisationLevierUrl({ collectiviteId, levierId }),
+    },
+  ];
+};
+
+const EmptyPreselection = (): JSX.Element => {
+  const { collectiviteId } = useCurrentCollectivite();
+  const leviersQuery = useLeviersPriorisation(collectiviteId);
+  const { levierToPrioritizeId } = useLeviersPlaces(leviersQuery);
+  return (
+    <EmptyCard
+      picto={() => (
+        <Icon
+          icon="bookmark-line"
+          size="2xl"
+          className="h-16 w-16 text-6xl leading-none text-grey-5"
+          aria-hidden
+        />
+      )}
+      title={appLabels.preselectionVide}
+      description={appLabels.preselectionVideDescription}
+      size="xs"
+      actions={toMostImportantLevierActions({
+        collectiviteId,
+        levierId: levierToPrioritizeId,
+      })}
+    />
+  );
+};
 
 const AddedToPlanFooter = ({
   addedToPlan,

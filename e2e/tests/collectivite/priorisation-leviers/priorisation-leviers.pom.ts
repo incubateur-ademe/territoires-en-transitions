@@ -231,6 +231,12 @@ export class PriorisationLeviersPom {
     return this.page.getByText("Aucune action sauvegardée pour l'instant");
   }
 
+  get mostImportantLevierLink(): Locator {
+    return this.page.getByRole('link', {
+      name: 'Afficher le levier le plus important',
+    });
+  }
+
   get preselectedCards(): Locator {
     return this.page.getByRole('listitem').filter({
       has: this.page.getByRole('heading', { level: 2 }),
