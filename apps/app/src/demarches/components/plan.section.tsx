@@ -350,6 +350,10 @@ const ListEligiblePlansTable = ({
   onUnlinkPlan: (planId: number) => void;
 }) => {
   const hasPlans = plans.length > 0;
+  const hasLinkedPlanPendingVerification = plans.some(
+    (plan) =>
+      linkedPlanIds.includes(plan.id) && isPlanPendingVerification(plan)
+  );
   const { countsByPlanId } = useListPlanSecteursCounts(
     collectiviteId,
     plans.map((plan) => plan.id)
@@ -417,7 +421,7 @@ const ListEligiblePlansTable = ({
             </tbody>
           </table>
         </div>
-        {!isReadonly && (
+        {!isReadonly && hasLinkedPlanPendingVerification && (
           <div data-test="demarches.plan.verifier-plans-info">
             <Alert
               state="warning"
@@ -480,7 +484,9 @@ export const ProgrammeActionsSection = ({
     combine: (results) => results.flatMap((result) => result.data ?? []),
   });
 
-  const rows = [...missingLinkedPlansQuery, ...plans];
+  const rows = [...missingLinkedPlansQuery, ...plans].sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt)
+  );
 
   const linkPlan = (planId: number) => {
     onUpdateAction((current) => ({

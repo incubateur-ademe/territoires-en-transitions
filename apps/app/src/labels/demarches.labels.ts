@@ -586,7 +586,7 @@ export const demarchesLabels = {
   demarcheProgrammeImportDescription:
     'Votre programme d’actions peut devenir un plan structuré, avec ses axes et ses actions, que vous retrouverez à l’étape Programme d’actions.',
   demarcheProgrammeImportArrierePlan:
-    'L’import se fait en arrière-plan : vous pouvez continuer vos dépôts. Relisez le plan une fois l’import terminé, il a pu manquer ou mal repérer certains éléments.',
+    'L’import se fait en arrière-plan : vous pouvez continuer vos dépôts. Relisez attentivement le plan une fois l’import terminé, cette fonctionnalité repose sur des outils d’intelligence artificielle qui pourraient manquer ou mal repérer certains éléments.',
   demarcheProgrammeImportFichierErreur:
     'Le fichier déposé n’a pas pu être récupéré. Vous pourrez lancer l’import depuis l’étape Programme d’actions.',
   demarcheProgrammeImportPlusTard: 'Plus tard',
