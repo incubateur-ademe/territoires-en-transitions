@@ -1,0 +1,176 @@
+-- À exécuter uniquement dans une base jetable vide avec pgTAP installé.
+-- Extension .psql : exclure ce schéma synthétique de la suite sur base initialisée.
+\set ON_ERROR_STOP on
+BEGIN;
+DO $$
+BEGIN
+    IF to_regclass('public.collectivite') IS NOT NULL
+       OR EXISTS (SELECT 1 FROM pg_namespace WHERE nspname IN ('storage', 'historique', 'imports')) THEN
+        RAISE EXCEPTION 'Ces tests nécessitent une base jetable vide';
+    END IF;
+END;
+$$;
+
+SELECT plan(31);
+CREATE SCHEMA storage;
+CREATE SCHEMA historique;
+CREATE SCHEMA imports;
+CREATE TABLE public.collectivite (
+    id serial PRIMARY KEY,
+    nom text NOT NULL,
+    type text NOT NULL,
+    commune_code text,
+    UNIQUE (id, type)
+);
+CREATE TABLE storage.buckets (id text PRIMARY KEY);
+CREATE TABLE storage.objects (id integer PRIMARY KEY, bucket_id text REFERENCES storage.buckets);
+CREATE TABLE public.collectivite_bucket (
+    collectivite_id integer REFERENCES public.collectivite,
+    bucket_id text REFERENCES storage.buckets,
+    PRIMARY KEY (collectivite_id, bucket_id)
+);
+CREATE TABLE public.private_utilisateur_droit (
+    collectivite_id integer REFERENCES public.collectivite ON DELETE CASCADE
+);
+CREATE TABLE public.collectivite_relations (
+    parent_id integer REFERENCES public.collectivite ON DELETE SET NULL
+);
+CREATE TABLE public.composite_reference (
+    owner_id integer,
+    owner_type text,
+    FOREIGN KEY (owner_id, owner_type) REFERENCES public.collectivite (id, type) ON DELETE CASCADE
+);
+CREATE TABLE historique.action_statut (collectivite_id integer, statut text);
+CREATE TABLE imports.commune (code text PRIMARY KEY);
+CREATE TABLE public.utilisateur (id integer PRIMARY KEY, nom text);
+
+INSERT INTO public.collectivite (nom, type, commune_code)
+SELECT 'Arrondissement ' || code, 'commune', code::text
+FROM (
+    SELECT generate_series(13201, 13216) AS code
+    UNION ALL
+    SELECT generate_series(75101, 75120)
+) AS codes;
+-- Noms trompeurs, limites voisines, autre type et autre ville restent intacts.
+INSERT INTO public.collectivite (nom, type, commune_code) VALUES
+    ('Marseille', 'commune', '13055'), ('Paris', 'commune', '75056'),
+    ('Lyon', 'commune', '69123'), ('Lyon 1er Arrondissement', 'commune', '69381'),
+    ('Paris 21e Arrondissement', 'commune', '75121'),
+    ('Marseille 17e Arrondissement', 'commune', '13217'),
+    ('Paris', 'commune', '75100'), ('Marseille', 'commune', '13200'),
+    ('Paris 1er Arrondissement', 'test', '75101'),
+    ('Marseille 1er Arrondissement', 'commune', NULL);
+INSERT INTO storage.buckets SELECT id::text FROM public.collectivite;
+INSERT INTO public.collectivite_bucket SELECT id, id::text FROM public.collectivite;
+INSERT INTO imports.commune SELECT DISTINCT commune_code FROM public.collectivite WHERE commune_code IS NOT NULL;
+INSERT INTO public.utilisateur VALUES (1, 'Compte à conserver');
+CREATE TEMP TABLE before_collectivites AS SELECT * FROM public.collectivite;
+CREATE TEMP TABLE before_buckets AS SELECT * FROM storage.buckets;
+CREATE TEMP TABLE before_communes AS SELECT * FROM imports.commune;
+
+\ir ../../scripts/delete-arrondissements-paris-marseille.function.sql
+
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(), 0, 'Le mode par défaut ne supprime rien');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id', 'SELECT * FROM before_collectivites ORDER BY id', 'L''inventaire conserve toutes les collectivités');
+SELECT is((SELECT count(*)::integer FROM public.collectivite_bucket), 46, 'L''inventaire conserve les liens de stockage');
+
+INSERT INTO public.private_utilisateur_droit VALUES (1);
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(false), 0, 'L''inventaire reste disponible en présence de données');
+SELECT throws_ok(
+    'SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Suppression refusée : des données ou des espaces Ville nécessitent un arbitrage. Aucune suppression effectuée',
+    'Un membre bloque toute suppression, même avec une FK CASCADE'
+);
+SELECT is((SELECT count(*)::integer FROM public.private_utilisateur_droit), 1, 'Les membres restent intacts');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id', 'SELECT * FROM before_collectivites ORDER BY id', 'Un blocage conserve aussi les arrondissements vides');
+DELETE FROM public.private_utilisateur_droit;
+
+INSERT INTO public.collectivite_relations VALUES (1);
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Une référence parent_id avec SET NULL bloque la suppression');
+DELETE FROM public.collectivite_relations;
+
+INSERT INTO public.composite_reference VALUES (1, 'commune');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Une clé étrangère composite bloque la suppression');
+DELETE FROM public.composite_reference;
+
+INSERT INTO historique.action_statut VALUES (1, 'fait');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Un historique sans clé étrangère bloque la suppression');
+DELETE FROM historique.action_statut;
+
+CREATE TABLE public.fiche_action_import_csv (collectivite_id text);
+INSERT INTO public.fiche_action_import_csv VALUES ('hors périmètre'), ('999999'), (NULL);
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(false), 0,
+    'L''inventaire accepte les références textuelles, même non numériques');
+INSERT INTO public.fiche_action_import_csv VALUES ('1');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Suppression refusée : des données ou des espaces Ville nécessitent un arbitrage. Aucune suppression effectuée',
+    'Une référence textuelle à un arrondissement bloque la suppression');
+DELETE FROM public.fiche_action_import_csv WHERE collectivite_id = '1';
+
+-- Plusieurs buckets par collectivité : le second ne doit pas être oublié.
+INSERT INTO storage.buckets VALUES ('second-bucket');
+INSERT INTO public.collectivite_bucket VALUES (1, 'second-bucket');
+INSERT INTO storage.objects VALUES (1, 'second-bucket');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'Un fichier dans un deuxième bucket bloque la suppression');
+SELECT is((SELECT count(*)::integer FROM storage.objects), 1, 'Les fichiers restent intacts');
+DELETE FROM storage.objects;
+DELETE FROM public.collectivite_bucket WHERE bucket_id = 'second-bucket';
+DELETE FROM storage.buckets WHERE id = 'second-bucket';
+
+UPDATE public.collectivite SET commune_code = NULL WHERE commune_code = '75056';
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001', NULL,
+    'L''absence de l''espace Ville de Paris bloque la suppression');
+UPDATE public.collectivite SET commune_code = '75056' WHERE nom = 'Paris' AND commune_code IS NULL;
+
+INSERT INTO public.collectivite (nom, type, commune_code) VALUES ('Doublon', 'commune', '13201');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Plusieurs espaces portent le même code arrondissement : arbitrage requis', 'Un code dupliqué exige un arbitrage');
+DELETE FROM public.collectivite WHERE nom = 'Doublon';
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(NULL)', 'P0001',
+    'Le mode apply doit être true ou false', 'Un mode NULL est refusé');
+
+CREATE ROLE arrondissements_test_reader;
+GRANT USAGE ON SCHEMA public, storage, historique, imports TO arrondissements_test_reader;
+SELECT format('GRANT USAGE ON SCHEMA %I TO arrondissements_test_reader', nspname)
+FROM pg_namespace WHERE oid = pg_my_temp_schema() \gexec
+GRANT SELECT ON ALL TABLES IN SCHEMA public, storage, historique, imports TO arrondissements_test_reader;
+ALTER TABLE public.private_utilisateur_droit ENABLE ROW LEVEL SECURITY;
+SET LOCAL ROLE arrondissements_test_reader;
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(false)', '42501', NULL,
+    'Un rôle limité par RLS ne peut pas produire un inventaire incomplet');
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', '42501', NULL,
+    'Un rôle sans permission d''écriture ne peut pas supprimer');
+RESET ROLE;
+
+CREATE FUNCTION pg_temp.skip_delete() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    IF OLD.id = 36 THEN RETURN NULL; END IF;
+    RETURN OLD;
+END;
+$$;
+CREATE TRIGGER skip_delete BEFORE DELETE ON public.collectivite
+FOR EACH ROW EXECUTE FUNCTION pg_temp.skip_delete();
+SELECT throws_ok('SELECT pg_temp.delete_arrondissements_paris_marseille(true)', 'P0001',
+    'Suppression incomplète : 35/36 espaces', 'Une suppression incomplète annule la transaction');
+SELECT is((SELECT count(*)::integer FROM public.collectivite_bucket), 46, 'Les liens sont restaurés après un échec');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id', 'SELECT * FROM before_collectivites ORDER BY id', 'Tous les espaces sont restaurés après un échec');
+DROP TRIGGER skip_delete ON public.collectivite;
+
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(true), 36, 'Les 36 espaces vides sont supprimés');
+SELECT is((SELECT count(*)::integer FROM public.collectivite WHERE id <= 36), 0, 'Aucun arrondissement ciblé ne reste');
+SELECT results_eq('SELECT * FROM public.collectivite ORDER BY id',
+    'SELECT * FROM before_collectivites WHERE id > 36 ORDER BY id', 'Villes, Lyon, codes voisins et autres types sont conservés');
+SELECT results_eq('TABLE imports.commune', 'TABLE before_communes', 'Les données géographiques sont conservées');
+SELECT is((SELECT nom FROM public.utilisateur WHERE id = 1), 'Compte à conserver', 'Les comptes utilisateurs sont conservés');
+SELECT results_eq('TABLE storage.buckets', 'TABLE before_buckets', 'Les buckets vides restent disponibles pour une gestion via Storage');
+SELECT is((SELECT count(*)::integer FROM public.collectivite_bucket), 10, 'Seuls les liens des espaces ciblés sont supprimés');
+SELECT is((SELECT count(*)::integer FROM public.fiche_action_import_csv), 3,
+    'Les imports CSV hors périmètre restent intacts');
+SELECT is(pg_temp.delete_arrondissements_paris_marseille(true), 0, 'Une nouvelle exécution est sans effet');
+
+SELECT * FROM finish();
+ROLLBACK;
