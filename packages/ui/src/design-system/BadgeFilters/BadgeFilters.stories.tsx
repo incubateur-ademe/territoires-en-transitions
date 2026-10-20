@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
+import { expect, fn, waitFor, within } from 'storybook/test';
 import { StoryWrapper } from '../../storybook/story.wrapper';
 import { BadgeFilters, FilterCategory } from './index';
 
@@ -134,6 +135,20 @@ const InteractiveBadgeFilters = () => {
 
 export const Interactive: Story = {
   render: () => <InteractiveBadgeFilters />,
+  play: async ({ canvas, userEvent }) => {
+    await expect(
+      canvas.getByRole('button', { name: 'Voir les autres filtres' })
+    ).toHaveTextContent('+2');
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Supprimer tous les filtres' })
+    );
+
+    await expect(canvas.getByText('Sans pilote')).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Voir les autres filtres' })
+    ).not.toBeInTheDocument();
+  },
   parameters: {
     docs: {
       description: {
@@ -141,6 +156,72 @@ export const Interactive: Story = {
           'This is an interactive example where you can actually remove filters and see the component update in real-time. It uses typed category keys for better type safety.',
       },
     },
+  },
+};
+
+export const ReadonlyCollapsed: Story = {
+  args: {
+    maxDisplayedCategoriesCount: 1,
+    onDeleteFilterValue: fn(),
+    filterCategories: [
+      {
+        key: 'pilotes',
+        title: 'Personne pilote',
+        selectedFilters: ['Camille Martin'],
+        readonly: true,
+      },
+      {
+        key: 'plans',
+        title: 'Plans',
+        selectedFilters: ['Plan climat', 'Plan mobilité', 'Plan biodiversité'],
+        readonly: true,
+      },
+      {
+        key: 'statuts',
+        title: 'Statut',
+        selectedFilters: ['Bloqué', 'En pause', 'En retard'],
+        readonly: true,
+      },
+    ],
+  },
+  play: async ({ canvas, canvasElement, userEvent, step }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', {
+      name: 'Voir les autres filtres',
+    });
+
+    await expect(trigger).toHaveTextContent('+2');
+    await expect(canvas.getByText('Personne pilote')).toBeVisible();
+    await expect(body.queryByText('Plans')).not.toBeInTheDocument();
+    await expect(body.queryByText('Statut')).not.toBeInTheDocument();
+
+    await step('Consulter les filtres masqués au survol', async () => {
+      await userEvent.hover(trigger);
+      const tooltip = within(await body.findByRole('tooltip'));
+      await expect(tooltip.getByText('Plans')).toBeVisible();
+      await expect(tooltip.getByText('Statut')).toBeVisible();
+      await expect(tooltip.getByText('Plan mobilité')).toBeVisible();
+      await expect(tooltip.queryByRole('button')).not.toBeInTheDocument();
+
+      await userEvent.unhover(trigger);
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(body.queryByRole('tooltip')).not.toBeInTheDocument()
+      );
+    });
+
+    await step('Consulter les filtres masqués au clavier', async () => {
+      await userEvent.tab();
+      await expect(trigger).toHaveFocus();
+      await expect(await body.findByRole('tooltip')).toHaveTextContent(
+        'Plan climat'
+      );
+
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(body.queryByRole('tooltip')).not.toBeInTheDocument()
+      );
+    });
   },
 };
 

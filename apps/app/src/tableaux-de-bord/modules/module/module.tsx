@@ -153,7 +153,10 @@ const Module = ({
         )}
       </div>
       {/** Filtres du module */}
-      <ReadonlyFilterBadges filterCategories={filterCategories} />
+      <ReadonlyFilterBadges
+        filterCategories={filterCategories}
+        maxDisplayedCategoriesCount={1}
+      />
       {/** Contenu principal */}
       <div className="flex-grow">{children}</div>
       {/** Footer */}
