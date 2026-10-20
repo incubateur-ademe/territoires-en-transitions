@@ -189,7 +189,7 @@ const useToggleRowExpandedReducer = (rows: ActionListItem[]) => {
 
 // renvoi le sous-ensemble des lignes appartenant au même axe
 // (ex: `cae_1` et ses descendants `cae_1.x...` pour la ligne cliquée `cae_1.2.3`)
-const getRowsByAxe = (rows: ActionListItem[], clickedId: string) => {
+export const getRowsByAxe = (rows: ActionListItem[], clickedId: string) => {
   const axeId = clickedId.split('.')[0];
   return rows.filter(
     ({ actionId }) => actionId === axeId || actionId.startsWith(`${axeId}.`)
@@ -198,7 +198,7 @@ const getRowsByAxe = (rows: ActionListItem[], clickedId: string) => {
 
 // niveau de profondeur en fonction du nombre de points dans l'id de l'action
 // (ex: `cae_1.2` => 1)
-const getDepth = (actionId: string) => actionId.split('.').length - 1;
+export const getDepth = (actionId: string) => actionId.split('.').length - 1;
 
 export const getMaxDepth = (referentiel: string | null) =>
   referentiel === 'cae' ? 4 : 3;

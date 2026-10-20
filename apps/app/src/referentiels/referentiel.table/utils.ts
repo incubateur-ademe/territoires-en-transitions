@@ -14,6 +14,7 @@ import {
   ActionId,
   ActionType,
   ActionTypeEnum,
+  isNewReferentiel,
   ReferentielException,
   ReferentielId,
 } from '@tet/domain/referentiels';
@@ -78,6 +79,21 @@ export const getTableMeta = (
   }
   return meta;
 };
+
+/**
+ * Indique si une ligne de la table peut être dépliée : sur les nouveaux
+ * référentiels les sous-actions ne sont pas dépliées (les tâches sont masquées)
+ */
+export const canExpandReferentielTableRow = (
+  action: ActionListItem,
+  referentielId: ReferentielId | undefined
+): boolean =>
+  action.childrenIds.length > 0 &&
+  !(
+    action.actionType === ActionTypeEnum.SOUS_ACTION &&
+    referentielId !== undefined &&
+    isNewReferentiel(referentielId)
+  );
 
 export const isAuditableMesure = (
   action: ActionListItem,

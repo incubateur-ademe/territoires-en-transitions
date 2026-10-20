@@ -11,7 +11,16 @@ import { MouseEvent } from 'react';
 import { getActionInfoPanelSearchParams } from '../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/side-panel/informations.config';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useReferentielThematiqueView } from './use-referentiel-thematique-view';
-import { getTableMeta, ReferentielTableFeatures } from './utils';
+import { ExpandShortcutsTooltipLabel } from './expand-shortcuts.tooltip-label';
+import {
+  getExpandedStateByLevel,
+  listExpandableRows,
+} from './toggle-rows-expanded-by-level';
+import {
+  canExpandReferentielTableRow,
+  getTableMeta,
+  ReferentielTableFeatures,
+} from './utils';
 
 type Props = {
   info: CellContext<ReferentielTableFeatures, ActionListItem, string>;
@@ -19,22 +28,45 @@ type Props = {
 
 export const ReferentielTableTitleCell = ({ info }: Props) => {
   const row = info.row;
-  const { actionType, identifiant, childrenIds } = row.original;
+  const { actionType, identifiant } = row.original;
+  const table = info.table;
 
-  const referentielId = info.table.options.meta?.referentielId;
+  const referentielId = table.options.meta?.referentielId;
 
   const isNewReferentiel =
     referentielId && isNewReferentielUtils(referentielId);
 
   const { view } = useReferentielThematiqueView();
 
-  const haveChildren = childrenIds.length > 0;
+  const haveDisplayableChildren = canExpandReferentielTableRow(
+    row.original,
+    referentielId
+  );
 
-  const isSousActionAndNewReferentiel =
-    actionType === ActionTypeEnum.SOUS_ACTION && isNewReferentiel;
-
-  const haveDisplayableChildren =
-    haveChildren && !isSousActionAndNewReferentiel;
+  // Shift + clic : plie/déplie les lignes de même niveau de l'axe
+  // Alt + clic : déplie aussi les lignes de même niveau des autres axes
+  const toggleExpanded = (event: MouseEvent<HTMLTableCellElement>) => {
+    if (!event.shiftKey && !event.altKey) {
+      row.toggleExpanded();
+      return;
+    }
+    const { data, getSubRows } = table.options;
+    const rows = listExpandableRows({
+      roots: data,
+      getId: (action) => action.actionId,
+      getChildren: (action) => getSubRows?.(action, 0) ?? [],
+      canExpand: (action) =>
+        canExpandReferentielTableRow(action, referentielId),
+    });
+    table.setExpanded((expanded) =>
+      getExpandedStateByLevel({
+        rows,
+        expanded,
+        clickedId: row.id,
+        scope: event.shiftKey ? 'axe' : 'all',
+      })
+    );
+  };
 
   const isAxeOrSousAxe =
     actionType === ActionTypeEnum.AXE || actionType === ActionTypeEnum.SOUS_AXE;
@@ -45,9 +77,11 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
       tabIndex={-1}
       data-cell-id={info.cell.id}
       className={cn(haveDisplayableChildren ? 'cursor-pointer' : '')}
-      onClick={
-        haveDisplayableChildren ? row.getToggleExpandedHandler() : undefined
-      }
+      onClick={haveDisplayableChildren ? toggleExpanded : undefined}
+      // évite la sélection de texte provoquée par Shift + clic
+      onMouseDown={(event) => {
+        if (haveDisplayableChildren && event.shiftKey) event.preventDefault();
+      }}
     >
       <div
         className={cn('flex items-center gap-2')}
@@ -58,15 +92,25 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
         }}
       >
         {haveDisplayableChildren ? (
-          <Icon
-            icon={
-              row.getIsExpanded() ? 'arrow-down-s-line' : 'arrow-right-s-line'
+          <Tooltip
+            label={
+              <ExpandShortcutsTooltipLabel isExpanded={row.getIsExpanded()} />
             }
-            className={cn({
-              'text-white': isAxeOrSousAxe,
-              'text-primary-9': !isAxeOrSousAxe,
-            })}
-          />
+          >
+            <span className="flex">
+              <Icon
+                icon={
+                  row.getIsExpanded()
+                    ? 'arrow-down-s-line'
+                    : 'arrow-right-s-line'
+                }
+                className={cn({
+                  'text-white': isAxeOrSousAxe,
+                  'text-primary-9': !isAxeOrSousAxe,
+                })}
+              />
+            </span>
+          </Tooltip>
         ) : (
           <span className="w-5 h-5 shrink-0" />
         )}

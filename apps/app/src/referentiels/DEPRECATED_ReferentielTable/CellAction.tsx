@@ -1,6 +1,4 @@
 import { makeReferentielTacheUrl } from '@/app/app/paths';
-import { appLabels } from '@/app/labels/catalog';
-import { Kbd } from '@/app/ui/shared/Kbd';
 import {
   ActionType,
   getActionLevelIndex,
@@ -11,6 +9,7 @@ import { Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
 import { ActionListItem } from '../actions/use-list-actions';
+import { ExpandShortcutsTooltipLabel } from '../referentiel.table/expand-shortcuts.tooltip-label';
 import { ActionDetailed } from '../use-snapshot';
 
 export type TCellProps = CellProps<ActionListItem & ActionDetailed> & {
@@ -113,26 +112,6 @@ export const CellAction = (props: TCellProps) => {
   );
 };
 
-// infobulles
-const infoReplier = (
-  <p className="font-normal">
-    {appLabels.tooltipReplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd>{' '}
-    {appLabels.tooltipMaintienEnfonce}
-    <br />
-    {appLabels.tooltipReplierLignesFin}
-  </p>
-);
-const infoDeplier = (
-  <p className="font-normal">
-    {appLabels.tooltipDeplierLignesDebut} <Kbd>{appLabels.toucheShift}</Kbd>{' '}
-    {appLabels.tooltipMaintienEnfoncePourDeplier}
-    <br />
-    {appLabels.tooltipDeplierMemeAxe}
-    <br />
-    <Kbd>{appLabels.toucheAlt}</Kbd> {appLabels.tooltipDeplierTousAxes}
-  </p>
-);
-
 // affiche le picto reflétant l'état plié/déplié
 const Expand = ({ row, hierarchie }: TCellProps) => {
   const { isExpanded, original } = row;
@@ -146,9 +125,8 @@ const Expand = ({ row, hierarchie }: TCellProps) => {
     invertColor ? 'before:bg-white' : 'before:bg-black',
   ].join(' ');
 
-  const label = isExpanded ? infoReplier : infoDeplier;
   return (
-    <Tooltip label={label}>
+    <Tooltip label={<ExpandShortcutsTooltipLabel isExpanded={isExpanded} />}>
       <button
         data-test={`btn-${isExpanded ? 'collapse' : 'expand'}`}
         className={className}
