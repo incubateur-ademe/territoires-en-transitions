@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
+import { ActionDeReferenceSaveToggle } from './action-de-reference-save.toggle';
 import type { ActionDeReferenceInterestControl } from './actions-de-reference.contract';
 
 export const ActionDeReferenceInterestButtons = ({
@@ -16,25 +17,15 @@ export const ActionDeReferenceInterestButtons = ({
       </Button>
     ))
     .with({ status: 'preselectionnee' }, ({ onToggleSaved }) => (
-      <Button
-        variant="primary"
-        size="xs"
-        icon="bookmark-fill"
-        onClick={onToggleSaved}
-      >
-        {appLabels.actionDeReferenceRetirer}
-      </Button>
+      <ActionDeReferenceSaveToggle isSaved size="xs" onToggle={onToggleSaved} />
     ))
     .with({ status: 'disponible' }, ({ onToggleSaved, onDismiss }) => (
       <>
-        <Button
-          variant="outlined"
+        <ActionDeReferenceSaveToggle
+          isSaved={false}
           size="xs"
-          icon="bookmark-line"
-          onClick={onToggleSaved}
-        >
-          {appLabels.actionDeReferenceSauvegarder}
-        </Button>
+          onToggle={onToggleSaved}
+        />
         <Button variant="link" size="xs" onClick={onDismiss}>
           {appLabels.actionDeReferencePasInteresse}
         </Button>

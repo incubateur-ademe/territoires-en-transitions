@@ -3,11 +3,11 @@
 import { useLeviersPlaces } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/data/use-leviers-places';
 import { useLeviersPriorisation } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/data/use-leviers-priorisation';
 import { appLabels } from '@/app/labels/catalog';
+import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { VisibleWhen } from '@tet/ui';
 import { JSX, useMemo } from 'react';
-import { ActionDeReferenceInfoItem } from './action-de-reference-info.item';
 import { toLevierImpactLines, toLevierImpacts } from './to-levier-impacts';
 
 const ActionDeReferenceImpactInfo = ({
@@ -29,7 +29,8 @@ const ActionDeReferenceImpactInfo = ({
 
   return (
     <VisibleWhen condition={lines.length > 0}>
-      <ActionDeReferenceInfoItem
+      <DetailedAction.Item
+        small
         icon="line-chart-line"
         label={appLabels.actionDeReferenceImpactInfo}
       >
@@ -38,7 +39,7 @@ const ActionDeReferenceImpactInfo = ({
             {text}
           </span>
         ))}
-      </ActionDeReferenceInfoItem>
+      </DetailedAction.Item>
     </VisibleWhen>
   );
 };

@@ -2,7 +2,14 @@ import { makeCollectiviteActionDeReferenceUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import type { ActionDeReference } from '@tet/domain/shared';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import type { JSX } from 'react';
+
+const useCurrentRelativeUrl = (): string => {
+  const pathname = usePathname();
+  const search = useSearchParams().toString();
+  return search === '' ? pathname : `${pathname}?${search}`;
+};
 
 export const ActionDeReferenceDetailLink = ({
   action,
@@ -10,11 +17,13 @@ export const ActionDeReferenceDetailLink = ({
   readonly action: Pick<ActionDeReference, 'id' | 'titre'>;
 }): JSX.Element => {
   const collectiviteId = useCollectiviteId();
+  const from = useCurrentRelativeUrl();
   return (
     <Link
       href={makeCollectiviteActionDeReferenceUrl({
         collectiviteId,
         actionDeReferenceId: action.id,
+        from,
       })}
       className="bg-none text-inherit before:absolute before:inset-0 before:rounded-lg after:hidden focus-visible:outline-none focus-visible:before:outline focus-visible:before:outline-2 focus-visible:before:outline-offset-2 focus-visible:before:outline-primary-7"
     >

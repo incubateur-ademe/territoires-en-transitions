@@ -41,11 +41,11 @@ const MockBreadcrumbs = (): JSX.Element => (
 );
 
 const MockMetadata = (): JSX.Element => (
-  <div className="flex items-center gap-4 text-sm text-grey-8">
-    <span>Pilote : Jean Dupont</span>
+  <PageHeader.MetadataRow>
+    <span className="text-sm text-grey-8">Pilote : Jean Dupont</span>
     <Divider orientation="vertical" className="h-4" />
-    <span>Budget : 120 000 €</span>
-  </div>
+    <span className="text-sm text-grey-8">Budget : 120 000 €</span>
+  </PageHeader.MetadataRow>
 );
 
 const MockToolbarRow = (): JSX.Element => (

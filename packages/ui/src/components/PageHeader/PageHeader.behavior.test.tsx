@@ -137,6 +137,25 @@ describe('PageHeader.Metadata — prop visibleWhen', () => {
   });
 });
 
+describe('PageHeader.MetadataRow', () => {
+  it('aligne ses enfants sur une même ligne dans le slot Metadata', () => {
+    render(
+      <PageHeader>
+        <PageHeader.Title>Mon header</PageHeader.Title>
+        <PageHeader.Metadata>
+          <PageHeader.MetadataRow>
+            <span>premier</span>
+            <span>second</span>
+          </PageHeader.MetadataRow>
+        </PageHeader.Metadata>
+      </PageHeader>
+    );
+    const row = screen.getByText('premier').parentElement;
+    expect(row).toContainElement(screen.getByText('second'));
+    expect(row).toHaveClass('flex', 'items-center');
+  });
+});
+
 describe('PageHeader.EditableTitle', () => {
   it('rend un EditableTitle (h1 + édition au clic)', () => {
     const onUpdate = vi.fn();

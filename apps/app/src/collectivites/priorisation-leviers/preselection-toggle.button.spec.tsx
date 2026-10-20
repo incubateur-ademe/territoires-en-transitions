@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PreselectionToggleButton } from './preselection-toggle.button';
 import type { Preselection, PreselectionStatus } from './use-preselection';
 
-const BUTTON_NAME = "Ça m'intéresse";
+const BUTTON_NAME = 'Sauvegarder';
 
 const preselectionMock = vi.hoisted(() => ({
   add: vi.fn<Preselection['add']>(),

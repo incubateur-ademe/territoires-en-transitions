@@ -11,6 +11,7 @@ import {
 const meta: Meta<typeof ActionDeReferenceCard> = {
   component: ActionDeReferenceCard,
   args: { interest: noInterest },
+  parameters: { nextjs: { appDirectory: true } },
 };
 
 export default meta;

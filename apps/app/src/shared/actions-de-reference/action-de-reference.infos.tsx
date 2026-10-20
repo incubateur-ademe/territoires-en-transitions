@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
 import {
   type ActionDeReference,
   LEVIER_NOM_BY_ID,
@@ -6,7 +7,6 @@ import {
 } from '@tet/domain/shared';
 import { uniq } from 'es-toolkit';
 import type { JSX } from 'react';
-import { ActionDeReferenceInfoItem } from './action-de-reference-info.item';
 import { ActionDeReferenceImpactInfo } from './action-de-reference.impact';
 
 const InfoLines = ({
@@ -35,25 +35,28 @@ const ActionDeReferenceInfos = ({
   );
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-6">
-      <ActionDeReferenceInfoItem
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+      <DetailedAction.Item
+        small
         icon="building-line"
         label={appLabels.actionDeReferenceSecteurInfo}
       >
         <InfoLines values={secteurs} />
-      </ActionDeReferenceInfoItem>
-      <ActionDeReferenceInfoItem
+      </DetailedAction.Item>
+      <DetailedAction.Item
+        small
         icon="folder-add-line"
         label={appLabels.actionDeReferenceLevierInfo}
       >
         <InfoLines values={levierNoms} />
-      </ActionDeReferenceInfoItem>
-      <ActionDeReferenceInfoItem
+      </DetailedAction.Item>
+      <DetailedAction.Item
+        small
         icon="bookmark-line"
         label={appLabels.actionDeReferenceCategorieInfo}
       >
         <InfoLines values={categories} />
-      </ActionDeReferenceInfoItem>
+      </DetailedAction.Item>
       <ActionDeReferenceImpactInfo action={action} />
     </div>
   );

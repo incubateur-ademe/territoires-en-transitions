@@ -19,6 +19,11 @@ vi.mock('@tet/api/collectivites', () => ({
   useCollectiviteId: (): number => 5596,
 }));
 
+vi.mock('next/navigation', () => ({
+  usePathname: (): string => '/collectivite/5596/actions-reference',
+  useSearchParams: (): URLSearchParams => new URLSearchParams(),
+}));
+
 const EMPTY_STATE_TITLE =
   'Aucune action de référence ne correspond à votre recherche';
 

@@ -11,12 +11,18 @@ vi.mock('@tet/api/collectivites', () => ({
   useCollectiviteId: (): number => 5596,
 }));
 
+vi.mock('next/navigation', () => ({
+  usePathname: (): string => '/collectivite/5596/actions-reference',
+  useSearchParams: (): URLSearchParams =>
+    new URLSearchParams('searchedText=velo'),
+}));
+
 const keepWhitespace = (text: string): string => text;
 
 afterEach(cleanup);
 
 describe('card-mene-au-detail', () => {
-  it("le titre est un lien vers la page détail de l'action", () => {
+  it("le titre est un lien vers la page détail de l'action, qui mémorise la page d'origine", () => {
     render(
       <ActionDeReferenceCard
         action={isolationComblesAction}
@@ -31,7 +37,9 @@ describe('card-mene-au-detail', () => {
           name: 'Isoler les combles perdus des bâtiments communaux',
         })
         .getAttribute('href')
-    ).toBe('/collectivite/5596/actions-reference/1');
+    ).toBe(
+      '/collectivite/5596/actions-reference/1?from=%2Fcollectivite%2F5596%2Factions-reference%3FsearchedText%3Dvelo'
+    );
   });
 
   it('avec le droit de modification, la card porte le lien du titre et le bouton de modification, sans les confondre', () => {

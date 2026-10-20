@@ -17,6 +17,7 @@ const meta: Meta<typeof ActionsDeReferenceResults> = {
     renderCollectivites: () => null,
     interestOf: () => noInterest,
   },
+  parameters: { nextjs: { appDirectory: true } },
 };
 
 export default meta;

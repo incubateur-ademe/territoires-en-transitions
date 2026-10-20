@@ -1,7 +1,8 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button, Card } from '@tet/ui';
+import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
+import { Button } from '@tet/ui';
 import type { JSX, ReactNode } from 'react';
 import { useState } from 'react';
 
@@ -26,6 +27,7 @@ const UsefulnessQuestion = ({
     </UsefulnessTitle>
     <div className="flex justify-center gap-4">
       <Button
+        size="sm"
         variant="outlined"
         icon="thumb-up-line"
         onClick={() => onAnswer('+1')}
@@ -33,6 +35,7 @@ const UsefulnessQuestion = ({
         {appLabels.actionDeReferenceUtileOui}
       </Button>
       <Button
+        size="sm"
         variant="outlined"
         icon="thumb-down-line"
         onClick={() => onAnswer('-1')}
@@ -56,15 +59,17 @@ export const ActionDeReferenceUsefulnessCard = ({
   };
 
   return (
-    <Card className="items-center gap-4 p-6 font-normal shadow-none">
-      {hasAnswered ? (
-        <UsefulnessTitle>
-          {appLabels.actionDeReferenceUtileMerci}
-        </UsefulnessTitle>
-      ) : (
-        <UsefulnessQuestion onAnswer={answerQuestion} />
-      )}
-    </Card>
+    <DetailedAction.Section>
+      <div className="flex flex-col items-center gap-4">
+        {hasAnswered ? (
+          <UsefulnessTitle>
+            {appLabels.actionDeReferenceUtileMerci}
+          </UsefulnessTitle>
+        ) : (
+          <UsefulnessQuestion onAnswer={answerQuestion} />
+        )}
+      </div>
+    </DetailedAction.Section>
   );
 };
 

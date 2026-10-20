@@ -5,4 +5,5 @@ export type MakeCollectiviteActionsDeReferenceUrl = (args: {
 export type MakeCollectiviteActionDeReferenceUrl = (args: {
   collectiviteId: number;
   actionDeReferenceId: number;
+  from?: string;
 }) => string;

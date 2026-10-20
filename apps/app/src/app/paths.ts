@@ -118,6 +118,7 @@ const collectivitePreselectionPath = `${collectivitePriorisationPath}/actions-pr
 const collectiviteModifierPath = `${collectivitePath}/modifier`;
 const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
 const actionDeReferenceIdParam = 'actionDeReferenceId';
+export const actionDeReferenceFromParam = 'from';
 const collectiviteActionsDeReferencePath = `${collectivitePath}/actions-reference`;
 const collectiviteActionDeReferencePath = `${collectiviteActionsDeReferencePath}/:${actionDeReferenceIdParam}`;
 
@@ -703,7 +704,13 @@ export const makeCollectiviteActionsDeReferenceUrl: MakeCollectiviteActionsDeRef
     );
 
 export const makeCollectiviteActionDeReferenceUrl: MakeCollectiviteActionDeReferenceUrl =
-  ({ collectiviteId, actionDeReferenceId }) =>
-    collectiviteActionDeReferencePath
+  ({ collectiviteId, actionDeReferenceId, from }) => {
+    const path = collectiviteActionDeReferencePath
       .replace(`:${collectiviteParam}`, collectiviteId.toString())
       .replace(`:${actionDeReferenceIdParam}`, actionDeReferenceId.toString());
+    return from === undefined
+      ? path
+      : `${path}?${new URLSearchParams({
+          [actionDeReferenceFromParam]: from,
+        }).toString()}`;
+  };

@@ -1,14 +1,9 @@
 import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
 import { appLabels } from '@/app/labels/catalog';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
+import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import {
-  cn,
-  RichTextEditor,
-  SelectMultiple,
-  Tooltip,
-  VisibleWhen,
-} from '@tet/ui';
+import { RichTextEditor, SelectMultiple, Tooltip, VisibleWhen } from '@tet/ui';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
@@ -17,24 +12,6 @@ import { Secteurs } from '../secteurs';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
-const MainTitle = ({
-  children,
-  size = 'large',
-}: {
-  children: React.ReactNode;
-  size?: 'large' | 'normal';
-}) => {
-  return (
-    <div
-      className={cn('text-primary-10 font-bold text-lg', {
-        'text-base': size === 'normal',
-        'font-normal': size === 'normal',
-      })}
-    >
-      {children}
-    </div>
-  );
-};
 export const Description = () => {
   const { fiche, isReadonly, update } = useFicheContext();
   const { control, watch, getValues, setValue } =
@@ -91,7 +68,9 @@ export const Description = () => {
   return (
     <>
       <div className="flex flex-col">
-        <MainTitle>{getFieldLabel('description', fiche.description)}</MainTitle>
+        <DetailedAction.FieldTitle>
+          {getFieldLabel('description', fiche.description)}
+        </DetailedAction.FieldTitle>
         <VisibleWhen condition={isReadonly && !initialDescription}>
           {appLabels.placeholderARenseigner}
         </VisibleWhen>
@@ -109,9 +88,9 @@ export const Description = () => {
         />
       </div>
       <div className="flex flex-col gap-1">
-        <MainTitle size="normal">
+        <DetailedAction.FieldTitle size="normal">
           {getFieldLabel('objectifs', fiche.objectifs)}
-        </MainTitle>
+        </DetailedAction.FieldTitle>
         <VisibleWhen condition={isReadonly && !initialObjectifs}>
           {appLabels.placeholderARenseigner}
         </VisibleWhen>

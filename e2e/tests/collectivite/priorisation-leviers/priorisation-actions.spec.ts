@@ -270,10 +270,9 @@ test.describe('Priorisation : présélection', () => {
 
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
 
-    await expect(card.getByRole('button', { name: 'Retirer' })).toBeVisible();
-    await expect(card.getByRole('button', { name: 'Sauvegarder' })).toHaveCount(
-      0
-    );
+    await expect(
+      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+    ).toBeVisible();
     await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
 
     await page.reload();
@@ -325,7 +324,7 @@ test.describe('Priorisation : présélection', () => {
     ).toBeVisible();
   });
 
-  test('« Retirer » sort une action de la présélection', async ({
+  test('relâcher « Sauvegarder » sort une action de la présélection', async ({
     collectivites,
     actionsDeReference,
     page,
@@ -349,7 +348,7 @@ test.describe('Priorisation : présélection', () => {
 
     await pom
       .preselectedCard(amenagement.titre)
-      .getByRole('button', { name: 'Retirer' })
+      .getByRole('button', { name: 'Sauvegarder', pressed: true })
       .click();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
@@ -397,14 +396,18 @@ test.describe('Priorisation : présélection', () => {
 
     await pom.backToPriorisation();
     await pom.openLevier(LEVIER_NOM);
-    await card.getByRole('button', { name: 'Retirer' }).click();
+    await card
+      .getByRole('button', { name: 'Sauvegarder', pressed: true })
+      .click();
 
     const removedToast = page
       .getByRole('status')
       .filter({ hasText: /^Action retirée de vos actions sauvegardées/ });
     await expect(removedToast).toBeVisible();
     await removedToast.getByRole('button', { name: 'Annuler' }).click();
-    await expect(card.getByRole('button', { name: 'Retirer' })).toBeVisible();
+    await expect(
+      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+    ).toBeVisible();
   });
 
   test('« Afficher le levier le plus important » de la présélection vide ouvre ce levier dans la matrice', async ({

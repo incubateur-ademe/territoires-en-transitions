@@ -99,10 +99,10 @@ export const sharedLabels = {
   actionDeReferenceDescriptionLabel: 'Description',
   actionDeReferenceLevierLabel: 'Levier',
   actionDeReferenceCategorieLabel: 'Catégorie',
-  actionDeReferenceSecteurInfo: 'Secteur :',
-  actionDeReferenceLevierInfo: 'Levier :',
-  actionDeReferenceCategorieInfo: 'Catégorie :',
-  actionDeReferenceImpactInfo: 'Impact potentiel du levier :',
+  actionDeReferenceSecteurInfo: 'Secteur',
+  actionDeReferenceLevierInfo: 'Levier',
+  actionDeReferenceCategorieInfo: 'Catégorie',
+  actionDeReferenceImpactInfo: 'Impact potentiel du levier',
   actionDeReferenceImpactValeur: (score: number): string =>
     `${score}/100 du territoire (estimé)`,
   actionDeReferenceImpactValeurDuLevier: ({
@@ -140,7 +140,6 @@ export const sharedLabels = {
       ? '1 collectivité a des actions liées'
       : `${count} collectivités ont des actions liées`,
   actionDeReferenceSauvegarder: 'Sauvegarder',
-  actionDeReferenceRetirer: 'Retirer',
   actionDeReferencePasInteresse: 'Pas intéressé',
   actionDeReferenceRestaurer: 'Restaurer',
   actionDeReferenceMarqueesPasInteresse: (count: number): string =>

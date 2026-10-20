@@ -209,7 +209,6 @@ export const collectivitesLabels = {
   sauvegarderAction: 'Sauvegarder',
   ajouteeALaPreselection: 'Ajoutée',
   pasInteresse: 'Pas intéressé',
-  actionDeReferenceInteresse: "Ça m'intéresse",
   retirerDeMaListe: 'Retirer de ma liste',
   retablirAction: 'Rétablir',
   ilManqueUneAction: 'Il manque une action ?',
