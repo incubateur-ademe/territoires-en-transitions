@@ -249,11 +249,17 @@ export const BadgeFilters = <TKey extends string = string>({
             </div>
           }
         >
-          <Badge
-            title={`+${categoriesLeft.length}`}
-            variant="standard"
-            className="px-2 py-1.5"
-          />
+          <button
+            type="button"
+            aria-label={uiLabels.voirLesAutresFiltres}
+            data-test="badge-filters.show-more"
+          >
+            <Badge
+              title={`+${categoriesLeft.length}`}
+              variant="standard"
+              className="px-2 py-1.5"
+            />
+          </button>
         </Tooltip>
       </VisibleWhen>
       <VisibleWhen condition={shouldShowClearAllFilters}>
