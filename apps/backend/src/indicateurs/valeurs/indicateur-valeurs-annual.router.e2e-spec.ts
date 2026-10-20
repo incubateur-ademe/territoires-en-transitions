@@ -7,10 +7,12 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
+import { loadImage } from 'canvas';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { init, type LineSeriesOption, type SeriesModel } from 'echarts';
 import type { EChartsOption } from 'echarts/types/dist/echarts';
 import { randomUUID } from 'node:crypto';
+import request from 'supertest';
 import { IndicateurChartService } from '../charts/indicateur-chart.service';
 import { indicateurCategorieTagTable } from '../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
@@ -451,6 +453,54 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
     expect(absent.indicateurSegmentation).toMatchObject({ source: 'absente' });
     expect(absent.chartData.series).toEqual([]);
   });
+
+  test.each(['png', 'svg'] as const)(
+    'Exporte par HTTP les objectifs segmentés avec leurs motifs au format %s',
+    async (format) => {
+      const { chartData, indicateurSegmentation } = await createSegmentedChart([
+        [
+          { dateValeur: '2025-01-01', objectif: 10 },
+          { dateValeur: '2026-01-01', objectif: 20 },
+        ],
+        [
+          { dateValeur: '2025-01-01', objectif: 15 },
+          { dateValeur: '2026-01-01', objectif: 25 },
+        ],
+      ]);
+      expect(indicateurSegmentation).toMatchObject({
+        source: 'collectivite',
+        valeurType: 'objectif',
+      });
+
+      const width = 320;
+      const height = 200;
+      const response = await request(app.getHttpServer())
+        .post('/charts/render')
+        .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+        .send({ format, width, height, options: chartData })
+        .expect(200)
+        .expect(
+          'Content-Type',
+          format === 'png' ? /image\/png/ : /application\/xml/
+        )
+        .responseType('blob');
+
+      if (format === 'png') {
+        expect(response.body.subarray(0, 8)).toEqual(
+          Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
+        );
+        const image = await loadImage(response.body);
+        expect(image.width).toBe(width * 3);
+        expect(image.height).toBe(height * 3);
+      } else {
+        const svg = response.body.toString();
+        expect(svg).toContain('<svg');
+        expect(svg).toContain(`width="${width}"`);
+        expect(svg).toContain(`height="${height}"`);
+        expect(svg).toContain('<pattern');
+      }
+    }
+  );
 
   test("L'upsert historique applique aussi l'interdiction de saisie utilisateur", async () => {
     const protectedIndicateurId = await insertAnnualIndicateur({
