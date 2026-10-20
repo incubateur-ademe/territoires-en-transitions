@@ -335,6 +335,47 @@ test.describe('Priorisation : présélection', () => {
     ).toBeVisible();
   });
 
+  test('sauvegarder affiche un toast qui mène aux actions sauvegardées, retirer un toast qui permet d’annuler', async ({
+    collectivites,
+    actionsDeReference,
+    page,
+  }) => {
+    const runToken = crypto.randomUUID().slice(0, 8);
+    const [amenagement] = toCovoiturageActions(runToken);
+    await actionsDeReference.add([amenagement]);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await addMobilisationAvecFiche(collectivite.data.id);
+    const pom = new PriorisationLeviersPom(page);
+    await pom.goto(collectivite.data.id);
+    await pom.openLevier(LEVIER_NOM);
+    const card = pom.actionCardInPanel(LEVIER_NOM, amenagement.titre);
+
+    await card.getByRole('button', { name: 'Sauvegarder' }).click();
+
+    const savedToast = page
+      .getByRole('status')
+      .filter({ hasText: /^Action sauvegardée/ });
+    await expect(savedToast).toBeVisible();
+    await savedToast
+      .getByRole('button', { name: 'Voir mes actions sauvegardées' })
+      .click();
+    await expect(pom.preselectionTitle).toBeVisible();
+    await expect(pom.preselectedCard(amenagement.titre)).toBeVisible();
+
+    await pom.backToPriorisation();
+    await pom.openLevier(LEVIER_NOM);
+    await card.getByRole('button', { name: 'Retirer' }).click();
+
+    const removedToast = page
+      .getByRole('status')
+      .filter({ hasText: /^Action retirée de vos actions sauvegardées/ });
+    await expect(removedToast).toBeVisible();
+    await removedToast.getByRole('button', { name: 'Annuler' }).click();
+    await expect(card.getByRole('button', { name: 'Retirer' })).toBeVisible();
+  });
+
   test('les filtres par levier et par catégorie réduisent la présélection', async ({
     collectivites,
     actionsDeReference,

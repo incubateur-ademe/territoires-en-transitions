@@ -1,10 +1,52 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
+import { type JSX, useCallback, useState } from 'react';
 
 type Hidden = null;
 export type ToastStatus = Hidden | 'success' | 'error' | 'info';
+
+type ToastAction = {
+  label: string;
+  onClick: () => void;
+};
+
+type ShowToastArgs = {
+  status: ToastStatus;
+  message: string;
+  autoHideDuration?: number;
+  action?: ToastAction;
+};
+
+const ToastActionButtons = ({
+  action,
+  onClose,
+}: {
+  action: ToastAction;
+  onClose: () => void;
+}): JSX.Element => (
+  <>
+    <button
+      type="button"
+      className="ml-4 whitespace-nowrap font-bold underline"
+      onClick={() => {
+        onClose();
+        action.onClick();
+      }}
+    >
+      {action.label}
+    </button>
+    <button
+      type="button"
+      aria-label={appLabels.fermer}
+      className="ml-3 flex"
+      onClick={onClose}
+    >
+      <Icon icon="close-line" size="sm" aria-hidden />
+    </button>
+  </>
+);
 
 /**
  * Fourni les fonctions de base pour afficher une notification "toast"
@@ -13,6 +55,7 @@ export const useBaseToast = () => {
   const [status, setStatus] = useState<ToastStatus>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [duration, setDuration] = useState<number | undefined>(undefined);
+  const [action, setAction] = useState<ToastAction | undefined>(undefined);
   // Sert de `key` au `ToastFloater` : le remonter réarme la fermeture
   // automatique, qu'un toast enchaîné hériterait sinon du précédent.
   const [occurrence, setOccurrence] = useState(0);
@@ -20,6 +63,7 @@ export const useBaseToast = () => {
   const close = () => {
     setStatus(null);
     setMessage(null);
+    setAction(undefined);
   };
 
   /**
@@ -27,14 +71,21 @@ export const useBaseToast = () => {
    * soit invoquée dans le rendu d'un composant react pour que l'affichage soit
    * effectif)
    */
-  const setToast = useCallback(
-    (status: ToastStatus, message: string, autoHideDuration?: number) => {
+  const showToast = useCallback(
+    ({ status, message, autoHideDuration, action }: ShowToastArgs) => {
       setMessage(message);
       setStatus(status);
       setDuration(autoHideDuration);
+      setAction(action);
       setOccurrence((n) => n + 1);
     },
     []
+  );
+
+  const setToast = useCallback(
+    (status: ToastStatus, message: string, autoHideDuration?: number) =>
+      showToast({ status, message, autoHideDuration }),
+    [showToast]
   );
 
   /**
@@ -65,13 +116,20 @@ export const useBaseToast = () => {
         })}
         autoHideDuration={duration}
       >
-        <div className="flex items-center" data-test={`toast-${status}`}>
+        <div
+          role={status === 'error' ? 'alert' : 'status'}
+          className="flex items-center"
+          data-test={`toast-${status}`}
+        >
           {status && <Icon icon={getIcon(status)} size="lg" className="mr-3" />}
           {message}
+          {action && <ToastActionButtons action={action} onClose={close} />}
         </div>
       </ToastFloater>
     );
   };
 
-  return { renderToast, setToast };
+  return { renderToast, setToast, setToastWithAction: showToast };
 };
+
+export type BaseToast = ReturnType<typeof useBaseToast>;
