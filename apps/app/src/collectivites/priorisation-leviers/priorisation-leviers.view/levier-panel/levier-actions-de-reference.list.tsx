@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useListActionsDeReference } from '@/app/shared/actions-de-reference/data/use-list-actions-de-reference';
-import { SearchBar } from '@/app/shared/actions-de-reference/search-bar';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import {
@@ -9,19 +8,20 @@ import {
   categorieActionEnumValues,
   type LevierId,
 } from '@tet/domain/shared';
-import { Accordion, Select, VisibleWhen } from '@tet/ui';
+import {
+  Accordion,
+  type OptionValue,
+  SelectMultiple,
+  VisibleWhen,
+} from '@tet/ui';
 import { partition } from 'es-toolkit';
 import { JSX, ReactNode, RefCallback, useState } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../../levier-card-info';
-import {
-  FilterField,
-  toCategorie,
-  toCategorieOption,
-} from '../../preselection.filters';
+import { FilterField, toCategorieOption } from '../../preselection.filters';
 import { Preselection } from '../../use-preselection';
 import { ActionDeReferencePreselectionCard } from './action-de-reference-preselection.card';
-import { keepCategorie } from './keep-categorie';
+import { keepCategories } from './keep-categories';
 
 type LevierActionsDeReferenceListProps = {
   actionsRef?: RefCallback<HTMLDivElement>;
@@ -142,35 +142,36 @@ const GroupedActions = ({
 
 const CATEGORIE_OPTIONS = categorieActionEnumValues.map(toCategorieOption);
 
+const toCategories = (
+  values: readonly OptionValue[] | undefined
+): CategorieAction[] =>
+  categorieActionEnumValues.filter((categorie) => values?.includes(categorie));
+
 export const LevierActionsDeReferenceList = ({
   actionsRef,
   levierId,
   initialCategorie,
   preselection,
 }: LevierActionsDeReferenceListProps): JSX.Element => {
-  const [searchedText, setSearchedText] = useState('');
-  const [categorie, setCategorie] = useState(initialCategorie);
+  const [categories, setCategories] = useState<CategorieAction[]>(
+    initialCategorie === undefined ? [] : [initialCategorie]
+  );
   const levierActions = useListActionsDeReference({
-    searchedText,
+    searchedText: '',
     leviers: [levierId],
     categories: [],
     sortBy: 'categories',
   });
-  const actionsQuery = keepCategorie({ list: levierActions, categorie });
-  const isFiltering = searchedText !== '' || categorie !== undefined;
+  const actionsQuery = keepCategories({ list: levierActions, categories });
+  const isFiltering = categories.length > 0;
 
   return (
     <div className="flex flex-col gap-4">
-      <SearchBar
-        searchedText={searchedText}
-        onSearch={setSearchedText}
-        label={appLabels.rechercherUneActionDeReference}
-      />
       <FilterField label={appLabels.filtrerParCategorie}>
-        <Select
+        <SelectMultiple
           options={CATEGORIE_OPTIONS}
-          values={categorie}
-          onChange={(value) => setCategorie(toCategorie(value))}
+          values={categories}
+          onChange={({ values }) => setCategories(toCategories(values))}
           placeholder={appLabels.filtrerParCategorie}
           small
         />
@@ -187,7 +188,7 @@ export const LevierActionsDeReferenceList = ({
         .with({ status: 'loaded', actions: [] }, () => (
           <LevierCardInfo>
             {isFiltering
-              ? appLabels.actionsDeReferenceAucune
+              ? appLabels.aucuneActionDeReferenceDansCategories
               : appLabels.aucuneActionDeReferenceDuLevier}
           </LevierCardInfo>
         ))

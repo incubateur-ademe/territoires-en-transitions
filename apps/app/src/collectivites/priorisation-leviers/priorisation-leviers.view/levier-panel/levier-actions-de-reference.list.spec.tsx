@@ -3,8 +3,8 @@ import {
   aireCovoiturageAction,
   isolationComblesAction,
 } from '@/app/shared/actions-de-reference/actions-de-reference.fixture';
-import type { ActionDeReferenceId } from '@tet/domain/shared';
-import { cleanup, render } from '@testing-library/react';
+import type { ActionDeReferenceId, CategorieAction } from '@tet/domain/shared';
+import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Preselection, PreselectionStatus } from '../../use-preselection';
 import { LevierActionsDeReferenceList } from './levier-actions-de-reference.list';
@@ -52,6 +52,18 @@ const buildPreselection = (
   clearAddedToPlan: vi.fn(),
 });
 
+const renderWithInitialCategorie = (
+  initialCategorie: CategorieAction
+): void => {
+  render(
+    <LevierActionsDeReferenceList
+      levierId="covoiturage"
+      initialCategorie={initialCategorie}
+      preselection={buildPreselection(() => 'disponible')}
+    />
+  );
+};
+
 const renderActionsTarget = (
   statusOf: (actionId: ActionDeReferenceId) => PreselectionStatus
 ): HTMLDivElement[] => {
@@ -86,5 +98,19 @@ describe('LevierActionsDeReferenceList', () => {
 
     expect(targetElements).toHaveLength(1);
     expect(targetElements[0]?.querySelectorAll('button')).toHaveLength(2);
+  });
+
+  it("dit qu'aucune action ne relève des catégories choisies quand le filtre ne garde rien", () => {
+    renderWithInitialCategorie('gouvernance');
+
+    expect(
+      screen.getByText(appLabels.aucuneActionDeReferenceDansCategories)
+    ).toBeTruthy();
+  });
+
+  it('ne mentionne pas de recherche quand le filtre de catégories ne garde rien', () => {
+    renderWithInitialCategorie('gouvernance');
+
+    expect(screen.queryByText(appLabels.actionsDeReferenceAucune)).toBeNull();
   });
 });

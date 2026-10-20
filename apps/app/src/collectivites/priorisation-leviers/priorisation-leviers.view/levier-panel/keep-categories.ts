@@ -1,22 +1,21 @@
 import type { ActionsDeReferenceList } from '@/app/shared/actions-de-reference/actions-de-reference.contract';
 import type { CategorieAction } from '@tet/domain/shared';
 
-export const keepCategorie = ({
+export const keepCategories = ({
   list,
-  categorie,
+  categories,
 }: {
   list: ActionsDeReferenceList;
-  categorie: CategorieAction | undefined;
+  categories: readonly CategorieAction[];
 }): ActionsDeReferenceList => {
-  const hasActionsToFilter =
-    list.status === 'loaded' && categorie !== undefined;
+  const hasActionsToFilter = list.status === 'loaded' && categories.length > 0;
   if (!hasActionsToFilter) {
     return list;
   }
   return {
     ...list,
     actions: list.actions.filter((action) =>
-      action.categories.includes(categorie)
+      action.categories.some((categorie) => categories.includes(categorie))
     ),
   };
 };

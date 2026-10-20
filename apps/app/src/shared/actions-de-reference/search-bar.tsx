@@ -46,14 +46,9 @@ const useSyncedSearchText = ({
 type SearchBarProps = {
   readonly searchedText: string;
   readonly onSearch: (text: string) => void;
-  readonly label?: string;
 };
 
-const SearchBar = ({
-  searchedText,
-  onSearch,
-  label = appLabels.actionsDeReferenceRecherche,
-}: SearchBarProps): JSX.Element => {
+const SearchBar = ({ searchedText, onSearch }: SearchBarProps): JSX.Element => {
   const { typedText, typeText, searchTypedText } = useSyncedSearchText({
     searchedText,
     onSearch,
@@ -62,8 +57,8 @@ const SearchBar = ({
   return (
     <Input
       type="search"
-      aria-label={label}
-      placeholder={label}
+      aria-label={appLabels.actionsDeReferenceRecherche}
+      placeholder={appLabels.actionsDeReferenceRecherche}
       value={typedText}
       onChange={(event) => typeText(event.target.value)}
       onSearch={searchTypedText}
