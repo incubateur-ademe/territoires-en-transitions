@@ -6,6 +6,7 @@ import { AiImportFlow } from '@/app/plans/plans/import-plan/ai-import.flow';
 import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
 import { Button, Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { useState } from 'react';
 
 type Props = {
   openState: OpenState;
@@ -25,24 +26,28 @@ export const DemarcheImportPlanModal = ({
   planTypeId,
   importDefaults,
   onImportStarted,
-}: Props) => (
-  <Modal
-    size="lg"
-    title={<BetaLabel>{appLabels.importPlanIaTitre}</BetaLabel>}
-    openState={openState}
-    dataTest="demarches.plan.import-plan-modal"
-    render={({ close }) => (
-      <AiImportFlow
-        lockedPlanTypeId={planTypeId}
-        defaults={importDefaults}
-        onImportStarted={onImportStarted}
-        onPlanCreated={close}
-        cancelButton={
-          <Button variant="outlined" type="button" onClick={close}>
-            {appLabels.annuler}
-          </Button>
-        }
-      />
-    )}
-  />
-);
+}: Props) => {
+  const [isProgressVisible, setIsProgressVisible] = useState(false);
+  return (
+    <Modal
+      size={isProgressVisible ? 'sm' : 'lg'}
+      title={<BetaLabel>{appLabels.importPlanIaTitre}</BetaLabel>}
+      openState={openState}
+      dataTest="demarches.plan.import-plan-modal"
+      render={({ close }) => (
+        <AiImportFlow
+          lockedPlanTypeId={planTypeId}
+          defaults={importDefaults}
+          onImportStarted={onImportStarted}
+          onPlanCreated={close}
+          onProgressVisibilityChange={setIsProgressVisible}
+          cancelButton={
+            <Button variant="outlined" type="button" onClick={close}>
+              {appLabels.annuler}
+            </Button>
+          }
+        />
+      )}
+    />
+  );
+};

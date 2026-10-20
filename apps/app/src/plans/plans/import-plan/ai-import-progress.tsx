@@ -101,7 +101,7 @@ const ImportStepList = ({ steps }: { steps: ImportStepView[] }) => {
       </p>
       <ol
         aria-label={appLabels.importPlanIaEtapesTitre}
-        className="flex flex-col gap-3 mx-auto mb-0 p-0 list-none"
+        className="flex flex-col gap-3 mb-0 p-0 list-none"
         data-test="plans.import-ia.etapes"
       >
         {steps.filter(isVisible).map((step) => (
@@ -159,7 +159,7 @@ export const AiImportProgress = ({
       />
     </VisibleWhen>
     <VisibleWhen condition={!failed}>
-      <p className="mb-0 text-sm text-center text-grey-7">
+      <p className="mb-0 text-sm text-grey-7">
         {appLabels.importPlanIaEnCours}
       </p>
     </VisibleWhen>
