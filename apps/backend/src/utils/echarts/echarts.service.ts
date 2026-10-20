@@ -5,7 +5,6 @@ import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';
 import { NextFunction, Response } from 'express';
 import path from 'node:path';
 
-
 registerFont(path.join(__dirname, './fonts/Poppins-Regular.ttf'), {
   family: 'Poppins',
   weight: '400',
@@ -68,6 +67,11 @@ export class EchartsService {
    */
   async getEcharts(): Promise<any> {
     const echarts = await import('echarts');
+    // Decal patterns need auxiliary canvases even when init receives a canvas.
+    // ECharts types expect a browser canvas; node-canvas provides the Node API.
+    echarts.setPlatformAPI({
+      createCanvas: () => createCanvas(1, 1) as unknown as HTMLCanvasElement,
+    });
     return echarts;
   }
 
