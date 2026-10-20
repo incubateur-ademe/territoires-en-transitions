@@ -240,5 +240,5 @@ export const collectivitesLabels = {
     'Action retirée de vos actions sauvegardées',
   preselectionVide: "Aucune action sauvegardée pour l'instant",
   preselectionVideDescription:
-    'Cliquez sur un levier de la matrice puis sur « Sauvegarder » pour retrouver une action ici.',
+    'Ouvrez un levier à prioriser dans la matrice, puis cliquez sur « Sauvegarder » pour retenir les actions à discuter avec vos élus. Elles apparaîtront ici.',
 };

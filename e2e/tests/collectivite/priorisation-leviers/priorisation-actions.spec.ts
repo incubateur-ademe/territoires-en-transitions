@@ -11,6 +11,7 @@ import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_NOM: Levier = LEVIER_NOM_BY_ID.covoiturage;
 const AUTRE_LEVIER_NOM: Levier = LEVIER_NOM_BY_ID.biogaz;
+const LEVIER_TO_PRIORITIZE: Levier = LEVIER_NOM_BY_ID.vehicules_electriques;
 
 const toCovoiturageActions = (
   runToken: string
@@ -60,6 +61,7 @@ test.describe('Priorisation : matrice et volet', () => {
     await pom.openPreselection();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
+    await expect(pom.mostImportantLevierLink).toHaveCount(0);
   });
 
   test("l'onglet « Classement » affiche l'histogramme des sous-leviers", async ({
@@ -374,6 +376,26 @@ test.describe('Priorisation : présélection', () => {
     await expect(removedToast).toBeVisible();
     await removedToast.getByRole('button', { name: 'Annuler' }).click();
     await expect(card.getByRole('button', { name: 'Retirer' })).toBeVisible();
+  });
+
+  test('« Afficher le levier le plus important » de la présélection vide ouvre ce levier dans la matrice', async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await addMobilisationAvecFiche(collectivite.data.id);
+    const pom = new PriorisationLeviersPom(page);
+    await pom.stubLevierWithPotentiel(LEVIER_TO_PRIORITIZE);
+    await pom.goto(collectivite.data.id);
+    await pom.openPreselection();
+    await expect(pom.emptyPreselectionMessage).toBeVisible();
+
+    await pom.mostImportantLevierLink.click();
+
+    await expect(pom.levierPanel(LEVIER_TO_PRIORITIZE)).toBeVisible();
+    await expect(page).not.toHaveURL(/levier=/);
   });
 
   test('les filtres par levier et par catégorie réduisent la présélection', async ({

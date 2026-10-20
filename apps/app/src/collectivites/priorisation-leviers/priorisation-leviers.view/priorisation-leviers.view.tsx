@@ -59,6 +59,7 @@ import { PriorisationEmptyCard } from './priorisation-empty.card';
 import { SelectLevier } from './select-levier';
 import { LevierNudge, useLevierNudge } from './use-levier-nudge';
 import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
+import { useOpenLevierFromUrl } from './use-open-levier-from-url';
 
 type PriorisationAlertsProps = {
   potentiels: PotentielsReduction;
@@ -410,11 +411,18 @@ export const PriorisationLeviersView = (): JSX.Element => {
   });
   const isLeviersReady = leviersQuery.status === 'ready';
   const hasMobilisation = isLeviersReady && leviersQuery.hasMobilisation;
-  const isTourReady = hasMobilisation && preselection.isReady;
   const levierNudge = useLevierNudge();
+  const { isLevierRequestedByUrl } = useOpenLevierFromUrl({
+    isReady: isLeviersReady,
+    onLevierRequested: (levierId) => {
+      levierNudge.dismiss();
+      levierSidePanel.select(levierId);
+    },
+  });
+  const isTourReady = hasMobilisation && preselection.isReady;
   const { Tour, view, setView, restartOnMatrix, isTourOver } =
     useLeviersViewWithTour({
-      isTourReady,
+      isTourReady: isTourReady && !isLevierRequestedByUrl,
       levierToPrioritizeId,
       levierSidePanel,
       onTourEnded: levierNudge.reset,

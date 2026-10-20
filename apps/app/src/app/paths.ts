@@ -16,6 +16,7 @@ import {
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+import type { LevierId } from '@tet/domain/shared';
 import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 import { makeUserTdbUrl } from '../tableaux-de-bord/make-user-tdb-url';
@@ -325,6 +326,19 @@ export const makeCollectivitePriorisationUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const priorisationLevierQueryParam = 'levier';
+
+export const makeCollectivitePriorisationLevierUrl = ({
+  collectiviteId,
+  levierId,
+}: {
+  collectiviteId: number;
+  levierId: LevierId;
+}): string =>
+  `${makeCollectivitePriorisationUrl({
+    collectiviteId,
+  })}?${priorisationLevierQueryParam}=${levierId}`;
 
 export const makeCollectivitePreselectionUrl = ({
   collectiviteId,
