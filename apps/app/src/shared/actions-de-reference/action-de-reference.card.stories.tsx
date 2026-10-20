@@ -30,6 +30,34 @@ export const Modifiable: Story = {
   },
 };
 
+export const Sauvegardee: Story = {
+  args: {
+    action: isolationComblesAction,
+    updateAccess: { status: 'forbidden' },
+    interest: {
+      status: 'preselectionnee',
+      onToggleSaved: () => undefined,
+      onDismiss: () => undefined,
+    },
+  },
+};
+
+export const Ignoree: Story = {
+  args: {
+    action: isolationComblesAction,
+    updateAccess: { status: 'forbidden' },
+    interest: { status: 'ignoree', onRestore: () => undefined },
+  },
+};
+
+export const AvecBadgeActionDeReference: Story = {
+  args: {
+    action: isolationComblesAction,
+    updateAccess: { status: 'forbidden' },
+    showTypeBadge: true,
+  },
+};
+
 export const DescriptionLongue: Story = {
   args: {
     action: longDescriptionAction,

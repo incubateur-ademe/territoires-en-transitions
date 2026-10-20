@@ -1,12 +1,15 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { ActionDeReference } from '@tet/domain/shared';
-import { Button, Card } from '@tet/ui';
+import { ActionCard, Button } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
 import { ActionDeReferenceDetailLink } from './action-de-reference-detail.link';
 import { ActionDeReferenceInterestButtons } from './action-de-reference-interest.buttons';
 import { ActionDeReferenceBadges } from './action-de-reference.badges';
-import type { ActionDeReferenceCardComponent } from './actions-de-reference.contract';
+import type {
+  ActionDeReferenceCardComponent,
+  ActionDeReferenceUpdateAccess,
+} from './actions-de-reference.contract';
 
 const UpdateActionDeReferenceButton = ({
   action,
@@ -28,6 +31,20 @@ const UpdateActionDeReferenceButton = ({
   );
 };
 
+const toHoverActions = ({
+  action,
+  updateAccess,
+}: {
+  readonly action: ActionDeReference;
+  readonly updateAccess: ActionDeReferenceUpdateAccess;
+}): JSX.Element | undefined =>
+  match(updateAccess)
+    .with({ status: 'forbidden' }, () => undefined)
+    .with({ status: 'allowed' }, ({ onUpdate }) => (
+      <UpdateActionDeReferenceButton action={action} onUpdate={onUpdate} />
+    ))
+    .exhaustive();
+
 const ActionDeReferenceTitle = ({
   action,
 }: {
@@ -48,40 +65,27 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
   actionsRef,
   children,
 }) => (
-  <div className="group relative h-full">
-    {match(updateAccess)
-      .with({ status: 'forbidden' }, () => null)
-      .with({ status: 'allowed' }, ({ onUpdate }) => (
-        <div className="absolute right-4 top-4 z-10 opacity-0 transition group-focus-within:opacity-100 group-hover:opacity-100">
-          <UpdateActionDeReferenceButton action={action} onUpdate={onUpdate} />
-        </div>
-      ))
-      .exhaustive()}
-    <Card
-      className="h-full gap-2 p-4 font-normal text-grey-8 shadow-none"
-      header={
-        <ActionDeReferenceBadges
-          action={action}
-          hasUpdateButton={updateAccess.status === 'allowed'}
-          showTypeBadge={showTypeBadge}
-          showLevierAndCategorieBadges={showLevierAndCategorieBadges}
-        />
-      }
-      footer={
-        <div
-          ref={actionsRef}
-          className="flex flex-wrap items-center gap-3 pt-1"
-        >
-          <ActionDeReferenceInterestButtons interest={interest} />
-          {actions}
-        </div>
-      }
-    >
-      <ActionDeReferenceTitle action={action} />
-      <p className="mb-0 whitespace-pre-line text-sm font-medium text-grey-8">
-        {action.description}
-      </p>
-      {children}
-    </Card>
-  </div>
+  <ActionCard
+    hoverActions={toHoverActions({ action, updateAccess })}
+    header={
+      <ActionDeReferenceBadges
+        action={action}
+        hasUpdateButton={updateAccess.status === 'allowed'}
+        showTypeBadge={showTypeBadge}
+        showLevierAndCategorieBadges={showLevierAndCategorieBadges}
+      />
+    }
+    footer={
+      <div ref={actionsRef} className="flex flex-wrap items-center gap-3 pt-1">
+        <ActionDeReferenceInterestButtons interest={interest} />
+        {actions}
+      </div>
+    }
+  >
+    <ActionDeReferenceTitle action={action} />
+    <p className="mb-0 whitespace-pre-line text-sm font-medium text-grey-8">
+      {action.description}
+    </p>
+    {children}
+  </ActionCard>
 );
