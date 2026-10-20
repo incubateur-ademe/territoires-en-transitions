@@ -1,4 +1,5 @@
 import { FicheWithRelations } from '@tet/domain/plans';
+import { PageHeader } from '@tet/ui';
 import { JSX } from 'react';
 import { CompletionStatus } from '../../components/completion.badge';
 import { AccessManagementBadges } from './access-management.badges';
@@ -19,7 +20,7 @@ export const SubHeader = ({
 }): JSX.Element => {
   const { completion, pilotes } = fiche;
   return (
-    <div className="flex gap-4 items-center">
+    <PageHeader.MetadataRow>
       <Pilotes personnes={pilotes ?? []} />
       <Separator />
       <Status status={fiche.statut} />
@@ -28,6 +29,6 @@ export const SubHeader = ({
       <Separator />
       {completion ? <CompletionStatus completion={completion} /> : null}
       <AccessManagementBadges fiche={fiche} collectiviteId={collectiviteId} />
-    </div>
+    </PageHeader.MetadataRow>
   );
 };

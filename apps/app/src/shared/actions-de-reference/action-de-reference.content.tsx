@@ -1,10 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
+import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
-import { CardCoverBanner } from '@/app/ui/shared/card-cover.banner';
 import { LoadingStatus } from '@/app/ui/shared/loading-status';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import type { ActionDeReference } from '@tet/domain/shared';
-import { Badge, Card, EmptyCard } from '@tet/ui';
+import { EmptyCard } from '@tet/ui';
 import type { JSX } from 'react';
 import { match } from 'ts-pattern';
 import { ActionDeReferenceInfos } from './action-de-reference.infos';
@@ -18,17 +18,19 @@ const ActionDeReferenceDescription = ({
 }: {
   readonly action: ActionDeReference;
 }): JSX.Element => (
-  <Card className="gap-6 p-8 font-normal shadow-none">
-    <section className="flex flex-col gap-1">
-      <h2 className="m-0 text-base font-bold text-primary-9">
-        {appLabels.actionDeReferenceDescriptionLabel}
-      </h2>
-      <p className="m-0 max-w-[70ch] whitespace-pre-line text-sm text-primary-9">
-        {action.description}
-      </p>
-    </section>
-    <ActionDeReferenceInfos action={action} />
-  </Card>
+  <DetailedAction.Section>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
+        <DetailedAction.FieldTitle>
+          {appLabels.actionDeReferenceDescriptionLabel}
+        </DetailedAction.FieldTitle>
+        <p className="m-0 whitespace-pre-line text-sm text-primary-9">
+          {action.description}
+        </p>
+      </div>
+      <ActionDeReferenceInfos action={action} />
+    </div>
+  </DetailedAction.Section>
 );
 
 const ActionDeReferenceDetails = ({
@@ -39,28 +41,15 @@ const ActionDeReferenceDetails = ({
   const sendUsefulnessResponse = useSendUsefulnessResponse(action.id);
 
   return (
-    <div className="flex flex-col gap-6">
-      <Badge
-        title={appLabels.actionDeReference}
-        variant="warning"
-        size="sm"
-        className="w-fit"
-      />
-      <div className="flex w-full flex-col gap-6 md:flex-row">
-        <div className="w-full md:flex-[2]">
-          <CardCoverBanner />
-          <div className="flex flex-col gap-6">
-            <ActionDeReferenceDescription action={action} />
-            <ActionDeReferenceUsefulnessCard
-              onAnswer={sendUsefulnessResponse}
-            />
-          </div>
-        </div>
-        <div className="w-full md:flex-[1]">
-          <LinkedFichesCard actionDeReferenceId={action.id} />
-        </div>
-      </div>
-    </div>
+    <DetailedAction.Root>
+      <DetailedAction.Main>
+        <ActionDeReferenceDescription action={action} />
+        <ActionDeReferenceUsefulnessCard onAnswer={sendUsefulnessResponse} />
+      </DetailedAction.Main>
+      <DetailedAction.Aside>
+        <LinkedFichesCard actionDeReferenceId={action.id} />
+      </DetailedAction.Aside>
+    </DetailedAction.Root>
   );
 };
 

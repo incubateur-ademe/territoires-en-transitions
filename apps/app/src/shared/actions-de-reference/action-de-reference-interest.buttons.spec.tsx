@@ -24,7 +24,26 @@ describe('ActionDeReferenceInterestButtons', () => {
     ).toBeTruthy();
   });
 
-  it('une action sauvegardée propose « Retirer » à la place de « Sauvegarder »', () => {
+  it('une action disponible a son bouton « Sauvegarder » relâché', () => {
+    render(
+      <ActionDeReferenceInterestButtons
+        interest={{
+          status: 'disponible',
+          onToggleSaved: vi.fn(),
+          onDismiss: vi.fn(),
+        }}
+      />
+    );
+
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.actionDeReferenceSauvegarder,
+        pressed: false,
+      })
+    ).toBeTruthy();
+  });
+
+  it('une action sauvegardée garde « Sauvegarder », enfoncé', () => {
     render(
       <ActionDeReferenceInterestButtons
         interest={{
@@ -36,12 +55,10 @@ describe('ActionDeReferenceInterestButtons', () => {
     );
 
     expect(
-      screen.getByRole('button', { name: appLabels.actionDeReferenceRetirer })
-    ).toBeTruthy();
-    expect(
-      screen.queryByRole('button', {
+      screen.getByRole('button', {
         name: appLabels.actionDeReferenceSauvegarder,
+        pressed: true,
       })
-    ).toBeNull();
+    ).toBeTruthy();
   });
 });

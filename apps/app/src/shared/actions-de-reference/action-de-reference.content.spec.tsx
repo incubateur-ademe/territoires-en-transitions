@@ -86,12 +86,6 @@ describe('detail-charge', () => {
     }).toEqual({ secteur: 1, levier: 1, categorie: 1 });
   });
 
-  it("indique que c'est une action de référence de l'ADEME", () => {
-    renderLoadedAction();
-
-    expect(screen.getByText('Action de référence')).toBeDefined();
-  });
-
   it("montre les mises en œuvre de l'action", () => {
     renderLoadedAction();
 

@@ -759,7 +759,7 @@ export const appLabels = {
   actionPartageeEnEditionAvec: 'Cette action est partagée en édition avec',
   actionVousEstPartageeEnEditionPar:
     'Cette action vous est partagée en édition par la collectivité',
-  labelDeuxPoints: ({ label }: { label: string }): string => `${label} :`,
+  labelDeuxPoints: ({ label }: { label: string }): string => `${label}\u00A0:`,
   dateDebutFinPrevisionnelleLabel: 'Date de début et de fin prévisionnelle :',
   tempsDeMiseEnOeuvre: 'Temps de mise en œuvre',
   actionSeRepeteTousLesAns:

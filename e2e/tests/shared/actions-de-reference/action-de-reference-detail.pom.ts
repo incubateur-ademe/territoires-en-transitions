@@ -2,13 +2,13 @@ import { expect, Locator, Page } from '@playwright/test';
 import type { ActionDeReference } from '@tet/domain/shared';
 
 export class ActionDeReferenceDetailPom {
-  readonly interestedButton: Locator;
+  readonly saveButton: Locator;
   readonly linkedFichesList: Locator;
   readonly noLinkedFichesMessage: Locator;
 
   constructor(readonly page: Page) {
-    this.interestedButton = page.getByRole('button', {
-      name: "Ça m'intéresse",
+    this.saveButton = page.getByRole('button', {
+      name: 'Sauvegarder',
     });
     this.linkedFichesList = page
       .getByRole('heading', { name: 'Mises en œuvre' })
@@ -41,6 +41,10 @@ export class ActionDeReferenceDetailPom {
     await expect(
       this.page.getByRole('heading', { level: 1, name: action.titre })
     ).toBeVisible();
+  }
+
+  backBreadcrumb(label: string): Locator {
+    return this.page.getByRole('link', { name: label, exact: true });
   }
 
   linkedFiche(ficheTitre: string): Locator {

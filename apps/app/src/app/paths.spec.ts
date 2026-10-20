@@ -117,6 +117,18 @@ describe('entree-nav-reservee-au-super-admin', () => {
       })
     ).toBe('/collectivite/5596/actions-reference/42');
   });
+
+  it("le détail d'une action de référence encode la page d'origine en paramètre from", () => {
+    expect(
+      makeCollectiviteActionDeReferenceUrl({
+        collectiviteId: 5596,
+        actionDeReferenceId: 42,
+        from: '/collectivite/5596/actions-reference?searchedText=velo',
+      })
+    ).toBe(
+      '/collectivite/5596/actions-reference/42?from=%2Fcollectivite%2F5596%2Factions-reference%3FsearchedText%3Dvelo'
+    );
+  });
 });
 
 describe('priorisation', () => {

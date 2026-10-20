@@ -76,6 +76,11 @@ const Metadata = ({
 };
 Metadata.displayName = 'PageHeader.Metadata';
 
+const MetadataRow = ({ children }: { children: ReactNode }): JSX.Element => (
+  <div className="flex min-h-6 items-center gap-4">{children}</div>
+);
+MetadataRow.displayName = 'PageHeader.MetadataRow';
+
 type NavigationProps = { children: ReactNode; label: string };
 
 const Navigation = ({ children, label }: NavigationProps): JSX.Element => (
@@ -183,7 +188,7 @@ export const PageHeader = ({
         )}
       >
         {navigation}
-        <div className="flex flex-row flex-wrap items-center gap-x-4 gap-y-2 lg:flex-nowrap">
+        <div className="flex flex-row flex-wrap items-start gap-x-4 gap-y-2 lg:flex-nowrap">
           {title}
           {actions}
         </div>
@@ -212,4 +217,5 @@ PageHeader.EditableTitle = EditableTitle;
 PageHeader.Actions = Actions;
 PageHeader.Subtitle = Subtitle;
 PageHeader.Metadata = Metadata;
+PageHeader.MetadataRow = MetadataRow;
 PageHeader.Navigation = Navigation;

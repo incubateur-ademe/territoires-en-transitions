@@ -1,6 +1,5 @@
-import { appLabels } from '@/app/labels/catalog';
+import { ActionDeReferenceSaveToggle } from '@/app/shared/actions-de-reference/action-de-reference-save.toggle';
 import type { ActionDeReference } from '@tet/domain/shared';
-import { Button } from '@tet/ui';
 import type { JSX } from 'react';
 import { usePreselection } from './use-preselection';
 
@@ -21,16 +20,12 @@ const PreselectionToggleButton = ({
   };
 
   return (
-    <Button
+    <ActionDeReferenceSaveToggle
+      isSaved={isPreselected}
       size="sm"
-      icon={isPreselected ? 'check-line' : 'bookmark-line'}
-      variant={isPreselected ? 'primary' : 'outlined'}
-      aria-pressed={isPreselected}
       disabled={!preselection.isReady}
-      onClick={toggle}
-    >
-      {appLabels.actionDeReferenceInteresse}
-    </Button>
+      onToggle={toggle}
+    />
   );
 };
 

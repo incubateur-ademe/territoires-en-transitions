@@ -11,6 +11,8 @@ import { LevierActionsDeReferenceList } from './levier-actions-de-reference.list
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => '/collectivite/1/priorisation',
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock('@/app/utils/toast/toast-context', () => ({

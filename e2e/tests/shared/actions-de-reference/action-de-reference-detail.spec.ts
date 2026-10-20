@@ -186,39 +186,44 @@ test.describe('linked-fiches', () => {
   });
 });
 
-test.describe('ca-m-interesse', () => {
-  test("le bouton s'enfonce au clic, reste enfoncé après rechargement et se relâche au second clic", async ({
+test.describe('retour-a-la-page-d-origine', () => {
+  test("depuis le catalogue, le fil d'Ariane revient au catalogue avec la recherche saisie", async ({
     actionsDeReference,
     collectivites,
+    actionsDeReferencePom,
     actionDeReferenceDetailPom,
     page,
   }) => {
+    const runToken = toRunToken();
     const [action] = await actionsDeReference.add([
-      toCovoiturageAction(toRunToken()),
+      toCovoiturageAction(runToken),
     ]);
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
-    await actionDeReferenceDetailPom.open({
-      collectiviteId: collectivite.data.id,
-      action,
-    });
-    const { interestedButton } = actionDeReferenceDetailPom;
-    await expect(interestedButton).toHaveAttribute('aria-pressed', 'false');
+    await actionsDeReferencePom.openAndWaitForTitle(collectivite.data.id);
+    await actionsDeReferencePom.searchField.fill(action.titre);
+    await expect(page).toHaveURL(/searchedText=/);
+    await expect(
+      actionsDeReferencePom.cardTitlesContaining(runToken)
+    ).toHaveText([action.titre]);
+    await actionsDeReferencePom.cards
+      .filter({ hasText: action.titre })
+      .getByRole('link', { name: action.titre })
+      .click();
+    await expect(
+      page.getByRole('heading', { level: 1, name: action.titre })
+    ).toBeVisible();
 
-    await interestedButton.click();
-    await expect(interestedButton).toHaveAttribute('aria-pressed', 'true');
+    await actionDeReferenceDetailPom
+      .backBreadcrumb('Actions de référence')
+      .click();
 
-    await page.reload();
-    await expect(interestedButton).toHaveAttribute('aria-pressed', 'true');
-
-    await interestedButton.click();
-    await expect(interestedButton).toHaveAttribute('aria-pressed', 'false');
+    await expect(actionsDeReferencePom.title).toBeVisible();
+    await expect(actionsDeReferencePom.searchField).toHaveValue(action.titre);
   });
-});
 
-test.describe('ca-m-interesse-et-priorisation', () => {
-  test("une action marquée « Ça m'intéresse » sur sa page est dans la présélection de la priorisation", async ({
+  test("depuis la priorisation, le fil d'Ariane revient à l'aide à la priorisation", async ({
     actionsDeReference,
     collectivites,
     actionDeReferenceDetailPom,
@@ -232,26 +237,24 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     });
     await addMobilisationAvecFiche(collectivite.data.id);
     const priorisationPom = new PriorisationLeviersPom(page);
-    await actionDeReferenceDetailPom.open({
-      collectiviteId: collectivite.data.id,
-      action,
-    });
-
-    await actionDeReferenceDetailPom.interestedButton.click();
-    await expect(actionDeReferenceDetailPom.interestedButton).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
     await priorisationPom.goto(collectivite.data.id);
-
+    await priorisationPom.openLevier(LEVIER_NOM);
+    await priorisationPom
+      .actionCardInPanel(LEVIER_NOM, action.titre)
+      .getByRole('link', { name: action.titre })
+      .click();
     await expect(
-      priorisationPom.metricCount(/^actions? sauvegardées?$/)
-    ).toHaveText('1');
-    await priorisationPom.openPreselection();
-    await expect(priorisationPom.preselectedCard(action.titre)).toBeVisible();
+      page.getByRole('heading', { level: 1, name: action.titre })
+    ).toBeVisible();
+
+    await actionDeReferenceDetailPom
+      .backBreadcrumb('Aide à la priorisation')
+      .click();
+
+    await expect(priorisationPom.title).toBeVisible();
   });
 
-  test("une action ajoutée à la présélection depuis la priorisation a son bouton « Ça m'intéresse » enfoncé sur sa page", async ({
+  test("depuis les actions sauvegardées, le fil d'Ariane revient aux actions sauvegardées", async ({
     actionsDeReference,
     collectivites,
     actionDeReferenceDetailPom,
@@ -269,14 +272,155 @@ test.describe('ca-m-interesse-et-priorisation', () => {
     await priorisationPom.openLevier(LEVIER_NOM);
     const card = priorisationPom.actionCardInPanel(LEVIER_NOM, action.titre);
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
-    await expect(card.getByRole('button', { name: 'Retirer' })).toBeVisible();
+    await expect(
+      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+    ).toBeVisible();
+    await priorisationPom.openPreselection();
+    await priorisationPom
+      .preselectedCard(action.titre)
+      .getByRole('link', { name: action.titre })
+      .click();
+    await expect(
+      page.getByRole('heading', { level: 1, name: action.titre })
+    ).toBeVisible();
+
+    await actionDeReferenceDetailPom
+      .backBreadcrumb('Mes actions sauvegardées')
+      .click();
+
+    await expect(priorisationPom.preselectionTitle).toBeVisible();
+  });
+
+  test("une origine externe est ignorée : le fil d'Ariane revient au catalogue", async ({
+    actionsDeReference,
+    collectivites,
+    actionsDeReferencePom,
+    actionDeReferenceDetailPom,
+    page,
+  }) => {
+    const [action] = await actionsDeReference.add([
+      toCovoiturageAction(toRunToken()),
+    ]);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const externalOrigin = encodeURIComponent(
+      'https://example.org/priorisation'
+    );
+    await page.goto(
+      `${actionDeReferenceDetailPom.url({
+        collectiviteId: collectivite.data.id,
+        actionDeReferenceId: action.id,
+      })}?from=${externalOrigin}`
+    );
+    await expect(
+      page.getByRole('heading', { level: 1, name: action.titre })
+    ).toBeVisible();
+
+    await actionDeReferenceDetailPom
+      .backBreadcrumb('Actions de référence')
+      .click();
+
+    await expect(actionsDeReferencePom.title).toBeVisible();
+    await expect(page).toHaveURL(
+      (url) => url.pathname === actionsDeReferencePom.url(collectivite.data.id)
+    );
+  });
+});
+
+test.describe('sauvegarde', () => {
+  test("le bouton s'enfonce au clic, reste enfoncé après rechargement et se relâche au second clic", async ({
+    actionsDeReference,
+    collectivites,
+    actionDeReferenceDetailPom,
+    page,
+  }) => {
+    const [action] = await actionsDeReference.add([
+      toCovoiturageAction(toRunToken()),
+    ]);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await actionDeReferenceDetailPom.open({
+      collectiviteId: collectivite.data.id,
+      action,
+    });
+    const { saveButton } = actionDeReferenceDetailPom;
+    await expect(saveButton).toHaveAttribute('aria-pressed', 'false');
+
+    await saveButton.click();
+    await expect(saveButton).toHaveAttribute('aria-pressed', 'true');
+
+    await page.reload();
+    await expect(saveButton).toHaveAttribute('aria-pressed', 'true');
+
+    await saveButton.click();
+    await expect(saveButton).toHaveAttribute('aria-pressed', 'false');
+  });
+});
+
+test.describe('sauvegarde-et-priorisation', () => {
+  test('une action marquée « Sauvegarder » sur sa page est dans la présélection de la priorisation', async ({
+    actionsDeReference,
+    collectivites,
+    actionDeReferenceDetailPom,
+    page,
+  }) => {
+    const [action] = await actionsDeReference.add([
+      toCovoiturageAction(toRunToken()),
+    ]);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await addMobilisationAvecFiche(collectivite.data.id);
+    const priorisationPom = new PriorisationLeviersPom(page);
+    await actionDeReferenceDetailPom.open({
+      collectiviteId: collectivite.data.id,
+      action,
+    });
+
+    await actionDeReferenceDetailPom.saveButton.click();
+    await expect(actionDeReferenceDetailPom.saveButton).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    await priorisationPom.goto(collectivite.data.id);
+
+    await expect(
+      priorisationPom.metricCount(/^actions? sauvegardées?$/)
+    ).toHaveText('1');
+    await priorisationPom.openPreselection();
+    await expect(priorisationPom.preselectedCard(action.titre)).toBeVisible();
+  });
+
+  test('une action ajoutée à la présélection depuis la priorisation a son bouton « Sauvegarder » enfoncé sur sa page', async ({
+    actionsDeReference,
+    collectivites,
+    actionDeReferenceDetailPom,
+    page,
+  }) => {
+    const [action] = await actionsDeReference.add([
+      toCovoiturageAction(toRunToken()),
+    ]);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await addMobilisationAvecFiche(collectivite.data.id);
+    const priorisationPom = new PriorisationLeviersPom(page);
+    await priorisationPom.goto(collectivite.data.id);
+    await priorisationPom.openLevier(LEVIER_NOM);
+    const card = priorisationPom.actionCardInPanel(LEVIER_NOM, action.titre);
+    await card.getByRole('button', { name: 'Sauvegarder' }).click();
+    await expect(
+      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+    ).toBeVisible();
 
     await actionDeReferenceDetailPom.open({
       collectiviteId: collectivite.data.id,
       action,
     });
 
-    await expect(actionDeReferenceDetailPom.interestedButton).toHaveAttribute(
+    await expect(actionDeReferenceDetailPom.saveButton).toHaveAttribute(
       'aria-pressed',
       'true'
     );
