@@ -42,7 +42,7 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
   action,
   updateAccess,
   interest,
-  showAdemeBadge = false,
+  showTypeBadge = false,
   showLevierAndCategorieBadges = true,
   actions,
   actionsRef,
@@ -63,7 +63,7 @@ export const ActionDeReferenceCard: ActionDeReferenceCardComponent = ({
         <ActionDeReferenceBadges
           action={action}
           hasUpdateButton={updateAccess.status === 'allowed'}
-          showAdemeBadge={showAdemeBadge}
+          showTypeBadge={showTypeBadge}
           showLevierAndCategorieBadges={showLevierAndCategorieBadges}
         />
       }

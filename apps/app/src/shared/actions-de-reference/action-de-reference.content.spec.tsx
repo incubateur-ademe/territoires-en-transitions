@@ -89,7 +89,7 @@ describe('detail-charge', () => {
   it("indique que c'est une action de référence de l'ADEME", () => {
     renderLoadedAction();
 
-    expect(screen.getByText('Action de référence ADEME')).toBeDefined();
+    expect(screen.getByText('Action de référence')).toBeDefined();
   });
 
   it("montre les mises en œuvre de l'action", () => {
