@@ -635,7 +635,6 @@ export const demarchesLabels = {
     'Les pièces du PCAET adopté, transmis pour avis hors de la plateforme.',
   demarcheActionContinuer: 'Continuer',
   demarcheActionConsulter: 'Consulter',
-  demarcheActionFinaliserDepot: 'Finaliser le dépôt',
   demarcheActionSupprimer: 'Supprimer',
   demarcheSupprimerModaleTitre: 'Supprimer la démarche',
   demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>

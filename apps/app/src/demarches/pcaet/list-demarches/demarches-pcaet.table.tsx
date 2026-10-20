@@ -211,6 +211,7 @@ const columns = [
           title={formatDemarcheStatut(row.original.status)}
           variant={DEMARCHE_PCAET_STATUT_VARIANTS[row.original.status]}
           size="sm"
+          trim={false}
         />
       </TableCell>
     ),

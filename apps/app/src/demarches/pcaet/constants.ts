@@ -83,11 +83,11 @@ export const DEMARCHE_PCAET_OUVERTURE_ACTIONS: Record<
     icon: 'eye-line',
   },
   instruit: {
-    label: appLabels.demarcheActionFinaliserDepot,
+    label: appLabels.demarcheActionContinuer,
     icon: 'edit-line',
   },
   instruit_hors_plateforme: {
-    label: appLabels.demarcheActionFinaliserDepot,
+    label: appLabels.demarcheActionContinuer,
     icon: 'edit-line',
   },
   publie: { label: appLabels.demarcheActionConsulter, icon: 'eye-line' },
