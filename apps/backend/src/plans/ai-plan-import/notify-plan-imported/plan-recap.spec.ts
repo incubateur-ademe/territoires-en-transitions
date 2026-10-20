@@ -5,7 +5,7 @@ describe('formatPlanRecap', () => {
   it('énumère axes, sous-axes et fiches au pluriel', () => {
     expect(
       formatPlanRecap({ axesCount: 5, sousAxesCount: 11, fichesCount: 224 })
-    ).toBe('5 axes, 11 sous-axes, 224 actions et sous-actions');
+    ).toBe('5 axes, 11 sous-axes, 224 actions');
   });
 
   it('passe au singulier pour un seul élément', () => {
@@ -17,7 +17,7 @@ describe('formatPlanRecap', () => {
   it('omet les niveaux vides', () => {
     expect(
       formatPlanRecap({ axesCount: 2, sousAxesCount: 0, fichesCount: 8 })
-    ).toBe('2 axes, 8 actions et sous-actions');
+    ).toBe('2 axes, 8 actions');
   });
 
   it('renvoie une chaîne vide pour un plan vide', () => {

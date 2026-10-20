@@ -1,4 +1,4 @@
-import { Section, Text } from '@react-email/components';
+import { Link, Section, Text } from '@react-email/components';
 import { CTAButton } from '@tet/backend/utils/notifications/components/cta.button';
 import { EmailContainer } from '@tet/backend/utils/notifications/components/email-container';
 import { Footer } from '@tet/backend/utils/notifications/components/footer';
@@ -19,21 +19,36 @@ export const NotifyPlanImportedEmail = (
       <Text>Bonjour,</Text>
 
       <Text>
-        Votre plan <b>{planName}</b> a été créé à partir du fichier que vous
-        avez importé{planRecap ? <> : {planRecap}</> : null}. Il est disponible
-        sur la plateforme.
+        Votre plan <b>{planName}</b> a bien été importé sur la plateforme
+        {planRecap ? (
+          <>
+            {' '}
+            : {planRecap} et principales informations ont été créés sur la base
+            du fichier source
+          </>
+        ) : null}
+        .
       </Text>
 
       <Text>
-        L&apos;import est en version bêta : certains éléments ont pu être
-        manqués ou mal repérés. Relisez le plan, comparez-le à votre document et
-        corrigez-le si besoin, puis validez-le depuis sa page. Tant qu&apos;il
-        n&apos;est pas validé, il ne compte pas dans le programme d&apos;actions
-        d&apos;une démarche PCAET.
+        Cet import permet de gagner du temps sur la mise en ligne, mais il
+        restera à compléter directement sur la plateforme toutes les
+        informations utiles au suivi de vos actions.
+      </Text>
+
+      <Text>
+        Notre outil d&apos;import est en version bêta : si vous observez des
+        incohérences quant à la structure du plan ou au contenu des fiches
+        action, n&apos;hésitez pas à nous le signaler via le support en ligne ou
+        par mail à{' '}
+        <Link href="mailto:contact@territoiresentransitions.fr">
+          contact@territoiresentransitions.fr
+        </Link>{' '}
+        pour qu&apos;on vous aide à le reprendre.
       </Text>
 
       <Section className="my-8 text-center">
-        <CTAButton href={planUrl}>Vérifier le plan →</CTAButton>
+        <CTAButton href={planUrl}>Voir le plan →</CTAButton>
       </Section>
 
       <Footer
@@ -47,7 +62,7 @@ export const NotifyPlanImportedEmail = (
 // exemple pour react-email-preview (en dev)
 NotifyPlanImportedEmail.PreviewProps = {
   planName: 'PCAET 2024-2030',
-  planRecap: '5 axes, 11 sous-axes, 224 actions et sous-actions',
+  planRecap: '5 axes, 11 sous-axes, 224 actions',
   planUrl: 'https://app.territoiresentransitions.fr',
   sendToEmail: 'editeur@collectivite.fr',
 };
