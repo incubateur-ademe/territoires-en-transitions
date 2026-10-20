@@ -1,4 +1,4 @@
-/** Les pièces des dossiers : une par dossier, temps et contenu ; les copies d'un même contenu s'y fondent. */
+/** Les pièces des dossiers : une par dossier, étape et contenu ; les copies d'un même contenu s'y fondent. */
 
 import type { Contenu } from './archive';
 import type { Depot } from './bibliotheque';
@@ -25,7 +25,10 @@ const TEMPS_PAR_TYPE: Record<number, Temps> = {
   28: 'amont',
 };
 
-/** Règle : dépôt pour avis à l'amont, daté de la transmission ; dépôt définitif à l'aval, daté de la publication ; le reste, sans date. */
+// Une autre rubrique va aux documents additionnels de l'amont.
+const etapeDe = (temps: Temps) => (temps === 'aval' ? 'aval' : 'amont');
+
+/** Règle : dépôt pour avis à l'amont, daté de la transmission ; dépôt définitif à l'aval, daté de la publication ; le reste, sans date. Un contenu déposé en autre rubrique et au dépôt pour avis garde le dépôt pour avis. */
 export const buildPieces = (
   fichiers: readonly Fichier[],
   contenus: ReadonlyMap<number, Contenu>
@@ -34,12 +37,15 @@ export const buildPieces = (
   for (const f of fichiers) {
     const temps = TEMPS_PAR_TYPE[f.typeFichierId] ?? 'autre';
     const contenu = contenus.get(f.tecId);
-    const cle = `${f.demarcheId}|${temps}|${
+    const cle = `${f.demarcheId}|${etapeDe(temps)}|${
       contenu?.empreinte ?? `manquant ${f.tecId}`
     }`;
     const piece = pieces.get(cle);
     if (piece) {
       piece.fichiers.push(f);
+      if (piece.temps === 'autre' && temps === 'amont') {
+        Object.assign(piece, { fichier: f, temps, date: f.transmisLe });
+      }
       continue;
     }
     pieces.set(cle, {

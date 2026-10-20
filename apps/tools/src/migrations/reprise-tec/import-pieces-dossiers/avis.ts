@@ -164,7 +164,7 @@ export const readDateDuNom = (nom: string) => {
 const ajouterUnAn = (jour: string) =>
   `${Number(jour.slice(0, 4)) + 1}${jour.slice(4, 10)}`;
 
-/** Règle : suivi SGPE dans l'année, puis date du nom, puis date « envoi », la première qui ne précède pas la transmission ; sinon, à moins d'un an avant, la transmission. */
+/** Règle : suivi SGPE ou date du nom dans l'année, puis date « envoi », la première qui ne précède pas la transmission ; sinon, à moins d'un an avant, la transmission. */
 export const decideDate = (
   avis: Avis,
   retenu: Fichier,
@@ -180,13 +180,14 @@ export const decideDate = (
       ? retenu.envoiDreal
       : retenu.envoiCr
   )?.slice(0, 10);
+  const dansLAnnee = (date: string | null) =>
+    date && date <= ajouterUnAn(transmission) ? date : null;
   const dates = [
+    { date: dansLAnnee(dansSuivi), dateVenueDe: 'suivi SGPE' as const },
     {
-      date:
-        dansSuivi && dansSuivi <= ajouterUnAn(transmission) ? dansSuivi : null,
-      dateVenueDe: 'suivi SGPE' as const,
+      date: dansLAnnee(readDateDuNom(retenu.nom)),
+      dateVenueDe: 'nom du fichier' as const,
     },
-    { date: readDateDuNom(retenu.nom), dateVenueDe: 'nom du fichier' as const },
     { date: envoi ?? null, dateVenueDe: 'envoi T&C' as const },
   ];
   const retenue = dates.find((d) => d.date !== null && d.date >= transmission);

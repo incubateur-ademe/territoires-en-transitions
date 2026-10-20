@@ -539,7 +539,7 @@ existant, comme le produit : relancer après un échec redépose à l'identique.
 | Dans T&C                                          | Dans TeT                                                                                                                                      |
 | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | un fichier de dossier                             | une ligne de la bibliothèque de la collectivité, référencée par l'empreinte sha256 de ses octets ; un objet de stockage                       |
-| le même contenu plusieurs fois                    | une seule pièce par dossier, temps et contenu (les copies du doublon « définitif » s'y fondent) ; une seule ligne de bibliothèque par contenu |
+| le même contenu plusieurs fois                    | une seule pièce par dossier, étape et contenu (les copies du doublon « définitif » et d'une autre rubrique s'y fondent) ; une seule ligne de bibliothèque par contenu |
 | rubrique « dépôt pour avis »                      | l'amont du dossier, daté de la transmission                                                                                                   |
 | rubrique « dépôt définitif »                      | l'aval du dossier, daté de la publication                                                                                                     |
 | autre rubrique                                    | documents additionnels de l'amont, datés du jour de l'import                                                                                  |
@@ -562,9 +562,9 @@ l'avis, ou, parmi plusieurs, celui dont le nom dit avis, courrier ou signé (ni
 annexe, ni MRAe, ni réponse), de préférence celui qui nomme l'émetteur du titre,
 puis signé ou courrier, puis le plus ancien. Il va dans la bibliothèque et le
 bucket de l'émetteur, marqué confidentiel ; aucune copie chez la collectivité.
-Sa date : le suivi SGPE s'il tombe dans l'année qui suit la transmission (avis
-du préfet), puis une date écrite dans le nom du fichier, puis la date « envoi »
-de T&C, la première qui ne précède pas la transmission ; sinon, à moins d'un an
+Sa date : le suivi SGPE (avis du préfet), puis une date écrite dans le nom du
+fichier, chacun s'il tombe dans l'année qui suit la transmission (« 260918 » se
+lit 18/09/2026, trop tard : écarté), puis la date « envoi » de T&C, la première qui ne précède pas la transmission ; sinon, à moins d'un an
 avant, le jour de la transmission. Les autres fichiers de l'avis, et ceux d'un
 avis qui n'est pas écrit, vont aux documents de l'amont du dossier, rangés comme
 les autres pièces, après elles.
