@@ -159,12 +159,13 @@ const useToggleRowExpandedReducer = (rows: ActionListItem[]) => {
       return {
         ...newState,
         expanded: rowsSubset.reduce(
-          (newExpanded, { depth, identifiant }) => ({
+          (newExpanded, { depth, actionId }) => ({
             ...newExpanded,
             // une ligne sera dépliée si il y a une entrée clé/valeur `[id, true]`
             // dans l'objet `expanded` et est repliée si son id n'est pas dans
             // l'objet (l'entrée `[id, undefined]` supprime la clé de l'objet)
-            [identifiant]: depth - 1 <= clickedDepth ? true : undefined,
+            // NB : les ids des lignes sont les `actionId` (cf. `getRowId`)
+            [actionId]: depth - 1 <= clickedDepth ? true : undefined,
           }),
           newState.expanded as Record<string, boolean | undefined>
         ),
@@ -187,13 +188,17 @@ const useToggleRowExpandedReducer = (rows: ActionListItem[]) => {
 };
 
 // renvoi le sous-ensemble des lignes appartenant au même axe
+// (ex: `cae_1` et ses descendants `cae_1.x...` pour la ligne cliquée `cae_1.2.3`)
 const getRowsByAxe = (rows: ActionListItem[], clickedId: string) => {
-  const axeId = clickedId.split('.')[0] + '.';
-  return rows.filter(({ identifiant }) => identifiant?.startsWith(axeId));
+  const axeId = clickedId.split('.')[0];
+  return rows.filter(
+    ({ actionId }) => actionId === axeId || actionId.startsWith(`${axeId}.`)
+  );
 };
 
-// niveau de profondeur en fonction du nombre de points dans l'identifiant
-const getDepth = (identifiant: string) => identifiant.split('.').length - 1;
+// niveau de profondeur en fonction du nombre de points dans l'id de l'action
+// (ex: `cae_1.2` => 1)
+const getDepth = (actionId: string) => actionId.split('.').length - 1;
 
 export const getMaxDepth = (referentiel: string | null) =>
   referentiel === 'cae' ? 4 : 3;
