@@ -18,6 +18,7 @@ export * from './components/tracking';
 // dossier design-system
 export * from './components/PageHeader';
 export * from './design-system/Accordion';
+export * from './design-system/action-card';
 export * from './design-system/Alert';
 export * from './design-system/autosave-badge';
 export * from './design-system/Badge';
