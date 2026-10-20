@@ -122,12 +122,6 @@ export class PriorisationLeviersPom {
     return this.page.getByRole('figure').getByRole('table');
   }
 
-  actionSearch(nom: Levier): Locator {
-    return this.levierPanel(nom).getByRole('searchbox', {
-      name: 'Rechercher une action par titre ou description',
-    });
-  }
-
   actionsTrouveesCount(nom: Levier): Locator {
     return this.levierPanel(nom)
       .getByRole('status')
@@ -150,28 +144,28 @@ export class PriorisationLeviersPom {
       });
   }
 
-  async chooseCategorieInPanel(
+  async chooseCategoriesInPanel(
     nom: Levier,
-    categorie: CategorieLabel
+    categories: readonly CategorieLabel[]
   ): Promise<void> {
     await this.levierPanel(nom)
       .getByRole('group', { name: 'Toutes les catégories' })
       .getByRole('button', { name: 'ouvrir le menu' })
       .click();
-    await this.page
-      .getByRole('button', { name: categorie, exact: true })
-      .click();
+    await categories.reduce(
+      (previousClicks, categorie) =>
+        previousClicks.then(() =>
+          this.page
+            .getByRole('button', { name: categorie, exact: true })
+            .click()
+        ),
+      Promise.resolve()
+    );
   }
 
   noActionMessage(nom: Levier): Locator {
     return this.levierPanel(nom).getByText(
       "Nous n'avons pas de recommandation sur ce levier."
-    );
-  }
-
-  noMatchingActionMessage(nom: Levier): Locator {
-    return this.levierPanel(nom).getByText(
-      'Aucune action de référence ne correspond à votre recherche'
     );
   }
 

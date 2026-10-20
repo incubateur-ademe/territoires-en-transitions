@@ -162,7 +162,7 @@ test.describe('Priorisation : matrice et volet', () => {
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
 
-    await pom.chooseCategorieInPanel(LEVIER_NOM, 'Financement & fiscalité');
+    await pom.chooseCategoriesInPanel(LEVIER_NOM, ['Financement & fiscalité']);
 
     await expect(
       pom.actionCardInPanel(LEVIER_NOM, financement.titre)
@@ -172,14 +172,20 @@ test.describe('Priorisation : matrice et volet', () => {
     ).toBeHidden();
   });
 
-  test('la recherche filtre les actions du volet par titre, et dit quand rien ne correspond', async ({
+  test('le filtre par catégories du volet garde les actions de chacune des catégories choisies', async ({
     collectivites,
     actionsDeReference,
     page,
   }) => {
     const runToken = crypto.randomUUID().slice(0, 8);
     const [amenagement, financement] = toCovoiturageActions(runToken);
-    await actionsDeReference.add([amenagement, financement]);
+    const gouvernance: NewActionDeReference = {
+      titre: withRunSuffix('Charte de gouvernance du covoiturage', runToken),
+      description: 'Réunir les acteurs autour d’une charte commune.',
+      leviers: ['covoiturage'],
+      categories: ['gouvernance'],
+    };
+    await actionsDeReference.add([amenagement, financement, gouvernance]);
     const { collectivite } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
@@ -188,27 +194,28 @@ test.describe('Priorisation : matrice et volet', () => {
     await pom.goto(collectivite.data.id);
     await pom.openLevier(LEVIER_NOM);
 
-    await pom.actionSearch(LEVIER_NOM).fill('prime');
-    await pom.actionSearch(LEVIER_NOM).press('Enter');
+    await pom.chooseCategoriesInPanel(LEVIER_NOM, [
+      'Aménagement & infrastructures',
+      'Financement & fiscalité',
+    ]);
 
+    await expect(
+      pom.actionCardInPanel(LEVIER_NOM, amenagement.titre)
+    ).toBeVisible();
     await expect(
       pom.actionCardInPanel(LEVIER_NOM, financement.titre)
     ).toBeVisible();
     await expect(
-      pom.actionCardInPanel(LEVIER_NOM, amenagement.titre)
+      pom.actionCardInPanel(LEVIER_NOM, gouvernance.titre)
     ).toBeHidden();
-
-    await pom.actionSearch(LEVIER_NOM).fill(runToken);
-    await pom.actionSearch(LEVIER_NOM).press('Enter');
-
+    const shownActionsCount = await pom
+      .levierPanel(LEVIER_NOM)
+      .getByRole('listitem')
+      .filter({ has: page.getByRole('heading', { level: 2 }) })
+      .count();
     await expect(pom.actionsTrouveesCount(LEVIER_NOM)).toHaveText(
-      '2 actions de référence trouvées'
+      `${shownActionsCount} actions de référence trouvées`
     );
-
-    await pom.actionSearch(LEVIER_NOM).fill(`introuvable-${runToken}`);
-    await pom.actionSearch(LEVIER_NOM).press('Enter');
-
-    await expect(pom.noMatchingActionMessage(LEVIER_NOM)).toBeVisible();
   });
 });
 

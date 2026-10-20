@@ -32,7 +32,7 @@ const levierIdSchema = z.enum(levierIdEnumValues);
 
 const categorieSchema = z.enum(categorieActionEnumValues);
 
-export const toCategorie = (
+const toCategorie = (
   value: OptionValue | undefined
 ): CategorieAction | undefined => {
   const categorie = categorieSchema.safeParse(value);

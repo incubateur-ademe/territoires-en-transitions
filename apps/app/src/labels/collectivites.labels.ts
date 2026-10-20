@@ -202,8 +202,6 @@ export const collectivitesLabels = {
   mobilisationFaible: 'Peu mobilisé',
   mobilisationMoyenne: 'Bien mobilisé',
   mobilisationForte: 'Très mobilisé',
-  rechercherUneActionDeReference:
-    'Rechercher une action par titre ou description',
   filtrerParLevier: 'Tous les leviers',
   filtrerParCategorie: 'Toutes les catégories',
   aucuneActionDeReferenceDuLevier:
@@ -217,6 +215,8 @@ export const collectivitesLabels = {
   ilManqueUneAction: 'Il manque une action ?',
   listeNonExhaustiveSignalerAction:
     "Cette liste n'est pas (encore) exhaustive. Proposez-nous une action que vous jugez pertinente pour ce levier.",
+  aucuneActionDeReferenceDansCategories:
+    'Aucune action de référence dans les catégories choisies',
   suggererUneAction: 'Suggérer une action',
   decrireLAction: "Décrivez l'action en quelques mots",
   suggestionEnvoyee: 'Merci, votre suggestion a bien été envoyée.',
