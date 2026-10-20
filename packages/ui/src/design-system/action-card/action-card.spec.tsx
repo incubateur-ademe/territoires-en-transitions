@@ -44,6 +44,24 @@ describe('ActionCard', () => {
     expect(link.contains(button)).toBe(false);
   });
 
+  it('en lien, le lien précède les actions de survol dans l’ordre de tabulation', () => {
+    render(
+      <ActionCard
+        href="/actions/1"
+        hoverActions={<button type="button">Modifier</button>}
+      >
+        Contenu
+      </ActionCard>
+    );
+
+    const link = screen.getByRole('link');
+    const button = screen.getByRole('button', { name: 'Modifier' });
+
+    expect(
+      link.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
   it('pose le libellé accessible sur la carte et non sur son enveloppe', () => {
     render(<ActionCard aria-label="Aires de covoiturage">Contenu</ActionCard>);
 
@@ -73,6 +91,16 @@ describe('ActionCard', () => {
     fireEvent.click(screen.getByText('Contenu'));
 
     expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("ne réagit qu'au survol de sa propre carte, pas à celui d'un parent qui est un groupe", () => {
+    const { container } = render(
+      <ActionCard hoverActions={<button type="button">Modifier</button>}>
+        Contenu
+      </ActionCard>
+    );
+
+    expect(container.innerHTML).not.toMatch(/group-(hover|focus-within):/);
   });
 
   it("ignore le clic d'une carte désactivée", () => {

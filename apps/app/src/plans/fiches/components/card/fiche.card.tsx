@@ -2,10 +2,6 @@ import {
   Completion,
   FicheListItem,
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import {
-  getFicheActionShareIcon,
-  getFicheActionShareText,
-} from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
@@ -17,16 +13,15 @@ import { getModifiedSince } from '@/app/utils/formatUtils';
 import { generateTitle } from '@/app/utils/generate-title';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
+  ActionCard,
   Button,
   ButtonMenu,
-  Card,
   Checkbox,
-  Notification,
   Tooltip,
 } from '@tet/ui';
-import classNames from 'classnames';
 import { useState } from 'react';
 import { EditFicheModal } from './edit-fiche.modal';
+import { FicheAccessBadges } from './fiche-access.badges';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { appLabels } from '@/app/labels/catalog';
@@ -113,148 +108,106 @@ export const FicheCard = ({
     onToggleOpen?.(isOpen);
   };
 
-  return (
-    <div className="relative group h-full">
-      {/* Menu d'édition et de suppression */}
-      {canUpdate && (isEditable || onUnlink) && (
-        <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
-          {onUnlink && (
-            <Button
-              icon="link-unlink"
-              title="Dissocier l'action"
-              variant="grey"
-              size="xs"
-              onClick={onUnlink}
+  const hasEditMenu = isEditable && !onSelect;
+  const hoverActions = canUpdate && (onUnlink || hasEditMenu) && (
+    <>
+      {onUnlink && (
+        <Button
+          icon="link-unlink"
+          title="Dissocier l'action"
+          variant="grey"
+          size="xs"
+          onClick={onUnlink}
+        />
+      )}
+      {hasEditMenu && (
+        <>
+          {isEditOpen && (
+            <EditFicheModal
+              initialFiche={ficheAction}
+              isOpen={isEditOpen}
+              setIsOpen={() => toggleOpen(!isEditOpen)}
             />
           )}
-          {isEditable && canUpdate && !onSelect && (
+          <Button
+            data-test="EditerFicheBouton"
+            id={`fiche-${ficheAction.id}-edit-button`}
+            icon="edit-line"
+            title="Modifier l'action"
+            variant="grey"
+            size="xs"
+            onClick={() => toggleOpen(!isEditOpen)}
+          />
+          {isMoveable ? (
             <>
-              <>
-                {isEditOpen && (
-                  <EditFicheModal
-                    initialFiche={ficheAction}
-                    isOpen={isEditOpen}
-                    setIsOpen={() => toggleOpen(!isEditOpen)}
-                  />
-                )}
-                <Button
-                  data-test="EditerFicheBouton"
-                  id={`fiche-${ficheAction.id}-edit-button`}
-                  icon="edit-line"
-                  title="Modifier l'action"
-                  variant="grey"
-                  size="xs"
-                  onClick={() => toggleOpen(!isEditOpen)}
-                />
-              </>
-              {isMoveable ? (
-                <>
-                  <DeleteOrRemoveFicheSharingModal
-                    fiche={ficheAction}
-                    openState={{
-                      isOpen: isDeleteModalOpen,
-                      setIsOpen: setIsDeleteModalOpen,
-                    }}
-                    hideButton
-                    planId={planId}
-                    axeId={axeId}
-                  />
-                  {isMoveModalOpen && collectivitePlans.length > 0 && (
-                    <MoveFicheModal
-                      fiche={ficheAction}
-                      planId={planId ?? collectivitePlans[0].id}
-                      isReadonly={!canUpdate}
-                      openState={{
-                        isOpen: isMoveModalOpen,
-                        setIsOpen: setIsMoveModalOpen,
-                      }}
-                    />
-                  )}
-                  <ButtonMenu
-                    dataTest="fiche-card-options"
-                    title="Plus d'options"
-                    icon="more-line"
-                    variant="grey"
-                    size="xs"
-                    menu={{
-                      actions: [
-                        {
-                          label: 'Déplacer',
-                          icon: 'drag-move-2-line',
-                          onClick: () => setIsMoveModalOpen(true),
-                        },
-                        {
-                          label: appLabels.dupliquerLAction,
-                          icon: 'file-copy-line',
-                          onClick: () => duplicateFiche(),
-                        },
-                        {
-                          label: 'Supprimer',
-                          icon: 'delete-bin-6-line',
-                          variant: 'destructive',
-                          onClick: () => setIsDeleteModalOpen(true),
-                        },
-                      ],
-                    }}
-                  />
-                </>
-              ) : (
-                <DeleteOrRemoveFicheSharingModal
-                  fiche={ficheAction}
-                  planId={planId}
-                  axeId={axeId}
-                />
-              )}
-            </>
-          )}
-        </div>
-      )}
-
-      {/* Cadenas accès restreint */}
-      {(ficheAction.restreint ||
-        ficheAction.sharedWithCollectivites?.length) && (
-        <div className="absolute -top-3 left-5 flex items-center gap-1">
-          {ficheAction.restreint && (
-            <div data-test="FicheCartePrivee" title="Action en accès restreint">
-              <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
-            </div>
-          )}
-          {ficheAction.sharedWithCollectivites?.length && (
-            <div
-              data-test="FicheCartePrivee"
-              title={getFicheActionShareText(
-                ficheAction,
-                currentCollectivite.collectiviteId
-              )}
-            >
-              <Notification
-                icon={getFicheActionShareIcon(
-                  ficheAction,
-                  currentCollectivite.collectiviteId
-                )}
-                variant="success"
-                size="xs"
-                classname="w-7 h-7"
+              <DeleteOrRemoveFicheSharingModal
+                fiche={ficheAction}
+                openState={{
+                  isOpen: isDeleteModalOpen,
+                  setIsOpen: setIsDeleteModalOpen,
+                }}
+                hideButton
+                planId={planId}
+                axeId={axeId}
               />
-            </div>
+              {isMoveModalOpen && collectivitePlans.length > 0 && (
+                <MoveFicheModal
+                  fiche={ficheAction}
+                  planId={planId ?? collectivitePlans[0].id}
+                  isReadonly={false}
+                  openState={{
+                    isOpen: isMoveModalOpen,
+                    setIsOpen: setIsMoveModalOpen,
+                  }}
+                />
+              )}
+              <ButtonMenu
+                title="Plus d'options"
+                icon="more-line"
+                variant="grey"
+                size="xs"
+                menu={{
+                  actions: [
+                    {
+                      label: 'Déplacer',
+                      icon: 'drag-move-2-line',
+                      onClick: () => setIsMoveModalOpen(true),
+                    },
+                    {
+                      label: appLabels.dupliquerLAction,
+                      icon: 'file-copy-line',
+                      onClick: () => duplicateFiche(),
+                    },
+                    {
+                      label: 'Supprimer',
+                      icon: 'delete-bin-6-line',
+                      variant: 'destructive',
+                      onClick: () => setIsDeleteModalOpen(true),
+                    },
+                  ],
+                }}
+              />
+            </>
+          ) : (
+            <DeleteOrRemoveFicheSharingModal
+              fiche={ficheAction}
+              planId={planId}
+              axeId={axeId}
+            />
           )}
-        </div>
+        </>
       )}
+    </>
+  );
 
-      {/* Carte */}
-      <Card
-        dataTest="FicheActionCarte"
-        id={carteId}
-        className={classNames(
-          'h-full !p-4 !gap-2 !text-grey-8 !shadow-none transition',
-          {
-            'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
-          }
-        )}
+  return (
+    <div id={carteId} data-test="FicheActionCarte" className="relative h-full">
+      <ActionCard
+        hoverActions={hoverActions}
         href={onSelect || isNotClickable ? undefined : link}
         onClick={onSelect ? () => onSelect(!isSelected) : undefined}
         disabled={isNotClickable}
-        isSelected={isSelected}
+        isSelected={onSelect ? isSelected : undefined}
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
@@ -341,7 +294,12 @@ export const FicheCard = ({
             'Action non classée'
           )}
         </span>
-      </Card>
+      </ActionCard>
+
+      <FicheAccessBadges
+        ficheAction={ficheAction}
+        collectiviteId={currentCollectivite.collectiviteId}
+      />
     </div>
   );
 };

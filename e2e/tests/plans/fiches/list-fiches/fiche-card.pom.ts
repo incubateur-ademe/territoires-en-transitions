@@ -52,7 +52,9 @@ export class FicheCardPom {
       .locator('span')
       .filter({ hasText: /^(Bas|Moyen|Élevé)$/ });
     this.editButton = this.card.locator('[data-test="EditerFicheBouton"]');
-    this.privateIndicator = this.card.locator('[data-test="FicheCartePrivee"]');
+    this.privateIndicator = this.card.getByTitle('Action en accès restreint', {
+      exact: true,
+    });
     this.footer = this.card
       .locator('footer, [class*="flex flex-col gap-2"]')
       .last();
@@ -141,9 +143,7 @@ export class FicheCardPom {
    */
   async openMoveMenu() {
     await this.card.hover();
-    const menuButton = this.card
-      .locator('..')
-      .getByTestId('fiche-card-options');
+    const menuButton = this.card.getByTitle("Plus d'options");
     await menuButton.click();
     await this.page
       .locator('[data-floating-ui-portal]')
