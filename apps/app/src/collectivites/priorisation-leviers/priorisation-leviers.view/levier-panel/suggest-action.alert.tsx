@@ -5,7 +5,7 @@ import { JSX, useState } from 'react';
 import { match } from 'ts-pattern';
 import { SuggestActionForm } from './suggest-action.form';
 
-type SuggestActionStatus = 'idle' | 'editing' | 'sent';
+type SuggestActionStatus = 'idle' | 'editing';
 
 type SuggestActionAlertProps = {
   levierId: LevierId;
@@ -21,9 +21,7 @@ export const SuggestActionAlert = ({
       state="warning"
       customIcon="alarm-warning-line"
       title={appLabels.ilManqueUneAction}
-      description={match(status)
-        .with('sent', () => appLabels.suggestionEnvoyee)
-        .otherwise(() => appLabels.listeNonExhaustiveSignalerAction)}
+      description={appLabels.listeNonExhaustiveSignalerAction}
       footer={match(status)
         .with('idle', () => (
           <Button
@@ -38,11 +36,9 @@ export const SuggestActionAlert = ({
         .with('editing', () => (
           <SuggestActionForm
             levierId={levierId}
-            onSent={() => setStatus('sent')}
             onCancel={() => setStatus('idle')}
           />
         ))
-        .with('sent', () => null)
         .exhaustive()}
     />
   );

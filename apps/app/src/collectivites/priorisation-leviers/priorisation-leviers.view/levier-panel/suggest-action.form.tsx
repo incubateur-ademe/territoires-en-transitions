@@ -1,4 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { LevierId } from '@tet/domain/shared';
 import { Button, Field, Textarea } from '@tet/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,19 +16,19 @@ type SuggestActionValues = z.infer<typeof suggestActionSchema>;
 
 type SuggestActionFormProps = {
   levierId: LevierId;
-  onSent: () => void;
   onCancel: () => void;
 };
 
 export const SuggestActionForm = ({
   levierId,
-  onSent,
   onCancel,
 }: SuggestActionFormProps): JSX.Element => {
   const sendSuggestion = useSendActionSuggestion();
+  const { setToast } = useToastContext();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SuggestActionValues>({
     resolver: zodResolver(suggestActionSchema),
@@ -37,7 +38,8 @@ export const SuggestActionForm = ({
 
   const onSubmit = ({ description }: SuggestActionValues): void => {
     sendSuggestion(levierId, description);
-    onSent();
+    setToast('success', appLabels.suggestionEnvoyee);
+    reset();
   };
 
   return (
