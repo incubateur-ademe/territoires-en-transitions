@@ -37,6 +37,7 @@ export const AiImportFlow = ({
   cancelButton,
   lockedPlanTypeId,
   defaults,
+  onProgressVisibilityChange,
 }: {
   /**
    * `jobId` : l'import terminé, qu'il ait été lancé depuis ce formulaire ou
@@ -51,6 +52,8 @@ export const AiImportFlow = ({
   cancelButton: ReactElement;
   lockedPlanTypeId?: number;
   defaults?: AiImportDefaults;
+  /** Le suivi tient dans une modale plus étroite que le formulaire. */
+  onProgressVisibilityChange?: (isProgressVisible: boolean) => void;
 }) => {
   const collectiviteId = useCollectiviteId();
   const { setToast } = useToastContext();
@@ -69,6 +72,10 @@ export const AiImportFlow = ({
     ? currentImport?.jobId ?? null
     : null;
   const jobId = chosenJobId === undefined ? resumedJobId : chosenJobId;
+  const isProgressVisible = !isCheckingOngoingImport && jobId !== null;
+  useEffect(() => {
+    onProgressVisibilityChange?.(isProgressVisible);
+  }, [isProgressVisible, onProgressVisibilityChange]);
 
   const enqueue = useEnqueueAiImport();
   const { data: status } = useGetAiImportStatus(jobId);
