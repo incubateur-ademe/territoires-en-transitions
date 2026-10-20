@@ -32,7 +32,7 @@ export const ActionDeReferencePreselectionCard = ({
         status,
         preselection
       )}
-      showAdemeBadge
+      showTypeBadge
       showLevierAndCategorieBadges={false}
       actionsRef={actionsRef}
     >

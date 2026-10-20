@@ -41,7 +41,7 @@ const ActionDeReferenceDetails = ({
   return (
     <div className="flex flex-col gap-6">
       <Badge
-        title={appLabels.actionDeReferenceAdeme}
+        title={appLabels.actionDeReference}
         variant="warning"
         size="sm"
         className="w-fit"

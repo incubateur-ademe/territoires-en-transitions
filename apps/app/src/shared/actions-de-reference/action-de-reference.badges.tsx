@@ -2,21 +2,21 @@ import { appLabels } from '@/app/labels/catalog';
 import { type ActionDeReference, LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { Badge, cn, VisibleWhen } from '@tet/ui';
 import type { JSX } from 'react';
-import { ActionDeReferenceAdemeBadge } from './action-de-reference-ademe.badge';
+import { ActionDeReferenceTypeBadge } from './action-de-reference-type.badge';
 
 const ActionDeReferenceBadges = ({
   action,
   hasUpdateButton,
-  showAdemeBadge = false,
+  showTypeBadge = false,
   showLevierAndCategorieBadges = true,
 }: {
   readonly action: ActionDeReference;
   readonly hasUpdateButton: boolean;
-  readonly showAdemeBadge?: boolean;
+  readonly showTypeBadge?: boolean;
   readonly showLevierAndCategorieBadges?: boolean;
 }): JSX.Element => (
   <div className={cn('flex flex-wrap gap-2', hasUpdateButton && 'pr-8')}>
-    {showAdemeBadge && <ActionDeReferenceAdemeBadge />}
+    {showTypeBadge && <ActionDeReferenceTypeBadge />}
     <VisibleWhen condition={showLevierAndCategorieBadges}>
       {action.leviers.map((levier) => (
         <Badge

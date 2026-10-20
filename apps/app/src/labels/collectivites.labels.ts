@@ -225,7 +225,7 @@ export const collectivitesLabels = {
     one: 'action marquée « Pas intéressé »',
     other: 'actions marquées « Pas intéressé »',
   }),
-  actionDeReferenceAdeme: 'Action de référence ADEME',
+  actionDeReference: 'Action de référence',
   ajouterAuPlan: (planNom: string): string => `Ajouter à « ${planNom} »`,
   actionAjouteeAuPlanSucces: 'Action ajoutée au plan',
   actionAjouteeAuPlanErreur: "Échec de l'ajout de l'action au plan",

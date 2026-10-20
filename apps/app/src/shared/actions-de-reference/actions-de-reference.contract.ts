@@ -130,7 +130,7 @@ export type ActionDeReferenceCardProps = {
   readonly action: ActionDeReference;
   readonly updateAccess: ActionDeReferenceUpdateAccess;
   readonly interest: ActionDeReferenceInterestControl;
-  readonly showAdemeBadge?: boolean;
+  readonly showTypeBadge?: boolean;
   readonly showLevierAndCategorieBadges?: boolean;
   readonly actions?: ReactNode;
   readonly actionsRef?: RefCallback<HTMLDivElement>;
