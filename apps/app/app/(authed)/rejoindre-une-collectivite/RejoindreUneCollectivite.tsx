@@ -11,7 +11,6 @@ import {
   Input,
   ModalFooterOKCancel,
   Select,
-  SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
 import { useState } from 'react';
@@ -26,11 +25,6 @@ const ROLES: Array<{ value: MembreFonction; label: string }> = [
   { value: 'technique', label: 'Directions et services techniques' },
   { value: 'partenaire', label: 'Partenaire' },
   { value: 'conseiller', label: "Bureau d'études" },
-];
-
-const REFERENTIELS = [
-  { value: 'cae', label: 'Climat Air Énergie' },
-  { value: 'eci', label: 'Économie Circulaire' },
 ];
 
 /**
@@ -53,17 +47,12 @@ export const RejoindreUneCollectivite = (
   const [formState, setFormState] = useState<
     Omit<RejoindreUneCollectiviteData, 'collectiviteId'>
   >({});
-  const { est_referent, poste, role, champ_intervention } = formState;
+  const { est_referent, poste, role } = formState;
   const { id: collectiviteId, contacts } = collectiviteSelectionnee || {};
 
   const hasContacts = !!contacts?.length;
   const hasPoste = !!poste?.trim();
-  const isValid =
-    collectiviteId &&
-    !hasContacts &&
-    role &&
-    hasPoste &&
-    (!est_referent || champ_intervention?.length);
+  const isValid = collectiviteId && !hasContacts && role && hasPoste;
 
   const eventTracker = useEventTracker();
   return (
@@ -170,23 +159,6 @@ export const RejoindreUneCollectivite = (
                 }))
               }
             />
-            {est_referent && (
-              <Field title="Référentiel du programme *">
-                <SelectMultiple
-                  multiple
-                  dataTest="role"
-                  options={REFERENTIELS}
-                  values={champ_intervention}
-                  onChange={({ values }) => {
-                    setFormState((previous) => ({
-                      ...previous,
-                      champ_intervention:
-                        values as RejoindreUneCollectiviteData['champ_intervention'],
-                    }));
-                  }}
-                />
-              </Field>
-            )}
           </>
         )}
       </FormSectionGrid>
