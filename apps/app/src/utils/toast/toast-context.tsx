@@ -1,11 +1,9 @@
 'use client';
 import { createContext, PropsWithChildren, useContext } from 'react';
-import { useBaseToast } from './use-base-toast';
+import { type BaseToast, useBaseToast } from './use-base-toast';
 import { useMutationToast } from './use-mutation-toast';
 
-type ToastContextValue = {
-  setToast: ReturnType<typeof useBaseToast>['setToast'];
-};
+type ToastContextValue = Pick<BaseToast, 'setToast' | 'setToastWithAction'>;
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
@@ -18,10 +16,10 @@ export const useToastContext = () => {
 };
 
 export const ToastProvider = ({ children }: PropsWithChildren) => {
-  const { setToast, renderToast } = useBaseToast();
+  const { setToast, setToastWithAction, renderToast } = useBaseToast();
   useMutationToast(setToast);
   return (
-    <ToastContext.Provider value={{ setToast }}>
+    <ToastContext.Provider value={{ setToast, setToastWithAction }}>
       {renderToast()}
       {children}
     </ToastContext.Provider>

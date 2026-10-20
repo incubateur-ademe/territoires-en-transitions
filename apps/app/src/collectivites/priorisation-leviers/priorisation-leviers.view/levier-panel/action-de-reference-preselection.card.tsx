@@ -5,13 +5,14 @@ import { useActionDeReferenceUpdateAccess } from '@/app/shared/actions-de-refere
 import type { ActionDeReference } from '@tet/domain/shared';
 import { JSX, RefCallback } from 'react';
 import { Preselection, PreselectionStatus } from '../../use-preselection';
+import { useSavedActionToasts } from './use-saved-action-toasts';
 
 type ActionDeReferencePreselectionCardProps = {
   readonly action: ActionDeReference;
   readonly status: PreselectionStatus;
   readonly preselection: Pick<
     Preselection,
-    'add' | 'remove' | 'ignore' | 'restore' | 'statusOf'
+    'actions' | 'add' | 'remove' | 'ignore' | 'restore' | 'statusOf'
   >;
   readonly actionsRef?: RefCallback<HTMLDivElement>;
 };
@@ -23,6 +24,7 @@ export const ActionDeReferencePreselectionCard = ({
   actionsRef,
 }: ActionDeReferencePreselectionCardProps): JSX.Element => {
   const updateAccess = useActionDeReferenceUpdateAccess();
+  const savedActionControls = useSavedActionToasts(preselection);
   return (
     <ActionDeReferenceCard
       action={action}
@@ -30,7 +32,7 @@ export const ActionDeReferencePreselectionCard = ({
       interest={toActionDeReferenceInterestControl(
         action,
         status,
-        preselection
+        savedActionControls
       )}
       showTypeBadge
       showLevierAndCategorieBadges={false}

@@ -9,6 +9,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Preselection, PreselectionStatus } from '../../use-preselection';
 import { LevierActionsDeReferenceList } from './levier-actions-de-reference.list';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock('@/app/utils/toast/toast-context', () => ({
+  useToastContext: () => ({ setToast: vi.fn(), setToastWithAction: vi.fn() }),
+}));
+
 vi.mock('@tet/api/collectivites', () => ({
   useCollectiviteId: (): number => 4322,
 }));
