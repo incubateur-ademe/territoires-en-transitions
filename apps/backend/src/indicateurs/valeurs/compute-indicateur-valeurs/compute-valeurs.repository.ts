@@ -55,6 +55,10 @@ type IndicateurValeurPeriodeKey = Pick<
   'collectiviteId' | 'dateValeur'
 >;
 
+// Population updates fan out across formulas and sources. Bound each SQL
+// expression before Drizzle serializes it, even for a small incoming value batch.
+const SOURCE_QUERIES_BATCH_SIZE = 500;
+
 @Injectable()
 export class ComputeValeursRepository {
   constructor(private readonly databaseService: DatabaseService) {}
@@ -81,8 +85,62 @@ export class ComputeValeursRepository {
     queries: CalculSourceValeurQuery[],
     tx?: Transaction
   ): Promise<CalculSourceValeur[]> {
-    if (queries.length === 0) return [];
+    const groupedQueries = this.groupSourceQueries(queries);
+    const valeursById = new Map<number, CalculSourceValeur>();
+    for (
+      let offset = 0;
+      offset < groupedQueries.length;
+      offset += SOURCE_QUERIES_BATCH_SIZE
+    ) {
+      const valeurs = await this.listSourceValeursBatch(
+        groupedQueries.slice(offset, offset + SOURCE_QUERIES_BATCH_SIZE),
+        tx
+      );
+      // Several formulas and source policies can select the same observation.
+      // Preserve the union semantics of a single SELECT with OR conditions.
+      for (const valeur of valeurs) valeursById.set(valeur.id, valeur);
+    }
+    return [...valeursById.values()];
+  }
 
+  private groupSourceQueries(
+    queries: CalculSourceValeurQuery[]
+  ): CalculSourceValeurQuery[] {
+    const groups = new Map<
+      string,
+      { query: CalculSourceValeurQuery; identifiants: Set<string> }
+    >();
+    for (const query of queries) {
+      // Formulas sharing the same scope can load their identifiers together.
+      // PCAET metadata scopes and fallback-source policies must stay distinct.
+      const key = JSON.stringify([
+        query.collectiviteId,
+        IndicateurPeriodes.key(query.periode),
+        query.sourceId ?? null,
+        query.sourceId === PCAET_COLLECTIVITE_SOURCE_ID
+          ? query.metadonneeId
+          : null,
+        [...new Set(query.extraSourceCalculIds)].sort(),
+      ]);
+      let group = groups.get(key);
+      if (!group) {
+        group = { query, identifiants: new Set() };
+        groups.set(key, group);
+      }
+      for (const identifiant of query.identifiants) {
+        group.identifiants.add(identifiant);
+      }
+    }
+    return [...groups.values()].map(({ query, identifiants }) => ({
+      ...query,
+      identifiants: [...identifiants],
+    }));
+  }
+
+  private async listSourceValeursBatch(
+    queries: CalculSourceValeurQuery[],
+    tx?: Transaction
+  ): Promise<CalculSourceValeur[]> {
     const conditions = queries.map(
       ({
         collectiviteId,
