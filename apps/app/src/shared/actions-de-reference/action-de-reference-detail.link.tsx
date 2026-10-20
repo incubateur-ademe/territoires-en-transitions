@@ -16,7 +16,7 @@ export const ActionDeReferenceDetailLink = ({
         collectiviteId,
         actionDeReferenceId: action.id,
       })}
-      className="bg-none text-inherit before:absolute before:inset-0 before:rounded-lg after:hidden hover:underline focus-visible:outline-none focus-visible:before:outline focus-visible:before:outline-2 focus-visible:before:outline-offset-2 focus-visible:before:outline-primary-7"
+      className="bg-none text-inherit before:absolute before:inset-0 before:rounded-lg after:hidden focus-visible:outline-none focus-visible:before:outline focus-visible:before:outline-2 focus-visible:before:outline-offset-2 focus-visible:before:outline-primary-7"
     >
       {action.titre}
     </Link>
