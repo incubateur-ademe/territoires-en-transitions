@@ -251,7 +251,9 @@ export const BadgeFilters = <TKey extends string = string>({
         >
           <button
             type="button"
-            aria-label={uiLabels.voirLesAutresFiltres}
+            aria-label={uiLabels.voirLesAutresFiltres({
+              count: categoriesLeft.length,
+            })}
             data-test="badge-filters.show-more"
           >
             <Badge

@@ -137,7 +137,7 @@ export const Interactive: Story = {
   render: () => <InteractiveBadgeFilters />,
   play: async ({ canvas, userEvent }) => {
     await expect(
-      canvas.getByRole('button', { name: 'Voir les autres filtres' })
+      canvas.getByRole('button', { name: 'Voir les autres filtres (+2)' })
     ).toHaveTextContent('+2');
 
     await userEvent.click(
@@ -146,7 +146,7 @@ export const Interactive: Story = {
 
     await expect(canvas.getByText('Sans pilote')).toBeVisible();
     await expect(
-      canvas.queryByRole('button', { name: 'Voir les autres filtres' })
+      canvas.queryByRole('button', { name: /Voir les autres filtres/ })
     ).not.toBeInTheDocument();
   },
   parameters: {
@@ -187,7 +187,7 @@ export const ReadonlyCollapsed: Story = {
   play: async ({ canvas, canvasElement, userEvent, step }) => {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', {
-      name: 'Voir les autres filtres',
+      name: 'Voir les autres filtres (+2)',
     });
 
     await expect(trigger).toHaveTextContent('+2');

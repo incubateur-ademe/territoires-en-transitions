@@ -16,7 +16,8 @@ const uiLabels = {
   pageSuivante: 'Page suivante',
   etape: ({ step }: { step: number }): string => `Étape ${step}`,
   supprimerTousLesFiltres: 'Supprimer tous les filtres',
-  voirLesAutresFiltres: 'Voir les autres filtres',
+  voirLesAutresFiltres: ({ count }: { count: number }): string =>
+    `Voir les autres filtres (+${count})`,
   editer: 'Éditer',
   supprimer: 'Supprimer',
   creer: 'Créer',
