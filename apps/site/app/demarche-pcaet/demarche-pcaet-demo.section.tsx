@@ -5,7 +5,7 @@ import { DepotDemo } from './depot-demo/depot-demo';
 
 export const DemarchePcaetDemoSection = () => (
   <Section containerClassName="bg-primary-1 lg:!py-20" className="gap-12">
-    <div className="flex flex-col items-center gap-5 text-center max-w-4xl mx-auto">
+    <div className="flex flex-col items-center gap-5 text-center max-w-4xl mx-auto mb-4">
       <h2 className="mb-0 text-primary-9 text-2xl lg:text-[1.875rem] leading-tight">
         Comment élaborer votre PCAET <br className="max-lg:hidden" />
         sur Territoires en Transitions&nbsp;?
