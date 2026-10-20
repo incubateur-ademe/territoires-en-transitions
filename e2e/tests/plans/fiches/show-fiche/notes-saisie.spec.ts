@@ -49,7 +49,7 @@ test.describe('Saisie des notes de suivi', () => {
     await expect(editor).toHaveText('Nouvelle note de suivi.');
   });
 
-  test("conserve le curseur pendant la sauvegarde de l'année et enregistre la modification", async ({
+  test('préserve le brouillon et le curseur lors d’une mise à jour concurrente', async ({
     page,
     collectivites,
     fiches,
@@ -86,11 +86,16 @@ test.describe('Saisie des notes de suivi', () => {
     const saveReleased = new Promise<void>((resolve) => {
       releaseSave = resolve;
     });
+    let confirmYearSaved!: () => void;
+    const yearSaved = new Promise<void>((resolve) => {
+      confirmYearSaved = resolve;
+    });
     const updateUrl = '**/trpc/plans.fiches.update*';
     await page.route(
       updateUrl,
       async (route) => {
         const response = await route.fetch();
+        confirmYearSaved();
         await saveReleased;
         await route.fulfill({ response });
       },
@@ -111,6 +116,20 @@ test.describe('Saisie des notes de suivi', () => {
       await page.keyboard.press('Home');
       await page.keyboard.type('B');
       await expect(editor).toHaveText('BUne note de suivi.');
+
+      // Une autre session modifie la note avant le rafraîchissement serveur.
+      await yearSaved;
+      const fiche = await trpcClient.plans.fiches.get.query({ id: ficheId });
+      await trpcClient.plans.fiches.update.mutate({
+        ficheId,
+        ficheFields: {
+          notes: fiche.notes?.map((note) => ({
+            id: note.id,
+            dateNote: note.dateNote,
+            note: '<p>Note modifiée dans une autre session.</p>',
+          })),
+        },
+      });
 
       releaseSave();
       // Les métadonnées confirment que le résultat serveur a été affiché.
@@ -136,5 +155,60 @@ test.describe('Saisie des notes de suivi', () => {
     } finally {
       releaseSave();
     }
+  });
+
+  test('affiche la version distante quand la note ne contient pas de brouillon', async ({
+    page,
+    collectivites,
+    fiches,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { role: 'admin', autoLogin: true },
+    });
+    const [ficheId] = await fiches.create(user, [
+      {
+        titre: 'Fiche avec une note à actualiser',
+        collectiviteId: collectivite.data.id,
+      },
+    ]);
+    const trpcClient = user.getTrpcClient();
+    const year = new Date().getFullYear();
+    await trpcClient.plans.fiches.update.mutate({
+      ficheId,
+      ficheFields: {
+        notes: [{ dateNote: `${year}-01-01`, note: '<p>Note initiale.</p>' }],
+      },
+    });
+    await page.goto(
+      `/collectivite/${collectivite.data.id}/actions/${ficheId}/notes`
+    );
+    const table = page.getByRole('table');
+    const editor = table.getByRole('textbox');
+    await expect(editor).toHaveText('Note initiale.');
+
+    await page.route(
+      '**/trpc/plans.fiches.update*',
+      async (route) => {
+        const response = await route.fetch();
+        const fiche = await trpcClient.plans.fiches.get.query({ id: ficheId });
+        await trpcClient.plans.fiches.update.mutate({
+          ficheId,
+          ficheFields: {
+            notes: fiche.notes?.map((note) => ({
+              id: note.id,
+              dateNote: note.dateNote,
+              note: '<p>Note actualisée dans une autre session.</p>',
+            })),
+          },
+        });
+        await route.fulfill({ response });
+      },
+      { times: 1 }
+    );
+    await table.getByRole('cell', { name: String(year), exact: true }).click();
+    await page
+      .getByRole('button', { name: String(year - 1), exact: true })
+      .click();
+    await expect(editor).toHaveText('Note actualisée dans une autre session.');
   });
 });
