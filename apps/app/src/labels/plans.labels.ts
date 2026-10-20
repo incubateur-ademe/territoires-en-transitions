@@ -291,10 +291,12 @@ export const plansLabels = {
   }) =>
     `Il a été importé le ${date} dans le plan « ${planNom} », toujours présent. Relancer l'import créera un second plan.`,
   importPlanIaRelancerQuandMeme: "Relancer l'import quand même",
-  planImporteBanniereTitre: 'Plan importé automatiquement (version bêta)',
+  planImporteBeta:
+    "Notre outil d'import est en version bêta. Pour toute question ou suggestion d'amélioration, contactez le support en ligne.",
+  planImporteBanniereTitre: "Votre plan d'action a bien été importé",
   planImporteBanniereAVerifier: 'À vérifier',
   planImporteBanniereDescription:
-    "Ce plan a été créé à partir de votre fichier. L'import est en version bêta : certains éléments ont pu être manqués ou mal repérés. Relisez votre plan et corrigez-le si besoin.",
+    'À présent, vérifiez que la structure du plan (axes, sous-axes, fiches action) est fidèle à votre fichier initial, puis validez. Votre plan pourra toujours être modifié a posteriori sur la plateforme, dans le cadre du suivi.',
   planImporteBanniereDemoAvant: 'Réservez un créneau pour suivre une',
   planImporteBanniereDemoLien: 'démo de prise en main',
   planImporteBanniereSupportAvant: 'ou prenez un',
@@ -302,12 +304,8 @@ export const plansLabels = {
   planImporteBanniereSupportApres: "s'il y a un problème avec l'import.",
   planImporteValider: 'Valider le plan',
   planImporteValiderTitre: 'Valider le plan importé',
-  planImporteValiderAvertissementTitre: 'Vérifiez le plan avant de le valider',
-  planImporteValiderAvertissement:
-    "Comparez le plan à votre document : axes, actions, sous-actions et informations associées. L'import est en version bêta et a pu manquer ou mal repérer certains éléments.",
-  planImporteValiderEngagement:
-    'En validant, vous confirmez que ce plan est conforme au document importé. La validation est enregistrée à votre nom et ne peut pas être annulée.',
-  planImporteValiderConfirmer: 'Je confirme, le plan est conforme',
+  planImporteValiderDescription:
+    'Vérifiez que la structure du plan importé (axes, sous-axes, fiches action) est satisfaisante en comparaison avec votre fichier source. Dans tous les cas, vous gardez la main pour modifier vos actions sur la plateforme.',
   planImporteValide: 'Plan validé',
   planImporteValidationErreur: 'La validation du plan a échoué',
 };

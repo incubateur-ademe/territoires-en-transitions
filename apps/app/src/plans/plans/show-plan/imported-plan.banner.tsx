@@ -28,18 +28,21 @@ export const ImportedPlanBanner = ({ planId }: { planId: number }) => {
           </div>
         }
         description={
-          <p className="mb-0 text-sm font-medium text-grey-9">
-            {appLabels.planImporteBanniereDescription}{' '}
-            {appLabels.planImporteBanniereDemoAvant}{' '}
-            <InlineLink href={IMPORT_PLAN_DEMO_URL} openInNewTab>
-              {appLabels.planImporteBanniereDemoLien}
-            </InlineLink>{' '}
-            {appLabels.planImporteBanniereSupportAvant}{' '}
-            <InlineLink href={IMPORT_PLAN_SUPPORT_URL} openInNewTab>
-              {appLabels.planImporteBanniereSupportLien}
-            </InlineLink>{' '}
-            {appLabels.planImporteBanniereSupportApres}
-          </p>
+          <div className="flex flex-col gap-2 text-sm font-medium text-grey-9">
+            <p className="mb-0">{appLabels.planImporteBanniereDescription}</p>
+            <p className="mb-0">
+              {appLabels.planImporteBeta}{' '}
+              {appLabels.planImporteBanniereDemoAvant}{' '}
+              <InlineLink href={IMPORT_PLAN_DEMO_URL} openInNewTab>
+                {appLabels.planImporteBanniereDemoLien}
+              </InlineLink>{' '}
+              {appLabels.planImporteBanniereSupportAvant}{' '}
+              <InlineLink href={IMPORT_PLAN_SUPPORT_URL} openInNewTab>
+                {appLabels.planImporteBanniereSupportLien}
+              </InlineLink>{' '}
+              {appLabels.planImporteBanniereSupportApres}
+            </p>
+          </div>
         }
         action={
           <Button
