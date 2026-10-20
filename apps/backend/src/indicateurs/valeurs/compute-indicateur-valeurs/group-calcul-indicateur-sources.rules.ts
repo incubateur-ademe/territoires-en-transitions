@@ -141,17 +141,19 @@ export const fillCalculSourceGroups = (
   }
   // Populate after discovering all groups: shared sources can precede the
   // PCAET observations in an unordered SQL result.
+  const groupsByCollectivitePeriode = new Map<string, CalculSourceGroup[]>();
+  for (const group of Object.values(groups)) {
+    const key = `${group.collectiviteId}_${IndicateurPeriodes.key(group.periode)}`;
+    const periodGroups = groupsByCollectivitePeriode.get(key) ?? [];
+    periodGroups.push(group);
+    groupsByCollectivitePeriode.set(key, periodGroups);
+  }
   for (const valeur of valeurs) {
     if (valeur.deleted || !neededIdentifiants.has(valeur.indicateurIdentifiant))
       continue;
     const sourceId = normalizeCalculSourceId(valeur.sourceId);
-    for (const group of Object.values(groups)) {
-      if (
-        group.collectiviteId !== valeur.collectiviteId ||
-        IndicateurPeriodes.key(group.periode) !==
-          IndicateurPeriodes.key(valeur.periode)
-      )
-        continue;
+    const key = `${valeur.collectiviteId}_${IndicateurPeriodes.key(valeur.periode)}`;
+    for (const group of groupsByCollectivitePeriode.get(key) ?? []) {
       const isDirect = group.sourceId === sourceId;
       if (
         isDirect &&

@@ -739,6 +739,104 @@ describe('Indicateurs', () => {
       .expect(201);
   });
 
+  it.each([50, 500])(
+    'importe puis met à jour %i populations en recalculant les ratios de chaque collectivité et année',
+    async (valeursCount) => {
+      const populationId = await getIndicateurIdByIdentifiant(
+        databaseService,
+        'terr_1'
+      );
+      const emissionsId = await getIndicateurIdByIdentifiant(
+        databaseService,
+        'cae_1.a'
+      );
+      const emissionsParHabitantId = await getIndicateurIdByIdentifiant(
+        databaseService,
+        'cae_1.b'
+      );
+      const collectiviteIds: number[] = [];
+      for (let index = 0; index < Math.ceil(valeursCount / 20); index++) {
+        const fixture = await addTestCollectivite(databaseService);
+        collectiviteIds.push(fixture.collectivite.id);
+        onTestFinished(fixture.cleanup);
+      }
+      const populations = Array.from({ length: valeursCount }, (_, index) => ({
+        collectiviteId: collectiviteIds[Math.floor(index / 20)],
+        indicateurId: populationId,
+        metadonneeId: inseeMetadataId,
+        dateValeur: `${2006 + (index % 20)}-01-01`,
+        resultat: 10000,
+      }));
+      // Chaque cellule a un numérateur distinct pour détecter un mélange
+      // entre collectivités ou années pendant le recalcul.
+      await databaseService.db.insert(indicateurValeurTable).values(
+        populations.map((valeur, index) => ({
+          ...valeur,
+          indicateurId: emissionsId,
+          metadonneeId: rareMetadataId,
+          resultat: 100 * (index + 1),
+        }))
+      );
+      const assertCalculatedValeurs = (
+        valeurs: UpsertIndicateursValeursResponse['valeurs'],
+        multiplier: number
+      ) => {
+        const calculated = valeurs.filter(
+          ({ indicateurId }) => indicateurId === emissionsParHabitantId
+        );
+        expect(calculated).toHaveLength(valeursCount);
+        const byCollectiviteAndDate = new Map(
+          calculated.map((valeur) => [
+            `${valeur.collectiviteId}:${valeur.dateValeur}`,
+            valeur,
+          ])
+        );
+        expect(byCollectiviteAndDate.size).toBe(valeursCount);
+        for (const [index, population] of populations.entries()) {
+          expect(
+            byCollectiviteAndDate.get(
+              `${population.collectiviteId}:${population.dateValeur}`
+            )
+          ).toMatchObject({
+            metadonneeId: rareMetadataId,
+            periodicite: 'annuelle',
+            resultat: multiplier * (index + 1),
+            calculAuto: true,
+          });
+        }
+      };
+
+      for (const populationMultiplier of [1, 2]) {
+        const response = await request(app.getHttpServer())
+          .post('/indicateurs/valeurs')
+          .set('Authorization', `Bearer ${serviceRoleToken}`)
+          .send({
+            valeurs: populations.map((valeur) => ({
+              ...valeur,
+              resultat: valeur.resultat * populationMultiplier,
+            })),
+          })
+          .expect(201);
+        const { valeurs }: UpsertIndicateursValeursResponse = response.body;
+        expect(
+          valeurs.filter(({ indicateurId }) => indicateurId === populationId)
+        ).toHaveLength(valeursCount);
+        assertCalculatedValeurs(valeurs, 10 / populationMultiplier);
+      }
+
+      const stored = await databaseService.db
+        .select()
+        .from(indicateurValeurTable)
+        .where(
+          and(
+            inArray(indicateurValeurTable.collectiviteId, collectiviteIds),
+            eq(indicateurValeurTable.indicateurId, emissionsParHabitantId)
+          )
+        );
+      assertCalculatedValeurs(stored, 5);
+    }
+  );
+
   async function createCalculationFixture(
     dates: [string, string],
     pcaet = false
