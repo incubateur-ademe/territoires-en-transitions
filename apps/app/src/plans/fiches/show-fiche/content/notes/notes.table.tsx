@@ -62,11 +62,12 @@ export const NotesTable = ({
           header: () => (
             <TableHeaderCell title={appLabels.annee} className="w-32" />
           ),
-          cell: () => <NoteYearCell />,
+          cell: NoteYearCell,
         }),
         columnHelper.accessor('note', {
           header: () => <TableHeaderCell title={appLabels.description()} />,
-          cell: () => <NoteDescriptionCell />,
+          // A stable component identity keeps the editor mounted on fiche updates.
+          cell: NoteDescriptionCell,
         }),
         columnHelper.display({
           id: 'metadata',
@@ -76,7 +77,7 @@ export const NotesTable = ({
               className="w-96"
             />
           ),
-          cell: () => <NoteMetadataCell />,
+          cell: NoteMetadataCell,
         }),
         columnHelper.display({
           id: 'actions',

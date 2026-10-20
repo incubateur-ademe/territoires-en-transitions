@@ -10,7 +10,7 @@ import { fr as locale } from '@blocknote/core/locales';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote, useEditorChange } from '@blocknote/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './rich-text-editor.css';
 
 import { SizeVariant } from '@tet/design-tokens';
@@ -30,6 +30,8 @@ export type RichTextEditorProps = {
   dataTest?: string;
   ariaLabel?: string;
   initialValue?: string;
+  /** Preserve local edits when initialValue changes, until they are persisted. */
+  preserveDraft?: boolean;
   placeholder?: string;
   disabled?: boolean;
   autoFocus?: boolean;
@@ -67,6 +69,7 @@ export default function RichTextEditor({
   className,
   id,
   initialValue,
+  preserveDraft = false,
   dataTest,
   ariaLabel,
   placeholder,
@@ -140,11 +143,35 @@ export default function RichTextEditor({
   };
 
   const editor = useCreateBlockNote(editorOptions, [className]);
+  const synchronizedDocument = useRef<{
+    editor: typeof editor;
+    snapshot: string;
+  } | null>(null);
 
   useEffect(() => {
-    // Replaces the blocks on initialization
-    // But, you can also call this before rendering the editor
+    if (initialValue === undefined || (!initialValue && !preserveDraft)) {
+      return;
+    }
+
+    let cancelled = false;
     async function loadContent(content: string) {
+      const currentDocument = editor.document;
+      // Stored HTML can differ from BlockNote's normalized serialization.
+      const snapshot = JSON.stringify(currentDocument);
+
+      if (
+        preserveDraft &&
+        synchronizedDocument.current?.editor === editor &&
+        synchronizedDocument.current.snapshot !== snapshot
+      ) {
+        const html = await editor.blocksToFullHTML(currentDocument);
+        // Acknowledging our own save must not rebuild the blocks or move the caret.
+        if (!cancelled && html === content) {
+          synchronizedDocument.current = { editor, snapshot };
+        }
+        return;
+      }
+
       const isHtml = content.trim().startsWith('<');
 
       const blocks = isHtml
@@ -153,13 +180,27 @@ export default function RichTextEditor({
         ? parseLegacyPlainTextToBlocks(content)
         : await editor.tryParseMarkdownToBlocks(content);
 
+      if (
+        cancelled ||
+        (preserveDraft && JSON.stringify(editor.document) !== snapshot)
+      ) {
+        return;
+      }
+
       editor.replaceBlocks(editor.document, blocks);
+      if (preserveDraft) {
+        synchronizedDocument.current = {
+          editor,
+          snapshot: JSON.stringify(editor.document),
+        };
+      }
     }
 
-    if (initialValue) {
-      loadContent(initialValue);
-    }
-  }, [editor, initialValue]);
+    loadContent(initialValue);
+    return () => {
+      cancelled = true;
+    };
+  }, [editor, initialValue, preserveDraft]);
 
   useEditorChange(async (editor) => {
     const html = await editor.blocksToFullHTML(editor.document);

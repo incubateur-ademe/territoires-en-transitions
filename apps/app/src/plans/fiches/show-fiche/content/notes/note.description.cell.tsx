@@ -8,7 +8,7 @@ export const NoteDescriptionCell = () => {
     <TableCell className="text-primary-9 align-top">
       <RichTextEditor
         unstyled
-        // Reload only persisted content; feeding the draft back resets the caret.
+        preserveDraft
         initialValue={note.note}
         onChange={(html) => form.setValue('description', html)}
         onBlurTextChanged={submitNote}
