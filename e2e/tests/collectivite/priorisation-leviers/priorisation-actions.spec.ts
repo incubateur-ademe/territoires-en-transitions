@@ -219,6 +219,35 @@ test.describe('Priorisation : matrice et volet', () => {
       `${shownActionsCount} actions de référence trouvées`
     );
   });
+
+  test("suggérer une action confirme l'envoi par un toast et laisse le formulaire remplissable", async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await addMobilisationAvecFiche(collectivite.data.id);
+    const pom = new PriorisationLeviersPom(page);
+    await pom.goto(collectivite.data.id);
+    await pom.openLevier(LEVIER_NOM);
+    const panel = pom.levierPanel(LEVIER_NOM);
+    await panel.getByRole('button', { name: 'Suggérer une action' }).click();
+    const description = panel.getByRole('textbox', {
+      name: "Décrivez l'action en quelques mots",
+    });
+    await description.fill('Une prime pour les covoitureurs');
+
+    await panel.getByRole('button', { name: 'Envoyer' }).click();
+
+    await expect(
+      page.getByRole('status').filter({
+        hasText: 'Merci, votre suggestion a bien été envoyée.',
+      })
+    ).toBeVisible();
+    await expect(description).toBeVisible();
+    await expect(description).toHaveValue('');
+  });
 });
 
 test.describe('Priorisation : présélection', () => {
