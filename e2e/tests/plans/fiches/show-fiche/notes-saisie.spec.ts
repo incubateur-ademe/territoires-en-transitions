@@ -80,24 +80,18 @@ test.describe('Saisie des notes de suivi', () => {
     const editor = table.getByRole('textbox');
     await expect(editor).toHaveText('Une note de suivi.');
 
-    // Retarde uniquement la réponse réelle : le rafraîchissement de la fiche
-    // doit arriver pendant la saisie, sans dépendre de la vitesse du serveur.
-    let releaseSave!: () => void;
-    const saveReleased = new Promise<void>((resolve) => {
-      releaseSave = resolve;
-    });
-    let confirmYearSaved!: () => void;
-    const yearSaved = new Promise<void>((resolve) => {
-      confirmYearSaved = resolve;
+    // Laisse la sauvegarde fermer le sélecteur d'année, mais retarde la lecture
+    // qui suit pour que le rafraîchissement arrive pendant la saisie.
+    let releaseRefresh!: () => void;
+    const refreshReleased = new Promise<void>((resolve) => {
+      releaseRefresh = resolve;
     });
     const updateUrl = '**/trpc/plans.fiches.update*';
     await page.route(
-      updateUrl,
+      '**/trpc/*plans.fiches.get*',
       async (route) => {
-        const response = await route.fetch();
-        confirmYearSaved();
-        await saveReleased;
-        await route.fulfill({ response });
+        await refreshReleased;
+        await route.continue();
       },
       { times: 1 }
     );
@@ -106,11 +100,14 @@ test.describe('Saisie des notes de suivi', () => {
       await table
         .getByRole('cell', { name: String(year), exact: true })
         .click();
-      const saveRequested = page.waitForRequest(updateUrl);
-      await page
-        .getByRole('button', { name: String(year - 1), exact: true })
-        .click();
-      await saveRequested;
+      const yearSaved = page.waitForResponse(updateUrl);
+      const yearOption = page.getByRole('button', {
+        name: String(year - 1),
+        exact: true,
+      });
+      await yearOption.click();
+      await yearSaved;
+      await expect(yearOption).not.toBeVisible();
 
       await editor.click();
       await page.keyboard.press('Home');
@@ -118,7 +115,6 @@ test.describe('Saisie des notes de suivi', () => {
       await expect(editor).toHaveText('BUne note de suivi.');
 
       // Une autre session modifie la note avant le rafraîchissement serveur.
-      await yearSaved;
       const fiche = await trpcClient.plans.fiches.get.query({ id: ficheId });
       await trpcClient.plans.fiches.update.mutate({
         ficheId,
@@ -131,7 +127,7 @@ test.describe('Saisie des notes de suivi', () => {
         },
       });
 
-      releaseSave();
+      releaseRefresh();
       // Les métadonnées confirment que le résultat serveur a été affiché.
       await expect(table.getByText(/^Modifiée par /)).toBeVisible();
       await expect(editor).toBeFocused();
@@ -153,7 +149,7 @@ test.describe('Saisie des notes de suivi', () => {
         table.getByRole('cell', { name: String(year - 1), exact: true })
       ).toBeVisible();
     } finally {
-      releaseSave();
+      releaseRefresh();
     }
   });
 
