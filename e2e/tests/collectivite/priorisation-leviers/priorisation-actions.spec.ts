@@ -239,9 +239,10 @@ test.describe('Priorisation : présélection', () => {
 
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
 
-    await expect(
-      card.getByRole('button', { name: 'Sauvegarder' })
-    ).toHaveAttribute('aria-pressed', 'true');
+    await expect(card.getByRole('button', { name: 'Retirer' })).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Sauvegarder' })).toHaveCount(
+      0
+    );
     await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
 
     await page.reload();

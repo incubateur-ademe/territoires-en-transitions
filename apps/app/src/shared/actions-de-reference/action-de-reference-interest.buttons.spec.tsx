@@ -6,11 +6,11 @@ import { ActionDeReferenceInterestButtons } from './action-de-reference-interest
 afterEach(cleanup);
 
 describe('ActionDeReferenceInterestButtons', () => {
-  it('une action sauvegardée affiche « Sauvegarder » par défaut', () => {
+  it('une action disponible propose « Sauvegarder »', () => {
     render(
       <ActionDeReferenceInterestButtons
         interest={{
-          status: 'preselectionnee',
+          status: 'disponible',
           onToggleSaved: vi.fn(),
           onDismiss: vi.fn(),
         }}
@@ -24,14 +24,13 @@ describe('ActionDeReferenceInterestButtons', () => {
     ).toBeTruthy();
   });
 
-  it('une action sauvegardée affiche « Retirer » quand le libellé est fourni', () => {
+  it('une action sauvegardée propose « Retirer » à la place de « Sauvegarder »', () => {
     render(
       <ActionDeReferenceInterestButtons
         interest={{
           status: 'preselectionnee',
           onToggleSaved: vi.fn(),
           onDismiss: vi.fn(),
-          savedActionLabel: appLabels.actionDeReferenceRetirer,
         }}
       />
     );
