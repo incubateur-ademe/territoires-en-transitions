@@ -4,7 +4,6 @@ import {
   CollectivitePublic,
   type MembreFonction,
 } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
@@ -14,7 +13,6 @@ export type MatchingCollectivites = Pick<CollectivitePublic, 'id' | 'nom'>[];
 export type RejoindreUneCollectiviteData = {
   collectiviteId?: number | null;
   role?: MembreFonction | null;
-  champ_intervention?: ReferentielId[];
   poste?: string;
   est_referent?: boolean;
 };
@@ -93,7 +91,6 @@ export const useRejoindreUneCollectivite = ({
     try {
       await joinCollectivite({
         collectiviteId: formData.collectiviteId,
-        champIntervention: formData.champ_intervention || [],
         fonction: formData.role as MembreFonction,
         detailsFonction: poste,
         estReferent: formData.est_referent || false,
