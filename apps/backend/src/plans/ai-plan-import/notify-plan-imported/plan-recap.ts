@@ -11,7 +11,7 @@ export type PlanRecap = z.infer<typeof planRecapSchema>;
 const pluralize = (count: number, singular: string, plural: string) =>
   `${count} ${count > 1 ? plural : singular}`;
 
-/** « 5 axes, 11 sous-axes, 224 actions et sous-actions », sans les zéros. */
+/** « 5 axes, 11 sous-axes, 224 actions », sans les zéros. */
 export const formatPlanRecap = ({
   axesCount,
   sousAxesCount,
@@ -20,8 +20,7 @@ export const formatPlanRecap = ({
   [
     axesCount > 0 && pluralize(axesCount, 'axe', 'axes'),
     sousAxesCount > 0 && pluralize(sousAxesCount, 'sous-axe', 'sous-axes'),
-    fichesCount > 0 &&
-      pluralize(fichesCount, 'action', 'actions et sous-actions'),
+    fichesCount > 0 && pluralize(fichesCount, 'action', 'actions'),
   ]
     .filter(Boolean)
     .join(', ');
