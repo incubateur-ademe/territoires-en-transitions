@@ -10,7 +10,8 @@ import { cn, FooterTeT, VisibleWhen } from '@tet/ui';
 import { OfflineAlert } from './offline-alert';
 
 /**
- * Grille à 2 colonnes : `main + footer` à gauche, `SidePanel` sticky à droite.
+ * Grille à 2 colonnes : `header + main + footer` à gauche, `SidePanel` sticky
+ * à droite.
  * Les `grid-template-columns` s'animent entre l'état fermé (`1fr 0`) et
  * ouvert (`1fr <side-panel-width>`), ce qui produit le slide-in du panel à
  * largeur fixe.
@@ -35,6 +36,7 @@ const ContentWrapper = ({
           'max-lg:hidden': panel.isOpen,
         })}
       >
+        <Header />
         <div className="grow flex flex-col w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6 pb-12 pt-6">
           {children}
         </div>
@@ -61,7 +63,6 @@ export const AppLayout = ({
       {/* Au-dessus du header, et collé en haut : l'agent d'un service navigue
           au nom d'un autre, et ce rappel-là ne doit pas défiler avec la page. */}
       <ContexteInstructionBanner />
-      <Header />
       <ContentWrapper belowFooterSlot={belowFooterSlot}>
         {children}
       </ContentWrapper>
