@@ -67,4 +67,15 @@ test.describe('Export indicateurs en Excel', () => {
     expect(wb.worksheets.length).toBe(1);
     expect(wb.getWorksheet(1)?.rowCount).toBe(2);
   });
+
+  test('exporte uniquement l’indicateur sélectionné depuis sa vignette, sans valeurs', async () => {
+    await pom.gotoIndicateursList(collectiviteId);
+    await pom.filterByText(FILTRE_TEXTE, NB_INDICATEURS);
+    const wb = await pom.exportFromCard(indicateurIds[0]);
+
+    expect(wb.worksheets.length).toBe(1);
+    const worksheet = wb.getWorksheet(1);
+    expect(worksheet?.rowCount).toBe(2);
+    expect(worksheet?.getCell('B2').value).toBe(`Indicateur ${FILTRE_TEXTE} 0`);
+  });
 });

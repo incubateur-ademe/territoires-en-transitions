@@ -3,6 +3,7 @@ import { appLabels } from '@/app/labels/catalog';
 type IndicateurActionId =
   | 'remove-from-favorites'
   | 'add-to-favorites'
+  | 'download-xlsx'
   | 'download-chart';
 
 export type IndicateurMenuAction = {
@@ -27,6 +28,11 @@ export const getIndicateurMenuActions = (args: {
       id: 'add-to-favorites',
       label: appLabels.ajouterFavoris,
       isVisible: isEditable && !isFavoriCollectivite,
+    },
+    {
+      id: 'download-xlsx',
+      label: appLabels.exporterXlsx,
+      isVisible: true,
     },
     {
       id: 'download-chart',

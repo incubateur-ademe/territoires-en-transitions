@@ -1,6 +1,6 @@
+import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import { ActionId } from '@tet/domain/referentiels';
-import { ButtonMenu } from '@tet/ui';
+import { ButtonMenu, MenuAction } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurMenuAction } from '../menu-actions';
 export type ChartDownloadSettings = {
@@ -22,31 +22,35 @@ const IndicateurCardMenu = ({
   chartDownloadSettings,
 }: Props) => {
   const { mutate: updateIndicateur } = useUpdateIndicateur(indicateurId);
+  const { mutate: exportIndicateurs, isPending } = useExportIndicateurs({
+    mode: 'selection',
+    indicateurIds: [indicateurId],
+  });
 
   const toggleEstFavori = (newValue: boolean) => {
     updateIndicateur({ estFavori: newValue });
     openState.setIsOpen(false);
   };
 
-  const onClickActions: Record<ActionId, () => void> = {
+  const onClickActions: Record<IndicateurMenuAction['id'], () => void> = {
     'remove-from-favorites': () => toggleEstFavori(false),
     'add-to-favorites': () => toggleEstFavori(true),
+    'download-xlsx': () => exportIndicateurs(),
     'download-chart': () => {
       chartDownloadSettings.openModal();
       openState.setIsOpen(false);
     },
   };
 
-  const actions: Array<{ onClick: () => void; label: string }> =
-    menuActions.map((action) => {
-      return {
-        label: action.label,
-        onClick: onClickActions[action.id],
-      };
-    });
+  const actions: MenuAction[] = menuActions.map((action) => ({
+    label: action.label,
+    onClick: onClickActions[action.id],
+    disabled: action.id === 'download-xlsx' && isPending,
+  }));
 
   return (
     <ButtonMenu
+      dataTest="indicateurs.carte.menu"
       icon="more-line"
       variant="grey"
       size="xs"

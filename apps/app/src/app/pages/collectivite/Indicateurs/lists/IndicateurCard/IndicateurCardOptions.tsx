@@ -74,7 +74,7 @@ const IndicateurCardOptions = ({
           chartDownloadSettings={chartDownloadSettings}
           openState={{
             isOpen: isMenuOpen,
-            setIsOpen: () => setIsMenuOpen(!isMenuOpen),
+            setIsOpen: setIsMenuOpen,
           }}
         />
       </VisibleWhen>
