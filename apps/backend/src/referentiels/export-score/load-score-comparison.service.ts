@@ -19,7 +19,6 @@ import {
   ActionLabels,
   ActionTags,
   flatMapActionsEnfants,
-  isNewReferentiel,
   ReferentielId,
   rollUpActionIdToActionLevel,
   ScoreSnapshot,
@@ -32,7 +31,7 @@ import { htmlToText } from '@tet/domain/utils';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
 import * as Utils from '../../utils/excel/export-excel.utils';
-import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
+import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { auditTable } from '../labellisations/audit.table';
 import { ListActionDefinitionsService } from '../list-actions/list-action-definitions.service';
@@ -135,7 +134,7 @@ export class LoadScoreComparisonService {
     private readonly databaseService: DatabaseService,
     private readonly handlePilotesService: HandleMesurePilotesService,
     private readonly handleServicesService: HandleMesureServicesService,
-    private readonly getReferentielService: GetReferentielService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly listActionDefinitionsService: ListActionDefinitionsService,
     private readonly listFichesService: ListFichesService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService
@@ -207,18 +206,22 @@ export class LoadScoreComparisonService {
           referentielId
         )
       : null;
-    // un seul chargement de l'arbre du référentiel exporté, consommé à la fois
-    // pour les descriptions d'action et pour les mesures affectées des questions
-    // de personnalisation
-    const { hierarchie, actionsById, descriptions } =
-      await this.getReferentielActionsIndex(referentielId);
-    const actionTagsResult = await this.getActionTagsAndAdaptationNiveaux(
+    // un seul chargement des définitions du référentiel exporté, consommé à la
+    // fois pour les colonnes du tableau et pour les mesures affectées des
+    // questions de personnalisation
+    const actionsIndexResult = await this.getReferentielActionsIndex(
       referentielId
     );
-    if (!actionTagsResult.success) {
-      return actionTagsResult;
+    if (!actionsIndexResult.success) {
+      return actionsIndexResult;
     }
-    const { adaptationNiveaux, actionTags } = actionTagsResult.data;
+    const {
+      hierarchie,
+      actionsById,
+      descriptions,
+      adaptationNiveaux,
+      actionTags,
+    } = actionsIndexResult.data;
     const mesureIds = scoreRows.map((r) => r.actionId);
     const pilotes = await this.handlePilotesService.listPilotes(
       collectiviteId,
@@ -316,103 +319,80 @@ export class LoadScoreComparisonService {
   }
 
   /**
-   * Charge l'arbre du référentiel exporté une seule fois et en dérive :
+   * Charge les définitions du référentiel exporté une seule fois (celles du
+   * tableau du référentiel dans l'app) et en dérive :
    * - `hierarchie` : les niveaux ordonnés du référentiel (axe, sous-axe,
    *   mesure…), nécessaires pour remonter un lien question→action au niveau
    *   « mesure » ;
    * - `actionsById` : index par `actionId` (numérotation + libellé), pour
    *   résoudre les mesures affectées par les questions de personnalisation ;
-   * - `descriptions` : description HTML nettoyée, par `actionId`.
+   * - `descriptions` : description HTML nettoyée, par `actionId` ;
+   * - `adaptationNiveaux` : niveau d'exposition, par `actionId` ;
+   * - `actionTags` : volets, tag coremeasure et thématiques, par `actionId`.
    */
   private async getReferentielActionsIndex(
-    referentielId: ReferentielId
-  ): Promise<{
-    hierarchie: ActionType[];
-    actionsById: Map<ActionId, { identifiant: string; nom: string }>;
-    descriptions: Record<ActionId, string>;
-  }> {
-    const referentiel = await this.getReferentielService.getReferentielTree(
-      referentielId
-    );
-
-    type ActionNode = {
-      actionId?: ActionId;
-      identifiant?: string | null;
-      nom?: string | null;
-      description?: string | null;
-      actionsEnfant?: ActionNode[];
-    };
-
-    const actionsById = new Map<
-      ActionId,
-      { identifiant: string; nom: string }
-    >();
-    const descriptions: Record<ActionId, string> = {};
-    const walk = (node: ActionNode) => {
-      if (node.actionId) {
-        actionsById.set(node.actionId, {
-          identifiant: node.identifiant ?? '',
-          nom: (node.nom ?? '').trim(),
-        });
-        if (node.description) {
-          descriptions[node.actionId] = Utils.cleanHtmlDescription(
-            node.description
-          );
-        }
-      }
-      node.actionsEnfant?.forEach(walk);
-    };
-    walk(referentiel.itemsTree as ActionNode);
-
-    return {
-      hierarchie: referentiel.orderedItemTypes,
-      actionsById,
-      descriptions,
-    };
-  }
-
-  /**
-   * Volets, tag coremeasure, thématiques et niveau d'adaptation de chaque
-   * action, lus dans les mêmes définitions que le tableau du référentiel.
-   * Ces colonnes n'existent que pour les nouveaux référentiels : rien n'est
-   * chargé pour les autres.
-   */
-  private async getActionTagsAndAdaptationNiveaux(
     referentielId: ReferentielId
   ): Promise<
     Result<
       {
+        hierarchie: ActionType[];
+        actionsById: Map<ActionId, { identifiant: string; nom: string }>;
+        descriptions: Record<ActionId, string>;
         adaptationNiveaux: Record<ActionId, ActionAdaptationNiveau>;
         actionTags: Record<ActionId, ActionLabels & ActionTags>;
       },
       ExportScoreComparisonError
     >
   > {
-    const adaptationNiveaux: Record<ActionId, ActionAdaptationNiveau> = {};
-    const actionTags: Record<ActionId, ActionLabels & ActionTags> = {};
-    if (!isNewReferentiel(referentielId)) {
-      return success({ adaptationNiveaux, actionTags });
-    }
-
-    const definitionsResult =
-      await this.listActionDefinitionsService.listActionDefinitions({
+    const [definitionsResult, hierarchies] = await Promise.all([
+      this.listActionDefinitionsService.listActionDefinitions({
         referentielId,
-      });
+      }),
+      this.getReferentielDefinitionService.getHierarchiesByReferentielIds([
+        referentielId,
+      ]),
+    ]);
     if (!definitionsResult.success) {
       return definitionsResult;
     }
 
-    for (const definition of Object.values(
-      definitionsResult.data.definitionsById
-    )) {
-      const { actionId, adaptationNiveau, labels, isCoremeasure, thematiques } =
-        definition;
+    const actionsById = new Map<
+      ActionId,
+      { identifiant: string; nom: string }
+    >();
+    const descriptions: Record<ActionId, string> = {};
+    const adaptationNiveaux: Record<ActionId, ActionAdaptationNiveau> = {};
+    const actionTags: Record<ActionId, ActionLabels & ActionTags> = {};
+    for (const {
+      actionId,
+      identifiant,
+      nom,
+      description,
+      adaptationNiveau,
+      labels,
+      isCoremeasure,
+      thematiques,
+    } of Object.values(definitionsResult.data.definitionsById)) {
+      actionsById.set(actionId, {
+        identifiant: identifiant ?? '',
+        nom: (nom ?? '').trim(),
+      });
+      if (description) {
+        descriptions[actionId] = Utils.cleanHtmlDescription(description);
+      }
       if (adaptationNiveau) {
         adaptationNiveaux[actionId] = adaptationNiveau;
       }
       actionTags[actionId] = { labels, isCoremeasure, thematiques };
     }
-    return success({ adaptationNiveaux, actionTags });
+
+    return success({
+      hierarchie: hierarchies.get(referentielId) ?? [],
+      actionsById,
+      descriptions,
+      adaptationNiveaux,
+      actionTags,
+    });
   }
 
   /**
