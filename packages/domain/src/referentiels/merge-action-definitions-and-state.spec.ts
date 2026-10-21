@@ -4,6 +4,7 @@ import {
   ListActionsDynamicStateResult,
 } from './action-with-score.schema';
 import { ListActionDefinitionsOutput } from './actions/list-action-definitions.output';
+import { ListActionTextOverridesOutput } from './actions/list-action-text-overrides.output';
 import { mergeActionDefinitionsAndState } from './merge-action-definitions-and-state';
 
 const buildDefinition = (
@@ -56,7 +57,45 @@ const buildStates = (
   hiddenActionIds,
 });
 
+const buildTextOverrides = (
+  overridesById: ListActionTextOverridesOutput['overridesById'],
+  referentielVersion = '1.0.0'
+): ListActionTextOverridesOutput => ({
+  referentielVersion,
+  textVariantKey: 'r1;localisation=dom',
+  overridesById,
+});
+
 describe('mergeActionDefinitionsAndState', () => {
+  test('applique les surcharges de texte aux actions et aux actions masquées', () => {
+    const result = mergeActionDefinitionsAndState(
+      buildDefinitions([buildDefinition('te_1'), buildDefinition('te_1.1')]),
+      buildStates([buildState('te_1')], ['te_1.1']),
+      buildTextOverrides({
+        te_1: { nom: 'Nom DOM te_1' },
+        'te_1.1': { nom: 'Nom DOM te_1.1' },
+      })
+    );
+
+    expect(result.actionsById['te_1']).toMatchObject({
+      nom: 'Nom DOM te_1',
+      description: 'Description te_1',
+    });
+    expect(result.hiddenActions).toEqual([
+      { actionId: 'te_1.1', identifiant: '1.1', nom: 'Nom DOM te_1.1' },
+    ]);
+  });
+
+  test('ignore des surcharges d’une autre version que les définitions', () => {
+    const result = mergeActionDefinitionsAndState(
+      buildDefinitions([buildDefinition('te_1')]),
+      buildStates([buildState('te_1')]),
+      buildTextOverrides({ te_1: { nom: 'Nom DOM te_1' } }, '0.9.0')
+    );
+
+    expect(result.actionsById['te_1'].nom).toBe('Nom te_1');
+  });
+
   test('fusionne la définition et l’état de chaque action', () => {
     const result = mergeActionDefinitionsAndState(
       buildDefinitions([buildDefinition('cae_1')]),
