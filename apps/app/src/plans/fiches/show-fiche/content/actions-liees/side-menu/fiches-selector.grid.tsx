@@ -2,7 +2,7 @@ import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { FicheActionCard } from '../card/fiche-action.card';
+import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { appLabels } from '@/app/labels/catalog';
 
 type Props = {
@@ -29,7 +29,7 @@ export const FichesSelectorGrid = (props: Props) => {
       {fiches.map((fiche) => {
         const isSelected = selectedFiches?.some((f) => f === fiche.id) ?? false;
         return (
-          <FicheActionCard
+          <FicheCard
             key={fiche.id}
             ficheAction={fiche}
             link={makeCollectiviteActionUrl({
