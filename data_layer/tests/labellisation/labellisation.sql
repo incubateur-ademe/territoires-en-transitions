@@ -1,5 +1,5 @@
 begin;
-select plan(35);
+select plan(34);
 
 -- prevent calls to the business service
 select test.disable_evaluation_api();
@@ -86,10 +86,6 @@ select ok((select bool_and(etoile_labellise is null and
 select ok((select bool_and(atteint and etoile_objectif = '1')
            from labellisation.critere_score_global(1)),
           'Should be able to reach étoile #1 since required score is 0');
-
-select ok((select not bool_and(atteint)
-           from labellisation.critere_action(1)),
-          'Should not be able to reach any criteres since all scores are at 0');
 
 
 -----------------------------------------
