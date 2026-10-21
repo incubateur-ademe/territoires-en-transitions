@@ -540,7 +540,10 @@ SELECT c.collectivite_id,
                                                    )::double precision * 100::double precision
                        end AS pourcentage
             FROM collectivite c_1
-            LEFT JOIN (select i.* from indicateur_collectivite i
+            -- Colonnes explicites : `i.*` embarquerait aussi is_suivi, et bloquerait le revert
+            -- de indicateur/indicateur_collectivite_is_suivi.
+            LEFT JOIN (select i.indicateur_id, i.collectivite_id, i.commentaire, i.confidentiel, i.favoris
+                       from indicateur_collectivite i
             join indicateur_definition id on i.indicateur_id = id.id
                        where i.confidentiel = true
                          and id.collectivite_id is null) ic
