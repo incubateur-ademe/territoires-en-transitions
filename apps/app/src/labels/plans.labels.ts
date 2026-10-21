@@ -47,6 +47,9 @@ export const plansLabels = {
 
   /** Action */
   action: plural({ one: 'action', other: 'actions' }),
+  ficheNavigation: 'Navigation entre les actions du plan',
+  ficheNavigationPrecedente: 'Action précédente',
+  ficheNavigationSuivante: 'Action suivante',
 
   sousAction: plural({ one: 'sous-action', other: 'sous-actions' }),
   sousActionSupprimer: 'Supprimer la sous-action',
@@ -103,8 +106,6 @@ export const plansLabels = {
   planSecteursPosition: ({ index, total }: { index: number; total: number }) =>
     `${index} sur ${total}`,
   planSecteursRetourListe: 'Retour à la liste',
-  planSecteursPrecedente: 'Action précédente',
-  planSecteursSuivante: 'Action suivante',
   planSecteursNonAttribuable: 'Non attribuable',
   planSecteursEnregistrerEtSuivante: 'Enregistrer et passer à la suivante',
   planSecteursEnregistrer: 'Enregistrer',

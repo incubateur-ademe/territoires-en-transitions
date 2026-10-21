@@ -1,11 +1,13 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PageHeader } from '@tet/ui';
 import { uiLabels } from '@tet/ui/labels/catalog';
 import { ReactElement, ReactNode } from 'react';
+import { FicheContextValue, useFicheContext } from '../context/fiche-context';
 import {
-  FicheContextValue,
-  useFicheContext,
-} from '../context/fiche-context';
+  FicheNavigationButtons,
+  FicheNavigationLinks,
+} from '../navigation/fiche-navigation.buttons';
 import { Breadcrumbs } from './breadcrumbs';
 import { EditionModalManagerProvider } from './context/edition-modal-manager-context';
 import { EditionModalRenderer } from './context/edition-modal-renderer';
@@ -27,7 +29,11 @@ const FicheHeaderShell = ({
   </EditionModalManagerProvider>
 );
 
-export const Header = (): ReactElement => {
+export const Header = ({
+  navigation,
+}: {
+  navigation?: FicheNavigationLinks;
+}): ReactElement => {
   const { fiche, isReadonly, planId, update } = useFicheContext();
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
@@ -49,7 +55,14 @@ export const Header = (): ReactElement => {
           onUpdate={updateTitle}
         />
         <PageHeader.Actions>
-          <Menu />
+          <div className="flex items-center gap-2">
+            {navigation && (
+              <PageHeader.Navigation label={appLabels.ficheNavigation}>
+                <FicheNavigationButtons {...navigation} />
+              </PageHeader.Navigation>
+            )}
+            <Menu />
+          </div>
         </PageHeader.Actions>
 
         {hasCollectivitePermission('plans.read') && (

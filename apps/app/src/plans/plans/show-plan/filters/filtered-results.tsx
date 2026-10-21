@@ -29,10 +29,12 @@ const FilteredResultsEmpty = () => {
 };
 
 const FilteredResultsList = ({
+  planId,
   collectivite,
   filteredResults,
   currentUserId,
 }: {
+  planId: number;
   collectivite: CollectiviteCurrent;
   filteredResults: FicheListItem[];
   currentUserId: string;
@@ -44,6 +46,7 @@ const FilteredResultsList = ({
           key={fiche.id}
           ficheAction={fiche}
           link={makeCollectiviteActionUrl({
+            planId,
             collectiviteId: collectivite.collectiviteId,
             ficheUid: fiche.id.toString(),
           })}
@@ -56,11 +59,16 @@ const FilteredResultsList = ({
 };
 
 type Props = {
+  planId: number;
   collectivite: CollectiviteCurrent;
   currentUserId: string;
 };
 
-export const FilteredResults = ({ collectivite, currentUserId }: Props) => {
+export const FilteredResults = ({
+  planId,
+  collectivite,
+  currentUserId,
+}: Props) => {
   const {
     filters,
     isLoading,
@@ -119,6 +127,7 @@ export const FilteredResults = ({ collectivite, currentUserId }: Props) => {
         <>
           <VisibleWhen condition={hasFilteredContent}>
             <FilteredResultsList
+              planId={planId}
               collectivite={collectivite}
               filteredResults={filteredResults}
               currentUserId={currentUserId}

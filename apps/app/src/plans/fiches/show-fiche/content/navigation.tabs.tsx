@@ -17,8 +17,15 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const rawActiveTab = useSelectedLayoutSegment();
   const activeTab =
     rawActiveTab && isFicheSectionId(rawActiveTab) ? rawActiveTab : 'details';
-  const { fiche, indicateurs, actionsLiees, documents, mesures, sousActions } =
-    useFicheContext();
+  const {
+    fiche,
+    planId,
+    indicateurs,
+    actionsLiees,
+    documents,
+    mesures,
+    sousActions,
+  } = useFicheContext();
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
 
@@ -100,6 +107,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
           collectiviteId,
           ficheUid: fiche.id.toString(),
           content: tab.id,
+          planId,
         })}
         isActive={activeTab === tab.id}
       />
