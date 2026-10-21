@@ -1101,15 +1101,6 @@ values
     ('fonction', 'delete_axe_all', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'delete_axe_all', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'delete_axe_all', 'auditeur', 'non', 'non', 'non', 'non'),
-    -- Fonction delete_collectivite_test
-    ('fonction', 'delete_collectivite_test', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'connecte', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'verifie', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'support', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'lecture', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'edition', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'admin', 'non', 'non', 'non', 'non'),
-    ('fonction', 'delete_collectivite_test', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Fonction deplacer_fiche_action_dans_un_axe
     ('fonction', 'deplacer_fiche_action_dans_un_axe', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'deplacer_fiche_action_dans_un_axe', 'connecte', 'non', 'non', 'non', 'non'),
