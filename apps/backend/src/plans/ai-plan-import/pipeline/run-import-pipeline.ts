@@ -34,6 +34,7 @@ import {
 import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
 import { describeLlmError } from '@tet/backend/utils/llm/llm.errors';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { EffetAttendu } from '@tet/domain/shared';
 import { z } from 'zod';
 import { ExtractedAction, isPinnedAction } from '../models/extracted-action';
 import type { ImportStepRun } from '../models/import-step-run';
@@ -125,6 +126,8 @@ export type RunImportPipelineInput = {
   withSousActions: boolean;
   /** Secteurs réglementaires proposés pour chaque action : plans PCAET. */
   withSecteurs?: boolean;
+  /** Liste close des effets attendus, lue en base : vide, l'étape n'en propose pas. */
+  effetsAttendus: EffetAttendu[];
   signal?: AbortSignal;
   onStepStatesChange?: (stepStates: Readonly<StepStates>) => Promise<void>;
   /** Chaque étape terminée, passée ou en échec : durée, appels, comptes. */
@@ -431,7 +434,8 @@ export const runImportPipeline = async (
 
   // Deux branches en parallèle après la consolidation, qui recrée les
   // sous-actions : les secteurs ne lisent rien de ce qu'écrit l'enrichissement
-  // et n'écrivent que `action.secteurs`, que la revue ne lit pas.
+  // et n'écrivent que `action.secteurs` et `action.effetsAttendus`, que la
+  // revue ne lit pas.
   // Une branche en échec arrête l'autre : la reprise repartira d'avant les
   // deux, et chaque appel de plus y serait payé deux fois.
   const branchAbort = new AbortController();
@@ -458,11 +462,13 @@ export const runImportPipeline = async (
   const secteursBranch: PipelineStep[] = [
     {
       name: 'secteurs',
-      skipWhen: () => !input.withSecteurs,
+      skipWhen: () => !input.withSecteurs && input.effetsAttendus.length === 0,
       run: (actions) =>
         classifySecteurs(llm, {
           actions,
           source: state.source,
+          withSecteurs: input.withSecteurs ?? false,
+          effetsAttendus: input.effetsAttendus,
           signal: branchSignal,
         }),
     },
@@ -515,8 +521,12 @@ export const runImportPipeline = async (
     }
     return {
       actions: enriched.actions.map((action, index) => {
-        const secteurs = classified.actions[index]?.secteurs;
-        return secteurs === undefined ? action : { ...action, secteurs };
+        const { secteurs, effetsAttendus } = classified.actions[index] ?? {};
+        return {
+          ...action,
+          ...(secteurs !== undefined && { secteurs }),
+          ...(effetsAttendus !== undefined && { effetsAttendus }),
+        };
       }),
       review: enriched.review,
       tokens: sumTokenUsage([

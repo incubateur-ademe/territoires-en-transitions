@@ -133,6 +133,7 @@ export const AiImportFlow = ({
         onResume={canResume ? () => resume.mutate({ jobId }) : undefined}
         isResuming={resume.isPending}
         steps={toImportStepViews(status?.stepStates, { failed })}
+        withSecteurs={status?.withSecteurs ?? false}
       />
     );
   }

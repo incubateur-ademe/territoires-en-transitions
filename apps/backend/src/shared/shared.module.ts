@@ -23,6 +23,6 @@ import { NotificationsModule } from '@tet/backend/utils/notifications/notificati
     SendContactMessageRouter,
     SharedRouter,
   ],
-  exports: [SharedRouter],
+  exports: [SharedRouter, EffetAttenduService],
 })
 export class SharedModule {}

@@ -81,4 +81,5 @@ const toOutput = (view: AiPlanImportJobStatusView): GetImportStatusOutput => ({
   error: view.error,
   createdPlanId: view.createdPlanId,
   resumable: view.resumable,
+  withSecteurs: view.withSecteurs,
 });

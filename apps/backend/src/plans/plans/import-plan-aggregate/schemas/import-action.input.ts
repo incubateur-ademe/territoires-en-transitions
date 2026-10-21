@@ -188,6 +188,8 @@ const rawParseSchema = z.object({
 type RawParsedAction = z.infer<typeof rawParseSchema> & {
   /** Proposés par l'import IA ; jamais lus dans un fichier Excel. */
   secteursProposes?: SecteursProposes;
+  /** Identifiants d'effets attendus proposés par l'import IA, comme les secteurs. */
+  effetsAttendus?: number[];
 };
 
 export type ImportActionInput = Omit<RawParsedAction, 'sousTitreAction'>;

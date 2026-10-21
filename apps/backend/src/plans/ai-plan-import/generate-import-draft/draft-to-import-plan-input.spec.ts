@@ -1,3 +1,4 @@
+import { importPlanInputToCreatePlanAggregateInput } from '@tet/backend/plans/plans/import-plan-aggregate/adapters/import-plan-input-to-create-plan-aggregate-input';
 import { describe, expect, it } from 'vitest';
 import {
   createUnenrichedSousAction,
@@ -52,6 +53,49 @@ describe('draftToImportPlanInput', () => {
       'Sous-action 1.1',
       'Sous-action 1.2',
       'Action 2',
+    ]);
+  });
+
+  it("porte les effets attendus jusqu'aux fiches à créer, sous-actions comprises", () => {
+    const planInput = draftToImportPlanInput({
+      planName: 'Plan',
+      actions: [
+        toAction({
+          titre: 'Action 1',
+          effetsAttendus: [24],
+          sousActions: [createUnenrichedSousAction('Sous-action 1.1')],
+        }),
+        toAction({ titre: 'Action 2', effetsAttendus: [] }),
+      ],
+    });
+
+    const created = importPlanInputToCreatePlanAggregateInput(
+      planInput,
+      planInput.actions.map((action) => ({
+        titre: action.titre,
+        axisPath: action.axisPath,
+        pilotes: [],
+        referents: [],
+        structures: [],
+        services: [],
+        financeurs: [],
+        partenaires: [],
+        instanceGouvernance: [],
+      })),
+      1
+    );
+
+    expect(created.success).toBe(true);
+    if (!created.success) return;
+    expect(
+      created.data.fiches.map(({ fiche }) => [
+        fiche.titre,
+        fiche.effetsAttendus,
+      ])
+    ).toEqual([
+      ['Action 1', [{ id: 24 }]],
+      ['Sous-action 1.1', [{ id: 24 }]],
+      ['Action 2', undefined],
     ]);
   });
 });

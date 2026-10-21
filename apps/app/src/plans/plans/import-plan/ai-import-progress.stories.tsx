@@ -52,6 +52,10 @@ export const ExtractionEnCours: Story = {
 
 /** Les secteurs tournent à côté de l'enrichissement : deux spinners. */
 export const DeuxEtapesEnParallele: Story = {
+  args: { steps: toImportStepViews(duringEnrichment), withSecteurs: true },
+};
+
+export const HorsPcaet: Story = {
   args: { steps: toImportStepViews(duringEnrichment) },
 };
 

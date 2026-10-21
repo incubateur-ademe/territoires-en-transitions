@@ -97,6 +97,27 @@ describe('extractedActionToImportActions', () => {
     }
   });
 
+  it("donne les effets attendus de l'action à ses sous-actions, comme ses secteurs", () => {
+    const rows = extractedActionToImportActions(
+      toAction({
+        effetsAttendus: [24, 9],
+        secteurs: { secteurs: ['transport_routier'], justification: '' },
+        sousActions: [toSousAction()],
+      })
+    );
+
+    expect(rows.map((row) => row.effetsAttendus)).toEqual([
+      [24, 9],
+      [24, 9],
+    ]);
+  });
+
+  it("ne donne aucun effet attendu à une action que l'étape n'a pas classée", () => {
+    const [row] = extractedActionToImportActions(toAction());
+
+    expect(row.effetsAttendus).toBeUndefined();
+  });
+
   it('déplie une action en 1 action + N sous-actions partageant axisPath et parent', () => {
     const result = extractedActionToImportActions(
       toAction({

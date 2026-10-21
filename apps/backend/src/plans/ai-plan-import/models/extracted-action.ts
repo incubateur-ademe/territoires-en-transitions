@@ -55,6 +55,8 @@ export const extractedActionSchema = z.object({
   sousActions: z.array(extractedSousActionSchema),
   /** Absent tant que l'étape des secteurs n'a pas classé l'action. */
   secteurs: secteursProposesSchema.optional(),
+  /** Identifiants de la table `effet_attendu`, proposés par la même étape. */
+  effetsAttendus: z.array(z.number().int()).optional(),
 });
 
 export type ActionConfidence = z.output<typeof actionConfidenceSchema>;

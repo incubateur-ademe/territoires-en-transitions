@@ -76,4 +76,6 @@ export type AiPlanImportJobStatusView = {
   qualitativeReview: string | null;
   /** En échec, avec un point de reprise : l'équipe peut le reprendre. */
   resumable: boolean;
+  /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
+  withSecteurs: boolean;
 };

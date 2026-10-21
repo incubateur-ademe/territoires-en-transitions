@@ -24,6 +24,7 @@ const toView = (
   createdPlanId: null,
   qualitativeReview: null,
   resumable: false,
+  withSecteurs: false,
   ...overrides,
 });
 
@@ -61,6 +62,20 @@ describe('GetImportStatusService', () => {
     expect(result).toMatchObject({
       success: true,
       data: { jobId: 'job-1', status: 'running', qualitativeReview: null },
+    });
+  });
+
+  it("dit si l'import propose les secteurs réglementaires, pour l'écran de suivi", async () => {
+    const service = buildService({
+      view: toView({ withSecteurs: true }),
+      isAllowed: true,
+    });
+
+    const result = await service.getStatus({ jobId: 'job-1', user });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: { withSecteurs: true },
     });
   });
 
@@ -106,7 +121,10 @@ describe('GetImportStatusService', () => {
 
   it('expose le job en cours de la collectivité', async () => {
     const service = buildService({
-      inFlight: toView({ id: 'job-9', status: AiPlanImportJobStatusEnum.RUNNING }),
+      inFlight: toView({
+        id: 'job-9',
+        status: AiPlanImportJobStatusEnum.RUNNING,
+      }),
       isAllowed: true,
     });
 

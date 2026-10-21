@@ -1,6 +1,6 @@
+import { SecteursProposes } from '@tet/backend/plans/fiches/fiche-secteurs/secteurs-proposes';
 import { describeLlmError, LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import {
   emptyTokenUsage,
   sumTokenUsage,
@@ -8,17 +8,18 @@ import {
 } from '@tet/backend/utils/llm/token-usage';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { Result, success } from '@tet/backend/utils/result.type';
+import { EffetAttendu } from '@tet/domain/shared';
 import { uniq } from 'es-toolkit';
 import { ExtractedAction } from '../../models/extracted-action';
-import { SECTEURS_PROMPT } from '../../prompts/secteurs.prompt';
 import { renderActionsText } from '../score-actions/render-actions-text';
 import {
   ChunkGroup,
   groupByChunk,
   SourceChunks,
 } from '../source-chunks/source-chunks';
+import { buildSecteursPrompt } from './classify-secteurs.prompt';
 import {
-  SecteursEntry,
+  effetsAttendusResponseSchema,
   secteursResponseSchema,
 } from './classify-secteurs.schema';
 
@@ -29,6 +30,10 @@ const SECTEURS_BATCH_SIZE = 30;
 export type ClassifySecteursInput = {
   actions: ExtractedAction[];
   source: SourceChunks;
+  /** Secteurs réglementaires demandés : plans PCAET. */
+  withSecteurs: boolean;
+  /** La liste close où choisir les effets attendus, lue en base. */
+  effetsAttendus: EffetAttendu[];
   signal?: AbortSignal;
 };
 
@@ -41,21 +46,35 @@ export type ClassifySecteursResult = {
 
 type IndexedAction = { index: number; action: ExtractedAction };
 
+type ClassifiedEntry = {
+  index: number;
+  /** Absent hors PCAET. */
+  secteurs?: SecteursProposes;
+  effetsAttendus: number[];
+};
+
 type BatchOutcome = {
-  entries: SecteursEntry[];
+  entries: ClassifiedEntry[];
   tokens: TokenUsage;
   warning: string | null;
 };
 
 /**
- * Secteurs réglementaires de chaque action, lus avec la tranche du document
- * qui la décrit. Un lot en échec n'arrête pas l'import, même quand tous
- * échouent : ses actions restent sans secteur proposé, et la complétion par
- * Communs s'en chargera.
+ * Secteurs réglementaires (PCAET) et effets attendus de chaque action, lus
+ * avec la tranche du document qui la décrit, en un seul appel par lot. Un lot
+ * en échec n'arrête pas l'import, même quand tous échouent : ses actions
+ * restent sans proposition, et la complétion par Communs s'occupera des
+ * secteurs.
  */
 export const classifySecteurs = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { actions, source, signal }: ClassifySecteursInput
+  {
+    actions,
+    source,
+    withSecteurs,
+    effetsAttendus,
+    signal,
+  }: ClassifySecteursInput
 ): Promise<Result<ClassifySecteursResult, LlmError>> => {
   const batches = groupByChunk(
     actions.map((action, index) => ({ index, action })),
@@ -63,49 +82,75 @@ export const classifySecteurs = async (
     source
   ).flatMap((group) => splitGroup(group, SECTEURS_BATCH_SIZE));
 
+  const knownEffets = new Set(effetsAttendus.map(({ id }) => id));
+  const subject = withSecteurs
+    ? 'Secteurs et effets attendus'
+    : 'Effets attendus';
   const outcomes = await mapWithConcurrency(
     batches,
     SECTEURS_CONCURRENCY,
-    (batch) => classifyBatch(llm, { batch, signal })
+    (batch) =>
+      classifyBatch(llm, {
+        batch,
+        withSecteurs,
+        effetsAttendus,
+        subject,
+        signal,
+      })
   );
 
-  const secteursByIndex = new Map(
+  const entriesByIndex = new Map(
     outcomes
       .flatMap((outcome) => outcome.entries)
       .map((entry) => [entry.index, entry])
   );
+  let unknownEffets = 0;
   const classified = actions.map((action, index) => {
-    const entry = secteursByIndex.get(index);
-    return entry
-      ? {
-          ...action,
-          secteurs: {
-            secteurs: uniq(entry.secteurs),
-            justification: entry.justification.trim(),
-          },
-        }
-      : action;
+    const entry = entriesByIndex.get(index);
+    if (!entry) {
+      return action;
+    }
+    const proposed = uniq(entry.effetsAttendus);
+    const known = proposed.filter((id) => knownEffets.has(id));
+    unknownEffets += proposed.length - known.length;
+    return {
+      ...action,
+      ...(entry.secteurs && { secteurs: entry.secteurs }),
+      effetsAttendus: known,
+    };
   });
 
   const warnings = outcomes.flatMap((outcome) =>
     outcome.warning ? [outcome.warning] : []
   );
-  if (batches.length > 0 && warnings.length === batches.length) {
+  if (
+    withSecteurs &&
+    batches.length > 0 &&
+    warnings.length === batches.length
+  ) {
     warnings.push(
       `Aucun secteur proposé : les ${batches.length} lot(s) ont échoué, la complétion par Communs prendra le relais`
     );
   }
 
+  const entries = [...entriesByIndex.values()];
   return success({
     actions: classified,
     tokens: sumTokenUsage(outcomes.map((outcome) => outcome.tokens)),
     warnings,
     details: {
       batches: batches.length,
-      classified: secteursByIndex.size,
-      withoutSecteur: [...secteursByIndex.values()].filter(
-        (entry) => entry.secteurs.length === 0
+      classified: entriesByIndex.size,
+      ...(withSecteurs && {
+        withoutSecteur: entries.filter(
+          (entry) => entry.secteurs?.secteurs.length === 0
+        ).length,
+      }),
+      withoutEffetAttendu: classified.filter(
+        (action, index) =>
+          entriesByIndex.has(index) && action.effetsAttendus?.length === 0
       ).length,
+      unknownEffetsAttendus: unknownEffets,
     },
   });
 };
@@ -121,32 +166,71 @@ const splitGroup = (
 
 const classifyBatch = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { batch, signal }: { batch: ChunkGroup<IndexedAction>; signal?: AbortSignal }
-): Promise<BatchOutcome> => {
-  const completion = await llm.generateStructured({
-    prompt: generatePrompt(SECTEURS_PROMPT, {
-      actions: renderActionsText(batch.items.map(({ action }) => action)),
-      texteSource: batch.text,
-    }),
-    tier: 'light',
-    schema: secteursResponseSchema,
-    thinkingLevel: 'low',
+  {
+    batch,
+    withSecteurs,
+    effetsAttendus,
+    subject,
     signal,
-  });
+  }: {
+    batch: ChunkGroup<IndexedAction>;
+    withSecteurs: boolean;
+    effetsAttendus: EffetAttendu[];
+    subject: string;
+    signal?: AbortSignal;
+  }
+): Promise<BatchOutcome> => {
+  const request = {
+    prompt: buildSecteursPrompt({
+      renderedActions: renderActionsText(
+        batch.items.map(({ action }) => action)
+      ),
+      text: batch.text,
+      withSecteurs,
+      effetsAttendus,
+    }),
+    tier: 'light' as const,
+    thinkingLevel: 'low' as const,
+    signal,
+  };
+  const completion = withSecteurs
+    ? await llm.generateStructured({
+        ...request,
+        schema: secteursResponseSchema,
+      })
+    : await llm.generateStructured({
+        ...request,
+        schema: effetsAttendusResponseSchema,
+      });
   if (!completion.success) {
     return {
       entries: [],
       tokens: emptyTokenUsage(),
-      warning: `Secteurs non proposés pour ${
+      warning: `${subject} non proposés pour ${
         batch.items.length
       } action(s) : ${describeLlmError(completion.error)}`,
     };
   }
 
   // Le prompt numérote les actions du lot à partir de 0.
-  const entries = completion.data.data.flatMap((entry) => {
+  const entries = completion.data.data.flatMap((entry): ClassifiedEntry[] => {
     const item = batch.items[entry.index];
-    return item ? [{ ...entry, index: item.index }] : [];
+    if (!item) {
+      return [];
+    }
+    return [
+      {
+        index: item.index,
+        effetsAttendus: entry.effetsAttendus,
+        ...(withSecteurs &&
+          'secteurs' in entry && {
+            secteurs: {
+              secteurs: uniq(entry.secteurs),
+              justification: entry.justification.trim(),
+            },
+          }),
+      },
+    ];
   });
   return { entries, tokens: completion.data.tokens, warning: null };
 };

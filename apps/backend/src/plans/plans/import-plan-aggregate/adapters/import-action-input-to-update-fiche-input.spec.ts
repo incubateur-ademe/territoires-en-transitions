@@ -60,5 +60,24 @@ describe('importActionInputToUpdateFicheInput', () => {
     ]);
     expect(result.pilotes).toEqual([{ userId: 'user-123' }]);
     expect(result.referents).toEqual([{ tagId: 456 }]);
+    expect(result.effetsAttendus).toBeUndefined();
+  });
+
+  it("reporte les effets attendus proposés par l'import IA", () => {
+    const result = importActionInputToUpdateFicheInput(
+      { titre: 'Action', effetsAttendus: [3, 21] } as ImportActionInput,
+      createResolvedEntities()
+    );
+
+    expect(result.effetsAttendus).toEqual([{ id: 3 }, { id: 21 }]);
+  });
+
+  it("ne touche pas aux effets attendus d'une action sans proposition", () => {
+    const result = importActionInputToUpdateFicheInput(
+      { titre: 'Action', effetsAttendus: [] as number[] } as ImportActionInput,
+      createResolvedEntities()
+    );
+
+    expect(result.effetsAttendus).toBeUndefined();
   });
 });
