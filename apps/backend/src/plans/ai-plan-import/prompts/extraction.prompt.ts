@@ -1,11 +1,15 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 import {
   buildStatutRule,
+  CARTOUCHE_RULE,
   DESCRIPTION_RULE,
+  FIELD_ALLOCATION_EXAMPLE,
+  FIELD_ALLOCATION_RULE,
   NON_ACTION_PASSAGES_RULE,
   OBJECTIFS_RULE,
   PARTNER_COMMITMENTS_RULE,
   PILOTES_RULE,
+  SOUS_ACTIONS_RULE,
 } from './field-rules';
 
 const instructions = '{instructions}';
@@ -55,7 +59,7 @@ Types et formats attendus
 • "sous-axe" est une chaîne
 • "titre" est une chaîne courte (300 caractères maximum). Si le titre issu du texte source dépasse 300 caractères, conserver uniquement les 300 premiers caractères significatifs dans "titre" et reporter le reste dans "description"
 • ${DESCRIPTION_RULE}
-• "sous-actions" est une liste de chaînes. Chaque sous-action est un libellé d’étape court (300 caractères maximum) : si un passage du texte source est long, le résumer en un libellé concis plutôt que de le recopier intégralement, et ne jamais produire une sous-action de plus de 300 caractères. Si aucune sous action ne s’impose, mettre une liste vide []
+• ${SOUS_ACTIONS_RULE}
 • ${OBJECTIFS_RULE}
 • ${PILOTES_RULE}
 • "personne pilote" est une chaîne
@@ -71,7 +75,7 @@ Définitions opérationnelles
 • Plan. Ensemble structuré d’orientations et de mesures d’une collectivité
 • Axe. Grande orientation stratégique du plan. Exemple "Vers une mobilité vertueuse et réfléchie"
 • Sous axe. Niveau facultatif qui regroupe plusieurs actions d’un même axe (orientation, objectif stratégique, enjeu). Exemple "Mettre en œuvre les conditions favorables à des déplacements plus sobres"
-• Action. Mesure opérationnelle unique qui peut être mise en œuvre et suivie. Elle a un titre court et, uniquement si nécessaire, une description qui reprend fidèlement le texte complémentaire au titre
+• Action. Mesure opérationnelle unique qui peut être mise en œuvre et suivie. Elle a un titre court et, uniquement si nécessaire, une description qui reprend fidèlement le texte de présentation qu’aucun autre champ n’accueille
 • Sous action. Etape ou brique concrète qui détaille la mise en œuvre d’une action. Les sous actions sont listées dans "sous-actions"
 
 Hiérarchie et numérotation
@@ -95,7 +99,7 @@ Tâches obligatoires et ordre d’exécution
    • Un titre qui n’annonce qu’une seule action, ou qui reprend le titre d’une fiche, n’est pas un sous axe
    • Si le plan va directement des axes aux actions, laisser "sous-axe" à "" : c’est fréquent et c’est la bonne réponse
 3 Extraction des actions
-   • Lister chaque action avec un titre court et tout son contenu : ne pas résumer, ne pas regrouper plusieurs actions en une
+   • Lister chaque action avec un titre court et tout son contenu, chaque information dans son champ : ne pas résumer, ne pas regrouper plusieurs actions en une
    • Lorsque le texte présente des puces, des sous parties ou des verbes d’exécution multiples rattachés à une même action, créer des sous actions dans "sous-actions" comme une liste de chaînes
 4 Rattachement hiérarchique
    • Associer chaque action à son axe et, s’il existe, à son sous axe
@@ -123,8 +127,8 @@ Règles générales
 4 Majuscules. Mettre une majuscule au premier mot de chaque champ texte. Conserver les majuscules des noms propres et des sigles. Supprimer les espaces superflus au début et à la fin. Un axe, un sous axe ou un titre écrit tout en capitales dans le texte source est remis en casse de phrase, accents rétablis : "DEVELOPPER LE POTENTIEL ENERGETIQUE" donne "Développer le potentiel énergétique"
 5 Respect strict des libellés existants pour axes et sous axes. Ne jamais créer d’axe ni de sous axe absent du document
 6 Ordre de tri. Le tableau doit être trié selon la hiérarchie axe puis sous axe puis ordre des actions
-7 "titre" et "description" ne doivent jamais contenir les mêmes informations. La description apporte un complément au titre. Si le titre suffit à décrire l’action et qu’il n’y a rien de pertinent à ajouter, laisser "description" à ""
-8 Ne recopie pas les objectifs dans les descriptions. S'il n'y a pas de description et seulement des objectifs, les mettre dans le champ "objectifs"
+7 ${FIELD_ALLOCATION_RULE}
+8 ${CARTOUCHE_RULE}
 9 ${NON_ACTION_PASSAGES_RULE}
 10 ${PARTNER_COMMITMENTS_RULE}
 
@@ -173,6 +177,9 @@ Extraction attendue pour une action située dans le sous axe "4.2 Mettre en œuv
  "date de fin": "31/12/2026",
  "statut": "En cours"
 }
+
+Exemple de répartition des champs
+${FIELD_ALLOCATION_EXAMPLE}
 
 Précisions sur le nettoyage minimal
 • Retirer les mentions "Unnamed"

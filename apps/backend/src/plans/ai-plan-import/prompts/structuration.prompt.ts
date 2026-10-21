@@ -1,11 +1,15 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
 import {
   buildStatutRule,
+  CARTOUCHE_RULE,
   DESCRIPTION_RULE,
+  FIELD_ALLOCATION_EXAMPLE,
+  FIELD_ALLOCATION_RULE,
   NON_ACTION_PASSAGES_RULE,
   OBJECTIFS_RULE,
   PARTNER_COMMITMENTS_RULE,
   PILOTES_RULE,
+  SOUS_ACTIONS_RULE,
 } from './field-rules';
 
 const dateDuJour = '{date_du_jour}';
@@ -25,7 +29,7 @@ export const STRUCTURATION_SYSTEM_PROMPT = definePrompt({
 Vous ne voyez qu'un extrait d'un document plus long, découpé pour l'analyse. Votre tâche : extraire toutes les actions présentes dans cet extrait, et seulement celles-là.
 
 Règles d'extraction
-- Une entrée par action présente dans l'extrait, avec tout son contenu : ne résumez pas, ne regroupez pas plusieurs actions en une.
+- Une entrée par action présente dans l'extrait, avec tout son contenu, chaque information dans son champ : ne résumez pas, ne regroupez pas plusieurs actions en une.
 - Si l'extrait ne contient aucune action (diagnostic, sommaire, méthodologie, page de garde), répondez avec un tableau vide [].
 - ${NON_ACTION_PASSAGES_RULE}
 - ${PARTNER_COMMITMENTS_RULE}
@@ -33,6 +37,7 @@ Règles d'extraction
 - Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre", avec les règles de format ci-dessous.
 - Le rappel de l'objectif ou de l'axe en tête d'une fiche (« 1- AMELIORER LA PERFORMANCE DES BATIMENTS » au-dessus de « ACTION 2 - … ») donne le sous-axe ou l'axe de la fiche : ce n'est jamais une action.
 - Le texte peut venir d'un PDF converti, avec des artefacts de mise en page : retirez seulement les artefacts manifestes, conservez l'orthographe et les majuscules des noms propres et sigles.${regleTableur}
+- ${CARTOUCHE_RULE}
 
 Sortie : un tableau JSON dont chaque objet a exactement ces champs
 "axe", "sous-axe", "titre", "description", "sous-actions", "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorite", "date de debut", "date de fin", "statut"
@@ -42,8 +47,9 @@ Formats
 - Le numéro d'une action vient du document : « 2.1.3 » s'il est écrit, ou « Action 3 » de l'objectif 2.1 donne « 2.1.3 ». Sans numéro d'action dans le document, écrivez le titre seul, même si son sous-axe est numéroté : n'inventez jamais de numéro. Ne recopiez jamais « Action 3 - », « Fiche n° » ou « Mesure » devant le titre. Si l'axe ne peut pas être identifié, laissez "axe" et "sous-axe" à "" plutôt que d'inventer. Le "sous-axe" n'existe que si le document place un niveau intermédiaire entre l'axe et ses actions : quand il passe directement de l'axe aux actions, laissez "sous-axe" à "", et ne faites jamais un sous-axe du titre de l'action.
 - "titre" : 300 caractères au plus ; l'excédent va dans "description".
 - Un titre, un axe ou un sous-axe écrit tout en capitales dans le document est remis en casse de phrase, accents rétablis, sigles et noms propres conservés : "DEVELOPPER LE POTENTIEL ENERGETIQUE" donne "Développer le potentiel énergétique", "ANCRER L'ADMINISTRATION DANS L'ECO-RESPONSABILITE" donne "Ancrer l'administration dans l'éco-responsabilité".
+- ${FIELD_ALLOCATION_RULE}
 - ${DESCRIPTION_RULE}
-- "sous-actions" : liste de libellés courts (300 caractères au plus) quand le texte présente des puces, étapes ou sous-parties rattachées à l'action ; sinon [].
+- ${SOUS_ACTIONS_RULE}
 - ${OBJECTIFS_RULE}
 - ${PILOTES_RULE}
 - "personne pilote" : uniquement des noms de personnes.
@@ -54,7 +60,10 @@ Formats
 - "priorite" : "Élevé", "Moyen" ou "Bas", sinon "". "Priorité 1", "P1", "***", "Majeur", "Forte" donnent "Élevé" ; "Priorité 2", "**", "Moyenne" donnent "Moyen" ; "Priorité 3", "*", "Faible" donnent "Bas".
 - "date de debut" et "date de fin" : "JJ/MM/AAAA" ou "", d'après le calendrier de l'action. Une année seule de début donne le 01/01, une année seule de fin le 31/12 : "2024-2030" donne "01/01/2024" et "31/12/2030". Ne jamais inventer de date.
 - ${buildStatutRule(dateDuJour)}
-- Majuscule au premier mot de chaque champ, sans espaces superflus.`,
+- Majuscule au premier mot de chaque champ, sans espaces superflus.
+
+Exemple de répartition des champs
+${FIELD_ALLOCATION_EXAMPLE}`,
   placeholders: { dateDuJour, regleTableur },
 });
 

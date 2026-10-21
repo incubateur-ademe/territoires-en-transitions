@@ -1,13 +1,19 @@
 import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { describe, expect, it } from 'vitest';
 import {
+  CARTOUCHE_RULE,
+  DESCRIPTION_RULE,
+  FIELD_ALLOCATION_EXAMPLE,
+  FIELD_ALLOCATION_RULE,
   NON_ACTION_PASSAGES_RULE,
   SPREADSHEET_RULE,
   OBJECTIFS_RULE,
   PARTNER_COMMITMENTS_RULE,
   PILOTES_RULE,
+  SOUS_ACTIONS_RULE,
 } from '../../prompts/field-rules';
 import { STRUCTURATION_SYSTEM_PROMPT } from '../../prompts/structuration.prompt';
+import { buildConsolidationPrompt } from '../consolidate-actions/consolidate-actions.prompt';
 import { buildExtractionPrompt } from './extract-actions.prompt';
 
 describe('buildExtractionPrompt', () => {
@@ -69,8 +75,13 @@ describe('buildExtractionPrompt', () => {
     for (const rule of [
       NON_ACTION_PASSAGES_RULE,
       PARTNER_COMMITMENTS_RULE,
+      FIELD_ALLOCATION_RULE,
+      DESCRIPTION_RULE,
+      SOUS_ACTIONS_RULE,
       OBJECTIFS_RULE,
       PILOTES_RULE,
+      CARTOUCHE_RULE,
+      FIELD_ALLOCATION_EXAMPLE,
     ]) {
       expect(extraction).toContain(rule);
       expect(structuration).toContain(rule);
@@ -79,6 +90,33 @@ describe('buildExtractionPrompt', () => {
     expect(structuration).not.toContain(`"titre" : "n.X.Y`);
     expect(structuration).toContain('même si son sous-axe est numéroté');
     expect(extraction).not.toContain('{date_du_jour}');
+  });
+
+  it('donne à la consolidation les mêmes règles de description et de sous-actions', () => {
+    const consolidation = buildConsolidationPrompt({
+      renderedActionsToImprove: '|0| Action',
+      text: 'texte',
+      disabledFields: [],
+    });
+
+    for (const rule of [
+      DESCRIPTION_RULE,
+      SOUS_ACTIONS_RULE,
+      CARTOUCHE_RULE,
+      FIELD_ALLOCATION_EXAMPLE,
+    ]) {
+      expect(consolidation).toContain(rule);
+    }
+    expect(consolidation).not.toContain('NOTAMMENT DES DESCRIPTIONS');
+  });
+
+  it("interdit à la description ce qu'un autre champ accueille, et aux sous-actions les objectifs", () => {
+    expect(DESCRIPTION_RULE).toContain('Jamais : les objectifs');
+    expect(DESCRIPTION_RULE).toContain('« Référent interne »');
+    expect(SOUS_ACTIONS_RULE).toContain(
+      "Un objectif n'est jamais une sous-action"
+    );
+    expect(FIELD_ALLOCATION_RULE).toContain('un seul champ');
   });
 
   it('ajoute la règle des tableurs pour un tableur seulement', () => {

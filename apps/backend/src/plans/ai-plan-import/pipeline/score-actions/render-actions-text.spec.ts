@@ -33,7 +33,10 @@ describe('renderActionsText', () => {
         titre: '4.2.1 Réduire l autosolisme',
         description: 'Développer le covoiturage',
         personnePilote: 'Jean Dupont',
+        partenaires: 'Région, ADEME',
         budget: 24000,
+        financements: 'Fonds vert',
+        moyensHumains: '0,5 ETP',
         statut: 'En cours',
         sousActions: [
           aSousAction('Déployer des lignes'),
@@ -48,7 +51,10 @@ describe('renderActionsText', () => {
     expect(text).toContain('Développer le covoiturage');
     expect(text).toContain('Déployer des lignes; Autopartage');
     expect(text).toContain('Personne pilote Jean Dupont');
+    expect(text).toContain('Partenaires Région, ADEME');
     expect(text).toContain('Budget 24000');
+    expect(text).toContain('Financements Fonds vert');
+    expect(text).toContain('Moyens humains 0,5 ETP');
     expect(text).toContain('Statut En cours');
   });
 

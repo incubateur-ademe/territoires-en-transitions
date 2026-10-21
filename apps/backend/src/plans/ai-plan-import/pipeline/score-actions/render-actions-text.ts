@@ -35,7 +35,10 @@ const renderActionLine = ({ index, action }: IndexedAction): string => {
     labelled('Structure pilote', action.structurePilote),
     labelled('Direction ou service pilote', action.directionServicePilote),
     labelled('Personne pilote', action.personnePilote),
+    labelled('Partenaires', action.partenaires),
     labelled('Budget', action.budget === null ? null : String(action.budget)),
+    labelled('Financements', action.financements),
+    labelled('Moyens humains', action.moyensHumains),
     labelled('Statut', action.statut),
   ].filter((champ): champ is string => champ !== null && champ.length > 0);
   return `${champs.join('; ')}.`;

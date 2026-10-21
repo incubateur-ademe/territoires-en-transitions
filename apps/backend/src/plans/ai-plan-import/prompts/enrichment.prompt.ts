@@ -33,6 +33,7 @@ Règles strictes
 6 Si une sous-action est trop générique ou introuvable dans le texte source, laisser tous les champs à "".
 7 Une personne pilote doit forcément être une personne physique et NE PEUT PAS être une direction ou service
 8 La description de la sous-action ne doit pas répéter le titre de la sous-action. Elle doit apporter des informations complémentaires. Si le titre est suffisant, laisser "description" à "".
+9 La description d'une sous-action ne contient que le détail propre à cette sous-action : ni le texte de présentation de l'action parente, ni ses objectifs, ni ses autres sous-actions, ni un libellé de cartouche ou de tableau.
 
 Liste des sous-actions à enrichir
 Chaque ligne est préfixée de l'index de la sous-action.
