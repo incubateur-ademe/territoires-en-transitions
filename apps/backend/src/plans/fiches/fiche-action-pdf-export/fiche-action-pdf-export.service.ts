@@ -45,6 +45,7 @@ type GeneratePdfOutput = {
 type GeneratePdfError =
   | 'NO_FICHES'
   | 'RENDER_ERROR'
+  | 'RENDER_BUSY'
   | 'INTERNAL_ERROR'
   | 'TOO_MANY_FICHES';
 
@@ -117,7 +118,9 @@ export class FicheActionPdfExportService {
 
     if (!renderResult.success) {
       this.logger.error(`Rendu PDF échoué : ${renderResult.error}`);
-      return failure('RENDER_ERROR');
+      return failure(
+        renderResult.error === 'RENDER_BUSY' ? 'RENDER_BUSY' : 'RENDER_ERROR'
+      );
     }
 
     const fileName =
