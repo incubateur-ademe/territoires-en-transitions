@@ -1602,6 +1602,101 @@ describe('ListFichesRouter', () => {
       );
     });
 
+    test.each([
+      { noThematique: true, selectThematique: false, expectedIndexes: [0] },
+      { noThematique: true, selectThematique: true, expectedIndexes: [0, 1] },
+      { noThematique: false, selectThematique: true, expectedIndexes: [1] },
+      { noThematique: undefined, selectThematique: true, expectedIndexes: [1] },
+      {
+        noThematique: false,
+        selectThematique: false,
+        expectedIndexes: [0, 1, 2],
+      },
+      {
+        noThematique: undefined,
+        selectThematique: false,
+        expectedIndexes: [0, 1, 2],
+      },
+    ])(
+      'Filtre thématique : sans=$noThematique, sélection=$selectThematique',
+      async ({ noThematique, selectThematique, expectedIndexes }) => {
+        const caller = router.createCaller({ user: testUser });
+        const [selectedThematique, otherThematique] = await db.db
+          .insert(thematiqueTable)
+          .values([
+            { nom: 'Thématique sélectionnée' },
+            { nom: 'Autre thématique' },
+          ])
+          .returning();
+        const { ficheIds, cleanup } = await createFiches({
+          caller,
+          ficheInputs: [
+            {
+              titre: 'Sans thématique',
+              statut: 'En cours',
+              collectiviteId: testCollectiviteId,
+            },
+            {
+              titre: 'Thématique sélectionnée',
+              statut: 'En cours',
+              collectiviteId: testCollectiviteId,
+            },
+            {
+              titre: 'Autre thématique',
+              statut: 'En cours',
+              collectiviteId: testCollectiviteId,
+            },
+            {
+              titre: 'Sans thématique terminée',
+              statut: 'Réalisé',
+              collectiviteId: testCollectiviteId,
+            },
+          ],
+        });
+        onTestFinished(async () => {
+          await cleanup();
+          await db.db
+            .delete(thematiqueTable)
+            .where(
+              inArray(thematiqueTable.id, [
+                selectedThematique.id,
+                otherThematique.id,
+              ])
+            );
+        });
+        await db.db.insert(ficheActionThematiqueTable).values([
+          { ficheId: ficheIds[1], thematiqueId: selectedThematique.id },
+          { ficheId: ficheIds[2], thematiqueId: otherThematique.id },
+        ]);
+
+        const filters = {
+          ficheIds,
+          noThematique,
+          thematiqueIds: selectThematique ? [selectedThematique.id] : [],
+          statuts: [StatutEnum.EN_COURS],
+        };
+        const result = await caller.plans.fiches.listFiches({
+          collectiviteId: testCollectiviteId,
+          filters,
+        });
+        const expectedIds = expectedIndexes.map((index) => ficheIds[index]);
+        expect(result.data?.map(({ id }) => id).sort()).toEqual(
+          expectedIds.sort()
+        );
+        expect(result.count).toBe(expectedIds.length);
+
+        const countBy = await caller.plans.fiches.countBy({
+          collectiviteId: testCollectiviteId,
+          countByProperty: 'statut',
+          filter: filters,
+        });
+        expect(countBy.total).toBe(expectedIds.length);
+        expect(countBy.countByResult[StatutEnum.EN_COURS].count).toBe(
+          expectedIds.length
+        );
+      }
+    );
+
     test('Fetch avec filtre sur sousThematiqueIds', async () => {
       const caller = router.createCaller({ user: testUser });
 

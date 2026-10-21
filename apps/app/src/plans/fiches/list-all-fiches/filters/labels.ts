@@ -42,6 +42,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   hasAtLeastBeginningOrEndDate: appLabels.filtreHasAtLeastBeginningOrEndDate,
   hasDateDeFinPrevisionnelle: appLabels.filtreHasDateDeFinPrevisionnelle,
   noTag: appLabels.filtreNoTag,
+  noThematique: appLabels.filtreNoThematique,
   notes: appLabels.filtreNotes,
   anneesNotes: appLabels.filtreAnneesNotes,
   indicateurIds: appLabels.filtreIndicateurIds,

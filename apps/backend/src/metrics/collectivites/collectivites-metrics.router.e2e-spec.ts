@@ -83,6 +83,7 @@ describe('CollectivitesMetricsRouter', () => {
         countByProperty: 'priorite',
         filtre: {
           statuts: ['En retard', 'En cours'],
+          noThematique: true,
         },
       },
     };

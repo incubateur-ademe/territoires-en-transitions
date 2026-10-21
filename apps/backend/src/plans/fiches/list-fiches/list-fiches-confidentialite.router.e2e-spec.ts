@@ -157,6 +157,17 @@ describe('listFiches et la confidentialité', () => {
     ).toEqual(new Set());
   });
 
+  it('écarte la fiche restreinte du visiteur vérifié qui filtre les fiches sans thématique', async () => {
+    const { count, data } = await listFichesFor(visiteurVerifie, {
+      noThematique: true,
+    });
+
+    expect(count).toBe(2);
+    expect(new Set(data.map((fiche) => fiche.id))).toEqual(
+      new Set([ficheOuverteId, ficheRestreintNullId])
+    );
+  });
+
   it('ne rend rien au visiteur vérifié qui filtre les fiches restreintes avec une description', async () => {
     expect(
       await listedFicheIdsFor(visiteurVerifie, {

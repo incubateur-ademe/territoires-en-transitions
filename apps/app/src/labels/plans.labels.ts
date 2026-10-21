@@ -204,6 +204,7 @@ export const plansLabels = {
   filtreHasAtLeastBeginningOrEndDate: 'Date de début ou de fin',
   filtreHasDateDeFinPrevisionnelle: 'Date de fin prévisionnelle',
   filtreNoTag: 'Sans tags personnalisés',
+  filtreNoThematique: 'Sans thématique',
   filtreNotes: 'Notes',
   filtreAnneesNotes: 'Années de notes',
   filtreIndicateurIds: 'Indicateurs',

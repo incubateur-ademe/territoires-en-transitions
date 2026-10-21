@@ -612,6 +612,21 @@ export const ToutesLesFichesFiltersForm = ({
                 />
               )}
             />
+            <Controller
+              name="noThematique"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  data-test="plans.fiches.filters.no-thematique"
+                  label={getFilterLabel('noThematique')}
+                  checked={field.value || false}
+                  disabled={!isNil(readonlyFilters.noThematique)}
+                  onChange={(event) => {
+                    field.onChange(event.target.checked);
+                  }}
+                />
+              )}
+            />
           </div>
 
           <div className="flex flex-col gap-4">
