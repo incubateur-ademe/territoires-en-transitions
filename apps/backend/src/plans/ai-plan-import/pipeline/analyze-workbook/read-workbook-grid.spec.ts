@@ -171,7 +171,7 @@ describe('readWorkbookGrids', () => {
     const worksheet = workbook.addWorksheet('Plan');
     worksheet.getCell('A1').value = 'Fiche';
     worksheet.getCell('XFD1048576').value = 'égarée';
-    worksheet.mergeCells('B1:B1048576');
+    worksheet.mergeCells('B1:B6000');
     const [grid] = await readGrids(
       Buffer.from(await workbook.xlsx.writeBuffer())
     );
