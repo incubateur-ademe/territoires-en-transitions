@@ -31,15 +31,9 @@ import {
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import {
-  and,
-  count,
-  eq,
-  getTableColumns,
-  inArray,
-  sql,
-} from 'drizzle-orm';
+import { and, count, eq, inArray, sql } from 'drizzle-orm';
 import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
+import { actionDefinitionColumns } from '../models/action-definition-columns.column';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDepth } from '../models/action-depth.column';
 import { actionPiloteTable } from '../models/action-pilote.table';
@@ -290,7 +284,7 @@ export class ListActionsService {
   private listWithDepth() {
     return this.db
       .select({
-        ...getTableColumns(actionDefinitionTable),
+        ...actionDefinitionColumns,
 
         depth: actionDepth.as('depth'),
       })

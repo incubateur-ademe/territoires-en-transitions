@@ -14,8 +14,9 @@ import {
   ReferentielLabelEnum,
   ReferentielTagTypeEnum,
 } from '@tet/domain/referentiels';
-import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
+import { actionDefinitionColumns } from '../models/action-definition-columns.column';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDepth } from '../models/action-depth.column';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
@@ -54,7 +55,7 @@ export class ListActionDefinitionsService {
 
         const definitions: ActionStaticDefinition[] = await tx
           .select({
-            ...getTableColumns(actionDefinitionTable),
+            ...actionDefinitionColumns,
             modifiedAt: sqlToDateTimeISO(actionDefinitionTable.modifiedAt),
             depth: actionDepth.as('depth'),
 

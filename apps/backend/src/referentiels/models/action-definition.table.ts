@@ -3,9 +3,11 @@ import {
   ActionAdaptationNiveau,
   ActionCategorieEnum,
   ActionThematiqueSgpe,
+  TemplatedActionField,
 } from '@tet/domain/referentiels';
 import {
   doublePrecision,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -45,6 +47,17 @@ export const actionDefinitionTable = pgTable('action_definition', {
   exprScore: text('expr_score'),
   adaptationNiveau: text('adaptation_niveau').$type<ActionAdaptationNiveau>(),
   thematiqueSgpe: text('thematique_sgpe').$type<ActionThematiqueSgpe>(),
+  /**
+   * Textes sources des seuls champs balisés (`{{si …}}`). Les colonnes de
+   * texte contiennent le rendu par défaut. Ne doit jamais partir vers le
+   * front : sélectionner `actionDefinitionColumns` plutôt que
+   * `getTableColumns(actionDefinitionTable)`.
+   */
+  templates: jsonb('templates').$type<ActionDefinitionTemplates>(),
 });
+
+export type ActionDefinitionTemplates = Partial<
+  Record<TemplatedActionField, string>
+>;
 
 export type ActionDefinitionCreate = typeof actionDefinitionTable.$inferInsert;

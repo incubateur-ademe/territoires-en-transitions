@@ -20,6 +20,7 @@ import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { actionOrigineTexteTable } from '../correlated-actions/action-origine-texte.table';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
 import { GetActionOrigineTexteDtoSchema } from '../correlated-actions/get-action-origine-texte.dto';
+import { actionDefinitionColumns } from '../models/action-definition-columns.column';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDefinitionTable } from '../models/action-definition.table';
 import { actionRelationTable } from '../models/action-relation.table';
@@ -151,7 +152,7 @@ export class GetReferentielRepository {
             pourcentage: actionDefinitionTable.pourcentage,
             exprScore: actionDefinitionTable.exprScore,
           }
-        : getTableColumns(actionDefinitionTable);
+        : actionDefinitionColumns;
 
     const query = this.databaseService.db
       .select({
