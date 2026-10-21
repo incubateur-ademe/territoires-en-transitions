@@ -309,7 +309,7 @@ const RevueFiche = ({
             size="xs"
             variant="grey"
             icon="arrow-left-s-line"
-            title={appLabels.planSecteursPrecedente}
+            title={appLabels.ficheNavigationPrecedente}
             disabled={index === 0}
             onClick={() => onNavigate(index - 1)}
           />
@@ -317,7 +317,7 @@ const RevueFiche = ({
             size="xs"
             variant="grey"
             icon="arrow-right-s-line"
-            title={appLabels.planSecteursSuivante}
+            title={appLabels.ficheNavigationSuivante}
             disabled={index + 1 >= total}
             onClick={() => onNavigate(index + 1)}
           />

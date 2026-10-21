@@ -195,6 +195,7 @@ const PlanViewContent = () => {
           </VisibleWhen>
           <VisibleWhen condition={isFiltered}>
             <FilteredResults
+              planId={plan.id}
               collectivite={collectivite}
               currentUserId={user.id}
             />
