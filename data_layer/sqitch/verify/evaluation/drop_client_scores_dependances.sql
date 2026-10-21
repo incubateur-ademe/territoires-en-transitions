@@ -18,9 +18,8 @@ BEGIN
           RAISE EXCEPTION 'La fonction labellisation.critere_action existe encore';
     END IF;
 
-    IF pg_get_functiondef('public.delete_collectivite_test(integer)'::regprocedure)
-        ~ '\m(client_scores|pre_audit_scores|post_audit_scores)\M' THEN
-          RAISE EXCEPTION 'delete_collectivite_test référence encore les anciennes tables de scores';
+    IF to_regprocedure('public.delete_collectivite_test(integer)') IS NOT NULL THEN
+          RAISE EXCEPTION 'La fonction delete_collectivite_test existe encore';
     END IF;
 
     IF EXISTS (SELECT FROM cron.job WHERE jobname = 'refresh_stats_completude') THEN

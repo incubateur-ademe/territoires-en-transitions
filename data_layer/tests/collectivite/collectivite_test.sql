@@ -1,6 +1,6 @@
 begin;
 
-select plan(2);
+select plan(1);
 
 -- Création collectivité test
 insert into collectivite (nom, type) values ('testsql', 'test');
@@ -177,11 +177,5 @@ alter table justification enable trigger modified_by;
 insert into cot(collectivite_id, actif, signataire)
 values ((select id from collectivite where nom = 'testsql' limit 1), true, null);
 
--- Suppression collectivité test
-select test.identify_as_service_role();
-select delete_collectivite_test((
-    select id from collectivite where nom = 'testsql' limit 1
-));
-select ok((select count(*) = 0 from collectivite_test where nom = 'testsql'));
 
 rollback;
