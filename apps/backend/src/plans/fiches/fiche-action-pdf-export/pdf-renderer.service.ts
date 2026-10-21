@@ -1,25 +1,38 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { renderToBuffer } from '@react-pdf/renderer';
+import { Injectable, Logger } from '@nestjs/common';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  composeFichesPdfDocument,
-  getNodeImageSources,
-  registerMarianneForNode,
   type FicheActionPdfExtendedProps,
   type PdfSectionKey,
 } from '@tet/pdf-components';
+import { createRequire } from 'node:module';
+import { Worker } from 'node:worker_threads';
 
 export type PdfExportRenderError = 'RENDER_ERROR' | 'RENDER_TIMEOUT';
 
-@Injectable()
-export class PdfRendererService implements OnModuleInit {
-  private readonly logger = new Logger(PdfRendererService.name);
-  private readonly imageSources = getNodeImageSources();
+// Code du worker thread, en CommonJS : chargé tel quel compilé comme sous
+// vitest. Les modules sont résolus depuis ce fichier et passés en chemins absolus.
+const resolveModule = createRequire(__filename).resolve;
+const THREAD_MODULES = {
+  reactPdf: resolveModule('@react-pdf/renderer'),
+  pdfComponents: resolveModule('@tet/pdf-components'),
+};
+const THREAD_CODE = `
+const { parentPort, workerData } = require('node:worker_threads');
+const { renderToBuffer } = require(workerData.modules.reactPdf);
+const pdf = require(workerData.modules.pdfComponents);
+pdf.registerMarianneForNode();
+renderToBuffer(
+  pdf.composeFichesPdfDocument({ ...workerData.input, imageSources: pdf.getNodeImageSources() })
+).then((buffer) => parentPort.postMessage(buffer, [buffer.buffer]));
+`;
 
-  onModuleInit(): void {
-    registerMarianneForNode();
-    this.logger.log('Marianne fonts registered for Node.js PDF rendering');
-  }
+// ponytail: un thread par rendu, sans limite de concurrence. Ajouter un pool
+// si les exports simultanés saturent la mémoire de l'instance.
+const THREAD_MAX_HEAP_MB = 1024;
+
+@Injectable()
+export class PdfRendererService {
+  private readonly logger = new Logger(PdfRendererService.name);
 
   async render({
     fiches,
@@ -32,27 +45,32 @@ export class PdfRendererService implements OnModuleInit {
     notesYears: number[] | 'all';
     timeoutMs: number;
   }): Promise<Result<Buffer, PdfExportRenderError>> {
-    const element = composeFichesPdfDocument({
-      fiches,
-      sections,
-      notesYears,
-      imageSources: this.imageSources,
+    // renderToBuffer peut boucler indéfiniment sur une mise en page : rendu dans
+    // un worker thread pour que l'event loop reste libre et que le délai puisse
+    // l'interrompre (un Promise.race ne s'exécute jamais si le thread est bloqué).
+    const worker = new Worker(THREAD_CODE, {
+      eval: true,
+      workerData: {
+        modules: THREAD_MODULES,
+        input: { fiches, sections, notesYears },
+      },
+      resourceLimits: { maxOldGenerationSizeMb: THREAD_MAX_HEAP_MB },
     });
 
     let timer: NodeJS.Timeout | undefined;
     try {
-      // renderToBuffer peut bloquer indéfiniment sur un layout complexe ;
-      // le timeout évite de garder un worker Node occupé sans limite.
-      const buffer = await Promise.race([
-        renderToBuffer(element),
-        new Promise<never>((_, reject) => {
-          timer = setTimeout(
-            () =>
-              reject(new Error(`PDF render timed out after ${timeoutMs}ms`)),
-            timeoutMs
-          );
-        }),
-      ]);
+      const pdf = await new Promise<Uint8Array>((resolve, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(`PDF render timed out after ${timeoutMs}ms`)),
+          timeoutMs
+        );
+        worker.once('message', resolve);
+        worker.once('error', reject);
+        worker.once('exit', (code) =>
+          reject(new Error(`PDF render thread exited with code ${code}`))
+        );
+      });
+      const buffer = Buffer.from(pdf.buffer, pdf.byteOffset, pdf.byteLength);
 
       this.logger.log(`PDF rendered successfully (${buffer.length} bytes)`);
       return success(buffer);
@@ -67,7 +85,8 @@ export class PdfRendererService implements OnModuleInit {
       this.logger.error(`PDF render error: ${message}`);
       return failure('RENDER_ERROR');
     } finally {
-      if (timer) clearTimeout(timer);
+      clearTimeout(timer);
+      void worker.terminate();
     }
   }
 }
