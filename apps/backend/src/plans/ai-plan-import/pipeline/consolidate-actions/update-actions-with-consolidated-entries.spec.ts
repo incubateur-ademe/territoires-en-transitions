@@ -31,6 +31,7 @@ describe('updateActionsWithConsolidatedEntries', () => {
           index: 0,
           titre: 'Nouveau titre',
           description: 'Nouvelle description',
+          objectifs: '',
           'sous-actions': ['Étape A', '  ', 'Étape B'],
         },
       ]
@@ -49,7 +50,15 @@ describe('updateActionsWithConsolidatedEntries', () => {
   it('met la description à null quand la consolidation la laisse vide', () => {
     const result = updateActionsWithConsolidatedEntries(
       [anAction()],
-      [{ index: 0, titre: 'T', description: '   ', 'sous-actions': [] }]
+      [
+        {
+          index: 0,
+          titre: 'T',
+          description: '   ',
+          objectifs: '',
+          'sous-actions': [],
+        },
+      ]
     );
 
     expect(result[0].description).toBeNull();
@@ -69,9 +78,54 @@ describe('updateActionsWithConsolidatedEntries', () => {
 
     const result = updateActionsWithConsolidatedEntries(
       [pinned],
-      [{ index: 0, titre: 'Réécrit', description: '', 'sous-actions': [] }]
+      [
+        {
+          index: 0,
+          titre: 'Réécrit',
+          description: '',
+          objectifs: '',
+          'sous-actions': [],
+        },
+      ]
     );
 
     expect(result[0]).toEqual(pinned);
+  });
+
+  it('ajoute les objectifs retrouvés par la consolidation à ceux déjà relevés, sans doublon', () => {
+    const result = updateActionsWithConsolidatedEntries(
+      [anAction({ objectifs: '- Réduire les pesticides' })],
+      [
+        {
+          index: 0,
+          titre: 'T',
+          description: '',
+          objectifs:
+            '- Réduire les pesticides\n- 2030 : -10 % de GES par rapport à 2015',
+          'sous-actions': [],
+        },
+      ]
+    );
+
+    expect(result[0].objectifs).toBe(
+      '- Réduire les pesticides\n- 2030 : -10 % de GES par rapport à 2015'
+    );
+  });
+
+  it('garde les objectifs déjà relevés quand la consolidation n’en rend pas', () => {
+    const result = updateActionsWithConsolidatedEntries(
+      [anAction({ objectifs: '- Réduire les pesticides' })],
+      [
+        {
+          index: 0,
+          titre: 'T',
+          description: '',
+          objectifs: '',
+          'sous-actions': [],
+        },
+      ]
+    );
+
+    expect(result[0].objectifs).toBe('- Réduire les pesticides');
   });
 });

@@ -292,4 +292,16 @@ describe('removeDuplicatedContent', () => {
     expect(result.actions[0]).toBe(action);
     expect(result).toMatchObject({ descriptionLines: 0, sousActions: 0 });
   });
+
+  it('ne prend pas la partie entière d’un nombre décimal pour un numéro de liste', () => {
+    const action = createEmptyExtractedAction({
+      titre: 'Financer la rénovation',
+      description: 'Budget : 2.5 M€',
+      financements: '1.5 M€',
+    });
+
+    const result = removeDuplicatedContent([action]);
+
+    expect(result.actions[0].description).toBe('Budget : 2.5 M€');
+  });
 });
