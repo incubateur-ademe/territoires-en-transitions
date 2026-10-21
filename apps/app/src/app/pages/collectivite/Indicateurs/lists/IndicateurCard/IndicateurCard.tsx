@@ -155,19 +155,17 @@ export const IndicateurCardBase = ({
           </Tooltip>
         )}
 
-        {/** Menus d'édition */}
-        {!readonly && (
-          <IndicateurCardOptions
-            definition={definitionSimple}
-            isEditable={isEditable}
-            isFavoriCollectivite={definition.estFavori || false}
-            otherMenuActions={otherMenuActions}
-            chartDownloadSettings={{
-              showTrigger: Boolean(showChart && hasValeur),
-              openModal: () => setIsDownloadChartOpen(true),
-            }}
-          />
-        )}
+        {/** Actions de la carte */}
+        <IndicateurCardOptions
+          definition={definitionSimple}
+          isEditable={isEditable && !readonly}
+          isFavoriCollectivite={definition.estFavori || false}
+          otherMenuActions={readonly ? undefined : otherMenuActions}
+          chartDownloadSettings={{
+            showTrigger: Boolean(!readonly && showChart && hasValeur),
+            openModal: () => setIsDownloadChartOpen(true),
+          }}
+        />
 
         {/* Carte indicateur */}
         <Card
