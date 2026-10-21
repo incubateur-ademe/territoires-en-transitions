@@ -93,7 +93,7 @@ class PersonnalisationsExpressionParser extends ExpressionParser {
 
 export const parser = new PersonnalisationsExpressionParser();
 
-class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
+export class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
   parser.getBaseCstVisitorConstructor()
 ) {
   reponses: PersonnalisationReponses | null = null;
