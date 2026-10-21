@@ -124,6 +124,9 @@ services:
       # service_role à chaque requête : ces rôles, la membership et les droits
       # sur le schéma storage sont posés par sql/002 et sql/003.
       DATABASE_URL: ${STORAGE_DB_DATABASE_URL}
+      # Seule à activer le TLS (l'URL n'a pas de sslmode : node-postgres le
+      # ferait passer avant la CA). Obligatoire : sans elle, connexion en clair.
+      DATABASE_SSL_ROOT_CERT: ${STORAGE_DB_SSL_ROOT_CERT:?CA de la RDB requise}
       # false : l'admin Scaleway n'est pas superuser, les migrations ne
       # peuvent pas créer les rôles (ni donner BYPASSRLS à service_role).
       # sql/003 fait ce travail, politiques RLS service_role comprises.

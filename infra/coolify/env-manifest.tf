@@ -44,7 +44,7 @@ locals {
   # ce stack ne crée pas leur coquille.
   coolify_env_derived_secrets = [
     "supabase-database-url", "gotrue-db-database-url", "storage-db-database-url",
-    "queue-redis-url", "queue-redis-tls-ca",
+    "queue-redis-url", "queue-redis-tls-ca", "postgres-tls-ca",
   ]
 
   # Fournies par l'image ou par le déploiement : les poser dans Coolify
@@ -159,8 +159,9 @@ locals {
         SUPABASE_ANON_KEY         = { secret = "supabase-anon-key" }
         SUPABASE_SERVICE_ROLE_KEY = { secret = "supabase-service-role-key" }
 
-        GOTRUE_DB_DATABASE_URL  = { secret = "gotrue-db-database-url" }
-        STORAGE_DB_DATABASE_URL = { secret = "storage-db-database-url" }
+        GOTRUE_DB_DATABASE_URL   = { secret = "gotrue-db-database-url" }
+        STORAGE_DB_DATABASE_URL  = { secret = "storage-db-database-url" }
+        STORAGE_DB_SSL_ROOT_CERT = { secret = "postgres-tls-ca", multiline = true }
 
         # 2525 tant que Scaleway n'a pas débloqué 25/465/587 sur le projet.
         BREVO_SMTP_HOST         = { value = "smtp-relay.brevo.com" }
