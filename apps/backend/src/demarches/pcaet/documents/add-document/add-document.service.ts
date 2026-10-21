@@ -9,6 +9,7 @@ import {
   getEtapeExigeanteDemarcheDocument,
   isDemarcheDocumentDeEtape,
   isDemarcheDocumentFileAccepted,
+  resolveDemarcheDocumentFilesConfig,
   listDefaultInclusions,
   type DemarcheDocumentDepose,
 } from '@tet/domain/demarches';
@@ -110,14 +111,18 @@ export class AddDemarchePcaetDocumentService {
         return failure(AddDemarchePcaetDocumentErrorEnum.FICHIER_NOT_FOUND);
       }
 
-      // Les formats acceptés sont une propriété du type de démarche, pas une
-      // règle du code : le dossier PCAET n'accepte que des PDF parce que sa
-      // configuration le dit.
+      // Les formats acceptés sont de la donnée, pas une règle du code : ceux du
+      // type de démarche, sauf quand la pièce déclare les siens.
       const config = await this.demarcheDocumentsRepository.loadDocumentsConfig(
         DemarcheTypeEnum.PCAET,
         transaction
       );
-      if (!isDemarcheDocumentFileAccepted(fichier, config)) {
+      if (
+        !isDemarcheDocumentFileAccepted(
+          fichier,
+          resolveDemarcheDocumentFilesConfig(config, definition)
+        )
+      ) {
         return failure(
           AddDemarchePcaetDocumentErrorEnum.FICHIER_FORMAT_NON_SUPPORTE
         );

@@ -256,6 +256,22 @@ const getFileExtension = (filename: string): string | undefined => {
 };
 
 /**
+ * Les formats d'une pièce : les siens quand le modèle en déclare (le programme
+ * d'actions s'importe en plan, il accepte donc des tableurs), sinon ceux du type.
+ */
+export const resolveDemarcheDocumentFilesConfig = (
+  config: DemarcheDocumentsConfig,
+  {
+    formatsAutorises,
+    mimeTypesAutorises,
+  }: Pick<DemarcheDocumentDefinition, 'formatsAutorises' | 'mimeTypesAutorises'>
+): DemarcheDocumentsConfig => ({
+  ...config,
+  formatsAutorises: formatsAutorises ?? config.formatsAutorises,
+  mimeTypesAutorises: mimeTypesAutorises ?? config.mimeTypesAutorises,
+});
+
+/**
  * Un fichier de la bibliothèque est-il acceptable comme pièce du dossier ? Les
  * deux restrictions valent indépendamment : absente, elle n'impose rien de plus
  * que la bibliothèque ; présente, elle doit être satisfaite. Le mime type n'est

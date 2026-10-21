@@ -182,6 +182,9 @@ export class DemarcheDocumentsRepository {
           ordre: demarcheDocumentDefinitionTable.ordre,
           etape: demarcheDocumentDefinitionTable.etape,
           exprApplicable: demarcheDocumentDefinitionTable.exprApplicable,
+          formatsAutorises: demarcheDocumentDefinitionTable.formatsAutorises,
+          mimeTypesAutorises:
+            demarcheDocumentDefinitionTable.mimeTypesAutorises,
         })
         .from(demarcheDocumentDefinitionTable)
         .where(eq(demarcheDocumentDefinitionTable.demarcheType, demarcheType))
