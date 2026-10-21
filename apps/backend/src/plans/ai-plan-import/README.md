@@ -104,7 +104,10 @@ flowchart TD
 ```
 
 Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications,
-l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET.
+l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET. Pour un
+tableur que le code lit en entier, seuls les secteurs et l'avis appellent le
+modèle : l'extraction reprend les actions lues, les étapes 2 et 4 à 7
+sautent (voir [Tableurs](#tableurs-pipelineanalyze-workbook)).
 
 Les secteurs tournent en parallèle de l'enrichissement puis de la revue : ils
 ne lisent rien de ce que l'enrichissement écrit, et la revue ne lit pas les
@@ -159,14 +162,14 @@ flowchart LR
     F[Fichier] --> K{type}
     K -- PDF --> P[pdf.js : texte et taille<br/>de police, ligne par ligne]
     K -- Word --> M[mammoth : titres Word<br/>conservés comme titres]
-    K -- "Excel, CSV" --> T[une page par feuille,<br/>lignes de tableau intactes]
+    K -- "Excel, CSV" --> T[une grille par onglet :<br/>fusions, formules, état ;<br/>une rangée par ligne]
     P --> O{pages presque vides ?}
     O -- "oui, et OCR disponible" --> OCR[rendu en image<br/>→ modèle OCR]
     O -- non --> N
     OCR --> N[Normalisation :<br/>ligatures, césures,<br/>en-têtes et pieds répétés,<br/>numéros de page]
     M --> N
-    T --> N
     N --> D[ReadDocument :<br/>pages de lignes]
+    T --> D
 ```
 
 - Une page de moins de 200 caractères est candidate à l'OCR. Si au moins 80 %
@@ -187,6 +190,90 @@ flowchart LR
   relances, qui libèrent leur place auprès du modèle.
 - Gemini n'a pas d'OCR branché : un scan intégral y aboutit à « document sans
   texte ».
+- Un tableur échappe à la normalisation, faite pour les pages d'un PDF : la
+  première rangée commune à plusieurs onglets (un bandeau d'ambition) n'y est
+  pas un en-tête de page. Chaque onglet garde sa grille
+  (`pipeline/analyze-workbook/`) : cellules fusionnées, formules et leur
+  résultat, onglets masqués. Le texte d'un onglet tient une rangée par ligne ;
+  une valeur fusionnée n'y est écrite qu'à sa première rangée, et le texte
+  joint annonce chaque onglet par « [Onglet « nom »] ».
+
+### Tableurs (`pipeline/analyze-workbook/`)
+
+Un classeur porte sa hiérarchie dans ses colonnes et ses cellules fusionnées,
+que le texte aplati perd. La lecture analyse donc chaque onglet sans le
+modèle (`analyze-workbook.ts`), et ne confie au modèle que ce qu'elle n'a pas
+su lire. Le moteur attend des **rôles**, pas un format : des fiches
+(obligatoires), éventuellement une hiérarchie au-dessus et des sous-actions
+dessous, et des attributs (pilote, statut, calendrier ou dates, budget,
+financement, indicateurs, commentaires). Aucune lettre de colonne, aucun
+libellé ni aucune position n'est attendu : le rôle d'une colonne se déduit de
+son contenu (blocs fusionnés ou répétés, cardinalité, nombres, croix, dates,
+liste fermée), et son libellé ne fait que départager, par un synonymier
+(`match-column-label.ts`). Un libellé que le contenu contredit (« PILOTE »
+au-dessus des sous-actions) donne un avertissement.
+
+| Rôle d'onglet | Reconnu quand | Ce qu'il devient |
+|---|---|---|
+| `plan` | fiches aux titres rédigés et distincts, et une hiérarchie (deux niveaux, bandeaux ou sous-actions) ou un tableau plat au libellé de titre reconnu et aux attributs de fiche (pilote, statut, dates) | actions construites par le code, épinglées |
+| `complement` | ≥ 60 % de ses n° ou titres retrouvés dans un onglet `plan` | indicateurs et cibles ajoutés aux `objectifs` des fiches ; jamais d'action |
+| `synthese` | surtout des formules vers d'autres onglets, ou des nombres (hors montants d'une fiche) | ignoré, avec un avertissement ; confié au modèle si aucun onglet ne se lit |
+| `liste` | une colonne courte dont les valeurs reviennent ailleurs | ignoré ; confirme une colonne statut |
+| `masque` | onglet masqué | ignoré, avec un avertissement |
+| `modele` | rien de reconnu avec confiance | lu par le modèle, comme un document |
+
+| Forme | Exemple | Lecture de la hiérarchie |
+|---|---|---|
+| horizontale | colonnes de cellules fusionnées ou répétées (suivi de PCAET) | colonnes à blocs emboîtés, de la plus grossière à la plus fine, sous les bandeaux |
+| verticale | rangées de titre isolées (« Axe 1 – … », « 1.2 … ») | bandeaux, niveau donné par la numérotation |
+| numérotation | une colonne « N° » qui vaut 1, 1.2, 1.2.3 | profondeur du code : la fiche est la moins profonde à porter des attributs, au-dessus des axes, en dessous ses sous-actions |
+| un onglet par axe | « Axe 1 Mobilité », « Axe 2 Habitat »… | nom d'onglet ou titre au-dessus du tableau, puis l'une des formes ci-dessus |
+| fiche-formulaire | un onglet par fiche, paires libellé / valeur, dont un titre | champ « Axe », sinon nom d'onglet ; suivie d'un tableau d'étapes, l'onglet part au modèle |
+| tableau plat | une rangée par fiche, CSV, modèle d'import de la plateforme | colonnes à forte répétition, remplies vers le bas pour un CSV |
+
+La fiche est le niveau le plus fin qui porte un titre stable sur plusieurs
+rangées, ou un n° ; une colonne qui change à chaque rangée sous elle donne
+les sous-actions, sinon une rangée est une fiche. Une colonne écartée par
+son libellé (« Objectif ») ou parce qu'elle ressemble à une liste fermée
+(peu d'axes aux intitulés courts) redevient un niveau d'axe quand un niveau
+retenu s'emboîte dans ses blocs. Une rangée prise dans une fusion de données,
+ou qui écrit un statut, n'est jamais un en-tête : une feuille sans en-tête se
+lit par son contenu seul.
+
+Rien n'est jeté. Une colonne non reconnue, un avancement rédigé ou une date
+sans libellé de date (« Date de mise à jour ») rejoignent la description en
+« Libellé : valeur » ; une échéance en texte (« Fin 2026 », « Juin 2025 ») ou
+un montant illisible y restent tels quels, avec un avertissement. Les
+statuts passent par une table (`map-tabular-statut.ts`), puis par une
+correspondance approchée stricte ; un avancement chiffré (0,5 ou 50 %) se lit
+dans une colonne qui se dit d'avancement ; une case vide ne donne aucun
+statut, et celui d'une fiche s'agrège de ses sous-actions. Les dates d'une
+sous-action vont du 1er janvier de la première année cochée au 31 décembre de
+la dernière. Le budget d'une fiche somme ses colonnes de budget annuel, ou
+prend leur total ; il est contrôlé contre la formule de total, et une rangée
+ajoutée sous une plage de `SUM` restée courte reste une fiche. Les cellules
+en erreur (« #REF! ») et les formules sans valeur calculée se lisent vides,
+avec un avertissement. Les champs désactivés par l'utilisateur sont vidés par
+le code.
+
+Dans le pipeline :
+
+- les actions lues par le code entrent dans `progress.actions` dès la
+  lecture, avec leur texte source (une tranche par fiche, regroupées en
+  fenêtres) : la reprise les retrouve sans relire le classeur ;
+- unités et tranches ne sont calculées que sur les onglets `modele` ; sans
+  onglet `modele`, le repérage saute et l'extraction n'appelle pas le
+  modèle. Le plafond d'unités compte aussi les fiches lues par le code, que
+  les secteurs et la revue lisent encore ;
+- une action épinglée (`sourceTableur`) n'est ni rattachée ni fondue par la
+  mise en cohérence, ni notée, ni corrigée, ni enrichie ; la mise en
+  cohérence saute quand toutes le sont, et les étapes 5 à 7 aussi ;
+- les consignes de l'utilisateur et les vérifications ne s'appliquent pas
+  aux onglets lus par le code : un avertissement du rapport le dit.
+
+`eval/run-ai-import-eval.ts --lecture-seule` montre le rôle de chaque onglet
+et de chaque colonne, l'arbre obtenu et les avertissements, sans aucun appel
+au modèle : on essaie un nouveau classeur sans coût.
 
 ## 2. Segmentation et repérage (Albert seulement)
 
@@ -199,6 +286,20 @@ fusionnent avec leur voisine, les grandes sont fenêtrées avec une reprise).
 Chaque unité garde ses pages, son chemin de titres (axe > sous-axe) et la
 partie du document qui la contient (diagnostic, stratégie, plan d'actions,
 annexes…).
+
+Un onglet de tableur confié au modèle se découpe d'après sa grille
+(`segment-document/cut-tabular-units.ts`), lue comme l'analyse des classeurs
+la lit (`detectTableHeader`, `classifyGridRows`, `readColumnBlocks`) :
+
+- l'en-tête (une ou deux rangées, « CALENDRIER · 2021 ») est répété en tête de
+  chaque unité, les titres au-dessus ne le sont pas ;
+- un bandeau ouvre une unité, et son texte rejoint le chemin de titres après
+  l'onglet ;
+- la coupe tombe entre deux blocs de la colonne de regroupement la plus fine
+  (valeurs fusionnées ou répétées sur plusieurs rangées, sans réemploi d'un
+  bloc à l'autre : en général la fiche) ;
+- une unité qui commence au milieu d'un regroupement s'ouvre sur « [Suite de :
+  … » et les valeurs fusionnées en cours.
 
 ```mermaid
 flowchart TD
@@ -260,8 +361,10 @@ Ce que la mise en page trompe, et comment la segmentation s'en garde :
   sous-axe ou leur numéro (« 2.1.3 » et « 2.2.4 », « Fiche 3 » et « Fiche 7 »)
   diffèrent ; deux sous-axes se comparent par leur numéro, par leur libellé
   quand aucun n'en a, et un sous-axe numéroté d'un seul côté ne distingue
-  rien. Un tableur n'est pas dédoublonné, quelle que soit la stratégie :
-  chaque ligne y est une fiche, aucune n'est l'écho d'une autre.
+  rien. Un tableur dont chaque rangée est une fiche n'est pas dédoublonné,
+  quelle que soit la stratégie : aucune rangée n'y est l'écho d'une autre. Il
+  l'est quand ses fiches s'étendent sur plusieurs rangées fusionnées, car le
+  modèle peut alors rendre deux fois une fiche coupée entre deux extraits.
 - **Squelette** (palier fort, un appel) : les axes et sous-axes du plan, tirés
   des titres relevés et des extraits de structure (sommaire, tableau
   récapitulatif). Il sert ensuite de référence à la structuration et à la mise

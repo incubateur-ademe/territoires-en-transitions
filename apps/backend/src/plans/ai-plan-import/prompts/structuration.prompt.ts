@@ -13,6 +13,7 @@ const squelette = '{squelette}';
 const instructions = '{instructions}';
 const position = '{position}';
 const extrait = '{extrait}';
+const regleTableur = '{regle_tableur}';
 
 /**
  * Version condensée du prompt d'extraction, envoyée en instruction système
@@ -31,7 +32,7 @@ Règles d'extraction
 - Ne jamais inventer d'information ni de chiffre. Un champ absent du texte reste "".
 - Les lignes "[Extrait …]" et "[page N]" sont des repères de découpage : ne les reprenez pas. Quand un repère donne « fiche « … » », c'est le titre complet de la fiche, même si le texte le coupe sur plusieurs lignes : reprenez-le pour "titre", avec les règles de format ci-dessous.
 - Le rappel de l'objectif ou de l'axe en tête d'une fiche (« 1- AMELIORER LA PERFORMANCE DES BATIMENTS » au-dessus de « ACTION 2 - … ») donne le sous-axe ou l'axe de la fiche : ce n'est jamais une action.
-- Le texte peut venir d'un PDF converti, avec des artefacts de mise en page : retirez seulement les artefacts manifestes, conservez l'orthographe et les majuscules des noms propres et sigles.
+- Le texte peut venir d'un PDF converti, avec des artefacts de mise en page : retirez seulement les artefacts manifestes, conservez l'orthographe et les majuscules des noms propres et sigles.${regleTableur}
 
 Sortie : un tableau JSON dont chaque objet a exactement ces champs
 "axe", "sous-axe", "titre", "description", "sous-actions", "objectifs", "structure pilote", "direction ou service pilote", "personne pilote", "partenaires", "budget", "financements", "moyens humains", "priorite", "date de debut", "date de fin", "statut"
@@ -54,7 +55,7 @@ Formats
 - "date de debut" et "date de fin" : "JJ/MM/AAAA" ou "", d'après le calendrier de l'action. Une année seule de début donne le 01/01, une année seule de fin le 31/12 : "2024-2030" donne "01/01/2024" et "31/12/2030". Ne jamais inventer de date.
 - ${buildStatutRule(dateDuJour)}
 - Majuscule au premier mot de chaque champ, sans espaces superflus.`,
-  placeholders: { dateDuJour },
+  placeholders: { dateDuJour, regleTableur },
 });
 
 export const STRUCTURATION_USER_PROMPT = definePrompt({

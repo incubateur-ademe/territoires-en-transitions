@@ -1,6 +1,6 @@
 import { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
-import { ExtractedAction } from '../models/extracted-action';
+import { axisPathOf, ExtractedAction } from '../models/extracted-action';
 import { PlanDraft } from '../models/plan-draft';
 import {
   computeContentMetrics,
@@ -17,6 +17,8 @@ export type EvalMetrics = {
   actionsSansAxe: number;
   axes: number;
   sousAxes: number;
+  /** Absente des résultats enregistrés avant les chemins d'axes complets. */
+  profondeurAxes?: number;
   sousActions: number;
   /** Part des actions dont le champ est renseigné, entre 0 et 1. */
   fillRates: Record<FillRateField, number>;
@@ -33,7 +35,10 @@ export type EvalRun = {
 };
 
 export type EvalDiff = {
-  deltas: Record<keyof Omit<EvalMetrics, 'fillRates' | 'tokens'>, number>;
+  deltas: Record<
+    keyof Omit<EvalMetrics, 'fillRates' | 'tokens' | 'profondeurAxes'>,
+    number
+  >;
   fillRateDeltas: Record<FillRateField, number>;
   /** Titres de la référence introuvables dans le résultat. */
   missingTitles: string[];
@@ -70,18 +75,29 @@ export type ManualReference = {
   manual: true;
   document: string;
   axes: string[];
-  actions: { axe: string; titre: string }[];
+  /**
+   * `cheminAxes`, quand le plan a plus d'un niveau d'axes, donne le chemin
+   * complet attendu ; il commence par `axe`.
+   */
+  actions: { axe: string; titre: string; cheminAxes?: string[] }[];
 };
 
 export type ManualReferenceDiff = {
   axes: { expected: number; actual: number; missing: string[] };
   actions: { expected: number; actual: number; found: number };
+  /**
+   * Nombre de niveaux d'axes distincts à chaque profondeur, attendus et
+   * obtenus ; `null` pour une référence sans chemins complets.
+   */
+  axisLevels: { expected: number[]; actual: number[] } | null;
   missingTitles: string[];
   extraTitles: string[];
   /** Titres attendus retrouvés en sous-axe : le modèle a inventé un niveau. */
   titlesFoundAsSousAxe: string[];
   /** Actions retrouvées sous un autre axe que celui attendu. */
   misplacedTitles: { titre: string; expectedAxe: string; actualAxe: string }[];
+  /** Actions sous le bon axe, mais à un autre chemin que celui attendu. */
+  misplacedPaths: { titre: string; expectedPath: string; actualPath: string }[];
 };
 
 export const isManualReference = (
@@ -95,11 +111,12 @@ export const compareWithManualReference = (
 ): ManualReferenceDiff => {
   const { actions } = actual.draft;
   const actualAxes = [...new Set(actions.map((action) => action.axe))];
-  const matches = reference.actions.map((expected) => ({
-    expected,
-    action: actions.find((action) => titlesMatch(action.titre, expected.titre)),
-  }));
+  const matches = matchExpectedActions(reference.actions, actions);
+  const matched = new Set(matches.map(({ action }) => action));
   const missing = matches.filter(({ action }) => !action);
+  const expectedPaths = reference.actions.flatMap(({ cheminAxes }) =>
+    cheminAxes ? [cheminAxes] : []
+  );
 
   return {
     axes: {
@@ -114,14 +131,16 @@ export const compareWithManualReference = (
       actual: actions.length,
       found: matches.length - missing.length,
     },
+    axisLevels:
+      expectedPaths.length > 0
+        ? {
+            expected: countAxisLevels(expectedPaths),
+            actual: countAxisLevels(actions.map(axisPathOf)),
+          }
+        : null,
     missingTitles: missing.map(({ expected }) => expected.titre),
     extraTitles: actions
-      .filter(
-        (action) =>
-          !reference.actions.some((expected) =>
-            titlesMatch(action.titre, expected.titre)
-          )
-      )
+      .filter((action) => !matched.has(action))
       .map((action) => action.titre),
     titlesFoundAsSousAxe: missing
       .filter(({ expected }) =>
@@ -139,8 +158,85 @@ export const compareWithManualReference = (
           ]
         : []
     ),
+    misplacedPaths: matches.flatMap(({ expected, action }) =>
+      action &&
+      expected.cheminAxes &&
+      titlesMatch(action.axe, expected.axe) &&
+      !pathsMatch(axisPathOf(action), expected.cheminAxes)
+        ? [
+            {
+              titre: expected.titre,
+              expectedPath: expected.cheminAxes.join(' > '),
+              actualPath: axisPathOf(action).join(' > '),
+            },
+          ]
+        : []
+    ),
   };
 };
+
+/**
+ * Une action obtenue ne répond qu'à une action attendue : deux fiches
+ * homonymes sous deux chemins différents en demandent deux. À titre égal,
+ * celle qui est rangée au bon endroit est préférée.
+ */
+const matchExpectedActions = (
+  expectedActions: ManualReference['actions'],
+  actions: ExtractedAction[]
+) => {
+  const taken = new Set<ExtractedAction>();
+  const take = (
+    expected: ManualReference['actions'][number],
+    isWellPlaced: boolean
+  ): ExtractedAction | undefined => {
+    const action = actions.find(
+      (candidate) =>
+        !taken.has(candidate) &&
+        titlesMatch(candidate.titre, expected.titre) &&
+        (!isWellPlaced || isPlacedAsExpected(candidate, expected))
+    );
+    if (action) {
+      taken.add(action);
+    }
+    return action;
+  };
+  // Les actions bien rangées d'abord : sinon un homonyme mal rangé peut
+  // prendre la place de celui qui est au bon endroit.
+  const wellPlaced = expectedActions.map((expected) => take(expected, true));
+  return expectedActions.map((expected, index) => ({
+    expected,
+    action: wellPlaced[index] ?? take(expected, false),
+  }));
+};
+
+const isPlacedAsExpected = (
+  action: ExtractedAction,
+  expected: ManualReference['actions'][number]
+): boolean =>
+  expected.cheminAxes
+    ? pathsMatch(axisPathOf(action), expected.cheminAxes)
+    : titlesMatch(action.axe, expected.axe);
+
+const pathsMatch = (left: string[], right: string[]): boolean =>
+  left.length === right.length &&
+  left.every((segment, index) => titlesMatch(segment, right[index]));
+
+/** Le nombre d'axes distincts à chaque profondeur. */
+export const countAxisLevels = (paths: string[][]): number[] =>
+  Array.from(
+    { length: Math.max(0, ...paths.map((path) => path.length)) },
+    (_, depth) =>
+      new Set(
+        paths
+          .filter((path) => path.length > depth)
+          .map((path) =>
+            path
+              .slice(0, depth + 1)
+              .map((segment) => segment.trim().toLowerCase())
+              .join(' > ')
+          )
+      ).size
+  );
 
 export const compareWithReference = (
   actual: EvalRun,

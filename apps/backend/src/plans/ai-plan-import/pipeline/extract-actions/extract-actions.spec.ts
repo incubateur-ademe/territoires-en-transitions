@@ -159,7 +159,10 @@ describe('extractActions', () => {
       })
     );
 
-    const result = await extractActions(llm, { ...promptInput, tabular: true });
+    const result = await extractActions(llm, {
+      ...promptInput,
+      rowsAreFiches: true,
+    });
 
     expect(result.success).toBe(true);
     if (result.success) {

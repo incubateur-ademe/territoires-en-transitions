@@ -49,6 +49,26 @@ describe('indexSousActions', () => {
       },
     ]);
   });
+
+  it('écarte les sous-actions d’une action lue dans un tableur', () => {
+    const indexed = indexSousActions([
+      {
+        ...toAction('Action A', ['a0']),
+        sourceTableur: { onglet: 'Suivi', premiereLigne: 5, derniereLigne: 7 },
+      },
+      toAction('Action B', ['b0']),
+    ]);
+
+    expect(indexed).toEqual([
+      {
+        index: 0,
+        actionIndex: 1,
+        sousActionIndex: 0,
+        parentTitre: 'Action B',
+        sousAction: createUnenrichedSousAction('b0'),
+      },
+    ]);
+  });
 });
 
 describe('renderSousActionsToEnrich', () => {

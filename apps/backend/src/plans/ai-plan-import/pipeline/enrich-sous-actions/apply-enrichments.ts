@@ -3,6 +3,7 @@ import { frenchDateToIso } from '../../adapters/french-date-to-iso';
 import {
   ExtractedAction,
   ExtractedSousAction,
+  isPinnedAction,
 } from '../../models/extracted-action';
 import { EnrichmentEntry } from './enrich-sous-actions.schema';
 import { IndexedSousAction } from './index-sous-actions';
@@ -23,15 +24,19 @@ export const applyEnrichments = (
       ])
   );
 
-  return actions.map((action, actionIndex) => ({
-    ...action,
-    sousActions: action.sousActions.map((sousAction, sousActionIndex) => {
-      const entry = enrichmentByPosition.get(
-        positionKey(actionIndex, sousActionIndex)
-      );
-      return entry ? enrichSousAction(sousAction, entry) : sousAction;
-    }),
-  }));
+  return actions.map((action, actionIndex) =>
+    isPinnedAction(action)
+      ? action
+      : {
+          ...action,
+          sousActions: action.sousActions.map((sousAction, sousActionIndex) => {
+            const entry = enrichmentByPosition.get(
+              positionKey(actionIndex, sousActionIndex)
+            );
+            return entry ? enrichSousAction(sousAction, entry) : sousAction;
+          }),
+        }
+  );
 };
 
 type EnrichedPosition = { item: IndexedSousAction; entry: EnrichmentEntry };

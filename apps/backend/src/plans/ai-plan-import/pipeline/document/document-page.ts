@@ -1,3 +1,5 @@
+import type { SheetGrid } from '../analyze-workbook/sheet-grid';
+
 export type PageLine = {
   text: string;
   /** Taille de police médiane de la ligne, PDF texte seulement. */
@@ -22,7 +24,7 @@ export type DocumentPage = {
 
 export type DocumentKind = 'pdf' | 'docx' | 'xlsx' | 'csv';
 
-/** Un tableur : la première ligne est l'en-tête, chaque ligne une entrée. */
+/** Un tableur, Excel ou CSV : une page par onglet, une ligne par rangée. */
 export const isTabularKind = (kind: DocumentKind): boolean =>
   kind === 'xlsx' || kind === 'csv';
 
@@ -37,6 +39,11 @@ export type ReadDocument = {
   };
   /** Pages dont la transcription a échoué, gardées telles que pdf.js les a lues. */
   ocrFailures: { pageIndex: number; reason: string }[];
+  /**
+   * Un tableur : une grille par page, dans le même ordre. Elle ne sert qu'à
+   * la lecture et n'entre jamais dans le point de reprise.
+   */
+  workbook?: SheetGrid[];
 };
 
 export const buildPage = (
@@ -63,11 +70,13 @@ export const buildPage = (
 export const buildDocument = (
   kind: DocumentKind,
   pages: DocumentPage[],
-  ocrFailures: ReadDocument['ocrFailures'] = []
+  ocrFailures: ReadDocument['ocrFailures'] = [],
+  workbook?: SheetGrid[]
 ): ReadDocument => ({
   kind,
   pages,
   ocrFailures,
+  ...(workbook ? { workbook } : {}),
   stats: {
     pageCount: pages.length,
     textPages: pages.filter((page) => page.source === 'text').length,
@@ -76,9 +85,15 @@ export const buildDocument = (
   },
 });
 
-/** Le texte du document, une page après l'autre. */
+/** Le texte du document, une page après l'autre ; chaque onglet d'un tableur annoncé. */
 export const joinPages = (document: ReadDocument): string =>
   document.pages
-    .map((page) => page.text)
-    .filter((text) => text.trim().length > 0)
+    .filter((page) => page.text.trim().length > 0)
+    .map((page) =>
+      isTabularKind(document.kind) && page.label
+        ? `${sheetMarker(page.label)}\n${page.text}`
+        : page.text
+    )
     .join('\n');
+
+export const sheetMarker = (label: string): string => `[Onglet « ${label} »]`;

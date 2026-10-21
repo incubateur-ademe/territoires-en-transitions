@@ -57,6 +57,37 @@ describe('scoreActions', () => {
     }
   });
 
+  it("n'envoie pas au modèle une action lue dans un tableur", async () => {
+    const prompts: string[] = [];
+    const llm = {
+      generateStructured: async ({ prompt }: { prompt: string }) => {
+        prompts.push(prompt);
+        return success({
+          data: [{ index: 0, score: 70, explication: '' }],
+          tokens,
+        });
+      },
+    } as unknown as Pick<LlmService, 'generateStructured'>;
+    const pinned = {
+      ...anAction('Lue par le code'),
+      sourceTableur: { onglet: 'Suivi', premiereLigne: 5, derniereLigne: 7 },
+    };
+
+    const result = await scoreActions(llm, {
+      ...inWholeDocument([pinned, anAction('Extraite')]),
+    });
+
+    expect(prompts).toHaveLength(1);
+    expect(prompts[0]).not.toContain('Lue par le code');
+    expect(result.success && result.data.actions).toEqual([
+      pinned,
+      expect.objectContaining({
+        titre: 'Extraite',
+        confidence: expect.objectContaining({ score: 70 }),
+      }),
+    ]);
+  });
+
   it("laisse sans score les actions d'un groupe en échec, avec un avertissement", async () => {
     const llm = {
       generateStructured: async () => failure({ kind: 'truncated' }),

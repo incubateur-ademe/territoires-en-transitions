@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { createEmptyExtractedAction } from '../models/extracted-action';
+import {
+  createEmptyExtractedAction,
+  withAxisPath,
+} from '../models/extracted-action';
 import {
   stripTitleNumber,
   stripTitleNumbers,
@@ -128,7 +131,69 @@ describe('unifyAxisLabels', () => {
   });
 });
 
+describe('unifyAxisLabels sur un chemin de plusieurs niveaux', () => {
+  const onPath = (...path: string[]) =>
+    withAxisPath(createEmptyExtractedAction({ titre: 'Une action' }), path);
+
+  it('unifie chaque niveau parmi les libellés qui ont le même parent', () => {
+    const actions = unifyAxisLabels([
+      onPath('Ambition 1', 'Sobriété', 'RÉNOVER  LES ÉCOLES'),
+      onPath('AMBITION 1', 'Sobriété', 'Rénover les écoles'),
+      onPath('Ambition 1', 'Mobilité', 'RÉNOVER LES ÉCOLES'),
+    ]);
+
+    expect(actions.map(({ cheminAxes }) => cheminAxes)).toEqual([
+      ['Ambition 1', 'Sobriété', 'Rénover les écoles'],
+      ['Ambition 1', 'Sobriété', 'Rénover les écoles'],
+      ['Ambition 1', 'Mobilité', 'RÉNOVER LES ÉCOLES'],
+    ]);
+    expect(actions.map(({ axe, sousAxe }) => [axe, sousAxe])).toEqual([
+      ['Ambition 1', 'Sobriété'],
+      ['Ambition 1', 'Sobriété'],
+      ['Ambition 1', 'Mobilité'],
+    ]);
+  });
+
+  it('rattache un numéro nu au troisième niveau, et rapproche un chemin court d’un chemin long', () => {
+    const actions = unifyAxisLabels([
+      onPath('Axe 1 : Bâtiments', '1.2 Rénover', '1.2.3 Isoler les écoles'),
+      onPath('Axe 1 : Bâtiments', '1.2 Rénover', '1.2.3'),
+      createEmptyExtractedAction({ axe: 'AXE 1 : BÂTIMENTS', sousAxe: '1.2' }),
+    ]);
+
+    expect(actions.map(({ axe, sousAxe }) => [axe, sousAxe])).toEqual([
+      ['Axe 1 : Bâtiments', '1.2 Rénover'],
+      ['Axe 1 : Bâtiments', '1.2 Rénover'],
+      ['Axe 1 : Bâtiments', '1.2 Rénover'],
+    ]);
+    expect(actions.map(({ cheminAxes }) => cheminAxes)).toEqual([
+      ['Axe 1 : Bâtiments', '1.2 Rénover', '1.2.3 Isoler les écoles'],
+      ['Axe 1 : Bâtiments', '1.2 Rénover', '1.2.3 Isoler les écoles'],
+      undefined,
+    ]);
+  });
+});
+
 describe('stripTitleNumbers', () => {
+  it('compare les fiches sur leur chemin complet', () => {
+    const onPath = (titre: string, ...path: string[]) =>
+      withAxisPath(createEmptyExtractedAction({ titre }), path);
+
+    const actions = stripTitleNumbers([
+      onPath('Fiche 3 : Sensibiliser', 'Ambition 1', 'Sobriété', 'Écoles'),
+      onPath('Fiche 7 : Sensibiliser', 'Ambition 1', 'Sobriété', 'Écoles'),
+      onPath('Fiche 9 : Accompagner', 'Ambition 1', 'Sobriété', 'Écoles'),
+      onPath('Fiche 12 : Accompagner', 'Ambition 1', 'Sobriété', 'Mairies'),
+    ]);
+
+    expect(actions.map(({ titre }) => titre)).toEqual([
+      'Fiche 3 : Sensibiliser',
+      'Fiche 7 : Sensibiliser',
+      'Accompagner',
+      'Accompagner',
+    ]);
+  });
+
   it('garde le numéro quand il est seul à distinguer deux fiches du même axe', () => {
     const actions = stripTitleNumbers([
       createEmptyExtractedAction({

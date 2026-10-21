@@ -12,6 +12,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
+import {
+  buildHorizontalHierarchyWorkbook,
+  buildTestWorkbook,
+} from '../__fixtures__/build-test-workbook';
 import { buildPage } from '../document/document-page';
 import { readDocument } from './read-document';
 
@@ -224,7 +228,7 @@ describe('readDocument', () => {
     }
   });
 
-  it('lit un CSV sur une seule page', async () => {
+  it('lit un CSV sur une seule page, colonnes séparées par une tabulation', async () => {
     const result = await readDocument({
       buffer: Buffer.from('axe;titre\nMobilité;Covoiturage', 'utf-8'),
       mimeType: CSV_MIME,
@@ -233,8 +237,9 @@ describe('readDocument', () => {
     if (result.success) {
       expect(result.data.kind).toBe('csv');
       expect(result.data.pages.map((page) => page.text)).toEqual([
-        'axe;titre\nMobilité;Covoiturage',
+        'axe\ttitre\nMobilité\tCovoiturage',
       ]);
+      expect(result.data.workbook).toHaveLength(1);
     }
   });
 
@@ -273,6 +278,52 @@ describe('readDocument', () => {
     if (result.success) {
       expect(result.data.pages[0].text).toContain('2025-03-01');
       expect(result.data.pages[0].text).toContain('Action\t\t');
+    }
+  });
+
+  it("ne retire pas d'un tableur la première rangée commune à ses onglets, comme un en-tête de page", async () => {
+    const buffer = await buildTestWorkbook(
+      ['Mobilité', 'Habitat', 'Énergie', 'Déchets', 'Eau', 'Forêt'].map(
+        (name) => ({
+          name,
+          rows: [
+            ['AMBITION n°2 Pour un territoire plus vertueux'],
+            [`Fiche ${name}`],
+          ],
+        })
+      )
+    );
+
+    const result = await readDocument({ buffer, mimeType: XLSX_MIME });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      for (const page of result.data.pages) {
+        expect(page.lines[0].text).toBe(
+          'AMBITION n°2 Pour un territoire plus vertueux'
+        );
+      }
+    }
+  });
+
+  it('garde la grille de chaque onglet, une valeur fusionnée écrite une seule fois', async () => {
+    const result = await readDocument({
+      buffer: await buildHorizontalHierarchyWorkbook(),
+      mimeType: XLSX_MIME,
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const { pages, workbook } = result.data;
+      expect(workbook?.map(({ name }) => name)).toEqual(
+        pages.map(({ label }) => label)
+      );
+      const suivi = pages.find(({ label }) => label === 'Suivi');
+      expect(
+        suivi?.lines.filter(({ text }) =>
+          text.includes('Se déplacer moins et mieux')
+        )
+      ).toHaveLength(1);
     }
   });
 

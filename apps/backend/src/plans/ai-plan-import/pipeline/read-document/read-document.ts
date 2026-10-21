@@ -5,6 +5,7 @@ import {
   DocumentPage,
   ReadDocument,
 } from '../document/document-page';
+import type { SheetGrid } from '../analyze-workbook/sheet-grid';
 import { normalizePages } from '../normalize-text/normalize-pages';
 import { decideOcr, DEFAULT_OCR_POLICY, OcrPolicy } from './decide-ocr';
 import { OcrPageFn } from './llm-ocr-page';
@@ -49,43 +50,62 @@ export const readDocument = async (
   if (!read.success) {
     return read;
   }
+  if (read.data.workbook) {
+    // Les rangées d'un tableur ne sont pas des lignes de page : aucun en-tête
+    // ni pied de page à retirer, aucune césure à recoller.
+    return validateDocument(
+      buildDocument(kind, read.data.pages, [], read.data.workbook)
+    );
+  }
   const transcribed =
     kind === 'pdf' && options.ocr
-      ? await transcribeScannedPages(read.data, args.buffer, {
+      ? await transcribeScannedPages(read.data.pages, args.buffer, {
           ...options,
           ocr: options.ocr,
         })
-      : success({ pages: read.data, failures: [] });
+      : success({ pages: read.data.pages, failures: [] });
   if (!transcribed.success) {
     return transcribed;
   }
-  const document = buildDocument(
-    kind,
-    normalizePages(transcribed.data.pages),
-    transcribed.data.failures
+  return validateDocument(
+    buildDocument(
+      kind,
+      normalizePages(transcribed.data.pages),
+      transcribed.data.failures
+    )
   );
+};
+
+const validateDocument = (
+  document: ReadDocument
+): Result<ReadDocument, ReadDocumentError> => {
   if (document.stats.textPages === 0 && document.stats.ocrPages === 0) {
     return failure({ kind: 'empty_text' });
   }
   return success(document);
 };
 
-const readPages = (
+type ReadPages = { pages: DocumentPage[]; workbook?: SheetGrid[] };
+
+const readPages = async (
   kind: DocumentKind,
   buffer: Buffer,
   options: ReadDocumentOptions
-): Promise<Result<DocumentPage[], ReadDocumentError>> => {
+): Promise<Result<ReadPages, ReadDocumentError>> => {
   switch (kind) {
     case 'pdf':
-      return readPdf(buffer, options.pdfReader);
+      return withPages(await readPdf(buffer, options.pdfReader));
     case 'docx':
-      return readDocxPages(buffer);
+      return withPages(await readDocxPages(buffer));
     case 'xlsx':
       return readXlsxPages(buffer);
     case 'csv':
-      return Promise.resolve(success(readCsvPages(buffer)));
+      return success(readCsvPages(buffer));
   }
 };
+
+const withPages = <E>(read: Result<DocumentPage[], E>): Result<ReadPages, E> =>
+  read.success ? success({ pages: read.data }) : read;
 
 const transcribeScannedPages = (
   pages: DocumentPage[],
@@ -140,7 +160,6 @@ const withPageRenderer = async <T>(
   }
 };
 
-/** CSV et Excel : la première ligne du texte est l'en-tête du tableau. */
 export const isTabularMimeType = (mimeType: string): boolean => {
   const kind = classifyMimeType(mimeType);
   return kind === 'csv' || kind === 'xlsx';

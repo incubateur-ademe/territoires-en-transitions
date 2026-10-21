@@ -3,6 +3,7 @@ import { isNotNil } from 'es-toolkit';
 import {
   ExtractedAction,
   ExtractedSousAction,
+  sousAxeLabelOf,
 } from '../../models/extracted-action';
 
 // La relecture porte un jugement d'ensemble : un échantillon suffit, et
@@ -37,7 +38,7 @@ const renderActionLine = (action: ExtractedAction): string =>
   [
     action.titre,
     labelled('Axe', action.axe),
-    labelled('Sous-axe', action.sousAxe),
+    labelled('Sous-axe', sousAxeLabelOf(action)),
     labelled('Description', action.description),
     labelled('Objectifs', action.objectifs),
     labelled('Structure pilote', action.structurePilote),

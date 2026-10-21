@@ -7,6 +7,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DisableableField } from '../../models/disableable-field';
 import { ExtractedAction } from '../../models/extracted-action';
 import { PlanSkeleton, renderSkeleton } from '../../models/plan-skeleton';
+import { SPREADSHEET_RULE } from '../../prompts/field-rules';
 import { buildIgnoreDirective } from '../../prompts/ignore-directive';
 import {
   STRUCTURATION_SYSTEM_PROMPT,
@@ -44,8 +45,10 @@ export type StructureUnitsInput = {
   instructions: string;
   disabledFields: DisableableField[];
   currentDate: string;
-  /** Un tableur : chaque ligne est une fiche, un titre repris n'y est pas un écho. */
-  tabular?: boolean;
+  /** Un tableur : le prompt dit comment en lire les rangées. */
+  spreadsheet?: boolean;
+  /** Un tableur dont chaque rangée est une fiche : un titre repris n'y est pas un écho. */
+  rowsAreFiches?: boolean;
   signal?: AbortSignal;
 };
 
@@ -69,7 +72,8 @@ export const structureUnits = async (
     instructions,
     disabledFields,
     currentDate,
-    tabular = false,
+    spreadsheet = false,
+    rowsAreFiches = false,
     signal,
   }: StructureUnitsInput
 ): Promise<Result<StructureUnitsResult, ExtractActionsError>> => {
@@ -82,6 +86,7 @@ export const structureUnits = async (
   );
   const systemInstruction = generatePrompt(STRUCTURATION_SYSTEM_PROMPT, {
     dateDuJour: currentDate,
+    regleTableur: spreadsheet ? `\n- ${SPREADSHEET_RULE}` : '',
   });
   const ignoreDirective = buildIgnoreDirective(disabledFields);
   const renderedSkeleton = renderSkeleton(skeleton);
@@ -119,7 +124,7 @@ export const structureUnits = async (
     return failure(failures[0]?.error ?? { kind: 'no_actions_extracted' });
   }
   return success({
-    ...(tabular ? merged : dedupeByTitle(merged)),
+    ...(rowsAreFiches ? merged : dedupeByTitle(merged)),
     chunks,
     tokens: sumTokenUsage(outcomes.flatMap(({ tokens }) => tokens)),
     warnings: failures.map(

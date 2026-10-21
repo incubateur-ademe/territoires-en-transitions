@@ -1,0 +1,659 @@
+{
+  "manual": true,
+  "document": "Outil de suivi du PCAET de la Communauté de communes du Pont du Gard (Outil suivi_CCPG sc.xlsx), onglet « Suivi » : 4 ambitions, 15 objectifs stratégiques, 33 objectifs opérationnels (celui de la fiche 9 porte son titre et ne forme pas un niveau), 72 fiches et 424 sous-actions ; les onglets thématiques n'apportent que des indicateurs",
+  "axes": [
+    "AMBITION n°1 : Pour un territoire sobre en énergie",
+    "AMBITION n°2 Pour un territoire plus vertueux",
+    "AMBITION n°3: Pour un territoire préservé et résilient",
+    "Pour des collectivités éco-exemplaires"
+  ],
+  "actions": [
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Développer l'usage des transports en commun (TC)"
+      ],
+      "titre": "1 Aménager deux pôles multimodaux à proximité des gares et un pôle routier à proximité de l'échangeur A9"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Développer l'usage des transports en commun (TC)"
+      ],
+      "titre": "2 Mettre en place un programme de communication impactant sur l'usage des Transport en Commun"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Développer l'usage des transports en commun (TC)"
+      ],
+      "titre": "3 Assurer une connexion en sécurité des arrêts de bus existants et à venir"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Développer l'usage des transports en commun (TC)"
+      ],
+      "titre": "4 Élaborer un plan de la mobilité durable à l'échelle de nos bassins de mobilité"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Favoriser le covoiturage"
+      ],
+      "titre": "5 Mailler le territoire d'aires de covoiturage"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Favoriser le covoiturage"
+      ],
+      "titre": "6 Déployer le dispositif Rezo Pouce et l'application"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Structurer un réseau de mobilités douces"
+      ],
+      "titre": "7 Élaborer un schéma directeur des chemins et voies cyclables"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux",
+        "Structurer un réseau de mobilités douces"
+      ],
+      "titre": "8 Mettre en place un programme de sensibilisation sur l'usage des modes actifs"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Se déplacer / transporter moins et mieux"
+      ],
+      "titre": "9 Contribuer à la réduction du fret routier de marchandises"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Vivre et travailler dans des bâtiments performants",
+        "Mettre en place une stratégie pour massifier la rénovation des logements"
+      ],
+      "titre": "10 Mettre en place un guichet unique pour les particuliers sur les aides à la rénovation"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Vivre et travailler dans des bâtiments performants",
+        "Mettre en place une stratégie pour massifier la rénovation des logements"
+      ],
+      "titre": "11 Mettre en place un PLH"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Vivre et travailler dans des bâtiments performants",
+        "Mettre en place une stratégie avec les entreprises pour la rénovation Énergétique"
+      ],
+      "titre": "12 Sensibiliser les particuliers à réduire leur consommation"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Vivre et travailler dans des bâtiments performants",
+        "Mettre en place une stratégie avec les entreprises pour la rénovation Énergétique"
+      ],
+      "titre": "13 Mettre en place d'un guichet à destination des entreprises sur le volet rénovation des bâtiments de 5 à 100 salariés"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Vivre et travailler dans des bâtiments performants",
+        "Mettre en place une stratégie avec les entreprises pour la rénovation Énergétique"
+      ],
+      "titre": "14 Accompagner les diagnostics énergétiques des bâtiments publics"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Vivre et travailler dans des bâtiments performants",
+        "Mettre en place une stratégie avec les entreprises pour la rénovation Énergétique"
+      ],
+      "titre": "15 Optimiser le traitement des certificats d'économies d'énergie"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Coopérer avec les acteurs économiques du tertiaire et de l'industrie",
+        "Inciter les entreprises vers la transition écologique"
+      ],
+      "titre": "16 Déployer les actions Eco Défi auprès des commerçants/ artisans"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Coopérer avec les acteurs économiques du tertiaire et de l'industrie",
+        "Inciter les entreprises vers la transition écologique"
+      ],
+      "titre": "17 Créer un pool d’entreprises/associations pour impulser une dynamique autour de la transition énergétique"
+    },
+    {
+      "axe": "AMBITION n°1 : Pour un territoire sobre en énergie",
+      "cheminAxes": [
+        "AMBITION n°1 : Pour un territoire sobre en énergie",
+        "Coopérer avec les acteurs économiques du tertiaire et de l'industrie",
+        "Inciter les entreprises vers la transition écologique"
+      ],
+      "titre": "18 Poursuivre le Contrat de Transition Écologique et identifier de nouvelles actions à engager"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Consommer et produire localement",
+        "Mener une politique de circuit court"
+      ],
+      "titre": "19 Favoriser la création d'une régie agricole pour l’approvisionnement de(s) école(s)"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Consommer et produire localement",
+        "Mener une politique de circuit court"
+      ],
+      "titre": "20 Favoriser le développement d'une plateforme locale des produits agricoles (plutôt à destination des professionnels)"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Consommer et produire localement",
+        "Mener une politique de circuit court"
+      ],
+      "titre": "21 Ouvrir une réflexion avec les territoires de proximité pour le PAT"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Consommer et produire localement",
+        "Promouvoir une économie de proximité"
+      ],
+      "titre": "22 Créer/valoriser un annuaire des artisans/ commerçants engagés"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Appuyer le développement le solaire (PV et thermique) sur le territoire"
+      ],
+      "titre": "23 Mettre en place un cadastre solaire"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Accompagner à la mise en place de EnR auprès des particuliers et des entreprises"
+      ],
+      "titre": "24 Doter le territoire d'ingénierie en transition écologique"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Définir une stratégie d’action cohérente, opérationnelle et multipartenariale"
+      ],
+      "titre": "25 Réaliser le Plan de Paysage Transition Énergétique des gorges du Gardon/ Pont du Gard"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Développer d'autres filière d'énergie renouvelables (autre que solaires)"
+      ],
+      "titre": "26 Effectuer un bilan détaillé par filière de production"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Développer d'autres filière d'énergie renouvelables (autre que solaires)"
+      ],
+      "titre": "27 Mener une réflexion sur le développement d'une filière méthanisation"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Développer d'autres filière d'énergie renouvelables (autre que solaires)"
+      ],
+      "titre": "28 Mener une réflexion sur la structuration de la filière bois énergie sur le territoire"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer les énergies renouvelables en préservant la qualité paysagère",
+        "Développer d'autres filière d'énergie renouvelables (autre que solaires)"
+      ],
+      "titre": "29 Étudier la mise en place de nouvelles filières émergentes d'énergies Renouvelables"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Tendre vers un territoire zéro déchet",
+        "Communiquer et homogénéiser les actions existantes"
+      ],
+      "titre": "30 Optimiser le traitement des déchets collectés : complémentarité des filières"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Tendre vers un territoire zéro déchet",
+        "Communiquer et homogénéiser les actions existantes"
+      ],
+      "titre": "31 Travailler à la structuration de la compétence collecte des déchets (unité de services)"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Tendre vers un territoire zéro déchet",
+        "Communiquer et homogénéiser les actions existantes"
+      ],
+      "titre": "32 Mettre en place un programme de communication impactant autour des déchets et des nouvelles filières de traitements"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Tendre vers un territoire zéro déchet",
+        "Réduire la production de déchet du territoire"
+      ],
+      "titre": "33 Mettre en place la filière de biodéchets - \"compostage\""
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Tendre vers un territoire zéro déchet",
+        "Réduire la production de déchet du territoire"
+      ],
+      "titre": "34 Élaboration d'un plan local de prévention des déchets"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Tendre vers un territoire zéro déchet",
+        "Améliorer le réemploi et la réutilisation/ développer les filières de valorisation des déchets"
+      ],
+      "titre": "35 Recenser puis développer d'autres filières de déchets à traiter propres au territoire"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer l’économie circulaire",
+        "Favoriser la limitation de l'usage des ressources"
+      ],
+      "titre": "36 Assurer la montée en compétences des acteurs sur l'économie circulaire (EIT)"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer l’économie circulaire",
+        "Favoriser la limitation de l'usage des ressources"
+      ],
+      "titre": "37 Installer une ressourcerie sur le territoire"
+    },
+    {
+      "axe": "AMBITION n°2 Pour un territoire plus vertueux",
+      "cheminAxes": [
+        "AMBITION n°2 Pour un territoire plus vertueux",
+        "Développer l’économie circulaire",
+        "Permettre la montée en compétence des acteurs économiques sur la conception de l'économie circulaire au sein de leur activités"
+      ],
+      "titre": "38 Assurer la montée en compétences des acteurs sur l'économie circulaire (EIT)"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Gérer durablement les espaces naturels",
+        "Améliorer la connaissance des milieux et sensibiliser l'ensemble des acteurs"
+      ],
+      "titre": "39 Mettre en place un programme de sensibilisation à la biodiversité et à la préservation des espaces naturels à destination des particuliers"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Gérer durablement les espaces naturels",
+        "Améliorer la connaissance des milieux et sensibiliser l'ensemble des acteurs"
+      ],
+      "titre": "40 Mettre en place un observatoire de l’évolution des espaces naturels"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Gérer durablement les espaces naturels",
+        "permettre une intégration durable des projets énergétiques dans les espaces"
+      ],
+      "titre": "41 Mettre en œuvre les actions issues du PPTE"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Gérer durablement les espaces naturels",
+        "conserver et maintenir la fonction première des espaces naturels"
+      ],
+      "titre": "42 Restaurer d'une zone humide Les Paluns"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Maîtriser la ressource en eau",
+        "Accompagner les particuliers et les collectivités pour une meilleure gestion de l'eau"
+      ],
+      "titre": "43 Coordonner la mise en place du programme de sensibilisation à la préservation de la ressource en eau à destination des particuliers"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Maîtriser la ressource en eau",
+        "Accompagner les particuliers et les collectivités pour une meilleure gestion de l'eau"
+      ],
+      "titre": "44 Vers une prise de compétence Eau et Assainissement de la CCPG"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Maîtriser la ressource en eau",
+        "Accompagner les particuliers et les collectivités pour une meilleure gestion de l'eau"
+      ],
+      "titre": "45 Accompagner les collectivités pour lutter contre le gaspillage et la consommation d'eau"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Maîtriser la ressource en eau",
+        "Maintenir de la qualité de l’eau sur le territoire"
+      ],
+      "titre": "46 Intensifier les actions sur l'économie de l'eau auprès/avec les agriculteurs et les vignerons en particulier"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Maîtriser la ressource en eau",
+        "Maintenir de la qualité de l’eau sur le territoire"
+      ],
+      "titre": "47 Expérimenter la mise en place de zones humides artificielles pour traiter les pesticides -ZTHA"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Maîtriser la ressource en eau",
+        "Maintenir de la qualité de l’eau sur le territoire"
+      ],
+      "titre": "48 Poursuivre les actions de mise en conformité des fosses septiques (au travers du SPANC)"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Accompagner l'adaptation des systèmes agricoles et forestiers",
+        "Inciter à une agriculture plus durable et respectueuse de l’environnement"
+      ],
+      "titre": "49 Former les agriculteurs et essaimer les bonnes pratiques"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Accompagner l'adaptation des systèmes agricoles et forestiers",
+        "Essaimer les pratiques plus résilientes et les projets pour améliorer la séquestration carbone / renforcer le stockage du carbone"
+      ],
+      "titre": "50 Développer la connaissance pour se préparer à l’évolution des cultures et des espaces non cultivés en lien avec le changement climatique"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Accompagner l'adaptation des systèmes agricoles et forestiers",
+        "Essaimer les pratiques plus résilientes et les projets pour améliorer la séquestration carbone / renforcer le stockage du carbone"
+      ],
+      "titre": "51 Faire connaître le label bas carbone"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Développer un tourisme durable",
+        "Encourager et accompagner à la mise en place de pratiques vertueuses chez les professionnels du tourisme"
+      ],
+      "titre": "52 Rédiger un guide sur les bonnes pratiques des visiteurs de la CC Pont du Gard"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Développer un tourisme durable",
+        "Encourager et accompagner à la mise en place de pratiques vertueuses chez les professionnels du tourisme"
+      ],
+      "titre": "53 Définir une gestion des déchets sur les sentiers de randonnées"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Renforcer la culture du risque et mener des actions de protection",
+        "Promouvoir la gestion alternative des eaux pluviales"
+      ],
+      "titre": "54 Inciter les collectivités à intégrer la gestion de l’eau à la parcelle/ captage à la source dans leur document d’urbanisme"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Renforcer la culture du risque et mener des actions de protection",
+        "Promouvoir la gestion alternative des eaux pluviales"
+      ],
+      "titre": "55 Accompagner les administrés dans les opérations de gestion de l’eau à la parcelle"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Renforcer la culture du risque et mener des actions de protection",
+        "Sensibiliser la population et les élus à la gestion des risques naturels"
+      ],
+      "titre": "56 Mener un programme de sensibilisation à la population et les élus à la gestion des risques naturels"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Renforcer la culture du risque et mener des actions de protection",
+        "Sensibiliser la population et les élus à la gestion des risques naturels"
+      ],
+      "titre": "57 Accompagner les propriétaires /collectivités dans la protection de leur bâti"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Renforcer la culture du risque et mener des actions de protection",
+        "Mener des actions de protections"
+      ],
+      "titre": "58 Développer les zones d'expansion de crues"
+    },
+    {
+      "axe": "AMBITION n°3: Pour un territoire préservé et résilient",
+      "cheminAxes": [
+        "AMBITION n°3: Pour un territoire préservé et résilient",
+        "Renforcer la culture du risque et mener des actions de protection",
+        "Mener des actions de protections"
+      ],
+      "titre": "59 Prévention du risque incendie"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Mettre en œuvre une politique d'aménagement durable",
+        "Accompagner les communes membres dans la prise en compte de la qualité environnementale"
+      ],
+      "titre": "60 Mettre en place une charte paysagère et la promouvoir"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Mettre en œuvre une politique d'aménagement durable",
+        "Accompagner les communes membres dans la prise en compte de la qualité environnementale"
+      ],
+      "titre": "61 Accompagner les communes membres à mettre en adéquation leur PLU avec les objectifs PCAET"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Mettre en œuvre une politique d'aménagement durable",
+        "Accompagner les communes membres dans la prise en compte de la qualité environnementale"
+      ],
+      "titre": "62 Élaborer un guide de l'écoresponsabilité au bureau et de bonnes pratiques"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Faire vivre le Plan Climat",
+        "Améliorer le partage d’expérience autour des pratiques éco exemplaires"
+      ],
+      "titre": "63 Informer des actions mises en place dans le cadre du PCAET"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Faire vivre le Plan Climat",
+        "Construire un réseau de partenaires investi dans le Plan Climat"
+      ],
+      "titre": "64 Mettre en place un copil d’évaluation du PCAET élargi avec des membres privés et associatifs"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Améliorer et promouvoir la performance énergétique du patrimoine public"
+      ],
+      "titre": "65 travailler à la mise en place du label écolo-crèche"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Améliorer et promouvoir la performance énergétique du patrimoine public"
+      ],
+      "titre": "66 Élaborer un plan pluriannuel de rénovation du patrimoine public de la CC"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Améliorer et promouvoir la performance énergétique du patrimoine public"
+      ],
+      "titre": "67 Mettre en place l'accompagnement par un Conseiller en Energie partagé"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Améliorer et promouvoir la performance énergétique du patrimoine public"
+      ],
+      "titre": "68 Développer une flotte électrique de la CC à la place des thermiques"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Proposer des actions collectives autour de l'éco responsabilité des collectivités"
+      ],
+      "titre": "69 Mettre en place un programme d'information/ formation sur les éco gestes"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Proposer des actions collectives autour de l'éco responsabilité des collectivités"
+      ],
+      "titre": "70 Mettre en place des actions de commandes mutualisées par des marchés publics"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Proposer des actions collectives autour de l'éco responsabilité des collectivités"
+      ],
+      "titre": "71 Nettoyer les stockages numériques"
+    },
+    {
+      "axe": "Pour des collectivités éco-exemplaires",
+      "cheminAxes": [
+        "Pour des collectivités éco-exemplaires",
+        "Conduire une stratégie de transition dans les pratiques des collectivités",
+        "Proposer des actions collectives autour de l'éco responsabilité des collectivités"
+      ],
+      "titre": "72 Mettre en place le télétravail et les téléréunions (visio conférence)"
+    }
+  ]
+}

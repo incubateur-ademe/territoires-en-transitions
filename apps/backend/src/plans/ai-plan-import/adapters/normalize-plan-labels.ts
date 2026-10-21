@@ -1,4 +1,8 @@
-import { ExtractedAction } from '../models/extracted-action';
+import {
+  axisSlotsOf,
+  ExtractedAction,
+  withAxisPath,
+} from '../models/extracted-action';
 import { normalizeTitle } from '../pipeline/extract-actions/merge-chunk-actions';
 
 // « 2.1.3 Titre », « 1- Titre », « 6/ Titre », « ACTION 3 - Titre », « Fiche
@@ -13,14 +17,14 @@ export const stripTitleNumber = (titre: string): string =>
   titre.replace(TITLE_NUMBER, '').trim();
 
 /**
- * Retire le numéro des titres d'action, sauf quand deux actions du même axe
- * et du même sous-axe ne se distingueraient plus que par lui.
+ * Retire le numéro des titres d'action, sauf quand deux actions du même
+ * chemin d'axes ne se distingueraient plus que par lui.
  */
 export const stripTitleNumbers = (
   actions: ExtractedAction[]
 ): ExtractedAction[] => {
   const keyOf = (action: ExtractedAction, titre: string) =>
-    [action.axe, action.sousAxe, normalizeTitle(titre)]
+    [...axisSlotsOf(action), normalizeTitle(titre)]
       .map((part) => part.trim())
       .join('|');
   const stripped = actions.map((action) => stripTitleNumber(action.titre));
@@ -46,41 +50,47 @@ const SOUS_AXE_PREFIX = /^(\d{1,2}(?:\.\d{1,2})+)\.?\s*/u;
  * axes dans le plan. Les libellés identiques aux accents et à la casse près
  * prennent une seule graphie, en casse normale de préférence ; un numéro nu
  * (« Axe 6 », « 6.2 ») rejoint le seul libellé complet de même numéro. Deux
- * titres différents de même numéro restent deux axes.
+ * titres différents de même numéro restent deux axes. Chaque niveau s'unifie
+ * parmi les libellés qui partagent le même chemin au-dessus de lui.
  */
 export const unifyAxisLabels = (
   extracted: ExtractedAction[]
 ): ExtractedAction[] => {
-  const actions = extracted.map((action) => ({
-    ...action,
-    axe: collapseSpaces(action.axe),
-    sousAxe: collapseSpaces(action.sousAxe),
-  }));
-  const axes = unifyLabels(
-    actions.map((action) => action.axe),
-    AXE_PREFIX
+  const paths = extracted.map((action) =>
+    axisSlotsOf(action).map(collapseSpaces)
   );
-  const unifiedAxes = actions.map((action) => axes(action.axe));
-  const sousAxesByAxe = new Map<string, (label: string) => string>();
-  for (const axe of new Set(unifiedAxes)) {
-    sousAxesByAxe.set(
-      axe,
-      unifyLabels(
-        actions
-          .filter((_, index) => unifiedAxes[index] === axe)
-          .map((action) => action.sousAxe),
-        SOUS_AXE_PREFIX
-      )
-    );
+  const depth = Math.max(0, ...paths.map((path) => path.length));
+  for (let level = 0; level < depth; level++) {
+    const unifyByParent = new Map<string, (label: string) => string>();
+    const parentKeyOf = (path: string[]) =>
+      JSON.stringify(path.slice(0, level));
+    for (const parentKey of new Set(
+      paths.filter((path) => level < path.length).map(parentKeyOf)
+    )) {
+      unifyByParent.set(
+        parentKey,
+        unifyLabels(
+          paths
+            .filter(
+              (path) => level < path.length && parentKeyOf(path) === parentKey
+            )
+            .map((path) => path[level]),
+          level === 0 ? AXE_PREFIX : SOUS_AXE_PREFIX
+        )
+      );
+    }
+    for (const path of paths) {
+      const unify = unifyByParent.get(parentKeyOf(path));
+      if (level < path.length && unify) {
+        path[level] = unify(path[level]);
+      }
+    }
   }
-  return actions.map((action, index) => {
-    const axe = unifiedAxes[index];
-    const sousAxes = sousAxesByAxe.get(axe);
-    return {
-      ...action,
-      axe,
-      sousAxe: sousAxes ? sousAxes(action.sousAxe) : action.sousAxe,
-    };
+  return extracted.map((action, index) => {
+    const path = paths[index];
+    return action.cheminAxes
+      ? withAxisPath(action, path)
+      : { ...action, axe: path[0], sousAxe: path[1] };
   });
 };
 

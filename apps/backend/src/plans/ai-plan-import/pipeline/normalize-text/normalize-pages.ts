@@ -1,12 +1,5 @@
 import { buildPage, DocumentPage } from '../document/document-page';
-
-const LIGATURES: Record<string, string> = {
-  '\uFB00': 'ff',
-  '\uFB01': 'fi',
-  '\uFB02': 'fl',
-  '\uFB03': 'ffi',
-  '\uFB04': 'ffl',
-};
+import { cleanText } from './clean-text';
 
 // Une ligne d'en-tête ou de pied de page revient sur une bonne part des pages,
 // au même endroit ; ses chiffres (numéro de page, date) varient seuls.
@@ -32,7 +25,7 @@ export const normalizePages = (pages: DocumentPage[]): DocumentPage[] => {
     }
     let lines = page.lines.map((line) => ({
       ...line,
-      text: cleanText(line.text),
+      text: cleanLine(line.text),
     }));
     lines = dropEdgeLines(page, lines, repeatedFirst, repeatedLast);
     lines = dehyphenate(lines);
@@ -40,27 +33,11 @@ export const normalizePages = (pages: DocumentPage[]): DocumentPage[] => {
   });
 };
 
-// Glyphes sans correspondance Unicode (pdf.js rend U+0000) et demi-paires de
-// surrogates : sans valeur pour le modèle, et refusés par Postgres en jsonb,
-// où le point de reprise garde le texte.
-// eslint-disable-next-line no-control-regex -- ce sont eux qu'on retire.
-const CONTROL_CHARACTERS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
-const LONE_SURROGATES =
-  /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g;
-
-const cleanText = (text: string): string =>
-  text
-    .replace(CONTROL_CHARACTERS, '')
-    .replace(LONE_SURROGATES, '\uFFFD')
-    .replace(/[\uFB00-\uFB04]/g, (ligature) => LIGATURES[ligature] ?? ligature)
-    .replace(/\u00A0/g, ' ')
-    // Les tabulations séparent les colonnes d'un tableur : on ne touche qu'aux espaces.
-    .replace(/ {2,}/g, ' ')
-    .trim();
+const cleanLine = (text: string): string => cleanText(text).trim();
 
 /** Clé d'une ligne : minuscules, chiffres remplacés, pour reconnaître ses répétitions. */
 const lineKey = (text: string): string =>
-  cleanText(text).toLowerCase().replace(/\d+/g, '#');
+  cleanLine(text).toLowerCase().replace(/\d+/g, '#');
 
 type Edge = 'top' | 'bottom';
 

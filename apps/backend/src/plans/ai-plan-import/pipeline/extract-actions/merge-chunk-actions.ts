@@ -1,6 +1,10 @@
 import {
+  axisPathOf,
+  axisSlotsOf,
   ExtractedAction,
   ExtractedSousAction,
+  isPinnedAction,
+  withAxisPath,
 } from '../../models/extracted-action';
 
 /** Dernières actions de la tranche précédente où chercher un doublon. */
@@ -98,18 +102,27 @@ export const dedupeByTitle = (merged: ChunkedActions): ChunkedActions => {
 
 /**
  * Un même titre est deux actions réelles quand chacune porte son propre
- * contenu et que leur axe, leur sous-axe ou leur numéro les distingue
- * (« Sensibiliser les habitants » en 2.1.3 et en 2.2.4) ; un écho sans contenu
- * (sommaire, rappel) se fond, lui, quel que soit son rattachement.
+ * contenu et qu'un niveau d'axe ou leur numéro les distingue (« Sensibiliser
+ * les habitants » en 2.1.3 et en 2.2.4) ; un écho sans contenu (sommaire,
+ * rappel) se fond, lui, quel que soit son rattachement.
  */
 const isSameOrEcho = (a: ExtractedAction, b: ExtractedAction): boolean => {
   if (contentLength(a) === 0 || contentLength(b) === 0) {
     return true;
   }
-  return (
-    !bothSetAndDiffer(normalizeTitle(a.axe), normalizeTitle(b.axe)) &&
-    !sousAxesDiffer(a.sousAxe, b.sousAxe) &&
-    !actionNumbersDiffer(a.titre, b.titre)
+  return !axisPathsDiffer(a, b) && !actionNumbersDiffer(a.titre, b.titre);
+};
+
+const axisPathsDiffer = (a: ExtractedAction, b: ExtractedAction): boolean => {
+  const segmentsA = axisSlotsOf(a);
+  const segmentsB = axisSlotsOf(b);
+  return Array.from(
+    { length: Math.max(segmentsA.length, segmentsB.length) },
+    (_, level) => [segmentsA[level] ?? '', segmentsB[level] ?? ''] as const
+  ).some(([segmentA, segmentB], level) =>
+    level === 1
+      ? sousAxesDiffer(segmentA, segmentB)
+      : bothSetAndDiffer(normalizeTitle(segmentA), normalizeTitle(segmentB))
   );
 };
 
@@ -158,6 +171,33 @@ const richer = (a: string | null, b: string | null): string | null =>
   b !== null && (a === null || b.length > a.length) ? b : a;
 
 export const mergeActions = (
+  first: ExtractedAction,
+  second: ExtractedAction
+): ExtractedAction => {
+  if (isPinnedAction(second) && !isPinnedAction(first)) {
+    return mergeActions(second, first);
+  }
+  const merged = mergeFields(first, second);
+  return first.cheminAxes || second.cheminAxes
+    ? withAxisPath(merged, mergeAxisPaths(first, second))
+    : merged;
+};
+
+// Le chemin de la première l'emporte, sauf s'il n'est que le début de l'autre.
+const mergeAxisPaths = (
+  first: ExtractedAction,
+  second: ExtractedAction
+): string[] => {
+  const pathA = axisPathOf(first);
+  const pathB = axisPathOf(second);
+  const isPrefix = pathA.every(
+    (segment, level) =>
+      normalizeTitle(segment) === normalizeTitle(pathB[level] ?? '')
+  );
+  return pathB.length > pathA.length && isPrefix ? pathB : pathA;
+};
+
+const mergeFields = (
   first: ExtractedAction,
   second: ExtractedAction
 ): ExtractedAction => ({

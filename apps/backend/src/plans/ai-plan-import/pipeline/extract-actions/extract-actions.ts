@@ -17,8 +17,8 @@ import {
 
 export type ExtractActionsInput = Omit<ExtractionPromptInput, 'text'> & {
   chunks: string[];
-  /** Un tableur : chaque ligne est une fiche, un titre repris n'y est pas un écho. */
-  tabular?: boolean;
+  /** Un tableur dont chaque rangée est une fiche : un titre repris n'y est pas un écho. */
+  rowsAreFiches?: boolean;
   signal?: AbortSignal;
 };
 
@@ -34,7 +34,7 @@ export type ExtractActionsError = LlmError | { kind: 'no_actions_extracted' };
  */
 export const extractActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
-  { chunks, tabular = false, signal, ...promptInput }: ExtractActionsInput
+  { chunks, rowsAreFiches = false, signal, ...promptInput }: ExtractActionsInput
 ): Promise<Result<ExtractActionsResult, ExtractActionsError>> => {
   let extracted: ChunkedActions = { actions: [], chunkIndexByAction: [] };
   const usages: TokenUsage[] = [];
@@ -69,7 +69,7 @@ export const extractActions = async (
     return failure({ kind: 'no_actions_extracted' });
   }
   return success({
-    ...(tabular ? extracted : dedupeByTitle(extracted)),
+    ...(rowsAreFiches ? extracted : dedupeByTitle(extracted)),
     tokens: sumTokenUsage(usages),
   });
 };

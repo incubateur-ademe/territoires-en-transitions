@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createEmptyExtractedAction,
   ExtractedAction,
+  withAxisPath,
 } from '../../models/extracted-action';
 import { renderActionsCompact } from './render-actions-compact';
 
@@ -26,6 +27,21 @@ describe('renderActionsCompact', () => {
     expect(rendu).toBe(
       "1.1.1 Réduire l'autosolisme | Axe : Axe 1 | Sous-axe : 1.1 | " +
         'Description : Développer le covoiturage | Personne pilote : Jean Dupont'
+    );
+  });
+
+  it('rend les niveaux sous l’axe comme un seul sous-axe', () => {
+    const rendu = renderActionsCompact([
+      withAxisPath(toAction({ titre: 'Cadastre solaire' }), [
+        'Ambition 2',
+        'Développer les EnR',
+        'Appuyer le solaire',
+      ]),
+    ]);
+
+    expect(rendu).toBe(
+      'Cadastre solaire | Axe : Ambition 2 | ' +
+        'Sous-axe : Développer les EnR > Appuyer le solaire'
     );
   });
 

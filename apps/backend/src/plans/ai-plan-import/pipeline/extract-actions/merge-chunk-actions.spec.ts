@@ -3,8 +3,13 @@ import {
   createUnenrichedSousAction,
   createEmptyExtractedAction,
   ExtractedAction,
+  withAxisPath,
 } from '../../models/extracted-action';
-import { dedupeByTitle, mergeChunkActions } from './merge-chunk-actions';
+import {
+  dedupeByTitle,
+  mergeActions,
+  mergeChunkActions,
+} from './merge-chunk-actions';
 
 const anAction = (
   titre: string,
@@ -292,5 +297,71 @@ describe('dedupeByTitle', () => {
     });
 
     expect(deduped.actions).toHaveLength(2);
+  });
+
+  it('garde distinctes deux fiches riches que seul le troisième niveau d’axe distingue', () => {
+    const deduped = dedupeByTitle({
+      actions: [
+        withAxisPath(
+          anAction('Accompagner les projets', { description: 'Solaire.' }),
+          ['Ambition 2', 'Développer les EnR', 'Appuyer le solaire']
+        ),
+        withAxisPath(
+          anAction('Accompagner les projets', { description: 'Biogaz.' }),
+          ['Ambition 2', 'Développer les EnR', 'Appuyer la méthanisation']
+        ),
+      ],
+      chunkIndexByAction: [0, 0],
+    });
+
+    expect(deduped.actions.map((a) => a.cheminAxes?.[2])).toEqual([
+      'Appuyer le solaire',
+      'Appuyer la méthanisation',
+    ]);
+  });
+});
+
+describe('mergeActions', () => {
+  it('garde le chemin le plus précis quand l’autre n’en est que le début', () => {
+    const merged = mergeActions(
+      anAction('Isoler', { axe: 'Ambition 1', sousAxe: 'Rénover' }),
+      withAxisPath(anAction('Isoler'), ['Ambition 1', 'Rénover', 'Écoles'])
+    );
+
+    expect(merged).toMatchObject({
+      axe: 'Ambition 1',
+      sousAxe: 'Rénover',
+      cheminAxes: ['Ambition 1', 'Rénover', 'Écoles'],
+    });
+  });
+
+  it('prend une action épinglée pour base, même passée en second', () => {
+    const pinned = withAxisPath(
+      anAction('Isoler', {
+        description: 'Tableur.',
+        sourceTableur: { onglet: 'Suivi', premiereLigne: 4, derniereLigne: 6 },
+      }),
+      ['Ambition 1', 'Rénover', 'Écoles']
+    );
+
+    const merged = mergeActions(
+      anAction('Isoler', { axe: 'Axe 2', description: 'Modèle, plus long.' }),
+      pinned
+    );
+
+    expect(merged).toMatchObject({
+      sourceTableur: pinned.sourceTableur,
+      cheminAxes: ['Ambition 1', 'Rénover', 'Écoles'],
+      axe: 'Ambition 1',
+    });
+  });
+
+  it('garde le chemin de la première action quand les deux divergent', () => {
+    const merged = mergeActions(
+      withAxisPath(anAction('Isoler'), ['Ambition 1', 'Rénover', 'Écoles']),
+      withAxisPath(anAction('Isoler'), ['Ambition 2', 'Mobilité', 'Vélo'])
+    );
+
+    expect(merged.cheminAxes).toEqual(['Ambition 1', 'Rénover', 'Écoles']);
   });
 });

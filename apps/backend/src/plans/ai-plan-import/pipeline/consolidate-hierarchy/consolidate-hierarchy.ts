@@ -5,7 +5,7 @@ import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { chunk } from 'es-toolkit';
-import { ExtractedAction } from '../../models/extracted-action';
+import { axisPathOf, ExtractedAction } from '../../models/extracted-action';
 import { PlanSkeleton, renderSkeleton } from '../../models/plan-skeleton';
 import { HIERARCHIE_PROMPT } from '../../prompts/hierarchie.prompt';
 import {
@@ -136,7 +136,9 @@ const consolidateBatch = async (
   };
 };
 
-const renderLine = (action: ExtractedAction, index: number): string =>
-  `|${index}| ${action.axe || '(sans axe)'} > ${
-    action.sousAxe || '(sans sous-axe)'
-  } > ${action.titre}`;
+const renderLine = (action: ExtractedAction, index: number): string => {
+  const path = action.cheminAxes
+    ? axisPathOf(action)
+    : [action.axe || '(sans axe)', action.sousAxe || '(sans sous-axe)'];
+  return `|${index}| ${[...path, action.titre].join(' > ')}`;
+};

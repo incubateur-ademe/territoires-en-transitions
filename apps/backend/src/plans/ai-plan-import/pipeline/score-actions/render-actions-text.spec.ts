@@ -3,6 +3,7 @@ import {
   createEmptyExtractedAction,
   ExtractedAction,
   ExtractedSousAction,
+  withAxisPath,
 } from '../../models/extracted-action';
 import { renderActionsText } from './render-actions-text';
 
@@ -60,5 +61,20 @@ describe('renderActionsText', () => {
     expect(text.indexOf('Axe A :')).toBeLessThan(text.indexOf('Axe Z :'));
     expect(text).toContain('| 1 | Action A');
     expect(text).toContain('| 0 | Action Z');
+  });
+
+  it('rend les niveaux sous l’axe comme un seul sous-axe', () => {
+    const text = renderActionsText([
+      withAxisPath(anAction({ titre: 'Cadastre solaire' }), [
+        'Ambition 2',
+        'Développer les EnR',
+        'Appuyer le solaire',
+      ]),
+    ]);
+
+    expect(text).toContain('Ambition 2 :');
+    expect(text).toContain(
+      'Sous axe Développer les EnR > Appuyer le solaire :'
+    );
   });
 });

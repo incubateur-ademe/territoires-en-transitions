@@ -175,6 +175,7 @@ describe('compareWithManualReference', () => {
     expect(diff).toEqual({
       axes: { expected: 2, actual: 2, missing: [] },
       actions: { expected: 3, actual: 3, found: 2 },
+      axisLevels: null,
       missingTitles: ['3 Développer le covoiturage'],
       extraTitles: ['Organiser des trajets partagés'],
       titlesFoundAsSousAxe: ['3 Développer le covoiturage'],
@@ -185,6 +186,116 @@ describe('compareWithManualReference', () => {
           actualAxe: 'Axe 2 : Mobilité',
         },
       ],
+      misplacedPaths: [],
+    });
+  });
+
+  describe('avec des chemins d’axes complets', () => {
+    const deepReference: ManualReference = {
+      manual: true,
+      document: 'test',
+      axes: ['Ambition 1'],
+      actions: [
+        {
+          axe: 'Ambition 1',
+          cheminAxes: ['Ambition 1', 'Mobilité', 'Transports en commun'],
+          titre: '1 Aménager un pôle multimodal',
+        },
+        {
+          axe: 'Ambition 1',
+          cheminAxes: ['Ambition 1', 'Économie', 'Économie circulaire'],
+          titre: '36 Former les acteurs',
+        },
+        {
+          axe: 'Ambition 1',
+          cheminAxes: ['Ambition 1', 'Économie', 'Réemploi'],
+          titre: '38 Former les acteurs',
+        },
+      ],
+    };
+    const aDeepAction = (titre: string, cheminAxes: string[]) =>
+      anAction(titre, {
+        axe: cheminAxes[0],
+        sousAxe: cheminAxes[1],
+        cheminAxes,
+      });
+
+    it('compte les niveaux par profondeur et garde deux homonymes rangés à des chemins différents', () => {
+      const diff = compareWithManualReference(
+        run([
+          aDeepAction('Former les acteurs', [
+            'Ambition 1',
+            'Économie',
+            'Réemploi',
+          ]),
+          aDeepAction('Aménager un pôle multimodal', [
+            'Ambition 1',
+            'Mobilité',
+            'Transports en commun',
+          ]),
+          aDeepAction('Former les acteurs', [
+            'Ambition 1',
+            'Économie',
+            'Économie circulaire',
+          ]),
+        ]),
+        deepReference
+      );
+
+      expect(diff.axisLevels).toEqual({
+        expected: [1, 2, 3],
+        actual: [1, 2, 3],
+      });
+      expect(diff.actions.found).toBe(3);
+      expect(diff.extraTitles).toEqual([]);
+      expect(diff.misplacedPaths).toEqual([]);
+    });
+
+    it('ne laisse pas un homonyme mal rangé prendre la place de celui qui est au bon endroit', () => {
+      const diff = compareWithManualReference(
+        run([
+          aDeepAction('Former les acteurs', [
+            'Ambition 1',
+            'Économie',
+            'Réemploi',
+          ]),
+          aDeepAction('Former les acteurs', ['Ambition 1', 'Économie']),
+        ]),
+        deepReference
+      );
+
+      expect(diff.misplacedPaths).toEqual([
+        {
+          titre: '36 Former les acteurs',
+          expectedPath: 'Ambition 1 > Économie > Économie circulaire',
+          actualPath: 'Ambition 1 > Économie',
+        },
+      ]);
+    });
+
+    it('signale une action sous le bon axe mais à un autre chemin', () => {
+      const diff = compareWithManualReference(
+        run([
+          aDeepAction('Aménager un pôle multimodal', [
+            'Ambition 1',
+            'Mobilité',
+          ]),
+        ]),
+        deepReference
+      );
+
+      expect(diff.axisLevels).toEqual({
+        expected: [1, 2, 3],
+        actual: [1, 1],
+      });
+      expect(diff.misplacedTitles).toEqual([]);
+      expect(diff.misplacedPaths).toEqual([
+        {
+          titre: '1 Aménager un pôle multimodal',
+          expectedPath: 'Ambition 1 > Mobilité > Transports en commun',
+          actualPath: 'Ambition 1 > Mobilité',
+        },
+      ]);
     });
   });
 });
