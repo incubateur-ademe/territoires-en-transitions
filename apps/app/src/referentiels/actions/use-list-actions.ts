@@ -2,6 +2,7 @@ import {
   Action,
   getReferentielIdFromActionId,
   ListActionsInput,
+  ReferentielId,
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
 import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
@@ -22,14 +23,26 @@ type ActionListFilters = Pick<
   | 'servicePiloteIds'
 >;
 
+/**
+ * Référentiels à charger : sans `referentielIds` explicite, une liste
+ * d'`actionIds` suffit à les déterminer (les autres référentiels seraient
+ * de toute façon écartés par le filtre) ; à défaut, tous les référentiels.
+ */
+export function getReferentielIdsToFetch({
+  referentielIds,
+  actionIds,
+}: Pick<ListActionsInput, 'referentielIds' | 'actionIds'>): ReferentielId[] {
+  const fromActionIds = (actionIds ?? []).map(getReferentielIdFromActionId);
+  if (referentielIds === undefined && actionIds === undefined) {
+    return [ReferentielIdEnum.CAE, ReferentielIdEnum.ECI, ReferentielIdEnum.TE];
+  }
+  return [...new Set([...(referentielIds ?? []), ...fromActionIds])];
+}
+
 export function useListActions(
   {
     collectiviteId,
-    referentielIds = [
-      ReferentielIdEnum.CAE,
-      ReferentielIdEnum.ECI,
-      ReferentielIdEnum.TE,
-    ],
+    referentielIds,
     actionIds,
     actionTypes = [],
     utilisateurPiloteIds = [],
@@ -38,12 +51,10 @@ export function useListActions(
   }: ListActionsInput,
   { enabled }: { enabled?: boolean } = { enabled: true }
 ) {
-  const referentielIdsToFetch = [
-    ...new Set([
-      ...referentielIds,
-      ...(actionIds ?? []).map(getReferentielIdFromActionId),
-    ]),
-  ];
+  const referentielIdsToFetch = getReferentielIdsToFetch({
+    referentielIds,
+    actionIds,
+  });
 
   const { data: actionsMap, isPending } = useListActionsGroupedById(
     {

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { ActionListItem, filterActions } from './use-list-actions';
+import {
+  ActionListItem,
+  filterActions,
+  getReferentielIdsToFetch,
+} from './use-list-actions';
 
 const action = (
   overrides: Partial<ActionListItem> & Pick<ActionListItem, 'actionId'>
@@ -92,5 +96,33 @@ describe('filterActions', () => {
       utilisateurPiloteIds: ['u1'],
     });
     expect(result).toEqual([pilotedByUser]);
+  });
+});
+
+describe('getReferentielIdsToFetch', () => {
+  it('charge tous les référentiels sans filtre', () => {
+    expect(getReferentielIdsToFetch({})).toEqual(['cae', 'eci', 'te']);
+  });
+
+  it("ne charge que les référentiels des actionIds quand referentielIds n'est pas fourni", () => {
+    expect(getReferentielIdsToFetch({ actionIds: ['cae_1.1'] })).toEqual([
+      'cae',
+    ]);
+    expect(
+      getReferentielIdsToFetch({ actionIds: ['eci_2', 'cae_1.1', 'eci_3.1'] })
+    ).toEqual(['eci', 'cae']);
+  });
+
+  it('ne charge rien quand actionIds est vide', () => {
+    expect(getReferentielIdsToFetch({ actionIds: [] })).toEqual([]);
+  });
+
+  it('fait l’union de referentielIds et des référentiels des actionIds', () => {
+    expect(
+      getReferentielIdsToFetch({
+        referentielIds: ['te'],
+        actionIds: ['cae_1.1', 'te_2'],
+      })
+    ).toEqual(['te', 'cae']);
   });
 });
