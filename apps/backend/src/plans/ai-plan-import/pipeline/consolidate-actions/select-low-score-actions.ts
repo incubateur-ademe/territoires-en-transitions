@@ -1,4 +1,4 @@
-import { ExtractedAction } from '../../models/extracted-action';
+import { ExtractedAction, isPinnedAction } from '../../models/extracted-action';
 
 export const CONSOLIDATION_SCORE_THRESHOLD = 90;
 
@@ -11,6 +11,7 @@ export const selectLowScoreActions = (
     .map((action, index) => ({ index, action }))
     .filter(
       ({ action }) =>
+        !isPinnedAction(action) &&
         action.confidence !== null &&
         action.confidence.score < CONSOLIDATION_SCORE_THRESHOLD
     );

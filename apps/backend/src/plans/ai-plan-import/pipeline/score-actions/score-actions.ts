@@ -3,7 +3,7 @@ import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { Result, success } from '@tet/backend/utils/result.type';
-import { ExtractedAction } from '../../models/extracted-action';
+import { ExtractedAction, isPinnedAction } from '../../models/extracted-action';
 import { keepSucceededBatches } from '../keep-succeeded-batches';
 import {
   ChunkGroup,
@@ -38,8 +38,11 @@ export const scoreActions = async (
   llm: Pick<LlmService, 'generateStructured'>,
   { actions, source, signal }: ScoreActionsInput
 ): Promise<Result<ScoreActionsResult, LlmError>> => {
+  // Une action lue dans un tableur par le code n'a rien à contrôler.
   const groups = groupByChunk(
-    actions.map((action, index) => ({ index, action })),
+    actions
+      .map((action, index) => ({ index, action }))
+      .filter(({ action }) => !isPinnedAction(action)),
     ({ index }) => index,
     source
   );

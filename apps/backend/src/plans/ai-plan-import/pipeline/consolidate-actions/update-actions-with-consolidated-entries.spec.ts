@@ -61,4 +61,17 @@ describe('updateActionsWithConsolidatedEntries', () => {
 
     expect(result[0]).toEqual(original);
   });
+
+  it('laisse intacte une action lue dans un tableur par le code', () => {
+    const pinned = anAction({
+      sourceTableur: { onglet: 'Suivi', premiereLigne: 5, derniereLigne: 7 },
+    });
+
+    const result = updateActionsWithConsolidatedEntries(
+      [pinned],
+      [{ index: 0, titre: 'Réécrit', description: '', 'sous-actions': [] }]
+    );
+
+    expect(result[0]).toEqual(pinned);
+  });
 });

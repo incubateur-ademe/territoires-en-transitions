@@ -3,6 +3,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { buildDocument, buildPage } from '../document/document-page';
 import { segmentDocument } from '../segment-document/segment-document';
+import { SPREADSHEET_RULE } from '../../prompts/field-rules';
 import { ExtractionAction } from './extract-actions.schema';
 import { packUnits, structureUnits } from './structure-units';
 
@@ -130,13 +131,35 @@ describe('structureUnits', () => {
     }
   });
 
+  it('dit comment lire un tableur, et seulement pour un tableur', async () => {
+    const { llm, calls } = llmAnswering(() => [anExtractionAction('A')]);
+
+    await structureUnits(llm, input);
+    await structureUnits(llm, { ...input, spreadsheet: true });
+
+    expect(calls[0].systemInstruction).not.toContain(SPREADSHEET_RULE);
+    expect(calls[1].systemInstruction).toContain(`\n- ${SPREADSHEET_RULE}`);
+    expect(calls[1].systemInstruction).not.toContain('{regle_tableur}');
+  });
+
+  it("fond les titres repris d'un tableur aux fiches sur plusieurs rangées", async () => {
+    const { llm } = llmAnswering(() => [
+      anExtractionAction('Sensibiliser', 'Axe 1 : Mobilité'),
+      anExtractionAction('Sensibiliser', 'Axe 2 : Énergie'),
+    ]);
+
+    const result = await structureUnits(llm, { ...input, spreadsheet: true });
+
+    expect(result.success && result.data.actions).toHaveLength(1);
+  });
+
   it("garde chaque ligne d'un tableur, même de titre répété et sans description", async () => {
     const { llm } = llmAnswering(() => [
       anExtractionAction('Sensibiliser', 'Axe 1 : Mobilité'),
       anExtractionAction('Sensibiliser', 'Axe 2 : Énergie'),
     ]);
 
-    const result = await structureUnits(llm, { ...input, tabular: true });
+    const result = await structureUnits(llm, { ...input, rowsAreFiches: true });
 
     expect(result.success).toBe(true);
     if (result.success) {

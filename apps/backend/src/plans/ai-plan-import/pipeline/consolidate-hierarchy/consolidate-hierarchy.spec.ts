@@ -5,6 +5,7 @@ import {
   createUnenrichedSousAction,
   createEmptyExtractedAction,
   ExtractedAction,
+  withAxisPath,
 } from '../../models/extracted-action';
 import { applyHierarchy } from './apply-hierarchy';
 import { consolidateHierarchy } from './consolidate-hierarchy';
@@ -84,6 +85,48 @@ describe('applyHierarchy', () => {
     ]);
 
     expect(outcome.keptIndexes).toEqual([0, 1]);
+  });
+
+  it('efface le chemin complet quand il réécrit le rattachement', () => {
+    const action = withAxisPath(anAction('Isoler'), ['A', 'B', 'C']);
+
+    const outcome = applyHierarchy(
+      [action],
+      [{ index: 0, axe: 'Axe 1 : Bâtiments', 'sous-axe': '', doublonDe: -1 }]
+    );
+
+    expect(outcome.actions[0]).toMatchObject({
+      axe: 'Axe 1 : Bâtiments',
+      sousAxe: '',
+    });
+    expect(outcome.actions[0].cheminAxes).toBeUndefined();
+  });
+
+  it('ne touche jamais une action épinglée, et retire sans fusion son doublon venu du modèle', () => {
+    const pinned = withAxisPath(
+      anAction('Créer un cadastre solaire', {
+        description: 'courte',
+        sourceTableur: { onglet: 'Suivi', premiereLigne: 8, derniereLigne: 12 },
+      }),
+      ['Ambition 2', 'Développer les EnR', 'Appuyer le solaire']
+    );
+    const fromModel = anAction('Créer un cadastre solaire', {
+      description: 'une description bien plus longue que celle du tableur',
+    });
+
+    const outcome = applyHierarchy(
+      [pinned, fromModel, { ...pinned, titre: 'Autre fiche épinglée' }],
+      [
+        { index: 0, axe: 'Axe 2 : Mobilité', 'sous-axe': '', doublonDe: -1 },
+        { index: 1, axe: 'Axe 2 : Mobilité', 'sous-axe': '', doublonDe: 0 },
+        { index: 2, axe: 'Axe 2 : Mobilité', 'sous-axe': '', doublonDe: 0 },
+      ]
+    );
+
+    expect(outcome.keptIndexes).toEqual([0, 2]);
+    expect(outcome.actions[0]).toEqual(pinned);
+    expect(outcome.actions[1].titre).toBe('Autre fiche épinglée');
+    expect(outcome.actions[1].cheminAxes).toEqual(pinned.cheminAxes);
   });
 });
 

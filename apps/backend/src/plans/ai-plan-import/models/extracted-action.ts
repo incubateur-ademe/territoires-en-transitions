@@ -17,9 +17,23 @@ const extractedSousActionSchema = z.object({
   dateFin: z.string().date().nullable(),
 });
 
+const sourceTableurSchema = z.object({
+  onglet: z.string(),
+  premiereLigne: z.number().int(),
+  derniereLigne: z.number().int(),
+  numero: z.string().optional(),
+});
+
 export const extractedActionSchema = z.object({
   axe: z.string(),
   sousAxe: z.string(),
+  /**
+   * Chemin d'axes complet quand le plan a plus de deux niveaux : il fait foi,
+   * `axe` et `sousAxe` en reprennent les deux premiers segments.
+   */
+  cheminAxes: z.array(z.string()).optional(),
+  /** Action construite depuis un tableur : épinglée, le modèle n'y touche pas. */
+  sourceTableur: sourceTableurSchema.optional(),
   titre: z.string(),
   description: z.string().nullable(),
   objectifs: z.string().nullable(),
@@ -46,6 +60,42 @@ export const extractedActionSchema = z.object({
 export type ActionConfidence = z.output<typeof actionConfidenceSchema>;
 export type ExtractedSousAction = z.output<typeof extractedSousActionSchema>;
 export type ExtractedAction = z.output<typeof extractedActionSchema>;
+
+/** Le chemin d'axes de l'action, sans segment vide. */
+export const axisPathOf = (
+  action: Pick<ExtractedAction, 'axe' | 'sousAxe' | 'cheminAxes'>
+): string[] => compactPath(action.cheminAxes ?? [action.axe, action.sousAxe]);
+
+const compactPath = (path: string[]): string[] =>
+  path.map((segment) => segment.trim()).filter((segment) => segment !== '');
+
+/**
+ * Les niveaux d'axe à leur position, vides compris : sans chemin complet, un
+ * sous-axe sous un axe vide reste un sous-axe et ne se compare pas à un axe.
+ */
+export const axisSlotsOf = (
+  action: Pick<ExtractedAction, 'axe' | 'sousAxe' | 'cheminAxes'>
+): string[] => action.cheminAxes ?? [action.axe, action.sousAxe];
+
+export const withAxisPath = (
+  action: ExtractedAction,
+  path: string[]
+): ExtractedAction => {
+  const cheminAxes = compactPath(path);
+  return {
+    ...action,
+    cheminAxes,
+    axe: cheminAxes[0] ?? '',
+    sousAxe: cheminAxes[1] ?? '',
+  };
+};
+
+/** Les niveaux sous l'axe, lus comme un seul sous-axe pour un rendu texte. */
+export const sousAxeLabelOf = (action: ExtractedAction): string =>
+  action.cheminAxes ? axisPathOf(action).slice(1).join(' > ') : action.sousAxe;
+
+export const isPinnedAction = (action: ExtractedAction): boolean =>
+  action.sourceTableur !== undefined;
 
 export const createUnenrichedSousAction = (
   titre: string

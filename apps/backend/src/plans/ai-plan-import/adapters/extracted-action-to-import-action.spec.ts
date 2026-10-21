@@ -6,6 +6,7 @@ import {
   createEmptyExtractedAction,
   ExtractedAction,
   ExtractedSousAction,
+  withAxisPath,
 } from '../models/extracted-action';
 import {
   capExtractedActionTitles,
@@ -35,6 +36,21 @@ const toAction = (overrides: Partial<ExtractedAction> = {}): ExtractedAction =>
     titre: 'Réduire l autosolisme',
     ...overrides,
   });
+
+// Deux fiches de même titre sous le même axe et le même sous-axe, que seul le
+// troisième niveau distingue.
+const AMBITION = 'Ambition 2 : Produire une énergie locale';
+const OBJECTIF = 'Développer les énergies renouvelables';
+const homonymousFiches = (): ExtractedAction[] => [
+  withAxisPath(
+    toAction({ titre: 'Accompagner les projets', description: 'n°36' }),
+    [AMBITION, OBJECTIF, 'Appuyer le solaire']
+  ),
+  withAxisPath(
+    toAction({ titre: 'Accompagner les projets', description: 'n°38' }),
+    [AMBITION, OBJECTIF, 'Appuyer la méthanisation']
+  ),
+];
 
 describe('extractedActionToImportActions', () => {
   it('mappe une action (axisPath, statut, budget, pilote)', () => {
@@ -122,7 +138,43 @@ describe('extractedActionToImportActions', () => {
   });
 });
 
+describe('extractedActionToImportActions sur un chemin de trois niveaux', () => {
+  it('donne le chemin complet à l’action et à ses sous-actions', () => {
+    const result = extractedActionToImportActions(
+      withAxisPath(toAction({ sousActions: [toSousAction()] }), [
+        AMBITION,
+        OBJECTIF,
+        'Appuyer le solaire',
+      ])
+    );
+
+    expect(result.map((action) => action.axisPath)).toEqual([
+      [AMBITION, OBJECTIF, 'Appuyer le solaire'],
+      [AMBITION, OBJECTIF, 'Appuyer le solaire'],
+    ]);
+  });
+
+  it('round-trip : deux fiches homonymes sur deux chemins passent la validation', () => {
+    const result = validateImportPlanInput({
+      nom: 'Plan importé',
+      actions: homonymousFiches().flatMap(extractedActionToImportActions),
+    });
+
+    expect(result.success).toBe(true);
+  });
+});
+
 describe('dedupeExtractedActions', () => {
+  it('garde deux fiches de même titre que seul le troisième niveau distingue', () => {
+    expect(dedupeExtractedActions(homonymousFiches())).toHaveLength(2);
+  });
+
+  it('supprime un doublon de même chemin complet', () => {
+    const [fiche] = homonymousFiches();
+
+    expect(dedupeExtractedActions([fiche, { ...fiche }])).toHaveLength(1);
+  });
+
   it('supprime les actions de même axe, sous-axe et titre en gardant la première', () => {
     const result = dedupeExtractedActions([
       toAction({ description: 'première' }),
@@ -245,6 +297,21 @@ describe('normalizeExtractedActions', () => {
     expect(result.actions.map(({ axe, titre }) => [axe, titre])).toEqual([
       ['Axe 6 : Développer le potentiel', 'Développer l’énergie hydraulique'],
       ['Axe 6 : Développer le potentiel', 'Développer le stockage'],
+    ]);
+  });
+
+  it('garde les deux fiches homonymes et leur chemin complet', () => {
+    const result = normalizeExtractedActions(homonymousFiches());
+
+    expect(result.duplicateCount).toBe(0);
+    expect(
+      result.actions.map(({ cheminAxes, description }) => [
+        cheminAxes,
+        description,
+      ])
+    ).toEqual([
+      [[AMBITION, OBJECTIF, 'Appuyer le solaire'], 'n°36'],
+      [[AMBITION, OBJECTIF, 'Appuyer la méthanisation'], 'n°38'],
     ]);
   });
 

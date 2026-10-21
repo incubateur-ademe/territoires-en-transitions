@@ -82,4 +82,30 @@ describe('applyEnrichments', () => {
     expect(action.sousActions[0]).toEqual(createUnenrichedSousAction('a0'));
     expect(action.sousActions[1].description).toBe('Seule a1 enrichie');
   });
+
+  it('laisse intactes les sous-actions d’une action lue dans un tableur', () => {
+    const pinned = {
+      ...toAction('Action A', ['a0']),
+      sourceTableur: { onglet: 'Suivi', premiereLigne: 5, derniereLigne: 7 },
+    };
+    const actions = [pinned, toAction('Action B', ['b0'])];
+
+    const [actionA, actionB] = applyEnrichments(
+      actions,
+      [
+        {
+          index: 0,
+          actionIndex: 0,
+          sousActionIndex: 0,
+          parentTitre: 'Action A',
+          sousAction: pinned.sousActions[0],
+        },
+        ...indexSousActions(actions),
+      ],
+      [{ ...emptyEntry(0), description: 'Réécrite' }]
+    );
+
+    expect(actionA).toEqual(pinned);
+    expect(actionB.sousActions[0].description).toBe('Réécrite');
+  });
 });

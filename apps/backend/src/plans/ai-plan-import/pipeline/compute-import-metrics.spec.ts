@@ -1,6 +1,13 @@
 import { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { describe, expect, it } from 'vitest';
-import { computeLlmCallDetails } from './compute-import-metrics';
+import {
+  createEmptyExtractedAction,
+  withAxisPath,
+} from '../models/extracted-action';
+import {
+  computeContentMetrics,
+  computeLlmCallDetails,
+} from './compute-import-metrics';
 
 const call = (overrides: Partial<LlmCallEvent>): LlmCallEvent => ({
   tier: 'strong',
@@ -52,5 +59,25 @@ describe('computeLlmCallDetails', () => {
       errors_rate_limited: 1,
       errors_invalid_json: 1,
     });
+  });
+});
+
+describe('computeContentMetrics', () => {
+  it('relève la profondeur du plus long chemin d’axes', () => {
+    const metrics = computeContentMetrics([
+      createEmptyExtractedAction({ axe: 'Axe 1', sousAxe: '1.1' }),
+      withAxisPath(createEmptyExtractedAction(), ['Ambition 1', 'B', 'C']),
+      withAxisPath(createEmptyExtractedAction(), ['Ambition 1', 'B', 'D']),
+    ]);
+
+    expect(metrics).toMatchObject({
+      axes: 2,
+      sousAxes: 2,
+      profondeurAxes: 3,
+    });
+  });
+
+  it('vaut 0 sans aucun axe', () => {
+    expect(computeContentMetrics([]).profondeurAxes).toBe(0);
   });
 });

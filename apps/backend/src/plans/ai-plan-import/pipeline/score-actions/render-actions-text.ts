@@ -1,5 +1,5 @@
 import { groupBy } from 'es-toolkit';
-import { ExtractedAction } from '../../models/extracted-action';
+import { ExtractedAction, sousAxeLabelOf } from '../../models/extracted-action';
 
 type IndexedAction = { index: number; action: ExtractedAction };
 
@@ -14,7 +14,9 @@ export const renderActionsText = (actions: ExtractedAction[]): string => {
 };
 
 const renderAxe = (axe: string, entries: IndexedAction[]): string => {
-  const body = Object.entries(groupBy(entries, (entry) => entry.action.sousAxe))
+  const body = Object.entries(
+    groupBy(entries, (entry) => sousAxeLabelOf(entry.action))
+  )
     .map(([sousAxe, sousAxeEntries]) =>
       [`Sous axe ${sousAxe} :`, ...sousAxeEntries.map(renderActionLine)].join(
         '\n'
@@ -44,5 +46,5 @@ const labelled = (label: string, value: string | null): string | null =>
 
 const compareByHierarchy = (a: IndexedAction, b: IndexedAction): number =>
   a.action.axe.localeCompare(b.action.axe) ||
-  a.action.sousAxe.localeCompare(b.action.sousAxe) ||
+  sousAxeLabelOf(a.action).localeCompare(sousAxeLabelOf(b.action)) ||
   a.index - b.index;

@@ -1,6 +1,7 @@
 import {
   ExtractedAction,
   ExtractedSousAction,
+  isPinnedAction,
 } from '../../models/extracted-action';
 
 export type IndexedSousAction = {
@@ -15,13 +16,17 @@ export const indexSousActions = (
   actions: ExtractedAction[]
 ): IndexedSousAction[] =>
   actions
+    // Les sous-actions d'un tableur lu par le code y ont déjà leur statut et
+    // leurs dates.
     .flatMap((action, actionIndex) =>
-      action.sousActions.map((sousAction, sousActionIndex) => ({
-        actionIndex,
-        sousActionIndex,
-        parentTitre: action.titre,
-        sousAction,
-      }))
+      (isPinnedAction(action) ? [] : action.sousActions).map(
+        (sousAction, sousActionIndex) => ({
+          actionIndex,
+          sousActionIndex,
+          parentTitre: action.titre,
+          sousAction,
+        })
+      )
     )
     .map((entry, index) => ({ index, ...entry }));
 

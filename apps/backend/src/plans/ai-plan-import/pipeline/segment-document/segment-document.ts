@@ -1,17 +1,13 @@
-import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count';
+import type { SheetGrid } from '../analyze-workbook/sheet-grid';
 import {
   DocumentPage,
   isTabularKind,
   ReadDocument,
 } from '../document/document-page';
+import { cutTabularUnits } from './cut-tabular-units';
 import { cutUnits, CutUnitsOptions } from './cut-units';
 import { detectHeadings } from './detect-headings';
-import {
-  buildUnit,
-  DocumentUnit,
-  numberUnits,
-  UnitLine,
-} from './document-unit';
+import { DocumentUnit, numberUnits } from './document-unit';
 
 export type SegmentDocumentOptions = CutUnitsOptions;
 
@@ -30,42 +26,18 @@ export const segmentDocument = (
 ): DocumentUnit[] => {
   const pages = document.pages.filter((page) => page.source !== 'empty');
   const units = isTabularKind(document.kind)
-    ? pages.flatMap((page) => cutTabularUnits(page, options.maxTokens))
+    ? pages.flatMap((page) =>
+        cutTabularUnits(page, options.maxTokens, gridOfPage(document, page))
+      )
     : cutUnits(pages, detectHeadings(pages), options);
   return numberUnits(units);
 };
 
-/**
- * Un tableur : chaque unité reprend l'en-tête de la feuille, et une ligne
- * du tableau n'est jamais coupée.
- */
-const cutTabularUnits = (
-  page: DocumentPage,
-  maxTokens: number
-): DocumentUnit[] => {
-  const [header, ...rows] = page.lines.map(
-    (line): UnitLine => ({ text: line.text, pageIndex: page.index })
-  );
-  if (!header) {
-    return [];
-  }
-  const headingPath = page.label ? [page.label] : [];
-  const headerTokens = estimateTokenCount(header.text) + 1;
-  const units: DocumentUnit[] = [];
-  let current: UnitLine[] = [];
-  let tokens = headerTokens;
-  for (const row of rows) {
-    const rowTokens = estimateTokenCount(row.text) + 1;
-    if (current.length > 0 && tokens + rowTokens > maxTokens) {
-      units.push(buildUnit([header, ...current], headingPath, 'table'));
-      current = [];
-      tokens = headerTokens;
-    }
-    current.push(row);
-    tokens += rowTokens;
-  }
-  if (current.length > 0) {
-    units.push(buildUnit([header, ...current], headingPath, 'table'));
-  }
-  return units;
+/** La grille d'une page de tableur, dans le même ordre que les pages. */
+const gridOfPage = (
+  document: ReadDocument,
+  page: DocumentPage
+): SheetGrid | undefined => {
+  const grid = document.workbook?.[page.index];
+  return grid && grid.name === (page.label ?? '') ? grid : undefined;
 };

@@ -1,5 +1,6 @@
+import { omit } from 'es-toolkit';
 import { z } from 'zod';
-import { ExtractedAction } from '../../models/extracted-action';
+import { ExtractedAction, isPinnedAction } from '../../models/extracted-action';
 import { mergeActions } from '../extract-actions/merge-chunk-actions';
 
 export const hierarchyEntrySchema = z.object({
@@ -22,7 +23,9 @@ export type HierarchyOutcome = {
 
 /**
  * Applique les rattachements et fusionne les doublons. Une action que le
- * modèle a oubliée garde son axe : c'est lui qui résume, pas nous.
+ * modèle a oubliée garde son axe : c'est lui qui résume, pas nous. Une action
+ * épinglée n'est ni rattachée ni retirée ; un doublon d'elle venu du modèle
+ * disparaît sans s'y fondre.
  */
 export const applyHierarchy = (
   actions: ExtractedAction[],
@@ -31,9 +34,14 @@ export const applyHierarchy = (
   const entryByIndex = new Map(entries.map((entry) => [entry.index, entry]));
 
   const targetOf = new Map<number, number>();
-  actions.forEach((_, index) => {
+  actions.forEach((action, index) => {
     const target = entryByIndex.get(index)?.doublonDe ?? -1;
-    if (target >= 0 && target < index && target !== index) {
+    if (
+      !isPinnedAction(action) &&
+      target >= 0 &&
+      target < index &&
+      target !== index
+    ) {
       targetOf.set(index, resolveTarget(target, targetOf));
     }
   });
@@ -41,7 +49,9 @@ export const applyHierarchy = (
   // l'action conservée prime sur ce que son doublon portait.
   const merged = [...actions];
   for (const [index, target] of targetOf) {
-    merged[target] = mergeActions(merged[target], merged[index]);
+    if (!isPinnedAction(merged[target])) {
+      merged[target] = mergeActions(merged[target], merged[index]);
+    }
   }
 
   const keptIndexes = actions
@@ -53,9 +63,9 @@ export const applyHierarchy = (
       const action = merged[index];
       // Un axe vide : le modèle n'a pas su rattacher, l'origine reste. Un axe
       // avec un sous-axe vide : l'axe n'a pas de sous-axe, c'est voulu.
-      return entry && entry.axe.trim()
+      return entry && entry.axe.trim() && !isPinnedAction(action)
         ? {
-            ...action,
+            ...omit(action, ['cheminAxes']),
             axe: entry.axe.trim(),
             sousAxe: entry['sous-axe'].trim(),
           }

@@ -1,6 +1,7 @@
 import {
   createUnenrichedSousAction,
   ExtractedAction,
+  isPinnedAction,
 } from '../../models/extracted-action';
 import { ConsolidationEntry } from './consolidate-actions.schema';
 
@@ -11,7 +12,7 @@ export const updateActionsWithConsolidatedEntries = (
   const entryByIndex = new Map(entries.map((entry) => [entry.index, entry]));
   return actions.map((action, index) => {
     const entry = entryByIndex.get(index);
-    return entry
+    return entry && !isPinnedAction(action)
       ? updateLowQualityActionWithConsolidatedEntry(action, entry)
       : action;
   });

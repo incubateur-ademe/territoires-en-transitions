@@ -40,6 +40,12 @@ export type PipelineCheckpoint = PipelineState & {
   currentDate: string;
   /** Absent des points de reprise enregistrés avant son ajout. */
   documentKind?: DocumentKind;
+  /**
+   * Un tableur dont les fiches s'étendent sur plusieurs rangées fusionnées :
+   * ses titres repris se dédoublonnent. Absent des points de reprise
+   * antérieurs, où chaque rangée reste une fiche.
+   */
+  tabularRowGroups?: boolean;
   /** Le texte est découpé pour ce modèle : un autre ne le reprend pas. */
   llm: {
     strategy: PipelineLlm['capabilities']['strategy'];

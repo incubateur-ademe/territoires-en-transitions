@@ -309,7 +309,7 @@ describe('GenerateImportDraftService', () => {
     );
     // L'en-tête du tableau est repris dans chaque tranche.
     for (const prompt of extractionPrompts) {
-      expect(prompt).toContain('axe,titre\n1,Action longue');
+      expect(prompt).toContain('axe\ttitre\n1\tAction longue');
     }
     expect(mocks.jobRepository.markFailed).not.toHaveBeenCalled();
     expect(mocks.jobRepository.markDone).toHaveBeenCalled();

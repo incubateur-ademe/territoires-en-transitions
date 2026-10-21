@@ -18,11 +18,26 @@ La cible compile le backend (`nest build`) puis lance
 `dist/plans/ai-plan-import/eval/run-ai-import-eval.js` sous dotenvx. Le
 résultat est écrit dans `apps/backend/eval-out/` (ignoré par git).
 
+## Lecture seule d'un tableur
+
+Pour voir comment le code lit un classeur, sans appeler aucun modèle ni
+démarrer Nest :
+
+```sh
+make ai-import-eval f=plan.xlsx args="--lecture-seule"
+```
+
+Le script affiche le rôle de chaque onglet (`plan`, `complement`, `synthese`,
+`liste`, `masque`, `modele`) et de chaque colonne, avec la raison de chaque
+choix, puis l'arbre des axes et des fiches et les avertissements. Un onglet
+`modele` serait confié au modèle lors d'un vrai import. C'est la façon, sans
+coût, d'essayer les heuristiques sur un nouveau classeur réel.
+
 ## Ce que mesure le JSON
 
-- `metrics` : nombre d'actions, d'axes et de sous-axes distincts, de
-  sous-actions ; taux de remplissage par champ ; appels au modèle, dont les
-  429 et les échecs ; tokens ; durée.
+- `metrics` : nombre d'actions, d'axes et de sous-axes distincts, profondeur
+  du plus long chemin d'axes, nombre de sous-actions ; taux de remplissage par
+  champ ; appels au modèle, dont les 429 et les échecs ; tokens ; durée.
 - `draft` : le brouillon complet, tel qu'il serait enregistré.
 - `diff` (avec `ref=`) : écarts de métriques, titres de la référence
   introuvables dans le résultat, titres en trop. Les titres sont comparés sans
@@ -51,8 +66,35 @@ pipeline, comparable d'un run à l'autre.
 
 Le `diff` donne alors les axes et actions retrouvés, les actions introuvables,
 celles retrouvées en sous-axe (niveau inventé), celles rangées sous un autre
-axe et les titres en trop. Il juge la structure, pas le contenu des fiches :
-pour le contenu, comparer aussi avec une référence Gemini.
+axe et les titres en trop. Une action obtenue ne répond qu'à une action
+attendue : un doublon compte parmi les titres en trop. Le `diff` juge la
+structure, pas le contenu des fiches : pour le contenu, comparer aussi avec une
+référence Gemini.
+
+Une référence peut aussi donner, par action, le chemin d'axes complet
+(`cheminAxes`, qui commence par `axe`) quand le plan a plus de deux niveaux.
+C'est le cas de `ccpg-suivi-2021.json`, l'outil de suivi du PCAET de la CC du
+Pont du Gard (classeur, onglet « Suivi ») : 4 ambitions, 15 objectifs
+stratégiques, 33 objectifs opérationnels et 72 fiches, dont deux homonymes
+rangées sous deux objectifs différents. Le `diff` donne alors en plus le
+nombre de niveaux distincts à chaque profondeur, attendu et obtenu, et les
+actions rangées sous le bon axe mais à un autre chemin. Le classeur n'est pas
+dans le dépôt : renommez-le sans espaces (`ccpg.xlsx`), voyez d'abord sa
+lecture, sans coût, puis lancez l'éval réelle (à faire par un humain) :
+
+```sh
+make ai-import-eval f=ccpg.xlsx args="--lecture-seule"
+make ai-import-eval f=ccpg.xlsx ref=apps/backend/src/plans/ai-plan-import/eval/references/ccpg-suivi-2021.json
+```
+
+Attendu : aucun appel au modèle pour le repérage, l'extraction et la
+hiérarchie, seulement pour les secteurs et la revue. Le même classeur sert à
+une spec locale, sautée sans lui :
+
+```sh
+cd apps/backend
+CCPG_XLSX="…/ccpg.xlsx" npx vitest run src/plans/ai-plan-import/pipeline/analyze-workbook/analyze-workbook.real-file.spec.ts
+```
 
 ## Méthode conseillée
 

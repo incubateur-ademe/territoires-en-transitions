@@ -5,7 +5,7 @@ import {
   sumTokenUsage,
   TokenUsage,
 } from '@tet/backend/utils/llm/token-usage';
-import { ExtractedAction } from '../models/extracted-action';
+import { axisPathOf, ExtractedAction } from '../models/extracted-action';
 
 /**
  * Mesures communes à l'éval et aux imports réels : mêmes définitions des deux
@@ -28,6 +28,8 @@ export type ContentMetrics = {
   actionsSansAxe: number;
   axes: number;
   sousAxes: number;
+  /** Nombre de niveaux d'axes du plus long chemin, 0 sans aucun axe. */
+  profondeurAxes: number;
   sousActions: number;
   /** Part des actions dont le champ est renseigné, entre 0 et 1. */
   fillRates: Record<FillRateField, number>;
@@ -52,6 +54,10 @@ export const computeContentMetrics = (
     actions
       .filter((action) => action.sousAxe.trim())
       .map((action) => `${action.axe}|${action.sousAxe}`)
+  ),
+  profondeurAxes: Math.max(
+    0,
+    ...actions.map((action) => axisPathOf(action).length)
   ),
   sousActions: actions.reduce(
     (total, action) => total + action.sousActions.length,

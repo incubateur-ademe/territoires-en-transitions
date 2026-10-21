@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { buildHorizontalHierarchyWorkbook } from '../__fixtures__/build-test-workbook';
 import { buildDocument, buildPage } from '../document/document-page';
+import { readDocument } from '../read-document/read-document';
 import { detectHeadings } from './detect-headings';
 import { segmentDocument } from './segment-document';
 import { renderUnit } from './render-unit';
@@ -25,7 +27,27 @@ describe('segmentDocument', () => {
     expect(units[1]).toMatchObject({ kind: 'fiche', pageStart: 2, pageEnd: 2 });
   });
 
-  it('découpe un tableur par lignes entières, en-tête répété', () => {
+  it('découpe un classeur lu avec sa grille par fiches, sous son vrai en-tête', async () => {
+    const read = await readDocument({
+      buffer: await buildHorizontalHierarchyWorkbook(),
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    if (!read.success) {
+      throw new Error(read.error.kind);
+    }
+
+    const units = segmentDocument(read.data);
+    const suivi = units.filter(({ headingPath }) => headingPath[0] === 'Suivi');
+
+    expect(suivi.map(({ headingPath }) => headingPath[1])).toEqual([
+      'AMBITION n°1 : Pour un territoire sobre en énergie',
+      'AMBITION n°2 Pour un territoire préservé',
+    ]);
+    expect(suivi[1].lines[0].text).toContain('CALENDRIER · 2021');
+  });
+
+  it('découpe un tableur sans grille par lignes entières, en-tête répété', () => {
     const rows = Array.from(
       { length: 30 },
       (_, i) => `Axe ${i % 3}\tAction ${i}\tDescription assez longue ${i}`

@@ -5,6 +5,9 @@
  * vrai (cf. « Paid external AI calls » dans le CLAUDE.md racine).
  *
  *   make ai-import-eval f=plan.pdf [ref=eval-out/reference.json] [out=…]
+ *
+ * Seule exception, `--lecture-seule` sur un tableur : la lecture du classeur
+ * par le code, sans démarrer Nest ni aucun modèle.
  */
 import { ConsoleLogger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -17,6 +20,7 @@ import { basename, extname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { normalizeExtractedActions } from '../adapters/extracted-action-to-import-action';
 import { detectSourceMimeType } from '../enqueue-import/detect-source-mime-type';
+import { analyzeWorkbook } from '../pipeline/analyze-workbook/analyze-workbook';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
 import { runImportPipeline } from '../pipeline/run-import-pipeline';
@@ -31,6 +35,7 @@ import {
   ManualReference,
   ManualReferenceDiff,
 } from './eval-metrics';
+import { describeWorkbookAnalysis } from './describe-workbook-analysis';
 import { EvalModule } from './eval.module';
 
 const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
@@ -42,7 +47,8 @@ const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
 };
 
 const USAGE = `Usage : run-ai-import-eval --file <pdf|xlsx|csv> [--out <json>] [--ref <json>]
-  [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]`;
+  [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]
+       run-ai-import-eval --file <xlsx|csv> --lecture-seule   (aucun appel au modèle)`;
 
 type EvalOutput = EvalRun & {
   file: string;
@@ -104,6 +110,7 @@ const main = async (): Promise<number> => {
       instructions: { type: 'string', default: '' },
       'no-verifications': { type: 'boolean', default: false },
       'no-sous-actions': { type: 'boolean', default: false },
+      'lecture-seule': { type: 'boolean', default: false },
       help: { type: 'boolean', default: false },
     },
   });
@@ -119,6 +126,9 @@ const main = async (): Promise<number> => {
   if (mimeType === null) {
     print(`✗ Format non supporté : ${values.file}`);
     return 1;
+  }
+  if (values['lecture-seule']) {
+    return printWorkbookAnalysis(buffer, mimeType);
   }
   // Lue avant le premier appel payant : une référence illisible arrête tout.
   const reference = values.ref
@@ -265,6 +275,29 @@ const main = async (): Promise<number> => {
   return outcome.status === 'done' ? 0 : 1;
 };
 
+/**
+ * Avant tout module Nest : rien ne peut instancier le fournisseur du modèle.
+ * Sans option d'OCR, la lecture du document n'appelle aucun modèle.
+ */
+const printWorkbookAnalysis = async (
+  buffer: Buffer,
+  mimeType: string
+): Promise<number> => {
+  const read = await readDocument({ buffer, mimeType });
+  if (!read.success) {
+    print(`✗ Lecture impossible : ${JSON.stringify(read.error)}`);
+    return 1;
+  }
+  const { workbook } = read.data;
+  if (!workbook) {
+    print('✗ --lecture-seule ne lit que les tableurs (xlsx, csv).');
+    return 1;
+  }
+  describeWorkbookAnalysis(analyzeWorkbook(workbook)).forEach(print);
+  finished = true;
+  return 0;
+};
+
 const printMetrics = (
   metrics: EvalMetrics,
   status: string,
@@ -272,7 +305,7 @@ const printMetrics = (
 ): void => {
   print(`Statut : ${status}${error ? ` (${error})` : ''}`);
   print(
-    `Actions ${metrics.actions} (sans axe ${metrics.actionsSansAxe}) · axes ${metrics.axes} · sous-axes ${metrics.sousAxes} · sous-actions ${metrics.sousActions}`
+    `Actions ${metrics.actions} (sans axe ${metrics.actionsSansAxe}) · axes ${metrics.axes} · sous-axes ${metrics.sousAxes} · profondeur ${metrics.profondeurAxes} · sous-actions ${metrics.sousActions}`
   );
   print(
     `Remplissage : ${Object.entries(metrics.fillRates)
@@ -312,6 +345,13 @@ const printManualDiff = (diff: ManualReferenceDiff): void => {
   print(
     `Structure attendue : axes ${diff.axes.actual}/${diff.axes.expected}, actions retrouvées ${diff.actions.found}/${diff.actions.expected} (${diff.actions.actual} extraites)`
   );
+  if (diff.axisLevels) {
+    print(
+      `Niveaux d'axes distincts par profondeur : ${diff.axisLevels.actual.join(
+        ' / '
+      )} (attendus : ${diff.axisLevels.expected.join(' / ')})`
+    );
+  }
   if (diff.axes.missing.length > 0) {
     print(
       `Axes introuvables : ${diff.axes.missing.length}${list(
@@ -339,6 +379,18 @@ const printManualDiff = (diff: ManualReferenceDiff): void => {
       )
     )}`
   );
+  if (diff.misplacedPaths.length > 0) {
+    print(
+      `Actions sous le bon axe mais à un autre chemin : ${
+        diff.misplacedPaths.length
+      }${list(
+        diff.misplacedPaths.map(
+          (m) =>
+            `${m.titre} (attendu : ${m.expectedPath} ; obtenu : ${m.actualPath})`
+        )
+      )}`
+    );
+  }
   print(`Titres en trop : ${diff.extraTitles.length}${list(diff.extraTitles)}`);
 };
 

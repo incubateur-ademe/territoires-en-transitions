@@ -7,6 +7,7 @@ import {
 } from '@tet/backend/plans/plans/import-plan-aggregate/schemas/import-action.input';
 import { uniqBy } from 'es-toolkit';
 import {
+  axisPathOf,
   ExtractedAction,
   ExtractedSousAction,
 } from '../models/extracted-action';
@@ -43,9 +44,7 @@ export const countOverlongTitles = (actions: ExtractedAction[]): number =>
 export const dedupeExtractedActions = (
   actions: ExtractedAction[]
 ): ExtractedAction[] =>
-  uniqBy(actions, (action) =>
-    getActionKey(action.titre, toAxisPath(action.axe, action.sousAxe))
-  );
+  uniqBy(actions, (action) => getActionKey(action.titre, toAxisPath(action)));
 
 export type NormalizedExtractedActions = {
   actions: ExtractedAction[];
@@ -72,7 +71,7 @@ export const normalizeExtractedActions = (
 export const extractedActionToImportActions = (
   action: ExtractedAction
 ): ImportActionOrSousAction[] => {
-  const axisPath = toAxisPath(action.axe, action.sousAxe);
+  const axisPath = toAxisPath(action);
   // Une sous-action relève des secteurs de son action.
   const secteursProposes = action.secteurs;
   return [
@@ -149,10 +148,8 @@ const sousActionToImport = (
   indicateurs: undefined,
 });
 
-const toAxisPath = (axe: string, sousAxe: string): string[] | undefined => {
-  const segments = [axe, sousAxe]
-    .map((segment) => segment.trim())
-    .filter((segment) => segment.length > 0);
+const toAxisPath = (action: ExtractedAction): string[] | undefined => {
+  const segments = axisPathOf(action);
   return segments.length > 0 ? segments : undefined;
 };
 

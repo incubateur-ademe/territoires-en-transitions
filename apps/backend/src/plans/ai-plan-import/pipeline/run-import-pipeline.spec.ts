@@ -4,15 +4,25 @@ import type { LlmCallEvent } from '@tet/backend/utils/llm/llm-observer';
 import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
+import { axisPathOf, ExtractedAction } from '../models/extracted-action';
 import { ImportStepRun } from '../models/import-step-run';
 import {
   buildDocument,
   buildPage,
   type ReadDocument,
 } from './document/document-page';
+import { SPREADSHEET_RULE } from '../prompts/field-rules';
+import {
+  buildHorizontalHierarchyWorkbook,
+  buildMixedWorkbook,
+  buildTestWorkbook,
+  FLAT_TABLE_ROWS,
+} from './__fixtures__/build-test-workbook';
 import type { PipelineCheckpoint } from './pipeline-checkpoint';
+import { readDocument } from './read-document/read-document';
 import {
   isCheckpointUsableBy,
+  MAX_DOCUMENT_UNITS,
   PipelineLlm,
   RunImportPipelineInput,
   runImportPipeline,
@@ -22,6 +32,9 @@ import {
 } from './run-import-pipeline';
 
 const stepOrder = stepStatesSchema.keyof().options;
+
+const XLSX_MIME =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 const tokens: TokenUsage = {
   promptTokens: 10,
@@ -135,6 +148,19 @@ const documentOf = (text: string) =>
   buildDocument('pdf', [buildPage(0, [{ text }])]);
 
 type FreshInput = Extract<RunImportPipelineInput, { document: ReadDocument }>;
+
+const readWorkbookDocument = async (
+  buffer: Promise<Buffer>
+): Promise<ReadDocument> => {
+  const read = await readDocument({
+    buffer: await buffer,
+    mimeType: XLSX_MIME,
+  });
+  if (!read.success) {
+    throw new Error(read.error.kind);
+  }
+  return read.data;
+};
 
 const input = (overrides: Partial<FreshInput> = {}): FreshInput => ({
   document: documentOf('texte source'),
@@ -312,6 +338,84 @@ describe('runImportPipeline', () => {
     expect(
       await runImportPipeline(llm, { ...base, resumeFrom: checkpoints[0] })
     ).toEqual(outcome);
+  });
+
+  it("fond les titres repris d'un onglet confié au modèle aux fiches fusionnées sur plusieurs rangées, y compris à la reprise", async () => {
+    // Deux fiches seulement : trop peu pour que le code lise l'onglet.
+    const document = await readWorkbookDocument(
+      buildTestWorkbook([
+        {
+          name: 'Plan',
+          rows: [
+            ['Axe', 'Fiche', 'Sous-action'],
+            ['Axe 1', 'Isoler les écoles', 'Diagnostiquer les bâtiments'],
+            [null, null, 'Isoler les combles'],
+            ['Axe 2', 'Rénover la mairie', 'Choisir le maître d’œuvre'],
+            [null, null, 'Réaliser les travaux'],
+          ],
+          merges: ['A2:A3', 'B2:B3', 'A4:A5', 'B4:B5'],
+        },
+      ])
+    );
+    const [extracted] = responseByStep.extraction as object[];
+    const row = { ...extracted, description: '', 'sous-actions': [] };
+    const llm = routedLlm();
+    const route = vi.mocked(llm.generateStructured).getMockImplementation();
+    vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+      prompt: string;
+    }) =>
+      stepOf(args.prompt) === 'extraction'
+        ? success({
+            data: [
+              { ...row, axe: 'Axe 1' },
+              { ...row, axe: 'Axe 2' },
+            ],
+            tokens,
+          })
+        : route?.(args as never)) as never);
+    const options = { withVerifications: false, withSousActions: false };
+    const checkpoints: PipelineCheckpoint[] = [];
+
+    const outcome = await runImportPipeline(
+      llm,
+      input({
+        ...options,
+        document,
+        onCheckpoint: async (checkpoint) => {
+          checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+        },
+      })
+    );
+
+    expect(outcome.status).toBe('done');
+    if (outcome.status === 'done') {
+      expect(outcome.draft.actions).toHaveLength(1);
+    }
+    expect(checkpoints[0]).toMatchObject({
+      documentKind: 'xlsx',
+      tabularRowGroups: true,
+    });
+    expect(checkpoints[0]).not.toHaveProperty('workbook');
+    expect(JSON.stringify(checkpoints[0])).not.toContain('isMergeSlave');
+    const [{ prompt }] = vi.mocked(llm.generateStructured).mock.calls[0];
+    expect(prompt).toContain(SPREADSHEET_RULE);
+    expect(prompt).toContain('[Onglet « Plan »]');
+    const { document: _document, ...base } = input(options);
+    expect(
+      await runImportPipeline(llm, { ...base, resumeFrom: checkpoints[0] })
+    ).toEqual(outcome);
+  });
+
+  it("n'ajoute pas la règle des tableurs au prompt d'un PDF", async () => {
+    const llm = routedLlm();
+
+    await runImportPipeline(
+      llm,
+      input({ withVerifications: false, withSousActions: false })
+    );
+
+    const [{ prompt }] = vi.mocked(llm.generateStructured).mock.calls[0];
+    expect(prompt).not.toContain(SPREADSHEET_RULE);
   });
 
   it('émet la progression cumulée après chaque étape', async () => {
@@ -1156,6 +1260,294 @@ describe('runImportPipeline', () => {
       expect(resumed).toEqual(
         await runImportPipeline(routedLlm(), input({ withSecteurs: true }))
       );
+    });
+  });
+
+  describe('tableur lu par le code', () => {
+    const strategies = ['whole-document', 'segmented'] as const;
+
+    /** Le modèle ne lit plus le classeur : tout appel de lecture fait lever. */
+    const tabularLlm = (
+      strategy: (typeof strategies)[number],
+      readingSteps: StepName[] = []
+    ): PipelineLlm => {
+      const llm = routedLlm();
+      (llm as { capabilities: unknown }).capabilities = {
+        ocr: false,
+        strategy,
+      };
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+      }) => {
+        const step = stepOf(args.prompt);
+        if (
+          !['secteurs', 'qualitativeReview', ...readingSteps].includes(step)
+        ) {
+          throw new Error(`Appel inattendu au modèle : ${step}`);
+        }
+        return route?.(args as never);
+      }) as never);
+      return llm;
+    };
+
+    const stepsCalled = (llm: PipelineLlm): StepName[] =>
+      vi
+        .mocked(llm.generateStructured)
+        .mock.calls.map(([args]) =>
+          stepOf((args as { prompt: string }).prompt)
+        );
+
+    const treeOf = (actions: ExtractedAction[]): string[] =>
+      actions.map((action) =>
+        [...axisPathOf(action), action.titre].join(' > ')
+      );
+
+    const tabularInput = async (
+      overrides: Partial<FreshInput> = {}
+    ): Promise<FreshInput> =>
+      input({
+        document: await readWorkbookDocument(
+          buildHorizontalHierarchyWorkbook()
+        ),
+        withSecteurs: true,
+        ...overrides,
+      });
+
+    it.each(strategies)(
+      "construit l'arbre sans appeler le modèle hors secteurs et revue (%s)",
+      async (strategy) => {
+        const llm = tabularLlm(strategy);
+        const runs: ImportStepRun[] = [];
+
+        const outcome = await runImportPipeline(
+          llm,
+          await tabularInput({
+            instructions: 'Ignorer les actions terminées',
+            onStepRun: async (run) => {
+              runs.push(run);
+            },
+          })
+        );
+
+        expect(stepsCalled(llm).sort()).toEqual([
+          'qualitativeReview',
+          'secteurs',
+        ]);
+        expect(outcome.status).toBe('done');
+        if (outcome.status !== 'done') return;
+        expect(treeOf(outcome.draft.actions)).toEqual([
+          "AMBITION n°1 : Pour un territoire sobre en énergie > Se déplacer moins et mieux > Développer l'usage des transports collectifs > 1 - Aménager deux pôles multimodaux",
+          "AMBITION n°1 : Pour un territoire sobre en énergie > Se déplacer moins et mieux > Développer l'usage des transports collectifs > 2 - Communiquer sur les aides à la mobilité",
+          'AMBITION n°1 : Pour un territoire sobre en énergie > Se déplacer moins et mieux > Favoriser le covoiturage > 3 - Déployer des aires de covoiturage',
+          "AMBITION n°1 : Pour un territoire sobre en énergie > Développer l'économie circulaire > Limiter l'usage des ressources > 4 - Faire monter en compétence les acteurs (EIT)",
+          "AMBITION n°1 : Pour un territoire sobre en énergie > Développer l'économie circulaire > Accompagner les acteurs économiques > 5 - Faire monter en compétence les acteurs (EIT)",
+          'AMBITION n°2 Pour un territoire préservé > Maîtriser la ressource en eau > 6 - Réduire les fuites des réseaux',
+        ]);
+        const [first] = outcome.draft.actions;
+        expect(first.sousActions.map(({ statut }) => statut)).toEqual([
+          'En cours',
+          'À venir',
+          'Réalisé',
+        ]);
+        expect(first.sousActions[0].description).toBeNull();
+        expect(first.confidence).toBeNull();
+        expect(first.secteurs).toBeDefined();
+        expect(outcome.stepStates).toEqual({
+          reading: 'ok',
+          scouting: 'skipped',
+          extraction: 'ok',
+          hierarchy: 'skipped',
+          scoring: 'skipped',
+          consolidation: 'skipped',
+          enrichment: 'skipped',
+          secteurs: 'ok',
+          qualitativeReview: 'ok',
+        });
+        expect(outcome.warnings).toEqual(
+          expect.arrayContaining([
+            expect.stringMatching(/« Synthèse » ignoré/),
+            "Les consignes et les vérifications ne s'appliquent pas aux 6 fiches lues sans le modèle (« Suivi »).",
+          ])
+        );
+        expect(runs.find(({ step }) => step === 'reading')?.details).toEqual({
+          ...(strategy === 'segmented' ? { units: 0 } : { chunks: 0 }),
+          planSheets: 1,
+          complementSheets: 1,
+          ignoredSheets: 2,
+          tabularActions: 6,
+        });
+      }
+    );
+
+    it.each(strategies)(
+      'refuse sans appel au modèle un tableur dont le code lit trop de fiches (%s)',
+      async (strategy) => {
+        const llm = tabularLlm(strategy);
+        const rows = Array.from(
+          { length: MAX_DOCUMENT_UNITS + 1 },
+          (_, index) => [
+            index < 150 ? 'Mobilité' : 'Habitat',
+            `Action n°${index + 1} du plan climat du territoire`,
+            'Interco',
+            'En cours',
+          ]
+        );
+
+        const outcome = await runImportPipeline(
+          llm,
+          input({
+            document: await readWorkbookDocument(
+              buildTestWorkbook([
+                {
+                  name: 'Plan',
+                  rows: [['Axe', 'Action', 'Porteur', 'Statut'], ...rows],
+                },
+              ])
+            ),
+          })
+        );
+
+        expect(outcome).toMatchObject({
+          status: 'failed',
+          failedStep: 'reading',
+          error: {
+            kind: 'document_too_long',
+            chunks: MAX_DOCUMENT_UNITS + 1,
+            maxChunks: MAX_DOCUMENT_UNITS,
+          },
+        });
+        expect(llm.generateStructured).not.toHaveBeenCalled();
+      }
+    );
+
+    it.each(strategies)(
+      'reprend après la lecture sans relire le classeur ni doubler les actions (%s)',
+      async (strategy) => {
+        const checkpoints: PipelineCheckpoint[] = [];
+        const outcome = await runImportPipeline(
+          tabularLlm(strategy),
+          await tabularInput({
+            onCheckpoint: async (checkpoint) => {
+              checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+            },
+          })
+        );
+        expect(checkpoints[0]).toMatchObject({ completedStep: 'reading' });
+        expect(checkpoints[0].progress.actions).toHaveLength(6);
+        expect(checkpoints[0]).not.toHaveProperty('workbook');
+
+        const { document: _document, ...base } = await tabularInput();
+        for (const checkpoint of checkpoints.slice(0, 3)) {
+          const resumed = await runImportPipeline(tabularLlm(strategy), {
+            ...base,
+            resumeFrom: checkpoint,
+          });
+          expect(resumed).toEqual(outcome);
+        }
+      }
+    );
+
+    it.each(strategies)(
+      "ne confie au modèle que l'onglet qu'il n'a pas su lire (%s)",
+      async (strategy) => {
+        const llm = tabularLlm(strategy, [
+          'scouting',
+          'extraction',
+          'hierarchy',
+          'scoring',
+          'consolidation',
+          'enrichment',
+        ]);
+        const checkpoints: PipelineCheckpoint[] = [];
+
+        const outcome = await runImportPipeline(
+          llm,
+          input({
+            document: await readWorkbookDocument(buildMixedWorkbook()),
+            onCheckpoint: async (checkpoint) => {
+              checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+            },
+          })
+        );
+
+        const readingPrompts = vi
+          .mocked(llm.generateStructured)
+          .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+          .filter((prompt) =>
+            ['scouting', 'extraction'].includes(stepOf(prompt))
+          );
+        expect(readingPrompts.length).toBeGreaterThan(0);
+        for (const prompt of readingPrompts) {
+          expect(prompt).not.toContain(FLAT_TABLE_ROWS[1][1]);
+        }
+        expect(
+          readingPrompts.some((prompt) =>
+            prompt.includes('Compte rendu du comité')
+          )
+        ).toBe(true);
+
+        expect(outcome.status).toBe('done');
+        if (outcome.status !== 'done') return;
+        const titres = outcome.draft.actions.map(({ titre }) => titre);
+        expect(titres).toHaveLength(6);
+        expect(titres.slice(0, 5)).toEqual(
+          FLAT_TABLE_ROWS.slice(1).map((row) => row[1])
+        );
+        // L'action du modèle garde sa tranche, après celles du code.
+        const { source } = checkpoints.find(
+          ({ completedStep }) => completedStep === 'extraction'
+        ) as PipelineCheckpoint;
+        expect(source.chunkIndexByAction).toHaveLength(6);
+        expect(source.chunks[source.chunkIndexByAction[5]]).toContain(
+          'Compte rendu du comité'
+        );
+        expect(source.chunks[source.chunkIndexByAction[0]]).toContain(
+          FLAT_TABLE_ROWS[1][1]
+        );
+      }
+    );
+
+    it('applique les champs désactivés aux fiches lues par le code', async () => {
+      const outcome = await runImportPipeline(
+        tabularLlm('whole-document'),
+        await tabularInput({ disabledFields: ['budget', 'statut'] })
+      );
+
+      expect(outcome.status).toBe('done');
+      if (outcome.status !== 'done') return;
+      const { actions } = outcome.draft;
+      expect(actions.every(({ budget }) => budget === null)).toBe(true);
+      expect(
+        actions.every(
+          ({ statut, sousActions }) =>
+            statut === null &&
+            sousActions.every((sousAction) => sousAction.statut === null)
+        )
+      ).toBe(true);
+    });
+
+    it("échoue sans action quand aucun onglet n'en porte", async () => {
+      const outcome = await runImportPipeline(
+        tabularLlm('whole-document'),
+        input({
+          document: await readWorkbookDocument(
+            buildTestWorkbook([
+              {
+                name: 'Feuil2',
+                rows: [['Statut'], ['En cours'], ['Terminée']],
+                state: 'hidden',
+              },
+            ])
+          ),
+        })
+      );
+
+      expect(outcome).toMatchObject({
+        status: 'failed',
+        failedStep: 'extraction',
+        error: { kind: 'no_actions_extracted' },
+      });
     });
   });
 });

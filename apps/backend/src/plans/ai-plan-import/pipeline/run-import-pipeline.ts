@@ -1,4 +1,10 @@
 import { DisableableField } from '../models/disableable-field';
+import { upperFirst } from 'es-toolkit';
+import {
+  analyzeWorkbook,
+  WorkbookAnalysis,
+} from './analyze-workbook/analyze-workbook';
+import { SheetRole } from './analyze-workbook/classify-sheets';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import {
   isTabularKind,
@@ -15,8 +21,10 @@ import {
 } from './detect-document-tome/detect-document-tome';
 import { scoutUnits } from './scout-units/scout-units';
 import { DocumentUnit } from './segment-document/document-unit';
+import { hasMergedRowGroups } from './segment-document/cut-tabular-units';
 import { segmentDocument } from './segment-document/segment-document';
 import { coalesceChunks } from './source-chunks/coalesce-chunks';
+import { SourceChunks } from './source-chunks/source-chunks';
 import { splitDocument } from './split-document/split-document';
 import {
   emptyTokenUsage,
@@ -27,7 +35,7 @@ import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
 import { describeLlmError } from '@tet/backend/utils/llm/llm.errors';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
-import { ExtractedAction } from '../models/extracted-action';
+import { ExtractedAction, isPinnedAction } from '../models/extracted-action';
 import type { ImportStepRun } from '../models/import-step-run';
 import { PlanDraft } from '../models/plan-draft';
 import { classifySecteurs } from './classify-secteurs/classify-secteurs';
@@ -211,41 +219,55 @@ export const runImportPipeline = async (
     input.onStepRun?.(run) ?? Promise.resolve();
 
   let state: PipelineState;
+  let tabularRowGroups: boolean | undefined;
   if (input.resumeFrom) {
+    // Les actions lues par le code sont dans `progress.actions` : la reprise
+    // les retrouve sans relire le classeur.
     const { progress, chunks, units, skeleton, source } = input.resumeFrom;
     state = { progress, chunks, units, skeleton, source };
+    tabularRowGroups = input.resumeFrom.tabularRowGroups;
   } else {
     const readingStartedAt = new Date();
-    const read = readSource(llm, input.document);
+    const read = readSource(llm, input.document, input.disabledFields);
     await reportStepRun({
       step: 'reading',
       status: read.success ? 'ok' : 'failed',
       startedAt: readingStartedAt,
       endedAt: new Date(),
       calls: [],
-      details: read.success
-        ? read.data.units
-          ? { units: read.data.units.length }
-          : { chunks: read.data.chunks.length }
-        : {},
+      details: read.success ? describeReading(read.data) : {},
       error: read.success ? null : read.error.kind,
     });
     if (!read.success) {
       return failed(initialProgress(), 'reading', read.error);
     }
+    const { analysis } = read.data;
+    const progress = markOk(initialProgress(), 'reading');
     state = {
-      progress: markOk(initialProgress(), 'reading'),
+      progress: {
+        ...progress,
+        actions: analysis?.actions ?? [],
+        warnings: analysis ? readingWarnings(analysis, input) : [],
+      },
       chunks: read.data.chunks,
       units: read.data.units,
       skeleton: null,
-      source: { chunks: read.data.chunks, chunkIndexByAction: [] },
+      source: analysis
+        ? coalesceChunks(analysis.source, VERIFICATION_WINDOW_TOKENS)
+        : { chunks: read.data.chunks, chunkIndexByAction: [] },
     };
+    tabularRowGroups = read.data.tabularRowGroups;
   }
 
   const documentKind = input.resumeFrom
     ? input.resumeFrom.documentKind
     : input.document.kind;
   const tabular = documentKind !== undefined && isTabularKind(documentKind);
+  const hasModelInput = (): boolean =>
+    state.units ? state.units.length > 0 : state.chunks.length > 0;
+  const allPinned = (): boolean =>
+    state.progress.actions.length > 0 &&
+    state.progress.actions.every(isPinnedAction);
 
   const checkpoint = (
     completedStep: StepName,
@@ -256,6 +278,7 @@ export const runImportPipeline = async (
       completedStep,
       currentDate: input.currentDate,
       documentKind,
+      tabularRowGroups,
       llm: {
         strategy: llm.capabilities.strategy,
         maxInputTokens: llm.maxInputTokens,
@@ -274,7 +297,7 @@ export const runImportPipeline = async (
     // seulement quand le document est lu par unités.
     {
       name: 'scouting',
-      skipWhen: () => state.units === null,
+      skipWhen: () => state.units === null || state.units.length === 0,
       run: async () => {
         const result = await scoutUnits(llm, {
           units: state.units as DocumentUnit[],
@@ -299,47 +322,53 @@ export const runImportPipeline = async (
     // d'origine relevée à l'extraction reste valable pour elles.
     {
       name: 'extraction',
-      run: async () => {
+      // Les actions déjà là sont celles que le code a lues dans le classeur :
+      // celles du modèle viennent après elles.
+      run: async (tabularActions) => {
+        if (!hasModelInput()) {
+          return tabularActions.length > 0
+            ? success({ actions: tabularActions, tokens: emptyTokenUsage() })
+            : failure({ kind: 'no_actions_extracted' as const });
+        }
         const extraction = {
           instructions: input.instructions,
           disabledFields: input.disabledFields,
           currentDate: input.currentDate,
-          tabular,
+          spreadsheet: tabular,
+          rowsAreFiches: tabular && tabularRowGroups !== true,
           signal: input.signal,
         };
-        if (state.units) {
-          const result = await structureUnits(llm, {
-            units: state.units,
-            skeleton: state.skeleton,
-            ...extraction,
-          });
-          if (result.success) {
-            state.chunks = result.data.chunks;
-            state.source = {
-              chunks: state.chunks,
-              chunkIndexByAction: result.data.chunkIndexByAction,
-            };
-          }
-          return result;
+        const result = state.units
+          ? await structureUnits(llm, {
+              units: state.units,
+              skeleton: state.skeleton,
+              ...extraction,
+            }).then((structured) => {
+              if (structured.success) {
+                state.chunks = structured.data.chunks;
+              }
+              return structured;
+            })
+          : await extractActions(llm, { chunks: state.chunks, ...extraction });
+        if (!result.success) {
+          return withTabularActions(result, tabularActions);
         }
-        const result = await extractActions(llm, {
+        state.source = appendSource(state.source, tabularActions, {
           chunks: state.chunks,
-          ...extraction,
+          chunkIndexByAction: result.data.chunkIndexByAction,
         });
-        if (result.success) {
-          state.source = {
-            chunks: state.chunks,
-            chunkIndexByAction: result.data.chunkIndexByAction,
-          };
-        }
-        return result;
+        return success({
+          ...result.data,
+          actions: [...tabularActions, ...result.data.actions],
+        });
       },
     },
     // Rattacher chaque action au squelette et fondre les doublons : des
     // extraits lus séparément ne se coordonnent pas seuls.
     {
       name: 'hierarchy',
-      skipWhen: () => state.units === null || state.skeleton === null,
+      skipWhen: () =>
+        state.units === null || state.skeleton === null || allPinned(),
       run: async (actions) => {
         const result = await consolidateHierarchy(llm, {
           actions,
@@ -379,7 +408,7 @@ export const runImportPipeline = async (
     },
     {
       name: 'scoring',
-      skipWhen: () => !input.withVerifications,
+      skipWhen: () => !input.withVerifications || allPinned(),
       run: (actions) =>
         scoreActions(llm, {
           actions,
@@ -389,7 +418,7 @@ export const runImportPipeline = async (
     },
     {
       name: 'consolidation',
-      skipWhen: () => !input.withVerifications,
+      skipWhen: () => !input.withVerifications || allPinned(),
       run: (actions) =>
         consolidateActions(llm, {
           actions,
@@ -412,7 +441,7 @@ export const runImportPipeline = async (
   const enrichmentBranch: PipelineStep[] = [
     {
       name: 'enrichment',
-      skipWhen: () => !input.withSousActions,
+      skipWhen: () => !input.withSousActions || allPinned(),
       run: (actions) =>
         enrichSousActions(llm, {
           actions,
@@ -568,9 +597,9 @@ export const runImportPipeline = async (
   ]);
 
   state.progress = joinUpTo(STEP_ORDER.length - 1);
-  const failure = failures.find((branch) => branch !== null);
-  if (failure) {
-    return failed(state.progress, failure.step, failure.error);
+  const branchFailure = failures.find((branch) => branch !== null);
+  if (branchFailure) {
+    return failed(state.progress, branchFailure.step, branchFailure.error);
   }
   return done(state.progress);
 };
@@ -676,15 +705,23 @@ const markOk = (progress: Progress, name: StepName): Progress => ({
   stepStates: { ...progress.stepStates, [name]: 'ok' },
 });
 
-type ReadSource = { chunks: string[]; units: DocumentUnit[] | null };
+type ReadSource = {
+  chunks: string[];
+  units: DocumentUnit[] | null;
+  /** Un tableur : ce que le code en a lu, le reste allant au modèle. */
+  analysis: WorkbookAnalysis | null;
+  tabularRowGroups: boolean;
+};
 
 /**
  * Le document tel que l'extraction le lira : des unités de la taille d'une
- * fiche pour un modèle qui résume au-delà, le texte en tranches sinon.
+ * fiche pour un modèle qui résume au-delà, le texte en tranches sinon. D'un
+ * tableur, le modèle ne lit que les onglets que le code n'a pas su lire.
  */
 const readSource = (
   llm: PipelineLlm,
-  document: ReadDocument
+  document: ReadDocument,
+  disabledFields: DisableableField[]
 ): Result<ReadSource, ReadingError> => {
   const tome = detectDocumentTome(document);
   if (tome.verdict === 'wrong_tome') {
@@ -694,23 +731,55 @@ const readSource = (
       evidence: tome.evidence,
     });
   }
+  const { workbook } = document;
+  const analysis = workbook
+    ? analyzeWorkbook(workbook, { disabledFields })
+    : null;
+  // Les fiches lues par le code passent encore par les secteurs et la
+  // revue : le garde-fou de coût les compte comme des unités.
+  if (analysis && analysis.actions.length > MAX_DOCUMENT_UNITS) {
+    return failure({
+      kind: 'document_too_long',
+      chunks: analysis.actions.length,
+      maxChunks: MAX_DOCUMENT_UNITS,
+    });
+  }
+  const modelDocument: ReadDocument = analysis
+    ? { ...document, pages: analysis.modelPages }
+    : document;
+  const tabularRowGroups =
+    isTabularKind(document.kind) &&
+    hasMergedRowGroups(
+      analysis && workbook
+        ? analysis.modelPages.map(({ index }) => workbook[index])
+        : workbook ?? []
+    );
   if (llm.capabilities.strategy === 'segmented') {
-    const units = segmentDocument(document);
-    if (units.length > MAX_DOCUMENT_UNITS) {
+    const units = segmentDocument(modelDocument);
+    const total = units.length + (analysis?.actions.length ?? 0);
+    if (total > MAX_DOCUMENT_UNITS) {
       return failure({
         kind: 'document_too_long',
-        chunks: units.length,
+        chunks: total,
         maxChunks: MAX_DOCUMENT_UNITS,
       });
     }
-    return success({ chunks: [], units });
+    return success({ chunks: [], units, analysis, tabularRowGroups });
   }
-  const text = joinPages(document);
-  const chunks = splitDocument(text, {
-    maxTokens: llm.maxInputTokens,
-    overlapTokens: CHUNK_OVERLAP_TOKENS,
-    header: isTabularKind(document.kind) ? text.split('\n', 1)[0] : undefined,
-  });
+  const text = joinPages(modelDocument);
+  const chunks =
+    text.trim() === ''
+      ? []
+      : splitDocument(text, {
+          maxTokens: llm.maxInputTokens,
+          overlapTokens: CHUNK_OVERLAP_TOKENS,
+          // Un classeur s'ouvre sur le nom de son premier onglet, qui ne vaut
+          // pas pour les tranches suivantes : seul un CSV a un en-tête à répéter.
+          header:
+            isTabularKind(document.kind) && !modelDocument.pages[0]?.label
+              ? text.split('\n', 1)[0]
+              : undefined,
+        });
   if (chunks.length > MAX_DOCUMENT_CHUNKS) {
     return failure({
       kind: 'document_too_long',
@@ -718,8 +787,82 @@ const readSource = (
       maxChunks: MAX_DOCUMENT_CHUNKS,
     });
   }
-  return success({ chunks, units: null });
+  return success({ chunks, units: null, analysis, tabularRowGroups });
 };
+
+const describeReading = ({
+  chunks,
+  units,
+  analysis,
+}: ReadSource): Record<string, number> => {
+  const countSheets = (...roles: SheetRole[]) =>
+    analysis?.sheets.filter(({ role }) => roles.includes(role)).length ?? 0;
+  return {
+    ...(units ? { units: units.length } : { chunks: chunks.length }),
+    ...(analysis && {
+      planSheets: countSheets('plan'),
+      complementSheets: countSheets('complement'),
+      ignoredSheets: countSheets('synthese', 'liste', 'masque'),
+      tabularActions: analysis.actions.length,
+    }),
+  };
+};
+
+const readingWarnings = (
+  analysis: WorkbookAnalysis,
+  { instructions, withVerifications }: RunImportPipelineInput
+): string[] => {
+  const planSheets = analysis.sheets
+    .filter(({ role }) => role === 'plan')
+    .map(({ name }) => (name === '' ? 'le fichier CSV' : `« ${name} »`));
+  const ignored = [
+    ...(instructions.trim() !== '' ? ['les consignes'] : []),
+    ...(withVerifications ? ['les vérifications'] : []),
+  ];
+  return analysis.actions.length > 0 && ignored.length > 0
+    ? [
+        ...analysis.warnings,
+        `${upperFirst(ignored.join(' et '))} ne s'appliquent pas aux ${
+          analysis.actions.length
+        } fiches lues sans le modèle (${planSheets.join(', ')}).`,
+      ]
+    : analysis.warnings;
+};
+
+/** Les tranches du modèle à la suite de celles des actions lues par le code. */
+const appendSource = (
+  source: SourceChunks,
+  tabularActions: ExtractedAction[],
+  extracted: SourceChunks
+): SourceChunks => {
+  if (tabularActions.length === 0) {
+    return extracted;
+  }
+  return {
+    chunks: [...source.chunks, ...extracted.chunks],
+    chunkIndexByAction: [
+      ...source.chunkIndexByAction,
+      ...extracted.chunkIndexByAction.map(
+        (index) => index + source.chunks.length
+      ),
+    ],
+  };
+};
+
+/** Des onglets confiés au modèle sans action : les fiches lues par le code suffisent. */
+const withTabularActions = (
+  result: { success: false; error: ExtractActionsError },
+  tabularActions: ExtractedAction[]
+): Result<StepProduce, PipelineError> =>
+  result.error.kind === 'no_actions_extracted' && tabularActions.length > 0
+    ? success({
+        actions: tabularActions,
+        tokens: emptyTokenUsage(),
+        warnings: [
+          "Aucune action trouvée par le modèle dans les onglets qu'il a lus.",
+        ],
+      })
+    : result;
 
 const clearSousActions = (progress: Progress): Progress => ({
   ...progress,

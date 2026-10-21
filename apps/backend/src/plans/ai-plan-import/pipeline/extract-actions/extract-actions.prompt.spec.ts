@@ -2,6 +2,7 @@ import { generatePrompt } from '@tet/backend/utils/llm/prompt-template';
 import { describe, expect, it } from 'vitest';
 import {
   NON_ACTION_PASSAGES_RULE,
+  SPREADSHEET_RULE,
   OBJECTIFS_RULE,
   PARTNER_COMMITMENTS_RULE,
   PILOTES_RULE,
@@ -62,6 +63,7 @@ describe('buildExtractionPrompt', () => {
     });
     const structuration = generatePrompt(STRUCTURATION_SYSTEM_PROMPT, {
       dateDuJour: '08/06/2026',
+      regleTableur: '',
     });
 
     for (const rule of [
@@ -77,5 +79,32 @@ describe('buildExtractionPrompt', () => {
     expect(structuration).not.toContain(`"titre" : "n.X.Y`);
     expect(structuration).toContain('même si son sous-axe est numéroté');
     expect(extraction).not.toContain('{date_du_jour}');
+  });
+
+  it('ajoute la règle des tableurs pour un tableur seulement', () => {
+    const promptOf = (spreadsheet: boolean) =>
+      buildExtractionPrompt({
+        text: 'texte',
+        instructions: '',
+        disabledFields: [],
+        currentDate: '08/06/2026',
+        spreadsheet,
+      });
+
+    expect(promptOf(false)).not.toContain(SPREADSHEET_RULE);
+    expect(promptOf(true)).toContain(SPREADSHEET_RULE);
+    expect(promptOf(true)).not.toContain('{regle_tableur}');
+  });
+
+  it("donne la table des avancements d'un tableau de suivi", () => {
+    const prompt = buildExtractionPrompt({
+      text: 'texte',
+      instructions: '',
+      disabledFields: [],
+      currentDate: '08/06/2026',
+    });
+
+    expect(prompt).toContain('"Non engagée", "En projet", "Non démarrée"');
+    expect(prompt).toContain('"Annulée" donne "Abandonné"');
   });
 });
