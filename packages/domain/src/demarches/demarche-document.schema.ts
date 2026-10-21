@@ -71,6 +71,9 @@ export const demarcheDocumentDefinitionSchema = z.object({
    * une EES ou une délibération vivent souvent à part.
    */
   substitutsDeclarables: z.array(z.string()),
+  /** Restriction propre à la pièce ; absente, celle du type de démarche s'applique. */
+  formatsAutorises: z.optional(z.nullable(z.array(z.string()))),
+  mimeTypesAutorises: z.optional(z.nullable(z.array(z.string()))),
 });
 
 export type DemarcheDocumentDefinition = z.infer<

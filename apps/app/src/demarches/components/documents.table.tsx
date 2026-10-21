@@ -10,6 +10,7 @@ import {
   getEtapeExigeanteDemarcheDocument,
   isDemarcheDocumentDeEtape,
   isDemarcheDocumentsAdditionalAutorise,
+  resolveDemarcheDocumentFilesConfig,
 } from '@tet/domain/demarches';
 import type {
   DemarcheDocumentCoverage,
@@ -442,6 +443,12 @@ export const DemarcheDocumentsTable = ({
   onDownloadAdditional,
 }: Props): ReactElement => {
   const fileConstraints = useMemo(() => toFileConstraints(config), [config]);
+  const fileConstraintsDe = (definition: DemarcheDocumentDefinition) =>
+    definition.formatsAutorises || definition.mimeTypesAutorises
+      ? toFileConstraints(
+          resolveDemarcheDocumentFilesConfig(config, definition)
+        )
+      : fileConstraints;
   const section =
     etape === 'aval' && !mergeEtapes ? sectionDemandee : undefined;
   const isDeLaSection = (etapeExigeante: DemarcheDocumentEtape) =>
@@ -605,7 +612,7 @@ export const DemarcheDocumentsTable = ({
             answer={
               <SectionAnswer
                 demarcheType={demarcheType}
-                fileConstraints={fileConstraints}
+                fileConstraints={fileConstraintsDe(definition)}
                 definition={definition}
                 document={documentDe(definition)}
                 documentOriginal={documentOriginalByDefinitionId.get(

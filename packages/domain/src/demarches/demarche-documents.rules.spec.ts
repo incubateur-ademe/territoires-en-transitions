@@ -13,6 +13,7 @@ import {
   isDemarcheDocumentsAvalComplet,
   isDemarcheDocumentsAdditionalAutorise,
   isDemarcheDossierDocumentsComplet,
+  resolveDemarcheDocumentFilesConfig,
 } from './demarche-documents.rules';
 
 const GLOBAL_ID = 'document_global';
@@ -673,6 +674,56 @@ describe('isDemarcheDocumentFileAccepted', () => {
         { filename: 'pcaet.pdf', mimeType: 'application/zip' },
         pdfSeul
       )
+    ).toBe(false);
+  });
+});
+
+describe('resolveDemarcheDocumentFilesConfig', () => {
+  const pdfSeul = {
+    ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
+    formatsAutorises: ['pdf'],
+    mimeTypesAutorises: ['application/pdf'],
+  };
+  const tableurs = {
+    formatsAutorises: ['pdf', 'xlsx', 'csv'],
+    mimeTypesAutorises: [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/csv',
+    ],
+  };
+
+  it('garde les formats du type pour une pièce qui n’en déclare pas', () => {
+    expect(resolveDemarcheDocumentFilesConfig(pdfSeul, {})).toEqual(pdfSeul);
+    expect(
+      resolveDemarcheDocumentFilesConfig(pdfSeul, {
+        formatsAutorises: null,
+        mimeTypesAutorises: null,
+      })
+    ).toEqual(pdfSeul);
+  });
+
+  it('accepte un tableur pour une pièce qui déclare ses formats', () => {
+    const config = resolveDemarcheDocumentFilesConfig(pdfSeul, tableurs);
+
+    expect(
+      isDemarcheDocumentFileAccepted(
+        {
+          filename: 'programme.xlsx',
+          mimeType:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+        config
+      )
+    ).toBe(true);
+    expect(
+      isDemarcheDocumentFileAccepted(
+        { filename: 'programme.docx', mimeType: 'application/zip' },
+        config
+      )
+    ).toBe(false);
+    expect(
+      isDemarcheDocumentFileAccepted({ filename: 'programme.xlsx' }, pdfSeul)
     ).toBe(false);
   });
 });

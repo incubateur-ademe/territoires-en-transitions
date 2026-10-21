@@ -26,6 +26,9 @@ export const demarcheDocumentDefinitionTable = pgTable(
       .$type<DemarcheDocumentEtape>(),
     /** Condition d'assujettissement de la collectivité ; nulle = pièce attendue de tous. */
     exprApplicable: text('expr_applicable'),
+    /** Restriction de formats propre à la pièce ; nulle = celle du type de démarche. */
+    formatsAutorises: text('formats_autorises').array(),
+    mimeTypesAutorises: text('mime_types_autorises').array(),
     createdAt,
     modifiedAt,
   },
