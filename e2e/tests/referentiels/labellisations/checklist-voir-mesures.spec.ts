@@ -66,6 +66,12 @@ test.describe('Checklist audit-labellisation — accès aux mesures non renseign
     await page.goto(progressionUrl);
     await expect(statutColumnHeader).toBeVisible();
 
+    // attends l'affichage de la 1ère mesure car les en-têtes s'affichent dès le
+    // chargement : la table est remontée à l'arrivée des mesures, ce qui
+    // fermerait le menu « Colonnes » à peine ouvert
+    const firstMesureRow = page.locator('tr[data-action-type]').first();
+    await expect(firstMesureRow).toBeVisible();
+
     await page.getByRole('button', { name: 'Colonnes' }).click();
     await statutColumnCheckbox.uncheck();
     await expect(statutColumnCheckbox).not.toBeChecked();
@@ -92,6 +98,7 @@ test.describe('Checklist audit-labellisation — accès aux mesures non renseign
 
     await page.reload();
     await expect(statutColumnHeader).toBeVisible();
+    await expect(firstMesureRow).toBeVisible();
     await page.getByRole('button', { name: 'Colonnes' }).click();
     await expect(statutColumnCheckbox).toBeChecked();
   });
