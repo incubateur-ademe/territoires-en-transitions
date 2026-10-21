@@ -12,6 +12,10 @@ import {
 } from './sheet-grid';
 
 const EXCEL_TIMEOUT_MS = 30_000;
+// Bien au-delà d'un plan d'actions ; une valeur égarée en XFD1048576
+// allouerait sinon des milliards de cellules.
+export const MAX_GRID_ROWS = 5_000;
+export const MAX_GRID_COLS = 100;
 
 export type ReadWorkbookError = { kind: 'parse_failed' } | { kind: 'timeout' };
 
@@ -39,8 +43,11 @@ export const readWorkbookGrids = async (
 };
 
 export const worksheetToGrid = (worksheet: ExcelJS.Worksheet): SheetGrid => {
-  const merges = (worksheet.model.merges ?? []).map(parseRange);
-  const { rowCount, colCount } = contentExtent(worksheet, merges);
+  const allMerges = (worksheet.model.merges ?? []).map(parseRange);
+  const extent = contentExtent(worksheet, allMerges);
+  const rowCount = Math.min(extent.rowCount, MAX_GRID_ROWS);
+  const colCount = Math.min(extent.colCount, MAX_GRID_COLS);
+  const merges = clampMerges(allMerges, rowCount, colCount);
   const mergeAt = indexMerges(merges);
   const cells = Array.from({ length: rowCount }, (_, rowIndex) => {
     const row = worksheet.getRow(rowIndex + 1);
@@ -61,8 +68,24 @@ export const worksheetToGrid = (worksheet: ExcelJS.Worksheet): SheetGrid => {
     rowCount,
     colCount,
     merges,
+    ...(rowCount < extent.rowCount || colCount < extent.colCount
+      ? { truncatedFrom: extent }
+      : {}),
   };
 };
+
+const clampMerges = (
+  merges: GridRange[],
+  rowCount: number,
+  colCount: number
+): GridRange[] =>
+  merges
+    .filter(({ top, left }) => top <= rowCount && left <= colCount)
+    .map((merge) => ({
+      ...merge,
+      bottom: Math.min(merge.bottom, rowCount),
+      right: Math.min(merge.right, colCount),
+    }));
 
 const toGridCell = (
   cell: ExcelJS.Cell,

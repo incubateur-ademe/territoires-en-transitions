@@ -66,7 +66,7 @@ export const analyzeWorkbook = (
   // Une fiche-formulaire est un onglet par fiche : elle ne fait pas d'un
   // tableau voisin un onglet par axe.
   const tablePlanCount = plans.filter(({ layout }) => !layout?.form).length;
-  const warnings: string[] = [];
+  const warnings: string[] = workbook.flatMap(describeTruncation);
   const complementLines = readAllComplementLines(classified, warnings);
 
   const actions: ExtractedAction[] = [];
@@ -292,6 +292,22 @@ const readAllComplementLines = (
   }
   return lines;
 };
+
+const describeTruncation = ({
+  name,
+  rowCount,
+  colCount,
+  truncatedFrom,
+}: SheetGrid): string[] =>
+  truncatedFrom
+    ? [
+        `${sheetLabel(
+          name
+        )} : seules ses ${rowCount} premières rangées et ${colCount} premières colonnes sont lues (il en compte ${
+          truncatedFrom.rowCount
+        } et ${truncatedFrom.colCount}).`,
+      ]
+    : [];
 
 const describeIgnoredSheet = (sheet: SheetClassification): string | null => {
   switch (sheet.role) {

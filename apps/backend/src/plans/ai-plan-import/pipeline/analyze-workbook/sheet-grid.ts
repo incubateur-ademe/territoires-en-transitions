@@ -51,6 +51,8 @@ export type SheetGrid = {
   rowCount: number;
   colCount: number;
   merges: GridRange[];
+  /** Étendue réelle de l'onglet, quand elle dépasse ce que la grille retient. */
+  truncatedFrom?: { rowCount: number; colCount: number };
 };
 
 export const getGridCell = (

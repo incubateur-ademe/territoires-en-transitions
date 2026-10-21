@@ -216,4 +216,24 @@ describe('stripTitleNumbers', () => {
       'Former les élus',
     ]);
   });
+
+  it('compare les chemins compactés : un sous-axe vide ne distingue pas deux fiches', () => {
+    const actions = stripTitleNumbers([
+      createEmptyExtractedAction({
+        axe: 'Axe 1 : Sensibiliser',
+        titre: 'Fiche 3 : Sensibiliser les habitants',
+      }),
+      withAxisPath(
+        createEmptyExtractedAction({
+          titre: 'Fiche 7 : Sensibiliser les habitants',
+        }),
+        ['Axe 1 : Sensibiliser']
+      ),
+    ]);
+
+    expect(actions.map(({ titre }) => titre)).toEqual([
+      'Fiche 3 : Sensibiliser les habitants',
+      'Fiche 7 : Sensibiliser les habitants',
+    ]);
+  });
 });
