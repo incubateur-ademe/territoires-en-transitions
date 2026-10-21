@@ -78,4 +78,47 @@ test.describe('Export indicateurs en Excel', () => {
     expect(worksheet?.rowCount).toBe(2);
     expect(worksheet?.getCell('B2').value).toBe(`Indicateur ${FILTRE_TEXTE} 0`);
   });
+
+  test('exporte depuis une vignette en lecture seule sans proposer les actions restreintes', async ({
+    page,
+    collectivites,
+  }) => {
+    const indicateurId = indicateurIds[0];
+    await user.getTrpcClient().indicateurs.valeurs.upsert.mutate({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2025-01-01',
+      resultat: 42,
+    });
+    await collectivites
+      .getCollectivite()
+      .addUser({ role: 'lecture', autoLogin: true });
+
+    await pom.gotoIndicateursList(collectiviteId);
+    await pom.filterByText(FILTRE_TEXTE, NB_INDICATEURS);
+    await page
+      .getByRole('checkbox', { name: 'Afficher les graphiques' })
+      .check();
+    await pom.openCardMenu(indicateurId);
+
+    const card = page.getByTestId(`chart-${indicateurId}`).locator('..');
+    await expect(
+      card.getByRole('button', { name: 'Modifier', exact: true })
+    ).toHaveCount(0);
+    for (const name of [
+      'Ajouter aux favoris',
+      'Retirer des favoris',
+      'Télécharger le graphique (.png)',
+    ]) {
+      await expect(page.getByRole('button', { name, exact: true })).toHaveCount(
+        0
+      );
+    }
+
+    const wb = await pom.exportFromCardMenu();
+    expect(wb.worksheets.length).toBe(1);
+    const worksheet = wb.getWorksheet(1);
+    expect(worksheet?.rowCount).toBe(2);
+    expect(worksheet?.getCell('B2').value).toBe(`Indicateur ${FILTRE_TEXTE} 0`);
+  });
 });

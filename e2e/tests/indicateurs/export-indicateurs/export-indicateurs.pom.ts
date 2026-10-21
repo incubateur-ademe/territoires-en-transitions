@@ -37,11 +37,24 @@ export class ExportIndicateursPom {
     return this.parseXlsx(download);
   }
 
-  async exportFromCard(indicateurId: number): Promise<Workbook> {
+  async openCardMenu(indicateurId: number) {
     const card = this.page.getByTestId(`chart-${indicateurId}`);
     await card.hover();
     await card.locator('..').getByTestId('indicateurs.carte.menu').click();
+    await expect(
+      this.page.getByRole('button', {
+        name: 'Exporter au format .xlsx',
+        exact: true,
+      })
+    ).toBeVisible();
+  }
 
+  async exportFromCard(indicateurId: number): Promise<Workbook> {
+    await this.openCardMenu(indicateurId);
+    return this.exportFromCardMenu();
+  }
+
+  async exportFromCardMenu(): Promise<Workbook> {
     const downloadPromise = this.page.waitForEvent('download');
     const exportButton = this.page.getByRole('button', {
       name: 'Exporter au format .xlsx',
