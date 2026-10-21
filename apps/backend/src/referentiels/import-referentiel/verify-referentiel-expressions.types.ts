@@ -1,6 +1,6 @@
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { regleTypeEnumValues } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ReferentielId, TemplatedActionField } from '@tet/domain/referentiels';
 import { ImportActionDefinition } from './import-action-definition.dto';
 
 type RegleType = (typeof regleTypeEnumValues)[number];
@@ -56,7 +56,12 @@ export type VerifyReferentielExpressionsInput = {
   actions: Array<
     Pick<
       ImportActionDefinition,
-      'identifiant' | 'desactivation' | 'reduction' | 'score' | 'exprScore'
+      | 'identifiant'
+      | 'desactivation'
+      | 'reduction'
+      | 'score'
+      | 'exprScore'
+      | TemplatedActionField
     >
   >;
   questions: QuestionForVerification[];

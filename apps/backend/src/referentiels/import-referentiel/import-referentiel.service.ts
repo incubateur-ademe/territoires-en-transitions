@@ -44,6 +44,7 @@ import {
   referentielLabelEnumSchema,
   ReferentielTag,
   ReferentielTagTypeEnum,
+  TemplatedActionField,
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { isNil } from 'es-toolkit';
@@ -58,6 +59,11 @@ import {
   parseActionsOrigineTexte,
 } from './action-origine.adapter';
 import { BUILTIN_REFERENTIEL_TAGS } from './builtin-referentiel-tags.constants';
+import {
+  buildActionTextColumns,
+  verifyActionTextTemplates,
+  VerifyActionTextTemplatesResult,
+} from './import-action-text-templates.rules';
 import {
   ImportReferentielTag,
   importReferentielTagSchema,
@@ -192,6 +198,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     if (!verifyResult.success) {
       return verifyResult;
     }
+    for (const warning of this.verifyTextTemplates(
+      referentielId,
+      importActionDefinitions.data
+    ).warnings) {
+      this.logger.warn(warning);
+    }
 
     // Seul le spreadsheet du nouveau référentiel dispose d'un onglet `Tags`
     const referentielTags = isNewReferentiel
@@ -216,6 +228,10 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           actionId,
           referentielDefinition.hierarchie
         );
+        // rendu par défaut dans les colonnes, sources balisées dans
+        // `templates` (null si aucun champ n'est balisé : une ancienne
+        // surcharge ne doit pas survivre au retrait des balises)
+        const { texts, templates } = buildActionTextColumns(action);
         const createActionDefinition: ActionDefinitionToSave = {
           identifiant: action.identifiant,
           actionId,
@@ -227,6 +243,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           reductionPotentiel: action.reductionPotentiel || '',
           perimetreEvaluation: action.perimetreEvaluation || '',
           preuve: action.preuve || '',
+          ...texts,
+          templates,
           points: null,
           pourcentage: null,
           categorie: action.categorie || null,
@@ -515,9 +533,16 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
   }
 
-  async verifyReferentiel(
-    referentielId: ReferentielId
-  ): Promise<Result<{ ok: true }, 'DATABASE_ERROR'>> {
+  async verifyReferentiel(referentielId: ReferentielId): Promise<
+    Result<
+      {
+        ok: true;
+        /** Textes balisés : avertissements et texte vu par chaque profil */
+        textTemplates: Omit<VerifyActionTextTemplatesResult, 'errors'>;
+      },
+      'DATABASE_ERROR'
+    >
+  > {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
     this.logger.log(
       `Vérification des formules du référentiel ${referentielId} depuis le spreadsheet ${spreadsheetId}`
@@ -545,7 +570,23 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       importActionDefinitions.data
     );
 
-    return success({ ok: true });
+    const { warnings, previews } = this.verifyTextTemplates(
+      referentielId,
+      importActionDefinitions.data
+    );
+    return success({ ok: true, textTemplates: { warnings, previews } });
+  }
+
+  private verifyTextTemplates(
+    referentielId: ReferentielId,
+    actions: ImportActionDefinition[]
+  ): VerifyActionTextTemplatesResult {
+    return verifyActionTextTemplates(
+      actions.map((action) => ({
+        ...action,
+        actionId: buildActionId(referentielId, action.identifiant),
+      }))
+    );
   }
 
   async verifyReferentielExpressions(
@@ -559,6 +600,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         | 'score'
         | 'exprScore'
         | 'indicateurs'
+        | TemplatedActionField
       >
     >
   ): Promise<Result<true, 'DATABASE_ERROR'>> {

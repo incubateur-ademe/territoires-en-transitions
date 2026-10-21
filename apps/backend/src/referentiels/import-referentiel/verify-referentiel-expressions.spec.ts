@@ -248,6 +248,40 @@ describe('verifyReferentielExpressions', () => {
   });
 });
 
+describe('verifyReferentielExpressions : textes balisés', () => {
+  it('nomme l’action et la colonne d’une balise invalide', () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      referentielId: 'te',
+      actions: [
+        { identifiant: '1.1', nom: 'A {{si dom}}B' },
+        {
+          identifiant: '1.2',
+          preuve: '{{si identite(population, moins_de_20000)}}x{{/si}}',
+        },
+        { identifiant: '1.3', nom: '{{si non dom}}x{{/si}}' },
+        { identifiant: '1.4', nom: '{{si metropole}}x{{/si}}' },
+        { identifiant: '1.5', preuve: '{{si dom}}x{{/si}}' },
+      ],
+    });
+
+    expect(errors).toEqual([
+      expect.stringMatching(
+        /^L'action te_1\.1, colonne nom : .*n’est pas fermée/
+      ),
+      expect.stringMatching(
+        /^L'action te_1\.2, colonne preuve : .*« population » n’est pas utilisable/
+      ),
+      expect.stringMatching(
+        /^L'action te_1\.3, colonne nom : .*\{\{si metropole\}\}/
+      ),
+      expect.stringMatching(
+        /^L'action te_1\.4, colonne nom : le nom est vide pour le profil DOM$/
+      ),
+    ]);
+  });
+});
+
 describe('buildQuestionActionRelations', () => {
   it('extrait les questions depuis une expression de desactivation', () => {
     const relations = buildQuestionActionRelations({

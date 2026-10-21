@@ -98,6 +98,7 @@ export class ImportReferentielRepository {
         'pourcentage',
         'adaptationNiveau',
         'thematiqueSgpe',
+        'templates',
       ];
 
       await tx

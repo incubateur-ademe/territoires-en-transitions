@@ -4,6 +4,7 @@ import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/reference
 import { regleTypeEnumValues } from '@tet/domain/collectivites';
 import { ActionQuestion, ReferentielId } from '@tet/domain/referentiels';
 import { upperFirst } from 'es-toolkit';
+import { verifyActionTextTemplates } from './import-action-text-templates.rules';
 import { ImportActionDefinition } from './import-action-definition.dto';
 import {
   ExpressionToVerify,
@@ -399,5 +400,12 @@ export function verifyReferentielExpressions(
       indicateurIdByIdentifiant,
       indicateurDefinitions
     ),
+    // 5. Balises {{si …}} des textes (structure, conditions, nom non vide)
+    ...verifyActionTextTemplates(
+      actions.map((action) => ({
+        ...action,
+        actionId: buildActionId(referentielId, action.identifiant),
+      }))
+    ).errors,
   ];
 }
