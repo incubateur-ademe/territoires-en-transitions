@@ -8,6 +8,7 @@ import DocumentToExport from '../primitives/DocumentToExport';
 import type { ImageSources } from '../primitives/DocumentToExport';
 import FicheActionPdf from '../fiche-action/FicheActionPdf';
 import { ficheActionFixture } from './__fixtures__/fiche-81152.fixture';
+import { noteBloquante } from './__fixtures__/note-bloquante.fixture';
 import { comparePdfs } from './pdf-visual-compare';
 
 const ASSETS_DIR = path.resolve(__dirname, '../../assets');
@@ -74,6 +75,37 @@ describe('PDF Node rendering', () => {
 
     const outputPath = path.join(OUTPUT_DIR, 'fiche-81152-server.pdf');
     writeFileSync(outputPath, buffer);
+  }, 60_000);
+
+  // Incident prod du 2026-10-20 : renderToBuffer bouclait à l'infini sur
+  // cette note dans un bloc wrap={false}, bloquant l'event loop du backend.
+  it('renders the note that froze the PDF export', async () => {
+    const element = (
+      <DocumentToExport
+        imageSources={nodeImageSources}
+        content={
+          <FicheActionPdf
+            {...ficheActionFixture}
+            sections={['notes']}
+            notes={[
+              {
+                id: 1,
+                dateNote: '2025-01-01',
+                note: noteBloquante,
+                createdAt: '2025-11-04T15:28:28.221Z',
+                modifiedAt: '2026-05-13T07:24:59.210Z',
+                createdBy: null,
+                modifiedBy: null,
+              },
+            ]}
+          />
+        }
+      />
+    );
+
+    const buffer = await renderToBuffer(element);
+
+    expect(buffer.subarray(0, 5).toString('ascii')).toBe('%PDF-');
   }, 60_000);
 
   it('visual regression: server PDF matches golden baseline structure', async () => {

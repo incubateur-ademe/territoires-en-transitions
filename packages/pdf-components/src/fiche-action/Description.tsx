@@ -15,7 +15,7 @@ const Section = ({
   title: string;
   value: string | null | undefined;
 }) => (
-  <Stack gap={1} wrap={false}>
+  <Stack gap={1}>
     <Title variant="h5" className="text-primary-10">
       {title}
     </Title>
