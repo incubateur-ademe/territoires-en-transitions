@@ -82,7 +82,7 @@ const MAX_LABEL_WORDS = Math.max(...CARTOUCHE_LABELS.map((l) => l.length));
 const LABEL_KEYS = new Set(CARTOUCHE_LABELS.map((label) => label.join(' ')));
 
 const LEADING_ENUMERATOR =
-  /^\s*(?:[-•*–—▪●◦]+|\(?(?:\d{1,2}|[a-z]|[ivx]{1,4})[).°]|\d{1,2}\s*[-–])\s*/iu;
+  /^\s*(?:[-•*–—▪●◦]+|\(?(?:\d{1,2}|[a-z]|[ivx]{1,4})[).°](?!\d)|\d{1,2}\s*[-–](?!\d))\s*/iu;
 
 export type RemovedDuplicatedContent = {
   actions: ExtractedAction[];

@@ -4,6 +4,8 @@ const consolidationEntrySchema = z.object({
   index: z.number().int().min(0),
   titre: z.string(),
   description: z.string(),
+  // Facultatif : une réponse sans objectifs garde ceux de l'extraction.
+  objectifs: z.string().optional().default(''),
   'sous-actions': z.array(z.string()),
 });
 
