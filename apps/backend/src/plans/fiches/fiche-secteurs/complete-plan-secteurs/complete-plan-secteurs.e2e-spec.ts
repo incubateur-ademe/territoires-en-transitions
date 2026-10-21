@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { GenerateImportDraftService } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.service';
 import { aiPlanImportJobTable } from '@tet/backend/plans/ai-plan-import/models/ai-plan-import-job.table';
+import { effetsAttendusResponseSchema } from '@tet/backend/plans/ai-plan-import/pipeline/classify-secteurs/classify-secteurs.schema';
 import { extractionResponseSchema } from '@tet/backend/plans/ai-plan-import/pipeline/extract-actions/extract-actions.schema';
 import { initialStepStates } from '@tet/backend/plans/ai-plan-import/pipeline/run-import-pipeline';
 import { qualitativeReviewResponseSchema } from '@tet/backend/plans/ai-plan-import/pipeline/qualitative-review/qualitative-review.schema';
@@ -104,6 +105,12 @@ const fakeLlm = {
     }
     if (schema === qualitativeReviewResponseSchema) {
       return { success: true, data: { data: { avis: 'Avis' }, tokens: {} } };
+    }
+    if (schema === effetsAttendusResponseSchema) {
+      return {
+        success: true,
+        data: { data: [{ index: 0, effetsAttendus: [] }], tokens: {} },
+      };
     }
     throw new Error('Schéma LLM inattendu dans le faux LLM');
   },
