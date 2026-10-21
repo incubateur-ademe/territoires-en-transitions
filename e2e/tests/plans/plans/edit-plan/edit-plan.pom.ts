@@ -151,7 +151,7 @@ export class EditPlanPom {
    */
   async expectFicheExists(ficheTitre: string) {
     // Les fiches sont affichées dans la liste des fiches
-    const fiche = this.page.locator('[data-test="FicheActionCarte"]').filter({
+    const fiche = this.page.getByRole('article').filter({
       hasText: ficheTitre,
     });
     await expect(fiche).toBeVisible();

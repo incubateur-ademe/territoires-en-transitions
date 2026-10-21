@@ -34,13 +34,11 @@ export class FicheCardPom {
     // Sélectionner la carte spécifique
     if (options.ficheTitre) {
       this.card = parentLocator
-        .locator('[data-test="FicheActionCarte"]')
+        .getByRole('article')
         .filter({ hasText: options.ficheTitre })
         .first();
     } else {
-      this.card = parentLocator
-        .locator('[data-test="FicheActionCarte"]')
-        .nth(options.index ?? 0);
+      this.card = parentLocator.getByRole('article').nth(options.index ?? 0);
     }
 
     // Éléments de la carte
@@ -51,7 +49,7 @@ export class FicheCardPom {
     this.prioriteBadge = this.card
       .locator('span')
       .filter({ hasText: /^(Bas|Moyen|Élevé)$/ });
-    this.editButton = this.card.locator('[data-test="EditerFicheBouton"]');
+    this.editButton = this.card.getByTitle("Modifier l'action");
     this.privateIndicator = this.card.getByTitle('Action en accès restreint', {
       exact: true,
     });
