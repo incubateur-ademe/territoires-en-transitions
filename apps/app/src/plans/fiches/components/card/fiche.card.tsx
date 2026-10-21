@@ -11,13 +11,15 @@ import { getModifiedSince } from '@/app/utils/formatUtils';
 import { generateTitle } from '@/app/utils/generate-title';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { ActionCard, Button, Checkbox, Tooltip } from '@tet/ui';
+import { JSX } from 'react';
 import { FicheAccessBadges } from './fiche-access.badges';
 import { FicheCardHoverActions } from './fiche-card-hover.actions';
+import { FicheCardLinkAction } from './fiche-card-link.action';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { appLabels } from '@/app/labels/catalog';
 
-export type FicheCardProps = {
+type FicheCardBaseProps = {
   /** Contenu de la carte fiche action */
   ficheAction: FicheListItem;
   /** Complétion de la fiche action */
@@ -35,8 +37,6 @@ export type FicheCardProps = {
   isSelected?: boolean;
   /** Dissociation de la fiche action */
   onUnlink?: () => void;
-  /** Sélection de la fiche action */
-  onSelect?: (isSelected: boolean) => void;
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
@@ -49,6 +49,22 @@ export type FicheCardProps = {
   axeId?: number;
 };
 
+type FicheCardSelectionProps =
+  | {
+      /** Sélection de la fiche action */
+      onSelect?: (isSelected: boolean) => void;
+      onToggleLink?: never;
+    }
+  | {
+      onSelect?: never;
+      onToggleLink?: () => void;
+      onUnlink?: never;
+      isEditable?: never;
+      isMoveable?: never;
+    };
+
+export type FicheCardProps = FicheCardBaseProps & FicheCardSelectionProps;
+
 export const FicheCard = ({
   ficheAction,
   completion,
@@ -59,12 +75,13 @@ export const FicheCard = ({
   isSelected = false,
   onUnlink,
   onSelect,
+  onToggleLink,
   onToggleOpen,
   currentCollectivite,
   currentUserId,
   planId,
   axeId,
-}: FicheCardProps) => {
+}: FicheCardProps): JSX.Element => {
   const carteId = `fiche-${ficheAction.id}`;
 
   const collectivitePlans = getFicheActionPlanForCollectivite(
@@ -84,8 +101,17 @@ export const FicheCard = ({
     currentUserId
   );
 
-  const hasEditMenu = isEditable && !onSelect;
-  const hoverActions = canUpdate && (onUnlink || hasEditMenu) && (
+  const isSelectable = onSelect !== undefined || onToggleLink !== undefined;
+  const hasEditMenu = isEditable && !isSelectable;
+  const canShowEditActions =
+    canUpdate && (onUnlink !== undefined || hasEditMenu);
+  const showsSelectionCheckbox = onSelect !== undefined;
+  const toggleSelection = onSelect ? () => onSelect(!isSelected) : onToggleLink;
+
+  const linkAction = onToggleLink && (
+    <FicheCardLinkAction isLinked={isSelected} onToggle={onToggleLink} />
+  );
+  const editActions = canShowEditActions && (
     <FicheCardHoverActions
       ficheAction={ficheAction}
       collectivitePlans={collectivitePlans}
@@ -97,15 +123,16 @@ export const FicheCard = ({
       onToggleOpen={onToggleOpen}
     />
   );
+  const hoverActions = linkAction || editActions;
 
   return (
     <article id={carteId} className="relative h-full">
       <ActionCard
         hoverActions={hoverActions}
-        href={onSelect || isNotClickable ? undefined : link}
-        onClick={onSelect ? () => onSelect(!isSelected) : undefined}
+        href={isSelectable || isNotClickable ? undefined : link}
+        onClick={toggleSelection}
         disabled={isNotClickable}
-        isSelected={onSelect ? isSelected : undefined}
+        isSelected={isSelectable ? isSelected : undefined}
         external={openInNewTab}
         header={
           (ficheAction.priorite ||
@@ -171,7 +198,7 @@ export const FicheCard = ({
         }
       >
         <div className="flex min-w-min">
-          {onSelect && <Checkbox checked={isSelected} />}
+          {showsSelectionCheckbox && <Checkbox checked={isSelected} />}
           <span className="text-base font-bold text-primary-9">
             {generateTitle(ficheAction.titre)}
           </span>

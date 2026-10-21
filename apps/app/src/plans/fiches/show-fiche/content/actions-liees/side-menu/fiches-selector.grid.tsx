@@ -1,4 +1,3 @@
-import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -32,11 +31,7 @@ export const FichesSelectorGrid = (props: Props) => {
           <FicheCard
             key={fiche.id}
             ficheAction={fiche}
-            link={makeCollectiviteActionUrl({
-              collectiviteId: collectivite.collectiviteId,
-              ficheUid: fiche.id.toString(),
-            })}
-            onSelect={() => onSelect(fiche)}
+            onToggleLink={() => onSelect(fiche)}
             isSelected={isSelected}
             currentCollectivite={collectivite}
             currentUserId={user.id}
