@@ -186,6 +186,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   noReferent: parseAsBoolean,
   doesBelongToSeveralPlans: parseAsBoolean,
   noTag: parseAsBoolean,
+  noThematique: parseAsBoolean,
   noTitre: parseAsBoolean,
   noDescription: parseAsBoolean,
   noObjectif: parseAsBoolean,

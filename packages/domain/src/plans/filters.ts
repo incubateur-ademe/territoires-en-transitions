@@ -110,6 +110,7 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants de tags de financeur séparés par des virgules'
       ),
+    noThematique: z.coerce.boolean().optional().describe(`Aucune thématique`),
     thematiqueIds: z
       .array(z.coerce.number())
       .optional()

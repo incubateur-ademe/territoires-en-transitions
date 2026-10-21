@@ -1904,7 +1904,15 @@ export default class ListFichesService {
       conditions.push(or(...linkedFicheConditions));
     }
 
-    conditions.push(
+    const thematiqueConditions: (SQLWrapper | SQL | undefined)[] = [];
+    thematiqueConditions.push(
+      this.getHasNoLinkedEntityCondition(
+        filters.noThematique,
+        ficheActionThematiqueTable,
+        ficheActionThematiqueTable.ficheId
+      )
+    );
+    thematiqueConditions.push(
       this.getHasIdentifiedLinkedEntityCondition(
         ficheActionThematiqueTable,
         ficheActionThematiqueTable.ficheId,
@@ -1912,6 +1920,7 @@ export default class ListFichesService {
         filters.thematiqueIds
       )
     );
+    conditions.push(or(...thematiqueConditions));
 
     conditions.push(
       this.getHasIdentifiedLinkedEntityCondition(

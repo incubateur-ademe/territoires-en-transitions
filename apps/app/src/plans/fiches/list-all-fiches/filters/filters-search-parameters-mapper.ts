@@ -48,6 +48,7 @@ type FicheSearchParameters =
   | 'npr'
   | 'ma'
   | 'nt'
+  | 'nth'
   | 'notes'
   | 'anneesNote'
   | 'nr'
@@ -93,6 +94,7 @@ export const nameToparams: Record<
   noServicePilote: 'sssp',
   noStatut: 'sss',
   noTag: 'nt',
+  noThematique: 'nth',
   noPlan: 'np',
   noPriorite: 'npr',
   typePeriode: 'tp',
