@@ -52,4 +52,14 @@ describe('PdfRendererService', () => {
     expect(terminate).toHaveBeenCalledOnce();
   });
 
+  it('returns RENDER_BUSY when too many renders are running', async () => {
+    const renders = [1, 2, 3].map(() =>
+      renderer.render({ fiches: [fiche], notesYears: 'all', timeoutMs: 30_000 })
+    );
+
+    const results = await Promise.all(renders);
+
+    expect(results.map((r) => r.success)).toEqual([true, true, false]);
+    expect(results[2]).toEqual({ success: false, error: 'RENDER_BUSY' });
+  });
 });

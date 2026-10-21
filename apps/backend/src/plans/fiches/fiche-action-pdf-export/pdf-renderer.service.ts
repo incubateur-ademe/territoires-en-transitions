@@ -7,7 +7,10 @@ import {
 import { createRequire } from 'node:module';
 import { Worker } from 'node:worker_threads';
 
-export type PdfExportRenderError = 'RENDER_ERROR' | 'RENDER_TIMEOUT';
+export type PdfExportRenderError =
+  | 'RENDER_ERROR'
+  | 'RENDER_TIMEOUT'
+  | 'RENDER_BUSY';
 
 // Code du worker thread, en CommonJS : chargé tel quel compilé comme sous
 // vitest. Les modules sont résolus depuis ce fichier et passés en chemins absolus.
@@ -26,13 +29,17 @@ renderToBuffer(
 ).then((buffer) => parentPort.postMessage(buffer, [buffer.buffer]));
 `;
 
-// ponytail: un thread par rendu, sans limite de concurrence. Ajouter un pool
-// si les exports simultanés saturent la mémoire de l'instance.
+// La limite de heap s'applique à chaque thread : on borne le nombre de rendus
+// simultanés pour borner la mémoire totale (MAX_CONCURRENT_RENDERS × heap).
+// ponytail: refus immédiat au-delà, sans file d'attente. Passer à une file
+// bornée (ou piscina) si les refus deviennent fréquents.
 const THREAD_MAX_HEAP_MB = 1024;
+const MAX_CONCURRENT_RENDERS = 2;
 
 @Injectable()
 export class PdfRendererService {
   private readonly logger = new Logger(PdfRendererService.name);
+  private activeRenders = 0;
 
   async render({
     fiches,
@@ -45,6 +52,14 @@ export class PdfRendererService {
     notesYears: number[] | 'all';
     timeoutMs: number;
   }): Promise<Result<Buffer, PdfExportRenderError>> {
+    if (this.activeRenders >= MAX_CONCURRENT_RENDERS) {
+      this.logger.warn(
+        `PDF render refused: ${this.activeRenders} renders already running`
+      );
+      return failure('RENDER_BUSY');
+    }
+    this.activeRenders++;
+
     // renderToBuffer peut boucler indéfiniment sur une mise en page : rendu dans
     // un worker thread pour que l'event loop reste libre et que le délai puisse
     // l'interrompre (un Promise.race ne s'exécute jamais si le thread est bloqué).
@@ -87,6 +102,7 @@ export class PdfRendererService {
     } finally {
       clearTimeout(timer);
       void worker.terminate();
+      this.activeRenders--;
     }
   }
 }

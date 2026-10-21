@@ -4,6 +4,7 @@ import { FICHE_ACTION_PDF_EXPORT_CONFIG } from './fiche-action-pdf-export.config
 type SpecificError =
   | 'NO_FICHES'
   | 'RENDER_ERROR'
+  | 'RENDER_BUSY'
   | 'INTERNAL_ERROR'
   | 'TOO_MANY_FICHES';
 
@@ -16,6 +17,11 @@ export const ficheActionPdfExportErrorConfig: TrpcErrorHandlerConfig<SpecificErr
     RENDER_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Erreur de rendu PDF',
+    },
+    RENDER_BUSY: {
+      code: 'TOO_MANY_REQUESTS',
+      message:
+        "Trop d'exports PDF en cours, veuillez réessayer dans quelques minutes.",
     },
     INTERNAL_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
