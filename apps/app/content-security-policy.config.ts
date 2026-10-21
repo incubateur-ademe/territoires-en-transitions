@@ -27,6 +27,11 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
   const supabaseUrl = process.env.SUPABASE_URL ?? '';
   const supabaseWsUrl = supabaseUrl.replace('http', 'ws');
   const backendUrl = process.env.BACKEND_URL ?? '';
+  // Hôte PostHog (proxy ou cloud). Autorisé pour `script-src`, `style-src` (la
+  // toolbar charge `…/toolbar/toolbar-app.css`) et `connect-src`. `connect-src`
+  // ajoute aussi `https://*.posthog.com` car la toolbar interroge l'API cloud
+  // PostHog (`internal-cf.posthog.com` : flags, actions, web-vitals) même
+  // derrière un reverse proxy.
   const posthogSource = getPostHogSource(process.env.POSTHOG_HOST ?? '');
   const crispUrl = 'https://*.crisp.chat';
   const crispHelpdeskUrl = 'https://*.crisp.help';
@@ -40,7 +45,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
     font-src 'self' data: ${crispUrl};
     media-src 'self' data: ${crispUrl};
     script-src ${scriptSrc} ${posthogSource} ${crispUrl};
-    style-src ${styleSrc} ${crispUrl};
+    style-src ${styleSrc} ${posthogSource} ${crispUrl};
     object-src 'none';
     worker-src 'self' blob: ${crispUrl};
     connect-src 'self'
@@ -49,6 +54,7 @@ export function getContentSecurityPolicy(url: URL, nonce: string): string {
       *.${rootDomain}
       ${backendUrl}
       ${posthogSource}
+      https://*.posthog.com
       ${crispUrl}
       wss://*.relay.crisp.chat
       wss://*.relay.rescue.crisp.chat;
