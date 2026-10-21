@@ -110,6 +110,9 @@ export function useListActionsGroupedById(
       handledVersionMismatchKeys.add(versionMismatchKey);
 
       const [referentielId] = versionMismatchKey.split(':') as [ReferentielId];
+      // La clé n'est jamais retirée : l'écart n'est plus signalé pendant le
+      // rechargement puis réapparaît s'il persiste (échec, données
+      // incohérentes) ; la retirer relancerait les rechargements en boucle.
       queryClient.invalidateQueries(
         trpc.referentiels.actions.listActionDefinitions.queryFilter({
           referentielId,
