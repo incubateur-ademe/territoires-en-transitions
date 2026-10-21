@@ -1,4 +1,5 @@
 import {
+  axisPathOf,
   axisSlotsOf,
   ExtractedAction,
   withAxisPath,
@@ -24,7 +25,7 @@ export const stripTitleNumbers = (
   actions: ExtractedAction[]
 ): ExtractedAction[] => {
   const keyOf = (action: ExtractedAction, titre: string) =>
-    [...axisSlotsOf(action), normalizeTitle(titre)]
+    [...axisPathOf(action), normalizeTitle(titre)]
       .map((part) => part.trim())
       .join('|');
   const stripped = actions.map((action) => stripTitleNumber(action.titre));

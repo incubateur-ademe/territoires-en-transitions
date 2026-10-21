@@ -1,10 +1,16 @@
+import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
 import {
   buildHorizontalHierarchyWorkbook,
   buildTestWorkbook,
   SUIVI_FIRST_DATA_ROW,
 } from '../__fixtures__/build-test-workbook';
-import { readWorkbookGrids, referencedSheets } from './read-workbook-grid';
+import {
+  MAX_GRID_COLS,
+  MAX_GRID_ROWS,
+  readWorkbookGrids,
+  referencedSheets,
+} from './read-workbook-grid';
 import {
   getCellValue,
   getGridCell,
@@ -158,6 +164,27 @@ describe('readWorkbookGrids', () => {
       { row: 3, text: '\tPédaler\tPistes' },
     ]);
     expect(getGridCell(grid, 2, 3)?.text).toBe('Première ligne\nseconde ligne');
+  });
+
+  it('borne la grille à une valeur égarée tout au bout de la feuille', async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Plan');
+    worksheet.getCell('A1').value = 'Fiche';
+    worksheet.getCell('XFD1048576').value = 'égarée';
+    worksheet.mergeCells('B1:B1048576');
+    const [grid] = await readGrids(
+      Buffer.from(await workbook.xlsx.writeBuffer())
+    );
+
+    expect(grid.rowCount).toBe(MAX_GRID_ROWS);
+    expect(grid.colCount).toBe(MAX_GRID_COLS);
+    expect(grid.truncatedFrom).toEqual({
+      rowCount: 1048576,
+      colCount: 16384,
+    });
+    expect(grid.merges).toEqual([
+      { top: 1, left: 2, bottom: MAX_GRID_ROWS, right: 2 },
+    ]);
   });
 
   it('refuse un fichier qui n’est pas un classeur', async () => {
