@@ -91,7 +91,7 @@ bootstrap-storage-sql:
 	echo ""; \
 	echo "STORAGE_DB_DATABASE_URL pour Storage API (IP privée du VPC, dans Coolify) :"; \
 	echo ""; \
-	echo "    postgres://supabase_storage_admin:$$storage_pwd@$$pg_private_ip:$$pg_port/$$pg_dbname?sslmode=require"
+	echo "    postgres://supabase_storage_admin:$$storage_pwd@$$pg_private_ip:$$pg_port/$$pg_dbname  (sans sslmode : TLS par STORAGE_DB_SSL_ROOT_CERT)"
 
 # Export plutôt qu'interpolation shell : d peut contenir des espaces.
 restore-preprod-db: export DUMP = $(d)

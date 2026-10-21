@@ -26,8 +26,10 @@ locals {
       module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
     }
     "storage-db-database-url" = {
-      description = "STORAGE_DB_DATABASE_URL de supabase-api preprod : rôle supabase_storage_admin, réseau privé."
-      value = format("postgres://%s:%s@%s:%d/%s?sslmode=require",
+      description = "STORAGE_DB_DATABASE_URL de supabase-api preprod : rôle supabase_storage_admin, réseau privé, TLS vérifié par postgres-tls-ca."
+      # Sans sslmode : pour node-postgres, il remplacerait la CA de
+      # DATABASE_SSL_ROOT_CERT (postgres-tls-ca), qui active seule le TLS.
+      value = format("postgres://%s:%s@%s:%d/%s",
         scaleway_rdb_user.supabase_storage_admin.name, random_password.supabase_storage_admin.result,
       module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
     }
@@ -38,6 +40,10 @@ locals {
     "queue-redis-tls-ca" = {
       description = "QUEUE_REDIS_TLS_CA du backend preprod : CA du cluster Redis, pour vérifier la chaîne TLS."
       value       = module.redis.certificate
+    }
+    "postgres-tls-ca" = {
+      description = "Certificat auto-signé de la RDB preprod (DATABASE_SSL_ROOT_CERT de Storage), pour vérifier le TLS."
+      value       = module.postgres.certificate
     }
   }
 }
