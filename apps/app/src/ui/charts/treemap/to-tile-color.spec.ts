@@ -9,18 +9,18 @@ const MOBILISATION = [
 ] as const;
 
 describe('toTileColor', () => {
-  it('gives the weakest intensity a 10 % tint of the group color over white', () => {
+  it('gives the weakest intensity a 50 % tint of the group color over white', () => {
     expect(
       toTileColor({
         color: '#404092',
         intensity: 'Non mobilisé',
         intensityScale: MOBILISATION,
       })
-    ).toBe('rgba(236,236,244,1)');
+    ).toBe('rgba(160,160,201,1)');
   });
 
   it.each(['Peu mobilisé', 'Bien mobilisé', 'Très mobilisé'] as const)(
-    'gives %s a 42 % tint of the group color over white',
+    'gives %s the full group color',
     (intensity) => {
       expect(
         toTileColor({
@@ -28,7 +28,7 @@ describe('toTileColor', () => {
           intensity,
           intensityScale: MOBILISATION,
         })
-      ).toBe('rgba(175,175,209,1)');
+      ).toBe('rgba(64,64,146,1)');
     }
   );
 

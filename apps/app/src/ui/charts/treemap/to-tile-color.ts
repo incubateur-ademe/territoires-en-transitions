@@ -3,8 +3,7 @@ import type { HexColor, IntensityScale } from './treemap-group';
 
 const WHITE = '#FFFFFF';
 const FULL_TINT = 1;
-const WEAKEST_TINT = 0.1;
-const REACHED_TINT = 0.42;
+const WEAKEST_TINT = 0.5;
 const HEADER_TINT = 0.55;
 
 const toTint = <TIntensity extends string>({
@@ -19,7 +18,7 @@ const toTint = <TIntensity extends string>({
     return FULL_TINT;
   }
   const isWeakest = intensityScale.indexOf(intensity) === 0;
-  return isWeakest ? WEAKEST_TINT : REACHED_TINT;
+  return isWeakest ? WEAKEST_TINT : FULL_TINT;
 };
 
 const toTileColor = <TIntensity extends string>({
