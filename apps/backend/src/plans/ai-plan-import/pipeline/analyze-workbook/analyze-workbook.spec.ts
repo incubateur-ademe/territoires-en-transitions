@@ -4,6 +4,7 @@ import { axisPathOf, ExtractedAction } from '../../models/extracted-action';
 import {
   buildCoverPageWorkbook,
   buildDeepNumberingWorkbook,
+  buildDriftingComplementWorkbook,
   buildErrorCellsSheet,
   buildFlatTableCsv,
   buildFlatTableWorkbook,
@@ -117,6 +118,29 @@ describe('analyzeWorkbook', () => {
         "- Nombre d'aires équipées (cible : 3)"
       );
       expect(actions[1].objectifs).toBeNull();
+    });
+
+    it('signale un rattachement par le seul n° et garde les colonnes non reconnues du complément', async () => {
+      const { actions, warnings } = await analyze(
+        buildDriftingComplementWorkbook()
+      );
+
+      expect(actions[0].objectifs).toContain(
+        '- Fréquentation des pôles (cible : 900) ; Relevé 2022 : 412'
+      );
+      expect(actions[2].objectifs).toBe(
+        "- Nombre d'aires équipées (cible : 3)"
+      );
+      expect(warnings).toEqual(
+        expect.arrayContaining([
+          expect.stringMatching(
+            /« Mobilité » : fiches rattachées par leur seul n°.*n°3 « Créer une vélostation »/
+          ),
+          expect.stringMatching(
+            /« Mobilité » : colonnes non reconnues, reprises avec les indicateurs : G « Relevé 2022 »/
+          ),
+        ])
+      );
     });
 
     it('donne une tranche de texte source par action, sans modèle', async () => {

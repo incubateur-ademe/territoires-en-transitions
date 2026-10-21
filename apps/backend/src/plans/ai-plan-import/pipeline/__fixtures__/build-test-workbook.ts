@@ -505,6 +505,33 @@ export const buildHorizontalHierarchyWorkbook = (): Promise<Buffer> => {
 };
 
 /**
+ * L'onglet d'indicateurs ne suit plus le plan : une fiche y porte un autre
+ * titre sous le même n°, et une colonne de valeurs annuelles s'y ajoute.
+ */
+export const buildDriftingComplementWorkbook = (): Promise<Buffer> => {
+  const indicateurs = buildIndicateursSheet();
+  const [bandeau, blank, header, ...rows] = indicateurs.rows;
+  return buildTestWorkbook([
+    buildSuiviSheet(),
+    {
+      ...indicateurs,
+      rows: [
+        bandeau,
+        blank,
+        [...header, 'Relevé 2022'],
+        ...rows.map((row, index) => {
+          const renamed =
+            row[2] === 3
+              ? [...row.slice(0, 3), 'Créer une vélostation', ...row.slice(4)]
+              : row;
+          return [...renamed, index === 0 ? 412 : null];
+        }),
+      ],
+    },
+  ]);
+};
+
+/**
  * La même hiérarchie horizontale sans aucune fusion : chaque rangée répète
  * ses regroupements, comme un export de base de données.
  */

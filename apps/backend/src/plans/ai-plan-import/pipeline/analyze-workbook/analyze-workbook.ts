@@ -227,7 +227,9 @@ const readAllComplementLines = (
       );
       continue;
     }
+    const extraColumns = layout.columns.filter(({ role }) => role === 'autre');
     const unmatched: string[] = [];
+    const matchedByNumero: string[] = [];
     layout.fiches.forEach((fiche, index) => {
       const match = complement.matches?.[index];
       const target =
@@ -240,16 +242,23 @@ const readAllComplementLines = (
         );
         return;
       }
+      if (!titlesMatch(target.titre, fiche.titre)) {
+        matchedByNumero.push(`n°${fiche.numero} « ${fiche.titre} »`);
+      }
       const ficheLines = fiche.rows.flatMap((row) => {
         const indicateur = collapseSpaces(layout.valueAt(row, indicatorCol));
-        return indicateur === ''
-          ? []
-          : [
-              formatIndicator(
-                indicateur,
-                cibleCol === null ? '' : layout.valueAt(row, cibleCol)
-              ),
-            ];
+        if (indicateur === '') {
+          return [];
+        }
+        const extras = extraColumns.flatMap(({ col, letter, label }) => {
+          const value = collapseSpaces(layout.valueAt(row, col));
+          return value === '' ? [] : [`${label || letter} : ${value}`];
+        });
+        const line = formatIndicator(
+          indicateur,
+          cibleCol === null ? '' : layout.valueAt(row, cibleCol)
+        );
+        return [extras.length === 0 ? line : `${line} ; ${extras.join(' ; ')}`];
       });
       lines.set(target, [...(lines.get(target) ?? []), ...ficheLines]);
     });
@@ -258,6 +267,26 @@ const readAllComplementLines = (
         `${sheetLabel(complement.name)} : fiches introuvables dans « ${
           plan.name
         } », leurs indicateurs ne sont pas importés : ${unmatched.join(', ')}.`
+      );
+    }
+    if (matchedByNumero.length > 0) {
+      warnings.push(
+        `${sheetLabel(
+          complement.name
+        )} : fiches rattachées par leur seul n°, leur titre diffère de celui de « ${
+          plan.name
+        } » : ${matchedByNumero.join(', ')}.`
+      );
+    }
+    if (extraColumns.length > 0) {
+      warnings.push(
+        `${sheetLabel(
+          complement.name
+        )} : colonnes non reconnues, reprises avec les indicateurs : ${extraColumns
+          .map(({ letter, label }) =>
+            label ? `${letter} « ${label} »` : letter
+          )
+          .join(', ')}.`
       );
     }
   }
