@@ -54,14 +54,16 @@ export const ActionsLieesView = () => {
           </VisibleWhen>
         }
       >
-        <FichesListTable
-          collectivite={collectivite}
-          fiches={actionsLiees.list}
-          isLoading={false}
-          isGroupedActionsOn={false}
-          enableSelection={false}
-          onUnlink={!isReadonly ? handleUnlink : undefined}
-        />
+        <div className="overflow-x-auto">
+          <FichesListTable
+            collectivite={collectivite}
+            fiches={actionsLiees.list}
+            isLoading={false}
+            isGroupedActionsOn={false}
+            enableSelection={false}
+            onUnlink={!isReadonly ? handleUnlink : undefined}
+          />
+        </div>
       </ContentLayout.Content>
     </ContentLayout.Root>
   );
