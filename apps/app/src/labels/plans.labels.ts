@@ -242,6 +242,7 @@ export const plansLabels = {
 
   creerAction: 'Créer une action',
   dissocierAction: "Dissocier l'action",
+  lierLAction: "Lier l'action",
   lierIndicateurExistant: 'Lier un indicateur existant',
   lierMesureReferentiels: 'Lier une mesure des référentiels',
   rechercherIndicateurPlaceholder: 'Rechercher par mots clés',
