@@ -72,13 +72,17 @@ export const extractedActionToImportActions = (
   action: ExtractedAction
 ): ImportActionOrSousAction[] => {
   const axisPath = toAxisPath(action);
-  // Une sous-action relève des secteurs de son action.
-  const secteursProposes = action.secteurs;
+  // Une sous-action relève des secteurs et des effets attendus de son action :
+  // le modèle les a choisis en lisant l'action avec ses sous-actions.
+  const proposes = {
+    secteursProposes: action.secteurs,
+    effetsAttendus: action.effetsAttendus,
+  };
   return [
-    { ...actionToImport(action, axisPath), secteursProposes },
+    { ...actionToImport(action, axisPath), ...proposes },
     ...action.sousActions.map((sousAction) => ({
       ...sousActionToImport(sousAction, action.titre, axisPath),
-      secteursProposes,
+      ...proposes,
     })),
   ];
 };

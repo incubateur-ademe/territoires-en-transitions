@@ -97,14 +97,17 @@ flowchart TD
 
     V[5. scoring<br/>note de confiance par action] --> C[6. consolidation<br/>relecture des actions mal notées]
     C --> E[7. enrichment<br/>sous-actions]
-    C --> SE[8. secteurs<br/>secteurs réglementaires, PCAET]
+    C --> SE[8. secteurs<br/>effets attendus,<br/>secteurs réglementaires si PCAET]
     E --> Q[9. qualitativeReview<br/>avis d'ensemble]
     Q --> P[Brouillon → plan en base]
     SE --> P
 ```
 
 Les étapes 5 et 6 sautent si l'utilisateur désactive les vérifications,
-l'étape 7 s'il désactive les sous-actions, et l'étape 8 hors PCAET. Pour un
+l'étape 7 s'il désactive les sous-actions. L'étape 8 tourne pour tout plan :
+elle propose les effets attendus de chaque action, parmi la table
+`effet_attendu` lue en base au lancement, et, pour un PCAET seulement, ses
+secteurs réglementaires, dans le même appel. Pour un
 tableur que le code lit en entier, seuls les secteurs et l'avis appellent le
 modèle : l'extraction reprend les actions lues, les étapes 2 et 4 à 7
 sautent (voir [Tableurs](#tableurs-pipelineanalyze-workbook)).
@@ -452,9 +455,11 @@ relances épuisées, fait échouer l'import, pour qu'il se reprenne plutôt que 
 rendre en silence un brouillon sans vérification.
 
 Les secteurs (étape 8) font exception : même tous leurs lots en échec, ils ne
-font jamais échouer l'import. Ils sont optionnels, et la complétion par Communs
-propose ensuite les secteurs des fiches qui n'en ont pas. Un avertissement
-signale alors qu'aucun secteur n'a été proposé.
+font jamais échouer l'import. Secteurs et effets attendus sont optionnels, et
+la complétion par Communs propose ensuite les secteurs des fiches qui n'en ont
+pas. Un avertissement signale alors qu'aucun secteur n'a été proposé. Un
+identifiant d'effet attendu hors de la liste fournie est écarté (compte
+`unknownEffetsAttendus`).
 
 ## Couche LLM (`utils/llm/`)
 

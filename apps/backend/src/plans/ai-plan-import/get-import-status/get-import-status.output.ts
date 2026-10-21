@@ -11,6 +11,8 @@ export const getImportStatusOutputSchema = z.object({
   createdPlanId: z.number().nullable(),
   /** En échec avec un point de reprise : l'équipe peut le reprendre. */
   resumable: z.boolean(),
+  /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
+  withSecteurs: z.boolean(),
 });
 
 export type GetImportStatusOutput = z.output<typeof getImportStatusOutputSchema>;

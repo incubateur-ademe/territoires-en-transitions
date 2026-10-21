@@ -99,7 +99,12 @@ const responseByStep: Partial<Record<StepName, unknown>> = {
     },
   ],
   secteurs: [
-    { index: 0, secteurs: ['tertiaire'], justification: 'Bâtiments publics.' },
+    {
+      index: 0,
+      secteurs: ['tertiaire'],
+      effetsAttendus: [25],
+      justification: 'Bâtiments publics.',
+    },
   ],
   qualitativeReview: { avis: 'Extraction cohérente' },
 };
@@ -144,6 +149,21 @@ const routedLlm = (
     }),
   } as unknown as PipelineLlm);
 
+const EFFETS_ATTENDUS = [
+  {
+    id: 9,
+    nom: 'Réduction des émissions de gaz à effet de serre',
+    notice: null,
+  },
+  { id: 25, nom: 'Efficacité énergétique', notice: null },
+];
+
+const secteursPromptsOf = (llm: PipelineLlm): string[] =>
+  vi
+    .mocked(llm.generateStructured)
+    .mock.calls.map(([args]) => (args as { prompt: string }).prompt)
+    .filter((prompt) => stepOf(prompt) === 'secteurs');
+
 const documentOf = (text: string) =>
   buildDocument('pdf', [buildPage(0, [{ text }])]);
 
@@ -169,6 +189,7 @@ const input = (overrides: Partial<FreshInput> = {}): FreshInput => ({
   currentDate: '2026-06-10',
   withVerifications: true,
   withSousActions: true,
+  effetsAttendus: [],
   ...overrides,
 });
 
@@ -712,10 +733,11 @@ describe('runImportPipeline', () => {
     });
   });
 
-  it('propose les secteurs de chaque action quand withSecteurs est vrai', async () => {
+  it('propose les secteurs et les effets attendus de chaque action quand withSecteurs est vrai', async () => {
+    const llm = routedLlm();
     const outcome = await runImportPipeline(
-      routedLlm(),
-      input({ withSecteurs: true })
+      llm,
+      input({ withSecteurs: true, effetsAttendus: EFFETS_ATTENDUS })
     );
 
     expect(outcome).toMatchObject({
@@ -727,10 +749,33 @@ describe('runImportPipeline', () => {
         secteurs: ['tertiaire'],
         justification: 'Bâtiments publics.',
       });
+      expect(outcome.draft.actions[0].effetsAttendus).toEqual([25]);
     }
+    expect(secteursPromptsOf(llm)).toHaveLength(1);
   });
 
-  it('saute les secteurs par défaut', async () => {
+  it('hors PCAET, propose les effets attendus dans le même appel sans demander ni enregistrer de secteur', async () => {
+    const llm = routedLlm();
+    const outcome = await runImportPipeline(
+      llm,
+      input({ withSecteurs: false, effetsAttendus: EFFETS_ATTENDUS })
+    );
+
+    expect(outcome).toMatchObject({
+      status: 'done',
+      stepStates: { secteurs: 'ok' },
+    });
+    if (outcome.status === 'done') {
+      expect(outcome.draft.actions[0].secteurs).toBeUndefined();
+      expect(outcome.draft.actions[0].effetsAttendus).toEqual([25]);
+    }
+    const [prompt, ...others] = secteursPromptsOf(llm);
+    expect(others).toEqual([]);
+    expect(prompt).toContain('• 25 : Efficacité énergétique');
+    expect(prompt).not.toContain('"residentiel"');
+  });
+
+  it('saute les secteurs sans PCAET ni effets attendus', async () => {
     const outcome = await runImportPipeline(routedLlm(), input());
 
     expect(outcome).toMatchObject({ stepStates: { secteurs: 'skipped' } });
@@ -1379,6 +1424,29 @@ describe('runImportPipeline', () => {
         });
       }
     );
+
+    it('propose les effets attendus des fiches lues par le code, hors PCAET', async () => {
+      const llm = tabularLlm('whole-document');
+
+      const outcome = await runImportPipeline(
+        llm,
+        await tabularInput({
+          withSecteurs: false,
+          effetsAttendus: EFFETS_ATTENDUS,
+        })
+      );
+
+      expect(stepsCalled(llm).sort()).toEqual([
+        'qualitativeReview',
+        'secteurs',
+      ]);
+      expect(outcome.status).toBe('done');
+      if (outcome.status !== 'done') return;
+      const [first] = outcome.draft.actions;
+      expect(first.sourceTableur).toBeDefined();
+      expect(first.effetsAttendus).toEqual([25]);
+      expect(first.secteurs).toBeUndefined();
+    });
 
     it.each(strategies)(
       'refuse sans appel au modèle un tableur dont le code lit trop de fiches (%s)',

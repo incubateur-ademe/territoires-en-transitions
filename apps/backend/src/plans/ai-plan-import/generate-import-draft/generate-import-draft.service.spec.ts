@@ -10,6 +10,8 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
+import { EffetAttendu } from '@tet/domain/shared';
 import { Logger } from '@nestjs/common';
 import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
@@ -95,6 +97,7 @@ type MockOverrides = {
   attempt?: number;
   previousLlm?: LlmCallMetrics;
   sourceAvailable?: boolean;
+  effetsAttendus?: EffetAttendu[];
 };
 
 const buildMocks = (overrides: MockOverrides = {}) => {
@@ -186,8 +189,13 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     ),
   } as unknown as AiPlanImportStepRunRepository;
 
+  const effetAttenduService = {
+    getEffetAttendu: vi.fn(async () => overrides.effetsAttendus ?? []),
+  } as unknown as EffetAttenduService;
+
   return {
     jobRepository,
+    effetAttenduService,
     documentStorage,
     llm,
     importPlanService,
@@ -219,7 +227,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.transactionManager,
     mocks.trackingService,
     mocks.enqueueCompletePlanSecteursService,
-    mocks.stepRunRepository
+    mocks.stepRunRepository,
+    mocks.effetAttenduService
   );
 
 describe('GenerateImportDraftService', () => {
@@ -282,6 +291,48 @@ describe('GenerateImportDraftService', () => {
       bucketId: 'ai-plan-import-sources',
       key: '10/abc',
     });
+  });
+
+  it('propose les effets attendus lus en base et les donne aux fiches créées', async () => {
+    const generateStructured = vi.fn(async ({ prompt }: { prompt: string }) => {
+      if (prompt.includes('auditeur qualité')) {
+        return success({ data: { avis: 'Extraction ok' }, tokens });
+      }
+      if (prompt.includes('agent de classement des actions')) {
+        return success({ data: [{ index: 0, effetsAttendus: [25] }], tokens });
+      }
+      return success({ data: [extractionAction], tokens });
+    });
+    const mocks = buildMocks({
+      generateStructured: generateStructured as never,
+      effetsAttendus: [{ id: 25, nom: 'Efficacité énergétique', notice: null }],
+    });
+
+    const result = await buildService(mocks).generate('job-1');
+
+    expect(result).toMatchObject({ success: true });
+    const classementPrompt = generateStructured.mock.calls
+      .map(([{ prompt }]) => prompt)
+      .find((prompt) => prompt.includes('agent de classement des actions'));
+    expect(classementPrompt).toContain('• 25 : Efficacité énergétique');
+    expect(classementPrompt).not.toContain('"residentiel"');
+    expect(mocks.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        planInput: expect.objectContaining({
+          actions: [
+            expect.objectContaining({
+              effetsAttendus: [25],
+              secteursProposes: undefined,
+            }),
+          ],
+        }),
+      })
+    );
+    expect(mocks.jobRepository.updateStepStates).toHaveBeenLastCalledWith(
+      'job-1',
+      0,
+      expect.objectContaining({ secteurs: 'ok' })
+    );
   });
 
   it('découpe un document trop long et en extrait les tranches une par une', async () => {

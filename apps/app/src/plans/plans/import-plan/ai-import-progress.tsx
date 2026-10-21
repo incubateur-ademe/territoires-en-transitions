@@ -6,7 +6,7 @@ import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { ImportStepName, ImportStepView } from './ai-import-steps.model';
 
-const stepLabels: Record<ImportStepName, string> = {
+const STEP_LABELS: Record<ImportStepName, string> = {
   reading: appLabels.importPlanIaEtapeLecture,
   scouting: appLabels.importPlanIaEtapeReperage,
   extraction: appLabels.importPlanIaEtapeExtraction,
@@ -17,6 +17,12 @@ const stepLabels: Record<ImportStepName, string> = {
   secteurs: appLabels.importPlanIaEtapeSecteurs,
   qualitativeReview: appLabels.importPlanIaEtapeRevue,
 };
+
+// Hors PCAET, l'étape ne propose que les effets attendus.
+const stepLabelsFor = (withSecteurs: boolean): Record<ImportStepName, string> =>
+  withSecteurs
+    ? STEP_LABELS
+    : { ...STEP_LABELS, secteurs: appLabels.importPlanIaEtapeEffetsAttendus };
 
 const ImportFailedAlert = ({
   errorMessage,
@@ -92,7 +98,14 @@ const StepStatusIcon = ({ status }: { status: VisibleStepStatus }) => {
 const isVisible = (step: ImportStepView): step is VisibleStep =>
   step.status !== 'skipped';
 
-const ImportStepList = ({ steps }: { steps: ImportStepView[] }) => {
+const ImportStepList = ({
+  steps,
+  withSecteurs,
+}: {
+  steps: ImportStepView[];
+  withSecteurs: boolean;
+}) => {
+  const stepLabels = stepLabelsFor(withSecteurs);
   const currentSteps = steps.filter((step) => step.status === 'current');
   return (
     <>
@@ -138,6 +151,8 @@ type AiImportProgressProps = {
   onResume?: () => void;
   isResuming?: boolean;
   steps: ImportStepView[];
+  /** Plan PCAET : l'import propose aussi les secteurs réglementaires. */
+  withSecteurs?: boolean;
 };
 
 export const AiImportProgress = ({
@@ -147,9 +162,10 @@ export const AiImportProgress = ({
   onResume,
   isResuming = false,
   steps,
+  withSecteurs = false,
 }: AiImportProgressProps) => (
   <div className="flex flex-col gap-8 py-10">
-    <ImportStepList steps={steps} />
+    <ImportStepList steps={steps} withSecteurs={withSecteurs} />
     <VisibleWhen condition={failed}>
       <ImportFailedAlert
         errorMessage={errorMessage}

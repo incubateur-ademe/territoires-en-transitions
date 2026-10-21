@@ -272,7 +272,9 @@ export const plansLabels = {
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
   importPlanIaPlanImporte: 'Plan importé',
   importPlanIaEnCoursCourt: 'Import en cours',
-  importPlanIaEtapeSecteurs: 'Identification des secteurs réglementaires',
+  importPlanIaEtapeSecteurs:
+    'Identification des secteurs et des effets attendus',
+  importPlanIaEtapeEffetsAttendus: 'Identification des effets attendus',
   importPlanIaEtapesTitre: "Étapes de l'import",
   importPlanIaEtapeTerminee: 'terminée',
   importPlanIaEtapeEnCours: 'en cours',

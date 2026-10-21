@@ -1,6 +1,7 @@
 import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
+import { SharedModule } from '@tet/backend/shared/shared.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
@@ -35,6 +36,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     forwardRef(() => CollectivitesModule),
     CompletePlanSecteursModule,
     PlansUtilsModule,
+    SharedModule,
     UsersModule,
     NotificationsModule,
     TrackingModule,

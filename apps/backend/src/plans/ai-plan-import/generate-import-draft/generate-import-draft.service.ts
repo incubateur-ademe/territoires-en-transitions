@@ -12,6 +12,7 @@ import {
 } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
+import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
@@ -88,7 +89,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly transactionManager: TransactionManager,
     private readonly trackingService: TrackingService,
     private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
-    private readonly stepRunRepository: AiPlanImportStepRunRepository
+    private readonly stepRunRepository: AiPlanImportStepRunRepository,
+    private readonly effetAttenduService: EffetAttenduService
   ) {}
 
   /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
@@ -284,6 +286,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       };
     }
 
+    const effetsAttendus = await this.effetAttenduService.getEffetAttendu();
     const outcome = await runImportPipeline(this.llm, {
       ...start,
       instructions: job.options.instructions,
@@ -291,6 +294,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       withVerifications: job.options.withVerifications,
       withSousActions: job.options.withSousActions,
       withSecteurs: job.options.withSecteurs ?? false,
+      effetsAttendus,
       onStepStatesChange: async (stepStates) => {
         await this.jobRepository.updateStepStates(job.id, attempt, stepStates);
       },

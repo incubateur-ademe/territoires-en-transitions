@@ -40,5 +40,8 @@ export function importActionInputToUpdateFicheInput(
       montantTtc: financeur.montant,
     })),
     partenaires: resolvedEntities.partenaires,
+    effetsAttendus: action.effetsAttendus?.length
+      ? action.effetsAttendus.map((id) => ({ id }))
+      : undefined,
   };
 }

@@ -97,6 +97,7 @@ const statusViewProjection = {
     string | null
   >`${aiPlanImportJobTable.draft} ->> 'qualitativeReview'`,
   resumable: sql<boolean>`coalesce(${isResumable}, false)`,
+  withSecteurs: sql<boolean>`coalesce((${aiPlanImportJobTable.options} ->> 'withSecteurs')::boolean, false)`,
 };
 
 @Injectable()

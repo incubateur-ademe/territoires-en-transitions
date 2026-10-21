@@ -4,20 +4,23 @@ import { describe, expect, it, vi } from 'vitest';
 import { AiImportProgress } from './ai-import-progress';
 import { ImportStepView } from './ai-import-steps.model';
 
-const renderProgress = (steps: ImportStepView[], failed = false) =>
+const renderProgress = (
+  steps: ImportStepView[],
+  failed = false,
+  withSecteurs = false
+) =>
   render(
     <AiImportProgress
       failed={failed}
       errorMessage={null}
       onRetry={vi.fn()}
       steps={steps}
+      withSecteurs={withSecteurs}
     />
   );
 
 const listedSteps = () =>
-  within(
-    screen.getByRole('list', { name: appLabels.importPlanIaEtapesTitre })
-  )
+  within(screen.getByRole('list', { name: appLabels.importPlanIaEtapesTitre }))
     .getAllByRole('listitem')
     .map((item) => [item.textContent, item.dataset.status]);
 
@@ -68,4 +71,22 @@ describe('AiImportProgress', () => {
     ]);
     expect(screen.getByRole('alert')).toBeTruthy();
   });
+
+  it.each([
+    [true, appLabels.importPlanIaEtapeSecteurs],
+    [false, appLabels.importPlanIaEtapeEffetsAttendus],
+  ])(
+    "nomme l'etape des secteurs selon le plan (PCAET : %s)",
+    (withSecteurs, label) => {
+      renderProgress(
+        [{ name: 'secteurs', status: 'current' }],
+        false,
+        withSecteurs
+      );
+
+      expect(listedSteps()).toEqual([
+        [`${label} (${appLabels.importPlanIaEtapeEnCours})`, 'current'],
+      ]);
+    }
+  );
 });

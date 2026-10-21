@@ -194,6 +194,8 @@ const main = async (): Promise<number> => {
     document: document.data,
     ...options,
     disabledFields: [],
+    // Sans base : l'étape des effets attendus et des secteurs saute.
+    effetsAttendus: [],
     currentDate: new Date().toISOString(),
     onStepStatesChange: async (stepStates) => {
       lastStep = `pipeline ${JSON.stringify(stepStates)}, ${
