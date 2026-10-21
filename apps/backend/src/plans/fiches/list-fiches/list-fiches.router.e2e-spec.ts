@@ -1665,8 +1665,16 @@ describe('ListFichesRouter', () => {
             );
         });
         await db.db.insert(ficheActionThematiqueTable).values([
-          { ficheId: ficheIds[1], thematiqueId: selectedThematique.id },
-          { ficheId: ficheIds[2], thematiqueId: otherThematique.id },
+          {
+            ficheId: ficheIds[1],
+            thematiqueId: selectedThematique.id,
+            createdBy: testUser.id,
+          },
+          {
+            ficheId: ficheIds[2],
+            thematiqueId: otherThematique.id,
+            createdBy: testUser.id,
+          },
         ]);
 
         const filters = {
