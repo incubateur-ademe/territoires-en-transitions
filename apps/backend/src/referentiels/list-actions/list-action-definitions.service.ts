@@ -38,144 +38,155 @@ export class ListActionDefinitionsService {
   }: ListActionDefinitionsInput): Promise<
     Result<ListActionDefinitionsOutput, CommonError>
   > {
-    const [referentiel] = await this.db
-      .select({ version: referentielDefinitionTable.version })
-      .from(referentielDefinitionTable)
-      .where(eq(referentielDefinitionTable.id, referentielId));
+    // Les deux lectures partagent le même instantané : la version renvoyée
+    // correspond toujours aux définitions, même si une nouvelle version est
+    // publiée entre les deux requêtes.
+    return this.db.transaction(
+      async (tx) => {
+        const [referentiel] = await tx
+          .select({ version: referentielDefinitionTable.version })
+          .from(referentielDefinitionTable)
+          .where(eq(referentielDefinitionTable.id, referentielId));
 
-    if (!referentiel) {
-      return failure('NOT_FOUND');
-    }
+        if (!referentiel) {
+          return failure('NOT_FOUND');
+        }
 
-    const definitions: ActionStaticDefinition[] = await this.db
-      .select({
-        ...getTableColumns(actionDefinitionTable),
-        modifiedAt: sqlToDateTimeISO(actionDefinitionTable.modifiedAt),
-        depth: actionDepth.as('depth'),
+        const definitions: ActionStaticDefinition[] = await tx
+          .select({
+            ...getTableColumns(actionDefinitionTable),
+            modifiedAt: sqlToDateTimeISO(actionDefinitionTable.modifiedAt),
+            depth: actionDepth.as('depth'),
 
-        // Type d'action d'après `referentiel_definition.hierarchie`
-        // Ex: 'axe', 'sous-axe', etc
-        actionType:
-          sql<ActionType>`${referentielDefinitionTable.hierarchie}[${actionDepth} + 1]`.as(
-            'actionType'
-          ),
-
-        questionIds: sql<Array<string>>`
-          COALESCE(
-            (
-              SELECT array_to_json(
-                array_agg(DISTINCT ${questionActionTable.questionId})
-              )
-              FROM ${questionActionTable}
-              WHERE ${eq(
-                questionActionTable.actionId,
-                actionDefinitionTable.actionId
-              )}
-            ),
-            '[]'::json
-          )
-        `.as('questionIds'),
-
-        labels: sql<Array<ReferentielLabel>>`
-          COALESCE(
-            (
-              SELECT array_to_json(
-                array_agg(DISTINCT ${actionDefinitionTagTable.tagRef})
-              )
-              FROM ${actionDefinitionTagTable}
-              WHERE ${and(
-                eq(
-                  actionDefinitionTagTable.actionId,
-                  actionDefinitionTable.actionId
-                ),
-                eq(
-                  actionDefinitionTagTable.referentielId,
-                  actionDefinitionTable.referentielId
-                ),
-                inArray(actionDefinitionTagTable.tagRef, [
-                  ReferentielLabelEnum.TE_CAE,
-                  ReferentielLabelEnum.TE_ECI,
-                ])
-              )}
-            ),
-            '[]'::json
-          )
-        `.as('labels'),
-
-        isCoremeasure: sql<boolean>`
-          EXISTS (
-            SELECT 1
-            FROM ${actionDefinitionTagTable}
-            WHERE ${and(
-              eq(
-                actionDefinitionTagTable.actionId,
-                actionDefinitionTable.actionId
+            // Type d'action d'après `referentiel_definition.hierarchie`
+            // Ex: 'axe', 'sous-axe', etc
+            actionType:
+              sql<ActionType>`${referentielDefinitionTable.hierarchie}[${actionDepth} + 1]`.as(
+                'actionType'
               ),
+
+            questionIds: sql<Array<string>>`
+              COALESCE(
+                (
+                  SELECT array_to_json(
+                    array_agg(DISTINCT ${questionActionTable.questionId})
+                  )
+                  FROM ${questionActionTable}
+                  WHERE ${eq(
+                    questionActionTable.actionId,
+                    actionDefinitionTable.actionId
+                  )}
+                ),
+                '[]'::json
+              )
+            `.as('questionIds'),
+
+            labels: sql<Array<ReferentielLabel>>`
+              COALESCE(
+                (
+                  SELECT array_to_json(
+                    array_agg(DISTINCT ${actionDefinitionTagTable.tagRef})
+                  )
+                  FROM ${actionDefinitionTagTable}
+                  WHERE ${and(
+                    eq(
+                      actionDefinitionTagTable.actionId,
+                      actionDefinitionTable.actionId
+                    ),
+                    eq(
+                      actionDefinitionTagTable.referentielId,
+                      actionDefinitionTable.referentielId
+                    ),
+                    inArray(actionDefinitionTagTable.tagRef, [
+                      ReferentielLabelEnum.TE_CAE,
+                      ReferentielLabelEnum.TE_ECI,
+                    ])
+                  )}
+                ),
+                '[]'::json
+              )
+            `.as('labels'),
+
+            isCoremeasure: sql<boolean>`
+              EXISTS (
+                SELECT 1
+                FROM ${actionDefinitionTagTable}
+                WHERE ${and(
+                  eq(
+                    actionDefinitionTagTable.actionId,
+                    actionDefinitionTable.actionId
+                  ),
+                  eq(
+                    actionDefinitionTagTable.referentielId,
+                    actionDefinitionTable.referentielId
+                  ),
+                  eq(
+                    actionDefinitionTagTable.tagRef,
+                    ImportActionDefinitionCoremeasureType.COREMEASURE
+                  )
+                )}
+              )
+            `.as('isCoremeasure'),
+
+            thematiques: sql<Array<ActionThematique>>`
+              COALESCE(
+                (
+                  SELECT jsonb_agg(
+                    DISTINCT jsonb_build_object(
+                      'ref', ${referentielTagTable.ref},
+                      'nom', ${referentielTagTable.nom}
+                    )
+                  )
+                  FROM ${actionDefinitionTagTable}
+                  JOIN ${referentielTagTable}
+                    ON ${eq(
+                      referentielTagTable.ref,
+                      actionDefinitionTagTable.tagRef
+                    )}
+                  WHERE ${and(
+                    eq(
+                      actionDefinitionTagTable.actionId,
+                      actionDefinitionTable.actionId
+                    ),
+                    eq(
+                      actionDefinitionTagTable.referentielId,
+                      actionDefinitionTable.referentielId
+                    ),
+                    eq(
+                      referentielTagTable.type,
+                      ReferentielTagTypeEnum.THEMATIQUE
+                    )
+                  )}
+                ),
+                '[]'::jsonb
+              )
+            `.as('thematiques'),
+          })
+          .from(actionDefinitionTable)
+          .innerJoin(
+            referentielDefinitionTable,
+            and(
               eq(
-                actionDefinitionTagTable.referentielId,
+                referentielDefinitionTable.id,
                 actionDefinitionTable.referentielId
               ),
               eq(
-                actionDefinitionTagTable.tagRef,
-                ImportActionDefinitionCoremeasureType.COREMEASURE
+                referentielDefinitionTable.version,
+                actionDefinitionTable.referentielVersion
               )
-            )}
+            )
           )
-        `.as('isCoremeasure'),
+          .where(eq(actionDefinitionTable.referentielId, referentielId))
+          .orderBy(asc(actionDefinitionTable.actionId));
 
-        thematiques: sql<Array<ActionThematique>>`
-          COALESCE(
-            (
-              SELECT jsonb_agg(
-                DISTINCT jsonb_build_object(
-                  'ref', ${referentielTagTable.ref},
-                  'nom', ${referentielTagTable.nom}
-                )
-              )
-              FROM ${actionDefinitionTagTable}
-              JOIN ${referentielTagTable}
-                ON ${eq(
-                  referentielTagTable.ref,
-                  actionDefinitionTagTable.tagRef
-                )}
-              WHERE ${and(
-                eq(
-                  actionDefinitionTagTable.actionId,
-                  actionDefinitionTable.actionId
-                ),
-                eq(
-                  actionDefinitionTagTable.referentielId,
-                  actionDefinitionTable.referentielId
-                ),
-                eq(referentielTagTable.type, ReferentielTagTypeEnum.THEMATIQUE)
-              )}
-            ),
-            '[]'::jsonb
-          )
-        `.as('thematiques'),
-      })
-      .from(actionDefinitionTable)
-      .innerJoin(
-        referentielDefinitionTable,
-        and(
-          eq(
-            referentielDefinitionTable.id,
-            actionDefinitionTable.referentielId
+        return success({
+          referentielVersion: referentiel.version,
+          definitionsById: Object.fromEntries(
+            definitions.map((definition) => [definition.actionId, definition])
           ),
-          eq(
-            referentielDefinitionTable.version,
-            actionDefinitionTable.referentielVersion
-          )
-        )
-      )
-      .where(eq(actionDefinitionTable.referentielId, referentielId))
-      .orderBy(asc(actionDefinitionTable.actionId));
-
-    return success({
-      referentielVersion: referentiel.version,
-      definitionsById: Object.fromEntries(
-        definitions.map((definition) => [definition.actionId, definition])
-      ),
-    });
+        });
+      },
+      { isolationLevel: 'repeatable read', accessMode: 'read only' }
+    );
   }
 }
