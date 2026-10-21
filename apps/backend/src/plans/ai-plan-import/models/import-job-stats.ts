@@ -12,6 +12,9 @@ export type ImportJobStats = {
         extracted: number;
         duplicates: number;
         truncatedTitles: number;
+        /** Absents des imports antérieurs à ce nettoyage. */
+        removedDescriptionLines?: number;
+        removedObjectifSousActions?: number;
         /** Actions notées par la vérification, et parmi elles reprises. */
         scored: number;
         improved: number;

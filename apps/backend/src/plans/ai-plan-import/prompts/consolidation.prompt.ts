@@ -1,4 +1,10 @@
 import { definePrompt } from '@tet/backend/utils/llm/prompt-template';
+import {
+  CARTOUCHE_RULE,
+  DESCRIPTION_RULE,
+  FIELD_ALLOCATION_EXAMPLE,
+  SOUS_ACTIONS_RULE,
+} from './field-rules';
 
 const actionsAAmeliorer = '{actions_a_ameliorer}';
 const textePdfAAnalyser = '{texte_pdf_a_analyser}';
@@ -60,14 +66,17 @@ Exemple :
 Types et formats attendus
 • "index" est l’entier identifiant l’action, repris tel quel depuis la liste en entrée
 • "titre" est une chaîne de la forme "n.X.Y Titre de l'action" qui doit correspondre à l’une des actions listées. Le titre ne doit pas dépasser 300 caractères. Si le titre issu du texte source dépasse 300 caractères, conserver uniquement les 300 premiers caractères significatifs dans "titre" et reporter le reste dans "description"
-• "description" est une chaîne
-• "sous-actions" est une liste de chaînes. Chaque sous-action est un libellé d’étape court (300 caractères maximum) : résumer en un libellé concis si le passage source est long, et ne jamais produire une sous-action de plus de 300 caractères. Si aucune sous action ne s’impose, mettre []
+• ${DESCRIPTION_RULE}
+• ${SOUS_ACTIONS_RULE}
 
 Règles d’extraction spécifiques
 1) Si l’information n’est pas explicitement présente dans le texte source, laisser ces champs à [] pour "sous-actions"
-2) **SOYEZ COMPLETEMENT EXHAUSTIF SUR L'EXTRACTION NOTAMMENT DES DESCRIPTIONS ET SOUS-ACTIONS**
-3) Ne vous répétez pas entre les descriptions et les sous-actions, si certaines phrases s'apparentent à des sous-actions. Mettez les dans les sous-actions et non dans la description.
-4) Le titre et la description ne doivent JAMAIS contenir les mêmes informations. La description ne doit apporter que des informations complémentaires au titre. Si le titre est suffisant, laisser "description" à "".
+2) **SOYEZ COMPLETEMENT EXHAUSTIF SUR LES SOUS-ACTIONS.** La description ne garde que ce que sa règle ci-dessus permet.
+3) Les autres champs de l'action (objectifs, pilotes, partenaires, budget, financements, moyens, dates, statut) sont relevés à part : ne les reportez ni dans "description" ni dans "sous-actions". Chaque information va dans un seul champ.
+4) ${CARTOUCHE_RULE}
+
+Exemple de répartition des champs (ici, seuls "titre", "description" et "sous-actions" sont à rendre)
+${FIELD_ALLOCATION_EXAMPLE}
 
 Nettoyage minimal
 • Corriger les espaces multiples

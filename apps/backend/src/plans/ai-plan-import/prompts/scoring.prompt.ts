@@ -28,6 +28,7 @@ Tu dois juger uniquement sur
 • omissions de texte significatives
 • reformulations textuelles (changement de vocabulaire ou de structure de phrase)
 Les ajouts de vocabulaire non présents dans le texte source sont considérés comme des reformulations.
+Une information du passage rangée dans l'un des champs de l'action (sous actions, objectifs, pilotes, partenaires, budget, financements, moyens, statut) n'est pas une omission, même absente de la description ; un libellé de cartouche ou de tableau non repris non plus.
 
 Règles de notation
 Tu dois attribuer pour chaque action un score entier entre 0 et 100, noté score, qui reflète la fidélité au texte source.

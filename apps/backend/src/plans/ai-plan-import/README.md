@@ -129,7 +129,18 @@ un même axe ou sous-axe libellé de deux façons (mêmes mots aux accents et à
 la casse près) prend une seule graphie, en casse normale de préférence, et un
 numéro nu (« Axe 6 ») rejoint le seul libellé complet de ce numéro, et les
 espaces multiples d'un libellé d'axe ou de sous-axe sont écrasés ; les
-doublons exacts sont écartés.
+doublons exacts sont écartés. Enfin `adapters/remove-duplicated-content.ts`
+retire, sans appel au modèle ni réécriture, ce que la description répète
+d'un autre champ : une ligne déjà présente dans les objectifs, les
+sous-actions, les pilotes, les partenaires, le budget, les financements ou
+les moyens (mots comparés sans casse, accents, ponctuation ni puce ; ligne
+incluse telle quelle, ou à 90 % dans l'ordre, ou faite à 80 % des noms
+d'organismes déjà rangés), un libellé de cartouche seul (« Référent
+interne »), la répétition du titre ; un intertitre « … : » reste tant que sa
+suite reste. Une sous-action qui reprend un objectif, sans pilote, statut ni
+date propres, est retirée. Les actions lues dans un tableur n'y passent pas.
+Les comptes sont dans `stats.content` (`removedDescriptionLines`,
+`removedObjectifSousActions`).
 
 La lecture (étape 1) porte aussi un garde-fou déterministe,
 `pipeline/detect-document-tome/` : un PCAET se publie en plusieurs tomes, et
@@ -398,9 +409,13 @@ flowchart LR
 ```
 
 Le prompt d'extraction (Gemini) et celui de structuration (Albert) partagent
-leurs règles de contenu (`prompts/field-rules.ts`) : description reprise sans
-résumé, objectifs chiffrés en lignes « - », pilotes tirés d'un schéma
-d'acteurs, statut déduit du seul calendrier de l'action, et ni évaluation, ni
+leurs règles de contenu (`prompts/field-rules.ts`), que la consolidation
+reprend pour la description et les sous-actions : chaque information dans un
+seul champ, le plus spécialisé ; description réduite au texte de
+présentation qu'aucun autre champ n'accueille, sans résumé ; jamais un
+objectif en sous-action ; cartouche lu colonne par colonne rapproché de ses
+libellés, fragments orphelins écartés ; objectifs chiffrés en lignes « - »,
+pilotes tirés d'un schéma d'acteurs, statut déduit du seul calendrier de l'action, et ni évaluation, ni
 mesures ERC, ni engagements de partenaires lus comme des actions. Aucun ne
 numérote une action que le document ne numérote pas.
 

@@ -336,13 +336,42 @@ describe('normalizeExtractedActions', () => {
     ]);
   });
 
+  it('retire de la description ce que les autres champs reprennent, et le compte', () => {
+    const result = normalizeExtractedActions([
+      toAction({
+        titre: '2.1.3 Réduire l autosolisme',
+        description:
+          'Le covoiturage reste marginal.\nObjectifs\nDoubler le covoiturage',
+        objectifs: '- Doubler le covoiturage',
+        sousActions: [
+          toSousAction({ titre: 'Doubler le covoiturage' }),
+          toSousAction(),
+        ],
+      }),
+    ]);
+
+    expect(result.actions[0].description).toBe(
+      'Le covoiturage reste marginal.'
+    );
+    expect(result.actions[0].sousActions).toHaveLength(1);
+    expect(result).toMatchObject({
+      removedDescriptionLines: 2,
+      removedObjectifSousActions: 1,
+    });
+  });
+
   it('ne signale ni doublon ni troncature sur des actions propres', () => {
     const result = normalizeExtractedActions([
       toAction({ titre: 'Action A' }),
       toAction({ titre: 'Action B' }),
     ]);
 
-    expect(result).toMatchObject({ truncatedCount: 0, duplicateCount: 0 });
+    expect(result).toMatchObject({
+      truncatedCount: 0,
+      duplicateCount: 0,
+      removedDescriptionLines: 0,
+      removedObjectifSousActions: 0,
+    });
     expect(result.actions).toHaveLength(2);
   });
 });

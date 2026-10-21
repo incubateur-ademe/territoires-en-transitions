@@ -12,6 +12,7 @@ import {
   ExtractedSousAction,
 } from '../models/extracted-action';
 import { stripTitleNumbers, unifyAxisLabels } from './normalize-plan-labels';
+import { removeDuplicatedContent } from './remove-duplicated-content';
 import { textToRichText } from './text-to-rich-text';
 
 export const MAX_FICHE_TITLE_LENGTH = 300;
@@ -50,6 +51,10 @@ export type NormalizedExtractedActions = {
   actions: ExtractedAction[];
   truncatedCount: number;
   duplicateCount: number;
+  /** Lignes de description qui répétaient un autre champ, ou un libellé seul. */
+  removedDescriptionLines: number;
+  /** Sous-actions qui reprenaient un objectif de leur fiche. */
+  removedObjectifSousActions: number;
 };
 
 export const normalizeExtractedActions = (
@@ -61,10 +66,13 @@ export const normalizeExtractedActions = (
   // Dédoublonné sur les titres encore numérotés : « Fiche 3 » et « Fiche 7 »
   // de même intitulé sont deux fiches.
   const deduped = dedupeExtractedActions(capped);
+  const cleaned = removeDuplicatedContent(stripTitleNumbers(deduped));
   return {
-    actions: stripTitleNumbers(deduped),
+    actions: cleaned.actions,
     truncatedCount,
     duplicateCount: capped.length - deduped.length,
+    removedDescriptionLines: cleaned.descriptionLines,
+    removedObjectifSousActions: cleaned.sousActions,
   };
 };
 

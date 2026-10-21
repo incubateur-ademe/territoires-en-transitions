@@ -372,8 +372,13 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     stepStates: StepStates,
     telemetry: ImportJobTelemetry
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const { actions, truncatedCount, duplicateCount } =
-      normalizeExtractedActions(draft.actions);
+    const {
+      actions,
+      truncatedCount,
+      duplicateCount,
+      removedDescriptionLines,
+      removedObjectifSousActions,
+    } = normalizeExtractedActions(draft.actions);
     if (truncatedCount > 0) {
       this.logger.warn(
         `Import ${job.id}: ${truncatedCount} title(s) truncated to ${MAX_FICHE_TITLE_LENGTH} chars before plan creation`
@@ -382,6 +387,11 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     if (duplicateCount > 0) {
       this.logger.warn(
         `Import ${job.id}: ${duplicateCount} duplicate action(s) skipped before plan creation`
+      );
+    }
+    if (removedDescriptionLines > 0 || removedObjectifSousActions > 0) {
+      this.logger.warn(
+        `Import ${job.id}: ${removedDescriptionLines} description line(s) and ${removedObjectifSousActions} sous-action(s) repeating another field removed before plan creation`
       );
     }
 
@@ -400,6 +410,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       extracted: draft.actions.length,
       duplicates: duplicateCount,
       truncatedTitles: truncatedCount,
+      removedDescriptionLines,
+      removedObjectifSousActions,
       scored: actions.filter((action) => action.confidence !== null).length,
       improved: actions.filter((action) => action.confidence?.amelioree).length,
       fichesCreated: planInput.actions.length,
