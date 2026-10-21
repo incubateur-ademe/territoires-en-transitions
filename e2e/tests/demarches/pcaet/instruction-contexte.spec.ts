@@ -285,7 +285,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     await expect(pom.dossier).toBeHidden();
   });
 
-  test('ouvrir un dossier plus ancien affiche son propre contexte', async ({
+  test('chaque dossier de la même collectivité conserve son propre contexte', async ({
     collectivites,
     page,
   }) => {
@@ -318,21 +318,34 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       titre: 'PCAET precedent',
       status: 'archive',
     });
-    await createDossierTransmis({
+    const nouvelleDemandeAvisId = await createDossierTransmis({
       collectiviteId: deposante.data.id,
       serviceId: dreal.data.id,
     });
 
     const pom = new InstructionPom(page);
 
-    await page.goto(
-      `/collectivite/${deposante.data.id}/instruction/${ancienneDemandeAvisId}`
-    );
+    for (const demandeAvisId of [
+      nouvelleDemandeAvisId,
+      ancienneDemandeAvisId,
+    ]) {
+      const dossierUrl = `/collectivite/${deposante.data.id}/instruction/${demandeAvisId}`;
+      await page.goto(dossierUrl);
+      await pom.expectContexte({
+        collectiviteInstruiteId: deposante.data.id,
+        demandeAvisId,
+        casquette: DREAL_CASQUETTE,
+      });
 
-    await pom.expectContexte({
-      collectiviteInstruiteId: deposante.data.id,
-      demandeAvisId: ancienneDemandeAvisId,
-      casquette: DREAL_CASQUETTE,
-    });
+      await page.getByTestId('nav-pa').click();
+      await page.getByTestId('pa-tous').click();
+      await expect(page).toHaveURL(`/collectivite/${deposante.data.id}/plans`);
+      await expect(pom.bannerBackToDossier).toHaveAttribute('href', dossierUrl);
+      await pom.goBackToDossier({
+        collectiviteInstruiteId: deposante.data.id,
+        demandeAvisId,
+      });
+      await expect(pom.dossier).toBeVisible();
+    }
   });
 });

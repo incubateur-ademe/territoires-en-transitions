@@ -21,8 +21,12 @@ export const CollectiviteProviderStoreClient = ({
   }, [newCollectivite, collectivite, setCollectivite]);
 
   // Les enfants utilisent useCurrentCollectivite : attendre que le contexte
-  // corresponde à l'URL, y compris pour un visiteur sans collectivité membre.
-  return collectivite?.collectiviteId === newCollectivite.collectiviteId
+  // corresponde à la collectivité et au dossier d'instruction de l'URL.
+  return collectivite?.collectiviteId === newCollectivite.collectiviteId &&
+    isEqual(
+      collectivite.contexteInstruction,
+      newCollectivite.contexteInstruction
+    )
     ? children
     : null;
 };
