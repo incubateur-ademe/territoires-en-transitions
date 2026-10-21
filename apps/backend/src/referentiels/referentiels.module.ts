@@ -16,6 +16,7 @@ import { PersonnalisationsModule } from '../collectivites/personnalisations/pers
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
 import { TransactionModule } from '../utils/transaction/transaction.module';
+import { ActionDefinitionsModule } from './action-definitions/action-definitions.module';
 import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { ActionPersonnalisationsService } from './action-personnalisations/action-personnalisations.service';
 import { AddPreuveRepository } from './add-preuve/add-preuve.repository';
@@ -83,6 +84,7 @@ import { UpdateDossierLabellisationService } from './labellisations/dossiers-lab
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
 import { ListActionDefinitionsRouter } from './list-actions/list-action-definitions.router';
 import { ListActionDefinitionsService } from './list-actions/list-action-definitions.service';
+import { ListActionTextOverridesRouter } from './list-actions/list-action-text-overrides.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
 import { DeletePreuvesArchiveService } from './preuves-archive/delete-preuves-archive/delete-preuves-archive.service';
@@ -128,6 +130,7 @@ import { UpdateActionStatutRouter } from './update-action-statut/update-action-s
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
   imports: [
+    ActionDefinitionsModule,
     CollectivitesModule,
     SheetModule,
     PersonnalisationsModule,
@@ -159,6 +162,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListActionsRouter,
     ListActionDefinitionsService,
     ListActionDefinitionsRouter,
+    ListActionTextOverridesRouter,
 
     CountPreuvesService,
     CountPreuvesRouter,

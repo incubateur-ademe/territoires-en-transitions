@@ -3,6 +3,7 @@ import {
   ListActionDefinitionsOutput,
   ListActionsDynamicStateResult,
   ListActionsGroupedByIdResult,
+  ListActionTextOverridesOutput,
   mergeActionDefinitionsAndState,
   ReferentielId,
 } from '@tet/domain/referentiels';
@@ -25,16 +26,22 @@ export type ActionsQueryFailure = {
   retry: () => void;
 };
 
-/** Résultats des deux queries (définitions, état) d'un référentiel */
+/**
+ * Résultats des queries d'un référentiel : définitions, état, et surcharges
+ * de texte (seulement si l'état donne une clé de variante)
+ */
 export type ActionsQueryResultsPair = {
   referentielId: ReferentielId;
   definitions: ActionsQueryPart<ListActionDefinitionsOutput>;
   state: ActionsQueryPart<ListActionsDynamicStateResult>;
+  textOverrides?: ActionsQueryPart<ListActionTextOverridesOutput>;
 };
 
 /**
- * Les deux parties d'un référentiel ont été servies pour des versions publiées
- * différentes (une nouvelle version a été publiée entre les deux chargements).
+ * Deux parties d'un référentiel ont été servies pour des versions publiées
+ * différentes (une nouvelle version a été publiée entre les chargements).
+ * `stateVersion` : version de l'état, ou des surcharges de texte qui en
+ * découlent.
  */
 export type ReferentielVersionMismatch = {
   referentielId: ReferentielId;
@@ -58,49 +65,104 @@ export function getVersionMismatchKey({
   return `${referentielId}:${definitionsVersion}:${stateVersion}`;
 }
 
+/** Tient lieu de surcharges absentes (profil de référence) dans le cache */
+const NO_TEXT_OVERRIDES = {};
+
 /**
- * Fusions déjà calculées, par paire (définitions, état) : tant qu'aucune des
- * deux queries n'est rechargée, les consommateurs reçoivent la même référence.
+ * Fusions déjà calculées, par (définitions, état, surcharges) : tant qu'aucune
+ * des queries n'est rechargée, les consommateurs reçoivent la même référence.
  */
 const mergedByDefinitions = new WeakMap<
   ListActionDefinitionsOutput,
-  WeakMap<ListActionsDynamicStateResult, ListActionsGroupedByIdResult>
+  WeakMap<
+    ListActionsDynamicStateResult,
+    WeakMap<object, ListActionsGroupedByIdResult>
+  >
 >();
+
+function getOrCreate<K extends object, V>(
+  map: WeakMap<K, V>,
+  key: K,
+  create: () => V
+): V {
+  let value = map.get(key);
+  if (!value) {
+    value = create();
+    map.set(key, value);
+  }
+  return value;
+}
 
 function mergeMemoized(
   definitions: ListActionDefinitionsOutput,
-  state: ListActionsDynamicStateResult
+  state: ListActionsDynamicStateResult,
+  textOverrides: ListActionTextOverridesOutput | undefined
 ): ListActionsGroupedByIdResult {
-  let mergedByState = mergedByDefinitions.get(definitions);
-  if (!mergedByState) {
-    mergedByState = new WeakMap();
-    mergedByDefinitions.set(definitions, mergedByState);
-  }
-
-  let merged = mergedByState.get(state);
-  if (!merged) {
-    merged = mergeActionDefinitionsAndState(definitions, state);
-    mergedByState.set(state, merged);
-  }
-  return merged;
+  const mergedByState = getOrCreate(
+    mergedByDefinitions,
+    definitions,
+    () => new WeakMap()
+  );
+  const mergedByTextOverrides = getOrCreate(
+    mergedByState,
+    state,
+    () => new WeakMap()
+  );
+  return getOrCreate(
+    mergedByTextOverrides,
+    textOverrides ?? NO_TEXT_OVERRIDES,
+    () => mergeActionDefinitionsAndState(definitions, state, textOverrides)
+  );
 }
 
 /**
- * Fusionne, pour chaque référentiel, les résultats des queries de définitions
- * et d'état, et signale les écarts de version publiée entre les deux parties.
+ * Fusionne, pour chaque référentiel, les résultats des queries de définitions,
+ * d'état et de surcharges de texte, et signale les écarts de version publiée
+ * entre les parties.
+ *
+ * Quand l'état donne une clé de variante, le référentiel n'est fusionné
+ * qu'une fois les surcharges chargées : on n'affiche jamais le texte par
+ * défaut à la place du texte de la collectivité.
  */
 export function mergeActionsQueryResults(
   pairs: ActionsQueryResultsPair[]
 ): MergedActionsQueryResults {
   const data = new Map<ReferentielId, ListActionsGroupedByIdResult>();
   const versionMismatches: ReferentielVersionMismatch[] = [];
+  const parts: ActionsQueryPart<unknown>[] = [];
 
-  for (const { referentielId, definitions, state } of pairs) {
-    if (!definitions.data || !state.data) {
+  for (const { referentielId, definitions, state, textOverrides } of pairs) {
+    parts.push(definitions, state);
+    // sans clé de variante, la query des surcharges est désactivée : elle ne
+    // compte ni pour le chargement ni pour les erreurs
+    const needsTextOverrides = Boolean(state.data?.textVariantKey);
+    if (needsTextOverrides) {
+      parts.push(
+        textOverrides ?? {
+          data: undefined,
+          isFetching: false,
+          isPending: true,
+          isError: false,
+        }
+      );
+    }
+
+    if (
+      !definitions.data ||
+      !state.data ||
+      (needsTextOverrides && !textOverrides?.data)
+    ) {
       continue;
     }
 
-    data.set(referentielId, mergeMemoized(definitions.data, state.data));
+    data.set(
+      referentielId,
+      mergeMemoized(
+        definitions.data,
+        state.data,
+        needsTextOverrides ? textOverrides?.data : undefined
+      )
+    );
 
     // Une nouvelle version du référentiel a été publiée depuis le chargement
     // de l'une des deux parties (chaque réponse porte la version publiée au
@@ -116,10 +178,23 @@ export function mergeActionsQueryResults(
         definitionsVersion: definitions.data.referentielVersion,
         stateVersion: state.data.referentielVersion,
       });
+    } else if (
+      needsTextOverrides &&
+      textOverrides?.data &&
+      textOverrides.data.referentielVersion !==
+        definitions.data.referentielVersion &&
+      !definitions.isFetching &&
+      !textOverrides.isFetching
+    ) {
+      // les surcharges sont demandées pour la version de l'état : un écart
+      // avec les définitions se traite comme un écart définitions / état
+      versionMismatches.push({
+        referentielId,
+        definitionsVersion: definitions.data.referentielVersion,
+        stateVersion: textOverrides.data.referentielVersion,
+      });
     }
   }
-
-  const parts = pairs.flatMap(({ definitions, state }) => [definitions, state]);
 
   return {
     data,

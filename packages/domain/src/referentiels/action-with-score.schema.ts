@@ -111,4 +111,10 @@ export type ListActionsDynamicStateResult = {
   referentielVersion: string;
   actionsById: Record<ActionId, ActionDynamicState>;
   hiddenActionIds: ActionId[];
+  /**
+   * Profil de la collectivité pour les textes balisés, à passer à
+   * `listActionTextOverrides`. `null` : profil de référence, les définitions
+   * suffisent.
+   */
+  textVariantKey: string | null;
 };

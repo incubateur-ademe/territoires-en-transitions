@@ -3,6 +3,7 @@ import {
   ActionStaticDefinition,
   ListActionDefinitionsOutput,
   ListActionsDynamicStateResult,
+  ListActionTextOverridesOutput,
 } from '@tet/domain/referentiels';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -28,8 +29,11 @@ const buildDefinitions = (
   },
 });
 
+const DOM_KEY = 'r1;localisation=dom';
+
 const buildState = (
-  referentielVersion = '1.0.0'
+  referentielVersion = '1.0.0',
+  textVariantKey: string | null = null
 ): ListActionsDynamicStateResult => ({
   referentielVersion,
   actionsById: {
@@ -46,6 +50,15 @@ const buildState = (
     } as unknown as ActionDynamicState,
   },
   hiddenActionIds: [],
+  textVariantKey,
+});
+
+const buildTextOverrides = (
+  referentielVersion = '1.0.0'
+): ListActionTextOverridesOutput => ({
+  referentielVersion,
+  textVariantKey: DOM_KEY,
+  overridesById: { cae_1: { nom: 'Nom DOM cae_1' } },
 });
 
 const buildPart = <TData>(
@@ -73,12 +86,14 @@ const buildFailedPart = <TData>(
 const buildPair = ({
   definitions = buildPart(buildDefinitions()),
   state = buildPart(buildState()),
+  textOverrides,
 }: Partial<
   Omit<ActionsQueryResultsPair, 'referentielId'>
 > = {}): ActionsQueryResultsPair => ({
   referentielId: 'cae',
   definitions,
   state,
+  textOverrides,
 });
 
 describe('mergeActionsQueryResults', () => {
@@ -155,6 +170,68 @@ describe('mergeActionsQueryResults', () => {
 
     expect(second.data.get('cae')).toBe(first.data.get('cae'));
     expect(afterStateRefetch.data.get('cae')).not.toBe(first.data.get('cae'));
+  });
+
+  it('sans clé de variante, ignore la query des surcharges (désactivée)', () => {
+    const result = mergeActionsQueryResults([
+      buildPair({
+        textOverrides: buildPart<ListActionTextOverridesOutput>(undefined),
+      }),
+    ]);
+
+    expect(result.isPending).toBe(false);
+    expect(result.data.get('cae')?.actionsById['cae_1'].nom).toBe('Nom cae_1');
+  });
+
+  it('avec une clé de variante, attend les surcharges puis les applique', () => {
+    const state = buildPart(buildState('1.0.0', DOM_KEY));
+
+    const pending = mergeActionsQueryResults([
+      buildPair({
+        state,
+        textOverrides: buildPart<ListActionTextOverridesOutput>(undefined),
+      }),
+    ]);
+    expect(pending.isPending).toBe(true);
+    expect(pending.data.has('cae')).toBe(false);
+
+    const loaded = mergeActionsQueryResults([
+      buildPair({ state, textOverrides: buildPart(buildTextOverrides()) }),
+    ]);
+    expect(loaded.isPending).toBe(false);
+    expect(loaded.data.get('cae')?.actionsById['cae_1'].nom).toBe(
+      'Nom DOM cae_1'
+    );
+  });
+
+  it('une erreur sur les surcharges met le résultat en erreur', () => {
+    const result = mergeActionsQueryResults([
+      buildPair({
+        state: buildPart(buildState('1.0.0', DOM_KEY)),
+        textOverrides: buildPart<ListActionTextOverridesOutput>(undefined, {
+          isPending: false,
+          isError: true,
+        }),
+      }),
+    ]);
+
+    expect(result.isError).toBe(true);
+    expect(result.data.has('cae')).toBe(false);
+  });
+
+  it('signale un écart de version entre les définitions et les surcharges', () => {
+    const result = mergeActionsQueryResults([
+      buildPair({
+        state: buildPart(buildState('1.0.0', DOM_KEY)),
+        textOverrides: buildPart(buildTextOverrides('2.0.0')),
+      }),
+    ]);
+
+    expect(result.versionMismatches.map(getVersionMismatchKey)).toEqual([
+      'cae:1.0.0:2.0.0',
+    ]);
+    // surcharges d'une autre version : ignorées
+    expect(result.data.get('cae')?.actionsById['cae_1'].nom).toBe('Nom cae_1');
   });
 
   it('agrège les états de chargement et d’erreur de toutes les queries', () => {

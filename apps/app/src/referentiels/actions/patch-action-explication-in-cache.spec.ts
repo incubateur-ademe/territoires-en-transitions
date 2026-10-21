@@ -18,6 +18,7 @@ const buildCache = (): ListActionsDynamicStateResult => ({
     'cae_1.1.2': buildAction('cae_1.1.2', null),
   },
   hiddenActionIds: ['cae_1.2'],
+  textVariantKey: null,
 });
 
 describe('patchActionExplicationInCache', () => {

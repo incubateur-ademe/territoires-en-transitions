@@ -55,6 +55,7 @@ const buildStates = (
   referentielVersion: '1.0.0',
   actionsById: Object.fromEntries(states.map((s) => [s.actionId, s])),
   hiddenActionIds,
+  textVariantKey: null,
 });
 
 const buildTextOverrides = (

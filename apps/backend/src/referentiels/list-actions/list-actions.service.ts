@@ -32,6 +32,7 @@ import {
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { and, count, eq, inArray, sql } from 'drizzle-orm';
+import { RenderActionTextsService } from '../action-definitions/render-action-texts.service';
 import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
 import { actionDefinitionColumns } from '../models/action-definition-columns.column';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
@@ -53,7 +54,8 @@ export class ListActionsService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly permissions: PermissionService,
-    private readonly snapshotService: SnapshotsService
+    private readonly snapshotService: SnapshotsService,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   private db = this.databaseService.db;
@@ -102,13 +104,14 @@ export class ListActionsService {
       );
     }
 
-    const [referentielVersion, pilotesAndServicesByActionId] =
+    const [referentielVersion, pilotesAndServicesByActionId, textVariantKey] =
       await Promise.all([
         this.getPublishedReferentielVersion(referentielId),
         this.listPilotesAndServicesGroupedByActionId(
           collectiviteId,
           referentielId
         ),
+        this.renderActionTextsService.getTextVariantKey(collectiviteId),
       ]);
     if (referentielVersion === null) {
       return failure('NOT_FOUND');
@@ -163,6 +166,7 @@ export class ListActionsService {
         referentielVersion,
         actionsById,
         hiddenActionIds: [],
+        textVariantKey,
       });
     }
 
@@ -174,6 +178,7 @@ export class ListActionsService {
       referentielVersion,
       actionsById: filterHiddenActionsFromGroupedById(actionsById),
       hiddenActionIds,
+      textVariantKey,
     });
   }
 

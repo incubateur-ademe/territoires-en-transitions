@@ -10,9 +10,10 @@ import {
   ListActionDefinitionsOutput,
   ListActionsDynamicStateResult,
   ListActionsGroupedByIdResult,
+  ListActionTextOverridesOutput,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { useCallback, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   ActionsQueryPart,
   getVersionMismatchKey,
@@ -27,12 +28,30 @@ export type ActionsGroupedByIdData = ListActionsGroupedByIdResult;
  */
 const handledVersionMismatchKeys = new Set<string>();
 
+/** Ne garde que les champs utiles d'un résultat de query */
+function toQueryPart<TData>(
+  result: QueryObserverResult<unknown, unknown>
+): ActionsQueryPart<TData> {
+  return {
+    data: result.data as TData | undefined,
+    isFetching: result.isFetching,
+    isPending: result.isPending,
+    isError: result.isError,
+  };
+}
+
+function combineQueryParts(results: QueryObserverResult<unknown, unknown>[]) {
+  return results.map((result) => toQueryPart<unknown>(result));
+}
+
 /**
  * Liste les actions des référentiels demandés, en fusionnant pour chacun :
  * - les définitions (partie statique, partagée entre collectivités et chargée
  *   une fois par session) ;
  * - l'état de la collectivité (scores, pilotes, services, généalogie),
- *   rechargé après chaque écriture.
+ *   rechargé après chaque écriture ;
+ * - les textes propres au profil de la collectivité (par ex. DOM), chargés
+ *   une fois par session et par profil, seulement si l'état en donne la clé.
  */
 export function useListActionsGroupedById(
   {
@@ -52,36 +71,7 @@ export function useListActionsGroupedById(
   const referentielIdsKey = referentielIds.join(',');
 
   // les résultats arrivent par paire : [définitions, état] pour chaque référentiel
-  const combine = useCallback(
-    (results: QueryObserverResult<unknown, unknown>[]) => {
-      const ids = (
-        referentielIdsKey ? referentielIdsKey.split(',') : []
-      ) as ReferentielId[];
-
-      const { versionMismatches, ...merged } = mergeActionsQueryResults(
-        ids.map((referentielId, i) => ({
-          referentielId,
-          definitions: results[
-            2 * i
-          ] as ActionsQueryPart<ListActionDefinitionsOutput>,
-          state: results[
-            2 * i + 1
-          ] as ActionsQueryPart<ListActionsDynamicStateResult>,
-        }))
-      );
-
-      return {
-        ...merged,
-        // clé stable (chaîne) pour les dépendances de l'effet ci-dessous
-        versionMismatchesKey: versionMismatches
-          .map(getVersionMismatchKey)
-          .join(','),
-      };
-    },
-    [referentielIdsKey]
-  );
-
-  const { versionMismatchesKey, ...result } = useQueries({
+  const definitionsAndStates = useQueries({
     queries: referentielIds.flatMap((referentielId) => [
       trpc.referentiels.actions.listActionDefinitions.queryOptions(
         { referentielId },
@@ -92,10 +82,62 @@ export function useListActionsGroupedById(
         { enabled, ...DISABLE_AUTO_REFETCH }
       ),
     ]),
-    combine,
+    combine: combineQueryParts,
   });
 
-  // Écart de version entre les deux parties d'un référentiel : les deux sont
+  // surcharges de texte : clé et version lues dans l'état, donc relancées
+  // d'elles-mêmes quand l'état change de version ou de profil
+  const textOverrides = useQueries({
+    queries: referentielIds.map((referentielId, i) => {
+      const state = definitionsAndStates[2 * i + 1]?.data as
+        | ListActionsDynamicStateResult
+        | undefined;
+      return trpc.referentiels.actions.listActionTextOverrides.queryOptions(
+        {
+          referentielId,
+          referentielVersion: state?.referentielVersion ?? '',
+          textVariantKey: state?.textVariantKey ?? '',
+        },
+        {
+          enabled: Boolean(enabled && state?.textVariantKey),
+          staleTime: Infinity,
+          gcTime: Infinity,
+        }
+      );
+    }),
+    combine: combineQueryParts,
+  });
+
+  const { versionMismatchesKey, ...result } = useMemo(() => {
+    const ids = (
+      referentielIdsKey ? referentielIdsKey.split(',') : []
+    ) as ReferentielId[];
+
+    const { versionMismatches, ...merged } = mergeActionsQueryResults(
+      ids.map((referentielId, i) => ({
+        referentielId,
+        definitions: definitionsAndStates[
+          2 * i
+        ] as ActionsQueryPart<ListActionDefinitionsOutput>,
+        state: definitionsAndStates[
+          2 * i + 1
+        ] as ActionsQueryPart<ListActionsDynamicStateResult>,
+        textOverrides: textOverrides[
+          i
+        ] as ActionsQueryPart<ListActionTextOverridesOutput>,
+      }))
+    );
+
+    return {
+      ...merged,
+      // clé stable (chaîne) pour les dépendances de l'effet ci-dessous
+      versionMismatchesKey: versionMismatches
+        .map(getVersionMismatchKey)
+        .join(','),
+    };
+  }, [referentielIdsKey, definitionsAndStates, textOverrides]);
+
+  // Écart de version entre les parties d'un référentiel : toutes sont
   // rechargées (elles lisent la version publiée dans la même table et
   // convergent donc), une seule fois par écart quel que soit le nombre
   // d'instances du hook.
@@ -122,6 +164,11 @@ export function useListActionsGroupedById(
       // instances du hook, quelle que soit leur collectivité
       queryClient.invalidateQueries(
         trpc.referentiels.actions.listActionsGroupedById.queryFilter({
+          referentielId,
+        })
+      );
+      queryClient.invalidateQueries(
+        trpc.referentiels.actions.listActionTextOverrides.queryFilter({
           referentielId,
         })
       );
