@@ -6,11 +6,15 @@ import {
 import { getLibelleScoreIndicatif } from '@tet/backend/referentiels/score-indicatif/score-indicatif.rules';
 import { PreuveEssential } from '@tet/domain/collectivites';
 import {
+  ActionAdaptationNiveau,
+  ActionAdaptationNiveauEnum,
   ActionTypeEnum,
   getIdentifiantFromActionId,
   getParentId,
   isNewReferentiel,
   ReferentielId,
+  ReferentielLabel,
+  ReferentielLabelEnum,
   ScoreComputeModeEnum,
   StatutAvancementCreate,
   StatutAvancementEnum,
@@ -118,6 +122,74 @@ const POTENTIEL_MAX_COLUMN: Column = {
     row.score1.score.pointReferentiel || row.score2?.score.pointReferentiel,
 };
 
+// le niveau "exposition faible" n'est volontairement pas affiché
+const ADAPTATION_NIVEAU_TO_LABEL: Partial<
+  Record<ActionAdaptationNiveau, string>
+> = {
+  [ActionAdaptationNiveauEnum.EXPOSITION_FORTE]: 'Exposition forte',
+  [ActionAdaptationNiveauEnum.EXPOSITION_PARTIELLE]: 'Exposition partielle',
+};
+
+const LABEL_TO_NOM: Record<ReferentielLabel, string> = {
+  [ReferentielLabelEnum.TE_CAE]: 'CAE',
+  [ReferentielLabelEnum.TE_ECI]: 'ECi',
+};
+
+/** Colonnes "Volets", "Thématiques" et "Adaptation" (nouveaux référentiels uniquement) */
+const VOLETS_THEMATIQUES_ADAPTATION_COLUMNS: Column[] = [
+  {
+    title: 'Volets',
+    colProps: {
+      style: { alignment: Utils.ALIGN_CENTER },
+      width: WIDTH_SMALL,
+    },
+    headCellProps: { style: Utils.HEADING2 },
+    getValue: ({ scoreRow: row, data }) =>
+      data.actionTags[row.actionId]?.labels
+        .map((label) => LABEL_TO_NOM[label])
+        .join(', '),
+  },
+  {
+    title: 'Thématiques',
+    colProps: {
+      style: { alignment: Utils.ALIGN_LEFT_WRAP },
+      width: WIDTH_MEDIUM,
+    },
+    headCellProps: { style: Utils.HEADING2 },
+    getValue: ({ scoreRow: row, data }) =>
+      data.actionTags[row.actionId]?.thematiques
+        .map(({ nom }) => nom)
+        .join(', '),
+  },
+  {
+    title: 'Adaptation',
+    colProps: {
+      style: { alignment: Utils.ALIGN_CENTER_WRAP },
+      width: WIDTH_SMALL,
+    },
+    headCellProps: { style: Utils.HEADING2 },
+    getValue: ({ scoreRow: row, data }) => {
+      const niveau = data.adaptationNiveaux[row.actionId];
+      return niveau ? ADAPTATION_NIVEAU_TO_LABEL[niveau] : undefined;
+    },
+  },
+];
+
+/** Colonne "Labellisation Gold" (nouveaux référentiels uniquement) */
+const LABELLISATION_GOLD_COLUMN: Column = {
+  title: 'Labellisation Gold',
+  colProps: {
+    style: { alignment: Utils.ALIGN_CENTER },
+    width: WIDTH_SMALL,
+  },
+  headCellProps: { style: Utils.HEADING2 },
+  // le tag coremeasure est porté par la mesure : pas de valeur ailleurs
+  getValue: ({ scoreRow: row, data }) => {
+    if (row.actionType !== ActionTypeEnum.ACTION) return undefined;
+    return data.actionTags[row.actionId]?.isCoremeasure ? 'Avec' : 'Sans';
+  },
+};
+
 /** Génère la liste des colonnes */
 export function buildColumns(
   exportMode: ExportMode,
@@ -178,8 +250,11 @@ export function buildColumns(
       getValue: ({ scoreRow: row }) =>
         Utils.capitalize(row.score1.categorie || row.score2?.categorie),
     },
-    // le potentiel max n'a pas de sens pour les nouveaux référentiels (mesures alternatives)
-    ...(isNewRef ? [] : [POTENTIEL_MAX_COLUMN]),
+    // le potentiel max n'a pas de sens pour les nouveaux référentiels (mesures
+    // alternatives), qui ont à la place les colonnes volets/thématiques/adaptation
+    ...(isNewRef
+      ? VOLETS_THEMATIQUES_ADAPTATION_COLUMNS
+      : [POTENTIEL_MAX_COLUMN]),
 
     // 1er groupe de colonnes "points/scores"
     ...buildScoreColumns(1, columnLetterByKey, isNewRef),
@@ -232,7 +307,8 @@ export function buildColumns(
       headCellProps: { style: Utils.HEADING2 },
       getValue: ({ scoreRow: row, data }) =>
         isTotalRow(row) ? '' : data.fichesActionLiees[row.actionId],
-    }
+    },
+    ...(isNewRef ? [LABELLISATION_GOLD_COLUMN] : [])
   );
 
   // rempli la table de correspondance entre la clé d'une colonne et sa lettre

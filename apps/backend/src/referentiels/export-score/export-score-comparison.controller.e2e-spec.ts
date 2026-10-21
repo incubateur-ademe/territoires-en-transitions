@@ -47,7 +47,6 @@ describe('Referentiels scoring routes', () => {
     collectivite = testCollectiviteAndUserResult.collectivite;
     const editionUserFixture = testCollectiviteAndUserResult.user;
     editionUser = getAuthUserFromUserCredentials(editionUserFixture);
-
   });
 
   afterAll(async () => {
@@ -683,5 +682,85 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
     // un CSV est mono-feuille : seule la feuille des scores est sérialisée
     const csv = (response.body as Buffer).toString('utf-8');
     expect(csv).not.toContain('Thématique');
+  }, 30000);
+
+  test(`Export du référentiel CR : colonnes Volets, Thématiques, Adaptation et Labellisation Gold`, async () => {
+    const referentielId: ReferentielId = 'te';
+    const collectiviteId = collectivite.id;
+
+    const snapshotResult = await snapshotsService.computeAndUpsert({
+      collectiviteId,
+      referentielId,
+      jalon: SnapshotJalonEnum.COURANT,
+    });
+    expect(snapshotResult.success).toBe(true);
+
+    const response = await request(app.getHttpServer())
+      .get(
+        `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
+      )
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: [SNAPSHOTS.SCORE_COURANT_REF],
+      })
+      .expect(200)
+      .responseType('blob');
+
+    const wb = new Workbook();
+    await wb.xlsx.load(response.body as ArrayBuffer);
+    const ws = wb.getWorksheet(1);
+    expect(ws).toBeDefined();
+
+    // comme dans le tableau du référentiel : Volets, Thématiques et Adaptation
+    // après Phase, Labellisation Gold en dernier
+    const header = (ws?.getRow(7).values as CellValue[]) ?? [];
+    const phaseIndex = header.indexOf('Phase');
+    expect(header.slice(phaseIndex, phaseIndex + 4)).toEqual([
+      'Phase',
+      'Volets',
+      'Thématiques',
+      'Adaptation',
+    ]);
+    expect(header.at(-1)).toBe('Labellisation Gold');
+
+    const rows = ws?.getRows(8, 2000) ?? [];
+    const getCells = (identifiant: string) => {
+      const values = rows.find(
+        (r) => (r.values as CellValue[])?.[1] === identifiant
+      )?.values as CellValue[] | undefined;
+      if (!values) throw new Error(`ligne ${identifiant} absente`);
+      const cell = (title: string) => values[header.indexOf(title)];
+      return {
+        volets: cell('Volets'),
+        thematiques: cell('Thématiques'),
+        adaptation: cell('Adaptation'),
+        labellisationGold: cell('Labellisation Gold'),
+      };
+    };
+
+    // mesure des deux volets, coremeasure, plusieurs thématiques
+    expect(getCells('1.1.3')).toEqual({
+      volets: 'CAE, ECi',
+      thematiques: 'Biodiversité, Déchets, Eau',
+      adaptation: undefined,
+      labellisationGold: 'Avec',
+    });
+    // mesure d'un seul volet, sans coremeasure
+    expect(getCells('1.1.4')).toMatchObject({
+      volets: 'ECi',
+      thematiques: 'Déchets',
+      labellisationGold: 'Sans',
+    });
+    // sous-mesures : niveau d'adaptation affiché sauf exposition faible, pas
+    // de labellisation Gold
+    expect(getCells('1.1.1.4')).toMatchObject({
+      volets: 'CAE',
+      adaptation: 'Exposition forte',
+      labellisationGold: undefined,
+    });
+    expect(getCells('1.1.1.5').adaptation).toBe('Exposition partielle');
+    expect(getCells('1.1.1.1').adaptation).toBeUndefined();
   }, 30000);
 });

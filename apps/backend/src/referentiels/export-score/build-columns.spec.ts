@@ -79,6 +79,8 @@ function createScoreComparisonData(
     scoreRows,
     auditeurs: null,
     descriptions: {},
+    adaptationNiveaux: {},
+    actionTags: {},
     pilotes: {},
     services: {},
     fichesActionLiees: {},
@@ -420,7 +422,7 @@ describe('buildColumns', () => {
 
   it.each([
     { referentielId: 'eci' as const, formula: 'IFERROR(G8/F8,"")' },
-    { referentielId: 'te' as const, formula: 'IFERROR(F8/E8,"")' },
+    { referentielId: 'te' as const, formula: 'IFERROR(I8/H8,"")' },
   ])(
     'référence la bonne colonne de potentiel dans les formules ($referentielId)',
     ({ referentielId, formula }) => {
@@ -437,4 +439,116 @@ describe('buildColumns', () => {
       ).toEqual({ result: 0.5, formula });
     }
   );
+
+  it("n'inclut pas les colonnes Volets, Thématiques, Adaptation et Labellisation Gold pour les anciens référentiels", () => {
+    const titles = getTitles(buildColumns(ExportMode.SINGLE_SNAPSHOT, 'eci'));
+
+    expect(titles).not.toContain('Volets');
+    expect(titles).not.toContain('Thématiques');
+    expect(titles).not.toContain('Adaptation');
+    expect(titles).not.toContain('Labellisation Gold');
+  });
+
+  it('place Volets, Thématiques et Adaptation après Phase, et Labellisation Gold en dernier pour le référentiel CR', () => {
+    const titles = getTitles(buildColumns(ExportMode.COMPARISON, 'te'));
+
+    expect(titles.slice(3, 7)).toEqual([
+      'Phase',
+      'Volets',
+      'Thématiques',
+      'Adaptation',
+    ]);
+    expect(titles.at(-1)).toBe('Labellisation Gold');
+  });
+
+  describe('valeurs des colonnes du référentiel CR', () => {
+    const columns = buildColumns(ExportMode.SINGLE_SNAPSHOT, 'te');
+    const getColumn = (title: string) => {
+      const column = columns.find((col) => col.title === title);
+      if (!column) throw new Error(`colonne ${title} absente`);
+      return column;
+    };
+
+    const mesure = createScoreRow('te_1.1.1', ActionTypeEnum.ACTION, {});
+    const autreMesure = createScoreRow('te_1.1.2', ActionTypeEnum.ACTION, {});
+    const sousMesureForte = createScoreRow(
+      'te_1.1.1.1',
+      ActionTypeEnum.SOUS_ACTION,
+      {}
+    );
+    const sousMesurePartielle = createScoreRow(
+      'te_1.1.1.2',
+      ActionTypeEnum.SOUS_ACTION,
+      {}
+    );
+    const sousMesureFaible = createScoreRow(
+      'te_1.1.1.3',
+      ActionTypeEnum.SOUS_ACTION,
+      {}
+    );
+    const data: ScoreComparisonData = {
+      ...createScoreComparisonData(undefined, [
+        mesure,
+        autreMesure,
+        sousMesureForte,
+        sousMesurePartielle,
+        sousMesureFaible,
+      ]),
+      referentielId: 'te',
+      adaptationNiveaux: {
+        'te_1.1.1.1': 'exposition_forte',
+        'te_1.1.1.2': 'exposition_partielle',
+        'te_1.1.1.3': 'exposition_faible',
+      },
+      actionTags: {
+        'te_1.1.1': {
+          labels: ['te_cae', 'te_eci'],
+          isCoremeasure: true,
+          thematiques: [
+            { ref: 'dechets', nom: 'Déchets' },
+            { ref: 'eau', nom: 'Eau' },
+          ],
+        },
+        'te_1.1.2': { labels: [], isCoremeasure: false, thematiques: [] },
+        'te_1.1.1.1': {
+          labels: ['te_eci'],
+          isCoremeasure: false,
+          thematiques: [],
+        },
+      },
+    };
+    const getValue = (title: string, scoreRow: ScoreRow) =>
+      getColumn(title).getValue({
+        data,
+        scoreRow,
+        scoreRowIndex: 0,
+        rowIndex: 8,
+      });
+
+    it('liste les volets de la ligne', () => {
+      expect(getValue('Volets', mesure)).toBe('CAE, ECi');
+      expect(getValue('Volets', sousMesureForte)).toBe('ECi');
+      expect(getValue('Volets', autreMesure)).toBe('');
+    });
+
+    it('liste les noms des thématiques de la ligne', () => {
+      expect(getValue('Thématiques', mesure)).toBe('Déchets, Eau');
+      expect(getValue('Thématiques', autreMesure)).toBe('');
+    });
+
+    it("affiche le niveau d'exposition sauf l'exposition faible", () => {
+      expect(getValue('Adaptation', sousMesureForte)).toBe('Exposition forte');
+      expect(getValue('Adaptation', sousMesurePartielle)).toBe(
+        'Exposition partielle'
+      );
+      expect(getValue('Adaptation', sousMesureFaible)).toBeUndefined();
+      expect(getValue('Adaptation', mesure)).toBeUndefined();
+    });
+
+    it('affiche "Avec" ou "Sans" sur les mesures uniquement', () => {
+      expect(getValue('Labellisation Gold', mesure)).toBe('Avec');
+      expect(getValue('Labellisation Gold', autreMesure)).toBe('Sans');
+      expect(getValue('Labellisation Gold', sousMesureForte)).toBeUndefined();
+    });
+  });
 });

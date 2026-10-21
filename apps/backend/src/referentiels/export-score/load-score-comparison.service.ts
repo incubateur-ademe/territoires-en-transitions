@@ -14,8 +14,12 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
+  ActionAdaptationNiveau,
   ActionId,
+  ActionLabels,
+  ActionTags,
   flatMapActionsEnfants,
+  isNewReferentiel,
   ReferentielId,
   rollUpActionIdToActionLevel,
   ScoreSnapshot,
@@ -31,6 +35,7 @@ import * as Utils from '../../utils/excel/export-excel.utils';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { auditTable } from '../labellisations/audit.table';
+import { ListActionDefinitionsService } from '../list-actions/list-action-definitions.service';
 import { snapshotTable } from '../snapshots/snapshot.table';
 import { SNAPSHOTS } from '../snapshots/snapshots.constants';
 import {
@@ -96,6 +101,10 @@ export type ScoreComparisonData = {
   snapshot2Label: string;
   auditeurs: Auditeur[] | null;
   descriptions: Record<ActionId, string>;
+  /** niveau d'exposition (colonne "Adaptation"), par `actionId` */
+  adaptationNiveaux: Record<ActionId, ActionAdaptationNiveau>;
+  /** volets, tag coremeasure et thématiques, par `actionId` */
+  actionTags: Record<ActionId, ActionLabels & ActionTags>;
   pilotes: Record<ActionId, PersonneTagOrUser[]>;
   services: Record<ActionId, TagWithCollectiviteId[]>;
   fichesActionLiees: Record<ActionId, string>;
@@ -127,6 +136,7 @@ export class LoadScoreComparisonService {
     private readonly handlePilotesService: HandleMesurePilotesService,
     private readonly handleServicesService: HandleMesureServicesService,
     private readonly getReferentielService: GetReferentielService,
+    private readonly listActionDefinitionsService: ListActionDefinitionsService,
     private readonly listFichesService: ListFichesService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService
   ) {}
@@ -202,6 +212,13 @@ export class LoadScoreComparisonService {
     // de personnalisation
     const { hierarchie, actionsById, descriptions } =
       await this.getReferentielActionsIndex(referentielId);
+    const actionTagsResult = await this.getActionTagsAndAdaptationNiveaux(
+      referentielId
+    );
+    if (!actionTagsResult.success) {
+      return actionTagsResult;
+    }
+    const { adaptationNiveaux, actionTags } = actionTagsResult.data;
     const mesureIds = scoreRows.map((r) => r.actionId);
     const pilotes = await this.handlePilotesService.listPilotes(
       collectiviteId,
@@ -248,6 +265,8 @@ export class LoadScoreComparisonService {
       scoreRows,
       auditeurs,
       descriptions,
+      adaptationNiveaux,
+      actionTags,
       pilotes,
       services,
       fichesActionLiees,
@@ -350,6 +369,50 @@ export class LoadScoreComparisonService {
       actionsById,
       descriptions,
     };
+  }
+
+  /**
+   * Volets, tag coremeasure, thématiques et niveau d'adaptation de chaque
+   * action, lus dans les mêmes définitions que le tableau du référentiel.
+   * Ces colonnes n'existent que pour les nouveaux référentiels : rien n'est
+   * chargé pour les autres.
+   */
+  private async getActionTagsAndAdaptationNiveaux(
+    referentielId: ReferentielId
+  ): Promise<
+    Result<
+      {
+        adaptationNiveaux: Record<ActionId, ActionAdaptationNiveau>;
+        actionTags: Record<ActionId, ActionLabels & ActionTags>;
+      },
+      ExportScoreComparisonError
+    >
+  > {
+    const adaptationNiveaux: Record<ActionId, ActionAdaptationNiveau> = {};
+    const actionTags: Record<ActionId, ActionLabels & ActionTags> = {};
+    if (!isNewReferentiel(referentielId)) {
+      return success({ adaptationNiveaux, actionTags });
+    }
+
+    const definitionsResult =
+      await this.listActionDefinitionsService.listActionDefinitions({
+        referentielId,
+      });
+    if (!definitionsResult.success) {
+      return definitionsResult;
+    }
+
+    for (const definition of Object.values(
+      definitionsResult.data.definitionsById
+    )) {
+      const { actionId, adaptationNiveau, labels, isCoremeasure, thematiques } =
+        definition;
+      if (adaptationNiveau) {
+        adaptationNiveaux[actionId] = adaptationNiveau;
+      }
+      actionTags[actionId] = { labels, isCoremeasure, thematiques };
+    }
+    return success({ adaptationNiveaux, actionTags });
   }
 
   /**
