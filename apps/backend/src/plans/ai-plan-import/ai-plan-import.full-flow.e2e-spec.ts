@@ -60,7 +60,10 @@ import { GenerateImportDraftService } from './generate-import-draft/generate-imp
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
 import { qualitativeReviewResponseSchema } from './pipeline/qualitative-review/qualitative-review.schema';
 import { scoringResponseSchema } from './pipeline/score-actions/score-actions.schema';
-import { secteursResponseSchema } from './pipeline/classify-secteurs/classify-secteurs.schema';
+import {
+  effetsAttendusResponseSchema,
+  secteursResponseSchema,
+} from './pipeline/classify-secteurs/classify-secteurs.schema';
 
 const QUALITATIVE_REVIEW_TEXT = 'Plan cohérent et bien structuré.';
 
@@ -157,6 +160,10 @@ const buildFakeLlm = (): LlmService => {
       ],
     ],
     [
+      schemaKey(effetsAttendusResponseSchema),
+      [{ index: 0, effetsAttendus: [] }],
+    ],
+    [
       schemaKey(qualitativeReviewResponseSchema),
       { avis: QUALITATIVE_REVIEW_TEXT },
     ],
@@ -168,6 +175,7 @@ const buildFakeLlm = (): LlmService => {
     [schemaKey(consolidationResponseSchema), 'consolidation'],
     [schemaKey(enrichmentResponseSchema), 'enrichment'],
     [schemaKey(secteursResponseSchema), 'secteurs'],
+    [schemaKey(effetsAttendusResponseSchema), 'secteurs'],
     [schemaKey(qualitativeReviewResponseSchema), 'qualitativeReview'],
   ]);
 
@@ -629,7 +637,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         { step: 'scoring', status: 'ok' },
         { step: 'consolidation', status: 'ok' },
         { step: 'enrichment', status: 'ok' },
-        { step: 'secteurs', status: 'skipped' },
+        { step: 'secteurs', status: 'ok' },
         { step: 'qualitativeReview', status: 'ok' },
         { step: 'persistence', status: 'ok' },
       ])
@@ -660,8 +668,8 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       llm: {
         strategy: 'whole-document',
         models: [FAKE_MODEL],
-        calls: 5,
-        tokens: { totalTokens: 5 * fakeTokens.totalTokens },
+        calls: 6,
+        tokens: { totalTokens: 6 * fakeTokens.totalTokens },
       },
     });
 
@@ -974,12 +982,16 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       await generate(jobId);
 
       expect(fakeLlmControl.calls).not.toContain('extraction');
-      expect(fakeLlmControl.calls).toEqual([
-        'scoring',
-        'consolidation',
-        'enrichment',
-        'qualitativeReview',
-      ]);
+      // Les effets attendus tournent à côté de l'enrichissement : ordre non fixé.
+      expect([...fakeLlmControl.calls].sort()).toEqual(
+        [
+          'scoring',
+          'consolidation',
+          'enrichment',
+          'secteurs',
+          'qualitativeReview',
+        ].sort()
+      );
       expect(await readJob(jobId)).toMatchObject({
         status: 'done',
         checkpoint: null,
@@ -1044,18 +1056,21 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       await generate(jobId);
 
       // La lecture est acquise : seule la suite rappelle le modèle.
-      expect(fakeLlmControl.calls).toEqual([
-        'extraction',
-        'scoring',
-        'consolidation',
-        'enrichment',
-        'qualitativeReview',
-      ]);
+      expect([...fakeLlmControl.calls].sort()).toEqual(
+        [
+          'extraction',
+          'scoring',
+          'consolidation',
+          'enrichment',
+          'secteurs',
+          'qualitativeReview',
+        ].sort()
+      );
       const done = await readJob(jobId);
       expect(done).toMatchObject({ status: 'done', checkpoint: null });
       expect(done.stats).toMatchObject({
         resumes: 1,
-        llm: expect.objectContaining({ calls: 6 }),
+        llm: expect.objectContaining({ calls: 7 }),
       });
       expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
       expect(await stepRuns(jobId)).toEqual(
