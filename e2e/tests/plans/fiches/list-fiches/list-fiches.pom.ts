@@ -11,7 +11,7 @@ export class ListFichesPom {
     this.searchInput = page.getByRole('searchbox', {
       name: 'Rechercher par nom ou',
     });
-    this.fichesCarte = page.locator('[data-test="FicheActionCarte"]');
+    this.fichesCarte = page.getByRole('article');
     this.noFicheHeading = page.getByRole('heading', {
       name: 'Aucune action ne',
     });

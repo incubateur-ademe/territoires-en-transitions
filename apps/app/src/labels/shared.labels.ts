@@ -11,6 +11,7 @@ export const sharedLabels = {
   fermer: 'Fermer',
   modifier: 'Modifier',
   supprimer: 'Supprimer',
+  deplacer: 'Déplacer',
   dupliquer: 'Dupliquer',
   telecharger: 'Télécharger',
   enregistrer: 'Enregistrer',

@@ -3,29 +3,19 @@ import {
   FicheListItem,
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import FichePrioriteBadge from '@/app/plans/fiches/show-fiche/components/fiche-priorite.badge';
 import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
-import MoveFicheModal from '@/app/plans/plans/show-plan/actions/move-fiche.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { generateTitle } from '@/app/utils/generate-title';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
-import {
-  ActionCard,
-  Button,
-  ButtonMenu,
-  Checkbox,
-  Tooltip,
-} from '@tet/ui';
-import { useState } from 'react';
-import { EditFicheModal } from './edit-fiche.modal';
+import { ActionCard, Button, Checkbox, Tooltip } from '@tet/ui';
 import { FicheAccessBadges } from './fiche-access.badges';
+import { FicheCardHoverActions } from './fiche-card-hover.actions';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { appLabels } from '@/app/labels/catalog';
-import { useDuplicateFiche } from '@/app/plans/fiches/duplicate-fiche/data/use-duplicate-fiche';
 
 export type FicheCardProps = {
   /** Contenu de la carte fiche action */
@@ -75,15 +65,6 @@ export const FicheCard = ({
   planId,
   axeId,
 }: FicheCardProps) => {
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
-
-  const { mutate: duplicateFiche } = useDuplicateFiche({
-    ficheId: ficheAction.id,
-    invalidatePlanId: planId,
-  });
-
   const carteId = `fiche-${ficheAction.id}`;
 
   const collectivitePlans = getFicheActionPlanForCollectivite(
@@ -103,105 +84,22 @@ export const FicheCard = ({
     currentUserId
   );
 
-  const toggleOpen = (isOpen: boolean) => {
-    setIsEditOpen(isOpen);
-    onToggleOpen?.(isOpen);
-  };
-
   const hasEditMenu = isEditable && !onSelect;
   const hoverActions = canUpdate && (onUnlink || hasEditMenu) && (
-    <>
-      {onUnlink && (
-        <Button
-          icon="link-unlink"
-          title="Dissocier l'action"
-          variant="grey"
-          size="xs"
-          onClick={onUnlink}
-        />
-      )}
-      {hasEditMenu && (
-        <>
-          {isEditOpen && (
-            <EditFicheModal
-              initialFiche={ficheAction}
-              isOpen={isEditOpen}
-              setIsOpen={() => toggleOpen(!isEditOpen)}
-            />
-          )}
-          <Button
-            data-test="EditerFicheBouton"
-            id={`fiche-${ficheAction.id}-edit-button`}
-            icon="edit-line"
-            title="Modifier l'action"
-            variant="grey"
-            size="xs"
-            onClick={() => toggleOpen(!isEditOpen)}
-          />
-          {isMoveable ? (
-            <>
-              <DeleteOrRemoveFicheSharingModal
-                fiche={ficheAction}
-                openState={{
-                  isOpen: isDeleteModalOpen,
-                  setIsOpen: setIsDeleteModalOpen,
-                }}
-                hideButton
-                planId={planId}
-                axeId={axeId}
-              />
-              {isMoveModalOpen && collectivitePlans.length > 0 && (
-                <MoveFicheModal
-                  fiche={ficheAction}
-                  planId={planId ?? collectivitePlans[0].id}
-                  isReadonly={false}
-                  openState={{
-                    isOpen: isMoveModalOpen,
-                    setIsOpen: setIsMoveModalOpen,
-                  }}
-                />
-              )}
-              <ButtonMenu
-                title="Plus d'options"
-                icon="more-line"
-                variant="grey"
-                size="xs"
-                menu={{
-                  actions: [
-                    {
-                      label: 'Déplacer',
-                      icon: 'drag-move-2-line',
-                      onClick: () => setIsMoveModalOpen(true),
-                    },
-                    {
-                      label: appLabels.dupliquerLAction,
-                      icon: 'file-copy-line',
-                      onClick: () => duplicateFiche(),
-                    },
-                    {
-                      label: 'Supprimer',
-                      icon: 'delete-bin-6-line',
-                      variant: 'destructive',
-                      onClick: () => setIsDeleteModalOpen(true),
-                    },
-                  ],
-                }}
-              />
-            </>
-          ) : (
-            <DeleteOrRemoveFicheSharingModal
-              fiche={ficheAction}
-              planId={planId}
-              axeId={axeId}
-            />
-          )}
-        </>
-      )}
-    </>
+    <FicheCardHoverActions
+      ficheAction={ficheAction}
+      collectivitePlans={collectivitePlans}
+      hasEditMenu={hasEditMenu}
+      isMoveable={isMoveable}
+      planId={planId}
+      axeId={axeId}
+      onUnlink={onUnlink}
+      onToggleOpen={onToggleOpen}
+    />
   );
 
   return (
-    <div id={carteId} data-test="FicheActionCarte" className="relative h-full">
+    <article id={carteId} className="relative h-full">
       <ActionCard
         hoverActions={hoverActions}
         href={onSelect || isNotClickable ? undefined : link}
@@ -210,7 +108,6 @@ export const FicheCard = ({
         isSelected={onSelect ? isSelected : undefined}
         external={openInNewTab}
         header={
-          // Badges priorité et statut de la fiche
           (ficheAction.priorite ||
             ficheAction.statut ||
             ficheAction.actionImpactId) && (
@@ -222,7 +119,7 @@ export const FicheCard = ({
                 <FicheStatutBadge statut={ficheAction.statut} size="sm" />
               )}
               {ficheAction.actionImpactId && (
-                <Tooltip label="Action issue du service Actions à Impact">
+                <Tooltip label={appLabels.actionIssueActionsAImpact}>
                   <Button
                     variant="outlined"
                     size="xs"
@@ -235,9 +132,7 @@ export const FicheCard = ({
           )
         }
         footer={
-          // Bas de la carte
           <div className="flex flex-col gap-2 font-normal">
-            {/* Personnes pilote et date de fin prévisionnelle */}
             <FicheFooter
               pilotes={ficheAction.pilotes}
               dateDeFin={ficheAction.dateFin}
@@ -249,16 +144,15 @@ export const FicheCard = ({
               <>
                 <div className="h-[0.5px] w-full bg-primary-3 mt-1" />
                 <div className="flex max-md:flex-col gap-3 items-center">
-                  {/* Date de dernière modification */}
                   {!!ficheAction.modifiedAt && (
                     <span
                       className="text-xs font-medium italic text-grey-6"
-                      title="Dernière modification"
+                      title={appLabels.ficheDerniereModification}
                     >
-                      {appLabels.modifie} {getModifiedSince(ficheAction.modifiedAt)}
+                      {appLabels.modifie}{' '}
+                      {getModifiedSince(ficheAction.modifiedAt)}
                     </span>
                   )}
-                  {/* Complétion */}
                   {completion && (
                     <>
                       {!!ficheAction.modifiedAt && (
@@ -276,7 +170,6 @@ export const FicheCard = ({
           </div>
         }
       >
-        {/* Titre de la fiche action */}
         <div className="flex min-w-min">
           {onSelect && <Checkbox checked={isSelected} />}
           <span className="text-base font-bold text-primary-9">
@@ -284,14 +177,16 @@ export const FicheCard = ({
           </span>
         </div>
 
-        {/* Plans dans lesquels sont la fiche */}
-        <span title="Emplacements" className="text-sm font-medium">
+        <span
+          title={appLabels.ficheEmplacements}
+          className="text-sm font-medium"
+        >
           {collectivitePlans.length > 0 ? (
             <ListWithTooltip
               list={collectivitePlans.map((p) => generateTitle(p.nom))}
             />
           ) : (
-            'Action non classée'
+            appLabels.actionNonClassee
           )}
         </span>
       </ActionCard>
@@ -300,6 +195,6 @@ export const FicheCard = ({
         ficheAction={ficheAction}
         collectiviteId={currentCollectivite.collectiviteId}
       />
-    </div>
+    </article>
   );
 };

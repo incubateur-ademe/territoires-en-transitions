@@ -94,6 +94,6 @@ export class FichesLieesMesurePom {
   }
 
   ficheCard(titre: string) {
-    return this.panel.getByTestId('FicheActionCarte').filter({ hasText: titre });
+    return this.panel.getByRole('article').filter({ hasText: titre });
   }
 }
