@@ -1,11 +1,17 @@
 import { appLabels } from '@/app/labels/catalog';
+import { COULEURS_BY_SECTEUR } from '@/app/shared/secteurs/secteur-colors';
 import { Caption } from '@/app/ui/charts/matrix/caption';
 import type {
   HexColor,
   TreemapGroup,
 } from '@/app/ui/charts/treemap/treemap-group';
 import { TreemapChart } from '@/app/ui/charts/treemap/treemap.chart';
-import { CategorieAction, LevierId } from '@tet/domain/shared';
+import {
+  CategorieAction,
+  LEVIER_NOM_BY_ID,
+  LEVIER_SECTEURS,
+  LevierId,
+} from '@tet/domain/shared';
 import { preset } from '@tet/ui';
 import { orderBy } from 'es-toolkit';
 import { JSX, useMemo } from 'react';
@@ -36,45 +42,24 @@ const { colors } = preset.theme.extend;
 
 const NON_PERTINENT_COLOR: HexColor = colors.grey[4];
 
-const LEVIER_PALETTE: readonly HexColor[] = [
-  '#404092',
-  '#6A6AF4',
-  '#91B2EE',
-  '#1CC272',
-  '#FFCA79',
-  '#9747FF',
-  '#4380F5',
-  '#7B61FF',
-  '#C3C3FB',
-  '#F4C447',
-  '#F55B5B',
-];
-
-const toLevierColor = ({
-  levier,
-  rank,
-}: {
-  levier: LevierTile;
-  rank: number;
-}): HexColor => {
+const toLevierColor = (levier: LevierTile): HexColor => {
   if (levier.pertinence === 'non_pertinent') {
     return NON_PERTINENT_COLOR;
   }
-  return LEVIER_PALETTE[rank % LEVIER_PALETTE.length];
+  const secteur = LEVIER_SECTEURS[LEVIER_NOM_BY_ID[levier.levierId]];
+  return COULEURS_BY_SECTEUR[secteur];
 };
 
 const toTreemapGroup = ({
   levier,
-  rank,
   isFlagged,
 }: {
   levier: LevierTile;
-  rank: number;
   isFlagged: boolean;
 }): TreemapGroup<MobilisationLevel, LevierId, CategorieAction> => ({
   id: levier.levierId,
   label: levier.nom,
-  color: toLevierColor({ levier, rank }),
+  color: toLevierColor(levier),
   isFlagged,
   displayedValue: levier.impactIndex,
   tooltip: toLevierTooltip(levier),
@@ -103,13 +88,11 @@ export const LeviersMondrianChart = ({
   const tiles = useMemo(() => toMondrianTiles(places), [places]);
   const groups = useMemo(() => {
     const leviersToPrioritizeIds = toLeviersToPrioritizeIds(places);
-    return orderBy(tiles, ['potentielReduction'], ['desc']).map(
-      (levier, rank) =>
-        toTreemapGroup({
-          levier,
-          rank,
-          isFlagged: leviersToPrioritizeIds.includes(levier.levierId),
-        })
+    return orderBy(tiles, ['potentielReduction'], ['desc']).map((levier) =>
+      toTreemapGroup({
+        levier,
+        isFlagged: leviersToPrioritizeIds.includes(levier.levierId),
+      })
     );
   }, [places, tiles]);
   return (
