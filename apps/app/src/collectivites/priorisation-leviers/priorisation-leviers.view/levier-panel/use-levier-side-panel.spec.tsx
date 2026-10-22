@@ -26,6 +26,11 @@ const COVOITURAGE: LevierPriorisation = {
   noteByCategorie: NO_MOBILISATION,
 };
 
+const COVOITURAGE_NON_PERTINENT: LevierPriorisation = {
+  ...COVOITURAGE,
+  pertinence: 'non_pertinent',
+};
+
 const EMPTY_PRESELECTION: Preselection = {
   isReady: true,
   actions: [],
@@ -99,6 +104,27 @@ describe('useLevierSidePanel', () => {
       levier: { nom: 'Covoiturage' },
       subtitle: 'Transports · Impact potentiel estimé : 19/100',
     });
+  });
+
+  it("l'en-tête du volet termine par la pertinence enregistrée du levier sélectionné", () => {
+    const { result } = renderHook(
+      () => ({
+        levierSidePanel: useLevierSidePanel({
+          leviers: [COVOITURAGE_NON_PERTINENT],
+          places: [],
+          preselection: EMPTY_PRESELECTION,
+        }),
+        panelHeaderExtra: useSidePanel().panel.headerExtra,
+      }),
+      { wrapper: SidePanelWrapper }
+    );
+
+    act(() => result.current.levierSidePanel.select('covoiturage'));
+
+    expect(
+      isValidElement(result.current.panelHeaderExtra) &&
+        result.current.panelHeaderExtra.props
+    ).toMatchObject({ subtitle: 'Transports · Non pertinent' });
   });
 
   it('referme le volet ouvert et oublie le levier sélectionné', () => {

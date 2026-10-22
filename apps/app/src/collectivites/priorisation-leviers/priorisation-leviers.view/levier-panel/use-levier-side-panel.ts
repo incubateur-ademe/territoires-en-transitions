@@ -85,6 +85,7 @@ export const useLevierSidePanel = ({
         subtitle: toLevierSubtitle({
           secteur: selectedLevier.secteur,
           impactIndex,
+          pertinence: selectedLevier.pertinence,
         }),
         upsertPertinence,
         headerRef,

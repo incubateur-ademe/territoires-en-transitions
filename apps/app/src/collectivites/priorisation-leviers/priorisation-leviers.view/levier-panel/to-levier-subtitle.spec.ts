@@ -11,4 +11,25 @@ describe('toLevierSubtitle', () => {
   it("n'affiche que le secteur quand le levier n'a pas de potentiel", () => {
     expect(toLevierSubtitle({ secteur: 'Bâtiment' })).toBe('Bâtiment');
   });
+
+  it.each([
+    ['pertinent', 'Bâtiment · Impact potentiel estimé : 19/100 · Pertinent'],
+    [
+      'non_pertinent',
+      'Bâtiment · Impact potentiel estimé : 19/100 · Non pertinent',
+    ],
+  ] as const)(
+    'termine par la pertinence quand le levier est marqué %s',
+    (pertinence, subtitle) => {
+      expect(
+        toLevierSubtitle({ secteur: 'Bâtiment', impactIndex: 19, pertinence })
+      ).toBe(subtitle);
+    }
+  );
+
+  it("ajoute la pertinence au secteur quand le levier n'a pas de potentiel", () => {
+    expect(
+      toLevierSubtitle({ secteur: 'Bâtiment', pertinence: 'non_pertinent' })
+    ).toBe('Bâtiment · Non pertinent');
+  });
 });
