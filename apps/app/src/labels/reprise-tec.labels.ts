@@ -210,30 +210,39 @@ export const repriseTecLabels = {
   repriseTecSpecificiteSansEtat: 'Dossier sans état repris comme PCAET publié',
   repriseTecSpecificiteSansEtatDetail: 'Question ouverte au métier.',
   repriseTecSpecificiteElaborationPublie:
-    'En élaboration dans T&C, publié d’après le suivi ADEME',
+    'En élaboration dans T&C, publié d’après le suivi SGPE',
   repriseTecSpecificiteElaborationPublieDetail: (
     approbationLe: string | null,
     lanceLe: string | null
   ) =>
-    `Le suivi ADEME le dit approuvé le ${toDate(
+    `Le suivi SGPE le dit approuvé le ${toDate(
       approbationLe
-    )}, après son lancement le ${toDate(lanceLe)}. Le suivi ADEME prime.`,
+    )}, après son lancement le ${toDate(lanceLe)}. Le suivi SGPE prime.`,
   repriseTecSpecificiteDepotInstruit: 'Dépôt pour avis arrivé instruit',
   repriseTecSpecificiteDepotInstruitDetail: (approbationLe: string | null) =>
     approbationLe
-      ? `Approbation du suivi ADEME le ${toDate(
+      ? `Approbation du suivi SGPE le ${toDate(
           approbationLe
         )}, antérieure au dossier : celle d’un PCAET précédent.`
-      : 'Pas d’approbation au suivi ADEME : la collectivité doit déposer sa délibération et publier.',
-  repriseTecSpecificiteAdoptionSuivi: 'Adoption à la date du suivi ADEME',
+      : 'Pas d’approbation au suivi SGPE : la collectivité doit déposer sa délibération et publier.',
+  repriseTecSpecificiteAdoptionSuivi: 'Adoption à la date du suivi SGPE',
   repriseTecSpecificiteAdoptionSuiviDetail: (adopteLe: string | null) =>
-    `${toDate(adopteLe)}, date du suivi ADEME, qui prime sur T&C.`,
-  repriseTecSpecificiteAdoptionRepli:
-    'Adoption à une date de T&C, faute de date au suivi',
-  repriseTecSpecificiteAdoptionRepliDetail: (adopteLe: string | null) =>
-    `Adopté le ${toDate(
-      adopteLe
-    )} : dépôt définitif ou dernière mise à jour dans T&C.`,
+    `${toDate(adopteLe)}, date du suivi SGPE, qui prime sur T&C.`,
+  repriseTecSpecificiteAdoptionRepli: (approbationLe: string | null) =>
+    approbationLe
+      ? 'Adoption à une date de T&C : l’approbation du suivi SGPE est postérieure'
+      : 'Adoption à une date de T&C, faute de date au suivi SGPE',
+  repriseTecSpecificiteAdoptionRepliDetail: (
+    adopteLe: string | null,
+    approbationLe: string | null
+  ) =>
+    approbationLe
+      ? `Adopté le ${toDate(adopteLe)}, date du dépôt définitif dans T&C. Le suivi SGPE date l’approbation du ${toDate(
+          approbationLe
+        )}, après ce dépôt : une adoption ne suit pas la publication, la date de T&C est gardée.`
+      : `Adopté le ${toDate(
+          adopteLe
+        )} : dépôt définitif ou dernière mise à jour dans T&C.`,
   repriseTecSpecificiteLancementCorrige: (saisi: string) =>
     `Date de lancement « ${saisi} » corrigée`,
   repriseTecSpecificiteLancementCorrigeDetail: (lanceLe: string | null) =>
@@ -249,7 +258,7 @@ export const repriseTecLabels = {
   ) =>
     `T&C donnait le ${toDate(
       transmisDansTec
-    )} ; l’avis de l’État du suivi ADEME est du ${toDate(
+    )} ; l’avis de l’État du suivi SGPE est du ${toDate(
       avisEtatLe
     )} : transmission au ${toDate(transmisLe)}.`,
   repriseTecSpecificiteMelange: 'Totaux du diagnostic mélangés',
@@ -346,7 +355,7 @@ export const repriseTecLabels = {
   repriseTecDateAdoption: 'Adoption',
   repriseTecDatePublication: 'Publication',
   repriseTecSourceTec: 'T&C',
-  repriseTecSourceSuivi: 'Suivi ADEME',
+  repriseTecSourceSuivi: 'Suivi SGPE',
   repriseTecSourceTet: 'TeT',
   repriseTecNombreLignesEcartees: plural({
     zero: 'aucune ligne écartée',
@@ -427,19 +436,19 @@ const casTypesTextes: Record<
   { titre: string; chemin: string; detail: string }
 > = {
   C1: {
-    titre: 'Dossier déposé, adopté à la date du suivi ADEME',
+    titre: 'Dossier déposé, adopté à la date du suivi SGPE',
     chemin: 'mise en œuvre → publié',
     detail:
-      'Sa copie « définitif » le rejoint ; la date d’approbation du suivi ADEME devient la date d’adoption.',
+      'Sa copie « définitif » le rejoint ; la date d’approbation du suivi SGPE devient la date d’adoption.',
   },
   C2: {
     titre: 'Dossier déposé, adopté à une date de T&C',
     chemin: 'mise en œuvre → publié',
     detail:
-      'Faute de date au suivi ADEME, l’adoption prend le dépôt définitif ou la dernière mise à jour de T&C.',
+      'Faute de date au suivi SGPE, l’adoption prend le dépôt définitif ou la dernière mise à jour de T&C.',
   },
   C3: {
-    titre: 'Dossier sans état, adopté à la date du suivi ADEME',
+    titre: 'Dossier sans état, adopté à la date du suivi SGPE',
     chemin: 'sans état → publié',
     detail:
       'Ancien PCET, Cit’ergie, TEPOS ou CTE visible sur la vitrine : repris comme PCAET publié, question ouverte au métier.',
@@ -448,13 +457,13 @@ const casTypesTextes: Record<
     titre: 'Dossier sans état, adopté à une date de T&C',
     chemin: 'sans état → publié',
     detail:
-      'Le même, sans date au suivi ADEME : l’adoption prend une date de T&C.',
+      'Le même, sans date au suivi SGPE : l’adoption prend une date de T&C.',
   },
   C5: {
-    titre: 'Dépôt pour avis, approuvé d’après le suivi ADEME',
+    titre: 'Dépôt pour avis, approuvé d’après le suivi SGPE',
     chemin: 'dépôt pour avis → publié',
     detail:
-      'Le suivi ADEME donne une approbation récente : le dossier arrive publié, même resté en dépôt pour avis dans T&C.',
+      'Le suivi SGPE donne une approbation récente : le dossier arrive publié, même resté en dépôt pour avis dans T&C.',
   },
   C6: {
     titre: 'Dépôt pour avis sans approbation récente',
@@ -465,7 +474,7 @@ const casTypesTextes: Record<
   C7: {
     titre: 'En élaboration, approuvé au suivi après son lancement',
     chemin: 'en élaboration → publié',
-    detail: 'Le suivi ADEME prime sur l’état de T&C.',
+    detail: 'Le suivi SGPE prime sur l’état de T&C.',
   },
   C8: {
     titre: 'En élaboration, pas approuvé',
@@ -521,7 +530,7 @@ const decisionsTextes: Record<
   },
   D2: {
     titre: 'Un dossier en élaboration que le suivi dit approuvé',
-    regle: 'Publié, adopté à la date du suivi ADEME.',
+    regle: 'Publié, adopté à la date du suivi SGPE.',
     qui: 'Prise par la reprise',
   },
   D3: {
@@ -542,12 +551,12 @@ const decisionsTextes: Record<
   D6: {
     titre: 'La date d’adoption',
     regle:
-      'Le suivi ADEME ; à défaut, le dépôt définitif ou la dernière mise à jour de T&C (les dossiers comptés ici).',
+      'Le suivi SGPE ; à défaut, le dépôt définitif ou la dernière mise à jour de T&C (les dossiers comptés ici).',
     qui: 'Prise par la reprise',
   },
   D7: {
     titre: 'La date de transmission',
-    regle: 'Jamais après l’avis de l’État du suivi ADEME.',
+    regle: 'Jamais après l’avis de l’État du suivi SGPE.',
     qui: 'Prise par la reprise',
   },
   D8: {
@@ -563,7 +572,7 @@ const decisionsTextes: Record<
   D10: {
     titre: 'L’obligation absente du dossier',
     regle:
-      'Le suivi ADEME, sinon le seuil de 20 000 habitants, sinon volontaire.',
+      'Le suivi SGPE, sinon le seuil de 20 000 habitants, sinon volontaire.',
     qui: 'Prise par la reprise',
   },
   D11: {

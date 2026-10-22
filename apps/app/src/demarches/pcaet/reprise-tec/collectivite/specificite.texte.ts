@@ -47,8 +47,11 @@ export const toSpecificiteTexte = (
       };
     case 'adoption_repli':
       return {
-        titre: appLabels.repriseTecSpecificiteAdoptionRepli,
-        detail: appLabels.repriseTecSpecificiteAdoptionRepliDetail(s.adopteLe),
+        titre: appLabels.repriseTecSpecificiteAdoptionRepli(s.approbationLe),
+        detail: appLabels.repriseTecSpecificiteAdoptionRepliDetail(
+          s.adopteLe,
+          s.approbationLe
+        ),
       };
     case 'lancement_corrige':
       return {

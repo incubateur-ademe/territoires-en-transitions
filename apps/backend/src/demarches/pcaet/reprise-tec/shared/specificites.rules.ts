@@ -14,7 +14,11 @@ export type Specificite = { regles: number[]; ton: 'info' | 'warning' } & (
     }
   | { code: 'depot_instruit'; approbationLe: string | null }
   | { code: 'adoption_suivi'; adopteLe: string | null }
-  | { code: 'adoption_repli'; adopteLe: string | null }
+  | {
+      code: 'adoption_repli';
+      adopteLe: string | null;
+      approbationLe: string | null;
+    }
   | { code: 'lancement_corrige'; saisi: string; lanceLe: string | null }
   | {
       code: 'transmission_ramenee';
@@ -119,6 +123,7 @@ export const listSpecificites = ({
     specificites.push({
       code: 'adoption_repli',
       adopteLe: demarche.adoptedAt,
+      approbationLe: suivi.approbationLe,
       regles: [2],
       ton: 'warning',
     });

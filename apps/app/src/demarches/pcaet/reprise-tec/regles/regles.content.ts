@@ -15,7 +15,7 @@ export const reglesDeLaReprise = `## 1. Les dossiers
 
 ### Où arrivent les autres
 
-| État dans T&C | Ce qu'en dit le suivi ADEME | Statut dans TeT | Nombre |
+| État dans T&C | Ce qu'en dit le suivi SGPE | Statut dans TeT | Nombre |
 |---|---|---|---:|
 | Mise en œuvre (dossier déposé et définitif) | | **Publié** | 463 |
 | Sans état, visible sur la vitrine | | **Publié** | 339 |
@@ -36,16 +36,16 @@ d'adoption ? T&C n'a pas de champ qui le dise : on le déduit de deux sources.
 - **Dans T&C**, le dossier est resté en « dépôt pour avis » : la collectivité
   n'est pas passée au dépôt définitif, l'étape où elle dépose le PCAET adopté
   et sa délibération, et qui met le dossier en « mise en œuvre ».
-- **Dans le suivi ADEME**, aucune approbation récente : pas de date
+- **Dans le suivi SGPE**, aucune approbation récente : pas de date
   d'approbation, ou une date de plus de 2 ans avant la transmission pour avis
   (c'est alors celle du PCAET précédent).
 
-Si le suivi ADEME donne une approbation récente, le dossier arrive
+Si le suivi SGPE donne une approbation récente, le dossier arrive
 **Publié**, même resté en « dépôt pour avis » dans T&C (91 dossiers).
 « Instruit » veut donc dire, au sens strict : aucune adoption connue, ni dans
-T&C, ni dans le suivi ADEME (47 dossiers). Deux limites : une collectivité a
+T&C, ni dans le suivi SGPE (47 dossiers). Deux limites : une collectivité a
 pu adopter son PCAET sans faire le dépôt définitif dans T&C, et le suivi
-ADEME peut ne pas avoir encore noté une adoption récente. « Les avis ont été
+SGPE peut ne pas avoir encore noté une adoption récente. « Les avis ont été
 rendus » est aussi une déduction : toutes les consultations sont tenues pour
 closes.
 
@@ -60,7 +60,7 @@ closes.
 | Auteur, historique des statuts | aucun |
 
 > Exemple : CA Pays de Montbéliard. Dans T&C, son dossier est « en cours
-> d'élaboration » (lancé le 14/11/2024). Le suivi ADEME dit approuvé le
+> d'élaboration » (lancé le 14/11/2024). Le suivi SGPE dit approuvé le
 > 26/06/2025. Il arrive **Publié**, adopté le 26/06/2025.
 
 ## 2. Les dates
@@ -70,12 +70,12 @@ closes.
 | Lancement | la date de lancement saisie dans T&C |
 | Transmission pour avis | la réception du projet ; à défaut, la première date d'avis de T&C. Jamais après l'avis de l'État du suivi. |
 | Échéance des avis | la transmission plus 4 mois |
-| Adoption et publication | la date d'approbation du suivi ADEME ; à défaut, la date de dépôt définitif ou de dernière mise à jour dans T&C |
+| Adoption et publication | la date d'approbation du suivi SGPE ; à défaut, la date de dépôt définitif ou de dernière mise à jour dans T&C |
 | Une date saisie « 0023 » | lue 2023 ; une date impossible est ignorée |
 
 ## 3. Obligatoire ou volontaire
 
-Dans l'ordre : ce que dit le dossier T&C ; sinon le suivi ADEME ; sinon le seuil
+Dans l'ordre : ce que dit le dossier T&C ; sinon le suivi SGPE ; sinon le seuil
 de 20 000 habitants pour une intercommunalité ; sinon volontaire.
 
 ## 4. Les services qui instruisent
@@ -113,7 +113,7 @@ nationaux. Ils le voient dans leur liste à la date de transmission.
 | « Avis DREAL », « Avis CR » d'un dossier transmis | l'avis du préfet de région ou du président de région, avec son PDF |
 | Plusieurs PDF | le courrier signé, plutôt qu'une annexe |
 | Un avis sans PDF, ou sans courrier | non repris comme avis ; ses fichiers restent au dossier |
-| La date de l'avis | le suivi ADEME s'il tombe dans l'année qui suit la transmission ; sinon une date écrite dans le nom du fichier ; sinon la date de T&C |
+| La date de l'avis | le suivi SGPE s'il tombe dans l'année qui suit la transmission ; sinon une date écrite dans le nom du fichier ; sinon la date de T&C |
 | Où est rangé le PDF | chez le service qui a rendu l'avis, confidentiel ; la collectivité le lit dans « Avis reçus » |
 
 **448 avis** repris.
