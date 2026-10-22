@@ -31,24 +31,27 @@ import { useResizeGraphOnContainerSizeUpdate } from '@/app/ui/charts/echarts/use
 import { prepareReferenceObjectifsDataset } from './prepare-reference-objectifs-dataset';
 import { makeSegmentSeries } from './make-segment-series';
 
-type ChartVariant = 'thumbnail' | 'modal' | 'detail';
+type ChartVariant = 'thumbnail' | 'modal' | 'detail' | 'export';
 
 const variantToHeight: Record<ChartVariant, number> = {
   thumbnail: 320,
   modal: 550,
   detail: 450,
+  export: 550,
 };
 
 const variantToGrid: Record<ChartVariant, GridComponentOption> = {
   thumbnail: { bottom: 0, right: '5%' },
   modal: {},
   detail: { left: 32, right: 32, bottom: 80 },
+  export: {},
 };
 
 const variantToStyle: Record<ChartVariant, { height: number }> = {
   thumbnail: { height: variantToHeight.thumbnail },
   modal: { height: variantToHeight.modal },
   detail: { height: variantToHeight.detail },
+  export: { height: variantToHeight.export },
 };
 
 const TooltipContainerClassname =
@@ -259,9 +262,14 @@ type IndicateurChartProps = {
   variant?: ChartVariant;
   /** ClassName du container */
   className?: string;
+  /** Appelé quand le graphe a fini de se dessiner */
+  onFinished?: () => void;
 };
 
-type PreparedChartProps = Pick<IndicateurChartProps, 'title' | 'variant'> & {
+type PreparedChartProps = Pick<
+  IndicateurChartProps,
+  'title' | 'variant' | 'onFinished'
+> & {
   data: IndicateurChartInfo['data'];
   periodicite: NonNullable<IndicateurChartInfo['data']['periodicite']>;
   donneesResultatObjectif: IndicateurDataset[];
@@ -278,6 +286,7 @@ const PreparedChart = memo(
     references,
     title,
     variant = 'detail',
+    onFinished,
   }: PreparedChartProps) => {
     const option = useMemo(() => {
       const dataset = [
@@ -361,7 +370,18 @@ const PreparedChart = memo(
       variant,
     ]);
 
-    return <ReactECharts option={option} style={variantToStyle[variant]} />;
+    const onEvents = useMemo(
+      () => (onFinished ? { finished: onFinished } : undefined),
+      [onFinished]
+    );
+
+    return (
+      <ReactECharts
+        option={option}
+        style={variantToStyle[variant]}
+        onEvents={onEvents}
+      />
+    );
   }
 );
 
@@ -373,6 +393,7 @@ const IndicateurChart = ({
   isLoading,
   variant = 'detail',
   className,
+  onFinished,
 }: IndicateurChartProps) => {
   const { data } = chartInfo;
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -421,6 +442,7 @@ const IndicateurChart = ({
           references={preparedDatasets.references}
           title={title}
           variant={variant}
+          onFinished={onFinished}
         />
       )}
     </div>

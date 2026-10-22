@@ -2,7 +2,6 @@
 
 import { DateModificationItem } from '@/app/demarches/pcaet/components/header/date-modification-item';
 import { DepotDateItem } from '@/app/demarches/pcaet/components/header/depot-date-item';
-import { Separator } from '@/app/demarches/pcaet/components/header/separator';
 import { appLabels } from '@/app/labels/catalog';
 import {
   demandeAvisEtatLabel,
@@ -10,7 +9,11 @@ import {
   statutInstructionLabel,
   STATUT_INSTRUCTION_VARIANTS,
 } from '../instruction.constants';
-import { MetadataItem, MetadataLine } from '@/app/ui/metadata-line';
+import {
+  MetadataItem,
+  MetadataLine,
+  MetadataSeparator,
+} from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
 import { PcaetStatutInstructionEnum } from '@tet/domain/demarches';
@@ -102,7 +105,7 @@ export const DossierInstructionHeader = ({
           )}
           {dossier.isScotAec ? (
             <>
-              <Separator />
+              <MetadataSeparator />
               <Badge
                 title={appLabels.demarcheScotAecBadge}
                 variant="info"
@@ -111,7 +114,7 @@ export const DossierInstructionHeader = ({
               />
             </>
           ) : null}
-          <Separator />
+          <MetadataSeparator />
           {dossier.etat === null ? (
             // Sans saisine, pas d'état à lire : le dossier est en élaboration,
             // et c'est le statut de la liste qui le dit — le même badge qu'y

@@ -1,11 +1,14 @@
+import {
+  downloadElementAsImage,
+  ImageFileType,
+} from '@/app/utils/download-element-as-image';
 import { Button, ButtonProps } from '@tet/ui';
-import html2canvas from 'html2canvas';
 import { JSX, MouseEvent, RefObject } from 'react';
 
 type DownloadCanvasButtonProps = {
   containerRef: RefObject<HTMLElement | null>;
   fileName: string;
-  fileType: 'png' | 'jpg' | 'jpeg';
+  fileType: ImageFileType;
 } & ButtonProps;
 
 /** Bouton de téléchargement d'un élément identifié par une ref */
@@ -23,14 +26,7 @@ const DownloadCanvasButton = ({
     event: MouseEvent<HTMLAnchorElement> & MouseEvent<HTMLButtonElement>
   ) => {
     if (containerRef && containerRef.current) {
-      html2canvas(containerRef.current, { scale: 2 }).then((canvas) => {
-        const link = document.createElement('a');
-        document.body.appendChild(link);
-        link.setAttribute('href', canvas.toDataURL(`image/${fileType}`));
-        link.setAttribute('download', `${fileName}.${fileType}`);
-        link.click();
-        link.remove();
-      });
+      downloadElementAsImage(containerRef.current, fileName, fileType);
 
       if (props.onClick) props.onClick(event);
     }

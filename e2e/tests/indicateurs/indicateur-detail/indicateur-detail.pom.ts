@@ -8,7 +8,7 @@ export class IndicateurDetailPom {
   constructor(readonly page: Page) {
     this.favoriButton = page.locator('[data-test="IndicateurFavoriButton"]');
     this.piloteButton = page.locator(
-      '[data-test="indicateurs.detail.personnes-pilotes-button"]'
+      '[data-test="indicateurs.detail.personnes-pilotes"]'
     );
     this.piloteDropdown = page.getByPlaceholder(
       'Sélectionner ou créer une personne pilote'

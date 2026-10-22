@@ -3,13 +3,16 @@
 import { makeCollectiviteDemarchePcaetUrl } from '@/app/app/paths';
 import { DateModificationItem } from '@/app/demarches/pcaet/components/header/date-modification-item';
 import { DepotDateItem } from '@/app/demarches/pcaet/components/header/depot-date-item';
-import { Separator } from '@/app/demarches/pcaet/components/header/separator';
 import {
   DEMARCHE_PCAET_STATUT_VARIANTS,
   formatDemarcheStatut,
 } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
-import { MetadataItem, MetadataLine } from '@/app/ui/metadata-line';
+import {
+  MetadataItem,
+  MetadataLine,
+  MetadataSeparator,
+} from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { DemarchePcaetPublic } from '@tet/domain/demarches';
 import { Badge, Button, PageHeader } from '@tet/ui';
@@ -64,7 +67,7 @@ export const ConsultationHeader = ({
             value={demarche.pilotes.map(({ nom }) => nom).join(', ')}
           />
         )}
-        <Separator />
+        <MetadataSeparator />
         <Badge
           title={formatDemarcheStatut(demarche.status)}
           variant={DEMARCHE_PCAET_STATUT_VARIANTS[demarche.status]}
