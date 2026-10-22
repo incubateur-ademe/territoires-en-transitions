@@ -121,6 +121,7 @@ export const designTokens = {
   },
   zIndex: {
     header: '100',
+    'side-panel': '110',
     modal: '1000',
     dropdown: '999',
     tooltip: '1001',
