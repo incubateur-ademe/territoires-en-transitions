@@ -67,7 +67,7 @@ export const SidePanel = (): JSX.Element => {
       aria-hidden={!panel.isOpen}
       inert={!panel.isOpen}
       className={cn(
-        'sticky top-0 z-sticky-header self-start h-screen',
+        'sticky top-0 z-side-panel h-screen',
         'w-[100vw] lg:w-side-panel',
         'flex flex-col border-l border-primary-3 bg-white shadow',
         !panel.isOpen && 'pointer-events-none'
