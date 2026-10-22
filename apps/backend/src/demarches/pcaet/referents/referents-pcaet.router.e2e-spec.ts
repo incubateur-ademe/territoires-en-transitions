@@ -333,6 +333,17 @@ describe('Référents PCAET', () => {
       ]);
     });
 
+    it("ne s'ouvre pas à un compte vérifié qui n'en est pas membre", async () => {
+      const { user, cleanup } = await addTestUser(db, { collectiviteId: null });
+      cleanups.push(cleanup);
+
+      await expect(
+        callerFor(user).demarches.pcaet.listContacts({
+          collectiviteId: deposanteId,
+        })
+      ).rejects.toThrow();
+    });
+
     it("un membre qui quitte l'organisme n'est plus affiché", async () => {
       await db.db
         .update(utilisateurCollectiviteAccessTable)

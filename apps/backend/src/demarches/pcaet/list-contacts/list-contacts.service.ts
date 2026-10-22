@@ -39,9 +39,11 @@ export class ListContactsService {
     { collectiviteId }: ListContactsInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<OrganismeContacts[], ListContactsError>> {
+    // Confidentiel et non `demarches.pcaet.read`, ouvert à tout compte
+    // vérifié : les référents sont des agents de services à accès restreint.
     const permission = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['DEMARCHES.PCAET.READ'],
+      PermissionOperationEnum['COLLECTIVITES.READ_CONFIDENTIEL'],
       ResourceType.COLLECTIVITE,
       { collectiviteId },
       tx
