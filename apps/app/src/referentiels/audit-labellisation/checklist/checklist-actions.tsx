@@ -56,11 +56,7 @@ const AuditeurActions = (): ReactElement => {
     <>
       {auditADemarrer && <StartAuditButton auditId={auditADemarrer.id} />}
       {auditEnCours && (
-        <CloturerAuditButton
-          auditId={auditEnCours.id}
-          demandeId={auditEnCours.demandeId}
-          size="xs"
-        />
+        <CloturerAuditButton auditId={auditEnCours.id} size="xs" />
       )}
     </>
   );

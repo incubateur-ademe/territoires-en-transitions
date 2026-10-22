@@ -11,12 +11,10 @@ type WizardStep = (typeof STEPS)[number];
 
 export const CloturerAuditModal = ({
   auditId,
-  demandeId,
   isOpen,
   setIsOpen,
 }: {
   auditId: number;
-  demandeId: number | null;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }): JSX.Element => {
@@ -38,7 +36,6 @@ export const CloturerAuditModal = ({
   });
   const mailStep = useMailStep({
     auditId,
-    demandeId,
     isUploading: uploadState.isUploading,
     engagementChecked,
     onEngagementCheckedChange: setEngagementChecked,

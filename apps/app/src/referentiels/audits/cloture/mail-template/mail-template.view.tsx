@@ -84,7 +84,7 @@ const FieldWithCopy = ({
   );
 };
 
-const useGetMailTemplateToCopyPaste = (demandeId: number | null) => {
+const useGetMailTemplateToCopyPaste = () => {
   const collectivite = useCurrentCollectivite();
   const referentielId = useReferentielId();
   const collectiviteNom = collectivite?.nom;
@@ -94,7 +94,6 @@ const useGetMailTemplateToCopyPaste = (demandeId: number | null) => {
 
   return {
     template: getMailTemplateToCopyPaste({
-      demandeId,
       collectiviteNom: collectiviteNom ?? '',
       referentielNom: referentielNom ?? '',
     }),
@@ -102,15 +101,13 @@ const useGetMailTemplateToCopyPaste = (demandeId: number | null) => {
 };
 
 export const MailTemplate = ({
-  demandeId,
   engagementChecked,
   onEngagementCheckedChange,
 }: {
-  demandeId: number | null;
   engagementChecked: boolean;
   onEngagementCheckedChange: (next: boolean) => void;
 }): JSX.Element => {
-  const { template } = useGetMailTemplateToCopyPaste(demandeId);
+  const { template } = useGetMailTemplateToCopyPaste();
   const { copy } = useCopyToClipboard();
   const { setToast } = useToastContext();
 

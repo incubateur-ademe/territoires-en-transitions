@@ -5,11 +5,9 @@ import { CloturerAuditModal } from './cloturer-audit.modal';
 
 export const CloturerAuditButton = ({
   auditId,
-  demandeId,
   size = 'sm',
 }: {
   auditId: number;
-  demandeId: number | null;
   size?: ButtonSize;
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +18,6 @@ export const CloturerAuditButton = ({
       </Button>
       <CloturerAuditModal
         auditId={auditId}
-        demandeId={demandeId}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
       />

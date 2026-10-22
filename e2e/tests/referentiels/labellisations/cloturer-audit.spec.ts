@@ -79,10 +79,8 @@ test.describe("Modale de clôture d'audit", () => {
       )
     ).toBeVisible();
 
-    // Vérification de l'interpolation : audit lié à une demande de labellisation
-    // (cf. requestLabellisationForCot + startAudit dans le beforeEach).
     await expect(labellisationPom.cloturerAuditObjetField).toHaveValue(
-      /L'audit de labellisation du .+ de la collectivité .+ est terminé/
+      /^.+ \/ Achèvement Audit \(à préciser COT\/Label, CAE\/ECi\)$/
     );
 
     // Bouton "Valider" disabled tant que la checkbox d'engagement n'est pas cochée
