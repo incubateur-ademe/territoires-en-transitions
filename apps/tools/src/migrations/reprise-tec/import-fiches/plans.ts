@@ -1,14 +1,19 @@
-/** Les plans : un par dossier qui porte des actions, rattaché à lui ; jamais écrits : `plan` (trigger), `source`, `panier_id` (courriel), `description`. */
+/** Les plans : un par dossier qui porte des actions, rattaché à lui, de source `reprise_tec` ; jamais écrits : `plan` (trigger), `panier_id` (courriel), `description`. */
 
 import { PoolClient } from 'pg';
 import { decrireDossier, type Dossier } from './dossiers';
 import { reserveIds } from './ecriture';
 
-/** Règle : « PCAET <année de lancement> (repris de Territoires & Climat) », sans année si le dossier n'a pas de date. */
+/** Règle : « PCAET adopté en <année d'adoption> (repris de Territoires & Climat) » ; non adopté, « PCAET <année de lancement> (…) », sans année si le dossier n'a pas de date. */
 export const buildNomPlan = (dossier: Dossier) =>
-  dossier.lanceLe === null
+  dossier.adopteLe !== null
+    ? `PCAET adopté en ${dossier.adopteLe.slice(0, 4)} (repris de Territoires & Climat)`
+    : dossier.lanceLe === null
     ? 'PCAET (repris de Territoires & Climat)'
     : `PCAET ${dossier.lanceLe.slice(0, 4)} (repris de Territoires & Climat)`;
+
+// Origine des plans repris, comme `import_ia` pour ceux de l'import IA.
+const SOURCE = 'reprise_tec';
 
 /** Écrit les plans, leur lien au dossier et leur trace ; rend le plan de chaque dossier. */
 export const createPlans = async (
@@ -19,8 +24,8 @@ export const createPlans = async (
   const ids = await reserveIds(client, 'axe', dossiers.length);
   await client.query(
     `with plans as (
-       insert into public.axe (id, nom, collectivite_id, type, modified_by)
-       select id, nom, collectivite_id, $5, null
+       insert into public.axe (id, nom, collectivite_id, type, modified_by, source)
+       select id, nom, collectivite_id, $5, null, $7
          from unnest($1::int[], $2::text[], $3::int[]) as p(id, nom, collectivite_id)
        returning id
      ), liens as (
@@ -43,6 +48,7 @@ export const createPlans = async (
       dossiers.map((d) => d.demarcheId),
       typePlanId,
       dossiers.map((d) => d.tecId),
+      SOURCE,
     ]
   );
   return new Map(dossiers.map((d, i) => [d.tecId, ids[i]]));

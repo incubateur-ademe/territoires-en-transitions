@@ -359,7 +359,8 @@ s'il en trouve un :
 ### 5. Importer les fiches
 
 Chaque action d'un dossier repris devient une fiche, rangée dans un plan
-« PCAET <année de lancement> (repris de Territoires & Climat) » rattaché au
+« PCAET adopté en <année d'adoption> (repris de Territoires & Climat) » (non
+adopté : « PCAET <année de lancement> (…) »), de source `reprise_tec`, rattaché au
 dossier : un plan par dossier qui porte des actions, aucun plan vide. Les
 actions se lisent sur la ligne « mise en œuvre » du dossier, jamais sur son
 doublon « définitif ». Le plan est un plan ordinaire : il compte pour l'étape

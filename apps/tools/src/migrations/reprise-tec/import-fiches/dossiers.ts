@@ -27,6 +27,7 @@ export type Dossier = {
   collectivite: string;
   // celle du dossier dans TeT, déjà corrigée par l'import des dossiers
   lanceLe: string | null;
+  adopteLe: string | null;
   actions: Action[];
 };
 
@@ -63,6 +64,7 @@ export const loadDossiers = async (client: PoolClient): Promise<Dossier[]> => {
            d.collectivite_id     as "collectiviteId",
            co.nom                as collectivite,
            d.launched_at::text   as "lanceLe",
+           d.adopted_at::text    as "adopteLe",
            json_build_object(
              'tecId', a.id,
              'titre', a.intitule_action,
