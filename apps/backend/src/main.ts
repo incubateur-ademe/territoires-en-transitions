@@ -4,6 +4,7 @@ import './utils/telemetry-init';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, NextFunction, Request, Response } from 'express';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 import v8 from 'v8';
 import { AppModule } from './app.module';
 import { ContextRouteParametersInterceptor } from './utils/context/context-route-parameters.interceptor';
@@ -94,7 +95,7 @@ async function bootstrap() {
     })
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = cleanupOpenApiDoc(SwaggerModule.createDocument(app, config));
   SwaggerModule.setup('api-docs/v1', app, document, {
     swaggerOptions: {
       tagsSorter: 'alpha',
