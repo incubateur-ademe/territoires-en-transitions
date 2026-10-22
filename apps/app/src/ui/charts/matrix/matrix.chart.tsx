@@ -122,8 +122,7 @@ const QUADRANT_BADGE_GLYPH = '⚐';
 const LABEL_GAP_TO_POINT = 12;
 const LABEL_RIGHT_MARGIN = 4;
 const DEFAULT_LABEL_MAX_WIDTH = 220;
-const QUADRANT_TITLE_INSET = 8;
-const QUADRANT_TITLE_DISTANCE = 5;
+const QUADRANT_TITLE_DISTANCE = 12;
 const QUADRANT_TITLE_CHAR_WIDTH = 8;
 const QUADRANT_TITLE_LINE_HEIGHT = 14;
 const TRANSPARENT = 'transparent';
@@ -202,7 +201,7 @@ const toQuadrantTitleWidth = ({
   }
   const quadrantWidth =
     ((quadrant.to.x - quadrant.from.x) / bounds.x) * plotWidth;
-  return Math.max(0, quadrantWidth - 2 * QUADRANT_TITLE_INSET);
+  return Math.max(0, quadrantWidth - 2 * QUADRANT_TITLE_DISTANCE);
 };
 
 const buildArea = ({
@@ -233,6 +232,7 @@ const buildArea = ({
         show: title !== undefined || badge !== undefined,
         formatter: toQuadrantLabel({ badge, title }),
         position: TITLE_POSITION[titleAnchor],
+        distance: QUADRANT_TITLE_DISTANCE,
         color: override?.title ?? colors.grey[10],
         fontSize: 11,
         fontWeight: 'normal' as const,
