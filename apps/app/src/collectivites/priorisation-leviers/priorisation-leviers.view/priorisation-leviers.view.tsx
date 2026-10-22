@@ -12,7 +12,14 @@ import {
   LevierId,
   levierIdEnumValues,
 } from '@tet/domain/shared';
-import { Alert, Button, PageHeader, VisibleWhen } from '@tet/ui';
+import {
+  Alert,
+  Button,
+  Event,
+  PageHeader,
+  useEventTracker,
+  VisibleWhen,
+} from '@tet/ui';
 import {
   Tabs,
   TabsList,
@@ -60,7 +67,6 @@ import { SelectLevier } from './select-levier';
 import { LevierNudge, useLevierNudge } from './use-levier-nudge';
 import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
 import { useOpenLevierFromUrl } from './use-open-levier-from-url';
-
 type PriorisationAlertsProps = {
   potentiels: PotentielsReduction;
 };
@@ -181,6 +187,7 @@ const MatrixView = ({
 }: LeviersSectionProps): JSX.Element => {
   const leviersWithoutPotentiel = toLeviersWithoutPotentiel(leviers);
   const hasLeviersWithoutPotentiel = leviersWithoutPotentiel.length > 0;
+  const tracker = useEventTracker();
   return (
     <>
       <LevierCardInfo>{appLabels.selectionnerUnLevier}</LevierCardInfo>
@@ -188,7 +195,10 @@ const MatrixView = ({
         places={places}
         preselectedCountByLevier={preselectedCountByLevier}
         selectedLevierId={selectedLevierId}
-        onLevierSelected={onLevierSelected}
+        onLevierSelected={(levierId, categorie) => {
+          onLevierSelected(levierId, categorie);
+          tracker(Event.priorisation.matriceClicked, { levierId, categorie });
+        }}
         anchor={anchor}
       />
       <VisibleWhen condition={hasLeviersWithoutPotentiel}>
@@ -206,14 +216,20 @@ const BreakdownView = ({
   selectedLevierId,
   selectedCategorie,
   onLevierSelected,
-}: BreakdownViewProps): JSX.Element => (
-  <LeviersMondrianChart
-    places={places}
-    selectedLevierId={selectedLevierId}
-    selectedCategorie={selectedCategorie}
-    onLevierSelected={onLevierSelected}
-  />
-);
+}: BreakdownViewProps): JSX.Element => {
+  const tracker = useEventTracker();
+  return (
+    <LeviersMondrianChart
+      places={places}
+      selectedLevierId={selectedLevierId}
+      selectedCategorie={selectedCategorie}
+      onLevierSelected={(levierId, categorie) => {
+        onLevierSelected(levierId, categorie);
+        tracker(Event.priorisation.carteClicked, { levierId, categorie });
+      }}
+    />
+  );
+};
 
 const SousLeviersView = ({
   places,
@@ -221,15 +237,21 @@ const SousLeviersView = ({
   selectedLevierId,
   selectedCategorie,
   onLevierSelected,
-}: SousLeviersViewProps): JSX.Element => (
-  <SousLeviersChart
-    places={places}
-    preselectedActions={preselectedActions}
-    selectedLevierId={selectedLevierId}
-    selectedCategorie={selectedCategorie}
-    onLevierSelected={onLevierSelected}
-  />
-);
+}: SousLeviersViewProps): JSX.Element => {
+  const tracker = useEventTracker();
+  return (
+    <SousLeviersChart
+      places={places}
+      preselectedActions={preselectedActions}
+      selectedLevierId={selectedLevierId}
+      selectedCategorie={selectedCategorie}
+      onLevierSelected={(levierId, categorie) => {
+        onLevierSelected(levierId, categorie);
+        tracker(Event.priorisation.classementClicked, { levierId, categorie });
+      }}
+    />
+  );
+};
 
 const LeviersSection = ({
   ref,
