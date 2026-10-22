@@ -271,7 +271,7 @@ test.describe('Priorisation : présélection', () => {
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
 
     await expect(
-      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+      card.getByRole('button', { name: 'Sauvegardé' })
     ).toBeVisible();
     await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('1');
 
@@ -324,7 +324,7 @@ test.describe('Priorisation : présélection', () => {
     ).toBeVisible();
   });
 
-  test('relâcher « Sauvegarder » sort une action de la présélection', async ({
+  test('cliquer sur « Sauvegardé » sort une action de la présélection', async ({
     collectivites,
     actionsDeReference,
     page,
@@ -348,7 +348,7 @@ test.describe('Priorisation : présélection', () => {
 
     await pom
       .preselectedCard(amenagement.titre)
-      .getByRole('button', { name: 'Sauvegarder', pressed: true })
+      .getByRole('button', { name: 'Sauvegardé' })
       .click();
 
     await expect(pom.emptyPreselectionMessage).toBeVisible();
@@ -396,9 +396,7 @@ test.describe('Priorisation : présélection', () => {
 
     await pom.backToPriorisation();
     await pom.openLevier(LEVIER_NOM);
-    await card
-      .getByRole('button', { name: 'Sauvegarder', pressed: true })
-      .click();
+    await card.getByRole('button', { name: 'Sauvegardé' }).click();
 
     const removedToast = page
       .getByRole('status')
@@ -406,7 +404,7 @@ test.describe('Priorisation : présélection', () => {
     await expect(removedToast).toBeVisible();
     await removedToast.getByRole('button', { name: 'Annuler' }).click();
     await expect(
-      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+      card.getByRole('button', { name: 'Sauvegardé' })
     ).toBeVisible();
   });
 
