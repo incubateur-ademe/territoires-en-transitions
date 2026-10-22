@@ -2,19 +2,15 @@ import { expect, Locator, Page } from '@playwright/test';
 
 export class IndicateurDetailPom {
   readonly favoriButton: Locator;
-  readonly modifierButton: Locator;
-  readonly editModal: Locator;
-  readonly editModalValiderButton: Locator;
+  readonly piloteButton: Locator;
   readonly piloteDropdown: Locator;
 
   constructor(readonly page: Page) {
     this.favoriButton = page.locator('[data-test="IndicateurFavoriButton"]');
-    this.modifierButton = page.getByRole('button', {
-      name: "Modifier l'indicateur",
-    });
-    this.editModal = page.locator('[data-test="IndicateurEditModal"]');
-    this.editModalValiderButton = this.editModal.getByText('Valider');
-    this.piloteDropdown = this.editModal.getByPlaceholder(
+    this.piloteButton = page.locator(
+      '[data-test="indicateurs.detail.personnes-pilotes-button"]'
+    );
+    this.piloteDropdown = page.getByPlaceholder(
       'Sélectionner ou créer une personne pilote'
     );
   }
@@ -30,14 +26,9 @@ export class IndicateurDetailPom {
     await this.favoriButton.click();
   }
 
-  async openEditModal() {
-    await this.modifierButton.click();
-    await expect(this.editModal).toBeVisible();
-  }
-
-  async saveEditModal() {
-    await this.editModalValiderButton.click();
-    await expect(this.editModal).toBeHidden();
+  async openPiloteDropdown() {
+    await this.piloteButton.click();
+    await expect(this.piloteDropdown).toBeVisible();
   }
 
   async expectIsFavori() {

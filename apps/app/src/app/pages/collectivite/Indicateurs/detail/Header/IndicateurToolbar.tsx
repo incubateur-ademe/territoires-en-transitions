@@ -4,10 +4,8 @@ import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-in
 import { PermissionOperation } from '@tet/domain/users';
 import { Button, Tooltip, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 import DeleteModal from './DeleteModal';
-import EditModal from './EditModal';
 
 type Props = {
   definition: IndicateurDefinition;
@@ -22,8 +20,6 @@ const IndicateurToolbar = ({
   isPerso = false,
   className,
 }: Props) => {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
   const { mutate: exportIndicateurs, isPending } = useExportIndicateurs({
     mode: 'selection',
     indicateurIds: [definition.id],
@@ -34,66 +30,45 @@ const IndicateurToolbar = ({
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
 
   return (
-    <>
-      <div className={classNames('flex items-center gap-4', className)}>
+    <div className={classNames('flex items-center gap-4', className)}>
+      <Tooltip
+        label={
+          estFavori
+            ? appLabels.indicateurRetirerFavoris
+            : appLabels.indicateurAjouterFavoris
+        }
+      >
         <Button
-          disabled={isPending}
-          title={appLabels.modifierIndicateur}
-          aria-label={appLabels.modifierIndicateur}
+          dataTest="IndicateurFavoriButton"
+          icon={estFavori ? 'star-fill' : 'star-line'}
           size="xs"
           variant="grey"
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          {appLabels.modifier}
-        </Button>
-
-        <Tooltip
-          label={
-            estFavori
-              ? appLabels.indicateurRetirerFavoris
-              : appLabels.indicateurAjouterFavoris
-          }
-        >
-          <Button
-            dataTest="IndicateurFavoriButton"
-            icon={estFavori ? 'star-fill' : 'star-line'}
-            size="xs"
-            variant="grey"
-            className={classNames({
-              'text-warning-1 hover:text-warning-1': estFavori,
-            })}
-            onClick={() => updateIndicateur({ estFavori: !estFavori })}
-          />
-        </Tooltip>
-
-        <Button
-          dataTest="indicateurs.detail.exporter-excel"
-          loading={isPending}
-          disabled={isPending}
-          icon="download-fill"
-          title={appLabels.exporterXlsx}
-          size="xs"
-          variant="grey"
-          onClick={() => exportIndicateurs()}
+          className={classNames({
+            'text-warning-1 hover:text-warning-1': estFavori,
+          })}
+          onClick={() => updateIndicateur({ estFavori: !estFavori })}
         />
+      </Tooltip>
 
-        <VisibleWhen
-          condition={
-            isPerso &&
-            hasCollectivitePermission('indicateurs.indicateurs.delete')
-          }
-        >
-          <DeleteModal {...{ definition, isPending }} />
-        </VisibleWhen>
-      </div>
+      <Button
+        dataTest="indicateurs.detail.exporter-excel"
+        loading={isPending}
+        disabled={isPending}
+        icon="download-fill"
+        title={appLabels.exporterXlsx}
+        size="xs"
+        variant="grey"
+        onClick={() => exportIndicateurs()}
+      />
 
-      {isEditModalOpen && (
-        <EditModal
-          openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
-          {...{ definition }}
-        />
-      )}
-    </>
+      <VisibleWhen
+        condition={
+          isPerso && hasCollectivitePermission('indicateurs.indicateurs.delete')
+        }
+      >
+        <DeleteModal {...{ definition, isPending }} />
+      </VisibleWhen>
+    </div>
   );
 };
 

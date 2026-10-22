@@ -34,6 +34,7 @@ const IndicateurHeader = ({
     definition,
     isPerso,
     composeSansAgregation,
+    isReadonly,
   });
 
   const [isSticky, setIsSticky] = useState(false);

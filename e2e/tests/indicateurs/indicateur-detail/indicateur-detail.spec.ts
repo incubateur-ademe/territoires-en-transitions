@@ -44,17 +44,15 @@ test.describe("Détail d'un indicateur personnalisé", () => {
     // Vérifier que le favori est actif
     await indicateurDetailPom.expectIsFavori();
 
-    // Ouvrir la modale d'édition et sélectionner un pilote
-    await indicateurDetailPom.openEditModal();
-
-    // Sélectionner le premier pilote disponible dans le dropdown
-    await indicateurDetailPom.piloteDropdown.click();
+    // Ouvrir le dropdown des pilotes dans l'en-tête et sélectionner un pilote
+    await indicateurDetailPom.openPiloteDropdown();
     const userOption = indicateurDetailPom.page.getByTestId(user.data.id);
     await expect(userOption).toBeVisible();
     await userOption.click();
-
-    // Sauvegarder
-    await indicateurDetailPom.saveEditModal();
+    await indicateurDetailPom.page.keyboard.press('Escape');
+    await expect(indicateurDetailPom.piloteButton).not.toHaveText(
+      'Sans pilote'
+    );
 
     // Recharger la page pour vérifier la persistance
     await indicateurDetailPom.goto(collectiviteId, indicateurId);
