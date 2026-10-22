@@ -49,7 +49,7 @@ export const CreatePlanOptionLinksList = ({
       ) : (
         <Link
           title={appLabels.importerUnPlan}
-          subTitle={appLabels.importPlanModeleSousTitre}
+          subTitle={appLabels.importPlanSupportSousTitre}
           icon={<ImportPlanPicto />}
           url={makeCollectivitePlansActionsImporterUrl({
             collectiviteId,

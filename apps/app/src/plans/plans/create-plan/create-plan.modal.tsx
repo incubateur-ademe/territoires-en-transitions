@@ -4,7 +4,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { JSX } from 'react';
 import { CreatePlanOptionLinksList } from './components/create-plan-option-link.list.tsx';
 
-export function CreatePlanModal({
+export function AddPlanModal({
   collectiviteId,
   children,
   openState,
@@ -16,7 +16,7 @@ export function CreatePlanModal({
   return (
     <Modal
       size="lg"
-      title={appLabels.creerPlan}
+      title={appLabels.ajouterPlan}
       openState={openState}
       render={() => (
         <CreatePlanOptionLinksList collectiviteId={collectiviteId} />

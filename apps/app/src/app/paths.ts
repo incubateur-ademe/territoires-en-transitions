@@ -146,7 +146,6 @@ const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
-const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
 const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
@@ -457,16 +456,6 @@ export const makeReferentielAuditLabellisationUrl = ({
   referentielAuditLabellisationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId);
-
-export const makeCollectivitePlansActionsNouveauUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectivitePlansActionsNouveauPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
 
 export const makeCollectivitePlansActionsCreerUrl = ({
   collectiviteId,

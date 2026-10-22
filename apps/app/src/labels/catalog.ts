@@ -88,9 +88,6 @@ export const appLabels = {
   sourceSeuil: 'Valeur limite',
   sourceSeuilMin: 'Limite',
 
-  formatExcel: 'Format Excel (.xlsx)',
-  formatOpenDocument: 'Format OpenDocument (.ods)',
-
   budgetInvestissement: "Budget d'investissement : ",
   budgetFonctionnement: 'Budget de fonctionnement : ',
   budgetCompleterInvestissement: "Compléter le budget d'investissement",
@@ -621,7 +618,6 @@ export const appLabels = {
   validerAjouterAnnee: 'Valider et ajouter une année',
   ajouterRapport: 'Ajouter le rapport',
   ajouterAnnee: 'Ajouter une année',
-  creerPlan: 'Créer un plan',
   planDateFinPosterieureDateDebut:
     'La date de fin doit être postérieure ou égale à la date de début',
   planCalendrier: 'Calendrier',
@@ -759,7 +755,6 @@ export const appLabels = {
   aucuneActionDansCePlan: 'Aucune action dans ce plan',
   completezStatutsActionsPourRepartition:
     'Complétez les statuts de vos actions pour voir la répartition',
-  vousSouhaitez: 'Vous souhaitez',
   aucuneActionCorrespondRecherche:
     'Aucune action ne correspond à votre recherche',
   actionsMasqueesDansAffichageGlobal:
@@ -821,9 +816,6 @@ export const appLabels = {
   valeurAbsoluePoints: 'Valeur absolue (points)',
   valeurRelativePourcent: 'Valeur relative (%)',
   detailsLabel: 'Afficher le détail',
-  etape: ({ index }: { index: number }): string => `Étape ${index}`,
-  enCliquantIci: 'en cliquant ici.',
-  ressources: 'Ressources',
   revenirEtapePrecedente: "Revenir à l'étape précédente",
   importerUnPlan: 'Importer un plan',
   importPlanIaTitre: 'Importer un plan',
@@ -851,30 +843,6 @@ export const appLabels = {
   importPlanIaEtapeConsolidation: 'Correction des actions incomplètes',
   importPlanIaEtapeEnrichissement: 'Identification des sous-actions',
   importPlanIaEtapeRevue: 'Relecture finale',
-  importPlanTelechargerModele: 'Télécharger le modèle',
-  importPlanTelechargerModeleEtapeTitre: 'Téléchargez le modèle de plan',
-  importPlanModeleStructureFormat:
-    'Il est structuré selon le format attendu par la plateforme.',
-  importPlanCompleterFichierEtapeTitre:
-    'Complétez le fichier avec les informations de votre plan',
-  importPlanModeleDescription:
-    'Le modèle vous permet de renseigner la structure du plan ainsi que les principales données utiles au pilotage. Le reste sera a compléter sur la plateforme.',
-  importPlanConsignesRespect:
-    "Veillez à bien respecter les consignes de remplissage présentes dans le fichier, pour garantir la bonne prise en compte des données lors de l'import sur la plateforme.",
-  importPlanEnvoyerEmailEtapeTitre:
-    'Envoyez-nous le fichier complété par email',
-  importPlanAdresseLabel: 'Adresse :',
-  importPlanContactEmail: 'contact@territoiresentransitions.fr',
-  importPlanContactRelance:
-    "Nous vous informons dès que l'import est réalisé. Des questions pendant le remplissage, contactez nous.",
-  importPlanRealiseEtapeTitre: "Une fois l'import réalisé",
-  importPlanDemoPostImport: 'Suivez une démo post import',
-  importPlanArticleProchainesEtapes:
-    'Consultez notre article sur les prochaines étapes',
-  importPlanVideoPresentation:
-    "Visualisez une vidéo de présentation du fichier d'import",
-  importPlanRendezVousEquipe:
-    'Prenez un rendez-vous individuel avec notre équipe',
   labellisationAjouterDocumentsOfficielsCandidature:
     'Ajouter les documents officiels de candidature',
   toucheShift: '⇧ SHIFT',
