@@ -2,7 +2,8 @@
 
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { Button, ButtonSize } from '@tet/ui';
-import { CreatePlanModal } from '../create-plan.modal';
+import { AddPlanModal } from '../create-plan.modal';
+import { appLabels } from '@/app/labels/catalog';
 
 export const CreatePlanButton = ({
   collectiviteId,
@@ -15,8 +16,8 @@ export const CreatePlanButton = ({
   if (isVisitor) return null;
 
   return (
-    <CreatePlanModal collectiviteId={collectiviteId}>
-      <Button size={size}>{'Créer un plan'}</Button>
-    </CreatePlanModal>
+    <AddPlanModal collectiviteId={collectiviteId}>
+      <Button size={size}>{appLabels.ajouterPlan}</Button>
+    </AddPlanModal>
   );
 };

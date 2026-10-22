@@ -140,7 +140,6 @@ export const Event = {
     updateModaleValidation: 'modale:action:modification:valider',
     deleteModaleValidation: 'modale:action:suppression:valider',
     viewImpactInfo: 'cta_fa_fai',
-    downloadModele: 'cta_telecharger_modele',
     listChangeView: {
       grid: 'plans:fiches:change_view_grid',
       table: 'plans:fiches:change_view_table',

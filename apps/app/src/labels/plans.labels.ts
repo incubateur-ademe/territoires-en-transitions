@@ -34,9 +34,9 @@ export const plansLabels = {
   planBudgetAucunVisibleInfo:
     "Aucun budget dépensé HT n'est visible pour le moment.\nLes actions en accès restreint ne sont pas incluses.",
 
-  sansPlanCardTitle: "Aucun plan d'action renseigné !",
+  sansPlanCardTitle: 'Aucun plan renseigné !',
   sansPlanCardDescription:
-    'Créer un plan sur la plateforme vous permet de piloter vos actions.',
+    'Ajouter un plan sur la plateforme vous permet de piloter vos actions.',
   sansPlanCardDescriptionSecondLine:
     "Vous pouvez intégrer n'importe quel plan thématique, déjà approuvé ou en cours d'élaboration.",
 
@@ -259,8 +259,16 @@ export const plansLabels = {
   modifierModulePersonnalise: 'Modifier un module personnalisé',
 
   /** Création et import de plan */
+  ajouterPlan: 'Ajouter un plan',
+  creerPlan: 'Créer un plan',
   creerPlanSousTitre: 'directement sur la plateforme',
-  importPlanModeleSousTitre: 'à partir d’un modèle',
+  importPlanSupportSousTitre: 'en envoyant votre document à notre équipe',
+  importPlanSupportEnvoyez: 'Envoyez-nous votre document (PDF ou Excel) via le',
+  importPlanSupportChat: 'chat en ligne',
+  importPlanSupportOuAdresse: 'ou à l’adresse',
+  importPlanSupportEmail: 'contact@territoiresentransitions.fr',
+  importPlanSupportPriseEnCharge:
+    'Notre équipe se chargera de l’importer pour vous sur la plateforme.',
   importPlanIaContact:
     "Si l'import ne vous convient pas, contactez-nous à contact@territoiresentransitions.fr en joignant le fichier et en précisant le contexte.",
   importPlanIaFormatsAcceptes:
@@ -317,4 +325,4 @@ export const plansLabels = {
     'Vérifiez que la structure du plan importé (axes, sous-axes, fiches action) est satisfaisante en comparaison avec votre fichier source. Dans tous les cas, vous gardez la main pour modifier vos actions sur la plateforme.',
   planImporteValide: 'Plan validé',
   planImporteValidationErreur: 'La validation du plan a échoué',
-};
+} as const;

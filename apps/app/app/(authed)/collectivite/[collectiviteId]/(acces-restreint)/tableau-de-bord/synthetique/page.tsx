@@ -1,14 +1,11 @@
 'use client';
 
-import {
-  makeCollectivitePlansActionsNouveauUrl,
-  makeTdbPlansEtActionsUrl,
-} from '@/app/app/paths';
+import { makeTdbPlansEtActionsUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button, PageHeader } from '@tet/ui';
+import { PageHeader } from '@tet/ui';
 import Metrics from './_components/metrics';
 import ScoreReferentielCard from './_components/score-referentiel.card';
 import Section from './_components/section';
@@ -21,13 +18,10 @@ import imageCountByStatutPlaceholder from './_components/action-countby-statut-p
 import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
 
 const Page = () => {
-  const { collectiviteId, collectiviteNom, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId, collectiviteNom } = useCurrentCollectivite();
 
   const listPlansQuery = useListPlans(collectiviteId);
   const { totalCount: plansCount } = listPlansQuery;
-
-  const canCreatePlan = hasCollectivitePermission('plans.mutate');
 
   return (
     <>
@@ -59,21 +53,7 @@ const Page = () => {
           {plansCount === 0 ? (
             <ModuleContainer className="overflow-hidden !p-0">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
-                <h5 className="mb-0">
-                  {canCreatePlan
-                    ? appLabels.sansPlanCardTitle
-                    : "Aucun plan n'a été déposé"}
-                </h5>
-                {canCreatePlan && (
-                  <Button
-                    href={makeCollectivitePlansActionsNouveauUrl({
-                      collectiviteId,
-                    })}
-                    size="sm"
-                  >
-                    {appLabels.creerPlan}
-                  </Button>
-                )}
+                <h5 className="mb-0">{appLabels.sansPlanCardTitle}</h5>
               </div>
               <div className="grid lg:grid-cols-3 gap-6">
                 <Image

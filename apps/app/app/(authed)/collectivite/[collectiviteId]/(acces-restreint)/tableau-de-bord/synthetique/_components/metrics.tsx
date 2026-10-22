@@ -4,7 +4,6 @@ import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/In
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsListUrl,
-  makeCollectivitePlansActionsNouveauUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
@@ -20,8 +19,7 @@ import { CreateIndicateurModal } from '@/app/plans/fiches/show-fiche/content/ind
 import { useTdbCollectiviteFetchMetrics } from '../_hooks/use-tdb-collectivite-fetch-metrics';
 
 const Metrics = () => {
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
 
   const { data: metrics, isLoading } = useTdbCollectiviteFetchMetrics();
 
@@ -78,13 +76,6 @@ const Metrics = () => {
                       collectiviteId,
                     }),
                     children: 'Voir tous les plans',
-                  }
-                : hasCollectivitePermission('plans.mutate')
-                ? {
-                    href: makeCollectivitePlansActionsNouveauUrl({
-                      collectiviteId,
-                    }),
-                    children: 'Créer un plan',
                   }
                 : undefined
             }

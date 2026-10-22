@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { RequestPlanImportSteps } from '@/app/plans/plans/import-plan/request-plan-import-steps';
+import { RequestPlanImportInfo } from '@/app/plans/plans/import-plan/request-plan-import.info';
 import { Button, Modal, ModalFooter } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
@@ -16,7 +16,7 @@ export const DemarcheRequestPlanImportModal = ({
     title={appLabels.importerUnPlan}
     openState={openState}
     dataTest="demarches.plan.request-plan-import-modal"
-    render={() => <RequestPlanImportSteps />}
+    render={() => <RequestPlanImportInfo />}
     renderFooter={({ close }) => (
       <ModalFooter>
         <Button variant="outlined" type="button" onClick={close}>

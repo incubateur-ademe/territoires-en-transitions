@@ -4,7 +4,7 @@ import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { EmptyCard } from '@tet/ui';
 import { useState } from 'react';
-import { CreatePlanModal } from '../create-plan/create-plan.modal';
+import { AddPlanModal } from '../create-plan/create-plan.modal';
 
 const ListPlansVisitorEmptyCard = () => (
   <EmptyCard
@@ -35,14 +35,14 @@ export const ListPlansEmptyCard = ({
         ]}
         actions={[
           {
-            children: appLabels.creerPlan,
+            children: appLabels.ajouterPlan,
             onClick: () => setIsModalOpen(true),
           },
         ]}
       />
 
       {isModalOpen && (
-        <CreatePlanModal
+        <AddPlanModal
           collectiviteId={collectivite.collectiviteId}
           openState={{
             isOpen: isModalOpen,
