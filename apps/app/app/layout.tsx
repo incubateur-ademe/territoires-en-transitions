@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './global.css';
-import { PublicEnvScript } from './public-env.script';
+import { PublicEnvScript } from '@tet/api/public-env.script';
 import RootProviders from './root-providers';
 
 export const dynamic = 'force-dynamic';
