@@ -5,6 +5,8 @@ import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Tab, Tabs } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
+import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
@@ -60,6 +62,8 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
     handleUpdate('commentaire', value);
   };
 
+  const chartInfo = useIndicateurChartInfo({ definition });
+
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   const canReadFiches = hasCollectivitePermission('plans.fiches.read');
@@ -75,6 +79,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
         collectiviteId={collectiviteId}
         hasCollectivitePermission={hasCollectivitePermission}
         definition={definition}
+        chartInfo={composeSansAgregation ? undefined : chartInfo}
         isReadonly={!canMutateIndicateur}
         isPerso={definition.estPerso}
         composeSansAgregation={composeSansAgregation}
@@ -96,6 +101,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             <Tab label="Données">
               <DonneesIndicateur
                 definition={definition}
+                chartInfo={chartInfo}
                 updateUnite={handleUniteUpdate}
                 updateCommentaire={handleCommentaireUpdate}
               />
@@ -127,7 +133,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             ) : undefined}
 
             {canReadFiches ? (
-              <Tab label="Actions">
+              <Tab label={appLabels.actionsLiees}>
                 <FichesLiees definition={definition} />
               </Tab>
             ) : undefined}

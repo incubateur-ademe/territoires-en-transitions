@@ -1,6 +1,7 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { PermissionOperation } from '@tet/domain/users';
 import { PageHeader } from '@tet/ui';
+import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { ReactElement, useState } from 'react';
 import CheminIndicateur from './CheminIndicateur';
 import { hasIndicateurInfos, IndicateurInfos } from './IndicateurInfos';
@@ -9,6 +10,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 type Props = {
   collectiviteId: number;
   definition: IndicateurDefinition;
+  chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isReadonly: boolean;
   isPerso: boolean;
@@ -20,6 +22,7 @@ const IndicateurHeader = ({
   collectiviteId,
   hasCollectivitePermission,
   definition,
+  chartInfo,
   isReadonly,
   isPerso,
   composeSansAgregation,
@@ -52,6 +55,7 @@ const IndicateurHeader = ({
         <PageHeader.Actions>
           <IndicateurToolbar
             definition={definition}
+            chartInfo={chartInfo}
             isPerso={isPerso}
             hasCollectivitePermission={hasCollectivitePermission}
           />

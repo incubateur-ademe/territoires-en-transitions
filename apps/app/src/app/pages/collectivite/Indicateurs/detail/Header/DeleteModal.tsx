@@ -1,23 +1,24 @@
 import { useDeleteIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-delete-indicateur-definition';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 /**
- * Bouton + modale pour la suppression d'un indicateur personnalisé
+ * Modale pour la suppression d'un indicateur personnalisé
  */
 type Props = {
   definition: IndicateurDefinition;
-  isLoading?: boolean;
+  openState: OpenState;
 };
 
-const DeleteModal = ({ definition, isLoading = false }: Props) => {
+const DeleteModal = ({ definition, openState }: Props) => {
   const { mutate: deleteIndicateur } = useDeleteIndicateurDefinition(
     definition.id
   );
   return (
     <Modal
+      openState={openState}
       title={appLabels.suppressionIndicateur}
       subTitle={definition.titre}
       render={() => (
@@ -38,16 +39,7 @@ const DeleteModal = ({ definition, isLoading = false }: Props) => {
           }}
         />
       )}
-    >
-      {/* Bouton d'ouverture de la modale */}
-      <DeleteButton
-        disabled={isLoading}
-        title={appLabels.supprimerIndicateur}
-        aria-label={appLabels.supprimerIndicateur}
-        size="xs"
-        variant="grey"
-      />
-    </Modal>
+    />
   );
 };
 

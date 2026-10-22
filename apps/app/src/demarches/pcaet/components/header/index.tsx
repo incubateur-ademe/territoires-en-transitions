@@ -4,7 +4,7 @@ import type {
   DemarchePcaet,
   DemarchePcaetUpdatePatch,
 } from '@/app/demarches/types';
-import { MetadataLine } from '@/app/ui/metadata-line';
+import { MetadataLine, MetadataSeparator } from '@/app/ui/metadata-line';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { PageHeader } from '@tet/ui';
 import { useQuery } from '@tanstack/react-query';
@@ -18,7 +18,6 @@ import { DepotDateItem } from './depot-date-item';
 import { ObligationField } from './obligation-field';
 import { PilotesField } from './pilotes-field';
 import { ScotAecField } from './scot-aec-field';
-import { Separator } from './separator';
 import { StatutBadges } from './statut-badges';
 
 type Props = {
@@ -87,7 +86,7 @@ export const DemarchePcaetHeader = ({
               readOnly={!pilotesModifiables}
               onChange={(pilotes) => onUpdate({ pilotes })}
             />
-            <Separator />
+            <MetadataSeparator />
             <ObligationField
               obligation={demarche.obligation}
               readOnly={isPublished}
@@ -95,7 +94,7 @@ export const DemarchePcaetHeader = ({
             />
             {montreScotAec ? (
               <>
-                <Separator />
+                <MetadataSeparator />
                 <ScotAecField
                   isScotAec={demarche.isScotAec}
                   readOnly={!demarche.amontModifiable}
@@ -103,7 +102,7 @@ export const DemarchePcaetHeader = ({
                 />
               </>
             ) : null}
-            <Separator />
+            <MetadataSeparator />
             <StatutBadges isPublished={isPublished} />
           </MetadataLine>
         </PageHeader.Metadata>

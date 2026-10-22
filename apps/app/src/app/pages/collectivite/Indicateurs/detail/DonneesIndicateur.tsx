@@ -8,7 +8,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { PersonnalisationQuestionsList } from '../../../../../collectivites/personnalisations/personnalisation-questions.list';
-import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
+import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { useIndicateurPersonnalisation } from '../data/use-indicateur-personnalisation';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
@@ -20,22 +20,19 @@ import { TypeSegmentationSelect } from './type-segmentation.select';
 
 type Props = {
   definition: IndicateurDefinition;
+  chartInfo: IndicateurChartInfo;
   updateUnite: (value: string) => void;
   updateCommentaire: (value: string) => void;
 };
 
 const DonneesIndicateur = ({
   definition,
+  chartInfo,
   updateUnite,
   updateCommentaire,
 }: Props) => {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const { commentaire, unite } = definition;
-
-  // charge les valeurs à afficher dans le graphe
-  const chartInfo = useIndicateurChartInfo({
-    definition,
-  });
 
   const { sourceFilter, typesSegmentation } = chartInfo;
 

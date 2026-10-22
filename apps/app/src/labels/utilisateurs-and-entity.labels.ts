@@ -60,6 +60,10 @@ export const utilisateursAndEntityLabels = {
     other: 'Directions ou services pilotes',
   }),
   directionOuServicePiloteSans: 'Sans direction ou service pilote',
+  servicePilote: plural({
+    one: 'Service pilote',
+    other: 'Services pilotes',
+  }),
   directionOuServicePilotePlaceholderSelectionner: (
     isEditionAllowed: boolean
   ) =>

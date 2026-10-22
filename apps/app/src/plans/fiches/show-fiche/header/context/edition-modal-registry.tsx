@@ -5,7 +5,7 @@ import { JSX } from 'react';
 import { FicheContextValue } from '../../context/fiche-context';
 import { ModaleEmplacement } from '../actions/emplacement/EmplacementFiche/ModaleEmplacement';
 import { AccessRightsManagementModal } from '../menu/actions/acces/access-rights-management.modal';
-import { ActivityLogModal } from '../menu/actions/activity-log/activity-log.modal';
+import { ActivityLogModal } from '@/app/ui/shared/activity-log.modal';
 import { ExportFicheModal } from '../menu/actions/pdf-export/ExportModal/export-fa-modal';
 import { ModalType } from './edition-modal-manager-context';
 
@@ -61,6 +61,12 @@ export const modalRegistry: Record<RegisteredModalType, ModalRenderer> = {
     />
   ),
   activityLog: ({ fiche, onClose }) => (
-    <ActivityLogModal fiche={fiche} onClose={onClose} />
+    <ActivityLogModal
+      createdAt={fiche.createdAt}
+      createdBy={fiche.createdBy}
+      modifiedAt={fiche.modifiedAt}
+      modifiedBy={fiche.modifiedBy}
+      onClose={onClose}
+    />
   ),
 };

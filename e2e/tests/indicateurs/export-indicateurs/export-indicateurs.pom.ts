@@ -72,14 +72,15 @@ export class ExportIndicateursPom {
       `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
     );
     await expect(
-      this.page.locator('[data-test="indicateurs.detail.exporter-excel"]')
+      this.page.locator('[data-test="indicateurs.detail.menu"]')
     ).toBeVisible();
   }
 
   async exportSingle(): Promise<Workbook> {
     const downloadPromise = this.page.waitForEvent('download');
+    await this.page.locator('[data-test="indicateurs.detail.menu"]').click();
     await this.page
-      .locator('[data-test="indicateurs.detail.exporter-excel"]')
+      .getByRole('button', { name: 'Télécharger (Excel)' })
       .click();
     const download = await downloadPromise;
     return this.parseXlsx(download);
