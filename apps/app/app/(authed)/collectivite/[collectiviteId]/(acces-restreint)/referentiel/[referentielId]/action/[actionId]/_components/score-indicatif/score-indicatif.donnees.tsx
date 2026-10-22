@@ -62,7 +62,6 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
           <IndicateurDetailChart
             definition={definition}
             chartInfo={chartInfo}
-            isDownloadable={false}
           />
         }
         additionalRightHeaderContent={
