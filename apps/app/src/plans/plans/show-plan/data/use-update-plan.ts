@@ -14,7 +14,8 @@ export const useUpdatePlan = ({
   );
 
   const { mutateAsync } = useMutation({
-    mutationFn: updatePlanMutation,
+    mutationFn: (variables: Parameters<typeof updatePlanMutation>[0]) =>
+      updatePlanMutation(variables),
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.get.queryKey({ planId: data.id }),
