@@ -4,6 +4,7 @@ import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { departementTable } from '@tet/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
@@ -395,6 +396,13 @@ export class AirtableCrmSyncService {
         lab_eci_programme: sql<string | null>`(${llEci.score_programme})::text`,
         lab_eci_realise: sql<string | null>`(${llEci.score_realise})::text`,
         lab_eci_annee: sql<string | null>`(${llEci.annee})::text`,
+        // Les plans repris de Territoires & Climat, à activer par le déploiement.
+        plan_repris_tec: sql<boolean>`exists (
+          select from ${axeTable}
+          where ${axeTable.collectiviteId} = ${collectiviteTable.id}
+            and ${axeTable.parent} is null
+            and ${axeTable.source} = 'reprise_tec'
+        )`,
       })
       .from(collectiviteTable)
       // Cast text→int implicite côté Postgres : `nature_insee` est typé text

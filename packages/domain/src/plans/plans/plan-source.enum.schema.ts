@@ -1,7 +1,7 @@
 import * as z from 'zod/mini';
 import { createEnumObject } from '../../utils';
 
-export const planSourceValues = ['import_ia'] as const;
+export const planSourceValues = ['import_ia', 'reprise_tec'] as const;
 
 /** Origine d'un plan ; absente (`null`) pour un plan créé à la main. */
 export const PlanSourceEnum = createEnumObject(planSourceValues);
