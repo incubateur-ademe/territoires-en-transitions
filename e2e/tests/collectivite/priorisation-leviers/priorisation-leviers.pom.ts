@@ -84,7 +84,9 @@ export class PriorisationLeviersPom {
   }
 
   get analyzedActionsText(): Locator {
-    return this.page.getByText(/^Analyse de \d+ actions? issues? de vos/);
+    return this.page.getByText(
+      /^Analyse de \d+ actions? issues? de (votre plan|vos \d+ plans)/
+    );
   }
 
   get missingPotentielsMessage(): Locator {
