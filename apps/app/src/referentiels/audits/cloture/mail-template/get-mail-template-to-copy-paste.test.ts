@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { appLabels } from '../../../../labels/catalog';
 import { getMailTemplateToCopyPaste } from './get-mail-template-to-copy-paste';
 
 describe('getMailTemplateToCopyPaste', () => {
@@ -8,46 +7,20 @@ describe('getMailTemplateToCopyPaste', () => {
     collectiviteNom: 'Ville de Lyon',
   };
 
-  it('renvoie le template "sans labellisation" quand demandeId est null', () => {
-    const result = getMailTemplateToCopyPaste({ ...baseInput, demandeId: null });
-    expect(result.typeAuditLabel).toBe(appLabels.typeAuditSansLabellisation);
-    expect(result.subject).toBe(
-      appLabels.mailClotureAuditObjet({
-        typeAudit: appLabels.typeAuditSansLabellisation,
-        referentielNom: 'Climat Air Énergie',
-        collectiviteNom: 'Ville de Lyon',
-      })
-    );
-    expect(result.body).toBe(
-      appLabels.mailClotureAuditContenu({
-        typeAudit: appLabels.typeAuditSansLabellisation,
-        referentielNom: 'Climat Air Énergie',
-        collectiviteNom: 'Ville de Lyon',
-      })
+  it("laisse l'auditeur préciser la nature de l'audit dans l'objet", () => {
+    expect(getMailTemplateToCopyPaste(baseInput).subject).toBe(
+      'Ville de Lyon / Achèvement Audit (à préciser COT/Label, CAE/ECi)'
     );
   });
 
-  it('renvoie le template "de labellisation" quand demandeId est non-null', () => {
-    const result = getMailTemplateToCopyPaste({ ...baseInput, demandeId: 42 });
-    expect(result.typeAuditLabel).toBe(appLabels.typeAuditDeLabellisation);
-    expect(result.subject).toBe(
-      appLabels.mailClotureAuditObjet({
-        typeAudit: appLabels.typeAuditDeLabellisation,
-        referentielNom: 'Climat Air Énergie',
-        collectiviteNom: 'Ville de Lyon',
-      })
-    );
-    expect(result.body).toBe(
-      appLabels.mailClotureAuditContenu({
-        typeAudit: appLabels.typeAuditDeLabellisation,
-        referentielNom: 'Climat Air Énergie',
-        collectiviteNom: 'Ville de Lyon',
-      })
+  it("annonce la fin de l'audit avec le nom du référentiel, le lien de l'app et le questionnaire", () => {
+    expect(getMailTemplateToCopyPaste(baseInput).body).toBe(
+      "Bonjour,\n\nL'audit Climat Air Énergie de Ville de Lyon est terminé.\n\nVous trouverez le rapport d'audit sur la plateforme Territoires en Transitions (https://app.territoiresentransitions.fr). Dans un souci d'amélioration continue de nos pratiques d'audit, merci de bien vouloir renseigner le questionnaire ci-joint : https://forms.office.com/e/29txbS6kRX?origin=lprLink\n\nJe me tiens à votre disposition pour tout élément complémentaire.\n\nEn vous remerciant encore pour la qualité des échanges et en vous félicitant pour votre implication dans la démarche TETE.\n\nBonne continuation dans la démarche et à bientôt,\n\nCordialement,"
     );
   });
 
   it('contient le lien forms.office.com dans le contenu (invariant supply-chain)', () => {
-    const { body } = getMailTemplateToCopyPaste({ ...baseInput, demandeId: null });
+    const { body } = getMailTemplateToCopyPaste(baseInput);
     expect(body).toContain('https://forms.office.com/e/');
   });
 
@@ -55,7 +28,6 @@ describe('getMailTemplateToCopyPaste', () => {
     const hostile = '<script>alert(1)</script>\r\n"evil"';
     const { subject, body } = getMailTemplateToCopyPaste({
       ...baseInput,
-      demandeId: null,
       collectiviteNom: hostile,
     });
     // L'invariant : le rendu se fait dans un <textarea readOnly>, donc on ne

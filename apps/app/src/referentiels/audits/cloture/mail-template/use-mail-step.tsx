@@ -11,7 +11,6 @@ import { MailTemplate } from './mail-template.view';
 
 type MailStepArgs = {
   auditId: number;
-  demandeId: number | null;
   isUploading: boolean;
   engagementChecked: boolean;
   onEngagementCheckedChange: (next: boolean) => void;
@@ -22,7 +21,6 @@ type MailStepArgs = {
 
 export const useMailStep = ({
   auditId,
-  demandeId,
   isUploading,
   engagementChecked,
   onEngagementCheckedChange,
@@ -68,7 +66,6 @@ export const useMailStep = ({
   return {
     body: (
       <MailTemplate
-        demandeId={demandeId}
         engagementChecked={engagementChecked}
         onEngagementCheckedChange={onEngagementCheckedChange}
       />

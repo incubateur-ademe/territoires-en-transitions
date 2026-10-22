@@ -1,6 +1,7 @@
 import { ENV } from '@tet/api/environmentVariables';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { plural } from '@tet/ui/labels/plural';
+import { APP_BASE_URL } from '@tet/ui/utils/constants';
 import { collectivitesLabels } from './collectivites.labels';
 import { demarchesLabels } from './demarches.labels';
 import { indicateursLabels } from './indicateurs.labels';
@@ -250,8 +251,6 @@ export const appLabels = {
     current: number;
     total: number;
   }): string => `Étape ${current}/${total}`,
-  typeAuditSansLabellisation: 'sans labellisation',
-  typeAuditDeLabellisation: 'de labellisation',
   infoRemplacementRapportAudit:
     "Le rapport d'audit sera ajouté dans la bibliothèque de documents et sera visible par les membres de la communauté. Il vous est possible de le remplacer dans les 15 jours après la clôture de l'audit.",
   validerEtPasserEtapeSuivante: "Valider et passer à l'étape suivante",
@@ -264,26 +263,16 @@ export const appLabels = {
   mailClotureAuditRetourTexteLien: 'ce lien',
   mailClotureAuditObjetLabel: "Objet de l'email :",
   mailClotureAuditContenuLabel: "Contenu de l'email :",
-  mailClotureAuditObjet: ({
-    typeAudit,
-    referentielNom,
-    collectiviteNom,
-  }: {
-    typeAudit: string;
-    referentielNom: string;
-    collectiviteNom: string;
-  }): string =>
-    `L'audit ${typeAudit} du ${referentielNom} de la collectivité ${collectiviteNom} est terminé`,
+  mailClotureAuditObjet: (collectiviteNom: string): string =>
+    `${collectiviteNom} / Achèvement Audit (à préciser COT/Label, CAE/ECi)`,
   mailClotureAuditContenu: ({
-    typeAudit,
     referentielNom,
     collectiviteNom,
   }: {
-    typeAudit: string;
     referentielNom: string;
     collectiviteNom: string;
   }): string =>
-    `Bonjour,\nPar ce mail, je vous informe que l'audit ${typeAudit} du ${referentielNom} de la ${collectiviteNom} est terminé. Vous trouverez le rapport d'audit sur le profil de la collectivité sur la plateforme Territoires en Transitions.\nMerci de renseigner le questionnaire ci-joint pour donner votre avis sur la prestation d'audit : https://forms.office.com/e/29txbS6kRX?origin=lprLink\nEn vous souhaitant une bonne continuation,\nCordialement,`,
+    `Bonjour,\n\nL'audit ${referentielNom} de ${collectiviteNom} est terminé.\n\nVous trouverez le rapport d'audit sur la plateforme Territoires en Transitions (${APP_BASE_URL}). Dans un souci d'amélioration continue de nos pratiques d'audit, merci de bien vouloir renseigner le questionnaire ci-joint : https://forms.office.com/e/29txbS6kRX?origin=lprLink\n\nJe me tiens à votre disposition pour tout élément complémentaire.\n\nEn vous remerciant encore pour la qualité des échanges et en vous félicitant pour votre implication dans la démarche TETE.\n\nBonne continuation dans la démarche et à bientôt,\n\nCordialement,`,
   mailClotureAuditEngagementCheckbox:
     "Je m'engage à envoyer un mail aux interlocuteurs, avec l'enquête de satisfaction",
   copierObjet: "Copier l'objet du mail",
