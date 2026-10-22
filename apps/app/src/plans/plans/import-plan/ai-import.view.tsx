@@ -3,7 +3,7 @@
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Button, Icon } from '@tet/ui';
+import { Button, PageHeader } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { BetaLabel } from '@/app/ui/beta.label';
@@ -41,10 +41,11 @@ const AiImportContent = () => {
 
   return (
     <div className="flex flex-col">
-      <h3 className="mb-8 flex items-center gap-2">
-        <Icon icon="import-fill" size="lg" />
-        <BetaLabel>{appLabels.importPlanIaTitre}</BetaLabel>
-      </h3>
+      <PageHeader>
+        <PageHeader.Title>
+          <BetaLabel>{appLabels.importPlanIaTitre}</BetaLabel>
+        </PageHeader.Title>
+      </PageHeader>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
         <AiImportFlow
           onPlanCreated={redirectToPlan}
