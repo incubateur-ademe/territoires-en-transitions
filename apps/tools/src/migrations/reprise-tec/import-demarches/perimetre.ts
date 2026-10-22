@@ -18,6 +18,7 @@ export type LigneDemarche = {
   envoiDreal: string | null;
   envoiCr: string | null;
   receptionProjet: string | null;
+  aUnDepotPourAvis: boolean;
 };
 
 export type Motif =
@@ -25,6 +26,9 @@ export type Motif =
   | 'coquille_vide'
   | 'pas_un_pcaet'
   | 'doublon';
+
+/** Les types de fichier de la rubrique « Dépôt pour avis » de T&C : le projet et son cadre de dépôt. */
+const TYPES_DEPOT_POUR_AVIS: readonly number[] = [22, 23];
 
 /** Dossiers de T&C saisis pour essai : 2414 « TEST », CA de Sophia Antipolis. */
 const DOSSIERS_DE_TEST: readonly number[] = [2414];
@@ -64,6 +68,13 @@ const listLignesDemarche = async (
            d.date_envoi_avis_dreal::text      as "envoiDreal",
            d.date_envoi_avis_cr::text         as "envoiCr",
            d.date_reception_projet::text      as "receptionProjet",
+           (   d.date_reception_projet is not null
+            or exists (select from reprise_tec.staging_demarche c
+                        where c.id = d.pcaet_definitif and c.date_reception_projet is not null)
+            or exists (select from reprise_tec.staging_demarche_fichier x
+                        where x.demarche_id in (d.id, d.pcaet_definitif)
+                          and x.type_fichier_id = any($1))
+           )                                  as "aUnDepotPourAvis",
            (   exists (select from reprise_tec.staging_demarche_fichier x where x.demarche_id = d.id)
             or exists (select from reprise_tec.staging_demarche_emission_ges x where x.demarche_id = d.id)
             or exists (select from reprise_tec.staging_demarche_consommation x where x.demarche_id = d.id)
@@ -71,7 +82,9 @@ const listLignesDemarche = async (
             or exists (select from reprise_tec.staging_demarche_domaine_vulnerabilite x where x.demarche_id = d.id)
            )::int                             as contenu
       from reprise_tec.staging_demarche d
-     order by d.id`);
+     order by d.id`,
+    [TYPES_DEPOT_POUR_AVIS]
+  );
   return rows;
 };
 

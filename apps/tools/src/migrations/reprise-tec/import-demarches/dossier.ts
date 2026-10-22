@@ -56,6 +56,7 @@ export type Dossier = {
     launchedAt: string | null;
     publishedAt: string | null;
     transmittedAt: string | null;
+    transmittedOffPlatform: boolean;
     avisDeadlineAt: string | null;
     adoptedAt: string | null;
     createdAt: string | null;
@@ -98,12 +99,17 @@ export const buildDossier = (
       launchedAt: ligne.lanceLe,
       publishedAt: dates.publishedAt,
       transmittedAt: dates.transmittedAt,
+      transmittedOffPlatform: isTransmisHorsPlateforme(ligne),
       avisDeadlineAt: dates.avisDeadlineAt,
       adoptedAt: dates.adoptedAt,
       createdAt: ligne.creeLe,
     },
   };
 };
+
+/** Règle : un dossier « mise en œuvre » sans trace de dépôt pour avis dans T&C (ni projet déposé, ni réception du projet) a été soumis pour avis hors de T&C. */
+const isTransmisHorsPlateforme = (ligne: LigneDemarche) =>
+  ligne.etat === 'mise_en_oeuvre' && !ligne.aUnDepotPourAvis;
 
 /** Les dates saisies à la main dans T&C, que `correctDatesSaisies` vérifie. */
 const DATES_SAISIES = [

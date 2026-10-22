@@ -34,6 +34,11 @@ export const printRapport = ({
   for (const ligne of compter(ecrits.map((d) => d.colonnes.status))) {
     console.log(`  ${ligne}`);
   }
+  console.log(
+    `  dont transmis hors plateforme : ${
+      ecrits.filter((d) => d.colonnes.transmittedOffPlatform).length
+    }`
+  );
   console.log('Parties de dossier écrit sans place dans TeT (sans_place)');
   for (const ligne of compter(partiesEcartees.map((p) => p.precision))) {
     console.log(`  ${ligne}`);

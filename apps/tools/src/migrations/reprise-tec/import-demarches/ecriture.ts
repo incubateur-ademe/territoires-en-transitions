@@ -15,9 +15,9 @@ export const createDossiers = async (
          insert into public.demarche (
            collectivite_id, type, titre, description, status, obligation,
            launched_at, published_at, transmitted_at, avis_deadline_at,
-           adopted_at, created_at
+           adopted_at, created_at, transmitted_off_platform
          )
-         values ($1, $13, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         values ($1, $13, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $15)
          returning id
        ), correspondance as (
          insert into reprise_tec.correspondance
@@ -41,6 +41,7 @@ export const createDossiers = async (
         tecId,
         DemarcheTypeEnum.PCAET,
         sources.adoption,
+        c.transmittedOffPlatform,
       ]
     );
   }

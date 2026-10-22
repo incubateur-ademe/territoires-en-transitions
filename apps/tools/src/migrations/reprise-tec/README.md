@@ -91,6 +91,12 @@ dans sa collectivité et lancé avant l'approbation du suivi, il a été adopté
 hors de T&C : il arrive publié, adopté et publié à la date d'approbation. Le
 rapport nomme chacun.
 
+Un dossier « mise en œuvre » sans trace de dépôt pour avis dans T&C, ni
+fichier dans la rubrique « Dépôt pour avis » ni date de réception du projet
+(sur sa ligne et sur son doublon « définitif »), a été soumis pour avis hors de
+T&C : il arrive publié, marqué transmis hors plateforme
+(`transmitted_off_platform`). Le rapport les compte.
+
 La population couverte et le commentaire de statut d'un dossier écrit n'ont
 pas de place dans TeT : chacun laisse un écart `sans_place`, `precision` = le
 nom de la colonne.
