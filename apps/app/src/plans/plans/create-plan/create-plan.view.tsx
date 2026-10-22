@@ -7,7 +7,7 @@ import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneId } from '@tet/domain/collectivites';
-import { Button, Icon } from '@tet/ui';
+import { Button, PageHeader } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
 const useGetCreatePlanFunction = () => {
@@ -77,10 +77,9 @@ export const CreatePlanView = () => {
   return (
     <div className="flex flex-col">
       <div className="w-full mx-auto">
-        <h3 className="mb-8">
-          <Icon icon="edit-box-fill" size="lg" className="mr-2" />
-          {appLabels.creerPlan}
-        </h3>
+        <PageHeader>
+          <PageHeader.Title>{appLabels.creerPlan}</PageHeader.Title>
+        </PageHeader>
         <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
           <UpsertPlanForm
             onSubmit={handleSubmit}

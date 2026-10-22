@@ -2,7 +2,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@tet/ui';
+import { Button, PageHeader } from '@tet/ui';
 import { RequestPlanImportInfo } from './request-plan-import.info';
 
 export const RequestPlanImportView = () => {
@@ -12,8 +12,10 @@ export const RequestPlanImportView = () => {
   };
   return (
     <>
+      <PageHeader>
+        <PageHeader.Title>{appLabels.importerUnPlan}</PageHeader.Title>
+      </PageHeader>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
-        <h3 className="mb-8">{appLabels.importerUnPlan}</h3>
         <RequestPlanImportInfo />
         <div className="h-[1px] my-8 bg-gray-300" />
 
