@@ -11,15 +11,16 @@ export const toLevierSubtitle = ({
   secteur,
   impactIndex,
   pertinence,
-}: LevierSubtitleInput): string =>
-  [
-    secteur,
+}: LevierSubtitleInput): string => {
+  const impactLabel =
     impactIndex === undefined
       ? undefined
-      : appLabels.impactPotentielEstime(impactIndex),
+      : appLabels.impactPotentielEstime(impactIndex);
+  const pertinenceLabel =
     pertinence === undefined
       ? undefined
-      : appLabels.pertinenceLabel(pertinence),
-  ]
+      : appLabels.pertinenceLabel(pertinence);
+  return [secteur, impactLabel, pertinenceLabel]
     .filter((part) => part !== undefined)
     .join(' · ');
+};
