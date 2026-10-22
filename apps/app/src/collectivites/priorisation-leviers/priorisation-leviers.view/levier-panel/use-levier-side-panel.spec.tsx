@@ -127,6 +127,32 @@ describe('useLevierSidePanel', () => {
     ).toMatchObject({ subtitle: 'Transports · Non pertinent' });
   });
 
+  it("l'en-tête du volet ouvert suit la pertinence quand on la bascule", () => {
+    const { result, rerender } = renderHook(
+      ({ leviers }: { leviers: LevierPriorisation[] }) => ({
+        levierSidePanel: useLevierSidePanel({
+          leviers,
+          places: [],
+          preselection: EMPTY_PRESELECTION,
+        }),
+        panelHeaderExtra: useSidePanel().panel.headerExtra,
+      }),
+      { wrapper: SidePanelWrapper, initialProps: { leviers: [COVOITURAGE] } }
+    );
+    act(() => result.current.levierSidePanel.select('covoiturage'));
+    const beforeToggle = result.current.panelHeaderExtra;
+
+    rerender({ leviers: [COVOITURAGE_NON_PERTINENT] });
+
+    expect({
+      beforeToggle,
+      afterToggle: result.current.panelHeaderExtra,
+    }).toMatchObject({
+      beforeToggle: { props: { subtitle: 'Transports' } },
+      afterToggle: { props: { subtitle: 'Transports · Non pertinent' } },
+    });
+  });
+
   it('referme le volet ouvert et oublie le levier sélectionné', () => {
     const { result } = renderLevierSidePanel();
     act(() => result.current.levierSidePanel.select('covoiturage'));
