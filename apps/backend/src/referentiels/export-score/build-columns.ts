@@ -152,7 +152,7 @@ const VOLETS_THEMATIQUES_ADAPTATION_COLUMNS: Column[] = [
   {
     title: 'Thématiques',
     colProps: {
-      style: { alignment: Utils.ALIGN_LEFT_WRAP },
+      style: { alignment: Utils.ALIGN_CENTER_WRAP },
       width: WIDTH_MEDIUM,
     },
     headCellProps: { style: Utils.HEADING2 },
