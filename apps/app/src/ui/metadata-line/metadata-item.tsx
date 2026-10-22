@@ -10,6 +10,7 @@ export type MetadataItemProps = {
   icon: IconValue;
   label: string;
   value: ReactNode;
+  emptyLabel?: string;
   tooltip?: ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
@@ -20,6 +21,7 @@ export const MetadataItem = ({
   icon,
   label,
   value,
+  emptyLabel,
   tooltip,
   ...props
 }: MetadataItemProps) => {
@@ -37,7 +39,11 @@ export const MetadataItem = ({
         <Icon icon={icon} />
         <span className="font-normal">{`${label} : `}</span>
         {isNil(value) || value === '' ? (
-          <span className="text-warning-1">{appLabels.aCompleterMaj}</span>
+          emptyLabel ? (
+            <span className="font-normal">{emptyLabel}</span>
+          ) : (
+            <span className="text-warning-1">{appLabels.aCompleterMaj}</span>
+          )
         ) : (
           <span className="font-medium">{value}</span>
         )}

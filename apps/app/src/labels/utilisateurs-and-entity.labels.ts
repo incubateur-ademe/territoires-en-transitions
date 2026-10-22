@@ -60,6 +60,7 @@ export const utilisateursAndEntityLabels = {
     other: 'Directions ou services pilotes',
   }),
   directionOuServicePiloteSans: 'Sans direction ou service pilote',
+  servicePiloteSans: 'Sans service pilote',
   servicePilote: plural({
     one: 'Service pilote',
     other: 'Services pilotes',

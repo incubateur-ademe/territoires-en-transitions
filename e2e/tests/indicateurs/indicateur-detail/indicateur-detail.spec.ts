@@ -51,7 +51,7 @@ test.describe("Détail d'un indicateur personnalisé", () => {
     await userOption.click();
     await indicateurDetailPom.page.keyboard.press('Escape');
     await expect(indicateurDetailPom.piloteButton).not.toContainText(
-      'À compléter'
+      'Sans pilote'
     );
 
     // Recharger la page pour vérifier la persistance

@@ -3,6 +3,7 @@ import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indi
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { MetadataItem, MetadataItemPersonne } from '@/app/ui/metadata-line';
+import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { InlineEditWrapper } from '@tet/ui';
 
 type Props = {
@@ -23,6 +24,7 @@ export const IndicateurPilotes = ({ definition, isReadonly }: Props) => {
         one: appLabels.pilote(),
         many: appLabels.pilote({ plural: true }),
       }}
+      emptyLabel={SANS_PILOTE_LABEL}
       personnes={(definition.pilotes ?? []).map((p) => ({
         tagId: p.tagId,
         userId: p.userId,
@@ -70,6 +72,7 @@ export const IndicateurServicesPilotes = ({
             : appLabels.servicePilote()
         }
         value={services.map((s) => s.nom).join(', ')}
+        emptyLabel={appLabels.servicePiloteSans}
       />
     </InlineEditWrapper>
   );

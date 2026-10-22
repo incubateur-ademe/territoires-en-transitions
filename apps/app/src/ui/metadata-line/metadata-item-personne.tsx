@@ -10,6 +10,7 @@ export const MetadataItemPersonne = ({
   hideSeparator,
   isReadOnly,
   label,
+  emptyLabel,
   personnes,
   onChange,
   openState,
@@ -20,6 +21,7 @@ export const MetadataItemPersonne = ({
   hideSeparator?: boolean;
   isReadOnly: boolean;
   label: { one: string; many: string };
+  emptyLabel?: string;
   personnes: Personne[];
   onChange: (personnes: Personne[]) => void;
   openState?: { isOpen: boolean; setIsOpen: (v: boolean) => void };
@@ -58,6 +60,7 @@ export const MetadataItemPersonne = ({
         tooltip={tooltip}
         icon={icon}
         label={personnes.length > 1 ? label.many : label.one}
+        emptyLabel={emptyLabel}
         value={
           personnes.length
             ? personnes
