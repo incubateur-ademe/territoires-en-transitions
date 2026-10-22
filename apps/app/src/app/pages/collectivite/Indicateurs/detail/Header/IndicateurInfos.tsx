@@ -1,5 +1,6 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
+import { IndicateurPeriodiciteBadge } from '@/app/indicateurs/valeurs/indicateur-periodicite.badge';
 import { cn, Icon } from '@tet/ui';
 import { format } from 'date-fns';
 import { Fragment, ReactNode } from 'react';
@@ -28,6 +29,8 @@ export const hasIndicateurInfos = ({
   const services = definition.services ?? [];
   return (
     !isReadonly ||
+    !composeSansAgregation ||
+    Boolean(definition.modifiedAt) ||
     pilotes.length > 0 ||
     services.length > 0 ||
     Boolean(participationScore) ||
@@ -63,6 +66,12 @@ export const IndicateurInfos = ({
             })
           : ''}
       </span>
+    ),
+    !composeSansAgregation && (
+      <IndicateurPeriodiciteBadge
+        periodicite={definition.periodicite}
+        participationScore={Boolean(participationScore)}
+      />
     ),
     showPilotes && (
       <IndicateurPilotes definition={definition} isReadonly={isReadonly} />
