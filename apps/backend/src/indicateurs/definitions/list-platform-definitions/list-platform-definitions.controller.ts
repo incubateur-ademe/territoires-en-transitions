@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -13,7 +13,10 @@ import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
 import { listPlatformDefinitionsApiRequestSchema } from './list-platform-definitions.api-request';
-import { listPlatformDefinitionsApiResponseSchema } from './list-platform-definitions.api-response';
+import {
+  listPlatformDefinitionsApiResponseEnvelopeSchema,
+  listPlatformDefinitionsApiResponseSchema,
+} from './list-platform-definitions.api-response';
 import { ListPlatformDefinitionsService } from './list-platform-definitions.service';
 
 class ListPlatformDefinitionsApiRequestClass extends createZodDto(
@@ -21,7 +24,7 @@ class ListPlatformDefinitionsApiRequestClass extends createZodDto(
 ) {}
 
 class ListPlatformDefinitionsApiResponseClass extends createZodDto(
-  listPlatformDefinitionsApiResponseSchema
+  listPlatformDefinitionsApiResponseEnvelopeSchema
 ) {}
 
 @ApiTags('Indicateurs')
@@ -42,7 +45,7 @@ export class ListPlatformDefinitionsController {
     description:
       "Les indicateurs prédéfinis sont disponibles à l'ensemble des collectivités.",
   })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: ListPlatformDefinitionsApiResponseClass,
   })
   async listDefinitions(
