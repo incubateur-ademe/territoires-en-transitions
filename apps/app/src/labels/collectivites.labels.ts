@@ -1,6 +1,7 @@
 import { Pertinence } from '@tet/domain/collectivites';
 import { CategorieAction, Levier } from '@tet/domain/shared';
 import { capitalize, plural } from '@tet/ui/labels/plural';
+import { compact } from 'es-toolkit';
 
 const pertinenceLabels = {
   non_pertinent: 'non pertinent',
@@ -16,6 +17,23 @@ const actionsAnalyseesLabel = plural({ one: 'action', other: 'actions' });
 const plansAnalysesLabel = plural({ one: 'plan', other: 'plans' });
 
 const issuesLabel = plural({ one: 'issue', other: 'issues' });
+
+const actionsOriginLabel = ({
+  actionsCount,
+  plansCount,
+}: {
+  actionsCount: number;
+  plansCount: number;
+}): string => {
+  if (plansCount === 0) {
+    return '';
+  }
+  const issues = issuesLabel({ count: actionsCount, withoutCount: true });
+  if (plansCount === 1) {
+    return `${issues} de votre plan`;
+  }
+  return `${issues} de vos ${plansAnalysesLabel({ count: plansCount })}`;
+};
 
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
@@ -168,14 +186,10 @@ export const collectivitesLabels = {
     actionsCount: number;
     plansCount: number;
   }): string =>
-    `Analyse de ${actionsAnalyseesLabel({
-      count: actionsCount,
-    })} ${issuesLabel({
-      count: actionsCount,
-      withoutCount: true,
-    })} de vos ${plansAnalysesLabel({
-      count: plansCount,
-    })}. L'impact GES et la mobilisation sont des estimations.`,
+    `${compact([
+      `Analyse de ${actionsAnalyseesLabel({ count: actionsCount })}`,
+      actionsOriginLabel({ actionsCount, plansCount }),
+    ]).join(' ')}. L'impact GES et la mobilisation sont des estimations.`,
 
   selectionnerUnLevier:
     'Cliquez sur un levier de la matrice pour consulter ses actions de référence.',
