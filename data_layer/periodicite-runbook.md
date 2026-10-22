@@ -294,6 +294,15 @@ avec zéro, les commentaires et la lecture seule. Les scénarios mensuels,
 trimestriels et semestriels seront exécutés avec #5215.
 Le retour à l’application précédente conserve toutes les observations annuelles.
 
+## 7. Margny — #5312
+
+Arrêter toutes les écritures, imports et tâches. Suivre la
+[procédure Margny](margny-monthly-migration.md) et contrôler les six observations
+mensuelles dans l'application avant réouverture.
+
+Le retour à `indicateur/periodicite_activation` reste possible tant que les observations
+concernées et leurs dépendances n'ont pas changé, et avant le nettoyage #5296.
+
 ## En cas d'échec
 
 Garder les écritures fermées. Corriger le déploiement ou revenir au dernier changement
@@ -316,3 +325,17 @@ annuelle. Il ne dépend pas d’une ancienne table d’audit temporaire. Le reto
 arrière de `periodicite_schema` refuse de retirer le schéma si les verrous SQL
 optionnels de #5417 ont été installés. Cette garde est inactive dans la chaîne
 retenue, qui ne déploie pas #5417. Les gardes d’activation restent dans #5215.
+
+### Vérification de la reprise de Margny — sauvegarde du 14 octobre 2026
+
+La sauvegarde contient les six images originales dans
+`private.indicateur_valeur_date_repair`. Quatre observations ne sont plus dans
+`indicateur_valeur` ; les deux conservées correspondent intégralement aux images
+annuelles archivées. La migration mensuelle reste donc nécessaire.
+
+Déploiement puis retour arrière vérifiés dans une transaction annulée sur la
+copie locale : six observations mensuelles restaurées, puis les deux images
+annuelles initiales retrouvées sans différence. Aucun contrôle ne dépend de
+l’ancienne projection des dépendances : les deux définitions doivent déjà être
+sans formule et sans identifiant référentiel. La restauration conserve l’archive
+si elle est présente dans la sauvegarde, y compris avant la conversion mensuelle.
