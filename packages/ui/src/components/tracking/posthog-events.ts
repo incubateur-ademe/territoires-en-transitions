@@ -196,6 +196,11 @@ export const Event = {
     /** Bascule vers le référentiel TE menée à son terme. */
     switchToTeSuccess: 'referentiels:switch_to_te:success',
   },
+  priorisation: {
+    matriceClicked: 'priorisation:matrice_clicked',
+    carteClicked: 'priorisation:carte_clicked',
+    classementClicked: 'priorisation:classement_clicked',
+  },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
   togglePanel: 'panneau_lateral_toggle',
