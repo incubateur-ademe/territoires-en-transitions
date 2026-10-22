@@ -20,8 +20,10 @@ import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-
 import { ListPublicDemarchesPcaetRouter } from './list-public-demarches-pcaet/list-public-demarches-pcaet.router';
 import { GetPublicDemarchePcaetRouter } from './get-public-demarche-pcaet/get-public-demarche-pcaet.router';
 import { GetPublicDiagnosticRouter } from './get-public-diagnostic/get-public-diagnostic.router';
+import { ListContactsRouter } from './list-contacts/list-contacts.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
+import { ReferentsPcaetRouter } from './referents/referents-pcaet.router';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
@@ -56,7 +58,9 @@ export class PcaetRouter {
     private readonly cloreInstructionRouter: CloreInstructionRouter,
     private readonly publierDemarchePcaetRouter: PublierDemarchePcaetRouter,
     private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
-    private readonly pcaetDocumentsRouter: PcaetDocumentsRouter
+    private readonly pcaetDocumentsRouter: PcaetDocumentsRouter,
+    private readonly listContactsRouter: ListContactsRouter,
+    private readonly referentsPcaetRouter: ReferentsPcaetRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -84,10 +88,12 @@ export class PcaetRouter {
     this.transmettrePourAvisRouter.router,
     this.cloreInstructionRouter.router,
     this.publierDemarchePcaetRouter.router,
+    this.listContactsRouter.router,
 
     this.trpc.router({
       diagnostic: this.pcaetDiagnosticRouter.router,
       documents: this.pcaetDocumentsRouter.router,
+      referents: this.referentsPcaetRouter.router,
     })
   );
 }

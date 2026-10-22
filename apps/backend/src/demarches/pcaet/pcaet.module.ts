@@ -75,6 +75,20 @@ import { GetDossierDocumentUrlService } from './get-dossier-document-url/get-dos
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { GetDossierInstructionService } from './get-dossier-instruction/get-dossier-instruction.service';
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
+import { ListContactsRouter } from './list-contacts/list-contacts.router';
+import { ListContactsService } from './list-contacts/list-contacts.service';
+import { AddReferentRouter } from './referents/add-referent/add-referent.router';
+import { AddReferentService } from './referents/add-referent/add-referent.service';
+import { GetReferentsAccessRouter } from './referents/get-referents-access/get-referents-access.router';
+import { ListReferentsOrganismesRouter } from './referents/list-referents-organismes/list-referents-organismes.router';
+import { ListReferentsOrganismesService } from './referents/list-referents-organismes/list-referents-organismes.service';
+import { ListReferentsRegionsRouter } from './referents/list-referents-regions/list-referents-regions.router';
+import { ListReferentsRegionsService } from './referents/list-referents-regions/list-referents-regions.service';
+import { ReferentsPcaetPermissionsService } from './referents/referents-pcaet-permissions.service';
+import { ReferentsPcaetRouter } from './referents/referents-pcaet.router';
+import { ReferentsPcaetRepository } from './referents/referents-pcaet.repository';
+import { RemoveReferentRouter } from './referents/remove-referent/remove-referent.router';
+import { RemoveReferentService } from './referents/remove-referent/remove-referent.service';
 import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
 import { ListDossiersInstructionRepository } from './list-dossiers-instruction/list-dossiers-instruction.repository';
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
@@ -261,6 +275,20 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     SetDemarchePcaetDocumentCouvertureService,
     SetDemarchePcaetDocumentCouvertureRouter,
     PcaetDocumentsRouter,
+    ListContactsService,
+    ListContactsRouter,
+    ReferentsPcaetRepository,
+    ReferentsPcaetPermissionsService,
+    GetReferentsAccessRouter,
+    ListReferentsRegionsService,
+    ListReferentsRegionsRouter,
+    ListReferentsOrganismesService,
+    ListReferentsOrganismesRouter,
+    AddReferentService,
+    AddReferentRouter,
+    RemoveReferentService,
+    RemoveReferentRouter,
+    ReferentsPcaetRouter,
     PcaetRouter,
   ],
   exports: [PcaetRouter],

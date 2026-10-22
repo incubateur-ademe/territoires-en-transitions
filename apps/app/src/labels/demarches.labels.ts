@@ -233,13 +233,40 @@ export const demarchesLabels = {
   demarcheContactsTitre: 'Contacts',
   demarcheContactsDescription:
     'Interlocuteurs désignés pour le suivi de votre démarche.',
-  demarcheMenuTitre: 'Actions',
-  demarcheContactDreal: 'Contacts DREAL',
-  demarcheContactCr: 'Contacts Conseil régional',
+  demarcheContactsAucunReferent: 'Aucun référent renseigné pour le moment.',
+  demarcheContactsAucunOrganisme:
+    'Aucun service de l’État ni conseil régional ne couvre encore votre territoire.',
   demarcheContactDrealSituation:
     'Dépôt réglementaire, vérification de conformité et suivi administratif de votre PCAET.',
   demarcheContactCrSituation:
     'Avis du conseil régional et questions liées à la politique climat-air-énergie régionale.',
+  demarcheContactDdtSituation:
+    'Accompagnement de proximité et lien avec les services de l’État dans le département.',
+  referentsPcaetTitre: 'Référents PCAET',
+  referentsPcaetMenuConfiguration: 'Configuration',
+  referentsPcaetDescription:
+    'Désignez, pour chaque DREAL, conseil régional et DDT, les interlocuteurs que verront les collectivités qui déposent leur PCAET.',
+  referentsPcaetChoisirRegion: 'Choisir une région',
+  referentsPcaetChoisirRegionAide:
+    'Choisissez une région pour afficher sa DREAL, son conseil régional et ses DDT.',
+  referentsPcaetSectionDreal: 'DREAL',
+  referentsPcaetSectionRegion: 'Conseil régional',
+  referentsPcaetSectionDdt: 'DDT',
+  referentsPcaetAjouterMembre: 'Ajouter un membre',
+  referentsPcaetAucunMembre: 'Aucun membre à ajouter',
+  referentsPcaetAjouterContact: 'Ajouter un contact hors plateforme',
+  referentsPcaetContactLibelle: 'Libellé',
+  referentsPcaetContactEmail: 'Adresse e-mail',
+  referentsPcaetAjoutSucces: 'Référent ajouté',
+  referentsPcaetRetraitSucces: 'Référent retiré',
+  referentsPcaetRetirerTitre: 'Retirer le référent',
+  referentsPcaetRetirerDescription: ({
+    nom,
+    organisme,
+  }: {
+    nom: string;
+    organisme: string;
+  }) => `Retirer ${nom} des référents PCAET de ${organisme} ?`,
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
   demarcheAvanceSectionDocumentsDescription:

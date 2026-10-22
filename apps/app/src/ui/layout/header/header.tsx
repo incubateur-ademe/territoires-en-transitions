@@ -1,6 +1,7 @@
 import { usePathname } from 'next/navigation';
 
 import { homePath, makeDemandesAvisUrl } from '@/app/app/paths';
+import { useReferentsAccess } from '@/app/demarches/pcaet/referents/data/use-referents-access';
 import { useCanReadDemarchesPcaet } from '@/app/demarches/pcaet/use-is-enabled';
 import { useIsPriorisationEnabled } from '@/app/collectivites/priorisation-leviers/use-is-priorisation-enabled';
 import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
@@ -8,6 +9,7 @@ import { makeUserTdbUrl } from '@/app/tableaux-de-bord/make-user-tdb-url';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
+  collectiviteTypeEnum,
   isServiceDeconcentre,
   REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
 } from '@tet/domain/collectivites';
@@ -28,6 +30,13 @@ export const Header = () => {
   const referentielTeEnabled = useReferentielTeEnabled();
   const isDemarchePcaetEnabled = useCanReadDemarchesPcaet();
   const isPriorisationEnabled = useIsPriorisationEnabled();
+  // Seule la DGEC y a accès, et elle est un service national : inutile
+  // d'interroger le serveur pour toute autre collectivité.
+  const referentsAccess = useReferentsAccess({
+    collectiviteId: collectivite?.collectiviteId ?? 0,
+    enabled:
+      collectivite?.collectiviteType === collectiviteTypeEnum.SERVICE_NATIONAL,
+  });
 
   const rootUrl = collectivite
     ? isServiceDeconcentre(collectivite.collectiviteType)
@@ -50,6 +59,7 @@ export const Header = () => {
           : undefined,
         isDemarchePcaetEnabled,
         isPriorisationEnabled,
+        canReadReferentsPcaet: referentsAccess.canRead,
       })}
       secondaryNav={makeSecondaryNav({
         user,
