@@ -309,7 +309,10 @@ qui couvre sa collectivité (DREAL, région, DDT, DR ADEME, services nationaux),
 comme l'aurait fait sa transmission dans TeT : même règle de couverture
 (`listInstructeursCouvrants` du backend), `source = 'transmission'`, périmètre
 principal ou secondaire. Chaque saisine est datée du jour de la transmission
-pour avis du dossier. Un dossier en élaboration n'est jamais saisi. Aucun avis
+pour avis du dossier. Un dossier transmis hors plateforme est saisi comme le
+produit le fait (`source = 'depot_hors_plateforme'`), même sans date de
+transmission : la saisine est alors datée de la création du dossier. Un dossier
+en élaboration n'est jamais saisi. Aucun avis
 n'est écrit : ils viendront avec leur fichier.
 
 ```bash
