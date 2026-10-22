@@ -102,3 +102,51 @@ describe('navigation d’une collectivité consultée en instruction', () => {
     );
   });
 });
+
+describe('navigation de la DGEC', () => {
+  const DGEC_ID = 30;
+  const agentDgec: UserWithRolesAndPermissions = {
+    ...agentDreal,
+    id: 'agent-dgec',
+    collectivites: [
+      acces(DGEC_ID, {
+        collectiviteType: collectiviteTypeEnum.SERVICE_NATIONAL,
+      }),
+    ],
+  };
+
+  const makeDgecNav = (canReadReferentsPcaet: boolean) =>
+    makeMainNav({
+      user: agentDgec,
+      currentCollectivite: toCollectiviteCurrent(
+        {
+          ...acces(DGEC_ID, {
+            collectiviteType: collectiviteTypeEnum.SERVICE_NATIONAL,
+          }),
+          contexteInstruction: null,
+        },
+        agentDgec
+      ),
+      isDemarchePcaetEnabled: true,
+      isPriorisationEnabled: true,
+      canReadReferentsPcaet,
+    });
+
+  test('ouvre la configuration des référents PCAET à côté du sélecteur', () => {
+    const endItems = makeDgecNav(true)?.endItems ?? [];
+    const configuration = endItems[0];
+
+    expect(libelles(endItems)[0]).toBe(
+      appLabels.referentsPcaetMenuConfiguration
+    );
+    expect(
+      isNavDropdown(configuration) && configuration.links.map((l) => l.children)
+    ).toEqual([appLabels.referentsPcaetTitre]);
+  });
+
+  test('ne montre pas la configuration sans accès', () => {
+    expect(libelles(makeDgecNav(false)?.endItems)).not.toContain(
+      appLabels.referentsPcaetMenuConfiguration
+    );
+  });
+});

@@ -9,6 +9,8 @@ export type MakeMainNavArgs = {
   referentielDisplay?: ReferentielDisplayMap;
   isDemarchePcaetEnabled: boolean;
   isPriorisationEnabled: boolean;
+  /** Membre de la DGEC : ouvre la configuration des référents PCAET. */
+  canReadReferentsPcaet?: boolean;
 };
 
 export type MakeMainNav = (args: MakeMainNavArgs) => HeaderProps['mainNav'];

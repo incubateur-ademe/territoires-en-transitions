@@ -13,6 +13,7 @@ export const makeMainNav: MakeMainNav = ({
   referentielDisplay,
   isDemarchePcaetEnabled,
   isPriorisationEnabled,
+  canReadReferentsPcaet = false,
 }) => {
   const hasToCompleteRegistration =
     !hasRole(user, PlatformRole.VERIFIED) && user.collectivites.length === 0;
@@ -30,7 +31,11 @@ export const makeMainNav: MakeMainNav = ({
 
   if (currentCollectivite) {
     if (isServiceDeconcentre(currentCollectivite.collectiviteType)) {
-      return makeServiceDeconcentreNav({ user, currentCollectivite });
+      return makeServiceDeconcentreNav({
+        user,
+        currentCollectivite,
+        canReadReferentsPcaet,
+      });
     }
 
     if (currentCollectivite.isSimplifiedView) {

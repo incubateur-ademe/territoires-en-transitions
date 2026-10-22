@@ -171,6 +171,18 @@ export const makeDemandesAvisUrl = ({
 }) =>
   demandesAvisPath.replace(`:${collectiviteParam}`, collectiviteId.toString());
 
+const referentsPcaetPath = `${collectivitePath}/referents-pcaet`;
+
+export const makeReferentsPcaetUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  referentsPcaetPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
 const demandeAvisParam = 'demandeAvisId';
 
 /**

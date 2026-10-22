@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { JSX, ReactNode } from 'react';
-import { DemarcheMenuButton } from '../demarche-menu.button';
+import { PcaetContactsButton } from '../contacts.button';
 import { DateLancementField } from './date-lancement-field';
 import { DateModificationItem } from './date-modification-item';
 import { DepotDateItem } from './depot-date-item';
@@ -65,7 +65,7 @@ export const DemarchePcaetHeader = ({
         <PageHeader.Title>{demarche.titre}</PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-row items-center gap-2">
-            <DemarcheMenuButton />
+            <PcaetContactsButton collectiviteId={demarche.collectiviteId} />
             {sidePanelAction}
           </div>
         </PageHeader.Actions>
