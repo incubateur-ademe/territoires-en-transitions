@@ -3,12 +3,16 @@ import type { ActionDeReference } from '@tet/domain/shared';
 
 export class ActionDeReferenceDetailPom {
   readonly saveButton: Locator;
+  readonly savedButton: Locator;
   readonly linkedFichesList: Locator;
   readonly noLinkedFichesMessage: Locator;
 
   constructor(readonly page: Page) {
     this.saveButton = page.getByRole('button', {
       name: 'Sauvegarder',
+    });
+    this.savedButton = page.getByRole('button', {
+      name: 'Sauvegardé',
     });
     this.linkedFichesList = page
       .getByRole('heading', { name: 'Mises en œuvre' })
