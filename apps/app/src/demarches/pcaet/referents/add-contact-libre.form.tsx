@@ -37,9 +37,15 @@ export const AddContactLibreForm = ({
     mode: 'onChange',
   });
 
-  const onSubmit = async (contact: ContactLibre) => {
-    await addReferent({ collectiviteId, organismeId, ...contact });
-    onDone();
+  // L'échec est déjà signalé par le toast global : le formulaire reste ouvert.
+  const onSubmit = async (contact: ContactLibre): Promise<boolean> => {
+    try {
+      await addReferent({ collectiviteId, organismeId, ...contact });
+      onDone();
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   return (

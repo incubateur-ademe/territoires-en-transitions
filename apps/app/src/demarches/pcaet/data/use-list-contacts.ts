@@ -11,9 +11,9 @@ export const useListContacts = ({
 }) => {
   const trpc = useTRPC();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     trpc.demarches.pcaet.listContacts.queryOptions({ collectiviteId })
   );
 
-  return { organismes: data ?? [], isLoading };
+  return { organismes: data ?? [], isLoading, isError };
 };

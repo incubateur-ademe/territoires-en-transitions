@@ -234,6 +234,8 @@ export const demarchesLabels = {
   demarcheContactsDescription:
     'Interlocuteurs désignés pour le suivi de votre démarche.',
   demarcheContactsAucunReferent: 'Aucun référent renseigné pour le moment.',
+  demarcheContactsErreur:
+    'Les contacts n’ont pas pu être chargés. Réessayez dans quelques instants.',
   demarcheContactsAucunOrganisme:
     'Aucun service de l’État ni conseil régional ne couvre encore votre territoire.',
   demarcheContactDrealSituation:

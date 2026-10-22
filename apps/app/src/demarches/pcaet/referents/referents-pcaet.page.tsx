@@ -31,11 +31,15 @@ export const ReferentsPcaetPage = ({
   collectiviteId: number;
 }): JSX.Element => {
   const access = useReferentsAccess({ collectiviteId });
-  const { regions } = useListReferentsRegions({ collectiviteId });
+  const { regions } = useListReferentsRegions({
+    collectiviteId,
+    enabled: access.canRead,
+  });
   const [regionCode, setRegionCode] = useQueryState('region', parseAsString);
   const { organismes, isLoading } = useListReferentsOrganismes({
     collectiviteId,
     regionCode,
+    enabled: access.canRead,
   });
 
   if (access.isLoading) {

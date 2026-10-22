@@ -9,16 +9,18 @@ export type OrganismeAvecReferents =
 export const useListReferentsOrganismes = ({
   collectiviteId,
   regionCode,
+  enabled = true,
 }: {
   collectiviteId: number;
   regionCode: string | null;
+  enabled?: boolean;
 }) => {
   const trpc = useTRPC();
 
   const { data, isLoading } = useQuery(
     trpc.demarches.pcaet.referents.listOrganismes.queryOptions(
       { collectiviteId, regionCode: regionCode ?? '' },
-      { enabled: !!regionCode }
+      { enabled: enabled && !!regionCode }
     )
   );
 

@@ -26,7 +26,9 @@ type Props = {
 };
 
 export const PcaetContactsTable = ({ collectiviteId }: Props): JSX.Element => {
-  const { organismes, isLoading } = useListContacts({ collectiviteId });
+  const { organismes, isLoading, isError } = useListContacts({
+    collectiviteId,
+  });
 
   return (
     <div className="overflow-hidden rounded-xl border border-grey-3">
@@ -35,7 +37,14 @@ export const PcaetContactsTable = ({ collectiviteId }: Props): JSX.Element => {
           {isLoading && (
             <TableLoading columnIds={['contact', 'situation']} nbOfRows={3} />
           )}
-          {!isLoading && organismes.length === 0 && (
+          {isError && (
+            <TableRow>
+              <TableCell colSpan={2} className="text-error-1">
+                {appLabels.demarcheContactsErreur}
+              </TableCell>
+            </TableRow>
+          )}
+          {!isLoading && !isError && organismes.length === 0 && (
             <TableRow>
               <TableCell colSpan={2} className="text-grey-7">
                 {appLabels.demarcheContactsAucunOrganisme}

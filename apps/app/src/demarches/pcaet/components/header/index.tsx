@@ -65,7 +65,9 @@ export const DemarchePcaetHeader = ({
         <PageHeader.Title>{demarche.titre}</PageHeader.Title>
         <PageHeader.Actions>
           <div className="flex flex-row items-center gap-2">
-            <PcaetContactsButton collectiviteId={demarche.collectiviteId} />
+            {hasCollectivitePermission('collectivites.read_confidentiel') && (
+              <PcaetContactsButton collectiviteId={demarche.collectiviteId} />
+            )}
             {sidePanelAction}
           </div>
         </PageHeader.Actions>
