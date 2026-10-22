@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { RenderActionTextsService } from '@tet/backend/referentiels/action-definitions/render-action-texts.service';
 import { matchesActionOrDescendant } from '@tet/backend/referentiels/action-or-descendant.utils';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
@@ -34,7 +35,8 @@ import { QueryOptionsType } from './discussion.query-options';
 export class DiscussionQueryService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly logger: Logger
+    private readonly logger: Logger,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   async findByDiscussionIds(
@@ -142,7 +144,14 @@ export class DiscussionQueryService {
       }
     }
 
-    const discussions = await query;
+    const discussions = await this.renderActionTextsService.applyNomOverrides(
+      collectiviteId,
+      await query,
+      {
+        getActionId: (discussion) => discussion.actionId,
+        setNom: (discussion, actionNom) => ({ ...discussion, actionNom }),
+      }
+    );
 
     return {
       success: true,

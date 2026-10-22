@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { RenderActionTextsService } from '@tet/backend/referentiels/action-definitions/render-action-texts.service';
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -31,7 +32,8 @@ export class ListHistoriqueService {
     private readonly listHistoriqueRepository: ListHistoriqueRepository,
     private readonly permissions: PermissionService,
     private readonly collectivites: CollectivitesService,
-    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   /**
@@ -120,8 +122,11 @@ export class ListHistoriqueService {
     const { rows, total } = await this.listHistoriqueRepository.listHistorique(
       input
     );
-    const hierarchies = await this.getHierarchies();
-    const items: ListHistoriqueOutput['items'] = rows
+    const [hierarchies, rowsWithNoms] = await Promise.all([
+      this.getHierarchies(),
+      this.applyNomOverrides(collectiviteId, rows),
+    ]);
+    const items: ListHistoriqueOutput['items'] = rowsWithNoms
       .map((row) => this.mapRowToItem(row, hierarchies))
       .filter((item): item is NonNullable<typeof item> => item !== null);
 
@@ -141,6 +146,45 @@ export class ListHistoriqueService {
    * violée (drift de schéma, vue cassée), on journalise et on filtre la
    * ligne plutôt que de propager un crash.
    */
+  /**
+   * Noms rendus pour le profil de la collectivité : `tacheNom` est celui de
+   * l'action de la ligne, `actionNom` celui de son action parente.
+   */
+  private async applyNomOverrides(
+    collectiviteId: number,
+    rows: HistoriqueUnionRow[]
+  ): Promise<HistoriqueUnionRow[]> {
+    const overrides = await this.renderActionTextsService.getTextOverrides(
+      collectiviteId
+    );
+    if (overrides.size === 0) {
+      return rows;
+    }
+    return rows.map((row) => {
+      if (!row.actionId) {
+        return row;
+      }
+      const parentActionId = row.actionIdentifiant
+        ? `${getReferentielIdFromActionId(row.actionId)}_${
+            row.actionIdentifiant
+          }`
+        : null;
+      const actionNom = parentActionId
+        ? overrides.get(parentActionId)?.nom
+        : undefined;
+      const tacheNom = overrides.get(row.actionId)?.nom;
+      return {
+        ...row,
+        ...(actionNom !== undefined && row.actionNom !== null
+          ? { actionNom }
+          : {}),
+        ...(tacheNom !== undefined && row.tacheNom !== null
+          ? { tacheNom }
+          : {}),
+      };
+    });
+  }
+
   private mapRowToItem(
     row: HistoriqueUnionRow,
     hierarchies: HierarchiesByReferentielId

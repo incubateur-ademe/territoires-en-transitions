@@ -9,12 +9,14 @@ import {
   ActionStaticDefinition,
   ActionThematique,
   ActionType,
+  applyActionTextOverrides,
   ListActionDefinitionsOutput,
   ReferentielLabel,
   ReferentielLabelEnum,
   ReferentielTagTypeEnum,
 } from '@tet/domain/referentiels';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { RenderActionTextsService } from '../action-definitions/render-action-texts.service';
 import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
 import { actionDefinitionColumns } from '../models/action-definition-columns.column';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
@@ -30,15 +32,52 @@ import { ListActionDefinitionsInput } from './list-action-definitions.input';
  */
 @Injectable()
 export class ListActionDefinitionsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly renderActionTextsService: RenderActionTextsService
+  ) {}
 
   private db = this.databaseService.db;
 
+  /**
+   * Sans `collectiviteId` : textes par défaut, identiques pour toutes les
+   * collectivités (procédure tRPC publique). Avec : textes rendus pour le
+   * profil de la collectivité, pour les appelants du backend qui la
+   * connaissent (export, etc.). L'input tRPC ne contient pas cette option.
+   */
   async listActionDefinitions({
     referentielId,
-  }: ListActionDefinitionsInput): Promise<
+    collectiviteId,
+  }: ListActionDefinitionsInput & { collectiviteId?: number }): Promise<
     Result<ListActionDefinitionsOutput, CommonError>
   > {
+    const result = await this.listDefaultActionDefinitions(referentielId);
+    if (!result.success || collectiviteId === undefined) {
+      return result;
+    }
+    const textOverrides = await this.renderActionTextsService.getTextOverrides(
+      collectiviteId,
+      { referentielId }
+    );
+    if (textOverrides.size === 0) {
+      return result;
+    }
+    return success({
+      ...result.data,
+      definitionsById: Object.fromEntries(
+        Object.entries(result.data.definitionsById).map(
+          ([actionId, definition]) => [
+            actionId,
+            applyActionTextOverrides(definition, textOverrides.get(actionId)),
+          ]
+        )
+      ),
+    });
+  }
+
+  private async listDefaultActionDefinitions(
+    referentielId: ListActionDefinitionsInput['referentielId']
+  ): Promise<Result<ListActionDefinitionsOutput, CommonError>> {
     // Les deux lectures partagent le même instantané : la version renvoyée
     // correspond toujours aux définitions, même si une nouvelle version est
     // publiée entre les deux requêtes.

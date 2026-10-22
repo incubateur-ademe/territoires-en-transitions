@@ -208,9 +208,11 @@ export class LoadScoreComparisonService {
       : null;
     // un seul chargement des définitions du référentiel exporté, consommé à la
     // fois pour les colonnes du tableau et pour les mesures affectées des
-    // questions de personnalisation
+    // questions de personnalisation ; textes rendus pour le profil de la
+    // collectivité
     const actionsIndexResult = await this.getReferentielActionsIndex(
-      referentielId
+      referentielId,
+      collectiviteId
     );
     if (!actionsIndexResult.success) {
       return actionsIndexResult;
@@ -331,7 +333,8 @@ export class LoadScoreComparisonService {
    * - `actionTags` : volets, tag coremeasure et thématiques, par `actionId`.
    */
   private async getReferentielActionsIndex(
-    referentielId: ReferentielId
+    referentielId: ReferentielId,
+    collectiviteId: number
   ): Promise<
     Result<
       {
@@ -347,6 +350,7 @@ export class LoadScoreComparisonService {
     const [definitionsResult, hierarchies] = await Promise.all([
       this.listActionDefinitionsService.listActionDefinitions({
         referentielId,
+        collectiviteId,
       }),
       this.getReferentielDefinitionService.getHierarchiesByReferentielIds([
         referentielId,

@@ -1,4 +1,3 @@
-import { round } from 'es-toolkit';
 import { Test } from '@nestjs/testing';
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
@@ -15,6 +14,7 @@ import {
   ActionTypeEnum,
   ScoreFields,
 } from '@tet/domain/referentiels';
+import { round } from 'es-toolkit';
 import { CollectiviteReferentielModeService } from '../../collectivites/collectivite-referentiel-mode/collectivite-referentiel-mode.service';
 import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationReponsesRepository } from '../../collectivites/personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
@@ -30,6 +30,7 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { RenderActionTextsService } from '../action-definitions/render-action-texts.service';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
@@ -98,6 +99,15 @@ describe('ReferentielsScoringService', () => {
           token === CollectiviteReferentielModeService
         ) {
           return {};
+        }
+        if (token === RenderActionTextsService) {
+          return {
+            applyNomOverridesToTree: async (
+              _collectivite: unknown,
+              tree: unknown
+            ) => tree,
+            getTextOverrides: async () => new Map(),
+          };
         }
       })
       .compile();

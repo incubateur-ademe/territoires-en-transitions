@@ -21,9 +21,13 @@ export class ListActionDefinitionsRouter {
       .input(listActionDefinitionsInputSchema)
       // les champs non déclarés dans le schéma ne sont pas exposés
       .output(listActionDefinitionsOutputSchema)
-      .query(async ({ input }) => {
+      .query(async ({ input: { referentielId } }) => {
+        // jamais de `collectiviteId` ici : textes par défaut, identiques pour
+        // tous (les textes d'un profil passent par `listActionTextOverrides`)
         return this.getResultDataOrThrowError(
-          await this.listActionDefinitionsService.listActionDefinitions(input)
+          await this.listActionDefinitionsService.listActionDefinitions({
+            referentielId,
+          })
         );
       }),
   });

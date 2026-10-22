@@ -34,6 +34,7 @@ import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/mod
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { actionImpactActionTable } from '@tet/backend/plans/fiches/shared/models/action-impact-action.table';
+import { RenderActionTextsService } from '@tet/backend/referentiels/action-definitions/render-action-texts.service';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
 import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mise-en-oeuvre.table';
@@ -145,7 +146,8 @@ export default class ListFichesService {
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly listFichesBudgetRepository: ListFichesBudgetRepository
+    private readonly listFichesBudgetRepository: ListFichesBudgetRepository,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   private getFicheActionSousThematiquesQuery(
@@ -1264,12 +1266,28 @@ export default class ListFichesService {
       data as unknown as FicheWithoutCompletion[]
     );
 
+    // nom des mesures liées rendu pour le profil de la collectivité de la fiche
+    const textOverridesByCollectivite =
+      await this.renderActionTextsService.getTextOverridesByCollectivite(
+        data.map((fiche) => fiche.collectiviteId)
+      );
+
     const fichesWithCompletion = data.map((fiche) => {
       const completion = completionData.find((c) => c.ficheId === fiche.id);
       if (!completion) {
         throw new Error(`Completion data not found for action ${fiche.id}`);
       }
-      return { ...fiche, completion };
+      const textOverrides = textOverridesByCollectivite.get(
+        fiche.collectiviteId
+      );
+      const mesures =
+        textOverrides?.size && fiche.mesures
+          ? fiche.mesures.map((mesure) => ({
+              ...mesure,
+              nom: textOverrides.get(mesure.id)?.nom ?? mesure.nom,
+            }))
+          : fiche.mesures;
+      return { ...fiche, mesures, completion };
     });
 
     return { data: fichesWithCompletion, count };

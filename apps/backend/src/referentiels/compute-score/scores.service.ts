@@ -43,6 +43,7 @@ import {
   AuthenticatedUser,
   AuthUser as InternalAuthUser,
 } from '../../users/models/auth.models';
+import { RenderActionTextsService } from '../action-definitions/render-action-texts.service';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
@@ -87,7 +88,8 @@ export default class ScoresService {
     private readonly documentService: DocumentService,
     private readonly scoreIndicatifService: ScoreIndicatifService,
     private readonly listActionStatutsRepository: ListActionStatutsRepository,
-    private readonly listActionExplicationsRepository: ListActionExplicationsRepository
+    private readonly listActionExplicationsRepository: ListActionExplicationsRepository,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   private async checkCollectiviteAndReferentielWithAccess(
@@ -1200,6 +1202,13 @@ export default class ScoresService {
         );
       }
       this.ajouteScoresIndicatifs(scoresIndicatifs, scoresPayload.scores);
+      // l'arbre est chargé une fois pour plusieurs collectivités : le nom
+      // propre au profil de la collectivité n'est appliqué qu'ici
+      scoresPayload.scores =
+        await this.renderActionTextsService.applyNomOverridesToTree(
+          collectiviteInfo ?? collectiviteId,
+          scoresPayload.scores
+        );
 
       return {
         scoresPayload,
@@ -1229,7 +1238,10 @@ export default class ScoresService {
         collectiviteInfo,
         date: parameters.date || new Date().toISOString(),
         payloadVersion: SCORES_PAYLOAD_CURRENT_VERSION,
-        scores: scores,
+        scores: await this.renderActionTextsService.applyNomOverridesToTree(
+          collectiviteInfo ?? collectiviteId,
+          scores
+        ),
       };
 
       return {

@@ -39,6 +39,7 @@ import { MutateTagRouter } from '@tet/backend/collectivites/tags/mutate-tag/muta
 import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
+import { ActionDefinitionsModule } from '@tet/backend/referentiels/action-definitions/action-definitions.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { CollectiviteController } from './collectivite.controller';
@@ -82,6 +83,7 @@ import { SiteRouter } from './site/site.router';
 
 @Module({
   imports: [
+    ActionDefinitionsModule,
     AnalysisModule,
     CollectivitesCoreModule,
     PersonnalisationsModule,

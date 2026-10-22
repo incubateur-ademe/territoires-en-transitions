@@ -272,7 +272,10 @@ export class GeneratePreuvesArchiveService {
       );
     }
 
-    const treeResult = await this.fetchReferentielTree(context.referentielId);
+    const treeResult = await this.fetchReferentielTree(
+      context.referentielId,
+      archive.collectiviteId
+    );
     if (!treeResult.success) {
       return treeResult;
     }
@@ -292,11 +295,13 @@ export class GeneratePreuvesArchiveService {
   }
 
   private async fetchReferentielTree(
-    referentielId: ReferentielId
+    referentielId: ReferentielId,
+    collectiviteId: number
   ): Promise<Result<ReferentielTreeNode, GenerateArchiveFailure>> {
     try {
       const tree = await this.getReferentielService.getReferentielTree(
-        referentielId
+        referentielId,
+        { collectiviteId }
       );
       return success(tree.itemsTree);
     } catch (error) {

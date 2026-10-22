@@ -4,6 +4,7 @@ import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
 } from '@tet/backend/collectivites/discussions/presentation/discussion.schemas';
+import { RenderActionTextsService } from '@tet/backend/referentiels/action-definitions/render-action-texts.service';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -25,7 +26,10 @@ import { discussionMessageTable, discussionTable } from './discussion.table';
 export class DiscussionRepositoryImpl implements DiscussionRepository {
   private readonly logger = new Logger(DiscussionRepositoryImpl.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly renderActionTextsService: RenderActionTextsService
+  ) {}
 
   async findByCollectiviteIdAndReferentielId(
     collectiviteId: number,
@@ -48,7 +52,17 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
           like(discussionTable.actionId, `${referentielId}%`)
         )
       );
-    return { success: true, data: discussions };
+    return {
+      success: true,
+      data: await this.renderActionTextsService.applyNomOverrides(
+        collectiviteId,
+        discussions,
+        {
+          getActionId: (discussion) => discussion.actionId,
+          setNom: (discussion, actionNom) => ({ ...discussion, actionNom }),
+        }
+      ),
+    };
   }
 
   create: (

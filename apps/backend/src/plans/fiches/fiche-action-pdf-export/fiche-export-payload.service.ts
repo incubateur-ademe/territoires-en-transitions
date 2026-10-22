@@ -6,6 +6,7 @@ import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-actio
 import { FicheAnnexesService } from '@tet/backend/plans/fiches/fiche-annexes/fiche-annexes.service';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ActionDefinitionsRepository } from '@tet/backend/referentiels/action-definitions/action-definitions.repository';
+import { RenderActionTextsService } from '@tet/backend/referentiels/action-definitions/render-action-texts.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isIndicateurPerso } from '@tet/domain/indicateurs';
@@ -31,7 +32,8 @@ export class FicheExportPayloadService {
     private readonly actionDefinitionsRepository: ActionDefinitionsRepository,
     private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository,
     private readonly fichePermissions: FicheActionPermissionsService,
-    private readonly ficheAnnexesService: FicheAnnexesService
+    private readonly ficheAnnexesService: FicheAnnexesService,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   async buildFicheExportPayload({
@@ -173,7 +175,15 @@ export class FicheExportPayloadService {
     const actions = await this.actionDefinitionsRepository.listByActionIds(
       actionIds
     );
-    return actions;
+    // nom rendu pour le profil de la collectivité de la fiche
+    return this.renderActionTextsService.applyNomOverrides(
+      fiche.collectiviteId,
+      actions,
+      {
+        getActionId: (action) => action.actionId,
+        setNom: (action, nom) => ({ ...action, nom }),
+      }
+    );
   }
 
   private async loadAnnexes({

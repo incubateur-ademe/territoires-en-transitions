@@ -34,7 +34,11 @@ export const actionTextOverridesSchema = z.partial(
 
 export type ActionTextOverrides = z.infer<typeof actionTextOverridesSchema>;
 
-/** Applique les surcharges de texte d'une action à sa définition. */
+/**
+ * Applique les surcharges de texte d'une action à sa définition. Seuls les
+ * champs présents dans la définition sont remplacés : une sélection partielle
+ * (le seul `nom`, par exemple) ne reçoit pas les autres textes.
+ */
 export function applyActionTextOverrides<T extends Partial<ActionDefinition>>(
   definition: T,
   overrides: ActionTextOverrides | undefined
@@ -44,7 +48,7 @@ export function applyActionTextOverrides<T extends Partial<ActionDefinition>>(
   }
   const result = { ...definition };
   for (const field of TEMPLATED_ACTION_FIELDS) {
-    if (Object.hasOwn(overrides, field)) {
+    if (Object.hasOwn(overrides, field) && Object.hasOwn(definition, field)) {
       (result as Partial<ActionDefinition>)[field] = overrides[field] as never;
     }
   }

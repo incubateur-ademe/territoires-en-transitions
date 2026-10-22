@@ -25,6 +25,15 @@ describe('applyActionTextOverrides', () => {
     expect(definition.nom).toBe('Nom');
   });
 
+  test('n’ajoute pas un champ absent de la définition', () => {
+    expect(
+      applyActionTextOverrides(
+        { actionId: 'te_1', nom: 'Nom' },
+        { nom: 'Nom DOM', description: 'Description DOM' }
+      )
+    ).toEqual({ actionId: 'te_1', nom: 'Nom DOM' });
+  });
+
   test('ignore les champs qui ne sont pas des textes balisables', () => {
     expect(
       applyActionTextOverrides(definition, {

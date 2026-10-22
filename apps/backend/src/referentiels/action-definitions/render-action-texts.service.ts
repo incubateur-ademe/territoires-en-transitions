@@ -11,6 +11,7 @@ import {
   ReferentielId,
   TEMPLATED_ACTION_FIELDS,
 } from '@tet/domain/referentiels';
+import { IdentiteCollectivite } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, isNotNull } from 'drizzle-orm';
 import { renderActionTextTemplateForVariant } from './action-text-template-condition.visitor';
@@ -23,6 +24,12 @@ import {
 } from './action-text-variant.rules';
 
 export type ActionTextOverridesById = Record<ActionId, ActionTextOverrides>;
+
+type ActionTreeNodeWithNom<T> = {
+  actionId: ActionId;
+  nom?: string | null;
+  actionsEnfant: T[];
+};
 
 export type TextOverridesForVariant = {
   referentielVersion: string;
@@ -51,11 +58,18 @@ export class RenderActionTextsService {
     private readonly collectivitesService: CollectivitesService
   ) {}
 
-  /** Clé de variante d'une collectivité, `null` pour le profil de référence. */
-  async getTextVariantKey(collectiviteId: number): Promise<string | null> {
-    const collectivite =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    return buildTextVariantKey(collectivite);
+  /**
+   * Clé de variante d'une collectivité, `null` pour le profil de référence.
+   * Accepte l'identité déjà chargée, pour éviter de la relire.
+   */
+  async getTextVariantKey(
+    collectivite: number | IdentiteCollectivite
+  ): Promise<string | null> {
+    const identite =
+      typeof collectivite === 'number'
+        ? await this.collectivitesService.getCollectiviteAvecType(collectivite)
+        : collectivite;
+    return buildTextVariantKey(identite);
   }
 
   /**
@@ -92,13 +106,13 @@ export class RenderActionTextsService {
    * base.
    */
   async getTextOverrides(
-    collectiviteId: number,
+    collectivite: number | IdentiteCollectivite,
     {
       referentielId,
       tx,
     }: { referentielId?: ReferentielId; tx?: Transaction } = {}
   ): Promise<Map<ActionId, ActionTextOverrides>> {
-    const textVariantKey = await this.getTextVariantKey(collectiviteId);
+    const textVariantKey = await this.getTextVariantKey(collectivite);
     const overrides = new Map<ActionId, ActionTextOverrides>();
     if (textVariantKey === null) {
       return overrides;
@@ -120,6 +134,23 @@ export class RenderActionTextsService {
       }
     }
     return overrides;
+  }
+
+  /**
+   * Surcharges pour plusieurs collectivités, chargées une fois par
+   * collectivité (et une fois par profil en base, grâce au cache).
+   */
+  async getTextOverridesByCollectivite(
+    collectiviteIds: Iterable<number>
+  ): Promise<Map<number, Map<ActionId, ActionTextOverrides>>> {
+    const ids = [...new Set(collectiviteIds)];
+    const entries = await Promise.all(
+      ids.map(
+        async (collectiviteId) =>
+          [collectiviteId, await this.getTextOverrides(collectiviteId)] as const
+      )
+    );
+    return new Map(entries);
   }
 
   /**
@@ -149,6 +180,30 @@ export class RenderActionTextsService {
       const nom = actionId ? overrides.get(actionId)?.nom : undefined;
       return nom === undefined ? row : setNom(row, nom);
     });
+  }
+
+  /**
+   * Remplace le nom des nœuds d'un arbre d'actions par celui rendu pour la
+   * collectivité. Renvoie une copie : l'arbre reçu peut être partagé entre
+   * collectivités.
+   */
+  async applyNomOverridesToTree<T extends ActionTreeNodeWithNom<T>>(
+    collectivite: number | IdentiteCollectivite,
+    tree: T
+  ): Promise<T> {
+    const overrides = await this.getTextOverrides(collectivite);
+    if (overrides.size === 0) {
+      return tree;
+    }
+    const walk = (node: T): T => {
+      const nom = overrides.get(node.actionId)?.nom;
+      return {
+        ...node,
+        ...(nom !== undefined ? { nom } : {}),
+        actionsEnfant: node.actionsEnfant.map(walk),
+      };
+    };
+    return walk(tree);
   }
 
   /** Réservé aux tests qui modifient `templates` sans changer de version. */

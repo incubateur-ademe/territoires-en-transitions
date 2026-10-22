@@ -8,6 +8,7 @@ import {
 import {
   ActionDefinition,
   ActionDefinitionEssential,
+  applyActionTextOverrides,
   ActionTreeNode,
   ActionType,
   ReferentielId,
@@ -15,6 +16,7 @@ import {
   ReferentielTagType,
 } from '@tet/domain/referentiels';
 import { isNil } from 'es-toolkit';
+import { RenderActionTextsService } from '../action-definitions/render-action-texts.service';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
 import { GetActionOrigineTexteDtoSchema } from '../correlated-actions/get-action-origine-texte.dto';
@@ -41,7 +43,8 @@ export class GetReferentielService {
 
   constructor(
     private readonly getReferentielRepository: GetReferentielRepository,
-    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
+    private readonly renderActionTextsService: RenderActionTextsService
   ) {}
 
   /** Donne les références des tags des types demandés */
@@ -56,6 +59,12 @@ export class GetReferentielService {
       getActionsOrigine?: boolean;
       withPreuves?: boolean;
       getActionsOrigineTexte?: boolean;
+      /**
+       * Rend les textes balisés pour le profil de cette collectivité (noms
+       * des actions et des actions d'origine). Sans collectivité : rendu
+       * par défaut.
+       */
+      collectiviteId?: number;
     }
   ): Promise<ReferentielResponse> {
     this.logger.log(`Get referentiel ${referentielId}`);
@@ -65,7 +74,19 @@ export class GetReferentielService {
         referentielId
       );
 
-    const actionDefinitions =
+    const textOverrides = options?.collectiviteId
+      ? await this.renderActionTextsService.getTextOverrides(
+          options.collectiviteId
+        )
+      : new Map();
+    const applyNomOverride = <T extends { origineActionNom?: string | null }>(
+      row: T & { origineActionId: string }
+    ): T => {
+      const nom = textOverrides.get(row.origineActionId)?.nom;
+      return nom === undefined ? row : { ...row, origineActionNom: nom };
+    };
+
+    const actionDefinitionsWithDefaultTexts =
       await this.getReferentielRepository.getActionDefinitionsWithParent(
         referentielId,
         referentielDefinition.version,
@@ -74,19 +95,29 @@ export class GetReferentielService {
           withPreuves: options?.withPreuves,
         }
       );
+    const actionDefinitions =
+      textOverrides.size === 0
+        ? actionDefinitionsWithDefaultTexts
+        : actionDefinitionsWithDefaultTexts.map((action) =>
+            applyActionTextOverrides(action, textOverrides.get(action.actionId))
+          );
 
     this.logger.log(
       `${actionDefinitions.length} actions trouvees pour le referentiel ${referentielId}`
     );
 
     const actionOrigines = options?.getActionsOrigine
-      ? await this.getReferentielRepository.getActionsOrigine(referentielId)
+      ? (
+          await this.getReferentielRepository.getActionsOrigine(referentielId)
+        ).map(applyNomOverride)
       : null;
 
     const actionOrigineTextes = options?.getActionsOrigineTexte
-      ? await this.getReferentielRepository.getActionsOrigineTexte(
-          referentielId
-        )
+      ? (
+          await this.getReferentielRepository.getActionsOrigineTexte(
+            referentielId
+          )
+        ).map(applyNomOverride)
       : null;
 
     const actionsTree = buildReferentielTree(
@@ -166,7 +197,9 @@ function attacheActionsEnfant(
     );
 
     referentiel.actionsOrigine = associatedActionOrigines.map((origine) => ({
-      referentielId: referentielIdEnumSchema.parse(origine.origineReferentielId),
+      referentielId: referentielIdEnumSchema.parse(
+        origine.origineReferentielId
+      ),
       actionId: origine.origineActionId,
       ponderation: origine.ponderation,
       nom: origine.origineActionNom || null,
