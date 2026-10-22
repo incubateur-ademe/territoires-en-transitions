@@ -1,4 +1,5 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Personne } from '@tet/domain/collectivites';
 import { IconValue, InlineEditWrapper } from '@tet/ui';
 import { ReactNode } from 'react';
@@ -11,6 +12,7 @@ export const MetadataItemPersonne = ({
   isReadOnly,
   label,
   emptyLabel,
+  compact = false,
   personnes,
   onChange,
   openState,
@@ -22,11 +24,16 @@ export const MetadataItemPersonne = ({
   isReadOnly: boolean;
   label: { one: string; many: string };
   emptyLabel?: string;
+  compact?: boolean;
   personnes: Personne[];
   onChange: (personnes: Personne[]) => void;
   openState?: { isOpen: boolean; setIsOpen: (v: boolean) => void };
   tooltip?: ReactNode;
 }) => {
+  const noms = personnes
+    .map((p) => p.userName || p.tagName || '')
+    .filter(Boolean);
+
   return (
     <InlineEditWrapper
       disabled={isReadOnly}
@@ -62,12 +69,11 @@ export const MetadataItemPersonne = ({
         label={personnes.length > 1 ? label.many : label.one}
         emptyLabel={emptyLabel}
         value={
-          personnes.length
-            ? personnes
-                .map((p) => p.userName || p.tagName || '')
-                .filter(Boolean)
-                .join(', ')
-            : null
+          !noms.length ? null : compact ? (
+            <ListWithTooltip list={noms} />
+          ) : (
+            noms.join(', ')
+          )
         }
       />
     </InlineEditWrapper>

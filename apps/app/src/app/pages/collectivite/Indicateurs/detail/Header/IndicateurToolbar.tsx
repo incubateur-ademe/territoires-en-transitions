@@ -71,7 +71,7 @@ const IndicateurToolbar = ({
 
   return (
     <>
-      <div className={classNames('flex items-center gap-4', className)}>
+      <div className={classNames('flex items-center gap-2', className)}>
         <Tooltip
           label={
             estFavori

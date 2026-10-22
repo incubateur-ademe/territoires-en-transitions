@@ -2,6 +2,7 @@ import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { MetadataItem, MetadataItemPersonne } from '@/app/ui/metadata-line';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { InlineEditWrapper } from '@tet/ui';
@@ -25,6 +26,7 @@ export const IndicateurPilotes = ({ definition, isReadonly }: Props) => {
         many: appLabels.pilote({ plural: true }),
       }}
       emptyLabel={SANS_PILOTE_LABEL}
+      compact
       personnes={(definition.pilotes ?? []).map((p) => ({
         tagId: p.tagId,
         userId: p.userId,
@@ -71,7 +73,11 @@ export const IndicateurServicesPilotes = ({
             ? appLabels.servicePilote({ plural: true })
             : appLabels.servicePilote()
         }
-        value={services.map((s) => s.nom).join(', ')}
+        value={
+          services.length ? (
+            <ListWithTooltip list={services.map((s) => s.nom)} />
+          ) : null
+        }
         emptyLabel={appLabels.servicePiloteSans}
       />
     </InlineEditWrapper>
