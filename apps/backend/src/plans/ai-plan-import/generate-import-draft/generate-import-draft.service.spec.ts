@@ -1,3 +1,4 @@
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
@@ -216,7 +217,10 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   };
 };
 
-const buildService = (mocks: ReturnType<typeof buildMocks>) =>
+const buildService = (
+  mocks: ReturnType<typeof buildMocks>,
+  backgroundTasksEnabled = true
+) =>
   new GenerateImportDraftService(
     mocks.jobRepository,
     mocks.documentStorage,
@@ -228,10 +232,22 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.trackingService,
     mocks.enqueueCompletePlanSecteursService,
     mocks.stepRunRepository,
-    mocks.effetAttenduService
+    mocks.effetAttenduService,
+    { get: () => backgroundTasksEnabled } as unknown as ConfigurationService
   );
 
 describe('GenerateImportDraftService', () => {
+  it.each([false, true])(
+    'purge les points de reprise au démarrage seulement si les tâches de fond sont actives (%s)',
+    async (enabled) => {
+      const mocks = buildMocks();
+      const purge = vi.fn().mockResolvedValue(undefined);
+      mocks.jobRepository.purgeFailedCheckpoints = purge;
+      await buildService(mocks, enabled).onApplicationBootstrap();
+      expect(purge).toHaveBeenCalledTimes(enabled ? 1 : 0);
+    }
+  );
+
   it('remplit le plan créé au lancement, marque le job done et supprime la source', async () => {
     const mocks = buildMocks();
     const service = buildService(mocks);

@@ -50,13 +50,13 @@ Les workflows et actions composites utilisent un chemin depuis la racine du dép
 
 ### Déploiement groupé
 
-[cd.yml](./workflows/cd.yml) livre la stack complète sur staging, preprod ou prod, avec Sqitch avant les services et une transition backend/app bornée. Les builds partagés de l'app et du backend servent aussi les aperçus. Consulter le [guide de déploiement](../doc/development/deploiement.md) pour la configuration des environments, l'ordre des opérations et la reprise après échec.
+[cd.yml](./workflows/cd.yml) livre la stack complète sur staging, staging-test, preprod, preprod-test ou prod, avec Sqitch avant les services et une transition backend/app bornée. Les cibles de test vérifient le schéma partagé sans le migrer, avec leurs workers et cron désactivés. Consulter le [guide de déploiement](../doc/development/deploiement.md) pour la configuration des environments, l'ordre des opérations et la reprise après échec.
 
 ### Cache des images de déploiement
 
 L'action `docker-build-push` utilise un [cache BuildKit dans le registre](https://docs.docker.com/build/cache/backends/registry/), sous le tag `buildcache-<cache-scope>` du même package GHCR que l'image. Le cache est partagé entre les branches et les environnements et conserve les couches intermédiaires (`mode=max`), avec compression zstd niveau 1. Il utilise la connexion fournie par `docker-login` ; un échec d'export du cache ne fait pas échouer le déploiement.
 
-Le workflow `cd.yml` et les aperçus réutilisent les images `app`, `backend` et `tools` déjà publiées pour le commit si leur attestation est valide. Cocher **Reconstruire les images même si ce commit est déjà publié** pour relancer les builds en conservant le cache BuildKit. Le site est reconstruit avec sa configuration d'environnement. Les jobs transmettent ensuite les références par digest à l'adaptateur Koyeb.
+Le workflow `cd.yml` réutilise les images `app`, `backend` et `tools` déjà publiées pour le commit si leur attestation est valide. Cocher **Reconstruire les images même si ce commit est déjà publié** pour relancer les builds en conservant le cache BuildKit. Le site est reconstruit avec sa configuration d'environnement. Les jobs transmettent ensuite les références par digest à l'adaptateur Koyeb.
 
 Les caches de travail Next.js et Nx de l'app restent dans des mounts locaux au builder et ne sont pas exportés dans les couches Docker. Sur un runner éphémère, le build Next.js reste donc un build à froid lorsque le commit change. Le premier build après ce changement de backend de cache doit également alimenter le cache GHCR.
 
