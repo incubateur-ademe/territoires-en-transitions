@@ -81,10 +81,11 @@ locals {
         SUPABASE_URL              = { value = local.coolify_env_settings.preprod.supabase_url }
         SUPABASE_AUTH_COOKIE_NAME = { value = local.coolify_env_settings.preprod.supabase_auth_cookie_name }
 
-        SUPABASE_DATABASE_URL     = { secret = "supabase-database-url" }
-        SUPABASE_JWT_SECRET       = { secret = "supabase-jwt-secret" }
-        SUPABASE_SERVICE_ROLE_KEY = { secret = "supabase-service-role-key" }
-        SUPABASE_ANON_KEY         = { secret = "supabase-anon-key" }
+        SUPABASE_DATABASE_URL           = { secret = "supabase-database-url" }
+        SUPABASE_DATABASE_SSL_ROOT_CERT = { secret = "postgres-tls-ca", multiline = true }
+        SUPABASE_JWT_SECRET             = { secret = "supabase-jwt-secret" }
+        SUPABASE_SERVICE_ROLE_KEY       = { secret = "supabase-service-role-key" }
+        SUPABASE_ANON_KEY               = { secret = "supabase-anon-key" }
 
         QUEUE_REDIS_URL    = { secret = "queue-redis-url" }
         QUEUE_REDIS_TLS_CA = { secret = "queue-redis-tls-ca", multiline = true }
