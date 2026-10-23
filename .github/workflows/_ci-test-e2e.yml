@@ -101,22 +101,18 @@ jobs:
       # Build in-job so it overlaps the backgrounded Supabase startup instead of gating on a separate build job.
       - name: Restore Next app build cache
         id: next-app-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: ./.github/actions/cache/next-app-build
         with:
-          path: apps/app/.next/cache
-          key: ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-
+          mode: restore
 
       - name: Build app and backend
         run: pnpm nx run-many -t build -p app backend --parallel=50%
 
       - name: Save Next app build cache
         if: ${{ matrix.shard == 1 && steps.next-app-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: ./.github/actions/cache/next-app-build
         with:
-          path: apps/app/.next/cache
-          key: ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          mode: save
 
       - name: Wait for service startup steps
         wait: [start-supabase, start-redis]

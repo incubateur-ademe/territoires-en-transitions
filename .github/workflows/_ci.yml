@@ -38,11 +38,10 @@ jobs:
 
       - name: Check dependency cache
         id: deps-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: ./.github/actions/cache/node-modules
         with:
-          path: node_modules
-          key: ${{ steps.deps-metadata.outputs.cache-key }}
-          lookup-only: true
+          mode: lookup
+          cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
       - name: Install dependencies on cache miss
         if: ${{ steps.deps-cache.outputs.cache-hit != 'true' }}
@@ -52,10 +51,10 @@ jobs:
 
       - name: Save dependency cache
         if: ${{ steps.deps-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: ./.github/actions/cache/node-modules
         with:
-          path: node_modules
-          key: ${{ steps.deps-metadata.outputs.cache-key }}
+          mode: save
+          cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
       - uses: ./.github/actions/pnpm-prepare
         with:
