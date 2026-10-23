@@ -68,7 +68,13 @@ begin
 end ;
 $$;
 
-select cron.unschedule(jobid) from cron.job where jobname = 'refresh_stats_completude';
+-- pg_cron n'existe pas hors Supabase (RDB Scaleway).
+do $$
+begin
+  if to_regclass('cron.job') is not null then
+    perform cron.unschedule(jobid) from cron.job where jobname = 'refresh_stats_completude';
+  end if;
+end $$;
 
 -- 3. Vues et fonctions qui lisent les anciennes tables de scores.
 drop materialized view public.stats_tranche_completude;
