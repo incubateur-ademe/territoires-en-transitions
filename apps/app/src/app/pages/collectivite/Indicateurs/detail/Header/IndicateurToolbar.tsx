@@ -44,13 +44,13 @@ const IndicateurToolbar = ({
   const actions: MenuAction[] = [
     {
       icon: 'download-line',
-      label: appLabels.indicateurTelechargerExcel,
+      label: appLabels.exporterXlsx,
       onClick: () => exportIndicateurs(),
     },
     {
       isVisible: !!chartInfo?.hasValeur,
       icon: 'image-line',
-      label: appLabels.indicateurTelechargerPng,
+      label: appLabels.telechargerGraphiquePng,
       onClick: () => setIsExportingPng(true),
     },
     {
@@ -97,7 +97,7 @@ const IndicateurToolbar = ({
           icon="more-line"
           variant="grey"
           size="xs"
-          menu={{ actions }}
+          menu={{ actions, className: 'max-w-none' }}
         />
       </div>
 

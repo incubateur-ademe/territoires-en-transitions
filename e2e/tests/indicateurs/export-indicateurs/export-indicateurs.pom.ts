@@ -80,7 +80,7 @@ export class ExportIndicateursPom {
     const downloadPromise = this.page.waitForEvent('download');
     await this.page.locator('[data-test="indicateurs.detail.menu"]').click();
     await this.page
-      .getByRole('button', { name: 'Télécharger (Excel)' })
+      .getByRole('button', { name: 'Exporter au format .xlsx' })
       .click();
     const download = await downloadPromise;
     return this.parseXlsx(download);
