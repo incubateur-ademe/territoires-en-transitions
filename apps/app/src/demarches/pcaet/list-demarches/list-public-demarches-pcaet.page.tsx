@@ -68,6 +68,7 @@ export const ListPublicDemarchesPcaetPage = () => {
           />
         ) : (
           <DemarchesPcaetTable
+            ariaLabel={appLabels.demarcheListeTitre(PCAET_TYPE)}
             demarches={items}
             {...pilotage}
             statutOptions={DEMARCHE_PCAET_PUBLIC_STATUSES}
