@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, LoggerService, Optional } from '@nestjs/common';
+import { DrizzleQueryError } from 'drizzle-orm';
 import { pick } from 'es-toolkit';
 import { Level, pino } from 'pino';
 import type { Options } from 'pino-http';
@@ -36,12 +37,30 @@ export const getDefaultLoggerOptions = (): Options => {
           },
   };
 };
-// Le message d'une erreur Drizzle se termine par `\nparams: <valeurs>` : on
-// coupe jusqu'à la fin du message, ou jusqu'aux frames dans une stack.
-const QUERY_PARAMS_PATTERN = /\nparams: [\s\S]*?(?=\n {4}at |$)/;
-
-function redactQueryParams<T extends string | undefined>(text: T): T {
-  return text?.replace(QUERY_PARAMS_PATTERN, '\nparams: [masqués]') as T;
+/**
+ * Masque les paramètres des requêtes Drizzle en échec de la chaîne.
+ *
+ * Le message d'un DrizzleQueryError est `Failed query: <requête>\nparams:
+ * <valeurs>`, recopié tel quel par les erreurs qui l'enveloppent (TRPCError :
+ * message et stack). On le remplace à l'identique, reconstruit depuis
+ * `query` : les valeurs, saisies par l'utilisateur, ne sont jamais analysées.
+ */
+function buildQueryParamsRedactor(error: Error) {
+  const replacements: [string, string][] = [];
+  for (let e: unknown = error; e instanceof Error; e = e.cause) {
+    if (e instanceof DrizzleQueryError) {
+      replacements.push([
+        e.message,
+        `Failed query: ${e.query}\nparams: [masqués]`,
+      ]);
+    }
+  }
+  return <T extends string | undefined>(text: T): T =>
+    replacements.reduce<string | undefined>(
+      (redacted, [original, replacement]) =>
+        redacted?.split(original).join(replacement),
+      text
+    ) as T;
 }
 
 // Liste fermée : les autres propriétés des causes peuvent porter des données
@@ -55,17 +74,20 @@ const LOGGED_CAUSE_KEYS = [
   'routine',
 ] as const;
 
-function pickCause(cause: unknown): Record<string, unknown> | undefined {
+function pickCause(
+  cause: unknown,
+  redact: (text: string) => string
+): Record<string, unknown> | undefined {
   if (cause === undefined || cause === null) {
     return undefined;
   }
   if (!(cause instanceof Error)) {
-    return { message: redactQueryParams(String(cause)) };
+    return { message: String(cause) };
   }
-  const nested = pickCause(cause.cause);
+  const nested = pickCause(cause.cause, redact);
   return {
     name: cause.name,
-    message: redactQueryParams(cause.message),
+    message: redact(cause.message),
     ...pick(cause as any, [...LOGGED_CAUSE_KEYS]),
     ...(nested && { cause: nested }),
   };
@@ -124,10 +146,11 @@ export class CustomLogger implements LoggerService {
       if (message instanceof Error) {
         // La cause porte l'erreur d'origine (ex. l'erreur pg sous un
         // "Failed query" de Drizzle, elle-même sous une TRPCError).
-        const cause = pickCause(message.cause);
+        const redact = buildQueryParamsRedactor(message);
+        const cause = pickCause(message.cause, redact);
         objArg.error = {
-          stack: redactQueryParams(message.stack),
-          message: redactQueryParams(message.message),
+          stack: redact(message.stack),
+          message: redact(message.message),
           ...(cause !== undefined && { cause }),
         };
         objArg.message = objArg.error.message;

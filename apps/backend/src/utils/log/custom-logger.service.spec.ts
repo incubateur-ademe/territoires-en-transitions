@@ -62,6 +62,21 @@ describe('CustomLogger', () => {
     });
   });
 
+  test('masque des params qui imitent une frame de stack', () => {
+    const { logger, lines } = createLogger();
+
+    const drizzleError = new DrizzleQueryError(
+      'select from dcp where nom = $1',
+      ['x\n    at fake (y)\nsecret@b.fr'],
+      new Error('boom')
+    );
+
+    logger.error(getTRPCErrorFromUnknown(drizzleError), 'Test');
+
+    expect(lines[0]).not.toContain('secret@b.fr');
+    expect(lines[0]).not.toContain('fake (y)');
+  });
+
   test("logue une cause qui n'est pas une erreur", () => {
     const { logger, lines } = createLogger();
 
