@@ -4,7 +4,6 @@ import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
 import { ListActionExplicationsRepository } from '@tet/backend/referentiels/actions/list-action-explications/list-action-explications.repository';
 import { ListActionStatutsRepository } from '@tet/backend/referentiels/actions/list-action-statuts/list-action-statuts.repository';
-import ActionStatutHistoryService from '@tet/backend/referentiels/compute-score/action-statut-history.service';
 import { ReferentielsScoringController } from '@tet/backend/referentiels/compute-score/scores.controller';
 import { LoadScoreComparisonService } from '@tet/backend/referentiels/export-score/load-score-comparison.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
@@ -139,7 +138,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     }),
   ],
   providers: [
-    ActionStatutHistoryService,
     GetReferentielService,
     GetReferentielRepository,
     GetReferentielDefinitionRouter,

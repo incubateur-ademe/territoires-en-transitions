@@ -4,7 +4,6 @@ import VersionService from '@tet/backend/utils/version/version.service';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from './bullmq/queue-names.constants';
 import { ContextStoreService } from './context/context.service';
 import { CsvService } from './csv/csv.service';
-import MattermostNotificationService from './mattermost-notification.service';
 import { ArchiveAssemblyService } from './archive/archive-assembly.service';
 import { DocumentStorageService } from './supabase/document-storage.service';
 import { VersionController } from './version/version.controller';
@@ -21,7 +20,6 @@ import { WebhookService } from './webhooks/webhook.service';
   providers: [
     ContextStoreService,
     CsvService,
-    MattermostNotificationService,
     WebhookService,
     VersionService,
     ArchiveAssemblyService,
@@ -30,7 +28,6 @@ import { WebhookService } from './webhooks/webhook.service';
   exports: [
     ContextStoreService,
     CsvService,
-    MattermostNotificationService,
     WebhookService,
     VersionService,
     ArchiveAssemblyService,

@@ -30,7 +30,6 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import MattermostNotificationService from '../../utils/mattermost-notification.service';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
@@ -90,7 +89,6 @@ describe('ReferentielsScoringService', () => {
           token === PermissionService ||
           token === CollectivitesService ||
           token === LabellisationService ||
-          token === MattermostNotificationService ||
           token === ConfigurationService ||
           token === SheetService ||
           token === DocumentService ||
