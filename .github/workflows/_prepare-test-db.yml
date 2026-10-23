@@ -1,9 +1,5 @@
-# Start Supabase and restore or create a seeded DB volume for tests.
-#
-# In CI, the image for the current DB state (matching the checksum of the
-# data_layer dir, see `db-path` action) is pulled from ghcr.io and only built
-# and pushed if it does not exist.
-name: Prepare test database
+# Prepare a seeded Supabase test database, reusing its cached image when available.
+name: _Prepare test database
 
 permissions:
   contents: read
@@ -35,9 +31,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/docker-login
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         if: ${{ !env.ACT }}
         with:
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 

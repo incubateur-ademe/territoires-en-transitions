@@ -1,6 +1,6 @@
 ## GitHub workflows et actions
 
-Le dossier `.github` contient la définition des worflows utilisés en CI.
+Le dossier `.github` contient les workflows de CI, de déploiement et de maintenance.
 
 Nous utilisons les [workflows réutilisables](https://docs.github.com/en/actions/concepts/workflows-and-actions/reusable-workflows#about-reusable-workflows) et les [actions personnalisées](https://docs.github.com/en/actions/concepts/workflows-and-actions/custom-actions) afin de modulariser les différents workflows et de minimiser la duplication de code.
 
@@ -9,6 +9,27 @@ Ces workflows peuvent aussi être utilisés en local par le biais de [`act`](htt
 La variable d'environnement `ACT` est ajoutée automatiquement ce qui permet de distinguer dans les workflows les exécutions locales de celles en CI.
 
 Par exemple les images docker construites par les actions ne sont pas tirées ou poussées vers le registre de containers lorsque les workflows associés sont utilisés avec `act`.
+
+### Organisation de la CI
+
+| Workflow                                                  | Rôle                                                                                               |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [main-ci.yml](./workflows/main-ci.yml)                    | Point d'entrée pour les pushes sur `main` et les lancements manuels.                               |
+| [pull-request-ci.yml](./workflows/pull-request-ci.yml)    | Point d'entrée pour les PR hors brouillon.                                                         |
+| [\_ci.yml](./workflows/_ci.yml)                           | Validation des projets affectés et agrégation des résultats, appelée par les deux points d'entrée. |
+| [\_prepare-test-db.yml](./workflows/_prepare-test-db.yml) | Préparation de la base de test, partagée entre `_ci.yml` et `dev.yml`.                             |
+
+Les workflows internes portent le préfixe `_`, exposent seulement `workflow_call` et ont au moins deux workflows appelants. Les jobs de validation, de tests, de Storybook et de rapports E2E sont définis directement dans `_ci.yml`.
+
+Le check `ci / ci-complete` exige le succès de tous les jobs applicables, y compris la publication Storybook et le rapport E2E. Les exclusions doivent correspondre aux scopes calculés. Ce nom peut servir de check requis dans les règles de protection de branche. Le retry automatique reste limité à une tentative pour les tests backend/API et les shards E2E ; il relance aussi leur agrégateur si tous les échecs proviennent de ces tests.
+
+La CI appelle directement les actions officielles de cache et de login Docker. Les chemins, clés et conditions des caches `node_modules` et Next.js restent visibles dans les jobs. `keep-alive-streamlit.yml` utilise une [action dédiée](./actions/keep-alive-streamlit/action.yml) pour installer les dépendances et réveiller les applications Streamlit.
+
+Pour vérifier les contrats des workflows localement, avec Node 24 :
+
+```sh
+node --test .github/workflows/ci.test.mjs
+```
 
 ### Cache des images de déploiement
 
@@ -69,7 +90,7 @@ act -j prepare-dev-db
 - Voir un graphe d'un workflow :
 
 ```sh
-act -W .github/workflows/ci.yml -g
+act -W .github/workflows/main-ci.yml -g
 ```
 
 ## Troubleshooting
