@@ -87,6 +87,15 @@ describe('Test recherches collectivite', () => {
     expect(result.items.length).toEqual(0);
   });
 
+  test('Test tab "Collectivités" recherche par nom avec apostrophe', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+    const result = await caller.collectivites.recherches.collectivites({
+      ...input,
+      nom: "l'Arc'); DROP TABLE collectivite; --",
+    });
+    expect(result.items.length).toEqual(0);
+  });
+
   /**
    * Un service de l'État est une ligne `collectivite` sans en être : pas de
    * territoire, pas de référentiel, pas de plan. Il n'a rien à faire dans un
