@@ -21,13 +21,14 @@ export class PersonnesRouter {
     list: this.trpc.authedProcedure
       .input(inputSchema)
       .query(async ({ input, ctx }) => {
-        // It's ok to load tags from all collectivites
-        await this.permission.assertAllowed(
-          ctx.user,
-          'collectivites.read',
-          ResourceType.PLATEFORME,
-          null
-        );
+        for (const collectiviteId of input.collectiviteIds) {
+          await this.permission.assertAllowed(
+            ctx.user,
+            'collectivites.read',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId }
+          );
+        }
 
         return this.service.list(input);
       }),
