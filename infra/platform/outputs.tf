@@ -57,18 +57,6 @@ output "coolify_host_ssh_public_key" {
   value       = module.coolify.host_ssh_public_key
 }
 
-# --- DNS ---
-
-output "dns_zone_nameservers" {
-  description = "Serveurs de noms de chaque zone créée, indexés par sous-domaine. À reporter chez le registrar sous forme d'enregistrements NS pour activer la délégation."
-  value       = { for k, z in scaleway_domain_zone.env : k => z.ns }
-}
-
-output "dns_zone_domains" {
-  description = "FQDN des zones déléguées, indexés par sous-domaine. À reporter dans la variable dns_zone des stacks applicatifs."
-  value       = { for k, z in scaleway_domain_zone.env : k => "${z.subdomain}.${z.domain}" }
-}
-
 # --- Stockage ---
 
 output "coolify_backups_bucket_name" {

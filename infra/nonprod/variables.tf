@@ -85,26 +85,3 @@ variable "redis_allowed_ips" {
   type        = map(string)
   default     = {}
 }
-
-# --- DNS ---
-
-variable "dns_enabled" {
-  description = "Crée les enregistrements DNS. Laisser à false tant que les zones n'ont pas été créées par infra/platform et déléguées chez le registrar."
-  type        = bool
-  default     = false
-}
-
-variable "dns_zones" {
-  description = "Zones DNS servies par ce serveur. Les deux environnements du tier nonprod partagent la même IP publique."
-  type        = list(string)
-  default = [
-    "preprod.territoiresentransitions.fr",
-    "staging.territoiresentransitions.fr",
-  ]
-}
-
-variable "dns_ttl" {
-  description = "TTL des enregistrements DNS, en secondes. Court sur les environnements non-prod, où l'IP peut changer lors d'une recréation de serveur."
-  type        = number
-  default     = 300
-}

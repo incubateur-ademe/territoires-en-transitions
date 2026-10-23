@@ -14,8 +14,3 @@ coolify_ssh_allowed_ips = [
 coolify_ssh_authorized_keys = [
   "ssh-ed25519 AAAA... prenom.nom@example.org",
 ]
-
-# Passer à true une fois territoiresentransitions.fr enregistré comme domaine
-# externe chez Scaleway (cf. commentaire DNS dans main.tf).
-dns_enabled = false
-

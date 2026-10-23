@@ -16,6 +16,3 @@ server_ssh_authorized_keys = [
 pg_allowed_ips = {
   "203.0.113.10/32" = "poste opérateur"
 }
-
-# Passer à true une fois les zones créées par infra/platform et déléguées.
-dns_enabled = false

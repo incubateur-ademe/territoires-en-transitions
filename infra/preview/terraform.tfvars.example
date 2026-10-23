@@ -9,6 +9,3 @@ private_network_id  = "fr-par/00000000-0000-0000-0000-000000000000"
 server_ssh_authorized_keys = [
   "ssh-ed25519 AAAA... prenom.nom@example.org",
 ]
-
-# Passer à true une fois la zone créée par infra/platform et déléguée.
-dns_enabled = false
