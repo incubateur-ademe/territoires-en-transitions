@@ -14,24 +14,24 @@
 # apps/backend/Dockerfile pour le découpage fetch / manifests / builder.
 
 ARG NODE_IMAGE=node:24.21.0-alpine@sha256:be80f76cf40ec8e42b9bec49f60a55e0660f30af58d3e5a25530785b30ea67e2
-ARG PNPM_VERSION=9.15.5
+ARG PNPM_VERSION=12.15.0
 
 FROM ${NODE_IMAGE} AS base
 ARG PNPM_VERSION
 RUN apk add --no-cache libc6-compat
 WORKDIR /workspace
 ENV CI=true
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 FROM base AS fetch
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm fetch
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm fetch
 
 FROM fetch AS builder
 COPY --parents package.json apps/*/package.json packages/*/package.json e2e/package.json ./
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm install -r --offline --frozen-lockfile
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
 
 COPY . .
 
@@ -54,10 +54,7 @@ ENV NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_APP_URL=$APP_URL \
     NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
 
-# The secret mount here just silences pnpm's harmless "can't resolve
-# ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).
-RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm run build:site
+RUN pnpm run build:site
 
 FROM ${NODE_IMAGE} AS runner
 WORKDIR /app

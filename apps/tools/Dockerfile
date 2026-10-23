@@ -24,37 +24,34 @@
 # in this repo would be an unforced risk for no real size gain here.
 
 ARG NODE_IMAGE=node:24.21.0-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
-ARG PNPM_VERSION=9.15.5
+ARG PNPM_VERSION=12.15.0
 
 FROM ${NODE_IMAGE} AS base
 ARG PNPM_VERSION
 WORKDIR /workspace
 ENV CI=true
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 FROM base AS fetch
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm fetch
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm fetch
 
 FROM fetch AS manifests
 COPY --parents package.json apps/*/package.json packages/*/package.json e2e/package.json ./
 
 FROM manifests AS deps-prod
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm install -r --offline --frozen-lockfile --prod
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile --prod
 
 FROM manifests AS builder
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm install -r --offline --frozen-lockfile
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
 COPY . .
 # `nx build tools` (aliased by this script) also builds the workspace
 # packages it depends on, i.e. domain. `backend` itself is built too since
 # tools imports its compiled output directly.
-# The secret mount here just silences pnpm's harmless "can't resolve
-# ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (nx doesn't re-install).
-RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm run build:tools
+RUN pnpm run build:tools
 
 FROM ${NODE_IMAGE} AS runner
 WORKDIR /app

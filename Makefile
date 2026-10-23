@@ -356,11 +356,11 @@ ai-import-eval: preflight-env-keys ## Évalue l'import IA sur un document : make
 		--file="$(abspath $(f))" $(if $(ref),--ref="$(abspath $(ref))") $(if $(out),--out="$(abspath $(out))") $(args)
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
-install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas et supabase
+install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas
 	@$(if $(IS_WORKTREE),node scripts/worktree-env.mts,true)
 	@$(call decrypt_env,$(ENV_ROOT)) -- sh -c '\
 		case "$$BRYNTUM_ACCESS_TOKEN" in ""|encrypted:*) echo "✗ BRYNTUM_ACCESS_TOKEN vide ou indéchiffrable dans $(ENV_ROOT) (clé .env.keys manquante ?)"; exit 1;; esac; \
-		pnpm install && pnpm rebuild canvas supabase'
+		env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm install && pnpm rebuild --config.ignore-scripts=false canvas'
 
 # Chemins cités un à un : les routes Next ont des parenthèses et des crochets
 # (`(authed)/[collectiviteId]`) que le shell interpréterait. Les guillemets

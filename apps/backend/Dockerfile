@@ -21,9 +21,9 @@
 #   `@tet/domain`, `@tet/design-tokens` and `@tet/pdf-components` workspace
 #   packages (their package.json "exports" point at dist/, not src/).
 # - `canvas` needs cairo/pango/jpeg/gif/rsvg native libraries to compile,
-#   and `.npmrc` sets `ignore-scripts=true` (supply-chain hardening), so its
-#   postinstall never runs automatically — `pnpm rebuild canvas` after
-#   install is required, same as in .github/actions/node-canvas.
+#   and `pnpm-workspace.yaml` sets `ignoreScripts: true` (supply-chain hardening), so its
+#   postinstall never runs automatically — `pnpm rebuild --config.ignore-scripts=false canvas`
+#   after install is required, same as in .github/actions/node-canvas.
 
 # Image de base épinglée par digest : `node:24-slim` flotterait sur le
 # dernier patch 24.x publié, et deux déploiements à une semaine d'écart
@@ -31,15 +31,16 @@
 # ne l'explique. Pour bumper : `docker buildx imagetools inspect node:24-slim`
 # puis reporter tag + digest ici et dans les autres apps/*/Dockerfile.
 ARG NODE_IMAGE=node:24.21.0-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
-# Aligné sur le champ `packageManager` de la racine (corepack prepare pnpm@9
-# résoudrait le dernier 9.x du jour, encore un input non épinglé).
-ARG PNPM_VERSION=9.15.5
+# Aligné sur le champ `packageManager` de la racine. Installé via npm plutôt
+# que corepack : pnpm 12 est un binaire natif que corepack ne gère pas de
+# façon fiable, et Node 25+ n'embarque plus corepack.
+ARG PNPM_VERSION=12.15.0
 
 FROM ${NODE_IMAGE} AS base
 ARG PNPM_VERSION
 WORKDIR /workspace
 ENV CI=true
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 # ---- store pnpm ----
 # `pnpm fetch` ne lit que le lockfile : cette couche — la seule qui accède au
@@ -52,7 +53,7 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 FROM base AS fetch
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm fetch
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm fetch
 
 # ---- manifests du workspace ----
 # Copiés seuls, avant les sources : les deux `pnpm install` ci-dessous ne
@@ -80,20 +81,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # --offline : tout est déjà dans le store depuis l'étape `fetch`, aucun accès
 # réseau ici.
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm install -r --offline --frozen-lockfile --prod \
- && pnpm rebuild canvas
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile --prod \
+ && pnpm rebuild --config.ignore-scripts=false canvas
 
 # ---- build (full deps, incl. @nestjs/cli / swc / typescript) ----
 FROM manifests AS builder
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm install -r --offline --frozen-lockfile
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
 COPY . .
 # `nx build backend` (aliased by this script) also builds the workspace
 # packages it depends on: domain, design-tokens, pdf-components.
-# The secret mount here just silences pnpm's harmless "can't resolve
-# ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (nx doesn't re-install).
-RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm run build:backend
+RUN pnpm run build:backend
 
 # ---- runtime ----
 FROM ${NODE_IMAGE} AS runner

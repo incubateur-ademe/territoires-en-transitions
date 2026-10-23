@@ -42,10 +42,13 @@ runs:
         key: ${{ inputs.cache-key }}
         fail-on-cache-miss: true
 
+    # --trust-lockfile : la vérification supply-chain du lockfile (minimumReleaseAge)
+    # a déjà eu lieu en ligne dans le job d'install ; hors ligne elle échouerait
+    # (ERR_PNPM_NO_OFFLINE_META, les métadonnées ne sont pas dans node_modules).
     - name: Relink restored workspace dependencies
       if: ${{ inputs.cache-key != '' }}
       shell: bash
-      run: pnpm install --frozen-lockfile --offline
+      run: pnpm install --frozen-lockfile --offline --trust-lockfile
 
     - name: Install dependencies
       if: ${{ inputs.cache-key == '' }}
@@ -62,4 +65,4 @@ runs:
     - name: Rebuild canvas package
       if: ${{ inputs.cache-key == '' }}
       shell: bash
-      run: pnpm rebuild canvas
+      run: pnpm rebuild --config.ignore-scripts=false canvas
