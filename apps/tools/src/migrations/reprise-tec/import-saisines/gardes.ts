@@ -6,11 +6,10 @@ import { listCasBloquantsServices, type Saisine } from './services';
 /** Arrête avant toute écriture si une garde trouve un cas ; liste tous les cas d'un coup. */
 export const validateGardes = (
   dossiers: Dossiers,
-  saisines: readonly Saisine[],
-  dateDuJour: string
+  saisines: readonly Saisine[]
 ) => {
   const cas = [
-    ...dossiers.listCasBloquants(dateDuJour),
+    ...dossiers.listCasBloquants(),
     ...listCasBloquantsServices(dossiers.transmis, saisines),
   ];
   if (cas.length > 0) {

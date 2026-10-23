@@ -321,6 +321,9 @@ pnpx tsx $SCRIPT            # simulation
 pnpx tsx $SCRIPT --confirm  # import
 ```
 
+Un dossier encore en consultation (transmis pour avis) est saisi comme les
+autres : ses services peuvent rendre leur avis dans TeT jusqu'à l'échéance.
+
 Après l'import, `rattraper-saisines-pcaet` ne trouve rien à faire sur les
 dossiers repris. Ne pas le lancer entre l'import des dossiers et celui-ci : il
 saisirait les services avec la date du jour.
@@ -350,7 +353,7 @@ s'il en trouve un :
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | aucun dossier repris                                                                  | lancer d'abord l'import des dossiers (étape 2)                                                                   |
 | un dossier repris a déjà une saisine                                                  | l'import a déjà tourné (l'annuler d'abord), ou le rattrapage des saisines est passé avant : retirer ses saisines |
-| un dossier transmis dont l'échéance d'avis n'est pas passée, jour compris, ou absente | vérifier la date de transmission ; si elle est juste, attendre la fin de la consultation                         |
+| un dossier transmis sans échéance d'avis                                              | vérifier la date de transmission dans T&C                                                                        |
 | un dossier transmis sans DREAL ou sans région qui couvre son siège                    | créer le service, ou corriger son périmètre, avant l'import                                                      |
 
 ## Le schéma de travail `reprise_tec`

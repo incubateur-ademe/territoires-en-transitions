@@ -22,7 +22,7 @@ const main = async () => {
   try {
     const dossiers = await loadDossiers(client);
     const saisines = await listSaisines(pool, dossiers.transmis);
-    validateGardes(dossiers, saisines, new Date().toISOString().slice(0, 10));
+    validateGardes(dossiers, saisines);
 
     await client.query('begin');
     let ecrites: number;

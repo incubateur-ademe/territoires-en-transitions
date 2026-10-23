@@ -44,8 +44,8 @@ export const loadDossiers = async (client: PoolClient) => {
     /** Les dossiers repris transmis pour avis, sur la plateforme ou hors d'elle, les seuls à saisir. */
     transmis,
 
-    /** Garde, appelée par `gardes.ts` : aucun dossier repris, un dossier déjà saisi, ou une échéance d'avis non passée. */
-    listCasBloquants: (dateDuJour: string) => [
+    /** Garde, appelée par `gardes.ts` : aucun dossier repris, un dossier déjà saisi, ou un dossier transmis sans échéance d'avis. */
+    listCasBloquants: () => [
       ...(rows.length === 0
         ? [
             "  aucun dossier repris : l'import des dossiers (import-demarches) n'a pas tourné",
@@ -56,13 +56,8 @@ export const loadDossiers = async (client: PoolClient) => {
         .map((d) => `  dossier qui a déjà une saisine : ${decrireDossier(d)}`),
       ...transmis
         .filter((d) => !d.estHorsPlateforme)
-        .filter((d) => d.echeanceAvis === null || d.echeanceAvis >= dateDuJour)
-        .map(
-          (d) =>
-            `  échéance d'avis non passée : ${decrireDossier(d)}, échéance ${
-              d.echeanceAvis ?? 'absente'
-            }`
-        ),
+        .filter((d) => d.echeanceAvis === null)
+        .map((d) => `  transmis sans échéance d'avis : ${decrireDossier(d)}`),
     ],
   };
 };
