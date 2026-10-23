@@ -110,13 +110,13 @@ make db-init    # services docker + migrations + référentiels + données de te
 - **Sécurité**: résolution stricte des dépendances et `node_modules` non-plat
 - **Performance**: installation plus rapide et meilleure prise en charge des monorepos
 
-L'installation passe par le registre npm privé Bryntum. Le token (`BRYNTUM_ACCESS_TOKEN`) est chiffré dans le `.env` racine et le `.npmrc` du projet le référence par variable d'environnement : avec `.env.keys` en place (voir [Variables d'environnement](#variables-denvironnement)), il suffit de lancer :
+La version attendue est celle du champ `packageManager` du `package.json` racine (`npm install -g pnpm@12.15.0` ; tout pnpm ≥ 11 bascule de lui-même sur cette version). Si pnpm est géré par corepack (`ERR_PNPM_UNSUPPORTED_ENGINE` au premier `make install`), d'abord `corepack disable && npm install -g pnpm@12.15.0`. L'installation passe par le registre npm privé Bryntum. Le token (`BRYNTUM_ACCESS_TOKEN`) est chiffré dans le `.env` racine et transmis à pnpm par variable d'environnement : avec `.env.keys` en place (voir [Variables d'environnement](#variables-denvironnement)), il suffit de lancer :
 
 ```sh
 make install
 ```
 
-La target injecte le token à la volée puis recompile les modules natifs (`canvas`, `supabase`) que le `ignore-scripts` du `.npmrc` empêche de builder à l'installation. À noter : la compilation de [node-canvas](https://github.com/Automattic/node-canvas) (pas de binaire précompilé pour Node 24) nécessite les bibliothèques système Cairo/Pango :
+La target injecte le token à la volée puis compile le module natif `canvas`, seul script de build autorisé (`allowBuilds` de `pnpm-workspace.yaml`), que `ignoreScripts` empêche de lancer à l'installation. À noter : la compilation de [node-canvas](https://github.com/Automattic/node-canvas) (pas de binaire précompilé pour Node 24) nécessite les bibliothèques système Cairo/Pango :
 
 ```sh
 # 🐧 Linux (Debian/Ubuntu)
@@ -127,9 +127,9 @@ sudo apt-get install -y --no-install-recommends \
 brew install pkg-config cairo pango libpng jpeg giflib librsvg
 ```
 
-#### Surcharges de versions (`pnpm.overrides`)
+#### Surcharges de versions (`overrides`)
 
-Le bloc `pnpm.overrides` du `package.json` racine force la résolution de quelques
+Le bloc `overrides` de `pnpm-workspace.yaml` force la résolution de quelques
 dépendances **transitives** épinglées trop bas par leurs parents, qui laissaient
 sinon des alertes Dependabot ouvertes sans qu'aucune dépendance directe soit en
 cause :

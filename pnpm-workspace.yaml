@@ -5,3 +5,50 @@ packages:
 
 # Ensures that only packages released at least one day ago can be installed
 minimumReleaseAge: 1440
+
+# Enforces strict engine compatibility for every dependency. Combined with the
+# bogus npm/yarn engines in package.json, this makes pnpm the only usable
+# package manager.
+engineStrict: true
+
+# Prevents automatic execution of dependency scripts during installation
+# (supply-chain hardening). `allowBuilds` lists the only reviewed build
+# scripts; they still only run on an explicit
+# `pnpm rebuild --config.ignore-scripts=false canvas` (see `make install`).
+ignoreScripts: true
+allowBuilds:
+  canvas: true
+
+# Only warn when node_modules is out of date instead of installing implicitly:
+# an install needs the Bryntum token, which `make install` injects.
+verifyDepsBeforeRun: warn
+
+# Version overrides for transitive dependencies — see README.md
+# « Surcharges de versions ».
+overrides:
+  next: '16.3.6'
+  axios: '1.20.0'
+  'brace-expansion@5': '^5.0.9'
+  handlebars: '^4.7.9'
+  'undici@7': '^7.29.0'
+  'ajv@8': '^8.18.0'
+  'glob@11': '^11.1.0'
+  'js-yaml@4': '^4.3.2'
+  koa: '^3.1.2'
+  lodash: '^4.18.0'
+  'path-to-regexp@8': '^8.4.0'
+  'picomatch@4': '^4.0.4'
+  smol-toml: '^1.7.1'
+  webpack: '^5.104.1'
+  webpack-dev-server: '^5.2.6'
+  'ws@8': '^8.21.0'
+  'svgo@3': '3.3.2'
+  '@opentelemetry/core': '^2.8.0'
+  source-map-js: '^1.2.2'
+  'image-size@2': '^2.0.4'
+  'http-cache-semantics@4': '^4.3.0'
+
+# Agent skills shipped by dependencies are not installed (`pnpm approve`).
+permissions:
+  '@tanstack/react-table':
+    skills: false

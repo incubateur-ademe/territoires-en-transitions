@@ -16,4 +16,4 @@ runs:
     - name: Rebuild canvas package
       if: ${{ inputs.rebuild == 'true' }}
       shell: bash
-      run: pnpm rebuild canvas
+      run: pnpm rebuild --config.ignore-scripts=false canvas
