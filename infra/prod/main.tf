@@ -135,38 +135,3 @@ module "redis" {
   private_network_id = local.private_network_id
   allowed_ips        = var.redis_allowed_ips
 }
-
-# --- DNS ---
-#
-# Par défaut aucun enregistrement n'est géré ici : l'apex
-# territoiresentransitions.fr et les noms de production restent chez le
-# registrar actuel (décision explicite).
-#
-# Pour basculer la prod sous Terraform plus tard, il suffira d'enregistrer les
-# zones concernées dans infra/platform puis de renseigner dns_zones ici.
-resource "scaleway_domain_record" "wildcard" {
-  for_each = var.dns_enabled ? toset(var.dns_zones) : toset([])
-
-  dns_zone = each.value
-  name     = "*"
-  type     = "A"
-  data     = module.app_server.public_ip
-  ttl      = var.dns_ttl
-
-  # Le provider relit le nom « * » comme vide : sans ignore_changes, chaque
-  # plan remplace l'enregistrement, et chaque apply coupe brièvement le DNS de
-  # tout l'environnement.
-  lifecycle {
-    ignore_changes = [name]
-  }
-}
-
-resource "scaleway_domain_record" "apex" {
-  for_each = var.dns_enabled ? toset(var.dns_zones) : toset([])
-
-  dns_zone = each.value
-  name     = ""
-  type     = "A"
-  data     = module.app_server.public_ip
-  ttl      = var.dns_ttl
-}

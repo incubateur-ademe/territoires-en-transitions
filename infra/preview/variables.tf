@@ -53,23 +53,3 @@ variable "docker_gc_until" {
   type        = string
   default     = "72h"
 }
-
-# --- DNS ---
-
-variable "dns_enabled" {
-  description = "Crée les enregistrements DNS. Laisser à false tant que la zone n'a pas été créée par infra/platform et déléguée chez le registrar."
-  type        = bool
-  default     = false
-}
-
-variable "dns_zone" {
-  description = "Zone DNS des previews. Chaque PR reçoit un sous-domaine sous cette zone."
-  type        = string
-  default     = "preview.territoiresentransitions.fr"
-}
-
-variable "dns_ttl" {
-  description = "TTL des enregistrements DNS, en secondes."
-  type        = number
-  default     = 300
-}

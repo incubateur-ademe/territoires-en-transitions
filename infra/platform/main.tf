@@ -1,4 +1,4 @@
-# Socle transverse : réseau, control plane Coolify, zones DNS et stockage.
+# Socle transverse : réseau, control plane Coolify et stockage.
 # Rien ici n'appartient à un environnement applicatif — les stacks nonprod et
 # preview viennent s'y brancher.
 #
@@ -94,27 +94,6 @@ module "coolify" {
 # infra/prod crée son VPC et ses ressources. Le projet est créé par un admin de
 # l'organisation : créer un projet exige des droits d'organisation que les
 # credentials Terraform n'ont pas. Ce stack ne fait que relayer son ID.
-
-# --- DNS ---
-#
-# Zones de sous-domaine déléguées à Scaleway. L'apex et la production restent
-# chez le registrar actuel : on ne déplace pas ses NS.
-#
-# Prérequis manuel, à faire une fois avant le premier apply avec dns_enabled :
-#   1. scw domain external-domain register domain=<root_domain>
-#      (validation par enregistrement TXT d'ownership — les NS de l'apex ne
-#      bougent pas)
-#   2. après apply, poser chez le registrar les NS de chaque zone créée ici
-#      (output dns_zone_nameservers)
-#
-# dns_enabled reste à false tant que l'étape 1 n'est pas faite, pour que le
-# reste du socle puisse être appliqué sans attendre.
-resource "scaleway_domain_zone" "env" {
-  for_each = var.dns_enabled ? toset(var.dns_subdomains) : toset([])
-
-  domain    = var.root_domain
-  subdomain = each.value
-}
 
 # --- Stockage des backups ---
 #

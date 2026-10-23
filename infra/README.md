@@ -103,7 +103,7 @@ infra/
 ├── nonprod/           Serveur mutualisé + RDB preprod + Redis preprod
 │   ├── supabase-api/  Stack Docker Compose GoTrue + Storage (déployée par coolify/services.tf)
 │   └── Makefile       Bootstrap SQL des rôles GoTrue
-├── preview/           Serveur preview + wildcard DNS
+├── preview/           Serveur preview
 └── coolify/           Coolify-as-code : clés, serveurs, projet et environnements, S3 storage
 ```
 
@@ -365,28 +365,20 @@ réglage « Instance Domain », stocké en base : les étapes 3 et 4 restent man
 
 ## DNS
 
-L'apex `territoiresentransitions.fr` et les noms de production restent chez le registrar
-actuel. Seules les zones non-prod sont déléguées à Scaleway.
+Tout reste chez Cloudflare, hors Terraform : l'apex, les noms de production et les
+enregistrements non-prod, posés à la main en **DNS only** (pas de proxy : Traefik émet
+lui-même ses certificats Let's Encrypt en HTTP-01) :
 
-Prérequis manuel, une fois :
+| Nom | Type | Cible |
+|---|---|---|
+| `preprod`, `*.preprod`, `staging`, `*.staging` | A | IP publique de nonprod (`terraform -chdir=infra/nonprod output -raw server_public_ip`) |
+| `preview`, `*.preview` | A | IP publique de preview (`terraform -chdir=infra/preview output -raw server_public_ip`) |
 
-```sh
-# Enregistre le domaine racine comme domaine externe (validation par TXT
-# d'ownership — les NS de l'apex ne bougent pas).
-scw domain external-domain register domain=territoiresentransitions.fr
-```
+À reporter à la main si un serveur est recréé avec une autre IP.
 
-Puis passer `dns_enabled = true` dans `platform/terraform.tfvars` et appliquer. Récupérer
-les serveurs de noms de chaque zone créée et les poser chez le registrar sous forme
-d'enregistrements NS :
-
-```sh
-terraform -chdir=infra/platform output -json dns_zone_nameservers
-```
-
-Les enregistrements eux-mêmes appartiennent aux stacks applicatifs : un `*` et un apex par
-zone, pointant sur l'IP publique du serveur du tier. Coolify émet ensuite un certificat
-par sous-domaine en HTTP-01 — ni DNS-01 ni certificat wildcard nécessaires.
+Pas de sous-zones déléguées à Scaleway Domains : un domaine externe dont l'apex ne pointe
+pas sur les NS de Scaleway y est supprimé au bout de 14 jours, ses zones avec (incident du
+2026-10-23). À reconsidérer après la migration de la prod.
 
 ## Couche Coolify-as-code (`infra/coolify/`)
 

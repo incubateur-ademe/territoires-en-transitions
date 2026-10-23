@@ -9,7 +9,7 @@ output "server_name" {
 }
 
 output "server_public_ip" {
-  description = "IP publique du serveur preview. Cible du wildcard DNS."
+  description = "IP publique du serveur preview. Cible du wildcard DNS (géré chez Cloudflare)."
   value       = module.app_server.public_ip
 }
 

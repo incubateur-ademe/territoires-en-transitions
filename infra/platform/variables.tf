@@ -111,26 +111,6 @@ variable "coolify_ssh_authorized_keys" {
   default     = []
 }
 
-# --- DNS ---
-
-variable "dns_enabled" {
-  description = "Crée les zones DNS de sous-domaine. Laisser à false tant que le domaine racine n'a pas été enregistré comme domaine externe chez Scaleway (cf. commentaire dans main.tf)."
-  type        = bool
-  default     = false
-}
-
-variable "root_domain" {
-  description = "Domaine racine. Reste géré par le registrar actuel : seules les zones de sous-domaine listées dans dns_subdomains lui sont déléguées."
-  type        = string
-  default     = "territoiresentransitions.fr"
-}
-
-variable "dns_subdomains" {
-  description = "Sous-domaines délégués à Scaleway. La prod en est volontairement absente : ses enregistrements restent chez le registrar."
-  type        = list(string)
-  default     = ["preprod", "staging", "preview"]
-}
-
 # --- Stockage ---
 
 variable "coolify_backups_bucket_name" {

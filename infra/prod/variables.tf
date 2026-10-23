@@ -123,23 +123,3 @@ variable "redis_allowed_ips" {
   type        = map(string)
   default     = {}
 }
-
-# --- DNS ---
-
-variable "dns_enabled" {
-  description = "Crée les enregistrements DNS de production. Reste à false : l'apex et les noms de production sont gérés par le registrar actuel."
-  type        = bool
-  default     = false
-}
-
-variable "dns_zones" {
-  description = "Zones DNS servies par le serveur de production. Vide par défaut, la prod n'étant pas déléguée à Scaleway."
-  type        = list(string)
-  default     = []
-}
-
-variable "dns_ttl" {
-  description = "TTL des enregistrements DNS, en secondes."
-  type        = number
-  default     = 300
-}
