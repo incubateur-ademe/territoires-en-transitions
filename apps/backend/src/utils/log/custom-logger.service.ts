@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, LoggerService, Optional } from '@nestjs/common';
+import { pick } from 'es-toolkit';
 import { Level, pino } from 'pino';
 import type { Options } from 'pino-http';
 import { ContextStoreService } from '../context/context.service';
@@ -35,6 +36,28 @@ export const getDefaultLoggerOptions = (): Options => {
           },
   };
 };
+// Liste fermée : les autres propriétés des causes peuvent porter des données
+// personnelles (`params` / `query` de Drizzle, `detail` de pg).
+const LOGGED_CAUSE_KEYS = [
+  'type',
+  'message',
+  'code',
+  'severity',
+  'table',
+  'column',
+  'constraint',
+  'routine',
+] as const;
+
+function pickCause(cause: any): Record<string, unknown> | undefined {
+  if (cause === undefined || cause === null) {
+    return undefined;
+  }
+  const picked: Record<string, unknown> = pick(cause, [...LOGGED_CAUSE_KEYS]);
+  const nested = pickCause(cause.cause);
+  return nested ? { ...picked, cause: nested } : picked;
+}
+
 /**
  * Use a custom logger instead of https://github.com/iamolegga/nestjs-pino/tree/master
  * In order to have full control on the context
@@ -86,9 +109,15 @@ export class CustomLogger implements LoggerService {
 
     if (typeof message === 'object') {
       if (message instanceof Error) {
+        // La cause porte l'erreur d'origine (ex. l'erreur pg sous un
+        // "Failed query" de Drizzle, elle-même sous une TRPCError).
+        const cause = pickCause(
+          pino.stdSerializers.errWithCause(message).cause
+        );
         objArg.error = {
           stack: message.stack,
           message: message.message,
+          ...(cause !== undefined && { cause }),
         };
         objArg.message = message.message;
       } else {
@@ -99,5 +128,4 @@ export class CustomLogger implements LoggerService {
       this.logger[level](objArg, message, ...params);
     }
   }
-
 }
