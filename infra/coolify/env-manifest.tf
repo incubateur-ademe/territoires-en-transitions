@@ -107,8 +107,7 @@ locals {
         INDICATEUR_DEFINITIONS_SHEET_ID     = { value = "1im08NvNBGsVb-xB2Lmh-3sgKO7Tje7jUAYQOCNixnuM" }
         PERSONNALISATION_QUESTIONS_SHEET_ID = { value = "14zHHgti8nkDI7URZ6VTaJ4ARLr9SJAtOHnQtjs41AYA" }
 
-        BREVO_API_KEY                        = { secret = "brevo-api-key" }
-        MATTERMOST_NOTIFICATIONS_WEBHOOK_URL = { secret = "mattermost-notifications-webhook-url" }
+        BREVO_API_KEY = { secret = "brevo-api-key" }
 
         POSTHOG_HOST = { value = local.coolify_env_posthog_host }
         POSTHOG_KEY  = { secret = "posthog-key" }
