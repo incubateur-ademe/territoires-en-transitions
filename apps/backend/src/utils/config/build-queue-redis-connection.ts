@@ -1,8 +1,8 @@
-import { X509Certificate } from 'node:crypto';
 import type {
   PeerCertificate,
   ConnectionOptions as TlsConnectionOptions,
 } from 'node:tls';
+import { parsePemCertificate } from './parse-pem-certificate';
 
 export type QueueRedisConfig = {
   QUEUE_REDIS_HOST?: string;
@@ -108,15 +108,10 @@ export function buildQueueRedisConnection(
  * `10.0.1.11`). L'empreinte est un critère plus strict que le nom.
  */
 function pinCertificate(rawPem: string): TlsConnectionOptions {
-  // Un PEM injecté sur une ligne (secret, variable d'environnement) arrive
-  // souvent avec des `\n` littéraux.
-  const pem = rawPem.replace(/\\n/g, '\n');
-  let pinned: string;
-  try {
-    pinned = new X509Certificate(pem).fingerprint256;
-  } catch {
-    throw new Error("QUEUE_REDIS_TLS_CA n'est pas un certificat PEM valide");
-  }
+  const { pem, fingerprint256: pinned } = parsePemCertificate(
+    rawPem,
+    'QUEUE_REDIS_TLS_CA'
+  );
 
   return {
     ca: pem,
