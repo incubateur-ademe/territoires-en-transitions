@@ -11,7 +11,7 @@
 import { getCible } from '../db';
 import { loadCollectivites } from './collectivites';
 import { loadDemarchesTet } from './demarches-tet';
-import { buildDossier } from './dossier';
+import { buildDossier, openConsultations } from './dossier';
 import { createEcarts, listPartiesEcartees, validateBilan } from './ecarts';
 import { createDossiers } from './ecriture';
 import { calculateElaborations } from './elaborations';
@@ -38,13 +38,15 @@ const main = async () => {
     );
 
     const elaborations = calculateElaborations(dossiers);
-    const dossiersAImporter = elaborations.retenues;
+    const dossiersAImporter = openConsultations(
+      elaborations.retenues,
+      dateReference
+    );
     const ecarts = [...perimetre.ecartees, ...elaborations.ecartees];
 
     validateGardes(dossiersAImporter, {
       collectivites,
       demarchesTet,
-      dateReference,
     });
     validateBilan(perimetre.lues, dossiersAImporter, ecarts);
     const partiesEcartees = await listPartiesEcartees(

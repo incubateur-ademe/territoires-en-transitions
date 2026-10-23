@@ -13,10 +13,15 @@ import type { Porteur } from './collectivites';
 import type { LigneDemarche } from './perimetre';
 import type { LigneSuivi, SuiviAdeme } from './suivi-ademe';
 
-const { EN_ELABORATION, INSTRUIT, PUBLIE } = DemarchePcaetStatusEnum;
+const { EN_ELABORATION, TRANSMIS_POUR_AVIS, INSTRUIT, PUBLIE } =
+  DemarchePcaetStatusEnum;
 const { OBLIGATOIRE, VOLONTAIRE } = DemarchePcaetObligationEnum;
 
-type Statut = typeof EN_ELABORATION | typeof INSTRUIT | typeof PUBLIE;
+type Statut =
+  | typeof EN_ELABORATION
+  | typeof TRANSMIS_POUR_AVIS
+  | typeof INSTRUIT
+  | typeof PUBLIE;
 
 /**
  * Qui a décidé l'obligation, dans l'ordre de la règle :
@@ -145,28 +150,25 @@ const correctDatesSaisies = (ligne: LigneDemarche) => {
   return { ligne: corrigee, datesRevues };
 };
 
+/** Règle : un dossier instruit dont l'échéance d'avis n'est pas passée à la date de référence (échéance comprise) est encore en consultation : il arrive transmis pour avis. */
+export const openConsultations = (
+  dossiers: readonly Dossier[],
+  dateReference: string
+): Dossier[] =>
+  dossiers.map((d) =>
+    d.colonnes.status === INSTRUIT &&
+    d.colonnes.avisDeadlineAt !== null &&
+    d.colonnes.avisDeadlineAt >= dateReference
+      ? { ...d, colonnes: { ...d.colonnes, status: TRANSMIS_POUR_AVIS } }
+      : d
+  );
+
 /**
  * Garde, appelée par `gardes.ts` : liste les cas bloquants, un par ligne.
- * - A3 : fenêtre d'avis encore ouverte à la date de référence, échéance comprise ;
  * - D7 : publié sans date de publication ;
  * - D3 : instruit sans date de transmission, le dossier serait enfermé.
  */
-export const listCasBloquantsDossiers = (
-  dossiers: readonly Dossier[],
-  dateReference: string
-) => [
-  ...dossiers
-    .filter(
-      (d) =>
-        d.colonnes.avisDeadlineAt !== null &&
-        d.colonnes.avisDeadlineAt >= dateReference
-    )
-    .map(
-      (d) =>
-        `  fenêtre d'avis encore ouverte (A3) : ${decrireDossier(
-          d
-        )}, échéance ${d.colonnes.avisDeadlineAt}`
-    ),
+export const listCasBloquantsDossiers = (dossiers: readonly Dossier[]) => [
   ...dossiers
     .filter(
       (d) => d.colonnes.status === PUBLIE && d.colonnes.publishedAt === null

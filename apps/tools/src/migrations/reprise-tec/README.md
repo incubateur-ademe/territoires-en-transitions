@@ -62,7 +62,11 @@ pnpx tsx $SCRIPT --suivi <csv> --date-reference <AAAA-MM-JJ> --confirm  # import
 ```
 
 `--date-reference` est **la date du jour de l'import**, pas la date de gel de
-T&C : elle décide si une fenêtre d'avis est encore ouverte.
+T&C : elle décide si une fenêtre d'avis est encore ouverte. Un dossier en
+dépôt pour avis dont l'échéance (transmission plus 4 mois) n'est pas passée à
+cette date, échéance comprise, est encore en consultation : il arrive
+**transmis pour avis**, avec son échéance ; la clôture de nuit le passera en
+instruit à l'échéance. Sinon, il arrive instruit.
 
 La date de transmission d'un dossier est la **réception du projet** ; à
 défaut, la plus précoce des deux dates « envoi avis DREAL » et « envoi avis
@@ -130,7 +134,6 @@ s'il en trouve un :
 | Code | Garde                                                                                          | Quoi faire                                                                                                                                 |
 | ---- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | A27  | collectivité introuvable dans TeT, ou trouvée plusieurs fois                                   | la créer, ou corriger le doublon, avant l'import ; si elle existe sous un autre SIREN, l'ajouter à `SIRENS_RATTACHES` (`collectivites.ts`) |
-| A3   | fenêtre d'avis de trois mois encore ouverte à la date de référence, jour de l'échéance compris | vérifier la date ; si elle est juste, attendre la fin de la consultation                                                                   |
 | D3   | dossier qui arriverait instruit sans date de transmission                                      | corriger la source : il serait enfermé dans TeT                                                                                            |
 | D4   | collectivité qui a déjà une démarche active dans TeT                                           | décider au cas par cas, on ne touche pas à son dossier                                                                                     |
 | D7   | dossier qui arriverait publié sans date de publication                                         | corriger la source                                                                                                                         |

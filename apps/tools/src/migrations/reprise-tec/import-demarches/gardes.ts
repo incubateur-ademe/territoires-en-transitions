@@ -10,16 +10,14 @@ export const validateGardes = (
   {
     collectivites,
     demarchesTet,
-    dateReference,
   }: {
     collectivites: Collectivites;
     demarchesTet: DemarchesTet;
-    dateReference: string;
   }
 ) => {
   const cas = [
     ...collectivites.listCasBloquants(dossiers),
-    ...listCasBloquantsDossiers(dossiers, dateReference),
+    ...listCasBloquantsDossiers(dossiers),
     ...demarchesTet.listCasBloquants(dossiers, collectivites),
   ];
   if (cas.length > 0) {
