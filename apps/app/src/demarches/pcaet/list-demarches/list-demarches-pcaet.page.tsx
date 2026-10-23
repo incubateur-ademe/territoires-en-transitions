@@ -100,6 +100,7 @@ export const ListDemarchesPcaetPage = () => {
       </div>
       <section className="rounded-xl border border-grey-3 bg-white p-6">
         <DemarchesPcaetTable
+          ariaLabel={appLabels.demarcheListeTitre(PCAET_TYPE)}
           demarches={items}
           {...pilotage}
           statutOptions={demarchePcaetStatusValues}

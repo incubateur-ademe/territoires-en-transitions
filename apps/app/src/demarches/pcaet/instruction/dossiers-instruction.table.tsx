@@ -209,6 +209,11 @@ const columnHelper = createColumnHelper<typeof features, Dossier>();
  * Le tableau est en `table-fixed` : sans elles, une date et un nom de
  * collectivité occupent la même part de la largeur, et les sept colonnes
  * s'étalent bien au-delà de ce qu'elles ont à montrer.
+ *
+ * En contrepartie, ces deux colonnes prennent ce qui reste : sur un écran
+ * étroit, plus rien, et leurs en-têtes débordent sur les voisines. D'où la
+ * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`
+ * — au-dessus, il tient, et l'en-tête reste collant à la page.
  */
 const columns = [
   columnHelper.display({
@@ -381,15 +386,24 @@ export const DossiersInstructionTable = ({
 
   return (
     <PilotageContext.Provider value={pilotage}>
-      <ReactTable
-        table={table}
-        ariaLabel={appLabels.instructionListeTitre}
-        isEmpty={dossiers.length === 0}
-        emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
-        getRowProps={(row) => ({
-          'data-test': `demarches.pcaet.instruction.ligne-${row.id}`,
-        })}
-      />
+      {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
+      <div
+        className="max-xl:overflow-x-auto"
+        tabIndex={0}
+        role="region"
+        aria-label={appLabels.instructionListeTitre}
+      >
+        <ReactTable
+          table={table}
+          ariaLabel={appLabels.instructionListeTitre}
+          className={afficherRegion ? 'min-w-[72rem]' : 'min-w-[64rem]'}
+          isEmpty={dossiers.length === 0}
+          emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
+          getRowProps={(row) => ({
+            'data-test': `demarches.pcaet.instruction.ligne-${row.id}`,
+          })}
+        />
+      </div>
     </PilotageContext.Provider>
   );
 };
