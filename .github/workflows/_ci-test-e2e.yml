@@ -1,5 +1,5 @@
-# Run sharded Playwright tests against the prepared stack.
-name: Test end-to-end
+# Run Playwright shards and merge their reports after success or failure.
+name: _CI / E2E tests
 
 permissions:
   actions: read
@@ -13,13 +13,8 @@ on:
         required: true
         type: string
       nx-cloud-token-secret-type:
-        description: Nx Cloud token access type (read-only or read-write)
-        required: false
-        default: read-only
+        required: true
         type: string
-
-env:
-  LOGS: /tmp/logs
 
 jobs:
   test-end-to-end:
@@ -34,6 +29,7 @@ jobs:
     # intercepte les clics et fait échouer les tests e2e. `|| 'false'` : évite un
     # boot en erreur si la variable de dépôt n'est pas définie.
     env:
+      LOGS: /tmp/logs
       MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
       NEXT_PUBLIC_AXEPTIO_ID: e2e
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
@@ -188,7 +184,7 @@ jobs:
           retention-days: 7
 
   merge-playwright-reports:
-    if: ${{ always() && !cancelled() }}
+    if: ${{ always() && !cancelled() && (needs.test-end-to-end.result == 'success' || needs.test-end-to-end.result == 'failure') }}
     needs: [test-end-to-end]
     runs-on: ubuntu-latest
 

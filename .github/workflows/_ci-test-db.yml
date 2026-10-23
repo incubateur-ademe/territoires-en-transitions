@@ -1,22 +1,20 @@
-# Test sqitch revert/deploy
-name: test-db-deploy
+# Test database migrations, restore compatibility and constraints against local Supabase.
+name: _CI / Database tests
 
 permissions:
   contents: read
-  # Pull des images de la base et de sqitch (publiées par prepare-test-db)
   packages: read
 
 on:
   workflow_call:
 
-env:
-  # le tag sqitch jusqu'où on test les revert/deploy
-  tag: v4.0.0
-
 jobs:
   test-db-deploy:
     name: Test database deployment lifecycle
     runs-on: ubuntu-latest
+    env:
+      # Sqitch tag used as the starting point for revert/deploy tests.
+      tag: v4.0.0
 
     steps:
       - uses: actions/checkout@v7.0.1
