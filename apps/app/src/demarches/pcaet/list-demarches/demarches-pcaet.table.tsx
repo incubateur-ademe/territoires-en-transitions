@@ -155,8 +155,9 @@ const ActionsCell = ({ demarche }: { demarche: DemarcheListItem }) => {
 
 /**
  * Mêmes conventions que la liste d'instruction des services : largeurs posées
- * colonne par colonne sauf sur le texte libre, et l'action principale en
- * bouton visible plutôt que cachée dans un menu.
+ * colonne par colonne sauf sur le texte libre, largeur minimale du tableau qui
+ * défile dans son cadre sur écran étroit, et l'action principale en bouton
+ * visible plutôt que cachée dans un menu.
  */
 const columns = [
   columnHelper.display({
@@ -283,6 +284,7 @@ const columns = [
 ];
 
 export const DemarchesPcaetTable = <T extends DemarcheListItem>({
+  ariaLabel,
   demarches,
   sort,
   direction,
@@ -294,6 +296,7 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
   renderActions,
   etatVide,
 }: Pilotage & {
+  ariaLabel: string;
   demarches: T[];
   statutOptions: Variant['statutOptions'];
   getDetailUrl: (demarche: T) => string;
@@ -342,11 +345,21 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
 
   return (
     <PilotageContext.Provider value={pilotage}>
-      <ReactTable
-        table={table}
-        isEmpty={demarches.length === 0}
-        emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
-      />
+      {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
+      <div
+        className="max-xl:overflow-x-auto"
+        tabIndex={0}
+        role="region"
+        aria-label={ariaLabel}
+      >
+        <ReactTable
+          table={table}
+          ariaLabel={ariaLabel}
+          className="min-w-[72rem]"
+          isEmpty={demarches.length === 0}
+          emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
+        />
+      </div>
     </PilotageContext.Provider>
   );
 };
