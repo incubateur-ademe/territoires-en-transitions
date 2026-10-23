@@ -24,13 +24,13 @@ export const getStockage = () =>
     { auth: { persistSession: false } }
   );
 
-/** Envoie une fois chaque contenu dans le bucket de sa collectivité, nommé par son empreinte, en `upsert` comme `saveInStorage`. */
+/** Envoie une fois chaque contenu dans le bucket de sa collectivité, nommé par son empreinte, en `upsert` comme `saveInStorage` ; un objet déjà là a le même contenu, il n'est pas renvoyé. */
 export const uploadFichiers = async (
   client: PoolClient,
   archive: string,
-  depots: readonly Depot[]
+  depots: readonly Depot[],
+  isConfirmed = true
 ) => {
-  const stockage = getStockage();
   const { rows } = await client.query<{
     collectiviteId: number;
     bucketId: string;
@@ -40,7 +40,7 @@ export const uploadFichiers = async (
   );
   const buckets = new Map(rows.map((r) => [r.collectiviteId, r.bucketId]));
 
-  const aEnvoyer = [
+  const uniques = [
     ...new Map(
       depots.flatMap((d) =>
         d.contenu
@@ -49,6 +49,24 @@ export const uploadFichiers = async (
       )
     ).values(),
   ];
+  const { rows: presents } = await client.query<{ objet: string }>(
+    `select bucket_id || '|' || name as objet from storage.objects
+      where bucket_id = any($1)`,
+    [[...new Set(uniques.flatMap((d) => buckets.get(d.collectiviteId) ?? []))]]
+  );
+  const dejaLa = new Set(presents.map((r) => r.objet));
+  const aEnvoyer = uniques.filter(
+    (d) =>
+      !dejaLa.has(`${buckets.get(d.collectiviteId)}|${d.contenu?.empreinte}`)
+  );
+  if (!isConfirmed) {
+    return {
+      fichiers: aEnvoyer.length,
+      octets: aEnvoyer.reduce((n, d) => n + (d.contenu?.taille ?? 0), 0),
+      dejaLa: uniques.length - aEnvoyer.length,
+    };
+  }
+  const stockage = getStockage();
   let octetsEnvoyes = 0;
   const envoyer = async () => {
     for (let p = aEnvoyer.shift(); p; p = aEnvoyer.shift()) {
@@ -77,7 +95,11 @@ export const uploadFichiers = async (
   };
   const total = aEnvoyer.length;
   await Promise.all(Array.from({ length: ENVOIS_EN_PARALLELE }, envoyer));
-  return { fichiers: total, octets: octetsEnvoyes };
+  return {
+    fichiers: total,
+    octets: octetsEnvoyes,
+    dejaLa: uniques.length - total,
+  };
 };
 
 /** Garde, appelée par `gardes.ts` : une collectivité ou un émetteur qui doit recevoir un fichier n'a pas de bucket. */

@@ -31,7 +31,7 @@ export const printRapport = ({
   avis: ReturnType<typeof buildAvis>;
   empreintesDesFiches: Awaited<ReturnType<typeof updateFichiersDesFiches>>;
   bibliotheque: Pick<Bibliotheque, 'creees' | 'reutilisees'>;
-  envoi: { fichiers: number; octets: number } | null;
+  envoi: { fichiers: number; octets: number; dejaLa: number } | null;
   isConfirmed: boolean;
 }) => {
   const sansFichier = pieces.filter((p) => !p.contenu);
@@ -144,7 +144,7 @@ export const printRapport = ({
     envoi
       ? `Stockage : ${envoi.fichiers} fichiers déposés, ${(
           envoi.octets / 1e9
-        ).toFixed(2)} Go`
+        ).toFixed(2)} Go, ${envoi.dejaLa} déjà là`
       : 'Stockage : rien déposé (simulation)'
   );
 

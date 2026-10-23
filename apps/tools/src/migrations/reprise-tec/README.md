@@ -534,7 +534,25 @@ pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv> --confirm  # dépôt 
 `Demarches/…`) ; `--suivi`, le suivi SGPE de l'import des dossiers. Avec
 `--confirm`, les fichiers sont déposés **avant** la transaction, dans le bucket
 de leur collectivité, sous le nom de leur empreinte et en remplaçant l'objet
-existant, comme le produit : relancer après un échec redépose à l'identique.
+existant, comme le produit. Un objet déjà là sous ce nom a le même contenu : il
+n'est pas renvoyé, et relancer après un échec ne dépose que ce qui manque.
+
+**Déposer à l'avance.** L'envoi est la partie longue. `envoyer.ts` dépose, avant
+l'étape 2, les fichiers des dossiers que l'étape 2 reprendra (calculés comme
+elle, sans rien écrire) et ceux de leurs actions, dans le bucket de leur
+collectivité. Il n'écrit rien en base ; les avis rendus, qui vont chez leur
+émetteur, attendent l'étape 6 bis. Il lui faut la copie de l'étape 1 et le
+suivi SGPE. Le jour J, l'étape 6 bis ne dépose que les nouveaux fichiers.
+
+```bash
+SCRIPT=apps/tools/src/migrations/reprise-tec/import-pieces-dossiers/envoyer.ts
+pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv>            # simulation, compte ce qu'il reste à déposer
+pnpx tsx $SCRIPT --archive <dossier Uploads> --suivi <csv> --confirm  # dépôt
+```
+
+Un fichier déposé à l'avance dont le dossier ne sera finalement pas repris
+reste dans le bucket, sans ligne de bibliothèque : invisible dans le produit, et
+l'annulation ne le retire pas.
 
 | Dans T&C                                          | Dans TeT                                                                                                                                      |
 | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
