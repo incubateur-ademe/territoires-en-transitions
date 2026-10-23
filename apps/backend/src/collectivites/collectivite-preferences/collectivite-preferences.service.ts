@@ -44,8 +44,8 @@ export class CollectivitePreferencesService {
     await this.permission.assertAllowed(
       user,
       'collectivites.read',
-      ResourceType.PLATEFORME,
-      null
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
     );
     return this.repository.getPreferencesByCollectiviteId(collectiviteId);
   }
