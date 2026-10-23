@@ -668,7 +668,7 @@ Scaleway : il restaure les données seules dans un schéma posé par Sqitch (ADR
 rejeu de toutes les migrations bute sur des extensions absentes de Scaleway ; il ne reprend
 qu'`auth.users` (tout le monde serait déconnecté) ; et il anonymise. On restaure donc le dump
 **complet** (schéma + données, schéma `sqitch` compris : les déploiements suivants repartent
-de là) avec [`scripts/restore-preprod-db.sh`](scripts/restore-preprod-db.sh) :
+de là) avec [`scripts/restore-db.sh`](scripts/restore-db.sh) :
 
 - les schémas internes de Supabase (`net`, `vault`, `graphql`, `realtime`…), les
   publications, event triggers et extensions indisponibles sont écartés, ainsi que `cron` :
@@ -678,7 +678,8 @@ de là) avec [`scripts/restore-preprod-db.sh`](scripts/restore-preprod-db.sh) :
 - `extensions` est ajouté au `search_path` des rôles, comme sur Supabase ;
 - en preprod : `clean_data.sql`, plus la purge des sessions, refresh tokens et facteurs MFA.
 
-La cible est lue dans les outputs de `infra/nonprod` : le script ne sait pas viser la prod.
+La cible est lue dans les outputs de `infra/nonprod` (`restore-preprod-db`) ou de `infra/prod`
+(`restore-prod-db`).
 
 ### Répétition sur preprod
 
@@ -748,8 +749,16 @@ plus : `EXCLUDE_REGEX='…'`. Rejouable : chaque passage repart de zéro.
 Même chemin, avec trois différences : un dump **frais** pris une fois l'application en
 lecture seule (`data_layer/backup/backup.sh`, pas celui de la nuit), **aucune**
 anonymisation (les sessions et refresh tokens restent valides grâce au même `JWT_SECRET`), et
-une cible lue dans `infra/prod`. La variante prod du script s'écrit une fois la répétition
-preprod passée sans erreur. Séquence complète (TTL DNS, fenêtre de maintenance, garde de
+une cible lue dans `infra/prod` :
+
+```sh
+make -C infra/prod restore-prod-db d=$HOME/tet-dumps/backup-AAAA-MM-JJ.dump list=true
+make -C infra/prod restore-prod-db d=$HOME/tet-dumps/backup-AAAA-MM-JJ.dump
+```
+
+Garde-fou : le script refuse de tourner si la RDB prod a une connexion
+(`auth.users.last_sign_in_at`) postérieure à la date du dump, c'est-à-dire si elle est déjà
+en service. Les répétitions sur la RDB prod avant la bascule passent. Séquence complète (TTL DNS, fenêtre de maintenance, garde de
 Supabase Cloud en lecture seule pendant 14 jours, rollback) : section « Stratégie de
 bascule » de `doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md`.
 
