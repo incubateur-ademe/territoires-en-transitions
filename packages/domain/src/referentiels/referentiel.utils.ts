@@ -172,11 +172,8 @@ export function rollUpActionIdToActionLevel(
   }
 }
 
-export function isActionHidden(
-  desactive: boolean | undefined,
-  referentielTeEnabled: boolean
-): boolean {
-  return Boolean(desactive) && referentielTeEnabled;
+export function isActionHidden(desactive: boolean | undefined): boolean {
+  return Boolean(desactive);
 }
 
 export function isNewReferentiel(referentielId: string): boolean {
@@ -240,7 +237,7 @@ export function filterHiddenActionsFromGroupedById<
   for (const actionId in actions) {
     if (
       Object.prototype.hasOwnProperty.call(actions, actionId) &&
-      !isActionHidden(actions[actionId].score.desactive, true)
+      !isActionHidden(actions[actionId].score.desactive)
     ) {
       visibleIds.add(actionId);
     }

@@ -85,14 +85,6 @@ export const defaultCollectivitePreferences: CollectivitePreferences = {
   },
 } as const;
 
-// référentiels affichés quand le feature flag `is-referentiel-te-enabled` n'est pas activé
-export const REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY: ReferentielDisplayMap =
-  {
-    eci: true,
-    cae: true,
-    te: false,
-  } as const;
-
 export function getReferentielDisplayMap(
   referentiels: CollectiviteReferentielPreferences
 ): ReferentielDisplayMap {

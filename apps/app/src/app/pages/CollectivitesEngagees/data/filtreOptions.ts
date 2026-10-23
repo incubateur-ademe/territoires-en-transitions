@@ -27,18 +27,11 @@ export const niveauLabellisationCollectiviteOptions: TOption[] = [
   { value: '5', label: appLabels.niveauLabellisation5 },
 ];
 
-export const getReferentielCollectiviteOptions = (
-  referentielTeEnabled: boolean
-): TOption[] => {
-  const referentielOptions = [
-    { value: 'cae', label: referentielToName['cae'] },
-    { value: 'eci', label: referentielToName['eci'] },
-    { value: 'te', label: referentielToName['te'] },
-  ];
-  return referentielTeEnabled
-    ? referentielOptions
-    : referentielOptions.filter((option) => option.value !== 'te');
-};
+export const referentielCollectiviteOptions: TOption[] = [
+  { value: 'cae', label: referentielToName['cae'] },
+  { value: 'eci', label: referentielToName['eci'] },
+  { value: 'te', label: referentielToName['te'] },
+];
 
 export const trierParOptions: TOption[] = [
   { value: 'score', label: appLabels.trierParRealiseCourant },
