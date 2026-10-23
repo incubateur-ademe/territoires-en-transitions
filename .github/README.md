@@ -28,7 +28,25 @@ Les workflows internes portent le préfixe `_` et exposent seulement `workflow_c
 
 Chaque job publie son propre résultat dans les checks de la PR. Le retry automatique reste limité à une tentative pour les tests backend/API et les shards E2E, uniquement si tous les jobs en échec font partie de ces tests. Un échec de publication Storybook ou de fusion des rapports ne déclenche pas de retry automatique.
 
-Les caches passent par les actions locales dédiées [à `node_modules`](./actions/cache/node-modules/action.yml) et [au build Next.js](./actions/cache/next-app-build/action.yml), qui utilisent `actions/cache`. Le login Docker passe par l'[action locale `docker-login`](./actions/docker-login/action.yml), qui utilise `docker/login-action`. `keep-alive-streamlit.yml` utilise une [action dédiée](./actions/keep-alive-streamlit/action.yml) pour installer les dépendances et réveiller les applications Streamlit.
+Les caches passent par les actions locales dédiées [à `node_modules`](./actions/cache/node-modules/action.yml) et [au build Next.js](./actions/cache/next-app-build/action.yml), qui utilisent `actions/cache`. Le login Docker passe par l'[action locale `docker/login`](./actions/docker/login/action.yml), qui utilise `docker/login-action`. `keep-alive-streamlit.yml` utilise une [action dédiée](./actions/providers/streamlit/keep-alive/action.yml) pour installer les dépendances et réveiller les applications Streamlit.
+
+### Organisation des actions locales
+
+Les actions sont classées par responsabilité sous `.github/actions/` :
+
+| Dossier      | Responsabilité                                                                                  |
+| ------------ | ----------------------------------------------------------------------------------------------- |
+| `app/`       | Configuration, démarrage et métadonnées des applications.                                       |
+| `cache/`     | Caches dédiés aux dépendances, builds et outils de test.                                        |
+| `ci/`        | Calcul des projets affectés et sélection des validations.                                       |
+| `database/`  | Commandes PostgreSQL, seed et migrations Sqitch ; services locaux dans `supabase/` et `redis/`. |
+| `docker/`    | Login au registre, chemins, disponibilité, pull et build/push des images.                       |
+| `node/`      | Préparation de pnpm et des dépendances natives Node.js.                                         |
+| `providers/` | Intégrations externes, séparées dans `aws/`, `koyeb/` et `streamlit/`.                          |
+| `runner/`    | Configuration du système du runner.                                                             |
+| `utils/`     | Helpers partagés de troncature et d'attente HTTP.                                               |
+
+Les workflows et actions composites utilisent un chemin depuis la racine du dépôt, par exemple `uses: ./.github/actions/docker/login`. Les scripts et Dockerfiles propres à une action restent dans son dossier.
 
 ### Cache des images de déploiement
 
