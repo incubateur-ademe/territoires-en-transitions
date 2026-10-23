@@ -79,21 +79,21 @@ describe('buildIndicateurValeursTableSections', () => {
     ]);
   });
 
-  it('crée une table obligatoire par puits de séquestration', () => {
+  it('regroupe les puits de séquestration dans une seule table obligatoire', () => {
     const sections = buildIndicateurValeursTableSections(
       byCode('sequestration')
     );
 
-    expect(sections[0].tables.map((table) => table.title)).toEqual([
+    expect(sections).toHaveLength(1);
+    expect(sections[0].tables).toHaveLength(1);
+    expect(sections[0].tables[0].title).toBe('Séquestration carbone');
+    expect(sections[0].tables[0].isOptional).toBe(false);
+    expect(sections[0].tables[0].rows.map((row) => row.label)).toEqual([
       'Forêt',
       'Sols agricoles (terres cultivées et prairies)',
       'Produits bois',
       'Autres sols',
     ]);
-    expect(sections[0].tables.every((table) => table.rows.length === 1)).toBe(
-      true
-    );
-    expect(sections[0].tables.some((table) => table.isOptional)).toBe(false);
   });
 
   it('sépare les ENR par groupBy et écarte les identifiants non résolus', () => {

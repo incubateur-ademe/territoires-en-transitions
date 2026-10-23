@@ -376,7 +376,7 @@ const SEQUESTRATION_CARBONE = {
   icon: 'seedling-line',
 
   indicateurDefinitionId: 'cae_63.a',
-  referenceYearApplyLevel: 'child',
+  referenceYearApplyLevel: 'parent',
   children: [
     {
       label: 'Forêt',
