@@ -67,6 +67,14 @@ export const toolsAutomationApiConfigurationSchema = z
       .string()
       .min(1)
       .describe('Database url to be able to persist webhook events'),
+    // Optionnel : sans CA, TLS reste piloté par le sslmode de l'URL (local, CI,
+    // Supabase Cloud). Cf. buildDatabaseSsl.
+    SUPABASE_DATABASE_SSL_ROOT_CERT: z
+      .string()
+      .optional()
+      .describe(
+        "CA (PEM) du serveur Postgres, pour un TLS vérifié face à un certificat auto-signé (RDB Scaleway). L'URL ne doit alors pas porter de sslmode."
+      ),
     EXTERNAL_SYSTEM_SECRET_MAP: z
       .json()
       .describe(
