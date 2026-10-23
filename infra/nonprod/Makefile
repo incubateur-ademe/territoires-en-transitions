@@ -96,6 +96,7 @@ bootstrap-storage-sql:
 # Export plutôt qu'interpolation shell : d peut contenir des espaces.
 restore-preprod-db: export DUMP = $(d)
 restore-preprod-db: export LIST_ONLY = $(if $(list),true,false)
+restore-preprod-db: export TARGET = preprod
 restore-preprod-db:
 	@test -n "$(d)" || { echo "Usage : make restore-preprod-db d=backup-AAAA-MM-JJ.dump [list=true]"; exit 1; }
-	@../scripts/restore-preprod-db.sh
+	@../scripts/restore-db.sh

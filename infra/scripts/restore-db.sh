@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Restaure un dump complet (schéma + données) de Supabase Cloud dans la RDB
-# Scaleway de preprod. Répétition de la bascule : même chemin que le jour J,
-# avec en plus l'anonymisation de data_layer/backup/clean_data.sql.
+# Scaleway de preprod ou de prod :
+#   - preprod : répétition de la bascule, avec en plus l'anonymisation de
+#     data_layer/backup/clean_data.sql ;
+#   - prod : la bascule elle-même, sans anonymisation (mots de passe, sessions
+#     et refresh tokens repris tels quels, même JWT_SECRET).
 #
 # Différences avec data_layer/backup/restore.sh (data-only, ADR 0016) :
 #   - le schéma vient du dump, pas de Sqitch : rejouer toutes les migrations
@@ -10,15 +13,18 @@
 #     MFA), pas seulement auth.users. GoTrue reprend ensuite ses migrations
 #     depuis auth.schema_migrations du dump.
 #
-# La cible est lue dans les outputs de infra/nonprod : ce script ne sait pas
-# viser la prod. Lancer via `make -C infra/nonprod restore-preprod-db d=<dump>`.
+# La cible est lue dans les outputs de infra/nonprod (preprod) ou infra/prod.
+# Lancer via `make -C infra/nonprod restore-preprod-db d=<dump>` ou
+# `make -C infra/prod restore-prod-db d=<dump>`.
 #
 # Ordre (les FK de public pointent vers la clé primaire d'auth.users, les
 # triggers d'auth.users appellent des fonctions des schémas applicatifs) :
 #   1. préparation : la base repart de zéro (schémas du dump supprimés, public
 #      vidé), 001 / 002 ;
-#   2. auth, définitions et données, en supabase_auth_admin, puis anonymisé ;
-#   3. le reste, définitions et données, en tet_admin, puis clean_data.sql ;
+#   2. auth, définitions et données, en supabase_auth_admin, puis anonymisé
+#      (preprod) ;
+#   3. le reste, définitions et données, en tet_admin, puis clean_data.sql
+#      (preprod) ;
 #   4. auth, index, contraintes et triggers, en supabase_auth_admin ;
 #   5. le reste, index, contraintes et triggers, puis rafraîchissement des
 #      vues matérialisées ;
@@ -29,15 +35,24 @@
 # GoTrue reçoit USAGE sur les schémas applicatifs, pour ses triggers.
 #
 # Variables :
+#   TARGET                   preprod | prod
 #   DUMP                     dump pg_dump --format=custom (data_layer/backup/backup.sh)
 #   LIST_ONLY                (optionnel) true : affiche le tri du sommaire, n'écrit rien
-#   RESTORE_ENCRYPTED_PASSWORD  hash bcrypt posé sur tous les comptes (requis)
+#   RESTORE_ENCRYPTED_PASSWORD  hash bcrypt posé sur tous les comptes (requis en preprod)
 #   EXCLUDE_REGEX            (optionnel) entrées du sommaire à écarter en plus (ERE)
 #   JOBS                     (optionnel) parallélisme de pg_restore, défaut 4
-#   CONFIRM                  (optionnel) « preprod » pour sauter la confirmation
+#   CONFIRM                  (optionnel) nom de la cible pour sauter la confirmation
 set -euo pipefail
 
 : "${DUMP:?DUMP non défini (chemin du .dump)}"
+case "${TARGET:-}" in
+  preprod) _tf_dir=nonprod _anonymize=1 ;;
+  prod) _tf_dir=prod _anonymize=0 ;;
+  *)
+    echo "✗ TARGET doit valoir preprod ou prod." >&2
+    exit 1
+    ;;
+esac
 
 case "$-" in *x*)
   echo "✗ Refus de tourner en mode trace (set -x) : les mots de passe apparaîtraient." >&2
@@ -53,8 +68,9 @@ for bin in psql pg_restore terraform awk; do
 done
 
 _root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-_nonprod="$_root/infra/nonprod"
-_sql="$_nonprod/supabase-api/sql"
+_tf="$_root/infra/$_tf_dir"
+# Bootstrap SQL commun aux environnements (même compose supabase-api).
+_sql="$_root/infra/nonprod/supabase-api/sql"
 _backup_sql="$_root/data_layer/backup"
 _jobs="${JOBS:-4}"
 
@@ -63,7 +79,7 @@ _jobs="${JOBS:-4}"
   exit 1
 }
 
-if [ "${LIST_ONLY:-false}" != "true" ]; then
+if [ "${LIST_ONLY:-false}" != "true" ] && [ "$_anonymize" -eq 1 ]; then
   _pwd="${RESTORE_ENCRYPTED_PASSWORD:-}"
   if [ "${#_pwd}" -ne 60 ] || ! [[ "$_pwd" =~ ^\$2[aby]\$ ]]; then
     echo "✗ RESTORE_ENCRYPTED_PASSWORD doit être un hash bcrypt (60 caractères, \$2a\$…)." >&2
@@ -90,16 +106,16 @@ on_exit() {
 }
 trap on_exit EXIT
 
-# --- Connexion : endpoint public de la RDB preprod, en tet_admin ---
+# --- Connexion : endpoint public de la RDB cible, en tet_admin ---
 # Paramètres libpq par l'environnement, jamais d'URI : le mot de passe contient
 # des caractères réservés, et ne passe pas par argv.
-echo "→ Lecture des outputs de infra/nonprod…"
+echo "→ Lecture des outputs de infra/${_tf_dir}…"
 export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
-PGHOST="$(terraform -chdir="$_nonprod" output -raw pg_endpoint_ip)"
-PGPORT="$(terraform -chdir="$_nonprod" output -raw pg_endpoint_port)"
-PGDATABASE="$(terraform -chdir="$_nonprod" output -raw pg_database_name)"
-PGUSER="$(terraform -chdir="$_nonprod" output -raw pg_admin_user)"
-PGPASSWORD="$(terraform -chdir="$_nonprod" output -raw pg_admin_password)"
+PGHOST="$(terraform -chdir="$_tf" output -raw pg_endpoint_ip)"
+PGPORT="$(terraform -chdir="$_tf" output -raw pg_endpoint_port)"
+PGDATABASE="$(terraform -chdir="$_tf" output -raw pg_database_name)"
+PGUSER="$(terraform -chdir="$_tf" output -raw pg_admin_user)"
+PGPASSWORD="$(terraform -chdir="$_tf" output -raw pg_admin_password)"
 export PGSSLMODE=require PGCONNECT_TIMEOUT=10 PGOPTIONS="-c client_min_messages=warning -c statement_timeout=0"
 PSQL=(psql -X -w -v ON_ERROR_STOP=1 -q)
 
@@ -241,11 +257,34 @@ if [ -n "$_dump_storage" ] && [ -n "$_image_storage" ] && [ "$_dump_storage" -gt
   exit 1
 fi
 
+# Prod déjà en service sur Scaleway : des connexions plus récentes que le dump
+# seraient perdues. Les répétitions sur la RDB prod avant la bascule passent :
+# leurs connexions datent toutes d'avant le dump frais.
+if [ "$TARGET" = "prod" ]; then
+  _dump_at="$(sed -n 's/^; *Archive created at //p' "$_work/full.toc")"
+  _live=f
+  if [ "$("${PSQL[@]}" -Atc "select to_regclass('auth.users') is not null")" = "t" ]; then
+    _live="$("${PSQL[@]}" -v at="$_dump_at" -At <<'SQL'
+select exists (select from auth.users where last_sign_in_at > :'at'::timestamptz)
+SQL
+)" || {
+      echo "✗ Date du dump illisible (« ${_dump_at} ») : contrôle de la prod en service impossible." >&2
+      exit 1
+    }
+  fi
+  if [ "$_live" != "f" ]; then
+    echo "✗ La RDB prod a des connexions postérieures au dump (${_dump_at}) : elle est en service." >&2
+    echo "  Restaurer ici effacerait ces données. Prendre un dump frais de cette base." >&2
+    exit 1
+  fi
+fi
+
 echo ""
-echo "⚠ La base ${PGDATABASE} sur ${PGHOST}:${PGPORT} (preprod) va être remplacée par ${DUMP}."
-if [ "${CONFIRM:-}" != "preprod" ]; then
-  read -r -p "  Taper « preprod » pour continuer : " _answer
-  [ "$_answer" = "preprod" ] || {
+echo "⚠ La base ${PGDATABASE} sur ${PGHOST}:${PGPORT} (${TARGET}) va être remplacée par ${DUMP}."
+[ "$_anonymize" -eq 1 ] || echo "  Aucune anonymisation : données de prod telles quelles."
+if [ "${CONFIRM:-}" != "$TARGET" ]; then
+  read -r -p "  Taper « ${TARGET} » pour continuer : " _answer
+  [ "$_answer" = "$TARGET" ] || {
     echo "Abandon."
     exit 1
   }
@@ -327,17 +366,18 @@ for _role in "$PGUSER" anon authenticated service_role supabase_storage_admin; d
   "${PSQL[@]}" -c "ALTER ROLE \"${_role}\" SET search_path = \"\$user\", public, extensions" >>"$_log"
 done
 
-# --- 2. à 5. Restauration, anonymisation au plus tôt ---
+# --- 2. à 5. Restauration, anonymisation au plus tôt (preprod) ---
 # Chaque passe de données est anonymisée dès qu'elle est chargée, avant les
 # index (la partie longue) : la fenêtre où la preprod porte des données brutes
 # reste courte, et on_exit la signale si elle s'interrompt.
-_raw=1
+_raw=$_anonymize
 run_restore "auth : définitions et données" -L "$_work/auth.toc" --section=pre-data --section=data --role=supabase_auth_admin
 
 # restore.sh ne copie qu'auth.users ; ici tout auth vient de la prod : sessions,
 # jetons et secrets MFA n'ont rien à faire en preprod.
-echo "→ Anonymisation d'auth…"
-"${PSQL[@]}" -v pwd="$RESTORE_ENCRYPTED_PASSWORD" >>"$_log" <<'SQL'
+if [ "$_anonymize" -eq 1 ]; then
+  echo "→ Anonymisation d'auth…"
+  "${PSQL[@]}" -v pwd="$RESTORE_ENCRYPTED_PASSWORD" >>"$_log" <<'SQL'
 UPDATE auth.users SET phone = NULL WHERE phone IS NOT NULL;
 UPDATE auth.users SET encrypted_password = :'pwd' WHERE encrypted_password IS DISTINCT FROM :'pwd';
 -- Jetons en cours (un lien de récupération de prod marcherait en preprod) et
@@ -362,13 +402,16 @@ BEGIN
   END LOOP;
 END $$;
 SQL
+fi
 
 run_restore "reste : définitions et données (${_jobs} jobs)" -L "$_work/main.toc" --section=pre-data --section=data -j "$_jobs"
 
 # Reprend auth.users (idempotent) et ajoute dcp, config, puis ses assertions.
-echo "→ Anonymisation (clean_data.sql)…"
-"${PSQL[@]}" -v pwd="$RESTORE_ENCRYPTED_PASSWORD" -f "$_backup_sql/clean_data.sql" >>"$_log"
-_raw=0
+if [ "$_anonymize" -eq 1 ]; then
+  echo "→ Anonymisation (clean_data.sql)…"
+  "${PSQL[@]}" -v pwd="$RESTORE_ENCRYPTED_PASSWORD" -f "$_backup_sql/clean_data.sql" >>"$_log"
+  _raw=0
+fi
 
 # Les triggers d'auth.users (créés en supabase_auth_admin) désignent des
 # fonctions de schémas applicatifs : il faut pouvoir les nommer.
@@ -417,4 +460,4 @@ if [ "$_errors" -ne 0 ] || [ "$_fail" -ne 0 ]; then
   echo "✗ Restauration terminée avec des erreurs : relire le journal (grep -n 'error:' $_log)."
   exit 1
 fi
-echo "✓ Preprod restaurée depuis ${DUMP}. Démarrer supabase-api, puis redéployer le backend."
+echo "✓ ${TARGET} restaurée depuis ${DUMP}. Démarrer supabase-api, puis redéployer le backend."
