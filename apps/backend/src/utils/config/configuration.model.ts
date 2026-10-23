@@ -230,10 +230,6 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé TeT de l'API Communs (Authorization: Bearer), pour les secteurs réglementaires des fiches"
       ),
-    MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z
-      .string()
-      .optional()
-      .describe('Url du webhook pour les notifications Mattermost'),
     // Requis sauf si QUEUE_REDIS_URL est fourni (cf. superRefine) : le Redis
     // managé Scaleway exige utilisateur, mot de passe et TLS, que seule l'URL
     // porte.
