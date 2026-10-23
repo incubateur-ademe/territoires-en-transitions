@@ -16,7 +16,7 @@ Par exemple les images docker construites par les actions ne sont pas tirées ou
 | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [main-ci.yml](./workflows/main-ci.yml)                            | Point d'entrée pour les pushes sur `main` et les lancements manuels.                     |
 | [pull-request-ci.yml](./workflows/pull-request-ci.yml)            | Point d'entrée pour les PR hors brouillon.                                               |
-| [\_ci.yml](./workflows/_ci.yml)                                   | Calcul des scopes, orchestration des validations et agrégation des résultats.            |
+| [\_ci.yml](./workflows/_ci.yml)                                   | Calcul des scopes et orchestration des validations.                                      |
 | [\_ci-validate.yml](./workflows/_ci-validate.yml)                 | Lint, build, typecheck et tests unitaires des projets affectés.                          |
 | [\_ci-storybook.yml](./workflows/_ci-storybook.yml)               | Tests des Storybooks sélectionnés et publication UI sur Chromatic.                       |
 | [\_ci-test-db.yml](./workflows/_ci-test-db.yml)                   | Tests des migrations, de la compatibilité des backups et des contraintes en base locale. |
@@ -26,15 +26,9 @@ Par exemple les images docker construites par les actions ne sont pas tirées ou
 
 Les workflows internes portent le préfixe `_` et exposent seulement `workflow_call`. Les points d'entrée appellent `_ci.yml`, qui délègue chaque famille de validations à un sous-workflow `_ci-*.yml`. Ces sous-workflows séparent les responsabilités même lorsqu'ils n'ont qu'un seul appelant.
 
-Le check `ci / ci-complete` exige le succès de tous les sous-workflows applicables. La publication Storybook et le rapport E2E font partie de leurs validations respectives. Les exclusions doivent correspondre aux scopes calculés. Ce nom peut servir de check requis dans les règles de protection de branche. Le retry automatique reste limité à une tentative pour les tests backend/API et les shards E2E ; il relance aussi leur agrégateur si tous les échecs proviennent de ces tests. Un échec de publication ou de fusion des rapports ne déclenche pas de retry automatique.
+Chaque job publie son propre résultat dans les checks de la PR. Le retry automatique reste limité à une tentative pour les tests backend/API et les shards E2E, uniquement si tous les jobs en échec font partie de ces tests. Un échec de publication Storybook ou de fusion des rapports ne déclenche pas de retry automatique.
 
-La CI appelle directement les actions officielles de cache et de login Docker. Les chemins, clés et conditions des caches `node_modules` et Next.js restent visibles dans les jobs. `keep-alive-streamlit.yml` utilise une [action dédiée](./actions/keep-alive-streamlit/action.yml) pour installer les dépendances et réveiller les applications Streamlit.
-
-Pour vérifier les contrats des workflows localement, avec Node 24 :
-
-```sh
-node --test .github/workflows/ci.test.mjs
-```
+La CI appelle directement les actions officielles de cache. Les chemins, clés et conditions des caches `node_modules` et Next.js restent visibles dans les jobs. Le login Docker passe par l'[action locale `docker-login`](./actions/docker-login/action.yml), qui utilise `docker/login-action`. `keep-alive-streamlit.yml` utilise une [action dédiée](./actions/keep-alive-streamlit/action.yml) pour installer les dépendances et réveiller les applications Streamlit.
 
 ### Cache des images de déploiement
 

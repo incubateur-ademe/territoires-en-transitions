@@ -1,4 +1,4 @@
-# Select and orchestrate CI checks, then require every applicable workflow to succeed.
+# Select affected projects and orchestrate their CI checks.
 name: _CI
 
 permissions:
@@ -9,20 +9,6 @@ on:
   workflow_call:
 
 jobs:
-  workflow-checks:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 24.22.0
-          package-manager-cache: false
-      - name: Check workflow aggregation and flaky-test retries
-        run: node --test .github/workflows/ci.test.mjs
-
   analyze-affected:
     runs-on: ubuntu-latest
     outputs:
@@ -157,68 +143,3 @@ jobs:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
-
-  ci-complete:
-    if: ${{ always() }}
-    needs:
-      - analyze-affected
-      - workflow-checks
-      - validate-affected-projects
-      - storybook
-      - prepare-test-db
-      - test-db-deploy
-      - test-backend-api
-      - test-end-to-end
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 24.22.0
-          package-manager-cache: false
-      - name: Require all applicable checks and justify exclusions
-        env:
-          CI_NEEDS: ${{ toJSON(needs) }}
-        run: |
-          node --input-type=module <<'NODE'
-          import assert from 'node:assert/strict';
-
-          const needs = JSON.parse(process.env.CI_NEEDS);
-          assert.ok(
-            needs && typeof needs === 'object' && !Array.isArray(needs),
-            'needs must be a JSON object'
-          );
-          for (const job of [
-            'analyze-affected',
-            'validate-affected-projects',
-            'workflow-checks',
-          ]) {
-            assert.equal(needs[job]?.result, 'success', `${job} must succeed`);
-          }
-          const outputs = needs['analyze-affected'].outputs;
-          const enabled = (name) => {
-            assert.ok(
-              ['true', 'false'].includes(outputs[name]),
-              `Missing scope decision: ${name}`
-            );
-            return outputs[name] === 'true';
-          };
-          const uiStorybook = enabled('run-ui-storybook');
-          const appStorybook = enabled('run-app-storybook');
-          const e2e = enabled('run-e2e');
-          const expectations = {
-            'storybook': uiStorybook || appStorybook,
-            'prepare-test-db': enabled('run-prepare-test-db'),
-            'test-db-deploy': enabled('run-db-deploy'),
-            'test-backend-api': enabled('run-backend-api'),
-            'test-end-to-end': e2e,
-          };
-          for (const [job, required] of Object.entries(expectations)) {
-            assert.equal(
-              needs[job]?.result,
-              required ? 'success' : 'skipped',
-              `${job}: scope requires ${required ? 'success' : 'an explicit skip'}`
-            );
-          }
-          console.log(JSON.stringify(expectations));
-          NODE

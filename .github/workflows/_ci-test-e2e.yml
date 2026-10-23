@@ -45,9 +45,8 @@ jobs:
           persist-credentials: false
 
       - if: ${{ !env.ACT }}
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: ./.github/actions/docker-login
         with:
-          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1,4 +1,4 @@
-# Retry failed CI jobs once when all failures are limited to known flaky tests and their aggregate.
+# Retry failed CI jobs once when all failures are limited to known flaky tests.
 name: Retry flaky jobs
 
 permissions: {}
@@ -41,10 +41,7 @@ jobs:
             exit 0
           fi
 
-          # L'agrégateur échoue aussi quand un test applicable échoue. Il doit être
-          # relancé avec les tests, sans rendre relançable un échec isolé de l'agrégateur.
-          if ! echo "$failed_jobs" | grep -Eq "$retryable" || \
-             echo "$failed_jobs" | grep -Ev "$retryable" | grep -Evq '^ci / ci-complete$'; then
+          if echo "$failed_jobs" | grep -Evq "$retryable"; then
             echo "Échec en dehors des jobs relançables, pas de retry automatique :"
             echo "$failed_jobs"
             exit 0
