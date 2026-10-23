@@ -6,6 +6,12 @@ import { DatabaseServiceInterface } from './database-service.interface';
 
 const dbSchema = {};
 
+// pg ne transmet pas à TLS un hôte qui est une IP : sans `host`, le
+// certificat serait vérifié contre « localhost ».
+function getSslConfig(url: string, ca: string | undefined) {
+  return ca ? { ca, host: new URL(url).hostname } : undefined;
+}
+
 @Injectable()
 export class DatabaseService
   implements OnApplicationShutdown, DatabaseServiceInterface
@@ -14,6 +20,10 @@ export class DatabaseService
 
   private readonly pool = new Pool({
     connectionString: this.configService.get('SUPABASE_DATABASE_URL'),
+    ssl: getSslConfig(
+      this.configService.get('SUPABASE_DATABASE_URL'),
+      this.configService.get('SUPABASE_DATABASE_SSL_ROOT_CERT')
+    ),
     application_name: `Backend ${process.env.APPLICATION_VERSION}`,
     // Under vitest, each worker holds one shared-app Pool (plus a transient
     // one for option-built apps). CI now caps backend workers at 2 because

@@ -9,6 +9,14 @@ export const backendConfigurationSchema = z
       .describe(
         'Url de connexion complète à la base de données Postgres Supabase (postgres://)'
       ),
+    // Optionnel : sans CA, TLS reste piloté par le sslmode de l'URL (local, CI,
+    // Supabase Cloud).
+    SUPABASE_DATABASE_SSL_ROOT_CERT: z
+      .string()
+      .optional()
+      .describe(
+        "CA (PEM) du serveur Postgres, pour un TLS vérifié face à un certificat auto-signé (RDB Scaleway). L'URL ne doit alors pas porter de sslmode, qui remplacerait cette configuration."
+      ),
     SUPABASE_JWT_SECRET: z
       .string()
       .min(1)
