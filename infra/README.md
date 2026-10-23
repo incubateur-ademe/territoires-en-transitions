@@ -753,6 +753,25 @@ preprod passée sans erreur. Séquence complète (TTL DNS, fenêtre de maintenan
 Supabase Cloud en lecture seule pendant 14 jours, rollback) : section « Stratégie de
 bascule » de `doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md`.
 
+**Fichiers en deux passes.** La copie complète de l'étape 6 a pris 2 h 45 pour 273 Go
+(répétition preprod du 2026-10-23) : trop long pour la fenêtre de maintenance.
+
+1. **Quelques jours avant**, application en ligne : passe complète, en lisant
+   `storage.objects` sur la base Supabase prod. Noter l'instant `T` du `select`.
+2. **Pendant la fenêtre**, une fois le dump frais restauré : la même boucle, en ne listant
+   que les objets touchés depuis `T`. `updated_at` couvre les créations comme les
+   ré-uploads, qui donnent une nouvelle `version` donc une nouvelle clé :
+
+   ```sql
+   select bucket_id, name, coalesce(version, '') from storage.objects
+   where updated_at > '<T>'
+   ```
+
+Les objets supprimés entre-temps restent dans le bucket Scaleway, orphelins et sans
+conséquence. Ils faussent aussi le contrôle final : `rclone size` doit compter **au moins**
+autant d'objets que `select count(*) from storage.objects`. Sinon, relancer la boucle de
+la passe 2 (`copyto` saute les objets déjà identiques).
+
 ## State backend : locking natif
 
 Le backend S3 utilise `use_lockfile = true` (Terraform >= 1.10). Lors de chaque `plan` ou `apply`, Terraform écrit un fichier `.tflock` dans le bucket via un **conditional write S3** (`If-None-Match: *`) : si le fichier existe déjà, l'opération échoue immédiatement avec un message d'erreur explicite, ce qui empêche deux applies simultanés.
