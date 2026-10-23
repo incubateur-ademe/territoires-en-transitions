@@ -1,5 +1,4 @@
-import { getReferentielCollectiviteOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
-import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
+import { referentielCollectiviteOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
 import {
@@ -12,9 +11,8 @@ import {
  * la collectivité, et options de référentiels proposées dans son filtre.
  */
 export function useMesuresModuleFiltre(filtre: ListActionsInput) {
-  const referentielTeEnabled = useReferentielTeEnabled();
   const { referentiels } = useCurrentCollectivite().collectivitePreferences;
-  const context = { referentiels, referentielTeEnabled };
+  const context = { referentiels };
 
   const displayedReferentielIds: ReferentielId[] =
     listDisplayedReferentielIds(context);
@@ -28,9 +26,7 @@ export function useMesuresModuleFiltre(filtre: ListActionsInput) {
       ),
     },
     displayedReferentielIds,
-    referentielOptions: getReferentielCollectiviteOptions(
-      referentielTeEnabled
-    ).filter((option) =>
+    referentielOptions: referentielCollectiviteOptions.filter((option) =>
       displayedReferentielIds.includes(option.value as ReferentielId)
     ),
   };

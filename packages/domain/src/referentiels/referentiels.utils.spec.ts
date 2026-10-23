@@ -177,10 +177,10 @@ describe('getSousActionLevelIndex', () => {
 });
 
 describe('isActionHidden', () => {
-  test('masque uniquement si TE activé et action désactivée', () => {
-    expect(isActionHidden(true, true)).toBe(true);
-    expect(isActionHidden(true, false)).toBe(false);
-    expect(isActionHidden(false, true)).toBe(false);
+  test('masque uniquement une action désactivée', () => {
+    expect(isActionHidden(true)).toBe(true);
+    expect(isActionHidden(false)).toBe(false);
+    expect(isActionHidden(undefined)).toBe(false);
   });
 });
 

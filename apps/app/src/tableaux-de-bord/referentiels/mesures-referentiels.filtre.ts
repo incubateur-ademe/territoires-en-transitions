@@ -8,18 +8,14 @@ import { ReferentielId } from '@tet/domain/referentiels';
 
 type ReferentielsContext = {
   referentiels: CollectiviteReferentielPreferences;
-  referentielTeEnabled: boolean;
 };
 
-/** Référentiels affichés pour la collectivité (TE seulement si le flag est actif). */
+/** Référentiels affichés pour la collectivité. */
 export function listDisplayedReferentielIds({
   referentiels,
-  referentielTeEnabled,
 }: ReferentielsContext): CollectiviteReferentielPreferenceId[] {
   return collectiviteReferentielPreferenceIds.filter(
-    (referentielId) =>
-      referentiels[referentielId].display &&
-      (referentielId !== 'te' || referentielTeEnabled)
+    (referentielId) => referentiels[referentielId].display
   );
 }
 

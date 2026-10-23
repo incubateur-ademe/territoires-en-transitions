@@ -41,12 +41,10 @@ export const SwitchToTeBanner = () => {
             return <SwitchToTeBlockedBanner blockers={status.blockers} />;
           case 'NOT_ELIGIBLE':
           case 'ALREADY_SWITCHED':
-          case 'SWITCH_TO_TE_DISABLED':
           default:
-            // pas de bascule à proposer (aucun CAE/ECI engagé, déjà basculé —
-            // ce dernier cas n'a normalement plus le mode `readonly` —, ou
-            // bascule désactivée globalement) : bandeau générique, sans mention
-            // de la bascule.
+            // pas de bascule à proposer (aucun CAE/ECI engagé, ou déjà basculé —
+            // ce dernier cas n'a normalement plus le mode `readonly`) : bandeau
+            // générique, sans mention de la bascule.
             return <ReferentielModeReadonlyBanner />;
         }
       })()}

@@ -22,7 +22,6 @@ import {
   addTestUser,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   Collectivite,
@@ -453,24 +452,6 @@ describe('SwitchToTeRouter', () => {
       });
 
       expect(status).toEqual({ value: 'CAN_SWITCH' });
-    });
-
-    test('SWITCH_TO_TE_DISABLED quand le feature flag is-switch-to-te-enabled est désactivé', async () => {
-      const { collectiviteId, adminCaller } = await setupEligibleCollectivite(
-        prefsEligibleCaeOnly
-      );
-
-      const trackingService = app.get(TrackingService);
-      const isFeatureEnabledSpy = vi
-        .spyOn(trackingService, 'isFeatureEnabled')
-        .mockImplementation(async (flag) => flag !== 'is-switch-to-te-enabled');
-      onTestFinished(() => isFeatureEnabledSpy.mockRestore());
-
-      const status = await adminCaller.referentiels.getSwitchToTeStatus({
-        collectiviteId,
-      });
-
-      expect(status).toEqual({ value: 'SWITCH_TO_TE_DISABLED' });
     });
 
     test('UNAUTHORIZED sans permission REFERENTIELS.MUTATE', async () => {
