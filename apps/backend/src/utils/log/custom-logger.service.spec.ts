@@ -77,6 +77,25 @@ describe('CustomLogger', () => {
     expect(lines[0]).not.toContain('fake (y)');
   });
 
+  test('masque les params d’un message de requête sans DrizzleQueryError', () => {
+    const { logger, lines } = createLogger();
+
+    // Erreur recréée depuis le message : plus d'instance à reconnaître.
+    const recreated = new Error(
+      'Failed query: select from dcp\nparams: x\n    at fake (y)\nsecret@b.fr'
+    );
+    logger.error(new Error('Échec', { cause: recreated }), 'Test');
+    logger.error(
+      new Error('Échec', { cause: 'Failed query: q\nparams: string@b.fr' }),
+      'Test'
+    );
+
+    expect(lines.join()).not.toMatch(/secret@b.fr|fake \(y\)|string@b.fr/);
+    expect(JSON.parse(lines[0]).error.cause.message).toBe(
+      'Failed query: select from dcp\nparams: [masqués]'
+    );
+  });
+
   test("logue une cause qui n'est pas une erreur", () => {
     const { logger, lines } = createLogger();
 

@@ -45,6 +45,17 @@ export const getDefaultLoggerOptions = (): Options => {
  * message et stack). On le remplace à l'identique, reconstruit depuis
  * `query` : les valeurs, saisies par l'utilisateur, ne sont jamais analysées.
  */
+const PARAMS_MARKER = '\nparams: ';
+
+// Coupe jusqu'à la fin du texte : appliqué à un message seul, jamais à une
+// stack, où la fin des params ne se repère pas sans analyser les valeurs.
+function maskParamsToEnd(message: string) {
+  const index = message.indexOf(PARAMS_MARKER);
+  return index === -1
+    ? message
+    : `${message.slice(0, index)}${PARAMS_MARKER}[masqués]`;
+}
+
 function buildQueryParamsRedactor(error: Error) {
   const replacements: [string, string][] = [];
   for (let e: unknown = error; e instanceof Error; e = e.cause) {
@@ -53,6 +64,10 @@ function buildQueryParamsRedactor(error: Error) {
         e.message,
         `Failed query: ${e.query}\nparams: [masqués]`,
       ]);
+    } else if (e.message.includes(PARAMS_MARKER)) {
+      // Filet : message de requête sans DrizzleQueryError reconnaissable
+      // (autre copie de drizzle-orm, erreur recréée depuis le message).
+      replacements.push([e.message, maskParamsToEnd(e.message)]);
     }
   }
   return <T extends string | undefined>(text: T): T =>
@@ -82,7 +97,7 @@ function pickCause(
     return undefined;
   }
   if (!(cause instanceof Error)) {
-    return { message: String(cause) };
+    return { message: maskParamsToEnd(redact(String(cause))) };
   }
   const nested = pickCause(cause.cause, redact);
   return {
