@@ -88,7 +88,16 @@ services:
       - traefik.http.routers.tet-${STACK_ENV}-gotrue.tls=true
       - traefik.http.routers.tet-${STACK_ENV}-gotrue.tls.certresolver=letsencrypt
       - traefik.http.middlewares.tet-${STACK_ENV}-gotrue-strip.stripprefix.prefixes=/auth/v1
-      - traefik.http.routers.tet-${STACK_ENV}-gotrue.middlewares=tet-${STACK_ENV}-gotrue-strip
+      # CORS porté par Traefik pour tout le sous-domaine (Kong le fait chez
+      # Supabase Cloud) : GoTrue refuse le header `apikey` en preflight, et
+      # Storage ne gère pas du tout CORS. Le middleware répond seul aux
+      # preflights et écrase les headers CORS de GoTrue sur les réponses.
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolallowmethods=GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolallowheaders=*
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolexposeheaders=X-Total-Count,Link,X-Supabase-Api-Version
+      - traefik.http.middlewares.tet-${STACK_ENV}-cors.headers.accesscontrolmaxage=3600
+      - traefik.http.routers.tet-${STACK_ENV}-gotrue.middlewares=tet-${STACK_ENV}-cors,tet-${STACK_ENV}-gotrue-strip
       - traefik.http.routers.tet-${STACK_ENV}-gotrue.service=tet-${STACK_ENV}-gotrue
       - traefik.http.services.tet-${STACK_ENV}-gotrue.loadbalancer.server.port=9999
 
@@ -157,6 +166,6 @@ services:
       - traefik.http.routers.tet-${STACK_ENV}-storage.tls=true
       - traefik.http.routers.tet-${STACK_ENV}-storage.tls.certresolver=letsencrypt
       - traefik.http.middlewares.tet-${STACK_ENV}-storage-strip.stripprefix.prefixes=/storage/v1
-      - traefik.http.routers.tet-${STACK_ENV}-storage.middlewares=tet-${STACK_ENV}-storage-strip
+      - traefik.http.routers.tet-${STACK_ENV}-storage.middlewares=tet-${STACK_ENV}-cors,tet-${STACK_ENV}-storage-strip
       - traefik.http.routers.tet-${STACK_ENV}-storage.service=tet-${STACK_ENV}-storage
       - traefik.http.services.tet-${STACK_ENV}-storage.loadbalancer.server.port=5000
