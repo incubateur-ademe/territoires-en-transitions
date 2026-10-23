@@ -88,12 +88,29 @@ describe('Test recherches collectivite', () => {
   });
 
   test('Test tab "Collectivités" recherche par nom avec apostrophe', async () => {
+    // Un membre actif est requis pour apparaître dans la recherche
+    const nom = "Saint-Pierre-d'Arc test recherche";
+    const setup = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: { nom },
+    });
+    onTestFinished(() => setup.cleanup());
+
     const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.collectivites({
       ...input,
+      nom,
+      nbCards: 50,
+    });
+    expect(result.items.map((item) => item.collectiviteId)).toContain(
+      setup.collectivite.id
+    );
+
+    const injection = await caller.collectivites.recherches.collectivites({
+      ...input,
       nom: "l'Arc'); DROP TABLE collectivite; --",
     });
-    expect(result.items.length).toEqual(0);
+    expect(injection.items.length).toEqual(0);
   });
 
   /**
