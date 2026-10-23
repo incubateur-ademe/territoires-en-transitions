@@ -1,0 +1,88 @@
+# Build the app image for bundled deployments and previews, keeping the existing tags.
+name: _Build / app
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        type: string
+        required: true
+      force-rebuild:
+        type: boolean
+        default: false
+    outputs:
+      image:
+        description: Immutable image reference
+        value: ${{ jobs.build.outputs.image }}
+
+jobs:
+  build:
+    name: Build l'app
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      # Signature de l'attestation de provenance (cf. docker-build-push).
+      id-token: write
+      attestations: write
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - id: meta
+        uses: ./.github/actions/app/build-metadata
+
+      - uses: ./.github/actions/docker/login
+        if: ${{ !env.ACT }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker/image-path
+        with:
+          username: incubateur-ademe
+          image: tet-app
+          # Une image par commit, pas par (commit, environnement) : c'est ce qui
+          # rend la promotion preprod -> prod possible sans rebuild.
+          tag: ${{ steps.meta.outputs.git-short-hash }}
+
+      - name: Build et push de l'image app
+        id: build
+        uses: ./.github/actions/docker/build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+        with:
+          signer-workflow: ${{ github.repository }}/.github/workflows/_build-app.yml
+          dockerfile: apps/app/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-app
+          push: ${{ !env.ACT }}
+          reuse-image: ${{ !inputs.force-rebuild }}
+          secrets: |
+            bryntum_token=BRYNTUM_ACCESS_TOKEN
+            posthog_api_key=POSTHOG_API_KEY
+          # Métadonnées du commit uniquement : tout ce qui est spécifique à un
+          # environnement est injecté au déploiement (cf. cd.yml). Les
+          # variables POSTHOG_* et GITHUB_* ne servent qu'au téléversement des
+          # source maps (nom et version de la release) : sans POSTHOG_API_KEY ni
+          # POSTHOG_PROJECT_ID, le build se fait sans téléversement.
+          build-args: |
+            GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
+            GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
+            APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}
+            POSTHOG_PROJECT_ID=${{ vars.POSTHOG_PROJECT_ID }}
+            POSTHOG_HOST=https://eu.posthog.com
+            GITHUB_ACTIONS=true
+            GITHUB_SHA=${{ github.sha }}
+            GITHUB_REF_NAME=${{ github.ref_name }}
+            GITHUB_REPOSITORY=${{ github.repository }}
+            GITHUB_SERVER_URL=${{ github.server_url }}

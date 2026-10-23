@@ -1,0 +1,96 @@
+# Deploy the existing app preview independently of the shared environment stack.
+name: Déploiement de test / app
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      force-rebuild:
+        type: boolean
+        description: Reconstruire l'image même si ce commit est déjà publié
+        default: false
+
+jobs:
+  build-app:
+    uses: ./.github/workflows/_build-app.yml
+    with:
+      target: preprod
+      force-rebuild: ${{ inputs.force-rebuild }}
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+
+  deploy-test-app:
+    name: Déploie l'app de test
+    needs: build-app
+    # `preprod` et non `preprod-koyeb` : les apps de test sont des artefacts
+    # preprod (c'est déjà l'environnement utilisé par cd-test-app-destroy.yml
+    # pour les supprimer), et c'est là que vivent BACKEND_TEST_URL & co.
+    environment:
+      name: preprod
+      url: ${{ steps.deployment-url.outputs.url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: test-app-name
+        uses: ./.github/actions/providers/koyeb/test-app-name
+        with:
+          branch-name: ${{ github.ref_name }}
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Déploie (ou crée) l'app de test sur Koyeb
+        env:
+          IMAGE: ${{ needs.build-app.outputs.image }}
+          NAME: ${{ steps.test-app-name.outputs.name }}
+          # `preprod`, comme l'environnement GitHub du job : les secrets et
+          # variables lus ici sont ceux de preprod, l'app de test ne doit pas se
+          # déclarer `prod` à PostHog (feature flags, error tracking).
+          ENV_NAME: preprod
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
+          BACKEND_URL: ${{ vars.BACKEND_TEST_URL }}
+          APP_URL: ${{ vars.APP_URL }}
+          CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
+        run: |
+          # Seule différence avec l'app déployée : BACKEND_URL pointe sur le
+          # backend de test. C'était un build arg, c'est désormais une variable
+          # de déploiement — d'où la disparition de l'image tet-app-test.
+          env_flags=(
+            --env "ENV_NAME=$ENV_NAME"
+            --env "SUPABASE_URL=$SUPABASE_URL"
+            --env "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY"
+            --env "BACKEND_URL=$BACKEND_URL"
+            --env "APP_URL=$APP_URL"
+            --env "CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID"
+          )
+
+          if koyeb apps get "test-app-$NAME" >/dev/null 2>&1; then
+            echo "App de test déjà déployée sur Koyeb à test-app-$NAME, mise à jour..."
+            koyeb services update "test-app-$NAME/test-app-$NAME" \
+              --docker "$IMAGE" --docker-private-registry-secret ghcr --docker-skip-verify \
+              "${env_flags[@]}"
+          else
+            echo "App de test introuvable sur Koyeb à test-app-$NAME, création avec $IMAGE..."
+            koyeb apps init "test-app-$NAME" \
+              --docker "$IMAGE" --docker-private-registry-secret ghcr --docker-skip-verify \
+              --type web --port 3000:http --route /:3000 --env PORT=3000 \
+              "${env_flags[@]}" \
+              --regions par
+          fi
+
+      - id: deployment-url
+        uses: ./.github/actions/providers/koyeb/get-app-url
+        with:
+          app-name: test-app-${{ steps.test-app-name.outputs.name }}

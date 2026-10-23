@@ -1,0 +1,76 @@
+name: deploy-koyeb-service
+description: Update one existing Koyeb service by digest and wait for its exact deployment
+
+inputs:
+  service:
+    description: Existing app/service
+    required: true
+  image:
+    description: Immutable GHCR image reference
+    required: true
+  environment:
+    description: Runtime environment entries, KEY=value or KEY=@secret, one per line
+    default: ''
+  deadline:
+    description: Absolute Unix deadline shared with the other steps of a transition
+    required: true
+  strategy:
+    description: Koyeb deployment strategy (immediate stops the previous deployment first)
+    default: rolling
+  url:
+    description: Public version endpoint
+    default: ''
+  commit:
+    description: Expected short Git SHA
+    default: ''
+
+outputs:
+  deployment:
+    description: Koyeb deployment ID
+    value: ${{ steps.update.outputs.deployment }}
+
+runs:
+  using: composite
+  steps:
+    - name: Update service
+      id: update
+      shell: bash
+      env:
+        SERVICE: ${{ inputs.service }}
+        IMAGE: ${{ inputs.image }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        DEADLINE: ${{ inputs.deadline }}
+        STRATEGY: ${{ inputs.strategy }}
+      run: |
+        set -euo pipefail
+        [[ "$SERVICE" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]
+        [[ "$IMAGE" =~ ^ghcr\.io/[a-z0-9_/-]+@sha256:[a-f0-9]{64}$ ]]
+        [[ "$DEADLINE" =~ ^[0-9]+$ ]]
+        (( DEADLINE > $(date +%s) ))
+        [[ "$STRATEGY" == rolling || "$STRATEGY" == immediate ]]
+        args=()
+        while IFS= read -r entry; do
+          [[ -n "$entry" ]] || continue
+          [[ "$entry" =~ ^[A-Z_][A-Z0-9_]*= ]]
+          args+=(--env "$entry")
+        done <<< "$ENVIRONMENT"
+        printf '| %s | requested | `%s` |\n' "$SERVICE" "$IMAGE" >> "$GITHUB_STEP_SUMMARY"
+        # Never retry a mutation: a lost response can still mean an accepted deployment.
+        remaining=$((DEADLINE - $(date +%s)))
+        (( remaining <= 30 )) || remaining=30
+        service=$(timeout --kill-after=5s "${remaining}s" koyeb services update "$SERVICE" \
+          --docker "$IMAGE" --docker-private-registry-secret ghcr --docker-skip-verify \
+          --deployment-strategy "$STRATEGY" \
+          "${args[@]}" --output json)
+        deployment=$(jq -er '.latest_deployment_id | select(test("^[a-zA-Z0-9-]+$"))' <<< "$service")
+        echo "deployment=$deployment" >> "$GITHUB_OUTPUT"
+        printf '| %s | accepted | `%s` |\n' "$SERVICE" "$deployment" >> "$GITHUB_STEP_SUMMARY"
+
+    - uses: ./.github/actions/providers/koyeb/wait-for-service
+      with:
+        service: ${{ inputs.service }}
+        deployment: ${{ steps.update.outputs.deployment }}
+        image: ${{ inputs.image }}
+        deadline: ${{ inputs.deadline }}
+        url: ${{ inputs.url }}
+        commit: ${{ inputs.commit }}

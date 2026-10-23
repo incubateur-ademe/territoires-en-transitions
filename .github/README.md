@@ -48,11 +48,15 @@ Les actions sont classées par responsabilité sous `.github/actions/` :
 
 Les workflows et actions composites utilisent un chemin depuis la racine du dépôt, par exemple `uses: ./.github/actions/docker/login`. Les scripts et Dockerfiles propres à une action restent dans son dossier.
 
+### Déploiement groupé
+
+[cd.yml](./workflows/cd.yml) livre la stack complète sur staging, preprod ou prod, avec Sqitch avant les services et une transition backend/app bornée. Les builds partagés de l'app et du backend servent aussi les aperçus. Consulter le [guide de déploiement](../doc/development/deploiement.md) pour la configuration des environments, l'ordre des opérations et la reprise après échec.
+
 ### Cache des images de déploiement
 
 L'action `docker-build-push` utilise un [cache BuildKit dans le registre](https://docs.docker.com/build/cache/backends/registry/), sous le tag `buildcache-<cache-scope>` du même package GHCR que l'image. Le cache est partagé entre les branches et les environnements et conserve les couches intermédiaires (`mode=max`), avec compression zstd niveau 1. Il utilise la connexion fournie par `docker-login` ; un échec d'export du cache ne fait pas échouer le déploiement.
 
-Le workflow `cd-app.yml` réutilise l'image d'un commit déjà publié, y compris lors d'une promotion vers un autre environnement ou d'un déploiement d'app de test. Cocher **Reconstruire l'image même si ce commit est déjà publié** pour relancer le build en conservant le cache BuildKit : les étapes déjà en cache peuvent être réutilisées. Cette réutilisation d'image concerne l'app, dont la configuration arrive au runtime ; l'action la désactive par défaut pour les autres images.
+Le workflow `cd.yml` et les aperçus réutilisent les images `app`, `backend` et `tools` déjà publiées pour le commit si leur attestation est valide. Cocher **Reconstruire les images même si ce commit est déjà publié** pour relancer les builds en conservant le cache BuildKit. Le site est reconstruit avec sa configuration d'environnement. Les jobs transmettent ensuite les références par digest à l'adaptateur Koyeb.
 
 Les caches de travail Next.js et Nx de l'app restent dans des mounts locaux au builder et ne sont pas exportés dans les couches Docker. Sur un runner éphémère, le build Next.js reste donc un build à froid lorsque le commit change. Le premier build après ce changement de backend de cache doit également alimenter le cache GHCR.
 
