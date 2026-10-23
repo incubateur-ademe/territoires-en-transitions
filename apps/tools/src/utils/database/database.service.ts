@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { buildDatabaseSsl } from '@tet/backend/utils/database/build-database-ssl';
 import { Pool } from 'pg';
 import ConfigurationService from '../../config/configuration.service';
 
@@ -11,6 +12,10 @@ export class DatabaseService implements OnApplicationShutdown {
 
   private readonly pool = new Pool({
     connectionString: this.configService.get('SUPABASE_DATABASE_URL'),
+    ssl: buildDatabaseSsl({
+      url: this.configService.get('SUPABASE_DATABASE_URL'),
+      ca: this.configService.get('SUPABASE_DATABASE_SSL_ROOT_CERT'),
+    }),
     application_name: `Tools Automation Api ${process.env.APPLICATION_VERSION}`,
   });
 
