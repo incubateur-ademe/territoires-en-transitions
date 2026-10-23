@@ -14,8 +14,13 @@
 locals {
   coolify_env_secrets = {
     "supabase-database-url" = {
-      description = "SUPABASE_DATABASE_URL du backend preprod : RDB managé, réseau privé, sslmode=require."
-      value       = module.postgres.private_connection_uri
+      description = "SUPABASE_DATABASE_URL du backend preprod : RDB managé, réseau privé, TLS vérifié par postgres-tls-ca."
+      # Sans sslmode : pour node-postgres, require vaut verify-full sans la CA
+      # (certificat auto-signé refusé) et remplacerait celle de
+      # SUPABASE_DATABASE_SSL_ROOT_CERT (postgres-tls-ca).
+      value = format("postgres://%s:%s@%s:%d/%s",
+        module.postgres.admin_user_name, module.postgres.admin_password,
+      module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
     }
     # Mots de passe restreints à -_.!*~ (main.tf) : injectables sans
     # percent-encoding.
