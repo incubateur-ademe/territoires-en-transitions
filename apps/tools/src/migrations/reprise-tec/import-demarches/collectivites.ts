@@ -6,6 +6,7 @@ import { decrireDossier, type Dossier } from './dossier';
 /** La collectivité principale du dossier dans T&C, et sa correspondante dans TeT. */
 export type Porteur = {
   demarcheId: number;
+  tecCollectiviteId: number;
   nom: string;
   siren: string | null;
   collectiviteId: number | null;
@@ -37,6 +38,7 @@ export const loadCollectivites = async (client: PoolClient) => {
   const decrire = (tecId: number) => decrirePorteur(getPorteur(tecId));
 
   return {
+    porteurs: [...porteurs.values()],
     getPorteur,
     decrire,
 
@@ -75,6 +77,7 @@ const listPorteurs = async (
     with porteur as (
       select distinct on (dc.demarche_id)
              dc.demarche_id,
+             c.id as tec_collectivite_id,
              c.nom,
              lpad(c.siren, 9, '0') as siren,
              c.insee_commune_siege,
@@ -96,6 +99,7 @@ const listPorteurs = async (
       select * from unnest($1::text[], $2::text[]) as r(siren_tec, siren_tet)
     )
     select p.demarche_id::int as "demarcheId",
+           p.tec_collectivite_id::int as "tecCollectiviteId",
            p.nom,
            p.siren,
            tet.id             as "collectiviteId",
