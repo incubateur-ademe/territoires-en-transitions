@@ -44,4 +44,5 @@ export interface ApplicationContextLogger {
 export interface ApplicationContextError {
   stack?: string;
   message: string;
+  cause?: Record<string, unknown>;
 }

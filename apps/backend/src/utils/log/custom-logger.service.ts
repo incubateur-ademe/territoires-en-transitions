@@ -36,11 +36,17 @@ export const getDefaultLoggerOptions = (): Options => {
           },
   };
 };
+// Le message d'une erreur Drizzle se termine par `\nparams: <valeurs>` : on
+// coupe jusqu'à la fin du message, ou jusqu'aux frames dans une stack.
+const QUERY_PARAMS_PATTERN = /\nparams: [\s\S]*?(?=\n {4}at |$)/;
+
+function redactQueryParams<T extends string | undefined>(text: T): T {
+  return text?.replace(QUERY_PARAMS_PATTERN, '\nparams: [masqués]') as T;
+}
+
 // Liste fermée : les autres propriétés des causes peuvent porter des données
 // personnelles (`params` / `query` de Drizzle, `detail` de pg).
 const LOGGED_CAUSE_KEYS = [
-  'type',
-  'message',
   'code',
   'severity',
   'table',
@@ -49,13 +55,20 @@ const LOGGED_CAUSE_KEYS = [
   'routine',
 ] as const;
 
-function pickCause(cause: any): Record<string, unknown> | undefined {
+function pickCause(cause: unknown): Record<string, unknown> | undefined {
   if (cause === undefined || cause === null) {
     return undefined;
   }
-  const picked: Record<string, unknown> = pick(cause, [...LOGGED_CAUSE_KEYS]);
+  if (!(cause instanceof Error)) {
+    return { message: redactQueryParams(String(cause)) };
+  }
   const nested = pickCause(cause.cause);
-  return nested ? { ...picked, cause: nested } : picked;
+  return {
+    name: cause.name,
+    message: redactQueryParams(cause.message),
+    ...pick(cause as any, [...LOGGED_CAUSE_KEYS]),
+    ...(nested && { cause: nested }),
+  };
 }
 
 /**
@@ -111,15 +124,13 @@ export class CustomLogger implements LoggerService {
       if (message instanceof Error) {
         // La cause porte l'erreur d'origine (ex. l'erreur pg sous un
         // "Failed query" de Drizzle, elle-même sous une TRPCError).
-        const cause = pickCause(
-          pino.stdSerializers.errWithCause(message).cause
-        );
+        const cause = pickCause(message.cause);
         objArg.error = {
-          stack: message.stack,
-          message: message.message,
+          stack: redactQueryParams(message.stack),
+          message: redactQueryParams(message.message),
           ...(cause !== undefined && { cause }),
         };
-        objArg.message = message.message;
+        objArg.message = objArg.error.message;
       } else {
         Object.assign(objArg, message);
       }
