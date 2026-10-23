@@ -32,7 +32,7 @@ jobs:
 
           # Préfixes des jobs relançables. Les jobs issus d'un workflow
           # réutilisable sont nommés "<job appelant> / <job appelé>".
-          retryable='^ci / (test-backend-api|test-end-to-end \([0-9]+\))$'
+          retryable='^ci / (test-backend-api / test-backend-api|test-end-to-end / test-end-to-end \([0-9]+\))$'
           failed_jobs=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs?per_page=100" --paginate \
             --jq '.jobs[] | select(.conclusion == "failure") | .name')
 

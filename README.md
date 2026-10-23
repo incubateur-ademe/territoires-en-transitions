@@ -360,7 +360,7 @@ Les tests pgTAP de [`data_layer/tests`](./data_layer/tests) n'ont pas d'équival
 cd data_layer/scripts && sh run_tests.sh
 ```
 
-L'aller-retour deploy/revert/verify des migrations sqitch est couvert en CI par le job `test-db-deploy` du workflow [`_ci.yml`](./.github/workflows/_ci.yml).
+L'aller-retour deploy/revert/verify des migrations sqitch est couvert en CI par le workflow [`_ci-test-db.yml`](./.github/workflows/_ci-test-db.yml).
 
 ## Déploiement
 

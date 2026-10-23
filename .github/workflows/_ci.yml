@@ -1,4 +1,4 @@
-# Validate workflow contracts and affected projects, then aggregate their results.
+# Select and orchestrate CI checks, then require every applicable workflow to succeed.
 name: _CI
 
 permissions:
@@ -88,163 +88,26 @@ jobs:
     needs: [analyze-affected]
     permissions:
       contents: read
-    env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
+    uses: ./.github/workflows/_ci-validate.yml
+    with:
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      nx-base: ${{ needs.analyze-affected.outputs.nx-base }}
+      nx-head: ${{ needs.analyze-affected.outputs.nx-head }}
+    secrets: inherit
 
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 0
-          filter: tree:0
-          persist-credentials: false
-
-      - uses: ./.github/actions/pnpm-prepare
-        with:
-          cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-
-      - parallel:
-          - name: Setup app env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: app
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-
-          - name: Setup backend env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: backend
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-              supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
-              supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-              gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
-              brevo-api-key: ${{ secrets.BREVO_API_KEY }}
-              supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
-
-          - name: Setup site env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: site
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-
-      - name: Print affected projects
-        run: pnpm nx show projects --affected --base="${{ needs.analyze-affected.outputs.nx-base }}" --head="${{ needs.analyze-affected.outputs.nx-head }}"
-
-      # Download once before concurrent Nx commands to avoid racing on bundle extraction.
-      # https://github.com/nrwl/nx/issues/35209
-      - name: Download Nx Cloud client
-        run: pnpm nx download-cloud-client
-
-      - name: Lint affected projects
-        run: pnpm nx affected -t lint --base="${{ needs.analyze-affected.outputs.nx-base }}" --head="${{ needs.analyze-affected.outputs.nx-head }}" --parallel=75% -- --quiet
-        background: true
-
-      - name: Build affected projects
-        run: pnpm nx affected -t build --base="${{ needs.analyze-affected.outputs.nx-base }}" --head="${{ needs.analyze-affected.outputs.nx-head }}" --exclude=app,backend,e2e --parallel=50%
-
-      # Keep these Nx commands sequential: with the daemon disabled in CI, cache
-      # hits restore shared dependency outputs even when they are already present.
-      # A concurrent restore can overwrite declarations while typecheck reads them.
-      - name: Typecheck affected projects
-        env:
-          SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
-          SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
-        run: |
-          pnpm nx affected -t typecheck --base="${{ needs.analyze-affected.outputs.nx-base }}" --head="${{ needs.analyze-affected.outputs.nx-head }}" --parallel=50%
-
-      - name: Test affected projects
-        env:
-          SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
-          SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
-        run: |
-          pnpm nx affected -t test --base="${{ needs.analyze-affected.outputs.nx-base }}" --head="${{ needs.analyze-affected.outputs.nx-head }}" --exclude=backend,api,e2e --parallel=50%
-
-      - wait-all:
-
-  ui-storybook:
+  storybook:
+    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' || needs.analyze-affected.outputs.run-app-storybook == 'true' }}
     needs: [analyze-affected]
-    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
-    env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: ./.github/actions/pnpm-prepare
-        with:
-          cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
-
-      - run: pnpm nx build-storybook ui -- --quiet --stats-json
-
-      - uses: actions/upload-artifact@v7.0.1
-        with:
-          name: storybook-static
-          path: packages/ui/storybook-static
-          retention-days: 1
-
-      - uses: ./.github/actions/cache/playwright-browsers
-      - run: pnpm nx test-storybook ui
-
-  publish-storybook:
-    needs: [analyze-affected, ui-storybook]
-    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
-    env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: ./.github/actions/pnpm-prepare
-        with:
-          cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
-
-      - uses: actions/download-artifact@v8.0.1
-        with:
-          name: storybook-static
-          path: packages/ui/storybook-static
-
-      - name: Publish to Chromatic
-        run: pnpm nx chromatic ui -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-
-  app-storybook:
-    needs: [analyze-affected]
-    if: ${{ needs.analyze-affected.outputs.run-app-storybook == 'true' }}
-    env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: ./.github/actions/pnpm-prepare
-        with:
-          cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
-
-      - run: pnpm nx build-storybook app -- --quiet
-
-      - uses: ./.github/actions/cache/playwright-browsers
-      - run: pnpm nx test-storybook app
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_ci-storybook.yml
+    with:
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      run-ui: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' }}
+      run-app: ${{ needs.analyze-affected.outputs.run-app-storybook == 'true' }}
+    secrets: inherit
 
   prepare-test-db:
     if: ${{ needs.analyze-affected.outputs.run-prepare-test-db == 'true' }}
@@ -264,166 +127,8 @@ jobs:
     permissions:
       contents: read
       packages: read
-    name: Test database deployment lifecycle
-    runs-on: ubuntu-latest
-    env:
-      # Sqitch tag used as the starting point for revert/deploy tests.
-      tag: v4.0.0
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        if: ${{ !env.ACT }}
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Start supabase
-        id: start
-        uses: ./.github/actions/supabase-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-          pull: ${{ !env.ACT }}
-
-      - name: Bind database tests to the local Supabase container
-        id: local-supabase
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@supabase_db_tet:5432/postgres
-          SUPABASE_NETWORK: ${{ vars.SUPABASE_NETWORK }}
-        run: |
-          set -euo pipefail
-
-          container_id="$(docker inspect --format '{{.Id}}' supabase_db_tet)"
-          if [[ "$(docker inspect --format '{{.State.Running}}' supabase_db_tet)" != 'true' ]]; then
-            echo "::error::Le conteneur Supabase local n'est pas démarré."
-            exit 2
-          fi
-
-          attached_container_ip=''
-          while IFS='|' read -r attached_container_id attached_container_cidr; do
-            if [[ "$attached_container_id" == "$container_id" ]]; then
-              attached_container_ip="${attached_container_cidr%%/*}"
-              break
-            fi
-          done < <(
-            docker network inspect \
-              --format '{{range $id, $container := .Containers}}{{$id}}|{{$container.IPv4Address}}{{"\n"}}{{end}}' \
-              "$SUPABASE_NETWORK"
-          )
-          if [[ -z "$attached_container_ip" ]]; then
-            echo "::error::Le conteneur Supabase local n'est pas rattaché au réseau $SUPABASE_NETWORK."
-            exit 2
-          fi
-
-          postgres_image="$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)"
-          connection_identity="$(
-            docker run \
-              --rm \
-              --network "$SUPABASE_NETWORK" \
-              --env DATABASE_URL \
-              --entrypoint psql \
-              "$postgres_image" \
-              "$DATABASE_URL" \
-              --no-psqlrc \
-              --tuples-only \
-              --no-align \
-              --set ON_ERROR_STOP=1 \
-              --command "select current_database() || '|' || host(inet_server_addr())"
-          )"
-          if [[ "$connection_identity" != "postgres|$attached_container_ip" ]]; then
-            echo '::error::La cible PostgreSQL ne correspond pas au conteneur Supabase local démarré.'
-            exit 2
-          fi
-
-          echo "database-url=$DATABASE_URL" >> "$GITHUB_OUTPUT"
-          echo "sqitch-target=db:pg://${DATABASE_URL#postgresql://}" >> "$GITHUB_OUTPUT"
-
-      - name: Test periodicity catalogue migration in an empty disposable database
-        env:
-          SCHEMA_DATABASE_NAME: periodicite_schema_test_${{ github.run_id }}_${{ github.run_attempt }}
-        run: |
-          set -euo pipefail
-          docker exec --env PGPASSWORD=postgres supabase_db_tet \
-            createdb --host=127.0.0.1 --username=postgres --owner=postgres "$SCHEMA_DATABASE_NAME"
-          trap 'docker exec --env PGPASSWORD=postgres supabase_db_tet dropdb --host=127.0.0.1 --username=postgres --if-exists --force "$SCHEMA_DATABASE_NAME"' EXIT
-          docker run \
-            --rm \
-            --network container:supabase_db_tet \
-            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
-            --workdir /workspace \
-            --entrypoint pg_prove \
-            "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
-            --dbname="postgresql://postgres:postgres@127.0.0.1:5432/$SCHEMA_DATABASE_NAME" \
-            --ext .psql --verbose data_layer/tests/indicateur/periodicite-schema.assertions.psql
-
-      - name: Sqitch revert to ${{ env.tag }}
-        if: ${{ !env.ACT }}
-        uses: ./.github/actions/sqitch
-        with:
-          command: 'revert --to @${{ env.tag }} --y'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - name: Sqitch deploy/verify
-        if: ${{ !env.ACT }}
-        uses: ./.github/actions/sqitch
-        with:
-          command: 'deploy --mode change --verify'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - name: Sqitch revert to ${{ env.tag }} (local)
-        if: ${{ env.ACT }}
-        uses: ./.github/actions/sqitch-local
-        with:
-          command: 'revert --to @${{ env.tag }} --y'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-
-      - name: Sqitch deploy/verify (local)
-        if: ${{ env.ACT }}
-        uses: ./.github/actions/sqitch-local
-        with:
-          command: 'deploy --mode change --verify'
-          target: ${{ steps.local-supabase.outputs.sqitch-target }}
-
-      - name: Test backup preflight against the deployed database
-        run: |
-          set -euo pipefail
-          postgres_image="$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)"
-          docker run \
-            --rm --interactive \
-            --network container:supabase_db_tet \
-            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
-            --workdir /workspace \
-            --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=contract \
-            --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
-          archive="$(mktemp)"
-          trap 'rm -f "$archive"' EXIT
-          pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
-            --table=sqitch.changes --file="$archive"
-          phase="$(bash data_layer/backup/check-restore-compatibility.sh "$archive")"
-          [[ "$phase" == "$EXPECTED_RESTORE_PHASE" ]]
-          BASH
-
-      - name: Test periodicity constraints after deployment
-        run: |
-          docker run \
-            --rm \
-            --network container:supabase_db_tet \
-            --volume "$GITHUB_WORKSPACE:/workspace:ro" \
-            --workdir /workspace \
-            --entrypoint pg_prove \
-            "${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws}/supabase/pg_prove:3.36" \
-            --dbname=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --verbose data_layer/tests/indicateur/periodicite-release.sql \
-            data_layer/tests/indicateur/periodicite.sql \
-            data_layer/tests/indicateur/periodicite-formules.sql \
-            data_layer/tests/indicateur/periodicite-collectivite.sql
+    uses: ./.github/workflows/_ci-test-db.yml
+    secrets: inherit
 
   test-backend-api:
     if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' }}
@@ -432,90 +137,13 @@ jobs:
       actions: read
       contents: read
       packages: read
-    env:
-      NX_CLOUD_ACCESS_TOKEN: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        if: ${{ !env.ACT }}
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: ./.github/actions/speedup-dpkg
-
-      - name: Create docker network ahead of supabase and redis
-        shell: bash
-        run: docker network create ${{ vars.SUPABASE_NETWORK }} || true
-
-      - name: Start supabase in background (while installing deps)
-        id: start-supabase
-        background: true
-        uses: ./.github/actions/supabase-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-          api-url: ${{ vars.SUPABASE_API_URL }}
-          # Restore + pull run inside this backgrounded step so setup can overlap dependency install.
-          pull: ${{ !env.ACT }}
-
-      - name: Start redis in background
-        id: start-redis
-        background: true
-        uses: ./.github/actions/redis-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - uses: ./.github/actions/pnpm-prepare
-        with:
-          cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-          install-canvas-deps: 'true'
-
-      - uses: ./.github/actions/app-env
-        with:
-          app_name: backend
-          json_vars: ${{ toJSON(vars) }}
-          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-          supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
-          supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
-          brevo-api-key: ${{ secrets.BREVO_API_KEY }}
-          supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
-
-      - name: Build shared test dependencies once
-        if: ${{ needs.analyze-affected.outputs.run-backend == 'true' || needs.analyze-affected.outputs.run-api == 'true' }}
-        id: build-backend
-        run: pnpm nx build backend
-        background: true
-
-      - name: Wait for service startup steps
-        wait: [start-supabase, start-redis, build-backend]
-
-      - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
-
-      - parallel:
-          - name: Run backend shared app tests
-            if: ${{ needs.analyze-affected.outputs.run-backend == 'true' }}
-            env:
-              NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
-              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-              SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            # Sortie streamée via pnpm-prepare pour conserver le résumé Vitest
-            # et les tests en échec dans les logs GitHub.
-            run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app
-
-          - name: Run api tests
-            if: ${{ needs.analyze-affected.outputs.run-api == 'true' }}
-            env:
-              NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
-              NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-              SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            run: pnpm nx run api:test --excludeTaskDependencies
+    uses: ./.github/workflows/_ci-test-backend-api.yml
+    with:
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+      run-backend: ${{ needs.analyze-affected.outputs.run-backend == 'true' }}
+      run-api: ${{ needs.analyze-affected.outputs.run-api == 'true' }}
+    secrets: inherit
 
   test-end-to-end:
     if: ${{ needs.analyze-affected.outputs.run-e2e == 'true' }}
@@ -524,220 +152,11 @@ jobs:
       actions: read
       contents: read
       packages: read
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-
-    # Une variable d'environnement de niveau job est héritée par les steps ET
-    # les actions composites (`app-start`) — contrairement à un `env:` posé sur
-    # un step `uses:`. Elle l'emporte sur `node --env-file` (le .env commité a
-    # MON_COMPTE_ADEME_ENABLED=true) : MonCompteAdeme est ainsi désactivé en CI,
-    # sinon la modale d'incitation (montée sur toutes les pages authentifiées)
-    # intercepte les clics et fait échouer les tests e2e. `|| 'false'` : évite un
-    # boot en erreur si la variable de dépôt n'est pas définie.
-    env:
-      LOGS: /tmp/logs
-      MON_COMPTE_ADEME_ENABLED: ${{ vars.MON_COMPTE_ADEME_ENABLED || 'false' }}
-      NEXT_PUBLIC_AXEPTIO_ID: e2e
-      NX_CLOUD_ACCESS_TOKEN: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5]
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-
-      - if: ${{ !env.ACT }}
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: ./.github/actions/speedup-dpkg
-
-      - name: Start Supabase in background
-        id: start-supabase
-        background: true
-        uses: ./.github/actions/supabase-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-          api-url: ${{ vars.SUPABASE_API_URL }}
-          # Restore + pull run inside this backgrounded step, overlapping the parallel setup group.
-          pull: ${{ !env.ACT }}
-
-      - name: Start Redis in background
-        id: start-redis
-        background: true
-        uses: ./.github/actions/redis-start
-        with:
-          network: ${{ vars.SUPABASE_NETWORK }}
-
-      - uses: ./.github/actions/pnpm-prepare
-        with:
-          cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
-
-      - parallel:
-          - name: Setup app env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: app
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-              environment: ci
-
-          - name: Setup backend env
-            uses: ./.github/actions/app-env
-            with:
-              app_name: backend
-              json_vars: ${{ toJSON(vars) }}
-              supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
-              supabase-database-url: ${{ secrets.SUPABASE_DATABASE_URL }}
-              supabase-service-role-key: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-              gcloud-service-account-key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
-              brevo-api-key: ${{ secrets.BREVO_API_KEY }}
-              supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
-              environment: ci
-
-          - name: Install Playwright deps
-            uses: ./.github/actions/cache/playwright-browsers
-
-      # Build in-job so it overlaps the backgrounded Supabase startup instead of gating on a separate build job.
-      - name: Restore Next app build cache
-        id: next-app-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: apps/app/.next/cache
-          key: ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-
-
-      - name: Build app and backend
-        run: pnpm nx run-many -t build -p app backend --parallel=50%
-
-      - name: Save Next app build cache
-        if: ${{ matrix.shard == 1 && steps.next-app-cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: apps/app/.next/cache
-          key: ${{ runner.os }}-next-app-build-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-
-      - name: Wait for service startup steps
-        wait: [start-supabase, start-redis]
-
-      - name: Wait for Mailpit
-        id: wait-for-mailpit
-        uses: ./.github/actions/wait-for-url
-        with:
-          url: ${{ vars.SUPABASE_MAILPIT_URL }}/api/v1/info
-          retry: '30'
-          retry_delay: '2'
-
-      - parallel:
-          - name: Start backend
-            uses: ./.github/actions/app-start
-            with:
-              name: backend
-              port: 8080
-              wait-url: http://localhost:8080/api-docs/v1
-              logs-dir: ${{ env.LOGS }}
-
-          - name: Start app
-            uses: ./.github/actions/app-start
-            with:
-              name: app
-              port: 3000
-              wait-url: http://127.0.0.1:3000
-              logs-dir: ${{ env.LOGS }}
-
-      - name: Run isolated tests (parallel)
-        env:
-          PW_ARTIFACTS_SUFFIX: isolated
-          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
-          SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
-          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        # 50% of logical cores = 2 on the public 4-vCPU runner; scales if the runner grows.
-        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep-invert "@serial" --shard=${{ matrix.shard }}/${{ strategy.job-total }} --workers=50%
-
-      - name: Run serial tests (non isoles)
-        # Serial suite is tiny and must run once; pin it to the first shard.
-        if: ${{ success() && matrix.shard == 1 && !cancelled() }}
-        env:
-          PW_ARTIFACTS_SUFFIX: serial
-          SUPABASE_API_URL: ${{ vars.SUPABASE_API_URL }}
-          SUPABASE_MAILPIT_URL: ${{ vars.SUPABASE_MAILPIT_URL }}
-          SUPABASE_DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: pnpm exec playwright test --config ./e2e/playwright.config.mjs --grep @serial --workers=1 --pass-with-no-tests
-
-      - uses: actions/upload-artifact@v7.0.1
-        if: ${{ !cancelled() }}
-        with:
-          name: blob-report-${{ matrix.shard }}
-          path: ./e2e/blob-report
-          retention-days: 1
-
-      - uses: actions/upload-artifact@v7.0.1
-        if: ${{ failure() }}
-        with:
-          name: debug-shard-${{ matrix.shard }}
-          path: |
-            ./e2e/test-results
-            ./e2e/test-results-isolated
-            ./e2e/test-results-serial
-            ${{ env.LOGS }}
-          retention-days: 7
-
-  merge-playwright-reports:
-    if: ${{ always() && !cancelled() && needs.analyze-affected.outputs.run-e2e == 'true' && (needs.test-end-to-end.result == 'success' || needs.test-end-to-end.result == 'failure') }}
-    needs: [analyze-affected, test-end-to-end]
-    permissions:
-      actions: read
-      contents: read
-      packages: read
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@v7.0.0
-        with:
-          node-version: 24.18.0
-          package-manager-cache: false
-
-      # Merging blobs needs only Playwright, without browsers or workspace deps.
-      - name: Install report merger
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-        run: |
-          playwright_version="$(node -p 'require("./package.json").devDependencies["@playwright/test"]')"
-          npm install --prefix "$RUNNER_TEMP/playwright-report-merger" \
-            --no-package-lock --ignore-scripts --no-audit --no-fund \
-            "playwright@$playwright_version"
-
-      - name: Download blob reports
-        uses: actions/download-artifact@v8.0.1
-        with:
-          path: all-blob-reports
-          pattern: blob-report-*
-          merge-multiple: true
-
-      - name: Merge into HTML report
-        run: node "$RUNNER_TEMP/playwright-report-merger/node_modules/playwright/cli.js" merge-reports --reporter html ./all-blob-reports
-
-      - uses: actions/upload-artifact@v7.0.1
-        with:
-          name: html-report-attempt-${{ github.run_attempt }}
-          path: playwright-report
-          retention-days: 14
+    uses: ./.github/workflows/_ci-test-e2e.yml
+    with:
+      nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
+      pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
+    secrets: inherit
 
   ci-complete:
     if: ${{ always() }}
@@ -745,14 +164,11 @@ jobs:
       - analyze-affected
       - workflow-checks
       - validate-affected-projects
-      - ui-storybook
-      - publish-storybook
-      - app-storybook
+      - storybook
       - prepare-test-db
       - test-db-deploy
       - test-backend-api
       - test-end-to-end
-      - merge-playwright-reports
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -791,14 +207,11 @@ jobs:
           const appStorybook = enabled('run-app-storybook');
           const e2e = enabled('run-e2e');
           const expectations = {
-            'ui-storybook': uiStorybook,
-            'publish-storybook': uiStorybook,
-            'app-storybook': appStorybook,
+            'storybook': uiStorybook || appStorybook,
             'prepare-test-db': enabled('run-prepare-test-db'),
             'test-db-deploy': enabled('run-db-deploy'),
             'test-backend-api': enabled('run-backend-api'),
             'test-end-to-end': e2e,
-            'merge-playwright-reports': e2e,
           };
           for (const [job, required] of Object.entries(expectations)) {
             assert.equal(

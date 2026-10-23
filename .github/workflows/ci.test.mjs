@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 
-test('internal workflows have multiple callers and entry points expose only event triggers', () => {
+test('internal workflows are called and entry points expose only event triggers', () => {
   const directory = new URL('./', import.meta.url);
   const workflows = new Map(
     readdirSync(directory)
@@ -39,8 +39,8 @@ test('internal workflows have multiple callers and entry points expose only even
     if (file.startsWith('_')) {
       assert.deepEqual(events, ['workflow_call'], file);
       assert.ok(
-        callers.get(file).size >= 2,
-        `${file}: inline workflows with fewer than two callers`
+        callers.get(file).size >= 1,
+        `${file}: internal workflows must have a caller`
       );
     } else {
       assert.ok(
@@ -85,14 +85,11 @@ function ciResults() {
     },
     'workflow-checks': { result: 'success' },
     'validate-affected-projects': { result: 'success' },
-    'ui-storybook': { result: 'skipped' },
-    'publish-storybook': { result: 'skipped' },
-    'app-storybook': { result: 'skipped' },
+    storybook: { result: 'skipped' },
     'prepare-test-db': { result: 'success' },
     'test-db-deploy': { result: 'skipped' },
     'test-backend-api': { result: 'success' },
     'test-end-to-end': { result: 'skipped' },
-    'merge-playwright-reports': { result: 'skipped' },
   };
 }
 
@@ -114,52 +111,78 @@ test('rejects malformed CI job results', () => {
   }
 });
 
-test('CI requires each selected Storybook job and the E2E report, while accepting explicit scope exclusions', () => {
-  for (const [scope, jobs] of [
-    ['run-ui-storybook', ['ui-storybook', 'publish-storybook']],
-    ['run-app-storybook', ['app-storybook']],
-    ['run-e2e', ['test-end-to-end', 'merge-playwright-reports']],
+test('CI requires each selected workflow, while accepting explicit scope exclusions', () => {
+  for (const [scope, job] of [
+    ['run-ui-storybook', 'storybook'],
+    ['run-app-storybook', 'storybook'],
+    ['run-e2e', 'test-end-to-end'],
   ]) {
     const needs = ciResults();
     needs['analyze-affected'].outputs[scope] = 'true';
-    for (const job of jobs) needs[job].result = 'success';
+    needs[job].result = 'success';
     checkCi(needs);
-    for (const job of jobs) {
-      for (const result of ['failure', 'cancelled', 'skipped', undefined]) {
-        const failed = structuredClone(needs);
-        failed[job].result = result;
-        assert.throws(() => checkCi(failed), undefined, `${job}: ${result}`);
-      }
+    for (const result of ['failure', 'cancelled', 'skipped', undefined]) {
+      const failed = structuredClone(needs);
+      failed[job].result = result;
+      assert.throws(() => checkCi(failed), undefined, `${job}: ${result}`);
     }
   }
   const excluded = ciResults();
-  excluded['app-storybook'].result = 'success';
+  excluded['storybook'].result = 'success';
   assert.throws(() => checkCi(excluded));
 });
 
-test('E2E reports run after successful or failed shards, but not after exclusions or cancellation', () => {
-  const workflow = readFileSync(new URL('_ci.yml', import.meta.url), 'utf8');
+test('Storybook jobs follow their selected scope and publishing waits for UI tests', () => {
+  const workflow = readFileSync(
+    new URL('_ci-storybook.yml', import.meta.url),
+    'utf8'
+  );
+  for (const runUi of [false, true]) {
+    for (const runApp of [false, true]) {
+      for (const [job, expected] of [
+        ['ui-storybook', runUi],
+        ['publish-storybook', runUi],
+        ['app-storybook', runApp],
+      ]) {
+        const expression = workflow
+          .split(`\n  ${job}:\n`)[1]
+          .match(/^    if: \$\{\{ (.+) \}\}$/m)[1]
+          .replaceAll('inputs.run-ui', "inputs['run-ui']")
+          .replaceAll('inputs.run-app', "inputs['run-app']");
+        assert.equal(
+          runInNewContext(expression, {
+            inputs: { 'run-ui': runUi, 'run-app': runApp },
+          }),
+          expected
+        );
+      }
+    }
+  }
+  assert.match(
+    workflow.split('\n  publish-storybook:\n')[1],
+    /^    needs: \[ui-storybook\]$/m
+  );
+});
+
+test('E2E reports run after successful or failed shards, but not after skipped or cancelled shards', () => {
+  const workflow = readFileSync(
+    new URL('_ci-test-e2e.yml', import.meta.url),
+    'utf8'
+  );
   const expression = workflow
     .split('\n  merge-playwright-reports:\n')[1]
     .match(/^    if: \$\{\{ (.+) \}\}$/m)[1]
-    .replaceAll('needs.analyze-affected', "needs['analyze-affected']")
-    .replaceAll('.run-e2e', "['run-e2e']")
     .replaceAll('needs.test-end-to-end', "needs['test-end-to-end']");
-  for (const enabled of [false, true]) {
-    for (const cancelled of [false, true]) {
-      for (const result of ['success', 'failure', 'skipped', 'cancelled']) {
-        assert.equal(
-          runInNewContext(expression, {
-            always: () => true,
-            cancelled: () => cancelled,
-            needs: {
-              'analyze-affected': { outputs: { 'run-e2e': String(enabled) } },
-              'test-end-to-end': { result },
-            },
-          }),
-          enabled && !cancelled && ['success', 'failure'].includes(result)
-        );
-      }
+  for (const cancelled of [false, true]) {
+    for (const result of ['success', 'failure', 'skipped', 'cancelled']) {
+      assert.equal(
+        runInNewContext(expression, {
+          always: () => true,
+          cancelled: () => cancelled,
+          needs: { 'test-end-to-end': { result } },
+        }),
+        !cancelled && ['success', 'failure'].includes(result)
+      );
     }
   }
 });
@@ -179,24 +202,32 @@ if [[ $1 == api ]]; then printf '%s' "$MOCK_FAILED_JOBS"; fi
     );
     for (const [failures, retry] of [
       ['', false],
-      ['ci / test-end-to-end (1)\nci / ci-complete', true],
+      ['ci / test-end-to-end / test-end-to-end (1)\nci / ci-complete', true],
       [
-        'ci / test-end-to-end (2)\nci / test-end-to-end (5)\nci / ci-complete',
+        'ci / test-end-to-end / test-end-to-end (2)\nci / test-end-to-end / test-end-to-end (5)\nci / ci-complete',
         true,
       ],
-      ['ci / test-backend-api', true],
+      ['ci / test-backend-api / test-backend-api', true],
       ['ci / ci-complete', false],
-      ['ci / validate-affected-projects', false],
-      ['ci / test-end-to-end (1)\nci / validate-affected-projects', false],
-      ['ci / merge-playwright-reports', false],
+      ['ci / validate-affected-projects / validate-affected-projects', false],
       [
-        'ci / test-end-to-end (1)\nci / merge-playwright-reports\nci / ci-complete',
+        'ci / test-end-to-end / test-end-to-end (1)\nci / validate-affected-projects / validate-affected-projects',
         false,
       ],
-      ['ci / test-backend-api-extra', false],
+      ['ci / storybook / publish-storybook', false],
+      [
+        'ci / test-backend-api / test-backend-api\nci / storybook / publish-storybook\nci / ci-complete',
+        false,
+      ],
+      ['ci / test-end-to-end / merge-playwright-reports', false],
+      [
+        'ci / test-end-to-end / test-end-to-end (1)\nci / test-end-to-end / merge-playwright-reports\nci / ci-complete',
+        false,
+      ],
+      ['ci / test-backend-api / test-backend-api-extra', false],
       ['ci / workflow-checks\nci / ci-complete', false],
       [
-        'ci / test-end-to-end (1)\nci / workflow-checks\nci / ci-complete',
+        'ci / test-end-to-end / test-end-to-end (1)\nci / workflow-checks\nci / ci-complete',
         false,
       ],
     ]) {
