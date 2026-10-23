@@ -61,6 +61,8 @@ export const authProconnectPath = '/auth/proconnect';
 
 export const profilPath = '/profil';
 
+export const adminPath = '/admin';
+
 export const recherchesPath = '/recherches';
 const recherchesParam = 'recherchesId';
 export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
