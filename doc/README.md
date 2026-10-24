@@ -7,3 +7,7 @@ Le dossier [`ADRs`](./adr) contient les "Architecture Decision Records" - des do
 ## Déploiement
 
 [Déployer la stack](./deploiement.md) : environnements, configuration et reprise après échec.
+
+## Workflows locaux
+
+[Utiliser les workflows en local](./workflows-locaux.md) : configuration de `act` et gestion des services de test Supabase/Redis.

@@ -58,6 +58,22 @@ cibles. Le cleanup des points de reprise au démarrage est également désactiv�
 Ne pas diriger les planifications externes ou les webhooks de production vers
 ces cibles.
 
+## Images et cache de build
+
+Pour `app`, `backend` et `tools`, une image déjà publiée pour le commit est
+réutilisée si son attestation confirme le commit et le workflow de build attendus.
+Sinon, elle est reconstruite. Cocher "Reconstruire les images même si ce commit
+est déjà publié" (`force-rebuild`) pour forcer le build. Le site est toujours
+reconstruit avec la configuration de la cible. Les déploiements utilisent les
+références par digest.
+
+Le cache BuildKit dans GHCR reste actif lors d'un build forcé. Il est partagé
+entre branches et environnements, avec un scope par image ; les paramètres sont
+définis dans l'action [docker/build-push](../.github/actions/docker/build-push/action.yml).
+Les caches de travail Next.js et Nx restent locaux au builder et ne sont pas
+exportés : pour un nouveau commit, le build Next.js reste à froid sur un runner
+éphémère.
+
 ## Configuration de la cible
 
 Les services Koyeb doivent déjà exister : `<env>-backend/backend`,
