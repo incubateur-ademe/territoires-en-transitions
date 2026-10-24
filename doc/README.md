@@ -2,4 +2,12 @@
 
 ## ADRs
 
-Le dossier [`ADRs`]('./adr') contient les "Architecture Decision Records" - des documents qui capturent les décisions architecturales importantes prises sur le projet. Chaque ADR décrit le contexte, les options considérées, la décision prise et ses conséquences. Ils servent à comprendre l'évolution de l'architecture du projet, et documentent aussi nos outils, technos, et conventions de codage.
+Le dossier [`ADRs`](./adr) contient les "Architecture Decision Records" - des documents qui capturent les décisions architecturales importantes prises sur le projet. Chaque ADR décrit le contexte, les options considérées, la décision prise et ses conséquences. Ils servent à comprendre l'évolution de l'architecture du projet, et documentent aussi nos outils, technos, et conventions de codage.
+
+## Déploiement
+
+[Déployer la stack](./deploiement.md) : environnements, configuration et reprise après échec.
+
+## Workflows locaux
+
+[Utiliser les workflows en local](./workflows-locaux.md) : configuration de `act` et gestion des services de test Supabase/Redis.
