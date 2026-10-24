@@ -1,0 +1,74 @@
+# Build the backend image for bundled deployments and previews, keeping the existing tags.
+name: _Build / backend
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        type: string
+        required: true
+      force-rebuild:
+        type: boolean
+        default: false
+    outputs:
+      image:
+        description: Immutable image reference
+        value: ${{ jobs.build.outputs.image }}
+
+jobs:
+  build:
+    name: Build le backend
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+      # Signature de l'attestation de provenance (cf. docker-build-push).
+      id-token: write
+      attestations: write
+    outputs:
+      image: ${{ steps.build.outputs.image }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - id: meta
+        uses: ./.github/actions/app/build-metadata
+
+      - uses: ./.github/actions/docker/login
+        if: ${{ !env.ACT }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker/image-path
+        with:
+          username: incubateur-ademe
+          image: tet-backend
+          # Une image par commit, pas par (commit, environnement) : c'est ce qui
+          # rend la promotion preprod -> prod possible sans rebuild.
+          tag: ${{ steps.meta.outputs.git-short-hash }}
+
+      - name: Build et push de l'image backend
+        id: build
+        uses: ./.github/actions/docker/build-push
+        env:
+          BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+        with:
+          signer-workflow: ${{ github.repository }}/.github/workflows/_build-backend.yml
+          dockerfile: apps/backend/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          cache-scope: tet-backend
+          push: ${{ !env.ACT }}
+          reuse-image: ${{ !inputs.force-rebuild }}
+          secrets: |
+            bryntum_token=BRYNTUM_ACCESS_TOKEN
+          build-args: |
+            GIT_SHORT_HASH=${{ steps.meta.outputs.git-short-hash }}
+            GIT_COMMIT_TIMESTAMP=${{ steps.meta.outputs.git-commit-timestamp }}
+            APPLICATION_VERSION=${{ steps.meta.outputs.application-version }}

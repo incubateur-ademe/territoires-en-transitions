@@ -1,4 +1,3 @@
-import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import {
   MAX_FICHE_TITLE_LENGTH,
@@ -91,15 +90,12 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly trackingService: TrackingService,
     private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
-    private readonly effetAttenduService: EffetAttenduService,
-    private readonly configurationService: ConfigurationService
+    private readonly effetAttenduService: EffetAttenduService
   ) {}
 
-  /** Les instances traitant les jobs purgent les points de reprise expirés au démarrage. */
+  /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
   async onApplicationBootstrap(): Promise<void> {
-    if (this.configurationService.get('BACKGROUND_TASKS_ENABLED')) {
-      await this.jobRepository.purgeFailedCheckpoints();
-    }
+    await this.jobRepository.purgeFailedCheckpoints();
   }
 
   async generate(

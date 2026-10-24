@@ -1,0 +1,43 @@
+# Remove the branch app preview when its pull request closes.
+name: Supprime l'app de test de la branche
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  destroy-test-app:
+    name: Supprime l'app de test
+    environment: preprod
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: test-app-name
+        uses: ./.github/actions/providers/koyeb/test-app-name
+        with:
+          branch-name: ${{ github.event.pull_request.head.ref }}
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Supprime l'app de test sur Koyeb
+        env:
+          NAME: ${{ steps.test-app-name.outputs.name }}
+        run: |
+          set -euo pipefail
+          if koyeb apps get "test-app-$NAME" >/dev/null 2>&1; then
+            echo "App de test trouvée sur Koyeb à test-app-$NAME, suppression..."
+            koyeb apps delete "test-app-$NAME"
+          else
+            echo "App de test introuvable sur Koyeb à test-app-$NAME, rien à supprimer."
+          fi

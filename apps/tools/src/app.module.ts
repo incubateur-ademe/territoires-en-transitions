@@ -1,4 +1,4 @@
-import { Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 
 import { AirtableModule } from './airtable/airtable.module';
 import { CalendlyModule } from './calendly/calendly.module';
@@ -8,7 +8,7 @@ import { SireneModule } from './sirene/sirene.module';
 import { WebhookModule } from './webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
-import { BullModule, BullRegistrar } from '@nestjs/bullmq';
+import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { buildQueueRedisConnection } from '@tet/backend/utils/config/build-queue-redis-connection';
@@ -35,7 +35,6 @@ const appLogger = new Logger('AppModule');
     ConfigurationModule,
     CronModule,
     BullModule.forRootAsync({
-      extraOptions: { manualRegistration: true },
       imports: [ConfigurationModule],
       useFactory: async (config: ConfigurationService) => {
         const connection = buildQueueRedisConnection({
@@ -51,7 +50,7 @@ const appLogger = new Logger('AppModule');
           }`
         );
 
-        return { connection, prefix: config.get('QUEUE_PREFIX') };
+        return { connection };
       },
       inject: [ConfigurationService],
     }),
@@ -78,15 +77,4 @@ const appLogger = new Logger('AppModule');
   controllers: [],
   providers: [],
 })
-export class AppModule implements OnApplicationBootstrap {
-  constructor(
-    private readonly configurationService: ConfigurationService,
-    private readonly bullRegistrar: BullRegistrar
-  ) {}
-
-  onApplicationBootstrap() {
-    if (this.configurationService.get('BACKGROUND_TASKS_ENABLED')) {
-      this.bullRegistrar.register();
-    }
-  }
-}
+export class AppModule {}

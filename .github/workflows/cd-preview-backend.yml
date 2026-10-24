@@ -1,0 +1,100 @@
+# Deploy the existing backend preview independently of the shared environment stack.
+name: Déploiement de test / backend
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Environnement du backend de test
+        default: preprod
+        options: [preprod, staging]
+      force-rebuild:
+        type: boolean
+        description: Reconstruire l'image même si ce commit est déjà publié
+        default: false
+
+jobs:
+  build-backend:
+    uses: ./.github/workflows/_build-backend.yml
+    with:
+      target: ${{ inputs.target }}
+      force-rebuild: ${{ inputs.force-rebuild }}
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+
+  deploy-test-backend:
+    name: Déploie le backend de test
+    needs: build-backend
+    environment:
+      name: ${{ inputs.target }}
+      url: ${{ steps.deployment-url.outputs.url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: meta
+        uses: ./.github/actions/app/build-metadata
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Déploie le backend de test sur Koyeb
+        env:
+          ENV_NAME: ${{ inputs.target }}
+          IMAGE: ${{ needs.build-backend.outputs.image }}
+          SERVICE_NAME: test-${{ inputs.target }}-backend
+          DEPLOYMENT_TIMESTAMP: ${{ steps.meta.outputs.deployment-timestamp }}
+        run: >
+          koyeb services update $SERVICE_NAME/backend
+          --debug
+          --docker "$IMAGE"
+          --docker-private-registry-secret ghcr
+          --docker-skip-verify
+          --env ENV_NAME=$ENV_NAME
+          --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
+          --env GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY
+          --env GOOGLE_CLOUD_PROJECT=tet-gcloud
+          --env GOOGLE_CLOUD_LOCATION=eu
+          --env GEMINI_MODEL=gemini-3.5-flash
+          --env LLM_PROVIDER=albert
+          --env ALBERT_API_KEY=@ALBERT_API_KEY
+          --env ALBERT_MAX_CONCURRENT_CALLS=5
+          --env ALBERT_MODEL=gpt-oss-120b
+          --env ALBERT_MODEL_LIGHT=ministral-3-8b-instruct-2512
+          --env ALBERT_MODEL_OCR=lightonocr-2-1b
+          --env SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_$ENV_NAME
+          --env SUPABASE_URL=@SUPABASE_URL_$ENV_NAME
+          --env SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_$ENV_NAME
+          --env SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_$ENV_NAME
+          --env SUPABASE_ANON_KEY=@SUPABASE_ANON_KEY_$ENV_NAME
+          --env TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
+          --env TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
+          --env BREVO_API_KEY=@BREVO_API_KEY
+          --env REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --env REFERENTIEL_CAE_SHEET_ID=${{ vars.REFERENTIEL_CAE_SHEET_ID }}
+          --env REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
+          --env PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
+          --env INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
+          --env OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i
+          --env OTEL_SERVICE_NAME=backend
+          --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
+
+      - id: deployment-url
+        uses: ./.github/actions/providers/koyeb/get-app-url
+        with:
+          app-name: test-${{ inputs.target }}-backend

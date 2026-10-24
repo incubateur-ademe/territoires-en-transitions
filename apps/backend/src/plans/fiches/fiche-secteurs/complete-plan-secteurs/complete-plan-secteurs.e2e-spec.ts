@@ -1,6 +1,5 @@
 import { getQueueToken } from '@nestjs/bullmq';
 import { INestApplication } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { GenerateImportDraftService } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.service';
 import { aiPlanImportJobTable } from '@tet/backend/plans/ai-plan-import/models/ai-plan-import-job.table';
@@ -317,30 +316,6 @@ describe('Rattrapage des secteurs des fiches d’un plan', () => {
       });
       await enqueued();
 
-      expect(queue.addedFor(planId)).toEqual([]);
-    });
-
-    test('tâches de fond désactivées : la liaison du plan réussit sans ajouter de job', async () => {
-      const { caller, collectiviteId, demarcheId } = await freshEditor();
-      const planId = await createPlan(collectiviteId);
-      const enqueued = spyEnqueue();
-      const config = app.get(ConfigService);
-      const original = config.get('BACKGROUND_TASKS_ENABLED');
-      onTestFinished(() => config.set('BACKGROUND_TASKS_ENABLED', original));
-      config.set('BACKGROUND_TASKS_ENABLED', false);
-      const featureEnabled = vi
-        .spyOn(app.get(TrackingService), 'isFeatureEnabled')
-        .mockResolvedValue(true);
-      onTestFinished(() => featureEnabled.mockRestore());
-
-      const updated = await caller.demarches.pcaet.update({
-        collectiviteId,
-        demarcheId,
-        planActionIds: [planId],
-      });
-      await enqueued();
-
-      expect(updated.planActionIds).toEqual([planId]);
       expect(queue.addedFor(planId)).toEqual([]);
     });
 

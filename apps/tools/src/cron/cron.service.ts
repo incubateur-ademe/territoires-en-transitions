@@ -17,12 +17,9 @@ export class CronService {
     @InjectQueue(CRON_JOBS_QUEUE_NAME) private readonly cronQueue: Queue
   ) {
     const enableCronJobs = 'ENABLE_CRON_JOBS';
-    if (
-      !this.configurationService.get('BACKGROUND_TASKS_ENABLED') ||
-      !this.configurationService.get(enableCronJobs)
-    ) {
+    if (!this.configurationService.get(enableCronJobs)) {
       this.logger.log(
-        'Les cron jobs sont désactivés (BACKGROUND_TASKS_ENABLED et ENABLE_CRON_JOBS doivent être actifs)'
+        `Les cron jobs sont désactivés (définir la variable ${enableCronJobs} pour les activer)`
       );
       return;
     }

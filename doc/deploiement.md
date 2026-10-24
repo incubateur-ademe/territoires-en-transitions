@@ -1,7 +1,7 @@
 # Déploiement groupé
 
 Le workflow [cd.yml](../.github/workflows/cd.yml) livre un commit sur `staging`,
-`staging-test`, `preprod`, `preprod-test` ou `prod`. Choisir la branche dans
+`preprod` ou `prod`. Choisir la branche dans
 "Run workflow" ; `prod` exige `main`.
 Les branches du dépôt utilisées hors prod doivent être revues et autorisées à
 accéder aux secrets de l'environnement.
@@ -12,13 +12,12 @@ puis [\_cd-deploy.yml](../.github/workflows/_cd-deploy.yml). Ce dernier appelle
 de maintenance.
 
 1. Pour `prod` uniquement, le workflow exige une branche `main` et une CI réussie
-   du commit sélectionné avant le build. Les quatre autres cibles passent
+   du commit sélectionné avant le build. Les deux autres cibles passent
    directement au build, sans relancer la CI. Les images sont construites en
    parallèle. Les tags restent les SHA courts existants ; le site conserve son
    tag `<environnement>-<SHA court>` et sa configuration de build.
 2. Une fois toutes les images disponibles, le job de livraison prend le verrou
-   `database-maintenance-<parent>`, partagé avec les backups et restores.
-   `staging-test` utilise le verrou staging, `preprod-test` celui de preprod.
+   `database-maintenance-<environnement>`, partagé avec les backups et restores.
    Les opérations en attente sont conservées avec `queue: max` et le run actif
    n'est pas annulé par une nouvelle demande.
 3. Il contrôle les services existants et le registre Sqitch. En prod, il refuse
@@ -26,37 +25,22 @@ de maintenance.
    un backup S3 de moins de 24 h.
 4. Il exécute `sqitch check`, `sqitch deploy --mode change --verify`, puis
    `sqitch verify`, même sans nouveau SQL. Le plan et les images proviennent du
-   même commit. Les cibles `*-test` exigent que les IDs et l'ordre des changements
-   du plan correspondent exactement à la base du parent, puis exécutent seulement
-   `sqitch check` et `sqitch verify`, sans `deploy`. Un `verify` seul peut accepter
-   des migrations non appliquées. Aucune mise à jour de service ne démarre si cette étape échoue.
+   même commit. Aucune mise à jour de service ne démarre si cette étape échoue.
 5. Il déploie le backend par digest, attend ses instances et son `/version`, puis
    lance immédiatement l'app. Le délai partagé est mesuré du début de cette
    transition jusqu'à la readiness des deux services.
 6. Après la mise en service du couple, il observe les deux services en parallèle
    pendant au moins 30 secondes, puis livre le site et enfin `tools`.
-   `tools` est absent de preprod et preprod-test. Le workflow vérifie ensuite les URLs publiques
+   `tools` est absent de preprod. Le workflow vérifie ensuite les URLs publiques
    des frontends avant de déclarer le succès.
 
 Le workflow interne de déploiement conserve le verrou pendant les migrations,
 les déploiements et le workflow de contrôle final. Les jobs accédant aux services
 utilisent le GitHub Environment de la cible. Les builds sont hors de ce verrou.
-Les cinq cibles passent par ce point d'entrée. Les environnements de test sont
-fixes : déployer une nouvelle branche remplace la stack de test correspondante.
-Les workflows d'aperçu par branche et de destruction à la fermeture d'une PR sont
-supprimés. Les anciennes ressources Koyeb d'aperçu peuvent être retirées après
-bascule ; ce workflow ne les supprime pas automatiquement.
-
-Les cibles `*-test` partagent PostgreSQL, Supabase et Redis avec leur parent.
-`ENV_NAME` reste celui du parent ; les URLs app/backend/site correspondent à la
-cible de test. Les modifications de données sont donc visibles sur le parent.
-Les workers et cron sont désactivés via `BACKGROUND_TASKS_ENABLED=false`. Le
-préfixe BullMQ (`QUEUE_PREFIX=staging-test` ou `preprod-test`) empêche aussi les
-jobs éventuellement ajoutés par des requêtes de test d'être consommés par les
-workers du parent. Les fonctionnalités asynchrones ne sont pas exécutées sur ces
-cibles. Le cleanup des points de reprise au démarrage est également désactivé.
-Ne pas diriger les planifications externes ou les webhooks de production vers
-ces cibles.
+Les trois cibles passent par ce point d'entrée. Les aperçus restent accessibles
+séparément via [cd-preview-app.yml](../.github/workflows/cd-preview-app.yml) et
+[cd-preview-backend.yml](../.github/workflows/cd-preview-backend.yml), avec leur
+fonctionnement existant. Ils ne font pas partie du déploiement groupé.
 
 ## Images et cache de build
 
@@ -77,21 +61,10 @@ exportés : pour un nouveau commit, le build Next.js reste à froid sur un runne
 ## Configuration de la cible
 
 Les services Koyeb doivent déjà exister : `<env>-backend/backend`,
-`<env>-app/front`, `<env>-site/front` et, hors preprod/preprod-test,
+`<env>-app/front`, `<env>-site/front` et, hors preprod,
 `<env>-tools-autom-api/tools`. Les références de secrets et les valeurs runtime
 restent celles des workflows précédents. Les ports, ressources et checks de
 santé existants sont conservés.
-
-Créer aussi les GitHub Environments `staging-test` et `preprod-test`, avec les
-secrets de build et d'accès à la base/Supabase/Redis de leur parent, leurs propres
-URLs publiques et leur token Koyeb. Les références de secrets Koyeb utilisent le
-suffixe du parent (par exemple `SUPABASE_DATABASE_URL_staging`) ; les ressources
-utilisent le nom complet de la cible (par exemple `staging-test-backend/backend`).
-`tools` de staging-test pointe sur le backend de staging-test. Chaque ressource
-de test doit être provisionnée et saine avant sa première mise à jour par ce
-workflow, avec une image compatible avec le schéma du parent. Dès ce premier
-démarrage, configurer `BACKGROUND_TASKS_ENABLED=false` et le `QUEUE_PREFIX` de
-la cible pour le backend et `tools`.
 
 Configurer dans chaque GitHub Environment :
 
