@@ -39,6 +39,9 @@ inputs:
       d'environnement au build).
     required: false
     default: 'false'
+  signer-workflow:
+    description: Workflow ayant signé les images réutilisées (préciser le workflow interne pour un workflow_call)
+    default: ${{ github.workflow_ref }}
 
 outputs:
   image:
@@ -73,6 +76,7 @@ runs:
         SECRETS_INPUT: ${{ inputs.secrets }}
         PUSH: ${{ inputs.push }}
         REUSE_IMAGE: ${{ inputs.reuse-image }}
+        SIGNER_WORKFLOW: ${{ inputs.signer-workflow }}
         GH_TOKEN: ${{ github.token }}
       run: |
         set -euo pipefail
@@ -94,7 +98,7 @@ runs:
           immutable_image="${IMAGE%:*}@$digest"
           if gh attestation verify "oci://$immutable_image" \
             --repo "$GITHUB_REPOSITORY" \
-            --signer-workflow "${GITHUB_WORKFLOW_REF%@*}" \
+            --signer-workflow "${SIGNER_WORKFLOW%@*}" \
             --source-digest "$GITHUB_SHA" \
             --deny-self-hosted-runners >/dev/null; then
             echo "Image $IMAGE déjà publiée et attestée pour $GITHUB_SHA, réutilisation sans build."

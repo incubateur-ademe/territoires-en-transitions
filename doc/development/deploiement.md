@@ -6,7 +6,14 @@ Le workflow [cd.yml](../../.github/workflows/cd.yml) livre un commit sur `stagin
 Les branches du dépôt utilisées hors prod doivent être revues et autorisées à
 accéder aux secrets de l'environnement.
 
-1. Le workflow exécute la CI du commit sélectionné, puis construit les images en
+Le point d'entrée appelle [\_cd-build.yml](../../.github/workflows/_cd-build.yml)
+puis [\_cd-deploy.yml](../../.github/workflows/_cd-deploy.yml). Ce dernier appelle
+[\_cd-check.yml](../../.github/workflows/_cd-check.yml) avant de libérer le verrou
+de maintenance.
+
+1. Pour `prod` uniquement, le workflow exige une branche `main` et une CI réussie
+   du commit sélectionné avant le build. Les quatre autres cibles passent
+   directement au build, sans relancer la CI. Les images sont construites en
    parallèle. Les tags restent les SHA courts existants ; le site conserve son
    tag `<environnement>-<SHA court>` et sa configuration de build.
 2. Une fois toutes les images disponibles, le job de livraison prend le verrou
@@ -31,7 +38,9 @@ accéder aux secrets de l'environnement.
    `tools` est absent de preprod et preprod-test. Le workflow vérifie ensuite les URLs publiques
    des frontends avant de déclarer le succès.
 
-Le job protégé conserve le verrou pendant les migrations et tous les contrôles.
+Le workflow interne de déploiement conserve le verrou pendant les migrations,
+les déploiements et le workflow de contrôle final. Les jobs accédant aux services
+utilisent le GitHub Environment de la cible. Les builds sont hors de ce verrou.
 Les cinq cibles passent par ce point d'entrée. Les environnements de test sont
 fixes : déployer une nouvelle branche remplace la stack de test correspondante.
 Les workflows d'aperçu par branche et de destruction à la fermeture d'une PR sont
