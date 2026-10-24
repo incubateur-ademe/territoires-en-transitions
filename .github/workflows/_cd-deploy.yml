@@ -1,4 +1,4 @@
-# Migrate and verify the schema, deploy the stack, and retain the maintenance lock through final checks.
+# Migrate or verify the schema, deploy the stack, and retain the maintenance lock through final checks.
 name: CD / Deploy
 
 on:
@@ -7,6 +7,14 @@ on:
       target:
         description: Stack environment
         type: string
+        required: true
+      parent:
+        description: Shared database environment (staging, preprod or prod)
+        type: string
+        required: true
+      is-test:
+        description: Verify the parent schema without migrating and disable background tasks
+        type: boolean
         required: true
       backend-image:
         description: Backend image pinned by digest
@@ -30,7 +38,7 @@ permissions:
 
 # This lock covers both jobs; separate locks would allow a restore between deployment and checks.
 concurrency:
-  group: database-maintenance-${{ inputs.target }}
+  group: database-maintenance-${{ inputs.parent }}
   cancel-in-progress: false
   queue: max
 
@@ -47,7 +55,9 @@ jobs:
       app-deployment: ${{ steps.app.outputs.deployment }}
       commit: ${{ steps.meta.outputs.git-short-hash }}
     env:
-      ENV_NAME: ${{ inputs.target }}
+      ENV_NAME: ${{ inputs.parent }}
+      TARGET: ${{ inputs.target }}
+      IS_TEST: ${{ inputs.is-test }}
       SQITCH_FULLNAME: GitHub Actions
       SQITCH_EMAIL: actions@users.noreply.github.com
       PGCONNECT_TIMEOUT: '10'
@@ -88,7 +98,7 @@ jobs:
             [[ "$image" =~ ^ghcr\.io/incubateur-ademe/tet-(backend|app|site|tools)@sha256:[a-f0-9]{64}$ ]]
           done
           {
-            echo "### Deployment: $ENV_NAME / $GITHUB_SHA"
+            echo "### Deployment: $TARGET / $GITHUB_SHA"
             echo
             echo '| Service | State | Image / operation |'
             echo '| --- | --- | --- |'
@@ -131,8 +141,8 @@ jobs:
           BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: |
           set -euo pipefail
-          services=("$ENV_NAME-backend/backend" "$ENV_NAME-app/front" "$ENV_NAME-site/front")
-          [[ "$ENV_NAME" == preprod ]] || services+=("$ENV_NAME-tools-autom-api/tools")
+          services=("$TARGET-backend/backend" "$TARGET-app/front" "$TARGET-site/front")
+          [[ "$ENV_NAME" == preprod ]] || services+=("$TARGET-tools-autom-api/tools")
           for service in "${services[@]}"; do
             current=$(timeout --kill-after=5s 30s koyeb services get "$service" --output json)
             if ! jq -e '.status == "HEALTHY" and (.active_deployment_id | length > 0) and .active_deployment_id == .latest_deployment_id' <<< "$current" >/dev/null; then
@@ -200,7 +210,19 @@ jobs:
             --command "select count(*) from sqitch.projects where project = 'tet'") == 1 ]]
           sqitch status --target db:pg:
           sqitch check --target db:pg:
-          sqitch deploy --target db:pg: --mode change --verify --lock-timeout 60
+          if [[ "$IS_TEST" == true ]]; then
+            # verify alone tolerates pending changes: require an exact plan first.
+            sqitch plan --no-headers --no-color --format 'format:%H' > "$RUNNER_TEMP/planned-changes"
+            psql --no-psqlrc -At --set ON_ERROR_STOP=1 \
+              --command "select change_id from sqitch.changes where project = 'tet' order by committed_at" \
+              > "$RUNNER_TEMP/deployed-changes"
+            if ! cmp -s "$RUNNER_TEMP/planned-changes" "$RUNNER_TEMP/deployed-changes"; then
+              echo '::error::The test plan must exactly match its parent database. Deploy schema changes on the parent first.'
+              exit 1
+            fi
+          else
+            sqitch deploy --target db:pg: --mode change --verify --lock-timeout 60
+          fi
           sqitch verify --target db:pg:
 
       - name: Start the backend/app transition clock
@@ -222,7 +244,9 @@ jobs:
           url: ${{ vars.BACKEND_URL }}/version
           commit: ${{ steps.meta.outputs.git-short-hash }}
           environment: |
-            ENV_NAME=${{ inputs.target }}
+            BACKGROUND_TASKS_ENABLED=${{ !inputs.is-test }}
+            QUEUE_PREFIX=${{ inputs.is-test && inputs.target || 'bull' }}
+            ENV_NAME=${{ inputs.parent }}
             DEPLOYMENT_TIMESTAMP=${{ steps.meta.outputs.deployment-timestamp }}
             GCLOUD_SERVICE_ACCOUNT_KEY=@GCLOUD_SERVICE_ACCOUNT_KEY
             GOOGLE_CLOUD_PROJECT=tet-gcloud
@@ -234,11 +258,11 @@ jobs:
             ALBERT_MODEL=gpt-oss-120b
             ALBERT_MODEL_LIGHT=ministral-3-8b-instruct-2512
             ALBERT_MODEL_OCR=lightonocr-2-1b
-            SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_${{ inputs.target }}
-            SUPABASE_URL=@SUPABASE_URL_${{ inputs.target }}
-            SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_${{ inputs.target }}
-            SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_${{ inputs.target }}
-            SUPABASE_ANON_KEY=@SUPABASE_ANON_KEY_${{ inputs.target }}
+            SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_${{ inputs.parent }}
+            SUPABASE_URL=@SUPABASE_URL_${{ inputs.parent }}
+            SUPABASE_SERVICE_ROLE_KEY=@SUPABASE_SERVICE_ROLE_KEY_${{ inputs.parent }}
+            SUPABASE_JWT_SECRET=@SUPABASE_JWT_SECRET_${{ inputs.parent }}
+            SUPABASE_ANON_KEY=@SUPABASE_ANON_KEY_${{ inputs.parent }}
             TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
             TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
             TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
@@ -248,7 +272,7 @@ jobs:
             REFERENTIEL_ECI_SHEET_ID=${{ vars.REFERENTIEL_ECI_SHEET_ID }}
             PERSONNALISATION_QUESTIONS_SHEET_ID=${{ vars.PERSONNALISATION_QUESTIONS_SHEET_ID }}
             INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
-            QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_${{ inputs.target }}
+            QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_${{ inputs.parent }}
             OTEL_EXPORTER_OTLP_ENDPOINT=https://eu.i.posthog.com/i
             OTEL_SERVICE_NAME=backend
             OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=${{ inputs.target }}
@@ -266,7 +290,7 @@ jobs:
             POSTHOG_HOST=@POSTHOG_HOST
             POSTHOG_KEY=@POSTHOG_KEY
             DEPLOYMENT_TIMESTAMP=${{ steps.meta.outputs.deployment-timestamp }}
-            ENV_NAME=${{ inputs.target }}
+            ENV_NAME=${{ inputs.parent }}
             SUPABASE_URL=${{ secrets.API_URL }}
             SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }}
             BACKEND_URL=${{ vars.BACKEND_URL }}
@@ -314,12 +338,12 @@ jobs:
 
       - name: Start the tools deadline
         id: tools-deadline
-        if: ${{ inputs.target != 'preprod' }}
+        if: ${{ !startsWith(inputs.target, 'preprod') }}
         run: echo "deadline=$(($(date +%s) + 600))" >> "$GITHUB_OUTPUT"
 
       - name: Deploy tools
         id: tools
-        if: ${{ inputs.target != 'preprod' }}
+        if: ${{ !startsWith(inputs.target, 'preprod') }}
         uses: ./.github/actions/providers/koyeb/deploy
         with:
           service: ${{ inputs.target }}-tools-autom-api/tools
@@ -327,19 +351,21 @@ jobs:
           deadline: ${{ steps.tools-deadline.outputs.deadline }}
           strategy: immediate
           environment: |
-            ENV_NAME=${{ inputs.target }}
+            BACKGROUND_TASKS_ENABLED=${{ !inputs.is-test }}
+            QUEUE_PREFIX=${{ inputs.is-test && inputs.target || 'bull' }}
+            ENV_NAME=${{ inputs.parent }}
             DEPLOYMENT_TIMESTAMP=${{ steps.meta.outputs.deployment-timestamp }}
-            CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_${{ inputs.target }}
-            CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_${{ inputs.target }}
-            NOTION_TOKEN=@NOTION_TOKEN_${{ inputs.target }}
-            NOTION_BUG_SUPPORT_DATABASE_ID=@NOTION_BUG_SUPPORT_DATABASE_ID_${{ inputs.target }}
-            NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_${{ inputs.target }}
-            NOTION_SUPPORT_TEMPLATE_ID=@NOTION_SUPPORT_TEMPLATE_ID_${{ inputs.target }}
-            TET_API_URL=@TET_API_URL_${{ inputs.target }}
-            TET_API_TOKEN=@SUPABASE_SERVICE_ROLE_KEY_${{ inputs.target }}
-            EXTERNAL_SYSTEM_SECRET_MAP=@EXTERNAL_SYSTEM_SECRET_MAP_${{ inputs.target }}
-            SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_${{ inputs.target }}
-            QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_${{ inputs.target }}
+            CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_${{ inputs.parent }}
+            CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_${{ inputs.parent }}
+            NOTION_TOKEN=@NOTION_TOKEN_${{ inputs.parent }}
+            NOTION_BUG_SUPPORT_DATABASE_ID=@NOTION_BUG_SUPPORT_DATABASE_ID_${{ inputs.parent }}
+            NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_${{ inputs.parent }}
+            NOTION_SUPPORT_TEMPLATE_ID=@NOTION_SUPPORT_TEMPLATE_ID_${{ inputs.parent }}
+            TET_API_URL=${{ inputs.is-test && vars.BACKEND_URL || format('@TET_API_URL_{0}', inputs.parent) }}
+            TET_API_TOKEN=@SUPABASE_SERVICE_ROLE_KEY_${{ inputs.parent }}
+            EXTERNAL_SYSTEM_SECRET_MAP=@EXTERNAL_SYSTEM_SECRET_MAP_${{ inputs.parent }}
+            SUPABASE_DATABASE_URL=@SUPABASE_DATABASE_URL_${{ inputs.parent }}
+            QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_${{ inputs.parent }}
             AIRTABLE_PERSONAL_ACCESS_TOKEN=@AIRTABLE_PERSONAL_ACCESS_TOKEN
             AIRTABLE_IMPORT_DATABASE_ID=@AIRTABLE_IMPORT_DATABASE_ID
             AIRTABLE_CRM_DATABASE_ID=@AIRTABLE_CRM_DATABASE_ID

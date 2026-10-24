@@ -2,6 +2,12 @@ import { z } from 'zod';
 
 export const toolsAutomationApiConfigurationSchema = z
   .object({
+    // Les cibles *-test partagent les données du parent, mais pas ses traitements.
+    BACKGROUND_TASKS_ENABLED: z.stringbool().prefault('true'),
+    QUEUE_PREFIX: z
+      .string()
+      .regex(/^[a-z0-9-]{1,63}$/)
+      .prefault('bull'),
     CRISP_TOKEN_IDENTIFIER: z
       .string()
       .min(1)

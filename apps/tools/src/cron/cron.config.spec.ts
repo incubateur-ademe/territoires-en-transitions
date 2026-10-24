@@ -1,8 +1,18 @@
+import { ConfigService } from '@nestjs/config';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { Queue } from 'bullmq';
+import { onTestFinished, vi } from 'vitest';
+import {
+  toolsAutomationApiConfigurationSchema,
+  ToolsAutomationApiConfigurationType,
+} from '../config/configuration.model';
+import ConfigurationService from '../config/configuration.service';
 import {
   CRM_SYNC_JOBS,
   CrmSyncJobName,
 } from '../airtable/airtable-crm-sync.service';
 import { JOBS_CONFIG, JobConfig, JobName } from './cron.config';
+import { CronService } from './cron.service';
 
 type JobConfigEntry = JobConfig;
 
@@ -23,6 +33,38 @@ const JOBS_PROPRES = [
 ] as const;
 
 describe('cron.config', () => {
+  test.each(['false', undefined])(
+    'respecte BACKGROUND_TASKS_ENABLED=%s lors de la création des cron jobs',
+    (flag) => {
+      const backgroundTasksEnabled =
+        toolsAutomationApiConfigurationSchema.shape.BACKGROUND_TASKS_ENABLED.parse(
+          flag
+        );
+      const scheduler = new SchedulerRegistry();
+      onTestFinished(() => {
+        for (const name of scheduler.getCronJobs().keys()) {
+          scheduler.deleteCronJob(name);
+        }
+      });
+      const config = new ConfigService<
+        ToolsAutomationApiConfigurationType,
+        true
+      >({
+        BACKGROUND_TASKS_ENABLED: backgroundTasksEnabled,
+        ENABLE_CRON_JOBS: true,
+        CRON_JOBS_FILTER: [JOBS_CONFIG[0].name],
+      });
+
+      new CronService(new ConfigurationService(config), scheduler, {
+        add: vi.fn().mockResolvedValue({}),
+      } as unknown as Queue);
+
+      expect([...scheduler.getCronJobs().keys()]).toEqual(
+        flag === 'false' ? [] : [JOBS_CONFIG[0].name]
+      );
+    }
+  );
+
   test('rassemble ses propres jobs puis ceux du descripteur CRM', () => {
     // Les jobs CRM (collectivites, personnes, droits, labellisations,
     // indicateurs, plans) — crm_usages reste piloté par pg_cron pour le moment.

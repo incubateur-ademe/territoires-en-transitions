@@ -1,3 +1,4 @@
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
@@ -228,7 +229,8 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.trackingService,
     mocks.enqueueCompletePlanSecteursService,
     mocks.stepRunRepository,
-    mocks.effetAttenduService
+    mocks.effetAttenduService,
+    { get: () => true } as unknown as ConfigurationService
   );
 
 describe('GenerateImportDraftService', () => {

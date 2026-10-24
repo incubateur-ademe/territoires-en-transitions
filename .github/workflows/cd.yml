@@ -9,7 +9,7 @@ on:
         type: choice
         description: Environnement de la stack complète
         default: staging
-        options: [staging, preprod, prod]
+        options: [staging, staging-test, preprod, preprod-test, prod]
       force-rebuild:
         type: boolean
         description: Reconstruire les images même si ce commit est déjà publié
@@ -20,18 +20,25 @@ permissions:
 
 jobs:
   validate-request:
+    outputs:
+      parent: ${{ steps.target.outputs.parent }}
+      is-test: ${{ steps.target.outputs.is-test }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Validate the source and target
+        id: target
         env:
           TARGET: ${{ inputs.target }}
         run: |
           set -euo pipefail
           case "$TARGET" in
-            staging|preprod|prod) ;;
+            staging|preprod|prod) is_test=false ;;
+            staging-test|preprod-test) is_test=true ;;
             *) echo '::error::Unknown deployment target.'; exit 1 ;;
           esac
+          echo "parent=${TARGET%-test}" >> "$GITHUB_OUTPUT"
+          echo "is-test=$is_test" >> "$GITHUB_OUTPUT"
           [[ "$GITHUB_REF" == refs/heads/* ]]
           if [[ "$TARGET" == prod && "$GITHUB_REF" != refs/heads/main ]]; then
             echo '::error::Production deployments must run from main.'
@@ -72,6 +79,8 @@ jobs:
     uses: ./.github/workflows/_cd-deploy.yml
     with:
       target: ${{ inputs.target }}
+      parent: ${{ needs.validate-request.outputs.parent }}
+      is-test: ${{ needs.validate-request.outputs.is-test == 'true' }}
       backend-image: ${{ needs.build.outputs.backend-image }}
       app-image: ${{ needs.build.outputs.app-image }}
       site-image: ${{ needs.build.outputs.site-image }}
