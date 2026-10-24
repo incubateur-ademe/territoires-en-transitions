@@ -1,5 +1,6 @@
 import { getQueueToken } from '@nestjs/bullmq';
 import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
@@ -37,7 +38,14 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  onTestFinished,
+  test,
+} from 'vitest';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotifiedOnEnum } from '@tet/domain/utils';
 import { COMPLETE_PLAN_SECTEURS_QUEUE_NAME } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.queue';
@@ -1138,7 +1146,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       await jobRepository.markFailed({ id: jobId, error: 'Fin du test' });
     });
 
-    test("un échec plus vieux que la rétention n'est plus reprenable, et le démarrage le purge", async () => {
+    test("un échec expiré n'est purgé au démarrage que si les tâches de fond sont actives", async () => {
       const { jobId } = await failAtExtraction('reprise-expiree');
       await db.db
         .update(aiPlanImportJobTable)
@@ -1152,6 +1160,18 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       ).toMatchObject({ resumable: false });
       await expect(resume(jobId)).rejects.toMatchObject({ code: 'CONFLICT' });
 
+      const config = app.get(ConfigService);
+      const original = config.get('BACKGROUND_TASKS_ENABLED');
+      onTestFinished(() => config.set('BACKGROUND_TASKS_ENABLED', original));
+      const checkpoint = (await readJob(jobId)).checkpoint;
+      expect(checkpoint).not.toBeNull();
+
+      // Une cible de test partage cette base : son démarrage doit préserver le checkpoint.
+      config.set('BACKGROUND_TASKS_ENABLED', false);
+      await app.get(GenerateImportDraftService).onApplicationBootstrap();
+      expect((await readJob(jobId)).checkpoint).toEqual(checkpoint);
+
+      config.set('BACKGROUND_TASKS_ENABLED', true);
       await app.get(GenerateImportDraftService).onApplicationBootstrap();
 
       expect((await readJob(jobId)).checkpoint).toBeNull();

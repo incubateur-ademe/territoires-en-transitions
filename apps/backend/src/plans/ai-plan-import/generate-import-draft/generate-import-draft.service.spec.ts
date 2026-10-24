@@ -217,10 +217,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   };
 };
 
-const buildService = (
-  mocks: ReturnType<typeof buildMocks>,
-  backgroundTasksEnabled = true
-) =>
+const buildService = (mocks: ReturnType<typeof buildMocks>) =>
   new GenerateImportDraftService(
     mocks.jobRepository,
     mocks.documentStorage,
@@ -233,21 +230,10 @@ const buildService = (
     mocks.enqueueCompletePlanSecteursService,
     mocks.stepRunRepository,
     mocks.effetAttenduService,
-    { get: () => backgroundTasksEnabled } as unknown as ConfigurationService
+    { get: () => true } as unknown as ConfigurationService
   );
 
 describe('GenerateImportDraftService', () => {
-  it.each([false, true])(
-    'purge les points de reprise au démarrage seulement si les tâches de fond sont actives (%s)',
-    async (enabled) => {
-      const mocks = buildMocks();
-      const purge = vi.fn().mockResolvedValue(undefined);
-      mocks.jobRepository.purgeFailedCheckpoints = purge;
-      await buildService(mocks, enabled).onApplicationBootstrap();
-      expect(purge).toHaveBeenCalledTimes(enabled ? 1 : 0);
-    }
-  );
-
   it('remplit le plan créé au lancement, marque le job done et supprime la source', async () => {
     const mocks = buildMocks();
     const service = buildService(mocks);
