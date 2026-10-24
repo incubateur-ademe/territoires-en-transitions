@@ -37,10 +37,7 @@ de maintenance.
 Le workflow interne de déploiement conserve le verrou pendant les migrations,
 les déploiements et le workflow de contrôle final. Les jobs accédant aux services
 utilisent le GitHub Environment de la cible. Les builds sont hors de ce verrou.
-Les trois cibles passent par ce point d'entrée. Les aperçus restent accessibles
-séparément via [cd-preview-app.yml](../.github/workflows/cd-preview-app.yml) et
-[cd-preview-backend.yml](../.github/workflows/cd-preview-backend.yml), avec leur
-fonctionnement existant. Ils ne font pas partie du déploiement groupé.
+Les trois cibles passent par ce point d'entrée.
 
 ## Images et cache de build
 
