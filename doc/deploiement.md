@@ -1,14 +1,14 @@
 # Déploiement groupé
 
-Le workflow [cd.yml](../../.github/workflows/cd.yml) livre un commit sur `staging`,
+Le workflow [cd.yml](../.github/workflows/cd.yml) livre un commit sur `staging`,
 `staging-test`, `preprod`, `preprod-test` ou `prod`. Choisir la branche dans
 "Run workflow" ; `prod` exige `main`.
 Les branches du dépôt utilisées hors prod doivent être revues et autorisées à
 accéder aux secrets de l'environnement.
 
-Le point d'entrée appelle [\_cd-build.yml](../../.github/workflows/_cd-build.yml)
-puis [\_cd-deploy.yml](../../.github/workflows/_cd-deploy.yml). Ce dernier appelle
-[\_cd-check.yml](../../.github/workflows/_cd-check.yml) avant de libérer le verrou
+Le point d'entrée appelle [\_cd-build.yml](../.github/workflows/_cd-build.yml)
+puis [\_cd-deploy.yml](../.github/workflows/_cd-deploy.yml). Ce dernier appelle
+[\_cd-check.yml](../.github/workflows/_cd-check.yml) avant de libérer le verrou
 de maintenance.
 
 1. Pour `prod` uniquement, le workflow exige une branche `main` et une CI réussie
@@ -90,7 +90,7 @@ Les secrets Koyeb et de build existants restent nécessaires. En prod, les clés
 `BACKUP_*` utilisées par le backup quotidien doivent être accessibles au job de
 livraison pour lire les métadonnées des objets S3. La présence d'une archive
 récente ne remplace pas les exercices de restauration de
-[l'ADR 0016](../adr/0016-strategie-backup-database.md).
+[l'ADR 0016](./adr/0016-strategie-backup-database.md).
 
 La connexion PostgreSQL impose TLS `verify-full` avec les autorités du système.
 Le runner doit pouvoir joindre cette base et le rôle doit pouvoir exécuter le
@@ -130,17 +130,3 @@ Les contrôles refusent un service non sain ou dont le dernier déploiement n'es
 pas le déploiement actif. Une reprise applicative manuelle exige de vérifier la
 compatibilité avec le schéma atteint ; aucune compatibilité de rollback n'est
 présumée.
-
-## Périmètre de cette étape
-
-Cette étape implémente le déploiement progressif groupé de l'ADR de livraison
-([PR #5171](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5171)).
-Elle ne publie aucune release GitHub, ne calcule pas de SemVer et ne modifie pas les
-Dockerfiles. La réutilisation d'images vérifie leur attestation sur la référence
-immuable effectivement déployée.
-
-La promotion d'une release qualifiée staging → prod, le rollback automatique
-qualifié, le journal durable avec blocage après interruption, les sondes de
-readiness des dépendances et les smoke tests métier complets restent des étapes
-suivantes de l'ADR. Ce workflow conserve une reprise opérateur ; il n'implémente
-ni une transaction distribuée ni une bascule simultanée.

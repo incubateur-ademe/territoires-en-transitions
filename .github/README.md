@@ -50,7 +50,7 @@ Les workflows et actions composites utilisent un chemin depuis la racine du dép
 
 ### Déploiement groupé
 
-[cd.yml](./workflows/cd.yml) livre la stack complète sur staging, staging-test, preprod, preprod-test ou prod, avec Sqitch avant les services et une transition backend/app bornée. Les cibles de test vérifient le schéma partagé sans le migrer, avec leurs workers et cron désactivés. Consulter le [guide de déploiement](../doc/development/deploiement.md) pour la configuration des environments, l'ordre des opérations et la reprise après échec.
+[cd.yml](./workflows/cd.yml) livre la stack complète sur staging, staging-test, preprod, preprod-test ou prod, avec Sqitch avant les services et une transition backend/app bornée. Les cibles de test vérifient le schéma partagé sans le migrer, avec leurs workers et cron désactivés. Consulter le [guide de déploiement](../doc/deploiement.md) pour la configuration des environments, l'ordre des opérations et la reprise après échec.
 
 ### Cache des images de déploiement
 
