@@ -1,3 +1,4 @@
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
@@ -18,10 +19,12 @@ export class EnqueueCompletePlanSecteursService implements OnModuleInit {
   constructor(
     @InjectQueue(COMPLETE_PLAN_SECTEURS_QUEUE_NAME)
     private readonly queue: Queue<CompletePlanSecteursJobData>,
-    private readonly trackingService: TrackingService
+    private readonly trackingService: TrackingService,
+    private readonly configurationService: ConfigurationService
   ) {}
 
   async onModuleInit() {
+    if (!this.configurationService.get('BACKGROUND_TASKS_ENABLED')) return;
     try {
       await this.queue.setGlobalConcurrency(1);
     } catch (error) {
@@ -40,7 +43,10 @@ export class EnqueueCompletePlanSecteursService implements OnModuleInit {
     collectiviteId: number;
     userId: string;
   }): Promise<void> {
-    if (planIds.length === 0) {
+    if (
+      !this.configurationService.get('BACKGROUND_TASKS_ENABLED') ||
+      planIds.length === 0
+    ) {
       return;
     }
     try {

@@ -32,7 +32,7 @@ Le préfixe `_` désigne les workflows appelés via `workflow_call`. Ils ne se l
 | [\_ci-test-e2e.yml](./workflows/_ci-test-e2e.yml)                 | Exécuter les shards Playwright et fusionner leurs rapports.                                      |
 | [\_prepare-test-db.yml](./workflows/_prepare-test-db.yml)         | Préparer la base de test pour la CI et `dev.yml`.                                                |
 | [\_cd-build.yml](./workflows/_cd-build.yml)                       | Construire ou réutiliser les images et fournir leurs digests.                                    |
-| [\_cd-deploy.yml](./workflows/_cd-deploy.yml)                     | Migrer et vérifier le schéma, déployer les services et garder le verrou jusqu'au contrôle final. |
+| [\_cd-deploy.yml](./workflows/_cd-deploy.yml)                     | Migrer ou vérifier le schéma, déployer les services et garder le verrou jusqu'au contrôle final. |
 | [\_cd-check.yml](./workflows/_cd-check.yml)                       | Vérifier les versions déployées et les URLs publiques.                                           |
 
 ## Actions locales

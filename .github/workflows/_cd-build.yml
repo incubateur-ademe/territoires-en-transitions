@@ -217,7 +217,7 @@ jobs:
             BACKEND_URL=${{ vars.BACKEND_URL }}
 
   build-tools:
-    if: ${{ inputs.target != 'preprod' }}
+    if: ${{ !startsWith(inputs.target, 'preprod') }}
     name: Build l'api d'automatisation technique
     environment: ${{ inputs.target }}
     runs-on: ubuntu-latest

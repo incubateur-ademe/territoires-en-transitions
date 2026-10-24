@@ -1,5 +1,5 @@
-import { BullModule } from '@nestjs/bullmq';
-import { Logger, Module } from '@nestjs/common';
+import { BullModule, BullRegistrar } from '@nestjs/bullmq';
+import { Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -48,6 +48,7 @@ const appLogger = new Logger('AppModule');
       ],
     }),
     BullModule.forRootAsync({
+      extraOptions: { manualRegistration: true },
       imports: [ConfigurationModule],
       useFactory: async (config: ConfigurationService) => {
         const connection = buildQueueRedisConnection({
@@ -71,7 +72,7 @@ const appLogger = new Logger('AppModule');
         // own queue namespace.
         const prefix = process.env.VITEST
           ? `bull:test:${process.pid}:${randomUUID()}`
-          : undefined;
+          : config.get('QUEUE_PREFIX');
 
         return {
           connection,
@@ -107,4 +108,15 @@ const appLogger = new Logger('AppModule');
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(
+    private readonly configurationService: ConfigurationService,
+    private readonly bullRegistrar: BullRegistrar
+  ) {}
+
+  onApplicationBootstrap() {
+    if (this.configurationService.get('BACKGROUND_TASKS_ENABLED')) {
+      this.bullRegistrar.register();
+    }
+  }
+}
