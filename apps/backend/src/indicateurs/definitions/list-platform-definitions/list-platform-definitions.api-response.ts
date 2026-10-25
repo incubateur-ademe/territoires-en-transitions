@@ -40,6 +40,11 @@ export const listPlatformDefinitionsApiResponseSchema = z.array(
   platformDefinitionAggregateSchema
 );
 
+export const listPlatformDefinitionsApiResponseEnvelopeSchema = z.object({
+  count: z.number().check(z.int(), z.nonnegative()),
+  data: listPlatformDefinitionsApiResponseSchema,
+});
+
 export type ListPlatformDefinitionsApiResponse = z.infer<
   typeof listPlatformDefinitionsApiResponseSchema
 >;
