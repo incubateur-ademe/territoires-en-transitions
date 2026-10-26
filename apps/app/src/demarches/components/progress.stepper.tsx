@@ -341,8 +341,30 @@ export const AvanceDemarcheSection = ({
     demarcheId,
   });
 
+  const diagnosticStep: SectionStep = {
+    key: 'diagnostic',
+    label: appLabels.demarcheDiagnosticTitre,
+    description: appLabels.demarcheAvanceSectionDiagnosticDescription({
+      type: typeLabels,
+    }),
+    status: completion.diagnostic,
+    href: makeDemarcheSectionUrl('diagnostic', {
+      collectiviteId,
+      demarcheId,
+    }),
+  };
+
+  const planStep: SectionStep = {
+    key: 'plan',
+    label: appLabels.demarcheProgrammeTitre,
+    description: appLabels.demarcheAvanceSectionPlanDescription,
+    status: completion.plan,
+    href: makeDemarcheSectionUrl('plan', { collectiviteId, demarcheId }),
+  };
+
   // La sous-étape documents n'existe que si le modèle demande des pièces amont.
   const sectionSteps: SectionStep[] = [
+    diagnosticStep,
     ...(completion.documents !== null
       ? [
           {
@@ -354,25 +376,7 @@ export const AvanceDemarcheSection = ({
           },
         ]
       : []),
-    {
-      key: 'diagnostic',
-      label: appLabels.demarcheDiagnosticTitre,
-      description: appLabels.demarcheAvanceSectionDiagnosticDescription({
-        type: typeLabels,
-      }),
-      status: completion.diagnostic,
-      href: makeDemarcheSectionUrl('diagnostic', {
-        collectiviteId,
-        demarcheId,
-      }),
-    },
-    {
-      key: 'plan',
-      label: appLabels.demarcheProgrammeTitre,
-      description: appLabels.demarcheAvanceSectionPlanDescription,
-      status: completion.plan,
-      href: makeDemarcheSectionUrl('plan', { collectiviteId, demarcheId }),
-    },
+    planStep,
   ];
 
   /**
@@ -401,12 +405,23 @@ export const AvanceDemarcheSection = ({
           },
         ];
 
-  // Sous-étapes de la finalisation : les pièces produites après les avis
-  // (délibération d'adoption…), dont la couverture conditionne la publication,
-  // puis les deux rappels du dossier transmis. Ceux-ci mènent aux écrans de
-  // l'élaboration, passés en lecture seule dès la transmission : à ce stade on
-  // relit le dossier pour répondre aux avis, on ne le complète plus.
+  // Sous-étapes de la finalisation, dans l'ordre de l'élaboration : le rappel
+  // du diagnostic, les pièces produites après les avis (délibération
+  // d'adoption…), dont la couverture conditionne la publication, puis le rappel
+  // du plan. Les rappels mènent aux écrans de l'élaboration, passés en lecture
+  // seule dès la transmission : à ce stade on relit le dossier pour répondre
+  // aux avis, on ne le complète plus.
   const finalisationSteps: SectionStep[] = [
+    {
+      key: 'diagnostic',
+      label: appLabels.demarcheAvanceRappelDiagnosticLabel,
+      description: appLabels.demarcheAvanceRappelDiagnosticDescription,
+      status: null,
+      href: makeDemarcheSectionUrl('diagnostic', {
+        collectiviteId,
+        demarcheId,
+      }),
+    },
     ...(completion.documentsAval !== null
       ? [
           {
@@ -419,16 +434,6 @@ export const AvanceDemarcheSection = ({
           },
         ]
       : []),
-    {
-      key: 'diagnostic',
-      label: appLabels.demarcheAvanceRappelDiagnosticLabel,
-      description: appLabels.demarcheAvanceRappelDiagnosticDescription,
-      status: null,
-      href: makeDemarcheSectionUrl('diagnostic', {
-        collectiviteId,
-        demarcheId,
-      }),
-    },
     {
       key: 'plan',
       label: appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels }),
@@ -449,10 +454,7 @@ export const AvanceDemarcheSection = ({
    * arment la publication — et non deux rappels en lecture seule.
    */
   const etapeFinaleSteps: SectionStep[] = horsPlateforme
-    ? [
-        ...documentsHorsPlateformeSteps,
-        ...sectionSteps.filter((step) => step.key !== 'documents'),
-      ]
+    ? [diagnosticStep, ...documentsHorsPlateformeSteps, planStep]
     : finalisationSteps;
 
   const [elaborationStep, ...remainingSteps] = buildSteps(typeLabels);
@@ -494,7 +496,7 @@ export const AvanceDemarcheSection = ({
         connectorActive={!horsPlateforme && activeIndex > 0}
       />
 
-      {/* Sous-actions de l'étape 1 : documents, diagnostic, plan */}
+      {/* Sous-actions de l'étape 1 : diagnostic, documents, plan */}
       {isElaborationActive && (
         <div className="flex gap-5">
           <div className="flex flex-col items-center w-8 shrink-0">

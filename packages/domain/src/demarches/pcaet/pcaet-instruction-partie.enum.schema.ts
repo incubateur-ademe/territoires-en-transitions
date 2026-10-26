@@ -7,8 +7,8 @@ export const PcaetInstructionPartieEnum = {
 } as const;
 
 export const pcaetInstructionPartieValues = [
-  PcaetInstructionPartieEnum.DOCUMENTS,
   PcaetInstructionPartieEnum.DIAGNOSTIC,
+  PcaetInstructionPartieEnum.DOCUMENTS,
   PcaetInstructionPartieEnum.PLAN,
 ] as const;
 

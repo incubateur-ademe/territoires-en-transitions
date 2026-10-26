@@ -55,7 +55,7 @@ export const DemarchePcaetConsultationPage = ({
     useDemarchePcaetConsultation({ collectiviteId, demarcheId });
   const [etape, setEtape] = useQueryState(
     'etape',
-    parseAsStringLiteral(DEMARCHE_SECTION_KEYS).withDefault('documents')
+    parseAsStringLiteral(DEMARCHE_SECTION_KEYS).withDefault('diagnostic')
   );
 
   if (isLoading) {
