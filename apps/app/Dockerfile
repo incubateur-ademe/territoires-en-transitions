@@ -23,7 +23,7 @@
 
 # Épinglée par digest — cf. apps/backend/Dockerfile. Pour bumper :
 # `docker buildx imagetools inspect node:24-alpine`.
-ARG NODE_IMAGE=node:24.21.0-alpine@sha256:be80f76cf40ec8e42b9bec49f60a55e0660f30af58d3e5a25530785b30ea67e2
+ARG NODE_IMAGE=node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
 ARG PNPM_VERSION=12.15.0
 
 FROM ${NODE_IMAGE} AS base

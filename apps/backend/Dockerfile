@@ -30,7 +30,7 @@
 # pourraient partir sur des versions de Node différentes sans qu'aucun diff
 # ne l'explique. Pour bumper : `docker buildx imagetools inspect node:24-slim`
 # puis reporter tag + digest ici et dans les autres apps/*/Dockerfile.
-ARG NODE_IMAGE=node:24.21.0-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
+ARG NODE_IMAGE=node:24.22.1-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
 # Aligné sur le champ `packageManager` de la racine. Installé via npm plutôt
 # que corepack : pnpm 12 est un binaire natif que corepack ne gère pas de
 # façon fiable, et Node 25+ n'embarque plus corepack.
