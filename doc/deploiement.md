@@ -1,12 +1,16 @@
-# Déploiement groupé
+# Déploiement
 
 Le workflow [cd.yml](../.github/workflows/cd.yml) livre un commit sur `staging`,
 `preprod` ou `prod`. Choisir la branche dans
 "Run workflow" ; `prod` exige `main`.
+La cible `preview-app` déploie seulement le frontend de la branche, avec staging
+ou preprod comme parent. Le champ `preview-parent` est ignoré pour les autres cibles.
 Les branches du dépôt utilisées hors prod doivent être revues et autorisées à
 accéder aux secrets de l'environnement.
 
-Le point d'entrée appelle [\_cd-build.yml](../.github/workflows/_cd-build.yml)
+## Déploiement groupé
+
+Pour `staging`, `preprod` et `prod`, le point d'entrée appelle [\_cd-build.yml](../.github/workflows/_cd-build.yml)
 puis [\_cd-deploy.yml](../.github/workflows/_cd-deploy.yml). Ce dernier appelle
 [\_cd-check.yml](../.github/workflows/_cd-check.yml) avant de libérer le verrou
 de maintenance.
@@ -38,6 +42,50 @@ Le workflow interne de déploiement conserve le verrou pendant les migrations,
 les déploiements et le workflow de contrôle final. Les jobs accédant aux services
 utilisent le GitHub Environment de la cible. Les builds sont hors de ce verrou.
 Les trois cibles passent par ce point d'entrée.
+
+## Preview de l'app
+
+Lancer [cd.yml](../.github/workflows/cd.yml) depuis la branche à tester, choisir
+la cible `preview-app`, puis `staging` ou `preprod` (par défaut) dans le champ
+`preview-parent`. Le workflow
+construit uniquement l'app via [\_cd-build-app.yml](../.github/workflows/_cd-build-app.yml),
+également utilisé par le déploiement groupé, puis crée ou met à jour sa preview
+Koyeb. Il attend le déploiement exact et vérifie le commit servi par `/version`.
+L'URL est publiée dans le résumé du job et dans le déploiement GitHub.
+
+Chaque couple branche/environnement possède sa propre app Koyeb, nommée
+`preview-s-<hash>` ou `preview-p-<hash>`, avec un service `front` : une instance
+`nano` à Paris, port 3000. Le nom dérive du dépôt, de l'environnement et du nom
+complet de la branche. Relancer le workflow remplace uniquement cette preview.
+
+La preview utilise `BACKEND_URL`, `API_URL` et `ANON_KEY` du GitHub Environment
+parent. `ENV_NAME` reste `staging` ou `preprod` ; `APP_URL` est l'URL de la preview.
+Les credentials de build, le token Koyeb et les secrets Koyeb `ghcr`, `POSTHOG_HOST`
+et `POSTHOG_KEY` doivent être disponibles. Aucun GitHub Environment supplémentaire
+n'est nécessaire. Les branches déployées doivent être autorisées à accéder aux
+secrets du parent.
+
+Ce mode teste le frontend de la branche avec le backend et le schéma déjà
+déployés sur le parent. Il ne déploie ni backend, ni site, ni `tools`, et n'exécute
+aucune migration. Il ne modifie pas la configuration des workers. Les requêtes
+peuvent modifier les données partagées et déclencher les traitements du parent :
+ce n'est pas un mode en lecture seule. Une branche qui nécessite un nouveau
+contrat backend ou schéma doit d'abord être rendue compatible avec le parent.
+
+Autoriser l'URL HTTPS de la preview dans les redirections Supabase nécessaires
+à l'authentification. Les parcours OIDC du backend utilisent son `APP_URL` et
+redirigent vers l'app du parent ; ils ne sont pas isolés dans la preview.
+
+Le workflow [cd-preview-app-destroy.yml](../.github/workflows/cd-preview-app-destroy.yml)
+supprime les previews staging et preprod de la branche à la fermeture d'une PR
+du dépôt. Il ignore les PRs de forks. Pour une branche sans PR, le lancer
+manuellement avec le nom de branche. Le cleanup automatique charge ses actions
+depuis la branche par défaut ; elles doivent donc y être intégrées avant son
+activation. Le lancement manuel utilise le commit sélectionné dans "Run workflow".
+Déploiement et suppression partagent un verrou par branche, build inclus, sans
+annuler l'opération en cours. Une erreur d'accès Koyeb fait échouer l'opération ;
+elle n'est jamais traitée comme une ressource absente. Après un échec ou un
+timeout, inspecter Koyeb avant de relancer.
 
 ## Images et cache de build
 
