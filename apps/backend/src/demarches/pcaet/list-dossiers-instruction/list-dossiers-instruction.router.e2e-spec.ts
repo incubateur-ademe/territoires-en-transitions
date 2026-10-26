@@ -322,17 +322,22 @@ describe('listDossiersInstruction', () => {
       );
     });
 
-    it('ne filtre aucun statut par défaut', async () => {
+    it('retient tous les statuts sauf les archivés par défaut', async () => {
       const parDefaut = await appeler(camille, {
         statuts: undefined,
         limit: 200,
       });
-      const tous = await appeler(camille, {
-        statuts: TOUS_STATUTS,
+      const horsArchives = await appeler(camille, {
+        statuts: TOUS_STATUTS.filter(
+          (statut) => statut !== PcaetStatutInstructionEnum.ARCHIVE
+        ),
         limit: 200,
       });
 
-      expect(parDefaut.total).toBe(tous.total);
+      expect(parDefaut.total).toBe(horsArchives.total);
+      expect(parDefaut.items.map((item) => item.statut)).not.toContain(
+        PcaetStatutInstructionEnum.ARCHIVE
+      );
       const noms = parDefaut.items.map((item) => item.collectivite.nom);
       expect(noms).toContain('Nectarine Agglo sans depot');
       expect(noms).toContain('Cerise Agglo en cours');
@@ -580,14 +585,33 @@ describe('listDossiersInstruction', () => {
   });
 
   describe('tris', () => {
-    it('trie par échéance décroissante par défaut', async () => {
+    it('fait remonter les dossiers en instruction par défaut', async () => {
       const result = await appeler(camille, {});
 
-      // L'échéance vaut la transmission plus le délai légal : la décroissante
-      // met donc les dossiers transmis le plus récemment en tête.
+      // Abricot a l'échéance la plus proche, mais son avis est rendu : le
+      // dossier à instruire passe devant.
       expect(result.items.map((item) => item.collectivite.nom)).toEqual([
         'Zitrone Agglo',
         'Abricot Communaute',
+      ]);
+    });
+
+    it('trie par échéance dans les deux sens', async () => {
+      const desc = await appeler(camille, { sort: 'echeance' });
+      const asc = await appeler(camille, {
+        sort: 'echeance',
+        direction: 'asc',
+      });
+
+      // L'échéance vaut la transmission plus le délai légal : la décroissante
+      // met donc les dossiers transmis le plus récemment en tête.
+      expect(desc.items.map((item) => item.collectivite.nom)).toEqual([
+        'Zitrone Agglo',
+        'Abricot Communaute',
+      ]);
+      expect(asc.items.map((item) => item.collectivite.nom)).toEqual([
+        'Abricot Communaute',
+        'Zitrone Agglo',
       ]);
     });
 

@@ -4,62 +4,11 @@ import { appLabels } from '@/app/labels/catalog';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
   DemarchePcaetObligationEnum,
-  pcaetStatutInstructionValues,
   demarchePcaetObligationValues,
   type DemarchePcaetObligation,
-  type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
 import { HeaderFilterButton } from '@/app/demarches/components/header-filter.button';
 import { Badge, SelectFilter } from '@tet/ui';
-import {
-  statutInstructionLabel,
-  STATUT_INSTRUCTION_VARIANTS,
-} from './instruction.constants';
-
-/** Les statuts, dans l'ordre du cycle de vie — celui de l'enum du domaine. */
-export const StatutHeaderFilter = ({
-  deposeAvis,
-  statuts,
-  filterCount,
-  onChange,
-}: {
-  /** Le libellé d'un statut dépend du service : voir `statutInstructionLabel`. */
-  deposeAvis: boolean;
-  statuts: PcaetStatutInstruction[];
-  filterCount: number;
-  onChange: (statuts: PcaetStatutInstruction[]) => void;
-}) => (
-  <SelectFilter
-    dataTest="demarches.pcaet.instruction.filtre-statut"
-    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
-    options={pcaetStatutInstructionValues.map((value) => ({
-      value,
-      label: statutInstructionLabel(value, { deposeAvis }),
-    }))}
-    values={statuts}
-    onChange={({ values }) =>
-      onChange((values ?? []) as PcaetStatutInstruction[])
-    }
-    placeholder={appLabels.filtrer}
-    small
-    custom={{
-      triggerButton: {
-        button: <HeaderFilterButton filterCount={filterCount} />,
-      },
-      renderOptionItem: (item) => (
-        <Badge
-          title={statutInstructionLabel(item.value as PcaetStatutInstruction, {
-            deposeAvis,
-          })}
-          variant={
-            STATUT_INSTRUCTION_VARIANTS[item.value as PcaetStatutInstruction]
-          }
-          size="sm"
-        />
-      ),
-    }}
-  />
-);
 
 /**
  * Obligatoire ou volontaire, dans l'en-tête de la colonne « Collectivité » :

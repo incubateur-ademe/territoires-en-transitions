@@ -112,6 +112,7 @@ export const demarchesLabels = {
 
   instructionListeColonneRegion: 'Région',
   instructionListeColonneDateLancement: 'Date de lancement',
+  instructionListeFiltreStatuts: 'Statuts affichés',
 
   /**
    * Un dépôt qui n'a pas été transmis n'a pas d'échéance : elle se calcule à la

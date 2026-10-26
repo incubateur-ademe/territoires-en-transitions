@@ -9,6 +9,7 @@ import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { EmptyCard, Pagination } from '@tet/ui';
 import { useListDossiersInstruction } from './data/use-list-dossiers-instruction';
 import { DossiersInstructionMetrics } from './dossiers-instruction.metrics';
+import { StatutFilter } from './dossiers-instruction.statut-filter';
 import { DossiersInstructionTable } from './dossiers-instruction.table';
 
 /**
@@ -98,9 +99,13 @@ export const DossiersInstructionPage = ({
           />
         ) : (
           <>
+            <StatutFilter
+              deposeAvis={deposeAvis}
+              statuts={filtres.statuts}
+              onChange={(statuts) => setFiltres({ statuts })}
+            />
             <DossiersInstructionTable
               dossiers={data.items}
-              deposeAvis={deposeAvis}
               afficherRegion={data.perimetreRegions.length > 1}
               regionsOptions={data.perimetreRegions}
               filtres={filtres}

@@ -16,6 +16,7 @@ import type {
   ColonneTriable,
   DirectionTri,
   NbFiltresActifs,
+  TriDossiers,
 } from './data/use-list-dossiers-instruction';
 import {
   ActionsCell,
@@ -29,7 +30,6 @@ import {
 import {
   ObligationHeaderFilter,
   RegionHeaderFilter,
-  StatutHeaderFilter,
 } from './dossiers-instruction.header-filters';
 import {
   statutInstructionLabel,
@@ -43,12 +43,11 @@ type Filtres = {
 };
 
 type Pilotage = {
-  deposeAvis: boolean;
   regionsOptions: { code: string; libelle: string }[];
   filtres: Filtres;
   nbFiltresActifs: NbFiltresActifs;
   setFiltres: (filtres: Partial<Filtres>) => void;
-  sort: ColonneTriable;
+  sort: TriDossiers;
   direction: DirectionTri;
   trierPar: (colonne: ColonneTriable) => void;
 };
@@ -144,15 +143,7 @@ const PiloteHeader = () => {
 };
 
 const StatutHeader = () => {
-  const {
-    deposeAvis,
-    filtres,
-    nbFiltresActifs,
-    setFiltres,
-    sort,
-    direction,
-    trierPar,
-  } = usePilotage();
+  const { sort, direction, trierPar } = usePilotage();
 
   return (
     <TableHeaderCell
@@ -160,14 +151,6 @@ const StatutHeader = () => {
       title={appLabels.instructionListeColonneStatut}
       sortFn={() => trierPar('statut')}
       sortDirection={sort === 'statut' ? direction : null}
-      filter={
-        <StatutHeaderFilter
-          deposeAvis={deposeAvis}
-          statuts={filtres.statuts}
-          filterCount={nbFiltresActifs.statuts}
-          onChange={(statuts) => setFiltres({ statuts })}
-        />
-      }
     />
   );
 };
@@ -301,7 +284,6 @@ const columns = [
 
 export const DossiersInstructionTable = ({
   dossiers,
-  deposeAvis,
   afficherRegion,
   regionsOptions,
   filtres,
@@ -314,15 +296,6 @@ export const DossiersInstructionTable = ({
 }: {
   dossiers: Dossier[];
   /**
-   * Le nom accessible du tableau suit la famille, comme le titre visible : il
-   * dit ce que ce service fait d'ordinaire.
-   *
-   * Le statut de chaque ligne, lui, se lit sur la ligne — `dossier.deposeAvis`.
-   * Une DREAL dépose sur le dossier de sa région et lit celui de l'EPCI voisin
-   * qui déborde chez elle : les deux tiennent dans ce tableau.
-   */
-  deposeAvis: boolean;
-  /**
    * La région n'a de sens que pour un service qui en couvre plusieurs : un
    * national, ou la DR ADEME Océan Indien. Ailleurs, la colonne répéterait la
    * même valeur sur chaque ligne.
@@ -330,14 +303,10 @@ export const DossiersInstructionTable = ({
   afficherRegion: boolean;
   regionsOptions: { code: string; libelle: string }[];
   filtres: Filtres;
-  /**
-   * Ce que chaque filtre retient **une fois le défaut mis à part** : c'est le
-   * nombre que porte son badge, et non la taille de la sélection. Voir
-   * `nbFiltresActifs`.
-   */
+  /** Le nombre que porte le badge de chaque filtre d'en-tête. */
   nbFiltresActifs: NbFiltresActifs;
   setFiltres: (filtres: Partial<Filtres>) => void;
-  sort: ColonneTriable;
+  sort: TriDossiers;
   direction: DirectionTri;
   trierPar: (colonne: ColonneTriable) => void;
   /**
@@ -351,7 +320,6 @@ export const DossiersInstructionTable = ({
 }) => {
   const pilotage = useMemo(
     () => ({
-      deposeAvis,
       regionsOptions,
       filtres,
       nbFiltresActifs,
@@ -361,7 +329,6 @@ export const DossiersInstructionTable = ({
       trierPar,
     }),
     [
-      deposeAvis,
       regionsOptions,
       filtres,
       nbFiltresActifs,

@@ -4,6 +4,7 @@ import { PcaetAvisAuTitreDeEnum } from './pcaet-avis-au-titre-de.enum.schema';
 import {
   getStatutInstruction,
   PcaetStatutInstructionEnum,
+  pcaetStatutInstructionValues,
   STATUTS_INSTRUCTION_PAR_DEFAUT,
   type StatutInstructionEntree,
 } from './pcaet-statut-instruction.rules';
@@ -198,8 +199,12 @@ describe('getStatutInstruction — en aval', () => {
 });
 
 describe('STATUTS_INSTRUCTION_PAR_DEFAUT', () => {
-  it('ne filtre aucun statut', () => {
-    expect(STATUTS_INSTRUCTION_PAR_DEFAUT).toEqual([]);
+  it('retient tous les statuts sauf les archivés', () => {
+    expect(STATUTS_INSTRUCTION_PAR_DEFAUT).toEqual(
+      pcaetStatutInstructionValues.filter(
+        (statut) => statut !== PcaetStatutInstructionEnum.ARCHIVE
+      )
+    );
   });
 });
 
