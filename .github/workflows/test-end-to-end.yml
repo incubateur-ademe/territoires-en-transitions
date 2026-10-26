@@ -24,7 +24,8 @@ env:
 jobs:
   test-end-to-end:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    # Playwright 1.60 ne sait pas installer Chromium sur ubuntu-26.04 (ubuntu-latest depuis 10/2026)
+    runs-on: ubuntu-24.04
 
     # Une variable d'environnement de niveau job est héritée par les steps ET
     # les actions composites (`app-start`) — contrairement à un `env:` posé sur
