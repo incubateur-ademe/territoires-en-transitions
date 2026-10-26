@@ -1,5 +1,5 @@
 import {
-  DemarchePcaetObligationEnum,
+  CollectivitePcaetObligationEnum,
   PcaetStatutInstructionEnum,
   STATUTS_INSTRUCTION_PAR_DEFAUT,
 } from '@tet/domain/demarches';
@@ -29,7 +29,7 @@ const ligne = (
     pilotes: [],
     deposeAvis: true,
     statut: PcaetStatutInstructionEnum.EN_INSTRUCTION,
-    obligation: DemarchePcaetObligationEnum.OBLIGATOIRE,
+    obligation: CollectivitePcaetObligationEnum.OBLIGATOIRE,
     obligationSource: 'demarche',
     isScotAec: false,
     nbAvisValides: 0,
@@ -93,18 +93,27 @@ describe('estRetenue', () => {
   it('filtre par obligation', () => {
     const filtres = {
       ...AUCUN_FILTRE,
-      obligations: [DemarchePcaetObligationEnum.VOLONTAIRE],
+      obligations: [CollectivitePcaetObligationEnum.VOLONTAIRE],
     };
 
     expect(
       estRetenue(
-        ligne({ obligation: DemarchePcaetObligationEnum.VOLONTAIRE }),
+        ligne({ obligation: CollectivitePcaetObligationEnum.VOLONTAIRE }),
         filtres
       )
     ).toBe(true);
     expect(
       estRetenue(
-        ligne({ obligation: DemarchePcaetObligationEnum.OBLIGATOIRE }),
+        ligne({ obligation: CollectivitePcaetObligationEnum.OBLIGATOIRE }),
+        filtres
+      )
+    ).toBe(false);
+    expect(
+      estRetenue(
+        ligne({
+          obligation: CollectivitePcaetObligationEnum.NON_OBLIGE,
+          obligationSource: 'assujettissement',
+        }),
         filtres
       )
     ).toBe(false);
@@ -121,7 +130,7 @@ describe('estRetenue', () => {
     expect(
       estRetenue(sansObligation, {
         ...AUCUN_FILTRE,
-        obligations: [DemarchePcaetObligationEnum.OBLIGATOIRE],
+        obligations: [CollectivitePcaetObligationEnum.OBLIGATOIRE],
       })
     ).toBe(false);
     expect(estRetenue(sansObligation, AUCUN_FILTRE)).toBe(true);

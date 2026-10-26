@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import type { ColorVariant } from '@tet/design-tokens';
 import {
+  type CollectivitePcaetObligation,
   type PcaetDemandeAvisEtat,
   type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
@@ -62,6 +63,25 @@ export const STATUT_INSTRUCTION_VARIANTS: Record<
   instruit: 'success',
   adopte: 'success',
   archive: 'grey',
+};
+
+export const OBLIGATION_LABELS: Record<CollectivitePcaetObligation, string> = {
+  obligatoire: appLabels.demarcheObligationObligatoire,
+  volontaire: appLabels.demarcheObligationVolontaire,
+  non_oblige: appLabels.demarcheObligationNonOblige,
+};
+
+/**
+ * Seule l'obligation ressort, en `info` et non en `error` : une exigence
+ * réglementaire n'est pas une anomalie.
+ */
+export const OBLIGATION_VARIANTS: Record<
+  CollectivitePcaetObligation,
+  ColorVariant
+> = {
+  obligatoire: 'info',
+  volontaire: 'grey',
+  non_oblige: 'grey',
 };
 
 /**

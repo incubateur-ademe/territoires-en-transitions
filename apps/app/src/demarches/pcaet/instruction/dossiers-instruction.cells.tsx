@@ -8,12 +8,15 @@ import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
 import {
-  DemarchePcaetObligationEnum,
   DemarchePcaetStatusEnum,
   PcaetStatutInstructionEnum,
 } from '@tet/domain/demarches';
 import { Badge, Button, cn, Icon } from '@tet/ui';
 import Link from 'next/link';
+import {
+  OBLIGATION_LABELS,
+  OBLIGATION_VARIANTS,
+} from './instruction.constants';
 
 export type Dossier =
   RouterOutput['demarches']['pcaet']['listDossiersInstruction']['items'][number];
@@ -118,26 +121,15 @@ export const PiloteCell = ({ dossier }: { dossier: Dossier }) => {
   );
 };
 
-/**
- * Obligatoire ou volontaire. Le badge est en `info` et non en `error` : une
- * exigence réglementaire n'est pas une anomalie.
- */
 const ObligationBadge = ({ dossier }: { dossier: Dossier }) => {
   if (dossier.obligation === null) {
     return null;
   }
 
-  const obligatoire =
-    dossier.obligation === DemarchePcaetObligationEnum.OBLIGATOIRE;
-
   return (
     <Badge
-      title={
-        obligatoire
-          ? appLabels.demarcheObligationObligatoire
-          : appLabels.demarcheObligationVolontaire
-      }
-      variant={obligatoire ? 'info' : 'grey'}
+      title={OBLIGATION_LABELS[dossier.obligation]}
+      variant={OBLIGATION_VARIANTS[dossier.obligation]}
       size="sm"
       uppercase={false}
     />

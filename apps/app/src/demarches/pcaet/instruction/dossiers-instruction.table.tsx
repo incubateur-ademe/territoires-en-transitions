@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import type { DemarchePcaetObligation } from '@tet/domain/demarches';
+import type { CollectivitePcaetObligation } from '@tet/domain/demarches';
 import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
 import { Badge, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
@@ -39,7 +39,7 @@ import {
 
 type Filtres = {
   statuts: PcaetStatutInstruction[];
-  obligations: DemarchePcaetObligation[];
+  obligations: CollectivitePcaetObligation[];
   regions: string[];
 };
 

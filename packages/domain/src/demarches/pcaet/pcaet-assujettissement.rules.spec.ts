@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DemarchePcaetObligationEnum } from './demarche-pcaet-obligation.enum.schema';
+import { CollectivitePcaetObligationEnum } from './collectivite-pcaet-obligation.enum.schema';
 import {
   estNaturePorteusePcaet,
   getObligationAssujettissement,
@@ -37,25 +37,25 @@ describe('getObligationAssujettissement', () => {
         natureInsee: 'CA',
         population: SEUIL_POPULATION_PCAET + 1,
       })
-    ).toBe(DemarchePcaetObligationEnum.OBLIGATOIRE);
+    ).toBe(CollectivitePcaetObligationEnum.OBLIGATOIRE);
   });
 
-  it('en deçà du seuil : volontaire', () => {
+  it('en deçà du seuil : non obligé, pas volontaire faute de démarche', () => {
     expect(
       getObligationAssujettissement({
         natureInsee: 'CC',
         population: SEUIL_POPULATION_PCAET - 1,
       })
-    ).toBe(DemarchePcaetObligationEnum.VOLONTAIRE);
+    ).toBe(CollectivitePcaetObligationEnum.NON_OBLIGE);
   });
 
-  it('exactement au seuil : volontaire, la comparaison est stricte', () => {
+  it('exactement au seuil : non obligé, la comparaison est stricte', () => {
     expect(
       getObligationAssujettissement({
         natureInsee: 'CC',
         population: SEUIL_POPULATION_PCAET,
       })
-    ).toBe(DemarchePcaetObligationEnum.VOLONTAIRE);
+    ).toBe(CollectivitePcaetObligationEnum.NON_OBLIGE);
   });
 
   it('population inconnue : rien à affirmer', () => {
