@@ -401,7 +401,7 @@ const SEQUESTRATION_CARBONE = {
   ],
 } as const satisfies PcaetDiagnosticIndicateurParentConfig;
 
-const ENR = {
+const PRODUCTION_ENR = {
   code: 'enr',
   label: 'Énergies renouvelables',
   icon: 'sun-line',
@@ -420,13 +420,8 @@ const ENR = {
       groupBy: 'electricité',
     },
     {
-      label: 'Solaire thermodynamique',
-      indicateurDefinitionId: 'TBD',
-      groupBy: 'electricité',
-    },
-    {
       label: 'Hydraulique',
-      indicateurDefinitionId: 'TBD', // crte_3.2 ?
+      indicateurDefinitionId: 'crte_3.2',
       groupBy: 'electricité',
     },
     {
@@ -439,11 +434,6 @@ const ENR = {
       indicateurDefinitionId: 'cae_3.aa',
       groupBy: 'electricité',
     },
-    {
-      label: 'Géothermie', // = déchets ?
-      indicateurDefinitionId: 'TBD',
-      groupBy: 'electricité',
-    },
 
     {
       label: 'Biomasse solide',
@@ -452,12 +442,7 @@ const ENR = {
     },
     {
       label: 'Pompes à chaleur',
-      indicateurDefinitionId: 'TBD',
-      groupBy: 'chaleur',
-    },
-    {
-      label: 'Pompes à chaleur',
-      indicateurDefinitionId: 'cae_3.am',
+      indicateurDefinitionId: 'cae_3.al',
       groupBy: 'chaleur',
     },
     {
@@ -476,13 +461,18 @@ const ENR = {
       groupBy: 'chaleur',
     },
     {
+      label: 'Thermique',
+      indicateurDefinitionId: 'cae_3.aw',
+      groupBy: 'froid',
+    },
+    {
       label: 'Biométhane',
-      indicateurDefinitionId: 'TBD',
+      indicateurDefinitionId: 'cae_3.c',
       groupBy: 'autres',
     },
     {
       label: 'Biocarburants',
-      indicateurDefinitionId: 'TBD',
+      indicateurDefinitionId: 'cae_3.d',
       groupBy: 'autres',
     },
   ],
@@ -499,7 +489,7 @@ export const PCAET_DIAGNOSTIC_INDICATEURS = [
   POLLUANTS_ATMO,
   SEQUESTRATION_CARBONE,
   CONSO_ENERGETIQUE,
-  ENR,
+  PRODUCTION_ENR,
 ] as const satisfies readonly PcaetDiagnosticIndicateurParentConfig[];
 
 type IndicateurDefinitionConfigNode = {
@@ -528,7 +518,7 @@ export type PcaetDiagnosticIndicateurRequiredLeaf = {
 
 /**
  * Feuilles saisissables qui retiennent la complétude : pas les agrégats
- * parents, pas les `TBD`, pas les lignes `optionalYears: 'all'`.
+ * parents, pas les lignes `optionalYears: 'all'`.
  */
 export const listPcaetDiagnosticIndicateurRequiredLeaves = (
   config: PcaetDiagnosticIndicateurParentConfig
@@ -541,7 +531,6 @@ export const listPcaetDiagnosticIndicateurRequiredLeaves = (
   }) => {
     if (
       node.indicateurDefinitionId.length === 0 ||
-      node.indicateurDefinitionId === 'TBD' ||
       node.optionalYears === 'all'
     ) {
       return;

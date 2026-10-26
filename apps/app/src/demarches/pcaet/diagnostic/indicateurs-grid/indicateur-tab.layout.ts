@@ -90,7 +90,7 @@ type ChildConfig = PcaetDiagnosticIndicateurParentConfig['children'][number];
 
 const toTableRow = (child: ChildConfig): DiagnosticTableRow | null => {
   const { indicateurDefinitionId } = child;
-  if (indicateurDefinitionId === null || indicateurDefinitionId === 'TBD') {
+  if (indicateurDefinitionId === null || indicateurDefinitionId === '') {
     return null;
   }
   return {
