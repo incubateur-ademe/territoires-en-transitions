@@ -35,14 +35,11 @@ setup_pnpm() {
   log "pnpm $(pnpm -v)"
 }
 
+# Le token Bryntum n'est jamais dans la session : il est enregistré en Network
+# secret de l'environnement cloud, et le proxy l'ajoute aux requêtes vers
+# npm.bryntum.com.
 install_dependencies() {
-  if [ -n "${BRYNTUM_ACCESS_TOKEN:-}" ]; then
-    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" \
-      pnpm install --frozen-lockfile >&2
-  else
-    # Sans variable, le token peut être injecté par le proxy (Network secrets).
-    pnpm install --frozen-lockfile >&2
-  fi
+  pnpm install --frozen-lockfile >&2
 }
 
 # Le Playwright du repo attend une révision précise de Chromium ; le container
@@ -88,7 +85,7 @@ main() {
 ⚠️ session-start : `pnpm install` a échoué. Vérifier les prérequis de
 l'environnement cloud listés dans apps/prototypes/README.md (section
 « Prérequis ») : niveau réseau Limited avec `npm.bryntum.com` et
-`codeload.github.com` dans Allowed domains, et `BRYNTUM_ACCESS_TOKEN` défini.
+`codeload.github.com` dans Allowed domains, et token Bryntum en Network secret.
 Ne pas contourner les contrôles supply-chain de pnpm.
 MSG
     exit 0

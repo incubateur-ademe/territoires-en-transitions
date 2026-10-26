@@ -27,8 +27,13 @@ lui-même : la politique réseau est appliquée hors du container.
    (dépendance de `crisp-api` hébergée sur GitHub) dans _Allowed domains_, en
    laissant cochée la case _Allow package managers_. Cf.
    https://code.claude.com/docs/en/cloud-environments#network-access.
-2. **Token Bryntum** : `BRYNTUM_ACCESS_TOKEN` en _Network secret_ ou en
-   variable d'environnement. Ne jamais le coller dans le chat.
+2. **Token Bryntum** : en _Network secret_ (parfois appelé _API credentials_)
+   lié à l'hôte `npm.bryntum.com`, injecté dans l'en-tête
+   `Authorization: Bearer <token>`. Le proxy l'ajoute aux requêtes hors du
+   container : il n'est jamais lisible dans la session. Le saisir directement
+   dans le formulaire (jamais dans le chat ni le repo), idéalement un token
+   dédié et révocable. Ne pas le mettre en variable d'environnement, ni
+   fournir la clé dotenvx (`.env.keys`), qui déchiffrerait tous les secrets.
 3. **Accès GitHub** au repo avec droit de push, pour publier les branches de
    prototypes.
 
