@@ -19,6 +19,7 @@ import {
 import { useEffect } from 'react';
 
 const SORT_VALUES = [
+  'priorite',
   'echeance',
   'dateLancement',
   'collectivite',
@@ -27,16 +28,17 @@ const SORT_VALUES = [
 ] as const;
 const DIRECTION_VALUES = ['asc', 'desc'] as const;
 
-export type ColonneTriable = (typeof SORT_VALUES)[number];
+export type TriDossiers = (typeof SORT_VALUES)[number];
+/** La priorité, tri par défaut, n'est celui d'aucune colonne. */
+export type ColonneTriable = Exclude<TriDossiers, 'priorite'>;
 export type DirectionTri = (typeof DIRECTION_VALUES)[number];
 
 const LIMIT = 25;
 
 const parsers = {
   page: parseAsInteger.withDefault(1),
-  sort: parseAsStringLiteral(SORT_VALUES).withDefault('echeance'),
-  // Voir le défaut serveur : échéance décroissante, donc transmissions les
-  // plus récentes en tête.
+  // Voir le défaut serveur : les dossiers en instruction en tête.
+  sort: parseAsStringLiteral(SORT_VALUES).withDefault('priorite'),
   direction: parseAsStringLiteral(DIRECTION_VALUES).withDefault('desc'),
   /**
    * Le défaut vient du domaine, comme côté serveur : l'URL sans paramètre et
@@ -52,25 +54,13 @@ const parsers = {
 };
 
 /**
- * La sélection de statuts est-elle celle que l'écran propose de lui-même ?
- *
- * Ce défaut n'est pas un choix de l'agent : le badge du filtre ne doit pas
- * l'annoncer à quelqu'un qui vient d'arriver.
- */
-const estDefautStatuts = (statuts: PcaetStatutInstruction[]): boolean =>
-  statuts.length === STATUTS_INSTRUCTION_PAR_DEFAUT.length &&
-  STATUTS_INSTRUCTION_PAR_DEFAUT.every((statut) => statuts.includes(statut));
-
-/**
- * Ce que chaque filtre retient, défaut mis à part : le nombre que porte son
- * badge.
+ * Ce que chaque filtre d'en-tête retient : le nombre que porte son badge.
  *
  * Une liste vide ne compte pas — c'est l'absence de filtre, ce que dit
- * « Désélectionner les options ». Le défaut de statuts ne compte pas non plus,
- * pour la même raison : personne ne l'a posé.
+ * « Désélectionner les options ». Les statuts n'y figurent pas : leur filtre
+ * est au-dessus du tableau et montre lui-même sa sélection.
  */
 export type NbFiltresActifs = {
-  statuts: number;
   obligations: number;
   regions: number;
 };
@@ -169,7 +159,6 @@ export const useListDossiersInstruction = (serviceId: number) => {
     direction,
     filtres: { statuts, obligations, regions },
     nbFiltresActifs: {
-      statuts: estDefautStatuts(statuts) ? 0 : statuts.length,
       obligations: obligations.length,
       regions: regions.length,
     } satisfies NbFiltresActifs,

@@ -184,6 +184,44 @@ describe('trierDossiers', () => {
     ]);
   });
 
+  it('fait remonter les dossiers en instruction, le plus pressant en tête, quel que soit le sens', () => {
+    const lignes = [
+      ligne({
+        nom: 'Adopté récent',
+        statut: PcaetStatutInstructionEnum.ADOPTE,
+        avisDeadlineAt: '2026-09-10T00:00:00.000Z',
+      }),
+      ligne({
+        nom: 'Sans dépôt',
+        statut: PcaetStatutInstructionEnum.AUCUN_DEPOT,
+        avisDeadlineAt: null,
+      }),
+      ligne({
+        nom: 'À instruire plus tard',
+        avisDeadlineAt: '2026-06-10T00:00:00.000Z',
+      }),
+      ligne({
+        nom: 'Adopté ancien',
+        statut: PcaetStatutInstructionEnum.ADOPTE,
+        avisDeadlineAt: '2026-02-10T00:00:00.000Z',
+      }),
+      ligne({
+        nom: 'À instruire bientôt',
+        avisDeadlineAt: '2026-01-10T00:00:00.000Z',
+      }),
+    ];
+    const attendu = [
+      'À instruire bientôt',
+      'À instruire plus tard',
+      'Adopté récent',
+      'Adopté ancien',
+      'Sans dépôt',
+    ];
+
+    expect(noms(trierDossiers(lignes, 'priorite', 'desc'))).toEqual(attendu);
+    expect(noms(trierDossiers(lignes, 'priorite', 'asc'))).toEqual(attendu);
+  });
+
   it('trie par statut dans l’ordre du cycle de vie', () => {
     const lignes = [
       ligne({ nom: 'Adopté', statut: PcaetStatutInstructionEnum.ADOPTE }),

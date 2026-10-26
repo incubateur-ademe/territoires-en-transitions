@@ -6,6 +6,7 @@ import {
 import { z } from 'zod';
 
 export const listDossiersInstructionSortValues = [
+  'priorite',
   'echeance',
   'dateLancement',
   'collectivite',
@@ -38,11 +39,12 @@ export const listDossiersInstructionInputSchema = z.object({
    */
   regionCodes: z.string().array().optional(),
   recherche: z.string().trim().min(1).optional(),
-  sort: z.enum(listDossiersInstructionSortValues).prefault('echeance'),
   /**
-   * Échéance décroissante par défaut : l'échéance étant la transmission plus le
-   * délai légal, les dossiers arrivés le plus récemment remontent en tête.
+   * Par défaut, la priorité : les dossiers en instruction d'abord. Ce n'est le
+   * tri d'aucune colonne, et `direction` n'y change rien — voir
+   * `trierDossiers`.
    */
+  sort: z.enum(listDossiersInstructionSortValues).prefault('priorite'),
   direction: z.enum(['asc', 'desc']).prefault('desc'),
   page: z.coerce.number().int().min(1).prefault(1),
   limit: z.coerce.number().int().min(1).max(200).prefault(25),
