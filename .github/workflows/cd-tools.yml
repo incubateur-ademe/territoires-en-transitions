@@ -41,16 +41,16 @@ jobs:
           fetch-depth: 0
 
       - id: meta
-        uses: ./.github/actions/build-metadata
+        uses: ./.github/actions/app/build-metadata
 
-      - uses: ./.github/actions/docker-login
+      - uses: ./.github/actions/docker/login
         if: ${{ !env.ACT }}
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - id: image
-        uses: ./.github/actions/docker-image-path
+        uses: ./.github/actions/docker/image-path
         with:
           username: incubateur-ademe
           image: tet-tools
@@ -59,7 +59,7 @@ jobs:
           tag: ${{ steps.meta.outputs.git-short-hash }}
 
       - name: Build et push de l'image tools
-        uses: ./.github/actions/docker-build-push
+        uses: ./.github/actions/docker/build-push
         env:
           BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
         with:
@@ -90,9 +90,9 @@ jobs:
           persist-credentials: false
 
       - id: meta
-        uses: ./.github/actions/build-metadata
+        uses: ./.github/actions/app/build-metadata
 
-      - uses: ./.github/actions/koyeb-cli
+      - uses: ./.github/actions/providers/koyeb/cli
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
@@ -132,6 +132,6 @@ jobs:
           --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
 
       - id: deployment-url
-        uses: ./.github/actions/get-koyeb-app-url
+        uses: ./.github/actions/providers/koyeb/get-app-url
         with:
           app-name: ${{ github.event.inputs.target }}-tools-autom-api

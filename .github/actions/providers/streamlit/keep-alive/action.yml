@@ -10,7 +10,7 @@ runs:
   using: composite
   steps:
     - name: pnpm install
-      uses: ./.github/actions/pnpm-prepare
+      uses: ./.github/actions/node/pnpm-prepare
       with:
         bryntum-access-token: ${{ inputs.bryntum-access-token }}
 

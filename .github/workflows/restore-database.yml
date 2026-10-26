@@ -48,7 +48,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        uses: ./.github/actions/aws-cli
+        uses: ./.github/actions/providers/aws/cli
 
       - name: Compute restore argument
         id: restore_arg

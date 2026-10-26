@@ -29,7 +29,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 

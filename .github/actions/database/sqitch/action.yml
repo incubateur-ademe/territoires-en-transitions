@@ -21,20 +21,20 @@ runs:
     # Tag dérivé du contenu du Dockerfile, comme l'image de la base (`db-path`) :
     # une PR qui le modifie publie sous un nouveau tag au lieu d'écraser celui
     # utilisé par les autres runs, et la modification est bien prise en compte.
-    - uses: ./.github/actions/truncate
+    - uses: ./.github/actions/utils/truncate
       id: hash_files
       with:
-        string: ${{ hashFiles('.github/actions/sqitch-local/**') }}
+        string: ${{ hashFiles('.github/actions/database/sqitch-local/**') }}
 
     - name: Get image path
-      uses: ./.github/actions/docker-image-path
+      uses: ./.github/actions/docker/image-path
       id: get_image_path
       with:
         image: sqitch
         tag: ${{ steps.hash_files.outputs.result }}
 
     - name: Check if sqitch image exists
-      uses: ./.github/actions/docker-pull
+      uses: ./.github/actions/docker/pull
       id: image_exists
       with:
         image_path: ${{ steps.get_image_path.outputs.path }}
@@ -49,7 +49,7 @@ runs:
       env:
         SQITCH_IMAGE: ${{ steps.get_image_path.outputs.path }}
       run: |
-        docker build --tag "$SQITCH_IMAGE" .github/actions/sqitch-local
+        docker build --tag "$SQITCH_IMAGE" .github/actions/database/sqitch-local
         docker push "$SQITCH_IMAGE" || echo "::warning::Push de $SQITCH_IMAGE impossible, image utilisée localement seulement."
 
     # Tout `data_layer`, et pas seulement `sqitch` : un change peut inclure un
