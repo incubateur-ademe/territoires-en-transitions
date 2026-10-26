@@ -1,10 +1,13 @@
 /*
  * Exporte le design system de `@tet/ui` au format du design system publié dans
- * Claude (type « Design System ») : tokens, polices, logos et charte, sous
- * `<out>/project/`. Tout est lu dans le repo ; ce script n'écrit que hors du
- * repo (ou dans un dossier ignoré) et ne publie rien.
+ * Claude (type « Design System ») : tokens, polices, logos, charte et
+ * composants (bundle, CSS, types, aperçus tirés des stories), sous
+ * `<out>/project/`, plus `<out>/index-fields.json` (namespace, bibliothèques)
+ * pour l'index du design system. Tout est lu dans le repo ; ce script n'écrit
+ * que hors du repo (ou dans un dossier ignoré) et ne publie rien.
  *
- *   nx run ui:export-design-system -- --out <dossier>
+ *   nx typecheck ui   # les types des composants viennent de out-tsc/lib
+ *   nx run ui:export-design-system -- --out <dossier absolu>
  *
  * Les modules TypeScript et TSX (tokens, logos) sont chargés par Vite, comme
  * dans les tests : aucune étape de build préalable.
@@ -18,6 +21,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import resolveConfig from 'tailwindcss/resolveConfig.js';
 import { parseArgs } from 'node:util';
 import { createServer } from 'vite';
+import { buildComponents } from './build-components.mts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const uiRoot = resolve(here, '../..');
@@ -199,7 +203,21 @@ try {
     )
   );
 
-  console.log(`design system exporté dans ${projectDir}`);
+  const { components, libraries } = await buildComponents({
+    preset,
+    uiRoot,
+    repoRoot,
+    projectDir,
+    here,
+  });
+  await writeFile(
+    join(outDir, 'index-fields.json'),
+    `${JSON.stringify({ namespace: 'TeT', libraries }, null, 2)}\n`
+  );
+
+  console.log(
+    `design system exporté dans ${projectDir} (${components.length} composants)`
+  );
 } finally {
   await server.close();
 }

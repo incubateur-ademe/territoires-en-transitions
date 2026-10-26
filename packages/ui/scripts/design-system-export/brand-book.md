@@ -14,6 +14,14 @@ nom (token, composant, variante) est celui du code : une maquette qui s'en tient
 - Composer avec les composants de `@tet/ui` et leurs variantes existantes
   (`Button variant="primary" size="sm"`, `Badge variant="success"`,
   `PageHeader`, `Card`, `Modal`…), sans en redessiner.
+- Dans un design, ces composants sont ceux du bundle, sous `window.TeT` :
+  `TeT.Button`, `TeT.Stack`, `TeT.PageHeader`… avec les mêmes props que dans
+  le code (voir chaque fiche et `index.d.ts`). `TeT.Button` dans une maquette
+  devient `import { Button } from '@tet/ui'` dans l'app.
+- La mise en page se compose avec `TeT.Stack`, `TeT.Inline`, `TeT.Grid` et
+  `TeT.Box`, jamais avec des classes ou styles de layout écrits à la main.
+- Les fiches marquées « planche d'exemples » montrent des compositions tirées
+  des stories ; leur nom n'est pas un composant à importer.
 - Un besoin non couvert (nouveau composant, nouvelle variante, valeur hors
   échelle) est une **proposition** à nommer comme telle : « variante de
   `Button` » ou « nouveau composant », avec le besoin qu'elle sert. Dans le
@@ -117,9 +125,14 @@ nom (token, composant, variante) est celui du code : une maquette qui s'en tient
 
 ## Non synchronisé
 
-- Composants : pas encore publiés ici (aperçus et code). Les noms et variantes
-  cités ci-dessus sont ceux de `@tet/ui`.
-- Pictogrammes DSFR et icônes Remix : non copiés.
+- Composants : `@tet/ui` hors suivi d'audience (`components/tracking`, lié à
+  l'API de l'app) et hors composants dépréciés (`DEPRECATED_Table`). Les
+  exemples rejouent les stories sans leurs fonctions d'interaction (`play`).
+- Navigation : les liens et hooks de routage de Next sont remplacés par des
+  liens simples et une page fixe ; un composant qui lit l'URL s'affiche dans
+  son état par défaut.
+- Pictogrammes DSFR et jeu d'icônes Remix : utilisables via les composants
+  (`Icon`, `PictoWarning`…), pas copiés comme fichiers.
 - Tokens non repris : points de rupture (`2xl` 1440px, les autres sont ceux
   de Tailwind), `maxHeight` `80vh`, largeur du panneau latéral (32rem) et
   animation `spin-slow`.

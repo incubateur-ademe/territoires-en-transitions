@@ -6,9 +6,9 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals", "jsdom"]
   },
-  "include": ["scripts/**/*.ts", "scripts/**/*.mts"],
+  "include": ["scripts/**/*.ts", "scripts/**/*.tsx", "scripts/**/*.mts"],
   "references": [
     {
       "path": "./tsconfig.lib.json"
