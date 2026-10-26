@@ -205,10 +205,15 @@ export const bundleHeader = (
 
 /**
  * Le bundle est inliné par ses consommateurs dans un `<script>` : ni
- * `</script` ni `<!--` ne doivent y apparaître en clair.
+ * `</script` ni `<!--` ne doivent y apparaître en clair. Le caractère de
+ * remplacement U+FFFD, que des dépendances laissent en clair dans leurs
+ * chaînes et regex, est refusé à la publication : il est écrit `\uFFFD`.
  */
 export const escapeForInlineScript = (code: string): string =>
-  code.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '\\x3C!--');
+  code
+    .replace(/<\/script/gi, '<\\/script')
+    .replace(/<!--/g, '\\x3C!--')
+    .replace(/\uFFFD/g, '\\uFFFD');
 
 const escapeAttribute = (value: string): string => value.replace(/"/g, "'");
 

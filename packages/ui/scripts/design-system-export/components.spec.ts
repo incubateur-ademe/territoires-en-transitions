@@ -172,6 +172,9 @@ describe('escapeForInlineScript', () => {
       'a="<\\/script>";b="\\x3C!--"'
     );
   });
+  it('écrit le caractère de remplacement en séquence d’échappement', () => {
+    expect(escapeForInlineScript('`\uFFFD`')).toBe('`\\uFFFD`');
+  });
 });
 
 describe('previewHtml', () => {
