@@ -105,7 +105,7 @@ export const IndicateurValeurSlot = ({
               edit={edit}
               inputType="text"
               containerClassname="h-10"
-              className="min-w-0 w-full"
+              className="min-w-0 w-full text-center"
               displaySize="sm"
               onBlur={() => void save()}
               onCommit={() => void save()}
