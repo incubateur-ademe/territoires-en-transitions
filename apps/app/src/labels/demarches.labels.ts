@@ -753,7 +753,7 @@ export const demarchesLabels = {
   instructionDossierToutTelecharger: 'Tout télécharger',
   instructionDossierEtapeDocumentsDescription:
     'Consultez les pièces déposées par la collectivité pour ce dépôt de PCAET.',
-  instructionDossierEtapeDiagnostic: 'Diagnostic',
+  instructionDossierEtapeDiagnostic: 'Diagnostic et objectifs stratégiques',
   instructionDossierEtapeDiagnosticDescription:
     'Consultez les indicateurs par volet du PCAET : tableau des valeurs et données par secteur.',
   instructionDossierEtapePlan: 'Programme d’actions',
