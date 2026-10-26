@@ -3,10 +3,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {
-  demarchePcaetObligationValues,
+  collectivitePcaetObligationValues,
   pcaetStatutInstructionValues,
   STATUTS_INSTRUCTION_PAR_DEFAUT,
-  type DemarchePcaetObligation,
+  type CollectivitePcaetObligation,
   type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
 import {
@@ -48,7 +48,7 @@ const parsers = {
     parseAsStringLiteral(pcaetStatutInstructionValues)
   ).withDefault([...STATUTS_INSTRUCTION_PAR_DEFAUT]),
   obligations: parseAsArrayOf(
-    parseAsStringLiteral(demarchePcaetObligationValues)
+    parseAsStringLiteral(collectivitePcaetObligationValues)
   ).withDefault([]),
   regions: parseAsArrayOf(parseAsString).withDefault([]),
 };
@@ -148,7 +148,7 @@ export const useListDossiersInstruction = (serviceId: number) => {
   /** Tout changement de filtre ramène à la première page. */
   const setFiltres = (filtres: {
     statuts?: PcaetStatutInstruction[];
-    obligations?: DemarchePcaetObligation[];
+    obligations?: CollectivitePcaetObligation[];
     regions?: string[];
   }) => setParams({ ...filtres, page: 1 });
 

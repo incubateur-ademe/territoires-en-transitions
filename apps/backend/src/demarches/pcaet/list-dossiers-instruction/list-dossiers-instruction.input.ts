@@ -1,5 +1,5 @@
 import {
-  demarchePcaetObligationSchema,
+  collectivitePcaetObligationSchema,
   pcaetStatutInstructionSchema,
   STATUTS_INSTRUCTION_PAR_DEFAUT,
 } from '@tet/domain/demarches';
@@ -31,7 +31,7 @@ export const listDossiersInstructionInputSchema = z.object({
   statuts: z
     .array(pcaetStatutInstructionSchema)
     .prefault([...STATUTS_INSTRUCTION_PAR_DEFAUT]),
-  obligations: z.array(demarchePcaetObligationSchema).optional(),
+  obligations: z.array(collectivitePcaetObligationSchema).optional(),
   /**
    * Filtre par région de la collectivité déposante. N'a de sens que pour un
    * service qui en couvre plusieurs : un national, ou la DR ADEME Océan Indien

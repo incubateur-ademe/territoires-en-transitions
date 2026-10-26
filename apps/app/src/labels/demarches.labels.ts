@@ -629,6 +629,7 @@ export const demarchesLabels = {
   demarcheHeaderModifieLe: 'Modifié le',
   demarcheObligationObligatoire: 'Obligatoire',
   demarcheObligationVolontaire: 'Volontaire',
+  demarcheObligationNonOblige: 'Non obligé',
   demarcheBadgeAdopte: 'Adopté',
   demarcheHeaderPiloteSingulier: 'Pilote',
   demarcheHeaderPilotePluriel: 'Pilotes',

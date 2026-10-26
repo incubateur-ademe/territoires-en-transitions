@@ -1,5 +1,5 @@
 import {
-  demarchePcaetObligationValues,
+  collectivitePcaetObligationValues,
   demarchePcaetStatusValues,
   pcaetStatutInstructionSchema,
   pcaetStatutInstructionValues,
@@ -70,7 +70,7 @@ export const dossierInstructionLigneSchema = z.object({
    */
   deposeAvis: z.boolean(),
   statut: pcaetStatutInstructionSchema,
-  obligation: z.enum(demarchePcaetObligationValues).nullable(),
+  obligation: z.enum(collectivitePcaetObligationValues).nullable(),
   obligationSource: obligationSourceSchema.nullable(),
   /**
    * Le dépôt est un SCoT-AEC : un document unique valant SCoT et PCAET, déclaré

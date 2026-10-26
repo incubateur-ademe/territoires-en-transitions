@@ -27,7 +27,7 @@ const filtrePose = <T>(
  *
  * Une ligne sans obligation connue — population inconnue, nature qui ne porte
  * pas de PCAET — est écartée dès qu'un filtre d'obligation est posé : elle ne
- * peut affirmer ni l'une ni l'autre.
+ * peut affirmer aucune des valeurs.
  */
 export const estRetenue = (
   ligne: DossierInstructionLigne,

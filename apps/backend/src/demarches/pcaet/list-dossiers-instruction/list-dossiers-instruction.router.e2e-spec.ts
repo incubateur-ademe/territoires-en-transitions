@@ -16,6 +16,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { collectiviteNature } from '@tet/domain/collectivites';
 import {
+  CollectivitePcaetObligationEnum,
   DemarchePcaetObligationEnum,
   estNaturePorteusePcaet,
   PcaetStatutInstructionEnum,
@@ -228,7 +229,8 @@ describe('listDossiersInstruction', () => {
     });
     sansDepotId = sansDepot.collectivite.id;
 
-    // En deçà du seuil : porteuse, donc listée, mais volontaire.
+    // En deçà du seuil : porteuse, donc listée, mais non obligée — pas
+    // volontaire, faute de démarche.
     const petiteSansDepot = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
       collectivite: {
@@ -567,7 +569,7 @@ describe('listDossiersInstruction', () => {
         source: 'assujettissement',
       });
       expect(parNom.get('Prune CC sans depot')).toEqual({
-        obligation: DemarchePcaetObligationEnum.VOLONTAIRE,
+        obligation: CollectivitePcaetObligationEnum.NON_OBLIGE,
         source: 'assujettissement',
       });
     });
@@ -580,6 +582,17 @@ describe('listDossiersInstruction', () => {
 
       expect(result.items.map((item) => item.collectivite.nom)).toEqual([
         'Nectarine Agglo sans depot',
+      ]);
+    });
+
+    it('filtre sur les collectivités non obligées', async () => {
+      const result = await appeler(camille, {
+        statuts: [PcaetStatutInstructionEnum.AUCUN_DEPOT],
+        obligations: [CollectivitePcaetObligationEnum.NON_OBLIGE],
+      });
+
+      expect(result.items.map((item) => item.collectivite.nom)).toEqual([
+        'Prune CC sans depot',
       ]);
     });
   });
