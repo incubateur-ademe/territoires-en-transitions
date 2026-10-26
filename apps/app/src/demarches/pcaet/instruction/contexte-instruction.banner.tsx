@@ -22,12 +22,14 @@ import { extractDossierInstructionRefFromPath } from './dossier-instruction-path
  * Rappelle à l'agent d'un service qu'il n'est pas chez lui, et lui rend deux
  * chemins : le dossier qu'il instruit, et sa liste de dossiers.
  *
- * Montée dans `app-layout` au-dessus du header et collée en haut de l'écran,
- * comme le bandeau du mode super-admin : ce qui prévient qu'on agit au nom d'un
- * autre doit rester sous les yeux, pas défiler avec la page. Elle tient toute la
- * largeur de l'écran ; son conteneur intérieur reprend la gouttière des pages —
- * la même que celle du header — pour que le texte tombe sous le logo et la
- * navigation.
+ * Montée dans `app-layout` sous le header, en tête de la colonne de contenu, et
+ * collée en haut de l'écran une fois le header défilé : ce qui prévient qu'on
+ * agit au nom d'un autre doit rester sous les yeux, pas défiler avec la page.
+ * Son conteneur intérieur reprend la gouttière des pages pour que le texte
+ * tombe sous le logo et la navigation.
+ *
+ * Son z-index reste sous celui du header, dont les menus déroulants s'ouvrent
+ * par-dessus elle.
  *
  * Elle lit le contexte dans le store de collectivité, alimenté par le layout de
  * collectivité — même chemin que le header, qui vit au même niveau. Le contexte
@@ -85,7 +87,7 @@ export const ContexteInstructionBanner = () => {
     <div
       role="status"
       data-test="demarches.pcaet.instruction.contexte-banniere"
-      className="sticky top-0 z-tooltip border-b border-primary-3 bg-primary-1 text-sm text-primary-9"
+      className="sticky top-0 z-sticky-header bg-primary-8 text-sm text-white"
     >
       <div className="w-full max-w-8xl mx-auto px-2 md:px-4 lg:px-6 py-2 flex flex-wrap items-center gap-x-3 gap-y-2">
         <Icon icon="information-line" size="sm" className="shrink-0" />
@@ -121,7 +123,7 @@ export const ContexteInstructionBanner = () => {
           {pathname !== dossierUrl && (
             <Button
               size="xs"
-              variant="outlined"
+              variant="white"
               icon="file-text-line"
               dataTest="demarches.pcaet.instruction.contexte-banniere.dossier"
               href={dossierUrl}
@@ -131,7 +133,7 @@ export const ContexteInstructionBanner = () => {
           )}
           <Button
             size="xs"
-            variant="outlined"
+            variant="white"
             icon="arrow-left-line"
             dataTest="demarches.pcaet.instruction.contexte-banniere.retour"
             onClick={() =>
