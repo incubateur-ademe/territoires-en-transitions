@@ -1,0 +1,24 @@
+# Validate main pushes or manual branch runs.
+name: Main CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: main-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    if: ${{ startsWith(github.ref, 'refs/heads/') }}
+    uses: ./.github/workflows/_ci.yml
+    permissions:
+      actions: read
+      contents: read
+      packages: write # Prepared test database image.
+    secrets: inherit

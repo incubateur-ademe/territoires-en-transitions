@@ -1,5 +1,5 @@
-# Affected lint, typecheck, test, and non-e2e builds.
-name: Validate affected projects
+# Lint, build, typecheck and unit-test affected projects.
+name: _CI / Validate affected projects
 
 permissions:
   contents: read
@@ -11,9 +11,7 @@ on:
         required: true
         type: string
       nx-cloud-token-secret-type:
-        description: Nx Cloud token access type (read-only or read-write)
-        required: false
-        default: read-only
+        required: true
         type: string
       nx-base:
         required: true

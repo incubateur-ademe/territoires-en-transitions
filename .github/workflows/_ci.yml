@@ -1,26 +1,15 @@
-name: CI
+# Select affected projects and orchestrate their CI checks.
+name: _CI
 
 permissions:
   actions: read
   contents: read
 
 on:
-  workflow_dispatch:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore: ['**.md']
-  push:
-    branches:
-      - main
-    paths-ignore: ['**.md']
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   analyze-affected:
-    if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     outputs:
       cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
@@ -72,6 +61,8 @@ jobs:
           cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
       - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5.0.1
+        with:
+          workflow-id: main-ci.yml
 
       - uses: ./.github/actions/compute-affected-scope
         id: scope
@@ -80,7 +71,9 @@ jobs:
 
   validate-affected-projects:
     needs: [analyze-affected]
-    uses: ./.github/workflows/validate-affected-projects.yml
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_ci-validate.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
@@ -88,10 +81,12 @@ jobs:
       nx-head: ${{ needs.analyze-affected.outputs.nx-head }}
     secrets: inherit
 
-  ui-storybook:
+  storybook:
     if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' || needs.analyze-affected.outputs.run-app-storybook == 'true' }}
     needs: [analyze-affected]
-    uses: ./.github/workflows/test-ui-storybook.yml
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_ci-storybook.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
@@ -105,7 +100,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: ./.github/workflows/prepare-test-db.yml
+    uses: ./.github/workflows/_prepare-test-db.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
@@ -117,7 +112,7 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: ./.github/workflows/test-db-deploy.yml
+    uses: ./.github/workflows/_ci-test-db.yml
     secrets: inherit
 
   test-backend-api:
@@ -127,7 +122,7 @@ jobs:
       actions: read
       contents: read
       packages: read
-    uses: ./.github/workflows/test-backend-api.yml
+    uses: ./.github/workflows/_ci-test-backend-api.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
@@ -142,7 +137,7 @@ jobs:
       actions: read
       contents: read
       packages: read
-    uses: ./.github/workflows/test-end-to-end.yml
+    uses: ./.github/workflows/_ci-test-e2e.yml
     with:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
