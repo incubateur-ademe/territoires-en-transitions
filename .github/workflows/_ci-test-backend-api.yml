@@ -1,5 +1,5 @@
-# Backend and API tests that require the prepared Supabase/Redis stack.
-name: Test backend and API
+# Run affected backend and API integration tests against local Supabase and Redis.
+name: _CI / Backend and API tests
 
 permissions:
   actions: read
@@ -13,17 +13,13 @@ on:
         required: true
         type: string
       nx-cloud-token-secret-type:
-        description: Nx Cloud token access type (read-only or read-write)
-        required: false
-        default: read-only
+        required: true
         type: string
       run-backend:
-        required: false
-        default: true
+        required: true
         type: boolean
       run-api:
-        required: false
-        default: true
+        required: true
         type: boolean
 
 jobs:

@@ -1,0 +1,23 @@
+# Validate non-draft pull requests through the shared CI workflow.
+name: Pull request CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore: ['**.md']
+
+permissions: {}
+
+concurrency:
+  group: pull-request-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    if: ${{ !github.event.pull_request.draft }}
+    uses: ./.github/workflows/_ci.yml
+    permissions:
+      actions: read
+      contents: read
+      packages: write # Prepared test database image.
+    secrets: inherit

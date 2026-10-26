@@ -1,4 +1,4 @@
-# Local dev commands (runned using act)
+# Provide local Supabase and Redis maintenance commands through act.
 name: Dev utils
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: ./.github/workflows/prepare-test-db.yml
+    uses: ./.github/workflows/_prepare-test-db.yml
     secrets: inherit
 
   # Démarre supabase (et remonte le dernier backup)

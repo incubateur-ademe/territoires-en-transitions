@@ -1,0 +1,24 @@
+name: Keep Streamlit apps alive
+description: Install browser dependencies and wake the Streamlit applications embedded in the site.
+
+inputs:
+  bryntum-access-token:
+    description: Access token for installing the workspace's private Bryntum packages.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: pnpm install
+      uses: ./.github/actions/pnpm-prepare
+      with:
+        bryntum-access-token: ${{ inputs.bryntum-access-token }}
+
+    - name: Install Playwright browsers
+      uses: ./.github/actions/cache/playwright-browsers
+
+    - name: Visit Streamlit apps and wake if sleeping
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+      run: node --experimental-strip-types "$ACTION_PATH/keep-alive-streamlit.ts"

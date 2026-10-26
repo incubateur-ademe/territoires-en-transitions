@@ -1,9 +1,5 @@
-# Start Supabase and restore or create a seeded DB volume for tests.
-#
-# In CI, the image for the current DB state (matching the checksum of the
-# data_layer dir, see `db-path` action) is pulled from ghcr.io and only built
-# and pushed if it does not exist.
-name: Prepare test database
+# Prepare a seeded Supabase test database, reusing its cached image when available.
+name: _Prepare test database
 
 permissions:
   contents: read
