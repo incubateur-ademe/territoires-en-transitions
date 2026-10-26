@@ -3,6 +3,7 @@
 import NoResult from '@/site/components/info/NoResult';
 import Section from '@/site/components/sections/Section';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
+import { getDemoVideoUrl } from '@/site/components/video/get-demo-video-url';
 import AccueilHeroSection from './AccueilHeroSection';
 import { BeneficesPlateforme } from './BeneficesPlateforme';
 import { ConstructionPlateforme } from './ConstructionPlateforme';
@@ -15,7 +16,10 @@ import Temoignages from './Temoignages';
 import { getData } from './utils';
 
 export const HomePage = async () => {
-  const data = await getData();
+  const [data, demoVideoUrl] = await Promise.all([
+    getData(),
+    getDemoVideoUrl(),
+  ]);
 
   if (!data) {
     return <NoResult />;
@@ -25,10 +29,7 @@ export const HomePage = async () => {
     <>
       <AccueilHeroSection />
       <Section>
-        <EmbededVideo
-          url="https://tube.numerique.gouv.fr/w/9QfiUGr3fXiwHRCndgbwBt"
-          className="xl:w-4/6 lg:w-4/5"
-        />
+        <EmbededVideo url={demoVideoUrl} className="xl:w-4/6 lg:w-4/5" />
       </Section>
 
       <StatsHeroSection />

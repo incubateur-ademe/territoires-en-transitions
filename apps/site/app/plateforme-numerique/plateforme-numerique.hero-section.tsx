@@ -1,12 +1,14 @@
 import Section from '@/site/components/sections/Section';
+import { getDemoVideoUrl } from '@/site/components/video/get-demo-video-url';
 import tableauDeBord from '@/site/public/plateforme-numerique/tableau-de-bord-collectivite.png';
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
 import { Button, Icon } from '@tet/ui';
 import Image from 'next/image';
 
-export const PlateformeNumeriqueHeroSection = () => {
+export const PlateformeNumeriqueHeroSection = async () => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
+  const demoVideoUrl = await getDemoVideoUrl();
 
   return (
     <Section
@@ -35,7 +37,7 @@ export const PlateformeNumeriqueHeroSection = () => {
             <Button
               className="after:hidden"
               variant="outlined"
-              href="https://tube.numerique.gouv.fr/w/9QfiUGr3fXiwHRCndgbwBt"
+              href={demoVideoUrl}
               external
             >
               Voir une démo (2 min)
