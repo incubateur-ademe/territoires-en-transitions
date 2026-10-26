@@ -54,13 +54,25 @@ const parsers = {
 };
 
 /**
- * Ce que chaque filtre d'en-tête retient : le nombre que porte son badge.
+ * La sélection de statuts est-elle celle que l'écran propose de lui-même ?
+ *
+ * Ce défaut n'est pas un choix de l'agent : le badge du filtre ne doit pas
+ * l'annoncer à quelqu'un qui vient d'arriver.
+ */
+const estDefautStatuts = (statuts: PcaetStatutInstruction[]): boolean =>
+  statuts.length === STATUTS_INSTRUCTION_PAR_DEFAUT.length &&
+  STATUTS_INSTRUCTION_PAR_DEFAUT.every((statut) => statuts.includes(statut));
+
+/**
+ * Ce que chaque filtre retient, défaut mis à part : le nombre que porte son
+ * badge.
  *
  * Une liste vide ne compte pas — c'est l'absence de filtre, ce que dit
- * « Désélectionner les options ». Les statuts n'y figurent pas : leur filtre
- * est au-dessus du tableau et montre lui-même sa sélection.
+ * « Désélectionner les options ». Le défaut de statuts ne compte pas non plus,
+ * pour la même raison : personne ne l'a posé.
  */
 export type NbFiltresActifs = {
+  statuts: number;
   obligations: number;
   regions: number;
 };
@@ -159,6 +171,7 @@ export const useListDossiersInstruction = (serviceId: number) => {
     direction,
     filtres: { statuts, obligations, regions },
     nbFiltresActifs: {
+      statuts: estDefautStatuts(statuts) ? 0 : statuts.length,
       obligations: obligations.length,
       regions: regions.length,
     } satisfies NbFiltresActifs,
