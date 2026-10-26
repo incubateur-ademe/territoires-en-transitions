@@ -16,13 +16,13 @@ runs:
   using: composite
 
   steps:
-    - uses: ./.github/actions/truncate
+    - uses: ./.github/actions/utils/truncate
       id: hash_files
       with:
         string: ${{ hashFiles('data_layer', 'apps/backend/**/samples/*.csv') }}
 
     - name: Get image path
-      uses: ./.github/actions/docker-image-path
+      uses: ./.github/actions/docker/image-path
       id: get_image_path
       with:
         image: supabase_db_tet

@@ -1,6 +1,6 @@
 import { chromium, expect, type FrameLocator, type Page } from '@playwright/test';
-import { STREAMLIT_IMPACT_IFRAME_SRC } from '../../../apps/site/app/impact/streamlit.utils.ts';
-import { STREAMLIT_STATS_IFRAME_SRC } from '../../../apps/site/app/stats/streamlit.utils.ts';
+import { STREAMLIT_IMPACT_IFRAME_SRC } from '../../../../../apps/site/app/impact/streamlit.utils.ts';
+import { STREAMLIT_STATS_IFRAME_SRC } from '../../../../../apps/site/app/stats/streamlit.utils.ts';
 
 const LOAD_TIMEOUT_MS = 180_000;
 

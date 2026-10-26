@@ -34,7 +34,9 @@ jobs:
 
       - name: Compute dependency cache key
         id: deps-metadata
-        run: echo "cache-key=${{ runner.os }}-node-24.22.1-pnpm-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', 'package.json') }}" >> "$GITHUB_OUTPUT"
+        run: |
+          . /etc/os-release
+          echo "cache-key=${{ runner.os }}-$ID-$VERSION_ID-${{ runner.arch }}-node-24.22.1-pnpm-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', 'package.json') }}" >> "$GITHUB_OUTPUT"
 
       - name: Check dependency cache
         id: deps-cache
@@ -45,7 +47,7 @@ jobs:
 
       - name: Install dependencies on cache miss
         if: ${{ steps.deps-cache.outputs.cache-hit != 'true' }}
-        uses: ./.github/actions/pnpm-prepare
+        uses: ./.github/actions/node/pnpm-prepare
         with:
           bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
@@ -56,7 +58,7 @@ jobs:
           mode: save
           cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
 
@@ -64,7 +66,7 @@ jobs:
         with:
           workflow-id: main-ci.yml
 
-      - uses: ./.github/actions/compute-affected-scope
+      - uses: ./.github/actions/ci/compute-affected-scope
         id: scope
         with:
           default-branch: ${{ github.event.repository.default_branch }}

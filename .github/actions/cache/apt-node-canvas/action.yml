@@ -5,6 +5,12 @@ runs:
   using: composite
 
   steps:
+    - id: os
+      shell: bash
+      run: |
+        . /etc/os-release
+        echo "version=$ID-$VERSION_ID" >> "$GITHUB_OUTPUT"
+
     - uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
       with:
         packages: >
@@ -15,4 +21,4 @@ runs:
           libjpeg-dev
           libgif-dev
           librsvg2-dev
-        version: '1'
+        version: 1-${{ steps.os.outputs.version }}

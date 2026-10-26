@@ -92,7 +92,7 @@ runs:
         fi
 
         run_db_deploy=false
-        if grep -Eq '^(Makefile$|data_layer/|supabase/|sqitch\.conf$|\.github/actions/(sqitch/|sqitch-local/|aws-cli/)|\.github/workflows/(backup-database|restore-database|_prepare-test-db|_ci|_ci-test-db)\.yml$)' <<<"$changed_files"; then
+        if grep -Eq '^(Makefile$|data_layer/|supabase/|sqitch\.conf$|\.github/actions/(database/(sqitch/|sqitch-local/)|providers/aws/cli/)|\.github/workflows/(backup-database|restore-database|_prepare-test-db|_ci|_ci-test-db)\.yml$)' <<<"$changed_files"; then
           run_db_deploy=true
         fi
 

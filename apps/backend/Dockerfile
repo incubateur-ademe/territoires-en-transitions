@@ -23,7 +23,7 @@
 # - `canvas` needs cairo/pango/jpeg/gif/rsvg native libraries to compile,
 #   and `pnpm-workspace.yaml` sets `ignoreScripts: true` (supply-chain hardening), so its
 #   postinstall never runs automatically — `pnpm rebuild --config.ignore-scripts=false canvas`
-#   after install is required, same as in .github/actions/node-canvas.
+#   after install is required, same as in .github/actions/node/canvas.
 
 # Image de base épinglée par digest : `node:24-slim` flotterait sur le
 # dernier patch 24.x publié, et deux déploiements à une semaine d'écart

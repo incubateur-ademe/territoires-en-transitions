@@ -44,13 +44,13 @@ runs:
 
     - name: Try to restore db volume
       id: restore
-      uses: ./.github/actions/db-restore
+      uses: ./.github/actions/database/supabase/restore-volume
       with:
         pull: ${{ inputs.pull }}
 
     - name: Check if supabase is started
       id: is_started
-      uses: ./.github/actions/supabase-is-started
+      uses: ./.github/actions/database/supabase/is-started
 
     - name: Ensure Docker network exists
       if: ${{ steps.is_started.outputs.started == 'no' }}
@@ -68,7 +68,7 @@ runs:
 
     - name: Wait for Auth API
       if: ${{ inputs.api-url != '' }}
-      uses: ./.github/actions/wait-for-url
+      uses: ./.github/actions/utils/wait-for-url
       with:
         url: ${{ inputs.api-url }}/auth/v1/health
         retry: '60'

@@ -31,14 +31,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/docker-login
+      - uses: ./.github/actions/docker/login
         if: ${{ !env.ACT }}
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get image path
-        uses: ./.github/actions/db-path
+        uses: ./.github/actions/database/supabase/volume-path
         id: get_image_path
 
       - name: Pull image from registry (ci)
@@ -49,10 +49,10 @@ jobs:
 
       - name: Check if db volume image is available locally
         id: is_available
-        uses: ./.github/actions/db-exists
+        uses: ./.github/actions/database/supabase/volume-exists
 
       - name: Setup env
-        uses: ./.github/actions/app-env
+        uses: ./.github/actions/app/env
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         with:
           app_name: backend
@@ -74,14 +74,14 @@ jobs:
       - parallel:
           - name: Start supabase
             if: ${{ steps.is_available.outputs.exists != 'success' }}
-            uses: ./.github/actions/supabase-start
+            uses: ./.github/actions/database/supabase/start
             with:
               network: ${{ vars.SUPABASE_NETWORK }}
               pull: ${{ !env.ACT }}
 
           - name: Prepare Node deps for imports
             if: ${{ steps.is_available.outputs.exists != 'success' }}
-            uses: ./.github/actions/pnpm-prepare
+            uses: ./.github/actions/node/pnpm-prepare
             with:
               cache-key: ${{ inputs.pnpm-cache-key }}
               bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
@@ -90,14 +90,14 @@ jobs:
       - parallel:
           - name: Sqitch deploy (local)
             if: ${{ env.ACT && steps.is_available.outputs.exists != 'success' }}
-            uses: ./.github/actions/sqitch-local
+            uses: ./.github/actions/database/sqitch-local
             with:
               command: 'deploy --mode change'
               target: ${{ vars.SQITCH_TARGET }}
 
           - name: Sqitch deploy (ci)
             if: ${{ !env.ACT && steps.is_available.outputs.exists != 'success' }}
-            uses: ./.github/actions/sqitch
+            uses: ./.github/actions/database/sqitch
             with:
               command: 'deploy --mode change'
               target: ${{ vars.SQITCH_TARGET }}
@@ -105,7 +105,7 @@ jobs:
 
           - name: Start redis
             if: ${{ steps.is_available.outputs.exists != 'success' || env.ACT }}
-            uses: ./.github/actions/redis-start
+            uses: ./.github/actions/database/redis/start
             with:
               network: ${{ vars.SUPABASE_NETWORK }}
 
@@ -124,7 +124,7 @@ jobs:
       - name: Check if seeding is required
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         id: get_collectivites_count
-        uses: ./.github/actions/psql
+        uses: ./.github/actions/database/psql
         with:
           command: 'select count(*) from imports.region;'
           network: ${{ vars.SUPABASE_NETWORK }}
@@ -133,7 +133,7 @@ jobs:
       # Seed if no data is present in the DB (e.g. when running on ACT or when the image was not available and we had to create a new volume)
       - name: Load seed data
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
-        uses: ./.github/actions/db-seed
+        uses: ./.github/actions/database/seed
         with:
           script: 'seed/seed.sh'
           network: ${{ vars.SUPABASE_NETWORK }}
@@ -141,7 +141,7 @@ jobs:
 
       - name: Load geojson seed data
         if: ${{ steps.is_available.outputs.exists != 'success' && steps.get_collectivites_count.outputs.result == 0 }}
-        uses: ./.github/actions/db-seed
+        uses: ./.github/actions/database/seed
         with:
           script: 'seed/geojson.sh'
           network: ${{ vars.SUPABASE_NETWORK }}
@@ -149,6 +149,6 @@ jobs:
 
       - name: Save db volume
         if: ${{ steps.is_available.outputs.exists != 'success' }}
-        uses: ./.github/actions/db-save
+        uses: ./.github/actions/database/supabase/save-volume
         with:
           push: ${{ !env.ACT }}

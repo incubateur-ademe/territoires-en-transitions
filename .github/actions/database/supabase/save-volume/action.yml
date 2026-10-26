@@ -11,7 +11,7 @@ runs:
 
   steps:
     - name: Get image path
-      uses: ./.github/actions/db-path
+      uses: ./.github/actions/database/supabase/volume-path
       id: get_image_path
 
     - name: Create image from volume

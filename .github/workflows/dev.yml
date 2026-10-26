@@ -18,7 +18,7 @@ jobs:
           persist-credentials: false
       - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
       - id: get_path
-        uses: ./.github/actions/db-path
+        uses: ./.github/actions/database/supabase/volume-path
       - run: supabase stop --no-backup || echo "service already stopped"
       - run: docker image rm ${{ steps.get_path.outputs.path }} || echo "image already removed"
       - run: docker volume rm supabase_db_tet || echo "volume already removed"
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/supabase-start
+      - uses: ./.github/actions/database/supabase/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/db-save
+      - uses: ./.github/actions/database/supabase/save-volume
 
   # Restaure un backup de la base de dev
   db-restore:
@@ -72,7 +72,7 @@ jobs:
         with:
           persist-credentials: false
       - run: docker stop supabase_db_tet
-      - uses: ./.github/actions/db-restore
+      - uses: ./.github/actions/database/supabase/restore-volume
       - run: docker start supabase_db_tet
       - run: |
           while [[ "$(docker inspect -f '{{.State.Health.Status}}' supabase_db_tet)" != 'healthy' ]]; do
@@ -86,6 +86,6 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/redis-start
+      - uses: ./.github/actions/database/redis/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}

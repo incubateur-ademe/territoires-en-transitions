@@ -34,20 +34,20 @@ jobs:
           filter: tree:0
           persist-credentials: false
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
 
       - parallel:
           - name: Setup app env
-            uses: ./.github/actions/app-env
+            uses: ./.github/actions/app/env
             with:
               app_name: app
               json_vars: ${{ toJSON(vars) }}
               supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
 
           - name: Setup backend env
-            uses: ./.github/actions/app-env
+            uses: ./.github/actions/app/env
             with:
               app_name: backend
               json_vars: ${{ toJSON(vars) }}
@@ -59,7 +59,7 @@ jobs:
               supabase-jwt-secret: ${{ secrets.SUPABASE_JWT_SECRET }}
 
           - name: Setup site env
-            uses: ./.github/actions/app-env
+            uses: ./.github/actions/app/env
             with:
               app_name: site
               json_vars: ${{ toJSON(vars) }}
