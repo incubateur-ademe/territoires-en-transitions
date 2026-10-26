@@ -23,7 +23,7 @@
 # deps — resolving those against a different libc family than what's tested
 # in this repo would be an unforced risk for no real size gain here.
 
-ARG NODE_IMAGE=node:24.21.0-slim@sha256:2fe369e969550cde8e867afc3fe370b260140cab4a23d467074295b42163d553
+ARG NODE_IMAGE=node:24.22.1-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
 ARG PNPM_VERSION=12.15.0
 
 FROM ${NODE_IMAGE} AS base

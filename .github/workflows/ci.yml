@@ -45,7 +45,7 @@ jobs:
 
       - name: Compute dependency cache key
         id: deps-metadata
-        run: echo "cache-key=${{ runner.os }}-node-24.18.0-pnpm-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', 'package.json') }}" >> "$GITHUB_OUTPUT"
+        run: echo "cache-key=${{ runner.os }}-node-24.22.1-pnpm-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', 'package.json') }}" >> "$GITHUB_OUTPUT"
 
       - name: Check dependency cache
         id: deps-cache
