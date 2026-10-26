@@ -36,7 +36,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        uses: ./.github/actions/aws-cli
+        uses: ./.github/actions/providers/aws/cli
 
       - name: Run backup
         env:
@@ -85,7 +85,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        uses: ./.github/actions/aws-cli
+        uses: ./.github/actions/providers/aws/cli
 
       - name: Restore latest backup to staging
         env:
@@ -125,7 +125,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       - name: Install AWS CLI
-        uses: ./.github/actions/aws-cli
+        uses: ./.github/actions/providers/aws/cli
 
       - name: Compute D-1 backup date
         id: dminus1

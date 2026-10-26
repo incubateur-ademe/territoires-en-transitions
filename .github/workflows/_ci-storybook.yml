@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
           bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
@@ -64,7 +64,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
           bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
@@ -90,7 +90,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
           bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}

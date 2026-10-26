@@ -18,6 +18,6 @@ jobs:
           persist-credentials: false
 
       - name: Keep Streamlit apps alive
-        uses: ./.github/actions/keep-alive-streamlit
+        uses: ./.github/actions/providers/streamlit/keep-alive
         with:
           bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}

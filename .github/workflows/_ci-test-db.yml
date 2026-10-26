@@ -21,7 +21,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/docker-login
+      - uses: ./.github/actions/docker/login
         if: ${{ !env.ACT }}
         with:
           username: ${{ github.actor }}
@@ -29,7 +29,7 @@ jobs:
 
       - name: Start supabase
         id: start
-        uses: ./.github/actions/supabase-start
+        uses: ./.github/actions/database/supabase/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
           pull: ${{ !env.ACT }}
@@ -107,7 +107,7 @@ jobs:
 
       - name: Sqitch revert to ${{ env.tag }}
         if: ${{ !env.ACT }}
-        uses: ./.github/actions/sqitch
+        uses: ./.github/actions/database/sqitch
         with:
           command: 'revert --to @${{ env.tag }} --y'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
@@ -115,7 +115,7 @@ jobs:
 
       - name: Sqitch deploy/verify
         if: ${{ !env.ACT }}
-        uses: ./.github/actions/sqitch
+        uses: ./.github/actions/database/sqitch
         with:
           command: 'deploy --mode change --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
@@ -123,14 +123,14 @@ jobs:
 
       - name: Sqitch revert to ${{ env.tag }} (local)
         if: ${{ env.ACT }}
-        uses: ./.github/actions/sqitch-local
+        uses: ./.github/actions/database/sqitch-local
         with:
           command: 'revert --to @${{ env.tag }} --y'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
       - name: Sqitch deploy/verify (local)
         if: ${{ env.ACT }}
-        uses: ./.github/actions/sqitch-local
+        uses: ./.github/actions/database/sqitch-local
         with:
           command: 'deploy --mode change --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}

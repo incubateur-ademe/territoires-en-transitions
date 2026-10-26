@@ -46,16 +46,16 @@ jobs:
           fetch-depth: 0
 
       - id: meta
-        uses: ./.github/actions/build-metadata
+        uses: ./.github/actions/app/build-metadata
 
-      - uses: ./.github/actions/docker-login
+      - uses: ./.github/actions/docker/login
         if: ${{ !env.ACT }}
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - id: image
-        uses: ./.github/actions/docker-image-path
+        uses: ./.github/actions/docker/image-path
         with:
           username: incubateur-ademe
           image: tet-app
@@ -64,7 +64,7 @@ jobs:
           tag: ${{ steps.meta.outputs.git-short-hash }}
 
       - name: Build et push de l'image app
-        uses: ./.github/actions/docker-build-push
+        uses: ./.github/actions/docker/build-push
         env:
           BRYNTUM_ACCESS_TOKEN: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
@@ -109,9 +109,9 @@ jobs:
           persist-credentials: false
 
       - id: meta
-        uses: ./.github/actions/build-metadata
+        uses: ./.github/actions/app/build-metadata
 
-      - uses: ./.github/actions/koyeb-cli
+      - uses: ./.github/actions/providers/koyeb/cli
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
@@ -145,7 +145,7 @@ jobs:
           --env CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
 
       - id: deployment-url
-        uses: ./.github/actions/get-koyeb-app-url
+        uses: ./.github/actions/providers/koyeb/get-app-url
         with:
           app-name: ${{ github.event.inputs.target }}-app
           public-url: ${{ vars.APP_URL }}
@@ -168,11 +168,11 @@ jobs:
           persist-credentials: false
 
       - id: test-app-name
-        uses: ./.github/actions/test-app-name
+        uses: ./.github/actions/providers/koyeb/test-app-name
         with:
           branch-name: ${{ github.ref_name }}
 
-      - uses: ./.github/actions/koyeb-cli
+      - uses: ./.github/actions/providers/koyeb/cli
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
@@ -217,6 +217,6 @@ jobs:
           fi
 
       - id: deployment-url
-        uses: ./.github/actions/get-koyeb-app-url
+        uses: ./.github/actions/providers/koyeb/get-app-url
         with:
           app-name: test-app-${{ steps.test-app-name.outputs.name }}
