@@ -1,0 +1,139 @@
+name: wait-for-koyeb-service
+description: Wait for the expected Koyeb deployment and all its live instances, within a deadline
+
+inputs:
+  service:
+    description: Existing app/service
+    required: true
+  deployment:
+    description: Expected deployment ID (defaults to the latest deployment at entry)
+    default: ''
+  image:
+    description: Expected immutable image reference (optional for preflight)
+    default: ''
+  deadline:
+    description: Absolute Unix deadline shared by coordinated steps
+    default: ''
+  stability-seconds:
+    description: Continuous healthy observation after readiness
+    default: '0'
+  url:
+    description: Public version endpoint to check after provider readiness
+    default: ''
+  commit:
+    description: Expected short Git SHA returned by the version endpoint
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SERVICE: ${{ inputs.service }}
+        DEPLOYMENT: ${{ inputs.deployment }}
+        IMAGE: ${{ inputs.image }}
+        DEADLINE: ${{ inputs.deadline }}
+        STABILITY: ${{ inputs.stability-seconds }}
+        VERSION_URL: ${{ inputs.url }}
+        EXPECTED_COMMIT: ${{ inputs.commit }}
+      run: |
+        set -euo pipefail
+        [[ "$SERVICE" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]
+        [[ "$STABILITY" =~ ^[0-9]+$ ]]
+        (( STABILITY <= 120 ))
+        [[ -z "$IMAGE" || "$IMAGE" =~ ^ghcr\.io/[a-z0-9_/-]+@sha256:[a-f0-9]{64}$ ]]
+        [[ -z "$VERSION_URL" || ( "$VERSION_URL" == https://* && "$EXPECTED_COMMIT" =~ ^[a-f0-9]{7,40}$ ) ]]
+        DEADLINE=${DEADLINE:-$(($(date +%s) + 600))}
+        [[ "$DEADLINE" =~ ^[0-9]+$ ]]
+        # A stalled API request must not outlive the orchestration deadline.
+        koyeb_read() {
+          local remaining=$((DEADLINE - $(date +%s)))
+          (( remaining > 0 )) || return 124
+          (( remaining <= 20 )) || remaining=20
+          timeout --kill-after=5s "${remaining}s" koyeb "$@" --output json
+        }
+        until service=$(koyeb_read services get "$SERVICE"); do
+          if (( $(date +%s) >= DEADLINE )); then
+            echo "::error::Readiness deadline exceeded while reading $SERVICE."
+            exit 1
+          fi
+          sleep 2
+        done
+        service_id=$(jq -er '.id | select(length > 0)' <<< "$service")
+        DEPLOYMENT=${DEPLOYMENT:-$(jq -er '.latest_deployment_id | select(length > 0)' <<< "$service")}
+        [[ "$DEPLOYMENT" =~ ^[a-zA-Z0-9-]+$ ]]
+        healthy_since=0
+        while (( $(date +%s) < DEADLINE )); do
+          if ! service=$(koyeb_read services get "$service_id"); then
+            healthy_since=0
+            sleep 2
+            continue
+          fi
+          if [[ $(jq -r '.latest_deployment_id' <<< "$service") != "$DEPLOYMENT" ]]; then
+            echo "::error::A different deployment superseded $SERVICE; inspect Koyeb before retrying."
+            exit 1
+          fi
+          if ! deployment=$(koyeb_read deployments get "$DEPLOYMENT"); then
+            healthy_since=0
+            sleep 2
+            continue
+          fi
+          jq -e --arg id "$DEPLOYMENT" --arg service "$service_id" \
+            '.id == $id and .service_id == $service' <<< "$deployment" >/dev/null
+          case $(jq -r '.status' <<< "$deployment") in
+            ERROR|ERRORING|UNHEALTHY|DEGRADED|CANCELED|CANCELING|STOPPED|STOPPING)
+              echo "::error::Koyeb deployment $DEPLOYMENT failed; inspect $SERVICE before retrying."
+              exit 1 ;;
+          esac
+          ready=false
+          if jq -e --arg id "$DEPLOYMENT" '.status == "HEALTHY" and .active_deployment_id == $id' <<< "$service" >/dev/null \
+            && jq -e '.status == "HEALTHY"' <<< "$deployment" >/dev/null; then
+            if [[ -n "$IMAGE" ]]; then
+              jq -e --arg image "$IMAGE" '.definition.docker.image == $image' \
+                <<< "$deployment" >/dev/null
+            fi
+            if ! instances=$(koyeb_read instances list --service "$service_id"); then
+              healthy_since=0
+              sleep 2
+              continue
+            fi
+            if jq -e --arg service "$service_id" \
+              '.instances | length > 0 and all(.service_id == $service and .status == "HEALTHY")' \
+              <<< "$instances" >/dev/null; then
+              ready=true
+              while IFS= read -r regional_id; do
+                [[ "$regional_id" =~ ^[a-zA-Z0-9-]+$ ]]
+                if ! regional=$(koyeb_read regional-deployments get "$regional_id"); then
+                  ready=false
+                  break
+                fi
+                if ! jq -e --arg deployment "$DEPLOYMENT" --arg service "$service_id" \
+                  '.deployment_id == $deployment and .service_id == $service' <<< "$regional" >/dev/null; then
+                  ready=false
+                fi
+              done < <(jq -r '.instances[].regional_deployment_id' <<< "$instances" | sort -u)
+            fi
+          fi
+          if [[ "$ready" == true && -n "$VERSION_URL" ]]; then
+            remaining=$((DEADLINE - $(date +%s)))
+            (( remaining > 0 )) || break
+            (( remaining <= 10 )) || remaining=10
+            if ! curl --fail --silent --show-error --connect-timeout 5 --max-time "$remaining" \
+              -H 'Cache-Control: no-cache' "${VERSION_URL}?deployment=$DEPLOYMENT" \
+              | jq -e --arg commit "$EXPECTED_COMMIT" '.commit == $commit' >/dev/null; then
+              ready=false
+            fi
+          fi
+          if [[ "$ready" == true ]]; then
+            (( healthy_since != 0 )) || healthy_since=$(date +%s)
+            if (( $(date +%s) - healthy_since >= STABILITY && $(date +%s) < DEADLINE )); then
+              echo "$SERVICE is healthy at deployment $DEPLOYMENT."
+              exit 0
+            fi
+          else
+            healthy_since=0
+          fi
+          sleep 2
+        done
+        echo "::error::Readiness deadline exceeded for $SERVICE ($DEPLOYMENT). Remote work may still be running; inspect it before retrying."
+        exit 1
