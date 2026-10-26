@@ -1,0 +1,103 @@
+<!-- @dsCard height=328 -->
+<style>
+  .cover {
+    position: relative;
+    width: 960px;
+    height: 328px;
+    overflow: hidden;
+    font-family: var(--font-sans);
+  }
+  .cover svg {
+    position: absolute;
+    inset: 0 0 auto 0;
+  }
+  .brand {
+    fill: var(--primary-7);
+  }
+  .ink {
+    fill: var(--primary-9);
+  }
+  .state {
+    fill: var(--bf500);
+  }
+  .tint {
+    fill: var(--primary-2);
+  }
+  .signal {
+    fill: var(--secondary-1);
+  }
+  .tile {
+    rx: var(--radius-lg);
+  }
+  .cover-text {
+    position: absolute;
+    left: 48px;
+    bottom: 24px;
+    width: 864px;
+  }
+  .cover-name {
+    margin: 0;
+    font-size: 64px;
+    line-height: 0.95;
+    font-weight: 700;
+    color: var(--primary-9);
+  }
+  .cover-tagline {
+    margin: 8px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--grey-8);
+  }
+</style>
+<div class="cover">
+  <svg width="960" height="120" viewBox="0 0 960 120" aria-hidden="true">
+    <!--
+      Blocs : brand (primary-7) 384×120, ink (primary-9) 192×120,
+      state (bf500) 96×120, tint (primary-2) 288×120, plus une tuile signal
+      (secondary-1) ; largeurs multiples de space-xl (32px).
+      Disposition : bande pleine largeur collée en haut, du plus identitaire
+      (primary-7) au plus clair, le Bleu France entre la marque et la teinte.
+      Motif : tuiles modulaires arrondies, quelques-unes doubles comme les
+      cartes et badges d'une interface dense ; le README décrit une
+      plateforme sobre, dense en information, faite de cartes en radius-lg.
+      Pas : tuiles de space-lg (24px), espacées de space-sm (8px), rayon
+      radius-lg (8px), marges internes space-md (16px).
+    -->
+    <rect class="brand" x="0" y="0" width="384" height="120" />
+    <rect class="ink" x="384" y="0" width="192" height="120" />
+    <rect class="state" x="576" y="0" width="96" height="120" />
+    <rect class="tint" x="672" y="0" width="288" height="120" />
+
+    <rect class="tint tile" x="208" y="16" width="56" height="24" />
+    <rect class="tint tile" x="272" y="16" width="24" height="24" />
+    <rect class="tint tile" x="304" y="16" width="56" height="24" />
+    <rect class="tint tile" x="240" y="48" width="24" height="24" />
+    <rect class="tint tile" x="272" y="48" width="88" height="24" />
+    <rect class="tint tile" x="304" y="80" width="56" height="24" />
+
+    <rect class="brand tile" x="400" y="16" width="88" height="24" />
+    <rect class="brand tile" x="496" y="16" width="24" height="24" />
+    <rect class="brand tile" x="400" y="48" width="24" height="24" />
+    <rect class="brand tile" x="432" y="48" width="56" height="24" />
+
+    <rect class="brand tile" x="688" y="16" width="56" height="24" />
+    <rect class="brand tile" x="752" y="16" width="24" height="24" />
+    <rect class="ink tile" x="784" y="16" width="88" height="24" />
+    <rect class="brand tile" x="688" y="48" width="24" height="24" />
+    <rect class="signal tile" x="720" y="48" width="24" height="24" />
+    <rect class="ink tile" x="752" y="48" width="56" height="24" />
+    <rect class="brand tile" x="816" y="48" width="56" height="24" />
+    <rect class="ink tile" x="688" y="80" width="88" height="24" />
+    <rect class="brand tile" x="784" y="80" width="24" height="24" />
+    <rect class="brand tile" x="880" y="16" width="56" height="24" />
+    <rect class="ink tile" x="880" y="48" width="24" height="24" />
+    <rect class="brand tile" x="816" y="80" width="120" height="24" />
+  </svg>
+  <div class="cover-text">
+    <p class="cover-name">Territoires en<br />Transitions</p>
+    <p class="cover-tagline">
+      Le design system de la plateforme qui accompagne les collectivités dans
+      leur transition écologique.
+    </p>
+  </div>
+</div>
