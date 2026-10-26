@@ -14,13 +14,25 @@ prototype se transpose tel quel dans `apps/app`.
 
 Rien à installer en local : le hook `.claude/hooks/session-start.sh` installe
 Node, pnpm et les dépendances, configure le navigateur Playwright (captures) et
-vérifie que `nx build prototypes` passe. Il exige, dans les réglages de
-l'environnement cloud :
+vérifie que `nx build prototypes` passe.
 
-- `BRYNTUM_ACCESS_TOKEN` en variable d'environnement ou en Network secret ;
-- `npm.bryntum.com` et `codeload.github.com` dans les domaines autorisés.
+### Prérequis (une fois par environnement cloud)
 
-Si l'installation échoue, le hook l'indique en début de session.
+Dans les réglages de l'environnement (menu de l'environnement dans la barre de
+titre de la session → _Edit_). Un script de la session ne peut pas les poser
+lui-même : la politique réseau est appliquée hors du container.
+
+1. **Network access** : garder le niveau _Limited_ et ajouter
+   `npm.bryntum.com` (registre privé Bryntum) et `codeload.github.com`
+   (dépendance de `crisp-api` hébergée sur GitHub) dans _Allowed domains_, en
+   laissant cochée la case _Allow package managers_. Cf.
+   https://code.claude.com/docs/en/cloud-environments#network-access.
+2. **Token Bryntum** : `BRYNTUM_ACCESS_TOKEN` en _Network secret_ ou en
+   variable d'environnement. Ne jamais le coller dans le chat.
+3. **Accès GitHub** au repo avec droit de push, pour publier les branches de
+   prototypes.
+
+Si un prérequis manque, le hook l'indique en début de session.
 
 ## Déploiement
 

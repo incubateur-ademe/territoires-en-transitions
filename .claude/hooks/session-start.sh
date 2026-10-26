@@ -4,9 +4,8 @@
 # construit. Les journaux vont sur stderr ; stdout n'affiche que ce que
 # l'agent doit savoir en début de session (un prérequis manquant, un échec).
 #
-# Prérequis dans l'environnement cloud (cf. apps/prototypes/README.md) :
-# token `BRYNTUM_ACCESS_TOKEN` et domaines `npm.bryntum.com` et
-# `codeload.github.com` autorisés.
+# Prérequis de l'environnement cloud : cf. section « Prérequis » de
+# apps/prototypes/README.md.
 set -euo pipefail
 
 log() { echo "[session-start] $*" >&2; }
@@ -86,10 +85,11 @@ main() {
 
   if ! install_dependencies; then
     cat <<'MSG'
-⚠️ session-start : `pnpm install` a échoué. Vérifier dans les réglages de
-l'environnement cloud que `BRYNTUM_ACCESS_TOKEN` est défini (variable ou
-Network secret) et que `npm.bryntum.com` et `codeload.github.com` sont dans
-les domaines autorisés. Ne pas contourner les contrôles supply-chain de pnpm.
+⚠️ session-start : `pnpm install` a échoué. Vérifier les prérequis de
+l'environnement cloud listés dans apps/prototypes/README.md (section
+« Prérequis ») : niveau réseau Limited avec `npm.bryntum.com` et
+`codeload.github.com` dans Allowed domains, et `BRYNTUM_ACCESS_TOKEN` défini.
+Ne pas contourner les contrôles supply-chain de pnpm.
 MSG
     exit 0
   fi
