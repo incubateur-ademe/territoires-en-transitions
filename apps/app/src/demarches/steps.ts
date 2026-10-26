@@ -6,8 +6,8 @@ import {
 import { resolveActiveTopic } from './active-topic';
 
 export const DEMARCHE_SECTION_KEYS = [
-  'documents',
   'diagnostic',
+  'documents',
   'plan',
 ] as const;
 
@@ -65,8 +65,8 @@ export const getDemarcheParcours = ({
 });
 
 /**
- * Déroule le parcours d'un temps du dossier : les documents (si le modèle en
- * attend à ce temps-là), le diagnostic, puis le plan.
+ * Déroule le parcours d'un temps du dossier : le diagnostic, les documents (si
+ * le modèle en attend à ce temps-là), puis le plan.
  *
  * L'amont éclate le diagnostic en un item par topic : c'est là qu'on le
  * remplit, volet par volet. L'aval le garde entier — ce n'est plus qu'un rappel,
@@ -82,13 +82,13 @@ export const flattenSteps = ({
   hasDocuments: boolean;
   topicCodes: readonly string[];
 }): DemarcheStepItem[] => [
-  ...(hasDocuments ? [{ section: 'documents' as const, topicCode: null }] : []),
   ...(etape === 'amont' && topicCodes.length > 0
     ? topicCodes.map((topicCode) => ({
         section: 'diagnostic' as const,
         topicCode,
       }))
     : [{ section: 'diagnostic' as const, topicCode: null }]),
+  ...(hasDocuments ? [{ section: 'documents' as const, topicCode: null }] : []),
   { section: 'plan' as const, topicCode: null },
 ];
 

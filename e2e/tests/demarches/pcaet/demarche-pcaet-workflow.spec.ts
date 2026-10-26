@@ -114,7 +114,7 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await demarchePcaetPom.expectNoTopicGridRow('Autres industries');
   });
 
-  test('la barre d’étapes traverse documents, topics du diagnostic et plan', async ({
+  test('la barre d’étapes traverse topics du diagnostic, documents et plan', async ({
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     plans, // requis pour cleanup auto
@@ -138,22 +138,17 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
       await demarchePcaetPom.stepsNavNext.click();
     };
 
-    // Premier item du parcours : pas de « précédente ». Le panneau d'avancée
-    // est ouvert à l'arrivée sur la démarche ; on le ferme pour la suite.
-    await expect(page).toHaveURL(/\/documents\/?$/);
+    // Premier item du parcours : le diagnostic, sans « précédente ». Le panneau
+    // d'avancée est ouvert à l'arrivée sur la démarche ; on le ferme pour la
+    // suite.
+    await expect(page).toHaveURL(/\/indicateurs\/?$/);
+    await demarchePcaetPom.expectActiveTopic('emissions_ges');
     await demarchePcaetPom.expectProgressPanelOpen(true);
     await demarchePcaetPom.closeProgressPanel();
     await expect(demarchePcaetPom.stepsNavPrevious).toBeHidden();
 
-    // Franchir une sous-étape ouvre le panneau d'avancée automatiquement.
-    await clickNextTo(/topic=emissions_ges$/);
-    await expect(page).toHaveURL(/\/indicateurs\?topic=emissions_ges$/);
-    await demarchePcaetPom.expectActiveTopic('emissions_ges');
-    await demarchePcaetPom.expectProgressPanelOpen(true);
-
     // Naviguer entre topics ne touche pas au panneau. Le parcours suit l'ordre
     // réglementaire : émissions → polluants → séquestration → conso → ENR.
-    await demarchePcaetPom.closeProgressPanel();
     await clickNextTo(/topic=polluants_atmospheriques$/);
     await expect(page).toHaveURL(/\?topic=polluants_atmospheriques$/);
     await demarchePcaetPom.expectActiveTopic('polluants_atmospheriques');
@@ -173,7 +168,13 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await demarchePcaetPom.expectActiveTopic('vulnerabilite_territoire');
     await demarchePcaetPom.expectProgressPanelOpen(false);
 
-    // Dernier topic → plan : nouveau franchissement, le panneau se rouvre.
+    // Franchir une sous-étape ouvre le panneau d'avancée automatiquement.
+    await clickNextTo(/\/documents$/);
+    await expect(page).toHaveURL(/\/documents\/?$/);
+    await demarchePcaetPom.expectProgressPanelOpen(true);
+
+    // Documents → plan : nouveau franchissement, le panneau se rouvre.
+    await demarchePcaetPom.closeProgressPanel();
     await clickNextTo(/\/plan$/);
     await expect(page).toHaveURL(/\/plan\/?$/);
     await demarchePcaetPom.expectProgressPanelOpen(true);
@@ -184,9 +185,8 @@ test.describe('Démarche PCAET - workflow plan actions', () => {
     await expect(demarchePcaetPom.stepsNavTransmettre).toBeVisible();
     await expect(demarchePcaetPom.stepsNavTransmettre).toBeDisabled();
 
-    // « Précédente » depuis le plan revient sur le dernier topic du diagnostic.
+    // « Précédente » depuis le plan revient sur les documents.
     await demarchePcaetPom.stepsNavPrevious.click();
-    await expect(page).toHaveURL(/\?topic=vulnerabilite_territoire$/);
-    await demarchePcaetPom.expectActiveTopic('vulnerabilite_territoire');
+    await expect(page).toHaveURL(/\/documents\/?$/);
   });
 });

@@ -15,7 +15,7 @@ const TOPIC_CODES = [
 ] as const;
 
 describe('flattenSteps', () => {
-  it('déroule documents, un item par topic, puis plan', () => {
+  it('déroule un item par topic, documents, puis plan', () => {
     const items = flattenSteps({
       etape: 'amont',
       hasDocuments: true,
@@ -23,12 +23,12 @@ describe('flattenSteps', () => {
     });
 
     expect(items).toEqual([
-      { section: 'documents', topicCode: null },
       { section: 'diagnostic', topicCode: 'profil_energie_climat' },
       { section: 'diagnostic', topicCode: 'sequestration' },
       { section: 'diagnostic', topicCode: 'polluants_atmospheriques' },
       { section: 'diagnostic', topicCode: 'enr' },
       { section: 'diagnostic', topicCode: 'vulnerabilite_territoire' },
+      { section: 'documents', topicCode: null },
       { section: 'plan', topicCode: null },
     ]);
   });
@@ -37,8 +37,8 @@ describe('flattenSteps', () => {
     expect(
       flattenSteps({ etape: 'amont', hasDocuments: true, topicCodes: [] })
     ).toEqual([
-      { section: 'documents', topicCode: null },
       { section: 'diagnostic', topicCode: null },
+      { section: 'documents', topicCode: null },
       { section: 'plan', topicCode: null },
     ]);
   });
@@ -50,9 +50,9 @@ describe('flattenSteps', () => {
       topicCodes: TOPIC_CODES,
     });
 
-    expect(items[0]).toEqual({
+    expect(items.at(-2)).toEqual({
       section: 'diagnostic',
-      topicCode: 'profil_energie_climat',
+      topicCode: 'vulnerabilite_territoire',
     });
     expect(items).toHaveLength(TOPIC_CODES.length + 1);
   });
@@ -67,8 +67,8 @@ describe("flattenSteps à l'aval", () => {
         topicCodes: TOPIC_CODES,
       })
     ).toEqual([
-      { section: 'documents', topicCode: null },
       { section: 'diagnostic', topicCode: null },
+      { section: 'documents', topicCode: null },
       { section: 'plan', topicCode: null },
     ]);
   });
@@ -90,18 +90,18 @@ describe('getStepsNavModel', () => {
     topicCodes: TOPIC_CODES,
   };
 
-  it('sur documents : pas de précédent, suivant = premier topic', () => {
+  it('sur documents : précédent = dernier topic, suivant = plan', () => {
     const nav = getStepsNavModel({
       ...base,
       activeSection: 'documents',
       currentTopicCode: null,
     });
 
-    expect(nav.prev).toBeNull();
-    expect(nav.next).toEqual({
+    expect(nav.prev).toEqual({
       section: 'diagnostic',
-      topicCode: 'profil_energie_climat',
+      topicCode: 'vulnerabilite_territoire',
     });
+    expect(nav.next).toEqual({ section: 'plan', topicCode: null });
     expect(nav.isLastStep).toBe(false);
   });
 
@@ -119,24 +119,24 @@ describe('getStepsNavModel', () => {
     expect(nav.next).toEqual({ section: 'diagnostic', topicCode: 'enr' });
   });
 
-  it('sur le premier topic : précédent = documents', () => {
+  it('sur le premier topic : pas de précédent, c’est le début du parcours', () => {
     const nav = getStepsNavModel({
       ...base,
       activeSection: 'diagnostic',
       currentTopicCode: 'profil_energie_climat',
     });
 
-    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
+    expect(nav.prev).toBeNull();
   });
 
-  it('sur le dernier topic : suivant = plan', () => {
+  it('sur le dernier topic : suivant = documents', () => {
     const nav = getStepsNavModel({
       ...base,
       activeSection: 'diagnostic',
       currentTopicCode: 'vulnerabilite_territoire',
     });
 
-    expect(nav.next).toEqual({ section: 'plan', topicCode: null });
+    expect(nav.next).toEqual({ section: 'documents', topicCode: null });
     expect(nav.isLastStep).toBe(false);
   });
 
@@ -147,7 +147,7 @@ describe('getStepsNavModel', () => {
       currentTopicCode: null,
     });
 
-    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
+    expect(nav.prev).toBeNull();
     expect(nav.next).toEqual({
       section: 'diagnostic',
       topicCode: 'sequestration',
@@ -167,43 +167,40 @@ describe('getStepsNavModel', () => {
     });
   });
 
-  it('sur plan : précédent = dernier topic, et c’est la dernière étape', () => {
+  it('sur plan : précédent = documents, et c’est la dernière étape', () => {
     const nav = getStepsNavModel({
       ...base,
       activeSection: 'plan',
       currentTopicCode: null,
     });
 
-    expect(nav.prev).toEqual({
-      section: 'diagnostic',
-      topicCode: 'vulnerabilite_territoire',
-    });
+    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
     expect(nav.next).toBeNull();
     expect(nav.isLastStep).toBe(true);
   });
 
-  it('sur plan avec topics non chargés : précédent = diagnostic sans topic', () => {
+  it('sur documents avec topics non chargés : précédent = diagnostic sans topic', () => {
     const nav = getStepsNavModel({
       etape: 'amont',
       hasDocuments: true,
       topicCodes: [],
-      activeSection: 'plan',
+      activeSection: 'documents',
       currentTopicCode: null,
     });
 
     expect(nav.prev).toEqual({ section: 'diagnostic', topicCode: null });
   });
 
-  it('sans sous-étape documents : pas de précédent sur le premier topic', () => {
+  it('sans sous-étape documents : le dernier topic mène au plan', () => {
     const nav = getStepsNavModel({
       etape: 'amont',
       hasDocuments: false,
       topicCodes: TOPIC_CODES,
       activeSection: 'diagnostic',
-      currentTopicCode: 'profil_energie_climat',
+      currentTopicCode: 'vulnerabilite_territoire',
     });
 
-    expect(nav.prev).toBeNull();
+    expect(nav.next).toEqual({ section: 'plan', topicCode: null });
   });
 });
 
@@ -217,11 +214,11 @@ describe("getStepsNavModel à l'aval", () => {
   it('enchaîne les trois rappels, sans passer par les topics', () => {
     const nav = getStepsNavModel({
       ...base,
-      activeSection: 'diagnostic',
+      activeSection: 'documents',
       currentTopicCode: null,
     });
 
-    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
+    expect(nav.prev).toEqual({ section: 'diagnostic', topicCode: null });
     expect(nav.next).toEqual({ section: 'plan', topicCode: null });
     expect(nav.isLastStep).toBe(false);
   });
@@ -233,8 +230,8 @@ describe("getStepsNavModel à l'aval", () => {
       currentTopicCode: 'enr',
     });
 
-    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
-    expect(nav.next).toEqual({ section: 'plan', topicCode: null });
+    expect(nav.prev).toBeNull();
+    expect(nav.next).toEqual({ section: 'documents', topicCode: null });
   });
 
   it('le plan reste la dernière étape : elle porte la validation finale', () => {
@@ -244,7 +241,7 @@ describe("getStepsNavModel à l'aval", () => {
       currentTopicCode: null,
     });
 
-    expect(nav.prev).toEqual({ section: 'diagnostic', topicCode: null });
+    expect(nav.prev).toEqual({ section: 'documents', topicCode: null });
     expect(nav.next).toBeNull();
     expect(nav.isLastStep).toBe(true);
   });
