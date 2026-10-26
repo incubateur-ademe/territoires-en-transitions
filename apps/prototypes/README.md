@@ -10,6 +10,18 @@ prototype se transpose tel quel dans `apps/app`.
   et `Box`, sans classe de layout ni valeur arbitraire).
 - Conventions détaillées : `CLAUDE.md`.
 
+## Depuis une session Claude Code cloud
+
+Rien à installer en local : le hook `.claude/hooks/session-start.sh` installe
+Node, pnpm et les dépendances, configure le navigateur Playwright (captures) et
+vérifie que `nx build prototypes` passe. Il exige, dans les réglages de
+l'environnement cloud :
+
+- `BRYNTUM_ACCESS_TOKEN` en variable d'environnement ou en Network secret ;
+- `npm.bryntum.com` et `codeload.github.com` dans les domaines autorisés.
+
+Si l'installation échoue, le hook l'indique en début de session.
+
 ## Déploiement
 
 `nx build prototypes` produit un site statique dans `apps/prototypes/out/`,
