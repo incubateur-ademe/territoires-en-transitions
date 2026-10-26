@@ -43,6 +43,10 @@ const ContentWrapper = ({
           'max-lg:hidden': panel.isOpen,
         })}
       >
+        {/* Sous le header, et collé en haut une fois le header défilé : l'agent
+            d'un service navigue au nom d'un autre, et ce rappel-là ne doit pas
+            défiler avec la page. */}
+        <ContexteInstructionBanner />
         <div className="grow flex flex-col w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6 pb-12 pt-6">
           {children}
         </div>
@@ -68,9 +72,6 @@ export const AppLayout = ({
   return (
     <>
       <OfflineAlert />
-      {/* Au-dessus du header, et collé en haut : l'agent d'un service navigue
-          au nom d'un autre, et ce rappel-là ne doit pas défiler avec la page. */}
-      <ContexteInstructionBanner />
       <ContentWrapper belowFooterSlot={belowFooterSlot}>
         {children}
       </ContentWrapper>
