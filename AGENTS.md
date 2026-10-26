@@ -3,6 +3,7 @@
 For side-specific conventions, see:
 - `@apps/app/CLAUDE.md` — frontend (Next.js 16 + tRPC client + DSFR)
 - `@apps/backend/CLAUDE.md` — backend (NestJS 11 + tRPC + Drizzle)
+- `@apps/prototypes/CLAUDE.md` — design prototypes (Next.js + `@tet/ui`, layout primitives only)
 
 ## Project Overview
 

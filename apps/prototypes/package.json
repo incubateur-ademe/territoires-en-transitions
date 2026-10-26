@@ -1,0 +1,33 @@
+{
+  "name": "@tet/prototypes",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "prototypes",
+    "tags": [
+      "frontend"
+    ],
+    "targets": {
+      "dev": {
+        "continuous": true,
+        "dependsOn": [
+          "^build"
+        ],
+        "command": "next dev -p ${PROTOTYPES_PORT:-3002}",
+        "options": {
+          "cwd": "apps/prototypes"
+        }
+      },
+      "typecheck": {
+        "dependsOn": [
+          "^typecheck"
+        ],
+        "command": "tsc --noEmit -p tsconfig.json",
+        "options": {
+          "cwd": "apps/prototypes"
+        },
+        "cache": true
+      }
+    }
+  }
+}
