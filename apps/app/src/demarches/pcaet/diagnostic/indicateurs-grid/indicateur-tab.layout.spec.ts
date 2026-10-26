@@ -102,10 +102,13 @@ describe('buildIndicateurValeursTableSections', () => {
     expect(sections.map((section) => section.label)).toEqual([
       'electricité',
       'chaleur',
+      'froid',
+      'autres',
     ]);
     expect(sections[0].tables.map((table) => table.title)).toEqual([
       'Éolien terrestre',
       'Solaire photovoltaïque',
+      'Hydraulique',
       'Biomasse solide',
       'Biogaz',
     ]);
@@ -115,6 +118,13 @@ describe('buildIndicateurValeursTableSections', () => {
       'Géothermie',
       'Solaire thermique',
       'Biogaz',
+    ]);
+    expect(sections[2].tables.map((table) => table.title)).toEqual([
+      'Thermique',
+    ]);
+    expect(sections[3].tables.map((table) => table.title)).toEqual([
+      'Biométhane',
+      'Biocarburants',
     ]);
   });
 
@@ -126,7 +136,7 @@ describe('buildIndicateurValeursTableSections', () => {
       indicateurDefinitionId: 'cae_3.a',
       referenceYearApplyLevel: 'child',
       children: [
-        { label: 'Inconnu', indicateurDefinitionId: 'TBD', groupBy: 'autres' },
+        { label: 'Inconnu', indicateurDefinitionId: '', groupBy: 'autres' },
       ],
     });
 
