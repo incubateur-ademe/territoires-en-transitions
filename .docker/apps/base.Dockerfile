@@ -5,7 +5,7 @@
 # image telle quelle, seule leur command diffère. Le code est bind-mounté sur
 # /repo et node_modules est un volume nommé peuplé par le service `deps` —
 # l'image ne contient que le runtime.
-FROM node:24.11.1-slim
+FROM node:24.22.1-slim
 
 ARG UID=1000
 ARG GID=1000
@@ -25,8 +25,7 @@ ENV LANG=fr_FR.UTF-8 LC_ALL=fr_FR.UTF-8
 
 # pnpm épinglé sur le packageManager du repo + dotenvx global (les CMD doivent
 # pouvoir déchiffrer les .env avant même que node_modules n'existe)
-RUN corepack enable && corepack prepare pnpm@9.15.5 --activate \
-    && npm install -g @dotenvx/dotenvx
+RUN npm install -g pnpm@12.15.0 @dotenvx/dotenvx
 
 # Remap du user node sur l'UID/GID hôte : tout ce que le conteneur écrit sur
 # les bind mounts (.next, dist, .nx…) appartient à l'utilisateur hôte

@@ -61,6 +61,10 @@ export type AiImportDefaults = {
   planName?: string;
 };
 
+// Repéré par son libellé : les identifiants des types diffèrent d'un
+// environnement à l'autre.
+const ELECTRIFICATION_PLAN_TYPE = 'Plan Électrification';
+
 const FILE_INPUT_ID = 'input-file';
 const PLAN_NAME_INPUT_ID = 'ai-import-plan-name';
 const INSTRUCTIONS_INPUT_ID = 'ai-import-instructions';
@@ -78,7 +82,7 @@ export const AiImportForm = ({
   defaults?: AiImportDefaults;
 }) => {
   const collectiviteId = useCollectiviteId();
-  const { options: planTypesOptions } = useListPlanTypes();
+  const { data: planTypes, options: planTypesOptions } = useListPlanTypes();
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   const {
     register,
@@ -125,6 +129,12 @@ export const AiImportForm = ({
     useGetDocumentFile({ collectiviteId, fichierId: suggestedFichierId });
 
   const selectedFile = useWatch({ control, name: 'file' });
+  const selectedPlanTypeId = useWatch({ control, name: 'planType' });
+  const isElectrificationPlanType = planTypes.some(
+    (planType) =>
+      planType.id === selectedPlanTypeId &&
+      planType.type === ELECTRIFICATION_PLAN_TYPE
+  );
   const { previousImport, isLoading: isCheckingSelectedFile } =
     useFindPreviousAiImport({ file: selectedFile });
   // Une seule fois, et jamais par-dessus un fichier choisi pendant le
@@ -156,6 +166,44 @@ export const AiImportForm = ({
           </>
         }
       />
+      <Field
+        title={appLabels.nomPlan}
+        htmlFor={PLAN_NAME_INPUT_ID}
+        state={errors.planName ? 'error' : 'default'}
+        message={errors.planName?.message}
+      >
+        <Input id={PLAN_NAME_INPUT_ID} type="text" {...register('planName')} />
+      </Field>
+      <Field
+        title={appLabels.typePlan}
+        hint={
+          lockedPlanTypeId !== undefined
+            ? appLabels.importPlanIaTypeVerrouille
+            : undefined
+        }
+      >
+        <Controller
+          control={control}
+          name="planType"
+          render={({ field }) => (
+            <Select
+              disabled={lockedPlanTypeId !== undefined}
+              options={planTypesOptions ?? []}
+              values={field.value ?? undefined}
+              onChange={(value) =>
+                field.onChange(typeof value === 'number' ? value : null)
+              }
+            />
+          )}
+        />
+      </Field>
+      {isElectrificationPlanType && (
+        <Alert
+          state="info"
+          title={appLabels.importPlanIaElectrificationTitre}
+          description={appLabels.importPlanIaElectrificationDescription}
+        />
+      )}
       <Field
         title={appLabels.importPlanIaChampFichier}
         hint={appLabels.importPlanIaFormatsAcceptes}
@@ -211,37 +259,6 @@ export const AiImportForm = ({
               </>
             )
           }
-        />
-      </Field>
-      <Field
-        title={appLabels.nomPlan}
-        htmlFor={PLAN_NAME_INPUT_ID}
-        state={errors.planName ? 'error' : 'default'}
-        message={errors.planName?.message}
-      >
-        <Input id={PLAN_NAME_INPUT_ID} type="text" {...register('planName')} />
-      </Field>
-      <Field
-        title={appLabels.typePlan}
-        hint={
-          lockedPlanTypeId !== undefined
-            ? appLabels.importPlanIaTypeVerrouille
-            : undefined
-        }
-      >
-        <Controller
-          control={control}
-          name="planType"
-          render={({ field }) => (
-            <Select
-              disabled={lockedPlanTypeId !== undefined}
-              options={planTypesOptions ?? []}
-              values={field.value ?? undefined}
-              onChange={(value) =>
-                field.onChange(typeof value === 'number' ? value : null)
-              }
-            />
-          )}
         />
       </Field>
       {isSuperAdminRoleEnabled && (

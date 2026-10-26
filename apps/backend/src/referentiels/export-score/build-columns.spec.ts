@@ -440,6 +440,41 @@ describe('buildColumns', () => {
     }
   );
 
+  it("libelle le score indicatif d'une sauvegarde antérieure à la périodicité", () => {
+    const columns = buildColumns(ExportMode.SINGLE_SNAPSHOT, 'eci');
+    const row = createScoreRow('eci_1', ActionTypeEnum.ACTION, {});
+    row.score1.scoreIndicatif = {
+      unite: '%',
+      fait: {
+        score: 0,
+        valeursUtilisees: [
+          {
+            indicateurId: 315,
+            identifiantReferentiel: 'cae_5',
+            valeur: 82.52,
+            dateValeur: '2022-01-01',
+            sourceLibelle: 'INSEE',
+            sourceMetadonnee: {
+              sourceId: 'insee',
+              dateVersion: '2025-04-29T00:00:00',
+            },
+          },
+        ],
+      },
+      programme: null,
+    } as never;
+    const data = createScoreComparisonData(undefined, [row]);
+    const column = columns.find(
+      (col) => col.title === 'Score lié à un indicateur'
+    );
+
+    expect(
+      column?.getValue({ data, scoreRow: row, scoreRowIndex: 0, rowIndex: 8 })
+    ).toBe(
+      'Pourcentage indicatif Fait de 0% calculé sur la base de : 82.52 % en 2022 (source : INSEE)'
+    );
+  });
+
   it("n'inclut pas les colonnes Volets, Thématiques, Adaptation et Labellisation Gold pour les anciens référentiels", () => {
     const titles = getTitles(buildColumns(ExportMode.SINGLE_SNAPSHOT, 'eci'));
 

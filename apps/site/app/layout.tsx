@@ -1,4 +1,5 @@
 import Footer from '@/site/components/layout/Footer';
+import { PublicEnvScript } from '@tet/api/public-env.script';
 import { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import { ReactNode } from 'react';
@@ -89,6 +90,7 @@ export default async function RootLayout({
   return (
     <html lang="fr">
       <body className="min-h-screen flex flex-col justify-between">
+        <PublicEnvScript nonce={nonce} />
         <Trackers
           nonce={nonce}
           config={{

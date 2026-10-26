@@ -14,8 +14,8 @@
  *   `window.__TET_PUBLIC_ENV__` avant l'exécution des bundles applicatifs
  *   (cf. `apps/app/app/public-env.script.tsx`).
  *
- * `apps/site` n'injecte rien : il retombe sur
- * `BUILD_TIME_FALLBACK`, c'est-à-dire sur l'inlining `NEXT_PUBLIC_*` habituel.
+ * `apps/app` et `apps/site` posent tous deux ce script
+ * (cf. `./public-env.script.tsx`).
  *
  * https://nextjs.org/docs/app/guides/environment-variables#runtime-environment-variables
  */
@@ -42,6 +42,10 @@ export const PUBLIC_ENV_KEYS = [
   'APP_URL',
   'SITE_URL',
   'CRISP_WEBSITE_ID',
+  // Site : URL de Strapi (médias, CSP) et identifiant Axeptio du bandeau de
+  // consentement. La clé d'API Strapi, elle, reste côté serveur.
+  'STRAPI_URL',
+  'AXEPTIO_ID',
   // Clé publique du projet PostHog (phc_…), pour l'init de secours de l'error
   // tracking (cf. apps/app/src/utils/error-tracking/capture-exception.ts)
   'POSTHOG_KEY',
@@ -86,13 +90,9 @@ export function readPublicEnvFromProcess(): PublicEnv {
 
 /**
  * Valeurs inlinées au build. Les `process.env.NEXT_PUBLIC_*` sont écrits
- * littéralement : c'est ce qui permet au bundler de les remplacer, et donc à
- * `site` de continuer à fonctionner sans injection au runtime.
- *
- * Indispensable côté *serveur* aussi : l'étage runner de apps/site/Dockerfile
- * ne reçoit aucune de ces variables, son code serveur
- * ne dispose donc que des valeurs inlinées. Pour apps/app, où plus aucune
- * NEXT_PUBLIC_* n'existe au build, cet objet est entièrement vide.
+ * littéralement : c'est ce qui permet au bundler de les remplacer. Les images
+ * Docker n'en reçoivent plus aucune, cet objet n'y est donc rempli qu'en dev
+ * et en e2e, où les `.env` portent encore les noms `NEXT_PUBLIC_*`.
  */
 const BUILD_TIME_FALLBACK: PublicEnv = {
   SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -101,6 +101,8 @@ const BUILD_TIME_FALLBACK: PublicEnv = {
   APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   CRISP_WEBSITE_ID: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
+  STRAPI_URL: process.env.NEXT_PUBLIC_STRAPI_URL,
+  AXEPTIO_ID: process.env.NEXT_PUBLIC_AXEPTIO_ID,
   ENV_NAME: process.env.NEXT_PUBLIC_ENV_NAME,
   APPLICATION_VERSION: process.env.NEXT_PUBLIC_APPLICATION_VERSION,
   GIT_SHORT_HASH: process.env.NEXT_PUBLIC_GIT_SHORT_HASH,

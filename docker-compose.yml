@@ -454,7 +454,7 @@ services:
 
   # Install des dépendances dans le volume node-modules (one-shot, relancé à
   # chaque up : incrémental) : token Bryntum lu dans le .env racine, rebuild
-  # des natifs (canvas, binaire supabase). Hors conteneur d'app car l'install
+  # du natif canvas. Hors conteneur d'app car l'install
   # n'a rien d'interactif. Équivalent de `make install`.
   deps:
     profiles: &app-profiles [app, site, backend, tools]
@@ -481,7 +481,7 @@ services:
         '--',
         'sh',
         '-c',
-        'pnpm install && pnpm rebuild canvas supabase',
+        'env "pnpm_config_//npm.bryntum.com/:_authToken=$$BRYNTUM_ACCESS_TOKEN" pnpm install && pnpm rebuild --config.ignore-scripts=false canvas',
       ]
 
   nx-daemon:

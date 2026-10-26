@@ -11,15 +11,14 @@ import {
 import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import {
-  getReferentielCollectiviteOptions,
   niveauLabellisationCollectiviteOptions,
   populationCollectiviteOptions,
+  referentielCollectiviteOptions,
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
 } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { RecherchesViewParam } from '@/app/app/paths';
 import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
-import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteEngagee } from '@tet/api';
 import { capitalize } from '@tet/ui/labels/plural';
@@ -37,7 +36,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
   const tracker = useEventTracker();
 
   const { regions, isLoading: isRegionsLoading } = useListRegions();
-  const referentielTeEnabled = useReferentielTeEnabled();
   const { departements, isLoading: isDepartementsLoading } =
     useListDepartements();
   const { options: planTypeOptions, isLoading: isPlanTypesLoading } =
@@ -209,9 +207,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
               <MultiSelectCheckboxes
                 htmlId="ref"
                 title={capitalize(appLabels.referentiel())}
-                options={getReferentielCollectiviteOptions(
-                  referentielTeEnabled
-                )}
+                options={referentielCollectiviteOptions}
                 onChange={(selected) => {
                   setFilters({ ...filters, referentiel: selected });
                 }}

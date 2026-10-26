@@ -1,11 +1,10 @@
+import { getPublicEnv } from '@tet/api/public-env';
 import { StrapiMedia } from './types';
 
-// Isomorphe : importé par des composants serveur comme client. Ne lire ici
-// qu'une variable NEXT_PUBLIC_ (inlinée au build).
-const strapiBaseUrl = (process.env.NEXT_PUBLIC_STRAPI_URL ?? '').replace(
-  /\/+$/,
-  ''
-);
+// Isomorphe : importé par des composants serveur comme client, d'où
+// getPublicEnv() (environnement du conteneur ou script injecté par le layout).
+const getStrapiBaseUrl = () =>
+  (getPublicEnv().STRAPI_URL ?? '').replace(/\/+$/, '');
 
 /**
  * URL absolue d'un média : Strapi Cloud renvoie déjà une URL absolue, le
@@ -14,7 +13,7 @@ const strapiBaseUrl = (process.env.NEXT_PUBLIC_STRAPI_URL ?? '').replace(
 export const getStrapiMediaUrl = (url: string): string =>
   /^(https?:)?\/\/|^data:/.test(url)
     ? url
-    : `${strapiBaseUrl}/${url.replace(/^\/+/, '')}`;
+    : `${getStrapiBaseUrl()}/${url.replace(/^\/+/, '')}`;
 
 /** Texte alternatif saisi ; jamais le nom du fichier, qui n'aide personne. */
 const getAlt = (media: StrapiMedia) => {

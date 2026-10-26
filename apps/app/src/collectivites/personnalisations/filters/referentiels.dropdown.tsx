@@ -1,4 +1,3 @@
-import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   getReferentielDisplayMap,
@@ -6,7 +5,7 @@ import {
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
-import { getReferentielCollectiviteOptions } from '../../../app/pages/CollectivitesEngagees/data/filtreOptions';
+import { referentielCollectiviteOptions } from '../../../app/pages/CollectivitesEngagees/data/filtreOptions';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: ReferentielId[];
@@ -15,22 +14,17 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 
 export const ReferentielsDropdown = (props: Props) => {
   const { onChange } = props;
-  const referentielTeEnabled = useReferentielTeEnabled();
   const currentCollectivite = useCurrentCollectivite();
   const { referentiels } = currentCollectivite.collectivitePreferences;
   const display = getReferentielDisplayMap(referentiels);
-  const options = getReferentielCollectiviteOptions(referentielTeEnabled).filter(
-    (option) => {
-      const referentielId =
-        option.value as CollectiviteReferentielPreferenceId;
-      // Un référentiel archivé reste visible dans la nav pour consultation mais
-      // ne se personnalise plus : on l'exclut du filtre.
-      return (
-        display[referentielId] &&
-        referentiels[referentielId]?.mode !== 'archived'
-      );
-    }
-  );
+  const options = referentielCollectiviteOptions.filter((option) => {
+    const referentielId = option.value as CollectiviteReferentielPreferenceId;
+    // Un référentiel archivé reste visible dans la nav pour consultation mais
+    // ne se personnalise plus : on l'exclut du filtre.
+    return (
+      display[referentielId] && referentiels[referentielId]?.mode !== 'archived'
+    );
+  });
 
   return (
     <SelectFilter

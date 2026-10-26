@@ -1,7 +1,10 @@
+import { getPublicEnv } from '@tet/api/public-env';
 import { StrapiCollection, StrapiEntry } from './types';
 
-const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
-const apiKey = process.env.NEXT_PUBLIC_STRAPI_KEY;
+// Serveur uniquement : lu dans l'environnement du conteneur. Le nom
+// NEXT_PUBLIC_ reste accepté pour les .env de dev.
+const baseURL = getPublicEnv().STRAPI_URL;
+const apiKey = process.env.STRAPI_KEY ?? process.env.NEXT_PUBLIC_STRAPI_KEY;
 
 const headers = {
   'Content-Type': 'application/json',

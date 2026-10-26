@@ -19,6 +19,11 @@
       "import": "./src/tests/auth.ts",
       "default": "./src/tests/auth.ts"
     },
+    "./public-env.script": {
+      "types": "./src/public-env.script.tsx",
+      "import": "./src/public-env.script.tsx",
+      "default": "./src/public-env.script.tsx"
+    },
     "./*": {
       "types": "./src/*.ts",
       "import": "./src/*.ts",

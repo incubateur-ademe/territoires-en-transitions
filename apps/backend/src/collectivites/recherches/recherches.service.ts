@@ -29,13 +29,20 @@ import {
 import { navigablePlanStatuses } from '@tet/domain/plans';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { getTableName, sql } from 'drizzle-orm';
+import { getTableName, SQL, sql } from 'drizzle-orm';
 import { membreTable } from '../membres/membre.table';
 
 /** Les plans en cours d'import ou en échec ne sont ni listés ni comptés. */
 const NAVIGABLE_PLAN_STATUSES_SQL = navigablePlanStatuses
   .map((status) => `'${status}'`)
   .join(', ');
+
+/** Liste de valeurs passées en paramètres, pour un `IN (...)` */
+const inList = (values: (string | number)[]) =>
+  sql.join(
+    values.map((value) => sql`${value}`),
+    sql`, `
+  );
 
 /** Type of view */
 const tabEnum = {
@@ -52,14 +59,10 @@ export default class RecherchesService {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  // SÉCURITÉ : ce service construit ses requêtes par concaténation puis les
-  // exécute via `sql.raw(...)`. La protection contre les injections SQL repose
-  // intégralement sur la validation stricte effectuée par
-  // `filtersRequestSchema` (cf. filters.request.ts), qui restreint chaque
-  // entrée utilisateur à un jeu de caractères sûr (chiffres, codes INSEE,
-  // identifiants de tranche, etc.). Toute relaxation de ce schéma rouvrirait
-  // la faille. La migration vers des requêtes Drizzle paramétrées reste à
-  // faire (R2 du pentest ORHUS-302).
+  // SÉCURITÉ : les fragments passés à `sql.raw(...)` ne contiennent que des
+  // constantes du code (noms de tables et de colonnes, enums). Toute valeur
+  // issue des filtres doit passer en paramètre via `sql\`${valeur}\`` (cf.
+  // `inList`), jamais par concaténation (R2 du pentest ORHUS-302).
 
   /**
    * Get view for "Collectivités" tab
@@ -69,12 +72,9 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesCollectivite[] }> {
     // Create the query
-    // TODO: do not use raw query, use drizzle. Besides, simplify/optimize the query.
-    const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
-    ${this.getContactsQuery(
-      `pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}'`
-    )}
-    SELECT  c.collectiviteId as "collectiviteId",
+    const orderBy = this.getOrderBy(filters, tabEnum.Collectivite);
+    const select = `SELECT  c.total,
+            c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
             (
               SELECT COUNT(DISTINCT ${indicateurValeurTable.indicateurId.name})
@@ -93,16 +93,18 @@ export default class RecherchesService {
             c.etoilesEci as "etoilesEci",
             c.etoilesCae as "etoilesCae",
             ${this.getContactsProjection()}
-    FROM filteredCollectivites c
-    ORDER BY ${this.getOrderBy(filters, tabEnum.Collectivite)}`;
+    FROM page c
+    ORDER BY ${orderBy}`;
+    const query = sql`WITH ${this.getFilteredCollectivitesQuery(filters)},
+    ${sql.raw(
+      this.getContactsQuery(
+        `pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}'`
+      )
+    )},
+    ${this.getPageQuery(filters, orderBy)}
+    ${sql.raw(select)}`;
 
-    // Execute the query
-    const result = await this.databaseService.db.execute(sql.raw(query));
-    const allRows = result.rows.map((row) => ({
-      ...row,
-    })) as RecherchesCollectivite[];
-
-    return this.paginate(allRows, filters.nbCards, filters.page);
+    return this.executePageQuery<RecherchesCollectivite>(query);
   }
 
   /**
@@ -113,9 +115,9 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesReferentiel[] }> {
     // Create the query
-    const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
-    ${this.getContactsQuery(`pcm.${membreTable.estReferent.name} IS true`)}
-    SELECT c.collectiviteId as "collectiviteId",
+    const orderBy = this.getOrderBy(filters, tabEnum.Referentiel);
+    const select = `SELECT c.total,
+           c.collectiviteId as "collectiviteId",
            c.collectiviteNom as "collectiviteNom",
            c.collectiviteType as "collectiviteType",
            c.etoilesCae as "etoilesCae",
@@ -125,16 +127,16 @@ export default class RecherchesService {
            c.scoreFaitEci as "scoreFaitEci",
            c.scoreProgrammeEci as "scoreProgrammeEci",
            ${this.getContactsProjection()}
-    FROM filteredCollectivites c
-    ORDER BY ${this.getOrderBy(filters, tabEnum.Referentiel)}`;
+    FROM page c
+    ORDER BY ${orderBy}`;
+    const query = sql`WITH ${this.getFilteredCollectivitesQuery(filters)},
+    ${sql.raw(
+      this.getContactsQuery(`pcm.${membreTable.estReferent.name} IS true`)
+    )},
+    ${this.getPageQuery(filters, orderBy)}
+    ${sql.raw(select)}`;
 
-    // Execute the query
-    const result = await this.databaseService.db.execute(sql.raw(query));
-    const allRows = result.rows.map((row) => ({
-      ...row,
-    })) as RecherchesReferentiel[];
-
-    return this.paginate(allRows, filters.nbCards, filters.page);
+    return this.executePageQuery<RecherchesReferentiel>(query);
   }
 
   /**
@@ -148,10 +150,7 @@ export default class RecherchesService {
     const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.EDITION}')`;
 
     // Create the query
-    const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
-    ${this.getPlansQuery(filters)},
-    ${this.getContactsQuery(whereConditionContacts, true)}
-    SELECT c.collectiviteId as "collectiviteId",
+    const select = `SELECT c.collectiviteId as "collectiviteId",
            c.collectiviteNom as "collectiviteNom",
            p.planId as "planId",
            p.planNom as "planNom",
@@ -160,9 +159,13 @@ export default class RecherchesService {
     FROM filteredCollectivites c
     JOIN plans p ON c.collectiviteId = p.collectiviteId
     ORDER BY ${this.getOrderBy(filters, tabEnum.Plan)}`;
+    const query = sql`WITH ${this.getFilteredCollectivitesQuery(filters)},
+    ${this.getPlansQuery(filters)},
+    ${sql.raw(this.getContactsQuery(whereConditionContacts, true))}
+    ${sql.raw(select)}`;
 
     // Execute the query
-    const result = await this.databaseService.db.execute(sql.raw(query));
+    const result = await this.databaseService.db.execute(query);
     const allRows = result.rows.map((row) => ({
       ...row,
     })) as RecherchesPlan[];
@@ -175,19 +178,18 @@ export default class RecherchesService {
    */
   private sqlAndReferentielDisjunction(
     filters: FiltersRequest,
-    conditions: { eci: string; cae: string; te: string }
-  ): string {
+    conditions: { eci: SQL; cae: SQL; te: SQL }
+  ): SQL {
     const refs = filters.referentiel;
     const useAll = refs.length === 0;
-    const parts: string[] = [];
+    const parts: SQL[] = [];
     if (useAll || refs.includes('eci')) parts.push(conditions.eci);
     if (useAll || refs.includes('cae')) parts.push(conditions.cae);
     if (useAll || refs.includes('te') || refs.includes('te-test')) {
       parts.push(conditions.te);
     }
-    if (parts.length === 0) return '';
-    if (parts.length === 1) return ` AND (${parts[0]})`;
-    return ` AND (${parts.join(' OR ')})`;
+    if (parts.length === 0) return sql``;
+    return sql` AND (${sql.join(parts, sql` OR `)})`;
   }
 
   /**
@@ -198,10 +200,10 @@ export default class RecherchesService {
    */
   private getFilteredCollectivitesQuery(filters: FiltersRequest) {
     // Create the query
-    let query = `
+    const query = sql`
       WITH ${this.getCollectivitesQuery(filters)},
-      ${this.getLabellisationsQuery()},
-      ${this.getScoresQuery()}
+      ${sql.raw(this.getLabellisationsQuery())},
+      ${sql.raw(this.getScoresQuery())}
       SELECT c.collectiviteId,
              c.collectiviteNom,
              c.collectiviteType,
@@ -236,64 +238,54 @@ export default class RecherchesService {
     // Add conditions
     // Condition collectivite type
     if (filters.typesCollectivite.length > 0) {
-      const types = filters.typesCollectivite
-        .map((type) => `'${type}'`)
-        .join(', ');
-      query = `${query}
-      AND c.collectiviteType IN (${types})`;
+      query.append(sql`
+      AND c.collectiviteType IN (${inList(filters.typesCollectivite)})`);
     }
 
     // Condition stars
     if (filters.niveauDeLabellisation.length > 0) {
-      const etoiles = `${filters.niveauDeLabellisation.join(', ')}`;
-      const conditionEci = `COALESCE(l.etoilesEci, 0) IN (${etoiles})`;
-      const conditionCae = `COALESCE(l.etoilesCae, 0) IN (${etoiles})`;
-      const conditionTe = `COALESCE(l.etoilesTe, 0) IN (${etoiles})`;
-      query += this.sqlAndReferentielDisjunction(filters, {
-        eci: conditionEci,
-        cae: conditionCae,
-        te: conditionTe,
-      });
+      const etoiles = inList(filters.niveauDeLabellisation.map(Number));
+      query.append(
+        this.sqlAndReferentielDisjunction(filters, {
+          eci: sql`COALESCE(l.etoilesEci, 0) IN (${etoiles})`,
+          cae: sql`COALESCE(l.etoilesCae, 0) IN (${etoiles})`,
+          te: sql`COALESCE(l.etoilesTe, 0) IN (${etoiles})`,
+        })
+      );
     }
 
     // Condition accomplished
     if (filters.realiseCourant.length > 0) {
-      const tranches = filters.realiseCourant
-        .map((tranche) => `'${tranche}'`)
-        .join(', ');
-      const conditionEci = `seci.realiseTranche IN (${tranches})`;
-      const conditionCae = `scae.realiseTranche IN (${tranches})`;
-      const conditionTe = `(
+      const tranches = inList(filters.realiseCourant);
+      query.append(
+        this.sqlAndReferentielDisjunction(filters, {
+          eci: sql`seci.realiseTranche IN (${tranches})`,
+          cae: sql`scae.realiseTranche IN (${tranches})`,
+          te: sql`(
           (scte.realiseTranche IS NOT NULL AND scte.realiseTranche IN (${tranches}))
           OR (sctetest.realiseTranche IS NOT NULL AND sctetest.realiseTranche IN (${tranches}))
-        )`;
-      query += this.sqlAndReferentielDisjunction(filters, {
-        eci: conditionEci,
-        cae: conditionCae,
-        te: conditionTe,
-      });
+        )`,
+        })
+      );
     }
 
     // Condition completeness
     if (filters.tauxDeRemplissage.length > 0) {
-      const tranches = filters.tauxDeRemplissage
-        .map((tranche) => `'${tranche}'`)
-        .join(', ');
-      const conditionEci = `seci.completudeTranche IN (${tranches})`;
-      const conditionCae = `scae.completudeTranche IN (${tranches})`;
-      const conditionTe = `(
+      const tranches = inList(filters.tauxDeRemplissage);
+      query.append(
+        this.sqlAndReferentielDisjunction(filters, {
+          eci: sql`seci.completudeTranche IN (${tranches})`,
+          cae: sql`scae.completudeTranche IN (${tranches})`,
+          te: sql`(
           (scte.completudeTranche IS NOT NULL AND scte.completudeTranche IN (${tranches}))
           OR (sctetest.completudeTranche IS NOT NULL AND sctetest.completudeTranche IN (${tranches}))
-        )`;
-      query += this.sqlAndReferentielDisjunction(filters, {
-        eci: conditionEci,
-        cae: conditionCae,
-        te: conditionTe,
-      });
+        )`,
+        })
+      );
     }
 
     // Return the query
-    return `filteredCollectivites AS (${query})`;
+    return sql`filteredCollectivites AS (${query})`;
   }
 
   /**
@@ -302,9 +294,9 @@ export default class RecherchesService {
    * @param tab
    * @private
    */
-  private getCollectivitesQuery(filters: FiltersRequest): string {
+  private getCollectivitesQuery(filters: FiltersRequest): SQL {
     // Create the query
-    let query = `SELECT c.${collectiviteTable.id.name}  AS collectiviteId,
+    const query = sql.raw(`SELECT c.${collectiviteTable.id.name}  AS collectiviteId,
                         c.${collectiviteTable.nom.name} AS collectiviteNom,
                         CASE
                           WHEN c.${collectiviteTable.type.name} = '${
@@ -366,44 +358,41 @@ export default class RecherchesService {
       // et leurs scores y seraient vides. Le conseil régional, lui, reste : il
       // instruit sans cesser d'être une collectivité de plein exercice.
       servicesDeconcentresTypes.map((type) => `'${type}'`).join(', ')
-    })`;
+    })`);
 
     // Add conditions
     // Condition collectivite name
     if (filters.nom) {
-      query = `${query}
-      AND unaccent(c.${
+      query.append(sql`
+      AND unaccent(c.${sql.raw(
         collectiviteTable.nom.name
-      }) ILIKE unaccent('%${filters.nom.replace(/'/g, "''")}%')`;
+      )}) ILIKE unaccent(${`%${filters.nom}%`}::text)`);
     }
 
     // Condition region
     if (filters.regions.length > 0) {
-      const regions = filters.regions.map((region) => `'${region}'`).join(', ');
-      query = `${query}
-      AND ${collectiviteTable.regionCode.name} IN (${regions})`;
+      query.append(sql`
+      AND ${sql.raw(collectiviteTable.regionCode.name)} IN (${inList(
+        filters.regions
+      )})`);
     }
 
     // Condition department
     if (filters.departments.length > 0) {
-      const departments = filters.departments
-        .map((department) => `'${department}'`)
-        .join(', ');
-      query = `${query}
-      AND ${collectiviteTable.departementCode.name} IN (${departments})`;
+      query.append(sql`
+      AND ${sql.raw(collectiviteTable.departementCode.name)} IN (${inList(
+        filters.departments
+      )})`);
     }
 
     // Condition population
     if (filters.population.length > 0) {
-      const populations = filters.population
-        .map((population) => `'${population}'`)
-        .join(', ');
-      query = `${query}
-      AND populationTranche.id IN (${populations})`;
+      query.append(sql`
+      AND populationTranche.id IN (${inList(filters.population)})`);
     }
 
     // Return the query
-    return `collectivites AS (${query})`;
+    return sql`collectivites AS (${query})`;
   }
 
   /**
@@ -516,7 +505,7 @@ export default class RecherchesService {
    */
   private getPlansQuery(filters: FiltersRequest) {
     // Create the query
-    let query = `
+    const query = sql.raw(`
       SELECT a.${axeTable.collectiviteId.name}  AS collectiviteId,
              a.${axeTable.id.name}              AS planId,
              a.${axeTable.nom.name}             AS planNom,
@@ -529,17 +518,17 @@ export default class RecherchesService {
              JOIN filteredCollectivites c
                   ON a.${axeTable.collectiviteId.name} = c.collectiviteId
       WHERE a.${axeTable.parent.name} IS NULL
-        AND a.${axeTable.status.name} IN (${NAVIGABLE_PLAN_STATUSES_SQL})`;
+        AND a.${axeTable.status.name} IN (${NAVIGABLE_PLAN_STATUSES_SQL})`);
 
     // Add conditions
     // Condition plan type
     if (filters.typesPlan.length > 0) {
-      query = `${query}
-      AND a.${axeTable.typeId.name} IN (${filters.typesPlan.join(', ')})`;
+      query.append(sql`
+      AND a.${sql.raw(axeTable.typeId.name)} IN (${inList(filters.typesPlan)})`);
     }
 
     // Return the query
-    return `plans AS (${query})`;
+    return sql`plans AS (${query})`;
   }
 
   /**
@@ -659,6 +648,38 @@ export default class RecherchesService {
       default:
         return `c.collectiviteNom`;
     }
+  }
+
+  /**
+   * WITH subquery that keeps only the requested page of filtered collectivites,
+   * so the costly per-row subqueries (indicateurs, contacts…) run on that page
+   * only. `total` carries the count before pagination.
+   * Need WITH subquery for filtered collectivites before
+   * @private
+   */
+  private getPageQuery(filters: FiltersRequest, orderBy: string) {
+    const offset = filters.page ? (filters.page - 1) * filters.nbCards : 0;
+    return sql`page AS (
+      SELECT c.*, COUNT(*) OVER () AS total
+      FROM filteredCollectivites c
+      ORDER BY ${sql.raw(orderBy)}, c.collectiviteId
+      LIMIT ${filters.nbCards} OFFSET ${offset}
+    )`;
+  }
+
+  /**
+   * Execute a query built on the `page` subquery
+   * @private
+   */
+  private async executePageQuery<T>(
+    query: SQL
+  ): Promise<{ count: number; items: T[] }> {
+    const result = await this.databaseService.db.execute(query);
+    // ponytail: count is 0 when the page is past the last one, a separate COUNT if that matters
+    return {
+      count: Number(result.rows[0]?.total ?? 0),
+      items: result.rows.map(({ total: _total, ...row }) => row) as T[],
+    };
   }
 
   /**

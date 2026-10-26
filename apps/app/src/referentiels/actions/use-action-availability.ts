@@ -1,6 +1,5 @@
 import {
   getReferentielIdFromActionId,
-  isActionHidden,
   isNewReferentiel,
 } from '@tet/domain/referentiels';
 import { ActionListItem } from './use-list-actions';
@@ -39,7 +38,7 @@ export function useActionAvailability(actionId: string): ActionAvailability {
   const hiddenAction = actionsData?.hiddenActions.find(
     (candidate) => candidate.actionId === actionId
   );
-  if (isReferentielTe && hiddenAction && isActionHidden(true, true)) {
+  if (isReferentielTe && hiddenAction) {
     return { status: 'hidden', action: hiddenAction };
   }
 

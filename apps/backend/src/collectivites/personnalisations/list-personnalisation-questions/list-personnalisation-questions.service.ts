@@ -5,7 +5,6 @@ import { GetReferentielDefinitionService } from '@tet/backend/referentiels/defin
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
   PersonnalisationQuestionReponse,
   PersonnalisationReponsesPayload,
@@ -47,7 +46,6 @@ export default class ListPersonnalisationQuestionsService {
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly collectivitePreferencesService: CollectivitePreferencesService,
     private readonly listPersonnalisationReponsesService: ListPersonnalisationReponsesService,
-    private readonly trackingService: TrackingService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly personnalisationConsequencesService: PersonnalisationConsequencesService,
     private readonly personnalisationQuestionsActivesService: PersonnalisationQuestionsActivesService,
@@ -67,15 +65,8 @@ export default class ListPersonnalisationQuestionsService {
       ListPersonnalisationQuestionsError
     >
   > {
-    const isReferentielTEEnabled = await this.trackingService.isFeatureEnabled(
-      'is-referentiel-te-enabled',
-      user.id,
-      input.collectiviteId
-    );
-
     const enabledReferentiels =
       await this.collectivitePreferencesService.getEnabledReferentiels(
-        isReferentielTEEnabled,
         input.collectiviteId,
         user
       );
