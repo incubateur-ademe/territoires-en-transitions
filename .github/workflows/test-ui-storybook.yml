@@ -32,7 +32,8 @@ jobs:
     if: ${{ inputs.run-ui }}
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
+    # Playwright 1.60 ne sait pas installer Chromium sur ubuntu-26.04 (ubuntu-latest depuis 10/2026)
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
@@ -88,7 +89,8 @@ jobs:
     if: ${{ inputs.run-app }}
     env:
       NX_CLOUD_ACCESS_TOKEN: ${{ inputs.nx-cloud-token-secret-type == 'read-write' && secrets.NX_CLOUD_ACCESS_TOKEN_RW || secrets.NX_CLOUD_ACCESS_TOKEN_RO }}
-    runs-on: ubuntu-latest
+    # Playwright 1.60 ne sait pas installer Chromium sur ubuntu-26.04 (ubuntu-latest depuis 10/2026)
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
