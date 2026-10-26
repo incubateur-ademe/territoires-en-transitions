@@ -96,6 +96,11 @@ export const IndicateurValeursCombinedCell = ({
       )}
     </div>
   ) : null;
+  const visibleTypes = (['resultat', 'objectif'] as const).filter((type) => {
+    const value = type === 'resultat' ? resultat : objectif;
+    const isReadonly = readonly || (isFuture && type === 'resultat');
+    return !(isReadonly && value === null);
+  });
   return (
     <div className="relative">
       {addButton}
@@ -107,17 +112,18 @@ export const IndicateurValeursCombinedCell = ({
           showAddButton && 'invisible'
         )}
       >
-        {(['resultat', 'objectif'] as const).map((type) => {
+        {visibleTypes.map((type) => {
           const value = type === 'resultat' ? resultat : objectif;
           const isReadonly = readonly || (isFuture && type === 'resultat');
-          if (isReadonly && value === null) return null;
           return (
             <div
               key={type}
               className={cn(
                 'flex min-w-0 items-center justify-center gap-1 px-1',
                 // Reserve the same half for each type, even with unequal values.
-                type === 'objectif' && 'col-start-2'
+                visibleTypes.length === 1
+                  ? 'col-span-2'
+                  : type === 'objectif' && 'col-start-2'
               )}
             >
               <IndicateurValeurSlot

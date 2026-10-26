@@ -76,7 +76,7 @@ export const IndicateurValeurSlot = ({
           size="xs"
           variant="white"
           className={cn(
-            'h-10 min-w-full font-normal !border-transparent whitespace-nowrap',
+            'h-10 min-w-full justify-center font-normal !border-transparent whitespace-nowrap',
             isEditing && 'invisible'
           )}
           title={fieldLabel}
