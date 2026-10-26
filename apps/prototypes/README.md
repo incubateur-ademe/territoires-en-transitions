@@ -10,10 +10,14 @@ prototype se transpose tel quel dans `apps/app`.
   et `Box`, sans classe de layout ni valeur arbitraire).
 - Conventions détaillées : `CLAUDE.md`.
 
-## Déploiement Vercel
+## Déploiement
 
-- Root directory : `apps/prototypes`, framework Next.js.
-- L'installation se fait à la racine du monorepo : elle requiert le token du
-  registre Bryntum (`BRYNTUM_ACCESS_TOKEN`, cf. `.npmrc`) dans les variables
-  d'environnement du projet Vercel.
-- Les pages sont statiques : aucune variable d'environnement applicative.
+`nx build prototypes` produit un site statique dans `apps/prototypes/out/`,
+aux chemins relatifs : il se publie tel quel sur un hébergement statique.
+
+- **Preview depuis une session (locale ou cloud)** : déployer le dossier `out/`
+  déjà construit (ex. `vercel deploy apps/prototypes/out`), sans build côté
+  hébergeur, donc sans installer le monorepo ni fournir le token Bryntum.
+- **Build par Vercel à chaque push** : root directory `apps/prototypes`,
+  output `out`. L'installation se fait alors à la racine du monorepo et
+  requiert le token du registre Bryntum (`BRYNTUM_ACCESS_TOKEN`, cf. `.npmrc`).
