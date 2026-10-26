@@ -16,6 +16,7 @@ import {
   ReferentielLabel,
   ReferentielLabelEnum,
   ScoreComputeModeEnum,
+  scoreIndicatifPayloadSchema,
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
@@ -442,7 +443,10 @@ function buildScoreColumns(
     getValue: ({ scoreRow: row, data }) => {
       const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
       if (scoreIndicatif) {
-        return getLibelleScoreIndicatif(scoreIndicatif, data.referentielId);
+        return getLibelleScoreIndicatif(
+          scoreIndicatifPayloadSchema.parse(scoreIndicatif),
+          data.referentielId
+        );
       }
     },
   });
