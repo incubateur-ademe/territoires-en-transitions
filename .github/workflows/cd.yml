@@ -1,0 +1,79 @@
+# Dispatch a stack deployment; validate the target and require CI only for production.
+name: Déploiement groupé
+run-name: Déploiement de ${{ github.ref_name }} sur ${{ inputs.target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Environnement de la stack complète
+        default: staging
+        options: [staging, preprod, prod]
+      force-rebuild:
+        type: boolean
+        description: Reconstruire les images même si ce commit est déjà publié
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate-request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate the source and target
+        env:
+          TARGET: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          case "$TARGET" in
+            staging|preprod|prod) ;;
+            *) echo '::error::Unknown deployment target.'; exit 1 ;;
+          esac
+          [[ "$GITHUB_REF" == refs/heads/* ]]
+          if [[ "$TARGET" == prod && "$GITHUB_REF" != refs/heads/main ]]; then
+            echo '::error::Production deployments must run from main.'
+            exit 1
+          fi
+
+  ci:
+    needs: validate-request
+    if: ${{ inputs.target == 'prod' }}
+    uses: ./.github/workflows/_ci.yml
+    permissions:
+      actions: read
+      contents: read
+      packages: write
+    secrets: inherit
+
+  build:
+    needs: [validate-request, ci]
+    # Non-production deliberately skips CI; failed or cancelled production CI still blocks builds.
+    if: >-
+      ${{ !cancelled() && needs.validate-request.result == 'success' &&
+          (needs.ci.result == 'success' ||
+            (inputs.target != 'prod' && needs.ci.result == 'skipped')) }}
+    uses: ./.github/workflows/_cd-build.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    with:
+      target: ${{ inputs.target }}
+      force-rebuild: ${{ inputs.force-rebuild }}
+    secrets: inherit
+
+  deploy:
+    needs: [validate-request, build]
+    if: ${{ !cancelled() && needs.validate-request.result == 'success' && needs.build.result == 'success' }}
+    uses: ./.github/workflows/_cd-deploy.yml
+    with:
+      target: ${{ inputs.target }}
+      backend-image: ${{ needs.build.outputs.backend-image }}
+      app-image: ${{ needs.build.outputs.app-image }}
+      site-image: ${{ needs.build.outputs.site-image }}
+      tools-image: ${{ needs.build.outputs.tools-image }}
+    secrets: inherit
