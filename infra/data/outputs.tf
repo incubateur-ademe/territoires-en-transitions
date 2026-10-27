@@ -70,9 +70,17 @@ output "pg_connection_uri" {
 }
 
 output "pg_private_connection_uri" {
-  description = "URI Postgres admin via le réseau privé. Pour les scripts de calcul et Streamlit (conteneurs Coolify)."
+  description = "URI Postgres admin via le réseau privé. Réservée aux opérateurs : les conteneurs utilisent stats_writer_private_connection_uri."
   value       = module.postgres.private_connection_uri
   sensitive   = true
+}
+
+output "stats_writer_private_connection_uri" {
+  description = "URI Postgres du rôle stats_writer (lecture/écriture sur stats) via le réseau privé. Pour les scripts de calcul et Streamlit (conteneurs Coolify)."
+  value = format("postgres://%s:%s@%s:%d/%s?sslmode=require",
+    scaleway_rdb_user.stats_writer.name, random_password.stats_writer.result,
+  module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, module.postgres.database_name)
+  sensitive = true
 }
 
 output "pg_tls_ca" {
