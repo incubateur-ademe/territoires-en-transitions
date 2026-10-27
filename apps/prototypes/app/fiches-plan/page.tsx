@@ -2,7 +2,6 @@
 
 import {
   Badge,
-  Box,
   Button,
   Inline,
   InlineLink,
@@ -25,6 +24,7 @@ import {
   statuts,
 } from './fixtures';
 import { EnvironmentBanner } from './proposals/environment-banner';
+import { TableScrollFrame } from './proposals/table-scroll-frame';
 import { TableTotalRow } from './proposals/table-total-row';
 
 type Filtre = Statut | 'Tous';
@@ -51,7 +51,7 @@ const totalDepense = sommeDe('depense');
 
 const filtrerParStatut = (
   liste: ReadonlyArray<Fiche>,
-  filtre: Filtre,
+  filtre: Filtre
 ): ReadonlyArray<Fiche> =>
   filtre === 'Tous' ? liste : liste.filter((fiche) => fiche.statut === filtre);
 
@@ -95,7 +95,7 @@ export default function FichesPlanPage() {
 
   const fiches: ReadonlyArray<Fiche> = [
     ...Array.from({ length: nbAjoutees }, (_, index) =>
-      nouvelleFiche(index + 1),
+      nouvelleFiche(index + 1)
     ),
     ...fichesInitiales,
   ];
@@ -127,8 +127,10 @@ export default function FichesPlanPage() {
           </Button>
         </PageHeader.Actions>
         <PageHeader.Subtitle>
-          {`${pluralFiches(fiches.length)} · Budget prévisionnel total : ${euros.format(
-            totalBudget(fiches),
+          {`${pluralFiches(
+            fiches.length
+          )} · Budget prévisionnel total : ${euros.format(
+            totalBudget(fiches)
           )}`}
         </PageHeader.Subtitle>
       </PageHeader>
@@ -151,7 +153,7 @@ export default function FichesPlanPage() {
         </p>
       </Inline>
 
-      <Box className="overflow-x-auto rounded-lg border border-grey-3">
+      <TableScrollFrame>
         <Table aria-label="Fiches action du plan, filtrées par statut">
           <TableHead>
             <tr>
@@ -217,7 +219,7 @@ export default function FichesPlanPage() {
             />
           )}
         </Table>
-      </Box>
+      </TableScrollFrame>
     </Stack>
   );
 }

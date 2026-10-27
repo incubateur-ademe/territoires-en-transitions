@@ -45,7 +45,7 @@ export const EnvironmentBanner = ({
     if (!track?.animate || prefersReducedMotion()) return;
     const scroll = track.animate(
       [{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }],
-      { duration: speed * 1000, iterations: Infinity, easing: 'linear' },
+      { duration: speed * 1000, iterations: Infinity, easing: 'linear' }
     );
     setAnimation(scroll);
     return () => scroll.cancel();
