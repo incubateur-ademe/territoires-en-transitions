@@ -44,7 +44,9 @@ Route cible : la carte remplace `FicheCard` ; elle s'affiche dans `apps/app/app/
 
 ## Propositions de design system
 
-Aucune : le prototype n'utilise que des composants de `@tet/ui`.
+| Proposition                   | Besoin                                                                                                   | Équivalent existant                                               |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `proposals/budget-flamme.tsx` | Signaler un budget prévisionnel élevé (au-delà de 450 000 €) par trois flammes animées à côté du montant | aucun ; option conforme : `Badge variant="high"` « Budget élevé » |
 
 ## Données
 
@@ -81,3 +83,4 @@ Fiches privées : sans le droit de lecture, `maskFichesRestreintes` (`apps/backe
 9. Priorité — libellés « Priorité élevée / moyenne / basse » et couleurs high / standard / grey du prototype, ou ceux du badge actuel ?
 10. Densité — la page plan (2 colonnes) passe-t-elle aussi à la nouvelle carte et à 3 colonnes ?
 11. Fiche privée — que montre la carte pour les champs masqués (budget, indicateurs, étiquettes) ? Reste-t-elle non cliquable ?
+12. Budget élevé — flammes animées (`proposals/budget-flamme.tsx`, hors design system, animation sans prise en compte de `prefers-reduced-motion`) ou `Badge variant="high"` ? Le seuil de 450 000 € est-il fixe, par collectivité, ou relatif au plan ? Il dépend aussi du montant retenu à la question 2.

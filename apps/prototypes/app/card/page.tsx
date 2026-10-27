@@ -15,6 +15,7 @@ import {
 } from '@tet/ui';
 import { ReactNode } from 'react';
 import { Fiche, fiches, PrioriteFiche, StatutFiche } from './fixtures';
+import { BudgetFlamme } from './proposals/budget-flamme';
 
 const statutVariant = {
   'En cours': 'info',
@@ -30,6 +31,11 @@ const prioriteVariant = {
 
 const euros = (montant: number): string =>
   `${montant.toLocaleString('fr-FR')} €`;
+
+const SEUIL_BUDGET_ELEVE = 450_000;
+
+const estBudgetEleve = (montant: number): boolean =>
+  montant > SEUIL_BUDGET_ELEVE;
 
 const indicateursLabel = (nombre: number): string =>
   `${nombre} ${nombre > 1 ? 'liés' : 'lié'}`;
@@ -151,6 +157,9 @@ const FicheCard = ({ fiche }: { fiche: Fiche }) => (
           <span className="paragraphe-14">
             {euros(fiche.budgetPrevisionnel)}
           </span>
+          {estBudgetEleve(fiche.budgetPrevisionnel) && (
+            <BudgetFlamme seuil={euros(SEUIL_BUDGET_ELEVE)} />
+          )}
         </CardField>
         <CardField label="Indicateurs" icon="line-chart-line">
           <span className="paragraphe-14">

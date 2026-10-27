@@ -33,7 +33,7 @@ export const fiches: ReadonlyArray<Fiche> = [
     pilote: 'Camille Martin',
     echeance: '30 juin 2027',
     enRetard: false,
-    budgetPrevisionnel: 450_000,
+    budgetPrevisionnel: 520_000,
     indicateursLies: 2,
     etiquettes: ['Mobilité', 'Vélo'],
     estPrivee: false,
