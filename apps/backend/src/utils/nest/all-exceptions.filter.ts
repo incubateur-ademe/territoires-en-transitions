@@ -10,6 +10,7 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Request, Response } from 'express';
+import { redactErrorChain } from '../log/redact-error-chain';
 import { getErrorCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
 
@@ -50,6 +51,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    // Avant tout débouché : logs, PostHog et le message renvoyé au client.
+    redactErrorChain(exception);
     this.logger.error(getErrorMessage(exception));
     this.logger.error(exception);
 

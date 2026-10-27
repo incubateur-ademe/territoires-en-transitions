@@ -16,6 +16,7 @@ import {
 } from '../../users/models/auth.models';
 import ConfigurationService from '../config/configuration.service';
 import { ContextStoreService } from '../context/context.service';
+import { redactErrorChain } from '../log/redact-error-chain';
 import { extractAccessTokenFromSupabaseCookie } from '../supabase/supabase-cookie-parser';
 
 /**
@@ -90,13 +91,19 @@ export class TrpcService {
           codeKey = getStatusKeyFromCode(httpStatus);
           code = TRPC_ERROR_CODES_BY_KEY[codeKey];
         } else if (error.cause instanceof Error) {
+          // `errorKey` part au navigateur : jamais avec les params d'une requête.
+          redactErrorChain(error);
           errorKey = error.cause.message;
         }
 
+        // `shape` est construit avant l'expurgation : on y recopie le message
+        // et la pile expurgés.
         return {
           ...shape,
+          message: error.message,
           data: {
             ...shape.data,
+            ...(shape.data.stack !== undefined && { stack: error.stack }),
             httpStatus,
             code: codeKey,
             errorKey,
