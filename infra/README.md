@@ -5,8 +5,8 @@ Terraform qui décrit l'infrastructure cible TET sur Scaleway, dans le cadre de 
 
 ## Topologie
 
-Une instance Coolify **unique et transverse**, sur son propre serveur, pilote quatre
-environnements répartis sur trois serveurs applicatifs.
+Une instance Coolify **unique et transverse**, sur son propre serveur, pilote cinq
+environnements répartis sur quatre serveurs applicatifs.
 
 | Serveur                | Tier     | Projet Scaleway | Rôle                                                     |
 | ---------------------- | -------- | --------------- | -------------------------------------------------------- |
@@ -14,6 +14,7 @@ environnements répartis sur trois serveurs applicatifs.
 | `tet-prod-apps`        | prod     | **`tet-prod`**  | Applications de production.                              |
 | `tet-nonprod-apps`     | nonprod  | principal       | Mutualisé : preprod **et** staging.                      |
 | `tet-preview-apps`     | preview  | principal       | Previews éphémères, une par pull request.                |
+| `tet-data-apps`        | data     | principal       | Stack d'analyse : stats, Streamlit, Metabase, MCP. arm64. |
 
 La prod a son propre projet Scaleway (créé par un admin, cf. [Prérequis admin](#prérequis-admin-organisation-scaleway)) et son propre VPC (créé par
 `prod`), sans aucun lien réseau avec le VPC partagé. Les backups ont aussi leur projet,
@@ -25,6 +26,7 @@ La prod a son propre projet Scaleway (créé par un admin, cf. [Prérequis admin
 | preprod       | RDB managé Scaleway         | Redis managé Scaleway       |
 | staging       | conteneur Coolify           | conteneur Coolify           |
 | preview       | conteneur Coolify, éphémère | conteneur Coolify, éphémère |
+| data          | RDB managé Scaleway (stats) | aucun                       |
 
 Preprod reste sur du managé pour rester **iso-prod**. L'admin RDB Scaleway n'est pas
 superuser : c'est cette contrainte qui impose `scaleway_rdb_user.supabase_auth_admin`,
@@ -46,14 +48,16 @@ Deux VPC sans lien entre eux :
 | -------------------------------- | ------------- | -------------------------------------- | ------------------ |
 | `tet-platform-pn`                | `10.0.0.0/24` | VM Coolify                             | `10.0.0.10`        |
 | `tet-nonprod-pn`                 | `10.0.1.0/24` | VM nonprod, RDB preprod, Redis preprod | `10.0.1.10`        |
+| `tet-data-pn`                    | `10.0.2.0/24` | VM data, RDB stats                     | `10.0.2.10`        |
 | `tet-prod-pn` _(VPC `tet-prod`)_ | `10.0.3.0/24` | VM prod, RDB prod, Redis prod          | `10.0.3.10`        |
 | `tet-preview-pn`                 | `10.0.4.0/24` | VM preview                             | `10.0.4.10`        |
 
-`10.0.2.0/24` est laissé libre : staging n'a pas de Private Network propre, ses
-conteneurs vivent sur le serveur nonprod.
+Staging n'a pas de Private Network propre : ses conteneurs vivent sur le serveur
+nonprod. La base de stats du tier data reçoit une copie des données staging, mais
+vit dans son propre Private Network, sans route vers nonprod.
 
 Dans le VPC `tet`, le seul flux inter-Private Networks autorisé est **TCP/22 depuis le
-control plane vers les serveurs nonprod et preview**.
+control plane vers les serveurs nonprod, preview et data**.
 
 La prod n'a **aucune route** depuis ce VPC. Coolify la pilote en SSH sur son **IP
 publique**, que son security group n'ouvre qu'à l'IP publique du control plane
@@ -104,11 +108,12 @@ infra/
 │   ├── supabase-api/  Stack Docker Compose GoTrue + Storage (déployée par coolify/services.tf)
 │   └── Makefile       Bootstrap SQL des rôles GoTrue
 ├── preview/           Serveur preview
+├── data/              Serveur data (arm64) + RDB stats, rôles MCP (lecture seule) et Metabase
 └── coolify/           Coolify-as-code : clés, serveurs, projet et environnements, S3 storage
 ```
 
 Un **state par stack**, tous dans le bucket `tet-tfstate` :
-`platform/`, `prod/`, `nonprod/`, `preview/`, `coolify/`.
+`platform/`, `prod/`, `nonprod/`, `preview/`, `data/`, `coolify/`.
 
 `coolify/` a un state distinct parce qu'il suppose Coolify **déjà up et joignable** : le
 garder séparé évite que le `plan` de l'infra Scaleway exige que l'application tourne.
@@ -116,7 +121,7 @@ garder séparé évite que le `plan` de l'infra Scaleway exige que l'application
 ### Ordre d'application
 
 ```
-platform  →  nonprod / prod / preview  →  coolify
+platform  →  nonprod / prod / preview / data  →  coolify
 ```
 
 `platform` produit le VPC partagé, ses Private Networks, le control plane et le bucket de
@@ -259,7 +264,7 @@ plutôt que d'accepter la première clé présentée :
 ```sh
 {
   echo "$(terraform -chdir=infra/platform output -raw coolify_public_ip) $(terraform -chdir=infra/platform output -raw coolify_sshd_host_public_key)"
-  for t in nonprod preview; do
+  for t in nonprod preview data; do
     echo "$(terraform -chdir=infra/$t output -raw server_private_ip) $(terraform -chdir=infra/$t output -raw server_sshd_host_public_key)"
   done
   echo "$(terraform -chdir=infra/prod output -raw server_ssh_host) $(terraform -chdir=infra/prod output -raw server_sshd_host_public_key)"
@@ -803,7 +808,7 @@ Ce mécanisme repose sur le support des conditional writes par Scaleway Object S
 terraform fmt -recursive
 
 # Validation syntaxe / typage, sur chaque stack
-for d in platform nonprod prod preview coolify; do
+for d in platform nonprod prod preview data coolify; do
   terraform -chdir=$d init -backend=false && terraform -chdir=$d validate
 done
 

@@ -1,9 +1,9 @@
 variable "environment" {
-  description = "Nom de l'environnement (preprod, staging, prod). Utilisé pour le nommage des ressources."
+  description = "Nom de l'environnement (preprod, staging, prod, preview, stats). Utilisé pour le nommage des ressources."
   type        = string
   validation {
-    condition     = contains(["preprod", "staging", "prod", "preview"], var.environment)
-    error_message = "environment doit être l'une des valeurs : preprod, staging, prod, preview."
+    condition     = contains(["preprod", "staging", "prod", "preview", "stats"], var.environment)
+    error_message = "environment doit être l'une des valeurs : preprod, staging, prod, preview, stats."
   }
 }
 
