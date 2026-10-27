@@ -19,6 +19,8 @@ const ligne = (
     launchedAt: null,
     avisDeadlineAt: null,
     transmittedAt: null,
+    dateSaisine: null,
+    peutModifierDateSaisine: false,
     collectivite: {
       id: 1,
       nom,

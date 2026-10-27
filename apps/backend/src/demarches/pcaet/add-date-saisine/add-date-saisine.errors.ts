@@ -6,6 +6,7 @@ import {
 const specificErrors = [
   'DEMANDE_AVIS_NOT_FOUND',
   'DEPOT_TRANSMIS_SUR_PLATEFORME',
+  'DATE_SAISINE_HORS_BORNES',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -20,6 +21,11 @@ export const addDateSaisineErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
         code: 'CONFLICT',
         message:
           "La date de saisine d'un dépôt transmis sur la plateforme est celle de sa transmission",
+      },
+      DATE_SAISINE_HORS_BORNES: {
+        code: 'BAD_REQUEST',
+        message:
+          'La date de saisine doit être comprise entre le 1er janvier 1900 et aujourd’hui',
       },
     },
   };

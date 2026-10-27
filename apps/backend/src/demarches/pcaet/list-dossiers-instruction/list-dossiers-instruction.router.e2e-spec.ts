@@ -542,6 +542,12 @@ describe('listDossiersInstruction', () => {
         '2026-03-16',
       ]);
 
+      await expect(
+        caller.addDateSaisine({ demandeAvisId, dateSaisine: '2999-01-01' })
+      ).rejects.toThrow(
+        'La date de saisine doit être comprise entre le 1er janvier 1900 et aujourd’hui'
+      );
+
       const dates = await caller.listDatesSaisine({ demandeAvisId });
       expect(dates.map((ligne) => ligne.dateSaisine)).toEqual([
         '2026-03-16',
