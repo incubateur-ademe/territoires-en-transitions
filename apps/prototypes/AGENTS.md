@@ -17,6 +17,9 @@ fetching: pages render local fixtures.
   (`.claude/skills/proto-import`).
 - Desktop and mobile captures of a built prototype:
   `node apps/prototypes/scripts/capture.mjs --route <slug> --out <dir>`.
+- Sharing a built prototype: a claude.ai artifact, prepared with
+  `node apps/prototypes/scripts/prepare-artifact.mjs --route <slug> --out <dir>`
+  (step 8 of `/proto-import`).
 
 ## Compose only with `@tet/ui`
 

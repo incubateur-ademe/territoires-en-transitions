@@ -118,6 +118,27 @@ reported as such, never worked around in the page.
 
 ## 8. Share (only when the designer asks)
 
-When the designer asks to publish or share the prototype: commit on a
-`proto/<slug>` branch and push it; the Vercel preview of `apps/prototypes`
-builds from that branch. Never push to the default branch.
+When the designer asks to publish or share the prototype, publish its build as
+a claude.ai artifact: private by default, shared by link from the page's Share
+menu, no hosting token needed.
+
+1. Commit and push the prototype (the session's branch, or `proto/<slug>`;
+   never the default branch): the code in the repo is the source, the
+   artifact only a snapshot of its build.
+2. Prepare the publishable copy from the build of step 5:
+
+   ```bash
+   node apps/prototypes/scripts/prepare-artifact.mjs --route <slug> --out <scratchpad>/artifact-<slug> --title "<titre from src/prototypes.ts>"
+   ```
+
+   It renames `_next/` (paths starting with `_` are reserved), drops the
+   unused `.svg`/`.eot` fonts and escapes U+FFFD in the JS chunks: the
+   artifact service refuses these otherwise. It writes `files.json`.
+
+3. Publish with the Artifact tool: `file_path` = `<out>/<slug>.html`,
+   `root` = `<out>`, `files` = the content of `<out>/files.json`. On a later
+   build, publish the same `file_path` again to keep the URL (from another
+   session, pass the artifact's `url`).
+4. Give the designer the link, and say that the artifact shows the build, not
+   editable code: any change goes through the prototype's code, a new build
+   and a new publish.

@@ -55,9 +55,17 @@ Bryntum, non.
 `nx build prototypes` produit un site statique dans `apps/prototypes/out/`,
 aux chemins relatifs : il se publie tel quel sur un hébergement statique.
 
-- **Preview depuis une session (locale ou cloud)** : déployer le dossier `out/`
-  déjà construit (ex. `vercel deploy apps/prototypes/out`), sans build côté
-  hébergeur, donc sans installer le monorepo ni fournir le token Bryntum.
+- **Artifact claude.ai (par défaut, depuis une session Claude)** : `/proto-import`
+  publie la page construite en artifact, privé et partageable par lien, sans
+  token d'hébergement. `scripts/prepare-artifact.mjs --route <slug> --out <dossier>`
+  en prépare la copie publiable (renomme `_next/`, chemin réservé par
+  l'hébergeur). L'artifact est un instantané du build : le code reste dans le
+  repo, et chaque changement demande un nouveau build et une nouvelle
+  publication.
+- **Preview Vercel depuis une session (locale ou cloud)** : déployer le dossier
+  `out/` déjà construit (ex. `vercel deploy apps/prototypes/out`), sans build
+  côté hébergeur, donc sans installer le monorepo ni fournir le token Bryntum.
+  Demande un token Vercel.
 - **Build par Vercel à chaque push** : root directory `apps/prototypes`,
   output `out`. L'installation se fait alors à la racine du monorepo et
   requiert le token du registre Bryntum (`BRYNTUM_ACCESS_TOKEN`, cf. `.npmrc`).
