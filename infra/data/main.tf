@@ -72,6 +72,33 @@ resource "scaleway_rdb_privilege" "mcp_reader" {
   permission    = "readonly"
 }
 
+# Rôle des scripts de calcul et de Streamlit : lecture/écriture sur la base
+# de stats, sans les droits admin de l'instance. L'admin reste réservé aux
+# opérateurs et à la migration depuis Koyeb.
+resource "random_password" "stats_writer" {
+  length           = 32
+  special          = true
+  override_special = "-_.!*~"
+  min_lower        = 1
+  min_upper        = 1
+  min_numeric      = 1
+  min_special      = 1
+}
+
+resource "scaleway_rdb_user" "stats_writer" {
+  instance_id = module.postgres.instance_id
+  name        = "stats_writer"
+  password    = random_password.stats_writer.result
+  is_admin    = false
+}
+
+resource "scaleway_rdb_privilege" "stats_writer" {
+  instance_id   = module.postgres.instance_id
+  database_name = module.postgres.database_name
+  user_name     = scaleway_rdb_user.stats_writer.name
+  permission    = "readwrite"
+}
+
 # Base applicative de Metabase (ses dashboards, utilisateurs, requêtes
 # sauvegardées), sur la même instance : sauvegardée avec le reste.
 resource "scaleway_rdb_database" "metabase" {
