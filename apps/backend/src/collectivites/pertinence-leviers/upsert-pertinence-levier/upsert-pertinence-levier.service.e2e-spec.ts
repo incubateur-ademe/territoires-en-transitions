@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -46,6 +47,7 @@ describe('UpsertPertinenceLevierService', { timeout: 30_000 }, () => {
     serviceWithFailingUpsert = new UpsertPertinenceLevierService(
       app.get(TransactionManager),
       app.get(PermissionService),
+      app.get(CollectivitesService),
       new EnjeuPertinencesRepositories(new FailingUpsertRepository(db))
     );
 

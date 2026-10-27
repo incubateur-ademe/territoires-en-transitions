@@ -41,6 +41,7 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   // (cf. RLS `have_edition_acces` sur `tableau_de_bord_module`).
   'collectivites.tableau-de-bord-personnel.mutate',
   'collectivites.tableau-de-bord.mutate',
+  'collectivites.priorisation.read',
   'collectivites.tags.mutate',
   'collectivites.documents.mutate',
   'referentiels.mutate',
@@ -86,6 +87,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     ...visiteurVerifiePermissions,
 
     'referentiels.discussions.read',
+    'collectivites.priorisation.read',
 
     'indicateurs.indicateurs.read_confidentiel',
     'indicateurs.valeurs.read_confidentiel',
