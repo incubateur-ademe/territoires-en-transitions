@@ -54,8 +54,8 @@ export const DemarcheShell = ({
   const [isPublicationOuverte, setIsPublicationOuverte] = useState(false);
   const demanderPublication = () => setIsPublicationOuverte(true);
 
-  // L'acte qui clôt le temps parcouru. Un dossier publié n'en a plus : sa
-  // dernière sous-étape reste consultable, mais tout est validé.
+  // L'acte qui clôt le temps parcouru. Un dossier transmis ou publié n'en a
+  // plus : sa dernière sous-étape reste consultable, mais tout est validé.
   const finalAction = parcours.avalOuvert
     ? isPublished
       ? null
@@ -65,12 +65,14 @@ export const DemarcheShell = ({
           dataTest: 'demarches.steps-nav.publier',
           onClick: demanderPublication,
         }
-    : {
+    : parcours.amontOuvert
+    ? {
         transition: demarche.transitions.transmettre_pour_avis,
         label: appLabels.demarcheAvanceValiderDepot,
         dataTest: 'demarches.steps-nav.transmettre',
         onClick: demanderConfirmation,
-      };
+      }
+    : null;
 
   // Les guards (pilote, complétude, délais…) sont évalués côté serveur : le
   // front lit l'état des transitions, il ne le recompose pas.
