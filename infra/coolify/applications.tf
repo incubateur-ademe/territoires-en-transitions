@@ -11,8 +11,9 @@ locals {
   # Ce qui ne dépend pas de l'environnement.
   #
   # health_path vide : pas de check HTTP Coolify, le HEALTHCHECK de l'image
-  # suffit (apps/app et apps/backend en portent un, sur /version — leur image
-  # n'a ni curl ni wget pour le check Coolify).
+  # suffit (apps/app et apps/backend en portent un sur /version, apps/site sur
+  # / — leur image n'a pas curl, et le wget de busybox vise localhost, résolu
+  # en ::1 alors que Next n'écoute qu'en IPv4).
   application_catalog = {
     app = {
       image       = "ghcr.io/incubateur-ademe/tet-app"
@@ -27,7 +28,7 @@ locals {
     site = {
       image       = "ghcr.io/incubateur-ademe/tet-site"
       port        = 3000
-      health_path = "/"
+      health_path = ""
     }
   }
 
