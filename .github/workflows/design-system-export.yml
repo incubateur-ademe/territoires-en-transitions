@@ -1,0 +1,66 @@
+# Exporte le design system de @tet/ui au format « Design System » de Claude
+# à chaque changement de packages/ui ou packages/design-tokens sur main.
+#
+# Le workflow vérifie que l'export marche et l'attache au run ; il ne publie
+# rien. La publication dans l'artifact claude.ai se fait par `/ds-publish`
+# dans une session Claude Code, qui compare le commit publié (`meta.ref` du
+# tokens.json) à main : aucun secret Claude dans le repo. Le résumé du run
+# rappelle de la lancer ; `/proto-import` la lance aussi à chaque démarrage.
+name: Export du design system pour Claude
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/ui/**'
+      - 'packages/design-tokens/**'
+      - '.github/workflows/design-system-export.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: design-system-export
+  cancel-in-progress: true
+
+jobs:
+  export:
+    name: Export du design system
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: ./.github/actions/pnpm-prepare
+        with:
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      # Les types des composants exportés viennent de packages/ui/out-tsc/lib.
+      - run: pnpm nx typecheck ui
+
+      - name: Tests des fonctions d'export
+        run: pnpm exec vitest run scripts/design-system-export
+        working-directory: packages/ui
+
+      - run: pnpm nx run ui:export-design-system -- --out "$RUNNER_TEMP/design-system"
+
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: design-system-${{ github.sha }}
+          path: ${{ runner.temp }}/design-system
+          retention-days: 30
+
+      - name: Rappel de publication
+        run: |
+          {
+            echo '### Design system exporté'
+            echo
+            echo "Le design system de Claude Design n'est pas encore à jour :"
+            echo 'lancer `/ds-publish` dans une session Claude Code sur ce repo.'
+            echo '`/proto-import` le fait aussi automatiquement à son démarrage.'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -931,6 +931,8 @@ importers:
 
   apps/backend: {}
 
+  apps/prototypes: {}
+
   apps/site: {}
 
   apps/tools: {}
