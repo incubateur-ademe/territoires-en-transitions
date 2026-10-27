@@ -1465,7 +1465,7 @@ export const appLabels = {
   indicateurAnneeOptionnelleChamp: 'Année optionnelle',
   indicateurValeurRequise: 'Requis',
   pcaetDiagnosticIndicateurValeurRequiseAide:
-    "Les années marquées d'une étoile sont requises.",
+    "Les champs marqués d'une étoile sont requis.",
   indicateurAjouterAnnee: 'Ajouter une année',
   indicateurAjouterAnneeChamp: 'Année',
   /** Une même année peut porter un résultat et un objectif : le message ne dit
