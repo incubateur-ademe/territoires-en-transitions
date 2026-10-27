@@ -89,7 +89,8 @@ export type SwitchToTeBlocker =
   | { type: 'COLLECTIVITE_IS_SYNDICAT' }
   | { type: 'COLLECTIVITE_IS_DROM' }
   | { type: 'AUDIT_IN_PROGRESS'; referentiel: ReferentielId }
-  | { type: 'AUDIT_REQUEST_IN_PROGRESS'; referentiel: ReferentielId };
+  | { type: 'AUDIT_REQUEST_IN_PROGRESS'; referentiel: ReferentielId }
+  | { type: 'REFERENTIEL_TE_NOT_EMPTY' };
 
 /**
  * Détermine les blocages à la bascule vers TE à partir de l'état fourni.
@@ -106,6 +107,7 @@ export function getSwitchToTeBlockers(input: {
     referentiel: ReferentielId;
     status: ParcoursLabellisationStatus;
   }[];
+  teNonVide?: boolean;
 }): SwitchToTeBlocker[] {
   const blockers: SwitchToTeBlocker[] = [];
 
@@ -129,6 +131,10 @@ export function getSwitchToTeBlockers(input: {
       blockers.push({ type: 'AUDIT_REQUEST_IN_PROGRESS', referentiel });
     }
     // non_demandee et audit_valide ne sont pas bloquants
+  }
+
+  if (input.teNonVide) {
+    blockers.push({ type: 'REFERENTIEL_TE_NOT_EMPTY' });
   }
 
   return blockers;
