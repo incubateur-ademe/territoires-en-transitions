@@ -22,6 +22,7 @@ import {
   ActionsCell,
   CollectiviteCell,
   DateCell,
+  DateSaisineCell,
   EcheanceCell,
   PiloteCell,
   RegionCell,
@@ -213,8 +214,9 @@ const columnHelper = createColumnHelper<typeof features, Dossier>();
  *
  * En contrepartie, ces deux colonnes prennent ce qui reste : sur un écran
  * étroit, plus rien, et leurs en-têtes débordent sur les voisines. D'où la
- * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`
- * — au-dessus, il tient, et l'en-tête reste collant à la page.
+ * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`,
+ * ou de `2xl` avec la colonne Région — au-dessus, il tient, et l'en-tête reste
+ * collant à la page.
  */
 const columns = [
   columnHelper.display({
@@ -269,6 +271,21 @@ const columns = [
     cell: ({ row }) => (
       <TableCell>
         <DateCell date={row.original.launchedAt} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'dateSaisine',
+    header: () => (
+      <TableHeaderCell
+        className="w-36"
+        title={appLabels.instructionListeColonneDateSaisine}
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <DateSaisineCell dossier={row.original} />
       </TableCell>
     ),
   }),
@@ -389,7 +406,9 @@ export const DossiersInstructionTable = ({
     <PilotageContext.Provider value={pilotage}>
       {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
       <div
-        className="max-xl:overflow-x-auto"
+        className={
+          afficherRegion ? 'max-2xl:overflow-x-auto' : 'max-xl:overflow-x-auto'
+        }
         tabIndex={0}
         role="region"
         aria-label={appLabels.instructionListeTitre}
@@ -397,7 +416,7 @@ export const DossiersInstructionTable = ({
         <ReactTable
           table={table}
           ariaLabel={appLabels.instructionListeTitre}
-          className={afficherRegion ? 'min-w-[72rem]' : 'min-w-[64rem]'}
+          className={afficherRegion ? 'min-w-[81rem]' : 'min-w-[73rem]'}
           isEmpty={dossiers.length === 0}
           emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
           getRowProps={(row) => ({

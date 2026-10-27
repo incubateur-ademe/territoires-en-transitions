@@ -23,9 +23,10 @@ import {
   SEUIL_POPULATION_PCAET,
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { inArray } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
+import { pcaetDateSaisineTable } from '../shared/models/pcaet-date-saisine.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import { NATURES_PORTEUSES_PCAET } from './list-dossiers-instruction.repository';
 
@@ -496,6 +497,74 @@ describe('listDossiersInstruction', () => {
           PcaetStatutInstructionEnum.DEPOT_HORS_PLATEFORME
         ]
       ).toBe(0);
+    });
+
+    it('date la saisine : transmission sur la plateforme, saisie du service hors plateforme', async () => {
+      const collectivite = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: { regionCode: REGION, nom: 'Litchi Agglo hors plateforme' },
+      });
+      onTestFinished(async () => {
+        await collectivite.cleanup();
+      });
+
+      await creerDossier({
+        collectiviteId: collectivite.collectivite.id,
+        status: 'instruit_hors_plateforme',
+        transmittedOffPlatform: true,
+      });
+
+      const trouverLigne = async (nom: string) =>
+        (await appeler(camille, { statuts: TOUS_STATUTS })).items.find(
+          (item) => item.collectivite.nom === nom
+        );
+
+      const horsPlateforme = await trouverLigne('Litchi Agglo hors plateforme');
+      expect(horsPlateforme?.dateSaisine).toBeNull();
+      expect(horsPlateforme?.peutModifierDateSaisine).toBe(true);
+
+      const demandeAvisId = horsPlateforme?.demandeAvisId as number;
+      const caller = router.createCaller({ user: camille }).demarches.pcaet;
+      await caller.addDateSaisine({ demandeAvisId, dateSaisine: '2026-03-02' });
+      await caller.addDateSaisine({ demandeAvisId, dateSaisine: '2026-03-16' });
+
+      const apres = await trouverLigne('Litchi Agglo hors plateforme');
+      expect(apres?.dateSaisine).toBe('2026-03-16');
+
+      const historique = await db.db
+        .select({ dateSaisine: pcaetDateSaisineTable.dateSaisine })
+        .from(pcaetDateSaisineTable)
+        .where(
+          eq(pcaetDateSaisineTable.demarcheId, apres?.demarcheId as number)
+        );
+      expect(historique.map((ligne) => ligne.dateSaisine).sort()).toEqual([
+        '2026-03-02',
+        '2026-03-16',
+      ]);
+
+      const dates = await caller.listDatesSaisine({ demandeAvisId });
+      expect(dates.map((ligne) => ligne.dateSaisine)).toEqual([
+        '2026-03-16',
+        '2026-03-02',
+      ]);
+
+      const surPlateforme = (
+        await appeler(camille, { statuts: TOUS_STATUTS })
+      ).items.find(
+        (item) =>
+          item.demandeAvisId !== null &&
+          item.demarcheStatus === 'transmis_pour_avis'
+      );
+      expect(surPlateforme?.dateSaisine).toBe(surPlateforme?.transmittedAt);
+      expect(surPlateforme?.peutModifierDateSaisine).toBe(false);
+      await expect(
+        caller.addDateSaisine({
+          demandeAvisId: surPlateforme?.demandeAvisId as number,
+          dateSaisine: '2026-03-02',
+        })
+      ).rejects.toThrow(
+        "La date de saisine d'un dépôt transmis sur la plateforme est celle de sa transmission"
+      );
     });
 
     it('dit « adopté » d’un PCAET publié', async () => {

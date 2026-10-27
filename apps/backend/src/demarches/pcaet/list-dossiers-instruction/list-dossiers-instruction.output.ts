@@ -51,6 +51,8 @@ export const dossierInstructionLigneSchema = z.object({
   launchedAt: z.string().nullable(),
   avisDeadlineAt: z.string().nullable(),
   transmittedAt: z.string().nullable(),
+  dateSaisine: z.string().nullable(),
+  peutModifierDateSaisine: z.boolean(),
   collectivite: z.object({
     id: z.number().int(),
     nom: z.string(),

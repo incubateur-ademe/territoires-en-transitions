@@ -419,6 +419,39 @@ export class DepotPermissionsService {
     return success(contexte);
   }
 
+  async canModifierDateSaisine(
+    demandeAvisId: number,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<ContexteDemandeAvis, DepotPermissionsError>> {
+    const contexteResult = await this.resolveContexteInstruction(
+      demandeAvisId,
+      { user, tx }
+    );
+    if (!contexteResult.success) {
+      return failure(contexteResult.error);
+    }
+    const contexte = contexteResult.data;
+
+    if (
+      !peutDeposerAvisSaisine(contexte.instructeurType, contexte.perimetre)
+    ) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    const permissionResult = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: contexte.instructeurCollectiviteId },
+      tx
+    );
+    if (!permissionResult.success) {
+      return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
+    }
+
+    return success(contexte);
+  }
+
   /**
    * Barrières communes à toute action d'instruction : la demande existe,
    * l'utilisateur est membre actif de la collectivité instructrice, et celle-ci
