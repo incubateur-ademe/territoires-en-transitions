@@ -128,8 +128,6 @@ export const collectivitesLabels = {
     categorieActionLabels[categorie],
   categorieActionShortLabel: (categorie: CategorieAction): string =>
     categorieActionShortLabels[categorie],
-  potentielsIndisponibles:
-    "Le potentiel de réduction de GES par levier n'est disponible que pour les EPCI dont la trajectoire SNBC a été calculée.",
   leviersSansPotentiel: plural({
     one: 'levier hors matrice, sans potentiel de réduction connu',
     other: 'leviers hors matrice, sans potentiel de réduction connu',
@@ -179,6 +177,14 @@ export const collectivitesLabels = {
   priorisationVueBloqueeDescription:
     'La matrice repose sur les actions de vos plans : elle montre où votre collectivité mobilise déjà chaque levier. Sans action, elle ne peut pas être calculée.',
   ajouterDesActions: 'Ajouter des actions',
+  priorisationTrajectoireManquanteTitre:
+    'Calculez votre trajectoire SNBC pour accéder à cette vue',
+  priorisationTrajectoireManquanteDescription:
+    "L'aide à la priorisation s'appuie sur la trajectoire SNBC de votre collectivité : elle permet d'estimer le potentiel de réduction de GES de chaque levier. Sans trajectoire calculée, elle ne peut pas être affichée.",
+  calculerMaTrajectoireSnbc: 'Calculer ma trajectoire SNBC',
+  priorisationReserveeAuxEpciTitre: 'Cette vue est réservée aux EPCI',
+  priorisationReserveeAuxEpciDescription:
+    "L'aide à la priorisation s'appuie sur la trajectoire SNBC, qui n'est calculée que pour les EPCI. Elle ne peut pas être affichée pour votre collectivité.",
   priorisationAnalyse: ({
     actionsCount,
     plansCount,

@@ -22,6 +22,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
   let authenticatedUser: AuthenticatedUser;
   let fixture: Awaited<ReturnType<typeof addTestTrajectoireLeviers>>;
   let commune: Awaited<ReturnType<typeof addTestCollectivite>>;
+  let epciSansTrajectoire: Awaited<ReturnType<typeof addTestCollectivite>>;
   let cleanupUser: () => Promise<void>;
 
   beforeAll(async () => {
@@ -36,11 +37,13 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
     fixture = await addTestTrajectoireLeviers(db);
     commune = await addTestCollectivite(db, { type: 'commune' });
+    epciSansTrajectoire = await addTestCollectivite(db, { type: 'epci' });
   });
 
   afterAll(async () => {
     await fixture?.cleanup();
     await commune?.cleanup();
+    await epciSansTrajectoire?.cleanup();
     await cleanupUser?.();
     await app.close();
   });
@@ -71,6 +74,19 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
         collectiviteId: commune.collectivite.id,
       });
     }).rejects.toThrowError(/ doit être un epci/i);
+  });
+
+  test("Un EPCI dont la trajectoire SNBC n'a pas été calculée renvoie NOT_FOUND", async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    await expect(
+      caller.indicateurs.trajectoires.leviers.getData({
+        collectiviteId: epciSansTrajectoire.collectivite.id,
+      })
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: "La trajectoire SNBC de la collectivité n'a pas été calculée",
+    });
   });
 
   test('Un visiteur lit les données et les réductions des leviers par SIREN', async () => {
