@@ -24,3 +24,16 @@ export const getSecteursRetenus = (
     (secteur) => (repartition.parts[secteur] ?? 0) >= SEUIL_PART_SECTEUR
   );
 };
+
+/**
+ * Actions du plan dont les secteurs réglementaires restent à compléter par la
+ * collectivité. Celles « en cours de calcul » n'en sont pas : elles attendent
+ * Communs, pas la collectivité, et y restent tant que l'API n'est pas configurée.
+ */
+export const countPlanSecteursARenseigner = ({
+  aRenseigner,
+  nonAttribuables,
+}: {
+  aRenseigner: number;
+  nonAttribuables: number;
+}): number => aRenseigner + nonAttribuables;

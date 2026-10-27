@@ -8,7 +8,8 @@ import type { WorkflowGuardResults } from '../../../../utils/workflow/workflow.t
  * - `estPilote` : l'utilisateur est pilote de la démarche (fallback : si la
  *   démarche n'a aucun pilote à compte utilisateur, tout éditeur est autorisé).
  * - `dossierComplet` : pièces amont requises couvertes, lignes requises du
- *   diagnostic renseignées et programme d'actions rattaché.
+ *   diagnostic renseignées et programme d'actions rattaché, vérifié, avec les
+ *   secteurs réglementaires de chaque action renseignés.
  * - `avisTousRendus` : le dossier a au moins une demande d'avis, et chacune a
  *   reçu un avis validé pour chaque titre attendu.
  * - `delaiAvisEcoule` : le délai légal laissé aux instances consultatives est

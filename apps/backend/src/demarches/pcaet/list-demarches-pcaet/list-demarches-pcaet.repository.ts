@@ -66,15 +66,32 @@ export class ListDemarchesPcaetRepository {
         this.planActionsRepository.listUnverifiedByDemarcheIds(demarcheIds, tx),
       ]);
 
+      // Un plan n'a qu'un état de secteurs, quelle que soit la démarche qui le
+      // tient : une seule lecture pour tous les plans de la liste.
+      const secteursARenseignerPlanActionIds =
+        await this.planActionsRepository.listSecteursARenseignerPlanActionIds(
+          {
+            collectiviteId,
+            planActionIds: [
+              ...new Set([...planActionIdsByDemarcheId.values()].flat()),
+            ],
+          },
+          tx
+        );
+
       return success(
-        rows.map((row) =>
-          toDemarchePcaetDto(
+        rows.map((row) => {
+          const planActionIds = planActionIdsByDemarcheId.get(row.id) ?? [];
+          return toDemarchePcaetDto(
             row,
             pilotesByDemarcheId.get(row.id) ?? [],
-            planActionIdsByDemarcheId.get(row.id) ?? [],
-            unverifiedByDemarcheId.get(row.id) ?? []
-          )
-        )
+            planActionIds,
+            unverifiedByDemarcheId.get(row.id) ?? [],
+            secteursARenseignerPlanActionIds.filter((id) =>
+              planActionIds.includes(id)
+            )
+          );
+        })
       );
     } catch (error) {
       this.logger.error(

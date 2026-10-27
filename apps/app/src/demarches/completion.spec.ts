@@ -233,6 +233,7 @@ const completeDemarche: DemarchePcaet = {
   pilotes: [],
   planActionIds: [42],
   unverifiedPlanActionIds: [],
+  secteursARenseignerPlanActionIds: [],
 };
 
 describe('getDemarchePcaetCompletion', () => {
@@ -323,6 +324,20 @@ describe('getDemarchePcaetCompletion', () => {
         ...completeDemarche,
         planActionIds: [42, 43],
         unverifiedPlanActionIds: [43],
+      },
+      completeDiagnostic(),
+      completeSnapshot
+    );
+
+    expect(completion.plan).toBe('incomplete');
+  });
+
+  it('laisse le plan en incomplete tant que des secteurs réglementaires restent à renseigner', () => {
+    const completion = getDemarchePcaetCompletion(
+      {
+        ...completeDemarche,
+        planActionIds: [42, 43],
+        secteursARenseignerPlanActionIds: [42],
       },
       completeDiagnostic(),
       completeSnapshot
