@@ -1,5 +1,5 @@
 import { useDeleteIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-delete-indicateur-definition';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -8,13 +8,19 @@ import { OpenState } from '@tet/ui/utils/types';
  * Modale pour la suppression d'un indicateur personnalisé
  */
 type Props = {
-  definition: IndicateurDefinition;
+  definition: Pick<IndicateurDefinitionListItem, 'id' | 'titre'>;
   openState: OpenState;
+  redirectAfterDelete?: boolean;
 };
 
-const DeleteModal = ({ definition, openState }: Props) => {
+export const DeleteIndicateurDefinitionModal = ({
+  definition,
+  openState,
+  redirectAfterDelete,
+}: Props) => {
   const { mutate: deleteIndicateur } = useDeleteIndicateurDefinition(
-    definition.id
+    definition.id,
+    { redirectAfterDelete }
   );
   return (
     <Modal
@@ -42,5 +48,3 @@ const DeleteModal = ({ definition, openState }: Props) => {
     />
   );
 };
-
-export default DeleteModal;

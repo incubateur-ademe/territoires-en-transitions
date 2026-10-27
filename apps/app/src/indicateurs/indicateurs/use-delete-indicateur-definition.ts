@@ -5,7 +5,10 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
-export const useDeleteIndicateurDefinition = (indicateurId: number) => {
+export const useDeleteIndicateurDefinition = (
+  indicateurId: number,
+  { redirectAfterDelete = true }: { redirectAfterDelete?: boolean } = {}
+) => {
   const tracker = useEventTracker();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -37,11 +40,13 @@ export const useDeleteIndicateurDefinition = (indicateurId: number) => {
         }),
       });
 
-      router.push(
-        makeCollectiviteTousLesIndicateursUrl({
-          collectiviteId,
-        })
-      );
+      if (redirectAfterDelete) {
+        router.push(
+          makeCollectiviteTousLesIndicateursUrl({
+            collectiviteId,
+          })
+        );
+      }
     },
   });
 };

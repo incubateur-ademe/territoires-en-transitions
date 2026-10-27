@@ -4,7 +4,8 @@ type IndicateurActionId =
   | 'remove-from-favorites'
   | 'add-to-favorites'
   | 'download-xlsx'
-  | 'download-chart';
+  | 'download-chart'
+  | 'delete';
 
 export type IndicateurMenuAction = {
   id: IndicateurActionId;
@@ -16,8 +17,9 @@ export const getIndicateurMenuActions = (args: {
   isEditable: boolean;
   isFavoriCollectivite: boolean;
   isChartVisible: boolean;
+  canDelete: boolean;
 }): IndicateurMenuAction[] => {
-  const { isEditable, isFavoriCollectivite, isChartVisible } = args;
+  const { isEditable, isFavoriCollectivite, isChartVisible, canDelete } = args;
   return [
     {
       id: 'remove-from-favorites',
@@ -38,6 +40,11 @@ export const getIndicateurMenuActions = (args: {
       id: 'download-chart',
       label: appLabels.indicateurTelechargerGraphiquePng,
       isVisible: isChartVisible,
+    },
+    {
+      id: 'delete',
+      label: appLabels.supprimerIndicateur,
+      isVisible: isEditable && canDelete,
     },
   ];
 };
