@@ -44,13 +44,13 @@ const IndicateurToolbar = ({
   const actions: MenuAction[] = [
     {
       icon: 'download-line',
-      label: appLabels.exporterXlsx,
+      label: appLabels.indicateurTelechargerExcel,
       onClick: () => exportIndicateurs(),
     },
     {
       isVisible: !!chartInfo?.hasValeur,
       icon: 'image-line',
-      label: appLabels.telechargerGraphiquePng,
+      label: appLabels.indicateurTelechargerGraphiquePng,
       onClick: () => setIsExportingPng(true),
     },
     {

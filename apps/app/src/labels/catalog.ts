@@ -611,7 +611,6 @@ export const appLabels = {
   placeholderRenseignezCollectivite: 'Renseignez le nom de la collectivité',
   placeholderAjouterMontant: 'Ajouter un montant',
   supprimerIndicateur: "Supprimer l'indicateur",
-  exporterXlsx: 'Exporter au format .xlsx',
   lierAction: 'Lier une action',
   ajouterNote: 'Ajouter une note',
   enregistrementEnCours: 'Enregistrement en cours...',
@@ -1185,7 +1184,6 @@ export const appLabels = {
   indicateurAjouterFavoris: 'Ajouter aux favoris de ma collectivité',
   retirerFavoris: 'Retirer des favoris',
   ajouterFavoris: 'Ajouter aux favoris',
-  telechargerGraphiquePng: 'Télécharger le graphique (.png)',
   aucuneValeurCollectivite:
     "Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !",
   aucuneValeurTrouvee: 'Aucune valeur trouvée',
