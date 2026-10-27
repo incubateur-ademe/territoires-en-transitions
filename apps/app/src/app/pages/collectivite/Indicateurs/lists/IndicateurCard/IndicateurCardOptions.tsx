@@ -6,6 +6,8 @@ import IndicateurCardMenu, {
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
 import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { DeleteIndicateurDefinitionModal } from '@/app/indicateurs/indicateurs/delete-indicateur-definition.modal';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
 import { getIndicateurMenuActions } from './menu-actions';
@@ -29,17 +31,23 @@ const IndicateurCardOptions = ({
 }: Props) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const menuActions = getIndicateurMenuActions({
     isEditable,
     isFavoriCollectivite,
     isChartVisible: chartDownloadSettings.showTrigger,
+    canDelete:
+      definition.estPerso &&
+      hasCollectivitePermission('indicateurs.indicateurs.delete'),
   }).filter((action) => action.isVisible);
 
   return (
     <div
       className={classNames('absolute top-4 right-4 flex items-center gap-2', {
-        'invisible group-hover:visible': !isEditOpen && !isMenuOpen,
+        'invisible group-hover:visible':
+          !isEditOpen && !isMenuOpen && !isDeleteOpen,
       })}
     >
       {otherMenuActions &&
@@ -72,12 +80,20 @@ const IndicateurCardOptions = ({
           menuActions={menuActions}
           indicateurId={definition.id}
           chartDownloadSettings={chartDownloadSettings}
+          onDelete={() => setIsDeleteOpen(true)}
           openState={{
             isOpen: isMenuOpen,
             setIsOpen: setIsMenuOpen,
           }}
         />
       </VisibleWhen>
+      {isDeleteOpen && (
+        <DeleteIndicateurDefinitionModal
+          definition={definition}
+          redirectAfterDelete={false}
+          openState={{ isOpen: true, setIsOpen: setIsDeleteOpen }}
+        />
+      )}
     </div>
   );
 };

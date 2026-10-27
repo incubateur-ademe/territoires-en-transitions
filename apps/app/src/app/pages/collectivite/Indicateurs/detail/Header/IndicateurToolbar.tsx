@@ -6,10 +6,10 @@ import { PermissionOperation } from '@tet/domain/users';
 import { Button, ButtonMenu, MenuAction, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { DeleteIndicateurDefinitionModal } from '@/app/indicateurs/indicateurs/delete-indicateur-definition.modal';
 import { IndicateurChartPngExport } from '../../chart/indicateur-chart.png-export';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
-import DeleteModal from './DeleteModal';
 
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
@@ -110,7 +110,7 @@ const IndicateurToolbar = ({
       )}
 
       {currentModal === 'deleting' && (
-        <DeleteModal
+        <DeleteIndicateurDefinitionModal
           definition={definition}
           openState={{ isOpen: true, setIsOpen: closeModal }}
         />
