@@ -17,6 +17,8 @@ export const indicateursLabels = {
   indicateurDonneeIndisponible: 'Donnée indisponible',
   indicateurTableDefilement: 'Défilement horizontal du tableau',
   indicateurOptions: "Plus d'options",
+  indicateurTelechargerExcel: "Télécharger l'indicateur (Excel)",
+  indicateurTelechargerGraphiquePng: 'Télécharger le graphique (PNG)',
 
   indicateur: plural({ one: 'indicateur', other: 'indicateurs' }),
 

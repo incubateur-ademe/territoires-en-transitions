@@ -31,12 +31,12 @@ export const getIndicateurMenuActions = (args: {
     },
     {
       id: 'download-xlsx',
-      label: appLabels.exporterXlsx,
+      label: appLabels.indicateurTelechargerExcel,
       isVisible: true,
     },
     {
       id: 'download-chart',
-      label: appLabels.telechargerGraphiquePng,
+      label: appLabels.indicateurTelechargerGraphiquePng,
       isVisible: isChartVisible,
     },
   ];

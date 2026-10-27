@@ -108,7 +108,7 @@ test.describe('Export indicateurs en Excel', () => {
     for (const name of [
       'Ajouter aux favoris',
       'Retirer des favoris',
-      'Télécharger le graphique (.png)',
+      'Télécharger le graphique (PNG)',
     ]) {
       await expect(page.getByRole('button', { name, exact: true })).toHaveCount(
         0

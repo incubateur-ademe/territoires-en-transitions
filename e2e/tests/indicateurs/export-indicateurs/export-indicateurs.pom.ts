@@ -43,7 +43,7 @@ export class ExportIndicateursPom {
     await card.locator('..').getByTestId('indicateurs.carte.menu').click();
     await expect(
       this.page.getByRole('button', {
-        name: 'Exporter au format .xlsx',
+        name: "Télécharger l'indicateur (Excel)",
         exact: true,
       })
     ).toBeVisible();
@@ -57,7 +57,7 @@ export class ExportIndicateursPom {
   async exportFromCardMenu(): Promise<Workbook> {
     const downloadPromise = this.page.waitForEvent('download');
     const exportButton = this.page.getByRole('button', {
-      name: 'Exporter au format .xlsx',
+      name: "Télécharger l'indicateur (Excel)",
       exact: true,
     });
     await exportButton.click();
@@ -80,7 +80,7 @@ export class ExportIndicateursPom {
     const downloadPromise = this.page.waitForEvent('download');
     await this.page.locator('[data-test="indicateurs.detail.menu"]').click();
     await this.page
-      .getByRole('button', { name: 'Exporter au format .xlsx' })
+      .getByRole('button', { name: "Télécharger l'indicateur (Excel)" })
       .click();
     const download = await downloadPromise;
     return this.parseXlsx(download);
