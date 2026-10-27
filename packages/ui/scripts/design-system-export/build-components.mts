@@ -158,6 +158,13 @@ const buildScripts = async ({
   const bundleAlias: Alias[] = [
     ...reactAlias,
     { find: /^react-dom(\/client)?$/, replacement: entries.reactDomGlobal },
+    // Le runtime JSX aussi passe par le React de la page : sans cet alias, le
+    // bundle embarquerait celui de React 19 et ses éléments ne seraient pas
+    // reconnus par un autre React (canvas Claude Design).
+    {
+      find: /^react\/jsx(-dev)?-runtime$/,
+      replacement: join(shims, 'react-jsx-runtime.ts'),
+    },
     { find: /^next\/link$/, replacement: join(shims, 'next-link.tsx') },
     { find: /^next\/image$/, replacement: join(shims, 'next-image.tsx') },
     {
