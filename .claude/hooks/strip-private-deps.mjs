@@ -17,7 +17,10 @@ const isPrivate = (name) =>
 
 /** `'@bryntum/scheduler@6.3.1(…)':` → `@bryntum/scheduler` */
 const packageNameOf = (yamlKey) => {
-  const key = yamlKey.trim().replace(/^'/, '').replace(/'?:.*$/, '');
+  const key = yamlKey
+    .trim()
+    .replace(/^'/, '')
+    .replace(/'?:.*$/, '');
   const versionAt = key.indexOf('@', key.startsWith('@') ? 1 : 0);
   return versionAt === -1 ? key : key.slice(0, versionAt);
 };
@@ -57,7 +60,10 @@ const stripLockfile = (lines) =>
   ).kept;
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
-writeFileSync('package.json', `${JSON.stringify(stripPackageJson(pkg), null, 2)}\n`);
+writeFileSync(
+  'package.json',
+  `${JSON.stringify(stripPackageJson(pkg), null, 2)}\n`
+);
 
 const lockfile = readFileSync('pnpm-lock.yaml', 'utf8').split('\n');
 writeFileSync('pnpm-lock.yaml', stripLockfile(lockfile).join('\n'));
