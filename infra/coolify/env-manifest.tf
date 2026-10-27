@@ -35,6 +35,8 @@ locals {
       # environnements s'écrasent sur le domaine racine.
       supabase_auth_cookie_name = "sb-tet-preprod-auth-token"
       crisp_website_id          = "96fe7866-d005-4623-80b1-bd772e99855c"
+      axeptio_id                = "65ef34473dcae5d0c7a47699"
+      strapi_url                = "https://phenomenal-trust-ee3da2c906.strapiapp.com"
     }
   }
 
@@ -128,14 +130,22 @@ locals {
         OTEL_RESOURCE_ATTRIBUTES    = { value = "deployment.environment.name=preprod" }
       }
 
-      # Le reste de la configuration du site est inliné au build (NEXT_PUBLIC_*,
-      # image taguée <env>-<sha> par cd-site.yml) : seules les lectures runtime
-      # du serveur figurent ici.
+      # Toute la configuration du site est lue au runtime, comme pour l'app
+      # (cf. packages/api/src/public-env.ts) : une seule image tet-site:<sha>
+      # pour tous les environnements.
       site = {
-        POSTHOG_HOST   = { value = local.coolify_env_posthog_host }
-        POSTHOG_KEY    = { secret = "posthog-key" }
-        PCAET_LAUNCHED = { value = "true" }
-        DB_STATS_URL   = { secret = "db-stats-url" }
+        ENV_NAME         = { value = local.coolify_env_settings.preprod.env_name }
+        APP_URL          = { value = local.coolify_env_settings.preprod.app_url }
+        BACKEND_URL      = { value = local.coolify_env_settings.preprod.backend_url }
+        SITE_URL         = { value = local.coolify_env_settings.preprod.site_url }
+        CRISP_WEBSITE_ID = { value = local.coolify_env_settings.preprod.crisp_website_id }
+        AXEPTIO_ID       = { value = local.coolify_env_settings.preprod.axeptio_id }
+        STRAPI_URL       = { value = local.coolify_env_settings.preprod.strapi_url }
+        STRAPI_KEY       = { secret = "strapi-key" }
+        POSTHOG_HOST     = { value = local.coolify_env_posthog_host }
+        POSTHOG_KEY      = { secret = "posthog-key" }
+        PCAET_LAUNCHED   = { value = "true" }
+        DB_STATS_URL     = { secret = "db-stats-url" }
       }
 
       # Variables du compose infra/nonprod/supabase-api/docker-compose.yml :
