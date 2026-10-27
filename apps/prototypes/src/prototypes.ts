@@ -18,4 +18,10 @@ export const prototypes: ReadonlyArray<Prototype> = [
     description:
       'Importé d’une maquette Claude Design avec /proto-import : chiffres clés et budget consommé par fiche, avec trois propositions.',
   },
+  {
+    slug: 'fiches-plan',
+    titre: 'Fiches d’un plan',
+    description:
+      'Importé d’une maquette Claude Design avec /proto-import : liste filtrable des fiches d’un plan avec budget, ligne de total et bandeau d’environnement proposés.',
+  },
 ];
