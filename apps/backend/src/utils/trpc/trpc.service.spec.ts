@@ -1,6 +1,9 @@
 import type { Request } from 'express';
 import { describe, expect, it } from 'vitest';
-import { getClientIp } from './trpc.service';
+import { getTRPCErrorFromUnknown } from '@trpc/server';
+import { getErrorShape } from '@trpc/server/unstable-core-do-not-import';
+import { DrizzleQueryError } from 'drizzle-orm';
+import { getClientIp, TrpcService } from './trpc.service';
 
 const buildRequest = (
   headers: Record<string, string | string[]>,
@@ -43,5 +46,32 @@ describe('getClientIp', () => {
 
   it("renvoie undefined quand rien n'est disponible — rateLimit retombe alors sur un seau commun", () => {
     expect(getClientIp(buildRequest({}))).toBeUndefined();
+  });
+});
+
+describe('errorFormatter', () => {
+  it("renvoie au client le message expurgé des params d'une requête", () => {
+    const { trpc } = new TrpcService(
+      ...([
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ] as unknown as ConstructorParameters<typeof TrpcService>)
+    );
+    const error = getTRPCErrorFromUnknown(
+      new DrizzleQueryError('q', ['a@b.fr'], new Error('x'))
+    );
+
+    const shape = getErrorShape({
+      config: trpc._config,
+      error,
+      type: 'query',
+      path: 'p',
+      input: undefined,
+      ctx: undefined,
+    });
+
+    expect(JSON.stringify(shape)).not.toContain('a@b.fr');
   });
 });

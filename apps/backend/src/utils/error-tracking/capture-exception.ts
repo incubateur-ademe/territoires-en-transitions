@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { trace } from '@opentelemetry/api';
 import { ApplicationContext } from '@tet/backend/utils/context/application-context.dto';
 import { getErrorMessage } from '@tet/domain/utils';
+import { redactErrorChain } from '../log/redact-error-chain';
 import { getErrorTrackingClient } from './error-tracking.client';
 
 type ExtraProperties = {
@@ -24,6 +25,7 @@ export function captureException(
   context: ApplicationContext,
   extraProperties?: ExtraProperties
 ) {
+  redactErrorChain(exception);
   getErrorTrackingClient()
     ?.captureExceptionImmediate(exception, context.userId, {
       ...context.scope,
