@@ -8,6 +8,9 @@ prototype se transpose tel quel dans `apps/app`.
   `src/prototypes.ts`.
 - Vérifier : `nx lint prototypes` (le layout passe par `Stack`, `Inline`, `Grid`
   et `Box`, sans classe de layout ni valeur arbitraire).
+- Partir d'une maquette Claude Design : `/proto-import <slug>` dans Claude Code.
+- Captures desktop et mobile d'un prototype construit :
+  `node apps/prototypes/scripts/capture.mjs --route <slug> --out <dossier>`.
 - Conventions détaillées : `CLAUDE.md`.
 
 ## Depuis une session Claude Code cloud

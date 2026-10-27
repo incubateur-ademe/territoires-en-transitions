@@ -13,6 +13,10 @@ fetching: pages render local fixtures.
   (`PageHeader.Title`, `PageHeader.Actions`…) don't render from a server
   component.
 - `nx lint prototypes` must pass before sharing a prototype.
+- Starting from a Claude Design export: run `/proto-import <slug>`
+  (`.claude/skills/proto-import`).
+- Desktop and mobile captures of a built prototype:
+  `node apps/prototypes/scripts/capture.mjs --route <slug> --out <dir>`.
 
 ## Compose only with `@tet/ui`
 

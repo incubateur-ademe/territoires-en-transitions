@@ -12,4 +12,10 @@ export const prototypes: ReadonlyArray<Prototype> = [
     description:
       'Prototype de référence : une page composée uniquement de composants et de primitives de layout de @tet/ui.',
   },
+  {
+    slug: 'fiches-budget',
+    titre: 'Budget des fiches action',
+    description:
+      'Importé d’une maquette Claude Design avec /proto-import : chiffres clés et budget consommé par fiche, avec trois propositions.',
+  },
 ];
