@@ -133,8 +133,10 @@ const startTourWithLevierToPrioritize = async ({
   pom: PriorisationLeviersPom;
   collectiviteId: number;
 }): Promise<void> => {
-  await pom.stubLevierWithPotentiel(LEVIER_TO_PRIORITIZE);
-  await pom.goto(collectiviteId);
+  await pom.gotoWithLevierPotentiel({
+    collectiviteId,
+    nom: LEVIER_TO_PRIORITIZE,
+  });
   await startTourFromWelcome(pom);
 };
 
