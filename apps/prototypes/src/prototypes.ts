@@ -18,4 +18,10 @@ export const prototypes: ReadonlyArray<Prototype> = [
     description:
       'Importé d’une maquette Claude Design avec /proto-import : chiffres clés et budget consommé par fiche, avec trois propositions.',
   },
+  {
+    slug: 'card',
+    titre: 'Carte fiche action',
+    description:
+      'Importé d’une maquette Claude Design avec /proto-import : carte d’une fiche action (statut, priorité, avancement, pilote, échéance, budget, indicateurs, étiquettes), composée uniquement avec @tet/ui.',
+  },
 ];
