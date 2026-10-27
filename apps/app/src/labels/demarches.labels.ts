@@ -719,10 +719,9 @@ export const demarchesLabels = {
   instructionListeColonneStatut: 'Statut',
   instructionListeColonneDateSaisine: 'Date de saisine',
   instructionListeColonneEcheance: 'Échéance avis',
-  instructionDateSaisineAjouter: 'Ajouter',
-  instructionDateSaisineAjouterAria: 'Ajouter la date de saisine',
-  instructionDateSaisineModifierAria: ({ date }: { date: string }) =>
-    `${date}, modifier la date de saisine`,
+  instructionDateSaisineRenseignerAria: 'Renseigner la date de saisine',
+  instructionDateSaisineVide: 'jj/mm/aaaa',
+  instructionDateSaisineModifierAria: 'Modifier la date de saisine',
   instructionDateSaisineHistorique: 'Historique',
   instructionDateSaisineSaisiePar: ({ date, nom }: { date: string; nom: string }) =>
     nom.trim() ? `Saisie le ${date} par ${nom.trim()}` : `Saisie le ${date}`,

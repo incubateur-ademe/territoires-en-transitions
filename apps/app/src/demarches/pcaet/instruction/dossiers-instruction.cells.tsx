@@ -5,7 +5,7 @@ import {
   makeDossierInstructionUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { getTextFormattedDate } from '@/app/utils/formatUtils';
+import { format } from 'date-fns';
 import type { RouterOutput } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
@@ -25,6 +25,9 @@ export type Dossier =
   RouterOutput['demarches']['pcaet']['listDossiersInstruction']['items'][number];
 
 const JOURS_URGENCE = 30;
+
+const formatDateNumerique = (date: string): string =>
+  format(new Date(date), 'dd/MM/yyyy');
 
 const estUrgente = (avisDeadlineAt: string | null): boolean => {
   if (!avisDeadlineAt) return false;
@@ -63,7 +66,7 @@ const getDossierHref = (dossier: Dossier): string | null => {
 
 export const DateCell = ({ date }: { date: string | null }) =>
   date ? (
-    <span className="text-primary-9">{getTextFormattedDate({ date })}</span>
+    <span className="text-primary-9">{formatDateNumerique(date)}</span>
   ) : (
     <span className="text-grey-6">{'—'}</span>
   );
@@ -81,35 +84,43 @@ export const DateSaisineCell = ({ dossier }: { dossier: Dossier }) => {
     return <DateCell date={dossier.dateSaisine} />;
   }
 
-  const dateAffichee = dossier.dateSaisine
-    ? getTextFormattedDate({ date: dossier.dateSaisine })
-    : null;
+  const menu = {
+    placement: 'bottom-start' as const,
+    className: 'max-w-none w-80',
+    openState: { isOpen, setIsOpen },
+    startContent: (
+      <DateSaisinePanel
+        demandeAvisId={demandeAvisId}
+        dateSaisine={dossier.dateSaisine}
+        onSaved={() => setIsOpen(false)}
+      />
+    ),
+  };
+
+  const texte = dossier.dateSaisine
+    ? formatDateNumerique(dossier.dateSaisine)
+    : appLabels.instructionDateSaisineVide;
+  const action = dossier.dateSaisine
+    ? appLabels.instructionDateSaisineModifierAria
+    : appLabels.instructionDateSaisineRenseignerAria;
 
   return (
     <ButtonMenu
-      variant={dateAffichee ? 'outlined' : 'underlined'}
+      variant="unstyled"
       size="xs"
-      withArrow={dateAffichee !== null}
-      aria-label={
-        dateAffichee
-          ? appLabels.instructionDateSaisineModifierAria({ date: dateAffichee })
-          : appLabels.instructionDateSaisineAjouterAria
-      }
+      className="-mx-1 flex items-center gap-1 rounded px-1 py-0.5 text-primary-8 hover:bg-primary-1"
+      icon="calendar-2-line"
+      iconPosition="right"
+      title={action}
+      aria-label={`${texte}, ${action}`}
       data-test="demarches.pcaet.instruction.date-saisine-modifier"
-      menu={{
-        placement: 'bottom-start',
-        className: 'max-w-none w-80',
-        openState: { isOpen, setIsOpen },
-        startContent: (
-          <DateSaisinePanel
-            demandeAvisId={demandeAvisId}
-            dateSaisine={dossier.dateSaisine}
-            onSaved={() => setIsOpen(false)}
-          />
-        ),
-      }}
+      menu={menu}
     >
-      {dateAffichee ?? appLabels.instructionDateSaisineAjouter}
+      <span
+        className={dossier.dateSaisine ? 'text-primary-9' : 'text-grey-6'}
+      >
+        {texte}
+      </span>
     </ButtonMenu>
   );
 };
@@ -133,7 +144,7 @@ export const EcheanceCell = ({ dossier }: { dossier: Dossier }) => {
       )}
     >
       <Icon icon="calendar-line" size="sm" className="shrink-0" />
-      <span>{getTextFormattedDate({ date: dossier.avisDeadlineAt })}</span>
+      <span>{formatDateNumerique(dossier.avisDeadlineAt)}</span>
     </div>
   );
 };

@@ -39,6 +39,7 @@ export const DateSaisinePanel = ({
             min="1900-01-01"
             max={getDateCivileFrance(new Date())}
             value={date}
+            displaySize="sm"
             onChange={(event) => setDate(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
