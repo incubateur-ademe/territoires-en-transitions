@@ -13,6 +13,7 @@ const switchToTeBlockerSchema = z.discriminatedUnion('type', [
     type: z.literal('AUDIT_REQUEST_IN_PROGRESS'),
     referentiel: z.enum(referentielIdEnumValues),
   }),
+  z.object({ type: z.literal('REFERENTIEL_TE_NOT_EMPTY') }),
 ]);
 
 export const switchToTeStatusOutputSchema = z.discriminatedUnion('value', [
