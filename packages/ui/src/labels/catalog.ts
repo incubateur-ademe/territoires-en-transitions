@@ -46,6 +46,13 @@ const uiLabels = {
   saisirUnTitre: 'Saisir un titre',
   sansTitre: 'Sans titre',
   modifierLeTitre: 'Modifier le titre',
+  voirPlus: 'voir plus',
+  voirMoins: 'voir moins',
+  afficherNiveauxMasques: ({ count }: { count: number }): string =>
+    count > 1
+      ? `Afficher les ${count} niveaux masqués`
+      : 'Afficher le niveau masqué',
+  reduire: 'Réduire',
   caracteresSaisis: ({
     currentLength,
     maxLength,

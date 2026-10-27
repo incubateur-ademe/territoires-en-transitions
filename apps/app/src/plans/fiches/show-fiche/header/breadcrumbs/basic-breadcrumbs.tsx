@@ -86,6 +86,7 @@ export const Breadcrumbs = (props: BreadcrumbsProps) => {
     <BreadcrumbsUI
       size="sm"
       truncateItems
+      collapseMiddleItems
       enableLastElementClick={Boolean(
         breadcrumbsLinks.length === 1 && breadcrumbsLinks[0].href
       )}

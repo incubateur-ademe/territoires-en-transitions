@@ -35,9 +35,15 @@ export type EditableTitleProps = {
   suffix?: ReactNode;
   compact?: boolean;
   titleId?: string;
+  collapseAfter?: number;
 };
 
 const TITLE_FALLBACK = uiLabels.sansTitre;
+
+const truncateAtWord = (text: string, limit: number): string => {
+  const lastSpace = text.lastIndexOf(' ', limit);
+  return `${text.slice(0, lastSpace > 0 ? lastSpace : limit)}…`;
+};
 
 export const EditableTitle = ({
   className,
@@ -50,9 +56,11 @@ export const EditableTitle = ({
   suffix,
   compact = false,
   titleId,
+  collapseAfter,
 }: EditableTitleProps): JSX.Element => {
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const hintId = useId();
   const valueAtOpenRef = useRef(initialTitle);
   const wasCancelledRef = useRef(false);
@@ -76,6 +84,20 @@ export const EditableTitle = ({
   };
 
   const displayTitle = title || TITLE_FALLBACK;
+  const isCollapsible =
+    collapseAfter !== undefined && displayTitle.length > collapseAfter;
+  const isCollapsed = isCollapsible && !isExpanded;
+  const shownTitle =
+    isCollapsed && collapseAfter !== undefined
+      ? truncateAtWord(displayTitle, collapseAfter)
+      : displayTitle;
+  const editTriggerProps = {
+    'aria-label': uiLabels.modifierLeTitre,
+    'aria-haspopup': 'dialog' as const,
+    'aria-expanded': isEditing,
+    className:
+      'text-left appearance-none bg-transparent p-0 border-0 m-0 font-inherit text-inherit cursor-text hover:text-primary-9',
+  };
 
   return (
     <InlineEditWrapper
@@ -123,16 +145,27 @@ export const EditableTitle = ({
         )}
       >
         {isReadonly ? (
-          <>{displayTitle}</>
+          <>{shownTitle}</>
+        ) : isCollapsible ? (
+          <span role="button" tabIndex={0} {...editTriggerProps}>
+            {shownTitle}
+          </span>
         ) : (
+          <button type="button" {...editTriggerProps}>
+            {shownTitle}
+          </button>
+        )}
+        {isCollapsible && (
           <button
             type="button"
-            aria-label={uiLabels.modifierLeTitre}
-            aria-haspopup="dialog"
-            aria-expanded={isEditing}
-            className="text-left appearance-none bg-transparent p-0 border-0 m-0 font-inherit text-inherit cursor-text hover:text-primary-9"
+            aria-expanded={isExpanded}
+            onClick={(event) => {
+              event.stopPropagation();
+              setIsExpanded((expanded) => !expanded);
+            }}
+            className="ml-2 whitespace-nowrap text-base font-normal text-primary-8 underline underline-offset-4 hover:decoration-2 hover:text-primary-9"
           >
-            {displayTitle}
+            {isExpanded ? uiLabels.voirMoins : uiLabels.voirPlus}
           </button>
         )}
         {suffix}

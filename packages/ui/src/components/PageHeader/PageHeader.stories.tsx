@@ -70,14 +70,19 @@ const MockNavigation = (): JSX.Element => (
   </div>
 );
 
+const TITRE_LONG =
+  "Action 1. Création d'un comité de suivi d'élus autour du CLS, associant les communes membres, les partenaires institutionnels, les représentants des usagers du territoire et les acteurs associatifs du champ sanitaire et social, afin de piloter la mise en œuvre et l'évaluation du contrat";
+
 const EditableTitleExample = ({
   initialTitle,
   isReadonly,
   placeholder,
+  collapseAfter,
 }: {
   initialTitle: string | null;
   isReadonly: boolean;
   placeholder?: string;
+  collapseAfter?: number;
 }): JSX.Element => {
   const [title, setTitle] = useState<string | null>(initialTitle);
   return (
@@ -87,6 +92,7 @@ const EditableTitleExample = ({
         isReadonly={isReadonly}
         onUpdate={setTitle}
         placeholder={placeholder}
+        collapseAfter={collapseAfter}
       />
       <PageHeader.Actions>
         <MockMenu />
@@ -141,6 +147,26 @@ export const TitleEditableSansTitre: Story = {
 export const TitleEditableLectureSeule: Story = {
   render: () => (
     <EditableTitleExample initialTitle="Plan en lecture seule" isReadonly />
+  ),
+};
+
+export const TitleEditableLongReplie: Story = {
+  render: () => (
+    <EditableTitleExample
+      initialTitle={TITRE_LONG}
+      isReadonly={false}
+      collapseAfter={140}
+    />
+  ),
+};
+
+export const TitleLectureSeuleLongReplie: Story = {
+  render: () => (
+    <EditableTitleExample
+      initialTitle={TITRE_LONG}
+      isReadonly
+      collapseAfter={140}
+    />
   ),
 };
 
