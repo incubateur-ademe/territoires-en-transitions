@@ -22,6 +22,7 @@ import {
 import {
   and,
   asc,
+  desc,
   eq,
   inArray,
   isNotNull,
@@ -30,6 +31,7 @@ import {
   type SQL,
 } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
+import { pcaetDateSaisineTable } from '../shared/models/pcaet-date-saisine.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 import { couvreLesCodesSql } from '../shared/perimetre-instructeur.columns';
 import { PerimetreInstructeurRepository } from '../shared/perimetre-instructeur.repository';
@@ -68,6 +70,7 @@ export type DossierInstructionRow = {
   transmittedAt: string | null;
   /** `null` comme le reste de la démarche quand la collectivité n'a rien déposé. */
   transmittedOffPlatform: boolean | null;
+  dateSaisineHorsPlateforme: string | null;
   /** `null` quand la collectivité n'a rien déposé. */
   isScotAec: boolean | null;
   publishedAt: string | null;
@@ -215,6 +218,19 @@ export class ListDossiersInstructionRepository {
         .groupBy(pcaetAvisTable.demandeAvisId)
         .as('avis');
 
+      const derniereDateSaisine = db
+        .selectDistinctOn([pcaetDateSaisineTable.demarcheId], {
+          demarcheId: pcaetDateSaisineTable.demarcheId,
+          dateSaisine: pcaetDateSaisineTable.dateSaisine,
+        })
+        .from(pcaetDateSaisineTable)
+        .orderBy(
+          pcaetDateSaisineTable.demarcheId,
+          desc(pcaetDateSaisineTable.createdAt),
+          desc(pcaetDateSaisineTable.id)
+        )
+        .as('derniere_date_saisine');
+
       // Une collectivité entre dans l'assiette si elle a déposé — quoi qu'elle
       // soit devenue depuis — ou si sa famille juridique porte un PCAET. Sans
       // le second terme, « aucun dépôt » n'existerait pas ; sans le premier,
@@ -235,6 +251,7 @@ export class ListDossiersInstructionRepository {
           avisDeadlineAt: demarcheTable.avisDeadlineAt,
           transmittedAt: demarcheTable.transmittedAt,
           transmittedOffPlatform: demarcheTable.transmittedOffPlatform,
+          dateSaisineHorsPlateforme: derniereDateSaisine.dateSaisine,
           isScotAec: demarcheTable.isScotAec,
           publishedAt: demarcheTable.publishedAt,
           collectiviteId: collectiviteTable.id,
@@ -268,6 +285,10 @@ export class ListDossiersInstructionRepository {
           )
         )
         .leftJoin(avis, eq(avis.demandeAvisId, pcaetDemandeAvisTable.id))
+        .leftJoin(
+          derniereDateSaisine,
+          eq(derniereDateSaisine.demarcheId, demarcheTable.id)
+        )
         .leftJoin(
           regionTable,
           eq(regionTable.code, collectiviteTable.regionCode)

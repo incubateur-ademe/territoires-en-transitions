@@ -7,12 +7,15 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   DemarchePcaetStatusEnum,
   PcaetStatutInstructionEnum,
 } from '@tet/domain/demarches';
-import { Badge, Button, cn, Icon } from '@tet/ui';
+import { Badge, Button, ButtonMenu, cn, Icon } from '@tet/ui';
 import Link from 'next/link';
+import { useState } from 'react';
+import { DateSaisinePanel } from './date-saisine.panel';
 import {
   OBLIGATION_LABELS,
   OBLIGATION_VARIANTS,
@@ -64,6 +67,52 @@ export const DateCell = ({ date }: { date: string | null }) =>
   ) : (
     <span className="text-grey-6">{'—'}</span>
   );
+
+export const DateSaisineCell = ({ dossier }: { dossier: Dossier }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const { demandeAvisId } = dossier;
+
+  if (
+    demandeAvisId === null ||
+    !dossier.peutModifierDateSaisine ||
+    !hasCollectivitePermission('demarches.pcaet.mutate')
+  ) {
+    return <DateCell date={dossier.dateSaisine} />;
+  }
+
+  const dateAffichee = dossier.dateSaisine
+    ? getTextFormattedDate({ date: dossier.dateSaisine })
+    : null;
+
+  return (
+    <ButtonMenu
+      variant={dateAffichee ? 'outlined' : 'underlined'}
+      size="xs"
+      withArrow={dateAffichee !== null}
+      aria-label={
+        dateAffichee
+          ? appLabels.instructionDateSaisineModifierAria({ date: dateAffichee })
+          : appLabels.instructionDateSaisineAjouterAria
+      }
+      data-test="demarches.pcaet.instruction.date-saisine-modifier"
+      menu={{
+        placement: 'bottom-start',
+        className: 'max-w-none w-80',
+        openState: { isOpen, setIsOpen },
+        startContent: (
+          <DateSaisinePanel
+            demandeAvisId={demandeAvisId}
+            dateSaisine={dossier.dateSaisine}
+            onSaved={() => setIsOpen(false)}
+          />
+        ),
+      }}
+    >
+      {dateAffichee ?? appLabels.instructionDateSaisineAjouter}
+    </ButtonMenu>
+  );
+};
 
 export const EcheanceCell = ({ dossier }: { dossier: Dossier }) => {
   if (!dossier.avisDeadlineAt) {

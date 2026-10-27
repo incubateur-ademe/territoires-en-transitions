@@ -717,7 +717,17 @@ export const demarchesLabels = {
    */
   instructionListeColonnePilotes: 'Pilotes',
   instructionListeColonneStatut: 'Statut',
+  instructionListeColonneDateSaisine: 'Date de saisine',
   instructionListeColonneEcheance: 'Échéance avis',
+  instructionDateSaisineAjouter: 'Ajouter',
+  instructionDateSaisineAjouterAria: 'Ajouter la date de saisine',
+  instructionDateSaisineModifierAria: ({ date }: { date: string }) =>
+    `${date}, modifier la date de saisine`,
+  instructionDateSaisineHistorique: 'Historique',
+  instructionDateSaisineSaisiePar: ({ date, nom }: { date: string; nom: string }) =>
+    nom.trim() ? `Saisie le ${date} par ${nom.trim()}` : `Saisie le ${date}`,
+  instructionDateSaisineEnregistree: 'Date de saisine enregistrée',
+  instructionDateSaisineErreur: "La date de saisine n'a pas pu être enregistrée",
   instructionListeColonneActions: 'Actions',
   instructionListeConsulter: 'Consulter le PCAET',
   instructionListeVoirInstruction: 'Voir l’instruction',
