@@ -465,7 +465,8 @@ export const PriorisationLeviersView = (): JSX.Element => {
               size="sm"
               icon="external-link-line"
               iconPosition="right"
-              disabled
+              href="https://aide.territoiresentransitions.fr/fr/article/outil-daide-a-la-priorisation-documentation-technique-xjsvj1/"
+              external
             >
               {appLabels.priorisationMethodologie}
             </Button>
