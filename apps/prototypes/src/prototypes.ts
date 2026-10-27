@@ -18,4 +18,10 @@ export const prototypes: ReadonlyArray<Prototype> = [
     description:
       'Importé d’une maquette Claude Design avec /proto-import : chiffres clés et budget consommé par fiche, avec trois propositions.',
   },
+  {
+    slug: 'bourse',
+    titre: 'Suivi d’une fiche action',
+    description:
+      'Importé d’une maquette Claude Design avec /proto-import : chiffres clés, indicateurs liés, étapes, pilotage et financement d’une fiche.',
+  },
 ];
