@@ -42,6 +42,18 @@ install_dependencies() {
   pnpm install --frozen-lockfile >&2
 }
 
+# Sans token Bryntum ni accès à codeload.github.com, l'installation complète
+# échoue. Les prototypes n'ont besoin ni de Bryntum ni de crisp-api : on les
+# retire de la copie de travail le temps de l'installation, puis on restaure
+# package.json et pnpm-lock.yaml pour que rien n'en parte dans un commit.
+install_dependencies_without_private() {
+  local status=0
+  node .claude/hooks/strip-private-deps.mjs
+  pnpm install --no-frozen-lockfile >&2 || status=$?
+  git checkout -- package.json pnpm-lock.yaml
+  return "$status"
+}
+
 # Le Playwright du repo attend une révision précise de Chromium ; le container
 # en fournit une autre dans /opt/pw-browsers. On expose la révision installée
 # sous le nom attendu, sans rien télécharger.
@@ -80,18 +92,30 @@ main() {
   setup_node
   setup_pnpm
 
+  local partial_install=false
   if ! install_dependencies; then
-    cat <<'MSG'
-⚠️ session-start : `pnpm install` a échoué. Vérifier les prérequis de
-l'environnement cloud listés dans apps/prototypes/README.md (section
-« Prérequis ») : niveau réseau Limited avec `npm.bryntum.com` et
-`codeload.github.com` dans Allowed domains, et token Bryntum en Network secret.
-Ne pas contourner les contrôles supply-chain de pnpm.
+    log "installation complète impossible, repli sans Bryntum ni crisp-api"
+    partial_install=true
+    if ! install_dependencies_without_private; then
+      cat <<'MSG'
+⚠️ session-start : `pnpm install` a échoué, même sans Bryntum ni crisp-api.
+Vérifier les prérequis de l'environnement cloud listés dans
+apps/prototypes/README.md (section « Prérequis »). Ne pas contourner les
+contrôles supply-chain de pnpm.
 MSG
-    exit 0
+      exit 0
+    fi
   fi
 
   setup_playwright_browsers
+
+  if "$partial_install"; then
+    cat <<'MSG'
+session-start : dépendances installées sans Bryntum ni crisp-api (pas de
+token) : les prototypes se construisent, pas les pages de l'app qui en
+dépendent. package.json et pnpm-lock.yaml sont restés intacts.
+MSG
+  fi
 
   if check_prototypes_build; then
     echo "session-start : dépendances installées, \`nx build prototypes\` OK."

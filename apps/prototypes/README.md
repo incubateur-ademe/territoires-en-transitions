@@ -42,6 +42,14 @@ lui-même : la politique réseau est appliquée hors du container.
 
 Si un prérequis manque, le hook l'indique en début de session.
 
+Sans token Bryntum ni accès à `codeload.github.com`, le hook se replie sur une
+installation sans Bryntum ni `crisp-api`, dont les prototypes n'ont pas
+besoin : il les retire de `package.json` et `pnpm-lock.yaml` le temps de
+`pnpm install` (`.claude/hooks/strip-private-deps.mjs`), puis restaure les deux
+fichiers. Les contrôles supply-chain restent actifs pour tout le reste. Les
+prototypes se construisent et se capturent ; les pages de l'app qui utilisent
+Bryntum, non.
+
 ## Déploiement
 
 `nx build prototypes` produit un site statique dans `apps/prototypes/out/`,
