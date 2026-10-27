@@ -8,7 +8,10 @@ import {
   makeDemandesAvisUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { getReferentielDisplayMap } from '@tet/domain/collectivites';
+import {
+  canReadPriorisation,
+  getReferentielDisplayMap,
+} from '@tet/domain/collectivites';
 import { isTypeInstructeur } from '@tet/domain/demarches';
 import { hasRole, isUserVisitor, PlatformRole } from '@tet/domain/users';
 import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
@@ -91,8 +94,11 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
     }),
     generatePriorisationLink({
       collectiviteId,
-      collectiviteAccesRestreint,
-      isVisitor,
+      canReadPriorisation: canReadPriorisation(user, {
+        collectiviteId,
+        collectiviteType: currentCollectivite.collectiviteType,
+        collectiviteAccesRestreint,
+      }),
       isPriorisationEnabled,
     }),
     {

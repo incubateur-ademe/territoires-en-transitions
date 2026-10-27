@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisation.repository';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
@@ -38,7 +39,7 @@ test.describe('Priorisation des leviers', () => {
     ).toBeVisible();
   });
 
-  test('un utilisateur vérifié non membre voit les 29 leviers', async ({
+  test('un utilisateur vérifié non membre est renvoyé vers le tableau de bord de la collectivité', async ({
     collectivites,
     page,
   }) => {
@@ -48,11 +49,12 @@ test.describe('Priorisation des leviers', () => {
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
 
-    await priorisationLeviersPom.goto(collectivite.data.id);
+    await priorisationLeviersPom.open(collectivite.data.id);
 
-    await expect(priorisationLeviersPom.levierButtons).toHaveCount(
-      LEVIER_COUNT
+    await expect(page).toHaveURL(
+      new RegExp(`/collectivite/${collectivite.data.id}/tableau-de-bord`)
     );
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
   });
 
   test("un utilisateur vérifié non membre ne voit pas les leviers d'une collectivité en accès restreint", async ({
@@ -73,6 +75,24 @@ test.describe('Priorisation des leviers', () => {
     await expect(
       page.getByText("Cette collectivité n'est pas accessible en mode visite.")
     ).toBeVisible();
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
+  });
+
+  test("l'admin d'une commune est renvoyé vers le tableau de bord de la collectivité", async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: { type: collectiviteTypeEnum.COMMUNE },
+      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
+    });
+    const priorisationLeviersPom = new PriorisationLeviersPom(page);
+
+    await priorisationLeviersPom.open(collectivite.data.id);
+
+    await expect(page).toHaveURL(
+      new RegExp(`/collectivite/${collectivite.data.id}/tableau-de-bord`)
+    );
     await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
   });
 
@@ -100,26 +120,21 @@ test.describe('Priorisation des leviers', () => {
     ).toBeHidden();
   });
 
-  test('un utilisateur vérifié non membre voit le même nombre de fiches rattachées', async ({
+  test('un membre en lecture est renvoyé vers le tableau de bord de la collectivité', async ({
     collectivites,
-    mobilisations,
     page,
   }) => {
-    const collectivite = await collectivites.addCollectivite({});
-    await mobilisations.add({
-      collectiviteId: collectivite.data.id,
-      leviers: mobilisationWithTwoFiches,
-    });
-    await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true, role: CollectiviteRole.LECTURE },
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
 
-    await priorisationLeviersPom.goto(collectivite.data.id);
+    await priorisationLeviersPom.open(collectivite.data.id);
 
-    await expect(priorisationLeviersPom.analyzedActionsText).toContainText(
-      'Analyse de 2 actions'
+    await expect(page).toHaveURL(
+      new RegExp(`/collectivite/${collectivite.data.id}/tableau-de-bord`)
     );
+    await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
   });
 
   test('un admin qualifie un levier, et la valeur survit au rechargement', async ({
