@@ -118,14 +118,33 @@ reported as such, never worked around in the page.
 
 ## 8. Share (only when the designer asks)
 
-When the designer asks to publish or share the prototype, publish its build as
-a claude.ai artifact: private by default, shared by link from the page's Share
-menu, no hosting token needed.
+When the designer asks to publish or share the prototype: push it on its own
+branch with a draft pull request, and publish its build as a claude.ai
+artifact. The pull request is where the prototype lives until `/proto-handoff`
+hands it to the developers; the artifact is what the designer shows around.
 
-1. Commit and push the prototype (the session's branch, or `proto/<slug>`;
-   never the default branch): the code in the repo is the source, the
-   artifact only a snapshot of its build.
-2. Prepare the publishable copy from the build of step 5:
+### Branch and draft pull request
+
+1. The prototype goes on `proto/<slug>`, created from the default branch, and
+   holds only `apps/prototypes/app/<slug>/` and its entry in
+   `src/prototypes.ts`. Never push to the default branch, never mix tooling
+   or `packages/ui` changes into it. If `apps/prototypes` is not on the
+   default branch yet, branch from the branch that carries it and stack the
+   pull request on it (base = that branch), and say so in its description.
+2. Commit and push. The first time, open a **draft** pull request (GitHub
+   tools of the session; with the `gh` CLI: `gh pr create --draft`), titled
+   `proto(<slug>): <titre>`, following the repository's pull request template
+   when there is one. Its description holds:
+   - the Claude Design canvas link and the artifact link;
+   - the step 3 table (composants du design system, propositions, écarts);
+   - the captures' verdict, and the line « Brouillon : le design itère encore.
+     `/proto-handoff <slug>` la passera en revue. »
+3. Later iterations push to the same branch and refresh the description: one
+   pull request per prototype.
+
+### Artifact
+
+1. Prepare the publishable copy from the build of step 5:
 
    ```bash
    node apps/prototypes/scripts/prepare-artifact.mjs --route <slug> --out <scratchpad>/artifact-<slug> --title "<titre from src/prototypes.ts>"
@@ -135,10 +154,12 @@ menu, no hosting token needed.
    unused `.svg`/`.eot` fonts and escapes U+FFFD in the JS chunks: the
    artifact service refuses these otherwise. It writes `files.json`.
 
-3. Publish with the Artifact tool: `file_path` = `<out>/<slug>.html`,
+2. Publish with the Artifact tool: `file_path` = `<out>/<slug>.html`,
    `root` = `<out>`, `files` = the content of `<out>/files.json`. On a later
    build, publish the same `file_path` again to keep the URL (from another
    session, pass the artifact's `url`).
-4. Give the designer the link, and say that the artifact shows the build, not
-   editable code: any change goes through the prototype's code, a new build
-   and a new publish.
+3. Give the designer both links, and say that the artifact shows the build,
+   not editable code: any change goes through the prototype's code, a new
+   build and a new publish. It is private until shared from its Share menu.
+
+When the design is settled, the next step is `/proto-handoff <slug>`.
