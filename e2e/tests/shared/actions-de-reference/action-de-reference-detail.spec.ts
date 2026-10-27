@@ -273,7 +273,7 @@ test.describe('retour-a-la-page-d-origine', () => {
     const card = priorisationPom.actionCardInPanel(LEVIER_NOM, action.titre);
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
     await expect(
-      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+      card.getByRole('button', { name: 'Sauvegardé' })
     ).toBeVisible();
     await priorisationPom.openPreselection();
     await priorisationPom
@@ -329,7 +329,7 @@ test.describe('retour-a-la-page-d-origine', () => {
 });
 
 test.describe('sauvegarde', () => {
-  test("le bouton s'enfonce au clic, reste enfoncé après rechargement et se relâche au second clic", async ({
+  test('« Sauvegarder » devient « Sauvegardé » au clic, le reste après rechargement et redevient « Sauvegarder » au second clic', async ({
     actionsDeReference,
     collectivites,
     actionDeReferenceDetailPom,
@@ -345,17 +345,17 @@ test.describe('sauvegarde', () => {
       collectiviteId: collectivite.data.id,
       action,
     });
-    const { saveButton } = actionDeReferenceDetailPom;
-    await expect(saveButton).toHaveAttribute('aria-pressed', 'false');
+    const { saveButton, savedButton } = actionDeReferenceDetailPom;
+    await expect(saveButton).toBeVisible();
 
     await saveButton.click();
-    await expect(saveButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(savedButton).toBeVisible();
 
     await page.reload();
-    await expect(saveButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(savedButton).toBeVisible();
 
-    await saveButton.click();
-    await expect(saveButton).toHaveAttribute('aria-pressed', 'false');
+    await savedButton.click();
+    await expect(saveButton).toBeVisible();
   });
 });
 
@@ -380,10 +380,7 @@ test.describe('sauvegarde-et-priorisation', () => {
     });
 
     await actionDeReferenceDetailPom.saveButton.click();
-    await expect(actionDeReferenceDetailPom.saveButton).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    await expect(actionDeReferenceDetailPom.savedButton).toBeVisible();
     await priorisationPom.goto(collectivite.data.id);
 
     await expect(
@@ -393,7 +390,7 @@ test.describe('sauvegarde-et-priorisation', () => {
     await expect(priorisationPom.preselectedCard(action.titre)).toBeVisible();
   });
 
-  test('une action ajoutée à la présélection depuis la priorisation a son bouton « Sauvegarder » enfoncé sur sa page', async ({
+  test('une action ajoutée à la présélection depuis la priorisation affiche « Sauvegardé » sur sa page', async ({
     actionsDeReference,
     collectivites,
     actionDeReferenceDetailPom,
@@ -412,7 +409,7 @@ test.describe('sauvegarde-et-priorisation', () => {
     const card = priorisationPom.actionCardInPanel(LEVIER_NOM, action.titre);
     await card.getByRole('button', { name: 'Sauvegarder' }).click();
     await expect(
-      card.getByRole('button', { name: 'Sauvegarder', pressed: true })
+      card.getByRole('button', { name: 'Sauvegardé' })
     ).toBeVisible();
 
     await actionDeReferenceDetailPom.open({
@@ -420,9 +417,6 @@ test.describe('sauvegarde-et-priorisation', () => {
       action,
     });
 
-    await expect(actionDeReferenceDetailPom.saveButton).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    await expect(actionDeReferenceDetailPom.savedButton).toBeVisible();
   });
 });
