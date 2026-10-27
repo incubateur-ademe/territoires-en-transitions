@@ -48,7 +48,8 @@ export const toDemarchePcaetDto = (
   row: DemarchePcaetSelectRow,
   pilotes: PersonneTagOrUser[],
   planActionIds: number[],
-  unverifiedPlanActionIds: number[]
+  unverifiedPlanActionIds: number[],
+  secteursARenseignerPlanActionIds: number[]
 ): DemarchePcaet => ({
   id: row.id,
   collectiviteId: row.collectiviteId,
@@ -68,6 +69,7 @@ export const toDemarchePcaetDto = (
   avisDeadlineAt: row.avisDeadlineAt,
   planActionIds,
   unverifiedPlanActionIds,
+  secteursARenseignerPlanActionIds,
   pilotes,
   // Évaluations fail-closed par défaut (aucun guard renseigné) ;
   // DemarchePcaetGuardsService.enrich les remplace par celles de l'utilisateur.

@@ -14,8 +14,15 @@ import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
+import { ficheActionSecteurAttributionTable } from '@tet/backend/plans/fiches/fiche-secteurs/fiche-action-secteur-attribution.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { PlanSourceEnum, PlanStatusEnum } from '@tet/domain/plans';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import {
+  OrigineSecteursEnum,
+  PlanSourceEnum,
+  PlanStatusEnum,
+} from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
@@ -349,6 +356,64 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
       demarcheId: created.id,
     });
     expect(verifie.unverifiedPlanActionIds).toEqual([]);
+    const transmise = await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(transmise.status).toBe('transmis_pour_avis');
+  });
+
+  test('Des secteurs réglementaires à renseigner retiennent le dossier', async () => {
+    const { caller, collectivite, user } = await freshEditor();
+    const created = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+    await completeTestDossierPcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    const plan = await attachTestPlanToDemarchePcaet(db, {
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+      nom: 'Plan aux secteurs incomplets',
+    });
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({ titre: 'Rénover les écoles', collectiviteId: collectivite.id })
+      .returning({ id: ficheActionTable.id });
+    await db.db
+      .insert(ficheActionAxeTable)
+      .values({ ficheId: fiche.id, axeId: plan.id, createdBy: user.id });
+    // Communs n'a pas su classer l'action : à la collectivité de le faire.
+    await db.db.insert(ficheActionSecteurAttributionTable).values({
+      ficheId: fiche.id,
+      origine: OrigineSecteursEnum.INDISPONIBLE,
+      secteurs: [],
+    });
+
+    const incomplet = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(incomplet.secteursARenseignerPlanActionIds).toEqual([plan.id]);
+    expect(listEnabledTransitions(incomplet.transitions)).toEqual([]);
+    await expect(
+      caller.demarches.pcaet.transmettrePourAvis({
+        collectiviteId: collectivite.id,
+        demarcheId: created.id,
+      })
+    ).rejects.toThrow('DOSSIER_INCOMPLET');
+
+    await caller.plans.fiches.upsertSecteurs({
+      ficheId: fiche.id,
+      secteurs: ['residentiel'],
+    });
+
+    const complet = await caller.demarches.pcaet.get({
+      collectiviteId: collectivite.id,
+      demarcheId: created.id,
+    });
+    expect(complet.secteursARenseignerPlanActionIds).toEqual([]);
     const transmise = await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,
       demarcheId: created.id,
