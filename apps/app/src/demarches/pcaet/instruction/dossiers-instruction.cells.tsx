@@ -109,7 +109,7 @@ export const DateSaisineCell = ({ dossier }: { dossier: Dossier }) => {
       variant="unstyled"
       size="xs"
       className="-mx-1 flex items-center gap-1 rounded px-1 py-0.5 text-primary-8 hover:bg-primary-1"
-      icon="calendar-2-line"
+      icon="edit-line"
       iconPosition="right"
       title={action}
       aria-label={`${texte}, ${action}`}
