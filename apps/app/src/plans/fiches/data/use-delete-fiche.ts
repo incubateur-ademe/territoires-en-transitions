@@ -33,6 +33,14 @@ export const useDeleteFiche = ({
         queryClient.invalidateQueries({
           queryKey: trpc.plans.plans.get.queryKey(),
         });
+        // Supprimer une fiche aux secteurs à renseigner peut compléter le
+        // dossier d'une démarche PCAET.
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.get.pathKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.list.pathKey(),
+        });
 
         onDeleteCallback?.();
       },
