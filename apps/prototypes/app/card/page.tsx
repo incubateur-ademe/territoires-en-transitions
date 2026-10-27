@@ -12,7 +12,6 @@ import {
   Inline,
   PageHeader,
   Stack,
-  Tag,
 } from '@tet/ui';
 import { ReactNode } from 'react';
 import { Fiche, fiches, PrioriteFiche, StatutFiche } from './fixtures';
@@ -35,10 +34,7 @@ const euros = (montant: number): string =>
 const indicateursLabel = (nombre: number): string =>
   `${nombre} ${nombre > 1 ? 'liés' : 'lié'}`;
 
-const sousActionsLabel = ({
-  realisees,
-  total,
-}: Fiche['sousActions']): string =>
+const sousActionsLabel = ({ realisees, total }: Fiche['sousActions']): string =>
   `${realisees} / ${total} sous-actions réalisées`;
 
 const estTerminee = ({ realisees, total }: Fiche['sousActions']): boolean =>
@@ -144,7 +140,9 @@ const FicheCard = ({ fiche }: { fiche: Fiche }) => (
           icon={fiche.enRetard ? 'calendar-close-line' : 'calendar-line'}
         >
           <span
-            className={fiche.enRetard ? 'paragraphe-14 font-bold' : 'paragraphe-14'}
+            className={
+              fiche.enRetard ? 'paragraphe-14 font-bold' : 'paragraphe-14'
+            }
           >
             {fiche.echeance}
           </span>
@@ -164,7 +162,7 @@ const FicheCard = ({ fiche }: { fiche: Fiche }) => (
       <Inline justify="between" align="center">
         <Inline gap="xs" align="center">
           {fiche.etiquettes.map((etiquette) => (
-            <Tag key={etiquette} title={etiquette} />
+            <Badge key={etiquette} title={etiquette} variant="info" size="sm" />
           ))}
         </Inline>
         <Label>Modifiée le {fiche.modifieeLe}</Label>
@@ -180,7 +178,12 @@ export default function CardPage() {
         <PageHeader.Title>Carte fiche action</PageHeader.Title>
       </PageHeader>
 
-      <Grid as="ul" columns={{ base: 1, md: 2, lg: 3 }} gap="lg" className="mb-0">
+      <Grid
+        as="ul"
+        columns={{ base: 1, md: 2, lg: 3 }}
+        gap="lg"
+        className="mb-0"
+      >
         {fiches.map((fiche) => (
           <Box as="li" key={fiche.id}>
             <FicheCard fiche={fiche} />

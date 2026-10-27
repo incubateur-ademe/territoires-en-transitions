@@ -1,5 +1,8 @@
 export type StatutFiche = 'En cours' | 'En retard' | 'Réalisé';
-export type PrioriteFiche = 'Priorité élevée' | 'Priorité moyenne' | 'Priorité basse';
+export type PrioriteFiche =
+  | 'Priorité élevée'
+  | 'Priorité moyenne'
+  | 'Priorité basse';
 
 export type Fiche = Readonly<{
   id: number;
