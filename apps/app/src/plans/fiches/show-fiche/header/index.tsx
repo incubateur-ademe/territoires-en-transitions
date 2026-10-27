@@ -53,6 +53,7 @@ export const Header = ({
           title={titre}
           isReadonly={isReadonly}
           onUpdate={updateTitle}
+          collapseAfter={140}
         />
         <PageHeader.Actions>
           <div className="flex items-center gap-2">

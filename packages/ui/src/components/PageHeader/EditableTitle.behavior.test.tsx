@@ -155,6 +155,91 @@ describe('EditableTitle — compteur de caractères', () => {
   });
 });
 
+describe('EditableTitle — titre long replié', () => {
+  const TITRE_LONG =
+    'Création d’un comité de suivi des élus associant les communes membres et les partenaires institutionnels du territoire';
+  const SEUIL = 60;
+  const TITRE_COUPE = 'Création d’un comité de suivi des élus associant les…';
+
+  const getVoirPlus = (): HTMLElement =>
+    screen.getByRole('button', { name: uiLabels.voirPlus });
+
+  it('coupe le titre au dernier mot avant le seuil et affiche « voir plus »', () => {
+    render(
+      <EditableTitle
+        title={TITRE_LONG}
+        isReadonly={false}
+        onUpdate={vi.fn()}
+        collapseAfter={SEUIL}
+      />
+    );
+    expect(getHeading()).toHaveTextContent(TITRE_COUPE);
+    expect(getVoirPlus()).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it("déplie puis replie le titre sans ouvrir l'éditeur", () => {
+    render(
+      <EditableTitle
+        title={TITRE_LONG}
+        isReadonly={false}
+        onUpdate={vi.fn()}
+        collapseAfter={SEUIL}
+      />
+    );
+    fireEvent.click(getVoirPlus());
+    expect(getHeading()).toHaveTextContent(TITRE_LONG);
+    expect(screen.queryByRole('textbox')).toBeNull();
+
+    const voirMoins = screen.getByRole('button', { name: uiLabels.voirMoins });
+    expect(voirMoins).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(voirMoins);
+    expect(getHeading()).toHaveTextContent(TITRE_COUPE);
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it("ouvre l'éditeur au clic sur le titre replié", () => {
+    render(
+      <EditableTitle
+        title={TITRE_LONG}
+        isReadonly={false}
+        onUpdate={vi.fn()}
+        collapseAfter={SEUIL}
+      />
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: uiLabels.modifierLeTitre })
+    );
+    expect(getTextarea()).toHaveValue(TITRE_LONG);
+  });
+
+  it('coupe aussi le titre en lecture seule', () => {
+    render(
+      <EditableTitle
+        title={TITRE_LONG}
+        isReadonly={true}
+        onUpdate={vi.fn()}
+        collapseAfter={SEUIL}
+      />
+    );
+    expect(getHeading()).toHaveTextContent(TITRE_COUPE);
+    expect(getVoirPlus()).toBeInTheDocument();
+  });
+
+  it('ne propose pas « voir plus » sous le seuil', () => {
+    render(
+      <EditableTitle
+        title="Mon plan"
+        isReadonly={false}
+        onUpdate={vi.fn()}
+        collapseAfter={SEUIL}
+      />
+    );
+    expect(
+      screen.queryByRole('button', { name: uiLabels.voirPlus })
+    ).toBeNull();
+  });
+});
+
 describe('EditableTitle — accessibilité', () => {
   it('le <h1> reste un heading (pas de role=button qui casserait la navigation par headings)', () => {
     render(

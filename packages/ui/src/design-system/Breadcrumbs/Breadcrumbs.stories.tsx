@@ -64,6 +64,18 @@ export const LastItemClickable: Story = {
   },
 };
 
+export const MiddleItemsCollapsed: Story = {
+  render: (args) => (
+    <Breadcrumbs
+      {...args}
+      size="sm"
+      truncateItems
+      collapseMiddleItems
+      enableLastElementClick
+    />
+  ),
+};
+
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-col gap-8">
