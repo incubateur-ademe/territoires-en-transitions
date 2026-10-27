@@ -168,6 +168,7 @@ locals {
     preprod = "preprod"    # gate iso-prod, serveur tet-nonprod-apps, Postgres et Redis managés
     staging = "staging"    # intégration continue de main, serveur tet-nonprod-apps, tout conteneurisé
     preview = "preview"    # previews éphémères par pull request, serveur tet-preview-apps
+    data    = "data"       # stack d'analyse (stats, Streamlit, Metabase, MCP), serveur tet-data-apps
   }
 }
 
