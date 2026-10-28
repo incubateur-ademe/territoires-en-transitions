@@ -103,4 +103,21 @@ export const utilisateursAndEntityLabels = {
   associerCompteTagDescription:
     'Associer cette personne à un ou plusieurs tags afin de lui associer des actions, des indicateurs et des mesures.',
   associerCompteTagChamp: 'Associer cette personne à un ou plusieurs tags',
+
+  // Page de consentement OAuth (connecteurs MCP : Claude.ai, Claude Desktop…)
+  oauthConsentTitre: "Autoriser l'accès à Territoires en Transitions",
+  oauthConsentDescription: (clientName: string) =>
+    `${clientName} demande à interroger les données analytiques de Territoires en Transitions en votre nom.`,
+  oauthConsentReserveEquipe:
+    "Cet accès est réservé à l'équipe : il ne fonctionnera qu'avec un compte support.",
+  oauthConsentRedirection: (redirectUri: string) =>
+    `Après votre choix, vous serez redirigé vers ${redirectUri}.`,
+  oauthConsentCompte: (email: string) => `Connecté en tant que ${email}.`,
+  oauthConsentAutoriser: 'Autoriser',
+  oauthConsentRefuser: 'Refuser',
+  oauthConsentChargement: 'Vérification de la demande…',
+  oauthConsentAbsent:
+    "Aucune demande d'autorisation à afficher : revenez depuis l'application qui demande l'accès.",
+  oauthConsentErreur:
+    "La demande d'autorisation est invalide ou expirée. Relancez la connexion depuis l'application qui demande l'accès.",
 };
