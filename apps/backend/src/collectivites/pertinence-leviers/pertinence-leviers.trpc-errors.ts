@@ -29,5 +29,9 @@ export const pertinenceLeviersErrorConfig: TrpcErrorHandlerConfig<PertinenceLevi
         message:
           "Un levier non pertinent n'admet pas de pertinence sur ses catégories",
       },
+      PRIORISATION_NOT_AVAILABLE: {
+        code: 'FORBIDDEN',
+        message: "L'aide à la priorisation n'est ouverte qu'aux EPCI",
+      },
     },
   };

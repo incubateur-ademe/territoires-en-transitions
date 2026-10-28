@@ -21,18 +21,8 @@ describe('listDisplayedReferentielIds', () => {
     expect(
       listDisplayedReferentielIds({
         referentiels: apresBascule,
-        referentielTeEnabled: true,
       })
     ).toEqual(['cae', 'te']);
-  });
-
-  test('exclut TE quand le feature flag est désactivé', () => {
-    expect(
-      listDisplayedReferentielIds({
-        referentiels: avantBascule,
-        referentielTeEnabled: false,
-      })
-    ).toEqual(['cae', 'eci']);
   });
 });
 
@@ -41,7 +31,6 @@ describe('resolveMesuresReferentielIds', () => {
     expect(
       resolveMesuresReferentielIds(undefined, {
         referentiels: avantBascule,
-        referentielTeEnabled: true,
       })
     ).toEqual(['cae', 'eci']);
   });
@@ -50,7 +39,6 @@ describe('resolveMesuresReferentielIds', () => {
     expect(
       resolveMesuresReferentielIds([], {
         referentiels: apresBascule,
-        referentielTeEnabled: true,
       })
     ).toEqual(['te']);
   });
@@ -59,7 +47,6 @@ describe('resolveMesuresReferentielIds', () => {
     expect(
       resolveMesuresReferentielIds(['cae', 'eci'], {
         referentiels: apresBascule,
-        referentielTeEnabled: true,
       })
     ).toEqual(['cae']);
   });
@@ -68,7 +55,6 @@ describe('resolveMesuresReferentielIds', () => {
     expect(
       resolveMesuresReferentielIds(['eci'], {
         referentiels: apresBascule,
-        referentielTeEnabled: true,
       })
     ).toEqual(['te']);
   });
@@ -76,8 +62,10 @@ describe('resolveMesuresReferentielIds', () => {
   test('affiche les référentiels visibles quand aucun n’est modifiable', () => {
     expect(
       resolveMesuresReferentielIds(undefined, {
-        referentiels: { ...apresBascule, te: { display: true, mode: 'write' } },
-        referentielTeEnabled: false,
+        referentiels: {
+          ...apresBascule,
+          te: { display: false, mode: 'write' },
+        },
       })
     ).toEqual(['cae']);
   });

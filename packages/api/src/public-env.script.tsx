@@ -1,4 +1,4 @@
-import { getPublicEnv, PUBLIC_ENV_GLOBAL } from '@tet/api/public-env';
+import { getPublicEnv, PUBLIC_ENV_GLOBAL } from './public-env';
 
 /**
  * Publie la configuration runtime dans le HTML, à destination du navigateur.

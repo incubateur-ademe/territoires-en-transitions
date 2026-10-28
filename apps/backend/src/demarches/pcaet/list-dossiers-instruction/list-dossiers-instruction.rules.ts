@@ -1,4 +1,7 @@
-import { pcaetStatutInstructionValues } from '@tet/domain/demarches';
+import {
+  PcaetStatutInstructionEnum,
+  pcaetStatutInstructionValues,
+} from '@tet/domain/demarches';
 import type { ListDossiersInstructionInput } from './list-dossiers-instruction.input';
 import type { DossierInstructionLigne } from './list-dossiers-instruction.output';
 
@@ -24,7 +27,7 @@ const filtrePose = <T>(
  *
  * Une ligne sans obligation connue — population inconnue, nature qui ne porte
  * pas de PCAET — est écartée dès qu'un filtre d'obligation est posé : elle ne
- * peut affirmer ni l'une ni l'autre.
+ * peut affirmer aucune des valeurs.
  */
 export const estRetenue = (
   ligne: DossierInstructionLigne,
@@ -85,7 +88,8 @@ export const trierDossiers = (
   const parDate = (
     a: DossierInstructionLigne,
     b: DossierInstructionLigne,
-    dateDe: (ligne: DossierInstructionLigne) => string | null
+    dateDe: (ligne: DossierInstructionLigne) => string | null,
+    ordre: number
   ) => {
     const dateA = dateDe(a);
     const dateB = dateDe(b);
@@ -98,10 +102,29 @@ export const trierDossiers = (
     if (dateB === null) {
       return -1;
     }
-    return sens * (new Date(dateA).getTime() - new Date(dateB).getTime());
+    return ordre * (new Date(dateA).getTime() - new Date(dateB).getTime());
   };
 
+  const parEcheance = (
+    a: DossierInstructionLigne,
+    b: DossierInstructionLigne,
+    ordre: number
+  ) => parDate(a, b, (ligne) => ligne.avisDeadlineAt, ordre);
+
   return [...lignes].sort((a, b) => {
+    if (sort === 'priorite') {
+      // Les dossiers en instruction d'abord, le plus pressant en tête : c'est
+      // ce que le service vient chercher. Le reste suit, transmissions les plus
+      // récentes en tête.
+      const enInstructionA =
+        a.statut === PcaetStatutInstructionEnum.EN_INSTRUCTION;
+      const enInstructionB =
+        b.statut === PcaetStatutInstructionEnum.EN_INSTRUCTION;
+      if (enInstructionA !== enInstructionB) {
+        return enInstructionA ? -1 : 1;
+      }
+      return parEcheance(a, b, enInstructionA ? 1 : -1);
+    }
     if (sort === 'collectivite') {
       return sens * parCollectivite(a, b);
     }
@@ -128,8 +151,8 @@ export const trierDossiers = (
       return sens * nomA.localeCompare(nomB, 'fr');
     }
     if (sort === 'dateLancement') {
-      return parDate(a, b, (ligne) => ligne.launchedAt);
+      return parDate(a, b, (ligne) => ligne.launchedAt, sens);
     }
-    return parDate(a, b, (ligne) => ligne.avisDeadlineAt);
+    return parEcheance(a, b, sens);
   });
 };

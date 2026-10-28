@@ -9,14 +9,26 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import {
+  addAuditeurPermission,
+  createAudit,
+} from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { PertinenceLevier } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  PertinenceLevier,
+} from '@tet/domain/collectivites';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { categorieActionEnumValues, LevierId } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { sortBy } from 'es-toolkit';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { UpsertPertinenceLevierInput } from './upsert-pertinence-levier/upsert-pertinence-levier.input';
@@ -171,11 +183,47 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
     expect(authorRows.rows).toEqual([{ modifiedBy: admin.id }]);
   });
 
-  it("rend les pertinences à un utilisateur vérifié qui n'est membre d'aucune collectivité", async () => {
-    const { collectiviteId, user: admin } = await addCollectiviteWithMember(
+  it("refuse les pertinences à un utilisateur vérifié qui n'est membre d'aucune collectivité", async () => {
+    const { collectiviteId } = await addCollectiviteWithMember(
       CollectiviteRole.ADMIN
     );
     const verifiedUser = await addUserWithoutCollectivite({ verified: true });
+
+    await expect(
+      callerFor(verifiedUser).list({ collectiviteId, enjeu: 'ges' })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('refuse les pertinences à un membre en lecture', async () => {
+    const { collectiviteId, user: lecteur } = await addCollectiviteWithMember(
+      CollectiviteRole.LECTURE
+    );
+
+    await expect(
+      callerFor(lecteur).list({ collectiviteId, enjeu: 'ges' })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('refuse les pertinences à un membre contributeur', async () => {
+    const { collectiviteId, user: contributeur } =
+      await addCollectiviteWithMember(
+        CollectiviteRole.EDITION_FICHES_INDICATEURS
+      );
+
+    await expect(
+      callerFor(contributeur).list({ collectiviteId, enjeu: 'ges' })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it("rend les pertinences posées par l'admin à un membre en édition", async () => {
+    const { collectiviteId, user: admin } = await addCollectiviteWithMember(
+      CollectiviteRole.ADMIN
+    );
+    const { user: editionMember, cleanup } = await addTestUser(db, {
+      collectiviteId,
+      role: CollectiviteRole.EDITION,
+    });
+    onTestFinished(cleanup);
     await callerFor(admin).upsert({
       collectiviteId,
       enjeu: 'ges',
@@ -184,11 +232,127 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
     });
 
     expect(
-      await callerFor(verifiedUser).list({ collectiviteId, enjeu: 'ges' })
+      await callerFor(getAuthUserFromUserCredentials(editionMember)).list({
+        collectiviteId,
+        enjeu: 'ges',
+      })
     ).toEqual({
       collectiviteId,
       pertinences: [{ levierId: 'covoiturage', pertinence: 'non_pertinent' }],
     });
+  });
+
+  const addCommuneWithAdmin = async (): Promise<CollectiviteWithUser> => {
+    const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
+      db,
+      {
+        collectivite: { type: collectiviteTypeEnum.COMMUNE },
+        user: { role: CollectiviteRole.ADMIN },
+      }
+    );
+    onTestFinished(cleanup);
+    return {
+      collectiviteId: collectivite.id,
+      user: getAuthUserFromUserCredentials(user),
+    };
+  };
+
+  it("refuse les pertinences à l'admin d'une commune", async () => {
+    const { collectiviteId, user: communeAdmin } = await addCommuneWithAdmin();
+
+    await expect(
+      callerFor(communeAdmin).list({ collectiviteId, enjeu: 'ges' })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it("refuse la qualification d'un levier à l'admin d'une commune", async () => {
+    const { collectiviteId, user: communeAdmin } = await addCommuneWithAdmin();
+
+    await expect(
+      callerFor(communeAdmin).upsert({
+        collectiviteId,
+        enjeu: 'ges',
+        levierId: 'biogaz',
+        pertinence: 'pertinent',
+      })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it("refuse les pertinences à l'auditeur d'une collectivité dont il n'est pas membre", async () => {
+    const { collectiviteId } = await addCollectiviteWithMember(
+      CollectiviteRole.ADMIN
+    );
+    const { audit, cleanup: cleanupAudit } = await createAudit({
+      databaseService: db,
+      collectiviteId,
+      referentielId: ReferentielIdEnum.CAE,
+    });
+    onTestFinished(cleanupAudit);
+    const auditeur = await addUserWithoutCollectivite({ verified: true });
+    const { cleanup: cleanupAuditeur } = await addAuditeurPermission({
+      databaseService: db,
+      auditId: audit.id,
+      userId: auditeur.id,
+    });
+    onTestFinished(cleanupAuditeur);
+
+    await expect(
+      callerFor(auditeur).list({ collectiviteId, enjeu: 'ges' })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  const addAdemeUserWithoutCollectivite =
+    async (): Promise<AuthenticatedUser> => {
+      const ademeUser = await addUserWithoutCollectivite({ verified: true });
+      await db.db
+        .update(dcpTable)
+        .set({ email: `${ademeUser.id}@ademe.fr` })
+        .where(eq(dcpTable.id, ademeUser.id));
+      return ademeUser;
+    };
+
+  it("rend les pertinences à un utilisateur ADEME qui n'est pas membre de la collectivité", async () => {
+    const { collectiviteId } = await addCollectiviteWithMember(
+      CollectiviteRole.ADMIN
+    );
+    const ademeUser = await addAdemeUserWithoutCollectivite();
+
+    expect(
+      await callerFor(ademeUser).list({ collectiviteId, enjeu: 'ges' })
+    ).toEqual({ collectiviteId, pertinences: [] });
+  });
+
+  it("refuse la qualification d'un levier à un utilisateur ADEME qui n'est pas membre de la collectivité", async () => {
+    const { collectiviteId } = await addCollectiviteWithMember(
+      CollectiviteRole.ADMIN
+    );
+    const ademeUser = await addAdemeUserWithoutCollectivite();
+
+    await expect(
+      callerFor(ademeUser).upsert({
+        collectiviteId,
+        enjeu: 'ges',
+        levierId: 'biogaz',
+        pertinence: 'pertinent',
+      })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it("rend les pertinences à un super admin qui n'est pas membre de la collectivité", async () => {
+    const { collectiviteId } = await addCollectiviteWithMember(
+      CollectiviteRole.ADMIN
+    );
+    const superAdmin = await addUserWithoutCollectivite({ verified: true });
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller: router.createCaller({ user: superAdmin }),
+      userId: superAdmin.id,
+    });
+    onTestFinished(cleanup);
+
+    expect(
+      await callerFor(superAdmin).list({ collectiviteId, enjeu: 'ges' })
+    ).toEqual({ collectiviteId, pertinences: [] });
   });
 
   it("refuse la qualification d'un levier à un membre en édition", async () => {
@@ -225,12 +389,12 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
     ).toEqual({ collectiviteId: second.collectiviteId, pertinences: [] });
   });
 
-  it("rend les pertinences d'une collectivité en accès restreint à un de ses membres en lecture", async () => {
+  it("rend les pertinences d'une collectivité en accès restreint à un de ses membres en édition", async () => {
     const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
       db,
       {
         collectivite: { accesRestreint: true },
-        user: { role: CollectiviteRole.LECTURE },
+        user: { role: CollectiviteRole.EDITION },
       }
     );
     onTestFinished(cleanup);

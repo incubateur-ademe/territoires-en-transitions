@@ -18,6 +18,7 @@ const PertinenceLeviersSpecificErrors = [
   ...PertinenceLeviersRepositoryErrors,
   'COLLECTIVITE_NOT_FOUND',
   'CATEGORIE_PERTINENCE_NOT_ALLOWED',
+  'PRIORISATION_NOT_AVAILABLE',
 ] as const;
 
 export type PertinenceLeviersSpecificError =

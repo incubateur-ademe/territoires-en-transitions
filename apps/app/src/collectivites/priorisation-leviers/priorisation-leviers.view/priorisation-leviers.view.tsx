@@ -13,7 +13,6 @@ import {
   levierIdEnumValues,
 } from '@tet/domain/shared';
 import {
-  Alert,
   Button,
   Event,
   PageHeader,
@@ -36,10 +35,8 @@ import { Preselection, usePreselection } from '../use-preselection';
 import { LeviersMatrixChart } from './charts/leviers-matrix.chart';
 import { LeviersMondrianChart } from './charts/leviers-mondrian.chart';
 import { SousLeviersChart } from './charts/sous-leviers.chart';
-import {
-  LevierPriorisation,
-  PotentielsReduction,
-} from './data/to-leviers-priorisation';
+import { LevierPriorisation } from './data/to-leviers-priorisation';
+import { PriorisationAccess } from './data/to-priorisation-access';
 import {
   isBlindSpot,
   LevierPlace,
@@ -62,14 +59,11 @@ import {
   PriorisationAnalyse,
   PriorisationSummary,
 } from './priorisation.summary';
-import { PriorisationEmptyCard } from './priorisation-empty.card';
+import { PriorisationBlockedCard } from './priorisation-blocked.card';
 import { SelectLevier } from './select-levier';
 import { LevierNudge, useLevierNudge } from './use-levier-nudge';
 import { useLeviersViewWithTour } from './use-leviers-view-with-tour';
 import { useOpenLevierFromUrl } from './use-open-levier-from-url';
-type PriorisationAlertsProps = {
-  potentiels: PotentielsReduction;
-};
 
 type LeviersViewState = {
   view: LeviersView;
@@ -109,7 +103,6 @@ type PriorisationBoardProps = {
   leviers: LevierPriorisation[];
   places: LevierPlace[];
   levierToPrioritizeId?: LevierId;
-  potentiels: PotentielsReduction;
   preselection: Preselection;
   levierSidePanel: LevierSidePanel;
   leviersView: LeviersViewState;
@@ -117,16 +110,13 @@ type PriorisationBoardProps = {
   levierNudge: LevierNudge;
 };
 
-type PriorisationContentProps = Omit<
-  PriorisationBoardProps,
-  'leviers' | 'potentiels'
-> & {
+type PriorisationContentProps = Omit<PriorisationBoardProps, 'leviers'> & {
   leviersQuery: LeviersPriorisationQuery;
 };
 
 type PriorisationBoardGateProps = {
   collectiviteId: number;
-  hasMobilisation: boolean;
+  access: PriorisationAccess;
   children: ReactNode;
 };
 
@@ -162,19 +152,6 @@ const toAnchor = ({
     return anchor;
   }
   return { ...anchor, callout: appLabels.priorisationLevierADebuterConsigne };
-};
-
-const PriorisationAlerts = ({
-  potentiels,
-}: PriorisationAlertsProps): JSX.Element => {
-  const isPotentielUnavailable = potentiels.status === 'indisponible';
-  return (
-    <div className="flex flex-col gap-4">
-      <VisibleWhen condition={isPotentielUnavailable}>
-        <Alert state="warning" title={appLabels.potentielsIndisponibles} />
-      </VisibleWhen>
-    </div>
-  );
 };
 
 const MatrixView = ({
@@ -292,10 +269,11 @@ const LeviersSection = ({
 
 const PriorisationBoardGate = ({
   collectiviteId,
-  hasMobilisation,
+  access,
   children,
 }: PriorisationBoardGateProps): JSX.Element => {
-  if (hasMobilisation) {
+  const isPriorisationOpen = access === 'open';
+  if (isPriorisationOpen) {
     return <>{children}</>;
   }
   return (
@@ -304,7 +282,10 @@ const PriorisationBoardGate = ({
         {children}
       </div>
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <PriorisationEmptyCard collectiviteId={collectiviteId} />
+        <PriorisationBlockedCard
+          collectiviteId={collectiviteId}
+          access={access}
+        />
       </div>
     </div>
   );
@@ -315,7 +296,6 @@ const PriorisationBoard = ({
   leviers,
   places,
   levierToPrioritizeId,
-  potentiels,
   preselection,
   levierSidePanel,
   leviersView,
@@ -357,7 +337,6 @@ const PriorisationBoard = ({
         preselectedActionsCount={preselection.actions.length}
         onLevierSelected={selectLevier}
       />
-      <PriorisationAlerts potentiels={potentiels} />
       <LeviersSection
         ref={leviersPanelRef}
         leviers={leviers}
@@ -394,17 +373,13 @@ const PriorisationContent = ({
     .with({ status: 'error' }, ({ retry }) => (
       <ErrorCard title={appLabels.uneErreurEstSurvenue} retry={retry} />
     ))
-    .with({ status: 'ready' }, ({ leviers, hasMobilisation, potentiels }) => (
-      <PriorisationBoardGate
-        collectiviteId={collectiviteId}
-        hasMobilisation={hasMobilisation}
-      >
+    .with({ status: 'ready' }, ({ leviers, access }) => (
+      <PriorisationBoardGate collectiviteId={collectiviteId} access={access}>
         <PriorisationBoard
           collectiviteId={collectiviteId}
           leviers={leviers}
           places={places}
           levierToPrioritizeId={levierToPrioritizeId}
-          potentiels={potentiels}
           preselection={preselection}
           levierSidePanel={levierSidePanel}
           leviersView={leviersView}
@@ -432,16 +407,17 @@ export const PriorisationLeviersView = (): JSX.Element => {
     actionsRef: priorisationTargets.useTarget('firstActionDeReference'),
   });
   const isLeviersReady = leviersQuery.status === 'ready';
-  const hasMobilisation = isLeviersReady && leviersQuery.hasMobilisation;
+  const isPriorisationOpen = isLeviersReady && leviersQuery.access === 'open';
   const levierNudge = useLevierNudge();
   const { isLevierRequestedByUrl } = useOpenLevierFromUrl({
-    isReady: isLeviersReady,
+    isReady: isPriorisationOpen,
     onLevierRequested: (levierId) => {
       levierNudge.dismiss();
       levierSidePanel.select(levierId);
     },
   });
-  const isTourReady = hasMobilisation && preselection.isReady;
+  const isTourReady = isPriorisationOpen && preselection.isReady;
+  const isAnalysisSubtitleVisible = isPriorisationOpen && !plansQuery.isLoading;
   const { Tour, view, setView, restartOnMatrix, isTourOver } =
     useLeviersViewWithTour({
       isTourReady: isTourReady && !isLevierRequestedByUrl,
@@ -465,7 +441,8 @@ export const PriorisationLeviersView = (): JSX.Element => {
               size="sm"
               icon="external-link-line"
               iconPosition="right"
-              disabled
+              href="https://aide.territoiresentransitions.fr/fr/article/outil-daide-a-la-priorisation-documentation-technique-xjsvj1/"
+              external
             >
               {appLabels.priorisationMethodologie}
             </Button>
@@ -481,7 +458,7 @@ export const PriorisationLeviersView = (): JSX.Element => {
             </VisibleWhen>
           </div>
         </PageHeader.Actions>
-        {isLeviersReady && !plansQuery.isLoading && (
+        {isAnalysisSubtitleVisible && (
           <PageHeader.Subtitle>
             <PriorisationAnalyse
               actionsCount={sumBy(

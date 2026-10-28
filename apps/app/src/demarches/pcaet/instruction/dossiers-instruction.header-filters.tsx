@@ -3,15 +3,16 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
-  DemarchePcaetObligationEnum,
+  collectivitePcaetObligationValues,
   pcaetStatutInstructionValues,
-  demarchePcaetObligationValues,
-  type DemarchePcaetObligation,
+  type CollectivitePcaetObligation,
   type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
 import { HeaderFilterButton } from '@/app/demarches/components/header-filter.button';
 import { Badge, SelectFilter } from '@tet/ui';
 import {
+  OBLIGATION_LABELS,
+  OBLIGATION_VARIANTS,
   statutInstructionLabel,
   STATUT_INSTRUCTION_VARIANTS,
 } from './instruction.constants';
@@ -62,7 +63,8 @@ export const StatutHeaderFilter = ({
 );
 
 /**
- * Obligatoire ou volontaire, dans l'en-tête de la colonne « Collectivité » :
+ * Obligatoire, volontaire ou non obligée, dans l'en-tête de la colonne
+ * « Collectivité » :
  * c'est une propriété de la collectivité au regard du PCAET, pas du dossier.
  */
 export const ObligationHeaderFilter = ({
@@ -70,23 +72,20 @@ export const ObligationHeaderFilter = ({
   filterCount,
   onChange,
 }: {
-  obligations: DemarchePcaetObligation[];
+  obligations: CollectivitePcaetObligation[];
   filterCount: number;
-  onChange: (obligations: DemarchePcaetObligation[]) => void;
+  onChange: (obligations: CollectivitePcaetObligation[]) => void;
 }) => (
   <SelectFilter
     dataTest="demarches.pcaet.instruction.filtre-obligation"
     dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
-    options={demarchePcaetObligationValues.map((value) => ({
+    options={collectivitePcaetObligationValues.map((value) => ({
       value,
-      label:
-        value === DemarchePcaetObligationEnum.OBLIGATOIRE
-          ? appLabels.demarcheObligationObligatoire
-          : appLabels.demarcheObligationVolontaire,
+      label: OBLIGATION_LABELS[value],
     }))}
     values={obligations}
     onChange={({ values }) =>
-      onChange((values ?? []) as DemarchePcaetObligation[])
+      onChange((values ?? []) as CollectivitePcaetObligation[])
     }
     placeholder={appLabels.filtrer}
     small
@@ -96,15 +95,9 @@ export const ObligationHeaderFilter = ({
       },
       renderOptionItem: (item) => (
         <Badge
-          title={
-            item.value === DemarchePcaetObligationEnum.OBLIGATOIRE
-              ? appLabels.demarcheObligationObligatoire
-              : appLabels.demarcheObligationVolontaire
-          }
+          title={OBLIGATION_LABELS[item.value as CollectivitePcaetObligation]}
           variant={
-            item.value === DemarchePcaetObligationEnum.OBLIGATOIRE
-              ? 'info'
-              : 'grey'
+            OBLIGATION_VARIANTS[item.value as CollectivitePcaetObligation]
           }
           size="sm"
           uppercase={false}

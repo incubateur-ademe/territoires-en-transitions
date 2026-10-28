@@ -12,15 +12,20 @@ export const ActionDeReferenceSaveToggle = ({
   readonly size: 'xs' | 'sm';
   readonly disabled?: boolean;
   readonly onToggle: () => void;
-}): JSX.Element => (
-  <Button
-    size={size}
-    icon={isSaved ? 'check-line' : 'bookmark-line'}
-    variant={isSaved ? 'primary' : 'outlined'}
-    aria-pressed={isSaved}
-    disabled={disabled}
-    onClick={onToggle}
-  >
-    {appLabels.actionDeReferenceSauvegarder}
-  </Button>
-);
+}): JSX.Element => {
+  const label = isSaved
+    ? appLabels.actionDeReferenceDejaSauvegardee
+    : appLabels.actionDeReferenceSauvegarder;
+
+  return (
+    <Button
+      size={size}
+      icon={isSaved ? 'check-line' : 'bookmark-line'}
+      variant={isSaved ? 'primary' : 'outlined'}
+      disabled={disabled}
+      onClick={onToggle}
+    >
+      {label}
+    </Button>
+  );
+};

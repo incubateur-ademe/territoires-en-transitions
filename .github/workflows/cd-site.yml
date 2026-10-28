@@ -19,6 +19,10 @@ on:
           - preprod
           - staging
           - prod
+      force-rebuild:
+        type: boolean
+        description: Reconstruire l'image même si ce commit est déjà publié
+        default: false
 
 jobs:
   deploy-site:
@@ -49,7 +53,9 @@ jobs:
         with:
           username: incubateur-ademe
           image: tet-site
-          tag: ${{ github.event.inputs.target }}-${{ steps.meta.outputs.git-short-hash }}
+          # Une image par commit, pas par (commit, environnement) : c'est ce qui
+          # rend la promotion preprod -> prod possible sans rebuild.
+          tag: ${{ steps.meta.outputs.git-short-hash }}
 
       - name: Build et push de l'image site
         uses: ./.github/actions/docker-build-push
@@ -60,31 +66,41 @@ jobs:
           image: ${{ steps.image.outputs.path }}
           cache-scope: tet-site
           push: ${{ !env.ACT }}
+          reuse-image: ${{ github.event.inputs.force-rebuild != 'true' }}
           secrets: |
             bryntum_token=BRYNTUM_ACCESS_TOKEN
-          build-args: |
-            STRAPI_KEY=${{ secrets.STRAPI_KEY }}
-            STRAPI_URL=${{ secrets.STRAPI_URL }}
-            POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
-            POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
-            AXEPTIO_ID=${{ vars.AXEPTIO_ID }}
-            APP_URL=${{ vars.APP_URL }}
-            CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-            BACKEND_URL=${{ vars.BACKEND_URL }}
 
       - uses: ./.github/actions/koyeb-cli
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
+      # Toute la configuration du site arrive ici : l'image est la même pour
+      # preprod, staging et prod (cf. packages/api/src/public-env.ts).
       - name: Déploie le site sur Koyeb
         env:
           ENV_NAME: ${{ github.event.inputs.target }}
           IMAGE: ${{ steps.image.outputs.path }}
+          STRAPI_KEY: ${{ secrets.STRAPI_KEY }}
+          STRAPI_URL: ${{ secrets.STRAPI_URL }}
+          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
+          POSTHOG_KEY: ${{ secrets.POSTHOG_KEY }}
+          AXEPTIO_ID: ${{ vars.AXEPTIO_ID }}
+          APP_URL: ${{ vars.APP_URL }}
+          CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: >
           koyeb services update $ENV_NAME-site/front
           --docker "$IMAGE"
           --docker-private-registry-secret ghcr
           --docker-skip-verify
+          --env "STRAPI_KEY=$STRAPI_KEY"
+          --env "STRAPI_URL=$STRAPI_URL"
+          --env "POSTHOG_HOST=$POSTHOG_HOST"
+          --env "POSTHOG_KEY=$POSTHOG_KEY"
+          --env "AXEPTIO_ID=$AXEPTIO_ID"
+          --env "APP_URL=$APP_URL"
+          --env "CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID"
+          --env "BACKEND_URL=$BACKEND_URL"
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url

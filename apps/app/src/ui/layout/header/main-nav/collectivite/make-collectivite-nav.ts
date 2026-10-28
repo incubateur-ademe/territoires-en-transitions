@@ -8,7 +8,10 @@ import {
   makeDemandesAvisUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { getReferentielDisplayMap } from '@tet/domain/collectivites';
+import {
+  canReadPriorisation,
+  getReferentielDisplayMap,
+} from '@tet/domain/collectivites';
 import { isTypeInstructeur } from '@tet/domain/demarches';
 import { hasRole, isUserVisitor, PlatformRole } from '@tet/domain/users';
 import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
@@ -45,7 +48,6 @@ export const filterNavItems = (
 export const makeCollectiviteNav: MakeCollectiviteNav = ({
   user,
   currentCollectivite,
-  referentielDisplay,
   isDemarchePcaetEnabled,
   isPriorisationEnabled,
 }) => {
@@ -82,22 +84,21 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
-      referentielsDisplay:
-        referentielDisplay ??
-        getReferentielDisplayMap(
-          currentCollectivite.collectivitePreferences.referentiels
-        ),
+      referentielsDisplay: getReferentielDisplayMap(
+        currentCollectivite.collectivitePreferences.referentiels
+      ),
       // `mode` par référentiel : sert à suffixer "(archivé)" dans la nav.
-      // Non pertinent quand l'affichage est forcé (feature flag TE désactivé).
-      referentielsPreferences: referentielDisplay
-        ? undefined
-        : currentCollectivite.collectivitePreferences.referentiels,
+      referentielsPreferences:
+        currentCollectivite.collectivitePreferences.referentiels,
       isDemarchePcaetEnabled,
     }),
     generatePriorisationLink({
       collectiviteId,
-      collectiviteAccesRestreint,
-      isVisitor,
+      canReadPriorisation: canReadPriorisation(user, {
+        collectiviteId,
+        collectiviteType: currentCollectivite.collectiviteType,
+        collectiviteAccesRestreint,
+      }),
       isPriorisationEnabled,
     }),
     {

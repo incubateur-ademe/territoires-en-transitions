@@ -36,6 +36,14 @@ export class MigrateCollectiviteDataService {
     private readonly buildSwitchToTeContextService: BuildSwitchToTeContextService
   ) {}
 
+  async hasTeData(collectiviteId: number, tx?: Transaction): Promise<boolean> {
+    return this.migrateCollectiviteDataRepository.hasCollectiviteReferentielData(
+      collectiviteId,
+      ReferentielIdEnum.TE,
+      tx
+    );
+  }
+
   async migrate(
     collectiviteId: number,
     prefs: CollectiviteReferentielPreferences,
@@ -44,14 +52,7 @@ export class MigrateCollectiviteDataService {
     // de l'appelant
     { user, tx }: ServiceSecondArg & { tx: Transaction }
   ): Promise<Result<void, SwitchToTeError>> {
-    const hasTeData =
-      await this.migrateCollectiviteDataRepository.hasCollectiviteReferentielData(
-        collectiviteId,
-        ReferentielIdEnum.TE,
-        tx
-      );
-
-    if (hasTeData) {
+    if (await this.hasTeData(collectiviteId, tx)) {
       return failure(SwitchToTeErrorEnum.REFERENTIEL_TE_NOT_EMPTY);
     }
 

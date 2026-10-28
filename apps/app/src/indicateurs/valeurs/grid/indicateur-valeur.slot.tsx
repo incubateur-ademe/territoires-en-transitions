@@ -76,7 +76,7 @@ export const IndicateurValeurSlot = ({
           size="xs"
           variant="white"
           className={cn(
-            'h-10 min-w-full font-normal !border-transparent whitespace-nowrap',
+            'h-10 min-w-full justify-center font-normal !border-transparent whitespace-nowrap',
             isEditing && 'invisible'
           )}
           title={fieldLabel}
@@ -105,7 +105,7 @@ export const IndicateurValeurSlot = ({
               edit={edit}
               inputType="text"
               containerClassname="h-10"
-              className="min-w-0 w-full"
+              className="min-w-0 w-full text-center"
               displaySize="sm"
               onBlur={() => void save()}
               onCommit={() => void save()}

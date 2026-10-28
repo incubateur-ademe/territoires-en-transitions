@@ -58,6 +58,8 @@ export type DemarchePcaet = {
   planActionIds: number[];
   /** Parmi eux, les plans importés par IA pas encore vérifiés. */
   unverifiedPlanActionIds: number[];
+  /** Parmi eux, les plans dont des actions ont leurs secteurs réglementaires à renseigner. */
+  secteursARenseignerPlanActionIds: number[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur.
    * Le front ne recompose aucune règle : il lit `enabled` et `blockedBy`.

@@ -3,10 +3,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {
-  demarchePcaetObligationValues,
+  collectivitePcaetObligationValues,
   pcaetStatutInstructionValues,
   STATUTS_INSTRUCTION_PAR_DEFAUT,
-  type DemarchePcaetObligation,
+  type CollectivitePcaetObligation,
   type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
 import {
@@ -19,6 +19,7 @@ import {
 import { useEffect } from 'react';
 
 const SORT_VALUES = [
+  'priorite',
   'echeance',
   'dateLancement',
   'collectivite',
@@ -27,16 +28,17 @@ const SORT_VALUES = [
 ] as const;
 const DIRECTION_VALUES = ['asc', 'desc'] as const;
 
-export type ColonneTriable = (typeof SORT_VALUES)[number];
+export type TriDossiers = (typeof SORT_VALUES)[number];
+/** La priorité, tri par défaut, n'est celui d'aucune colonne. */
+export type ColonneTriable = Exclude<TriDossiers, 'priorite'>;
 export type DirectionTri = (typeof DIRECTION_VALUES)[number];
 
 const LIMIT = 25;
 
 const parsers = {
   page: parseAsInteger.withDefault(1),
-  sort: parseAsStringLiteral(SORT_VALUES).withDefault('echeance'),
-  // Voir le défaut serveur : échéance décroissante, donc transmissions les
-  // plus récentes en tête.
+  // Voir le défaut serveur : les dossiers en instruction en tête.
+  sort: parseAsStringLiteral(SORT_VALUES).withDefault('priorite'),
   direction: parseAsStringLiteral(DIRECTION_VALUES).withDefault('desc'),
   /**
    * Le défaut vient du domaine, comme côté serveur : l'URL sans paramètre et
@@ -46,7 +48,7 @@ const parsers = {
     parseAsStringLiteral(pcaetStatutInstructionValues)
   ).withDefault([...STATUTS_INSTRUCTION_PAR_DEFAUT]),
   obligations: parseAsArrayOf(
-    parseAsStringLiteral(demarchePcaetObligationValues)
+    parseAsStringLiteral(collectivitePcaetObligationValues)
   ).withDefault([]),
   regions: parseAsArrayOf(parseAsString).withDefault([]),
 };
@@ -146,7 +148,7 @@ export const useListDossiersInstruction = (serviceId: number) => {
   /** Tout changement de filtre ramène à la première page. */
   const setFiltres = (filtres: {
     statuts?: PcaetStatutInstruction[];
-    obligations?: DemarchePcaetObligation[];
+    obligations?: CollectivitePcaetObligation[];
     regions?: string[];
   }) => setParams({ ...filtres, page: 1 });
 

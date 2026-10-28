@@ -1,6 +1,7 @@
 import { Pertinence } from '@tet/domain/collectivites';
 import { CategorieAction, Levier } from '@tet/domain/shared';
 import { capitalize, plural } from '@tet/ui/labels/plural';
+import { compact } from 'es-toolkit';
 
 const pertinenceLabels = {
   non_pertinent: 'non pertinent',
@@ -16,6 +17,23 @@ const actionsAnalyseesLabel = plural({ one: 'action', other: 'actions' });
 const plansAnalysesLabel = plural({ one: 'plan', other: 'plans' });
 
 const issuesLabel = plural({ one: 'issue', other: 'issues' });
+
+const actionsOriginLabel = ({
+  actionsCount,
+  plansCount,
+}: {
+  actionsCount: number;
+  plansCount: number;
+}): string => {
+  if (plansCount === 0) {
+    return '';
+  }
+  const issues = issuesLabel({ count: actionsCount, withoutCount: true });
+  if (plansCount === 1) {
+    return `${issues} de votre plan`;
+  }
+  return `${issues} de vos ${plansAnalysesLabel({ count: plansCount })}`;
+};
 
 const categorieActionLabels = {
   amenagement: 'Aménagement & infrastructures',
@@ -110,8 +128,6 @@ export const collectivitesLabels = {
     categorieActionLabels[categorie],
   categorieActionShortLabel: (categorie: CategorieAction): string =>
     categorieActionShortLabels[categorie],
-  potentielsIndisponibles:
-    "Le potentiel de réduction de GES par levier n'est disponible que pour les EPCI dont la trajectoire SNBC a été calculée.",
   leviersSansPotentiel: plural({
     one: 'levier hors matrice, sans potentiel de réduction connu',
     other: 'leviers hors matrice, sans potentiel de réduction connu',
@@ -161,6 +177,14 @@ export const collectivitesLabels = {
   priorisationVueBloqueeDescription:
     'La matrice repose sur les actions de vos plans : elle montre où votre collectivité mobilise déjà chaque levier. Sans action, elle ne peut pas être calculée.',
   ajouterDesActions: 'Ajouter des actions',
+  priorisationTrajectoireManquanteTitre:
+    'Calculez votre trajectoire SNBC pour accéder à cette vue',
+  priorisationTrajectoireManquanteDescription:
+    "L'aide à la priorisation s'appuie sur la trajectoire SNBC de votre collectivité : elle permet d'estimer le potentiel de réduction de GES de chaque levier. Sans trajectoire calculée, elle ne peut pas être affichée.",
+  calculerMaTrajectoireSnbc: 'Calculer ma trajectoire SNBC',
+  priorisationReserveeAuxEpciTitre: 'Cette vue est réservée aux EPCI',
+  priorisationReserveeAuxEpciDescription:
+    "L'aide à la priorisation s'appuie sur la trajectoire SNBC, qui n'est calculée que pour les EPCI. Elle ne peut pas être affichée pour votre collectivité.",
   priorisationAnalyse: ({
     actionsCount,
     plansCount,
@@ -168,14 +192,10 @@ export const collectivitesLabels = {
     actionsCount: number;
     plansCount: number;
   }): string =>
-    `Analyse de ${actionsAnalyseesLabel({
-      count: actionsCount,
-    })} ${issuesLabel({
-      count: actionsCount,
-      withoutCount: true,
-    })} de vos ${plansAnalysesLabel({
-      count: plansCount,
-    })}. L'impact GES et la mobilisation sont des estimations.`,
+    `${compact([
+      `Analyse de ${actionsAnalyseesLabel({ count: actionsCount })}`,
+      actionsOriginLabel({ actionsCount, plansCount }),
+    ]).join(' ')}. L'impact GES et la mobilisation sont des estimations.`,
 
   selectionnerUnLevier:
     'Cliquez sur un levier de la matrice pour consulter ses actions de référence.',

@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -18,7 +19,10 @@ type ServerDemarche = RouterOutput['demarches']['pcaet']['get'];
 type UpdateInput = RouterInput['demarches']['pcaet']['update'];
 type HeaderPatch = Omit<UpdateInput, 'collectiviteId' | 'demarcheId'>;
 
-const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
+const toFrontDemarche = (
+  server: ServerDemarche,
+  { isFicheSecteursEnabled }: { isFicheSecteursEnabled: boolean }
+): DemarchePcaet => ({
   id: server.id,
   collectiviteId: server.collectiviteId,
   type: server.type,
@@ -38,6 +42,11 @@ const toFrontDemarche = (server: ServerDemarche): DemarchePcaet => ({
   pilotes: server.pilotes,
   planActionIds: server.planActionIds,
   unverifiedPlanActionIds: server.unverifiedPlanActionIds,
+  // Même règle que le serveur : sans le flag, les secteurs ne se voient ni ne
+  // se corrigent, donc ne retiennent pas le programme d'actions.
+  secteursARenseignerPlanActionIds: isFicheSecteursEnabled
+    ? server.secteursARenseignerPlanActionIds
+    : [],
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,
@@ -91,9 +100,15 @@ export const useDemarchePcaet = (demarcheId: number) => {
     trpc.demarches.pcaet.get.queryOptions({ collectiviteId, demarcheId })
   );
 
+  const isFicheSecteursEnabled = useIsFeatureFlagEnabled(
+    'is-fiche-secteurs-enabled'
+  );
   const demarche = useMemo(
-    () => (serverDemarche ? toFrontDemarche(serverDemarche) : null),
-    [serverDemarche]
+    () =>
+      serverDemarche
+        ? toFrontDemarche(serverDemarche, { isFicheSecteursEnabled })
+        : null,
+    [serverDemarche, isFicheSecteursEnabled]
   );
 
   const invalidateList = useCallback(

@@ -146,6 +146,34 @@ describe('PersonnesRouter', () => {
     });
   });
 
+  test('list: membre non vérifié de la collectivité', async () => {
+    const { collectivite: autreCollectivite, users } =
+      await addTestCollectiviteAndUsers(db, {
+        users: [{ role: CollectiviteRole.ADMIN, verified: false }],
+      });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(users[0]),
+    });
+
+    const result = await caller.collectivites.personnes.list({
+      collectiviteIds: [autreCollectivite.id],
+    });
+    expect(result.length).toBeGreaterThan(0);
+  });
+
+  test('list: non vérifié sans accès à la collectivité', async () => {
+    const { user } = await addTestUser(db, { verified: false });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+
+    await expect(
+      caller.collectivites.personnes.list({
+        collectiviteIds: [collectivite.id],
+      })
+    ).rejects.toThrowError(/Droits insuffisants/);
+  });
+
   test('list: not authenticated', async () => {
     const caller = router.createCaller({ user: null });
 

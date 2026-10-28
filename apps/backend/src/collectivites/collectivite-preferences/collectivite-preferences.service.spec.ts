@@ -1,8 +1,4 @@
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import {
-  getEnabledReferentielIdsFromDisplayMap,
-  REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
-} from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
 import { CollectivitePreferencesService } from './collectivite-preferences.service';
 
@@ -24,20 +20,19 @@ describe('CollectivitePreferencesService', () => {
   );
 
   describe('getEnabledReferentiels', () => {
-    it('retourne les référentiels par défaut quand le feature flag est désactivé', async () => {
+    it('retourne les référentiels par défaut sans collectivité', async () => {
       const getPreferencesSpy = vi.spyOn(service, 'getPreferences');
 
       const enabledReferentiels = await service.getEnabledReferentiels(
-        false,
-        collectiviteId,
+        undefined,
         user
       );
 
       expect(getPreferencesSpy).not.toHaveBeenCalled();
-      expect(enabledReferentiels).toEqual(['eci', 'cae']);
+      expect(enabledReferentiels).toEqual(['cae', 'eci', 'te']);
     });
 
-    it('retourne les préférences collectivité quand le feature flag est activé', async () => {
+    it('retourne les préférences de la collectivité', async () => {
       vi.spyOn(service, 'getPreferences').mockResolvedValue({
         success: true,
         data: {
@@ -50,7 +45,6 @@ describe('CollectivitePreferencesService', () => {
       });
 
       const enabledReferentiels = await service.getEnabledReferentiels(
-        true,
         collectiviteId,
         user
       );
@@ -79,7 +73,6 @@ describe('CollectivitePreferencesService', () => {
       });
 
       const enabledReferentiels = await service.getEnabledReferentiels(
-        true,
         collectiviteId,
         user
       );
@@ -94,16 +87,11 @@ describe('CollectivitePreferencesService', () => {
       });
 
       const enabledReferentiels = await service.getEnabledReferentiels(
-        true,
         collectiviteId,
         user
       );
 
-      expect(enabledReferentiels).toEqual(
-        getEnabledReferentielIdsFromDisplayMap(
-          REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY
-        )
-      );
+      expect(enabledReferentiels).toEqual(['cae', 'eci', 'te']);
     });
 
     it("revient au comportement par défaut si les préférences n'existent pas", async () => {
@@ -113,12 +101,11 @@ describe('CollectivitePreferencesService', () => {
       });
 
       const enabledReferentiels = await service.getEnabledReferentiels(
-        true,
         collectiviteId,
         user
       );
 
-      expect(enabledReferentiels).toEqual(['eci', 'cae']);
+      expect(enabledReferentiels).toEqual(['cae', 'eci', 'te']);
     });
   });
 });

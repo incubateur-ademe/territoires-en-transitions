@@ -174,6 +174,18 @@ describe('getEligibiliteType', () => {
 });
 
 describe('getSwitchToTeBlockers', () => {
+  test('TE déjà renseigné seul → un blocage REFERENTIEL_TE_NOT_EMPTY', () => {
+    expect(
+      getSwitchToTeBlockers({
+        cotActif: false,
+        isSyndicat: false,
+        isDrom: false,
+        referentielsEnWrite: [],
+        teNonVide: true,
+      })
+    ).toEqual([{ type: 'REFERENTIEL_TE_NOT_EMPTY' }]);
+  });
+
   test('COT actif seul → un blocage COT_ACTIVE', () => {
     expect(
       getSwitchToTeBlockers({

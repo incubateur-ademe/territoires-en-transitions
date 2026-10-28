@@ -4,7 +4,6 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import type { CollectiviteReferentielPreferences } from '@tet/domain/collectivites';
 import {
@@ -38,7 +37,6 @@ export class SwitchToTeService {
   private readonly logger = new Logger(SwitchToTeService.name);
 
   constructor(
-    private readonly trackingService: TrackingService,
     private readonly permissionService: PermissionService,
     private readonly collectivitesService: CollectivitesService,
     private readonly collectiviteReferentielModeService: CollectiviteReferentielModeService,
@@ -65,6 +63,7 @@ export class SwitchToTeService {
     COLLECTIVITE_IS_DROM: SwitchToTeErrorEnum.COLLECTIVITE_IS_DROM,
     AUDIT_REQUEST_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_REQUEST_IN_PROGRESS,
     AUDIT_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_IN_PROGRESS,
+    REFERENTIEL_TE_NOT_EMPTY: SwitchToTeErrorEnum.REFERENTIEL_TE_NOT_EMPTY,
   };
 
   /**
@@ -80,7 +79,7 @@ export class SwitchToTeService {
       (referentiel) => prefs[referentiel].mode === 'write'
     );
 
-    const [cotActif, { isSyndicat, isDrom }, referentielsEnWrite] =
+    const [cotActif, { isSyndicat, isDrom }, referentielsEnWrite, teNonVide] =
       await Promise.all([
         this.getLabellisationService.isCotActif(collectiviteId),
         this.collectivitesService
@@ -99,6 +98,7 @@ export class SwitchToTeService {
             };
           })
         ),
+        this.migrateCollectiviteDataService.hasTeData(collectiviteId),
       ]);
 
     return getSwitchToTeBlockers({
@@ -106,6 +106,7 @@ export class SwitchToTeService {
       isSyndicat,
       isDrom,
       referentielsEnWrite,
+      teNonVide,
     });
   }
 
@@ -152,24 +153,6 @@ export class SwitchToTeService {
     collectiviteId: number,
     { user }: ServiceSecondArg
   ): Promise<Result<SwitchToTeStatus, SwitchToTeError>> {
-    const isReferentielTeEnabled = await this.trackingService.isFeatureEnabled(
-      'is-referentiel-te-enabled',
-      user.id,
-      collectiviteId
-    );
-    if (!isReferentielTeEnabled) {
-      return failure(SwitchToTeErrorEnum.REFERENTIEL_TE_DISABLED);
-    }
-
-    const isSwitchToTeEnabled = await this.trackingService.isFeatureEnabled(
-      'is-switch-to-te-enabled',
-      user.id,
-      collectiviteId
-    );
-    if (!isSwitchToTeEnabled) {
-      return success({ value: SwitchToTeErrorEnum.SWITCH_TO_TE_DISABLED });
-    }
-
     const preferencesResult =
       await this.collectiviteReferentielModeService.getReferentielPreferences(
         collectiviteId
@@ -228,8 +211,6 @@ export class SwitchToTeService {
       switch (status.value) {
         case 'UNAUTHORIZED':
           return failure('UNAUTHORIZED');
-        case 'SWITCH_TO_TE_DISABLED':
-          return failure(SwitchToTeErrorEnum.SWITCH_TO_TE_DISABLED);
         case 'NOT_ELIGIBLE':
           return failure(SwitchToTeErrorEnum.NOT_ELIGIBLE);
         case 'BLOCKED':

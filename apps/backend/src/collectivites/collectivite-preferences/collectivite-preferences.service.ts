@@ -4,9 +4,9 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import type { Result } from '@tet/backend/utils/result.type';
 import type { CollectivitePreferences } from '@tet/domain/collectivites';
 import {
+  defaultCollectivitePreferences,
   getEnabledReferentielIdsFromDisplayMap,
   getReferentielDisplayMap,
-  REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
@@ -44,23 +44,24 @@ export class CollectivitePreferencesService {
     await this.permission.assertAllowed(
       user,
       'collectivites.read',
-      ResourceType.PLATEFORME,
-      null
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
     );
     return this.repository.getPreferencesByCollectiviteId(collectiviteId);
   }
 
   /**
-   * Fourni la liste des référentiels activés en fonction du feature flag
-   * `is-referentiel-te-enabled` et des préférences
+   * Fourni la liste des référentiels activés en fonction des préférences de
+   * la collectivité (préférences par défaut à défaut).
    */
   async getEnabledReferentiels(
-    isReferentielTEEnabled: boolean,
     collectiviteId: number | undefined,
     user: AuthenticatedUser
   ): Promise<ReferentielId[]> {
-    let referentielsDisplayMap = REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY;
-    if (isReferentielTEEnabled && collectiviteId) {
+    let referentielsDisplayMap = getReferentielDisplayMap(
+      defaultCollectivitePreferences.referentiels
+    );
+    if (collectiviteId) {
       const result = await this.getPreferences(collectiviteId, user);
       if (result.success && result.data) {
         const { referentiels } = result.data;

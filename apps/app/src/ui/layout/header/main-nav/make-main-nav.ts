@@ -10,7 +10,6 @@ import type { MakeMainNav } from './make-main-nav.contract';
 export const makeMainNav: MakeMainNav = ({
   user,
   currentCollectivite,
-  referentielDisplay,
   isDemarchePcaetEnabled,
   isPriorisationEnabled,
   canReadReferentsPcaet = false,
@@ -48,7 +47,6 @@ export const makeMainNav: MakeMainNav = ({
     return makeCollectiviteNav({
       user,
       currentCollectivite,
-      referentielDisplay,
       isDemarchePcaetEnabled,
       isPriorisationEnabled,
     });

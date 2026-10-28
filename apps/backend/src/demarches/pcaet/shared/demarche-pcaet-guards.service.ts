@@ -51,6 +51,13 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
   /** Parmi eux, les plans importés par IA pas encore vérifiés. */
   unverifiedPlanActionIds?: readonly number[];
   /**
+   * Parmi eux, les plans dont des actions ont encore leurs secteurs
+   * réglementaires à renseigner. Vide quand le feature flag
+   * `is-fiche-secteurs-enabled` est inactif : on n'exige pas ce que
+   * l'utilisateur ne peut ni voir ni corriger.
+   */
+  secteursARenseignerPlanActionIds?: readonly number[];
+  /**
    * Environnements de démonstration : le dossier se passe d'un diagnostic
    * complet (cf. feature flag PostHog `is-demarche-pcaet-bypass-diagnostic-enabled`).
    * Faux partout ailleurs.
@@ -88,7 +95,8 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
     user ? isDemarchePcaetPilote(user.id, context.pilotes) : undefined,
 
   // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
-  // diagnostic renseigné ET un programme d'actions rattaché.
+  // diagnostic renseigné ET un programme d'actions rattaché, vérifié, dont
+  // chaque action a ses secteurs réglementaires.
   //
   // Une transmission l'a déjà fait attester : le guard rend alors vrai sans rien
   // relire. Ce n'est pas un raccourci de performance, c'est la seule lecture
@@ -106,13 +114,15 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
       : context.documentsComplets === undefined ||
         context.diagnostic === undefined ||
         context.planActionIds === undefined ||
-        context.unverifiedPlanActionIds === undefined
+        context.unverifiedPlanActionIds === undefined ||
+        context.secteursARenseignerPlanActionIds === undefined
       ? undefined
       : context.documentsComplets &&
         (context.isDiagnosticBypassed === true ||
           isDemarchePcaetDiagnosticComplet(context.diagnostic)) &&
         context.planActionIds.length > 0 &&
-        context.unverifiedPlanActionIds.length === 0,
+        context.unverifiedPlanActionIds.length === 0 &&
+        context.secteursARenseignerPlanActionIds.length === 0,
 
   avisTousRendus: (context) =>
     context.demandesAvis === undefined
@@ -188,6 +198,25 @@ export class DemarchePcaetGuardsService {
     return isBypassed;
   }
 
+  private async listSecteursARenseignerPlanActionIds(
+    collectiviteId: number,
+    planActionIds: readonly number[],
+    user: AuthenticatedUser | null,
+    tx?: Transaction
+  ): Promise<number[]> {
+    const isEnabled = await this.trackingService.isFeatureEnabled(
+      'is-fiche-secteurs-enabled',
+      user?.id,
+      collectiviteId
+    );
+    return isEnabled
+      ? this.planActionsRepository.listSecteursARenseignerPlanActionIds(
+          { collectiviteId, planActionIds },
+          tx
+        )
+      : [];
+  }
+
   /**
    * Lit ce dont dépendent les guards du statut courant, et rien de plus : le
    * workflow dit quels guards comptent ici, donc quelles requêtes valent la
@@ -261,11 +290,21 @@ export class DemarchePcaetGuardsService {
         : Promise.resolve(undefined),
     ]);
 
+    const secteursARenseignerPlanActionIds = planActionIds
+      ? await this.listSecteursARenseignerPlanActionIds(
+          demarche.collectiviteId,
+          planActionIds,
+          user,
+          tx
+        )
+      : undefined;
+
     return {
       ...demarche,
       pilotes,
       planActionIds,
       unverifiedPlanActionIds,
+      secteursARenseignerPlanActionIds,
       demandesAvis,
       pcaetSuivantAdopte,
       isDiagnosticBypassed: needsDossier

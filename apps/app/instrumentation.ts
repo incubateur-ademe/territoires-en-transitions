@@ -18,6 +18,15 @@ export const onRequestError: Instrumentation.onRequestError = async (
     return;
   }
 
+  // Le navigateur a fermé la connexion pendant le streaming du rendu (page
+  // quittée, prefetch annulé) : React interrompt le rendu, ce n'est pas un bug.
+  if (
+    error instanceof Error &&
+    error.message === 'The destination stream closed early.'
+  ) {
+    return;
+  }
+
   const { captureServerException, getDistinctIdFromCookie } = await import(
     './src/utils/error-tracking/capture-exception.server'
   );

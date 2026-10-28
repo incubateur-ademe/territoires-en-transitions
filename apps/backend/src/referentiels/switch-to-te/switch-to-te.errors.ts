@@ -8,8 +8,6 @@ import {
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
 const specificErrors = [
-  'REFERENTIEL_TE_DISABLED',
-  'SWITCH_TO_TE_DISABLED',
   'ALREADY_SWITCHED',
   'NOT_ELIGIBLE',
   'COT_ACTIVE',
@@ -30,14 +28,6 @@ const specificErrors = [
 ] as const;
 
 export const switchToTeTrpcErrorEntries = {
-  REFERENTIEL_TE_DISABLED: {
-    code: 'FORBIDDEN',
-    message: "Le référentiel TE n'est pas activé pour cette collectivité",
-  },
-  SWITCH_TO_TE_DISABLED: {
-    code: 'FORBIDDEN',
-    message: "La bascule vers le référentiel TE n'est pas activée",
-  },
   ALREADY_SWITCHED: {
     code: 'CONFLICT',
     message: 'La bascule vers TE a déjà été effectuée',

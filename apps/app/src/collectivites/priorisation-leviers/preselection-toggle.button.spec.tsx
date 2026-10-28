@@ -4,7 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PreselectionToggleButton } from './preselection-toggle.button';
 import type { Preselection, PreselectionStatus } from './use-preselection';
 
-const BUTTON_NAME = 'Sauvegarder';
+const SAVE_BUTTON_NAME = 'Sauvegarder';
+const SAVED_BUTTON_NAME = 'Sauvegardé';
 
 const preselectionMock = vi.hoisted(() => ({
   add: vi.fn<Preselection['add']>(),
@@ -29,14 +30,14 @@ afterEach(cleanup);
 const renderButtonWithStatus = (status: PreselectionStatus): HTMLElement => {
   preselectionMock.statusOf.mockReturnValue(status);
   render(<PreselectionToggleButton action={aireCovoiturageAction} />);
-  return screen.getByRole('button', { name: BUTTON_NAME });
+  return screen.getByRole('button');
 };
 
 describe('action-disponible', () => {
-  it("n'est pas enfoncé", () => {
+  it('propose « Sauvegarder »', () => {
     const button = renderButtonWithStatus('disponible');
 
-    expect(button.getAttribute('aria-pressed')).toBe('false');
+    expect(button.textContent).toBe(SAVE_BUTTON_NAME);
   });
 
   it("ajoute l'action à la présélection au clic", () => {
@@ -51,10 +52,10 @@ describe('action-disponible', () => {
 });
 
 describe('action-preselectionnee', () => {
-  it('est enfoncé', () => {
+  it('affiche « Sauvegardé »', () => {
     const button = renderButtonWithStatus('preselectionnee');
 
-    expect(button.getAttribute('aria-pressed')).toBe('true');
+    expect(button.textContent).toBe(SAVED_BUTTON_NAME);
   });
 
   it("retire l'action de la présélection au clic", () => {
@@ -70,10 +71,10 @@ describe('action-preselectionnee', () => {
 });
 
 describe('action-ignoree', () => {
-  it("n'est pas enfoncé", () => {
+  it('propose « Sauvegarder »', () => {
     const button = renderButtonWithStatus('ignoree');
 
-    expect(button.getAttribute('aria-pressed')).toBe('false');
+    expect(button.textContent).toBe(SAVE_BUTTON_NAME);
   });
 
   it("ajoute l'action à la présélection au clic", () => {

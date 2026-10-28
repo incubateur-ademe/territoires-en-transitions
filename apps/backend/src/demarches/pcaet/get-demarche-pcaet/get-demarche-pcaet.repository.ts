@@ -62,12 +62,18 @@ export class GetDemarchePcaetRepository {
             tx
           ),
         ]);
+      const secteursARenseignerPlanActionIds =
+        await this.planActionsRepository.listSecteursARenseignerPlanActionIds(
+          { collectiviteId, planActionIds },
+          tx
+        );
       return success(
         toDemarchePcaetDto(
           rows[0],
           pilotesByDemarcheId.get(demarcheId) ?? [],
           planActionIds,
-          unverifiedPlanActionIds
+          unverifiedPlanActionIds,
+          secteursARenseignerPlanActionIds
         )
       );
     } catch (error) {

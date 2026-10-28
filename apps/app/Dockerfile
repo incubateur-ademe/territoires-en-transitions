@@ -23,8 +23,8 @@
 
 # Épinglée par digest — cf. apps/backend/Dockerfile. Pour bumper :
 # `docker buildx imagetools inspect node:24-alpine`.
-ARG NODE_IMAGE=node:24.21.0-alpine@sha256:be80f76cf40ec8e42b9bec49f60a55e0660f30af58d3e5a25530785b30ea67e2
-ARG PNPM_VERSION=9.15.5
+ARG NODE_IMAGE=node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
+ARG PNPM_VERSION=12.15.0
 
 FROM ${NODE_IMAGE} AS base
 ARG PNPM_VERSION
@@ -33,19 +33,19 @@ ARG PNPM_VERSION
 RUN apk add --no-cache libc6-compat
 WORKDIR /workspace
 ENV CI=true
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 # The @bryntum scope is a private registry (see .npmrc); the token is only
 # needed for these layers and must never land in an image layer or its history.
 FROM base AS fetch
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm fetch
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm fetch
 
 FROM fetch AS builder
 COPY --parents package.json apps/*/package.json packages/*/package.json e2e/package.json ./
 RUN --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
-    pnpm install -r --offline --frozen-lockfile
+    env "pnpm_config_//npm.bryntum.com/:_authToken=$BRYNTUM_ACCESS_TOKEN" pnpm install -r --offline --frozen-lockfile
 
 COPY . .
 
@@ -82,9 +82,7 @@ ENV GITHUB_ACTIONS=$GITHUB_ACTIONS \
 ENV NX_NO_CLOUD=true
 
 # POSTHOG_API_KEY is only used by the PostHog build plugin to upload source
-# maps; it stays out of ENV and image history. The
-# bryntum secret here just silences pnpm's harmless "can't resolve
-# ${BRYNTUM_ACCESS_TOKEN} in .npmrc" warning (next build doesn't re-install).
+# maps; it stays out of ENV and image history.
 # Les caches de travail Next/Nx restent locaux au builder : ils ne doivent
 # pas gonfler la couche exportée à chaque commit. Ces mounts ne sont pas
 # restaurés depuis le registre sur les runners éphémères ; le cache distant
@@ -92,7 +90,6 @@ ENV NX_NO_CLOUD=true
 RUN --mount=type=cache,id=tet-app-next,target=/workspace/apps/app/.next/cache \
     --mount=type=cache,id=tet-app-nx,target=/workspace/.nx/cache \
     --mount=type=secret,id=posthog_api_key,env=POSTHOG_API_KEY \
-    --mount=type=secret,id=bryntum_token,env=BRYNTUM_ACCESS_TOKEN \
     pnpm run build:app
 
 FROM ${NODE_IMAGE} AS runner

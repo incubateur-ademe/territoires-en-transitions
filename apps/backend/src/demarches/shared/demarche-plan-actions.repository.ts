@@ -5,8 +5,12 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DEMARCHE_PCAET_EN_COURS_STATUSES } from '@tet/domain/demarches';
+import { ListPlanSecteursCountsRepository } from '@tet/backend/plans/fiches/fiche-secteurs/list-plan-secteurs-counts.repository';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { PlanStatusEnum } from '@tet/domain/plans';
+import {
+  countPlanSecteursARenseigner,
+  PlanStatusEnum,
+} from '@tet/domain/plans';
 import { and, asc, eq, inArray, ne } from 'drizzle-orm';
 
 /** Autre démarche active tenant déjà un plan que l'on cherche à rattacher. */
@@ -27,7 +31,10 @@ export type DemarcheHoldingPlan = {
 export class DemarchePlanActionsRepository {
   private readonly logger = new Logger(DemarchePlanActionsRepository.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly planSecteursCountsRepository: ListPlanSecteursCountsRepository
+  ) {}
 
   /** Plans rattachés à chaque démarche, dans l'ordre de rattachement. */
   async listByDemarcheIds(
@@ -108,6 +115,31 @@ export class DemarchePlanActionsRepository {
       tx
     );
     return byDemarcheId.get(demarcheId) ?? [];
+  }
+
+  /**
+   * Parmi ces plans, ceux dont des actions ont encore leurs secteurs
+   * réglementaires à renseigner : le programme d'actions n'est complet que
+   * lorsque chaque action a les siens.
+   */
+  async listSecteursARenseignerPlanActionIds(
+    {
+      collectiviteId,
+      planActionIds,
+    }: { collectiviteId: number; planActionIds: readonly number[] },
+    tx?: Transaction
+  ): Promise<number[]> {
+    if (planActionIds.length === 0) {
+      return [];
+    }
+    const counts = await this.planSecteursCountsRepository.listCounts(
+      { collectiviteId, planIds: [...planActionIds] },
+      tx
+    );
+    return counts
+      .filter((planCounts) => countPlanSecteursARenseigner(planCounts) > 0)
+      .map(({ planId }) => planId)
+      .sort((a, b) => a - b);
   }
 
   async listPlanActionIds(

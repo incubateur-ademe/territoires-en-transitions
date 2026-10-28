@@ -4,13 +4,14 @@ import {
 } from '../../collectivites/identite-collectivite.schema';
 import type { CollectiviteNatureType } from '../../collectivites/collectivite-banatic-type.enum';
 import {
-  DemarchePcaetObligationEnum,
-  type DemarchePcaetObligation,
-} from './demarche-pcaet-obligation.enum.schema';
+  CollectivitePcaetObligationEnum,
+  type CollectivitePcaetObligation,
+} from './collectivite-pcaet-obligation.enum.schema';
 
 /**
  * Seuil légal de l'obligation PCAET : au-delà, un EPCI à fiscalité propre doit
- * adopter un plan ; en deçà, il peut s'y engager volontairement.
+ * adopter un plan ; en deçà, il n'y est pas obligé et peut s'y engager
+ * volontairement.
  *
  * À ne pas confondre avec `PLUS_DE_45000`, qui est le seuil du plan local de
  * chaleur et de froid — intégré au PCAET, mais qui n'en déclenche pas
@@ -42,6 +43,9 @@ export type AssujettissementEntree = {
  * la porte : c'est ce qui permet à un service de l'État de distinguer, parmi
  * les collectivités qui n'ont rien déposé, celles qui le devraient.
  *
+ * Jamais « volontaire » : ce mot dit une démarche engagée, et la collectivité
+ * n'en a pas. Sous le seuil, elle est non obligée.
+ *
  * Rend `null` plutôt qu'une valeur par défaut dans deux cas où l'affirmer
  * serait faux :
  *
@@ -56,7 +60,7 @@ export type AssujettissementEntree = {
 export const getObligationAssujettissement = ({
   natureInsee,
   population,
-}: AssujettissementEntree): DemarchePcaetObligation | null => {
+}: AssujettissementEntree): CollectivitePcaetObligation | null => {
   if (!estNaturePorteusePcaet(natureInsee)) {
     return null;
   }
@@ -64,6 +68,6 @@ export const getObligationAssujettissement = ({
     return null;
   }
   return population > SEUIL_POPULATION_PCAET
-    ? DemarchePcaetObligationEnum.OBLIGATOIRE
-    : DemarchePcaetObligationEnum.VOLONTAIRE;
+    ? CollectivitePcaetObligationEnum.OBLIGATOIRE
+    : CollectivitePcaetObligationEnum.NON_OBLIGE;
 };

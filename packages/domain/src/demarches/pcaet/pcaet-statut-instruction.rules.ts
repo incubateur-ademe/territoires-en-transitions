@@ -71,12 +71,15 @@ export type PcaetStatutInstruction = z.infer<
 >;
 
 /**
- * Ce que le service voit sans rien demander : tous les statuts, dépôts en
- * chantier et collectivités sans dossier compris. Une liste vide n'est pas un
- * filtre — c'est ce que dit « Désélectionner les options ».
+ * Ce que le service voit sans rien demander : tous les statuts sauf les cycles
+ * clos, dépôts en chantier et collectivités sans dossier compris. Les archivés
+ * ne disent plus rien du territoire et noyaient la liste. Une liste vide, elle,
+ * n'est pas un filtre — c'est ce que dit « Désélectionner les options ».
  */
 export const STATUTS_INSTRUCTION_PAR_DEFAUT: readonly PcaetStatutInstruction[] =
-  [];
+  pcaetStatutInstructionValues.filter(
+    (statut) => statut !== PcaetStatutInstructionEnum.ARCHIVE
+  );
 
 /**
  * Traduction de l'état d'une saisine dans le vocabulaire du suivi.

@@ -8,6 +8,7 @@ import {
   PostHogProvider,
   ScriptLikeProps,
 } from '@tet/ui';
+import { ENV } from '@tet/api/environmentVariables';
 import Script from 'next/script';
 import posthog from 'posthog-js';
 
@@ -84,7 +85,7 @@ function loadScripts(
 function loadCrispWidget() {
   if (typeof window !== 'undefined') {
     window.$crisp = [];
-    window.CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID;
+    window.CRISP_WEBSITE_ID = ENV.crisp_website_id;
 
     const d = document;
     const s = d.createElement('script');

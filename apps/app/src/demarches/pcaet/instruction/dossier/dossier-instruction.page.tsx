@@ -50,7 +50,7 @@ export const DossierInstructionPage = ({
   const [etape, setEtape] = useQueryState(
     'etape',
     parseAsStringLiteral(pcaetInstructionPartieValues).withDefault(
-      PcaetInstructionPartieEnum.DOCUMENTS
+      PcaetInstructionPartieEnum.DIAGNOSTIC
     )
   );
 

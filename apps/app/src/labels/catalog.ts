@@ -1307,6 +1307,7 @@ export const appLabels = {
   referentielTeModeBlockedAuditDemandeDescription: `Une demande d'audit est en cours. Attendez la fin de l'audit avant de basculer.`,
   referentielTeModeBlockedSyndicatDescription: `La bascule n'est pas ouverte aux syndicats. Votre référentiel Économie Circulaire reste actif et modifiable.`,
   referentielTeModeBlockedDromDescription: `La bascule n'est pas encore ouverte aux collectivités des DROM. Vos référentiels Climat Air Énergie et Économie Circulaire restent actifs et modifiables.`,
+  referentielTeModeBlockedTeNonVideDescription: `Le référentiel Climat Ressources contient déjà des données pour votre collectivité. Contactez le support pour réaliser la bascule.`,
   referentielModeArchivedTitle: 'Référentiel archivé',
   referentielModeArchivedDescription:
     "Consultation seule — ce référentiel n'est plus modifiable.",

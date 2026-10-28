@@ -181,6 +181,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CompleteFicheSecteursService,
     FicheSecteursEligibiliteRepository,
     FicheSecteursAttributionRepository,
+    ListPlanSecteursCountsRepository,
   ],
 })
 export class FichesModule {}
