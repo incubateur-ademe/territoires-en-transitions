@@ -2,7 +2,6 @@ import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { CategorieAction, LevierId } from '@tet/domain/shared';
 import {
   createElement,
-  Ref,
   RefCallback,
   useCallback,
   useEffect,
@@ -35,7 +34,7 @@ type UseLevierSidePanelArgs = {
   places: LevierPlace[];
   preselection: Preselection;
   upsertPertinence?: UpsertPertinence;
-  headerRef?: Ref<HTMLDivElement>;
+  headerRef?: RefCallback<HTMLElement>;
   actionsRef?: RefCallback<HTMLDivElement>;
 };
 
