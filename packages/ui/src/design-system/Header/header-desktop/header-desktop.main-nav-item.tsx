@@ -18,7 +18,7 @@ import { Button } from '../../Button';
 import { Icon } from '../../Icon';
 import { isNavDropdown, NavDropdown, NavItem, NavLink } from '../types';
 import { isActiveNavDropdown, isActiveNavLink } from '../utils';
-import { HEADER_MAIN_NAV_ID } from './header-desktop';
+import { HEADER_MAIN_NAV_ID } from './header-desktop.main-nav';
 
 export const HeaderDesktopMainNavItem = ({
   item,

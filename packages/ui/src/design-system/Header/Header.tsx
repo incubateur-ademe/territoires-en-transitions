@@ -13,6 +13,11 @@ export type HeaderProps = {
     endItems?: NavItem[];
   };
   secondaryNav?: NavItem[];
+  /**
+   * Sur desktop, ne rend pas la navigation principale : l'app la place
+   * ailleurs avec `HeaderMainNav`. Le menu mobile la garde.
+   */
+  isMainNavDetached?: boolean;
   id?: string;
 };
 
@@ -21,6 +26,7 @@ export const Header = ({
   rootUrl = '/',
   mainNav,
   secondaryNav,
+  isMainNavDetached,
   id,
 }: HeaderProps) => {
   return (
@@ -34,6 +40,7 @@ export const Header = ({
         pathname={pathname}
         mainNav={mainNav}
         secondaryNav={secondaryNav}
+        isMainNavDetached={isMainNavDetached}
       />
       <HeaderMobile
         className="lg:hidden"
