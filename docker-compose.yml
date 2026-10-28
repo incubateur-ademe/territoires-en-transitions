@@ -190,7 +190,7 @@ services:
   # ———————————————————————————— Storage ———————————————————————————————————
   storage:
     profiles: [supabase]
-    image: supabase/storage-api:v1.77.0
+    image: supabase/storage-api:v1.80.2
     depends_on:
       db:
         condition: service_healthy
