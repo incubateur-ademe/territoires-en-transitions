@@ -1,3 +1,7 @@
+/**
+ * @deprecated Espacer les éléments avec le `gap` de leur parent (`Stack`,
+ * `Inline`, `Grid`) ou le padding d'un `Box`, plutôt qu'avec un élément vide.
+ */
 export const Spacer = ({
   height,
 }: {

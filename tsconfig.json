@@ -24,6 +24,9 @@
       "path": "./apps/app"
     },
     {
+      "path": "./apps/prototypes"
+    },
+    {
       "path": "./e2e"
     },
     {
