@@ -77,6 +77,7 @@ export const PermissionOperations = [
 
   // Utils
   'utils.banner.mutate',
+  'utils.mcp.read',
 
   // Shared
   'shared.actions-de-reference.mutate',

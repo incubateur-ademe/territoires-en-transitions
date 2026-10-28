@@ -65,7 +65,13 @@ async function bootstrap() {
 
   // Seulement une v1 pour l'instant
   app.setGlobalPrefix('api/v1', {
-    exclude: ['version', 'throw'],
+    exclude: [
+      'version',
+      'throw',
+      // Découverte OAuth des clients MCP (RFC 9728) : à la racine du domaine.
+      '.well-known/oauth-protected-resource',
+      '.well-known/oauth-protected-resource/api/v1/mcp',
+    ],
   });
 
   app.useGlobalFilters(

@@ -238,6 +238,26 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé TeT de l'API Communs (Authorization: Bearer), pour les secteurs réglementaires des fiches"
       ),
+    // Serveur MCP (utils/mcp) : optionnelles, le backend démarre sans elles ;
+    // les outils analytiques répondent alors ANALYTICS_DATABASE_NOT_CONFIGURED.
+    ANALYTICS_DATABASE_URL: z
+      .string()
+      .optional()
+      .describe(
+        'URL Postgres de la base analytique (rôle en lecture seule) interrogée par le serveur MCP'
+      ),
+    ANALYTICS_DATABASE_SSL_ROOT_CERT: z
+      .string()
+      .optional()
+      .describe(
+        'CA (PEM) du serveur Postgres analytique, même usage que SUPABASE_DATABASE_SSL_ROOT_CERT'
+      ),
+    BACKEND_PUBLIC_URL: z
+      .url()
+      .optional()
+      .describe(
+        "URL publique de l'API (ex : https://api.territoiresentransitions.fr) pour les métadonnées OAuth du serveur MCP ; à défaut, l'en-tête Host de la requête"
+      ),
     // Requis sauf si QUEUE_REDIS_URL est fourni (cf. superRefine) : le Redis
     // managé Scaleway exige utilisateur, mot de passe et TLS, que seule l'URL
     // porte.
@@ -279,6 +299,24 @@ export const backendConfigurationSchema = z
       .describe('The throttle limit'),
     POSTHOG_KEY: z.string().optional().describe('The PostHog key'),
     POSTHOG_HOST: z.string().optional().describe('The PostHog host'),
+    // Lecture de l'API PostHog (requêtes HogQL du serveur MCP), distincte de
+    // POSTHOG_KEY qui ne sert qu'à envoyer des événements.
+    POSTHOG_PERSONAL_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        'Clé API personnelle PostHog (lecture) pour les requêtes HogQL du serveur MCP'
+      ),
+    POSTHOG_PROJECT_ID: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(12975)
+      .describe('Identifiant du projet PostHog interrogé par le serveur MCP'),
+    POSTHOG_API_HOST: z
+      .url()
+      .prefault('https://eu.posthog.com')
+      .describe("Hôte de l'API PostHog interrogée par le serveur MCP"),
     SMTP_URL: z
       .string()
       .optional()
