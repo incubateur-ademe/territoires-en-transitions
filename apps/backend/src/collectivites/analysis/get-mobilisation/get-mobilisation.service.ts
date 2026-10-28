@@ -5,12 +5,15 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { uniq } from 'es-toolkit';
+import { match } from 'ts-pattern';
 import {
   AnalysisJobErrorEnum,
   type AnalysisJobError,
 } from '../analysis-job.errors';
+import { FicheAnalysisStatusRepository } from '../analyze-fiches/fiche-analysis-status.repository';
 import { EnjeuRepositories } from '../enjeu.repositories';
 import { type LevierMobilisation } from '../mobilisation.repository';
+import { type FicheAnalysis } from '../models/fiche-analysis';
 import { GetMobilisationInput } from './get-mobilisation.input';
 import {
   type LevierMobilisationOutput,
@@ -19,6 +22,15 @@ import {
 
 const countDistinctFiches = (ficheIds: number[]): number =>
   uniq(ficheIds).length;
+
+const isCoveredByAnalysis = ({ status }: FicheAnalysis): boolean =>
+  match(status)
+    .with('processed', 'stale', () => true)
+    .with('failed', () => false)
+    .exhaustive();
+
+const countAnalyzedFiches = (analyses: FicheAnalysis[]): number =>
+  analyses.filter(isCoveredByAnalysis).length;
 
 const toLevierMobilisationOutput = ({
   levierId,
@@ -38,7 +50,8 @@ export class GetMobilisationService {
   constructor(
     private readonly permissions: PermissionService,
     private readonly collectivites: CollectivitesService,
-    private readonly enjeuRepositories: EnjeuRepositories
+    private readonly enjeuRepositories: EnjeuRepositories,
+    private readonly ficheAnalysisStatusRepository: FicheAnalysisStatusRepository
   ) {}
 
   async getMobilisation(
@@ -68,8 +81,15 @@ export class GetMobilisationService {
       return failure(AnalysisJobErrorEnum.GET_MOBILISATION_ERROR);
     }
 
+    const analysesResult =
+      await this.ficheAnalysisStatusRepository.listAnalyses({ collectiviteId });
+    if (!analysesResult.success) {
+      return failure(AnalysisJobErrorEnum.GET_MOBILISATION_ERROR);
+    }
+
     return success({
       collectiviteId,
+      analyzedFicheCount: countAnalyzedFiches(analysesResult.data),
       leviers: mobilisationResult.data.map(toLevierMobilisationOutput),
     });
   }

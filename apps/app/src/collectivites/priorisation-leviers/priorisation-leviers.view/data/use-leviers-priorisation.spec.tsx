@@ -29,7 +29,7 @@ vi.mock('@tet/api', () => ({
         getMobilisation: {
           queryOptions: () => ({
             queryKey: ['mobilisation'],
-            queryFn: () => ({ leviers: [] }),
+            queryFn: () => ({ analyzedFicheCount: 0, leviers: [] }),
           }),
         },
       },
@@ -101,6 +101,7 @@ describe('useLeviersPriorisation', () => {
       expect(result.current).toEqual({
         status: 'ready',
         leviers: [],
+        analyzedFicheCount: 0,
         access: 'reservedToEpci',
       })
     );
