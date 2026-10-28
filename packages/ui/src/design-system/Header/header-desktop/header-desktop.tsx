@@ -7,10 +7,8 @@ import { RepubliqueFrancaiseLogo } from '../../../assets/republique-francaise.lo
 import { TerritoiresEnTransitionsLogo } from '../../../assets/territoires-en-transitions.logo';
 import { cn } from '../../../utils/cn';
 import { HeaderProps } from '../Header';
-import { HeaderDesktopMainNavItem } from './header-desktop.main-nav-item';
+import { HeaderMainNav } from './header-desktop.main-nav';
 import { HeaderDesktopSecondaryNavItem } from './header-desktop.secondary-nav-item';
-
-export const HEADER_MAIN_NAV_ID = 'header-main-nav';
 
 type Props = HeaderProps & {
   className?: string;
@@ -21,6 +19,7 @@ const HeaderDesktop = ({
   rootUrl,
   mainNav,
   secondaryNav,
+  isMainNavDetached,
   className,
 }: Props) => {
   return (
@@ -61,39 +60,14 @@ const HeaderDesktop = ({
         )}
       </HeaderContainer>
       {/** Navigation principale */}
-      {mainNav && (
+      {mainNav && !isMainNavDetached && (
         <>
           <div className="h-px bg-primary-3" />
-          <HeaderContainer
-            id={HEADER_MAIN_NAV_ID}
-            className={cn('text-sm text-primary-9', className)}
-          >
-            {/* Les items portent un `p-4` qui les décollerait de la gouttière du
-                conteneur : le premier est ramené dessus, pour que la navigation
-                tombe sur la même verticale que le logo, le titre de page et les
-                bandeaux. Le dernier item de droite est traité de même. */}
-            {mainNav.startItems.map((item, i) => (
-              <HeaderDesktopMainNavItem
-                key={i}
-                item={{
-                  ...item,
-                  className: cn(i === 0 && '-ml-4', item.className),
-                }}
-                pathname={pathname}
-              />
-            ))}
-            {mainNav.endItems && (
-              <div className="ml-auto flex items-center -mr-4">
-                {mainNav.endItems.map((item, i) => (
-                  <HeaderDesktopMainNavItem
-                    key={i}
-                    item={item}
-                    pathname={pathname}
-                  />
-                ))}
-              </div>
-            )}
-          </HeaderContainer>
+          <HeaderMainNav
+            pathname={pathname}
+            mainNav={mainNav}
+            className={className}
+          />
         </>
       )}
     </>
@@ -103,16 +77,13 @@ const HeaderDesktop = ({
 export default HeaderDesktop;
 
 const HeaderContainer = ({
-  id,
   children,
   className,
 }: {
-  id?: string;
   children: React.ReactNode;
   className?: string;
 }) => (
   <div
-    id={id}
     className={cn('w-full max-w-8xl mx-auto px-6 flex items-center', className)}
   >
     {children}

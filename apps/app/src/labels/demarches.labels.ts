@@ -4,10 +4,6 @@
  * `catalog.ts` reste le seul point d'entrée public (`appLabels`) : il agrège ce
  * fichier, et les composants n'importent jamais d'ici directement.
  */
-import {
-  collectiviteTypeEnum,
-  type CollectiviteType,
-} from '@tet/domain/collectivites';
 import type {
   DemarcheDocumentEtape,
   DemarchePcaetGuardId,
@@ -29,31 +25,9 @@ const demarcheVulnerabiliteSousThematiqueMot = plural({
 
 export const demarchesLabels = {
   /**
-   * Sans le nom de la collectivité : il est déjà affiché juste au-dessus, dans
-   * le sélecteur de contexte du header. Ce que la bannière ajoute, c'est la
-   * casquette — à quel titre on est là.
-   */
-  contexteInstructionTitre: ({ instructeur }: { instructeur: string }) =>
-    `Vous naviguez sur l’espace de cette collectivité au titre de ${instructeur}`,
-
-  /**
-   * La casquette dite comme l'agent la nomme, article compris : « au titre de la
-   * DREAL » se lit, « au titre de DREAL » non.
-   *
-   * Le nom propre du service reste le repli — il porte déjà son type (« DREAL
-   * Bretagne ») — pour les types qui instruisent sans figurer ici.
-   */
-  contexteInstructionCasquette: {
-    [collectiviteTypeEnum.DREAL]: 'la DREAL',
-    [collectiviteTypeEnum.DDT]: 'la DDT',
-    [collectiviteTypeEnum.DR_ADEME]: 'la Direction régionale de l’ADEME',
-    [collectiviteTypeEnum.REGION]: 'la Région',
-  } as Partial<Record<CollectiviteType, string>>,
-
-  /**
-   * Le même repère, quand le dossier ne vient au service que par un territoire
-   * qu'il ne préside pas : l'EPCI déborde chez lui, l'avis revient au service du
-   * siège. Le dire évite de chercher un bouton de dépôt qui n'apparaîtra pas.
+   * Quand le dossier ne vient au service que par un territoire qu'il ne préside
+   * pas : l'EPCI déborde chez lui, l'avis revient au service du siège. Le dire
+   * évite de chercher un bouton de dépôt qui n'apparaîtra pas.
    */
   contexteInstructionLectureSeule:
     'Ce dossier vous est communiqué pour information : il relève d’un territoire limitrophe, et l’avis revient au service dont il dépend.',

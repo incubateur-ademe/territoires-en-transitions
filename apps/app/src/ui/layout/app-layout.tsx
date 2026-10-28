@@ -2,10 +2,11 @@
 
 import { ReactNode } from 'react';
 
-import { ContexteInstructionBanner } from '@/app/demarches/pcaet/instruction/contexte-instruction.banner';
-import { Header } from '@/app/ui/layout/header/header';
+import { AppMainNav, Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
+import { useVisitMode } from '@/app/ui/layout/visit-mode/use-visit-mode';
+import { VisitModeFrame } from '@/app/ui/layout/visit-mode/visit-mode.frame';
 import { cn, FooterTeT, VisibleWhen } from '@tet/ui';
 import { OfflineAlert } from './offline-alert';
 
@@ -15,6 +16,9 @@ import { OfflineAlert } from './offline-alert';
  * Les `grid-template-columns` s'animent entre l'état fermé (`1fr 0`) et
  * ouvert (`1fr <side-panel-width>`), ce qui produit le slide-in du panel à
  * largeur fixe.
+ *
+ * En visite, la navigation principale quitte le header pour le cadre qui
+ * entoure la page ; le footer, qui est celui de la plateforme, reste dehors.
  */
 const ContentWrapper = ({
   children,
@@ -24,6 +28,14 @@ const ContentWrapper = ({
   belowFooterSlot?: ReactNode;
 }) => {
   const { panel } = useSidePanel();
+  const visit = useVisitMode();
+
+  const page = (
+    <div className="grow flex flex-col w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6 pb-12 pt-6">
+      {children}
+    </div>
+  );
+
   return (
     <div
       className={cn(
@@ -36,20 +48,20 @@ const ContentWrapper = ({
           'max-lg:hidden': panel.isOpen,
         })}
       >
-        <Header />
+        <Header isMainNavDetached={!!visit} />
       </div>
       <div
         className={cn('col-start-1 row-start-2 flex flex-col min-w-0', {
           'max-lg:hidden': panel.isOpen,
         })}
       >
-        {/* Sous le header, et collé en haut une fois le header défilé : l'agent
-            d'un service navigue au nom d'un autre, et ce rappel-là ne doit pas
-            défiler avec la page. */}
-        <ContexteInstructionBanner />
-        <div className="grow flex flex-col w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6 pb-12 pt-6">
-          {children}
-        </div>
+        {visit ? (
+          <VisitModeFrame visit={visit} nav={<AppMainNav />}>
+            {page}
+          </VisitModeFrame>
+        ) : (
+          page
+        )}
         <FooterTeT />
         <VisibleWhen condition={!!belowFooterSlot}>
           <div className="p-4">{belowFooterSlot}</div>
