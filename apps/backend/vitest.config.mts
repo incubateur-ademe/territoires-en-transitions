@@ -68,6 +68,13 @@ export default defineConfig(({ mode }) => ({
       // testés en conditions réelles, quel que soit le .env de la machine.
       // Les specs qui veulent le contournement le simulent elles-mêmes.
       DEMARCHE_PCAET_BYPASS_DIAGNOSTIC: 'false',
+      // Les e2e du serveur MCP interrogent la base de test en guise de base
+      // analytique ; une vraie URL posée dans l'env de la machine prime.
+      ANALYTICS_DATABASE_URL:
+        process.env.ANALYTICS_DATABASE_URL ??
+        loadEnv(mode, __dirname, '').SUPABASE_DATABASE_URL ??
+        process.env.SUPABASE_DATABASE_URL ??
+        '',
     },
 
     // Limit CI parallelism: `backend:test` now runs alongside `api:test` in the

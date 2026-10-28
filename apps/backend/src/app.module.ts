@@ -20,6 +20,7 @@ import ConfigurationService from './utils/config/configuration.service';
 import { DatabaseModule } from './utils/database/database.module';
 import { EchartsModule } from './utils/echarts/echarts.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
+import { McpModule } from './utils/mcp/mcp.module';
 import { NotificationsModule } from './utils/notifications/notifications.module';
 import { buildQueueRedisConnection } from './utils/config/build-queue-redis-connection';
 import { TrackingModule } from './utils/tracking/tracking.module';
@@ -98,6 +99,7 @@ const appLogger = new Logger('AppModule');
     MetricsModule,
     NotificationsModule,
     BannerModule,
+    McpModule,
   ],
   providers: [
     TrpcRouter,
