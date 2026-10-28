@@ -263,6 +263,7 @@ describe("ActeEngagementRow — qui peut éditer l'acte", () => {
       showActeEngagement: true,
       showCandidatureDocuments: false,
       canUpdateCandidatureDocuments,
+      selectEtoileVisee: vi.fn(),
     };
 
     render(

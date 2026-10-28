@@ -9,6 +9,7 @@ import { Parcours } from '../checklist-view-model';
 import { useChecklist } from '../checklist.context';
 import { AuditTableHintBanner } from './audit-table-hint.banner';
 import { ChecklistActions } from './checklist-actions';
+import { EtoileViseeField } from './etoile-visee.field';
 import { Container } from './layout/container';
 import { Header } from './layout/header';
 import { LabellisationChecklistTable } from './table/labellisation-checklist.table';
@@ -19,7 +20,7 @@ export const ChecklistView = ({
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const { referentielId, cycle } = useChecklist();
+  const { referentielId, cycle, selectEtoileVisee } = useChecklist();
   const hierarchie = useGetReferentielDefinitionFromContext()?.hierarchie ?? [];
 
   const isPremiereEtoile = viewModel.etoileObjectif === 1;
@@ -41,6 +42,12 @@ export const ChecklistView = ({
       />
       <Spacer height={1} />
       <Divider />
+      <Spacer height={1} />
+      <EtoileViseeField
+        value={viewModel.etoileObjectif}
+        etoilesObtenues={cycle.parcours?.labellisation?.etoiles ?? 0}
+        onChange={selectEtoileVisee}
+      />
       <Spacer height={1} />
       <VisibleWhen condition={isPremiereEtoile}>
         <p className="text-sm font-normal text-primary-10 m-0">

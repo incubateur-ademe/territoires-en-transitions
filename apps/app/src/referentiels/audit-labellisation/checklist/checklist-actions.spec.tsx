@@ -63,12 +63,14 @@ const setCollectiviteCycle = (cycle: Partial<TCycleLabellisation>): void => {
 };
 
 const premiereEtoileDemandeEnvoyee = {
+  etoiles: 1,
   status: 'demande_envoyee',
   audit: null,
   demande: { sujet: 'labellisation', etoiles: '1' },
 } as TCycleLabellisation['parcours'];
 
 const cycleSansDemande = {
+  etoiles: 1,
   status: 'non_demandee',
   audit: null,
   demande: null,
@@ -112,5 +114,22 @@ describe('ChecklistActions — bouton « Obtenir la première étoile »', () =>
     });
 
     expect(renderFirstStarButton().hasAttribute('disabled')).toBe(false);
+  });
+
+  it("n'affiche pas le bouton quand la checklist évalue une étoile auditée", () => {
+    setCollectiviteCycle({
+      canAskFirstStar: true,
+      status: 'non_demandee',
+      parcours: {
+        ...cycleSansDemande,
+        etoiles: 2,
+      } as TCycleLabellisation['parcours'],
+    });
+
+    render(<ChecklistActions />);
+
+    expect(
+      screen.queryByRole('button', { name: obtenirPremiereEtoile })
+    ).toBeNull();
   });
 });

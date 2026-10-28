@@ -83,6 +83,7 @@ const setChecklist = (
     showActeEngagement: false,
     showCandidatureDocuments: true,
     canUpdateCandidatureDocuments,
+    selectEtoileVisee: vi.fn(),
   };
 };
 

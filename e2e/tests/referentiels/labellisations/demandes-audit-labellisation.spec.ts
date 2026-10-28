@@ -211,10 +211,10 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.uploadCandidatureDocument();
     await auditLabellisationPom.openAuditModal();
     await auditLabellisationPom.auditTypeCotAvecLabellisationRadio.click();
-    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.envoyerAuditButton.click();
 
     await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
@@ -244,10 +244,10 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
       await auditLabellisationPom.goto(collectiviteId, ref);
+      await auditLabellisationPom.selectTargetStar(2);
       await auditLabellisationPom.uploadCandidatureDocument();
       await auditLabellisationPom.openAuditModal();
       await expect(auditLabellisationPom.auditTypeGroup).toHaveCount(0);
-      await auditLabellisationPom.selectTargetStar(2);
       await auditLabellisationPom.envoyerAuditButton.click();
 
       await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
@@ -276,9 +276,9 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
       await auditLabellisationPom.goto(collectiviteId, ref);
+      await auditLabellisationPom.selectTargetStar(5);
       await auditLabellisationPom.uploadCandidatureDocument();
       await auditLabellisationPom.openAuditModal();
-      await auditLabellisationPom.selectTargetStar(5);
       await auditLabellisationPom.envoyerAuditButton.click();
 
       await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();

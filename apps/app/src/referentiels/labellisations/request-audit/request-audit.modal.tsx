@@ -8,7 +8,10 @@ import {
 import { Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { ReactNode } from 'react';
-import { AuditSelection, auditSelectionToRequestInput } from './audit-selection';
+import {
+  AuditSelection,
+  auditSelectionToRequestInput,
+} from './audit-selection';
 import { RequestAuditForm } from './request-audit.form';
 import { useRequestLabellisation } from '../data/use-request-labellisation';
 
@@ -17,7 +20,7 @@ type RequestAuditModalProps = {
   collectiviteId: number;
   referentielId: ReferentielId;
   auditTypeOptions: readonly AuditTypeOption[];
-  maximumRequestableStar: Etoile;
+  etoile: Etoile;
 };
 
 export const RequestAuditModal = ({
@@ -25,7 +28,7 @@ export const RequestAuditModal = ({
   collectiviteId,
   referentielId,
   auditTypeOptions,
-  maximumRequestableStar,
+  etoile,
 }: RequestAuditModalProps): ReactNode => {
   const { setToast } = useToastContext();
   const { mutate, isPending } = useRequestLabellisation();
@@ -33,7 +36,7 @@ export const RequestAuditModal = ({
   const submitAudit = (selection: AuditSelection, close: () => void): void => {
     mutate(
       auditSelectionToRequestInput(
-        { collectiviteId, referentiel: referentielId },
+        { collectiviteId, referentiel: referentielId, etoile },
         selection
       ),
       {
@@ -56,7 +59,7 @@ export const RequestAuditModal = ({
       render={({ close }) => (
         <RequestAuditForm
           auditTypeOptions={auditTypeOptions}
-          maximumRequestableStar={maximumRequestableStar}
+          etoile={etoile}
           isPending={isPending}
           onCancel={close}
           onSubmit={(selection) => submitAudit(selection, close)}

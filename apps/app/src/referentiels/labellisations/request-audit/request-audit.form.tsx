@@ -9,14 +9,13 @@ import {
 import { ModalFooterOKCancel, VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { numLabels } from '../numLabels';
 import {
   AuditSelection,
   AuditSelectionDraft,
   auditSelectionSchema,
-  defaultRequestableStar,
 } from './audit-selection';
 import { AuditTypeField } from './audit-type.field';
-import { TargetStarField } from './target-star.field';
 
 const isLabellisationSujet = (sujet: SujetDemande | null): boolean =>
   sujet === SujetDemandeEnum.LABELLISATION ||
@@ -24,7 +23,7 @@ const isLabellisationSujet = (sujet: SujetDemande | null): boolean =>
 
 type RequestAuditFormProps = {
   auditTypeOptions: readonly AuditTypeOption[];
-  maximumRequestableStar: Etoile;
+  etoile: Etoile;
   isPending: boolean;
   onSubmit: (selection: AuditSelection) => void;
   onCancel: () => void;
@@ -32,7 +31,7 @@ type RequestAuditFormProps = {
 
 export const RequestAuditForm = ({
   auditTypeOptions,
-  maximumRequestableStar,
+  etoile,
   isPending,
   onSubmit,
   onCancel,
@@ -43,15 +42,12 @@ export const RequestAuditForm = ({
   const {
     control,
     handleSubmit,
-    setValue,
-    getValues,
     formState: { isValid },
   } = useForm<AuditSelectionDraft, unknown, AuditSelection>({
     resolver: zodResolver(auditSelectionSchema),
     mode: 'onChange',
     defaultValues: {
       sujet: hasAuditTypeChoice ? null : onlyAuditTypeOption?.sujet ?? null,
-      targetStar: defaultRequestableStar(maximumRequestableStar),
     },
   });
 
@@ -67,34 +63,17 @@ export const RequestAuditForm = ({
             <AuditTypeField
               options={auditTypeOptions}
               value={field.value}
-              onChange={(nextSujet) => {
-                field.onChange(nextSujet);
-                if (nextSujet === SujetDemandeEnum.COT) {
-                  setValue('targetStar', null, { shouldValidate: true });
-                } else if (!getValues('targetStar')) {
-                  setValue(
-                    'targetStar',
-                    defaultRequestableStar(maximumRequestableStar),
-                    { shouldValidate: true }
-                  );
-                }
-              }}
+              onChange={field.onChange}
             />
           )}
         />
       </VisibleWhen>
       <VisibleWhen condition={isLabellisationSujet(sujet)}>
-        <Controller
-          name="targetStar"
-          control={control}
-          render={({ field }) => (
-            <TargetStarField
-              maximumRequestableStar={maximumRequestableStar}
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
+        <p className="m-0">
+          {appLabels.demarrerAuditEtoileDemandee({
+            etoileLabel: numLabels[etoile],
+          })}
+        </p>
       </VisibleWhen>
       <ModalFooterOKCancel
         btnOKProps={{

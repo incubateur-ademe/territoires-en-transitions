@@ -1,5 +1,4 @@
 import {
-  ETOILE_MIN_REALISE_SCORE,
   EtoileEnum,
   getIdentifiantFromActionId,
   isAuditLabellisationReferentiel,
@@ -61,18 +60,13 @@ const extractRoleMesures = (parcours: ParcoursLabellisation): RoleMesures => {
 const getMinimumScore = (
   critereScore: ParcoursLabellisation['critereScore'],
   etoiles: ParcoursLabellisation['etoiles']
-): MinimumScoreViewModel => {
-  if (etoiles > 1) {
-    return {
-      done: critereScore.atteint,
-      seuilPercent: Math.round(critereScore.scoreARealiser * 100),
-    };
+): MinimumScoreViewModel | null => {
+  if (etoiles === EtoileEnum.PREMIERE_ETOILE) {
+    return null;
   }
-  const seuilDeuxiemeEtoile =
-    ETOILE_MIN_REALISE_SCORE[EtoileEnum.DEUXIEME_ETOILE];
   return {
-    done: critereScore.scoreFait >= seuilDeuxiemeEtoile,
-    seuilPercent: Math.round(seuilDeuxiemeEtoile * 100),
+    done: critereScore.atteint,
+    seuilPercent: Math.round(critereScore.scoreARealiser * 100),
   };
 };
 

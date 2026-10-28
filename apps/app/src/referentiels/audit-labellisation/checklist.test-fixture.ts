@@ -14,12 +14,15 @@ export const EMPTY_CYCLE: TCycleLabellisation = {
   isConductingAudit: false,
   viewerRole: 'auditee',
   isCOT: false,
-  maximumRequestableStar: null,
   canStartAudit: false,
   canAskFirstStar: false,
 };
 
-export const toAudit = ({ valide }: { valide: boolean }): LabellisationAudit => ({
+export const toAudit = ({
+  valide,
+}: {
+  valide: boolean;
+}): LabellisationAudit => ({
   id: 1,
   collectiviteId: 1,
   referentielId: 'cae',

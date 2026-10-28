@@ -209,10 +209,19 @@ export const appLabels = {
   }: {
     etoileLabel: string;
   }): string => `${etoileLabel} étoile`,
+  demarrerAuditEtoileObtenueOption: ({
+    etoileLabel,
+  }: {
+    etoileLabel: string;
+  }): string => `${etoileLabel} étoile, déjà obtenue`,
   demarrerAuditCotAvecLabellisationMessage:
     'Penser à joindre les documents de labellisation.',
-  demarrerAuditSelectionIncomplete:
-    "Sélectionnez un type d'audit et une étoile.",
+  demarrerAuditSelectionIncomplete: "Sélectionnez un type d'audit.",
+  demarrerAuditEtoileDemandee: ({
+    etoileLabel,
+  }: {
+    etoileLabel: string;
+  }): string => `Étoile demandée : ${etoileLabel} étoile`,
   demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
   demarrerAuditTypeLabellisation: 'Audit de labellisation',
   notesAuditeur: "Notes de l'auditeur, auditrice",

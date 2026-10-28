@@ -8,6 +8,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionId,
   AuditLabellisationReferentielId,
+  Etoile,
   EtoileEnum,
   canUpdateCandidatureDocuments,
   getExpectedDocuments,
@@ -33,6 +34,7 @@ export type ChecklistContextValue = {
   showActeEngagement: boolean;
   showCandidatureDocuments: boolean;
   canUpdateCandidatureDocuments: boolean;
+  selectEtoileVisee: (etoile: Etoile) => void;
 };
 
 type RoleDropdownContextValue = {
@@ -56,7 +58,8 @@ const ChecklistParcoursProvider = ({
   referentielId: AuditLabellisationReferentielId;
   children: ReactNode;
 }): ReactElement => {
-  const cycle = useCycleLabellisation(referentielId);
+  const [etoileVisee, selectEtoileVisee] = useState<Etoile>();
+  const cycle = useCycleLabellisation(referentielId, etoileVisee);
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canMutateLabellisationDocuments = hasCollectivitePermission(
     'referentiels.labellisations.mutate_documents'
@@ -93,6 +96,7 @@ const ChecklistParcoursProvider = ({
         canMutateLabellisationDocuments,
         audit: cycle.parcours?.audit ?? null,
       }).canUpdate,
+      selectEtoileVisee,
     }),
     [
       cycle,

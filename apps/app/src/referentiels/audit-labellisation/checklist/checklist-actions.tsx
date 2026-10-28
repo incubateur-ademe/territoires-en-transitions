@@ -4,6 +4,7 @@ import { CloturerAuditButton } from '@/app/referentiels/audits/cloture/cloturer-
 import { AskPremiereEtoileModal } from '@/app/referentiels/labellisations/ask-premiere-etoile/ask-premiere-etoile.modal';
 import { RequestAuditButton } from '@/app/referentiels/labellisations/request-audit/request-audit.button';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { EtoileEnum } from '@tet/domain/referentiels';
 import { VisibleWhen } from '@tet/ui';
 import { ReactElement, useState } from 'react';
 import { useChecklist } from '../checklist.context';
@@ -16,9 +17,15 @@ const CollectiviteActions = (): ReactElement => {
   const { cycle, referentielId, premiereEtoileObtenue } = useChecklist();
   const [isOpen, setIsOpen] = useState(false);
 
+  const isPremiereEtoileVisee =
+    cycle.parcours?.etoiles === EtoileEnum.PREMIERE_ETOILE;
+  const canDemanderPremiereEtoile =
+    !premiereEtoileObtenue && isPremiereEtoileVisee;
+  const canDemanderAudit = !isPremiereEtoileVisee || cycle.isCOT;
+
   return (
     <>
-      <VisibleWhen condition={!premiereEtoileObtenue}>
+      <VisibleWhen condition={canDemanderPremiereEtoile}>
         <AskPremiereEtoileButton
           state={getAskPremiereEtoileButtonState({
             canAskFirstStar: cycle.canAskFirstStar,
@@ -35,7 +42,9 @@ const CollectiviteActions = (): ReactElement => {
           setOpened={setIsOpen}
         />
       </VisibleWhen>
-      <RequestAuditButton referentielId={referentielId} />
+      <VisibleWhen condition={canDemanderAudit}>
+        <RequestAuditButton referentielId={referentielId} />
+      </VisibleWhen>
     </>
   );
 };
@@ -48,9 +57,7 @@ const AuditeurActions = (): ReactElement => {
     : null;
 
   const auditADemarrer =
-    cycle.canStartAudit && cycle.parcours?.audit
-      ? cycle.parcours.audit
-      : null;
+    cycle.canStartAudit && cycle.parcours?.audit ? cycle.parcours.audit : null;
 
   return (
     <>
