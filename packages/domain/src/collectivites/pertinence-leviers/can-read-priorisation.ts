@@ -3,6 +3,28 @@ import type { UserRolesAndPermissions } from '../../users/authorizations/user-ro
 import type { CollectiviteType } from '../collectivite-type.enum';
 import { isPriorisationAvailable } from './is-priorisation-available';
 
+// Droit d'ouvrir la page, quel que soit le type de collectivité : une
+// collectivité non EPCI y voit qu'elle est réservée aux EPCI.
+export const hasPriorisationReadPermission = (
+  user: UserRolesAndPermissions | null,
+  {
+    collectiviteId,
+    collectiviteAccesRestreint,
+  }: {
+    collectiviteId: number;
+    collectiviteAccesRestreint: boolean;
+  }
+): boolean => {
+  const canReadCollectivite =
+    !collectiviteAccesRestreint ||
+    hasPermission(user, 'collectivites.read_confidentiel', { collectiviteId });
+
+  return (
+    canReadCollectivite &&
+    hasPermission(user, 'collectivites.priorisation.read', { collectiviteId })
+  );
+};
+
 export const canReadPriorisation = (
   user: UserRolesAndPermissions | null,
   {
@@ -14,14 +36,9 @@ export const canReadPriorisation = (
     collectiviteType: CollectiviteType;
     collectiviteAccesRestreint: boolean;
   }
-): boolean => {
-  const canReadCollectivite =
-    !collectiviteAccesRestreint ||
-    hasPermission(user, 'collectivites.read_confidentiel', { collectiviteId });
-
-  return (
-    isPriorisationAvailable(collectiviteType) &&
-    canReadCollectivite &&
-    hasPermission(user, 'collectivites.priorisation.read', { collectiviteId })
-  );
-};
+): boolean =>
+  isPriorisationAvailable(collectiviteType) &&
+  hasPriorisationReadPermission(user, {
+    collectiviteId,
+    collectiviteAccesRestreint,
+  });
