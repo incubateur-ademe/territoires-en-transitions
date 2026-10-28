@@ -8,13 +8,16 @@ import { PriorisationLeviersPom } from './priorisation-leviers.pom';
 
 const LEVIER_COUNT = 29;
 
-const mobilisationWithTwoFiches: LevierMobilisation[] = [
+const toMobilisationCitingInTwoLeviers = (
+  ficheId: number
+): LevierMobilisation[] => [
   {
     levierId: 'velo_transport_commun',
-    volets: [
-      { categorie: 'amenagement', note: 2, ficheIds: [1] },
-      { categorie: 'financement', note: 0, ficheIds: [1, 2] },
-    ],
+    volets: [{ categorie: 'amenagement', note: 2, ficheIds: [ficheId] }],
+  },
+  {
+    levierId: 'covoiturage',
+    volets: [{ categorie: 'financement', note: 1, ficheIds: [ficheId] }],
   },
 ];
 
@@ -77,24 +80,46 @@ test.describe('Priorisation des leviers', () => {
     await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
   });
 
-  test('un membre voit le nombre de fiches rattachées aux leviers', async ({
+  test("un membre voit le nombre d'actions analysées, qu'elles soient rattachées à un levier ou non", async ({
     collectivites,
+    fiches,
     mobilisations,
     page,
   }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
+    const collectiviteId = collectivite.data.id;
+    const [
+      ficheInTwoLeviers,
+      ficheWithoutLevier,
+      ficheModifiedSinceAnalysis,
+      ficheWithFailedAnalysis,
+    ] = await fiches.create(
+      user,
+      ['Pistes cyclables', 'Fête de la ville', 'Covoiturage', 'Archives'].map(
+        (titre) => ({ titre, collectiviteId })
+      )
+    );
     await mobilisations.add({
-      collectiviteId: collectivite.data.id,
-      leviers: mobilisationWithTwoFiches,
+      collectiviteId,
+      leviers: toMobilisationCitingInTwoLeviers(ficheInTwoLeviers),
+    });
+    await mobilisations.addFicheAnalyses({
+      collectiviteId,
+      analyses: [
+        { ficheId: ficheInTwoLeviers, status: 'processed' },
+        { ficheId: ficheWithoutLevier, status: 'processed' },
+        { ficheId: ficheModifiedSinceAnalysis, status: 'stale' },
+        { ficheId: ficheWithFailedAnalysis, status: 'failed' },
+      ],
     });
     const priorisationLeviersPom = new PriorisationLeviersPom(page);
 
-    await priorisationLeviersPom.goto(collectivite.data.id);
+    await priorisationLeviersPom.goto(collectiviteId);
 
     await expect(priorisationLeviersPom.analyzedActionsText).toContainText(
-      'Analyse de 2 actions'
+      'Analyse de 3 actions'
     );
     await expect(
       priorisationLeviersPom.missingMobilisationMessage
