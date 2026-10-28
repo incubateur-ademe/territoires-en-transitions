@@ -92,6 +92,12 @@ export const useLeviersPriorisation = (
     }
   };
 
+  // Hors EPCI, les pertinences sont refusées : la carte « réservée aux EPCI »
+  // prime sur l'erreur de chargement.
+  if (trajectoireState === 'reservedToEpci') {
+    return { status: 'ready', leviers: [], access: 'reservedToEpci' };
+  }
+
   const hasLoadingError =
     pertinencesQuery.isLoadingError || mobilisationQuery.isLoadingError;
   if (hasLoadingError || trajectoireState === 'failed') {
