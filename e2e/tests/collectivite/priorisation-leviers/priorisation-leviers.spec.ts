@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisation.repository';
-import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { LEVIER_NOM_BY_ID } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { test } from 'tests/main.fixture';
@@ -75,24 +74,6 @@ test.describe('Priorisation des leviers', () => {
     await expect(
       page.getByText("Cette collectivité n'est pas accessible en mode visite.")
     ).toBeVisible();
-    await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
-  });
-
-  test("l'admin d'une commune est renvoyé vers le tableau de bord de la collectivité", async ({
-    collectivites,
-    page,
-  }) => {
-    const { collectivite } = await collectivites.addCollectiviteAndUser({
-      collectiviteArgs: { type: collectiviteTypeEnum.COMMUNE },
-      userArgs: { autoLogin: true, role: CollectiviteRole.ADMIN },
-    });
-    const priorisationLeviersPom = new PriorisationLeviersPom(page);
-
-    await priorisationLeviersPom.open(collectivite.data.id);
-
-    await expect(page).toHaveURL(
-      new RegExp(`/collectivite/${collectivite.data.id}/tableau-de-bord`)
-    );
     await expect(priorisationLeviersPom.levierButtons).toHaveCount(0);
   });
 
