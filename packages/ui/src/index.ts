@@ -39,6 +39,7 @@ export * from './design-system/Header';
 export * from './design-system/Icon';
 export * from './design-system/inline-edit';
 export * from './design-system/InlineLink';
+export * from './design-system/layout';
 export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';

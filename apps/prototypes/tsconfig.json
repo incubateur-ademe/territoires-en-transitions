@@ -1,0 +1,34 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "out-tsc",
+    "noEmit": true,
+    "types": ["node"],
+    "allowJs": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/prototypes/*": ["./src/*"]
+    }
+  },
+  "include": ["*.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["out-tsc/**/*", "vitest.config.mts", "eslint/**/*"],
+  "references": [
+    {
+      "path": "../../packages/design-tokens"
+    },
+    {
+      "path": "../../packages/ui"
+    },
+    {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../../packages/api"
+    }
+  ]
+}
