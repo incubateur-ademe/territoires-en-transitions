@@ -20,7 +20,6 @@ import {
   PlanListItem,
   useListPlans,
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { countPlanSecteursARenseigner } from '@/app/plans/plans/secteurs-counts/count-plan-secteurs-a-renseigner';
 import { useListPlanSecteursCounts } from '@/app/plans/plans/secteurs-counts/data/use-list-plan-secteurs-counts';
 import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -36,6 +35,7 @@ import {
   TableHeaderCell,
 } from '@tet/ui';
 import {
+  countPlanSecteursARenseigner,
   isPlanNavigable,
   isPlanPendingVerification,
   planStatusValues,

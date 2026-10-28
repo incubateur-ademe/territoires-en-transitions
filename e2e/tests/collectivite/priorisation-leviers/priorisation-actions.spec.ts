@@ -38,7 +38,43 @@ const toBiogazAction = (runToken: string): NewActionDeReference => ({
 });
 
 test.describe('Priorisation : matrice et volet', () => {
-  test('sans trajectoire SNBC, la page prévient et liste les 29 leviers hors matrice', async ({
+  test('sans trajectoire SNBC, la vue invite à la calculer et mène à la page trajectoire', async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    await addMobilisationAvecFiche(collectivite.data.id);
+    const pom = new PriorisationLeviersPom(page);
+    await pom.gotoWithoutTrajectoire(collectivite.data.id);
+    await expect(pom.missingTrajectoireMessage).toBeVisible();
+    await expect(pom.missingMobilisationMessage).toHaveCount(0);
+
+    await pom.computeTrajectoireLink.click();
+
+    await expect(page).toHaveURL(
+      new RegExp(`/collectivite/${collectivite.data.id}/trajectoire$`)
+    );
+  });
+
+  test('une commune voit que la vue est réservée aux EPCI, sans invitation à calculer de trajectoire', async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: { type: 'commune' },
+      userArgs: { autoLogin: true },
+    });
+    const pom = new PriorisationLeviersPom(page);
+
+    await pom.gotoWithoutTrajectoire(collectivite.data.id);
+
+    await expect(pom.reservedToEpciMessage).toBeVisible();
+    await expect(pom.computeTrajectoireLink).toHaveCount(0);
+  });
+
+  test('sans potentiel de réduction connu, la page liste les 29 leviers hors matrice', async ({
     collectivites,
     page,
   }) => {
@@ -50,7 +86,6 @@ test.describe('Priorisation : matrice et volet', () => {
 
     await pom.goto(collectivite.data.id);
 
-    await expect(pom.missingPotentielsMessage).toBeVisible();
     await expect(pom.levierButtons).toHaveCount(29);
     await expect(pom.metricCount(/^actions? sauvegardées?$/)).toHaveText('0');
     await expect(pom.metricCount(/^leviers? à prioriser$/)).toHaveText('0');
@@ -417,8 +452,10 @@ test.describe('Priorisation : présélection', () => {
     });
     await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
-    await pom.stubLevierWithPotentiel(LEVIER_TO_PRIORITIZE);
-    await pom.goto(collectivite.data.id);
+    await pom.gotoWithLevierPotentiel({
+      collectiviteId: collectivite.data.id,
+      nom: LEVIER_TO_PRIORITIZE,
+    });
     await pom.openPreselection();
     await expect(pom.emptyPreselectionMessage).toBeVisible();
 

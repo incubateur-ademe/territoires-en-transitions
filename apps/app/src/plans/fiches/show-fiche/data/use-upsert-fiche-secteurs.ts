@@ -31,6 +31,14 @@ export const useUpsertFicheSecteurs = (ficheId: number) => {
       },
       onSuccess: (secteurs) => {
         queryClient.setQueryData(queryKey, secteurs);
+        // Les secteurs à renseigner retiennent le programme d'actions d'une
+        // démarche PCAET.
+        void queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.get.pathKey(),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.list.pathKey(),
+        });
       },
     })
   );

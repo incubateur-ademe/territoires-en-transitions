@@ -5,17 +5,14 @@ import type { CollectiviteNavLink } from './make-collectivite-nav.contract';
 
 export const generatePriorisationLink = ({
   collectiviteId,
-  collectiviteAccesRestreint,
-  isVisitor,
+  canReadPriorisation,
   isPriorisationEnabled,
 }: {
   collectiviteId: number;
-  collectiviteAccesRestreint: boolean;
-  isVisitor: boolean;
+  canReadPriorisation: boolean;
   isPriorisationEnabled: boolean;
 }): CollectiviteNavLink => ({
-  isVisible:
-    isPriorisationEnabled && !(collectiviteAccesRestreint && isVisitor),
+  isVisible: isPriorisationEnabled && canReadPriorisation,
   children: <BetaLabel>{appLabels.priorisationLeviersTitre}</BetaLabel>,
   href: makeCollectivitePriorisationUrl({ collectiviteId }),
   urlPrefix: [makeCollectivitePriorisationUrl({ collectiviteId })],

@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import request from 'supertest';
@@ -9,6 +10,7 @@ describe('Trajectoire Leviers Controller', () => {
   let app: INestApplication;
   let authToken: string;
   let fixture: Awaited<ReturnType<typeof addTestTrajectoireLeviers>>;
+  let epciSansTrajectoire: Awaited<ReturnType<typeof addTestCollectivite>>;
   let cleanupUser: () => Promise<void>;
 
   beforeAll(async () => {
@@ -22,6 +24,7 @@ describe('Trajectoire Leviers Controller', () => {
     });
 
     fixture = await addTestTrajectoireLeviers(db);
+    epciSansTrajectoire = await addTestCollectivite(db, { type: 'epci' });
   }, 30000);
 
   test('Lit les objectifs et résultats annuels par SIREN', async () => {
@@ -42,8 +45,21 @@ describe('Trajectoire Leviers Controller', () => {
     });
   });
 
+  test("Répond 404 pour un EPCI dont la trajectoire SNBC n'a pas été calculée", async () => {
+    const response = await request(app.getHttpServer())
+      .get(
+        `/trajectoires/snbc/leviers?collectiviteId=${epciSansTrajectoire.collectivite.id}`
+      )
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(404);
+    expect(response.body).toMatchObject({
+      message: "La trajectoire SNBC de la collectivité n'a pas été calculée",
+    });
+  });
+
   afterAll(async () => {
     await fixture?.cleanup();
+    await epciSansTrajectoire?.cleanup();
     await cleanupUser?.();
     await app.close();
   });

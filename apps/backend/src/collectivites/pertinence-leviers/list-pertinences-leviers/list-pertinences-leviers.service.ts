@@ -3,6 +3,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { isPriorisationAvailable } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { EnjeuPertinencesRepositories } from '../enjeu-pertinences.repositories';
 import {
@@ -24,10 +25,9 @@ export class ListPertinencesLeviersService {
     { collectiviteId, enjeu }: ListPertinencesLeviersInput,
     { user }: ServiceSecondArg
   ): Promise<Result<PertinencesLeviers, PertinenceLeviersError>> {
-    const isCollectivitePrivate = await this.collectivites.isPrivate(
-      collectiviteId
-    );
-    const readCollectiviteOperation = isCollectivitePrivate
+    const { collectivite } =
+      await this.collectivites.getCollectivite(collectiviteId);
+    const readCollectiviteOperation = collectivite.accesRestreint
       ? PermissionOperationEnum['COLLECTIVITES.READ_CONFIDENTIEL']
       : PermissionOperationEnum['COLLECTIVITES.READ'];
     const permissionResult = await this.permissions.isAllowed(
@@ -38,6 +38,20 @@ export class ListPertinencesLeviersService {
     );
     if (!permissionResult.success) {
       return failure(PertinenceLeviersErrorEnum.COLLECTIVITE_NOT_FOUND);
+    }
+
+    const priorisationPermissionResult = await this.permissions.isAllowed(
+      user,
+      PermissionOperationEnum['COLLECTIVITES.PRIORISATION.READ'],
+      ResourceType.COLLECTIVITE,
+      { collectiviteId }
+    );
+    if (!priorisationPermissionResult.success) {
+      return failure(PertinenceLeviersErrorEnum.UNAUTHORIZED);
+    }
+
+    if (!isPriorisationAvailable(collectivite.type)) {
+      return failure(PertinenceLeviersErrorEnum.PRIORISATION_NOT_AVAILABLE);
     }
 
     const pertinencesResult = await this.enjeuPertinencesRepositories

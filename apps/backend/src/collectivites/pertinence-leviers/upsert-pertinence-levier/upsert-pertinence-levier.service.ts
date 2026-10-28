@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
-import { canCategoriesHaveOwnPertinence } from '@tet/domain/collectivites';
+import {
+  canCategoriesHaveOwnPertinence,
+  isPriorisationAvailable,
+} from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { EnjeuPertinencesRepositories } from '../enjeu-pertinences.repositories';
 import {
@@ -24,6 +28,7 @@ export class UpsertPertinenceLevierService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly permissions: PermissionService,
+    private readonly collectivites: CollectivitesService,
     private readonly enjeuPertinencesRepositories: EnjeuPertinencesRepositories
   ) {}
 
@@ -43,6 +48,14 @@ export class UpsertPertinenceLevierService {
       );
       if (!permissionResult.success) {
         return failure(PertinenceLeviersErrorEnum.UNAUTHORIZED);
+      }
+
+      const { collectivite } = await this.collectivites.getCollectivite(
+        collectiviteId,
+        transaction
+      );
+      if (!isPriorisationAvailable(collectivite.type)) {
+        return failure(PertinenceLeviersErrorEnum.PRIORISATION_NOT_AVAILABLE);
       }
 
       const pertinencesRepository =

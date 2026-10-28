@@ -83,6 +83,12 @@ export type DemarchePcaet = DemarcheBase & {
    */
   unverifiedPlanActionIds: number[];
   /**
+   * Plans rattachés dont des actions ont encore leurs secteurs réglementaires
+   * à renseigner : le programme d'actions n'est complet qu'une fois ce tableau
+   * vide (tant que le feature flag `is-fiche-secteurs-enabled` est actif).
+   */
+  secteursARenseignerPlanActionIds: number[];
+  /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur
    * (structure du workflow + guards) — le front l'affiche, sans recalculer :
    * `enabled` arme l'action, `blockedBy` dit pourquoi elle ne l'est pas.

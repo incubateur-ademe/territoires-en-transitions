@@ -58,17 +58,13 @@ export class PriorisationLeviersPom {
     this.saveErrorToast = page.getByText("Erreur lors de l'enregistrement");
   }
 
-  async stubLevierWithPotentiel(nom: Levier): Promise<void> {
+  private async stubTrajectoireLeviers(
+    leviers: { nom: Levier; objectifReduction: number }[]
+  ): Promise<void> {
     await this.page.route(TRAJECTOIRE_LEVIERS_URL_PATTERN, (route) =>
       route.fulfill({
         contentType: 'application/json',
-        body: JSON.stringify({
-          result: {
-            data: {
-              secteurs: [{ leviers: [{ nom, objectifReduction: -100 }] }],
-            },
-          },
-        }),
+        body: JSON.stringify({ result: { data: { secteurs: [{ leviers }] } } }),
       })
     );
   }
@@ -87,10 +83,20 @@ export class PriorisationLeviersPom {
     return this.page.getByText(/^Analyse de \d+ actions?\b/);
   }
 
-  get missingPotentielsMessage(): Locator {
+  get missingTrajectoireMessage(): Locator {
     return this.page.getByText(
-      /potentiel de réduction de GES par levier n'est disponible/
+      'Calculez votre trajectoire SNBC pour accéder à cette vue'
     );
+  }
+
+  get reservedToEpciMessage(): Locator {
+    return this.page.getByText('Cette vue est réservée aux EPCI');
+  }
+
+  get computeTrajectoireLink(): Locator {
+    return this.page.getByRole('link', {
+      name: 'Calculer ma trajectoire SNBC',
+    });
   }
 
   get matrixTab(): Locator {
@@ -390,6 +396,22 @@ export class PriorisationLeviersPom {
   }
 
   async goto(collectiviteId: number): Promise<void> {
+    await this.stubTrajectoireLeviers([]);
+    await this.gotoWithoutTrajectoire(collectiviteId);
+  }
+
+  async gotoWithLevierPotentiel({
+    collectiviteId,
+    nom,
+  }: {
+    collectiviteId: number;
+    nom: Levier;
+  }): Promise<void> {
+    await this.stubTrajectoireLeviers([{ nom, objectifReduction: -100 }]);
+    await this.gotoWithoutTrajectoire(collectiviteId);
+  }
+
+  async gotoWithoutTrajectoire(collectiviteId: number): Promise<void> {
     await this.open(collectiviteId);
     await expect(this.title).toBeVisible();
   }

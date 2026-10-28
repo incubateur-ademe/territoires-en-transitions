@@ -234,6 +234,17 @@ export const useUpdateFiche = (args?: Args) => {
             }),
           });
         }
+
+        // Une fiche aux secteurs à renseigner qui entre dans un plan rattaché à
+        // une démarche PCAET, ou qui en sort, change la complétude du dossier.
+        if (ficheFields.axes) {
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.get.pathKey(),
+          });
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.list.pathKey(),
+          });
+        }
       },
       onSuccess: () => {
         if (args?.onUpdateCallback) {

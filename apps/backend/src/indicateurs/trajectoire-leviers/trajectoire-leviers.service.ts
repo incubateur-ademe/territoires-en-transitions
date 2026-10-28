@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { GetTrajectoireLeviersDataRequest } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
 import {
@@ -24,8 +19,13 @@ import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/man
 import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/list-indicateur-valeurs/get-indicateur-valeurs.response';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
 import { isNil, round, sum, sumBy } from 'es-toolkit';
+import {
+  TrajectoireLeviersError,
+  TrajectoireLeviersErrorEnum,
+} from './trajectoire-leviers.errors';
 
 @Injectable()
 export class TrajectoireLeviersService {
@@ -220,9 +220,19 @@ export class TrajectoireLeviersService {
     };
   }
 
+  private hasSnbcValeurs(
+    indicateurValeurs: GetIndicateursValeursResponse
+  ): boolean {
+    return indicateurValeurs.indicateurs.some(
+      (indicateur) =>
+        (indicateur.sources[this.trajectoiresDataService.SNBC_SOURCE.id]
+          ?.valeurs?.length ?? 0) > 0
+    );
+  }
+
   private extractTrajectoireSource(
     indicateurValeurs: GetIndicateursValeursResponse
-  ): string[] {
+  ): Result<string[], TrajectoireLeviersError> {
     const indicateurValeursSnbcFlat = indicateurValeurs.indicateurs
       .filter(
         (indicateur) =>
@@ -245,17 +255,22 @@ export class TrajectoireLeviersService {
           )
         : null;
     if (!extractedTrajectoireSource) {
-      throw new InternalServerErrorException(
+      this.logger.error(
         `Impossible d'extraire les sources de données utilisées pour calculer la trajectoire de la collectivité à partir du comentaire ${firstValeurWithCommentaire?.objectifCommentaire}`
       );
+      return failure(
+        TrajectoireLeviersErrorEnum.TRAJECTOIRE_SOURCES_NOT_EXTRACTABLE
+      );
     }
-    return extractedTrajectoireSource.sources;
+    return success(extractedTrajectoireSource.sources);
   }
 
   async getData(
     input: GetTrajectoireLeviersDataRequest,
     user: AuthUser
-  ): Promise<GetTrajectoireLeviersDataResponse> {
+  ): Promise<
+    Result<GetTrajectoireLeviersDataResponse, TrajectoireLeviersError>
+  > {
     this.logger.log(
       `Get trajectoire leviers input data for collectivite: ${input.collectiviteId}`
     );
@@ -263,21 +278,22 @@ export class TrajectoireLeviersService {
     const collectivite =
       await this.collectiviteService.getCollectiviteByAnyIdentifiant(input);
     if (collectivite.type !== 'epci' && collectivite.type !== 'test') {
-      throw new BadRequestException(
-        'La collectivité doit être un EPCI pour récupérer les données de trajectoire leviers'
-      );
+      return failure(TrajectoireLeviersErrorEnum.COLLECTIVITE_NOT_EPCI);
     }
     input.collectiviteId = collectivite.id;
     this.logger.log(
       `La collectivité ${collectivite.id} (${collectivite.nom}) appartient à la région ${collectivite.regionCode}`
     );
 
-    await this.permissionService.assertAllowed(
+    const permission = await this.permissionService.isAllowed(
       user,
       'indicateurs.valeurs.read',
       ResourceType.COLLECTIVITE,
       { collectiviteId: collectivite.id }
     );
+    if (!permission.success) {
+      return failure(TrajectoireLeviersErrorEnum.UNAUTHORIZED);
+    }
 
     const getTrajectoireLeviersDataResponse: GetTrajectoireLeviersDataResponse =
       {
@@ -322,9 +338,22 @@ export class TrajectoireLeviersService {
         { user }
       );
 
+    const isTrajectoireComputed = this.hasSnbcValeurs(
+      indicateurValeursObjectifs2030
+    );
+    if (!isTrajectoireComputed) {
+      return failure(TrajectoireLeviersErrorEnum.TRAJECTOIRE_NOT_COMPUTED);
+    }
+
     // On peut extraire la source de données utilisée pour calculer la trajectoire
+    const trajectoireSourceResult = this.extractTrajectoireSource(
+      indicateurValeursObjectifs2030
+    );
+    if (!trajectoireSourceResult.success) {
+      return trajectoireSourceResult;
+    }
     getTrajectoireLeviersDataResponse.sourcesResultats =
-      this.extractTrajectoireSource(indicateurValeursObjectifs2030);
+      trajectoireSourceResult.data;
 
     this.logger.log(
       `La trajectoire de la collectivite ${
@@ -371,7 +400,7 @@ export class TrajectoireLeviersService {
     // On calcule les objectifs de réduction pour les leviers à partir des données des secteurs/sous-secteurs et des pourcentages régionaux
     this.computeObjectifReduction(getTrajectoireLeviersDataResponse);
 
-    return getTrajectoireLeviersDataResponse;
+    return success(getTrajectoireLeviersDataResponse);
   }
 
   private getObjectifReduction(

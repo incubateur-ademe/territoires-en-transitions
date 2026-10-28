@@ -11,6 +11,11 @@ import {
   toPotentielsReduction,
 } from './to-leviers-priorisation';
 import { toPertinencesListInput } from './to-pertinences-list-input';
+import {
+  PriorisationAccess,
+  toPriorisationAccess,
+  toTrajectoireState,
+} from './to-priorisation-access';
 
 export type LeviersPriorisationQuery =
   | { status: 'loading' }
@@ -18,8 +23,7 @@ export type LeviersPriorisationQuery =
   | {
       status: 'ready';
       leviers: LevierPriorisation[];
-      hasMobilisation: boolean;
-      potentiels: PotentielsReduction;
+      access: PriorisationAccess;
     };
 
 const UNAVAILABLE_POTENTIELS: PotentielsReduction = {
@@ -52,6 +56,14 @@ export const useLeviersPriorisation = (
   const pertinences = pertinencesQuery.data;
   const mobilisation = mobilisationQuery.data;
   const trajectoire = trajectoireQuery.data;
+  const trajectoireErrorKey = trajectoireQuery.error?.data?.errorKey;
+  const trajectoireState = toTrajectoireState({
+    hasTrajectoire: trajectoire !== undefined,
+    isLoadingError: trajectoireQuery.isLoadingError,
+    isTrajectoireNotComputed:
+      trajectoireErrorKey === 'TRAJECTOIRE_NOT_COMPUTED',
+    isCollectiviteNotEpci: trajectoireErrorKey === 'COLLECTIVITE_NOT_EPCI',
+  });
   const potentiels = useMemo(
     () =>
       trajectoire ? toPotentielsReduction(trajectoire) : UNAVAILABLE_POTENTIELS,
@@ -75,28 +87,34 @@ export const useLeviersPriorisation = (
     if (mobilisationQuery.isLoadingError) {
       void mobilisationQuery.refetch();
     }
+    if (trajectoireState === 'failed') {
+      void trajectoireQuery.refetch();
+    }
   };
+
+  // Hors EPCI, les pertinences sont refusées : la carte « réservée aux EPCI »
+  // prime sur l'erreur de chargement.
+  if (trajectoireState === 'reservedToEpci') {
+    return { status: 'ready', leviers: [], access: 'reservedToEpci' };
+  }
 
   const hasLoadingError =
     pertinencesQuery.isLoadingError || mobilisationQuery.isLoadingError;
-  if (hasLoadingError) {
+  if (hasLoadingError || trajectoireState === 'failed') {
     return { status: 'error', retry: retryFailedQueries };
   }
 
-  const isTrajectoireSettled =
-    trajectoire !== undefined || trajectoireQuery.isLoadingError;
-  const isStillLoading =
-    leviers === undefined ||
-    mobilisation === undefined ||
-    !isTrajectoireSettled;
-  if (isStillLoading) {
+  const isStillLoading = leviers === undefined || mobilisation === undefined;
+  if (isStillLoading || trajectoireState === 'loading') {
     return { status: 'loading' };
   }
 
   return {
     status: 'ready',
     leviers,
-    hasMobilisation: hasMobilisation(mobilisation),
-    potentiels,
+    access: toPriorisationAccess({
+      hasMobilisation: hasMobilisation(mobilisation),
+      trajectoireState,
+    }),
   };
 };

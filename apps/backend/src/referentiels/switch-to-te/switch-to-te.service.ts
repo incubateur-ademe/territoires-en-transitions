@@ -63,6 +63,7 @@ export class SwitchToTeService {
     COLLECTIVITE_IS_DROM: SwitchToTeErrorEnum.COLLECTIVITE_IS_DROM,
     AUDIT_REQUEST_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_REQUEST_IN_PROGRESS,
     AUDIT_IN_PROGRESS: SwitchToTeErrorEnum.AUDIT_IN_PROGRESS,
+    REFERENTIEL_TE_NOT_EMPTY: SwitchToTeErrorEnum.REFERENTIEL_TE_NOT_EMPTY,
   };
 
   /**
@@ -78,7 +79,7 @@ export class SwitchToTeService {
       (referentiel) => prefs[referentiel].mode === 'write'
     );
 
-    const [cotActif, { isSyndicat, isDrom }, referentielsEnWrite] =
+    const [cotActif, { isSyndicat, isDrom }, referentielsEnWrite, teNonVide] =
       await Promise.all([
         this.getLabellisationService.isCotActif(collectiviteId),
         this.collectivitesService
@@ -97,6 +98,7 @@ export class SwitchToTeService {
             };
           })
         ),
+        this.migrateCollectiviteDataService.hasTeData(collectiviteId),
       ]);
 
     return getSwitchToTeBlockers({
@@ -104,6 +106,7 @@ export class SwitchToTeService {
       isSyndicat,
       isDrom,
       referentielsEnWrite,
+      teNonVide,
     });
   }
 
