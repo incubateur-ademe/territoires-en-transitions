@@ -1,7 +1,7 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { getCollectiviteForRequest } from '@/app/collectivites/get-collectivite-for-request.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
-import { canReadPriorisation } from '@tet/domain/collectivites';
+import { hasPriorisationReadPermission } from '@tet/domain/collectivites';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 import z from 'zod';
@@ -21,9 +21,8 @@ export default async function Layout({
     getCollectiviteForRequest(collectiviteId),
   ]);
 
-  const isPriorisationReadable = canReadPriorisation(user, {
+  const isPriorisationReadable = hasPriorisationReadPermission(user, {
     collectiviteId,
-    collectiviteType: collectivite.collectiviteType,
     collectiviteAccesRestreint: collectivite.collectiviteAccesRestreint,
   });
 
