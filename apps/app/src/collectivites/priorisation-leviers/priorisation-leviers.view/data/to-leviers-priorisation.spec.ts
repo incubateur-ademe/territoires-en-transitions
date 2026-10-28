@@ -8,6 +8,7 @@ import {
 
 const toMobilisation = (leviers: Mobilisation['leviers']): Mobilisation => ({
   collectiviteId: 1,
+  analyzedFicheCount: 0,
   leviers,
 });
 
