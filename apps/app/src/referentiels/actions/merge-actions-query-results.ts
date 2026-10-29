@@ -1,3 +1,4 @@
+import { AppRouter } from '@tet/api';
 import {
   ListActionDefinitionsOutput,
   ListActionsDynamicStateResult,
@@ -5,13 +6,23 @@ import {
   mergeActionDefinitionsAndState,
   ReferentielId,
 } from '@tet/domain/referentiels';
+import { TRPCClientErrorLike } from '@trpc/client';
+
+export type ActionsQueryError = TRPCClientErrorLike<AppRouter>;
 
 /** Sous-ensemble utile du résultat d'une query React Query */
 export type ActionsQueryPart<TData> = {
   data: TData | undefined;
+  error: ActionsQueryError | null;
   isFetching: boolean;
   isPending: boolean;
   isError: boolean;
+  refetch: () => Promise<unknown>;
+};
+
+export type ActionsQueryFailure = {
+  error: ActionsQueryError;
+  retry: () => void;
 };
 
 /** Résultats des deux queries (définitions, état) d'un référentiel */
@@ -34,7 +45,7 @@ export type ReferentielVersionMismatch = {
 export type MergedActionsQueryResults = {
   data: Map<ReferentielId, ListActionsGroupedByIdResult>;
   isPending: boolean;
-  isError: boolean;
+  failure: ActionsQueryFailure | undefined;
   versionMismatches: ReferentielVersionMismatch[];
 };
 
@@ -113,7 +124,24 @@ export function mergeActionsQueryResults(
   return {
     data,
     isPending: parts.some((part) => part.isPending),
-    isError: parts.some((part) => part.isError && part.data === undefined),
+    failure: getFailure(parts),
     versionMismatches,
+  };
+}
+
+function getFailure(
+  parts: ActionsQueryPart<unknown>[]
+): ActionsQueryFailure | undefined {
+  const failedParts = parts.filter(
+    (part) => part.isError && part.data === undefined
+  );
+  const firstError = failedParts.find((part) => part.error)?.error;
+  if (!firstError) {
+    return undefined;
+  }
+
+  return {
+    error: firstError,
+    retry: () => failedParts.forEach((part) => void part.refetch()),
   };
 }

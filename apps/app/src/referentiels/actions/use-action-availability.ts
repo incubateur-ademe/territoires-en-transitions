@@ -2,11 +2,13 @@ import {
   getReferentielIdFromActionId,
   isNewReferentiel,
 } from '@tet/domain/referentiels';
+import { ActionsQueryFailure } from './merge-actions-query-results';
 import { ActionListItem } from './use-list-actions';
 import { useListActionsGroupedById } from './use-list-actions-grouped-by-id';
 
 export type ActionAvailability =
   | { status: 'pending' }
+  | ({ status: 'error' } & ActionsQueryFailure)
   | { status: 'visible'; action: ActionListItem }
   | {
       status: 'hidden';
@@ -18,15 +20,15 @@ export function useActionAvailability(actionId: string): ActionAvailability {
   const referentielId = getReferentielIdFromActionId(actionId);
   const isReferentielTe = isNewReferentiel(referentielId);
 
-  const { isPending, isError, data } = useListActionsGroupedById({
+  const { isPending, failure, data } = useListActionsGroupedById({
     referentielIds: [referentielId],
   });
 
   if (isPending) {
     return { status: 'pending' };
   }
-  if (isError) {
-    throw new Error(`Erreur de lecture de ${actionId}`);
+  if (failure) {
+    return { status: 'error', ...failure };
   }
 
   const actionsData = data.get(referentielId);
