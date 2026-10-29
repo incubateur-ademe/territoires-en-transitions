@@ -44,7 +44,7 @@
         "--",
         "sh",
         "-c",
-        "exec npx -y mcp-remote@0.14.3 \"${TET_MCP_URL:-https://staging-api.territoiresentransitions.fr}/api/v1/mcp\" --allow-http"
+        "exec npx -y mcp-remote@0.14.3 \"${TET_MCP_URL:-https://staging-api.territoiresentransitions.fr}/api/v1/mcp\""
       ]
     }
   }

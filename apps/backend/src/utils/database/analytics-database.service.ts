@@ -101,18 +101,22 @@ export class AnalyticsDatabaseService implements OnApplicationShutdown {
     const wrapped = `SELECT _sub.*, count(*) OVER () AS ${TOTAL_ROW_COUNT_COLUMN} FROM (\n${text}\n) AS _sub LIMIT ${limit}`;
 
     try {
-      const result = await this.pool.query(wrapped, values);
-      const totalRowCount = Number(
-        result.rows[0]?.[TOTAL_ROW_COUNT_COLUMN] ?? 0
-      );
+      // Lignes en tableaux : le compteur se lit par position, sans écraser
+      // une colonne de la requête qui porterait le même nom.
+      const result = await this.pool.query<unknown[]>({
+        text: wrapped,
+        values,
+        rowMode: 'array',
+      });
+      const columns = result.fields.slice(0, -1).map((field) => field.name);
+      const totalRowCount = Number(result.rows[0]?.[columns.length] ?? 0);
       return success({
-        columns: result.fields
-          .map((field) => field.name)
-          .filter((name) => name !== TOTAL_ROW_COUNT_COLUMN),
-        rows: result.rows.slice(0, maxRows).map((row) => {
-          const { [TOTAL_ROW_COUNT_COLUMN]: _total, ...rest } = row;
-          return rest;
-        }),
+        columns,
+        rows: result.rows
+          .slice(0, maxRows)
+          .map((row) =>
+            Object.fromEntries(columns.map((column, i) => [column, row[i]]))
+          ),
         truncated: result.rows.length > maxRows,
         totalRowCount,
       });

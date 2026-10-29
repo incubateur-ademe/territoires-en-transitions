@@ -8,9 +8,11 @@ import { RunHogqlQueryService } from './run-hogql-query.service';
 const user = { id: 'user-1' } as AuthenticatedUser;
 
 function buildService({
+  columns = ['collectivite_id', 'person.properties.email', 'n'],
   results,
   internalEmails,
 }: {
+  columns?: string[];
   results: unknown[][];
   internalEmails: string[] | 'unavailable';
 }) {
@@ -18,7 +20,7 @@ function buildService({
     isConfigured: () => true,
     run: vi.fn(async () =>
       success({
-        columns: ['collectivite_id', 'person.properties.email', 'n'],
+        columns,
         results,
         hasMore: false,
       })
@@ -83,7 +85,7 @@ describe('RunHogqlQueryService', () => {
     expect(analytics.query).toHaveBeenCalledTimes(1);
   });
 
-  test('sans liste des internes, la colonne e-mail est quand même retirée', async () => {
+  test('échoue quand la liste des internes est indisponible et qu’une colonne porte des adresses', async () => {
     const { service } = buildService({
       results: [['1', 'interne@beta.gouv.fr', 5]],
       internalEmails: 'unavailable',
@@ -92,16 +94,29 @@ describe('RunHogqlQueryService', () => {
     const result = await service.run({ hogql: 'select 1 limit 10' }, { user });
 
     expect(result).toMatchObject({
+      success: false,
+      error: 'INTERNAL_USERS_UNAVAILABLE',
+    });
+  });
+
+  test('conserve une mesure agrégée dont le nom contient « mail »', async () => {
+    const { service, analytics } = buildService({
+      columns: ['collectivite_id', 'email_count'],
+      results: [['1', 12]],
+      internalEmails: 'unavailable',
+    });
+
+    const result = await service.run({ hogql: 'select 1 limit 10' }, { user });
+
+    expect(result).toMatchObject({
       success: true,
       data: {
-        columns: ['collectivite_id', 'n'],
-        totalRowCount: 1,
-        meta: {
-          internalRowsRemoved: 0,
-          emailColumnsRemoved: ['person.properties.email'],
-        },
+        columns: ['collectivite_id', 'email_count'],
+        previewRows: [{ collectivite_id: '1', email_count: 12 }],
+        meta: { emailColumnsRemoved: [] },
       },
     });
+    expect(analytics.query).not.toHaveBeenCalled();
   });
 
   test('remplace {internal_emails} par la liste des internes avant envoi', async () => {
@@ -124,6 +139,25 @@ describe('RunHogqlQueryService', () => {
     });
     expect(posthog.run).toHaveBeenCalledWith(
       "select count() as n from events where coalesce(person.properties.email, '') not in ('interne@beta.gouv.fr', 'o''neil@ademe.fr')"
+    );
+  });
+
+  test('sans interne connu, {internal_emails} ne retire pas les anonymes', async () => {
+    const { service, posthog } = buildService({
+      results: [],
+      internalEmails: [],
+    });
+
+    await service.run(
+      {
+        hogql:
+          "select count() from events where coalesce(person.properties.email, '') not in ({internal_emails})",
+      },
+      { user }
+    );
+
+    expect(posthog.run).toHaveBeenCalledWith(
+      "select count() from events where coalesce(person.properties.email, '') not in ('aucun utilisateur interne')"
     );
   });
 

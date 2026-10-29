@@ -190,8 +190,16 @@ export class RunHogqlQueryService {
     }
     rows = rows.slice(0, HOGQL_MAX_TOTAL_ROWS);
 
-    const { kept, removed, emailColumnIndexes } =
-      await this.removeInternalUsers(columns, rows);
+    const filtered = await this.removeInternalUsers(columns, rows);
+    if (filtered === null) {
+      return failure(
+        'INTERNAL_USERS_UNAVAILABLE',
+        new Error(
+          'La liste des utilisateurs internes est indisponible : leurs lignes ne peuvent pas être retirées.'
+        )
+      );
+    }
+    const { kept, removed, emailColumnIndexes } = filtered;
     const emailColumnsRemoved = emailColumnIndexes.map(
       (index) => columns[index]
     );
@@ -262,7 +270,8 @@ export class RunHogqlQueryService {
    * Retire les lignes des utilisateurs internes (table `public.internal_users`
    * de la base analytique) sur toute colonne qui ressemble à une adresse
    * e-mail, puis signale ces colonnes pour qu'elles soient supprimées du
-   * résultat.
+   * résultat. Null si la liste des internes est indisponible alors qu'il
+   * faut filtrer.
    */
   private async removeInternalUsers(
     columns: string[],
@@ -271,15 +280,22 @@ export class RunHogqlQueryService {
     kept: unknown[][];
     removed: number;
     emailColumnIndexes: number[];
-  }> {
+  } | null> {
     const emailColumnIndexes = columns
-      .map((column, index) => (EMAIL_COLUMN_PATTERN.test(column) ? index : -1))
+      .map((column, index) =>
+        EMAIL_COLUMN_PATTERN.test(column) && !isMeasureColumn(rows, index)
+          ? index
+          : -1
+      )
       .filter((index) => index >= 0);
     if (emailColumnIndexes.length === 0) {
       return { kept: rows, removed: 0, emailColumnIndexes };
     }
 
-    const internalEmails = (await this.getInternalEmails()) ?? new Set();
+    const internalEmails = await this.getInternalEmails();
+    if (internalEmails === null) {
+      return null;
+    }
     if (internalEmails.size === 0) {
       return { kept: rows, removed: 0, emailColumnIndexes };
     }
@@ -308,9 +324,7 @@ export class RunHogqlQueryService {
       maxRows: MAX_INTERNAL_EMAILS,
     });
     if (!result.success) {
-      this.logger.warn(
-        `Internal users unavailable (${result.error}): PostHog rows are not filtered`
-      );
+      this.logger.warn(`Internal users unavailable (${result.error})`);
       return null;
     }
     const emails = new Set(
@@ -326,11 +340,27 @@ export class RunHogqlQueryService {
 /** Liste HogQL de chaînes entre apostrophes, apostrophes internes doublées. */
 function toHogqlStringList(values: Set<string>): string {
   if (values.size === 0) {
-    return "''";
+    // Pas `''` : `coalesce(email, '') NOT IN ('')` exclurait les anonymes.
+    // Une adresse ne contient pas d'espace, cette valeur n'en retire aucune.
+    return "'aucun utilisateur interne'";
   }
   return [...values]
     .map((value) => `'${value.replaceAll("'", "''")}'`)
     .join(', ');
+}
+
+/** Mesure agrégée (`email_count`) : nombres ou booléens seulement, jamais
+ * d'adresse à filtrer ni à masquer. */
+function isMeasureColumn(rows: unknown[][], index: number): boolean {
+  return rows.every((row) => {
+    const value = row[index];
+    return (
+      value === null ||
+      value === undefined ||
+      typeof value === 'number' ||
+      typeof value === 'boolean'
+    );
+  });
 }
 
 function dedupeRows(rows: unknown[][]): unknown[][] {
