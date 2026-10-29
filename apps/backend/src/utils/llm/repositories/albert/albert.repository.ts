@@ -220,6 +220,13 @@ export class AlbertRepository extends LlmRepository {
       );
       const completed =
         finishReason === 'stop' || finishReason === 'tool_calls';
+      if (!choice?.message.content?.trim() && toolCalls.length === 0) {
+        this.logger.warn(
+          `Empty Albert chat response (model ${model}, finishReason ${
+            finishReason ?? 'unknown'
+          }, ${response.usage?.completion_tokens ?? '?'} completion tokens)`
+        );
+      }
       if (!completed) {
         this.logger.warn(
           `Incomplete Albert chat response (model ${model}, finishReason ${
@@ -294,7 +301,9 @@ export const toChatToolsParams = (
       : []),
     ...request.messages.map(toOpenAiMessage),
   ],
-  ...(request.tools.length > 0
+  // gpt-oss sur vLLM n'honore pas `tool_choice: 'none'` : il appelle quand
+  // même un outil, sans texte. Sans outils déclarés, il répond.
+  ...(request.tools.length > 0 && request.toolChoice !== 'none'
     ? {
         tools: request.tools.map((tool) => ({
           type: 'function' as const,
@@ -304,7 +313,7 @@ export const toChatToolsParams = (
             parameters: tool.parameters,
           },
         })),
-        tool_choice: request.toolChoice ?? 'auto',
+        tool_choice: 'auto' as const,
       }
     : {}),
   temperature: request.temperature,

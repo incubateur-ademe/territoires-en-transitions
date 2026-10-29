@@ -143,8 +143,7 @@ requêtes nommées, avec l'équipe data, pas en touchant aux outils.
 ### 7. Ce que cette couche ne fait pas
 
 - **Aucun appel à un modèle** : le cerveau est toujours un client du MCP
-  (Claude aujourd'hui, un agent sur Albert demain, dans le backend mais à côté
-  de cette couche).
+  (Claude, ou l'agent du backend, à côté de cette couche, cf. décision 8).
 - **Pas de double emploi avec les connecteurs du client** : dans Claude.ai,
   Notion est lu par le connecteur Notion de Claude ; le MCP n'expose que ce qui
   est propre à Territoires en Transitions.
@@ -152,6 +151,29 @@ requêtes nommées, avec l'équipe data, pas en touchant aux outils.
   (import de plan…) seront annoncés non idempotents et destructifs, pour que le
   client demande confirmation, et s'exécuteront avec les droits de
   l'utilisateur.
+
+### 8. Le cerveau du backend : un client MCP en mémoire
+
+L'agent du backend (`utils/assistant/`, mutation tRPC `assistant.ask`) est un
+client de ce même serveur, branché en mémoire (`InMemoryTransport`) sur le
+`McpServer` construit pour l'utilisateur : mêmes outils, mêmes permissions,
+même prompt que dans Claude.ai, sans saut réseau ni seconde authentification.
+
+- Le fournisseur est neutre : `LlmService.chat` (appels d'outils) est
+  implémenté pour Albert et Gemini, choisi par `LLM_PROVIDER`.
+- L'historique est porté par l'appelant ; rien n'est stocké.
+- La boucle est bornée (8 appels au modèle, 4 outils par tour, 120 s). Un
+  outil inconnu, des arguments illisibles, un refus de droits ou un appel
+  répété reviennent au modèle comme une erreur qu'il peut corriger ; au
+  plafond, un dernier tour sans outils force une réponse.
+- La qualité se mesure par une évaluation réelle (`make assistant-eval`) qui
+  juge les actes (outils, arguments, absence d'e-mail ou de chiffre non
+  sourcé) et pas la prose ; une empreinte du prompt et des outils, vérifiée en
+  CI, signale qu'il faut la relancer.
+
+Première évaluation (29/10/2026, 9 scénarios hors base analytique) :
+gpt-oss-120b sur Albert 9/9, gemini-3.5-flash 8/9, Albert deux fois plus
+sobre en tokens.
 
 ## Alternatives considérées
 
@@ -192,9 +214,10 @@ Négatives et points d'attention :
 - le serveur d'autorisation OAuth de Supabase est en bêta et devra être
   remplacé si l'application quitte Supabase Auth.
 
-Suite prévue, sur la même base : un agent sur Albert dans le backend, le
-support dans Crisp (`/tet <question>` en note privée, avec le contexte de la
-conversation), puis l'assistant dans l'app.
+Suite prévue, sur la même base : le support dans Crisp (`/tet <question>` en
+note privée, avec le contexte de la conversation), puis l'assistant dans
+l'app.
 
 Références : `apps/backend/src/utils/mcp/README.md` (mode d'emploi, outils,
-configuration) et le ticket de pilotage « Assistant TeT » dans Notion.
+configuration), `apps/backend/src/utils/assistant/README.md` (agent, évaluation)
+et le ticket de pilotage « Assistant TeT » dans Notion.

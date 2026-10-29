@@ -1,0 +1,9 @@
+{
+  "promptVersion": "e09c59bd9e36",
+  "toolsetVersion": "00f32d6ec6b3",
+  "lastEval": {
+    "date": "2026-10-29",
+    "albert": "gpt-oss-120b : 9/9",
+    "gemini": "gemini-3.5-flash : 8/9"
+  }
+}
