@@ -175,4 +175,17 @@ describe('mergeActionsQueryResults', () => {
       ...mergeActionsQueryResults([loaded, pending, inError]).data.keys(),
     ]).toEqual(['cae']);
   });
+
+  it("ne signale pas d'erreur quand un rechargement échoue alors que les données sont en cache", () => {
+    const result = mergeActionsQueryResults([
+      buildPair({
+        state: buildPart(buildState(), { isError: true }),
+      }),
+    ]);
+
+    expect(result).toMatchObject({ isPending: false, isError: false });
+    expect(result.data.get('cae')?.actionsById['cae_1']).toMatchObject({
+      actionId: 'cae_1',
+    });
+  });
 });
