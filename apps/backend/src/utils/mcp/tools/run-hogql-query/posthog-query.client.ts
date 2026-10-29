@@ -37,6 +37,7 @@ export class PosthogQueryClient {
     const projectId = this.configService.get('POSTHOG_PROJECT_ID');
 
     let response: Response;
+    let body: string;
     try {
       response = await fetch(`${host}/api/projects/${projectId}/query/`, {
         method: 'POST',
@@ -47,12 +48,13 @@ export class PosthogQueryClient {
         body: JSON.stringify({ query: { kind: 'HogQLQuery', query: hogql } }),
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
+      // Le délai court encore pendant la lecture du corps.
+      body = await response.text();
     } catch (error) {
       this.logger.warn(`PostHog query failed: ${(error as Error).message}`);
       return failure('POSTHOG_QUERY_ERROR', error as Error);
     }
 
-    const body = await response.text();
     if (!response.ok) {
       return failure(
         'POSTHOG_QUERY_ERROR',
@@ -62,7 +64,7 @@ export class PosthogQueryClient {
       );
     }
 
-    let json: Partial<HogqlQueryResponse>;
+    let json: Partial<HogqlQueryResponse> | null;
     try {
       json = JSON.parse(body);
     } catch {
@@ -71,7 +73,7 @@ export class PosthogQueryClient {
         new Error('Réponse PostHog illisible (JSON invalide)')
       );
     }
-    if (!Array.isArray(json.results)) {
+    if (!json || !Array.isArray(json.results)) {
       return failure(
         'POSTHOG_QUERY_ERROR',
         new Error(

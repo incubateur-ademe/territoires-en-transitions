@@ -18,7 +18,7 @@ function buildService({
     isConfigured: () => true,
     run: vi.fn(async () =>
       success({
-        columns: ['collectivite_id', 'Email', 'n'],
+        columns: ['collectivite_id', 'person.properties.email', 'n'],
         results,
         hasMore: false,
       })
@@ -33,6 +33,7 @@ function buildService({
             columns: ['email'],
             rows: internalEmails.map((email) => ({ email })),
             truncated: false,
+            totalRowCount: internalEmails.length,
           })
     ),
   } as unknown as AnalyticsDatabaseService;
@@ -44,6 +45,7 @@ function buildService({
   return {
     service: new RunHogqlQueryService(posthog, analytics, permissions),
     analytics,
+    posthog,
   };
 }
 
@@ -69,7 +71,10 @@ describe('RunHogqlQueryService', () => {
           { collectivite_id: '1', n: 3 },
           { collectivite_id: '2', n: 1 },
         ],
-        meta: { internalRowsRemoved: 1, emailColumnsRemoved: ['Email'] },
+        meta: {
+          internalRowsRemoved: 1,
+          emailColumnsRemoved: ['person.properties.email'],
+        },
       },
     });
 
@@ -91,8 +96,53 @@ describe('RunHogqlQueryService', () => {
       data: {
         columns: ['collectivite_id', 'n'],
         totalRowCount: 1,
-        meta: { internalRowsRemoved: 0, emailColumnsRemoved: ['Email'] },
+        meta: {
+          internalRowsRemoved: 0,
+          emailColumnsRemoved: ['person.properties.email'],
+        },
       },
+    });
+  });
+
+  test('remplace {internal_emails} par la liste des internes avant envoi', async () => {
+    const { service, posthog } = buildService({
+      results: [],
+      internalEmails: ['interne@beta.gouv.fr', "o'neil@ademe.fr"],
+    });
+
+    const result = await service.run(
+      {
+        hogql:
+          "select count() as n from events where coalesce(person.properties.email, '') not in ({internal_emails})",
+      },
+      { user }
+    );
+
+    expect(result).toMatchObject({
+      success: true,
+      data: { meta: { internalFilterInQuery: true } },
+    });
+    expect(posthog.run).toHaveBeenCalledWith(
+      "select count() as n from events where coalesce(person.properties.email, '') not in ('interne@beta.gouv.fr', 'o''neil@ademe.fr')"
+    );
+  });
+
+  test('refuse {internal_emails} quand la liste des internes est indisponible', async () => {
+    const { service } = buildService({
+      results: [],
+      internalEmails: 'unavailable',
+    });
+
+    const result = await service.run(
+      {
+        hogql: 'select count() from events where x not in ({internal_emails})',
+      },
+      { user }
+    );
+
+    expect(result).toMatchObject({
+      success: false,
+      error: 'INTERNAL_USERS_UNAVAILABLE',
     });
   });
 

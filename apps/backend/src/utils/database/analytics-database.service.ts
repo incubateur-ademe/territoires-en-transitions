@@ -12,6 +12,8 @@ import { buildDatabaseSsl } from './build-database-ssl';
 
 export const ANALYTICS_STATEMENT_TIMEOUT_MS = 10_000;
 
+const TOTAL_ROW_COUNT_COLUMN = '_total_row_count';
+
 export type AnalyticsQuery = {
   text: string;
   values?: unknown[];
@@ -23,6 +25,8 @@ export type AnalyticsQueryResult = {
   columns: string[];
   rows: Record<string, unknown>[];
   truncated: boolean;
+  /** Nombre de lignes de la requête complète, avant troncature. */
+  totalRowCount: number;
 };
 
 /**
@@ -32,7 +36,8 @@ export type AnalyticsQueryResult = {
  * avec `ANALYTICS_DATABASE_NOT_CONFIGURED` et le backend démarre quand même.
  *
  * Lecture seule à trois niveaux : rôle Postgres (la vraie garde, hors
- * dépôt), `default_transaction_read_only` posé à la connexion, et sous-requête
+ * dépôt), `default_transaction_read_only` posé comme paramètre de connexion
+ * (un refus fait échouer la connexion, pas un simple log), et sous-requête
  * `LIMIT` qui rend toute seconde instruction syntaxiquement invalide.
  */
 @Injectable()
@@ -56,22 +61,16 @@ export class AnalyticsDatabaseService implements OnApplicationShutdown {
       ssl: buildDatabaseSsl({
         url,
         ca: this.configService.get('ANALYTICS_DATABASE_SSL_ROOT_CERT'),
+        urlVariable: 'ANALYTICS_DATABASE_URL',
+        caVariable: 'ANALYTICS_DATABASE_SSL_ROOT_CERT',
       }),
-      application_name: `Backend MCP analytics ${process.env.APPLICATION_VERSION}`,
+      application_name: 'Backend MCP analytics',
+      options: '-c default_transaction_read_only=on',
       max: 3,
       connectionTimeoutMillis: 5000,
       idleTimeoutMillis: 30000,
       statement_timeout: ANALYTICS_STATEMENT_TIMEOUT_MS,
       idle_in_transaction_session_timeout: 15000,
-    });
-    this.pool.on('connect', (client) => {
-      client
-        .query('SET default_transaction_read_only = on')
-        .catch((error: Error) =>
-          this.logger.error(
-            `Cannot set analytics connection read only: ${error.message}`
-          )
-        );
     });
     this.pool.on('error', (error) =>
       this.logger.error(`Analytics pool error: ${error.message}`)
@@ -83,6 +82,10 @@ export class AnalyticsDatabaseService implements OnApplicationShutdown {
     return this.pool !== null;
   }
 
+  /**
+   * Exécute la requête une seule fois : le total vient d'une fonction de
+   * fenêtrage, pas d'un second passage.
+   */
   async query({
     text,
     values = [],
@@ -94,41 +97,27 @@ export class AnalyticsDatabaseService implements OnApplicationShutdown {
       return failure('ANALYTICS_DATABASE_NOT_CONFIGURED');
     }
 
-    const wrapped = `SELECT * FROM (\n${text}\n) AS _sub LIMIT ${
-      Math.max(1, Math.floor(maxRows)) + 1
-    }`;
+    const limit = Math.max(1, Math.floor(maxRows)) + 1;
+    const wrapped = `SELECT _sub.*, count(*) OVER () AS ${TOTAL_ROW_COUNT_COLUMN} FROM (\n${text}\n) AS _sub LIMIT ${limit}`;
 
     try {
       const result = await this.pool.query(wrapped, values);
+      const totalRowCount = Number(
+        result.rows[0]?.[TOTAL_ROW_COUNT_COLUMN] ?? 0
+      );
       return success({
-        columns: result.fields.map((field) => field.name),
-        rows: result.rows.slice(0, maxRows),
+        columns: result.fields
+          .map((field) => field.name)
+          .filter((name) => name !== TOTAL_ROW_COUNT_COLUMN),
+        rows: result.rows.slice(0, maxRows).map((row) => {
+          const { [TOTAL_ROW_COUNT_COLUMN]: _total, ...rest } = row;
+          return rest;
+        }),
         truncated: result.rows.length > maxRows,
+        totalRowCount,
       });
     } catch (error) {
       return failure(toAnalyticsDatabaseError(error), error as Error);
-    }
-  }
-
-  /** Nombre total de lignes d'une requête, ou null si le comptage échoue. */
-  async countRows({
-    text,
-    values = [],
-  }: Omit<AnalyticsQuery, 'maxRows'>): Promise<number | null> {
-    if (!this.pool) {
-      return null;
-    }
-    try {
-      const result = await this.pool.query<{ n: number }>(
-        `SELECT count(*)::int AS n FROM (\n${text}\n) AS _count`,
-        values
-      );
-      return result.rows[0]?.n ?? null;
-    } catch (error) {
-      this.logger.warn(
-        `Analytics row count failed: ${(error as Error).message}`
-      );
-      return null;
     }
   }
 

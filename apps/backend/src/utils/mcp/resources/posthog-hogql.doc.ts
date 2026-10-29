@@ -52,7 +52,12 @@ Sans marqueurs, la requête est exécutée une seule fois : mettre soi-même un 
 
 ## Utilisateurs internes et adresses e-mail
 
-Les lignes dont la colonne \`email\` appartient aux utilisateurs internes (\`public.internal_users\`) sont retirées automatiquement (\`meta.internalRowsRemoved\`), à condition de nommer la colonne exactement \`email\`. **La colonne \`email\` est ensuite supprimée du résultat renvoyé** : utiliser \`count(DISTINCT person.properties.email)\` pour compter des personnes, pas pour les lister.
+Deux mécanismes, selon la forme de la requête :
+
+- **Agrégats** (\`count()\`, \`GROUP BY\` sans colonne e-mail) : le serveur ne peut pas filtrer après coup. Insérer le marqueur \`{internal_emails}\` dans la requête, remplacé côté serveur par la liste des adresses internes entre apostrophes : \`AND coalesce(person.properties.email, '') NOT IN ({internal_emails})\`. Sans ce marqueur, un comptage inclut les internes.
+- **Listes de lignes** : toute colonne dont le nom contient \`mail\` est utilisée pour retirer les lignes des utilisateurs internes (\`meta.internalRowsRemoved\`), puis **supprimée du résultat renvoyé**. Utiliser \`count(DISTINCT person.properties.email)\` pour compter des personnes, pas pour les lister.
+
+Le découpage par mois ne convient qu'aux listes \`DISTINCT\` : un agrégat dont la clé de groupement chevauche deux fenêtres (une semaine à cheval sur deux mois) revient en deux lignes partielles. Pour un agrégat par période, grouper par mois (\`toStartOfMonth\`) ou ne pas découper.
 
 ## Croiser PostHog et la base analytique
 

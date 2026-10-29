@@ -21,9 +21,9 @@ export class McpResourceMetadataService {
   constructor(private readonly configService: ConfigurationService) {}
 
   /**
-   * Origine publique de l'API : `BACKEND_PUBLIC_URL`, sinon l'en-tête Host.
-   * `req.protocol` n'est pas fiable sans `trust proxy` derrière Koyeb : on
-   * suppose https partout sauf en local.
+   * Origine publique de l'API : `BACKEND_PUBLIC_URL`, posée par le déploiement.
+   * L'en-tête Host n'est repris qu'en local : il vient du client, et un Host
+   * forgé enverrait les clients MCP vers un serveur d'autorisation arbitraire.
    */
   getBaseUrl(req: Request): string {
     const configured = this.configService.get('BACKEND_PUBLIC_URL');
@@ -31,8 +31,12 @@ export class McpResourceMetadataService {
       return configured.replace(/\/+$/, '');
     }
     const host = req.headers.host ?? 'localhost';
-    const protocol = LOCAL_HOST_PATTERN.test(host) ? 'http' : 'https';
-    return `${protocol}://${host}`;
+    if (!LOCAL_HOST_PATTERN.test(host)) {
+      throw new Error(
+        'BACKEND_PUBLIC_URL doit être définie hors environnement local'
+      );
+    }
+    return `http://${host}`;
   }
 
   getResourceUrl(req: Request): string {

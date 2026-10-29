@@ -26,7 +26,9 @@ export class McpUnauthorizedFilter implements ExceptionFilter {
 
     res.setHeader(
       'WWW-Authenticate',
-      `Bearer error="invalid_token", error_description="${exception.message}", resource_metadata="${metadataUrl}"`
+      // Pas d'error_description : un message avec un guillemet ou un caractère
+      // hors Latin-1 casserait l'en-tête ; le corps JSON porte le détail.
+      `Bearer error="invalid_token", resource_metadata="${metadataUrl}"`
     );
     res.status(401).json({
       error: 'invalid_token',

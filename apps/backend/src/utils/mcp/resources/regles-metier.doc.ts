@@ -52,7 +52,8 @@ Texte repris de \`posthog-db-query/pieges.md\` du dashboard. Les sections sur la
 - Les tables de stats (\`activite_semaine\`, \`ct_actives\`, \`pap_*\`, etc.) les excluent déjà : inutile de re-filtrer.
 
 **Utilisateurs internes**
-- Sur \`prod.*\` et sur \`events\`, exclus-les toujours : \`lower(email) NOT IN (SELECT lower(email) FROM internal_users WHERE email IS NOT NULL)\`.
+- Sur \`prod.*\` (PostgreSQL, \`run_sql_query\`), exclus-les toujours : \`lower(email) NOT IN (SELECT lower(email) FROM public.internal_users WHERE email IS NOT NULL)\`.
+- Sur \`events\` (PostHog, \`run_hogql_query\`), la table \`internal_users\` n'existe pas : pour un agrégat, insère le marqueur \`{internal_emails}\` dans la requête (\`AND coalesce(person.properties.email, '') NOT IN ({internal_emails})\`), remplacé côté serveur par la liste des adresses internes ; pour une liste de lignes avec une colonne \`email\`, le filtrage est fait après coup et la colonne est retirée du résultat.
 - Les tables de stats les excluent déjà.
 
 **Sous-actions**
@@ -108,7 +109,7 @@ Une jointure qui renvoie 0 ligne vient presque toujours d'un problème de type o
 - **\`activite_semaine\` vs \`user_actifs_ct_mois\`** : la première exclut BE, conseillers et @ademe.fr ; la seconde les inclut. Le défaut est \`activite_semaine\`.
 - **Activation et activité** sont deux notions distinctes. \`ct_actives\` donne l'activation (date du premier membre), pas l'activité récente.
 - **Tables homonymes** : \`collectivite\`, \`labellisation\`, \`cot\` et \`score_snapshot\` existent en version stats et en version \`prod.*\`, avec des colonnes et un sens différents. Les versions de stats sont des exports ADEME.
-- **Labellisation actuelle** : prends la dernière valeur par collectivité et par référentiel, \`argMax(etoiles, obtenue_le)\`. \`max(etoiles)\` donne le meilleur niveau jamais atteint, qui diffère si une collectivité a perdu une étoile.
+- **Labellisation actuelle** : prends la dernière valeur par collectivité et par référentiel. En PostgreSQL : \`SELECT DISTINCT ON (collectivite_id, referentiel) collectivite_id, referentiel, etoiles FROM labellisation ORDER BY collectivite_id, referentiel, obtenue_le DESC\` ; en HogQL : \`argMax(etoiles, obtenue_le)\`. \`max(etoiles)\` donne le meilleur niveau jamais atteint, qui diffère si une collectivité a perdu une étoile.
 - **Tables mensuelles de statut** (\`pap_statut_*\`, \`statut_fiche_*\`, \`user_actif_12_mois\`) : pour la valeur actuelle, filtre sur \`mois = (SELECT max(mois) FROM ...)\`. Ne cumule pas les mois entre eux.
 - **Tables cumulées** (\`fa_distrib\`, \`evolution_ind_od\`, \`evolution_labellisation\`) : chaque mois contient déjà le total. Ne somme pas les mois.
 - **Tables \`*_backup\` et \`*_historique_backup\`** : historisation de l'état passé, pas l'état actuel.

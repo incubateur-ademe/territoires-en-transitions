@@ -507,10 +507,12 @@ WHERE TO_DATE(semaine, 'YYYY-MM-DD') >= CURRENT_DATE - INTERVAL '3 months';
 
 ### "Niveau de labellisation actuel des collectivités sur le référentiel cae"
 \`\`\`sql
-select collectivite_id, max(etoiles)
-from labellisation l 
-where referentiel ='cae'
-group by collectivite_id 
+-- Dernière labellisation par collectivité : max(etoiles) donnerait le meilleur
+-- niveau jamais atteint, faux si une collectivité a perdu une étoile.
+select distinct on (collectivite_id) collectivite_id, etoiles, obtenue_le
+from labellisation
+where referentiel = 'cae'
+order by collectivite_id, obtenue_le desc
 \`\`\`
 
 ### "PAP actifs 52 semaines (North Star publique)"

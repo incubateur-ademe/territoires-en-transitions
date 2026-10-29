@@ -27,15 +27,20 @@ const CONFLICTING_URL_PARAMS = [
 export function buildDatabaseSsl({
   url,
   ca,
+  urlVariable = 'SUPABASE_DATABASE_URL',
+  caVariable = 'SUPABASE_DATABASE_SSL_ROOT_CERT',
 }: {
   url: string;
   ca: string | undefined;
+  /** Noms des variables, pour que les erreurs désignent la bonne base. */
+  urlVariable?: string;
+  caVariable?: string;
 }): TlsConnectionOptions | undefined {
   if (ca === undefined) {
     return undefined;
   }
 
-  const { pem } = parsePemCertificate(ca, 'SUPABASE_DATABASE_SSL_ROOT_CERT');
+  const { pem } = parsePemCertificate(ca, caVariable);
 
   // L'erreur native de `new URL` contient l'URL complète, mot de passe compris :
   // on la remplace pour ne pas l'exposer dans les logs de démarrage.
@@ -44,7 +49,7 @@ export function buildDatabaseSsl({
     parsed = new URL(url);
   } catch {
     throw new Error(
-      "SUPABASE_DATABASE_URL n'est pas une URL valide (caractères spéciaux du mot de passe à percent-encoder ?)"
+      `${urlVariable} n'est pas une URL valide (caractères spéciaux du mot de passe à percent-encoder ?)`
     );
   }
 
@@ -53,9 +58,9 @@ export function buildDatabaseSsl({
   );
   if (conflicting.length > 0) {
     throw new Error(
-      `SUPABASE_DATABASE_URL ne doit pas porter ${conflicting.join(
+      `${urlVariable} ne doit pas porter ${conflicting.join(
         ', '
-      )} quand SUPABASE_DATABASE_SSL_ROOT_CERT est fourni : pg les ferait primer sur la CA`
+      )} quand ${caVariable} est fourni : pg les ferait primer sur la CA`
     );
   }
 
