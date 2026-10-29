@@ -78,7 +78,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
-        cms-pull cms-pull-local gcloud ai-import-eval
+        cms-pull cms-pull-local gcloud ai-import-eval assistant-eval
 
 help: ## Affiche cette aide
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -354,6 +354,13 @@ ai-import-eval: preflight-env-keys ## Évalue l'import IA sur un document : make
 	@test -n "$(f)" || { echo "✗ indiquez le document : make ai-import-eval f=plan.pdf"; exit 1; }
 	@$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm exec nx eval-ai-import backend -- \
 		--file="$(abspath $(f))" $(if $(ref),--ref="$(abspath $(ref))") $(if $(out),--out="$(abspath $(out))") $(args)
+
+# Appels réels au modèle (Albert, ou Gemini avec provider=gemini).
+assistant-eval: preflight-env-keys ## Évalue l'assistant MCP : make assistant-eval [provider=albert|gemini] [scenario=id,…] [tag=metier,…] [repeat=1] [max_tokens=500000]
+	@$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- sh -c 'cd apps/backend && \
+		ASSISTANT_EVAL=1 $(if $(provider),LLM_PROVIDER=$(provider)) $(if $(scenario),ASSISTANT_EVAL_SCENARIO=$(scenario)) \
+		$(if $(tag),ASSISTANT_EVAL_TAG=$(tag)) $(if $(repeat),ASSISTANT_EVAL_REPEAT=$(repeat)) $(if $(max_tokens),ASSISTANT_EVAL_MAX_TOKENS=$(max_tokens)) \
+		pnpm exec vitest run --config vitest.config.live.mts'
 
 ## —— 🧑‍💻 Développement ———————————————————————————————————————————————————————
 install: preflight-env-keys ## Installe les dépendances (token Bryntum injecté depuis le .env racine) et compile canvas

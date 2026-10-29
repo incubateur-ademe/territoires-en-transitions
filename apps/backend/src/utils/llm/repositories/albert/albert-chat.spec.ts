@@ -65,7 +65,7 @@ describe('Albert : conversation avec outils', () => {
     expect(params).not.toHaveProperty('stream');
   });
 
-  test('sans outils, ni tools ni tool_choice ; toolChoice none est transmis', () => {
+  test('sans outils ou avec toolChoice none, ni tools ni tool_choice', () => {
     const base = {
       tier: 'strong' as const,
       messages: [{ role: 'user' as const, text: 'Q' }],
@@ -79,7 +79,7 @@ describe('Albert : conversation avec outils', () => {
         toolChoice: 'none',
         tools: [{ name: 't', description: 'd', parameters: {} }],
       })
-    ).toMatchObject({ tool_choice: 'none' });
+    ).not.toHaveProperty('tool_choice');
   });
 
   test('arguments : vides, objet, JSON invalide, non-objet', () => {

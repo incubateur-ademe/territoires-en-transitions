@@ -163,6 +163,40 @@ describe('Assistant (agent sur le serveur MCP)', () => {
       role: 'user',
       text: expect.stringContaining("Limite d'appels"),
     });
+    // Le même appel n'est exécuté qu'une fois ; les suivants sont signalés.
+    const results = result.success ? result.data.toolCalls : [];
+    expect(results.map((call) => call.isError)).toEqual([
+      false,
+      ...Array(6).fill(true),
+    ]);
+    expect(
+      last?.messages.filter((message) => message.role === 'tool').at(-1)
+    ).toMatchObject({ content: expect.stringContaining('Appel identique') });
+  });
+
+  test('réponse vide au plafond : un repli dit ce qui a été tenté', async () => {
+    const loop = (n: number) => ({
+      toolCalls: [
+        {
+          id: `v${n}`,
+          name: 'get_collectivite',
+          arguments: { collectiviteId: -n },
+        },
+      ],
+    });
+    llm.enqueue(...Array.from({ length: 7 }, (_, n) => loop(n + 1)), {
+      text: '  ',
+    });
+
+    const result = await ask('Boucle muette');
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        stopReason: 'max_model_calls',
+        answer: expect.stringContaining('Outils appelés : get_collectivite'),
+      },
+    });
   });
 
   test('mode esquisse : le prompt d’esquisse et ses arguments', async () => {

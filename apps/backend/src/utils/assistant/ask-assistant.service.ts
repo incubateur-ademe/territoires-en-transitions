@@ -34,6 +34,22 @@ const RESULT_PREVIEW_CHARS = 300;
 const LAST_TURN_INSTRUCTION =
   "Limite d'appels d'outils atteinte. Réponds maintenant avec ce que tu as obtenu, sans appeler d'outil, et dis clairement ce qui manque.";
 
+/** Le modèle n'a rien écrit : on dit au moins ce qui a été tenté. */
+const fallbackAnswer = (traces: AssistantToolCallTrace[]): string => {
+  const failed = traces.filter((trace) => trace.isError);
+  return [
+    "Je n'ai pas pu formuler de réponse.",
+    traces.length
+      ? `Outils appelés : ${[...new Set(traces.map((t) => t.name))].join(
+          ', '
+        )}.`
+      : "Aucun outil n'a été appelé.",
+    ...failed
+      .slice(0, 3)
+      .map((trace) => `Erreur de ${trace.name} : ${trace.resultPreview}`),
+  ].join('\n');
+};
+
 export type AssistantToolCallTrace = {
   name: string;
   arguments: Record<string, unknown>;
@@ -129,6 +145,7 @@ export class AskAssistantService {
       const usages: TokenUsage[] = [];
       const traces: AssistantToolCallTrace[] = [];
       const known = new Set(tools.map((tool) => tool.name));
+      const alreadyCalled = new Set<string>();
 
       for (let modelCalls = 1; ; modelCalls += 1) {
         const lastCall = modelCalls >= maxModelCalls;
@@ -147,15 +164,15 @@ export class AskAssistantService {
           return failure('TIMEOUT');
         }
         if (!turn.success) {
+          const cause = describeLlmError(turn.error);
           this.logger.warn(
-            `Assistant model call ${modelCalls} failed: ${describeLlmError(
-              turn.error
-            )}`
+            `Assistant model call ${modelCalls} failed: ${cause}`
           );
           return failure(
             turn.error.kind === 'unsupported'
               ? 'TOOLS_UNSUPPORTED'
-              : 'LLM_ERROR'
+              : 'LLM_ERROR',
+            new Error(cause)
           );
         }
         usages.push(turn.data.usage);
@@ -167,7 +184,7 @@ export class AskAssistantService {
             `Assistant answered after ${modelCalls} model calls and ${traces.length} tool calls`
           );
           return success({
-            answer: turn.data.text ?? '',
+            answer: turn.data.text?.trim() || fallbackAnswer(traces),
             stopReason: lastCall ? 'max_model_calls' : 'answered',
             modelCalls,
             toolCalls: traces,
@@ -185,12 +202,13 @@ export class AskAssistantService {
           providerData: turn.data.providerData,
         });
         for (const [index, call] of turn.data.toolCalls.entries()) {
-          const trace = await this.runToolCall(
-            session,
-            call,
+          const key = `${call.name} ${JSON.stringify(call.arguments)}`;
+          const trace = await this.runToolCall(session, call, {
             known,
-            index < MAX_TOOL_CALLS_PER_TURN
-          );
+            withinBudget: index < MAX_TOOL_CALLS_PER_TURN,
+            repeated: alreadyCalled.has(key),
+          });
+          alreadyCalled.add(key);
           traces.push(trace.trace);
           messages.push({
             role: 'tool',
@@ -208,8 +226,11 @@ export class AskAssistantService {
   private async runToolCall(
     session: McpSession,
     call: LlmToolCall,
-    known: Set<string>,
-    withinBudget: boolean
+    {
+      known,
+      withinBudget,
+      repeated,
+    }: { known: Set<string>; withinBudget: boolean; repeated: boolean }
   ): Promise<{ trace: AssistantToolCallTrace; content: string }> {
     const startedAt = Date.now();
     const result = !withinBudget
@@ -219,6 +240,11 @@ export class AskAssistantService {
         }
       : call.argumentsError
       ? { text: call.argumentsError, isError: true }
+      : repeated
+      ? {
+          text: `Appel identique déjà fait (${call.name}, mêmes arguments) : son résultat est plus haut. Change d'approche ou réponds.`,
+          isError: true,
+        }
       : !known.has(call.name)
       ? {
           text: `Outil inconnu : ${call.name}. Outils disponibles : ${[

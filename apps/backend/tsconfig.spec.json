@@ -24,6 +24,8 @@
     "src/**/*.test-fixture.ts",
     "src/**/*.spec.ts",
     "src/**/*.e2e-spec.ts",
+    "src/**/*.live-spec.ts",
+    "src/utils/assistant/eval/baseline.json",
     "test/**/*.d.ts",
     "test/**/*.ts",
   ],
