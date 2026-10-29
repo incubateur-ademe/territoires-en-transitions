@@ -11,12 +11,22 @@ Réservé à l'équipe : utilisateurs **support** (`utilisateur_support`) et sup
 | outil | `run_sql_query` | SELECT en lecture seule sur la base analytique (schéma `public` : statistiques à J-1 ; schéma `prod` : miroir applicatif). Aperçu de 20 lignes + nombre total. |
 | outil | `list_tables`, `describe_table` | Catalogue de la base analytique, limité aux objets lisibles par le rôle. |
 | outil | `run_hogql_query` | HogQL sur PostHog (événements), découpage mensuel `{start}`/`{end}`, internes retirés, colonnes e-mail supprimées du résultat. |
+| outil | `list_named_queries`, `run_named_query` | Catalogue de requêtes SQL revues pour les questions récurrentes (activation, activité, plans actifs, labellisation), avec paramètres ; la requête exécutée est renvoyée pour être citée. |
 | ressource | `tet://docs/regles-metier` | Règles métier, filtres obligatoires, glossaire. |
 | ressource | `tet://docs/base-analytique` | Description des tables de statistiques. |
 | ressource | `tet://docs/posthog-hogql` | Guide HogQL. |
-| prompt | `analyse-stats` | Méthode de travail + les trois ressources. |
+| ressource | `tet://docs/esquisse-modele` | Le modèle d'esquisse (pitch Shape Up) de l'équipe et son vocabulaire. |
+| prompt | `analyse-stats` | Méthode de travail + les ressources de données. |
+| prompt | `esquisse-shape-up` | Arguments `sujet`, `appetit`, `contexte` : rédige un premier jet d'esquisse au format de l'équipe, chiffres sourcés par les outils, précédents lus dans Notion quand un connecteur est disponible dans la conversation. |
 
-Les ressources sont des fichiers TypeScript dans `resources/`, repris du dashboard de Baptiste (`BaptisteTCS/dashboard_tet`). C'est là que vit la qualité des réponses : corriger une règle métier se fait dans ces fichiers.
+Les ressources sont des fichiers TypeScript dans `resources/`, repris du dashboard de Baptiste (`BaptisteTCS/dashboard_tet`) et du gabarit Notion « [FORMALISATION] ». C'est là que vit la qualité des réponses : corriger une règle métier ou le modèle d'esquisse se fait dans ces fichiers. Les requêtes nommées vivent dans `tools/run-named-query/named-queries.catalog.ts` : ajouter une question récurrente = une entrée relue par l'équipe data. Le jeu de questions de recette est dans `eval/questions-esquisse.md`.
+
+## Formaliser une esquisse depuis Claude.ai
+
+1. Brancher le connecteur (voir plus bas) et, pour les précédents, activer le connecteur Notion de Claude.
+2. Dans une conversation, choisir le prompt `esquisse-shape-up`, renseigner le sujet (et l'appétit ou le contexte si connus).
+3. L'assistant pose au plus trois questions si le sujet est flou, cherche les chiffres (requêtes nommées, puis SQL), cherche les précédents dans Notion, et rend l'esquisse en Markdown dans le modèle de l'équipe, avec une section Recherche (chaque chiffre et sa requête) et une section Inconnues.
+4. Coller le texte dans la page Notion de l'esquisse. L'assistant n'écrit pas dans Notion.
 
 ## Sécurité
 
