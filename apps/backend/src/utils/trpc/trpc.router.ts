@@ -11,6 +11,7 @@ import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
 import { PlanMainRouter } from '@tet/backend/plans/plans-main.router';
 import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
 import { SharedRouter } from '@tet/backend/shared/shared.router';
+import { AssistantRouter } from '@tet/backend/utils/assistant/ask-assistant.router';
 import { BannerRouter } from '@tet/backend/utils/banner/banner.router';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { NotificationsRouter } from '@tet/backend/utils/notifications/notifications.router';
@@ -55,7 +56,8 @@ export class TrpcRouter {
     private readonly sharedRouter: SharedRouter,
     private readonly metricsRouter: MetricsRouter,
     private readonly notificationsRouter: NotificationsRouter,
-    private readonly bannerRouter: BannerRouter
+    private readonly bannerRouter: BannerRouter,
+    private readonly assistantRouter: AssistantRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -72,6 +74,7 @@ export class TrpcRouter {
     metrics: this.metricsRouter.router,
     notifications: this.notificationsRouter.router,
     banner: this.bannerRouter.router,
+    assistant: this.assistantRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);

@@ -4,10 +4,13 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import OpenAI from 'openai';
 import type {
   ChatCompletionContentPart,
+  ChatCompletionCreateParamsNonStreaming,
   ChatCompletionCreateParamsStreaming,
+  ChatCompletionMessageParam,
 } from 'openai/resources/chat/completions';
 import type { CompletionUsage } from 'openai/resources/completions';
 import { describeError } from '../describe-error';
+import { LlmChatRequest, LlmChatTurn, LlmToolCall } from '../../llm-chat';
 import { LlmError } from '../../llm.errors';
 import { LlmCapabilities, LlmReasoningEffort, LlmTier } from '../../llm-tier';
 import {
@@ -172,7 +175,174 @@ export class AlbertRepository extends LlmRepository {
       return failure({ kind: 'api_error', httpStatus });
     }
   }
+
+  /**
+   * Tour de conversation avec outils, sans streaming : les appels d'outils
+   * arrivent entiers. Des arguments illisibles ne font pas échouer le tour,
+   * ils sont signalés sur l'appel pour être renvoyés au modèle.
+   */
+  async chat(request: LlmChatRequest): Promise<Result<LlmChatTurn, LlmError>> {
+    const model = this.modelFor(request.tier);
+    if (!this.client || !model) {
+      this.logger.error(
+        `ALBERT_API_KEY ou modèle du palier ${request.tier} manquant : appel Albert impossible`
+      );
+      return failure({ kind: 'api_error', httpStatus: null });
+    }
+
+    this.logger.log(
+      `Albert chat (model ${model}, ${request.messages.length} messages, ${request.tools.length} tools)`
+    );
+
+    try {
+      const response = await this.client.chat.completions.create(
+        toChatToolsParams(model, request, {
+          reasoningEffort:
+            model === this.models.strong
+              ? request.reasoningEffort ?? this.reasoningEffort
+              : undefined,
+        }),
+        { signal: request.signal }
+      );
+      const choice = response.choices[0];
+      const finishReason = choice?.finish_reason;
+      const toolCalls = (choice?.message.tool_calls ?? []).flatMap(
+        (call): LlmToolCall[] =>
+          call.type === 'function'
+            ? [
+                toLlmToolCall(
+                  call.id,
+                  call.function.name,
+                  call.function.arguments
+                ),
+              ]
+            : []
+      );
+      const completed =
+        finishReason === 'stop' || finishReason === 'tool_calls';
+      if (!completed) {
+        this.logger.warn(
+          `Incomplete Albert chat response (model ${model}, finishReason ${
+            finishReason ?? 'unknown'
+          })`
+        );
+      }
+      const text = choice?.message.content ?? undefined;
+      return success({
+        completed,
+        text: text && text.length > 0 ? text : undefined,
+        toolCalls,
+        usage: toTokenUsage(response.usage),
+      });
+    } catch (error) {
+      const httpStatus =
+        error instanceof OpenAI.APIError ? error.status ?? null : null;
+      this.logger.error(
+        `Albert chat error (model ${model}, status ${httpStatus}): ${describeError(
+          error
+        )}`
+      );
+      if (httpStatus !== null && RATE_LIMITED_STATUSES.has(httpStatus)) {
+        return failure({ kind: 'rate_limited' });
+      }
+      return failure({ kind: 'api_error', httpStatus });
+    }
+  }
 }
+
+export const toLlmToolCall = (
+  id: string,
+  name: string,
+  rawArguments: string
+): LlmToolCall => {
+  if (!rawArguments.trim()) {
+    return { id, name, arguments: {} };
+  }
+  try {
+    const parsed: unknown = JSON.parse(rawArguments);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return { id, name, arguments: parsed as Record<string, unknown> };
+    }
+    return {
+      id,
+      name,
+      arguments: {},
+      argumentsError: 'Les arguments doivent être un objet JSON.',
+    };
+  } catch {
+    return {
+      id,
+      name,
+      arguments: {},
+      argumentsError: `Arguments JSON illisibles : ${rawArguments.slice(
+        0,
+        200
+      )}`,
+    };
+  }
+};
+
+export const toChatToolsParams = (
+  model: string,
+  request: LlmChatRequest,
+  { reasoningEffort }: { reasoningEffort?: LlmReasoningEffort } = {}
+): ChatCompletionCreateParamsNonStreaming => ({
+  model,
+  messages: [
+    ...(request.systemInstruction
+      ? [{ role: 'system' as const, content: request.systemInstruction }]
+      : []),
+    ...request.messages.map(toOpenAiMessage),
+  ],
+  ...(request.tools.length > 0
+    ? {
+        tools: request.tools.map((tool) => ({
+          type: 'function' as const,
+          function: {
+            name: tool.name,
+            description: tool.description,
+            parameters: tool.parameters,
+          },
+        })),
+        tool_choice: request.toolChoice ?? 'auto',
+      }
+    : {}),
+  temperature: request.temperature,
+  max_completion_tokens: request.maxOutputTokens,
+  ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}),
+});
+
+const toOpenAiMessage = (
+  message: LlmChatRequest['messages'][number]
+): ChatCompletionMessageParam => {
+  switch (message.role) {
+    case 'user':
+      return { role: 'user', content: message.text };
+    case 'tool':
+      return {
+        role: 'tool',
+        tool_call_id: message.toolCallId,
+        content: message.content,
+      };
+    case 'assistant':
+      return {
+        role: 'assistant',
+        content: message.text ?? null,
+        ...(message.toolCalls.length > 0
+          ? {
+              tool_calls: message.toolCalls.map((call) => ({
+                id: call.id,
+                type: 'function' as const,
+                function: {
+                  name: call.name,
+                  arguments: JSON.stringify(call.arguments),
+                },
+              })),
+            }
+          : {}),
+      };
+  }
+};
 
 export const toChatCompletionParams = (
   model: string,
