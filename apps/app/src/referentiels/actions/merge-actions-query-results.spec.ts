@@ -4,8 +4,9 @@ import {
   ListActionDefinitionsOutput,
   ListActionsDynamicStateResult,
 } from '@tet/domain/referentiels';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
+  ActionsQueryError,
   ActionsQueryPart,
   ActionsQueryResultsPair,
   getVersionMismatchKey,
@@ -52,11 +53,22 @@ const buildPart = <TData>(
   overrides: Partial<ActionsQueryPart<TData>> = {}
 ): ActionsQueryPart<TData> => ({
   data,
+  error: null,
   isFetching: false,
   isPending: data === undefined,
   isError: false,
+  refetch: vi.fn(),
   ...overrides,
 });
+
+const networkError = {
+  message: 'NetworkError when attempting to fetch resource.',
+} as ActionsQueryError;
+
+const buildFailedPart = <TData>(
+  data: TData | undefined
+): ActionsQueryPart<TData> =>
+  buildPart(data, { isPending: false, isError: true, error: networkError });
 
 const buildPair = ({
   definitions = buildPart(buildDefinitions()),
@@ -79,7 +91,7 @@ describe('mergeActionsQueryResults', () => {
       pilotes: [],
     });
     expect(result.isPending).toBe(false);
-    expect(result.isError).toBe(false);
+    expect(result.failure).toBeUndefined();
   });
 
   it('ne renvoie rien pour un référentiel dont une partie manque', () => {
@@ -155,21 +167,18 @@ describe('mergeActionsQueryResults', () => {
     };
     const inError = {
       ...buildPair({
-        state: buildPart<ListActionsDynamicStateResult>(undefined, {
-          isPending: false,
-          isError: true,
-        }),
+        state: buildFailedPart<ListActionsDynamicStateResult>(undefined),
       }),
       referentielId: 'te' as const,
     };
 
     expect(mergeActionsQueryResults([loaded, pending])).toMatchObject({
       isPending: true,
-      isError: false,
+      failure: undefined,
     });
     expect(mergeActionsQueryResults([loaded, inError])).toMatchObject({
       isPending: false,
-      isError: true,
+      failure: { error: networkError },
     });
     expect([
       ...mergeActionsQueryResults([loaded, pending, inError]).data.keys(),
@@ -179,13 +188,43 @@ describe('mergeActionsQueryResults', () => {
   it("ne signale pas d'erreur quand un rechargement échoue alors que les données sont en cache", () => {
     const result = mergeActionsQueryResults([
       buildPair({
-        state: buildPart(buildState(), { isError: true }),
+        state: buildFailedPart(buildState()),
       }),
     ]);
 
-    expect(result).toMatchObject({ isPending: false, isError: false });
+    expect(result).toMatchObject({ isPending: false, failure: undefined });
     expect(result.data.get('cae')?.actionsById['cae_1']).toMatchObject({
       actionId: 'cae_1',
+    });
+  });
+
+  it('la relance ne recharge que les queries en échec sans données', () => {
+    const failedDefinitions =
+      buildFailedPart<ListActionDefinitionsOutput>(undefined);
+    const failedRefetchWithCache = buildFailedPart(buildState());
+    const loadedDefinitions = buildPart(buildDefinitions());
+
+    const { failure } = mergeActionsQueryResults([
+      buildPair({ definitions: failedDefinitions }),
+      {
+        ...buildPair({
+          definitions: loadedDefinitions,
+          state: failedRefetchWithCache,
+        }),
+        referentielId: 'eci',
+      },
+    ]);
+    failure?.retry();
+
+    expect({
+      failedDefinitions: vi.mocked(failedDefinitions.refetch).mock.calls.length,
+      failedRefetchWithCache: vi.mocked(failedRefetchWithCache.refetch).mock
+        .calls.length,
+      loadedDefinitions: vi.mocked(loadedDefinitions.refetch).mock.calls.length,
+    }).toEqual({
+      failedDefinitions: 1,
+      failedRefetchWithCache: 0,
+      loadedDefinitions: 0,
     });
   });
 });
