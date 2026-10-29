@@ -288,7 +288,12 @@ export class RunHogqlQueryService {
           : -1
       )
       .filter((index) => index >= 0);
-    if (emailColumnIndexes.length === 0) {
+    // Colonnes sans aucune adresse (résultat vide, visiteurs anonymes) :
+    // retirées du résultat, sans liste des internes à consulter.
+    const hasAddress = rows.some((row) =>
+      emailColumnIndexes.some((index) => typeof row[index] === 'string')
+    );
+    if (emailColumnIndexes.length === 0 || !hasAddress) {
       return { kept: rows, removed: 0, emailColumnIndexes };
     }
 
@@ -349,18 +354,19 @@ function toHogqlStringList(values: Set<string>): string {
     .join(', ');
 }
 
-/** Mesure agrégée (`email_count`) : nombres ou booléens seulement, jamais
- * d'adresse à filtrer ni à masquer. */
+/** Mesure agrégée (`email_count`) : au moins un nombre ou un booléen, et rien
+ * d'autre que des nombres, des booléens ou des nulls. Une colonne vide ou
+ * entièrement nulle n'en est pas une : elle reste traitée comme une adresse. */
 function isMeasureColumn(rows: unknown[][], index: number): boolean {
-  return rows.every((row) => {
-    const value = row[index];
-    return (
-      value === null ||
-      value === undefined ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
-    );
-  });
+  const values = rows
+    .map((row) => row[index])
+    .filter((value) => value !== null && value !== undefined);
+  return (
+    values.length > 0 &&
+    values.every(
+      (value) => typeof value === 'number' || typeof value === 'boolean'
+    )
+  );
 }
 
 function dedupeRows(rows: unknown[][]): unknown[][] {

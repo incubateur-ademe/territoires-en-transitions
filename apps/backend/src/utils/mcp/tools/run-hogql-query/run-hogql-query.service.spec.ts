@@ -119,6 +119,33 @@ describe('RunHogqlQueryService', () => {
     expect(analytics.query).not.toHaveBeenCalled();
   });
 
+  test.each([
+    ['entièrement nulle (visiteurs anonymes)', [['1', null, 3]]],
+    ['dans un résultat vide', []],
+  ])(
+    'retire une colonne e-mail %s, sans consulter la liste des internes',
+    async (_, results) => {
+      const { service, analytics } = buildService({
+        results,
+        internalEmails: 'unavailable',
+      });
+
+      const result = await service.run(
+        { hogql: 'select 1 limit 10' },
+        { user }
+      );
+
+      expect(result).toMatchObject({
+        success: true,
+        data: {
+          columns: ['collectivite_id', 'n'],
+          meta: { emailColumnsRemoved: ['person.properties.email'] },
+        },
+      });
+      expect(analytics.query).not.toHaveBeenCalled();
+    }
+  );
+
   test('remplace {internal_emails} par la liste des internes avant envoi', async () => {
     const { service, posthog } = buildService({
       results: [],
