@@ -46,11 +46,14 @@ describe('MCP controller', () => {
       if (hogql.includes('erreur_attendue')) {
         return failure('POSTHOG_QUERY_ERROR', new Error('HogQL invalide'));
       }
+      const withEmail = hogql.includes('email');
       return success({
-        columns: ['semaine', 'collectivite_id', 'email'],
+        columns: withEmail
+          ? ['semaine', 'collectivite_id', 'email']
+          : ['semaine', 'collectivite_id'],
         results: [
-          ['2025-01-06', '12', 'agent@ville.fr'],
-          ['2025-01-13', '12', 'agent@ville.fr'],
+          ['2025-01-06', '12', ...(withEmail ? ['agent@ville.fr'] : [])],
+          ['2025-01-13', '12', ...(withEmail ? ['agent@ville.fr'] : [])],
         ],
         hasMore: false,
       });
@@ -263,13 +266,13 @@ describe('MCP controller', () => {
       expect(content.text).toContain(expectedError);
     });
 
-    test('run_hogql_query : fenêtres mensuelles, dédoublonnage, e-mails retirés', async () => {
+    test('run_hogql_query : fenêtres mensuelles et dédoublonnage', async () => {
       posthogQueries.length = 0;
       const result = await client.callTool({
         name: 'run_hogql_query',
         arguments: {
           hogql:
-            "select toStartOfWeek(timestamp) as semaine, properties.collectivite_id as collectivite_id, person.properties.email as email from events where timestamp >= toDateTime('{start}', 'UTC') and timestamp < toDateTime('{end}', 'UTC') limit 50000",
+            "select toStartOfWeek(timestamp) as semaine, properties.collectivite_id as collectivite_id from events where timestamp >= toDateTime('{start}', 'UTC') and timestamp < toDateTime('{end}', 'UTC') limit 50000",
           dateFrom: '2025-01-01',
           dateTo: '2025-03-01',
         },
@@ -294,9 +297,26 @@ describe('MCP controller', () => {
           windows: 2,
           truncatedWindows: [],
           rowCapReached: false,
-          emailColumnsRemoved: ['email'],
+          emailColumnsRemoved: [],
         },
       });
+    });
+
+    // La base de test n'a pas `public.internal_users` : avec une colonne
+    // e-mail, l'outil refuse plutôt que de laisser passer des internes.
+    test('run_hogql_query : colonne e-mail sans liste des internes, refus', async () => {
+      const result = await client.callTool({
+        name: 'run_hogql_query',
+        arguments: {
+          hogql:
+            'select toStartOfWeek(timestamp) as semaine, properties.collectivite_id as collectivite_id, person.properties.email as email from events limit 100',
+        },
+      });
+
+      expect(result.isError).toBe(true);
+      expect((result.content as { text: string }[])[0].text).toContain(
+        'INTERNAL_USERS_UNAVAILABLE'
+      );
     });
 
     test('run_hogql_query : marqueurs sans dateFrom et erreur PostHog', async () => {
