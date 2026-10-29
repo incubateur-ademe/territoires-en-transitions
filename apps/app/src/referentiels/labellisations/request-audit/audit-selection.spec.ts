@@ -5,52 +5,34 @@ import {
 } from './audit-selection';
 
 describe('auditSelectionSchema', () => {
-  it('valide un audit COT et ignore l\'étoile', () => {
-    const result = auditSelectionSchema.safeParse({
-      sujet: 'cot',
-      targetStar: null,
-    });
+  it('valide un audit COT', () => {
+    const result = auditSelectionSchema.safeParse({ sujet: 'cot' });
     expect(result).toEqual({ success: true, data: { sujet: 'cot' } });
   });
 
-  it('valide une variante labellisante avec son étoile', () => {
+  it('valide une variante labellisante', () => {
     const result = auditSelectionSchema.safeParse({
       sujet: 'labellisation_cot',
-      targetStar: 4,
     });
     expect(result).toEqual({
       success: true,
-      data: { sujet: 'labellisation_cot', targetStar: 4 },
+      data: { sujet: 'labellisation_cot' },
     });
   });
 
   it('rejette une sélection sans sujet', () => {
-    expect(
-      auditSelectionSchema.safeParse({ sujet: null, targetStar: 3 }).success
-    ).toBe(false);
-  });
-
-  it('rejette une variante labellisante sans étoile', () => {
-    expect(
-      auditSelectionSchema.safeParse({
-        sujet: 'labellisation',
-        targetStar: null,
-      }).success
-    ).toBe(false);
-  });
-
-  it('rejette la première étoile (hors périmètre audit)', () => {
-    expect(
-      auditSelectionSchema.safeParse({ sujet: 'labellisation', targetStar: 1 })
-        .success
-    ).toBe(false);
+    expect(auditSelectionSchema.safeParse({ sujet: null }).success).toBe(false);
   });
 });
 
 describe('auditSelectionToRequestInput', () => {
-  const context = { collectiviteId: 16527, referentiel: 'cae' as const };
+  const context = {
+    collectiviteId: 16527,
+    referentiel: 'cae' as const,
+    etoile: 3 as const,
+  };
 
-  it('envoie etoiles: null pour un audit COT seul', () => {
+  it("envoie etoiles: null pour un audit COT seul, quelle que soit l'étoile de la checklist", () => {
     expect(auditSelectionToRequestInput(context, { sujet: 'cot' })).toEqual({
       collectiviteId: 16527,
       referentiel: 'cae',
@@ -59,12 +41,9 @@ describe('auditSelectionToRequestInput', () => {
     });
   });
 
-  it('envoie l\'étoile visée pour une labellisation COT', () => {
+  it("envoie l'étoile de la checklist pour une labellisation COT", () => {
     expect(
-      auditSelectionToRequestInput(context, {
-        sujet: 'labellisation_cot',
-        targetStar: 3,
-      })
+      auditSelectionToRequestInput(context, { sujet: 'labellisation_cot' })
     ).toEqual({
       collectiviteId: 16527,
       referentiel: 'cae',

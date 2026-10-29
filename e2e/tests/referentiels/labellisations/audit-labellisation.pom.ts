@@ -4,6 +4,13 @@ import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
 export type RoleKey = 'eluReferent' | 'referentTechnique';
 
+const TARGET_STAR_LABEL: Record<2 | 3 | 4 | 5, string> = {
+  2: 'deuxième étoile',
+  3: 'troisième étoile',
+  4: 'quatrième étoile',
+  5: 'cinquième étoile',
+};
+
 /** Libellé visible du rôle dans le header (champ vide → forme au singulier) */
 const ROLE_LABEL: Record<RoleKey, string> = {
   eluReferent: 'Personne élue',
@@ -36,7 +43,6 @@ export class AuditLabellisationPom {
   readonly auditTypeLabellisationRadio: Locator;
   readonly auditTypeRadios: Locator;
   readonly tooltip: Locator;
-  readonly targetStarSelect: Locator;
   readonly envoyerAuditButton: Locator;
   readonly auditSuccessToast: Locator;
   readonly documentsPom: DocumentsPom;
@@ -111,7 +117,6 @@ export class AuditLabellisationPom {
     });
     this.auditTypeRadios = this.auditModal.getByRole('radio');
     this.tooltip = page.getByRole('tooltip');
-    this.targetStarSelect = this.auditModal.getByTestId('target-star');
     this.envoyerAuditButton = this.auditModal.getByRole('button', {
       name: 'Envoyer ma demande',
     });
@@ -198,7 +203,10 @@ export class AuditLabellisationPom {
   }
 
   async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {
-    await this.targetStarSelect.click();
-    await this.auditModal.getByTestId(String(star)).click();
+    const etoileRadio = this.page.getByRole('radio', {
+      name: TARGET_STAR_LABEL[star],
+    });
+    await this.page.locator('label').filter({ has: etoileRadio }).click();
+    await expect(etoileRadio).toBeChecked();
   }
 }

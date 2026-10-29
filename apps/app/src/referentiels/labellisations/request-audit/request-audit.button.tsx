@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { getRequestAuditTooltip } from '@/app/referentiels/audit-labellisation/audit-badge-status';
+import { useChecklist } from '@/app/referentiels/audit-labellisation/checklist.context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   AuditLabellisationReferentielId,
@@ -12,7 +13,6 @@ import {
 import { Button, Icon, Tooltip } from '@tet/ui';
 import { ReactElement, ReactNode, useState } from 'react';
 import { match } from 'ts-pattern';
-import { useCycleLabellisation } from '../useCycleLabellisation';
 import { RequestAuditModal } from './request-audit.modal';
 
 type RequestAuditButtonProps = {
@@ -62,11 +62,12 @@ export const RequestAuditButton = ({
   referentielId,
 }: RequestAuditButtonProps): ReactNode => {
   const { collectiviteId } = useCurrentCollectivite();
-  const { parcours, isCOT, maximumRequestableStar, viewerRole } =
-    useCycleLabellisation(referentielId);
+  const {
+    cycle: { parcours, isCOT, viewerRole },
+  } = useChecklist();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (parcours === null || maximumRequestableStar === null) {
+  if (parcours === null) {
     return null;
   }
 
@@ -74,10 +75,7 @@ export const RequestAuditButton = ({
     return null;
   }
 
-  const auditTypeOptions = listAuditTypeOptions(parcours, {
-    isCOT,
-    maximumRequestableStar,
-  });
+  const auditTypeOptions = listAuditTypeOptions(parcours, { isCOT });
   const availability = getAuditRequestAvailability(parcours, auditTypeOptions);
 
   const tooltip = availability.canRequest
@@ -104,7 +102,7 @@ export const RequestAuditButton = ({
         collectiviteId={collectiviteId}
         referentielId={referentielId}
         auditTypeOptions={auditTypeOptions}
-        maximumRequestableStar={maximumRequestableStar}
+        etoile={parcours.etoiles}
       />
     </>
   );

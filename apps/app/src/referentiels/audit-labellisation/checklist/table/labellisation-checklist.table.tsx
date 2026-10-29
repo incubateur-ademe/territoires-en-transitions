@@ -253,7 +253,9 @@ export const LabellisationChecklistTable = ({
         collectiviteId={collectiviteId}
         referentielId={referentielId}
       />
-      <MinimumScoreRow minimumScore={viewModel.minimumScore} />
+      {viewModel.minimumScore && (
+        <MinimumScoreRow minimumScore={viewModel.minimumScore} />
+      )}
       <MesuresRows
         mesures={viewModel.mesures}
         roleActionIds={roleActionIds}

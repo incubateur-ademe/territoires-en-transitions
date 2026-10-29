@@ -35,10 +35,7 @@ const makeParcours = (
 
 const availabilityOf = (
   parcours: ParcoursForAuditRequest,
-  context: {
-    isCOT: boolean;
-    maximumRequestableStar: Etoile;
-  }
+  context: { isCOT: boolean }
 ): AuditRequestAvailability =>
   getAuditRequestAvailability(
     parcours,
@@ -50,7 +47,6 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(makeParcours({ etoiles: 1 as Etoile }), {
         isCOT: false,
-        maximumRequestableStar: 1,
       })
     ).toEqual({
       canRequest: false,
@@ -65,16 +61,14 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(makeParcours({ isCot: true, etoiles: 1 as Etoile }), {
         isCOT: true,
-        maximumRequestableStar: 1,
       })
     ).toEqual({ canRequest: true, reason: null });
   });
 
-  it('non-COT + maximumRequestableStar = 2 : disponible (audit de labellisation demandable)', () => {
+  it('non-COT + étoile 2 : disponible (audit de labellisation demandable)', () => {
     expect(
       availabilityOf(makeParcours(), {
         isCOT: false,
-        maximumRequestableStar: 2,
       })
     ).toEqual({ canRequest: true, reason: null });
   });
@@ -83,7 +77,6 @@ describe('getAuditRequestAvailability', () => {
     expect(
       availabilityOf(makeParcours({ completudeOk: false }), {
         isCOT: false,
-        maximumRequestableStar: 2,
       })
     ).toEqual({
       canRequest: false,
@@ -103,7 +96,7 @@ describe('getAuditRequestAvailability', () => {
             { atteint: false, actionId: 'cae_1.1.2' },
           ],
         }),
-        { isCOT: false, maximumRequestableStar: 2 }
+        { isCOT: false }
       )
     ).toEqual({
       canRequest: false,
@@ -121,7 +114,7 @@ describe('getAuditRequestAvailability', () => {
           conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         }),
-        { isCOT: false, maximumRequestableStar: 2 }
+        { isCOT: false }
       )
     ).toEqual({
       canRequest: false,
@@ -141,7 +134,7 @@ describe('getAuditRequestAvailability', () => {
             envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
         }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        { isCOT: true }
       )
     ).toEqual({
       canRequest: false,
@@ -167,7 +160,7 @@ describe('getAuditRequestAvailability', () => {
             obtenueLe: '2026-06-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['labellisation'],
         }),
-        { isCOT: false, maximumRequestableStar: 3 }
+        { isCOT: false }
       )
     ).toEqual({ canRequest: true, reason: null });
   });
@@ -183,7 +176,7 @@ describe('getAuditRequestAvailability', () => {
             envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
         }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        { isCOT: true }
       )
     ).toEqual({ canRequest: true, reason: null });
   });
@@ -198,7 +191,7 @@ describe('getAuditRequestAvailability', () => {
             referentTechnique: true,
           },
         }),
-        { isCOT: false, maximumRequestableStar: 2 }
+        { isCOT: false }
       )
     ).toEqual({
       canRequest: false,
@@ -220,7 +213,7 @@ describe('getAuditRequestAvailability', () => {
             referentTechnique: false,
           },
         }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        { isCOT: true }
       )
     ).toEqual({ canRequest: true, reason: null });
   });
@@ -235,7 +228,7 @@ describe('getAuditRequestAvailability', () => {
             envoyeeLe: '2026-01-01T00:00:00.000Z',
           } as ParcoursForAuditRequest['demande'],
         }),
-        { isCOT: false, maximumRequestableStar: 1 }
+        { isCOT: false }
       )
     ).toEqual({
       canRequest: false,

@@ -649,9 +649,11 @@ from s_etoile s
   async getParcoursLabellisation({
     collectiviteId,
     referentielId,
+    etoileVisee,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
+    etoileVisee?: Etoile;
   }): Promise<Result<ParcoursLabellisation, GetLabellisationError>> {
     const snapshotResult = await this.getCurrentSnapshot(
       collectiviteId,
@@ -680,6 +682,7 @@ from s_etoile s
       currentEtoile: labellisation?.etoiles,
       nextEtoile: labellisation?.prochaineEtoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
+      etoileVisee,
     });
 
     const conditionFichiers: ConditionFichiers = {
@@ -765,10 +768,12 @@ from s_etoile s
     currentEtoile = EtoileEnum.PREMIERE_ETOILE,
     nextEtoile = EtoileEnum.PREMIERE_ETOILE,
     scoreFait,
+    etoileVisee,
   }: {
     currentEtoile: number | undefined;
     nextEtoile: number | undefined;
     scoreFait: number | null | undefined;
+    etoileVisee: Etoile | undefined;
   }) {
     const etoilesDefinitions =
       await this.labellisationService.getEtoileDefinitions();
@@ -780,12 +785,14 @@ from s_etoile s
           ?.etoile ?? EtoileEnum.PREMIERE_ETOILE
       : EtoileEnum.PREMIERE_ETOILE;
 
-    const nbEtoilesCibles = Math.max(
-      currentEtoile,
-      nextEtoile,
-      maxEligibleEtoile,
-      EtoileEnum.PREMIERE_ETOILE
-    ) as Etoile;
+    const nbEtoilesCibles =
+      etoileVisee ??
+      (Math.max(
+        currentEtoile,
+        nextEtoile,
+        maxEligibleEtoile,
+        EtoileEnum.PREMIERE_ETOILE
+      ) as Etoile);
 
     const etoileCible = etoilesDefinitions.find(
       (etoile) => etoile.etoile === nbEtoilesCibles

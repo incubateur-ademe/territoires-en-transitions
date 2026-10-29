@@ -7,7 +7,10 @@ import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuditViewerRole } from '../../audit-labellisation/audit-badge-status/types';
-import { useCycleLabellisation } from '../useCycleLabellisation';
+import {
+  ChecklistContextValue,
+  useChecklist,
+} from '../../audit-labellisation/checklist.context';
 import { RequestAuditButton } from './request-audit.button';
 
 vi.mock('@tet/api/collectivites', () => ({
@@ -15,11 +18,14 @@ vi.mock('@tet/api/collectivites', () => ({
 }));
 
 vi.mock(
-  '../useCycleLabellisation',
+  '@/app/referentiels/audit-labellisation/checklist.context',
   (): Partial<
-    Record<keyof typeof import('../useCycleLabellisation'), unknown>
+    Record<
+      keyof typeof import('../../audit-labellisation/checklist.context'),
+      unknown
+    >
   > => ({
-    useCycleLabellisation: vi.fn(),
+    useChecklist: vi.fn(),
   })
 );
 
@@ -43,7 +49,7 @@ vi.mock('@tet/ui', async (importActual) => {
 });
 
 const mockedUseCurrentCollectivite = vi.mocked(useCurrentCollectivite);
-const mockedUseCycleLabellisation = vi.mocked(useCycleLabellisation);
+const mockedUseChecklist = vi.mocked(useChecklist);
 
 const demanderAuditButton = /Demander un audit/;
 
@@ -62,21 +68,16 @@ const getTooltipLabel = (): string | null =>
 
 const setCycle = ({
   parcours,
-  maximumRequestableStar,
   isCOT = false,
   viewerRole = 'auditee',
 }: {
   parcours: ParcoursForAuditRequest | null;
-  maximumRequestableStar: number | null;
   isCOT?: boolean;
   viewerRole?: AuditViewerRole;
 }): void => {
-  mockedUseCycleLabellisation.mockReturnValue({
-    parcours,
-    isCOT,
-    maximumRequestableStar,
-    viewerRole,
-  } as unknown as ReturnType<typeof useCycleLabellisation>);
+  mockedUseChecklist.mockReturnValue({
+    cycle: { parcours, isCOT, viewerRole },
+  } as unknown as ChecklistContextValue);
 };
 
 const requestableCycle = {
@@ -103,7 +104,6 @@ const requestableCycle = {
       { atteint: true, actionId: 'cae_5.1.1.1.3' },
     ],
   } as ParcoursForAuditRequest,
-  maximumRequestableStar: 2,
 };
 
 beforeEach(() => {
@@ -139,7 +139,6 @@ describe('RequestAuditButton — visibilité selon le rôle', () => {
   it("ne rend rien tant que le parcours n'est pas chargé", () => {
     setCycle({
       parcours: null,
-      maximumRequestableStar: 2,
     });
 
     const { container } = render(<RequestAuditButton referentielId="cae" />);
@@ -165,7 +164,6 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         completudeOk,
       } as ParcoursForAuditRequest,
       isCOT: true,
-      maximumRequestableStar: 1,
     });
 
   it('COT dont les statuts ne sont pas tous renseignés : bouton désactivé, la complétude manque', () => {
@@ -200,7 +198,6 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         ],
       } as ParcoursForAuditRequest,
       isCOT: false,
-      maximumRequestableStar: 2,
     });
 
     render(<RequestAuditButton referentielId="cae" />);
@@ -220,7 +217,6 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         completudeOk: true,
       } as ParcoursForAuditRequest,
       isCOT: false,
-      maximumRequestableStar: 1,
     });
 
     render(<RequestAuditButton referentielId="cae" />);
@@ -228,6 +224,22 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
     expect(getRequestAuditButton().disabled).toBe(true);
     expect(getTooltipLabel()).toBe(
       'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.'
+    );
+  });
+
+  it('étoile visée au-dessus de celle permise par le score : bouton désactivé, les critères attendus manquent', () => {
+    setCycle({
+      parcours: {
+        ...requestableCycle.parcours,
+        etoiles: 3,
+      } as ParcoursForAuditRequest,
+    });
+
+    render(<RequestAuditButton referentielId="cae" />);
+
+    expect(getRequestAuditButton().disabled).toBe(true);
+    expect(getTooltipLabel()).toBe(
+      'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation'
     );
   });
 
@@ -247,7 +259,7 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
   });
 
   it('rend le bouton désactivé avec un tooltip quand les prérequis de labellisation sont incomplets', () => {
-    mockedUseCycleLabellisation.mockReturnValue({
+    setCycle({
       parcours: {
         status: 'non_demandee',
         demande: null,
@@ -261,11 +273,8 @@ describe('RequestAuditButton — état du bouton pour la collectivité auditée'
         referentiel: 'cae',
         referentRolesDefined: { eluReferent: true, referentTechnique: true },
         criteresAction: [{ atteint: false, actionId: 'cae_1.1.1' }],
-      },
-      isCOT: false,
-      maximumRequestableStar: 2,
-      viewerRole: 'auditee',
-    } as unknown as ReturnType<typeof useCycleLabellisation>);
+      } as unknown as ParcoursForAuditRequest,
+    });
 
     render(<RequestAuditButton referentielId="cae" />);
 

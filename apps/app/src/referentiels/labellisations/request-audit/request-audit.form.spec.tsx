@@ -20,9 +20,13 @@ import { RequestAuditForm } from './request-audit.form';
 const AUDIT_TYPE_LEGEND = "Quel type d'audit souhaitez-vous demander ?";
 const SUBMIT_BUTTON = 'Envoyer ma demande';
 
-const toSatisfiedParcours = (
-  isCOT: boolean
-): ParcoursForAuditPrerequisites => ({
+const toSatisfiedParcours = ({
+  isCOT,
+  etoile,
+}: {
+  isCOT: boolean;
+  etoile: Etoile;
+}): ParcoursForAuditPrerequisites => ({
   labellisation: null,
   referentiel: 'cae',
   referentRolesDefined: { eluReferent: true, referentTechnique: true },
@@ -33,7 +37,7 @@ const toSatisfiedParcours = (
     scoreFait: 0.8,
   } as ParcoursForAuditPrerequisites['critereScore'],
   isCot: isCOT,
-  etoiles: 2 as Etoile,
+  etoiles: etoile,
   conditionFichiers: { preuveNombre: 1 },
   preuvesObjets: [
     { objet: ObjetPreuveEnum.ACTE_ENGAGEMENT },
@@ -42,34 +46,28 @@ const toSatisfiedParcours = (
   criteresAction: [{ atteint: true, actionId: 'cae_1.1.1' }],
 });
 
-const toAuditTypeOptions = (
-  isCOT: boolean,
-  maximumRequestableStar: Etoile
-): AuditTypeOption[] =>
-  listAuditTypeOptions(toSatisfiedParcours(isCOT), {
-    isCOT,
-    maximumRequestableStar,
-  });
-
-const renderForm = (props: {
+const toAuditTypeOptions = (props: {
   isCOT: boolean;
-  maximumRequestableStar: Etoile;
-}): RenderResult =>
+  etoile: Etoile;
+}): AuditTypeOption[] =>
+  listAuditTypeOptions(toSatisfiedParcours(props), { isCOT: props.isCOT });
+
+const renderForm = (
+  props: { isCOT: boolean; etoile: Etoile },
+  onSubmit = vi.fn()
+): RenderResult =>
   render(
     <RequestAuditForm
-      auditTypeOptions={toAuditTypeOptions(
-        props.isCOT,
-        props.maximumRequestableStar
-      )}
-      maximumRequestableStar={props.maximumRequestableStar}
+      auditTypeOptions={toAuditTypeOptions(props)}
+      etoile={props.etoile}
       isPending={false}
-      onSubmit={vi.fn()}
+      onSubmit={onSubmit}
       onCancel={vi.fn()}
     />
   );
 
-const targetStarField = (container: HTMLElement): Element | null =>
-  container.querySelector('[data-test="target-star"]');
+const queryEtoileDemandee = (etoileLabel: string): HTMLElement | null =>
+  screen.queryByText(`Étoile demandée : ${etoileLabel} étoile`);
 
 const getRadioButtonByName = (name: string): HTMLInputElement => {
   const element = screen.getByRole('radio', { name });
@@ -87,21 +85,23 @@ const getSubmitButton = (): HTMLButtonElement => {
   return button;
 };
 
+const submit = (container: HTMLElement): void => {
+  const form = container.querySelector('form');
+  if (!form) {
+    throw new Error('formulaire introuvable');
+  }
+  fireEvent.submit(form);
+};
+
 describe('RequestAuditForm', () => {
-  it("non-COT avec score >= 35% : pas de choix de type d'audit, seulement le sélecteur d'étoile", () => {
-    const { container } = renderForm({
-      isCOT: false,
-      maximumRequestableStar: 5,
-    });
+  it("non-COT : pas de choix de type d'audit, l'étoile de la checklist est rappelée", () => {
+    renderForm({ isCOT: false, etoile: 3 });
     expect(screen.queryByRole('group', { name: AUDIT_TYPE_LEGEND })).toBeNull();
-    expect(targetStarField(container)).not.toBeNull();
+    expect(queryEtoileDemandee('troisième')).not.toBeNull();
   });
 
-  it("COT sous 35 % : les trois types sont proposés, les deux labellisants grisés, sans sélecteur d'étoile", () => {
-    const { container } = renderForm({
-      isCOT: true,
-      maximumRequestableStar: 1,
-    });
+  it("COT sous 35 % : les trois types sont proposés, les deux labellisants grisés, sans rappel d'étoile", () => {
+    renderForm({ isCOT: true, etoile: 1 });
     expect(getRadioButtonByName('Audit COT sans labellisation').disabled).toBe(
       false
     );
@@ -109,14 +109,11 @@ describe('RequestAuditForm', () => {
       true
     );
     expect(getRadioButtonByName('Audit de labellisation').disabled).toBe(true);
-    expect(targetStarField(container)).toBeNull();
+    expect(queryEtoileDemandee('première')).toBeNull();
   });
 
   it("COT avec score >= 35% : les trois types sont proposés, l'audit de labellisation compris", () => {
-    renderForm({
-      isCOT: true,
-      maximumRequestableStar: 3,
-    });
+    renderForm({ isCOT: true, etoile: 3 });
     const group = screen.getByRole('group', { name: AUDIT_TYPE_LEGEND });
     expect(
       within(group).getByRole('radio', { name: 'Audit COT sans labellisation' })
@@ -129,94 +126,50 @@ describe('RequestAuditForm', () => {
     ).toBeDefined();
   });
 
-  it("COT avec score >= 35% : le sélecteur d'étoile apparaît au choix d'un audit labellisant", () => {
-    const { container } = renderForm({
-      isCOT: true,
-      maximumRequestableStar: 4,
-    });
-    expect(targetStarField(container)).toBeNull();
+  it("COT : l'étoile de la checklist est rappelée au choix d'un audit labellisant", () => {
+    renderForm({ isCOT: true, etoile: 4 });
+    expect(queryEtoileDemandee('quatrième')).toBeNull();
     fireEvent.click(
       screen.getByRole('radio', { name: 'Audit COT avec labellisation' })
     );
-    expect(targetStarField(container)).not.toBeNull();
+    expect(queryEtoileDemandee('quatrième')).not.toBeNull();
   });
 
-  it("COT avec score >= 35% : choisir l'audit COT seul masque le sélecteur d'étoile", () => {
-    const { container } = renderForm({
-      isCOT: true,
-      maximumRequestableStar: 4,
-    });
+  it("COT : choisir l'audit COT seul masque le rappel d'étoile", () => {
+    renderForm({ isCOT: true, etoile: 4 });
     fireEvent.click(
       screen.getByRole('radio', { name: 'Audit COT sans labellisation' })
     );
-    expect(targetStarField(container)).toBeNull();
+    expect(queryEtoileDemandee('quatrième')).toBeNull();
   });
 
-  it("présélectionne l'étoile-objectif dans le sélecteur d'étoile", () => {
-    renderForm({ isCOT: false, maximumRequestableStar: 3 });
-    expect(screen.getByText('troisième étoile')).toBeDefined();
-  });
-
-  it("non-COT : la soumission émet la sélection labellisation avec l'étoile présélectionnée", async () => {
+  it('non-COT : la soumission émet la sélection labellisation', async () => {
     const onSubmit = vi.fn();
-    const { container } = render(
-      <RequestAuditForm
-        auditTypeOptions={toAuditTypeOptions(false, 3)}
-        maximumRequestableStar={3}
-        isPending={false}
-        onSubmit={onSubmit}
-        onCancel={vi.fn()}
-      />
-    );
+    const { container } = renderForm({ isCOT: false, etoile: 3 }, onSubmit);
 
-    const form = container.querySelector('form');
-    if (!form) {
-      throw new Error('formulaire introuvable');
-    }
-    fireEvent.submit(form);
+    submit(container);
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     expect(onSubmit.mock.calls[0][0]).toEqual({
       sujet: SujetDemandeEnum.LABELLISATION,
-      targetStar: 3,
     });
   });
 
-  it('COT seul : la soumission émet { sujet: cot } sans étoile', async () => {
+  it('COT seul : la soumission émet { sujet: cot }', async () => {
     const onSubmit = vi.fn();
-    const { container } = render(
-      <RequestAuditForm
-        auditTypeOptions={toAuditTypeOptions(true, 3)}
-        maximumRequestableStar={3}
-        isPending={false}
-        onSubmit={onSubmit}
-        onCancel={vi.fn()}
-      />
-    );
+    const { container } = renderForm({ isCOT: true, etoile: 3 }, onSubmit);
 
     fireEvent.click(
       screen.getByRole('radio', { name: 'Audit COT sans labellisation' })
     );
-    const form = container.querySelector('form');
-    if (!form) {
-      throw new Error('formulaire introuvable');
-    }
-    fireEvent.submit(form);
+    submit(container);
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     expect(onSubmit.mock.calls[0][0]).toEqual({ sujet: SujetDemandeEnum.COT });
   });
 
   it("choix de type : « Envoyer ma demande » est désactivé tant qu'aucun type n'est choisi, puis activé après sélection", async () => {
-    render(
-      <RequestAuditForm
-        auditTypeOptions={toAuditTypeOptions(true, 3)}
-        maximumRequestableStar={3}
-        isPending={false}
-        onSubmit={vi.fn()}
-        onCancel={vi.fn()}
-      />
-    );
+    renderForm({ isCOT: true, etoile: 3 });
 
     expect(getSubmitButton().disabled).toBe(true);
 
@@ -243,7 +196,7 @@ describe('RequestAuditForm', () => {
             reason: 'SCORE_ACTIONS_CRITERIA_NOT_SATISFIED',
           },
         ]}
-        maximumRequestableStar={3}
+        etoile={3}
         isPending={false}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
