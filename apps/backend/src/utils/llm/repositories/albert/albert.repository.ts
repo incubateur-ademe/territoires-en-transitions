@@ -301,8 +301,9 @@ export const toChatToolsParams = (
       : []),
     ...request.messages.map(toOpenAiMessage),
   ],
-  // gpt-oss sur vLLM n'honore pas `tool_choice: 'none'` : il appelle quand
-  // même un outil, sans texte. Sans outils déclarés, il répond.
+  // Avec `tool_choice: 'none'`, gpt-oss sur vLLM a rendu des tours vides : on
+  // ne déclare plus d'outils. Un tour vide reste possible sur un long
+  // contexte ; l'agent a un repli.
   ...(request.tools.length > 0 && request.toolChoice !== 'none'
     ? {
         tools: request.tools.map((tool) => ({
