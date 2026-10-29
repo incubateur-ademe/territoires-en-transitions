@@ -303,6 +303,11 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     ReferentsPcaetRouter,
     PcaetRouter,
   ],
-  exports: [PcaetRouter],
+  exports: [
+    PcaetRouter,
+    // Lectures réutilisées par les outils MCP (utils/mcp).
+    ListDemarchesPcaetService,
+    ListDemarchePcaetDocumentsService,
+  ],
 })
 export class PcaetModule {}

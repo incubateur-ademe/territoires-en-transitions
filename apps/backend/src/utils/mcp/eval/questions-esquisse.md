@@ -22,6 +22,16 @@ Pour chaque question : l'outil attendu, les règles à respecter, et la réponse
 | 14 | Quels retours utilisateurs sur l'import de plan ces 3 derniers mois ? | `run_sql_query` sur `retours_utilisateurs_*` (si accordé au rôle) ; sinon dire que la source n'est pas disponible | Pas de texte nominatif ; thèmes et volumes seulement | à remplir |
 | 15 | Rédige l'esquisse « améliorer l'activation des communes de moins de 5 000 habitants » | Prompt `esquisse-shape-up` + questions 1, 2, 6, 11 | Toutes les sections du modèle, un seul appétit, chaque chiffre dans Recherche, inconnues listées | relecture par un PS |
 
+## Questions contextuelles (outils métier, compte support en mode super admin)
+
+| # | Question | Outil attendu | Règles à respecter | Réponse de référence (date) |
+| --- | --- | --- | --- | --- |
+| 16 | Combien la collectivité X a-t-elle de plans actifs actuellement ? | `get_collectivite` (par SIREN) puis `list_plans` | Actif = fiches modifiées récemment ; annoncer le critère (90 jours ici, 52 semaines pour la North Star) | à remplir |
+| 17 | Qui est le pilote du PCAET de la collectivité X ? | `get_demarche_pcaet` | Démarche en cours d'abord ; noms seulement | à remplir |
+| 18 | La collectivité X est bloquée à l'étape de transmission : pourquoi ? | `get_demarche_pcaet` (transitions, `bloqueePar`, pièces non couvertes) | Distinguer `estPilote` (évalué pour l'appelant) des conditions du dossier | à remplir |
+| 19 | Quel est le score CAE de la collectivité X et combien d'étoiles ? | `get_referentiel_scores` | Complétion ≠ réalisation ; dire la date du calcul | à remplir |
+| 20 | Que fait l'utilisateur Y depuis une semaine sur la plateforme ? | `find_user` puis `list_recent_events(jours=7)` | Pas d'e-mail dans la réponse ; rappeler que les bloqueurs de publicité masquent des visites | à remplir |
+
 ## Déroulé de la recette
 
 1. Lancer chaque question depuis Claude.ai avec le connecteur branché sur staging (ou prod une fois le rôle en place).

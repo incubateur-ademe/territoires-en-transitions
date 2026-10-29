@@ -12,6 +12,12 @@ Réservé à l'équipe : utilisateurs **support** (`utilisateur_support`) et sup
 | outil | `list_tables`, `describe_table` | Catalogue de la base analytique, limité aux objets lisibles par le rôle. |
 | outil | `run_hogql_query` | HogQL sur PostHog (événements), découpage mensuel `{start}`/`{end}`, internes retirés, colonnes e-mail supprimées du résultat. |
 | outil | `list_named_queries`, `run_named_query` | Catalogue de requêtes SQL revues pour les questions récurrentes (activation, activité, plans actifs, labellisation), avec paramètres ; la requête exécutée est renvoyée pour être citée. |
+| outil | `get_collectivite` | Fiche d'une collectivité (par id ou SIREN) : identité, COT, accès restreint, membres actifs, nombre de plans. |
+| outil | `list_plans` | Plans d'une collectivité avec pilotes, référents, fiches par statut, dernière modification et fiches modifiées sur 90 jours. |
+| outil | `get_demarche_pcaet` | Démarche PCAET en cours : statut, étape, dates, pilotes, transitions possibles et conditions bloquantes, pièces attendues et leur couverture. |
+| outil | `get_referentiel_scores` | Score courant sur `cae`, `eci` ou `te` : points et pourcentages, étoiles (peut recalculer un snapshot périmé). |
+| outil | `find_user` | Utilisateur par e-mail : prénom, nom, état du compte, collectivités avec niveau d'accès et fonction ; ni e-mail ni téléphone en sortie. |
+| outil | `list_recent_events` | 50 derniers événements PostHog d'un utilisateur sur 1 à 90 jours, requête construite côté serveur. |
 | ressource | `tet://docs/regles-metier` | Règles métier, filtres obligatoires, glossaire. |
 | ressource | `tet://docs/base-analytique` | Description des tables de statistiques. |
 | ressource | `tet://docs/posthog-hogql` | Guide HogQL. |
@@ -27,6 +33,12 @@ Les ressources sont des fichiers TypeScript dans `resources/`, repris du dashboa
 2. Dans une conversation, choisir le prompt `esquisse-shape-up`, renseigner le sujet (et l'appétit ou le contexte si connus).
 3. L'assistant pose au plus trois questions si le sujet est flou, cherche les chiffres (requêtes nommées, puis SQL), cherche les précédents dans Notion, et rend l'esquisse en Markdown dans le modèle de l'équipe, avec une section Recherche (chaque chiffre et sa requête) et une section Inconnues.
 4. Coller le texte dans la page Notion de l'esquisse. L'assistant n'écrit pas dans Notion.
+
+Les décisions d'architecture (hébergement dans l'API, authentification, permissions, anatomie d'un outil, données personnelles) sont dans l'ADR [0021](../../../../../doc/adr/0021-serveur-mcp-dans-l-api.md).
+
+## Outils métier et mode super admin
+
+Les outils par collectivité ou par utilisateur vérifient les permissions de l'app sur la ressource (`collectivites.read`, `plans.read`, `demarches.pcaet.mutate`, `referentiels.read`, `collectivites.membres.read`, variante `*_confidentiel` pour une collectivité en accès restreint). Un compte support qui n'est pas membre de la collectivité doit **activer le mode super admin** dans l'app ; sans lui, l'outil répond `UNAUTHORIZED` avec cette consigne. Un compte vérifié lit déjà ce que l'app montre à tout visiteur vérifié (fiche de collectivité, plans publics).
 
 ## Sécurité
 
