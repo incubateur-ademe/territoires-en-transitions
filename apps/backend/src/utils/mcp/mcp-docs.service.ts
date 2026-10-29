@@ -66,9 +66,10 @@ Méthode :
 1. Lis les règles métier ci-dessous avant la première requête.
 2. Commence par list_named_queries : si une requête nommée répond à la question, utilise run_named_query (SQL déjà revu). Sinon, vérifie les noms de tables et de colonnes avec list_tables et describe_table plutôt que de les deviner.
 3. Privilégie le schéma public (statistiques déjà calculées) ; passe par prod pour le détail, en excluant les collectivités de test.
-4. N'annonce aucun chiffre qui ne vient pas d'un résultat d'outil ; si tu ne sais pas, dis-le.
-5. Cite la requête qui a produit chaque chiffre, pour qu'un lecteur puisse la rejouer.
-6. Réponds en français, de façon factuelle et concise.`;
+4. Pour une collectivité ou un utilisateur précis, utilise les outils métier (get_collectivite, list_plans, get_demarche_pcaet, get_referentiel_scores, find_user, list_recent_events) plutôt que du SQL. S'ils répondent UNAUTHORIZED, transmets la consigne (activer le mode super admin) sans contourner par la base analytique.
+5. N'annonce aucun chiffre qui ne vient pas d'un résultat d'outil ; si tu ne sais pas, dis-le.
+6. Cite la requête ou l'outil qui a produit chaque chiffre, pour qu'un lecteur puisse le retrouver.
+7. Réponds en français, de façon factuelle et concise.`;
 
 const esquisseArgsSchema = {
   sujet: z
@@ -114,7 +115,7 @@ ${appetitLine}${contexteBlock}
 
 Méthode, dans l'ordre :
 1. Reformule le sujet en problème : besoin non satisfait, persona, fréquence. Si le sujet est trop flou pour avancer, pose au plus trois questions courtes ; sinon avance avec des hypothèses explicites.
-2. Cherche les chiffres avec les outils de ce serveur : d'abord list_named_queries puis run_named_query (requêtes revues par l'équipe data), ensuite run_sql_query en respectant les règles métier ci-dessous, et run_hogql_query seulement pour l'usage fin d'une fonctionnalité. Chaque chiffre cité porte sa requête dans la section Recherche.
+2. Cherche les chiffres avec les outils de ce serveur : d'abord list_named_queries puis run_named_query (requêtes revues par l'équipe data), ensuite run_sql_query en respectant les règles métier ci-dessous, et run_hogql_query seulement pour l'usage fin d'une fonctionnalité. Pour illustrer avec des collectivités précises (exemples, cas typiques), utilise get_collectivite, list_plans et get_demarche_pcaet. Chaque chiffre cité porte sa requête ou son outil dans la section Recherche.
 3. Cherche les précédents : si un connecteur Notion est disponible dans cette conversation, trouve les esquisses, rétros et retours de table des paris proches du sujet dans l'espace « Territoires en transitions » (Cycles & Roadmap, Échanges d'équipe) et cite-les avec leur lien. Sinon, écris que tu n'as pas pu consulter les précédents.
 4. Rédige l'esquisse dans le modèle ci-dessous, en français, avec le vocabulaire de l'équipe. Un seul appétit, justifié. Chaque piège a un contournement. Le hors périmètre est explicite.
 5. Termine par les inconnues : chiffres non obtenus, hypothèses à valider, expert à consulter.

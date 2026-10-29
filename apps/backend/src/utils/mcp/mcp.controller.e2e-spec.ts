@@ -187,7 +187,13 @@ describe('MCP controller', () => {
       const { tools } = await client.listTools();
       expect(tools.map((tool) => tool.name).sort()).toEqual([
         'describe_table',
+        'find_user',
+        'get_collectivite',
+        'get_demarche_pcaet',
+        'get_referentiel_scores',
         'list_named_queries',
+        'list_plans',
+        'list_recent_events',
         'list_tables',
         'run_hogql_query',
         'run_named_query',

@@ -99,6 +99,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
   ],
   exports: [
     PlanRouter,
+    GetPlanCompletionService,
     UpsertPlanService,
     UpsertAxeService,
     ListPlansService,
