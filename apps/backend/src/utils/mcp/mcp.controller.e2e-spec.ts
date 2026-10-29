@@ -187,8 +187,10 @@ describe('MCP controller', () => {
       const { tools } = await client.listTools();
       expect(tools.map((tool) => tool.name).sort()).toEqual([
         'describe_table',
+        'list_named_queries',
         'list_tables',
         'run_hogql_query',
+        'run_named_query',
         'run_sql_query',
       ]);
 
@@ -198,11 +200,14 @@ describe('MCP controller', () => {
           'tet://docs/regles-metier',
           'tet://docs/base-analytique',
           'tet://docs/posthog-hogql',
+          'tet://docs/esquisse-modele',
         ])
       );
 
       const { prompts } = await client.listPrompts();
-      expect(prompts.map((prompt) => prompt.name)).toContain('analyse-stats');
+      expect(prompts.map((prompt) => prompt.name)).toEqual(
+        expect.arrayContaining(['analyse-stats', 'esquisse-shape-up'])
+      );
     });
 
     test('lit une ressource et le prompt', async () => {
@@ -217,6 +222,70 @@ describe('MCP controller', () => {
       const { messages } = await client.getPrompt({ name: 'analyse-stats' });
       expect(messages.length).toBeGreaterThan(1);
       expect(messages[0].content).toMatchObject({ type: 'text' });
+    });
+
+    test('esquisse-shape-up : prompt avec arguments, modèle et règles métier', async () => {
+      const { messages } = await client.getPrompt({
+        name: 'esquisse-shape-up',
+        arguments: {
+          sujet:
+            "améliorer l'activation des communes de moins de 5 000 habitants",
+          appetit: 'petite',
+        },
+      });
+
+      expect(messages[0].content).toMatchObject({
+        type: 'text',
+        text: expect.stringContaining('communes de moins de 5 000 habitants'),
+      });
+      expect(messages[0].content).toMatchObject({
+        text: expect.stringContaining('petite'),
+      });
+      expect(
+        messages
+          .slice(1)
+          .map((message) =>
+            message.content.type === 'resource'
+              ? message.content.resource.uri
+              : null
+          )
+      ).toEqual(['tet://docs/esquisse-modele', 'tet://docs/regles-metier']);
+    });
+
+    test('list_named_queries et run_named_query', async () => {
+      const list = await client.callTool({
+        name: 'list_named_queries',
+        arguments: {},
+      });
+      expect(list.isError).toBeFalsy();
+      expect(
+        (list.structuredContent as { queries: { name: string }[] }).queries.map(
+          (query) => query.name
+        )
+      ).toContain('collectivites_actives_periode');
+
+      const unknown = await client.callTool({
+        name: 'run_named_query',
+        arguments: { name: 'inconnue' },
+      });
+      expect(unknown.isError).toBe(true);
+      expect((unknown.content as { text: string }[])[0].text).toContain(
+        'NOT_FOUND'
+      );
+
+      // La base de test n'a pas les tables analytiques : l'erreur Postgres
+      // remonte au modèle, requête citée.
+      const missingTable = await client.callTool({
+        name: 'run_named_query',
+        arguments: {
+          name: 'collectivites_actives_periode',
+          params: { jours: 90 },
+        },
+      });
+      expect(missingTable.isError).toBe(true);
+      expect((missingTable.content as { text: string }[])[0].text).toContain(
+        'ANALYTICS_QUERY_ERROR'
+      );
     });
 
     test('run_sql_query : SELECT simple', async () => {
