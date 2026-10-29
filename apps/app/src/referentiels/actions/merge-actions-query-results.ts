@@ -113,7 +113,7 @@ export function mergeActionsQueryResults(
   return {
     data,
     isPending: parts.some((part) => part.isPending),
-    isError: parts.some((part) => part.isError),
+    isError: parts.some((part) => part.isError && part.data === undefined),
     versionMismatches,
   };
 }
