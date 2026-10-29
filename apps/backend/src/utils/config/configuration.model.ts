@@ -252,6 +252,25 @@ export const backendConfigurationSchema = z
       .describe(
         'CA (PEM) du serveur Postgres analytique, même usage que SUPABASE_DATABASE_SSL_ROOT_CERT'
       ),
+    // Agent du backend (utils/assistant) : boucle d'appels d'outils MCP.
+    ASSISTANT_MAX_MODEL_CALLS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(8)
+      .describe('Appels au modèle par question avant de forcer une réponse'),
+    ASSISTANT_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(120_000)
+      .describe("Durée maximale de réponse de l'assistant, en millisecondes"),
+    ASSISTANT_TIER: z
+      .enum(['strong', 'light'])
+      .prefault('strong')
+      .describe(
+        "Palier de modèle de l'assistant (strong : ALBERT_MODEL ou GEMINI_MODEL)"
+      ),
     BACKEND_PUBLIC_URL: z
       .url()
       .optional()

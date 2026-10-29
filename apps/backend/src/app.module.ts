@@ -14,6 +14,7 @@ import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
 import configuration from './utils/config/configuration';
+import { AssistantModule } from './utils/assistant/assistant.module';
 import { BannerModule } from './utils/banner/banner.module';
 import { ConfigurationModule } from './utils/config/configuration.module';
 import ConfigurationService from './utils/config/configuration.service';
@@ -100,6 +101,7 @@ const appLogger = new Logger('AppModule');
     NotificationsModule,
     BannerModule,
     McpModule,
+    AssistantModule,
   ],
   providers: [
     TrpcRouter,

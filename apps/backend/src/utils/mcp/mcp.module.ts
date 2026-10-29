@@ -79,5 +79,7 @@ const toolClasses = [
       inject: toolClasses,
     },
   ],
+  // L'agent du backend (utils/assistant) se branche sur le même serveur.
+  exports: [BuildMcpServerService],
 })
 export class McpModule {}
