@@ -353,6 +353,26 @@ describe('MCP controller', () => {
   // Une CTE modifiante est déjà refusée par la sous-requête `LIMIT` (elle doit
   // être au niveau supérieur) ; `nextval` passe la syntaxe et bute sur la
   // session en lecture seule.
+  test('avec le préfixe global de main.ts, les métadonnées restent à la racine', async () => {
+    const prefixedApp = await getDisposableTestApp({ withGlobalPrefix: true });
+    onTestFinished(async () => {
+      await prefixedApp.close();
+    });
+    const server = prefixedApp.getHttpServer();
+
+    await request(server)
+      .get('/.well-known/oauth-protected-resource')
+      .expect(200);
+    await request(server)
+      .get('/.well-known/oauth-protected-resource/api/v1/mcp')
+      .expect(200);
+    await request(server)
+      .get('/api/v1/.well-known/oauth-protected-resource')
+      .expect(404);
+    await request(server).post('/api/v1/mcp').expect(401);
+    await request(server).post('/mcp').expect(404);
+  });
+
   test('la connexion analytique est en lecture seule', async () => {
     const result = await app.get(AnalyticsDatabaseService).query({
       text: "select nextval('collectivite_id_seq') as n",

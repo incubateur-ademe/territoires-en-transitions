@@ -15,8 +15,7 @@ export const runSqlQueryOutputSchema = z.object({
   columnCount: z.number(),
   totalRowCount: z
     .number()
-    .nullable()
-    .describe('Nombre total de lignes, null si le comptage a échoué'),
+    .describe('Nombre total de lignes de la requête, avant troncature'),
   previewRowCount: z.number(),
   previewRows: z.array(z.record(z.string(), z.unknown())),
   truncated: z.boolean(),
@@ -72,10 +71,7 @@ export class RunSqlQueryService {
       return result;
     }
 
-    const { columns, rows, truncated } = result.data;
-    const totalRowCount = truncated
-      ? await this.analyticsDatabaseService.countRows({ text: validated.sql })
-      : rows.length;
+    const { columns, rows, truncated, totalRowCount } = result.data;
     this.logger.log(
       `run_sql_query ok in ${durationMs}ms: ${rows.length} rows shown, ${totalRowCount} total`
     );
@@ -88,9 +84,7 @@ export class RunSqlQueryService {
       previewRows: rows,
       truncated,
       note: truncated
-        ? `Aperçu limité à ${MCP_PREVIEW_ROWS} lignes sur ${
-            totalRowCount ?? 'un nombre inconnu de'
-          } : agrège ou filtre davantage plutôt que de lister.`
+        ? `Aperçu limité à ${MCP_PREVIEW_ROWS} lignes sur ${totalRowCount} : agrège ou filtre davantage plutôt que de lister.`
         : 'Résultat complet.',
     });
   }

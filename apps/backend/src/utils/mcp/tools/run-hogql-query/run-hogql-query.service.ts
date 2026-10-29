@@ -27,14 +27,19 @@ export const runHogqlQueryOutputSchema = z.object({
   truncated: z.boolean(),
   note: z.string(),
   meta: z.object({
-    windows: z.number().describe('Nombre de fenêtres mensuelles exécutées'),
+    windows: z.number().describe('Nombre de fenêtres mensuelles prévues'),
+    windowsExecuted: z.number(),
     truncatedWindows: z
       .array(z.string())
       .describe(
         'Fenêtres qui ont atteint la limite de lignes : résultat incomplet'
       ),
     rowCapReached: z.boolean(),
+    timeBudgetReached: z.boolean(),
     internalRowsRemoved: z.number(),
+    internalFilterInQuery: z
+      .boolean()
+      .describe('Le marqueur {internal_emails} a été remplacé dans la requête'),
     emailColumnsRemoved: z.array(z.string()),
     noteDates: z.string().optional(),
   }),
@@ -42,8 +47,13 @@ export const runHogqlQueryOutputSchema = z.object({
 
 export type RunHogqlQueryOutput = z.infer<typeof runHogqlQueryOutputSchema>;
 
+const INTERNAL_EMAILS_MARKER = '{internal_emails}';
 const INTERNAL_EMAILS_CACHE_MS = 60 * 60 * 1000;
 const MAX_INTERNAL_EMAILS = 10_000;
+/** Au-delà, les fenêtres restantes ne sont pas lancées : une requête HTTP ne
+ * peut pas durer des dizaines de minutes derrière le répartiteur de charge. */
+const TIME_BUDGET_MS = 60_000;
+const EMAIL_COLUMN_PATTERN = /mail|courriel/i;
 
 @Injectable()
 export class RunHogqlQueryService {
@@ -77,7 +87,24 @@ export class RunHogqlQueryService {
       return failure('POSTHOG_NOT_CONFIGURED');
     }
 
-    const hogql = input.hogql.trim();
+    let hogql = input.hogql.trim();
+    const internalFilterInQuery = hogql.includes(INTERNAL_EMAILS_MARKER);
+    if (internalFilterInQuery) {
+      const internalEmails = await this.getInternalEmails();
+      if (internalEmails === null) {
+        return failure(
+          'INTERNAL_USERS_UNAVAILABLE',
+          new Error(
+            'La liste des utilisateurs internes est indisponible : {internal_emails} ne peut pas être remplacé.'
+          )
+        );
+      }
+      hogql = hogql.replaceAll(
+        INTERNAL_EMAILS_MARKER,
+        toHogqlStringList(internalEmails)
+      );
+    }
+
     const windowed = hasWindowMarkers(hogql);
     let windows: HogqlWindow[] = [];
     let noteDates: string | undefined;
@@ -103,9 +130,10 @@ export class RunHogqlQueryService {
         'dateFrom/dateTo ignorés : la requête ne contient pas les marqueurs {start}/{end}.';
     }
 
-    // Journal d'audit : la requête seule, jamais les données renvoyées.
+    // Journal d'audit : la requête du modèle, jamais les données renvoyées
+    // (ni la liste des internes substituée).
     this.logger.log(
-      `run_hogql_query (${windows.length || 1} fenêtre(s)): ${hogql
+      `run_hogql_query (${windows.length || 1} fenêtre(s)): ${input.hogql
         .replace(/\s+/g, ' ')
         .slice(0, 2000)}`
     );
@@ -115,13 +143,20 @@ export class RunHogqlQueryService {
     let rows: unknown[][] = [];
     const truncatedWindows: string[] = [];
     let rowCapReached = false;
+    let timeBudgetReached = false;
+    let windowsExecuted = 0;
 
     const queries = windowed
       ? windows.map((window) => ({ window, hogql: applyWindow(hogql, window) }))
       : [{ window: null, hogql }];
 
     for (const { window, hogql: query } of queries) {
+      if (windowsExecuted > 0 && Date.now() - startedAt > TIME_BUDGET_MS) {
+        timeBudgetReached = true;
+        break;
+      }
       const result = await this.posthogQueryClient.run(query);
+      windowsExecuted += 1;
       if (!result.success) {
         const prefix = window
           ? `[fenêtre ${window.start} → ${window.end}] `
@@ -171,13 +206,14 @@ export class RunHogqlQueryService {
       .slice(0, MCP_PREVIEW_ROWS)
       .map((row) => Object.fromEntries(keptColumns.map((c, i) => [c, row[i]])));
     const truncated = keptRows.length > MCP_PREVIEW_ROWS;
+    const partial = rowCapReached || timeBudgetReached;
 
     this.logger.log(
       `run_hogql_query ok in ${Date.now() - startedAt}ms: ${
         keptRows.length
       } rows, ${removed} internal removed, ${
         truncatedWindows.length
-      } truncated windows`
+      } truncated windows, ${windowsExecuted}/${queries.length} windows`
     );
 
     return success({
@@ -189,10 +225,18 @@ export class RunHogqlQueryService {
       truncated,
       note: [
         truncated
-          ? `Aperçu limité à ${MCP_PREVIEW_ROWS} lignes sur ${keptRows.length} : agrège davantage côté PostHog.`
+          ? `Aperçu limité à ${MCP_PREVIEW_ROWS} lignes sur ${keptRows.length}${
+              partial ? ' (total partiel)' : ''
+            } : agrège davantage côté PostHog.`
           : 'Résultat complet.',
         truncatedWindows.length > 0
           ? 'Certaines fenêtres ont atteint la limite de lignes : résultats incomplets, ajoute des filtres ou agrège davantage.'
+          : null,
+        rowCapReached
+          ? `Plafond de ${HOGQL_MAX_TOTAL_ROWS} lignes atteint : les fenêtres suivantes n'ont pas été exécutées et le total est partiel.`
+          : null,
+        timeBudgetReached
+          ? `Budget de temps épuisé après ${windowsExecuted} fenêtre(s) sur ${queries.length} : réduis la période ou agrège davantage.`
           : null,
         emailColumnsRemoved.length > 0
           ? 'Les colonnes e-mail ont été retirées du résultat : compte les personnes, ne les liste pas.'
@@ -202,9 +246,12 @@ export class RunHogqlQueryService {
         .join(' '),
       meta: {
         windows: queries.length,
+        windowsExecuted,
         truncatedWindows,
         rowCapReached,
+        timeBudgetReached,
         internalRowsRemoved: removed,
+        internalFilterInQuery,
         emailColumnsRemoved,
         noteDates,
       },
@@ -213,8 +260,9 @@ export class RunHogqlQueryService {
 
   /**
    * Retire les lignes des utilisateurs internes (table `public.internal_users`
-   * de la base analytique) sur toute colonne nommée `email`, puis signale ces
-   * colonnes pour qu'elles soient supprimées du résultat.
+   * de la base analytique) sur toute colonne qui ressemble à une adresse
+   * e-mail, puis signale ces colonnes pour qu'elles soient supprimées du
+   * résultat.
    */
   private async removeInternalUsers(
     columns: string[],
@@ -225,13 +273,13 @@ export class RunHogqlQueryService {
     emailColumnIndexes: number[];
   }> {
     const emailColumnIndexes = columns
-      .map((column, index) => (column.toLowerCase() === 'email' ? index : -1))
+      .map((column, index) => (EMAIL_COLUMN_PATTERN.test(column) ? index : -1))
       .filter((index) => index >= 0);
     if (emailColumnIndexes.length === 0) {
       return { kept: rows, removed: 0, emailColumnIndexes };
     }
 
-    const internalEmails = await this.getInternalEmails();
+    const internalEmails = (await this.getInternalEmails()) ?? new Set();
     if (internalEmails.size === 0) {
       return { kept: rows, removed: 0, emailColumnIndexes };
     }
@@ -249,7 +297,8 @@ export class RunHogqlQueryService {
     return { kept, removed: rows.length - kept.length, emailColumnIndexes };
   }
 
-  private async getInternalEmails(): Promise<Set<string>> {
+  /** Adresses internes en minuscules, ou null si la base analytique ne répond pas. */
+  private async getInternalEmails(): Promise<Set<string> | null> {
     const cache = this.internalEmailsCache;
     if (cache && Date.now() - cache.loadedAt < INTERNAL_EMAILS_CACHE_MS) {
       return cache.emails;
@@ -262,7 +311,7 @@ export class RunHogqlQueryService {
       this.logger.warn(
         `Internal users unavailable (${result.error}): PostHog rows are not filtered`
       );
-      return new Set();
+      return null;
     }
     const emails = new Set(
       result.data.rows
@@ -272,6 +321,16 @@ export class RunHogqlQueryService {
     this.internalEmailsCache = { emails, loadedAt: Date.now() };
     return emails;
   }
+}
+
+/** Liste HogQL de chaînes entre apostrophes, apostrophes internes doublées. */
+function toHogqlStringList(values: Set<string>): string {
+  if (values.size === 0) {
+    return "''";
+  }
+  return [...values]
+    .map((value) => `'${value.replaceAll("'", "''")}'`)
+    .join(', ');
 }
 
 function dedupeRows(rows: unknown[][]): unknown[][] {

@@ -15,6 +15,10 @@ import {
 } from './utils/log/custom-logger.service';
 import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
 import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
+import {
+  GLOBAL_PREFIX,
+  GLOBAL_PREFIX_EXCLUDED_PATHS,
+} from './utils/nest/global-prefix';
 import { ApiTrackingInterceptor } from './utils/tracking/api-tracking.interceptor';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 
@@ -64,14 +68,8 @@ async function bootstrap() {
   app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
 
   // Seulement une v1 pour l'instant
-  app.setGlobalPrefix('api/v1', {
-    exclude: [
-      'version',
-      'throw',
-      // Découverte OAuth des clients MCP (RFC 9728) : à la racine du domaine.
-      '.well-known/oauth-protected-resource',
-      '.well-known/oauth-protected-resource/api/v1/mcp',
-    ],
+  app.setGlobalPrefix(GLOBAL_PREFIX, {
+    exclude: GLOBAL_PREFIX_EXCLUDED_PATHS,
   });
 
   app.useGlobalFilters(

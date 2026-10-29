@@ -8,8 +8,12 @@ export type ValidatedSql =
   | { ok: true; sql: string }
   | { ok: false; reason: string };
 
+// Commandes d'écriture, puis fonctions qui modifient la session (et donc
+// contournent `default_transaction_read_only` ou `statement_timeout` posés sur
+// la connexion poolée), prennent des verrous de session, dorment, ou lisent le
+// système de fichiers du serveur.
 const FORBIDDEN_KEYWORDS =
-  /\b(insert|update|delete|drop|alter|create|truncate|grant|revoke|copy|pg_sleep|lo_import|lo_export|dblink)\b/i;
+  /\b(insert|update|delete|drop|alter|create|truncate|grant|revoke|copy|set_config|setval|pg_sleep\w*|pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_(?:try_)?advisory_\w+|pg_notify|pg_read_\w+|pg_ls_\w+|pg_stat_file|pg_logdir_ls|lo_\w+|dblink\w*)\b/i;
 
 const CATALOG_TABLES = /\b(information_schema|pg_catalog)\b/i;
 

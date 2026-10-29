@@ -43,6 +43,13 @@ describe('validateSelectSql', () => {
     'select 1 union all delete from x',
     'with x as (select 1) insert into y select * from x',
     'select pg_sleep(10)',
+    "select pg_sleep_for('1 hour')",
+    "select set_config('default_transaction_read_only', 'off', false)",
+    "select set_config('statement_timeout', '0', false)",
+    'select pg_advisory_lock(42)',
+    'select pg_try_advisory_xact_lock(42)',
+    'select pg_terminate_backend(1)',
+    "select pg_read_file('/etc/passwd')",
     'select * from prod.collectivite; drop table prod.collectivite',
   ])('refuse les commandes de modification : %s', (sql) => {
     expect(validateSelectSql(sql)).toMatchObject({ ok: false });
