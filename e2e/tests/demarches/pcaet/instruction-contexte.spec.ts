@@ -9,9 +9,6 @@ import { test } from 'tests/main.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { InstructionPom } from './instruction.pom';
 
-/** Ce que la bannière affiche pour un service de type `dreal`. */
-const DREAL_CASQUETTE = 'la DREAL';
-
 /**
  * Ouvrir un dossier depuis la liste d'un service bascule le contexte sur la
  * collectivité instruite : l'agent s'y retrouve sans en être membre, et la
@@ -103,7 +100,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     await pom.expectContexte({
       collectiviteInstruiteId: deposante.data.id,
       demandeAvisId,
-      casquette: DREAL_CASQUETTE,
+      collectiviteNom: deposante.data.nom,
     });
     await pom.expectCollectiviteNavigation();
 
@@ -167,7 +164,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     await pom.expectDossierEnElaboration({
       collectiviteInstruiteId: deposante.data.id,
       demarcheId: demarche.id,
-      casquette: DREAL_CASQUETTE,
+      collectiviteNom: deposante.data.nom,
     });
 
     // Parti dans les plans du territoire, l'agent garde le chemin du dossier.
@@ -230,7 +227,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
     await pom.expectContexte({
       collectiviteInstruiteId: deposante.data.id,
       demandeAvisId,
-      casquette: DREAL_CASQUETTE,
+      collectiviteNom: deposante.data.nom,
     });
     await expect(pom.accessError).toBeHidden();
   });
@@ -334,7 +331,7 @@ test.describe('Démarche PCAET - contexte d’instruction', () => {
       await pom.expectContexte({
         collectiviteInstruiteId: deposante.data.id,
         demandeAvisId,
-        casquette: DREAL_CASQUETTE,
+        collectiviteNom: deposante.data.nom,
       });
 
       await page.getByTestId('nav-pa').click();
