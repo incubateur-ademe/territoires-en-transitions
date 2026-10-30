@@ -1,7 +1,7 @@
 import { CrispSessionMessage } from '../models/get-crisp-session-messages.response';
 
 /** Note d'opérateur « /tet <question> », sur une ou plusieurs lignes. */
-const TET_COMMAND_REGEXP = /^\/tet\s+([\s\S]+)$/i;
+const TET_COMMAND_REGEXP = /^\/tet\s([\s\S]*)$/i;
 
 /** Première ligne des notes de réponse : c'est ainsi qu'on les relit. */
 export const ASSISTANT_NOTE_PREFIX = '🤖 Assistant TeT';
