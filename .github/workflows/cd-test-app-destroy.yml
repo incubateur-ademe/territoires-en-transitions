@@ -21,11 +21,11 @@ jobs:
           persist-credentials: false
 
       - id: test-app-name
-        uses: ./.github/actions/test-app-name
+        uses: ./.github/actions/providers/koyeb/test-app-name
         with:
           branch-name: ${{ github.event.pull_request.head.ref }}
 
-      - uses: ./.github/actions/koyeb-cli
+      - uses: ./.github/actions/providers/koyeb/cli
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 

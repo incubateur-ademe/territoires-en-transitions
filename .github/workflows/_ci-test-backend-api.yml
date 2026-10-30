@@ -33,13 +33,13 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/docker-login
+      - uses: ./.github/actions/docker/login
         if: ${{ !env.ACT }}
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ./.github/actions/speedup-dpkg
+      - uses: ./.github/actions/runner/speedup-dpkg
 
       - name: Create docker network ahead of supabase and redis
         shell: bash
@@ -48,7 +48,7 @@ jobs:
       - name: Start supabase in background (while installing deps)
         id: start-supabase
         background: true
-        uses: ./.github/actions/supabase-start
+        uses: ./.github/actions/database/supabase/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
           api-url: ${{ vars.SUPABASE_API_URL }}
@@ -58,16 +58,16 @@ jobs:
       - name: Start redis in background
         id: start-redis
         background: true
-        uses: ./.github/actions/redis-start
+        uses: ./.github/actions/database/redis/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
           install-canvas-deps: 'true'
 
-      - uses: ./.github/actions/app-env
+      - uses: ./.github/actions/app/env
         with:
           app_name: backend
           json_vars: ${{ toJSON(vars) }}

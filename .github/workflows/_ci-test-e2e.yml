@@ -45,17 +45,17 @@ jobs:
           persist-credentials: false
 
       - if: ${{ !env.ACT }}
-        uses: ./.github/actions/docker-login
+        uses: ./.github/actions/docker/login
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ./.github/actions/speedup-dpkg
+      - uses: ./.github/actions/runner/speedup-dpkg
 
       - name: Start Supabase in background
         id: start-supabase
         background: true
-        uses: ./.github/actions/supabase-start
+        uses: ./.github/actions/database/supabase/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
           api-url: ${{ vars.SUPABASE_API_URL }}
@@ -65,17 +65,17 @@ jobs:
       - name: Start Redis in background
         id: start-redis
         background: true
-        uses: ./.github/actions/redis-start
+        uses: ./.github/actions/database/redis/start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
 
-      - uses: ./.github/actions/pnpm-prepare
+      - uses: ./.github/actions/node/pnpm-prepare
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
 
       - parallel:
           - name: Setup app env
-            uses: ./.github/actions/app-env
+            uses: ./.github/actions/app/env
             with:
               app_name: app
               json_vars: ${{ toJSON(vars) }}
@@ -83,7 +83,7 @@ jobs:
               environment: ci
 
           - name: Setup backend env
-            uses: ./.github/actions/app-env
+            uses: ./.github/actions/app/env
             with:
               app_name: backend
               json_vars: ${{ toJSON(vars) }}
@@ -119,7 +119,7 @@ jobs:
 
       - name: Wait for Mailpit
         id: wait-for-mailpit
-        uses: ./.github/actions/wait-for-url
+        uses: ./.github/actions/utils/wait-for-url
         with:
           url: ${{ vars.SUPABASE_MAILPIT_URL }}/api/v1/info
           retry: '30'
@@ -127,7 +127,7 @@ jobs:
 
       - parallel:
           - name: Start backend
-            uses: ./.github/actions/app-start
+            uses: ./.github/actions/app/start
             with:
               name: backend
               port: 8080
@@ -135,7 +135,7 @@ jobs:
               logs-dir: ${{ env.LOGS }}
 
           - name: Start app
-            uses: ./.github/actions/app-start
+            uses: ./.github/actions/app/start
             with:
               name: app
               port: 3000
