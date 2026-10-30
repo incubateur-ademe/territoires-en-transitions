@@ -1,0 +1,31 @@
+name: koyeb-preview-app-name
+description: Compute the same scoped Koyeb app name for preview deployment and cleanup
+
+inputs:
+  branch:
+    description: Repository branch to preview
+    required: true
+  target:
+    description: Parent environment (staging or preprod)
+    required: true
+
+outputs:
+  name:
+    description: Koyeb app name, at most 23 characters
+    value: ${{ steps.name.outputs.name }}
+
+runs:
+  using: composite
+  steps:
+    - id: name
+      shell: bash
+      env:
+        BRANCH: ${{ inputs.branch }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        set -euo pipefail
+        [[ "$TARGET" == staging || "$TARGET" == preprod ]]
+        git check-ref-format "refs/heads/$BRANCH"
+        # Include the full, case-sensitive branch, repository and target in the hash.
+        hash=$(printf '%s\0%s\0%s' "$GITHUB_REPOSITORY" "$TARGET" "$BRANCH" | sha256sum)
+        echo "name=preview-${TARGET:0:1}-${hash:0:13}" >> "$GITHUB_OUTPUT"
