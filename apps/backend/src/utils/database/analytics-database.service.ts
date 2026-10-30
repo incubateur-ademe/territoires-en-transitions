@@ -8,7 +8,6 @@ import {
 } from '../postgresql-error-codes.enum';
 import { failure, Result, success } from '../result.type';
 import { AnalyticsDatabaseError } from './analytics-database.errors';
-import { buildDatabaseSsl } from './build-database-ssl';
 
 export const ANALYTICS_STATEMENT_TIMEOUT_MS = 10_000;
 
@@ -58,12 +57,6 @@ export class AnalyticsDatabaseService implements OnApplicationShutdown {
 
     this.pool = new Pool({
       connectionString: url,
-      ssl: buildDatabaseSsl({
-        url,
-        ca: this.configService.get('ANALYTICS_DATABASE_SSL_ROOT_CERT'),
-        urlVariable: 'ANALYTICS_DATABASE_URL',
-        caVariable: 'ANALYTICS_DATABASE_SSL_ROOT_CERT',
-      }),
       application_name: 'Backend MCP analytics',
       options: '-c default_transaction_read_only=on',
       max: 3,

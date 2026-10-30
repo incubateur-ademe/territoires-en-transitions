@@ -15,6 +15,10 @@ export default defineConfig((env) => {
         fileParallelism: false,
         testTimeout: 60 * 60 * 1000,
         hookTimeout: 120_000,
+        // Déchiffrée du .env par `make assistant-eval`.
+        env: {
+          ANALYTICS_DATABASE_URL: process.env.ANALYTICS_DATABASE_URL ?? '',
+        },
       },
     })
   );

@@ -121,10 +121,15 @@ export class DescribeTableService {
       return result;
     }
     if (result.data.rows.length === 0) {
+      const candidates = await this.findCandidateTables(input.table);
       return failure(
         'NOT_FOUND',
         new Error(
-          `Table ${input.schema}.${input.table} introuvable ou non accessible`
+          `Table ${input.schema}.${input.table} introuvable ou non accessible${
+            candidates.length
+              ? ` ; tables existantes du même nom : ${candidates.join(', ')}`
+              : ''
+          }`
         )
       );
     }
@@ -137,5 +142,26 @@ export class DescribeTableService {
         nullable: row.is_nullable === 'YES',
       })),
     });
+  }
+
+  /**
+   * Le miroir `prod` préfixe ses tables du schéma d'origine
+   * (`prod.public_fiche_action`) : sans piste, le modèle reprend le même
+   * nom dans un autre schéma et tourne en rond.
+   */
+  private async findCandidateTables(table: string): Promise<string[]> {
+    const bareName = table.replace(/^public_/i, '');
+    const result = await this.analyticsDatabaseService.query({
+      text: `SELECT table_schema || '.' || table_name AS name
+        FROM information_schema.tables
+        WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
+          AND table_name IN ($1, $2)
+        ORDER BY 1`,
+      values: [bareName, `public_${bareName}`],
+      maxRows: 10,
+    });
+    return result.success
+      ? result.data.rows.map((row) => String(row.name))
+      : [];
   }
 }

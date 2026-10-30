@@ -44,16 +44,15 @@ Les outils par collectivité ou par utilisateur vérifient les permissions de l'
 
 - **Authentification** : le guard global du backend (JWT Supabase). Trois sources de jeton fonctionnent : une session utilisateur, un jeton OAuth émis par Supabase Auth (connecteurs Claude.ai / Claude Desktop), un jeton de clé API (`POST /api/v1/oauth/token`).
 - **Autorisation** : utilisateur humain (un jeton `service_role` est refusé) porteur de `utils.mcp.read`. Vérifiée au contrôleur et dans chaque service d'outil.
-- **Lecture seule** : rôle Postgres en lecture seule sur la base analytique (hors dépôt, à créer par l'équipe data), `default_transaction_read_only` posé à la connexion, validation SQL (`validate-select-sql.rules.ts`), sous-requête `LIMIT`, `statement_timeout` de 10 s.
-- **Données personnelles** : le rôle analytique n'a pas accès aux tables personnelles (`auth_users`, `dcp`, droits, membres…) ; côté PostHog, les colonnes `email` sont retirées du résultat.
+- **Lecture seule** : rôle Postgres `mcp_readonly` sur la base analytique `tet-shared` (Postgres managé Koyeb, `koyeb databases list`) : `SELECT` sur `public` et `prod`, nouvelles tables comprises (privilèges par défaut de `koyeb-adm`), aucune écriture. S'y ajoutent `default_transaction_read_only` posé à la connexion, la validation SQL (`validate-select-sql.rules.ts`), la sous-requête `LIMIT` et un `statement_timeout` de 10 s.
+- **Données personnelles** : `mcp_readonly` lit tout `prod`, tables personnelles comprises (`auth_users`, `public_dcp`…) : l'accès est réservé aux comptes support. Côté PostHog, les colonnes `email` sont retirées du résultat.
 - **Journalisation** : chaque requête SQL ou HogQL est tracée (requête seule, jamais les données), avec l'utilisateur et le `client_id` du contexte ; chaque appel émet l'événement PostHog `api_post_mcp`.
 
 ## Configuration
 
 | Variable | Rôle |
 | --- | --- |
-| `ANALYTICS_DATABASE_URL` | URL Postgres de la base analytique, avec le rôle lecture seule. Sans elle, les outils SQL répondent `ANALYTICS_DATABASE_NOT_CONFIGURED`. |
-| `ANALYTICS_DATABASE_SSL_ROOT_CERT` | CA PEM optionnelle, comme pour la base principale. |
+| `ANALYTICS_DATABASE_URL` | URL Postgres de la base analytique (Neon, `?sslmode=verify-full`), avec le rôle lecture seule. Sans elle, les outils SQL répondent `ANALYTICS_DATABASE_NOT_CONFIGURED`. |
 | `POSTHOG_PERSONAL_API_KEY` | Clé API personnelle PostHog en lecture. Sans elle, `run_hogql_query` répond `POSTHOG_NOT_CONFIGURED`. |
 | `POSTHOG_PROJECT_ID`, `POSTHOG_API_HOST` | Projet et hôte PostHog (défauts : 12975, `https://eu.posthog.com`). |
 | `BACKEND_PUBLIC_URL` | URL publique de l'API pour les métadonnées OAuth ; à défaut, l'en-tête Host. |
