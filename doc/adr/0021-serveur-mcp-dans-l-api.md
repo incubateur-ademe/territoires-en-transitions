@@ -162,6 +162,10 @@ même prompt que dans Claude.ai, sans saut réseau ni seconde authentification.
 - Le fournisseur est neutre : `LlmService.chat` (appels d'outils) est
   implémenté pour Albert et Gemini, choisi par `LLM_PROVIDER`.
 - L'historique est porté par l'appelant ; rien n'est stocké.
+- Depuis Crisp (`/tet`, appelé par `apps/tools` avec le jeton service),
+  l'agent agit au nom de l'opérateur support, lu comme en mode super admin
+  mais limité aux opérations de lecture des outils MCP : l'élévation n'est
+  posée que par le code serveur, jamais tirée d'un jeton.
 - La boucle est bornée (8 appels au modèle, 4 outils par tour, 120 s). Un
   outil inconnu, des arguments illisibles, un refus de droits ou un appel
   répété reviennent au modèle comme une erreur qu'il peut corriger ; au

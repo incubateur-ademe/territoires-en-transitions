@@ -23,6 +23,24 @@ trpc.assistant.ask.mutate({
 Bornes, réglables par l'environnement : `ASSISTANT_MAX_MODEL_CALLS` (8),
 `ASSISTANT_TIMEOUT_MS` (120 000), `ASSISTANT_TIER` (`strong`).
 
+## Dans Crisp : `/tet <question>`
+
+Un opérateur écrit `/tet qui pilote le PCAET ?` en note privée. `apps/tools`
+(`crisp/services/crisp-tet.service.ts`) relit la note par l'API Crisp (le
+webhook n'est pas signé), poste « je cherche… », appelle `assistant.askFromCrisp`
+avec le jeton service, puis répond en note privée.
+
+- L'assistant agit au nom de l'opérateur, retrouvé par son e-mail : son compte
+  TeT doit être support. Il lit **comme en mode super admin sans l'avoir
+  activé**, limité aux opérations des outils MCP (`support-elevation.ts`) ;
+  aucune écriture possible.
+- Contexte automatique : profil TeT du visiteur (`find_user`) et ses 10
+  derniers messages ; les `/tet` précédents de la conversation et leurs
+  réponses servent d'historique. Rien n'est stocké.
+- Prompt MCP `support-conversation` : réponses courtes, sans e-mail.
+- Rien à configurer côté Crisp : le webhook et le jeton existants suffisent.
+  Déployer le backend, puis `apps/tools` (`cd-tools`, manuel).
+
 ## Évaluation
 
 Les scénarios (`eval/scenarios.ts`) jugent ce que l'agent fait : outils

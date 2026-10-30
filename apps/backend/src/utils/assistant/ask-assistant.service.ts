@@ -15,6 +15,7 @@ import { BuildMcpServerService } from '@tet/backend/utils/mcp/build-mcp-server.s
 import {
   MCP_ANALYSE_STATS_PROMPT_NAME,
   MCP_ESQUISSE_PROMPT_NAME,
+  MCP_SUPPORT_PROMPT_NAME,
 } from '@tet/backend/utils/mcp/mcp-docs.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
@@ -22,6 +23,7 @@ import { AskAssistantError } from './ask-assistant.errors';
 import {
   AskAssistantInput,
   askAssistantInputSchema,
+  AskAssistantParsedInput,
 } from './ask-assistant.input';
 import { McpSession } from './mcp-session';
 
@@ -33,6 +35,44 @@ const RESULT_PREVIEW_CHARS = 300;
 
 const LAST_TURN_INSTRUCTION =
   "Limite d'appels d'outils atteinte. Réponds maintenant avec ce que tu as obtenu, sans appeler d'outil, et dis clairement ce qui manque.";
+
+/**
+ * Profil de l'utilisateur de la conversation, lu par `find_user` avec les
+ * droits du support, et ses derniers messages : le modèle n'a pas à les
+ * chercher.
+ */
+const buildSupportContext = async (
+  session: McpSession,
+  {
+    visitorEmail,
+    visitorMessages,
+  }: NonNullable<AskAssistantParsedInput['support']>
+): Promise<string> => {
+  const profile = visitorEmail
+    ? await session.callTool('find_user', { email: visitorEmail })
+    : null;
+  return [
+    'Contexte de la conversation (fourni par le système) :',
+    visitorEmail
+      ? `- Utilisateur : ${visitorEmail}`
+      : "- Utilisateur : adresse e-mail inconnue, la conversation n'est pas rattachée à un compte.",
+    ...(profile
+      ? [
+          profile.isError
+            ? `- Profil TeT : introuvable (${profile.text})`
+            : `- Profil TeT (find_user) :\n${profile.text}`,
+        ]
+      : []),
+    ...(visitorMessages.length
+      ? [
+          '- Ses derniers messages, du plus ancien au plus récent :',
+          ...visitorMessages.map(
+            (message) => `  > ${message.replace(/\n/g, ' ')}`
+          ),
+        ]
+      : []),
+  ].join('\n');
+};
 
 /** Le modèle n'a rien écrit : on dit au moins ce qui a été tenté. */
 const fallbackAnswer = (traces: AssistantToolCallTrace[]): string => {
@@ -91,7 +131,11 @@ export class AskAssistantService {
 
   async ask(
     rawInput: AskAssistantInput,
-    { user, signal }: { user: AuthenticatedUser; signal?: AbortSignal }
+    {
+      user,
+      signal,
+      timeoutMs: timeoutOverride,
+    }: { user: AuthenticatedUser; signal?: AbortSignal; timeoutMs?: number }
   ): Promise<Result<AssistantAnswer, AskAssistantError>> {
     const input = askAssistantInputSchema.parse(rawInput);
     const allowed = await this.permissionService.isAllowed(
@@ -107,7 +151,8 @@ export class AskAssistantService {
     const maxModelCalls = Number(
       this.configService.get('ASSISTANT_MAX_MODEL_CALLS')
     );
-    const timeoutMs = Number(this.configService.get('ASSISTANT_TIMEOUT_MS'));
+    const timeoutMs =
+      timeoutOverride ?? Number(this.configService.get('ASSISTANT_TIMEOUT_MS'));
     const tier = this.configService.get('ASSISTANT_TIER') as LlmTier;
     const provider = String(this.configService.get('LLM_PROVIDER'));
     const turnSignal = signal
@@ -130,8 +175,19 @@ export class AskAssistantService {
                 ? { contexte: input.esquisse.contexte }
                 : {}),
             })
-          : await session.getPromptText(MCP_ANALYSE_STATS_PROMPT_NAME);
+          : await session.getPromptText(
+              input.mode === 'support'
+                ? MCP_SUPPORT_PROMPT_NAME
+                : MCP_ANALYSE_STATS_PROMPT_NAME
+            );
       const tools = await session.listTools();
+      const question =
+        input.mode === 'support' && input.support
+          ? `${await buildSupportContext(
+              session,
+              input.support
+            )}\n\nQuestion du support : ${input.question}`
+          : input.question;
 
       const messages: LlmChatMessage[] = [
         ...input.history.map(
@@ -140,7 +196,7 @@ export class AskAssistantService {
               ? { role: 'user', text: entry.text }
               : { role: 'assistant', text: entry.text, toolCalls: [] }
         ),
-        { role: 'user', text: input.question },
+        { role: 'user', text: question },
       ];
       const usages: TokenUsage[] = [];
       const traces: AssistantToolCallTrace[] = [];

@@ -32,11 +32,16 @@ export type Viewer = 'support-super-admin' | 'support-sans-mode';
 export type Scenario = {
   id: string;
   /** `metier` (fixtures locales), `analytique` (base de l'équipe data),
-   * `posthog`, `refus`, `esquisse`. */
+   * `posthog`, `refus`, `esquisse`, `support` (Crisp). */
   tags: string[];
   viewer?: Viewer;
   mode?: 'analyse' | 'esquisse';
   esquisse?: { sujet: string; appetit?: string };
+  /** Joué comme `/tet` dans Crisp : le visiteur est le membre de la fixture. */
+  support?: {
+    visitorMessages?: string[];
+    history?: { role: 'user' | 'assistant'; text: string }[];
+  };
   say: string;
   expect: {
     /** Chaque attente doit être satisfaite par au moins un appel. */

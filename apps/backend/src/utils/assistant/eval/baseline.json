@@ -1,9 +1,9 @@
 {
-  "promptVersion": "e09c59bd9e36",
+  "promptVersion": "b03094acfa20",
   "toolsetVersion": "00f32d6ec6b3",
   "lastEval": {
-    "date": "2026-10-29",
-    "albert": "gpt-oss-120b : 9/9",
-    "gemini": "gemini-3.5-flash : 8/9"
+    "date": "2026-10-30",
+    "albert": "gpt-oss-120b : 12/12 (dont 3 scénarios support Crisp)",
+    "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support"
   }
 }

@@ -16,6 +16,7 @@ import {
   type UserRolesAndPermissions,
 } from '@tet/domain/users';
 import { AuthRole, AuthUser } from '../models/auth.models';
+import { withSupportSuperAdminRole } from './get-user-roles-and-permissions/get-user-roles-and-permissions.adapter';
 import { GetUserRolesAndPermissionsService } from './get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { PermissionRepository } from './permission.repository';
 
@@ -348,8 +349,14 @@ export class PermissionService {
       return failure('UNAUTHORIZED');
     }
 
+    // Lecture élevée de l'assistant dans Crisp : jamais sans liste blanche.
+    const userPermissions =
+      user.supportElevation && user.jwtPayload?.permissions
+        ? withSupportSuperAdminRole(userPermissionsResult.data)
+        : userPermissionsResult.data;
+
     if (isAuditPermissionResource(resourceId)) {
-      const roleAllows = hasPermission(userPermissionsResult.data, operation, {
+      const roleAllows = hasPermission(userPermissions, operation, {
         auditId: resourceId.auditId,
       });
 
@@ -362,10 +369,7 @@ export class PermissionService {
 
       // Mode: resolve audit → collectiviteId + referentielId (payload, else DB).
       const auditContext =
-        findAuditPermissionContext(
-          userPermissionsResult.data,
-          resourceId.auditId
-        ) ??
+        findAuditPermissionContext(userPermissions, resourceId.auditId) ??
         (await this.permissionRepository.getAuditPermissionContext(
           resourceId.auditId,
           tx
@@ -379,7 +383,7 @@ export class PermissionService {
       }
 
       const modeResult = await this.checkReferentielMode(
-        userPermissionsResult.data,
+        userPermissions,
         operation,
         auditContext,
         tx
@@ -395,7 +399,7 @@ export class PermissionService {
     }
 
     if (isReferentielPermissionResource(resourceId)) {
-      const roleAllows = hasPermission(userPermissionsResult.data, operation, {
+      const roleAllows = hasPermission(userPermissions, operation, {
         collectiviteId: resourceId.collectiviteId,
       });
 
@@ -407,7 +411,7 @@ export class PermissionService {
       }
 
       const modeResult = await this.checkReferentielMode(
-        userPermissionsResult.data,
+        userPermissions,
         operation,
         resourceId,
         tx
@@ -423,11 +427,9 @@ export class PermissionService {
     }
 
     if (isCollectivitePermissionResource(resourceId)) {
-      const hasPermissionResult = hasPermission(
-        userPermissionsResult.data,
-        operation,
-        { collectiviteId: resourceId.collectiviteId }
-      );
+      const hasPermissionResult = hasPermission(userPermissions, operation, {
+        collectiviteId: resourceId.collectiviteId,
+      });
 
       if (!hasPermissionResult) {
         this.logger.warn(
@@ -443,10 +445,7 @@ export class PermissionService {
     }
 
     // ResourceType.PLATEFORME → resourceId null
-    const hasPermissionResult = hasPermission(
-      userPermissionsResult.data,
-      operation
-    );
+    const hasPermissionResult = hasPermission(userPermissions, operation);
 
     if (!hasPermissionResult) {
       this.logger.warn(
