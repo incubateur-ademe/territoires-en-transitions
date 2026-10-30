@@ -119,7 +119,7 @@ const RegionHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-40"
+      className="w-32"
       title={appLabels.instructionListeColonneRegion}
       filter={
         <RegionHeaderFilter
@@ -158,7 +158,7 @@ const StatutHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-56"
+      className="w-52"
       title={appLabels.instructionListeColonneStatut}
       sortFn={() => trierPar('statut')}
       sortDirection={sort === 'statut' ? direction : null}
@@ -183,6 +183,32 @@ const DateLancementHeader = () => {
       title={appLabels.instructionListeColonneDateLancement}
       sortFn={() => trierPar('dateLancement')}
       sortDirection={sort === 'dateLancement' ? direction : null}
+    />
+  );
+};
+
+const DateSaisineHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-32"
+      title={appLabels.instructionListeColonneDateSaisine}
+      sortFn={() => trierPar('dateSaisine')}
+      sortDirection={sort === 'dateSaisine' ? direction : null}
+    />
+  );
+};
+
+const DateAdoptionHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-36"
+      title={appLabels.instructionListeColonneDateAdoption}
+      sortFn={() => trierPar('dateAdoption')}
+      sortDirection={sort === 'dateAdoption' ? direction : null}
     />
   );
 };
@@ -277,12 +303,7 @@ const columns = [
 
   columnHelper.display({
     id: 'dateSaisine',
-    header: () => (
-      <TableHeaderCell
-        className="w-32"
-        title={appLabels.instructionListeColonneDateSaisine}
-      />
-    ),
+    header: DateSaisineHeader,
     cell: ({ row }) => (
       <TableCell>
         <DateSaisineCell dossier={row.original} />
@@ -302,12 +323,7 @@ const columns = [
 
   columnHelper.display({
     id: 'dateAdoption',
-    header: () => (
-      <TableHeaderCell
-        className="w-32"
-        title={appLabels.instructionListeColonneDateAdoption}
-      />
-    ),
+    header: DateAdoptionHeader,
     cell: ({ row }) => (
       <TableCell>
         <DateCell date={row.original.adoptedAt} />
@@ -319,7 +335,7 @@ const columns = [
     id: 'actions',
     header: () => (
       <TableHeaderCell
-        className="w-52"
+        className="w-44"
         title={appLabels.instructionListeColonneActions}
         align="right"
       />
