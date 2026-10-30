@@ -246,7 +246,7 @@ export const demarchesLabels = {
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
   demarcheAvanceSectionDocumentsDescription:
-    'Déposez les pièces usuelles du dossier (ou un PCAET global).',
+    'Déposez les pièces usuelles du dossier.',
   demarcheAvanceSectionDocumentsAvalDescription:
     'Déposez les pièces usuelles du dossier attendues après les avis.',
   demarcheAvanceSectionDiagnosticDescription: ({
