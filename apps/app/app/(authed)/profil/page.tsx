@@ -2,6 +2,8 @@
 
 import { makeRejoindreCollectiviteUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { AssistantCard } from '@/app/users/assistant/assistant.card';
+import { canUseAssistant } from '@/app/users/assistant/can-use-assistant';
 import { LinkOidcIdentityMethods } from '@/app/users/authentications/oidc/link-oidc-identity/link-oidc-identity.methods';
 import { ProfilInfo } from '@/app/users/profil/profil-info';
 import { ProfilNotifications } from '@/app/users/profil/profil-notifications';
@@ -26,6 +28,7 @@ export default function Page() {
         <ProfilInfo user={user} />
         <ProfilNotifications />
         <LinkOidcIdentityMethods />
+        {canUseAssistant(user) && <AssistantCard />}
       </div>
     </div>
   );
