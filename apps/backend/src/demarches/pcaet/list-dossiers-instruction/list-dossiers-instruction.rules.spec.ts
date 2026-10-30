@@ -234,6 +234,31 @@ describe('trierDossiers', () => {
     expect(noms(trierDossiers(lignes, 'priorite', 'asc'))).toEqual(attendu);
   });
 
+  it.each([
+    ['dateSaisine', 'dateSaisine'],
+    ['dateAdoption', 'adoptedAt'],
+  ] as const)(
+    'trie par %s, et laisse les lignes sans date en dernier dans les deux sens',
+    (sort, champ) => {
+      const lignes = [
+        ligne({ nom: 'Sans date', [champ]: null }),
+        ligne({ nom: 'Ancienne', [champ]: '2024-01-01' }),
+        ligne({ nom: 'Récente', [champ]: '2026-01-01' }),
+      ];
+
+      expect(noms(trierDossiers(lignes, sort, 'asc'))).toEqual([
+        'Ancienne',
+        'Récente',
+        'Sans date',
+      ]);
+      expect(noms(trierDossiers(lignes, sort, 'desc'))).toEqual([
+        'Récente',
+        'Ancienne',
+        'Sans date',
+      ]);
+    }
+  );
+
   it('trie par statut dans l’ordre du cycle de vie', () => {
     const lignes = [
       ligne({ nom: 'Adopté', statut: PcaetStatutInstructionEnum.ADOPTE }),
