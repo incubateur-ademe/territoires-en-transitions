@@ -40,7 +40,12 @@ export const VisitModeFrame = ({
         {appLabels.visiteEspaceDe}{' '}
         <span className="font-bold">{visit.collectiviteNom}</span>
         {visit.isReadOnly && appLabels.visiteLectureSeule}
-        {visit.notice && <> {visit.notice}</>}
+        {visit.notice && (
+          <>
+            {'. '}
+            {visit.notice}
+          </>
+        )}
       </span>
       <div className="ml-auto flex items-center gap-3">
         {visit.actions}
@@ -54,8 +59,14 @@ export const VisitModeFrame = ({
       <InvertedCorners />
     </div>
     <div className="grow flex flex-col mx-2 md:mx-4 mb-2 md:mb-4 rounded-[10px] overflow-clip bg-grey-2 shadow-md">
-      <div className="bg-white border-b border-grey-3 max-lg:hidden">{nav}</div>
-      {children}
+      {/* Hors du header, la navigation perd son `z-header` : ses menus, qui ne
+          passent pas par un portail, doivent rester au-dessus de la page, mais
+          sous la barre collée. La page est isolée pour qu'aucun de ses
+          z-index ne remonte au-dessus des deux. */}
+      <div className="relative z-10 bg-white border-b border-grey-3 max-lg:hidden">
+        {nav}
+      </div>
+      <div className="grow flex flex-col isolate">{children}</div>
     </div>
   </div>
 );
