@@ -201,7 +201,18 @@ describe('CrispService — commande tet', () => {
     expect(handleTetRequest).toHaveBeenCalledWith('website', 'session', 42);
   });
 
-  test.each(['/tet', 'tet qui ?', '🤖 Assistant TeT\n/tet', 'voir /tet x'])(
+  test('confie « /tet » seul au service', async () => {
+    const service = await buildService();
+
+    const result = await service.handleMessageReceived(
+      noteFromOperator('/tet', 7) as never
+    );
+
+    expect(result).toEqual({ type: 'tet' });
+    expect(handleTetRequest).toHaveBeenCalledWith('website', 'session', 7);
+  });
+
+  test.each(['/tetx', 'tet qui ?', '🤖 Assistant TeT\n/tet', 'voir /tet x'])(
     'ne se déclenche pas sur « %s »',
     async (content) => {
       const service = await buildService();

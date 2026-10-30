@@ -28,7 +28,9 @@ Bornes, réglables par l'environnement : `ASSISTANT_MAX_MODEL_CALLS` (8),
 Un opérateur écrit `/tet qui pilote le PCAET ?` en note privée. `apps/tools`
 (`crisp/services/crisp-tet.service.ts`) relit la note par l'API Crisp (le
 webhook n'est pas signé), poste « je cherche… », appelle `assistant.askFromCrisp`
-avec le jeton service, puis répond en note privée.
+avec le jeton service, puis répond en note privée. `/tet` seul demande un
+résumé de l'utilisateur, de sa collectivité et de ce qui pourrait expliquer sa
+demande (`DEFAULT_TET_QUESTION`).
 
 - L'assistant agit au nom de l'opérateur, retrouvé par son e-mail : son compte
   TeT doit être support. Il lit **comme en mode super admin sans l'avoir

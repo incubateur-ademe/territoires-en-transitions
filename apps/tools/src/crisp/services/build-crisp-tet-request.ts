@@ -1,7 +1,15 @@
 import { CrispSessionMessage } from '../models/get-crisp-session-messages.response';
 
-/** Note d'opérateur « /tet <question> », sur une ou plusieurs lignes. */
-const TET_COMMAND_REGEXP = /^\/tet\s([\s\S]*)$/i;
+/**
+ * Note d'opérateur « /tet <question> », sur une ou plusieurs lignes, ou
+ * « /tet » seul. Un seul `\s` avant le reste : pas de retour arrière
+ * polynomial (CodeQL).
+ */
+const TET_COMMAND_REGEXP = /^\/tet(?:\s([\s\S]*))?$/i;
+
+/** « /tet » seul : le premier réflexe du support en ouvrant une conversation. */
+export const DEFAULT_TET_QUESTION =
+  "Résume qui est cet utilisateur, sa collectivité, et ce qui pourrait expliquer sa demande d'après ses derniers messages.";
 
 /** Première ligne des notes de réponse : c'est ainsi qu'on les relit. */
 export const ASSISTANT_NOTE_PREFIX = '🤖 Assistant TeT';
@@ -35,8 +43,10 @@ const textOf = (message: CrispSessionMessage): string =>
 const isOperatorNote = (message: CrispSessionMessage): boolean =>
   message.from === 'operator' && (message.type as string) === 'note';
 
-export const parseTetCommand = (content: string): string | null =>
-  content.trim().match(TET_COMMAND_REGEXP)?.[1].trim() || null;
+export const parseTetCommand = (content: string): string | null => {
+  const match = content.trim().match(TET_COMMAND_REGEXP);
+  return match ? match[1]?.trim() || DEFAULT_TET_QUESTION : null;
+};
 
 const stripAnswerNote = (text: string): string =>
   text.slice(ASSISTANT_NOTE_PREFIX.length).split(FOOTER_SEPARATOR)[0].trim();
