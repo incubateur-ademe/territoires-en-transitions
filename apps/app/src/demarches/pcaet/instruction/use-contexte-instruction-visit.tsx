@@ -8,7 +8,10 @@ import {
 import { appLabels } from '@/app/labels/catalog';
 import type { VisitMode } from '@/app/ui/layout/visit-mode/visit-mode';
 import { useCollectiviteContext } from '@tet/api/collectivites';
-import { PcaetPerimetreSaisineEnum } from '@tet/domain/demarches';
+import {
+  PcaetPerimetreSaisineEnum,
+  peutDeposerAvisSaisine,
+} from '@tet/domain/demarches';
 import { Button } from '@tet/ui';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
@@ -80,8 +83,14 @@ export const useContexteInstructionVisit = (): VisitMode | null => {
   return {
     dataTest: 'demarches.pcaet.instruction.contexte-banniere',
     collectiviteNom: collectivite.nom ?? '',
-    // Le dossier est le seul endroit où l'agent écrit : il y rend son avis.
-    isReadOnly: !isOnDossier,
+    // Le dossier est le seul endroit où l'agent écrit, et seulement s'il est
+    // saisi pour avis : ni en élaboration, ni en périmètre limitrophe, ni pour
+    // une DDT, qui ne rend jamais d'avis.
+    isReadOnly: !(
+      isOnDossier &&
+      contexte.demandeAvisId !== null &&
+      peutDeposerAvisSaisine(contexte.instructeur.type, contexte.perimetre)
+    ),
     // Un dossier qui n'arrive que par un territoire limitrophe se lit sans se
     // conclure : le dire ici, où l'agent lit déjà chez qui il est, plutôt que
     // de le laisser déduire d'un bouton absent.
