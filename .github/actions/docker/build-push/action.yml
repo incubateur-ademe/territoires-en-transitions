@@ -39,6 +39,14 @@ inputs:
       d'environnement au build).
     required: false
     default: 'false'
+  signer-workflow:
+    description: Workflow ayant signé les images réutilisées (préciser le workflow interne pour un workflow_call)
+    default: ${{ github.workflow_ref }}
+
+outputs:
+  image:
+    description: Image reference, pinned by digest when published (local tag when push is disabled)
+    value: ${{ steps.build.outputs.image }}
 
 # Le job appelant doit avoir les permissions `id-token: write` et
 # `attestations: write` (signature de l'attestation de provenance), en plus de
@@ -68,6 +76,7 @@ runs:
         SECRETS_INPUT: ${{ inputs.secrets }}
         PUSH: ${{ inputs.push }}
         REUSE_IMAGE: ${{ inputs.reuse-image }}
+        SIGNER_WORKFLOW: ${{ inputs.signer-workflow }}
         GH_TOKEN: ${{ github.token }}
       run: |
         set -euo pipefail
@@ -84,12 +93,16 @@ runs:
         # reconstruit, ce qui réécrit le tag.
         if [ "$PUSH" = "true" ] && [ "$REUSE_IMAGE" = "true" ] \
           && docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
-          if gh attestation verify "oci://$IMAGE" \
+          digest=$(docker buildx imagetools inspect "$IMAGE" --format '{{json .Manifest}}' | jq -er '.digest')
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          immutable_image="${IMAGE%:*}@$digest"
+          if gh attestation verify "oci://$immutable_image" \
             --repo "$GITHUB_REPOSITORY" \
-            --signer-workflow "${GITHUB_WORKFLOW_REF%@*}" \
+            --signer-workflow "${SIGNER_WORKFLOW%@*}" \
             --source-digest "$GITHUB_SHA" \
             --deny-self-hosted-runners >/dev/null; then
             echo "Image $IMAGE déjà publiée et attestée pour $GITHUB_SHA, réutilisation sans build."
+            echo "image=$immutable_image" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "::warning::Image $IMAGE sans attestation valide pour $GITHUB_SHA : reconstruction."
@@ -171,8 +184,13 @@ runs:
           .
 
         if [ "$PUSH" = "true" ]; then
+          digest=$(jq -er '."containerimage.digest"' "$RUNNER_TEMP/build-metadata.json")
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
           echo "name=${IMAGE%:*}" >> "$GITHUB_OUTPUT"
-          echo "digest=$(jq -r '."containerimage.digest"' "$RUNNER_TEMP/build-metadata.json")" >> "$GITHUB_OUTPUT"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "image=${IMAGE%:*}@$digest" >> "$GITHUB_OUTPUT"
+        else
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
         fi
 
     # Prouve que l'image a été construite par ce workflow, à ce commit : c'est
