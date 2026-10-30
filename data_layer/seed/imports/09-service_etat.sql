@@ -46,24 +46,24 @@
 insert into collectivite (nom, type, region_code, siren, nic)
 select v.nom, v.type, v.region_code, v.siren, v.nic
 from (values
-        ('Direction de l''Environnement, de l''Aménagement et du Logement Guadeloupe (DEAL)', 'dreal', '01', '130013915', '00017'),
-        ('Direction de l''Environnement, de l''Aménagement et du Logement Martinique (DEAL)', 'dreal', '02', '130014236', '00017'),
-        ('Direction Générale des Territoires et de la Mer (DGTM)', 'dreal', '03', '130026586', '00011'),
-        ('Direction de l''Environnement, de l''Aménagement et du Logement La Réunion (DEAL)', 'dreal', '04', '130014368', '00018'),
-        ('Direction de l''Environnement, de l''Aménagement, du Logement et de la Mer de Mayotte (DEALM)', 'dreal', '06', '130017395', '00018'),
-        ('Direction Régionale et interdépartementale de l''environnement, de l''aménagement et des transports (DRIEAT) - Île-de-France', 'dreal', '11', '130029325', '00011'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Centre-Val de Loire (DREAL)', 'dreal', '24', '130009301', '00016'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Bourgogne-Franche-Comté (DREAL)', 'dreal', '27', '130009012', '00167'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Normandie (DREAL)', 'dreal', '28', '130006265', '00016'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Hauts-de-France (DREAL)', 'dreal', '32', '130006570', '00019'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Grand Est (DREAL)', 'dreal', '44', '130010259', '00252'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Pays de la Loire (DREAL)', 'dreal', '52', '130006109', '00057'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Bretagne (DREAL)', 'dreal', '53', '130010002', '00017'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Nouvelle-Aquitaine (DREAL)', 'dreal', '75', '130010457', '00013'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Occitanie (DREAL)', 'dreal', '76', '130006091', '00313'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Auvergne-Rhône-Alpes (DREAL)', 'dreal', '84', '130006729', '00029'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Provence-Alpes-Côte d''Azur (DREAL)', 'dreal', '93', '130006380', '00013'),
-        ('Direction Régionale de l''Environnement, de l''Aménagement et du Logement Corse (DREAL)', 'dreal', '94', '130006596', '00030')
+        ('DEAL Guadeloupe (Direction de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '01', '130013915', '00017'),
+        ('DEAL Martinique (Direction de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '02', '130014236', '00017'),
+        ('DGTM Guyane (Direction Générale des Territoires et de la Mer)', 'dreal', '03', '130026586', '00011'),
+        ('DEAL La Réunion (Direction de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '04', '130014368', '00018'),
+        ('DEALM Mayotte (Direction de l''Environnement, de l''Aménagement, du Logement et de la Mer)', 'dreal', '06', '130017395', '00018'),
+        ('DRIEAT Île-de-France (Direction Régionale et Interdépartementale de l''Environnement, de l''Aménagement et des Transports)', 'dreal', '11', '130029325', '00011'),
+        ('DREAL Centre-Val de Loire (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '24', '130009301', '00016'),
+        ('DREAL Bourgogne-Franche-Comté (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '27', '130009012', '00167'),
+        ('DREAL Normandie (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '28', '130006265', '00016'),
+        ('DREAL Hauts-de-France (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '32', '130006570', '00019'),
+        ('DREAL Grand Est (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '44', '130010259', '00252'),
+        ('DREAL Pays de la Loire (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '52', '130006109', '00057'),
+        ('DREAL Bretagne (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '53', '130010002', '00017'),
+        ('DREAL Nouvelle-Aquitaine (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '75', '130010457', '00013'),
+        ('DREAL Occitanie (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '76', '130006091', '00313'),
+        ('DREAL Auvergne-Rhône-Alpes (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '84', '130006729', '00029'),
+        ('DREAL Provence-Alpes-Côte d''Azur (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '93', '130006380', '00013'),
+        ('DREAL Corse (Direction Régionale de l''Environnement, de l''Aménagement et du Logement)', 'dreal', '94', '130006596', '00030')
 ) as v (nom, type, region_code, siren, nic)
 where exists (select 1 from collectivite)
 on conflict (type, region_code) where type = 'dreal'

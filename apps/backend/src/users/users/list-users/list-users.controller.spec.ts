@@ -200,7 +200,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           // séquence, il n'est pas comparable d'une base à l'autre.
           collectiviteId: expect.any(Number),
           collectiviteNom:
-            "Direction Régionale de l'Environnement, de l'Aménagement et du Logement Auvergne-Rhône-Alpes (DREAL)",
+            "DREAL Auvergne-Rhône-Alpes (Direction Régionale de l'Environnement, de l'Aménagement et du Logement)",
           collectiviteType: collectiviteTypeEnum.DREAL,
           // Un service déconcentré est toujours en accès restreint : la base le
           // force (collectivite/service_etat_acces_restreint).
