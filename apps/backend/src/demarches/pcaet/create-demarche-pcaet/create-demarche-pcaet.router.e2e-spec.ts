@@ -13,6 +13,8 @@ import { Collectivite } from '@tet/domain/collectivites';
 import {
   DEMARCHE_PCAET_DEFAULT_TITRE,
   DEMARCHE_PCAET_INITIAL_STATUS,
+  DemarchePcaetObligationEnum,
+  SEUIL_POPULATION_PCAET,
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
@@ -83,6 +85,57 @@ describe('Créer une démarche PCAET', () => {
     expect(demarche.planActionIds).toEqual([]);
     expect(demarche.transmittedOffPlatform).toBe(false);
     expect(demarche.isScotAec).toBe(false);
+  });
+
+  describe('obligation initiale', () => {
+    const editorOf = async (population: number) => {
+      const fixture = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.EDITION },
+        collectivite: { natureInsee: 'CC', population },
+      });
+      const user = getAuthUserFromUserCredentials(fixture.user);
+      return {
+        collectivite: fixture.collectivite,
+        caller: router.createCaller({ user }),
+      };
+    };
+
+    test('un EPCI non obligé qui commence un dépôt devient volontaire', async () => {
+      const { caller, collectivite } = await editorOf(
+        SEUIL_POPULATION_PCAET - 5_000
+      );
+
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+
+      expect(demarche.obligation).toBe(DemarchePcaetObligationEnum.VOLONTAIRE);
+    });
+
+    test('un EPCI au-dessus du seuil part obligatoire', async () => {
+      const { caller, collectivite } = await editorOf(
+        SEUIL_POPULATION_PCAET + 5_000
+      );
+
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+
+      expect(demarche.obligation).toBe(DemarchePcaetObligationEnum.OBLIGATOIRE);
+    });
+
+    test('la déclaration de la collectivité prime', async () => {
+      const { caller, collectivite } = await editorOf(
+        SEUIL_POPULATION_PCAET - 5_000
+      );
+
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+        obligation: DemarchePcaetObligationEnum.OBLIGATOIRE,
+      });
+
+      expect(demarche.obligation).toBe(DemarchePcaetObligationEnum.OBLIGATOIRE);
+    });
   });
 
   describe('SCoT-AEC', () => {

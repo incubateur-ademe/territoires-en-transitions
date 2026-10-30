@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
+  type AssujettissementEntree,
   type DemarchePcaetObligation,
   type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
@@ -43,6 +45,24 @@ export class CreateDemarchePcaetRepository {
       )
       .limit(1);
     return rows.length > 0;
+  }
+
+  async getAssujettissement(
+    collectiviteId: number,
+    tx: Transaction
+  ): Promise<AssujettissementEntree> {
+    const [row] = await tx
+      .select({
+        natureInsee: collectiviteTable.natureInsee,
+        population: collectiviteTable.population,
+      })
+      .from(collectiviteTable)
+      .where(eq(collectiviteTable.id, collectiviteId))
+      .limit(1);
+    return {
+      natureInsee: row?.natureInsee ?? null,
+      population: row?.population ?? null,
+    };
   }
 
   async insertDemarche(
