@@ -59,6 +59,7 @@ export const MCP_DOCS: readonly McpDoc[] = [
 
 export const MCP_ANALYSE_STATS_PROMPT_NAME = 'analyse-stats';
 export const MCP_ESQUISSE_PROMPT_NAME = 'esquisse-shape-up';
+export const MCP_SUPPORT_PROMPT_NAME = 'support-conversation';
 
 const ANALYSE_STATS_INSTRUCTIONS = `Tu assistes l'équipe de Territoires en Transitions pour répondre à des questions chiffrées sur l'usage de la plateforme, les collectivités, les plans d'action, les indicateurs et les référentiels.
 
@@ -70,6 +71,14 @@ Méthode :
 5. N'annonce aucun chiffre qui ne vient pas d'un résultat d'outil ; si tu ne sais pas, dis-le.
 6. Cite la requête ou l'outil qui a produit chaque chiffre, pour qu'un lecteur puisse le retrouver.
 7. Réponds en français, de façon factuelle et concise.`;
+
+const SUPPORT_INSTRUCTIONS = `${ANALYSE_STATS_INSTRUCTIONS}
+
+Tu réponds ici à un membre du support, dans une note privée de sa conversation avec un utilisateur de la plateforme. Le message peut commencer par le contexte de la conversation : le profil de l'utilisateur (sa ou ses collectivités, ses rôles) et ses derniers messages.
+- « il », « elle », « l'utilisateur », « sa collectivité » désignent cet utilisateur et sa collectivité : sers-toi de leurs identifiants sans les redemander.
+- Pour comprendre un blocage, croise ce qu'il écrit avec l'état réel (démarche, pièces, conditions qui bloquent, événements récents) et propose une piste concrète au support.
+- Réponds en quelques lignes, en texte simple avec des puces, sans tableau ni titre.
+- Ne recopie jamais d'adresse e-mail ni de numéro de téléphone.`;
 
 const esquisseArgsSchema = {
   sujet: z
@@ -160,6 +169,24 @@ export class McpDocsService {
           ...[REGLES_METIER, BASE_ANALYTIQUE, POSTHOG_HOGQL].map(
             toResourceMessage
           ),
+        ],
+      })
+    );
+
+    server.registerPrompt(
+      MCP_SUPPORT_PROMPT_NAME,
+      {
+        title: 'Répondre au support sur une conversation',
+        description:
+          "Aide un membre du support à comprendre la situation d'un utilisateur : profil, collectivité, démarche, blocages, avec les outils de ce serveur.",
+      },
+      async () => ({
+        messages: [
+          {
+            role: 'user',
+            content: { type: 'text', text: SUPPORT_INSTRUCTIONS },
+          },
+          ...[REGLES_METIER, POSTHOG_HOGQL].map(toResourceMessage),
         ],
       })
     );

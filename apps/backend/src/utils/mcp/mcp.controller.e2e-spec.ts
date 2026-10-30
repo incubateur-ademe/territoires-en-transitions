@@ -212,7 +212,11 @@ describe('MCP controller', () => {
 
       const { prompts } = await client.listPrompts();
       expect(prompts.map((prompt) => prompt.name)).toEqual(
-        expect.arrayContaining(['analyse-stats', 'esquisse-shape-up'])
+        expect.arrayContaining([
+          'analyse-stats',
+          'esquisse-shape-up',
+          'support-conversation',
+        ])
       );
     });
 

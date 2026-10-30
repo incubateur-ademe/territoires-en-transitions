@@ -14,13 +14,20 @@ export const askAssistantInputSchema = z.object({
     )
     .max(20)
     .default([]),
-  mode: z.enum(['analyse', 'esquisse']).default('analyse'),
+  mode: z.enum(['analyse', 'esquisse', 'support']).default('analyse'),
   /** Arguments du prompt d'esquisse, en mode `esquisse`. */
   esquisse: z
     .object({
       sujet: z.string().min(1),
       appetit: z.string().optional(),
       contexte: z.string().optional(),
+    })
+    .optional(),
+  /** Conversation de support, en mode `support` : l'utilisateur concerné. */
+  support: z
+    .object({
+      visitorEmail: z.string().trim().email().optional(),
+      visitorMessages: z.array(z.string().max(2_000)).max(10).default([]),
     })
     .optional(),
 });

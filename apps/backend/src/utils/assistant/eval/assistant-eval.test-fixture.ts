@@ -15,6 +15,7 @@ import {
 } from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteRole } from '@tet/domain/users';
 import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
+import { AskAssistantFromCrispService } from '../ask-assistant-from-crisp.service';
 import { AskAssistantService } from '../ask-assistant.service';
 import { checkExpectations, EvalFixture, resolveText } from './expectations';
 import { RunOutcome } from './report';
@@ -22,7 +23,7 @@ import { Scenario, Viewer } from './scenario';
 
 export type EvalContext = {
   fixture: EvalFixture;
-  viewers: Record<Viewer, AuthenticatedUser>;
+  viewers: Record<Viewer, AuthenticatedUser & { email: string }>;
 };
 
 const PLAN_NOM = 'Plan climat de la vallée';
@@ -51,7 +52,7 @@ export const createEvalContext = async (
       isSupport: true,
       isSuperAdminRoleEnabled,
     });
-    return getAuthUserFromUserCredentials(user);
+    return { ...getAuthUserFromUserCredentials(user), email: user.email ?? '' };
   };
 
   const { user: membre } = await addTestUser(db, {
@@ -91,15 +92,30 @@ export const runScenario = async (
     totalTokens: 0,
   };
   try {
+    const question = resolveText(scenario.say, context.fixture);
+    const viewer = context.viewers[scenario.viewer ?? 'support-super-admin'];
+    // Les scénarios support passent par le chemin de Crisp : opérateur
+    // retrouvé par e-mail, lecture élevée, contexte de la conversation.
     const { result, calls } = await recordLlmCalls(() =>
-      app.get(AskAssistantService).ask(
-        {
-          question: resolveText(scenario.say, context.fixture),
-          mode: scenario.mode ?? 'analyse',
-          ...(scenario.esquisse ? { esquisse: scenario.esquisse } : {}),
-        },
-        { user: context.viewers[scenario.viewer ?? 'support-super-admin'] }
-      )
+      scenario.support
+        ? app.get(AskAssistantFromCrispService).askFromCrisp({
+            operatorEmail: viewer.email,
+            question,
+            visitorEmail: String(context.fixture['membre.email']),
+            visitorMessages: scenario.support.visitorMessages ?? [],
+            history: (scenario.support.history ?? []).map((entry) => ({
+              ...entry,
+              text: resolveText(entry.text, context.fixture),
+            })),
+          })
+        : app.get(AskAssistantService).ask(
+            {
+              question,
+              mode: scenario.mode ?? 'analyse',
+              ...(scenario.esquisse ? { esquisse: scenario.esquisse } : {}),
+            },
+            { user: viewer }
+          )
     );
     const totalTokens = calls.reduce(
       (total, call) => total + (call.usage?.totalTokens ?? 0),

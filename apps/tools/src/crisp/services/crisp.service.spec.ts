@@ -5,6 +5,7 @@ import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
 import { BuildCrispCrmNoteService } from './build-crisp-crm-note.service';
 import { BuildCrispUserDataService } from './build-crisp-user-data.service';
+import { CrispTetService } from './crisp-tet.service';
 import { CrispService } from './crisp.service';
 
 const getConversation = vi.fn();
@@ -24,6 +25,7 @@ vi.mock('crisp-api', () => ({
 
 const buildUserData = vi.fn();
 const buildCrmNote = vi.fn();
+const handleTetRequest = vi.fn();
 
 const buildService = async () => {
   const module = await Test.createTestingModule({
@@ -34,6 +36,7 @@ const buildService = async () => {
       { provide: ConfigurationService, useValue: { get: vi.fn() } },
       { provide: BuildCrispUserDataService, useValue: { buildUserData } },
       { provide: BuildCrispCrmNoteService, useValue: { buildCrmNote } },
+      { provide: CrispTetService, useValue: { handleTetRequest } },
     ],
   }).compile();
   return module.get(CrispService);
@@ -164,6 +167,50 @@ describe('CrispService — commande crm', () => {
       })
     );
   });
+});
+
+describe('CrispService — commande tet', () => {
+  const noteFromOperator = (content: string, fingerprint = Math.random()) => ({
+    website_id: 'website',
+    event: 'message:received',
+    timestamp: 0,
+    data: {
+      website_id: 'website',
+      session_id: 'session',
+      fingerprint,
+      from: 'operator',
+      type: 'note',
+      content,
+    },
+  });
+
+  beforeEach(() => {
+    getConversation.mockReset().mockResolvedValue({ meta: {} });
+    handleTetRequest.mockReset().mockResolvedValue(undefined);
+  });
+
+  test('confie « /tet <question> » au service, sans attendre sa réponse', async () => {
+    handleTetRequest.mockReturnValue(new Promise(() => undefined));
+    const service = await buildService();
+
+    const result = await service.handleMessageReceived(
+      noteFromOperator('/tet qui pilote le PCAET ?', 42) as never
+    );
+
+    expect(result).toEqual({ type: 'tet' });
+    expect(handleTetRequest).toHaveBeenCalledWith('website', 'session', 42);
+  });
+
+  test.each(['/tet', 'tet qui ?', '🤖 Assistant TeT\n/tet', 'voir /tet x'])(
+    'ne se déclenche pas sur « %s »',
+    async (content) => {
+      const service = await buildService();
+
+      await service.handleMessageReceived(noteFromOperator(content) as never);
+
+      expect(handleTetRequest).not.toHaveBeenCalled();
+    }
+  );
 });
 
 describe('CrispService — déclenchement de l’enrichissement', () => {

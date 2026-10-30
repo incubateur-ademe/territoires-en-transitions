@@ -4,6 +4,7 @@ import { BuildMcpServerService } from '@tet/backend/utils/mcp/build-mcp-server.s
 import {
   MCP_ANALYSE_STATS_PROMPT_NAME,
   MCP_ESQUISSE_PROMPT_NAME,
+  MCP_SUPPORT_PROMPT_NAME,
 } from '@tet/backend/utils/mcp/mcp-docs.service';
 import { createHash } from 'node:crypto';
 import { McpSession } from '../mcp-session';
@@ -35,6 +36,7 @@ export const computeAssistantVersions = async (
       await session.getPromptText(MCP_ESQUISSE_PROMPT_NAME, {
         sujet: '{sujet}',
       }),
+      await session.getPromptText(MCP_SUPPORT_PROMPT_NAME),
     ];
     const tools = (await session.listTools()).sort((a, b) =>
       a.name.localeCompare(b.name)

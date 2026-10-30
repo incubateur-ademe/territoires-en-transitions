@@ -26,6 +26,28 @@ function buildUniquePermissionsSet(
   ];
 }
 
+/**
+ * Rôles d'un compte support lu comme s'il avait activé le mode super admin.
+ * Sans effet si le compte n'est pas support.
+ */
+export function withSupportSuperAdminRole(
+  userPermissions: UserRolesAndPermissions
+): UserRolesAndPermissions {
+  const { roles } = userPermissions;
+  if (
+    !roles.includes(PlatformRole.SUPPORT) ||
+    roles.includes(PlatformRole.SUPER_ADMIN)
+  ) {
+    return userPermissions;
+  }
+  const elevatedRoles = [...roles, PlatformRole.SUPER_ADMIN];
+  return {
+    ...userPermissions,
+    roles: elevatedRoles,
+    permissions: buildUniquePermissionsSet(elevatedRoles),
+  };
+}
+
 function toAuditRolesAndPermissions(
   audit: AuditRolesRow
 ): AuditRolesAndPermissions {

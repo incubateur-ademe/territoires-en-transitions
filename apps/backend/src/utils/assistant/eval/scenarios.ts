@@ -177,6 +177,69 @@ export const SCENARIOS: readonly Scenario[] = [
     maxModelCalls: 5,
   }),
   defineScenario({
+    id: 'support-plans',
+    tags: ['support'],
+    viewer: 'support-sans-mode',
+    support: {},
+    say: 'Combien de plans a sa collectivité ?',
+    expect: {
+      tools: [
+        {
+          name: 'list_plans',
+          args: { collectiviteId: { ref: 'collectivite.id' } },
+        },
+      ],
+      answer: { contains: [{ ref: 'plan.nom' }] },
+    },
+    maxModelCalls: 3,
+  }),
+  defineScenario({
+    id: 'support-blocage',
+    tags: ['support'],
+    viewer: 'support-sans-mode',
+    support: {
+      visitorMessages: [
+        "Bonjour, je n'arrive pas à transmettre notre PCAET pour avis, le bouton reste grisé.",
+      ],
+    },
+    say: 'Pourquoi est-il bloqué ?',
+    expect: {
+      tools: [
+        {
+          name: 'get_demarche_pcaet',
+          args: { collectiviteId: { ref: 'collectivite.id' } },
+        },
+      ],
+      answer: { contains: [['pièce', 'document', 'dossier', 'diagnostic']] },
+    },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
+    id: 'support-suite',
+    tags: ['support'],
+    viewer: 'support-sans-mode',
+    support: {
+      history: [
+        { role: 'user', text: 'Pour quelle collectivité travaille-t-il ?' },
+        {
+          role: 'assistant',
+          text: 'Il est administrateur de {collectivite.nom} (n°{collectivite.id}).',
+        },
+      ],
+    },
+    say: 'Et où en est sa démarche PCAET ?',
+    expect: {
+      tools: [
+        {
+          name: 'get_demarche_pcaet',
+          args: { collectiviteId: { ref: 'collectivite.id' } },
+        },
+      ],
+      answer: { contains: [['élaboration', 'elaboration']] },
+    },
+    maxModelCalls: 3,
+  }),
+  defineScenario({
     id: 'esquisse-activation',
     tags: ['esquisse'],
     mode: 'esquisse',
