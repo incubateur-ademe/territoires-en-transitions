@@ -20,12 +20,10 @@ import { join } from 'node:path';
 import request from 'supertest';
 import TestAgent from 'supertest/lib/agent';
 import { onTestFinished } from 'vitest';
-import {
-  addTestBibliothequeFichier,
-  PCAET_DOCUMENT_GLOBAL_ID,
-} from '../demarches-pcaet.test-fixture';
+import { addTestBibliothequeFichier } from '../demarches-pcaet.test-fixture';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
+const DIAGNOSTIC_ID = 'pcaet_diagnostic';
 describe('DownloadDossierDocumentsController', () => {
   let app: INestApplication;
   let db: DatabaseService;
@@ -81,14 +79,14 @@ describe('DownloadDossierDocumentsController', () => {
 
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: deposante.collectivite.id,
-      filename: 'dossier-complet.pdf',
+      filename: 'diagnostic.pdf',
     });
     const depose = await router
       .createCaller({ user: getAuthUserFromUserCredentials(deposante.user) })
       .demarches.pcaet.documents.add({
         collectiviteId: deposante.collectivite.id,
         demarcheId: demarche.id,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        documentId: DIAGNOSTIC_ID,
         fichierId: fichier.id,
       });
     const storeResult = await app.get(DocumentStorageService).storeDocument({
@@ -161,7 +159,7 @@ describe('DownloadDossierDocumentsController', () => {
     expect(filename).toBe(`Dossier PCAET - ${COLLECTIVITE_NOM}.zip`);
 
     expect(await listArchiveEntries(response.body)).toEqual([
-      'PCAET global - dossier-complet.pdf',
+      'Diagnostic - diagnostic.pdf',
     ]);
   });
 

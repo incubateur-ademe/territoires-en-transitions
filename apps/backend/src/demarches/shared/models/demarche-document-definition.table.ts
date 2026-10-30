@@ -1,10 +1,21 @@
-import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
+import {
+  createdAt,
+  modifiedAt,
+  TIMESTAMP_OPTIONS,
+} from '@tet/backend/utils/column.utils';
 import type {
   DemarcheDocumentEtape,
   DemarcheType,
 } from '@tet/domain/demarches';
 import { InferSelectModel } from 'drizzle-orm';
-import { boolean, index, integer, pgTable, text } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 
 /**
  * Catalogue des pièces attendues au dépôt, par type de démarche (même héritage
@@ -29,6 +40,8 @@ export const demarcheDocumentDefinitionTable = pgTable(
     /** Restriction de formats propre à la pièce ; nulle = celle du type de démarche. */
     formatsAutorises: text('formats_autorises').array(),
     mimeTypesAutorises: text('mime_types_autorises').array(),
+    /** Retirée du catalogue : proposée aux seules démarches qui l'ont déposée. */
+    retiredAt: timestamp('retired_at', TIMESTAMP_OPTIONS),
     createdAt,
     modifiedAt,
   },
