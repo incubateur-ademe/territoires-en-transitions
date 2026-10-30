@@ -45,6 +45,7 @@ export const toDossierInstructionLigne = (
       ? row.dateSaisineHorsPlateforme
       : row.transmittedAt,
     peutModifierDateSaisine: deposeAvis && row.transmittedOffPlatform === true,
+    adoptedAt: row.adoptedAt,
     collectivite: {
       id: row.collectiviteId,
       nom: row.collectiviteNom,

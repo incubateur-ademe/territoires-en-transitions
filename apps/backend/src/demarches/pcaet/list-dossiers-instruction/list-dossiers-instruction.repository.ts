@@ -74,6 +74,7 @@ export type DossierInstructionRow = {
   /** `null` quand la collectivité n'a rien déposé. */
   isScotAec: boolean | null;
   publishedAt: string | null;
+  adoptedAt: string | null;
   collectiviteId: number;
   collectiviteNom: string;
   collectiviteDepartementCode: string | null;
@@ -254,6 +255,7 @@ export class ListDossiersInstructionRepository {
           dateSaisineHorsPlateforme: derniereDateSaisine.dateSaisine,
           isScotAec: demarcheTable.isScotAec,
           publishedAt: demarcheTable.publishedAt,
+          adoptedAt: demarcheTable.adoptedAt,
           collectiviteId: collectiviteTable.id,
           collectiviteNom: collectiviteTable.nom,
           collectiviteDepartementCode: collectiviteTable.departementCode,
