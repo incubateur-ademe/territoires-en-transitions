@@ -215,6 +215,33 @@ export const SCENARIOS: readonly Scenario[] = [
     maxModelCalls: 4,
   }),
   defineScenario({
+    // « /tet » seul : question par défaut de apps/tools (DEFAULT_TET_QUESTION).
+    id: 'support-resume',
+    tags: ['support'],
+    viewer: 'support-sans-mode',
+    support: {
+      visitorMessages: [
+        "Bonjour, je n'arrive pas à transmettre notre PCAET pour avis, le bouton reste grisé.",
+      ],
+    },
+    say: "Résume qui est cet utilisateur, sa collectivité, et ce qui pourrait expliquer sa demande d'après ses derniers messages.",
+    expect: {
+      tools: [
+        {
+          name: 'get_demarche_pcaet',
+          args: { collectiviteId: { ref: 'collectivite.id' } },
+        },
+      ],
+      answer: {
+        contains: [
+          { ref: 'collectivite.nom' },
+          ['pièce', 'document', 'dossier', 'diagnostic'],
+        ],
+      },
+    },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
     id: 'support-suite',
     tags: ['support'],
     viewer: 'support-sans-mode',

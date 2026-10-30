@@ -3,6 +3,7 @@ import { CrispSessionMessage } from '../models/get-crisp-session-messages.respon
 import {
   ASSISTANT_NOTE_PREFIX,
   buildTetConversation,
+  DEFAULT_TET_QUESTION,
   formatTetAnswer,
   parseTetCommand,
 } from './build-crisp-tet-request';
@@ -25,7 +26,8 @@ describe('parseTetCommand', () => {
   test.each([
     ['/tet qui pilote ?', 'qui pilote ?'],
     ['  /TET   plusieurs\nlignes ', 'plusieurs\nlignes'],
-    ['/tet', null],
+    ['/tet', DEFAULT_TET_QUESTION],
+    ['  /TET  ', DEFAULT_TET_QUESTION],
     ['/tetx question', null],
     ['voir /tet question', null],
   ])('« %s » → %s', (content, expected) => {
