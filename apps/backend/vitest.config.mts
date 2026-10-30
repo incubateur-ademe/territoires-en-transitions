@@ -69,9 +69,9 @@ export default defineConfig(({ mode }) => ({
       // Les specs qui veulent le contournement le simulent elles-mêmes.
       DEMARCHE_PCAET_BYPASS_DIAGNOSTIC: 'false',
       // Les e2e du serveur MCP interrogent la base de test en guise de base
-      // analytique ; une vraie URL posée dans l'env de la machine prime.
+      // analytique, même si dotenvx a déchiffré la vraie URL : seule l'éval
+      // (vitest.config.live.mts) vise la vraie base.
       ANALYTICS_DATABASE_URL:
-        process.env.ANALYTICS_DATABASE_URL ??
         loadEnv(mode, __dirname, '').SUPABASE_DATABASE_URL ??
         process.env.SUPABASE_DATABASE_URL ??
         '',

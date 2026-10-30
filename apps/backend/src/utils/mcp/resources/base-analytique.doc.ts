@@ -526,6 +526,6 @@ and statut = 'actif'
 
 ## ⚠️ Notes Importantes
 
-1. **Filtrage systématique** : Toutes les stats excluent par défaut les utilisateurs internes et collectivités tests
+1. **Filtrage systématique** : Toutes les stats doivent exclure par défaut les utilisateurs internes et collectivités tests
 2. **Casse importante** : \`Score_mesures\` (avec S majuscule)
 `;

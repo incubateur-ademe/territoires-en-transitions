@@ -1,9 +1,9 @@
 {
-  "promptVersion": "b03094acfa20",
+  "promptVersion": "4f10016c05ec",
   "toolsetVersion": "00f32d6ec6b3",
   "lastEval": {
     "date": "2026-10-30",
-    "albert": "gpt-oss-120b : 12/12 (dont 3 scénarios support Crisp)",
-    "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support"
+    "albert": "gpt-oss-120b : 15/18, première éval sur la vraie base analytique (rôle mcp_readonly) ; métier et support 11/11, échecs variables sur plans-actifs-52-semaines (SQL écrit au lieu de la requête nommée, chiffre juste), fiches-par-statut et catalogue-requetes",
+    "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support et sans base analytique"
   }
 }

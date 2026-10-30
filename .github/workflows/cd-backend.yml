@@ -144,6 +144,7 @@ jobs:
           --env OTEL_SERVICE_NAME=backend
           --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
           --env POSTHOG_PERSONAL_API_KEY=@POSTHOG_PERSONAL_API_KEY
+          --env ANALYTICS_DATABASE_URL=@ANALYTICS_DATABASE_URL
 
       - id: deployment-url
         uses: ./.github/actions/get-koyeb-app-url

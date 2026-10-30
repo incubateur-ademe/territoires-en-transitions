@@ -446,6 +446,15 @@ describe('MCP controller', () => {
         arguments: { schema: 'public', table: 'table_qui_n_existe_pas' },
       });
       expect(missing.isError).toBe(true);
+
+      const wrongSchema = await client.callTool({
+        name: 'describe_table',
+        arguments: { schema: 'prod', table: 'collectivite' },
+      });
+      expect(wrongSchema.isError).toBe(true);
+      expect(JSON.stringify(wrongSchema.content)).toContain(
+        'tables existantes du même nom : public.collectivite'
+      );
     });
   });
 

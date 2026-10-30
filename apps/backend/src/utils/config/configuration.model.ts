@@ -238,19 +238,13 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé TeT de l'API Communs (Authorization: Bearer), pour les secteurs réglementaires des fiches"
       ),
-    // Serveur MCP (utils/mcp) : optionnelles, le backend démarre sans elles ;
+    // Serveur MCP (utils/mcp) : optionnelle, le backend démarre sans elle ;
     // les outils analytiques répondent alors ANALYTICS_DATABASE_NOT_CONFIGURED.
     ANALYTICS_DATABASE_URL: z
       .string()
       .optional()
       .describe(
         'URL Postgres de la base analytique (rôle en lecture seule) interrogée par le serveur MCP'
-      ),
-    ANALYTICS_DATABASE_SSL_ROOT_CERT: z
-      .string()
-      .optional()
-      .describe(
-        'CA (PEM) du serveur Postgres analytique, même usage que SUPABASE_DATABASE_SSL_ROOT_CERT'
       ),
     // Agent du backend (utils/assistant) : boucle d'appels d'outils MCP.
     ASSISTANT_MAX_MODEL_CALLS: z.coerce
