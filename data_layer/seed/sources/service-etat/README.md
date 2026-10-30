@@ -152,6 +152,11 @@ substitution.
 Les libellés sont sinon **repris bruts**, sans forme courte dérivée : c'est la
 dénomination officielle du service qui fait foi.
 
+Exception : `dreal.csv` met l'acronyme et le territoire d'abord, le développé entre
+parenthèses à la fin (`DEAL Martinique (Direction de l'Environnement…)`). Le change
+`collectivite/service_etat_noms_acronyme` porte ce renommage sur les bases déjà
+peuplées.
+
 ## Codes région
 
 Le classeur stocke les codes de région d'outre-mer en numérique (`1`, `2`, `3`, `4`,
