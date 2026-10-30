@@ -396,7 +396,7 @@ const SEQUESTRATION_CARBONE = {
     {
       label: 'Autres sols',
       indicateurDefinitionId: 'cae_63.d',
-      optionalYears: [2050],
+      optionalYears: 'all',
     },
   ],
 } as const satisfies PcaetDiagnosticIndicateurParentConfig;
