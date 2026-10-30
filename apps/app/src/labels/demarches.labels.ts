@@ -692,6 +692,7 @@ export const demarchesLabels = {
   instructionListeColonnePilotes: 'Pilotes',
   instructionListeColonneStatut: 'Statut',
   instructionListeColonneDateSaisine: 'Date de saisine',
+  instructionListeColonneDateAdoption: "Date d'adoption",
   instructionListeColonneEcheance: 'Échéance avis',
   instructionDateSaisineRenseignerAria: 'Renseigner la date de saisine',
   instructionDateSaisineVide: 'jj/mm/aaaa',

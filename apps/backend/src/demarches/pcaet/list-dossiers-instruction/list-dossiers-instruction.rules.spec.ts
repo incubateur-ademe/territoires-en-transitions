@@ -21,6 +21,7 @@ const ligne = (
     transmittedAt: null,
     dateSaisine: null,
     peutModifierDateSaisine: false,
+    adoptedAt: null,
     collectivite: {
       id: 1,
       nom,

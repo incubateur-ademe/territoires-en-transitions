@@ -179,7 +179,7 @@ const DateLancementHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-36"
+      className="w-32"
       title={appLabels.instructionListeColonneDateLancement}
       sortFn={() => trierPar('dateLancement')}
       sortDirection={sort === 'dateLancement' ? direction : null}
@@ -192,7 +192,7 @@ const EcheanceHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-40"
+      className="w-36"
       title={appLabels.instructionListeColonneEcheance}
       sortFn={() => trierPar('echeance')}
       sortDirection={sort === 'echeance' ? direction : null}
@@ -279,7 +279,7 @@ const columns = [
     id: 'dateSaisine',
     header: () => (
       <TableHeaderCell
-        className="w-36"
+        className="w-32"
         title={appLabels.instructionListeColonneDateSaisine}
       />
     ),
@@ -296,6 +296,21 @@ const columns = [
     cell: ({ row }) => (
       <TableCell>
         <EcheanceCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'dateAdoption',
+    header: () => (
+      <TableHeaderCell
+        className="w-32"
+        title={appLabels.instructionListeColonneDateAdoption}
+      />
+    ),
+    cell: ({ row }) => (
+      <TableCell>
+        <DateCell date={row.original.adoptedAt} />
       </TableCell>
     ),
   }),
@@ -416,7 +431,7 @@ export const DossiersInstructionTable = ({
         <ReactTable
           table={table}
           ariaLabel={appLabels.instructionListeTitre}
-          className={afficherRegion ? 'min-w-[81rem]' : 'min-w-[73rem]'}
+          className={afficherRegion ? 'min-w-[83rem]' : 'min-w-[77rem]'}
           isEmpty={dossiers.length === 0}
           emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
           getRowProps={(row) => ({
