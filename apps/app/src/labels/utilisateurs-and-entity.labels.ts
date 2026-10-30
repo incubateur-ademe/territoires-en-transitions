@@ -103,4 +103,16 @@ export const utilisateursAndEntityLabels = {
   associerCompteTagDescription:
     'Associer cette personne à un ou plusieurs tags afin de lui associer des actions, des indicateurs et des mesures.',
   associerCompteTagChamp: 'Associer cette personne à un ou plusieurs tags',
+
+  /** Administration */
+  administration: 'Administration',
+  administrationSousTitre: 'Outils internes réservés aux super admins',
+  administrationAffichageOutils: 'Affichage des outils',
+  administrationOuvrirOutil: "Ouvrir l'outil",
+  administrationImporterPlanDescription:
+    "Importer le plan d'action d'une collectivité depuis un fichier Excel",
+  administrationAjouterCollectiviteDescription:
+    'Créer une collectivité absente de TeT',
+  administrationBanniereDescription:
+    'Afficher un message à tous les utilisateurs de TeT',
 };

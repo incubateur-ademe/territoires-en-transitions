@@ -1,4 +1,5 @@
 import {
+  adminPath,
   collectiviteBasePath,
   finaliserMonInscriptionUrl,
   invitationPath,
@@ -28,6 +29,8 @@ export function isAllowedWithoutCollectivite(pathname: string): boolean {
     path.startsWith(invitationPath) ||
     path.startsWith(recherchesPath) ||
     path.startsWith(profilPath) ||
-    path.startsWith(collectiviteBasePath)
+    path.startsWith(collectiviteBasePath) ||
+    path === adminPath ||
+    path.startsWith(`${adminPath}/`)
   );
 }
