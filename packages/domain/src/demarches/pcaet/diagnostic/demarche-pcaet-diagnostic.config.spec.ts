@@ -37,7 +37,6 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
       { indicateurDefinitionId: 'cae_63.b', optionalYears: [2050] },
       { indicateurDefinitionId: 'cae_63.c', optionalYears: [2050] },
       { indicateurDefinitionId: 'cae_63.e', optionalYears: [2050] },
-      { indicateurDefinitionId: 'cae_63.d', optionalYears: [2050] },
     ]);
   });
 
