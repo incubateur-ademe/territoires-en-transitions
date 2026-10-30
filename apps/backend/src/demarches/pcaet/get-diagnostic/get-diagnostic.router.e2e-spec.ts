@@ -153,7 +153,7 @@ describe('Récupérer le diagnostic PCAET', () => {
     expect(conso?.children).toHaveLength(8);
   });
 
-  test('La séquestration est obligatoire, hors objectif 2050', async () => {
+  test('La séquestration est obligatoire, hors objectif 2050 et hors « Autres sols »', async () => {
     const { caller, collectivite, demarche } = await createDemarche(db, router);
 
     const sequestration = (
@@ -172,7 +172,7 @@ describe('Récupérer le diagnostic PCAET', () => {
       ['cae_63.b', [2050]],
       ['cae_63.c', [2050]],
       ['cae_63.e', [2050]],
-      ['cae_63.d', [2050]],
+      ['cae_63.d', 'all'],
     ]);
   });
 
