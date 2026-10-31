@@ -11,11 +11,11 @@ runs:
 
   steps:
     - name: Get image path
-      uses: ./.github/actions/db-path
+      uses: ./.github/actions/database/supabase/volume-path
       id: get_image_path
 
     - name: Check if db volume image is available
       id: is_available
-      uses: ./.github/actions/docker-image-available
+      uses: ./.github/actions/docker/image-available
       with:
         image_path: ${{ steps.get_image_path.outputs.path }}
