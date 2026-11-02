@@ -2,7 +2,7 @@ import { chromium } from '@playwright/test';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { basename, dirname, extname, join, resolve } from 'node:path';
+import { basename, dirname, extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 
@@ -25,6 +25,8 @@ const MIME_TYPES = {
 
 const outDir = resolve(dirname(fileURLToPath(import.meta.url)), '../out');
 
+const isInsideOutDir = (path) => path.startsWith(`${outDir}${sep}`);
+
 const toBuildFile = (urlPath) => {
   const clean = decodeURIComponent(urlPath.split('?')[0] ?? '/');
   const candidates = [
@@ -34,7 +36,7 @@ const toBuildFile = (urlPath) => {
   ];
   return candidates.find(
     (path) =>
-      path.startsWith(outDir) && existsSync(path) && statSync(path).isFile()
+      isInsideOutDir(path) && existsSync(path) && statSync(path).isFile()
   );
 };
 
