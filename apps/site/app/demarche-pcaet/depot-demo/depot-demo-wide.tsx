@@ -198,7 +198,7 @@ const DocumentCell = ({
 
 const DiagnosticScreen = ({ state }: ScreenProps) => (
   <Screen
-    title="Compléter le diagnostic et les objectifs"
+    title="Compléter les données du diagnostic et de la stratégie"
     subtitle="Consultez et complétez les indicateurs par volet du PCAET."
     footer={
       <>
@@ -392,7 +392,7 @@ const ProgrammeScreen = ({ state }: ScreenProps) => (
       <>
         <PreviousButton />
         <NextButton
-          label="Valider le dépôt pour avis"
+          label="Valider le dépôt et transmettre pour avis"
           enabled={state.programme.canValidate}
           pressed={state.isClicking}
         />
@@ -603,7 +603,7 @@ const ProgressPanel = ({ state }: ScreenProps) => (
                 enabled={state.programme.canValidate}
                 className="self-start px-3 py-2 text-xs"
               >
-                Valider le dépôt pour avis →
+                Valider le dépôt et transmettre pour avis →
               </FakeButton>
             </div>
           )}

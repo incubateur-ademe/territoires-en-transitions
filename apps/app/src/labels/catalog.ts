@@ -823,7 +823,9 @@ export const appLabels = {
   importPlanIaTitre: 'Importer un plan',
   importPlanIaSousTitre: 'depuis un fichier PDF, Word ou Excel',
   importPlanIaDescription:
-    "Nous importons les actions, les sous-actions et les personnes pilotes, et parfois davantage lorsque nous parvenons à les repérer automatiquement (descriptions, dates, etc.). Cette fonctionnalité s'appuie sur des outils d'intelligence artificielle, le résultat peut contenir des erreurs : relisez attentivement votre plan, et corrigez-le si besoin.",
+    'À partir de votre fichier, nous importons la structure de votre plan et ses fiches actions. Notre outil détecte automatiquement : axes, sous-axes, titres des actions, description, statut, pilotes, dates, objectifs…',
+  importPlanIaAvertissement:
+    'Cet outil est en phase d’amélioration : le résultat peut contenir des erreurs, pensez à relire votre plan, vous pourrez le modifier ensuite.',
   importPlanIaChampFichier: 'Document à importer',
   importPlanIaChampInstructions: "Précisions pour l'IA (facultatif)",
   importPlanIaFichierRequis: 'Un document est requis',

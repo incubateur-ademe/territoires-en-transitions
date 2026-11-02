@@ -270,7 +270,7 @@ export const plansLabels = {
   importPlanSupportPriseEnCharge:
     'Notre équipe se chargera de l’importer pour vous sur la plateforme.',
   importPlanIaContact:
-    "Si l'import ne vous convient pas, contactez-nous à contact@territoiresentransitions.fr en joignant le fichier et en précisant le contexte.",
+    'L’import ne vous convient pas ? Contactez-nous via le live chat en joignant votre fichier et quelques mots de contexte, cela nous aide à l’améliorer.',
   importPlanIaFormatsAcceptes:
     'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
   importPlanIaFichierSuggere:

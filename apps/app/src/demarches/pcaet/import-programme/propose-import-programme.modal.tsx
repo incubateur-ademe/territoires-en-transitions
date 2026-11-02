@@ -88,7 +88,10 @@ export const ProposeImportProgrammeModal = ({
       render={() => (
         <div className="flex flex-col gap-4">
           <p className="m-0">{appLabels.demarcheProgrammeImportDescription}</p>
-          <p className="m-0">{appLabels.demarcheProgrammeImportArrierePlan}</p>
+          <ul className="m-0 pl-6 list-disc">
+            <li>{appLabels.demarcheProgrammeImportAvantageTemps}</li>
+            <li>{appLabels.demarcheProgrammeImportAvantageSuivi}</li>
+          </ul>
           {previousImport && (
             <PreviousAiImportAlert previousImport={previousImport} />
           )}

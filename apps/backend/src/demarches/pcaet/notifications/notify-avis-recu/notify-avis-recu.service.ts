@@ -44,7 +44,7 @@ type AvisRecuNotificationInsert = Omit<
 /** Les libellés des titres, pour le corps du message. */
 const libelleAuTitreDe: Record<string, string> = {
   [PcaetAvisAuTitreDeEnum.PREFET_REGION]: 'Préfet de région',
-  [PcaetAvisAuTitreDeEnum.PRESIDENT_REGION]: 'Président de région',
+  [PcaetAvisAuTitreDeEnum.PRESIDENT_REGION]: 'Président du conseil régional',
 };
 
 @Injectable()
