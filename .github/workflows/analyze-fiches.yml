@@ -1,8 +1,10 @@
 name: Analyse des fiches action (priorisation des actions)
 
-run-name: Analyse des fiches action des CT ${{ inputs.collectivites }}
+run-name: ${{ github.event_name == 'schedule' && 'Passage quotidien d''analyse des fiches action' || format('Analyse des fiches action des CT {0}', inputs.collectivites) }}
 
 on:
+  schedule:
+    - cron: '0 23 * * *'
   workflow_dispatch:
     inputs:
       collectivites:
@@ -48,4 +50,9 @@ jobs:
           GOOGLE_CLOUD_LOCATION: eu
           GEMINI_MODEL: gemini-3.5-flash
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js "--collectivites=$COLLECTIVITES"
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js
+          else
+            node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js "--collectivites=$COLLECTIVITES"
+          fi
