@@ -7,5 +7,4 @@ Le dossier [`ADRs`]('./adr') contient les "Architecture Decision Records" - des 
 ## Flow de design
 
 [`design-flow.md`](./design-flow.md) décrit le passage d'une maquette Claude
-Design à un prototype, puis à l'implémentation : étapes, rôles, règles de
-conformité et verrous.
+Design à l'implémentation : étapes, rôles et règles de conformité.
