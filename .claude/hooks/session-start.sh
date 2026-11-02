@@ -62,11 +62,19 @@ install_dependencies() {
 # échoue. Les prototypes n'ont besoin ni de Bryntum ni de crisp-api : on les
 # retire de la copie de travail le temps de l'installation, puis on restaure
 # package.json et pnpm-lock.yaml pour que rien n'en parte dans un commit.
+restore_manifests() {
+  cp "$1/package.json" "$1/pnpm-lock.yaml" .
+}
+
 install_dependencies_without_private() {
-  local status=0
+  local status=0 manifests_backup
+  manifests_backup="$(mktemp -d)"
+  cp package.json pnpm-lock.yaml "$manifests_backup/"
+  trap "restore_manifests '$manifests_backup'" EXIT INT TERM HUP
   node .claude/hooks/strip-private-deps.mjs
   pnpm install --no-frozen-lockfile >&2 || status=$?
-  git checkout -- package.json pnpm-lock.yaml
+  restore_manifests "$manifests_backup"
+  trap - EXIT INT TERM HUP
   return "$status"
 }
 
