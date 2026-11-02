@@ -306,6 +306,52 @@ describe('trierDossiers', () => {
     ]);
   });
 
+  it('garde côte à côte les lignes d’une même collectivité, quel que soit le tri', () => {
+    const collectivite = (id: number, nom: string) => ({
+      id,
+      nom,
+      departementCode: '54',
+      regionCode: '44',
+      regionLibelle: 'Grand Est',
+    });
+    const lignes = [
+      ligne({
+        nom: 'Renouvellement',
+        collectivite: collectivite(1, 'Agglo A'),
+        statut: PcaetStatutInstructionEnum.EN_ELABORATION,
+        avisDeadlineAt: null,
+        demarcheId: 11,
+      }),
+      ligne({
+        nom: 'Autre',
+        collectivite: collectivite(2, 'Agglo B'),
+        avisDeadlineAt: '2026-06-10T00:00:00.000Z',
+        demarcheId: 2,
+      }),
+      ligne({
+        nom: 'Adopté',
+        collectivite: collectivite(1, 'Agglo A'),
+        statut: PcaetStatutInstructionEnum.ADOPTE,
+        avisDeadlineAt: '2025-01-10T00:00:00.000Z',
+        demarcheId: 10,
+      }),
+    ];
+    const demarches = (triees: DossierInstructionLigne[]) =>
+      triees.map(({ demarcheId }) => demarcheId);
+
+    // Sans regroupement, l'élaboration sans échéance tomberait en dernier.
+    expect(demarches(trierDossiers(lignes, 'echeance', 'asc'))).toEqual([
+      10, 11, 2,
+    ]);
+    // Agglo B passe devant : sa meilleure échéance est plus lointaine.
+    expect(demarches(trierDossiers(lignes, 'echeance', 'desc'))).toEqual([
+      2, 10, 11,
+    ]);
+    expect(demarches(trierDossiers(lignes, 'statut', 'asc'))).toEqual([
+      11, 10, 2,
+    ]);
+  });
+
   it('ne touche pas au tableau reçu', () => {
     const lignes = [ligne({ nom: 'Zitrone' }), ligne({ nom: 'Abricot' })];
     trierDossiers(lignes, 'collectivite', 'asc');

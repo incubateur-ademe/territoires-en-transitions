@@ -65,7 +65,30 @@ export const trieSurLesPilotes = (
   sort: ListDossiersInstructionInput['sort']
 ): boolean => sort === 'pilote';
 
+/**
+ * Trie les lignes, puis garde côte à côte celles d'une même collectivité : un
+ * PCAET adopté et son renouvellement en élaboration font deux lignes, que le
+ * service doit lire ensemble. Chaque collectivité prend la place de sa ligne la
+ * mieux classée, et ses autres lignes la suivent, dans l'ordre du tri.
+ */
 export const trierDossiers = (
+  lignes: DossierInstructionLigne[],
+  sort: ListDossiersInstructionInput['sort'],
+  direction: ListDossiersInstructionInput['direction']
+): DossierInstructionLigne[] => {
+  const parCollectiviteId = new Map<number, DossierInstructionLigne[]>();
+  for (const ligne of trierLignes(lignes, sort, direction)) {
+    const groupe = parCollectiviteId.get(ligne.collectivite.id);
+    if (groupe) {
+      groupe.push(ligne);
+    } else {
+      parCollectiviteId.set(ligne.collectivite.id, [ligne]);
+    }
+  }
+  return [...parCollectiviteId.values()].flat();
+};
+
+const trierLignes = (
   lignes: DossierInstructionLigne[],
   sort: ListDossiersInstructionInput['sort'],
   direction: ListDossiersInstructionInput['direction']
