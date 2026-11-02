@@ -32,6 +32,8 @@ import {
   collectiviteSelectionSchema,
 } from './analyze-fiches.input';
 import { AnalyzeFichesService } from './analyze-fiches.service';
+import { ANALYZED_COLLECTIVITE_IDS } from './analyzed-collectivite-ids';
+import { AnalyzedCollectivites } from './analyzed-collectivites';
 import { calculateFicheFingerprint } from './calculate-fiche-fingerprint.rules';
 import {
   FicheAnalysisStatusRepository,
@@ -78,6 +80,7 @@ type HarnessOptions = {
   readonly lastRunStart?: Date | null;
   readonly classify?: ClassifyBehavior;
   readonly score?: ScoreBehavior;
+  readonly analyzedCollectivites?: AnalyzedCollectivites;
 };
 
 type Harness = {
@@ -173,6 +176,8 @@ const scoredLeviers: LevierMobilisation[] = [
 
 const scoreEveryCollectivite: ScoreBehavior = () =>
   success({ leviers: scoredLeviers });
+
+const everyCollectiviteAnalyzed: AnalyzedCollectivites = { has: () => true };
 
 const applyUpsert = (
   stored: FicheAnalysis | undefined,
@@ -401,7 +406,8 @@ const toHarness = (options: HarnessOptions = {}): Harness => {
     analysisRunDependency,
     enjeuRepositoriesDependency,
     classifyBatchDependency,
-    scoreMobilisationDependency
+    scoreMobilisationDependency,
+    options.analyzedCollectivites ?? everyCollectiviteAnalyzed
   );
 
   return {
@@ -464,6 +470,7 @@ describe('full-flow', () => {
         [3814, { calculatedAt: PAST, ficheIds: [20] }],
         [3815, { calculatedAt: PAST, ficheIds: [] }],
       ]),
+      analyzedCollectivites: ANALYZED_COLLECTIVITE_IDS,
     });
 
     await harness.service.analyzeFiches(onCollectivites('all'));
@@ -480,6 +487,7 @@ describe('full-flow', () => {
         toFiche({ ficheId: 20, collectiviteId: 3810 }),
       ],
       mobilisations: new Map([[2, { calculatedAt: PAST, ficheIds: [] }]]),
+      analyzedCollectivites: ANALYZED_COLLECTIVITE_IDS,
     });
 
     await harness.service.analyzeFiches(onCollectivites('all'));
@@ -666,6 +674,24 @@ describe('daily-ct-check', () => {
     expect(
       harness.events.filter((event) => event.startsWith('get_mobilisation'))
     ).toEqual(['get_mobilisation:1', 'get_mobilisation:2']);
+  });
+
+  it('ignore une CT absente de la liste retenue, même avec une fiche candidate ou un engagement', async () => {
+    const harness = toHarness({
+      fiches: [
+        toFiche({ ficheId: 10, collectiviteId: 1 }),
+        toFiche({ ficheId: 20, collectiviteId: 3810 }),
+      ],
+      mobilisations: new Map([[2, { calculatedAt: PAST, ficheIds: [] }]]),
+      lastRunStart: LAST_RUN_START,
+      analyzedCollectivites: ANALYZED_COLLECTIVITE_IDS,
+    });
+
+    await harness.service.analyzeFiches(dailyRun);
+
+    expect(
+      harness.selections.map(({ collectiviteId }) => collectiviteId)
+    ).toEqual([3810]);
   });
 
   it("vérifie l'engagement des CT qui n'ont plus aucun statut", async () => {
