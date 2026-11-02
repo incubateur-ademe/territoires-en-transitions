@@ -24,7 +24,7 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
     ).toBe('Émissions GES');
   });
 
-  it('exige chaque ligne de la séquestration carbone, hors objectif 2050', () => {
+  it('exige chaque ligne de la séquestration carbone, objectif 2050 compris', () => {
     const sequestration = PCAET_DIAGNOSTIC_INDICATEURS.find(
       (topic) => topic.code === 'sequestration'
     );
@@ -34,10 +34,17 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
       sequestration &&
         listPcaetDiagnosticIndicateurRequiredLeaves(sequestration)
     ).toEqual([
-      { indicateurDefinitionId: 'cae_63.b', optionalYears: [2050] },
-      { indicateurDefinitionId: 'cae_63.c', optionalYears: [2050] },
-      { indicateurDefinitionId: 'cae_63.e', optionalYears: [2050] },
+      { indicateurDefinitionId: 'cae_63.b', optionalYears: [] },
+      { indicateurDefinitionId: 'cae_63.c', optionalYears: [] },
+      { indicateurDefinitionId: 'cae_63.e', optionalYears: [] },
     ]);
+  });
+
+  it('exige l’objectif 2050 sur toutes les lignes saisissables', () => {
+    const leavesExcluant2050 = PCAET_DIAGNOSTIC_INDICATEURS.flatMap((topic) =>
+      listPcaetDiagnosticIndicateurRequiredLeaves(topic)
+    ).filter((leaf) => leaf.optionalYears.includes(2050));
+    expect(leavesExcluant2050).toEqual([]);
   });
 
   it('liste des identifiants référentiel uniques', () => {

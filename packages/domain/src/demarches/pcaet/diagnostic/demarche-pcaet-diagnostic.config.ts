@@ -37,42 +37,34 @@ const EMISSIONS_GES = {
     {
       label: 'Résidentiel',
       indicateurDefinitionId: 'cae_1.c',
-      optionalYears: [2050],
     },
     {
       label: 'Tertiaire',
       indicateurDefinitionId: 'cae_1.d',
-      optionalYears: [2050],
     },
     {
       label: 'Transport routier',
       indicateurDefinitionId: 'cae_1.e',
-      optionalYears: [2050],
     },
     {
       label: 'Autres transports',
       indicateurDefinitionId: 'cae_1.f',
-      optionalYears: [2050],
     },
     {
       label: 'Agriculture',
       indicateurDefinitionId: 'cae_1.g',
-      optionalYears: [2050],
     },
     {
       label: 'Déchets',
       indicateurDefinitionId: 'cae_1.h',
-      optionalYears: [2050],
     },
     {
       label: 'Industrie hors branche énergie',
       indicateurDefinitionId: 'cae_1.i',
-      optionalYears: [2050],
     },
     {
       label: 'Industrie branche énergie',
       indicateurDefinitionId: 'cae_1.j',
-      optionalYears: [2050],
     },
   ],
 } as const satisfies PcaetDiagnosticIndicateurParentConfig;
@@ -90,42 +82,34 @@ const CONSO_ENERGETIQUE = {
     {
       label: 'Résidentiel',
       indicateurDefinitionId: 'cae_2.e',
-      optionalYears: [2050],
     },
     {
       label: 'Tertiaire',
       indicateurDefinitionId: 'cae_2.f',
-      optionalYears: [2050],
     },
     {
       label: 'Transport routier',
       indicateurDefinitionId: 'cae_2.g',
-      optionalYears: [2050],
     },
     {
       label: 'Autres transports',
       indicateurDefinitionId: 'cae_2.h',
-      optionalYears: [2050],
     },
     {
       label: 'Agriculture',
       indicateurDefinitionId: 'cae_2.i',
-      optionalYears: [2050],
     },
     {
       label: 'Déchets',
       indicateurDefinitionId: 'cae_2.j',
-      optionalYears: [2050],
     },
     {
       label: 'Industrie hors branche énergie',
       indicateurDefinitionId: 'cae_2.k',
-      optionalYears: [2050],
     },
     {
       label: 'Industrie branche énergie',
       indicateurDefinitionId: 'cae_2.l_pcaet',
-      optionalYears: [2050],
     },
   ],
 } as const satisfies PcaetDiagnosticIndicateurParentConfig;
@@ -381,17 +365,14 @@ const SEQUESTRATION_CARBONE = {
     {
       label: 'Forêt',
       indicateurDefinitionId: 'cae_63.b',
-      optionalYears: [2050],
     },
     {
       label: 'Sols agricoles (terres cultivées et prairies)',
       indicateurDefinitionId: 'cae_63.c',
-      optionalYears: [2050],
     },
     {
       label: 'Produits bois',
       indicateurDefinitionId: 'cae_63.e',
-      optionalYears: [2050],
     },
     {
       label: 'Autres sols',
