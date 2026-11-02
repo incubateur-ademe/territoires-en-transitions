@@ -2,7 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { RunFailure, addRunFailures } from './add-run-failures.rules';
 
 const toFicheFailures = (ficheIds: number[]): RunFailure[] =>
-  ficheIds.map((ficheId) => ({ kind: 'fiche', ficheId }));
+  ficheIds.map((ficheId) => ({
+    kind: 'fiche',
+    ficheId,
+    collectiviteId: 1,
+    cause: { kind: 'api_error', httpStatus: 400 },
+  }));
+
+const toMobilisationFailure = (collectiviteId: number): RunFailure => ({
+  kind: 'mobilisation',
+  collectiviteId,
+  cause: { kind: 'collectivite_not_found', collectiviteId },
+});
 
 describe('llm-issue', () => {
   it('laisse le passage continuer à 9 fiches en échec définitif', () => {
@@ -52,9 +63,9 @@ describe('llm-issue', () => {
       [],
       [
         ...toFicheFailures([1, 2, 3, 4, 5, 6, 7]),
-        { kind: 'mobilisation', collectiviteId: 10 },
-        { kind: 'mobilisation', collectiviteId: 11 },
-        { kind: 'mobilisation', collectiviteId: 12 },
+        toMobilisationFailure(10),
+        toMobilisationFailure(11),
+        toMobilisationFailure(12),
       ]
     );
 
@@ -64,9 +75,9 @@ describe('llm-issue', () => {
         kind: 'failure_threshold_reached',
         failures: [
           ...toFicheFailures([1, 2, 3, 4, 5, 6, 7]),
-          { kind: 'mobilisation', collectiviteId: 10 },
-          { kind: 'mobilisation', collectiviteId: 11 },
-          { kind: 'mobilisation', collectiviteId: 12 },
+          toMobilisationFailure(10),
+          toMobilisationFailure(11),
+          toMobilisationFailure(12),
         ],
       },
     });
