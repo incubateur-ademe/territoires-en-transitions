@@ -149,7 +149,7 @@ export const utilisateursAndEntityLabels = {
   assistantUsageCrispTitre: 'Dans Crisp',
   assistantUsageCrispBadge: 'Rien à installer',
   assistantUsageCrispDescription:
-    "Déjà actif pour l'équipe support : tapez /tet en note privée. Aucun rapport avec le connecteur Claude : cela fonctionne même si vous ne l'avez jamais branché.",
+    "Un utilisateur écrit au support parce que quelque chose bloque ? Tapez /tet en note privée dans la conversation : l'assistant cherche l'explication dans son compte et vous propose une piste de réponse. Rien à installer, et indépendant du connecteur Claude.",
   assistantUsageCrispLien: 'Voir les commandes',
   assistantConnexionTitre: 'Se connecter dans Claude',
   assistantConnexionDescription:
@@ -248,7 +248,17 @@ export const utilisateursAndEntityLabels = {
   ],
   assistantCrispTitre: 'Depuis Crisp',
   assistantCrispDescription:
-    "Indépendant du connecteur Claude : il suffit d'un compte Territoires en Transitions support sous la même adresse e-mail que votre compte Crisp. Le mode super-admin n'est pas nécessaire : dans Crisp, l'assistant lit toutes les collectivités.",
+    'Quand un utilisateur écrit au support parce que quelque chose bloque, /tet vous aide à comprendre pourquoi et à lui répondre.',
+  assistantCrispFonctionnement:
+    "L'assistant lit le compte de l'utilisateur de la conversation (droits, collectivités, plans, suivi PCAET, activité récente) et ses derniers messages, puis propose une explication et une piste de réponse. Inutile de lui dire de qui il s'agit.",
+  assistantCrispExemplesTitre: 'Par exemple :',
+  assistantCrispExemples: [
+    "/tet pourquoi n'arrive-t-il pas à transmettre son PCAET ?",
+    '/tet pourquoi ne voit-il pas le plan de sa collectivité ?',
+    '/tet que lui répondre ?',
+  ],
+  assistantCrispPrerequis:
+    "Il suffit d'un compte Territoires en Transitions support sous la même adresse e-mail que votre compte Crisp. Ni le mode super-admin ni le connecteur Claude ne sont nécessaires.",
   assistantCrispNotePrivee: 'En note privée sur une conversation :',
   assistantCrispCommandes: [
     {
@@ -257,11 +267,11 @@ export const utilisateursAndEntityLabels = {
     },
     {
       commande: '/tet <question>',
-      description: 'pose une question précise.',
+      description: 'pose une question précise sur le problème rencontré.',
     },
   ],
   assistantCrispReponse:
-    "La réponse arrive en note privée, rédigée avec Albert, le modèle de l'État.",
+    "La réponse arrive en note privée, visible du support seulement, rédigée avec Albert, le modèle de l'État. Relisez-la avant de répondre à l'utilisateur.",
   assistantASavoirTitre: 'À savoir',
   assistantASavoir: [
     {
