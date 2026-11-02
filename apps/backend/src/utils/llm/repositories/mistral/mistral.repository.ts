@@ -4,6 +4,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import OpenAI from 'openai';
 import type { ChatCompletionCreateParamsStreaming } from 'openai/resources/chat/completions';
 import type { CompletionUsage } from 'openai/resources/completions';
+import { z } from 'zod';
 import { LlmError } from '../../llm.errors';
 import { LlmCapabilities, LlmTier } from '../../llm-tier';
 import { TokenUsage } from '../../token-usage';
@@ -21,6 +22,26 @@ const MAX_CONCURRENT_CALLS = 5;
 const MAX_INPUT_TOKENS = 100_000;
 const MAX_OUTPUT_TOKENS = 16_384;
 const RATE_LIMITED_STATUSES = new Set([429, 503]);
+
+const deltaContentSchema = z.union([z.string(), z.array(z.unknown())]);
+
+const textChunkSchema = z.object({ type: z.literal('text'), text: z.string() });
+
+const toChunkText = (contentChunk: unknown): string[] => {
+  const textChunk = textChunkSchema.safeParse(contentChunk);
+  return textChunk.success ? [textChunk.data.text] : [];
+};
+
+const toAnswerText = (deltaContent: unknown): string => {
+  const parsedContent = deltaContentSchema.safeParse(deltaContent);
+  if (!parsedContent.success) {
+    return '';
+  }
+  if (typeof parsedContent.data === 'string') {
+    return parsedContent.data;
+  }
+  return parsedContent.data.flatMap(toChunkText).join('');
+};
 
 @Injectable()
 export class MistralRepository extends LlmRepository {
@@ -68,7 +89,11 @@ export class MistralRepository extends LlmRepository {
 
     const timeout = request.timeoutMs ?? CALL_TIMEOUT_MS;
     this.logger.log(
-      `Mistral call (model ${MISTRAL_MODEL}, prompt ${request.prompt.length} chars, instruction ${request.systemInstruction?.length ?? 0} chars, timeout ${timeout} ms)`
+      `Mistral call (model ${MISTRAL_MODEL}, prompt ${
+        request.prompt.length
+      } chars, instruction ${
+        request.systemInstruction?.length ?? 0
+      } chars, timeout ${timeout} ms)`
     );
 
     try {
@@ -82,7 +107,7 @@ export class MistralRepository extends LlmRepository {
       let usage: CompletionUsage | undefined;
       for await (const chunk of stream) {
         for (const choice of chunk.choices) {
-          text += choice.delta.content ?? '';
+          text += toAnswerText(choice.delta.content);
           finishReason = choice.finish_reason ?? finishReason;
         }
         usage = chunk.usage ?? usage;
