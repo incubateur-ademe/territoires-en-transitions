@@ -87,11 +87,11 @@ export const usages: Readonly<Record<string, string>> = {
   text: 'Échelle Tailwind (`text-sm`, `text-lg`…) des libellés, badges et contrôles.',
 
   spacing:
-    'Échelle des primitives `Stack`, `Inline`, `Grid` (`gap`) et `Box` (`padding`). Le parent porte l’espacement : pas de marge sur les enfants.',
+    'Échelle unique des `gap` et des `padding`. Le parent porte l’espacement : pas de marge sur les enfants.',
   'space-none': 'Éléments accolés.',
   'space-xs': 'Icône et libellé, éléments d’un même groupe serré.',
-  'space-sm': 'Éléments d’une ligne (`Inline`), champs d’un même groupe.',
-  'space-md': 'Valeur par défaut de `Stack` et `Grid` : blocs d’une section.',
+  'space-sm': 'Éléments d’une ligne, champs d’un même groupe.',
+  'space-md': 'Blocs d’une section.',
   'space-lg': 'Sections d’une page ; padding des cartes.',
   'space-xl': 'Grandes séparations de page.',
 

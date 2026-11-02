@@ -16,7 +16,7 @@ nom (token, composant, variante) est celui du code : une maquette qui s'en tient
 - Les noms sont ceux du code : `Button variant="primary" size="sm"`,
   `Badge variant="success"`, `PageHeader`, `Card`, `Modal`…
 - Dans un design, ces composants sont ceux du bundle, sous `window.TeT` :
-  `TeT.Button`, `TeT.Stack`, `TeT.PageHeader`… avec les mêmes props que dans
+  `TeT.Button`, `TeT.Badge`, `TeT.PageHeader`… avec les mêmes props que dans
   le code (voir chaque fiche et `index.d.ts`). `TeT.Button` dans une maquette
   devient `import { Button } from '@tet/ui'` dans l'app.
 - Les fiches marquées « planche d'exemples » montrent des compositions tirées
@@ -68,16 +68,15 @@ nom (token, composant, variante) est celui du code : une maquette qui s'en tient
 
 ## Espacement et mise en page
 
-- Primitives (R2) : `Stack` vertical, `Inline` horizontal, `Grid` en
-  colonnes, `Box` pour le padding.
+- Le parent porte l'espacement (R2) : un `gap` sur l'échelle, jamais de
+  marge sur les enfants.
 - Échelle unique : `space-none` 0, `space-xs` 4px, `space-sm` 8px, `space-md`
   16px, `space-lg` 24px, `space-xl` 32px. `space-md` entre les blocs d'une
   section, `space-lg` entre les sections et dans les cartes, `space-sm` entre
   les éléments d'une ligne.
-- Chaque prop varie par point de rupture (`sm`, `md`, `lg`, `xl`, mobile
-  first). Une ligne d'actions passe en colonne sur mobile
-  (`Inline collapseBelow="md"`).
-- Toute page vit dans la coque `AppShell` : header de l'app, contenu centré
+- La mise en page varie par point de rupture (`sm`, `md`, `lg`, `xl`, mobile
+  first). Une ligne d'actions passe en colonne sur mobile.
+- Toute page vit dans le cadre de l'app : header, contenu centré
   sur `max-w-8xl` (90rem) avec 8px de marge latérale sur mobile, 16px dès
   `md` et 24px dès `lg`, puis footer. Une page commence par `PageHeader`
   (titre, actions, métadonnées), jamais par un titre fait main.

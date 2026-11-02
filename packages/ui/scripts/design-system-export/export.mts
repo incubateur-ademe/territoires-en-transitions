@@ -61,7 +61,6 @@ try {
   const load = (path: string) => server.ssrLoadModule(path);
   const [
     { designTokens },
-    { spacingScale },
     { preset },
     tokensModule,
     { usages },
@@ -69,7 +68,6 @@ try {
     { buildReadme },
   ] = await Promise.all([
     load('@tet/design-tokens'),
-    load('./src/design-system/layout/layout.tokens.ts'),
     load('./src/tailwind-preset.ts'),
     load('./scripts/design-system-export/tokens.ts'),
     load('./scripts/design-system-export/usages.ts'),
@@ -99,7 +97,6 @@ try {
       paths: {
         tokens: [
           'packages/design-tokens/src/design-tokens.ts',
-          'packages/ui/src/design-system/layout/layout.tokens.ts',
           'packages/ui/src/tailwind-preset.ts',
         ],
         fonts: ['packages/ui/src/assets/fonts'],
@@ -117,7 +114,7 @@ try {
     fontSize: designTokens.fontSize,
     headings: globalCss.headings,
     paragraphes: globalCss.paragraphes,
-    spacingScale,
+    spacingScale: designTokens.spacingScale,
     tailwindSpacing: theme.spacing as Readonly<Record<string, string>>,
     radius: designTokens.borderRadius,
     boxShadow: designTokens.boxShadow,

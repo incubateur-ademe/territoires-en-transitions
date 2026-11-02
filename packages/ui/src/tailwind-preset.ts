@@ -1,14 +1,12 @@
 import { designTokens } from '@tet/design-tokens';
 import { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
-import { listLayoutClasses } from './design-system/layout/layout.classes';
 
 export const preset = {
   content: [
     './src/**/*.{ts,tsx}',
     '../../packages/design-tokens/src/**/*.{ts,tsx}',
   ],
-  safelist: [...listLayoutClasses()],
   theme: {
     maxHeight: designTokens.maxHeight,
     extend: {

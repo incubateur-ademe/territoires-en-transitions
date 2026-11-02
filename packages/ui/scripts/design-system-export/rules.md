@@ -8,9 +8,9 @@ renvoient par leur numéro.
   composants `TeT.*` (`@tet/ui` dans le code) et leurs props et variantes
   existantes. Aucun élément d'interface fait à la main : `div` stylée,
   `role="progressbar"`, pastille, carte, graphique…
-- **R2 · Mise en page par les primitives.** `Stack`, `Inline`, `Grid` et
-  `Box` ; le parent porte l'espacement avec `gap`, jamais de marge sur les
-  enfants. Chaque prop varie par point de rupture, mobile d'abord.
+- **R2 · Le parent porte l'espacement.** Mise en page en flex ou en grille,
+  espacée par le `gap` du parent sur l'échelle de R3, jamais par une marge sur
+  les enfants. Mobile d'abord, puis par point de rupture.
 - **R3 · Tokens uniquement.** Espacements sur l'échelle 0, 4, 8, 16, 24 et
   32px, jamais 12px ni une valeur au pixel près ; couleurs, rayons et ombres
   de ce design system.

@@ -92,6 +92,14 @@ export const designTokens = {
     extrabold: '800',
     black: '900',
   },
+  spacingScale: {
+    none: '0',
+    xs: '1',
+    sm: '2',
+    md: '4',
+    lg: '6',
+    xl: '8',
+  },
   borderRadius: {
     none: '0px',
     sm: '0.125rem',
