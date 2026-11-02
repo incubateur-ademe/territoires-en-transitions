@@ -7,6 +7,7 @@ import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_DEFAULT_TITRE,
   getDemarchePcaetInitialStatus,
+  getObligationInitiale,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -68,13 +69,22 @@ export class CreateDemarchePcaetService {
         );
       }
 
+      const obligation =
+        input.obligation ??
+        getObligationInitiale(
+          await this.createDemarchePcaetRepository.getAssujettissement(
+            input.collectiviteId,
+            transaction
+          )
+        );
+
       const insertResult =
         await this.createDemarchePcaetRepository.insertDemarche(
           {
             collectiviteId: input.collectiviteId,
             titre: input.titre?.trim() || DEMARCHE_PCAET_DEFAULT_TITRE,
             description: input.description ?? '',
-            obligation: input.obligation,
+            obligation,
             launchedAt: input.launchedAt ?? null,
             // Un PCAET déjà transmis hors plateforme n'a ni élaboration ni
             // transmission à rejouer : son dossier démarre à la finalisation.

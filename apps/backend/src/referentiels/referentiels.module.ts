@@ -258,6 +258,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListHistoriqueUtilisateurService,
   ],
   exports: [
+    SnapshotsService,
     ListLabellisationsService,
     ListActionsService,
     ReferentielsRouter,

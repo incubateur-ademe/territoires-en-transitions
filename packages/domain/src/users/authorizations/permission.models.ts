@@ -72,16 +72,21 @@ const collectiviteAdminPermissions: readonly PermissionOperation[] = [
 export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
   [PlatformRole.CONNECTED]: [],
   [PlatformRole.VERIFIED]: [...visiteurVerifiePermissions],
-  [PlatformRole.SUPPORT]: ['users.authorizations.mutate_super_admin_role'],
+  [PlatformRole.SUPPORT]: [
+    'users.authorizations.mutate_super_admin_role',
+    'utils.mcp.read',
+  ],
   [PlatformRole.SUPER_ADMIN]: [
     ...collectiviteAdminPermissions,
 
     'collectivites.mutate',
+    'plans.import.mutate',
     'plans.fiches.import_in_parallel',
     'plans.fiches.import_resume',
     'referentiels.labellisations.mutate_documents',
     'shared.actions-de-reference.mutate',
     'utils.banner.mutate',
+    'utils.mcp.read',
   ],
   [PlatformRole.ADEME]: [
     ...visiteurVerifiePermissions,

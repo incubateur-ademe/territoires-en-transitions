@@ -21,7 +21,7 @@ import type {
   DemarcheDocumentsConfig,
   DemarcheDocumentsSnapshot,
 } from '@tet/domain/demarches';
-import { and, asc, eq, isNull, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import type { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import { demarcheDefinitionTable } from './models/demarche-definition.table';
 import { DemarcheDocumentApplicabiliteService } from './demarche-document-applicabilite.service';
@@ -103,6 +103,7 @@ const toFichier = (row: {
  */
 type DemarcheDocumentDefinitionWithExpr = DemarcheDocumentDefinition & {
   exprApplicable: string | null;
+  isRetired: boolean;
 };
 
 /**
@@ -128,6 +129,10 @@ export class DemarcheDocumentsRepository {
    * ici, et nulle part ailleurs : c'est le seul point de passage du catalogue,
    * donc la seule façon de garantir que l'écran de la collectivité et le guard
    * de transmission voient le même dossier.
+   *
+   * Même chose pour les pièces retirées du catalogue : seules les démarches qui
+   * les ont déjà déposées les gardent, avec leurs inclusions, pour que leur
+   * dossier ne change pas.
    */
   async listDefinitions(
     demarcheType: DemarcheType,
@@ -137,7 +142,15 @@ export class DemarcheDocumentsRepository {
     }: { collectiviteId: number; demarcheId: number },
     tx?: Transaction
   ): Promise<DemarcheDocumentDefinition[]> {
-    const definitions = await this.listDefinitionsInCatalogue(demarcheType, tx);
+    const catalogue = await this.listDefinitionsInCatalogue(demarcheType, tx);
+    const retiredIdsDeposes = await this.listRetiredIdsDeposes(
+      demarcheId,
+      catalogue.filter(({ isRetired }) => isRetired).map(({ id }) => id),
+      tx
+    );
+    const definitions = catalogue.filter(
+      ({ id, isRetired }) => !isRetired || retiredIdsDeposes.has(id)
+    );
 
     const expressions = definitions
       .map(({ exprApplicable }) => exprApplicable)
@@ -157,12 +170,39 @@ export class DemarcheDocumentsRepository {
       .filter(({ exprApplicable }) =>
         this.applicabiliteService.isApplicable(exprApplicable, context)
       )
-      .map(({ exprApplicable: _exprApplicable, ...definition }) => definition);
+      .map(
+        ({
+          exprApplicable: _exprApplicable,
+          isRetired: _isRetired,
+          ...definition
+        }) => definition
+      );
+  }
+
+  private async listRetiredIdsDeposes(
+    demarcheId: number,
+    retiredIds: string[],
+    tx?: Transaction
+  ): Promise<Set<string>> {
+    // Aucune pièce retirée : rien à charger.
+    if (retiredIds.length === 0) {
+      return new Set();
+    }
+    const rows = await (tx ?? this.databaseService.db)
+      .selectDistinct({ documentId: demarcheDocumentTable.documentId })
+      .from(demarcheDocumentTable)
+      .where(
+        and(
+          eq(demarcheDocumentTable.demarcheId, demarcheId),
+          inArray(demarcheDocumentTable.documentId, retiredIds)
+        )
+      );
+    return new Set(rows.map(({ documentId }) => documentId));
   }
 
   /**
    * Le catalogue brut, toutes collectivités confondues, condition
-   * d'assujettissement comprise. Réservé aux appelants qui doivent voir une
+   * d'assujettissement et pièces retirées comprises. Réservé aux appelants qui doivent voir une
    * pièce même quand elle ne concerne plus la collectivité — retirer un dépôt
    * devenu orphelin, par exemple.
    */
@@ -185,6 +225,7 @@ export class DemarcheDocumentsRepository {
           formatsAutorises: demarcheDocumentDefinitionTable.formatsAutorises,
           mimeTypesAutorises:
             demarcheDocumentDefinitionTable.mimeTypesAutorises,
+          isRetired: sql<boolean>`${demarcheDocumentDefinitionTable.retiredAt} is not null`,
         })
         .from(demarcheDocumentDefinitionTable)
         .where(eq(demarcheDocumentDefinitionTable.demarcheType, demarcheType))
@@ -245,7 +286,11 @@ export class DemarcheDocumentsRepository {
     if (!found) {
       return undefined;
     }
-    const { exprApplicable: _exprApplicable, ...definition } = found;
+    const {
+      exprApplicable: _exprApplicable,
+      isRetired: _isRetired,
+      ...definition
+    } = found;
     return definition;
   }
 

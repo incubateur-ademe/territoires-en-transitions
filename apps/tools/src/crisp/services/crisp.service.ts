@@ -7,6 +7,8 @@ import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
 import { BuildCrispCrmNoteService } from './build-crisp-crm-note.service';
 import { BuildCrispUserDataService } from './build-crisp-user-data.service';
+import { parseTetCommand } from './build-crisp-tet-request';
+import { CrispTetService } from './crisp-tet.service';
 import { CrispEventRequest } from '../models/crisp-event.request';
 import { CrispMessageReceivedEventDataDto } from '../models/crisp-message-received-event-data.dto';
 import { CrispOperatorIndo } from '../models/get-crisp-operator.response';
@@ -42,7 +44,8 @@ export class CrispService {
     private readonly configurationService: ConfigurationService,
     private readonly airtableService: AirtableService,
     private readonly buildCrispUserDataService: BuildCrispUserDataService,
-    private readonly buildCrispCrmNoteService: BuildCrispCrmNoteService
+    private readonly buildCrispCrmNoteService: BuildCrispCrmNoteService,
+    private readonly crispTetService: CrispTetService
   ) {
     this.crispClient = new Crisp();
     this.crispClient.authenticateTier(
@@ -129,6 +132,14 @@ export class CrispService {
       const feedbackMatch = content.match(this.FEEDBACK_REGEXP);
       if (this.CRM_REGEXP.test(content)) {
         return await this.handleCrmRequest(websiteId, sessionId);
+      } else if (parseTetCommand(content)) {
+        // Sans attendre : Crisp n'attend pas la réponse de l'assistant.
+        void this.crispTetService.handleTetRequest(
+          websiteId,
+          sessionId,
+          messageId
+        );
+        return { type: 'tet' };
       } else if (ticketMatch) {
         return await this.handleTicketCreationRequest(
           websiteId,
@@ -145,7 +156,7 @@ export class CrispService {
         );
       } else {
         this.logger.log(
-          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket, feedback or crm`
+          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket, feedback, crm or tet`
         );
 
         return {

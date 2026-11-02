@@ -25,7 +25,7 @@ import {
   TabsPanel,
   TabsTab,
 } from '@tet/ui/design-system/TabsNext/index';
-import { countBy, sumBy } from 'es-toolkit';
+import { countBy } from 'es-toolkit';
 import { JSX, ReactNode, Ref, useMemo } from 'react';
 import { match } from 'ts-pattern';
 import { LevierCardInfo } from '../levier-card-info';
@@ -461,10 +461,7 @@ export const PriorisationLeviersView = (): JSX.Element => {
         {isAnalysisSubtitleVisible && (
           <PageHeader.Subtitle>
             <PriorisationAnalyse
-              actionsCount={sumBy(
-                leviersQuery.leviers,
-                ({ ficheCount }) => ficheCount
-              )}
+              actionsCount={leviersQuery.analyzedFicheCount}
               plansCount={plansQuery.totalCount}
             />
           </PageHeader.Subtitle>

@@ -146,7 +146,9 @@ export const AddFile = (props: AddFileProps) => {
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
       <Field
-        title={appLabels.ajouterFichiers}
+        title={appLabels.ajouterFichiers({
+          plural: fileConstraints.maxFiles !== 1,
+        })}
         message={appLabels.aideUploadFichier({
           tailleMaxMo: Math.round(fileConstraints.maxSizeBytes / (1024 * 1024)),
           formats: fileConstraints.formats,

@@ -23,6 +23,7 @@ export type LeviersPriorisationQuery =
   | {
       status: 'ready';
       leviers: LevierPriorisation[];
+      analyzedFicheCount: number;
       access: PriorisationAccess;
     };
 
@@ -95,7 +96,12 @@ export const useLeviersPriorisation = (
   // Hors EPCI, les pertinences sont refusées : la carte « réservée aux EPCI »
   // prime sur l'erreur de chargement.
   if (trajectoireState === 'reservedToEpci') {
-    return { status: 'ready', leviers: [], access: 'reservedToEpci' };
+    return {
+      status: 'ready',
+      leviers: [],
+      analyzedFicheCount: 0,
+      access: 'reservedToEpci',
+    };
   }
 
   const hasLoadingError =
@@ -112,6 +118,7 @@ export const useLeviersPriorisation = (
   return {
     status: 'ready',
     leviers,
+    analyzedFicheCount: mobilisation.analyzedFicheCount,
     access: toPriorisationAccess({
       hasMobilisation: hasMobilisation(mobilisation),
       trajectoireState,

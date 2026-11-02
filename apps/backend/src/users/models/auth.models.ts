@@ -12,6 +12,12 @@ export interface AuthUser<Role extends AuthRole = AuthRole> {
   role: Role;
   isAnonymous: Role extends AuthRole.AUTHENTICATED ? false : true;
   jwtPayload: AuthJwtPayload<Role>;
+  /**
+   * Compte support lu comme en mode super admin, sans l'avoir activé. Posé
+   * uniquement par le code serveur (assistant appelé depuis Crisp), jamais
+   * tiré d'un jeton ; toujours accompagné de `jwtPayload.permissions`.
+   */
+  supportElevation?: 'crisp';
 }
 
 export type AnonymousUser = AuthUser<AuthRole.ANON>;

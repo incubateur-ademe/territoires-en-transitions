@@ -13,6 +13,7 @@ type Props = {
   openState: OpenState;
   chartDownloadSettings: ChartDownloadSettings;
   menuActions: IndicateurMenuAction[];
+  onDelete: () => void;
 };
 
 const IndicateurCardMenu = ({
@@ -20,6 +21,7 @@ const IndicateurCardMenu = ({
   openState,
   indicateurId,
   chartDownloadSettings,
+  onDelete,
 }: Props) => {
   const { mutate: updateIndicateur } = useUpdateIndicateur(indicateurId);
   const { mutate: exportIndicateurs, isPending } = useExportIndicateurs({
@@ -40,12 +42,17 @@ const IndicateurCardMenu = ({
       chartDownloadSettings.openModal();
       openState.setIsOpen(false);
     },
+    delete: () => {
+      onDelete();
+      openState.setIsOpen(false);
+    },
   };
 
   const actions: MenuAction[] = menuActions.map((action) => ({
     label: action.label,
     onClick: onClickActions[action.id],
     disabled: action.id === 'download-xlsx' && isPending,
+    variant: action.id === 'delete' ? 'destructive' : undefined,
   }));
 
   return (

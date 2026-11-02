@@ -4,6 +4,10 @@ import { AppModule } from '@tet/backend/app.module';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
+import {
+  GLOBAL_PREFIX,
+  GLOBAL_PREFIX_EXCLUDED_PATHS,
+} from '@tet/backend/utils/nest/global-prefix';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { createTRPCClient, TRPCClient } from '@trpc/client';
@@ -12,6 +16,9 @@ import { observable } from '@trpc/server/observable';
 type TestAppOptions = {
   mockProdEnv?: boolean;
   overrides?: (builder: TestingModuleBuilder) => void;
+  /** Applique le préfixe global de `main.ts` (absent par défaut : les specs
+   * appellent les routes sans `api/v1`). */
+  withGlobalPrefix?: boolean;
 };
 
 const buildTestApp = async (
@@ -38,6 +45,11 @@ const buildTestApp = async (
   const app = moduleRef.createNestApplication();
   const contextStoreService = app.get(ContextStoreService);
   app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
+  if (options?.withGlobalPrefix) {
+    app.setGlobalPrefix(GLOBAL_PREFIX, {
+      exclude: GLOBAL_PREFIX_EXCLUDED_PATHS,
+    });
+  }
 
   await app.init();
 

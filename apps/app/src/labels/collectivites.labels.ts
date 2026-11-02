@@ -54,6 +54,11 @@ const categorieActionShortLabels = {
 } satisfies Record<CategorieAction, string>;
 
 export const collectivitesLabels = {
+  /** Le nom de la collectivité s'insère entre les deux, en gras. */
+  visiteEspaceDe: 'Vous visitez l’espace de',
+  visiteLectureSeule: ', en lecture seule',
+  visiteBadge: 'Visite',
+
   fichierErreurTeleversement:
     "L'ajout de ce fichier n'a pas pu être terminé. Fermez cette fenêtre, puis rouvrez-la et sélectionnez le même fichier pour réessayer.",
 

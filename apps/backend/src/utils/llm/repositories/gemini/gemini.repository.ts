@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
+  Content,
   FinishReason,
+  FunctionCallingConfigMode,
   GenerateContentResponseUsageMetadata,
   GoogleGenAI,
+  Part,
   ThinkingConfig,
   ThinkingLevel,
 } from '@google/genai';
@@ -10,6 +13,12 @@ import ConfigurationService from '@tet/backend/utils/config/configuration.servic
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { createHash, randomUUID } from 'node:crypto';
 import { describeError } from '../describe-error';
+import {
+  LlmChatMessage,
+  LlmChatRequest,
+  LlmChatTurn,
+  LlmToolCall,
+} from '../../llm-chat';
 import { LlmError } from '../../llm.errors';
 import { LlmCapabilities, LlmThinkingLevel, LlmTier } from '../../llm-tier';
 import {
@@ -85,7 +94,11 @@ export class GeminiRepository extends LlmRepository {
     let chunkCount = 0;
 
     this.logger.log(
-      `Gemini call ${callId} (model ${this.model}, prompt ${request.prompt.length} chars #${toPromptFingerprint(request.prompt)}, instruction ${request.systemInstruction?.length ?? 0} chars, timeout ${timeoutMs} ms)`
+      `Gemini call ${callId} (model ${this.model}, prompt ${
+        request.prompt.length
+      } chars #${toPromptFingerprint(request.prompt)}, instruction ${
+        request.systemInstruction?.length ?? 0
+      } chars, timeout ${timeoutMs} ms)`
     );
 
     try {
@@ -139,11 +152,11 @@ export class GeminiRepository extends LlmRepository {
       const usage = toTokenUsage(usageMetadata);
       if (finishReason !== FinishReason.STOP) {
         this.logger.warn(
-          `Incomplete Gemini response ${callId} (model ${this.model}, finishReason ${
-            finishReason ?? 'unknown'
-          }, ${usage.candidatesTokens} tokens generated of ${
-            request.maxOutputTokens
-          } allowed)`
+          `Incomplete Gemini response ${callId} (model ${
+            this.model
+          }, finishReason ${finishReason ?? 'unknown'}, ${
+            usage.candidatesTokens
+          } tokens generated of ${request.maxOutputTokens} allowed)`
         );
       }
 
@@ -168,7 +181,117 @@ export class GeminiRepository extends LlmRepository {
       }
       const httpStatus = extractHttpStatus(error);
       this.logger.error(
-        `Gemini API error (model ${this.model}, status ${httpStatus}, call ${callId}, after ${elapsedMs} ms): ${describeError(
+        `Gemini API error (model ${
+          this.model
+        }, status ${httpStatus}, call ${callId}, after ${elapsedMs} ms): ${describeError(
+          error
+        )}`
+      );
+      if (httpStatus !== null && RATE_LIMITED_STATUSES.has(httpStatus)) {
+        return failure({ kind: 'rate_limited' });
+      }
+      return failure({ kind: 'api_error', httpStatus });
+    }
+  }
+
+  /**
+   * Tour de conversation avec outils. Le contenu rendu par le modèle est
+   * gardé tel quel (`providerData`) et rejoué sans modification : Gemini 3
+   * exige ses signatures de pensée au tour suivant.
+   */
+  async chat(request: LlmChatRequest): Promise<Result<LlmChatTurn, LlmError>> {
+    const client = this.getClient();
+    if (!client || !this.model) {
+      this.logger.error(
+        'Client ou GEMINI_MODEL manquant : appel Gemini impossible'
+      );
+      return failure({ kind: 'api_error', httpStatus: null });
+    }
+
+    const callId = randomUUID().slice(0, CALL_ID_LENGTH);
+    const startedAt = Date.now();
+    this.logger.log(
+      `Gemini chat ${callId} (model ${this.model}, ${request.messages.length} messages, ${request.tools.length} tools)`
+    );
+
+    try {
+      const response = await client.models.generateContent({
+        model: this.model,
+        contents: toGeminiContents(request.messages),
+        config: {
+          systemInstruction: request.systemInstruction,
+          temperature: request.temperature,
+          maxOutputTokens: request.maxOutputTokens,
+          ...(request.tools.length > 0
+            ? {
+                tools: [
+                  {
+                    functionDeclarations: request.tools.map((tool) => ({
+                      name: tool.name,
+                      description: tool.description,
+                      parametersJsonSchema: tool.parameters,
+                    })),
+                  },
+                ],
+                toolConfig: {
+                  functionCallingConfig: {
+                    mode:
+                      request.toolChoice === 'none'
+                        ? FunctionCallingConfigMode.NONE
+                        : FunctionCallingConfigMode.AUTO,
+                  },
+                },
+              }
+            : {}),
+          httpOptions: { timeout: CALL_TIMEOUT_MS },
+          abortSignal: request.signal,
+        },
+      });
+
+      const candidate = response.candidates?.[0];
+      const parts = candidate?.content?.parts ?? [];
+      const toolCalls = parts.flatMap((part, index): LlmToolCall[] =>
+        part.functionCall?.name
+          ? [
+              {
+                id:
+                  part.functionCall.id ?? `${part.functionCall.name}-${index}`,
+                name: part.functionCall.name,
+                arguments: part.functionCall.args ?? {},
+              },
+            ]
+          : []
+      );
+      const text = parts
+        .filter((part) => part.text && !part.thought)
+        .map((part) => part.text)
+        .join('');
+      const completed = candidate?.finishReason === FinishReason.STOP;
+      if (!completed) {
+        this.logger.warn(
+          `Incomplete Gemini chat ${callId} (finishReason ${
+            candidate?.finishReason ?? 'unknown'
+          }, after ${Date.now() - startedAt} ms)`
+        );
+      }
+      return success({
+        completed,
+        text: text.length > 0 ? text : undefined,
+        toolCalls,
+        usage: toTokenUsage(response.usageMetadata),
+        providerData: candidate?.content,
+      });
+    } catch (error) {
+      const elapsedMs = Date.now() - startedAt;
+      if (isAbortError(error)) {
+        this.logger.warn(`Gemini chat ${callId} aborted after ${elapsedMs} ms`);
+        return failure({ kind: 'api_error', httpStatus: null });
+      }
+      const httpStatus = extractHttpStatus(error);
+      this.logger.error(
+        `Gemini chat error (model ${
+          this.model
+        }, status ${httpStatus}, call ${callId}, after ${elapsedMs} ms): ${describeError(
           error
         )}`
       );
@@ -198,6 +321,61 @@ export class GeminiRepository extends LlmRepository {
     return this.client;
   }
 }
+
+/**
+ * Messages neutres vers `Content[]` : les réponses d'outils consécutives
+ * forment un seul message `user`, les tours du modèle sont rejoués tels quels
+ * quand le fournisseur les a fournis.
+ */
+export const toGeminiContents = (messages: LlmChatMessage[]): Content[] => {
+  const contents: Content[] = [];
+  for (const message of messages) {
+    if (message.role === 'user') {
+      contents.push({ role: 'user', parts: [{ text: message.text }] });
+      continue;
+    }
+    if (message.role === 'assistant') {
+      const replayed = message.providerData as Content | undefined;
+      contents.push(
+        replayed?.parts
+          ? { role: 'model', parts: replayed.parts }
+          : {
+              role: 'model',
+              parts: [
+                ...(message.text ? [{ text: message.text }] : []),
+                ...message.toolCalls.map(
+                  (call): Part => ({
+                    functionCall: {
+                      id: call.id,
+                      name: call.name,
+                      args: call.arguments,
+                    },
+                  })
+                ),
+              ],
+            }
+      );
+      continue;
+    }
+    const part: Part = {
+      functionResponse: {
+        id: message.toolCallId,
+        name: message.name,
+        response: { result: message.content },
+      },
+    };
+    const previous = contents.at(-1);
+    if (
+      previous?.role === 'user' &&
+      previous.parts?.every((p) => p.functionResponse)
+    ) {
+      previous.parts.push(part);
+    } else {
+      contents.push({ role: 'user', parts: [part] });
+    }
+  }
+  return contents;
+};
 
 const THINKING_LEVELS: Record<LlmThinkingLevel, ThinkingLevel> = {
   minimal: ThinkingLevel.MINIMAL,

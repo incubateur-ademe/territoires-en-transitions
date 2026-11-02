@@ -103,4 +103,211 @@ export const utilisateursAndEntityLabels = {
   associerCompteTagDescription:
     'Associer cette personne à un ou plusieurs tags afin de lui associer des actions, des indicateurs et des mesures.',
   associerCompteTagChamp: 'Associer cette personne à un ou plusieurs tags',
+
+  // Page de consentement OAuth (connecteurs MCP : Claude.ai, Claude Desktop…)
+  oauthConsentTitre: "Autoriser l'accès à Territoires en Transitions",
+  oauthConsentDescription: (clientName: string) =>
+    `${clientName} demande à interroger les données analytiques de Territoires en Transitions en votre nom.`,
+  oauthConsentReserveEquipe:
+    "Cet accès est réservé à l'équipe : il ne fonctionnera qu'avec un compte support.",
+  oauthConsentRedirection: (redirectUri: string) =>
+    `Après votre choix, vous serez redirigé vers ${redirectUri}.`,
+  oauthConsentCompte: (email: string) => `Connecté en tant que ${email}.`,
+  oauthConsentAutoriser: 'Autoriser',
+  oauthConsentRefuser: 'Refuser',
+  oauthConsentChargement: 'Vérification de la demande…',
+  oauthConsentAbsent:
+    "Aucune demande d'autorisation à afficher : revenez depuis l'application qui demande l'accès.",
+  oauthConsentErreur:
+    "La demande d'autorisation est invalide ou expirée. Relancez la connexion depuis l'application qui demande l'accès.",
+
+  // Assistant TeT (connecteur MCP pour Claude, commande /tet dans Crisp)
+  assistantTitre: 'Assistant TeT',
+  assistantBadgeSupport: 'Support',
+  assistantBadgeReserveSupport: 'Réservé au support',
+  assistantBadgeLectureSeule: 'Lecture seule',
+  assistantCarteResume:
+    "Interrogez la plateforme depuis Claude, en français : fiche d'un utilisateur ou d'une collectivité, suivi PCAET, scores des référentiels, statistiques d'usage. L'assistant applique vos droits et cite la source de chaque chiffre.",
+  assistantConfigurer: "Configurer l'assistant",
+  assistantVoirExemples: 'Voir les exemples de questions',
+  assistantEtatConnecte: 'Connecté',
+  assistantEtatNonConnecte: 'Non connecté',
+  assistantEtatNonConnecteDetail: '3 minutes pour brancher Claude',
+  assistantEtatAutoriseLe: (date: string) => `autorisé le ${date}`,
+  assistantEtatIndisponible:
+    "L'état de la connexion n'est pas disponible pour le moment.",
+  assistantIntro:
+    "Posez vos questions sur la plateforme en français. L'assistant lit les données, ne modifie rien, et cite la source de chaque chiffre. Il s'utilise de deux façons, indépendantes l'une de l'autre.",
+  assistantOngletPresentation: 'Présentation',
+  assistantOngletClaude: 'Claude',
+  assistantOngletCrisp: 'Crisp',
+  assistantUsageClaudeTitre: 'Dans Claude',
+  assistantUsageClaudeBadge: 'À configurer une fois',
+  assistantUsageClaudeDescription:
+    "Vous branchez le connecteur sur votre compte, puis vous discutez librement : fiches, PCAET, scores, statistiques, modèles de prompt. C'est l'usage le plus large, mais il demande trois étapes, décrites dans l'onglet Claude.",
+  assistantUsageClaudeLien: 'Brancher Claude',
+  assistantUsageCrispTitre: 'Dans Crisp',
+  assistantUsageCrispBadge: 'Rien à installer',
+  assistantUsageCrispDescription:
+    "Un utilisateur écrit au support parce que quelque chose bloque ? Tapez /tet en note privée dans la conversation : l'assistant cherche l'explication dans son compte et vous propose une piste de réponse. Rien à installer, et indépendant du connecteur Claude.",
+  assistantUsageCrispLien: 'Voir les commandes',
+  assistantConnexionTitre: 'Se connecter dans Claude',
+  assistantConnexionDescription:
+    'Ces trois étapes ne concernent que Claude. Les commandes Crisp fonctionnent sans elles.',
+  assistantEtapeAjouterTitre: 'Ajouter le connecteur dans Claude',
+  assistantEtapeAjouterDescription:
+    "Dans Claude (claude.ai ou l'application Claude) : Paramètres › Connecteurs › Ajouter un connecteur personnalisé, puis collez cette adresse.",
+  assistantAdresseConnecteur: 'Adresse du connecteur',
+  assistantCopierAdresse: "Copier l'adresse",
+  assistantEtapeAutoriserTitre: "Autoriser l'accès",
+  assistantEtapeAutoriserDescription:
+    "Connectez-vous avec votre compte Territoires en Transitions, puis autorisez l'accès. L'assistant applique exactement vos droits : il ne voit que ce que vous voyez dans la plateforme.",
+  assistantEtapeSuperAdminTitre:
+    "Pour une collectivité dont vous n'êtes pas membre",
+  assistantEtapeSuperAdminDescription:
+    "Activez le mode super-admin, puis reposez votre question à l'assistant. Sans cela, il répondra qu'il n'a pas accès à cette collectivité.",
+  assistantModeSuperAdmin: 'Mode super-admin',
+  assistantModeSuperAdminActif: 'Actif',
+  assistantModeSuperAdminInactif: 'Inactif',
+  assistantModeSuperAdminAide: 'Activez-le depuis la barre en bas de page.',
+  assistantExemplesTitre: 'Ce que vous pouvez lui demander',
+  assistantExemplesDescription:
+    "Posez vos questions en langage courant : l'assistant choisit lui-même la requête et vous la montre.",
+  assistantExemplesColonneDomaine: 'Domaine',
+  assistantExemplesColonneQuestions: 'Exemples de questions',
+  assistantExemples: [
+    {
+      domaine: 'Un utilisateur',
+      questions: [
+        '« Qui est jean.dupont@ville.fr et à quelles collectivités a-t-il accès ? »',
+        "« Qu'a-t-il fait sur la plateforme ces 15 derniers jours ? »",
+        '« Il ne voit pas le plan de sa collectivité, pourquoi ? »',
+      ],
+    },
+    {
+      domaine: 'Une collectivité',
+      questions: [
+        '« Fais-moi la fiche de la CC du Pays de Gex : type, population, COT. »',
+        "« Quels sont ses plans d'action et lesquels sont actifs ? »",
+      ],
+    },
+    {
+      domaine: 'Le suivi PCAET',
+      questions: [
+        "« Où en est le PCAET de Clisson Sèvre et Maine ? Qui le pilote, qu'est-ce qui manque pour le transmettre ? »",
+      ],
+    },
+    {
+      domaine: 'Les référentiels',
+      questions: [
+        '« Quel est le score CAE de Grenoble-Alpes Métropole et comment a-t-il évolué ? »',
+      ],
+    },
+    {
+      domaine: 'Les statistiques de la plateforme',
+      questions: [
+        '« Combien de collectivités sont activées, par catégorie ? »',
+        "« Combien de plans d'action sont actifs sur 52 semaines ? »",
+        '« Quelles sont les 3 collectivités les plus actives ce trimestre ? »',
+        "« Combien de collectivités sont labellisées, par niveau d'étoiles ? »",
+      ],
+    },
+    {
+      domaine: "L'usage du produit",
+      questions: [
+        '« Quelles pages ont été les plus consultées ces 30 derniers jours ? »',
+        "« Combien d'exports ont été faits ce mois-ci ? »",
+      ],
+    },
+    {
+      domaine: 'Formaliser un besoin',
+      questions: [
+        '« Esquisse : relancer les collectivités inactives depuis 6 mois »',
+      ],
+      note: "Avec le modèle « Formaliser une esquisse (Shape Up) », l'assistant chiffre le problème.",
+    },
+  ],
+  assistantModelesTitre: 'Modèles de prompt disponibles dans Claude',
+  assistantModelesDescription:
+    'Bouton « + » dans la zone de saisie, puis le connecteur Territoires en Transitions.',
+  assistantModeles: [
+    {
+      titre: 'Analyser des statistiques de la plateforme',
+      description:
+        "Cadre la question, choisit la bonne requête et commente l'évolution.",
+    },
+    {
+      titre: 'Répondre au support sur une conversation',
+      description:
+        "Part d'une conversation et remonte le contexte de l'utilisateur.",
+    },
+    {
+      titre: 'Formaliser une esquisse (Shape Up)',
+      description: "Le problème est chiffré avant d'être cadré.",
+    },
+  ],
+  assistantCrispTitre: 'Depuis Crisp',
+  assistantCrispDescription:
+    'Quand un utilisateur écrit au support parce que quelque chose bloque, /tet vous aide à comprendre pourquoi et à lui répondre.',
+  assistantCrispFonctionnement:
+    "L'assistant lit le compte de l'utilisateur de la conversation (droits, collectivités, plans, suivi PCAET, activité récente) et ses derniers messages, puis propose une explication et une piste de réponse. Inutile de lui dire de qui il s'agit.",
+  assistantCrispExemplesTitre: 'Par exemple :',
+  assistantCrispExemples: [
+    "/tet pourquoi n'arrive-t-il pas à transmettre son PCAET ?",
+    '/tet pourquoi ne voit-il pas le plan de sa collectivité ?',
+    '/tet que lui répondre ?',
+  ],
+  assistantCrispPrerequis:
+    "Il suffit d'un compte Territoires en Transitions support sous la même adresse e-mail que votre compte Crisp. Ni le mode super-admin ni le connecteur Claude ne sont nécessaires.",
+  assistantCrispNotePrivee: 'En note privée sur une conversation :',
+  assistantCrispCommandes: [
+    {
+      commande: '/tet',
+      description: 'résume la conversation.',
+    },
+    {
+      commande: '/tet <question>',
+      description: 'pose une question précise sur le problème rencontré.',
+    },
+  ],
+  assistantCrispReponse:
+    "La réponse arrive en note privée, visible du support seulement, rédigée avec Albert, le modèle de l'État. Relisez-la avant de répondre à l'utilisateur.",
+  assistantASavoirTitre: 'À savoir',
+  assistantASavoir: [
+    {
+      titre: 'Lecture seule',
+      description:
+        "L'assistant ne peut rien modifier, ni rattacher un utilisateur, ni changer un droit.",
+    },
+    {
+      titre: 'Fraîcheur des données',
+      description:
+        "Les statistiques datent de la veille. La fiche d'un utilisateur, d'une collectivité ou d'un PCAET est à jour.",
+    },
+    {
+      titre: 'Chaque chiffre est sourcé',
+      description:
+        "Il vient d'une requête que l'assistant cite : en cas de doute, demandez-lui la requête.",
+    },
+    {
+      titre: 'Périmètre des statistiques',
+      description:
+        'Les utilisateurs internes et les collectivités de test en sont exclus.',
+    },
+  ],
+  assistantDroitsTitre: "Vos droits s'appliquent",
+  assistantDroitsDescription:
+    "L'assistant interroge la plateforme en votre nom. Il ne voit ni plus ni moins que vous, et le mode super-admin agit sur lui comme sur l'interface.",
+
+  /** Administration */
+  administration: 'Administration',
+  administrationSousTitre: 'Outils internes réservés aux super admins',
+  administrationAffichageOutils: 'Affichage des outils',
+  administrationOuvrirOutil: "Ouvrir l'outil",
+  administrationImporterPlanDescription:
+    "Importer le plan d'action d'une collectivité depuis un fichier Excel",
+  administrationAjouterCollectiviteDescription:
+    'Créer une collectivité absente de TeT',
+  administrationBanniereDescription:
+    'Afficher un message à tous les utilisateurs de TeT',
 };

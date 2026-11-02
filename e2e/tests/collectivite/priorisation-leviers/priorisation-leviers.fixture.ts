@@ -1,5 +1,9 @@
-import { addTestMobilisation } from '@tet/backend/collectivites/analysis/analysis.test-fixture';
+import {
+  addTestFicheAnalyses,
+  addTestMobilisation,
+} from '@tet/backend/collectivites/analysis/analysis.test-fixture';
 import { LevierMobilisation } from '@tet/backend/collectivites/analysis/mobilisation.repository';
+import { FicheAnalysis } from '@tet/backend/collectivites/analysis/models/fiche-analysis';
 import { databaseService } from 'tests/shared/database.service';
 import { testWithCollectivites } from '../collectivites.fixture';
 
@@ -24,6 +28,13 @@ class MobilisationsFactory {
     leviers: LevierMobilisation[];
   }): Promise<void> {
     await addTestMobilisation(databaseService, input);
+  }
+
+  async addFicheAnalyses(input: {
+    collectiviteId: number;
+    analyses: { ficheId: number; status: FicheAnalysis['status'] }[];
+  }): Promise<void> {
+    await addTestFicheAnalyses(databaseService, input);
   }
 }
 

@@ -171,10 +171,29 @@ export async function addTestBibliothequeFichier(
 }
 
 /**
- * Identifiant de la pièce globale du modèle de démarche PCAET : son dépôt couvre
- * toutes les sections attendues.
+ * Identifiant de la pièce globale du modèle de démarche PCAET. Retirée du
+ * catalogue : seuls les dossiers qui l'avaient déjà déposée la gardent.
  */
 export const PCAET_DOCUMENT_GLOBAL_ID = 'pcaet_document_global';
+
+/**
+ * Met une démarche dans la situation d'un dossier historique qui avait déposé le
+ * PCAET global avant son retrait du catalogue. Écrit directement en base : le
+ * dépôt n'est plus possible par l'API sur un dossier neuf.
+ */
+export async function addTestDocumentGlobalHistoriquePcaet(
+  db: DatabaseService,
+  { collectiviteId, demarcheId }: { collectiviteId: number; demarcheId: number }
+): Promise<void> {
+  const fichier = await addTestBibliothequeFichier(db, { collectiviteId });
+  await db.db.insert(demarcheDocumentTable).values({
+    collectiviteId,
+    demarcheId,
+    documentId: PCAET_DOCUMENT_GLOBAL_ID,
+    etape: 'amont',
+    fichierId: fichier.id,
+  });
+}
 
 /**
  * Rattache un plan au programme d'actions de la démarche — l'une des deux
@@ -203,7 +222,8 @@ export async function attachTestPlanToDemarchePcaet(
 
 /**
  * Couvre toutes les sections requises — l'autre condition du guard
- * `dossierComplet`. Le PCAET global déposé n'y suffit pas : plus aucune
+ * `dossierComplet`, sur le modèle d'un dossier historique qui avait déposé le
+ * PCAET global. Le PCAET global déposé n'y suffit pas : plus aucune
  * couverture n'est implicite, chaque pièce qu'il contient porte sa déclaration
  * d'inclusion — celles que le dépôt coche d'office comme celles qui attendent
  * la collectivité. Écrit directement en base : c'est un raccourci de mise en

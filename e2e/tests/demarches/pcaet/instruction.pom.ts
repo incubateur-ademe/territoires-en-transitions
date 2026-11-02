@@ -131,17 +131,19 @@ export class InstructionPom {
   async expectDossierEnElaboration({
     collectiviteInstruiteId,
     demarcheId,
-    casquette,
+    collectiviteNom,
   }: {
     collectiviteInstruiteId: number;
     demarcheId: number;
-    casquette: string;
+    collectiviteNom: string;
   }) {
     await expect(this.page).toHaveURL(
       `/collectivite/${collectiviteInstruiteId}/instruction/demarche/${demarcheId}`
     );
     await expect(this.dossier).toBeVisible();
-    await expect(this.banner).toContainText(casquette);
+    await expect(this.banner).toContainText(collectiviteNom);
+    // Rien n'est encore soumis à avis : le dossier se lit sans s'instruire.
+    await expect(this.banner).toContainText('en lecture seule');
     await expect(this.bannerBackToDossier).toBeHidden();
     await expect(this.enElaboration).toBeVisible();
     await expect(this.finaliser).toBeHidden();
@@ -149,26 +151,22 @@ export class InstructionPom {
 
   /**
    * La navigation reste celle de la collectivité visitée : l'agent doit pouvoir
-   * circuler dans ses plans et ses indicateurs. Seule la bannière signale d'où
-   * il vient.
+   * circuler dans ses plans et ses indicateurs. Seul le cadre de visite signale
+   * qu'il n'est pas chez lui.
    */
   async expectCollectiviteNavigation() {
     await expect(this.page.getByTestId('nav-pa')).toBeVisible();
   }
 
-  /**
-   * `casquette` et non le nom du service : la bannière dit à quel titre l'agent
-   * est là (« la DREAL »), le nom propre étant déjà lisible dans le sélecteur de
-   * contexte du header.
-   */
+  /** La barre du cadre de visite nomme la collectivité visitée. */
   async expectContexte({
     collectiviteInstruiteId,
     demandeAvisId,
-    casquette,
+    collectiviteNom,
   }: {
     collectiviteInstruiteId: number;
     demandeAvisId: number;
-    casquette: string;
+    collectiviteNom: string;
   }) {
     // L'URL porte la collectivité instruite, pas le service : c'est la bascule
     // de contexte elle-même.
@@ -176,7 +174,7 @@ export class InstructionPom {
       `/collectivite/${collectiviteInstruiteId}/instruction/${demandeAvisId}`
     );
     await expect(this.dossier).toBeVisible();
-    await expect(this.banner).toContainText(casquette);
+    await expect(this.banner).toContainText(collectiviteNom);
     // Sur le dossier lui-même, le raccourci vers le dossier n'a rien à proposer.
     await expect(this.bannerBackToDossier).toBeHidden();
   }

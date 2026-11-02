@@ -24,6 +24,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import {
+  addTestDocumentGlobalHistoriquePcaet,
   PCAET_DOCUMENT_GLOBAL_ID,
   addTestBibliothequeFichier,
   cloreTestInstructionPcaet,
@@ -63,6 +64,22 @@ describe('Documents d’une démarche PCAET', () => {
     return snapshot.definitions.map(({ id }) => id);
   };
 
+  /**
+   * Le PCAET global est retiré du catalogue : il ne se dépose plus que dans un
+   * dossier qui l'avait déjà déposé. On part de ce dossier historique, puis on
+   * redépose par l'API pour exercer le vrai chemin de dépôt.
+   */
+  const deposerGlobal = async (
+    caller: ReturnType<TrpcRouter['createCaller']>,
+    input: { collectiviteId: number; demarcheId: number; fichierId: number }
+  ) => {
+    await addTestDocumentGlobalHistoriquePcaet(db, input);
+    return caller.demarches.pcaet.documents.add({
+      ...input,
+      documentId: PCAET_DOCUMENT_GLOBAL_ID,
+    });
+  };
+
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
@@ -82,7 +99,7 @@ describe('Documents d’une démarche PCAET', () => {
     });
 
     // Ni assujettie aux plans annexes, ni en renouvellement : le socle commun.
-    expect(snapshot.definitions).toHaveLength(11);
+    expect(snapshot.definitions).toHaveLength(10);
     expect(snapshot.documents).toEqual([]);
     expect(snapshot.documentsAdditional).toEqual([]);
     // Le dossier PCAET est réglementaire : PDF uniquement, et la collectivité
@@ -94,15 +111,12 @@ describe('Documents d’une démarche PCAET', () => {
       mimeTypesAutorises: ['application/pdf'],
     });
 
-    // Une seule liste : le PCAET global y est une pièce comme les autres, à son
-    // rang, et rien ne le distingue plus dans le modèle que son ordre.
+    // Le PCAET global est retiré du catalogue : un dossier neuf ne demande que
+    // les pièces détaillées.
     const sections = snapshot.definitions;
-    expect(sections).toHaveLength(11);
-    expect(sections[0].id).toBe(PCAET_DOCUMENT_GLOBAL_ID);
     // Les sections sont triées par ordre d'affichage : la chronologie de la
     // démarche, de la délibération d'engagement à celle d'adoption.
     expect(sections.map((section) => section.id)).toEqual([
-      PCAET_DOCUMENT_GLOBAL_ID,
       'pcaet_deliberation_engagement',
       'pcaet_diagnostic',
       'pcaet_strategie_territoriale',
@@ -125,30 +139,6 @@ describe('Documents d’une démarche PCAET', () => {
       'pcaet_synthese_consultation_publique',
       'pcaet_deliberation_adoption',
     ]);
-    // Le PCAET global couvre d'office les sections qu'il regroupe toujours, ni
-    // les optionnelles ni les pièces aval.
-    expect(
-      sections
-        .filter((section) =>
-          section.substituts.includes(PCAET_DOCUMENT_GLOBAL_ID)
-        )
-        .map((section) => section.id)
-    ).toEqual([
-      'pcaet_diagnostic',
-      'pcaet_strategie_territoriale',
-      'pcaet_dispositif_suivi_evaluation',
-    ]);
-    // L'EES et la délibération d'arrêt ne s'y retrouvent pas systématiquement :
-    // leur inclusion se déclare, comme celle du dispositif de suivi dans le
-    // programme d'actions. Le programme d'actions aussi, pour pousser à le
-    // déposer à part : c'est lui qu'on importe dans la plateforme.
-    expect(
-      sections
-        .filter((section) =>
-          section.substitutsDeclarables.includes(PCAET_DOCUMENT_GLOBAL_ID)
-        )
-        .map((section) => section.id)
-    ).toEqual(['pcaet_plan_actions', 'pcaet_ees', 'pcaet_deliberation_arret']);
     expect(
       sections
         .filter((section) => !section.requis || section.etape === 'aval')
@@ -183,16 +173,59 @@ describe('Documents d’une démarche PCAET', () => {
     expect(isDemarcheDossierDocumentsComplet(snapshot)).toBe(false);
   });
 
+  test('Un dossier qui a déposé le PCAET global le garde, avec ce qu’il regroupe', async () => {
+    const { caller, collectivite, demarche } = await createDemarche(db, router);
+    const ids = { collectiviteId: collectivite.id, demarcheId: demarche.id };
+    const fichier = await addTestBibliothequeFichier(db, {
+      collectiviteId: collectivite.id,
+    });
+
+    // Retiré du catalogue, il n'est plus proposé ni déposable sur un dossier neuf.
+    expect(
+      await listDocumentIds(caller, ids.collectiviteId, ids.demarcheId)
+    ).not.toContain(PCAET_DOCUMENT_GLOBAL_ID);
+    await expect(
+      caller.demarches.pcaet.documents.add({
+        ...ids,
+        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        fichierId: fichier.id,
+      })
+    ).rejects.toThrow();
+
+    // Déposé avant son retrait, il reste à son rang, avec les pièces qu'il
+    // regroupe d'office et celles dont l'inclusion se déclare.
+    await addTestDocumentGlobalHistoriquePcaet(db, ids);
+    const snapshot = await caller.demarches.pcaet.documents.list(ids);
+    expect(snapshot.definitions[0].id).toBe(PCAET_DOCUMENT_GLOBAL_ID);
+    expect(
+      snapshot.definitions
+        .filter(({ substituts }) =>
+          substituts.includes(PCAET_DOCUMENT_GLOBAL_ID)
+        )
+        .map(({ id }) => id)
+    ).toEqual([
+      'pcaet_diagnostic',
+      'pcaet_strategie_territoriale',
+      'pcaet_dispositif_suivi_evaluation',
+    ]);
+    expect(
+      snapshot.definitions
+        .filter(({ substitutsDeclarables }) =>
+          substitutsDeclarables.includes(PCAET_DOCUMENT_GLOBAL_ID)
+        )
+        .map(({ id }) => id)
+    ).toEqual(['pcaet_plan_actions', 'pcaet_ees', 'pcaet_deliberation_arret']);
+  });
+
   test('Le PCAET global couvre les sections qu’il regroupe d’office', async () => {
     const { caller, collectivite, demarche } = await createDemarche(db, router);
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
 
-    const depose = await caller.demarches.pcaet.documents.add({
+    const depose = await deposerGlobal(caller, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
     expect(depose.documentId).toBe(PCAET_DOCUMENT_GLOBAL_ID);
@@ -256,10 +289,9 @@ describe('Documents d’une démarche PCAET', () => {
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
-    await caller.demarches.pcaet.documents.add({
+    await deposerGlobal(caller, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
 
@@ -394,10 +426,9 @@ describe('Documents d’une démarche PCAET', () => {
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
-    await caller.demarches.pcaet.documents.add({
+    await deposerGlobal(caller, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
     const apresDepot = await caller.demarches.pcaet.documents.list({
@@ -481,9 +512,8 @@ describe('Documents d’une démarche PCAET', () => {
     const ids = { collectiviteId: collectivite.id, demarcheId: demarche.id };
 
     // Le PCAET global déposé ne couvre plus ces deux pièces d'office.
-    await caller.demarches.pcaet.documents.add({
+    await deposerGlobal(caller, {
       ...ids,
-      documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
     const avecGlobal = await caller.demarches.pcaet.documents.list(ids);
@@ -583,10 +613,9 @@ describe('Documents d’une démarche PCAET', () => {
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: collectivite.id,
     });
-    await caller.demarches.pcaet.documents.add({
+    await deposerGlobal(caller, {
       collectiviteId: collectivite.id,
       demarcheId: demarche.id,
-      documentId: PCAET_DOCUMENT_GLOBAL_ID,
       fichierId: fichier.id,
     });
     // Le global ne regroupe d'office ni le programme d'actions, ni l'EES, ni la
@@ -1185,7 +1214,7 @@ describe('Documents d’une démarche PCAET', () => {
       lecteurCaller.demarches.pcaet.documents.add({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        documentId: 'pcaet_diagnostic',
         fichierId: fichier.id,
       })
     ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
@@ -1328,10 +1357,9 @@ describe('Documents d’une démarche PCAET', () => {
       });
 
       // Même le PCAET global déposé ne le couvre pas, et la case n'existe pas.
-      await caller.demarches.pcaet.documents.add({
+      await deposerGlobal(caller, {
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
         fichierId: fichier.id,
       });
 
@@ -1383,9 +1411,8 @@ describe('Documents d’une démarche PCAET', () => {
         demarcheId: demarche.id,
       });
 
-      expect(snapshot.definitions).toHaveLength(13);
+      expect(snapshot.definitions).toHaveLength(12);
       expect(snapshot.definitions.map(({ id }) => id)).toEqual([
-        PCAET_DOCUMENT_GLOBAL_ID,
         'pcaet_deliberation_engagement',
         'pcaet_diagnostic',
         'pcaet_strategie_territoriale',

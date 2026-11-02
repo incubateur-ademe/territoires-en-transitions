@@ -22,6 +22,7 @@ import {
   ActionsCell,
   CollectiviteCell,
   DateCell,
+  DateSaisineCell,
   EcheanceCell,
   PiloteCell,
   RegionCell,
@@ -118,7 +119,7 @@ const RegionHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-40"
+      className="w-32"
       title={appLabels.instructionListeColonneRegion}
       filter={
         <RegionHeaderFilter
@@ -157,7 +158,7 @@ const StatutHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-56"
+      className="w-52"
       title={appLabels.instructionListeColonneStatut}
       sortFn={() => trierPar('statut')}
       sortDirection={sort === 'statut' ? direction : null}
@@ -178,10 +179,36 @@ const DateLancementHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-36"
+      className="w-32"
       title={appLabels.instructionListeColonneDateLancement}
       sortFn={() => trierPar('dateLancement')}
       sortDirection={sort === 'dateLancement' ? direction : null}
+    />
+  );
+};
+
+const DateSaisineHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-32"
+      title={appLabels.instructionListeColonneDateSaisine}
+      sortFn={() => trierPar('dateSaisine')}
+      sortDirection={sort === 'dateSaisine' ? direction : null}
+    />
+  );
+};
+
+const DateAdoptionHeader = () => {
+  const { sort, direction, trierPar } = usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-36"
+      title={appLabels.instructionListeColonneDateAdoption}
+      sortFn={() => trierPar('dateAdoption')}
+      sortDirection={sort === 'dateAdoption' ? direction : null}
     />
   );
 };
@@ -191,7 +218,7 @@ const EcheanceHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-40"
+      className="w-36"
       title={appLabels.instructionListeColonneEcheance}
       sortFn={() => trierPar('echeance')}
       sortDirection={sort === 'echeance' ? direction : null}
@@ -213,8 +240,9 @@ const columnHelper = createColumnHelper<typeof features, Dossier>();
  *
  * En contrepartie, ces deux colonnes prennent ce qui reste : sur un écran
  * étroit, plus rien, et leurs en-têtes débordent sur les voisines. D'où la
- * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`
- * — au-dessus, il tient, et l'en-tête reste collant à la page.
+ * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`,
+ * ou de `2xl` avec la colonne Région — au-dessus, il tient, et l'en-tête reste
+ * collant à la page.
  */
 const columns = [
   columnHelper.display({
@@ -274,6 +302,16 @@ const columns = [
   }),
 
   columnHelper.display({
+    id: 'dateSaisine',
+    header: DateSaisineHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <DateSaisineCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
     id: 'echeance',
     header: EcheanceHeader,
     cell: ({ row }) => (
@@ -284,10 +322,20 @@ const columns = [
   }),
 
   columnHelper.display({
+    id: 'dateAdoption',
+    header: DateAdoptionHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <DateCell date={row.original.adoptedAt} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
     id: 'actions',
     header: () => (
       <TableHeaderCell
-        className="w-52"
+        className="w-44"
         title={appLabels.instructionListeColonneActions}
         align="right"
       />
@@ -389,7 +437,9 @@ export const DossiersInstructionTable = ({
     <PilotageContext.Provider value={pilotage}>
       {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
       <div
-        className="max-xl:overflow-x-auto"
+        className={
+          afficherRegion ? 'max-2xl:overflow-x-auto' : 'max-xl:overflow-x-auto'
+        }
         tabIndex={0}
         role="region"
         aria-label={appLabels.instructionListeTitre}
@@ -397,7 +447,7 @@ export const DossiersInstructionTable = ({
         <ReactTable
           table={table}
           ariaLabel={appLabels.instructionListeTitre}
-          className={afficherRegion ? 'min-w-[72rem]' : 'min-w-[64rem]'}
+          className={afficherRegion ? 'min-w-[83rem]' : 'min-w-[77rem]'}
           isEmpty={dossiers.length === 0}
           emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
           getRowProps={(row) => ({

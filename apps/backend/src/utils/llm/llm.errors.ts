@@ -8,7 +8,7 @@ export type LlmError =
   | { kind: 'truncated' }
   | { kind: 'invalid_json'; rawTextLength: number; schemaIssue?: SchemaIssue }
   | { kind: 'api_error'; httpStatus: number | null }
-  | { kind: 'unsupported'; feature: 'images' | 'ocr' };
+  | { kind: 'unsupported'; feature: 'images' | 'ocr' | 'tools' };
 
 /** L'erreur en une ligne, pour un avertissement : la règle violée pour un JSON invalide. */
 export const describeLlmError = (error: LlmError): string => {

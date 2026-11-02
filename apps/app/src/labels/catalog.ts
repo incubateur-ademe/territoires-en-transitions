@@ -156,7 +156,10 @@ export const appLabels = {
   titreLienObligatoire: 'Titre (obligatoire)',
   lienObligatoire: 'Lien (obligatoire)',
 
-  ajouterFichiers: 'Ajouter un ou plusieurs fichier(s)',
+  ajouterFichiers: plural({
+    one: 'Ajouter un fichier',
+    other: 'Ajouter un ou plusieurs fichiers',
+  }),
   aideUploadFichier: ({
     tailleMaxMo,
     formats,

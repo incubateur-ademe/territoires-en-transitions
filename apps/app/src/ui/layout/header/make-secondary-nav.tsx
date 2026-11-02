@@ -1,6 +1,14 @@
-import { getRechercheViewUrl, profilPath } from '@/app/app/paths';
+import {
+  adminPath,
+  getRechercheViewUrl,
+  profilAssistantPath,
+  profilPath,
+} from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import { canUseAssistant } from '@/app/users/assistant/can-use-assistant';
+import { listAllowedBackofficeTools } from '@/app/utils/backoffice/backoffice-tools';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { Badge } from '@tet/ui';
 import {
   hasRole,
   PlatformRole,
@@ -53,6 +61,33 @@ export const makeSecondaryNav = ({
           href: profilPath,
           children: appLabels.preferences,
         },
+        ...(canUseAssistant(user)
+          ? [
+              {
+                dataTest: 'user-assistant',
+                href: profilAssistantPath,
+                children: (
+                  <span className="flex items-center gap-2">
+                    {appLabels.assistantTitre}
+                    <Badge
+                      size="xs"
+                      variant="info"
+                      title={appLabels.assistantBadgeSupport}
+                    />
+                  </span>
+                ),
+              },
+            ]
+          : []),
+        ...(listAllowedBackofficeTools(user).length > 0
+          ? [
+              {
+                dataTest: 'user-admin',
+                href: adminPath,
+                children: appLabels.administration,
+              },
+            ]
+          : []),
         {
           dataTest: 'user-logout',
           children: appLabels.deconnexion,

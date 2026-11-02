@@ -118,3 +118,6 @@ __pycache__/
 # membres. Des adresses nominatives d'agents n'ont rien à faire dans un dépôt
 # public : le fichier reçu du métier se dépose ici et n'est jamais versionné.
 /contacts/
+
+# Rapports des évaluations réelles (make assistant-eval)
+/reports/

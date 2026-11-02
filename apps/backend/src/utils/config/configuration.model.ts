@@ -238,6 +238,39 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé TeT de l'API Communs (Authorization: Bearer), pour les secteurs réglementaires des fiches"
       ),
+    // Serveur MCP (utils/mcp) : optionnelle, le backend démarre sans elle ;
+    // les outils analytiques répondent alors ANALYTICS_DATABASE_NOT_CONFIGURED.
+    ANALYTICS_DATABASE_URL: z
+      .string()
+      .optional()
+      .describe(
+        'URL Postgres de la base analytique (rôle en lecture seule) interrogée par le serveur MCP'
+      ),
+    // Agent du backend (utils/assistant) : boucle d'appels d'outils MCP.
+    ASSISTANT_MAX_MODEL_CALLS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(8)
+      .describe('Appels au modèle par question avant de forcer une réponse'),
+    ASSISTANT_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(120_000)
+      .describe("Durée maximale de réponse de l'assistant, en millisecondes"),
+    ASSISTANT_TIER: z
+      .enum(['strong', 'light'])
+      .prefault('strong')
+      .describe(
+        "Palier de modèle de l'assistant (strong : ALBERT_MODEL ou GEMINI_MODEL)"
+      ),
+    BACKEND_PUBLIC_URL: z
+      .url()
+      .optional()
+      .describe(
+        "URL publique de l'API (ex : https://api.territoiresentransitions.fr) pour les métadonnées OAuth du serveur MCP ; à défaut, l'en-tête Host de la requête"
+      ),
     // Requis sauf si QUEUE_REDIS_URL est fourni (cf. superRefine) : le Redis
     // managé Scaleway exige utilisateur, mot de passe et TLS, que seule l'URL
     // porte.
@@ -279,6 +312,24 @@ export const backendConfigurationSchema = z
       .describe('The throttle limit'),
     POSTHOG_KEY: z.string().optional().describe('The PostHog key'),
     POSTHOG_HOST: z.string().optional().describe('The PostHog host'),
+    // Lecture de l'API PostHog (requêtes HogQL du serveur MCP), distincte de
+    // POSTHOG_KEY qui ne sert qu'à envoyer des événements.
+    POSTHOG_PERSONAL_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        'Clé API personnelle PostHog (lecture) pour les requêtes HogQL du serveur MCP'
+      ),
+    POSTHOG_PROJECT_ID: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(12975)
+      .describe('Identifiant du projet PostHog interrogé par le serveur MCP'),
+    POSTHOG_API_HOST: z
+      .url()
+      .prefault('https://eu.posthog.com')
+      .describe("Hôte de l'API PostHog interrogée par le serveur MCP"),
     SMTP_URL: z
       .string()
       .optional()

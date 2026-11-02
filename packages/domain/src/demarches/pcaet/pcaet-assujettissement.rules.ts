@@ -7,6 +7,10 @@ import {
   CollectivitePcaetObligationEnum,
   type CollectivitePcaetObligation,
 } from './collectivite-pcaet-obligation.enum.schema';
+import {
+  DemarchePcaetObligationEnum,
+  type DemarchePcaetObligation,
+} from './demarche-pcaet-obligation.enum.schema';
 
 /**
  * Seuil légal de l'obligation PCAET : au-delà, un EPCI à fiscalité propre doit
@@ -71,3 +75,19 @@ export const getObligationAssujettissement = ({
     ? CollectivitePcaetObligationEnum.OBLIGATOIRE
     : CollectivitePcaetObligationEnum.NON_OBLIGE;
 };
+
+/**
+ * L'obligation d'une démarche à sa création, quand la collectivité ne la
+ * déclare pas : un non obligé qui commence un dépôt devient volontaire.
+ *
+ * Obligatoire dans le doute — population inconnue, ou structure qui porte le
+ * PCAET par transfert de compétence (PETR, syndicat de SCoT) : la collectivité
+ * corrige le champ dans l'en-tête de la démarche.
+ */
+export const getObligationInitiale = (
+  entree: AssujettissementEntree
+): DemarchePcaetObligation =>
+  getObligationAssujettissement(entree) ===
+  CollectivitePcaetObligationEnum.NON_OBLIGE
+    ? DemarchePcaetObligationEnum.VOLONTAIRE
+    : DemarchePcaetObligationEnum.OBLIGATOIRE;

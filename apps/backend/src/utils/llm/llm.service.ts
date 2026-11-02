@@ -4,6 +4,12 @@ import { z, ZodType } from 'zod';
 import { ConcurrencyLimiter } from '../concurrency-limiter';
 import { sleep } from '../sleep.utils';
 import { estimateRequestTokens } from './estimate-request-tokens';
+import {
+  chatPromptChars,
+  estimateChatTokens,
+  LlmChatRequest,
+  LlmChatTurn,
+} from './llm-chat';
 import { describeLlmError, LlmError } from './llm.errors';
 import { currentLlmCallRecorder } from './llm-call-recorder';
 import { LlmCallEvent, LlmObserver } from './llm-observer';
@@ -65,6 +71,8 @@ export type StructuredCompletion<Schema extends ZodType> = {
   tokens: TokenUsage;
 };
 
+export type ChatArgs = Omit<LlmChatRequest, 'tier'> & { tier?: LlmTier };
+
 export type TextCompletion = {
   text: string;
   tokens: TokenUsage;
@@ -102,6 +110,10 @@ export class LlmService {
     return this.llmRepository.maxInputTokensFor(tier);
   }
 
+  modelFor(tier: LlmTier): string | undefined {
+    return this.llmRepository.modelFor(tier);
+  }
+
   async generateStructured<Schema extends ZodType>(
     args: GenerateStructuredArgs<Schema>
   ): Promise<Result<StructuredCompletion<Schema>, LlmError>> {
@@ -119,6 +131,31 @@ export class LlmService {
   }
 
   /**
+   * Un tour de conversation avec appels d'outils, avec les mêmes quotas,
+   * reprises et observations que les autres appels. Une réponse tronquée est
+   * un échec `truncated`.
+   */
+  async chat(args: ChatArgs): Promise<Result<LlmChatTurn, LlmError>> {
+    const request: LlmChatRequest = {
+      ...args,
+      tier: args.tier ?? 'strong',
+      temperature: args.temperature ?? DEFAULT_TEMPERATURE,
+      maxOutputTokens: args.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
+    };
+    return this.callModel(
+      {
+        tier: request.tier,
+        promptChars: chatPromptChars(request),
+        estimatedTokens: estimateChatTokens(request),
+        signal: request.signal,
+      },
+      () => this.llmRepository.chat(request),
+      (turn) =>
+        turn.completed ? success(turn) : failure({ kind: 'truncated' })
+    );
+  }
+
+  /**
    * `toResult` valide la réponse dans la tentative : une réponse tronquée ou
    * hors schéma est un appel en échec pour l'observateur, même quand l'API a
    * répondu.
@@ -127,10 +164,35 @@ export class LlmService {
     request: LlmCompletionRequest,
     toResult: (completion: LlmRawCompletion) => Result<T, LlmError>
   ): Promise<Result<T, LlmError>> {
-    const promptChars =
-      request.prompt.length + (request.systemInstruction?.length ?? 0);
-    const estimatedTokens = estimateRequestTokens(request);
-    const model = this.llmRepository.modelFor(request.tier) ?? request.tier;
+    return this.callModel(
+      {
+        tier: request.tier,
+        promptChars:
+          request.prompt.length + (request.systemInstruction?.length ?? 0),
+        estimatedTokens: estimateRequestTokens(request),
+        signal: request.signal,
+      },
+      () => this.llmRepository.complete(request),
+      toResult
+    );
+  }
+
+  private callModel<Raw extends { usage: TokenUsage }, T>(
+    {
+      tier,
+      promptChars,
+      estimatedTokens,
+      signal,
+    }: {
+      tier: LlmTier;
+      promptChars: number;
+      estimatedTokens: number;
+      signal?: AbortSignal;
+    },
+    call: () => Promise<Result<Raw, LlmError>>,
+    toResult: (raw: Raw) => Result<T, LlmError>
+  ): Promise<Result<T, LlmError>> {
+    const model = this.llmRepository.modelFor(tier) ?? tier;
     const recorder = currentLlmCallRecorder();
     return this.callWithRetry(
       (attempt) =>
@@ -140,10 +202,10 @@ export class LlmService {
           const settle = await this.rateLimiters.acquire(
             model,
             estimatedTokens,
-            request.signal
+            signal
           );
           const startedAt = Date.now();
-          const completion = await this.llmRepository.complete(request);
+          const completion = await call();
           settle(
             completion.success ? completion.data.usage.promptTokens : undefined
           );
@@ -154,7 +216,7 @@ export class LlmService {
             ? toResult(completion.data)
             : completion;
           const event: LlmCallEvent = {
-            tier: request.tier,
+            tier,
             model,
             attempt,
             durationMs: Date.now() - startedAt,
@@ -166,7 +228,7 @@ export class LlmService {
           recorder?.calls.push(event);
           return result;
         }),
-      request.signal
+      signal
     );
   }
 

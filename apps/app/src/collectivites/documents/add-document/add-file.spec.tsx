@@ -2,6 +2,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { PreuveType, toDocumentHash } from '@tet/domain/collectivites';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DEFAULT_FILE_CONSTRAINTS, FileConstraints } from '../upload/constants';
 import { AddFile } from './add-file';
 import { FileUploadItem } from './file-item';
 import { UploadStatusCode } from './types';
@@ -80,9 +81,20 @@ const duplicatedFichier: FileUploadItem = {
   },
 };
 
-const renderAddFile = ({ preuveType }: { preuveType?: PreuveType } = {}) =>
+const renderAddFile = ({
+  preuveType,
+  fileConstraints,
+}: {
+  preuveType?: PreuveType;
+  fileConstraints?: FileConstraints;
+} = {}) =>
   render(
-    <AddFile preuveType={preuveType} onAddFile={onAddFile} onClose={onClose} />
+    <AddFile
+      preuveType={preuveType}
+      fileConstraints={fileConstraints}
+      onAddFile={onAddFile}
+      onClose={onClose}
+    />
   );
 
 const checkConfidentiel = () =>
@@ -198,5 +210,26 @@ describe('AddFile', () => {
 
     expect(onAddFile).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('annonce un seul fichier quand la pièce n’en accepte qu’un', () => {
+    renderAddFile({
+      fileConstraints: { ...DEFAULT_FILE_CONSTRAINTS, maxFiles: 1 },
+    });
+
+    expect(
+      screen.getByText(appLabels.ajouterFichiers({ plural: false }))
+    ).toBeTruthy();
+    expect(
+      screen.queryByText(appLabels.ajouterFichiers({ plural: true }))
+    ).toBeNull();
+  });
+
+  it('annonce plusieurs fichiers quand la sélection n’est pas limitée', () => {
+    renderAddFile();
+
+    expect(
+      screen.getByText(appLabels.ajouterFichiers({ plural: true }))
+    ).toBeTruthy();
   });
 });

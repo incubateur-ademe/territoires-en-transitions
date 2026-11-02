@@ -20,6 +20,7 @@ const levierSchema = z.object({
 
 export const mobilisationSchema = z.object({
   collectiviteId: z.number().int().positive(),
+  analyzedFicheCount: ficheCountSchema,
   leviers: z.array(levierSchema),
 });
 

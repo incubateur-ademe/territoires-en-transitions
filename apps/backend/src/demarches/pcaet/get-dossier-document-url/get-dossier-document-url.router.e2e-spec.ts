@@ -13,12 +13,10 @@ import { DocumentStorageService } from '@tet/backend/utils/supabase/document-sto
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
-import {
-  addTestBibliothequeFichier,
-  PCAET_DOCUMENT_GLOBAL_ID,
-} from '../demarches-pcaet.test-fixture';
+import { addTestBibliothequeFichier } from '../demarches-pcaet.test-fixture';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
 
+const DIAGNOSTIC_ID = 'pcaet_diagnostic';
 describe('getDossierDocumentUrl', () => {
   let app: INestApplication;
   let db: DatabaseService;
@@ -67,7 +65,7 @@ describe('getDossierDocumentUrl', () => {
 
     const fichier = await addTestBibliothequeFichier(db, {
       collectiviteId: deposante.collectivite.id,
-      filename: 'dossier-complet.pdf',
+      filename: 'diagnostic.pdf',
     });
     filename = fichier.filename;
 
@@ -76,7 +74,7 @@ describe('getDossierDocumentUrl', () => {
       .demarches.pcaet.documents.add({
         collectiviteId: deposante.collectivite.id,
         demarcheId,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        documentId: DIAGNOSTIC_ID,
         fichierId: fichier.id,
       });
 
@@ -126,7 +124,7 @@ describe('getDossierDocumentUrl', () => {
       .createCaller({ user: camille })
       .demarches.pcaet.getDossierDocumentUrl({
         demandeAvisId,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        documentId: DIAGNOSTIC_ID,
       });
 
     expect(result.filename).toBe(filename);
@@ -157,7 +155,7 @@ describe('getDossierDocumentUrl', () => {
       .createCaller({ user: camille })
       .demarches.pcaet.getDossierDocumentUrl({
         demarcheId,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
+        documentId: DIAGNOSTIC_ID,
       });
 
     expect(result.filename).toBe(filename);
@@ -169,17 +167,19 @@ describe('getDossierDocumentUrl', () => {
         .createCaller({ user: camille })
         .demarches.pcaet.getDossierDocumentUrl({
           demarcheId,
-          documentId: PCAET_DOCUMENT_GLOBAL_ID,
+          documentId: DIAGNOSTIC_ID,
         })
     ).rejects.toThrow();
   });
 
   it("refuse l'agente de la collectivité déposante", async () => {
     await expect(
-      router.createCaller({ user: marie }).demarches.pcaet.getDossierDocumentUrl({
-        demandeAvisId,
-        documentId: PCAET_DOCUMENT_GLOBAL_ID,
-      })
+      router
+        .createCaller({ user: marie })
+        .demarches.pcaet.getDossierDocumentUrl({
+          demandeAvisId,
+          documentId: DIAGNOSTIC_ID,
+        })
     ).rejects.toThrow();
   });
 
@@ -189,7 +189,7 @@ describe('getDossierDocumentUrl', () => {
         .createCaller({ user: camille })
         .demarches.pcaet.getDossierDocumentUrl({
           demandeAvisId,
-          documentId: 'pcaet_diagnostic',
+          documentId: 'pcaet_strategie_territoriale',
         })
     ).rejects.toThrow("Le document n'a pas été trouvé dans ce dossier");
   });

@@ -1,9 +1,8 @@
 'use client';
 
-import {
-  useActionAvailabilityState,
-} from '@/app/referentiels/actions/action-context';
+import { useActionAvailabilityState } from '@/app/referentiels/actions/action-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ErrorPage } from '@/app/utils/error/error.page';
 import { ActionHiddenView } from './_components/action-hidden.view';
 import { ActionNotFoundView } from './_components/action-not-found.view';
 import { ActionView } from './_components/action.view';
@@ -14,6 +13,10 @@ export default function Page() {
 
   if (availability.status === 'pending') {
     return <SpinnerLoader className="m-auto" />;
+  }
+
+  if (availability.status === 'error') {
+    return <ErrorPage error={availability.error} retry={availability.retry} />;
   }
 
   if (availability.status === 'hidden') {

@@ -3,6 +3,8 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { CloreInstructionRouter } from './clore-instruction/clore-instruction.router';
 import { CreateAndLinkPlanRouter } from './create-and-link-plan/create-and-link-plan.router';
 import { CreateDemarchePcaetRouter } from './create-demarche-pcaet/create-demarche-pcaet.router';
+import { AddDateSaisineRouter } from './add-date-saisine/add-date-saisine.router';
+import { ListDatesSaisineRouter } from './list-dates-saisine/list-dates-saisine.router';
 import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
 import { PcaetDiagnosticRouter } from './diagnostic/pcaet-diagnostic.router';
@@ -48,6 +50,8 @@ export class PcaetRouter {
     private readonly upsertAvisRouter: UpsertAvisRouter,
     private readonly validerAvisRouter: ValiderAvisRouter,
     private readonly deleteAvisRouter: DeleteAvisRouter,
+    private readonly addDateSaisineRouter: AddDateSaisineRouter,
+    private readonly listDatesSaisineRouter: ListDatesSaisineRouter,
     private readonly getDemarchePcaetRouter: GetDemarchePcaetRouter,
     private readonly createDemarchePcaetRouter: CreateDemarchePcaetRouter,
     private readonly getDepotContextRouter: GetDepotContextRouter,
@@ -79,6 +83,8 @@ export class PcaetRouter {
     this.upsertAvisRouter.router,
     this.validerAvisRouter.router,
     this.deleteAvisRouter.router,
+    this.addDateSaisineRouter.router,
+    this.listDatesSaisineRouter.router,
     this.getDemarchePcaetRouter.router,
     this.createDemarchePcaetRouter.router,
     this.getDepotContextRouter.router,

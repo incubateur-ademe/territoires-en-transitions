@@ -153,6 +153,12 @@ export const trierDossiers = (
     if (sort === 'dateLancement') {
       return parDate(a, b, (ligne) => ligne.launchedAt, sens);
     }
+    if (sort === 'dateSaisine') {
+      return parDate(a, b, (ligne) => ligne.dateSaisine, sens);
+    }
+    if (sort === 'dateAdoption') {
+      return parDate(a, b, (ligne) => ligne.adoptedAt, sens);
+    }
     return parEcheance(a, b, sens);
   });
 };

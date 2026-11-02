@@ -1,6 +1,6 @@
 ## GitHub workflows et actions
 
-Le dossier `.github` contient la définition des worflows utilisés en CI.
+Le dossier `.github` contient les workflows de CI, de déploiement et de maintenance.
 
 Nous utilisons les [workflows réutilisables](https://docs.github.com/en/actions/concepts/workflows-and-actions/reusable-workflows#about-reusable-workflows) et les [actions personnalisées](https://docs.github.com/en/actions/concepts/workflows-and-actions/custom-actions) afin de modulariser les différents workflows et de minimiser la duplication de code.
 
@@ -9,6 +9,26 @@ Ces workflows peuvent aussi être utilisés en local par le biais de [`act`](htt
 La variable d'environnement `ACT` est ajoutée automatiquement ce qui permet de distinguer dans les workflows les exécutions locales de celles en CI.
 
 Par exemple les images docker construites par les actions ne sont pas tirées ou poussées vers le registre de containers lorsque les workflows associés sont utilisés avec `act`.
+
+### Organisation de la CI
+
+| Workflow                                                          | Rôle                                                                                     |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [main-ci.yml](./workflows/main-ci.yml)                            | Point d'entrée pour les pushes sur `main` et les lancements manuels.                     |
+| [pull-request-ci.yml](./workflows/pull-request-ci.yml)            | Point d'entrée pour les PR hors brouillon.                                               |
+| [\_ci.yml](./workflows/_ci.yml)                                   | Calcul des scopes et orchestration des validations.                                      |
+| [\_ci-validate.yml](./workflows/_ci-validate.yml)                 | Lint, build, typecheck et tests unitaires des projets affectés.                          |
+| [\_ci-storybook.yml](./workflows/_ci-storybook.yml)               | Tests des Storybooks sélectionnés et publication UI sur Chromatic.                       |
+| [\_ci-test-db.yml](./workflows/_ci-test-db.yml)                   | Tests des migrations, de la compatibilité des backups et des contraintes en base locale. |
+| [\_ci-test-backend-api.yml](./workflows/_ci-test-backend-api.yml) | Tests d'intégration backend et API avec Supabase et Redis.                               |
+| [\_ci-test-e2e.yml](./workflows/_ci-test-e2e.yml)                 | Shards Playwright et fusion des rapports E2E.                                            |
+| [\_prepare-test-db.yml](./workflows/_prepare-test-db.yml)         | Préparation de la base de test, partagée entre `_ci.yml` et `dev.yml`.                   |
+
+Les workflows internes portent le préfixe `_` et exposent seulement `workflow_call`. Les points d'entrée appellent `_ci.yml`, qui délègue chaque famille de validations à un sous-workflow `_ci-*.yml`. Ces sous-workflows séparent les responsabilités même lorsqu'ils n'ont qu'un seul appelant.
+
+Chaque job publie son propre résultat dans les checks de la PR. Le retry automatique reste limité à une tentative pour les tests backend/API et les shards E2E, uniquement si tous les jobs en échec font partie de ces tests. Un échec de publication Storybook ou de fusion des rapports ne déclenche pas de retry automatique.
+
+Les caches passent par les actions locales dédiées [à `node_modules`](./actions/cache/node-modules/action.yml) et [au build Next.js](./actions/cache/next-app-build/action.yml), qui utilisent `actions/cache`. Le login Docker passe par l'[action locale `docker-login`](./actions/docker-login/action.yml), qui utilise `docker/login-action`. `keep-alive-streamlit.yml` utilise une [action dédiée](./actions/keep-alive-streamlit/action.yml) pour installer les dépendances et réveiller les applications Streamlit.
 
 ### Cache des images de déploiement
 
@@ -69,7 +89,7 @@ act -j prepare-dev-db
 - Voir un graphe d'un workflow :
 
 ```sh
-act -W .github/workflows/ci.yml -g
+act -W .github/workflows/main-ci.yml -g
 ```
 
 ## Troubleshooting

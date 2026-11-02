@@ -60,6 +60,11 @@ export const authVerifyPath = '/auth/verify';
 export const authProconnectPath = '/auth/proconnect';
 
 export const profilPath = '/profil';
+export const profilAssistantPath = `${profilPath}/assistant`;
+export const profilAssistantExemplesUrl = `${profilAssistantPath}#exemples`;
+export const profilAssistantClaudeUrl = `${profilAssistantPath}?onglet=claude`;
+
+export const adminPath = '/admin';
 
 export const recherchesPath = '/recherches';
 const recherchesParam = 'recherchesId';

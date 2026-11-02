@@ -1,4 +1,5 @@
-import { Result } from '@tet/backend/utils/result.type';
+import { failure, Result } from '@tet/backend/utils/result.type';
+import { LlmChatRequest, LlmChatTurn } from '../llm-chat';
 import { LlmError } from '../llm.errors';
 import {
   LlmCapabilities,
@@ -59,4 +60,9 @@ export abstract class LlmRepository {
   abstract complete(
     request: LlmCompletionRequest
   ): Promise<Result<LlmRawCompletion, LlmError>>;
+
+  /** Un tour de conversation avec appels d'outils ; non pris en charge par défaut. */
+  async chat(_request: LlmChatRequest): Promise<Result<LlmChatTurn, LlmError>> {
+    return failure({ kind: 'unsupported', feature: 'tools' });
+  }
 }

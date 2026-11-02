@@ -22,6 +22,8 @@ const SORT_VALUES = [
   'priorite',
   'echeance',
   'dateLancement',
+  'dateSaisine',
+  'dateAdoption',
   'collectivite',
   'pilote',
   'statut',

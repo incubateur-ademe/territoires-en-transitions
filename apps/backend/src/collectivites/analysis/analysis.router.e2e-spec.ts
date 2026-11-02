@@ -19,7 +19,9 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { sortBy } from 'es-toolkit';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
+import { addTestFicheAnalyses } from './analysis.test-fixture';
 import { collectiviteVoletGesTable } from './models/collectivite-volet-ges.table';
+import { ficheActionAnalysisTable } from './models/fiche-action-analysis.table';
 
 describe('AnalysisRouter', { timeout: 30_000 }, () => {
   let app: INestApplication;
@@ -101,7 +103,11 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         enjeu: 'ges',
       });
 
-      expect(mobilisation).toEqual({ collectiviteId, leviers: [] });
+      expect(mobilisation).toEqual({
+        collectiviteId,
+        analyzedFicheCount: 0,
+        leviers: [],
+      });
     });
 
     it('compte une seule fois au levier une fiche rattachée à deux de ses catégories, sans rendre son identifiant', async () => {
@@ -123,6 +129,7 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
         })),
       }).toStrictEqual({
         collectiviteId,
+        analyzedFicheCount: 0,
         leviers: [
           {
             levierId,
@@ -133,6 +140,44 @@ describe('AnalysisRouter', { timeout: 30_000 }, () => {
             ],
           },
         ],
+      });
+    });
+
+    it('compte les fiches analysées de la collectivité, sans les classifications en échec', async () => {
+      const createFiche = async (titre: string): Promise<number> => {
+        const { ficheId: createdFicheId, ficheCleanup } =
+          await createFicheAndCleanupFunction({
+            caller: router.createCaller({ user: editionUser }),
+            ficheInput: { collectiviteId, titre },
+          });
+        onTestFinished(ficheCleanup);
+        return createdFicheId;
+      };
+      const staleFicheId = await createFiche('Organiser le covoiturage');
+      const failedFicheId = await createFiche('Archiver les dossiers');
+      await addTestFicheAnalyses(db, {
+        collectiviteId,
+        analyses: [
+          { ficheId, status: 'processed' },
+          { ficheId: staleFicheId, status: 'stale' },
+          { ficheId: failedFicheId, status: 'failed' },
+        ],
+      });
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionAnalysisTable)
+          .where(eq(ficheActionAnalysisTable.collectiviteId, collectiviteId));
+      });
+
+      const mobilisation = await callerFor(editionUser).getMobilisation({
+        collectiviteId,
+        enjeu: 'ges',
+      });
+
+      expect(mobilisation).toEqual({
+        collectiviteId,
+        analyzedFicheCount: 2,
+        leviers: [],
       });
     });
 
