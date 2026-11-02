@@ -644,29 +644,11 @@ export const demarchesLabels = {
   erreurAccesMessage: 'Vous n’avez pas accès à cette page.',
   retourTableauDeBord: 'Retour au tableau de bord',
   retourPagePrecedente: 'Revenir à la page précédente',
-  instructionBonjour: ({ prenom }: { prenom: string }) => `Bonjour ${prenom} !`,
-  /**
-   * Sans variante de lecture : les compteurs ne s'affichent qu'aux services qui
-   * déposent un avis — la DREAL et le conseil régional. La DDT, la DR ADEME et
-   * les services nationaux reçoivent le dossier en lecture : ils n'ont pas de
-   * charge à mesurer, et un délai moyen d'instruction qu'ils ne mènent pas ne
-   * dirait rien d’eux.
-   */
-  instructionStatATraiter: 'PCAET à instruire',
-  instructionStatInstruits: plural({
-    one: 'PCAET instruit',
-    other: 'PCAET instruits',
-  }),
-  instructionStatDelaiMoyen: plural({
-    one: 'jour de délais moyens d’instruction',
-    other: 'jours de délais moyens d’instruction',
-  }),
-  /** Au-delà du plafond, la valeur affichée n'est plus la moyenne exacte. */
-  instructionStatDelaiMoyenPlafonne: ({ plafond }: { plafond: number }) =>
-    `jours ou plus de délais moyens d’instruction (plafond à ${plafond})`,
-  instructionStatDelaiMoyenAucun: 'Aucune instruction encore achevée',
   /** Titre de la liste et nom accessible du tableau, pour toutes les familles. */
   instructionListeTitre: 'PCAET suivis par mon organisme',
+  /** Charge du service qui rend un avis, à côté du titre de la liste. */
+  instructionListeSoumisPourAvis: ({ count }: { count: number }) =>
+    `${count} soumis pour avis`,
   /**
    * Sans territoire : l'écran sert les cinq familles d'instructeurs, dont les
    * périmètres diffèrent — région pour une DREAL ou un conseil régional,
