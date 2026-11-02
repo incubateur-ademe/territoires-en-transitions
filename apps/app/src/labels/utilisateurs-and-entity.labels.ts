@@ -285,16 +285,6 @@ export const utilisateursAndEntityLabels = {
         'Les utilisateurs internes et les collectivités de test en sont exclus.',
     },
   ],
-  assistantConnexionEtatTitre: 'État de la connexion',
-  assistantConnexionEtatDescription:
-    'Concerne le connecteur Claude uniquement.',
-  assistantAutoriseLe: 'Autorisé le',
-  assistantClient: 'Client',
-  assistantRevoquer: "Révoquer l'accès",
-  assistantRevoquerConfirmation: (client: string) =>
-    `${client} ne pourra plus interroger la plateforme en votre nom. Pour le rebrancher, reconnectez-vous depuis Claude.`,
-  assistantRevoquerSucces: 'Accès révoqué',
-  assistantRevoquerErreur: "La révocation de l'accès a échoué",
   assistantDroitsTitre: "Vos droits s'appliquent",
   assistantDroitsDescription:
     "L'assistant interroge la plateforme en votre nom. Il ne voit ni plus ni moins que vous, et le mode super-admin agit sur lui comme sur l'interface.",
