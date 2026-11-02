@@ -85,7 +85,8 @@ export const demarchesLabels = {
   instructionListeAucunResultat: 'Aucun dossier ne correspond à ces filtres',
 
   instructionListeColonneRegion: 'Région',
-  instructionListeColonneDateLancement: 'Date de lancement (délibération)',
+  /** Court : la colonne est étroite, et le service ne saisit pas cette date. */
+  instructionListeColonneDateLancement: 'Date de lancement',
 
   /**
    * Un dépôt qui n'a pas été transmis n'a pas d'échéance : elle se calcule à la
