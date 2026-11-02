@@ -47,7 +47,7 @@ describe('buildIndicateurValeursTableSections', () => {
     ]);
     expect(
       sections[0].tables[0].rows.every(
-        (row) => row.optionalYears !== 'all' && row.optionalYears.includes(2050)
+        (row) => row.optionalYears !== 'all' && row.optionalYears.length === 0
       )
     ).toBe(true);
   });

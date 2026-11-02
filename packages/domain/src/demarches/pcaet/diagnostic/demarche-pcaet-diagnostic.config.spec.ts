@@ -24,7 +24,7 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
     ).toBe('Émissions GES');
   });
 
-  it('exige chaque ligne de la séquestration carbone, hors objectif 2050', () => {
+  it('exige chaque ligne de la séquestration carbone', () => {
     const sequestration = PCAET_DIAGNOSTIC_INDICATEURS.find(
       (topic) => topic.code === 'sequestration'
     );
@@ -34,9 +34,9 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
       sequestration &&
         listPcaetDiagnosticIndicateurRequiredLeaves(sequestration)
     ).toEqual([
-      { indicateurDefinitionId: 'cae_63.b', optionalYears: [2050] },
-      { indicateurDefinitionId: 'cae_63.c', optionalYears: [2050] },
-      { indicateurDefinitionId: 'cae_63.e', optionalYears: [2050] },
+      { indicateurDefinitionId: 'cae_63.b', optionalYears: [] },
+      { indicateurDefinitionId: 'cae_63.c', optionalYears: [] },
+      { indicateurDefinitionId: 'cae_63.e', optionalYears: [] },
     ]);
   });
 
