@@ -19,7 +19,7 @@ import { AnalysisRunRepository } from './analysis-run.repository';
 import { buildAnalysisRunPlan } from './build-analysis-run-plan.rules';
 import { calculateFicheFingerprint } from './calculate-fiche-fingerprint.rules';
 import { AnalyzeFichesError } from './analyze-fiches.errors';
-import { ANALYZED_COLLECTIVITE_IDS } from './analyzed-collectivite-ids';
+import { AnalyzedCollectivites } from './analyzed-collectivites';
 import { AnalyzeFichesInput } from './analyze-fiches.input';
 import { AnalyzeFichesOutput } from './analyze-fiches.output';
 import {
@@ -129,10 +129,6 @@ const toExplicitCollectiviteIds = (
   return scope.collectivites;
 };
 
-const isRunOnEveryCollectivite = (
-  scope: AnalyzeFichesInput['scope']
-): boolean => scope.kind === 'collectivites' && scope.collectivites === 'all';
-
 const toFicheToClassify = ({
   ficheId,
   titre,
@@ -153,7 +149,8 @@ export class AnalyzeFichesService {
     private readonly analysisRuns: AnalysisRunRepository,
     private readonly enjeuRepositories: EnjeuRepositories,
     private readonly classifyBatchService: ClassifyBatchService,
-    private readonly scoreMobilisationService: ScoreMobilisationService
+    private readonly scoreMobilisationService: ScoreMobilisationService,
+    private readonly analyzedCollectivites: AnalyzedCollectivites
   ) {}
 
   async analyzeFiches({
@@ -278,11 +275,9 @@ export class AnalyzeFichesService {
       ...mobilisationsResult.data,
     ]).toSorted((a, b) => a - b);
     return success(
-      isRunOnEveryCollectivite(scope)
-        ? collectiviteIds.filter((collectiviteId) =>
-            ANALYZED_COLLECTIVITE_IDS.has(collectiviteId)
-          )
-        : collectiviteIds
+      collectiviteIds.filter((collectiviteId) =>
+        this.analyzedCollectivites.has(collectiviteId)
+      )
     );
   }
 

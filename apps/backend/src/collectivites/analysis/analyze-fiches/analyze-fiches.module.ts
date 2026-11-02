@@ -14,6 +14,8 @@ import { CollectiviteIdentityRepository } from '../score-mobilisation/collectivi
 import { ScoreMobilisationService } from '../score-mobilisation/score-mobilisation.service';
 import { AnalysisRunRepository } from './analysis-run.repository';
 import { AnalyzeFichesService } from './analyze-fiches.service';
+import { ANALYZED_COLLECTIVITE_IDS } from './analyzed-collectivite-ids';
+import { AnalyzedCollectivites } from './analyzed-collectivites';
 import { FicheAnalysisStatusRepository } from './fiche-analysis-status.repository';
 import { FicheCandidateRepository } from './fiche-candidate.repository';
 import { FicheTextRepository } from './fiche-text.repository';
@@ -37,6 +39,7 @@ import { FicheTextRepository } from './fiche-text.repository';
       useClass: FicheActionAnalysisRepository,
     },
     { provide: AnalysisRunRepository, useClass: AnalysisRunTableRepository },
+    { provide: AnalyzedCollectivites, useValue: ANALYZED_COLLECTIVITE_IDS },
   ],
 })
 export class AnalyzeFichesModule {}

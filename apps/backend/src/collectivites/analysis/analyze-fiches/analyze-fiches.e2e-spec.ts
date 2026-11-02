@@ -49,6 +49,7 @@ import {
   runAnalyzeFichesScript,
 } from './analyze-fiches.script';
 import { AnalyzeFichesService } from './analyze-fiches.service';
+import { AnalyzedCollectivites } from './analyzed-collectivites';
 import { FicheCandidateError } from './analyze-fiches.errors';
 import { FicheCandidateRepository } from './fiche-candidate.repository';
 
@@ -328,6 +329,11 @@ beforeAll(async () => {
       factory: (database: DatabaseService) =>
         new CollectivitesOfDailyRunsMobilisationRepository(database),
       inject: [DatabaseService],
+    })
+    .overrideProvider(AnalyzedCollectivites)
+    .useValue({
+      has: (collectiviteId: number) =>
+        collectiviteIdsOfDailyRuns.includes(collectiviteId),
     })
     .compile();
   analysisContext = await analysisModule.init();
