@@ -80,9 +80,9 @@ Le design system « Territoires en Transitions »
 par `nx run ui:export-design-system` ; son README est `brand-book.md`, où
 l'export insère les règles de `rules.md`.
 
-- **CI** : `.github/workflows/design-system-export.yml` teste et exporte à
-  chaque merge sur `main` qui touche `packages/ui` ou `packages/design-tokens`,
-  sans rien publier (aucun secret Claude dans le repo).
+- **CI** : la CI des PR vérifie les types de `@tet/ui` et teste les fonctions
+  d'export ; l'export complet ne tourne que dans `/ds-publish`, sans aucun
+  secret Claude dans le repo.
 - **Publication** : `/ds-publish` compare la version publiée (`meta.ref` de
   `tokens.json`) à `main` et ne republie que les fichiers changés, depuis un
   worktree séparé. Quand le lancer : `doc/design-flow.md`.

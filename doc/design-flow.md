@@ -14,8 +14,8 @@ contient que ce qui le concerne (voir « Où vit quoi »).
 | 4. Propositions         | design, devs du design system                       | PR sur `packages/ui`                                  | les composants retenus dans `@tet/ui`, puis dans Claude Design (étape 0)                     |
 | 5. Implémentation       | dev                                                 | Claude Code dans `apps/app`                           | la PR d'implémentation, à partir de `handoff.md`                                             |
 
-`/proto-import` lance lui-même `/ds-publish`. Après un merge sur `@tet/ui`, le
-résumé du workflow `design-system-export` rappelle de le lancer.
+`/proto-import` lance lui-même `/ds-publish`. Après un merge sur `@tet/ui`,
+lancer `/ds-publish` à la main pour mettre Claude Design à jour sans attendre.
 
 ## Les règles
 

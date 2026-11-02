@@ -1,6 +1,6 @@
 ---
 name: ds-publish
-description: Republish the "Territoires en Transitions" design system (the claude.ai artifact of type Design System used by Claude Design) from packages/ui on main, file by file, only when @tet/ui or @tet/design-tokens changed since the published version. Use at the start of /proto-import, after a change to @tet/ui is merged (the design-system-export workflow asks for it), when someone says the design system in Claude Design is out of date, or when someone types /ds-publish.
+description: Republish the "Territoires en Transitions" design system (the claude.ai artifact of type Design System used by Claude Design) from packages/ui on main, file by file, only when @tet/ui or @tet/design-tokens changed since the published version. Use at the start of /proto-import, after a change to @tet/ui is merged, when someone says the design system in Claude Design is out of date, or when someone types /ds-publish.
 argument-hint: '[--force]'
 ---
 
@@ -10,9 +10,9 @@ The design system that designers use in Claude Design is the artifact
 **https://claude.ai/artifact/7Qrax7LhLsLyA5FxZX8PuP** (type « Design System »,
 namespace `TeT`, `"editing": "code"`: it is only ever written from the code).
 This skill republishes it from `main`. `/proto-import` runs it first, so a
-prototyping session always starts from an up-to-date design system. The workflow
-`.github/workflows/design-system-export.yml` checks on every merge that the
-export still builds; publishing needs a Claude session, so it happens here.
+prototyping session always starts from an up-to-date design system. The export
+runs here, not in CI: publishing needs a Claude session, and the pull request
+CI already typechecks `@tet/ui` and tests the export functions.
 
 Talk to the person in French. Read the artifact's own type instructions (the
 `read` of the artifact returns them) before writing to it: they win on the
