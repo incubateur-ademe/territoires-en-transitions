@@ -113,6 +113,7 @@ export const usages: Readonly<Record<string, string>> = {
   'radius-lg':
     'Rayon le plus utilisé : cartes, boutons, badges (`rounded-lg`).',
   'radius-xl': 'Grandes cartes et conteneurs (`rounded-xl`).',
+  'radius-3xl': 'Grands blocs de page (`rounded-t-3xl`).',
   'radius-full': 'Pastilles, avatars, puces (`rounded-full`).',
 
   // Ombres

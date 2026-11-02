@@ -54,17 +54,6 @@ const SVG_LOGOS = [
 ] as const;
 const PNG_LOGOS = ['electrifions-la-france.png'] as const;
 
-/** Clés de `rounded-*` employées par `@tet/ui` et l'app. */
-const RADIUS_KEYS = [
-  'none',
-  'sm',
-  'DEFAULT',
-  'md',
-  'lg',
-  'xl',
-  'full',
-] as const;
-
 const git = (...gitArgs: string[]): string =>
   execFileSync('git', gitArgs, { cwd: repoRoot, encoding: 'utf8' }).trim();
 
@@ -73,16 +62,6 @@ const writeProjectFile = async (path: string, content: string | Buffer) => {
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, content);
 };
-
-const pick = (
-  record: Readonly<Record<string, unknown>>,
-  keys: ReadonlyArray<string>
-): Readonly<Record<string, string>> =>
-  Object.fromEntries(
-    keys.flatMap((key) =>
-      typeof record[key] === 'string' ? [[key, record[key] as string]] : []
-    )
-  );
 
 const server = await createServer({
   root: uiRoot,
@@ -155,7 +134,7 @@ try {
     paragraphes: globalCss.paragraphes,
     spacingScale,
     tailwindSpacing: theme.spacing as Readonly<Record<string, string>>,
-    radius: pick(theme.borderRadius ?? {}, RADIUS_KEYS),
+    radius: designTokens.borderRadius,
     boxShadow: designTokens.boxShadow,
     maxWidth: designTokens.maxWidth,
     zIndex: designTokens.zIndex,
