@@ -6,8 +6,8 @@
 | ----------------------- | --------------------- | ------------------------------ | -------------------------------------------------------------------------------------- |
 | 0. Design system à jour | devs du design system | Claude Code, `/ds-publish`     | le design system « Territoires en Transitions » de Claude Design aligné sur `main`     |
 | 1. Maquette             | designer              | Claude Design (canevas)        | une maquette composée avec les composants `@tet/ui`, besoins non couverts notés        |
-| 2. Passation            | designer, PO          | Claude Code, `/design-handoff` | une issue GitHub : périmètre, correspondance avec l'app, données, questions techniques |
-| 3. Implémentation       | dev                   | Claude Code dans `apps/app`    | la PR d'implémentation, à partir de l'issue                                            |
+| 2. Passation            | designer, PO          | Claude Code, `/design-handoff` | une issue GitHub en langage produit : la page, l'écran concerné, propositions, données |
+| 3. Implémentation       | dev                   | Claude Code dans `apps/app`    | la correspondance avec le code existant, puis la PR, à partir de l'issue               |
 
 Lancer `/ds-publish` après chaque merge qui touche `@tet/ui` ou
 `@tet/design-tokens`, et avant de commencer une maquette. Une proposition
