@@ -10,9 +10,9 @@ export default function PrototypesPage() {
         <PageHeader.Title>Prototypes</PageHeader.Title>
       </PageHeader>
       <Stack as="ul" gap="md">
-        {prototypes.map(({ slug, titre, description }) => (
+        {prototypes.map(({ slug, title, description }) => (
           <li key={slug}>
-            <Card href={`/${slug}`} header={titre}>
+            <Card href={`/${slug}`} header={title}>
               <span className="text-sm font-normal text-grey-8">
                 {description}
               </span>

@@ -1,6 +1,6 @@
 export type Prototype = Readonly<{
   slug: string;
-  titre: string;
+  title: string;
   description: string;
 }>;
 

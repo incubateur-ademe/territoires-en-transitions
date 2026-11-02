@@ -133,7 +133,7 @@ a prototype.
   Inside a proposal, plain Tailwind with preset tokens is allowed (the lint only
   warns there); still prefer composing `@tet/ui` components.
 
-- An entry in `apps/prototypes/src/prototypes.ts` (`slug`, `titre`,
+- An entry in `apps/prototypes/src/prototypes.ts` (`slug`, `title`,
   `description`).
 
 Never edit `packages/ui` to make the design fit (R6), never copy a design
@@ -178,7 +178,7 @@ hands it to the developers; the artifact is what the designer shows around.
    on it (base = that branch), and say so in its description.
 2. Commit and push. The first time, open a **draft** pull request (GitHub
    tools of the session; with the `gh` CLI: `gh pr create --draft`), titled
-   `feat(prototypes): <slug> — <titre>`, following the repository's pull request template
+   `feat(prototypes): <slug> — <title>`, following the repository's pull request template
    when there is one. Its description holds:
    - the Claude Design canvas link and the artifact link;
    - the step 3 table (composants du design system, propositions, libertés
@@ -195,7 +195,7 @@ hands it to the developers; the artifact is what the designer shows around.
 1. Prepare the publishable copy from the build of step 5:
 
    ```bash
-   node apps/prototypes/scripts/prepare-artifact.mjs --route <slug> --out <scratchpad>/artifact-<slug> --title "<titre from src/prototypes.ts>"
+   node apps/prototypes/scripts/prepare-artifact.mjs --route <slug> --out <scratchpad>/artifact-<slug> --title "<title from src/prototypes.ts>"
    ```
 
    It renames `_next/` (paths starting with `_` are reserved), drops the
