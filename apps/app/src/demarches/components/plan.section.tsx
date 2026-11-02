@@ -233,12 +233,14 @@ const ProgrammeActionsPlanRow = ({
 };
 
 /**
- * Ajout d'un plan au programme, à hauteur du titre de la section : c'est
- * l'action de l'écran, pas celle du tableau. Importer prime : le programme
- * existe déjà dans le document déposé. La création manuelle est rangée derrière
- * la flèche.
+ * Ajout d'un plan au programme. Importer prime : le programme existe déjà dans
+ * le document déposé. La création manuelle est rangée derrière la flèche.
+ *
+ * Le bouton change de place selon qu'il existe des plans à associer, les
+ * modales non : un import qui crée son plan ferait sinon disparaître, avec le
+ * bouton, la modale qui en suit la progression.
  */
-const CreatePlanAction = ({
+const useCreatePlanAction = ({
   planTypeId,
   isReadonly,
   onCreatePlan,
@@ -268,38 +270,42 @@ const CreatePlanAction = ({
     return () => setIsProgressDisplayed(false);
   }, [isImportPlanModalOpen, setIsProgressDisplayed]);
 
-  return (
+  const renderButton = (variant: 'primary' | 'outlined') => (
+    <SplitButton
+      size="sm"
+      variant={variant}
+      className="shrink-0"
+      icon={<Icon icon="import-line" />}
+      onClick={() =>
+        isAiPlanImportEnabled
+          ? setIsImportPlanModalOpen(true)
+          : setIsRequestPlanImportModalOpen(true)
+      }
+      disabled={isReadonly}
+      dataTest="demarches.plan.importer-plan-button"
+      menuDataTest="demarches.plan.creer-plan-menu"
+      menuActions={[
+        {
+          icon: 'add-line',
+          label: appLabels.demarcheProgrammeCreerPlan,
+          onClick: () => setIsCreatePlanModalOpen(true),
+          disabled: isReadonly,
+        },
+      ]}
+    >
+      {isImportOngoing ? (
+        <span role="status" className="inline-flex items-center gap-2">
+          {appLabels.importPlanIaEnCoursCourt}
+          <SpinnerLoader className="w-4 h-4" />
+        </span>
+      ) : (
+        appLabels.demarcheProgrammeImporterPlan
+      )}
+    </SplitButton>
+  );
+
+  const modals = (
     <>
-      <SplitButton
-        size="sm"
-        className="shrink-0"
-        icon={<Icon icon="import-line" />}
-        onClick={() =>
-          isAiPlanImportEnabled
-            ? setIsImportPlanModalOpen(true)
-            : setIsRequestPlanImportModalOpen(true)
-        }
-        disabled={isReadonly}
-        dataTest="demarches.plan.importer-plan-button"
-        menuDataTest="demarches.plan.creer-plan-menu"
-        menuActions={[
-          {
-            icon: 'add-line',
-            label: appLabels.demarcheProgrammeCreerPlan,
-            onClick: () => setIsCreatePlanModalOpen(true),
-            disabled: isReadonly,
-          },
-        ]}
-      >
-        {isImportOngoing ? (
-          <span role="status" className="inline-flex items-center gap-2">
-            {appLabels.importPlanIaEnCoursCourt}
-            <SpinnerLoader className="w-4 h-4" />
-          </span>
-        ) : (
-          appLabels.demarcheProgrammeImporterPlan
-        )}
-      </SplitButton>
       <DemarcheCreatePlanModal
         defaultTypeId={planTypeId}
         openState={{
@@ -325,6 +331,8 @@ const CreatePlanAction = ({
       />
     </>
   );
+
+  return { renderButton, modals };
 };
 
 const ListEligiblePlansTable = ({
@@ -336,6 +344,7 @@ const ListEligiblePlansTable = ({
   isReadonly,
   onLinkPlan,
   onUnlinkPlan,
+  footerAction,
 }: {
   planTypeLabel: string;
   plans: PlanListItem[];
@@ -348,11 +357,11 @@ const ListEligiblePlansTable = ({
   isReadonly: boolean;
   onLinkPlan: (planId: number) => void;
   onUnlinkPlan: (planId: number) => void;
+  footerAction?: ReactNode;
 }) => {
   const hasPlans = plans.length > 0;
   const hasLinkedPlanPendingVerification = plans.some(
-    (plan) =>
-      linkedPlanIds.includes(plan.id) && isPlanPendingVerification(plan)
+    (plan) => linkedPlanIds.includes(plan.id) && isPlanPendingVerification(plan)
   );
   const { countsByPlanId } = useListPlanSecteursCounts(
     collectiviteId,
@@ -421,6 +430,7 @@ const ListEligiblePlansTable = ({
             </tbody>
           </table>
         </div>
+        {footerAction && <div className="flex">{footerAction}</div>}
         {!isReadonly && hasLinkedPlanPendingVerification && (
           <div data-test="demarches.plan.verifier-plans-info">
             <Alert
@@ -500,8 +510,23 @@ export const ProgrammeActionsSection = ({
     }));
   };
 
+  const isLoading =
+    isLoadingEligibility || (planTypeId !== undefined && isLoadingPlans);
+
+  // Des plans à associer : l'association est l'action attendue, les utilisateurs
+  // cliquaient sur le titre du plan. L'import passe alors sous le tableau, en
+  // second. Sans plan, il reste l'action principale, à hauteur du titre.
+  const hasEligiblePlans = rows.length > 0;
+  const { renderButton: renderCreatePlanButton, modals: createPlanModals } =
+    useCreatePlanAction({
+      planTypeId,
+      isReadonly,
+      onCreatePlan,
+      importDefaults,
+    });
+
   const renderContent = () => {
-    if (isLoadingEligibility || (planTypeId !== undefined && isLoadingPlans)) {
+    if (isLoading) {
       return <ProgrammeActionsLoading />;
     }
     return (
@@ -514,6 +539,9 @@ export const ProgrammeActionsSection = ({
         isReadonly={isReadonly}
         onLinkPlan={linkPlan}
         onUnlinkPlan={unlinkPlan}
+        footerAction={
+          hasEligiblePlans ? renderCreatePlanButton('outlined') : undefined
+        }
       />
     );
   };
@@ -526,22 +554,16 @@ export const ProgrammeActionsSection = ({
       // l'interligne de la section. Hors élaboration, l'invitation à rattacher
       // n'aurait pas de sens — c'est le message de lecture seule qui la remplace.
       description={
-        isReadonly
-          ? undefined
-          : appLabels.demarcheProgrammeRattachementIntro({
-              type: appLabels.demarcheTypeLabels[demarche.type],
-            })
+        isReadonly ? undefined : appLabels.demarcheProgrammeRattachementIntro
       }
       action={
-        <CreatePlanAction
-          planTypeId={planTypeId}
-          isReadonly={isReadonly}
-          onCreatePlan={onCreatePlan}
-          importDefaults={importDefaults}
-        />
+        isLoading || hasEligiblePlans
+          ? undefined
+          : renderCreatePlanButton('primary')
       }
     >
       {renderContent()}
+      {createPlanModals}
     </DemarcheSection>
   );
 };
