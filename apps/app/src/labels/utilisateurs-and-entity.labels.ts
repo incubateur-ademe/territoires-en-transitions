@@ -295,8 +295,4 @@ export const utilisateursAndEntityLabels = {
   assistantDroitsTitre: "Vos droits s'appliquent",
   assistantDroitsDescription:
     "L'assistant interroge la plateforme en votre nom. Il ne voit ni plus ni moins que vous, et le mode super-admin agit sur lui comme sur l'interface.",
-  assistantSouciTitre: 'Un souci ?',
-  assistantSouciDescription:
-    "Si une réponse vous paraît fausse, demandez la requête à l'assistant et joignez-la au signalement.",
-  assistantSouciLien: "Signaler un problème sur l'assistant",
 };

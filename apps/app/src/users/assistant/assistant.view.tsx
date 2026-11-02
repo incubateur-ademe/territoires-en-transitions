@@ -1,7 +1,6 @@
 'use client';
 import { profilPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import { OpenCrispChatLink } from '@/app/lib/open-crisp-chat.link';
 import { Badge, Breadcrumbs, InlineLink, PageHeader } from '@tet/ui';
 import { ReactNode } from 'react';
 import { AssistantConnectionStatusPanel } from './assistant-connection-status.panel';
@@ -237,14 +236,6 @@ export const AssistantView = () => (
           description={appLabels.assistantDroitsDescription}
         >
           <SuperAdminModeState />
-        </SideCard>
-        <SideCard
-          title={appLabels.assistantSouciTitre}
-          description={appLabels.assistantSouciDescription}
-        >
-          <OpenCrispChatLink dataTest="profil.assistant.signaler">
-            {appLabels.assistantSouciLien}
-          </OpenCrispChatLink>
         </SideCard>
       </aside>
     </div>
