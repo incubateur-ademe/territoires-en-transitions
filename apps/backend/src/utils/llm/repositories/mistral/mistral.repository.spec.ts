@@ -52,7 +52,7 @@ afterEach(() => {
 });
 
 describe('toMistralChatParams', () => {
-  it('traduit la requête au format de Mistral : max_tokens, sans raisonnement ni stream_options', () => {
+  it('traduit la requête au format de Mistral : max_tokens, raisonnement au plus bas que mistral-large-4-0 accepte (low, pas none), sans stream_options', () => {
     expect(toMistralChatParams('mistral-large-4-0', request)).toEqual({
       model: 'mistral-large-4-0',
       messages: [
@@ -61,7 +61,7 @@ describe('toMistralChatParams', () => {
       ],
       temperature: 0.2,
       max_tokens: 16384,
-      reasoning_effort: 'none',
+      reasoning_effort: 'low',
       response_format: {
         type: 'json_schema',
         json_schema: { name: 'response', schema: { type: 'object' } },
@@ -141,7 +141,7 @@ describe('MistralRepository', () => {
     expect(JSON.parse(String(init.body))).toMatchObject({
       model: 'mistral-large-4-0',
       max_tokens: 16384,
-      reasoning_effort: 'none',
+      reasoning_effort: 'low',
     });
     expect(JSON.parse(String(init.body))).not.toHaveProperty('stream_options');
   });
