@@ -795,11 +795,11 @@ describe('wiring', () => {
     }).toEqual({ hasAnalyzeFichesService: true, bullModuleNames: [] });
   });
 
-  it('le workflow analyze-fiches.yml lance le script à la demande, sans cron, avec une liste de CT ou all obligatoire', async () => {
+  it("le workflow analyze-fiches.yml lance le passage quotidien sans argument à 23h UTC, minuit à Paris l'hiver, et à la demande avec une liste de CT ou all obligatoire", async () => {
     const workflow = await readFile(WORKFLOW_PATH, 'utf8');
 
     expect({
-      hasSchedule: /^\s+schedule:/m.test(workflow),
+      scheduleCron: workflow.match(/schedule:\s+- cron: '([^']+)'/)?.[1],
       hasManualDispatch: /workflow_dispatch:\s+inputs:\s+collectivites:/.test(
         workflow
       ),
@@ -807,15 +807,20 @@ describe('wiring', () => {
         workflow
       ),
       hasDefaultCollectivites: /^\s+default:/m.test(workflow),
-      scriptCommand: workflow.match(
-        /node (\S+analyze-fiches\.script\.js) "--collectivites=\$COLLECTIVITES"/
+      dailyScriptCommand: workflow.match(
+        /"\$GITHUB_EVENT_NAME" = "schedule" \]; then\s+node (\S+analyze-fiches\.script\.js)\n/
+      )?.[1],
+      manualScriptCommand: workflow.match(
+        /else\s+node (\S+analyze-fiches\.script\.js) "--collectivites=\$COLLECTIVITES"/
       )?.[1],
     }).toEqual({
-      hasSchedule: false,
+      scheduleCron: '0 23 * * *',
       hasManualDispatch: true,
       isCollectivitesRequired: true,
       hasDefaultCollectivites: false,
-      scriptCommand:
+      dailyScriptCommand:
+        'apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js',
+      manualScriptCommand:
         'apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js',
     });
   });
