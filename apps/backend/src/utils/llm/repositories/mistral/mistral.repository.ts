@@ -134,7 +134,7 @@ export const toMistralChatParams = (
     request.maxOutputTokens === undefined
       ? MAX_OUTPUT_TOKENS
       : Math.min(request.maxOutputTokens, MAX_OUTPUT_TOKENS),
-  reasoning_effort: 'none',
+  reasoning_effort: 'low',
   ...(request.jsonSchema
     ? {
         response_format: {
