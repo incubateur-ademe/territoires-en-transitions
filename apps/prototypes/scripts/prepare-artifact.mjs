@@ -63,6 +63,18 @@ if (!args.route || !args.out) {
   process.exit(1);
 }
 
+const target = resolve(args.out);
+const isFreeOrPreviousArtifact =
+  !existsSync(target) ||
+  readdirSync(target).length === 0 ||
+  existsSync(join(target, 'files.json'));
+if (!isFreeOrPreviousArtifact) {
+  console.error(
+    `${target} n'est ni vide ni une sortie de prepare-artifact.mjs : choisir un dossier vide.`
+  );
+  process.exit(1);
+}
+
 const page = `${args.route}.html`;
 if (!existsSync(join(outDir, page))) {
   console.error(
@@ -71,7 +83,6 @@ if (!existsSync(join(outDir, page))) {
   process.exit(1);
 }
 
-const target = resolve(args.out);
 rmSync(target, { recursive: true, force: true });
 await mkdir(target, { recursive: true });
 
