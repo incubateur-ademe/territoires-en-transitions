@@ -2,6 +2,7 @@
 import { profilPath } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, Breadcrumbs, Button, PageHeader } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import {
   Tabs,
   TabsList,
@@ -9,13 +10,13 @@ import {
   TabsTab,
 } from '@tet/ui/design-system/TabsNext/index';
 import { ReactNode } from 'react';
-import { AssistantConnectionStatusPanel } from './assistant-connection-status.panel';
 import {
   AssistantConnectionSteps,
   SuperAdminModeState,
 } from './assistant-connection.steps';
 import { AssistantExamplesTable } from './assistant-examples.table';
 import { ClaudeLogo, CrispLogo } from './assistant-logos';
+import { useListMcpGrants } from './data/use-list-mcp-grants';
 import {
   AssistantTab,
   useAssistantTabQueryState,
@@ -23,6 +24,38 @@ import {
 
 const EXEMPLES_ANCHOR = 'exemples';
 const LOGO_CLASSNAME = 'h-5 w-auto shrink-0';
+
+/**
+ * Logo Claude et diode d'état du connecteur : verte s'il est branché, grise
+ * sinon, absente tant que l'état est inconnu (chargement, serveur OAuth
+ * indisponible en local).
+ */
+const ClaudeTabIcon = ({
+  className,
+  isConnected,
+}: {
+  className: string;
+  isConnected: boolean | null;
+}) => (
+  <span className="inline-flex items-center gap-1.5">
+    <ClaudeLogo className={className} />
+    {isConnected !== null && (
+      <span
+        role="img"
+        aria-label={
+          isConnected
+            ? appLabels.assistantEtatConnecte
+            : appLabels.assistantEtatNonConnecte
+        }
+        data-test="profil.assistant.etat-claude"
+        className={cn(
+          'h-2 w-2 shrink-0 rounded-full',
+          isConnected ? 'bg-success-1' : 'bg-grey-5'
+        )}
+      />
+    )}
+  </span>
+);
 
 const Section = ({
   id,
@@ -149,13 +182,6 @@ const ClaudeTab = () => (
     </Section>
 
     <Section
-      title={appLabels.assistantConnexionEtatTitre}
-      description={appLabels.assistantConnexionEtatDescription}
-    >
-      <AssistantConnectionStatusPanel />
-    </Section>
-
-    <Section
       title={appLabels.assistantModelesTitre}
       description={appLabels.assistantModelesDescription}
     >
@@ -207,6 +233,8 @@ const CrispTab = () => (
 /** Page « Assistant TeT » : présentation, brancher Claude, /tet dans Crisp. */
 export const AssistantView = () => {
   const [activeTab, setActiveTab] = useAssistantTabQueryState();
+  const { data: grants } = useListMcpGrants();
+  const isClaudeConnected = grants ? grants.length > 0 : null;
 
   return (
     <div className="flex flex-col gap-6" data-test="profil.assistant.page">
@@ -251,7 +279,12 @@ export const AssistantView = () => {
           <TabsTab
             id="assistant-tab-claude"
             label={appLabels.assistantOngletClaude}
-            icon={(className) => <ClaudeLogo className={className} />}
+            icon={(className) => (
+              <ClaudeTabIcon
+                className={className}
+                isConnected={isClaudeConnected}
+              />
+            )}
             isActive={activeTab === 'claude'}
             onClick={() => setActiveTab('claude')}
             dataTest="profil.assistant.onglet-claude"
