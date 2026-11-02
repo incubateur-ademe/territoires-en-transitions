@@ -125,7 +125,7 @@ export const demarchesLabels = {
     'Voici la page d’accueil de votre service : les dépôts PCAET qui vous concernent y seront listés dès leur transmission.',
 
   accueilRattachementConsulter:
-    'Consulter les PCAET transmis pour avis et leurs échéances',
+    'Consulter les PCAET déposés et leurs échéances',
 
   /** Suit la famille : seules la DREAL et la région instruisent. */
   accueilRattachementSuivre: ({ deposeAvis }: { deposeAvis: boolean }) =>

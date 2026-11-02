@@ -32,7 +32,7 @@ export const InvitationCorrespondantEmail = ({
   // Les dénominations officielles dépassent la centaine de caractères : le nom
   // n'est donné qu'une fois, la suite dit « votre service ».
   const role = deposeUnAvis
-    ? 'Votre service y rend son avis et y suit ses échéances.'
+    ? 'Votre service consulte les dépôts et rend son avis lorsqu’il est demandé par les collectivités via la plateforme.'
     : 'Votre service y consulte les démarches déposées sur son territoire, ainsi que les avis rendus.';
 
   const suite = estAdministrateur
@@ -51,8 +51,8 @@ export const InvitationCorrespondantEmail = ({
       </Text>
 
       <Text>
-        Les collectivités déposent désormais leur PCAET pour avis sur
-        Territoires en Transitions. {role}
+        Les collectivités déposent désormais leur PCAET sur Territoires en
+        Transitions. {role}
       </Text>
 
       <Text>
