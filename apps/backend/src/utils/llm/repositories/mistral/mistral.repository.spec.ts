@@ -98,6 +98,57 @@ describe('MistralRepository', () => {
     expect(repository.capabilities.ocr).toBe(false);
   });
 
+  it('ne garde que le texte de la réponse quand le flux mêle morceaux de raisonnement et texte', async () => {
+    stubFetch(
+      sseResponse(
+        chunk({
+          choices: [
+            {
+              index: 0,
+              delta: {
+                content: [
+                  {
+                    type: 'thinking',
+                    thinking: [{ type: 'text', text: 'Je classe la fiche' }],
+                  },
+                ],
+              },
+            },
+          ],
+        }),
+        chunk({
+          choices: [
+            {
+              index: 0,
+              delta: {
+                content: [
+                  {
+                    type: 'thinking',
+                    thinking: [{ type: 'text', text: ' dans le GES.' }],
+                  },
+                  { type: 'text', text: '{"enjeu":' },
+                ],
+              },
+            },
+          ],
+        }),
+        chunk({
+          choices: [
+            { index: 0, delta: { content: '"ges"}' }, finish_reason: 'stop' },
+          ],
+        }),
+        'data: [DONE]\n\n'
+      )
+    );
+
+    const result = await buildRepository().complete(request);
+
+    expect(result).toMatchObject({
+      success: true,
+      data: { completed: true, text: '{"enjeu":"ges"}' },
+    });
+  });
+
   it("appelle l'API Mistral avec la clé, recolle le flux et lit l'usage final", async () => {
     const fetchMock = stubFetch(
       sseResponse(
