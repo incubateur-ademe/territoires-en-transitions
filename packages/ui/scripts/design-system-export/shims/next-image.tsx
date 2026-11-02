@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element -- remplace `next/image` hors de Next */
 import { forwardRef, ImgHTMLAttributes } from 'react';
 
 type StaticImage = Readonly<{ src: string; width?: number; height?: number }>;
