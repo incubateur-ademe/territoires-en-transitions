@@ -129,12 +129,6 @@ export const designTokens = {
   maxHeight: {
     '80vh': '80vh',
   },
-  width: {
-    'side-panel': '32rem',
-  },
-  gridTemplateColumns: {
-    'side-panel-open': '1fr 32rem',
-  },
   zIndex: {
     header: '100',
     'side-panel': '110',

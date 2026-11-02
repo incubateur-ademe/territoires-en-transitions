@@ -22,8 +22,6 @@ export const preset = {
       boxShadow: designTokens.boxShadow,
       screens: designTokens.screens,
       maxWidth: designTokens.maxWidth,
-      width: designTokens.width,
-      gridTemplateColumns: designTokens.gridTemplateColumns,
       zIndex: designTokens.zIndex,
       animation: designTokens.animation,
       backgroundImage: {

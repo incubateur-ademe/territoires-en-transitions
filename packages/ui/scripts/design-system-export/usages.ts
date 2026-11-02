@@ -119,7 +119,7 @@ export const usages: Readonly<Record<string, string>> = {
   'shadow-t-3xl':
     'Ombre portée vers le haut, maximale et diffuse ; non utilisée dans le code actuel.',
 
-  'max-w-8xl': 'Largeur maximale du contenu de page (conteneur de `AppShell`).',
+  'max-w-8xl': 'Largeur maximale du contenu de page.',
   'max-w-modal-xs': 'Modale très étroite (`Modal size="xs"`).',
   'max-w-modal-sm': 'Modale étroite.',
   'max-w-modal-md': 'Modale moyenne.',
