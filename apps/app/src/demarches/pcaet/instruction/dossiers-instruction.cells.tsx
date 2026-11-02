@@ -235,12 +235,12 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
   }
 
   // Un dossier encore à instruire s'ouvre pour y travailler ; les autres se
-  // consultent. Un dépôt en élaboration se consulte aussi, mais il n'y a pas
-  // d'instruction à voir : c'est le PCAET lui-même qu'on lit.
+  // consultent. Avant l'adoption, on lit un projet ; après, le PCAET lui-même.
   const instructionOuverte =
     dossier.statut === PcaetStatutInstructionEnum.EN_INSTRUCTION;
-  const enElaboration =
-    dossier.statut === PcaetStatutInstructionEnum.EN_ELABORATION;
+  const pcaetAdopte =
+    dossier.statut === PcaetStatutInstructionEnum.ADOPTE ||
+    dossier.statut === PcaetStatutInstructionEnum.ARCHIVE;
 
   return (
     <div className="flex items-center gap-2 justify-end">
@@ -250,9 +250,9 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
         size="xs"
         icon={instructionOuverte ? 'draft-line' : 'eye-line'}
       >
-        {instructionOuverte || enElaboration
-          ? appLabels.instructionListeConsulter
-          : appLabels.instructionListeVoirInstruction}
+        {pcaetAdopte
+          ? appLabels.instructionListeVoirPcaet
+          : appLabels.instructionListeConsulterProjet}
       </Button>
     </div>
   );

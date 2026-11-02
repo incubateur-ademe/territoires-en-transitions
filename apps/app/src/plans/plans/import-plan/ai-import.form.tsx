@@ -162,6 +162,7 @@ export const AiImportForm = ({
         description={
           <>
             <p className="mb-2">{appLabels.importPlanIaDescription}</p>
+            <p className="mb-2">{appLabels.importPlanIaAvertissement}</p>
             <p className="mb-0">{appLabels.importPlanIaContact}</p>
           </>
         }

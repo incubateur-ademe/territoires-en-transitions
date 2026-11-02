@@ -48,7 +48,7 @@ export const demarchesLabels = {
    * en est l'agent et non le dossier, et la révision est un attribut du dépôt,
    * pas une étape — le workflow est linéaire et sans retour.
    */
-  instructionStatutAucunDepot: 'Aucun dépôt',
+  instructionStatutAucunDepot: 'Aucune élaboration',
   instructionStatutEnElaboration: 'En élaboration',
   instructionStatutDepotHorsPlateforme: 'Dépôt hors plateforme',
   demarcheAvanceEtapeHorsPlateforme:
@@ -72,7 +72,7 @@ export const demarchesLabels = {
   demarcheScotAecBadgeAbsent: 'PCAET seul',
   instructionStatutEnInstruction: 'En instruction',
   /** « En instruction » pour le service qui rend l'avis : c'est à lui d'agir. */
-  instructionStatutAInstruire: 'À instruire',
+  instructionStatutAInstruire: 'Soumis pour avis',
   instructionStatutPasDAvisDepose: 'Pas d’avis déposé',
   instructionStatutInstruit: 'Instruit',
   instructionStatutAdopte: 'Adopté',
@@ -85,7 +85,7 @@ export const demarchesLabels = {
   instructionListeAucunResultat: 'Aucun dossier ne correspond à ces filtres',
 
   instructionListeColonneRegion: 'Région',
-  instructionListeColonneDateLancement: 'Date de lancement',
+  instructionListeColonneDateLancement: 'Date de lancement (délibération)',
 
   /**
    * Un dépôt qui n'a pas été transmis n'a pas d'échéance : elle se calcule à la
@@ -184,7 +184,7 @@ export const demarchesLabels = {
     'Les champs marqués d’un astérisque (*) sont obligatoires.',
   demarcheCreerPilotes: 'Pilotes *',
   demarcheCreerRechercherPilote: 'Rechercher un pilote…',
-  demarcheCreerDateLancement: 'Date de lancement *',
+  demarcheCreerDateLancement: 'Date de lancement (délibération) *',
   demarcheCreerDateLancementRequise: 'La date de lancement est requise',
   demarcheCreerSoumettre: 'Commencer le dépôt',
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
@@ -245,15 +245,18 @@ export const demarchesLabels = {
   }) => `Retirer ${nom} des référents PCAET de ${organisme} ?`,
   demarcheAvanceTitre: 'Les étapes de votre démarche',
   demarcheAvancePanneauBouton: 'Étapes',
-  demarcheAvanceSectionDocumentsDescription:
-    'Déposez les pièces usuelles du dossier.',
-  demarcheAvanceSectionDocumentsAvalDescription:
-    'Déposez les pièces usuelles du dossier attendues après les avis.',
-  demarcheAvanceSectionDiagnosticDescription: ({
+  demarcheAvanceSectionDocumentsDescription: ({
     type,
   }: {
     type: DemarcheTypeLabels;
-  }) => `Renseignez les indicateurs et objectifs par volet ${type.complement}.`,
+  }) => `Déposer les documents relatifs à votre projet de ${type.nom}.`,
+  demarcheAvanceSectionDocumentsAvalDescription: ({
+    type,
+  }: {
+    type: DemarcheTypeLabels;
+  }) => `Déposer les documents relatifs à ${type.possessif} adopté.`,
+  demarcheAvanceSectionDiagnosticDescription:
+    'Renseigner les données de votre diagnostic et les objectifs de votre stratégie.',
   demarcheAvanceSectionPlanDescription:
     "Rattachez ou créez un plan d'actions dans la plateforme.",
   // Les deux rappels de la finalisation. Ces libellés servent à la fois la
@@ -275,16 +278,16 @@ export const demarchesLabels = {
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `Renseignez l'intitulé, les pilotes et la date de lancement pour lancer le dépôt de ${type.possessif}.`,
+    `Renseigner l'intitulé, les pilotes et la date de lancement pour débuter le dépôt de votre projet de ${type.nom}.`,
   demarcheAvanceEtapeElaborationLabel: 'Élaboration',
   demarcheAvanceEtapeElaborationDescription:
-    "Dépôt du diagnostic, des objectifs, du programme d’actions et des pièces jointes par la collectivité, jusqu'à la transmission pour avis.",
+    "Dépôt des données du projet de PCAET (diagnostic, objectifs de la stratégie, programme d’actions) et de ses différents documents, jusqu'à la transmission pour avis.",
   demarcheAvanceEtapeTransmisLabel: 'Transmis pour avis',
   demarcheAvanceEtapeTransmisDescription:
-    'Consultations auprès du conseil régional et du préfet de région.',
-  demarcheAvanceEtapeTransmisInfo: ({ mois }: { mois: number }) =>
-    `Ces services déconcentrés vont rendre leurs avis directement sur cette plateforme ou hors plateforme (par exemple par email…), dans un délai de ${mois} mois`,
-  demarcheAvanceEtapeFinalisationLabel: 'Consultation des avis et délibération',
+    'Consultations auprès du préfet de région.',
+  demarcheAvanceEtapeTransmisInfo:
+    'Vous recevrez l’avis de ces instructeurs directement sur cette plateforme ou hors plateforme (par exemple par email).',
+  demarcheAvanceEtapeFinalisationLabel: 'Prise en compte des avis et délibération',
   demarcheAvanceEtapeFinalisationDescription:
     'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche',
   demarcheAvanceEtapeFinalisationHorsPlateformeDescription:
@@ -295,7 +298,7 @@ export const demarchesLabels = {
   }: {
     type: DemarcheTypeLabels;
   }) =>
-    `${type.nom} en vigueur jusqu’à l’adoption du suivant et mis à disposition du public, pilotage des actions et indicateurs associés sur 6 ans. Un bilan à mi-parcours et l’évaluation finale pourront être déposés sur la plateforme.`,
+    `${type.nom} en vigueur jusqu’à sa révision et l’adoption du suivant. Il est accessible au public. Pilotez vos actions et renseignez vos indicateurs durant les 6 ans de mise en œuvre.`,
   demarcheAvanceEtapeArchiveLabel: 'Archivé',
   demarcheAvanceEtapeArchiveDescription: ({
     type,
@@ -303,9 +306,9 @@ export const demarchesLabels = {
     type: DemarcheTypeLabels;
   }) => `Remplacé par le ${type.nom} suivant, adopté depuis.`,
   demarcheAvanceNouvelleDemarche: 'Nouvelle démarche',
-  demarcheAvanceValiderDepot: 'Valider le dépôt pour avis',
+  demarcheAvanceValiderDepot: 'Valider le dépôt et transmettre pour avis',
   demarcheTransmettreConfirmationTitre:
-    'Votre dossier va être transmis pour avis',
+    'Votre dépôt va être transmis pour avis',
   demarcheTransmettreConfirmationProcessus: ({ mois }: { mois: number }) =>
     `Votre dossier sera transmis aux instances consultatives, qui disposent de ${mois} mois pour rendre leurs avis. Il sera figé pendant toute la durée de l'instruction : vous ne pourrez plus modifier le diagnostic ni les pièces déposées, jusqu'à la fin de celle-ci.`,
   demarcheTransmettreConfirmationSuite:
@@ -459,7 +462,8 @@ export const demarchesLabels = {
     'Une thématique porte déjà ce nom dans cette démarche',
   demarcheVulnerabiliteDescription:
     'Évaluez le niveau de vulnérabilité du territoire pour chaque thématique, aux horizons actuel, 2050 et 2100, puis décrivez les objectifs associés.',
-  demarcheDiagnosticTitre: 'Compléter le diagnostic et les objectifs',
+  demarcheDiagnosticTitre:
+    'Compléter les données du diagnostic et de la stratégie',
   demarcheDiagnosticDescription:
     'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
   /** Complétude d'une étape du dépôt, rendue par `DemarcheCompletionBadge`. */
@@ -579,22 +583,24 @@ export const demarchesLabels = {
     one: 'action',
     other: 'actions',
   }),
-  demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan à partir de zéro',
+  demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan manuellement',
   demarcheProgrammeImportTitre:
-    'Importer le programme d’actions dans la plateforme ?',
+    'Importer le programme d’actions sur la plateforme',
   demarcheProgrammeImportDescription:
-    'Votre programme d’actions peut devenir un plan structuré, avec ses axes et ses actions, que vous retrouverez à l’étape Programme d’actions.',
-  demarcheProgrammeImportArrierePlan:
-    'L’import se fait en arrière-plan : vous pouvez continuer vos dépôts. Relisez attentivement le plan une fois l’import terminé, cette fonctionnalité repose sur des outils d’intelligence artificielle qui pourraient manquer ou mal repérer certains éléments.',
+    'Vous venez de déposer votre programme d’actions au format pdf. Lancez maintenant la conversion de votre programme d’actions en format numérique pour :',
+  demarcheProgrammeImportAvantageTemps:
+    'Gagner du temps à l’étape 3 du dépôt, qui nécessite de saisir les actions dans un format structuré (pilotes, secteurs, échéances, etc).',
+  demarcheProgrammeImportAvantageSuivi:
+    'Suivre le plan dans le volet « Plans & Actions » de la plateforme, et bénéficier ainsi de toutes les fonctionnalités utiles au pilotage opérationnel après le dépôt.',
   demarcheProgrammeImportFichierErreur:
     'Le fichier déposé n’a pas pu être récupéré. Vous pourrez lancer l’import depuis l’étape Programme d’actions.',
   demarcheProgrammeImportPlusTard: 'Plus tard',
-  demarcheProgrammeImportLancer: 'Importer en arrière-plan',
+  demarcheProgrammeImportLancer: 'Lancer l’import',
   demarcheProgrammeImportLance:
     'Import lancé : le plan apparaîtra à l’étape Programme d’actions.',
   demarcheProgrammeImportTermine:
     'Programme d’actions importé : retrouvez le plan à l’étape Programme d’actions.',
-  demarcheHeaderDateLancement: 'Date de lancement',
+  demarcheHeaderDateLancement: 'Date de lancement (délibération)',
   demarcheHeaderDemarcheCreatedAt: 'Créé le',
   demarcheHeaderModifieLe: 'Modifié le',
   demarcheObligationObligatoire: 'Obligatoire',
@@ -617,7 +623,7 @@ export const demarchesLabels = {
   demarcheListeColonnePilotes: 'Pilotes',
   demarcheListeColonneStatut: 'Statut',
   demarcheListeColonneCreation: 'Créée le',
-  demarcheListeColonneLancement: 'Date de lancement',
+  demarcheListeColonneLancement: 'Date de lancement (délibération)',
   demarcheListeColonneModification: 'Modifiée le',
   demarcheListeColonneActions: 'Actions',
   demarcheListeAucunResultat: 'Aucune démarche ne correspond à ces filtres',
@@ -681,12 +687,12 @@ export const demarchesLabels = {
   instructionDateSaisineEnregistree: 'Date de saisine enregistrée',
   instructionDateSaisineErreur: "La date de saisine n'a pas pu être enregistrée",
   instructionListeColonneActions: 'Actions',
-  instructionListeConsulter: 'Consulter le PCAET',
-  instructionListeVoirInstruction: 'Voir l’instruction',
+  instructionListeConsulterProjet: 'Consulter le projet',
+  instructionListeVoirPcaet: 'Voir le PCAET',
   instructionListeSansPilote: 'Aucun pilote renseigné',
-  instructionEtatATraiter: 'À instruire',
+  instructionEtatATraiter: 'Soumis pour avis',
   /**
-   * Le même état, dit à un destinataire en lecture : « À instruire » lui
+   * Le même état, dit à un destinataire en lecture : « Soumis pour avis » lui
    * demanderait un travail qu'il n'a pas à faire — une DDT, une DR ADEME et un
    * service national ne déposent aucun avis, ils suivent le dossier.
    */
@@ -748,9 +754,9 @@ export const demarchesLabels = {
   demarchePlanContenuAxeVide: 'Aucune action dans cet axe.',
   instructionDossierInstruitLe: ({ date }: { date: string }) =>
     `Instruit le ${date}`,
-  instructionDossierAvisTelecharger: 'Rapport',
+  instructionDossierAvisTelecharger: 'Avis',
   instructionDossierAvisTelechargerAria: ({ titre }: { titre: string }) =>
-    `Télécharger le rapport de l’avis au titre de ${titre}`,
+    `Télécharger l’avis au titre de ${titre}`,
   /**
    * « Rendus » et non « reçus » : la liste mêle les avis des autres
    * destinataires et, pour une DREAL ou un conseil régional, les siens — qu'il
@@ -767,7 +773,7 @@ export const demarchesLabels = {
   instructionFinaliserVerrouille:
     'La fenêtre d’avis est fermée : l’instruction ne peut plus être finalisée.',
   instructionFinaliserTitre: 'Finaliser l’instruction',
-  instructionFinaliserAjouterRapport: 'Ajouter le rapport d’instruction',
+  instructionFinaliserAjouterRapport: 'Ajouter l’avis',
   /**
    * Ce que l'instructeur doit savoir de la portée de son acte : la
    * réglementation n'oblige pas la collectivité à suivre l'avis rendu.
@@ -789,7 +795,7 @@ export const demarchesLabels = {
   instructionFinaliseeFermer: 'Fermer',
   demarchePcaetAvisAuTitreDeLabels: {
     prefet_region: 'Préfet de région',
-    president_region: 'Président de région',
+    president_region: 'Président du conseil régional',
   },
   pcaetDiagnosticAnneeReferenceBasculee:
     'Année de référence mise à jour, les valeurs saisies ont suivi.',

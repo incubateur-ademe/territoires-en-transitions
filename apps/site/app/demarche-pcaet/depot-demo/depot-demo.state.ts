@@ -190,7 +190,7 @@ export const getDepotDemoState = (time: number) => {
       ? { label: 'Étape suivante', enabled: true, visible: true }
       : screen === 'programme'
       ? {
-          label: 'Valider le dépôt pour avis',
+          label: 'Valider le dépôt et transmettre pour avis',
           enabled: canValidate,
           visible: true,
         }
@@ -232,7 +232,7 @@ export const getDepotDemoState = (time: number) => {
         time < ETAPES[2].start
           ? 'Transmis pour avis'
           : time < ADOPTION_TIME
-          ? 'Consultation des avis et délibération'
+          ? 'Prise en compte des avis et délibération'
           : 'Adoption',
       subtitle:
         time < ETAPES[2].start

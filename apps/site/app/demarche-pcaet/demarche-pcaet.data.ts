@@ -34,7 +34,7 @@ export const DEPOT_ETAPES: DepotEtape[] = [
       "Vous constituez votre dossier directement dans la plateforme. Il est enregistré au fil de l'eau : vous pouvez le compléter en plusieurs fois et à plusieurs.",
     actions: [
       'Ajouter les documents attendus',
-      'Compléter le diagnostic et les objectifs',
+      'Compléter les données du diagnostic et de la stratégie',
       "Renseigner le programme d'actions, ou l'importer depuis un PDF, un Word ou un Excel",
     ],
     stakeholders: ['Collectivité', 'Équipes projet'],
@@ -52,7 +52,7 @@ export const DEPOT_ETAPES: DepotEtape[] = [
     ],
   },
   {
-    title: 'Consultation des avis et délibération',
+    title: 'Prise en compte des avis et délibération',
     detail:
       "Les avis reçus sont rattachés à votre dépôt. Vous en prenez connaissance et ajustez des éléments si nécessaire. Puis votre assemblée délibère pour l'adopter.",
     actions: [

@@ -238,7 +238,7 @@ export const ELABORATION_SUB_STEPS: {
     screen: 'documents',
   },
   {
-    title: 'Compléter le diagnostic et les objectifs',
+    title: 'Compléter les données du diagnostic et de la stratégie',
     shortTitle: 'Diagnostic',
     description: 'Renseignez les indicateurs par volet.',
     completedAt: 17.3,
@@ -276,7 +276,7 @@ export const ETAPES: {
     end: 26.0,
   },
   {
-    title: 'Consultation des avis et délibération',
+    title: 'Prise en compte des avis et délibération',
     description:
       'Consultez les avis rendus, puis délibérez pour adopter le plan.',
     start: 26.0,

@@ -2,7 +2,6 @@ import { makeCollectiviteDemarchePcaetNouveauUrl } from '@/app/app/paths';
 import { makeDemarcheSectionUrl, type DemarcheSectionKey } from '../steps';
 import { appLabels, type DemarcheTypeLabels } from '@/app/labels/catalog';
 import {
-  DEMARCHE_PCAET_DELAI_AVIS_MOIS,
   DemarchePcaetStatusEnum,
   getEtapeIndexDemarchePcaet,
   getIndexEtapeDemarchePcaet,
@@ -206,9 +205,7 @@ const buildSteps = (
   {
     label: appLabels.demarcheAvanceEtapeTransmisLabel,
     description: appLabels.demarcheAvanceEtapeTransmisDescription,
-    info: appLabels.demarcheAvanceEtapeTransmisInfo({
-      mois: DEMARCHE_PCAET_DELAI_AVIS_MOIS,
-    }),
+    info: appLabels.demarcheAvanceEtapeTransmisInfo,
   },
   {
     label: appLabels.demarcheAvanceEtapeFinalisationLabel,
@@ -344,9 +341,7 @@ export const AvanceDemarcheSection = ({
   const diagnosticStep: SectionStep = {
     key: 'diagnostic',
     label: appLabels.demarcheDiagnosticTitre,
-    description: appLabels.demarcheAvanceSectionDiagnosticDescription({
-      type: typeLabels,
-    }),
+    description: appLabels.demarcheAvanceSectionDiagnosticDescription,
     status: completion.diagnostic,
     href: makeDemarcheSectionUrl('diagnostic', {
       collectiviteId,
@@ -370,7 +365,9 @@ export const AvanceDemarcheSection = ({
           {
             key: 'documents' as const,
             label: appLabels.demarcheDetailDocumentsTitre,
-            description: appLabels.demarcheAvanceSectionDocumentsDescription,
+            description: appLabels.demarcheAvanceSectionDocumentsDescription({
+              type: typeLabels,
+            }),
             status: completion.documents,
             href: documentsUrl,
           },
@@ -395,7 +392,9 @@ export const AvanceDemarcheSection = ({
           {
             key: 'documents' as const,
             label: appLabels.demarcheDetailDocumentsTitre,
-            description: appLabels.demarcheAvanceSectionDocumentsDescription,
+            description: appLabels.demarcheAvanceSectionDocumentsDescription({
+              type: typeLabels,
+            }),
             status:
               completion.documents !== 'incomplete' &&
               completion.documentsAval !== 'incomplete'
@@ -428,7 +427,9 @@ export const AvanceDemarcheSection = ({
             key: 'documents' as const,
             label: appLabels.demarcheDetailAvisEtDocumentsTitre,
             description:
-              appLabels.demarcheAvanceSectionDocumentsAvalDescription,
+              appLabels.demarcheAvanceSectionDocumentsAvalDescription({
+                type: typeLabels,
+              }),
             status: completion.documentsAval,
             href: documentsUrl,
           },
