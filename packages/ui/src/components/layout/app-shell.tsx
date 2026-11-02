@@ -5,11 +5,7 @@ import { cn } from '../../utils/cn';
 export type AppShellProps = {
   header: ReactNode;
   footer: ReactNode;
-  /**
-   * Contenu affiché sous le header, en tête de la colonne de page et hors du
-   * conteneur de page (une bannière de contexte, par exemple).
-   */
-  belowHeader?: ReactNode;
+  pageFrame?: (page: ReactNode) => ReactNode;
   /** Panneau latéral, rendu sticky à droite par-dessus le header. */
   sidePanel?: ReactNode;
   isSidePanelOpen?: boolean;
@@ -17,6 +13,8 @@ export type AppShellProps = {
   belowFooter?: ReactNode;
   children: ReactNode;
 };
+
+const renderPageWithoutFrame = (page: ReactNode): ReactNode => page;
 
 /**
  * Coque présentationnelle des pages de l'app : header, conteneur de page,
@@ -32,7 +30,7 @@ export type AppShellProps = {
 export const AppShell = ({
   header,
   footer,
-  belowHeader,
+  pageFrame = renderPageWithoutFrame,
   sidePanel,
   isSidePanelOpen = false,
   belowFooter,
@@ -56,10 +54,11 @@ export const AppShell = ({
         'max-lg:hidden': isSidePanelOpen,
       })}
     >
-      {belowHeader}
-      <div className="grow flex flex-col w-full max-w-8xl mx-auto px-2 md:px-4 lg:px-6 pb-12 pt-6">
-        {children}
-      </div>
+      {pageFrame(
+        <div className="grow flex flex-col w-full max-w-8xl mx-auto px-2 md:px-4 lg:px-6 pb-12 pt-6">
+          {children}
+        </div>
+      )}
       {footer}
       <VisibleWhen condition={!!belowFooter}>
         <div className="p-4">{belowFooter}</div>

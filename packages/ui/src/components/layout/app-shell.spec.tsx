@@ -39,20 +39,20 @@ describe('AppShell', () => {
     );
   });
 
-  it('place le contenu sous le header en tête de la colonne de page', () => {
+  it('entoure le conteneur de page du cadre fourni, footer laissé dehors', () => {
     render(
       <AppShell
         header={<header>En-tête</header>}
-        footer={null}
-        belowHeader={<p>Bannière</p>}
+        footer={<footer>Pied</footer>}
+        pageFrame={(page) => <section aria-label="Cadre">{page}</section>}
       >
         <main>Page</main>
       </AppShell>
     );
 
-    const banniere = screen.getByText('Bannière');
-    const colonne = screen.getByRole('main').closest('.min-w-0');
-    expect(colonne?.firstElementChild).toBe(banniere);
+    const frame = screen.getByRole('region', { name: 'Cadre' });
+    expect(frame.contains(screen.getByRole('main'))).toBe(true);
+    expect(frame.contains(screen.getByRole('contentinfo'))).toBe(false);
   });
 
   it("n'affiche le contenu sous le footer que s'il est fourni", () => {

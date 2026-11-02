@@ -21,10 +21,12 @@ const ContentWrapper = ({
     <AppShell
       header={<Header />}
       footer={<FooterTeT />}
-      // Sous le header, et collé en haut une fois le header défilé : l'agent
-      // d'un service navigue au nom d'un autre, et ce rappel-là ne doit pas
-      // défiler avec la page.
-      belowHeader={<ContexteInstructionBanner />}
+      pageFrame={(page) => (
+        <>
+          <ContexteInstructionBanner />
+          {page}
+        </>
+      )}
       sidePanel={<SidePanel />}
       isSidePanelOpen={panel.isOpen}
       belowFooter={belowFooterSlot}
