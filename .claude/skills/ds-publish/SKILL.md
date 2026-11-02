@@ -1,6 +1,6 @@
 ---
 name: ds-publish
-description: Republish the "Territoires en Transitions" design system (the claude.ai artifact of type Design System used by Claude Design) from packages/ui on main, file by file, only when @tet/ui or @tet/design-tokens changed since the published version. Use at the start of /proto-import, after a change to @tet/ui is merged, when someone says the design system in Claude Design is out of date, or when someone types /ds-publish.
+description: Republish the "Territoires en Transitions" design system (the claude.ai artifact of type Design System used by Claude Design) from packages/ui on main, file by file, only when @tet/ui or @tet/design-tokens changed since the published version. Use after a change to @tet/ui is merged, before a designer starts a mock-up, when someone says the design system in Claude Design is out of date, or when someone types /ds-publish.
 argument-hint: '[--force]'
 ---
 
@@ -9,8 +9,8 @@ argument-hint: '[--force]'
 The design system that designers use in Claude Design is the artifact
 **https://claude.ai/artifact/7Qrax7LhLsLyA5FxZX8PuP** (type « Design System »,
 namespace `TeT`, `"editing": "code"`: it is only ever written from the code).
-This skill republishes it from `main`. `/proto-import` runs it first, so a
-prototyping session always starts from an up-to-date design system. The export
+This skill republishes it from `main`, so that a mock-up starts from the
+components of the app as they are. The export
 runs here, not in CI: publishing needs a Claude session, and the pull request
 CI already typechecks `@tet/ui` and tests the export functions.
 
@@ -33,8 +33,7 @@ format of its files.
 ## 2. Export from `main`
 
 Export from a separate worktree of `origin/main`, so that the session's own
-checkout and branch stay untouched (`/proto-import` runs this skill before its
-own work). The worktree borrows the installed dependencies:
+checkout and branch stay untouched. The worktree borrows the installed dependencies:
 
 ```bash
 W=<scratchpad>/ds-main

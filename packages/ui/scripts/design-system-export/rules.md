@@ -1,7 +1,6 @@
 ## Règles de conformité
 
-Ces règles s'appliquent à chaque élément de chaque maquette et de chaque
-prototype, sans exception. Elles sont la seule source : la doc et les outils y
+Ces règles s'appliquent à chaque élément de chaque maquette, sans exception. Elles sont la seule source : la doc et les outils y
 renvoient par leur numéro.
 
 - **R1 · Composants du design system uniquement.** Composer avec les
@@ -27,13 +26,12 @@ renvoient par leur numéro.
   besoin, la maquette garde l'option conforme et le canevas porte une note
   « Proposition : … » qui nomme le besoin. Ajouter un token, un pas
   d'espacement, un composant ou une variante est une décision du design
-  system, prise ensuite dans `@tet/ui`, jamais dans une maquette ni un
-  prototype.
-- **R7 · Un écart non noté n'atteint pas les devs.** Au passage en
-  prototype, tout écart sans note « Proposition » est remplacé par l'option
-  conforme la plus proche et listé « à trancher » ; la passation aux devs
-  attend qu'il n'en reste aucun. Un composant qui existe déjà dans l'app sans
-  être dans `@tet/ui` est un écart « à promouvoir », pas à inventer.
+  system, prise ensuite dans `@tet/ui`, jamais dans une maquette.
+- **R7 · Un écart non noté n'atteint pas les devs.** À la passation, tout
+  écart sans note « Proposition » est listé « à trancher » avec l'option
+  conforme la plus proche ; la passation attend qu'il n'en reste aucun. Un
+  composant qui existe déjà dans l'app sans être dans `@tet/ui` est un écart
+  « à promouvoir », pas à inventer.
 - **R8 · Le canevas fait référence.** Un changement décidé en cours de route
-  se fait dans le canevas, puis le prototype est régénéré ; un réglage du
-  canevas que le prototype ne reproduit pas est un écart.
+  se fait dans le canevas, puis la passation est relancée ; ce que le canevas
+  ne montre pas n'est pas décidé.
