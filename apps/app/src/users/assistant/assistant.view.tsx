@@ -207,6 +207,9 @@ const CrispTab = () => (
     title={appLabels.assistantCrispTitre}
     description={appLabels.assistantCrispDescription}
   >
+    <p className="m-0 text-sm text-grey-8">
+      {appLabels.assistantCrispFonctionnement}
+    </p>
     <div className="flex flex-col gap-3">
       <p className="m-0 text-sm font-medium">
         {appLabels.assistantCrispNotePrivee}
@@ -223,10 +226,25 @@ const CrispTab = () => (
           </div>
         ))}
       </dl>
-      <p className="m-0 text-sm text-grey-8">
-        {appLabels.assistantCrispReponse}
-      </p>
     </div>
+    <div className="flex flex-col gap-2">
+      <p className="m-0 text-sm font-medium">
+        {appLabels.assistantCrispExemplesTitre}
+      </p>
+      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+        {appLabels.assistantCrispExemples.map((exemple) => (
+          <li key={exemple}>
+            <code className="rounded bg-grey-2 px-2 py-0.5 text-sm text-primary-9">
+              {exemple}
+            </code>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <p className="m-0 text-sm text-grey-8">{appLabels.assistantCrispReponse}</p>
+    <p className="m-0 text-xs text-grey-7">
+      {appLabels.assistantCrispPrerequis}
+    </p>
   </Section>
 );
 
