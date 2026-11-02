@@ -1,17 +1,3 @@
-/*
- * Exporte le design system de `@tet/ui` au format du design system publié dans
- * Claude (type « Design System ») : tokens, polices, logos, charte et
- * composants (bundle, CSS, types, aperçus tirés des stories), sous
- * `<out>/project/`, plus `<out>/index-fields.json` (namespace, bibliothèques)
- * pour l'index du design system. Tout est lu dans le repo ; ce script n'écrit
- * que hors du repo (ou dans un dossier ignoré) et ne publie rien.
- *
- *   nx typecheck ui   # les types des composants viennent de out-tsc/lib
- *   nx run ui:export-design-system -- --out <dossier absolu>
- *
- * Les modules TypeScript et TSX (tokens, logos) sont chargés par Vite, comme
- * dans les tests : aucune étape de build préalable.
- */
 import { execFileSync } from 'node:child_process';
 import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -37,7 +23,6 @@ if (!args.out) {
 const outDir = resolve(process.cwd(), args.out);
 const projectDir = join(outDir, 'project');
 
-/** Logos de `src/assets`, rendus depuis leurs composants. */
 const SVG_LOGOS = [
   [
     'republique-francaise.svg',

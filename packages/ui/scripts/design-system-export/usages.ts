@@ -1,12 +1,4 @@
-/*
- * Notes d'usage des tokens publiés : où le code les emploie (classes Tailwind
- * de `@tet/ui` et de l'app, `variantClassNames` de `@tet/design-tokens`).
- * Une gamme (`primary`) sert de note par défaut à ses teintes (`primary-3`).
- * Les contrastes cités sont mesurés (WCAG 2) ; une paire du code sous le seuil
- * est gardée telle quelle et signalée.
- */
 export const usages: Readonly<Record<string, string>> = {
-  // Couleurs : marque
   primary:
     'Couleur de marque, alias de `primary-7` : boutons principaux (`bg-primary-7`), liens, icônes, éléments actifs.',
   'primary-0': 'Fond le plus clair de la gamme (`bg-primary-0`).',
@@ -82,7 +74,6 @@ export const usages: Readonly<Record<string, string>> = {
   'orange-1': 'Orange d’accent ponctuel (fond, bordure, texte).',
   overlay: 'Voile semi-transparent, non utilisé en classe dans le code actuel.',
 
-  // Typographie
   h1: 'Titre de page (dans `PageHeader.Title`). 2rem / 2.5rem sous le point de rupture md.',
   h2: 'Titre de section. 1.75rem / 2.25rem sous md.',
   h3: 'Titre de sous-section. 1.5rem / 2rem sous md.',
@@ -95,7 +86,6 @@ export const usages: Readonly<Record<string, string>> = {
   'paragraphe-22': 'Texte d’accroche.',
   text: 'Échelle Tailwind (`text-sm`, `text-lg`…) des libellés, badges et contrôles.',
 
-  // Espacement
   spacing:
     'Échelle des primitives `Stack`, `Inline`, `Grid` (`gap`) et `Box` (`padding`). Le parent porte l’espacement : pas de marge sur les enfants.',
   'space-none': 'Éléments accolés.',
@@ -105,7 +95,6 @@ export const usages: Readonly<Record<string, string>> = {
   'space-lg': 'Sections d’une page ; padding des cartes.',
   'space-xl': 'Grandes séparations de page.',
 
-  // Rayons
   radius: 'Rayon par défaut (`rounded`) : petits contrôles.',
   'radius-none': 'Angles droits.',
   'radius-sm': 'Petits éléments (`rounded-sm`).',
@@ -116,7 +105,6 @@ export const usages: Readonly<Record<string, string>> = {
   'radius-3xl': 'Grands blocs de page (`rounded-t-3xl`).',
   'radius-full': 'Pastilles, avatars, puces (`rounded-full`).',
 
-  // Ombres
   'shadow-button': 'Ombre légère des boutons (`shadow-button`).',
   'shadow-card': 'Ombre des cartes (`shadow-card`).',
   'shadow-t-sm': 'Ombre portée vers le haut des barres collées en bas d’écran.',
@@ -131,7 +119,6 @@ export const usages: Readonly<Record<string, string>> = {
   'shadow-t-3xl':
     'Ombre portée vers le haut, maximale et diffuse ; non utilisée dans le code actuel.',
 
-  // Largeurs
   'max-w-8xl': 'Largeur maximale du contenu de page (conteneur de `AppShell`).',
   'max-w-modal-xs': 'Modale très étroite (`Modal size="xs"`).',
   'max-w-modal-sm': 'Modale étroite.',
@@ -139,7 +126,6 @@ export const usages: Readonly<Record<string, string>> = {
   'max-w-modal-lg': 'Modale large.',
   'max-w-modal-xl': 'Modale très large.',
 
-  // Superposition
   'z-header': 'Header de l’app.',
   'z-side-panel': 'Panneau latéral, au-dessus du header.',
   'z-modal': 'Modales.',

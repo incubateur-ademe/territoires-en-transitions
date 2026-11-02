@@ -1,13 +1,3 @@
-/*
- * Captures d'écran d'un prototype (ou d'une maquette) en desktop et mobile.
- *
- *   node apps/prototypes/scripts/capture.mjs --route <slug> --out <dossier>
- *   node apps/prototypes/scripts/capture.mjs --file <maquette.html> --out <dossier>
- *
- * `--route` sert le build statique `apps/prototypes/out` (lancer
- * `nx build prototypes` avant) ; `--file` ouvre un fichier HTML tel quel.
- * Écrit `<nom>-desktop.png` (1280px) et `<nom>-mobile.png` (390px).
- */
 import { chromium } from '@playwright/test';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
@@ -35,7 +25,6 @@ const MIME_TYPES = {
 
 const outDir = resolve(dirname(fileURLToPath(import.meta.url)), '../out');
 
-/** Chemin servi → fichier du build statique (`/slug` → `slug.html`). */
 const toBuildFile = (urlPath) => {
   const clean = decodeURIComponent(urlPath.split('?')[0] ?? '/');
   const candidates = [

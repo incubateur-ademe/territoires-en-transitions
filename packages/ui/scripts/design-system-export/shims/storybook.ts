@@ -1,7 +1,3 @@
-/*
- * Modules Storybook importés par les stories : seuls les helpers d'exécution
- * sont fournis (actions muettes) ; les fonctions `play` ne sont pas jouées.
- */
 const noop = (): void => undefined;
 
 export const action =

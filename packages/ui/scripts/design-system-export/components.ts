@@ -1,13 +1,5 @@
-/*
- * Fonctions pures de l'export des composants : inventaire des stories,
- * source du point d'entrée du bundle, en-tête du bundle, preview.html et
- * README de chaque composant. Les lectures de fichiers et le build sont dans
- * `build-components.mts`.
- */
-
 export const NAMESPACE = 'TeT';
 
-/** `WithHoverActions` → `With hover actions`. */
 export const toStoryLabel = (exportName: string): string =>
   exportName
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
@@ -15,17 +7,13 @@ export const toStoryLabel = (exportName: string): string =>
     .toLowerCase()
     .replace(/^./, (first) => first.toUpperCase());
 
-/** Une story Storybook telle que lue dans son module (côté Node). */
 export type StoryFile = Readonly<{
-  /** Chemin relatif à `packages/ui` (`src/design-system/Button/Button.stories.tsx`). */
   path: string;
   title: string | undefined;
   componentName: string | undefined;
-  /** Exports de stories, dans l'ordre de déclaration du fichier. */
   storyExports: ReadonlyArray<string>;
 }>;
 
-/** Un composant publié : une carte, un dossier `components/<name>/`. */
 export type PublishedComponent = Readonly<{
   name: string;
   group: string;
@@ -34,7 +22,6 @@ export type PublishedComponent = Readonly<{
 
 const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
-/** `split-button.stories.tsx` → `SplitButton`. */
 export const toPascalCase = (value: string): string =>
   value
     .split(/[^A-Za-z0-9]+/)
@@ -48,12 +35,10 @@ const storyBaseName = (path: string): string =>
     .at(-1)
     ?.replace(/\.stories\.tsx?$/, '') ?? path;
 
-/** Lit un fichier de stories : composant et titre du meta, exports de stories. */
 export const parseStoryFile = (path: string, source: string): StoryFile => {
   const metaSource = source.split(/^export default/m)[0] ?? source;
   return {
     path,
-    // propriétés de premier niveau du meta (indentées de deux espaces)
     title: /^ {2}title:\s*'([^']+)'/m.exec(metaSource)?.[1],
     componentName: /^ {2}component:\s*([A-Za-z_$][\w$]*)/m.exec(
       metaSource
@@ -62,7 +47,6 @@ export const parseStoryFile = (path: string, source: string): StoryFile => {
   };
 };
 
-/** Nom de la carte : le composant du meta, sinon le titre, sinon le fichier. */
 export const componentNameOf = (file: StoryFile): string => {
   const fromTitle = file.title?.split('/').at(-1);
   const candidates = [
@@ -77,16 +61,10 @@ export const componentNameOf = (file: StoryFile): string => {
   );
 };
 
-/** Groupe de la carte : premier segment du titre, sinon le dossier source. */
 export const groupOf = (file: StoryFile): string =>
   file.title?.split('/')[0]?.trim() ||
   (file.path.startsWith('src/components/') ? 'Components' : 'Design System');
 
-/**
- * Regroupe les fichiers de stories par composant ; deux fichiers qui
- * désigneraient le même nom pour des dossiers différents restent distincts
- * (le second prend le nom de son fichier).
- */
 export const groupStoryFiles = (
   files: ReadonlyArray<StoryFile>
 ): ReadonlyArray<PublishedComponent> =>
@@ -128,10 +106,6 @@ export const groupStoryFiles = (
       (a, b) => a.group.localeCompare(b.group) || a.name.localeCompare(b.name)
     );
 
-/**
- * Lignes d'export publiques de `src/index.ts`, chemins rendus absolus, sans
- * les modules écartés (tracking lié à `@tet/api`, composants dépréciés).
- */
 export const publicExportLines = (
   indexSource: string,
   srcDir: string,
@@ -146,7 +120,6 @@ export const publicExportLines = (
       : [];
   });
 
-/** Source du point d'entrée : API publique, stories composées, aperçu. */
 export const entrySource = ({
   exportLines,
   components,
@@ -190,7 +163,6 @@ export const entrySource = ({
   ].join('\n');
 };
 
-/** Ligne 1 du bundle : namespace et ordre des composants. */
 export const bundleHeader = (
   components: ReadonlyArray<PublishedComponent>,
   bundleExports: ReadonlySet<string>
@@ -203,12 +175,6 @@ export const bundleHeader = (
       .map(({ name }) => ({ name })),
   })} */`;
 
-/**
- * Le bundle est inliné par ses consommateurs dans un `<script>` : ni
- * `</script` ni `<!--` ne doivent y apparaître en clair. Le caractère de
- * remplacement U+FFFD, que des dépendances laissent en clair dans leurs
- * chaînes et regex, est refusé à la publication : il est écrit `\uFFFD`.
- */
 export const escapeForInlineScript = (code: string): string =>
   code
     .replace(/<\/script/gi, '<\\/script')
@@ -217,10 +183,6 @@ export const escapeForInlineScript = (code: string): string =>
 
 const escapeAttribute = (value: string): string => value.replace(/"/g, "'");
 
-/**
- * Carte d'un composant exporté par le bundle, ou planche d'exemples (`page`)
- * quand les stories composent plusieurs composants sans en exporter un seul.
- */
 export const previewHtml = (
   component: PublishedComponent,
   isBundleExport: boolean
@@ -245,13 +207,11 @@ export const previewHtml = (
   ].join('\n');
 };
 
-/** Noms des `export const` d'un fichier, dans l'ordre de déclaration. */
 export const exportedConstNames = (source: string): ReadonlyArray<string> =>
   [...source.matchAll(/^export const (\w+)/gm)].flatMap((match) =>
     match[1] ? [match[1]] : []
   );
 
-/** Commentaire JSDoc placé juste au-dessus de `export const <name>`. */
 export const jsDocAbove = (
   source: string,
   name: string
@@ -302,7 +262,6 @@ export const componentReadme = ({
     '',
   ].join('\n');
 
-/** Déclarations d'un `.d.ts` émis par tsc, sans imports ni source map. */
 export const stripDeclarationFile = (dts: string): string =>
   dts
     .split('\n')

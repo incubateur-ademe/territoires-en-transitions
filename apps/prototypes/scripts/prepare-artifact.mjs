@@ -1,23 +1,3 @@
-/*
- * Prépare la page d'un prototype pour la publier en artifact claude.ai.
- *
- *   node apps/prototypes/scripts/prepare-artifact.mjs --route <slug> --out <dossier> [--title <titre>]
- *
- * Part du build statique `apps/prototypes/out` (lancer `nx build prototypes`
- * avant) et écrit dans `<dossier>` une copie publiable :
- * - `<slug>.html`, la page, et `next-assets/`, ses ressources : l'hébergement
- *   des artifacts réserve les chemins qui commencent par `_`, donc `_next/`
- *   est renommé et ses références réécrites ;
- * - sans les polices `.svg` et `.eot`, que les navigateurs actuels ne chargent
- *   pas (la police SVG porte un DOCTYPE, refusé à la publication) ;
- * - avec le caractère U+FFFD des chunks JS écrit `\uFFFD`, son équivalent
- *   échappé (refusé en clair à la publication) ;
- * - `files.json`, la table `chemin publié → fichier` à passer en `files` à la
- *   publication, avec `root` = `<dossier>`.
- *
- * Le code du prototype reste la source : l'artifact n'en est qu'un instantané,
- * à republier après chaque build.
- */
 import { cpSync, existsSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, resolve } from 'node:path';
@@ -31,7 +11,6 @@ const REPLACEMENT_CHARACTER = String.fromCodePoint(0xfffd);
 
 const outDir = resolve(dirname(fileURLToPath(import.meta.url)), '../out');
 
-/** Tous les fichiers sous `dir`, en chemins relatifs à `dir`. */
 const listFiles = (dir) =>
   readdirSync(dir, { recursive: true })
     .map((path) => String(path))

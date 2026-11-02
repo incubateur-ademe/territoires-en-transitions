@@ -1,11 +1,3 @@
-/*
- * Construction pure du `tokens.json` (et du `tokens.css` compilé) du design
- * system publié dans Claude, à partir des sources du repo : `@tet/design-tokens`,
- * le thème Tailwind résolu, l'échelle des primitives de layout et les styles de
- * `global.css`. Aucune valeur n'est saisie ici : seules les notes d'usage le sont
- * (`usages.ts`).
- */
-
 export type Token = Readonly<{ name: string; value: string; usage: string }>;
 
 export type TokenFamily = Readonly<{
@@ -63,28 +55,23 @@ export type TokensJson = Readonly<{
   zIndex: TokenFamily;
 }>;
 
-/** Couleurs telles que déclarées dans `designTokens.colors`. */
 export type ColorSource = Readonly<
   Record<string, string | Readonly<Record<string, string>>>
 >;
 
-/** Déclarations CSS d'un sélecteur de `global.css` (`h1`, `.paragraphe-14`…). */
 export type CssDeclarations = Readonly<Record<string, string>>;
 
 export type TokensSource = Readonly<{
   name: string;
   meta: TokensMeta;
   colors: ColorSource;
-  /** Couleurs de `global.css` sans token Tailwind (texte courant). */
   extraColors: ReadonlyArray<Readonly<{ name: string; value: string }>>;
   fontStack: ReadonlyArray<string>;
   fontFaces: ReadonlyArray<FontFace>;
   fontSize: Readonly<Record<string, string>>;
   headings: Readonly<Record<string, CssDeclarations>>;
   paragraphes: Readonly<Record<string, CssDeclarations>>;
-  /** Échelle sémantique des primitives (`md` → pas Tailwind `4`). */
   spacingScale: Readonly<Record<string, string>>;
-  /** Thème Tailwind résolu : pas d'espacement → longueur. */
   tailwindSpacing: Readonly<Record<string, string>>;
   radius: Readonly<Record<string, string>>;
   boxShadow: Readonly<Record<string, string>>;
@@ -95,10 +82,6 @@ export type TokensSource = Readonly<{
 
 const DEFAULT_KEY = 'DEFAULT';
 
-/**
- * Aplatit `{ primary: { 1: '#…', DEFAULT: '#…' } }` en `primary-1`, `primary`.
- * Un `DEFAULT` égal à une teinte de sa gamme devient un alias de cette teinte.
- */
 export const flattenColors = (
   colors: ColorSource
 ): ReadonlyArray<Readonly<{ name: string; value: string }>> =>
@@ -131,7 +114,6 @@ export const flattenColors = (
     ];
   });
 
-/** Hex en minuscules, `rgba(26, 42, 130, 0.5)` sans espaces superflus. */
 export const normalizeColor = (value: string): string =>
   value.startsWith('#')
     ? value.toLowerCase()
@@ -144,7 +126,6 @@ const withUsage =
     usage: usages[token.name] ?? fallback(token.name),
   });
 
-/** Note d'usage par défaut d'une teinte : celle de sa gamme (`primary-3` → `primary`). */
 const groupUsage =
   (usages: TokensSource['usages']) =>
   (name: string): string =>
@@ -247,7 +228,6 @@ const declarationBlock = (
     '}',
   ].join('\n');
 
-/** `tokens.css` tel que la page du design system le compile (cf. format.md). */
 export const buildTokensCss = (tokens: TokensJson): string => {
   const firstTheme = tokens.color.themes[0]?.id ?? 'light';
   const customProperty = (token: Token) =>

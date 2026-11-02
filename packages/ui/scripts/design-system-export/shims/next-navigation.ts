@@ -1,7 +1,3 @@
-/*
- * `next/navigation` hors de Next : une page fixe, sans routeur. Les composants
- * qui lisent l'URL s'affichent dans leur état par défaut.
- */
 const noop = (): void => undefined;
 
 export const usePathname = (): string => '/';

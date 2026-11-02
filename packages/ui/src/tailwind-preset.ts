@@ -8,7 +8,6 @@ export const preset = {
     './src/**/*.{ts,tsx}',
     '../../packages/design-tokens/src/**/*.{ts,tsx}',
   ],
-  // classes construites dynamiquement par les primitives de layout
   safelist: [...listLayoutClasses()],
   theme: {
     maxHeight: designTokens.maxHeight,

@@ -1,10 +1,6 @@
 import { HTMLAttributes } from 'react';
 import { cn } from '../../utils/cn';
 
-/**
- * Éléments HTML qu'une primitive de layout peut rendre : le layout porte aussi
- * la sémantique de la page (sections, listes, navigation…).
- */
 export type LayoutElement =
   | 'div'
   | 'section'

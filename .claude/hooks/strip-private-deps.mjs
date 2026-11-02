@@ -1,13 +1,3 @@
-/*
- * Retire du `package.json` et du `pnpm-lock.yaml` racine les dépendances
- * qu'une session cloud sans token ne peut pas télécharger : Bryntum (registre
- * privé) et `crisp-api` (dépendance hébergée sur codeload.github.com).
- *
- * Utilisé par `session-start.sh` en repli, sur la copie de travail seulement :
- * le hook restaure les deux fichiers juste après l'installation, rien de ceci
- * n'est jamais commité. Aucun contrôle supply-chain de pnpm n'est désactivé :
- * les autres paquets restent soumis à `minimumReleaseAge` et au lockfile.
- */
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const PRIVATE_PACKAGES = ['crisp-api', 'fbemitter'];
@@ -15,7 +5,6 @@ const PRIVATE_PACKAGES = ['crisp-api', 'fbemitter'];
 const isPrivate = (name) =>
   name.startsWith('@bryntum/') || PRIVATE_PACKAGES.includes(name);
 
-/** `'@bryntum/scheduler@6.3.1(…)':` → `@bryntum/scheduler` */
 const packageNameOf = (yamlKey) => {
   const key = yamlKey
     .trim()
@@ -27,7 +16,6 @@ const packageNameOf = (yamlKey) => {
 
 const indentOf = (line) => line.length - line.trimStart().length;
 
-/** Entrées de lockfile : paquets (indentation 2) et dépendances d'un importer (6). */
 const isEntryKey = (line) => [2, 6].includes(indentOf(line)) && /:/.test(line);
 
 const stripPackageJson = (pkg) =>

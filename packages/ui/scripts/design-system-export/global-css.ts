@@ -1,7 +1,6 @@
 import postcss, { AtRule, Rule } from 'postcss';
 import type { CssDeclarations, FontFace } from './tokens';
 
-/** Ce que le design system reprend de `global.css`. */
 export type GlobalCssStyles = Readonly<{
   headings: Readonly<Record<string, CssDeclarations>>;
   paragraphes: Readonly<Record<string, CssDeclarations>>;
@@ -31,7 +30,6 @@ const isInsideMedia = (rule: Rule): boolean => {
   return walk(rule.parent as AncestorNode | undefined);
 };
 
-/** Fusionne les déclarations par sélecteur, dans l'ordre du fichier. */
 const collectRules = (
   rules: ReadonlyArray<Rule>,
   keyOf: (selector: string) => string | undefined
@@ -54,7 +52,6 @@ const collectRules = (
     {}
   );
 
-/** `url('./assets/fonts/Marianne-Light.woff2') format('woff2')` → `Marianne-Light.woff2`. */
 const woff2FileName = (src: string): string | undefined =>
   /url\(['"]?[^'")]*\/([^/'")]+\.woff2)['"]?\)/.exec(src)?.[1];
 

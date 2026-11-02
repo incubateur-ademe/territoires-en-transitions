@@ -1,9 +1,5 @@
 import { AnchorHTMLAttributes, forwardRef } from 'react';
 
-/*
- * `next/link` hors de Next : un simple lien. Le design system publié affiche
- * les composants sans routeur, les props de navigation de Next sont ignorées.
- */
 type Href = string | Readonly<{ pathname?: string | null }>;
 
 type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {

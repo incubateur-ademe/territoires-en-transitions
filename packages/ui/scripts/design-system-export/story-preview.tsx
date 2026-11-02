@@ -9,12 +9,6 @@ import {
 import { createRoot } from 'react-dom/client';
 import { toStoryLabel } from './components';
 
-/*
- * Rejoue les stories Storybook (CSF 3) dans les aperçus du design system
- * publié : args et render de la story ou du meta, décorateurs, sans les
- * fonctions `play`. Compilé dans le bundle, sous `TeT.__preview`.
- */
-
 type Args = Readonly<Record<string, unknown>>;
 
 type StoryContext = Readonly<{
@@ -76,7 +70,6 @@ export const composeStory = (
   }, Base);
 };
 
-/** Stories d'un module, dans l'ordre de déclaration donné (`exportOrder`). */
 export const composeStories = (
   module: StoryModule,
   exportOrder: ReadonlyArray<string>
@@ -94,7 +87,6 @@ export const composeStories = (
 
 type BoundaryState = Readonly<{ error: Error | null }>;
 
-/** Une story qui échoue s'affiche en erreur sans masquer les autres. */
 class StoryBoundary extends Component<{ children: ReactNode }, BoundaryState> {
   state: BoundaryState = { error: null };
 
@@ -152,7 +144,6 @@ const StoryList = ({
   </div>
 );
 
-/** Monte les stories d'un composant dans `element` (appelé par preview.html). */
 export const renderStories = (
   element: Element,
   stories: ReadonlyArray<ComposedStory>

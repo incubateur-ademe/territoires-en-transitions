@@ -107,8 +107,6 @@ describe('listLayoutClasses', () => {
       Object.fromEntries(breakpoints.map((breakpoint) => [breakpoint, value])),
     ]);
 
-  // Les classes non préfixées et sans valeur (`flex`, `grid`…) sont écrites
-  // en toutes lettres dans le source : le scan de Tailwind les trouve seul.
   const staticClasses = new Set([
     'flex',
     'flex-col',

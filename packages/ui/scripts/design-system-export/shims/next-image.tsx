@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- remplace `next/image` hors de Next */
 import { forwardRef, ImgHTMLAttributes } from 'react';
 
-/* `next/image` hors de Next : une image simple, sans optimisation. */
 type StaticImage = Readonly<{ src: string; width?: number; height?: number }>;
 
 type ImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> & {

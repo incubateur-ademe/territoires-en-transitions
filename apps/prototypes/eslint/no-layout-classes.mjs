@@ -1,12 +1,3 @@
-/*
- * Le layout des prototypes s'écrit avec les primitives de `@tet/ui` (`Stack`,
- * `Inline`, `Grid`, `Box`) et les tokens du preset : c'est ce qui rend un
- * prototype transposable tel quel dans l'app. Cette règle signale le layout
- * écrit à la main (classes Tailwind de flex/grid/espacement, valeurs
- * arbitraires, styles inline de layout).
- */
-
-/** Utilitaires de layout couverts par les primitives. */
 const LAYOUT_UTILITIES = [
   /^(flex|inline-flex|grid|inline-grid)$/,
   /^flex-(row|col|row-reverse|col-reverse|wrap|wrap-reverse|nowrap)$/,
@@ -19,36 +10,17 @@ const LAYOUT_UTILITIES = [
   /^grid-(cols|rows)-/,
 ];
 
-/** Propriétés CSS de layout interdites en style inline. */
 const LAYOUT_STYLE_PROPERTY =
   /^(display|gap|rowGap|columnGap|margin.*|padding.*|flex.*|grid.*|justify.*|align(Items|Content)|place(Content|Items))$/;
 
 const ARBITRARY_VALUE = /\[.*\]/;
 
-/** Remise à zéro d'une marge ou d'un padding (ex. `mb-0` sur un titre DSFR). */
 const SPACING_RESET =
   /^(p|px|py|pt|pr|pb|pl|ps|pe|m|mx|my|mt|mr|mb|ml|ms|me)-0$/;
 
-/**
- * Retire les variantes (`md:`, `hover:`), l'important (`!`) et le signe
- * négatif (`-mt-2`) d'une classe Tailwind.
- *
- * @param {string} className
- * @returns {string}
- */
 const toUtility = (className) =>
   className.split(':').at(-1)?.replace(/^!/, '').replace(/^-/, '') ?? '';
 
-/**
- * @typedef {{ className: string, kind: 'layout' | 'arbitrary' }} ClassViolation
- */
-
-/**
- * Classes interdites d'une chaîne de classes Tailwind.
- *
- * @param {string} classes
- * @returns {ReadonlyArray<ClassViolation>}
- */
 export const findClassViolations = (classes) =>
   classes
     .split(/\s+/)
@@ -67,14 +39,6 @@ export const findClassViolations = (classes) =>
       return [];
     });
 
-/**
- * Noeuds porteurs de chaînes de classes dans une expression : littéraux,
- * templates, et arguments de `cn(...)` / `classNames(...)` y compris les clés
- * d'objet (`{ 'max-lg:hidden': isOpen }`).
- *
- * @param {any} node
- * @returns {ReadonlyArray<{ node: any, value: string }>}
- */
 const collectClassStrings = (node) => {
   if (!node) return [];
   switch (node.type) {
@@ -118,24 +82,12 @@ const collectClassStrings = (node) => {
   }
 };
 
-/**
- * @param {any} node
- * @returns {string}
- */
 const getAttributeName = (node) =>
   node.name?.type === 'JSXIdentifier' ? node.name.name : '';
 
-/**
- * @param {string} name
- * @returns {boolean}
- */
 const isClassAttribute = (name) =>
   name === 'className' || name.endsWith('ClassName');
 
-/**
- * @param {any} property
- * @returns {string}
- */
 const getPropertyName = (property) => {
   if (property.type !== 'Property') return '';
   if (property.key.type === 'Identifier') return property.key.name;
@@ -170,7 +122,6 @@ export const noLayoutClassesRule = {
   create(context) {
     const { allowArbitraryValues = false } = context.options[0] ?? {};
 
-    /** @param {any} attribute */
     const checkClassAttribute = (attribute) =>
       collectClassStrings(attribute.value).forEach(({ node, value }) =>
         findClassViolations(value)
@@ -180,7 +131,6 @@ export const noLayoutClassesRule = {
           )
       );
 
-    /** @param {any} attribute */
     const checkStyleAttribute = (attribute) => {
       const expression = attribute.value?.expression;
       if (expression?.type !== 'ObjectExpression') return;

@@ -1,9 +1,3 @@
-/*
- * Build des composants du design system publié : `@tet/ui` compilé en un
- * script classique (`window.TeT`), React 19 en bibliothèques globales, le CSS
- * Tailwind, les types, et un aperçu + un README par composant tiré de ses
- * stories. Appelé par `export.mts`.
- */
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import postcss from 'postcss';
@@ -26,7 +20,6 @@ import {
 } from './components.ts';
 
 type BuildInput = Readonly<{
-  /** Preset Tailwind de `@tet/ui`, chargé par Vite dans `export.mts`. */
   preset: object;
   uiRoot: string;
   repoRoot: string;
@@ -46,13 +39,11 @@ export type BuildResult = Readonly<{
   libraries: ReadonlyArray<Library>;
 }>;
 
-/** Modules de `src/index.ts` laissés hors du bundle. */
 const EXCLUDED_MODULES = [
   /^components\/tracking/, // dépend de `@tet/api` (session, PostHog)
   /DEPRECATED_/,
 ];
 
-/** Dossiers de stories laissés hors des aperçus. */
 const EXCLUDED_STORY_PATHS = [/DEPRECATED_/, /\/tracking\//];
 
 const isExcludedModule = (modulePath: string): boolean =>
@@ -80,7 +71,6 @@ const readVersion = async (repoRoot: string, name: string): Promise<string> =>
     await readFile(join(repoRoot, 'node_modules', name, 'package.json'), 'utf8')
   ).version;
 
-/** Fichiers de stories lus statiquement, groupés par composant. */
 const inventoryComponents = async (
   uiRoot: string
 ): Promise<ReadonlyArray<PublishedComponent>> => {
@@ -150,17 +140,12 @@ const buildScripts = async ({
     })
   );
 
-  // Les bibliothèques et le bundle partagent une seule instance de React :
-  // celle des globales `window.React` / `window.ReactDOM`.
   const reactAlias: Alias[] = [
     { find: /^react$/, replacement: entries.reactGlobal },
   ];
   const bundleAlias: Alias[] = [
     ...reactAlias,
     { find: /^react-dom(\/client)?$/, replacement: entries.reactDomGlobal },
-    // Le runtime JSX aussi passe par le React de la page : sans cet alias, le
-    // bundle embarquerait celui de React 19 et ses éléments ne seraient pas
-    // reconnus par un autre React (canvas Claude Design).
     {
       find: /^react\/jsx(-dev)?-runtime$/,
       replacement: join(shims, 'react-jsx-runtime.ts'),
@@ -193,8 +178,6 @@ const buildScripts = async ({
       root: uiRoot,
       configFile: false,
       logLevel: 'error',
-      // Le serveur Vite d'export.mts a fixé NODE_ENV=development pour ce
-      // process : sans ceci, le JSX serait compilé vers le runtime de dev.
       mode: 'production',
       oxc: { jsx: { runtime: 'automatic', development: false } },
       resolve: { tsconfigPaths: true, alias: [...alias] },
@@ -244,10 +227,6 @@ const buildScripts = async ({
   return bundleExports;
 };
 
-/**
- * Évalue les trois scripts dans un DOM de test, comme le ferait la page :
- * vérifie qu'ils s'exécutent et renvoie les exports de `window.TeT`.
- */
 const listBundleExports = (
   scripts: ReadonlyArray<string>
 ): ReadonlySet<string> => {
@@ -266,10 +245,6 @@ const listBundleExports = (
   }
 };
 
-/**
- * `global.css` compilé par Tailwind sur les sources de `@tet/ui`, sans les
- * `@font-face` (servies par tokens.css) et avec Remix Icon, sa police inlinée.
- */
 const buildStylesheet = async ({
   preset,
   uiRoot,
@@ -282,8 +257,6 @@ const buildStylesheet = async ({
   const tailwind = await postcss([
     tailwindcss({
       presets: [preset],
-      // Les classes des variantes de couleur (Badge…) vivent dans
-      // @tet/design-tokens : à scanner comme dans la config des apps.
       content: [
         join(uiRoot, 'src/**/*.{ts,tsx}'),
         join(repoRoot, 'packages/design-tokens/src/**/*.{ts,tsx}'),
@@ -295,8 +268,6 @@ const buildStylesheet = async ({
   const woff2 = (await readFile(join(remixDir, 'remixicon.woff2'))).toString(
     'base64'
   );
-  // Toutes les déclarations `src` (eot, woff2, woff, ttf…) cèdent la place à
-  // la seule police woff2, inlinée : le bundle CSS ne charge aucun fichier.
   const remixCss = (await readFile(join(remixDir, 'remixicon.css'), 'utf8'))
     .replace(/\s*src:[^;]*;/g, '')
     .replace(
@@ -309,7 +280,6 @@ const buildStylesheet = async ({
   );
 };
 
-/** Déclarations émises par `nx typecheck ui` (out-tsc/lib) pour un dossier. */
 const declarationsFor = async (
   uiRoot: string,
   sourceDir: string

@@ -8,18 +8,6 @@ import {
   toResponsiveEntries,
 } from './layout.tokens';
 
-/*
- * Calcul pur des classes Tailwind des primitives de layout.
- *
- * Les classes sont construites dynamiquement (`md:gap-4`), donc invisibles au
- * scan de contenu de Tailwind : `listLayoutClasses` énumère toutes celles que
- * ces fonctions peuvent produire, et le preset les place en `safelist`. Une
- * seule source de vérité, sans table de classes à maintenir à la main.
- *
- * Ce fichier est chargé par la config Tailwind (Node) : il ne doit importer ni
- * React ni rien qui en dépende.
- */
-
 export const alignments = [
   'start',
   'center',
@@ -35,7 +23,6 @@ export type Justify = (typeof justifications)[number];
 export const columnCounts = [1, 2, 3, 4, 5, 6] as const;
 export type Columns = (typeof columnCounts)[number];
 
-/** Une prop de layout : ses valeurs possibles et la classe de chacune. */
 type ClassFamily<T extends string | number> = Readonly<{
   values: ReadonlyArray<T>;
   toClass: (value: T) => string;
@@ -76,10 +63,6 @@ const columnsFamily: ClassFamily<Columns> = {
   toClass: (columns) => `grid-cols-${columns}`,
 };
 
-/**
- * Classes d'une prop responsive. `basePrefix` remplace le préfixe vide de la
- * valeur de base : elle ne s'applique alors qu'à partir de ce point de rupture.
- */
 const responsiveClasses = <T extends string | number>(
   family: ClassFamily<T>,
   value: Responsive<T> | undefined,
@@ -96,7 +79,6 @@ const allFamilyClasses = <T extends string | number>(
     family.values.map((value) => `${prefix}${family.toClass(value)}`)
   );
 
-/** Passage en ligne d'un `Inline` replié en colonne sous un point de rupture. */
 const rowFromClass = (breakpoint: Breakpoint): string =>
   `${breakpoint}:flex-row`;
 
@@ -120,11 +102,6 @@ export type InlineLayout = Readonly<{
   align?: Responsive<Align>;
   justify?: Responsive<Justify>;
   wrap?: boolean;
-  /**
-   * Empile les éléments en colonne sous ce point de rupture. Replié, les
-   * éléments occupent toute la largeur : `align` et `justify` ne s'appliquent
-   * qu'à partir de ce point de rupture.
-   */
   collapseBelow?: Breakpoint;
 }>;
 
@@ -177,7 +154,6 @@ export const boxClasses = ({
     ...responsiveClasses(paddingYFamily, paddingY),
   ]);
 
-/** Toutes les classes dynamiques que les primitives peuvent produire. */
 export const listLayoutClasses = (): ReadonlyArray<string> => [
   ...allFamilyClasses(gapFamily),
   ...allFamilyClasses(paddingFamily),

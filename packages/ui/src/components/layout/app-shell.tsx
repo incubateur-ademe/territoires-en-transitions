@@ -6,27 +6,14 @@ export type AppShellProps = {
   header: ReactNode;
   footer: ReactNode;
   pageFrame?: (page: ReactNode) => ReactNode;
-  /** Panneau latéral, rendu sticky à droite par-dessus le header. */
   sidePanel?: ReactNode;
   isSidePanelOpen?: boolean;
-  /** Contenu affiché sous le footer, hors du conteneur de page. */
   belowFooter?: ReactNode;
   children: ReactNode;
 };
 
 const renderPageWithoutFrame = (page: ReactNode): ReactNode => page;
 
-/**
- * Coque présentationnelle des pages de l'app : header, conteneur de page,
- * footer et panneau latéral. Sans état ni donnée, elle est partagée entre
- * l'app et les prototypes pour que le cadre d'une page y soit identique.
- *
- * Grille à 2 colonnes : `header` en pleine largeur, `main + footer` à gauche
- * dessous, `sidePanel` sticky à droite par-dessus le header.
- * Les `grid-template-columns` s'animent entre l'état fermé (`1fr 0`) et
- * ouvert (`1fr <side-panel-width>`), ce qui produit le slide-in du panel à
- * largeur fixe.
- */
 export const AppShell = ({
   header,
   footer,
