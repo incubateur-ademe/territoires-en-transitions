@@ -6,9 +6,8 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
-import { EmptyCard, Pagination } from '@tet/ui';
+import { Badge, EmptyCard, PageHeader, Pagination } from '@tet/ui';
 import { useListDossiersInstruction } from './data/use-list-dossiers-instruction';
-import { DossiersInstructionMetrics } from './dossiers-instruction.metrics';
 import { DossiersInstructionTable } from './dossiers-instruction.table';
 
 /**
@@ -55,28 +54,29 @@ export const DossiersInstructionPage = ({
       data-test="demarches.pcaet.instruction.demandes-avis"
       className="flex flex-col gap-6 pb-12"
     >
-      <h1 className="text-2xl font-bold text-primary-9 m-0">
-        {appLabels.instructionBonjour({ prenom: user.prenom })}
-      </h1>
-
-      {/*
-        Les compteurs de charge ne s'adressent qu'aux services qui instruisent.
-        Les autres — DDT, DR ADEME, national — suivent des dossiers menés
-        ailleurs : « à instruire » leur réclamerait un travail qui n'est pas le
-        leur, et le délai moyen mesurerait la performance d'un autre service.
-      */}
-      {deposeAvis && data && (
-        <DossiersInstructionMetrics
-          countByStatut={data.countByStatut}
-          delaiMoyenJours={data.stats.delaiMoyenJours}
-        />
-      )}
+      <PageHeader>
+        <PageHeader.Title className="flex flex-wrap items-center gap-3">
+          {appLabels.instructionListeTitre}
+          {/*
+            La charge ne s'adresse qu'aux services qui rendent un avis. Les
+            autres — DDT, DR ADEME, national — suivent des dossiers menés
+            ailleurs : leur afficher une charge leur réclamerait un travail qui
+            n'est pas le leur.
+          */}
+          {deposeAvis && data && (
+            <Badge
+              title={appLabels.instructionListeSoumisPourAvis({
+                count: data.countByStatut.en_instruction,
+              })}
+              variant="info"
+              size="sm"
+              trim={false}
+            />
+          )}
+        </PageHeader.Title>
+      </PageHeader>
 
       <section className="flex flex-col gap-4 rounded-xl border border-grey-3 bg-white p-6">
-        <h2 className="text-lg font-bold text-primary-9 m-0">
-          {appLabels.instructionListeTitre}
-        </h2>
-
         {isLoading ? (
           <div className="flex py-12">
             <SpinnerLoader className="m-auto" />
