@@ -1,3 +1,7 @@
+export const spacings = ['none', 'xs', 'sm', 'md', 'lg', 'xl'] as const;
+
+export type Spacing = (typeof spacings)[number];
+
 export const spacingScale = {
   none: '0',
   xs: '1',
@@ -5,11 +9,7 @@ export const spacingScale = {
   md: '4',
   lg: '6',
   xl: '8',
-} as const;
-
-export type Spacing = keyof typeof spacingScale;
-
-export const spacings = Object.keys(spacingScale) as ReadonlyArray<Spacing>;
+} as const satisfies Record<Spacing, string>;
 
 export const breakpoints = ['sm', 'md', 'lg', 'xl'] as const;
 

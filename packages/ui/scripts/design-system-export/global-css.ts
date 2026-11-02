@@ -1,4 +1,4 @@
-import postcss, { AtRule, Rule } from 'postcss';
+import postcss, { AtRule, Container, Rule } from 'postcss';
 import type { CssDeclarations, FontFace } from './tokens';
 
 export type GlobalCssStyles = Readonly<{
@@ -18,16 +18,22 @@ const declarationsOf = (node: Rule | AtRule): CssDeclarations =>
     )
   );
 
-type AncestorNode = Readonly<{ type: string; name?: string; parent?: unknown }>;
+type Ancestor = Container['parent'];
+
+const isMediaAtRule = (node: NonNullable<Ancestor>): boolean =>
+  node.type === 'atrule' && 'name' in node && node.name === 'media';
 
 const isInsideMedia = (rule: Rule): boolean => {
-  const walk = (node: AncestorNode | undefined): boolean =>
-    node === undefined
-      ? false
-      : node.type === 'atrule' && node.name === 'media'
-      ? true
-      : walk(node.parent as AncestorNode | undefined);
-  return walk(rule.parent as AncestorNode | undefined);
+  const walk = (node: Ancestor): boolean => {
+    if (node === undefined) {
+      return false;
+    }
+    if (isMediaAtRule(node)) {
+      return true;
+    }
+    return walk(node.parent);
+  };
+  return walk(rule.parent);
 };
 
 const collectRules = (

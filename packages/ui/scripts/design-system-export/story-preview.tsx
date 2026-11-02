@@ -75,7 +75,7 @@ export const composeStories = (
   exportOrder: ReadonlyArray<string>
 ): ReadonlyArray<ComposedStory> =>
   exportOrder
-    .map((exportName) => [exportName, module[exportName]] as [string, unknown])
+    .map((exportName): [string, unknown] => [exportName, module[exportName]])
     .filter(isStoryExport)
     .map(([exportName, story]) => {
       const annotations = story as StoryAnnotations;

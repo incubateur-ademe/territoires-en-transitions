@@ -1,6 +1,13 @@
-import { createElement, ElementType, Fragment, Key, ReactElement } from 'react';
+import {
+  createElement,
+  ElementType,
+  Fragment,
+  Key,
+  ReactElement,
+  ReactNode,
+} from 'react';
 
-type Props = Readonly<Record<string, unknown>> & { children?: unknown };
+type Props = Readonly<Record<string, unknown>> & { children?: ReactNode };
 
 type ContextType = Readonly<{ Provider: ElementType; Consumer: unknown }>;
 
@@ -25,7 +32,7 @@ const toElement = (
   if (children === undefined) return createElement(type, config);
   return hasStaticChildren && Array.isArray(children)
     ? createElement(type, config, ...children)
-    : createElement(type, config, children as never);
+    : createElement(type, config, children);
 };
 
 export const jsx = (type: ElementType, props: Props, key?: Key): ReactElement =>
