@@ -1,7 +1,7 @@
 'use client';
 import {
+  profilAssistantClaudeUrl,
   profilAssistantExemplesUrl,
-  profilAssistantPath,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { Badge, Button } from '@tet/ui';
@@ -29,7 +29,7 @@ export const AssistantCard = () => (
     <div className="flex flex-wrap gap-3">
       <Button
         size="sm"
-        href={profilAssistantPath}
+        href={profilAssistantClaudeUrl}
         dataTest="profil.assistant.configurer"
       >
         {appLabels.assistantConfigurer}

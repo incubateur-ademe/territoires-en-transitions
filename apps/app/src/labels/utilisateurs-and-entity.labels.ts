@@ -138,11 +138,14 @@ export const utilisateursAndEntityLabels = {
     "L'état de la connexion n'est pas disponible pour le moment.",
   assistantIntro:
     "Posez vos questions sur la plateforme en français. L'assistant lit les données, ne modifie rien, et cite la source de chaque chiffre. Il s'utilise de deux façons, indépendantes l'une de l'autre.",
+  assistantOngletPresentation: 'Présentation',
+  assistantOngletClaude: 'Claude',
+  assistantOngletCrisp: 'Crisp',
   assistantUsageClaudeTitre: 'Dans Claude',
   assistantUsageClaudeBadge: 'À configurer une fois',
   assistantUsageClaudeDescription:
-    "Vous branchez le connecteur sur votre compte, puis vous discutez librement : fiches, PCAET, scores, statistiques, modèles de prompt. C'est l'usage le plus large, mais il demande les trois étapes ci-dessous.",
-  assistantUsageClaudeLien: 'Voir les trois étapes',
+    "Vous branchez le connecteur sur votre compte, puis vous discutez librement : fiches, PCAET, scores, statistiques, modèles de prompt. C'est l'usage le plus large, mais il demande trois étapes, décrites dans l'onglet Claude.",
+  assistantUsageClaudeLien: 'Brancher Claude',
   assistantUsageCrispTitre: 'Dans Crisp',
   assistantUsageCrispBadge: 'Rien à installer',
   assistantUsageCrispDescription:
