@@ -534,7 +534,7 @@ export const demarchesLabels = {
   demarcheDocumentsAdditionalCreationErreur: 'Échec de l’ajout du document',
   demarcheDocumentsAdditionalTitreErreur: 'Échec de l’enregistrement du titre',
   demarcheDocumentsAdditionalSuppressionErreur: 'Échec du retrait du document',
-  demarcheProgrammeTitre: 'Renseigner le programme d’actions',
+  demarcheProgrammeTitre: 'Associer ou créer le programme d’actions détaillé',
   demarcheProgrammeChargement:
     'Chargement des plans existants dans la plateforme…',
   demarcheProgrammeNoPlanIntro: ({
@@ -543,12 +543,8 @@ export const demarchesLabels = {
     typeLabel: string;
   }): string =>
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
-  demarcheProgrammeRattachementIntro: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Lier votre programme d’actions à un plan ${type.nom} existant de votre collectivité dans la plateforme, ou créez-en un nouveau.`,
+  demarcheProgrammeRattachementIntro:
+    'Associer un plan existant pour le transmettre comme programme d’actions, ou créer un plan pour l’associer.',
   demarcheProgrammeDetacher: 'Détacher',
   demarcheProgrammeVerifierPlansTitre:
     'Vérifiez votre plan associé avant de valider le dépôt',
@@ -568,7 +564,7 @@ export const demarchesLabels = {
     annee
       ? `Plan d'actions - PCAET ${annee} - ${collectiviteNom}`
       : `Plan d'actions - PCAET - ${collectiviteNom}`,
-  demarcheProgrammeLierCePlan: 'Lier ce plan',
+  demarcheProgrammeLierCePlan: 'Associer ce plan',
   demarcheProgrammePlanAVerifier: 'À vérifier',
   demarcheProgrammePlanDejaRattache: ({ titre }: { titre: string }): string =>
     `Déjà rattaché à la démarche « ${titre} »`,
