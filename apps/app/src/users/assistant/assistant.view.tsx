@@ -10,18 +10,22 @@ import {
   SuperAdminModeState,
 } from './assistant-connection.steps';
 import { AssistantExamplesTable } from './assistant-examples.table';
+import { ClaudeLogo, CrispLogo } from './assistant-logos';
 
 const CLAUDE_ANCHOR = 'claude';
 const EXEMPLES_ANCHOR = 'exemples';
 const CRISP_ANCHOR = 'crisp';
+const LOGO_CLASSNAME = 'h-5 w-auto shrink-0';
 
 const Section = ({
   id,
+  logo,
   title,
   description,
   children,
 }: {
   id?: string;
+  logo?: ReactNode;
   title: string;
   description?: string;
   children: ReactNode;
@@ -31,7 +35,10 @@ const Section = ({
     className="flex scroll-mt-24 flex-col gap-6 rounded-xl border border-grey-3 bg-white p-8"
   >
     <div>
-      <h2 className="mb-1 text-lg font-bold text-primary-9">{title}</h2>
+      <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-primary-9">
+        {logo}
+        {title}
+      </h2>
       {description && <p className="m-0 text-sm text-grey-8">{description}</p>}
     </div>
     {children}
@@ -39,12 +46,14 @@ const Section = ({
 );
 
 const UsageCard = ({
+  logo,
   title,
   badge,
   description,
   anchor,
   linkLabel,
 }: {
+  logo: ReactNode;
   title: string;
   badge: string;
   description: string;
@@ -53,6 +62,7 @@ const UsageCard = ({
 }) => (
   <div className="flex flex-col gap-3 rounded-xl border border-grey-3 bg-white p-6">
     <div className="flex flex-wrap items-center gap-2">
+      {logo}
       <h2 className="m-0 text-base font-bold text-primary-9">{title}</h2>
       <Badge size="xs" variant="grey" type="outlined" title={badge} />
     </div>
@@ -118,6 +128,7 @@ export const AssistantView = () => (
       <div className="flex min-w-0 flex-col gap-6 lg:col-span-2">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <UsageCard
+            logo={<ClaudeLogo className={LOGO_CLASSNAME} />}
             title={appLabels.assistantUsageClaudeTitre}
             badge={appLabels.assistantUsageClaudeBadge}
             description={appLabels.assistantUsageClaudeDescription}
@@ -125,6 +136,7 @@ export const AssistantView = () => (
             linkLabel={appLabels.assistantUsageClaudeLien}
           />
           <UsageCard
+            logo={<CrispLogo className={LOGO_CLASSNAME} />}
             title={appLabels.assistantUsageCrispTitre}
             badge={appLabels.assistantUsageCrispBadge}
             description={appLabels.assistantUsageCrispDescription}
@@ -135,6 +147,7 @@ export const AssistantView = () => (
 
         <Section
           id={CLAUDE_ANCHOR}
+          logo={<ClaudeLogo className={LOGO_CLASSNAME} />}
           title={appLabels.assistantConnexionTitre}
           description={appLabels.assistantConnexionDescription}
         >
@@ -172,6 +185,7 @@ export const AssistantView = () => (
 
         <Section
           id={CRISP_ANCHOR}
+          logo={<CrispLogo className={LOGO_CLASSNAME} />}
           title={appLabels.assistantCrispTitre}
           description={appLabels.assistantCrispDescription}
         >
