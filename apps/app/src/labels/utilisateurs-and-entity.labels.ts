@@ -253,7 +253,7 @@ export const utilisateursAndEntityLabels = {
   assistantCrispCommandes: [
     {
       commande: '/tet',
-      description: "résume l'utilisateur de la conversation.",
+      description: 'résume la conversation.',
     },
     {
       commande: '/tet <question>',
