@@ -22,11 +22,15 @@ test.describe('Assistant TeT dans les Préférences', () => {
     await expect(assistantMenuLink(page)).toBeVisible();
 
     await card.getByTestId('profil.assistant.configurer').click();
-    await expect(page).toHaveURL(/\/profil\/assistant$/);
+    await expect(page).toHaveURL(/\/profil\/assistant\?onglet=claude$/);
     await expect(page.getByTestId('profil.assistant.page')).toBeVisible();
     await expect(
       page.getByTestId('profil.assistant.adresse-connecteur')
     ).toHaveValue(/\/api\/v1\/mcp$/);
+
+    await page.getByTestId('profil.assistant.onglet-crisp').click();
+    await expect(page).toHaveURL(/onglet=crisp$/);
+    await expect(page.getByText('/tet <question>')).toBeVisible();
   });
 
   test('un utilisateur sans rôle support ne voit rien et la page le renvoie aux Préférences', async ({
