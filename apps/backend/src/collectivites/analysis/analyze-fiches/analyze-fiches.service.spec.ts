@@ -1012,11 +1012,12 @@ describe('llm-issue', () => {
         failure({ kind: 'collectivite_not_found', collectiviteId: 1 }),
     });
 
-  it('abandonne le passage au 10e échec définitif, fiches et CT confondues, même réparti sur plusieurs CT', async () => {
+  it('abandonne le passage au 10e échec définitif, fiches et CT confondues, même réparti sur plusieurs CT, en rapportant la CT et la cause de chaque échec', async () => {
     const harness = toFailingRun();
 
     const analysisResult = await harness.service.analyzeFiches(dailyRun);
 
+    const apiError = { kind: 'api_error', httpStatus: 503 };
     expect(analysisResult).toEqual({
       success: false,
       error: {
@@ -1025,9 +1026,20 @@ describe('llm-issue', () => {
           ...[11, 12, 13, 14, 15].map((ficheId) => ({
             kind: 'fiche',
             ficheId,
+            collectiviteId: 1,
+            cause: apiError,
           })),
-          { kind: 'mobilisation', collectiviteId: 1 },
-          ...[21, 22, 23, 24].map((ficheId) => ({ kind: 'fiche', ficheId })),
+          {
+            kind: 'mobilisation',
+            collectiviteId: 1,
+            cause: { kind: 'collectivite_not_found', collectiviteId: 1 },
+          },
+          ...[21, 22, 23, 24].map((ficheId) => ({
+            kind: 'fiche',
+            ficheId,
+            collectiviteId: 2,
+            cause: apiError,
+          })),
         ],
       },
     });

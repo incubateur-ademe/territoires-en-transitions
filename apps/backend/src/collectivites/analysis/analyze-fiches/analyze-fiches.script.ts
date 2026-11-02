@@ -4,7 +4,10 @@ import { initGoogleCloudCredentials } from '@tet/backend/utils/google-sheets/gcl
 import { success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { getErrorMessage } from '@tet/domain/utils';
-import { AnalyzeFichesInputError } from './analyze-fiches.errors';
+import {
+  AnalyzeFichesError,
+  AnalyzeFichesInputError,
+} from './analyze-fiches.errors';
 import {
   AnalyzeFichesInput,
   toAnalyzeFichesInputScope,
@@ -12,6 +15,7 @@ import {
 import { AnalyzeFichesModule } from './analyze-fiches.module';
 import { AnalyzeFichesOutput } from './analyze-fiches.output';
 import { AnalyzeFichesService } from './analyze-fiches.service';
+import { describeRunAborted } from './describe-run-aborted.rules';
 
 const SUCCESS_EXIT_CODE = 0;
 
@@ -55,6 +59,11 @@ const toRunSummary = (output: AnalyzeFichesOutput): string =>
     `${output.failedCollectiviteIds.length} mobilisation(s) failed`,
   ].join(', ');
 
+const describeRunError = (error: AnalyzeFichesError): string =>
+  error.kind === 'failure_threshold_reached'
+    ? describeRunAborted(error)
+    : JSON.stringify(error);
+
 export const runAnalyzeFichesScript = async ({
   app,
   ...command
@@ -71,7 +80,7 @@ export const runAnalyzeFichesScript = async ({
     .get(AnalyzeFichesService)
     .analyzeFiches(inputResult.data);
   if (!runResult.success) {
-    logger.error(`Run aborted: ${JSON.stringify(runResult.error)}`);
+    logger.error(`Run aborted: ${describeRunError(runResult.error)}`);
     return FAILURE_EXIT_CODE;
   }
 

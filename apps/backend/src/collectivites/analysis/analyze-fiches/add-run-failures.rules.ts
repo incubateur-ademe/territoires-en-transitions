@@ -1,20 +1,19 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { z } from 'zod';
+import { ClassifyBatchFailure } from '../classify-batch/classify-batch.errors';
+import { CalculateCollectiviteMobilisationError } from '../score-mobilisation/score-mobilisation.errors';
 
-export const runFailureSchema = z.discriminatedUnion('kind', [
-  z.object({
-    kind: z.literal('fiche'),
-    ficheId: z.number().int().positive(),
-    collectiviteId: z.optional(z.undefined()),
-  }),
-  z.object({
-    kind: z.literal('mobilisation'),
-    collectiviteId: z.number().int().positive(),
-    ficheId: z.optional(z.undefined()),
-  }),
-]);
-
-export type RunFailure = z.output<typeof runFailureSchema>;
+export type RunFailure =
+  | {
+      readonly kind: 'fiche';
+      readonly ficheId: number;
+      readonly collectiviteId: number;
+      readonly cause: ClassifyBatchFailure;
+    }
+  | {
+      readonly kind: 'mobilisation';
+      readonly collectiviteId: number;
+      readonly cause: CalculateCollectiviteMobilisationError;
+    };
 
 export type RunAborted = {
   readonly kind: 'failure_threshold_reached';
@@ -26,7 +25,7 @@ type AddRunFailures = (
   newFailures: readonly RunFailure[]
 ) => Result<RunFailure[], RunAborted>;
 
-const RUN_FAILURE_THRESHOLD = 10;
+export const RUN_FAILURE_THRESHOLD = 10;
 
 export const addRunFailures: AddRunFailures = (failures, newFailures) => {
   const allFailures = [...failures, ...newFailures];
