@@ -9,7 +9,7 @@ WITH inserted AS (
 ) SELECT id FROM inserted;
 CREATE TEMP TABLE release_indicateur AS
 WITH inserted AS (
-    INSERT INTO public.indicateur_definition (titre, unite) VALUES ('Livraison annuelle', 'kWh') RETURNING id
+    INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite) VALUES ('test-livraison-annuelle', 'Livraison annuelle', 'kWh') RETURNING id
 ) SELECT id FROM inserted;
 SELECT is((SELECT periodicite FROM public.indicateur_definition WHERE id = (SELECT id FROM release_indicateur)), 'annuelle', 'Une définition reste annuelle par défaut');
 SELECT lives_ok($sql$
@@ -24,13 +24,13 @@ SELECT lives_ok($sql$
     DO UPDATE SET resultat = EXCLUDED.resultat
 $sql$, 'L upsert annuel utilise l index incluant la périodicité');
 SELECT lives_ok($sql$
-    INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Mensuel', 'kWh', 'mensuelle')
+    INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('test-livraison-mensuel', 'Mensuel', 'kWh', 'mensuelle')
 $sql$, 'La seconde livraison accepte les définitions mensuelles');
 SELECT lives_ok($sql$
-    INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Trimestriel', 'kWh', 'trimestrielle')
+    INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('test-livraison-trimestriel', 'Trimestriel', 'kWh', 'trimestrielle')
 $sql$, 'La seconde livraison accepte les définitions trimestrielles');
 SELECT lives_ok($sql$
-    INSERT INTO public.indicateur_definition (titre, unite, periodicite) VALUES ('Semestriel', 'kWh', 'semestrielle')
+    INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite) VALUES ('test-livraison-semestriel', 'Semestriel', 'kWh', 'semestrielle')
 $sql$, 'La seconde livraison accepte les définitions semestrielles');
 SELECT throws_ok($sql$
     INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, date_valeur, periodicite, metadonnee_id, resultat)
