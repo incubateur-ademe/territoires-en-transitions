@@ -4,11 +4,12 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
-import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
+import { ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
+import { Alert, Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 
 import { capitalize } from '@tet/ui/labels/plural';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
 
@@ -114,7 +115,11 @@ export function UpsertPlanForm({
     | ((data: UpsertPlanWithFilePayload) => Promise<boolean>);
   includeFileUpload?: boolean;
 }) {
-  const { options: planTypesOptions } = useListPlanTypes();
+  const {
+    data: planTypes,
+    options: planTypesOptions,
+    isLoading: isLoadingPlanTypes,
+  } = useListPlanTypes();
 
   const schema = includeFileUpload
     ? upsertPlanWithFileSchema
@@ -138,10 +143,17 @@ export function UpsertPlanForm({
     },
   });
 
+  const selectedTypeId = useWatch({ control, name: 'typeId' });
+  const isElectrificationPlanType = planTypes.some(
+    ({ id, type }) =>
+      id === selectedTypeId && type === ELECTRIFICATION_PLAN_TYPE
+  );
+
   return (
     <form
       id={formId}
       onSubmit={handleSubmit(async (data) => {
+        if (isLoadingPlanTypes || isElectrificationPlanType) return;
         const submit = onSubmit as (
           data: UpsertPlanWithoutFilePayload | UpsertPlanWithFilePayload
         ) => Promise<boolean>;
@@ -192,6 +204,12 @@ export function UpsertPlanForm({
           }}
         />
       </Field>
+      {isElectrificationPlanType && (
+        <Alert
+          state="info"
+          description={appLabels.planElectrificationCreationIndisponible}
+        />
+      )}
       <div className="flex gap-6">
         <Field title={appLabels.dateDebut} className="grow">
           <Input
@@ -296,7 +314,12 @@ export function UpsertPlanForm({
       <div className="flex items-center justify-end gap-6 mt-6">
         <VisibleWhen condition={showButtons}>
           {cancelButton}
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={
+              isSubmitting || isLoadingPlanTypes || isElectrificationPlanType
+            }
+          >
             {isSubmitting ? <SpinnerLoader /> : submitButtonText}
           </Button>
         </VisibleWhen>

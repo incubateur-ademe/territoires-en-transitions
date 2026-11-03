@@ -5,7 +5,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
-import { AxeLight } from '@tet/domain/plans';
+import { AxeLight, ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
 import {
@@ -48,6 +48,32 @@ export class UpsertPlanService {
     ): Promise<Result<AxeLight, UpsertPlanError>> => {
       const { referents, pilotes, ...planProps } = plan;
       const updatePlanProps = baseUpdatePlanSchema.safeParse(planProps);
+
+      // Blocage temporaire jusqu’à l’import de l’annexe 3. Les plans existants
+      // restent modifiables, mais un autre plan ne peut pas prendre ce type.
+      if (planProps.typeId != null) {
+        const planType = await this.upsertPlanRepository.findPlanType(
+          planProps.typeId,
+          transaction
+        );
+        if (planType?.type === ELECTRIFICATION_PLAN_TYPE) {
+          const existingPlan = updatePlanProps.success
+            ? await this.upsertPlanRepository.findPlanAxe(
+                updatePlanProps.data.id,
+                transaction
+              )
+            : null;
+          if (
+            existingPlan?.typeId !== planProps.typeId ||
+            existingPlan.collectiviteId !== plan.collectiviteId
+          ) {
+            return {
+              success: false,
+              error: UpsertPlanErrorEnum.ELECTRIFICATION_CREATION_DISABLED,
+            };
+          }
+        }
+      }
 
       let result;
       if (updatePlanProps.success) {

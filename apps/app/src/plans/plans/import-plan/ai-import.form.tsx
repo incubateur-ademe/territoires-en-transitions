@@ -6,6 +6,7 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement, useCallback, useEffect, useRef } from 'react';
@@ -61,10 +62,6 @@ export type AiImportDefaults = {
   planName?: string;
 };
 
-// Repéré par son libellé : les identifiants des types diffèrent d'un
-// environnement à l'autre.
-const ELECTRIFICATION_PLAN_TYPE = 'Plan Électrification';
-
 const FILE_INPUT_ID = 'input-file';
 const PLAN_NAME_INPUT_ID = 'ai-import-plan-name';
 const INSTRUCTIONS_INPUT_ID = 'ai-import-instructions';
@@ -82,7 +79,11 @@ export const AiImportForm = ({
   defaults?: AiImportDefaults;
 }) => {
   const collectiviteId = useCollectiviteId();
-  const { data: planTypes, options: planTypesOptions } = useListPlanTypes();
+  const {
+    data: planTypes,
+    options: planTypesOptions,
+    isLoading: isLoadingPlanTypes,
+  } = useListPlanTypes();
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   const {
     register,
@@ -152,9 +153,13 @@ export const AiImportForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit((values) =>
-        onSubmit({ ...values, confirmReimport: previousImport !== null })
-      )}
+      onSubmit={handleSubmit((values) => {
+        if (isLoadingPlanTypes || isElectrificationPlanType) return;
+        return onSubmit({
+          ...values,
+          confirmReimport: previousImport !== null,
+        });
+      })}
       className="flex flex-col gap-6"
     >
       <Alert
@@ -201,8 +206,7 @@ export const AiImportForm = ({
       {isElectrificationPlanType && (
         <Alert
           state="info"
-          title={appLabels.importPlanIaElectrificationTitre}
-          description={appLabels.importPlanIaElectrificationDescription}
+          description={appLabels.planElectrificationCreationIndisponible}
         />
       )}
       <Field
@@ -309,7 +313,12 @@ export const AiImportForm = ({
         {cancelButton}
         <Button
           type="submit"
-          disabled={isSubmitting || isCheckingSelectedFile}
+          disabled={
+            isSubmitting ||
+            isCheckingSelectedFile ||
+            isLoadingPlanTypes ||
+            isElectrificationPlanType
+          }
           icon="upload-2-line"
           dataTest="ai-import.lancer"
         >

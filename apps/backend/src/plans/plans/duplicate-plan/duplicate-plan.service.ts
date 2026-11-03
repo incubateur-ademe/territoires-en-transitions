@@ -15,7 +15,10 @@ import { GetPlanError, GetPlanErrorEnum } from '../get-plan/get-plan.errors';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { UpsertPlanErrorEnum } from '../upsert-plan/upsert-plan.errors';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
-import { DuplicatePlanError, DuplicatePlanErrorEnum } from './duplicate-plan.errors';
+import {
+  DuplicatePlanError,
+  DuplicatePlanErrorEnum,
+} from './duplicate-plan.errors';
 import { DuplicatePlanInput } from './duplicate-plan.input';
 import { AxeIdRemapping } from './duplicated-fiche.mapper';
 
@@ -106,6 +109,14 @@ export class DuplicatePlanService {
         { user, tx: transaction }
       );
       if (!newPlanResult.success) {
+        if (
+          newPlanResult.error ===
+          UpsertPlanErrorEnum.ELECTRIFICATION_CREATION_DISABLED
+        ) {
+          return failure(
+            DuplicatePlanErrorEnum.ELECTRIFICATION_CREATION_DISABLED
+          );
+        }
         return failure(
           newPlanResult.error === UpsertPlanErrorEnum.UNAUTHORIZED
             ? DuplicatePlanErrorEnum.UNAUTHORIZED
@@ -167,7 +178,10 @@ export class DuplicatePlanService {
         tx
       );
 
-    return { actions, sousActions: ownedByCollectivite(matchedChildren, collectiviteId) };
+    return {
+      actions,
+      sousActions: ownedByCollectivite(matchedChildren, collectiviteId),
+    };
   }
 
   private async buildWriteAuthorization(

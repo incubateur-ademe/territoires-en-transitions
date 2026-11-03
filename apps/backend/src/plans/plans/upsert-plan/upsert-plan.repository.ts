@@ -8,6 +8,7 @@ import { eq, sql } from 'drizzle-orm';
 import { UpsertAxeBaseRepository } from '../../axes/upsert-axe/upsert-axe-base.repository';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
+import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
@@ -16,6 +17,7 @@ import { BaseCreatePlanInput, BaseUpdatePlanInput } from './upsert-plan.input';
 export type PlanAxeLookup = {
   id: number;
   parent: number | null;
+  typeId: number | null;
   collectiviteId: number;
 };
 
@@ -39,6 +41,15 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
     return UpsertPlanErrorEnum.UPDATE_PLAN_ERROR;
   }
 
+  async findPlanType(typeId: number, tx: Transaction) {
+    const [planType] = await tx
+      .select()
+      .from(planActionTypeTable)
+      .where(eq(planActionTypeTable.id, typeId))
+      .limit(1);
+    return planType;
+  }
+
   async findPlanAxe(
     planId: number,
     tx?: Transaction
@@ -47,6 +58,7 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
       .select({
         id: axeTable.id,
         parent: axeTable.parent,
+        typeId: axeTable.typeId,
         collectiviteId: axeTable.collectiviteId,
       })
       .from(axeTable)

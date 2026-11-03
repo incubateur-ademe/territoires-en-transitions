@@ -1,6 +1,7 @@
 import { createErrorsEnum } from '@tet/backend/utils/trpc/trpc-error-handler';
 
 export const AiPlanImportSpecificErrors = [
+  'ELECTRIFICATION_CREATION_DISABLED',
   'CREATE_JOB_ERROR',
   'GET_JOB_ERROR',
   'UPDATE_JOB_ERROR',
@@ -22,6 +23,8 @@ export const AiPlanImportSpecificErrors = [
 export type AiPlanImportSpecificError =
   (typeof AiPlanImportSpecificErrors)[number];
 
-export const AiPlanImportErrorEnum = createErrorsEnum(AiPlanImportSpecificErrors);
+export const AiPlanImportErrorEnum = createErrorsEnum(
+  AiPlanImportSpecificErrors
+);
 
 export type AiPlanImportError = keyof typeof AiPlanImportErrorEnum;

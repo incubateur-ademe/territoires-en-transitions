@@ -2,8 +2,10 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE } from '@tet/domain/plans';
 
 const specificErrors = [
+  'ELECTRIFICATION_CREATION_DISABLED',
   'CREATE_PLAN_ERROR',
   'UPDATE_PLAN_ERROR',
   'UPDATE_REFERENTS_ERROR',
@@ -15,6 +17,10 @@ type SpecificError = (typeof specificErrors)[number];
 
 export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
+    ELECTRIFICATION_CREATION_DISABLED: {
+      code: 'BAD_REQUEST',
+      message: ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE,
+    },
     CREATE_PLAN_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
       message: 'La création du plan a échoué',
@@ -37,8 +43,7 @@ export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     },
     NOT_A_PLAN: {
       code: 'BAD_REQUEST',
-      message:
-        "L'axe ciblé n'est pas un plan (il possède un parent)",
+      message: "L'axe ciblé n'est pas un plan (il possède un parent)",
     },
   },
 };

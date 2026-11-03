@@ -128,7 +128,7 @@ type MockOverrides = {
   isAllowed?: boolean;
   canImportInParallel?: boolean;
   countInFlight?: number;
-  planTypes?: { id: number }[];
+  planTypes?: { id: number; type?: string }[];
   createWithinQuotas?: () => Promise<unknown>;
   previousImport?: unknown;
   storeDocument?: () => Promise<unknown>;
@@ -224,6 +224,28 @@ const buildService = (overrides: MockOverrides = {}) => {
 };
 
 describe('EnqueueImportService', () => {
+  it('refuse le type Électrification avant tout stockage ou mise en file', async () => {
+    const { service, uploadBuffer, storeDocument, createWithinQuotas, add } =
+      buildService({
+        planTypes: [{ id: 73, type: 'Plan Électrification' }],
+      });
+
+    const result = await service.enqueue({
+      collectiviteId: 10,
+      user,
+      file: toCsvFile(),
+      options: { ...options, planType: 73 },
+    });
+
+    expect(result).toEqual(
+      failure(AiPlanImportErrorEnum.ELECTRIFICATION_CREATION_DISABLED)
+    );
+    expect(uploadBuffer).not.toHaveBeenCalled();
+    expect(storeDocument).not.toHaveBeenCalled();
+    expect(createWithinQuotas).not.toHaveBeenCalled();
+    expect(add).not.toHaveBeenCalled();
+  });
+
   it('retourne le jobId et enfile avec le même id en clé de dédup BullMQ', async () => {
     const { service, add } = buildService();
 

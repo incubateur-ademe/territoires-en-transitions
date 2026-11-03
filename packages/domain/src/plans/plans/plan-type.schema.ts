@@ -1,5 +1,8 @@
 import * as z from 'zod/mini';
 
+// Les identifiants des types varient selon l’environnement.
+export const ELECTRIFICATION_PLAN_TYPE = 'Plan Électrification';
+
 export const planTypeSchema = z.object({
   id: z.number(),
   categorie: z.string(),
