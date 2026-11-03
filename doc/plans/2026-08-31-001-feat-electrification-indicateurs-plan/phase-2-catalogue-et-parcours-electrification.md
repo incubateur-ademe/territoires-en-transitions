@@ -10,6 +10,11 @@ updated: 2026-10-08
 
 [← Index](README.md)
 
+Les orientations d'initialisation et de protection du plan ci-dessous sont
+historiques : le cadrage du 3 novembre 2026 retient l'import de l'annexe 3
+et abandonne le verrouillage. Voir l'[ADR 0022 proposé](../../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
+pour leur remplacement et les arbitrages encore ouverts.
+
 Source : [Notion Électrification / indicateurs](https://app.notion.com/p/accelerateur-transition-ecologique-ademe/lectrification-indicateurs-3c76523d57d78013aa2ae3785cf09f1f),
 dont le cadrage du 10/09 : PA Électrification par défaut, aligné sur les engagements et verrouillé,
 en coexistence avec les autres plans locaux ; vue Électrification préconfigurée pour les lauréats.
