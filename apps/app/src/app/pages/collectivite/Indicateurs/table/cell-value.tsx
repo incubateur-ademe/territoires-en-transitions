@@ -1,4 +1,4 @@
-import { DEPRECATED_TCell } from '@tet/ui';
+import { TableCell } from '@tet/ui';
 
 // pour formater les chiffres
 const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
@@ -10,8 +10,8 @@ type CellValueProps = {
 // Affiche une valeur du tableau en lecture seule.
 export const CellValue = ({ value }: CellValueProps) => {
   return (
-    <DEPRECATED_TCell variant="number">
+    <TableCell className="text-center font-bold text-primary-8">
       {typeof value === 'number' ? NumFormat.format(value) : ''}
-    </DEPRECATED_TCell>
+    </TableCell>
   );
 };
