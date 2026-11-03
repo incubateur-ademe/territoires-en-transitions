@@ -110,7 +110,8 @@ La préparation frontend [#5493](https://github.com/incubateur-ademe/territoires
 fusionnée dans `main` avant #5215, ajoute le badge de périodicité et sa lecture
 au clavier, ainsi que la lecture seule des indicateurs sans valeur utilisateur.
 #5215 ouvre les nouvelles cadences et l’ajout de périodes non annuelles ;
-#5312 reste la migration métier suivante. L’ensemble correspond aux prototypes [annuel](https://tet-protos.vercel.app/#/indicateurs/realisation-programme-tete)
+#5296 termine le nettoyage sans retour arrière : les indicateurs de Margny restent
+annuels et l’archive temporaire de réparation est supprimée ([ADR 0018](../../adr/0018-periodicite-des-indicateurs.md#5-nettoyage-définitif-après-activation)). L’ensemble correspond aux prototypes [annuel](https://tet-protos.vercel.app/#/indicateurs/realisation-programme-tete)
 et [mensuel](https://tet-protos.vercel.app/#/indicateurs/part-electrique-flotte-collectivite) :
 
 - placer le badge de périodicité et son infobulle sur la ligne de métadonnées, avec

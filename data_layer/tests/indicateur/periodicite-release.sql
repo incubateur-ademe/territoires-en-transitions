@@ -1,5 +1,8 @@
+\set ON_ERROR_STOP on
+\ir ../../sqitch/verify/indicateur/periodicite-nettoyage.sql
+
 BEGIN;
-SELECT plan(13);
+SELECT plan(14);
 CREATE TEMP TABLE release_collectivite AS
 WITH inserted AS (
     INSERT INTO public.collectivite (nom, type) VALUES ('Livraison annuelle', 'epci') RETURNING id
@@ -33,9 +36,10 @@ SELECT throws_ok($sql$
     INSERT INTO public.indicateur_valeur (collectivite_id, indicateur_id, date_valeur, periodicite, metadonnee_id, resultat)
     SELECT c.id, i.id, DATE '2024-01-01', 'mensuelle', NULL, 42 FROM release_collectivite c CROSS JOIN release_indicateur i
 $sql$, '23514', NULL, 'Une valeur locale doit toujours respecter la cadence de sa définition');
-SELECT throws_ok($sql$
-    UPDATE public.indicateur_definition SET aggregation_resultat = 'somme' WHERE id = (SELECT id FROM release_indicateur)
-$sql$, '23514', NULL, 'L agrégation reste fermée jusqu au nettoyage des colonnes');
+SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_resultat',
+    'Le nettoyage supprime la colonne inutilisée d’agrégation');
+SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,
+    'Le nettoyage supprime l archive temporaire de réparation');
 SELECT is(
     (SELECT array_agg(attname::text ORDER BY attnum)
      FROM pg_attribute

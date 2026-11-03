@@ -1,0 +1,70 @@
+-- Included after the schema lifecycle assertions, in the same disposable DB.
+-- Recreate the supported schema with the real migrations before cleanup.
+CREATE SCHEMA private;
+CREATE TABLE action_score_indicateur_valeur (indicateur_valeur_id integer);
+\ir ../../sqitch/deploy/indicateur/correct-dates-historiques.sql
+\ir ../../sqitch/deploy/indicateur/periodicite_schema.sql
+\ir ../../sqitch/deploy/indicateur/remplacer-catalogue-periodicites-par-contraintes.sql
+\ir ../../sqitch/deploy/indicateur/periodicite_obligatoire.sql
+\ir ../../sqitch/deploy/indicateur/periodicite_integrite.sql
+\ir ../../sqitch/deploy/indicateur/periodicite_activation.sql
+
+CREATE SCHEMA sqitch;
+CREATE TABLE sqitch.changes (change text, project text);
+INSERT INTO sqitch.changes VALUES ('indicateur/periodicite_activation', 'tet');
+
+-- Existing annual and monthly observations must survive the final cleanup.
+INSERT INTO indicateur_definition (id, titre, periodicite) VALUES
+    (31816, 'test', 'annuelle'),
+    (32392, 'Nombre de projets analysés', 'annuelle'),
+    (60000, 'Suivi mensuel', 'mensuelle');
+INSERT INTO indicateur_valeur
+    (id, indicateur_id, collectivite_id, date_valeur, periodicite, resultat, objectif, resultat_commentaire, calcul_auto)
+VALUES
+    (11979624, 31816, 2181, DATE '2025-01-01', 'annuelle', 8, 9, 'Commentaire conservé', false),
+    (12374017, 32392, 2181, DATE '2025-01-01', 'annuelle', NULL, 3, 'Objectif annuel', false),
+    (60000, 60000, 2181, DATE '2026-10-01', 'mensuelle', 0, NULL, 'Saisie en production', false);
+INSERT INTO private.indicateur_valeur_date_repair (valeur_id, avant, apres)
+VALUES (11979621, '{"id":11979621,"resultat":5,"objectif":3}', NULL);
+
+CREATE TEMP TABLE definitions_before_cleanup AS
+SELECT id, to_jsonb(d) - ARRAY['aggregation_resultat', 'aggregation_objectif'] AS row
+FROM indicateur_definition d;
+CREATE TEMP TABLE values_before_cleanup AS SELECT id, to_jsonb(v) AS row FROM indicateur_valeur v;
+CREATE TEMP TABLE value_access_before_cleanup AS
+SELECT relacl, relrowsecurity FROM pg_class WHERE oid = 'indicateur_valeur'::regclass;
+
+\ir ../../sqitch/deploy/indicateur/periodicite-nettoyage.sql
+\ir ../../sqitch/verify/indicateur/periodicite-nettoyage.sql
+\ir ../../sqitch/verify/indicateur/periodicite_activation.sql
+
+SELECT results_eq('SELECT id, to_jsonb(d) FROM indicateur_definition d ORDER BY id',
+    'SELECT id, row FROM definitions_before_cleanup ORDER BY id',
+    'Cleanup preserves annual and monthly definitions and removes only unused columns');
+SELECT results_eq('SELECT id, to_jsonb(v) FROM indicateur_valeur v ORDER BY id',
+    'SELECT id, row FROM values_before_cleanup ORDER BY id',
+    'Cleanup preserves active annual and monthly observations without restoring archived values');
+SELECT ok(to_regclass('private.indicateur_valeur_date_repair') IS NULL,
+    'Cleanup removes the populated repair archive');
+SELECT results_eq('SELECT relacl, relrowsecurity FROM pg_class WHERE oid = ''indicateur_valeur''::regclass',
+    'SELECT relacl, relrowsecurity FROM value_access_before_cleanup',
+    'Cleanup preserves observation permissions and RLS');
+SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_resultat', 'Unused result aggregation is removed');
+SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_objectif', 'Unused objective aggregation is removed');
+SELECT throws_ok($q$ UPDATE indicateur_definition SET periodicite = 'mensuelle' WHERE id = 31816 $q$,
+    '23514', NULL, 'The annual cadence of existing definitions remains immutable');
+
+-- Execute the real revert: it must fail before changing the cleaned schema.
+\set ON_ERROR_STOP off
+\ir ../../sqitch/revert/indicateur/periodicite-nettoyage.sql
+\set ON_ERROR_STOP on
+SELECT is(:'SQLSTATE'::text, '0A000', 'Cleanup refuses an irreversible rollback');
+\ir ../../sqitch/verify/indicateur/periodicite-nettoyage.sql
+SELECT results_eq('SELECT id, to_jsonb(v) FROM indicateur_valeur v ORDER BY id',
+    'SELECT id, row FROM values_before_cleanup ORDER BY id',
+    'Refused rollback leaves all active observations intact');
+SELECT lives_ok($q$
+    INSERT INTO indicateur_valeur
+        (indicateur_id, collectivite_id, date_valeur, periodicite, resultat, resultat_commentaire)
+    VALUES (60000, 2181, DATE '2026-11-01', 'mensuelle', 0, 'Saisie après nettoyage')
+$q$, 'Monthly observations remain writable after cleanup');

@@ -4,7 +4,9 @@ Date : 2026-04-15
 
 ## Statut
 
-Accepté
+Accepté. Révisé le 2026-11-02 pour remplacer les règles propres aux indicateurs
+par une prévalidation générique ; décision consolidée ici le 2026-11-03.
+Les anciennes règles restent consignées dans l’historique ci-dessous.
 
 ## Contexte
 
@@ -49,7 +51,7 @@ Lors de la restauration de la table `auth.users`, les triggers Supabase (qu'on n
 
 On ne supprime pas et ne recrée pas les tables lors d'une restauration. Seules les **données** sont restaurées (`pg_restore --data-only`). Le schéma de la base de données est géré exclusivement par le code (migrations Sqitch).
 
-Cette approche garantit que le schéma de la base cible est toujours celui du code actuellement déployé. On évite ainsi les incompatibilités entre un schéma sauvegardé (potentiellement ancien) et le code en cours d'exécution.
+Le schéma de la cible est préparé par les migrations avant le chargement des données. La prévalidation décrite au §8 contrôle sa compatibilité avec la sauvegarde.
 
 **Conséquence importante :** `pg_restore --data-only` ne restaure pas les séquences PostgreSQL. Après la restauration des données, un script dédié (`reset_sequences.sql`) réinitialise toutes les séquences pour correspondre au `MAX` effectif de leur colonne propriétaire. Sans cette étape, les prochains `INSERT` échoueraient avec des violations de clé dupliquée.
 
@@ -133,18 +135,9 @@ Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow
   domaine ne peut donc pas autoriser une autre cible. Toute URL inattendue, dont production, est
   rejetée sans journaliser ses credentials. Toute cible Supabase distante doit en plus déclarer
   explicitement `sslmode=require`, `verify-ca` ou `verify-full` dans son secret de connexion.
-- **Compatibilité avant troncature** : refuser la restauration si les contrôles détectent un schéma
-  incompatible ou incomplet, ou des objets attendus absents de la cible. Le registre Sqitch seul
-  ne suffit pas à vérifier l'état physique du schéma. La cible historique ne doit contenir ni
-  colonne `periodicite` ni catalogue ; la cible annuelle doit conserver ses deux contraintes
-  annuelles validées avant l'exécution du vérificateur Sqitch partagé. La préparation SQL des
-  formules utilise l’état `formulas`, avec les fonctions et le trigger vérifiés avant toute
-  troncature. La préparation d’intégrité annuelle utilise l’état `prepared` :
-  elle exige les migrations de cadence obligatoire et de cohérence, leurs contrôles
-  physiques et les restrictions annuelles. Les états intermédiaires sont refusés.
-  L’activation utilise ensuite `contract`, avec les quatre cadences autorisées.
-  La préparation précédente du reporting utilise l’état `reporting` et vérifie
-  également la vue matérialisée.
+- **Compatibilité avant troncature** : appliquer la prévalidation générique du §8.
+  Elle exige les mêmes migrations et empreintes Sqitch ainsi que les données et
+  tables configurées, sans règle propre à un domaine métier.
 - **Exclusion mutuelle des maintenances** : les restaurations planifiées et manuelles partagent un
   groupe de concurrence par base ; le backup utilise `database-maintenance-prod`. Ces groupes ne
   bloquent pas une opération lancée ailleurs. Les interventions hors de ces workflows doivent
@@ -177,6 +170,78 @@ Après `reset_sequences.sql` et avant les sanity checks, `restore.sh` exécute `
 **Interaction avec le trigger `auth.users → public.dcp`** : le trigger Supabase utilise `coalesce(new.phone, telephone)`. Quand le scrub met `auth.users.phone = NULL`, le trigger conserverait l'ancien `dcp.telephone`. Le SQL ajoute donc une seconde passe explicite `UPDATE public.dcp SET telephone = NULL`. Cette interaction est commentée dans `clean_data.sql`.
 
 **Assertion intégrée** : la fin de `clean_data.sql` est un bloc `DO $$ ... $$` qui vérifie chaque invariant (`auth.users.phone IS NULL`, `public.dcp.telephone IS NULL`, `config.service_configurations.token IS NULL`, et — si `pwd` est non vide — le hash attendu sur tous les `auth.users.encrypted_password`). En cas de violation, `RAISE EXCEPTION` fait échouer la transaction et `ON_ERROR_STOP=1` propage l'erreur jusqu'au job CI. C'est un oracle indépendant : chaque assertion est posée à la main (pas dérivée d'un quelconque mécanisme dynamique), donc un bug d'ajout d'`UPDATE` se détecte par l'absence de l'assertion correspondante, pas par sa réplication d'une boucle.
+
+### 8. Prévalidation générique des restaurations
+
+La restauration tronque les tables avant leur chargement. Une incompatibilité
+détectée seulement au chargement peut laisser la cible partiellement vidée.
+
+Avant toute troncature, `restore.sh` transmet au contrôle générique la liste
+exacte des tables lues dans `backup/restore-config.yml`. Le contrôle exige :
+
+- des données `TABLE DATA` dans le dump pour chaque table configurée, y compris
+  les tables vides ;
+- un registre `sqitch.changes` présent et non vide dans le dump ;
+- les mêmes triplets `(project, change_id, script_hash)` dans le backup et la
+  cible, pour tous les projets ;
+- l’existence physique de chaque table demandée dans la cible.
+
+Les dates d’application, les auteurs et les notes du registre n’interviennent
+pas dans la comparaison. L’ordre des lignes et les doublons dans la liste des
+tables ne changent pas le résultat. Les noms de tables sont validés avant leur
+emploi dans une requête SQL. Le SQL extrait du dump n’est jamais exécuté.
+
+Le registre est lu dans les données `COPY` produites par notre `pg_dump`, en
+utilisant les noms de colonnes de l’en-tête. Les archives sans registre lisible,
+vides ou produites avec des `INSERT` pour ce registre sont refusées.
+
+#### Limites et alternatives
+
+Cette règle est volontairement conservatrice : une migration supplémentaire
+bloque la restauration, même si elle pourrait être compatible. Le backup de la
+veille peut donc être refusé en préproduction après un déploiement. Aligner la
+cible sur le snapshot ou choisir un backup au même état de migrations avant
+de relancer ; aucune migration ni conversion implicite n’est effectuée.
+
+Sans nouvelle migration, l’écart de versions du code ne bloque pas le contrôle
+Sqitch. Des changements de `restore-config.yml`, de `restore.sh` ou de ses scripts
+peuvent néanmoins faire échouer la restauration. Autoriser des migrations
+différentes après répétition sur une base jetable constituerait un autre workflow ;
+aucun contournement automatique n’est ajouté ici.
+
+Le registre ne prouve pas l’absence de modifications manuelles du schéma. La
+prévalidation ne contrôle pas toutes les colonnes, contraintes, extensions ou
+évolutions des schémas gérés par Supabase, ni l’intégrité de toutes les données.
+Elle ne rend pas atomique la restauration table par table. Les migrations
+restent vérifiées lors du déploiement et une reprise doit être répétée sur une
+base isolée. Suspendre les écritures et migrations pendant la restauration.
+
+#### Validation maintenue
+
+L’étape "Test restore preflight in a disposable database" du
+[workflow de tests DB](../../.github/workflows/_ci-test-db.yml) utilise une base
+jetable et de vrais dumps. Elle vérifie trois cas : un état Sqitch identique est
+accepté, un hash de migration différent est refusé, et l’absence de données
+pour une table requise est refusée. Les données de la cible doivent rester
+intactes. Cette couverture ciblée ne teste pas tous les cas limites du script.
+
+Les options d’extraction et la table des matières reposent sur les commandes
+documentées de [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html).
+
+#### Répétition sur un backup réel — 2026-11-03
+
+Le backup `backup-2026-11-03.dump` a été restauré avec `restore.sh` inchangé
+dans une base locale isolée, initialisée avec son schéma et son registre Sqitch.
+Les droits Supabase et le seed SINOE, absents du dump de schéma, ont été rétablis
+avant le test. Les 165 tables configurées ont été restaurées en 10 min 13 s,
+dont 4 990 153 valeurs d’indicateurs ; l’anonymisation et les contrôles finaux
+ont réussi.
+
+Après déploiement et vérification de `indicateur/periodicite-nettoyage` sur cette
+copie, le même backup a été refusé avant toute troncature. Les comptages des
+six tables suivies sont restés identiques. Ce résultat porte sur ce snapshot
+local : la restauration d’une cible nettoyée nécessite un backup au même état
+de migrations.
 
 ## Conséquences
 
@@ -223,6 +288,24 @@ Supabase propose ses propres backups (Point-in-Time Recovery). Non retenu comme 
 - Dépendance au vendor pour une opération critique
 - Limité à 7 jours de rétention
 - Peut entraîner des coûts supplémentaires
+
+## Historique de la compatibilité des restaurations
+
+Avant la décision du 2 novembre 2026, le contrôle classait les snapshots selon
+les migrations de périodicité et vérifiait les objets propres à chaque état :
+
+- absence de colonne `periodicite` et de catalogue dans le schéma historique ;
+- contraintes annuelles validées et vérificateur Sqitch partagé dans le schéma annuel ;
+- fonctions et trigger pour l’état `formulas` ;
+- migrations de cadence obligatoire et de cohérence, contrôles physiques et
+  restrictions annuelles pour l’état `prepared` ;
+- quatre cadences autorisées pour l’état `contract` ;
+- vue matérialisée pour l’état `reporting`.
+
+Les états intermédiaires étaient refusés. Ces règles sont remplacées par la
+prévalidation générique du §8 : elles liaient la restauration à un chantier
+métier, incluaient des migrations abandonnées ou différées et ignoraient les
+autres domaines. Aucun de ces noms d’état n’intervient dans le contrôle actuel.
 
 ## Architecture globale
 

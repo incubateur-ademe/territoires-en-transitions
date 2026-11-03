@@ -98,14 +98,10 @@ SELECT throws_ok($$
     VALUES ('Cadence inconnue', 'kWh', 'hebdomadaire')
 $$, '23514', NULL, 'La base refuse une périodicité inconnue à la création');
 
-SELECT throws_ok($$
-    UPDATE public.indicateur_definition SET aggregation_resultat = 'somme'
-    WHERE id IN (SELECT id FROM declaration_indicateurs)
-$$, '23514', NULL, 'Aucune règle d’agrégation temporelle des résultats');
-SELECT throws_ok($$
-    UPDATE public.indicateur_definition SET aggregation_objectif = 'somme'
-    WHERE id IN (SELECT id FROM declaration_indicateurs)
-$$, '23514', NULL, 'Aucune règle d’agrégation temporelle des objectifs');
+SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_resultat',
+    'Aucune colonne inutilisée d’agrégation temporelle des résultats');
+SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_objectif',
+    'Aucune colonne inutilisée d’agrégation temporelle des objectifs');
 
 -- La saisie du diagnostic PCAET porte une métadonnée interne, contrairement
 -- aux données importées de la source externe pcaet.
