@@ -218,7 +218,7 @@ const EcheanceHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-36"
+      className="w-48"
       title={appLabels.instructionListeColonneEcheance}
       sortFn={() => trierPar('echeance')}
       sortDirection={sort === 'echeance' ? direction : null}

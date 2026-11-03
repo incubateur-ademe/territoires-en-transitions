@@ -245,7 +245,7 @@ describe('Notification de transmission aux destinataires en lecture', () => {
     const message = messageDe(drealPrincipaleEmail);
 
     expect(message).toContain('est saisi pour avis');
-    expect(message).toContain('Les avis sont attendus avant le');
+    expect(message).toContain('La date limite de dépôt de l’avis est le');
     expect(message).not.toContain('communiqué pour information');
   });
 });

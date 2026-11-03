@@ -16,11 +16,20 @@ export const DEMARCHE_PCAET_DELAI_AVIS_MOIS = 4;
  * le délai légal change, les dossiers déjà transmis gardent l'échéance qui
  * s'appliquait à eux.
  */
-export const computeAvisDeadline = (transmittedAt: Date): Date => {
-  const deadline = new Date(transmittedAt);
+export const computeAvisDeadline = (transmittedAt: Date): Date =>
+  addUtcMonths(transmittedAt, DEMARCHE_PCAET_DELAI_AVIS_MOIS);
+
+/** Délai réglementaire, opposable : celui qu'on affiche comme date limite. */
+export const DEMARCHE_PCAET_DELAI_AVIS_REGLEMENTAIRE_MOIS = 2;
+
+export const computeAvisEcheanceReglementaire = (transmittedAt: Date): Date =>
+  addUtcMonths(transmittedAt, DEMARCHE_PCAET_DELAI_AVIS_REGLEMENTAIRE_MOIS);
+
+const addUtcMonths = (date: Date, mois: number): Date => {
+  const resultat = new Date(date);
   // Calendrier UTC : même échéance quel que soit le fuseau du serveur.
-  deadline.setUTCMonth(deadline.getUTCMonth() + DEMARCHE_PCAET_DELAI_AVIS_MOIS);
-  return deadline;
+  resultat.setUTCMonth(resultat.getUTCMonth() + mois);
+  return resultat;
 };
 
 /** Une demande d'avis, vue par la règle d'achèvement de l'instruction. */

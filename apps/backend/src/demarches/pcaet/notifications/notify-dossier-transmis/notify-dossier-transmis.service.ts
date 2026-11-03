@@ -11,6 +11,7 @@ import { GetNotificationContentResult } from '@tet/backend/utils/notifications/m
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { render } from '@react-email/components';
 import {
+  computeAvisEcheanceReglementaire,
   estInstructeurNational,
   peutDeposerAvisInstructeur,
   peutDeposerAvisSaisine,
@@ -261,9 +262,12 @@ export class NotifyDossierTransmisService {
         : peutDeposerAvisInstructeur(saisine.serviceType)
         ? 'territoire'
         : 'famille',
-      echeanceAvis: saisine.avisDeadlineAt
-        ? formatDate(saisine.avisDeadlineAt)
-        : null,
+      echeanceAvis:
+        saisine.avisDeadlineAt && saisine.transmittedAt
+          ? formatDate(
+              computeAvisEcheanceReglementaire(new Date(saisine.transmittedAt))
+            )
+          : null,
       dossierUrl: this.getDemarcheUrlService.getDossierInstructionUrl({
         collectiviteInstruiteId: saisine.collectiviteId,
         demandeAvisId: parsed.data.demandeAvisId,
@@ -286,6 +290,7 @@ export class NotifyDossierTransmisService {
         collectiviteId: demarcheTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
         avisDeadlineAt: demarcheTable.avisDeadlineAt,
+        transmittedAt: demarcheTable.transmittedAt,
         serviceNom: serviceTable.nom,
         serviceType: serviceTable.type,
         perimetre: pcaetDemandeAvisTable.perimetre,

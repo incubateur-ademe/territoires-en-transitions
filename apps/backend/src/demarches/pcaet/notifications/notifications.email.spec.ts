@@ -32,7 +32,9 @@ describe('Contenu des emails de démarches PCAET', () => {
       );
 
       expect(html).toContain('est saisi pour avis sur ce dossier');
-      expect(html).toContain('Les avis sont attendus avant le 15/12/2026');
+      expect(html).toContain(
+        'La date limite de dépôt de l’avis est le 15/12/2026'
+      );
       expect(html).toContain(
         'le diagnostic, les objectifs et le programme d&#x27;actions'
       );

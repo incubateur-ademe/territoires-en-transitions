@@ -18,6 +18,8 @@ export type DemarcheTypeLabels = {
   possessif: string;
 };
 
+const echeanceAvisJour = plural({ one: 'jour', other: 'jours' });
+
 const demarcheVulnerabiliteSousThematiqueMot = plural({
   one: 'sous-thématique',
   other: 'sous-thématiques',
@@ -354,8 +356,7 @@ export const demarchesLabels = {
     documentsAvalComplets:
       'Complétez les pièces attendues après les avis (délibération d’adoption…) pour publier votre démarche.',
   } satisfies Record<DemarchePcaetGuardId, string>,
-  demarcheAvanceTransmisEcheance: 'Échéance remise des avis :',
-  demarcheAvanceTransmisDepasse: 'Délai dépassé',
+  demarcheAvanceTransmisEcheance: 'Date limite de dépôt de l’avis :',
   demarcheStepsNavPrevious: 'Étape précédente',
   demarcheStepsNavNext: 'Étape suivante',
   /** Étiquette du `<nav>` de la barre d'étapes, lue par les lecteurs d'écran. */
@@ -678,15 +679,30 @@ export const demarchesLabels = {
   instructionListeColonneStatut: 'Statut',
   instructionListeColonneDateSaisine: 'Date de saisine',
   instructionListeColonneDateAdoption: "Date d'adoption",
-  instructionListeColonneEcheance: 'Échéance avis',
+  instructionListeColonneEcheance: 'Date limite de dépôt de l’avis',
+  echeanceAvisJoursRestantsInfo: ({ jours }: { jours: number }) =>
+    `Il vous reste ${echeanceAvisJour({
+      count: jours,
+    })} pour être dans le délai réglementaire imparti.`,
+  echeanceAvisHorsDelaiInfo: ({ date }: { date: string }) =>
+    `Le délai réglementaire est dépassé, vous pouvez néanmoins déposer votre avis jusqu’au ${date}.`,
+  echeanceAvisJoursRestants: ({ jours }: { jours: number }) =>
+    `J\u2011${jours}`,
   instructionDateSaisineRenseignerAria: 'Renseigner la date de saisine',
   instructionDateSaisineVide: 'jj/mm/aaaa',
   instructionDateSaisineModifierAria: 'Modifier la date de saisine',
   instructionDateSaisineHistorique: 'Historique',
-  instructionDateSaisineSaisiePar: ({ date, nom }: { date: string; nom: string }) =>
+  instructionDateSaisineSaisiePar: ({
+    date,
+    nom,
+  }: {
+    date: string;
+    nom: string;
+  }) =>
     nom.trim() ? `Saisie le ${date} par ${nom.trim()}` : `Saisie le ${date}`,
   instructionDateSaisineEnregistree: 'Date de saisine enregistrée',
-  instructionDateSaisineErreur: "La date de saisine n'a pas pu être enregistrée",
+  instructionDateSaisineErreur:
+    "La date de saisine n'a pas pu être enregistrée",
   instructionListeColonneActions: 'Actions',
   instructionListeConsulterProjet: 'Consulter le projet',
   instructionListeVoirPcaet: 'Voir le PCAET',
@@ -704,10 +720,8 @@ export const demarchesLabels = {
   instructionEtatClos: 'Archivé',
   instructionDossierMetaCollectivite: 'Collectivité',
   instructionDossierMetaTransmis: 'Transmis le',
-  instructionDossierMetaEcheance: 'Échéance des avis',
+  instructionDossierMetaEcheance: 'Date limite de dépôt de l’avis',
   instructionDossierMetaInstruitLe: 'Instruit le',
-  instructionDossierMetaEcheanceDepassee: ({ date }: { date: string }) =>
-    `${date} (délai écoulé)`,
   /**
    * En tête du panneau d'un dépôt lu avant sa transmission. Le service voit un
    * dossier incomplet, sans avis ni échéance : il doit lire d'emblée que c'est

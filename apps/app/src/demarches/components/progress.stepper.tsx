@@ -11,61 +11,56 @@ import type {
   DemarchePcaetTransitionEvaluations,
 } from '@tet/domain/demarches';
 import { getTransitionBlocageLabel } from '../transitions';
-import { Alert, Button, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Alert, Button, cn, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
+import { getEcheanceAvis, type EcheanceAvisPhase } from '../echeance-avis';
+import { EcheanceAvisInfo, EcheanceAvisMention } from '../echeance-avis.view';
 import { DemarcheCompletionBadge } from './completion.badge';
 
 import type { DemarchePcaet, DemarchePcaetTopicStatut } from '../types';
 
-function diffDays(from: Date, to: Date): number {
-  return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
-}
+const ENCART_ECHEANCE_COULEURS: Record<EcheanceAvisPhase, string> = {
+  a_venir: 'bg-primary-1 text-primary-8 border-primary-3',
+  proche: 'bg-error-2 text-error-1 border-error-3',
+  hors_delai: 'bg-error-2 text-error-1 border-error-3',
+  close: 'bg-grey-2 text-grey-7 border-grey-4',
+};
 
-/** Échéance de remise des avis, figée côté serveur à la transmission. */
-function TransmisDeadline({ avisDeadlineAt }: { avisDeadlineAt: string }) {
-  const deadline = new Date(avisDeadlineAt);
-  const today = new Date();
-  const remaining = diffDays(today, deadline);
-  const deadlineStr = deadline.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+function TransmisDeadline({
+  avisDeadlineAt,
+  transmittedAt,
+}: {
+  avisDeadlineAt: string;
+  transmittedAt: string;
+}) {
+  const echeance = getEcheanceAvis({
+    transmittedAt,
+    avisDeadlineAt,
+    avisAttendu: true,
+    nowMs: Date.now(),
   });
-
-  const isOver = remaining < 0;
-  const isPending = remaining <= 14;
 
   return (
     <div
-      className={[
-        'mt-1 flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs w-fit',
-        isOver
-          ? 'bg-error-2 text-error-1 border border-error-3'
-          : isPending
-          ? 'bg-warning-2 text-warning-1 border border-warning-3'
-          : 'bg-primary-1 text-primary-8 border border-primary-3',
-      ].join(' ')}
+      className={cn(
+        'mt-1 flex flex-wrap items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs w-fit',
+        ENCART_ECHEANCE_COULEURS[echeance.phase]
+      )}
     >
       <span className="font-medium">
         {appLabels.demarcheAvanceTransmisEcheance}
       </span>
-      <span>{deadlineStr}</span>
-      <span
-        className={[
-          'font-semibold',
-          isOver
-            ? 'text-error-1'
-            : isPending
-            ? 'text-warning-1'
-            : 'text-primary-7',
-        ].join(' ')}
-      >
-        {isOver
-          ? appLabels.demarcheAvanceTransmisDepasse
-          : `J\u2011${remaining}`}
+      <span>
+        {echeance.date.toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })}
       </span>
+      <EcheanceAvisMention echeance={echeance} />
+      <EcheanceAvisInfo echeance={echeance} />
     </div>
   );
 }
@@ -295,6 +290,7 @@ type Props = {
   activeSection?: DemarcheSectionKey | null;
   /** Échéance de remise des avis (calculée par le serveur à la transmission). */
   avisDeadlineAt?: string | null;
+  transmittedAt?: string | null;
   /**
    * État serveur des transitions. Absent en preview (page de création) : les
    * actions s'affichent alors sans être armées par un dossier réel.
@@ -321,6 +317,7 @@ export const AvanceDemarcheSection = ({
   completion,
   activeSection = null,
   avisDeadlineAt,
+  transmittedAt,
   transitions,
   onTransmettre,
   isPublished,
@@ -574,8 +571,12 @@ export const AvanceDemarcheSection = ({
           >
             {index === ETAPE.transmis &&
               statut === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS &&
-              avisDeadlineAt && (
-                <TransmisDeadline avisDeadlineAt={avisDeadlineAt} />
+              avisDeadlineAt &&
+              transmittedAt && (
+                <TransmisDeadline
+                  avisDeadlineAt={avisDeadlineAt}
+                  transmittedAt={transmittedAt}
+                />
               )}
             {/* Un dépôt hors plateforme n'a pas d'avis à consulter ici : sa
                 finalisation est la constitution de tout le dossier. */}

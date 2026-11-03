@@ -35,7 +35,7 @@ export const NotifyDossierTransmisEmail = (
         <Text>
           <b>{serviceNom} est saisi pour avis sur ce dossier.</b>
           {echeanceAvis
-            ? ` Les avis sont attendus avant le ${echeanceAvis}.`
+            ? ` La date limite de dépôt de l’avis est le ${echeanceAvis}.`
             : ''}
         </Text>
       ) : (
