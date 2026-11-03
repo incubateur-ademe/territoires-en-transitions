@@ -124,7 +124,6 @@ const parentConfig = (
     {
       label: 'Résidentiel',
       indicateurDefinitionId: 'cae_1.c',
-      optionalYears: [2050],
     },
   ],
   ...overrides,
@@ -261,7 +260,7 @@ describe('getDemarchePcaetCompletion', () => {
         indicateurValeurs: [
           valeur({ identifiant: 'cae_1.c', year: 2021, resultat: 12 }),
           valeur({ identifiant: 'cae_1.c', year: 2030, objectif: 8 }),
-          // 2036 requis ; 2050 est hors exigence via optionalYears
+          // 2036 et 2050 requis
         ],
       }),
       completeSnapshot
@@ -270,7 +269,7 @@ describe('getDemarchePcaetCompletion', () => {
     expect(completion.diagnostic).toBe('incomplete');
   });
 
-  it('laisse le diagnostic complete sans 2050 quand optionalYears l’exclut', () => {
+  it('passe le diagnostic en incomplete sans l’objectif 2050', () => {
     const completion = getDemarchePcaetCompletion(
       completeDemarche,
       completeDiagnostic({
@@ -283,7 +282,7 @@ describe('getDemarchePcaetCompletion', () => {
       completeSnapshot
     );
 
-    expect(completion.diagnostic).toBe('complete');
+    expect(completion.diagnostic).toBe('incomplete');
   });
 
   it("laisse le diagnostic incomplete tant que les topics ne sont pas chargés : on ne déclare pas complet ce qu'on n'a pas lu", () => {

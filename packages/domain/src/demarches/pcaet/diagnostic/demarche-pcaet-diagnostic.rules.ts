@@ -3,7 +3,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../../../indicateurs';
 import {
-  listPcaetDiagnosticIndicateurRequiredLeaves,
+  listPcaetDiagnosticIndicateurRequiredLeafIds,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
 } from './demarche-pcaet-diagnostic.config';
 import type {
@@ -61,13 +61,9 @@ const getAnnualYear = ({
     'Le diagnostic PCAET'
   );
 
-const isLeafComplet = ({
-  optionalYears,
-  valeurs,
-}: {
-  optionalYears: readonly number[];
-  valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
-}): boolean => {
+const isLeafComplet = (
+  valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[]
+): boolean => {
   const hasReferenceResultat = valeurs.some((valeur) => {
     const { indicateurValeur } = valeur;
     const year = getAnnualYear(valeur);
@@ -79,12 +75,7 @@ const isLeafComplet = ({
     return false;
   }
 
-  const requiredObjectifYears =
-    PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
-      (year) => !optionalYears.includes(year)
-    );
-
-  return requiredObjectifYears.every((year) =>
+  return PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.every((year) =>
     valeurs.some(
       (valeur) =>
         getAnnualYear(valeur) === year &&
@@ -114,7 +105,7 @@ const listPcaetDiagnosticIdentifiantsNonApplicables = (
 /**
  * Un topic indicateur est complet quand chacune de ses lignes requises porte un
  * constat et une cible : un résultat sur l'année de comptabilisation et un
- * objectif sur chaque horizon requis (hors `optionalYears`). Les années ajoutées
+ * objectif sur chaque horizon requis. Les années ajoutées
  * ouvrent des colonnes sans rien exiger. Un topic optionnel, ou sans aucune
  * ligne exigée, est complet — sinon il retiendrait le dossier sur une saisie
  * qu'on ne lui demande pas.
@@ -137,9 +128,9 @@ export const isPcaetDiagnosticIndicateurComplet = ({
 
   // Une ligne déclarée non applicable n'est plus réclamée : elle sort du socle
   // exigé, comme le fait `non_concerne` pour une thématique de vulnérabilité.
-  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeaves(
+  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeafIds(
     config
-  ).filter((leaf) => !nonApplicables.has(leaf.indicateurDefinitionId));
+  ).filter((leafId) => !nonApplicables.has(leafId));
   if (requiredLeaves.length === 0) {
     return true;
   }
@@ -161,11 +152,8 @@ export const isPcaetDiagnosticIndicateurComplet = ({
     valeursByIdentifiant.set(identifiant, bucket);
   }
 
-  return requiredLeaves.every((leaf) =>
-    isLeafComplet({
-      optionalYears: leaf.optionalYears,
-      valeurs: valeursByIdentifiant.get(leaf.indicateurDefinitionId) ?? [],
-    })
+  return requiredLeaves.every((leafId) =>
+    isLeafComplet(valeursByIdentifiant.get(leafId) ?? [])
   );
 };
 

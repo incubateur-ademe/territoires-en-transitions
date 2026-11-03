@@ -6,7 +6,7 @@ import type {
 type DiagnosticTableRow = {
   label: string;
   indicateurDefinitionId: string;
-  optionalYears: readonly number[] | 'all';
+  isOptional: boolean;
 };
 
 type DiagnosticIndicateurTableLayout = {
@@ -96,7 +96,7 @@ const toTableRow = (child: ChildConfig): DiagnosticTableRow | null => {
   return {
     label: child.label,
     indicateurDefinitionId,
-    optionalYears: child.optionalYears ?? [],
+    isOptional: child.optional ?? false,
   };
 };
 
@@ -158,7 +158,7 @@ export const buildIndicateurValeursTableSections = (
         title: child.label,
         rows,
         groupBy: child.groupBy ?? null,
-        isOptional: child.optionalYears === 'all',
+        isOptional: child.optional ?? false,
       },
     ];
   });
