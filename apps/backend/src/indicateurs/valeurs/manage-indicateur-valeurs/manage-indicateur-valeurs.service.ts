@@ -6,7 +6,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
-  IndicateurDefinition,
+  IndicateurPredefini,
   IndicateurValeur,
   IndicateurValeurCreate,
 } from '@tet/domain/indicateurs';
@@ -195,7 +195,7 @@ export default class ManageIndicateurValeursService {
 
   async reconcileCollectiviteCalculatedIndicateurValeurs(
     collectiviteId: number,
-    definitions: IndicateurDefinition[],
+    definitions: IndicateurPredefini[],
     tx: Transaction
   ) {
     return getIndicateurValeursDataOrThrow(
@@ -210,7 +210,7 @@ export default class ManageIndicateurValeursService {
     onlyForCollectiviteId: number | undefined,
     user: AuthUser | null,
     options: {
-      definitions?: IndicateurDefinition[];
+      definitions?: IndicateurPredefini[];
       skipPermissionCheck?: boolean;
     } = {}
   ) {

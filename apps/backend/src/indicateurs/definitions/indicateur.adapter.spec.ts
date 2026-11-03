@@ -1,8 +1,48 @@
 import { toIndicateurDefinition } from './indicateur-definition.test-fixture';
 import {
   toIndicateurOrThrow,
+  toIndicateurPredefiniOrThrow,
   toIndicateursOrThrow,
+  toIndicateursPredefiniOrThrow,
 } from './indicateur.adapter';
+
+describe('toIndicateurPredefiniOrThrow', () => {
+  it('rend un prédéfini tel quel', () => {
+    const definition = toIndicateurDefinition({
+      identifiantReferentiel: 'cae_1.a',
+    });
+    expect(toIndicateurPredefiniOrThrow(definition)).toEqual(definition);
+  });
+
+  it('refuse un perso, pourtant cohérent', () => {
+    expect(() =>
+      toIndicateurPredefiniOrThrow(
+        toIndicateurDefinition({ id: 5, collectiviteId: 12 })
+      )
+    ).toThrow(
+      'Indicateur 5 : un indicateur de la plateforme doit être prédéfini'
+    );
+  });
+
+  it('nomme l’incohérence avant de refuser le perso', () => {
+    expect(() =>
+      toIndicateurPredefiniOrThrow(toIndicateurDefinition({ id: 6 }))
+    ).toThrow(
+      'Indicateur 6 : nature incohérente (PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL)'
+    );
+  });
+});
+
+describe('toIndicateursPredefiniOrThrow', () => {
+  it('échoue en entier si une définition est un perso', () => {
+    expect(() =>
+      toIndicateursPredefiniOrThrow([
+        toIndicateurDefinition({ id: 1, identifiantReferentiel: 'cae_1.a' }),
+        toIndicateurDefinition({ id: 2, collectiviteId: 12 }),
+      ])
+    ).toThrow('Indicateur 2 : un indicateur de la plateforme');
+  });
+});
 
 describe('toIndicateurOrThrow', () => {
   it('rend un perso tel quel', () => {

@@ -15,6 +15,7 @@ import {
   IndicateurAvecValeursParSource,
   IndicateurDefinition,
   IndicateurDefinitionTiny,
+  IndicateurPredefini,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
@@ -1910,6 +1911,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         id: 10,
         collectiviteId: 4,
         identifiantReferentiel: null,
+        groupementId: null,
         periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         precision: 2,
         sansValeurUtilisateur: false,
@@ -2076,7 +2078,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         identifiantReferentiel: 'target',
         valeurCalcule: 'val(source_a)',
         periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
-      } as IndicateurDefinition;
+      } as IndicateurPredefini;
       const computedValeur = {
         indicateurId: target.id,
         collectiviteId: 1,

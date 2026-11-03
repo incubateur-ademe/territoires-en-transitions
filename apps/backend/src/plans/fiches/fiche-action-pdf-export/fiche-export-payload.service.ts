@@ -7,6 +7,7 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { ActionDefinitionsRepository } from '@tet/backend/referentiels/action-definitions/action-definitions.repository';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { isIndicateurPerso } from '@tet/domain/indicateurs';
 import type {
   AnnexeDocument,
   AxeLight,
@@ -152,7 +153,7 @@ export class FicheExportPayloadService {
     );
     return definitions.map((definition) => ({
       ...definition,
-      estPerso: definition.identifiantReferentiel === null,
+      estPerso: isIndicateurPerso(definition),
       hasOpenData: false,
     }));
   }
