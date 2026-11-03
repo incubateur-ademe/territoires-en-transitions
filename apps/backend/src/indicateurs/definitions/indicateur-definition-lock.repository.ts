@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import { Indicateur } from '@tet/domain/indicateurs';
 import { asc, getTableColumns, inArray, sql } from 'drizzle-orm';
+import { toIndicateursOrThrow } from './indicateur.adapter';
 
 const INDICATEUR_CALCULATION_GRAPH_LOCK_KEY = 'indicateur-calculation-graph';
 
@@ -35,7 +36,7 @@ export class IndicateurDefinitionLockRepository {
   async lockDefinitions(
     indicateurIds: number[],
     tx: Transaction
-  ): Promise<IndicateurDefinition[]> {
+  ): Promise<Indicateur[]> {
     await this.lockForValueWrite(tx);
 
     const sortedIndicateurIds = [...new Set(indicateurIds)].sort(
@@ -45,7 +46,7 @@ export class IndicateurDefinitionLockRepository {
       return [];
     }
 
-    return tx
+    const definitions = await tx
       .select({
         ...getTableColumns(indicateurDefinitionTable),
         ...indicateurDefinitionPeriodiciteSelection,
@@ -54,5 +55,7 @@ export class IndicateurDefinitionLockRepository {
       .where(inArray(indicateurDefinitionTable.id, sortedIndicateurIds))
       .orderBy(asc(indicateurDefinitionTable.id))
       .for('share');
+
+    return toIndicateursOrThrow(definitions);
   }
 }

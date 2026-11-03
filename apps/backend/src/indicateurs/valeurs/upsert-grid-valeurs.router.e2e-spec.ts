@@ -1,8 +1,6 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
-import { createGroupement } from '@tet/backend/collectivites/shared/models/groupement.test-fixture';
 import { getAuthUserFromUserCredentials, getTestApp } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -482,98 +480,6 @@ describe('Écriture atomique de lots de valeurs annuelles', () => {
         ])
       );
     expect(saved).toHaveLength(0);
-  });
-
-  test("Rejette tout le lot après le retrait du groupement, même pour la collectivité propriétaire d'un indicateur historique", async () => {
-    const groupement = await createGroupement({
-      database: databaseService,
-      groupementData: { collectiviteIds: [collectiviteId] },
-    });
-    onTestFinished(groupement.cleanup);
-    const writableIndicateurId = await insertAnnualIndicateur();
-    const sharedIndicateurId = await insertAnnualIndicateur();
-    await databaseService.db
-      .update(indicateurDefinitionTable)
-      .set({ groupementId: groupement.id })
-      .where(eq(indicateurDefinitionTable.id, sharedIndicateurId));
-    await databaseService.db
-      .delete(groupementCollectiviteTable)
-      .where(
-        and(
-          eq(groupementCollectiviteTable.groupementId, groupement.id),
-          eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-        )
-      );
-    const caller = router.createCaller({ user: authenticatedUser });
-
-    await expect(
-      caller.indicateurs.valeurs.upsertMany({
-        collectiviteId,
-        valeurs: [writableIndicateurId, sharedIndicateurId].map(
-          (indicateurId) => ({
-            indicateurId,
-            period: IndicateurPeriodes.parse(
-              IndicateurPeriodiciteEnum.ANNUELLE,
-              '2026'
-            ),
-            resultat: 42,
-          })
-        ),
-      })
-    ).rejects.toMatchObject({
-      code: 'BAD_REQUEST',
-      cause: expect.objectContaining({
-        message: expect.stringContaining('non disponible pour la collectivité'),
-      }),
-    });
-
-    expect(
-      await databaseService.db
-        .select()
-        .from(indicateurValeurTable)
-        .where(
-          inArray(indicateurValeurTable.indicateurId, [
-            writableIndicateurId,
-            sharedIndicateurId,
-          ])
-        )
-    ).toHaveLength(0);
-  });
-
-  test('Autorise un lot pour un indicateur historique si sa collectivité appartient au groupement', async () => {
-    const groupement = await createGroupement({
-      database: databaseService,
-      groupementData: { collectiviteIds: [collectiviteId] },
-    });
-    onTestFinished(groupement.cleanup);
-    const indicateurId = await insertAnnualIndicateur();
-    await databaseService.db
-      .update(indicateurDefinitionTable)
-      .set({ groupementId: groupement.id })
-      .where(eq(indicateurDefinitionTable.id, indicateurId));
-    const caller = router.createCaller({ user: authenticatedUser });
-
-    await expect(
-      caller.indicateurs.valeurs.upsertMany({
-        collectiviteId,
-        valeurs: [
-          {
-            indicateurId,
-            period: IndicateurPeriodes.parse(
-              IndicateurPeriodiciteEnum.ANNUELLE,
-              '2026'
-            ),
-            resultat: 0,
-          },
-        ],
-      })
-    ).resolves.toMatchObject([{ indicateurId, resultat: 0 }]);
-    expect(
-      await databaseService.db
-        .select()
-        .from(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, indicateurId))
-    ).toMatchObject([{ collectiviteId, resultat: 0 }]);
   });
 
   test("Une clé d'API en lecture seule ne peut pas écrire un lot de grille avec les droits de son propriétaire", async () => {

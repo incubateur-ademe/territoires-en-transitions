@@ -221,6 +221,7 @@ describe('Indicateurs', () => {
     const [protectedDefinition] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
+        identifiantReferentiel: `test_${randomUUID()}`,
         titre: 'Indicateur open-data protégé',
         unite: 'MWh',
         periodicite: 'annuelle',

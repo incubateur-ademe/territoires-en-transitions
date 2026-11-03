@@ -1440,6 +1440,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     const [definition] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
+        identifiantReferentiel: `test_${randomUUID()}`,
         titre: 'Indicateur de moyenne isolé',
         unite: 'MWh',
         periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
