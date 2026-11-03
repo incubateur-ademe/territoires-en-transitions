@@ -13,7 +13,7 @@ import type {
 import { getTransitionBlocageLabel } from '../transitions';
 import { Alert, Button, cn, Icon, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { getEcheanceAvis, type EcheanceAvisPhase } from '../echeance-avis';
 import { EcheanceAvisInfo, EcheanceAvisMention } from '../echeance-avis.view';
@@ -35,11 +35,12 @@ function TransmisDeadline({
   avisDeadlineAt: string;
   transmittedAt: string;
 }) {
+  const [nowMs] = useState(() => Date.now());
   const echeance = getEcheanceAvis({
     transmittedAt,
     avisDeadlineAt,
     avisAttendu: true,
-    nowMs: Date.now(),
+    nowMs,
   });
 
   return (
