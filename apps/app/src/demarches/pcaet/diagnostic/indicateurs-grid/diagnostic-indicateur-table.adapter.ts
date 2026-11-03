@@ -1,7 +1,6 @@
 import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import {
   IndicateurPeriodes,
-  type IndicateurPeriode,
   type IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import type { IndicateurValeursTableMeta } from '../../../../indicateurs/valeurs/grid/utils';
@@ -54,25 +53,10 @@ export const buildDiagnosticIndicateurTableRows = (
         indicateurValeurs:
           valeursByIndicateurId.get(indicateurDefinition.id) ?? [],
         indicateurLabel: row.label,
-        isValeurRequired: (periode: IndicateurPeriode | null) => {
-          if (
-            !indicateurDefinition.isApplicable ||
-            row.optionalYears === 'all'
-          ) {
-            return false;
-          }
-          // La référence reste requise tant qu'aucune période n'est choisie.
-          return (
-            periode === null ||
-            !row.optionalYears.includes(
-              IndicateurPeriodes.toAnnualYear(
-                periode.periodicite,
-                periode.dateDebut,
-                'Diagnostic PCAET'
-              )
-            )
-          );
-        },
+        // Référence et horizons d'objectif sont tous requis : seules une ligne
+        // facultative ou non applicable sont libérées.
+        isValeurRequired: () =>
+          indicateurDefinition.isApplicable && !row.isOptional,
         isApplicable: indicateurDefinition.isApplicable,
       },
     ];

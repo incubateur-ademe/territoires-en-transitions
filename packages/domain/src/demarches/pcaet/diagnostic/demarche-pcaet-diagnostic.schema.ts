@@ -22,7 +22,8 @@ export type PcaetDiagnosticIndicateurValeur = z.infer<
 const pcaetDiagnosticIndicateurChildLeafSchema = z.object({
   label: z.string(),
   indicateurDefinitionId: z.string(),
-  optionalYears: z.optional(z.union([z.array(z.number()), z.literal('all')])),
+  /** Ligne facultative : rien n'est exigé pour la complétude. */
+  optional: z.optional(z.boolean()),
 });
 
 export type PcaetDiagnosticIndicateurChildLeaf = z.infer<

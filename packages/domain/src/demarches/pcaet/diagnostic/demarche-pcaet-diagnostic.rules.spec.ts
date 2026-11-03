@@ -25,7 +25,6 @@ const parentConfig = (
     {
       label: 'Résidentiel',
       indicateurDefinitionId: 'cae_1.c',
-      optionalYears: [2050],
     },
   ],
   ...overrides,
@@ -53,14 +52,14 @@ const valeur = ({
     indicateurDefinition: { identifiantReferentiel, periodicite: 'annuelle' },
   } as PcaetDiagnostic['indicateurValeurs'][number]);
 
-/** Constat + objectifs requis (2050 exclu via optionalYears). */
+/** Constat + objectif sur chaque horizon requis. */
 const valeursCompletes = (
   identifiantReferentiel = 'cae_1.c'
 ): PcaetDiagnostic['indicateurValeurs'] => [
   valeur({ year: 2021, identifiantReferentiel, resultat: 12 }),
-  ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
-    (year) => year !== 2050
-  ).map((year) => valeur({ year, identifiantReferentiel, objectif: 8 })),
+  ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map((year) =>
+    valeur({ year, identifiantReferentiel, objectif: 8 })
+  ),
 ];
 
 /**
@@ -158,10 +157,9 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
       isPcaetDiagnosticIndicateurComplet({
         definitions: [],
         config: parentConfig(),
-        indicateurs:
-          PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
-            (year) => year !== 2050
-          ).map((year) => valeur({ year, objectif: 8 })),
+        indicateurs: PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
+          (year) => valeur({ year, objectif: 8 })
+        ),
       })
     ).toBe(false);
   });
@@ -179,7 +177,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     ).toBe(false);
   });
 
-  it('n’exige pas un horizon listé dans optionalYears', () => {
+  it('exige aussi l’objectif 2050', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         definitions: [],
@@ -190,7 +188,7 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
           valeur({ year: 2036, objectif: 6 }),
         ],
       })
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('ignore les valeurs saisies sur les indicateurs d’un autre topic', () => {
@@ -219,12 +217,10 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
         {
           label: 'Résidentiel',
           indicateurDefinitionId: 'cae_1.c',
-          optionalYears: [2050],
         },
         {
           label: 'Tertiaire',
           indicateurDefinitionId: 'cae_1.d',
-          optionalYears: [2050],
         },
       ],
     });
@@ -290,16 +286,16 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     ).toBe(true);
   });
 
-  it('ignore une ligne entièrement optionnelle (optionalYears all)', () => {
+  it('ignore une ligne facultative', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({
         definitions: [],
         config: parentConfig({
           children: [
             {
-              label: 'Forêt',
-              indicateurDefinitionId: 'cae_63.b',
-              optionalYears: 'all',
+              label: 'Autres sols',
+              indicateurDefinitionId: 'cae_63.d',
+              optional: true,
             },
           ],
         }),
@@ -324,12 +320,10 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
         {
           label: 'Résidentiel',
           indicateurDefinitionId: 'cae_1.c',
-          optionalYears: [2050],
         },
         {
           label: 'Tertiaire',
           indicateurDefinitionId: 'cae_1.d',
-          optionalYears: [2050],
         },
       ],
     });
@@ -393,7 +387,6 @@ describe('isDemarchePcaetDiagnosticComplet', () => {
                 {
                   label: 'Résidentiel',
                   indicateurDefinitionId: 'cae_2.e',
-                  optionalYears: [2050],
                 },
               ],
             }),

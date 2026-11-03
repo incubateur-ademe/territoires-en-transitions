@@ -36,7 +36,7 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
 
 /**
  * Badge d'un onglet indicateur. Un volet `optional` s'annonce optionnel, les
- * autres suivent la saisie (année de référence + horizons, hors optionalYears).
+ * autres suivent la saisie (année de référence + horizons d'objectif).
  */
 export const getDiagnosticIndicateurTopicStatut = (
   config: PcaetDiagnosticIndicateurParentConfig,

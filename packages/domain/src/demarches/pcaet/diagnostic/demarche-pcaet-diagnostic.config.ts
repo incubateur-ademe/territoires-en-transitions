@@ -377,7 +377,7 @@ const SEQUESTRATION_CARBONE = {
     {
       label: 'Autres sols',
       indicateurDefinitionId: 'cae_63.d',
-      optionalYears: 'all',
+      optional: true,
     },
   ],
 } as const satisfies PcaetDiagnosticIndicateurParentConfig;
@@ -490,36 +490,22 @@ export const listPcaetDiagnosticIndicateurDefinitionIds = (
   config: PcaetDiagnosticIndicateurParentConfig
 ): string[] => [...new Set(collectIndicateurDefinitionIds(config))];
 
-/** Ligne feuille exigée pour la complétude d'un topic indicateur. */
-export type PcaetDiagnosticIndicateurRequiredLeaf = {
-  indicateurDefinitionId: string;
-  /** Horizons d'objectif non exigés pour cette ligne (hors `'all'`). */
-  optionalYears: readonly number[];
-};
-
 /**
- * Feuilles saisissables qui retiennent la complétude : pas les agrégats
- * parents, pas les lignes `optionalYears: 'all'`.
+ * Identifiants des feuilles saisissables qui retiennent la complétude : pas
+ * les agrégats parents, pas les lignes `optional`.
  */
-export const listPcaetDiagnosticIndicateurRequiredLeaves = (
+export const listPcaetDiagnosticIndicateurRequiredLeafIds = (
   config: PcaetDiagnosticIndicateurParentConfig
-): PcaetDiagnosticIndicateurRequiredLeaf[] => {
-  const leaves: PcaetDiagnosticIndicateurRequiredLeaf[] = [];
+): string[] => {
+  const leaves: string[] = [];
 
   const pushLeaf = (node: {
     indicateurDefinitionId: string;
-    optionalYears?: readonly number[] | 'all';
+    optional?: boolean;
   }) => {
-    if (
-      node.indicateurDefinitionId.length === 0 ||
-      node.optionalYears === 'all'
-    ) {
-      return;
+    if (node.indicateurDefinitionId.length > 0 && node.optional !== true) {
+      leaves.push(node.indicateurDefinitionId);
     }
-    leaves.push({
-      indicateurDefinitionId: node.indicateurDefinitionId,
-      optionalYears: node.optionalYears ?? [],
-    });
   };
 
   for (const child of config.children) {

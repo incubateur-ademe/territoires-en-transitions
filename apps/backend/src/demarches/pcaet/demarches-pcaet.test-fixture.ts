@@ -23,7 +23,7 @@ import type { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import {
   DemarchePcaet,
-  listPcaetDiagnosticIndicateurRequiredLeaves,
+  listPcaetDiagnosticIndicateurRequiredLeafIds,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurParentConfig,
@@ -36,18 +36,16 @@ import { demarchePcaetSourceMetadonneeTable } from './shared/models/demarche-pca
 
 /**
  * Toutes les feuilles exigées des topics non optionnels : la complétude juge
- * chaque ligne (référence + horizons hors optionalYears), pas un seul indicateur
- * pour tout le volet.
+ * chaque ligne (référence + horizons d'objectif), pas un seul indicateur pour
+ * tout le volet.
  */
-const DIAGNOSTIC_COMPLETION_LEAVES = (
-  PCAET_DIAGNOSTIC_INDICATEURS as readonly PcaetDiagnosticIndicateurParentConfig[]
-)
-  .filter((topic) => topic.optional !== true)
-  .flatMap((topic) => listPcaetDiagnosticIndicateurRequiredLeaves(topic));
-
 const DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS = [
   ...new Set(
-    DIAGNOSTIC_COMPLETION_LEAVES.map((leaf) => leaf.indicateurDefinitionId)
+    (
+      PCAET_DIAGNOSTIC_INDICATEURS as readonly PcaetDiagnosticIndicateurParentConfig[]
+    )
+      .filter((topic) => topic.optional !== true)
+      .flatMap((topic) => listPcaetDiagnosticIndicateurRequiredLeafIds(topic))
   ),
 ];
 
@@ -280,7 +278,7 @@ export async function coverTestDocumentsPcaet(
 /**
  * Renseigne les indicateurs du diagnostic au sens du guard : sur chaque feuille
  * exigée, un résultat sur l'année de référence et un objectif sur chaque
- * horizon requis (hors `optionalYears`). Écrit via la source dédiée
+ * horizon requis. Écrit via la source dédiée
  * `pcaet-collectivite`.
  */
 export async function completeTestDiagnosticIndicateursPcaet(
@@ -330,19 +328,13 @@ export async function completeTestDiagnosticIndicateursPcaet(
   await db.db
     .insert(indicateurValeurTable)
     .values(
-      DIAGNOSTIC_COMPLETION_LEAVES.flatMap((leaf) => {
-        const indicateurId = definitionByReferentiel.get(
-          leaf.indicateurDefinitionId
-        );
+      DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.flatMap((leafId) => {
+        const indicateurId = definitionByReferentiel.get(leafId);
         if (indicateurId === undefined) {
           throw new Error(
-            `Indicateur ${leaf.indicateurDefinitionId} absent du référentiel pour saturer le diagnostic`
+            `Indicateur ${leafId} absent du référentiel pour saturer le diagnostic`
           );
         }
-        const requiredObjectifYears =
-          PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.filter(
-            (year) => !leaf.optionalYears.includes(year)
-          );
         return [
           {
             indicateurId,
@@ -352,14 +344,16 @@ export async function completeTestDiagnosticIndicateursPcaet(
             resultat: 100,
             objectif: null,
           },
-          ...requiredObjectifYears.map((year) => ({
-            indicateurId,
-            collectiviteId,
-            dateValeur: `${year}-01-01`,
-            metadonneeId,
-            resultat: null,
-            objectif: 80,
-          })),
+          ...PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
+            (year) => ({
+              indicateurId,
+              collectiviteId,
+              dateValeur: `${year}-01-01`,
+              metadonneeId,
+              resultat: null,
+              objectif: 80,
+            })
+          ),
         ];
       })
     )

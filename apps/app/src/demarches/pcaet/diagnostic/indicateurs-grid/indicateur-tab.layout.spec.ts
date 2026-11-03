@@ -45,12 +45,6 @@ describe('buildIndicateurValeursTableSections', () => {
       'Industrie hors branche énergie',
       'Industrie branche énergie',
     ]);
-    expect(
-      sections[0].tables[0].rows.every(
-        (row) =>
-          row.optionalYears !== 'all' && !row.optionalYears.includes(2050)
-      )
-    ).toBe(true);
   });
 
   it('crée une table par polluant, avec les secteurs en lignes', () => {
@@ -149,7 +143,7 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
   const periode = (year: number) =>
     IndicateurPeriodes.parse(IndicateurPeriodiciteEnum.ANNUELLE, String(year));
   const buildRow = (
-    optionalYears: readonly number[] | 'all',
+    isOptional = false,
     isApplicable = true,
     periodicite: IndicateurPeriodicite = IndicateurPeriodiciteEnum.ANNUELLE
   ) => {
@@ -165,7 +159,7 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
         {
           label: 'Résidentiel',
           indicateurDefinitionId: 'cae_63.b',
-          optionalYears,
+          isOptional,
         },
       ],
       indicateurDefinitions: [
@@ -185,33 +179,30 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     IndicateurPeriodiciteEnum.TRIMESTRIELLE,
     IndicateurPeriodiciteEnum.SEMESTRIELLE,
   ])('refuse une définition %s dans le diagnostic annuel', (periodicite) => {
-    expect(() => buildRow([], true, periodicite)).toThrow(
+    expect(() => buildRow(false, true, periodicite)).toThrow(
       'INDICATEUR_ANNUAL_PERIODICITE_REQUIRED'
     );
   });
 
-  it.each([
-    { year: 2030, required: true },
-    { year: 2050, required: false },
-  ])('exige la valeur de $year : $required', ({ year, required }) => {
-    expect(buildRow([2050]).isValeurRequired(periode(year))).toBe(required);
+  it.each([2030, 2036, 2050])('exige la valeur de %i', (year) => {
+    expect(buildRow().isValeurRequired(periode(year))).toBe(true);
   });
 
   it("réclame la référence tant qu'elle n'est pas choisie", () => {
-    expect(buildRow([2050]).isValeurRequired(null)).toBe(true);
+    expect(buildRow().isValeurRequired(null)).toBe(true);
   });
 
   it.each([periode(2030), null])(
     'ne réclame aucune valeur pour une ligne facultative',
     (periode) => {
-      expect(buildRow('all').isValeurRequired(periode)).toBe(false);
+      expect(buildRow(true).isValeurRequired(periode)).toBe(false);
     }
   );
 
   it.each([periode(2030), null])(
     'ne réclame aucune valeur pour un indicateur non applicable',
     (periode) => {
-      expect(buildRow([], false).isValeurRequired(periode)).toBe(false);
+      expect(buildRow(false, false).isValeurRequired(periode)).toBe(false);
     }
   );
 });
