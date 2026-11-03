@@ -4,6 +4,7 @@ import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicate
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { isIndicateurPredefini } from '@tet/domain/indicateurs';
 import { useGetStatutTrajectoire } from '../../Trajectoire/use-get-statut-trajectoire';
 import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
 import IndicateurLayout from './IndicateurLayout';
@@ -34,8 +35,8 @@ export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
   // démarre le calcul de la trajectoire au chargement de la page
   useGetTrajectoire({
     enabled:
-      !definition?.estPerso &&
-      !!definition?.identifiantReferentiel &&
+      !!definition &&
+      isIndicateurPredefini(definition) &&
       INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(
         definition.identifiantReferentiel
       ) &&

@@ -5,7 +5,10 @@ import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
 import { appLabels } from '@/app/labels/catalog';
-import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import {
+  type IndicateurDetaille,
+  isIndicateurPerso,
+} from '@tet/domain/indicateurs';
 import { DeleteIndicateurDefinitionModal } from '@/app/indicateurs/indicateurs/delete-indicateur-definition.modal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
@@ -37,7 +40,7 @@ const IndicateurCardOptions = ({
     isFavoriCollectivite,
     isChartVisible: chartDownloadSettings.showTrigger,
     canDelete:
-      definition.estPerso &&
+      isIndicateurPerso(definition) &&
       hasCollectivitePermission('indicateurs.indicateurs.delete'),
   }).filter((action) => action.isVisible);
 

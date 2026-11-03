@@ -1,5 +1,8 @@
 import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
-import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import {
+  type IndicateurDetaille,
+  isIndicateurPerso,
+} from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import Markdown from '@/app/ui/Markdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -67,9 +70,10 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   const canReadFiches = hasCollectivitePermission('plans.fiches.read');
+  const isPerso = isIndicateurPerso(definition);
 
   const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
-    !definition.estPerso &&
+    !isPerso &&
     hasCollectivitePermission('referentiels.read') &&
     !isSimplifiedView;
 
@@ -81,7 +85,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
         definition={definition}
         chartInfo={composeSansAgregation ? undefined : chartInfo}
         isReadonly={!canMutateIndicateur}
-        isPerso={definition.estPerso}
+        isPerso={isPerso}
         composeSansAgregation={composeSansAgregation}
         onUpdate={handleTitreUpdate}
       />
@@ -138,7 +142,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               </Tab>
             ) : undefined}
 
-            {!definition.estPerso && !!description ? (
+            {!isPerso && !!description ? (
               <Tab label="Informations sur l’indicateur">
                 <Markdown
                   content={description}

@@ -2,7 +2,10 @@ import {
   canUpdateIndicateurDefinition,
   canUpdateIndicateurValeur,
 } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
-import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import {
+  type IndicateurDetaille,
+  isIndicateurPerso,
+} from '@tet/domain/indicateurs';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
@@ -56,11 +59,13 @@ const DonneesIndicateur = ({
     user.id
   );
 
+  const isPerso = isIndicateurPerso(definition);
+
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
       <div className="flex flex-row gap-4">
         {/* Unité personnalisée */}
-        {definition.estPerso && (
+        {isPerso && (
           <IndicateurUniteInput
             unite={unite}
             updateUnite={updateUnite}
@@ -69,7 +74,7 @@ const DonneesIndicateur = ({
         )}
 
         {/** Sélecteur de sources de données */}
-        {!definition.estPerso && sourceFilter.availableOptions.length > 1 && (
+        {!isPerso && sourceFilter.availableOptions.length > 1 && (
           <IndicateurSourcesSelect sourceFilter={sourceFilter} />
         )}
 
@@ -113,7 +118,7 @@ const DonneesIndicateur = ({
         <Divider color="primary" className="my-6" />
       </div>
 
-      {definition.estPerso && (
+      {isPerso && (
         <ThematiquesIndicateurInput
           definition={definition}
           disabled={!canMutateDefinition}
