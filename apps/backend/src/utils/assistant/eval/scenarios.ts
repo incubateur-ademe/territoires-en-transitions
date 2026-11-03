@@ -267,6 +267,23 @@ export const SCENARIOS: readonly Scenario[] = [
     maxModelCalls: 3,
   }),
   defineScenario({
+    // Question posée par le support le 03/11 : « aucun outil » avant cet outil.
+    id: 'support-historique',
+    tags: ['support', 'crisp'],
+    viewer: 'support-sans-mode',
+    support: {},
+    say: "Tu peux me donner l'historique des précédentes discussions avec cet utilisateur ?",
+    expect: {
+      tools: [
+        {
+          name: 'list_user_support_conversations',
+          args: { email: { ref: 'membre.email' } },
+        },
+      ],
+    },
+    maxModelCalls: 3,
+  }),
+  defineScenario({
     id: 'support-stats-cr',
     tags: ['crisp'],
     say: 'Combien de demandes le support a-t-il reçues sur le référentiel CR depuis le 1er août 2026, de quels types, et combien de temps y avons-nous passé ?',

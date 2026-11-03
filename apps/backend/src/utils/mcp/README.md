@@ -20,6 +20,7 @@ Réservé à l'équipe : utilisateurs **support** (`utilisateur_support`) et sup
 | outil | `list_recent_events` | 50 derniers événements PostHog d'un utilisateur sur 1 à 90 jours, requête construite côté serveur. |
 | outil | `get_support_stats` | Conversations Crisp du support sur un sujet de segment (ex. `cr`), des termes cherchés dans les messages et une période : volume, types de retours, parcours, temps passé estimé. Calculé par le serveur. |
 | outil | `sample_support_conversations` | Extraits de ces conversations (demande, dernière réponse du support), e-mails et téléphones masqués, pour synthétiser les retours. |
+| outil | `list_user_support_conversations` | Historique Crisp d'un usager par e-mail : ses 10 conversations les plus récentes (date, segments, demande, dernière réponse du support), masquées. |
 | outil | `list_support_segments` | Segments Crisp utilisés sur une période, par type de retour, avec leurs variantes d'orthographe. |
 | outil (app) | `propose_choices` | Assistant de l'app seulement : affiche une question et des réponses cliquables quand la demande est floue. |
 | outil (app) | `prepare_segment_tagging` | Assistant de l'app seulement, rôle support : prépare l'ajout d'un segment aux conversations d'un filtre, sans rien écrire ; l'utilisateur confirme d'un clic. |

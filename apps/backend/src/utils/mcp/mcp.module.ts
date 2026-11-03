@@ -14,6 +14,8 @@ import { ProposeChoicesTool } from './tools/propose-choices/propose-choices.tool
 import { ApplySegmentTaggingService } from './tools/support-crisp/apply-segment-tagging.service';
 import { ListSupportSegmentsService } from './tools/support-crisp/list-support-segments.service';
 import { ListSupportSegmentsTool } from './tools/support-crisp/list-support-segments.tool';
+import { ListUserSupportConversationsService } from './tools/support-crisp/list-user-support-conversations.service';
+import { ListUserSupportConversationsTool } from './tools/support-crisp/list-user-support-conversations.tool';
 import { PrepareSegmentTaggingService } from './tools/support-crisp/prepare-segment-tagging.service';
 import { PrepareSegmentTaggingTool } from './tools/support-crisp/prepare-segment-tagging.tool';
 import { DescribeTableService } from './tools/describe-table/describe-table.service';
@@ -64,6 +66,7 @@ const toolClasses = [
   GetSupportStatsTool,
   SampleSupportConversationsTool,
   ListSupportSegmentsTool,
+  ListUserSupportConversationsTool,
 ];
 
 const interactiveToolClasses = [ProposeChoicesTool, PrepareSegmentTaggingTool];
@@ -95,6 +98,7 @@ const interactiveToolClasses = [ProposeChoicesTool, PrepareSegmentTaggingTool];
     GetSupportStatsService,
     SampleSupportConversationsService,
     ListSupportSegmentsService,
+    ListUserSupportConversationsService,
     PrepareSegmentTaggingService,
     ApplySegmentTaggingService,
     ...toolClasses,

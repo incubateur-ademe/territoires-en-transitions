@@ -42,6 +42,21 @@ describe('CrispApiClient', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  test('un contact inconnu de Crisp donne une liste vide', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue(
+          reply(404, { error: true, reason: 'people_not_found', data: {} })
+        )
+    );
+
+    expect(
+      await new CrispApiClient(config).listPeopleSessionIds('x@y.fr')
+    ).toEqual({ success: true, data: [] });
+  });
+
   test('délai : Retry-After plafonné, sinon exponentiel', () => {
     expect(retryDelayMs('3', 0)).toBe(3_000);
     expect(retryDelayMs('120', 0)).toBe(30_000);

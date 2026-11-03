@@ -211,3 +211,54 @@ export const buildTermesMatcher = (
     return patterns.some((pattern) => pattern.test(normalized));
   };
 };
+
+export type ConversationSummary = {
+  date: string;
+  resolue: boolean;
+  segments: string[];
+  demande: string;
+  reponseSupport: string | null;
+};
+
+const textMessages = (messages: CrispMessage[]): string[] =>
+  messages
+    .filter(
+      (message) =>
+        message.type === 'text' &&
+        typeof message.content === 'string' &&
+        message.content.trim()
+    )
+    .map((message) => message.content as string);
+
+/**
+ * Une conversation en quelques lignes : premiers messages de l'usager et
+ * dernière réponse d'un opérateur humain, e-mails et téléphones masqués.
+ */
+export const summarizeConversation = (
+  conversation: {
+    created_at: number;
+    state?: string;
+    meta?: { segments?: string[] };
+  },
+  messages: CrispMessage[],
+  { demandeMaxLength = 400, reponseMaxLength = 250 } = {}
+): ConversationSummary => {
+  const demande = textMessages(
+    messages.filter((message) => message.from === 'user')
+  ).slice(0, 3);
+  const reponse = textMessages(
+    messages.filter(
+      (message) => isHumanOperatorMessage(message) && message.type === 'text'
+    )
+  ).at(-1);
+  return {
+    date: new Date(conversation.created_at).toISOString().slice(0, 10),
+    resolue: conversation.state === 'resolved',
+    segments: (conversation.meta?.segments ?? [])
+      .map(parseSegment)
+      .filter((segment) => segment.kind !== 'parcours')
+      .map((segment) => segment.normalized),
+    demande: toExcerpt(demande.join(' / '), demandeMaxLength),
+    reponseSupport: reponse ? toExcerpt(reponse, reponseMaxLength) : null,
+  };
+};
