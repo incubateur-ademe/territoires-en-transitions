@@ -205,4 +205,5 @@ jobs:
             --verbose data_layer/tests/indicateur/periodicite-release.sql \
             data_layer/tests/indicateur/periodicite.sql \
             data_layer/tests/indicateur/periodicite-formules.sql \
-            data_layer/tests/indicateur/periodicite-collectivite.sql
+            data_layer/tests/indicateur/periodicite-collectivite.sql \
+            data_layer/tests/indicateur/definition-nature.sql

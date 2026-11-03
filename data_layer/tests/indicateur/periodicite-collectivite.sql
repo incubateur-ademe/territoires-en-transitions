@@ -10,11 +10,11 @@ WITH inserted AS (
 
 CREATE TEMP TABLE declaration_indicateurs AS
 WITH inserted AS (
-    INSERT INTO public.indicateur_definition (titre, unite, periodicite)
-    VALUES ('Annuel', 'kWh', 'annuelle'),
-           ('Semestriel', 'kWh', 'semestrielle'),
-           ('Trimestriel', 'kWh', 'trimestrielle'),
-           ('Mensuel', 'kWh', 'mensuelle')
+    INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite)
+    VALUES ('test-declaration-annuel', 'Annuel', 'kWh', 'annuelle'),
+           ('test-declaration-semestriel', 'Semestriel', 'kWh', 'semestrielle'),
+           ('test-declaration-trimestriel', 'Trimestriel', 'kWh', 'trimestrielle'),
+           ('test-declaration-mensuel', 'Mensuel', 'kWh', 'mensuelle')
     RETURNING id, periodicite
 ) SELECT * FROM inserted;
 
@@ -94,8 +94,8 @@ SELECT lives_ok($$
 $$, 'La déclaration du deuxième semestre accepte zéro');
 
 SELECT throws_ok($$
-    INSERT INTO public.indicateur_definition (titre, unite, periodicite)
-    VALUES ('Cadence inconnue', 'kWh', 'hebdomadaire')
+    INSERT INTO public.indicateur_definition (identifiant_referentiel, titre, unite, periodicite)
+    VALUES ('test-declaration-cadence-inconnue', 'Cadence inconnue', 'kWh', 'hebdomadaire')
 $$, '23514', NULL, 'La base refuse une périodicité inconnue à la création');
 
 SELECT hasnt_column('public', 'indicateur_definition', 'aggregation_resultat',
