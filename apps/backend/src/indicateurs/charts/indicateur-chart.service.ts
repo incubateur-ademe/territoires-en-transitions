@@ -4,9 +4,11 @@ import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
 } from '@tet/domain/collectivites';
-import { IndicateurAvecValeursParSource } from '@tet/domain/indicateurs';
+import {
+  IndicateurAvecValeursParSource,
+  IndicateurDetaille,
+} from '@tet/domain/indicateurs';
 import { EChartsOption } from 'echarts/types/dist/echarts';
-import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
 import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import ValeursMoyenneService from '../valeurs/get-moyenne-indicateur-valeurs/valeurs-moyenne.service';
@@ -41,7 +43,7 @@ export class IndicateurChartService {
 
   private async getIndicateursSegmentationValeurs(
     collectiviteId: number,
-    definition: IndicateurListItem,
+    definition: Pick<IndicateurDetaille, 'estAgregation' | 'enfants'>,
     segmentation: IndicateurChartSegmentation
   ): Promise<IndicateurChartSegmentationWithValeurs | null> {
     const indicateursEnfantIds =

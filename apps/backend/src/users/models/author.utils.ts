@@ -1,15 +1,6 @@
-import { dcpSchema } from '@tet/domain/users';
+import type { Author } from '@tet/domain/users';
 import { sql } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import * as z from 'zod/mini';
-
-export const authorSchema = z.object({
-  id: dcpSchema.shape.id,
-  nom: dcpSchema.shape.nom,
-  prenom: dcpSchema.shape.prenom,
-});
-
-export type Author = z.infer<typeof authorSchema>;
 
 export function sqlAuthorOrNull({
   userIdColumn,

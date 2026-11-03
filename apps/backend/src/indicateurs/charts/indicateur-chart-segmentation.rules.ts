@@ -1,19 +1,19 @@
 import {
   DEFAULT_SEGMENTATION,
+  IndicateurDetaille,
   IndicateurAvecValeursParSource,
   IndicateurSegmentation,
   IndicateurValeurTypeEnum,
   ORDERED_SEGMENTATIONS,
 } from '@tet/domain/indicateurs';
 import { intersection, isNil } from 'es-toolkit';
-import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
 
 type IndicateursBySegmentation = Partial<
   Record<IndicateurSegmentation, number[]>
 >;
 
 export const groupIndicateursByOrderedSegmentation = (
-  childDefinitions: IndicateurListItem[]
+  childDefinitions: Pick<IndicateurDetaille, 'id' | 'categories'>[]
 ): Readonly<{
   orderedAvailableSegmentations: IndicateurSegmentation[];
   indicateursBySegmentation: IndicateursBySegmentation;

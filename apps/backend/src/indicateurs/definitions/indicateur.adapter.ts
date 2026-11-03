@@ -1,10 +1,32 @@
 import {
+  getIncoherentNatureError,
   type Indicateur,
   type IndicateurDefinition,
+  type IndicateurNatureFields,
+  type IndicateurPersoNatureFields,
   type IndicateurPredefini,
+  type IndicateurPredefiniNatureFields,
+  isIndicateurPerso,
   isIndicateurPredefini,
   toIndicateur,
 } from '@tet/domain/indicateurs';
+
+export const withNatureOrThrow = <
+  T extends IndicateurNatureFields & { id: number }
+>(
+  row: T
+):
+  | (T & IndicateurPersoNatureFields)
+  | (T & IndicateurPredefiniNatureFields) => {
+  if (isIndicateurPerso(row) || isIndicateurPredefini(row)) {
+    return row;
+  }
+  throw new Error(
+    `Indicateur ${row.id} : nature incohérente (${getIncoherentNatureError(
+      row
+    )})`
+  );
+};
 
 export const toIndicateurOrThrow = (
   definition: IndicateurDefinition

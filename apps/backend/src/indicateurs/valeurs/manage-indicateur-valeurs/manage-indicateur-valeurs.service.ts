@@ -6,6 +6,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
+  IndicateurDetaille,
   IndicateurPredefini,
   IndicateurValeur,
   IndicateurValeurCreate,
@@ -19,7 +20,6 @@ import {
   isAuthenticatedUser,
 } from '../../../users/models/auth.models';
 import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
-import { IndicateurListItem } from '../../indicateurs/list-indicateurs/list-indicateurs.output';
 import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
@@ -240,7 +240,7 @@ export default class ManageIndicateurValeursService {
   async canMutateValeur(
     user: AuthenticatedUser,
     collectiviteId: number,
-    indicateur: IndicateurListItem
+    indicateur: IndicateurDetaille
   ): Promise<boolean> {
     await this.canMutateValeurs(user, collectiviteId, [indicateur]);
     return true;
@@ -248,7 +248,7 @@ export default class ManageIndicateurValeursService {
   async canMutateValeurs(
     user: AuthenticatedUser,
     collectiviteId: number,
-    indicateurs: IndicateurListItem[]
+    indicateurs: IndicateurDetaille[]
   ): Promise<void> {
     // `authedProcedure` also accepts API-key JWTs whose permissions claim can
     // deliberately be narrower than the owner's collectivity role.

@@ -7,6 +7,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import {
+  type IndicateurDetaille,
+  indicateurDetailleSchema,
+} from '@tet/domain/indicateurs';
 import { omit } from 'es-toolkit';
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
@@ -14,10 +18,6 @@ import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
 import { listIndicateursApiRequestSchema } from './list-indicateurs.api-request';
 import { listIndicateursInputSchema } from './list-indicateurs.input';
-import {
-  indicateurListItemSchema,
-  ListIndicateursOutput,
-} from './list-indicateurs.output';
 import { ListIndicateursService } from './list-indicateurs.service';
 
 class ListIndicateursApiRequestClass extends createZodDto(
@@ -25,7 +25,7 @@ class ListIndicateursApiRequestClass extends createZodDto(
 ) {}
 
 class ListIndicateursApiResponseClass extends createZodDto(
-  z.array(indicateurListItemSchema)
+  z.array(indicateurDetailleSchema)
 ) {}
 
 @ApiTags('Indicateurs')
@@ -69,7 +69,7 @@ export class ListIndicateursController {
     );
 
     const mapToNonBreakingPublicApiOutput = (
-      indicateur: ListIndicateursOutput['data'][number]
+      indicateur: IndicateurDetaille
     ) => ({
       ...omit(indicateur, ['estFavori', 'estConfidentiel', 'fiches', 'parent']),
 
