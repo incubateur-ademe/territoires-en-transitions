@@ -37,7 +37,7 @@ function createAuthorizationDependencies() {
 describe('UpdateDefinitionService', () => {
   it('returns an API-key denial before reading or writing the definition', async () => {
     const transactionManager = { executeSingle: vi.fn() };
-    const repository = { getDefinitionOwnership: vi.fn() };
+    const repository = { getDefinitionNature: vi.fn() };
     const { getUserPermissionsService, permissionService } =
       createAuthorizationDependencies();
     permissionService.isApiKeyAllowed.mockReturnValue(failure('UNAUTHORIZED'));
@@ -66,7 +66,7 @@ describe('UpdateDefinitionService', () => {
       user,
       'indicateurs.indicateurs.update'
     );
-    expect(repository.getDefinitionOwnership).not.toHaveBeenCalled();
+    expect(repository.getDefinitionNature).not.toHaveBeenCalled();
     expect(
       getUserPermissionsService.getUserRolesAndPermissions
     ).not.toHaveBeenCalled();
@@ -76,8 +76,9 @@ describe('UpdateDefinitionService', () => {
   it("refuse l'identifiant d'un indicateur d'une autre collectivité avant l'autorisation", async () => {
     const transactionManager = { executeSingle: vi.fn() };
     const repository = {
-      getDefinitionOwnership: vi.fn().mockResolvedValue({
+      getDefinitionNature: vi.fn().mockResolvedValue({
         collectiviteId: 2,
+        identifiantReferentiel: null,
         groupementId: null,
         periodicite: 'annuelle',
       }),
@@ -112,11 +113,70 @@ describe('UpdateDefinitionService', () => {
     expect(transactionManager.executeSingle).not.toHaveBeenCalled();
   });
 
+  it.each([
+    {
+      label: 'possédée par une collectivité et rattachée à un groupement',
+      collectiviteId: 1,
+      identifiantReferentiel: null,
+      groupementId: 99,
+    },
+    {
+      label: 'perso qui porte un identifiant référentiel',
+      collectiviteId: 1,
+      identifiantReferentiel: 'cae_1.a',
+      groupementId: null,
+    },
+    {
+      label: 'sans collectivité ni identifiant référentiel',
+      collectiviteId: null,
+      identifiantReferentiel: null,
+      groupementId: null,
+    },
+  ])(
+    'refuse par défaut une définition $label',
+    async ({ collectiviteId, identifiantReferentiel, groupementId }) => {
+      const transactionManager = { executeSingle: vi.fn() };
+      const repository = {
+        getDefinitionNature: vi.fn().mockResolvedValue({
+          collectiviteId,
+          identifiantReferentiel,
+          groupementId,
+        }),
+      };
+      const { getUserPermissionsService, permissionService } =
+        createAuthorizationDependencies();
+      const service = new UpdateDefinitionService(
+        transactionManager as never,
+        repository as never,
+        getUserPermissionsService as never,
+        permissionService as never,
+        {} as never,
+        {} as never,
+        {} as never,
+        {} as never
+      );
+
+      await expect(
+        service.updateDefinition(
+          {
+            indicateurId: 42,
+            collectiviteId: 1,
+            indicateurFields: { commentaire: 'tentative' },
+          },
+          { user }
+        )
+      ).rejects.toBeInstanceOf(NotFoundException);
+
+      expect(transactionManager.executeSingle).not.toHaveBeenCalled();
+    }
+  );
+
   it("refuse la mutation des thématiques globales d'un indicateur prédéfini", async () => {
     const transactionManager = { executeSingle: vi.fn() };
     const repository = {
-      getDefinitionOwnership: vi.fn().mockResolvedValue({
+      getDefinitionNature: vi.fn().mockResolvedValue({
         collectiviteId: null,
+        identifiantReferentiel: 'cae_1.a',
         groupementId: null,
         periodicite: 'annuelle',
       }),
@@ -157,13 +217,15 @@ describe('UpdateDefinitionService', () => {
       ),
     };
     const repository = {
-      getDefinitionOwnership: vi.fn().mockResolvedValue({
+      getDefinitionNature: vi.fn().mockResolvedValue({
         collectiviteId: 1,
+        identifiantReferentiel: null,
         groupementId: null,
         periodicite: 'annuelle',
       }),
-      lockDefinitionOwnership: vi.fn().mockResolvedValue({
+      lockDefinitionNature: vi.fn().mockResolvedValue({
         collectiviteId: 1,
+        identifiantReferentiel: null,
         groupementId: null,
         periodicite: 'annuelle',
       }),
@@ -244,13 +306,21 @@ describe('UpdateDefinitionService', () => {
     expect(transactionManager.executeSingle).toHaveBeenCalledOnce();
   });
 
-  it.each([null, 1])(
-    'refuse une modification de périodicité pour la définition de collectivité %s',
-    async (collectiviteId) => {
+  it.each([
+    {
+      label: 'prédéfinie',
+      collectiviteId: null,
+      identifiantReferentiel: 'cae_1.a',
+    },
+    { label: 'perso', collectiviteId: 1, identifiantReferentiel: null },
+  ])(
+    'refuse une modification de périodicité pour la définition $label',
+    async ({ collectiviteId, identifiantReferentiel }) => {
       const transactionManager = { executeSingle: vi.fn() };
       const repository = {
-        getDefinitionOwnership: vi.fn().mockResolvedValue({
+        getDefinitionNature: vi.fn().mockResolvedValue({
           collectiviteId,
+          identifiantReferentiel,
           groupementId: null,
           periodicite: 'annuelle',
         }),
@@ -283,10 +353,11 @@ describe('UpdateDefinitionService', () => {
 });
 
 describe('UpdateDefinitionService — groupement', () => {
-  function setup(ownerId: number | null = 2) {
+  function setup() {
     const tx = { name: 'shared-definition-tx' };
     const definition = {
-      collectiviteId: ownerId,
+      collectiviteId: null,
+      identifiantReferentiel: 'sydev_1',
       groupementId: 99,
       periodicite: 'annuelle' as const,
     };
@@ -297,8 +368,8 @@ describe('UpdateDefinitionService — groupement', () => {
       ),
     };
     const repository = {
-      getDefinitionOwnership: vi.fn().mockResolvedValue(definition),
-      lockDefinitionOwnership: vi.fn().mockResolvedValue(definition),
+      getDefinitionNature: vi.fn().mockResolvedValue(definition),
+      lockDefinitionNature: vi.fn().mockResolvedValue(definition),
       lockGroupementMembership: vi.fn().mockResolvedValue(true),
       upsertCollectiviteFields: vi.fn().mockResolvedValue(undefined),
       updatePersonalizedDefinition: vi.fn().mockResolvedValue(true),
@@ -372,77 +443,71 @@ describe('UpdateDefinitionService — groupement', () => {
     };
   }
 
-  it.each([2, null])(
-    'autorise les personnalisations locales du membre, propriétaire %s',
-    async (ownerId) => {
-      const h = setup(ownerId);
-      await h.service.updateDefinition(
-        {
-          ...h.input,
-          indicateurFields: {
-            commentaire: 'Méthode locale',
-            estFavori: true,
-            estConfidentiel: true,
-            isApplicable: false,
-            ficheIds: [11],
-            pilotes: [{ userId: user.id }],
-            services: [{ id: 12 }],
-          },
-        },
-        { user }
-      );
-
-      expect(h.repository.lockGroupementMembership).toHaveBeenCalledWith(
-        { groupementId: 99, collectiviteId: 1 },
-        h.tx
-      );
-      expect(
-        h.getUserPermissionsService.getUserRolesAndPermissions
-      ).toHaveBeenLastCalledWith({ userId: user.id, tx: h.tx });
-      expect(h.repository.upsertCollectiviteFields).toHaveBeenCalledWith(
-        {
-          indicateurId: 42,
-          collectiviteId: 1,
+  it('autorise les personnalisations locales du membre', async () => {
+    const h = setup();
+    await h.service.updateDefinition(
+      {
+        ...h.input,
+        indicateurFields: {
           commentaire: 'Méthode locale',
-          favoris: true,
-          confidentiel: true,
+          estFavori: true,
+          estConfidentiel: true,
           isApplicable: false,
-          modifiedBy: user.id,
+          ficheIds: [11],
+          pilotes: [{ userId: user.id }],
+          services: [{ id: 12 }],
         },
-        h.tx
-      );
-      expect(h.fiches.upsertIndicateurFiches).toHaveBeenCalledWith(
-        { indicateurId: 42, collectiviteId: 1, ficheIds: [11] },
-        { user, tx: h.tx }
-      );
-      expect(h.pilotes.upsertIndicateurPilotes).toHaveBeenCalledWith(
-        { indicateurId: 42, collectiviteId: 1, pilotes: [{ userId: user.id }] },
-        h.tx
-      );
-      expect(h.services.upsertIndicateurServices).toHaveBeenCalledWith(
-        { indicateurId: 42, collectiviteId: 1, serviceIds: [12] },
-        h.tx
-      );
-      expect(h.repository.updatePersonalizedDefinition).not.toHaveBeenCalled();
-      expect(h.thematiques.upsertIndicateurThematiques).not.toHaveBeenCalled();
-    }
-  );
+      },
+      { user }
+    );
 
-  it.each([2, null])(
-    'refuse un non-membre avant toute écriture, propriétaire %s',
-    async (ownerId) => {
-      const h = setup(ownerId);
-      h.repository.lockGroupementMembership.mockResolvedValue(false);
-      await expect(
-        h.service.updateDefinition(h.input, { user })
-      ).rejects.toBeInstanceOf(NotFoundException);
-      expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
-      expect(h.repository.touchDefinitions).not.toHaveBeenCalled();
-    }
-  );
+    expect(h.repository.lockGroupementMembership).toHaveBeenCalledWith(
+      { groupementId: 99, collectiviteId: 1 },
+      h.tx
+    );
+    expect(
+      h.getUserPermissionsService.getUserRolesAndPermissions
+    ).toHaveBeenLastCalledWith({ userId: user.id, tx: h.tx });
+    expect(h.repository.upsertCollectiviteFields).toHaveBeenCalledWith(
+      {
+        indicateurId: 42,
+        collectiviteId: 1,
+        commentaire: 'Méthode locale',
+        favoris: true,
+        confidentiel: true,
+        isApplicable: false,
+        modifiedBy: user.id,
+      },
+      h.tx
+    );
+    expect(h.fiches.upsertIndicateurFiches).toHaveBeenCalledWith(
+      { indicateurId: 42, collectiviteId: 1, ficheIds: [11] },
+      { user, tx: h.tx }
+    );
+    expect(h.pilotes.upsertIndicateurPilotes).toHaveBeenCalledWith(
+      { indicateurId: 42, collectiviteId: 1, pilotes: [{ userId: user.id }] },
+      h.tx
+    );
+    expect(h.services.upsertIndicateurServices).toHaveBeenCalledWith(
+      { indicateurId: 42, collectiviteId: 1, serviceIds: [12] },
+      h.tx
+    );
+    expect(h.repository.updatePersonalizedDefinition).not.toHaveBeenCalled();
+    expect(h.thematiques.upsertIndicateurThematiques).not.toHaveBeenCalled();
+  });
+
+  it('refuse un non-membre avant toute écriture', async () => {
+    const h = setup();
+    h.repository.lockGroupementMembership.mockResolvedValue(false);
+    await expect(
+      h.service.updateDefinition(h.input, { user })
+    ).rejects.toBeInstanceOf(NotFoundException);
+    expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
+    expect(h.repository.touchDefinitions).not.toHaveBeenCalled();
+  });
 
   it.each([{ titre: 'Autre titre' }, { unite: 'kg' }, { thematiques: [] }])(
-    'refuse les champs globaux du non-propriétaire : %j',
+    'refuse les champs globaux d’un prédéfini de groupement : %j',
     async (fields) => {
       const h = setup();
       await expect(
@@ -455,37 +520,7 @@ describe('UpdateDefinitionService — groupement', () => {
     }
   );
 
-  it('conserve la modification des champs globaux du propriétaire sans appartenance au groupement', async () => {
-    const h = setup(1);
-    h.repository.lockGroupementMembership.mockResolvedValue(false);
-    await h.service.updateDefinition(
-      {
-        ...h.input,
-        indicateurFields: {
-          titre: 'Titre propriétaire',
-          unite: 'kg',
-          thematiques: [],
-        },
-      },
-      { user }
-    );
-    expect(h.repository.lockGroupementMembership).not.toHaveBeenCalled();
-    expect(h.repository.updatePersonalizedDefinition).toHaveBeenCalledWith(
-      {
-        indicateurId: 42,
-        collectiviteId: 1,
-        titre: 'Titre propriétaire',
-        unite: 'kg',
-      },
-      h.tx
-    );
-    expect(h.thematiques.upsertIndicateurThematiques).toHaveBeenCalledWith(
-      { indicateurId: 42, thematiqueIds: [] },
-      h.tx
-    );
-  });
-
-  it('refuse un changement de périodicité sur un indicateur partagé', async () => {
+  it('refuse un changement de périodicité sur un prédéfini de groupement', async () => {
     const h = setup();
     await expect(
       h.service.updateDefinition(
@@ -496,21 +531,20 @@ describe('UpdateDefinitionService — groupement', () => {
     expect(h.transactionManager.executeSingle).not.toHaveBeenCalled();
   });
 
-  it('refuse une définition qui a perdu son partage avant le verrouillage', async () => {
+  it('ne vérifie plus l’appartenance quand le groupement a disparu avant le verrouillage', async () => {
     const h = setup();
-    h.repository.lockDefinitionOwnership.mockResolvedValue({
+    h.repository.lockDefinitionNature.mockResolvedValue({
       ...h.definition,
       groupementId: null,
     });
-    await expect(
-      h.service.updateDefinition(h.input, { user })
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
+    await h.service.updateDefinition(h.input, { user });
+    expect(h.repository.lockGroupementMembership).not.toHaveBeenCalled();
+    expect(h.repository.upsertCollectiviteFields).toHaveBeenCalledOnce();
   });
 
   it('vérifie le groupement courant après verrouillage de la définition', async () => {
     const h = setup();
-    h.repository.lockDefinitionOwnership.mockResolvedValue({
+    h.repository.lockDefinitionNature.mockResolvedValue({
       ...h.definition,
       groupementId: 100,
     });
@@ -523,21 +557,6 @@ describe('UpdateDefinitionService — groupement', () => {
       h.tx
     );
     expect(h.repository.upsertCollectiviteFields).not.toHaveBeenCalled();
-  });
-
-  it('revérifie le propriétaire des champs globaux sous verrou', async () => {
-    const h = setup(1);
-    h.repository.lockDefinitionOwnership.mockResolvedValue({
-      ...h.definition,
-      collectiviteId: 2,
-    });
-    await expect(
-      h.service.updateDefinition(
-        { ...h.input, indicateurFields: { titre: 'Titre' } },
-        { user }
-      )
-    ).rejects.toBeInstanceOf(BadRequestException);
-    expect(h.repository.updatePersonalizedDefinition).not.toHaveBeenCalled();
   });
 
   it('refuse les permissions retirées avant la transaction', async () => {

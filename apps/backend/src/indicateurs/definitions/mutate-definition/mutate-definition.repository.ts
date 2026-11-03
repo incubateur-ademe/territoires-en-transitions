@@ -6,6 +6,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type {
   IndicateurDefinition,
+  IndicateurNatureFields,
   IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
 import { and, eq, isNotNull } from 'drizzle-orm';
@@ -29,11 +30,6 @@ type CreatePersonalizedDefinition = Readonly<{
   estConfidentiel: boolean;
   isApplicable: boolean;
   modifiedBy: string;
-}>;
-
-export type DefinitionOwnership = Readonly<{
-  collectiviteId: number | null;
-  groupementId: number | null;
 }>;
 
 type UpdateCollectiviteFields = PersonalizedDefinitionKey &
@@ -113,12 +109,14 @@ export class MutateDefinitionRepository {
     return indicateur.id;
   }
 
-  async getDefinitionOwnership(
+  async getDefinitionNature(
     indicateurId: number
-  ): Promise<DefinitionOwnership | null> {
+  ): Promise<IndicateurNatureFields | null> {
     const [definition] = await this.databaseService.db
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
+        identifiantReferentiel:
+          indicateurDefinitionTable.identifiantReferentiel,
         groupementId: indicateurDefinitionTable.groupementId,
       })
       .from(indicateurDefinitionTable)
@@ -128,13 +126,15 @@ export class MutateDefinitionRepository {
     return definition ?? null;
   }
 
-  async lockDefinitionOwnership(
+  async lockDefinitionNature(
     indicateurId: number,
     tx: Transaction
-  ): Promise<DefinitionOwnership | null> {
+  ): Promise<IndicateurNatureFields | null> {
     const [definition] = await tx
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
+        identifiantReferentiel:
+          indicateurDefinitionTable.identifiantReferentiel,
         groupementId: indicateurDefinitionTable.groupementId,
       })
       .from(indicateurDefinitionTable)
