@@ -50,6 +50,7 @@ jobs:
           GOOGLE_CLOUD_LOCATION: eu
           GEMINI_MODEL: gemini-3.5-flash
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
             node apps/backend/dist/collectivites/analysis/analyze-fiches/analyze-fiches.script.js

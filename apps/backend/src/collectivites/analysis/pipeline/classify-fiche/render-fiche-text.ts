@@ -4,7 +4,7 @@ import {
   MAX_TITRE_LENGTH,
   sanitize,
   truncate,
-} from '../classify-fiches/render-fiches-text';
+} from '../fiche-text/sanitize-fiche-text';
 
 export const MAX_CONTEXTE_LENGTH = 500;
 

@@ -14,7 +14,7 @@ import {
   Note,
 } from './calculate-mobilisation.schema';
 import { LevierVolets } from './group-volets-by-levier';
-import { sanitize } from '../classify-fiches/render-fiches-text';
+import { sanitize } from '../fiche-text/sanitize-fiche-text';
 import {
   FicheToScore,
   renderVoletActions,

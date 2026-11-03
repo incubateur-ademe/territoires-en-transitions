@@ -1,13 +1,11 @@
 import { Enjeu } from '@tet/domain/shared';
 import { ClassificationEnjeu } from './pipeline/classification-enjeu';
-import { buildClassificationPrompt } from './pipeline/classify-fiches/classify-fiches.prompt';
-import { classificationResponseSchema } from './pipeline/classify-fiches/classify-fiches.schema';
-import { CLASSIFICATION_SYSTEM_INSTRUCTION } from './prompts/classification.prompt';
+import { FICHE_CLASSIFICATION_SYSTEM_INSTRUCTION } from './pipeline/classify-fiche/classify-fiche.prompt';
+import { ficheClassificationSchema } from './pipeline/classify-fiche/classify-fiche.schema';
 
 export const ENJEU_GES: ClassificationEnjeu = {
-  systemInstruction: CLASSIFICATION_SYSTEM_INSTRUCTION,
-  buildPrompt: buildClassificationPrompt,
-  responseSchema: classificationResponseSchema,
+  systemInstruction: FICHE_CLASSIFICATION_SYSTEM_INSTRUCTION,
+  responseSchema: ficheClassificationSchema,
 };
 
 export const DECLARED_ENJEUX = {

@@ -1,8 +1,6 @@
-import { ClassificationPromptInput } from './classify-fiches/classify-fiches.prompt';
-import { ClassificationResponseSchema } from './classify-fiches/classify-fiches.schema';
+import { ficheClassificationSchema } from './classify-fiche/classify-fiche.schema';
 
 export type ClassificationEnjeu = {
   systemInstruction: string;
-  buildPrompt: (input: ClassificationPromptInput) => string;
-  responseSchema: ClassificationResponseSchema;
+  responseSchema: typeof ficheClassificationSchema;
 };

@@ -3,7 +3,7 @@ import {
   MAX_TITRE_LENGTH,
   sanitize,
   truncate,
-} from '../classify-fiches/render-fiches-text';
+} from '../fiche-text/sanitize-fiche-text';
 import {
   CATEGORIES_IN_PROMPT_ORDER,
   CATEGORIE_LABELS,

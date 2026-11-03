@@ -73,6 +73,11 @@ export type AnalyzeFichesError =
     }
   | {
       readonly kind: 'step_failed';
+      readonly step: 'list_fiche_axe_paths';
+      readonly cause: FicheAxePathError;
+    }
+  | {
+      readonly kind: 'step_failed';
       readonly step: 'list_analyses' | 'upsert_analyses' | 'delete_analyses';
       readonly cause: FicheAnalysisStatusError;
     }

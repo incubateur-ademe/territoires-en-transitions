@@ -7,7 +7,7 @@ import {
 import {
   MAX_DESCRIPTION_LENGTH,
   MAX_TITRE_LENGTH,
-} from '../classify-fiches/render-fiches-text';
+} from '../fiche-text/sanitize-fiche-text';
 
 const fiche: FicheToClassify = {
   ficheId: 7,

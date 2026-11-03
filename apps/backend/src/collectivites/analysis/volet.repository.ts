@@ -1,7 +1,7 @@
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { type Result } from '@tet/backend/utils/result.type';
 import { FicheVolet } from './pipeline/calculate-mobilisation/group-volets-by-levier';
-import { ClassifiedFiche } from './pipeline/classify-fiches/apply-classification';
+import { ClassifiedFiche } from './pipeline/classify-fiche/to-classified-fiche.rules';
 import { type VoletError } from './volet.errors';
 
 export type FicheVolets = Pick<ClassifiedFiche, 'ficheId' | 'volets'>;

@@ -1,5 +1,5 @@
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
-import { ClassifyBatchFailure } from '../classify-batch/classify-batch.errors';
+import { ClassifyFicheFailure } from '../classify-fiche/classify-fiche.errors';
 import { CalculateCollectiviteMobilisationError } from '../score-mobilisation/score-mobilisation.errors';
 
 export type RunFailure =
@@ -7,7 +7,7 @@ export type RunFailure =
       readonly kind: 'fiche';
       readonly ficheId: number;
       readonly collectiviteId: number;
-      readonly cause: ClassifyBatchFailure;
+      readonly cause: ClassifyFicheFailure;
     }
   | {
       readonly kind: 'mobilisation';

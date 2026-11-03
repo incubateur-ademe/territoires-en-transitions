@@ -4,11 +4,8 @@ import { uniq } from 'es-toolkit';
 import { Enjeu } from '@tet/domain/shared';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { z } from 'zod';
-import { ClassifyBatchFailure } from '../classify-batch/classify-batch.errors';
-import {
-  ClassifyBatchOutcome,
-  ClassifyBatchService,
-} from '../classify-batch/classify-batch.service';
+import { ClassifyFicheFailure } from '../classify-fiche/classify-fiche.errors';
+import { ClassifyFicheService } from '../classify-fiche/classify-fiche.service';
 import { EnjeuRepositories } from '../enjeu.repositories';
 import {
   FicheAnalysis,
@@ -19,7 +16,8 @@ import { MobilisationState } from '../models/mobilisation-state';
 import { LevierMobilisation } from '../mobilisation.repository';
 import { FicheVolet } from '../pipeline/calculate-mobilisation/group-volets-by-levier';
 import { FicheVolets } from '../volet.repository';
-import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
+import { ClassifyFicheResult } from '../pipeline/classify-fiche/classify-fiche';
+import { FicheToClassify } from '../pipeline/classify-fiche/render-fiche-text';
 import { CalculateCollectiviteMobilisationError } from '../score-mobilisation/score-mobilisation.errors';
 import { CalculateCollectiviteMobilisationInput } from '../score-mobilisation/score-mobilisation.input';
 import {
@@ -39,6 +37,12 @@ import {
   FicheAnalysisStatusRepository,
   FicheAnalysisUpsert,
 } from './fiche-analysis-status.repository';
+import { FicheAxePathError } from './analyze-fiches.errors';
+import {
+  AxePath,
+  FicheAxePaths,
+  FicheAxePathRepository,
+} from './fiche-axe-path.repository';
 import {
   FicheCandidateRepository,
   FicheCandidateSelection,
@@ -63,9 +67,11 @@ type StoredMobilisation = {
 };
 
 type ClassifyBehavior = (
-  fiches: readonly FicheToClassify[],
+  fiche: FicheToClassify,
   callIndex: number
-) => Result<ClassifyBatchOutcome, ClassifyBatchFailure>;
+) =>
+  | Result<ClassifyFicheResult, ClassifyFicheFailure>
+  | Promise<Result<ClassifyFicheResult, ClassifyFicheFailure>>;
 
 type ScoreBehavior = (
   input: CalculateCollectiviteMobilisationInput,
@@ -77,6 +83,8 @@ type HarnessOptions = {
   readonly analyses?: readonly FicheAnalysis[];
   readonly mobilisations?: ReadonlyMap<number, StoredMobilisation>;
   readonly volets?: readonly FicheVolet[];
+  readonly axePaths?: ReadonlyMap<number, readonly AxePath[]>;
+  readonly axePathsFailure?: FicheAxePathError;
   readonly lastRunStart?: Date | null;
   readonly classify?: ClassifyBehavior;
   readonly score?: ScoreBehavior;
@@ -87,7 +95,7 @@ type Harness = {
   readonly service: AnalyzeFichesService;
   readonly events: string[];
   readonly selections: FicheCandidateSelection[];
-  readonly classifiedBatches: number[][];
+  readonly classifiedFiches: FicheToClassify[];
   readonly classifyEnjeux: Enjeu[];
   readonly upserts: FicheAnalysisUpsert[];
   readonly scoreInputs: CalculateCollectiviteMobilisationInput[];
@@ -155,15 +163,13 @@ const toFailedAnalysis = ({
     analyzedAt: PAST,
   });
 
-const classifyEveryFiche: ClassifyBehavior = (fiches) =>
+const classifyEveryFiche: ClassifyBehavior = ({ ficheId }) =>
   success({
-    classified: fiches.map(({ ficheId }) => ({
+    fiche: {
       ficheId,
-      justification: 'Covoiturage',
       isDescriptionTruncated: false,
       volets: [{ levier: 'Covoiturage', categorie: 'amenagement' }],
-    })),
-    sources: [...fiches],
+    },
     tokens: classificationTokens,
   });
 
@@ -212,7 +218,7 @@ const toHarness = (options: HarnessOptions = {}): Harness => {
   const score = options.score ?? scoreEveryCollectivite;
   const events: string[] = [];
   const selections: FicheCandidateSelection[] = [];
-  const classifiedBatches: number[][] = [];
+  const classifiedFiches: FicheToClassify[] = [];
   const classifyEnjeux: Enjeu[] = [];
   const upserts: FicheAnalysisUpsert[] = [];
   const scoreInputs: CalculateCollectiviteMobilisationInput[] = [];
@@ -247,6 +253,25 @@ const toHarness = (options: HarnessOptions = {}): Harness => {
             description,
           }))
       )
+    ),
+  };
+  const ficheAxePaths = {
+    listFicheAxePaths: vi.fn(
+      async ({
+        ficheIds,
+      }: {
+        ficheIds: number[];
+      }): Promise<Result<FicheAxePaths[], FicheAxePathError>> => {
+        if (options.axePathsFailure !== undefined) {
+          return failure(options.axePathsFailure);
+        }
+        return success(
+          ficheIds.map((ficheId) => ({
+            ficheId,
+            axePaths: options.axePaths?.get(ficheId) ?? [],
+          }))
+        );
+      }
     ),
   };
   const ficheAnalyses = {
@@ -358,21 +383,19 @@ const toHarness = (options: HarnessOptions = {}): Harness => {
     voletsOf: vi.fn(() => voletRepository),
     mobilisationOf: vi.fn(() => mobilisationRepository),
   };
-  const classifyBatchService = {
+  const classifyFicheService = {
     classify: vi.fn(
       async ({
         enjeu,
-        fiches: batch,
+        fiche,
       }: {
         enjeu: Enjeu;
-        fiches: FicheToClassify[];
+        fiche: FicheToClassify;
       }) => {
-        events.push(
-          `classify:${batch.map(({ ficheId }) => ficheId).join(',')}`
-        );
+        events.push(`classify:${fiche.ficheId}`);
         classifyEnjeux.push(enjeu);
-        classifiedBatches.push(batch.map(({ ficheId }) => ficheId));
-        return classify(batch, classifiedBatches.length);
+        classifiedFiches.push(fiche);
+        return classify(fiche, classifiedFiches.length);
       }
     ),
   };
@@ -388,24 +411,27 @@ const toHarness = (options: HarnessOptions = {}): Harness => {
   const ficheCandidateDependency =
     ficheCandidates as unknown as FicheCandidateRepository;
   const ficheTextDependency = ficheTexts as unknown as FicheTextRepository;
+  const ficheAxePathDependency =
+    ficheAxePaths as unknown as FicheAxePathRepository;
   const ficheAnalysisDependency =
     ficheAnalyses as unknown as FicheAnalysisStatusRepository;
   const analysisRunDependency =
     analysisRuns as unknown as AnalysisRunRepository;
   const enjeuRepositoriesDependency =
     enjeuRepositories as unknown as EnjeuRepositories;
-  const classifyBatchDependency =
-    classifyBatchService as unknown as ClassifyBatchService;
+  const classifyFicheDependency =
+    classifyFicheService as unknown as ClassifyFicheService;
   const scoreMobilisationDependency =
     scoreMobilisationService as unknown as ScoreMobilisationService;
 
   const service = new AnalyzeFichesService(
     ficheCandidateDependency,
     ficheTextDependency,
+    ficheAxePathDependency,
     ficheAnalysisDependency,
     analysisRunDependency,
     enjeuRepositoriesDependency,
-    classifyBatchDependency,
+    classifyFicheDependency,
     scoreMobilisationDependency,
     options.analyzedCollectivites ?? everyCollectiviteAnalyzed
   );
@@ -414,7 +440,7 @@ const toHarness = (options: HarnessOptions = {}): Harness => {
     service,
     events,
     selections,
-    classifiedBatches,
+    classifiedFiches,
     classifyEnjeux,
     scoreInputs,
     updatedMobilisations,
@@ -444,6 +470,9 @@ const dailyRun: AnalyzeFichesInput = {
 
 const alwaysFailing: ClassifyBehavior = () =>
   failure({ kind: 'api_error', httpStatus: 503 });
+
+const alwaysInvalid: ClassifyBehavior = () =>
+  failure({ kind: 'invalid_json', rawTextLength: 12 });
 
 describe('full-flow', () => {
   it('un lancement sur une liste de CT ne parcourt que ces CT', async () => {
@@ -551,7 +580,7 @@ describe('full-flow', () => {
     });
   });
 
-  it('classe par lots de 25 les fiches que le plan désigne', async () => {
+  it('classe chaque fiche que le plan désigne par un appel qui ne porte qu’elle', async () => {
     const fiches = Array.from({ length: 30 }, (_, index) =>
       toFiche({ ficheId: index + 1, collectiviteId: 1 })
     );
@@ -559,8 +588,51 @@ describe('full-flow', () => {
 
     await harness.service.analyzeFiches(onCollectivites([1]));
 
-    expect(harness.classifiedBatches.map((batch) => batch.length)).toEqual([
-      25, 5,
+    expect(harness.classifiedFiches.map(({ ficheId }) => ficheId)).toEqual(
+      fiches.map(({ ficheId }) => ficheId)
+    );
+  });
+
+  it('écrit les volets d’un groupe de 25 fiches avant de classer le groupe suivant', async () => {
+    const fiches = Array.from({ length: 30 }, (_, index) =>
+      toFiche({ ficheId: index + 1, collectiviteId: 1 })
+    );
+    const harness = toHarness({ fiches });
+
+    await harness.service.analyzeFiches(onCollectivites([1]));
+
+    expect({
+      lastOfFirstGroupSavedBeforeFirstOfSecondClassified:
+        harness.events.indexOf('save_volets:25') <
+        harness.events.indexOf('classify:26'),
+      firstGroupClassifiedBeforeAnySave:
+        harness.events.indexOf('classify:25') <
+        harness.events.indexOf('save_volets:1'),
+    }).toEqual({
+      lastOfFirstGroupSavedBeforeFirstOfSecondClassified: true,
+      firstGroupClassifiedBeforeAnySave: true,
+    });
+  });
+
+  it('fournit à la classification le chemin des axes de chaque fiche', async () => {
+    const harness = toHarness({
+      fiches: [
+        toFiche({ ficheId: 10, collectiviteId: 1 }),
+        toFiche({ ficheId: 11, collectiviteId: 1 }),
+      ],
+      axePaths: new Map([[10, [['PCAET', 'Mobilité']]]]),
+    });
+
+    await harness.service.analyzeFiches(onCollectivites([1]));
+
+    expect(
+      harness.classifiedFiches.map(({ ficheId, axePaths }) => ({
+        ficheId,
+        axePaths,
+      }))
+    ).toEqual([
+      { ficheId: 10, axePaths: [['PCAET', 'Mobilité']] },
+      { ficheId: 11, axePaths: [] },
     ]);
   });
 
@@ -582,6 +654,84 @@ describe('full-flow', () => {
         status: 'processed',
         fingerprint: calculateFicheFingerprint(fiche),
       }),
+    });
+  });
+});
+
+describe('concurrent-classification', () => {
+  it('lance ensemble les appels des 25 fiches d’un groupe', async () => {
+    const startedFicheIds: number[] = [];
+    let openGate: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      openGate = resolve;
+    });
+    const harness = toHarness({
+      fiches: Array.from({ length: 25 }, (_, index) =>
+        toFiche({ ficheId: index + 1, collectiviteId: 1 })
+      ),
+      classify: async (fiche, callIndex) => {
+        startedFicheIds.push(fiche.ficheId);
+        if (startedFicheIds.length === 25) {
+          openGate();
+        }
+        await gate;
+        return classifyEveryFiche(fiche, callIndex);
+      },
+    });
+
+    await harness.service.analyzeFiches(onCollectivites([1]));
+
+    expect(startedFicheIds).toHaveLength(25);
+  });
+
+  it('attribue chaque réponse à sa fiche quand les appels se terminent dans le désordre', async () => {
+    const harness = toHarness({
+      fiches: [
+        toFiche({ ficheId: 10, collectiviteId: 1 }),
+        toFiche({ ficheId: 11, collectiviteId: 1 }),
+      ],
+      classify: async (fiche, callIndex) => {
+        const delayInMs = fiche.ficheId === 10 ? 20 : 0;
+        await new Promise((resolve) => setTimeout(resolve, delayInMs));
+        return fiche.ficheId === 10
+          ? failure({ kind: 'api_error', httpStatus: 400 })
+          : classifyEveryFiche(fiche, callIndex);
+      },
+    });
+
+    await harness.service.analyzeFiches(onCollectivites([1]));
+
+    expect([
+      harness.analysisOf(10)?.status,
+      harness.analysisOf(11)?.status,
+    ]).toEqual(['failed', 'processed']);
+  });
+});
+
+describe('axe-paths-issue', () => {
+  it('interrompt le passage sans classer aucune fiche quand le chemin des axes ne peut pas être lu', async () => {
+    const harness = toHarness({
+      fiches: [toFiche({ ficheId: 10, collectiviteId: 1 })],
+      axePathsFailure: 'LIST_FICHE_AXE_PATHS_ERROR',
+    });
+
+    const analysisResult = await harness.service.analyzeFiches(
+      onCollectivites([1])
+    );
+
+    expect({
+      analysisResult,
+      classifyCalls: harness.classifiedFiches.length,
+    }).toEqual({
+      analysisResult: {
+        success: false,
+        error: {
+          kind: 'step_failed',
+          step: 'list_fiche_axe_paths',
+          cause: 'LIST_FICHE_AXE_PATHS_ERROR',
+        },
+      },
+      classifyCalls: 0,
     });
   });
 });
@@ -614,15 +764,9 @@ describe('fiche-sans-volet', () => {
   it('écrit un statut traité pour une fiche classée sans volet', async () => {
     const harness = toHarness({
       fiches: [toFiche({ ficheId: 10, collectiviteId: 1 })],
-      classify: (fiches) =>
+      classify: ({ ficheId }) =>
         success({
-          classified: fiches.map(({ ficheId }) => ({
-            ficheId,
-            justification: 'Aucun levier',
-            isDescriptionTruncated: false,
-            volets: [],
-          })),
-          sources: [...fiches],
+          fiche: { ficheId, isDescriptionTruncated: false, volets: [] },
           tokens: classificationTokens,
         }),
     });
@@ -812,62 +956,60 @@ describe('cron-action-management', () => {
 });
 
 describe('retry-on-failure', () => {
-  it("relance jusqu'à 3 fois dans le passage les seules fiches encore en échec", async () => {
+  it("relance jusqu'à 3 fois dans le passage une fiche dont la réponse est invalide, puis la classe", async () => {
     const harness = toHarness({
-      fiches: [
-        toFiche({ ficheId: 10, collectiviteId: 1 }),
-        toFiche({ ficheId: 11, collectiviteId: 1 }),
-      ],
-      classify: (fiches, callIndex) => {
+      fiches: [toFiche({ ficheId: 10, collectiviteId: 1 })],
+      classify: (fiche, callIndex) => {
         const isBeforeThirdAttempt = callIndex < 3;
         return isBeforeThirdAttempt
-          ? failure({ kind: 'missing_indexes', indexes: [1] })
-          : classifyEveryFiche(fiches, callIndex);
+          ? failure({ kind: 'invalid_json', rawTextLength: 12 })
+          : classifyEveryFiche(fiche, callIndex);
       },
     });
 
     await harness.service.analyzeFiches(onCollectivites([1]));
 
     expect({
-      batches: harness.classifiedBatches,
-      statuses: [
-        harness.analysisOf(10)?.status,
-        harness.analysisOf(11)?.status,
-      ],
-    }).toEqual({
-      batches: [
-        [10, 11],
-        [10, 11],
-        [10, 11],
-      ],
-      statuses: ['processed', 'processed'],
-    });
+      calls: harness.classifiedFiches.map(({ ficheId }) => ficheId),
+      status: harness.analysisOf(10)?.status,
+    }).toEqual({ calls: [10, 10, 10], status: 'processed' });
   });
 
-  it("relance sans leur compter d'essai raté les autres fiches d'un lot dont une fiche est fautive", async () => {
+  it("ne relance que la fiche en échec, sans compter d'essai raté aux autres fiches du groupe", async () => {
     const harness = toHarness({
       fiches: [
         toFiche({ ficheId: 10, collectiviteId: 1 }),
         toFiche({ ficheId: 11, collectiviteId: 1 }),
       ],
-      classify: (fiches, callIndex) =>
-        fiches.some(({ ficheId }) => ficheId === 11)
-          ? failure({ kind: 'duplicate_index', index: 1 })
-          : classifyEveryFiche(fiches, callIndex),
+      classify: (fiche, callIndex) =>
+        fiche.ficheId === 11
+          ? failure({ kind: 'invalid_json', rawTextLength: 12 })
+          : classifyEveryFiche(fiche, callIndex),
     });
 
     await harness.service.analyzeFiches(onCollectivites([1]));
 
     expect({
-      batches: harness.classifiedBatches,
+      calls: harness.classifiedFiches.map(({ ficheId }) => ficheId).toSorted(),
       statuses: [
         harness.analysisOf(10)?.status,
         harness.analysisOf(11)?.status,
       ],
-    }).toEqual({
-      batches: [[10, 11], [10, 11], [10, 11], [10]],
-      statuses: ['processed', 'failed'],
+    }).toEqual({ calls: [10, 11, 11, 11], statuses: ['processed', 'failed'] });
+  });
+
+  it("ne relance pas une fiche en erreur d'API, que le fournisseur a déjà rejouée", async () => {
+    const harness = toHarness({
+      fiches: [toFiche({ ficheId: 10, collectiviteId: 1 })],
+      classify: alwaysFailing,
     });
+
+    await harness.service.analyzeFiches(onCollectivites([1]));
+
+    expect({
+      calls: harness.classifiedFiches.length,
+      status: harness.analysisOf(10)?.status,
+    }).toEqual({ calls: 1, status: 'failed' });
   });
 
   it('écrit en erreur, compteur incrémenté et empreinte inchangée, une fiche qui échoue 3 fois', async () => {
@@ -886,13 +1028,13 @@ describe('retry-on-failure', () => {
           fingerprintOf: classifiedVersion,
         }),
       ],
-      classify: alwaysFailing,
+      classify: alwaysInvalid,
     });
 
     await harness.service.analyzeFiches(onCollectivites([1]));
 
     expect({
-      classifyCalls: harness.classifiedBatches.length,
+      classifyCalls: harness.classifiedFiches.length,
       upserts: harness.upserts,
     }).toEqual({
       classifyCalls: 3,
@@ -970,7 +1112,7 @@ describe('reclassification-on-deletion', () => {
 
     await harness.service.analyzeFiches(onCollectivites([1]));
 
-    expect(harness.classifiedBatches).toEqual([]);
+    expect(harness.classifiedFiches).toEqual([]);
   });
 });
 
@@ -988,7 +1130,7 @@ describe('full-flow-behavior-on-already-processed-action', () => {
     await harness.service.analyzeFiches(onCollectivites([1]));
 
     expect({
-      classifyCalls: harness.classifiedBatches.length,
+      classifyCalls: harness.classifiedFiches.length,
       scoreCalls: harness.scoreInputs.length,
     }).toEqual({ classifyCalls: 0, scoreCalls: 0 });
   });

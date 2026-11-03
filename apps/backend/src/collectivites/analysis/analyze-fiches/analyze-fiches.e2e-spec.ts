@@ -13,9 +13,8 @@ import {
 } from '@tet/backend/test';
 import { AnalysisLlmService } from '@tet/backend/collectivites/analysis/analysis-llm.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { success, type Result } from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { categorieActionEnumValues } from '@tet/domain/shared';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferRouterInputs } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
@@ -31,17 +30,14 @@ import {
   expect,
   it,
 } from 'vitest';
+import { ClassificationLlmService } from '../classification-llm.service';
 import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
 import { analysisRunTable } from '../models/analysis-run.table';
 import { ficheActionAnalysisTable } from '../models/fiche-action-analysis.table';
 import { ficheActionVoletGesTable } from '../models/fiche-action-volet-ges.table';
 import { FicheAnalysis } from '../models/fiche-analysis';
 import { MobilisationState } from '../models/mobilisation-state';
-import {
-  classificationResponseSchema,
-  FicheClassification,
-} from '../pipeline/classify-fiches/classify-fiches.schema';
-import { toLevierRank } from '../prompts/levier-ranks';
+import { ficheClassificationSchema } from '../pipeline/classify-fiche/classify-fiche.schema';
 import { VoletError } from '../volet.errors';
 import { AnalyzeFichesModule } from './analyze-fiches.module';
 import {
@@ -78,8 +74,9 @@ const REJECTED_MARKER = 'Rejetée par le modèle';
 
 const MOBILISATION_PROMPT_MARKER = 'Levier évalué';
 
-const ACTION_BLOCK_PATTERN =
-  /<action index="(\d+)" nonce="[^"]*">([\s\S]*?)<\/action>/g;
+const FICHE_BLOCK_PATTERN = /<fiche nonce="[^"]*">([\s\S]*?)<\/fiche>/g;
+
+const TITRE_LINE_PATTERN = /^Titre : (.*)$/m;
 
 const WORKFLOW_PATH = path.join(
   __dirname,
@@ -94,9 +91,9 @@ const TOKENS = {
   totalTokens: 15,
 };
 
-const VELO_AMENAGEMENT_VOLET = {
-  levier: toLevierRank('Vélo et transport en commun'),
-  categories: [categorieActionEnumValues.indexOf('amenagement') + 1],
+const VELO_AMENAGEMENT_LEVIER = {
+  levier: 'velo_transport_commun',
+  categories: [1],
 };
 
 const MODEL_NOTE = 2;
@@ -107,25 +104,8 @@ let collectiviteIdsOfDailyRuns: readonly number[] = [];
 let dailyRunStarts: readonly Date[] = [];
 let cleanups: readonly (() => Promise<void>)[] = [];
 
-const toFakeFicheClassifications = (prompt: string): FicheClassification[] =>
-  classificationResponseSchema.parse(
-    [...prompt.matchAll(ACTION_BLOCK_PATTERN)].flatMap(([, index, text]) => {
-      const isRejected =
-        isRejectingMarkedFiches && text.includes(REJECTED_MARKER);
-      if (isRejected) {
-        return [];
-      }
-      const hasNoRelevantLevier = text.includes(NO_LEVIER_MARKER);
-      return [
-        {
-          index: Number(index),
-          justification: 'Classement du faux modèle',
-          hasNoRelevantLevier,
-          volets: hasNoRelevantLevier ? [] : [VELO_AMENAGEMENT_VOLET],
-        },
-      ];
-    })
-  );
+const toFicheText = (prompt: string): string =>
+  [...prompt.matchAll(FICHE_BLOCK_PATTERN)][0]?.[1] ?? '';
 
 const fakeLlm = {
   generateStructured: async ({ prompt }: { prompt: string }) => {
@@ -143,12 +123,20 @@ const fakeLlm = {
         tokens: TOKENS,
       });
     }
+    const ficheText = toFicheText(prompt);
+    if (isRejectingMarkedFiches && ficheText.includes(REJECTED_MARKER)) {
+      return failure({ kind: 'invalid_json', rawTextLength: 0 });
+    }
     return success({
-      data: toFakeFicheClassifications(prompt),
+      data: ficheClassificationSchema.parse({
+        leviers: ficheText.includes(NO_LEVIER_MARKER)
+          ? []
+          : [VELO_AMENAGEMENT_LEVIER],
+      }),
       tokens: TOKENS,
     });
   },
-} as unknown as AnalysisLlmService;
+} as unknown as AnalysisLlmService & ClassificationLlmService;
 
 const keepCollectivitesOfDailyRuns = <Failure>(
   collectiviteIdsResult: Result<number[], Failure>
@@ -210,8 +198,8 @@ const toClassifiedFicheTexts = (prompts: readonly string[]): string[] =>
   prompts
     .filter((prompt) => !prompt.includes(MOBILISATION_PROMPT_MARKER))
     .flatMap((prompt) =>
-      [...prompt.matchAll(ACTION_BLOCK_PATTERN)].map(([, , text]) =>
-        text.trim()
+      [...prompt.matchAll(FICHE_BLOCK_PATTERN)].map(
+        ([, text]) => TITRE_LINE_PATTERN.exec(text)?.[1] ?? ''
       )
     );
 
@@ -318,6 +306,8 @@ beforeAll(async () => {
     imports: [AnalyzeFichesModule],
   })
     .overrideProvider(AnalysisLlmService)
+    .useValue(fakeLlm)
+    .overrideProvider(ClassificationLlmService)
     .useValue(fakeLlm)
     .overrideProvider(FicheCandidateRepository)
     .useFactory({
