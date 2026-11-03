@@ -6,9 +6,10 @@ import {
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
-  IndicateurDefinition,
+  Indicateur,
   IndicateurPeriodiciteEnum,
   IndicateurValeurCreate,
+  isIndicateurPerso,
   PCAET_COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -145,7 +146,7 @@ export class ValidateIndicateurValeursWriteService {
   }
   private async assertIndicateurValeursAvailableForWrite(
     valeurs: IndicateurValeurCreate[],
-    definitionsById: Partial<Record<number, IndicateurDefinition>>,
+    definitionsById: Partial<Record<number, Indicateur>>,
     enforceGroupementMembership: boolean,
     tx: Transaction
   ): Promise<void> {
@@ -163,8 +164,7 @@ export class ValidateIndicateurValeursWriteService {
         );
       }
       if (
-        isNil(definition.groupementId) &&
-        isNotNil(definition.collectiviteId) &&
+        isIndicateurPerso(definition) &&
         definition.collectiviteId !== valeur.collectiviteId
       ) {
         throw new BadRequestException(

@@ -157,7 +157,7 @@ export class UpsertIndicateurDefinitionsService {
             created
               .filter((definition) =>
                 hasIndicateurFormulaChanged(
-                  expected.get(definition.identifiantReferentiel)
+                  expected.get(definition.identifiantReferentiel ?? '')
                     ?.valeurCalcule,
                   definition.valeurCalcule
                 )

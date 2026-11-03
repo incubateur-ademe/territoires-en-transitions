@@ -3,10 +3,11 @@ import IndicateurSourcesService from '@tet/backend/indicateurs/sources/indicateu
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
-  IndicateurDefinition,
+  IndicateurPredefini,
   IndicateurValeur,
   IndicateurPeriodes,
   IndicateurValeurCreate,
+  isIndicateurPredefini,
 } from '@tet/domain/indicateurs';
 import type {
   CalculSourceGroups,
@@ -68,7 +69,7 @@ export default class ComputeValeursService {
   }
 
   async getAllSourceIdentifiants(
-    definitions?: IndicateurDefinition[]
+    definitions?: IndicateurPredefini[]
   ): Promise<string[]> {
     if (!definitions) {
       const result = await this.graphService.loadAllComputedDefinitions();
@@ -166,7 +167,7 @@ export default class ComputeValeursService {
     );
     const sources = valeurs.flatMap<CalculSourceValeur>((valeur) => {
       const definition = definitionsById.get(valeur.indicateurId);
-      if (!definition?.identifiantReferentiel) return [];
+      if (!definition || !isIndicateurPredefini(definition)) return [];
       const metadonnee = metadonnees.find(
         ({ id }) => id === valeur.metadonneeId
       );

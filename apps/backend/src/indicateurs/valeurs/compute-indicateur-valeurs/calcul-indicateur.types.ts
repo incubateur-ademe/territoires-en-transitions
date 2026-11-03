@@ -1,6 +1,6 @@
 import type {
-  IndicateurDefinition,
   IndicateurPeriode,
+  IndicateurPredefini,
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
@@ -14,7 +14,7 @@ export type CalculSourceValeur = IndicateurValeurWithIdentifiant & {
 };
 
 export type IndicateurFormula = {
-  definition: IndicateurDefinition;
+  definition: IndicateurPredefini;
   references: ReferencedIndicateur[];
 };
 

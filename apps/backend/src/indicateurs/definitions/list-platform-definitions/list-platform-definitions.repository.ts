@@ -9,7 +9,7 @@ import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.tabl
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Tag } from '@tet/domain/collectivites';
-import type { Indicateur } from '@tet/domain/indicateurs';
+import type { IndicateurPredefini } from '@tet/domain/indicateurs';
 import {
   and,
   eq,
@@ -24,7 +24,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
-import { toIndicateursOrThrow } from '../indicateur.adapter';
+import { toIndicateursPredefiniOrThrow } from '../indicateur.adapter';
 import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
 
@@ -43,7 +43,7 @@ export class ListPlatformDefinitionsRepository {
       indicateurIds?: number[];
     } = {},
     tx?: Transaction
-  ): Promise<Indicateur[]> {
+  ): Promise<IndicateurPredefini[]> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -59,7 +59,7 @@ export class ListPlatformDefinitionsRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return toIndicateursOrThrow(definitions);
+    return toIndicateursPredefiniOrThrow(definitions);
   }
 
   /**
@@ -123,7 +123,7 @@ export class ListPlatformDefinitionsRepository {
       indicateurIds?: number[];
     } = {},
     tx?: Transaction
-  ): Promise<Indicateur[]> {
+  ): Promise<IndicateurPredefini[]> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -167,7 +167,7 @@ export class ListPlatformDefinitionsRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return toIndicateursOrThrow(definitions);
+    return toIndicateursPredefiniOrThrow(definitions);
   }
 
   private getQueryConditions({
@@ -203,7 +203,7 @@ export class ListPlatformDefinitionsRepository {
   async listPlatformDefinitionsHavingComputedValue(
     { identifiantsReferentiel }: { identifiantsReferentiel?: string[] } = {},
     tx?: Transaction
-  ): Promise<Indicateur[]> {
+  ): Promise<IndicateurPredefini[]> {
     const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] =
       identifiantsReferentiel?.map((identifiant) =>
         ilike(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
@@ -241,7 +241,7 @@ export class ListPlatformDefinitionsRepository {
       }`
     );
 
-    return toIndicateursOrThrow(computedIndicateurDefinitions);
+    return toIndicateursPredefiniOrThrow(computedIndicateurDefinitions);
   }
 
   getCategoriesSubQuery() {

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import {
+  Indicateur,
+  IndicateurPredefini,
+  isIndicateurPredefini,
+} from '@tet/domain/indicateurs';
 import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
 import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
 import type { IndicateurFormula } from './calcul-indicateur.types';
@@ -9,8 +13,8 @@ import IndicateurExpressionService from '../indicateur-expression.service';
 
 type CalculGraph = {
   formulas: IndicateurFormula[];
-  sourceDefinitions: IndicateurDefinition[];
-  targetDefinitions: IndicateurDefinition[];
+  sourceDefinitions: Indicateur[];
+  targetDefinitions: IndicateurPredefini[];
 };
 type GraphContext = { tx: Transaction };
 type GraphResult = Result<CalculGraph, 'LOAD_CALCUL_GRAPH_FAILED'>;
@@ -24,7 +28,7 @@ export class LoadIndicateurCalculGraphService {
     private readonly expressions: IndicateurExpressionService
   ) {}
 
-  getFormula(definition: IndicateurDefinition): IndicateurFormula {
+  getFormula(definition: IndicateurPredefini): IndicateurFormula {
     return {
       definition,
       references: definition.valeurCalcule
@@ -36,7 +40,7 @@ export class LoadIndicateurCalculGraphService {
   }
 
   async loadAllComputedDefinitions(): Promise<
-    Result<IndicateurDefinition[], 'LOAD_CALCUL_GRAPH_FAILED'>
+    Result<IndicateurPredefini[], 'LOAD_CALCUL_GRAPH_FAILED'>
   > {
     try {
       return success(
@@ -128,8 +132,8 @@ export class LoadIndicateurCalculGraphService {
   }
 
   private async lockGraph(
-    candidates: IndicateurDefinition[],
-    knownSources: IndicateurDefinition[],
+    candidates: IndicateurPredefini[],
+    knownSources: Indicateur[],
     targetIds: number[],
     tx: Transaction
   ): Promise<CalculGraph> {
@@ -176,12 +180,9 @@ export class LoadIndicateurCalculGraphService {
       tx
     );
     const targetIdSet = new Set(targetIds);
-    const targetDefinitions = lockedDefinitions.filter(
-      (definition) =>
-        targetIdSet.has(definition.id) &&
-        definition.collectiviteId === null &&
-        Boolean(definition.identifiantReferentiel)
-    );
+    const targetDefinitions = lockedDefinitions
+      .filter(({ id }) => targetIdSet.has(id))
+      .filter(isIndicateurPredefini);
     return {
       targetDefinitions,
       formulas: targetDefinitions

@@ -3,7 +3,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
-  IndicateurDefinition,
+  IndicateurPredefini,
   IndicateurValeur,
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
@@ -144,7 +144,7 @@ export class ReconcileIndicateurValeursService {
   }
 
   reconcileCollectivite(
-    input: { collectiviteId: number; definitions: IndicateurDefinition[] },
+    input: { collectiviteId: number; definitions: IndicateurPredefini[] },
     context: IndicateurValeursWriteContext
   ) {
     return captureIndicateurValeursResult(() =>
@@ -157,7 +157,7 @@ export class ReconcileIndicateurValeursService {
   }
   private async reconcileInTransaction(
     collectiviteId: number,
-    definitions: IndicateurDefinition[],
+    definitions: IndicateurPredefini[],
     tx: Transaction
   ): Promise<RecomputedCollectiviteIndicateurValeurs> {
     const recomputed =
@@ -221,7 +221,7 @@ export class ReconcileIndicateurValeursService {
   }
 
   recomputeAll(
-    input: { collectiviteId?: number; definitions?: IndicateurDefinition[] },
+    input: { collectiviteId?: number; definitions?: IndicateurPredefini[] },
     context: IndicateurValeursContext
   ) {
     return captureIndicateurValeursResult(async () => {
