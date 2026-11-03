@@ -96,32 +96,35 @@ export const ElaborationDossierCompletNonPilote: Story = {
   },
 };
 
-/** Démarche transmise : échéance des avis à venir, reprise possible (pilote). */
+/** Démarche transmise : date limite à venir, reprise possible (pilote). */
 export const TransmisPourAvis: Story = {
   args: {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
-    avisDeadlineAt: echeanceDans(80),
+    transmittedAt: echeanceDans(-10),
+    avisDeadlineAt: echeanceDans(110),
     transitions: transitionsDe('transmis_pour_avis', { estPilote: true }),
   },
 };
 
-/** Échéance des avis dans moins de 14 jours : badge d'avertissement. */
+/** Date limite dans moins de 21 jours : badge rouge. */
 export const TransmisEcheanceProche: Story = {
   args: {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
-    avisDeadlineAt: echeanceDans(10),
+    transmittedAt: echeanceDans(-45),
+    avisDeadlineAt: echeanceDans(75),
     transitions: transitionsDe('transmis_pour_avis', { estPilote: true }),
   },
 };
 
-/** Délai légal écoulé : badge d'erreur, l'adoption devient possible. */
+/** Date limite dépassée, dépôt encore possible : badge gris. */
 export const TransmisDelaiEcoule: Story = {
   args: {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
-    avisDeadlineAt: echeanceDans(-30),
+    transmittedAt: echeanceDans(-90),
+    avisDeadlineAt: echeanceDans(30),
     transitions: transitionsDe('transmis_pour_avis', { estPilote: true }),
   },
 };
@@ -131,7 +134,8 @@ export const TransmisNonPilote: Story = {
   args: {
     statut: 'transmis_pour_avis',
     completion: dossierComplet,
-    avisDeadlineAt: echeanceDans(80),
+    transmittedAt: echeanceDans(-10),
+    avisDeadlineAt: echeanceDans(110),
     transitions: transitionsDe('transmis_pour_avis'),
   },
 };

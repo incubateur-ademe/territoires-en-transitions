@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   computeAvisDeadline,
+  computeAvisEcheanceReglementaire,
   isDemarchePcaetAvisTousRendus,
   isDemarchePcaetPilote,
 } from './demarche-pcaet-guard.rules';
@@ -103,5 +104,13 @@ describe('règles pures des guards', () => {
     expect(
       computeAvisDeadline(new Date('2026-10-31T10:00:00.000Z')).toISOString()
     ).toBe('2027-03-03T10:00:00.000Z');
+  });
+
+  it('computeAvisEcheanceReglementaire : deux mois après la transmission', () => {
+    expect(
+      computeAvisEcheanceReglementaire(
+        new Date('2026-08-06T10:00:00.000Z')
+      ).toISOString()
+    ).toBe('2026-10-06T10:00:00.000Z');
   });
 });

@@ -93,6 +93,7 @@ export function useDemarcheAvanceSidePanel(
     contentProps.statut,
     contentProps.activeSection,
     contentProps.avisDeadlineAt,
+    contentProps.transmittedAt,
     contentProps.isPublished,
     contentProps.transitions,
     contentProps.isPreview,

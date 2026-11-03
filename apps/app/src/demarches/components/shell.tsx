@@ -85,6 +85,7 @@ export const DemarcheShell = ({
       completion,
       activeSection,
       avisDeadlineAt: demarche.dateEcheanceAvis,
+      transmittedAt: demarche.dateTransmission,
       transitions: demarche.transitions,
       onTransmettre: demanderConfirmation,
       isPublished,

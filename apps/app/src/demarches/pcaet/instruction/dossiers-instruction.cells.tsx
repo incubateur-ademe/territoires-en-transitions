@@ -15,6 +15,12 @@ import {
 import { Badge, Button, ButtonMenu, cn, Icon } from '@tet/ui';
 import Link from 'next/link';
 import { useState } from 'react';
+import { getEcheanceAvis } from '../../echeance-avis';
+import {
+  ECHEANCE_AVIS_COULEURS,
+  EcheanceAvisInfo,
+  EcheanceAvisMention,
+} from '../../echeance-avis.view';
 import { DateSaisinePanel } from './date-saisine.panel';
 import {
   OBLIGATION_LABELS,
@@ -24,16 +30,8 @@ import {
 export type Dossier =
   RouterOutput['demarches']['pcaet']['listDossiersInstruction']['items'][number];
 
-const JOURS_URGENCE = 30;
-
 const formatDateNumerique = (date: string): string =>
   format(new Date(date), 'dd/MM/yyyy');
-
-const estUrgente = (avisDeadlineAt: string | null): boolean => {
-  if (!avisDeadlineAt) return false;
-  const restant = new Date(avisDeadlineAt).getTime() - Date.now();
-  return restant < JOURS_URGENCE * 24 * 60 * 60 * 1000;
-};
 
 /**
  * Deux portes vers le dossier. La saisine, une fois le dépôt transmis : c'est
@@ -116,9 +114,7 @@ export const DateSaisineCell = ({ dossier }: { dossier: Dossier }) => {
       data-test="demarches.pcaet.instruction.date-saisine-modifier"
       menu={menu}
     >
-      <span
-        className={dossier.dateSaisine ? 'text-primary-9' : 'text-grey-6'}
-      >
+      <span className={dossier.dateSaisine ? 'text-primary-9' : 'text-grey-6'}>
         {texte}
       </span>
     </ButtonMenu>
@@ -126,7 +122,9 @@ export const DateSaisineCell = ({ dossier }: { dossier: Dossier }) => {
 };
 
 export const EcheanceCell = ({ dossier }: { dossier: Dossier }) => {
-  if (!dossier.avisDeadlineAt) {
+  const [nowMs] = useState(() => Date.now());
+
+  if (!dossier.avisDeadlineAt || !dossier.transmittedAt) {
     return (
       <span className="text-grey-6">
         {appLabels.instructionListeSansEcheance}
@@ -134,17 +132,30 @@ export const EcheanceCell = ({ dossier }: { dossier: Dossier }) => {
     );
   }
 
-  const urgente = estUrgente(dossier.avisDeadlineAt);
+  const echeance = getEcheanceAvis({
+    transmittedAt: dossier.transmittedAt,
+    avisDeadlineAt: dossier.avisDeadlineAt,
+    avisAttendu:
+      dossier.deposeAvis &&
+      dossier.statut === PcaetStatutInstructionEnum.EN_INSTRUCTION,
+    nowMs,
+  });
 
   return (
-    <div
-      className={cn(
-        'flex items-center gap-2',
-        urgente ? 'text-error-1 font-medium' : 'text-primary-9'
-      )}
-    >
-      <Icon icon="calendar-line" size="sm" className="shrink-0" />
-      <span>{formatDateNumerique(dossier.avisDeadlineAt)}</span>
+    <div className="flex flex-col gap-1">
+      <div
+        className={cn(
+          'flex items-center gap-2',
+          ECHEANCE_AVIS_COULEURS[echeance.phase],
+          (echeance.phase === 'proche' || echeance.phase === 'hors_delai') &&
+            'font-medium'
+        )}
+      >
+        <Icon icon="calendar-line" size="sm" className="shrink-0" />
+        <span>{format(echeance.date, 'dd/MM/yyyy')}</span>
+        <EcheanceAvisInfo echeance={echeance} />
+      </div>
+      <EcheanceAvisMention echeance={echeance} className="text-xs" />
     </div>
   );
 };

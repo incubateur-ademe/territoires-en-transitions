@@ -16,9 +16,18 @@ import {
 } from '@/app/ui/metadata-line';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { RouterOutput } from '@tet/api';
-import { PcaetStatutInstructionEnum } from '@tet/domain/demarches';
-import { Badge, PageHeader } from '@tet/ui';
+import {
+  PcaetDemandeAvisEtatEnum,
+  PcaetStatutInstructionEnum,
+} from '@tet/domain/demarches';
+import { Badge, cn, PageHeader } from '@tet/ui';
 import { ReactNode, useState } from 'react';
+import { getEcheanceAvis } from '../../../echeance-avis';
+import {
+  ECHEANCE_AVIS_COULEURS,
+  EcheanceAvisInfo,
+  EcheanceAvisMention,
+} from '../../../echeance-avis.view';
 
 type Dossier = RouterOutput['demarches']['pcaet']['getDossierInstruction'];
 
@@ -30,9 +39,18 @@ export const DossierInstructionHeader = ({
   action: ReactNode;
 }) => {
   const [nowMs] = useState(() => Date.now());
-  const isEcheancePassee =
-    dossier.avisDeadlineAt !== null &&
-    new Date(dossier.avisDeadlineAt).getTime() < nowMs;
+  const echeance =
+    dossier.avisDeadlineAt && dossier.transmittedAt
+      ? getEcheanceAvis({
+          transmittedAt: dossier.transmittedAt,
+          avisDeadlineAt: dossier.avisDeadlineAt,
+          avisAttendu:
+            dossier.titresDeposables.length > 0 &&
+            (dossier.etat === PcaetDemandeAvisEtatEnum.A_TRAITER ||
+              dossier.etat === PcaetDemandeAvisEtatEnum.BROUILLON_EN_COURS),
+          nowMs,
+        })
+      : null;
 
   return (
     <PageHeader>
@@ -82,23 +100,29 @@ export const DossierInstructionHeader = ({
               value={getTextFormattedDate({ date: dossier.instruitLe })}
             />
           ) : (
-            dossier.avisDeadlineAt && (
+            echeance && (
               <MetadataItem
                 icon="time-line"
                 label={appLabels.instructionDossierMetaEcheance}
                 hideSeparator
+                tooltip={<EcheanceAvisInfo echeance={echeance} />}
                 value={
-                  isEcheancePassee ? (
-                    <span className="text-error-1">
-                      {appLabels.instructionDossierMetaEcheanceDepassee({
-                        date: getTextFormattedDate({
-                          date: dossier.avisDeadlineAt,
-                        }),
+                  <span>
+                    <span
+                      className={cn(
+                        'whitespace-nowrap',
+                        ECHEANCE_AVIS_COULEURS[echeance.phase]
+                      )}
+                    >
+                      {getTextFormattedDate({
+                        date: echeance.date.toISOString(),
                       })}
                     </span>
-                  ) : (
-                    getTextFormattedDate({ date: dossier.avisDeadlineAt })
-                  )
+                    <EcheanceAvisMention
+                      echeance={echeance}
+                      className="ml-2 font-normal"
+                    />
+                  </span>
                 }
               />
             )

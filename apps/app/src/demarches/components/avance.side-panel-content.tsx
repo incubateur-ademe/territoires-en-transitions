@@ -18,6 +18,7 @@ export type DemarcheAvanceSidePanelContentProps = {
   completion: DemarchePcaetCompletion;
   activeSection?: DemarcheSectionKey | null;
   avisDeadlineAt?: string | null;
+  transmittedAt?: string | null;
   /** État serveur des transitions (absent en preview). */
   transitions?: DemarchePcaetTransitionEvaluations;
   onTransmettre?: () => void;
@@ -40,6 +41,7 @@ export const DemarcheAvanceSidePanelContent = ({
   completion,
   activeSection = null,
   avisDeadlineAt,
+  transmittedAt,
   transitions,
   onTransmettre,
   isPublished = false,
@@ -56,6 +58,7 @@ export const DemarcheAvanceSidePanelContent = ({
       completion={completion}
       activeSection={activeSection}
       avisDeadlineAt={avisDeadlineAt}
+      transmittedAt={transmittedAt}
       transitions={transitions}
       onTransmettre={onTransmettre}
       isPublished={isPublished}
