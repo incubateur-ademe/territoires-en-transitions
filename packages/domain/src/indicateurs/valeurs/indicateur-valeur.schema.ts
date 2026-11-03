@@ -1,9 +1,10 @@
 import * as z from 'zod/mini';
-import {
-  indicateurDefinitionSchema,
-  indicateurDefinitionSchemaTiny,
-} from '../definitions/indicateur-definition.schema';
+import { indicateurPredefiniNatureSchema } from '../definitions/indicateur-nature.schema';
 import { indicateurPeriodiciteSchema } from '../definitions/indicateur-periodicite.schema';
+import {
+  indicateurCommonSchema,
+  indicateurSchema,
+} from '../definitions/indicateur.schema';
 import { indicateurSourceMetadonneeSchema } from '../shared/indicateur-source-metadonnee.schema';
 import { indicateurSourceSchema } from '../shared/indicateur-source.schema';
 
@@ -75,8 +76,26 @@ export type IndicateurValeurGroupee = z.infer<
   typeof indicateurValeurGroupeeSchema
 >;
 
+export const indicateurResumeSchema = z.object({
+  ...z.pick(indicateurCommonSchema, {
+    id: true,
+    titre: true,
+    titreLong: true,
+    description: true,
+    unite: true,
+    periodicite: true,
+    borneMin: true,
+    borneMax: true,
+  }).shape,
+  identifiantReferentiel: z.nullable(
+    indicateurPredefiniNatureSchema.shape.identifiantReferentiel
+  ),
+});
+
+export type IndicateurResume = z.infer<typeof indicateurResumeSchema>;
+
 export const indicateurAvecValeursSchema = z.object({
-  definition: indicateurDefinitionSchemaTiny,
+  definition: indicateurResumeSchema,
   valeurs: z.array(indicateurValeurGroupeeSchema),
 });
 
@@ -89,7 +108,7 @@ export const indicateurValeursGroupeeParSourceSchema = z.object({
 });
 
 export const indicateurAvecValeursParSourceSchema = z.object({
-  definition: indicateurDefinitionSchema,
+  definition: indicateurSchema,
   totalValeursCount: z.number(),
   totalFilledValeursCount: z.number(),
   sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
@@ -102,7 +121,7 @@ export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
 
 export const indicateurValeurAvecMetadonnesDefinitionSchema = z.object({
   indicateurValeur: indicateurValeurSchema,
-  indicateurDefinition: z.nullable(indicateurDefinitionSchema),
+  indicateurDefinition: z.nullable(indicateurSchema),
   indicateurSourceMetadonnee: z.nullable(indicateurSourceMetadonneeSchema),
   confidentiel: z.nullish(z.boolean()),
 });

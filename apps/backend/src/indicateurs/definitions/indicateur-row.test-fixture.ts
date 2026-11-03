@@ -1,8 +1,8 @@
-import type { IndicateurDefinition } from '@tet/domain/indicateurs';
+import type { IndicateurRow } from './indicateur.adapter';
 
-export const toIndicateurDefinition = (
-  overrides: Partial<IndicateurDefinition>
-): IndicateurDefinition => ({
+export const toIndicateurRow = (
+  overrides: Partial<IndicateurRow>
+): IndicateurRow => ({
   id: 1,
   version: '1',
   groupementId: null,

@@ -1,7 +1,7 @@
 import {
   getIncoherentNatureError,
   type Indicateur,
-  type IndicateurDefinition,
+  type IndicateurCommon,
   type IndicateurNatureFields,
   type IndicateurPersoNatureFields,
   type IndicateurPredefini,
@@ -10,6 +10,8 @@ import {
   isIndicateurPredefini,
   toIndicateur,
 } from '@tet/domain/indicateurs';
+
+export type IndicateurRow = IndicateurCommon & IndicateurNatureFields;
 
 export const withNatureOrThrow = <
   T extends IndicateurNatureFields & { id: number }
@@ -28,9 +30,20 @@ export const withNatureOrThrow = <
   );
 };
 
-export const toIndicateurOrThrow = (
-  definition: IndicateurDefinition
-): Indicateur => {
+export const withPredefiniOrThrow = <
+  T extends IndicateurNatureFields & { id: number }
+>(
+  row: T
+): T & IndicateurPredefiniNatureFields => {
+  if (isIndicateurPredefini(row)) {
+    return row;
+  }
+  throw new Error(
+    `Indicateur ${row.id} : un indicateur de la plateforme doit être prédéfini`
+  );
+};
+
+export const toIndicateurOrThrow = (definition: IndicateurRow): Indicateur => {
   const result = toIndicateur(definition);
   if (!result.success) {
     throw new Error(
@@ -41,12 +54,12 @@ export const toIndicateurOrThrow = (
 };
 
 export const toIndicateursOrThrow = (
-  definitions: readonly IndicateurDefinition[]
+  definitions: readonly IndicateurRow[]
 ): Indicateur[] =>
   definitions.map((definition) => toIndicateurOrThrow(definition));
 
 export const toIndicateurPredefiniOrThrow = (
-  definition: IndicateurDefinition
+  definition: IndicateurRow
 ): IndicateurPredefini => {
   const indicateur = toIndicateurOrThrow(definition);
   if (!isIndicateurPredefini(indicateur)) {
@@ -58,6 +71,6 @@ export const toIndicateurPredefiniOrThrow = (
 };
 
 export const toIndicateursPredefiniOrThrow = (
-  definitions: readonly IndicateurDefinition[]
+  definitions: readonly IndicateurRow[]
 ): IndicateurPredefini[] =>
   definitions.map((definition) => toIndicateurPredefiniOrThrow(definition));

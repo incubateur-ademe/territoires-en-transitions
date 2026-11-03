@@ -165,6 +165,7 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
       indicateurDefinitions: [
         {
           ...fixture.indicateurDefinition,
+          collectiviteId: null,
           identifiantReferentiel: 'cae_63.b',
           isApplicable,
           periodicite,

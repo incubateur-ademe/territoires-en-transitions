@@ -3,18 +3,20 @@ import { personneTagOrUserSchema } from '../../collectivites/personne-tag-or-use
 import { tagSchema } from '../../collectivites/tag.base.schema';
 import { authorSchema } from '../../users/author.schema';
 import { indicateurCollectiviteSchema } from '../shared/indicateur-collectivite.schema';
-import { indicateurDefinitionSchema } from './indicateur-definition.schema';
+import { indicateurPredefiniNatureSchema } from './indicateur-nature.schema';
 import {
+  indicateurCommonSchema,
   indicateurPersoSchema,
   indicateurPredefiniSchema,
 } from './indicateur.schema';
 
 const indicateurEnfantSchema = z.object({
-  id: indicateurDefinitionSchema.shape.id,
-  identifiantReferentiel:
-    indicateurDefinitionSchema.shape.identifiantReferentiel,
-  titre: indicateurDefinitionSchema.shape.titre,
-  titreCourt: indicateurDefinitionSchema.shape.titreCourt,
+  id: indicateurCommonSchema.shape.id,
+  identifiantReferentiel: z.nullable(
+    indicateurPredefiniNatureSchema.shape.identifiantReferentiel
+  ),
+  titre: indicateurCommonSchema.shape.titre,
+  titreCourt: indicateurCommonSchema.shape.titreCourt,
 });
 
 const indicateurParentSchema = z.object({

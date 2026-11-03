@@ -1,8 +1,8 @@
 import { tagSchema } from '@tet/domain/collectivites';
-import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
+import { indicateurPredefiniSchema } from '@tet/domain/indicateurs';
 import { z } from 'zod/mini';
 
-const platformDefinitionSchema = z.pick(indicateurDefinitionSchema, {
+const platformDefinitionSchema = z.pick(indicateurPredefiniSchema, {
   id: true,
   version: true,
   identifiantReferentiel: true,

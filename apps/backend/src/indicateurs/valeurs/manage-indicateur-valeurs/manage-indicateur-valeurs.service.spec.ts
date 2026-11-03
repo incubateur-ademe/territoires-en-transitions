@@ -13,8 +13,8 @@ import {
   IndicateurPeriodiciteEnum,
   IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
-  IndicateurDefinition,
-  IndicateurDefinitionTiny,
+  Indicateur,
+  IndicateurResume,
   IndicateurPredefini,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
@@ -242,7 +242,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateur', () => {
     it('Groupe les valeurs par indicateur, trie par date croissante les valeurs', async () => {
-      const indicateurDefinitions: IndicateurDefinitionTiny[] = [
+      const indicateurDefinitions: IndicateurResume[] = [
         indicateur1,
         indicateur2,
         indicateur3,
@@ -376,12 +376,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateurEtSource', () => {
     it('Groupe les valeurs par indicateur et par source, trie par date croissante les valeurs', async () => {
-      const indicateurDefinitions: IndicateurDefinitionTiny[] = [
+      const indicateurDefinitions = [
         indicateur1,
         indicateur2,
         indicateur3,
         indicateur1, // duplicate
-      ];
+      ] as Indicateur[];
 
       const indicateurMetadonnees: IndicateurSourceMetadonnee[] = [
         {
@@ -527,7 +527,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
               periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
               borneMin: null,
               borneMax: null,
-            } as IndicateurDefinition,
+            } as Indicateur,
             totalValeursCount: 4,
             totalFilledValeursCount: 3,
             sources: {
@@ -601,7 +601,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
               periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
               borneMin: null,
               borneMax: null,
-            } as IndicateurDefinition,
+            } as Indicateur,
             totalValeursCount: 1,
             totalFilledValeursCount: 1,
             sources: {

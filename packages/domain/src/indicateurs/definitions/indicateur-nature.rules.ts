@@ -1,13 +1,13 @@
-import type { IndicateurDefinition } from './indicateur-definition.schema';
 import type {
   IndicateurPersoNatureFields,
   IndicateurPredefiniNatureFields,
 } from './indicateur-nature.schema';
 
-export type IndicateurNatureFields = Pick<
-  IndicateurDefinition,
-  'collectiviteId' | 'identifiantReferentiel' | 'groupementId'
->;
+export type IndicateurNatureFields = Readonly<{
+  [Field in keyof IndicateurPersoNatureFields]:
+    | IndicateurPersoNatureFields[Field]
+    | IndicateurPredefiniNatureFields[Field];
+}>;
 
 export type IndicateurNatureError =
   | 'PERSO_WITH_IDENTIFIANT_REFERENTIEL'

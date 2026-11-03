@@ -1,5 +1,4 @@
 import { expectTypeOf } from 'vitest';
-import type { IndicateurDefinition } from './indicateur-definition.schema';
 import {
   getIncoherentNatureError,
   type IndicateurNatureError,
@@ -11,7 +10,11 @@ import type {
   IndicateurPersoNatureFields,
   IndicateurPredefiniNatureFields,
 } from './indicateur-nature.schema';
-import type { IndicateurPerso, IndicateurPredefini } from './indicateur.schema';
+import type {
+  IndicateurCandidate,
+  IndicateurPerso,
+  IndicateurPredefini,
+} from './indicateur.schema';
 
 const perso: IndicateurNatureFields = {
   collectiviteId: 12,
@@ -121,11 +124,21 @@ describe('getIncoherentNatureError', () => {
 describe('types des gardes', () => {
   it('affinent une définition vers un perso ou un prédéfini', () => {
     expectTypeOf(
-      isIndicateurPerso<IndicateurDefinition>
+      isIndicateurPerso<IndicateurCandidate>
     ).guards.toExtend<IndicateurPerso>();
     expectTypeOf(
-      isIndicateurPredefini<IndicateurDefinition>
+      isIndicateurPredefini<IndicateurCandidate>
     ).guards.toExtend<IndicateurPredefini>();
+  });
+
+  it('accepte toute combinaison des champs de nature, cohérente ou non', () => {
+    expectTypeOf<IndicateurNatureFields>().toEqualTypeOf<
+      Readonly<{
+        collectiviteId: number | null;
+        identifiantReferentiel: string | null;
+        groupementId: number | null;
+      }>
+    >();
   });
 
   it('affinent les seuls champs de nature sans exiger la définition entière', () => {
@@ -139,7 +152,7 @@ describe('types des gardes', () => {
 
   it('ne laissent pas le type de départ inchangé', () => {
     expectTypeOf(
-      isIndicateurPerso<IndicateurDefinition>
-    ).guards.not.toEqualTypeOf<IndicateurDefinition>();
+      isIndicateurPerso<IndicateurCandidate>
+    ).guards.not.toEqualTypeOf<IndicateurCandidate>();
   });
 });

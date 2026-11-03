@@ -1,4 +1,5 @@
 import {
+  indicateurResumeSchema,
   indicateurValeurGroupeeSchema,
   indicateurValeurSchemaCreate,
 } from './indicateur-valeur.schema';
@@ -40,5 +41,26 @@ describe('indicateur valeur periodicite', () => {
         periodicite: 'hebdomadaire',
       }).success
     ).toBe(false);
+  });
+});
+
+describe("résumé d'indicateur", () => {
+  it('exige la périodicité des observations', () => {
+    const resume = {
+      id: 1,
+      identifiantReferentiel: 'test_periodicite',
+      titre: 'Indicateur mensuel',
+      titreLong: null,
+      description: null,
+      unite: 'kWh',
+      periodicite: 'mensuelle',
+      borneMin: null,
+      borneMax: null,
+    };
+    expect(indicateurResumeSchema.parse(resume)).toEqual(resume);
+    const { periodicite: _periodicite, ...withoutPeriodicite } = resume;
+    expect(indicateurResumeSchema.safeParse(withoutPeriodicite).success).toBe(
+      false
+    );
   });
 });

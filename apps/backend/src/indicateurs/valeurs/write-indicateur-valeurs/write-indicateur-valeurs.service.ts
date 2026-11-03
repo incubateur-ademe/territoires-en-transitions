@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
-  IndicateurDefinition,
+  IndicateurCommon,
   IndicateurPeriodicite,
   IndicateurPeriodiciteEnum,
   IndicateurPeriodes,
@@ -185,7 +185,7 @@ export class WriteIndicateurValeursService {
     );
   }
   private assertPeriodiciteAllowed(
-    definition: Pick<IndicateurDefinition, 'periodicite'>,
+    definition: Pick<IndicateurCommon, 'periodicite'>,
     periodicite: IndicateurPeriodicite
   ) {
     if (definition.periodicite !== periodicite) {
@@ -196,7 +196,7 @@ export class WriteIndicateurValeursService {
   }
   private getCanonicalDateValeur(
     dateValeur: string,
-    definition: Pick<IndicateurDefinition, 'id' | 'periodicite'>
+    definition: Pick<IndicateurCommon, 'id' | 'periodicite'>
   ): string {
     try {
       // The annual API accepts any date in the year; storage uses its first day.

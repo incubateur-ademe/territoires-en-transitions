@@ -1,6 +1,6 @@
 import {
-  IndicateurDefinition,
   IndicateurPeriodiciteEnum,
+  IndicateurPredefini,
   IndicateurValeur,
 } from '@tet/domain/indicateurs';
 import { IndicateurTableRow } from '../types';
@@ -27,7 +27,7 @@ const pollutants = ['NOx', 'PM10', 'PM2,5', 'COVNM', 'SO2', 'NH3'];
 const fakeIndicateurDefinition = (
   id: number,
   titre: string
-): IndicateurDefinition => ({
+): IndicateurPredefini => ({
   id,
   version: '1.0.0',
   groupementId: null,

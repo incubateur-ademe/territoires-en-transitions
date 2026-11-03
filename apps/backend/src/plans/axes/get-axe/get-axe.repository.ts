@@ -8,7 +8,7 @@ import { eq, sql } from 'drizzle-orm';
 import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.table';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
-import { Indicateur } from './get-axe.output';
+import { AxeIndicateur } from './get-axe.output';
 
 type AxeDbRowFromPlanActionChemin = {
   id: number;
@@ -166,7 +166,7 @@ export class GetAxeRepository {
   async getAxeIndicateurs(
     axeId: number,
     tx?: Transaction
-  ): Promise<Result<Indicateur[], GetAxeError>> {
+  ): Promise<Result<AxeIndicateur[], GetAxeError>> {
     try {
       const indicateurs = await (tx || this.databaseService.db)
         .select({

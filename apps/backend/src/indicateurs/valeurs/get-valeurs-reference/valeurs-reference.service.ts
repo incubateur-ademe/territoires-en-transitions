@@ -6,7 +6,7 @@ import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
 } from '@tet/domain/collectivites';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import { Indicateur } from '@tet/domain/indicateurs';
 import { inArray } from 'drizzle-orm';
 import { groupBy, isNil } from 'es-toolkit';
 import PersonnalisationsExpressionService, {
@@ -120,7 +120,7 @@ export default class ValeursReferenceService {
   async getValeursReferenceForDefinition(options: {
     collectiviteId: number;
     definition: Pick<
-      IndicateurDefinition,
+      Indicateur,
       | 'id'
       | 'identifiantReferentiel'
       | 'exprCible'
@@ -173,7 +173,7 @@ export default class ValeursReferenceService {
 
   private getValeursReferenceIndicateur(
     definition: Pick<
-      IndicateurDefinition,
+      Indicateur,
       | 'id'
       | 'identifiantReferentiel'
       | 'exprCible'
