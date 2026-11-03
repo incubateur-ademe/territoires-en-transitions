@@ -10,6 +10,12 @@ notion: https://app.notion.com/p/accelerateur-transition-ecologique-ademe/lectri
 
 # Suivi des indicateurs Électrification
 
+Le volet d'initialisation du plan décrit ci-dessous est dépassé par le cadrage
+du 3 novembre 2026 : import de l'annexe 3 et plan librement modifiable.
+L'[ADR 0022 proposé](../../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
+décrit son remplacement et les arbitrages encore ouverts. Les autres lots
+ne sont pas révisés par cet ADR.
+
 Plan actualisé à partir du [cadrage Notion](https://app.notion.com/p/accelerateur-transition-ecologique-ademe/lectrification-indicateurs-3c76523d57d78013aa2ae3785cf09f1f),
 notamment des ateliers des 8 et 10 septembre, relu le 24 septembre 2026.
 
