@@ -27,7 +27,7 @@ export class CrispTetService {
   ) {
     this.crispClient = new Crisp();
     this.crispClient.authenticateTier(
-      'plugin',
+      'website',
       configurationService.get('CRISP_TOKEN_IDENTIFIER'),
       configurationService.get('CRISP_TOKEN_KEY')
     );

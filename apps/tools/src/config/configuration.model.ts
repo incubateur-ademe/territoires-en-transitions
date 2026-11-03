@@ -5,11 +5,13 @@ export const toolsAutomationApiConfigurationSchema = z
     CRISP_TOKEN_IDENTIFIER: z
       .string()
       .min(1)
-      .describe("Token identifier pour l'authentification à l'API Crisp"),
+      .describe(
+        'Identifiant du jeton API Crisp de niveau website (Crisp > Paramètres > API)'
+      ),
     CRISP_TOKEN_KEY: z
       .string()
       .min(1)
-      .describe("Token key pour l'authentification à l'API Crisp"),
+      .describe('Clé du jeton API Crisp de niveau website'),
     NOTION_TOKEN: z
       .string()
       .min(1)
