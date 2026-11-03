@@ -190,7 +190,7 @@ importers:
   .:
     dependencies:
       '@anthropic-ai/sdk':
-        specifier: ^1.3.0
+        specifier: 1.3.0
         version: 1.3.0(zod@4.1.12)
       '@blocknote/core':
         specifier: 0.37.0
