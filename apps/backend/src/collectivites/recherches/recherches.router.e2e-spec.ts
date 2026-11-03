@@ -5,13 +5,20 @@ import { servicesDeconcentresTypes } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import {
+  addAuditeurPermission,
+  createAudit,
+} from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addTestUser,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
@@ -278,5 +285,119 @@ describe('Test recherches collectivite', () => {
       inputWithCondition
     );
     expect(result.items.length).toEqual(0);
+  });
+
+  /**
+   * Les contacts (nom, e-mail, téléphone) sont réservés aux utilisateurs
+   * vérifiés et membres actifs d'au moins une collectivité.
+   */
+  describe('contacts', () => {
+    const contactsOf = async (
+      user: AuthenticatedUser,
+      collectiviteId: number,
+      nom: string
+    ) => {
+      const caller = router.createCaller({ user });
+      const result = await caller.collectivites.recherches.collectivites({
+        ...input,
+        nom,
+        nbCards: 50,
+      });
+      return result.items.find((item) => item.collectiviteId === collectiviteId)
+        ?.contacts;
+    };
+
+    const setupCibleEtLecteur = async (lecteur: {
+      membre: boolean;
+      verified: boolean;
+    }) => {
+      const nom = `Contacts test recherche ${crypto.randomUUID()}`;
+      const cible = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+        collectivite: { nom },
+      });
+      onTestFinished(() => cible.cleanup());
+
+      const lecteurSetup = lecteur.membre
+        ? await addTestCollectiviteAndUser(db, {
+            user: {
+              role: CollectiviteRole.LECTURE,
+              verified: lecteur.verified,
+            },
+          })
+        : await addTestUser(db, {
+            collectiviteId: null,
+            role: CollectiviteRole.LECTURE,
+            verified: lecteur.verified,
+          });
+      onTestFinished(() => lecteurSetup.cleanup());
+
+      return {
+        nom,
+        collectiviteId: cible.collectivite.id,
+        lecteur: getAuthUserFromUserCredentials(lecteurSetup.user),
+      };
+    };
+
+    test('visibles pour un membre vérifié', async () => {
+      const { nom, collectiviteId, lecteur } = await setupCibleEtLecteur({
+        membre: true,
+        verified: true,
+      });
+      expect(await contactsOf(lecteur, collectiviteId, nom)).toHaveLength(1);
+    });
+
+    test("masqués pour un utilisateur vérifié membre d'aucune collectivité", async () => {
+      const { nom, collectiviteId, lecteur } = await setupCibleEtLecteur({
+        membre: false,
+        verified: true,
+      });
+      expect(await contactsOf(lecteur, collectiviteId, nom)).toEqual([]);
+    });
+
+    test("masqués pour un auditeur vérifié membre d'aucune collectivité", async () => {
+      const { nom, collectiviteId, lecteur } = await setupCibleEtLecteur({
+        membre: false,
+        verified: true,
+      });
+      const { audit, cleanup: cleanupAudit } = await createAudit({
+        databaseService: db,
+        collectiviteId,
+        referentielId: 'cae',
+      });
+      const { cleanup: cleanupAuditeur } = await addAuditeurPermission({
+        databaseService: db,
+        auditId: audit.id,
+        userId: lecteur.id,
+      });
+      onTestFinished(async () => {
+        await cleanupAuditeur();
+        await cleanupAudit();
+      });
+
+      expect(await contactsOf(lecteur, collectiviteId, nom)).toEqual([]);
+    });
+
+    test("visibles pour le support même membre d'aucune collectivité", async () => {
+      const { nom, collectiviteId, lecteur } = await setupCibleEtLecteur({
+        membre: false,
+        verified: true,
+      });
+      const { cleanup } = await addUserRoleSupport({
+        databaseService: db,
+        userId: lecteur.id,
+      });
+      onTestFinished(cleanup);
+
+      expect(await contactsOf(lecteur, collectiviteId, nom)).toHaveLength(1);
+    });
+
+    test('masqués pour un membre non vérifié', async () => {
+      const { nom, collectiviteId, lecteur } = await setupCibleEtLecteur({
+        membre: true,
+        verified: false,
+      });
+      expect(await contactsOf(lecteur, collectiviteId, nom)).toEqual([]);
+    });
   });
 });

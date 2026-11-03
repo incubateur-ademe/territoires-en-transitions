@@ -19,7 +19,9 @@ import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
+import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
@@ -28,7 +30,7 @@ import {
 } from '@tet/domain/collectivites';
 import { navigablePlanStatuses } from '@tet/domain/plans';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
-import { CollectiviteRole } from '@tet/domain/users';
+import { CollectiviteRole, hasRole, PlatformRole } from '@tet/domain/users';
 import { getTableName, SQL, sql } from 'drizzle-orm';
 import { membreTable } from '../membres/membre.table';
 
@@ -57,7 +59,54 @@ type Tab = (typeof tabEnum)[keyof typeof tabEnum];
 export default class RecherchesService {
   private readonly logger = new Logger(RecherchesService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly getUserRolesAndPermissions: GetUserRolesAndPermissionsService
+  ) {}
+
+  /**
+   * Les contacts (nom, e-mail, téléphone) sont réservés aux utilisateurs
+   * vérifiés et membres actifs d'au moins une collectivité, ainsi qu'au
+   * support, aux super-admins et à l'ADEME. Les entrées sans rôle (auditeur
+   * seulement) ne valent pas appartenance.
+   */
+  private async canSeeContacts(user: AuthenticatedUser): Promise<boolean> {
+    const result =
+      await this.getUserRolesAndPermissions.getUserRolesAndPermissions({
+        userId: user.id,
+      });
+    if (!result.success) {
+      return false;
+    }
+    const roles = result.data;
+    const hasPlatformAccess = [
+      PlatformRole.SUPPORT,
+      PlatformRole.SUPER_ADMIN,
+      PlatformRole.ADEME,
+    ].some((role) => hasRole(roles, role));
+    return (
+      hasPlatformAccess ||
+      (hasRole(roles, PlatformRole.VERIFIED) &&
+        roles.collectivites.some((c) => c.role !== null))
+    );
+  }
+
+  private async withContactsFor<T extends { contacts: unknown[] }>(
+    user: AuthenticatedUser,
+    pagePromise: Promise<{ count: number; items: T[] }>
+  ): Promise<{ count: number; items: T[] }> {
+    const [page, canSeeContacts] = await Promise.all([
+      pagePromise,
+      this.canSeeContacts(user),
+    ]);
+    if (canSeeContacts) {
+      return page;
+    }
+    return {
+      ...page,
+      items: page.items.map((item) => ({ ...item, contacts: [] })),
+    };
+  }
 
   // SÉCURITÉ : les fragments passés à `sql.raw(...)` ne contiennent que des
   // constantes du code (noms de tables et de colonnes, enums). Toute valeur
@@ -69,7 +118,8 @@ export default class RecherchesService {
    * @param filters
    */
   async collectivites(
-    filters: FiltersRequest
+    filters: FiltersRequest,
+    { user }: { user: AuthenticatedUser }
   ): Promise<{ count: number; items: RecherchesCollectivite[] }> {
     // Create the query
     const orderBy = this.getOrderBy(filters, tabEnum.Collectivite);
@@ -104,7 +154,10 @@ export default class RecherchesService {
     ${this.getPageQuery(filters, orderBy)}
     ${sql.raw(select)}`;
 
-    return this.executePageQuery<RecherchesCollectivite>(query);
+    return this.withContactsFor(
+      user,
+      this.executePageQuery<RecherchesCollectivite>(query)
+    );
   }
 
   /**
@@ -112,7 +165,8 @@ export default class RecherchesService {
    * @param filters
    */
   async referentiels(
-    filters: FiltersRequest
+    filters: FiltersRequest,
+    { user }: { user: AuthenticatedUser }
   ): Promise<{ count: number; items: RecherchesReferentiel[] }> {
     // Create the query
     const orderBy = this.getOrderBy(filters, tabEnum.Referentiel);
@@ -136,7 +190,10 @@ export default class RecherchesService {
     ${this.getPageQuery(filters, orderBy)}
     ${sql.raw(select)}`;
 
-    return this.executePageQuery<RecherchesReferentiel>(query);
+    return this.withContactsFor(
+      user,
+      this.executePageQuery<RecherchesReferentiel>(query)
+    );
   }
 
   /**
@@ -144,7 +201,8 @@ export default class RecherchesService {
    * @param filters
    */
   async plans(
-    filters: FiltersRequest
+    filters: FiltersRequest,
+    { user }: { user: AuthenticatedUser }
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
     const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.EDITION}')`;
@@ -164,13 +222,14 @@ export default class RecherchesService {
     ${sql.raw(this.getContactsQuery(whereConditionContacts, true))}
     ${sql.raw(select)}`;
 
-    // Execute the query
-    const result = await this.databaseService.db.execute(query);
-    const allRows = result.rows.map((row) => ({
-      ...row,
-    })) as RecherchesPlan[];
+    const page = this.databaseService.db.execute(query).then((result) => {
+      const allRows = result.rows.map((row) => ({
+        ...row,
+      })) as RecherchesPlan[];
+      return this.paginate(allRows, filters.nbCards, filters.page);
+    });
 
-    return this.paginate(allRows, filters.nbCards, filters.page);
+    return this.withContactsFor(user, page);
   }
 
   /**
@@ -296,7 +355,9 @@ export default class RecherchesService {
    */
   private getCollectivitesQuery(filters: FiltersRequest): SQL {
     // Create the query
-    const query = sql.raw(`SELECT c.${collectiviteTable.id.name}  AS collectiviteId,
+    const query = sql.raw(`SELECT c.${
+      collectiviteTable.id.name
+    }  AS collectiviteId,
                         c.${collectiviteTable.nom.name} AS collectiviteNom,
                         CASE
                           WHEN c.${collectiviteTable.type.name} = '${
@@ -524,7 +585,9 @@ export default class RecherchesService {
     // Condition plan type
     if (filters.typesPlan.length > 0) {
       query.append(sql`
-      AND a.${sql.raw(axeTable.typeId.name)} IN (${inList(filters.typesPlan)})`);
+      AND a.${sql.raw(axeTable.typeId.name)} IN (${inList(
+        filters.typesPlan
+      )})`);
     }
 
     // Return the query
