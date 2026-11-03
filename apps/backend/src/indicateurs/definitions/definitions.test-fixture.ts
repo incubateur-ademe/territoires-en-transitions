@@ -3,14 +3,14 @@ import { inferRouterInputs } from '@trpc/server';
 import { omit, pick } from 'es-toolkit';
 import { onTestFinished } from 'vitest';
 import { UpsertValeurIndicateur } from '../valeurs/write-indicateur-valeurs/upsert-valeur-indicateur.request';
-import { UpdateIndicateurDefinitionInput } from './mutate-definition/mutate-definition.input';
+import { UpdateIndicateurInput } from './mutate-indicateur/mutate-indicateur.input';
 
-type CreateIndicateurDefinitionInput =
+type CreateIndicateurRouterInput =
   inferRouterInputs<AppRouter>['indicateurs']['indicateurs']['create'];
 
-type AllowedInput = Pick<CreateIndicateurDefinitionInput, 'collectiviteId'> &
-  Partial<Omit<CreateIndicateurDefinitionInput, 'collectiviteId'>> &
-  UpdateIndicateurDefinitionInput['indicateurFields'] & {
+type AllowedInput = Pick<CreateIndicateurRouterInput, 'collectiviteId'> &
+  Partial<Omit<CreateIndicateurRouterInput, 'collectiviteId'>> &
+  UpdateIndicateurInput['indicateurFields'] & {
     valeurs?: Omit<UpsertValeurIndicateur, 'indicateurId' | 'collectiviteId'>[];
   };
 

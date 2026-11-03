@@ -1,6 +1,6 @@
 import { uniqBy } from 'es-toolkit';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
+import { UpdateIndicateurService } from '@tet/backend/indicateurs/definitions/mutate-indicateur/update-indicateur.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { success } from '@tet/backend/utils/result.type';
@@ -19,7 +19,7 @@ import {
   AuthUser,
   isAuthenticatedUser,
 } from '../../../users/models/auth.models';
-import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
 import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
@@ -92,9 +92,9 @@ export default class ManageIndicateurValeursService {
     private readonly permissionService: PermissionService,
     private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly listIndicateursService: ListIndicateursService,
-    private readonly updateIndicateurService: UpdateDefinitionService,
+    private readonly updateIndicateurService: UpdateIndicateurService,
     private readonly lockRepository: IndicateurValeurLockRepository,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository,
+    private readonly indicateurLockRepository: IndicateurLockRepository,
     private readonly transactionManager: TransactionManager,
     private readonly reader: ListIndicateurValeursService,
     private readonly writer: WriteIndicateurValeursService,
@@ -324,7 +324,7 @@ export default class ManageIndicateurValeursService {
           tx,
         })
       );
-      await this.updateIndicateurService.updateDefinitionModifiedFields(
+      await this.updateIndicateurService.updateIndicateurModifiedFields(
         { indicateurId, collectiviteId, user },
         tx
       );
@@ -354,7 +354,7 @@ export default class ManageIndicateurValeursService {
     );
 
     await this.executeTransaction(async (tx) => {
-      await this.definitionLockRepository.lockForValueWrite(tx);
+      await this.indicateurLockRepository.lockForValueWrite(tx);
 
       const existing = await this.repository.findUserValeur(
         { collectiviteId, indicateurId, id },
@@ -376,7 +376,7 @@ export default class ManageIndicateurValeursService {
         })
       );
 
-      await this.updateIndicateurService.updateDefinitionModifiedFields(
+      await this.updateIndicateurService.updateIndicateurModifiedFields(
         { indicateurId, collectiviteId, user },
         tx
       );
@@ -401,7 +401,7 @@ export default class ManageIndicateurValeursService {
     const deletedIds = await this.executeTransaction(async (tx) => {
       // Le trigger statement-level arrive trop tard pour imposer l'ordre
       // graphe -> table : PostgreSQL a déjà pris le verrou de table du DELETE.
-      await this.definitionLockRepository.lockForValueWrite(tx);
+      await this.indicateurLockRepository.lockForValueWrite(tx);
 
       const candidates = await this.repository.listValeursToDelete(options, tx);
       if (candidates.length === 0) return [];

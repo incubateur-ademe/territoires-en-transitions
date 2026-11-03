@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { MutateDefinitionRouter } from './definitions/mutate-definition/mutate-definition.router';
+import { MutateIndicateurRouter } from './definitions/mutate-indicateur/mutate-indicateur.router';
 import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
@@ -16,14 +16,14 @@ export class IndicateursRouter {
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly listIndicateursRouter: ListIndicateursRouter,
-    private readonly mutateDefinitionRouter: MutateDefinitionRouter,
+    private readonly mutateIndicateurRouter: MutateIndicateurRouter,
     private readonly indicateurVuesRouter: IndicateurVuesRouter
   ) {}
 
   router = this.trpc.router({
     indicateurs: this.trpc.mergeRouters(
       this.listIndicateursRouter.router,
-      this.mutateDefinitionRouter.router
+      this.mutateIndicateurRouter.router
     ),
 
     valeurs: this.indicateurValeursRouter.router,

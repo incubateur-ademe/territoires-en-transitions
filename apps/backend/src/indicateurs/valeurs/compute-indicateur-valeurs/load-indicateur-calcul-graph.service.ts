@@ -6,7 +6,7 @@ import {
   IndicateurPredefini,
   isIndicateurPredefini,
 } from '@tet/domain/indicateurs';
-import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
 import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import type { IndicateurFormula } from './calcul-indicateur.types';
 import IndicateurExpressionService from '../indicateur-expression.service';
@@ -24,7 +24,7 @@ type GraphResult = Result<CalculGraph, 'LOAD_CALCUL_GRAPH_FAILED'>;
 export class LoadIndicateurCalculGraphService {
   constructor(
     private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
-    private readonly locks: IndicateurDefinitionLockRepository,
+    private readonly locks: IndicateurLockRepository,
     private readonly expressions: IndicateurExpressionService
   ) {}
 
@@ -171,7 +171,7 @@ export class LoadIndicateurCalculGraphService {
         );
       return definition ? [definition] : [];
     });
-    const lockedDefinitions = await this.locks.lockDefinitions(
+    const lockedDefinitions = await this.locks.lockIndicateurs(
       [
         ...new Set([
           ...knownSources.map(({ id }) => id),

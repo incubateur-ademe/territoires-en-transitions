@@ -9,7 +9,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { isNil, partition, round } from 'es-toolkit';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
-import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
@@ -27,7 +27,7 @@ export class WriteIndicateurValeursService {
   constructor(
     private readonly repository: IndicateurValeursRepository,
     private readonly validationService: ValidateIndicateurValeursWriteService,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository,
+    private readonly indicateurLockRepository: IndicateurLockRepository,
     private readonly lockRepository: IndicateurValeurLockRepository
   ) {}
 
@@ -110,7 +110,7 @@ export class WriteIndicateurValeursService {
       async (): Promise<IndicateurValeur | undefined> => {
         const { collectiviteId, indicateurId } = data;
         const [lockedDefinition] =
-          await this.definitionLockRepository.lockDefinitions(
+          await this.indicateurLockRepository.lockIndicateurs(
             [indicateurId],
             tx
           );

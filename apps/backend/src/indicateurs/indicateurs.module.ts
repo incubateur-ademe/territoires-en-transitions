@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import CreateDefinitionService from '@tet/backend/indicateurs/definitions/mutate-definition/create-definition.service';
-import { MutateDefinitionRouter } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.router';
+import CreateIndicateurService from '@tet/backend/indicateurs/definitions/mutate-indicateur/create-indicateur.service';
+import { MutateIndicateurRouter } from '@tet/backend/indicateurs/definitions/mutate-indicateur/mutate-indicateur.router';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
 import { TrajectoireLeviersController } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.controller';
 import { TrajectoireLeviersRouter } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
@@ -16,14 +16,14 @@ import { TransactionModule } from '../utils/transaction/transaction.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
-import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from './definitions/indicateur-lock.repository';
 import { ListCollectiviteIndicateursRepository } from './definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { ListIndicateursPredefinisController } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.controller';
 import { ListIndicateursPredefinisRepository } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { ListIndicateursPredefinisService } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
-import { DeleteDefinitionService } from './definitions/mutate-definition/delete-definition.service';
-import { MutateDefinitionRepository } from './definitions/mutate-definition/mutate-definition.repository';
-import { UpdateDefinitionService } from './definitions/mutate-definition/update-definition.service';
+import { DeleteIndicateurService } from './definitions/mutate-indicateur/delete-indicateur.service';
+import { MutateIndicateurRepository } from './definitions/mutate-indicateur/mutate-indicateur.repository';
+import { UpdateIndicateurService } from './definitions/mutate-indicateur/update-indicateur.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
 import { ImportIndicateurDefinitionRepository } from './import-indicateurs/import-indicateur-definition.repository';
@@ -31,14 +31,14 @@ import { ImportIndicateurRelationsService } from './import-indicateurs/import-in
 import { UpsertIndicateurDefinitionsService } from './import-indicateurs/upsert-indicateur-definitions.service';
 import { ExportIndicateursController } from './indicateurs/export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './indicateurs/export-indicateurs/export-indicateurs.service';
-import { HandleDefinitionFichesRepository } from './indicateurs/handle-definition-fiches/handle-definition-fiches.repository';
-import { HandleDefinitionFichesService } from './indicateurs/handle-definition-fiches/handle-definition-fiches.service';
-import { HandleDefinitionPilotesRepository } from './indicateurs/handle-definition-pilotes/handle-definition-pilotes.repository';
-import { HandleDefinitionPilotesService } from './indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
-import { HandleDefinitionServicesRepository } from './indicateurs/handle-definition-services/handle-definition-services.repository';
-import { HandleDefinitionServicesService } from './indicateurs/handle-definition-services/handle-definition-services.service';
-import { HandleDefinitionThematiquesRepository } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.repository';
-import { HandleDefinitionThematiquesService } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
+import { UpsertIndicateurFichesRepository } from './indicateurs/upsert-indicateur-fiches/upsert-indicateur-fiches.repository';
+import { UpsertIndicateurFichesService } from './indicateurs/upsert-indicateur-fiches/upsert-indicateur-fiches.service';
+import { UpsertIndicateurPilotesRepository } from './indicateurs/upsert-indicateur-pilotes/upsert-indicateur-pilotes.repository';
+import { UpsertIndicateurPilotesService } from './indicateurs/upsert-indicateur-pilotes/upsert-indicateur-pilotes.service';
+import { UpsertIndicateurServicesRepository } from './indicateurs/upsert-indicateur-services/upsert-indicateur-services.repository';
+import { UpsertIndicateurServicesService } from './indicateurs/upsert-indicateur-services/upsert-indicateur-services.service';
+import { UpsertIndicateurThematiquesRepository } from './indicateurs/upsert-indicateur-thematiques/upsert-indicateur-thematiques.repository';
+import { UpsertIndicateurThematiquesService } from './indicateurs/upsert-indicateur-thematiques/upsert-indicateur-thematiques.service';
 import { ListIndicateursController } from './indicateurs/list-indicateurs/list-indicateurs.controller';
 import { ListIndicateursRepository } from './indicateurs/list-indicateurs/list-indicateurs.repository';
 import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
@@ -81,22 +81,22 @@ const DEFINITIONS_PROVIDERS = [
   ListIndicateursPredefinisRepository,
   ListIndicateursPredefinisService,
   ListCollectiviteIndicateursRepository,
-  IndicateurDefinitionLockRepository,
+  IndicateurLockRepository,
 
-  CreateDefinitionService,
-  UpdateDefinitionService,
-  DeleteDefinitionService,
-  MutateDefinitionRepository,
-  MutateDefinitionRouter,
+  CreateIndicateurService,
+  UpdateIndicateurService,
+  DeleteIndicateurService,
+  MutateIndicateurRepository,
+  MutateIndicateurRouter,
 
-  HandleDefinitionPilotesService,
-  HandleDefinitionPilotesRepository,
-  HandleDefinitionServicesService,
-  HandleDefinitionServicesRepository,
-  HandleDefinitionThematiquesService,
-  HandleDefinitionThematiquesRepository,
-  HandleDefinitionFichesService,
-  HandleDefinitionFichesRepository,
+  UpsertIndicateurPilotesService,
+  UpsertIndicateurPilotesRepository,
+  UpsertIndicateurServicesService,
+  UpsertIndicateurServicesRepository,
+  UpsertIndicateurThematiquesService,
+  UpsertIndicateurThematiquesRepository,
+  UpsertIndicateurFichesService,
+  UpsertIndicateurFichesRepository,
 ];
 
 @Module({
@@ -158,7 +158,7 @@ const DEFINITIONS_PROVIDERS = [
     ListIndicateursPredefinisService,
     ListIndicateursPredefinisRepository,
     ListIndicateursService,
-    UpdateDefinitionService,
+    UpdateIndicateurService,
 
     IndicateurExpressionService,
     ManageIndicateurValeursService,
