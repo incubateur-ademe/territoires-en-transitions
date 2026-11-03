@@ -56,7 +56,7 @@ describe('permissionsByRole', () => {
     ]);
   });
 
-  it("n'ouvre l'aide à la priorisation qu'au super admin, à l'ADEME, à l'éditeur et à l'admin de la collectivité", () => {
+  it("n'ouvre l'aide à la priorisation qu'au super admin, à l'éditeur et à l'admin de la collectivité", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>
         permissions.includes('collectivites.priorisation.read')
@@ -65,7 +65,6 @@ describe('permissionsByRole', () => {
 
     expect(rolesGranting).toEqual([
       PlatformRole.SUPER_ADMIN,
-      PlatformRole.ADEME,
       CollectiviteRole.EDITION,
       CollectiviteRole.ADMIN,
     ]);

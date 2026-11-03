@@ -289,17 +289,11 @@ describe('aide-a-la-priorisation-dans-la-nav', () => {
     ).toEqual([]);
   });
 
-  it.each([
-    { label: 'un super admin', roles: superAdminRoles },
-    {
-      label: 'un utilisateur ADEME',
-      roles: [...connectedRoles, PlatformRole.ADEME],
-    },
-  ])("$label a l'onglet sur un EPCI dont il n'est pas membre", ({ roles }) => {
+  it("un super admin a l'onglet sur un EPCI dont il n'est pas membre", () => {
     expect(
       toPriorisationHrefs(
         toStartItemsOnEpciOfNonMember({
-          roles,
+          roles: superAdminRoles,
           collectiviteAccesRestreint: false,
         })
       )
@@ -317,12 +311,12 @@ describe('aide-a-la-priorisation-dans-la-nav', () => {
     ).toEqual([priorisationHref]);
   });
 
-  it("un utilisateur ADEME n'a pas l'onglet sur un EPCI en accès restreint dont il n'est pas membre", () => {
+  it("un utilisateur ADEME n'a pas l'onglet sur un EPCI dont il n'est pas membre", () => {
     expect(
       toPriorisationHrefs(
         toStartItemsOnEpciOfNonMember({
           roles: [...connectedRoles, PlatformRole.ADEME],
-          collectiviteAccesRestreint: true,
+          collectiviteAccesRestreint: false,
         })
       )
     ).toEqual([]);
