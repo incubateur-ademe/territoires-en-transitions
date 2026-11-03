@@ -2,14 +2,14 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type { SQL } from 'drizzle-orm';
 import { PgDialect } from 'drizzle-orm/pg-core';
-import { ListPlatformDefinitionsRepository } from './list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from './list-indicateurs-predefinis.repository';
 
 const makeRepository = () => {
   const where = vi.fn().mockResolvedValue([]);
   const from = vi.fn(() => ({ where }));
   const select = vi.fn(() => ({ from }));
   const baseSelect = vi.fn();
-  const repository = new ListPlatformDefinitionsRepository({
+  const repository = new ListIndicateursPredefinisRepository({
     db: { select: baseSelect },
   } as unknown as DatabaseService);
 
@@ -22,11 +22,11 @@ const makeRepository = () => {
   };
 };
 
-describe('ListPlatformDefinitionsRepository', () => {
+describe('ListIndicateursPredefinisRepository', () => {
   it('utilise la transaction fournie et borne les définitions à la plateforme', async () => {
     const { repository, tx, select, where, baseSelect } = makeRepository();
 
-    await repository.listPlatformDefinitions(
+    await repository.listIndicateursPredefinis(
       { identifiantsReferentiel: ['CAE_1.A'], indicateurIds: [7] },
       tx
     );
@@ -43,7 +43,7 @@ describe('ListPlatformDefinitionsRepository', () => {
   it('recherche les formules sans tenir compte de la casse et exclut les définitions locales', async () => {
     const { repository, tx, where } = makeRepository();
 
-    await repository.listPlatformDefinitionsHavingComputedValue(
+    await repository.listIndicateursPredefinisHavingComputedValue(
       { identifiantsReferentiel: ['CAE_1.A'] },
       tx
     );

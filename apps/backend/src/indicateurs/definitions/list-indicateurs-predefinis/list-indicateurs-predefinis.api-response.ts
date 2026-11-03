@@ -2,7 +2,7 @@ import { tagSchema } from '@tet/domain/collectivites';
 import { indicateurPredefiniSchema } from '@tet/domain/indicateurs';
 import { z } from 'zod/mini';
 
-const platformDefinitionSchema = z.pick(indicateurPredefiniSchema, {
+const indicateurPredefiniApiSchema = z.pick(indicateurPredefiniSchema, {
   id: true,
   version: true,
   identifiantReferentiel: true,
@@ -23,8 +23,8 @@ const platformDefinitionSchema = z.pick(indicateurPredefiniSchema, {
   libelleCibleSeuil: true,
 });
 
-const platformDefinitionAggregateSchema = z.object({
-  ...platformDefinitionSchema.shape,
+const indicateurPredefiniAggregateApiSchema = z.object({
+  ...indicateurPredefiniApiSchema.shape,
 
   categories: z.array(tagSchema),
   thematiques: z.array(tagSchema),
@@ -36,10 +36,10 @@ const platformDefinitionAggregateSchema = z.object({
   ),
 });
 
-export const listPlatformDefinitionsApiResponseSchema = z.array(
-  platformDefinitionAggregateSchema
+export const listIndicateursPredefinisApiResponseSchema = z.array(
+  indicateurPredefiniAggregateApiSchema
 );
 
-export type ListPlatformDefinitionsApiResponse = z.infer<
-  typeof listPlatformDefinitionsApiResponseSchema
+export type ListIndicateursPredefinisApiResponse = z.infer<
+  typeof listIndicateursPredefinisApiResponseSchema
 >;

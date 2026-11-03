@@ -2,20 +2,20 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type { SQL } from 'drizzle-orm';
 import { PgDialect } from 'drizzle-orm/pg-core';
-import { ListCollectiviteDefinitionsRepository } from './list-collectivite-definitions.repository';
+import { ListCollectiviteIndicateursRepository } from './list-collectivite-indicateurs.repository';
 
-describe('ListCollectiviteDefinitionsRepository', () => {
+describe('ListCollectiviteIndicateursRepository', () => {
   it('utilise la transaction fournie en conservant le périmètre de la collectivité', async () => {
     const where = vi.fn().mockResolvedValue([]);
     const from = vi.fn(() => ({ where }));
     const select = vi.fn(() => ({ from }));
     const baseSelect = vi.fn();
-    const repository = new ListCollectiviteDefinitionsRepository({
+    const repository = new ListCollectiviteIndicateursRepository({
       db: { select: baseSelect },
     } as unknown as DatabaseService);
     const tx = { select } as unknown as Transaction;
 
-    await repository.listCollectiviteDefinitions(
+    await repository.listCollectiviteIndicateurs(
       {
         collectiviteId: 42,
         identifiantsReferentiel: ['CAE_1.A'],

@@ -29,7 +29,7 @@ import { describe, expect, onTestFinished, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
-import { ListCollectiviteDefinitionsRepository } from '../list-collectivite-definitions/list-collectivite-definitions.repository';
+import { ListCollectiviteIndicateursRepository } from '../list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 import { UpdateDefinitionService } from './update-definition.service';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
@@ -913,8 +913,8 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       'filtre la lecture des définitions partagées, membre : %s',
       async (isMember) => {
         const h = await createSharedDefinition({ isMember });
-        const repository = app.get(ListCollectiviteDefinitionsRepository);
-        const definitions = await repository.listCollectiviteDefinitions({
+        const repository = app.get(ListCollectiviteIndicateursRepository);
+        const definitions = await repository.listCollectiviteIndicateurs({
           collectiviteId: collectivite.id,
           indicateurIds: [h.definition.id],
         });

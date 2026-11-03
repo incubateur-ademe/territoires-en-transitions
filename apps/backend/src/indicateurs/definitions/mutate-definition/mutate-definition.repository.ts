@@ -5,7 +5,7 @@ import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type {
-  IndicateurCommon,
+  Indicateur,
   IndicateurNatureFields,
   IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
@@ -43,7 +43,7 @@ type UpdateCollectiviteFields = PersonalizedDefinitionKey &
   }>;
 
 type UpdatePersonalizedDefinitionFields = PersonalizedDefinitionKey &
-  Partial<Pick<IndicateurCommon, 'titre' | 'unite'>>;
+  Partial<Pick<Indicateur, 'titre' | 'unite'>>;
 
 @Injectable()
 export class MutateDefinitionRepository {

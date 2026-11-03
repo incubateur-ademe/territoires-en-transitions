@@ -1,11 +1,11 @@
 import { paginationNoSortSchemaOptionalLimit } from '@tet/domain/utils';
 import { z } from 'zod';
-import { listPlatformDefinitionsApiRequestSchema } from '../../definitions/list-platform-definitions/list-platform-definitions.api-request';
+import { listIndicateursPredefinisApiRequestSchema } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.api-request';
 
 export const listIndicateursApiRequestSchema = z.object({
   ...paginationNoSortSchemaOptionalLimit.shape,
 
-  ...listPlatformDefinitionsApiRequestSchema.shape,
+  ...listIndicateursPredefinisApiRequestSchema.shape,
 
   collectiviteId: z.coerce
     .number()

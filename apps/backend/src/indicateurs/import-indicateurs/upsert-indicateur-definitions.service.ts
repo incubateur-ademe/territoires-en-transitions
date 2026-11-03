@@ -9,7 +9,7 @@ import { omit } from 'es-toolkit';
 import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 import { hasIndicateurFormulaChanged } from '../definitions/indicateur-formula.rules';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import type { ImportIndicateurDefinitionType } from './import-indicateur-definition.dto';
 import type { ImportIndicateurDefinitionError } from './import-indicateur-definition.errors';
@@ -31,7 +31,7 @@ import {
 export class UpsertIndicateurDefinitionsService {
   constructor(
     private readonly repository: ImportIndicateurDefinitionRepository,
-    private readonly definitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly transactionManager: TransactionManager,
     private readonly locks: IndicateurDefinitionLockRepository,
     private readonly relations: ImportIndicateurRelationsService,
@@ -67,10 +67,11 @@ export class UpsertIndicateurDefinitionsService {
       const identifiantsReferentiel = imported.map(
         (definition) => definition.identifiantReferentiel
       );
-      const existing = await this.definitionsRepository.listPlatformDefinitions(
-        { identifiantsReferentiel },
-        context.tx
-      );
+      const existing =
+        await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
+          { identifiantsReferentiel },
+          context.tx
+        );
       const expected = new Map(
         existing.map((definition) => [
           definition.identifiantReferentiel,
@@ -152,7 +153,10 @@ export class UpsertIndicateurDefinitionsService {
           if (!relations.success) return relations;
 
           const definitions =
-            await this.definitionsRepository.listPlatformDefinitions({}, tx);
+            await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
+              {},
+              tx
+            );
           const changedIds = new Set(
             created
               .filter((definition) =>

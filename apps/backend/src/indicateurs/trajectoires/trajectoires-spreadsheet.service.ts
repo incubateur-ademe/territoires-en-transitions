@@ -19,7 +19,7 @@ import slugify from 'slugify';
 import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import {
   CalculTrajectoireRequestType,
@@ -38,7 +38,7 @@ export default class TrajectoiresSpreadsheetService {
 
   constructor(
     private readonly configService: ConfigurationService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly valeursService: ManageIndicateurValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
@@ -252,7 +252,7 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const indicateurResultatDefinitions =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+      await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
             (identifiant) => identifiant !== ''
@@ -613,7 +613,7 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const indicateurDefinitions =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+      await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService
             .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,

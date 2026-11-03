@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const listPlatformDefinitionsApiRequestSchema = z.object({
+export const listIndicateursPredefinisApiRequestSchema = z.object({
   indicateurIds: z
     .string()
     .transform((value) => value.split(',').map(Number))
@@ -15,6 +15,6 @@ export const listPlatformDefinitionsApiRequestSchema = z.object({
     .describe('Identifiants du référentiel (séparés par des virgules)'),
 });
 
-export type ListPlatformDefinitionsApiRequest = z.infer<
-  typeof listPlatformDefinitionsApiRequestSchema
+export type ListIndicateursPredefinisApiRequest = z.infer<
+  typeof listIndicateursPredefinisApiRequestSchema
 >;

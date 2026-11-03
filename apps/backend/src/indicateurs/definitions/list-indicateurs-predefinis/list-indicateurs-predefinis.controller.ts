@@ -12,31 +12,32 @@ import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
 import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import { createZodDto } from 'nestjs-zod';
-import { listPlatformDefinitionsApiRequestSchema } from './list-platform-definitions.api-request';
-import { listPlatformDefinitionsApiResponseSchema } from './list-platform-definitions.api-response';
-import { ListPlatformDefinitionsService } from './list-platform-definitions.service';
+import { listIndicateursPredefinisApiRequestSchema } from './list-indicateurs-predefinis.api-request';
+import { listIndicateursPredefinisApiResponseSchema } from './list-indicateurs-predefinis.api-response';
+import { ListIndicateursPredefinisService } from './list-indicateurs-predefinis.service';
 
 class ListPlatformDefinitionsApiRequestClass extends createZodDto(
-  listPlatformDefinitionsApiRequestSchema
+  listIndicateursPredefinisApiRequestSchema
 ) {}
 
 class ListPlatformDefinitionsApiResponseClass extends createZodDto(
-  listPlatformDefinitionsApiResponseSchema
+  listIndicateursPredefinisApiResponseSchema
 ) {}
 
 @ApiTags('Indicateurs')
 @ApiBearerAuth()
 @Controller()
-export class ListPlatformDefinitionsController {
+export class ListIndicateursPredefinisController {
   private readonly getResultDataOrThrowError = createControllerErrorHandler();
   constructor(
-    private readonly listPlatformDefinitionsService: ListPlatformDefinitionsService
+    private readonly listIndicateursPredefinisService: ListIndicateursPredefinisService
   ) {}
 
   @AllowAnonymousAccess()
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
   @Get('indicateurs/definitions')
   @ApiOperation({
+    operationId: 'ListPlatformDefinitionsController_listDefinitions',
     summary:
       'Récupération des définitions des indicateurs prédéfinis de la plateforme.',
     description:
@@ -45,19 +46,19 @@ export class ListPlatformDefinitionsController {
   @ApiCreatedResponse({
     type: ListPlatformDefinitionsApiResponseClass,
   })
-  async listDefinitions(
+  async listIndicateursPredefinis(
     @Query() input: ListPlatformDefinitionsApiRequestClass,
     @TokenInfo() user: AuthUser | null
   ) {
     const result =
-      await this.listPlatformDefinitionsService.listPlatformDefinitionAggregates(
+      await this.listIndicateursPredefinisService.listIndicateursPredefinisAggregates(
         input,
         { user }
       );
 
     // Parsing will strip keys that are not in the schema
     // ensuring consistent API response format
-    const parsedResult = listPlatformDefinitionsApiResponseSchema.parse(
+    const parsedResult = listIndicateursPredefinisApiResponseSchema.parse(
       this.getResultDataOrThrowError(result)
     );
 

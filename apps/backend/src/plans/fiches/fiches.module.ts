@@ -16,7 +16,7 @@ import { GetActionModule } from '@tet/backend/referentiels/get-action/get-action
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
-import { IndicateurDefinitionsModule } from '../../indicateurs/indicateur-definitions/indicateur-definitions.module';
+import { IndicateurModule } from '../../indicateurs/indicateur/indicateur.module';
 import { ActionDefinitionsModule } from '../../referentiels/action-definitions/action-definitions.module';
 import { AxeModule } from '../axes/axe.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
@@ -76,7 +76,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     GetActionModule,
     AxeModule,
     ActionDefinitionsModule,
-    IndicateurDefinitionsModule,
+    IndicateurModule,
   ],
   controllers: [ExportPlanController],
   providers: [

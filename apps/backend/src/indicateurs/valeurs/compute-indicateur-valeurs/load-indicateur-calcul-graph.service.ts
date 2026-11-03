@@ -7,7 +7,7 @@ import {
   isIndicateurPredefini,
 } from '@tet/domain/indicateurs';
 import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
-import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import type { IndicateurFormula } from './calcul-indicateur.types';
 import IndicateurExpressionService from '../indicateur-expression.service';
 
@@ -23,7 +23,7 @@ type GraphResult = Result<CalculGraph, 'LOAD_CALCUL_GRAPH_FAILED'>;
 @Injectable()
 export class LoadIndicateurCalculGraphService {
   constructor(
-    private readonly definitions: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly locks: IndicateurDefinitionLockRepository,
     private readonly expressions: IndicateurExpressionService
   ) {}
@@ -39,12 +39,12 @@ export class LoadIndicateurCalculGraphService {
     };
   }
 
-  async loadAllComputedDefinitions(): Promise<
+  async loadAllComputedIndicateurs(): Promise<
     Result<IndicateurPredefini[], 'LOAD_CALCUL_GRAPH_FAILED'>
   > {
     try {
       return success(
-        await this.definitions.listPlatformDefinitionsHavingComputedValue()
+        await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue()
       );
     } catch (error) {
       return failure(
@@ -61,10 +61,11 @@ export class LoadIndicateurCalculGraphService {
     try {
       // The graph lock precedes every read, including source identities.
       await this.locks.lockForValueWrite(tx);
-      const sourceDefinitions = await this.definitions.listPlatformDefinitions(
-        { indicateurIds },
-        tx
-      );
+      const sourceDefinitions =
+        await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
+          { indicateurIds },
+          tx
+        );
       const sourceIdentifiants = sourceDefinitions.flatMap((definition) =>
         definition.identifiantReferentiel
           ? [definition.identifiantReferentiel]
@@ -77,7 +78,7 @@ export class LoadIndicateurCalculGraphService {
           targetDefinitions: [],
         });
       const candidates =
-        await this.definitions.listPlatformDefinitionsHavingComputedValue(
+        await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
           { identifiantsReferentiel: sourceIdentifiants },
           tx
         );
@@ -116,10 +117,11 @@ export class LoadIndicateurCalculGraphService {
           sourceDefinitions: [],
           targetDefinitions: [],
         });
-      const candidates = await this.definitions.listPlatformDefinitions(
-        { indicateurIds },
-        tx
-      );
+      const candidates =
+        await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
+          { indicateurIds },
+          tx
+        );
       const graph = await this.lockGraph(candidates, [], indicateurIds, tx);
       this.assertCompatibleSources(graph);
       return success(graph);
@@ -156,7 +158,7 @@ export class LoadIndicateurCalculGraphService {
       (identifiant) => !knownByIdentifiant.has(identifiant)
     );
     const missingDefinitions = missingIdentifiants.length
-      ? await this.definitions.listPlatformDefinitions(
+      ? await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
           { identifiantsReferentiel: missingIdentifiants },
           tx
         )

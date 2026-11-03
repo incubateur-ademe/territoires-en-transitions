@@ -14,7 +14,7 @@ import PersonnalisationsExpressionService, {
 } from '../../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../../collectivites/personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../../utils/database/database.service';
-import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurObjectifTable } from '../../shared/models/indicateur-objectif.table';
 import { ValeursReferenceDTO } from './valeurs-reference.dto';
 
@@ -25,7 +25,7 @@ export default class ValeursReferenceService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly collectivitesService: CollectivitesService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService
@@ -102,7 +102,7 @@ export default class ValeursReferenceService {
 
     // les définitions des indicateurs
     const definitions =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+      await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         indicateurIds,
       });
 
