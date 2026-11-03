@@ -3,6 +3,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { BuildMcpServerService } from '@tet/backend/utils/mcp/build-mcp-server.service';
 import {
   MCP_ANALYSE_STATS_PROMPT_NAME,
+  MCP_APP_PROMPT_NAME,
   MCP_ESQUISSE_PROMPT_NAME,
   MCP_SUPPORT_PROMPT_NAME,
 } from '@tet/backend/utils/mcp/mcp-docs.service';
@@ -28,7 +29,8 @@ export const computeAssistantVersions = async (
   user: AuthenticatedUser
 ): Promise<AssistantVersions> => {
   const session = await McpSession.open(
-    app.get(BuildMcpServerService).build(user)
+    // Outils interactifs compris : l'assistant de l'app les voit tous.
+    app.get(BuildMcpServerService).build(user, { interactive: true })
   );
   try {
     const prompts = [
@@ -37,6 +39,7 @@ export const computeAssistantVersions = async (
         sujet: '{sujet}',
       }),
       await session.getPromptText(MCP_SUPPORT_PROMPT_NAME),
+      await session.getPromptText(MCP_APP_PROMPT_NAME),
     ];
     const tools = (await session.listTools()).sort((a, b) =>
       a.name.localeCompare(b.name)

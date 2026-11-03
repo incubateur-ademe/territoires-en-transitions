@@ -32,10 +32,12 @@ export type Viewer = 'support-super-admin' | 'support-sans-mode';
 export type Scenario = {
   id: string;
   /** `metier` (fixtures locales), `analytique` (base de l'équipe data),
-   * `posthog`, `refus`, `esquisse`, `support` (Crisp). */
+   * `posthog`, `refus`, `esquisse`, `support` (`/tet` dans Crisp), `crisp`
+   * (conversations du support, API Crisp), `app` (assistant de l'app). */
   tags: string[];
   viewer?: Viewer;
-  mode?: 'analyse' | 'esquisse';
+  /** `app` : assistant de l'application (choix cliquables, écritures préparées). */
+  mode?: 'analyse' | 'esquisse' | 'app';
   esquisse?: { sujet: string; appetit?: string };
   /** Joué comme `/tet` dans Crisp : le visiteur est le membre de la fixture. */
   support?: {
@@ -48,6 +50,9 @@ export type Scenario = {
     tools?: ToolExpectation[];
     /** Au moins un de ces outils doit être appelé. */
     anyTool?: string[];
+    /** Mode `app` : des réponses cliquables sont proposées (`propose_choices`
+     * ou son repli en texte). */
+    suggestions?: boolean;
     answer?: {
       /** Chaque entrée : une chaîne, ou plusieurs dont une suffit. */
       contains?: (string | { ref: FixtureRef } | string[])[];

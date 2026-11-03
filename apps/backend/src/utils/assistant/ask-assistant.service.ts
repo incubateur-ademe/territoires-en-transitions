@@ -14,6 +14,7 @@ import { sumTokenUsage, TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { BuildMcpServerService } from '@tet/backend/utils/mcp/build-mcp-server.service';
 import {
   MCP_ANALYSE_STATS_PROMPT_NAME,
+  MCP_APP_PROMPT_NAME,
   MCP_ESQUISSE_PROMPT_NAME,
   MCP_SUPPORT_PROMPT_NAME,
 } from '@tet/backend/utils/mcp/mcp-docs.service';
@@ -25,6 +26,13 @@ import {
   askAssistantInputSchema,
   AskAssistantParsedInput,
 } from './ask-assistant.input';
+import {
+  AssistantPendingAction,
+  AssistantSuggestions,
+  extractPendingAction,
+  readChoicesFromText,
+  readProposedChoices,
+} from './assistant-interactions';
 import { McpSession } from './mcp-session';
 
 /** Appels d'outils exécutés par tour ; les suivants sont refusés au modèle. */
@@ -100,7 +108,11 @@ export type AssistantToolCallTrace = {
 
 export type AssistantAnswer = {
   answer: string;
-  stopReason: 'answered' | 'max_model_calls';
+  /** Mode `app` : réponses cliquables proposées par l'assistant. */
+  suggestions: AssistantSuggestions | null;
+  /** Mode `app` : écritures préparées, à confirmer par l'utilisateur. */
+  actions: AssistantPendingAction[];
+  stopReason: 'answered' | 'max_model_calls' | 'choices_proposed';
   modelCalls: number;
   toolCalls: AssistantToolCallTrace[];
   usage: TokenUsage;
@@ -161,7 +173,9 @@ export class AskAssistantService {
     const startedAt = Date.now();
 
     const session = await McpSession.open(
-      this.buildMcpServerService.build(user)
+      this.buildMcpServerService.build(user, {
+        interactive: input.mode === 'app',
+      })
     );
     try {
       const systemInstruction =
@@ -178,6 +192,8 @@ export class AskAssistantService {
           : await session.getPromptText(
               input.mode === 'support'
                 ? MCP_SUPPORT_PROMPT_NAME
+                : input.mode === 'app'
+                ? MCP_APP_PROMPT_NAME
                 : MCP_ANALYSE_STATS_PROMPT_NAME
             );
       const tools = await session.listTools();
@@ -202,6 +218,22 @@ export class AskAssistantService {
       const traces: AssistantToolCallTrace[] = [];
       const known = new Set(tools.map((tool) => tool.name));
       const alreadyCalled = new Set<string>();
+      const actions: AssistantPendingAction[] = [];
+
+      const answerWith = (
+        modelCalls: number,
+        reply: Pick<AssistantAnswer, 'answer' | 'suggestions' | 'stopReason'>
+      ) =>
+        success({
+          ...reply,
+          actions,
+          modelCalls,
+          toolCalls: traces,
+          usage: sumTokenUsage(usages),
+          provider,
+          model: this.llmService.modelFor(tier) ?? null,
+          durationMs: Date.now() - startedAt,
+        });
 
       for (let modelCalls = 1; ; modelCalls += 1) {
         const lastCall = modelCalls >= maxModelCalls;
@@ -235,19 +267,25 @@ export class AskAssistantService {
 
         // Réponse finale, ou dernier appel : le texte écrit avant des appels
         // d'outils n'est jamais rendu, seule la réponse l'est.
+        const choicesInText =
+          input.mode === 'app' && turn.data.toolCalls.length === 0
+            ? readChoicesFromText(turn.data.text)
+            : null;
+        if (choicesInText) {
+          return answerWith(modelCalls, {
+            answer: choicesInText.question,
+            suggestions: choicesInText,
+            stopReason: 'choices_proposed',
+          });
+        }
         if (turn.data.toolCalls.length === 0 || lastCall) {
           this.logger.log(
             `Assistant answered after ${modelCalls} model calls and ${traces.length} tool calls`
           );
-          return success({
+          return answerWith(modelCalls, {
             answer: turn.data.text?.trim() || fallbackAnswer(traces),
+            suggestions: null,
             stopReason: lastCall ? 'max_model_calls' : 'answered',
-            modelCalls,
-            toolCalls: traces,
-            usage: sumTokenUsage(usages),
-            provider,
-            model: this.llmService.modelFor(tier) ?? null,
-            durationMs: Date.now() - startedAt,
           });
         }
 
@@ -257,6 +295,7 @@ export class AskAssistantService {
           toolCalls: turn.data.toolCalls,
           providerData: turn.data.providerData,
         });
+        let suggestions: AssistantSuggestions | null = null;
         for (const [index, call] of turn.data.toolCalls.entries()) {
           const key = `${call.name} ${JSON.stringify(call.arguments)}`;
           const trace = await this.runToolCall(session, call, {
@@ -266,11 +305,29 @@ export class AskAssistantService {
           });
           alreadyCalled.add(key);
           traces.push(trace.trace);
+          const pending = trace.trace.isError
+            ? null
+            : extractPendingAction(call, trace.rawText);
+          if (pending) {
+            actions.push(pending.action);
+          }
+          if (!trace.trace.isError) {
+            suggestions = readProposedChoices(call) ?? suggestions;
+          }
           messages.push({
             role: 'tool',
             toolCallId: call.id,
             name: call.name,
-            content: trace.content,
+            content: pending ? pending.textForModel : trace.content,
+          });
+        }
+
+        // Des choix sont affichés : la suite viendra de l'utilisateur.
+        if (suggestions) {
+          return answerWith(modelCalls, {
+            answer: turn.data.text?.trim() || suggestions.question,
+            suggestions,
+            stopReason: 'choices_proposed',
           });
         }
       }
@@ -287,7 +344,11 @@ export class AskAssistantService {
       withinBudget,
       repeated,
     }: { known: Set<string>; withinBudget: boolean; repeated: boolean }
-  ): Promise<{ trace: AssistantToolCallTrace; content: string }> {
+  ): Promise<{
+    trace: AssistantToolCallTrace;
+    content: string;
+    rawText: string;
+  }> {
     const startedAt = Date.now();
     const result = !withinBudget
       ? {
@@ -323,6 +384,7 @@ export class AskAssistantService {
           )}\n[Résultat tronqué : agrège ou filtre davantage.]`
         : result.text;
     return {
+      rawText: result.text,
       content: result.isError ? `ERREUR : ${content}` : content,
       trace: {
         name: call.name,

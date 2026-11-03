@@ -56,6 +56,7 @@ describe("Scénarios d'évaluation de l'assistant", () => {
       SCENARIOS.flatMap((scenario) => [
         ...(scenario.expect.tools ?? []).map((tool) => tool.name),
         ...(scenario.expect.anyTool ?? []),
+        ...(scenario.expect.suggestions ? ['propose_choices'] : []),
       ])
     );
 

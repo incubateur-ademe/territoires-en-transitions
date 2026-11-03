@@ -10,6 +10,10 @@ export const MCP_PROTECTED_RESOURCE_METADATA_PATH =
 /** Jeton d'injection de la liste des outils enregistrés sur le serveur MCP. */
 export const MCP_TOOLS = Symbol('MCP_TOOLS');
 
+/** Outils de l'assistant de l'app seulement : choix cliquables, écritures
+ * confirmées par un bouton. Absents de Claude.ai et de Crisp. */
+export const MCP_INTERACTIVE_TOOLS = Symbol('MCP_INTERACTIVE_TOOLS');
+
 /** Lignes renvoyées au modèle par un outil de requête : au-delà, il affiche
  * le total et invite à filtrer ou agréger. */
 export const MCP_PREVIEW_ROWS = 20;

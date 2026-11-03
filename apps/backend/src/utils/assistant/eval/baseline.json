@@ -1,9 +1,9 @@
 {
-  "promptVersion": "4f10016c05ec",
-  "toolsetVersion": "00f32d6ec6b3",
+  "promptVersion": "a823fabfe35c",
+  "toolsetVersion": "385e7947bd8a",
   "lastEval": {
-    "date": "2026-10-30",
-    "albert": "gpt-oss-120b : 15/18, première éval sur la vraie base analytique (rôle mcp_readonly) ; métier et support 11/11, échecs variables sur plans-actifs-52-semaines (SQL écrit au lieu de la requête nommée, chiffre juste), fiches-par-statut et catalogue-requetes",
+    "date": "2026-11-03",
+    "albert": "gpt-oss-120b : run complet 20/25 (stats Crisp et mode app ajoutés) ; échecs hors périmètre : activation-par-categorie et catalogue-requetes (instables depuis le 30/10), support-resume (échoue aussi avec le prompt et les outils de main : changement de comportement d'Albert). Scénarios crisp + app rejoués ×2 après corrections : 14/14 ; app-segmenter-cr peut prendre un 429 Crisp à froid (recherche par termes sur un mois).",
     "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support et sans base analytique"
   }
 }

@@ -3,7 +3,8 @@
 Une question, les outils du serveur MCP de l'utilisateur, un modèle qui les
 enchaîne puis rédige. Même prompt et mêmes outils que dans Claude.ai ; le
 modèle est celui de `LLM_PROVIDER` (Albert ou Gemini). Contexte et décisions :
-[ADR 0021](../../../../../doc/adr/0021-serveur-mcp-dans-l-api.md), décision 8.
+[ADR 0021](../../../../../doc/adr/0021-serveur-mcp-dans-l-api.md), décisions 8
+et 9.
 
 ## Appel
 
@@ -15,13 +16,33 @@ appels par minute.
 trpc.assistant.ask.mutate({
   question: 'Où en est la démarche PCAET de la collectivité 4242 ?',
   history: [], // tours précédents { role: 'user' | 'assistant', text }, rien n'est stocké
-  mode: 'analyse', // ou 'esquisse', avec esquisse: { sujet, appetit?, contexte? }
+  mode: 'analyse', // 'esquisse' (avec esquisse: { sujet, appetit?, contexte? }), 'app'
 });
-// → { answer, stopReason, modelCalls, toolCalls[], usage, provider, model, durationMs }
+// → { answer, suggestions, actions[], stopReason, modelCalls, toolCalls[], usage, provider, model, durationMs }
 ```
 
 Bornes, réglables par l'environnement : `ASSISTANT_MAX_MODEL_CALLS` (8),
 `ASSISTANT_TIMEOUT_MS` (120 000), `ASSISTANT_TIER` (`strong`).
+
+## Dans l'app : onglet « Assistant inApp »
+
+`/profil/assistant?onglet=app` (`apps/app/src/users/assistant/chat/`) : un chat
+en mode `app`, pour le support et les super admins. Le prompt MCP
+`assistant-app` demande à l'assistant de clarifier avant d'agir et de proposer
+une suite ; deux outils n'existent que dans ce mode :
+
+- `propose_choices` : question et réponses cliquables (`suggestions` dans la
+  réponse) ; le tour s'arrête (`stopReason: 'choices_proposed'`) et le clic
+  envoie la réponse comme message suivant.
+- `prepare_segment_tagging` : prépare l'ajout d'un segment Crisp aux
+  conversations d'un filtre (sujet, termes, période), sans rien écrire. Le
+  jeton signé part dans `actions[]` (le modèle ne le voit pas) ; l'interface
+  affiche une carte « Confirmer » qui appelle `assistant.confirmAction`, seule
+  à écrire. Rôle support uniquement (`utils.mcp.mutate`) : le mode super admin
+  n'y donne pas droit.
+
+Rien n'est stocké : la conversation vit dans la page, l'historique est renvoyé
+à chaque question.
 
 ## Dans Crisp : `/tet <question>`
 
@@ -40,6 +61,13 @@ demande (`DEFAULT_TET_QUESTION`).
   derniers messages ; les `/tet` précédents de la conversation et leurs
   réponses servent d'historique. Rien n'est stocké.
 - Prompt MCP `support-conversation` : réponses courtes, sans e-mail.
+- Statistiques du support : `/tet combien de demandes sur le référentiel CR depuis août, de quels types, et combien de temps y a-t-on passé ?`.
+  L'assistant ignore alors le visiteur et s'appuie sur `get_support_stats`
+  (chiffres calculés par le serveur à partir des segments Crisp) et
+  `sample_support_conversations` (extraits masqués). Le temps passé est une
+  estimation : voir la ressource `tet://docs/support-crisp`. Mieux vaut le
+  demander dans une conversation interne, pour ne pas mêler la note à celle
+  d'un usager.
 - Rien à configurer côté Crisp : le webhook et le jeton existants suffisent.
   Déployer le backend, puis `apps/tools` (`cd-tools`, manuel).
 
@@ -59,7 +87,10 @@ make assistant-eval scenario=score-cae
 
 Rapport dans `reports/assistant-eval/` (`latest.md`, et JSON par run). Le run
 s'arrête au-delà de `max_tokens` (500 000 par défaut). Les scénarios
-`analytique` ne tournent qu'avec une vraie `ANALYTICS_DATABASE_URL`.
+`analytique` ne tournent qu'avec une vraie `ANALYTICS_DATABASE_URL`, les
+scénarios `crisp` (stats du support, mode `app`) qu'avec `CRISP_API_IDENTIFIER`
+et `CRISP_API_KEY` : ils lisent les vraies conversations, sans jamais écrire
+(`prepare_segment_tagging` ne fait que préparer).
 
 `eval/scenarios.e2e-spec.ts`, dans la suite normale, vérifie que chaque outil
 MCP est couvert et que le prompt et les outils n'ont pas changé depuis la

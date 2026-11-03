@@ -14,7 +14,9 @@ export const askAssistantInputSchema = z.object({
     )
     .max(20)
     .default([]),
-  mode: z.enum(['analyse', 'esquisse', 'support']).default('analyse'),
+  /** `app` : l'assistant de l'application (choix cliquables, écritures
+   * confirmées). */
+  mode: z.enum(['analyse', 'esquisse', 'support', 'app']).default('analyse'),
   /** Arguments du prompt d'esquisse, en mode `esquisse`. */
   esquisse: z
     .object({
