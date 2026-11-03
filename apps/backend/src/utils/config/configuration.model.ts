@@ -172,6 +172,12 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé d'API Mistral AI (La Plateforme) de l'analyse des fiches ; sans elle, les appels Mistral échouent"
       ),
+    ANTHROPIC_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        "Clé d'API Anthropic de l'analyse des fiches ; sans elle, les appels Anthropic échouent"
+      ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
       .min(1)
