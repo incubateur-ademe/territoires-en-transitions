@@ -1,6 +1,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonMenu, Icon, MenuAction, MenuSeparator } from '@tet/ui';
 import { useState } from 'react';
@@ -164,6 +165,7 @@ export const PlanMenuButton = () => {
         <DuplicatePlanModal
           planNom={plan.nom}
           isPending={isDuplicating}
+          isCreationDisabled={plan.type?.type === ELECTRIFICATION_PLAN_TYPE}
           onDuplicate={async (nom) => {
             await duplicatePlan({ nom });
           }}

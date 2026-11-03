@@ -1,3 +1,4 @@
+import { ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE } from '@tet/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreatePlanAggregateService } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.service';
 import { PlanErrorType } from '@tet/backend/plans/plans/plans.errors';
@@ -92,6 +93,13 @@ export class ImportPlanService {
         // contraintes, elle suit à part pour les journaux.
         if (!planCreationResult.success) {
           const { error, cause } = planCreationResult;
+          if (error === 'ELECTRIFICATION_CREATION_DISABLED') {
+            return failure(
+              new PlanCreationError(
+                ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE
+              )
+            );
+          }
           return failure(
             new PlanCreationError(
               error === PlanErrorType.INVALID_DATA

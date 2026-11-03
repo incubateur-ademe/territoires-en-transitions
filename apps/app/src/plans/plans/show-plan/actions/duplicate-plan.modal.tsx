@@ -1,6 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Alert, Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -19,6 +19,7 @@ type Props = {
   planNom: string | null;
   openState: OpenState;
   isPending: boolean;
+  isCreationDisabled: boolean;
   onDuplicate: (nom: string) => Promise<void>;
 };
 
@@ -26,6 +27,7 @@ export const DuplicatePlanModal = ({
   planNom,
   openState,
   isPending,
+  isCreationDisabled,
   onDuplicate,
 }: Props) => {
   const {
@@ -39,6 +41,7 @@ export const DuplicatePlanModal = ({
   });
 
   const onValid = async ({ nom }: DuplicatePlanFormValues): Promise<void> => {
+    if (isCreationDisabled) return;
     await onDuplicate(nom);
   };
 
@@ -49,6 +52,12 @@ export const DuplicatePlanModal = ({
       openState={openState}
       render={() => (
         <form onSubmit={handleSubmit(onValid)} className="flex flex-col gap-4">
+          {isCreationDisabled && (
+            <Alert
+              state="info"
+              description={appLabels.planElectrificationCreationIndisponible}
+            />
+          )}
           <Field
             title={appLabels.nomPlan}
             state={errors.nom ? 'error' : 'default'}
@@ -67,7 +76,7 @@ export const DuplicatePlanModal = ({
           btnOKProps={{
             children: appLabels.dupliquer,
             onClick: handleSubmit(onValid),
-            disabled: isPending || !isValid,
+            disabled: isPending || !isValid || isCreationDisabled,
           }}
         />
       )}
