@@ -712,7 +712,6 @@ export class ListIndicateursRepository {
 
         // TODO: to be removed, deprecated and not documented anymore but still used in the app
         identifiant: indicateurDefinitionTable.identifiantReferentiel,
-        estPerso: sql<boolean>`${indicateurDefinitionTable.identifiantReferentiel} is null`,
 
         // Columns from indicateurCollectiviteTable
         ...indicateurDefinitionPeriodiciteSelection,

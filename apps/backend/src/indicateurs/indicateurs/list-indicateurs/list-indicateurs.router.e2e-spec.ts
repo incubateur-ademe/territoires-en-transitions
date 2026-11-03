@@ -25,6 +25,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   IndicateurDefinition,
   indicateurDetailleSchema,
+  isIndicateurPerso,
 } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
@@ -1124,7 +1125,7 @@ describe('ListIndicateursRouter', () => {
       );
 
       result.forEach((indicateur) => {
-        expect(indicateur.estPerso).toBe(true);
+        expect(isIndicateurPerso(indicateur)).toBe(true);
         expect(indicateur.identifiantReferentiel).toBeNull();
       });
 
@@ -1144,7 +1145,7 @@ describe('ListIndicateursRouter', () => {
       );
 
       resultSansPerso.forEach((indicateur) => {
-        expect(indicateur.estPerso).toBe(false);
+        expect(isIndicateurPerso(indicateur)).toBe(false);
         expect(indicateur.identifiantReferentiel).not.toBeNull();
       });
     });

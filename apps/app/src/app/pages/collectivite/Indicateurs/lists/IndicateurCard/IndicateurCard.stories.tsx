@@ -52,7 +52,6 @@ const definition = {
   fiches: [],
   mesures: [],
   hasOpenData: false,
-  estPerso: true,
   estAgregation: false,
   estRempli: true,
 } satisfies IndicateurDetaille;
