@@ -1,8 +1,10 @@
-import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { IndicateurValeursTableLegend } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs.table-legend';
 import { IndicateurValeursTableFrame } from '@/app/indicateurs/valeurs/grid/indicateur-valeurs.table-frame';
 import { appLabels } from '@/app/labels/catalog';
-import type { IndicateurPeriode } from '@tet/domain/indicateurs';
+import type {
+  IndicateurPeriode,
+  IndicateurDetaille,
+} from '@tet/domain/indicateurs';
 import { TableCell } from '@tet/ui';
 import { useRef, type ReactNode } from 'react';
 import type { IndicateurPeriodeData } from '../data/prepare-indicateur-periode-data';
@@ -15,7 +17,7 @@ import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
 import { useRevealIndicateurPeriode } from './use-reveal-indicateur-periode';
 
 type Props = {
-  definition: Pick<IndicateurDefinition, 'titre' | 'unite' | 'periodicite'>;
+  definition: Pick<IndicateurDetaille, 'titre' | 'unite' | 'periodicite'>;
   resultats: IndicateurPeriodeData;
   objectifs: IndicateurPeriodeData;
   readonly?: boolean;

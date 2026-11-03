@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { IndicateurPeriodiciteBadge } from '@/app/indicateurs/valeurs/indicateur-periodicite.badge';
 import { MetadataLine, MetadataSeparator } from '@/app/ui/metadata-line';
@@ -11,7 +11,7 @@ import {
 } from './IndicateurPilotes';
 
 type Props = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   isPerso: boolean;
   composeSansAgregation: boolean;
   isReadonly: boolean;

@@ -1,4 +1,4 @@
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { DocumentRattache } from '@/app/collectivites/documents/bibliotheque/types';
@@ -24,10 +24,10 @@ export type DocumentsState = {
 };
 
 export type IndicateursState = {
-  list: IndicateurDefinitionListItem[];
+  list: IndicateurDetaille[];
   isLoading: boolean;
-  update: (indicateur: IndicateurDefinitionListItem) => Promise<void>;
-  canUpdate: (indicateur: IndicateurDefinitionListItem) => boolean;
+  update: (indicateur: IndicateurDetaille) => Promise<void>;
+  canUpdate: (indicateur: IndicateurDetaille) => boolean;
   canCreate: boolean;
 };
 

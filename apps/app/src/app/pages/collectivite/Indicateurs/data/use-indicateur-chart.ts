@@ -1,13 +1,11 @@
-import {
-  IndicateurDefinitionListItem,
-  useListIndicateurs,
-} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { PALETTE_LIGHT } from '@/app/ui/charts/echarts/constants';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   IndicateurPeriodes,
   type IndicateurPeriodicite,
+  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { intersection } from 'es-toolkit';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
@@ -30,7 +28,7 @@ export const SEGMENTATIONS = [
 const SEGMENTATION_PAR_DEFAUT = 'autre';
 
 type PreparedSegment = {
-  definition: IndicateurDefinitionListItem;
+  definition: IndicateurDetaille;
   source: PreparedData['sources'][number];
 };
 
@@ -50,7 +48,7 @@ type IndicateurChartData = {
 };
 
 export type IndicateurChartInfo = {
-  definition: IndicateurDefinitionListItem | undefined;
+  definition: IndicateurDetaille | undefined;
   typesSegmentation: string[];
   segmentation: string | undefined;
   setSegmentation: Dispatch<SetStateAction<string | undefined>>;
@@ -67,7 +65,7 @@ export const useIndicateurChartInfo = ({
   definition,
   externalCollectiviteId,
 }: {
-  definition?: IndicateurDefinitionListItem;
+  definition?: IndicateurDetaille;
   externalCollectiviteId?: number;
 }): IndicateurChartInfo => {
   const {
@@ -315,7 +313,7 @@ function prepareMoyenne(
 
 // groupe les indicateurs enfants par type de segmentation
 function prepareEnfantsParSegmentation(
-  enfants: IndicateurDefinitionListItem[] | undefined,
+  enfants: IndicateurDetaille[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
   type: 'objectif' | 'resultat',
   avecSecteursSNBC: boolean

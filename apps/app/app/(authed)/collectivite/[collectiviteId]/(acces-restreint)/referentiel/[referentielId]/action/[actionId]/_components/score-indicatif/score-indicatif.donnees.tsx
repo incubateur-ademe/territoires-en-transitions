@@ -5,9 +5,9 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { Accordion, Button, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ import {
 import { useSetValeursUtilisees } from './use-set-valeurs-utilisees';
 
 export type ScoreIndicatifDonneesProps = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   scoreIndicatif: ScoreIndicatifAction;
   indicateurId: number;
   openState: OpenState;

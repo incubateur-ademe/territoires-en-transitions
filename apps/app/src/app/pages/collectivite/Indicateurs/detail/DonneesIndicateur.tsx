@@ -2,7 +2,7 @@ import {
   canUpdateIndicateurDefinition,
   canUpdateIndicateurValeur,
 } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
@@ -19,7 +19,7 @@ import { ThematiquesIndicateurInput } from './ThematiquesIndicateurInput';
 import { TypeSegmentationSelect } from './type-segmentation.select';
 
 type Props = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   chartInfo: IndicateurChartInfo;
   updateUnite: (value: string) => void;
   updateCommentaire: (value: string) => void;

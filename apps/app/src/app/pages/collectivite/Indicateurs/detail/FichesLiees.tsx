@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
@@ -10,7 +10,7 @@ import { FichePicto } from './fiche.picto';
 import { FichesLieesModal } from './fiches-liees.modal';
 
 type Props = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
 };
 
 const FichesLiees = ({ definition }: Props) => {

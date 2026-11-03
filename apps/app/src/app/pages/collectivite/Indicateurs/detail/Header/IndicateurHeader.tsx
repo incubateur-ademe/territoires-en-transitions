@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { PermissionOperation } from '@tet/domain/users';
 import { PageHeader } from '@tet/ui';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
@@ -9,7 +9,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 
 type Props = {
   collectiviteId: number;
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isReadonly: boolean;

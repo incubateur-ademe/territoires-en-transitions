@@ -2,14 +2,14 @@ import {
   makeCollectiviteIndicateursUrl,
   makeCollectiviteTousLesIndicateursUrl,
 } from '@/app/app/paths';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { Breadcrumbs } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { getIndicateurGroup } from '../../lists/IndicateurCard/utils';
 
 type Props = {
   collectiviteId: number;
-  indicateur: IndicateurDefinition;
+  indicateur: IndicateurDetaille;
 };
 
 const CheminIndicateur = ({ collectiviteId, indicateur }: Props) => {

@@ -1,16 +1,16 @@
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 
 type Props = {
-  definitions?: IndicateurDefinitionListItem[];
+  definitions?: IndicateurDetaille[];
   isLoading?: boolean;
-  selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
-  onSelect: (indicateur: IndicateurDefinitionListItem) => void;
+  selectedIndicateurs: IndicateurDetaille[] | null | undefined;
+  onSelect: (indicateur: IndicateurDetaille) => void;
 };
 
 export const IndicateursSelectorGrid = (props: Props) => {
@@ -54,8 +54,8 @@ export const IndicateursSelectorGrid = (props: Props) => {
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
   props: IndicateurCardProps & {
-    selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
-    onSelect: (indicateur: IndicateurDefinitionListItem) => void;
+    selectedIndicateurs: IndicateurDetaille[] | null | undefined;
+    onSelect: (indicateur: IndicateurDetaille) => void;
   }
 ) => {
   const { ref, entry } = useIntersectionObserver();

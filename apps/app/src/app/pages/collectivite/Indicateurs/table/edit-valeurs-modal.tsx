@@ -1,4 +1,3 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { appLabels } from '@/app/labels/catalog';
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
@@ -15,13 +14,17 @@ import {
 import { capitalize } from '@tet/ui/labels/plural';
 import { OpenState } from '@tet/ui/utils/types';
 import { useId, useRef, useState } from 'react';
-import { IndicateurPeriode, IndicateurPeriodes } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriode,
+  IndicateurPeriodes,
+  IndicateurDetaille,
+} from '@tet/domain/indicateurs';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
 type EditValeursModalProps = {
   collectiviteId: number;
-  definition: Pick<IndicateurDefinition, 'id' | 'periodicite'>;
+  definition: Pick<IndicateurDetaille, 'id' | 'periodicite'>;
   openState: OpenState;
   data: PreparedData;
   title?: string;

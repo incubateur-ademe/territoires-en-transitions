@@ -1,8 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { RouterOutput, useTRPC } from '@tet/api';
-
-export type IndicateurDefinition =
-  RouterOutput['indicateurs']['indicateurs']['list']['data'][number];
+import { useTRPC } from '@tet/api';
 
 export const useGetIndicateur = (
   indicateurId: number | string,

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isNil } from 'es-toolkit';
 
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { RouterInput, useTRPC } from '@tet/api';
 import { PlanNode } from '@tet/domain/plans';
 import { AxeDescriptionCreatedEvent } from '../plan-arborescence.view/axe/axe.context';
@@ -11,7 +11,7 @@ type UpdateAxe = Omit<
   'id' | 'collectiviteId' | 'parent' | 'indicateurs'
 > & {
   parent?: number | null;
-  indicateurs?: IndicateurDefinitionListItem[];
+  indicateurs?: IndicateurDetaille[];
 };
 
 export const useUpdateAxe = ({

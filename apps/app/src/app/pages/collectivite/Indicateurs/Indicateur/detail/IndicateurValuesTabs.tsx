@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -16,7 +16,7 @@ export const IndicateurValuesTabs = ({
   openModalState,
 }: {
   isReadonly: boolean;
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {

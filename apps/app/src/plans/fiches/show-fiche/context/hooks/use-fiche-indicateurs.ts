@@ -1,8 +1,6 @@
 import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
-import {
-  IndicateurDefinitionListItem,
-  useListIndicateurs,
-} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useCallback, useMemo } from 'react';
 import { useUpdateFiche } from '../../../update-fiche/data/use-update-fiche';
@@ -25,7 +23,7 @@ export const useFicheIndicateurs = (
   const list = useMemo(() => data?.data ?? [], [data]);
 
   const update = useCallback(
-    async (indicateur: IndicateurDefinitionListItem) => {
+    async (indicateur: IndicateurDetaille) => {
       const isAlreadyLinked = list.some((i) => i.id === indicateur.id);
 
       const updatedIndicateurs = isAlreadyLinked
@@ -47,7 +45,7 @@ export const useFicheIndicateurs = (
   );
 
   const canUpdate = useCallback(
-    (indicateur: IndicateurDefinitionListItem) =>
+    (indicateur: IndicateurDetaille) =>
       canUpdateIndicateurDefinition(
         collectivite.hasCollectivitePermission,
         indicateur,

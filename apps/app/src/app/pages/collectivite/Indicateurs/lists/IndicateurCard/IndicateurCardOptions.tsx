@@ -5,7 +5,7 @@ import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
 import { appLabels } from '@/app/labels/catalog';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { DeleteIndicateurDefinitionModal } from '@/app/indicateurs/indicateurs/delete-indicateur-definition.modal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
@@ -13,13 +13,11 @@ import IndicateurCardEditModal from './IndicateurCardEditModal';
 import { getIndicateurMenuActions } from './menu-actions';
 
 type Props = {
-  definition: IndicateurDefinitionListItem;
+  definition: IndicateurDetaille;
   isEditable?: boolean;
   chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite?: boolean;
-  otherMenuActions?: (
-    indicateur: IndicateurDefinitionListItem
-  ) => React.ReactNode[];
+  otherMenuActions?: (indicateur: IndicateurDetaille) => React.ReactNode[];
 };
 
 const IndicateurCardOptions = ({

@@ -5,13 +5,13 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 type TIndicateurChartsGridProps = {
-  definitions: IndicateurDefinitionListItem[];
+  definitions: IndicateurDetaille[];
   view: IndicateurViewParamOption;
 };
 

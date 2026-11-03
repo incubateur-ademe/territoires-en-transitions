@@ -1,5 +1,5 @@
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -8,7 +8,7 @@ import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { InlineEditWrapper } from '@tet/ui';
 
 type Props = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   isReadonly: boolean;
 };
 
