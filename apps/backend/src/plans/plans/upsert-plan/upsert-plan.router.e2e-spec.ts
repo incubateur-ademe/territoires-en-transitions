@@ -178,7 +178,7 @@ describe('Créer ou modifier un plan', () => {
       'Refuse de convertir un plan avec un type existant : %s',
       async (hasType) => {
         const caller = router.createCaller({ user: editorUser });
-        const typeId = hasType ? otherTypeId : null;
+        const typeId = hasType ? otherTypeId : undefined;
         const plan = await caller.plans.plans.create({
           collectiviteId: collectivite.id,
           nom: 'Plan à conserver',
@@ -201,7 +201,10 @@ describe('Créer ou modifier un plan', () => {
           .select()
           .from(axeTable)
           .where(eq(axeTable.id, plan.id));
-        expect(storedPlan).toMatchObject({ nom: 'Plan à conserver', typeId });
+        expect(storedPlan).toMatchObject({
+          nom: 'Plan à conserver',
+          typeId: typeId ?? null,
+        });
       }
     );
 
