@@ -197,6 +197,7 @@ describe('MCP controller', () => {
         'list_recent_events',
         'list_support_segments',
         'list_tables',
+        'list_user_support_conversations',
         'run_hogql_query',
         'run_named_query',
         'run_sql_query',
