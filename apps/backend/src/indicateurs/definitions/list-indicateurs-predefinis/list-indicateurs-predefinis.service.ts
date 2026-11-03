@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import type { IndicateurPredefini } from '@tet/domain/indicateurs';
 import { ListIndicateursPredefinisRepository } from './list-indicateurs-predefinis.repository';
 
 type IndicateurPredefiniReadContext = Omit<ServiceSecondArg, 'user'> & {
@@ -13,14 +14,6 @@ type ListInput = Parameters<
 type AggregateInput = Parameters<
   ListIndicateursPredefinisRepository['listIndicateursPredefinisAggregates']
 >[0];
-type IndicateursPredefinis = Awaited<
-  ReturnType<ListIndicateursPredefinisRepository['listIndicateursPredefinis']>
->;
-type IndicateursPredefinisAggregates = Awaited<
-  ReturnType<
-    ListIndicateursPredefinisRepository['listIndicateursPredefinisAggregates']
-  >
->;
 
 /** Public catalog reads; caller identity is carried without restricting access. */
 @Injectable()
@@ -32,11 +25,9 @@ export class ListIndicateursPredefinisService {
   async listIndicateursPredefinis(
     input: ListInput,
     { tx }: IndicateurPredefiniReadContext
-  ): Promise<Result<IndicateursPredefinis, 'DATABASE_ERROR'>> {
+  ): Promise<Result<IndicateurPredefini[], 'DATABASE_ERROR'>> {
     try {
-      return success(
-        await this.repository.listIndicateursPredefinis(input, tx)
-      );
+      return await this.repository.listIndicateursPredefinis(input, tx);
     } catch (error) {
       return failure(
         'DATABASE_ERROR',
@@ -48,10 +39,11 @@ export class ListIndicateursPredefinisService {
   async listIndicateursPredefinisAggregates(
     input: AggregateInput,
     { tx }: IndicateurPredefiniReadContext
-  ): Promise<Result<IndicateursPredefinisAggregates, 'DATABASE_ERROR'>> {
+  ): Promise<Result<IndicateurPredefini[], 'DATABASE_ERROR'>> {
     try {
-      return success(
-        await this.repository.listIndicateursPredefinisAggregates(input, tx)
+      return await this.repository.listIndicateursPredefinisAggregates(
+        input,
+        tx
       );
     } catch (error) {
       return failure(

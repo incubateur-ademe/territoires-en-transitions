@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ListIndicateursPredefinisService } from './list-indicateurs-predefinis.service';
+import { failure, success } from '@tet/backend/utils/result.type';
 
 describe('ListIndicateursPredefinisService', () => {
   const context = { user: null };
@@ -26,7 +27,7 @@ describe('ListIndicateursPredefinisService', () => {
     const repository = {
       listIndicateursPredefinisAggregates: vi
         .fn()
-        .mockResolvedValue(definitions),
+        .mockResolvedValue(success(definitions)),
     };
     const service = new ListIndicateursPredefinisService(repository as never);
     const input = { indicateurIds: [1] };
@@ -46,7 +47,9 @@ describe('ListIndicateursPredefinisService', () => {
       { id: 2, identifiantReferentiel: 'cae_1.b' },
     ];
     const repository = {
-      listIndicateursPredefinis: vi.fn().mockResolvedValue(definitions),
+      listIndicateursPredefinis: vi
+        .fn()
+        .mockResolvedValue(success(definitions)),
     };
     const service = new ListIndicateursPredefinisService(repository as never);
 
@@ -62,6 +65,21 @@ describe('ListIndicateursPredefinisService', () => {
       },
       undefined
     );
+  });
+
+  it('propage l’échec de nature renvoyé par le repository', async () => {
+    const natureFailure = failure(
+      'DATABASE_ERROR',
+      new Error('Indicateur 2 : nature incohérente (PERSO_WITH_GROUPEMENT)')
+    );
+    const repository = {
+      listIndicateursPredefinis: vi.fn().mockResolvedValue(natureFailure),
+    };
+    const service = new ListIndicateursPredefinisService(repository as never);
+
+    await expect(
+      service.listIndicateursPredefinis({}, context)
+    ).resolves.toEqual(natureFailure);
   });
 
   it('préserve le court-circuit historique pour une liste vide', async () => {

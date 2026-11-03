@@ -15,6 +15,7 @@ import VersionService from '@tet/backend/utils/version/version.service';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { getIndicateurDataOrThrow } from '../definitions/indicateur-nature.utils';
 import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -97,10 +98,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   }
 
   async importIndicateurDefinitions(): Promise<ImportIndicateurDefinitionsResult> {
-    const indicateurDefinitions =
+    const indicateurDefinitions = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel: ['cae_1.a'],
-      });
+      })
+    );
 
     const allowVersionOverwrite =
       this.versionService.getVersion().environment !== 'prod';

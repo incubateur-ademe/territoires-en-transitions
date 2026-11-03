@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { Result, success } from '@tet/backend/utils/result.type';
 import { Indicateur } from '@tet/domain/indicateurs';
 import { asc, getTableColumns, inArray, sql } from 'drizzle-orm';
-import { toIndicateursOrThrow } from './indicateur.adapter';
+import { validateIndicateurs } from './indicateur.adapter';
 
 const INDICATEUR_CALCULATION_GRAPH_LOCK_KEY = 'indicateur-calculation-graph';
 
@@ -36,14 +37,14 @@ export class IndicateurLockRepository {
   async lockIndicateurs(
     indicateurIds: number[],
     tx: Transaction
-  ): Promise<Indicateur[]> {
+  ): Promise<Result<Indicateur[], 'DATABASE_ERROR'>> {
     await this.lockForValueWrite(tx);
 
     const sortedIndicateurIds = [...new Set(indicateurIds)].sort(
       (left, right) => left - right
     );
     if (sortedIndicateurIds.length === 0) {
-      return [];
+      return success([]);
     }
 
     const definitions = await tx
@@ -56,6 +57,6 @@ export class IndicateurLockRepository {
       .orderBy(asc(indicateurDefinitionTable.id))
       .for('share');
 
-    return toIndicateursOrThrow(definitions);
+    return validateIndicateurs(definitions);
   }
 }

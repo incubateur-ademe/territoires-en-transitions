@@ -39,7 +39,7 @@ import { axeTable } from '../../../plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../../plans/fiches/shared/models/fiche-action-axe.table';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { arrayOverlapsPatched } from '../../../utils/drizzle.utils';
-import { withNatureOrThrow } from '../../definitions/indicateur.adapter';
+import { validateNatures } from '../../definitions/indicateur.adapter';
 import { indicateurCategorieTagTable } from '../../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 import { indicateurDefinitionPeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
@@ -899,7 +899,7 @@ export class ListIndicateursRepository {
       .limit(queryOptions.limit)
       .offset((queryOptions.page - 1) * queryOptions.limit);
 
-    return (await definitionsQuery).map(withNatureOrThrow);
+    return validateNatures(await definitionsQuery);
   }
 
   async getPath(indicateurId: number) {

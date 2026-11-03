@@ -67,11 +67,13 @@ export class UpsertIndicateurDefinitionsService {
       const identifiantsReferentiel = imported.map(
         (definition) => definition.identifiantReferentiel
       );
-      const existing =
+      const existingResult =
         await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
           { identifiantsReferentiel },
           context.tx
         );
+      if (!existingResult.success) return existingResult;
+      const existing = existingResult.data;
       const expected = new Map(
         existing.map((definition) => [
           definition.identifiantReferentiel,
@@ -152,11 +154,13 @@ export class UpsertIndicateurDefinitionsService {
           );
           if (!relations.success) return relations;
 
-          const definitions =
+          const definitionsResult =
             await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
               {},
               tx
             );
+          if (!definitionsResult.success) return definitionsResult;
+          const definitions = definitionsResult.data;
           const changedIds = new Set(
             created
               .filter((definition) =>

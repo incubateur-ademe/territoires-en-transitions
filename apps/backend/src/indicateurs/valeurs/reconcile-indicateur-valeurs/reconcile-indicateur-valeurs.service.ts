@@ -22,6 +22,7 @@ import {
 } from '../indicateur-valeurs.errors';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
+import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
 
 export type RecomputedCollectiviteIndicateurValeurs = {
   collectiviteId: number;
@@ -227,10 +228,12 @@ export class ReconcileIndicateurValeursService {
     return captureIndicateurValeursResult(async () => {
       const definitions =
         input.definitions ??
-        (await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
-          {},
-          context.tx
-        ));
+        getIndicateurDataOrThrow(
+          await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
+            {},
+            context.tx
+          )
+        );
       const sourceIdentifiants =
         await this.computeValeursService.getAllSourceIdentifiants(definitions);
       const collectiviteIds = input.collectiviteId

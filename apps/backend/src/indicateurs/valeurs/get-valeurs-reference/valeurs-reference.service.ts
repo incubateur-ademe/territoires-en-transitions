@@ -17,6 +17,7 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurObjectifTable } from '../../shared/models/indicateur-objectif.table';
 import { ValeursReferenceDTO } from './valeurs-reference.dto';
+import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
 
 @Injectable()
 export default class ValeursReferenceService {
@@ -101,10 +102,11 @@ export default class ValeursReferenceService {
       ));
 
     // les définitions des indicateurs
-    const definitions =
+    const definitions = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         indicateurIds,
-      });
+      })
+    );
 
     return definitions.map((definition) =>
       this.getValeursReferenceIndicateur(

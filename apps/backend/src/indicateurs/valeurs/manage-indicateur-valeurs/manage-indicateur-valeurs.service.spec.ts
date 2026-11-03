@@ -199,11 +199,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
   describe('listIndicateurValeurs', () => {
     it('limite les définitions retournées à la collectivité demandée', async () => {
       const repository = {
-        listIndicateurValeurs: vi.fn().mockResolvedValue([]),
+        listIndicateurValeurs: vi.fn().mockResolvedValue(success([])),
         listSources: vi.fn().mockResolvedValue([]),
       };
       const collectiviteIndicateursRepository = {
-        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([]),
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue(success([])),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1551,16 +1551,18 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         }),
       };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue([
-          {
-            id: 10,
-            collectiviteId: null,
-            identifiantReferentiel: null,
-            periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
-            precision: 2,
-            sansValeurUtilisateur: false,
-          },
-        ]),
+        lockIndicateurs: vi.fn().mockResolvedValue(
+          success([
+            {
+              id: 10,
+              collectiviteId: null,
+              identifiantReferentiel: null,
+              periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+              precision: 2,
+              sansValeurUtilisateur: false,
+            },
+          ])
+        ),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1643,34 +1645,38 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         assertAllowed: vi.fn().mockResolvedValue(undefined),
       };
       const collectiviteIndicateursRepository = {
-        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([
-          {
-            id: 10,
-            collectiviteId: null,
-            groupementId: 99,
-            identifiantReferentiel: null,
-            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-            precision: 2,
-            sansValeurUtilisateur: true,
-          },
-        ]),
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue(
+          success([
+            {
+              id: 10,
+              collectiviteId: null,
+              groupementId: 99,
+              identifiantReferentiel: null,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+              precision: 2,
+              sansValeurUtilisateur: true,
+            },
+          ])
+        ),
       };
       const computeValeursService = {
         updateCalculatedIndicateurValeurs: vi.fn().mockResolvedValue([]),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue([
-          {
-            id: 10,
-            collectiviteId: null,
-            groupementId: 99,
-            identifiantReferentiel: null,
-            periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
-            precision: 2,
-            sansValeurUtilisateur: true,
-          },
-        ]),
+        lockIndicateurs: vi.fn().mockResolvedValue(
+          success([
+            {
+              id: 10,
+              collectiviteId: null,
+              groupementId: 99,
+              identifiantReferentiel: null,
+              periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+              precision: 2,
+              sansValeurUtilisateur: true,
+            },
+          ])
+        ),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1744,11 +1750,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         assertAllowed: vi.fn().mockResolvedValue(undefined),
       };
       const collectiviteIndicateursRepository = {
-        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([definition]),
+        listCollectiviteIndicateurs: vi
+          .fn()
+          .mockResolvedValue(success([definition])),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue([definition]),
+        lockIndicateurs: vi.fn().mockResolvedValue(success([definition])),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1808,11 +1816,13 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         upsertValeursWithoutMetadata: vi.fn().mockResolvedValue([]),
       };
       const collectiviteIndicateursRepository = {
-        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([definition]),
+        listCollectiviteIndicateurs: vi
+          .fn()
+          .mockResolvedValue(success([definition])),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue([definition]),
+        lockIndicateurs: vi.fn().mockResolvedValue(success([definition])),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1853,16 +1863,18 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const repository = {};
       const transactionManager = createTransactionManager(tx);
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue([
-          {
-            id: 10,
-            collectiviteId: null,
-            identifiantReferentiel: null,
-            periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
-            precision: 2,
-            sansValeurUtilisateur: false,
-          },
-        ]),
+        lockIndicateurs: vi.fn().mockResolvedValue(
+          success([
+            {
+              id: 10,
+              collectiviteId: null,
+              identifiantReferentiel: null,
+              periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+              precision: 2,
+              sansValeurUtilisateur: false,
+            },
+          ])
+        ),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1919,10 +1931,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
           .fn()
-          .mockResolvedValue([foreignDefinition]),
+          .mockResolvedValue(success([foreignDefinition])),
       };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue([foreignDefinition]),
+        lockIndicateurs: vi
+          .fn()
+          .mockResolvedValue(success([foreignDefinition])),
       };
       const service = createManageIndicateurValeursService(
         {} as never,
@@ -1989,10 +2003,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         assertAllowed: vi.fn().mockResolvedValue(undefined),
       };
       const collectiviteIndicateursRepository = {
-        listCollectiviteIndicateurs: vi.fn().mockResolvedValue(definitions),
+        listCollectiviteIndicateurs: vi
+          .fn()
+          .mockResolvedValue(success(definitions)),
       };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue(definitions),
+        lockIndicateurs: vi.fn().mockResolvedValue(success(definitions)),
       };
       const lockRepository = { lock: vi.fn() };
       const service = createManageIndicateurValeursService(
@@ -2115,14 +2131,18 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {
-          listCollectiviteIndicateurs: vi.fn().mockResolvedValue([target]),
+          listCollectiviteIndicateurs: vi
+            .fn()
+            .mockResolvedValue(success([target])),
         } as never,
         {} as never,
         {} as never,
         {} as never,
         computeValeursService as never,
         { lock: vi.fn() } as never,
-        { lockIndicateurs: vi.fn().mockResolvedValue([target]) } as never,
+        {
+          lockIndicateurs: vi.fn().mockResolvedValue(success([target])),
+        } as never,
         transactionManager as never
       );
       const upsertedValeur = {

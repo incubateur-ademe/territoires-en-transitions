@@ -32,6 +32,13 @@ export async function captureIndicateurValeursResult<T>(
   }
 }
 
+export async function captureIndicateurValeursResultOf<Data>(
+  operation: () => Promise<Result<Data, IndicateurValeursError>>
+): Promise<Result<Data, IndicateurValeursError>> {
+  const captured = await captureIndicateurValeursResult(operation);
+  return captured.success ? captured.data : captured;
+}
+
 /** Compatibility boundary for callers still using the historical throwing API. */
 export function getIndicateurValeursDataOrThrow<T>(
   result: Result<T, IndicateurValeursError>
