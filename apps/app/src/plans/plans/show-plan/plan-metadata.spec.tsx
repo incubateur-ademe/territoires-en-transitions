@@ -3,6 +3,7 @@ import { Plan } from '@tet/domain/plans';
 import { render, screen } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import type { useListPlanTypes } from '../use-list-plan-types';
 import { PlanMetadata } from './plan-metadata';
 
 vi.mock('@tet/api/collectivites', () => ({
@@ -10,7 +11,11 @@ vi.mock('@tet/api/collectivites', () => ({
 }));
 
 vi.mock('../use-list-plan-types', () => ({
-  useListPlanTypes: () => ({ options: [] }),
+  useListPlanTypes: (): ReturnType<typeof useListPlanTypes> => ({
+    data: [],
+    options: [],
+    isLoading: false,
+  }),
 }));
 
 vi.mock('./plan-calendar.inline-editable-field', () => ({

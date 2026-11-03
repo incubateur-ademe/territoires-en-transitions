@@ -12,11 +12,13 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '../../fiches/shared/models/fiche-action.table';
+import { planActionTypeCategorieTable } from '../../fiches/shared/models/plan-action-type-categorie.table';
+import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 
@@ -111,6 +113,186 @@ describe('Créer ou modifier un plan', () => {
           collectiviteId: collectivite.id,
         })
       );
+    });
+  });
+
+  describe('Création des plans Électrification', () => {
+    let electrificationTypeId: number;
+    let otherTypeId: number;
+    const creationDisabledMessage =
+      'La création d’un plan Électrification est temporairement indisponible. L’import depuis l’annexe 3 est en cours de préparation.';
+
+    beforeAll(async () => {
+      const categorie = `e2e_creation_plan_${collectivite.id}`;
+      await db.db.insert(planActionTypeCategorieTable).values({ categorie });
+      const [electrificationType, otherType] = await db.db
+        .insert(planActionTypeTable)
+        .values([
+          { categorie, type: 'Plan Électrification' },
+          { categorie, type: 'Plan climat' },
+        ])
+        .returning();
+      electrificationTypeId = electrificationType.id;
+      otherTypeId = otherType.id;
+    });
+
+    const getPlans = () =>
+      db.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.collectiviteId, collectivite.id))
+        .orderBy(axeTable.id);
+
+    const createExistingElectrificationPlan = async () => {
+      // Un plan antérieur à la suspension reste consultable et modifiable.
+      const [plan] = await db.db
+        .insert(axeTable)
+        .values({
+          collectiviteId: collectivite.id,
+          nom: 'Plan Électrification existant',
+          typeId: electrificationTypeId,
+        })
+        .returning();
+      return plan;
+    };
+
+    test('Refuse la création sans persister de plan', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const plansBefore = await getPlans();
+
+      await expect(
+        caller.plans.plans.create({
+          collectiviteId: collectivite.id,
+          nom: 'Plan Électrification refusé',
+          typeId: electrificationTypeId,
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+        message: creationDisabledMessage,
+      });
+
+      expect(await getPlans()).toEqual(plansBefore);
+    });
+
+    test.each([false, true])(
+      'Refuse de convertir un plan avec un type existant : %s',
+      async (hasType) => {
+        const caller = router.createCaller({ user: editorUser });
+        const typeId = hasType ? otherTypeId : undefined;
+        const plan = await caller.plans.plans.create({
+          collectiviteId: collectivite.id,
+          nom: 'Plan à conserver',
+          typeId,
+        });
+
+        await expect(
+          caller.plans.plans.update({
+            id: plan.id,
+            collectiviteId: collectivite.id,
+            nom: 'Modification refusée',
+            typeId: electrificationTypeId,
+          })
+        ).rejects.toMatchObject({
+          code: 'BAD_REQUEST',
+          message: creationDisabledMessage,
+        });
+
+        const [storedPlan] = await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.id, plan.id));
+        expect(storedPlan).toMatchObject({
+          nom: 'Plan à conserver',
+          typeId: typeId ?? null,
+        });
+      }
+    );
+
+    test.each([false, true])(
+      'Permet la création avec un autre type : %s',
+      async (hasType) => {
+        const caller = router.createCaller({ user: editorUser });
+        const typeId = hasType ? otherTypeId : undefined;
+        const plan = await caller.plans.plans.create({
+          collectiviteId: collectivite.id,
+          nom: 'Plan autorisé',
+          typeId,
+        });
+
+        const [storedPlan] = await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.id, plan.id));
+        expect(storedPlan).toMatchObject({
+          nom: 'Plan autorisé',
+          typeId: typeId ?? null,
+        });
+      }
+    );
+
+    test.each([false, true])(
+      'Permet de modifier un plan existant avec le type explicite : %s',
+      async (includesType) => {
+        const caller = router.createCaller({ user: editorUser });
+        const plan = await createExistingElectrificationPlan();
+
+        await caller.plans.plans.update({
+          id: plan.id,
+          collectiviteId: collectivite.id,
+          nom: 'Plan Électrification renommé',
+          ...(includesType ? { typeId: electrificationTypeId } : {}),
+        });
+
+        const storedPlan = await caller.plans.plans.get({ planId: plan.id });
+        expect(storedPlan).toMatchObject({
+          nom: 'Plan Électrification renommé',
+          type: { id: electrificationTypeId },
+        });
+      }
+    );
+
+    test.each([false, true])(
+      'Permet de remplacer le type Électrification par un autre type : %s',
+      async (hasReplacementType) => {
+        const caller = router.createCaller({ user: editorUser });
+        const plan = await createExistingElectrificationPlan();
+        const typeId = hasReplacementType ? otherTypeId : null;
+
+        await caller.plans.plans.update({
+          id: plan.id,
+          collectiviteId: collectivite.id,
+          typeId,
+        });
+
+        const [storedPlan] = await db.db
+          .select()
+          .from(axeTable)
+          .where(
+            and(
+              eq(axeTable.id, plan.id),
+              eq(axeTable.collectiviteId, collectivite.id)
+            )
+          );
+        expect(storedPlan.typeId).toBe(typeId);
+      }
+    );
+
+    test('Refuse la duplication dans une transaction sans altérer le plan source', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const plan = await createExistingElectrificationPlan();
+      const plansBefore = await getPlans();
+
+      await expect(
+        caller.plans.plans.duplicate({
+          planId: plan.id,
+          nom: 'Copie refusée',
+        })
+      ).rejects.toMatchObject({
+        code: 'BAD_REQUEST',
+        message: creationDisabledMessage,
+      });
+
+      expect(await getPlans()).toEqual(plansBefore);
     });
   });
 

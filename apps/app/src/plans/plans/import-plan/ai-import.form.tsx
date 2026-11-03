@@ -6,6 +6,7 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { PlanCreationRules } from '@tet/domain/plans';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement, useCallback, useEffect, useRef } from 'react';
@@ -61,10 +62,6 @@ export type AiImportDefaults = {
   planName?: string;
 };
 
-// Repéré par son libellé : les identifiants des types diffèrent d'un
-// environnement à l'autre.
-const ELECTRIFICATION_PLAN_TYPE = 'Plan Électrification';
-
 const FILE_INPUT_ID = 'input-file';
 const PLAN_NAME_INPUT_ID = 'ai-import-plan-name';
 const INSTRUCTIONS_INPUT_ID = 'ai-import-instructions';
@@ -82,7 +79,11 @@ export const AiImportForm = ({
   defaults?: AiImportDefaults;
 }) => {
   const collectiviteId = useCollectiviteId();
-  const { data: planTypes, options: planTypesOptions } = useListPlanTypes();
+  const {
+    data: planTypes,
+    options: planTypesOptions,
+    isLoading: isLoadingPlanTypes,
+  } = useListPlanTypes();
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   const {
     register,
@@ -130,13 +131,17 @@ export const AiImportForm = ({
 
   const selectedFile = useWatch({ control, name: 'file' });
   const selectedPlanTypeId = useWatch({ control, name: 'planType' });
-  const isElectrificationPlanType = planTypes.some(
-    (planType) =>
-      planType.id === selectedPlanTypeId &&
-      planType.type === ELECTRIFICATION_PLAN_TYPE
+  const selectedPlanType = planTypes.find(
+    ({ id }) => id === selectedPlanTypeId
   );
+  const creationDisabledReason =
+    PlanCreationRules.getDisabledReason(selectedPlanType);
+  const isPlanCreationDisabled =
+    isLoadingPlanTypes || creationDisabledReason !== undefined;
   const { previousImport, isLoading: isCheckingSelectedFile } =
     useFindPreviousAiImport({ file: selectedFile });
+  const isSubmitDisabled =
+    isSubmitting || isCheckingSelectedFile || isPlanCreationDisabled;
   // Une seule fois, et jamais par-dessus un fichier choisi pendant le
   // téléchargement : retiré, le fichier suggéré ne revient pas.
   const hasAppliedSuggestedFile = useRef(false);
@@ -152,9 +157,13 @@ export const AiImportForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit((values) =>
-        onSubmit({ ...values, confirmReimport: previousImport !== null })
-      )}
+      onSubmit={handleSubmit((values) => {
+        if (isPlanCreationDisabled) return;
+        return onSubmit({
+          ...values,
+          confirmReimport: previousImport !== null,
+        });
+      })}
       className="flex flex-col gap-6"
     >
       <Alert
@@ -198,11 +207,10 @@ export const AiImportForm = ({
           )}
         />
       </Field>
-      {isElectrificationPlanType && (
+      {creationDisabledReason && (
         <Alert
           state="info"
-          title={appLabels.importPlanIaElectrificationTitre}
-          description={appLabels.importPlanIaElectrificationDescription}
+          description={appLabels.planCreationDisabled(creationDisabledReason)}
         />
       )}
       <Field
@@ -309,7 +317,7 @@ export const AiImportForm = ({
         {cancelButton}
         <Button
           type="submit"
-          disabled={isSubmitting || isCheckingSelectedFile}
+          disabled={isSubmitDisabled}
           icon="upload-2-line"
           dataTest="ai-import.lancer"
         >

@@ -1,4 +1,9 @@
-import { OrigineSecteurs, SecteurReglementaire } from '@tet/domain/plans';
+import {
+  PLAN_CREATION_DISABLED_MESSAGES,
+  PlanCreationDisabledReason,
+  OrigineSecteurs,
+  SecteurReglementaire,
+} from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
 type PlanBudgetCalculArgs = {
@@ -19,6 +24,8 @@ export const plansLabels = {
   nomPlanRequis: 'Le nom du plan est requis',
   nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   typePlan: 'Type de plan',
+  planCreationDisabled: (reason: PlanCreationDisabledReason): string =>
+    PLAN_CREATION_DISABLED_MESSAGES[reason],
   type: 'Type',
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
@@ -280,9 +287,6 @@ export const plansLabels = {
   importPlanIaRetirerFichier: 'Retirer',
   importPlanIaTypeVerrouille:
     "Un plan lié au programme d'actions du PCAET est nécessairement de ce type.",
-  importPlanIaElectrificationTitre: 'Votre convention est signée ?',
-  importPlanIaElectrificationDescription:
-    'Importez son annexe 3 : votre plan est créé en 2 clics, avec vos axes, vos actions et vos indicateurs.',
   importPlanIaPlanImporte: 'Plan importé',
   importPlanIaEnCoursCourt: 'Import en cours',
   importPlanIaEtapeSecteurs:

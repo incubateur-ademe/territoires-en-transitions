@@ -9,13 +9,16 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Personne, PersonneId } from '@tet/domain/collectivites';
-import { FicheWithRelations, Plan } from '@tet/domain/plans';
+import { FicheWithRelations, Plan, PlanCreationRules } from '@tet/domain/plans';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
 import { GetPlanError, GetPlanErrorEnum } from '../get-plan/get-plan.errors';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { UpsertPlanErrorEnum } from '../upsert-plan/upsert-plan.errors';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
-import { DuplicatePlanError, DuplicatePlanErrorEnum } from './duplicate-plan.errors';
+import {
+  DuplicatePlanError,
+  DuplicatePlanErrorEnum,
+} from './duplicate-plan.errors';
 import { DuplicatePlanInput } from './duplicate-plan.input';
 import { AxeIdRemapping } from './duplicated-fiche.mapper';
 
@@ -106,6 +109,9 @@ export class DuplicatePlanService {
         { user, tx: transaction }
       );
       if (!newPlanResult.success) {
+        if (PlanCreationRules.isDisabledReason(newPlanResult.error)) {
+          return failure(newPlanResult.error);
+        }
         return failure(
           newPlanResult.error === UpsertPlanErrorEnum.UNAUTHORIZED
             ? DuplicatePlanErrorEnum.UNAUTHORIZED
@@ -167,7 +173,10 @@ export class DuplicatePlanService {
         tx
       );
 
-    return { actions, sousActions: ownedByCollectivite(matchedChildren, collectiviteId) };
+    return {
+      actions,
+      sousActions: ownedByCollectivite(matchedChildren, collectiviteId),
+    };
   }
 
   private async buildWriteAuthorization(

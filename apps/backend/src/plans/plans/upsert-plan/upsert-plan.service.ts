@@ -5,7 +5,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
-import { AxeLight } from '@tet/domain/plans';
+import { AxeLight, PlanCreationRules } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
 import {
@@ -48,6 +48,34 @@ export class UpsertPlanService {
     ): Promise<Result<AxeLight, UpsertPlanError>> => {
       const { referents, pilotes, ...planProps } = plan;
       const updatePlanProps = baseUpdatePlanSchema.safeParse(planProps);
+
+      // Les plans existants restent modifiables, mais un autre plan ne peut
+      // pas prendre un type dont la création est désactivée.
+      if (planProps.typeId != null) {
+        const planType = await this.upsertPlanRepository.findPlanType(
+          planProps.typeId,
+          transaction
+        );
+        const creationDisabledReason =
+          PlanCreationRules.getDisabledReason(planType);
+        if (creationDisabledReason) {
+          const existingPlan = updatePlanProps.success
+            ? await this.upsertPlanRepository.findPlanAxe(
+                updatePlanProps.data.id,
+                transaction
+              )
+            : null;
+          const isKeepingExistingPlanType =
+            existingPlan?.typeId === planProps.typeId &&
+            existingPlan.collectiviteId === plan.collectiviteId;
+          if (!isKeepingExistingPlanType) {
+            return {
+              success: false,
+              error: creationDisabledReason,
+            };
+          }
+        }
+      }
 
       let result;
       if (updatePlanProps.success) {

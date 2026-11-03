@@ -1,3 +1,4 @@
+import { planCreationErrorConfig } from '../plans/plan-creation.errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from './ai-plan-import.constants';
 import type { AiPlanImportSpecificError } from './ai-plan-import.errors';
@@ -5,6 +6,7 @@ import type { AiPlanImportSpecificError } from './ai-plan-import.errors';
 export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecificError> =
   {
     specificErrors: {
+      ...planCreationErrorConfig,
       CREATE_JOB_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "La création du job d'import a échoué",
@@ -70,7 +72,8 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       },
       UNAUTHORIZED: {
         code: 'FORBIDDEN',
-        message: "Vous n'avez pas le droit de lancer un import sur cette collectivité",
+        message:
+          "Vous n'avez pas le droit de lancer un import sur cette collectivité",
       },
     },
   };

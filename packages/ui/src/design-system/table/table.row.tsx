@@ -6,7 +6,9 @@ export const TableRow = ({ className, ...props }: Props) => (
   <tr
     role="row"
     className={cn(
-      'group relative border-b border-grey-3 last:border-b-0 bg-white even:bg-grey-1',
+      // Pas de `relative` : Firefox peindrait le fond de la ligne par-dessus
+      // la bordure fusionnée qui la sépare de la suivante.
+      'group border-b border-grey-3 last:border-b-0 bg-white even:bg-grey-1',
       // Cache le span inséré par FloatingFocusManager
       // qui est ajouté pour récupérer le focus lorsque qu'une cellule
       // qui est ouverte (portal) en inline editing est refermée

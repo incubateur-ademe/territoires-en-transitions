@@ -2,8 +2,11 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { planCreationDisabledReasons } from '@tet/domain/plans';
+import { planCreationErrorConfig } from '../plan-creation.errors';
 
 const specificErrors = [
+  ...planCreationDisabledReasons,
   'CREATE_PLAN_ERROR',
   'UPDATE_PLAN_ERROR',
   'UPDATE_REFERENTS_ERROR',
@@ -15,6 +18,7 @@ type SpecificError = (typeof specificErrors)[number];
 
 export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
+    ...planCreationErrorConfig,
     CREATE_PLAN_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
       message: 'La création du plan a échoué',
@@ -37,8 +41,7 @@ export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     },
     NOT_A_PLAN: {
       code: 'BAD_REQUEST',
-      message:
-        "L'axe ciblé n'est pas un plan (il possède un parent)",
+      message: "L'axe ciblé n'est pas un plan (il possède un parent)",
     },
   },
 };

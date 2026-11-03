@@ -8,11 +8,12 @@ import {
   MetadataLine,
 } from '@/app/ui/metadata-line';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { AggregatedBudget, Plan } from '@tet/domain/plans';
+import { AggregatedBudget, Plan, PlanCreationRules } from '@tet/domain/plans';
 import { InlineEditWrapper, Select, Tooltip } from '@tet/ui';
 import { plural } from '@tet/ui/labels/plural';
 import { countBy } from 'es-toolkit';
 import FranceIcon from '../components/france-icon.svg';
+import { planTypesToOptions } from '../plan-types-to-options';
 import { useListPlanTypes } from '../use-list-plan-types';
 import { useUpdatePlan } from './data/use-update-plan';
 import { PlanCalendarInlineEditableField } from './plan-calendar.inline-editable-field';
@@ -30,7 +31,15 @@ export const PlanMetadata = ({
   isReadOnly,
   updatePlan,
 }: PlanMetadataProps) => {
-  const { options: planTypesOptions } = useListPlanTypes();
+  const { data: planTypes } = useListPlanTypes();
+  const planTypesOptions = planTypesToOptions(
+    planTypes.filter((planType) => {
+      const isCurrentPlanType = planType.id === plan.type?.id;
+      const isPlanCreationDisabled =
+        PlanCreationRules.getDisabledReason(planType) !== undefined;
+      return isCurrentPlanType || !isPlanCreationDisabled;
+    })
+  );
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canReadFichesRestreintes = hasCollectivitePermission(
     'plans.fiches.read_confidentiel'

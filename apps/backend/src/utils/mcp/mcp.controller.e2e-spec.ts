@@ -191,13 +191,16 @@ describe('MCP controller', () => {
         'get_collectivite',
         'get_demarche_pcaet',
         'get_referentiel_scores',
+        'get_support_stats',
         'list_named_queries',
         'list_plans',
         'list_recent_events',
+        'list_support_segments',
         'list_tables',
         'run_hogql_query',
         'run_named_query',
         'run_sql_query',
+        'sample_support_conversations',
       ]);
 
       const { resources } = await client.listResources();

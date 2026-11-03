@@ -3,11 +3,19 @@ import {
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-const specificErrors = ['PLAN_NOT_FOUND', 'DUPLICATE_PLAN_ERROR'] as const;
+import { planCreationDisabledReasons } from '@tet/domain/plans';
+import { planCreationErrorConfig } from '../plan-creation.errors';
+
+const specificErrors = [
+  'PLAN_NOT_FOUND',
+  'DUPLICATE_PLAN_ERROR',
+  ...planCreationDisabledReasons,
+] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const duplicatePlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
+    ...planCreationErrorConfig,
     PLAN_NOT_FOUND: {
       code: 'NOT_FOUND',
       message: "Le plan à dupliquer n'a pas été trouvé",

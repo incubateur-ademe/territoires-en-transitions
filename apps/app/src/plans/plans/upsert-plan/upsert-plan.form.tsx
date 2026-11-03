@@ -4,11 +4,12 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
-import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
+import { PlanCreationRules } from '@tet/domain/plans';
+import { Alert, Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 
 import { capitalize } from '@tet/ui/labels/plural';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
 
@@ -114,7 +115,11 @@ export function UpsertPlanForm({
     | ((data: UpsertPlanWithFilePayload) => Promise<boolean>);
   includeFileUpload?: boolean;
 }) {
-  const { options: planTypesOptions } = useListPlanTypes();
+  const {
+    data: planTypes,
+    options: planTypesOptions,
+    isLoading: isLoadingPlanTypes,
+  } = useListPlanTypes();
 
   const schema = includeFileUpload
     ? upsertPlanWithFileSchema
@@ -138,10 +143,21 @@ export function UpsertPlanForm({
     },
   });
 
+  const selectedPlanTypeId = useWatch({ control, name: 'typeId' });
+  const selectedPlanType = planTypes.find(
+    ({ id }) => id === selectedPlanTypeId
+  );
+  const creationDisabledReason =
+    PlanCreationRules.getDisabledReason(selectedPlanType);
+  const isPlanCreationDisabled =
+    isLoadingPlanTypes || creationDisabledReason !== undefined;
+  const isSubmitDisabled = isSubmitting || isPlanCreationDisabled;
+
   return (
     <form
       id={formId}
       onSubmit={handleSubmit(async (data) => {
+        if (isPlanCreationDisabled) return;
         const submit = onSubmit as (
           data: UpsertPlanWithoutFilePayload | UpsertPlanWithFilePayload
         ) => Promise<boolean>;
@@ -192,6 +208,12 @@ export function UpsertPlanForm({
           }}
         />
       </Field>
+      {creationDisabledReason && (
+        <Alert
+          state="info"
+          description={appLabels.planCreationDisabled(creationDisabledReason)}
+        />
+      )}
       <div className="flex gap-6">
         <Field title={appLabels.dateDebut} className="grow">
           <Input
@@ -296,7 +318,7 @@ export function UpsertPlanForm({
       <div className="flex items-center justify-end gap-6 mt-6">
         <VisibleWhen condition={showButtons}>
           {cancelButton}
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitDisabled}>
             {isSubmitting ? <SpinnerLoader /> : submitButtonText}
           </Button>
         </VisibleWhen>
