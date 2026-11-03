@@ -1,15 +1,15 @@
 import { expectTypeOf } from 'vitest';
-import type { IndicateurDefinition } from './indicateur-definition.schema';
 import type { IndicateurNatureError } from './indicateur-nature.rules';
 import {
   type Indicateur,
+  type IndicateurCandidate,
   indicateurSchema,
   toIndicateur,
 } from './indicateur.schema';
 
-const toIndicateurDefinition = (
-  overrides: Partial<IndicateurDefinition>
-): IndicateurDefinition => ({
+const toIndicateurCandidate = (
+  overrides: Partial<IndicateurCandidate>
+): IndicateurCandidate => ({
   id: 1,
   version: '1',
   groupementId: null,
@@ -40,15 +40,15 @@ const toIndicateurDefinition = (
 const coherentDefinitions = [
   {
     label: 'un perso',
-    definition: toIndicateurDefinition({ collectiviteId: 12 }),
+    definition: toIndicateurCandidate({ collectiviteId: 12 }),
   },
   {
     label: 'un prédéfini commun',
-    definition: toIndicateurDefinition({ identifiantReferentiel: 'cae_1.a' }),
+    definition: toIndicateurCandidate({ identifiantReferentiel: 'cae_1.a' }),
   },
   {
     label: 'un prédéfini de groupement',
-    definition: toIndicateurDefinition({
+    definition: toIndicateurCandidate({
       identifiantReferentiel: 'sydev_1',
       groupementId: 3,
     }),
@@ -57,12 +57,12 @@ const coherentDefinitions = [
 
 const incoherentDefinitions: ReadonlyArray<{
   label: string;
-  definition: IndicateurDefinition;
+  definition: IndicateurCandidate;
   error: IndicateurNatureError;
 }> = [
   {
     label: 'un perso qui porte un identifiant référentiel',
-    definition: toIndicateurDefinition({
+    definition: toIndicateurCandidate({
       collectiviteId: 12,
       identifiantReferentiel: 'cae_1.a',
     }),
@@ -70,12 +70,12 @@ const incoherentDefinitions: ReadonlyArray<{
   },
   {
     label: 'un perso rattaché à un groupement',
-    definition: toIndicateurDefinition({ collectiviteId: 12, groupementId: 3 }),
+    definition: toIndicateurCandidate({ collectiviteId: 12, groupementId: 3 }),
     error: 'PERSO_WITH_GROUPEMENT',
   },
   {
     label: 'une définition sans collectivité ni identifiant référentiel',
-    definition: toIndicateurDefinition({}),
+    definition: toIndicateurCandidate({}),
     error: 'PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL',
   },
 ];
@@ -107,11 +107,11 @@ describe('indicateurSchema', () => {
 });
 
 describe('type Indicateur', () => {
-  it('reste assignable à IndicateurDefinition', () => {
-    expectTypeOf<Indicateur>().toExtend<IndicateurDefinition>();
+  it('reste assignable à IndicateurCandidate', () => {
+    expectTypeOf<Indicateur>().toExtend<IndicateurCandidate>();
   });
 
   it('n’accepte pas une définition plate sans passer par toIndicateur', () => {
-    expectTypeOf<IndicateurDefinition>().not.toExtend<Indicateur>();
+    expectTypeOf<IndicateurCandidate>().not.toExtend<Indicateur>();
   });
 });

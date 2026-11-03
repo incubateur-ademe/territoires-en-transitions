@@ -1,4 +1,3 @@
-export * from './definitions/indicateur-definition.schema';
 export * from './definitions/indicateur-detaille.schema';
 export * from './definitions/indicateur-nature.rules';
 export * from './definitions/indicateur-nature.schema';

@@ -1,9 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import type { Indicateur, IndicateurDefinition } from '@tet/domain/indicateurs';
+import type { Indicateur } from '@tet/domain/indicateurs';
 import { getTableColumns, inArray } from 'drizzle-orm';
-import { toIndicateursOrThrow } from '../definitions/indicateur.adapter';
+import {
+  type IndicateurRow,
+  toIndicateursOrThrow,
+} from '../definitions/indicateur.adapter';
 import { indicateurDefinitionPeriodiciteSelection } from '../definitions/indicateur-periodicite.column';
 
 @Injectable()
@@ -20,7 +23,7 @@ export class IndicateurDefinitionsRepository {
     return toIndicateursOrThrow(await this.selectByIds(ids));
   }
 
-  private async selectByIds(ids: number[]): Promise<IndicateurDefinition[]> {
+  private async selectByIds(ids: number[]): Promise<IndicateurRow[]> {
     try {
       return await this.databaseService.db
         .select({

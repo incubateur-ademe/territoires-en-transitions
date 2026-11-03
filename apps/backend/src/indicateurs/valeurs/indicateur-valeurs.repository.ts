@@ -38,6 +38,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
+import { withNatureOrThrow } from '../definitions/indicateur.adapter';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type ListIndicateurValeursQuery = Readonly<{
@@ -150,7 +151,7 @@ export class IndicateurValeursRepository {
     options: ListIndicateurValeursQuery,
     tx?: Transaction
   ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
-    return (tx ?? this.databaseService.db)
+    const rows = await (tx ?? this.databaseService.db)
       .select({
         indicateurValeur: {
           ...indicateurValeurPeriodiciteSelection,
@@ -201,6 +202,12 @@ export class IndicateurValeursRepository {
         )
       )
       .where(and(...this.getListConditions(options)));
+
+    return rows.map((row) => ({
+      ...row,
+      indicateurDefinition:
+        row.indicateurDefinition && withNatureOrThrow(row.indicateurDefinition),
+    }));
   }
 
   async listSources(

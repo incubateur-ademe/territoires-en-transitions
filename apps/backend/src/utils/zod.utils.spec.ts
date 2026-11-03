@@ -234,7 +234,7 @@ describe('getPropertyPaths', () => {
       expect(getPropertyPaths(schema)).toEqual(['name', 'age']);
     });
 
-    it('should handle complex zod/mini schema similar to indicateurDefinitionSchema', () => {
+    it('should handle complex zod/mini schema similar to indicateurCommonSchema', () => {
       const schema = zMini.z.object({
         id: zMini.z.number(),
         version: zMini.z.string(),

@@ -9,7 +9,7 @@ import { VerificationTrajectoireRequest } from '@tet/backend/indicateurs/traject
 import { VerificationTrajectoireResultType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import { CollectiviteResume } from '@tet/domain/collectivites';
 import {
-  IndicateurDefinition,
+  Indicateur,
   IndicateurValeurCreate,
   isUnsupportedTrajectoireStatus,
   VerificationTrajectoireStatus,
@@ -448,7 +448,7 @@ export default class TrajectoiresSpreadsheetService {
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: readonly (readonly unknown[])[] | null,
     identifiantsReferentielAssocie: string[],
-    indicateurResultatDefinitions: IndicateurDefinition[],
+    indicateurResultatDefinitions: Indicateur[],
     donneesCalculTrajectoire: DataInputForTrajectoireCompute
   ): IndicateurValeurCreate[] {
     const donneesEntree = [

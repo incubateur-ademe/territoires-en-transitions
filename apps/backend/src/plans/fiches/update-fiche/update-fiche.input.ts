@@ -9,7 +9,7 @@ import {
   structureTagSchema,
 } from '@tet/domain/collectivites';
 
-import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
+import { indicateurCommonSchema } from '@tet/domain/indicateurs';
 import {
   axeSchema,
   ficheNoteUpsertSchema,
@@ -64,9 +64,7 @@ export const updateFicheInputSchema = ficheSchemaUpdate.extend({
     .array()
     .nullish(),
   mesures: z.array(zm.pick(actionRelationSchema, { id: true })).nullish(),
-  indicateurs: z
-    .array(zm.pick(indicateurDefinitionSchema, { id: true }))
-    .nullish(),
+  indicateurs: z.array(zm.pick(indicateurCommonSchema, { id: true })).nullish(),
   services: z.array(zm.pick(serviceTagSchema, { id: true })).nullish(),
   financeurs: financeurWithMontantSchema.array().nullish(),
   fichesLiees: ficheSchema.pick({ id: true }).array().nullish(),

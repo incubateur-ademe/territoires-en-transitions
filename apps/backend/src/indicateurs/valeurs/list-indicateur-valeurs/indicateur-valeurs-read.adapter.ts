@@ -1,9 +1,9 @@
 import {
   COLLECTIVITE_SOURCE_ID,
+  Indicateur,
   IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
-  IndicateurDefinition,
-  IndicateurDefinitionTiny,
+  IndicateurResume,
   IndicateurSource,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
@@ -54,11 +54,11 @@ export function deduplicateIndicateurValeursBySource(
 
 export function groupIndicateurValeurs(
   indicateurValeurs: IndicateurValeur[],
-  indicateurDefinitions: IndicateurDefinitionTiny[],
+  indicateurDefinitions: IndicateurResume[],
   commentairesNonInclus = false
 ): IndicateurAvecValeurs[] {
   const initialDefinitionsAcc: {
-    [key: string]: IndicateurDefinitionTiny;
+    [key: string]: IndicateurResume;
   } = {};
   const uniqueIndicateurDefinitions = Object.values(
     indicateurDefinitions.reduce((acc, def) => {
@@ -108,13 +108,13 @@ export function groupIndicateurValeurs(
 
 export function groupIndicateurValeursBySource(
   indicateurValeurs: (IndicateurValeur & { confidentiel?: boolean | null })[],
-  indicateurDefinitions: Pick<IndicateurDefinition, 'id'>[],
+  indicateurDefinitions: Indicateur[],
   indicateurMetadonnees: IndicateurSourceMetadonnee[],
   sources: IndicateurSource[],
   supprimeIndicateursSansValeurs = true
 ): IndicateurAvecValeursParSource[] {
   const initialDefinitionsAcc: {
-    [key: string]: Pick<IndicateurDefinition, 'id'>;
+    [key: string]: Indicateur;
   } = {};
   const uniqueIndicateurDefinitions = Object.values(
     indicateurDefinitions.reduce((acc, def) => {
@@ -192,7 +192,7 @@ export function groupIndicateurValeursBySource(
         };
       }
       const IndicateurAvecValeursParSource: IndicateurAvecValeursParSource = {
-        definition: indicateurDefinition as IndicateurDefinition,
+        definition: indicateurDefinition,
         totalValeursCount: valeurs.length,
         totalFilledValeursCount: valeurs.filter(
           (v) => !isNil(v.resultat) || !isNil(v.objectif)

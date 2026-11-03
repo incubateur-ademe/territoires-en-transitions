@@ -1,5 +1,5 @@
 import * as z from 'zod/mini';
-import { indicateurDefinitionSchema } from '../../../indicateurs/definitions/indicateur-definition.schema';
+import { indicateurPredefiniSchema } from '../../../indicateurs/definitions/indicateur.schema';
 import { indicateurCollectiviteSchema } from '../../../indicateurs/shared/indicateur-collectivite.schema';
 import { indicateurValeurAvecMetadonnesDefinitionSchema } from '../../../indicateurs/valeurs/indicateur-valeur.schema';
 import {
@@ -85,10 +85,10 @@ export type PcaetDiagnosticVulnerabilite = z.infer<
  * définition, `collectiviteId` désigne la collectivité propriétaire d'un
  * indicateur perso), un merge à plat les écraserait.
  */
-export const pcaetDiagnosticIndicateurDefinitionSchema = z.object({
-  ...indicateurDefinitionSchema.shape,
-  ...z.pick(indicateurCollectiviteSchema, { isApplicable: true }).shape,
-});
+export const pcaetDiagnosticIndicateurDefinitionSchema = z.extend(
+  indicateurPredefiniSchema,
+  z.pick(indicateurCollectiviteSchema, { isApplicable: true }).shape
+);
 
 export type PcaetDiagnosticIndicateurDefinition = z.infer<
   typeof pcaetDiagnosticIndicateurDefinitionSchema

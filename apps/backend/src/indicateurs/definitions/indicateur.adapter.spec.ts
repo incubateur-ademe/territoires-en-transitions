@@ -1,14 +1,33 @@
-import { toIndicateurDefinition } from './indicateur-definition.test-fixture';
+import { toIndicateurRow } from './indicateur-row.test-fixture';
 import {
   toIndicateurOrThrow,
   toIndicateurPredefiniOrThrow,
   toIndicateursOrThrow,
   toIndicateursPredefiniOrThrow,
+  withPredefiniOrThrow,
 } from './indicateur.adapter';
+
+describe('withPredefiniOrThrow', () => {
+  it('rend la ligne telle quelle, champs supplémentaires compris', () => {
+    const row = {
+      ...toIndicateurRow({ id: 3, identifiantReferentiel: 'cae_1.a' }),
+      isApplicable: false,
+    };
+    expect(withPredefiniOrThrow(row)).toEqual(row);
+  });
+
+  it('refuse un perso', () => {
+    expect(() =>
+      withPredefiniOrThrow(toIndicateurRow({ id: 5, collectiviteId: 12 }))
+    ).toThrow(
+      'Indicateur 5 : un indicateur de la plateforme doit être prédéfini'
+    );
+  });
+});
 
 describe('toIndicateurPredefiniOrThrow', () => {
   it('rend un prédéfini tel quel', () => {
-    const definition = toIndicateurDefinition({
+    const definition = toIndicateurRow({
       identifiantReferentiel: 'cae_1.a',
     });
     expect(toIndicateurPredefiniOrThrow(definition)).toEqual(definition);
@@ -17,7 +36,7 @@ describe('toIndicateurPredefiniOrThrow', () => {
   it('refuse un perso, pourtant cohérent', () => {
     expect(() =>
       toIndicateurPredefiniOrThrow(
-        toIndicateurDefinition({ id: 5, collectiviteId: 12 })
+        toIndicateurRow({ id: 5, collectiviteId: 12 })
       )
     ).toThrow(
       'Indicateur 5 : un indicateur de la plateforme doit être prédéfini'
@@ -26,7 +45,7 @@ describe('toIndicateurPredefiniOrThrow', () => {
 
   it('nomme l’incohérence avant de refuser le perso', () => {
     expect(() =>
-      toIndicateurPredefiniOrThrow(toIndicateurDefinition({ id: 6 }))
+      toIndicateurPredefiniOrThrow(toIndicateurRow({ id: 6 }))
     ).toThrow(
       'Indicateur 6 : nature incohérente (PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL)'
     );
@@ -37,8 +56,8 @@ describe('toIndicateursPredefiniOrThrow', () => {
   it('échoue en entier si une définition est un perso', () => {
     expect(() =>
       toIndicateursPredefiniOrThrow([
-        toIndicateurDefinition({ id: 1, identifiantReferentiel: 'cae_1.a' }),
-        toIndicateurDefinition({ id: 2, collectiviteId: 12 }),
+        toIndicateurRow({ id: 1, identifiantReferentiel: 'cae_1.a' }),
+        toIndicateurRow({ id: 2, collectiviteId: 12 }),
       ])
     ).toThrow('Indicateur 2 : un indicateur de la plateforme');
   });
@@ -46,12 +65,12 @@ describe('toIndicateursPredefiniOrThrow', () => {
 
 describe('toIndicateurOrThrow', () => {
   it('rend un perso tel quel', () => {
-    const definition = toIndicateurDefinition({ collectiviteId: 12 });
+    const definition = toIndicateurRow({ collectiviteId: 12 });
     expect(toIndicateurOrThrow(definition)).toEqual(definition);
   });
 
   it('rend un prédéfini tel quel', () => {
-    const definition = toIndicateurDefinition({
+    const definition = toIndicateurRow({
       identifiantReferentiel: 'cae_1.a',
     });
     expect(toIndicateurOrThrow(definition)).toEqual(definition);
@@ -59,7 +78,7 @@ describe('toIndicateurOrThrow', () => {
 
   it('garde les colonnes ajoutées par la requête', () => {
     const definition = {
-      ...toIndicateurDefinition({ collectiviteId: 12 }),
+      ...toIndicateurRow({ collectiviteId: 12 }),
       categories: [{ id: 1, nom: 'Énergie' }],
     };
     expect(toIndicateurOrThrow(definition)).toEqual(definition);
@@ -68,7 +87,7 @@ describe('toIndicateurOrThrow', () => {
   it.each([
     {
       label: 'un perso qui porte un identifiant référentiel',
-      definition: toIndicateurDefinition({
+      definition: toIndicateurRow({
         id: 7,
         collectiviteId: 12,
         identifiantReferentiel: 'cae_1.a',
@@ -78,7 +97,7 @@ describe('toIndicateurOrThrow', () => {
     },
     {
       label: 'un perso rattaché à un groupement',
-      definition: toIndicateurDefinition({
+      definition: toIndicateurRow({
         id: 8,
         collectiviteId: 12,
         groupementId: 3,
@@ -87,7 +106,7 @@ describe('toIndicateurOrThrow', () => {
     },
     {
       label: 'une définition sans collectivité ni identifiant référentiel',
-      definition: toIndicateurDefinition({ id: 9 }),
+      definition: toIndicateurRow({ id: 9 }),
       message:
         'Indicateur 9 : nature incohérente (PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL)',
     },
@@ -99,16 +118,16 @@ describe('toIndicateurOrThrow', () => {
 describe('toIndicateursOrThrow', () => {
   it('convertit toutes les définitions dans l’ordre', () => {
     const definitions = [
-      toIndicateurDefinition({ id: 1, collectiviteId: 12 }),
-      toIndicateurDefinition({ id: 2, identifiantReferentiel: 'cae_1.a' }),
+      toIndicateurRow({ id: 1, collectiviteId: 12 }),
+      toIndicateurRow({ id: 2, identifiantReferentiel: 'cae_1.a' }),
     ];
     expect(toIndicateursOrThrow(definitions)).toEqual(definitions);
   });
 
   it('échoue en entier si une seule définition est incohérente', () => {
     const definitions = [
-      toIndicateurDefinition({ id: 1, collectiviteId: 12 }),
-      toIndicateurDefinition({ id: 2 }),
+      toIndicateurRow({ id: 1, collectiviteId: 12 }),
+      toIndicateurRow({ id: 2 }),
     ];
     expect(() => toIndicateursOrThrow(definitions)).toThrow(
       'Indicateur 2 : nature incohérente'

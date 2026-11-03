@@ -1,17 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
-import { toIndicateurDefinition } from './indicateur-definition.test-fixture';
+import { toIndicateurRow } from './indicateur-row.test-fixture';
 import { IndicateurDefinitionLockRepository } from './indicateur-definition-lock.repository';
 
 describe('IndicateurDefinitionLockRepository', () => {
   it('verrouille et relit les définitions dans un ordre déterministe', async () => {
     const lockedDefinitions = [
-      toIndicateurDefinition({
+      toIndicateurRow({
         id: 2,
         identifiantReferentiel: 'cae_1.a',
         periodicite: 'mensuelle',
         precision: 2,
       }),
-      toIndicateurDefinition({
+      toIndicateurRow({
         id: 10,
         collectiviteId: 12,
         periodicite: 'annuelle',

@@ -1,5 +1,5 @@
 import {
-  IndicateurDefinition,
+  Indicateur,
   IndicateurPeriode,
   IndicateurValeur,
   IndicateurValeurType,
@@ -21,7 +21,7 @@ export type IndicateurPeriodeColumn = {
 export type IndicateurTableRow = {
   indicateurId: number;
   indicateurLabel: string;
-  indicateurDefinition: IndicateurDefinition;
+  indicateurDefinition: Indicateur;
   indicateurValeurs: IndicateurValeur[];
   /** Règle métier fournie par le contexte qui construit la grille. */
   isValeurRequired: (periode: IndicateurPeriode | null) => boolean;

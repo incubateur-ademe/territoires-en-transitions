@@ -1,9 +1,9 @@
-import type { IndicateurDefinition } from '@tet/domain/indicateurs';
+import type { IndicateurCommon } from '@tet/domain/indicateurs';
 import { UserIndicateurValeurNotAllowedException } from './user-indicateur-valeur.errors';
 
 /** Politique unique protégeant les indicateurs alimentés exclusivement par calcul/source. */
 export const assertUserIndicateurValeursAllowed = (
-  indicateurs: Pick<IndicateurDefinition, 'id' | 'sansValeurUtilisateur'>[]
+  indicateurs: Pick<IndicateurCommon, 'id' | 'sansValeurUtilisateur'>[]
 ): void => {
   const protectedIndicateurIds = indicateurs
     .filter(({ sansValeurUtilisateur }) => sansValeurUtilisateur)

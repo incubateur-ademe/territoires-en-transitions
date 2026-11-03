@@ -1,6 +1,6 @@
-import { IndicateurDefinitionTiny } from '@tet/domain/indicateurs';
+import { IndicateurResume } from '@tet/domain/indicateurs';
 
-export const indicateur1: IndicateurDefinitionTiny = {
+export const indicateur1: IndicateurResume = {
   id: 456,
   identifiantReferentiel: 'cae_1.c',
   titre: 'Emissions de gaz à effet de serre - résidentiel',
@@ -12,7 +12,7 @@ export const indicateur1: IndicateurDefinitionTiny = {
   borneMax: null,
 };
 
-export const indicateur2: IndicateurDefinitionTiny = {
+export const indicateur2: IndicateurResume = {
   id: 457,
   identifiantReferentiel: 'cae_1.d',
   titre: 'Emissions de gaz à effet de serre - tertiaire',
@@ -24,7 +24,7 @@ export const indicateur2: IndicateurDefinitionTiny = {
   borneMax: null,
 };
 
-export const indicateur3: IndicateurDefinitionTiny = {
+export const indicateur3: IndicateurResume = {
   id: 458,
   identifiantReferentiel: 'cae_1.e',
   titre: 'Emissions de gaz à effet de serre - transport routier',

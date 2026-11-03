@@ -1,7 +1,7 @@
 import { serviceTagSchema } from '@tet/domain/collectivites';
 import {
   IndicateurPeriodiciteEnum,
-  indicateurDefinitionSchemaCreate,
+  indicateurCommonSchema,
   indicateurPeriodiciteValues,
 } from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
@@ -10,8 +10,8 @@ import * as zm from 'zod/mini';
 import { upsertIndicateurDefinitionPilotesInputSchema } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.input';
 
 export const createIndicateurDefinitionInputSchema = z.object({
-  titre: indicateurDefinitionSchemaCreate.shape.titre,
-  unite: z.optional(indicateurDefinitionSchemaCreate.shape.unite),
+  titre: indicateurCommonSchema.shape.titre,
+  unite: z.optional(indicateurCommonSchema.shape.unite),
   // Compatibilité de l'API historique : l'absence de périodicité est
   // interprétée une seule fois à la frontière d'entrée. Le service reçoit
   // toujours une périodicité explicite.

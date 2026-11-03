@@ -24,7 +24,10 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
-import { toIndicateursPredefiniOrThrow } from '../indicateur.adapter';
+import {
+  toIndicateursPredefiniOrThrow,
+  withPredefiniOrThrow,
+} from '../indicateur.adapter';
 import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
 
@@ -111,7 +114,7 @@ export class ListPlatformDefinitionsRepository {
       `${definitions.length} définitions trouvées pour la collectivité ${collectiviteId}`
     );
 
-    return definitions;
+    return definitions.map(withPredefiniOrThrow);
   }
 
   async listPlatformDefinitionAggregates(
