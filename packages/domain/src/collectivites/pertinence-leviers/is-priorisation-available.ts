@@ -3,5 +3,10 @@ import {
   collectiviteTypeEnum,
 } from '../collectivite-type.enum';
 
+const typesWithPriorisation: readonly CollectiviteType[] = [
+  collectiviteTypeEnum.EPCI,
+  collectiviteTypeEnum.TEST,
+];
+
 export const isPriorisationAvailable = (type: CollectiviteType): boolean =>
-  type === collectiviteTypeEnum.EPCI;
+  typesWithPriorisation.includes(type);
