@@ -6,19 +6,24 @@ import {
 } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { Result, success } from '@tet/backend/utils/result.type';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurSourceMetadonnee,
+  IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
+import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
 import { ListCollectiviteIndicateursRepository } from '../../definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
 import {
   captureIndicateurValeursResult,
+  captureIndicateurValeursResultOf,
   getIndicateurValeursDataOrThrow,
+  IndicateurValeursError,
 } from '../indicateur-valeurs.errors';
 import {
   deduplicateIndicateurValeursBySource,
@@ -35,18 +40,23 @@ export class ListIndicateurValeursService {
     private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository
   ) {}
 
-  get(
+  async get(
     options: ListIndicateurValeursInput & { ignoreDedoublonnage?: boolean },
     context: Extract<IndicateurValeursContext, { isUserTrusted: true }>
-  ) {
-    return captureIndicateurValeursResult(async () => {
-      const valeurs = await this.repository.listIndicateurValeurs(
+  ): Promise<
+    Result<IndicateurValeurAvecMetadonnesDefinition[], IndicateurValeursError>
+  > {
+    return captureIndicateurValeursResultOf(async () => {
+      const listing = await this.repository.listIndicateurValeurs(
         options,
         context.tx
       );
-      return options.ignoreDedoublonnage
-        ? valeurs
-        : deduplicateIndicateurValeursBySource(valeurs);
+      if (!listing.success) return listing;
+      return success(
+        options.ignoreDedoublonnage
+          ? listing.data
+          : deduplicateIndicateurValeursBySource(listing.data)
+      );
     });
   }
 
@@ -120,7 +130,7 @@ export class ListIndicateurValeursService {
       confidentiel: v.confidentiel,
     }));
 
-    const uniqueIndicateurDefinitions =
+    const uniqueIndicateurDefinitions = getIndicateurDataOrThrow(
       await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
         {
           indicateurIds: options.indicateurIds,
@@ -128,7 +138,8 @@ export class ListIndicateurValeursService {
           collectiviteId,
         },
         tx
-      );
+      )
+    );
 
     options.identifiantsReferentiel?.forEach((identifiant) => {
       if (

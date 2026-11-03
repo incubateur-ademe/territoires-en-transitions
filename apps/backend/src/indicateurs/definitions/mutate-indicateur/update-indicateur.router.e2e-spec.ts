@@ -29,6 +29,7 @@ import { describe, expect, onTestFinished, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
+import { getIndicateurDataOrThrow } from '../indicateur-nature.utils';
 import { ListCollectiviteIndicateursRepository } from '../list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { UpdateIndicateurInput } from './mutate-indicateur.input';
 import { UpdateIndicateurService } from './update-indicateur.service';
@@ -914,10 +915,12 @@ describe('UpdateIndicateurRouter', () => {
       async (isMember) => {
         const h = await createSharedDefinition({ isMember });
         const repository = app.get(ListCollectiviteIndicateursRepository);
-        const definitions = await repository.listCollectiviteIndicateurs({
-          collectiviteId: collectivite.id,
-          indicateurIds: [h.definition.id],
-        });
+        const definitions = getIndicateurDataOrThrow(
+          await repository.listCollectiviteIndicateurs({
+            collectiviteId: collectivite.id,
+            indicateurIds: [h.definition.id],
+          })
+        );
 
         expect(definitions.map(({ id }) => id)).toEqual(
           isMember ? [h.definition.id] : []

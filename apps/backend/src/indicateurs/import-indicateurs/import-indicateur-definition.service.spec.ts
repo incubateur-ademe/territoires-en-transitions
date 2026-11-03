@@ -197,7 +197,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
 
   test('préserve une erreur de commit renvoyée par le gestionnaire de transaction', async () => {
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
-      []
+      success([])
     );
     transactionManager.executeSingle.mockResolvedValueOnce(
       failure(new Error('commit failed'))
@@ -210,12 +210,46 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     ).rejects.toThrow('commit failed');
   });
 
+  test('propage l’échec de lecture des prédéfinis avant toute écriture', async () => {
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
+      failure(
+        'DATABASE_ERROR',
+        new Error('Indicateur 9 : nature incohérente (PERSO_WITH_GROUPEMENT)')
+      )
+    );
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        sampleImportIndicateurDefinition,
+      ])
+    ).rejects.toThrow('Indicateur 9 : nature incohérente');
+    expect(importRepository.upsertDefinitions).not.toHaveBeenCalled();
+  });
+
+  test('propage l’échec de relecture des prédéfinis après l’écriture', async () => {
+    listIndicateursPredefinisRepository.listIndicateursPredefinis
+      .mockResolvedValueOnce(success([]))
+      .mockResolvedValueOnce(
+        failure(
+          'DATABASE_ERROR',
+          new Error('Indicateur 9 : nature incohérente (PERSO_WITH_GROUPEMENT)')
+        )
+      );
+
+    await expect(
+      importIndicateurDefinitionService.upsertIndicateurDefinitions([
+        sampleImportIndicateurDefinition,
+      ])
+    ).rejects.toThrow('Indicateur 9 : nature incohérente');
+    expect(valeursService.recomputeAll).not.toHaveBeenCalled();
+  });
+
   test('accepte une nouvelle cadence mensuelle après activation', async () => {
     const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
     monthlyDefinition.periodicite = 'mensuelle';
     monthlyDefinition.identifiantReferentiel = 'test_mensuel';
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
-      []
+      success([])
     );
 
     await expect(
@@ -236,7 +270,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     monthlyDefinition.periodicite = 'mensuelle';
     monthlyDefinition.identifiantReferentiel = 'test_mensuel';
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
-      [{ ...monthlyDefinition, id: 42 }]
+      success([{ ...monthlyDefinition, id: 42 }])
     );
 
     importRepository.listDefinitionSnapshots.mockResolvedValue([
@@ -271,7 +305,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       periodicite: 'annuelle' as const,
     };
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
-      [existingDefinition]
+      success([existingDefinition])
     );
     importRepository.listDefinitionSnapshots.mockResolvedValue([
       {
@@ -298,7 +332,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
     importedDefinition.valeurCalcule = '1';
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
-      [{ ...importedDefinition, id: 42, valeurCalcule: null }]
+      success([{ ...importedDefinition, id: 42, valeurCalcule: null }])
     );
 
     importRepository.listDefinitionSnapshots.mockResolvedValue([
@@ -346,7 +380,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       id: 42,
     };
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValueOnce(
-      [definition]
+      success([definition])
     );
     const checkLastVersion = vi
       .spyOn(importIndicateurDefinitionService, 'checkLastVersion')
@@ -383,7 +417,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       environment: 'prod',
     } as never);
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValueOnce(
-      [definition]
+      success([definition])
     );
     sheetService.getDataFromSheet.mockResolvedValueOnce({
       data: [{ version: '2.0.0' }],
@@ -420,7 +454,9 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     listIndicateursPredefinisRepository.listIndicateursPredefinis.mockImplementation(
       (_input, currentTransaction) =>
         Promise.resolve(
-          currentTransaction ? [updatedDefinition] : [previousDefinition]
+          success(
+            currentTransaction ? [updatedDefinition] : [previousDefinition]
+          )
         )
     );
     importRepository.listDefinitionSnapshots.mockResolvedValue([

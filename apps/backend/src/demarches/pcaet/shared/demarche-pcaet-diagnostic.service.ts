@@ -18,6 +18,7 @@ import {
   PCAET_COLLECTIVITE_SOURCE_ID,
 } from './demarche-pcaet-source-metadonnee.repository';
 import { DemarchePcaetVulnerabiliteReadService } from './demarche-pcaet-vulnerabilite-read.service';
+import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/definitions/indicateur-nature.utils';
 
 /**
  * Assemble le diagnostic d'une démarche : indicateurs (grille CAE) et
@@ -63,7 +64,7 @@ export class DemarchePcaetDiagnosticService {
 
     return {
       indicateurParentConfigs: PCAET_DIAGNOSTIC_INDICATEURS,
-      indicateurDefinitions,
+      indicateurDefinitions: getIndicateurDataOrThrow(indicateurDefinitions),
       indicateurValeurs,
       vulnerabilite: this.toVulnerabilite(
         PCAET_DIAGNOSTIC_VULNERABILITE,

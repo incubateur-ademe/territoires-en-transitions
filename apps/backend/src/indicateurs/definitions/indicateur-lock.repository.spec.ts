@@ -1,3 +1,4 @@
+import { success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { toIndicateurRow } from './indicateur-row.test-fixture';
 import { IndicateurLockRepository } from './indicateur-lock.repository';
@@ -28,7 +29,7 @@ describe('IndicateurLockRepository', () => {
 
     await expect(
       repository.lockIndicateurs([10, 2, 10], { execute, select } as never)
-    ).resolves.toEqual(lockedDefinitions);
+    ).resolves.toEqual(success(lockedDefinitions));
     expect(execute).toHaveBeenCalledOnce();
     expect(execute.mock.invocationCallOrder[0]).toBeLessThan(
       select.mock.invocationCallOrder[0]
@@ -49,7 +50,7 @@ describe('IndicateurLockRepository', () => {
 
     await expect(
       repository.lockIndicateurs([], { execute, select } as never)
-    ).resolves.toEqual([]);
+    ).resolves.toEqual(success([]));
     expect(execute).toHaveBeenCalledOnce();
     expect(select).not.toHaveBeenCalled();
   });

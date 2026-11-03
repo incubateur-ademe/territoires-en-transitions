@@ -19,6 +19,13 @@ type CalculGraph = {
 type GraphContext = { tx: Transaction };
 type GraphResult = Result<CalculGraph, 'LOAD_CALCUL_GRAPH_FAILED'>;
 
+const toGraphFailure = ({
+  cause,
+}: {
+  cause?: Error;
+}): Result<never, 'LOAD_CALCUL_GRAPH_FAILED'> =>
+  failure('LOAD_CALCUL_GRAPH_FAILED', cause);
+
 /** Loads and validates one stable formula graph under the caller's transaction. */
 @Injectable()
 export class LoadIndicateurCalculGraphService {
@@ -43,9 +50,10 @@ export class LoadIndicateurCalculGraphService {
     Result<IndicateurPredefini[], 'LOAD_CALCUL_GRAPH_FAILED'>
   > {
     try {
-      return success(
-        await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue()
-      );
+      const computed =
+        await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue();
+      if (!computed.success) return toGraphFailure(computed);
+      return computed;
     } catch (error) {
       return failure(
         'LOAD_CALCUL_GRAPH_FAILED',
@@ -61,11 +69,13 @@ export class LoadIndicateurCalculGraphService {
     try {
       // The graph lock precedes every read, including source identities.
       await this.locks.lockForValueWrite(tx);
-      const sourceDefinitions =
+      const sourceResult =
         await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
           { indicateurIds },
           tx
         );
+      if (!sourceResult.success) return toGraphFailure(sourceResult);
+      const sourceDefinitions = sourceResult.data;
       const sourceIdentifiants = sourceDefinitions.flatMap((definition) =>
         definition.identifiantReferentiel
           ? [definition.identifiantReferentiel]
@@ -77,17 +87,21 @@ export class LoadIndicateurCalculGraphService {
           sourceDefinitions,
           targetDefinitions: [],
         });
-      const candidates =
+      const candidatesResult =
         await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
           { identifiantsReferentiel: sourceIdentifiants },
           tx
         );
-      const graph = await this.lockGraph(
+      if (!candidatesResult.success) return toGraphFailure(candidatesResult);
+      const candidates = candidatesResult.data;
+      const lockedGraph = await this.lockGraph(
         candidates,
         sourceDefinitions,
         candidates.map(({ id }) => id),
         tx
       );
+      if (!lockedGraph.success) return lockedGraph;
+      const graph = lockedGraph.data;
       const changedIdentifiants = new Set(sourceIdentifiants);
       graph.formulas = graph.formulas.filter(({ references }) =>
         references.some(({ identifiant }) =>
@@ -117,14 +131,21 @@ export class LoadIndicateurCalculGraphService {
           sourceDefinitions: [],
           targetDefinitions: [],
         });
-      const candidates =
+      const candidatesResult =
         await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
           { indicateurIds },
           tx
         );
-      const graph = await this.lockGraph(candidates, [], indicateurIds, tx);
-      this.assertCompatibleSources(graph);
-      return success(graph);
+      if (!candidatesResult.success) return toGraphFailure(candidatesResult);
+      const lockedGraph = await this.lockGraph(
+        candidatesResult.data,
+        [],
+        indicateurIds,
+        tx
+      );
+      if (!lockedGraph.success) return lockedGraph;
+      this.assertCompatibleSources(lockedGraph.data);
+      return lockedGraph;
     } catch (error) {
       return failure(
         'LOAD_CALCUL_GRAPH_FAILED',
@@ -138,7 +159,7 @@ export class LoadIndicateurCalculGraphService {
     knownSources: Indicateur[],
     targetIds: number[],
     tx: Transaction
-  ): Promise<CalculGraph> {
+  ): Promise<GraphResult> {
     const sourceIdentifiants = [
       ...new Set(
         candidates.flatMap((definition) =>
@@ -157,12 +178,12 @@ export class LoadIndicateurCalculGraphService {
     const missingIdentifiants = sourceIdentifiants.filter(
       (identifiant) => !knownByIdentifiant.has(identifiant)
     );
-    const missingDefinitions = missingIdentifiants.length
-      ? await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
-          { identifiantsReferentiel: missingIdentifiants },
-          tx
-        )
-      : [];
+    const missingResult = await this.listMissingDefinitions(
+      missingIdentifiants,
+      tx
+    );
+    if (!missingResult.success) return toGraphFailure(missingResult);
+    const missingDefinitions = missingResult.data;
     const sourceDefinitions = sourceIdentifiants.flatMap((identifiant) => {
       const definition =
         knownByIdentifiant.get(identifiant) ??
@@ -171,7 +192,7 @@ export class LoadIndicateurCalculGraphService {
         );
       return definition ? [definition] : [];
     });
-    const lockedDefinitions = await this.locks.lockIndicateurs(
+    const lockedResult = await this.locks.lockIndicateurs(
       [
         ...new Set([
           ...knownSources.map(({ id }) => id),
@@ -181,17 +202,32 @@ export class LoadIndicateurCalculGraphService {
       ],
       tx
     );
+    if (!lockedResult.success) return toGraphFailure(lockedResult);
+    const lockedDefinitions = lockedResult.data;
     const targetIdSet = new Set(targetIds);
     const targetDefinitions = lockedDefinitions
       .filter(({ id }) => targetIdSet.has(id))
       .filter(isIndicateurPredefini);
-    return {
+    return success({
       targetDefinitions,
       formulas: targetDefinitions
         .filter((definition) => Boolean(definition.valeurCalcule))
         .map((definition) => this.getFormula(definition)),
       sourceDefinitions: lockedDefinitions,
-    };
+    });
+  }
+
+  private async listMissingDefinitions(
+    identifiantsReferentiel: string[],
+    tx: Transaction
+  ): Promise<
+    ReturnType<ListIndicateursPredefinisRepository['listIndicateursPredefinis']>
+  > {
+    if (!identifiantsReferentiel.length) return success([]);
+    return this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
+      { identifiantsReferentiel },
+      tx
+    );
   }
 
   private assertCompatibleSources(graph: CalculGraph): void {

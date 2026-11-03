@@ -20,6 +20,7 @@ import {
   PreparedIndicateurValeurs,
   ValidateIndicateurValeursWriteService,
 } from './validate-indicateur-valeurs-write.service';
+import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
 
 /** Persists values under the caller's transaction; recalculation stays in the reconciliation service. */
 @Injectable()
@@ -109,11 +110,12 @@ export class WriteIndicateurValeursService {
     return captureIndicateurValeursResult(
       async (): Promise<IndicateurValeur | undefined> => {
         const { collectiviteId, indicateurId } = data;
-        const [lockedDefinition] =
+        const [lockedDefinition] = getIndicateurDataOrThrow(
           await this.indicateurLockRepository.lockIndicateurs(
             [indicateurId],
             tx
-          );
+          )
+        );
         if (!lockedDefinition)
           throw new BadRequestException(
             `Indicateur definition not found for id ${indicateurId}`

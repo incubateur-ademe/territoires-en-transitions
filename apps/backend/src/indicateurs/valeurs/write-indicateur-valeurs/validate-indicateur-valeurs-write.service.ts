@@ -23,6 +23,7 @@ import {
 } from '../indicateur-valeurs-context.types';
 import { captureIndicateurValeursResult } from '../indicateur-valeurs.errors';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
+import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
 
 export type PreparedIndicateurValeurs = {
   valeurs: IndicateurValeurCreate[];
@@ -85,9 +86,8 @@ export class ValidateIndicateurValeursWriteService {
       const indicateurIds = [
         ...new Set(input.valeurs.map((v) => v.indicateurId)),
       ];
-      const definitions = await this.indicateurLockRepository.lockIndicateurs(
-        indicateurIds,
-        tx
+      const definitions = getIndicateurDataOrThrow(
+        await this.indicateurLockRepository.lockIndicateurs(indicateurIds, tx)
       );
       const definitionsById = keyBy(definitions, (d) => d.id);
       const enforceUserRules =

@@ -31,6 +31,7 @@ import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { UNSUPPORTED_MESSAGES } from './verification-trajectoire.rules';
+import { getIndicateurDataOrThrow } from '../definitions/indicateur-nature.utils';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -251,13 +252,14 @@ export default class TrajectoiresSpreadsheetService {
       consommationSpreadsheetData
     );
 
-    const indicateurResultatDefinitions =
+    const indicateurResultatDefinitions = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
             (identifiant) => identifiant !== ''
           ),
-      });
+      })
+    );
 
     const trajectoireCalculResultat =
       await this.sheetService.getRawDataFromSheet(
@@ -612,12 +614,13 @@ export default class TrajectoiresSpreadsheetService {
       this.getIdentifiantDossierResultat()
     );
 
-    const indicateurDefinitions =
+    const indicateurDefinitions = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService
             .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
-      });
+      })
+    );
     const [
       indicateurConsommationDefinitions,
       indicateurEmissionsSequestrationDefinitions,

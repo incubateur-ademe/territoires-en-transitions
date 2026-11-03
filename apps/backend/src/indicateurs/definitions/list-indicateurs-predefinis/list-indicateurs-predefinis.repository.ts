@@ -8,6 +8,7 @@ import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-d
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { Result } from '@tet/backend/utils/result.type';
 import { Tag } from '@tet/domain/collectivites';
 import type { IndicateurPredefini } from '@tet/domain/indicateurs';
 import {
@@ -25,8 +26,8 @@ import {
 } from 'drizzle-orm';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import {
-  toIndicateursPredefiniOrThrow,
-  withPredefiniOrThrow,
+  validateIndicateursPredefinis,
+  validatePredefinis,
 } from '../indicateur.adapter';
 import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
@@ -48,7 +49,7 @@ export class ListIndicateursPredefinisRepository {
       indicateurIds?: number[];
     } = {},
     tx?: Transaction
-  ): Promise<IndicateurPredefini[]> {
+  ): Promise<Result<IndicateurPredefini[], 'DATABASE_ERROR'>> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -64,7 +65,7 @@ export class ListIndicateursPredefinisRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return toIndicateursPredefiniOrThrow(definitions);
+    return validateIndicateursPredefinis(definitions);
   }
 
   async listIndicateursPredefinisForCollectivite(
@@ -78,7 +79,7 @@ export class ListIndicateursPredefinisRepository {
       collectiviteId: number;
     },
     tx?: Transaction
-  ): Promise<PcaetDiagnosticIndicateurDefinition[]> {
+  ): Promise<Result<PcaetDiagnosticIndicateurDefinition[], 'DATABASE_ERROR'>> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -110,7 +111,7 @@ export class ListIndicateursPredefinisRepository {
       `${definitions.length} définitions trouvées pour la collectivité ${collectiviteId}`
     );
 
-    return definitions.map(withPredefiniOrThrow);
+    return validatePredefinis(definitions);
   }
 
   async listIndicateursPredefinisAggregates(
@@ -122,7 +123,7 @@ export class ListIndicateursPredefinisRepository {
       indicateurIds?: number[];
     } = {},
     tx?: Transaction
-  ): Promise<IndicateurPredefini[]> {
+  ): Promise<Result<IndicateurPredefini[], 'DATABASE_ERROR'>> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,
@@ -166,7 +167,7 @@ export class ListIndicateursPredefinisRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return toIndicateursPredefiniOrThrow(definitions);
+    return validateIndicateursPredefinis(definitions);
   }
 
   private getQueryConditions({
@@ -202,7 +203,7 @@ export class ListIndicateursPredefinisRepository {
   async listIndicateursPredefinisHavingComputedValue(
     { identifiantsReferentiel }: { identifiantsReferentiel?: string[] } = {},
     tx?: Transaction
-  ): Promise<IndicateurPredefini[]> {
+  ): Promise<Result<IndicateurPredefini[], 'DATABASE_ERROR'>> {
     const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] =
       identifiantsReferentiel?.map((identifiant) =>
         ilike(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
@@ -240,7 +241,7 @@ export class ListIndicateursPredefinisRepository {
       }`
     );
 
-    return toIndicateursPredefiniOrThrow(computedIndicateurDefinitions);
+    return validateIndicateursPredefinis(computedIndicateurDefinitions);
   }
 
   getCategoriesSubQuery() {

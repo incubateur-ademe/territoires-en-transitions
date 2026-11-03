@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/definitions/indicateur-nature.utils';
 import { IndicateurRepository } from '@tet/backend/indicateurs/indicateur/indicateur.repository';
 import { GetAxeService } from '@tet/backend/plans/axes/get-axe/get-axe.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
@@ -148,8 +149,8 @@ export class FicheExportPayloadService {
     fiche: FicheWithRelations;
   }): Promise<PdfIndicateurDefinition[]> {
     const indicateurIds = (fiche.indicateurs ?? []).map((i) => i.id);
-    const definitions = await this.indicateurRepository.listByIds(
-      indicateurIds
+    const definitions = getIndicateurDataOrThrow(
+      await this.indicateurRepository.listByIds(indicateurIds)
     );
     return definitions.map((definition) => ({
       ...definition,

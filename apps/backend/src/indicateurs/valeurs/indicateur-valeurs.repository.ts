@@ -16,6 +16,11 @@ import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
+  combineResults,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
+import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurSource,
   IndicateurValeur,
@@ -38,7 +43,10 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
-import { withNatureOrThrow } from '../definitions/indicateur.adapter';
+import {
+  type IndicateurRow,
+  validateNature,
+} from '../definitions/indicateur.adapter';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type ListIndicateurValeursQuery = Readonly<{
@@ -80,6 +88,28 @@ type UserValeurFields = Pick<
   | 'modifiedBy'
   | 'modifiedAt'
 >;
+
+type ValeurAvecDefinitionRow = Omit<
+  IndicateurValeurAvecMetadonnesDefinition,
+  'indicateurDefinition'
+> & { indicateurDefinition: IndicateurRow | null };
+
+const toValeurAvecDefinition = ({
+  indicateurDefinition,
+  ...row
+}: ValeurAvecDefinitionRow): Result<
+  IndicateurValeurAvecMetadonnesDefinition,
+  'DATABASE_ERROR'
+> => {
+  if (!indicateurDefinition) {
+    return success({ ...row, indicateurDefinition: null });
+  }
+  const nature = validateNature(indicateurDefinition);
+  if (!nature.success) {
+    return nature;
+  }
+  return success({ ...row, indicateurDefinition: nature.data });
+};
 
 @Injectable()
 export class IndicateurValeursRepository {
@@ -150,7 +180,9 @@ export class IndicateurValeursRepository {
   async listIndicateurValeurs(
     options: ListIndicateurValeursQuery,
     tx?: Transaction
-  ): Promise<IndicateurValeurAvecMetadonnesDefinition[]> {
+  ): Promise<
+    Result<IndicateurValeurAvecMetadonnesDefinition[], 'DATABASE_ERROR'>
+  > {
     const rows = await (tx ?? this.databaseService.db)
       .select({
         indicateurValeur: {
@@ -203,11 +235,7 @@ export class IndicateurValeursRepository {
       )
       .where(and(...this.getListConditions(options)));
 
-    return rows.map((row) => ({
-      ...row,
-      indicateurDefinition:
-        row.indicateurDefinition && withNatureOrThrow(row.indicateurDefinition),
-    }));
+    return combineResults(rows.map(toValeurAvecDefinition));
   }
 
   async listSources(
