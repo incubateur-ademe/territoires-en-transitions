@@ -14,7 +14,7 @@ import { eq, inArray, sql } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { IndicateurSourcesRepository } from '../sources/indicateur-sources.repository';
@@ -49,7 +49,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
     compute = new ComputeValeursService(
       new ComputeValeursRepository(database),
       new LoadIndicateurCalculGraphService(
-        new ListPlatformDefinitionsRepository(database),
+        new ListIndicateursPredefinisRepository(database),
         new IndicateurDefinitionLockRepository(),
         expressions
       ),

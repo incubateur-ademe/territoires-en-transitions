@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.service';
+import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -37,7 +37,7 @@ export class UpdateDiagnosticIndicateursValeursService {
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly crudValeursService: ManageIndicateurValeursService,
-    private readonly definitionsService: ListPlatformDefinitionsService
+    private readonly listIndicateursPredefinisService: ListIndicateursPredefinisService
   ) {}
 
   async updateValeurs(
@@ -83,10 +83,11 @@ export class UpdateDiagnosticIndicateursValeursService {
     const indicateurIds = [
       ...new Set(valeurs.map(({ indicateurId }) => indicateurId)),
     ];
-    const definitions = await this.definitionsService.listPlatformDefinitions(
-      { indicateurIds },
-      { user, tx }
-    );
+    const definitions =
+      await this.listIndicateursPredefinisService.listIndicateursPredefinis(
+        { indicateurIds },
+        { user, tx }
+      );
     if (!definitions.success) return definitions;
     if (definitions.data.length !== indicateurIds.length) {
       return failure(

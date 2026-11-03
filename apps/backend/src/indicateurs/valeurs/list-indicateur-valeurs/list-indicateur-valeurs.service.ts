@@ -12,7 +12,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
-import { ListCollectiviteDefinitionsRepository } from '../../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
+import { ListCollectiviteIndicateursRepository } from '../../definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
@@ -32,7 +32,7 @@ export class ListIndicateurValeursService {
     private readonly repository: IndicateurValeursRepository,
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
-    private readonly listCollectiviteDefinitionsRepository: ListCollectiviteDefinitionsRepository
+    private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository
   ) {}
 
   get(
@@ -121,7 +121,7 @@ export class ListIndicateurValeursService {
     }));
 
     const uniqueIndicateurDefinitions =
-      await this.listCollectiviteDefinitionsRepository.listCollectiviteDefinitions(
+      await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
         {
           indicateurIds: options.indicateurIds,
           identifiantsReferentiel: options.identifiantsReferentiel,

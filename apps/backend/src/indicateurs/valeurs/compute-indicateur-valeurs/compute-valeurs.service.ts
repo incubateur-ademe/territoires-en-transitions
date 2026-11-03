@@ -72,7 +72,7 @@ export default class ComputeValeursService {
     definitions?: IndicateurPredefini[]
   ): Promise<string[]> {
     if (!definitions) {
-      const result = await this.graphService.loadAllComputedDefinitions();
+      const result = await this.graphService.loadAllComputedIndicateurs();
       if (!result.success) throw result.cause ?? result.error;
       definitions = result.data;
     }

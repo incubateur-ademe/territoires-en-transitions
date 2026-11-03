@@ -19,14 +19,14 @@ import {
 } from 'drizzle-orm';
 
 @Injectable()
-export class ListCollectiviteDefinitionsRepository {
+export class ListCollectiviteIndicateursRepository {
   private readonly logger = new Logger(
-    ListCollectiviteDefinitionsRepository.name
+    ListCollectiviteIndicateursRepository.name
   );
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listCollectiviteDefinitions(
+  async listCollectiviteIndicateurs(
     {
       identifiantsReferentiel,
       indicateurIds,

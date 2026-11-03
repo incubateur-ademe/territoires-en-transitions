@@ -15,7 +15,7 @@ import VersionService from '@tet/backend/utils/version/version.service';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
   importIndicateurDefinitionSchema,
@@ -30,7 +30,7 @@ import {
   getImportResultOrThrow,
 } from './import-indicateur-definition.errors';
 import type {
-  PlatformDefinitions,
+  IndicateursPredefinis,
   UpsertIndicateurDefinitionsResult,
 } from './import-indicateur-definition.types';
 import { mapIndicateurObjectifs } from './map-indicateur-objectifs.rules';
@@ -48,7 +48,7 @@ const UNKNOWN_QUESTION_HINT =
   "Si cette question vient d'être créée, importez les questions de personnalisation avant les indicateurs.";
 
 type ImportIndicateurDefinitionsResult = Readonly<{
-  definitions: PlatformDefinitions;
+  definitions: IndicateursPredefinis;
   identifiantsRecalcules: string[];
 }>;
 
@@ -68,7 +68,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
   constructor(
     private readonly configurationService: ConfigurationService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
@@ -98,7 +98,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
   async importIndicateurDefinitions(): Promise<ImportIndicateurDefinitionsResult> {
     const indicateurDefinitions =
-      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+      await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel: ['cae_1.a'],
       });
 
@@ -185,7 +185,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return { ok: true };
   }
 
-  async importObjectifs(definitions: PlatformDefinitions) {
+  async importObjectifs(definitions: IndicateursPredefinis) {
     return getImportResultOrThrow(
       mapIndicateurObjectifs(await this.readObjectifs(), definitions)
     );

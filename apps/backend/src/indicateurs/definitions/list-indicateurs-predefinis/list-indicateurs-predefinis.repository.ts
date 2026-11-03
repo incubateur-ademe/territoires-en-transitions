@@ -32,12 +32,14 @@ import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
 
 @Injectable()
-export class ListPlatformDefinitionsRepository {
-  private readonly logger = new Logger(ListPlatformDefinitionsRepository.name);
+export class ListIndicateursPredefinisRepository {
+  private readonly logger = new Logger(
+    ListIndicateursPredefinisRepository.name
+  );
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listPlatformDefinitions(
+  async listIndicateursPredefinis(
     {
       identifiantsReferentiel,
       indicateurIds,
@@ -65,13 +67,7 @@ export class ListPlatformDefinitionsRepository {
     return toIndicateursPredefiniOrThrow(definitions);
   }
 
-  /**
-   * Définitions du référentiel augmentées de l'applicabilité décidée par la
-   * collectivité. Méthode distincte de `listPlatformDefinitions` : celle-ci a
-   * dix appelants (imports, trajectoires, calcul auto) que cette jointure ne
-   * concerne pas, on ne change pas leur type de retour pour autant.
-   */
-  async listPlatformDefinitionsForCollectivite(
+  async listIndicateursPredefinisForCollectivite(
     {
       identifiantsReferentiel,
       indicateurIds,
@@ -117,7 +113,7 @@ export class ListPlatformDefinitionsRepository {
     return definitions.map(withPredefiniOrThrow);
   }
 
-  async listPlatformDefinitionAggregates(
+  async listIndicateursPredefinisAggregates(
     {
       identifiantsReferentiel,
       indicateurIds,
@@ -203,7 +199,7 @@ export class ListPlatformDefinitionsRepository {
     return conditions;
   }
 
-  async listPlatformDefinitionsHavingComputedValue(
+  async listIndicateursPredefinisHavingComputedValue(
     { identifiantsReferentiel }: { identifiantsReferentiel?: string[] } = {},
     tx?: Transaction
   ): Promise<IndicateurPredefini[]> {

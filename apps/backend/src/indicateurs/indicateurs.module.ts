@@ -17,10 +17,10 @@ import { TrackingModule } from '../utils/tracking/tracking.module';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { IndicateurDefinitionLockRepository } from './definitions/indicateur-definition-lock.repository';
-import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
-import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
-import { ListPlatformDefinitionsRepository } from './definitions/list-platform-definitions/list-platform-definitions.repository';
-import { ListPlatformDefinitionsService } from './definitions/list-platform-definitions/list-platform-definitions.service';
+import { ListCollectiviteIndicateursRepository } from './definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
+import { ListIndicateursPredefinisController } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.controller';
+import { ListIndicateursPredefinisRepository } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { ListIndicateursPredefinisService } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import { DeleteDefinitionService } from './definitions/mutate-definition/delete-definition.service';
 import { MutateDefinitionRepository } from './definitions/mutate-definition/mutate-definition.repository';
 import { UpdateDefinitionService } from './definitions/mutate-definition/update-definition.service';
@@ -78,9 +78,9 @@ const DEFINITIONS_PROVIDERS = [
   ListIndicateursService,
   ListIndicateursRouter,
 
-  ListPlatformDefinitionsRepository,
-  ListPlatformDefinitionsService,
-  ListCollectiviteDefinitionsRepository,
+  ListIndicateursPredefinisRepository,
+  ListIndicateursPredefinisService,
+  ListCollectiviteIndicateursRepository,
   IndicateurDefinitionLockRepository,
 
   CreateDefinitionService,
@@ -155,8 +155,8 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
-    ListPlatformDefinitionsService,
-    ListPlatformDefinitionsRepository,
+    ListIndicateursPredefinisService,
+    ListIndicateursPredefinisRepository,
     ListIndicateursService,
     UpdateDefinitionService,
 
@@ -173,7 +173,7 @@ const DEFINITIONS_PROVIDERS = [
   controllers: [
     IndicateursValeursController,
     ListIndicateursController,
-    ListPlatformDefinitionsController,
+    ListIndicateursPredefinisController,
     ImportIndicateurDefinitionController,
     ExportIndicateursController,
     TrajectoiresController,

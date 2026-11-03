@@ -8,7 +8,7 @@ import {
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
-import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ComputeValeursService from '../compute-indicateur-valeurs/compute-valeurs.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import {
@@ -38,7 +38,7 @@ export class ReconcileIndicateurValeursService {
     private readonly computeValeursService: ComputeValeursService,
     private readonly validationService: ValidateIndicateurValeursWriteService,
     private readonly writer: WriteIndicateurValeursService,
-    private readonly definitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly transactionManager: TransactionManager
   ) {}
 
@@ -227,7 +227,7 @@ export class ReconcileIndicateurValeursService {
     return captureIndicateurValeursResult(async () => {
       const definitions =
         input.definitions ??
-        (await this.definitionsRepository.listPlatformDefinitionsHavingComputedValue(
+        (await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
           {},
           context.tx
         ));

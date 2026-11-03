@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
-import { ListPlatformDefinitionsService } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.service';
+import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
@@ -125,7 +125,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly repository: ImportReferentielRepository,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
-    private readonly listPlatformDefinitionsService: ListPlatformDefinitionsService,
+    private readonly listIndicateursPredefinisService: ListIndicateursPredefinisService,
     private readonly importPreuveReglementaireDefinitionService: ImportPreuveReglementaireDefinitionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly referentielService: GetReferentielService,
@@ -464,7 +464,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ({ identifiant }) => identifiant
       );
       const indicateurIdParIdentifiantResult =
-        await this.listPlatformDefinitionsService.listPlatformDefinitionIdsByIdentifiantReferentiels(
+        await this.listIndicateursPredefinisService.listIndicateursPredefinisIdsByIdentifiantReferentiels(
           identifiants,
           { user: null }
         );
@@ -624,7 +624,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       ),
     ];
     const indicateurIdByIdentifiantResult =
-      await this.listPlatformDefinitionsService.listPlatformDefinitionIdsByIdentifiantReferentiels(
+      await this.listIndicateursPredefinisService.listIndicateursPredefinisIdsByIdentifiantReferentiels(
         identifiants,
         { user: null }
       );
@@ -641,7 +641,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       ),
     ];
     const indicateurDefinitionsResult =
-      await this.listPlatformDefinitionsService.listPlatformDefinitions(
+      await this.listIndicateursPredefinisService.listIndicateursPredefinis(
         {
           indicateurIds,
         },

@@ -1,38 +1,40 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ListPlatformDefinitionsService } from './list-platform-definitions.service';
+import { ListIndicateursPredefinisService } from './list-indicateurs-predefinis.service';
 
-describe('ListPlatformDefinitionsService', () => {
+describe('ListIndicateursPredefinisService', () => {
   const context = { user: null };
 
   it('propage la transaction et représente les erreurs de lecture par un Result', async () => {
     const cause = new Error('database unavailable');
     const repository = {
-      listPlatformDefinitions: vi.fn().mockRejectedValue(cause),
+      listIndicateursPredefinis: vi.fn().mockRejectedValue(cause),
     };
-    const service = new ListPlatformDefinitionsService(repository as never);
+    const service = new ListIndicateursPredefinisService(repository as never);
     const tx = { name: 'catalog-read' } as never;
 
     await expect(
-      service.listPlatformDefinitions({}, { user: null, tx })
+      service.listIndicateursPredefinis({}, { user: null, tx })
     ).resolves.toEqual({
       success: false,
       error: 'DATABASE_ERROR',
       cause,
     });
-    expect(repository.listPlatformDefinitions).toHaveBeenCalledWith({}, tx);
+    expect(repository.listIndicateursPredefinis).toHaveBeenCalledWith({}, tx);
   });
   it('délègue la lecture au repository', async () => {
     const definitions = [{ id: 1, periodicite: 'annuelle' }];
     const repository = {
-      listPlatformDefinitionAggregates: vi.fn().mockResolvedValue(definitions),
+      listIndicateursPredefinisAggregates: vi
+        .fn()
+        .mockResolvedValue(definitions),
     };
-    const service = new ListPlatformDefinitionsService(repository as never);
+    const service = new ListIndicateursPredefinisService(repository as never);
     const input = { indicateurIds: [1] };
 
     await expect(
-      service.listPlatformDefinitionAggregates(input, context)
+      service.listIndicateursPredefinisAggregates(input, context)
     ).resolves.toEqual({ success: true, data: definitions });
-    expect(repository.listPlatformDefinitionAggregates).toHaveBeenCalledWith(
+    expect(repository.listIndicateursPredefinisAggregates).toHaveBeenCalledWith(
       input,
       undefined
     );
@@ -44,17 +46,17 @@ describe('ListPlatformDefinitionsService', () => {
       { id: 2, identifiantReferentiel: 'cae_1.b' },
     ];
     const repository = {
-      listPlatformDefinitions: vi.fn().mockResolvedValue(definitions),
+      listIndicateursPredefinis: vi.fn().mockResolvedValue(definitions),
     };
-    const service = new ListPlatformDefinitionsService(repository as never);
+    const service = new ListIndicateursPredefinisService(repository as never);
 
     await expect(
-      service.listPlatformDefinitionIdsByIdentifiantReferentiels(
+      service.listIndicateursPredefinisIdsByIdentifiantReferentiels(
         ['cae_1.a', 'cae_1.b'],
         context
       )
     ).resolves.toEqual({ success: true, data: { 'cae_1.a': 1, 'cae_1.b': 2 } });
-    expect(repository.listPlatformDefinitions).toHaveBeenCalledWith(
+    expect(repository.listIndicateursPredefinis).toHaveBeenCalledWith(
       {
         identifiantsReferentiel: ['cae_1.a', 'cae_1.b'],
       },
@@ -64,13 +66,13 @@ describe('ListPlatformDefinitionsService', () => {
 
   it('préserve le court-circuit historique pour une liste vide', async () => {
     const repository = {
-      listPlatformDefinitions: vi.fn(),
+      listIndicateursPredefinis: vi.fn(),
     };
-    const service = new ListPlatformDefinitionsService(repository as never);
+    const service = new ListIndicateursPredefinisService(repository as never);
 
     await expect(
-      service.listPlatformDefinitionIdsByIdentifiantReferentiels([], context)
+      service.listIndicateursPredefinisIdsByIdentifiantReferentiels([], context)
     ).resolves.toEqual({ success: true, data: {} });
-    expect(repository.listPlatformDefinitions).not.toHaveBeenCalled();
+    expect(repository.listIndicateursPredefinis).not.toHaveBeenCalled();
   });
 });

@@ -15,7 +15,7 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
 import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
-import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,
@@ -58,8 +58,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     getDefaultRangeFromHeader: vi.fn(() => 'Objectifs!A:C'),
     getDataFromSheet: vi.fn(),
   };
-  const listPlatformDefinitionsRepository = {
-    listPlatformDefinitions: vi.fn(),
+  const listIndicateursPredefinisRepository = {
+    listIndicateursPredefinis: vi.fn(),
   };
   const transaction = {} as Transaction;
   const transactionManager = {
@@ -116,8 +116,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         if (token === SheetService) {
           return sheetService;
         }
-        if (token === ListPlatformDefinitionsRepository) {
-          return listPlatformDefinitionsRepository;
+        if (token === ListIndicateursPredefinisRepository) {
+          return listIndicateursPredefinisRepository;
         }
         if (token === ImportIndicateurDefinitionRepository) {
           return importRepository;
@@ -196,7 +196,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
   });
 
   test('préserve une erreur de commit renvoyée par le gestionnaire de transaction', async () => {
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
       []
     );
     transactionManager.executeSingle.mockResolvedValueOnce(
@@ -214,7 +214,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
     monthlyDefinition.periodicite = 'mensuelle';
     monthlyDefinition.identifiantReferentiel = 'test_mensuel';
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
       []
     );
 
@@ -235,7 +235,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     const monthlyDefinition = cloneDeep(sampleImportIndicateurDefinition);
     monthlyDefinition.periodicite = 'mensuelle';
     monthlyDefinition.identifiantReferentiel = 'test_mensuel';
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
       [{ ...monthlyDefinition, id: 42 }]
     );
 
@@ -270,7 +270,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       id: 42,
       periodicite: 'annuelle' as const,
     };
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
       [existingDefinition]
     );
     importRepository.listDefinitionSnapshots.mockResolvedValue([
@@ -297,7 +297,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
   test('refuse un import dont la formule a changé avant le verrou exclusif', async () => {
     const importedDefinition = cloneDeep(sampleImportIndicateurDefinition);
     importedDefinition.valeurCalcule = '1';
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValue(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValue(
       [{ ...importedDefinition, id: 42, valeurCalcule: null }]
     );
 
@@ -345,7 +345,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       ...cloneDeep(sampleImportIndicateurDefinition),
       id: 42,
     };
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValueOnce(
       [definition]
     );
     const checkLastVersion = vi
@@ -382,7 +382,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     vi.spyOn(versionService, 'getVersion').mockReturnValue({
       environment: 'prod',
     } as never);
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockResolvedValueOnce(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockResolvedValueOnce(
       [definition]
     );
     sheetService.getDataFromSheet.mockResolvedValueOnce({
@@ -417,7 +417,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       ...importedDefinition,
       id: 42,
     };
-    listPlatformDefinitionsRepository.listPlatformDefinitions.mockImplementation(
+    listIndicateursPredefinisRepository.listIndicateursPredefinis.mockImplementation(
       (_input, currentTransaction) =>
         Promise.resolve(
           currentTransaction ? [updatedDefinition] : [previousDefinition]

@@ -25,8 +25,8 @@ import { cloneDeep } from 'es-toolkit';
 import { vi } from 'vitest';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
 import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
-import { ListCollectiviteDefinitionsRepository } from '../../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
-import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListCollectiviteIndicateursRepository } from '../../definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
+import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { UpdateDefinitionService } from '../../definitions/mutate-definition/update-definition.service';
 import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import IndicateurSourcesService from '../../sources/indicateur-sources.service';
@@ -47,8 +47,8 @@ const createManageIndicateurValeursService = (
   permissions: PermissionService,
   userPermissions: GetUserRolesAndPermissionsService,
   collectivites: CollectivitesService,
-  definitions: ListCollectiviteDefinitionsRepository,
-  platformDefinitions: ListPlatformDefinitionsRepository,
+  collectiviteIndicateurs: ListCollectiviteIndicateursRepository,
+  indicateursPredefinis: ListIndicateursPredefinisRepository,
   indicateurs: ListIndicateursService,
   updateDefinition: UpdateDefinitionService,
   compute: ComputeValeursService,
@@ -71,14 +71,14 @@ const createManageIndicateurValeursService = (
     repository,
     permissions,
     collectivites,
-    definitions
+    collectiviteIndicateurs
   );
   const reconciliation = new ReconcileIndicateurValeursService(
     repository,
     compute,
     validation,
     writer,
-    platformDefinitions,
+    indicateursPredefinis,
     transactions
   );
   return new ManageIndicateurValeursService(
@@ -117,8 +117,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           token === IndicateurValeursRepository ||
           token === PermissionService ||
           token === CollectivitesService ||
-          token === ListCollectiviteDefinitionsRepository ||
-          token === ListPlatformDefinitionsRepository ||
+          token === ListCollectiviteIndicateursRepository ||
+          token === ListIndicateursPredefinisRepository ||
           token === ListIndicateursService ||
           token === IndicateurExpressionService ||
           token === UpdateDefinitionService ||
@@ -202,15 +202,15 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         listIndicateurValeurs: vi.fn().mockResolvedValue([]),
         listSources: vi.fn().mockResolvedValue([]),
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi.fn().mockResolvedValue([]),
+      const collectiviteIndicateursRepository = {
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([]),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
         {} as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        collectiviteIndicateursRepository as never,
         {} as never,
         {} as never,
         {} as never,
@@ -228,7 +228,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       ).resolves.toEqual({ count: 0, indicateurs: [] });
 
       expect(
-        definitionsRepository.listCollectiviteDefinitions
+        collectiviteIndicateursRepository.listCollectiviteIndicateurs
       ).toHaveBeenCalledWith(
         {
           collectiviteId: 3,
@@ -1642,8 +1642,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const permissionService = {
         assertAllowed: vi.fn().mockResolvedValue(undefined),
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi.fn().mockResolvedValue([
+      const collectiviteIndicateursRepository = {
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([
           {
             id: 10,
             collectiviteId: null,
@@ -1677,7 +1677,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         permissionService as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        collectiviteIndicateursRepository as never,
         {} as never,
         {} as never,
         {} as never,
@@ -1743,8 +1743,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const permissionService = {
         assertAllowed: vi.fn().mockResolvedValue(undefined),
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi.fn().mockResolvedValue([definition]),
+      const collectiviteIndicateursRepository = {
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([definition]),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const definitionLockRepository = {
@@ -1755,7 +1755,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         permissionService as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        collectiviteIndicateursRepository as never,
         {} as never,
         {} as never,
         {} as never,
@@ -1807,8 +1807,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         lockGroupementMemberships: vi.fn(),
         upsertValeursWithoutMetadata: vi.fn().mockResolvedValue([]),
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi.fn().mockResolvedValue([definition]),
+      const collectiviteIndicateursRepository = {
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue([definition]),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const definitionLockRepository = {
@@ -1819,7 +1819,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        collectiviteIndicateursRepository as never,
         {} as never,
         {} as never,
         {} as never,
@@ -1916,8 +1916,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         precision: 2,
         sansValeurUtilisateur: false,
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi
+      const collectiviteIndicateursRepository = {
+        listCollectiviteIndicateurs: vi
           .fn()
           .mockResolvedValue([foreignDefinition]),
       };
@@ -1929,7 +1929,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        collectiviteIndicateursRepository as never,
         {} as never,
         {} as never,
         {} as never,
@@ -1988,8 +1988,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const permissionService = {
         assertAllowed: vi.fn().mockResolvedValue(undefined),
       };
-      const definitionsRepository = {
-        listCollectiviteDefinitions: vi.fn().mockResolvedValue(definitions),
+      const collectiviteIndicateursRepository = {
+        listCollectiviteIndicateurs: vi.fn().mockResolvedValue(definitions),
       };
       const definitionLockRepository = {
         lockDefinitions: vi.fn().mockResolvedValue(definitions),
@@ -2000,7 +2000,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         permissionService as never,
         {} as never,
         {} as never,
-        definitionsRepository as never,
+        collectiviteIndicateursRepository as never,
         {} as never,
         {} as never,
         {} as never,
@@ -2115,7 +2115,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {
-          listCollectiviteDefinitions: vi.fn().mockResolvedValue([target]),
+          listCollectiviteIndicateurs: vi.fn().mockResolvedValue([target]),
         } as never,
         {} as never,
         {} as never,

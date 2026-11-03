@@ -2,52 +2,40 @@ import { Injectable } from '@nestjs/common';
 import type { AuthUser } from '@tet/backend/users/models/auth.models';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { ListPlatformDefinitionsRepository } from './list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from './list-indicateurs-predefinis.repository';
 
-type DefinitionReadContext = Omit<ServiceSecondArg, 'user'> & {
+type IndicateurPredefiniReadContext = Omit<ServiceSecondArg, 'user'> & {
   user: AuthUser | null;
 };
 type ListInput = Parameters<
-  ListPlatformDefinitionsRepository['listPlatformDefinitions']
+  ListIndicateursPredefinisRepository['listIndicateursPredefinis']
 >[0];
 type AggregateInput = Parameters<
-  ListPlatformDefinitionsRepository['listPlatformDefinitionAggregates']
+  ListIndicateursPredefinisRepository['listIndicateursPredefinisAggregates']
 >[0];
-type Definitions = Awaited<
-  ReturnType<ListPlatformDefinitionsRepository['listPlatformDefinitions']>
+type IndicateursPredefinis = Awaited<
+  ReturnType<ListIndicateursPredefinisRepository['listIndicateursPredefinis']>
 >;
-type Aggregates = Awaited<
+type IndicateursPredefinisAggregates = Awaited<
   ReturnType<
-    ListPlatformDefinitionsRepository['listPlatformDefinitionAggregates']
+    ListIndicateursPredefinisRepository['listIndicateursPredefinisAggregates']
   >
 >;
 
 /** Public catalog reads; caller identity is carried without restricting access. */
 @Injectable()
-export class ListPlatformDefinitionsService {
-  constructor(private readonly repository: ListPlatformDefinitionsRepository) {}
+export class ListIndicateursPredefinisService {
+  constructor(
+    private readonly repository: ListIndicateursPredefinisRepository
+  ) {}
 
-  async listPlatformDefinitions(
+  async listIndicateursPredefinis(
     input: ListInput,
-    { tx }: DefinitionReadContext
-  ): Promise<Result<Definitions, 'DATABASE_ERROR'>> {
-    try {
-      return success(await this.repository.listPlatformDefinitions(input, tx));
-    } catch (error) {
-      return failure(
-        'DATABASE_ERROR',
-        error instanceof Error ? error : new Error(String(error))
-      );
-    }
-  }
-
-  async listPlatformDefinitionAggregates(
-    input: AggregateInput,
-    { tx }: DefinitionReadContext
-  ): Promise<Result<Aggregates, 'DATABASE_ERROR'>> {
+    { tx }: IndicateurPredefiniReadContext
+  ): Promise<Result<IndicateursPredefinis, 'DATABASE_ERROR'>> {
     try {
       return success(
-        await this.repository.listPlatformDefinitionAggregates(input, tx)
+        await this.repository.listIndicateursPredefinis(input, tx)
       );
     } catch (error) {
       return failure(
@@ -57,12 +45,28 @@ export class ListPlatformDefinitionsService {
     }
   }
 
-  async listPlatformDefinitionIdsByIdentifiantReferentiels(
+  async listIndicateursPredefinisAggregates(
+    input: AggregateInput,
+    { tx }: IndicateurPredefiniReadContext
+  ): Promise<Result<IndicateursPredefinisAggregates, 'DATABASE_ERROR'>> {
+    try {
+      return success(
+        await this.repository.listIndicateursPredefinisAggregates(input, tx)
+      );
+    } catch (error) {
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
+  }
+
+  async listIndicateursPredefinisIdsByIdentifiantReferentiels(
     identifiantsReferentiel: string[],
-    context: DefinitionReadContext
+    context: IndicateurPredefiniReadContext
   ): Promise<Result<Record<string, number>, 'DATABASE_ERROR'>> {
     if (!identifiantsReferentiel.length) return success({});
-    const result = await this.listPlatformDefinitions(
+    const result = await this.listIndicateursPredefinis(
       { identifiantsReferentiel },
       context
     );

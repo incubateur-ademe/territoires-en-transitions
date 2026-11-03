@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '@tet/backend/indicateurs/definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -31,7 +31,7 @@ export class DemarchePcaetDiagnosticService {
   constructor(
     private readonly vulnerabiliteReadService: DemarchePcaetVulnerabiliteReadService,
     private readonly crudValeursService: ManageIndicateurValeursService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository
   ) {}
 
@@ -44,7 +44,7 @@ export class DemarchePcaetDiagnosticService {
   ): Promise<PcaetDiagnostic> {
     const [indicateurDefinitions, indicateurValeurs, vulnerabilite] =
       await Promise.all([
-        this.listPlatformDefinitionsRepository.listPlatformDefinitionsForCollectivite(
+        this.listIndicateursPredefinisRepository.listIndicateursPredefinisForCollectivite(
           {
             identifiantsReferentiel: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
             collectiviteId,

@@ -10,8 +10,8 @@ import {
 import { indicateurDefinitionPeriodiciteSelection } from '../definitions/indicateur-periodicite.column';
 
 @Injectable()
-export class IndicateurDefinitionsRepository {
-  private readonly logger = new Logger(IndicateurDefinitionsRepository.name);
+export class IndicateurRepository {
+  private readonly logger = new Logger(IndicateurRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 
@@ -34,9 +34,7 @@ export class IndicateurDefinitionsRepository {
         .where(inArray(indicateurDefinitionTable.id, ids));
     } catch (error) {
       this.logger.warn(
-        `Impossible de charger les indicateur-definitions ${ids.join(
-          ', '
-        )} : ${error}`
+        `Impossible de charger les indicateurs ${ids.join(', ')} : ${error}`
       );
       return [];
     }

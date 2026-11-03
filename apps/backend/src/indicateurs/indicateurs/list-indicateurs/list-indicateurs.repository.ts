@@ -43,7 +43,7 @@ import { withNatureOrThrow } from '../../definitions/indicateur.adapter';
 import { indicateurCategorieTagTable } from '../../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 import { indicateurDefinitionPeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
-import { ListPlatformDefinitionsRepository } from '../../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurServiceTagTable } from '../handle-definition-services/indicateur-service-tag.table';
 import { ListIndicateursInput } from './list-indicateurs.input';
@@ -68,7 +68,7 @@ type IndicateurDefinitionParent = {
 export class ListIndicateursRepository {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository
+    private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository
   ) {}
 
   private getIndicateurDefinitionParentsQuery() {
@@ -455,9 +455,9 @@ export class ListIndicateursRepository {
     //  First get all subqueries agnostic of collectiviteId
 
     const indicateurThematiques =
-      this.listPlatformDefinitionsRepository.getThematiquesSubQuery();
+      this.listIndicateursPredefinisRepository.getThematiquesSubQuery();
     const indicateurMesures =
-      this.listPlatformDefinitionsRepository.getMesuresSubQuery();
+      this.listIndicateursPredefinisRepository.getMesuresSubQuery();
 
     const indicateurCategories = this.getIndicateurDefinitionCategoriesQuery({
       collectiviteId,
