@@ -50,7 +50,6 @@ const detailedFieldsShape = {
   ...indicateurSuiviCollectiviteSchema.shape,
   ...indicateurRelationsSchema.shape,
   hasOpenData: z.boolean(),
-  estPerso: z.boolean(),
   estAgregation: z.boolean(),
   estRempli: z.boolean(),
 };

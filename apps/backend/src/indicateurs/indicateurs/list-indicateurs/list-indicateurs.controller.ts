@@ -10,6 +10,7 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import {
   type IndicateurDetaille,
   indicateurDetailleSchema,
+  isIndicateurPerso,
 } from '@tet/domain/indicateurs';
 import { omit } from 'es-toolkit';
 import { createZodDto } from 'nestjs-zod';
@@ -24,8 +25,10 @@ class ListIndicateursApiRequestClass extends createZodDto(
   listIndicateursApiRequestSchema
 ) {}
 
+const persoFlagApiSchema = z.object({ estPerso: z.boolean() });
+
 class ListIndicateursApiResponseClass extends createZodDto(
-  z.array(indicateurDetailleSchema)
+  z.array(z.intersection(indicateurDetailleSchema, persoFlagApiSchema))
 ) {}
 
 @ApiTags('Indicateurs')
@@ -73,6 +76,7 @@ export class ListIndicateursController {
     ) => ({
       ...omit(indicateur, ['estFavori', 'estConfidentiel', 'fiches', 'parent']),
 
+      estPerso: isIndicateurPerso(indicateur),
       favoris: indicateur.estFavori,
       confidentiel: indicateur.estConfidentiel,
       ficheActions: indicateur.fiches,
