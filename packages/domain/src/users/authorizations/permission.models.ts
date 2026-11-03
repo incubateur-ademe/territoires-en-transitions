@@ -75,6 +75,9 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
   [PlatformRole.SUPPORT]: [
     'users.authorizations.mutate_super_admin_role',
     'utils.mcp.read',
+    // Écritures de l'assistant (segments Crisp) : le rôle support seul, le
+    // mode super admin n'y donne pas droit.
+    'utils.mcp.mutate',
   ],
   [PlatformRole.SUPER_ADMIN]: [
     ...collectiviteAdminPermissions,

@@ -147,10 +147,11 @@ requêtes nommées, avec l'équipe data, pas en touchant aux outils.
 - **Pas de double emploi avec les connecteurs du client** : dans Claude.ai,
   Notion est lu par le connecteur Notion de Claude ; le MCP n'expose que ce qui
   est propre à Territoires en Transitions.
-- **Pas d'écriture métier pour l'instant** : les futurs outils d'écriture
+- **Pas d'écriture métier dans la plateforme** : les futurs outils d'écriture
   (import de plan…) seront annoncés non idempotents et destructifs, pour que le
   client demande confirmation, et s'exécuteront avec les droits de
-  l'utilisateur.
+  l'utilisateur. Seule exception à ce jour, hors de la base : l'ajout d'un
+  segment à des conversations Crisp, jamais exécuté par un modèle (décision 9).
 
 ### 8. Le cerveau du backend : un client MCP en mémoire
 
@@ -178,6 +179,34 @@ même prompt que dans Claude.ai, sans saut réseau ni seconde authentification.
 Première évaluation (29/10/2026, 9 scénarios hors base analytique) :
 gpt-oss-120b sur Albert 9/9, gemini-3.5-flash 8/9, Albert deux fois plus
 sobre en tokens.
+
+### 9. L'assistant de l'app : interactif, écritures confirmées par un clic
+
+Ajout du 03/11/2026. L'onglet « Assistant inApp » de la page Assistant
+(`/profil/assistant?onglet=app`) est un chat sur l'agent de la décision 8, en
+mode `app`, pour les porteurs de `utils.mcp.read` (support, super admin).
+
+- **Outils interactifs** : le serveur construit pour ce mode ajoute
+  `propose_choices` (question et réponses cliquables quand la demande est
+  floue ; le tour s'arrête là) et `prepare_segment_tagging`. Ils ne sont
+  enregistrés ni pour Claude.ai ni pour Crisp, qui n'ont pas de bouton.
+- **Écriture en deux temps** : `prepare_segment_tagging` ne lit que Crisp et
+  renvoie un jeton signé (HMAC, 30 minutes) qui porte exactement le segment,
+  les conversations et l'auteur. Le jeton n'est pas montré au modèle ; il part
+  dans la réponse, et l'interface affiche une carte « Confirmer ». Seule la
+  mutation `assistant.confirmAction`, déclenchée par ce clic, écrit : elle
+  revérifie le droit, l'auteur et l'expiration, relit les segments de chaque
+  conversation et y ajoute le nouveau. Aucun état côté serveur, donc valable
+  quelle que soit l'instance.
+- **Droit d'écriture** : nouvelle permission `utils.mcp.mutate`, accordée au
+  seul rôle support. Le mode super admin n'y donne pas droit, et l'élévation
+  de Crisp (`/tet`) ne la contient pas.
+- **Données du support** : les outils `get_support_stats`,
+  `sample_support_conversations` et `list_support_segments` lisent l'API REST
+  Crisp (jeton de niveau `website`) et calculent les chiffres côté serveur :
+  le modèle ne reçoit que des agrégats et des extraits masqués. Le serveur MCP
+  officiel de Crisp a été écarté : outils d'écriture vers les usagers non
+  annotés, ni filtre de date ni pagination.
 
 ## Alternatives considérées
 
@@ -218,9 +247,9 @@ Négatives et points d'attention :
 - le serveur d'autorisation OAuth de Supabase est en bêta et devra être
   remplacé si l'application quitte Supabase Auth.
 
-Suite prévue, sur la même base : le support dans Crisp (`/tet <question>` en
-note privée, avec le contexte de la conversation), puis l'assistant dans
-l'app.
+Réalisé ensuite sur la même base : le support dans Crisp (`/tet <question>`
+en note privée, avec le contexte de la conversation), puis l'assistant dans
+l'app (décision 9).
 
 Références : `apps/backend/src/utils/mcp/README.md` (mode d'emploi, outils,
 configuration), `apps/backend/src/utils/assistant/README.md` (agent, évaluation)

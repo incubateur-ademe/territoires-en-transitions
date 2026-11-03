@@ -121,11 +121,11 @@ export const utilisateursAndEntityLabels = {
   oauthConsentErreur:
     "La demande d'autorisation est invalide ou expirée. Relancez la connexion depuis l'application qui demande l'accès.",
 
-  // Assistant TeT (connecteur MCP pour Claude, commande /tet dans Crisp)
+  // Assistant TeT (dans l'app, connecteur MCP pour Claude, /tet dans Crisp)
   assistantTitre: 'Assistant TeT',
   assistantBadgeSupport: 'Support',
   assistantBadgeReserveSupport: 'Réservé au support',
-  assistantBadgeLectureSeule: 'Lecture seule',
+  assistantBadgeLectureSeule: 'Lecture seule, sauf segments Crisp (support)',
   assistantCarteResume:
     "Interrogez la plateforme depuis Claude, en français : fiche d'un utilisateur ou d'une collectivité, suivi PCAET, scores des référentiels, statistiques d'usage. L'assistant applique vos droits et cite la source de chaque chiffre.",
   assistantConfigurer: "Configurer l'assistant",
@@ -137,10 +137,70 @@ export const utilisateursAndEntityLabels = {
   assistantEtatIndisponible:
     "L'état de la connexion n'est pas disponible pour le moment.",
   assistantIntro:
-    "Posez vos questions sur la plateforme en français. L'assistant lit les données, ne modifie rien, et cite la source de chaque chiffre. Il s'utilise de deux façons, indépendantes l'une de l'autre.",
+    "Posez vos questions sur la plateforme en français. L'assistant lit les données et cite la source de chaque chiffre ; la seule écriture possible, l'ajout d'un segment à des conversations Crisp, est réservée au rôle support et se confirme d'un clic. Il s'utilise de trois façons, indépendantes les unes des autres.",
   assistantOngletPresentation: 'Présentation',
   assistantOngletClaude: 'Claude',
   assistantOngletCrisp: 'Crisp',
+  assistantOngletApp: 'Assistant inApp',
+  assistantUsageAppTitre: "Dans l'app",
+  assistantUsageAppBadge: 'Rien à installer',
+  assistantUsageAppDescription:
+    "Discutez avec l'assistant sans quitter la plateforme, comme avec Claude : statistiques, fiches, PCAET, et désormais les conversations du support (volume, retours, temps passé sur un sujet). Il vous demande de préciser quand c'est flou et vous propose des choix. Animé par Albert, le modèle de l'État.",
+  assistantUsageAppLien: "Ouvrir l'assistant",
+  assistantChatTitre: "Discuter avec l'assistant",
+  assistantChatDescription:
+    "Animé par Albert, le modèle de l'État. Rien n'est conservé : la conversation disparaît quand vous quittez la page.",
+  assistantChatPlaceholder:
+    'Posez votre question (Entrée pour envoyer, Maj + Entrée pour aller à la ligne)',
+  assistantChatEnvoyer: 'Envoyer',
+  assistantChatNouvelleConversation: 'Nouvelle conversation',
+  assistantChatReflexion: "L'assistant cherche… (de 10 secondes à une minute)",
+  assistantChatErreur: (message: string) =>
+    `L'assistant n'a pas pu répondre : ${message}`,
+  assistantChatVous: 'Vous',
+  assistantChatAssistant: 'Assistant',
+  assistantChatActionTitre: 'Écriture à confirmer',
+  assistantChatConversationCrisp: plural({
+    one: 'conversation Crisp créée',
+    other: 'conversations Crisp créées',
+  }),
+  assistantChatActionAjoutSegment: ({
+    segment,
+    conversations,
+    dateFrom,
+    dateTo,
+  }: {
+    segment: string;
+    conversations: string;
+    dateFrom: string;
+    dateTo: string;
+  }) =>
+    `Ajouter le segment « ${segment} » à ${conversations} du ${dateFrom} au ${dateTo}.`,
+  assistantChatActionNouveauSegment:
+    "Ce segment n'existe pas encore dans Crisp : il sera créé.",
+  assistantChatActionDejaTaguees: plural({
+    one: 'conversation du filtre a déjà ce segment.',
+    other: 'conversations du filtre ont déjà ce segment.',
+  }),
+  assistantChatActionConfirmer: 'Confirmer',
+  assistantChatActionAnnuler: 'Annuler',
+  assistantChatActionAnnulee: "Annulé : rien n'a été écrit.",
+  assistantChatActionReserveeSupport:
+    'Réservé au rôle support : le mode super-admin ne suffit pas pour écrire.',
+  assistantChatActionResultat: ({
+    segment,
+    ajoutes,
+    dejaPresents,
+    echecs,
+  }: {
+    segment: string;
+    ajoutes: number;
+    dejaPresents: number;
+    echecs: number;
+  }) =>
+    `Segment « ${segment} » : ${ajoutes} ajout(s), ${dejaPresents} déjà présent(s), ${echecs} échec(s).`,
+  assistantChatActionErreur: (message: string) =>
+    `L'ajout a échoué : ${message}`,
   assistantUsageClaudeTitre: 'Dans Claude',
   assistantUsageClaudeBadge: 'À configurer une fois',
   assistantUsageClaudeDescription:
@@ -213,6 +273,15 @@ export const utilisateursAndEntityLabels = {
       ],
     },
     {
+      domaine: 'Les conversations du support (Crisp)',
+      questions: [
+        '« Combien de demandes sur le référentiel CR depuis août, de quels types, et combien de temps y avons-nous passé ? »',
+        '« Que disent les usagers qui nous écrivent sur le référentiel CR ? »',
+        "« Ajoute le segment besoin_guidage_referentiel_cr aux conversations d'octobre qui parlent du nouveau référentiel. »",
+      ],
+      note: "Le temps passé est une estimation. L'ajout de segment se fait dans l'onglet Assistant inApp, pour le rôle support, après confirmation.",
+    },
+    {
       domaine: "L'usage du produit",
       questions: [
         '« Quelles pages ont été les plus consultées ces 30 derniers jours ? »',
@@ -275,9 +344,9 @@ export const utilisateursAndEntityLabels = {
   assistantASavoirTitre: 'À savoir',
   assistantASavoir: [
     {
-      titre: 'Lecture seule',
+      titre: 'Presque en lecture seule',
       description:
-        "L'assistant ne peut rien modifier, ni rattacher un utilisateur, ni changer un droit.",
+        "L'assistant ne peut ni rattacher un utilisateur, ni changer un droit, ni modifier une donnée de la plateforme. Seule exception, dans l'onglet Assistant inApp : ajouter un segment à des conversations Crisp, pour le rôle support, après votre confirmation.",
     },
     {
       titre: 'Fraîcheur des données',

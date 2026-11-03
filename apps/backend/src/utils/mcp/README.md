@@ -18,11 +18,18 @@ Réservé à l'équipe : utilisateurs **support** (`utilisateur_support`) et sup
 | outil | `get_referentiel_scores` | Score courant sur `cae`, `eci` ou `te` : points et pourcentages, étoiles (peut recalculer un snapshot périmé). |
 | outil | `find_user` | Utilisateur par e-mail : prénom, nom, état du compte, collectivités avec niveau d'accès et fonction ; ni e-mail ni téléphone en sortie. |
 | outil | `list_recent_events` | 50 derniers événements PostHog d'un utilisateur sur 1 à 90 jours, requête construite côté serveur. |
+| outil | `get_support_stats` | Conversations Crisp du support sur un sujet de segment (ex. `cr`), des termes cherchés dans les messages et une période : volume, types de retours, parcours, temps passé estimé. Calculé par le serveur. |
+| outil | `sample_support_conversations` | Extraits de ces conversations (demande, dernière réponse du support), e-mails et téléphones masqués, pour synthétiser les retours. |
+| outil | `list_support_segments` | Segments Crisp utilisés sur une période, par type de retour, avec leurs variantes d'orthographe. |
+| outil (app) | `propose_choices` | Assistant de l'app seulement : affiche une question et des réponses cliquables quand la demande est floue. |
+| outil (app) | `prepare_segment_tagging` | Assistant de l'app seulement, rôle support : prépare l'ajout d'un segment aux conversations d'un filtre, sans rien écrire ; l'utilisateur confirme d'un clic. |
 | ressource | `tet://docs/regles-metier` | Règles métier, filtres obligatoires, glossaire. |
 | ressource | `tet://docs/base-analytique` | Description des tables de statistiques. |
 | ressource | `tet://docs/posthog-hogql` | Guide HogQL. |
+| ressource | `tet://docs/support-crisp` | Taxonomie des segments Crisp du support et méthode d'estimation du temps passé. |
 | ressource | `tet://docs/esquisse-modele` | Le modèle d'esquisse (pitch Shape Up) de l'équipe et son vocabulaire. |
 | prompt | `analyse-stats` | Méthode de travail + les ressources de données. |
+| prompt | `assistant-app` | Assistant de l'app : clarifier la demande (choix cliquables), proposer une suite, préparer les ajouts de segments. |
 | prompt | `esquisse-shape-up` | Arguments `sujet`, `appetit`, `contexte` : rédige un premier jet d'esquisse au format de l'équipe, chiffres sourcés par les outils, précédents lus dans Notion quand un connecteur est disponible dans la conversation. |
 
 Les ressources sont des fichiers TypeScript dans `resources/`, repris du dashboard de Baptiste (`BaptisteTCS/dashboard_tet`) et du gabarit Notion « [FORMALISATION] ». C'est là que vit la qualité des réponses : corriger une règle métier ou le modèle d'esquisse se fait dans ces fichiers. Les requêtes nommées vivent dans `tools/run-named-query/named-queries.catalog.ts` : ajouter une question récurrente = une entrée relue par l'équipe data. Le jeu de questions de recette est dans `eval/questions-esquisse.md`.
@@ -54,6 +61,7 @@ Les outils par collectivité ou par utilisateur vérifient les permissions de l'
 | --- | --- |
 | `ANALYTICS_DATABASE_URL` | URL Postgres de la base analytique (Neon, `?sslmode=verify-full`), avec le rôle lecture seule. Sans elle, les outils SQL répondent `ANALYTICS_DATABASE_NOT_CONFIGURED`. |
 | `POSTHOG_PERSONAL_API_KEY` | Clé API personnelle PostHog en lecture. Sans elle, `run_hogql_query` répond `POSTHOG_NOT_CONFIGURED`. |
+| `CRISP_API_IDENTIFIER`, `CRISP_API_KEY` | Jeton REST Crisp de niveau `website` (portée `website:conversation:sessions` et `website:conversation:messages`). Sans lui, les outils support répondent `CRISP_NOT_CONFIGURED`. `CRISP_WEBSITE_ID` a pour défaut l'espace de TeT. |
 | `POSTHOG_PROJECT_ID`, `POSTHOG_API_HOST` | Projet et hôte PostHog (défauts : 12975, `https://eu.posthog.com`). |
 | `BACKEND_PUBLIC_URL` | URL publique de l'API pour les métadonnées OAuth ; à défaut, l'en-tête Host. |
 

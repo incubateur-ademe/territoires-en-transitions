@@ -13,6 +13,8 @@ const fixture: EvalFixture = {
 
 const answer = (overrides: Partial<AssistantAnswer>): AssistantAnswer => ({
   answer: 'Réponse',
+  suggestions: null,
+  actions: [],
   stopReason: 'answered',
   modelCalls: 2,
   toolCalls: [],

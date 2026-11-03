@@ -9,7 +9,13 @@ import { McpProtectedResourceMetadataController } from './mcp-protected-resource
 import { McpResourceMetadataService } from './mcp-resource-metadata.service';
 import { McpUnauthorizedFilter } from './mcp-unauthorized.filter';
 import { McpController } from './mcp.controller';
-import { MCP_TOOLS } from './mcp.constants';
+import { MCP_INTERACTIVE_TOOLS, MCP_TOOLS } from './mcp.constants';
+import { ProposeChoicesTool } from './tools/propose-choices/propose-choices.tool';
+import { ApplySegmentTaggingService } from './tools/support-crisp/apply-segment-tagging.service';
+import { ListSupportSegmentsService } from './tools/support-crisp/list-support-segments.service';
+import { ListSupportSegmentsTool } from './tools/support-crisp/list-support-segments.tool';
+import { PrepareSegmentTaggingService } from './tools/support-crisp/prepare-segment-tagging.service';
+import { PrepareSegmentTaggingTool } from './tools/support-crisp/prepare-segment-tagging.tool';
 import { DescribeTableService } from './tools/describe-table/describe-table.service';
 import { FindUserRepository } from './tools/find-user/find-user.repository';
 import { FindUserService } from './tools/find-user/find-user.service';
@@ -34,6 +40,12 @@ import { RunNamedQueryTool } from './tools/run-named-query/run-named-query.tool'
 import { RunSqlQueryService } from './tools/run-sql-query/run-sql-query.service';
 import { RunSqlQueryTool } from './tools/run-sql-query/run-sql-query.tool';
 import { CollectiviteAccessService } from './tools/shared/collectivite-access.service';
+import { CrispApiClient } from './tools/support-crisp/crisp-api.client';
+import { GetSupportStatsService } from './tools/support-crisp/get-support-stats.service';
+import { GetSupportStatsTool } from './tools/support-crisp/get-support-stats.tool';
+import { SampleSupportConversationsService } from './tools/support-crisp/sample-support-conversations.service';
+import { SampleSupportConversationsTool } from './tools/support-crisp/sample-support-conversations.tool';
+import { SupportConversationsService } from './tools/support-crisp/support-conversations.service';
 
 const toolClasses = [
   // Analytique (base de l'équipe data, PostHog)
@@ -48,7 +60,13 @@ const toolClasses = [
   GetReferentielScoresTool,
   FindUserTool,
   ListRecentEventsTool,
+  // Support : conversations Crisp
+  GetSupportStatsTool,
+  SampleSupportConversationsTool,
+  ListSupportSegmentsTool,
 ];
+
+const interactiveToolClasses = [ProposeChoicesTool, PrepareSegmentTaggingTool];
 
 @Module({
   imports: [CollectivitesModule, PlanModule, PcaetModule, ReferentielsModule],
@@ -72,14 +90,28 @@ const toolClasses = [
     GetDemarchePcaetService,
     GetReferentielScoresService,
     ListRecentEventsService,
+    CrispApiClient,
+    SupportConversationsService,
+    GetSupportStatsService,
+    SampleSupportConversationsService,
+    ListSupportSegmentsService,
+    PrepareSegmentTaggingService,
+    ApplySegmentTaggingService,
     ...toolClasses,
+    ...interactiveToolClasses,
     {
       provide: MCP_TOOLS,
       useFactory: (...tools: unknown[]) => tools,
       inject: toolClasses,
     },
+    {
+      provide: MCP_INTERACTIVE_TOOLS,
+      useFactory: (...tools: unknown[]) => tools,
+      inject: interactiveToolClasses,
+    },
   ],
-  // L'agent du backend (utils/assistant) se branche sur le même serveur.
-  exports: [BuildMcpServerService],
+  // L'agent du backend (utils/assistant) se branche sur le même serveur, et
+  // confirme les écritures préparées par l'assistant de l'app.
+  exports: [BuildMcpServerService, ApplySegmentTaggingService],
 })
 export class McpModule {}

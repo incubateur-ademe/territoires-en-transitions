@@ -145,6 +145,8 @@ jobs:
           --env OTEL_RESOURCE_ATTRIBUTES=deployment.environment.name=$ENV_NAME
           --env POSTHOG_PERSONAL_API_KEY=@POSTHOG_PERSONAL_API_KEY
           --env ANALYTICS_DATABASE_URL=@ANALYTICS_DATABASE_URL
+          --env CRISP_API_IDENTIFIER=@CRISP_API_IDENTIFIER
+          --env CRISP_API_KEY=@CRISP_API_KEY
 
       - id: deployment-url
         uses: ./.github/actions/providers/koyeb/get-app-url

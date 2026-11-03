@@ -3,7 +3,12 @@
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 
 export const ASSISTANT_TAB_PARAM = 'onglet';
-export const assistantTabs = ['presentation', 'claude', 'crisp'] as const;
+export const assistantTabs = [
+  'presentation',
+  'app',
+  'claude',
+  'crisp',
+] as const;
 export type AssistantTab = (typeof assistantTabs)[number];
 
 /** Onglet de la page Assistant, dans l'URL pour qu'un lien mène au bon. */

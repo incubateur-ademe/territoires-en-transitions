@@ -80,6 +80,10 @@ export const checkExpectations = (
     failures.push({ code: 'TOOL_NOT_CALLED', detail: anyTool.join(' | ') });
   }
 
+  if (scenario.expect.suggestions && !answer.suggestions) {
+    failures.push({ code: 'NO_SUGGESTIONS', detail: 'propose_choices' });
+  }
+
   const lower = normalize(text);
   for (const expected of scenario.expect.answer?.contains ?? []) {
     const options = Array.isArray(expected)

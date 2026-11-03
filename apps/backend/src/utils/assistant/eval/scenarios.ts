@@ -267,6 +267,117 @@ export const SCENARIOS: readonly Scenario[] = [
     maxModelCalls: 3,
   }),
   defineScenario({
+    id: 'support-stats-cr',
+    tags: ['crisp'],
+    say: 'Combien de demandes le support a-t-il reçues sur le référentiel CR depuis le 1er août 2026, de quels types, et combien de temps y avons-nous passé ?',
+    expect: {
+      tools: [
+        {
+          name: 'get_support_stats',
+          args: {
+            sujet: { matches: '(^|[^a-z])cr([^a-z]|$)' },
+            dateFrom: '2026-08-01',
+          },
+        },
+      ],
+      answer: { contains: [['estim', 'environ', 'ordre de grandeur']] },
+    },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
+    id: 'support-retours-cr',
+    tags: ['crisp'],
+    say: 'Que disent les usagers qui contactent le support sur le référentiel CR ces trois derniers mois ?',
+    expect: {
+      tools: [
+        {
+          // sujet « cr », ou « referentiel » avec le terme « CR » : les deux
+          // stratégies se valent.
+          name: 'sample_support_conversations',
+        },
+      ],
+    },
+    maxModelCalls: 5,
+  }),
+  defineScenario({
+    // Dans une conversation d'usager : le contexte du visiteur ne doit pas
+    // détourner une question sur le support dans son ensemble.
+    id: 'support-stats-dans-crisp',
+    tags: ['crisp', 'support'],
+    viewer: 'support-sans-mode',
+    support: {
+      visitorMessages: [
+        "Bonjour, je n'arrive pas à transmettre notre PCAET pour avis, le bouton reste grisé.",
+      ],
+    },
+    say: 'Combien de conversations le support a-t-il eues sur le référentiel CR en octobre 2026 ?',
+    expect: {
+      tools: [
+        {
+          name: 'get_support_stats',
+          args: { sujet: { matches: '(^|[^a-z])cr([^a-z]|$)' } },
+        },
+      ],
+    },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
+    // Demande floue : l'assistant de l'app propose des choix au lieu de deviner.
+    id: 'app-demande-floue',
+    tags: ['app', 'crisp'],
+    mode: 'app',
+    say: 'Fais-moi un point sur les retours du support.',
+    expect: { suggestions: true },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
+    id: 'app-segments-referentiel',
+    tags: ['app', 'crisp'],
+    mode: 'app',
+    say: 'Quels segments le support utilise-t-il pour les demandes sur les référentiels depuis septembre 2026 ?',
+    // get_support_stats sur « referentiel » liste aussi les segments.
+    expect: { anyTool: ['list_support_segments', 'get_support_stats'] },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
+    id: 'app-stats-cr',
+    tags: ['app', 'crisp'],
+    mode: 'app',
+    say: 'Combien de demandes le support a-t-il reçues sur le référentiel CR en octobre 2026 ?',
+    expect: {
+      tools: [
+        {
+          name: 'get_support_stats',
+          args: { sujet: { matches: '(^|[^a-z])cr([^a-z]|$)' } },
+        },
+      ],
+    },
+    maxModelCalls: 4,
+  }),
+  defineScenario({
+    // Écriture préparée, jamais faite : l'utilisateur confirme d'un clic.
+    id: 'app-segmenter-cr',
+    tags: ['app', 'crisp'],
+    mode: 'app',
+    say: "Ajoute le segment besoin_guidage_referentiel_cr aux conversations d'octobre 2026 qui parlent du « nouveau référentiel ».",
+    expect: {
+      tools: [
+        {
+          name: 'prepare_segment_tagging',
+          args: { segment: { matches: 'referentiel_cr' } },
+        },
+      ],
+      answer: {
+        notContains: [
+          'ajouté avec succès',
+          'a bien été ajouté',
+          'ont été ajoutés',
+        ],
+      },
+    },
+    maxModelCalls: 6,
+  }),
+  defineScenario({
     id: 'esquisse-activation',
     tags: ['esquisse'],
     mode: 'esquisse',

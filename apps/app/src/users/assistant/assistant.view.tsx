@@ -15,7 +15,8 @@ import {
   SuperAdminModeState,
 } from './assistant-connection.steps';
 import { AssistantExamplesTable } from './assistant-examples.table';
-import { ClaudeLogo, CrispLogo } from './assistant-logos';
+import { AlbertLogo, ClaudeLogo, CrispLogo } from './assistant-logos';
+import { AssistantChat } from './chat/assistant-chat.view';
 import { useListMcpGrants } from './data/use-list-mcp-grants';
 import {
   AssistantTab,
@@ -123,7 +124,16 @@ const PresentationTab = ({
 }) => (
   <div className="flex flex-col gap-6">
     <p className="m-0 max-w-3xl text-grey-8">{appLabels.assistantIntro}</p>
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <UsageCard
+        logo={<AlbertLogo className={LOGO_CLASSNAME} />}
+        title={appLabels.assistantUsageAppTitre}
+        badge={appLabels.assistantUsageAppBadge}
+        description={appLabels.assistantUsageAppDescription}
+        linkLabel={appLabels.assistantUsageAppLien}
+        onSelect={() => onSelectTab('app')}
+        dataTest="profil.assistant.vers-app"
+      />
       <UsageCard
         logo={<ClaudeLogo className={LOGO_CLASSNAME} />}
         title={appLabels.assistantUsageClaudeTitre}
@@ -170,6 +180,15 @@ const PresentationTab = ({
       <SuperAdminModeState />
     </Section>
   </div>
+);
+
+const AppTab = () => (
+  <Section
+    title={appLabels.assistantChatTitre}
+    description={appLabels.assistantChatDescription}
+  >
+    <AssistantChat />
+  </Section>
 );
 
 const ClaudeTab = () => (
@@ -248,7 +267,8 @@ const CrispTab = () => (
   </Section>
 );
 
-/** Page « Assistant TeT » : présentation, brancher Claude, /tet dans Crisp. */
+/** Page « Assistant TeT » : présentation, assistant de l'app, brancher
+ * Claude, /tet dans Crisp. */
 export const AssistantView = () => {
   const [activeTab, setActiveTab] = useAssistantTabQueryState();
   const { data: grants } = useListMcpGrants();
@@ -295,6 +315,14 @@ export const AssistantView = () => {
             dataTest="profil.assistant.onglet-presentation"
           />
           <TabsTab
+            id="assistant-tab-app"
+            label={appLabels.assistantOngletApp}
+            icon={(className) => <AlbertLogo className={className} />}
+            isActive={activeTab === 'app'}
+            onClick={() => setActiveTab('app')}
+            dataTest="profil.assistant.onglet-app"
+          />
+          <TabsTab
             id="assistant-tab-claude"
             label={appLabels.assistantOngletClaude}
             icon={(className) => (
@@ -318,7 +346,9 @@ export const AssistantView = () => {
         </TabsList>
 
         <TabsPanel className="mt-6">
-          {activeTab === 'claude' ? (
+          {activeTab === 'app' ? (
+            <AppTab />
+          ) : activeTab === 'claude' ? (
             <ClaudeTab />
           ) : activeTab === 'crisp' ? (
             <CrispTab />

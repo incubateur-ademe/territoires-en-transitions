@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import {
+  applySegmentTaggingInputSchema,
+  ApplySegmentTaggingService,
+} from '@tet/backend/utils/mcp/tools/support-crisp/apply-segment-tagging.service';
+import { supportCrispErrorConfig } from '@tet/backend/utils/mcp/tools/support-crisp/support-crisp.errors';
 import { askAssistantFromCrispInputSchema } from './ask-assistant-from-crisp.input';
 import { AskAssistantFromCrispService } from './ask-assistant-from-crisp.service';
 import { askAssistantErrorConfig } from './ask-assistant.errors';
@@ -12,11 +17,15 @@ export class AssistantRouter {
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
     askAssistantErrorConfig
   );
+  private readonly getActionResultOrThrowError = createTrpcErrorHandler(
+    supportCrispErrorConfig
+  );
 
   constructor(
     private readonly trpc: TrpcService,
     private readonly askAssistantService: AskAssistantService,
-    private readonly askAssistantFromCrispService: AskAssistantFromCrispService
+    private readonly askAssistantFromCrispService: AskAssistantFromCrispService,
+    private readonly applySegmentTaggingService: ApplySegmentTaggingService
   ) {}
 
   router = this.trpc.router({
@@ -36,6 +45,27 @@ export class AssistantRouter {
           signal,
         });
         return this.getResultDataOrThrowError(result);
+      }),
+
+    /**
+     * Confirme une écriture préparée par l'assistant de l'app (ajout d'un
+     * segment Crisp), d'un clic de l'utilisateur : le modèle ne l'appelle
+     * jamais. Rôle support seulement.
+     */
+    confirmAction: this.trpc.authedProcedure
+      .use(
+        this.trpc.rateLimit({
+          name: 'assistant-confirm-action',
+          limit: 10,
+          ttl: 60_000,
+        })
+      )
+      .input(applySegmentTaggingInputSchema)
+      .mutation(async ({ input, ctx: { user } }) => {
+        const result = await this.applySegmentTaggingService.run(input, {
+          user,
+        });
+        return this.getActionResultOrThrowError(result);
       }),
 
     /**

@@ -34,11 +34,15 @@ const hasAnalyticsDatabase =
   !!env.ANALYTICS_DATABASE_URL &&
   env.ANALYTICS_DATABASE_URL !== env.SUPABASE_DATABASE_URL;
 
+// Les scénarios `crisp` lisent les vraies conversations du support.
+const hasCrisp = !!env.CRISP_API_IDENTIFIER && !!env.CRISP_API_KEY;
+
 const selected = SCENARIOS.filter(
   (scenario) =>
     (!scenarioFilter || scenarioFilter.includes(scenario.id)) &&
     (!tagFilter || scenario.tags.some((tag) => tagFilter.includes(tag))) &&
-    (hasAnalyticsDatabase || !scenario.tags.includes('analytique'))
+    (hasAnalyticsDatabase || !scenario.tags.includes('analytique')) &&
+    (hasCrisp || !scenario.tags.includes('crisp'))
 );
 
 /** Vertex lit un fichier de clé : on l'écrit hors du dépôt. */

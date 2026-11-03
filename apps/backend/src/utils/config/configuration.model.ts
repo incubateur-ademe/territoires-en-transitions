@@ -246,6 +246,22 @@ export const backendConfigurationSchema = z
       .describe(
         'URL Postgres de la base analytique (rôle en lecture seule) interrogée par le serveur MCP'
       ),
+    // Outils « support » du serveur MCP : optionnels, sans eux ces outils
+    // répondent CRISP_NOT_CONFIGURED. Jeton REST Crisp de niveau `website`.
+    CRISP_API_IDENTIFIER: z
+      .string()
+      .optional()
+      .describe('Identifiant du jeton API Crisp (lecture des conversations)'),
+    CRISP_API_KEY: z
+      .string()
+      .optional()
+      .describe('Clé du jeton API Crisp (lecture des conversations)'),
+    CRISP_WEBSITE_ID: z
+      .string()
+      .prefault('582ff50a-5ac4-4f38-a8bc-62f51beeef89')
+      .describe(
+        'Espace de travail Crisp de TeT (public : il est dans le widget)'
+      ),
     // Agent du backend (utils/assistant) : boucle d'appels d'outils MCP.
     ASSISTANT_MAX_MODEL_CALLS: z.coerce
       .number()
