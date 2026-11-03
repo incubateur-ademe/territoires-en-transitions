@@ -1,6 +1,6 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
@@ -11,7 +11,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 
 type Props = {
-  indicateur: IndicateurDefinitionListItem;
+  indicateur: IndicateurDetaille;
   openState: OpenState;
 };
 
@@ -22,7 +22,7 @@ type IndicateurCardEditState = {
 };
 
 export const buildIndicateurCardUpdate = (
-  indicateur: Pick<IndicateurDefinitionListItem, 'estPerso'>,
+  indicateur: Pick<IndicateurDetaille, 'estPerso'>,
   state: IndicateurCardEditState
 ) => ({
   pilotes: state.pilotes,

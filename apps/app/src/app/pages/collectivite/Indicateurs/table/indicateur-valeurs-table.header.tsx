@@ -1,10 +1,10 @@
-import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { IndicateurHeaderTitleCell } from '@/app/indicateurs/valeurs/grid/indicateur-title.header-cell';
 import { IndicateurValeurPeriodeHeaderCell } from '@/app/indicateurs/valeurs/grid/indicateur-valeur-periode.header-cell';
 import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
+  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { Button, Icon, TableHead, TableHeaderCell, Tooltip } from '@tet/ui';
 import type { ReactNode } from 'react';
@@ -12,7 +12,7 @@ import type { IndicateurPeriodeValue } from '../data/prepare-indicateur-periode-
 import { ADD_PERIODE_CELL_CLASSNAME } from './indicateur-valeurs-table.styles';
 
 type Props = {
-  definition: Pick<IndicateurDefinition, 'titre' | 'unite'>;
+  definition: Pick<IndicateurDetaille, 'titre' | 'unite'>;
   periodes: readonly IndicateurPeriode[];
   localValues: readonly IndicateurPeriodeValue[];
   privatePeriode?: IndicateurPeriode;

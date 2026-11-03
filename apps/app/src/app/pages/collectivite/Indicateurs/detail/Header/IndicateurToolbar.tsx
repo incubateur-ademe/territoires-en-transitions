@@ -1,5 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { ActivityLogModal } from '@/app/ui/shared/activity-log.modal';
 import { PermissionOperation } from '@tet/domain/users';
@@ -14,7 +14,7 @@ import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
 type Props = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isPerso?: boolean;

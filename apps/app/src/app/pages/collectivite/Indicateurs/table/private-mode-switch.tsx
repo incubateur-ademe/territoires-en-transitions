@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { Checkbox, Tooltip } from '@tet/ui';
 
@@ -7,7 +7,7 @@ export const PrivateModeSwitch = ({
   definition,
   isReadOnly,
 }: {
-  definition: Pick<IndicateurDefinition, 'id' | 'estConfidentiel'>;
+  definition: Pick<IndicateurDetaille, 'id' | 'estConfidentiel'>;
   isReadOnly?: boolean;
 }) => {
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);

@@ -1,10 +1,10 @@
-import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { Field } from '@tet/ui';
 
 type Props = {
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   disabled?: boolean;
 };
 

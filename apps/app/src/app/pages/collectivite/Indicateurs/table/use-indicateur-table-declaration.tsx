@@ -1,9 +1,9 @@
-import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import {
   IndicateurPeriodes,
   type IndicateurPeriode,
   type SupportedIndicateurPeriodicite,
+  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import type { OpenState } from '@tet/ui/utils/types';
 import { useState, type ReactNode } from 'react';
@@ -14,7 +14,7 @@ export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
   periodicite: SupportedIndicateurPeriodicite | undefined;
   collectiviteId: number;
-  definition: Pick<IndicateurDefinition, 'id'>;
+  definition: Pick<IndicateurDetaille, 'id'>;
   existingPeriodes: readonly IndicateurPeriode[];
   openModalState?: OpenState;
 };

@@ -1,7 +1,5 @@
-import {
-  IndicateurDefinitionListItem,
-  useListIndicateurs,
-} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { PlanNode } from '@tet/domain/plans';
 import { useUpdateAxe } from './use-update-axe';
 
@@ -32,7 +30,7 @@ export function useListAxeIndicateurs({
     planId,
   });
 
-  const toggleIndicateur = async (indicateur: IndicateurDefinitionListItem) => {
+  const toggleIndicateur = async (indicateur: IndicateurDetaille) => {
     const isAssocie =
       selectedIndicateurs.some((i) => i.id === indicateur.id) ?? false;
 

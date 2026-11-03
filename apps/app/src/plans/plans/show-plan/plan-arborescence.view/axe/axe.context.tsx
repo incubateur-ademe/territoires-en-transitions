@@ -1,5 +1,5 @@
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
@@ -39,8 +39,8 @@ type AxeContextValue = {
   shouldScroll: boolean;
 
   // sélection des indicateurs associés à l'axe
-  selectedIndicateurs: IndicateurDefinitionListItem[];
-  toggleIndicateur: (indicateur: IndicateurDefinitionListItem) => Promise<void>;
+  selectedIndicateurs: IndicateurDetaille[];
+  toggleIndicateur: (indicateur: IndicateurDetaille) => Promise<void>;
 
   // édition du titre de l'axe
   isOpenEditTitle: boolean;

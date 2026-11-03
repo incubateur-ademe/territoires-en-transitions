@@ -1,9 +1,9 @@
 import { PermissionOperation } from '@tet/domain/users';
-import { IndicateurDefinition } from './use-get-indicateur';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 
 export function canUpdateIndicateurDefinition(
   hasCollectivitePermission: (permission: PermissionOperation) => boolean,
-  indicateur: Pick<IndicateurDefinition, 'pilotes'>,
+  indicateur: Pick<IndicateurDetaille, 'pilotes'>,
   userId: string
 ): boolean {
   if (hasCollectivitePermission('indicateurs.indicateurs.update')) {
@@ -17,7 +17,7 @@ export function canUpdateIndicateurDefinition(
 
 export function canUpdateIndicateurValeur(
   hasCollectivitePermission: (permission: PermissionOperation) => boolean,
-  indicateur: Pick<IndicateurDefinition, 'pilotes'>,
+  indicateur: Pick<IndicateurDetaille, 'pilotes'>,
   userId: string
 ): boolean {
   if (hasCollectivitePermission('indicateurs.valeurs.mutate')) {

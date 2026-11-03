@@ -1,4 +1,3 @@
-import type { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { getIndicateurPeriodPresentation } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { useDeclareIndicateurPeriodes } from '@/app/indicateurs/valeurs/use-declare-indicateur-periodes';
@@ -6,6 +5,7 @@ import {
   IndicateurPeriodes,
   IndicateurPeriodiciteEnum,
   type IndicateurPeriode,
+  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
 import { Button } from '@tet/ui';
 import type { OpenState } from '@tet/ui/utils/types';
@@ -28,7 +28,7 @@ import { PrivateModeSwitch } from './private-mode-switch';
 type IndicateurTableProps = {
   chartInfo: IndicateurChartInfo;
   collectiviteId: number;
-  definition: IndicateurDefinition;
+  definition: IndicateurDetaille;
   readonly?: boolean;
   confidentiel?: boolean;
   openModalState?: OpenState;

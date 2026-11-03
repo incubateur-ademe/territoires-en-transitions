@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
 
 type ListDefinitionsInput = RouterInput['indicateurs']['indicateurs']['list'];
-
-export type IndicateurDefinitionListItem =
-  RouterOutput['indicateurs']['indicateurs']['list']['data'][number];
 
 export type ListDefinitionsInputFilters = NonNullable<
   ListDefinitionsInput['filters']

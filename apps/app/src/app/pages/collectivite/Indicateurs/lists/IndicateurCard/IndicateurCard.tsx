@@ -15,7 +15,7 @@ import {
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
@@ -29,7 +29,7 @@ import { IndicateurCardSkeleton } from './indicateur-card.skeleton';
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
   /** Item dans une liste d'indicateurs (avant que le détail pour la vignette ne soit chargé) */
-  definition: IndicateurDefinitionListItem;
+  definition: IndicateurDetaille;
 
   /**
    * Id de la collectivité pour laquelle on veut voir les valeurs, si non défini, on utilise la collectivité courante
@@ -45,7 +45,7 @@ export type IndicateurCardProps = {
      */
     checkbox?: boolean;
     selected: boolean;
-    setSelected: (indicateur: IndicateurDefinitionListItem) => void;
+    setSelected: (indicateur: IndicateurDetaille) => void;
   };
   /** Rend la carte comme un lien. Ne peux pas être utilisé avec la prop `selectState` */
   href?: string;
@@ -58,9 +58,7 @@ export type IndicateurCardProps = {
   /** Affiche les options de modification au hover de la carte */
   isEditable?: boolean;
   /** Permet d'ajouter des éléments dans le groupe de menus */
-  otherMenuActions?: (
-    indicateur: IndicateurDefinitionListItem
-  ) => React.ReactNode[];
+  otherMenuActions?: (indicateur: IndicateurDetaille) => React.ReactNode[];
   /** Props du composant générique Card */
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */

@@ -2,8 +2,8 @@ import { Meta, type StoryObj } from '@storybook/nextjs-vite';
 import {
   IndicateurPeriodiciteEnum,
   IndicateurPeriodes,
+  IndicateurDetaille,
 } from '@tet/domain/indicateurs';
-import type { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 
 import { IndicateurCardBase } from './IndicateurCard';
 import type { IndicateurCardBaseProps } from './IndicateurCard';
@@ -55,7 +55,7 @@ const definition = {
   estPerso: true,
   estAgregation: false,
   estRempli: true,
-} satisfies IndicateurDefinitionListItem;
+} satisfies IndicateurDetaille;
 
 const props = {
   chartInfo: {
