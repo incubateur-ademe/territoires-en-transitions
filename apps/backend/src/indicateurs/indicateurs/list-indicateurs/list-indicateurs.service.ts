@@ -1,16 +1,13 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'assert';
-import { omit } from 'es-toolkit';
 import { PermissionService } from '../../../users/authorizations/permission.service';
 import { GetFavorisCountRequest } from './get-favoris-count.request';
 import { GetPathRequest } from './get-path.request';
 import { ListIndicateursInput } from './list-indicateurs.input';
-import {
-  IndicateurListItem,
-  ListIndicateursOutput,
-} from './list-indicateurs.output';
+import { ListIndicateursOutput } from './list-indicateurs.output';
 import { ListIndicateursRepository } from './list-indicateurs.repository';
 
 @Injectable()
@@ -28,7 +25,7 @@ export class ListIndicateursService {
   }: {
     indicateurId: number;
     collectiviteId: number;
-  }): Promise<IndicateurListItem> {
+  }): Promise<IndicateurDetaille> {
     const indicateurs = await this.listIndicateurs({
       collectiviteId,
       filters: { indicateurIds: [indicateurId] },
@@ -49,7 +46,7 @@ export class ListIndicateursService {
   }: {
     identifiantReferentiel: string;
     collectiviteId: number;
-  }): Promise<IndicateurListItem> {
+  }): Promise<IndicateurDetaille> {
     const indicateurs = await this.listIndicateurs({
       collectiviteId,
       filters: { identifiantsReferentiel: [identifiantReferentiel] },
@@ -95,7 +92,9 @@ export class ListIndicateursService {
     const count = definitionsResult[0]?.count ?? 0;
 
     return {
-      data: definitionsResult.map((d) => omit(d, ['count'])),
+      data: definitionsResult.map(
+        ({ count: _count, ...indicateur }) => indicateur
+      ),
       count,
       page: queryOptions.page,
       pageSize: queryOptions.limit,

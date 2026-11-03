@@ -1,13 +1,5 @@
 import * as z from 'zod';
-import { dcpSchema } from '../../users';
-
-export const authorSchema = z.object({
-  id: dcpSchema.shape.id,
-  nom: dcpSchema.shape.nom,
-  prenom: dcpSchema.shape.prenom,
-});
-
-export type Author = z.infer<typeof authorSchema>;
+import { authorSchema } from '../../users';
 
 export const ficheNoteSchema = z.object({
   id: z.number(),

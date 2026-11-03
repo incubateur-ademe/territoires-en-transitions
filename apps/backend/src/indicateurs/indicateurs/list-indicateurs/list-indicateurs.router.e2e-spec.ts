@@ -22,7 +22,10 @@ import {
   setUserCollectiviteRole,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import {
+  IndicateurDefinition,
+  indicateurDetailleSchema,
+} from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
@@ -35,7 +38,6 @@ import { indicateurCategorieTagTable } from '../../definitions/indicateur-catego
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurValeurTable } from '../../valeurs/indicateur-valeur.table';
-import { indicateurListItemSchema } from './list-indicateurs.output';
 
 import { addCollectiviteToGroupement } from '../../../collectivites/shared/models/groupement.test-fixture';
 
@@ -85,7 +87,7 @@ describe('ListIndicateursRouter', () => {
 
       expect(result.length).toBeGreaterThan(0);
 
-      const parsedResult = z.array(indicateurListItemSchema).safeParse(result);
+      const parsedResult = z.array(indicateurDetailleSchema).safeParse(result);
 
       expect(parsedResult.error).toBeUndefined();
       expect(parsedResult.success).toBeTruthy();
@@ -152,7 +154,7 @@ describe('ListIndicateursRouter', () => {
 
       expect(result.length).toBe(1);
 
-      const toCheck1 = indicateurListItemSchema.safeParse(result[0]);
+      const toCheck1 = indicateurDetailleSchema.safeParse(result[0]);
       expect(toCheck1.success).toBeTruthy();
 
       const [indicateur] = result;
@@ -1773,7 +1775,7 @@ describe('ListIndicateursRouter', () => {
 
       // Vérifie que chaque élément respecte le schéma
       result.forEach((indicateur) => {
-        const toCheck = indicateurListItemSchema.safeParse(indicateur);
+        const toCheck = indicateurDetailleSchema.safeParse(indicateur);
         expect(toCheck.success).toBeTruthy();
       });
     });
@@ -2142,7 +2144,7 @@ describe('ListIndicateursRouter', () => {
       const { data: result } = await caller.indicateurs.indicateurs.list(input);
 
       result.forEach((indicateur) => {
-        const toCheck = indicateurListItemSchema.safeParse(indicateur);
+        const toCheck = indicateurDetailleSchema.safeParse(indicateur);
         expect(toCheck.success).toBeTruthy();
       });
     });
