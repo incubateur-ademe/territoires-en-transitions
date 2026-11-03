@@ -1,14 +1,13 @@
 import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
 import {
-  DEPRECATED_Table,
-  DEPRECATED_TBody,
-  DEPRECATED_TCell,
-  DEPRECATED_THead,
-  DEPRECATED_THeadCell,
-  DEPRECATED_TRow,
   Input,
+  Table,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
 } from '@tet/ui';
-import classNames from 'classnames';
+import { cn } from '@tet/ui/utils/cn';
 import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 import { appLabels } from '@/app/labels/catalog';
 
@@ -71,29 +70,31 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
       ];
 
   return (
-    <DEPRECATED_Table className="mt-7">
-      <DEPRECATED_THead>
-        <DEPRECATED_TRow>
-          <DEPRECATED_THeadCell className="text-left uppercase">
-            {appLabels.secteur}
-          </DEPRECATED_THeadCell>
-          {sources.map((source) => (
-            <DEPRECATED_THeadCell
-              key={source.id}
-              className={classNames('w-1/5', {
-                uppercase: source.id !== 'collectivite',
-              })}
-            >
-              {source.nom}
-            </DEPRECATED_THeadCell>
-          ))}
-        </DEPRECATED_TRow>
-      </DEPRECATED_THead>
-      <DEPRECATED_TBody>
-        {secteurs.map((secteur) => {
-          return (
-            <DEPRECATED_TRow key={secteur.identifiant}>
-              <DEPRECATED_TCell variant="title">{secteur.nom}</DEPRECATED_TCell>
+    <div className="mt-7 overflow-x-auto rounded-xl border border-grey-3">
+      <Table className="table-auto">
+        <TableHead>
+          <tr>
+            <TableHeaderCell title={appLabels.secteur} />
+            {sources.map((source) => (
+              <TableHeaderCell
+                key={source.id}
+                className="w-1/5"
+                align="center"
+                title={source.nom}
+                titleClassName={cn({
+                  'normal-case':
+                    source.id === IndicateurSourceEnum.COLLECTIVITE,
+                })}
+              />
+            ))}
+          </tr>
+        </TableHead>
+        <tbody>
+          {secteurs.map((secteur) => (
+            <TableRow key={secteur.identifiant}>
+              <TableCell className="font-bold text-primary-10">
+                {secteur.nom}
+              </TableCell>
               {sources.map((source) => (
                 <CellNumber
                   secteurs={secteurs}
@@ -105,11 +106,11 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
                   source={source}
                 />
               ))}
-            </DEPRECATED_TRow>
-          );
-        })}
-      </DEPRECATED_TBody>
-    </DEPRECATED_Table>
+            </TableRow>
+          ))}
+        </tbody>
+      </Table>
+    </div>
   );
 };
 
@@ -135,9 +136,11 @@ const CellNumber = ({
   const val = valNumber?.toString() ?? '';
 
   return (
-    <DEPRECATED_TCell
-      key={source.id}
-      variant={estSourceCollectivite ? 'input' : 'number'}
+    <TableCell
+      className={cn({
+        'py-1': estSourceCollectivite,
+        'text-center font-bold text-primary-8': !estSourceCollectivite,
+      })}
     >
       {estSourceCollectivite ? (
         <Input
@@ -169,6 +172,6 @@ const CellNumber = ({
       ) : (
         '--'
       )}
-    </DEPRECATED_TCell>
+    </TableCell>
   );
 };

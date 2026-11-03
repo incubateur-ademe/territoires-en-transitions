@@ -1,14 +1,12 @@
 import { appLabels } from '@/app/labels/catalog';
 import {
-  DEPRECATED_Table,
-  DEPRECATED_TBody,
-  DEPRECATED_TCell,
-  DEPRECATED_THead,
-  DEPRECATED_THeadCell,
-  DEPRECATED_THeadRow,
-  DEPRECATED_TRow,
   Modal,
   ModalFooterOKCancel,
+  Table,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
 } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 import { useState } from 'react';
@@ -52,35 +50,33 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
               IndicateurPeriodes.format(periode)
             )}
           </p>
-          <DEPRECATED_Table>
-            <DEPRECATED_THead>
-              <DEPRECATED_THeadRow>
-                <DEPRECATED_THeadCell>&nbsp;</DEPRECATED_THeadCell>
-                <DEPRECATED_THeadCell>
-                  {appLabels.confirmDeleteValeur}
-                </DEPRECATED_THeadCell>
-                <DEPRECATED_THeadCell>
-                  {appLabels.commentaire}
-                </DEPRECATED_THeadCell>
-              </DEPRECATED_THeadRow>
-            </DEPRECATED_THead>
-            <DEPRECATED_TBody>
-              <DEPRECATED_TRow>
-                <DEPRECATED_TCell className="font-medium">
-                  {`${capitalize(appLabels.indicateurResultat())} (${unite})`}
-                </DEPRECATED_TCell>
-                <CellValue value={resultat ?? ''} />
-                <DEPRECATED_TCell>{resultatCommentaire}</DEPRECATED_TCell>
-              </DEPRECATED_TRow>
-              <DEPRECATED_TRow>
-                <DEPRECATED_TCell className="font-medium">
-                  {`${capitalize(appLabels.indicateurObjectif())} (${unite})`}
-                </DEPRECATED_TCell>
-                <CellValue value={objectif ?? ''} />
-                <DEPRECATED_TCell>{objectifCommentaire}</DEPRECATED_TCell>
-              </DEPRECATED_TRow>
-            </DEPRECATED_TBody>
-          </DEPRECATED_Table>
+          <div className="overflow-x-auto rounded-xl border border-grey-3">
+            <Table className="table-auto">
+              <TableHead>
+                <tr>
+                  <TableHeaderCell />
+                  <TableHeaderCell title={appLabels.confirmDeleteValeur} />
+                  <TableHeaderCell title={appLabels.commentaire} />
+                </tr>
+              </TableHead>
+              <tbody>
+                <TableRow>
+                  <TableCell className="font-medium">
+                    {`${capitalize(appLabels.indicateurResultat())} (${unite})`}
+                  </TableCell>
+                  <CellValue value={resultat ?? ''} />
+                  <TableCell>{resultatCommentaire}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">
+                    {`${capitalize(appLabels.indicateurObjectif())} (${unite})`}
+                  </TableCell>
+                  <CellValue value={objectif ?? ''} />
+                  <TableCell>{objectifCommentaire}</TableCell>
+                </TableRow>
+              </tbody>
+            </Table>
+          </div>
         </>
       )}
       renderFooter={({ close }) => (

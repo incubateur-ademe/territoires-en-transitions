@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import {
   Checkbox,
-  DEPRECATED_TBody,
-  DEPRECATED_TCell,
-  DEPRECATED_THead,
-  DEPRECATED_TRow,
-  DEPRECATED_Table,
+  Table,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
 } from '@tet/ui';
 import { PdfSectionKey, TSectionsValues, sectionsList } from '../utils';
 import ExportSuiviSelect from './export-suivi-select';
@@ -29,41 +29,41 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-auto">
-      <DEPRECATED_Table className="border-[0.5px] border-primary-4">
-        {/* En-tête du tableau */}
-        <DEPRECATED_THead>
-          <DEPRECATED_TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
-            <DEPRECATED_TCell className="min-w-80">{appLabels.sections}</DEPRECATED_TCell>
-            <DEPRECATED_TCell className="w-96">
-              {appLabels.personnaliserSection}
-            </DEPRECATED_TCell>
-            <DEPRECATED_TCell className="min-w-52">
-              {appLabels.ajouterAExportPdf}
-            </DEPRECATED_TCell>
-          </DEPRECATED_TRow>
-        </DEPRECATED_THead>
-
-        {/* Contenu du tableau */}
-        <DEPRECATED_TBody>
+    <div className="w-full max-w-full overflow-x-auto rounded-xl border border-grey-3">
+      <Table className="table-auto">
+        <TableHead>
+          <tr>
+            <TableHeaderCell className="min-w-80" title={appLabels.sections} />
+            <TableHeaderCell
+              className="w-96"
+              title={appLabels.personnaliserSection}
+            />
+            <TableHeaderCell
+              className="min-w-52"
+              align="center"
+              title={appLabels.ajouterAExportPdf}
+            />
+          </tr>
+        </TableHead>
+        <tbody>
           {sectionsList.map((section) => (
-            <DEPRECATED_TRow key={section.key}>
+            <TableRow key={section.key}>
               {/* Sections */}
-              <DEPRECATED_TCell className="text-primary-10 font-bold text-sm">
+              <TableCell className="text-primary-10 font-bold text-sm">
                 {section.title}
-              </DEPRECATED_TCell>
+              </TableCell>
 
               {/* Personnalisation */}
-              <DEPRECATED_TCell className="!px-3 !py-1">
+              <TableCell className="px-3 py-1">
                 {section.key === 'notes' ? (
                   <ExportSuiviSelect {...{ options, setOptions }} />
                 ) : (
                   ''
                 )}
-              </DEPRECATED_TCell>
+              </TableCell>
 
               {/* Sélection */}
-              <DEPRECATED_TCell>
+              <TableCell>
                 <Checkbox
                   className="mx-auto"
                   checked={options[section.key].isChecked}
@@ -71,11 +71,11 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
                     handleOnCheck(section.key, evt.currentTarget.checked)
                   }
                 />
-              </DEPRECATED_TCell>
-            </DEPRECATED_TRow>
+              </TableCell>
+            </TableRow>
           ))}
-        </DEPRECATED_TBody>
-      </DEPRECATED_Table>
+        </tbody>
+      </Table>
     </div>
   );
 };
