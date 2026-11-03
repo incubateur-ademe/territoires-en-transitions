@@ -1,6 +1,10 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
-import type { IndicateurDetaille } from '@tet/domain/indicateurs';
+import {
+  type IndicateurDetaille,
+  isIndicateurPerso,
+  type IndicateurNatureFields,
+} from '@tet/domain/indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
@@ -22,12 +26,12 @@ type IndicateurCardEditState = {
 };
 
 export const buildIndicateurCardUpdate = (
-  indicateur: Pick<IndicateurDetaille, 'estPerso'>,
+  indicateur: IndicateurNatureFields,
   state: IndicateurCardEditState
 ) => ({
   pilotes: state.pilotes,
   services: state.services,
-  ...(indicateur.estPerso ? { thematiques: state.thematiques } : {}),
+  ...(isIndicateurPerso(indicateur) ? { thematiques: state.thematiques } : {}),
 });
 
 const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
@@ -83,7 +87,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
               }
             />
           </Field>
-          {indicateur.estPerso && (
+          {isIndicateurPerso(indicateur) && (
             <Field title={appLabels.thematique()}>
               <ThematiquesDropdown
                 values={state.thematiques.map((t) => t.id)}
