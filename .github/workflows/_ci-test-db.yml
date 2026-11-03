@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Sqitch tag used as the starting point for revert/deploy tests.
-      tag: v4.0.0
+      tag: v5.0.0
 
     steps:
       - uses: actions/checkout@v7.0.1
@@ -135,24 +135,61 @@ jobs:
           command: 'deploy --mode change --verify'
           target: ${{ steps.local-supabase.outputs.sqitch-target }}
 
-      - name: Test backup preflight against the deployed database
+      - name: Test restore preflight in a disposable database
+        env:
+          DATABASE_URL: ${{ steps.local-supabase.outputs.database-url }}
         run: |
           set -euo pipefail
           postgres_image="$(docker inspect --format '{{.Config.Image}}' supabase_db_tet)"
+          wget -qO "$RUNNER_TEMP/yq" https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_amd64
+          chmod +x "$RUNNER_TEMP/yq"
           docker run \
             --rm --interactive \
             --network container:supabase_db_tet \
+            --env DATABASE_URL \
             --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+            --volume "$RUNNER_TEMP/yq:/usr/local/bin/yq:ro" \
             --workdir /workspace \
-            --env TO_DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-            --env EXPECTED_RESTORE_PHASE=contract \
-            --entrypoint bash "$postgres_image" -euo pipefail <<'BASH'
-          archive="$(mktemp)"
-          trap 'rm -f "$archive"' EXIT
-          pg_dump "$TO_DB_URL" --format=custom --schema=sqitch \
-            --table=sqitch.changes --file="$archive"
-          phase="$(bash data_layer/backup/check-restore-compatibility.sh "$archive")"
-          [[ "$phase" == "$EXPECTED_RESTORE_PHASE" ]]
+            --entrypoint bash "$postgres_image" -seuo pipefail <<'BASH'
+          set -euo pipefail
+          DATABASE_URL="${DATABASE_URL/supabase_db_tet/127.0.0.1}"
+          workspace=$(mktemp -d)
+          database="restore_preflight_${$}"
+          trap 'rm -rf "$workspace"' EXIT
+          createdb --maintenance-db="$DATABASE_URL" "$database"
+          trap 'dropdb --maintenance-db="$DATABASE_URL" --if-exists "$database"; rm -rf "$workspace"' EXIT
+          export TO_DB_URL="${DATABASE_URL%/*}/$database"
+          # Only table presence matters before preflight; derive the fixture from the real config.
+          tables=$(yq -r '.groups[][]' data_layer/backup/restore-config.yml | sort -u)
+          while IFS= read -r table; do
+              [[ "$table" == *.* ]] || table="public.$table"
+              printf 'CREATE SCHEMA IF NOT EXISTS %s; CREATE TABLE IF NOT EXISTS %s (id integer, value text);\n' "${table%%.*}" "$table"
+          done <<< "$tables" | psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL"
+          psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" <<'SQL'
+          CREATE SCHEMA sqitch;
+          CREATE TABLE sqitch.changes (project text, change_id text, script_hash text);
+          INSERT INTO sqitch.changes VALUES ('test', repeat('a', 40), repeat('b', 40));
+          INSERT INTO public.dcp VALUES (1, 'preserved');
+          SQL
+          checker=data_layer/backup/check-restore-compatibility.sh
+          pg_dump --format=custom --dbname="$TO_DB_URL" --file="$workspace/complete.dump"
+          bash "$checker" "$workspace/complete.dump" public.dcp
+          expect_refusal() {
+              local archive="$1" message="$2"
+              if CI=true bash data_layer/backup/restore.sh "$archive" > "$workspace/result" 2>&1; then
+                  echo "Preflight unexpectedly accepted $archive" >&2
+                  exit 1
+              fi
+              grep -F "$message" "$workspace/result"
+              [[ $(psql -X -At --dbname="$TO_DB_URL" -c "SELECT count(*) = 1 AND bool_and(id = 1 AND value = 'preserved') FROM public.dcp") == t ]]
+          }
+          pg_dump --format=custom --dbname="$TO_DB_URL" --exclude-table-data=public.dcp \
+              --file="$workspace/incomplete.dump"
+          expect_refusal "$workspace/incomplete.dump" 'backup lacks TABLE DATA'
+          psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
+              -c "UPDATE sqitch.changes SET script_hash = repeat('c', 40)"
+          expect_refusal "$workspace/complete.dump" 'different Sqitch migrations or script hashes'
+          echo 'Preflight: matching registry accepted; restore.sh refuses missing data and changed registry without truncating dcp.'
           BASH
 
       - name: Test periodicity constraints after deployment

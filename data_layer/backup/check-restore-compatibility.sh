@@ -1,104 +1,89 @@
 #!/bin/bash
 set -euo pipefail
 : "${TO_DB_URL:?Missing TO_DB_URL}"
-[[ "$#" == 1 ]] || { echo 'Usage: TO_DB_URL=... check-restore-compatibility.sh backup.dump' >&2; exit 2; }
+[[ "$#" -ge 2 ]] || { echo 'Usage: TO_DB_URL=... check-restore-compatibility.sh backup.dump schema.table [...]' >&2; exit 2; }
 
-# Restore complete releases only, without intermediate normalization states.
-classify_release() {
-    awk -F '\t' '
-        $2 != "tet" { next }
-        { seen = 1 }
-        $1 == "indicateur/periodicite_schema" { schema = 1 }
-        $1 == "indicateur/dependances_formules" { extractor = 1 }
-        $1 == "indicateur/periodicite_obligatoire" { mandatory = 1 }
-        $1 == "indicateur/periodicite_integrite" { integrity = 1 }
-        $1 == "indicateur/periodicite_formules" { formulas = 1 }
-        $1 == "stats/report_indicateur_resultat_periode" { reporting = 1 }
-        $1 == "indicateur/reconciliation_formules" { reconciliation = 1 }
-        $1 == "indicateur/periodicite_activation" { activation = 1 }
-        $1 == "indicateur/periodicite_nettoyage" { later = 1 }
-        END {
-            if (!seen || later || reconciliation) print "unsupported"
-            else if (schema) {
-                if (activation && mandatory && integrity && extractor && formulas && reporting) print "contract"
-                else if (!activation && mandatory && integrity && extractor && formulas && reporting) print "prepared"
-                else if (activation || mandatory || integrity) print "incomplete"
-                else if (extractor && formulas && reporting) print "reporting"
-                else if (reporting) print "incomplete"
-                else if (extractor && formulas) print "formulas"
-                else if (extractor || formulas) print "incomplete"
-                else print "schema"
+archive="$1"
+shift
+workspace=$(mktemp -d)
+trap 'rm -rf "$workspace"' EXIT
+export LC_ALL=C
+
+# restore.sh supplies the exact table list it reads from restore-config.yml.
+# Restrict names before using them in SQL; never execute SQL from the archive.
+for table in "$@"; do
+    if ! [[ "$table" =~ ^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$ ]]; then
+        echo "Invalid restore table: $table" >&2
+        exit 2
+    fi
+    printf '%s\n' "$table"
+done | sort -u > "$workspace/required-tables"
+
+pg_restore --list "$archive" > "$workspace/toc"
+awk '$4 == "TABLE" && $5 == "DATA" { print $6 "." $7 }' "$workspace/toc" \
+    | sort -u > "$workspace/archive-tables"
+comm -23 "$workspace/required-tables" "$workspace/archive-tables" > "$workspace/missing-tables"
+if [[ -s "$workspace/missing-tables" ]]; then
+    echo 'Refusing to restore: backup lacks TABLE DATA for required tables:' >&2
+    cat "$workspace/missing-tables" >&2
+    exit 1
+fi
+if ! grep -Fxq 'sqitch.changes' "$workspace/archive-tables"; then
+    echo 'Refusing to restore: backup lacks the Sqitch registry.' >&2
+    exit 1
+fi
+
+# Compare immutable migration identities and script hashes, not deployment
+# timestamps or application-specific release labels. Extra/missing/rewritten
+# migrations require an aligned schema before restoring any data.
+if ! pg_restore --data-only --schema=sqitch --table=changes --file=- "$archive" \
+    | awk -F '\t' '
+        /^COPY sqitch\.changes \(/ {
+            columns = $0
+            sub(/^COPY sqitch\.changes \(/, "", columns)
+            sub(/\) FROM stdin;$/, "", columns)
+            count = split(columns, names, ", ")
+            for (i = 1; i <= count; i++) {
+                gsub(/"/, "", names[i])
+                positions[names[i]] = i
             }
-            else if (extractor || mandatory || integrity || formulas || reporting || reconciliation || activation) print "incomplete"
-            else print "legacy"
+            if (!positions["project"] || !positions["change_id"] || !positions["script_hash"]) exit 1
+            copying = 1
+            blocks++
+            next
         }
-    '
-}
+        copying && $0 == "\\." { copying = 0; next }
+        copying {
+            if (NF != count || $(positions["project"]) == "" || $(positions["project"]) == "\\N" ||
+                $(positions["change_id"]) == "" || $(positions["change_id"]) == "\\N") exit 1
+            print $(positions["project"]) "\t" $(positions["change_id"]) "\t" $(positions["script_hash"])
+            rows++
+        }
+        END { if (blocks != 1 || copying || !rows) exit 1 }
+    ' | sort > "$workspace/source-changes"; then
+    echo 'Refusing to restore: unreadable or empty Sqitch registry data (COPY format required).' >&2
+    exit 1
+fi
 
-# The archived registry belongs to the same snapshot as the restored data.
-source_phase=$(pg_restore --data-only --schema=sqitch --table=changes --file=- "$1" \
-    | awk -F '\t' '$4 == "tet" { print $3 "\t" $4 }' | classify_release)
-target_phase=$(psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 \
-    --tuples-only --no-align --field-separator=$'\t' --dbname="$TO_DB_URL" \
-    --command="SELECT change, project FROM sqitch.changes" | classify_release)
+psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
+    --command='COPY (SELECT project, change_id, script_hash FROM sqitch.changes) TO STDOUT' \
+    | sort > "$workspace/target-changes"
+if ! cmp -s "$workspace/source-changes" "$workspace/target-changes"; then
+    echo 'Refusing to restore: backup and target have different Sqitch migrations or script hashes.' >&2
+    echo 'Use a backup and target at the same migration state; no tables were truncated.' >&2
+    exit 1
+fi
 
-case "$source_phase:$target_phase" in
-    legacy:legacy|legacy:schema|schema:schema|formulas:formulas|reporting:reporting|prepared:prepared|contract:contract) ;;
-    *) echo "Refusing to restore: incompatible indicator releases ($source_phase -> $target_phase)." >&2; exit 1 ;;
-esac
-# Verify the physical schema before restore.sh truncates any table.
-if [[ "$target_phase" == legacy ]]; then
-    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
-DO $$
-BEGIN
-    ASSERT NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_schema = 'public'
-                         AND table_name IN ('indicateur_definition', 'indicateur_valeur')
-                         AND column_name = 'periodicite'),
-        'Le schéma historique ne doit pas contenir de colonne periodicite';
-    ASSERT to_regclass('public.indicateur_periodicite') IS NULL,
-        'Le schéma historique ne doit pas contenir de catalogue de périodicités';
-END $$;
-SQL
-elif [[ "$target_phase" != contract ]]; then
-    # The shared verifier accepts activated schemas too. This release must
-    # still have both annual-only constraints, whatever the registry says.
-    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" >/dev/null <<'SQL'
-DO $$
-BEGIN
-    ASSERT (SELECT count(*) = 2 FROM pg_constraint
-        WHERE contype = 'c' AND convalidated
-          AND ((conrelid = 'public.indicateur_definition'::regclass
-                AND conname = 'indicateur_definition_schema_annuel')
-            OR (conrelid = 'public.indicateur_valeur'::regclass
-                AND conname = 'indicateur_valeur_schema_annuel'))),
-        'La restauration annuelle exige les deux contraintes annuelles actives';
-END $$;
-SQL
+# The registry cannot detect manual schema drift. Check at least that every
+# requested data table physically exists; views and foreign tables are refused.
+while IFS= read -r table; do
+    printf "SELECT '%s' WHERE NOT EXISTS (SELECT FROM pg_class WHERE oid = to_regclass('%s') AND relkind IN ('r', 'p'));\n" "$table" "$table"
+done < "$workspace/required-tables" > "$workspace/check-tables.sql"
+psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --tuples-only --no-align \
+    --dbname="$TO_DB_URL" --file="$workspace/check-tables.sql" > "$workspace/missing-target-tables"
+if [[ -s "$workspace/missing-target-tables" ]]; then
+    echo 'Refusing to restore: target lacks required data tables:' >&2
+    cat "$workspace/missing-target-tables" >&2
+    exit 1
 fi
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-verify_changes=()
-if [[ "$target_phase" != legacy ]]; then
-    verify_changes+=(indicateur/periodicite_schema)
-fi
-if [[ "$target_phase" != legacy && "$target_phase" != schema ]]; then
-    verify_changes+=(
-        indicateur/remplacer-catalogue-periodicites-par-contraintes
-        indicateur/dependances_formules
-        indicateur/periodicite_formules
-    )
-fi
-if [[ "$target_phase" == reporting || "$target_phase" == prepared || "$target_phase" == contract ]]; then
-    verify_changes+=(stats/report_indicateur_resultat_periode)
-fi
-if [[ "$target_phase" == prepared || "$target_phase" == contract ]]; then
-    verify_changes+=(indicateur/periodicite_obligatoire indicateur/periodicite_integrite)
-fi
-if [[ "$target_phase" == contract ]]; then
-    verify_changes+=(indicateur/periodicite_activation)
-fi
-for change in "${verify_changes[@]}"; do
-    psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
-        --file="$script_dir/../sqitch/verify/$change.sql" >/dev/null
-done
-printf '%s\n' "$target_phase"
+printf '%s\n' 'Restore preflight passed: matching Sqitch state and required tables present.'

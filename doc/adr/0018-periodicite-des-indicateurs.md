@@ -3,6 +3,7 @@
 Date : 2026-09-03
 
 Mise à jour : 2026-10-08, pour restituer la décision produit du 24 septembre 2026.
+Complété le 2026-11-03 avec la décision de nettoyage définitif après activation.
 
 ## Statut
 
@@ -182,6 +183,28 @@ flowchart TB
     PRESENTATION -.-> PERIODES
 ```
 
+### 5. Nettoyage définitif après activation
+
+- Les indicateurs 31816 et 32392 de Margny (collectivité 2181) restent annuels,
+  conformément à l’arbitrage Bizdev. La conversion mensuelle proposée dans
+  [#5312](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5312)
+  est abandonnée.
+- Après l’activation #5215, le nettoyage #5296 supprime les colonnes
+  `aggregation_resultat` et `aggregation_objectif`, contraintes à NULL, ainsi que
+  toute la table temporaire `private.indicateur_valeur_date_repair`.
+  Les observations actives restent intactes ; les quatre anciennes observations
+  de Margny présentes uniquement dans l’archive disparaissent avec celle-ci.
+- L’archive sort de `restore-config.yml` et des futures sauvegardes, sans
+  conservation séparée. Les sauvegardes antérieures restent inchangées.
+- Le nettoyage est irréversible : son `revert` échoue explicitement. Les anciennes
+  migrations restent versionnées pour les installations neuves. La CI vérifie le
+  schéma nettoyé et limite le cycle revert/deploy aux migrations suivant
+  `@v5.0.0`, placé juste après `indicateur/periodicite-nettoyage` ; ce cycle
+  n’exécute aucun changement tant qu’aucune migration ne suit le tag.
+
+Les règles génériques de compatibilité des sauvegardes relèvent de
+l’[ADR 0016](0016-strategie-backup-database.md#8-prévalidation-générique-des-restaurations).
+
 ## Conséquences
 
 La périodicité commune à la déclaration et à la visualisation est fixée une fois pour toutes
@@ -192,6 +215,19 @@ Les couples périodicité/date sont validés aux frontières API et base de donn
 Le tableau, le graphique, les cartes et le rendu serveur présentent les observations à cette
 même périodicité, sans agrégation. Les modes forcé/recommandé, les préférences locales de
 périodicité et le choix d'une périodicité de visualisation indépendante sont supprimés.
+
+## Historique du traitement des données et du nettoyage
+
+- **28 septembre 2026** : la [réparation historique](../../data_layer/sqitch/deploy/indicateur/correct-dates-historiques.sql)
+  corrige trois dates, supprime six observations et archive les neuf originaux.
+  Les répétitions des 28 et 29 septembre valident ces opérations et leur restauration.
+- **14 octobre 2026** : le backup examiné pour #5312 confirme les valeurs annuelles
+  conservées à Margny au 1er janvier 2025 : résultat 8 / objectif 9 pour 31816,
+  résultat absent / objectif 3 pour 32392. Ces constats sont des preuves historiques,
+  pas une validation actuelle de production.
+- **3 novembre 2026** : après presque trois semaines en production, le nettoyage
+  devient définitif. Cette décision remplace celle du 2 novembre, qui conservait
+  l’archive et un retour arrière jusqu’à `@v4.0.0`.
 
 ## Documents associés
 

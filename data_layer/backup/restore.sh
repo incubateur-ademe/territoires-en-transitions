@@ -124,6 +124,7 @@ GROUP_ORDER=(
 # Parse every group and check every target table before the first TRUNCATE.
 # Otherwise a missing table in a later group leaves the database partly emptied.
 GROUP_TABLES=()
+RESTORE_TABLES=()
 table_values=""
 for group in "${GROUP_ORDER[@]}"; do
     if ! tables=$(yq -er ".groups.${group}[]" "$RESTORE_CONFIG"); then
@@ -137,6 +138,7 @@ for group in "${GROUP_ORDER[@]}"; do
             exit 1
         fi
         [[ "$table" == *.* ]] || table="public.$table"
+        RESTORE_TABLES+=("$table")
         table_values+="${table_values:+,}('$table')"
     done <<< "$tables"
 done
@@ -262,7 +264,7 @@ if ! pg_restore --list "$DUMP_FILE" > /dev/null; then
     exit 1
 fi
 
-TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE"
+TO_DB_URL="$TO_DB_URL" bash "$SCRIPT_DIR/check-restore-compatibility.sh" "$DUMP_FILE" "${RESTORE_TABLES[@]}"
 
 echo "Restoring to $(echo "$TO_DB_URL" | sed 's|://[^@]*@|://***@|') from $DUMP_FILE"
 if [ -z "${CI:-}" ]; then
