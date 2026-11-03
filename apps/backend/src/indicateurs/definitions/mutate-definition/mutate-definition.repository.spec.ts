@@ -41,7 +41,7 @@ describe('MutateDefinitionRepository', () => {
     } as DatabaseService);
 
     await expect(
-      repository.lockDefinitionOwnership(7, { select } as never)
+      repository.lockDefinitionNature(7, { select } as never)
     ).resolves.toEqual({
       collectiviteId: 42,
       groupementId: 99,
@@ -73,7 +73,7 @@ describe('MutateDefinitionRepository — groupement', () => {
     const repository = new MutateDefinitionRepository({
       db: { select },
     } as unknown as DatabaseService);
-    await expect(repository.getDefinitionOwnership(7)).resolves.toEqual(
+    await expect(repository.getDefinitionNature(7)).resolves.toEqual(
       definition
     );
     expect(select).toHaveBeenCalledWith(

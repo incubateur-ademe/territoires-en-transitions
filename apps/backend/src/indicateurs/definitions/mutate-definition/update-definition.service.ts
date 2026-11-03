@@ -15,16 +15,31 @@ import type { Transaction } from '@tet/backend/utils/database/transaction.utils'
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import {
+  type IndicateurNatureFields,
+  isIndicateurPerso,
+  isIndicateurPredefini,
+} from '@tet/domain/indicateurs';
 import { hasPermission, ResourceType } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
 import { HandleDefinitionPilotesService } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
 import { HandleDefinitionServicesService } from '../../indicateurs/handle-definition-services/handle-definition-services.service';
 import { HandleDefinitionThematiquesService } from '../../indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
-import {
-  type DefinitionOwnership,
-  MutateDefinitionRepository,
-} from './mutate-definition.repository';
+import { MutateDefinitionRepository } from './mutate-definition.repository';
+
+const isOwnedByCollectivite = (
+  definition: IndicateurNatureFields,
+  collectiviteId: number
+): boolean =>
+  isIndicateurPerso(definition) && definition.collectiviteId === collectiviteId;
+
+const isInCollectiviteScope = (
+  definition: IndicateurNatureFields,
+  collectiviteId: number
+): boolean =>
+  isIndicateurPredefini(definition) ||
+  isOwnedByCollectivite(definition, collectiviteId);
 
 @Injectable()
 export class UpdateDefinitionService {
@@ -104,15 +119,13 @@ export class UpdateDefinitionService {
   }
 
   private assertDefinitionInCollectiviteScope(
-    definition: DefinitionOwnership | null,
+    definition: IndicateurNatureFields | null,
     requestedCollectiviteId: number,
     indicateurId: number
-  ): asserts definition is DefinitionOwnership {
+  ): asserts definition is IndicateurNatureFields {
     if (
       !definition ||
-      (definition.groupementId == null &&
-        definition.collectiviteId !== null &&
-        definition.collectiviteId !== requestedCollectiviteId)
+      !isInCollectiviteScope(definition, requestedCollectiviteId)
     ) {
       throw new NotFoundException(
         `Indicateur ${indicateurId} non trouvé pour la collectivité ${requestedCollectiviteId}`
@@ -120,8 +133,31 @@ export class UpdateDefinitionService {
     }
   }
 
+  private async assertMemberOfDefinitionGroupement(
+    definition: IndicateurNatureFields,
+    collectiviteId: number,
+    indicateurId: number,
+    tx: Transaction
+  ): Promise<void> {
+    if (
+      !isIndicateurPredefini(definition) ||
+      definition.groupementId === null
+    ) {
+      return;
+    }
+    const isMember = await this.repository.lockGroupementMembership(
+      { groupementId: definition.groupementId, collectiviteId },
+      tx
+    );
+    if (!isMember) {
+      throw new NotFoundException(
+        `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
+      );
+    }
+  }
+
   private assertRequestedFieldsAreMutable(
-    definition: DefinitionOwnership,
+    definition: IndicateurNatureFields,
     collectiviteId: number,
     indicateurId: number,
     indicateurFields: UpdateIndicateurDefinitionInput['indicateurFields']
@@ -131,7 +167,7 @@ export class UpdateDefinitionService {
         'La périodicité est fixée à la création de l’indicateur'
       );
     }
-    if (definition.collectiviteId === collectiviteId) {
+    if (isOwnedByCollectivite(definition, collectiviteId)) {
       return;
     }
 
@@ -161,9 +197,7 @@ export class UpdateDefinitionService {
       return apiKeyPermissionResult;
     }
 
-    const definition = await this.repository.getDefinitionOwnership(
-      indicateurId
-    );
+    const definition = await this.repository.getDefinitionNature(indicateurId);
     this.assertDefinitionInCollectiviteScope(
       definition,
       collectiviteId,
@@ -201,7 +235,7 @@ export class UpdateDefinitionService {
       void,
       unknown
     >(async (tx) => {
-      const lockedDefinition = await this.repository.lockDefinitionOwnership(
+      const lockedDefinition = await this.repository.lockDefinitionNature(
         indicateurId,
         tx
       );
@@ -217,20 +251,12 @@ export class UpdateDefinitionService {
         indicateurFields
       );
 
-      // The owner retains its metadata access; shared local customizations
-      // require membership locked until all writes have committed.
-      if (
-        lockedDefinition.groupementId != null &&
-        lockedDefinition.collectiviteId !== collectiviteId &&
-        !(await this.repository.lockGroupementMembership(
-          { groupementId: lockedDefinition.groupementId, collectiviteId },
-          tx
-        ))
-      ) {
-        throw new NotFoundException(
-          `Indicateur ${indicateurId} non trouvé pour la collectivité ${collectiviteId}`
-        );
-      }
+      await this.assertMemberOfDefinitionGroupement(
+        lockedDefinition,
+        collectiviteId,
+        indicateurId,
+        tx
+      );
       await this.canUpdateDefinition(
         user,
         collectiviteId,
