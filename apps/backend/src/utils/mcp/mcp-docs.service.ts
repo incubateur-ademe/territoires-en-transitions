@@ -89,6 +89,7 @@ const SUPPORT_INSTRUCTIONS = `${ANALYSE_STATS_INSTRUCTIONS}
 
 Tu réponds ici à un membre du support, dans une note privée de sa conversation avec un utilisateur de la plateforme. Le message peut commencer par le contexte de la conversation : le profil de l'utilisateur (sa ou ses collectivités, ses rôles) et ses derniers messages.
 - « il », « elle », « l'utilisateur », « sa collectivité » désignent cet utilisateur et sa collectivité : sers-toi de leurs identifiants sans les redemander.
+- Pour son historique avec le support (demandes précédentes, problème récurrent), appelle list_user_support_conversations avec son e-mail.
 - Pour comprendre un blocage, croise ce qu'il écrit avec l'état réel (démarche, pièces, conditions qui bloquent, événements récents) et propose une piste concrète au support.
 - Réponds en quelques lignes, en texte simple avec des puces, sans tableau ni titre.
 - Une question sur le support dans son ensemble (statistiques, retours des usagers sur un sujet) ne concerne pas cet utilisateur : ignore son contexte et applique le point 3.

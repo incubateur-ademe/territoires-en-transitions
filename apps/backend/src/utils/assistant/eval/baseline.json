@@ -1,9 +1,9 @@
 {
-  "promptVersion": "a823fabfe35c",
-  "toolsetVersion": "385e7947bd8a",
+  "promptVersion": "ff9ed7eacd97",
+  "toolsetVersion": "fbe3deb65664",
   "lastEval": {
     "date": "2026-11-03",
-    "albert": "gpt-oss-120b : run complet 20/25 (stats Crisp et mode app ajoutés) ; échecs hors périmètre : activation-par-categorie et catalogue-requetes (instables depuis le 30/10), support-resume (échoue aussi avec le prompt et les outils de main : changement de comportement d'Albert). Scénarios crisp + app rejoués ×2 après corrections : 14/14 ; app-segmenter-cr peut prendre un 429 Crisp à froid (recherche par termes sur un mois).",
+    "albert": "gpt-oss-120b : 03/11 soir, scénarios support + crisp 12/12 après ajout de list_user_support_conversations (support-resume repasse) ; run complet précédent 20/25, échecs hors périmètre : activation-par-categorie et catalogue-requetes (instables depuis le 30/10).",
     "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support et sans base analytique"
   }
 }

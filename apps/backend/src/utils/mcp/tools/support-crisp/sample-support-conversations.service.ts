@@ -2,16 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { z } from 'zod';
-import { CrispMessage, CrispApiClient } from './crisp-api.client';
+import { CrispApiClient } from './crisp-api.client';
 import { SupportCrispError } from './support-crisp.errors';
 import { supportConversationsFilterSchema } from './support-crisp.input';
 import { SupportConversationsService } from './support-conversations.service';
 import {
-  isHumanOperatorMessage,
   segmentMatchesSujet,
   spreadSample,
+  summarizeConversation,
   SUPPORT_SEGMENT_TYPES,
-  toExcerpt,
 } from './support-segments.rules';
 
 export const sampleSupportConversationsInputSchema =
@@ -60,8 +59,6 @@ export type SampleSupportConversationsOutput = z.infer<
 >;
 
 const DEFAULT_LIMIT = 30;
-const DEMANDE_MAX_LENGTH = 400;
-const REPONSE_MAX_LENGTH = 250;
 const MESSAGE_CONCURRENCY = 6;
 
 /**
@@ -108,26 +105,7 @@ export class SampleSupportConversationsService {
         if (!messages.success) {
           continue;
         }
-        const demande = textOf(
-          messages.data.filter((message) => message.from === 'user')
-        ).slice(0, 3);
-        const reponse = textOf(
-          messages.data.filter(
-            (message) =>
-              isHumanOperatorMessage(message) && message.type === 'text'
-          )
-        ).at(-1);
-        echantillon.push({
-          date: new Date(conversation.created_at).toISOString().slice(0, 10),
-          resolue: conversation.state === 'resolved',
-          segments: conversation.segments
-            .filter((segment) => segment.kind !== 'parcours')
-            .map((segment) => segment.normalized),
-          demande: toExcerpt(demande.join(' / '), DEMANDE_MAX_LENGTH),
-          reponseSupport: reponse
-            ? toExcerpt(reponse, REPONSE_MAX_LENGTH)
-            : null,
-        });
+        echantillon.push(summarizeConversation(conversation, messages.data));
       }
     };
     await Promise.all(
@@ -142,13 +120,3 @@ export class SampleSupportConversationsService {
     });
   }
 }
-
-const textOf = (messages: CrispMessage[]): string[] =>
-  messages
-    .filter(
-      (message) =>
-        message.type === 'text' &&
-        typeof message.content === 'string' &&
-        message.content.trim()
-    )
-    .map((message) => message.content as string);

@@ -165,6 +165,41 @@ export class CrispApiClient {
     return success(messages);
   }
 
+  /**
+   * Conversations d'un contact Crisp (identifiant ou e-mail), des plus
+   * récentes aux plus anciennes. Un contact inconnu donne une liste vide.
+   */
+  async listPeopleSessionIds(
+    peopleIdOrEmail: string,
+    maxPages = 2
+  ): Promise<Result<string[], CrispApiError>> {
+    const ids: string[] = [];
+    for (let page = 1; page <= maxPages; page++) {
+      const result = await this.get<string[]>(
+        `people/conversations/${encodeURIComponent(
+          peopleIdOrEmail
+        )}/list/${page}`,
+        {}
+      );
+      if (!result.success) {
+        return /not_found/.test(result.cause?.message ?? '')
+          ? success(ids)
+          : result;
+      }
+      ids.push(...result.data);
+      if (result.data.length === 0) {
+        break;
+      }
+    }
+    return success([...new Set(ids)]);
+  }
+
+  async getConversation(
+    sessionId: string
+  ): Promise<Result<CrispConversation, CrispApiError>> {
+    return this.request<CrispConversation>('GET', `conversation/${sessionId}`);
+  }
+
   /** Segments actuels d'une conversation, relus juste avant d'écrire. */
   async getSegments(
     sessionId: string
