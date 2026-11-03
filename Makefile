@@ -78,7 +78,7 @@ env_target = $(if $(app),apps/$(app)/.env,$$(node scripts/pick-env-file.mts))
         up services-up node-base heal-db stop down cache-clean workflow-graph logs ps tui \
         preflight-inotify preflight-env-keys ensure-deps inotify-persist \
         db-init db-migrate db-seed db-reset db-shell db-import-referentiels db-restore-local-from-prod-backup seeds_rebuild_from_source \
-        cms-pull cms-pull-local gcloud ai-import-eval assistant-eval
+        cms-pull cms-pull-local gcloud ai-import-eval assistant-eval deploy
 
 help: ## Affiche cette aide
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-15s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -331,6 +331,15 @@ cms-pull: guard-main ## ⚠ Remplace le contenu Strapi local par celui de l'inst
 			npm run strapi -- transfer --from "$${STRAPI_REMOTE_URL%/}/admin" --from-token "$$STRAPI_TRANSFER_TOKEN" --force --exclude files; \
 		status=$$?; $(COMPOSE) up -d strapi && exit $$status'
 	@node scripts/strapi-localize-uploads.mts
+
+## —— 🚀 Déploiement ——————————————————————————————————————————————————————————
+# Sans la CI GitHub (file d'attente) : construit l'image comme cd-*.yml et la
+# déploie sur Koyeb, variables du service inchangées. Questions interactives
+# pour ce qui n'est pas passé en argument. Cf. scripts/deploy.mts.
+deploy: preflight-env-keys ## Construit et déploie sans la CI : make deploy [app=backend,app] [env=prod] [branch=main] [rebuild=1] [yes=1] [dry=1]
+	@$(call decrypt_env,$(ENV_ROOT)) -q -- env $(node_env) node scripts/deploy.mts \
+		$(if $(app),--app "$(app)") $(if $(env),--env "$(env)") $(if $(branch),--branch "$(branch)") \
+		$(if $(filter 1,$(rebuild)),--rebuild) $(if $(filter 1,$(yes)),--yes) $(if $(filter 1,$(dry)),--dry-run)
 
 ## —— ☁️  Google Cloud ————————————————————————————————————————————————————————
 # Même règle que initGoogleCloudCredentials (apps/backend) : un
