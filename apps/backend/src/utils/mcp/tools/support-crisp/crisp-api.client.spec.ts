@@ -1,5 +1,5 @@
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
-import { CrispApiClient, retryDelayMs } from './crisp-api.client';
+import { CrispApiClient, redactEmails, retryDelayMs } from './crisp-api.client';
 
 const config = {
   get: (key: string) =>
@@ -55,6 +55,16 @@ describe('CrispApiClient', () => {
     expect(
       await new CrispApiClient(config).listPeopleSessionIds('x@y.fr')
     ).toEqual({ success: true, data: [] });
+  });
+
+  test("masque l'e-mail d'un contact dans un chemin journalisé", () => {
+    expect(
+      redactEmails('people/conversations/jean.dupont%40ville.fr/list/1')
+    ).toBe('people/conversations/[e-mail]/list/1');
+    expect(redactEmails('people/data/a@b.fr')).toBe('people/data/[e-mail]');
+    expect(redactEmails('conversation/session_1/messages')).toBe(
+      'conversation/session_1/messages'
+    );
   });
 
   test('délai : Retry-After plafonné, sinon exponentiel', () => {

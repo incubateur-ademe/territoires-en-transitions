@@ -25,16 +25,26 @@ const summarySchema = z.object({
   segments: z.array(z.string()),
   demande: z.string(),
   reponseSupport: z.string().nullable(),
+  incomplet: z
+    .boolean()
+    .describe(
+      'Messages illisibles dans Crisp : demande et réponse inconnues, pas absentes'
+    ),
 });
 
 export const listUserSupportConversationsOutputSchema = z.object({
   conversations: z
     .number()
     .describe("Conversations de l'usager trouvées dans Crisp"),
+  nonLues: z
+    .number()
+    .describe(
+      "Conversations parmi les plus récentes que Crisp n'a pas renvoyées"
+    ),
   historique: z
     .array(summarySchema)
     .describe(
-      'Les plus récentes d’abord ; la conversation en cours en fait partie'
+      "Les plus récentes d'abord ; la conversation en cours en fait partie"
     ),
 });
 export type ListUserSupportConversationsOutput = z.infer<
@@ -80,6 +90,7 @@ export class ListUserSupportConversationsService {
     const historique: (ListUserSupportConversationsOutput['historique'][number] & {
       createdAt: number;
     })[] = [];
+    let nonLues = 0;
     const queue = ids.data.slice(0, MAX_CONVERSATIONS);
     let index = 0;
     const worker = async () => {
@@ -89,6 +100,7 @@ export class ListUserSupportConversationsService {
           sessionId
         );
         if (!conversation.success) {
+          nonLues += 1;
           continue;
         }
         const messages = await this.crispApiClient.listMessages(
@@ -99,6 +111,7 @@ export class ListUserSupportConversationsService {
             conversation.data,
             messages.success ? messages.data : []
           ),
+          incomplet: !messages.success,
           createdAt: conversation.data.created_at,
         });
       }
@@ -107,6 +120,7 @@ export class ListUserSupportConversationsService {
 
     return success({
       conversations: ids.data.length,
+      nonLues,
       historique: historique
         .sort((a, b) => b.createdAt - a.createdAt)
         .map(({ createdAt: _createdAt, ...summary }) => summary),

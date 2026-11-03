@@ -33,6 +33,10 @@ const MAX_MESSAGE_PAGES = 5;
 const CACHE_TTL_MS = 60 * 60 * 1000;
 const MAX_RATE_LIMIT_RETRIES = 5;
 
+/** Un chemin peut contenir l'e-mail d'un contact : jamais dans les journaux. */
+export const redactEmails = (path: string): string =>
+  path.replace(/[^/?&]*(?:@|%40)[^/?&]*/gi, '[e-mail]');
+
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -289,7 +293,9 @@ export class CrispApiClient {
       }
     } catch (error) {
       this.logger.warn(
-        `Crisp ${method} ${path} failed: ${(error as Error).message}`
+        `Crisp ${method} ${redactEmails(path)} failed: ${
+          (error as Error).message
+        }`
       );
       return failure('CRISP_API_ERROR', error as Error);
     }
