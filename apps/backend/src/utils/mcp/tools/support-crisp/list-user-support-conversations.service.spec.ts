@@ -23,20 +23,30 @@ const CONVERSATIONS: Record<string, CrispConversation> = {
   b: conversation('b', '2026-10-15', ['besoin_guidage_referentiel_cr']),
 };
 
-function build({ allowed = true, ids = ['b', 'a'] } = {}) {
+function build({
+  allowed = true,
+  ids = ['b', 'a'],
+  unreadable = [] as string[],
+} = {}) {
   const client = {
     isConfigured: () => true,
     listPeopleSessionIds: vi.fn(async () => success(ids)),
-    getConversation: vi.fn(async (id: string) => success(CONVERSATIONS[id])),
+    getConversation: vi.fn(async (id: string) =>
+      CONVERSATIONS[id]
+        ? success(CONVERSATIONS[id])
+        : failure('CRISP_API_ERROR')
+    ),
     listMessages: vi.fn(async ({ session_id }: CrispConversation) =>
-      success([
-        {
-          from: 'user',
-          type: 'text',
-          content: `Demande ${session_id}, écrire à x@y.fr`,
-          timestamp: 0,
-        },
-      ])
+      unreadable.includes(session_id)
+        ? failure('CRISP_API_ERROR')
+        : success([
+            {
+              from: 'user',
+              type: 'text',
+              content: `Demande ${session_id}, écrire à x@y.fr`,
+              timestamp: 0,
+            },
+          ])
     ),
   } as unknown as CrispApiClient;
   const permissions = {
@@ -54,6 +64,7 @@ describe('list_user_support_conversations', () => {
     expect(result).toEqual(
       success({
         conversations: 2,
+        nonLues: 0,
         historique: [
           {
             date: '2026-10-15',
@@ -61,6 +72,7 @@ describe('list_user_support_conversations', () => {
             segments: ['besoin_guidage_referentiel_cr'],
             demande: 'Demande b, écrire à [e-mail]',
             reponseSupport: null,
+            incomplet: false,
           },
           {
             date: '2026-09-01',
@@ -68,6 +80,7 @@ describe('list_user_support_conversations', () => {
             segments: ['bug_indicateur'],
             demande: 'Demande a, écrire à [e-mail]',
             reponseSupport: null,
+            incomplet: false,
           },
         ],
       })
@@ -77,7 +90,26 @@ describe('list_user_support_conversations', () => {
   test('aucune conversation : historique vide', async () => {
     expect(
       await build({ ids: [] }).run({ email: 'inconnu@ville.fr' }, { user })
-    ).toEqual(success({ conversations: 0, historique: [] }));
+    ).toEqual(success({ conversations: 0, nonLues: 0, historique: [] }));
+  });
+
+  test('signale les conversations ou messages que Crisp ne renvoie pas', async () => {
+    const result = await build({
+      ids: ['b', 'a', 'disparue'],
+      unreadable: ['a'],
+    }).run({ email: 'usager@ville.fr' }, { user });
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        conversations: 3,
+        nonLues: 1,
+        historique: [
+          { date: '2026-10-15', incomplet: false },
+          { date: '2026-09-01', incomplet: true, demande: '' },
+        ],
+      },
+    });
   });
 
   test('réservé aux comptes support', async () => {
