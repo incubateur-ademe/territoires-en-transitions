@@ -16,7 +16,6 @@ import {
   isNewReferentiel as isNewReferentielUtils,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { htmlToText } from '@tet/domain/utils';
 import { ActionExplicationField } from './action-explication.field';
 import { SubactionsListContainer } from './components.new-referentiel/subactions.list-container';
 import { SubActionCardsList } from './components.old-referentiel/subaction/subaction.cards-list';
@@ -76,8 +75,7 @@ function ActionDetailContent({
       <div className="flex flex-col gap-6 mb-8">
         <ActionPersonnalisationInfo actionId={action.actionId} />
         <ActionAuditDetail action={action} />
-        {(!isMesureAlternativeASousMesureUnique(action) ||
-          hasExplication(action)) && (
+        {action.childrenIds.length !== 1 && (
           <div className=" bg-white p-4 rounded-lg">
             <ActionExplicationField
               action={action}
@@ -103,26 +101,6 @@ function ActionDetailContent({
       )}
     </section>
   );
-}
-
-/**
- * Mesure alternative (`te_x.y.zalter`) qui ne porte qu'une sous-mesure : son
- * explication ferait doublon avec celle de la sous-mesure.
- *
- * Le nombre de sous-mesures seul ne suffit pas : `childrenIds` exclut les
- * sous-mesures désactivées par la personnalisation, et une mesure ordinaire
- * peut ainsi n'en montrer qu'une alors qu'elle a sa propre explication (ex.
- * texte repris à la bascule vers TE).
- */
-function isMesureAlternativeASousMesureUnique(action: ActionListItem) {
-  return (
-    action.childrenIds.length === 1 && /alter[a-z]*$/.test(action.actionId)
-  );
-}
-
-/** Un texte déjà saisi (ou repris à la bascule) reste toujours visible */
-function hasExplication(action: ActionListItem) {
-  return htmlToText(action.score.explication ?? '').trim().length > 0;
 }
 
 function groupByCategorie<T extends { categorie: string | null }>(
