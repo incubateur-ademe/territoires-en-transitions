@@ -311,15 +311,15 @@ describe('PertinenceLeviersRouter', { timeout: 30_000 }, () => {
       return ademeUser;
     };
 
-  it("rend les pertinences à un utilisateur ADEME qui n'est pas membre de la collectivité", async () => {
+  it("refuse les pertinences à un utilisateur ADEME qui n'est pas membre de la collectivité", async () => {
     const { collectiviteId } = await addCollectiviteWithMember(
       CollectiviteRole.ADMIN
     );
     const ademeUser = await addAdemeUserWithoutCollectivite();
 
-    expect(
-      await callerFor(ademeUser).list({ collectiviteId, enjeu: 'ges' })
-    ).toEqual({ collectiviteId, pertinences: [] });
+    await expect(
+      callerFor(ademeUser).list({ collectiviteId, enjeu: 'ges' })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
 
   it("refuse la qualification d'un levier à un utilisateur ADEME qui n'est pas membre de la collectivité", async () => {

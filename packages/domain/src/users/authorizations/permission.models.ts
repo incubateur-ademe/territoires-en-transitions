@@ -92,7 +92,6 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     ...visiteurVerifiePermissions,
 
     'referentiels.discussions.read',
-    'collectivites.priorisation.read',
 
     'indicateurs.indicateurs.read_confidentiel',
     'indicateurs.valeurs.read_confidentiel',
