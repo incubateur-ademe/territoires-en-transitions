@@ -5,7 +5,8 @@ Date : 2026-11-03
 ## Statut
 
 Proposé. Les décisions techniques ci-dessous restent à relire par l'équipe.
-Trois arbitrages produit restent ouverts, détaillés en fin de document.
+Le suivi des deux cibles d'E07 attend encore une confirmation métier.
+Les autres dépendances sont détaillées en fin de document.
 
 ## Contexte
 
@@ -18,9 +19,11 @@ des identifiants permettant ensuite le reporting ADEME. L'appétit annoncé
 est de deux semaines ; il ne constitue pas une estimation technique validée.
 
 Le tableau A décrit 12 engagements, regroupés dans 11 axes. Seuls les
-engagements retenus sont initialisés. Les fiches B peuvent décrire des actions
-de référence, des actions propres au territoire ou des actions existantes dans
-TeT. Le plan obtenu reste modifiable : aucun verrou métier n'est ajouté.
+engagements retenus sont initialisés, mais une fiche B peut aussi demander
+la création d'un axe numéroté sans engagement retenu. Les fiches peuvent décrire
+des actions de référence, des actions propres au territoire ou des actions
+existantes dans TeT. Le plan obtenu reste modifiable : aucun verrou métier
+n'est ajouté.
 
 L'import existant fournit déjà l'upload, la lecture documentaire, l'extraction,
 les jobs BullMQ, les checkpoints et la persistance transactionnelle. Il manque
@@ -105,10 +108,19 @@ extraction. Il ne génère pas d'actions ou de sous-actions supplémentaires,
 
 Versionner un catalogue limité à ce besoin : axes, sous-axes, engagements,
 actions et sous-actions de référence, indicateurs ou jalons oui/non associés.
+La source métier indiquée par le PM le 3 novembre 2026 est le
+[référentiel Grist des actions et indicateurs](https://grist.numerique.gouv.fr/o/100te/m4aC9Epwz7ot/Referentiel-dactions-feuilles-de-routes/p/86).
+Version consultée à cette date : "Référentiel V1.3". Ses codes métier ne sont
+pas des identifiants TeT : leur correspondance avec les définitions intégrées
+reste à valider avec l'équipe data.
 Un fichier de données validé et livré avec le backend suffit ; il ne s'agit
 pas de construire une bibliothèque de modèles administrable. Les définitions
 d'indicateurs restent dans le catalogue existant, alimenté par l'équipe data.
 Les associations sont explicites, sans appel à Grist pendant un import.
+Le mapping valide aussi les unités et périodicités : pour un indicateur à
+deux unités, seule l'unité principale retenue par le métier est importée,
+conformément à l'esquisse. Une fréquence "Ponctuelle" du catalogue ne devient
+pas automatiquement une périodicité annuelle dans TeT.
 
 Le catalogue traduit les lignes du tableau A en codes E01 à E12 : ces codes
 ne figurent pas dans le Word et ne sont pas affichés à la collectivité.
@@ -127,11 +139,19 @@ ne figurent pas dans le Word et ne sont pas affichés à la collectivité.
 | 10. Industrie | E10 |
 | 11. Agriculture | E11 |
 
-Créer chaque axe retenu une seule fois, même sans fiche B. E01 et E02
-partagent l'axe 1, tout en conservant chacun leur identité. Le numéro d'axe
-fait foi sur son intitulé. Les axes libres sont identifiés par le champ prévu
-dans l'annexe, sans leur attribuer de code d'engagement. Les quatre familles
-ADEME sont une correspondance de reporting, pas un niveau de l'arbre.
+Créer une seule fois chaque axe demandé par un engagement retenu ou par
+une fiche B. Un engagement retenu crée son axe même sans fiche ; une fiche
+peut créer un axe numéroté même si aucun engagement de cet axe n'est retenu,
+conformément à l'[arbitrage du PM du 3 novembre](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d781f6a99c001c3befc4d7).
+Ce dernier cas est valide et ne demande pas de corriger l'annexe. Il ne crée
+ni engagement ni cible : seul le tableau A détermine les engagements retenus.
+Un axe sans engagement retenu et absent des fiches n'est pas créé.
+
+E01 et E02 partagent l'axe 1, tout en conservant chacun leur identité.
+Le numéro d'axe fait foi sur son intitulé. Les axes libres sont identifiés
+par le champ prévu dans l'annexe, sans leur attribuer de code d'engagement.
+Les quatre familles ADEME sont une correspondance de reporting, pas un
+niveau de l'arbre.
 
 Réutiliser `axe`, `fiche_action` et leurs relations. Ajouter une provenance
 structurée aux axes et aux fiches créés depuis une référence : version du
@@ -147,8 +167,9 @@ les éléments supprimés ou sortis du plan ne sont pas comptés, les écarts so
 signalés. Une action de l'axe 1 n'est pas comptée deux fois pour E01 et E02.
 Déplacer une action ne change pas les engagements retenus dans la convention.
 Le catalogue conserve l'origine de l'action ; son axe actuel détermine son
-rattachement dans le plan, conformément à l'esquisse. Une incohérence avec les
-engagements retenus est signalée, sans réaffectation silencieuse de ceux-ci.
+rattachement dans le plan. Le reporting distingue un axe portant un engagement
+retenu d'un axe créé uniquement pour accueillir des fiches. La présence d'une
+action ou d'un axe de référence n'ajoute pas d'engagement au tableau A.
 
 ### 4. Séparer la cible conventionnelle de l'objectif de l'indicateur
 
@@ -160,9 +181,21 @@ Persister les engagements dans des relations dédiées au plan :
 | Engagement retenu | `(planId, codeEngagement)`, axe associé ; fiche de suivi pour E03/E12 |
 | Cible d'engagement | `(planId, codeEngagement, codeCible)`, indicateur associé, valeur nullable, unité et échéance |
 
-Le nombre de cibles d'E07 reste à arbitrer ; la relation permet plusieurs
-cibles sans imposer un indicateur unique par engagement. Le catalogue doit
-fournir les correspondances exactes, sans inventer d'identifiant d'indicateur.
+Pour E07, le PM envisage deux indicateurs et
+[demande confirmation à l'équipe data](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78163bb61001cef0db51c).
+Le [catalogue V1.3 consulté le 3 novembre 2026](https://grist.numerique.gouv.fr/o/100te/api/docs/m4aC9Epwz7ot/tables/V1_3_Indicateurs/records)
+contient déjà deux indicateurs rattachés à E07 :
+
+| Code métier | Intitulé | Unité | Fréquence |
+| --- | --- | --- | --- |
+| `6-a` | Nombre de points de recharge ouverts au public | nb | Annuelle |
+| `6-b` | Nombre de points de recharge rapide (150 kW et plus) ouverts au public | nb | Annuelle |
+
+Ce sont des correspondances métier candidates, pas un arbitrage définitif
+ni des identifiants TeT vérifiés. La convention parle de "bornes", le catalogue
+de "points de recharge" : l'équivalence et le seuil de 150 kW restent à confirmer.
+La relation permet plusieurs cibles sans imposer un indicateur unique par
+engagement ; ne pas fusionner les deux valeurs ni inventer d'identifiant TeT.
 
 Les cibles du tableau A sont des données de convention, distinctes de
 `indicateur_valeur.objectif`. Les présenter comme "Cible de l'annexe 3" à côté
@@ -223,9 +256,11 @@ d'achèvement. Ne pas confondre ces sous-actions avec les anciennes étapes de f
 Conserver aussi la réponse extraite et sa période d'observation dans la
 provenance : le statut modifiable et l'échéance ne remplacent pas cette information.
 
-Les objets restent modifiables avec les droits ordinaires. Le renommage local
-des indicateurs prédéfinis reste un arbitrage : modifier leur définition globale
-affecterait les autres collectivités et n'est pas une option.
+Les objets restent modifiables avec les droits ordinaires. Pour les indicateurs
+prédéfinis, le [PM confirme le maintien du titre commun à toutes les collectivités](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d781f0bd1d001c893e9e4e) :
+leur titre ne peut pas être renommé, et cette livraison n'ajoute pas de libellé
+local. Un intitulé différent dans l'annexe ne modifie pas le titre du catalogue.
+Les indicateurs personnalisés restent renommables selon les droits existants.
 Retirer un indicateur prédéfini du plan supprime son lien local, pas sa
 définition de catalogue ni ses valeurs dans la collectivité.
 
@@ -263,9 +298,11 @@ distingué d'une reprise ; le remplacement d'un plan existant relève du support
 
 La livraison principale comprend l'import, les identités de référence,
 les engagements, les indicateurs et le respect des données existantes.
-Le catalogue métier et la correspondance des lauréats avec les collectivités
-TeT sont des dépendances, pas des données à déduire par l'IA. La création du
-catalogue d'indicateurs reste à la charge de l'équipe data.
+La source du catalogue métier est identifiée dans Grist. La validation de
+son contenu et des correspondances avec les indicateurs TeT, ainsi que celle
+des lauréats avec les collectivités TeT, restent des dépendances, pas des
+données à déduire par l'IA. La création du catalogue d'indicateurs reste à la
+charge de l'équipe data.
 
 **Étape supplémentaire facultative : budgets et financements.** Leur import
 est un "nice to have" distinct, confirmé pendant la rédaction. Le socle peut
@@ -307,6 +344,8 @@ tests déjà exécutés :
 
 - Une convention V4 avec modèle vide et exemple fictif n'importe que les vraies
   fiches B ; un axe retenu sans fiche est créé ; E01/E02 partagent un axe.
+- Une fiche sous un axe numéroté sans engagement retenu crée cet axe sans
+  erreur, engagement ni cible supplémentaires ; un axe non demandé reste absent.
 - Les codes, URL affichées ou masquées derrière un lien et clés de parent
   survivent au pipeline ; deux fiches homonymes restent distinctes.
 - Une référence inconnue, incohérente ou inaccessible bloque sans création
@@ -315,8 +354,10 @@ tests déjà exécutés :
   Une cible conventionnelle coexiste avec un objectif 2030 déjà renseigné.
 - Les personnalisés reçoivent leurs valeurs datées ; les oui/non deviennent
   des sous-actions ; un objectif "Oui" ne vaut pas résultat "Oui".
-- Renommer, déplacer ou supprimer reste possible ; les références survivantes
-  restent lisibles et les éléments libres ne deviennent pas des références.
+- Renommer les axes, fiches et indicateurs personnalisés, déplacer ou retirer
+  les liens reste possible ; les références survivantes restent lisibles et
+  les éléments libres ne deviennent pas des références. Le titre d'un indicateur
+  prédéfini reste celui du catalogue, sans renommage local ni global par l'import.
 - Les erreurs d'écriture et workers concurrents ne laissent aucun agrégat
   partiel ni doublon ; tester la création d'indicateurs dans le rollback.
 - Les imports génériques conservent leur comportement. Tester le parcours
@@ -331,15 +372,13 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
 
 ## Questions ouvertes avant implémentation
 
-Les trois premiers points nécessitent un arbitrage produit. Le quatrième
-recense les données métier nécessaires à l'implémentation.
-
-1. La V4 contient deux cibles pour E07 : bornes publiques totales et rapides.
-   Confirmer leur conservation et le mapping vers les indicateurs.
-2. La V4 autorise une fiche sous un axe numéroté non retenu au tableau A,
-   contrairement à l'esquisse. Choisir entre refus et axe sans engagement.
-3. Confirmer le renommage local des indicateurs prédéfinis et sa portée.
-4. Fournir la source maintenue des lauréats, son mapping vers les collectivités
-   TeT et le catalogue validé : codes, sous-axes, sous-actions, unités,
-   correspondances de cibles et liens d'aides. Le contournement envisagé pour
-   les aides est leur ajout dans l'onglet "Documents", à préciser avec le métier.
+1. Confirmer avec l'équipe data les deux indicateurs envisagés pour E07
+   (`6-a` et `6-b`), l'équivalence entre bornes et points de recharge et le
+   seuil de 150 kW pour les points rapides.
+2. Valider une version exploitable du catalogue Grist et son mapping vers TeT :
+   codes, sous-axes, sous-actions, unités, correspondances de cibles et liens
+   d'aides. Le lien fourni identifie la source ; il ne valide pas à lui seul
+   toutes ces correspondances. Le contournement envisagé pour les aides est
+   leur ajout dans l'onglet "Documents", à préciser avec le métier.
+3. Fournir la source maintenue des lauréats et son mapping vers les
+   collectivités TeT.
