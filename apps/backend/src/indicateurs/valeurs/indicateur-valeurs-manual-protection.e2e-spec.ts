@@ -12,7 +12,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { randomUUID } from 'crypto';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
-import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../definitions/indicateur-lock.repository';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
 import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
@@ -50,7 +50,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       new ComputeValeursRepository(database),
       new LoadIndicateurCalculGraphService(
         new ListIndicateursPredefinisRepository(database),
-        new IndicateurDefinitionLockRepository(),
+        new IndicateurLockRepository(),
         expressions
       ),
       {

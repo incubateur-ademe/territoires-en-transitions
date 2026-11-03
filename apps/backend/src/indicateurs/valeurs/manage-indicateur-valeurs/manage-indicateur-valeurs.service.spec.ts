@@ -24,10 +24,10 @@ import { success } from '@tet/backend/utils/result.type';
 import { cloneDeep } from 'es-toolkit';
 import { vi } from 'vitest';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
-import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
 import { ListCollectiviteIndicateursRepository } from '../../definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
-import { UpdateDefinitionService } from '../../definitions/mutate-definition/update-definition.service';
+import { UpdateIndicateurService } from '../../definitions/mutate-indicateur/update-indicateur.service';
 import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import IndicateurSourcesService from '../../sources/indicateur-sources.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
@@ -50,21 +50,21 @@ const createManageIndicateurValeursService = (
   collectiviteIndicateurs: ListCollectiviteIndicateursRepository,
   indicateursPredefinis: ListIndicateursPredefinisRepository,
   indicateurs: ListIndicateursService,
-  updateDefinition: UpdateDefinitionService,
+  updateIndicateur: UpdateIndicateurService,
   compute: ComputeValeursService,
   locks: IndicateurValeurLockRepository,
-  definitionLocks: IndicateurDefinitionLockRepository,
+  indicateurLocks: IndicateurLockRepository,
   transactions: TransactionManager
 ) => {
   const validation = new ValidateIndicateurValeursWriteService(
     repository,
     permissions,
-    definitionLocks
+    indicateurLocks
   );
   const writer = new WriteIndicateurValeursService(
     repository,
     validation,
-    definitionLocks,
+    indicateurLocks,
     locks
   );
   const reader = new ListIndicateurValeursService(
@@ -86,9 +86,9 @@ const createManageIndicateurValeursService = (
     permissions,
     userPermissions,
     indicateurs,
-    updateDefinition,
+    updateIndicateur,
     locks,
-    definitionLocks,
+    indicateurLocks,
     transactions,
     reader,
     writer,
@@ -121,11 +121,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           token === ListIndicateursPredefinisRepository ||
           token === ListIndicateursService ||
           token === IndicateurExpressionService ||
-          token === UpdateDefinitionService ||
+          token === UpdateIndicateurService ||
           token === IndicateurSourcesService ||
           token === ComputeValeursService ||
           token === IndicateurValeurLockRepository ||
-          token === IndicateurDefinitionLockRepository ||
+          token === IndicateurLockRepository ||
           token === TransactionManager ||
           token === GetUserRolesAndPermissionsService ||
           token === ListIndicateurValeursService ||
@@ -1550,8 +1550,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           sansValeurUtilisateur: false,
         }),
       };
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue([
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue([
           {
             id: 10,
             collectiviteId: null,
@@ -1573,7 +1573,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {} as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         transactionManager as never
       );
       vi.spyOn(service, 'canMutateValeur').mockResolvedValue(true);
@@ -1597,7 +1597,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         'La valeur doit respecter la périodicité de déclaration'
       );
 
-      expect(definitionLockRepository.lockDefinitions).toHaveBeenCalledWith(
+      expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
         [10],
         tx
       );
@@ -1659,8 +1659,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         updateCalculatedIndicateurValeurs: vi.fn().mockResolvedValue([]),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue([
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue([
           {
             id: 10,
             collectiviteId: null,
@@ -1683,7 +1683,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         computeValeursService as never,
         lockRepository as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         transactionManager as never
       );
       const serviceRoleUser = {
@@ -1712,7 +1712,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       ]);
 
       expect(permissionService.assertAllowed).toHaveBeenCalledOnce();
-      expect(definitionLockRepository.lockDefinitions).toHaveBeenCalledWith(
+      expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
         [10],
         tx
       );
@@ -1747,8 +1747,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         listCollectiviteIndicateurs: vi.fn().mockResolvedValue([definition]),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue([definition]),
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue([definition]),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1761,7 +1761,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         lockRepository as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         createTransactionManager(tx) as never
       );
 
@@ -1811,8 +1811,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         listCollectiviteIndicateurs: vi.fn().mockResolvedValue([definition]),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue([definition]),
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue([definition]),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1825,7 +1825,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         lockRepository as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         createTransactionManager(tx) as never
       );
 
@@ -1852,8 +1852,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const tx = { insert: vi.fn() };
       const repository = {};
       const transactionManager = createTransactionManager(tx);
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue([
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue([
           {
             id: 10,
             collectiviteId: null,
@@ -1875,7 +1875,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {} as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         transactionManager as never
       );
 
@@ -1897,7 +1897,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         'La valeur doit respecter la périodicité de déclaration'
       );
 
-      expect(definitionLockRepository.lockDefinitions).toHaveBeenCalledWith(
+      expect(indicateurLockRepository.lockIndicateurs).toHaveBeenCalledWith(
         [10],
         tx
       );
@@ -1921,8 +1921,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           .fn()
           .mockResolvedValue([foreignDefinition]),
       };
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue([foreignDefinition]),
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue([foreignDefinition]),
       };
       const service = createManageIndicateurValeursService(
         {} as never,
@@ -1935,7 +1935,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         {} as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         transactionManager as never
       );
 
@@ -1991,8 +1991,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi.fn().mockResolvedValue(definitions),
       };
-      const definitionLockRepository = {
-        lockDefinitions: vi.fn().mockResolvedValue(definitions),
+      const indicateurLockRepository = {
+        lockIndicateurs: vi.fn().mockResolvedValue(definitions),
       };
       const lockRepository = { lock: vi.fn() };
       const service = createManageIndicateurValeursService(
@@ -2006,7 +2006,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         {} as never,
         lockRepository as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         transactionManager as never
       );
 
@@ -2122,7 +2122,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         computeValeursService as never,
         { lock: vi.fn() } as never,
-        { lockDefinitions: vi.fn().mockResolvedValue([target]) } as never,
+        { lockIndicateurs: vi.fn().mockResolvedValue([target]) } as never,
         transactionManager as never
       );
       const upsertedValeur = {
@@ -2207,7 +2207,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
           events.push('lock-periodes');
         }),
       };
-      const definitionLockRepository = {
+      const indicateurLockRepository = {
         lockForValueWrite: vi.fn(async () => {
           events.push('lock-graph');
         }),
@@ -2223,7 +2223,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
         {} as never,
         computeValeursService as never,
         lockRepository as never,
-        definitionLockRepository as never,
+        indicateurLockRepository as never,
         transactionManager as never
       );
 

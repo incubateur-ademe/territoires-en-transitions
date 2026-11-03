@@ -14,7 +14,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
-import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../definitions/indicateur-lock.repository';
 import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import {
   sampleImportIndicateurDefinition,
@@ -86,8 +86,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     replaceGroupRelations: vi.fn().mockResolvedValue(undefined),
     upsertObjectifs: vi.fn().mockResolvedValue(undefined),
   };
-  const definitionLockRepository = {
-    lockForDefinitionMutation: vi.fn(),
+  const indicateurLockRepository = {
+    lockForIndicateurMutation: vi.fn(),
   };
   const valeursService = { recomputeAll: vi.fn() };
 
@@ -125,8 +125,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         if (token === TransactionManager) {
           return transactionManager;
         }
-        if (token === IndicateurDefinitionLockRepository) {
-          return definitionLockRepository;
+        if (token === IndicateurLockRepository) {
+          return indicateurLockRepository;
         }
         if (token === ReconcileIndicateurValeursService) {
           return valeursService;
@@ -253,7 +253,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       ])
     ).rejects.toThrow(/a changé pendant l'import/i);
     expect(
-      definitionLockRepository.lockForDefinitionMutation
+      indicateurLockRepository.lockForIndicateurMutation
     ).toHaveBeenCalledWith(transaction);
     expect(
       importRepository.deleteGroupRelationsByChildIds

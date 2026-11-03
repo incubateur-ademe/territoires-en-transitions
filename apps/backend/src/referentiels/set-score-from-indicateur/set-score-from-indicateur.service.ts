@@ -3,7 +3,7 @@ import ManageIndicateurValeursService, {
   IndicateurValeurDeletionListener,
   IndicateurValeurUpsertedEvent,
 } from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
-import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
+import { UpdateIndicateurService } from '@tet/backend/indicateurs/definitions/mutate-indicateur/update-indicateur.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -40,7 +40,7 @@ export class SetScoreFromIndicateurService {
     private readonly updateActionStatutService: UpdateActionStatutService,
     private readonly snapshotsService: SnapshotsService,
     private readonly indicateurValeursService: ManageIndicateurValeursService,
-    private readonly updateDefinitionService: UpdateDefinitionService
+    private readonly updateIndicateurService: UpdateIndicateurService
   ) {
     // Une valeur d'indicateur retenue pour un score peut être corrigée après
     // coup (sans changer la sélection) : le score et l'avancement qui en
@@ -291,10 +291,10 @@ export class SetScoreFromIndicateurService {
   ): Promise<Result<ScoreSnapshot, SetScoreFromIndicateurError>> {
     const { collectiviteId, actionId, indicateurId, isSuivi } = input;
 
-    // vérifié hors transaction : `updateDefinition` lève une exception en cas
+    // vérifié hors transaction : `updateIndicateur` lève une exception en cas
     // de droits insuffisants, que `TransactionManager` ne sait pas convertir
     // en erreur typée
-    const canUpdate = await this.updateDefinitionService.canUpdateDefinition(
+    const canUpdate = await this.updateIndicateurService.canUpdateIndicateur(
       user,
       collectiviteId,
       indicateurId,
@@ -305,7 +305,7 @@ export class SetScoreFromIndicateurService {
     }
 
     return this.writeAndRefreshScore(input, user, async (tx) => {
-      const updateResult = await this.updateDefinitionService.updateDefinition(
+      const updateResult = await this.updateIndicateurService.updateIndicateur(
         { collectiviteId, indicateurId, indicateurFields: { isSuivi } },
         { user, tx }
       );

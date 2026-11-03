@@ -15,7 +15,7 @@ import {
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { isNil, isNotNil, keyBy } from 'es-toolkit';
 import { AuthRole } from '../../../users/models/auth.models';
-import { IndicateurDefinitionLockRepository } from '../../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import {
   IndicateurValeursContext,
@@ -33,7 +33,7 @@ export class ValidateIndicateurValeursWriteService {
   constructor(
     private readonly repository: IndicateurValeursRepository,
     private readonly permissionService: PermissionService,
-    private readonly definitionLockRepository: IndicateurDefinitionLockRepository
+    private readonly indicateurLockRepository: IndicateurLockRepository
   ) {}
 
   prepare(
@@ -85,7 +85,7 @@ export class ValidateIndicateurValeursWriteService {
       const indicateurIds = [
         ...new Set(input.valeurs.map((v) => v.indicateurId)),
       ];
-      const definitions = await this.definitionLockRepository.lockDefinitions(
+      const definitions = await this.indicateurLockRepository.lockIndicateurs(
         indicateurIds,
         tx
       );

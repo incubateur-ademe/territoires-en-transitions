@@ -1,0 +1,96 @@
+import { serviceTagSchema } from '@tet/domain/collectivites';
+import {
+  IndicateurPeriodiciteEnum,
+  indicateurCommonSchema,
+  indicateurPeriodiciteValues,
+} from '@tet/domain/indicateurs';
+import { thematiqueSchema } from '@tet/domain/shared';
+import z from 'zod';
+import * as zm from 'zod/mini';
+import { upsertIndicateurPilotesInputSchema } from '../../indicateurs/upsert-indicateur-pilotes/upsert-indicateur-pilotes.input';
+
+export const createIndicateurInputSchema = z.object({
+  titre: indicateurCommonSchema.shape.titre,
+  unite: z.optional(indicateurCommonSchema.shape.unite),
+  // Compatibilité de l'API historique : l'absence de périodicité est
+  // interprétée une seule fois à la frontière d'entrée. Le service reçoit
+  // toujours une périodicité explicite.
+  periodicite: z
+    .enum(indicateurPeriodiciteValues)
+    .optional()
+    .default(IndicateurPeriodiciteEnum.ANNUELLE),
+  isApplicable: z.boolean().optional().default(true),
+  collectiviteId: z.number(),
+  thematiques: z
+    .array(z.object({ id: thematiqueSchema.shape.id }))
+    .optional()
+    .default([]),
+  commentaire: z
+    .string()
+    .optional()
+    .describe('Correspond au champ "description et méthodologie de calcul"'),
+  estFavori: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Si l'indicateur doit faire parti des indicateurs favoris de la collectivité"
+    ),
+  estConfidentiel: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Si true, la valeur associée à l'indicateur la plus récente n'est pas consultable en mode visite."
+    ),
+  ficheId: z
+    .number()
+    .int()
+    .optional()
+    .describe('Action à laquelle rattacher le nouvel indicateur'),
+});
+
+export type CreateIndicateurInput = z.infer<typeof createIndicateurInputSchema>;
+
+export const updateIndicateurInputSchema = z.object({
+  indicateurId: z.number(),
+  collectiviteId: z.number(),
+  indicateurFields: z
+    .object({
+      ...createIndicateurInputSchema.omit({
+        collectiviteId: true,
+        periodicite: true,
+        ficheId: true,
+        thematiques: true,
+        estFavori: true,
+        estConfidentiel: true,
+        isApplicable: true,
+      }).shape,
+
+      // La périodicité appartient uniquement au contrat de création.
+      // Refuser aussi sa présence dans un payload externe de mise à jour.
+      periodicite: z.never().optional(),
+      // Redéfinis sans valeurs par défaut pour que le service puisse distinguer
+      // "absent du payload" d'une mise à jour explicite.
+      isApplicable: z.boolean().optional(),
+      estFavori: z.boolean().optional(),
+      estConfidentiel: z.boolean().optional(),
+      isSuivi: z.boolean().optional(),
+      ficheIds: z.array(z.number()).optional(),
+      pilotes: z.array(upsertIndicateurPilotesInputSchema).optional(),
+      services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),
+      thematiques: z
+        .array(z.object({ id: thematiqueSchema.shape.id }))
+        .optional(),
+    })
+    .partial(),
+});
+
+export type UpdateIndicateurInput = z.infer<typeof updateIndicateurInputSchema>;
+
+export const deleteIndicateurInputSchema = z.object({
+  indicateurId: z.number().int().positive(),
+  collectiviteId: z.number().int().positive(),
+});
+
+export type DeleteIndicateurInput = z.infer<typeof deleteIndicateurInputSchema>;

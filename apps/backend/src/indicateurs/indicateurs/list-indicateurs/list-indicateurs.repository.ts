@@ -45,7 +45,7 @@ import { indicateurDefinitionTable } from '../../definitions/indicateur-definiti
 import { indicateurDefinitionPeriodiciteSelection } from '../../definitions/indicateur-periodicite.column';
 import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
-import { indicateurServiceTagTable } from '../handle-definition-services/indicateur-service-tag.table';
+import { indicateurServiceTagTable } from '../upsert-indicateur-services/indicateur-service-tag.table';
 import { ListIndicateursInput } from './list-indicateurs.input';
 
 type IndicateurDefinitionGrandParent = {

@@ -6,7 +6,7 @@ import {
   TransactionManager,
 } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { omit } from 'es-toolkit';
-import { IndicateurDefinitionLockRepository } from '../definitions/indicateur-definition-lock.repository';
+import { IndicateurLockRepository } from '../definitions/indicateur-lock.repository';
 import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 import { hasIndicateurFormulaChanged } from '../definitions/indicateur-formula.rules';
 import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
@@ -33,7 +33,7 @@ export class UpsertIndicateurDefinitionsService {
     private readonly repository: ImportIndicateurDefinitionRepository,
     private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly transactionManager: TransactionManager,
-    private readonly locks: IndicateurDefinitionLockRepository,
+    private readonly locks: IndicateurLockRepository,
     private readonly relations: ImportIndicateurRelationsService,
     private readonly valeurs: ReconcileIndicateurValeursService,
     private readonly expressions: IndicateurExpressionService,
@@ -104,7 +104,7 @@ export class UpsertIndicateurDefinitionsService {
         ImportIndicateurDefinitionError | Error
       >(async (tx) => {
         try {
-          await this.locks.lockForDefinitionMutation(tx);
+          await this.locks.lockForIndicateurMutation(tx);
           const currentDefinitions =
             await this.repository.listDefinitionSnapshots(
               identifiantsReferentiel,

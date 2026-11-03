@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
+import { UpdateIndicateurService } from '@tet/backend/indicateurs/definitions/mutate-indicateur/update-indicateur.service';
 import {
   AuthenticatedUser,
   AuthRole,
@@ -60,7 +60,7 @@ export class UpsertGridValeursService {
     private readonly transactionManager: TransactionManager,
     private readonly manageIndicateurValeursService: ManageIndicateurValeursService,
     private readonly listIndicateursService: ListIndicateursService,
-    private readonly updateDefinitionService: UpdateDefinitionService,
+    private readonly updateIndicateurService: UpdateIndicateurService,
     private readonly computeValeursService: ComputeValeursService,
     private readonly lockRepository: IndicateurValeurLockRepository,
     private readonly validationService: ValidateIndicateurValeursWriteService,
@@ -160,7 +160,7 @@ export class UpsertGridValeursService {
 
           await this.lockRepository.lock(valeursToWrite, tx);
           const saved = await this.repository.upsert(valeursToWrite, tx);
-          await this.updateDefinitionService.updateDefinitionsModifiedFields(
+          await this.updateIndicateurService.updateIndicateursModifiedFields(
             { indicateurIds, collectiviteId, user },
             tx
           );
