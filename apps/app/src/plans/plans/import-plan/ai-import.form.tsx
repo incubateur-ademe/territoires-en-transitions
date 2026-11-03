@@ -6,7 +6,7 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
-import { ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
+import { PlanCreationRules } from '@tet/domain/plans';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement, useCallback, useEffect, useRef } from 'react';
@@ -131,13 +131,17 @@ export const AiImportForm = ({
 
   const selectedFile = useWatch({ control, name: 'file' });
   const selectedPlanTypeId = useWatch({ control, name: 'planType' });
-  const isElectrificationPlanType = planTypes.some(
-    (planType) =>
-      planType.id === selectedPlanTypeId &&
-      planType.type === ELECTRIFICATION_PLAN_TYPE
+  const selectedPlanType = planTypes.find(
+    ({ id }) => id === selectedPlanTypeId
   );
+  const creationDisabledReason =
+    PlanCreationRules.getDisabledReason(selectedPlanType);
+  const isPlanCreationDisabled =
+    isLoadingPlanTypes || creationDisabledReason !== undefined;
   const { previousImport, isLoading: isCheckingSelectedFile } =
     useFindPreviousAiImport({ file: selectedFile });
+  const isSubmitDisabled =
+    isSubmitting || isCheckingSelectedFile || isPlanCreationDisabled;
   // Une seule fois, et jamais par-dessus un fichier choisi pendant le
   // téléchargement : retiré, le fichier suggéré ne revient pas.
   const hasAppliedSuggestedFile = useRef(false);
@@ -154,7 +158,7 @@ export const AiImportForm = ({
   return (
     <form
       onSubmit={handleSubmit((values) => {
-        if (isLoadingPlanTypes || isElectrificationPlanType) return;
+        if (isPlanCreationDisabled) return;
         return onSubmit({
           ...values,
           confirmReimport: previousImport !== null,
@@ -203,10 +207,10 @@ export const AiImportForm = ({
           )}
         />
       </Field>
-      {isElectrificationPlanType && (
+      {creationDisabledReason && (
         <Alert
           state="info"
-          description={appLabels.planElectrificationCreationIndisponible}
+          description={appLabels.planCreationDisabled(creationDisabledReason)}
         />
       )}
       <Field
@@ -313,12 +317,7 @@ export const AiImportForm = ({
         {cancelButton}
         <Button
           type="submit"
-          disabled={
-            isSubmitting ||
-            isCheckingSelectedFile ||
-            isLoadingPlanTypes ||
-            isElectrificationPlanType
-          }
+          disabled={isSubmitDisabled}
           icon="upload-2-line"
           dataTest="ai-import.lancer"
         >

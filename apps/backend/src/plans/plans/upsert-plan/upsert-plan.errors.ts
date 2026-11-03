@@ -2,10 +2,11 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
-import { ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE } from '@tet/domain/plans';
+import { planCreationDisabledReasons } from '@tet/domain/plans';
+import { planCreationErrorConfig } from '../plan-creation.errors';
 
 const specificErrors = [
-  'ELECTRIFICATION_CREATION_DISABLED',
+  ...planCreationDisabledReasons,
   'CREATE_PLAN_ERROR',
   'UPDATE_PLAN_ERROR',
   'UPDATE_REFERENTS_ERROR',
@@ -17,10 +18,7 @@ type SpecificError = (typeof specificErrors)[number];
 
 export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
-    ELECTRIFICATION_CREATION_DISABLED: {
-      code: 'BAD_REQUEST',
-      message: ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE,
-    },
+    ...planCreationErrorConfig,
     CREATE_PLAN_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
       message: 'La création du plan a échoué',
