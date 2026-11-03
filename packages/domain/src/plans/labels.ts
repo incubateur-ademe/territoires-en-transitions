@@ -1,5 +1,12 @@
-export const ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE =
-  'La création d’un plan Électrification est temporairement indisponible. L’import depuis l’annexe 3 est en cours de préparation.';
+import type { PlanCreationDisabledReason } from './plans/plan-creation.rules';
+
+export const PLAN_CREATION_DISABLED_MESSAGES: Record<
+  PlanCreationDisabledReason,
+  string
+> = {
+  ELECTRIFICATION_CREATION_DISABLED:
+    'La création d’un plan Électrification est temporairement indisponible. L’import depuis l’annexe 3 est en cours de préparation.',
+};
 
 export const SANS_PRIORITE_LABEL = 'Sans priorité' as const;
 export const SANS_STATUT_LABEL = 'Sans statut' as const;

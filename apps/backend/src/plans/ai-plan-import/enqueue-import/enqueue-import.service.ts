@@ -12,7 +12,7 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
-import { ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
+import { PlanCreationRules } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
@@ -90,8 +90,10 @@ export class EnqueueImportService {
       if (!planType) {
         return failure(AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE);
       }
-      if (planType.type === ELECTRIFICATION_PLAN_TYPE) {
-        return failure(AiPlanImportErrorEnum.ELECTRIFICATION_CREATION_DISABLED);
+      const creationDisabledReason =
+        PlanCreationRules.getDisabledReason(planType);
+      if (creationDisabledReason) {
+        return failure(creationDisabledReason);
       }
       withSecteurs =
         planType.categorie === PCAET_PLAN_TYPE_KEY.categorie &&

@@ -1,5 +1,6 @@
 import {
-  ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE,
+  PLAN_CREATION_DISABLED_MESSAGES,
+  PlanCreationDisabledReason,
   OrigineSecteurs,
   SecteurReglementaire,
 } from '@tet/domain/plans';
@@ -23,8 +24,8 @@ export const plansLabels = {
   nomPlanRequis: 'Le nom du plan est requis',
   nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   typePlan: 'Type de plan',
-  planElectrificationCreationIndisponible:
-    ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE,
+  planCreationDisabled: (reason: PlanCreationDisabledReason): string =>
+    PLAN_CREATION_DISABLED_MESSAGES[reason],
   type: 'Type',
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),

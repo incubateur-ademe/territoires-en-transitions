@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PlanCreationDisabledReason } from '@tet/domain/plans';
 import { Alert, Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useForm } from 'react-hook-form';
@@ -19,7 +20,7 @@ type Props = {
   planNom: string | null;
   openState: OpenState;
   isPending: boolean;
-  isCreationDisabled: boolean;
+  creationDisabledReason?: PlanCreationDisabledReason;
   onDuplicate: (nom: string) => Promise<void>;
 };
 
@@ -27,7 +28,7 @@ export const DuplicatePlanModal = ({
   planNom,
   openState,
   isPending,
-  isCreationDisabled,
+  creationDisabledReason,
   onDuplicate,
 }: Props) => {
   const {
@@ -40,8 +41,11 @@ export const DuplicatePlanModal = ({
     defaultValues: { nom: appLabels.nomCopiePlan({ nom: planNom }) },
   });
 
+  const isPlanCreationDisabled = creationDisabledReason !== undefined;
+  const isSubmitDisabled = isPending || !isValid || isPlanCreationDisabled;
+
   const onValid = async ({ nom }: DuplicatePlanFormValues): Promise<void> => {
-    if (isCreationDisabled) return;
+    if (isPlanCreationDisabled) return;
     await onDuplicate(nom);
   };
 
@@ -52,10 +56,12 @@ export const DuplicatePlanModal = ({
       openState={openState}
       render={() => (
         <form onSubmit={handleSubmit(onValid)} className="flex flex-col gap-4">
-          {isCreationDisabled && (
+          {creationDisabledReason && (
             <Alert
               state="info"
-              description={appLabels.planElectrificationCreationIndisponible}
+              description={appLabels.planCreationDisabled(
+                creationDisabledReason
+              )}
             />
           )}
           <Field
@@ -76,7 +82,7 @@ export const DuplicatePlanModal = ({
           btnOKProps={{
             children: appLabels.dupliquer,
             onClick: handleSubmit(onValid),
-            disabled: isPending || !isValid || isCreationDisabled,
+            disabled: isSubmitDisabled,
           }}
         />
       )}

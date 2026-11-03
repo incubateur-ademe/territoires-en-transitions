@@ -3,21 +3,19 @@ import {
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-import { ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE } from '@tet/domain/plans';
+import { planCreationDisabledReasons } from '@tet/domain/plans';
+import { planCreationErrorConfig } from '../plan-creation.errors';
 
 const specificErrors = [
   'PLAN_NOT_FOUND',
   'DUPLICATE_PLAN_ERROR',
-  'ELECTRIFICATION_CREATION_DISABLED',
+  ...planCreationDisabledReasons,
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const duplicatePlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
-    ELECTRIFICATION_CREATION_DISABLED: {
-      code: 'BAD_REQUEST',
-      message: ELECTRIFICATION_PLAN_CREATION_DISABLED_MESSAGE,
-    },
+    ...planCreationErrorConfig,
     PLAN_NOT_FOUND: {
       code: 'NOT_FOUND',
       message: "Le plan à dupliquer n'a pas été trouvé",

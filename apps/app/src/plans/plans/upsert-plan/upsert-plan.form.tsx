@@ -4,7 +4,7 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
-import { ELECTRIFICATION_PLAN_TYPE } from '@tet/domain/plans';
+import { PlanCreationRules } from '@tet/domain/plans';
 import { Alert, Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 
@@ -143,17 +143,21 @@ export function UpsertPlanForm({
     },
   });
 
-  const selectedTypeId = useWatch({ control, name: 'typeId' });
-  const isElectrificationPlanType = planTypes.some(
-    ({ id, type }) =>
-      id === selectedTypeId && type === ELECTRIFICATION_PLAN_TYPE
+  const selectedPlanTypeId = useWatch({ control, name: 'typeId' });
+  const selectedPlanType = planTypes.find(
+    ({ id }) => id === selectedPlanTypeId
   );
+  const creationDisabledReason =
+    PlanCreationRules.getDisabledReason(selectedPlanType);
+  const isPlanCreationDisabled =
+    isLoadingPlanTypes || creationDisabledReason !== undefined;
+  const isSubmitDisabled = isSubmitting || isPlanCreationDisabled;
 
   return (
     <form
       id={formId}
       onSubmit={handleSubmit(async (data) => {
-        if (isLoadingPlanTypes || isElectrificationPlanType) return;
+        if (isPlanCreationDisabled) return;
         const submit = onSubmit as (
           data: UpsertPlanWithoutFilePayload | UpsertPlanWithFilePayload
         ) => Promise<boolean>;
@@ -204,10 +208,10 @@ export function UpsertPlanForm({
           }}
         />
       </Field>
-      {isElectrificationPlanType && (
+      {creationDisabledReason && (
         <Alert
           state="info"
-          description={appLabels.planElectrificationCreationIndisponible}
+          description={appLabels.planCreationDisabled(creationDisabledReason)}
         />
       )}
       <div className="flex gap-6">
@@ -314,12 +318,7 @@ export function UpsertPlanForm({
       <div className="flex items-center justify-end gap-6 mt-6">
         <VisibleWhen condition={showButtons}>
           {cancelButton}
-          <Button
-            type="submit"
-            disabled={
-              isSubmitting || isLoadingPlanTypes || isElectrificationPlanType
-            }
-          >
+          <Button type="submit" disabled={isSubmitDisabled}>
             {isSubmitting ? <SpinnerLoader /> : submitButtonText}
           </Button>
         </VisibleWhen>

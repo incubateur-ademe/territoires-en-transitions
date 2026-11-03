@@ -8,11 +8,7 @@ import {
   MetadataLine,
 } from '@/app/ui/metadata-line';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import {
-  AggregatedBudget,
-  Plan,
-  ELECTRIFICATION_PLAN_TYPE,
-} from '@tet/domain/plans';
+import { AggregatedBudget, Plan, PlanCreationRules } from '@tet/domain/plans';
 import { InlineEditWrapper, Select, Tooltip } from '@tet/ui';
 import { plural } from '@tet/ui/labels/plural';
 import { countBy } from 'es-toolkit';
@@ -37,10 +33,12 @@ export const PlanMetadata = ({
 }: PlanMetadataProps) => {
   const { data: planTypes } = useListPlanTypes();
   const planTypesOptions = planTypesToOptions(
-    planTypes.filter(
-      ({ id, type }) =>
-        type !== ELECTRIFICATION_PLAN_TYPE || id === plan.type?.id
-    )
+    planTypes.filter((planType) => {
+      const isCurrentPlanType = planType.id === plan.type?.id;
+      const isPlanCreationDisabled =
+        PlanCreationRules.getDisabledReason(planType) !== undefined;
+      return isCurrentPlanType || !isPlanCreationDisabled;
+    })
   );
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canReadFichesRestreintes = hasCollectivitePermission(
