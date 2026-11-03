@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import {
   addTestCollectivite,
   addTestCollectiviteAndUser,
@@ -152,11 +153,13 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       .insert(indicateurDefinitionTable)
       .values([
         {
+          identifiantReferentiel: `test_${randomUUID()}`,
           titre: 'Indicateur global autorisé',
           unite: 't',
           periodicite: 'annuelle',
         },
         {
+          identifiantReferentiel: `test_${randomUUID()}`,
           groupementId: groupement.id,
           titre: 'Indicateur de groupement interdit',
           unite: 't',
@@ -211,6 +214,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     const [definition] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
+        identifiantReferentiel: `test_${randomUUID()}`,
         groupementId: groupement.id,
         titre: 'Indicateur de groupement autorisé',
         unite: 't',
@@ -260,6 +264,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     const [definition] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
+        identifiantReferentiel: `test_${randomUUID()}`,
         groupementId: groupement.id,
         titre: 'Indicateur de traitement interne',
         unite: 'MWh',
@@ -308,6 +313,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     const [definition] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
+        identifiantReferentiel: `test_${randomUUID()}`,
         titre: 'Indicateur de contrôle de provenance',
         unite: 't',
         periodicite: 'annuelle',

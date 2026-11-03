@@ -4,7 +4,8 @@ import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/m
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import { Indicateur } from '@tet/domain/indicateurs';
+import { toIndicateursOrThrow } from '../indicateur.adapter';
 import {
   and,
   eq,
@@ -36,7 +37,7 @@ export class ListCollectiviteDefinitionsRepository {
       collectiviteId?: number;
     } = {},
     tx?: Transaction
-  ): Promise<IndicateurDefinition[]> {
+  ): Promise<Indicateur[]> {
     this.logger.log(
       `Récupération des définitions des indicateurs ${identifiantsReferentiel?.join(
         ','
@@ -87,6 +88,6 @@ export class ListCollectiviteDefinitionsRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return definitions;
+    return toIndicateursOrThrow(definitions);
   }
 }

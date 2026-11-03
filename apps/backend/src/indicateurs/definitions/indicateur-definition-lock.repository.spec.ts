@@ -1,11 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
+import { toIndicateurDefinition } from './indicateur-definition.test-fixture';
 import { IndicateurDefinitionLockRepository } from './indicateur-definition-lock.repository';
 
 describe('IndicateurDefinitionLockRepository', () => {
   it('verrouille et relit les définitions dans un ordre déterministe', async () => {
     const lockedDefinitions = [
-      { id: 2, periodicite: 'mensuelle', precision: 2 },
-      { id: 10, periodicite: 'annuelle', precision: 0 },
+      toIndicateurDefinition({
+        id: 2,
+        identifiantReferentiel: 'cae_1.a',
+        periodicite: 'mensuelle',
+        precision: 2,
+      }),
+      toIndicateurDefinition({
+        id: 10,
+        collectiviteId: 12,
+        periodicite: 'annuelle',
+        precision: 0,
+      }),
     ];
     const forLock = vi.fn().mockResolvedValue(lockedDefinitions);
     const orderBy = vi.fn(() => ({ for: forLock }));
