@@ -7,7 +7,8 @@ import { DatabaseModule } from '@tet/backend/utils/database/database.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { AnalysisLlmService } from '../analysis-llm.service';
 import { AnalysisRunTableRepository } from '../analysis-run-table.repository';
-import { ClassifyBatchService } from '../classify-batch/classify-batch.service';
+import { ClassificationLlmService } from '../classification-llm.service';
+import { ClassifyFicheService } from '../classify-fiche/classify-fiche.service';
 import { CollectiviteVoletGesRepository } from '../collectivite-volet-ges.repository';
 import { EnjeuRepositories } from '../enjeu.repositories';
 import { FicheActionAnalysisRepository } from '../fiche-action-analysis.repository';
@@ -27,8 +28,9 @@ import { FicheTextRepository } from './fiche-text.repository';
   imports: [ConfigurationModule, DatabaseModule, LlmModule],
   providers: [
     AnalysisLlmService,
+    ClassificationLlmService,
     AnalyzeFichesService,
-    ClassifyBatchService,
+    ClassifyFicheService,
     ScoreMobilisationService,
     CollectiviteIdentityRepository,
     EnjeuRepositories,

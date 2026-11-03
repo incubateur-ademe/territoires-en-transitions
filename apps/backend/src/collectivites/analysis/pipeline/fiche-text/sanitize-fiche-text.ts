@@ -22,23 +22,6 @@ export const MAX_DESCRIPTION_LENGTH = 2000;
  */
 const DISALLOWED_CHARACTERS = /[^\p{L}\p{N}\p{Zs}'’,.;:!?%°€/+()\-–—]/gu;
 
-export type FicheToClassify = {
-  ficheId: number;
-  titre: string;
-  description: string | null;
-};
-
-export type RenderedFiche = {
-  index: number;
-  ficheId: number;
-  isDescriptionTruncated: boolean;
-};
-
-export type FichesRendering = {
-  text: string;
-  rendered: RenderedFiche[];
-};
-
 /**
  * Réduit le texte d'une fiche à de la donnée inerte, en trois passes ordonnées.
  *
@@ -71,45 +54,4 @@ export const truncate = (value: string, max: number): string => {
   return characters.length > max
     ? `${characters.slice(0, max - 1).join('')}…`
     : value;
-};
-
-const renderFiche = (
-  fiche: FicheToClassify,
-  index: number,
-  nonce: string
-): { rendered: RenderedFiche; block: string } => {
-  const titre = truncate(sanitize(fiche.titre), MAX_TITRE_LENGTH);
-  const sanitizedDescription = sanitize(fiche.description ?? '');
-  const description = truncate(sanitizedDescription, MAX_DESCRIPTION_LENGTH);
-
-  return {
-    rendered: {
-      index,
-      ficheId: fiche.ficheId,
-      isDescriptionTruncated:
-        Array.from(sanitizedDescription).length > MAX_DESCRIPTION_LENGTH,
-    },
-    block: [
-      `<action index="${index}" nonce="${nonce}">`,
-      titre,
-      description,
-      '</action>',
-    ]
-      .filter((line) => line.length > 0)
-      .join('\n'),
-  };
-};
-
-export const renderFichesText = (
-  fiches: FicheToClassify[],
-  nonce: string
-): FichesRendering => {
-  const renderings = fiches.map((fiche, index) =>
-    renderFiche(fiche, index, nonce)
-  );
-
-  return {
-    text: renderings.map(({ block }) => block).join('\n\n'),
-    rendered: renderings.map(({ rendered }) => rendered),
-  };
 };

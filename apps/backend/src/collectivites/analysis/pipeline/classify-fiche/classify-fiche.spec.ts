@@ -9,6 +9,7 @@ import {
   FicheClassification,
   ficheClassificationSchema,
 } from './classify-fiche.schema';
+import { ClassificationEnjeu } from '../classification-enjeu';
 import { FicheToClassify } from './render-fiche-text';
 
 const fiche: FicheToClassify = {
@@ -16,6 +17,11 @@ const fiche: FicheToClassify = {
   titre: 'Expérimenter l’autopartage',
   description: null,
   axePaths: [['PCAET', 'Mobilité']],
+};
+
+const enjeu: ClassificationEnjeu = {
+  systemInstruction: FICHE_CLASSIFICATION_SYSTEM_INSTRUCTION,
+  responseSchema: ficheClassificationSchema,
 };
 
 const tokens: TokenUsage = {
@@ -49,7 +55,7 @@ describe('classifyFiche', () => {
   it('envoie la fiche balisée, le prompt système, le schéma et le plafond de sortie', async () => {
     const { llm, generateStructured } = buildLlm({ data: { leviers: [] } });
 
-    await classifyFiche(llm, { fiche, nonce: 'abc' });
+    await classifyFiche(llm, { enjeu, fiche, nonce: 'abc' });
 
     expect(generateStructured).toHaveBeenCalledWith({
       prompt: [
@@ -72,7 +78,7 @@ describe('classifyFiche', () => {
       data: { leviers: [{ levier: 'covoiturage', categories: [1] }] },
     });
 
-    expect(await classifyFiche(llm, { fiche })).toEqual({
+    expect(await classifyFiche(llm, { enjeu, fiche })).toEqual({
       success: true,
       data: {
         fiche: {
@@ -88,7 +94,7 @@ describe('classifyFiche', () => {
   it('rend une fiche sans volet quand aucun levier ne convient', async () => {
     const { llm } = buildLlm({ data: { leviers: [] } });
 
-    expect(await classifyFiche(llm, { fiche })).toMatchObject({
+    expect(await classifyFiche(llm, { enjeu, fiche })).toMatchObject({
       success: true,
       data: { fiche: { ficheId: 7, volets: [] } },
     });
@@ -97,7 +103,7 @@ describe('classifyFiche', () => {
   it('renvoie l’erreur du fournisseur sans la modifier', async () => {
     const { llm } = buildLlm({ error: { kind: 'rate_limited' } });
 
-    expect(await classifyFiche(llm, { fiche })).toEqual({
+    expect(await classifyFiche(llm, { enjeu, fiche })).toEqual({
       success: false,
       error: { kind: 'rate_limited' },
     });
@@ -106,8 +112,8 @@ describe('classifyFiche', () => {
   it('tire un nonce différent à chaque appel quand aucun n’est donné', async () => {
     const { llm, generateStructured } = buildLlm({ data: { leviers: [] } });
 
-    await classifyFiche(llm, { fiche });
-    await classifyFiche(llm, { fiche });
+    await classifyFiche(llm, { enjeu, fiche });
+    await classifyFiche(llm, { enjeu, fiche });
 
     const [firstCall, secondCall] = generateStructured.mock.calls as unknown as [
       [{ prompt: string }],

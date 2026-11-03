@@ -2,14 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { Enjeu } from '@tet/domain/shared';
 import { chunk, uniq } from 'es-toolkit';
-import { ClassifyBatchFailure } from '../classify-batch/classify-batch.errors';
-import { ClassifyBatchService } from '../classify-batch/classify-batch.service';
-import { describeClassifyBatchFailure } from '../classify-batch/describe-classify-batch-failure.rules';
-import { toFaultyFicheIds } from '../classify-batch/to-faulty-fiche-ids.rules';
+import { ClassifyFicheFailure } from '../classify-fiche/classify-fiche.errors';
+import { ClassifyFicheService } from '../classify-fiche/classify-fiche.service';
+import { describeClassifyFicheFailure } from '../classify-fiche/describe-classify-fiche-failure.rules';
 import { EnjeuRepositories } from '../enjeu.repositories';
 import { AnalysisRunPlan, FicheCandidate } from '../models/fiche-analysis';
-import { ClassifiedFiche } from '../pipeline/classify-fiches/apply-classification';
-import { FicheToClassify } from '../pipeline/classify-fiches/render-fiches-text';
+import { FicheToClassify } from '../pipeline/classify-fiche/render-fiche-text';
+import { ClassifiedFiche } from '../pipeline/classify-fiche/to-classified-fiche.rules';
 import { CalculateCollectiviteMobilisationError } from '../score-mobilisation/score-mobilisation.errors';
 import { CalculateCollectiviteMobilisationInput } from '../score-mobilisation/score-mobilisation.input';
 import {
@@ -29,6 +28,10 @@ import {
   FicheAnalysisStatusRepository,
   FicheAnalysisUpsert,
 } from './fiche-analysis-status.repository';
+import {
+  AxePath,
+  FicheAxePathRepository,
+} from './fiche-axe-path.repository';
 import {
   FicheCandidateRepository,
   FicheCandidateSelection,
@@ -51,8 +54,10 @@ type ToFicheSelection = (collectiviteId: number) => FicheCandidateSelection;
 
 type FailedFiche = {
   readonly ficheId: number;
-  readonly cause: ClassifyBatchFailure;
+  readonly cause: ClassifyFicheFailure;
 };
+
+type AxePathsByFicheId = ReadonlyMap<number, readonly AxePath[]>;
 
 type BatchClassification = {
   readonly classified: readonly ClassifiedFiche[];
@@ -137,11 +142,18 @@ const toExplicitCollectiviteIds = (
   return scope.collectivites;
 };
 
-const toFicheToClassify = ({
+const toFicheToClassify = (
+  { ficheId, titre, description }: FicheCandidate,
+  axePathsByFicheId: AxePathsByFicheId
+): FicheToClassify => ({
   ficheId,
   titre,
   description,
-}: FicheCandidate): FicheToClassify => ({ ficheId, titre, description });
+  axePaths: axePathsByFicheId.get(ficheId) ?? [],
+});
+
+const isHealedByNewAttempt = (failure: ClassifyFicheFailure): boolean =>
+  failure.kind === 'invalid_json' || failure.kind === 'truncated';
 
 const toFicheIds = (fiches: readonly { ficheId: number }[]): number[] =>
   fiches.map(({ ficheId }) => ficheId);
@@ -153,10 +165,11 @@ export class AnalyzeFichesService {
   constructor(
     private readonly ficheCandidates: FicheCandidateRepository,
     private readonly ficheTexts: FicheTextRepository,
+    private readonly ficheAxePaths: FicheAxePathRepository,
     private readonly ficheAnalyses: FicheAnalysisStatusRepository,
     private readonly analysisRuns: AnalysisRunRepository,
     private readonly enjeuRepositories: EnjeuRepositories,
-    private readonly classifyBatchService: ClassifyBatchService,
+    private readonly classifyFicheService: ClassifyFicheService,
     private readonly scoreMobilisationService: ScoreMobilisationService,
     private readonly analyzedCollectivites: AnalyzedCollectivites
   ) {}
@@ -417,6 +430,22 @@ export class AnalyzeFichesService {
   }: CollectiviteStep & {
     readonly fiches: readonly FicheCandidate[];
   }): Promise<StepResult<RunProgress>> {
+    if (fiches.length === 0) {
+      return success(progress);
+    }
+    const axePathsResult = await this.ficheAxePaths.listFicheAxePaths({
+      ficheIds: toFicheIds(fiches),
+    });
+    if (!axePathsResult.success) {
+      return failure({
+        kind: 'step_failed',
+        step: 'list_fiche_axe_paths',
+        cause: axePathsResult.error,
+      });
+    }
+    const axePathsByFicheId: AxePathsByFicheId = new Map(
+      axePathsResult.data.map(({ ficheId, axePaths }) => [ficheId, axePaths])
+    );
     const batches = chunk([...fiches], CLASSIFICATION_BATCH_SIZE);
     return batches.reduce<Promise<StepResult<RunProgress>>>(
       async (previous, batch, index) => {
@@ -428,6 +457,7 @@ export class AnalyzeFichesService {
           enjeu,
           collectiviteId,
           batch,
+          axePathsByFicheId,
           progress: previousResult.data,
           position: { index, total: batches.length },
         });
@@ -440,20 +470,33 @@ export class AnalyzeFichesService {
     enjeu,
     collectiviteId,
     batch,
+    axePathsByFicheId,
     progress,
     position,
   }: CollectiviteStep & {
     readonly batch: readonly FicheCandidate[];
+    readonly axePathsByFicheId: AxePathsByFicheId;
     readonly position: RunPosition;
   }): Promise<StepResult<RunProgress>> {
-    const { classified, failedFiches } = await this.classifyWithRetries({
-      enjeu,
-      collectiviteId,
-      position,
-      fiches: batch.map(toFicheToClassify),
-      failedAttempts: new Map(),
-      classification: { classified: [], failedFiches: [] },
-    });
+    const results = await Promise.all(
+      batch.map((fiche) =>
+        this.classifyWithRetries({
+          enjeu,
+          collectiviteId,
+          position,
+          fiche: toFicheToClassify(fiche, axePathsByFicheId),
+          attempt: 1,
+        })
+      )
+    );
+    const classified = results.flatMap((result) =>
+      result.success ? [result.data] : []
+    );
+    const failedFiches = results.flatMap((result, index): FailedFiche[] =>
+      result.success
+        ? []
+        : [{ ficheId: batch[index].ficheId, cause: result.error }]
+    );
     this.logger.log(
       `Collectivite ${collectiviteId}, batch ${formatRunPosition(position)}: ${
         classified.length
@@ -501,75 +544,39 @@ export class AnalyzeFichesService {
     enjeu,
     collectiviteId,
     position,
-    fiches,
-    failedAttempts,
-    classification,
+    fiche,
+    attempt,
   }: Omit<CollectiviteStep, 'progress'> & {
     readonly position: RunPosition;
-    readonly fiches: readonly FicheToClassify[];
-    readonly failedAttempts: ReadonlyMap<number, number>;
-    readonly classification: BatchClassification;
-  }): Promise<BatchClassification> {
-    if (fiches.length === 0) {
-      return classification;
-    }
-    const batchResult = await this.classifyBatchService.classify({
+    readonly fiche: FicheToClassify;
+    readonly attempt: number;
+  }): Promise<Result<ClassifiedFiche, ClassifyFicheFailure>> {
+    const classificationResult = await this.classifyFicheService.classify({
       enjeu,
-      fiches: [...fiches],
+      fiche,
     });
-    if (batchResult.success) {
-      return {
-        ...classification,
-        classified: [
-          ...classification.classified,
-          ...batchResult.data.classified,
-        ],
-      };
+    if (classificationResult.success) {
+      return success(classificationResult.data.fiche);
     }
-    const faultyFicheIds = toFaultyFicheIds({
-      failure: batchResult.error,
-      fiches,
-    });
-    const hasIdentifiedFaultyFiches = faultyFicheIds.length > 0;
-    const countedFicheIds = hasIdentifiedFaultyFiches
-      ? faultyFicheIds
-      : toFicheIds(fiches);
-    const nextFailedAttempts = new Map([
-      ...failedAttempts,
-      ...countedFicheIds.map((ficheId): [number, number] => [
-        ficheId,
-        (failedAttempts.get(ficheId) ?? 0) + 1,
-      ]),
-    ]);
-    const exhaustedFicheIds = countedFicheIds.filter(
-      (ficheId) => (nextFailedAttempts.get(ficheId) ?? 0) >= MAX_ATTEMPTS
-    );
     this.logger.warn(
       `Collectivite ${collectiviteId}, batch ${formatRunPosition(
         position
-      )}: classification failed for fiche(s) ${countedFicheIds.join(
-        ', '
-      )} (${describeClassifyBatchFailure(batchResult.error)}), ${
-        exhaustedFicheIds.length
-      } out of attempts`
+      )}: classification of fiche ${fiche.ficheId} failed (${describeClassifyFicheFailure(
+        classificationResult.error
+      )}), attempt ${attempt}/${MAX_ATTEMPTS}`
     );
+    const isRetryable =
+      isHealedByNewAttempt(classificationResult.error) &&
+      attempt < MAX_ATTEMPTS;
+    if (!isRetryable) {
+      return failure(classificationResult.error);
+    }
     return this.classifyWithRetries({
       enjeu,
       collectiviteId,
       position,
-      fiches: fiches.filter(
-        ({ ficheId }) => !exhaustedFicheIds.includes(ficheId)
-      ),
-      failedAttempts: nextFailedAttempts,
-      classification: {
-        ...classification,
-        failedFiches: [
-          ...classification.failedFiches,
-          ...exhaustedFicheIds.map(
-            (ficheId): FailedFiche => ({ ficheId, cause: batchResult.error })
-          ),
-        ],
-      },
+      fiche,
+      attempt: attempt + 1,
     });
   }
 

@@ -1,6 +1,6 @@
 import { groupBy } from 'es-toolkit';
 import { match } from 'ts-pattern';
-import { describeClassifyBatchFailure } from '../classify-batch/describe-classify-batch-failure.rules';
+import { describeClassifyFicheFailure } from '../classify-fiche/describe-classify-fiche-failure.rules';
 import { CalculateCollectiviteMobilisationError } from '../score-mobilisation/score-mobilisation.errors';
 import {
   RUN_FAILURE_THRESHOLD,
@@ -30,7 +30,7 @@ export const describeMobilisationFailure = (
 
 const describeFailureCause = (failure: RunFailure): string =>
   match(failure)
-    .with({ kind: 'fiche' }, ({ cause }) => describeClassifyBatchFailure(cause))
+    .with({ kind: 'fiche' }, ({ cause }) => describeClassifyFicheFailure(cause))
     .with({ kind: 'mobilisation' }, ({ cause }) =>
       describeMobilisationFailure(cause)
     )
