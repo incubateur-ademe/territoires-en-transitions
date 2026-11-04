@@ -4,7 +4,10 @@ import {
   extractedActionSchema,
   type ExtractedAction,
 } from '../models/extracted-action';
-import { GENERIC_IMPORT_CONTRACT_VERSION } from '../models/import-profile';
+import {
+  AiPlanImportProfileEnum,
+  GENERIC_IMPORT_CONTRACT_VERSION,
+} from '../models/import-profile';
 import { planSkeletonSchema, type PlanSkeleton } from '../models/plan-skeleton';
 import type { DocumentKind } from './document/document-page';
 import type { PipelineLlm } from './run-import-pipeline';
@@ -41,7 +44,7 @@ export const PIPELINE_CHECKPOINT_SCHEMA_VERSION = 1;
  */
 export type PipelineCheckpoint = PipelineState & {
   /** Absents des jobs génériques déjà en cours lors de l'ajout des profils. */
-  profile?: 'generic';
+  profile?: typeof AiPlanImportProfileEnum.GENERIC;
   contractVersion?: typeof GENERIC_IMPORT_CONTRACT_VERSION;
   catalogueVersion?: null;
   schemaVersion: typeof PIPELINE_CHECKPOINT_SCHEMA_VERSION;
@@ -65,7 +68,7 @@ export type PipelineCheckpoint = PipelineState & {
 
 /** Seul le contrat générique est exécutable ; aucun format annexe implicite. */
 export const genericImportContractSchema = z.object({
-  profile: z.literal('generic').optional(),
+  profile: z.literal(AiPlanImportProfileEnum.GENERIC).optional(),
   contractVersion: z.literal(GENERIC_IMPORT_CONTRACT_VERSION).optional(),
   catalogueVersion: z.null().optional(),
 });

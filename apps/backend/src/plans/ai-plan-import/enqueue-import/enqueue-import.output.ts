@@ -1,13 +1,14 @@
 import { z } from 'zod';
+import { AiPlanImportProfileEnum } from '../models/import-profile';
 
 export const enqueueImportOutputSchema = z.discriminatedUnion('profile', [
   z.object({
-    profile: z.literal('generic'),
+    profile: z.literal(AiPlanImportProfileEnum.GENERIC),
     jobId: z.string().uuid(),
     planId: z.number().int().positive(),
   }),
   z.object({
-    profile: z.literal('annexe-3-electrification'),
+    profile: z.literal(AiPlanImportProfileEnum['ANNEXE-3-ELECTRIFICATION']),
     jobId: z.string().uuid(),
     planId: z.null(),
   }),

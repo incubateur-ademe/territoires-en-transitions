@@ -36,6 +36,7 @@ import {
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
 import {
+  AiPlanImportProfileEnum,
   GENERIC_IMPORT_CONTRACT_VERSION,
   isImportProfileImplemented,
   resolveImportProfile,
@@ -197,7 +198,7 @@ export class EnqueueImportService {
         fichierId: fichier.data.id,
         options: {
           ...options,
-          profile: 'generic',
+          profile: AiPlanImportProfileEnum.GENERIC,
           contractVersion: GENERIC_IMPORT_CONTRACT_VERSION,
           catalogueVersion: null,
           withSecteurs,
@@ -269,7 +270,7 @@ export class EnqueueImportService {
         withSousActions: options.withSousActions,
       },
     });
-    return success({ profile: 'generic', jobId, planId });
+    return success({ profile: AiPlanImportProfileEnum.GENERIC, jobId, planId });
   }
 
   /**
