@@ -2335,3 +2335,12 @@ La Stratégie nationale pour les aires protégées 2030 fixe les objectifs suiva
 - 30 % du territoire national (terrestre et marin, métropole et outre-mer) couvert par des aires protégées d’ici 2030.
 - 10 % de cette surface en protection forte (c’est-à-dire avec une réglementation stricte limitant les activités humaines).",,,
 terr_1,Population,Nombre,,Nombre d'habitants,,,,,,FALSE,FALSE,,,2,Nombre d'habitants par an.,,,
+conso_ENR_chaleur,Consommation de chaleur renouvelable,GWh,,,,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+conso_ENR_biomasse,"Consommation de chaleur renouvelable, issue de la biomasse solide",GWh,,,conso_ENR_chaleur,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+conso_ENR_PAC,"Consommation de chaleur renouvelable, issue de pompe à chaleur",GWh,,,conso_ENR_chaleur,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+conso_ENR_geothermie,"Consommation de chaleur renouvelable, issue de la géothermie",GWh,,,conso_ENR_chaleur,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+conso_ENR_solaire_th,"Consommation de chaleur renouvelable, issue du solaire thermique",GWh,,,conso_ENR_chaleur,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+conso_ENR_biogaz,"Consommation de chaleur renouvelable, issue du biogaz",GWh,,,conso_ENR_chaleur,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+conso_ENR_biocarburant,Consommation de biocarburants,GWh,,,,Plan Electrification,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+pcaet_valo_recup,Valorisation du potentiel d'énergie de récupération,GWh,,,,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
+pcaet_valo_stockage,Valorisation du potentiel de stockage énergétique,GWh,,,,pcaet,energie_et_climat,,,FALSE,FALSE,,,2,,,,
