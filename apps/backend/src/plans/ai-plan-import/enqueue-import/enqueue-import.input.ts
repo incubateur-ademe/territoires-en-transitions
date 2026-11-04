@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { disableableFieldValues } from '../models/disableable-field';
-import { aiPlanImportProfileSchema } from '../models/import-profile';
+import {
+  AiPlanImportProfileEnum,
+  aiPlanImportProfileSchema,
+} from '../models/import-profile';
 
 const booleanFromString = z
   .enum(['true', 'false'])
@@ -15,7 +18,7 @@ const disabledFieldsFromForm = z
   .default([]);
 
 export const enqueueImportFormSchema = z.object({
-  profile: aiPlanImportProfileSchema.default('generic'),
+  profile: aiPlanImportProfileSchema.default(AiPlanImportProfileEnum.GENERIC),
   instructions: z.string().max(2000).default(''),
   planName: z.string().min(1).max(300),
   planType: z.coerce.number().int().positive().optional(),

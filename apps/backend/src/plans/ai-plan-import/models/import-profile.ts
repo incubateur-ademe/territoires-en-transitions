@@ -1,9 +1,16 @@
+import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
 
-export const aiPlanImportProfileSchema = z.enum([
+export const aiPlanImportProfileValues = [
   'generic',
   'annexe-3-electrification',
-]);
+] as const;
+
+export const AiPlanImportProfileEnum = createEnumObject(
+  aiPlanImportProfileValues
+);
+
+export const aiPlanImportProfileSchema = z.enum(aiPlanImportProfileValues);
 
 export type AiPlanImportProfile = z.infer<typeof aiPlanImportProfileSchema>;
 
@@ -13,7 +20,7 @@ export const GENERIC_IMPORT_CONTRACT_VERSION = 1;
 export function resolveImportProfile(
   profile: unknown
 ): AiPlanImportProfile | null {
-  if (profile === undefined) return 'generic';
+  if (profile === undefined) return AiPlanImportProfileEnum.GENERIC;
   const parsed = aiPlanImportProfileSchema.safeParse(profile);
   return parsed.success ? parsed.data : null;
 }
@@ -22,5 +29,5 @@ export function resolveImportProfile(
 export function isImportProfileImplemented(
   profile: AiPlanImportProfile
 ): boolean {
-  return profile === 'generic';
+  return profile === AiPlanImportProfileEnum.GENERIC;
 }

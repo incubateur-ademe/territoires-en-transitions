@@ -1,5 +1,8 @@
 import { DisableableField } from '../models/disableable-field';
-import { GENERIC_IMPORT_CONTRACT_VERSION } from '../models/import-profile';
+import {
+  AiPlanImportProfileEnum,
+  GENERIC_IMPORT_CONTRACT_VERSION,
+} from '../models/import-profile';
 import { upperFirst } from 'es-toolkit';
 import {
   analyzeWorkbook,
@@ -263,7 +266,7 @@ export const runImportPipeline = async (
     progress: Progress = state.progress
   ): Promise<void> =>
     input.onCheckpoint?.({
-      profile: 'generic',
+      profile: AiPlanImportProfileEnum.GENERIC,
       contractVersion: GENERIC_IMPORT_CONTRACT_VERSION,
       catalogueVersion: null,
       schemaVersion: PIPELINE_CHECKPOINT_SCHEMA_VERSION,
