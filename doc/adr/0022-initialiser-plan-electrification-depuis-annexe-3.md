@@ -2,11 +2,13 @@
 
 Date : 2026-11-03
 
+Dernière mise à jour : 2026-11-04
+
 ## Statut
 
 Proposé. Les décisions techniques ci-dessous restent à relire par l'équipe.
-Le suivi des deux cibles d'E07 attend encore une confirmation métier.
-Les autres dépendances sont détaillées en fin de document.
+Le suivi d'E07 par deux indicateurs existants est confirmé par l'équipe data.
+Les correspondances restant à valider sont détaillées en fin de document.
 
 ## Contexte
 
@@ -108,15 +110,25 @@ extraction. Il ne génère pas d'actions ou de sous-actions supplémentaires,
 
 Versionner un catalogue limité à ce besoin : axes, sous-axes, engagements,
 actions et sous-actions de référence, indicateurs ou jalons oui/non associés.
-La source métier indiquée par le PM le 3 novembre 2026 est le
+Pour les actions de référence et leurs indicateurs, la source métier indiquée
+par le PM le 3 novembre 2026 est le
 [référentiel Grist des actions et indicateurs](https://grist.numerique.gouv.fr/o/100te/m4aC9Epwz7ot/Referentiel-dactions-feuilles-de-routes/p/86).
-Version consultée à cette date : "Référentiel V1.3". Ses codes métier ne sont
-pas des identifiants TeT : leur correspondance avec les définitions intégrées
-reste à valider avec l'équipe data.
+Version consultée à cette date : "Référentiel V1.3".
+
+Pour les indicateurs d'engagement, Émeline indique le 4 novembre 2026 la colonne
+"ID et Titre indicateur TeT v2" de la
+[liste des 12 engagements](https://app.notion.com/p/3d66523d57d7805c8206d00be2545ea1).
+Cette colonne donne les identifiants de référence TeT à résoudre vers les
+définitions existantes, pas leurs ID numériques en base. Les deux sources ne
+sont pas interchangeables : seuls certains indicateurs sont communs, selon sa
+[réponse](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d).
+Les correspondances entre codes Grist et identifiants TeT restent à compléter
+et à valider ; ne pas les déduire des intitulés.
+
 Un fichier de données validé et livré avec le backend suffit ; il ne s'agit
 pas de construire une bibliothèque de modèles administrable. Les définitions
 d'indicateurs restent dans le catalogue existant, alimenté par l'équipe data.
-Les associations sont explicites, sans appel à Grist pendant un import.
+Les associations sont explicites, sans appel à Grist ou Notion pendant un import.
 Le mapping valide aussi les unités et périodicités : pour un indicateur à
 deux unités, seule l'unité principale retenue par le métier est importée,
 conformément à l'esquisse. Une fréquence "Ponctuelle" du catalogue ne devient
@@ -181,21 +193,27 @@ Persister les engagements dans des relations dédiées au plan :
 | Engagement retenu | `(planId, codeEngagement)`, axe associé ; fiche de suivi pour E03/E12 |
 | Cible d'engagement | `(planId, codeEngagement, codeCible)`, indicateur associé, valeur nullable, unité et échéance |
 
-Pour E07, le PM envisage deux indicateurs et
-[demande confirmation à l'équipe data](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78163bb61001cef0db51c).
-Le [catalogue V1.3 consulté le 3 novembre 2026](https://grist.numerique.gouv.fr/o/100te/api/docs/m4aC9Epwz7ot/tables/V1_3_Indicateurs/records)
-contient déjà deux indicateurs rattachés à E07 :
+Pour E07, Émeline [confirme le 4 novembre 2026](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78163bb61001cef0db51c)
+deux indicateurs déjà existants dans TeT. La
+[ligne E07 de la liste des engagements](https://app.notion.com/p/3d66523d57d78028a8b8f67932311e86)
+précise les correspondances à utiliser :
 
-| Code métier | Intitulé | Unité | Fréquence |
-| --- | --- | --- | --- |
-| `6-a` | Nombre de points de recharge ouverts au public | nb | Annuelle |
-| `6-b` | Nombre de points de recharge rapide (150 kW et plus) ouverts au public | nb | Annuelle |
+| Cible de l'annexe | `identifiantReferentiel` TeT | Intitulé TeT |
+| --- | --- | --- |
+| Nombre total de bornes publiques | `s_26` | Nombre de bornes de recharge ouvertes au public |
+| Nombre de bornes rapides, incluses dans ce total | `s_26.a` | Nombre de bornes de recharge ouvertes au public - Station dédiée à la recharge rapide |
 
-Ce sont des correspondances métier candidates, pas un arbitrage définitif
-ni des identifiants TeT vérifiés. La convention parle de "bornes", le catalogue
-de "points de recharge" : l'équivalence et le seuil de 150 kW restent à confirmer.
-La relation permet plusieurs cibles sans imposer un indicateur unique par
-engagement ; ne pas fusionner les deux valeurs ni inventer d'identifiant TeT.
+Créer deux cibles distinctes sous l'engagement E07, chacune liée à son
+indicateur dans l'axe 6, en conservant l'unité "Nombre de bornes". La relation
+permet plusieurs cibles par engagement ; ne pas fusionner ni additionner les
+deux valeurs. Une cible vide reste indépendante de l'autre. Réutiliser les
+définitions existantes sans modifier leurs formules ni leurs valeurs.
+
+Les codes Grist `6-a` et `6-b` désignent des "points de recharge", avec un seuil
+de 150 kW pour `6-b`. La confirmation des indicateurs TeT d'E07 ne valide pas
+leur équivalence avec ces codes : cette correspondance reste à établir pour
+les fiches B qui les citent. Ne pas convertir des points en bornes ni ajouter
+ce seuil aux cibles de l'annexe.
 
 Les cibles du tableau A sont des données de convention, distinctes de
 `indicateur_valeur.objectif`. Les présenter comme "Cible de l'annexe 3" à côté
@@ -298,11 +316,13 @@ distingué d'une reprise ; le remplacement d'un plan existant relève du support
 
 La livraison principale comprend l'import, les identités de référence,
 les engagements, les indicateurs et le respect des données existantes.
-La source du catalogue métier est identifiée dans Grist. La validation de
-son contenu et des correspondances avec les indicateurs TeT, ainsi que celle
-des lauréats avec les collectivités TeT, restent des dépendances, pas des
-données à déduire par l'IA. La création du catalogue d'indicateurs reste à la
-charge de l'équipe data.
+Les sources du catalogue métier sont identifiées : Grist pour les références
+d'actions et leurs indicateurs, la table Notion pour les indicateurs
+d'engagement. L'intégration des définitions manquantes, la validation des
+correspondances encore ouvertes et celle des lauréats avec les collectivités
+TeT restent des dépendances, pas des données à déduire par l'IA. L'alimentation
+du catalogue d'indicateurs reste à la charge de l'équipe data ; les définitions
+déjà présentes, notamment les deux indicateurs d'E07, sont réutilisées.
 
 **Étape supplémentaire facultative : budgets et financements.** Leur import
 est un "nice to have" distinct, confirmé pendant la rédaction. Le socle peut
@@ -352,6 +372,9 @@ tests déjà exécutés :
   de plan ; une cible absente reste vide ; aucune valeur n'est inventée.
 - Une URL réutilise le même objet et conserve champs, valeurs et autres liens.
   Une cible conventionnelle coexiste avec un objectif 2030 déjà renseigné.
+- E07 crée deux cibles distinctes liées à `s_26` et `s_26.a` dans l'axe 6,
+  sans recréer les indicateurs ni modifier leurs valeurs ou formules. Une cible
+  vide ne supprime pas l'autre ; le total et sa partie rapide ne sont pas additionnés.
 - Les personnalisés reçoivent leurs valeurs datées ; les oui/non deviennent
   des sous-actions ; un objectif "Oui" ne vaut pas résultat "Oui".
 - Renommer les axes, fiches et indicateurs personnalisés, déplacer ou retirer
@@ -372,13 +395,17 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
 
 ## Questions ouvertes avant implémentation
 
-1. Confirmer avec l'équipe data les deux indicateurs envisagés pour E07
-   (`6-a` et `6-b`), l'équivalence entre bornes et points de recharge et le
-   seuil de 150 kW pour les points rapides.
-2. Valider une version exploitable du catalogue Grist et son mapping vers TeT :
-   codes, sous-axes, sous-actions, unités, correspondances de cibles et liens
-   d'aides. Le lien fourni identifie la source ; il ne valide pas à lui seul
-   toutes ces correspondances. Le contournement envisagé pour les aides est
-   leur ajout dans l'onglet "Documents", à préciser avec le métier.
+1. Confirmer le choix des indicateurs d'E06 et E08 : la colonne v2 indique
+   `part_v_h_im.c` et `part_v_h_im.ef`, portant sur la part électrique des
+   immatriculations annuelles, alors que les engagements visent le parc de
+   véhicules particuliers et le parc d'autobus à 2030. Le second indicateur
+   couvre aussi les cars. La correspondance est documentée ; son adéquation
+   au périmètre des cibles reste à confirmer avec l'équipe data.
+2. Valider une version exploitable du catalogue et compléter le mapping
+   Grist vers TeT : codes, sous-axes, sous-actions, unités et liens d'aides.
+   Cela inclut l'éventuelle correspondance de `6-a`/`6-b` avec les indicateurs
+   E07, distincte du choix confirmé de `s_26`/`s_26.a` pour les engagements.
+   Le contournement envisagé pour les aides est leur ajout dans l'onglet
+   "Documents", à préciser avec le métier.
 3. Fournir la source maintenue des lauréats et son mapping vers les
    collectivités TeT.
