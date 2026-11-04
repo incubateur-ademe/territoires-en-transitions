@@ -1,21 +1,62 @@
-# Validate non-draft pull requests through the shared CI workflow.
+# Validate ready stack tips, including all changes from the default branch.
+# Ancestors still run if no ready descendant has CI for a head containing theirs.
+# Selection happens when a run starts; it does not cancel earlier ancestor runs.
+# After closing/drafting a tip, rerun the newly exposed ready PR if needed.
 name: Pull request CI
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore: ['**.md']
+    types:
+      [
+        opened,
+        synchronize,
+        reopened,
+        ready_for_review,
+        converted_to_draft,
+        edited,
+      ]
+    # Filter Markdown after computing the full stack diff: a docs-only tip may
+    # cover code changes in its ancestors.
 
 permissions: {}
 
 concurrency:
-  group: pull-request-${{ github.ref }}
+  # Title/body edits must not cancel a useful run or replace a queued one.
+  group: pull-request-${{ github.event.action == 'edited' && github.event.changes.base == null && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
+  select-stack-tip:
+    if: >-
+      !github.event.pull_request.draft &&
+      (github.event.action != 'edited' || github.event.changes.base != null)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    outputs:
+      run-ci: ${{ steps.select.outputs.run-ci }}
+      nx-base: ${{ steps.select.outputs.nx-base }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          filter: tree:0
+          persist-credentials: false
+
+      - uses: ./.github/actions/ci/select-stack-tip
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   ci:
-    if: ${{ !github.event.pull_request.draft }}
+    needs: [select-stack-tip]
+    if: ${{ needs.select-stack-tip.outputs.run-ci == 'true' }}
     uses: ./.github/workflows/_ci.yml
+    with:
+      nx-base: ${{ needs.select-stack-tip.outputs.nx-base }}
     permissions:
       actions: read
       contents: read
