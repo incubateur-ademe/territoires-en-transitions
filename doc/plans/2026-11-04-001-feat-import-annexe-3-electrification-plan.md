@@ -76,6 +76,11 @@ ou de migrations inutilisables sans leur code associé.
   Ne pas invalider les checkpoints génériques v1 par une hausse globale de
   version. Garder les versions nécessaires aux reprises autorisées et aligner
   les contrôles du worker avec ceux de l'API de reprise.
+  Comparer profil et versions contrat/catalogue entre job et checkpoint, y
+  compris après la dernière étape, et vérifier leur prise en charge par le worker.
+  Une divergence ou un format inconnu bloque la reprise en conservant source
+  et checkpoint selon leur rétention, sans ré-extraction automatique avec une
+  autre version. Revalider les références et les droits avant écriture.
 
 Les points d'appui existent : [feature flags](../../packages/domain/src/utils/feature-flags.ts),
 [TrackingService](../../apps/backend/src/utils/tracking/tracking.service.ts),
@@ -201,6 +206,8 @@ de résolution sans création de plan. Aucune administration de catalogue à con
 - Distinguer la source Notion des indicateurs d'engagement de la source Grist
   des actions et indicateurs associés. Implémenter les correspondances validées
   de l'ADR, notamment E06, E07 et E08 ; ne pas inventer celles encore absentes.
+  Pour E06/E08, les identifiants sont confirmés ; les définitions, formules,
+  unités, périodicités, dépendances et l'adéquation métier restent à valider.
 - Livrer le contrat métier typé d'entrée/sortie du résolveur dans cette PR.
   L'extracteur de la phase 3 le produira ; le résolveur ne dépend pas de types
   ou d'exports laissés à une PR suivante.
@@ -221,13 +228,19 @@ de résolution sans création de plan. Aucune administration de catalogue à con
   fichier versionné suffit pour ce programme, garder ce format avec sa source ;
   ne pas développer un outil de gestion des candidatures. Distinguer éligibilité
   métier et sélection du premier groupe de déploiement.
+  Un mapping absent, obsolète ou ambigu rend le profil indisponible pour la
+  collectivité et bloque l'enfilement avec une erreur de configuration.
+  Conserver source et version de la décision, avec une validité vérifiable ;
+  les jobs admis enregistrent cette provenance. Distinguer ce cas d'une
+  non-éligibilité établie par un mapping valide.
 - Une configuration métier incomplète rend le profil indisponible sans empêcher
   le backend de démarrer ni bloquer les imports génériques. Tester avec des
   fixtures synthétiques tant que les données réelles ne sont pas prêtes.
 
 **Validation :** références inexistantes/ambiguës, URL autorisée ou non, fiche
 partagée, absence de correspondance, unités doubles, cible zéro/vide, deux
-cibles E07, catalogue indisponible et collectivité non éligible.
+cibles E07, catalogue indisponible, collectivité non éligible et mapping lauréat
+absent/obsolète/ambigu avec décision traçable.
 
 **Déploiement et arrêt possible :** services internes seulement ; aucune
 création de plan. Les prérequis data peuvent avancer sans ouvrir l'import.
@@ -369,6 +382,8 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   stable et configuration avant upload/enfilement.
 - Pour l'annexe, créer le job sans plan provisoire. Adapter les échecs de stockage
   ou de queue sans suppression d'un plan inexistant ni job bloquant les quotas.
+  Le service et le contrôleur retournent `planId: null` pour ce profil ; le
+  nettoyage n'appelle `deleteImportingPlan` que si un identifiant existe.
   Garder le plan provisoire du profil générique et son comportement PCAET.
 - Extraire/préparer hors transaction. Dans une transaction courte : revalider
   droits et références, créer plan/axes/fiches, ajouter liens, créer les
@@ -378,7 +393,8 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   Si le lot crée des personnalisés, acquérir le verrou exclusif du graphe avant
   toute revalidation verrouillée des définitions, selon l'ordre défini en 4B.
 - E01/E02 partagent un axe ; seuls les engagements A retenus sont persistés.
-  E06/E08 utilisent les références confirmées, E07 deux cibles indépendantes,
+  E06/E08 utilisent les références confirmées une fois leurs définitions
+  validées et intégrées, E07 deux cibles indépendantes,
   E03/E12 des fiches "À venir". Aucun résultat ni achèvement n'est déduit d'un objectif.
 - Déclencher notifications et webhooks après commit. Leur échec ne modifie pas
   un job réussi et ne relance pas la création. Ajouter profil, versions et
@@ -448,7 +464,10 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   des fiches B et traitement des liens d'aides dans "Documents" convenu.
 - Définitions et dépendances de calcul disponibles dans l'environnement cible,
   notamment `v_particulier_elec`, `autobus_autocar_elec`, `s_26` et `s_26.a`.
-  La présence d'un ID dans Notion n'est pas une preuve d'intégration.
+  Pour E06/E08, définitions, formules, unités, périodicités, dépendances et
+  adéquation métier validées avec l'équipe data et le métier, notamment le
+  périmètre autobus/autocars. La présence d'un ID dans Notion ne prouve ni cette
+  validation ni l'intégration ; le profil reste fermé tant qu'elles manquent.
 - Mapping lauréats → collectivités validé et maintenu ; premier groupe choisi
   parmi ces lauréats. Aucun élargissement de droits par le ciblage du flag.
 - Migrations, backend/API, tous les workers et app compatibles déployés.

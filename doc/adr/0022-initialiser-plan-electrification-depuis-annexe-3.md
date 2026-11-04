@@ -7,7 +7,9 @@ Dernière mise à jour : 2026-11-04
 ## Statut
 
 Proposé. Les décisions techniques ci-dessous restent à relire par l'équipe.
-Le choix des indicateurs d'E06, E07 et E08 est confirmé par l'équipe data.
+Le choix des indicateurs d'E07 est confirmé par l'équipe data. Pour E06 et
+E08, les identifiants des indicateurs de parc sont confirmés ; leurs définitions,
+leur adéquation métier et leur disponibilité restent à valider avant ouverture.
 Les correspondances restant à valider sont détaillées en fin de document.
 
 Le [plan d'implémentation](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md)
@@ -54,6 +56,17 @@ collectivité et les permissions ; le libellé affiché du type de plan ne fait
 pas office d'identifiant ni d'autorisation. Conserver le profil et les versions
 du contrat d'extraction et du catalogue dans le job et ses checkpoints.
 
+Avant toute reprise, l'API et le worker vérifient que le profil et les versions
+du contrat et du catalogue du checkpoint correspondent à ceux du job et sont
+pris en charge par le worker. Ce contrôle s'applique aussi à la dernière étape,
+en complément de la validation du schéma et des contraintes LLM existantes.
+Une ancienne version reste utilisable si elle est explicitement supportée ;
+les jobs génériques historiques sans métadonnées restent interprétés en v1.
+Un contrat inconnu ou une divergence bloque la reprise avec un diagnostic de
+compatibilité, en conservant source et checkpoint selon leur rétention. Aucun
+repli générique ni ré-extraction automatique avec un autre contrat ou catalogue.
+Un nouvel import explicite reste distinct d'une reprise du même job.
+
 L'orchestration reste dans `plans/ai-plan-import`. Les règles de création du
 plan et de ses engagements restent dans `plans`, celles des indicateurs dans
 `indicateurs`, conformément aux ADRs [3](0003-conventions-de-code.md),
@@ -69,6 +82,17 @@ que l'import n'a pas réussi. Une référence invalide ne laisse aucun plan cré
 Prévoir un accès persistant au suivi par identifiant de job, échecs compris :
 la seule recherche actuelle des jobs en cours ne permet pas de retrouver
 un échec après fermeture de la page.
+
+Le retour du service et du contrôleur d'enfilement est discriminé par `profile` :
+`{ profile: 'generic', jobId, planId: number }` ou
+`{ profile: 'annexe-3-electrification', jobId, planId: null }`.
+Le suivi expose `createdPlanId: number | null` ; pour l'annexe, il devient
+numérique seulement après le commit final. Pour ce profil, les consommateurs
+suivent `jobId` et attendent ce succès avant de naviguer vers le plan. Le nettoyage
+d'un échec de stockage ou de mise en queue ne supprime un plan provisoire que
+si son identifiant existe ; il libère le job et la source selon les règles
+existantes, sans appel à `deleteImportingPlan` avec une valeur absente.
+Le contrat générique et le parcours PCAET conservent leur plan immédiat.
 
 ### 2. Extraire les données, résoudre les identités dans le code
 
@@ -209,15 +233,20 @@ colonne "ID et Titre indicateur TeT v2" donnent les références suivantes :
 | [E08](https://app.notion.com/p/3d66523d57d780999cded9124716b3ed) | `autobus_autocar_elec` | Part des autobus et autocars électriques dans le parc roulant | % |
 
 E06 porte une cible dans l'axe 5, E08 une cible dans l'axe 8. Pour E08, le
-périmètre retenu couvre les autobus et les autocars. Émeline prévoit de
+périmètre proposé par l'équipe data couvre les autobus et les autocars ;
+son adéquation à l'engagement de l'annexe reste à valider. Émeline prévoit de
 s'appuyer sur `autobus_elec` et `autocar_elec` ; la définition et sa formule
 relèvent de l'équipe data. L'import lie l'indicateur composé sans recalculer
 sa valeur ni créer deux cibles à partir de ses composantes.
 
 Ces identifiants sont confirmés, mais les réponses annoncent la création des
 définitions et la mise à jour de Notion, sans confirmer leur disponibilité
-dans TeT. Vérifier leur intégration avant d'ouvrir l'import aux engagements
-concernés. Une définition attendue absente bloque avant création du plan,
+dans TeT. Avant ouverture du profil, faire valider avec l'équipe data et le
+métier les définitions, formules, unités, périodicités et dépendances de calcul,
+ainsi que leur adéquation aux engagements, puis vérifier leur intégration dans
+l'environnement cible. La confirmation des identifiants ne vaut pas cette
+validation complète. Tant qu'elle manque, le profil reste fermé. Une définition
+attendue absente bloque avant création du plan,
 avec un diagnostic de configuration à traiter par l'équipe ; la collectivité
 n'a pas à corriger une annexe valide. Ne pas créer d'indicateur personnalisé
 en remplacement ni utiliser les anciens indicateurs d'immatriculations.
@@ -353,6 +382,14 @@ TeT restent des dépendances, pas des données à déduire par l'IA. L'alimentat
 du catalogue d'indicateurs reste à la charge de l'équipe data ; les définitions
 déjà présentes, notamment les deux indicateurs d'E07, sont réutilisées.
 
+Un mapping lauréat–collectivité absent, obsolète ou ambigu rend le profil
+indisponible pour la collectivité et bloque l'enfilement, avant toute création
+de plan, avec un diagnostic de configuration. Il ne justifie aucun rapprochement
+par ressemblance. Conserver la source et la version du mapping utilisées pour
+la décision d'éligibilité ; les jobs admis les enregistrent dans leur provenance.
+Une non-éligibilité établie par un mapping valide reste distincte d'une
+configuration manquante.
+
 **Étape supplémentaire facultative : budgets et financements.** Leur import
 est un "nice to have" distinct, confirmé pendant la rédaction. Le socle peut
 être livré sans lui, en indiquant les champs non repris. Cette étape devra
@@ -401,7 +438,8 @@ tests déjà exécutés :
   de plan ; une cible absente reste vide ; aucune valeur n'est inventée.
 - Une URL réutilise le même objet et conserve champs, valeurs et autres liens.
   Une cible conventionnelle coexiste avec un objectif 2030 déjà renseigné.
-- E06 et E08 lient respectivement `v_particulier_elec` et `autobus_autocar_elec`
+- Après validation métier et intégration des définitions, E06 et E08 lient
+  respectivement `v_particulier_elec` et `autobus_autocar_elec`
   dans les axes 5 et 8, avec une cible chacun. Une définition manquante bloque
   avant création du plan, sans substitution par un indicateur d'immatriculations
   ou personnalisé, et sans demander de corriger l'annexe.
@@ -418,7 +456,14 @@ tests déjà exécutés :
   partiel ni doublon ; tester la création d'indicateurs dans le rollback.
 - Les imports génériques conservent leur comportement. Tester le parcours
   annexe sans `planId` avant succès, le retour sur un job échoué après fermeture
-  de la page et les permissions par collectivité.
+  de la page et les permissions par collectivité. Un échec d'enfilement sans
+  plan n'appelle pas sa suppression et ne laisse aucun job bloquant les quotas.
+- Une divergence de profil ou de version contrat/catalogue entre job et
+  checkpoint interdit la reprise, même après la dernière étape. Un format non
+  supporté conserve source et checkpoint ; les checkpoints génériques v1 restent
+  reprenables. Une reprise autorisée revalide références et droits avant écriture.
+- Un mapping lauréat–collectivité absent, obsolète ou ambigu bloque avant
+  enfilement et création du plan ; source et version de la décision sont traçables.
 
 Privilégier les règles pures, les tests de router avec base réelle et le
 [full flow avec faux LLM](../../apps/backend/src/plans/ai-plan-import/ai-plan-import.full-flow.e2e-spec.ts).
@@ -428,10 +473,11 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
 
 ## Questions ouvertes et dépendances avant implémentation
 
-1. Vérifier avec l'équipe data la disponibilité de `v_particulier_elec` et
-   `autobus_autocar_elec` dans le catalogue TeT, avec leurs unités, périodicités
-   et dépendances de calcul. Le choix métier d'E06/E08 est résolu ; l'intégration
-   des nouvelles définitions reste une dépendance de livraison.
+1. Valider avec l'équipe data et le métier les définitions de `v_particulier_elec`
+   et `autobus_autocar_elec` : formules, unités, périodicités, dépendances de calcul
+   et adéquation à E06/E08, notamment le périmètre autobus/autocars. Le passage
+   des immatriculations au parc et les identifiants sont confirmés ; cette
+   validation complète et l'intégration dans TeT conditionnent l'ouverture.
 2. Valider une version exploitable du catalogue et compléter le mapping
    Grist vers TeT : codes, sous-axes, sous-actions, unités et liens d'aides.
    Cela inclut l'éventuelle correspondance de `6-a`/`6-b` avec les indicateurs
@@ -439,4 +485,4 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    Le contournement envisagé pour les aides est leur ajout dans l'onglet
    "Documents", à préciser avec le métier.
 3. Fournir la source maintenue des lauréats et son mapping vers les
-   collectivités TeT.
+   collectivités TeT, avec une version et une validité vérifiables.
