@@ -1,15 +1,15 @@
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import {
-  ListDefinitionsInputFilters,
-  ListDefinitionsInputSort,
+  ListIndicateursInputFilters,
+  ListIndicateursInputSort,
 } from '@tet/domain/indicateurs';
 import { Badge, cn } from '@tet/ui';
 
-type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
+type SortItem = { field: ListIndicateursInputSort; direction: 'asc' | 'desc' };
 
 type Props = {
-  filters?: ListDefinitionsInputFilters;
+  filters?: ListIndicateursInputFilters;
   sort?: SortItem[];
   isFiltered: boolean;
 };

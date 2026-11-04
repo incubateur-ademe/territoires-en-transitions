@@ -1,11 +1,11 @@
 import { formatActionFiltersToCategories } from '@/app/referentiels/actions/format-action-filters-to-categories';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { ListFichesRequestFilters } from '@tet/domain/plans';
 import { ListActionsInput } from '@tet/domain/referentiels';
 import { FilterCategory } from '@tet/ui';
 
 export type ModuleFilters =
-  | ListDefinitionsInputFilters
+  | ListIndicateursInputFilters
   | ListFichesRequestFilters
   | ListActionsInput;
 
@@ -18,7 +18,7 @@ const isActionModuleFilters = (
 
 export const isIndicateurModuleFilters = (
   filters: ModuleFilters
-): filters is ListDefinitionsInputFilters =>
+): filters is ListIndicateursInputFilters =>
   'serviceIds' in filters ||
   'planIds' in filters ||
   'categorieNoms' in filters ||

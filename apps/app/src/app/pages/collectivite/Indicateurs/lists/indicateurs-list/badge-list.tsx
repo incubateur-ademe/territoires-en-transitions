@@ -1,20 +1,20 @@
 import { IndicateurFilterBadges } from '@/app/indicateurs/indicateurs/indicateur-filter-badges';
 import { useIndicateurFilterCategories } from '@/app/indicateurs/indicateurs/use-indicateur-filter-categories';
 import {
-  ListDefinitionsInputFilters,
-  ListDefinitionsInputSort,
+  ListIndicateursInputFilters,
+  ListIndicateursInputSort,
 } from '@tet/domain/indicateurs';
 import ExportButton from './export-button';
 
-type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
+type SortItem = { field: ListIndicateursInputSort; direction: 'asc' | 'desc' };
 
 type Props = {
   /** Filtres affichés en badges (sans les filtres par défaut de la vue) */
-  filters: ListDefinitionsInputFilters;
+  filters: ListIndicateursInputFilters;
   /** Filtres complets à envoyer à l'export (incluant les filtres par défaut) */
-  exportFilters?: ListDefinitionsInputFilters;
+  exportFilters?: ListIndicateursInputFilters;
   exportSort?: SortItem[];
-  onFiltersChange: (filters: ListDefinitionsInputFilters) => void;
+  onFiltersChange: (filters: ListIndicateursInputFilters) => void;
   resetFilters?: () => void;
   isLoading: boolean;
   isEmpty: boolean;

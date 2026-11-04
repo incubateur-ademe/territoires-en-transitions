@@ -1,7 +1,7 @@
 import { PermissionOperation } from '@tet/domain/users';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 
-export function canUpdateIndicateurDefinition(
+export function canUpdateIndicateur(
   hasCollectivitePermission: (permission: PermissionOperation) => boolean,
   indicateur: Pick<IndicateurDetaille, 'pilotes'>,
   userId: string

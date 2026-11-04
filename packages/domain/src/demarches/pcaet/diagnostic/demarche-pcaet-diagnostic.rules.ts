@@ -8,7 +8,7 @@ import {
 } from './demarche-pcaet-diagnostic.config';
 import type {
   PcaetDiagnostic,
-  PcaetDiagnosticIndicateurDefinition,
+  PcaetDiagnosticIndicateur,
   PcaetDiagnosticIndicateurParentConfig,
 } from './demarche-pcaet-diagnostic.schema';
 import { isPcaetDiagnosticVulnerabiliteComplete } from './demarche-pcaet-vulnerabilite.rules';
@@ -90,7 +90,7 @@ const isLeafComplet = (
  * numérique de `indicateur_collectivite` et les clés `cae_1.c` de la config.
  */
 const listPcaetDiagnosticIdentifiantsNonApplicables = (
-  definitions: readonly PcaetDiagnosticIndicateurDefinition[]
+  definitions: readonly PcaetDiagnosticIndicateur[]
 ): Set<string> => {
   const identifiants = new Set<string>();
   for (const definition of definitions) {
@@ -117,7 +117,7 @@ export const isPcaetDiagnosticIndicateurComplet = ({
 }: {
   config: PcaetDiagnosticIndicateurParentConfig;
   indicateurs: readonly IndicateurValeurAvecMetadonnesDefinition[];
-  definitions: readonly PcaetDiagnosticIndicateurDefinition[];
+  definitions: readonly PcaetDiagnosticIndicateur[];
 }): boolean => {
   if (config.optional === true) {
     return true;

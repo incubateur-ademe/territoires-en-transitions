@@ -11,7 +11,7 @@ import {
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { useUser } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { Checkbox, Divider, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { IndicateursSelectorGrid } from './indicateurs-selector.grid';
@@ -34,7 +34,7 @@ export const LinkIndicateursViewBase = ({
   const collectiviteId = useCollectiviteId();
 
   const { setValue, watch } = useForm<
-    ListDefinitionsInputFilters & {
+    ListIndicateursInputFilters & {
       searchText: string;
       searchTextDebounced: string;
     }

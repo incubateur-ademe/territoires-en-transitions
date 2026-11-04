@@ -18,7 +18,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
-import { createIndicateurPerso } from '../definitions.test-fixture';
+import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 
 describe('indicateurs.indicateurs.update (fiches)', () => {
   let router: TrpcRouter;

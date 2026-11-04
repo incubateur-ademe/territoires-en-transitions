@@ -15,14 +15,14 @@ import { Moyens } from './Moyens';
 import { Notes } from './Notes';
 import Acteurs from './components/acteurs';
 import { Chemins, Infos, Statuts } from './components/header';
-import { PdfIndicateurDefinition, PdfLinkedAction } from './external-types';
+import { PdfIndicateur, PdfLinkedAction } from './external-types';
 import { PdfSectionKey, allSectionKeys } from './utils';
 
 export type FicheActionPdfExtendedProps = {
   fiche: FicheWithRelations;
   chemins: AxeLight[][];
   sections?: PdfSectionKey[];
-  indicateursListe: PdfIndicateurDefinition[] | undefined | null;
+  indicateursListe: PdfIndicateur[] | undefined | null;
   fichesLiees: FicheWithRelations[];
   actionsLiees: PdfLinkedAction[];
   annexes: AnnexeDocument[] | undefined;

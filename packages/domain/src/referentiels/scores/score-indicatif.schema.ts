@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { IndicateurPeriodicite } from '../../indicateurs/definitions/indicateur-periodicite.schema';
+import type { IndicateurPeriodicite } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import type { IndicateurSourceMetadonnee } from '../../indicateurs/shared/indicateur-source-metadonnee.schema';
 
 export const scoreIndicatifTypeEnum = {

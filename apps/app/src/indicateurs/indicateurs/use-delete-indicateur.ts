@@ -5,7 +5,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
-export const useDeleteIndicateurDefinition = (
+export const useDeleteIndicateur = (
   indicateurId: number,
   { redirectAfterDelete = true }: { redirectAfterDelete?: boolean } = {}
 ) => {

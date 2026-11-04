@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { IndicateurPeriodiciteEnum } from '../definitions/indicateur-periodicite.schema';
+import { IndicateurPeriodiciteEnum } from '../indicateur/indicateur-periodicite.schema';
 import { IndicateurPeriodeErrorEnum } from './indicateur-periode.errors';
 import { IndicateurPeriodes } from './indicateur-periodes';
 

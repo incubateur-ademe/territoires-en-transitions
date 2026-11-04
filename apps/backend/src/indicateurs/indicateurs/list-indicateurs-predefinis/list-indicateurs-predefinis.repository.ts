@@ -1,4 +1,3 @@
-import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
@@ -8,6 +7,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Tag } from '@tet/domain/collectivites';
+import type { PcaetDiagnosticIndicateur } from '@tet/domain/demarches';
 import type { IndicateurPredefini } from '@tet/domain/indicateurs';
 import {
   and,
@@ -72,7 +72,7 @@ export class ListIndicateursPredefinisRepository {
       collectiviteId: number;
     },
     tx?: Transaction
-  ): Promise<Result<PcaetDiagnosticIndicateurDefinition[], 'DATABASE_ERROR'>> {
+  ): Promise<Result<PcaetDiagnosticIndicateur[], 'DATABASE_ERROR'>> {
     const conditions = this.getQueryConditions({
       identifiantsReferentiel,
       indicateurIds,

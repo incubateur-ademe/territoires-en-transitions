@@ -1,4 +1,4 @@
-import { IndicateurPeriodiciteEnum } from '../definitions/indicateur-periodicite.schema';
+import { IndicateurPeriodiciteEnum } from '../indicateur/indicateur-periodicite.schema';
 import { IndicateurPeriodes } from './indicateur-periodes';
 import type {
   IndicateurPeriode,

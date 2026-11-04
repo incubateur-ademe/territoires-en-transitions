@@ -17,7 +17,7 @@ import type {
 } from '@tet/domain/plans';
 import type {
   FicheActionPdfExtendedProps,
-  PdfIndicateurDefinition,
+  PdfIndicateur,
   PdfLinkedAction,
 } from '@tet/pdf-components';
 
@@ -147,7 +147,7 @@ export class FicheExportPayloadService {
     fiche,
   }: {
     fiche: FicheWithRelations;
-  }): Promise<PdfIndicateurDefinition[]> {
+  }): Promise<PdfIndicateur[]> {
     const indicateurIds = (fiche.indicateurs ?? []).map((i) => i.id);
     if (indicateurIds.length === 0) {
       return [];

@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
-import { createIndicateurPerso } from '@tet/backend/indicateurs/indicateurs/definitions.test-fixture';
+import { createIndicateurPerso } from '@tet/backend/indicateurs/indicateurs/indicateur-perso.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,

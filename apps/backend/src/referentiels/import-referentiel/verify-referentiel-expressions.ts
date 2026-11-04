@@ -8,7 +8,7 @@ import { ImportActionDefinition } from './import-action-definition.dto';
 import {
   ExpressionToVerify,
   IndicateurCibleLimiteReference,
-  IndicateurDefinitionForVerification,
+  IndicateurForVerification,
   IndicateurReference,
   ParseExpression,
   QuestionForVerification,
@@ -314,23 +314,23 @@ function verifyIndicateursExist(
   });
 }
 
-function verifyDefinitionCibleOrLimite(
+function verifyIndicateurCibleOrLimite(
   type: 'cible' | 'limite',
   references: IndicateurCibleLimiteReference[],
-  indicateurDefinitions: IndicateurDefinitionForVerification[]
+  indicateurs: IndicateurForVerification[]
 ): string[] {
   const expressionField = type === 'cible' ? 'exprCible' : 'exprSeuil';
 
   return references.flatMap((reference) => {
-    const definition = indicateurDefinitions.find(
-      (definition) => definition.id === reference.indicateurId
+    const indicateur = indicateurs.find(
+      (candidate) => candidate.id === reference.indicateurId
     );
 
-    if (definition?.[expressionField]) return [];
+    if (indicateur?.[expressionField]) return [];
 
     return [
       `L'expression ${type} manquante pour l'indicateur "${
-        definition?.identifiantReferentiel ?? ''
+        indicateur?.identifiantReferentiel ?? ''
       }" utilisé dans l'expression "${reference.scoreExpression}" de l'action ${
         reference.actionId
       }`,
@@ -341,7 +341,7 @@ function verifyDefinitionCibleOrLimite(
 function verifyCibleLimiteExpressions(
   references: IndicateurReference[],
   indicateurIdByIdentifiant: Record<string, number>,
-  definitions: IndicateurDefinitionForVerification[]
+  indicateurs: IndicateurForVerification[]
 ): string[] {
   const { cible, limite } = buildCibleLimiteReferences(
     references,
@@ -351,8 +351,8 @@ function verifyCibleLimiteExpressions(
   if (!cible.length && !limite.length) return [];
 
   return [
-    ...verifyDefinitionCibleOrLimite('cible', cible, definitions),
-    ...verifyDefinitionCibleOrLimite('limite', limite, definitions),
+    ...verifyIndicateurCibleOrLimite('cible', cible, indicateurs),
+    ...verifyIndicateurCibleOrLimite('limite', limite, indicateurs),
   ];
 }
 

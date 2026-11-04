@@ -1,5 +1,5 @@
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCreateIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-create-indicateur-definition';
+import { useCreateIndicateur } from '@/app/indicateurs/indicateurs/use-create-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { INDICATEUR_PERIODICITE_OPTIONS } from '@/app/indicateurs/valeurs/indicateur-period-presentation';
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
@@ -53,24 +53,22 @@ const IndicateurPersoNouveau = ({
   const ficheId = fiche?.id;
   const periodiciteOptions = INDICATEUR_PERIODICITE_OPTIONS;
 
-  const { mutate: createIndicateur, isPending } = useCreateIndicateurDefinition(
-    {
-      onSuccess: (indicateurId) => {
-        // redirige vers la page de l'indicateur après la création
-        const url = makeCollectiviteIndicateursUrl({
-          collectiviteId,
-          indicateurView: 'perso',
-          indicateurId,
-        });
-        onClose?.();
-        if (ficheId !== undefined) {
-          window.open(url, '_blank');
-        } else {
-          router.push(url);
-        }
-      },
-    }
-  );
+  const { mutate: createIndicateur, isPending } = useCreateIndicateur({
+    onSuccess: (indicateurId) => {
+      // redirige vers la page de l'indicateur après la création
+      const url = makeCollectiviteIndicateursUrl({
+        collectiviteId,
+        indicateurView: 'perso',
+        indicateurId,
+      });
+      onClose?.();
+      if (ficheId !== undefined) {
+        window.open(url, '_blank');
+      } else {
+        router.push(url);
+      }
+    },
+  });
 
   const [thematiqueIds, setThematiqueIds] = useState<number[]>(
     fiche?.thematiques?.map((item) => item.id) ?? []

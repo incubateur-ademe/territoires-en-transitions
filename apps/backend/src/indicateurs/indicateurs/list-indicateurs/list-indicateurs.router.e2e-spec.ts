@@ -34,7 +34,7 @@ import z from 'zod';
 import { axeIndicateurTable } from '../../../plans/fiches/shared/models/axe-indicateur.table';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
-import { createIndicateurPerso } from '../definitions.test-fixture';
+import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 import { indicateurCategorieTagTable } from '../../indicateur/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';

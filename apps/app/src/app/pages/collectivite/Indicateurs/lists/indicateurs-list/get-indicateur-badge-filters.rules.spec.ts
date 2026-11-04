@@ -1,4 +1,4 @@
-import type { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import type { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { getIndicateurBadgeFilters } from './get-indicateur-badge-filters.rules';
 
@@ -16,9 +16,9 @@ describe('getIndicateurBadgeFilters', () => {
 
   it.each<{
     name: string;
-    filters: ListDefinitionsInputFilters;
-    defaultFilters: ListDefinitionsInputFilters;
-    expected: ListDefinitionsInputFilters;
+    filters: ListIndicateursInputFilters;
+    defaultFilters: ListIndicateursInputFilters;
+    expected: ListIndicateursInputFilters;
   }>([
     {
       name: 'hides unchanged fixed-tab criteria',

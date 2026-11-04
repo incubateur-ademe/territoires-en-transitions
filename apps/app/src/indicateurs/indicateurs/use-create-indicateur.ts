@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
-export const useCreateIndicateurDefinition = (options?: {
+export const useCreateIndicateur = (options?: {
   onSuccess: (indicateurId: number) => void;
 }) => {
   const queryClient = useQueryClient();

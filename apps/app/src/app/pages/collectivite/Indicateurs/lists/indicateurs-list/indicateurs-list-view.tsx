@@ -1,6 +1,6 @@
 'use client';
 
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import {
   IndicateursListParamOption,
   makeCollectiviteIndicateursVueUrl,
@@ -28,7 +28,7 @@ import {
   useIndicateursListParams,
 } from './use-indicateurs-list-params';
 
-const emptyFilters: ListDefinitionsInputFilters = {};
+const emptyFilters: ListIndicateursInputFilters = {};
 
 /** Page de listing des indicateurs de la collectivité */
 const IndicateursListView = ({
@@ -36,7 +36,7 @@ const IndicateursListView = ({
   listId,
   vue,
 }: {
-  defaultFilters?: ListDefinitionsInputFilters;
+  defaultFilters?: ListIndicateursInputFilters;
   listId: IndicateursListParamOption;
   vue?: IndicateurVue;
 }) => {

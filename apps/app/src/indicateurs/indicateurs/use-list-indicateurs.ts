@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
-import type { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import type { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 
-type ListDefinitionsInput = RouterInput['indicateurs']['indicateurs']['list'];
+type ListIndicateursInput = RouterInput['indicateurs']['indicateurs']['list'];
 
 export const getFiltersForIndicateurClefs = (
-  filters?: ListDefinitionsInputFilters
+  filters?: ListIndicateursInputFilters
 ) => {
   return { ...(filters ?? {}), categorieNoms: ['clef'] };
 };
@@ -19,7 +19,7 @@ export const getFiltersForMyIndicateurs = (userId: string) => ({
 });
 
 export const useListIndicateurs = (
-  input: ListDefinitionsInput,
+  input: ListIndicateursInput,
   options: {
     enabled?: boolean | undefined;
   } = { enabled: true }

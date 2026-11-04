@@ -1,11 +1,11 @@
 import { appLabels } from '@/app/labels/catalog';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { FilterCategory } from '@tet/ui';
 import { capitalize } from '@tet/ui/labels/plural';
 
 export type IndicateurFilterCategoryKey =
-  | keyof ListDefinitionsInputFilters
+  | keyof ListIndicateursInputFilters
   | 'pilotes';
 
 type LookupLabels = {
@@ -16,7 +16,7 @@ type LookupLabels = {
 };
 
 export const formatIndicateurFiltersToCategories = (
-  filters: ListDefinitionsInputFilters,
+  filters: ListIndicateursInputFilters,
   lookupLabels: LookupLabels = {}
 ): FilterCategory<IndicateurFilterCategoryKey>[] => {
   const categories: FilterCategory<IndicateurFilterCategoryKey>[] = [];
