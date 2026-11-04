@@ -28,18 +28,6 @@ const epciAccess: CollectiviteRolesAndPermissions = {
   audits: [],
 };
 
-const drealAccess: CollectiviteRolesAndPermissions = {
-  ...epciAccess,
-  collectiviteId: 10,
-  collectiviteNom: 'DREAL du Test',
-  collectiviteType: collectiviteTypeEnum.DREAL,
-};
-
-const simplifiedViewAccess: CollectiviteRolesAndPermissions = {
-  ...epciAccess,
-  role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
-};
-
 const connectedRoles: readonly PlatformRole[] = [
   PlatformRole.CONNECTED,
   PlatformRole.VERIFIED,
@@ -66,20 +54,6 @@ const toUser = (
   collectivites: [access],
 });
 
-type RootLink = { label: NavItem['children']; href: NavLink['href'] };
-
-const toRootLinks = (items: NavItem[] | undefined): RootLink[] =>
-  (items ?? [])
-    .filter(isNavLink)
-    .map((link) => ({ label: link.children, href: link.href }));
-
-const toSuperAdminMenuLinks = (items: NavItem[]): RootLink[] =>
-  toRootLinks(
-    items
-      .filter(isNavDropdown)
-      .find((dropdown) => dropdown.children === appLabels.roleSuperAdmin)?.links
-  );
-
 const toCollectiviteStartItems = (
   roles: readonly PlatformRole[]
 ): NavItem[] => {
@@ -95,28 +69,6 @@ const toCollectiviteStartItems = (
       isPriorisationEnabled: false,
     })?.startItems ?? []
   );
-};
-
-const toMainStartItems = (
-  access: CollectiviteRolesAndPermissions
-): NavItem[] => {
-  const user = toUser(access, superAdminRoles);
-  return (
-    makeMainNav({
-      user,
-      currentCollectivite: toCollectiviteCurrent(
-        { ...access, contexteInstruction: null },
-        user
-      ),
-      isDemarchePcaetEnabled: false,
-      isPriorisationEnabled: false,
-    })?.startItems ?? []
-  );
-};
-
-const actionsDeReferenceLink: RootLink = {
-  label: appLabels.actionsDeReference,
-  href: '/collectivite/20/actions-reference',
 };
 
 const toMemberAccess = ({
@@ -323,32 +275,12 @@ describe('aide-a-la-priorisation-dans-la-nav', () => {
   });
 });
 
-describe('entree-actions-de-reference-dans-le-menu-super-admin', () => {
-  it('un super admin trouve dans le menu Super Admin le lien vers les actions de référence de la collectivité', () => {
-    expect(
-      toSuperAdminMenuLinks(toCollectiviteStartItems(superAdminRoles))
-    ).toContainEqual(actionsDeReferenceLink);
-  });
+describe('menu-super-admin', () => {
+  it("un super admin n'a plus de menu Super Admin : ses outils sont dans l'espace Administration", () => {
+    const dropdowns = toCollectiviteStartItems(superAdminRoles)
+      .filter(isNavDropdown)
+      .map((dropdown) => dropdown.children);
 
-  it("un utilisateur qui n'est pas super admin n'a pas le menu Super Admin", () => {
-    expect(
-      toSuperAdminMenuLinks(toCollectiviteStartItems(connectedRoles))
-    ).toEqual([]);
-  });
-
-  it("un super admin en service déconcentré n'a pas le lien vers les actions de référence", () => {
-    const labels = toSuperAdminMenuLinks(toMainStartItems(drealAccess)).map(
-      (link) => link.label
-    );
-
-    expect(labels).not.toContain(appLabels.actionsDeReference);
-  });
-
-  it("un super admin en vue simplifiée n'a pas le lien vers les actions de référence", () => {
-    const labels = toSuperAdminMenuLinks(
-      toMainStartItems(simplifiedViewAccess)
-    ).map((link) => link.label);
-
-    expect(labels).not.toContain(appLabels.actionsDeReference);
+    expect(dropdowns).not.toContain(appLabels.roleSuperAdmin);
   });
 });

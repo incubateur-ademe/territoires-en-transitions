@@ -9,6 +9,7 @@ import {
 import { Fragment, HTMLAttributes, ReactNode } from 'react';
 
 import { EmptyCardProps } from '../../components/EmptyCard/EmptyCard';
+import { cn } from '../../utils/cn';
 
 import { Table } from './table';
 import { TableEmpty } from './table.empty';
@@ -95,8 +96,9 @@ export const ReactTable = <
         </Fragment>
       );
     }
+    const { className, ...rowProps } = getRowProps?.(row) ?? {};
     return (
-      <TableRow key={row.id} className="text-sm" {...getRowProps?.(row)}>
+      <TableRow key={row.id} className={cn('text-sm', className)} {...rowProps}>
         {cells}
       </TableRow>
     );

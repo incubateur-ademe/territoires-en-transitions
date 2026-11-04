@@ -56,6 +56,22 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Outils de plateforme déplacés dans l'espace Administration.
+      {
+        source: '/ajouter-collectivite',
+        destination: '/admin/ajouter-collectivite',
+        permanent: true,
+      },
+      {
+        source: '/plans/import',
+        destination: '/admin/plans/import',
+        permanent: true,
+      },
+      {
+        source: '/banniere',
+        destination: '/admin/banniere',
+        permanent: true,
+      },
       // Ancienne page d'accueil collectivité, supprimée : `/` route vers le
       // bon tableau de bord selon l'utilisateur.
       {

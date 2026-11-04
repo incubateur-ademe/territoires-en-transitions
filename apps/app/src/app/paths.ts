@@ -84,9 +84,10 @@ export const getRechercheViewUrl = (args: {
   )}${recherchesLandingPath.replace(`:${recherchesParam}`, view)}`;
 };
 export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
-export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
-export const importerPlanUrl = `/plans/import`;
-export const bannerInfoUrl = `/banniere`;
+// Outils de plateforme de l'espace Administration
+export const ajouterCollectiviteUrl = `${adminPath}/ajouter-collectivite`;
+export const importerPlanUrl = `${adminPath}/plans/import`;
+export const bannerInfoUrl = `${adminPath}/banniere`;
 
 const collectiviteParam = 'collectiviteId';
 const indicateurViewParam = 'vue';

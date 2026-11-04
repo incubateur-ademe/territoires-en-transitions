@@ -37,12 +37,10 @@ test.describe('Préférences référentiels (support)', () => {
 
     await page.goto(`/`);
 
-    await expect(
-      page.getByRole('button', { name: 'Super Admin' })
-    ).toBeVisible();
-    await page.getByRole('button', { name: 'Super Admin' }).click();
+    // L'espace Administration agit sur la collectivité en cours, celle de l'utilisateur.
+    await page.goto(`/admin`);
     await page
-      .getByRole('link', { name: 'Affichage des référentiels' })
+      .getByRole('link', { name: /Affichage des référentiels/ })
       .click();
 
     await expect(

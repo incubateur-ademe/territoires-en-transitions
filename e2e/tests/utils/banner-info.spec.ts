@@ -24,12 +24,9 @@ test.describe('Bannière info (support)', () => {
 
     await page.goto('/');
 
-    // Navigate to the banner edit page from the Super Admin menu
-    await expect(
-      page.getByRole('button', { name: 'Super Admin' })
-    ).toBeVisible();
-    await page.getByRole('button', { name: 'Super Admin' }).click();
-    await page.getByRole('link', { name: 'Bannière' }).click();
+    // Navigate to the banner edit page from the Administration space
+    await page.goto('/admin');
+    await page.getByRole('link', { name: /^Bannière/ }).click();
 
     await expect(page.getByRole('heading', { name: 'Bannière' })).toBeVisible();
 
@@ -67,8 +64,8 @@ test.describe('Bannière info (support)', () => {
 
     // Deactivate the banner from the edit page by unchecking the active
     // checkbox and saving — there's no dedicated "Désactiver" button.
-    await page.getByRole('button', { name: 'Super Admin' }).click();
-    await page.getByRole('link', { name: 'Bannière' }).click();
+    await page.goto('/admin');
+    await page.getByRole('link', { name: /^Bannière/ }).click();
     await page.getByRole('checkbox', { name: 'Bannière active' }).uncheck();
 
     const saveButtonAfterUncheck = page.getByRole('button', {
@@ -79,12 +76,12 @@ test.describe('Bannière info (support)', () => {
 
     // Re-navigate and confirm the banner has disappeared
     await page.goto('/');
-    await expect(
-      page.getByText('Maintenance prévue ce week-end')
-    ).toHaveCount(0);
+    await expect(page.getByText('Maintenance prévue ce week-end')).toHaveCount(
+      0
+    );
   });
 
-  test("La page /banniere est invisible pour un utilisateur sans rôle support", async ({
+  test('La page /banniere est invisible pour un utilisateur sans rôle support', async ({
     collectivites,
     page,
   }) => {
@@ -95,11 +92,8 @@ test.describe('Bannière info (support)', () => {
       },
     });
 
-    await page.goto('/');
-
-    // The "Super Admin" entry should not be in the nav at all
-    await expect(
-      page.getByRole('button', { name: 'Super Admin' })
-    ).toHaveCount(0);
+    // The Administration space, and its "Bannière" tool, are out of reach
+    await page.goto('/admin');
+    await expect(page.getByRole('link', { name: /^Bannière/ })).toHaveCount(0);
   });
 });

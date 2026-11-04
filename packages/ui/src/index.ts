@@ -27,6 +27,7 @@ export * from './design-system/BottomOkCancel';
 export * from './design-system/Breadcrumbs';
 export * from './design-system/Button';
 export * from './design-system/Card';
+export * from './design-system/link-list';
 export * from './design-system/Checkbox';
 export * from './design-system/ChecklistTable';
 export * from './design-system/Divider';

@@ -17,7 +17,7 @@ export class ImportPlanPom {
   }
 
   async goto() {
-    await this.page.goto('/plans/import', { waitUntil: 'domcontentloaded' });
+    await this.page.goto('/admin/plans/import', { waitUntil: 'domcontentloaded' });
     await expect(this.title).toBeVisible();
   }
 

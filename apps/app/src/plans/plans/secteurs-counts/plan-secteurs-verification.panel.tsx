@@ -17,7 +17,14 @@ import {
   SecteurReglementaire,
   secteurReglementaireEnumValues,
 } from '@tet/domain/plans';
-import { Alert, Button, Icon, InlineLink } from '@tet/ui';
+import {
+  Alert,
+  Button,
+  Icon,
+  InlineLink,
+  LinkList,
+  LinkListItem,
+} from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
 import {
@@ -140,25 +147,16 @@ const ListeFiches = ({
           {appLabels.planSecteursGroupeARenseigner}
           <span className="ml-2 font-normal text-grey-7">{fiches.length}</span>
         </h3>
-        <ul className="mb-0 pl-0 list-none border-t border-grey-3">
+        <LinkList framed={false} size="sm">
           {fiches.map((fiche) => (
-            <li key={fiche.ficheId} className="border-b border-grey-3">
-              <button
-                type="button"
-                className="w-full flex items-center justify-between gap-3 py-3 text-left text-sm text-primary-10 hover:bg-primary-1"
-                onClick={() => onSelect(fiche)}
-                data-test="plans.secteurs-counts-alert.fiche"
-              >
-                <TitreFiche fiche={fiche} />
-                <Icon
-                  icon="arrow-right-s-line"
-                  size="sm"
-                  className="shrink-0 text-grey-6"
-                />
-              </button>
-            </li>
+            <LinkListItem
+              key={fiche.ficheId}
+              onClick={() => onSelect(fiche)}
+              dataTest="plans.secteurs-counts-alert.fiche"
+              title={<TitreFiche fiche={fiche} />}
+            />
           ))}
-        </ul>
+        </LinkList>
       </section>
     )}
   </div>
