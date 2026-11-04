@@ -42,6 +42,31 @@ class ReadOnlyLlmRepository extends LlmRepository {
   }
 }
 
+const checkpoint: ImportCheckpoint = {
+  schemaVersion: 1,
+  completedStep: 'extraction',
+  currentDate: '2026-11-04T10:00:00Z',
+  llm: { strategy: 'whole-document', maxInputTokens: 60_000 },
+  progress: {
+    actions: [createEmptyExtractedAction({ titre: 'Rénover les bâtiments' })],
+    review: null,
+    tokens: emptyTokenUsage(),
+    stepStates: { ...initialStepStates(), reading: 'ok', extraction: 'ok' },
+    warnings: [],
+  },
+  chunks: ['Contenu privé du document'],
+  units: null,
+  skeleton: null,
+  source: { chunks: ['Contenu privé du document'], chunkIndexByAction: [0] },
+  documentStats: null,
+};
+
+const genericContract = {
+  profile: 'generic',
+  contractVersion: 1,
+  catalogueVersion: null,
+} as const;
+
 describe('Suivi des imports IA', () => {
   let app: INestApplication;
   let db: DatabaseService;
@@ -212,75 +237,165 @@ describe('Suivi des imports IA', () => {
     ).toMatchObject({ jobId: runningJob.id, status: 'running' });
   });
 
-  test('valide le checkpoint en base avant de proposer ou effectuer une reprise', async () => {
-    const context = await createContext();
-    const checkpoint: ImportCheckpoint = {
-      schemaVersion: 1,
-      completedStep: 'extraction',
-      currentDate: '2026-11-04T10:00:00Z',
-      llm: { strategy: 'whole-document', maxInputTokens: 60_000 },
-      progress: {
-        actions: [
-          createEmptyExtractedAction({ titre: 'Rénover les bâtiments' }),
-        ],
-        review: null,
-        tokens: emptyTokenUsage(),
-        stepStates: { ...initialStepStates(), reading: 'ok', extraction: 'ok' },
-        warnings: [],
+  test.each(['historique', 'explicite'] as const)(
+    'propose la reprise du contrat générique v1 %s conservé en base',
+    async (format) => {
+      const context = await createContext();
+      const {
+        reading: _reading,
+        scouting: _scouting,
+        hierarchy: _hierarchy,
+        secteurs: _secteurs,
+        ...historicalSteps
+      } = checkpoint.progress.stepStates;
+      const storedCheckpoint =
+        format === 'explicite'
+          ? { ...checkpoint, ...genericContract, documentKind: 'pdf' }
+          : {
+              ...checkpoint,
+              progress: { ...checkpoint.progress, stepStates: historicalSteps },
+            };
+      const contract = format === 'explicite' ? genericContract : {};
+      const job = await insertJob(context);
+      await db.db
+        .update(aiPlanImportJobTable)
+        .set({
+          checkpoint: sql`${JSON.stringify(storedCheckpoint)}::jsonb`,
+          options: { ...job.options, ...contract },
+        })
+        .where(eq(aiPlanImportJobTable.id, job.id));
+      const repository = app.get(AiPlanImportJobRepository);
+
+      expect(await repository.getCheckpoint(job.id)).toMatchObject({
+        success: true,
+        data: {
+          ...checkpoint,
+          ...contract,
+          progress: {
+            ...checkpoint.progress,
+            stepStates:
+              format === 'explicite'
+                ? checkpoint.progress.stepStates
+                : {
+                    ...historicalSteps,
+                    reading: 'skipped',
+                    scouting: 'skipped',
+                    hierarchy: 'skipped',
+                    secteurs: 'skipped',
+                  },
+          },
+        },
+      });
+      const status = await context.api.getAiImportStatus({ jobId: job.id });
+      expect(status.profile).toBe('generic');
+      expect(status.resumable).toBe(true);
+      expect(JSON.stringify(status)).not.toContain('Contenu privé du document');
+      expect(
+        await context.api.listRecentAiImports({
+          collectiviteId: context.collectiviteId,
+        })
+      ).toMatchObject({ items: [{ jobId: job.id, resumable: true }] });
+    }
+  );
+
+  test.each([
+    {
+      name: 'profil de checkpoint inconnu',
+      checkpointPatch: { profile: 'unknown' },
+    },
+    {
+      name: 'version de schéma inconnue',
+      checkpointPatch: { schemaVersion: 2 },
+    },
+    {
+      name: 'version de contrat inconnue',
+      checkpointPatch: { contractVersion: 2 },
+    },
+    {
+      name: 'profil annexe dans les options',
+      optionsPatch: { profile: 'annexe-3-electrification' },
+    },
+    {
+      name: 'version de contrat différente dans les options',
+      optionsPatch: { contractVersion: 2 },
+    },
+    {
+      name: 'catalogue incompatible dans les options',
+      optionsPatch: { catalogueVersion: 'annexe-v1' },
+    },
+    {
+      name: 'action incomplète',
+      checkpointPatch: {
+        progress: {
+          ...checkpoint.progress,
+          actions: [{ titre: 'Incomplète' }],
+        },
       },
-      chunks: ['Contenu privé du document'],
-      units: null,
-      skeleton: null,
-      source: {
-        chunks: ['Contenu privé du document'],
-        chunkIndexByAction: [0],
+    },
+    {
+      name: 'action sans rattachement source',
+      checkpointPatch: {
+        source: { ...checkpoint.source, chunkIndexByAction: [] },
       },
-      documentStats: null,
-    };
-    const job = await insertJob(context, { checkpoint });
-    const repository = app.get(AiPlanImportJobRepository);
+    },
+    {
+      name: 'rattachement vers une source inexistante',
+      checkpointPatch: {
+        source: { ...checkpoint.source, chunkIndexByAction: [1] },
+      },
+    },
+  ])(
+    'refuse la reprise sans modifier les données : $name',
+    async ({ checkpointPatch, optionsPatch }) => {
+      const context = await createContext();
+      const storedCheckpoint = { ...checkpoint, ...checkpointPatch };
+      const job = await insertJob(context);
+      await db.db
+        .update(aiPlanImportJobTable)
+        .set({
+          // Simule du JSON persistant que le type TypeScript ne peut pas garantir.
+          checkpoint: sql`${JSON.stringify(storedCheckpoint)}::jsonb`,
+          options: sql`${JSON.stringify({
+            ...job.options,
+            ...optionsPatch,
+          })}::jsonb`,
+        })
+        .where(eq(aiPlanImportJobTable.id, job.id));
+      const [before] = await db.db
+        .select()
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.id, job.id));
+      const repository = app.get(AiPlanImportJobRepository);
 
-    expect(await repository.getCheckpoint(job.id)).toEqual({
-      success: true,
-      data: checkpoint,
-    });
-    const status = await context.api.getAiImportStatus({ jobId: job.id });
-    expect(status.resumable).toBe(true);
-    expect(JSON.stringify(status)).not.toContain('Contenu privé du document');
-    expect(
-      await context.api.listRecentAiImports({
-        collectiviteId: context.collectiviteId,
-      })
-    ).toMatchObject({ items: [{ jobId: job.id, resumable: true }] });
-
-    // Simule du JSON persistant que le type TypeScript ne peut pas garantir.
-    const malformedCheckpoint = {
-      ...checkpoint,
-      progress: { ...checkpoint.progress, actions: [{ titre: 'Incomplète' }] },
-    };
-    await db.db
-      .update(aiPlanImportJobTable)
-      .set({
-        checkpoint: sql`${JSON.stringify(malformedCheckpoint)}::jsonb`,
-      })
-      .where(eq(aiPlanImportJobTable.id, job.id));
-
-    expect(await repository.getCheckpoint(job.id)).toEqual({
-      success: false,
-      error: 'INVALID_CHECKPOINT',
-    });
-    expect(
-      await context.api.getAiImportStatus({ jobId: job.id })
-    ).toMatchObject({ status: 'failed', resumable: false });
-    expect(
-      await context.api.listRecentAiImports({
-        collectiviteId: context.collectiviteId,
-      })
-    ).toMatchObject({ items: [{ jobId: job.id, resumable: false }] });
-    expect(
-      await db.db.transaction((tx) => repository.resumeFailed(job.id, tx))
-    ).toEqual({ success: false, error: 'JOB_NOT_RESUMABLE' });
-  });
+      expect(await repository.getCheckpoint(job.id)).toEqual(
+        checkpointPatch
+          ? {
+              success: false,
+              error: 'INVALID_CHECKPOINT',
+            }
+          : {
+              success: true,
+              data: checkpoint,
+            }
+      );
+      expect(
+        await context.api.getAiImportStatus({ jobId: job.id })
+      ).toMatchObject({ status: 'failed', resumable: false });
+      expect(
+        await context.api.listRecentAiImports({
+          collectiviteId: context.collectiviteId,
+        })
+      ).toMatchObject({ items: [{ jobId: job.id, resumable: false }] });
+      expect(
+        await db.db.transaction((tx) => repository.resumeFailed(job.id, tx))
+      ).toEqual({ success: false, error: 'JOB_NOT_RESUMABLE' });
+      const [after] = await db.db
+        .select()
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.id, job.id));
+      expect(after).toEqual(before);
+    }
+  );
 
   test('isole les collectivités, y compris les curseurs, et revérifie les droits de lecture', async () => {
     const context = await createContext();
@@ -293,6 +408,11 @@ describe('Suivi des imports IA', () => {
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
     await expect(
       other.api.listRecentAiImports({ collectiviteId: context.collectiviteId })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    await expect(
+      other.api.getAiImportCapabilities({
+        collectiviteId: context.collectiviteId,
+      })
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
     await expect(
       context.api.listRecentAiImports({
@@ -323,6 +443,11 @@ describe('Suivi des imports IA', () => {
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
     await expect(
       context.api.getCurrentAiImport({ collectiviteId: context.collectiviteId })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    await expect(
+      context.api.getAiImportCapabilities({
+        collectiviteId: context.collectiviteId,
+      })
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
 
