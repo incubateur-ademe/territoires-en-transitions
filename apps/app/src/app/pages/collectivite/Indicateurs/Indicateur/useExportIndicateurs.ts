@@ -1,11 +1,13 @@
-import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/utils/save-blob';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
+import {
+  ListDefinitionsInputFilters,
+  ListDefinitionsInputSort,
+} from '@tet/domain/indicateurs';
 import { Event, useEventTracker } from '@tet/ui';
 
 type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };

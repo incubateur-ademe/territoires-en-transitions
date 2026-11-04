@@ -1,7 +1,9 @@
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
-import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
-import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
+import {
+  ListDefinitionsInputFilters,
+  ListDefinitionsInputSort,
+} from '@tet/domain/indicateurs';
 import { Badge, cn } from '@tet/ui';
 
 type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };

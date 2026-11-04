@@ -1,10 +1,10 @@
 'use client';
 
+import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import {
   IndicateursListParamOption,
   makeCollectiviteIndicateursVueUrl,
 } from '@/app/app/paths';
-import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { IndicateurVue } from '@/app/indicateurs/vues/data/use-indicateur-vues';
 import {
   areIndicateurVueFiltersEqual,

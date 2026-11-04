@@ -9,10 +9,8 @@ import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lis
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
-import {
-  ListDefinitionsInputFilters,
-  useListIndicateurs,
-} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { IndicateurCardSkeleton } from '../IndicateurCard/indicateur-card.skeleton';

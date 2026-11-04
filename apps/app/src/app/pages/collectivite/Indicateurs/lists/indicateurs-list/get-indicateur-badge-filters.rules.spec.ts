@@ -1,4 +1,4 @@
-import type { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import { describe, expect, it } from 'vitest';
 import { getIndicateurBadgeFilters } from './get-indicateur-badge-filters.rules';
 
