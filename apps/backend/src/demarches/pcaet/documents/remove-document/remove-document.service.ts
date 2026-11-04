@@ -92,6 +92,7 @@ export class RemoveDemarchePcaetDocumentService {
       const pruned =
         await this.demarcheDocumentsRepository.pruneInertInclusions(
           demarche.id,
+          {},
           transaction
         );
 

@@ -766,8 +766,8 @@ export class DemarcheDocumentsRepository {
    */
   async pruneInertInclusions(
     demarcheId: number,
-    tx?: Transaction,
-    { documentIds }: { documentIds?: readonly string[] } = {}
+    { documentIds }: { documentIds?: readonly string[] } = {},
+    tx?: Transaction
   ): Promise<string[]> {
     const db = tx ?? this.databaseService.db;
 

@@ -73,4 +73,32 @@ COMMENT ON COLUMN public.demarche_document_detection.pages IS
 -- demarche_document.
 ALTER TABLE public.demarche_document_detection ENABLE ROW LEVEL SECURITY;
 
+-- ===========================================================================
+-- 4. Avant cette migration, le PLCF ne pouvait être déclaré compris que dans
+--    le programme d'actions, sans analyse. Sans détection positive, ces
+--    déclarations ne couvriraient plus le PLCF et le prochain retrait d'un
+--    document les effacerait : la déclaration de la collectivité en tient lieu.
+-- ===========================================================================
+INSERT INTO public.demarche_document_detection
+    (demarche_id, document_id, included_document_id, fichier_id, status,
+     is_included, justification, analyzed_at)
+SELECT declaration.demarche_id,
+       'pcaet_plan_actions',
+       'pcaet_plan_chaleur_froid',
+       plan_actions.fichier_id,
+       'done',
+       true,
+       'Déclaré compris par la collectivité avant l''analyse automatique.',
+       now()
+FROM public.demarche_document AS declaration
+JOIN public.demarche_document AS plan_actions
+    ON plan_actions.demarche_id = declaration.demarche_id
+   AND plan_actions.document_id = 'pcaet_plan_actions'
+   AND plan_actions.etape = 'amont'
+   AND plan_actions.fichier_id IS NOT NULL
+WHERE declaration.document_id = 'pcaet_plan_chaleur_froid'
+  AND declaration.etape = 'amont'
+  AND declaration.fichier_id IS NULL
+ON CONFLICT (demarche_id, document_id, included_document_id) DO NOTHING;
+
 COMMIT;

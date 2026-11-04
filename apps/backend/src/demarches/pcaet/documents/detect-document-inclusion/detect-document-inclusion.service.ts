@@ -237,8 +237,8 @@ export class DetectDocumentInclusionService {
       if (!isIncluded) {
         await this.demarcheDocumentsRepository.pruneInertInclusions(
           ref.id,
-          transaction,
-          { documentIds: [detection.includedDocumentId] }
+          { documentIds: [detection.includedDocumentId] },
+          transaction
         );
       }
 
