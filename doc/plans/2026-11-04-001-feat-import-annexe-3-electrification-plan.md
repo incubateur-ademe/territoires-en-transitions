@@ -86,9 +86,11 @@ Les points d'appui existent : [feature flags](../../packages/domain/src/utils/fe
 [TrackingService](../../apps/backend/src/utils/tracking/tracking.service.ts),
 [options des jobs](../../apps/backend/src/plans/ai-plan-import/models/ai-plan-import-job.ts)
 et [repository des jobs](../../apps/backend/src/plans/ai-plan-import/ai-plan-import-job.repository.ts).
-Le flag IA actuel ne protège pas l'enfilement côté serveur. Le type de plan
-Électrification est actuellement sélectionnable ; son alerte dans le formulaire
-n'est pas un verrou. L'ouverture ci-dessous concerne le nouveau profil d'import.
+Le flag IA actuel ne protège pas l'enfilement côté serveur. La création de
+plans Électrification est temporairement bloquée côté interface et backend
+par la [PR #5673](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5673).
+Les premiers lots conservent ce garde-fou. Son remplacement intervient dans
+les phases 5 et 6, sans ouvrir le profil annexe avant la phase 7.
 
 ## Phase 1 — Contrats compatibles et suivi persistant
 
@@ -142,7 +144,8 @@ et point d'accès depuis la liste des plans.
   Aucun sélecteur annexe ni nouveau comportement d'extraction dans cette PR.
 - Conditionner dès ce lot l'alerte actuelle qui promet l'import des axes,
   actions et indicateurs depuis l'annexe : ne plus proposer ce parcours lorsque
-  la capacité serveur est indisponible. La création Électrification ordinaire reste possible.
+  la capacité serveur est indisponible. Conserver le blocage temporaire de
+  création Électrification, y compris pour le parcours ordinaire.
 
 **Validation :** rechargement pendant/après échec, accès refusé, job terminé,
 reprise, conservation du compte rendu et parcours PCAET. Scénarios sans plan
@@ -385,6 +388,10 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   Le service et le contrôleur retournent `planId: null` pour ce profil ; le
   nettoyage n'appelle `deleteImportingPlan` que si un identifiant existe.
   Garder le plan provisoire du profil générique et son comportement PCAET.
+- Adapter le blocage temporaire de création Électrification dans les services
+  partagés pour permettre la transaction annexe uniquement après validation de
+  son admission. Aucun contournement par le type de plan, la duplication ou un
+  import générique ; le parcours ordinaire reste bloqué jusqu'à la phase 6.
 - Extraire/préparer hors transaction. Dans une transaction courte : revalider
   droits et références, créer plan/axes/fiches, ajouter liens, créer les
   personnalisés, écrire les valeurs autorisées, provenance, engagements/cibles
@@ -426,8 +433,10 @@ compte rendu. Réutiliser le suivi de la phase 1 et les lectures de la phase 2.
 - Proposer l'annexe à partir de la capacité serveur, des droits et de
   l'éligibilité. Envoyer son profil explicite ; adapter consignes et options
   pour conserver les sous-actions et références nécessaires. Ne pas envoyer
-  une annexe indisponible au pipeline générique. Les non-lauréats conservent
-  le plan Électrification ordinaire.
+  une annexe indisponible au pipeline générique. Remplacer aussi le blocage
+  temporaire du parcours ordinaire côté interface et backend pour permettre
+  aux non-lauréats de créer un plan Électrification sans initialisation
+  conventionnelle. Cela n'ouvre pas le profil annexe.
 - Présenter "Cible de l'annexe 3" séparément de l'objectif courant, avec unité
   et échéance, notamment dans les
   [indicateurs d'axe](../../apps/app/src/plans/plans/show-plan/plan-arborescence.view/axe/axe-indicateurs.tsx).
