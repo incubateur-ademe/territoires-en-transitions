@@ -37,6 +37,9 @@ pas qu'il est fusionné ou déployé. L'ouverture en production reste une étape
 
 Chaque PR contient son code, ses migrations éventuelles, ses tests et la mise
 à jour de sa documentation. Elle compile et fonctionne sans une PR suivante.
+Pour les nouveaux comportements, privilégier les suites e2e existantes et
+éviter de créer des fichiers de tests unitaires. Les tests d'import utilisent
+un faux LLM.
 Les premières phases livrent des capacités complètes mais gardent l'import
 annexe fermé. Il n'y a pas d'ouverture intermédiaire qui importerait seulement
 les engagements ou ignorerait les indicateurs des fiches B.
@@ -150,10 +153,12 @@ production en PR 5. Aucun texte extrait ni chemin de stockage n'est ajouté aux 
 - Exposer la capacité serveur, encore indisponible pour l'annexe. Ne pas
   conditionner la lecture des anciens jobs à l'ouverture du profil.
 
-**Vérifications effectuées :** 177 tests unitaires des contrats, admission, statut,
-worker, pipeline et reprise ; six tests tRPC avec vraie base et douze tests
-full flow avec faux LLM ; typechecks du backend, de ses tests et de l'app ;
-ESLint ciblé et vérification des liens locaux. Aucun appel réel au modèle.
+**Vérifications effectuées :** 16 tests tRPC avec vraie base et 14 tests
+full flow HTTP avec faux LLM, couvrant notamment l'admission, la réponse
+générique, les permissions et les checkpoints conservés en base. Aucun nouveau
+fichier de tests unitaires ; les suites unitaires existantes restent en place.
+Typechecks du backend, de ses tests et de l'app, ESLint ciblé et liens locaux
+vérifiés. Aucun appel réel au modèle.
 Le suivi dans l'app (1B) et le déploiement en production restent à faire.
 
 **Validation :** jobs historiques avec et sans plan provisoire ; checkpoint v1 ;

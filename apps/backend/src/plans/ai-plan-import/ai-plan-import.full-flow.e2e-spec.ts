@@ -16,6 +16,7 @@ import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.t
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { calculateDocumentHash } from '@tet/backend/collectivites/documents/store-document/calculate-document-hash.utils';
+import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -35,9 +36,17 @@ import { z, ZodType } from 'zod';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, count, eq, inArray } from 'drizzle-orm';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  onTestFinished,
+  test,
+  vi,
+} from 'vitest';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotifiedOnEnum } from '@tet/domain/utils';
 import { COMPLETE_PLAN_SECTEURS_QUEUE_NAME } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.queue';
@@ -534,8 +543,58 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   ): Promise<{ jobId: string; planId: number }> => {
     const response = await postImport({ fields, source, asOther });
     expect(response.status).toBe(201);
-    return response.body;
+    expect(response.body.profile).toBe('generic');
+    // Contrat actuellement lu par le client dans use-enqueue-ai-import.ts.
+    // Le discriminant ajouté ne doit pas empêcher ce parsing.
+    return z
+      .object({ jobId: z.string(), planId: z.number() })
+      .parse(response.body);
   };
+
+  test.each([
+    { profile: 'unknown', status: 400 },
+    { profile: 'annexe-3-electrification', status: 412 },
+  ])(
+    'refuse le profil $profile avant tout upload, plan ou job, même en super-admin',
+    async ({ profile, status }) => {
+      const upload = vi.spyOn(app.get(StoreDocumentService), 'uploadBuffer');
+      const store = vi.spyOn(app.get(DocumentStorageService), 'storeDocument');
+      onTestFinished(() => {
+        upload.mockRestore();
+        store.mockRestore();
+      });
+      const readCounts = () =>
+        Promise.all([
+          db.db
+            .select({ count: count() })
+            .from(aiPlanImportJobTable)
+            .where(eq(aiPlanImportJobTable.collectiviteId, collectiviteId)),
+          db.db
+            .select({ count: count() })
+            .from(axeTable)
+            .where(eq(axeTable.collectiviteId, collectiviteId)),
+          db.db
+            .select({ count: count() })
+            .from(bibliothequeFichierTable)
+            .where(eq(bibliothequeFichierTable.collectiviteId, collectiviteId)),
+        ]);
+      const before = await readCounts();
+      const queued = aiImportQueueJobs.length;
+      const llmCalls = fakeLlmControl.calls.length;
+
+      const response = await postImport({
+        fields: { profile, planName: 'Import indisponible' },
+        source: csvSource(profile),
+      });
+
+      expect(response.status).toBe(status);
+      expect(await readCounts()).toEqual(before);
+      expect(upload).not.toHaveBeenCalled();
+      expect(store).not.toHaveBeenCalled();
+      expect(aiImportQueueJobs).toHaveLength(queued);
+      expect(fakeLlmControl.calls).toHaveLength(llmCalls);
+    }
+  );
 
   test('crée le plan en import au lancement, puis le remplit à la fin du job', async () => {
     const source = csvSource('complet');
@@ -568,6 +627,11 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     ]);
 
     const job = await readJob(jobId);
+    expect(job.options).toMatchObject({
+      profile: 'generic',
+      contractVersion: 1,
+      catalogueVersion: null,
+    });
     expect(job.createdPlanId).toBe(createdAtEnqueue);
     expect(job.fichierId).not.toBeNull();
     const [fichier] = await db.db
@@ -863,6 +927,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       );
     const { jobId, planId } = await enqueue(
       {
+        profile: 'generic',
         planName: 'Plan import IA PCAET',
         planType: String(pcaetType.id),
         withVerifications: 'false',
@@ -870,6 +935,12 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       },
       { source: csvSource('pcaet') }
     );
+    expect((await readJob(jobId)).options).toMatchObject({
+      profile: 'generic',
+      contractVersion: 1,
+      catalogueVersion: null,
+      withSecteurs: true,
+    });
 
     await app.get(GenerateImportDraftService).generate(jobId);
 
