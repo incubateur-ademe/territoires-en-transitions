@@ -209,6 +209,7 @@ export function areAuditPrerequisitesMet(
 
   // Pour les autres cas, il faut vérifier le fichier déposé
   const expectedDocuments = getExpectedDocuments({
+    sujet,
     isCot: parcours.isCot,
     premiereEtoileObtenue: parcours.labellisation !== null,
     etoile: etoiles ?? EtoileEnum.PREMIERE_ETOILE,

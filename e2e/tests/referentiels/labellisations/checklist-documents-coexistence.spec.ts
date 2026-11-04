@@ -24,13 +24,12 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     const collectivite = collectivites.getCollectivite();
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
     await expect(
       auditLabellisationPom.ajouterActeEngagementButton
     ).toBeVisible();
-    await expect(
-      auditLabellisationPom.candidatureDocumentsTitle
-    ).toBeVisible();
+    await expect(auditLabellisationPom.candidatureDocumentsTitle).toBeVisible();
   });
 
   test("Une preuve sans objet n'apparait dans aucune section", async ({
@@ -49,10 +48,9 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     );
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
-    await expect(
-      auditLabellisationPom.candidatureDocumentsTitle
-    ).toBeVisible();
+    await expect(auditLabellisationPom.candidatureDocumentsTitle).toBeVisible();
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(
       auditLabellisationPom.ajouterActeEngagementButton
@@ -66,6 +64,7 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     const collectivite = collectivites.getCollectivite();
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.uploadCandidatureDocument();
 
     await expect(
@@ -83,14 +82,13 @@ test.describe("Checklist audit-labellisation — acte d'engagement et documents 
     const collectivite = collectivites.getCollectivite();
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.uploadActeEngagement();
 
     await expect(
       auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
     ).toBeVisible();
-    await expect(
-      auditLabellisationPom.candidatureDocumentsRow
-    ).toBeVisible();
+    await expect(auditLabellisationPom.candidatureDocumentsRow).toBeVisible();
     await expect(
       auditLabellisationPom.candidatureDocumentsRow.getByText(
         'document_test.pdf'

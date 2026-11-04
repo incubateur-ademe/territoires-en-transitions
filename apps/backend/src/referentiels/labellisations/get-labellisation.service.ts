@@ -28,6 +28,7 @@ import {
   ReferentRolesDefined,
   ScoreSnapshot,
   toReferentRolesDefined,
+  toReponseAttendue,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
@@ -649,9 +650,11 @@ from s_etoile s
   async getParcoursLabellisation({
     collectiviteId,
     referentielId,
+    etoileVisee,
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
+    etoileVisee?: Etoile;
   }): Promise<Result<ParcoursLabellisation, GetLabellisationError>> {
     const snapshotResult = await this.getCurrentSnapshot(
       collectiviteId,
@@ -680,6 +683,7 @@ from s_etoile s
       currentEtoile: labellisation?.etoiles,
       nextEtoile: labellisation?.prochaineEtoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
+      etoileVisee,
     });
 
     const conditionFichiers: ConditionFichiers = {
@@ -765,10 +769,12 @@ from s_etoile s
     currentEtoile = EtoileEnum.PREMIERE_ETOILE,
     nextEtoile = EtoileEnum.PREMIERE_ETOILE,
     scoreFait,
+    etoileVisee,
   }: {
     currentEtoile: number | undefined;
     nextEtoile: number | undefined;
     scoreFait: number | null | undefined;
+    etoileVisee: Etoile | undefined;
   }) {
     const etoilesDefinitions =
       await this.labellisationService.getEtoileDefinitions();
@@ -780,12 +786,14 @@ from s_etoile s
           ?.etoile ?? EtoileEnum.PREMIERE_ETOILE
       : EtoileEnum.PREMIERE_ETOILE;
 
-    const nbEtoilesCibles = Math.max(
-      currentEtoile,
-      nextEtoile,
-      maxEligibleEtoile,
-      EtoileEnum.PREMIERE_ETOILE
-    ) as Etoile;
+    const nbEtoilesCibles =
+      etoileVisee ??
+      (Math.max(
+        currentEtoile,
+        nextEtoile,
+        maxEligibleEtoile,
+        EtoileEnum.PREMIERE_ETOILE
+      ) as Etoile);
 
     const etoileCible = etoilesDefinitions.find(
       (etoile) => etoile.etoile === nbEtoilesCibles
@@ -855,33 +863,17 @@ function addIsScoreConditionSatisfied<
         ? parentSatisfyRatioFait || parentSatisfyRatioFaitPlusProgramme
         : actionSatisfyRatioFait || actionSatisfyRatioFaitPlusProgramme;
 
-    let statutOrScore;
-
-    if (
-      actionCondition.minRealisePercentage === 100 &&
-      actionCondition.minProgrammePercentage === null
-    ) {
-      statutOrScore = 'Fait';
-    } else if (
-      actionCondition.minRealisePercentage === 100 &&
-      actionCondition.minProgrammePercentage === 100
-    ) {
-      statutOrScore = 'Programmé ou fait';
-    } else if (
-      actionCondition.minRealisePercentage !== null &&
-      actionCondition.minProgrammePercentage === null
-    ) {
-      statutOrScore = `${actionCondition.minRealisePercentage}% fait minimum`;
-    } else {
-      statutOrScore = `${actionCondition.minRealisePercentage}% fait minimum ou ${actionCondition.minProgrammePercentage}% programmé minimum`;
-    }
-
     return {
       ...actionCondition,
       atteint: isConditionSatisfied,
       proportionFait: actionScore.ratioFait,
       proportionProgramme: actionScore.ratioProgramme,
-      statutOuScore: statutOrScore,
+      reponseAttendue: toReponseAttendue({
+        referentiel: actionCondition.referentielId,
+        actionId: actionCondition.actionId,
+        minRealisePercentage: actionCondition.minRealisePercentage,
+        minProgrammePercentage: actionCondition.minProgrammePercentage,
+      }),
     };
   };
 }

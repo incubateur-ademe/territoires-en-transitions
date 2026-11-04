@@ -2,7 +2,7 @@ import {
   SujetDemande,
   SujetDemandeEnum,
 } from '../labellisation-demande.schema';
-import { Etoile, EtoileEnum } from '../labellisation-etoile.enum.schema';
+import { EtoileEnum } from '../labellisation-etoile.enum.schema';
 import {
   areAuditPrerequisitesMet,
   AuditPrerequisitesError,
@@ -41,12 +41,11 @@ const listAvailableSujets = (isCOT: boolean): readonly SujetDemande[] =>
 
 const toAuditTypeOption = (
   parcours: ParcoursForAuditPrerequisites,
-  sujet: SujetDemande,
-  maximumRequestableStar: Etoile
+  sujet: SujetDemande
 ): AuditTypeOption => {
   if (
     requiresAuditableStar(sujet) &&
-    maximumRequestableStar < EtoileEnum.DEUXIEME_ETOILE
+    parcours.etoiles < EtoileEnum.DEUXIEME_ETOILE
   ) {
     return {
       sujet,
@@ -58,7 +57,7 @@ const toAuditTypeOption = (
   const prerequisites = areAuditPrerequisitesMet(
     parcours,
     sujet,
-    requiresAuditableStar(sujet) ? maximumRequestableStar : null
+    requiresAuditableStar(sujet) ? parcours.etoiles : null
   );
 
   if (prerequisites.met) {
@@ -69,8 +68,8 @@ const toAuditTypeOption = (
 
 export const listAuditTypeOptions = (
   parcours: ParcoursForAuditPrerequisites,
-  context: { isCOT: boolean; maximumRequestableStar: Etoile }
+  context: { isCOT: boolean }
 ): AuditTypeOption[] =>
   listAvailableSujets(context.isCOT).map((sujet) =>
-    toAuditTypeOption(parcours, sujet, context.maximumRequestableStar)
+    toAuditTypeOption(parcours, sujet)
   );

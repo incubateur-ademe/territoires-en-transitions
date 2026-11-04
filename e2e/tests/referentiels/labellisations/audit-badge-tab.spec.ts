@@ -269,6 +269,7 @@ test.describe("Badge d'état d'audit : tous les états CT vs auditeur vs visiteu
     );
 
     await viewAs(editeurUser, auditLabellisationPom, collectiviteId);
+    await auditLabellisationPom.demanderAuditCotSansLabellisation();
     await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
     await expect(auditBadgeTab(page, /Audit terminé/)).toHaveCount(0);
 
