@@ -18,7 +18,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
 ## Avancement
 
-- [x] PR 1A — Contrats des profils et API de suivi : implémentée et vérifiée, en revue.
+- [x] PR 1A — Contrats des profils et API de suivi : [#5702](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5702), implémentée et vérifiée, en revue.
 - [ ] PR 1B — Suivi sans dépendre d'un plan.
 - [ ] PR 2A — Stockage métier et lectures.
 - [ ] PR 2B — Catalogue et résolution déterministe.
