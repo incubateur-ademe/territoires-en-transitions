@@ -7,7 +7,7 @@ Dernière mise à jour : 2026-11-04
 ## Statut
 
 Proposé. Les décisions techniques ci-dessous restent à relire par l'équipe.
-Le suivi d'E07 par deux indicateurs existants est confirmé par l'équipe data.
+Le choix des indicateurs d'E06, E07 et E08 est confirmé par l'équipe data.
 Les correspondances restant à valider sont détaillées en fin de document.
 
 ## Contexte
@@ -119,7 +119,9 @@ Pour les indicateurs d'engagement, Émeline indique le 4 novembre 2026 la colonn
 "ID et Titre indicateur TeT v2" de la
 [liste des 12 engagements](https://app.notion.com/p/3d66523d57d7805c8206d00be2545ea1).
 Cette colonne donne les identifiants de référence TeT à résoudre vers les
-définitions existantes, pas leurs ID numériques en base. Les deux sources ne
+définitions du catalogue, pas leurs ID numériques en base. Certains identifiants
+désignent des définitions dont la création est annoncée ; leur présence dans
+Notion ne garantit pas leur disponibilité dans TeT. Les deux sources ne
 sont pas interchangeables : seuls certains indicateurs sont communs, selon sa
 [réponse](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d).
 Les correspondances entre codes Grist et identifiants TeT restent à compléter
@@ -192,6 +194,30 @@ Persister les engagements dans des relations dédiées au plan :
 | Initialisation Électrification | `planId`, collectivité, job source, fichier/hash, version du catalogue, auteur et date |
 | Engagement retenu | `(planId, codeEngagement)`, axe associé ; fiche de suivi pour E03/E12 |
 | Cible d'engagement | `(planId, codeEngagement, codeCible)`, indicateur associé, valeur nullable, unité et échéance |
+
+Pour E06 et E08, la [réponse d'Émeline du 4 novembre 2026](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d)
+remplace les indicateurs d'immatriculations annuelles `part_v_h_im.c` et
+`part_v_h_im.ef` par des indicateurs de parc. Les lignes mises à jour dans la
+colonne "ID et Titre indicateur TeT v2" donnent les références suivantes :
+
+| Engagement | `identifiantReferentiel` TeT | Intitulé TeT | Unité |
+| --- | --- | --- | --- |
+| [E06](https://app.notion.com/p/3d66523d57d7807a8703ef4460177db4) | `v_particulier_elec` | Part des voitures électriques dans le parc de voitures particulières | % |
+| [E08](https://app.notion.com/p/3d66523d57d780999cded9124716b3ed) | `autobus_autocar_elec` | Part des autobus et autocars électriques dans le parc roulant | % |
+
+E06 porte une cible dans l'axe 5, E08 une cible dans l'axe 8. Pour E08, le
+périmètre retenu couvre les autobus et les autocars. Émeline prévoit de
+s'appuyer sur `autobus_elec` et `autocar_elec` ; la définition et sa formule
+relèvent de l'équipe data. L'import lie l'indicateur composé sans recalculer
+sa valeur ni créer deux cibles à partir de ses composantes.
+
+Ces identifiants sont confirmés, mais les réponses annoncent la création des
+définitions et la mise à jour de Notion, sans confirmer leur disponibilité
+dans TeT. Vérifier leur intégration avant d'ouvrir l'import aux engagements
+concernés. Une définition attendue absente bloque avant création du plan,
+avec un diagnostic de configuration à traiter par l'équipe ; la collectivité
+n'a pas à corriger une annexe valide. Ne pas créer d'indicateur personnalisé
+en remplacement ni utiliser les anciens indicateurs d'immatriculations.
 
 Pour E07, Émeline [confirme le 4 novembre 2026](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78163bb61001cef0db51c)
 deux indicateurs déjà existants dans TeT. La
@@ -372,6 +398,10 @@ tests déjà exécutés :
   de plan ; une cible absente reste vide ; aucune valeur n'est inventée.
 - Une URL réutilise le même objet et conserve champs, valeurs et autres liens.
   Une cible conventionnelle coexiste avec un objectif 2030 déjà renseigné.
+- E06 et E08 lient respectivement `v_particulier_elec` et `autobus_autocar_elec`
+  dans les axes 5 et 8, avec une cible chacun. Une définition manquante bloque
+  avant création du plan, sans substitution par un indicateur d'immatriculations
+  ou personnalisé, et sans demander de corriger l'annexe.
 - E07 crée deux cibles distinctes liées à `s_26` et `s_26.a` dans l'axe 6,
   sans recréer les indicateurs ni modifier leurs valeurs ou formules. Une cible
   vide ne supprime pas l'autre ; le total et sa partie rapide ne sont pas additionnés.
@@ -393,14 +423,12 @@ La validation qualitative sur des annexes représentatives reste à lancer
 manuellement selon le [guide d'évaluation](../../apps/backend/src/plans/ai-plan-import/eval/README.md).
 Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
 
-## Questions ouvertes avant implémentation
+## Questions ouvertes et dépendances avant implémentation
 
-1. Confirmer le choix des indicateurs d'E06 et E08 : la colonne v2 indique
-   `part_v_h_im.c` et `part_v_h_im.ef`, portant sur la part électrique des
-   immatriculations annuelles, alors que les engagements visent le parc de
-   véhicules particuliers et le parc d'autobus à 2030. Le second indicateur
-   couvre aussi les cars. La correspondance est documentée ; son adéquation
-   au périmètre des cibles reste à confirmer avec l'équipe data.
+1. Vérifier avec l'équipe data la disponibilité de `v_particulier_elec` et
+   `autobus_autocar_elec` dans le catalogue TeT, avec leurs unités, périodicités
+   et dépendances de calcul. Le choix métier d'E06/E08 est résolu ; l'intégration
+   des nouvelles définitions reste une dépendance de livraison.
 2. Valider une version exploitable du catalogue et compléter le mapping
    Grist vers TeT : codes, sous-axes, sous-actions, unités et liens d'aides.
    Cela inclut l'éventuelle correspondance de `6-a`/`6-b` avec les indicateurs
