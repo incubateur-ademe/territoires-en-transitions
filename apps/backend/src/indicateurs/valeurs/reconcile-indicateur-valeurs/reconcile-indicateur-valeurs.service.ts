@@ -145,26 +145,26 @@ export class ReconcileIndicateurValeursService {
   }
 
   reconcileCollectivite(
-    input: { collectiviteId: number; definitions: IndicateurPredefini[] },
+    input: { collectiviteId: number; indicateurs: IndicateurPredefini[] },
     context: IndicateurValeursWriteContext
   ) {
     return captureIndicateurValeursResult(() =>
       this.reconcileInTransaction(
         input.collectiviteId,
-        input.definitions,
+        input.indicateurs,
         context.tx
       )
     );
   }
   private async reconcileInTransaction(
     collectiviteId: number,
-    definitions: IndicateurPredefini[],
+    indicateursPredefinis: IndicateurPredefini[],
     tx: Transaction
   ): Promise<RecomputedCollectiviteIndicateurValeurs> {
     const recomputed =
       await this.computeValeursService.recomputeCollectiviteCalculatedIndicateurValeurs(
         collectiviteId,
-        definitions.map(({ id }) => id),
+        indicateursPredefinis.map(({ id }) => id),
         tx
       );
 
@@ -222,12 +222,12 @@ export class ReconcileIndicateurValeursService {
   }
 
   recomputeAll(
-    input: { collectiviteId?: number; definitions?: IndicateurPredefini[] },
+    input: { collectiviteId?: number; indicateurs?: IndicateurPredefini[] },
     context: IndicateurValeursContext
   ) {
     return captureIndicateurValeursResult(async () => {
-      const definitions =
-        input.definitions ??
+      const indicateurs =
+        input.indicateurs ??
         getIndicateurDataOrThrow(
           await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
             {},
@@ -235,13 +235,13 @@ export class ReconcileIndicateurValeursService {
           )
         );
       const sourceIdentifiants =
-        await this.computeValeursService.getAllSourceIdentifiants(definitions);
+        await this.computeValeursService.getAllSourceIdentifiants(indicateurs);
       const collectiviteIds = input.collectiviteId
         ? [input.collectiviteId]
         : await this.repository.listRecomputeCandidateCollectiviteIds(
             {
               sourceIdentifiants,
-              computedIndicateurIds: definitions.map(({ id }) => id),
+              computedIndicateurIds: indicateurs.map(({ id }) => id),
             },
             context.tx
           );
@@ -251,7 +251,7 @@ export class ReconcileIndicateurValeursService {
         const result = await this.transactionManager.executeSingle(
           async (tx) =>
             this.reconcileCollectivite(
-              { collectiviteId, definitions },
+              { collectiviteId, indicateurs },
               { ...context, tx }
             ),
           context.tx

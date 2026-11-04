@@ -699,7 +699,7 @@ export class ListIndicateursRepository {
       whereConditions.push(or(...searchConditions));
     }
 
-    const definitionsQuery = this.databaseService.db
+    const indicateursQuery = this.databaseService.db
       .select({
         ...omit(getTableColumns(indicateurDefinitionTable), [
           'createdAt',
@@ -894,12 +894,12 @@ export class ListIndicateursRepository {
     // Stable tiebreaker to ensure consistent pagination across pages.
     orderByExpressions.push(sql`${indicateurDefinitionTable.id} asc`);
 
-    definitionsQuery
+    indicateursQuery
       .orderBy(...orderByExpressions)
       .limit(queryOptions.limit)
       .offset((queryOptions.page - 1) * queryOptions.limit);
 
-    return validateNatures(await definitionsQuery);
+    return validateNatures(await indicateursQuery);
   }
 
   async getPath(indicateurId: number) {

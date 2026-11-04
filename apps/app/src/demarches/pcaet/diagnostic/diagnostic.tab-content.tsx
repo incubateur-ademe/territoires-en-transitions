@@ -11,7 +11,7 @@ import { DiagnosticVulnerabiliteTab } from './indicateurs-grid/diagnostic.vulner
 type Props = {
   config: PcaetDiagnosticIndicateurParentConfig | null;
   vulnerabilite: PcaetDiagnosticVulnerabilite | null;
-  definitions: PcaetDiagnostic['indicateurDefinitions'];
+  indicateurs: PcaetDiagnostic['indicateurDefinitions'];
   valeurs: PcaetDiagnostic['indicateurValeurs'];
   demarcheId: number;
   isReadonly: boolean;
@@ -20,7 +20,7 @@ type Props = {
 export const DiagnosticTabContent = ({
   config,
   vulnerabilite,
-  definitions,
+  indicateurs,
   valeurs,
   demarcheId,
   isReadonly,
@@ -43,7 +43,7 @@ export const DiagnosticTabContent = ({
     <DiagnosticIndicateurTabContent
       demarcheId={demarcheId}
       config={config}
-      definitions={definitions}
+      indicateurs={indicateurs}
       valeurs={valeurs}
       isReadonly={isReadonly}
     />

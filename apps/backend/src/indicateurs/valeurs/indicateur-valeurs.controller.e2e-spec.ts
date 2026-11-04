@@ -218,7 +218,7 @@ describe('Indicateurs', () => {
   });
 
   it(`Une intégration service-role peut alimenter une source open-data d'un indicateur sans valeur utilisateur`, async () => {
-    const [protectedDefinition] = await databaseService.db
+    const [protectedIndicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         identifiantReferentiel: `test_${randomUUID()}`,
@@ -231,10 +231,10 @@ describe('Indicateurs', () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, protectedDefinition.id));
+        .where(eq(indicateurValeurTable.indicateurId, protectedIndicateur.id));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, protectedDefinition.id));
+        .where(eq(indicateurDefinitionTable.id, protectedIndicateur.id));
     });
 
     const response = await request(app.getHttpServer())
@@ -244,7 +244,7 @@ describe('Indicateurs', () => {
         valeurs: [
           {
             collectiviteId,
-            indicateurId: protectedDefinition.id,
+            indicateurId: protectedIndicateur.id,
             dateValeur: '2026-01-01',
             metadonneeId: rareMetadataId,
             resultat: 42,
@@ -256,7 +256,7 @@ describe('Indicateurs', () => {
     expect(response.body.valeurs).toEqual([
       expect.objectContaining({
         collectiviteId,
-        indicateurId: protectedDefinition.id,
+        indicateurId: protectedIndicateur.id,
         dateValeur: '2026-01-01',
         metadonneeId: rareMetadataId,
         resultat: 42,

@@ -86,16 +86,16 @@ export class ValidateIndicateurValeursWriteService {
       const indicateurIds = [
         ...new Set(input.valeurs.map((v) => v.indicateurId)),
       ];
-      const definitions = getIndicateurDataOrThrow(
+      const indicateurs = getIndicateurDataOrThrow(
         await this.indicateurLockRepository.lockIndicateurs(indicateurIds, tx)
       );
-      const definitionsById = keyBy(definitions, (d) => d.id);
+      const indicateursById = keyBy(indicateurs, (d) => d.id);
       const enforceUserRules =
         !isUserTrusted && user?.role === AuthRole.AUTHENTICATED;
-      if (enforceUserRules) assertUserIndicateurValeursAllowed(definitions);
+      if (enforceUserRules) assertUserIndicateurValeursAllowed(indicateurs);
       await this.assertIndicateurValeursAvailableForWrite(
         input.valeurs,
-        definitionsById,
+        indicateursById,
         enforceUserRules,
         tx
       );
@@ -115,7 +115,7 @@ export class ValidateIndicateurValeursWriteService {
           .map(({ id }) => id)
       );
       for (const valeur of input.valeurs) {
-        const definition = definitionsById[valeur.indicateurId];
+        const indicateur = indicateursById[valeur.indicateurId];
         if (enforceUserRules && valeur.metadonneeId != null) {
           const authorization = !context.isUserTrusted
             ? context.pcaetMetadataAuthorization
@@ -133,7 +133,7 @@ export class ValidateIndicateurValeursWriteService {
         if (
           (valeur.metadonneeId == null ||
             localMetadataIds.has(valeur.metadonneeId)) &&
-          definition.periodicite !==
+          indicateur.periodicite !==
             (valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE)
         ) {
           throw new BadRequestException(
@@ -141,12 +141,12 @@ export class ValidateIndicateurValeursWriteService {
           );
         }
       }
-      return definitionsById;
+      return indicateursById;
     });
   }
   private async assertIndicateurValeursAvailableForWrite(
     valeurs: IndicateurValeurCreate[],
-    definitionsById: Partial<Record<number, Indicateur>>,
+    indicateursById: Partial<Record<number, Indicateur>>,
     enforceGroupementMembership: boolean,
     tx: Transaction
   ): Promise<void> {
@@ -157,24 +157,24 @@ export class ValidateIndicateurValeursWriteService {
     }> = [];
 
     for (const valeur of valeurs) {
-      const definition = definitionsById[valeur.indicateurId];
-      if (!definition) {
+      const indicateur = indicateursById[valeur.indicateurId];
+      if (!indicateur) {
         throw new BadRequestException(
           `Indicateur definition not found for id ${valeur.indicateurId}`
         );
       }
       if (
-        isIndicateurPerso(definition) &&
-        definition.collectiviteId !== valeur.collectiviteId
+        isIndicateurPerso(indicateur) &&
+        indicateur.collectiviteId !== valeur.collectiviteId
       ) {
         throw new BadRequestException(
           `Indicateur ${valeur.indicateurId} non disponible pour la collectivité ${valeur.collectiviteId}`
         );
       }
-      if (enforceGroupementMembership && isNotNil(definition.groupementId)) {
+      if (enforceGroupementMembership && isNotNil(indicateur.groupementId)) {
         groupementScopes.push({
           indicateurId: valeur.indicateurId,
-          groupementId: definition.groupementId,
+          groupementId: indicateur.groupementId,
           collectiviteId: valeur.collectiviteId,
         });
       }

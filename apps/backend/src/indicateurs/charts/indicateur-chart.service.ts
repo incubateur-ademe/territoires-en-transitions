@@ -43,18 +43,18 @@ export class IndicateurChartService {
 
   private async getIndicateursSegmentationValeurs(
     collectiviteId: number,
-    definition: Pick<IndicateurDetaille, 'estAgregation' | 'enfants'>,
+    indicateur: Pick<IndicateurDetaille, 'estAgregation' | 'enfants'>,
     segmentation: IndicateurChartSegmentation
   ): Promise<IndicateurChartSegmentationWithValeurs | null> {
     const indicateursEnfantIds =
-      definition.estAgregation && definition.enfants?.length
-        ? definition.enfants.map((e) => e.id)
+      indicateur.estAgregation && indicateur.enfants?.length
+        ? indicateur.enfants.map((e) => e.id)
         : [];
     if (!indicateursEnfantIds.length) {
       return null;
     }
-    const indicateursEnfantDefinitions =
-      await this.listIndicateursService.listIndicateurs({
+    const indicateursEnfant = await this.listIndicateursService.listIndicateurs(
+      {
         collectiviteId,
         filters: {
           indicateurIds: indicateursEnfantIds,
@@ -63,10 +63,11 @@ export class IndicateurChartService {
           page: 1,
           limit: indicateursEnfantIds.length,
         },
-      });
+      }
+    );
 
     const { orderedAvailableSegmentations, indicateursBySegmentation } =
-      groupIndicateursByOrderedSegmentation(indicateursEnfantDefinitions.data);
+      groupIndicateursByOrderedSegmentation(indicateursEnfant.data);
 
     if (!segmentation.type) {
       this.logger.log(
@@ -150,7 +151,7 @@ export class IndicateurChartService {
       );
     }
 
-    const definition = indicateurId
+    const indicateur = indicateurId
       ? await this.listIndicateursService.getIndicateur({
           indicateurId,
           collectiviteId,
@@ -174,7 +175,7 @@ export class IndicateurChartService {
         .listIndicateurValeurs(
           {
             collectiviteId,
-            indicateurIds: [definition.id],
+            indicateurIds: [indicateur.id],
             sources: sources?.map((s) => s.sourceId),
           },
           { isUserTrusted: true }
@@ -184,7 +185,7 @@ export class IndicateurChartService {
       includeReferenceValeurs
         ? this.valeurReferenceService.getValeursReferenceForDefinition({
             collectiviteId,
-            definition,
+            indicateur,
             collectiviteAvecType,
             personnalisationReponses,
           })
@@ -194,8 +195,8 @@ export class IndicateurChartService {
         ? this.valeursMoyenneService.getMoyenneCollectivites(
             {
               collectiviteId,
-              indicateurId: definition.id,
-              periodicite: definition.periodicite,
+              indicateurId: indicateur.id,
+              periodicite: indicateur.periodicite,
             },
             user
           )
@@ -204,7 +205,7 @@ export class IndicateurChartService {
       includeSegmentation
         ? this.getIndicateursSegmentationValeurs(
             collectiviteId,
-            definition,
+            indicateur,
             includeSegmentation
           )
         : Promise.resolve(null),

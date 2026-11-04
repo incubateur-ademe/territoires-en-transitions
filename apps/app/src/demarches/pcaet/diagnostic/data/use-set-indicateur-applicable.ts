@@ -47,10 +47,10 @@ export const useSetIndicateurApplicable = (
       }
       return {
         ...old,
-        indicateurDefinitions: old.indicateurDefinitions.map((definition) =>
-          definition.id === indicateurId
-            ? { ...definition, isApplicable }
-            : definition
+        indicateurDefinitions: old.indicateurDefinitions.map((indicateur) =>
+          indicateur.id === indicateurId
+            ? { ...indicateur, isApplicable }
+            : indicateur
         ),
       };
     });
@@ -73,7 +73,7 @@ export const useSetIndicateurApplicable = (
         const previousIsApplicable = queryClient
           .getQueryData(queryKeyOfDiagnostic)
           ?.indicateurDefinitions.find(
-            (definition) => definition.id === indicateurId
+            (indicateur) => indicateur.id === indicateurId
           )?.isApplicable;
 
         setIsApplicableInCache(indicateurId, isApplicable);

@@ -152,14 +152,14 @@ export class FicheExportPayloadService {
     if (indicateurIds.length === 0) {
       return [];
     }
-    const definitions = getIndicateurDataOrThrow(
+    const indicateurs = getIndicateurDataOrThrow(
       await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
         { indicateurIds }
       )
     );
-    return definitions.map((definition) => ({
-      ...definition,
-      estPerso: isIndicateurPerso(definition),
+    return indicateurs.map((indicateur) => ({
+      ...indicateur,
+      estPerso: isIndicateurPerso(indicateur),
       hasOpenData: false,
     }));
   }

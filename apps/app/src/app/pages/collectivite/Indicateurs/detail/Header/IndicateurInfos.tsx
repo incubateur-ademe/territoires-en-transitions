@@ -11,21 +11,21 @@ import {
 } from './IndicateurPilotes';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   isPerso: boolean;
   composeSansAgregation: boolean;
   isReadonly: boolean;
 };
 
 export const hasIndicateurInfos = ({
-  definition,
+  indicateur,
   isPerso,
   composeSansAgregation,
   isReadonly,
 }: Props): boolean => {
-  const { participationScore, hasOpenData } = definition;
-  const pilotes = definition.pilotes ?? [];
-  const services = definition.services ?? [];
+  const { participationScore, hasOpenData } = indicateur;
+  const pilotes = indicateur.pilotes ?? [];
+  const services = indicateur.services ?? [];
   return (
     !isReadonly ||
     !composeSansAgregation ||
@@ -37,30 +37,30 @@ export const hasIndicateurInfos = ({
 };
 
 export const IndicateurInfos = ({
-  definition,
+  indicateur,
   isPerso,
   composeSansAgregation,
   isReadonly,
 }: Props) => {
-  const { participationScore, hasOpenData } = definition;
+  const { participationScore, hasOpenData } = indicateur;
 
-  const showPilotes = !isReadonly || (definition.pilotes ?? []).length > 0;
-  const showServices = !isReadonly || (definition.services ?? []).length > 0;
+  const showPilotes = !isReadonly || (indicateur.pilotes ?? []).length > 0;
+  const showServices = !isReadonly || (indicateur.services ?? []).length > 0;
   const showBadges = !composeSansAgregation && (isPerso || hasOpenData);
 
   const items: ReactNode[] = [
     !composeSansAgregation && (
       <IndicateurPeriodiciteBadge
-        periodicite={definition.periodicite}
+        periodicite={indicateur.periodicite}
         participationScore={Boolean(participationScore)}
       />
     ),
     showPilotes && (
-      <IndicateurPilotes definition={definition} isReadonly={isReadonly} />
+      <IndicateurPilotes indicateur={indicateur} isReadonly={isReadonly} />
     ),
     showServices && (
       <IndicateurServicesPilotes
-        definition={definition}
+        indicateur={indicateur}
         isReadonly={isReadonly}
       />
     ),

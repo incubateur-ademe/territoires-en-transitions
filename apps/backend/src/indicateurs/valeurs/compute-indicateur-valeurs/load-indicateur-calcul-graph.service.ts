@@ -13,8 +13,8 @@ import IndicateurExpressionService from '../indicateur-expression.service';
 
 type CalculGraph = {
   formulas: IndicateurFormula[];
-  sourceDefinitions: Indicateur[];
-  targetDefinitions: IndicateurPredefini[];
+  sourceIndicateurs: Indicateur[];
+  targetIndicateurs: IndicateurPredefini[];
 };
 type GraphContext = { tx: Transaction };
 type GraphResult = Result<CalculGraph, 'LOAD_CALCUL_GRAPH_FAILED'>;
@@ -35,12 +35,12 @@ export class LoadIndicateurCalculGraphService {
     private readonly expressions: IndicateurExpressionService
   ) {}
 
-  getFormula(definition: IndicateurPredefini): IndicateurFormula {
+  getFormula(indicateur: IndicateurPredefini): IndicateurFormula {
     return {
-      definition,
-      references: definition.valeurCalcule
+      definition: indicateur,
+      references: indicateur.valeurCalcule
         ? this.expressions.extractNeededSourceIndicateursFromFormula(
-            definition.valeurCalcule
+            indicateur.valeurCalcule
           )
         : [],
     };
@@ -75,17 +75,17 @@ export class LoadIndicateurCalculGraphService {
           tx
         );
       if (!sourceResult.success) return toGraphFailure(sourceResult);
-      const sourceDefinitions = sourceResult.data;
-      const sourceIdentifiants = sourceDefinitions.flatMap((definition) =>
-        definition.identifiantReferentiel
-          ? [definition.identifiantReferentiel]
+      const sourceIndicateurs = sourceResult.data;
+      const sourceIdentifiants = sourceIndicateurs.flatMap((indicateur) =>
+        indicateur.identifiantReferentiel
+          ? [indicateur.identifiantReferentiel]
           : []
       );
       if (!sourceIdentifiants.length)
         return success({
           formulas: [],
-          sourceDefinitions,
-          targetDefinitions: [],
+          sourceIndicateurs,
+          targetIndicateurs: [],
         });
       const candidatesResult =
         await this.listIndicateursPredefinisRepository.listIndicateursPredefinisHavingComputedValue(
@@ -96,7 +96,7 @@ export class LoadIndicateurCalculGraphService {
       const candidates = candidatesResult.data;
       const lockedGraph = await this.lockGraph(
         candidates,
-        sourceDefinitions,
+        sourceIndicateurs,
         candidates.map(({ id }) => id),
         tx
       );
@@ -110,7 +110,7 @@ export class LoadIndicateurCalculGraphService {
       );
       this.assertCompatibleSources(graph);
       // Hydration only needs the original updated source definitions.
-      return success({ ...graph, sourceDefinitions });
+      return success({ ...graph, sourceIndicateurs });
     } catch (error) {
       return failure(
         'LOAD_CALCUL_GRAPH_FAILED',
@@ -128,8 +128,8 @@ export class LoadIndicateurCalculGraphService {
       if (!indicateurIds.length)
         return success({
           formulas: [],
-          sourceDefinitions: [],
-          targetDefinitions: [],
+          sourceIndicateurs: [],
+          targetIndicateurs: [],
         });
       const candidatesResult =
         await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(
@@ -162,17 +162,17 @@ export class LoadIndicateurCalculGraphService {
   ): Promise<GraphResult> {
     const sourceIdentifiants = [
       ...new Set(
-        candidates.flatMap((definition) =>
-          this.getFormula(definition).references.map(
+        candidates.flatMap((indicateur) =>
+          this.getFormula(indicateur).references.map(
             ({ identifiant }) => identifiant
           )
         )
       ),
     ];
     const knownByIdentifiant = new Map(
-      [...knownSources, ...candidates].map((definition) => [
-        definition.identifiantReferentiel,
-        definition,
+      [...knownSources, ...candidates].map((indicateur) => [
+        indicateur.identifiantReferentiel,
+        indicateur,
       ])
     );
     const missingIdentifiants = sourceIdentifiants.filter(
@@ -183,37 +183,37 @@ export class LoadIndicateurCalculGraphService {
       tx
     );
     if (!missingResult.success) return toGraphFailure(missingResult);
-    const missingDefinitions = missingResult.data;
-    const sourceDefinitions = sourceIdentifiants.flatMap((identifiant) => {
-      const definition =
+    const missingIndicateurs = missingResult.data;
+    const sourceIndicateurs = sourceIdentifiants.flatMap((identifiant) => {
+      const indicateur =
         knownByIdentifiant.get(identifiant) ??
-        missingDefinitions.find(
+        missingIndicateurs.find(
           (item) => item.identifiantReferentiel === identifiant
         );
-      return definition ? [definition] : [];
+      return indicateur ? [indicateur] : [];
     });
     const lockedResult = await this.locks.lockIndicateurs(
       [
         ...new Set([
           ...knownSources.map(({ id }) => id),
           ...targetIds,
-          ...sourceDefinitions.map(({ id }) => id),
+          ...sourceIndicateurs.map(({ id }) => id),
         ]),
       ],
       tx
     );
     if (!lockedResult.success) return toGraphFailure(lockedResult);
-    const lockedDefinitions = lockedResult.data;
+    const lockedIndicateurs = lockedResult.data;
     const targetIdSet = new Set(targetIds);
-    const targetDefinitions = lockedDefinitions
+    const targetIndicateurs = lockedIndicateurs
       .filter(({ id }) => targetIdSet.has(id))
       .filter(isIndicateurPredefini);
     return success({
-      targetDefinitions,
-      formulas: targetDefinitions
-        .filter((definition) => Boolean(definition.valeurCalcule))
-        .map((definition) => this.getFormula(definition)),
-      sourceDefinitions: lockedDefinitions,
+      targetIndicateurs,
+      formulas: targetIndicateurs
+        .filter((indicateur) => Boolean(indicateur.valeurCalcule))
+        .map((indicateur) => this.getFormula(indicateur)),
+      sourceIndicateurs: lockedIndicateurs,
     });
   }
 
@@ -232,9 +232,9 @@ export class LoadIndicateurCalculGraphService {
 
   private assertCompatibleSources(graph: CalculGraph): void {
     const byIdentifiant = new Map(
-      graph.sourceDefinitions.map((definition) => [
-        definition.identifiantReferentiel,
-        definition,
+      graph.sourceIndicateurs.map((indicateur) => [
+        indicateur.identifiantReferentiel,
+        indicateur,
       ])
     );
     for (const { definition: target, references } of graph.formulas) {

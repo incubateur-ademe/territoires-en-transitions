@@ -71,11 +71,11 @@ describe('Récupérer le diagnostic PCAET', () => {
       .where(
         eq(indicateurDefinitionTable.identifiantReferentiel, referentielId)
       );
-    const definition = rows[0];
-    if (!definition) {
+    const indicateur = rows[0];
+    if (!indicateur) {
       throw new Error(`Indicateur ${referentielId} absent du référentiel`);
     }
-    return definition.id;
+    return indicateur.id;
   };
 
   beforeAll(async () => {
@@ -331,7 +331,7 @@ describe('Récupérer le diagnostic PCAET', () => {
       referentielId: string
     ) =>
       diagnostic.indicateurDefinitions.find(
-        (definition) => definition.identifiantReferentiel === referentielId
+        (indicateur) => indicateur.identifiantReferentiel === referentielId
       );
 
     // Sans rien déclarer, il n'y a pas de ligne `indicateur_collectivite` :
@@ -368,7 +368,7 @@ describe('Récupérer le diagnostic PCAET', () => {
 
     expect(
       diagnostic.indicateurDefinitions.find(
-        (definition) => definition.identifiantReferentiel === 'cae_1.c'
+        (indicateur) => indicateur.identifiantReferentiel === 'cae_1.c'
       )?.isApplicable
     ).toBe(true);
   });

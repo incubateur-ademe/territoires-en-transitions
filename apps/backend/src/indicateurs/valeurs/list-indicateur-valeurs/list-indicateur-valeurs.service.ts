@@ -130,7 +130,7 @@ export class ListIndicateurValeursService {
       confidentiel: v.confidentiel,
     }));
 
-    const uniqueIndicateurDefinitions = getIndicateurDataOrThrow(
+    const uniqueIndicateurs = getIndicateurDataOrThrow(
       await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
         {
           indicateurIds: options.indicateurIds,
@@ -143,9 +143,7 @@ export class ListIndicateurValeursService {
 
     options.identifiantsReferentiel?.forEach((identifiant) => {
       if (
-        !uniqueIndicateurDefinitions.find(
-          (d) => d.identifiantReferentiel === identifiant
-        )
+        !uniqueIndicateurs.find((d) => d.identifiantReferentiel === identifiant)
       ) {
         this.logger.warn(
           `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`
@@ -154,14 +152,14 @@ export class ListIndicateurValeursService {
     });
 
     options.indicateurIds?.forEach((indicateurId) => {
-      if (!uniqueIndicateurDefinitions.find((d) => d.id === indicateurId)) {
+      if (!uniqueIndicateurs.find((d) => d.id === indicateurId)) {
         this.logger.warn(
           `Définition de l'indicateur avec l'identifiant ${indicateurId} introuvable`
         );
       }
     });
 
-    uniqueIndicateurDefinitions.sort((a, b) => {
+    uniqueIndicateurs.sort((a, b) => {
       if (!a.identifiantReferentiel && !b.identifiantReferentiel) {
         return 0;
       }
@@ -197,7 +195,7 @@ export class ListIndicateurValeursService {
 
     const indicateurValeurGroupeesParSource = groupIndicateurValeursBySource(
       indicateurValeursSeules,
-      uniqueIndicateurDefinitions,
+      uniqueIndicateurs,
       uniqueIndicateurMetadonnees,
       sources,
       false

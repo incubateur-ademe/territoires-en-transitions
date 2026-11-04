@@ -87,7 +87,7 @@ const addLatestSourceValeur = (
 
 /** Enrich an existing set of affected groups without inventing new periods. */
 export const fillCalculSourceGroups = (
-  { definition, references }: IndicateurFormula,
+  { definition: indicateur, references }: IndicateurFormula,
   valeurs: CalculSourceValeur[],
   policies: SourceCalculPolicy[],
   groups: CalculSourceGroups = {},
@@ -99,7 +99,7 @@ export const fillCalculSourceGroups = (
   for (const valeur of valeurs) {
     if (!neededIdentifiants.has(valeur.indicateurIdentifiant)) continue;
     // Stored calculations always follow the target definition's cadence.
-    if (valeur.periode.periodicite !== definition.periodicite) continue;
+    if (valeur.periode.periodicite !== indicateur.periodicite) continue;
     const sourceId = normalizeCalculSourceId(valeur.sourceId);
     const sources = [
       sourceId,

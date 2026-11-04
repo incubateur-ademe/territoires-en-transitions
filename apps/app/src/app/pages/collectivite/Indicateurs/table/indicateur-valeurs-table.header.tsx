@@ -12,7 +12,7 @@ import type { IndicateurPeriodeValue } from '../data/prepare-indicateur-periode-
 import { ADD_PERIODE_CELL_CLASSNAME } from './indicateur-valeurs-table.styles';
 
 type Props = {
-  definition: Pick<IndicateurDetaille, 'titre' | 'unite'>;
+  indicateur: Pick<IndicateurDetaille, 'titre' | 'unite'>;
   periodes: readonly IndicateurPeriode[];
   localValues: readonly IndicateurPeriodeValue[];
   privatePeriode?: IndicateurPeriode;
@@ -22,7 +22,7 @@ type Props = {
 };
 
 export const IndicateurValeursTableHeader = ({
-  definition,
+  indicateur,
   periodes,
   localValues,
   privatePeriode,
@@ -41,8 +41,8 @@ export const IndicateurValeursTableHeader = ({
     <TableHead className="static shadow-none">
       <tr>
         <IndicateurHeaderTitleCell
-          title={definition.titre}
-          unit={definition.unite}
+          title={indicateur.titre}
+          unit={indicateur.unite}
           pinnedLeft={false}
           className="border-b border-r border-primary-4"
         />

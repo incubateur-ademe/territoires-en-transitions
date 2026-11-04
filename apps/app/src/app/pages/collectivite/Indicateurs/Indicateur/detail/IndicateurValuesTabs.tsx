@@ -10,13 +10,13 @@ const ID_SEQUESTRATION = 'cae_63.';
 
 /** Affiche la saisie des résultats et objectifs par période */
 export const IndicateurValuesTabs = ({
-  definition,
+  indicateur,
   chartInfo,
   isReadonly,
   openModalState,
 }: {
   isReadonly: boolean;
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {
@@ -26,7 +26,7 @@ export const IndicateurValuesTabs = ({
     <>
       {!isReadonly && (
         <>
-          {definition.identifiantReferentiel?.startsWith(ID_SEQUESTRATION) && (
+          {indicateur.identifiantReferentiel?.startsWith(ID_SEQUESTRATION) && (
             <Alert
               className="mb-8"
               state="warning"
@@ -36,11 +36,11 @@ export const IndicateurValuesTabs = ({
         </>
       )}
       <IndicateurTable
-        key={definition.id}
+        key={indicateur.id}
         chartInfo={chartInfo}
         collectiviteId={collectiviteId}
-        definition={definition}
-        confidentiel={definition.estConfidentiel || false}
+        indicateur={indicateur}
+        confidentiel={indicateur.estConfidentiel || false}
         readonly={isReadonly}
         openModalState={openModalState}
       />

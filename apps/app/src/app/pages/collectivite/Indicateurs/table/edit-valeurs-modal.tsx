@@ -24,7 +24,7 @@ import { InputValue } from './input-value';
 
 type EditValeursModalProps = {
   collectiviteId: number;
-  definition: Pick<IndicateurDetaille, 'id' | 'periodicite'>;
+  indicateur: Pick<IndicateurDetaille, 'id' | 'periodicite'>;
   openState: OpenState;
   data: PreparedData;
   title?: string;
@@ -34,7 +34,7 @@ type EditValeursModalProps = {
  * Affiche la modale d'édition des valeurs d'un indicateur
  */
 export const EditValeursModal = (props: EditValeursModalProps) => {
-  const { collectiviteId, data, definition, openState, title } = props;
+  const { collectiviteId, data, indicateur, openState, title } = props;
   const { valeursExistantes } = data;
   const fieldId = useId();
   const isSavingRef = useRef(false);
@@ -44,7 +44,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const [periode, setPeriode] = useState('');
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
     valeur || {};
-  const periodicite = definition.periodicite;
+  const periodicite = indicateur.periodicite;
   const presentation = getIndicateurPeriodPresentation(periodicite);
   let periodeValide: IndicateurPeriode | null = null;
   try {
@@ -74,7 +74,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       await upsertValeur({
         id: valeur.id,
         collectiviteId,
-        indicateurId: definition.id,
+        indicateurId: indicateur.id,
         periodicite: periodeValide.periodicite,
         dateValeur: IndicateurPeriodes.toDateValeur(periodeValide),
         resultat,

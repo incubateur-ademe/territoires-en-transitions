@@ -36,7 +36,7 @@ export function IndicateursPanelContent(): ReactNode {
         <p className="text-sm text-grey-6">{appLabels.aucunIndicateur}</p>
       ) : (
         <IndicateurChartsGrid
-          definitions={indicateursLies}
+          indicateurs={indicateursLies}
           view={getReferentielIdFromActionId(mesureId)}
         />
       )}

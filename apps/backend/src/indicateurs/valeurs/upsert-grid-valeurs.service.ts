@@ -99,10 +99,10 @@ export class UpsertGridValeursService {
       );
 
       for (const valeur of valeurs) {
-        const definition = indicateursById[valeur.indicateurId];
+        const indicateur = indicateursById[valeur.indicateurId];
         if (
-          !definition ||
-          valeur.period.periodicite !== definition.periodicite
+          !indicateur ||
+          valeur.period.periodicite !== indicateur.periodicite
         ) {
           return failure('INVALID_GRID_VALEUR');
         }
@@ -146,14 +146,14 @@ export class UpsertGridValeursService {
             );
           }
           const valeursToWrite = valeursToValidate.map((valeur) => {
-            const definition = validation.data[valeur.indicateurId];
+            const indicateur = validation.data[valeur.indicateurId];
             return {
               ...valeur,
               resultat: isNotNil(valeur.resultat)
-                ? round(valeur.resultat, definition.precision)
+                ? round(valeur.resultat, indicateur.precision)
                 : valeur.resultat,
               objectif: isNotNil(valeur.objectif)
-                ? round(valeur.objectif, definition.precision)
+                ? round(valeur.objectif, indicateur.precision)
                 : valeur.objectif,
             };
           });

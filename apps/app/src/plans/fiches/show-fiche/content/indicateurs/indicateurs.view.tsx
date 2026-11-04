@@ -93,7 +93,7 @@ export const IndicateursView = () => {
             <IndicateurCard
               key={`${indicateur.id}-${indicateur.titre}`}
               readonly={isReadonly}
-              definition={indicateur}
+              indicateur={indicateur}
               externalCollectiviteId={fiche.collectiviteId}
               isEditable={indicateurs.canUpdate(indicateur)}
               href={makeCollectiviteIndicateursUrl({

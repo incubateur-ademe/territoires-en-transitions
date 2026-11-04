@@ -88,7 +88,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   const insertMonthlyIndicateur = async ({
     sansValeurUtilisateur = false,
   }: { sansValeurUtilisateur?: boolean } = {}) => {
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         collectiviteId,
@@ -101,9 +101,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
     });
-    return definition.id;
+    return indicateur.id;
   };
 
   test('Écrit douze mois indépendants et conserve zéro comme valeur', async () => {
@@ -1255,7 +1255,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       const identifiants = ['a', 'b', 'total', 'aval'].map(
         (suffix) => `${prefix}_${suffix}`
       );
-      const definitions = await databaseService.db
+      const indicateurs = await databaseService.db
         .insert(indicateurDefinitionTable)
         .values(
           identifiants.map((identifiantReferentiel, index) => ({
@@ -1277,18 +1277,18 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
         await databaseService.db.delete(indicateurDefinitionTable).where(
           inArray(
             indicateurDefinitionTable.id,
-            definitions.map(({ id }) => id)
+            indicateurs.map(({ id }) => id)
           )
         );
       });
       const [sourceA, sourceB, total, aval] = identifiants.map(
         (identifiant) => {
-          const definition = definitions.find(
+          const indicateur = indicateurs.find(
             ({ identifiantReferentiel }) =>
               identifiantReferentiel === identifiant
           );
-          if (!definition) throw new Error(`Missing fixture ${identifiant}`);
-          return definition;
+          if (!indicateur) throw new Error(`Missing fixture ${identifiant}`);
+          return indicateur;
         }
       );
       const caller = router.createCaller({ user: authenticatedUser });
@@ -1437,7 +1437,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     const otherType = await addTestCollectivite(databaseService, {
       natureInsee: 'CC',
     });
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         identifiantReferentiel: `test_${randomUUID()}`,
@@ -1463,7 +1463,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
       await databaseService.db
         .delete(indicateurSourceMetadonneeTable)
         .where(eq(indicateurSourceMetadonneeTable.id, metadata.id));
@@ -1492,13 +1492,13 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
         ])
         .map((valeur) => ({
           ...valeur,
-          indicateurId: definition.id,
+          indicateurId: indicateur.id,
           metadonneeId: metadata.id,
           periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
         })),
       {
         collectiviteId: fixture.collectivite.id,
-        indicateurId: definition.id,
+        indicateurId: indicateur.id,
         metadonneeId: metadata.id,
         periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
         dateValeur: '2014-01-01',
@@ -1511,10 +1511,10 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     });
     const result = await caller.indicateurs.valeurs.average({
       collectiviteId: fixture.collectivite.id,
-      indicateurId: definition.id,
+      indicateurId: indicateur.id,
     });
     expect(result).toStrictEqual({
-      indicateurId: definition.id,
+      indicateurId: indicateur.id,
       typeCollectivite: 'CA',
       valeurs: [
         { dateValeur: '2014-01-01', valeur: 7.39, sourceLibelle },
@@ -1619,14 +1619,13 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       })
     ).rejects.toThrowError(/Droits insuffisants/);
 
-    const indicateurDefinitionResult =
-      await adminCaller.indicateurs.indicateurs.list({
-        collectiviteId,
-        filters: {
-          indicateurIds: [indicateurId],
-        },
-      });
-    const indicateur = indicateurDefinitionResult.data[0];
+    const indicateurResult = await adminCaller.indicateurs.indicateurs.list({
+      collectiviteId,
+      filters: {
+        indicateurIds: [indicateurId],
+      },
+    });
+    const indicateur = indicateurResult.data[0];
     const pilotes = indicateur.pilotes || [];
 
     // now set it as pilote

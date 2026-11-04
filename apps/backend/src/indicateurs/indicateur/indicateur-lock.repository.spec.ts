@@ -5,7 +5,7 @@ import { IndicateurLockRepository } from './indicateur-lock.repository';
 
 describe('IndicateurLockRepository', () => {
   it('verrouille et relit les définitions dans un ordre déterministe', async () => {
-    const lockedDefinitions = [
+    const lockedIndicateurs = [
       toIndicateurRow({
         id: 2,
         identifiantReferentiel: 'cae_1.a',
@@ -19,7 +19,7 @@ describe('IndicateurLockRepository', () => {
         precision: 0,
       }),
     ];
-    const forLock = vi.fn().mockResolvedValue(lockedDefinitions);
+    const forLock = vi.fn().mockResolvedValue(lockedIndicateurs);
     const orderBy = vi.fn(() => ({ for: forLock }));
     const where = vi.fn(() => ({ orderBy }));
     const from = vi.fn(() => ({ where }));
@@ -29,7 +29,7 @@ describe('IndicateurLockRepository', () => {
 
     await expect(
       repository.lockIndicateurs([10, 2, 10], { execute, select } as never)
-    ).resolves.toEqual(success(lockedDefinitions));
+    ).resolves.toEqual(success(lockedIndicateurs));
     expect(execute).toHaveBeenCalledOnce();
     expect(execute.mock.invocationCallOrder[0]).toBeLessThan(
       select.mock.invocationCallOrder[0]

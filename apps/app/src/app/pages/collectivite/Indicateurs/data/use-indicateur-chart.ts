@@ -62,10 +62,10 @@ export type IndicateurChartInfo = {
 
 /** Charge et prépare les données pour le graphe */
 export const useIndicateurChartInfo = ({
-  definition,
+  indicateur,
   externalCollectiviteId,
 }: {
-  definition?: IndicateurDetaille;
+  indicateur?: IndicateurDetaille;
   externalCollectiviteId?: number;
 }): IndicateurChartInfo => {
   const {
@@ -74,11 +74,11 @@ export const useIndicateurChartInfo = ({
     enfants,
     unite,
     periodicite,
-  } = definition ?? {};
+  } = indicateur ?? {};
   const currentCollectiviteId = useCollectiviteId();
   const dataCollectiviteId = externalCollectiviteId ?? currentCollectiviteId;
   const sourceFilter = useSourceFilter({
-    periodicite: definition?.periodicite,
+    periodicite: indicateur?.periodicite,
     collectiviteId: dataCollectiviteId,
     indicateurId: indicateurId ?? 0,
   });
@@ -118,7 +118,7 @@ export const useIndicateurChartInfo = ({
   // charge aussi les définitions détaillées des enfants pour avoir les
   // catégories permettant de faire la segmentation
   const {
-    data: { data: definitionEnfants } = {},
+    data: { data: indicateurEnfants } = {},
     isLoading: isLoadingEnfants,
   } = useListIndicateurs(
     {
@@ -144,7 +144,7 @@ export const useIndicateurChartInfo = ({
     // Groupe les indicateurs enfant par type de segmentation et conserve les
     // objectifs dont la segmentation n'existe pas dans les résultats.
     const segmentationsResultat = prepareEnfantsParSegmentation(
-      definitionEnfants,
+      indicateurEnfants,
       valeursSegments,
       'resultat',
       sourceFilter.avecSecteursSNBC
@@ -155,7 +155,7 @@ export const useIndicateurChartInfo = ({
     const enfantsParSegmentation = [
       ...segmentationsResultat,
       ...prepareEnfantsParSegmentation(
-        definitionEnfants,
+        indicateurEnfants,
         valeursSegments,
         'objectif',
         sourceFilter.avecSecteursSNBC
@@ -181,7 +181,7 @@ export const useIndicateurChartInfo = ({
       number,
       { id: number; name: string; color: string }
     >();
-    definitionEnfants
+    indicateurEnfants
       ?.toSorted((left, right) =>
         left.identifiantReferentiel && right.identifiantReferentiel
           ? left.identifiantReferentiel.localeCompare(
@@ -236,7 +236,7 @@ export const useIndicateurChartInfo = ({
     };
   }, [
     periodicite,
-    definitionEnfants,
+    indicateurEnfants,
     rawData,
     selectedSegmentation,
     sourceFilter.avecDonneesCollectivite,
@@ -251,13 +251,13 @@ export const useIndicateurChartInfo = ({
 
   return useMemo(
     () => ({
-      definition,
+      definition: indicateur,
       ...preparedChart,
       setSegmentation,
       sourceFilter,
       isLoading,
     }),
-    [definition, isLoading, preparedChart, sourceFilter]
+    [indicateur, isLoading, preparedChart, sourceFilter]
   );
 };
 

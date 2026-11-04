@@ -16,7 +16,7 @@ import IndicateurCardEditModal from './IndicateurCardEditModal';
 import { getIndicateurMenuActions } from './menu-actions';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   isEditable?: boolean;
   chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite?: boolean;
@@ -24,7 +24,7 @@ type Props = {
 };
 
 const IndicateurCardOptions = ({
-  definition,
+  indicateur,
   isEditable = true,
   isFavoriCollectivite = false,
   chartDownloadSettings,
@@ -40,7 +40,7 @@ const IndicateurCardOptions = ({
     isFavoriCollectivite,
     isChartVisible: chartDownloadSettings.showTrigger,
     canDelete:
-      isIndicateurPerso(definition) &&
+      isIndicateurPerso(indicateur) &&
       hasCollectivitePermission('indicateurs.indicateurs.delete'),
   }).filter((action) => action.isVisible);
 
@@ -52,7 +52,7 @@ const IndicateurCardOptions = ({
       })}
     >
       {otherMenuActions &&
-        otherMenuActions(definition)?.map((action, i) => (
+        otherMenuActions(indicateur)?.map((action, i) => (
           <Fragment key={i}>{action}</Fragment>
         ))}
 
@@ -68,7 +68,7 @@ const IndicateurCardOptions = ({
         />
         {isEditOpen && (
           <IndicateurCardEditModal
-            indicateur={definition}
+            indicateur={indicateur}
             openState={{
               isOpen: isEditOpen,
               setIsOpen: () => setIsEditOpen(!isEditOpen),
@@ -79,7 +79,7 @@ const IndicateurCardOptions = ({
       <VisibleWhen condition={menuActions.length > 0}>
         <IndicateurCardMenu
           menuActions={menuActions}
-          indicateurId={definition.id}
+          indicateurId={indicateur.id}
           chartDownloadSettings={chartDownloadSettings}
           onDelete={() => setIsDeleteOpen(true)}
           openState={{
@@ -90,7 +90,7 @@ const IndicateurCardOptions = ({
       </VisibleWhen>
       {isDeleteOpen && (
         <DeleteIndicateurModal
-          definition={definition}
+          indicateur={indicateur}
           redirectAfterDelete={false}
           openState={{ isOpen: true, setIsOpen: setIsDeleteOpen }}
         />

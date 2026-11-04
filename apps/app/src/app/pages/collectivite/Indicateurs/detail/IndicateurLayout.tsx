@@ -18,17 +18,17 @@ import SousIndicateurs from './SousIndicateurs';
 
 type IndicateurLayoutProps = {
   dataTest?: string;
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
 };
 
-const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
+const IndicateurLayout = ({ dataTest, indicateur }: IndicateurLayoutProps) => {
   const {
     enfants,
     sansValeurUtilisateur: sansValeur,
     description,
-  } = definition;
+  } = indicateur;
 
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
   const { id } = useUser();
 
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
@@ -36,7 +36,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
 
   const canMutateIndicateur = canUpdateIndicateur(
     hasCollectivitePermission,
-    definition,
+    indicateur,
     id
   );
 
@@ -48,7 +48,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
     fieldValue: string
   ) => {
     const trimmedFieldValue = fieldValue.trim();
-    const hasValueChanged = trimmedFieldValue !== definition[fieldName];
+    const hasValueChanged = trimmedFieldValue !== indicateur[fieldName];
 
     if (!hasValueChanged) {
       return;
@@ -65,12 +65,12 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
     handleUpdate('commentaire', value);
   };
 
-  const chartInfo = useIndicateurChartInfo({ definition });
+  const chartInfo = useIndicateurChartInfo({ indicateur });
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   const canReadFiches = hasCollectivitePermission('plans.fiches.read');
-  const isPerso = isIndicateurPerso(definition);
+  const isPerso = isIndicateurPerso(indicateur);
 
   const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
     !isPerso &&
@@ -82,7 +82,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
       <IndicateurHeader
         collectiviteId={collectiviteId}
         hasCollectivitePermission={hasCollectivitePermission}
-        definition={definition}
+        indicateur={indicateur}
         chartInfo={composeSansAgregation ? undefined : chartInfo}
         isReadonly={!canMutateIndicateur}
         isPerso={isPerso}
@@ -104,7 +104,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
-                definition={definition}
+                indicateur={indicateur}
                 chartInfo={chartInfo}
                 updateUnite={handleUniteUpdate}
                 updateCommentaire={handleCommentaireUpdate}
@@ -130,7 +130,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
                 <ActionsLiees
                   isReadonly={!canMutateIndicateur}
                   actionsIds={
-                    definition.mesures?.map((mesure) => mesure.id) ?? []
+                    indicateur.mesures?.map((mesure) => mesure.id) ?? []
                   }
                 />
               </Tab>
@@ -138,7 +138,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
 
             {canReadFiches ? (
               <Tab label={appLabels.actionsLiees}>
-                <FichesLiees definition={definition} />
+                <FichesLiees indicateur={indicateur} />
               </Tab>
             ) : undefined}
 

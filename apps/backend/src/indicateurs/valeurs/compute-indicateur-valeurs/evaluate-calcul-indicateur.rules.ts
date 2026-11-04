@@ -17,7 +17,7 @@ type EvaluateExpression = (
 
 const evaluateField = (
   field: 'resultat' | 'objectif',
-  { definition, references }: IndicateurFormula,
+  { definition: indicateur, references }: IndicateurFormula,
   group: CalculSourceGroup,
   evaluate: EvaluateExpression
 ): number | null => {
@@ -36,12 +36,12 @@ const evaluateField = (
   const hasMandatoryValues = references
     .filter(({ optional }) => !optional)
     .every(({ identifiant }) => !isNil(values[identifiant]));
-  if (!hasValue || !hasMandatoryValues || !definition.valeurCalcule)
+  if (!hasValue || !hasMandatoryValues || !indicateur.valeurCalcule)
     return null;
-  const result = evaluate(definition.valeurCalcule.toLowerCase(), values);
+  const result = evaluate(indicateur.valeurCalcule.toLowerCase(), values);
   return result === null
     ? null
-    : round(result, definition.precision ?? DEFAULT_ROUNDING_PRECISION);
+    : round(result, indicateur.precision ?? DEFAULT_ROUNDING_PRECISION);
 };
 
 /** Missing observations and present null observations have different meanings. */

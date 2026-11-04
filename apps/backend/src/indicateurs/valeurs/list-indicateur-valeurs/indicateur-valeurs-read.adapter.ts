@@ -57,19 +57,19 @@ export function groupIndicateurValeurs(
   indicateurDefinitions: IndicateurResume[],
   commentairesNonInclus = false
 ): IndicateurAvecValeurs[] {
-  const initialDefinitionsAcc: {
+  const initialIndicateursAcc: {
     [key: string]: IndicateurResume;
   } = {};
-  const uniqueIndicateurDefinitions = Object.values(
+  const uniqueIndicateurs = Object.values(
     indicateurDefinitions.reduce((acc, def) => {
       if (def?.id) {
         acc[def.id.toString()] = def;
       }
       return acc;
-    }, initialDefinitionsAcc)
+    }, initialIndicateursAcc)
   );
 
-  const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
+  const indicateurAvecValeurs = uniqueIndicateurs.map(
     (indicateurDefinition) => {
       const valeurs = indicateurValeurs
         .filter((v) => v.indicateurId === indicateurDefinition.id)
@@ -113,21 +113,21 @@ export function groupIndicateurValeursBySource(
   sources: IndicateurSource[],
   supprimeIndicateursSansValeurs = true
 ): IndicateurAvecValeursParSource[] {
-  const initialDefinitionsAcc: {
+  const initialIndicateursAcc: {
     [key: string]: Indicateur;
   } = {};
-  const uniqueIndicateurDefinitions = Object.values(
+  const uniqueIndicateurs = Object.values(
     indicateurDefinitions.reduce((acc, def) => {
       if (def?.id) {
         acc[def.id.toString()] = def;
       }
       return acc;
-    }, initialDefinitionsAcc)
+    }, initialIndicateursAcc)
   );
 
   const sourcesParId = sources?.length ? keyBy(sources, (item) => item.id) : {};
 
-  const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
+  const indicateurAvecValeurs = uniqueIndicateurs.map(
     (indicateurDefinition) => {
       const valeurs = indicateurValeurs
         .filter((v) => v.indicateurId === indicateurDefinition.id)

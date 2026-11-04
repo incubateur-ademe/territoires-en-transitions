@@ -82,11 +82,11 @@ describe('UpdateIndicateurRouter', () => {
           indicateurFields: { titre: 'Modification interdite' },
         })
       ).rejects.toMatchObject({ code: 'FORBIDDEN' });
-      const [definition] = await databaseService.db
+      const [indicateur] = await databaseService.db
         .select()
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
-      expect(definition.titre).toBe('Fixture titre');
+      expect(indicateur.titre).toBe('Fixture titre');
     });
 
     test('annule la modification du suivi si la transaction appelante échoue', async () => {
@@ -247,11 +247,11 @@ describe('UpdateIndicateurRouter', () => {
           } as never,
         })
       ).rejects.toThrow();
-      const [definition] = await databaseService.db
+      const [indicateur] = await databaseService.db
         .select()
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
-      expect(definition.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
+      expect(indicateur.periodicite).toBe(IndicateurPeriodiciteEnum.ANNUELLE);
     });
 
     test('should atomically update fiches and thematiques', async () => {
@@ -355,20 +355,20 @@ describe('UpdateIndicateurRouter', () => {
         })
       ).rejects.toMatchObject({ code: 'FORBIDDEN' });
 
-      const [definitionAfterRejectedUpdate] = await databaseService.db
+      const [indicateurAfterRejectedUpdate] = await databaseService.db
         .select({ periodicite: indicateurDefinitionTable.periodicite })
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
-      expect(definitionAfterRejectedUpdate?.periodicite).toBe(
+      expect(indicateurAfterRejectedUpdate?.periodicite).toBe(
         IndicateurPeriodiciteEnum.ANNUELLE
       );
       const {
-        data: [definitionAfterRejectedApiKeyUpdate],
+        data: [indicateurAfterRejectedApiKeyUpdate],
       } = await adminCaller.indicateurs.indicateurs.list({
         collectiviteId: collectivite.id,
         filters: { indicateurIds: [indicateurId] },
       });
-      expect(definitionAfterRejectedApiKeyUpdate.commentaire).not.toBe(
+      expect(indicateurAfterRejectedApiKeyUpdate.commentaire).not.toBe(
         'Updated by the pilot'
       );
 
@@ -379,20 +379,20 @@ describe('UpdateIndicateurRouter', () => {
         indicateurFields: { commentaire: 'Updated by the pilot' },
       });
 
-      const [definitionAfterHumanUpdate] = await databaseService.db
+      const [indicateurAfterHumanUpdate] = await databaseService.db
         .select({ periodicite: indicateurDefinitionTable.periodicite })
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, indicateurId));
-      expect(definitionAfterHumanUpdate?.periodicite).toBe(
+      expect(indicateurAfterHumanUpdate?.periodicite).toBe(
         IndicateurPeriodiciteEnum.ANNUELLE
       );
       const {
-        data: [localDefinition],
+        data: [localIndicateur],
       } = await humanPilotCaller.indicateurs.indicateurs.list({
         collectiviteId: collectivite.id,
         filters: { indicateurIds: [indicateurId] },
       });
-      expect(localDefinition.commentaire).toBe('Updated by the pilot');
+      expect(localIndicateur.commentaire).toBe('Updated by the pilot');
     });
 
     test('rejects local values at a different cadence from the definition', async () => {
@@ -614,11 +614,11 @@ describe('UpdateIndicateurRouter', () => {
         })
       ).rejects.toThrow(/non trouvé pour la collectivité/i);
 
-      const [definition] = await databaseService.db
+      const [indicateur] = await databaseService.db
         .select({ titre: indicateurDefinitionTable.titre })
         .from(indicateurDefinitionTable)
         .where(eq(indicateurDefinitionTable.id, foreignIndicateurId));
-      expect(definition?.titre).toBe('Foreign personal indicator');
+      expect(indicateur?.titre).toBe('Foreign personal indicator');
     });
 
     test('should reject fiche, service and pilote resources owned by another collectivite', async () => {
@@ -876,7 +876,7 @@ describe('UpdateIndicateurRouter', () => {
           collectiviteIds: isMember ? [collectivite.id] : [],
         },
       });
-      const [definition] = await databaseService.db
+      const [indicateur] = await databaseService.db
         .insert(indicateurDefinitionTable)
         .values({
           identifiantReferentiel: `partage_${groupement.id}`,
@@ -891,16 +891,16 @@ describe('UpdateIndicateurRouter', () => {
         user: getAuthUserFromUserCredentials(otherCollectivite.user),
       });
       const input = {
-        indicateurId: definition.id,
+        indicateurId: indicateur.id,
         collectiviteId: collectivite.id,
       };
       const readLocalFields = () =>
         databaseService.db
           .select()
           .from(indicateurCollectiviteTable)
-          .where(eq(indicateurCollectiviteTable.indicateurId, definition.id));
+          .where(eq(indicateurCollectiviteTable.indicateurId, indicateur.id));
       return {
-        definition,
+        definition: indicateur,
         otherCollectivite,
         groupement,
         caller,
@@ -915,14 +915,14 @@ describe('UpdateIndicateurRouter', () => {
       async (isMember) => {
         const h = await createSharedDefinition({ isMember });
         const repository = app.get(ListCollectiviteIndicateursRepository);
-        const definitions = getIndicateurDataOrThrow(
+        const indicateurs = getIndicateurDataOrThrow(
           await repository.listCollectiviteIndicateurs({
             collectiviteId: collectivite.id,
             indicateurIds: [h.definition.id],
           })
         );
 
-        expect(definitions.map(({ id }) => id)).toEqual(
+        expect(indicateurs.map(({ id }) => id)).toEqual(
           isMember ? [h.definition.id] : []
         );
       }
@@ -1049,7 +1049,7 @@ describe('UpdateIndicateurRouter', () => {
       const other = await addTestCollectiviteAndUser(databaseService, {
         user: { role: CollectiviteRole.ADMIN },
       });
-      const [definition] = await databaseService.db
+      const [indicateur] = await databaseService.db
         .insert(indicateurDefinitionTable)
         .values({
           collectiviteId: other.collectivite.id,
@@ -1061,7 +1061,7 @@ describe('UpdateIndicateurRouter', () => {
       const caller = router.createCaller({ user: authenticatedUser });
       await expect(
         caller.indicateurs.indicateurs.update({
-          indicateurId: definition.id,
+          indicateurId: indicateur.id,
           collectiviteId: collectivite.id,
           indicateurFields: { estFavori: true },
         })
@@ -1070,7 +1070,7 @@ describe('UpdateIndicateurRouter', () => {
         await databaseService.db
           .select()
           .from(indicateurCollectiviteTable)
-          .where(eq(indicateurCollectiviteTable.indicateurId, definition.id))
+          .where(eq(indicateurCollectiviteTable.indicateurId, indicateur.id))
       ).toEqual([]);
     });
 

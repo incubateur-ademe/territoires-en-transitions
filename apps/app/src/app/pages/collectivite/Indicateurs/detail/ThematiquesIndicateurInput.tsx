@@ -4,14 +4,14 @@ import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { Field } from '@tet/ui';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   disabled?: boolean;
 };
 
-export const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
-  const thematiques = definition.thematiques || [];
+export const ThematiquesIndicateurInput = ({ indicateur, disabled }: Props) => {
+  const thematiques = indicateur.thematiques || [];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
   const handleOnChange = (selectedThematiqueIds: number[]) => {
     updateIndicateur({

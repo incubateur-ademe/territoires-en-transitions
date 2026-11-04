@@ -208,8 +208,8 @@ describe('Indicateurs', () => {
                 titre: 'Enfant hors filtre',
                 participationScore: !participationScore,
               },
-            ].map((definition) => ({
-              ...definition,
+            ].map((indicateur) => ({
+              ...indicateur,
               collectiviteId: collectivite.id,
               unite: '%',
             }))

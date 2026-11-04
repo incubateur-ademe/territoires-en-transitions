@@ -91,7 +91,7 @@ const SaisiePeriodique = ({
         />
       </div>
       <IndicateurValeursTable
-        definition={{
+        indicateur={{
           titre: 'Part électrique du parc de véhicules',
           unite: '%',
           periodicite,

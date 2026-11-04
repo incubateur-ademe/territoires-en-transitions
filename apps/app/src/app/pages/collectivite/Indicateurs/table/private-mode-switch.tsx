@@ -4,15 +4,15 @@ import { Checkbox, Tooltip } from '@tet/ui';
 
 /** Affiche le bouton "Résultat récent en mode privé" */
 export const PrivateModeSwitch = ({
-  definition,
+  indicateur,
   isReadOnly,
 }: {
-  definition: Pick<IndicateurDetaille, 'id' | 'estConfidentiel'>;
+  indicateur: Pick<IndicateurDetaille, 'id' | 'estConfidentiel'>;
   isReadOnly?: boolean;
 }) => {
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
-  const { estConfidentiel } = definition;
+  const { estConfidentiel } = indicateur;
 
   return (
     !isReadOnly && (

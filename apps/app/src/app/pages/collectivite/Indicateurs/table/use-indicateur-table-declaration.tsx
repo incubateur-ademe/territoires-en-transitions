@@ -14,7 +14,7 @@ export type IndicateurTableDeclarationProps = {
   canWrite: boolean;
   periodicite: SupportedIndicateurPeriodicite | undefined;
   collectiviteId: number;
-  definition: Pick<IndicateurDetaille, 'id'>;
+  indicateur: Pick<IndicateurDetaille, 'id'>;
   existingPeriodes: readonly IndicateurPeriode[];
   openModalState?: OpenState;
 };
@@ -29,7 +29,7 @@ export const useIndicateurTableDeclaration = ({
   canWrite,
   periodicite,
   collectiviteId,
-  definition,
+  indicateur,
   existingPeriodes,
   openModalState,
 }: IndicateurTableDeclarationProps): IndicateurTableDeclaration => {
@@ -57,7 +57,7 @@ export const useIndicateurTableDeclaration = ({
     try {
       await upsertValeur({
         collectiviteId,
-        indicateurId: definition.id,
+        indicateurId: indicateur.id,
         periodicite: periode.periodicite,
         dateValeur: periode.dateDebut,
       });

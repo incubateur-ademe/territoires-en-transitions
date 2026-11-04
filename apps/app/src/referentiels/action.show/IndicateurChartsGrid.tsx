@@ -11,7 +11,7 @@ import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 type TIndicateurChartsGridProps = {
-  definitions: IndicateurDetaille[];
+  indicateurs: IndicateurDetaille[];
   view: IndicateurViewParamOption;
 };
 
@@ -20,16 +20,16 @@ type TIndicateurChartsGridProps = {
  * Les données des graphiques sont chargées dynamiquement lorsqu'ils deviennent visibles à l'écran.
  */
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
-  const { definitions, view } = props;
+  const { indicateurs, view } = props;
   const collectivite = useCurrentCollectivite();
   const referentielId = useReferentielId();
 
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-8">
-      {definitions?.map((definition) => (
+      {indicateurs?.map((indicateur) => (
         <IndicateurChartContainer
-          key={definition.id}
-          definition={definition}
+          key={indicateur.id}
+          indicateur={indicateur}
           view={view}
           isReadOnly={
             !collectivite.hasReferentielPermission(
@@ -54,12 +54,12 @@ const IndicateurChartContainer = (
 ) => {
   const { ref, entry } = useIntersectionObserver();
 
-  const { definition, view, isReadOnly, collectiviteId } = props;
+  const { indicateur, view, isReadOnly, collectiviteId } = props;
   const url = makeCollectiviteIndicateursUrl({
     collectiviteId,
     indicateurView: view,
-    indicateurId: definition.id,
-    identifiantReferentiel: definition.identifiantReferentiel,
+    indicateurId: indicateur.id,
+    identifiantReferentiel: indicateur.identifiantReferentiel,
   });
 
   return (
@@ -68,11 +68,11 @@ const IndicateurChartContainer = (
         <IndicateurCard
           href={url}
           className="h-full"
-          definition={definition}
+          indicateur={indicateur}
           readonly={isReadOnly}
         />
       ) : (
-        definition.titre
+        indicateur.titre
       )}
     </div>
   );

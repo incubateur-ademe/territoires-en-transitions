@@ -31,18 +31,18 @@ const identifiantsInTable = (
 const attachIndicateurDataToTable = (
   table: DiagnosticIndicateurTableLayout,
   {
-    definitions,
+    indicateurs,
     valeurs,
   }: {
-    definitions: PcaetDiagnostic['indicateurDefinitions'];
+    indicateurs: PcaetDiagnostic['indicateurDefinitions'];
     valeurs: PcaetDiagnostic['indicateurValeurs'];
   }
 ): DiagnosticIndicateurTable => {
   const identifiants = identifiantsInTable(table);
   return {
     ...table,
-    indicateurDefinitions: definitions.filter((definition) => {
-      const identifiant = definition.identifiantReferentiel;
+    indicateurDefinitions: indicateurs.filter((indicateur) => {
+      const identifiant = indicateur.identifiantReferentiel;
       return (
         identifiant !== null &&
         identifiant !== undefined &&
@@ -63,7 +63,7 @@ const attachIndicateurDataToTable = (
 export const attachIndicateurDataToTables = (
   tables: DiagnosticIndicateurTableLayout[],
   data: {
-    definitions: PcaetDiagnostic['indicateurDefinitions'];
+    indicateurs: PcaetDiagnostic['indicateurDefinitions'];
     valeurs: PcaetDiagnostic['indicateurValeurs'];
   }
 ): DiagnosticIndicateurTable[] =>

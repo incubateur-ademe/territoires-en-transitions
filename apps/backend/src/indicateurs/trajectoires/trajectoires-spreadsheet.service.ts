@@ -252,7 +252,7 @@ export default class TrajectoiresSpreadsheetService {
       consommationSpreadsheetData
     );
 
-    const indicateurResultatDefinitions = getIndicateurDataOrThrow(
+    const indicateursResultat = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
@@ -274,7 +274,7 @@ export default class TrajectoiresSpreadsheetService {
         trajectoireCalculResultat.data,
         this.trajectoiresDataService
           .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
-        indicateurResultatDefinitions,
+        indicateursResultat,
         resultatVerification.donneesEntree
       );
 
@@ -288,45 +288,43 @@ export default class TrajectoiresSpreadsheetService {
       );
 
     const [
-      indicateurResultatConsommationDefinitions,
-      indicateurResultatSequestrationEmissionsDefinitions,
+      indicateursResultatConsommation,
+      indicateursResultatSequestrationEmissions,
     ] = partition(
-      indicateurResultatDefinitions,
-      (definition) =>
-        definition.identifiantReferentiel?.startsWith(
+      indicateursResultat,
+      (indicateur) =>
+        indicateur.identifiantReferentiel?.startsWith(
           this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
         ) || false
     );
 
-    const [
-      indicateurResultatSequestrationDefinitions,
-      indicateurResultatEmissionsDefinitions,
-    ] = partition(
-      indicateurResultatSequestrationEmissionsDefinitions,
-      (definition) =>
-        definition.identifiantReferentiel?.startsWith(
-          this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
-        ) || false
-    );
+    const [indicateursResultatSequestration, indicateursResultatEmissions] =
+      partition(
+        indicateursResultatSequestrationEmissions,
+        (indicateur) =>
+          indicateur.identifiantReferentiel?.startsWith(
+            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+          ) || false
+      );
 
     const emissionGesTrajectoire =
       this.valeursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
-        indicateurResultatEmissionsDefinitions,
+        indicateursResultatEmissions,
         true
       );
 
     const consommationsTrajectoire =
       this.valeursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
-        indicateurResultatConsommationDefinitions,
+        indicateursResultatConsommation,
         true
       );
 
     const sequestrationTrajectoire =
       this.valeursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
-        indicateurResultatSequestrationDefinitions,
+        indicateursResultatSequestration,
         true
       );
 
@@ -450,7 +448,7 @@ export default class TrajectoiresSpreadsheetService {
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: readonly (readonly unknown[])[] | null,
     identifiantsReferentielAssocie: string[],
-    indicateurResultatDefinitions: Indicateur[],
+    indicateursResultat: Indicateur[],
     donneesCalculTrajectoire: DataInputForTrajectoireCompute
   ): IndicateurValeurCreate[] {
     const donneesEntree = [
@@ -541,13 +539,11 @@ export default class TrajectoiresSpreadsheetService {
             )} manquant en entrée, résultats pour indicateur ${identifiantReferentielSortie} ignorés`
           );
         } else {
-          const indicateurResultatDefinition =
-            indicateurResultatDefinitions.find(
-              (definition) =>
-                definition.identifiantReferentiel ===
-                identifiantReferentielSortie
-            );
-          if (indicateurResultatDefinition) {
+          const indicateurResultat = indicateursResultat.find(
+            (indicateur) =>
+              indicateur.identifiantReferentiel === identifiantReferentielSortie
+          );
+          if (indicateurResultat) {
             ligne.forEach((valeur, columnIndex) => {
               const floatValeur =
                 typeof valeur === 'number'
@@ -559,14 +555,14 @@ export default class TrajectoiresSpreadsheetService {
                 let facteur = 1;
                 const signeInversionSequestration =
                   this.trajectoiresDataService.signeInversionSequestration(
-                    indicateurResultatDefinition.identifiantReferentiel
+                    indicateurResultat.identifiantReferentiel
                   );
                 if (signeInversionSequestration) {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
                   facteur = -1;
                 }
                 const indicateurValeur: IndicateurValeurCreate = {
-                  indicateurId: indicateurResultatDefinition.id,
+                  indicateurId: indicateurResultat.id,
                   collectiviteId,
                   metadonneeId: indicateurSourceMetadonneeId,
                   dateValeur: `${2015 + columnIndex}-01-01`,
@@ -614,32 +610,29 @@ export default class TrajectoiresSpreadsheetService {
       this.getIdentifiantDossierResultat()
     );
 
-    const indicateurDefinitions = getIndicateurDataOrThrow(
+    const indicateurs = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         identifiantsReferentiel:
           this.trajectoiresDataService
             .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
       })
     );
-    const [
-      indicateurConsommationDefinitions,
-      indicateurEmissionsSequestrationDefinitions,
-    ] = partition(
-      indicateurDefinitions,
-      (definition) =>
-        definition.identifiantReferentiel?.startsWith(
-          this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
-        ) || false
-    );
-
-    const [indicateurSequestrationDefinitions, indicateurEmissionsDefinitions] =
+    const [indicateursConsommation, indicateursEmissionsSequestration] =
       partition(
-        indicateurEmissionsSequestrationDefinitions,
-        (definition) =>
-          definition.identifiantReferentiel?.startsWith(
-            this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+        indicateurs,
+        (indicateur) =>
+          indicateur.identifiantReferentiel?.startsWith(
+            this.trajectoiresDataService.CONSOMMATIONS_IDENTIFIANTS_PREFIX
           ) || false
       );
+
+    const [indicateursSequestration, indicateursEmissions] = partition(
+      indicateursEmissionsSequestration,
+      (indicateur) =>
+        indicateur.identifiantReferentiel?.startsWith(
+          this.trajectoiresDataService.SEQUESTRATION_IDENTIFIANTS_PREFIX
+        ) || false
+    );
 
     if (!results.valeurs) {
       throw new Error('Valeurs are missing from verification result');
@@ -648,21 +641,21 @@ export default class TrajectoiresSpreadsheetService {
     const emissionGesTrajectoire =
       this.valeursService.groupeIndicateursValeursParIndicateur(
         results.valeurs,
-        indicateurEmissionsDefinitions,
+        indicateursEmissions,
         true
       );
 
     const consommationsTrajectoire =
       this.valeursService.groupeIndicateursValeursParIndicateur(
         results.valeurs,
-        indicateurConsommationDefinitions,
+        indicateursConsommation,
         true
       );
 
     const sequestrationTrajectoire =
       this.valeursService.groupeIndicateursValeursParIndicateur(
         results.valeurs,
-        indicateurSequestrationDefinitions,
+        indicateursSequestration,
         true
       );
 

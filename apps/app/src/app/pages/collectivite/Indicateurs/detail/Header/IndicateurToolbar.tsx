@@ -14,7 +14,7 @@ import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 type ModalType = 'activityLog' | 'deleting' | 'none';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isPerso?: boolean;
@@ -22,7 +22,7 @@ type Props = {
 };
 
 const IndicateurToolbar = ({
-  definition,
+  indicateur,
   chartInfo,
   hasCollectivitePermission,
   isPerso = false,
@@ -34,12 +34,12 @@ const IndicateurToolbar = ({
 
   const { mutate: exportIndicateurs } = useExportIndicateurs({
     mode: 'selection',
-    indicateurIds: [definition.id],
+    indicateurIds: [indicateur.id],
   });
 
-  const { estFavori } = definition;
+  const { estFavori } = indicateur;
 
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
   const actions: MenuAction[] = [
     {
@@ -103,15 +103,15 @@ const IndicateurToolbar = ({
 
       {currentModal === 'activityLog' && (
         <ActivityLogModal
-          modifiedAt={definition.modifiedAt}
-          modifiedBy={definition.modifiedBy}
+          modifiedAt={indicateur.modifiedAt}
+          modifiedBy={indicateur.modifiedBy}
           onClose={closeModal}
         />
       )}
 
       {currentModal === 'deleting' && (
         <DeleteIndicateurModal
-          definition={definition}
+          indicateur={indicateur}
           openState={{ isOpen: true, setIsOpen: closeModal }}
         />
       )}
@@ -119,7 +119,7 @@ const IndicateurToolbar = ({
       {isExportingPng && chartInfo && (
         <IndicateurChartPngExport
           chartInfo={chartInfo}
-          title={definition.titre}
+          title={indicateur.titre}
           onDone={() => setIsExportingPng(false)}
         />
       )}

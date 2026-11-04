@@ -8,24 +8,24 @@ import { OpenState } from '@tet/ui/utils/types';
  * Modale pour la suppression d'un indicateur personnalisé
  */
 type Props = {
-  definition: Pick<IndicateurDetaille, 'id' | 'titre'>;
+  indicateur: Pick<IndicateurDetaille, 'id' | 'titre'>;
   openState: OpenState;
   redirectAfterDelete?: boolean;
 };
 
 export const DeleteIndicateurModal = ({
-  definition,
+  indicateur,
   openState,
   redirectAfterDelete,
 }: Props) => {
-  const { mutate: deleteIndicateur } = useDeleteIndicateur(definition.id, {
+  const { mutate: deleteIndicateur } = useDeleteIndicateur(indicateur.id, {
     redirectAfterDelete,
   });
   return (
     <Modal
       openState={openState}
       title={appLabels.suppressionIndicateur}
-      subTitle={definition.titre}
+      subTitle={indicateur.titre}
       render={() => (
         <p className="mb-0">{appLabels.suppressionIndicateurDescription}</p>
       )}

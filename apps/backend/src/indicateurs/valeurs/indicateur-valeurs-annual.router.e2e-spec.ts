@@ -53,7 +53,7 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
   const insertAnnualIndicateur = async ({
     sansValeurUtilisateur = false,
   } = {}) => {
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         collectiviteId,
@@ -66,12 +66,12 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurObjectifTable)
-        .where(eq(indicateurObjectifTable.indicateurId, definition.id));
+        .where(eq(indicateurObjectifTable.indicateurId, indicateur.id));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
     });
-    return definition.id;
+    return indicateur.id;
   };
 
   const renderChart = (option: EChartsOption) => {

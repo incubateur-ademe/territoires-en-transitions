@@ -9,7 +9,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 
 type Props = {
   collectiviteId: number;
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   chartInfo?: IndicateurChartInfo;
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isReadonly: boolean;
@@ -21,20 +21,20 @@ type Props = {
 const IndicateurHeader = ({
   collectiviteId,
   hasCollectivitePermission,
-  definition,
+  indicateur,
   chartInfo,
   isReadonly,
   isPerso,
   composeSansAgregation,
   onUpdate,
 }: Props): ReactElement => {
-  const { titre, unite } = definition;
+  const { titre, unite } = indicateur;
   const isTitleReadonly = isReadonly || !isPerso;
   const uniteSuffix = composeSansAgregation ? null : (
     <sup className="ml-1 text-grey-6 font-medium">{`(${unite})`}</sup>
   );
   const showInfos = hasIndicateurInfos({
-    definition,
+    indicateur,
     isPerso,
     composeSansAgregation,
     isReadonly,
@@ -54,7 +54,7 @@ const IndicateurHeader = ({
       {!isReadonly && (
         <PageHeader.Actions>
           <IndicateurToolbar
-            definition={definition}
+            indicateur={indicateur}
             chartInfo={chartInfo}
             isPerso={isPerso}
             hasCollectivitePermission={hasCollectivitePermission}
@@ -66,14 +66,14 @@ const IndicateurHeader = ({
         <PageHeader.Subtitle>
           <CheminIndicateur
             collectiviteId={collectiviteId}
-            indicateur={definition}
+            indicateur={indicateur}
           />
         </PageHeader.Subtitle>
       )}
 
       <PageHeader.Metadata visibleWhen={showInfos}>
         <IndicateurInfos
-          definition={definition}
+          indicateur={indicateur}
           isPerso={isPerso}
           composeSansAgregation={composeSansAgregation}
           isReadonly={isReadonly}

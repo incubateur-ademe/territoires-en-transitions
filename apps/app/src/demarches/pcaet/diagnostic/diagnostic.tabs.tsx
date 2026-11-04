@@ -116,7 +116,7 @@ export const DiagnosticTabs = ({
               vulnerabilite={
                 isVulnerabiliteActive ? diagnostic.vulnerabilite : null
               }
-              definitions={diagnostic.indicateurDefinitions}
+              indicateurs={diagnostic.indicateurDefinitions}
               valeurs={diagnostic.indicateurValeurs}
               demarcheId={demarcheId}
               isReadonly={isReadonly}

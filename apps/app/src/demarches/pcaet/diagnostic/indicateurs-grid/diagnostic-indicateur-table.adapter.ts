@@ -29,13 +29,13 @@ export const buildDiagnosticIndicateurTableRows = (
   }
 
   return table.rows.flatMap((row) => {
-    const indicateurDefinition = indicateurByIdentifiant.get(
+    const indicateur = indicateurByIdentifiant.get(
       row.indicateurDefinitionId
     );
-    if (indicateurDefinition === undefined) {
+    if (indicateur === undefined) {
       return [];
     }
-    for (const valeur of valeursByIndicateurId.get(indicateurDefinition.id) ??
+    for (const valeur of valeursByIndicateurId.get(indicateur.id) ??
       []) {
       IndicateurPeriodes.toAnnualYearFromHistoricalDate(
         valeur.periodicite,
@@ -45,16 +45,16 @@ export const buildDiagnosticIndicateurTableRows = (
     }
     return [
       {
-        indicateurId: indicateurDefinition.id,
-        indicateurDefinition,
+        indicateurId: indicateur.id,
+        indicateurDefinition: indicateur,
         indicateurValeurs:
-          valeursByIndicateurId.get(indicateurDefinition.id) ?? [],
+          valeursByIndicateurId.get(indicateur.id) ?? [],
         indicateurLabel: row.label,
         // Référence et horizons d'objectif sont tous requis : seules une ligne
         // facultative ou non applicable sont libérées.
         isValeurRequired: () =>
-          indicateurDefinition.isApplicable && !row.isOptional,
-        isApplicable: indicateurDefinition.isApplicable,
+          indicateur.isApplicable && !row.isOptional,
+        isApplicable: indicateur.isApplicable,
       },
     ];
   });

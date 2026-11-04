@@ -195,12 +195,12 @@ export default class ManageIndicateurValeursService {
 
   async reconcileCollectiviteCalculatedIndicateurValeurs(
     collectiviteId: number,
-    definitions: IndicateurPredefini[],
+    indicateursPredefinis: IndicateurPredefini[],
     tx: Transaction
   ) {
     return getIndicateurValeursDataOrThrow(
       await this.reconciliation.reconcileCollectivite(
-        { collectiviteId, definitions },
+        { collectiviteId, indicateurs: indicateursPredefinis },
         { isUserTrusted: true, tx }
       )
     );
@@ -210,7 +210,7 @@ export default class ManageIndicateurValeursService {
     onlyForCollectiviteId: number | undefined,
     user: AuthUser | null,
     options: {
-      definitions?: IndicateurPredefini[];
+      indicateurs?: IndicateurPredefini[];
       skipPermissionCheck?: boolean;
     } = {}
   ) {
@@ -220,7 +220,7 @@ export default class ManageIndicateurValeursService {
       await this.reconciliation.recomputeAll(
         {
           collectiviteId: onlyForCollectiviteId,
-          definitions: options.definitions,
+          indicateurs: options.indicateurs,
         },
         { isUserTrusted: true }
       )
@@ -307,11 +307,11 @@ export default class ManageIndicateurValeursService {
 
   async upsertValeur(data: UpsertValeurIndicateur, user: AuthenticatedUser) {
     const { collectiviteId, indicateurId } = data;
-    const definition = await this.listIndicateursService.getIndicateur({
+    const indicateur = await this.listIndicateursService.getIndicateur({
       collectiviteId,
       indicateurId,
     });
-    await this.canMutateValeur(user, collectiviteId, definition);
+    await this.canMutateValeur(user, collectiviteId, indicateur);
     const changed: IndicateurValeur[] = [];
     const saved = await this.executeTransaction(async (tx) => {
       const saved = getIndicateurValeursDataOrThrow(

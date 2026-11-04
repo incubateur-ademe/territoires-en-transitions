@@ -29,17 +29,17 @@ import { UpsertIndicateurThematiquesService } from '../upsert-indicateur-themati
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
 
 const isOwnedByCollectivite = (
-  definition: IndicateurNatureFields,
+  indicateur: IndicateurNatureFields,
   collectiviteId: number
 ): boolean =>
-  isIndicateurPerso(definition) && definition.collectiviteId === collectiviteId;
+  isIndicateurPerso(indicateur) && indicateur.collectiviteId === collectiviteId;
 
 const isInCollectiviteScope = (
-  definition: IndicateurNatureFields,
+  indicateur: IndicateurNatureFields,
   collectiviteId: number
 ): boolean =>
-  isIndicateurPredefini(definition) ||
-  isOwnedByCollectivite(definition, collectiviteId);
+  isIndicateurPredefini(indicateur) ||
+  isOwnedByCollectivite(indicateur, collectiviteId);
 
 @Injectable()
 export class UpdateIndicateurService {
@@ -119,13 +119,13 @@ export class UpdateIndicateurService {
   }
 
   private assertIndicateurInCollectiviteScope(
-    definition: IndicateurNatureFields | null,
+    indicateur: IndicateurNatureFields | null,
     requestedCollectiviteId: number,
     indicateurId: number
-  ): asserts definition is IndicateurNatureFields {
+  ): asserts indicateur is IndicateurNatureFields {
     if (
-      !definition ||
-      !isInCollectiviteScope(definition, requestedCollectiviteId)
+      !indicateur ||
+      !isInCollectiviteScope(indicateur, requestedCollectiviteId)
     ) {
       throw new NotFoundException(
         `Indicateur ${indicateurId} non trouvé pour la collectivité ${requestedCollectiviteId}`
@@ -134,19 +134,19 @@ export class UpdateIndicateurService {
   }
 
   private async assertMemberOfIndicateurGroupement(
-    definition: IndicateurNatureFields,
+    indicateur: IndicateurNatureFields,
     collectiviteId: number,
     indicateurId: number,
     tx: Transaction
   ): Promise<void> {
     if (
-      !isIndicateurPredefini(definition) ||
-      definition.groupementId === null
+      !isIndicateurPredefini(indicateur) ||
+      indicateur.groupementId === null
     ) {
       return;
     }
     const isMember = await this.repository.lockGroupementMembership(
-      { groupementId: definition.groupementId, collectiviteId },
+      { groupementId: indicateur.groupementId, collectiviteId },
       tx
     );
     if (!isMember) {
@@ -157,7 +157,7 @@ export class UpdateIndicateurService {
   }
 
   private assertRequestedFieldsAreMutable(
-    definition: IndicateurNatureFields,
+    indicateur: IndicateurNatureFields,
     collectiviteId: number,
     indicateurId: number,
     indicateurFields: UpdateIndicateurInput['indicateurFields']
@@ -167,7 +167,7 @@ export class UpdateIndicateurService {
         'La périodicité est fixée à la création de l’indicateur'
       );
     }
-    if (isOwnedByCollectivite(definition, collectiviteId)) {
+    if (isOwnedByCollectivite(indicateur, collectiviteId)) {
       return;
     }
 
@@ -193,9 +193,9 @@ export class UpdateIndicateurService {
       return apiKeyPermissionResult;
     }
 
-    const definition = await this.repository.getIndicateurNature(indicateurId);
+    const indicateur = await this.repository.getIndicateurNature(indicateurId);
     this.assertIndicateurInCollectiviteScope(
-      definition,
+      indicateur,
       collectiviteId,
       indicateurId
     );
@@ -221,7 +221,7 @@ export class UpdateIndicateurService {
     } = indicateurFields;
 
     this.assertRequestedFieldsAreMutable(
-      definition,
+      indicateur,
       collectiviteId,
       indicateurId,
       indicateurFields
@@ -231,24 +231,24 @@ export class UpdateIndicateurService {
       void,
       unknown
     >(async (tx) => {
-      const lockedDefinition = await this.repository.lockIndicateurNature(
+      const lockedIndicateur = await this.repository.lockIndicateurNature(
         indicateurId,
         tx
       );
       this.assertIndicateurInCollectiviteScope(
-        lockedDefinition,
+        lockedIndicateur,
         collectiviteId,
         indicateurId
       );
       this.assertRequestedFieldsAreMutable(
-        lockedDefinition,
+        lockedIndicateur,
         collectiviteId,
         indicateurId,
         indicateurFields
       );
 
       await this.assertMemberOfIndicateurGroupement(
-        lockedDefinition,
+        lockedIndicateur,
         collectiviteId,
         indicateurId,
         tx

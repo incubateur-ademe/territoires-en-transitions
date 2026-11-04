@@ -82,7 +82,7 @@ export class ListIndicateursService {
       ].join(',')} pour la collectivité ${collectiviteId}`
     );
 
-    const definitionsResult = getIndicateurDataOrThrow(
+    const indicateursResult = getIndicateurDataOrThrow(
       await this.repository.listIndicateurs({
         collectiviteId,
         filters,
@@ -90,12 +90,12 @@ export class ListIndicateursService {
       })
     );
 
-    this.logger.log(`${definitionsResult.length} définitions trouvées`);
+    this.logger.log(`${indicateursResult.length} définitions trouvées`);
 
-    const count = definitionsResult[0]?.count ?? 0;
+    const count = indicateursResult[0]?.count ?? 0;
 
     return {
-      data: definitionsResult.map(
+      data: indicateursResult.map(
         ({ count: _count, ...indicateur }) => indicateur
       ),
       count,

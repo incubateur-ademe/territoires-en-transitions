@@ -491,7 +491,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
     expect(valeursService.recomputeAll).toHaveBeenCalledTimes(2);
     expect(valeursService.recomputeAll).toHaveBeenNthCalledWith(
       1,
-      { definitions: [updatedDefinition] },
+      { indicateurs: [updatedDefinition] },
       { isUserTrusted: true, tx: transaction }
     );
   });

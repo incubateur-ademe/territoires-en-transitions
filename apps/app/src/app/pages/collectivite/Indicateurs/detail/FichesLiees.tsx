@@ -10,10 +10,10 @@ import { FichePicto } from './fiche.picto';
 import { FichesLieesModal } from './fiches-liees.modal';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
 };
 
-const FichesLiees = ({ definition }: Props) => {
+const FichesLiees = ({ indicateur }: Props) => {
   const collectivite = useCurrentCollectivite();
   const { hasCollectivitePermission, collectiviteId } = collectivite;
   useCurrentCollectivite();
@@ -22,13 +22,13 @@ const FichesLiees = ({ definition }: Props) => {
 
   const { fiches } = useListFiches(collectiviteId, {
     filters: {
-      indicateurIds: [definition.id],
+      indicateurIds: [indicateur.id],
     },
   });
 
   const ficheIds = fiches.map((f) => f.id);
 
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
   const isEmpty = ficheIds.length === 0;
 

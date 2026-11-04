@@ -69,18 +69,18 @@ export default class ComputeValeursService {
   }
 
   async getAllSourceIdentifiants(
-    definitions?: IndicateurPredefini[]
+    indicateurs?: IndicateurPredefini[]
   ): Promise<string[]> {
-    if (!definitions) {
+    if (!indicateurs) {
       const result = await this.graphService.loadAllComputedIndicateurs();
       if (!result.success) throw result.cause ?? result.error;
-      definitions = result.data;
+      indicateurs = result.data;
     }
     return [
       ...new Set(
-        definitions.flatMap((definition) =>
+        indicateurs.flatMap((indicateur) =>
           this.graphService
-            .getFormula(definition)
+            .getFormula(indicateur)
             .references.map(({ identifiant }) => identifiant)
         )
       ),
@@ -156,25 +156,25 @@ export default class ComputeValeursService {
       { tx }
     );
     if (!graphResult.success) throw graphResult.cause ?? graphResult.error;
-    const { formulas, sourceDefinitions } = graphResult.data;
+    const { formulas, sourceIndicateurs } = graphResult.data;
     const groupsByIndicateur = new Map<number, CalculSourceGroups>();
     if (!formulas.length) return { valeursToUpsert: [], groupsByIndicateur };
     const metadonnees =
       await this.indicateurSourceService.getAllIndicateurSourceMetadonnees(tx);
     const policies = await this.getSourcesCalcul(tx);
-    const definitionsById = new Map(
-      sourceDefinitions.map((definition) => [definition.id, definition])
+    const indicateursById = new Map(
+      sourceIndicateurs.map((indicateur) => [indicateur.id, indicateur])
     );
     const sources = valeurs.flatMap<CalculSourceValeur>((valeur) => {
-      const definition = definitionsById.get(valeur.indicateurId);
-      if (!definition || !isIndicateurPredefini(definition)) return [];
+      const indicateur = indicateursById.get(valeur.indicateurId);
+      if (!indicateur || !isIndicateurPredefini(indicateur)) return [];
       const metadonnee = metadonnees.find(
         ({ id }) => id === valeur.metadonneeId
       );
       return [
         {
           ...valeur,
-          indicateurIdentifiant: definition.identifiantReferentiel,
+          indicateurIdentifiant: indicateur.identifiantReferentiel,
           sourceId: normalizeCalculSourceId(metadonnee?.sourceId),
           metadonneeDateVersion: metadonnee?.dateVersion ?? null,
           deleted: deletedIds.has(valeur.id),
@@ -229,7 +229,7 @@ export default class ComputeValeursService {
       { tx }
     );
     if (!graphResult.success) throw graphResult.cause ?? graphResult.error;
-    const { formulas, targetDefinitions, sourceDefinitions } = graphResult.data;
+    const { formulas, targetIndicateurs, sourceIndicateurs } = graphResult.data;
     if (!indicateurIds.length)
       return {
         valeursToUpsert: [],
@@ -242,7 +242,7 @@ export default class ComputeValeursService {
       )
     );
     const sourceIds = new Set(
-      sourceDefinitions
+      sourceIndicateurs
         .filter(
           ({ identifiantReferentiel }) =>
             identifiantReferentiel &&
@@ -305,7 +305,7 @@ export default class ComputeValeursService {
             !expected.has(getCalculatedValeurIdentity(valeur))
         )
         .map(({ id }) => id),
-      indicateurIdentifiants: targetDefinitions.flatMap(
+      indicateurIdentifiants: targetIndicateurs.flatMap(
         ({ identifiantReferentiel }) =>
           identifiantReferentiel ? [identifiantReferentiel] : []
       ),

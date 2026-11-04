@@ -41,7 +41,7 @@ const toStatut = (isComplete: boolean): DemarchePcaetTopicStatut =>
 export const getDiagnosticIndicateurTopicStatut = (
   config: PcaetDiagnosticIndicateurParentConfig,
   valeurs: PcaetDiagnostic['indicateurValeurs'],
-  definitions: PcaetDiagnostic['indicateurDefinitions']
+  indicateurs: PcaetDiagnostic['indicateurDefinitions']
 ): DemarcheCompletionStatut =>
   config.optional === true
     ? 'optional'
@@ -49,7 +49,7 @@ export const getDiagnosticIndicateurTopicStatut = (
         isPcaetDiagnosticIndicateurComplet({
           config,
           indicateurs: valeurs,
-          definitions,
+          definitions: indicateurs,
         })
       );
 
