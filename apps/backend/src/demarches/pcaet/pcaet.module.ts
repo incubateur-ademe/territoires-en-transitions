@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { CollectivitesCoreModule } from '@tet/backend/collectivites/collectivites-core.module';
 import { PersonnalisationsModule } from '@tet/backend/collectivites/personnalisations/personnalisations.module';
@@ -12,6 +13,7 @@ import { CompletePlanSecteursModule } from '@tet/backend/plans/fiches/fiche-sect
 import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { UsersModule } from '@tet/backend/users/users.module';
+import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
@@ -54,6 +56,14 @@ import { AddDemarchePcaetDocumentRouter } from './documents/add-document/add-doc
 import { AddDemarchePcaetDocumentService } from './documents/add-document/add-document.service';
 import { CreateDemarchePcaetDocumentAdditionalRouter } from './documents/create-document-additional/create-document-additional.router';
 import { CreateDemarchePcaetDocumentAdditionalService } from './documents/create-document-additional/create-document-additional.service';
+import {
+  DETECT_DOCUMENT_INCLUSION_JOB_OPTIONS,
+  DETECT_DOCUMENT_INCLUSION_QUEUE_NAME,
+} from './documents/detect-document-inclusion/detect-document-inclusion.queue';
+import { DetectDocumentInclusionRepository } from './documents/detect-document-inclusion/detect-document-inclusion.repository';
+import { DetectDocumentInclusionService } from './documents/detect-document-inclusion/detect-document-inclusion.service';
+import { DetectDocumentInclusionWorker } from './documents/detect-document-inclusion/detect-document-inclusion.worker';
+import { EnqueueDocumentInclusionDetectionService } from './documents/detect-document-inclusion/enqueue-document-inclusion-detection.service';
 import { ListDemarchePcaetDocumentsRouter } from './documents/list-documents/list-documents.router';
 import { ListDemarchePcaetDocumentsService } from './documents/list-documents/list-documents.service';
 import { PcaetDocumentsRouter } from './documents/pcaet-documents.router';
@@ -163,6 +173,12 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     AxeModule,
     NotificationsModule,
     TrackingModule,
+    // Analyse des pièces déposées (le PLCF dans le diagnostic, par exemple).
+    LlmModule,
+    BullModule.registerQueue({
+      name: DETECT_DOCUMENT_INCLUSION_QUEUE_NAME,
+      defaultJobOptions: DETECT_DOCUMENT_INCLUSION_JOB_OPTIONS,
+    }),
   ],
   controllers: [DownloadDossierDocumentsController],
   providers: [
@@ -185,6 +201,10 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     DemarcheDocumentApplicabiliteService,
     DemarcheHistoriqueRepository,
     DemarcheDocumentsRepository,
+    DetectDocumentInclusionRepository,
+    DetectDocumentInclusionService,
+    DetectDocumentInclusionWorker,
+    EnqueueDocumentInclusionDetectionService,
     DemarchePlanActionsRepository,
     GetDemarchePcaetRepository,
     GetDemarchePcaetService,

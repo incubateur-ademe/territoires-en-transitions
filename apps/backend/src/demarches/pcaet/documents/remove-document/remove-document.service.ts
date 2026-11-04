@@ -10,6 +10,7 @@ import {
 } from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
+import { DetectDocumentInclusionRepository } from '../detect-document-inclusion/detect-document-inclusion.repository';
 import {
   RemoveDemarchePcaetDocumentError,
   RemoveDemarchePcaetDocumentErrorEnum,
@@ -24,7 +25,8 @@ export class RemoveDemarchePcaetDocumentService {
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly detectionRepository: DetectDocumentInclusionRepository
   ) {}
 
   /**
@@ -76,6 +78,15 @@ export class RemoveDemarchePcaetDocumentService {
       );
       if (!deleted) {
         return failure(RemoveDemarchePcaetDocumentErrorEnum.DOCUMENT_NOT_FOUND);
+      }
+
+      // Retiré, le document n'a plus rien à détecter : les pièces qu'on y avait
+      // trouvées perdent ce substitut, et leur case tombe s'il n'en reste aucun.
+      if (etape === 'amont') {
+        await this.detectionRepository.deleteForDocument(
+          { demarcheId: demarche.id, documentId: input.documentId },
+          transaction
+        );
       }
 
       const pruned =

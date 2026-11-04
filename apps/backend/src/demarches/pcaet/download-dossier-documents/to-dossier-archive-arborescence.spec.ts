@@ -23,6 +23,7 @@ const definition = (
   etape: 'both',
   substituts: [],
   substitutsDeclarables: [],
+  substitutsDetectes: [],
 });
 
 const fichier = (
@@ -66,6 +67,7 @@ const snapshot = (
   ],
   documents: [],
   documentsAdditional: [],
+  detections: [],
   ...overrides,
 });
 

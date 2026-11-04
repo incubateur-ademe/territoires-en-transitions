@@ -71,6 +71,13 @@ export const demarcheDocumentDefinitionSchema = z.object({
    * une EES ou une délibération vivent souvent à part.
    */
   substitutsDeclarables: z.array(z.string()),
+  /**
+   * Identifiants des pièces dans lesquelles celle-ci peut être comprise, mais
+   * seulement quand l'analyse du fichier déposé l'y a trouvée (ex. le PLCF dans
+   * le diagnostic, la stratégie ou le programme d'actions). Sans détection
+   * positive, la case n'est pas proposée.
+   */
+  substitutsDetectes: z.array(z.string()),
   /** Restriction propre à la pièce ; absente, celle du type de démarche s'applique. */
   formatsAutorises: z.optional(z.nullable(z.array(z.string()))),
   mimeTypesAutorises: z.optional(z.nullable(z.array(z.string()))),
@@ -138,6 +145,56 @@ export type DemarcheDocumentAdditional = z.infer<
   typeof demarcheDocumentAdditionalSchema
 >;
 
+export const demarcheDocumentDetectionStatusValues = [
+  'pending',
+  'done',
+  'failed',
+] as const;
+
+export const demarcheDocumentDetectionStatusSchema = z.enum(
+  demarcheDocumentDetectionStatusValues
+);
+
+export type DemarcheDocumentDetectionStatus = z.infer<
+  typeof demarcheDocumentDetectionStatusSchema
+>;
+
+/** Les trois parties d'un plan que l'analyse peut repérer dans un document. */
+export const demarcheDocumentDetectionPartieValues = [
+  'diagnostic',
+  'objectifs',
+  'programme_actions',
+] as const;
+
+export const demarcheDocumentDetectionPartieSchema = z.enum(
+  demarcheDocumentDetectionPartieValues
+);
+
+export type DemarcheDocumentDetectionPartie = z.infer<
+  typeof demarcheDocumentDetectionPartieSchema
+>;
+
+/**
+ * Résultat de l'analyse d'un fichier déposé (`documentId`) : contient-il la
+ * pièce `includedDocumentId` ? Elle porte sur un fichier précis : une détection
+ * dont le `fichierId` n'est plus celui déposé ne vaut plus rien.
+ */
+export const demarcheDocumentDetectionSchema = z.object({
+  documentId: z.string(),
+  includedDocumentId: z.string(),
+  fichierId: z.number(),
+  status: demarcheDocumentDetectionStatusSchema,
+  isIncluded: z.nullable(z.boolean()),
+  parties: z.array(demarcheDocumentDetectionPartieSchema),
+  sectionTitle: z.nullable(z.string()),
+  /** Pages où la pièce a été trouvée, telles que le document les numérote. */
+  pages: z.array(z.string()),
+});
+
+export type DemarcheDocumentDetection = z.infer<
+  typeof demarcheDocumentDetectionSchema
+>;
+
 /**
  * État complet des documents d'une démarche : ce que le type autorise, le modèle
  * attendu, ce qui a été déposé et les pièces additionnelles. Consommé tel
@@ -149,6 +206,7 @@ export const demarcheDocumentsSnapshotSchema = z.object({
   definitions: z.array(demarcheDocumentDefinitionSchema),
   documents: z.array(demarcheDocumentDeposeSchema),
   documentsAdditional: z.array(demarcheDocumentAdditionalSchema),
+  detections: z.array(demarcheDocumentDetectionSchema),
 });
 
 export type DemarcheDocumentsSnapshot = z.infer<

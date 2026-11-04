@@ -9,6 +9,7 @@ const specificErrors = [
   'DOCUMENT_DEFINITION_NOT_FOUND',
   'COUVERTURE_NON_APPLICABLE',
   'COUVERTURE_CONFLIT_DEPOT',
+  'COUVERTURE_NON_DETECTEE',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -37,6 +38,11 @@ export const setDemarchePcaetDocumentCouvertureErrorConfig: TrpcErrorHandlerConf
         code: 'CONFLICT',
         message:
           'Un document est déjà déposé pour cette pièce : retirez-le avant de la déclarer comprise dans une autre',
+      },
+      COUVERTURE_NON_DETECTEE: {
+        code: 'BAD_REQUEST',
+        message:
+          'Cette pièce n’a été trouvée dans aucun des documents déposés : déposez un document dédié',
       },
     },
   };

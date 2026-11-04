@@ -1427,16 +1427,27 @@ describe('Documents d’une démarche PCAET', () => {
         'pcaet_deliberation_adoption',
       ]);
 
-      // Les deux se déclarent comprises dans le programme d'actions, et nulle
-      // part ailleurs : l'écran ne propose qu'une case.
-      for (const id of ['pcaet_plan_qualite_air', 'pcaet_plan_chaleur_froid']) {
-        const plan = snapshot.definitions.find(
-          (definition) => definition.id === id
-        );
-        expect(plan?.requis).toBe(true);
-        expect(plan?.substituts).toEqual([]);
-        expect(plan?.substitutsDeclarables).toEqual(['pcaet_plan_actions']);
-      }
+      // Le plan qualité de l'air se déclare compris dans le programme
+      // d'actions ; le PLCF, dans les documents où l'analyse l'a trouvé.
+      const qualiteAir = snapshot.definitions.find(
+        (definition) => definition.id === 'pcaet_plan_qualite_air'
+      );
+      expect(qualiteAir?.requis).toBe(true);
+      expect(qualiteAir?.substituts).toEqual([]);
+      expect(qualiteAir?.substitutsDeclarables).toEqual(['pcaet_plan_actions']);
+      expect(qualiteAir?.substitutsDetectes).toEqual([]);
+
+      const plcf = snapshot.definitions.find(
+        (definition) => definition.id === 'pcaet_plan_chaleur_froid'
+      );
+      expect(plcf?.requis).toBe(true);
+      expect(plcf?.substituts).toEqual([]);
+      expect(plcf?.substitutsDeclarables).toEqual([]);
+      expect(plcf?.substitutsDetectes).toEqual([
+        'pcaet_diagnostic',
+        'pcaet_strategie_territoriale',
+        'pcaet_plan_actions',
+      ]);
     });
 
     it('les deux conditions sont indépendantes : à 60 000 habitants avec une commune de 46 000, seul le plan chaleur et froid est attendu', async () => {
@@ -1600,7 +1611,7 @@ describe('Documents d’une démarche PCAET', () => {
       ).rejects.toThrow();
     });
 
-    it('déclarer le plan compris dans le programme d’actions suffit à couvrir la pièce', async () => {
+    it('sans détection, le plan chaleur et froid ne se déclare pas compris dans le programme d’actions', async () => {
       const { caller, collectivite, demarche } = await createDemarche(
         db,
         router,
@@ -1616,30 +1627,23 @@ describe('Documents d’une démarche PCAET', () => {
         collectiviteId: collectivite.id,
       });
 
-      // La case ne vaut rien tant que le programme d'actions n'est pas déposé.
+      // Le cas détecté est couvert par detect-document-inclusion.e2e-spec.ts.
       await caller.demarches.pcaet.documents.add({
         collectiviteId: collectivite.id,
         demarcheId: demarche.id,
         documentId: 'pcaet_plan_actions',
         fichierId: fichier.id,
       });
-      await caller.demarches.pcaet.documents.setCouverture({
-        collectiviteId: collectivite.id,
-        demarcheId: demarche.id,
-        documentId: 'pcaet_plan_chaleur_froid',
-        couvert: true,
-      });
-
-      const snapshot = await caller.demarches.pcaet.documents.list({
-        collectiviteId: collectivite.id,
-        demarcheId: demarche.id,
-      });
-      const couverture = computeDemarcheDocumentsCoverage(snapshot).find(
-        ({ documentId }) => documentId === 'pcaet_plan_chaleur_froid'
+      await expect(
+        caller.demarches.pcaet.documents.setCouverture({
+          collectiviteId: collectivite.id,
+          demarcheId: demarche.id,
+          documentId: 'pcaet_plan_chaleur_froid',
+          couvert: true,
+        })
+      ).rejects.toThrow(
+        'Cette pièce n’a été trouvée dans aucun des documents déposés : déposez un document dédié'
       );
-      expect(couverture?.couvert).toBe(true);
-      expect(couverture?.origine).toBe('substitut');
-      expect(couverture?.substitutId).toBe('pcaet_plan_actions');
     });
 
     it('une pièce conditionnelle non couverte retient la complétude du dossier', async () => {

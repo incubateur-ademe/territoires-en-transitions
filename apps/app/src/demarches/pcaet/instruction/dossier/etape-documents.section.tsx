@@ -62,6 +62,7 @@ export const EtapeDocumentsSection = ({
         definitions={documents.definitions}
         documents={documents.documents}
         documentsAdditional={documents.documentsAdditional}
+        detections={documents.detections}
         coverage={coverage}
         isEtapeReadonly
         hideEmptyRows

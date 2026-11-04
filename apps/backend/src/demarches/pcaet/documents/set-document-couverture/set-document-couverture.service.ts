@@ -7,6 +7,8 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
   isDemarcheDocumentInclusionDeclarable,
+  listDemarcheDocumentSubstitutsDeposes,
+  type DemarcheDocumentDefinition,
 } from '@tet/domain/demarches';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
@@ -85,6 +87,20 @@ export class SetDemarchePcaetDocumentCouvertureService {
           SetDemarchePcaetDocumentCouvertureErrorEnum.COUVERTURE_NON_APPLICABLE
         );
       }
+      // Une pièce qui ne se range que là où l'analyse l'a trouvée : sans
+      // détection positive, il n'y a pas de case à cocher.
+      if (
+        input.couvert &&
+        !(await this.isInclusionAccueillie(
+          definition,
+          demarche.id,
+          transaction
+        ))
+      ) {
+        return failure(
+          SetDemarchePcaetDocumentCouvertureErrorEnum.COUVERTURE_NON_DETECTEE
+        );
+      }
       const written = await this.demarcheDocumentsRepository.setCouverture(
         {
           collectiviteId: demarche.collectiviteId,
@@ -112,5 +128,28 @@ export class SetDemarchePcaetDocumentCouvertureService {
     };
 
     return this.transactionManager.executeSingle(executeInTransaction, tx);
+  }
+
+  private async isInclusionAccueillie(
+    definition: DemarcheDocumentDefinition,
+    demarcheId: number,
+    transaction: Transaction
+  ): Promise<boolean> {
+    if (
+      definition.substituts.length > 0 ||
+      definition.substitutsDeclarables.length > 0
+    ) {
+      return true;
+    }
+    const [documents, detections] = await Promise.all([
+      this.demarcheDocumentsRepository.listDocuments(demarcheId, transaction),
+      this.demarcheDocumentsRepository.listDetections(demarcheId, transaction),
+    ]);
+    return (
+      listDemarcheDocumentSubstitutsDeposes(definition, {
+        documents,
+        detections,
+      }).length > 0
+    );
   }
 }

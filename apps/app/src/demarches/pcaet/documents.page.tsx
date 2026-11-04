@@ -185,6 +185,7 @@ export const DemarchePcaetDocumentsPage = () => {
           definitions: snapshot.definitions,
           documents: snapshot.documents,
           documentsAdditional: snapshot.documentsAdditional,
+          detections: snapshot.detections,
           documentAdditionalCreeId,
           coverage,
           isEtapeReadonly: isEtapeReadonly(etapeCourante),

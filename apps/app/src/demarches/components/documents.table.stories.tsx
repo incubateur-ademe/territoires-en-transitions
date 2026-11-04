@@ -26,6 +26,7 @@ const definitions: DemarcheDocumentDefinition[] = [
     etape: 'amont',
     substituts: [],
     substitutsDeclarables: [],
+    substitutsDetectes: [],
   },
   {
     id: 'pcaet_diagnostic',
@@ -36,6 +37,7 @@ const definitions: DemarcheDocumentDefinition[] = [
     etape: 'amont',
     substituts: ['pcaet_document_global'],
     substitutsDeclarables: [],
+    substitutsDetectes: [],
   },
   {
     id: 'pcaet_plan_actions',
@@ -46,6 +48,7 @@ const definitions: DemarcheDocumentDefinition[] = [
     etape: 'amont',
     substituts: ['pcaet_document_global'],
     substitutsDeclarables: [],
+    substitutsDetectes: [],
   },
   {
     id: 'pcaet_ees',
@@ -57,6 +60,7 @@ const definitions: DemarcheDocumentDefinition[] = [
     substituts: [],
     // Le PCAET global ne la regroupe pas d'office : son inclusion se déclare.
     substitutsDeclarables: ['pcaet_document_global'],
+    substitutsDetectes: [],
   },
 ];
 

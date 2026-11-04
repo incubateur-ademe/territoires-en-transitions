@@ -16,6 +16,10 @@ import {
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetAccessService } from '../../shared/demarche-pcaet-access.service';
 import {
+  EnqueueDocumentInclusionDetectionService,
+  type PendingDetection,
+} from '../detect-document-inclusion/enqueue-document-inclusion-detection.service';
+import {
   AddDemarchePcaetDocumentError,
   AddDemarchePcaetDocumentErrorEnum,
 } from './add-document.errors';
@@ -29,7 +33,8 @@ export class AddDemarchePcaetDocumentService {
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly enqueueDetectionService: EnqueueDocumentInclusionDetectionService
   ) {}
 
   /**
@@ -39,11 +44,15 @@ export class AddDemarchePcaetDocumentService {
    *
    * Le dépôt coche au passage les pièces que le catalogue range d'office dans
    * celle-ci — un défaut, que la collectivité reste libre de décocher.
+   *
+   * Il lance aussi, en tâche de fond, l'analyse du fichier pour les pièces qui
+   * ne s'y rangent que si on les y trouve (le PLCF dans le diagnostic).
    */
   async addDocument(
     input: AddDemarchePcaetDocumentInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarcheDocumentDepose, AddDemarchePcaetDocumentError>> {
+    let pendingDetections: PendingDetection[] = [];
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -164,6 +173,20 @@ export class AddDemarchePcaetDocumentService {
         transaction
       );
 
+      // L'inclusion se déclare sur le dossier transmis : une reprise aval n'est
+      // jamais analysée.
+      if (etape === 'amont') {
+        pendingDetections = await this.enqueueDetectionService.markPending(
+          {
+            demarcheId: demarche.id,
+            documentId: definition.id,
+            fichierId: fichier.id,
+            definitions,
+          },
+          transaction
+        );
+      }
+
       this.logger.log(
         `Document ${definition.id} deposited on demarche PCAET ${
           demarche.id
@@ -176,6 +199,13 @@ export class AddDemarchePcaetDocumentService {
       return success(document);
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      await this.enqueueDetectionService.enqueue(pendingDetections);
+    }
+    return result;
   }
 }

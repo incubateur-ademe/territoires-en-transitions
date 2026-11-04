@@ -20,6 +20,35 @@ export type DemarcheTypeLabels = {
 
 const echeanceAvisJour = plural({ one: 'jour', other: 'jours' });
 
+const pageMot = plural({ one: 'page', other: 'pages' });
+const ongletMot = plural({ one: 'onglet', other: 'onglets' });
+const listeEt = (items: string[]): string =>
+  new Intl.ListFormat('fr', { type: 'conjunction' }).format(items);
+
+/** « pages 12 à 14 et 20 » ; un tableur numérote par onglet : « onglet « PLCF » ». */
+const formatDetectionPages = (pages: string[]): string => {
+  const numeros = pages.map(Number);
+  if (!numeros.every(Number.isInteger)) {
+    return `${ongletMot({ count: pages.length, withoutCount: true })} ${listeEt(
+      pages.map((page) => `« ${page} »`)
+    )}`;
+  }
+  const plages: Array<[number, number]> = [];
+  for (const numero of numeros) {
+    const derniere = plages[plages.length - 1];
+    if (derniere && numero === derniere[1] + 1) {
+      derniere[1] = numero;
+    } else {
+      plages.push([numero, numero]);
+    }
+  }
+  return `${pageMot({ count: pages.length, withoutCount: true })} ${listeEt(
+    plages.map(([debut, fin]) =>
+      debut === fin ? `${debut}` : `${debut} à ${fin}`
+    )
+  )}`;
+};
+
 const demarcheVulnerabiliteSousThematiqueMot = plural({
   one: 'sous-thématique',
   other: 'sous-thématiques',
@@ -290,7 +319,8 @@ export const demarchesLabels = {
     'Consultations auprès du préfet de région.',
   demarcheAvanceEtapeTransmisInfo:
     'Vous recevrez l’avis de ces instructeurs directement sur cette plateforme ou hors plateforme (par exemple par email).',
-  demarcheAvanceEtapeFinalisationLabel: 'Prise en compte des avis et délibération',
+  demarcheAvanceEtapeFinalisationLabel:
+    'Prise en compte des avis et délibération',
   demarcheAvanceEtapeFinalisationDescription:
     'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche',
   demarcheAvanceEtapeFinalisationHorsPlateformeDescription:
@@ -486,6 +516,24 @@ export const demarchesLabels = {
     `Couvert par « ${nom} »`,
   demarcheDocumentsInclusDans: ({ nom }: { nom: string }) =>
     `Inclus dans « ${nom} »`,
+  /** « Inclus dans « A », « B » et « C » » : les documents où l'analyse a trouvé la pièce. */
+  demarcheDocumentsInclusDansListe: ({ noms }: { noms: string[] }) =>
+    `Inclus dans ${new Intl.ListFormat('fr', { type: 'conjunction' }).format(
+      noms.map((nom) => `« ${nom} »`)
+    )}`,
+  demarcheDocumentsInclusionDetectee:
+    'Détecté automatiquement dans les documents déposés.',
+  demarcheDocumentsDetectionPagesTitre: 'Où l’analyse l’a trouvé :',
+  /** « « Diagnostic » : pages 12 à 14 et 20 » */
+  demarcheDocumentsDetectionPagesDocument: ({
+    nom,
+    pages,
+  }: {
+    nom: string;
+    pages: string[];
+  }) => `« ${nom} » : ${formatDetectionPages(pages)}`,
+  demarcheDocumentsDetectionEnCours:
+    'Recherche de cette pièce dans les documents déposés…',
   demarcheDocumentsCaption: ({
     type,
     etape,

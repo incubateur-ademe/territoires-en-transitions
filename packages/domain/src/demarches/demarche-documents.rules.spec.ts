@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type {
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentDetection,
   DemarcheDocumentsSnapshot,
 } from './demarche-document.schema';
 import { DEMARCHE_DOCUMENTS_CONFIG_DEFAULT } from './demarche-definition.schema';
@@ -9,6 +10,9 @@ import {
   computeDemarcheDocumentsCoverage,
   findDemarcheDocumentSubstitutDepose,
   hasDemarcheDocumentsForEtape,
+  isDemarcheDocumentDetectionPending,
+  listDemarcheDocumentDetectionPages,
+  listDemarcheDocumentSubstitutsDeposes,
   isDemarcheDocumentFileAccepted,
   isDemarcheDocumentsAvalComplet,
   isDemarcheDocumentsAdditionalAutorise,
@@ -28,6 +32,7 @@ const definition = (
   etape: 'amont',
   substituts: [],
   substitutsDeclarables: [],
+  substitutsDetectes: [],
   ...overrides,
 });
 
@@ -92,6 +97,7 @@ const snapshot = (
   ],
   documents: [],
   documentsAdditional: [],
+  detections: [],
   ...overrides,
 });
 
@@ -203,16 +209,25 @@ describe('findDemarcheDocumentSubstitutDepose', () => {
 
   it('désigne le document déposé dans lequel la pièce peut être déclarée comprise', () => {
     expect(
-      findDemarcheDocumentSubstitutDepose(etudeImpact, [depose(GLOBAL_ID)])
+      findDemarcheDocumentSubstitutDepose(etudeImpact, {
+        documents: [depose(GLOBAL_ID)],
+        detections: [],
+      })
     ).toBe(GLOBAL_ID);
   });
 
   it('ne désigne rien tant que ce document n’est pas déposé', () => {
-    expect(findDemarcheDocumentSubstitutDepose(etudeImpact, [])).toBeNull();
     expect(
-      findDemarcheDocumentSubstitutDepose(etudeImpact, [
-        couvertParLaPlateforme(GLOBAL_ID),
-      ])
+      findDemarcheDocumentSubstitutDepose(etudeImpact, {
+        documents: [],
+        detections: [],
+      })
+    ).toBeNull();
+    expect(
+      findDemarcheDocumentSubstitutDepose(etudeImpact, {
+        documents: [couvertParLaPlateforme(GLOBAL_ID)],
+        detections: [],
+      })
     ).toBeNull();
   });
 
@@ -220,9 +235,187 @@ describe('findDemarcheDocumentSubstitutDepose', () => {
     expect(
       findDemarcheDocumentSubstitutDepose(
         definition({ id: 'diagnostic', substituts: [GLOBAL_ID] }),
-        [depose(GLOBAL_ID)]
+        { documents: [depose(GLOBAL_ID)], detections: [] }
       )
     ).toBe(GLOBAL_ID);
+  });
+});
+
+describe('inclusion détectée par l’analyse des documents déposés', () => {
+  const PLCF = 'plan_chaleur_froid';
+  const definitions = [
+    definition({ id: 'diagnostic', requis: true, ordre: 1 }),
+    definition({ id: 'strategie', requis: true, ordre: 2 }),
+    definition({ id: 'plan_actions', requis: true, ordre: 3 }),
+    definition({
+      id: PLCF,
+      requis: true,
+      ordre: 4,
+      substitutsDetectes: ['diagnostic', 'strategie', 'plan_actions'],
+    }),
+  ];
+  const plcf = definitions[3];
+
+  const deposeFichier = (documentId: string, fichierId: number) => {
+    const document = depose(documentId);
+    return {
+      ...document,
+      fichier: document.fichier && { ...document.fichier, id: fichierId },
+    };
+  };
+
+  const detection = (
+    documentId: string,
+    fichierId: number,
+    overrides: Partial<DemarcheDocumentDetection> = {}
+  ): DemarcheDocumentDetection => ({
+    documentId,
+    includedDocumentId: PLCF,
+    fichierId,
+    status: 'done',
+    isIncluded: true,
+    parties: ['diagnostic'],
+    sectionTitle: null,
+    pages: [],
+    ...overrides,
+  });
+
+  const snapshotPlcf = (
+    documents: DemarcheDocumentDepose[],
+    detections: DemarcheDocumentDetection[]
+  ): DemarcheDocumentsSnapshot => ({
+    ...snapshot(),
+    definitions,
+    documents,
+    detections,
+  });
+
+  it('ne propose aucune case sur le seul dépôt, sans détection', () => {
+    expect(
+      listDemarcheDocumentSubstitutsDeposes(plcf, {
+        documents: [deposeFichier('diagnostic', 1)],
+        detections: [],
+      })
+    ).toEqual([]);
+  });
+
+  it('nomme, dans l’ordre du catalogue, les documents où la pièce a été trouvée', () => {
+    expect(
+      listDemarcheDocumentSubstitutsDeposes(plcf, {
+        documents: [
+          deposeFichier('plan_actions', 3),
+          deposeFichier('diagnostic', 1),
+          deposeFichier('strategie', 2),
+        ],
+        detections: [
+          detection('plan_actions', 3),
+          detection('strategie', 2, { isIncluded: false }),
+          detection('diagnostic', 1),
+        ],
+      })
+    ).toEqual(['diagnostic', 'plan_actions']);
+  });
+
+  it('ignore une détection portant sur un fichier remplacé depuis', () => {
+    expect(
+      listDemarcheDocumentSubstitutsDeposes(plcf, {
+        documents: [deposeFichier('diagnostic', 2)],
+        detections: [detection('diagnostic', 1)],
+      })
+    ).toEqual([]);
+  });
+
+  it('ne couvre la pièce déclarée que si un document déposé la contient', () => {
+    const declaree = couvertParLaPlateforme(PLCF);
+
+    expect(
+      coverageOf(
+        snapshotPlcf([deposeFichier('diagnostic', 1), declaree], []),
+        PLCF
+      )?.couvert
+    ).toBe(false);
+    expect(
+      coverageOf(
+        snapshotPlcf(
+          [deposeFichier('diagnostic', 1), declaree],
+          [detection('diagnostic', 1)]
+        ),
+        PLCF
+      )
+    ).toEqual({
+      documentId: PLCF,
+      couvert: true,
+      origine: 'substitut',
+      substitutId: 'diagnostic',
+    });
+  });
+
+  it('ne couvre rien sur une analyse en cours ou échouée', () => {
+    const documents = [
+      deposeFichier('diagnostic', 1),
+      couvertParLaPlateforme(PLCF),
+    ];
+
+    expect(
+      coverageOf(
+        snapshotPlcf(documents, [
+          detection('diagnostic', 1, { status: 'pending', isIncluded: null }),
+        ]),
+        PLCF
+      )?.couvert
+    ).toBe(false);
+    expect(
+      coverageOf(
+        snapshotPlcf(documents, [
+          detection('diagnostic', 1, { status: 'failed', isIncluded: null }),
+        ]),
+        PLCF
+      )?.couvert
+    ).toBe(false);
+  });
+
+  it('signale une analyse en cours sur le fichier déposé, pas sur un fichier remplacé', () => {
+    const pending = detection('diagnostic', 1, {
+      status: 'pending',
+      isIncluded: null,
+    });
+
+    expect(
+      isDemarcheDocumentDetectionPending(
+        { documents: [deposeFichier('diagnostic', 1)], detections: [pending] },
+        PLCF
+      )
+    ).toBe(true);
+    expect(
+      isDemarcheDocumentDetectionPending({
+        documents: [deposeFichier('diagnostic', 2)],
+        detections: [pending],
+      })
+    ).toBe(false);
+    expect(
+      isDemarcheDocumentDetectionPending(
+        { documents: [deposeFichier('diagnostic', 1)], detections: [pending] },
+        'autre_piece'
+      )
+    ).toBe(false);
+  });
+
+  it('donne les pages des seules détections positives qui valent encore', () => {
+    const documents = [
+      deposeFichier('diagnostic', 1),
+      deposeFichier('strategie', 2),
+      deposeFichier('plan_actions', 4),
+    ];
+    expect(
+      listDemarcheDocumentDetectionPages(PLCF, {
+        documents,
+        detections: [
+          detection('diagnostic', 1, { pages: ['12', '13'] }),
+          detection('strategie', 2, { isIncluded: false, pages: ['4'] }),
+          detection('plan_actions', 3, { pages: ['7'] }),
+        ],
+      })
+    ).toEqual([{ documentId: 'diagnostic', pages: ['12', '13'] }]);
   });
 });
 

@@ -182,6 +182,7 @@ const DocumentsSection = ({
     definitions: documents.definitions,
     documents: documents.documents,
     documentsAdditional: documents.documentsAdditional,
+    detections: documents.detections,
     coverage,
     isEtapeReadonly: true,
     hideEmptyRows: true,

@@ -4,6 +4,7 @@ import {
   isDemarcheDocumentDeEtape,
   type DemarcheDocumentDefinition,
   type DemarcheDocumentDepose,
+  type DemarcheDocumentDetection,
   type DemarcheDocumentEtape,
   type DemarcheDocumentsSnapshot,
 } from './demarche-document.schema';
@@ -70,6 +71,7 @@ export const computeDemarcheDocumentsCoverage = (
         )
       )
     );
+  const estDetecte = buildEstDetecte(snapshot);
 
   return snapshot.definitions.map((definition) => {
     const etapeExigeante = getEtapeExigeanteDemarcheDocument(definition.etape);
@@ -86,7 +88,7 @@ export const computeDemarcheDocumentsCoverage = (
     const substitutId = inclusionsDeclarees.has(
       cle(definition.id, etapeExigeante)
     )
-      ? findSubstitutDepose(definition, estDepose)
+      ? listSubstitutsAccueillants(definition, estDepose, estDetecte)[0]
       : undefined;
     if (substitutId) {
       return {
@@ -107,38 +109,154 @@ export const computeDemarcheDocumentsCoverage = (
 
 /**
  * Toutes les pièces dans lesquelles celle-ci peut être comprise : celles qui
- * cochent la case au dépôt et celles qui attendent la déclaration. Le calcul de
- * couverture ne les distingue pas — seul le défaut au dépôt le fait.
+ * cochent la case au dépôt, celles qui attendent la déclaration et celles où
+ * l'analyse doit l'avoir trouvée. Le calcul de couverture ne distingue les deux
+ * premières qu'au défaut du dépôt ; la troisième exige en plus une détection.
  */
 const listSubstituts = (
   definition: DemarcheDocumentDefinition
 ): readonly string[] => [
   ...definition.substituts,
   ...definition.substitutsDeclarables,
+  ...definition.substitutsDetectes,
 ];
 
-const findSubstitutDepose = (
-  definition: DemarcheDocumentDefinition,
-  estDepose: (documentId: string) => boolean
-): string | undefined => listSubstituts(definition).find(estDepose);
+type EstDetecte = (definitionId: string, substitutId: string) => boolean;
+
+const isDetectionPositive = ({
+  status,
+  isIncluded,
+}: DemarcheDocumentDetection): boolean =>
+  status === 'done' && isIncluded === true;
+
+/** Le fichier déposé à l'amont pour chaque pièce : celui que l'analyse lit. */
+const indexFichiersAmont = (
+  documents: readonly DemarcheDocumentDepose[]
+): ReadonlyMap<string, number> =>
+  new Map(
+    documents.flatMap(({ documentId, etape, fichier }) =>
+      fichier !== null && etape === 'amont'
+        ? [[documentId, fichier.id] as const]
+        : []
+    )
+  );
 
 /**
- * Le document déposé dans lequel cette pièce peut être déclarée comprise, `null`
- * s'il n'y en a pas. Sans lui, la déclaration n'aurait rien à quoi se rattacher :
- * l'interface n'a donc pas de case à proposer.
+ * Une détection ne vaut que pour le fichier analysé : remplacé, il faut une
+ * nouvelle analyse ; retiré, il n'y a plus rien à détecter.
  */
-export const findDemarcheDocumentSubstitutDepose = (
+const isDetectionCourante = (
+  detection: DemarcheDocumentDetection,
+  fichiersAmont: ReadonlyMap<string, number>
+): boolean => fichiersAmont.get(detection.documentId) === detection.fichierId;
+
+const buildEstDetecte = ({
+  documents,
+  detections,
+}: Pick<DemarcheDocumentsSnapshot, 'documents' | 'detections'>): EstDetecte => {
+  const fichiersAmont = indexFichiersAmont(documents);
+  return (definitionId, substitutId) =>
+    detections.some(
+      (detection) =>
+        detection.documentId === substitutId &&
+        detection.includedDocumentId === definitionId &&
+        isDetectionCourante(detection, fichiersAmont) &&
+        isDetectionPositive(detection)
+    );
+};
+
+/**
+ * Les pièces déposées qui peuvent accueillir celle-ci, dans l'ordre du
+ * catalogue : pour un substitut détecté, il faut en plus que l'analyse du
+ * fichier déposé y ait trouvé la pièce.
+ */
+const listSubstitutsAccueillants = (
   definition: DemarcheDocumentDefinition,
-  documents: readonly DemarcheDocumentDepose[]
-): string | null => {
+  estDepose: (documentId: string) => boolean,
+  estDetecte: EstDetecte
+): string[] => [
+  ...[...definition.substituts, ...definition.substitutsDeclarables].filter(
+    estDepose
+  ),
+  ...definition.substitutsDetectes.filter(
+    (substitutId) =>
+      estDepose(substitutId) && estDetecte(definition.id, substitutId)
+  ),
+];
+
+/**
+ * Les documents déposés dans lesquels cette pièce peut être déclarée comprise.
+ * Vide, la déclaration n'aurait rien à quoi se rattacher : l'interface n'a donc
+ * pas de case à proposer. Pour une pièce à substituts détectés, la liste nomme
+ * les documents où l'analyse l'a trouvée.
+ */
+export const listDemarcheDocumentSubstitutsDeposes = (
+  definition: DemarcheDocumentDefinition,
+  {
+    documents,
+    detections,
+  }: Pick<DemarcheDocumentsSnapshot, 'documents' | 'detections'>
+): string[] => {
   // L'inclusion se déclare sur le dossier transmis : seules les versions amont
   // peuvent l'accueillir.
-  const deposes = new Set(
-    documents
-      .filter(({ fichier, etape }) => fichier !== null && etape === 'amont')
-      .map(({ documentId }) => documentId)
+  const fichiersAmont = indexFichiersAmont(documents);
+  return listSubstitutsAccueillants(
+    definition,
+    (id) => fichiersAmont.has(id),
+    buildEstDetecte({ documents, detections })
   );
-  return findSubstitutDepose(definition, (id) => deposes.has(id)) ?? null;
+};
+
+/** Le premier document déposé qui peut accueillir cette pièce, `null` sinon. */
+export const findDemarcheDocumentSubstitutDepose = (
+  definition: DemarcheDocumentDefinition,
+  snapshot: Pick<DemarcheDocumentsSnapshot, 'documents' | 'detections'>
+): string | null =>
+  listDemarcheDocumentSubstitutsDeposes(definition, snapshot)[0] ?? null;
+
+/**
+ * Une analyse est-elle en cours sur un fichier déposé ? Restreinte à la pièce
+ * cherchée quand `includedDocumentId` est donné. Une analyse d'un fichier
+ * remplacé depuis ne compte pas : son résultat sera ignoré.
+ */
+export const isDemarcheDocumentDetectionPending = (
+  {
+    documents,
+    detections,
+  }: Pick<DemarcheDocumentsSnapshot, 'documents' | 'detections'>,
+  includedDocumentId?: string
+): boolean => {
+  const fichiersAmont = indexFichiersAmont(documents);
+  return detections.some(
+    (detection) =>
+      detection.status === 'pending' &&
+      (includedDocumentId === undefined ||
+        detection.includedDocumentId === includedDocumentId) &&
+      isDetectionCourante(detection, fichiersAmont)
+  );
+};
+
+/**
+ * Les pages où l'analyse a trouvé cette pièce, document par document, pour les
+ * seules détections qui valent encore. Un document sans page citée n'y figure
+ * pas.
+ */
+export const listDemarcheDocumentDetectionPages = (
+  includedDocumentId: string,
+  {
+    documents,
+    detections,
+  }: Pick<DemarcheDocumentsSnapshot, 'documents' | 'detections'>
+): Array<{ documentId: string; pages: string[] }> => {
+  const fichiersAmont = indexFichiersAmont(documents);
+  return detections.flatMap((detection) =>
+    detection.includedDocumentId === includedDocumentId &&
+    detection.pages.length > 0 &&
+    isDetectionCourante(detection, fichiersAmont) &&
+    isDetectionPositive(detection)
+      ? [{ documentId: detection.documentId, pages: detection.pages }]
+      : []
+  );
 };
 
 /**

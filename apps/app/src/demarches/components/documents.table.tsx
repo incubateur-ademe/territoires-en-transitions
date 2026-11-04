@@ -6,8 +6,10 @@ import {
   type FileConstraints,
 } from '@/app/collectivites/documents/upload/constants';
 import {
-  findDemarcheDocumentSubstitutDepose,
   getEtapeExigeanteDemarcheDocument,
+  isDemarcheDocumentDetectionPending,
+  listDemarcheDocumentDetectionPages,
+  listDemarcheDocumentSubstitutsDeposes,
   isDemarcheDocumentDeEtape,
   isDemarcheDocumentsAdditionalAutorise,
   resolveDemarcheDocumentFilesConfig,
@@ -16,6 +18,7 @@ import type {
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentDetection,
   DemarcheDocumentEtape,
   DemarcheDocumentAdditional,
   DemarcheDocumentsConfig,
@@ -26,6 +29,7 @@ import {
   Checkbox,
   ChecklistTable,
   Icon,
+  InfoTooltip,
   type MenuAction,
 } from '@tet/ui';
 import { ReactElement, useCallback, useMemo } from 'react';
@@ -58,13 +62,44 @@ const SectionRequiredBadge = ({
 );
 
 /** Couverture sans dépôt : la pièce est comprise dans une autre du dossier. */
+type DetectionPages = { nom: string; pages: string[] };
+
+const DetectionPagesInfo = ({
+  detectionPages,
+}: {
+  detectionPages: DetectionPages[];
+}): ReactElement | null =>
+  detectionPages.length === 0 ? null : (
+    <InfoTooltip
+      ariaLabel={appLabels.demarcheDocumentsDetectionPagesTitre}
+      label={
+        <div className="flex flex-col gap-1">
+          <span>{appLabels.demarcheDocumentsDetectionPagesTitre}</span>
+          {detectionPages.map(({ nom, pages }) => (
+            <span key={nom}>
+              {appLabels.demarcheDocumentsDetectionPagesDocument({
+                nom,
+                pages,
+              })}
+            </span>
+          ))}
+        </div>
+      }
+    />
+  );
+
 const CouvertureSansFichier = ({
   substitutNom,
+  inclusionNoms,
   isInclusionDeclaree = false,
+  detectionPages = [],
 }: {
   substitutNom: string;
+  /** Documents nommés par la case, quand l'analyse en a trouvé plusieurs. */
+  inclusionNoms?: string[];
   /** Déclarée par la collectivité : la mention reprend le libellé de sa case. */
   isInclusionDeclaree?: boolean;
+  detectionPages?: DetectionPages[];
 }): ReactElement => (
   <div className="flex items-center gap-2 text-grey-9">
     <Icon
@@ -74,9 +109,14 @@ const CouvertureSansFichier = ({
     />
     <span className="text-sm">
       {isInclusionDeclaree
-        ? appLabels.demarcheDocumentsInclusDans({ nom: substitutNom })
+        ? appLabels.demarcheDocumentsInclusDansListe({
+            noms: inclusionNoms?.length ? inclusionNoms : [substitutNom],
+          })
         : appLabels.demarcheDocumentsCouvertPar({ nom: substitutNom })}
     </span>
+    {isInclusionDeclaree && (
+      <DetectionPagesInfo detectionPages={detectionPages} />
+    )}
   </div>
 );
 
@@ -105,8 +145,10 @@ const SectionAnswer = ({
   document,
   documentOriginal,
   coverage,
-  substitutDeclarable,
+  substitutsDeposes,
+  detectionPages,
   substitutCouvrantNom,
+  isDetectionPending,
   isReadonly,
   isInclusionFigee,
   onAddFichier,
@@ -127,12 +169,17 @@ const SectionAnswer = ({
   documentOriginal: DemarcheDocumentDepose | undefined;
   coverage: DemarcheDocumentCoverage | undefined;
   /**
-   * Pièce déposée dans laquelle celle-ci peut être déclarée comprise, `null`
-   * s'il n'y en a pas : c'est ce qui fait apparaître la case d'inclusion.
+   * Pièces déposées dans lesquelles celle-ci peut être déclarée comprise : la
+   * case n'apparaît que s'il y en a une. Pour une pièce que l'analyse
+   * recherche, ce sont les documents où elle a été trouvée, tous nommés.
    */
-  substitutDeclarable: DemarcheDocumentDefinition | null;
+  substitutsDeposes: DemarcheDocumentDefinition[];
+  /** Pages où l'analyse a trouvé la pièce, par document déposé. */
+  detectionPages: DetectionPages[];
   /** Nom de la pièce qui couvre celle-ci, pour la mention sans case à cocher. */
   substitutCouvrantNom: string | undefined;
+  /** Un document déposé est en cours d'analyse pour y trouver cette pièce. */
+  isDetectionPending: boolean;
   isReadonly: boolean;
   /**
    * L'inclusion se déclare sur la version transmise : une fois le dossier
@@ -221,7 +268,22 @@ const SectionAnswer = ({
   // qui l'accueille, la collectivité dit elle-même qu'elle s'y trouve. La case
   // n'a de sens que si ce document est déposé — sinon il n'y a rien à cocher, et
   // le dépôt d'une pièce propre reste la seule issue.
-  if (substitutDeclarable !== null && isInclusionFigee) {
+  const isDetectee = definition.substitutsDetectes.length > 0;
+  // Une pièce recherchée par l'analyse nomme tous les documents où elle a été
+  // trouvée ; les autres, le seul document qui peut l'accueillir.
+  const inclusionNoms = (
+    isDetectee ? substitutsDeposes : substitutsDeposes.slice(0, 1)
+  ).map(({ nom }) => nom);
+  const detectionPending = isDetectionPending && !isReadonly && (
+    <p
+      className="m-0 text-xs text-grey-7"
+      data-test={`demarches.pcaet.documents.detection-pending.${definition.id}`}
+    >
+      {appLabels.demarcheDocumentsDetectionEnCours}
+    </p>
+  );
+
+  if (substitutsDeposes.length > 0 && isInclusionFigee) {
     return (
       <SectionFallback
         demarcheType={demarcheType}
@@ -235,27 +297,38 @@ const SectionAnswer = ({
             ? appLabels.demarcheDocumentsDeposerFichierDedie
             : undefined
         }
+        inclusionNoms={inclusionNoms}
         isInclusionDeclaree
+        detectionPages={detectionPages}
         onAddFichier={onAddFichier}
       />
     );
   }
 
-  if (substitutDeclarable !== null) {
+  if (substitutsDeposes.length > 0) {
     const estDeclareInclus = coverage?.origine === 'substitut';
     return (
       <div className="flex flex-col items-start gap-2 min-w-0">
-        <Checkbox
-          variant="checkbox"
-          size="xs"
-          checked={estDeclareInclus}
-          disabled={isReadonly}
-          label={appLabels.demarcheDocumentsInclusDans({
-            nom: substitutDeclarable.nom,
-          })}
-          onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
-          data-test={`demarches.pcaet.documents.inclusion.${definition.id}`}
-        />
+        <div className="flex items-start gap-1">
+          <Checkbox
+            variant="checkbox"
+            size="xs"
+            checked={estDeclareInclus}
+            disabled={isReadonly}
+            label={appLabels.demarcheDocumentsInclusDansListe({
+              noms: inclusionNoms,
+            })}
+            message={
+              isDetectee
+                ? appLabels.demarcheDocumentsInclusionDetectee
+                : undefined
+            }
+            onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
+            data-test={`demarches.pcaet.documents.inclusion.${definition.id}`}
+          />
+          <DetectionPagesInfo detectionPages={detectionPages} />
+        </div>
+        {detectionPending}
         {!estDeclareInclus && (
           <SectionFallback
             demarcheType={demarcheType}
@@ -272,15 +345,18 @@ const SectionAnswer = ({
   }
 
   return (
-    <SectionFallback
-      demarcheType={demarcheType}
-      fileConstraints={fileConstraints}
-      documentId={definition.id}
-      coverage={coverage}
-      substitutCouvrantNom={substitutCouvrantNom}
-      isReadonly={isReadonly}
-      onAddFichier={onAddFichier}
-    />
+    <div className="flex flex-col items-start gap-2 min-w-0">
+      {detectionPending}
+      <SectionFallback
+        demarcheType={demarcheType}
+        fileConstraints={fileConstraints}
+        documentId={definition.id}
+        coverage={coverage}
+        substitutCouvrantNom={substitutCouvrantNom}
+        isReadonly={isReadonly}
+        onAddFichier={onAddFichier}
+      />
+    </div>
   );
 };
 
@@ -294,9 +370,11 @@ const SectionFallback = ({
   documentId,
   coverage,
   substitutCouvrantNom,
+  inclusionNoms,
   isReadonly,
   label = appLabels.demarcheDocumentsTeleverser,
   isInclusionDeclaree,
+  detectionPages,
   onAddFichier,
 }: {
   demarcheType: DemarcheType;
@@ -304,16 +382,20 @@ const SectionFallback = ({
   documentId: string;
   coverage: DemarcheDocumentCoverage | undefined;
   substitutCouvrantNom: string | undefined;
+  inclusionNoms?: string[];
   isReadonly: boolean;
   label?: string;
   isInclusionDeclaree?: boolean;
+  detectionPages?: DetectionPages[];
   onAddFichier: (fichierId: number) => void;
 }): ReactElement => (
   <div className="flex flex-wrap items-center gap-3 min-w-0">
     {coverage?.origine === 'substitut' && substitutCouvrantNom && (
       <CouvertureSansFichier
         substitutNom={substitutCouvrantNom}
+        inclusionNoms={inclusionNoms}
         isInclusionDeclaree={isInclusionDeclaree}
+        detectionPages={detectionPages}
       />
     )}
     {!isReadonly && (
@@ -349,6 +431,8 @@ type Props = {
   definitions: DemarcheDocumentDefinition[];
   documents: DemarcheDocumentDepose[];
   documentsAdditional: DemarcheDocumentAdditional[];
+  /** Analyses des documents déposés : elles décident de certaines cases. */
+  detections?: DemarcheDocumentDetection[];
   coverage: DemarcheDocumentCoverage[];
   /**
    * Gel de l'étape entière. Le gel par pièce s'y ajoute et se déduit du modèle :
@@ -426,6 +510,7 @@ export const DemarcheDocumentsTable = ({
   definitions,
   documents,
   documentsAdditional,
+  detections = [],
   documentAdditionalCreeId,
   coverage,
   isEtapeReadonly = false,
@@ -619,14 +704,24 @@ export const DemarcheDocumentsTable = ({
                   definition.id
                 )}
                 coverage={coverageByDefinitionId.get(definition.id)}
-                substitutDeclarable={
-                  definitionById.get(
-                    findDemarcheDocumentSubstitutDepose(
-                      definition,
-                      documents
-                    ) ?? ''
-                  ) ?? null
-                }
+                substitutsDeposes={listDemarcheDocumentSubstitutsDeposes(
+                  definition,
+                  { documents, detections }
+                ).flatMap((id) => {
+                  const substitut = definitionById.get(id);
+                  return substitut ? [substitut] : [];
+                })}
+                detectionPages={listDemarcheDocumentDetectionPages(
+                  definition.id,
+                  { documents, detections }
+                ).flatMap(({ documentId, pages }) => {
+                  const nom = definitionById.get(documentId)?.nom;
+                  return nom ? [{ nom, pages }] : [];
+                })}
+                isDetectionPending={isDemarcheDocumentDetectionPending(
+                  { documents, detections },
+                  definition.id
+                )}
                 substitutCouvrantNom={
                   definitionById.get(
                     coverageByDefinitionId.get(definition.id)?.substitutId ?? ''

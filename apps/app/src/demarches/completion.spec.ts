@@ -36,6 +36,7 @@ const documentsSnapshot = (
       etape: 'amont',
       substituts: [],
       substitutsDeclarables: [],
+      substitutsDetectes: [],
     },
     {
       id: 'diagnostic',
@@ -46,10 +47,12 @@ const documentsSnapshot = (
       etape: 'amont',
       substituts: ['document_global'],
       substitutsDeclarables: [],
+      substitutsDetectes: [],
     },
   ],
   documents: [],
   documentsAdditional: [],
+  detections: [],
   ...overrides,
 });
 
@@ -63,6 +66,7 @@ const deliberationDefinition = {
   etape: 'aval',
   substituts: [],
   substitutsDeclarables: [],
+  substitutsDetectes: [],
 } satisfies DemarcheDocumentsSnapshot['definitions'][number];
 
 const snapshotAvecDeliberation = (

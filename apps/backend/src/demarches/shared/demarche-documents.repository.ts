@@ -15,6 +15,7 @@ import type {
   DemarcheType,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentDetection,
   DemarcheDocumentEtape,
   DemarcheDocumentFichier,
   DemarcheDocumentAdditional,
@@ -27,6 +28,7 @@ import { demarcheDefinitionTable } from './models/demarche-definition.table';
 import { DemarcheDocumentApplicabiliteService } from './demarche-document-applicabilite.service';
 import { demarcheDocumentDefinitionTable } from './models/demarche-document-definition.table';
 import { demarcheDocumentAdditionalTable } from './models/demarche-document-additional.table';
+import { demarcheDocumentDetectionTable } from './models/demarche-document-detection.table';
 import { demarcheDocumentSubstitutionTable } from './models/demarche-document-substitution.table';
 import { demarcheDocumentTable } from './models/demarche-document.table';
 
@@ -235,28 +237,49 @@ export class DemarcheDocumentsRepository {
           documentId: demarcheDocumentSubstitutionTable.documentId,
           substitutId: demarcheDocumentSubstitutionTable.substitutId,
           automatic: demarcheDocumentSubstitutionTable.automatic,
+          isDetectionRequired:
+            demarcheDocumentSubstitutionTable.isDetectionRequired,
         })
         .from(demarcheDocumentSubstitutionTable),
     ]);
 
-    // Deux listes distinctes : ce qui couvre d'office, et ce que la collectivité
-    // peut déclarer. Le domaine ne les traite pas de la même façon.
+    // Trois listes distinctes : ce qui couvre d'office, ce que la collectivité
+    // peut déclarer, et ce que l'analyse du fichier déposé doit avoir confirmé.
+    // Le domaine ne les traite pas de la même façon.
     const substitutsByDocumentId = new Map<string, string[]>();
     const substitutsDeclarablesByDocumentId = new Map<string, string[]>();
-    for (const { documentId, substitutId, automatic } of substitutions) {
-      const index = automatic
-        ? substitutsByDocumentId
-        : substitutsDeclarablesByDocumentId;
+    const substitutsDetectesByDocumentId = new Map<string, string[]>();
+    for (const {
+      documentId,
+      substitutId,
+      automatic,
+      isDetectionRequired,
+    } of substitutions) {
+      let index = substitutsDeclarablesByDocumentId;
+      if (isDetectionRequired) {
+        index = substitutsDetectesByDocumentId;
+      } else if (automatic) {
+        index = substitutsByDocumentId;
+      }
       const substituts = index.get(documentId) ?? [];
       substituts.push(substitutId);
       index.set(documentId, substituts);
     }
+
+    // Les documents détectés se nomment ensemble sur la case : dans l'ordre du
+    // catalogue, que la table de substitution n'a pas.
+    const ordreById = new Map(definitions.map(({ id, ordre }) => [id, ordre]));
+    const byOrdre = (a: string, b: string) =>
+      (ordreById.get(a) ?? 0) - (ordreById.get(b) ?? 0);
 
     return definitions.map((definition) => ({
       ...definition,
       substituts: substitutsByDocumentId.get(definition.id) ?? [],
       substitutsDeclarables:
         substitutsDeclarablesByDocumentId.get(definition.id) ?? [],
+      substitutsDetectes: (
+        substitutsDetectesByDocumentId.get(definition.id) ?? []
+      ).sort(byOrdre),
     }));
   }
 
@@ -349,15 +372,39 @@ export class DemarcheDocumentsRepository {
     },
     tx?: Transaction
   ): Promise<DemarcheDocumentsSnapshot> {
-    const [config, definitions, documents, documentsAdditional] =
+    const [config, definitions, documents, documentsAdditional, detections] =
       await Promise.all([
         this.loadDocumentsConfig(demarcheType, tx),
         this.listDefinitions(demarcheType, { collectiviteId, demarcheId }, tx),
         this.listDocuments(demarcheId, tx),
         this.listDocumentsAdditional(demarcheId, tx),
+        this.listDetections(demarcheId, tx),
       ]);
 
-    return { config, definitions, documents, documentsAdditional };
+    return { config, definitions, documents, documentsAdditional, detections };
+  }
+
+  /**
+   * Analyses des fichiers déposés. Celles d'un fichier remplacé depuis restent
+   * dans la liste : le domaine les écarte en comparant `fichierId`.
+   */
+  async listDetections(
+    demarcheId: number,
+    tx?: Transaction
+  ): Promise<DemarcheDocumentDetection[]> {
+    return (tx ?? this.databaseService.db)
+      .select({
+        documentId: demarcheDocumentDetectionTable.documentId,
+        includedDocumentId: demarcheDocumentDetectionTable.includedDocumentId,
+        fichierId: demarcheDocumentDetectionTable.fichierId,
+        status: demarcheDocumentDetectionTable.status,
+        isIncluded: demarcheDocumentDetectionTable.isIncluded,
+        parties: demarcheDocumentDetectionTable.parties,
+        sectionTitle: demarcheDocumentDetectionTable.sectionTitle,
+        pages: demarcheDocumentDetectionTable.pages,
+      })
+      .from(demarcheDocumentDetectionTable)
+      .where(eq(demarcheDocumentDetectionTable.demarcheId, demarcheId));
   }
 
   /**
@@ -709,13 +756,18 @@ export class DemarcheDocumentsRepository {
 
   /**
    * Retire les déclarations d'inclusion devenues sans objet : plus aucune des
-   * pièces qui pouvaient les accueillir n'est déposée. Appelé après le retrait
-   * d'un document — sans quoi une case resterait cochée derrière un document qui
-   * n'existe plus, et se rallumerait toute seule au prochain dépôt.
+   * pièces qui pouvaient les accueillir n'est déposée — ou, pour une
+   * substitution détectée, plus aucune n'a d'analyse positive de son fichier
+   * actuel. Appelé après le retrait d'un document et après une analyse — sans
+   * quoi une case resterait cochée derrière un document qui n'existe plus, et
+   * se rallumerait toute seule au prochain dépôt.
+   *
+   * `documentIds` restreint le nettoyage aux pièces données.
    */
   async pruneInertInclusions(
     demarcheId: number,
-    tx?: Transaction
+    tx?: Transaction,
+    { documentIds }: { documentIds?: readonly string[] } = {}
   ): Promise<string[]> {
     const db = tx ?? this.databaseService.db;
 
@@ -725,6 +777,9 @@ export class DemarcheDocumentsRepository {
         and(
           eq(demarcheDocumentTable.demarcheId, demarcheId),
           isNull(demarcheDocumentTable.fichierId),
+          documentIds
+            ? inArray(demarcheDocumentTable.documentId, [...documentIds])
+            : undefined,
           sql`not exists (
             select 1
             from ${demarcheDocumentSubstitutionTable} as substitution
@@ -734,6 +789,19 @@ export class DemarcheDocumentsRepository {
              and substitut.etape = 'amont'
              and substitut.fichier_id is not null
             where substitution.document_id = ${demarcheDocumentTable.documentId}
+              and (
+                not substitution.is_detection_required
+                or exists (
+                  select 1
+                  from ${demarcheDocumentDetectionTable} as detection
+                  where detection.demarche_id = substitut.demarche_id
+                    and detection.document_id = substitut.document_id
+                    and detection.included_document_id = substitution.document_id
+                    and detection.fichier_id = substitut.fichier_id
+                    and detection.status = 'done'
+                    and detection.is_included
+                )
+              )
           )`
         )
       )

@@ -7,11 +7,14 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   computeDemarcheDocumentsCoverage,
+  isDemarcheDocumentDetectionPending,
   type DemarcheDocumentDepose,
   type DemarcheDocumentEtape,
 } from '@tet/domain/demarches';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { demarchePcaetAutosaveKeys } from './autosave-keys';
+
+const DETECTION_POLLING_INTERVAL_MS = 3000;
 
 /**
  * Modèle documentaire et pièces déposées d'une démarche PCAET, en lecture seule.
@@ -21,6 +24,7 @@ import { demarchePcaetAutosaveKeys } from './autosave-keys';
 export const useDemarchePcaetDocumentsSnapshot = (demarcheId: number) => {
   const { collectiviteId } = useCurrentCollectivite();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const {
     data: snapshot,
@@ -28,11 +32,36 @@ export const useDemarchePcaetDocumentsSnapshot = (demarcheId: number) => {
     isError,
     refetch,
   } = useQuery(
-    trpc.demarches.pcaet.documents.list.queryOptions({
-      collectiviteId,
-      demarcheId,
-    })
+    trpc.demarches.pcaet.documents.list.queryOptions(
+      { collectiviteId, demarcheId },
+      {
+        // L'analyse d'un document déposé tourne en tâche de fond : on relit la
+        // liste jusqu'à son résultat, qui peut cocher une case.
+        refetchInterval: (query) =>
+          query.state.data &&
+          isDemarcheDocumentDetectionPending(query.state.data)
+            ? DETECTION_POLLING_INTERVAL_MS
+            : false,
+      }
+    )
   );
+
+  // La fin d'une analyse peut compléter le dossier : `availableTransitions`
+  // est calculé par le serveur, la démarche doit être relue.
+  const isDetectionPending =
+    snapshot !== undefined && isDemarcheDocumentDetectionPending(snapshot);
+  const wasDetectionPending = useRef(isDetectionPending);
+  useEffect(() => {
+    if (wasDetectionPending.current && !isDetectionPending) {
+      queryClient.invalidateQueries({
+        queryKey: trpc.demarches.pcaet.get.queryKey({
+          collectiviteId,
+          demarcheId,
+        }),
+      });
+    }
+    wasDetectionPending.current = isDetectionPending;
+  }, [isDetectionPending, queryClient, trpc, collectiviteId, demarcheId]);
 
   const coverage = useMemo(
     () => (snapshot ? computeDemarcheDocumentsCoverage(snapshot) : []),

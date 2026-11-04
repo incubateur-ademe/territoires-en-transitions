@@ -53,16 +53,14 @@ BEGIN
           AND NOT automatic
     ), 'Chaque plan doit pouvoir être déclaré compris dans le programme d''actions';
 
-    -- Un seul substitut chacun : l'écran ne propose qu'une case, et la liste
-    -- des substitutions n'est pas ordonnée.
+    -- Un seul substitut pour le plan qualité de l'air : l'écran ne propose
+    -- qu'une case. Le PLCF en a gagné deux, détectés (cf.
+    -- pcaet_plan_chaleur_froid_detection).
     ASSERT (
-        SELECT bool_and(nb = 1) FROM (
-            SELECT count(*) AS nb
-            FROM public.demarche_document_substitution
-            WHERE document_id IN ('pcaet_plan_qualite_air', 'pcaet_plan_chaleur_froid')
-            GROUP BY document_id
-        ) AS substituts_par_plan
-    ), 'Chaque plan ne doit avoir qu''un seul substitut';
+        SELECT count(*) = 1
+        FROM public.demarche_document_substitution
+        WHERE document_id = 'pcaet_plan_qualite_air'
+    ), 'Le plan qualité de l''air ne doit avoir qu''un seul substitut';
 END $$;
 
 ROLLBACK;

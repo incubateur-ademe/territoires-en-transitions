@@ -6,6 +6,7 @@ import type {
   DemarcheDocumentCoverage,
   DemarcheDocumentDefinition,
   DemarcheDocumentDepose,
+  DemarcheDocumentDetection,
   DemarcheDocumentEtape,
   DemarcheDocumentsConfig,
 } from '@tet/domain/demarches';
@@ -34,6 +35,7 @@ const definition = (
   etape: 'amont',
   substituts: [],
   substitutsDeclarables: [],
+  substitutsDetectes: [],
   ...overrides,
 });
 
@@ -81,6 +83,7 @@ const renderTable = ({
   mergeEtapes = false,
   section,
   documentsAdditional = [],
+  detections = [],
   hideEmptyRows = false,
   onAddFichier = vi.fn(),
 }: {
@@ -91,6 +94,7 @@ const renderTable = ({
   mergeEtapes?: boolean;
   section?: DemarcheDocumentsSection;
   documentsAdditional?: DemarcheDocumentAdditional[];
+  detections?: DemarcheDocumentDetection[];
   hideEmptyRows?: boolean;
   onAddFichier?: (
     documentId: string,
@@ -107,6 +111,7 @@ const renderTable = ({
       definitions={definitions}
       documents={documents}
       documentsAdditional={documentsAdditional}
+      detections={detections}
       coverage={coverage}
       mergeEtapes={mergeEtapes}
       section={section}
@@ -481,6 +486,117 @@ describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce'
         name: appLabels.demarcheDocumentsTeleverser,
       })
     ).toBeNull();
+  });
+});
+
+describe('DemarcheDocumentsTable — inclusion détectée par l’analyse', () => {
+  const PLAN_ACTIONS = definition({
+    id: 'pcaet_plan_actions',
+    nom: 'Programme d’actions',
+    ordre: 3,
+  });
+  const PLCF = definition({
+    id: 'pcaet_plan_chaleur_froid',
+    nom: 'Plan local de chaleur et de froid',
+    ordre: 4,
+    substitutsDetectes: [DIAGNOSTIC.id, PLAN_ACTIONS.id],
+  });
+  const detection = (
+    documentId: string,
+    overrides: Partial<DemarcheDocumentDetection> = {}
+  ): DemarcheDocumentDetection => ({
+    documentId,
+    includedDocumentId: PLCF.id,
+    // Celui des fichiers déposés par `depose`.
+    fichierId: 7,
+    status: 'done',
+    isIncluded: true,
+    parties: ['diagnostic'],
+    sectionTitle: null,
+    pages: [],
+    ...overrides,
+  });
+  const definitions = [DIAGNOSTIC, PLAN_ACTIONS, PLCF];
+  const documents = [depose(DIAGNOSTIC.id), depose(PLAN_ACTIONS.id)];
+
+  it('ne propose aucune case tant que l’analyse n’a rien trouvé', () => {
+    renderTable({
+      definitions,
+      documents,
+      detections: [detection(DIAGNOSTIC.id, { isIncluded: false })],
+    });
+
+    expect(screen.queryByRole('checkbox')).toBeNull();
+  });
+
+  it('nomme tous les documents où la pièce a été trouvée', () => {
+    renderTable({
+      definitions,
+      documents,
+      detections: [detection(PLAN_ACTIONS.id), detection(DIAGNOSTIC.id)],
+    });
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Inclus dans « Diagnostic » et « Programme d’actions »',
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(appLabels.demarcheDocumentsInclusionDetectee)
+    ).toBeInTheDocument();
+  });
+
+  it('indique, dans une infobulle, les pages où la pièce a été trouvée', () => {
+    const { unmount } = renderTable({
+      definitions,
+      documents,
+      detections: [detection(DIAGNOSTIC.id)],
+    });
+    expect(
+      screen.queryByRole('button', {
+        name: appLabels.demarcheDocumentsDetectionPagesTitre,
+      })
+    ).toBeNull();
+    unmount();
+
+    renderTable({
+      definitions,
+      documents,
+      detections: [detection(DIAGNOSTIC.id, { pages: ['12', '13'] })],
+    });
+    expect(
+      screen.getByRole('button', {
+        name: appLabels.demarcheDocumentsDetectionPagesTitre,
+      })
+    ).toBeInTheDocument();
+  });
+
+  it.each([
+    [['4'], '« Diagnostic » : page 4'],
+    [['12', '13', '14', '20'], '« Diagnostic » : pages 12 à 14 et 20'],
+    [['PLCF'], '« Diagnostic » : onglet « PLCF »'],
+  ])('écrit les pages %j : « %s »', (pages, attendu) => {
+    expect(
+      appLabels.demarcheDocumentsDetectionPagesDocument({
+        nom: 'Diagnostic',
+        pages,
+      })
+    ).toBe(attendu);
+  });
+
+  it('signale l’analyse en cours', () => {
+    renderTable({
+      definitions,
+      documents,
+      detections: [
+        detection(DIAGNOSTIC.id, { status: 'pending', isIncluded: null }),
+      ],
+    });
+
+    expect(
+      screen.getByText(appLabels.demarcheDocumentsDetectionEnCours)
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('checkbox')).toBeNull();
   });
 });
 
