@@ -52,6 +52,23 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
         code: 'BAD_REQUEST',
         message: 'Type de plan inconnu',
       },
+      UNKNOWN_IMPORT_PROFILE: {
+        code: 'BAD_REQUEST',
+        message: "Profil d'import inconnu",
+      },
+      IMPORT_PROFILE_UNAVAILABLE: {
+        code: 'PRECONDITION_FAILED',
+        message: "Ce profil d'import n'est pas encore disponible",
+      },
+      UNSUPPORTED_IMPORT_CONTRACT: {
+        code: 'PRECONDITION_FAILED',
+        message: "Ce profil ou cette version d'import n'est pas pris en charge",
+      },
+      INVALID_CHECKPOINT: {
+        code: 'CONFLICT',
+        message:
+          'Le point de reprise de cet import est invalide ou incompatible',
+      },
       STORAGE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "L'enregistrement du fichier source a échoué",

@@ -1,9 +1,15 @@
 import { z } from 'zod';
 import { stepStatesSchema } from '../pipeline/run-import-pipeline';
 import { aiPlanImportJobStatusSchema } from '../models/ai-plan-import-job';
+import { aiPlanImportProfileSchema } from '../models/import-profile';
+import { importReportSchema } from '../models/import-report';
 
 export const getImportStatusOutputSchema = z.object({
   jobId: z.string(),
+  planName: z.string().nullable(),
+  profile: aiPlanImportProfileSchema.nullable(),
+  createdAt: z.string(),
+  finishedAt: z.string().nullable(),
   status: aiPlanImportJobStatusSchema,
   stepStates: stepStatesSchema,
   qualitativeReview: z.string().nullable(),
@@ -13,6 +19,18 @@ export const getImportStatusOutputSchema = z.object({
   resumable: z.boolean(),
   /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
   withSecteurs: z.boolean(),
+  report: importReportSchema,
 });
 
-export type GetImportStatusOutput = z.output<typeof getImportStatusOutputSchema>;
+export type GetImportStatusOutput = z.output<
+  typeof getImportStatusOutputSchema
+>;
+
+export const listRecentImportsOutputSchema = z.object({
+  items: z.array(getImportStatusOutputSchema),
+  nextCursor: z.string().uuid().nullable(),
+});
+
+export type ListRecentImportsOutput = z.output<
+  typeof listRecentImportsOutputSchema
+>;

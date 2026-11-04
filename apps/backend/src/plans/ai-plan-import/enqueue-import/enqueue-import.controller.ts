@@ -9,7 +9,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiConsumes, ApiExcludeController } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiExcludeController,
+} from '@nestjs/swagger';
 import {
   COLLECTIVITE_ID_PARAM_KEY,
   COLLECTIVITE_ID_ROUTE_PARAM,
@@ -22,6 +26,7 @@ import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller
 import { AI_PLAN_IMPORT_MAX_SOURCE_BYTES } from '../ai-plan-import.constants';
 import { aiPlanImportErrorConfig } from '../ai-plan-import.trpc-errors';
 import { enqueueImportFormSchema } from './enqueue-import.input';
+import type { EnqueueImportOutput } from './enqueue-import.output';
 import { EnqueueImportService } from './enqueue-import.service';
 
 export const ENQUEUE_IMPORT_ROUTE = `collectivites/${COLLECTIVITE_ID_ROUTE_PARAM}/plans/import-ia`;
@@ -49,7 +54,7 @@ export class EnqueueImportController {
     @UploadedFile() file: Express.Multer.File | undefined,
     @TokenInfo() user: AuthenticatedUser,
     @Body() body: unknown
-  ): Promise<{ jobId: string; planId: number }> {
+  ): Promise<EnqueueImportOutput> {
     const collectiviteId = parseInt(collectiviteIdParam, 10);
     if (Number.isNaN(collectiviteId)) {
       throw new BadRequestException('Identifiant de collectivité invalide');

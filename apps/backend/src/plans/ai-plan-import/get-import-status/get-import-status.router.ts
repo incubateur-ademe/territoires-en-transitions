@@ -5,8 +5,12 @@ import { aiPlanImportErrorConfig } from '../ai-plan-import.trpc-errors';
 import {
   getCurrentImportInputSchema,
   getImportStatusInputSchema,
+  listRecentImportsInputSchema,
 } from './get-import-status.input';
-import { getImportStatusOutputSchema } from './get-import-status.output';
+import {
+  getImportStatusOutputSchema,
+  listRecentImportsOutputSchema,
+} from './get-import-status.output';
 import { GetImportStatusService } from './get-import-status.service';
 
 @Injectable()
@@ -21,6 +25,17 @@ export class GetImportStatusRouter {
   );
 
   router = this.trpc.router({
+    listRecentAiImports: this.trpc.authedProcedure
+      .input(listRecentImportsInputSchema)
+      .output(listRecentImportsOutputSchema)
+      .query(async ({ input, ctx: { user } }) => {
+        const result = await this.getImportStatusService.listRecentImports(
+          input,
+          { user }
+        );
+        return this.getResultDataOrThrowError(result);
+      }),
+
     getAiImportStatus: this.trpc.authedProcedure
       .input(getImportStatusInputSchema)
       .output(getImportStatusOutputSchema)

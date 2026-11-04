@@ -18,6 +18,10 @@ const toView = (
 ): AiPlanImportJobStatusView => ({
   id: 'job-1',
   collectiviteId: 10,
+  planName: 'Plan de transition',
+  profile: 'generic',
+  createdAt: '2026-11-04T09:00:00Z',
+  finishedAt: null,
   status: AiPlanImportJobStatusEnum.RUNNING,
   stepStates: initialStepStates(),
   error: null,
@@ -31,6 +35,7 @@ const toView = (
 const buildService = (args: {
   view?: AiPlanImportJobStatusView | null;
   inFlight?: AiPlanImportJobStatusView | null;
+  recent?: AiPlanImportJobStatusView[];
   isAllowed: boolean;
 }): GetImportStatusService => {
   const jobRepository = {
@@ -41,6 +46,9 @@ const buildService = (args: {
     ),
     findInFlightByCollectivite: vi.fn(async () =>
       success(args.inFlight ?? null)
+    ),
+    listRecentByCollectivite: vi.fn(async () =>
+      success({ items: args.recent ?? [], nextCursor: null })
     ),
   } as unknown as AiPlanImportJobRepository;
   const permissions = {
@@ -93,7 +101,11 @@ describe('GetImportStatusService', () => {
 
     expect(result).toMatchObject({
       success: true,
-      data: { qualitativeReview: 'Avis IA', createdPlanId: 42 },
+      data: {
+        qualitativeReview: 'Avis IA',
+        createdPlanId: 42,
+        report: { qualitativeReview: 'Avis IA', issues: [] },
+      },
     });
   });
 
@@ -159,6 +171,64 @@ describe('GetImportStatusService', () => {
     });
 
     expect(result).toMatchObject({
+      success: false,
+      error: AiPlanImportErrorEnum.UNAUTHORIZED,
+    });
+  });
+
+  it('conserve les échecs sans plan dans le suivi et leur erreur non catégorisée', async () => {
+    const service = buildService({
+      recent: [
+        toView({
+          status: AiPlanImportJobStatusEnum.FAILED,
+          error: 'Traitement interrompu',
+          finishedAt: '2026-11-04T09:01:00Z',
+        }),
+      ],
+      isAllowed: true,
+    });
+
+    const result = await service.listRecentImports(
+      { collectiviteId: 10, limit: 20 },
+      { user }
+    );
+
+    expect(result).toMatchObject({
+      success: true,
+      data: {
+        nextCursor: null,
+        items: [
+          {
+            planName: 'Plan de transition',
+            profile: 'generic',
+            createdAt: '2026-11-04T09:00:00Z',
+            finishedAt: '2026-11-04T09:01:00Z',
+            createdPlanId: null,
+            report: {
+              qualitativeReview: null,
+              issues: [
+                {
+                  kind: 'processing-error',
+                  code: 'IMPORT_FAILED',
+                  message: 'Traitement interrompu',
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  it('refuse la liste des imports sans droit sur la collectivité', async () => {
+    const service = buildService({ recent: [toView({})], isAllowed: false });
+
+    const result = await service.listRecentImports(
+      { collectiviteId: 10, limit: 20 },
+      { user }
+    );
+
+    expect(result).toEqual({
       success: false,
       error: AiPlanImportErrorEnum.UNAUTHORIZED,
     });

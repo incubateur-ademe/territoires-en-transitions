@@ -20,6 +20,7 @@ import {
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import { isSupportedGenericImport } from '../models/import-checkpoint';
 import {
   FindResumableImportInput,
   ResumeImportInput,
@@ -64,6 +65,9 @@ export class ResumeImportService {
     const failed = await this.jobRepository.getById(jobId);
     if (!failed.success) {
       return failed;
+    }
+    if (!isSupportedGenericImport(failed.data.options)) {
+      return failure(AiPlanImportErrorEnum.UNSUPPORTED_IMPORT_CONTRACT);
     }
 
     const resumed = await this.transactionManager.executeSingle<

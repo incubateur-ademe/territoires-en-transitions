@@ -23,7 +23,12 @@ import {
   sql,
 } from 'drizzle-orm';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
-import { ImportCheckpoint } from './models/import-checkpoint';
+import { resolveImportProfile } from './models/import-profile';
+import {
+  ImportCheckpoint,
+  isImportCheckpointSupported,
+  parseImportCheckpoint,
+} from './models/import-checkpoint';
 import { PIPELINE_CHECKPOINT_SCHEMA_VERSION } from './pipeline/pipeline-checkpoint';
 import { ImportJobStats } from './models/import-job-stats';
 import { PlanDraft } from './models/plan-draft';
@@ -46,10 +51,7 @@ import {
   AiPlanImportErrorEnum,
   type AiPlanImportError,
 } from './ai-plan-import.errors';
-import {
-  initialStepStates,
-  StepStates,
-} from './pipeline/run-import-pipeline';
+import { initialStepStates, StepStates } from './pipeline/run-import-pipeline';
 
 export type CreateJobInput = {
   collectiviteId: number;
@@ -70,13 +72,13 @@ class CreatePlanAbortedError<E> extends Error {
   }
 }
 
-// Le point de reprise pèse le texte du document : il ne se lit qu'à part.
+// Les lectures usuelles excluent le checkpoint, qui contient le document.
 const { checkpoint: _checkpoint, ...jobColumns } =
   getTableColumns(aiPlanImportJobTable);
 
 /**
- * Reprenable : en échec, avec un point de reprise au format courant et encore
- * dans le délai de rétention.
+ * Préfiltre SQL : le profil et le contenu du checkpoint sont aussi validés
+ * avant d'annoncer ou d'effectuer une reprise.
  */
 const isResumable = sql<boolean>`${aiPlanImportJobTable.status} = ${
   AiPlanImportJobStatusEnum.FAILED
@@ -89,6 +91,12 @@ const isResumable = sql<boolean>`${aiPlanImportJobTable.status} = ${
 const statusViewProjection = {
   id: aiPlanImportJobTable.id,
   collectiviteId: aiPlanImportJobTable.collectiviteId,
+  planName: sql<string | null>`${aiPlanImportJobTable.options} ->> 'planName'`,
+  createdAt: aiPlanImportJobTable.createdAt,
+  finishedAt: aiPlanImportJobTable.finishedAt,
+  options: aiPlanImportJobTable.options,
+  // Vérification interne des reprises ; le document ne sort jamais du repository.
+  checkpoint: sql<unknown>`CASE WHEN ${isResumable} THEN ${aiPlanImportJobTable.checkpoint} ELSE NULL END`,
   status: aiPlanImportJobTable.status,
   stepStates: aiPlanImportJobTable.stepStates,
   error: aiPlanImportJobTable.error,
@@ -98,6 +106,32 @@ const statusViewProjection = {
   >`${aiPlanImportJobTable.draft} ->> 'qualitativeReview'`,
   resumable: sql<boolean>`coalesce(${isResumable}, false)`,
   withSecteurs: sql<boolean>`coalesce((${aiPlanImportJobTable.options} ->> 'withSecteurs')::boolean, false)`,
+};
+
+type StoredStatusView = Omit<AiPlanImportJobStatusView, 'profile'> & {
+  options: AiPlanImportJobOptions;
+  checkpoint: unknown;
+};
+
+const toStatusView = ({
+  options,
+  checkpoint,
+  ...view
+}: StoredStatusView): AiPlanImportJobStatusView => ({
+  ...view,
+  profile: resolveImportProfile(options.profile),
+  resumable: view.resumable && isImportCheckpointSupported(checkpoint, options),
+});
+
+export type ListRecentAiImportsInput = {
+  collectiviteId: number;
+  limit: number;
+  cursor?: string;
+};
+
+export type ListRecentAiImportsResult = {
+  items: AiPlanImportJobStatusView[];
+  nextCursor: string | null;
 };
 
 @Injectable()
@@ -229,7 +263,10 @@ export class AiPlanImportJobRepository {
           bibliothequeFichierTable,
           eq(bibliothequeFichierTable.id, aiPlanImportJobTable.fichierId)
         )
-        .innerJoin(axeTable, eq(axeTable.id, aiPlanImportJobTable.createdPlanId))
+        .innerJoin(
+          axeTable,
+          eq(axeTable.id, aiPlanImportJobTable.createdPlanId)
+        )
         .where(
           and(
             eq(aiPlanImportJobTable.collectiviteId, ref.collectiviteId),
@@ -291,7 +328,7 @@ export class AiPlanImportJobRepository {
         return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
       }
 
-      return success(row);
+      return success(toStatusView(row));
     } catch (error) {
       this.logger.error(
         `Lecture du statut du job ${id}: ${getErrorMessage(error)}`
@@ -319,10 +356,72 @@ export class AiPlanImportJobRepository {
         .orderBy(desc(aiPlanImportJobTable.createdAt))
         .limit(1);
 
-      return success(row ?? null);
+      return success(row ? toStatusView(row) : null);
     } catch (error) {
       this.logger.error(
         `Reading in-flight job for collectivité ${collectiviteId}: ${getErrorMessage(
+          error
+        )}`
+      );
+      return failure(AiPlanImportErrorEnum.GET_JOB_ERROR, toError(error));
+    }
+  }
+
+  async listRecentByCollectivite({
+    collectiviteId,
+    limit,
+    cursor,
+  }: ListRecentAiImportsInput): Promise<
+    Result<ListRecentAiImportsResult, AiPlanImportError>
+  > {
+    try {
+      let cursorCreatedAt: string | undefined;
+      if (cursor !== undefined) {
+        const [cursorJob] = await this.db
+          .select({ createdAt: aiPlanImportJobTable.createdAt })
+          .from(aiPlanImportJobTable)
+          .where(
+            and(
+              eq(aiPlanImportJobTable.id, cursor),
+              eq(aiPlanImportJobTable.collectiviteId, collectiviteId)
+            )
+          )
+          .limit(1);
+        if (!cursorJob) return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
+        cursorCreatedAt = cursorJob.createdAt;
+      }
+
+      const rows = await this.db
+        .select(statusViewProjection)
+        .from(aiPlanImportJobTable)
+        .where(
+          and(
+            eq(aiPlanImportJobTable.collectiviteId, collectiviteId),
+            cursor !== undefined && cursorCreatedAt !== undefined
+              ? or(
+                  lt(aiPlanImportJobTable.createdAt, cursorCreatedAt),
+                  and(
+                    eq(aiPlanImportJobTable.createdAt, cursorCreatedAt),
+                    lt(aiPlanImportJobTable.id, cursor)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(
+          desc(aiPlanImportJobTable.createdAt),
+          desc(aiPlanImportJobTable.id)
+        )
+        .limit(limit + 1);
+
+      const items = rows.slice(0, limit).map(toStatusView);
+      return success({
+        items,
+        nextCursor: rows.length > limit ? items[items.length - 1].id : null,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Lecture des imports de la collectivité ${collectiviteId}: ${getErrorMessage(
           error
         )}`
       );
@@ -391,9 +490,12 @@ export class AiPlanImportJobRepository {
         .from(aiPlanImportJobTable)
         .where(eq(aiPlanImportJobTable.id, id))
         .limit(1);
-      return row
-        ? success(row.checkpoint)
-        : failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
+      if (!row) return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
+      if (row.checkpoint === null) return success(null);
+      const parsed = parseImportCheckpoint(row.checkpoint);
+      return parsed.success
+        ? success(parsed.data)
+        : failure(AiPlanImportErrorEnum.INVALID_CHECKPOINT);
     } catch (error) {
       this.logger.error(
         `Lecture du point de reprise du job ${id}: ${getErrorMessage(error)}`
@@ -408,12 +510,20 @@ export class AiPlanImportJobRepository {
   ): Promise<Result<{ jobId: string } | null, AiPlanImportError>> {
     try {
       const [row] = await this.db
-        .select({ jobId: aiPlanImportJobTable.id })
+        .select({
+          jobId: aiPlanImportJobTable.id,
+          checkpoint: aiPlanImportJobTable.checkpoint,
+          options: aiPlanImportJobTable.options,
+        })
         .from(aiPlanImportJobTable)
         .where(and(eq(aiPlanImportJobTable.createdPlanId, planId), isResumable))
         .orderBy(desc(aiPlanImportJobTable.createdAt))
         .limit(1);
-      return success(row ?? null);
+      return success(
+        row && isImportCheckpointSupported(row.checkpoint, row.options)
+          ? { jobId: row.jobId }
+          : null
+      );
     } catch (error) {
       this.logger.error(
         `Recherche de l'import reprenable du plan ${planId}: ${getErrorMessage(
@@ -433,6 +543,22 @@ export class AiPlanImportJobRepository {
     tx: Transaction
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     try {
+      // Le verrou garde le JSON validé identique à celui que l'on remet en file.
+      const [candidate] = await tx
+        .select({
+          checkpoint: aiPlanImportJobTable.checkpoint,
+          options: aiPlanImportJobTable.options,
+        })
+        .from(aiPlanImportJobTable)
+        .where(and(eq(aiPlanImportJobTable.id, id), isResumable))
+        .for('update');
+      if (
+        !candidate ||
+        !isImportCheckpointSupported(candidate.checkpoint, candidate.options)
+      ) {
+        return failure(AiPlanImportErrorEnum.JOB_NOT_RESUMABLE);
+      }
+
       const [row] = await tx
         .update(aiPlanImportJobTable)
         .set({
@@ -625,9 +751,7 @@ export class AiPlanImportJobRepository {
 
       return success(row);
     } catch (error) {
-      this.logger.error(
-        `Mise à jour du job ${id}: ${getErrorMessage(error)}`
-      );
+      this.logger.error(`Mise à jour du job ${id}: ${getErrorMessage(error)}`);
       return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
     }
   }

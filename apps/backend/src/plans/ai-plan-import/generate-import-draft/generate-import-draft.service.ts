@@ -29,7 +29,10 @@ import {
   EVENT_AI_PLAN_IMPORT_FAILED,
   EVENT_AI_PLAN_IMPORT_SUCCEEDED,
 } from '../ai-plan-import.constants';
-import { type AiPlanImportError } from '../ai-plan-import.errors';
+import {
+  AiPlanImportErrorEnum,
+  type AiPlanImportError,
+} from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
 import { ImportJobStats } from '../models/import-job-stats';
@@ -39,7 +42,10 @@ import {
 } from '../pipeline/compute-import-metrics';
 import { ImportJobTelemetry } from './import-job-telemetry';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
-import { ImportCheckpoint } from '../models/import-checkpoint';
+import {
+  ImportCheckpoint,
+  isSupportedGenericImport,
+} from '../models/import-checkpoint';
 import { PlanDraft } from '../models/plan-draft';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { countPlanContent } from './count-plan-content';
@@ -111,8 +117,31 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     }
     const job = running.data;
 
+    if (!isSupportedGenericImport(job.options)) {
+      // Un autre déploiement peut savoir le traiter : ni repli générique,
+      // ni destruction de sa source ou de son point de reprise.
+      return this.recordFailure(
+        jobId,
+        "Ce contrat d'import n'est pas pris en charge par ce worker",
+        'unsupported_import_contract',
+        { attempt: job.attempt }
+      );
+    }
+    const checkpoint = await this.jobRepository.getCheckpoint(job.id);
+    if (
+      !checkpoint.success &&
+      checkpoint.error === AiPlanImportErrorEnum.INVALID_CHECKPOINT
+    ) {
+      return this.recordFailure(
+        jobId,
+        "Ce point de reprise n'est pas pris en charge par ce worker",
+        'checkpoint_unsupported',
+        { attempt: job.attempt }
+      );
+    }
+
     try {
-      return await this.runPipeline(job);
+      return await this.runPipeline(job, checkpoint);
     } catch (error) {
       const message = `Import interrompu: ${getErrorMessage(error)}`;
       await this.markFailed(jobId, message, 'interrupted', {
@@ -130,7 +159,9 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
   async recordTerminalFailure(jobId: string, message: string): Promise<void> {
     const job = await this.jobRepository.getById(jobId);
     await this.markFailed(jobId, message, 'terminal_failure');
-    if (job.success) {
+    if (job.success && isSupportedGenericImport(job.data.options)) {
+      const checkpoint = await this.jobRepository.getCheckpoint(jobId);
+      if (!checkpoint.success) return;
       await this.documentStorage.removeDocument({
         bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
         key: job.data.sourcePath,
@@ -196,11 +227,11 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
   }
 
   private async runPipeline(
-    job: AiPlanImportJob
+    job: AiPlanImportJob,
+    checkpoint: Result<ImportCheckpoint | null, AiPlanImportError>
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const { attempt } = job;
     const telemetry = await this.buildTelemetry(job);
-    const checkpoint = await this.jobRepository.getCheckpoint(job.id);
     if (!checkpoint.success) {
       return this.recordFailure(
         job.id,

@@ -567,9 +567,12 @@ terminée.
   l'import » de la page du plan en échec ou de l'écran d'échec de l'import. Le
   job repasse `pending` et son plan `importing`. Un échec à la création du
   plan se reprend sans aucun appel au modèle.
-- **Point de reprise inutilisable** (autre format, autre modèle configuré) :
-  l'import repart du document s'il est encore là, sinon il échoue en le disant
-  et n'est plus reprenable.
+- **Contrat incompatible** : le worker refuse un profil, une version ou un
+  JSON de checkpoint qu'il ne sait pas traiter, sans repli générique. Il garde
+  la source et le checkpoint ; l'API de suivi n'annonce pas ce job comme reprenable.
+  Les checkpoints génériques v1 sans métadonnées de profil restent acceptés.
+- **Modèle différent sur un checkpoint valide** : l'import repart du document
+  s'il est encore là, sinon il échoue en le disant et n'est plus reprenable.
 - **Rétention** : le point de reprise porte le texte du document, débarrassé
   des caractères que Postgres refuse en jsonb (`normalize-pages.ts`). Il est
   vidé à la réussite ; ceux des échecs ne sont plus reprenables après sept

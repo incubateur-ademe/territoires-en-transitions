@@ -5,6 +5,7 @@ import { TokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import { axisPathOf, ExtractedAction } from '../models/extracted-action';
+import { parseImportCheckpoint } from '../models/import-checkpoint';
 import { ImportStepRun } from '../models/import-step-run';
 import {
   buildDocument,
@@ -32,6 +33,20 @@ import {
 } from './run-import-pipeline';
 
 const stepOrder = stepStatesSchema.keyof().options;
+
+const roundTripCheckpoint = (
+  checkpoint: PipelineCheckpoint
+): PipelineCheckpoint => {
+  const json = JSON.parse(JSON.stringify(checkpoint));
+  const result = parseImportCheckpoint({ ...json, documentStats: null });
+  expect(result.success).toBe(true);
+  if (!result.success) {
+    throw result.error;
+  }
+  const { documentStats: _documentStats, ...parsed } = result.data;
+  expect(parsed).toEqual(json);
+  return parsed;
+};
 
 const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -339,7 +354,7 @@ describe('runImportPipeline', () => {
           buildPage(0, [{ text: 'Titre;Axe' }, { text: '1.1.1 Action;Axe 1' }]),
         ]),
         onCheckpoint: async (checkpoint) => {
-          checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+          checkpoints.push(roundTripCheckpoint(checkpoint));
         },
       })
     );
@@ -403,7 +418,7 @@ describe('runImportPipeline', () => {
         ...options,
         document,
         onCheckpoint: async (checkpoint) => {
-          checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+          checkpoints.push(roundTripCheckpoint(checkpoint));
         },
       })
     );
@@ -893,6 +908,62 @@ describe('runImportPipeline', () => {
       },
     ];
 
+    it('valide et reprend les checkpoints après fusion des doublons de hiérarchie', async () => {
+      const llm = segmentedLlm();
+      const route = vi.mocked(llm.generateStructured).getMockImplementation();
+      const [action] = responseByStep.extraction as object[];
+      vi.mocked(llm.generateStructured).mockImplementation((async (args: {
+        prompt: string;
+      }) => {
+        if (stepOf(args.prompt) === 'extraction') {
+          return success({
+            data: [
+              { ...action, titre: 'Isoler les bâtiments' },
+              { ...action, titre: 'Suivre le chantier' },
+            ],
+            tokens,
+          });
+        }
+        if (stepOf(args.prompt) === 'hierarchy') {
+          return success({
+            data: [
+              { index: 0, axe: 'Bâtiments', 'sous-axe': '', doublonDe: -1 },
+              { index: 1, axe: 'Bâtiments', 'sous-axe': '', doublonDe: 0 },
+            ],
+            tokens,
+          });
+        }
+        return route?.(args as never);
+      }) as never);
+      const checkpoints: PipelineCheckpoint[] = [];
+      const outcome = await runImportPipeline(
+        llm,
+        input({
+          document: segmentedDocument,
+          onCheckpoint: async (checkpoint) => {
+            checkpoints.push(roundTripCheckpoint(checkpoint));
+          },
+        })
+      );
+      const extraction = checkpoints.find(
+        ({ completedStep }) => completedStep === 'extraction'
+      );
+      const hierarchy = checkpoints.find(
+        ({ completedStep }) => completedStep === 'hierarchy'
+      );
+
+      expect(extraction?.progress.actions).toHaveLength(2);
+      expect(hierarchy?.progress.actions).toHaveLength(1);
+      expect(hierarchy?.source.chunkIndexByAction).toHaveLength(1);
+      if (!hierarchy) {
+        throw new Error('Point de reprise de hiérarchie manquant');
+      }
+      const { document: _document, ...base } = input();
+      expect(
+        await runImportPipeline(llm, { ...base, resumeFrom: hierarchy })
+      ).toEqual(outcome);
+    });
+
     it.each(strategies)(
       'enregistre un point de reprise JSON après chaque étape ($label)',
       async ({ llm, document }) => {
@@ -904,7 +975,7 @@ describe('runImportPipeline', () => {
             ...(document ? { document } : {}),
             withSecteurs: true,
             onCheckpoint: async (checkpoint) => {
-              checkpoints.push(checkpoint);
+              checkpoints.push(roundTripCheckpoint(checkpoint));
             },
           })
         );
@@ -945,7 +1016,7 @@ describe('runImportPipeline', () => {
             },
             onCheckpoint: async (checkpoint) => {
               // Comme en base : un JSON, pas les objets de la pipeline.
-              checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+              checkpoints.push(roundTripCheckpoint(checkpoint));
             },
           })
         );
@@ -1001,7 +1072,7 @@ describe('runImportPipeline', () => {
         input({
           ...overrides,
           onCheckpoint: async (checkpoint) => {
-            checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+            checkpoints.push(roundTripCheckpoint(checkpoint));
           },
         })
       );
@@ -1184,7 +1255,7 @@ describe('runImportPipeline', () => {
         input({
           withSecteurs: true,
           onCheckpoint: async (checkpoint) => {
-            checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+            checkpoints.push(roundTripCheckpoint(checkpoint));
           },
           onStepStatesChange: async (stepStates) => {
             reports.push(stepStates);
@@ -1497,7 +1568,7 @@ describe('runImportPipeline', () => {
           tabularLlm(strategy),
           await tabularInput({
             onCheckpoint: async (checkpoint) => {
-              checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+              checkpoints.push(roundTripCheckpoint(checkpoint));
             },
           })
         );
@@ -1534,7 +1605,7 @@ describe('runImportPipeline', () => {
           input({
             document: await readWorkbookDocument(buildMixedWorkbook()),
             onCheckpoint: async (checkpoint) => {
-              checkpoints.push(JSON.parse(JSON.stringify(checkpoint)));
+              checkpoints.push(roundTripCheckpoint(checkpoint));
             },
           })
         );

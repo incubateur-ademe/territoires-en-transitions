@@ -1,7 +1,7 @@
 ---
 title: "feat: Import de l'annexe 3 Électrification"
 type: feat
-status: draft
+status: in-progress
 date: 2026-11-04
 ---
 
@@ -14,7 +14,26 @@ provisionnement automatique ni le verrouillage des anciens plans de travail.
 
 **Sept phases : onze PR de code, puis une ouverture progressive.** Les budgets
 et financements constituent une huitième phase facultative. Les numéros de PR
-ci-dessous sont des lots à créer, pas des PR déjà ouvertes.
+ci-dessous désignent les lots ; leur avancement est suivi séparément.
+
+## Avancement
+
+- [x] PR 1A — Contrats des profils et API de suivi : implémentée et vérifiée, en revue.
+- [ ] PR 1B — Suivi sans dépendre d'un plan.
+- [ ] PR 2A — Stockage métier et lectures.
+- [ ] PR 2B — Catalogue et résolution déterministe.
+- [ ] PR 3A — Lecture documentaire.
+- [ ] PR 3B — Extraction typée de l'annexe.
+- [ ] PR 4A — Axes et liens de fiches.
+- [ ] PR 4B — Indicateurs et liens.
+- [ ] PR 4C — Compléter uniquement les valeurs absentes.
+- [ ] PR 5 — Pipeline complet et cycle de vie.
+- [ ] PR 6 — Parcours et lecture dans l'app.
+- [ ] Phase 7 — Qualification et ouverture en production.
+- [ ] Phase 8 — Budgets et financements, facultatifs.
+
+Une case cochée signifie que le lot est implémenté et vérifié dans sa PR,
+pas qu'il est fusionné ou déployé. L'ouverture en production reste une étape distincte.
 
 Chaque PR contient son code, ses migrations éventuelles, ses tests et la mise
 à jour de sa documentation. Elle compile et fonctionne sans une PR suivante.
@@ -98,6 +117,18 @@ les phases 5 et 6, sans ouvrir le profil annexe avant la phase 7.
 
 **Périmètre :** frontière HTTP, modèle du job, checkpoints et lectures de statut.
 
+**Livraison 1A :** le contrôle partagé `isImportProfileImplemented` interdit
+l'annexe dans tous les environnements. Le flag de déploiement est branché en
+PR 5, lorsque le pipeline existe ; aucun flag actuel ni mode super-admin ne
+peut ouvrir ce profil en 1A. Aucune migration n'est nécessaire pour ce lot.
+
+Le suivi expose `getAiImportStatus`, `getCurrentAiImport`,
+`listRecentAiImports` et `getAiImportCapabilities` sous `plans.aiImport`.
+Le compte rendu générique est dérivé de l'erreur et de la revue existantes :
+une erreur non classée reste `processing-error`, une revue n'est pas transformée
+en avertissement. La persistance des diagnostics annexe arrive avec leur
+production en PR 5. Aucun texte extrait ni chemin de stockage n'est ajouté aux réponses.
+
 - Ajouter le profil explicite et les versions de contrat/catalogue aux jobs.
   Un job historique sans profil reste générique. Un profil inconnu est refusé
   avant upload et enfilement. Reconnaître l'annexe mais refuser son admission
@@ -118,6 +149,12 @@ les phases 5 et 6, sans ouvrir le profil annexe avant la phase 7.
   avertissement et donnée conservée. Ne pas exposer de chemins de stockage.
 - Exposer la capacité serveur, encore indisponible pour l'annexe. Ne pas
   conditionner la lecture des anciens jobs à l'ouverture du profil.
+
+**Vérifications effectuées :** 177 tests unitaires des contrats, admission, statut,
+worker, pipeline et reprise ; six tests tRPC avec vraie base et douze tests
+full flow avec faux LLM ; typechecks du backend, de ses tests et de l'app ;
+ESLint ciblé et vérification des liens locaux. Aucun appel réel au modèle.
+Le suivi dans l'app (1B) et le déploiement en production restent à faire.
 
 **Validation :** jobs historiques avec et sans plan provisoire ; checkpoint v1 ;
 format inconnu refusé ; accès inter-collectivités refusé ; admission fermée sans
@@ -384,6 +421,9 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
 - Brancher le dispatch par profil sur l'extraction 3B et la résolution 2B.
   Garder l'admission fermée par défaut ; contrôler droits, éligibilité, type
   stable et configuration avant upload/enfilement.
+  Brancher le flag serveur dédié dans le contrôle de disponibilité partagé
+  avec l'enfilement ; l'exclure de l'activation automatique PostHog en dev/test/CI.
+  Le flag ne remplace aucun contrôle de droits ou de disponibilité métier.
 - Pour l'annexe, créer le job sans plan provisoire. Adapter les échecs de stockage
   ou de queue sans suppression d'un plan inexistant ni job bloquant les quotas.
   Le service et le contrôleur retournent `planId: null` pour ce profil ; le
@@ -412,6 +452,9 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   exploitable après échec ; ne pas supposer que le fichier temporaire existe
   encore, il est actuellement supprimé en fin de traitement. Ne pas purger le
   compte rendu avec les données temporaires de reprise.
+  Persister les diagnostics structurés produits par l'annexe, distincts de
+  l'erreur technique et du checkpoint ; les exposer via le contrat de compte
+  rendu livré en 1A.
 
 **Validation :** étendre le
 [full flow avec faux LLM](../../apps/backend/src/plans/ai-plan-import/ai-plan-import.full-flow.e2e-spec.ts)
