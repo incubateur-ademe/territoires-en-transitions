@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { IndicateurRepository } from './indicateur.repository';
+import { ListCollectiviteIndicateursRepository } from '../definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 
 @Module({
-  providers: [IndicateurRepository],
-  exports: [IndicateurRepository],
+  providers: [ListCollectiviteIndicateursRepository],
+  exports: [ListCollectiviteIndicateursRepository],
 })
 export class IndicateurModule {}

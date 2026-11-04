@@ -1,6 +1,6 @@
+import { indicateurSelection } from '../indicateur.column';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
@@ -14,7 +14,6 @@ import type { IndicateurPredefini } from '@tet/domain/indicateurs';
 import {
   and,
   eq,
-  getTableColumns,
   ilike,
   inArray,
   isNotNull,
@@ -54,8 +53,7 @@ export class ListIndicateursPredefinisRepository {
 
     const definitions = await (tx ?? this.databaseService.db)
       .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        ...indicateurDefinitionPeriodiciteSelection,
+        ...indicateurSelection,
       })
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
@@ -84,8 +82,7 @@ export class ListIndicateursPredefinisRepository {
 
     const definitions = await (tx ?? this.databaseService.db)
       .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        ...indicateurDefinitionPeriodiciteSelection,
+        ...indicateurSelection,
 
         // Sans ligne dans `indicateur_collectivite`, le LEFT JOIN rend `null` :
         // un indicateur dont la collectivité n'a rien dit est applicable.
@@ -132,8 +129,7 @@ export class ListIndicateursPredefinisRepository {
 
     const definitions = await (tx ?? this.databaseService.db)
       .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        ...indicateurDefinitionPeriodiciteSelection,
+        ...indicateurSelection,
 
         categories: sql<
           Tag[]
@@ -217,8 +213,7 @@ export class ListIndicateursPredefinisRepository {
 
     const computedIndicateurDefinitions = await (tx ?? this.databaseService.db)
       .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        ...indicateurDefinitionPeriodiciteSelection,
+        ...indicateurSelection,
       })
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
