@@ -1,8 +1,8 @@
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
-import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { areIndicateurVueFiltersEqual } from '@/app/indicateurs/vues/indicateur-vue-filters.rules';
 import { appLabels } from '@/app/labels/catalog';
 import {
+  ListDefinitionsInputFilters,
   listDefinitionsInputFiltersSchema,
   ListDefinitionsInputSort,
   listDefinitionsInputSortValues,

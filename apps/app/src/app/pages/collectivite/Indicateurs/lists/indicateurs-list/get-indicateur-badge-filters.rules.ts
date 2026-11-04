@@ -1,4 +1,4 @@
-import type { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import type { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import { areIndicateurVueFiltersEqual } from '@/app/indicateurs/vues/indicateur-vue-filters.rules';
 
 /** Hide fixed-tab criteria only while their current values remain equivalent. */

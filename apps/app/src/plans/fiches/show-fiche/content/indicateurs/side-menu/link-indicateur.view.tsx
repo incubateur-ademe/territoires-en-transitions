@@ -1,7 +1,6 @@
 import {
   getFiltersForIndicateurClefs,
   getFiltersForMyIndicateurs,
-  ListDefinitionsInputFilters,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { appLabels } from '@/app/labels/catalog';
@@ -12,6 +11,7 @@ import {
 import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import { useUser } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import { Checkbox, Divider, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { IndicateursSelectorGrid } from './indicateurs-selector.grid';

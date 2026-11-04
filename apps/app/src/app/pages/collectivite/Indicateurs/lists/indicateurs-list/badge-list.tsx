@@ -1,7 +1,9 @@
-import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { IndicateurFilterBadges } from '@/app/indicateurs/indicateurs/indicateur-filter-badges';
 import { useIndicateurFilterCategories } from '@/app/indicateurs/indicateurs/use-indicateur-filter-categories';
-import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
+import {
+  ListDefinitionsInputFilters,
+  ListDefinitionsInputSort,
+} from '@tet/domain/indicateurs';
 import ExportButton from './export-button';
 
 type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
@@ -27,7 +29,8 @@ const BadgeList = ({
   isEmpty,
   isLoading,
 }: Props) => {
-  const { categories: filterCategories } = useIndicateurFilterCategories(filters);
+  const { categories: filterCategories } =
+    useIndicateurFilterCategories(filters);
 
   const displayBadgesList = filterCategories.length > 0;
 

@@ -1,6 +1,6 @@
-import type { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import {
   areIndicateurVueFiltersEqual as areDomainIndicateurVueFiltersEqual,
+  type ListDefinitionsInputFilters,
   listDefinitionsInputFiltersSchema,
   normalizeIndicateurVueFilters as normalizeDomainIndicateurVueFilters,
 } from '@tet/domain/indicateurs';
