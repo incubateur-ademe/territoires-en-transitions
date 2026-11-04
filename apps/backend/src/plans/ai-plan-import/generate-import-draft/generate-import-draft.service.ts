@@ -31,6 +31,7 @@ import {
 } from '../ai-plan-import.constants';
 import {
   AiPlanImportErrorEnum,
+  aiPlanImportErrorMessages,
   type AiPlanImportError,
 } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
@@ -122,7 +123,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       // ni destruction de sa source ou de son point de reprise.
       return this.recordFailure(
         jobId,
-        "Ce contrat d'import n'est pas pris en charge par ce worker",
+        aiPlanImportErrorMessages.UNSUPPORTED_IMPORT_CONTRACT,
         'unsupported_import_contract',
         { attempt: job.attempt }
       );
@@ -134,7 +135,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     ) {
       return this.recordFailure(
         jobId,
-        "Ce point de reprise n'est pas pris en charge par ce worker",
+        aiPlanImportErrorMessages.INVALID_CHECKPOINT,
         'checkpoint_unsupported',
         { attempt: job.attempt }
       );

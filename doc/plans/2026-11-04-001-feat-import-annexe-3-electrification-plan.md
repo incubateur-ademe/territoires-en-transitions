@@ -131,6 +131,8 @@ Le compte rendu générique est dérivé de l'erreur et de la revue existantes :
 une erreur non classée reste `processing-error`, une revue n'est pas transformée
 en avertissement. La persistance des diagnostics annexe arrive avec leur
 production en PR 5. Aucun texte extrait ni chemin de stockage n'est ajouté aux réponses.
+Les messages d'incompatibilité du contrat et du point de reprise sont partagés
+entre les erreurs API et les échecs des jobs affichés dans l'app.
 
 - Ajouter le profil explicite et les versions de contrat/catalogue aux jobs.
   Un job historique sans profil reste générique. Un profil inconnu est refusé
