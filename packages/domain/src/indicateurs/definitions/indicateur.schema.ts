@@ -1,12 +1,6 @@
 import * as z from 'zod/mini';
 import { indicateurPeriodiciteSchema } from './indicateur-periodicite.schema';
-import {
-  getIncoherentNatureError,
-  type IndicateurNatureFields,
-  type IndicateurNatureResult,
-  isIndicateurPerso,
-  isIndicateurPredefini,
-} from './indicateur-nature.rules';
+import type { IndicateurNatureFields } from './indicateur-nature.rules';
 import {
   indicateurPersoNatureSchema,
   indicateurPredefiniNatureSchema,
@@ -57,12 +51,3 @@ export type IndicateurPredefini = z.infer<typeof indicateurPredefiniSchema>;
 export type Indicateur = IndicateurPerso | IndicateurPredefini;
 
 export type IndicateurCandidate = IndicateurCommon & IndicateurNatureFields;
-
-export const toIndicateur = (
-  candidate: IndicateurCandidate
-): IndicateurNatureResult<Indicateur> => {
-  if (isIndicateurPerso(candidate) || isIndicateurPredefini(candidate)) {
-    return { success: true, data: candidate };
-  }
-  return { success: false, error: getIncoherentNatureError(candidate) };
-};

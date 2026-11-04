@@ -22,6 +22,7 @@ import {
 } from '@tet/backend/utils/result.type';
 import {
   COLLECTIVITE_SOURCE_ID,
+  IndicateurCandidate,
   IndicateurSource,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
@@ -43,10 +44,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
-import {
-  type IndicateurRow,
-  validateNature,
-} from '../definitions/indicateur.adapter';
+import { validateNature } from '../definitions/indicateur.adapter';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type ListIndicateurValeursQuery = Readonly<{
@@ -92,7 +90,7 @@ type UserValeurFields = Pick<
 type ValeurAvecDefinitionRow = Omit<
   IndicateurValeurAvecMetadonnesDefinition,
   'indicateurDefinition'
-> & { indicateurDefinition: IndicateurRow | null };
+> & { indicateurDefinition: IndicateurCandidate | null };
 
 const toValeurAvecDefinition = ({
   indicateurDefinition,

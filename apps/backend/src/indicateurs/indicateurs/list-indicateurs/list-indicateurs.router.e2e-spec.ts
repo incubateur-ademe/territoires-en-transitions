@@ -23,6 +23,7 @@ import {
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  type IndicateurCandidate,
   indicateurDetailleSchema,
   isIndicateurPerso,
 } from '@tet/domain/indicateurs';
@@ -34,7 +35,6 @@ import { axeIndicateurTable } from '../../../plans/fiches/shared/models/axe-indi
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
-import type { IndicateurRow } from '../../definitions/indicateur.adapter';
 import { indicateurCategorieTagTable } from '../../definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
@@ -268,8 +268,8 @@ describe('ListIndicateursRouter', () => {
     });
 
     async function createIndicateur(
-      values: Partial<IndicateurRow> &
-        Pick<IndicateurRow, 'periodicite'> & { parentId?: number }
+      values: Partial<IndicateurCandidate> &
+        Pick<IndicateurCandidate, 'periodicite'> & { parentId?: number }
     ) {
       const [indicateur] = await database.db
         .insert(indicateurDefinitionTable)

@@ -6,7 +6,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Indicateur } from '@tet/domain/indicateurs';
-import { validateIndicateurs } from '../indicateur.adapter';
+import { validateNatures } from '../indicateur.adapter';
 import {
   and,
   eq,
@@ -89,6 +89,6 @@ export class ListCollectiviteIndicateursRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return validateIndicateurs(definitions);
+    return validateNatures(definitions);
   }
 }

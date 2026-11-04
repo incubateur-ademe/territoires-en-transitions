@@ -6,18 +6,12 @@ import {
 } from '@tet/backend/utils/result.type';
 import {
   getIncoherentNatureError,
-  type Indicateur,
-  type IndicateurCommon,
   type IndicateurNatureFields,
   type IndicateurPersoNatureFields,
-  type IndicateurPredefini,
   type IndicateurPredefiniNatureFields,
   isIndicateurPerso,
   isIndicateurPredefini,
-  toIndicateur,
 } from '@tet/domain/indicateurs';
-
-export type IndicateurRow = IndicateurCommon & IndicateurNatureFields;
 
 type NatureValidation<Data> = Result<Data, 'DATABASE_ERROR'>;
 
@@ -54,12 +48,16 @@ export const validatePredefini = <
 >(
   row: T
 ): NatureValidation<T & IndicateurPredefiniNatureFields> => {
-  if (isIndicateurPredefini(row)) {
-    return success(row);
+  const nature = validateNature(row);
+  if (!nature.success) {
+    return nature;
   }
-  return toNatureFailure(
-    `Indicateur ${row.id} : un indicateur de la plateforme doit être prédéfini`
-  );
+  if (!isIndicateurPredefini(nature.data)) {
+    return toNatureFailure(
+      `Indicateur ${row.id} : un indicateur de la plateforme doit être prédéfini`
+    );
+  }
+  return success(nature.data);
 };
 
 export const validatePredefinis = <
@@ -68,40 +66,3 @@ export const validatePredefinis = <
   rows: readonly T[]
 ): NatureValidation<(T & IndicateurPredefiniNatureFields)[]> =>
   combineResults(rows.map((row) => validatePredefini(row)));
-
-export const validateIndicateur = (
-  row: IndicateurRow
-): NatureValidation<Indicateur> => {
-  const result = toIndicateur(row);
-  if (!result.success) {
-    return toNatureFailure(
-      `Indicateur ${row.id} : nature incohérente (${result.error})`
-    );
-  }
-  return success(result.data);
-};
-
-export const validateIndicateurs = (
-  rows: readonly IndicateurRow[]
-): NatureValidation<Indicateur[]> =>
-  combineResults(rows.map((row) => validateIndicateur(row)));
-
-export const validateIndicateurPredefini = (
-  row: IndicateurRow
-): NatureValidation<IndicateurPredefini> => {
-  const indicateur = validateIndicateur(row);
-  if (!indicateur.success) {
-    return indicateur;
-  }
-  if (!isIndicateurPredefini(indicateur.data)) {
-    return toNatureFailure(
-      `Indicateur ${row.id} : un indicateur de la plateforme doit être prédéfini`
-    );
-  }
-  return success(indicateur.data);
-};
-
-export const validateIndicateursPredefinis = (
-  rows: readonly IndicateurRow[]
-): NatureValidation<IndicateurPredefini[]> =>
-  combineResults(rows.map((row) => validateIndicateurPredefini(row)));

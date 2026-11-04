@@ -1,9 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import {
+  type IndicateurCandidate,
+  IndicateurPeriodiciteEnum,
+} from '@tet/domain/indicateurs';
 import request from 'supertest';
-import type { IndicateurRow } from '../indicateur.adapter';
 
 describe("Api pour lister les définitions d'indicateur", () => {
   let app: INestApplication;
@@ -48,7 +50,8 @@ describe("Api pour lister les définitions d'indicateur", () => {
     expect(listDefinitionsResponse.data.length).toBe(2);
 
     const cae1aDefinition = listDefinitionsResponse.data.find(
-      (def: Partial<IndicateurRow>) => def.identifiantReferentiel === 'cae_2.a'
+      (def: Partial<IndicateurCandidate>) =>
+        def.identifiantReferentiel === 'cae_2.a'
     );
 
     expect(cae1aDefinition).toEqual({
@@ -95,7 +98,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
 
     // Now search by id
     const indicateurIds = listDefinitionsResponse.data
-      .map((def: Partial<IndicateurRow>) => def.id)
+      .map((def: Partial<IndicateurCandidate>) => def.id)
       .join(',');
     const responseById = await request(app.getHttpServer())
       .get(`/indicateurs/definitions?indicateurIds=${indicateurIds}`)
@@ -110,7 +113,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
 
     expect(listDefinitionsResponseById.data.length).toBe(2);
     const indicateurIdentifiantsReferentiel = listDefinitionsResponse.data.map(
-      (def: Partial<IndicateurRow>) => def.identifiantReferentiel
+      (def: Partial<IndicateurCandidate>) => def.identifiantReferentiel
     );
     // l'API ne garantit pas l'ordre des définitions
     expect(indicateurIdentifiantsReferentiel.sort()).toEqual([
@@ -133,7 +136,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
 
     // Vérifier que toutes les définitions n'ont pas de collectiviteId
     listDefinitionsResponse.data.forEach(
-      (definition: Partial<IndicateurRow>) => {
+      (definition: Partial<IndicateurCandidate>) => {
         expect(definition.collectiviteId).toBeUndefined();
       }
     );
