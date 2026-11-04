@@ -10,7 +10,6 @@ import {
   canRequestAuditOrLabellisation,
   canStartAudit as canStartAuditRule,
   Etoile,
-  getMaxRequestableStar,
   ParcoursLabellisation,
   ParcoursLabellisationStatus,
   ReferentielId,
@@ -28,13 +27,13 @@ export type TCycleLabellisation = {
   isConductingAudit: boolean;
   viewerRole: AuditViewerRole;
   isCOT: boolean;
-  maximumRequestableStar: Etoile | null;
   canStartAudit: boolean;
   canAskFirstStar: boolean;
 };
 
 export const useCycleLabellisation = (
-  referentielId: ReferentielId
+  referentielId: ReferentielId,
+  etoileVisee?: Etoile
 ): TCycleLabellisation => {
   const { collectiviteId, hasReferentielPermission } = useCurrentCollectivite();
   const user = useUser();
@@ -43,6 +42,7 @@ export const useCycleLabellisation = (
   const { parcours, isLoading, isError } = useLabellisationParcours({
     collectiviteId,
     referentielId,
+    etoileVisee,
   });
 
   const isAuditeur = parcours?.audit
@@ -73,10 +73,6 @@ export const useCycleLabellisation = (
       ).canRequest
     : false;
 
-  const maximumRequestableStar = parcours
-    ? getMaxRequestableStar(parcours.critereScore.scoreFait)
-    : null;
-
   return {
     parcours,
     isLoading,
@@ -87,7 +83,6 @@ export const useCycleLabellisation = (
     viewerRole,
     isCOT,
     canStartAudit,
-    maximumRequestableStar,
     canAskFirstStar,
   };
 };

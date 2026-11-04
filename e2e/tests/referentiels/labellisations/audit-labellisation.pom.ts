@@ -4,6 +4,14 @@ import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
 export type RoleKey = 'eluReferent' | 'referentTechnique';
 
+const TARGET_STAR_LABEL: Record<1 | 2 | 3 | 4 | 5, string> = {
+  1: 'première étoile',
+  2: 'deuxième étoile',
+  3: 'troisième étoile',
+  4: 'quatrième étoile',
+  5: 'cinquième étoile',
+};
+
 /** Libellé visible du rôle dans le header (champ vide → forme au singulier) */
 const ROLE_LABEL: Record<RoleKey, string> = {
   eluReferent: 'Personne élue',
@@ -30,13 +38,8 @@ export class AuditLabellisationPom {
   readonly supprimerDocumentCandidatureButton: Locator;
   readonly demanderAuditButton: Locator;
   readonly auditModal: Locator;
-  readonly auditTypeGroup: Locator;
-  readonly auditTypeCotRadio: Locator;
-  readonly auditTypeCotAvecLabellisationRadio: Locator;
-  readonly auditTypeLabellisationRadio: Locator;
-  readonly auditTypeRadios: Locator;
+  readonly labellisationCotSwitch: Locator;
   readonly tooltip: Locator;
-  readonly targetStarSelect: Locator;
   readonly envoyerAuditButton: Locator;
   readonly auditSuccessToast: Locator;
   readonly documentsPom: DocumentsPom;
@@ -94,24 +97,13 @@ export class AuditLabellisationPom {
     this.demanderAuditButton = page.getByRole('button', {
       name: 'Demander un audit',
     });
-    this.auditModal = page.getByRole('dialog', { name: 'Demander un audit' });
-    this.auditTypeGroup = page.getByRole('group', {
-      name: "Quel type d'audit souhaitez-vous demander ?",
+    this.auditModal = page.getByRole('dialog', {
+      name: "Confirmer votre demande d'audit",
     });
-    this.auditTypeCotRadio = this.auditModal.getByRole('radio', {
-      name: 'Audit COT sans labellisation',
+    this.labellisationCotSwitch = page.getByRole('checkbox', {
+      name: 'Avec labellisation',
     });
-    this.auditTypeCotAvecLabellisationRadio = this.auditModal.getByRole(
-      'radio',
-      { name: 'Audit COT avec labellisation' }
-    );
-    this.auditTypeLabellisationRadio = this.auditModal.getByRole('radio', {
-      name: 'Audit de labellisation',
-      exact: true,
-    });
-    this.auditTypeRadios = this.auditModal.getByRole('radio');
     this.tooltip = page.getByRole('tooltip');
-    this.targetStarSelect = this.auditModal.getByTestId('target-star');
     this.envoyerAuditButton = this.auditModal.getByRole('button', {
       name: 'Envoyer ma demande',
     });
@@ -197,8 +189,16 @@ export class AuditLabellisationPom {
     await this.demanderAuditButton.hover();
   }
 
-  async selectTargetStar(star: 2 | 3 | 4 | 5): Promise<void> {
-    await this.targetStarSelect.click();
-    await this.auditModal.getByTestId(String(star)).click();
+  async demanderAuditCotSansLabellisation(): Promise<void> {
+    await this.labellisationCotSwitch.uncheck();
+    await expect(this.labellisationCotSwitch).not.toBeChecked();
+  }
+
+  async selectTargetStar(star: 1 | 2 | 3 | 4 | 5): Promise<void> {
+    const etoileRadio = this.page.getByRole('radio', {
+      name: TARGET_STAR_LABEL[star],
+    });
+    await this.page.locator('label').filter({ has: etoileRadio }).click();
+    await expect(etoileRadio).toBeChecked();
   }
 }

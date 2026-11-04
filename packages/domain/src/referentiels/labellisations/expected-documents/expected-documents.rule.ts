@@ -1,22 +1,33 @@
+import {
+  SujetDemande,
+  SujetDemandeEnum,
+} from '../labellisation-demande.schema';
 import { Etoile } from '../labellisation-etoile.enum.schema';
 import { ObjetPreuve, ObjetPreuveEnum } from '../objet-preuve.enum.schema';
 
 export type PreuveWithObjet = { objet: ObjetPreuve | null };
 
 export const getExpectedDocuments = ({
+  sujet,
   isCot,
   premiereEtoileObtenue,
   etoile,
 }: {
+  sujet: SujetDemande;
   isCot: boolean;
   premiereEtoileObtenue: boolean;
   etoile: Etoile;
-}): ObjetPreuve[] => [
-  ...(!isCot && !premiereEtoileObtenue
-    ? [ObjetPreuveEnum.ACTE_ENGAGEMENT]
-    : []),
-  ...(etoile > 1 ? [ObjetPreuveEnum.CANDIDATURE] : []),
-];
+}): ObjetPreuve[] => {
+  if (sujet === SujetDemandeEnum.COT) {
+    return [];
+  }
+  return [
+    ...(!isCot && !premiereEtoileObtenue
+      ? [ObjetPreuveEnum.ACTE_ENGAGEMENT]
+      : []),
+    ...(etoile > 1 ? [ObjetPreuveEnum.CANDIDATURE] : []),
+  ];
+};
 
 export const areExpectedDocumentsDeposited = ({
   preuves,

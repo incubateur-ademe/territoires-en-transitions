@@ -3,6 +3,7 @@ import {
   EtoileEnum,
   ObjetPreuve,
   ObjetPreuveEnum,
+  SujetDemandeEnum,
 } from '@tet/domain/referentiels';
 import { EMPTY_CYCLE } from '../../../../checklist.test-fixture';
 import { render, screen } from '@testing-library/react';
@@ -79,10 +80,13 @@ const setChecklist = (
     cycle: EMPTY_CYCLE,
     parcours,
     referentielId: 'cae',
-    premiereEtoileObtenue: false,
     showActeEngagement: false,
     showCandidatureDocuments: true,
     canUpdateCandidatureDocuments,
+    sujetVise: SujetDemandeEnum.LABELLISATION,
+    sujetCotVise: SujetDemandeEnum.LABELLISATION_COT,
+    selectEtoileVisee: vi.fn(),
+    selectSujetCotVise: vi.fn(),
   };
 };
 

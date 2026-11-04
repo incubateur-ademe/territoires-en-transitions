@@ -8,10 +8,13 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionId,
   AuditLabellisationReferentielId,
+  Etoile,
   EtoileEnum,
   canUpdateCandidatureDocuments,
   getExpectedDocuments,
   ObjetPreuveEnum,
+  SujetDemande,
+  SujetDemandeEnum,
 } from '@tet/domain/referentiels';
 import {
   createContext,
@@ -24,15 +27,20 @@ import {
 } from 'react';
 import { Parcours } from './checklist-view-model';
 import { parcoursToChecklist } from './parcours-to-checklist';
+import { SujetCotVise, toSujetVise } from './sujet-vise';
+import { useEtoileVisee } from './use-etoile-visee';
 
 export type ChecklistContextValue = {
   cycle: TCycleLabellisation;
   parcours: Parcours | null;
   referentielId: AuditLabellisationReferentielId;
-  premiereEtoileObtenue: boolean;
   showActeEngagement: boolean;
   showCandidatureDocuments: boolean;
   canUpdateCandidatureDocuments: boolean;
+  sujetVise: SujetDemande;
+  sujetCotVise: SujetCotVise;
+  selectEtoileVisee: (etoile: Etoile) => void;
+  selectSujetCotVise: (sujet: SujetCotVise) => void;
 };
 
 type RoleDropdownContextValue = {
@@ -56,7 +64,22 @@ const ChecklistParcoursProvider = ({
   referentielId: AuditLabellisationReferentielId;
   children: ReactNode;
 }): ReactElement => {
-  const cycle = useCycleLabellisation(referentielId);
+  const { etoileVisee, isEtoileCourante, selectEtoileVisee } =
+    useEtoileVisee(referentielId);
+  const [sujetCotVise, selectSujetCotVise] = useState<SujetCotVise>(
+    SujetDemandeEnum.LABELLISATION_COT
+  );
+  const cycleEtoileVisee = useCycleLabellisation(referentielId, etoileVisee);
+  const isEtoileCouranteEnChargement =
+    isEtoileCourante && cycleEtoileVisee.parcours?.etoiles !== etoileVisee;
+  const cycle = useMemo(
+    () => ({
+      ...cycleEtoileVisee,
+      isLoading: cycleEtoileVisee.isLoading || isEtoileCouranteEnChargement,
+    }),
+    [cycleEtoileVisee, isEtoileCouranteEnChargement]
+  );
+  const sujetVise = toSujetVise({ isCOT: cycle.isCOT, sujetCotVise });
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canMutateLabellisationDocuments = hasCollectivitePermission(
     'referentiels.labellisations.mutate_documents'
@@ -69,6 +92,7 @@ const ChecklistParcoursProvider = ({
 
   const premiereEtoileObtenue = cycle.parcours?.labellisation != null;
   const expectedDocuments = getExpectedDocuments({
+    sujet: sujetVise,
     isCot: cycle.isCOT,
     premiereEtoileObtenue,
     etoile: parcours?.etoileObjectif ?? EtoileEnum.PREMIERE_ETOILE,
@@ -85,7 +109,6 @@ const ChecklistParcoursProvider = ({
       cycle,
       parcours,
       referentielId,
-      premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
       canUpdateCandidatureDocuments: canUpdateCandidatureDocuments({
@@ -93,15 +116,21 @@ const ChecklistParcoursProvider = ({
         canMutateLabellisationDocuments,
         audit: cycle.parcours?.audit ?? null,
       }).canUpdate,
+      sujetVise,
+      sujetCotVise,
+      selectEtoileVisee,
+      selectSujetCotVise,
     }),
     [
       cycle,
       parcours,
       referentielId,
-      premiereEtoileObtenue,
       showActeEngagement,
       showCandidatureDocuments,
       canMutateLabellisationDocuments,
+      sujetVise,
+      sujetCotVise,
+      selectEtoileVisee,
     ]
   );
 

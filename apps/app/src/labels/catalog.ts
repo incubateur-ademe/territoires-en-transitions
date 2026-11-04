@@ -197,27 +197,36 @@ export const appLabels = {
   supprimerSauvegardeDescription:
     'Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?',
 
-  auditCotSansLabellisation: 'Audit COT sans labellisation',
-  envoiEnCours: 'Envoi en cours...',
   obtenirPremiereEtoile: 'Obtenir la première étoile',
   demanderAudit: 'Demander un audit',
   demanderAuditScoreInsuffisant:
     'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.',
   renseignerCriteresPourDemande:
     'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation',
-  demarrerAuditChoixType: "Quel type d'audit souhaitez-vous demander ?",
   demarrerAuditChoixEtoile: 'Quelle étoile visez-vous ?',
   demarrerAuditEtoileOption: ({
     etoileLabel,
   }: {
     etoileLabel: string;
   }): string => `${etoileLabel} étoile`,
-  demarrerAuditCotAvecLabellisationMessage:
-    'Penser à joindre les documents de labellisation.',
-  demarrerAuditSelectionIncomplete:
-    "Sélectionnez un type d'audit et une étoile.",
-  demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
+  demarrerAuditEtoileObtenueOption: ({
+    etoileLabel,
+  }: {
+    etoileLabel: string;
+  }): string => `${etoileLabel} étoile, déjà obtenue`,
+  demarrerAuditEtoileDemandee: ({
+    etoileLabel,
+  }: {
+    etoileLabel: string;
+  }): string => `Étoile demandée : ${etoileLabel} étoile`,
+  auditCotSansLabellisation: 'Audit COT sans labellisation',
   demarrerAuditTypeLabellisation: 'Audit de labellisation',
+  confirmerDemandePremiereEtoile: 'Confirmer votre demande de première étoile',
+  confirmerDemandeAudit: "Confirmer votre demande d'audit",
+  demandePremiereEtoileLabel: 'Première étoile',
+  demandeAvecLabellisation: 'Avec labellisation',
+  demandePremiereEtoileSansAudit: "Sans audit, validée directement par l'ADEME",
+  demarrerAuditTypeCotAvecLabellisation: 'Audit COT avec labellisation',
   notesAuditeur: "Notes de l'auditeur, auditrice",
   notesAuditeurHint:
     "Remarques sur la mesure, questions pour la séance d'audit",

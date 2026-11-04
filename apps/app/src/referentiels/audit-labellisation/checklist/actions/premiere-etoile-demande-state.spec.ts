@@ -4,7 +4,7 @@ import {
   SujetDemande,
 } from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
-import { getAskPremiereEtoileButtonState } from './ask-premiere-etoile-button-state';
+import { getPremiereEtoileDemandeState } from './premiere-etoile-demande-state';
 
 type ParcoursForButtonState = Pick<
   ParcoursLabellisation,
@@ -32,10 +32,10 @@ const buildParcours = ({
   labellisation: null,
 });
 
-describe('getAskPremiereEtoileButtonState', () => {
+describe('getPremiereEtoileDemandeState', () => {
   it('request-pending quand la demande envoyée est une 1ère étoile', () => {
     expect(
-      getAskPremiereEtoileButtonState({
+      getPremiereEtoileDemandeState({
         canAskFirstStar: false,
         parcours: buildParcours({
           status: 'demande_envoyee',
@@ -48,16 +48,19 @@ describe('getAskPremiereEtoileButtonState', () => {
 
   it('other-cycle-in-progress avec AUDIT_REQUEST_PENDING quand une demande COT est envoyée', () => {
     expect(
-      getAskPremiereEtoileButtonState({
+      getPremiereEtoileDemandeState({
         canAskFirstStar: false,
         parcours: buildParcours({ status: 'demande_envoyee', sujet: 'cot' }),
       })
-    ).toEqual({ kind: 'other-cycle-in-progress', reason: 'AUDIT_REQUEST_PENDING' });
+    ).toEqual({
+      kind: 'other-cycle-in-progress',
+      reason: 'AUDIT_REQUEST_PENDING',
+    });
   });
 
   it('other-cycle-in-progress avec AUDIT_IN_PROGRESS quand un audit est en cours', () => {
     expect(
-      getAskPremiereEtoileButtonState({
+      getPremiereEtoileDemandeState({
         canAskFirstStar: false,
         parcours: buildParcours({ status: 'audit_en_cours', sujet: 'cot' }),
       })
@@ -66,7 +69,7 @@ describe('getAskPremiereEtoileButtonState', () => {
 
   it('other-cycle-in-progress avec LABELLISATION_IN_PROGRESS quand un audit est validé sans labellisation obtenue', () => {
     expect(
-      getAskPremiereEtoileButtonState({
+      getPremiereEtoileDemandeState({
         canAskFirstStar: false,
         parcours: buildParcours({
           status: 'audit_valide',
@@ -82,7 +85,7 @@ describe('getAskPremiereEtoileButtonState', () => {
 
   it('requestable quand aucun cycle est en cours et les critères sont remplis', () => {
     expect(
-      getAskPremiereEtoileButtonState({
+      getPremiereEtoileDemandeState({
         canAskFirstStar: true,
         parcours: buildParcours({ status: 'non_demandee' }),
       })
@@ -91,7 +94,7 @@ describe('getAskPremiereEtoileButtonState', () => {
 
   it('criteria-incomplete quand aucun cycle est en cours et les critères manquent', () => {
     expect(
-      getAskPremiereEtoileButtonState({
+      getPremiereEtoileDemandeState({
         canAskFirstStar: false,
         parcours: buildParcours({ status: 'non_demandee' }),
       })

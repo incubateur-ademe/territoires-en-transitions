@@ -8,6 +8,7 @@ import { PreuveWithObjet } from './expected-documents/expected-documents.rule';
 import { Etoile } from './labellisation-etoile.enum.schema';
 import { Labellisation } from './labellisation.schema';
 import { ReferentRolesDefined } from './role-mesures/role-mesures';
+import { ReponseAttendue } from './reponse-attendue/reponse-attendue.rule';
 import { ParcoursLabellisationStatus } from './parcours-labellisation-status.enum';
 
 export type ConditionFichiers = {
@@ -33,7 +34,7 @@ export type ParcoursLabellisation = {
     atteint: boolean;
     proportionFait: number;
     proportionProgramme: number;
-    statutOuScore: string;
+    reponseAttendue: ReponseAttendue;
   })[];
   labellisation: LabellisationWithProchaineEtoile | null;
   demande: LabellisationDemande | null;

@@ -36,7 +36,6 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
     expect(
       listAuditTypeOptions(makeParcours({ isCot: true }), {
         isCOT: true,
-        maximumRequestableStar: 5,
       }).map((option) => option.sujet)
     ).toEqual([
       SujetDemandeEnum.COT,
@@ -49,17 +48,16 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
     expect(
       listAuditTypeOptions(makeParcours(), {
         isCOT: false,
-        maximumRequestableStar: 5,
       }).map((option) => option.sujet)
     ).toEqual([SujetDemandeEnum.LABELLISATION]);
   });
 
   it("COT sous 35 % de score : l'audit COT seul reste demandable, les sujets labellisants non", () => {
     expect(
-      listAuditTypeOptions(makeParcours({ isCot: true }), {
-        isCOT: true,
-        maximumRequestableStar: 1,
-      })
+      listAuditTypeOptions(
+        makeParcours({ isCot: true, etoiles: 1 as Etoile }),
+        { isCOT: true }
+      )
     ).toEqual([
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
       {
@@ -77,9 +75,8 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
 
   it('non-COT sous 35 % de score : le seul sujet offert exige une étoile auditable', () => {
     expect(
-      listAuditTypeOptions(makeParcours(), {
+      listAuditTypeOptions(makeParcours({ etoiles: 1 as Etoile }), {
         isCOT: false,
-        maximumRequestableStar: 1,
       })
     ).toEqual([
       {
@@ -94,7 +91,6 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
     expect(
       listAuditTypeOptions(makeParcours({ isCot: true }), {
         isCOT: true,
-        maximumRequestableStar: 2,
       })
     ).toEqual([
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
@@ -115,7 +111,6 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
     expect(
       listAuditTypeOptions(makeParcours(), {
         isCOT: false,
-        maximumRequestableStar: 2,
       })
     ).toEqual([
       {
@@ -128,11 +123,24 @@ describe('listAuditTypeOptions — quels sujets sont proposés', () => {
 });
 
 describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandable', () => {
+  it("étoile visée au-dessus de celle permise par le score : l'audit de labellisation n'est pas demandable, faute de score global", () => {
+    expect(
+      listAuditTypeOptions(makeParcours({ etoiles: 4 as Etoile }), {
+        isCOT: false,
+      })
+    ).toEqual([
+      {
+        sujet: SujetDemandeEnum.LABELLISATION,
+        isRequestable: false,
+        reason: 'SCORE_GLOBAL_CRITERIA_NOT_SATISFIED',
+      },
+    ]);
+  });
+
   it('référentiel incomplet : aucun sujet demandable, tous sur la complétude', () => {
     expect(
       listAuditTypeOptions(makeParcours({ isCot: true, completudeOk: false }), {
         isCOT: true,
-        maximumRequestableStar: 2,
       })
     ).toEqual([
       {
@@ -161,7 +169,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
           referentRolesDefined: { eluReferent: false, referentTechnique: true },
           criteresAction: [{ atteint: true, actionId: 'cae_5.1.2.1.1' }],
         }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        { isCOT: true }
       )
     ).toEqual([
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
@@ -188,7 +196,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
             { atteint: false, actionId: 'cae_1.1.2' },
           ],
         }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        { isCOT: true }
       )
     ).toEqual([
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
@@ -212,7 +220,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
           conditionFichiers: { preuveNombre: 0 },
           preuvesObjets: [],
         }),
-        { isCOT: false, maximumRequestableStar: 2 }
+        { isCOT: false }
       )
     ).toEqual([
       {
@@ -231,7 +239,7 @@ describe('listAuditTypeOptions — pourquoi un sujet proposé n est pas demandab
           conditionFichiers: { preuveNombre: 1 },
           preuvesObjets: [],
         }),
-        { isCOT: true, maximumRequestableStar: 2 }
+        { isCOT: true }
       )
     ).toEqual([
       { sujet: SujetDemandeEnum.COT, isRequestable: true, reason: null },
