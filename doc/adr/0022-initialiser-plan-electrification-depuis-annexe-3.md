@@ -10,6 +10,9 @@ Proposé. Les décisions techniques ci-dessous restent à relire par l'équipe.
 Le choix des indicateurs d'E06, E07 et E08 est confirmé par l'équipe data.
 Les correspondances restant à valider sont détaillées en fin de document.
 
+Le [plan d'implémentation](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md)
+découpe ces décisions en incréments déployables séparément.
+
 ## Contexte
 
 Les collectivités lauréates du programme Électrification remplissent l'annexe 3
