@@ -103,7 +103,8 @@ les phases 5 et 6, sans ouvrir le profil annexe avant la phase 7.
   avant upload et enfilement. Reconnaître l'annexe mais refuser son admission
   tant que son traitement complet n'est pas branché : le flag seul ne suffit pas.
 - Définir une réponse discriminée : l'import générique continue à produire
-  `{ jobId, planId }`, l'annexe pourra produire `{ jobId, planId: null }`.
+  `{ profile: 'generic', jobId, planId: number }`, l'annexe pourra produire
+  `{ profile: 'annexe-3-electrification', jobId, planId: null }`.
   La colonne `created_plan_id` et le statut autorisent déjà `null` ; ne pas
   ajouter de migration de nullabilité inutile ni changer le parcours PCAET.
 - Valider le JSON des checkpoints à la lecture, selon profil et version.
