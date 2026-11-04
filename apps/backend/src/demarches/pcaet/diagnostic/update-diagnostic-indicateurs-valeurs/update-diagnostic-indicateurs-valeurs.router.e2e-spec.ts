@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';

@@ -11,8 +11,8 @@ import type {
 } from '@tet/domain/indicateurs';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { indicateurDefinitionTable } from '../indicateur-definition.table';
+import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
 type IndicateurPersoKey = Readonly<{
   indicateurId: number;

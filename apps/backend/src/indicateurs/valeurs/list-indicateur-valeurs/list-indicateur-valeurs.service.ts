@@ -14,8 +14,8 @@ import {
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
-import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
-import { ListCollectiviteIndicateursRepository } from '../../definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
+import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
+import { ListCollectiviteIndicateursRepository } from '../../indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';

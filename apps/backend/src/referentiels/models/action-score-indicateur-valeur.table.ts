@@ -1,5 +1,5 @@
 import { collectiviteId } from '@tet/backend/collectivites/collectivite-id.column';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { scoreIndicatifTypeEnumValues } from '@tet/domain/referentiels';

@@ -17,8 +17,8 @@ import { eq } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';
 import { TrpcRouter } from '../../../utils/trpc/trpc.router';
-import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
-import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
+import { createIndicateurPerso } from '../definitions.test-fixture';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 
 describe('Indicateurs', () => {

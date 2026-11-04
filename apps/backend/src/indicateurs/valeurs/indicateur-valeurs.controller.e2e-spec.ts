@@ -4,7 +4,7 @@ import {
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.response';

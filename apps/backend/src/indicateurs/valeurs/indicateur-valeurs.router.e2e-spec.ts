@@ -26,10 +26,10 @@ import { randomUUID } from 'node:crypto';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { indicateurCollectiviteTable } from '../definitions/indicateur-collectivite.table';
+import { indicateurCollectiviteTable } from '../indicateur/indicateur-collectivite.table';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
-import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
 import { getIndicateursValeursResponseSchema } from './list-indicateur-valeurs/get-indicateur-valeurs.response';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 

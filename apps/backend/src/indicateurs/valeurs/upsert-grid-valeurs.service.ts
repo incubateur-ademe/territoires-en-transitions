@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateIndicateurService } from '@tet/backend/indicateurs/definitions/mutate-indicateur/update-indicateur.service';
+import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import {
   AuthenticatedUser,
   AuthRole,

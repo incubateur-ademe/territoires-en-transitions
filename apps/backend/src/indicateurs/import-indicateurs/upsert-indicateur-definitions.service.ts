@@ -6,10 +6,10 @@ import {
   TransactionManager,
 } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { omit } from 'es-toolkit';
-import { IndicateurLockRepository } from '../definitions/indicateur-lock.repository';
+import { IndicateurLockRepository } from '../indicateur/indicateur-lock.repository';
 import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
-import { hasIndicateurFormulaChanged } from '../definitions/indicateur-formula.rules';
-import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { hasIndicateurFormulaChanged } from '../indicateur/indicateur-formula.rules';
+import { ListIndicateursPredefinisRepository } from '../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import type { ImportIndicateurDefinitionType } from './import-indicateur-definition.dto';
 import type { ImportIndicateurDefinitionError } from './import-indicateur-definition.errors';

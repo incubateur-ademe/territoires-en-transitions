@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { uploadCreateTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
-import { createIndicateurPerso } from '@tet/backend/indicateurs/definitions/definitions.test-fixture';
+import { createIndicateurPerso } from '@tet/backend/indicateurs/indicateurs/definitions.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -84,7 +84,10 @@ describe('Dupliquer une fiche action', () => {
     const referentTag = await createTag(TagEnum.Personne, 'Référent fiche');
     const serviceTag = await createTag(TagEnum.Service, 'Service fiche');
     const structureTag = await createTag(TagEnum.Structure, 'Structure fiche');
-    const partenaireTag = await createTag(TagEnum.Partenaire, 'Partenaire fiche');
+    const partenaireTag = await createTag(
+      TagEnum.Partenaire,
+      'Partenaire fiche'
+    );
     const libreTag = await createTag(TagEnum.Libre, 'Tag libre fiche');
     const instanceTag = await createTag(
       TagEnum.InstanceGouvernance,
@@ -149,7 +152,9 @@ describe('Dupliquer une fiche action', () => {
         services: [{ id: serviceTag.id }],
         pilotes: [{ tagId: piloteTag.id }],
         referents: [{ tagId: referentTag.id }],
-        financeurs: [{ financeurTag: { id: financeurTag.id }, montantTtc: 12345 }],
+        financeurs: [
+          { financeurTag: { id: financeurTag.id }, montantTtc: 12345 },
+        ],
         indicateurs: [{ id: indicateurId }],
         libreTags: [{ id: libreTag.id }],
         instanceGouvernance: [{ id: instanceTag.id }],
@@ -237,23 +242,39 @@ describe('Dupliquer une fiche action', () => {
     expect(duplicatedFiche.dateFin).toContain('2026-12-15');
 
     expect(duplicatedFiche.axes?.map((item) => item.id)).toEqual([axe.id]);
-    expect(duplicatedFiche.thematiques?.map((item) => item.id)).toEqual([thematique.id]);
+    expect(duplicatedFiche.thematiques?.map((item) => item.id)).toEqual([
+      thematique.id,
+    ]);
     expect(duplicatedFiche.sousThematiques?.map((item) => item.id)).toEqual([
       sousThematique.id,
     ]);
     expect(duplicatedFiche.effetsAttendus?.map((item) => item.id)).toEqual([
       effetAttendu.id,
     ]);
-    expect(duplicatedFiche.partenaires?.map((item) => item.id)).toEqual([partenaireTag.id]);
-    expect(duplicatedFiche.structures?.map((item) => item.id)).toEqual([structureTag.id]);
-    expect(duplicatedFiche.services?.map((item) => item.id)).toEqual([serviceTag.id]);
-    expect(duplicatedFiche.pilotes?.map((item) => item.tagId)).toEqual([piloteTag.id]);
-    expect(duplicatedFiche.referents?.map((item) => item.tagId)).toEqual([referentTag.id]);
-    expect(duplicatedFiche.libreTags?.map((item) => item.id)).toEqual([libreTag.id]);
-    expect(duplicatedFiche.instanceGouvernance?.map((item) => item.id)).toEqual([
-      instanceTag.id,
+    expect(duplicatedFiche.partenaires?.map((item) => item.id)).toEqual([
+      partenaireTag.id,
     ]);
-    expect(duplicatedFiche.indicateurs?.map((item) => item.id)).toEqual([indicateurId]);
+    expect(duplicatedFiche.structures?.map((item) => item.id)).toEqual([
+      structureTag.id,
+    ]);
+    expect(duplicatedFiche.services?.map((item) => item.id)).toEqual([
+      serviceTag.id,
+    ]);
+    expect(duplicatedFiche.pilotes?.map((item) => item.tagId)).toEqual([
+      piloteTag.id,
+    ]);
+    expect(duplicatedFiche.referents?.map((item) => item.tagId)).toEqual([
+      referentTag.id,
+    ]);
+    expect(duplicatedFiche.libreTags?.map((item) => item.id)).toEqual([
+      libreTag.id,
+    ]);
+    expect(duplicatedFiche.instanceGouvernance?.map((item) => item.id)).toEqual(
+      [instanceTag.id]
+    );
+    expect(duplicatedFiche.indicateurs?.map((item) => item.id)).toEqual([
+      indicateurId,
+    ]);
     expect(duplicatedFiche.tempsDeMiseEnOeuvre?.id).toBe(temps.id);
     expect(
       duplicatedFiche.financeurs?.map((item) => ({

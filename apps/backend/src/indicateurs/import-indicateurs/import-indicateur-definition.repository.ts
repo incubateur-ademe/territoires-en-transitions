@@ -3,8 +3,8 @@ import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag
 import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
-} from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+} from '@tet/backend/indicateurs/indicateur/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,

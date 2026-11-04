@@ -1,5 +1,5 @@
-import { indicateurActionTable } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurActionTable } from '@tet/backend/indicateurs/indicateur/indicateur-action.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';

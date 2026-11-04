@@ -1,11 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { DeleteIndicateurInput } from '@tet/backend/indicateurs/definitions/mutate-indicateur/mutate-indicateur.input';
+import { DeleteIndicateurInput } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
-import { IndicateurLockRepository } from '../indicateur-lock.repository';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
 
 @Injectable()

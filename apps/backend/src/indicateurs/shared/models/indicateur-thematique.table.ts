@@ -1,6 +1,6 @@
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
 export const indicateurThematiqueTable = pgTable(
   'indicateur_thematique',

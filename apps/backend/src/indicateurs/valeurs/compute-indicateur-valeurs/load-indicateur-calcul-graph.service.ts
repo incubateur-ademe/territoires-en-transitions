@@ -6,8 +6,8 @@ import {
   IndicateurPredefini,
   isIndicateurPredefini,
 } from '@tet/domain/indicateurs';
-import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
-import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
+import { ListIndicateursPredefinisRepository } from '../../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import type { IndicateurFormula } from './calcul-indicateur.types';
 import IndicateurExpressionService from '../indicateur-expression.service';
 

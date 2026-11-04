@@ -9,7 +9,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { isNil, partition, round } from 'es-toolkit';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
-import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
@@ -20,7 +20,7 @@ import {
   PreparedIndicateurValeurs,
   ValidateIndicateurValeursWriteService,
 } from './validate-indicateur-valeurs-write.service';
-import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 /** Persists values under the caller's transaction; recalculation stays in the reconciliation service. */
 @Injectable()

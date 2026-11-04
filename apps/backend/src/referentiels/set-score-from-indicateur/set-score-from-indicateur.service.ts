@@ -3,7 +3,7 @@ import ManageIndicateurValeursService, {
   IndicateurValeurDeletionListener,
   IndicateurValeurUpsertedEvent,
 } from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
-import { UpdateIndicateurService } from '@tet/backend/indicateurs/definitions/mutate-indicateur/update-indicateur.service';
+import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';

@@ -14,10 +14,10 @@ import PersonnalisationsExpressionService, {
 } from '../../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../../collectivites/personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../../utils/database/database.service';
-import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { ListIndicateursPredefinisRepository } from '../../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { indicateurObjectifTable } from '../../shared/models/indicateur-objectif.table';
 import { ValeursReferenceDTO } from './valeurs-reference.dto';
-import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 @Injectable()
 export default class ValeursReferenceService {

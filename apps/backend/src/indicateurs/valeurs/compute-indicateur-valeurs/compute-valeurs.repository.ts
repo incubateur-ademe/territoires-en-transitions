@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceSourceCalculTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';

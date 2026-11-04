@@ -14,7 +14,7 @@ import { sql } from 'drizzle-orm';
 import * as path from 'path';
 import { default as request } from 'supertest';
 import * as z from 'zod/mini';
-import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
 import TrajectoiresXlsxService from '../trajectoires/trajectoires-xlsx.service';
 import { importIndicateurDefinitionSchema } from './import-indicateur-definition.dto';
 
@@ -169,5 +169,4 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
       ok: true,
     });
   }, 10000);
-
 });

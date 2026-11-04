@@ -5,7 +5,7 @@ import {
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createGroupement } from '@tet/backend/collectivites/shared/models/groupement.test-fixture';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import {
   getAuthUserFromUserCredentials,

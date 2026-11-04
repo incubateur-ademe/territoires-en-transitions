@@ -7,7 +7,7 @@ import {
 import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
-import { upsertIndicateurPilotesInputSchema } from '../../indicateurs/upsert-indicateur-pilotes/upsert-indicateur-pilotes.input';
+import { upsertIndicateurPilotesInputSchema } from '../upsert-indicateur-pilotes/upsert-indicateur-pilotes.input';
 
 export const createIndicateurInputSchema = z.object({
   titre: indicateurCommonSchema.shape.titre,

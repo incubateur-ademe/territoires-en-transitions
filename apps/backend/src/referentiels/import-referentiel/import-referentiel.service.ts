@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
-import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
+import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {

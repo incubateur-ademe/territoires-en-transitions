@@ -20,7 +20,7 @@ import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { onTestFinished } from 'vitest';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
-import { indicateurDefinitionTable } from './indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';

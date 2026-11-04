@@ -3,7 +3,7 @@ import { personnalisationRegleTable } from '@tet/backend/collectivites/personnal
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
-} from '@tet/backend/indicateurs/definitions/indicateur-action.table';
+} from '@tet/backend/indicateurs/indicateur/indicateur-action.table';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import { ImportActionDefinition } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';

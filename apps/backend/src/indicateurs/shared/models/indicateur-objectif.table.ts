@@ -1,5 +1,5 @@
 import { date, integer, pgTable, text } from 'drizzle-orm/pg-core';
-import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
 export const indicateurObjectifTable = pgTable('indicateur_objectif', {
   indicateurId: integer('indicateur_id')

@@ -1,7 +1,7 @@
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
 export const indicateurServiceTagTable = pgTable(
   'indicateur_service_tag',
