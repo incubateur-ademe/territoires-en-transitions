@@ -353,4 +353,13 @@ export const referentielsLabels = {
     'Trop de fichiers pour une seule archive (500 maximum). Contactez le support.',
   preuvesTelechargementErreurArchiveTropVolumineuse:
     "Les documents dépassent la taille maximale d'une archive (2 Go). Contactez le support.",
+
+  reponsePourcentageFaitOuProgrammeMinimum: ({
+    fait,
+    programme,
+  }: {
+    fait: number;
+    programme: number;
+  }): string =>
+    `${fait}% fait minimum ou ${programme}% fait et programmé minimum`,
 } as const;

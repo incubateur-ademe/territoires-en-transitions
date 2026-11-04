@@ -36,7 +36,7 @@ export default async function Layout({
   }
 
   return (
-    <ChecklistProvider referentielId={referentielId}>
+    <ChecklistProvider key={referentielId} referentielId={referentielId}>
       {overview}
     </ChecklistProvider>
   );

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { SujetDemandeEnum } from '../labellisation-demande.schema';
 import { ObjetPreuveEnum } from '../objet-preuve.enum.schema';
 import {
   areExpectedDocumentsDeposited,
@@ -15,6 +16,7 @@ describe('getExpectedDocuments', () => {
   it("attend l'acte d'engagement tant que la première étoile n'est pas obtenue", () => {
     expect(
       getExpectedDocuments({
+        sujet: SujetDemandeEnum.LABELLISATION,
         isCot: false,
         premiereEtoileObtenue: false,
         etoile: 1,
@@ -25,6 +27,7 @@ describe('getExpectedDocuments', () => {
   it("n'attend plus l'acte d'engagement une fois la première étoile obtenue", () => {
     expect(
       getExpectedDocuments({
+        sujet: SujetDemandeEnum.LABELLISATION,
         isCot: false,
         premiereEtoileObtenue: true,
         etoile: 2,
@@ -35,6 +38,7 @@ describe('getExpectedDocuments', () => {
   it("n'attend pas d'acte d'engagement d'une collectivité COT", () => {
     expect(
       getExpectedDocuments({
+        sujet: SujetDemandeEnum.LABELLISATION_COT,
         isCot: true,
         premiereEtoileObtenue: false,
         etoile: 1,
@@ -45,11 +49,34 @@ describe('getExpectedDocuments', () => {
   it('attend les deux pièces sans étoile obtenue quand la labellisation est déjà visée', () => {
     expect(
       getExpectedDocuments({
+        sujet: SujetDemandeEnum.LABELLISATION,
         isCot: false,
         premiereEtoileObtenue: false,
         etoile: 3,
       })
     ).toEqual(LES_DEUX_OBJETS);
+  });
+
+  it("n'attend aucun document pour un audit COT sans labellisation, même en visant la troisième étoile", () => {
+    expect(
+      getExpectedDocuments({
+        sujet: SujetDemandeEnum.COT,
+        isCot: true,
+        premiereEtoileObtenue: false,
+        etoile: 3,
+      })
+    ).toEqual([]);
+  });
+
+  it('attend la candidature pour un audit COT avec labellisation de la deuxième étoile', () => {
+    expect(
+      getExpectedDocuments({
+        sujet: SujetDemandeEnum.LABELLISATION_COT,
+        isCot: true,
+        premiereEtoileObtenue: false,
+        etoile: 2,
+      })
+    ).toEqual([ObjetPreuveEnum.CANDIDATURE]);
   });
 });
 

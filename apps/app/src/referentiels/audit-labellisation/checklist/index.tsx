@@ -7,10 +7,13 @@ import { Divider, Spacer, VisibleWhen } from '@tet/ui';
 import { ReactElement } from 'react';
 import { Parcours } from '../checklist-view-model';
 import { useChecklist } from '../checklist.context';
+import { isLabellisationVisee } from '../sujet-vise';
 import { AuditTableHintBanner } from './audit-table-hint.banner';
 import { ChecklistActions } from './checklist-actions';
+import { EtoileViseeField } from './etoile-visee.field';
 import { Container } from './layout/container';
 import { Header } from './layout/header';
+import { SujetCotViseField } from './sujet-cot-vise.field';
 import { LabellisationChecklistTable } from './table/labellisation-checklist.table';
 
 export const ChecklistView = ({
@@ -19,10 +22,18 @@ export const ChecklistView = ({
   viewModel: Parcours;
 }): ReactElement => {
   const collectiviteId = useCollectiviteId();
-  const { referentielId, cycle } = useChecklist();
+  const {
+    referentielId,
+    cycle,
+    sujetVise,
+    sujetCotVise,
+    selectEtoileVisee,
+    selectSujetCotVise,
+  } = useChecklist();
   const hierarchie = useGetReferentielDefinitionFromContext()?.hierarchie ?? [];
 
-  const isPremiereEtoile = viewModel.etoileObjectif === 1;
+  const isLabellisation = isLabellisationVisee(sujetVise);
+  const isPremiereEtoile = isLabellisation && viewModel.etoileObjectif === 1;
 
   return (
     <Container>
@@ -42,8 +53,24 @@ export const ChecklistView = ({
       <Spacer height={1} />
       <Divider />
       <Spacer height={1} />
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+        <VisibleWhen condition={cycle.isCOT}>
+          <SujetCotViseField
+            value={sujetCotVise}
+            onChange={selectSujetCotVise}
+          />
+        </VisibleWhen>
+        <VisibleWhen condition={isLabellisation}>
+          <EtoileViseeField
+            value={viewModel.etoileObjectif}
+            etoilesObtenues={cycle.parcours?.labellisation?.etoiles ?? 0}
+            onChange={selectEtoileVisee}
+          />
+        </VisibleWhen>
+      </div>
+      <Spacer height={1} />
       <VisibleWhen condition={isPremiereEtoile}>
-        <p className="text-sm font-normal text-primary-10 m-0">
+        <p className="m-0 text-xs text-grey-7">
           {appLabels.premiereEtoileSansAudit}
         </p>
         <Spacer height={1} />

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { EtoileEnum } from '@tet/domain/referentiels';
@@ -49,9 +50,25 @@ const emptyParcours: Parcours = {
   acteEngagement: { demandeId: null },
 };
 
+const formulationMesure = 'Identifier les émissions du territoire';
+
+const parcoursAvecScoreEtMesure: Parcours = {
+  ...emptyParcours,
+  mesures: [
+    {
+      actionId: 'eci_1.1',
+      identifiant: '1.1',
+      formulation: formulationMesure,
+      done: false,
+      reponseAttendue: { kind: 'statut-fait' },
+    },
+  ],
+};
+
 describe('LabellisationChecklistTable', () => {
   beforeEach(() => {
     vi.mocked(useChecklist).mockReturnValue({
+      sujetVise: 'labellisation',
       showActeEngagement: false,
       showCandidatureDocuments: false,
     } as ReturnType<typeof useChecklist>);
@@ -69,11 +86,11 @@ describe('LabellisationChecklistTable', () => {
     window.localStorage.clear();
   });
 
-  const renderChecklist = (): void => {
+  const renderChecklist = (viewModel: Parcours = emptyParcours): void => {
     render(
       <UnnavigableLinks>
         <LabellisationChecklistTable
-          viewModel={emptyParcours}
+          viewModel={viewModel}
           collectiviteId={4172}
           referentielId="eci"
           hierarchie={[]}
@@ -88,6 +105,31 @@ describe('LabellisationChecklistTable', () => {
     expect(
       screen.getByRole('link', { name: voirLesMesures }).getAttribute('href')
     ).toBe('/collectivite/4172/referentiel/eci/progression?s=non_renseigne');
+  });
+
+  it('affiche le score minimum et les mesures pour une labellisation', () => {
+    renderChecklist(parcoursAvecScoreEtMesure);
+
+    expect(
+      screen.getByText(appLabels.minimumScoreCritere({ seuilPercent: 35 }))
+    ).toBeTruthy();
+    expect(screen.getByText(formulationMesure)).toBeTruthy();
+  });
+
+  it("masque le score minimum et les mesures lorsque l'audit COT est demandé seul, en gardant la complétude", () => {
+    vi.mocked(useChecklist).mockReturnValue({
+      sujetVise: 'cot',
+      showActeEngagement: false,
+      showCandidatureDocuments: false,
+    } as ReturnType<typeof useChecklist>);
+
+    renderChecklist(parcoursAvecScoreEtMesure);
+
+    expect(
+      screen.queryByText(appLabels.minimumScoreCritere({ seuilPercent: 35 }))
+    ).toBeNull();
+    expect(screen.queryByText(formulationMesure)).toBeNull();
+    expect(screen.getByRole('link', { name: voirLesMesures })).toBeTruthy();
   });
 
   it("réaffiche la colonne statut que l'utilisateur avait masquée", () => {

@@ -1,5 +1,9 @@
 import { toLegacyDocumentHash } from '@tet/domain/collectivites';
-import { EtoileEnum, ObjetPreuveEnum } from '@tet/domain/referentiels';
+import {
+  EtoileEnum,
+  ObjetPreuveEnum,
+  SujetDemandeEnum,
+} from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { appLabels } from '../../../../../labels/catalog';
@@ -259,10 +263,13 @@ describe("ActeEngagementRow — qui peut éditer l'acte", () => {
         acteEngagement: { demandeId: 42 },
       },
       referentielId: 'cae',
-      premiereEtoileObtenue: false,
       showActeEngagement: true,
       showCandidatureDocuments: false,
       canUpdateCandidatureDocuments,
+      sujetVise: SujetDemandeEnum.LABELLISATION,
+      sujetCotVise: SujetDemandeEnum.LABELLISATION_COT,
+      selectEtoileVisee: vi.fn(),
+      selectSujetCotVise: vi.fn(),
     };
 
     render(

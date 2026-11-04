@@ -28,6 +28,7 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
 
     // Étape 1 — état initial : aucun statut renseigné, bouton désactivé
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeDisabled();
@@ -46,6 +47,7 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
 
     // Étape 3 — recharger : bouton encore désactivé car acte d'engagement non déposé
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeDisabled();
@@ -65,6 +67,7 @@ test.describe('Demande 1ère étoile depuis la nouvelle vue audit-labellisation'
 
     // Étape 7 — les deux rôles désignés, bouton activé
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
     ).toBeEnabled();

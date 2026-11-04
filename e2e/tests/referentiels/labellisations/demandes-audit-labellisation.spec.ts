@@ -8,8 +8,6 @@ const COMPLETUDE_TOOLTIP =
   'Renseigner les statuts de toutes les mesures du référentiel';
 const CRITERES_TOOLTIP =
   'Renseigner tous les critères attendus afin de pouvoir demander un audit ou une labellisation';
-const SCORE_TOOLTIP =
-  'Atteindre au moins 35 % de score pour pouvoir demander un audit de labellisation.';
 
 test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
   test('visiteur : ni « Obtenir la première étoile » ni « Demander un audit »', async ({
@@ -39,7 +37,7 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     await expect(auditLabellisationPom.demanderAuditButton).toHaveCount(0);
   });
 
-  test('CT COT sans statuts renseignés : CTA désactivé, le tooltip nomme la complétude', async ({
+  test('CT COT sans statuts renseignés, audit COT seul : CTA désactivé, le tooltip nomme la complétude', async ({
     collectivites,
     auditLabellisationPom,
   }) => {
@@ -51,13 +49,14 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     await user.precomputeReferentielSnapshot(collectiviteId, referentiel);
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.demanderAuditCotSansLabellisation();
 
     await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
     await auditLabellisationPom.hoverDemanderAudit();
     await expect(auditLabellisationPom.tooltip).toHaveText(COMPLETUDE_TOOLTIP);
   });
 
-  test("CT COT complète sous 35 % : les trois types sont offerts, seul l'audit COT seul est demandable", async ({
+  test("CT COT complète sous 35 % : l'audit COT seul est demandable, sans étoile ni critère de labellisation", async ({
     collectivites,
     referentiels,
     auditLabellisationPom,
@@ -75,28 +74,21 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     );
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.demanderAuditCotSansLabellisation();
+
+    await expect(auditLabellisationPom.scoreMinimumRow).toHaveCount(0);
     await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
 
     await auditLabellisationPom.openAuditModal();
-    await expect(auditLabellisationPom.auditTypeRadios).toHaveCount(3);
-    await expect(auditLabellisationPom.auditTypeCotRadio).toBeEnabled();
     await expect(
-      auditLabellisationPom.auditTypeCotAvecLabellisationRadio
-    ).toBeDisabled();
-    await expect(
-      auditLabellisationPom.auditTypeLabellisationRadio
-    ).toBeDisabled();
-    await expect(
-      auditLabellisationPom.auditModal.getByText(CRITERES_TOOLTIP)
-    ).toHaveCount(2);
-
-    await auditLabellisationPom.auditTypeCotRadio.click();
+      auditLabellisationPom.auditModal.getByText('Audit COT sans labellisation')
+    ).toBeVisible();
     await auditLabellisationPom.envoyerAuditButton.click();
 
     await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
   });
 
-  test('CT non-COT complète sous 35 % : CTA désactivé, le tooltip nomme le score', async ({
+  test('CT non-COT complète sous 35 % visant la deuxième étoile : CTA désactivé, le tooltip renvoie aux critères', async ({
     collectivites,
     referentiels,
     auditLabellisationPom,
@@ -113,10 +105,11 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     );
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
     await expect(auditLabellisationPom.demanderAuditButton).toBeDisabled();
     await auditLabellisationPom.hoverDemanderAudit();
-    await expect(auditLabellisationPom.tooltip).toHaveText(SCORE_TOOLTIP);
+    await expect(auditLabellisationPom.tooltip).toHaveText(CRITERES_TOOLTIP);
   });
 
   test('audit COT sans labellisation : envoi ferme la modale', async ({
@@ -143,11 +136,11 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.demanderAuditCotSansLabellisation();
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
     ).toHaveCount(0);
     await auditLabellisationPom.openAuditModal();
-    await auditLabellisationPom.auditTypeCotRadio.click();
     await auditLabellisationPom.envoyerAuditButton.click();
 
     await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
@@ -177,10 +170,10 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     );
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.demanderAuditCotSansLabellisation();
     await expect(auditLabellisationPom.demanderAuditButton).toBeEnabled();
 
     await auditLabellisationPom.openAuditModal();
-    await auditLabellisationPom.auditTypeCotRadio.click();
     await auditLabellisationPom.envoyerAuditButton.click();
 
     await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
@@ -211,10 +204,10 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
     await referentiels.seedRolePilotes(user, collectiviteId, referentiel);
 
     await auditLabellisationPom.goto(collectiviteId, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
+    await expect(auditLabellisationPom.labellisationCotSwitch).toBeChecked();
     await auditLabellisationPom.uploadCandidatureDocument();
     await auditLabellisationPom.openAuditModal();
-    await auditLabellisationPom.auditTypeCotAvecLabellisationRadio.click();
-    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.envoyerAuditButton.click();
 
     await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
@@ -244,10 +237,15 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
       await auditLabellisationPom.goto(collectiviteId, ref);
-      await auditLabellisationPom.uploadCandidatureDocument();
-      await auditLabellisationPom.openAuditModal();
-      await expect(auditLabellisationPom.auditTypeGroup).toHaveCount(0);
       await auditLabellisationPom.selectTargetStar(2);
+      await auditLabellisationPom.uploadCandidatureDocument();
+      await expect(auditLabellisationPom.labellisationCotSwitch).toHaveCount(0);
+      await auditLabellisationPom.openAuditModal();
+      await expect(
+        auditLabellisationPom.auditModal.getByText(
+          'Étoile demandée : deuxième étoile'
+        )
+      ).toBeVisible();
       await auditLabellisationPom.envoyerAuditButton.click();
 
       await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();
@@ -276,9 +274,9 @@ test.describe('Demandes depuis la nouvelle vue audit-labellisation', () => {
       await referentiels.seedRolePilotes(user, collectiviteId, ref);
 
       await auditLabellisationPom.goto(collectiviteId, ref);
+      await auditLabellisationPom.selectTargetStar(5);
       await auditLabellisationPom.uploadCandidatureDocument();
       await auditLabellisationPom.openAuditModal();
-      await auditLabellisationPom.selectTargetStar(5);
       await auditLabellisationPom.envoyerAuditButton.click();
 
       await expect(auditLabellisationPom.auditSuccessToast).toBeVisible();

@@ -11,7 +11,7 @@ import {
   ReferentielId,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
-import { ChecklistTable, PillButton } from '@tet/ui';
+import { ChecklistTable, PillButton, VisibleWhen } from '@tet/ui';
 import { ReactElement } from 'react';
 import {
   MesureViewModel,
@@ -20,7 +20,7 @@ import {
   RoleMesures,
 } from '../../checklist-view-model';
 import { useChecklist, useRoleDropdown } from '../../checklist.context';
-import { formatReponseAttendue } from './format-reponse-attendue';
+import { isLabellisationVisee } from '../../sujet-vise';
 import { ReponseAttendueLabel } from './reponse-attendue.label';
 import { ActeEngagementRow } from './sections/acte-engagement.section';
 import { CandidatureDocumentsRow } from './sections/candidature-documents/candidature-documents.section';
@@ -209,15 +209,7 @@ const MesuresRows = ({
                 />
               ),
             }}
-            answer={
-              <ReponseAttendueLabel
-                value={formatReponseAttendue({
-                  formulation: mesure.formulation,
-                  minRealisePercentage: mesure.minRealisePercentage,
-                  minProgrammePercentage: mesure.minProgrammePercentage,
-                })}
-              />
-            }
+            answer={<ReponseAttendueLabel value={mesure.reponseAttendue} />}
           />
         );
       })}
@@ -239,7 +231,8 @@ export const LabellisationChecklistTable = ({
   hierarchie,
 }: LabellisationChecklistTableProps): ReactElement => {
   const { openDropdown } = useRoleDropdown();
-  const { showActeEngagement, showCandidatureDocuments } = useChecklist();
+  const { sujetVise, showActeEngagement, showCandidatureDocuments } =
+    useChecklist();
   const roleActionIds = collectRoleActionIds(viewModel.roleMesures);
 
   return (
@@ -253,15 +246,19 @@ export const LabellisationChecklistTable = ({
         collectiviteId={collectiviteId}
         referentielId={referentielId}
       />
-      <MinimumScoreRow minimumScore={viewModel.minimumScore} />
-      <MesuresRows
-        mesures={viewModel.mesures}
-        roleActionIds={roleActionIds}
-        collectiviteId={collectiviteId}
-        referentielId={referentielId}
-        hierarchie={hierarchie}
-        onOpenDropdown={openDropdown}
-      />
+      <VisibleWhen condition={isLabellisationVisee(sujetVise)}>
+        {viewModel.minimumScore && (
+          <MinimumScoreRow minimumScore={viewModel.minimumScore} />
+        )}
+        <MesuresRows
+          mesures={viewModel.mesures}
+          roleActionIds={roleActionIds}
+          collectiviteId={collectiviteId}
+          referentielId={referentielId}
+          hierarchie={hierarchie}
+          onOpenDropdown={openDropdown}
+        />
+      </VisibleWhen>
       {showActeEngagement && <ActeEngagementRow />}
       {showCandidatureDocuments && <CandidatureDocumentsRow />}
     </ChecklistTable>

@@ -47,6 +47,7 @@ test.describe('Demande 1ère étoile — désignation des référents obligatoir
     );
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
 
     const eluReferentRow = auditLabellisationPom.checklistRow(ELU_REFERENT);
     const referentTechniqueRow =
@@ -72,6 +73,7 @@ test.describe('Demande 1ère étoile — désignation des référents obligatoir
     await referentiels.seedRolePilotes(user, collectivite.data.id, referentiel);
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
 
     await expect(eluReferentRow.getByLabel('Critère atteint')).toBeVisible();
     await expect(

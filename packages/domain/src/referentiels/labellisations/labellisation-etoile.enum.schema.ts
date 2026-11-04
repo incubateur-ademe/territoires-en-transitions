@@ -12,6 +12,8 @@ export const etoileEnumSchema = z.enum(EtoileEnum);
 
 export type Etoile = (typeof EtoileEnum)[keyof typeof EtoileEnum];
 
+export const etoileEnumValues: readonly Etoile[] = Object.values(EtoileEnum);
+
 // TODO delete string types when refactoring labellisation sub-domain
 export const etoileAsStringEnumValues = ['1', '2', '3', '4', '5'] as const;
 export const etoileAsStringEnumSchema = z.enum(etoileAsStringEnumValues);

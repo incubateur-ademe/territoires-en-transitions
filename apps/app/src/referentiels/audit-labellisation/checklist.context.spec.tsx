@@ -24,6 +24,16 @@ vi.mock(
   })
 );
 
+vi.mock(
+  './use-etoile-visee',
+  (): Partial<Record<keyof typeof import('./use-etoile-visee'), unknown>> => ({
+    useEtoileVisee: () => ({
+      etoileVisee: undefined,
+      selectEtoileVisee: vi.fn(),
+    }),
+  })
+);
+
 vi.mock('@tet/api/collectivites', () => ({
   useCurrentCollectivite: vi.fn(),
 }));
