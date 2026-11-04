@@ -7,6 +7,11 @@ permissions:
 
 on:
   workflow_call:
+    inputs:
+      nx-base:
+        description: Optional merge base covering the full PR stack
+        required: false
+        type: string
 
 jobs:
   analyze-affected:
@@ -68,6 +73,8 @@ jobs:
 
       - uses: ./.github/actions/ci/compute-affected-scope
         id: scope
+        env:
+          NX_BASE: ${{ inputs.nx-base || env.NX_BASE }}
         with:
           default-branch: ${{ github.event.repository.default_branch }}
 
