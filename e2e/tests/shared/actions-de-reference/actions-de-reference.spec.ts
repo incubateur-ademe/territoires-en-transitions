@@ -1270,14 +1270,14 @@ test.describe('action-modifiee-sort-des-filtres', () => {
   });
 });
 
-test.describe('entree-nav-reservee-au-super-admin', () => {
-  test("un super admin a l'entrée « Actions de référence » dans le menu Super Admin, qui mène à la vue", async ({
+test.describe('entree-administration-reservee-au-super-admin', () => {
+  test("un super admin a l'outil « Actions de référence » dans l'espace Administration, qui mène à la vue de sa collectivité", async ({
     collectivites,
     actionsDeReferencePom,
     page,
   }) => {
     const { collectivite } =
-      await test.step("Given : un super admin, membre d'une collectivité standard, est sur le tableau de bord de sa collectivité", async () => {
+      await test.step("Given : un super admin, membre d'une collectivité standard, a ouvert le tableau de bord de sa collectivité", async () => {
         const collectiviteAndUser = await collectivites.addCollectiviteAndUser({
           userArgs: {
             autoLogin: true,
@@ -1292,9 +1292,9 @@ test.describe('entree-nav-reservee-au-super-admin', () => {
         );
         return collectiviteAndUser;
       });
-    await test.step('When : il ouvre le menu Super Admin puis clique le lien « Actions de référence »', async () => {
-      await actionsDeReferencePom.superAdminMenuButton.click();
-      await actionsDeReferencePom.navEntry.click();
+    await test.step("When : il ouvre l'espace Administration puis clique l'outil « Actions de référence »", async () => {
+      await page.goto('/admin');
+      await actionsDeReferencePom.adminToolEntry.click();
     });
     await test.step("Then : l'URL est /collectivite/:id/actions-reference et le titre de page « Actions de référence » est visible", async () => {
       await expect(page).toHaveURL(
@@ -1305,22 +1305,21 @@ test.describe('entree-nav-reservee-au-super-admin', () => {
     });
   });
 
-  test("un utilisateur qui n'est pas super admin n'a pas l'entrée « Actions de référence » dans la navigation", async ({
+  test("un utilisateur qui n'est pas super admin n'a pas l'outil « Actions de référence »", async ({
     collectivites,
     actionsDeReferencePom,
     page,
   }) => {
-    await test.step("Given : un utilisateur connecté sans rôle super admin, membre d'une collectivité standard, est sur le tableau de bord de sa collectivité", async () => {
-      const { collectivite } = await collectivites.addCollectiviteAndUser({
+    await test.step("Given : un utilisateur connecté sans rôle super admin, membre d'une collectivité standard", async () => {
+      await collectivites.addCollectiviteAndUser({
         userArgs: { autoLogin: true },
       });
-      await page.goto(actionsDeReferencePom.dashboardUrl(collectivite.data.id));
     });
-    await test.step('When : la navigation principale est affichée', async () => {
-      await expect(actionsDeReferencePom.indicateursNavEntry).toBeVisible();
+    await test.step("When : il tente d'ouvrir l'espace Administration", async () => {
+      await page.goto('/admin');
     });
     await test.step("Then : aucun lien « Actions de référence » n'est présent", async () => {
-      await expect(actionsDeReferencePom.navEntry).toHaveCount(0);
+      await expect(actionsDeReferencePom.adminToolEntry).toHaveCount(0);
     });
   });
 });

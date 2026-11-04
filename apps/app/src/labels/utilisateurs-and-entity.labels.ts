@@ -370,13 +370,21 @@ export const utilisateursAndEntityLabels = {
 
   /** Administration */
   administration: 'Administration',
-  administrationSousTitre: 'Outils internes réservés aux super admins',
-  administrationAffichageOutils: 'Affichage des outils',
-  administrationOuvrirOutil: "Ouvrir l'outil",
+  administrationSousTitre:
+    "Outils internes réservés à l'équipe de la plateforme",
+  administrationOutilsPlateforme: 'Plateforme',
+  administrationOutilsCollectivite: (nom: string): string =>
+    `Collectivité : ${nom}`,
   administrationImporterPlanDescription:
     "Importer le plan d'action d'une collectivité depuis un fichier Excel",
   administrationAjouterCollectiviteDescription:
     'Créer une collectivité absente de TeT',
   administrationBanniereDescription:
     'Afficher un message à tous les utilisateurs de TeT',
+  administrationModifierCollectiviteDescription:
+    'Modifier les informations de la collectivité',
+  administrationAffichageReferentielsDescription:
+    "Choisir les référentiels affichés et leur mode d'accès",
+  administrationActionsDeReferenceDescription:
+    'Consulter et modifier les actions de référence',
 };

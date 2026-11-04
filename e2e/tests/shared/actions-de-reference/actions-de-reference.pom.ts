@@ -54,8 +54,7 @@ export class ActionsDeReferencePom {
   readonly emptyStateMessage: Locator;
   readonly resetFiltersButton: Locator;
   readonly updateButtons: Locator;
-  readonly navEntry: Locator;
-  readonly superAdminMenuButton: Locator;
+  readonly adminToolEntry: Locator;
   readonly indicateursNavEntry: Locator;
   readonly searchField: Locator;
   readonly leviersFilter: Locator;
@@ -150,13 +149,8 @@ export class ActionsDeReferencePom {
     this.updateButtons = page.getByRole('button', {
       name: /^Modifier l'action/,
     });
-    this.navEntry = page.getByRole('link', {
-      name: 'Actions de référence',
-      exact: true,
-    });
-    this.superAdminMenuButton = page.getByRole('button', {
-      name: 'Super Admin',
-      exact: true,
+    this.adminToolEntry = page.getByRole('link', {
+      name: /^Actions de référence/,
     });
     this.indicateursNavEntry = page.getByRole('button', {
       name: /^Indicateurs/,

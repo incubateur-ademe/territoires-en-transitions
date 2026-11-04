@@ -2,24 +2,54 @@ import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
   importerPlanUrl,
+  makeCollectiviteActionsDeReferenceUrl,
+  makeCollectiviteAffichageReferentielsUrl,
+  makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
+import type { CollectiviteCurrent } from '@tet/api/collectivites';
+import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import {
   hasPermission,
   PermissionOperation,
   UserRolesAndPermissions,
 } from '@tet/domain/users';
 
+export type BackofficeToolId =
+  | 'importer-plan'
+  | 'ajouter-collectivite'
+  | 'modifier-collectivite'
+  | 'affichage-referentiels'
+  | 'banniere'
+  | 'actions-de-reference';
+
 export type BackofficeTool = {
-  id: string;
+  id: BackofficeToolId;
   label: string;
   description: string;
   icon: string;
   href: string;
   permission: PermissionOperation;
+  /** `collectivite` : l'outil agit sur la collectivité en cours. */
+  scope: 'plateforme' | 'collectivite';
 };
 
-const backofficeTools: BackofficeTool[] = [
+type BackofficeCollectivite = Pick<
+  CollectiviteCurrent,
+  'collectiviteId' | 'nom' | 'collectiviteType' | 'isSimplifiedView'
+>;
+
+type PlateformeBackofficeTool = Omit<BackofficeTool, 'scope'>;
+
+/** Outil qui agit sur la collectivité en cours. */
+type CollectiviteBackofficeTool = Omit<BackofficeTool, 'href' | 'scope'> & {
+  makeHref: (collectiviteId: number) => string;
+};
+
+const backofficeTools: (
+  | PlateformeBackofficeTool
+  | CollectiviteBackofficeTool
+)[] = [
   {
     id: 'importer-plan',
     label: appLabels.importerUnPlan,
@@ -37,6 +67,26 @@ const backofficeTools: BackofficeTool[] = [
     permission: 'collectivites.mutate',
   },
   {
+    id: 'modifier-collectivite',
+    label: appLabels.modifierCollectivite,
+    description: appLabels.administrationModifierCollectiviteDescription,
+    icon: 'edit-line',
+    makeHref: (collectiviteId) =>
+      makeCollectiviteModifierUrl({ collectiviteId }),
+    permission: 'collectivites.mutate',
+  },
+  {
+    id: 'affichage-referentiels',
+    label: appLabels.affichageDesReferentiels,
+    description: appLabels.administrationAffichageReferentielsDescription,
+    icon: 'eye-line',
+    makeHref: (collectiviteId) =>
+      makeCollectiviteAffichageReferentielsUrl({ collectiviteId }),
+    // La page n'a pas de permission propre : elle est réservée au mode
+    // super-admin, comme `collectivites.mutate`.
+    permission: 'collectivites.mutate',
+  },
+  {
     id: 'banniere',
     label: appLabels.banniere,
     description: appLabels.administrationBanniereDescription,
@@ -44,9 +94,56 @@ const backofficeTools: BackofficeTool[] = [
     href: bannerInfoUrl,
     permission: 'utils.banner.mutate',
   },
+  {
+    id: 'actions-de-reference',
+    label: appLabels.actionsDeReference,
+    description: appLabels.administrationActionsDeReferenceDescription,
+    icon: 'book-open-line',
+    makeHref: (collectiviteId) =>
+      makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
+    permission: 'shared.actions-de-reference.mutate',
+  },
 ];
 
+/**
+ * Les outils d'une collectivité n'existent que pour une collectivité standard,
+ * hors vue simplifiée : leurs pages refusent les services déconcentrés.
+ */
+const isCollectiviteStandard = (
+  collectivite: BackofficeCollectivite | null
+): collectivite is BackofficeCollectivite =>
+  collectivite !== null &&
+  !isServiceDeconcentre(collectivite.collectiviteType) &&
+  !collectivite.isSimplifiedView;
+
 export const listAllowedBackofficeTools = (
-  user: UserRolesAndPermissions | null
+  user: UserRolesAndPermissions | null,
+  collectivite: BackofficeCollectivite | null = null
 ): BackofficeTool[] =>
-  backofficeTools.filter((tool) => hasPermission(user, tool.permission));
+  backofficeTools
+    .filter((tool) => hasPermission(user, tool.permission))
+    .flatMap((tool): BackofficeTool[] => {
+      if (!('makeHref' in tool)) {
+        return [{ ...tool, scope: 'plateforme' }];
+      }
+      if (!isCollectiviteStandard(collectivite)) {
+        return [];
+      }
+      const { makeHref, ...rest } = tool;
+      return [
+        {
+          ...rest,
+          href: makeHref(collectivite.collectiviteId),
+          scope: 'collectivite',
+        },
+      ];
+    });
+
+/** L'outil est-il ouvert à cet utilisateur ? Garde les routes de chaque outil. */
+export const isBackofficeToolAllowed = (
+  user: UserRolesAndPermissions | null,
+  id: BackofficeToolId
+): boolean =>
+  backofficeTools.some(
+    (tool) => tool.id === id && hasPermission(user, tool.permission)
+  );

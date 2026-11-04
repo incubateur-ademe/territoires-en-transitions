@@ -1,19 +1,11 @@
-import {
-  ajouterCollectiviteUrl,
-  bannerInfoUrl,
-  importerPlanUrl,
-  makeCollectiviteActionsDeReferenceUrl,
-  makeCollectiviteAffichageReferentielsUrl,
-  makeCollectiviteModifierUrl,
-  makeDemandesAvisUrl,
-} from '@/app/app/paths';
+import { makeDemandesAvisUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import {
   canReadPriorisation,
   getReferentielDisplayMap,
 } from '@tet/domain/collectivites';
 import { isTypeInstructeur } from '@tet/domain/demarches';
-import { hasRole, isUserVisitor, PlatformRole } from '@tet/domain/users';
+import { isUserVisitor } from '@tet/domain/users';
 import { isNavDropdown, NavItem, NavLink } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateEdlDropdown } from './generate-edl-dropdown';
@@ -53,7 +45,6 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
 }) => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
-  const isSuperAdmin = hasRole(user, PlatformRole.SUPER_ADMIN);
   /**
    * Membre de cette collectivité, au sens strict du layout d'instruction — un
    * super-admin qui n'en est pas membre n'y accède pas davantage, la nav ne doit
@@ -114,40 +105,6 @@ export const makeCollectiviteNav: MakeCollectiviteNav = ({
         isTypeInstructeur(currentCollectivite.collectiviteType),
       children: appLabels.instructionTitre,
       href: makeDemandesAvisUrl({ collectiviteId }),
-    },
-    {
-      isVisible: isSuperAdmin,
-      children: appLabels.roleSuperAdmin,
-      links: [
-        {
-          children: appLabels.importerUnPlan,
-          href: importerPlanUrl,
-        },
-        {
-          children: appLabels.ajouterCollectivite,
-          href: ajouterCollectiviteUrl,
-        },
-        {
-          children: appLabels.modifierCollectivite,
-          href: makeCollectiviteModifierUrl({
-            collectiviteId,
-          }),
-        },
-        {
-          children: appLabels.affichageDesReferentiels,
-          href: makeCollectiviteAffichageReferentielsUrl({
-            collectiviteId,
-          }),
-        },
-        {
-          children: 'Bannière',
-          href: bannerInfoUrl,
-        },
-        {
-          children: appLabels.actionsDeReference,
-          href: makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
-        },
-      ],
     },
   ];
 
