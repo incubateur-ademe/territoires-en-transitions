@@ -153,6 +153,7 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     return buildDiagnosticIndicateurTableRows({
       id: 'emissions_ges',
       title: 'Émissions GES',
+      section: null,
       isOptional: false,
       rows: [
         {
