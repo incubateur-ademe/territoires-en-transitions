@@ -25,10 +25,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
-import {
-  validateIndicateursPredefinis,
-  validatePredefinis,
-} from '../indicateur.adapter';
+import { validatePredefinis } from '../indicateur.adapter';
 import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
 
@@ -65,7 +62,7 @@ export class ListIndicateursPredefinisRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return validateIndicateursPredefinis(definitions);
+    return validatePredefinis(definitions);
   }
 
   async listIndicateursPredefinisForCollectivite(
@@ -167,7 +164,7 @@ export class ListIndicateursPredefinisRepository {
 
     this.logger.log(`${definitions.length} définitions trouvées`);
 
-    return validateIndicateursPredefinis(definitions);
+    return validatePredefinis(definitions);
   }
 
   private getQueryConditions({
@@ -241,7 +238,7 @@ export class ListIndicateursPredefinisRepository {
       }`
     );
 
-    return validateIndicateursPredefinis(computedIndicateurDefinitions);
+    return validatePredefinis(computedIndicateurDefinitions);
   }
 
   getCategoriesSubQuery() {

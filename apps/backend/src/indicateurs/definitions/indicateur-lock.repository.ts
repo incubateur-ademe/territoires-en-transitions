@@ -5,7 +5,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { Indicateur } from '@tet/domain/indicateurs';
 import { asc, getTableColumns, inArray, sql } from 'drizzle-orm';
-import { validateIndicateurs } from './indicateur.adapter';
+import { validateNatures } from './indicateur.adapter';
 
 const INDICATEUR_CALCULATION_GRAPH_LOCK_KEY = 'indicateur-calculation-graph';
 
@@ -57,6 +57,6 @@ export class IndicateurLockRepository {
       .orderBy(asc(indicateurDefinitionTable.id))
       .for('share');
 
-    return validateIndicateurs(definitions);
+    return validateNatures(definitions);
   }
 }

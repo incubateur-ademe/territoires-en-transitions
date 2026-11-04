@@ -1,10 +1,8 @@
 import { expectTypeOf } from 'vitest';
-import type { IndicateurNatureError } from './indicateur-nature.rules';
 import {
   type Indicateur,
   type IndicateurCandidate,
   indicateurSchema,
-  toIndicateur,
 } from './indicateur.schema';
 
 const toIndicateurCandidate = (
@@ -55,46 +53,23 @@ const coherentDefinitions = [
   },
 ];
 
-const incoherentDefinitions: ReadonlyArray<{
-  label: string;
-  definition: IndicateurCandidate;
-  error: IndicateurNatureError;
-}> = [
+const incoherentDefinitions = [
   {
     label: 'un perso qui porte un identifiant référentiel',
     definition: toIndicateurCandidate({
       collectiviteId: 12,
       identifiantReferentiel: 'cae_1.a',
     }),
-    error: 'PERSO_WITH_IDENTIFIANT_REFERENTIEL',
   },
   {
     label: 'un perso rattaché à un groupement',
     definition: toIndicateurCandidate({ collectiviteId: 12, groupementId: 3 }),
-    error: 'PERSO_WITH_GROUPEMENT',
   },
   {
     label: 'une définition sans collectivité ni identifiant référentiel',
     definition: toIndicateurCandidate({}),
-    error: 'PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL',
   },
 ];
-
-describe('toIndicateur', () => {
-  it.each(coherentDefinitions)('accepte $label tel quel', ({ definition }) => {
-    expect(toIndicateur(definition)).toEqual({
-      success: true,
-      data: definition,
-    });
-  });
-
-  it.each(incoherentDefinitions)(
-    'refuse $label avec $error',
-    ({ definition, error }) => {
-      expect(toIndicateur(definition)).toEqual({ success: false, error });
-    }
-  );
-});
 
 describe('indicateurSchema', () => {
   it.each(coherentDefinitions)('accepte $label', ({ definition }) => {
@@ -111,7 +86,7 @@ describe('type Indicateur', () => {
     expectTypeOf<Indicateur>().toExtend<IndicateurCandidate>();
   });
 
-  it('n’accepte pas une définition plate sans passer par toIndicateur', () => {
+  it('n’accepte pas une définition plate sans passer par les gardes de nature', () => {
     expectTypeOf<IndicateurCandidate>().not.toExtend<Indicateur>();
   });
 });

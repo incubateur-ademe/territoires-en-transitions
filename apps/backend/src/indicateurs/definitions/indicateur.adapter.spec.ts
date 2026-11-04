@@ -1,10 +1,6 @@
 import { failure, success } from '@tet/backend/utils/result.type';
 import { toIndicateurRow } from './indicateur-row.test-fixture';
 import {
-  validateIndicateur,
-  validateIndicateurPredefini,
-  validateIndicateurs,
-  validateIndicateursPredefinis,
   validateNature,
   validateNatures,
   validatePredefini,
@@ -107,100 +103,9 @@ describe('validatePredefini', () => {
       )
     );
   });
-});
-
-describe('validatePredefinis', () => {
-  it('échoue en entier si une ligne est un perso', () => {
-    expect(
-      validatePredefinis([
-        toIndicateurRow({ id: 1, identifiantReferentiel: 'cae_1.a' }),
-        toIndicateurRow({ id: 2, collectiviteId: 12 }),
-      ])
-    ).toEqual(
-      failure(
-        'DATABASE_ERROR',
-        new Error(
-          'Indicateur 2 : un indicateur de la plateforme doit être prédéfini'
-        )
-      )
-    );
-  });
-});
-
-describe('validateIndicateur', () => {
-  it('rend un perso tel quel', () => {
-    const row = toIndicateurRow({ collectiviteId: 12 });
-    expect(validateIndicateur(row)).toEqual(success(row));
-  });
-
-  it('rend un prédéfini tel quel', () => {
-    const row = toIndicateurRow({ identifiantReferentiel: 'cae_1.a' });
-    expect(validateIndicateur(row)).toEqual(success(row));
-  });
-
-  it('garde les colonnes ajoutées par la requête', () => {
-    const row = {
-      ...toIndicateurRow({ collectiviteId: 12 }),
-      categories: [{ id: 1, nom: 'Énergie' }],
-    };
-    expect(validateIndicateur(row)).toEqual(success(row));
-  });
-
-  it.each(incoherentRows)('refuse $label', ({ row, message }) => {
-    expect(validateIndicateur(row)).toEqual(
-      failure('DATABASE_ERROR', new Error(message))
-    );
-  });
-});
-
-describe('validateIndicateurs', () => {
-  it('valide toutes les lignes dans l’ordre', () => {
-    const rows = [
-      toIndicateurRow({ id: 1, collectiviteId: 12 }),
-      toIndicateurRow({ id: 2, identifiantReferentiel: 'cae_1.a' }),
-    ];
-    expect(validateIndicateurs(rows)).toEqual(success(rows));
-  });
-
-  it('échoue en entier si une seule ligne est incohérente', () => {
-    const rows = [
-      toIndicateurRow({ id: 1, collectiviteId: 12 }),
-      toIndicateurRow({ id: 2 }),
-    ];
-    expect(validateIndicateurs(rows)).toEqual(
-      failure(
-        'DATABASE_ERROR',
-        new Error(
-          'Indicateur 2 : nature incohérente (PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL)'
-        )
-      )
-    );
-  });
-});
-
-describe('validateIndicateurPredefini', () => {
-  it('rend un prédéfini tel quel', () => {
-    const row = toIndicateurRow({ identifiantReferentiel: 'cae_1.a' });
-    expect(validateIndicateurPredefini(row)).toEqual(success(row));
-  });
-
-  it('refuse un perso, pourtant cohérent', () => {
-    expect(
-      validateIndicateurPredefini(
-        toIndicateurRow({ id: 5, collectiviteId: 12 })
-      )
-    ).toEqual(
-      failure(
-        'DATABASE_ERROR',
-        new Error(
-          'Indicateur 5 : un indicateur de la plateforme doit être prédéfini'
-        )
-      )
-    );
-  });
 
   it('nomme l’incohérence avant de refuser le perso', () => {
-    expect(validateIndicateurPredefini(toIndicateurRow({ id: 6 }))).toEqual(
+    expect(validatePredefini(toIndicateurRow({ id: 6 }))).toEqual(
       failure(
         'DATABASE_ERROR',
         new Error(
@@ -211,10 +116,10 @@ describe('validateIndicateurPredefini', () => {
   });
 });
 
-describe('validateIndicateursPredefinis', () => {
-  it('échoue en entier si une définition est un perso', () => {
+describe('validatePredefinis', () => {
+  it('échoue en entier si une ligne est un perso', () => {
     expect(
-      validateIndicateursPredefinis([
+      validatePredefinis([
         toIndicateurRow({ id: 1, identifiantReferentiel: 'cae_1.a' }),
         toIndicateurRow({ id: 2, collectiviteId: 12 }),
       ])

@@ -14,10 +14,6 @@ export type IndicateurNatureError =
   | 'PERSO_WITH_GROUPEMENT'
   | 'PREDEFINI_WITHOUT_IDENTIFIANT_REFERENTIEL';
 
-export type IndicateurNatureResult<Data> =
-  | Readonly<{ success: true; data: Data }>
-  | Readonly<{ success: false; error: IndicateurNatureError }>;
-
 export const isIndicateurPerso = <T extends IndicateurNatureFields>(
   indicateur: T
 ): indicateur is T & IndicateurPersoNatureFields =>
