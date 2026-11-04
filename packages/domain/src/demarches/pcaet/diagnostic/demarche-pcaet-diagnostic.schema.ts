@@ -33,6 +33,9 @@ export type PcaetDiagnosticIndicateurChildLeaf = z.infer<
 const pcaetDiagnosticIndicateurChildSchema = z.object({
   ...pcaetDiagnosticIndicateurChildLeafSchema.shape,
 
+  /** Intertitre regroupant les tables qui se suivent (ex. production / consommation). */
+  section: z.optional(z.string()),
+  /** Les enfants d'un même groupe partagent une table, titrée par le groupe. */
   groupBy: z.optional(z.string()),
   children: z.optional(z.array(pcaetDiagnosticIndicateurChildLeafSchema)),
 });

@@ -4,12 +4,11 @@ import type {
   PcaetDiagnostic,
   PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
-import { capitalize } from '@tet/ui/labels/plural';
-import { JSX, useMemo } from 'react';
+import { Fragment, JSX, useMemo } from 'react';
 import { DiagnosticIndicateurValeursTable } from './diagnostic.indicateur-valeurs.table';
 import {
-  attachIndicateurDataToSections,
-  buildIndicateurValeursTableSections,
+  attachIndicateurDataToTables,
+  buildIndicateurValeursTables,
 } from './indicateur-tab.layout';
 
 type Props = {
@@ -27,37 +26,32 @@ export const DiagnosticIndicateurTabContent = ({
   valeurs,
   isReadonly,
 }: Props): JSX.Element => {
-  const sections = useMemo(
+  const tables = useMemo(
     () =>
-      attachIndicateurDataToSections(
-        buildIndicateurValeursTableSections(config),
-        { definitions, valeurs }
-      ),
+      attachIndicateurDataToTables(buildIndicateurValeursTables(config), {
+        definitions,
+        valeurs,
+      }),
     [config, definitions, valeurs]
   );
 
-  const isSingleTable =
-    sections.length === 1 && sections[0].tables.length === 1;
-
   return (
     <div className="flex flex-col gap-8">
-      {sections.map((section) => (
-        <div key={section.label ?? config.code} className="flex flex-col gap-6">
-          {section.label !== null ? (
+      {tables.map((table, index) => (
+        <Fragment key={table.id}>
+          {table.section !== null &&
+          table.section !== tables[index - 1]?.section ? (
             <h3 className="text-lg font-bold text-primary-9 m-0">
-              {capitalize(section.label)}
+              {table.section}
             </h3>
           ) : null}
-          {section.tables.map((table) => (
-            <DiagnosticIndicateurValeursTable
-              key={table.id}
-              demarcheId={demarcheId}
-              table={table}
-              isReadonly={isReadonly}
-              maxHeight={isSingleTable ? 'viewport' : 'compact'}
-            />
-          ))}
-        </div>
+          <DiagnosticIndicateurValeursTable
+            demarcheId={demarcheId}
+            table={table}
+            isReadonly={isReadonly}
+            maxHeight={tables.length === 1 ? 'viewport' : 'compact'}
+          />
+        </Fragment>
       ))}
     </div>
   );

@@ -12,6 +12,8 @@ type DiagnosticTableRow = {
 type DiagnosticIndicateurTableLayout = {
   id: string;
   title: string;
+  /** Intertitre de la table, `null` hors section. */
+  section: string | null;
   isOptional: boolean;
   rows: DiagnosticTableRow[];
 };
@@ -20,17 +22,6 @@ type DiagnosticIndicateurTableLayout = {
 export type DiagnosticIndicateurTable = DiagnosticIndicateurTableLayout & {
   indicateurDefinitions: PcaetDiagnostic['indicateurDefinitions'];
   indicateurValeurs: PcaetDiagnostic['indicateurValeurs'];
-};
-
-export type DiagnosticIndicateurSection = {
-  /** Libellé `groupBy`, ou `null` si les tables ne sont pas regroupées. */
-  label: string | null;
-  tables: DiagnosticIndicateurTableLayout[];
-};
-
-export type DiagnosticIndicateurSectionWithValeurs = {
-  label: string | null;
-  tables: DiagnosticIndicateurTable[];
 };
 
 const identifiantsInTable = (
@@ -69,22 +60,14 @@ const attachIndicateurDataToTable = (
   };
 };
 
-export const attachIndicateurDataToSections = (
-  sections: DiagnosticIndicateurSection[],
-  {
-    definitions,
-    valeurs,
-  }: {
+export const attachIndicateurDataToTables = (
+  tables: DiagnosticIndicateurTableLayout[],
+  data: {
     definitions: PcaetDiagnostic['indicateurDefinitions'];
     valeurs: PcaetDiagnostic['indicateurValeurs'];
   }
-): DiagnosticIndicateurSectionWithValeurs[] =>
-  sections.map((section) => ({
-    ...section,
-    tables: section.tables.map((table) =>
-      attachIndicateurDataToTable(table, { definitions, valeurs })
-    ),
-  }));
+): DiagnosticIndicateurTable[] =>
+  tables.map((table) => attachIndicateurDataToTable(table, data));
 
 type ChildConfig = PcaetDiagnosticIndicateurParentConfig['children'][number];
 
@@ -117,16 +100,17 @@ const rowsForChild = (child: ChildConfig): DiagnosticTableRow[] => {
 };
 
 /**
- * Découpe un topic indicateur en sections et tables, selon
- * `referenceYearApplyLevel` et `groupBy`.
+ * Découpe un topic indicateur en tables, selon `referenceYearApplyLevel` et
+ * `groupBy`.
  *
  * - `parent` : une seule table, année de référence partagée.
  * - `child` : une table par enfant direct, chacune avec sa propre année de
- *   référence. Si les enfants portent un `groupBy`, une section par groupe.
+ *   référence. Les enfants d'une même section et d'un même `groupBy`
+ *   partagent une table, titrée par le groupe.
  */
-export const buildIndicateurValeursTableSections = (
+export const buildIndicateurValeursTables = (
   config: PcaetDiagnosticIndicateurParentConfig
-): DiagnosticIndicateurSection[] => {
+): DiagnosticIndicateurTableLayout[] => {
   if (config.referenceYearApplyLevel === 'parent') {
     const rows = config.children.flatMap(rowsForChild);
     if (rows.length === 0) {
@@ -134,59 +118,55 @@ export const buildIndicateurValeursTableSections = (
     }
     return [
       {
-        label: null,
-        tables: [
-          {
-            id: config.code,
-            title: config.label,
-            rows,
-            isOptional: config.optional ?? false,
-          },
-        ],
+        id: config.code,
+        title: config.label,
+        section: null,
+        rows,
+        isOptional: config.optional ?? false,
       },
     ];
   }
 
-  const tables = config.children.flatMap((child, index) => {
+  const tables: DiagnosticIndicateurTableLayout[] = [];
+  const tableByGroup = new Map<string, DiagnosticIndicateurTableLayout>();
+  config.children.forEach((child, index) => {
     const rows = rowsForChild(child);
     if (rows.length === 0) {
-      return [];
+      return;
     }
-    return [
-      {
-        id: `${config.code}:${child.indicateurDefinitionId}:${index}`,
-        title: child.label,
-        rows,
-        groupBy: child.groupBy ?? null,
-        isOptional: child.optional ?? false,
-      },
-    ];
+    const isOptional = child.optional ?? false;
+    const section = child.section ?? null;
+    const { groupBy } = child;
+    // Un même groupe peut revenir dans deux sections (ex. « Chaleur »).
+    const groupKey = `${section ?? ''}:${groupBy}`;
+    const existing =
+      groupBy === undefined ? undefined : tableByGroup.get(groupKey);
+    if (existing !== undefined) {
+      existing.rows.push(...rows);
+      existing.isOptional = existing.isOptional && isOptional;
+      return;
+    }
+
+    const table =
+      groupBy === undefined
+        ? {
+            id: `${config.code}:${child.indicateurDefinitionId}:${index}`,
+            title: child.label,
+            section,
+            rows,
+            isOptional,
+          }
+        : {
+            id: `${config.code}:${groupKey}`,
+            title: groupBy,
+            section,
+            rows,
+            isOptional,
+          };
+    if (groupBy !== undefined) {
+      tableByGroup.set(groupKey, table);
+    }
+    tables.push(table);
   });
-
-  if (tables.length === 0) {
-    return [];
-  }
-
-  const hasGroupBy = tables.some((table) => table.groupBy !== null);
-  if (!hasGroupBy) {
-    return [
-      {
-        label: null,
-        tables: tables.map(({ groupBy: _groupBy, ...table }) => table),
-      },
-    ];
-  }
-
-  const sections: DiagnosticIndicateurSection[] = [];
-  const indexByLabel = new Map<string | null, number>();
-  for (const { groupBy, ...table } of tables) {
-    const existing = indexByLabel.get(groupBy);
-    if (existing === undefined) {
-      indexByLabel.set(groupBy, sections.length);
-      sections.push({ label: groupBy, tables: [table] });
-    } else {
-      sections[existing].tables.push(table);
-    }
-  }
-  return sections.filter((section) => section.tables.length > 0);
+  return tables;
 };
