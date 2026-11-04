@@ -39,6 +39,12 @@ Ses axes sont déduits des fiches ; il ne peut donc pas représenter un axe rete
 sans fiche. Les lecteurs Word et tableur perdent les destinations des liens
 dont le texte n'est pas l'URL. Modifier uniquement le prompt ne suffit pas.
 
+La création de nouveaux plans Électrification est temporairement suspendue
+par la [PR #5673](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5673).
+Cet ADR décrit le fonctionnement cible ; les premiers lots de préparation
+conservent ce blocage. Son remplacement fait partie de la livraison du parcours
+complet, avec les contrôles de profil, d'éligibilité et de droits.
+
 Cet ADR propose de remplacer, pour l'initialisation du plan, les orientations
 du [plan de travail antérieur](../plans/2026-08-31-001-feat-electrification-indicateurs-plan/phase-2-catalogue-et-parcours-electrification.md) :
 provisionnement automatique et verrouillage.
