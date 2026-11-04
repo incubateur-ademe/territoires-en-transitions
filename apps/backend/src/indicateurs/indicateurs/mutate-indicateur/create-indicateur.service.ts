@@ -4,8 +4,8 @@ import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
-import { UpsertIndicateurFichesService } from '../../indicateurs/upsert-indicateur-fiches/upsert-indicateur-fiches.service';
-import { IndicateurLockRepository } from '../indicateur-lock.repository';
+import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { CreateIndicateurInput } from './mutate-indicateur.input';
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
 

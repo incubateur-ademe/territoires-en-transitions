@@ -4,7 +4,7 @@ import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'assert';
 import { PermissionService } from '../../../users/authorizations/permission.service';
-import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 import { GetFavorisCountRequest } from './get-favoris-count.request';
 import { GetPathRequest } from './get-path.request';
 import { ListIndicateursInput } from './list-indicateurs.input';

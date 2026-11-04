@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import CreateIndicateurService from '@tet/backend/indicateurs/definitions/mutate-indicateur/create-indicateur.service';
-import { MutateIndicateurRouter } from '@tet/backend/indicateurs/definitions/mutate-indicateur/mutate-indicateur.router';
+import CreateIndicateurService from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.service';
+import { MutateIndicateurRouter } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.router';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
 import { TrajectoireLeviersController } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.controller';
 import { TrajectoireLeviersRouter } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
@@ -16,14 +16,14 @@ import { TransactionModule } from '../utils/transaction/transaction.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
-import { IndicateurModule } from './indicateur/indicateur.module';
-import { IndicateurLockRepository } from './definitions/indicateur-lock.repository';
-import { ListIndicateursPredefinisController } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.controller';
-import { ListIndicateursPredefinisRepository } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
-import { ListIndicateursPredefinisService } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
-import { DeleteIndicateurService } from './definitions/mutate-indicateur/delete-indicateur.service';
-import { MutateIndicateurRepository } from './definitions/mutate-indicateur/mutate-indicateur.repository';
-import { UpdateIndicateurService } from './definitions/mutate-indicateur/update-indicateur.service';
+import { IndicateurLockRepository } from './indicateur/indicateur-lock.repository';
+import { ListCollectiviteIndicateursModule } from './indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.module';
+import { ListIndicateursPredefinisController } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.controller';
+import { ListIndicateursPredefinisRepository } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { ListIndicateursPredefinisService } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
+import { DeleteIndicateurService } from './indicateurs/mutate-indicateur/delete-indicateur.service';
+import { MutateIndicateurRepository } from './indicateurs/mutate-indicateur/mutate-indicateur.repository';
+import { UpdateIndicateurService } from './indicateurs/mutate-indicateur/update-indicateur.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
 import { ImportIndicateurDefinitionRepository } from './import-indicateurs/import-indicateur-definition.repository';
@@ -108,7 +108,7 @@ const DEFINITIONS_PROVIDERS = [
     PersonnalisationsModule,
     FichesModule,
     ReferentielsCoreModule,
-    IndicateurModule,
+    ListCollectiviteIndicateursModule,
   ],
   providers: [
     ExportIndicateursService,

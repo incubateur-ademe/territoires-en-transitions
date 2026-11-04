@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ListIndicateursPredefinisRepository } from '@tet/backend/indicateurs/definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { ListIndicateursPredefinisRepository } from '@tet/backend/indicateurs/indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -18,7 +18,7 @@ import {
   PCAET_COLLECTIVITE_SOURCE_ID,
 } from './demarche-pcaet-source-metadonnee.repository';
 import { DemarchePcaetVulnerabiliteReadService } from './demarche-pcaet-vulnerabilite-read.service';
-import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/indicateur/indicateur-nature.utils';
 
 /**
  * Assemble le diagnostic d'une démarche : indicateurs (grille CAE) et

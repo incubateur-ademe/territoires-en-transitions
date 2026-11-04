@@ -14,8 +14,8 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
-import { IndicateurLockRepository } from '../definitions/indicateur-lock.repository';
-import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { IndicateurLockRepository } from '../indicateur/indicateur-lock.repository';
+import { ListIndicateursPredefinisRepository } from '../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,

@@ -1,9 +1,6 @@
 import { INestApplication } from '@nestjs/common';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import {
-  getTestApp,
-  getTestDatabase,
-} from '@tet/backend/test';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
+import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { getYearFromIsoDate } from '@tet/domain/indicateurs';
@@ -66,7 +63,10 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test('Les valeurs suivent la nouvelle année de référence', async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -101,7 +101,10 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("Une saisie déjà présente sur l'année visée est écrasée, sans doublon", async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs({
@@ -131,7 +134,10 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test('Seuls les indicateurs du tableau basculent', async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
     const basculeId = await getIndicateurId('cae_1.c');
     const intactId = await getIndicateurId('cae_1.d');
 
@@ -169,7 +175,10 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("Un horizon d'objectif n'est pas une année de référence acceptable", async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
     const indicateurId = await getIndicateurId('cae_1.c');
 
     await expect(
@@ -184,7 +193,10 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   });
 
   test("Refus quand le diagnostic n'est plus modifiable", async () => {
-    const { caller, collectiviteId, demarche } = await createDemarche(db, router);
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
     await completeTestDossierPcaet(db, {
       collectiviteId,
       demarcheId: demarche.id,

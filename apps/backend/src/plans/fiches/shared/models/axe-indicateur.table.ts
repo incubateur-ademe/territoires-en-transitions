@@ -1,4 +1,4 @@
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { axeTable } from './axe.table';
 import { relationAuditColumns } from './relation-audit.column';

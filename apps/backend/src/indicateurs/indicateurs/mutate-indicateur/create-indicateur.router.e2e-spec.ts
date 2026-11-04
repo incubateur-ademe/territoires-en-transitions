@@ -16,8 +16,8 @@ import { eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import z from 'zod';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { indicateurDefinitionTable } from '../indicateur-definition.table';
+import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 import { createIndicateurInputSchema } from './mutate-indicateur.input';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 

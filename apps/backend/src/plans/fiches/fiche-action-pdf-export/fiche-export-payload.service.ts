@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/definitions/indicateur-nature.utils';
-import { ListCollectiviteIndicateursRepository } from '@tet/backend/indicateurs/definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
+import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/indicateur/indicateur-nature.utils';
+import { ListCollectiviteIndicateursRepository } from '@tet/backend/indicateurs/indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { GetAxeService } from '@tet/backend/plans/axes/get-axe/get-axe.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { FicheAnnexesService } from '@tet/backend/plans/fiches/fiche-annexes/fiche-annexes.service';

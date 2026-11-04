@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
+import { ListIndicateursPredefinisService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';

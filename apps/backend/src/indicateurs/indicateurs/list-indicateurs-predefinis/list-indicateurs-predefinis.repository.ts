@@ -1,9 +1,7 @@
-import { indicateurSelection } from '../indicateur.column';
-import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
 import { Injectable, Logger } from '@nestjs/common';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -23,10 +21,12 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
+import { validatePredefinis } from '../../indicateur/indicateur.adapter';
+import { indicateurSelection } from '../../indicateur/indicateur.column';
+import { indicateurActionTable } from '../../indicateur/indicateur-action.table';
+import { indicateurCategorieTagTable } from '../../indicateur/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
-import { validatePredefinis } from '../indicateur.adapter';
-import { indicateurActionTable } from '../indicateur-action.table';
-import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
 
 @Injectable()
 export class ListIndicateursPredefinisRepository {
@@ -52,9 +52,7 @@ export class ListIndicateursPredefinisRepository {
     });
 
     const definitions = await (tx ?? this.databaseService.db)
-      .select({
-        ...indicateurSelection,
-      })
+      .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 
@@ -212,9 +210,7 @@ export class ListIndicateursPredefinisRepository {
     }
 
     const computedIndicateurDefinitions = await (tx ?? this.databaseService.db)
-      .select({
-        ...indicateurSelection,
-      })
+      .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
 

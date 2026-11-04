@@ -1,12 +1,12 @@
-import { indicateurSelection } from '../indicateur.column';
 import { Injectable, Logger } from '@nestjs/common';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Indicateur } from '@tet/domain/indicateurs';
-import { validateNatures } from '../indicateur.adapter';
+import { indicateurSelection } from '../../indicateur/indicateur.column';
+import { validateNatures } from '../../indicateur/indicateur.adapter';
 import {
   and,
   eq,
@@ -79,9 +79,7 @@ export class ListCollectiviteIndicateursRepository {
     ];
 
     const definitions = await (tx ?? this.databaseService.db)
-      .select({
-        ...indicateurSelection,
-      })
+      .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 

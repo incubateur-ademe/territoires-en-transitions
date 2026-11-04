@@ -1,6 +1,6 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
 export const indicateurGroupeTable = pgTable(
   'indicateur_groupe',

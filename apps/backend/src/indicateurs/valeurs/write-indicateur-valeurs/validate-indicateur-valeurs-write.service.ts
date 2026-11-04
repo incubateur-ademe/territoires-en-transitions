@@ -15,7 +15,7 @@ import {
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { isNil, isNotNil, keyBy } from 'es-toolkit';
 import { AuthRole } from '../../../users/models/auth.models';
-import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import {
   IndicateurValeursContext,
@@ -23,7 +23,7 @@ import {
 } from '../indicateur-valeurs-context.types';
 import { captureIndicateurValeursResult } from '../indicateur-valeurs.errors';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
-import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 export type PreparedIndicateurValeurs = {
   valeurs: IndicateurValeurCreate[];

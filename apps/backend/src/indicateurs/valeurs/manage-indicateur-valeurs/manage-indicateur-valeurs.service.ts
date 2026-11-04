@@ -1,6 +1,6 @@
 import { uniqBy } from 'es-toolkit';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { UpdateIndicateurService } from '@tet/backend/indicateurs/definitions/mutate-indicateur/update-indicateur.service';
+import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { success } from '@tet/backend/utils/result.type';
@@ -19,7 +19,7 @@ import {
   AuthUser,
   isAuthenticatedUser,
 } from '../../../users/models/auth.models';
-import { IndicateurLockRepository } from '../../definitions/indicateur-lock.repository';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';

@@ -19,7 +19,7 @@ import slugify from 'slugify';
 import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListIndicateursPredefinisRepository } from '../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { ListIndicateursPredefinisRepository } from '../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ManageIndicateurValeursService from '../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import {
   CalculTrajectoireRequestType,
@@ -31,7 +31,7 @@ import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { UNSUPPORTED_MESSAGES } from './verification-trajectoire.rules';
-import { getIndicateurDataOrThrow } from '../definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '../indicateur/indicateur-nature.utils';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {

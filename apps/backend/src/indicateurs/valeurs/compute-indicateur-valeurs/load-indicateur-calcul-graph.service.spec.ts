@@ -1,6 +1,6 @@
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
-import { toIndicateurRow } from '../../definitions/indicateur-row.test-fixture';
+import { toIndicateurRow } from '../../indicateur/indicateur-row.test-fixture';
 import { LoadIndicateurCalculGraphService } from './load-indicateur-calcul-graph.service';
 
 const cause = new Error(

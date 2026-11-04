@@ -12,8 +12,8 @@ import {
 } from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
-import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
-import { indicateurCollectiviteTable } from '../definitions/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
+import { indicateurCollectiviteTable } from '../indicateur/indicateur-collectivite.table';
 import { inferProcedureInput } from '@trpc/server';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { indicateurValeurTable } from './indicateur-valeur.table';

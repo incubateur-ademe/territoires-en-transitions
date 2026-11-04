@@ -20,7 +20,7 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 
 export const indicateurValeurTable = pgTable(

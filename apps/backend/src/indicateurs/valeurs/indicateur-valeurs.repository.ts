@@ -1,15 +1,15 @@
 import {
   indicateurDefinitionPeriodiciteSelection,
   indicateurValeurPeriodiciteSelection,
-} from '../definitions/indicateur-periodicite.column';
+} from '../indicateur/indicateur-periodicite.column';
 import type { IndicateurPeriodicite } from '@tet/domain/indicateurs';
 import { Injectable } from '@nestjs/common';
 import {
   groupementCollectiviteTable,
   GroupementCollectiviteType,
 } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
-import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/indicateur/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
@@ -44,7 +44,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
-import { validateNature } from '../definitions/indicateur.adapter';
+import { validateNature } from '../indicateur/indicateur.adapter';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type ListIndicateurValeursQuery = Readonly<{

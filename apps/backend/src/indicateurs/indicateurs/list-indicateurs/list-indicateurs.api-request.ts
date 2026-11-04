@@ -1,6 +1,6 @@
 import { paginationNoSortSchemaOptionalLimit } from '@tet/domain/utils';
 import { z } from 'zod';
-import { listIndicateursPredefinisApiRequestSchema } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.api-request';
+import { listIndicateursPredefinisApiRequestSchema } from '../list-indicateurs-predefinis/list-indicateurs-predefinis.api-request';
 
 export const listIndicateursApiRequestSchema = z.object({
   ...paginationNoSortSchemaOptionalLimit.shape,

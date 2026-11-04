@@ -8,7 +8,7 @@ import {
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
-import { ListIndicateursPredefinisRepository } from '../../definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
+import { ListIndicateursPredefinisRepository } from '../../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ComputeValeursService from '../compute-indicateur-valeurs/compute-valeurs.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import {
@@ -22,7 +22,7 @@ import {
 } from '../indicateur-valeurs.errors';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
-import { getIndicateurDataOrThrow } from '../../definitions/indicateur-nature.utils';
+import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
 export type RecomputedCollectiviteIndicateurValeurs = {
   collectiviteId: number;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { MutateIndicateurRouter } from './definitions/mutate-indicateur/mutate-indicateur.router';
+import { MutateIndicateurRouter } from './indicateurs/mutate-indicateur/mutate-indicateur.router';
 import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';

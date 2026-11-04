@@ -10,7 +10,7 @@ import { demarcheDocumentSubstitutionTable } from '@tet/backend/demarches/shared
 import { demarcheDocumentTable } from '@tet/backend/demarches/shared/models/demarche-document.table';
 import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';

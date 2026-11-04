@@ -13,7 +13,7 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inArray } from 'drizzle-orm';

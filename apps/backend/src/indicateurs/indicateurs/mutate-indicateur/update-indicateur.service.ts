@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateIndicateurInput } from '@tet/backend/indicateurs/definitions/mutate-indicateur/mutate-indicateur.input';
+import { UpdateIndicateurInput } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   AuthenticatedUser,
@@ -22,10 +22,10 @@ import {
 } from '@tet/domain/indicateurs';
 import { hasPermission, ResourceType } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
-import { UpsertIndicateurFichesService } from '../../indicateurs/upsert-indicateur-fiches/upsert-indicateur-fiches.service';
-import { UpsertIndicateurPilotesService } from '../../indicateurs/upsert-indicateur-pilotes/upsert-indicateur-pilotes.service';
-import { UpsertIndicateurServicesService } from '../../indicateurs/upsert-indicateur-services/upsert-indicateur-services.service';
-import { UpsertIndicateurThematiquesService } from '../../indicateurs/upsert-indicateur-thematiques/upsert-indicateur-thematiques.service';
+import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
+import { UpsertIndicateurPilotesService } from '../upsert-indicateur-pilotes/upsert-indicateur-pilotes.service';
+import { UpsertIndicateurServicesService } from '../upsert-indicateur-services/upsert-indicateur-services.service';
+import { UpsertIndicateurThematiquesService } from '../upsert-indicateur-thematiques/upsert-indicateur-thematiques.service';
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
 
 const isOwnedByCollectivite = (

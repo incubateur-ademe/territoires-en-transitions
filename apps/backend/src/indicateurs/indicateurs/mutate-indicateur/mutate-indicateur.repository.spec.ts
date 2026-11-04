@@ -1,6 +1,6 @@
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { SQL } from 'drizzle-orm';
-import { indicateurDefinitionTable } from '../indicateur-definition.table';
+import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
 
