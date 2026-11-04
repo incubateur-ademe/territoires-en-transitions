@@ -14,7 +14,7 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/strapi": "5.59.0",
+    "@strapi/strapi": "5.61.0",
     "@strapi/typescript-utils": "5.59.0",
     "better-sqlite3": "^13.0.3",
     "pg": "^8.23.1",
