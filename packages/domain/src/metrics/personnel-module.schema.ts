@@ -1,6 +1,6 @@
 import {
-  ListDefinitionsInputFilters,
-  listDefinitionsInputFiltersSchema,
+  ListIndicateursInputFilters,
+  listIndicateursInputFiltersSchema,
 } from '../indicateurs';
 import {
   ListFichesRequestFilters,
@@ -37,7 +37,7 @@ const moduleIndicateursPaginationBaseSchema = getPaginationSchema([
 
 const moduleIndicateursPaginationSchema = z.object({
   ...moduleIndicateursPaginationBaseSchema.shape,
-  filtre: listDefinitionsInputFiltersSchema,
+  filtre: listIndicateursInputFiltersSchema,
   limit: z.coerce
     .number()
     .min(1)
@@ -155,7 +155,7 @@ export type PersonalDefaultModuleKeys = z.infer<
   typeof personalDefaultModuleKeysSchema
 >;
 
-export type Filtre = ListDefinitionsInputFilters | ListFichesRequestFilters;
+export type Filtre = ListIndicateursInputFilters | ListFichesRequestFilters;
 
 /**
  * Applique les valeurs par défaut du schéma Zod (notamment page et limit).

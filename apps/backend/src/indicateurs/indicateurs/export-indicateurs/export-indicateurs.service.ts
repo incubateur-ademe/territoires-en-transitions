@@ -1,6 +1,6 @@
 import { Injectable, Logger, PayloadTooLargeException } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { format } from 'date-fns';
 import { Workbook } from 'exceljs';
@@ -49,7 +49,7 @@ export default class ExportIndicateursService {
     const canReadConfidentiel = canReadConfidentielResult.success;
 
     // Filtres de résolution selon le mode.
-    const filters: ListDefinitionsInputFilters =
+    const filters: ListIndicateursInputFilters =
       options.mode === 'all'
         ? { ...options.filters }
         : { indicateurIds: options.indicateurIds };
@@ -119,7 +119,7 @@ export default class ExportIndicateursService {
     // valeurs exportées.
     const enfantIds = parents.flatMap((p) => p.enfants?.map((e) => e.id) ?? []);
     if (enfantIds.length) {
-      const enfantsFilters: ListDefinitionsInputFilters = {
+      const enfantsFilters: ListIndicateursInputFilters = {
         indicateurIds: enfantIds,
       };
       if (!canReadConfidentiel) {

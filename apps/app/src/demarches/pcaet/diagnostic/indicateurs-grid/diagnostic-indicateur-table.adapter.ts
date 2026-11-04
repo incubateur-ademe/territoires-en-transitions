@@ -1,4 +1,4 @@
-import type { PcaetDiagnosticIndicateurDefinition } from '@tet/domain/demarches';
+import type { PcaetDiagnosticIndicateur } from '@tet/domain/demarches';
 import {
   IndicateurPeriodes,
   type IndicateurValeur,
@@ -10,17 +10,14 @@ import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
 export const buildDiagnosticIndicateurTableRows = (
   table: DiagnosticIndicateurTable
 ): IndicateurTableRow[] => {
-  const definitionByIdentifiant = new Map<
-    string,
-    PcaetDiagnosticIndicateurDefinition
-  >();
-  for (const definition of table.indicateurDefinitions) {
-    IndicateurPeriodes.assertAnnual(definition.periodicite, 'Diagnostic PCAET');
-    const identifiant = definition.identifiantReferentiel;
+  const indicateurByIdentifiant = new Map<string, PcaetDiagnosticIndicateur>();
+  for (const indicateur of table.indicateurDefinitions) {
+    IndicateurPeriodes.assertAnnual(indicateur.periodicite, 'Diagnostic PCAET');
+    const identifiant = indicateur.identifiantReferentiel;
     if (identifiant === null || identifiant === undefined) {
       continue;
     }
-    definitionByIdentifiant.set(identifiant, definition);
+    indicateurByIdentifiant.set(identifiant, indicateur);
   }
 
   const valeursByIndicateurId = new Map<number, IndicateurValeur[]>();
@@ -32,7 +29,7 @@ export const buildDiagnosticIndicateurTableRows = (
   }
 
   return table.rows.flatMap((row) => {
-    const indicateurDefinition = definitionByIdentifiant.get(
+    const indicateurDefinition = indicateurByIdentifiant.get(
       row.indicateurDefinitionId
     );
     if (indicateurDefinition === undefined) {

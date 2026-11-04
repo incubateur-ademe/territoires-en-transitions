@@ -7,7 +7,7 @@ import type {
   FicheWithRelations,
 } from '@tet/domain/plans';
 import { ActionTypeEnum, type Action } from '@tet/domain/referentiels';
-import type { PdfIndicateurDefinition } from '../../fiche-action/external-types';
+import type { PdfIndicateur } from '../../fiche-action/external-types';
 import type { FicheActionPdfExtendedProps } from '../../fiche-action/FicheActionPdf';
 import type { PdfSectionKey } from '../../fiche-action/utils';
 
@@ -303,7 +303,7 @@ const sections: PdfSectionKey[] = [
   'documents',
 ];
 
-const indicateursListe: PdfIndicateurDefinition[] = [
+const indicateursListe: PdfIndicateur[] = [
   {
     id: 1,
     titre: 'Émissions de gaz à effet de serre',

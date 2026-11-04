@@ -9,7 +9,7 @@ import {
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import request from 'supertest';
-import { createIndicateurPerso } from '../definitions.test-fixture';
+import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 
 describe('ListIndicateursController', () => {
   let app: INestApplication;

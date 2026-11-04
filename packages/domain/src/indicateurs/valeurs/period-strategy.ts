@@ -1,4 +1,4 @@
-import type { IndicateurPeriodicite } from '../definitions/indicateur-periodicite.schema';
+import type { IndicateurPeriodicite } from '../indicateur/indicateur-periodicite.schema';
 import type { IndicateurPeriode, LocalDate } from './indicateur-periode.types';
 
 type PeriodCodec<K extends IndicateurPeriodicite> = Readonly<{

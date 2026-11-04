@@ -6,7 +6,7 @@ import {
   StatutAvancement,
 } from '@tet/domain/referentiels';
 
-export type PdfIndicateurDefinition = {
+export type PdfIndicateur = {
   id: number;
   titre: string;
   unite: string | null;

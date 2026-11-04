@@ -26,7 +26,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, onTestFinished, test } from 'vitest';
-import { createIndicateurPerso } from '../definitions.test-fixture';
+import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';

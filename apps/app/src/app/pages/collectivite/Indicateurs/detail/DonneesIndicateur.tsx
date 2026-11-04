@@ -1,7 +1,7 @@
 import {
-  canUpdateIndicateurDefinition,
+  canUpdateIndicateur,
   canUpdateIndicateurValeur,
-} from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
+} from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import {
   type IndicateurDetaille,
   isIndicateurPerso,
@@ -47,7 +47,7 @@ const DonneesIndicateur = ({
 
   const user = useUser();
 
-  const canMutateDefinition = canUpdateIndicateurDefinition(
+  const canMutateIndicateur = canUpdateIndicateur(
     hasCollectivitePermission,
     definition,
     user.id
@@ -69,7 +69,7 @@ const DonneesIndicateur = ({
           <IndicateurUniteInput
             unite={unite}
             updateUnite={updateUnite}
-            disabled={!canMutateDefinition}
+            disabled={!canMutateIndicateur}
           />
         )}
 
@@ -88,7 +88,7 @@ const DonneesIndicateur = ({
       {questionReponses && (
         <PersonnalisationQuestionsList
           questionReponses={questionReponses}
-          canEdit={canMutateDefinition}
+          canEdit={canMutateIndicateur}
         />
       )}
 
@@ -121,14 +121,14 @@ const DonneesIndicateur = ({
       {isPerso && (
         <ThematiquesIndicateurInput
           definition={definition}
-          disabled={!canMutateDefinition}
+          disabled={!canMutateIndicateur}
         />
       )}
 
       <IndicateurCommentaireInput
         key={commentaire}
         commentaire={commentaire}
-        disabled={!canMutateDefinition}
+        disabled={!canMutateIndicateur}
         updateCommentaire={updateCommentaire}
       />
     </div>

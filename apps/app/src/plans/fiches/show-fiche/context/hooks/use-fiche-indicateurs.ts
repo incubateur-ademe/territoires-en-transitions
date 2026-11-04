@@ -1,4 +1,4 @@
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
+import { canUpdateIndicateur } from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
@@ -46,7 +46,7 @@ export const useFicheIndicateurs = (
 
   const canUpdate = useCallback(
     (indicateur: IndicateurDetaille) =>
-      canUpdateIndicateurDefinition(
+      canUpdateIndicateur(
         collectivite.hasCollectivitePermission,
         indicateur,
         userId

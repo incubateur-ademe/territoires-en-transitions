@@ -40,7 +40,7 @@ import { ScoreIndicatifError } from './score-indicatif.errors';
 
 export type Formule = { actionId: string; exprScore: string | null };
 
-export type IndicateurDefinitionAvecCategories = {
+export type IndicateurAvecCategories = {
   indicateurId: number;
   identifiantReferentiel: string | null;
   unite: string;
@@ -98,9 +98,7 @@ export class ScoreIndicatifRepository {
     identifiants: string[],
     collectiviteId: number,
     tx?: Transaction
-  ): Promise<
-    Result<IndicateurDefinitionAvecCategories[], ScoreIndicatifError>
-  > {
+  ): Promise<Result<IndicateurAvecCategories[], ScoreIndicatifError>> {
     try {
       const {
         identifiantReferentiel,

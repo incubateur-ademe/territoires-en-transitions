@@ -1,18 +1,11 @@
 import { FicheWithRelations } from '@tet/domain/plans';
 import { htmlToText } from '@tet/domain/utils';
 import classNames from 'classnames';
-import {
-  Badge,
-  Card,
-  Divider,
-  Paragraph,
-  Stack,
-  Title,
-} from '../primitives';
-import { PdfIndicateurDefinition } from './external-types';
+import { Badge, Card, Divider, Paragraph, Stack, Title } from '../primitives';
+import { PdfIndicateur } from './external-types';
 
 type IndicateurCardProps = {
-  indicateur: PdfIndicateurDefinition;
+  indicateur: PdfIndicateur;
 };
 
 const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
@@ -62,7 +55,7 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
 
 type IndicateursProps = {
   fiche: FicheWithRelations;
-  indicateursListe: PdfIndicateurDefinition[] | undefined | null;
+  indicateursListe: PdfIndicateur[] | undefined | null;
 };
 
 const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
@@ -129,14 +122,20 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
                 </Title>
                 <Stack gap={2.5} direction="row" className="flex-wrap">
                   {firstIndicateursList.map((indicateur) => (
-                    <IndicateurCard key={indicateur.id} indicateur={indicateur} />
+                    <IndicateurCard
+                      key={indicateur.id}
+                      indicateur={indicateur}
+                    />
                   ))}
                 </Stack>
               </Stack>
               {otherIndicateursList && otherIndicateursList.length > 0 && (
                 <Stack gap={2.5} direction="row" className="flex-wrap">
                   {otherIndicateursList.map((indicateur) => (
-                    <IndicateurCard key={indicateur.id} indicateur={indicateur} />
+                    <IndicateurCard
+                      key={indicateur.id}
+                      indicateur={indicateur}
+                    />
                   ))}
                 </Stack>
               )}

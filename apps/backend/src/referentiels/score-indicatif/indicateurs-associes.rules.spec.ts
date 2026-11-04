@@ -5,9 +5,9 @@ import {
   buildIndicateursAssocies,
   filterIndicateursByLocalisation,
 } from './indicateurs-associes.rules';
-import { IndicateurDefinitionAvecCategories } from './score-indicatif.repository';
+import { IndicateurAvecCategories } from './score-indicatif.repository';
 
-const indicateurDom: IndicateurDefinitionAvecCategories = {
+const indicateurDom: IndicateurAvecCategories = {
   indicateurId: 1,
   identifiantReferentiel: 'ind_dom',
   unite: '%',
@@ -17,7 +17,7 @@ const indicateurDom: IndicateurDefinitionAvecCategories = {
   isSuivi: true,
 };
 
-const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
+const indicateurHorsDom: IndicateurAvecCategories = {
   indicateurId: 2,
   identifiantReferentiel: 'ind_hors_dom',
   unite: '%',
@@ -27,7 +27,7 @@ const indicateurHorsDom: IndicateurDefinitionAvecCategories = {
   isSuivi: true,
 };
 
-const indicateurNeutre: IndicateurDefinitionAvecCategories = {
+const indicateurNeutre: IndicateurAvecCategories = {
   indicateurId: 3,
   identifiantReferentiel: 'ind_neutre',
   unite: '%',

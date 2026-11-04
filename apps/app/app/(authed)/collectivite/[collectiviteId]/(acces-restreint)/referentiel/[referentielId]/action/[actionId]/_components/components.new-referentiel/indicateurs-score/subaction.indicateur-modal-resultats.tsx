@@ -1,4 +1,4 @@
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
+import { canUpdateIndicateur } from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
@@ -65,11 +65,7 @@ const SubactionIndicateurModalResultatsContent = ({
     useSetIndicateurSuivi();
   const nonSuivi = definition ? !definition.isSuivi : false;
   const canEditNonSuivi = definition
-    ? canUpdateIndicateurDefinition(
-        hasCollectivitePermission,
-        definition,
-        user.id
-      )
+    ? canUpdateIndicateur(hasCollectivitePermission, definition, user.id)
     : false;
 
   const valeurSelectionnee = valeursUtilisables?.selection.fait;

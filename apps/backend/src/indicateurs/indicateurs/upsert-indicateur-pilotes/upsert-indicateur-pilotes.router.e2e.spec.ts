@@ -18,7 +18,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
-import { createIndicateurPerso } from '../definitions.test-fixture';
+import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 import { indicateurPiloteTable } from '../../shared/models/indicateur-pilote.table';
 
 describe('indicateurs.indicateurs.update (pilotes)', () => {

@@ -1,16 +1,16 @@
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import { IndicateurAssocie } from '@tet/domain/referentiels';
-import { IndicateurDefinitionAvecCategories } from './score-indicatif.repository';
+import { IndicateurAvecCategories } from './score-indicatif.repository';
 
 /**
  * Certains indicateurs sont propres à la localisation de la collectivité :
  * exclut ceux qui ne s'appliquent pas à son territoire (DROM ou hors-DROM)
  */
 export function filterIndicateursByLocalisation(
-  indicateurs: IndicateurDefinitionAvecCategories[],
+  indicateurs: IndicateurAvecCategories[],
   identiteCollectivite: CollectiviteAvecType
-): IndicateurDefinitionAvecCategories[] {
+): IndicateurAvecCategories[] {
   const excluded = identiteCollectivite.drom ? 'hors_dom' : 'dom';
   return indicateurs.filter((ind) => !ind.categories.includes(excluded));
 }
@@ -26,7 +26,7 @@ export type IndicateursAssociesResult = {
  */
 export function buildIndicateursAssocies(
   indicateursParActionId: Record<string, ReferencedIndicateur[]>,
-  indicateursFiltres: IndicateurDefinitionAvecCategories[]
+  indicateursFiltres: IndicateurAvecCategories[]
 ): IndicateursAssociesResult {
   const identifiantsManquants: { actionId: string; identifiant: string }[] = [];
 

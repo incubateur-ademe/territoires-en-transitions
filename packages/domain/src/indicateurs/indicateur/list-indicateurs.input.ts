@@ -1,10 +1,6 @@
 import { z } from 'zod';
-import {
-  getPaginationSchema,
-  PAGE_DEFAULT,
-} from '../../utils/pagination.schema';
 
-export const listDefinitionsInputFiltersSchema = z.object({
+export const listIndicateursInputFiltersSchema = z.object({
   indicateurIds: z.number().int().array().optional(),
   ficheIds: z.number().int().array().optional(),
   identifiantsReferentiel: z.string().array().optional(),
@@ -27,28 +23,15 @@ export const listDefinitionsInputFiltersSchema = z.object({
   text: z.string().optional(),
 });
 
-export type ListDefinitionsInputFilters = z.infer<
-  typeof listDefinitionsInputFiltersSchema
+export type ListIndicateursInputFilters = z.infer<
+  typeof listIndicateursInputFiltersSchema
 >;
 
-export const listDefinitionsInputSortValues = [
+export const listIndicateursInputSortValues = [
   'estRempli',
   'titre',
   'identifiantReferentiel',
 ] as const;
 
-export type ListDefinitionsInputSort =
-  (typeof listDefinitionsInputSortValues)[number];
-
-const listDefinitionsInputQueryOptionsSchema = getPaginationSchema(
-  listDefinitionsInputSortValues
-);
-
-export const listDefinitionsInputSchema = z.object({
-  collectiviteId: z.number().optional(),
-  filters: listDefinitionsInputFiltersSchema.optional().prefault({}),
-  queryOptions: listDefinitionsInputQueryOptionsSchema.optional().prefault({
-    page: PAGE_DEFAULT,
-    limit: 50,
-  }),
-});
+export type ListIndicateursInputSort =
+  (typeof listIndicateursInputSortValues)[number];

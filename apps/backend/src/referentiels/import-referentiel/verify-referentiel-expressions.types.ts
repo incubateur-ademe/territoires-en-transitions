@@ -22,7 +22,7 @@ export type QuestionForVerification = {
   }> | null;
 };
 
-export type IndicateurDefinitionForVerification = {
+export type IndicateurForVerification = {
   id: number;
   identifiantReferentiel: string | null;
   exprCible: string | null;
@@ -62,7 +62,7 @@ export type VerifyReferentielExpressionsInput = {
   questions: QuestionForVerification[];
   indicateurReferences: IndicateurReference[];
   indicateurIdByIdentifiant: Record<string, number>;
-  indicateurDefinitions: IndicateurDefinitionForVerification[];
+  indicateurDefinitions: IndicateurForVerification[];
   parsePersonnalisationExpression: ParseExpression;
   parseScoreExpression: ParseExpression;
 };

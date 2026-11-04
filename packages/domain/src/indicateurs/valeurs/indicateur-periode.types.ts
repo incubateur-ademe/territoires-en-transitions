@@ -1,4 +1,4 @@
-import type { IndicateurPeriodicite } from '../definitions/indicateur-periodicite.schema';
+import type { IndicateurPeriodicite } from '../indicateur/indicateur-periodicite.schema';
 
 /** @internal Publicly nameable so downstream declaration emit preserves the brand. */
 export const localDateBrand: unique symbol = Symbol('LocalDate');

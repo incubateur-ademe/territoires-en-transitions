@@ -1,11 +1,11 @@
 import {
-  listDefinitionsInputFiltersSchema,
-  listDefinitionsInputSortValues,
+  listIndicateursInputFiltersSchema,
+  listIndicateursInputSortValues,
 } from '@tet/domain/indicateurs';
 import { z } from 'zod';
 
 const exportIndicateursSortSchema = z.object({
-  field: z.enum(listDefinitionsInputSortValues),
+  field: z.enum(listIndicateursInputSortValues),
   direction: z.enum(['asc', 'desc']).prefault('desc'),
 });
 
@@ -29,7 +29,7 @@ export const exportIndicateursRequestSchema = z
     z.object({
       mode: z.literal('all'),
       collectiviteId: z.int().describe('Identifiant de la collectivité'),
-      filters: listDefinitionsInputFiltersSchema
+      filters: listIndicateursInputFiltersSchema
         .optional()
         .prefault({})
         .describe('Filtres de la liste des indicateurs'),

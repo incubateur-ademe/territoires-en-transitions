@@ -553,7 +553,7 @@ const collectIndicateurDefinitionIds = (
 ];
 
 /** Identifiants référentiel des lignes saisissables d'un seul volet. */
-export const listPcaetDiagnosticIndicateurDefinitionIds = (
+export const listPcaetDiagnosticIndicateurIds = (
   config: PcaetDiagnosticIndicateurParentConfig
 ): string[] => [...new Set(collectIndicateurDefinitionIds(config))];
 
@@ -589,14 +589,14 @@ export const listPcaetDiagnosticIndicateurRequiredLeafIds = (
 };
 
 /** Identifiants référentiel de toutes les lignes saisissables (indicateurs). */
-const collectPcaetDiagnosticIndicateurDefinitionIds = (): string[] => [
+const collectPcaetDiagnosticIndicateurIds = (): string[] => [
   ...new Set(
     PCAET_DIAGNOSTIC_INDICATEURS.flatMap(collectIndicateurDefinitionIds)
   ),
 ];
 
 export const ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS =
-  collectPcaetDiagnosticIndicateurDefinitionIds();
+  collectPcaetDiagnosticIndicateurIds();
 
 /**
  * Topic vulnérabilité du diagnostic PCAET (niveaux par thématique, hors

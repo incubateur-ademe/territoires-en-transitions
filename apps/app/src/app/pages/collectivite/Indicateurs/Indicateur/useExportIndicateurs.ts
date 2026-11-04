@@ -5,16 +5,16 @@ import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
-  ListDefinitionsInputFilters,
-  ListDefinitionsInputSort,
+  ListIndicateursInputFilters,
+  ListIndicateursInputSort,
 } from '@tet/domain/indicateurs';
 import { Event, useEventTracker } from '@tet/ui';
 
-type SortItem = { field: ListDefinitionsInputSort; direction: 'asc' | 'desc' };
+type SortItem = { field: ListIndicateursInputSort; direction: 'asc' | 'desc' };
 
 export type ExportIndicateursInput =
   | { mode: 'selection'; indicateurIds: number[] }
-  | { mode: 'all'; filters?: ListDefinitionsInputFilters; sort?: SortItem[] };
+  | { mode: 'all'; filters?: ListIndicateursInputFilters; sort?: SortItem[] };
 
 export const useExportIndicateurs = (input: ExportIndicateursInput) => {
   const trackEvent = useEventTracker();

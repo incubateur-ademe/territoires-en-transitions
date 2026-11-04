@@ -2,10 +2,10 @@ import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateur
 import { areIndicateurVueFiltersEqual } from '@/app/indicateurs/vues/indicateur-vue-filters.rules';
 import { appLabels } from '@/app/labels/catalog';
 import {
-  ListDefinitionsInputFilters,
-  listDefinitionsInputFiltersSchema,
-  ListDefinitionsInputSort,
-  listDefinitionsInputSortValues,
+  ListIndicateursInputFilters,
+  listIndicateursInputFiltersSchema,
+  ListIndicateursInputSort,
+  listIndicateursInputSortValues,
 } from '@tet/domain/indicateurs';
 import { omit, pick } from 'es-toolkit';
 import {
@@ -18,7 +18,7 @@ import {
 } from 'nuqs';
 import { useCallback, useEffect, useRef } from 'react';
 
-export type SortBy = ListDefinitionsInputSort;
+export type SortBy = ListIndicateursInputSort;
 
 type ListOptions = {
   sortBy: SortBy;
@@ -57,17 +57,17 @@ const optionsNameToParams: Record<keyof ListOptions, string> = {
   currentPage: '$p',
 } as const;
 
-export type SearchParams = ListDefinitionsInputFilters & ListOptions;
+export type SearchParams = ListIndicateursInputFilters & ListOptions;
 const searchParamsShortMap = {
   ...indicateursNameToParams,
   ...optionsNameToParams,
 };
 
 const searchParamsMap = {
-  sortBy: parseAsStringLiteral(listDefinitionsInputSortValues),
+  sortBy: parseAsStringLiteral(listIndicateursInputSortValues),
   displayGraphs: parseAsBoolean,
   currentPage: parseAsInteger.withDefault(1),
-  filter: parseAsJson(listDefinitionsInputFiltersSchema.parse),
+  filter: parseAsJson(listIndicateursInputFiltersSchema.parse),
 };
 
 export const listIndicateursParamsSerializer = createSerializer(
@@ -76,7 +76,7 @@ export const listIndicateursParamsSerializer = createSerializer(
 );
 
 export const useIndicateursListParams = (
-  defaultFilters: ListDefinitionsInputFilters,
+  defaultFilters: ListIndicateursInputFilters,
   defaultOptions?: Partial<ListOptions>
 ) => {
   const [queryParams, setQueryParams] = useQueryStates(

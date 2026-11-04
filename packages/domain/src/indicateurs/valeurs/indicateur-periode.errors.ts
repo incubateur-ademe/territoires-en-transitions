@@ -1,5 +1,5 @@
 import { createEnumObject } from '../../utils/enum.utils';
-import type { IndicateurPeriodicite } from '../definitions/indicateur-periodicite.schema';
+import type { IndicateurPeriodicite } from '../indicateur/indicateur-periodicite.schema';
 import type { LocalCalendarDate } from './indicateur-periode.types';
 
 const indicateurPeriodeErrorCodes = [

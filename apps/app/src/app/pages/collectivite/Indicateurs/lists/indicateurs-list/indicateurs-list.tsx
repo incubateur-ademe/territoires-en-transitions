@@ -8,9 +8,9 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
+import { canUpdateIndicateur } from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { IndicateurCardSkeleton } from '../IndicateurCard/indicateur-card.skeleton';
@@ -26,7 +26,7 @@ type Props = {
   searchParams: SearchParams;
   setSearchParams: (prams: SearchParams) => void;
   resetFilters?: () => void;
-  defaultFilters?: ListDefinitionsInputFilters;
+  defaultFilters?: ListIndicateursInputFilters;
   renderSettings?: IndicateursListeOptionsProps['renderSettings'];
   status?: IndicateursListeOptionsProps['status'];
   actions?: IndicateursListeOptionsProps['actions'];
@@ -156,7 +156,7 @@ const IndicateursListe = (props: Props) => {
                 hideChart={!displayGraphs}
                 isEditable={isEditable}
                 readonly={
-                  !canUpdateIndicateurDefinition(
+                  !canUpdateIndicateur(
                     hasCollectivitePermission,
                     definition,
                     currentUserId

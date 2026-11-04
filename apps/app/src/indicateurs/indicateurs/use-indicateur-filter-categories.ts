@@ -4,12 +4,12 @@ import { useListServices } from '@/app/collectivites/tags/use-list-services';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useGetThematiqueOptions } from '@/app/shared/thematiques/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { useMemo } from 'react';
 import { formatIndicateurFiltersToCategories } from './format-indicateur-filters-to-categories';
 
 export const useIndicateurFilterCategories = (
-  filters: ListDefinitionsInputFilters
+  filters: ListIndicateursInputFilters
 ) => {
   const collectiviteId = useCollectiviteId();
   const { thematiqueListe } = useGetThematiqueOptions();

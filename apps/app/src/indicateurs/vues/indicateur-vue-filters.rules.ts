@@ -1,25 +1,25 @@
 import {
   areIndicateurVueFiltersEqual as areDomainIndicateurVueFiltersEqual,
-  type ListDefinitionsInputFilters,
-  listDefinitionsInputFiltersSchema,
+  type ListIndicateursInputFilters,
+  listIndicateursInputFiltersSchema,
   normalizeIndicateurVueFilters as normalizeDomainIndicateurVueFilters,
 } from '@tet/domain/indicateurs';
 
 // List state can contain extra fields; strip them before strict domain validation.
 export function normalizeIndicateurVueFilters(
-  filters: ListDefinitionsInputFilters
-): ListDefinitionsInputFilters {
+  filters: ListIndicateursInputFilters
+): ListIndicateursInputFilters {
   return normalizeDomainIndicateurVueFilters(
-    listDefinitionsInputFiltersSchema.parse(filters)
+    listIndicateursInputFiltersSchema.parse(filters)
   );
 }
 
 export function areIndicateurVueFiltersEqual(
-  first: ListDefinitionsInputFilters,
-  second: ListDefinitionsInputFilters
+  first: ListIndicateursInputFilters,
+  second: ListIndicateursInputFilters
 ) {
   return areDomainIndicateurVueFiltersEqual(
-    listDefinitionsInputFiltersSchema.parse(first),
-    listDefinitionsInputFiltersSchema.parse(second)
+    listIndicateursInputFiltersSchema.parse(first),
+    listIndicateursInputFiltersSchema.parse(second)
   );
 }

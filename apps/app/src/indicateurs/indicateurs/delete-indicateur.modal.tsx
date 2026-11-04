@@ -1,4 +1,4 @@
-import { useDeleteIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-delete-indicateur-definition';
+import { useDeleteIndicateur } from '@/app/indicateurs/indicateurs/use-delete-indicateur';
 import type { IndicateurDetaille } from '@tet/domain/indicateurs';
 import { appLabels } from '@/app/labels/catalog';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
@@ -13,15 +13,14 @@ type Props = {
   redirectAfterDelete?: boolean;
 };
 
-export const DeleteIndicateurDefinitionModal = ({
+export const DeleteIndicateurModal = ({
   definition,
   openState,
   redirectAfterDelete,
 }: Props) => {
-  const { mutate: deleteIndicateur } = useDeleteIndicateurDefinition(
-    definition.id,
-    { redirectAfterDelete }
-  );
+  const { mutate: deleteIndicateur } = useDeleteIndicateur(definition.id, {
+    redirectAfterDelete,
+  });
   return (
     <Modal
       openState={openState}

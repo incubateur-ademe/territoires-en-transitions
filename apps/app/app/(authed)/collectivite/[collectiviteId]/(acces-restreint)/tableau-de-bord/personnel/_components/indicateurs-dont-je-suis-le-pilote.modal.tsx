@@ -9,7 +9,7 @@ import ThematiquesDropdown from '@/app/shared/thematiques/thematiques.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import { useUser } from '@tet/api/users';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { ModuleIndicateursSelect } from '@tet/domain/metrics';
 import {
   Event,
@@ -39,7 +39,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
 
   const { id: userId } = useUser();
 
-  const [filtreState, setFiltreState] = useState<ListDefinitionsInputFilters>(
+  const [filtreState, setFiltreState] = useState<ListIndicateursInputFilters>(
     module.options.filtre
   );
 

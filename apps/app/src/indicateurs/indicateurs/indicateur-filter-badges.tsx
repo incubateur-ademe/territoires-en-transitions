@@ -2,14 +2,14 @@
 
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
 import { BadgeFilters, ClearAllFiltersButton, cn } from '@tet/ui';
 import { IndicateurFilterCategoryKey } from './format-indicateur-filters-to-categories';
 import { useIndicateurFilterCategories } from './use-indicateur-filter-categories';
 
 type Props = {
-  filters: ListDefinitionsInputFilters;
-  onFiltersChange: (filters: ListDefinitionsInputFilters) => void;
+  filters: ListIndicateursInputFilters;
+  onFiltersChange: (filters: ListIndicateursInputFilters) => void;
   onClearAllFilters?: () => void;
   className?: string;
 };

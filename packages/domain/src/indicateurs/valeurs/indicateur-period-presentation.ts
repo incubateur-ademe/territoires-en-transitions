@@ -1,7 +1,7 @@
 import {
   IndicateurPeriodiciteEnum,
   type IndicateurPeriodicite,
-} from '../definitions/indicateur-periodicite.schema';
+} from '../indicateur/indicateur-periodicite.schema';
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 

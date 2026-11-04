@@ -2,7 +2,7 @@ import {
   IndicateurPeriodiciteEnum,
   indicateurPeriodiciteValues,
   type IndicateurPeriodicite,
-} from '../definitions/indicateur-periodicite.schema';
+} from '../indicateur/indicateur-periodicite.schema';
 import {
   createIndicateurPeriodeError,
   IndicateurPeriodeErrorEnum,

@@ -1,4 +1,4 @@
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
+import { canUpdateIndicateur } from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
 import {
   type IndicateurDetaille,
   isIndicateurPerso,
@@ -34,7 +34,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
 
-  const canMutateIndicateur = canUpdateIndicateurDefinition(
+  const canMutateIndicateur = canUpdateIndicateur(
     hasCollectivitePermission,
     definition,
     id

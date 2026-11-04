@@ -9,7 +9,7 @@ import {
   type IndicateurDetaille,
   isIndicateurPerso,
 } from '@tet/domain/indicateurs';
-import { DeleteIndicateurDefinitionModal } from '@/app/indicateurs/indicateurs/delete-indicateur-definition.modal';
+import { DeleteIndicateurModal } from '@/app/indicateurs/indicateurs/delete-indicateur.modal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
@@ -89,7 +89,7 @@ const IndicateurCardOptions = ({
         />
       </VisibleWhen>
       {isDeleteOpen && (
-        <DeleteIndicateurDefinitionModal
+        <DeleteIndicateurModal
           definition={definition}
           redirectAfterDelete={false}
           openState={{ isOpen: true, setIsOpen: setIsDeleteOpen }}

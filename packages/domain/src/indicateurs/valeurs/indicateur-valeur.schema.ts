@@ -1,10 +1,10 @@
 import * as z from 'zod/mini';
-import { indicateurPredefiniNatureSchema } from '../definitions/indicateur-nature.schema';
-import { indicateurPeriodiciteSchema } from '../definitions/indicateur-periodicite.schema';
+import { indicateurPredefiniNatureSchema } from '../indicateur/indicateur-nature.schema';
+import { indicateurPeriodiciteSchema } from '../indicateur/indicateur-periodicite.schema';
 import {
   indicateurCommonSchema,
   indicateurSchema,
-} from '../definitions/indicateur.schema';
+} from '../indicateur/indicateur.schema';
 import { indicateurSourceMetadonneeSchema } from '../shared/indicateur-source-metadonnee.schema';
 import { indicateurSourceSchema } from '../shared/indicateur-source.schema';
 
