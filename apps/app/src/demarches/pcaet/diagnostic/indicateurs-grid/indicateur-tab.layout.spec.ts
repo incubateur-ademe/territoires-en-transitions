@@ -13,7 +13,7 @@ import {
   buildDiagnosticIndicateurTableRows,
   buildDiagnosticIndicateurValeurInput,
 } from './diagnostic-indicateur-table.adapter';
-import { buildIndicateurValeursTableSections } from './indicateur-tab.layout';
+import { buildIndicateurValeursTables } from './indicateur-tab.layout';
 
 const byCode = (code: string): PcaetDiagnosticIndicateurParentConfig => {
   const config = PCAET_DIAGNOSTIC_INDICATEURS.find(
@@ -25,17 +25,16 @@ const byCode = (code: string): PcaetDiagnosticIndicateurParentConfig => {
   return config;
 };
 
-describe('buildIndicateurValeursTableSections', () => {
-  it('regroupe les émissions GES en une table (année de référence au parent)', () => {
-    const sections = buildIndicateurValeursTableSections(
-      byCode('emissions_ges')
-    );
+const rowLabels = (table: { rows: { label: string }[] }) =>
+  table.rows.map((row) => row.label);
 
-    expect(sections).toHaveLength(1);
-    expect(sections[0].label).toBeNull();
-    expect(sections[0].tables).toHaveLength(1);
-    expect(sections[0].tables[0].title).toBe('Émissions GES');
-    expect(sections[0].tables[0].rows.map((row) => row.label)).toEqual([
+describe('buildIndicateurValeursTables', () => {
+  it('regroupe les émissions GES en une table (année de référence au parent)', () => {
+    const tables = buildIndicateurValeursTables(byCode('emissions_ges'));
+
+    expect(tables).toHaveLength(1);
+    expect(tables[0].title).toBe('Émissions GES');
+    expect(rowLabels(tables[0])).toEqual([
       'Résidentiel',
       'Tertiaire',
       'Transport routier',
@@ -48,13 +47,11 @@ describe('buildIndicateurValeursTableSections', () => {
   });
 
   it('crée une table par polluant, avec les secteurs en lignes', () => {
-    const sections = buildIndicateurValeursTableSections(
+    const tables = buildIndicateurValeursTables(
       byCode('polluants_atmospheriques')
     );
 
-    expect(sections).toHaveLength(1);
-    expect(sections[0].label).toBeNull();
-    expect(sections[0].tables.map((table) => table.title)).toEqual([
+    expect(tables.map((table) => table.title)).toEqual([
       'NOx',
       'PM10',
       'PM2.5',
@@ -62,7 +59,7 @@ describe('buildIndicateurValeursTableSections', () => {
       'SO2',
       'NH3',
     ]);
-    expect(sections[0].tables[0].rows.map((row) => row.label)).toEqual([
+    expect(rowLabels(tables[0])).toEqual([
       'Résidentiel',
       'Tertiaire',
       'Transport routier',
@@ -75,15 +72,12 @@ describe('buildIndicateurValeursTableSections', () => {
   });
 
   it('regroupe les puits de séquestration dans une seule table obligatoire', () => {
-    const sections = buildIndicateurValeursTableSections(
-      byCode('sequestration')
-    );
+    const tables = buildIndicateurValeursTables(byCode('sequestration'));
 
-    expect(sections).toHaveLength(1);
-    expect(sections[0].tables).toHaveLength(1);
-    expect(sections[0].tables[0].title).toBe('Séquestration carbone');
-    expect(sections[0].tables[0].isOptional).toBe(false);
-    expect(sections[0].tables[0].rows.map((row) => row.label)).toEqual([
+    expect(tables).toHaveLength(1);
+    expect(tables[0].title).toBe('Séquestration carbone');
+    expect(tables[0].isOptional).toBe(false);
+    expect(rowLabels(tables[0])).toEqual([
       'Forêt',
       'Sols agricoles (terres cultivées et prairies)',
       'Produits bois',
@@ -91,51 +85,56 @@ describe('buildIndicateurValeursTableSections', () => {
     ]);
   });
 
-  it('sépare les ENR par groupBy et écarte les identifiants non résolus', () => {
-    const sections = buildIndicateurValeursTableSections(byCode('enr'));
-
-    expect(sections.map((section) => section.label)).toEqual([
-      'electricité',
-      'chaleur',
-      'froid',
-      'autres',
-    ]);
-    expect(sections[0].tables.map((table) => table.title)).toEqual([
-      'Éolien terrestre',
-      'Solaire photovoltaïque',
-      'Hydraulique',
-      'Biomasse solide',
-      'Biogaz',
-    ]);
-    expect(sections[1].tables.map((table) => table.title)).toEqual([
+  it('sépare production et consommation ENR, une table par groupe', () => {
+    const tables = buildIndicateurValeursTables(byCode('enr'));
+    const chaleur = [
       'Biomasse solide',
       'Pompes à chaleur',
       'Géothermie',
       'Solaire thermique',
       'Biogaz',
-    ]);
-    expect(sections[2].tables.map((table) => table.title)).toEqual([
-      'Thermique',
-    ]);
-    expect(sections[3].tables.map((table) => table.title)).toEqual([
-      'Biométhane',
-      'Biocarburants',
+    ];
+
+    expect(
+      tables.map((table) => [table.section, table.title, rowLabels(table)])
+    ).toEqual([
+      [
+        "Production d'énergie",
+        'Électricité',
+        [
+          'Éolien terrestre',
+          'Solaire photovoltaïque',
+          'Hydraulique',
+          'Biomasse solide',
+          'Biogaz',
+        ],
+      ],
+      ["Production d'énergie", 'Chaleur', chaleur],
+      ["Production d'énergie", 'Froid', ['Thermique']],
+      ["Production d'énergie", 'Autres', ['Biométhane', 'Biocarburants']],
+      ["Consommation d'énergie", 'Chaleur', chaleur],
+      ["Consommation d'énergie", 'Autres', ['Biocarburants']],
+      [
+        "Valorisation des potentiels d'énergie",
+        'Récupération et stockage',
+        ['Récupération', 'Stockage'],
+      ],
     ]);
   });
 
   it('ne produit pas de table sans ligne saisissable', () => {
-    const sections = buildIndicateurValeursTableSections({
+    const tables = buildIndicateurValeursTables({
       code: 'vide',
       label: 'Vide',
       icon: 'sun-line',
       indicateurDefinitionId: 'cae_3.a',
       referenceYearApplyLevel: 'child',
       children: [
-        { label: 'Inconnu', indicateurDefinitionId: '', groupBy: 'autres' },
+        { label: 'Inconnu', indicateurDefinitionId: '', groupBy: 'Autres' },
       ],
     });
 
-    expect(sections).toEqual([]);
+    expect(tables).toEqual([]);
   });
 });
 
