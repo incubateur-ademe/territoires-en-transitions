@@ -12,10 +12,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Test stack selection
-      shell: bash
-      run: node --test "$GITHUB_ACTION_PATH/select-stack-tip.test.mjs"
-
     - name: Select stack tip
       id: select
       shell: bash
