@@ -28,6 +28,14 @@ export const AiPlanImportSpecificErrors = [
 export type AiPlanImportSpecificError =
   (typeof AiPlanImportSpecificErrors)[number];
 
+/** Messages partagés entre les réponses API et les échecs persistés des jobs. */
+export const aiPlanImportErrorMessages = {
+  UNSUPPORTED_IMPORT_CONTRACT:
+    "Ce profil ou cette version d'import n'est pas pris en charge",
+  INVALID_CHECKPOINT:
+    'Le point de reprise de cet import est invalide ou incompatible',
+} as const satisfies Partial<Record<AiPlanImportSpecificError, string>>;
+
 export const AiPlanImportErrorEnum = createErrorsEnum(
   AiPlanImportSpecificErrors
 );

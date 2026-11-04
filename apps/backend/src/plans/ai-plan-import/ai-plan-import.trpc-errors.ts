@@ -1,7 +1,10 @@
 import { planCreationErrorConfig } from '../plans/plan-creation.errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from './ai-plan-import.constants';
-import type { AiPlanImportSpecificError } from './ai-plan-import.errors';
+import {
+  aiPlanImportErrorMessages,
+  type AiPlanImportSpecificError,
+} from './ai-plan-import.errors';
 
 export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecificError> =
   {
@@ -62,12 +65,11 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       },
       UNSUPPORTED_IMPORT_CONTRACT: {
         code: 'PRECONDITION_FAILED',
-        message: "Ce profil ou cette version d'import n'est pas pris en charge",
+        message: aiPlanImportErrorMessages.UNSUPPORTED_IMPORT_CONTRACT,
       },
       INVALID_CHECKPOINT: {
         code: 'CONFLICT',
-        message:
-          'Le point de reprise de cet import est invalide ou incompatible',
+        message: aiPlanImportErrorMessages.INVALID_CHECKPOINT,
       },
       STORAGE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

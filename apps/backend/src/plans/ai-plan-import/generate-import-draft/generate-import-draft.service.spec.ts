@@ -269,7 +269,7 @@ describe('GenerateImportDraftService', () => {
         expect.objectContaining({
           id: 'job-1',
           attempt: 0,
-          error: expect.stringContaining("contrat d'import"),
+          error: "Ce profil ou cette version d'import n'est pas pris en charge",
         })
       );
       expect(
@@ -919,7 +919,8 @@ describe('GenerateImportDraftService', () => {
           expect.objectContaining({
             id: 'job-1',
             attempt: 1,
-            error: expect.stringContaining('point de reprise'),
+            error:
+              'Le point de reprise de cet import est invalide ou incompatible',
           })
         );
         expect(
