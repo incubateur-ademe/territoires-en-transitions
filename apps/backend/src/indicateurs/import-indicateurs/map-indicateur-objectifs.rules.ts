@@ -8,10 +8,10 @@ type Objectif = Omit<ImportObjectifType, 'identifiantReferentiel'> & {
 
 export function mapIndicateurObjectifs(
   objectifs: ImportObjectifType[],
-  definitions: { id: number; identifiantReferentiel: string | null }[]
+  indicateurs: { id: number; identifiantReferentiel: string | null }[]
 ): Result<Objectif[], ImportIndicateurDefinitionError> {
   const ids = new Map(
-    definitions.map(({ id, identifiantReferentiel }) => [
+    indicateurs.map(({ id, identifiantReferentiel }) => [
       identifiantReferentiel,
       id,
     ])

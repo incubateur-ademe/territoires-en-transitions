@@ -294,7 +294,7 @@ export async function completeTestDiagnosticIndicateursPcaet(
     demarcheId,
   });
 
-  const definitions = await db.db
+  const indicateurs = await db.db
     .select({
       id: indicateurDefinitionTable.id,
       identifiantReferentiel: indicateurDefinitionTable.identifiantReferentiel,
@@ -307,15 +307,15 @@ export async function completeTestDiagnosticIndicateursPcaet(
       )
     );
 
-  const definitionByReferentiel = new Map(
-    definitions.map((definition) => [
-      definition.identifiantReferentiel,
-      definition.id,
+  const indicateurByReferentiel = new Map(
+    indicateurs.map((indicateur) => [
+      indicateur.identifiantReferentiel,
+      indicateur.id,
     ])
   );
 
   const missing = DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.filter(
-    (id) => !definitionByReferentiel.has(id)
+    (id) => !indicateurByReferentiel.has(id)
   );
   if (missing.length > 0) {
     throw new Error(
@@ -329,7 +329,7 @@ export async function completeTestDiagnosticIndicateursPcaet(
     .insert(indicateurValeurTable)
     .values(
       DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS.flatMap((leafId) => {
-        const indicateurId = definitionByReferentiel.get(leafId);
+        const indicateurId = indicateurByReferentiel.get(leafId);
         if (indicateurId === undefined) {
           throw new Error(
             `Indicateur ${leafId} absent du référentiel pour saturer le diagnostic`

@@ -23,18 +23,18 @@ describe('ListIndicateursPredefinisService', () => {
     expect(repository.listIndicateursPredefinis).toHaveBeenCalledWith({}, tx);
   });
   it('délègue la lecture au repository', async () => {
-    const definitions = [{ id: 1, periodicite: 'annuelle' }];
+    const indicateurs = [{ id: 1, periodicite: 'annuelle' }];
     const repository = {
       listIndicateursPredefinisAggregates: vi
         .fn()
-        .mockResolvedValue(success(definitions)),
+        .mockResolvedValue(success(indicateurs)),
     };
     const service = new ListIndicateursPredefinisService(repository as never);
     const input = { indicateurIds: [1] };
 
     await expect(
       service.listIndicateursPredefinisAggregates(input, context)
-    ).resolves.toEqual({ success: true, data: definitions });
+    ).resolves.toEqual({ success: true, data: indicateurs });
     expect(repository.listIndicateursPredefinisAggregates).toHaveBeenCalledWith(
       input,
       undefined
@@ -42,14 +42,14 @@ describe('ListIndicateursPredefinisService', () => {
   });
 
   it('expose les définitions simples sans exposer le repository hors du domaine', async () => {
-    const definitions = [
+    const indicateurs = [
       { id: 1, identifiantReferentiel: 'cae_1.a' },
       { id: 2, identifiantReferentiel: 'cae_1.b' },
     ];
     const repository = {
       listIndicateursPredefinis: vi
         .fn()
-        .mockResolvedValue(success(definitions)),
+        .mockResolvedValue(success(indicateurs)),
     };
     const service = new ListIndicateursPredefinisService(repository as never);
 

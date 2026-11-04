@@ -32,7 +32,7 @@ import { IndicateurCardSkeleton } from './indicateur-card.skeleton';
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
   /** Item dans une liste d'indicateurs (avant que le détail pour la vignette ne soit chargé) */
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
 
   /**
    * Id de la collectivité pour laquelle on veut voir les valeurs, si non défini, on utilise la collectivité courante
@@ -70,7 +70,7 @@ export type IndicateurCardProps = {
 
 /** Carte qui permet d'afficher un graphique dans une liste */
 const IndicateurCard = ({
-  definition,
+  indicateur,
   externalCollectiviteId,
   selectState,
   href,
@@ -85,7 +85,7 @@ const IndicateurCard = ({
 
   // lit les données nécessaires à l'affichage du graphe
   const chartInfo = useIndicateurChartInfo({
-    definition,
+    indicateur,
     externalCollectiviteId,
   });
 
@@ -95,7 +95,7 @@ const IndicateurCard = ({
 
   return (
     <IndicateurCardBase
-      definition={definition}
+      indicateur={indicateur}
       chartInfo={chartInfo}
       externalCollectiviteId={externalCollectiviteId}
       selectState={selectState}
@@ -118,7 +118,7 @@ export type IndicateurCardBaseProps = IndicateurCardProps & {
  */
 export const IndicateurCardBase = ({
   chartInfo,
-  definition: definitionSimple,
+  indicateur: indicateurSimple,
   selectState,
   href,
   className,
@@ -131,8 +131,13 @@ export const IndicateurCardBase = ({
 }: IndicateurCardBaseProps) => {
   const [isDownloadChartOpen, setIsDownloadChartOpen] = useState(false);
 
-  const { definition, hasValeur, segmentItemParId, isLoading } = chartInfo;
-  if (!definition) {
+  const {
+    definition: indicateur,
+    hasValeur,
+    segmentItemParId,
+    isLoading,
+  } = chartInfo;
+  if (!indicateur) {
     return;
   }
 
@@ -140,15 +145,15 @@ export const IndicateurCardBase = ({
     (!hideChart && !hideChartWithoutValue) ||
     (hideChartWithoutValue && hasValeur);
 
-  const totalEnfants = definition.enfants?.length ?? 0;
+  const totalEnfants = indicateur.enfants?.length ?? 0;
   const isIndicateurParent = totalEnfants > 0;
-  const estGroupement = isIndicateurParent && !definition.estAgregation;
+  const estGroupement = isIndicateurParent && !indicateur.estAgregation;
 
   return (
     <>
       <div className="group relative h-full">
         {/** Cadenas indicateur privé */}
-        {definition?.estConfidentiel && (
+        {indicateur?.estConfidentiel && (
           <Tooltip label={appLabels.derniereValeurIndicateurModePrive}>
             <div className="absolute -top-5 left-5">
               <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
@@ -158,9 +163,9 @@ export const IndicateurCardBase = ({
 
         {/** Actions de la carte */}
         <IndicateurCardOptions
-          definition={definitionSimple}
+          indicateur={indicateurSimple}
           isEditable={isEditable && !readonly}
-          isFavoriCollectivite={definition.estFavori || false}
+          isFavoriCollectivite={indicateur.estFavori || false}
           otherMenuActions={readonly ? undefined : otherMenuActions}
           chartDownloadSettings={{
             showTrigger: Boolean(!readonly && showChart && hasValeur),
@@ -170,7 +175,7 @@ export const IndicateurCardBase = ({
 
         {/* Carte indicateur */}
         <Card
-          dataTest={`chart-${definition.id}`}
+          dataTest={`chart-${indicateur.id}`}
           className={classNames('h-full font-normal !gap-3 !p-6', className)}
           isSelected={selectState?.checkbox && selectState?.selected}
           href={href}
@@ -180,23 +185,23 @@ export const IndicateurCardBase = ({
           {selectState?.checkbox ? (
             <Checkbox
               checked={selectState.selected}
-              onChange={() => selectState.setSelected(definition)}
-              label={definition.titre}
+              onChange={() => selectState.setSelected(indicateur)}
+              label={indicateur.titre}
               labelClassname="!font-bold"
             />
           ) : (
             <>
               <div className="max-w-full font-bold line-clamp-2 text-primary-10">
-                {definition.titre}{' '}
-                {definition.unite && (
+                {indicateur.titre}{' '}
+                {indicateur.unite && (
                   <span className="font-normal text-grey-6">
-                    {`(${definition.unite})`}
+                    {`(${indicateur.unite})`}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                {isIndicateurPerso(definition) && <BadgeIndicateurPerso />}
-                {definition.hasOpenData && <BadgeOpenData />}
+                {isIndicateurPerso(indicateur) && <BadgeIndicateurPerso />}
+                {indicateur.hasOpenData && <BadgeOpenData />}
               </div>
             </>
           )}
@@ -244,7 +249,7 @@ export const IndicateurCardBase = ({
               (showChart ? (
                 <>
                   {/** Barre horizontale */}
-                  {(isIndicateurParent || definition.participationScore) && (
+                  {(isIndicateurParent || indicateur.participationScore) && (
                     <>
                       <div className="h-px bg-primary-3" />
                       <div className="flex flex-wrap gap-2 items-center text-xs text-grey-8 mt-3">
@@ -278,7 +283,7 @@ export const IndicateurCardBase = ({
                             <Tooltip
                               label={
                                 <ul>
-                                  {definition.enfants?.map((enfant) => (
+                                  {indicateur.enfants?.map((enfant) => (
                                     <li key={enfant.id}>{enfant.titre}</li>
                                   ))}
                                 </ul>
@@ -292,11 +297,11 @@ export const IndicateurCardBase = ({
                         {/** Barre verticale */}
                         {isIndicateurParent &&
                           totalEnfants &&
-                          definition.participationScore && (
+                          indicateur.participationScore && (
                             <div className="w-px h-3 bg-grey-5" />
                           )}
                         {/** Participation au score */}
-                        {definition.participationScore && (
+                        {indicateur.participationScore && (
                           <div>{appLabels.indicateurParticipeAuScore}</div>
                         )}
                       </div>
@@ -321,7 +326,7 @@ export const IndicateurCardBase = ({
         }}
         chartInfo={chartInfo}
         isLoading={isLoading}
-        title={definition?.titre}
+        title={indicateur?.titre}
       />
     </>
   );

@@ -50,7 +50,7 @@ describe('Écriture atomique de lots de valeurs mensuelles', () => {
   const insertMonthlyIndicateur = async ({
     sansValeurUtilisateur = false,
   } = {}) => {
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         collectiviteId,
@@ -63,9 +63,9 @@ describe('Écriture atomique de lots de valeurs mensuelles', () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
     });
-    return definition.id;
+    return indicateur.id;
   };
 
   test('Écrit douze mois indépendants et conserve zéro comme valeur', async () => {

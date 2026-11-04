@@ -13,7 +13,7 @@ describe('ValeursReferenceService', () => {
   let service: ValeursReferenceService;
   let collectiviteId: number;
 
-  const definition = {
+  const indicateur = {
     id: 0,
     identifiantReferentiel: null,
     exprCible: 'si identite(sinoe, rural_disperse) alors 2 sinon 3',
@@ -48,7 +48,7 @@ describe('ValeursReferenceService', () => {
 
       const valeurs = await service.getValeursReferenceForDefinition({
         collectiviteId,
-        definition,
+        indicateur,
       });
 
       expect(valeurs).toMatchObject({ seuil: 1, cible: 3 });
@@ -59,7 +59,7 @@ describe('ValeursReferenceService', () => {
 
       const valeurs = await service.getValeursReferenceForDefinition({
         collectiviteId,
-        definition,
+        indicateur,
       });
 
       expect(valeurs).toMatchObject({ seuil: 0, cible: 3 });

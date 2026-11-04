@@ -41,21 +41,21 @@ export class WriteIndicateurValeursService {
     return captureIndicateurValeursResult(
       async (): Promise<IndicateurValeurWithIdentifiant[]> => {
         const valeurs = input.valeurs.map((valeur) => {
-          const definition = validation.data[valeur.indicateurId];
+          const indicateur = validation.data[valeur.indicateurId];
           const periodicite =
             valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
           return {
             ...valeur,
             periodicite,
             dateValeur: this.getCanonicalDateValeur(valeur.dateValeur, {
-              id: definition.id,
+              id: indicateur.id,
               periodicite,
             }),
             resultat: !isNil(valeur.resultat)
-              ? round(valeur.resultat, definition.precision)
+              ? round(valeur.resultat, indicateur.precision)
               : null,
             objectif: !isNil(valeur.objectif)
-              ? round(valeur.objectif, definition.precision)
+              ? round(valeur.objectif, indicateur.precision)
               : null,
           };
         });
@@ -110,17 +110,17 @@ export class WriteIndicateurValeursService {
     return captureIndicateurValeursResult(
       async (): Promise<IndicateurValeur | undefined> => {
         const { collectiviteId, indicateurId } = data;
-        const [lockedDefinition] = getIndicateurDataOrThrow(
+        const [lockedIndicateur] = getIndicateurDataOrThrow(
           await this.indicateurLockRepository.lockIndicateurs(
             [indicateurId],
             tx
           )
         );
-        if (!lockedDefinition)
+        if (!lockedIndicateur)
           throw new BadRequestException(
             `Indicateur definition not found for id ${indicateurId}`
           );
-        assertUserIndicateurValeursAllowed([lockedDefinition]);
+        assertUserIndicateurValeursAllowed([lockedIndicateur]);
         const periodicite =
           data.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
         const dateValeur =
@@ -133,10 +133,10 @@ export class WriteIndicateurValeursService {
         const now = new Date().toISOString();
         const fields = {
           resultat: !isNil(data.resultat)
-            ? round(data.resultat, lockedDefinition.precision)
+            ? round(data.resultat, lockedIndicateur.precision)
             : data.resultat,
           objectif: !isNil(data.objectif)
-            ? round(data.objectif, lockedDefinition.precision)
+            ? round(data.objectif, lockedIndicateur.precision)
             : data.objectif,
           resultatCommentaire: data.resultatCommentaire,
           objectifCommentaire: data.objectifCommentaire,
@@ -149,7 +149,7 @@ export class WriteIndicateurValeursService {
           const key = { collectiviteId, indicateurId, id: data.id };
           const existing = await this.repository.findUserValeur(key, tx);
           if (!existing) return undefined;
-          this.assertPeriodiciteAllowed(lockedDefinition, existing.periodicite);
+          this.assertPeriodiciteAllowed(lockedIndicateur, existing.periodicite);
           if (
             data.periodicite !== undefined &&
             existing.periodicite !== data.periodicite
@@ -164,7 +164,7 @@ export class WriteIndicateurValeursService {
             undefined
           );
         }
-        this.assertPeriodiciteAllowed(lockedDefinition, periodicite);
+        this.assertPeriodiciteAllowed(lockedIndicateur, periodicite);
         if (dateValeur === undefined)
           throw new BadRequestException('Une valeur ou une date est requise');
         await this.lockRepository.lock([{ collectiviteId, dateValeur }], tx);
@@ -187,10 +187,10 @@ export class WriteIndicateurValeursService {
     );
   }
   private assertPeriodiciteAllowed(
-    definition: Pick<Indicateur, 'periodicite'>,
+    indicateur: Pick<Indicateur, 'periodicite'>,
     periodicite: IndicateurPeriodicite
   ) {
-    if (definition.periodicite !== periodicite) {
+    if (indicateur.periodicite !== periodicite) {
       throw new BadRequestException(
         'La valeur doit respecter la périodicité de déclaration'
       );
@@ -198,21 +198,21 @@ export class WriteIndicateurValeursService {
   }
   private getCanonicalDateValeur(
     dateValeur: string,
-    definition: Pick<Indicateur, 'id' | 'periodicite'>
+    indicateur: Pick<Indicateur, 'id' | 'periodicite'>
   ): string {
     try {
       // The annual API accepts any date in the year; storage uses its first day.
       const periode =
-        definition.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
-          ? IndicateurPeriodes.containing(definition.periodicite, dateValeur)
+        indicateur.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
+          ? IndicateurPeriodes.containing(indicateur.periodicite, dateValeur)
           : IndicateurPeriodes.fromDateValeur(
-              definition.periodicite,
+              indicateur.periodicite,
               dateValeur
             );
       return IndicateurPeriodes.toDateValeur(periode);
     } catch {
       throw new BadRequestException(
-        `Date de valeur ${dateValeur} non canonique pour l'indicateur ${definition.id} (${definition.periodicite})`
+        `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateur.id} (${indicateur.periodicite})`
       );
     }
   }

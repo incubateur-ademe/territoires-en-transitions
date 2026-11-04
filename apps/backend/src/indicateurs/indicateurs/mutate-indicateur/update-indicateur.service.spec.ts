@@ -355,7 +355,7 @@ describe('UpdateIndicateurService', () => {
 describe('UpdateIndicateurService — groupement', () => {
   function setup() {
     const tx = { name: 'shared-definition-tx' };
-    const definition = {
+    const indicateur = {
       collectiviteId: null,
       identifiantReferentiel: 'sydev_1',
       groupementId: 99,
@@ -368,8 +368,8 @@ describe('UpdateIndicateurService — groupement', () => {
       ),
     };
     const repository = {
-      getIndicateurNature: vi.fn().mockResolvedValue(definition),
-      lockIndicateurNature: vi.fn().mockResolvedValue(definition),
+      getIndicateurNature: vi.fn().mockResolvedValue(indicateur),
+      lockIndicateurNature: vi.fn().mockResolvedValue(indicateur),
       lockGroupementMembership: vi.fn().mockResolvedValue(true),
       upsertCollectiviteFields: vi.fn().mockResolvedValue(undefined),
       updateIndicateurPerso: vi.fn().mockResolvedValue(true),
@@ -430,7 +430,7 @@ describe('UpdateIndicateurService — groupement', () => {
       service,
       input,
       tx,
-      definition,
+      definition: indicateur,
       repository,
       transactionManager,
       permissions,

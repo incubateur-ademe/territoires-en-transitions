@@ -969,8 +969,8 @@ describe('ListIndicateursRouter', () => {
                 participationScore: !participationScore,
               },
               { titre: 'Racine correspondante', participationScore },
-            ].map((definition) => ({
-              ...definition,
+            ].map((indicateur) => ({
+              ...indicateur,
               collectiviteId: collectivite.id,
               unite: '%',
             }))

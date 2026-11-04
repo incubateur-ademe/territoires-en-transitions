@@ -83,21 +83,21 @@ export class UpdateDiagnosticIndicateursValeursService {
     const indicateurIds = [
       ...new Set(valeurs.map(({ indicateurId }) => indicateurId)),
     ];
-    const definitions =
+    const indicateurs =
       await this.listIndicateursPredefinisService.listIndicateursPredefinis(
         { indicateurIds },
         { user, tx }
       );
-    if (!definitions.success) return definitions;
-    if (definitions.data.length !== indicateurIds.length) {
+    if (!indicateurs.success) return indicateurs;
+    if (indicateurs.data.length !== indicateurIds.length) {
       return failure(
         UpdateDiagnosticIndicateursValeursErrorEnum.INDICATEUR_NON_ANNUEL
       );
     }
     try {
-      for (const definition of definitions.data) {
+      for (const indicateur of indicateurs.data) {
         IndicateurPeriodes.assertAnnual(
-          definition.periodicite,
+          indicateur.periodicite,
           'Le diagnostic PCAET'
         );
       }

@@ -175,8 +175,8 @@ describe('Téléchargement de la trajectoire SNBC', () => {
         (identifiant) =>
           recordedIndicateurs
             .find(
-              ({ definition }) =>
-                definition.identifiantReferentiel === identifiant
+              ({ definition: indicateur }) =>
+                indicateur.identifiantReferentiel === identifiant
             )
             ?.valeurs.map(({ objectif }) => objectif) ?? []
       );

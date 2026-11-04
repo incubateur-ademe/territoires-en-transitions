@@ -328,10 +328,10 @@ describe('createIndicateurPerso', () => {
       })
     ).rejects.toThrow(/fiches doivent appartenir/i);
 
-    const definitions = await databaseService.db
+    const indicateurs = await databaseService.db
       .select({ id: indicateurDefinitionTable.id })
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.titre, titre));
-    expect(definitions).toHaveLength(0);
+    expect(indicateurs).toHaveLength(0);
   });
 });

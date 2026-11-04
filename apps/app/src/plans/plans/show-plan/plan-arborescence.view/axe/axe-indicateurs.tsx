@@ -43,7 +43,7 @@ export const AxeIndicateurs = () => {
           return (
             <IndicateurChartContainer
               key={`${indicateur.id}-${indicateur.titre}`}
-              definition={indicateur}
+              indicateur={indicateur}
               collectiviteId={collectivite.collectiviteId}
               isReadOnly={isReadOnly}
               isEditable={isEditable}
@@ -70,7 +70,7 @@ const IndicateurChartContainer = (
   const { ref, entry } = useIntersectionObserver();
 
   const {
-    definition,
+    indicateur,
     hideChart,
     isEditable,
     isReadOnly,
@@ -82,19 +82,19 @@ const IndicateurChartContainer = (
     <div className="h-full" ref={ref}>
       {entry?.isIntersecting ? (
         <IndicateurCard
-          key={`${definition.id}-${definition.titre}`}
+          key={`${indicateur.id}-${indicateur.titre}`}
           readonly={isReadOnly}
           isEditable={isEditable}
-          definition={definition}
+          indicateur={indicateur}
           externalCollectiviteId={collectiviteId}
           hideChart={hideChart}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId,
             indicateurView: getIndicateurGroup(
-              definition.identifiantReferentiel
+              indicateur.identifiantReferentiel
             ),
-            indicateurId: definition.id,
-            identifiantReferentiel: definition.identifiantReferentiel,
+            indicateurId: indicateur.id,
+            identifiantReferentiel: indicateur.identifiantReferentiel,
           })}
           selectState={selectState}
           otherMenuActions={
@@ -113,7 +113,7 @@ const IndicateurChartContainer = (
           }
         />
       ) : (
-        definition.titre
+        indicateur.titre
       )}
     </div>
   );

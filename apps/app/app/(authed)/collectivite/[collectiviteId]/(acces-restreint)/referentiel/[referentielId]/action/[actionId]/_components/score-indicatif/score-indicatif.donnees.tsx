@@ -19,7 +19,7 @@ import {
 import { useSetValeursUtilisees } from './use-set-valeurs-utilisees';
 
 export type ScoreIndicatifDonneesProps = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   scoreIndicatif: ScoreIndicatifAction;
   indicateurId: number;
   openState: OpenState;
@@ -29,8 +29,8 @@ export type ScoreIndicatifDonneesProps = {
  * Affiche l'onglet "Données"
  */
 export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
-  const { indicateurId, definition, scoreIndicatif, openState } = props;
-  const chartInfo = useIndicateurChartInfo({ definition });
+  const { indicateurId, indicateur, scoreIndicatif, openState } = props;
+  const chartInfo = useIndicateurChartInfo({ indicateur });
   const selectionValeurs = useSelectionValeurs({
     actionId: scoreIndicatif.actionId,
     indicateurId,
@@ -41,8 +41,8 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
   const { resultats, objectifs } = chartInfo.data.valeurs;
   const data = resultats || objectifs;
 
-  const indicateurView = definition.identifiantReferentiel
-    ? (definition.identifiantReferentiel.split(
+  const indicateurView = indicateur.identifiantReferentiel
+    ? (indicateur.identifiantReferentiel.split(
         '_'
       )[0] as IndicateurViewParamOption)
     : null;
@@ -50,7 +50,7 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
     ? makeCollectiviteIndicateursUrl({
         collectiviteId,
         indicateurView: indicateurView,
-        identifiantReferentiel: definition.identifiantReferentiel,
+        identifiantReferentiel: indicateur.identifiantReferentiel,
       })
     : null;
 
@@ -60,7 +60,7 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
         title="Afficher le graphique de l'indicateur"
         content={
           <IndicateurDetailChart
-            definition={definition}
+            indicateur={indicateur}
             chartInfo={chartInfo}
           />
         }
@@ -115,7 +115,7 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
       {isAddValueOpen && (
         <EditValeursModal
           collectiviteId={collectiviteId}
-          definition={definition}
+          indicateur={indicateur}
           title="Ajouter une année"
           openState={{ isOpen: isAddValueOpen, setIsOpen: setIsAddValueOpen }}
           data={data}

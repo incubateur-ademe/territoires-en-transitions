@@ -178,10 +178,10 @@ export default class ExportIndicateursService {
   }
 
   getFilename(
-    definitions: { identifiantReferentiel: string | null; titre: string }[],
+    indicateurs: { identifiantReferentiel: string | null; titre: string }[],
     nomCollectivite: string
   ) {
-    if (!definitions?.length) return null;
+    if (!indicateurs?.length) return null;
 
     const exportedAt = format(new Date(), 'yyyy-MM-dd');
     const segments: string[] = [];
@@ -190,12 +190,12 @@ export default class ExportIndicateursService {
       segments.push(nomCollectivite);
     }
 
-    if (definitions.length === 1) {
-      const definition = definitions[0];
-      if (definition.identifiantReferentiel) {
-        segments.push(definition.identifiantReferentiel);
+    if (indicateurs.length === 1) {
+      const indicateur = indicateurs[0];
+      if (indicateur.identifiantReferentiel) {
+        segments.push(indicateur.identifiantReferentiel);
       }
-      segments.push(definition.titre ?? 'Sans titre', exportedAt);
+      segments.push(indicateur.titre ?? 'Sans titre', exportedAt);
     } else {
       segments.push('Indicateurs', exportedAt);
     }

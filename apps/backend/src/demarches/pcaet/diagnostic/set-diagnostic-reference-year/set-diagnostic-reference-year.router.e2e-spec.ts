@@ -17,16 +17,16 @@ describe("Bascule de l'année de référence du diagnostic PCAET", () => {
   let db: DatabaseService;
 
   const getIndicateurId = async (referentielId: string): Promise<number> => {
-    const [definition] = await db.db
+    const [indicateur] = await db.db
       .select({ id: indicateurDefinitionTable.id })
       .from(indicateurDefinitionTable)
       .where(
         eq(indicateurDefinitionTable.identifiantReferentiel, referentielId)
       );
-    if (!definition) {
+    if (!indicateur) {
       throw new Error(`Indicateur ${referentielId} absent du référentiel`);
     }
-    return definition.id;
+    return indicateur.id;
   };
 
   const listResultats = async (

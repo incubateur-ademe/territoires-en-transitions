@@ -102,16 +102,16 @@ export default class ValeursReferenceService {
       ));
 
     // les définitions des indicateurs
-    const definitions = getIndicateurDataOrThrow(
+    const indicateurs = getIndicateurDataOrThrow(
       await this.listIndicateursPredefinisRepository.listIndicateursPredefinis({
         indicateurIds,
       })
     );
 
-    return definitions.map((definition) =>
+    return indicateurs.map((indicateur) =>
       this.getValeursReferenceIndicateur(
-        definition,
-        valeursOBjectifsParIndicateurId[definition.id],
+        indicateur,
+        valeursOBjectifsParIndicateurId[indicateur.id],
         collectiviteInfo,
         reponses,
         referentielContext
@@ -121,7 +121,7 @@ export default class ValeursReferenceService {
 
   async getValeursReferenceForDefinition(options: {
     collectiviteId: number;
-    definition: Pick<
+    indicateur: Pick<
       Indicateur,
       | 'id'
       | 'identifiantReferentiel'
@@ -136,13 +136,13 @@ export default class ValeursReferenceService {
   }) {
     const {
       collectiviteId,
-      definition,
+      indicateur,
       collectiviteAvecType,
       personnalisationReponses,
       referentielContext: providedReferentielContext,
     } = options;
     this.logger.log(
-      `Récupération des valeurs référence de l'indicateur ${definition.id}`
+      `Récupération des valeurs référence de l'indicateur ${indicateur.id}`
     );
 
     const referentielContext = await this.resolveReferentielContext(
@@ -151,7 +151,7 @@ export default class ValeursReferenceService {
 
     // charge les objectifs associés à l'indicateur
     const valeurObjectifsIndicateur = await this.getValeurObjectifsIndicateurs([
-      definition.id,
+      indicateur.id,
     ]);
 
     // l'identité et la personnalisation de la collectivité
@@ -165,7 +165,7 @@ export default class ValeursReferenceService {
       ));
 
     return this.getValeursReferenceIndicateur(
-      definition,
+      indicateur,
       valeurObjectifsIndicateur,
       collectiviteInfo,
       reponses,
@@ -174,7 +174,7 @@ export default class ValeursReferenceService {
   }
 
   private getValeursReferenceIndicateur(
-    definition: Pick<
+    indicateur: Pick<
       Indicateur,
       | 'id'
       | 'identifiantReferentiel'
@@ -201,7 +201,7 @@ export default class ValeursReferenceService {
       exprSeuil,
       libelleCibleSeuil,
       unite,
-    } = definition;
+    } = indicateur;
     if (exprCible === null && exprSeuil === null && !valeurObjectifs?.length) {
       return null;
     }

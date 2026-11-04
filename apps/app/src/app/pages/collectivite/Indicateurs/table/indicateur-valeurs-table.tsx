@@ -17,7 +17,7 @@ import { prepareIndicateurTableData } from './prepare-indicateur-table-data';
 import { useRevealIndicateurPeriode } from './use-reveal-indicateur-periode';
 
 type Props = {
-  definition: Pick<IndicateurDetaille, 'titre' | 'unite' | 'periodicite'>;
+  indicateur: Pick<IndicateurDetaille, 'titre' | 'unite' | 'periodicite'>;
   resultats: IndicateurPeriodeData;
   objectifs: IndicateurPeriodeData;
   readonly?: boolean;
@@ -36,7 +36,7 @@ type Props = {
 
 /** Results and objectives share a cell, while source versions remain separate. */
 export const IndicateurValeursTable = ({
-  definition,
+  indicateur,
   resultats,
   objectifs,
   readonly,
@@ -66,11 +66,11 @@ export const IndicateurValeursTable = ({
         maxHeight="none"
         layout="auto"
         role="table"
-        aria-label={definition.titre}
+        aria-label={indicateur.titre}
         data-test="indicateurs.valeurs.table"
       >
         <IndicateurValeursTableHeader
-          definition={definition}
+          indicateur={indicateur}
           periodes={periodes}
           localValues={resultats.valeursExistantes}
           privatePeriode={confidentiel ? resultats.periodeModePrive : undefined}
@@ -92,7 +92,7 @@ export const IndicateurValeursTable = ({
                 row={row}
                 periodes={periodes}
                 readonly={readonly}
-                periodicite={definition.periodicite}
+                periodicite={indicateur.periodicite}
                 showAddPeriodeColumn={showAddPeriodeColumn}
                 getColorBySourceId={getColorBySourceId}
                 onSave={onSave}
@@ -105,7 +105,7 @@ export const IndicateurValeursTable = ({
           resultats={resultats.donneesCollectivite}
           objectifs={objectifs.donneesCollectivite}
           readonly={readonly}
-          periodicite={definition.periodicite}
+          periodicite={indicateur.periodicite}
           showAddPeriodeColumn={showAddPeriodeColumn}
           onComment={onComment}
         />

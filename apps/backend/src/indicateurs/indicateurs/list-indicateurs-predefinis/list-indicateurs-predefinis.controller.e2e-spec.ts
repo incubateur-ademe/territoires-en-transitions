@@ -41,20 +41,20 @@ describe("Api pour lister les définitions d'indicateur", () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    const listDefinitionsResponse = response.body;
-    expect(listDefinitionsResponse).toMatchObject({
+    const listIndicateursResponse = response.body;
+    expect(listIndicateursResponse).toMatchObject({
       count: 2,
       data: expect.any(Array),
     });
 
-    expect(listDefinitionsResponse.data.length).toBe(2);
+    expect(listIndicateursResponse.data.length).toBe(2);
 
-    const cae1aDefinition = listDefinitionsResponse.data.find(
+    const cae1aIndicateur = listIndicateursResponse.data.find(
       (def: Partial<IndicateurCandidate>) =>
         def.identifiantReferentiel === 'cae_2.a'
     );
 
-    expect(cae1aDefinition).toEqual({
+    expect(cae1aIndicateur).toEqual({
       id: expect.any(Number),
       version: expect.any(String),
       titre: expect.any(String),
@@ -78,8 +78,8 @@ describe("Api pour lister les définitions d'indicateur", () => {
       thematiques: expect.any(Array),
       mesures: expect.any(Array),
     });
-    expect(cae1aDefinition.mesures).toHaveLength(3);
-    expect(cae1aDefinition.mesures).toEqual(
+    expect(cae1aIndicateur.mesures).toHaveLength(3);
+    expect(cae1aIndicateur.mesures).toEqual(
       expect.arrayContaining([
         {
           id: 'cae_1.1.1',
@@ -97,7 +97,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
     );
 
     // Now search by id
-    const indicateurIds = listDefinitionsResponse.data
+    const indicateurIds = listIndicateursResponse.data
       .map((def: Partial<IndicateurCandidate>) => def.id)
       .join(',');
     const responseById = await request(app.getHttpServer())
@@ -105,14 +105,14 @@ describe("Api pour lister les définitions d'indicateur", () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    const listDefinitionsResponseById = responseById.body;
-    expect(listDefinitionsResponseById).toMatchObject({
+    const listIndicateursResponseById = responseById.body;
+    expect(listIndicateursResponseById).toMatchObject({
       count: 2,
       data: expect.any(Array),
     });
 
-    expect(listDefinitionsResponseById.data.length).toBe(2);
-    const indicateurIdentifiantsReferentiel = listDefinitionsResponse.data.map(
+    expect(listIndicateursResponseById.data.length).toBe(2);
+    const indicateurIdentifiantsReferentiel = listIndicateursResponse.data.map(
       (def: Partial<IndicateurCandidate>) => def.identifiantReferentiel
     );
     // l'API ne garantit pas l'ordre des définitions
@@ -128,16 +128,16 @@ describe("Api pour lister les définitions d'indicateur", () => {
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
-    const listDefinitionsResponse = response.body;
-    expect(listDefinitionsResponse).toMatchObject({
+    const listIndicateursResponse = response.body;
+    expect(listIndicateursResponse).toMatchObject({
       count: expect.any(Number),
       data: expect.any(Array),
     });
 
     // Vérifier que toutes les définitions n'ont pas de collectiviteId
-    listDefinitionsResponse.data.forEach(
-      (definition: Partial<IndicateurCandidate>) => {
-        expect(definition.collectiviteId).toBeUndefined();
+    listIndicateursResponse.data.forEach(
+      (indicateur: Partial<IndicateurCandidate>) => {
+        expect(indicateur.collectiviteId).toBeUndefined();
       }
     );
   });

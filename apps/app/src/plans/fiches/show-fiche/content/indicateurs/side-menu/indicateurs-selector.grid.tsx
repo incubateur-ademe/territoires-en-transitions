@@ -7,32 +7,32 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 
 type Props = {
-  definitions?: IndicateurDetaille[];
+  indicateurs?: IndicateurDetaille[];
   isLoading?: boolean;
   selectedIndicateurs: IndicateurDetaille[] | null | undefined;
   onSelect: (indicateur: IndicateurDetaille) => void;
 };
 
 export const IndicateursSelectorGrid = (props: Props) => {
-  const { definitions, isLoading, selectedIndicateurs, onSelect } = props;
+  const { indicateurs, isLoading, selectedIndicateurs, onSelect } = props;
   return (
     <>
       {/** Loading */}
       {isLoading ? (
         <SpinnerLoader className="mx-auto my-28" />
       ) : /** Indicateurs */
-      definitions && definitions.length > 0 ? (
+      indicateurs && indicateurs.length > 0 ? (
         <>
           {/** Nb results */}
           <div className="mb-4 text-sm text-grey-7">
-            {appLabels.resultat({ count: definitions.length })}
+            {appLabels.resultat({ count: indicateurs.length })}
           </div>
           {/** Grid */}
           <div className="flex flex-col gap-6">
-            {definitions.map((definition) => (
+            {indicateurs.map((indicateur) => (
               <IndicateurChartContainer
-                key={definition.id}
-                definition={definition}
+                key={indicateur.id}
+                indicateur={indicateur}
                 selectedIndicateurs={selectedIndicateurs}
                 onSelect={onSelect}
               />
@@ -59,16 +59,16 @@ const IndicateurChartContainer = (
   }
 ) => {
   const { ref, entry } = useIntersectionObserver();
-  const { definition, selectedIndicateurs, onSelect } = props;
+  const { indicateur, selectedIndicateurs, onSelect } = props;
 
   const selected =
-    selectedIndicateurs?.some((i) => i.id === definition.id) ?? false;
+    selectedIndicateurs?.some((i) => i.id === indicateur.id) ?? false;
 
   return (
     <div ref={ref} className="min-h-[5rem]">
       {entry?.isIntersecting ? (
         <IndicateurCard
-          definition={definition}
+          indicateur={indicateur}
           selectState={{
             checkbox: true,
             selected,
@@ -77,7 +77,7 @@ const IndicateurChartContainer = (
           hideChartWithoutValue
         />
       ) : (
-        definition.titre
+        indicateur.titre
       )}
     </div>
   );

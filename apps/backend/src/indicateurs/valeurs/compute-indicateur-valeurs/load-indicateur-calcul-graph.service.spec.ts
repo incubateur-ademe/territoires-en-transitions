@@ -97,8 +97,8 @@ describe('LoadIndicateurCalculGraphService', () => {
     await expect(service.loadForRecompute([1], context)).resolves.toEqual(
       success({
         formulas: [],
-        sourceDefinitions: [predefini],
-        targetDefinitions: [predefini],
+        sourceIndicateurs: [predefini],
+        targetIndicateurs: [predefini],
       })
     );
   });

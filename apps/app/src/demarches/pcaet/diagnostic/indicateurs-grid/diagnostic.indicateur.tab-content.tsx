@@ -14,7 +14,7 @@ import {
 type Props = {
   demarcheId: number;
   config: PcaetDiagnosticIndicateurParentConfig;
-  definitions: PcaetDiagnostic['indicateurDefinitions'];
+  indicateurs: PcaetDiagnostic['indicateurDefinitions'];
   valeurs: PcaetDiagnostic['indicateurValeurs'];
   isReadonly: boolean;
 };
@@ -22,17 +22,17 @@ type Props = {
 export const DiagnosticIndicateurTabContent = ({
   demarcheId,
   config,
-  definitions,
+  indicateurs,
   valeurs,
   isReadonly,
 }: Props): JSX.Element => {
   const tables = useMemo(
     () =>
       attachIndicateurDataToTables(buildIndicateurValeursTables(config), {
-        definitions,
+        indicateurs,
         valeurs,
       }),
-    [config, definitions, valeurs]
+    [config, indicateurs, valeurs]
   );
 
   return (

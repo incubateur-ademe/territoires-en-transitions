@@ -28,11 +28,11 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
       .where(
         eq(indicateurDefinitionTable.identifiantReferentiel, referentielId)
       );
-    const definition = rows[0];
-    if (!definition) {
+    const indicateur = rows[0];
+    if (!indicateur) {
       throw new Error(`Indicateur ${referentielId} absent du référentiel`);
     }
-    return definition.id;
+    return indicateur.id;
   };
 
   beforeAll(async () => {

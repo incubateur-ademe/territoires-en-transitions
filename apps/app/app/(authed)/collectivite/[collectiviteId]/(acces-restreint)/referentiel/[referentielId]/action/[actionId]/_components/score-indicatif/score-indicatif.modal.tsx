@@ -219,7 +219,10 @@ const ScoreIndicatifModalIndicateurTabs = (
   );
   const { titre, unite } = indicateur || {};
   const collectiviteId = useCollectiviteId();
-  const { data: definition } = useGetIndicateur(indicateurId, collectiviteId);
+  const { data: indicateurDetaille } = useGetIndicateur(
+    indicateurId,
+    collectiviteId
+  );
 
   if (!indicateur || !scoreIndicatif) return;
   return (
@@ -227,8 +230,8 @@ const ScoreIndicatifModalIndicateurTabs = (
       <h3 className="mb-2">
         {titre} <sup className="text-grey-6">{`(${unite})`}</sup>
       </h3>
-      {definition && (
-        <ScoreIndicatifDonnees definition={definition} {...props} />
+      {indicateurDetaille && (
+        <ScoreIndicatifDonnees indicateur={indicateurDetaille} {...props} />
       )}
     </div>
   );

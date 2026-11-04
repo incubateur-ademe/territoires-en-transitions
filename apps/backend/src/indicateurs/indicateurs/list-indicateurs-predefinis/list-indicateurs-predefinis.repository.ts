@@ -51,14 +51,14 @@ export class ListIndicateursPredefinisRepository {
       indicateurIds,
     });
 
-    const definitions = await (tx ?? this.databaseService.db)
+    const indicateurs = await (tx ?? this.databaseService.db)
       .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 
-    this.logger.log(`${definitions.length} définitions trouvées`);
+    this.logger.log(`${indicateurs.length} définitions trouvées`);
 
-    return validatePredefinis(definitions);
+    return validatePredefinis(indicateurs);
   }
 
   async listIndicateursPredefinisForCollectivite(
@@ -78,7 +78,7 @@ export class ListIndicateursPredefinisRepository {
       indicateurIds,
     });
 
-    const definitions = await (tx ?? this.databaseService.db)
+    const indicateurs = await (tx ?? this.databaseService.db)
       .select({
         ...indicateurSelection,
 
@@ -100,10 +100,10 @@ export class ListIndicateursPredefinisRepository {
       .where(and(...conditions));
 
     this.logger.log(
-      `${definitions.length} définitions trouvées pour la collectivité ${collectiviteId}`
+      `${indicateurs.length} définitions trouvées pour la collectivité ${collectiviteId}`
     );
 
-    return validatePredefinis(definitions);
+    return validatePredefinis(indicateurs);
   }
 
   async listIndicateursPredefinisAggregates(
@@ -125,7 +125,7 @@ export class ListIndicateursPredefinisRepository {
     const thematiquesSubQuery = this.getThematiquesSubQuery();
     const mesuresSubQuery = this.getMesuresSubQuery();
 
-    const definitions = await (tx ?? this.databaseService.db)
+    const indicateurs = await (tx ?? this.databaseService.db)
       .select({
         ...indicateurSelection,
 
@@ -156,9 +156,9 @@ export class ListIndicateursPredefinisRepository {
       )
       .where(and(...conditions));
 
-    this.logger.log(`${definitions.length} définitions trouvées`);
+    this.logger.log(`${indicateurs.length} définitions trouvées`);
 
-    return validatePredefinis(definitions);
+    return validatePredefinis(indicateurs);
   }
 
   private getQueryConditions({
@@ -209,15 +209,15 @@ export class ListIndicateursPredefinisRepository {
       sqlConditions.push(or(...sourceIndicateurSqlConditions) as SQLWrapper);
     }
 
-    const computedIndicateurDefinitions = await (tx ?? this.databaseService.db)
+    const computedIndicateurs = await (tx ?? this.databaseService.db)
       .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(and(...sqlConditions));
 
     this.logger.log(
       `Found ${
-        computedIndicateurDefinitions.length
-      } computed indicateur definitions: ${computedIndicateurDefinitions
+        computedIndicateurs.length
+      } computed indicateur definitions: ${computedIndicateurs
         .map(
           (def) =>
             `${def.identifiantReferentiel || `${def.id}`} (formula: ${
@@ -229,7 +229,7 @@ export class ListIndicateursPredefinisRepository {
       }`
     );
 
-    return validatePredefinis(computedIndicateurDefinitions);
+    return validatePredefinis(computedIndicateurs);
   }
 
   getCategoriesSubQuery() {

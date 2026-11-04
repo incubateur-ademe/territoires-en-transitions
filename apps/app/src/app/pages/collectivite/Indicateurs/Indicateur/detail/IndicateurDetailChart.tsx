@@ -9,7 +9,7 @@ import IndicateurChart from '../../chart/IndicateurChart';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   chartInfo: IndicateurChartInfo;
   className?: string;
   isReadonly?: boolean;
@@ -21,7 +21,7 @@ type Props = {
  * Utilisé dans les pages indicateurs.
  */
 const IndicateurDetailChart = ({
-  definition,
+  indicateur,
   chartInfo,
   className,
   isReadonly = true,
@@ -31,7 +31,7 @@ const IndicateurDetailChart = ({
 
   return hasValeur ? (
     <div
-      data-test={`chart-${definition.id}`}
+      data-test={`chart-${indicateur.id}`}
       className={classNames('w-full', className)}
     >
       <IndicateurChart chartInfo={chartInfo} isLoading={isLoading} />
@@ -52,7 +52,7 @@ const IndicateurDetailChart = ({
             ? [
                 {
                   children: getIndicateurPeriodPresentation(
-                    definition.periodicite
+                    indicateur.periodicite
                   ).editor.addLabel,
                   onClick: () => onAddValue(),
                 },

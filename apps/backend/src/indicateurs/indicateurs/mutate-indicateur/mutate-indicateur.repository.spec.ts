@@ -62,11 +62,11 @@ describe('MutateIndicateurRepository', () => {
 
 describe('MutateIndicateurRepository — groupement', () => {
   it('lit aussi le groupement avant de démarrer la transaction', async () => {
-    const definition = {
+    const indicateur = {
       collectiviteId: 42,
       groupementId: 99,
     };
-    const limit = vi.fn().mockResolvedValue([definition]);
+    const limit = vi.fn().mockResolvedValue([indicateur]);
     const select = vi.fn(() => ({
       from: vi.fn(() => ({ where: vi.fn(() => ({ limit })) })),
     }));
@@ -74,7 +74,7 @@ describe('MutateIndicateurRepository — groupement', () => {
       db: { select },
     } as unknown as DatabaseService);
     await expect(repository.getIndicateurNature(7)).resolves.toEqual(
-      definition
+      indicateur
     );
     expect(select).toHaveBeenCalledWith(
       expect.objectContaining({

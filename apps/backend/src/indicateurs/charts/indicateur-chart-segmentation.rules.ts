@@ -13,22 +13,22 @@ type IndicateursBySegmentation = Partial<
 >;
 
 export const groupIndicateursByOrderedSegmentation = (
-  childDefinitions: Pick<IndicateurDetaille, 'id' | 'categories'>[]
+  childIndicateurs: Pick<IndicateurDetaille, 'id' | 'categories'>[]
 ): Readonly<{
   orderedAvailableSegmentations: IndicateurSegmentation[];
   indicateursBySegmentation: IndicateursBySegmentation;
 }> => {
   const indicateursBySegmentation =
-    childDefinitions.reduce<IndicateursBySegmentation>((acc, definition) => {
+    childIndicateurs.reduce<IndicateursBySegmentation>((acc, indicateur) => {
       const foundSegmentations = intersection(
-        definition.categories?.map(({ nom }) => nom) ?? [],
+        indicateur.categories?.map(({ nom }) => nom) ?? [],
         ORDERED_SEGMENTATIONS
       ) as IndicateurSegmentation[];
       const segmentations: IndicateurSegmentation[] = foundSegmentations.length
         ? foundSegmentations
         : [DEFAULT_SEGMENTATION];
       segmentations.forEach((segmentation) => {
-        (acc[segmentation] ??= []).push(definition.id);
+        (acc[segmentation] ??= []).push(indicateur.id);
       });
       return acc;
     }, {});

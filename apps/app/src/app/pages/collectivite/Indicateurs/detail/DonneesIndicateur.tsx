@@ -22,25 +22,25 @@ import { ThematiquesIndicateurInput } from './ThematiquesIndicateurInput';
 import { TypeSegmentationSelect } from './type-segmentation.select';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   chartInfo: IndicateurChartInfo;
   updateUnite: (value: string) => void;
   updateCommentaire: (value: string) => void;
 };
 
 const DonneesIndicateur = ({
-  definition,
+  indicateur,
   chartInfo,
   updateUnite,
   updateCommentaire,
 }: Props) => {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-  const { commentaire, unite } = definition;
+  const { commentaire, unite } = indicateur;
 
   const { sourceFilter, typesSegmentation } = chartInfo;
 
   const questionReponses = useIndicateurPersonnalisation(
-    definition.identifiantReferentiel,
+    indicateur.identifiantReferentiel,
     chartInfo.sourceFilter.valeursReference?.drom ?? false
   );
   const { hasCollectivitePermission } = useCurrentCollectivite();
@@ -49,17 +49,17 @@ const DonneesIndicateur = ({
 
   const canMutateIndicateur = canUpdateIndicateur(
     hasCollectivitePermission,
-    definition,
+    indicateur,
     user.id
   );
 
   const canMutateValeur = canUpdateIndicateurValeur(
     hasCollectivitePermission,
-    definition,
+    indicateur,
     user.id
   );
 
-  const isPerso = isIndicateurPerso(definition);
+  const isPerso = isIndicateurPerso(indicateur);
 
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
@@ -96,8 +96,8 @@ const DonneesIndicateur = ({
       <IndicateurDetailChart
         className="mb-6"
         chartInfo={chartInfo}
-        definition={definition}
-        isReadonly={!canMutateValeur || definition.sansValeurUtilisateur}
+        indicateur={indicateur}
+        isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
         onAddValue={() => setIsTableModalOpen(true)}
       />
 
@@ -106,9 +106,9 @@ const DonneesIndicateur = ({
 
         {/* Tableau */}
         <IndicateurValuesTabs
-          definition={definition}
+          indicateur={indicateur}
           chartInfo={chartInfo}
-          isReadonly={!canMutateValeur || definition.sansValeurUtilisateur}
+          isReadonly={!canMutateValeur || indicateur.sansValeurUtilisateur}
           openModalState={{
             isOpen: isTableModalOpen,
             setIsOpen: setIsTableModalOpen,
@@ -120,7 +120,7 @@ const DonneesIndicateur = ({
 
       {isPerso && (
         <ThematiquesIndicateurInput
-          definition={definition}
+          indicateur={indicateur}
           disabled={!canMutateIndicateur}
         />
       )}

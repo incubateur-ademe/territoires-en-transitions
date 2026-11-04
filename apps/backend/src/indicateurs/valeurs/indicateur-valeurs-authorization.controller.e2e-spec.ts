@@ -68,7 +68,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
   it("ne divulgue pas la définition personnalisée d'une autre collectivité", async () => {
     const { collectivite: otherCollectivite, cleanup } =
       await addTestCollectivite(databaseService);
-    const [foreignDefinition] = await databaseService.db
+    const [foreignIndicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         collectiviteId: otherCollectivite.id,
@@ -81,13 +81,13 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, foreignDefinition.id));
+        .where(eq(indicateurDefinitionTable.id, foreignIndicateur.id));
       await cleanup();
     });
 
     const response = await request(app.getHttpServer())
       .get(
-        `/indicateurs/valeurs?collectiviteId=${collectiviteId}&indicateurIds=${foreignDefinition.id}`
+        `/indicateurs/valeurs?collectiviteId=${collectiviteId}&indicateurIds=${foreignIndicateur.id}`
       )
       .set('Authorization', `Bearer ${authenticatedToken}`)
       .expect(200);
@@ -98,7 +98,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
   it("refuse d'écrire une valeur pour la définition personnalisée d'une autre collectivité", async () => {
     const { collectivite: otherCollectivite, cleanup } =
       await addTestCollectivite(databaseService);
-    const [foreignDefinition] = await databaseService.db
+    const [foreignIndicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         collectiviteId: otherCollectivite.id,
@@ -111,10 +111,10 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, foreignDefinition.id));
+        .where(eq(indicateurValeurTable.indicateurId, foreignIndicateur.id));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, foreignDefinition.id));
+        .where(eq(indicateurDefinitionTable.id, foreignIndicateur.id));
       await cleanup();
     });
 
@@ -125,7 +125,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         valeurs: [
           {
             collectiviteId,
-            indicateurId: foreignDefinition.id,
+            indicateurId: foreignIndicateur.id,
             dateValeur: '2026-01-01',
             resultat: 42,
           },
@@ -134,13 +134,13 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       .expect(400);
 
     expect(response.body.message).toContain(
-      `Indicateur ${foreignDefinition.id} non disponible pour la collectivité ${collectiviteId}`
+      `Indicateur ${foreignIndicateur.id} non disponible pour la collectivité ${collectiviteId}`
     );
     await expect(
       databaseService.db
         .select()
         .from(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, foreignDefinition.id))
+        .where(eq(indicateurValeurTable.indicateurId, foreignIndicateur.id))
     ).resolves.toEqual([]);
   });
 
@@ -149,7 +149,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       database: databaseService,
       groupementData: { nom: 'Groupement non membre' },
     });
-    const definitions = await databaseService.db
+    const indicateurs = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values([
         {
@@ -167,15 +167,15 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         },
       ])
       .returning();
-    const definitionIds = definitions.map(({ id }) => id);
+    const indicateurIds = indicateurs.map(({ id }) => id);
 
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurValeurTable)
-        .where(inArray(indicateurValeurTable.indicateurId, definitionIds));
+        .where(inArray(indicateurValeurTable.indicateurId, indicateurIds));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(inArray(indicateurDefinitionTable.id, definitionIds));
+        .where(inArray(indicateurDefinitionTable.id, indicateurIds));
       await groupement.cleanup();
     });
 
@@ -183,7 +183,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${authenticatedToken}`)
       .send({
-        valeurs: definitions.map(({ id }, index) => ({
+        valeurs: indicateurs.map(({ id }, index) => ({
           collectiviteId,
           indicateurId: id,
           dateValeur: '2026-01-01',
@@ -193,13 +193,13 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       .expect(400);
 
     expect(response.body.message).toContain(
-      `Indicateur ${definitions[1].id} non disponible pour la collectivité ${collectiviteId}`
+      `Indicateur ${indicateurs[1].id} non disponible pour la collectivité ${collectiviteId}`
     );
     await expect(
       databaseService.db
         .select()
         .from(indicateurValeurTable)
-        .where(inArray(indicateurValeurTable.indicateurId, definitionIds))
+        .where(inArray(indicateurValeurTable.indicateurId, indicateurIds))
     ).resolves.toEqual([]);
   });
 
@@ -211,7 +211,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         collectiviteIds: [collectiviteId],
       },
     });
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         identifiantReferentiel: `test_${randomUUID()}`,
@@ -225,10 +225,10 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, definition.id));
+        .where(eq(indicateurValeurTable.indicateurId, indicateur.id));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
       await groupement.cleanup();
     });
 
@@ -239,7 +239,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         valeurs: [
           {
             collectiviteId,
-            indicateurId: definition.id,
+            indicateurId: indicateur.id,
             dateValeur: '2026-01-01',
             resultat: 42,
           },
@@ -250,7 +250,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     expect(response.body.valeurs).toEqual([
       expect.objectContaining({
         collectiviteId,
-        indicateurId: definition.id,
+        indicateurId: indicateur.id,
         resultat: 42,
       }),
     ]);
@@ -261,7 +261,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       database: databaseService,
       groupementData: { nom: 'Groupement réservé au traitement interne' },
     });
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         identifiantReferentiel: `test_${randomUUID()}`,
@@ -276,10 +276,10 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, definition.id));
+        .where(eq(indicateurValeurTable.indicateurId, indicateur.id));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
       await groupement.cleanup();
     });
 
@@ -290,7 +290,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         valeurs: [
           {
             collectiviteId,
-            indicateurId: definition.id,
+            indicateurId: indicateur.id,
             dateValeur: '2026-01-01',
             resultat: 42,
           },
@@ -301,7 +301,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     expect(response.body.valeurs).toEqual([
       expect.objectContaining({
         collectiviteId,
-        indicateurId: definition.id,
+        indicateurId: indicateur.id,
         resultat: 42,
       }),
     ]);
@@ -310,7 +310,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
   const createMetadataFixture = async (
     options: { pcaet?: boolean; sansValeurUtilisateur?: boolean } = {}
   ) => {
-    const [definition] = await databaseService.db
+    const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
       .values({
         identifiantReferentiel: `test_${randomUUID()}`,
@@ -322,7 +322,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       .returning();
     const sourceId = options.pcaet
       ? PCAET_COLLECTIVITE_SOURCE_ID
-      : `authorization-${definition.id}`;
+      : `authorization-${indicateur.id}`;
     await databaseService.db
       .insert(indicateurSourceTable)
       .values({ id: sourceId, libelle: 'Source de contrôle de provenance' })
@@ -334,10 +334,10 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     onTestFinished(async () => {
       await databaseService.db
         .delete(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, definition.id));
+        .where(eq(indicateurValeurTable.indicateurId, indicateur.id));
       await databaseService.db
         .delete(indicateurDefinitionTable)
-        .where(eq(indicateurDefinitionTable.id, definition.id));
+        .where(eq(indicateurDefinitionTable.id, indicateur.id));
       await databaseService.db
         .delete(indicateurSourceMetadonneeTable)
         .where(eq(indicateurSourceMetadonneeTable.id, metadata.id));
@@ -349,7 +349,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     });
     const valeur = {
       collectiviteId,
-      indicateurId: definition.id,
+      indicateurId: indicateur.id,
       dateValeur: '2026-01-01',
       metadonneeId: metadata.id,
       resultat: 42,
@@ -358,7 +358,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       databaseService.db
         .select()
         .from(indicateurValeurTable)
-        .where(eq(indicateurValeurTable.indicateurId, definition.id));
+        .where(eq(indicateurValeurTable.indicateurId, indicateur.id));
     return { valeur, readValeurs };
   };
 

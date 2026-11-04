@@ -60,7 +60,7 @@ describe('Calcul de trajectoire SNBC', () => {
     const sheetService = app.get(SheetService);
     const metadata =
       await trajectoiresDataService.getTrajectoireIndicateursMetadonnees();
-    const definitions = await database.db
+    const indicateurs = await database.db
       .select({ id: indicateurDefinitionTable.id })
       .from(indicateurDefinitionTable)
       .where(
@@ -69,9 +69,9 @@ describe('Calcul de trajectoire SNBC', () => {
           trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL
         )
       );
-    expect(definitions.length).toBeGreaterThan(0);
+    expect(indicateurs.length).toBeGreaterThan(0);
     await database.db.insert(indicateurValeurTable).values(
-      definitions.map(({ id }) => ({
+      indicateurs.map(({ id }) => ({
         collectiviteId: existingEpci.collectivite.id,
         indicateurId: id,
         periodicite: 'annuelle' as const,

@@ -47,13 +47,13 @@ export class IndicateurLockRepository {
       return success([]);
     }
 
-    const definitions = await tx
+    const indicateurs = await tx
       .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(inArray(indicateurDefinitionTable.id, sortedIndicateurIds))
       .orderBy(asc(indicateurDefinitionTable.id))
       .for('share');
 
-    return validateNatures(definitions);
+    return validateNatures(indicateurs);
   }
 }

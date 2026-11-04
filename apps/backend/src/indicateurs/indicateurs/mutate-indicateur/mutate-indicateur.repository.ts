@@ -112,7 +112,7 @@ export class MutateIndicateurRepository {
   async getIndicateurNature(
     indicateurId: number
   ): Promise<IndicateurNatureFields | null> {
-    const [definition] = await this.databaseService.db
+    const [indicateur] = await this.databaseService.db
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         identifiantReferentiel:
@@ -123,14 +123,14 @@ export class MutateIndicateurRepository {
       .where(eq(indicateurDefinitionTable.id, indicateurId))
       .limit(1);
 
-    return definition ?? null;
+    return indicateur ?? null;
   }
 
   async lockIndicateurNature(
     indicateurId: number,
     tx: Transaction
   ): Promise<IndicateurNatureFields | null> {
-    const [definition] = await tx
+    const [indicateur] = await tx
       .select({
         collectiviteId: indicateurDefinitionTable.collectiviteId,
         identifiantReferentiel:
@@ -142,7 +142,7 @@ export class MutateIndicateurRepository {
       .limit(1)
       .for('update');
 
-    return definition ?? null;
+    return indicateur ?? null;
   }
 
   async lockGroupementMembership(
@@ -171,7 +171,7 @@ export class MutateIndicateurRepository {
     { indicateurId, collectiviteId }: IndicateurPersoKey,
     tx: Transaction
   ): Promise<boolean> {
-    const [deletedDefinition] = await tx
+    const [deletedIndicateur] = await tx
       .delete(indicateurDefinitionTable)
       .where(
         and(
@@ -182,7 +182,7 @@ export class MutateIndicateurRepository {
       )
       .returning({ id: indicateurDefinitionTable.id });
 
-    return Boolean(deletedDefinition);
+    return Boolean(deletedIndicateur);
   }
 
   async upsertCollectiviteFields(
@@ -232,7 +232,7 @@ export class MutateIndicateurRepository {
     { indicateurId, collectiviteId, titre, unite }: UpdateIndicateurPersoFields,
     tx: Transaction
   ): Promise<boolean> {
-    const updatedDefinitions = await tx
+    const updatedIndicateurs = await tx
       .update(indicateurDefinitionTable)
       .set({
         ...(titre !== undefined && { titre }),
@@ -247,7 +247,7 @@ export class MutateIndicateurRepository {
       )
       .returning({ id: indicateurDefinitionTable.id });
 
-    return updatedDefinitions.length > 0;
+    return updatedIndicateurs.length > 0;
   }
 
   async touchIndicateurs(

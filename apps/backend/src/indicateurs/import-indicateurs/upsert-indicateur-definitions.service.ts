@@ -195,7 +195,7 @@ export class UpsertIndicateurDefinitionsService {
           // A failure rolls the catalogue, its version and every recalculation back.
           const recalculated = updatedFormulaDefinitions.length
             ? await this.valeurs.recomputeAll(
-                { definitions: updatedFormulaDefinitions },
+                { indicateurs: updatedFormulaDefinitions },
                 { isUserTrusted: true, tx }
               )
             : success([]);

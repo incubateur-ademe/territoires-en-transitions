@@ -242,7 +242,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateur', () => {
     it('Groupe les valeurs par indicateur, trie par date croissante les valeurs', async () => {
-      const indicateurDefinitions: IndicateurResume[] = [
+      const indicateurs: IndicateurResume[] = [
         indicateur1,
         indicateur2,
         indicateur3,
@@ -311,7 +311,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const indicateurValeursGroupees =
         indicateurService.groupeIndicateursValeursParIndicateur(
           indicateurValeurs,
-          indicateurDefinitions
+          indicateurs
         );
       const expectedIndicateurValeursGroupees: IndicateurAvecValeurs[] = [
         {
@@ -376,7 +376,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateurEtSource', () => {
     it('Groupe les valeurs par indicateur et par source, trie par date croissante les valeurs', async () => {
-      const indicateurDefinitions = [
+      const indicateurs = [
         indicateur1,
         indicateur2,
         indicateur3,
@@ -506,7 +506,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const indicateurValeursGroupees =
         indicateurService.groupeIndicateursValeursParIndicateurEtSource(
           indicateurValeurs,
-          indicateurDefinitions,
+          indicateurs,
           indicateurMetadonnees,
           [
             { id: 'rare', libelle: 'RARE-OREC', ordreAffichage: 1 },
@@ -1731,7 +1731,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
     it('donne la priorité au périmètre groupement pour une définition historique portant aussi une collectivité', async () => {
       const tx = { marker: 'transaction' };
-      const definition = {
+      const indicateur = {
         id: 10,
         collectiviteId: 4,
         groupementId: 99,
@@ -1752,11 +1752,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
           .fn()
-          .mockResolvedValue(success([definition])),
+          .mockResolvedValue(success([indicateur])),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue(success([definition])),
+        lockIndicateurs: vi.fn().mockResolvedValue(success([indicateur])),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1802,7 +1802,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
     it("préserve la capacité interne explicite d'écrire un indicateur de groupement pour une non-membre", async () => {
       const tx = { marker: 'transaction' };
-      const definition = {
+      const indicateur = {
         id: 10,
         collectiviteId: null,
         groupementId: 99,
@@ -1818,11 +1818,11 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
           .fn()
-          .mockResolvedValue(success([definition])),
+          .mockResolvedValue(success([indicateur])),
       };
       const lockRepository = { lock: vi.fn().mockResolvedValue(undefined) };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue(success([definition])),
+        lockIndicateurs: vi.fn().mockResolvedValue(success([indicateur])),
       };
       const service = createManageIndicateurValeursService(
         repository as never,
@@ -1919,7 +1919,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
     it("refuse d'écrire une valeur pour la définition personnalisée d'une autre collectivité", async () => {
       const tx = { insert: vi.fn() };
       const transactionManager = createTransactionManager(tx);
-      const foreignDefinition = {
+      const foreignIndicateur = {
         id: 10,
         collectiviteId: 4,
         identifiantReferentiel: null,
@@ -1931,12 +1931,12 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
           .fn()
-          .mockResolvedValue(success([foreignDefinition])),
+          .mockResolvedValue(success([foreignIndicateur])),
       };
       const indicateurLockRepository = {
         lockIndicateurs: vi
           .fn()
-          .mockResolvedValue(success([foreignDefinition])),
+          .mockResolvedValue(success([foreignIndicateur])),
       };
       const service = createManageIndicateurValeursService(
         {} as never,
@@ -1974,7 +1974,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
     it("refuse atomiquement un lot contenant un indicateur de groupement dont la collectivité n'est pas membre", async () => {
       const tx = { insert: vi.fn() };
       const transactionManager = createTransactionManager(tx);
-      const definitions = [
+      const indicateurs = [
         {
           id: 10,
           collectiviteId: null,
@@ -2005,10 +2005,10 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const collectiviteIndicateursRepository = {
         listCollectiviteIndicateurs: vi
           .fn()
-          .mockResolvedValue(success(definitions)),
+          .mockResolvedValue(success(indicateurs)),
       };
       const indicateurLockRepository = {
-        lockIndicateurs: vi.fn().mockResolvedValue(success(definitions)),
+        lockIndicateurs: vi.fn().mockResolvedValue(success(indicateurs)),
       };
       const lockRepository = { lock: vi.fn() };
       const service = createManageIndicateurValeursService(
@@ -2155,7 +2155,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
 
       await expect(
         service.recomputeAllCalculatedIndicateurValeurs(1, null, {
-          definitions: [target],
+          indicateurs: [target],
           skipPermissionCheck: true,
         })
       ).resolves.toEqual([

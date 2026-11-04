@@ -74,7 +74,7 @@ const IndicateursListe = (props: Props) => {
     .map((item) => ({ field: item.value, direction: item.direction }));
 
   const {
-    data: { data: definitions, count = 0 } = {},
+    data: { data: indicateurs, count = 0 } = {},
     isPending,
     isError,
   } = useListIndicateurs({
@@ -124,7 +124,7 @@ const IndicateursListe = (props: Props) => {
           ))}
         </GridContainer>
       ) : /** État vide  */
-      definitions?.length === 0 ? (
+      indicateurs?.length === 0 ? (
         renderEmpty ? (
           renderEmpty(
             isFiltered,
@@ -140,17 +140,17 @@ const IndicateursListe = (props: Props) => {
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
           <GridContainer>
-            {definitions?.map((definition) => (
+            {indicateurs?.map((indicateur) => (
               <IndicateurCard
-                key={definition.id}
-                definition={definition}
+                key={indicateur.id}
+                indicateur={indicateur}
                 href={makeCollectiviteIndicateursUrl({
                   collectiviteId,
                   indicateurView: getIndicateurGroup(
-                    definition.identifiantReferentiel
+                    indicateur.identifiantReferentiel
                   ),
-                  indicateurId: definition.id,
-                  identifiantReferentiel: definition.identifiantReferentiel,
+                  indicateurId: indicateur.id,
+                  identifiantReferentiel: indicateur.identifiantReferentiel,
                 })}
                 className="hover:!bg-white"
                 hideChart={!displayGraphs}
@@ -158,7 +158,7 @@ const IndicateursListe = (props: Props) => {
                 readonly={
                   !canUpdateIndicateur(
                     hasCollectivitePermission,
-                    definition,
+                    indicateur,
                     currentUserId
                   )
                 }

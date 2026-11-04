@@ -55,17 +55,17 @@ const SubactionIndicateurModalResultatsContent = ({
   const user = useUser();
 
   const valeursQuery = useGetValeursUtilisables(actionId, indicateurId);
-  const definitionQuery = useGetIndicateur(indicateurId, collectiviteId);
+  const indicateurQuery = useGetIndicateur(indicateurId, collectiviteId);
   const valeursUtilisables = valeursQuery.data;
-  const definition = definitionQuery.data;
+  const indicateur = indicateurQuery.data;
 
   const { mutate: setScoreFromIndicateur, isPending } =
     useSetScoreFromIndicateur();
   const { mutate: setIndicateurSuivi, isPending: isUpdatingNonSuivi } =
     useSetIndicateurSuivi();
-  const nonSuivi = definition ? !definition.isSuivi : false;
-  const canEditNonSuivi = definition
-    ? canUpdateIndicateur(hasCollectivitePermission, definition, user.id)
+  const nonSuivi = indicateur ? !indicateur.isSuivi : false;
+  const canEditNonSuivi = indicateur
+    ? canUpdateIndicateur(hasCollectivitePermission, indicateur, user.id)
     : false;
 
   const valeurSelectionnee = valeursUtilisables?.selection.fait;
@@ -109,20 +109,20 @@ const SubactionIndicateurModalResultatsContent = ({
     });
   };
 
-  if (valeursQuery.error || definitionQuery.error) {
+  if (valeursQuery.error || indicateurQuery.error) {
     return (
       <ErrorCard
         title={appLabels.resultatsIndicateurErreur}
         retry={() => {
           valeursQuery.refetch();
-          definitionQuery.refetch();
+          indicateurQuery.refetch();
         }}
         retryLabel={appLabels.reessayer}
       />
     );
   }
 
-  if (valeursQuery.isLoading || definitionQuery.isLoading) {
+  if (valeursQuery.isLoading || indicateurQuery.isLoading) {
     return (
       <div className="flex py-8">
         <SpinnerLoader className="m-auto" />

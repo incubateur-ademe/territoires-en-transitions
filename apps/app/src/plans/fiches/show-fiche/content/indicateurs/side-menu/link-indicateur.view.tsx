@@ -42,11 +42,13 @@ export const LinkIndicateursViewBase = ({
 
   const { searchText, searchTextDebounced, ...filters } = watch();
 
-  const { data: { data: definitions } = {}, isPending: isDefinitionsLoading } =
-    useListIndicateurs({
-      collectiviteId,
-      filters: { ...filters, text: searchTextDebounced },
-    });
+  const {
+    data: { data: searchedIndicateurs } = {},
+    isPending: isIndicateursLoading,
+  } = useListIndicateurs({
+    collectiviteId,
+    filters: { ...filters, text: searchTextDebounced },
+  });
 
   return (
     <div className="p-4" data-test={dataTest}>
@@ -130,8 +132,8 @@ export const LinkIndicateursViewBase = ({
         })}
       </div>
       <IndicateursSelectorGrid
-        definitions={definitions}
-        isLoading={isDefinitionsLoading}
+        indicateurs={searchedIndicateurs}
+        isLoading={isIndicateursLoading}
         selectedIndicateurs={selectedIndicateurs}
         onSelect={onSelect}
       />

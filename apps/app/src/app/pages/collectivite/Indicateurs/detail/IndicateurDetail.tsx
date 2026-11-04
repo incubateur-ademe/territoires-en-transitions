@@ -17,16 +17,16 @@ type Props = {
 export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: definition, isLoading } = useGetIndicateur(
+  const { data: indicateur, isLoading } = useGetIndicateur(
     indicateurId,
     collectiviteId
   );
 
   const { data: trajectoire } = useGetStatutTrajectoire(
     Boolean(
-      definition?.identifiantReferentiel &&
+      indicateur?.identifiantReferentiel &&
         INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(
-          definition.identifiantReferentiel
+          indicateur.identifiantReferentiel
         )
     )
   );
@@ -35,16 +35,16 @@ export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
   // démarre le calcul de la trajectoire au chargement de la page
   useGetTrajectoire({
     enabled:
-      !!definition &&
-      isIndicateurPredefini(definition) &&
+      !!indicateur &&
+      isIndicateurPredefini(indicateur) &&
       INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(
-        definition.identifiantReferentiel
+        indicateur.identifiantReferentiel
       ) &&
       status === 'pret_a_calculer',
   });
 
   if (isLoading) return <SpinnerLoader className="m-auto" />;
-  if (!definition) return null;
+  if (!indicateur) return null;
 
-  return <IndicateurLayout {...{ dataTest, definition }} />;
+  return <IndicateurLayout {...{ dataTest, indicateur }} />;
 };

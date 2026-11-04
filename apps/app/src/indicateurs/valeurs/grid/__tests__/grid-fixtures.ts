@@ -24,10 +24,7 @@ const sectors = [
 ];
 const pollutants = ['NOx', 'PM10', 'PM2,5', 'COVNM', 'SO2', 'NH3'];
 
-const fakeIndicateurDefinition = (
-  id: number,
-  titre: string
-): IndicateurPredefini => ({
+const fakeIndicateur = (id: number, titre: string): IndicateurPredefini => ({
   id,
   version: '1.0.0',
   groupementId: null,
@@ -114,7 +111,7 @@ export const fakeRow = ({
 }): IndicateurTableRow => ({
   indicateurId,
   indicateurLabel,
-  indicateurDefinition: fakeIndicateurDefinition(indicateurId, indicateurLabel),
+  indicateurDefinition: fakeIndicateur(indicateurId, indicateurLabel),
   indicateurValeurs,
   isApplicable,
   isValeurRequired,

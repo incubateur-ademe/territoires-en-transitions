@@ -80,7 +80,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
         nomDonnees: prefix,
       })
       .returning();
-    const definitions = await database.db
+    const indicateurs = await database.db
       .insert(indicateurDefinitionTable)
       .values([
         {
@@ -106,7 +106,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       await database.db.delete(indicateurDefinitionTable).where(
         inArray(
           indicateurDefinitionTable.id,
-          definitions.map(({ id }) => id)
+          indicateurs.map(({ id }) => id)
         )
       );
       await database.db
@@ -116,7 +116,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
     });
     const valeur: IndicateurValeurCreate = {
       collectiviteId: collectivite.id,
-      indicateurId: definitions[1].id,
+      indicateurId: indicateurs[1].id,
       dateValeur: '2025-01-01',
       periodicite: 'annuelle',
       metadonneeId: metadonnee.id,
@@ -129,7 +129,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       createdBy: user.id,
       modifiedBy: user.id,
     };
-    return { valeur, definitions };
+    return { valeur, indicateurs };
   }
 
   async function snapshot(id: number, tx?: Transaction) {
@@ -300,11 +300,11 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
   });
 
   it('recalcule les dépendants depuis la valeur manuelle conservée', async () => {
-    const { valeur, definitions } = await fixture();
+    const { valeur, indicateurs } = await fixture();
     const [source, manual] = await repository.upsertValeursWithMetadata([
       {
         ...valeur,
-        indicateurId: definitions[0].id,
+        indicateurId: indicateurs[0].id,
         resultat: 10,
         objectif: 20,
       },
@@ -316,7 +316,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       const calculated =
         await compute.recomputeCollectiviteCalculatedIndicateurValeurs(
           valeur.collectiviteId,
-          definitions.slice(1).map(({ id }) => id),
+          indicateurs.slice(1).map(({ id }) => id),
           tx
         );
       expect(calculated.valeurIdsToDelete).toEqual([]);
@@ -328,7 +328,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
             objectif: 40,
           }),
           expect.objectContaining({
-            indicateurId: definitions[2].id,
+            indicateurId: indicateurs[2].id,
             resultat: 21,
             objectif: 0,
           }),
@@ -340,7 +340,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       );
       expect(written).toHaveLength(1);
       expect(written[0]).toMatchObject({
-        indicateurId: definitions[2].id,
+        indicateurId: indicateurs[2].id,
         resultat: 21,
         objectif: 0,
       });
@@ -371,7 +371,7 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
     const [downstream] = await database.db
       .select()
       .from(indicateurValeurTable)
-      .where(eq(indicateurValeurTable.indicateurId, definitions[2].id));
+      .where(eq(indicateurValeurTable.indicateurId, indicateurs[2].id));
     expect(downstream).toMatchObject({
       resultat: 21,
       objectif: 0,

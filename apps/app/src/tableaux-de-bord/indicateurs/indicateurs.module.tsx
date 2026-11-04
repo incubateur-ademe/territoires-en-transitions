@@ -78,17 +78,17 @@ export const IndicateursModule = ({
       footerEndButtons={getBottomLinks()}
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {indicateurs?.map((definition) => (
+        {indicateurs?.map((indicateur) => (
           <IndicateurCard
-            key={definition.id}
-            definition={definition}
+            key={indicateur.id}
+            indicateur={indicateur}
             href={makeCollectiviteIndicateursUrl({
               collectiviteId,
               indicateurView: getIndicateurGroup(
-                definition.identifiantReferentiel
+                indicateur.identifiantReferentiel
               ),
-              indicateurId: definition.id,
-              identifiantReferentiel: definition.identifiantReferentiel,
+              indicateurId: indicateur.id,
+              identifiantReferentiel: indicateur.identifiantReferentiel,
             })}
           />
         ))}

@@ -78,13 +78,13 @@ export class ListCollectiviteIndicateursRepository {
       byCollectiviteId,
     ];
 
-    const definitions = await (tx ?? this.databaseService.db)
+    const indicateurs = await (tx ?? this.databaseService.db)
       .select(indicateurSelection)
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
 
-    this.logger.log(`${definitions.length} définitions trouvées`);
+    this.logger.log(`${indicateurs.length} définitions trouvées`);
 
-    return validateNatures(definitions);
+    return validateNatures(indicateurs);
   }
 }

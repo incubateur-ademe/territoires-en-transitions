@@ -12,7 +12,7 @@ const periode = IndicateurPeriodes.parse(
   IndicateurPeriodiciteEnum.ANNUELLE,
   '2021'
 );
-const definition = {
+const indicateur = {
   id: 768,
   version: '1.0.0',
   groupementId: null,
@@ -58,7 +58,7 @@ const definition = {
 
 const props = {
   chartInfo: {
-    definition,
+    definition: indicateur,
     typesSegmentation: [],
     segmentation: undefined,
     setSegmentation: () => undefined,
@@ -174,7 +174,7 @@ const props = {
     hasValeur: true,
     isLoading: false,
   },
-  definition,
+  indicateur,
   href: '/collectivite/1/indicateurs/perso/768?',
   className: 'hover:!bg-white',
   hideChart: false,

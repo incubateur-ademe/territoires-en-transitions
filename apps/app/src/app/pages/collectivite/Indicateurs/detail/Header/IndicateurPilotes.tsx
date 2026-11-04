@@ -8,12 +8,12 @@ import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { InlineEditWrapper } from '@tet/ui';
 
 type Props = {
-  definition: IndicateurDetaille;
+  indicateur: IndicateurDetaille;
   isReadonly: boolean;
 };
 
-export const IndicateurPilotes = ({ definition, isReadonly }: Props) => {
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+export const IndicateurPilotes = ({ indicateur, isReadonly }: Props) => {
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
   return (
     <MetadataItemPersonne
@@ -27,7 +27,7 @@ export const IndicateurPilotes = ({ definition, isReadonly }: Props) => {
       }}
       emptyLabel={SANS_PILOTE_LABEL}
       compact
-      personnes={(definition.pilotes ?? []).map((p) => ({
+      personnes={(indicateur.pilotes ?? []).map((p) => ({
         tagId: p.tagId,
         userId: p.userId,
         tagName: p.tagId ? p.nom : null,
@@ -43,12 +43,12 @@ export const IndicateurPilotes = ({ definition, isReadonly }: Props) => {
 };
 
 export const IndicateurServicesPilotes = ({
-  definition,
+  indicateur,
   isReadonly,
 }: Props) => {
-  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
-  const services = definition.services ?? [];
+  const services = indicateur.services ?? [];
 
   return (
     <InlineEditWrapper

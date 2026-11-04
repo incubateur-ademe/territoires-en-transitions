@@ -642,7 +642,7 @@ describe('Périodicité de déclaration des indicateurs', () => {
       '-',
       ''
     )}`;
-    const definition = {
+    const indicateur = {
       ...sampleImportIndicateurDefinition,
       identifiantReferentiel,
       titre: 'Import annuel',
@@ -664,7 +664,7 @@ describe('Périodicité de déclaration des indicateurs', () => {
           )
         );
     });
-    const imported = await importer.upsertIndicateurDefinitions([definition]);
+    const imported = await importer.upsertIndicateurDefinitions([indicateur]);
     const created = imported.definitions.find(
       (row) => row.identifiantReferentiel === identifiantReferentiel
     );
@@ -673,11 +673,11 @@ describe('Périodicité de déclaration des indicateurs', () => {
       titre: 'Import annuel',
     });
     await importer.upsertIndicateurDefinitions([
-      { ...definition, titre: 'Titre modifié' },
+      { ...indicateur, titre: 'Titre modifié' },
     ]);
     await expect(
       importer.upsertIndicateurDefinitions([
-        { ...definition, periodicite: IndicateurPeriodiciteEnum.MENSUELLE },
+        { ...indicateur, periodicite: IndicateurPeriodiciteEnum.MENSUELLE },
       ])
     ).rejects.toThrow('est fixée à sa création');
     const [saved] = await database.db
