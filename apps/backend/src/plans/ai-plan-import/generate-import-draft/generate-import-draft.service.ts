@@ -648,7 +648,7 @@ const pipelineErrorMessage = (
 ): string => {
   switch (error.kind) {
     case 'document_too_long':
-      return `Document trop long pour l'import (${error.chunks} parties à analyser, ${error.maxChunks} au maximum) : importez-le en plusieurs fois`;
+      return `Document trop long pour l'import (${error.chunks} parties à analyser, ${error.maxChunks} au maximum)`;
     case 'wrong_document_tome':
       return `Ce document semble être ${WRONG_TOME_LABELS[error.tome]} (« ${
         error.evidence

@@ -15,7 +15,7 @@ Deux fournisseurs de modèles sont branchés derrière `LlmService`, au choix pa
 | Fenêtre du modèle fort | 131 000 tokens | 1 000 000 tokens |
 | Stratégie | `segmented` : le document en morceaux de la taille d'une fiche | `whole-document` : le document en quelques grandes tranches |
 | OCR des pages scannées | oui | non |
-| Quotas | 128 000 tokens d'entrée et 10 requêtes par minute, par modèle | pas de limite connue |
+| Quotas | 246 000 tokens d'entrée et 50 requêtes par minute, par modèle | pas de limite connue |
 
 Le code ne teste jamais le nom du fournisseur : tout passe par
 `llm.capabilities` (`strategy`, `ocr`) et par `maxInputTokensFor(tier)`. Changer
@@ -509,8 +509,8 @@ Configuration (`utils/config/configuration.model.ts`) :
 | `ALBERT_MODEL` | — | modèle fort, requis avec Albert |
 | `ALBERT_MODEL_LIGHT` | `ministral-3-8b-instruct-2512` | tri ; vide : le modèle fort |
 | `ALBERT_MODEL_OCR` | `lightonocr-2-1b` | OCR ; vide : désactivé |
-| `ALBERT_MAX_INPUT_TOKENS_PER_MINUTE` | 128 000 | quota de tokens, par modèle |
-| `ALBERT_MAX_REQUESTS_PER_MINUTE` | 10 | quota de requêtes, par modèle |
+| `ALBERT_MAX_INPUT_TOKENS_PER_MINUTE` | 246 000 | quota de tokens, par modèle |
+| `ALBERT_MAX_REQUESTS_PER_MINUTE` | 50 | quota de requêtes, par modèle |
 | `ALBERT_MAX_CONCURRENT_CALLS` | 2 | appels simultanés, tous imports confondus (une étape en demande jusqu'à 5) |
 | `ALBERT_REASONING_EFFORT` | — | effort de raisonnement du modèle fort |
 | `GEMINI_MODEL` | — | modèle Gemini |

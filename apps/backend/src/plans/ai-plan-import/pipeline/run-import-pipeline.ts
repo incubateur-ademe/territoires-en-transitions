@@ -99,8 +99,12 @@ const CHUNK_OVERLAP_TOKENS = 1_500;
  * 10 tranches font environ 600 000 tokens, soit plusieurs centaines de pages.
  */
 export const MAX_DOCUMENT_CHUNKS = 10;
-/** Même garde-fou pour la stratégie segmentée, à la maille de la fiche. */
-export const MAX_DOCUMENT_UNITS = 300;
+/**
+ * Même garde-fou pour la stratégie segmentée, à la maille de la fiche (1 000 à
+ * 3 500 tokens). Les unités sont regroupées par appel : le quota de la clé
+ * Albert (50 requêtes et 246 000 tokens par minute) en absorbe 600.
+ */
+export const MAX_DOCUMENT_UNITS = 600;
 /**
  * Les vérifications relisent des fenêtres d'unités adjacentes : elles n'ont
  * pas besoin de la finesse d'une fiche, et un appel par fiche coûterait cher.

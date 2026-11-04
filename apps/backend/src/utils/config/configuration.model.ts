@@ -139,21 +139,23 @@ export const backendConfigurationSchema = z
       .describe(
         "Modèle image-texte d'Albert qui transcrit les pages scannées ; vide : OCR désactivé"
       ),
-    // Quota observé sur la clé : « 128000 input tokens per minute exceeded ».
+    // Quota de la clé de production (GET /v1/me/info) : 246 000 à 256 000
+    // selon le modèle, le plus bas retenu.
     ALBERT_MAX_INPUT_TOKENS_PER_MINUTE: z.coerce
       .number()
       .int()
       .positive()
-      .prefault(128000)
+      .prefault(246000)
       .describe(
         "Tokens d'entrée par minute accordés par modèle à la clé Albert, lissés avant l'appel plutôt que subis en 429"
       ),
-    // Quota observé sur la clé : « 10 requests per minute exceeded ».
+    // Quota de la clé de production (GET /v1/me/info) : 50 à 100 selon le
+    // modèle, le plus bas retenu.
     ALBERT_MAX_REQUESTS_PER_MINUTE: z.coerce
       .number()
       .int()
       .positive()
-      .prefault(10)
+      .prefault(50)
       .describe(
         "Requêtes par minute accordées par modèle à la clé Albert, lissées avant l'appel plutôt que subies en 429"
       ),
