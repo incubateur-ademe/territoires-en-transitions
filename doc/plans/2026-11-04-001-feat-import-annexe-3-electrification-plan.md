@@ -124,6 +124,7 @@ les phases 5 et 6, sans ouvrir le profil annexe avant la phase 7.
 l'annexe dans tous les environnements. Le flag de déploiement est branché en
 PR 5, lorsque le pipeline existe ; aucun flag actuel ni mode super-admin ne
 peut ouvrir ce profil en 1A. Aucune migration n'est nécessaire pour ce lot.
+Le blocage temporaire de création Électrification livré dans #5673 est conservé.
 
 Le suivi expose `getAiImportStatus`, `getCurrentAiImport`,
 `listRecentAiImports` et `getAiImportCapabilities` sous `plans.aiImport`.
@@ -161,6 +162,8 @@ générique, les permissions et les checkpoints conservés en base. Aucun nouvea
 fichier de tests unitaires ; les suites unitaires existantes restent en place.
 Typechecks du backend, de ses tests et de l'app, ESLint ciblé et liens locaux
 vérifiés. Aucun appel réel au modèle.
+Après rebase sur l'ADR fusionné, les 30 e2e et les 61 tests existants
+d'enfilement/génération passent, y compris le blocage de création Électrification.
 Le suivi dans l'app (1B) et le déploiement en production restent à faire.
 
 **Validation :** jobs historiques avec et sans plan provisoire ; checkpoint v1 ;
