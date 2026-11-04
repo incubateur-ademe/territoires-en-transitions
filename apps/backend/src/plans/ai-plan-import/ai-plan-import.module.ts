@@ -24,6 +24,8 @@ import { FindPreviousImportRouter } from './find-previous-import/find-previous-i
 import { FindPreviousImportService } from './find-previous-import/find-previous-import.service';
 import { GetImportStatusRouter } from './get-import-status/get-import-status.router';
 import { GetImportStatusService } from './get-import-status/get-import-status.service';
+import { GetImportCapabilitiesRouter } from './get-import-capabilities/get-import-capabilities.router';
+import { GetImportCapabilitiesService } from './get-import-capabilities/get-import-capabilities.service';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { ResumeImportRouter } from './resume-import/resume-import.router';
 import { ResumeImportService } from './resume-import/resume-import.service';
@@ -54,6 +56,8 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     GenerateImportDraftWorker,
     GetImportStatusService,
     GetImportStatusRouter,
+    GetImportCapabilitiesService,
+    GetImportCapabilitiesRouter,
     FindPreviousImportService,
     FindPreviousImportRouter,
     NotifyPlanImportedService,
@@ -62,6 +66,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
   ],
   exports: [
     GetImportStatusRouter,
+    GetImportCapabilitiesRouter,
     FindPreviousImportRouter,
     ResumeImportRouter,
   ],

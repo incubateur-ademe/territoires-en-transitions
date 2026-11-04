@@ -246,6 +246,53 @@ describe('EnqueueImportService', () => {
     expect(add).not.toHaveBeenCalled();
   });
 
+  it.each([
+    [
+      'annexe-3-electrification',
+      AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE,
+    ],
+    ['unknown', AiPlanImportErrorEnum.UNKNOWN_IMPORT_PROFILE],
+  ])(
+    'refuse %s avant tout effet de bord même en mode support',
+    async (profile, error) => {
+      const { service, uploadBuffer, storeDocument, createWithinQuotas, add } =
+        buildService({ canImportInParallel: true });
+
+      const result = await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options: { ...options, profile } as AiPlanImportJobOptions,
+      });
+
+      expect(result).toEqual({ success: false, error });
+      expect(uploadBuffer).not.toHaveBeenCalled();
+      expect(storeDocument).not.toHaveBeenCalled();
+      expect(createWithinQuotas).not.toHaveBeenCalled();
+      expect(add).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each([undefined, 'generic'] as const)(
+    'enregistre explicitement le contrat générique pour le profil %s',
+    async (profile) => {
+      const { service, createWithinQuotas } = buildService();
+      const result = await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options: { ...options, profile },
+      });
+
+      expect(result).toMatchObject({ success: true, data: { planId: 42 } });
+      expect(createWithinQuotas.mock.calls[0][0].options).toMatchObject({
+        profile: 'generic',
+        contractVersion: 1,
+        catalogueVersion: null,
+      });
+    }
+  );
+
   it('retourne le jobId et enfile avec le même id en clé de dédup BullMQ', async () => {
     const { service, add } = buildService();
 
@@ -258,7 +305,7 @@ describe('EnqueueImportService', () => {
 
     expect(result).toEqual({
       success: true,
-      data: { jobId: 'job-1', planId: 42 },
+      data: { profile: 'generic', jobId: 'job-1', planId: 42 },
     });
     expect(add).toHaveBeenCalledWith(
       'generate-import-draft',

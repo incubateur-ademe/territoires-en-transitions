@@ -2,8 +2,25 @@ import { describe, expect, it } from 'vitest';
 import { enqueueImportFormSchema } from './enqueue-import.input';
 
 describe('enqueueImportFormSchema', () => {
+  it.each(['generic', 'annexe-3-electrification'])(
+    'reconnaît le profil %s sans le confondre avec un import générique',
+    (profile) => {
+      expect(
+        enqueueImportFormSchema.parse({ planName: 'Mon plan', profile }).profile
+      ).toBe(profile);
+    }
+  );
+
+  it.each(['unknown', '', null])('refuse le profil invalide %s', (profile) => {
+    expect(
+      enqueueImportFormSchema.safeParse({ planName: 'Mon plan', profile })
+        .success
+    ).toBe(false);
+  });
+
   it('applique les valeurs par défaut quand seul le nom du plan est fourni', () => {
     expect(enqueueImportFormSchema.parse({ planName: 'Mon plan' })).toEqual({
+      profile: 'generic',
       instructions: '',
       planName: 'Mon plan',
       withVerifications: true,
@@ -34,6 +51,7 @@ describe('enqueueImportFormSchema', () => {
         disabledFields: ['budget', 'statut'],
       })
     ).toEqual({
+      profile: 'generic',
       instructions: 'Ignore les annexes',
       planName: 'Mon plan',
       withVerifications: false,

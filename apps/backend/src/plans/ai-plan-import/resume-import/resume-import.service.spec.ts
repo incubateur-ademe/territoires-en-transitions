@@ -95,6 +95,34 @@ const buildService = ({
 };
 
 describe('ResumeImportService', () => {
+  it.each([
+    { profile: 'annexe-3-electrification' },
+    { profile: 'unknown' },
+    { contractVersion: 2 },
+    { catalogueVersion: 'annexe-v1' },
+  ])(
+    'refuse la reprise du contrat %j sans mutation ni enfilement',
+    async (contract) => {
+      const { service, jobRepository, queue } = buildService({
+        job: {
+          ...failedJob,
+          options: {
+            ...failedJob.options,
+            ...contract,
+          } as AiPlanImportJob['options'],
+        },
+      });
+
+      const result = await service.resume({ jobId: 'job-1' }, { user });
+
+      expect(result).toEqual(
+        failure(AiPlanImportErrorEnum.UNSUPPORTED_IMPORT_CONTRACT)
+      );
+      expect(jobRepository.resumeFailed).not.toHaveBeenCalled();
+      expect(queue.add).not.toHaveBeenCalled();
+    }
+  );
+
   it('remet le job en file sous un identifiant BullMQ neuf et repasse son plan en import', async () => {
     const { service, queue, planVerificationRepository } = buildService();
 
@@ -144,12 +172,13 @@ describe('ResumeImportService', () => {
   });
 
   it("rétablit l'échec quand la remise en file échoue", async () => {
-    const { service, jobRepository, planVerificationRepository } =
-      buildService({
+    const { service, jobRepository, planVerificationRepository } = buildService(
+      {
         add: vi.fn(async () => {
           throw new Error('redis indisponible');
         }),
-      });
+      }
+    );
 
     const result = await service.resume({ jobId: 'job-1' }, { user });
 

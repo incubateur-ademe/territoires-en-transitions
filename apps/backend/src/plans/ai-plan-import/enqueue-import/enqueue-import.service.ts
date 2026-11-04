@@ -36,6 +36,12 @@ import {
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
 import {
+  GENERIC_IMPORT_CONTRACT_VERSION,
+  isImportProfileImplemented,
+  resolveImportProfile,
+} from '../models/import-profile';
+import type { EnqueueImportOutput } from './enqueue-import.output';
+import {
   detectSourceMimeType,
   DOCX_MIME,
   XLSX_MIME,
@@ -70,7 +76,7 @@ export class EnqueueImportService {
 
   async enqueue(
     input: EnqueueImportInput
-  ): Promise<Result<{ jobId: string; planId: number }, AiPlanImportError>> {
+  ): Promise<Result<EnqueueImportOutput, AiPlanImportError>> {
     const { collectiviteId, user, file, options, confirmReimport } = input;
 
     const permissionResult = await this.permissions.isAllowed(
@@ -81,6 +87,16 @@ export class EnqueueImportService {
     );
     if (!permissionResult.success) {
       return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
+    }
+
+    const profile = resolveImportProfile(options.profile);
+    if (profile === null) {
+      return failure(AiPlanImportErrorEnum.UNKNOWN_IMPORT_PROFILE);
+    }
+    // Aucun upload, plan ou job tant que le profil n'a pas de pipeline complet.
+    // Un flag UI ou le mode super-admin ne peuvent pas lever cette restriction.
+    if (!isImportProfileImplemented(profile)) {
+      return failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE);
     }
 
     let withSecteurs = false;
@@ -179,7 +195,13 @@ export class EnqueueImportService {
         createdBy: user.id,
         sourcePath,
         fichierId: fichier.data.id,
-        options: { ...options, withSecteurs },
+        options: {
+          ...options,
+          profile: 'generic',
+          contractVersion: GENERIC_IMPORT_CONTRACT_VERSION,
+          catalogueVersion: null,
+          withSecteurs,
+        },
       },
       {
         limitUserInFlight: !canImportInParallel.success,
@@ -247,7 +269,7 @@ export class EnqueueImportService {
         withSousActions: options.withSousActions,
       },
     });
-    return success({ jobId, planId });
+    return success({ profile: 'generic', jobId, planId });
   }
 
   /**

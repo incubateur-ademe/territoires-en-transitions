@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { StepStates } from '../pipeline/run-import-pipeline';
 import { DisableableField } from './disableable-field';
 import { ImportJobStats } from './import-job-stats';
+import { AiPlanImportProfile } from './import-profile';
 import { PlanDraft } from './plan-draft';
 
 export const aiPlanImportJobStatusValues = [
@@ -27,6 +28,10 @@ export const aiPlanImportJobInFlightStatuses: AiPlanImportJobStatus[] = [
 ];
 
 export type AiPlanImportJobOptions = {
+  /** Absents sur les jobs historiques, qui restent des imports génériques v1. */
+  profile?: AiPlanImportProfile;
+  contractVersion?: number;
+  catalogueVersion?: string | null;
   instructions: string;
   planName: string;
   planType?: number;
@@ -69,6 +74,10 @@ export type PreviousAiImport = {
 export type AiPlanImportJobStatusView = {
   id: string;
   collectiviteId: number;
+  planName: string | null;
+  profile: AiPlanImportProfile | null;
+  createdAt: string;
+  finishedAt: string | null;
   status: AiPlanImportJobStatus;
   stepStates: StepStates;
   error: string | null;

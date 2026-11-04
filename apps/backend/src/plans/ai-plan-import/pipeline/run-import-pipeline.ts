@@ -1,4 +1,5 @@
 import { DisableableField } from '../models/disableable-field';
+import { GENERIC_IMPORT_CONTRACT_VERSION } from '../models/import-profile';
 import { upperFirst } from 'es-toolkit';
 import {
   analyzeWorkbook,
@@ -35,7 +36,6 @@ import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
 import { describeLlmError } from '@tet/backend/utils/llm/llm.errors';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { EffetAttendu } from '@tet/domain/shared';
-import { z } from 'zod';
 import { ExtractedAction, isPinnedAction } from '../models/extracted-action';
 import type { ImportStepRun } from '../models/import-step-run';
 import { PlanDraft } from '../models/plan-draft';
@@ -54,28 +54,14 @@ import {
   type PipelineProgress,
   type PipelineState,
 } from './pipeline-checkpoint';
+import {
+  type StepName,
+  type StepStates,
+  stepStatesSchema,
+} from './pipeline-step-states';
 
-const stepStateSchema = z.enum(['ok', 'skipped', 'pending']);
-
-// Les étapes ajoutées après coup ont un défaut : les jobs déjà en base n'en
-// ont pas la trace, et le routeur de statut valide ce qu'il lit.
-export const stepStatesSchema = z.object({
-  reading: stepStateSchema.default('skipped'),
-  scouting: stepStateSchema.default('skipped'),
-  extraction: stepStateSchema,
-  hierarchy: stepStateSchema.default('skipped'),
-  scoring: stepStateSchema,
-  consolidation: stepStateSchema,
-  enrichment: stepStateSchema,
-  secteurs: stepStateSchema.default('skipped'),
-  qualitativeReview: stepStateSchema,
-});
-
-export type StepState = z.infer<typeof stepStateSchema>;
-
-export type StepStates = z.infer<typeof stepStatesSchema>;
-
-export type StepName = keyof StepStates;
+export { stepStatesSchema } from './pipeline-step-states';
+export type { StepName, StepState, StepStates } from './pipeline-step-states';
 
 export type ReadingError =
   | {
@@ -277,6 +263,9 @@ export const runImportPipeline = async (
     progress: Progress = state.progress
   ): Promise<void> =>
     input.onCheckpoint?.({
+      profile: 'generic',
+      contractVersion: GENERIC_IMPORT_CONTRACT_VERSION,
+      catalogueVersion: null,
       schemaVersion: PIPELINE_CHECKPOINT_SCHEMA_VERSION,
       completedStep,
       currentDate: input.currentDate,
