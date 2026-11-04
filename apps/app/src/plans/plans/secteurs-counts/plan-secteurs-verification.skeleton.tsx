@@ -1,5 +1,5 @@
 export const ListeFichesSkeleton = () => (
-  <div className="flex flex-col gap-2 p-4 animate-pulse">
+  <div className="flex flex-col gap-2 animate-pulse">
     <div className="h-5 w-32 rounded-md bg-grey-3" />
     <ul className="mb-0 pl-0 list-none border-t border-grey-3">
       {[1, 2, 3, 4, 5].map((ligne) => (

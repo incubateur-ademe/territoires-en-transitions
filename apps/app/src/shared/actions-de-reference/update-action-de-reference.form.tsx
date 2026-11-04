@@ -179,10 +179,7 @@ const UpdateActionDeReferenceFields = ({
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(saveFields)}
-        className="flex flex-col gap-6 p-4"
-      >
+      <form onSubmit={handleSubmit(saveFields)} className="flex flex-col gap-6">
         <Field
           title={appLabels.actionDeReferenceTitreLabel}
           state={errors.titre ? 'error' : 'default'}

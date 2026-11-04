@@ -44,7 +44,7 @@ export const EtapesInstructionSidePanelContent = ({
   avis,
   footer,
 }: EtapesInstructionSidePanelContentProps) => (
-  <div className="flex flex-col gap-3 p-4">
+  <div className="flex flex-col gap-3">
     {enElaboration && (
       <div data-test="demarches.pcaet.instruction.en-elaboration">
         <Alert
