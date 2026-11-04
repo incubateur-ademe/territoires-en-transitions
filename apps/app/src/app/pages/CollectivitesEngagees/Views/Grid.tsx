@@ -1,9 +1,8 @@
 import { appLabels } from '@/app/labels/catalog';
 import { Data } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { RecherchesViewParam } from '@/app/app/paths';
-import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg?url';
+import NoResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import Image from 'next/image';
 import { JSX } from 'react';
 
 type Props<T extends Data> = {
@@ -46,12 +45,9 @@ export const Grid = <T extends Data>({
           <div className="text-xl">
             {appLabels.modifierFiltresPourPlusDeResultats}
           </div>
-          <Image
-            className="w-[24rem] self-center mt-10"
-            src={noResultIllustration}
-            width={384}
-            height={384}
-            alt=""
+          <NoResultIllustration
+            className="inline-block w-[24rem] h-auto mt-10"
+            aria-hidden
           />
         </div>
       ) : (
