@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { getIndicateurDataOrThrow } from '@tet/backend/indicateurs/definitions/indicateur-nature.utils';
-import { IndicateurRepository } from '@tet/backend/indicateurs/indicateur/indicateur.repository';
+import { ListCollectiviteIndicateursRepository } from '@tet/backend/indicateurs/definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { GetAxeService } from '@tet/backend/plans/axes/get-axe/get-axe.service';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { FicheAnnexesService } from '@tet/backend/plans/fiches/fiche-annexes/fiche-annexes.service';
@@ -29,7 +29,7 @@ export class FicheExportPayloadService {
     private readonly listFichesService: ListFichesService,
     private readonly getAxeService: GetAxeService,
     private readonly actionDefinitionsRepository: ActionDefinitionsRepository,
-    private readonly indicateurRepository: IndicateurRepository,
+    private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository,
     private readonly fichePermissions: FicheActionPermissionsService,
     private readonly ficheAnnexesService: FicheAnnexesService
   ) {}
@@ -149,8 +149,13 @@ export class FicheExportPayloadService {
     fiche: FicheWithRelations;
   }): Promise<PdfIndicateurDefinition[]> {
     const indicateurIds = (fiche.indicateurs ?? []).map((i) => i.id);
+    if (indicateurIds.length === 0) {
+      return [];
+    }
     const definitions = getIndicateurDataOrThrow(
-      await this.indicateurRepository.listByIds(indicateurIds)
+      await this.listCollectiviteIndicateursRepository.listCollectiviteIndicateurs(
+        { indicateurIds }
+      )
     );
     return definitions.map((definition) => ({
       ...definition,

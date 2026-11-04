@@ -16,8 +16,8 @@ import { TransactionModule } from '../utils/transaction/transaction.module';
 import { TrackingModule } from '../utils/tracking/tracking.module';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
+import { IndicateurModule } from './indicateur/indicateur.module';
 import { IndicateurLockRepository } from './definitions/indicateur-lock.repository';
-import { ListCollectiviteIndicateursRepository } from './definitions/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
 import { ListIndicateursPredefinisController } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.controller';
 import { ListIndicateursPredefinisRepository } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import { ListIndicateursPredefinisService } from './definitions/list-indicateurs-predefinis/list-indicateurs-predefinis.service';
@@ -80,7 +80,6 @@ const DEFINITIONS_PROVIDERS = [
 
   ListIndicateursPredefinisRepository,
   ListIndicateursPredefinisService,
-  ListCollectiviteIndicateursRepository,
   IndicateurLockRepository,
 
   CreateIndicateurService,
@@ -109,6 +108,7 @@ const DEFINITIONS_PROVIDERS = [
     PersonnalisationsModule,
     FichesModule,
     ReferentielsCoreModule,
+    IndicateurModule,
   ],
   providers: [
     ExportIndicateursService,

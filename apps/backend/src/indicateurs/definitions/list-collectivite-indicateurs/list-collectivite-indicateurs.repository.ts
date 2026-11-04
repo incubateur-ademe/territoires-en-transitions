@@ -1,4 +1,4 @@
-import { indicateurDefinitionPeriodiciteSelection } from '@tet/backend/indicateurs/definitions/indicateur-periodicite.column';
+import { indicateurSelection } from '../indicateur.column';
 import { Injectable, Logger } from '@nestjs/common';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
@@ -11,7 +11,6 @@ import {
   and,
   eq,
   exists,
-  getTableColumns,
   inArray,
   isNull,
   or,
@@ -81,8 +80,7 @@ export class ListCollectiviteIndicateursRepository {
 
     const definitions = await (tx ?? this.databaseService.db)
       .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        ...indicateurDefinitionPeriodiciteSelection,
+        ...indicateurSelection,
       })
       .from(indicateurDefinitionTable)
       .where(and(...conditions));
