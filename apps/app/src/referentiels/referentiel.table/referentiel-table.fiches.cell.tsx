@@ -40,11 +40,7 @@ function FichesCellContent({
     setPanel({
       type: 'open',
       title: panelTitle,
-      content: (
-        <div className="px-6 py-4">
-          <FichesActionLiees actionId={action.actionId} />
-        </div>
-      ),
+      content: <FichesActionLiees actionId={action.actionId} />,
     });
   }, [isActive, setPanel, panelTitle, action]);
 

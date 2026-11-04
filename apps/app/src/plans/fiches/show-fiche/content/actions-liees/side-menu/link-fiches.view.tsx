@@ -45,7 +45,7 @@ export const LinkFichesView = () => {
   const filteredFiches = fiches.filter((fiche) => fiche.id !== currentFicheId);
 
   return (
-    <div className="p-4">
+    <div>
       <div className="relative flex flex-col gap-4">
         <Field title={appLabels.rechercherParNomOuDescription} small>
           <Input

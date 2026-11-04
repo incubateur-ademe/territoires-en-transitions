@@ -82,7 +82,9 @@ export const SidePanel = (): JSX.Element => {
         {panel.headerExtra}
       </div>
 
-      <div className="grow flex flex-col overflow-y-auto">{panel.content}</div>
+      <div className="grow flex flex-col overflow-y-auto p-4">
+        {panel.content}
+      </div>
     </aside>
   );
 };

@@ -47,19 +47,17 @@ function DocumentsCellContent({
       type: 'open',
       title: panelTitle,
       content: (
-        <div className="px-6 py-4">
-          <ReferentielProvider referentielId={referentielId}>
-            <section className="flex flex-col gap-5">
-              <DownloadDocumentsButton key={action.actionId} action={action} />
-              <ActionPreuvePanel
-                withSubActions
-                showWarning
-                displayInPanel
-                action={action}
-              />
-            </section>
-          </ReferentielProvider>
-        </div>
+        <ReferentielProvider referentielId={referentielId}>
+          <section className="flex flex-col gap-5">
+            <DownloadDocumentsButton key={action.actionId} action={action} />
+            <ActionPreuvePanel
+              withSubActions
+              showWarning
+              displayInPanel
+              action={action}
+            />
+          </section>
+        </ReferentielProvider>
       ),
     });
   }, [isActive, setPanel, panelTitle, referentielId, action]);

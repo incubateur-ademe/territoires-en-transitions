@@ -71,9 +71,7 @@ export const PlanSecteursVerificationPanel = ({
 
   if (isError) {
     return (
-      <div className="p-4">
-        <Alert state="error" title={appLabels.planSecteursErreurChargement} />
-      </div>
+      <Alert state="error" title={appLabels.planSecteursErreurChargement} />
     );
   }
 
@@ -121,7 +119,7 @@ const ListeFiches = ({
   onSelect: (fiche: FicheSecteursAVerifier) => void;
 }) => (
   <div
-    className="flex flex-col gap-6 p-4"
+    className="flex flex-col gap-6"
     data-test="plans.secteurs-counts-alert.liste"
   >
     {fiches.length === 0 ? (
@@ -289,7 +287,7 @@ const RevueFiche = ({
 
   return (
     <div
-      className="flex flex-col gap-6 p-4"
+      className="flex flex-col gap-6"
       data-test="plans.secteurs-counts-alert.revue"
     >
       <div className="flex items-center justify-between gap-2">

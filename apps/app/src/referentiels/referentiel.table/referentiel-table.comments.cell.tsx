@@ -68,18 +68,16 @@ function CommentsCellContent({
       type: 'open',
       title: appLabels.commentairesTitre,
       content: (
-        <div className="px-6 py-4">
-          <ReferentielProvider referentielId={referentielId}>
-            <ActionProvider actionId={action.actionId}>
-              <ActionCommentsSidePanelContent
-                action={action}
-                updateTitlePanel={(title: string) => {
-                  setTitle(title);
-                }}
-              />
-            </ActionProvider>
-          </ReferentielProvider>
-        </div>
+        <ReferentielProvider referentielId={referentielId}>
+          <ActionProvider actionId={action.actionId}>
+            <ActionCommentsSidePanelContent
+              action={action}
+              updateTitlePanel={(title: string) => {
+                setTitle(title);
+              }}
+            />
+          </ActionProvider>
+        </ReferentielProvider>
       ),
     });
   }, [isActive, setPanel, referentielId, action, setTitle]);

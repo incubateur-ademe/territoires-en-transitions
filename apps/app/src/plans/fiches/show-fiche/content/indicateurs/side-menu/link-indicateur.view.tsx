@@ -51,7 +51,7 @@ export const LinkIndicateursViewBase = ({
   });
 
   return (
-    <div className="p-4" data-test={dataTest}>
+    <div data-test={dataTest}>
       <div className="relative flex flex-col gap-4">
         <Field title={appLabels.rechercherNomDescription} small>
           <Input

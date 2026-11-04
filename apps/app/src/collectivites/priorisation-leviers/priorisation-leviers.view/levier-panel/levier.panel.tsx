@@ -18,7 +18,7 @@ export const LevierPanel = ({
   preselection,
   actionsRef,
 }: LevierPanelProps): JSX.Element => (
-  <div className="flex flex-col gap-4 p-4">
+  <div className="flex flex-col gap-4">
     <LevierActionsDeReferenceList
       actionsRef={actionsRef}
       levierId={levier.levierId}
