@@ -29,6 +29,8 @@ const ACTION_AVEC_FORMULE = 'te_2.2.3.1';
 const ACTION_SANS_FORMULE = 'te_2.2.3.2';
 /** Tâche TE dédiée aux tests d'une formule basée sur est_suivi(...) */
 const ACTION_EST_SUIVI = 'te_2.2.3.3';
+/** Tâche TE dédiée aux tests d'une formule basée sur reduction(...) */
+const ACTION_REDUCTION = 'te_2.2.3.4';
 
 describe('SetScoreFromIndicateurRouter', () => {
   let app: INestApplication;
@@ -376,6 +378,75 @@ describe('SetScoreFromIndicateurRouter', () => {
           id: valeurIds[1],
         })
       ).resolves.toBeUndefined();
+    });
+  });
+
+  describe("Valeur de l'année de départ de reduction(...)", () => {
+    const IDENTIFIANT_REDUCTION = 'test_score_from_indicateur_reduction';
+
+    /**
+     * Résultat de 100 en 2020 (année de départ) puis de 90 en 2025 : -50 %
+     * visés en 2030 donnent 75 attendus en 2025, soit une progression de 0,4
+     */
+    const insertFixtureReduction = () =>
+      insertFixtureScoreFromIndicateur(databaseService, {
+        collectiviteId,
+        actionId: ACTION_REDUCTION,
+        identifiantReferentiel: IDENTIFIANT_REDUCTION,
+        exprScore: `reduction(${IDENTIFIANT_REDUCTION}, 2020, 2030, 0.5)`,
+        valeurs: [
+          { dateValeur: '2020-01-01', resultat: 100 },
+          { dateValeur: '2025-01-01', resultat: 90 },
+        ],
+      });
+
+    test("Supprimer puis rajouter la valeur de l'année de départ recalcule le statut, sans toucher à la sélection", async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const {
+        indicateurId: reductionIndicateurId,
+        valeurIds: [valeurDepartId, valeurRetenueId],
+        cleanup,
+      } = await insertFixtureReduction();
+      onTestFinished(() => cleanup());
+
+      await caller.referentiels.actions.setScoreFromIndicateur({
+        collectiviteId,
+        actionId: ACTION_REDUCTION,
+        indicateurId: reductionIndicateurId,
+        valeurs: [{ indicateurValeurId: valeurRetenueId, typeScore: 'fait' }],
+      });
+      expect(await getStatut(ACTION_REDUCTION)).toMatchObject({
+        avancement: 'detaille',
+        avancementDetaille: [0.4, 0, 0.6],
+      });
+
+      await caller.indicateurs.valeurs.delete({
+        collectiviteId,
+        indicateurId: reductionIndicateurId,
+        id: valeurDepartId,
+      });
+
+      // sans valeur de départ, le score n'est plus calculable : l'action
+      // redevient non renseignée, mais la valeur retenue reste sélectionnée
+      expect(await getStatut(ACTION_REDUCTION)).toMatchObject({
+        avancement: 'non_renseigne',
+        avancementDetaille: null,
+      });
+      expect(await getValeursUtilisees(ACTION_REDUCTION)).toMatchObject([
+        { indicateurValeurId: valeurRetenueId, typeScore: 'fait' },
+      ]);
+
+      await caller.indicateurs.valeurs.upsert({
+        collectiviteId,
+        indicateurId: reductionIndicateurId,
+        dateValeur: '2020-01-01',
+        resultat: 100,
+      });
+
+      expect(await getStatut(ACTION_REDUCTION)).toMatchObject({
+        avancement: 'detaille',
+        avancementDetaille: [0.4, 0, 0.6],
+      });
     });
   });
 

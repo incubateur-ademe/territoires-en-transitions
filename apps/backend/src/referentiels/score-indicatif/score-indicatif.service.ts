@@ -449,12 +449,13 @@ export class ScoreIndicatifService {
   }
 
   /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
-  async getActionsUsingIndicateurValeur(
-    indicateurValeurId: number | number[]
-  ): Promise<
+  async getActionsUsingIndicateur(input: {
+    collectiviteId: number;
+    indicateurId: number;
+  }): Promise<
     Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
   > {
-    return this.repository.listActionsUsingIndicateurValeur(indicateurValeurId);
+    return this.repository.listActionsUsingIndicateur(input);
   }
 
   /** Calcule le score programmé ou fait */
