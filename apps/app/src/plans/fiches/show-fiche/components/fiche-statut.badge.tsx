@@ -3,7 +3,10 @@ import { Statut } from '@tet/domain/plans';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
-const statusToVariant: Record<Statut | 'Sans statut', ColorVariant> = {
+export const ficheStatutToColorVariant: Record<
+  Statut | 'Sans statut',
+  ColorVariant
+> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',
@@ -32,7 +35,7 @@ const FicheStatutBadge = ({ statut: defaultStatut, size, count }: Props) => {
         'bg-[#F9F3FE] border-[#9351CF] text-[#9351CF]': statut === 'A discuter',
       })}
       title={`${count ? count : ''} ${statut}`}
-      variant={statusToVariant[statut]}
+      variant={ficheStatutToColorVariant[statut]}
       size={size}
     />
   );
