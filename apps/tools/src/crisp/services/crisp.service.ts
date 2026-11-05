@@ -64,11 +64,11 @@ export class CrispService {
     filteredMessages: CrispSessionMessage[];
     allMessages: CrispSessionMessage[];
   }> {
-    const allMessages: CrispSessionMessage[] =
-      await this.crispClient.website.getMessagesInConversation(
+    const allMessages =
+      (await this.crispClient.website.getMessagesInConversation(
         websiteId,
         sessionId
-      );
+      )) as CrispSessionMessage[];
     this.logger.log(
       `Found ${allMessages.length} messages in session ${sessionId} on website ${websiteId}`
     );
@@ -186,8 +186,10 @@ export class CrispService {
     ).unref();
 
     try {
-      const session: CrispSession =
-        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const session = (await this.crispClient.website.getConversation(
+        websiteId,
+        sessionId
+      )) as CrispSession;
       const email = session.meta?.email;
       if (!email || !session.people_id) {
         return;
@@ -201,10 +203,12 @@ export class CrispService {
       }
 
       // PATCH : fusionne avec les données déjà présentes sur le contact.
+      // Le corps attendu par l'API est `{ data }` ; le type de crisp-api 12
+      // (données à plat) est faux, le client envoie le corps tel quel.
       await this.crispClient.website.updatePeopleData(
         websiteId,
         session.people_id,
-        { data: userData }
+        { data: userData } as unknown as Record<string, string>
       );
       this.logger.log(
         `Contact ${
@@ -227,8 +231,10 @@ export class CrispService {
   /** Répond par une note récapitulant le compte, ses collectivités et leurs plans. */
   async handleCrmRequest(websiteId: string, sessionId: string) {
     try {
-      const session: CrispSession =
-        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const session = (await this.crispClient.website.getConversation(
+        websiteId,
+        sessionId
+      )) as CrispSession;
       const email = session.meta?.email;
       const content = email
         ? await this.buildCrispCrmNoteService.buildCrmNote(email)
@@ -288,8 +294,10 @@ export class CrispService {
         }, delay ${delay}${delayUnit}, title ${ticketTitle})`
       );
 
-      const session: CrispSession =
-        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const session = (await this.crispClient.website.getConversation(
+        websiteId,
+        sessionId
+      )) as CrispSession;
 
       // Session url are not provided by the Crisp API, we need to build it manually
       // Besides, we add a query parameter so that the url is unique for a note
@@ -374,8 +382,10 @@ export class CrispService {
         `Feedback found in message received for session ${sessionId} on website ${websiteId}: ${feedbackMatch[0]} (delay ${delay}${delayUnit})`
       );
 
-      const session: CrispSession =
-        await this.crispClient.website.getConversation(websiteId, sessionId);
+      const session = (await this.crispClient.website.getConversation(
+        websiteId,
+        sessionId
+      )) as CrispSession;
       // Session url are not provided by the Crisp API, we need to build it manually
       // Besides, we add a query parameter so that the url is unique for a note
       session.session_url = `https://app.crisp.chat/website/${websiteId}/inbox/${sessionId}?message=${messageId}`;
@@ -396,11 +406,12 @@ export class CrispService {
           this.logger.log(
             `Retrieving operator ${operator.user_id} email from Crisp API`
           );
-          const operatorInfo: CrispOperatorIndo =
-            await this.crispClient.website.getWebsiteOperator(
+          // crisp-api 12 type la réponse en camelCase, l'API renvoie du snake_case.
+          const operatorInfo =
+            (await this.crispClient.website.getWebsiteOperator(
               websiteId,
               operator.user_id
-            );
+            )) as unknown as CrispOperatorIndo;
           this.logger.log(
             `Operator ${operator.user_id} info: ${JSON.stringify(operatorInfo)}`
           );
