@@ -60,7 +60,7 @@ export class ValiderAvisService {
       return failure(ValiderAvisErrorEnum.AVIS_NOT_FOUND);
     }
 
-    if (avis.fichierRef === null) {
+    if (avis.fichierRefs.length === 0) {
       return failure(ValiderAvisErrorEnum.AVIS_SANS_PIECE_JOINTE);
     }
 

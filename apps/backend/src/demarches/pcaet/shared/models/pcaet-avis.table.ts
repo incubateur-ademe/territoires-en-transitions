@@ -24,7 +24,11 @@ export const pcaetAvisTable = pgTable(
       .notNull()
       .references(() => collectiviteTable.id, { onDelete: 'cascade' }),
     auTitreDe: text('au_titre_de').notNull().$type<PcaetAvisAuTitreDe>(),
-    fichierRef: text('fichier_ref').$type<DocumentHash>(),
+    fichierRefs: text('fichier_refs')
+      .array()
+      .notNull()
+      .default([])
+      .$type<DocumentHash[]>(),
     valideLe: timestamp('valide_le', TIMESTAMP_OPTIONS),
     deposePar: uuid('depose_par').references(() => authUsersTable.id, {
       onDelete: 'set null',

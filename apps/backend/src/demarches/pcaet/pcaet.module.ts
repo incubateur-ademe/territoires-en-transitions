@@ -143,6 +143,9 @@ import { UpdateVulnerabiliteThematiqueRouter } from './update-vulnerabilite-them
 import { UpdateVulnerabiliteThematiqueService } from './update-vulnerabilite-thematique/update-vulnerabilite-thematique.service';
 import { DownloadDossierDocumentsController } from './download-dossier-documents/download-dossier-documents.controller';
 import { DownloadDossierDocumentsService } from './download-dossier-documents/download-dossier-documents.service';
+import { DownloadAvisPiecesController } from './download-avis-pieces/download-avis-pieces.controller';
+import { DownloadAvisPiecesService } from './download-avis-pieces/download-avis-pieces.service';
+import { ListAvisPiecesService } from './shared/list-avis-pieces.service';
 import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
 import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
@@ -164,9 +167,14 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     NotificationsModule,
     TrackingModule,
   ],
-  controllers: [DownloadDossierDocumentsController],
+  controllers: [
+    DownloadDossierDocumentsController,
+    DownloadAvisPiecesController,
+  ],
   providers: [
     DownloadDossierDocumentsService,
+    DownloadAvisPiecesService,
+    ListAvisPiecesService,
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
     DemarchePcaetTransitionService,

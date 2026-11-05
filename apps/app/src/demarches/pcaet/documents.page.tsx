@@ -259,7 +259,7 @@ export const DemarchePcaetDocumentsPage = () => {
                       id: unAvis.id,
                       demandeAvisId: unAvis.demandeAvisId,
                       auTitreDe: unAvis.auTitreDe,
-                      aUnRapport: unAvis.aUnRapport,
+                      nombrePieces: unAvis.nombrePieces,
                       valideLe: unAvis.valideLe,
                       deposeLe: unAvis.valideLe,
                     }))}

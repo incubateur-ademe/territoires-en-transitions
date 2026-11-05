@@ -5,6 +5,7 @@ import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { ARCHIVE_ZIP_CONTENT_TYPE } from '@tet/backend/utils/archive/archive-assembly.service';
+import { buildAttachmentContentDisposition } from '@tet/backend/utils/archive/build-content-disposition.utils';
 import { createControllerErrorHandler } from '@tet/backend/utils/nest/controller-error-handler';
 import type { Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
@@ -18,12 +19,6 @@ import { DownloadDossierDocumentsService } from './download-dossier-documents.se
 class DownloadDossierDocumentsQueryClass extends createZodDto(
   downloadDossierDocumentsQuerySchema
 ) {}
-
-const toExtValue = (filename: string): string =>
-  encodeURIComponent(filename).replace(
-    /['()*!]/g,
-    (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`
-  );
 
 /**
  * L'archive des documents d'un dossier PCAET, pour le service qui l'instruit.
@@ -61,7 +56,7 @@ export class DownloadDossierDocumentsController {
     response.set('Content-Type', ARCHIVE_ZIP_CONTENT_TYPE);
     response.set(
       'Content-Disposition',
-      `attachment; filename*=UTF-8''${toExtValue(filename)}`
+      buildAttachmentContentDisposition(filename)
     );
     response.set('Access-Control-Expose-Headers', 'Content-Disposition');
 

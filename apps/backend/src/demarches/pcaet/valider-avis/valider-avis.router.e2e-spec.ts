@@ -86,7 +86,7 @@ describe('validerAvis', () => {
         demandeAvisId,
         emetteurCollectiviteId: dreal.collectivite.id,
         auTitreDe: 'prefet_region',
-        fichierRef: null,
+        fichierRefs: [],
         deposePar: camille.id,
       })
       .returning({ id: pcaetAvisTable.id });
@@ -124,7 +124,7 @@ describe('validerAvis', () => {
   it('valide un brouillon portant sa pièce jointe', async () => {
     await db.db
       .update(pcaetAvisTable)
-      .set({ fichierRef: buildRandomDocumentHash() })
+      .set({ fichierRefs: [buildRandomDocumentHash()] })
       .where(eq(pcaetAvisTable.id, avisId));
 
     const avis = await valider(camille, avisId);

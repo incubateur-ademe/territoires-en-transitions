@@ -209,7 +209,7 @@ describe('Notifications des démarches PCAET', () => {
         demandeAvisId: demandeDrealId,
         emetteurCollectiviteId: drealId,
         auTitreDe: 'prefet_region',
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         deposePar: dreal.user.id,
       })
       .returning({ id: pcaetAvisTable.id });

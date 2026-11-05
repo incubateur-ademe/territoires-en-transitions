@@ -297,13 +297,13 @@ export class PcaetAvisRepository {
       demandeAvisId,
       emetteurCollectiviteId,
       auTitreDe,
-      fichierRef,
+      fichierRefs,
       deposePar,
     }: {
       demandeAvisId: number;
       emetteurCollectiviteId: number;
       auTitreDe: PcaetAvisAuTitreDe;
-      fichierRef: DocumentHash | null;
+      fichierRefs: DocumentHash[];
       deposePar: string;
     },
     tx?: Transaction
@@ -314,12 +314,12 @@ export class PcaetAvisRepository {
         demandeAvisId,
         emetteurCollectiviteId,
         auTitreDe,
-        fichierRef,
+        fichierRefs,
         deposePar,
       })
       .onConflictDoUpdate({
         target: [pcaetAvisTable.demandeAvisId, pcaetAvisTable.auTitreDe],
-        set: { fichierRef, modifieLe: new Date().toISOString() },
+        set: { fichierRefs, modifieLe: new Date().toISOString() },
       });
   }
 
@@ -330,11 +330,11 @@ export class PcaetAvisRepository {
    * et non à l'envoi du fichier : la bibliothèque déduplique par empreinte, et
    * un rapport dont le fichier y figurait déjà ressortirait sans marque.
    */
-  async marquerPieceConfidentielle(
+  async marquerPiecesConfidentielles(
     {
       emetteurCollectiviteId,
-      fichierRef,
-    }: { emetteurCollectiviteId: number; fichierRef: DocumentHash },
+      fichierRefs,
+    }: { emetteurCollectiviteId: number; fichierRefs: DocumentHash[] },
     tx?: Transaction
   ): Promise<void> {
     await (tx ?? this.databaseService.db)
@@ -343,7 +343,7 @@ export class PcaetAvisRepository {
       .where(
         and(
           eq(bibliothequeFichierTable.collectiviteId, emetteurCollectiviteId),
-          eq(bibliothequeFichierTable.hash, fichierRef)
+          inArray(bibliothequeFichierTable.hash, fichierRefs)
         )
       );
   }

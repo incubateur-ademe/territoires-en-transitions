@@ -83,7 +83,7 @@ describe('Clôture de l’instruction PCAET', () => {
         demandeAvisId: demande.id,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe,
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         valideLe: new Date().toISOString(),
       });
     }

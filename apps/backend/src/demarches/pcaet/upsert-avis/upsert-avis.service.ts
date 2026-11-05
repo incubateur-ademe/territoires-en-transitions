@@ -16,7 +16,7 @@ export class UpsertAvisService {
   ) {}
 
   async upsertAvis(
-    { demandeAvisId, auTitreDe, fichierRef }: UpsertAvisInput,
+    { demandeAvisId, auTitreDe, fichierRefs }: UpsertAvisInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetAvis[], UpsertAvisError>> {
     const permissionResult = await this.depotPermissionsService.canDeposerAvis(
@@ -64,15 +64,15 @@ export class UpsertAvisService {
         demandeAvisId,
         emetteurCollectiviteId,
         auTitreDe,
-        fichierRef,
+        fichierRefs,
         deposePar: user.id,
       },
       tx
     );
 
-    if (fichierRef !== null) {
-      await this.pcaetAvisRepository.marquerPieceConfidentielle(
-        { emetteurCollectiviteId, fichierRef },
+    if (fichierRefs.length > 0) {
+      await this.pcaetAvisRepository.marquerPiecesConfidentielles(
+        { emetteurCollectiviteId, fichierRefs },
         tx
       );
     }

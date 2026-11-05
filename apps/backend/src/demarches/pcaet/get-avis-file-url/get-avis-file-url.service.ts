@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
-import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { DepotPermissionsService } from '../shared/depot-permissions.service';
-import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
+import { ListAvisPiecesService } from '../shared/list-avis-pieces.service';
 import {
   GetAvisFileUrlError,
   GetAvisFileUrlErrorEnum,
@@ -18,84 +13,41 @@ import { AvisFileUrl } from './get-avis-file-url.output';
 const DOWNLOAD_URL_TTL_SECONDS = 60;
 
 /**
- * Lien de téléchargement du rapport joint à un avis.
- *
- * Le fichier vit dans le bucket de la collectivité **émettrice** de l'avis :
- * c'est elle qui l'a déposé, et sa bibliothèque qui en porte le nom. D'où la
- * résolution par `emetteurCollectiviteId` et non par la déposante.
+ * Lien de téléchargement de la pièce d'un avis qui n'en porte qu'une. Au-delà,
+ * les pièces se téléchargent ensemble par l'archive de l'avis.
  */
 @Injectable()
 export class GetAvisFileUrlService {
   constructor(
-    private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
-    private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
-    private readonly depotPermissionsService: DepotPermissionsService,
-    private readonly pcaetAvisRepository: PcaetAvisRepository,
-    private readonly documentStorageService: DocumentStorageService,
-    private readonly permissionService: PermissionService
+    private readonly listAvisPiecesService: ListAvisPiecesService,
+    private readonly documentStorageService: DocumentStorageService
   ) {}
 
   async getAvisFileUrl(
     { demandeAvisId, avisId }: GetAvisFileUrlInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<AvisFileUrl, GetAvisFileUrlError>> {
-    const avis = await this.pcaetAvisRepository.findById(
+    const piecesResult = await this.listAvisPiecesService.listAvisPieces(
       { demandeAvisId, avisId },
-      tx
+      { user, tx }
     );
-    if (!avis) {
-      return failure(GetAvisFileUrlErrorEnum.AVIS_NOT_FOUND);
+    if (!piecesResult.success) {
+      return failure(piecesResult.error);
     }
+    const { pieces } = piecesResult.data;
 
-    // Trois lecteurs légitimes, trois barrières distinctes, réunies ici pour ne
-    // pas dupliquer la fabrication de l'URL signée :
-    //
-    // - l'instructeur saisi sur cette demande, à la même condition que la
-    //   consultation du dossier — un rôle LECTURE lit les avis sans pouvoir les
-    //   déposer, et voit donc aussi ses propres brouillons ;
-    // - un autre destinataire du même dossier, sur les avis **validés** : une
-    //   DDT ou une DR ADEME suit l'instruction sans y prendre part ;
-    // - la collectivité déposante, sur les avis **validés** également.
-    //
-    // Le brouillon ne sort jamais de l'espace de son auteur : les deux dernières
-    // barrières sont derrière le même test de validation.
-    const autorise = await this.isAutorise(avis, demandeAvisId, { user, tx });
-    if (!autorise) {
-      return failure(GetAvisFileUrlErrorEnum.UNAUTHORIZED);
+    if (pieces.length > 1) {
+      return failure(GetAvisFileUrlErrorEnum.AVIS_PLUSIEURS_PIECES);
     }
-    if (!avis.fichierRef) {
-      return failure(GetAvisFileUrlErrorEnum.AVIS_SANS_PIECE_JOINTE);
-    }
-
-    const emetteurCollectiviteId =
-      await this.pcaetAvisRepository.getEmetteurCollectiviteId(
-        { demandeAvisId, avisId },
-        tx
-      );
-    if (emetteurCollectiviteId === null) {
-      return failure(GetAvisFileUrlErrorEnum.AVIS_NOT_FOUND);
-    }
-
-    const fichier = await this.bibliothequeFichierRepository.findByHash(
-      { collectiviteId: emetteurCollectiviteId, hash: avis.fichierRef },
-      tx
-    );
-    if (!fichier) {
-      return failure(GetAvisFileUrlErrorEnum.AVIS_SANS_PIECE_JOINTE);
-    }
-
-    const bucketId = await this.collectiviteBucketRepository.findBucketId(
-      emetteurCollectiviteId,
-      tx
-    );
-    if (bucketId === undefined) {
+    const [piece] = pieces;
+    if (piece.bucketId === null) {
       return failure(GetAvisFileUrlErrorEnum.AVIS_SANS_PIECE_JOINTE);
     }
 
     const signedUrlResult =
       await this.documentStorageService.createSignedDownloadUrl({
-        bucketId,
-        key: avis.fichierRef,
+        bucketId: piece.bucketId,
+        key: piece.hash,
         expiresInSeconds: DOWNLOAD_URL_TTL_SECONDS,
       });
     if (!signedUrlResult.success) {
@@ -104,53 +56,7 @@ export class GetAvisFileUrlService {
 
     return success({
       url: signedUrlResult.data.signedUrl,
-      filename: fichier.filename,
+      filename: piece.filename,
     });
-  }
-
-  private async isAutorise(
-    avis: { valideLe: string | null },
-    demandeAvisId: number,
-    { user, tx }: Pick<ServiceSecondArg, 'user' | 'tx'>
-  ): Promise<boolean> {
-    const cotéInstructeur =
-      await this.depotPermissionsService.canConsulterDepot(demandeAvisId, {
-        user,
-        tx,
-      });
-    if (cotéInstructeur.success) {
-      return true;
-    }
-
-    if (avis.valideLe === null) {
-      return false;
-    }
-
-    const autreDestinataire =
-      await this.depotPermissionsService.canConsulterAvisDuneAutreSaisine(
-        demandeAvisId,
-        { user, tx }
-      );
-    if (autreDestinataire.success) {
-      return true;
-    }
-
-    const deposanteCollectiviteId =
-      await this.pcaetAvisRepository.getDeposanteCollectiviteId(
-        demandeAvisId,
-        tx
-      );
-    if (deposanteCollectiviteId === null) {
-      return false;
-    }
-
-    const cotéDeposante = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId: deposanteCollectiviteId },
-      tx
-    );
-    return cotéDeposante.success;
   }
 }
