@@ -18,6 +18,8 @@ export * from './fiches/utils/fiche-status-color.utils';
 export * from './fiches/utils/fiche.rules';
 export * from './filters';
 export * from './labels';
+export * from './plans/electrification-engagements.config';
+export * from './plans/engagement.schema';
 export * from './plans/flat-axe.schema';
 export * from './plans/generate-report/download-plan-report.queryparams';
 export * from './plans/generate-report/generate-report.input';

@@ -3,15 +3,18 @@ import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { SharedModule } from '@tet/backend/shared/shared.module';
 import { UsersModule } from '@tet/backend/users/users.module';
+import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { electrificationEngagementsConfig } from '@tet/domain/plans';
 import { CompletePlanSecteursModule } from '../fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '../plans/plans.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from './ai-plan-import-step-run.repository';
+import { ELECTRIFICATION_ENGAGEMENTS_CONFIG } from './ai-plan-import.constants';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
   AI_PLAN_IMPORT_QUEUE_NAME,
@@ -28,6 +31,7 @@ import { GetImportCapabilitiesRouter } from './get-import-capabilities/get-impor
 import { GetImportCapabilitiesService } from './get-import-capabilities/get-import-capabilities.service';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { ResumeImportRouter } from './resume-import/resume-import.router';
+import { ResolveElectrificationEngagementsService } from './resolve-electrification-engagements/resolve-electrification-engagements.service';
 import { ResumeImportService } from './resume-import/resume-import.service';
 
 @Module({
@@ -40,6 +44,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     PlansUtilsModule,
     SharedModule,
     UsersModule,
+    IndicateursModule,
     NotificationsModule,
     TrackingModule,
     BullModule.registerQueue({
@@ -49,6 +54,11 @@ import { ResumeImportService } from './resume-import/resume-import.service';
   ],
   controllers: [EnqueueImportController],
   providers: [
+    {
+      provide: ELECTRIFICATION_ENGAGEMENTS_CONFIG,
+      useValue: electrificationEngagementsConfig,
+    },
+    ResolveElectrificationEngagementsService,
     AiPlanImportJobRepository,
     AiPlanImportStepRunRepository,
     EnqueueImportService,

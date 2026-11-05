@@ -72,6 +72,9 @@ sur les [périodicités](0018-periodicite-des-indicateurs.md) et les
 ### 1. Un profil d'import dans le parcours existant
 
 Ajouter un profil explicite `annexe-3-electrification` à l'import existant.
+Les règles propres au programme utilisent le nom `Electrification` ; "annexe 3"
+désigne la section du document officiel. L'identifiant de profil déjà livré
+reste inchangé pour préserver les contrats des jobs et de l'API.
 Le serveur vérifie sa compatibilité avec le type de plan, l'éligibilité de la
 collectivité et les permissions. Identifier le type dans `plan_action_type`
 par son couple unique `(categorie, type)`, selon le fonctionnement du PCAET,
@@ -100,6 +103,29 @@ plan, de ses axes et de ses fiches restent dans `plans`, celles des indicateurs 
 [11](0011-architecture-service-ddd.md) et [12](0012-pattern-result.md).
 Réutiliser les services et la queue existants ; aucun nouveau moteur de
 workflow, fournisseur d'IA ou domaine métier n'est nécessaire.
+
+Le [contrat métier des engagements](../../packages/domain/src/plans/plans/engagement.schema.ts)
+appartient au domaine `plans` et est exporté par `@tet/domain/plans`.
+`Engagement` décrit un code et ses cibles `EngagementCible` (clé, valeur,
+unité, année), sans dépendance à l'IA ni au document d'origine. Il est
+utilisable par le backend et l'app dans les parcours du plan. Les champs
+non renseignés restent nullables ; le contrat ne fixe ni liste de codes,
+ni échéance, ni bornes métier sur les valeurs.
+
+L'[adaptation pour l'import](../../apps/backend/src/plans/ai-plan-import/models/engagement-import.schema.ts)
+compose ces schémas et ajoute uniquement les
+[sources documentaires](../../apps/backend/src/plans/ai-plan-import/models/import-source.schema.ts)
+aux engagements et cibles. Ces sources restent dans le backend d'import,
+où elles servent aussi aux axes et aux diagnostics.
+
+Le schéma d'entrée Électrification compose ce contrat commun. La configuration
+du programme porte les correspondances E01–E12 ; le résolveur applique les
+cibles annuelles en 2030, la structure des tableaux A/B et le contrôle des
+deux cibles E07.
+Les traitements resteront spécifiques tant qu'un deuxième programme ne
+partage pas effectivement ces règles. Pour cet import, les axes, fiches,
+indicateurs et sources de valeurs existants portent les données métier,
+sans nouvelle entité persistante d'engagement.
 
 Pour ce profil, créer d'abord le job seul. Le plan sera créé après validation
 complète, dans la transaction finale. Cela diffère de l'import générique, qui
@@ -164,6 +190,20 @@ extraction. Il ne génère pas d'actions ou de sous-actions supplémentaires,
 
 Versionner un catalogue limité à ce besoin : axes, sous-axes, engagements,
 actions et sous-actions de référence, indicateurs ou jalons oui/non associés.
+Le fichier versionné dans Git fait référence pour les correspondances exécutées
+par l'import ; les définitions d'indicateurs font référence dans le catalogue TeT
+existant. La [configuration Électrification](../../packages/domain/src/plans/plans/electrification-engagements.config.ts),
+son schéma et son type appartiennent à `@tet/domain/plans`, comme la
+[configuration du diagnostic PCAET](../../packages/domain/src/demarches/pcaet/diagnostic/demarche-pcaet-diagnostic.config.ts).
+Ils sont réutilisables par les parcours du plan sans dépendre du backend
+d'import. Le branchement Nest et les diagnostics documentaires restent dans
+l'import ; la validation de la configuration y reste différée à la résolution.
+Toute évolution du mapping doit être validée avec le métier, revue
+en PR et livrée avec une nouvelle version du catalogue. Une modification d'une
+page Notion ou de Grist n'a aucun effet automatique sur l'import.
+Ces documents servent à préparer et justifier les décisions. Leurs liens et
+relevés datés restent dans l'ADR, hors du contrat et des données du résolveur.
+
 Pour les actions de référence et leurs indicateurs, la source métier indiquée
 par le PM le 3 novembre 2026 est le
 [référentiel Grist des actions et indicateurs](https://grist.numerique.gouv.fr/o/100te/m4aC9Epwz7ot/Referentiel-dactions-feuilles-de-routes/p/86).
@@ -180,6 +220,30 @@ sont pas interchangeables : seuls certains indicateurs sont communs, selon sa
 [réponse](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d).
 Les correspondances entre codes Grist et identifiants TeT restent à compléter
 et à valider ; ne pas les déduire des intitulés.
+
+**Relevé du 5 novembre 2026.** La colonne Notion "ID et Titre indicateur TeT v2"
+donne les références ci-dessous. Leur présence dans cette liste n'atteste
+ni leur intégration en base ni la validation de leur définition. Le catalogue
+livré garde les périodicités non validées à `null` et les correspondances en
+attente de validation ; le résolveur les signale comme erreurs de configuration.
+Les fixtures e2e validées vérifient le code, sans valider ces données métier.
+
+| Engagement | `identifiantReferentiel` TeT | Unité de la cible |
+| --- | --- | --- |
+| E01 | `part_log_priv_sortie_fioul` | % |
+| E02 | `part_log_priv_sortie_gaz` | % |
+| E04 | `part_log_soc_sortie_gaz` | % |
+| E05 | `part_bat_pub_sortie_gaz` | % |
+| E06 | `v_particulier_elec` | % |
+| E07 | `s_26`, `s_26.a` | Nombre de bornes |
+| E08 | `autobus_autocar_elec` | % |
+| E09 | `nb_artisan_elec` | Nombre |
+| E10 | `conso_elec_projet_ind` | MWh |
+| E11 | `conso_elec_projet_agri` | MWh |
+
+La résolution des cibles de A vérifie la compatibilité avec leur échéance
+annuelle 2030. Elle ne convertit pas une définition mensuelle ou une fréquence
+"Ponctuelle" en annuelle. E03/E12 restent des fiches suivies par statut.
 
 Un fichier de données validé et livré avec le backend suffit ; il ne s'agit
 pas de construire une bibliothèque de modèles administrable. Les définitions
@@ -232,7 +296,7 @@ sans tables de provenance supplémentaires.
 Conserver les codes d'engagement sélectionnés dans A sur l'axe racine du plan.
 Cette liste distingue E01 et E02 malgré leur axe commun et n'est pas enrichie
 par les fiches B. Elle ne constitue pas un registre de convention : aucune
-entité d'engagement, API d'édition ou lecture dédiée n'est créée. Les DTO publics
+table d'engagement, API d'édition ou lecture dédiée n'est créée. Les DTO publics
 ordinaires et les accès directs en base ne permettent pas d'attribuer ces
 références ; l'import les renseigne après résolution et contrôle des droits.
 La duplication ordinaire ne copie pas cette identité d'annexe sur le nouveau
@@ -420,9 +484,11 @@ distingué d'une reprise ; le remplacement d'un plan existant relève du support
 
 La livraison principale comprend l'import, les identités de référence,
 les engagements, les indicateurs et le respect des données existantes.
-Les sources du catalogue métier sont identifiées : Grist pour les références
-d'actions et leurs indicateurs, la table Notion pour les indicateurs
-d'engagement. L'intégration des définitions manquantes, la validation des
+Les documents de travail sont identifiés : Grist pour les références d'actions
+et leurs indicateurs, la table Notion pour les propositions de correspondances
+d'engagement. Seules les correspondances validées et livrées dans le catalogue
+versionné sont utilisables par l'import, avec les définitions existantes de TeT.
+L'intégration des définitions manquantes, la validation des
 correspondances encore ouvertes et celle des lauréats avec les collectivités
 TeT restent des dépendances, pas des données à déduire par l'IA. L'alimentation
 du catalogue d'indicateurs reste à la charge de l'équipe data ; les définitions
