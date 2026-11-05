@@ -12,7 +12,7 @@ en incréments déployables séparément. Il couvre l'import complet, depuis le
 document jusqu'au plan et au suivi des cibles. Il ne reprend pas le
 provisionnement automatique ni le verrouillage des anciens plans de travail.
 
-**Sept phases : onze PR de code, puis une ouverture progressive.** Les budgets
+**Sept phases : douze PR de code, puis une ouverture progressive.** Les budgets
 et financements constituent une huitième phase facultative. Les numéros de PR
 ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
@@ -21,7 +21,8 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 1A — Contrats des profils et API de suivi : [#5702](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5702), fusionnée le 4 novembre 2026 ; parcours générique vérifié en préproduction.
 - [x] PR 1B — Suivi sans dépendre d'un plan : [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), implémentée et vérifiée, en revue.
 - [x] PR 2A — Réutilisation du modèle et identification du type existant : [#5722](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5722), implémentée et vérifiée, en revue.
-- [ ] PR 2B — Catalogue et résolution déterministe.
+- [x] PR 2B1 — Catalogue des engagements, axes et cibles : [#5730](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5730), implémentée et vérifiée, en revue.
+- [ ] PR 2B2 — Références des fiches B et éligibilité.
 - [ ] PR 3A — Lecture documentaire.
 - [ ] PR 3B — Extraction typée de l'annexe.
 - [ ] PR 4A — Axes et liens de fiches.
@@ -59,7 +60,7 @@ les engagements ou ignorerait les indicateurs des fiches B.
 | Phase | PR | Résultat autonome en production | Dépendances |
 | --- | --- | --- | --- |
 | 1. Contrats et suivi des jobs | 1A, 1B | Jobs historiques compatibles ; suivi retrouvable après fermeture ; admission annexe fermée côté serveur | Aucune phase suivante |
-| 2. Identification et références métier | 2A, 2B | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 |
+| 2. Identification et références métier | 2A, 2B1, 2B2 | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 ; 2B2 réutilise 2B1 |
 | 3. Lecture et extraction de l'annexe | 3A, 3B | Document transformé en brouillon typé et validé, sans écriture métier | Phases 1 et 2 |
 | 4. Primitives de persistance | 4A, 4B, 4C | Création et liaison sous transaction, sans écraser les données existantes | Phases 1 et 2 |
 | 5. Import complet côté backend | 5 | Pipeline, reprise et transaction finale opérationnels ; admission toujours fermée | Phases 1 à 4 |
@@ -78,6 +79,9 @@ contrats de jobs, extraction documentaire, intégrité des liens, concurrence
 sur les valeurs. La PR 5 assemble des services déjà testés ; elle ne doit pas
 devenir la PR qui implémente toutes les écritures. Éviter les PR de types seuls
 ou de migrations inutilisables sans leur code associé.
+Le catalogue et la préparation des engagements (2B1) sont revus séparément
+des références de fiches et des droits d'accès associés (2B2). Les deux lots
+livrent des services internes complets, sans ouvrir l'import ni créer de données.
 
 ## Règles communes de déploiement
 
@@ -272,31 +276,103 @@ cibles par source reste à valider en phase 4.
 **Déploiement et arrêt possible :** backend et app, sans migration. La création
 Électrification reste suspendue, sans dépendre d'une phase suivante.
 
-### PR 2B — Catalogue et résolution déterministe
+### PR 2B1 — Catalogue des engagements, axes et cibles
 
-**Périmètre :** catalogue versionné livré avec le backend, validation et services
-de résolution sans création de plan. Aucune administration de catalogue à construire.
+**Périmètre :** configuration versionnée des engagements dans le domaine `plans`,
+préparation des axes demandés par A/B et résolution des cibles du tableau A
+vers les indicateurs existants. Services internes seulement, sans nouvelle
+table, API publique, écriture métier ni administration de catalogue.
 
-- Distinguer la source Notion des indicateurs d'engagement de la source Grist
-  des actions et indicateurs associés. Implémenter les correspondances validées
-  de l'ADR, notamment E06, E07 et E08 ; ne pas inventer celles encore absentes.
-  Pour E06/E08, les identifiants sont confirmés et l'unité "%" est renseignée.
-  Les composantes prévues pour E08 sont `autobus_elec` et `autocar_elec`.
-  Restent à valider les formules, périodicités et l'adéquation métier, puis à
-  vérifier les définitions et leurs dépendances dans l'environnement cible.
-- Livrer le contrat métier typé d'entrée/sortie du résolveur dans cette PR.
-  L'extracteur de la phase 3 le produira ; le résolveur ne dépend pas de types
-  ou d'exports laissés à une PR suivante.
+- Livrer le contrat métier typé d'entrée/sortie de cette préparation avec son
+  implémentation. L'extracteur de la phase 3 le produira ; ce lot ne dépend
+  d'aucun type ou export laissé à une PR suivante. Conserver clés de source
+  et localisations pour le rattachement et les diagnostics.
+- Placer `Engagement` et `EngagementCible` dans `packages/domain/src/plans/plans`,
+  exportés par `@tet/domain/plans` pour les parcours du plan. Dans l'import,
+  dériver `EngagementImport` et `EngagementCibleImport` de ces schémas en ajoutant
+  les sources `ImportSource`. Le domaine ne dépend pas de l'import ni de l'IA ;
+  le format et les validations d'import existants sont conservés.
+  Le catalogue, la structure A/B, l'échéance 2030 et les contrôles E07 restent
+  propres à Électrification.
+  Réutiliser les modèles et services existants ; ce lot ne crée aucun moteur
+  générique ni entité persistante d'engagement.
+- Utiliser le catalogue de correspondances versionné dans Git et les
+  définitions d'indicateurs existantes de TeT. La configuration, son schéma
+  et son type sont exportés par `@tet/domain/plans` depuis
+  `electrification-engagements.config.ts` ; le backend conserve le branchement
+  Nest et sa validation à la résolution. Les documents Notion et Grist
+  éclairent les décisions conservées dans l'ADR ; leurs liens ne font pas
+  partie du contrat du résolveur. Toute évolution du mapping nécessite une
+  validation métier, une PR et une nouvelle version du catalogue, sans
+  synchronisation automatique depuis ces documents. Résoudre les références
+  explicites, jamais par ressemblance de titre ni par ID numérique codé en dur.
+- Calculer l'union des axes demandés par A et B : axe 1 commun à E01/E02,
+  axe retenu sans fiche, axe demandé par B sans engagement implicite et axes
+  libres. Utiliser des clés de parents stables ; le numéro d'axe fait foi
+  sur son intitulé. La résolution du contenu des fiches B reste en 2B2.
+- Résoudre les indicateurs des cibles avec leurs unités et périodicités
+  validées. E07 conserve deux cibles indépendantes ; zéro reste une valeur,
+  une cible vide reste absente avec un avertissement. E03/E12 préparent des
+  fiches ordinaires "À venir", sans déduire de réalisation de leur sélection.
+- Une définition absente, ambiguë ou non conforme et une périodicité non
+  validée produisent une erreur de configuration, pas une demande de correction
+  de l'annexe. Ne pas créer d'indicateur personnalisé de remplacement.
+  Pour E06/E08, les formules, l'adéquation métier et les dépendances restent
+  à valider ; les composantes prévues pour E08 sont `autobus_elec` et `autocar_elec`.
+- Garder l'admission annexe fermée. Une configuration incomplète ne bloque
+  ni le démarrage du backend ni les imports génériques. Les e2e utilisent
+  des fixtures synthétiques validées tant que les données métier ne sont
+  pas prêtes ; leur réussite ne vaut pas validation du catalogue réel.
+
+Les correspondances relevées dans Notion sont documentées dans
+l'[ADR, section catalogue](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#3-un-catalogue-versionné-et-une-identité-indépendante-des-libellés).
+Leurs périodicités restent à valider avant utilisation ; une cible annuelle
+2030 n'est pas convertie vers une autre périodicité. Les correspondances de
+sous-axes restent indisponibles tant que le mapping Grist n'est pas livré.
+
+**Validation attendue :** axe vide, union A/B, E01/E02, axe libre, référence
+d'axe incohérente, clés stables, cible zéro/vide, deux cibles E07, E03/E12,
+unités et périodes invalides, définitions absentes/ambiguës et configuration
+non validée. Vérifier l'absence d'écriture et la conservation de l'admission fermée.
+
+**Vérifications effectuées :** 39 e2e du
+[résolveur](../../apps/backend/src/plans/ai-plan-import/resolve-electrification-engagements/resolve-electrification-engagements.service.e2e-spec.ts)
+avec vraie base et définitions synthétiques, 17 e2e de suivi et 14 e2e du
+parcours HTTP générique avec faux LLM. Ces suites vérifient la structure,
+les deux cibles E07, les droits, les configurations invalides, l'absence
+d'écriture métier et le maintien de l'admission annexe fermée. Les e2e du
+résolveur vérifient aussi l'utilisation du contrat métier sans contexte
+d'import, son adaptation documentaire et les validations Électrification,
+ainsi que le rejet d'identifiants de base injectés dans les engagements ou
+cibles. Builds domain et NestJS, TypeScript backend/tests, ESLint ciblé et
+liens locaux vérifiés. Aucun nouveau
+fichier de tests unitaires ni appel réel au modèle. Le catalogue livré reste
+en attente des validations métier ; ce résultat ne qualifie pas un import réel.
+
+**Déploiement et arrêt possible :** après 2A, services internes sans migration ;
+aucune création de plan ni dépendance à 2B2 pour fonctionner. Les références
+des fiches B et l'éligibilité restent à livrer avant le pipeline complet.
+
+### PR 2B2 — Références des fiches B et éligibilité
+
+**Périmètre :** étendre le catalogue et les contrats de 2B1 aux actions,
+sous-actions et indicateurs des fiches B ; contrôler les références et
+l'éligibilité, sans création de données métier ni nouvelle API publique.
+
+- Intégrer au catalogue versionné les correspondances Grist validées,
+  leurs unités principales, périodicités et numéros de sous-axes. Ne pas inventer les correspondances
+  encore absentes ; les codes `6-a`/`6-b` ne sont pas assimilés aux indicateurs
+  d'engagement `s_26`/`s_26.a` sans validation métier.
 - Résoudre codes, numéros d'axes/sous-axes et URL TeT reconnues, y compris UID
   de fiches, vers des identités existantes et accessibles. Aucun appel réseau
-  vers les URL du document, aucun rapprochement par titre.
-- Valider les unités, les périodes et la cohérence des références. Une référence
-  fournie invalide bloque ; une référence vide désigne un objet personnalisé.
-  Une cible vide est un avertissement ; une définition attendue manquante est
-  une erreur de configuration, pas une demande de correction du document.
-- Calculer la structure : union des axes demandés par A et B, axe 1 partagé
-  E01/E02, sans engagement implicite, clés de parents stables. Préparer le
-  résultat résolu sans écrire de données métier.
+  vers les URL du document, aucun rapprochement par titre. Une fiche d'une
+  autre collectivité exige le partage et les permissions ordinaires.
+- Valider unités, périodes et cohérence des références. Une référence fournie
+  invalide bloque ; une référence vide désigne un objet personnalisé. Une
+  valeur sans unité ou période exploitable est signalée, sans en inventer.
+  Une fréquence "Ponctuelle" ne devient pas automatiquement annuelle.
+- Conserver les données existantes pour les objets désignés par URL : préparer
+  uniquement leurs liens et signaler les champs de l'annexe non appliqués.
 - Pour les nouvelles fiches de référence, appliquer les compléments prévus au
   catalogue uniquement après les champs renseignés de l'annexe, qui priment.
   Ne pas ajouter deux fois une sous-action présente dans les deux sources.
@@ -313,13 +389,14 @@ de résolution sans création de plan. Aucune administration de catalogue à con
   le backend de démarrer ni bloquer les imports génériques. Tester avec des
   fixtures synthétiques tant que les données réelles ne sont pas prêtes.
 
-**Validation :** références inexistantes/ambiguës, URL autorisée ou non, fiche
-partagée, absence de correspondance, unités doubles, cible zéro/vide, deux
-cibles E07, catalogue indisponible, collectivité non éligible et mapping lauréat
-absent/obsolète/ambigu avec décision traçable.
+**Validation attendue :** références inexistantes/ambiguës, URL autorisée ou non,
+fiche partagée, absence de correspondance, unités doubles, périodes invalides,
+compléments sans écrasement ni sous-action dupliquée, catalogue indisponible,
+collectivité non éligible et mapping lauréat absent/obsolète/ambigu avec
+décision traçable.
 
-**Déploiement et arrêt possible :** services internes seulement ; aucune
-création de plan. Les prérequis data peuvent avancer sans ouvrir l'import.
+**Déploiement et arrêt possible :** après 2B1, services internes seulement ;
+aucune création de plan. Les prérequis data peuvent avancer sans ouvrir l'import.
 
 ## Phase 3 — Du document au brouillon validé
 
@@ -361,8 +438,8 @@ de production branché sur ce profil.
 - Préparer les conversions oui/non et les actions E03/E12 prévues par l'ADR.
   Reprendre les champs non budgétaires, dont moyens humains lorsqu'ils sont
   renseignés. Ne pas créer de compte depuis un nom de pilote.
-- Utiliser le résolveur 2B et son compte rendu. Sérialiser un checkpoint annexe
-  validé et versionné, sans IDs fournis par le LLM. Une reprise revalidera les
+- Utiliser les résolveurs 2B1/2B2 et leur compte rendu. Sérialiser un checkpoint
+  annexe validé et versionné, sans IDs fournis par le LLM. Une reprise revalidera les
   références et les permissions avant écriture, même si l'extraction est conservée.
 - Adapter le parcours d'évaluation existant pour sélectionner ce profil.
   Les tests utilisent un faux LLM ; les essais réels restent lancés par un humain.
@@ -487,7 +564,7 @@ le comportement des saisies et imports ordinaires qui ne l'appellent pas.
 [worker et service](../../apps/backend/src/plans/ai-plan-import/generate-import-draft/),
 reprise et orchestration métier. Les primitives de stockage sont déjà livrées.
 
-- Brancher le dispatch par profil sur l'extraction 3B et la résolution 2B.
+- Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2.
   Garder l'admission fermée par défaut ; contrôler droits, éligibilité, type
   stable et configuration avant upload/enfilement.
   Brancher le flag serveur dédié dans le contrôle de disponibilité partagé
@@ -596,9 +673,9 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   notamment `v_particulier_elec`, `autobus_autocar_elec`, `s_26` et `s_26.a`.
   Pour E06/E08, formules, périodicités et adéquation métier validées avec
   l'équipe data et le métier, notamment le périmètre autobus/autocars ;
-  définitions conformes à l'unité "%" renseignée dans Notion. La présence d'un
-  ID dans Notion ne prouve ni cette validation ni l'intégration ; le profil
-  reste fermé tant qu'elles manquent.
+  définitions conformes aux unités validées dans le catalogue versionné.
+  Une référence dans un document de travail ne prouve ni cette validation
+  ni l'intégration ; le profil reste fermé tant qu'elles manquent.
 - Mapping lauréats → collectivités validé et maintenu ; premier groupe choisi
   parmi ces lauréats. Aucun élargissement de droits par le ciblage du flag.
 - Migrations, backend/API, tous les workers et app compatibles déployés.
@@ -655,13 +732,13 @@ au socle. Aucun chantier de reporting budgétaire n'est inclus.
 
 | Exigence de l'ADR | Implémentation | Vérification de bout en bout |
 | --- | --- | --- |
-| Profil explicite, droits, lauréats, aucun plan avant validation | 1A, 2B, 5 | 5 et 7 |
+| Profil explicite, droits, lauréats, aucun plan avant validation | 1A, 2B2, 5 | 5 et 7 |
 | Suivi durable, reprise et compatibilité des jobs | 1A, 1B, 3B, 5 | 5 et 6 |
-| A/B uniquement, hyperliens, clés stables, références bloquantes | 2B, 3A, 3B | 5 |
-| Axes explicites, E01/E02, axes libres et B sans engagement | 2B, 4A, 5 | 5 et 6 |
-| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B, 4A, 4B, 4C, 5 | 5 et 6 |
+| A/B uniquement, hyperliens, clés stables, références bloquantes | 2B1, 2B2, 3A, 3B | 5 |
+| Axes explicites, E01/E02, axes libres et B sans engagement | 2B1, 4A, 5 | 5 et 6 |
+| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B1, 4A, 4B, 4C, 5 | 5 et 6 |
 | Personnalisés, valeurs datées, oui/non et codes de référence | 3B, 4A, 4B, 4C, 5 | 5 |
-| URL : liens seuls ; codes : complétion sans écrasement | 2B, 4A, 4B, 4C | 5 |
+| URL : liens seuls ; codes : complétion sans écrasement | 2B2, 4A, 4B, 4C | 5 |
 | Liberté d'édition, titres communs, suppression et références | 4A, 4B, 6 | 6 |
 | Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 5 | 5 |
 | Compte rendu complet, activation et arrêt sans perte | 1A, 1B, 5, 6 | 7 |
