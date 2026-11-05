@@ -24,7 +24,7 @@ export const createAndLinkPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError>
       DEMARCHE_PCAET_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
-          'Une démarche transmise pour avis n’est plus modifiable — reprenez l’élaboration pour la modifier',
+          'Le programme d’actions n’est plus modifiable : il se modifie pendant l’élaboration et après les avis, jusqu’à la publication',
       },
       PLAN_DEJA_RATTACHE: {
         code: 'CONFLICT',

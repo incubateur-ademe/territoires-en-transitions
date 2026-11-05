@@ -18,14 +18,15 @@ import {
 import { UpdateDemarchePcaetInput } from './update-demarche-pcaet.input';
 import { UpdateDemarchePcaetRepository } from './update-demarche-pcaet.repository';
 
-const isPilotesOnly = ({
-  collectiviteId,
-  demarcheId,
-  pilotes,
-  ...autres
-}: UpdateDemarchePcaetInput): boolean =>
-  pilotes !== undefined &&
-  Object.values(autres).every((value) => value === undefined);
+/** La requête ne renseigne que `champ`, en plus des identifiants. */
+const touchesOnly = (
+  { collectiviteId, demarcheId, ...champs }: UpdateDemarchePcaetInput,
+  champ: 'pilotes' | 'planActionIds'
+): boolean =>
+  champs[champ] !== undefined &&
+  Object.entries(champs).every(
+    ([key, value]) => key === champ || value === undefined
+  );
 
 @Injectable()
 export class UpdateDemarchePcaetService {
@@ -48,16 +49,26 @@ export class UpdateDemarchePcaetService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, UpdateDemarchePcaetError>> => {
+      // Le rattachement des plans relève du contenu du dossier, rouvert après
+      // les avis ; l'en-tête, de l'amont. Une requête qui touche aux deux suit
+      // la règle la plus stricte.
+      //
       // Les pilotes désignent qui porte la démarche, pas le contenu du dossier :
       // un admin peut les changer à tout statut, à condition de ne rien toucher
       // d'autre dans la même requête.
-      const access = await this.accessService.assertWritable(input, 'amont', {
-        user,
-        tx: transaction,
-        bypassEtapeWith: isPilotesOnly(input)
-          ? PermissionOperationEnum['DEMARCHES.PCAET.MUTATE_PILOTES_ANY_STATUS']
-          : undefined,
-      });
+      const access = await this.accessService.assertWritable(
+        input,
+        touchesOnly(input, 'planActionIds') ? 'contenu' : 'amont',
+        {
+          user,
+          tx: transaction,
+          bypassEtapeWith: touchesOnly(input, 'pilotes')
+            ? PermissionOperationEnum[
+                'DEMARCHES.PCAET.MUTATE_PILOTES_ANY_STATUS'
+              ]
+            : undefined,
+        }
+      );
       if (!access.success) {
         return failure(UpdateDemarchePcaetErrorEnum[access.error]);
       }

@@ -10,7 +10,7 @@ import {
   TransactionManager,
 } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
-  isDemarchePcaetAmontModifiable,
+  isDemarchePcaetContenuModifiable,
   PCAET_PLAN_TYPE_KEY,
   type DemarchePcaet,
 } from '@tet/domain/demarches';
@@ -89,7 +89,7 @@ export class CreateAndLinkPlanService {
       if (!ref) {
         return failure(CreateAndLinkPlanErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
       }
-      if (!isDemarchePcaetAmontModifiable(ref.status)) {
+      if (!isDemarchePcaetContenuModifiable(ref.status)) {
         return failure(
           CreateAndLinkPlanErrorEnum.DEMARCHE_PCAET_NON_MODIFIABLE
         );

@@ -11,7 +11,9 @@ import type { PcaetDiagnostic } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { listEnabledTransitions } from '@tet/domain/utils';
 import {
+  addTestBibliothequeFichier,
   attachTestPlanToDemarchePcaet,
+  cloreTestInstructionPcaet,
   completeTestDiagnosticIndicateursPcaet,
   completeTestDossierPcaet,
   completeTestVulnerabilitePcaet,
@@ -271,5 +273,72 @@ describe('Vulnérabilité du territoire', () => {
     expect(listEnabledTransitions(avecVulnerabilite.transitions)).toContain(
       'transmettre_pour_avis'
     );
+  });
+
+  // Après les avis, la collectivité reprend son diagnostic pour le dépôt
+  // final : ce qu'elle peut vider, la publication doit le revérifier.
+  test('Après les avis, le diagnostic se reprend et la publication le revérifie', async () => {
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
+    await completeTestDossierPcaet(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await cloreTestInstructionPcaet(app, db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId,
+      demarcheId: demarche.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+    const diagnostic = await caller.demarches.pcaet.diagnostic.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    const eau = thematiqueId(diagnostic, 'eau');
+
+    const vide = await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
+      collectiviteId,
+      demarcheId: demarche.id,
+      thematiqueId: eau,
+      niveau: { horizon: 'maintenant', valeur: null },
+    });
+    expect(ligneOf(vide, eau).niveauMaintenant).toBeNull();
+
+    const incomplet = await caller.demarches.pcaet.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    expect(listEnabledTransitions(incomplet.transitions)).not.toContain(
+      'publier'
+    );
+    expect(incomplet.transitions.publier?.blockedBy).toContain(
+      'dossierComplet'
+    );
+
+    await caller.demarches.pcaet.diagnostic.setVulnerabiliteLigne({
+      collectiviteId,
+      demarcheId: demarche.id,
+      thematiqueId: eau,
+      niveau: { horizon: 'maintenant', valeur: 'non_concerne' },
+    });
+    const complet = await caller.demarches.pcaet.get({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    expect(listEnabledTransitions(complet.transitions)).toContain('publier');
   });
 });

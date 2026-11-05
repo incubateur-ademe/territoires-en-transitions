@@ -9,7 +9,9 @@ import type { WorkflowGuardResults } from '../../../../utils/workflow/workflow.t
  *   démarche n'a aucun pilote à compte utilisateur, tout éditeur est autorisé).
  * - `dossierComplet` : pièces amont requises couvertes, lignes requises du
  *   diagnostic renseignées et programme d'actions rattaché, vérifié, avec les
- *   secteurs réglementaires de chaque action renseignés.
+ *   secteurs réglementaires de chaque action renseignés. Sur un dossier
+ *   transmis, seules les pièces amont restent attestées par la transmission :
+ *   diagnostic et programme d'actions, rouverts après les avis, se revérifient.
  * - `avisTousRendus` : le dossier a au moins une demande d'avis, et chacune a
  *   reçu un avis validé pour chaque titre attendu.
  * - `delaiAvisEcoule` : le délai légal laissé aux instances consultatives est

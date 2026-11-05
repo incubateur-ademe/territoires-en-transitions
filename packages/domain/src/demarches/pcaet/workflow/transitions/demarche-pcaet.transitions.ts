@@ -20,7 +20,8 @@ type DemarchePcaetTransitionDef = WorkflowTransitionDef<
  *
  * Aucune étape ne se reprend. Un dossier transmis est entre les mains des
  * instances consultatives : le rouvrir déferait sous leurs yeux le dossier même
- * sur lequel elles se prononcent, et la clôture de l'instruction recalculerait
+ * sur lequel elles se prononcent (son contenu ne se rouvre qu'après les avis,
+ * sans changer de statut), et la clôture de l'instruction recalculerait
  * une échéance sur un dossier déjà instruit. Un dossier publié vaut adopté :
  * il entre en mise en œuvre, et c'est le plan d'actions qui vit ensuite, pas le
  * dépôt.
@@ -58,10 +59,11 @@ export const DEMARCHE_PCAET_TRANSITIONS = {
   // un dossier encore en instruction n'est pas publiable — c'est la structure du
   // cycle qui le dit, pas un guard.
   //
-  // `dossierComplet` figure ici pour le dépôt hors plateforme, dont l'amont est
-  // resté ouvert jusqu'à ce point : c'est la publication qui l'atteste, faute de
-  // transmission pour l'avoir fait. Un dossier transmis, lui, l'a déjà fait
-  // attester — l'évaluateur du guard le sait et ne redemande rien.
+  // `dossierComplet` figure ici à deux titres. Le dépôt hors plateforme a gardé
+  // son amont ouvert jusqu'à ce point : c'est la publication qui l'atteste, faute
+  // de transmission pour l'avoir fait. Un dossier transmis a fait attester ses
+  // pièces amont, mais son diagnostic et son programme d'actions se rouvrent
+  // après les avis : ceux-là se revérifient avant le dépôt final.
   [DemarchePcaetTransitionEnum.PUBLIER]: {
     from: [
       DemarchePcaetStatusEnum.INSTRUIT,
