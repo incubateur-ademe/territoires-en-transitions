@@ -484,6 +484,38 @@ describe('DemarcheDocumentsTable — inclusion déclarée dans une autre pièce'
   });
 });
 
+describe('DemarcheDocumentsTable — pièce répartie entre plusieurs documents', () => {
+  const STRATEGIE = definition({
+    id: 'pcaet_strategie_territoriale',
+    nom: 'Stratégie territoriale',
+    ordre: 2,
+  });
+  const PLAN_ACTIONS = definition({
+    id: 'pcaet_plan_actions',
+    nom: 'Programme d’actions',
+    ordre: 3,
+  });
+  const PLCF = definition({
+    id: 'pcaet_plan_chaleur_froid',
+    nom: 'Plan local de chaleur et de froid',
+    ordre: 4,
+    substitutsDeclarables: [DIAGNOSTIC.id, STRATEGIE.id, PLAN_ACTIONS.id],
+  });
+
+  it('nomme tous les documents qui peuvent l’accueillir, dès que l’un est déposé', () => {
+    renderTable({
+      definitions: [DIAGNOSTIC, STRATEGIE, PLAN_ACTIONS, PLCF],
+      documents: [depose(STRATEGIE.id)],
+    });
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'Inclus dans « Diagnostic », « Stratégie territoriale » et/ou « Programme d’actions »',
+      })
+    ).not.toBeChecked();
+  });
+});
+
 describe('DemarcheDocumentsTable — liste fusionnée (dépôt hors plateforme)', () => {
   const DELIBERATION = definition({
     id: 'pcaet_deliberation_adoption',

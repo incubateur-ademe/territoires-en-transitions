@@ -486,6 +486,13 @@ export const demarchesLabels = {
     `Couvert par « ${nom} »`,
   demarcheDocumentsInclusDans: ({ nom }: { nom: string }) =>
     `Inclus dans « ${nom} »`,
+  /** « Inclus dans « A », « B » et/ou « C » » : la pièce peut être répartie entre plusieurs documents. */
+  demarcheDocumentsInclusDansListe: ({ noms }: { noms: string[] }) => {
+    const cites = noms.map((nom) => `« ${nom} »`);
+    return cites.length > 1
+      ? `Inclus dans ${cites.slice(0, -1).join(', ')} et/ou ${cites.at(-1)}`
+      : `Inclus dans ${cites.join('')}`;
+  },
   demarcheDocumentsCaption: ({
     type,
     etape,
