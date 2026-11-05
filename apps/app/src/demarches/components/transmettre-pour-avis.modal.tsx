@@ -1,7 +1,6 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { DEMARCHE_PCAET_DELAI_AVIS_MOIS } from '@tet/domain/demarches';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 
 type Props = {
@@ -31,9 +30,7 @@ export const TransmettrePourAvisModal = ({ onConfirm, onClose }: Props) => (
     render={() => (
       <div className="flex flex-col gap-4">
         <p className="m-0">
-          {appLabels.demarcheTransmettreConfirmationProcessus({
-            mois: DEMARCHE_PCAET_DELAI_AVIS_MOIS,
-          })}
+          {appLabels.demarcheTransmettreConfirmationProcessus}
         </p>
         <p className="m-0">{appLabels.demarcheTransmettreConfirmationSuite}</p>
       </div>
