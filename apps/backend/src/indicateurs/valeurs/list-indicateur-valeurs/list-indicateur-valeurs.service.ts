@@ -4,18 +4,16 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Result, success } from '@tet/backend/utils/result.type';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurSourceMetadonnee,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '@tet/domain/indicateurs';
-import { ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 import { ListCollectiviteIndicateursRepository } from '../../indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
+import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-access.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
@@ -35,8 +33,7 @@ export class ListIndicateurValeursService {
   private readonly logger = new Logger(ListIndicateurValeursService.name);
   constructor(
     private readonly repository: IndicateurValeursRepository,
-    private readonly permissionService: PermissionService,
-    private readonly collectiviteService: CollectivitesService,
+    private readonly readAccessService: IndicateurValeursReadAccessService,
     private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository
   ) {}
 
@@ -75,38 +72,23 @@ export class ListIndicateurValeursService {
     // Vérifie les droits
     let hasPermissionLecture;
     if (!isUserTrusted && user) {
-      const collectivitePrivate = await this.collectiviteService.isPrivate(
+      const readerResult = await this.readAccessService.resolveReader({
         collectiviteId,
-        tx
-      );
-      const permissionLectureResult = await this.permissionService.isAllowed(
         user,
-        'indicateurs.valeurs.read_confidentiel',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId },
-        tx
-      );
-      const permissionVisiteResult = await this.permissionService.isAllowed(
-        user,
-        'indicateurs.valeurs.read',
-        ResourceType.COLLECTIVITE,
-        { collectiviteId },
-        tx
-      );
-      const accesRestreintRequis =
-        collectivitePrivate && !permissionLectureResult.success;
-      if (accesRestreintRequis || !permissionVisiteResult.success) {
+        tx,
+      });
+      if (!readerResult.success) {
         throw new ForbiddenException(
           `Droits insuffisants, l'utilisateur ${
             user.id
           } n'a pas l'autorisation ${
-            accesRestreintRequis
+            readerResult.error === 'READ_CONFIDENTIEL_DENIED'
               ? 'indicateurs.valeurs.read_confidentiel'
               : 'indicateurs.valeurs.read'
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
-      hasPermissionLecture = permissionLectureResult.success;
+      hasPermissionLecture = readerResult.data === 'member';
     } else if (isUserTrusted) {
       hasPermissionLecture = true;
     } else {

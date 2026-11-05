@@ -59,6 +59,9 @@ import { IndicateurValeursRepository } from './valeurs/indicateur-valeurs.reposi
 import ManageIndicateurValeursService from './valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { ComputeValeursRepository } from './valeurs/compute-indicateur-valeurs/compute-valeurs.repository';
 import { LoadIndicateurCalculGraphService } from './valeurs/compute-indicateur-valeurs/load-indicateur-calcul-graph.service';
+import { IndicateurValeursReadAccessService } from './valeurs/indicateur-valeurs-read-access.service';
+import { GetIndicateurTotalsRepository } from './valeurs/get-indicateur-totals/get-indicateur-totals.repository';
+import { GetIndicateurTotalsService } from './valeurs/get-indicateur-totals/get-indicateur-totals.service';
 import { ListIndicateurValeursService } from './valeurs/list-indicateur-valeurs/list-indicateur-valeurs.service';
 import { ValidateIndicateurValeursWriteService } from './valeurs/write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from './valeurs/write-indicateur-valeurs/write-indicateur-valeurs.service';
@@ -118,6 +121,9 @@ const DEFINITIONS_PROVIDERS = [
     ManageIndicateurValeursService,
     IndicateurValeursRepository,
     ListIndicateurValeursService,
+    IndicateurValeursReadAccessService,
+    GetIndicateurTotalsRepository,
+    GetIndicateurTotalsService,
     ValidateIndicateurValeursWriteService,
     WriteIndicateurValeursService,
     ReconcileIndicateurValeursService,

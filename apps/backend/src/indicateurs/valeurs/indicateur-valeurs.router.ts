@@ -6,6 +6,8 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ResourceType } from '@tet/domain/users';
 import IndicateurValeursService from './manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { deleteValeurIndicateurSchema } from './manage-indicateur-valeurs/delete-valeur-indicateur.request';
+import { getIndicateurTotalsInputSchema } from './get-indicateur-totals/get-indicateur-totals.input';
+import { GetIndicateurTotalsService } from './get-indicateur-totals/get-indicateur-totals.service';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-indicateur-valeurs/get-moyenne-collectivites.request';
 import { getValeursReferenceRequestSchema } from './get-valeurs-reference/get-valeurs-reference.request';
 import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs/list-indicateur-valeurs.input';
@@ -25,14 +27,25 @@ export class IndicateurValeursRouter {
     private readonly service: IndicateurValeursService,
     private readonly upsertGridValeursService: UpsertGridValeursService,
     private readonly valeursMoyenne: ValeursMoyenneService,
-    private readonly valeursReference: ValeursReferenceService
+    private readonly valeursReference: ValeursReferenceService,
+    private readonly getIndicateurTotalsService: GetIndicateurTotalsService
   ) {}
 
   private readonly getUpsertGridValeursResultOrThrow = createTrpcErrorHandler(
     upsertGridValeursErrorConfig
   );
+  private readonly getIndicateurTotalsResultOrThrow = createTrpcErrorHandler();
 
   router = this.trpc.router({
+    totals: this.trpc.authedProcedure
+      .input(getIndicateurTotalsInputSchema)
+      .query(async ({ ctx, input }) => {
+        const result =
+          await this.getIndicateurTotalsService.getIndicateurTotals(input, {
+            user: ctx.user,
+          });
+        return this.getIndicateurTotalsResultOrThrow(result);
+      }),
     list: this.trpc.authedOrServiceRoleProcedure
       .input(listIndicateurValeursInputSchema)
       .query(({ ctx, input }) => {

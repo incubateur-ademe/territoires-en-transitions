@@ -35,6 +35,7 @@ import ManageIndicateurValeursService from './manage-indicateur-valeurs.service'
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import IndicateurExpressionService from '../indicateur-expression.service';
 import { indicateur1, indicateur2, indicateur3 } from '../tests/fixture';
+import { IndicateurValeursReadAccessService } from '../indicateur-valeurs-read-access.service';
 import { ListIndicateurValeursService } from '../list-indicateur-valeurs/list-indicateur-valeurs.service';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
@@ -69,8 +70,7 @@ const createManageIndicateurValeursService = (
   );
   const reader = new ListIndicateurValeursService(
     repository,
-    permissions,
-    collectivites,
+    new IndicateurValeursReadAccessService(permissions, collectivites),
     collectiviteIndicateurs
   );
   const reconciliation = new ReconcileIndicateurValeursService(
