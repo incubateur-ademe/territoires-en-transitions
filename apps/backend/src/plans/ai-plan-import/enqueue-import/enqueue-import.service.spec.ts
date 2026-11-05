@@ -8,6 +8,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -128,7 +129,7 @@ type MockOverrides = {
   isAllowed?: boolean;
   canImportInParallel?: boolean;
   countInFlight?: number;
-  planTypes?: { id: number; type?: string }[];
+  planTypes?: { id: number; categorie?: string; type?: string }[];
   createWithinQuotas?: () => Promise<unknown>;
   previousImport?: unknown;
   storeDocument?: () => Promise<unknown>;
@@ -227,7 +228,7 @@ describe('EnqueueImportService', () => {
   it('refuse le type Électrification avant tout stockage ou mise en file', async () => {
     const { service, uploadBuffer, storeDocument, createWithinQuotas, add } =
       buildService({
-        planTypes: [{ id: 73, type: 'Plan Électrification' }],
+        planTypes: [{ id: 73, ...ELECTRIFICATION_PLAN_TYPE_KEY }],
       });
 
     const result = await service.enqueue({

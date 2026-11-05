@@ -11,6 +11,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
+import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
@@ -119,21 +120,46 @@ describe('Créer ou modifier un plan', () => {
   describe('Création des plans Électrification', () => {
     let electrificationTypeId: number;
     let otherTypeId: number;
+    let sameLabelTypeId: number;
     const creationDisabledMessage =
       'La création d’un plan Électrification est temporairement indisponible. L’import depuis l’annexe 3 est en cours de préparation.';
 
     beforeAll(async () => {
+      let [electrificationType] = await db.db
+        .select()
+        .from(planActionTypeTable)
+        .where(
+          and(
+            eq(
+              planActionTypeTable.categorie,
+              ELECTRIFICATION_PLAN_TYPE_KEY.categorie
+            ),
+            eq(planActionTypeTable.type, ELECTRIFICATION_PLAN_TYPE_KEY.type)
+          )
+        );
+      if (!electrificationType) {
+        await db.db
+          .insert(planActionTypeCategorieTable)
+          .values({ categorie: ELECTRIFICATION_PLAN_TYPE_KEY.categorie })
+          .onConflictDoNothing();
+        [electrificationType] = await db.db
+          .insert(planActionTypeTable)
+          .values(ELECTRIFICATION_PLAN_TYPE_KEY)
+          .returning();
+      }
+      electrificationTypeId = electrificationType.id;
+
       const categorie = `e2e_creation_plan_${collectivite.id}`;
       await db.db.insert(planActionTypeCategorieTable).values({ categorie });
-      const [electrificationType, otherType] = await db.db
+      const [otherType, sameLabelType] = await db.db
         .insert(planActionTypeTable)
         .values([
-          { categorie, type: 'Plan Électrification' },
           { categorie, type: 'Plan climat' },
+          { categorie, type: ELECTRIFICATION_PLAN_TYPE_KEY.type },
         ])
         .returning();
-      electrificationTypeId = electrificationType.id;
       otherTypeId = otherType.id;
+      sameLabelTypeId = sameLabelType.id;
     });
 
     const getPlans = () =>
@@ -172,6 +198,17 @@ describe('Créer ou modifier un plan', () => {
       });
 
       expect(await getPlans()).toEqual(plansBefore);
+    });
+
+    test('Autorise un type portant le même libellé dans une autre catégorie', async () => {
+      const caller = router.createCaller({ user: editorUser });
+      const plan = await caller.plans.plans.create({
+        collectiviteId: collectivite.id,
+        nom: 'Plan de même libellé dans une autre catégorie',
+        typeId: sameLabelTypeId,
+      });
+
+      expect(plan.typeId).toBe(sameLabelTypeId);
     });
 
     test.each([false, true])(
