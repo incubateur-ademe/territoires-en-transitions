@@ -43,9 +43,13 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { omit } from 'es-toolkit';
+import { chunk, omit } from 'es-toolkit';
 import { validateNature } from '../indicateur/indicateur.adapter';
 import { indicateurValeurTable } from './indicateur-valeur.table';
+
+/** Au plus ~20 paramètres par ligne : ~20 000 par requête, sous la limite de 65 535. */
+export const UPSERT_VALEURS_CHUNK_SIZE = 1000;
+const DELETE_VALEURS_CHUNK_SIZE = 5000;
 
 type ListIndicateurValeursQuery = Readonly<{
   collectiviteId: number;
@@ -437,8 +441,16 @@ export class IndicateurValeursRepository {
     valeurs: IndicateurValeurCreate[],
     tx?: Transaction
   ): Promise<IndicateurValeur[]> {
-    if (valeurs.length === 0) return [];
-    return (tx ?? this.databaseService.db)
+    return this.inChunks(valeurs, UPSERT_VALEURS_CHUNK_SIZE, tx, (part, db) =>
+      this.upsertChunkWithoutMetadata(part, db)
+    );
+  }
+
+  private upsertChunkWithoutMetadata(
+    valeurs: IndicateurValeurCreate[],
+    db: Transaction | DatabaseService['db']
+  ): Promise<IndicateurValeur[]> {
+    return db
       .insert(indicateurValeurTable)
       .values(valeurs)
       .onConflictDoUpdate({
@@ -480,8 +492,16 @@ export class IndicateurValeursRepository {
     valeurs: IndicateurValeurCreate[],
     tx?: Transaction
   ): Promise<IndicateurValeur[]> {
-    if (valeurs.length === 0) return [];
-    return (tx ?? this.databaseService.db)
+    return this.inChunks(valeurs, UPSERT_VALEURS_CHUNK_SIZE, tx, (part, db) =>
+      this.upsertChunkWithMetadata(part, db)
+    );
+  }
+
+  private upsertChunkWithMetadata(
+    valeurs: IndicateurValeurCreate[],
+    db: Transaction | DatabaseService['db']
+  ): Promise<IndicateurValeur[]> {
+    return db
       .insert(indicateurValeurTable)
       .values(valeurs)
       .onConflictDoUpdate({
@@ -527,18 +547,44 @@ export class IndicateurValeursRepository {
     { collectiviteId }: { collectiviteId?: number },
     tx?: Transaction
   ): Promise<IndicateurValeur[]> {
-    if (ids.length === 0) return [];
-    const conditions: SQLWrapper[] = [
-      eq(indicateurValeurTable.calculAuto, true),
-      inArray(indicateurValeurTable.id, ids),
-    ];
-    if (collectiviteId !== undefined) {
-      conditions.push(eq(indicateurValeurTable.collectiviteId, collectiviteId));
-    }
-    return (tx ?? this.databaseService.db)
-      .delete(indicateurValeurTable)
-      .where(and(...conditions))
-      .returning();
+    return this.inChunks(ids, DELETE_VALEURS_CHUNK_SIZE, tx, (part, db) => {
+      const conditions: SQLWrapper[] = [
+        eq(indicateurValeurTable.calculAuto, true),
+        inArray(indicateurValeurTable.id, part),
+      ];
+      if (collectiviteId !== undefined) {
+        conditions.push(
+          eq(indicateurValeurTable.collectiviteId, collectiviteId)
+        );
+      }
+      return db
+        .delete(indicateurValeurTable)
+        .where(and(...conditions))
+        .returning();
+    });
+  }
+
+  /**
+   * Une requête PostgreSQL accepte au plus 65 535 paramètres : les écritures
+   * de masse passent par tranches. Sans transaction fournie, les tranches en
+   * partagent une, pour rester atomiques comme une requête unique.
+   */
+  private async inChunks<T, R>(
+    items: T[],
+    size: number,
+    tx: Transaction | undefined,
+    run: (chunk: T[], db: Transaction | DatabaseService['db']) => Promise<R[]>
+  ): Promise<R[]> {
+    if (items.length === 0) return [];
+    if (items.length <= size) return run(items, tx ?? this.databaseService.db);
+    const runAll = async (db: Transaction) => {
+      const results: R[] = [];
+      for (const part of chunk(items, size)) {
+        results.push(...(await run(part, db)));
+      }
+      return results;
+    };
+    return tx ? runAll(tx) : this.databaseService.db.transaction(runAll);
   }
 
   async listRecomputeCandidateCollectiviteIds(
