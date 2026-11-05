@@ -33,9 +33,11 @@ if ! grep -Fxq 'sqitch.changes' "$workspace/archive-tables"; then
     exit 1
 fi
 
-# Compare immutable migration identities and script hashes, not deployment
-# timestamps or application-specific release labels. Extra/missing/rewritten
-# migrations require an aligned schema before restoring any data.
+# Compare migration identities only. change_id already hashes the plan entry
+# (name, parent, dependencies, planner, note); script_hash is left out because
+# deploy scripts edited in place after their deployment keep their old hash in
+# long-lived databases and a new one in freshly built databases.
+# Extra/missing migrations require an aligned schema before restoring any data.
 if ! pg_restore --data-only --schema=sqitch --table=changes --file=- "$archive" \
     | awk -F '\t' '
         /^COPY sqitch\.changes \(/ {
@@ -47,7 +49,7 @@ if ! pg_restore --data-only --schema=sqitch --table=changes --file=- "$archive" 
                 gsub(/"/, "", names[i])
                 positions[names[i]] = i
             }
-            if (!positions["project"] || !positions["change_id"] || !positions["script_hash"]) exit 1
+            if (!positions["project"] || !positions["change_id"]) exit 1
             copying = 1
             blocks++
             next
@@ -56,7 +58,7 @@ if ! pg_restore --data-only --schema=sqitch --table=changes --file=- "$archive" 
         copying {
             if (NF != count || $(positions["project"]) == "" || $(positions["project"]) == "\\N" ||
                 $(positions["change_id"]) == "" || $(positions["change_id"]) == "\\N") exit 1
-            print $(positions["project"]) "\t" $(positions["change_id"]) "\t" $(positions["script_hash"])
+            print $(positions["project"]) "\t" $(positions["change_id"])
             rows++
         }
         END { if (blocks != 1 || copying || !rows) exit 1 }
@@ -66,10 +68,10 @@ if ! pg_restore --data-only --schema=sqitch --table=changes --file=- "$archive" 
 fi
 
 psql --no-psqlrc --no-password --set ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
-    --command='COPY (SELECT project, change_id, script_hash FROM sqitch.changes) TO STDOUT' \
+    --command='COPY (SELECT project, change_id FROM sqitch.changes) TO STDOUT' \
     | sort > "$workspace/target-changes"
 if ! cmp -s "$workspace/source-changes" "$workspace/target-changes"; then
-    echo 'Refusing to restore: backup and target have different Sqitch migrations or script hashes.' >&2
+    echo 'Refusing to restore: backup and target have different Sqitch migrations.' >&2
     echo 'Use a backup and target at the same migration state; no tables were truncated.' >&2
     exit 1
 fi

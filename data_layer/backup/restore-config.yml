@@ -41,6 +41,7 @@ groups:
     - banatic_2025_competence
     - banatic_2021_2025_crosswalk
     - collectivite_banatic_type
+    - typologie_sinoe
     - collectivite
     - collectivite_banatic_competence
     - collectivite_banatic_2025_competence
