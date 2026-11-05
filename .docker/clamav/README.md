@@ -20,7 +20,7 @@ clamd n'a **aucune authentification**. Son port 3310 ne doit être joignable que
 
 ## Image
 
-`infra/clamav/Dockerfile` part de l'image officielle (signatures embarquées, freshclam toutes les heures). Elle relève `StreamMaxLength` à 60M, au-dessus de la limite de 50 Mio de Storage. C'est la même image en local, sur Koyeb et sur Coolify.
+`.docker/clamav/Dockerfile` part de l'image officielle (signatures embarquées, freshclam toutes les heures). Elle relève `StreamMaxLength` à 60M, au-dessus de la limite de 50 Mio de Storage. C'est la même image en local, sur Koyeb et sur Coolify.
 
 ## En local
 

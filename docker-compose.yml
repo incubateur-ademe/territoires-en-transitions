@@ -308,7 +308,7 @@ services:
   clamav:
     profiles: [clamav]
     build:
-      context: infra/clamav
+      context: .docker/clamav
     ports:
       - '3310:3310'
 
