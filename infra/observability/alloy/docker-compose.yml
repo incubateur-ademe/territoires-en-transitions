@@ -1,0 +1,53 @@
+# Agent Grafana Alloy : un par serveur applicatif, déployé comme service
+# Coolify par infra/coolify/services.tf.
+#
+# Collecte les métriques de l'hôte, des conteneurs, de Traefik et des sondes
+# HTTP, plus les logs de tous les conteneurs Coolify, et pousse le tout vers
+# Cockpit (cf. config.alloy). infra/coolify dépose config.alloy par l'API
+# Coolify (file storage), qui l'écrit dans ./etc/alloy du dossier du service
+# sur le serveur. Coolify ne monte pas de lui-même un file storage créé par
+# l'API : le bind de ce dossier ci-dessous le fait.
+#
+# privileged et les montages de l'hôte sont ceux qu'attend cAdvisor. Le socket
+# Docker donne de toute façon à ce conteneur les droits de root sur l'hôte.
+#
+# Variables : toutes poussées depuis infra/coolify/env-manifest.tf (entrée alloy).
+
+services:
+  alloy:
+    image: grafana/alloy:v1.20.1
+    restart: unless-stopped
+    privileged: true
+    command:
+      - run
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    environment:
+      SERVER_NAME: ${SERVER_NAME:?SERVER_NAME requis}
+      ENV_NAME: ${ENV_NAME:?ENV_NAME requis}
+      COCKPIT_TOKEN: ${COCKPIT_TOKEN:?COCKPIT_TOKEN requis}
+      COCKPIT_METRICS_PUSH_URL: ${COCKPIT_METRICS_PUSH_URL:?COCKPIT_METRICS_PUSH_URL requis}
+      COCKPIT_LOGS_PUSH_URL: ${COCKPIT_LOGS_PUSH_URL:?COCKPIT_LOGS_PUSH_URL requis}
+      PROBE_APP_URL: ${PROBE_APP_URL:?PROBE_APP_URL requis}
+      PROBE_BACKEND_URL: ${PROBE_BACKEND_URL:?PROBE_BACKEND_URL requis}
+      PROBE_SITE_URL: ${PROBE_SITE_URL:?PROBE_SITE_URL requis}
+      PROBE_AUTH_URL: ${PROBE_AUTH_URL:?PROBE_AUTH_URL requis}
+      PROBE_STORAGE_URL: ${PROBE_STORAGE_URL:?PROBE_STORAGE_URL requis}
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - alloy-data:/var/lib/alloy/data
+      - ./etc/alloy:/etc/alloy:ro
+    # Réseau du proxy Coolify, pour scraper Traefik (coolify-proxy:8082).
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
+
+volumes:
+  alloy-data:
