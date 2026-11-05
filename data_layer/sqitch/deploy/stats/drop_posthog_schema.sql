@@ -8,7 +8,13 @@ BEGIN;
 -- utilisateur/remove_timescale a supprimé posthog.event(tstzrange) : plus rien
 -- n'est envoyé à PostHog depuis la base. Le suivi passe par le SDK (app,
 -- backend) et PostHogCollectivitesSyncService (apps/tools).
-select cron.unschedule(jobid) from cron.job where jobname = 'posthog_send_yesterday_events';
+-- pg_cron n'existe pas hors Supabase (RDB Scaleway).
+do $$
+begin
+  if to_regclass('cron.job') is not null then
+    perform cron.unschedule(jobid) from cron.job where jobname = 'posthog_send_yesterday_events';
+  end if;
+end $$;
 
 -- if exists : le contenu du schéma diffère selon les environnements (ex. pas de
 -- validate_event en staging et préprod).

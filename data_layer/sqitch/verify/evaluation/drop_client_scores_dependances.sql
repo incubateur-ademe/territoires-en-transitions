@@ -22,8 +22,10 @@ BEGIN
           RAISE EXCEPTION 'La fonction delete_collectivite_test existe encore';
     END IF;
 
-    IF EXISTS (SELECT FROM cron.job WHERE jobname = 'refresh_stats_completude') THEN
-          RAISE EXCEPTION 'Le job cron refresh_stats_completude existe encore';
+    IF to_regclass('cron.job') IS NOT NULL THEN
+        IF EXISTS (SELECT FROM cron.job WHERE jobname = 'refresh_stats_completude') THEN
+              RAISE EXCEPTION 'Le job cron refresh_stats_completude existe encore';
+        END IF;
     END IF;
 END $$;
 
