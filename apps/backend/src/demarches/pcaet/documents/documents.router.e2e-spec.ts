@@ -1269,8 +1269,9 @@ describe('Documents d’une démarche PCAET', () => {
     }
   });
 
-  describe('Bilan du PCAET précédent : attendu des seuls renouvellements', () => {
+  describe('Bilans du PCAET précédent : attendus des seuls renouvellements', () => {
     const BILAN = 'pcaet_bilan_pcaet_precedent';
+    const BILAN_MI_PARCOURS = 'pcaet_bilan_mi_parcours_precedent';
 
     /** Un dépôt antérieur mené à son terme, inséré tel quel : ce qui est testé
      *  ici est la lecture de l'historique, pas le workflow de publication. */
@@ -1299,6 +1300,36 @@ describe('Documents d’une démarche PCAET', () => {
       const ids = await listDocumentIds(caller, collectivite.id, demarche.id);
 
       expect(ids).not.toContain(BILAN);
+      expect(ids).not.toContain(BILAN_MI_PARCOURS);
+    });
+
+    it('un renouvellement ouvre son dossier sur les deux bilans, le bilan à mi-parcours facultatif', async () => {
+      const { caller, collectivite } = await freshEditor();
+      await addDemarcheAnterieure(collectivite.id, 'publie');
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+
+      const snapshot = await caller.demarches.pcaet.documents.list({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+      });
+
+      expect(snapshot.definitions.map(({ id }) => id).slice(0, 3)).toEqual([
+        BILAN,
+        BILAN_MI_PARCOURS,
+        'pcaet_deliberation_engagement',
+      ]);
+      const miParcours = snapshot.definitions.find(
+        ({ id }) => id === BILAN_MI_PARCOURS
+      );
+      expect(miParcours).toMatchObject({
+        nom: 'Bilan à mi-parcours du PCAET précédent',
+        requis: false,
+        etape: 'amont',
+        substituts: [],
+        substitutsDeclarables: [],
+      });
     });
 
     it('un renouvellement se le voit demander, obligatoire et déclarable dans le PCAET global', async () => {
