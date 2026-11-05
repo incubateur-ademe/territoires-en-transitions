@@ -17,8 +17,8 @@ const listIndicateursInputQueryOptionsSchema = getPaginationSchema(
 
 export const listIndicateursInputSchema = z.object({
   collectiviteId: z.number(),
-  filters: listDefinitionsInputFiltersSchema.optional().prefault({}),
-  queryOptions: listIndicateursInputQueryOptionsSchema.optional().prefault({
+  filters: listDefinitionsInputFiltersSchema.prefault({}),
+  queryOptions: listIndicateursInputQueryOptionsSchema.prefault({
     page: PAGE_DEFAULT,
     limit: 50,
   }),
