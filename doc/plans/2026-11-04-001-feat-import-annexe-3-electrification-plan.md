@@ -20,13 +20,13 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
 - [x] PR 1A — Contrats des profils et API de suivi : [#5702](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5702), fusionnée le 4 novembre 2026 ; parcours générique vérifié en préproduction.
 - [x] PR 1B — Suivi sans dépendre d'un plan : [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), implémentée et vérifiée, en revue.
-- [ ] PR 2A — Stockage métier et lectures.
+- [x] PR 2A — Réutilisation du modèle et identification du type existant : [#5722](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5722), implémentée et vérifiée, en revue.
 - [ ] PR 2B — Catalogue et résolution déterministe.
 - [ ] PR 3A — Lecture documentaire.
 - [ ] PR 3B — Extraction typée de l'annexe.
 - [ ] PR 4A — Axes et liens de fiches.
 - [ ] PR 4B — Indicateurs et liens.
-- [ ] PR 4C — Compléter uniquement les valeurs absentes.
+- [ ] PR 4C — Valeurs sans écrasement et sources isolées par plan.
 - [ ] PR 5 — Pipeline complet et cycle de vie.
 - [ ] PR 6 — Parcours et lecture dans l'app.
 - [ ] Phase 7 — Qualification et ouverture en production.
@@ -35,10 +35,15 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 Une case cochée signifie que le lot est implémenté et vérifié dans sa PR,
 pas qu'il est fusionné ou déployé. L'ouverture en production reste une étape distincte.
 
-La [revue des sources Notion du 5 novembre](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#questions-ouvertes-et-dépendances-avant-implémentation)
-n'a pas identifié de nouvel arbitrage modifiant ce découpage. Les validations
-des définitions E06/E08, du catalogue Grist vers TeT et du mapping des lauréats
-restent à obtenir avant ouverture ; aucun de ces prérequis n'est déclaré levé.
+La [révision de l'ADR du 5 novembre](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#statut)
+retire les cinq tables proposées dans la première version de #5722. Les
+engagements sont représentés par les axes, fiches et indicateurs existants ;
+les cibles utilisent les sources de valeurs, avec une métadonnée par plan.
+Le type de plan est identifié par son couple existant `(categorie, type)`,
+comme le PCAET, sans ajouter de colonne d'identification.
+Les champs nécessaires sont livrés avec leurs écritures et lectures dans
+les phases 4 à 6. Les validations des définitions E06/E08, du catalogue Grist
+vers TeT et du mapping des lauréats restent à obtenir avant ouverture.
 
 Chaque PR contient son code, ses migrations éventuelles, ses tests et la mise
 à jour de sa documentation. Elle compile et fonctionne sans une PR suivante.
@@ -54,7 +59,7 @@ les engagements ou ignorerait les indicateurs des fiches B.
 | Phase | PR | Résultat autonome en production | Dépendances |
 | --- | --- | --- | --- |
 | 1. Contrats et suivi des jobs | 1A, 1B | Jobs historiques compatibles ; suivi retrouvable après fermeture ; admission annexe fermée côté serveur | Aucune phase suivante |
-| 2. Données et références métier | 2A, 2B | Stockage et lecture des engagements prêts ; résolution des références testable sans import | Phase 1 |
+| 2. Identification et références métier | 2A, 2B | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 |
 | 3. Lecture et extraction de l'annexe | 3A, 3B | Document transformé en brouillon typé et validé, sans écriture métier | Phases 1 et 2 |
 | 4. Primitives de persistance | 4A, 4B, 4C | Création et liaison sous transaction, sans écraser les données existantes | Phases 1 et 2 |
 | 5. Import complet côté backend | 5 | Pipeline, reprise et transaction finale opérationnels ; admission toujours fermée | Phases 1 à 4 |
@@ -94,7 +99,7 @@ ou de migrations inutilisables sans leur code associé.
 - Les migrations sont additives et passent avant le code qui les utilise.
   Un rollback applicatif garde les tables et les données. Après ouverture,
   conserver un backend au moins aussi capable que celui de la phase 5 et une
-  app capable de lire les jobs et les engagements de la phase 6. Revenir au
+  app capable de lire les jobs et les sources de valeurs de la phase 6. Revenir au
   worker générique initial n'est pas un rollback sûr.
 - Avant ouverture, un retour à une API plus ancienne nécessite d'abord une
   app compatible avec ses routes et contrats. Ne pas retirer une lecture de
@@ -232,52 +237,40 @@ reprises IA sont simulés, sans appel réel au modèle.
 **Déploiement et arrêt possible :** après 1A ; améliore le suivi des imports
 actuels, même si aucune autre phase n'est livrée. L'annexe reste inaccessible.
 
-## Phase 2 — Modèle durable et références résolues
+## Phase 2 — Modèle existant et références résolues
 
-### PR 2A — Données conventionnelles, provenance et lecture
+### PR 2A — Réutilisation du modèle et identification du type existant
 
-**Périmètre :** migrations Sqitch, modèles et services internes dans `plans`,
-lecture autorisée des engagements d'un plan.
+**Périmètre :** révision de l'architecture et règle partagée de création
+utilisée par le backend et l'app, sans nouvelle table ni migration.
 
-- Ajouter les trois relations de l'ADR : initialisation, engagements retenus,
-  cibles. Ajouter deux tables de provenance attachées aux axes et aux fiches ;
-  cette forme évite d'étendre tous les DTO d'édition génériques. Les tables
-  sont typées, avec contraintes et clés étrangères, pas un stockage du draft brut.
-- Livrer leurs écritures internes sous transaction appelante et les tester
-  avec fixtures. La PR 5 les composera sans réimplémenter leur persistance.
-- Unicité par plan, puis `(plan, engagement)`, puis `(plan, engagement, cible)`.
-  Valeur, unité, échéance et référence métier sont indépendantes de l'indicateur
-  lié. Les cibles ne sont pas des lignes d'`indicateur_valeur.objectif`.
-- La suppression du plan supprime ses engagements/cibles. La suppression d'un
-  objet opérationnel met son lien à `null` ; une fiche supprimée logiquement
-  est exclue de la lecture. La provenance d'une fiche déplacée reste attachée
-  à celle-ci, même si le plan d'origine disparaît.
-- Conserver source/hash, versions, clés de source, auteur/date durablement.
-  Une suppression de job ou d'auteur ne doit pas supprimer les engagements :
-  références nullables, sans cascade depuis ces objets. Les checkpoints et le
-  fichier temporaire ne sont pas l'historique conventionnel.
-- RLS activée, accès direct `anon`/`authenticated` révoqué ; services backend
-  soumis aux droits et à la confidentialité du plan. Pas d'API d'édition des
-  engagements. La lecture retourne aussi les liens manquants et retourne une
-  liste vide pour un plan ordinaire.
-- Lire les rattachements actuels et distinguer un axe avec engagement retenu
-  d'un axe demandé seulement par B. Un élément libre ne devient pas une référence
-  du fait de sa position ; une action de l'axe 1 n'est comptée qu'une fois.
-- Ajouter au type de plan une clé technique stable pour Électrification,
-  nullable et unique, avec reprise contrôlée de l'entrée existante, sans changer
-  ses IDs. Si cette entrée est absente ou ambiguë, garder l'annexe indisponible
-  jusqu'à correction du mapping, sans bloquer la migration ni les autres types.
-  Le [modèle actuel](../../apps/backend/src/plans/fiches/shared/models/plan-action-type.table.ts)
-  ne porte que catégorie, libellé et ID ; ne pas reproduire le test de libellé UI.
+- Identifier le type Électrification par son couple unique `(categorie, type)`
+  `("Plans thématiques", "Plan Électrification")` dans `PlanCreationRules`, selon
+  le fonctionnement du PCAET. Conserver les IDs et les contrats de lecture existants.
+- Conserver le blocage temporaire de création Électrification et garder
+  l'admission annexe fermée. L'identification d'un type ne vaut ni autorisation
+  d'import ni contrôle d'éligibilité.
+- Réviser l'ADR et le découpage pour utiliser les axes, fiches, indicateurs et
+  sources existants. Les champs de référence sont livrés en 4A, les métadonnées
+  et valeurs en 4B/4C, avec les services qui les consomment. Aucune nouvelle
+  lecture d'engagements ni API d'édition n'est exposée dans ce lot.
 
-**Validation :** migrations `deploy/verify/revert` sur base de test ; contraintes,
-permissions, suppression/déplacement/dissociation et lecture sans double compte,
-auteur/job supprimé, ancien backend avec schéma étendu. Le `revert` refuse de
-supprimer les tables si l'une des cinq contient encore des données, provenance comprise.
+**Validation attendue :** suites e2e existantes pour la lecture des types,
+le blocage du type Électrification, les types ordinaires et le suivi des imports.
+Vérifier qu'un libellé identique dans une autre catégorie n'identifie pas le
+type Électrification. TypeScript backend/app/domain et lint ciblé.
 
-**Déploiement et arrêt possible :** migrations puis backend. Tables initialement
-vides, aucun writer public ; ancien fonctionnement conservé. Rollback du code
-sans retrait des données ni des tables utilisées.
+**Vérifications effectuées :** 54 tests dans les trois suites e2e existantes
+de création de plans, de lecture des types et de suivi des imports, ainsi que
+les 26 tests existants d'enfilement. Le type canonique reste bloqué, ses plans
+existants restent modifiables et un homonyme dans une autre catégorie est
+autorisé. Le build domain, TypeScript backend/tests/app/domain, le lint ciblé
+et les liens locaux passent. Aucun nouveau fichier de tests unitaires ni appel
+réel au modèle. Ce lot ne comporte aucune migration ; l'isolation des futures
+cibles par source reste à valider en phase 4.
+
+**Déploiement et arrêt possible :** backend et app, sans migration. La création
+Électrification reste suspendue, sans dépendre d'une phase suivante.
 
 ### PR 2B — Catalogue et résolution déterministe
 
@@ -391,6 +384,14 @@ adaptateurs existants et liaison des fiches aux axes.
 - Accepter des axes explicites, y compris sans fiche, et des clés
   `sourceKey`/`parentSourceKey`. Retourner les correspondances clés → IDs.
   Garder l'adaptateur générique fonctionnel et ses entrées actuelles.
+- Ajouter sur les axes et fiches existants les champs de référence nécessaires :
+  code, nature et version du catalogue. Conserver sur le plan racine la liste
+  des codes d'engagement retenus dans A, sans la déduire des axes demandés par B.
+  Le service interne les écrit après résolution, sous la transaction appelante.
+  Livrer ces champs avec leurs écritures, sans tables de provenance ni snapshots
+  répétés du fichier ou du job. Une duplication ordinaire ne les copie pas sur
+  les nouveaux objets. Les DTO publics et les accès directs en base ne permettent
+  pas de forger ces références ; vérifier les droits/RLS applicables.
 - Ajouter les liens de fiches existantes aux axes sans copier leur contenu,
   remplacer leurs autres liens ou modifier leurs sous-actions/indicateurs.
   Conserver les permissions ordinaires, y compris le partage entre collectivités.
@@ -400,7 +401,9 @@ adaptateurs existants et liaison des fiches aux axes.
   d'effet externe émise avant que la transaction englobante ait réussi.
 
 **Validation :** axe vide, homonymes, parents corrects, rollback, liens existants
-conservés, partage et droits, import générique. Aucun webhook après rollback ;
+conservés, partage et droits, import générique, codes après renommage/déplacement,
+duplication sans identité annexe et refus d'attribution par les écritures publiques.
+Aucun webhook après rollback ;
 un échec de notification ne provoque pas une seconde création.
 
 **Déploiement et arrêt possible :** amélioration complète de l'agrégat existant,
@@ -421,19 +424,29 @@ liens axe/indicateur et fiche/indicateur.
   Ne pas utiliser les setters qui remplacent toutes les relations, notamment
   `setAxeIndicateurs` et `upsertIndicateurFiches`, comme des opérations d'ajout.
   Ne modifier ni définition, ni valeurs, ni liens préexistants sur le chemin URL.
+- Réutiliser les sources et métadonnées d'indicateurs. Ajouter au plan racine
+  un lien nullable vers sa métadonnée. La suppression du plan retire ce lien,
+  sans supprimer les valeurs de la collectivité. Créer une métadonnée de source
+  "Annexe 3 Électrification" distincte par plan, sous la transaction commune,
+  sans créer de table d'engagement ou de cible. Contrôler la cohérence plan,
+  collectivité, unicité et permissions ; les écritures ordinaires ne peuvent pas
+  attribuer librement ce lien. La PR 4C consommera cet identifiant exact
+  pour les écritures et les lectures de valeurs.
 
 **Validation :** création ordinaire inchangée ; rollback de toutes les données
 de l'indicateur ; liens préservés ; droits refusés ; ordre des verrous ; titres
-prédéfinis inchangés. Les appels autorisés n'utilisent pas de contournement des droits.
+prédéfinis inchangés ; métadonnées de deux plans distinctes ; suppression d'un
+plan sans perte des valeurs. Les appels autorisés n'utilisent pas de contournement des droits.
 
 **Déploiement et arrêt possible :** nouvelles opérations internes complètes,
 API ordinaires conservées, aucune écriture issue d'une annexe.
 
-### PR 4C — Compléter uniquement les valeurs absentes
+### PR 4C — Écrire les valeurs sans écrasement et isoler les sources par plan
 
-**Périmètre :** [écriture des valeurs](../../apps/backend/src/indicateurs/valeurs/write-indicateur-valeurs/)
-et compte rendu des conflits. Cette règle mérite une revue séparée de la création
-des définitions : elle protège des saisies existantes et concurrentes.
+**Périmètre :** [écriture des valeurs](../../apps/backend/src/indicateurs/valeurs/write-indicateur-valeurs/),
+lectures et calculs par métadonnée, compte rendu des conflits. Ces règles
+méritent une revue séparée de la création des définitions : elles protègent
+les saisies existantes et concurrentes ainsi que les valeurs des autres plans.
 
 - Lire, comparer et écrire sous le même verrou de valeurs et la même transaction.
   Préserver séparément résultat, objectif et métadonnées déjà présents, y compris
@@ -444,10 +457,24 @@ des définitions : elle protège des saisies existantes et concurrentes.
 - Retourner les conflits conservés pour le compte rendu ; respecter unité,
   périodicité et source. Les valeurs des nouveaux personnalisés passent par les
   règles ordinaires. Les objets désignés par URL n'empruntent pas ce chemin.
+- Écrire les cibles de A comme objectifs datés sous la métadonnée propre au
+  plan, sans toucher à l'objectif de la collectivité ni aux autres sources.
+  Zéro est une valeur ; une cible absente n'invente ni résultat ni objectif.
+  Réutiliser les lectures de valeurs en ciblant le `metadonneeId` exact du plan.
+  Deux plans partageant un indicateur ne doivent pas lire la dernière valeur
+  disponible sous le seul nom de source.
+- Adapter l'isolation des calculs par métadonnée, à partir du mécanisme PCAET
+  existant, avant d'autoriser ces écritures. Préserver les règles des autres
+  sources et les formules du catalogue ; une cible saisie ne devient pas un
+  résultat calculé. Vérifier les droits sur le plan, la métadonnée et les
+  indicateurs sans introduire d'accès privilégié depuis un simple identifiant.
 
 **Validation :** résultat présent/objectif absent et inverse ; zéro ; données
 externes ; écritures concurrentes ; périodes invalides ; rollback ; chemin URL
-strictement sans modification. Préserver l'ordre de verrouillage définitions → valeurs.
+strictement sans modification ; deux plans de la même collectivité, même
+indicateur et même période avec cibles distinctes ; lectures et calculs isolés
+par métadonnée ; absence d'effet sur les sources collectivité et PCAET.
+Préserver l'ordre de verrouillage définitions → valeurs.
 
 **Déploiement et arrêt possible :** opération interne testée, sans modifier
 le comportement des saisies et imports ordinaires qui ne l'appellent pas.
@@ -477,14 +504,16 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   import générique ; le parcours ordinaire reste bloqué jusqu'à la phase 6.
 - Extraire/préparer hors transaction. Dans une transaction courte : revalider
   droits et références, créer plan/axes/fiches, ajouter liens, créer les
-  personnalisés, écrire les valeurs autorisées, provenance, engagements/cibles
-  et compte rendu, puis `markDone` avec le contrôle `status`/`attempt` existant.
+  personnalisés, écrire les codes de référence, la métadonnée du plan, les
+  valeurs autorisées et le compte rendu, puis `markDone` avec le contrôle
+  `status`/`attempt` existant.
   Un refus de `markDone` annule tout, comme une erreur métier ou une révocation de droit.
   Si le lot crée des personnalisés, acquérir le verrou exclusif du graphe avant
   toute revalidation verrouillée des définitions, selon l'ordre défini en 4B.
-- E01/E02 partagent un axe ; seuls les engagements A retenus sont persistés.
+- E01/E02 partagent un axe ; la liste sur le plan conserve seulement les codes
+  retenus dans A, indépendamment des axes demandés par les fiches B.
   E06/E08 utilisent les références confirmées une fois leurs définitions
-  validées et intégrées, E07 deux cibles indépendantes,
+  validées et intégrées, E07 deux objectifs indépendants sous la source du plan,
   E03/E12 des fiches "À venir". Aucun résultat ni achèvement n'est déduit d'un objectif.
 - Déclencher notifications et webhooks après commit. Leur échec ne modifie pas
   un job réussi et ne relance pas la création. Ajouter profil, versions et
@@ -514,7 +543,8 @@ cibles et le parcours de la phase 6.
 ### PR 6 — Exposer le parcours préparé
 
 **Périmètre :** formulaire d'import, affichage des engagements, erreurs et
-compte rendu. Réutiliser le suivi de la phase 1 et les lectures de la phase 2.
+compte rendu. Réutiliser le suivi de la phase 1 et les lectures ordinaires
+des plans et indicateurs, avec les sources préparées en phase 4.
 
 - Proposer l'annexe à partir de la capacité serveur, des droits et de
   l'éligibilité. Envoyer son profil explicite ; adapter consignes et options
@@ -526,13 +556,17 @@ compte rendu. Réutiliser le suivi de la phase 1 et les lectures de la phase 2.
 - Présenter "Cible de l'annexe 3" séparément de l'objectif courant, avec unité
   et échéance, notamment dans les
   [indicateurs d'axe](../../apps/app/src/plans/plans/show-plan/plan-arborescence.view/axe/axe-indicateurs.tsx).
-  Garder aussi une lecture au niveau du plan si l'axe ou l'indicateur a été
-  supprimé/déplacé. E03/E12 renvoient à la fiche suivie par statut.
+  Réutiliser l'affichage des sources et l'adapter pour sélectionner la métadonnée
+  exacte du plan, sans mélanger plusieurs imports ni masquer l'objectif local.
+  Ne pas ajouter de registre ou d'écran de gestion des engagements. E03/E12
+  renvoient à la fiche ordinaire suivie par statut.
 - Afficher erreurs localisées, cibles vides, conflits conservés, données non
   appliquées aux objets liés par URL et champs budgétaires non repris.
   Une configuration manquante n'est pas présentée comme un document à corriger.
-- Préserver les éditions ordinaires. Invalider le suivi après suppression,
-  déplacement ou dissociation ; ne recréer aucun objet disparu. Ne proposer
+- Préserver les éditions ordinaires et afficher les liens actuels après
+  suppression, déplacement ou dissociation ; ne recréer aucun objet disparu.
+  Les écarts avec la convention sont traités par l'ADEME et le support à partir
+  du document d'origine, sans API de détection des liens manquants. Ne proposer
   aucun renommage local des indicateurs prédéfinis ni édition des engagements.
 - Mettre les textes dans les labels existants et les URLs dans les builders.
   Mettre à jour le guide de parcours et de support avec ces comportements.
@@ -540,7 +574,8 @@ compte rendu. Réutiliser le suivi de la phase 1 et les lectures de la phase 2.
 **Validation :** parcours navigateur avec faux backend LLM/fixtures : upload,
 suivi sans plan, retour après fermeture, erreur/correction par nouvel import,
 reprise, succès et compte rendu. Vérifier les cibles E07, zéro/vide, axe sans
-fiche, axe B sans engagement, données existantes préservées et liens manquants.
+fiche, axe B sans engagement, deux plans sans mélange de sources, données
+existantes préservées et comportement ordinaire après retrait d'un lien.
 Les tests de l'ancien import support ne constituent pas cette couverture.
 
 **Déploiement et arrêt possible :** backend de phase 5 puis app, admission encore
@@ -593,7 +628,7 @@ préproduction. Une référence invalide dans une annexe est un rejet attendu,
 
 **Retour arrière :** fermer l'admission, garder les lecteurs et consommateurs
 compatibles, traiter les jobs admis selon leurs versions. Ne supprimer aucun
-plan, indicateur, lien ou engagement par rollback. Les problèmes d'un import
+plan, indicateur, lien ou valeur par rollback. Les problèmes d'un import
 terminé relèvent du support ; pas de réimport avec fusion automatique.
 
 ## Phase 8 — Budgets et financements, facultatif
@@ -624,10 +659,10 @@ au socle. Aucun chantier de reporting budgétaire n'est inclus.
 | Suivi durable, reprise et compatibilité des jobs | 1A, 1B, 3B, 5 | 5 et 6 |
 | A/B uniquement, hyperliens, clés stables, références bloquantes | 2B, 3A, 3B | 5 |
 | Axes explicites, E01/E02, axes libres et B sans engagement | 2B, 4A, 5 | 5 et 6 |
-| Cibles distinctes, E06/E08, deux cibles E07, actions E03/E12 | 2A, 2B, 5 | 5 et 6 |
-| Personnalisés, valeurs datées, oui/non et provenance | 2A, 3B, 4A, 4B, 4C, 5 | 5 |
+| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B, 4A, 4B, 4C, 5 | 5 et 6 |
+| Personnalisés, valeurs datées, oui/non et codes de référence | 3B, 4A, 4B, 4C, 5 | 5 |
 | URL : liens seuls ; codes : complétion sans écrasement | 2B, 4A, 4B, 4C | 5 |
-| Liberté d'édition, titres communs, suppression et traçabilité | 2A, 4A, 6 | 6 |
+| Liberté d'édition, titres communs, suppression et références | 4A, 4B, 6 | 6 |
 | Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 5 | 5 |
 | Compte rendu complet, activation et arrêt sans perte | 1A, 1B, 5, 6 | 7 |
 | Budgets facultatifs | 8 | 8, sans bloquer 7 |

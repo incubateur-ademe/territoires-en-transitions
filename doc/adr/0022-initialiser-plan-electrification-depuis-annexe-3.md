@@ -15,6 +15,21 @@ Les correspondances restant à valider sont détaillées en fin de document.
 Le [plan d'implémentation](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md)
 découpe ces décisions en incréments déployables séparément.
 
+**Révision du 5 novembre 2026.** Le rappel du cadrage du kickoff par le porteur
+de l'implémentation conduit à retirer le modèle proposé d'initialisation,
+d'engagement et de cible, ainsi que les deux tables de provenance préparées
+dans la [PR #5722](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5722).
+Ces cinq tables traduisaient une proposition technique de cet ADR, pas une
+exigence de Notion. Elles sont remplacées avant fusion par la réutilisation des
+axes, fiches, indicateurs et sources de valeurs existants. Les validations de
+la première version de cette PR portaient sur le modèle retiré ; elles ne
+valident pas la solution révisée.
+
+La proposition intermédiaire d'ajouter `plan_action_type.code` est également
+retirée. Les types ne sont pas renommables par les collectivités ; le risque
+évoqué de changement de libellé ne justifie pas une nouvelle colonne. Comme
+pour le PCAET, l'identification repose sur le couple existant `(categorie, type)`.
+
 ## Contexte
 
 Les collectivités lauréates du programme Électrification remplissent l'annexe 3
@@ -58,9 +73,15 @@ sur les [périodicités](0018-periodicite-des-indicateurs.md) et les
 
 Ajouter un profil explicite `annexe-3-electrification` à l'import existant.
 Le serveur vérifie sa compatibilité avec le type de plan, l'éligibilité de la
-collectivité et les permissions ; le libellé affiché du type de plan ne fait
-pas office d'identifiant ni d'autorisation. Conserver le profil et les versions
-du contrat d'extraction et du catalogue dans le job et ses checkpoints.
+collectivité et les permissions. Identifier le type dans `plan_action_type`
+par son couple unique `(categorie, type)`, selon le fonctionnement du PCAET,
+puis utiliser son ID dans les relations existantes. Le couple Électrification
+est `("Plans thématiques", "Plan Électrification")`. Le titre du plan reste libre ;
+ni lui ni le choix d'un type ne donnent une autorisation. Les types sont
+accessibles en lecture seule aux collectivités ; toute modification technique
+de leur couple doit rester cohérente avec les règles qui l'utilisent.
+Conserver le profil et les versions du contrat d'extraction et du catalogue
+dans le job et ses checkpoints.
 
 Avant toute reprise, l'API et le worker vérifient que le profil et les versions
 du contrat et du catalogue du checkpoint correspondent à ceux du job et sont
@@ -74,7 +95,7 @@ repli générique ni ré-extraction automatique avec un autre contrat ou catalog
 Un nouvel import explicite reste distinct d'une reprise du même job.
 
 L'orchestration reste dans `plans/ai-plan-import`. Les règles de création du
-plan et de ses engagements restent dans `plans`, celles des indicateurs dans
+plan, de ses axes et de ses fiches restent dans `plans`, celles des indicateurs dans
 `indicateurs`, conformément aux ADRs [3](0003-conventions-de-code.md),
 [11](0011-architecture-service-ddd.md) et [12](0012-pattern-result.md).
 Réutiliser les services et la queue existants ; aucun nouveau moteur de
@@ -200,33 +221,51 @@ par le champ prévu dans l'annexe, sans leur attribuer de code d'engagement.
 Les quatre familles ADEME sont une correspondance de reporting, pas un
 niveau de l'arbre.
 
-Réutiliser `axe`, `fiche_action` et leurs relations. Ajouter une provenance
-structurée aux axes et aux fiches créés depuis une référence : version du
-catalogue, nature de la référence et code. La nature distingue notamment une
-action de référence, une sous-action de référence et un indicateur oui/non
-converti. Pour les indicateurs prédéfinis, conserver leur
-`identifiantReferentiel` et leur ID existants.
+Réutiliser `axe`, `fiche_action` et leurs relations. Ajouter seulement les
+champs de référence nécessaires sur les axes et fiches créés depuis le
+catalogue : code, nature et version du catalogue. La nature distingue notamment
+une action de référence, une sous-action et un indicateur oui/non converti.
+Pour les indicateurs prédéfinis, conserver leur `identifiantReferentiel` et leur
+ID existants. Ces champs sont livrés avec les écritures qui les utilisent,
+sans tables de provenance supplémentaires.
 
-Cette provenance reste attachée à l'objet lors d'un renommage ou déplacement.
-Un élément libre n'en reçoit pas parce qu'il se trouve dans un axe de référence.
-Le reporting combine ces identifiants avec les liens et positions actuels :
-les éléments supprimés ou sortis du plan ne sont pas comptés, les écarts sont
-signalés. Une action de l'axe 1 n'est pas comptée deux fois pour E01 et E02.
-Déplacer une action ne change pas les engagements retenus dans la convention.
-Le catalogue conserve l'origine de l'action ; son axe actuel détermine son
-rattachement dans le plan. Le reporting distingue un axe portant un engagement
-retenu d'un axe créé uniquement pour accueillir des fiches. La présence d'une
-action ou d'un axe de référence n'ajoute pas d'engagement au tableau A.
+Conserver les codes d'engagement sélectionnés dans A sur l'axe racine du plan.
+Cette liste distingue E01 et E02 malgré leur axe commun et n'est pas enrichie
+par les fiches B. Elle ne constitue pas un registre de convention : aucune
+entité d'engagement, API d'édition ou lecture dédiée n'est créée. Les DTO publics
+ordinaires et les accès directs en base ne permettent pas d'attribuer ces
+références ; l'import les renseigne après résolution et contrôle des droits.
+La duplication ordinaire ne copie pas cette identité d'annexe sur le nouveau
+plan ni sur les nouveaux objets.
 
-### 4. Séparer la cible conventionnelle de l'objectif de l'indicateur
+Un code reste attaché à l'objet survivant lors d'un renommage ou déplacement.
+Un élément libre n'en reçoit pas du fait de sa position. Le reporting utilise
+les identifiants et les liens actuels : les éléments supprimés ou sortis du
+plan ne sont pas comptés et une action de l'axe 1 n'est pas comptée deux fois
+pour E01 et E02. Les écarts avec la convention sont traités manuellement par
+l'ADEME et le support, comme prévu dans l'esquisse. Aucun mécanisme de
+détection des liens manquants, de restauration ou d'historisation métier
+indépendante des objets n'est ajouté.
 
-Persister les engagements dans des relations dédiées au plan :
+### 4. Conserver les cibles avec les sources de valeurs existantes
 
-| Donnée proposée | Identité et contenu |
-| --- | --- |
-| Initialisation Électrification | `planId`, collectivité, job source, fichier/hash, version du catalogue, auteur et date |
-| Engagement retenu | `(planId, codeEngagement)`, axe associé ; fiche de suivi pour E03/E12 |
-| Cible d'engagement | `(planId, codeEngagement, codeCible)`, indicateur associé, valeur nullable, unité et échéance |
+Les cibles du tableau A sont des objectifs datés de la source "Annexe 3
+Électrification" dans `indicateur_valeur`. Elles coexistent avec les objectifs
+déjà saisis par la collectivité et les autres sources, sans les modifier.
+Réutiliser `indicateur_source` et `indicateur_source_metadonnee` ; ajouter à
+l'axe racine du plan un lien nullable vers sa métadonnée pour identifier les
+données issues de son import. Chaque plan importé a sa propre métadonnée,
+même si deux plans concernent le même indicateur, la même collectivité et
+la même année. Les lectures utilisent son `metadonneeId` exact, pas seulement
+le nom de la source ou la version la plus récente de cette source.
+
+Les écritures et les calculs doivent préserver cette isolation entre plans,
+ainsi que les sources existantes. Adapter les règles de regroupement et leurs
+tests avant toute écriture annexe, en réutilisant le mécanisme déjà employé
+pour les sources PCAET. Cela ne modifie pas les formules du catalogue et ne
+permet pas de recalculer une cible saisie comme un résultat. Les droits du
+plan et des indicateurs restent vérifiés par les services existants. Le
+rattachement de métadonnée n'est pas un droit d'accès supplémentaire.
 
 Pour E06 et E08, la [réponse d'Émeline du 4 novembre 2026](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d)
 remplace les indicateurs d'immatriculations annuelles `part_v_h_im.c` et
@@ -267,11 +306,11 @@ précise les correspondances à utiliser :
 | Nombre total de bornes publiques | `s_26` | Nombre de bornes de recharge ouvertes au public |
 | Nombre de bornes rapides, incluses dans ce total | `s_26.a` | Nombre de bornes de recharge ouvertes au public - Station dédiée à la recharge rapide |
 
-Créer deux cibles distinctes sous l'engagement E07, chacune liée à son
-indicateur dans l'axe 6, en conservant l'unité "Nombre de bornes". La relation
-permet plusieurs cibles par engagement ; ne pas fusionner ni additionner les
-deux valeurs. Une cible vide reste indépendante de l'autre. Réutiliser les
-définitions existantes sans modifier leurs formules ni leurs valeurs.
+Écrire deux objectifs distincts pour E07, chacun sur son indicateur dans
+l'axe 6 et sous la métadonnée du plan, avec l'unité "Nombre de bornes". Ne pas
+fusionner ni additionner les deux valeurs. Une cible vide reste indépendante
+de l'autre. Réutiliser les définitions existantes sans modifier leurs formules
+ni les valeurs des autres sources.
 
 Les codes Grist `6-a` et `6-b` désignent des "points de recharge", avec un seuil
 de 150 kW pour `6-b`. La confirmation des indicateurs TeT d'E07 ne valide pas
@@ -279,30 +318,30 @@ leur équivalence avec ces codes : cette correspondance reste à établir pour
 les fiches B qui les citent. Ne pas convertir des points en bornes ni ajouter
 ce seuil aux cibles de l'annexe.
 
-Les cibles du tableau A sont des données de convention, distinctes de
-`indicateur_valeur.objectif`. Les présenter comme "Cible de l'annexe 3" à côté
-du suivi de l'engagement ; elles ne remplacent ni les objectifs déjà saisis ni
-les résultats. Ne pas détourner une source de valeurs pour représenter cette
-différence métier. Les objectifs courants restent modifiables ; le changement
-des engagements de convention ne fait pas partie de cette livraison.
+Présenter la source et la cible de l'annexe à partir des lectures d'indicateurs
+existantes. Adapter si nécessaire leur sélection et leur affichage pour ne
+pas confondre les données de deux plans ou masquer l'objectif de la
+collectivité. Une cible absente reste absente et produit un avertissement ;
+zéro reste une valeur. Aucun écran de gestion des engagements ni nouvelle
+API de registre conventionnel n'est ajouté. La modification de la convention
+ne fait pas partie de cette livraison.
 
 Pour E03 et E12, créer une fiche ordinaire sous l'axe concerné, avec une
 référence d'engagement et un statut initial "À venir". "Engagement retenu :
 Oui" ne signifie pas "Réalisé". Le suivi utilise ensuite le statut de la fiche.
 
-Supprimer ou déplacer les éléments opérationnels reste possible. La trace
-des engagements importés reste liée au plan et permet de constater un lien
-manquant ; elle ne recrée pas les éléments supprimés. Les liens vers les
-éléments supprimés physiquement deviennent nuls, sans empêcher leur suppression.
-Les fiches supprimées logiquement sont exclues des lectures de suivi même si
-leurs relations existent encore en base.
-Supprimer le plan supprime ses données d'engagement.
+Supprimer, déplacer ou dissocier les objets reste possible avec les droits
+ordinaires. La suppression du plan ne supprime pas les valeurs d'indicateurs
+de la collectivité : seul son lien vers la métadonnée disparaît avec lui. Une fiche
+supprimée logiquement est exclue du suivi ordinaire. Le support s'appuie sur
+la convention d'origine pour les écarts ; le job et son compte rendu gardent
+leur rétention ordinaire, sans garantie d'archivage permanent de la convention.
 
 ### 5. Créer ou relier sans altérer les données existantes
 
 | Référence dans l'annexe | Comportement |
 | --- | --- |
-| Code d'action connu | Créer une fiche avec la provenance de référence ; reprendre les champs renseignés de l'annexe et les compléments du catalogue prévus pour cette référence. |
+| Code d'action connu | Créer une fiche avec ses champs de référence ; reprendre les champs renseignés de l'annexe et les compléments du catalogue prévus pour cette référence. |
 | URL de fiche existante | Ajouter son rattachement au plan, sans copier la fiche, déplacer ses autres liens ou modifier son contenu, ses sous-actions et ses indicateurs. |
 | Action sans code ni URL | Créer une fiche libre sous l'axe/sous-axe indiqué. |
 | Code d'indicateur connu | Lier la définition du catalogue ; ne pas recréer l'indicateur ni écraser des valeurs locales. |
@@ -335,8 +374,9 @@ le statut "Réalisé" ; "Non" donne "À venir". Une réponse vide est signalée
 et ne constitue pas une réalisation. L'année d'objectif devient une échéance
 en fin d'année, explicitement conventionnelle, sans inventer de date réelle
 d'achèvement. Ne pas confondre ces sous-actions avec les anciennes étapes de fiche.
-Conserver aussi la réponse extraite et sa période d'observation dans la
-provenance : le statut modifiable et l'échéance ne remplacent pas cette information.
+Le compte rendu conserve la réponse extraite et sa période d'observation
+selon sa rétention ordinaire ; le statut reste le suivi courant de la fiche.
+Ne pas recopier le fichier, son hash ou son extraction sur chaque objet créé.
 
 Les objets restent modifiables avec les droits ordinaires. Pour les indicateurs
 prédéfinis, le [PM confirme le maintien du titre commun à toutes les collectivités](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d781f0bd1d001c893e9e4e) :
@@ -361,7 +401,7 @@ le partage et les permissions ordinaires permettant sa liaison. Les liens
 sont ajoutés, jamais remplacés par la seule liste issue de l'annexe.
 
 Le plan, ses axes, les nouvelles fiches, les liens, les indicateurs créés,
-leurs valeurs et les engagements sont enregistrés avec la réussite du job.
+leurs valeurs et la métadonnée de source sont enregistrés avec la réussite du job.
 Tout échec annule ces écritures. Conserver le contrôle `status`/`attempt`
 existant pour empêcher un ancien worker de valider après une reprise.
 Les notifications de réussite et autres effets externes ont lieu après le
@@ -418,16 +458,20 @@ Les plans existants ne sont ni migrés ni supprimés automatiquement.
   les lecteurs existants et valider un contrat métier explicite.
 - **Recréer les fiches et indicateurs désignés par URL** produit des doublons
   et sépare l'historique de suivi ; conserver les objets existants.
-- **Utiliser l'objectif courant comme cible conventionnelle** mélange deux
-  données qui doivent coexister et peut écraser une saisie locale.
+- **Écrire la cible dans l'objectif courant de la collectivité** peut écraser
+  une saisie locale. Une métadonnée de source propre au plan permet leur coexistence.
+- **Créer un modèle d'initialisation, d'engagements et de cibles** ajoutait
+  une gestion conventionnelle absente du cadrage. Cette proposition est retirée
+  le 5 novembre 2026 ; les objets existants portent les données de l'import.
 - **Verrouiller le plan ou développer un moteur générique de modèles** ajoute
   un fonctionnement que le cadrage actuel ne demande plus.
 
-Le choix réutilise l'infrastructure d'import mais impose des migrations et
-des évolutions de contrats, de lecteurs et d'affichage. La cible conventionnelle
-distincte ajoute une donnée à expliquer dans l'interface. La liberté d'édition
-rend possibles les écarts au plan initial ; le reporting doit les distinguer
-d'un résultat nul et le support doit pouvoir les retrouver.
+Le choix réutilise l'infrastructure d'import et les modèles métier existants.
+Des champs de référence et un lien de métadonnée restent nécessaires, avec des
+évolutions de contrats, de lecteurs et d'affichage. L'isolation des sources par
+plan demande une validation explicite, notamment pour les calculs. La liberté
+d'édition rend possibles les écarts au plan initial ; leur contrôle relève
+de l'ADEME et du support à partir des conventions, sans nouveau registre.
 
 ## Validation attendue
 
@@ -443,14 +487,16 @@ tests déjà exécutés :
 - Une référence inconnue, incohérente ou inaccessible bloque sans création
   de plan ; une cible absente reste vide ; aucune valeur n'est inventée.
 - Une URL réutilise le même objet et conserve champs, valeurs et autres liens.
-  Une cible conventionnelle coexiste avec un objectif 2030 déjà renseigné.
+  Une cible annexe coexiste avec un objectif 2030 déjà renseigné grâce à sa
+  source distincte. Deux plans de la même collectivité ne mélangent ni leurs
+  objectifs ni leurs calculs ; les lectures ciblent la métadonnée du plan.
 - Après validation métier et intégration des définitions, E06 et E08 lient
   respectivement `v_particulier_elec` et `autobus_autocar_elec`
   dans les axes 5 et 8, avec une cible chacun. Une définition manquante bloque
   avant création du plan, sans substitution par un indicateur d'immatriculations
   ou personnalisé, et sans demander de corriger l'annexe.
 - E07 crée deux cibles distinctes liées à `s_26` et `s_26.a` dans l'axe 6,
-  sans recréer les indicateurs ni modifier leurs valeurs ou formules. Une cible
+  sans recréer les indicateurs ni modifier leurs autres valeurs ou formules. Une cible
   vide ne supprime pas l'autre ; le total et sa partie rapide ne sont pas additionnés.
 - Les personnalisés reçoivent leurs valeurs datées ; les oui/non deviennent
   des sous-actions ; un objectif "Oui" ne vaut pas résultat "Oui".
@@ -458,6 +504,8 @@ tests déjà exécutés :
   les liens reste possible ; les références survivantes restent lisibles et
   les éléments libres ne deviennent pas des références. Le titre d'un indicateur
   prédéfini reste celui du catalogue, sans renommage local ni global par l'import.
+  Une duplication ordinaire ne copie pas l'identité annexe ; les écritures
+  publiques ne permettent pas d'attribuer les codes réservés à l'import.
 - Les erreurs d'écriture et workers concurrents ne laissent aucun agrégat
   partiel ni doublon ; tester la création d'indicateurs dans le rollback.
 - Les imports génériques conservent leur comportement. Tester le parcours
@@ -494,3 +542,8 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    dans l'onglet "Documents".
 3. **Lauréats.** Fournir une source maintenue et son mapping vers les collectivités
    TeT, avec une version et une validité vérifiables.
+4. **Cibles par source.** Vérifier l'isolation par métadonnée dans les écritures,
+   lectures et calculs de la phase 4, puis adapter la sélection et l'affichage
+   des sources en phase 6. La présence du mécanisme de sources ne garantit pas
+   encore la bonne lecture de deux plans partageant un indicateur. Cette
+   validation technique précède l'ouverture du profil.
