@@ -9,6 +9,7 @@ import {
   isCrmSyncJobName,
 } from '../airtable/airtable-crm-sync.service';
 import { CronImportPerimetresEpciService } from '../collectivites/cron-import-perimetres-epci.service';
+import { CronScanFichiersService } from '../collectivites/cron-scan-fichiers.service';
 import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
@@ -30,6 +31,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly airtableCrmSyncService: AirtableCrmSyncService,
     private readonly postHogCollectivitesSyncService: PostHogCollectivitesSyncService,
     private readonly cronImportPerimetresEpciService: CronImportPerimetresEpciService,
+    private readonly cronScanFichiersService: CronScanFichiersService,
     private readonly contextStoreService: ContextStoreService
   ) {
     super();
@@ -66,6 +68,9 @@ export class CronConsumerService extends WorkerHost {
           break;
         case 'posthog-collectivites-group-sync':
           result = await this.postHogCollectivitesSyncService.process();
+          break;
+        case 'scan-fichiers':
+          result = await this.cronScanFichiersService.scanFichiers();
           break;
         case 'import-perimetres-epci':
           result =

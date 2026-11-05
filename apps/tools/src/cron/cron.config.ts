@@ -70,6 +70,14 @@ export const JOBS_CONFIG = [
     data: {},
   },
   {
+    // Analyse antivirus des fichiers déposés : le backend ne fait que mettre
+    // un balayage en file, ignoré si le précédent n'est pas fini. Le débit se
+    // règle par FICHIER_SCAN_BATCH_SIZE côté backend.
+    name: 'scan-fichiers',
+    cronExpression: CronExpression.EVERY_5_MINUTES,
+    data: {},
+  },
+  {
     // Le 1er janvier à 4 h. `CronExpression` n'a pas de valeur annuelle, d'où
     // l'expression littérale — comme les jobs CRM.
     //

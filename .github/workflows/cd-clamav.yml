@@ -1,0 +1,93 @@
+name: Déploiement à la demande de ClamAV
+
+permissions:
+  contents: read
+
+run-name: Déploiement de ClamAV sur ${{ github.event.inputs.target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Quel environnement ?
+        options:
+          - preprod
+          - staging
+          - prod
+
+jobs:
+  build-clamav:
+    name: Build l'image ClamAV
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+      # Signature de l'attestation de provenance (cf. docker-build-push).
+      id-token: write
+      attestations: write
+    outputs:
+      image: ${{ steps.image.outputs.path }}
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: meta
+        uses: ./.github/actions/app/build-metadata
+
+      - uses: ./.github/actions/docker/login
+        if: ${{ !env.ACT }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: image
+        uses: ./.github/actions/docker/image-path
+        with:
+          username: incubateur-ademe
+          image: tet-clamav
+          tag: ${{ steps.meta.outputs.git-short-hash }}
+
+      # Jamais de réutilisation d'image : l'image officielle embarque les
+      # signatures du jour, un rebuild en apporte de fraîches au démarrage.
+      - name: Build et push de l'image ClamAV
+        uses: ./.github/actions/docker/build-push
+        with:
+          dockerfile: infra/clamav/Dockerfile
+          image: ${{ steps.image.outputs.path }}
+          push: ${{ !env.ACT }}
+
+  deploy-clamav:
+    name: Déploie ClamAV
+    needs: build-clamav
+    environment:
+      name: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      # Service privé de l'app du backend, créé une première fois à la main
+      # (cf. infra/clamav/README.md) : aucune route publique, clamd n'a pas
+      # d'authentification.
+      - name: Déploie ClamAV sur Koyeb
+        env:
+          ENV_NAME: ${{ github.event.inputs.target }}
+          IMAGE: ${{ needs.build-clamav.outputs.image }}
+        run: >
+          koyeb services update $ENV_NAME-backend/clamav
+          --debug
+          --docker "$IMAGE"
+          --docker-private-registry-secret ghcr
+          --docker-skip-verify

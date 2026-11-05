@@ -52,6 +52,7 @@ import { DiscussionRepositoryImpl } from './discussions/infrastructure/discussio
 import { DiscussionRouter } from './discussions/presentation/discussion.router';
 import DocumentService from './documents/document.service';
 import { DocumentsRouter } from './documents/documents.router';
+import { ScanFichiersModule } from './documents/scan-fichiers/scan-fichiers.module';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
 
@@ -87,6 +88,7 @@ import { SiteRouter } from './site/site.router';
     PertinenceLeviersModule,
     TransactionModule,
     NotificationsModule,
+    ScanFichiersModule,
   ],
   providers: [
     CollectivitesRouter,

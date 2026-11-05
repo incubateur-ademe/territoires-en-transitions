@@ -172,6 +172,28 @@ export const backendConfigurationSchema = z
       .describe(
         "Clé d'API Mistral AI (La Plateforme) de l'analyse des fiches ; sans elle, les appels Mistral échouent"
       ),
+    // Optionnel : sans hôte, le balayage antivirus ne fait rien (dev sans
+    // conteneur clamav, environnements de test).
+    CLAMAV_HOST: z
+      .string()
+      .optional()
+      .describe(
+        "Hôte du démon clamd (réseau privé, jamais exposé) ; vide : l'analyse antivirus des fichiers est désactivée"
+      ),
+    CLAMAV_PORT: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(3310)
+      .describe('Port TCP du démon clamd'),
+    FICHIER_SCAN_BATCH_SIZE: z.coerce
+      .number()
+      .int()
+      .positive()
+      .prefault(50)
+      .describe(
+        'Objets analysés par balayage antivirus ; à relever le temps de résorber le stock existant'
+      ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
       .min(1)

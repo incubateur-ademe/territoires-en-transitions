@@ -5,6 +5,7 @@ import { CreateUploadTokenRouter } from './create-upload-token/create-upload-tok
 import { EditPreuveDocumentRouter } from './edit-preuve-document/edit-preuve-document.router';
 import { GetDownloadUrlRouter } from './get-download-url/get-download-url.router';
 import { ListBibliothequeDocumentsRouter } from './list-bibliotheque-documents/list-bibliotheque-documents.router';
+import { ScanFichiersRouter } from './scan-fichiers/scan-fichiers.router';
 import { StoreDocumentRouter } from './store-document/store-document.router';
 import { UpdateDocumentRouter } from './update-document/update-document.router';
 
@@ -18,7 +19,8 @@ export class DocumentsRouter {
     private readonly createUploadTokenRouter: CreateUploadTokenRouter,
     private readonly getDownloadUrlRouter: GetDownloadUrlRouter,
     private readonly listBibliothequeDocumentsRouter: ListBibliothequeDocumentsRouter,
-    private readonly addRapportVisiteRouter: AddRapportVisiteRouter
+    private readonly addRapportVisiteRouter: AddRapportVisiteRouter,
+    private readonly scanFichiersRouter: ScanFichiersRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -28,7 +30,8 @@ export class DocumentsRouter {
     this.createUploadTokenRouter.router,
     this.getDownloadUrlRouter.router,
     this.listBibliothequeDocumentsRouter.router,
-    this.addRapportVisiteRouter.router
+    this.addRapportVisiteRouter.router,
+    this.scanFichiersRouter.router
   );
 
   createCaller = this.trpc.createCallerFactory(this.router);

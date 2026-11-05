@@ -302,6 +302,16 @@ services:
       timeout: 5s
       retries: 5
 
+  # ——————————————— ClamAV (analyse antivirus des fichiers) ———————————————
+  # Opt-in : ~1,5 Go de RAM pour les signatures. Le backend le joint par
+  # CLAMAV_HOST=localhost (apps en réseau hôte).
+  clamav:
+    profiles: [clamav]
+    build:
+      context: infra/clamav
+    ports:
+      - '3310:3310'
+
   # ————————————————— Outillage base de données (profil tools) —————————————
   # Migrations sqitch : réutilise l'image de la CI (.github/actions/database/sqitch-local),
   # lancée ponctuellement par `make db-migrate` (docker compose run --rm).
