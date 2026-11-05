@@ -1,4 +1,5 @@
 import {
+  canChangeIndicateurUnite,
   type IndicateurInGroup,
   listSousIndicateursBecomingAutonomous,
   validateSousIndicateurPerso,
@@ -86,6 +87,44 @@ describe('validateSousIndicateurPerso', () => {
       success: false,
       error,
     });
+  });
+});
+
+describe('canChangeIndicateurUnite', () => {
+  it('autorise le changement d’unité d’un indicateur autonome', () => {
+    expect(
+      canChangeIndicateurUnite({
+        indicateur: toIndicateurInGroup({}),
+        unite: 'kg',
+      })
+    ).toBe(true);
+  });
+
+  it('autorise le changement d’unité d’un parent, qui la propage à ses sous-indicateurs', () => {
+    expect(
+      canChangeIndicateurUnite({
+        indicateur: toIndicateurInGroup({ hasChildren: true }),
+        unite: 'kg',
+      })
+    ).toBe(true);
+  });
+
+  it('refuse le changement d’unité d’un sous-indicateur, qui reprend celle de son parent', () => {
+    expect(
+      canChangeIndicateurUnite({
+        indicateur: toIndicateurInGroup({ parentId: 3 }),
+        unite: 'kg',
+      })
+    ).toBe(false);
+  });
+
+  it('accepte l’unité inchangée d’un sous-indicateur', () => {
+    expect(
+      canChangeIndicateurUnite({
+        indicateur: toIndicateurInGroup({ parentId: 3 }),
+        unite: 'tonnes',
+      })
+    ).toBe(true);
   });
 });
 

@@ -13,20 +13,24 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import type { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { success, type Result } from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
+  canChangeIndicateurUnite,
+  type IndicateurInGroup,
   type IndicateurNatureFields,
   isIndicateurPerso,
   isIndicateurPredefini,
 } from '@tet/domain/indicateurs';
 import { hasPermission, ResourceType } from '@tet/domain/users';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
+import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
 import { UpsertIndicateurPilotesService } from '../upsert-indicateur-pilotes/upsert-indicateur-pilotes.service';
 import { UpsertIndicateurServicesService } from '../upsert-indicateur-services/upsert-indicateur-services.service';
 import { UpsertIndicateurThematiquesService } from '../upsert-indicateur-thematiques/upsert-indicateur-thematiques.service';
 import { MutateIndicateurRepository } from './mutate-indicateur.repository';
+import { UpdateIndicateurError } from './update-indicateur.errors';
 
 const isOwnedByCollectivite = (
   indicateur: IndicateurNatureFields,
@@ -53,7 +57,8 @@ export class UpdateIndicateurService {
     private readonly upsertIndicateurFichesService: UpsertIndicateurFichesService,
     private readonly upsertIndicateurPilotesService: UpsertIndicateurPilotesService,
     private readonly upsertIndicateurServicesService: UpsertIndicateurServicesService,
-    private readonly upsertIndicateurThematiquesService: UpsertIndicateurThematiquesService
+    private readonly upsertIndicateurThematiquesService: UpsertIndicateurThematiquesService,
+    private readonly indicateurLockRepository: IndicateurLockRepository
   ) {}
 
   async canUpdateIndicateur(
@@ -184,7 +189,7 @@ export class UpdateIndicateurService {
   async updateIndicateur(
     { indicateurId, collectiviteId, indicateurFields }: UpdateIndicateurInput,
     { user, tx }: ServiceSecondArg
-  ): Promise<Result<void, 'UNAUTHORIZED'>> {
+  ): Promise<Result<void, UpdateIndicateurError>> {
     const apiKeyPermissionResult = this.permissionService.isApiKeyAllowed(
       user,
       'indicateurs.indicateurs.update'
@@ -229,8 +234,11 @@ export class UpdateIndicateurService {
 
     const transactionResult = await this.transactionManager.executeSingle<
       void,
-      unknown
+      UpdateIndicateurError | Error
     >(async (tx) => {
+      if (unite !== undefined) {
+        await this.indicateurLockRepository.lockForIndicateurMutation(tx);
+      }
       const lockedIndicateur = await this.repository.lockIndicateurNature(
         indicateurId,
         tx
@@ -283,6 +291,18 @@ export class UpdateIndicateurService {
         );
       }
 
+      const indicateurInGroup = await this.findIndicateurInGroupToChangeUnite(
+        { indicateurId, collectiviteId, unite },
+        tx
+      );
+      if (
+        unite !== undefined &&
+        indicateurInGroup !== null &&
+        !canChangeIndicateurUnite({ indicateur: indicateurInGroup, unite })
+      ) {
+        return failure('SOUS_INDICATEUR_UNITE_LOCKED');
+      }
+
       if (titre !== undefined || unite !== undefined) {
         const updated = await this.repository.updateIndicateurPerso(
           {
@@ -301,15 +321,26 @@ export class UpdateIndicateurService {
         }
       }
 
-      if (ficheIds !== undefined) {
-        await this.upsertIndicateurFichesService.upsertIndicateurFiches(
-          {
-            indicateurId,
-            collectiviteId,
-            ficheIds,
-          },
-          { user, tx }
+      if (unite !== undefined && indicateurInGroup?.hasChildren) {
+        await this.repository.updateSousIndicateursUnite(
+          { parentId: indicateurId, collectiviteId, unite },
+          tx
         );
+      }
+
+      if (ficheIds !== undefined) {
+        const fichesResult =
+          await this.upsertIndicateurFichesService.upsertIndicateurFiches(
+            {
+              indicateurId,
+              collectiviteId,
+              ficheIds,
+            },
+            { user, tx }
+          );
+        if (!fichesResult.success) {
+          return failure(fichesResult.error);
+        }
       }
 
       if (pilotes !== undefined) {
@@ -368,10 +399,30 @@ export class UpdateIndicateurService {
       return success(undefined);
     }, tx);
 
-    if (!transactionResult.success) {
+    if (transactionResult.success) {
+      return success(undefined);
+    }
+    if (transactionResult.error instanceof Error) {
       throw transactionResult.cause ?? transactionResult.error;
     }
-    return success(undefined);
+    return failure(transactionResult.error, transactionResult.cause);
+  }
+
+  private async findIndicateurInGroupToChangeUnite(
+    {
+      indicateurId,
+      collectiviteId,
+      unite,
+    }: { indicateurId: number; collectiviteId: number; unite?: string },
+    tx: Transaction
+  ): Promise<IndicateurInGroup | null> {
+    if (unite === undefined) {
+      return null;
+    }
+    return this.repository.getParentInGroup(
+      { parentId: indicateurId, collectiviteId },
+      tx
+    );
   }
 
   async updateIndicateurModifiedFields(

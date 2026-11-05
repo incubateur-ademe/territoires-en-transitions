@@ -1,4 +1,5 @@
 import { AuthRole } from '@tet/backend/users/models/auth.models';
+import { success } from '@tet/backend/utils/result.type';
 import { describe, expect, it, vi } from 'vitest';
 import CreateIndicateurService from './create-indicateur.service';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
@@ -16,11 +17,11 @@ describe('CreateIndicateurService', () => {
     const repository = {
       createIndicateurPerso: vi.fn(async () => {
         events.push('insert-definition');
-        return 42;
+        return success(42);
       }),
     };
     const permissionService = {
-      assertAllowed: vi.fn().mockResolvedValue(undefined),
+      isAllowed: vi.fn().mockResolvedValue({ success: true, data: undefined }),
     };
     const indicateurLockRepository = {
       lockForIndicateurMutation: vi.fn(async () => {
@@ -28,7 +29,7 @@ describe('CreateIndicateurService', () => {
       }),
     };
     const upsertIndicateurFichesService = {
-      upsertIndicateurFiches: vi.fn().mockResolvedValue(undefined),
+      upsertIndicateurFiches: vi.fn().mockResolvedValue(success(undefined)),
     };
     const service = new CreateIndicateurService(
       transactionManager as never,
@@ -52,11 +53,13 @@ describe('CreateIndicateurService', () => {
           ficheId: 9,
         },
         {
-          id: '00000000-0000-0000-0000-000000000001',
-          role: AuthRole.AUTHENTICATED,
-        } as never
+          user: {
+            id: '00000000-0000-0000-0000-000000000001',
+            role: AuthRole.AUTHENTICATED,
+          } as never,
+        }
       )
-    ).resolves.toBe(42);
+    ).resolves.toEqual({ success: true, data: 42 });
 
     expect(events).toEqual(['lock-graph', 'insert-definition']);
     expect(

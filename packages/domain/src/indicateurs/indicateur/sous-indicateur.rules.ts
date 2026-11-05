@@ -68,11 +68,21 @@ export const validateSousIndicateurPerso = ({
   return { success: true };
 };
 
-export const listSousIndicateursBecomingAutonomous = ({
+export const canChangeIndicateurUnite = ({
+  indicateur,
+  unite,
+}: {
+  indicateur: Pick<IndicateurInGroup, 'unite' | 'parentId'>;
+  unite: string;
+}): boolean => unite === indicateur.unite || indicateur.parentId === null;
+
+export const listSousIndicateursBecomingAutonomous = <
+  T extends Pick<IndicateurInGroup, 'parentId'>
+>({
   parentId,
   indicateurs,
 }: {
   parentId: number;
-  indicateurs: readonly IndicateurInGroup[];
-}): readonly IndicateurInGroup[] =>
+  indicateurs: readonly T[];
+}): readonly T[] =>
   indicateurs.filter((indicateur) => indicateur.parentId === parentId);
