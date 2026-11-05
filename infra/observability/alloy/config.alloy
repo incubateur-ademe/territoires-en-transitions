@@ -1,0 +1,221 @@
+// Collecte d'un serveur applicatif, poussée vers Cockpit.
+//
+// Métriques (scrape toutes les 60 s), par job :
+//   integrations/unix             hôte : CPU, mémoire, disques, réseau, pression
+//   integrations/cadvisor         conteneurs : CPU, mémoire, réseau, redémarrages
+//   traefik                       proxy Coolify : requêtes et latence par service
+//   integrations/blackbox/<nom>   sondes HTTPS des URL publiques de l'environnement
+// Les exporters intégrés imposent leur job : pas de job_name sur leurs scrapes.
+// Logs : stdout/stderr des conteneurs déployés par Coolify.
+//
+// Chaque série porte server (le serveur), et env / service quand elle vient
+// d'un conteneur Coolify ou d'une sonde. Ce sont les labels des règles
+// d'alerte (infra/observability/rules).
+//
+// Le volume poussé est facturé : les règles keep ci-dessous ne gardent que
+// les métriques utilisées par les alertes et les dashboards.
+
+// --- Hôte ---
+
+prometheus.exporter.unix "host" {
+	procfs_path    = "/rootfs/proc"
+	sysfs_path     = "/sys"
+	rootfs_path    = "/rootfs"
+	set_collectors = ["cpu", "diskstats", "filesystem", "loadavg", "meminfo", "netdev", "pressure", "stat", "uname"]
+
+	filesystem {
+		fs_types_exclude     = "^(autofs|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|nsfs|overlay|proc|pstore|securityfs|squashfs|sysfs|tmpfs|tracefs)$"
+		mount_points_exclude = "^/(dev|proc|run|sys|var/lib/docker/.+)($|/)"
+	}
+
+	netdev {
+		device_exclude = "^(lo|veth.*|br-.*|docker.*)$"
+	}
+}
+
+prometheus.scrape "host" {
+	targets         = prometheus.exporter.unix.host.targets
+	scrape_interval = "60s"
+	forward_to      = [prometheus.relabel.host.receiver]
+}
+
+prometheus.relabel "host" {
+	forward_to = [prometheus.remote_write.cockpit.receiver]
+
+	rule {
+		action        = "keep"
+		source_labels = ["__name__"]
+		regex         = "up|node_cpu_seconds_total|node_load(1|5|15)|node_memory_(MemTotal|MemAvailable)_bytes|node_filesystem_(size|avail)_bytes|node_network_(receive|transmit)_bytes_total|node_disk_(read|written)_bytes_total|node_pressure_(cpu|memory|io)_waiting_seconds_total"
+	}
+}
+
+// --- Conteneurs ---
+
+prometheus.exporter.cadvisor "containers" {
+	docker_only                  = true
+	store_container_labels       = false
+	allowlisted_container_labels = ["coolify.environmentName", "coolify.resourceName", "coolify.service.subName"]
+	enabled_metrics              = ["cpu", "memory", "network", "oom_event"]
+}
+
+prometheus.scrape "containers" {
+	targets         = prometheus.exporter.cadvisor.containers.targets
+	scrape_interval = "60s"
+	forward_to      = [prometheus.relabel.containers.receiver]
+}
+
+prometheus.relabel "containers" {
+	forward_to = [prometheus.remote_write.cockpit.receiver]
+
+	rule {
+		action        = "keep"
+		source_labels = ["__name__"]
+		regex         = "container_(cpu_usage_seconds_total|memory_working_set_bytes|spec_memory_limit_bytes|start_time_seconds|oom_events_total|network_(receive|transmit)_bytes_total)"
+	}
+
+	rule {
+		source_labels = ["container_label_coolify_environmentName"]
+		target_label  = "env"
+	}
+
+	rule {
+		source_labels = ["container_label_coolify_resourceName"]
+		target_label  = "service"
+	}
+
+	rule {
+		source_labels = ["container_label_coolify_service_subName"]
+		target_label  = "container"
+	}
+
+	// id : chemin du cgroup, redondant avec name.
+	rule {
+		action = "labeldrop"
+		regex  = "container_label_.+|id"
+	}
+}
+
+// --- Traefik ---
+
+// Entrypoint metrics du proxy Coolify, non publié (cf. infra/README.md,
+// « Observabilité »).
+prometheus.scrape "traefik" {
+	targets         = [{"__address__" = "coolify-proxy:8082"}]
+	job_name        = "traefik"
+	scrape_interval = "60s"
+	forward_to      = [prometheus.relabel.traefik.receiver]
+}
+
+prometheus.relabel "traefik" {
+	forward_to = [prometheus.remote_write.cockpit.receiver]
+
+	rule {
+		action        = "keep"
+		source_labels = ["__name__"]
+		regex         = "up|traefik_service_requests_total|traefik_service_request_duration_seconds_(bucket|count|sum)"
+	}
+}
+
+// --- Sondes ---
+
+prometheus.exporter.blackbox "probes" {
+	config = "{ modules: { https_2xx: { prober: http, timeout: 10s, http: { preferred_ip_protocol: ip4, fail_if_not_ssl: true } } } }"
+
+	target {
+		name    = "app"
+		address = sys.env("PROBE_APP_URL")
+		module  = "https_2xx"
+		labels  = {"env" = sys.env("ENV_NAME"), "service" = "app"}
+	}
+
+	target {
+		name    = "backend"
+		address = sys.env("PROBE_BACKEND_URL")
+		module  = "https_2xx"
+		labels  = {"env" = sys.env("ENV_NAME"), "service" = "backend"}
+	}
+
+	target {
+		name    = "site"
+		address = sys.env("PROBE_SITE_URL")
+		module  = "https_2xx"
+		labels  = {"env" = sys.env("ENV_NAME"), "service" = "site"}
+	}
+
+	target {
+		name    = "auth"
+		address = sys.env("PROBE_AUTH_URL")
+		module  = "https_2xx"
+		labels  = {"env" = sys.env("ENV_NAME"), "service" = "supabase-api", "container" = "gotrue"}
+	}
+
+	target {
+		name    = "storage"
+		address = sys.env("PROBE_STORAGE_URL")
+		module  = "https_2xx"
+		labels  = {"env" = sys.env("ENV_NAME"), "service" = "supabase-api", "container" = "storage"}
+	}
+}
+
+prometheus.scrape "probes" {
+	targets         = prometheus.exporter.blackbox.probes.targets
+	scrape_interval = "60s"
+	forward_to      = [prometheus.remote_write.cockpit.receiver]
+}
+
+// --- Logs ---
+
+// Seuls les conteneurs d'un environnement Coolify : ni le proxy, ni Sentinel.
+discovery.docker "containers" {
+	host = "unix:///var/run/docker.sock"
+
+	filter {
+		name   = "label"
+		values = ["coolify.environmentName"]
+	}
+}
+
+discovery.relabel "containers" {
+	targets = discovery.docker.containers.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_label_coolify_environmentName"]
+		target_label  = "env"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_coolify_resourceName"]
+		target_label  = "service"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_coolify_service_subName"]
+		target_label  = "container"
+	}
+}
+
+loki.source.docker "containers" {
+	host       = "unix:///var/run/docker.sock"
+	targets    = discovery.relabel.containers.output
+	forward_to = [loki.write.cockpit.receiver]
+}
+
+// --- Cockpit ---
+
+prometheus.remote_write "cockpit" {
+	endpoint {
+		url     = sys.env("COCKPIT_METRICS_PUSH_URL")
+		headers = {"X-Token" = sys.env("COCKPIT_TOKEN")}
+	}
+
+	external_labels = {"server" = sys.env("SERVER_NAME")}
+}
+
+loki.write "cockpit" {
+	endpoint {
+		url     = sys.env("COCKPIT_LOGS_PUSH_URL")
+		headers = {"X-Token" = sys.env("COCKPIT_TOKEN")}
+	}
+
+	external_labels = {"server" = sys.env("SERVER_NAME")}
+}
