@@ -269,12 +269,12 @@ export const parseImportedAction = async (
     path: err.path.join('.'),
     message: err.message,
   }));
+  const actionLabel = data.titre
+    ? `Action avec le titre "${data.titre}"`
+    : `Ligne ${data.ligneExcel}`;
   return failure(
     errors
-      .map(
-        (e) =>
-          `Action avec le titre "${data.titre}" : Colonne ${e.path}: ${e.message}`
-      )
+      .map((e) => `${actionLabel} : Colonne ${e.path}: ${e.message}`)
       .join('\n')
   );
 };

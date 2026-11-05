@@ -83,7 +83,9 @@ const OrderedColumnLabels: string[] = OrderedColumns.map(
   (column) => column.label
 );
 
-export type ParsedRow = Record<ColumnNames, unknown>;
+export type ParsedRow = Record<ColumnNames, unknown> & {
+  ligneExcel: number;
+};
 
 export type PlanDataParsedFromExcel = ParsedRow[];
 
@@ -187,11 +189,14 @@ function extractValue(
   return undefined;
 }
 
-function parseRow(rowData: CellValue[]): ParsedRow {
-  return OrderedColumns.reduce((acc, columnProperties, index) => {
-    acc[columnProperties.name] = extractValue(rowData[index]);
-    return acc;
-  }, {} as ParsedRow);
+function parseRow(rowData: CellValue[], ligneExcel: number): ParsedRow {
+  return OrderedColumns.reduce(
+    (acc, columnProperties, index) => {
+      acc[columnProperties.name] = extractValue(rowData[index]);
+      return acc;
+    },
+    { ligneExcel } as ParsedRow
+  );
 }
 
 function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
@@ -200,7 +205,7 @@ function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < FIRST_DATA_ROW) return; // Skip header rows
     const [_ignoredFirstColumn, ...rowData] = row.values as CellValue[];
-    rows.push(parseRow(rowData));
+    rows.push(parseRow(rowData, rowNumber));
   });
 
   return rows;
