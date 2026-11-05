@@ -19,6 +19,9 @@ on:
           - preprod
           - staging
           - prod
+          # Coolify sur Scaleway, en parallèle de la preprod Koyeb le temps de la
+          # migration. Même environnement GitHub que preprod (secrets de build).
+          - preprod-scaleway
       force-rebuild:
         type: boolean
         description: Reconstruire l'image même si ce commit est déjà publié
@@ -28,8 +31,8 @@ jobs:
   deploy-site:
     name: Déploie le site
     environment:
-      name: ${{ github.event.inputs.target }}
-      url: ${{ steps.deployment-url.outputs.url }}
+      name: ${{ github.event.inputs.target == 'preprod-scaleway' && 'preprod' || github.event.inputs.target }}
+      url: ${{ github.event.inputs.target == 'preprod-scaleway' && 'https://preprod.territoiresentransitions.fr' || steps.deployment-url.outputs.url }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -71,12 +74,14 @@ jobs:
             bryntum_token=BRYNTUM_ACCESS_TOKEN
 
       - uses: ./.github/actions/providers/koyeb/cli
+        if: ${{ github.event.inputs.target != 'preprod-scaleway' }}
         with:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
       # Toute la configuration du site arrive ici : l'image est la même pour
       # preprod, staging et prod (cf. packages/api/src/public-env.ts).
       - name: Déploie le site sur Koyeb
+        if: ${{ github.event.inputs.target != 'preprod-scaleway' }}
         env:
           ENV_NAME: ${{ github.event.inputs.target }}
           IMAGE: ${{ steps.image.outputs.path }}
@@ -103,7 +108,19 @@ jobs:
           --env "BACKEND_URL=$BACKEND_URL"
 
       - id: deployment-url
+        if: ${{ github.event.inputs.target != 'preprod-scaleway' }}
         uses: ./.github/actions/providers/koyeb/get-app-url
         with:
           app-name: ${{ github.event.inputs.target }}-site
           public-url: ${{ vars.SITE_URL }}
+
+      # Les variables d'environnement sont poussées par infra/coolify (Terraform),
+      # pas ici : la CD ne pose que le tag d'image et déclenche le déploiement.
+      - name: Déploie le site sur Coolify (Scaleway)
+        if: ${{ github.event.inputs.target == 'preprod-scaleway' }}
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          APP_ID: preprod/site
+          IMAGE: ${{ steps.image.outputs.path }}
+        run: IMAGE_TAG="${IMAGE##*:}" infra/scripts/coolify-deploy.sh
