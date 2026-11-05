@@ -42,6 +42,7 @@ export * from './labellisations/can-update-audit-report/can-update-audit-report.
 export * from './labellisations/request-labellisation/request-labellisation.rules';
 export * from './labellisations/request-labellisation/request-labellisation.rules-errors';
 export * from './labellisations/requestable-star';
+export * from './labellisations/reponse-attendue/reponse-attendue.rule';
 export * from './labellisations/role-mesures/role-mesures';
 export * from './labellisations/start-audit/start-audit.rules';
 export * from './labellisations/start-audit/start-audit.rules-errors';

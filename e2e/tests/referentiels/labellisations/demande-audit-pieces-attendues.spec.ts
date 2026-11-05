@@ -25,8 +25,10 @@ test.describe('Demande audit — pieces attendues', () => {
     const collectivite = collectivites.getCollectivite();
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.uploadCandidatureDocument();
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
     await expect(
       auditLabellisationPom.ajouterActeEngagementButton
@@ -50,6 +52,7 @@ test.describe('Demande audit — pieces attendues', () => {
     );
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
     await expect(page.getByText('test-preuve.pdf')).toHaveCount(0);
     await expect(
@@ -65,8 +68,10 @@ test.describe('Demande audit — pieces attendues', () => {
     const collectivite = collectivites.getCollectivite();
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.uploadActeEngagement();
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
     await expect(
       auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')
@@ -84,9 +89,11 @@ test.describe('Demande audit — pieces attendues', () => {
     const collectivite = collectivites.getCollectivite();
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
     await auditLabellisationPom.uploadCandidatureDocument();
     await auditLabellisationPom.uploadActeEngagement();
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(2);
 
     await expect(
       auditLabellisationPom.acteEngagementRow.getByText('document_test.pdf')

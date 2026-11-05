@@ -55,6 +55,7 @@ export class RequestLabellisationService {
       await this.labellisations.getParcoursLabellisation({
         collectiviteId,
         referentielId: referentiel,
+        etoileVisee: etoiles ?? undefined,
       });
     if (!labellisationResult.success) {
       return failure(

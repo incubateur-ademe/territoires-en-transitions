@@ -32,6 +32,7 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
     );
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
 
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
@@ -52,6 +53,7 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
     );
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
 
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton
@@ -78,6 +80,7 @@ test.describe('Demande de premiere etoile — pieces attendues', () => {
     );
 
     await auditLabellisationPom.goto(collectivite.data.id, referentiel);
+    await auditLabellisationPom.selectTargetStar(1);
 
     await expect(
       auditLabellisationPom.demanderPremiereEtoileButton

@@ -15,7 +15,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { ReferentielIdEnum } from '@tet/domain/referentiels';
+import { EtoileEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 import {
@@ -25,7 +25,10 @@ import {
 } from '../../update-action-statut/referentiel-action-statut.test-fixture';
 import { createTestDemandePreuve } from '../create-preuve/create-preuve.test-fixture';
 import { getRoleMesureIds } from '@tet/domain/referentiels';
-import { seedRoleMesurePilotes } from '../labellisations.test-fixture';
+import {
+  seedLabellisationObtenue,
+  seedRoleMesurePilotes,
+} from '../labellisations.test-fixture';
 
 describe('Request Labellisation Router', () => {
   let router: TrpcRouter;
@@ -574,5 +577,73 @@ describe('Request Labellisation Router', () => {
         etoiles: null,
       });
     }, 20_000);
+  });
+
+  describe('Request Labellisation - étoile demandée', () => {
+    const prepareCollectiviteLabelliseeTroisEtoiles =
+      async (): Promise<void> => {
+        const caller = router.createCaller({ user: adminUser });
+        const trpcClient = createTRPCClientFromCaller(caller);
+
+        await seedRoleMesurePilotes(
+          trpcClient,
+          collectivite.id,
+          ReferentielIdEnum.ECI,
+          adminUser.id
+        );
+        await seedLabellisationObtenue({
+          databaseService: db,
+          collectiviteId: collectivite.id,
+          referentielId: ReferentielIdEnum.ECI,
+          etoiles: EtoileEnum.TROISIEME_ETOILE,
+        });
+        await updateAllNeedReferentielStatutsToCompleteReferentiel(
+          trpcClient,
+          collectivite.id,
+          ReferentielIdEnum.ECI
+        );
+        await updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria(
+          trpcClient,
+          collectivite.id,
+          ReferentielIdEnum.ECI
+        );
+      };
+
+    test("une collectivité labellisée 3 étoiles dont les critères de la 4e sont atteints ne peut pas demander la 5e : les critères évalués sont ceux de l'étoile demandée", async () => {
+      await prepareCollectiviteLabelliseeTroisEtoiles();
+      const caller = router.createCaller({ user: adminUser });
+
+      await expect(
+        caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.ECI,
+          sujet: 'labellisation',
+          etoiles: EtoileEnum.CINQUIEME_ETOILE,
+        })
+      ).rejects.toThrow(
+        "Le critère de score global n'est pas atteint pour demander ce niveau de labellisation."
+      );
+    }, 60_000);
+
+    test("une collectivité labellisée 3 étoiles peut renouveler la 3e : la demande enregistre l'étoile demandée, pas celle que le score permettrait", async () => {
+      await prepareCollectiviteLabelliseeTroisEtoiles();
+      const caller = router.createCaller({ user: adminUser });
+
+      const demande =
+        await caller.referentiels.labellisations.requestLabellisation({
+          collectiviteId: collectivite.id,
+          referentiel: ReferentielIdEnum.ECI,
+          sujet: 'labellisation',
+          etoiles: EtoileEnum.TROISIEME_ETOILE,
+        });
+
+      expect(demande).toMatchObject({
+        collectiviteId: collectivite.id,
+        referentiel: ReferentielIdEnum.ECI,
+        sujet: 'labellisation',
+        etoiles: '3',
+        enCours: false,
+      });
+    }, 60_000);
   });
 });

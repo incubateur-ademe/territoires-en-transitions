@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { referentielIdEnumSchema } from '@tet/domain/referentiels';
+import {
+  etoileEnumSchema,
+  referentielIdEnumSchema,
+} from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import z from 'zod';
 import { getLabellisationErrorConfig } from './get-labellisation.errors';
@@ -11,6 +14,7 @@ import { GetLabellisationService } from './get-labellisation.service';
 export const inputSchema = z.object({
   collectiviteId: z.number(),
   referentielId: referentielIdEnumSchema,
+  etoileVisee: z.optional(etoileEnumSchema),
 });
 
 @Injectable()
@@ -29,7 +33,10 @@ export class GetLabellisationRouter {
     getParcours: this.trpc.authedProcedure
       .input(inputSchema)
       .query(
-        async ({ input: { collectiviteId, referentielId }, ctx: { user } }) => {
+        async ({
+          input: { collectiviteId, referentielId, etoileVisee },
+          ctx: { user },
+        }) => {
           await this.permissions.assertAllowed(
             user,
             'collectivites.read',
@@ -41,6 +48,7 @@ export class GetLabellisationRouter {
             await this.labellisations.getParcoursLabellisation({
               collectiviteId,
               referentielId,
+              etoileVisee,
             })
           );
         }

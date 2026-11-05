@@ -244,4 +244,12 @@ export const referentielsLabels = {
     `Référentiel v${version}`,
   sauvegardeCreeePar: (nom: string): string => `Créée par ${nom}`,
   sauvegardeAutomatique: 'Sauvegarde automatique',
+
+  reponsePourcentageFaitOuProgrammeMinimum: ({
+    fait,
+    programme,
+  }: {
+    fait: number;
+    programme: number;
+  }): string => `${fait}% fait minimum ou ${programme}% programmé minimum`,
 };

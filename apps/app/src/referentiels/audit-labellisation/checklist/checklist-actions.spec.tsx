@@ -1,3 +1,4 @@
+import { SujetDemande, SujetDemandeEnum } from '@tet/domain/referentiels';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TCycleLabellisation } from '../../labellisations/useCycleLabellisation';
@@ -18,99 +19,130 @@ vi.mock(
 );
 
 vi.mock(
-  '../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal',
+  '../../labellisations/send-demande/send-demande.modal',
   (): Partial<
     Record<
-      keyof typeof import('../../labellisations/ask-premiere-etoile/ask-premiere-etoile.modal'),
+      keyof typeof import('../../labellisations/send-demande/send-demande.modal'),
       unknown
     >
   > => ({
-    AskPremiereEtoileModal: () => null,
-  })
-);
-
-vi.mock(
-  '../../labellisations/request-audit/request-audit.button',
-  (): Partial<
-    Record<
-      keyof typeof import('../../labellisations/request-audit/request-audit.button'),
-      unknown
-    >
-  > => ({
-    RequestAuditButton: () => null,
+    SendDemandeModal: () => null,
   })
 );
 
 const mockedUseChecklist = vi.mocked(useChecklist);
 
 const obtenirPremiereEtoile = 'Obtenir la première étoile';
+const demanderAudit = 'Demander un audit';
 
-const setCollectiviteCycle = (cycle: Partial<TCycleLabellisation>): void => {
+const parcoursSansDemande = {
+  etoiles: 1,
+  status: 'non_demandee',
+  audit: null,
+  demande: null,
+  labellisation: null,
+  completudeOk: true,
+  critereScore: { atteint: true, scoreFait: 0 },
+  isCot: false,
+  conditionFichiers: { preuveNombre: 0 },
+  preuvesObjets: [],
+  referentiel: 'cae',
+  referentRolesDefined: { eluReferent: true, referentTechnique: true },
+  criteresAction: [],
+} as unknown as NonNullable<TCycleLabellisation['parcours']>;
+
+const setCycle = ({
+  cycle,
+  sujetVise = SujetDemandeEnum.LABELLISATION,
+}: {
+  cycle: Partial<TCycleLabellisation>;
+  sujetVise?: SujetDemande;
+}): void => {
   mockedUseChecklist.mockReturnValue({
+    sujetVise,
+    referentielId: 'cae',
     cycle: {
       isAuditeur: false,
       viewerRole: 'auditee',
       isCOT: false,
-      peutCommencerAudit: false,
+      canAskFirstStar: false,
+      parcours: parcoursSansDemande,
       ...cycle,
     } as TCycleLabellisation,
-    parcours: null,
-    referentielId: 'cae',
-    premiereEtoileObtenue: false,
-    showActeEngagement: false,
-    showCandidatureDocuments: false,
   } as unknown as ChecklistContextValue);
 };
 
-const premiereEtoileDemandeEnvoyee = {
-  status: 'demande_envoyee',
-  audit: null,
-  demande: { sujet: 'labellisation', etoiles: '1' },
-} as TCycleLabellisation['parcours'];
-
-const cycleSansDemande = {
-  status: 'non_demandee',
-  audit: null,
-  demande: null,
-} as TCycleLabellisation['parcours'];
-
-const renderFirstStarButton = (): HTMLElement => {
-  render(<ChecklistActions />);
-  return screen.getByRole('button', { name: obtenirPremiereEtoile });
+const getButton = (name: string): HTMLButtonElement => {
+  const button = screen
+    .getAllByRole('button', { name })
+    .find((element) => element instanceof HTMLButtonElement);
+  if (!button) {
+    throw new Error(`Bouton « ${name} » introuvable`);
+  }
+  return button;
 };
 
 beforeEach(() => {
   mockedUseChecklist.mockReset();
 });
 
-describe('ChecklistActions — bouton « Obtenir la première étoile »', () => {
-  it('désactive le bouton quand une demande de première étoile est déjà en cours', () => {
-    setCollectiviteCycle({
-      canAskFirstStar: true,
-      status: 'demande_envoyee',
-      parcours: premiereEtoileDemandeEnvoyee,
-    });
+describe('ChecklistActions — une seule demande selon le choix de la checklist', () => {
+  it('propose la première étoile, et pas un audit, quand la première étoile est choisie', () => {
+    setCycle({ cycle: { canAskFirstStar: true } });
 
-    expect(renderFirstStarButton().hasAttribute('disabled')).toBe(true);
+    render(<ChecklistActions />);
+
+    expect(getButton(obtenirPremiereEtoile).disabled).toBe(false);
+    expect(screen.queryByRole('button', { name: demanderAudit })).toBeNull();
   });
 
-  it('désactive le bouton quand les critères ne sont pas tous remplis', () => {
-    setCollectiviteCycle({
-      canAskFirstStar: false,
-      status: 'non_demandee',
-      parcours: cycleSansDemande,
+  it('propose un audit, et pas la première étoile, quand une étoile auditée est choisie', () => {
+    setCycle({
+      cycle: { parcours: { ...parcoursSansDemande, etoiles: 2 } },
     });
 
-    expect(renderFirstStarButton().hasAttribute('disabled')).toBe(true);
+    render(<ChecklistActions />);
+
+    expect(getButton(demanderAudit)).toBeDefined();
+    expect(
+      screen.queryByRole('button', { name: obtenirPremiereEtoile })
+    ).toBeNull();
   });
 
-  it("garde le bouton actif quand aucune demande n'a été envoyée et que les critères sont remplis", () => {
-    setCollectiviteCycle({
-      canAskFirstStar: true,
-      status: 'non_demandee',
-      parcours: cycleSansDemande,
+  it('propose un audit à une collectivité COT qui désactive la labellisation, même à la première étoile', () => {
+    setCycle({
+      cycle: {
+        isCOT: true,
+        canAskFirstStar: true,
+        parcours: { ...parcoursSansDemande, isCot: true },
+      },
+      sujetVise: SujetDemandeEnum.COT,
     });
 
-    expect(renderFirstStarButton().hasAttribute('disabled')).toBe(false);
+    render(<ChecklistActions />);
+
+    expect(getButton(demanderAudit).disabled).toBe(false);
+    expect(
+      screen.queryByRole('button', { name: obtenirPremiereEtoile })
+    ).toBeNull();
+  });
+
+  it('désactive la première étoile tant que ses critères ne sont pas remplis', () => {
+    setCycle({ cycle: { canAskFirstStar: false } });
+
+    render(<ChecklistActions />);
+
+    expect(getButton(obtenirPremiereEtoile).disabled).toBe(true);
+  });
+
+  it("n'affiche aucune demande à un auditeur", () => {
+    setCycle({ cycle: { viewerRole: 'auditor', canAskFirstStar: true } });
+
+    render(<ChecklistActions />);
+
+    expect(
+      screen.queryByRole('button', { name: obtenirPremiereEtoile })
+    ).toBeNull();
+    expect(screen.queryByRole('button', { name: demanderAudit })).toBeNull();
   });
 });
