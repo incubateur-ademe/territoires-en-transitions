@@ -79,7 +79,8 @@ const createManageIndicateurValeursService = (
     validation,
     writer,
     indicateursPredefinis,
-    transactions
+    transactions,
+    locks
   );
   return new ManageIndicateurValeursService(
     repository,

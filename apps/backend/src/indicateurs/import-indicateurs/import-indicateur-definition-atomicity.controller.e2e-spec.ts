@@ -12,7 +12,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { failure } from '@tet/backend/utils/result.type';
 import { randomUUID } from 'crypto';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import * as z from 'zod/mini';
 import { indicateurCategorieTagTable } from '../indicateur/indicateur-categorie-tag.table';
@@ -207,6 +207,8 @@ describe('import-indicateur-definition atomicity', () => {
     const reconciliation = app.get(ReconcileIndicateurValeursService);
     const recompute = reconciliation.recomputeAll.bind(reconciliation);
     let recalculatedCollectiviteIds: number[] = [];
+    let heldLocks: { locktype: string; mode: string; relation: string | null }[] =
+      [];
     const failureAfterRecompute = vi
       .spyOn(reconciliation, 'recomputeAll')
       .mockImplementation(async (...args) => {
@@ -215,6 +217,27 @@ describe('import-indicateur-definition atomicity', () => {
         recalculatedCollectiviteIds = result.data.map(
           ({ collectiviteId }) => collectiviteId
         );
+        const tx = args[1].tx;
+        if (!tx) throw new Error('Catalogue recalculation must share its transaction');
+        const periodeLockKeys = collectivites.map(
+          ({ collectivite }) => `indicateur-valeur:${collectivite.id}:2025-01-01`
+        );
+        // A bigint advisory key is split into classid (high) and objid (low).
+        const locks = await tx.execute<(typeof heldLocks)[number]>(sql`
+          SELECT CASE WHEN l.locktype = 'advisory' THEN 'periode' ELSE l.locktype END AS locktype,
+                 l.mode, l.relation::regclass::text AS relation
+          FROM pg_locks l
+          LEFT JOIN (
+            SELECT hashtextextended(key, 0) AS hash
+            FROM unnest(${sql.param(periodeLockKeys)}::text[]) AS key
+          ) periode
+            ON l.locktype = 'advisory'
+           AND l.classid::bigint = (periode.hash >> 32) & 4294967295
+           AND l.objid::bigint = periode.hash & 4294967295
+          WHERE l.pid = pg_backend_pid()
+            AND (periode.hash IS NOT NULL OR l.relation = 'indicateur_valeur'::regclass)
+        `);
+        heldLocks = locks.rows;
         return failure(
           'DATABASE_ERROR',
           new Error('Injected failure after real recalculation')
@@ -229,6 +252,17 @@ describe('import-indicateur-definition atomicity', () => {
       collectivites
         .map(({ collectivite }) => collectivite.id)
         .sort((left, right) => left - right)
+    );
+    // One table lock for the whole catalogue recalculation: per-period advisory
+    // locks would accumulate across collectivités until the lock table overflows.
+    expect(heldLocks.filter(({ locktype }) => locktype === 'periode')).toEqual(
+      []
+    );
+    expect(heldLocks).toContainEqual(
+      expect.objectContaining({
+        relation: 'indicateur_valeur',
+        mode: 'ShareRowExclusiveLock',
+      })
     );
 
     expect(await readValeurs()).toEqual(before);

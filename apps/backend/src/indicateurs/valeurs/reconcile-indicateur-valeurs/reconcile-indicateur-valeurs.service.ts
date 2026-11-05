@@ -10,6 +10,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { ListIndicateursPredefinisRepository } from '../../indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
 import ComputeValeursService from '../compute-indicateur-valeurs/compute-valeurs.service';
+import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import {
   IndicateurValeursContext,
@@ -40,7 +41,8 @@ export class ReconcileIndicateurValeursService {
     private readonly validationService: ValidateIndicateurValeursWriteService,
     private readonly writer: WriteIndicateurValeursService,
     private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
-    private readonly transactionManager: TransactionManager
+    private readonly transactionManager: TransactionManager,
+    private readonly valeurLockRepository: IndicateurValeurLockRepository
   ) {}
 
   async upsert(
@@ -247,6 +249,11 @@ export class ReconcileIndicateurValeursService {
           );
       const results: RecomputedCollectiviteIndicateurValeurs[] = [];
       // Catalogue imports share their transaction; standalone recalculations use one per collectivité.
+      // A shared transaction keeps every lock until commit: one table lock
+      // replaces the per-period locks, which would overflow PostgreSQL's lock table.
+      if (context.tx && collectiviteIds.length > 1) {
+        await this.valeurLockRepository.lockAllPeriodes(context.tx);
+      }
       for (const collectiviteId of collectiviteIds) {
         const result = await this.transactionManager.executeSingle(
           async (tx) =>
