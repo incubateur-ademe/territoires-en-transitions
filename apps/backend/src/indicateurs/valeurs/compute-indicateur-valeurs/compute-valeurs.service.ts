@@ -219,8 +219,9 @@ export default class ComputeValeursService {
     return { valeursToUpsert, groupsByIndicateur };
   }
 
-  async recomputeCollectiviteCalculatedIndicateurValeurs(
-    collectiviteId: number,
+  /** Recalcule plusieurs collectivités à la fois : le graphe et les règles ne sont lus qu'une fois. */
+  async recomputeCollectivitesCalculatedIndicateurValeurs(
+    collectiviteIds: number[],
     indicateurIds: number[],
     tx: Transaction
   ): Promise<RecomputedIndicateurValeurs> {
@@ -252,25 +253,34 @@ export default class ComputeValeursService {
     );
     const relevantIds = [...new Set([...indicateurIds, ...sourceIds])];
     const discoveredPeriodes = await this.repository.listPeriodeKeys(
-      { collectiviteId, indicateurIds: relevantIds },
+      { collectiviteIds, indicateurIds: relevantIds },
       tx
     );
     // Discover keys, acquire all period locks, then re-read the values used by
     // calculation. Writers arriving after discovery perform their own refresh.
     await this.valeurLockRepository.lock(discoveredPeriodes, tx);
-    const lockedDates = new Set(
-      discoveredPeriodes.map(({ dateValeur }) => dateValeur)
+    const periodeKey = (collectiviteId: number, dateValeur: string) =>
+      `${collectiviteId}:${dateValeur}`;
+    // A period locked for one collectivité does not cover the others.
+    const lockedPeriodes = new Set(
+      discoveredPeriodes.map(({ collectiviteId, dateValeur }) =>
+        periodeKey(collectiviteId, dateValeur)
+      )
     );
     const stored = (
       await this.repository.listRelevantValeurs(
         {
-          collectiviteId,
+          collectiviteIds,
           indicateurIds: relevantIds,
-          dateValeurs: [...lockedDates],
+          dateValeurs: [
+            ...new Set(discoveredPeriodes.map(({ dateValeur }) => dateValeur)),
+          ],
         },
         tx
       )
-    ).filter(({ dateValeur }) => lockedDates.has(dateValeur));
+    ).filter(({ collectiviteId, dateValeur }) =>
+      lockedPeriodes.has(periodeKey(collectiviteId, dateValeur))
+    );
     const sources = stored
       .filter(({ indicateurId }) => sourceIds.has(indicateurId))
       .map<CalculSourceValeur>((valeur) => {

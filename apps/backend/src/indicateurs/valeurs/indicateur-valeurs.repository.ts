@@ -544,7 +544,7 @@ export class IndicateurValeursRepository {
 
   async deleteAutomaticValeurs(
     ids: number[],
-    { collectiviteId }: { collectiviteId?: number },
+    { collectiviteIds }: { collectiviteIds?: number[] },
     tx?: Transaction
   ): Promise<IndicateurValeur[]> {
     return this.inChunks(ids, DELETE_VALEURS_CHUNK_SIZE, tx, (part, db) => {
@@ -552,9 +552,9 @@ export class IndicateurValeursRepository {
         eq(indicateurValeurTable.calculAuto, true),
         inArray(indicateurValeurTable.id, part),
       ];
-      if (collectiviteId !== undefined) {
+      if (collectiviteIds !== undefined) {
         conditions.push(
-          eq(indicateurValeurTable.collectiviteId, collectiviteId)
+          inArray(indicateurValeurTable.collectiviteId, collectiviteIds)
         );
       }
       return db

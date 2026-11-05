@@ -2108,7 +2108,7 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       const computeValeursService = {
         getAllSourceIdentifiants: vi.fn().mockResolvedValue(['source_a']),
         updateCalculatedIndicateurValeurs: vi.fn().mockResolvedValue([]),
-        recomputeCollectiviteCalculatedIndicateurValeurs: vi
+        recomputeCollectivitesCalculatedIndicateurValeurs: vi
           .fn()
           .mockResolvedValue({
             valeursToUpsert: [computedValeur],
@@ -2168,8 +2168,8 @@ describe('Indicateurs → manage-indicateur-valeurs.service', () => {
       ]);
 
       expect(
-        computeValeursService.recomputeCollectiviteCalculatedIndicateurValeurs
-      ).toHaveBeenCalledWith(1, [target.id], tx);
+        computeValeursService.recomputeCollectivitesCalculatedIndicateurValeurs
+      ).toHaveBeenCalledWith([1], [target.id], tx);
       expect(
         computeValeursService.reconcileDeletedIndicateurValeurs
       ).toHaveBeenNthCalledWith(1, [staleValeur], tx);
