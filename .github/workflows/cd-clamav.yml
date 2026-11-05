@@ -57,7 +57,7 @@ jobs:
       - name: Build et push de l'image ClamAV
         uses: ./.github/actions/docker/build-push
         with:
-          dockerfile: infra/clamav/Dockerfile
+          dockerfile: .docker/clamav/Dockerfile
           image: ${{ steps.image.outputs.path }}
           push: ${{ !env.ACT }}
 
@@ -79,7 +79,7 @@ jobs:
           api-key: ${{ secrets.KOYEB_API_KEY }}
 
       # Service privé de l'app du backend, créé une première fois à la main
-      # (cf. infra/clamav/README.md) : aucune route publique, clamd n'a pas
+      # (cf. .docker/clamav/README.md) : aucune route publique, clamd n'a pas
       # d'authentification.
       - name: Déploie ClamAV sur Koyeb
         env:
