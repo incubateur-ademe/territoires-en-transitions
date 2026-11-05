@@ -27,7 +27,8 @@ export const NotifyFichierInfecteEmail = (
       <Text>
         Ce fichier a été supprimé pour protéger les personnes qui le
         téléchargent. Les preuves, annexes et documents qui y faisaient
-        référence sont conservés, et indiquent que le fichier a été supprimé.
+        référence sont conservés : le fichier y apparaît désormais comme «
+        Fichier indisponible ».
       </Text>
 
       <Text>
