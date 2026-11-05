@@ -1,4 +1,5 @@
 import {
+  StatutFigeantJauge,
   PLAN_CREATION_DISABLED_MESSAGES,
   PlanCreationDisabledReason,
   OrigineSecteurs,
@@ -63,6 +64,25 @@ export const plansLabels = {
   sousActionAjouter: 'Ajouter une sous-action',
 
   ficheStatut: 'Statut',
+  ficheJauge: 'Avancement',
+  ficheJaugeInfo: "À 100 %, l'action passe automatiquement au statut Réalisé",
+  ficheJaugeFigeeTitre: 'Avancement figé',
+  ficheJaugeFigee: {
+    Abandonné:
+      "L'action est abandonnée. Changer de statut pour modifier la barre.",
+    'En pause':
+      "L'action est en pause. Changer de statut pour modifier la barre.",
+    Bloqué: "L'action est bloquée. Changer de statut pour modifier la barre.",
+  } satisfies Record<StatutFigeantJauge, string>,
+  ficheJaugeSousActionsRealisees: ({
+    realisees,
+    total,
+  }: {
+    realisees: number;
+    total: number;
+  }): string =>
+    `${realisees}/${total} sous-actions réalisées, à titre indicatif`,
+  ficheJaugeMiseAJour: (date: string): string => `Mis à jour le ${date}`,
   statutAVenir: 'À venir',
   statutADiscuter: 'À discuter',
   statutEnCours: 'En cours',
