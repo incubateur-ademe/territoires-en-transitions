@@ -1,3 +1,6 @@
+import { electrificationLaureatsConfig } from '@tet/domain/plans';
+import { CheckElectrificationEligibilityService } from './check-electrification-eligibility/check-electrification-eligibility.service';
+import { ELECTRIFICATION_LAUREATS_CONFIG } from './check-electrification-eligibility/electrification-eligibility.constants';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
@@ -55,6 +58,11 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     TransactionModule,
   ],
   providers: [
+    {
+      provide: ELECTRIFICATION_LAUREATS_CONFIG,
+      useValue: electrificationLaureatsConfig,
+    },
+    CheckElectrificationEligibilityService,
     GetPlanCompletionService,
     GetPlanCompletionRouter,
     DeleteAxeService,
@@ -98,6 +106,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     VerifyPlanRouter,
   ],
   exports: [
+    CheckElectrificationEligibilityService,
     PlanRouter,
     UpsertPlanService,
     UpsertAxeService,
