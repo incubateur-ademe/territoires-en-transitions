@@ -8,7 +8,7 @@ import type { Transaction } from '@tet/backend/utils/database/transaction.utils'
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  isDemarchePcaetAmontModifiable,
+  isDemarchePcaetContenuModifiable,
   type PcaetDiagnostic,
 } from '@tet/domain/demarches';
 import {
@@ -74,7 +74,7 @@ export class UpdateDiagnosticIndicateursValeursService {
         UpdateDiagnosticIndicateursValeursErrorEnum.DEMARCHE_PCAET_NOT_FOUND
       );
     }
-    if (!isDemarchePcaetAmontModifiable(ref.status)) {
+    if (!isDemarchePcaetContenuModifiable(ref.status)) {
       return failure(
         UpdateDiagnosticIndicateursValeursErrorEnum.DIAGNOSTIC_NON_MODIFIABLE
       );

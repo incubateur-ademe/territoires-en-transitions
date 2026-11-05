@@ -9,6 +9,8 @@ import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
 import { getYearFromIsoDate } from '@tet/domain/indicateurs';
 import { and, eq } from 'drizzle-orm';
 import {
+  addTestBibliothequeFichier,
+  cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   createDemarche,
@@ -337,6 +339,65 @@ describe('Mise à jour des valeurs du diagnostic PCAET', () => {
           },
         ],
       })
+    ).rejects.toThrow("n'est modifiable que pendant l'élaboration");
+  });
+
+  test('Le diagnostic se reprend après les avis, jusqu’à la publication', async () => {
+    const { caller, collectiviteId, demarche } = await createDemarche(
+      db,
+      router
+    );
+    await completeTestDossierPcaet(db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await caller.demarches.pcaet.transmettrePourAvis({
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    await cloreTestInstructionPcaet(app, db, {
+      collectiviteId,
+      demarcheId: demarche.id,
+    });
+    const indicateurId = await getIndicateurId('cae_1.c');
+    const valeur = (value: number) => ({
+      collectiviteId,
+      demarcheId: demarche.id,
+      valeurs: [
+        { indicateurId, year: 2021, field: 'resultat' as const, value },
+      ],
+    });
+
+    const diagnostic =
+      await caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs(
+        valeur(222)
+      );
+    expect(
+      diagnostic.indicateurValeurs.find(
+        ({ indicateurValeur }) =>
+          indicateurValeur.indicateurId === indicateurId &&
+          getYearFromIsoDate(indicateurValeur.dateValeur) === 2021
+      )?.indicateurValeur.resultat
+    ).toBe(222);
+
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId,
+      demarcheId: demarche.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+    await caller.demarches.pcaet.publier({
+      collectiviteId,
+      demarcheId: demarche.id,
+      dateAdoption: '2026-01-15',
+    });
+
+    await expect(
+      caller.demarches.pcaet.diagnostic.indicateurs.updateValeurs(valeur(333))
     ).rejects.toThrow("n'est modifiable que pendant l'élaboration");
   });
 

@@ -5,6 +5,7 @@ import {
   evaluateTransitions,
   isDemarchePcaetAmontModifiable,
   isDemarchePcaetAvalModifiable,
+  isDemarchePcaetContenuModifiable,
 } from '@tet/domain/demarches';
 import type { DemarchePcaet } from '@tet/domain/demarches';
 import { SQL, sql } from 'drizzle-orm';
@@ -76,6 +77,7 @@ export const toDemarchePcaetDto = (
   transitions: evaluateTransitions(row.status),
   amontModifiable: isDemarchePcaetAmontModifiable(row.status),
   avalModifiable: isDemarchePcaetAvalModifiable(row.status),
+  contenuModifiable: isDemarchePcaetContenuModifiable(row.status),
   createdAt: row.createdAt,
   modifiedAt: row.modifiedAt,
 });

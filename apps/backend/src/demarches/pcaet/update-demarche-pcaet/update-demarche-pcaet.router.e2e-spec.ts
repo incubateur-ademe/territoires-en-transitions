@@ -11,7 +11,10 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
+import { listEnabledTransitions } from '@tet/domain/utils';
 import {
+  addTestBibliothequeFichier,
+  cloreTestInstructionPcaet,
   completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
   coverTestDocumentsPcaet,
@@ -411,5 +414,83 @@ describe('Mettre à jour une démarche PCAET', () => {
         pilotes: [],
       })
     ).rejects.toThrow('Une démarche transmise pour avis n’est plus modifiable');
+  });
+
+  // Après les avis, le programme d'actions se reprend comme à l'élaboration :
+  // ce qu'on peut défaire, la publication doit le revérifier.
+  test('Après les avis, le programme se détache et se rattache, et la publication le revérifie', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const collectiviteId = localCollectivite.id;
+    const created = await transmettreDemarche({ caller, collectiviteId });
+    await cloreTestInstructionPcaet(app, db, {
+      collectiviteId,
+      demarcheId: created.id,
+    });
+    const deliberation = await addTestBibliothequeFichier(db, {
+      collectiviteId,
+      filename: 'deliberation-adoption.pdf',
+    });
+    await caller.demarches.pcaet.documents.add({
+      collectiviteId,
+      demarcheId: created.id,
+      documentId: 'pcaet_deliberation_adoption',
+      fichierId: deliberation.id,
+    });
+
+    const instruit = await caller.demarches.pcaet.get({
+      collectiviteId,
+      demarcheId: created.id,
+    });
+    expect(instruit.contenuModifiable).toBe(true);
+    expect(instruit.amontModifiable).toBe(false);
+    expect(listEnabledTransitions(instruit.transitions)).toContain('publier');
+    const planActionIds = instruit.planActionIds;
+    expect(planActionIds.length).toBeGreaterThan(0);
+
+    const detache = await caller.demarches.pcaet.update({
+      collectiviteId,
+      demarcheId: created.id,
+      planActionIds: [],
+    });
+    expect(detache.planActionIds).toEqual([]);
+    expect(listEnabledTransitions(detache.transitions)).not.toContain(
+      'publier'
+    );
+    expect(detache.transitions.publier?.blockedBy).toContain('dossierComplet');
+
+    const rattache = await caller.demarches.pcaet.update({
+      collectiviteId,
+      demarcheId: created.id,
+      planActionIds,
+    });
+    expect(listEnabledTransitions(rattache.transitions)).toContain('publier');
+
+    // L'en-tête, lui, reste tel qu'il a été transmis.
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId,
+        demarcheId: created.id,
+        titre: 'Titre interdit',
+        planActionIds,
+      })
+    ).rejects.toThrow('n’est plus modifiable');
+  });
+
+  test('Une fois publié, le programme d’actions ne se détache plus', async () => {
+    const { caller, collectivite: localCollectivite } = await freshEditor();
+    const collectiviteId = localCollectivite.id;
+    const created = await transmettreDemarche({ caller, collectiviteId });
+    await publierTestDemarchePcaet(app, db, caller, {
+      collectiviteId,
+      demarcheId: created.id,
+    });
+
+    await expect(
+      caller.demarches.pcaet.update({
+        collectiviteId,
+        demarcheId: created.id,
+        planActionIds: [],
+      })
+    ).rejects.toThrow('n’est plus modifiable');
   });
 });

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   isDemarchePcaetAmontModifiable,
   isDemarchePcaetAvalModifiable,
+  isDemarchePcaetContenuModifiable,
   isDemarchePcaetEtapeModifiable,
+  isDemarchePcaetPartieModifiable,
 } from './demarche-pcaet-modifiable.rules';
 
 describe('ce qui reste modifiable', () => {
@@ -54,5 +56,22 @@ describe('ce qui reste modifiable', () => {
       false
     );
     expect(isDemarchePcaetEtapeModifiable('instruit', 'aval')).toBe(true);
+  });
+
+  // La phase d'avis garde le dossier stable ; après les avis, la collectivité
+  // reprend son contenu pour le dépôt final, mais pas l'en-tête ni les pièces
+  // amont.
+  it('le contenu se rouvre après les avis, jusqu’à la publication', () => {
+    expect(isDemarchePcaetContenuModifiable('en_elaboration')).toBe(true);
+    expect(isDemarchePcaetContenuModifiable('transmis_pour_avis')).toBe(false);
+    expect(isDemarchePcaetContenuModifiable('instruit')).toBe(true);
+    expect(isDemarchePcaetContenuModifiable('instruit_hors_plateforme')).toBe(
+      true
+    );
+    expect(isDemarchePcaetContenuModifiable('publie')).toBe(false);
+    expect(isDemarchePcaetContenuModifiable('archive')).toBe(false);
+
+    expect(isDemarchePcaetPartieModifiable('instruit', 'contenu')).toBe(true);
+    expect(isDemarchePcaetPartieModifiable('instruit', 'amont')).toBe(false);
   });
 });

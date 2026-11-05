@@ -7,8 +7,8 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  isDemarchePcaetEtapeModifiable,
-  type DemarchePcaetEtapeDossier,
+  isDemarchePcaetPartieModifiable,
+  type DemarchePcaetPartieDossier,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import {
@@ -30,9 +30,9 @@ export type DemarchePcaetAccessError =
   | (typeof demarchePcaetAccessErrors)[number];
 
 /**
- * Préambule de toute mutation du contenu d'une démarche : droit d'édition sur
- * la collectivité, démarche lui appartenant bien (parade IDOR), et temps du
- * dossier visé encore modifiable. L'écrire une fois évite que les routes ne
+ * Préambule de toute mutation d'une démarche : droit d'édition sur la
+ * collectivité, démarche lui appartenant bien (parade IDOR), et partie du
+ * dossier visée encore modifiable. L'écrire une fois évite que les routes ne
  * divergent.
  *
  * **Dans la transaction, et sous verrou de ligne** : c'est ce qui distingue ce
@@ -56,7 +56,7 @@ export class DemarchePcaetAccessService {
       collectiviteId,
       demarcheId,
     }: { collectiviteId: number; demarcheId: number },
-    etape: DemarchePcaetEtapeDossier,
+    partie: DemarchePcaetPartieDossier,
     {
       user,
       tx,
@@ -87,7 +87,7 @@ export class DemarchePcaetAccessService {
       return failure('DEMARCHE_PCAET_NOT_FOUND');
     }
     if (
-      !isDemarchePcaetEtapeModifiable(ref.status, etape) &&
+      !isDemarchePcaetPartieModifiable(ref.status, partie) &&
       !(await this.isAllowedOnCollectivite(
         user,
         bypassEtapeWith,

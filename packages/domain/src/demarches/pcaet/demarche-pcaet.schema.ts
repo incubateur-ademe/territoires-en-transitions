@@ -101,6 +101,8 @@ export type DemarchePcaet = DemarcheBase & {
    */
   amontModifiable: boolean;
   avalModifiable: boolean;
+  /** Diagnostic, objectifs et programme d'actions : rouverts après les avis. */
+  contenuModifiable: boolean;
 };
 
 /**

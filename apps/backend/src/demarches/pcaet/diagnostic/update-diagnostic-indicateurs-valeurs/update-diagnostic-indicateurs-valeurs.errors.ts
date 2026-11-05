@@ -26,7 +26,7 @@ export const updateDiagnosticIndicateursValeursErrorConfig: TrpcErrorHandlerConf
       DIAGNOSTIC_NON_MODIFIABLE: {
         code: 'CONFLICT',
         message:
-          "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt",
+          "Le diagnostic n'est modifiable que pendant l'élaboration du dépôt et après les avis, jusqu'à la publication",
       },
     },
   };

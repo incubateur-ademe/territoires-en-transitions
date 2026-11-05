@@ -23,6 +23,12 @@ import {
  *   celui que le public consulte, ses pièces ne bougent plus. Une démarche
  *   archivée, publiée avant de l'être, reste fermée.
  *
+ * Le **contenu** du dossier — diagnostic, objectifs, programme d'actions — suit
+ * une troisième règle : fermé pendant la phase d'avis, comme l'amont, mais
+ * rouvert à la clôture de l'instruction, comme l'aval. La collectivité y reprend
+ * son dossier pour tenir compte des avis avant le dépôt final ; l'en-tête et les
+ * pièces amont, eux, restent tels qu'ils ont été transmis.
+ *
  * Ce ne sont pas des permissions utilisateur : celles-ci sont portées par
  * `demarches.pcaet.mutate` et répondent à « cette personne a-t-elle le droit
  * d'écrire ici ». Ces règles répondent à « le dossier accepte-t-il encore cette
@@ -50,6 +56,12 @@ export const isDemarchePcaetAvalModifiable = (
   status === DemarchePcaetStatusEnum.INSTRUIT ||
   status === DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME;
 
+export const isDemarchePcaetContenuModifiable = (
+  status: DemarchePcaetStatus
+): boolean =>
+  isDemarchePcaetAmontModifiable(status) ||
+  isDemarchePcaetAvalModifiable(status);
+
 /** Aiguille sur le bon temps du dossier — l'étape d'une pièce s'y branche. */
 export const isDemarchePcaetEtapeModifiable = (
   status: DemarchePcaetStatus,
@@ -58,3 +70,14 @@ export const isDemarchePcaetEtapeModifiable = (
   etape === 'amont'
     ? isDemarchePcaetAmontModifiable(status)
     : isDemarchePcaetAvalModifiable(status);
+
+/** Ce qu'une écriture vise : un temps du dossier, ou son contenu. */
+export type DemarchePcaetPartieDossier = DemarchePcaetEtapeDossier | 'contenu';
+
+export const isDemarchePcaetPartieModifiable = (
+  status: DemarchePcaetStatus,
+  partie: DemarchePcaetPartieDossier
+): boolean =>
+  partie === 'contenu'
+    ? isDemarchePcaetContenuModifiable(status)
+    : isDemarchePcaetEtapeModifiable(status, partie);

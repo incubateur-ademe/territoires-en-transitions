@@ -42,7 +42,7 @@ export class SetDiagnosticReferenceYearService {
     return this.transactionManager.executeSingle(async (transaction) => {
       const access = await this.accessService.assertWritable(
         { collectiviteId, demarcheId },
-        'amont',
+        'contenu',
         { user, tx: transaction }
       );
       if (!access.success) {

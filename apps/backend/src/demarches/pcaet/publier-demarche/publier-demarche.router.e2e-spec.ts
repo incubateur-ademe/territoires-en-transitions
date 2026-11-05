@@ -14,7 +14,9 @@ import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   addTestBibliothequeFichier,
+  attachTestPlanToDemarchePcaet,
   cloreTestInstructionPcaet,
+  completeTestDiagnosticPcaet,
   completeTestDossierPcaet,
 } from '../demarches-pcaet.test-fixture';
 
@@ -339,6 +341,16 @@ describe('Publication d’une démarche PCAET', () => {
       )
       .returning({ id: demarcheTable.id });
     for (const { id } of instruits) {
+      // La publication revérifie le diagnostic et le programme d'actions,
+      // rouverts après les avis : ils doivent être complets.
+      await attachTestPlanToDemarchePcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: id,
+      });
+      await completeTestDiagnosticPcaet(db, {
+        collectiviteId: collectivite.id,
+        demarcheId: id,
+      });
       const deliberation = await addTestBibliothequeFichier(db, {
         collectiviteId: collectivite.id,
         filename: 'deliberation-adoption.pdf',

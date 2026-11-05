@@ -14,6 +14,7 @@ import {
   isDemarchePcaetAmontModifiable,
   isDemarchePcaetAvalModifiable,
   isDemarchePcaetAvisTousRendus,
+  isDemarchePcaetContenuModifiable,
   isDemarchePcaetDiagnosticComplet,
   isDemarchePcaetPilote,
   type DemandeAvisAchevement,
@@ -98,31 +99,36 @@ const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
   // diagnostic renseigné ET un programme d'actions rattaché, vérifié, dont
   // chaque action a ses secteurs réglementaires.
   //
-  // Une transmission l'a déjà fait attester : le guard rend alors vrai sans rien
-  // relire. Ce n'est pas un raccourci de performance, c'est la seule lecture
-  // correcte — l'amont est fermé depuis, donc la collectivité ne peut plus rien
-  // y corriger, tandis que ce dont dépend le calcul continue de bouger sous elle
-  // (un plan d'actions supprimé depuis le module plans, une pièce devenue
-  // requise au catalogue, un feature flag de démonstration retiré). Recalculer
-  // ici rendrait le dossier impubliable et sans issue.
+  // Les pièces amont d'un dossier transmis ne se recalculent pas : la
+  // transmission les a fait attester, l'amont est fermé depuis, et ce dont
+  // dépend le calcul continue de bouger sous la collectivité (une pièce devenue
+  // requise au catalogue). Recalculer rendrait le dossier impubliable et sans
+  // issue.
   //
-  // Reste donc à calculer ce qui n'a jamais été transmis : le dépôt hors
-  // plateforme, dont la publication est le premier et seul contrôle.
-  dossierComplet: (context) =>
-    context.transmittedAt !== null
-      ? true
-      : context.documentsComplets === undefined ||
-        context.diagnostic === undefined ||
-        context.planActionIds === undefined ||
-        context.unverifiedPlanActionIds === undefined ||
-        context.secteursARenseignerPlanActionIds === undefined
-      ? undefined
-      : context.documentsComplets &&
-        (context.isDiagnosticBypassed === true ||
-          isDemarchePcaetDiagnosticComplet(context.diagnostic)) &&
-        context.planActionIds.length > 0 &&
-        context.unverifiedPlanActionIds.length === 0 &&
-        context.secteursARenseignerPlanActionIds.length === 0,
+  // Le diagnostic et le programme d'actions, eux, se rouvrent après les avis :
+  // ce qu'on peut défaire, on doit le revérifier avant la publication. Et ce
+  // qui bouge sous eux (un plan supprimé depuis le module plans, le
+  // contournement de démonstration retiré) se corrige depuis le dossier.
+  dossierComplet: (context) => {
+    const documentsAttestes = context.transmittedAt !== null;
+    if (
+      (!documentsAttestes && context.documentsComplets === undefined) ||
+      context.diagnostic === undefined ||
+      context.planActionIds === undefined ||
+      context.unverifiedPlanActionIds === undefined ||
+      context.secteursARenseignerPlanActionIds === undefined
+    ) {
+      return undefined;
+    }
+    return (
+      (documentsAttestes || context.documentsComplets === true) &&
+      (context.isDiagnosticBypassed === true ||
+        isDemarchePcaetDiagnosticComplet(context.diagnostic)) &&
+      context.planActionIds.length > 0 &&
+      context.unverifiedPlanActionIds.length === 0 &&
+      context.secteursARenseignerPlanActionIds.length === 0
+    );
+  },
 
   avisTousRendus: (context) =>
     context.demandesAvis === undefined
@@ -229,12 +235,10 @@ export class DemarchePcaetGuardsService {
   ): Promise<DemarchePcaetGuardContext> {
     const requiredGuards = getRequiredGuards(demarche.status);
     const needsPilotes = requiredGuards.includes('estPilote');
-    // Miroir du court-circuit de `dossierComplet` : sur un dossier transmis, le
-    // guard répond sans rien lire, donc ni snapshot documentaire, ni diagnostic,
-    // ni plans, ni appel PostHog — que `enrichAll` ferait sinon en boucle.
-    const needsDossier =
-      requiredGuards.includes('dossierComplet') &&
-      demarche.transmittedAt === null;
+    const needsDossier = requiredGuards.includes('dossierComplet');
+    // Miroir de `dossierComplet` : les pièces amont d'un dossier transmis ne se
+    // relisent pas.
+    const needsDocumentsAmont = needsDossier && demarche.transmittedAt === null;
     const needsDocumentsAval = requiredGuards.includes('documentsAvalComplets');
     const needsAvisRendus = requiredGuards.includes('avisTousRendus');
     const needsSuivant = requiredGuards.includes('pcaetSuivantAdopte');
@@ -251,7 +255,7 @@ export class DemarchePcaetGuardsService {
       needsPilotes
         ? this.pilotesRepository.listPiloteUserIds(demarche.id, tx)
         : Promise.resolve([]),
-      needsDossier || needsDocumentsAval
+      needsDocumentsAmont || needsDocumentsAval
         ? this.documentsRepository.loadSnapshot(
             {
               demarcheId: demarche.id,
@@ -312,7 +316,7 @@ export class DemarchePcaetGuardsService {
         : false,
       diagnostic,
       documentsComplets:
-        needsDossier && documentsSnapshot
+        needsDocumentsAmont && documentsSnapshot
           ? isDemarcheDossierDocumentsComplet(documentsSnapshot)
           : undefined,
       documentsAvalComplets:
@@ -340,7 +344,10 @@ export class DemarchePcaetGuardsService {
   computeAvailableActions(
     context: DemarchePcaetGuardContext,
     user: AuthenticatedUser | null
-  ): Pick<DemarchePcaet, 'transitions' | 'amontModifiable' | 'avalModifiable'> {
+  ): Pick<
+    DemarchePcaet,
+    'transitions' | 'amontModifiable' | 'avalModifiable' | 'contenuModifiable'
+  > {
     return {
       transitions: evaluateTransitions(
         context.status,
@@ -348,6 +355,7 @@ export class DemarchePcaetGuardsService {
       ),
       amontModifiable: isDemarchePcaetAmontModifiable(context.status),
       avalModifiable: isDemarchePcaetAvalModifiable(context.status),
+      contenuModifiable: isDemarchePcaetContenuModifiable(context.status),
     };
   }
 
