@@ -199,7 +199,7 @@ const DocumentCell = ({
 const DiagnosticScreen = ({ state }: ScreenProps) => (
   <Screen
     title="Compléter les données du diagnostic et de la stratégie"
-    subtitle="Consultez et complétez les indicateurs par volet du PCAET."
+    subtitle="Compléter et consulter les données issues de votre diagnostic et les objectifs de votre stratégie territoriale."
     footer={
       <>
         <PreviousButton />

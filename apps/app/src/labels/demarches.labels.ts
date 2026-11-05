@@ -8,8 +8,12 @@ import type {
   DemarcheDocumentEtape,
   DemarchePcaetGuardId,
   DemarcheType,
+  PCAET_DIAGNOSTIC_INDICATEURS,
 } from '@tet/domain/demarches';
 import { plural } from '@tet/ui/labels/plural';
+
+type PcaetDiagnosticIndicateurCode =
+  (typeof PCAET_DIAGNOSTIC_INDICATEURS)[number]['code'];
 
 /** Libellés d'un type de démarche, interpolés par les vues partagées. */
 export type DemarcheTypeLabels = {
@@ -467,7 +471,18 @@ export const demarchesLabels = {
   demarcheDiagnosticTitre:
     'Compléter les données du diagnostic et de la stratégie',
   demarcheDiagnosticDescription:
-    'Consultez et complétez les indicateurs par volet du PCAET : tableau des valeurs, données par secteur et graphique.',
+    'Compléter et consulter les données issues de votre diagnostic et les objectifs de votre stratégie territoriale.',
+  demarcheDiagnosticIndicateurDescriptions: {
+    emissions_ges:
+      'Renseigner les émissions de gaz à effet de serre de votre territoire, issues de votre diagnostic, et vos objectifs de réduction des émissions de gaz à effet de serre aux différents horizons, issus de votre stratégie.',
+    polluants_atmospheriques:
+      'Renseigner les émissions de polluants atmosphériques de votre territoire, issues de votre diagnostic, et vos objectifs de réduction des émissions de polluants atmosphériques aux différents horizons, issus de votre stratégie.',
+    sequestration:
+      'Renseigner la séquestration nette de dioxyde de carbone de votre territoire, issue de votre diagnostic, et vos objectifs de stockage carbone, issus de votre stratégie.',
+    consommation_energetique:
+      'Renseigner la consommation énergétique finale de votre territoire et vos objectifs de réduction de consommation d’énergie finale aux différents horizons.',
+    enr: 'Renseigner l’état de la production d’énergies renouvelables de votre territoire et vos objectifs de production et de consommation des énergies renouvelables.',
+  } satisfies Record<PcaetDiagnosticIndicateurCode, string>,
   /** Complétude d'une étape du dépôt, rendue par `DemarcheCompletionBadge`. */
   demarcheCompletionComplete: 'Complété',
   demarcheCompletionAComplete: 'À compléter',
