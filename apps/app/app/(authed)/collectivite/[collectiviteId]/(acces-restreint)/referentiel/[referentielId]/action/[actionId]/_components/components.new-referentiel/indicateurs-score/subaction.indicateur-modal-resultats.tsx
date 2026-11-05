@@ -1,27 +1,13 @@
-import { canUpdateIndicateur } from '@/app/indicateurs/indicateurs/indicateur-authorization.utils';
-import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { useUser } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CalculScoreIndicatif } from '@tet/domain/referentiels';
 import { Alert, Checkbox, Divider, InlineLink } from '@tet/ui';
-import { useGetValeursUtilisables } from '../../score-indicatif/use-get-valeurs-utilisables';
-import {
-  filterLignesFromAnneeReference,
-  getAnneeReference,
-  getValeurReferenceManquante,
-} from './filter-lignes-from-annee-reference.utils';
-import { LigneValeur } from './group-lignes-by-annee.utils';
 import { IndicateurResultatsTable } from './subaction.indicateur-modal-resultats.table';
 import { SubactionIndicateurScore } from './subaction.indicateur-score';
+import { useIndicateurModalResultats } from './use-indicateur-modal-resultats';
 import { useIsScoreIndicateurEnabled } from './use-is-score-indicateur-enabled';
-import {
-  useSetIndicateurSuivi,
-  useSetScoreFromIndicateur,
-} from './use-set-score-from-indicateur';
 
 type Props = {
   action: ActionListItem;
@@ -53,84 +39,40 @@ const SubactionIndicateurModalResultatsContent = ({
   calcul,
   indicateurUrl,
 }: Props) => {
-  const { actionId } = action;
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
-  const user = useUser();
-
-  const valeursQuery = useGetValeursUtilisables(actionId, indicateurId);
-  const indicateurQuery = useGetIndicateur(indicateurId, collectiviteId);
-  const valeursUtilisables = valeursQuery.data;
-  const indicateur = indicateurQuery.data;
-
-  const { mutate: setScoreFromIndicateur, isPending } =
-    useSetScoreFromIndicateur();
-  const { mutate: setIndicateurSuivi, isPending: isUpdatingNonSuivi } =
-    useSetIndicateurSuivi();
-  const nonSuivi = indicateur ? !indicateur.isSuivi : false;
-  const canEditNonSuivi = indicateur
-    ? canUpdateIndicateur(hasCollectivitePermission, indicateur, user.id)
-    : false;
-
-  const valeurSelectionnee = valeursUtilisables?.selection.fait;
-  const selectionneeId = valeurSelectionnee?.id ?? null;
-
-  const anneeReference = getAnneeReference(calcul);
-  const valeurReferenceManquante = getValeurReferenceManquante(calcul);
-  // sans valeur sur l'année de référence, aucun résultat ne permet de
-  // calculer la progression : la liste est grisée
-  const isCalculImpossible = valeurReferenceManquante !== null;
-  const toutesLignes: LigneValeur[] = (
-    valeursUtilisables?.sources ?? []
-  ).flatMap((source) =>
-    source.fait.map((valeur) => ({
-      ...valeur,
-      source: source.libelle ?? appLabels.sourceCollectivite,
-    }))
-  );
-  const lignes = filterLignesFromAnneeReference(
-    toutesLignes,
+  const {
+    isLoading,
+    isError,
+    retry,
+    valeurSelectionnee,
+    selectionneeId,
+    lignes,
     anneeReference,
-    selectionneeId
-  ).sort((a, b) => b.annee - a.annee);
+    hasResultatsAnterieursMasques,
+    valeurReferenceManquante,
+    nonSuivi,
+    canEditNonSuivi,
+    isSelecting,
+    isUpdatingNonSuivi,
+    isListeDisabled,
+    selectResultat,
+    toggleNonSuivi,
+  } = useIndicateurModalResultats({
+    actionId: action.actionId,
+    indicateurId,
+    calcul,
+  });
 
-  const handleSelect = (indicateurValeurId: number | null) => {
-    setScoreFromIndicateur({
-      actionId,
-      collectiviteId,
-      indicateurId,
-      valeurs:
-        indicateurValeurId === null
-          ? []
-          : [{ indicateurValeurId, typeScore: 'fait' }],
-    });
-  };
-
-  // en cochant la case, le backend désélectionne aussi la valeur retenue et
-  // recalcule le score de l'action
-  const handleToggleNonSuivi = () => {
-    setIndicateurSuivi({
-      actionId,
-      collectiviteId,
-      indicateurId,
-      isSuivi: nonSuivi,
-    });
-  };
-
-  if (valeursQuery.error || indicateurQuery.error) {
+  if (isError) {
     return (
       <ErrorCard
         title={appLabels.resultatsIndicateurErreur}
-        retry={() => {
-          valeursQuery.refetch();
-          indicateurQuery.refetch();
-        }}
+        retry={retry}
         retryLabel={appLabels.reessayer}
       />
     );
   }
 
-  if (valeursQuery.isLoading || indicateurQuery.isLoading) {
+  if (isLoading) {
     return (
       <div className="flex py-8">
         <SpinnerLoader className="m-auto" />
@@ -178,18 +120,18 @@ const SubactionIndicateurModalResultatsContent = ({
         containerClassname="mb-4"
         label={appLabels.indicateurNonSuiviCheckboxLabel}
         checked={nonSuivi}
-        disabled={!canEditNonSuivi || isUpdatingNonSuivi || isPending}
-        onChange={handleToggleNonSuivi}
+        disabled={!canEditNonSuivi || isUpdatingNonSuivi || isSelecting}
+        onChange={toggleNonSuivi}
       />
       <IndicateurResultatsTable
         lignes={lignes}
         unite={unite}
         anneeReference={anneeReference}
-        hasResultatsAnterieursMasques={lignes.length < toutesLignes.length}
+        hasResultatsAnterieursMasques={hasResultatsAnterieursMasques}
         selectionneeId={selectionneeId}
-        isPending={isPending}
-        disabled={nonSuivi || isUpdatingNonSuivi || isCalculImpossible}
-        onSelect={handleSelect}
+        isPending={isSelecting}
+        disabled={isListeDisabled}
+        onSelect={selectResultat}
       />
     </div>
   );
