@@ -2,7 +2,6 @@
 
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { DemarcheShell } from '@/app/demarches/components/shell';
-import { getDemarcheParcours } from '@/app/demarches/steps';
 import {
   findPcaetPlanType,
   makeProgrammeActionsPlanName,
@@ -72,12 +71,12 @@ export const DemarchePcaetPlanActionsPage = () => {
       onTransmettre={transmettrePourAvis}
       onPublish={publier}
     >
-      {/* Passée la clôture de l'instruction, l'écran change de rôle : il ne
-          sert plus à rattacher un plan mais à relire celui qui a été transmis,
-          dans la vue même que lisent les instructeurs. Le rattachement suit donc
-          l'amont, et non l'aval : un dépôt hors plateforme a les deux ouverts,
-          et c'est encore à lui de rattacher son plan. */}
-      {!getDemarcheParcours(demarche).amontOuvert ? (
+      {/* Pendant la phase d'avis, et une fois publié, l'écran ne sert qu'à
+          relire le programme transmis, dans la vue même que lisent les
+          instructeurs. Après les avis, il se rouvre comme à l'élaboration : la
+          collectivité peut encore rattacher, détacher ou modifier ses plans
+          avant le dépôt final. */}
+      {!demarche.contenuModifiable ? (
         <RappelPlanSection
           collectiviteId={collectiviteId}
           demarcheId={demarcheId}

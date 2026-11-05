@@ -457,9 +457,9 @@ export const ProgrammeActionsSection = ({
   const { collectiviteId } = collectivite;
   const trpc = useTRPC();
   const { planTypeId } = eligibility;
-  // Miroir du gating serveur : hors élaboration, le serveur refuse toute
-  // modification (DEMARCHE_NON_MODIFIABLE).
-  const isReadonly = !demarche.amontModifiable;
+  // Miroir du gating serveur : pendant la phase d'avis et après la publication,
+  // le serveur refuse toute modification (DEMARCHE_PCAET_NON_MODIFIABLE).
+  const isReadonly = !demarche.contenuModifiable;
 
   const { plans, isLoading: isLoadingPlans } = useListPlans(collectiviteId, {
     typeIds: planTypeId !== undefined ? [planTypeId] : undefined,

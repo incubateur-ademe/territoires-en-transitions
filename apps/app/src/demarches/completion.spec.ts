@@ -229,6 +229,7 @@ const completeDemarche: DemarchePcaet = {
   transitions: evaluateTransitions('en_elaboration'),
   amontModifiable: true,
   avalModifiable: false,
+  contenuModifiable: true,
   pilotes: [],
   planActionIds: [42],
   unverifiedPlanActionIds: [],

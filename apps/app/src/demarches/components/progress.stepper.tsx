@@ -402,23 +402,14 @@ export const AvanceDemarcheSection = ({
           },
         ];
 
-  // Sous-étapes de la finalisation, dans l'ordre de l'élaboration : le rappel
-  // du diagnostic, les pièces produites après les avis (délibération
-  // d'adoption…), dont la couverture conditionne la publication, puis le rappel
-  // du plan. Les rappels mènent aux écrans de l'élaboration, passés en lecture
-  // seule dès la transmission : à ce stade on relit le dossier pour répondre
-  // aux avis, on ne le complète plus.
+  // Sous-étapes de la finalisation, dans l'ordre de l'élaboration : le
+  // diagnostic, les pièces produites après les avis (délibération
+  // d'adoption…), puis le programme d'actions. Diagnostic et programme se
+  // rouvrent après les avis, comme à l'élaboration et avec leur complétude :
+  // la collectivité les reprend pour le dépôt final, et la publication les
+  // revérifie.
   const finalisationSteps: SectionStep[] = [
-    {
-      key: 'diagnostic',
-      label: appLabels.demarcheAvanceRappelDiagnosticLabel,
-      description: appLabels.demarcheAvanceRappelDiagnosticDescription,
-      status: null,
-      href: makeDemarcheSectionUrl('diagnostic', {
-        collectiviteId,
-        demarcheId,
-      }),
-    },
+    diagnosticStep,
     ...(completion.documentsAval !== null
       ? [
           {
@@ -433,13 +424,7 @@ export const AvanceDemarcheSection = ({
           },
         ]
       : []),
-    {
-      key: 'plan',
-      label: appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels }),
-      description: appLabels.demarcheAvanceRappelPlanDescription,
-      status: null,
-      href: makeDemarcheSectionUrl('plan', { collectiviteId, demarcheId }),
-    },
+    planStep,
   ];
 
   // Le bloc de finalisation s'affiche dès que l'étape est atteinte ; l'état de
@@ -447,10 +432,9 @@ export const AvanceDemarcheSection = ({
   const isFinalisationReached = activeIndex >= ETAPE.finalisation;
 
   /**
-   * Un dépôt hors plateforme n'a pas d'avis à relire : sa finalisation n'est pas
-   * une reprise du dossier mais sa constitution entière. Les sous-étapes sont
-   * donc celles de l'élaboration, avec leur complétude — ce sont elles qui
-   * arment la publication — et non deux rappels en lecture seule.
+   * Un dépôt hors plateforme n'a pas d'avis à relire : sa finalisation est la
+   * constitution entière du dossier, et sa sous-étape documents couvre les deux
+   * temps à la fois.
    */
   const etapeFinaleSteps: SectionStep[] = horsPlateforme
     ? [diagnosticStep, ...documentsHorsPlateformeSteps, planStep]
