@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { chunk } from 'es-toolkit';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -24,6 +25,9 @@ import {
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
+
+/** Taille d'un lot de recalcul : réglée sur le nombre d'allers-retours, pas sur la mémoire. */
+export const RECOMPUTE_COLLECTIVITES_BATCH_SIZE = 50;
 
 export type RecomputedCollectiviteIndicateurValeurs = {
   collectiviteId: number;
@@ -150,22 +154,38 @@ export class ReconcileIndicateurValeursService {
     input: { collectiviteId: number; indicateurs: IndicateurPredefini[] },
     context: IndicateurValeursWriteContext
   ) {
+    return captureIndicateurValeursResult(async () => {
+      const [result] = await this.reconcileInTransaction(
+        [input.collectiviteId],
+        input.indicateurs,
+        context.tx
+      );
+      return result;
+    });
+  }
+
+  /** Recalcule un lot de collectivités : une entrée par collectivité, même sans écriture. */
+  reconcileCollectivites(
+    input: { collectiviteIds: number[]; indicateurs: IndicateurPredefini[] },
+    context: IndicateurValeursWriteContext
+  ) {
     return captureIndicateurValeursResult(() =>
       this.reconcileInTransaction(
-        input.collectiviteId,
+        input.collectiviteIds,
         input.indicateurs,
         context.tx
       )
     );
   }
+
   private async reconcileInTransaction(
-    collectiviteId: number,
+    collectiviteIds: number[],
     indicateursPredefinis: IndicateurPredefini[],
     tx: Transaction
-  ): Promise<RecomputedCollectiviteIndicateurValeurs> {
+  ): Promise<RecomputedCollectiviteIndicateurValeurs[]> {
     const recomputed =
-      await this.computeValeursService.recomputeCollectiviteCalculatedIndicateurValeurs(
-        collectiviteId,
+      await this.computeValeursService.recomputeCollectivitesCalculatedIndicateurValeurs(
+        collectiviteIds,
         indicateursPredefinis.map(({ id }) => id),
         tx
       );
@@ -173,7 +193,7 @@ export class ReconcileIndicateurValeursService {
     const deletedValeurs = recomputed.valeurIdsToDelete.length
       ? await this.repository.deleteAutomaticValeurs(
           recomputed.valeurIdsToDelete,
-          { collectiviteId },
+          { collectiviteIds },
           tx
         )
       : [];
@@ -201,26 +221,31 @@ export class ReconcileIndicateurValeursService {
       ...insertedValeurs,
       ...propagated.upsertedValeurs,
     ];
-    const insertedIndicateurValeurIdentifiants = [
-      ...new Set(
-        [
-          ...recomputed.indicateurIdentifiants,
-          ...allInsertedValeurs.map((v) => v.indicateurIdentifiant),
-        ].filter((v): v is string => Boolean(v))
-      ).values(),
-    ] as string[];
+    const results = collectiviteIds.map((collectiviteId) => {
+      const inserted = allInsertedValeurs.filter(
+        (valeur) => valeur.collectiviteId === collectiviteId
+      );
+      const deletedCount = allDeletedValeurs.filter(
+        (valeur) => valeur.collectiviteId === collectiviteId
+      ).length;
+      const identifiants = [
+        ...new Set(
+          [
+            ...recomputed.indicateurIdentifiants,
+            ...inserted.map((v) => v.indicateurIdentifiant),
+          ].filter((v): v is string => Boolean(v))
+        ),
+      ];
+      return {
+        valeursCount: inserted.length + deletedCount,
+        identifiants,
+        collectiviteId,
+      };
+    });
     this.logger.log(
-      `Inserted ${
-        allInsertedValeurs.length
-      } computed indicateur valeurs for collectivite ${collectiviteId} and identifiants ${insertedIndicateurValeurIdentifiants.join(
-        ','
-      )}`
+      `Recalculated ${allInsertedValeurs.length} inserted and ${allDeletedValeurs.length} deleted indicateur valeurs for ${collectiviteIds.length} collectivites`
     );
-    return {
-      valeursCount: allInsertedValeurs.length + allDeletedValeurs.length,
-      identifiants: insertedIndicateurValeurIdentifiants,
-      collectiviteId,
-    };
+    return results;
   }
 
   recomputeAll(
@@ -248,22 +273,33 @@ export class ReconcileIndicateurValeursService {
             context.tx
           );
       const results: RecomputedCollectiviteIndicateurValeurs[] = [];
-      // Catalogue imports share their transaction; standalone recalculations use one per collectivité.
+      // Catalogue imports share their transaction; standalone recalculations use one per lot.
       // A shared transaction keeps every lock until commit: one table lock
       // replaces the per-period locks, which would overflow PostgreSQL's lock table.
       if (context.tx && collectiviteIds.length > 1) {
         await this.valeurLockRepository.lockAllPeriodes(context.tx);
       }
-      for (const collectiviteId of collectiviteIds) {
+      // Par lots : le graphe, les règles et les métadonnées ne sont relus
+      // qu'une fois par lot, et chaque requête couvre toutes ses collectivités.
+      const batches = chunk(
+        [...collectiviteIds].sort((left, right) => left - right),
+        RECOMPUTE_COLLECTIVITES_BATCH_SIZE
+      );
+      for (const [index, batch] of batches.entries()) {
         const result = await this.transactionManager.executeSingle(
           async (tx) =>
-            this.reconcileCollectivite(
-              { collectiviteId, indicateurs },
+            this.reconcileCollectivites(
+              { collectiviteIds: batch, indicateurs },
               { ...context, tx }
             ),
           context.tx
         );
-        results.push(getIndicateurValeursDataOrThrow(result));
+        results.push(...getIndicateurValeursDataOrThrow(result));
+        this.logger.log(
+          `Recalcul des indicateurs : lot ${index + 1}/${batches.length} (${
+            batch.length
+          } collectivités)`
+        );
       }
       return results;
     });

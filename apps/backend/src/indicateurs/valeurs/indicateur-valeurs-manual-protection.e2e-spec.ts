@@ -317,8 +317,8 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
 
     await database.db.transaction(async (tx) => {
       const calculated =
-        await compute.recomputeCollectiviteCalculatedIndicateurValeurs(
-          valeur.collectiviteId,
+        await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
+          [valeur.collectiviteId],
           indicateurs.slice(1).map(({ id }) => id),
           tx
         );
@@ -418,5 +418,81 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       .from(indicateurValeurTable)
       .where(eq(indicateurValeurTable.collectiviteId, other.collectiviteId));
     expect(kept).toEqual([]);
+  });
+
+  it('calcule un lot de collectivités comme chacune isolément', async () => {
+    const { valeur, indicateurs } = await fixture();
+    const { collectivite: other, cleanup } = await addTestCollectiviteAndUser(
+      database,
+      { user: { role: CollectiviteRole.ADMIN } }
+    );
+    onTestFinished(cleanup);
+    const source = (collectiviteId: number, dateValeur: string, resultat: number) => ({
+      ...valeur,
+      collectiviteId,
+      indicateurId: indicateurs[0].id,
+      metadonneeId: null,
+      dateValeur,
+      resultat,
+      objectif: null,
+    });
+    // Des périodes différentes : une date d'une collectivité ne doit pas
+    // en entraîner la lecture chez l'autre.
+    await repository.upsertValeursWithoutMetadata([
+      source(valeur.collectiviteId, '2024-01-01', 3),
+      source(other.id, '2025-01-01', 5),
+    ]);
+    const targets = indicateurs.slice(1).map(({ id }) => id);
+    const byIdentity = (
+      valeurs: { collectiviteId: number; indicateurId: number; dateValeur: string }[]
+    ) =>
+      [...valeurs].sort((left, right) =>
+        `${left.collectiviteId}:${left.indicateurId}:${left.dateValeur}`.localeCompare(
+          `${right.collectiviteId}:${right.indicateurId}:${right.dateValeur}`
+        )
+      );
+
+    await database.db.transaction(async (tx) => {
+      const batch = await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
+        [valeur.collectiviteId, other.id],
+        targets,
+        tx
+      );
+      const isolated = [
+        await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
+          [valeur.collectiviteId],
+          targets,
+          tx
+        ),
+        await compute.recomputeCollectivitesCalculatedIndicateurValeurs(
+          [other.id],
+          targets,
+          tx
+        ),
+      ];
+      expect(byIdentity(batch.valeursToUpsert)).toEqual(
+        byIdentity(isolated.flatMap(({ valeursToUpsert }) => valeursToUpsert))
+      );
+      expect(batch.valeursToUpsert).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            collectiviteId: valeur.collectiviteId,
+            dateValeur: '2024-01-01',
+            resultat: 6,
+          }),
+          expect.objectContaining({
+            collectiviteId: other.id,
+            dateValeur: '2025-01-01',
+            resultat: 10,
+          }),
+        ])
+      );
+      expect(
+        batch.valeursToUpsert.some(
+          ({ collectiviteId, dateValeur }) =>
+            collectiviteId === other.id && dateValeur === '2024-01-01'
+        )
+      ).toBe(false);
+    });
   });
 });

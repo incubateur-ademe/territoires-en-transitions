@@ -280,21 +280,21 @@ export class ComputeValeursRepository {
 
   async listPeriodeKeys(
     {
-      collectiviteId,
+      collectiviteIds,
       indicateurIds,
-    }: { collectiviteId: number; indicateurIds: number[] },
+    }: { collectiviteIds: number[]; indicateurIds: number[] },
     tx: Transaction
   ): Promise<IndicateurValeurPeriodeKey[]> {
-    if (indicateurIds.length === 0) return [];
+    if (collectiviteIds.length === 0 || indicateurIds.length === 0) return [];
     return tx
-      .select({
+      .selectDistinct({
         collectiviteId: indicateurValeurTable.collectiviteId,
         dateValeur: indicateurValeurTable.dateValeur,
       })
       .from(indicateurValeurTable)
       .where(
         and(
-          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          inArray(indicateurValeurTable.collectiviteId, collectiviteIds),
           inArray(indicateurValeurTable.indicateurId, indicateurIds)
         )
       );
@@ -302,17 +302,22 @@ export class ComputeValeursRepository {
 
   async listRelevantValeurs(
     {
-      collectiviteId,
+      collectiviteIds,
       indicateurIds,
       dateValeurs,
     }: {
-      collectiviteId: number;
+      collectiviteIds: number[];
       indicateurIds: number[];
       dateValeurs: string[];
     },
     tx: Transaction
   ): Promise<StoredRelevantValeur[]> {
-    if (indicateurIds.length === 0 || dateValeurs.length === 0) return [];
+    if (
+      collectiviteIds.length === 0 ||
+      indicateurIds.length === 0 ||
+      dateValeurs.length === 0
+    )
+      return [];
     return tx
       .select({
         ...getTableColumns(indicateurValeurTable),
@@ -335,7 +340,7 @@ export class ComputeValeursRepository {
       )
       .where(
         and(
-          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          inArray(indicateurValeurTable.collectiviteId, collectiviteIds),
           inArray(indicateurValeurTable.indicateurId, indicateurIds),
           inArray(indicateurValeurTable.dateValeur, dateValeurs)
         )
