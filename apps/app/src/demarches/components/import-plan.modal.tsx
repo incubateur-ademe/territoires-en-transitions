@@ -7,6 +7,8 @@ import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.f
 import { Button, Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { useQueryStates } from 'nuqs';
+import { aiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 
 type Props = {
   openState: OpenState;
@@ -18,7 +20,7 @@ type Props = {
    * La fin de l'import est traitée par l'appelant, qui reste monté : la
    * modale peut être fermée pendant l'import.
    */
-  onImportStarted: (jobId: string, planId: number) => void;
+  onImportStarted: (jobId: string, planId: number | null) => void;
 };
 
 export const DemarcheImportPlanModal = ({
@@ -27,6 +29,7 @@ export const DemarcheImportPlanModal = ({
   importDefaults,
   onImportStarted,
 }: Props) => {
+  const [, setImportQuery] = useQueryStates(aiImportQueryState);
   const [isProgressVisible, setIsProgressVisible] = useState(false);
   return (
     <Modal
@@ -39,7 +42,12 @@ export const DemarcheImportPlanModal = ({
           lockedPlanTypeId={planTypeId}
           defaults={importDefaults}
           onImportStarted={onImportStarted}
-          onPlanCreated={close}
+          onPlanCreated={() => {
+            // Le compte rendu reste dans l'historique. Une prochaine ouverture
+            // doit permettre un nouvel import, pas refermer aussitôt la modale.
+            void setImportQuery({ importJobId: null });
+            close();
+          }}
           onProgressVisibilityChange={setIsProgressVisible}
           cancelButton={
             <Button variant="outlined" type="button" onClick={close}>

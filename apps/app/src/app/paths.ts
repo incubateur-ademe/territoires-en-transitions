@@ -1,3 +1,4 @@
+import { serializeAiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 import {
   personnalisationPageSearchParamsSerializer,
   type PersonnalisationPageSearchParams,
@@ -485,12 +486,32 @@ export const makeCollectivitePlansActionsImporterUrl = ({
 
 export const makeCollectivitePlansActionsImporterIaUrl = ({
   collectiviteId,
+  importJobId,
 }: {
   collectiviteId: number;
+  importJobId?: string;
 }) =>
-  collectivitePlansActionsImporterIaPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
+  serializeAiImportQueryState(
+    collectivitePlansActionsImporterIaPath.replace(
+      `:${collectiviteParam}`,
+      collectiviteId.toString()
+    ),
+    { importJobId }
+  );
+
+export const makeCollectivitePlanImportsUrl = ({
+  collectiviteId,
+  importJobId,
+}: {
+  collectiviteId: number;
+  importJobId?: string;
+}) =>
+  serializeAiImportQueryState(
+    `${collectivitePlansActionsBasePath}/imports`.replace(
+      `:${collectiviteParam}`,
+      collectiviteId.toString()
+    ),
+    { importJobId }
   );
 
 export const makeCollectivitePlansActionsListUrl = ({

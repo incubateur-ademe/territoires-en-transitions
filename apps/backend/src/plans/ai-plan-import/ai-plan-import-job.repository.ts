@@ -125,6 +125,7 @@ const toStatusView = ({
 
 export type ListRecentAiImportsInput = {
   collectiviteId: number;
+  planId?: number;
   limit: number;
   cursor?: string;
 };
@@ -369,23 +370,25 @@ export class AiPlanImportJobRepository {
 
   async listRecentByCollectivite({
     collectiviteId,
+    planId,
     limit,
     cursor,
   }: ListRecentAiImportsInput): Promise<
     Result<ListRecentAiImportsResult, AiPlanImportError>
   > {
     try {
+      const scope = and(
+        eq(aiPlanImportJobTable.collectiviteId, collectiviteId),
+        planId !== undefined
+          ? eq(aiPlanImportJobTable.createdPlanId, planId)
+          : undefined
+      );
       let cursorCreatedAt: string | undefined;
       if (cursor !== undefined) {
         const [cursorJob] = await this.db
           .select({ createdAt: aiPlanImportJobTable.createdAt })
           .from(aiPlanImportJobTable)
-          .where(
-            and(
-              eq(aiPlanImportJobTable.id, cursor),
-              eq(aiPlanImportJobTable.collectiviteId, collectiviteId)
-            )
-          )
+          .where(and(eq(aiPlanImportJobTable.id, cursor), scope))
           .limit(1);
         if (!cursorJob) return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
         cursorCreatedAt = cursorJob.createdAt;
@@ -396,7 +399,7 @@ export class AiPlanImportJobRepository {
         .from(aiPlanImportJobTable)
         .where(
           and(
-            eq(aiPlanImportJobTable.collectiviteId, collectiviteId),
+            scope,
             cursor !== undefined && cursorCreatedAt !== undefined
               ? or(
                   lt(aiPlanImportJobTable.createdAt, cursorCreatedAt),

@@ -21,7 +21,7 @@ export type AiImportEnqueueInput = {
 
 const enqueueResponseSchema = z.object({
   jobId: z.string(),
-  planId: z.number(),
+  planId: z.number().nullable(),
 });
 export type AiImportEnqueueResult = z.infer<typeof enqueueResponseSchema>;
 
@@ -61,10 +61,11 @@ export const useEnqueueAiImport = (): UseMutationResult<
       return enqueueResponseSchema.parse(response);
     },
     onSuccess: (_result, { collectiviteId }) => {
-      // Le plan existe dès le lancement, en cours d'import.
+      // Le suivi existe même si le plan ne sera créé qu’à la fin.
       for (const queryKey of [
         trpc.plans.aiImport.getCurrentAiImport.queryKey({ collectiviteId }),
         trpc.plans.aiImport.findPreviousAiImport.queryKey(),
+        trpc.plans.aiImport.listRecentAiImports.pathKey(),
         trpc.plans.plans.list.queryKey({ collectiviteId }),
       ]) {
         queryClient.invalidateQueries({ queryKey });

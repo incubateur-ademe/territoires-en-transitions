@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import {
   getAuthUserFromUserCredentials,
   getDisposableTestApp,
@@ -235,6 +236,59 @@ describe('Suivi des imports IA', () => {
         collectiviteId: context.collectiviteId,
       })
     ).toMatchObject({ jobId: runningJob.id, status: 'running' });
+  });
+
+  test('retrouve uniquement les imports du plan demandé et filtre aussi les curseurs', async () => {
+    const context = await createContext();
+    const other = await createContext();
+    const [plan, manualPlan, otherPlan] = await db.db
+      .insert(axeTable)
+      .values([
+        { collectiviteId: context.collectiviteId, nom: 'Plan importé' },
+        { collectiviteId: context.collectiviteId, nom: 'Plan manuel' },
+        { collectiviteId: other.collectiviteId, nom: 'Autre collectivité' },
+      ])
+      .returning();
+    const firstJob = await insertJob(context, {
+      createdPlanId: plan.id,
+      createdAt: '2026-11-04T10:00:00Z',
+    });
+    const latestJob = await insertJob(context, {
+      createdPlanId: plan.id,
+      createdAt: '2026-11-04T10:01:00Z',
+      status: 'done',
+      error: null,
+    });
+    const unrelatedJob = await insertJob(context, {
+      createdAt: '2026-11-04T10:02:00Z',
+    });
+    await insertJob(other, { createdPlanId: otherPlan.id });
+    const input = {
+      collectiviteId: context.collectiviteId,
+      planId: plan.id,
+      limit: 1,
+    };
+
+    const firstPage = await context.api.listRecentAiImports(input);
+    expect(firstPage.items.map(({ jobId }) => jobId)).toEqual([latestJob.id]);
+    expect(firstPage.nextCursor).toBe(latestJob.id);
+    const secondPage = await context.api.listRecentAiImports({
+      ...input,
+      cursor: latestJob.id,
+    });
+    expect(secondPage.items.map(({ jobId }) => jobId)).toEqual([firstJob.id]);
+    expect(secondPage.nextCursor).toBeNull();
+    for (const planId of [manualPlan.id, otherPlan.id]) {
+      expect(
+        await context.api.listRecentAiImports({ ...input, planId })
+      ).toEqual({ items: [], nextCursor: null });
+    }
+    await expect(
+      context.api.listRecentAiImports({ ...input, cursor: unrelatedJob.id })
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+    await expect(other.api.listRecentAiImports(input)).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
   });
 
   test.each(['historique', 'explicite'] as const)(

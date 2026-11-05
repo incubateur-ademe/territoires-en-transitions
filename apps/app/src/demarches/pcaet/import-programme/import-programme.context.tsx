@@ -1,5 +1,7 @@
 'use client';
 
+import { useQueryStates } from 'nuqs';
+import { aiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-get-ongoing-ai-import';
@@ -26,7 +28,7 @@ type ImportProgrammeContextValue = {
    * À appeler dès l'import lancé depuis la démarche : le plan, créé au
    * lancement, y est rattaché d'office, et la fin de l'import est suivie.
    */
-  trackImport: (jobId: string, planId: number) => void;
+  trackImport: (jobId: string, planId: number | null) => void;
   /** Le suivi de l'import est affiché : son échec s'y lit déjà. */
   setIsProgressDisplayed: (isDisplayed: boolean) => void;
 };
@@ -63,6 +65,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     isOngoing,
   } = useGetOngoingAiImport(collectiviteId, { enabled: isEnabled });
 
+  const [, setImportQuery] = useQueryStates(aiImportQueryState);
   const [startedJobId, setStartedJobId] = useState<string | null>(null);
   // L'issue traitée, pas seulement le job : un import repris par l'équipe
   // aboutit après avoir échoué, sous le même identifiant.
@@ -145,14 +148,17 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   ]);
 
   const trackImport = useCallback(
-    (jobId: string, planId: number) => {
+    (jobId: string, planId: number | null) => {
       setStartedJobId(jobId);
+      void setImportQuery({ importJobId: jobId });
       // Le rattachement peut échouer sans compromettre l'import : la ligne du
       // tableau dit si le plan est rattaché, le toast d'erreur global dit
       // pourquoi.
-      linkIfFirstPlan(planId).catch(() => undefined);
+      if (planId !== null) {
+        linkIfFirstPlan(planId).catch(() => undefined);
+      }
     },
-    [linkIfFirstPlan]
+    [linkIfFirstPlan, setImportQuery]
   );
 
   const value = useMemo(
