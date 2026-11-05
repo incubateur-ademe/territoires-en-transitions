@@ -252,9 +252,14 @@ export class ScoreIndicatifRepository {
     }
   }
 
-  /** Liste les actions dont le score indicatif est calculé à partir des valeurs d'indicateurs */
-  async listActionsUsingIndicateurValeur(
-    indicateurValeurId: number | number[],
+  /**
+   * Liste les actions de la collectivité dont le score indicatif retient une
+   * valeur de l'indicateur. Toute valeur de l'indicateur peut peser sur ce
+   * score, même non retenue : ex. le résultat de l'année de départ de
+   * `reduction(...)`.
+   */
+  async listActionsUsingIndicateur(
+    { collectiviteId, indicateurId }: { collectiviteId: number; indicateurId: number },
     tx?: Transaction
   ): Promise<
     Result<{ collectiviteId: number; actionId: string }[], ScoreIndicatifError>
@@ -267,15 +272,10 @@ export class ScoreIndicatifRepository {
         })
         .from(actionScoreIndicateurValeurTable)
         .where(
-          Array.isArray(indicateurValeurId)
-            ? inArray(
-                actionScoreIndicateurValeurTable.indicateurValeurId,
-                indicateurValeurId
-              )
-            : eq(
-                actionScoreIndicateurValeurTable.indicateurValeurId,
-                indicateurValeurId
-              )
+          and(
+            eq(actionScoreIndicateurValeurTable.collectiviteId, collectiviteId),
+            eq(actionScoreIndicateurValeurTable.indicateurId, indicateurId)
+          )
         );
 
       return success(rows);

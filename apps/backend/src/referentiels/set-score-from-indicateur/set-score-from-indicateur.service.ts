@@ -42,22 +42,21 @@ export class SetScoreFromIndicateurService {
     private readonly indicateurValeursService: ManageIndicateurValeursService,
     private readonly updateIndicateurService: UpdateIndicateurService
   ) {
-    // Une valeur d'indicateur retenue pour un score peut être corrigée après
-    // coup (sans changer la sélection) : le score et l'avancement qui en
-    // dérivent doivent alors être réactualisés.
+    // Une valeur d'indicateur peut être corrigée après coup (sans changer la
+    // sélection) : le score et l'avancement qui en dérivent doivent alors être
+    // réactualisés. Ce n'est pas forcément la valeur retenue : le résultat de
+    // l'année de départ de `reduction(...)` pèse aussi sur le score.
     this.indicateurValeursService.registerValeurUpsertedListener((event) =>
       this.onIndicateurValeurUpserted(event)
     );
 
-    // Une valeur d'indicateur sélectionnée pour un score peut aussi être
-    // supprimée : la sélection est alors perdue (ON DELETE
-    // CASCADE) et le score/avancement dérivés doivent être réactualisés en
-    // conséquence.
+    // Même chose à la suppression. Si la valeur supprimée était retenue, la
+    // sélection est perdue (ON DELETE CASCADE) : les actions concernées sont
+    // donc recherchées avant la suppression.
     const deletionListener: IndicateurValeurDeletionListener<
       { collectiviteId: number; actionId: string }[]
     > = {
-      onWillDelete: (event) =>
-        this.getActionsUsingIndicateurValeurs([event.indicateurValeurId]),
+      onWillDelete: (event) => this.getActionsUsingIndicateur(event),
       onDeleted: (actions, event) =>
         this.refreshActionsAvancementAndSnapshots(actions, event.user),
     };
@@ -66,18 +65,22 @@ export class SetScoreFromIndicateurService {
     );
   }
 
-  private async getActionsUsingIndicateurValeurs(
-    indicateurValeurIds: number[]
-  ): Promise<{ collectiviteId: number; actionId: string }[]> {
+  /** Actions de la collectivité dont le score retient une valeur de l'indicateur */
+  private async getActionsUsingIndicateur({
+    collectiviteId,
+    indicateurId,
+  }: {
+    collectiviteId: number;
+    indicateurId: number;
+  }): Promise<{ collectiviteId: number; actionId: string }[]> {
     const actionsResult =
-      await this.scoreIndicatifService.getActionsUsingIndicateurValeur(
-        indicateurValeurIds
-      );
+      await this.scoreIndicatifService.getActionsUsingIndicateur({
+        collectiviteId,
+        indicateurId,
+      });
     if (!actionsResult.success) {
       this.logger.error(
-        `Impossible de retrouver les actions utilisant les valeurs d'indicateur ${indicateurValeurIds.join(
-          ', '
-        )}`,
+        `Impossible de retrouver les actions utilisant l'indicateur ${indicateurId} de la collectivité ${collectiviteId}`,
         actionsResult.cause?.stack
       );
       return [];
@@ -88,9 +91,7 @@ export class SetScoreFromIndicateurService {
   private async onIndicateurValeurUpserted(
     event: IndicateurValeurUpsertedEvent
   ): Promise<void> {
-    const actions = await this.getActionsUsingIndicateurValeurs([
-      event.indicateurValeurId,
-    ]);
+    const actions = await this.getActionsUsingIndicateur(event);
     if (!actions.length) {
       return;
     }

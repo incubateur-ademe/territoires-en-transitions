@@ -59,12 +59,14 @@ export type IndicateurValeurUpsertedEvent = {
 export type IndicateurValeurDeletionListener<TContext = unknown> = {
   onWillDelete: (event: {
     collectiviteId: number;
+    indicateurId: number;
     indicateurValeurId: number;
   }) => Promise<TContext>;
   onDeleted: (
     context: TContext,
     event: {
       collectiviteId: number;
+      indicateurId: number;
       indicateurValeurId: number;
       user: AuthenticatedUser;
     }
@@ -349,7 +351,11 @@ export default class ManageIndicateurValeursService {
     await this.canMutateValeur(user, collectiviteId, indicateur);
     const contexts = await Promise.all(
       this.valeurDeletionListeners.map((listener) =>
-        listener.onWillDelete({ collectiviteId, indicateurValeurId: id })
+        listener.onWillDelete({
+          collectiviteId,
+          indicateurId,
+          indicateurValeurId: id,
+        })
       )
     );
 
@@ -385,6 +391,7 @@ export default class ManageIndicateurValeursService {
       this.valeurDeletionListeners.map((listener, index) =>
         listener.onDeleted(contexts[index], {
           collectiviteId,
+          indicateurId,
           indicateurValeurId: id,
           user,
         })
