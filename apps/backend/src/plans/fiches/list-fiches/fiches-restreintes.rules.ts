@@ -107,6 +107,7 @@ const toMaskedFicheRestreinte = (
   parentId: fiche.parentId,
   titre: fiche.titre,
   statut: fiche.statut,
+  jauge: fiche.jauge,
   priorite: fiche.priorite,
   dateDebut: fiche.dateDebut,
   dateFin: fiche.dateFin,
