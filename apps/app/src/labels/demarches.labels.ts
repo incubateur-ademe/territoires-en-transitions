@@ -316,10 +316,10 @@ export const demarchesLabels = {
   demarcheAvanceValiderDepot: 'Valider le dépôt et transmettre pour avis',
   demarcheTransmettreConfirmationTitre:
     'Votre dépôt va être transmis pour avis',
-  demarcheTransmettreConfirmationProcessus: ({ mois }: { mois: number }) =>
-    `Votre dossier sera transmis aux instances consultatives, qui disposent de ${mois} mois pour rendre leurs avis. Il sera figé pendant toute la durée de l'instruction : vous ne pourrez plus modifier le diagnostic ni les pièces déposées, jusqu'à la fin de celle-ci.`,
+  demarcheTransmettreConfirmationProcessus:
+    "Votre dossier sera transmis aux instances consultatives pour qu'elles rendent leurs avis. Il sera figé pendant toute la durée de l'instruction : vous ne pourrez plus modifier le diagnostic ni les pièces déposées, jusqu'à la fin de celle-ci.",
   demarcheTransmettreConfirmationSuite:
-    "Vous reprendrez la main à l'étape suivante, pour déposer les pièces attendues après les avis et adopter votre PCAET.",
+    "Vous reprendrez la main à l'étape suivante, pour modifier au besoin les données et déposer votre PCAET adopté.",
   demarchePublierConfirmationTitre: 'Valider le dépôt final',
   demarchePublierConfirmationProcessus: ({
     type,
