@@ -39,7 +39,7 @@ export const indicateursLabels = {
 
   indicateurCompleteParCollectivite: 'Indicateur complété par la collectivité',
   indicateurNonSuiviCheckboxLabel:
-    'Je valide que ma collectivité ne suit pas cet indicateur',
+    'Ma collectivité ne dispose pas à ce jour des données pour renseigner cet indicateur',
   indicateurNonSuiviUpdateError: "L'indicateur n'a pas pu être mis à jour",
   indicateurModele: 'Liste',
   indicateurModeleCae: 'Référentiel CAE',

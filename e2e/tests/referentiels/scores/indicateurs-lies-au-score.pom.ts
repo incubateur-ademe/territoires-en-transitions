@@ -24,7 +24,7 @@ export class IndicateursLiesAuScorePom {
     });
     this.resultatsTable = this.modal.getByRole('table');
     this.nonSuiviCheckbox = this.modal.getByRole('checkbox', {
-      name: 'Je valide que ma collectivité ne suit pas cet indicateur',
+      name: 'Ma collectivité ne dispose pas à ce jour des données pour renseigner cet indicateur',
     });
     this.aucunResultatMessage = this.modal.getByText(
       "Aucun résultat n'a encore été renseigné pour cet indicateur."
