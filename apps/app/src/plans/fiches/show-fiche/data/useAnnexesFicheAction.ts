@@ -32,6 +32,21 @@ const toAnnexeFichier = (annexe: AnnexeDocument): StoredFile | null => {
 };
 
 function toDocumentAnnexe(annexe: AnnexeDocument): DocumentAnnexe {
+  // Taille absente : la ligne de bibliothèque survit à son contenu (supprimé
+  // par l'antivirus, ou perdu). Même affichage que pour une preuve.
+  if (annexe.fichier?.filename && annexe.fichier.filesize === null) {
+    return {
+      id: annexe.id,
+      collectiviteId: annexe.collectiviteId,
+      commentaire: annexe.commentaire,
+      modifiedAt: annexe.modifiedAt,
+      modifiedBy: null,
+      modifiedByNom: annexe.modifiedByNom,
+      type: 'fichierManquant',
+      filename: annexe.fichier.filename,
+      preuveType: 'annexe',
+    };
+  }
   return {
     ...toDocumentCollectivite({
       id: annexe.id,

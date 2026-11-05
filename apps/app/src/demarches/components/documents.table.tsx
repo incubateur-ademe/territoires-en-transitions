@@ -37,7 +37,7 @@ import {
   DemarcheDocumentUploadButton,
   DemarcheDocumentUploadSplitButton,
 } from './document-upload.button';
-import { FichierDepose } from './fichier-depose';
+import { FichierDepose, isFichierIndisponible } from './fichier-depose';
 
 const SectionRequiredBadge = ({
   requis,
@@ -176,7 +176,10 @@ const SectionAnswer = ({
     const menuActions: MenuAction[] = montreVersionOriginale
       ? []
       : [
-          ...(document?.fichier && documentOriginal?.fichier && onDownload
+          ...(document?.fichier &&
+          documentOriginal?.fichier &&
+          !isFichierIndisponible(documentOriginal.fichier) &&
+          onDownload
             ? [
                 {
                   icon: 'download-line',
@@ -199,7 +202,7 @@ const SectionAnswer = ({
     return (
       <div className="flex flex-wrap items-center gap-3 min-w-0">
         <FichierDepose
-          filename={affiche.fichier.filename}
+          fichier={affiche.fichier}
           onDownload={onDownload && (() => onDownload(affiche))}
         />
         {!isReadonly &&
