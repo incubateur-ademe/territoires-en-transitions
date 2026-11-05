@@ -188,8 +188,11 @@ jobs:
           expect_refusal "$workspace/incomplete.dump" 'backup lacks TABLE DATA'
           psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
               -c "UPDATE sqitch.changes SET script_hash = repeat('c', 40)"
-          expect_refusal "$workspace/complete.dump" 'different Sqitch migrations or script hashes'
-          echo 'Preflight: matching registry accepted; restore.sh refuses missing data and changed registry without truncating dcp.'
+          bash "$checker" "$workspace/complete.dump" public.dcp
+          psql -X -v ON_ERROR_STOP=1 --dbname="$TO_DB_URL" \
+              -c "UPDATE sqitch.changes SET change_id = repeat('c', 40)"
+          expect_refusal "$workspace/complete.dump" 'different Sqitch migrations'
+          echo 'Preflight: matching registry and changed script_hash accepted; restore.sh refuses missing data and changed change_id without truncating dcp.'
           BASH
 
       - name: Test periodicity constraints after deployment

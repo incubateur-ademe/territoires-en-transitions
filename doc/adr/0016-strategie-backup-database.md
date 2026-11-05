@@ -136,7 +136,7 @@ Ce mode `latest` est exposé par `restore.sh` lui-même (et non dans le workflow
   rejetée sans journaliser ses credentials. Toute cible Supabase distante doit en plus déclarer
   explicitement `sslmode=require`, `verify-ca` ou `verify-full` dans son secret de connexion.
 - **Compatibilité avant troncature** : appliquer la prévalidation générique du §8.
-  Elle exige les mêmes migrations et empreintes Sqitch ainsi que les données et
+  Elle exige les mêmes migrations Sqitch ainsi que les données et
   tables configurées, sans règle propre à un domaine métier.
 - **Exclusion mutuelle des maintenances** : les restaurations planifiées et manuelles partagent un
   groupe de concurrence par base ; le backup utilise `database-maintenance-prod`. Ces groupes ne
@@ -182,12 +182,16 @@ exacte des tables lues dans `backup/restore-config.yml`. Le contrôle exige :
 - des données `TABLE DATA` dans le dump pour chaque table configurée, y compris
   les tables vides ;
 - un registre `sqitch.changes` présent et non vide dans le dump ;
-- les mêmes triplets `(project, change_id, script_hash)` dans le backup et la
-  cible, pour tous les projets ;
+- les mêmes couples `(project, change_id)` dans le backup et la cible, pour
+  tous les projets ;
 - l’existence physique de chaque table demandée dans la cible.
 
-Les dates d’application, les auteurs et les notes du registre n’interviennent
-pas dans la comparaison. L’ordre des lignes et les doublons dans la liste des
+Les dates d’application, les auteurs, les notes et les `script_hash` du
+registre n’interviennent pas dans la comparaison. Le `change_id` identifie déjà
+l’entrée du plan ; le `script_hash` diverge dès qu’un script de déploiement est
+modifié après coup (la prod garde l’ancienne empreinte, une base reconstruite
+enregistre la nouvelle), ce qui rendait toute restauration de la prod vers une
+base locale impossible. L’ordre des lignes et les doublons dans la liste des
 tables ne changent pas le résultat. Les noms de tables sont validés avant leur
 emploi dans une requête SQL. Le SQL extrait du dump n’est jamais exécuté.
 
@@ -220,10 +224,10 @@ base isolée. Suspendre les écritures et migrations pendant la restauration.
 
 L’étape "Test restore preflight in a disposable database" du
 [workflow de tests DB](../../.github/workflows/_ci-test-db.yml) utilise une base
-jetable et de vrais dumps. Elle vérifie trois cas : un état Sqitch identique est
-accepté, un hash de migration différent est refusé, et l’absence de données
-pour une table requise est refusée. Les données de la cible doivent rester
-intactes. Cette couverture ciblée ne teste pas tous les cas limites du script.
+jetable et de vrais dumps. Elle vérifie quatre cas : un état Sqitch identique est
+accepté, un `script_hash` différent seul est accepté, un `change_id` différent
+est refusé, et l’absence de données pour une table requise est refusée. Les
+données de la cible doivent rester intactes après chaque refus. Cette couverture ciblée ne teste pas tous les cas limites du script.
 
 Les options d’extraction et la table des matières reposent sur les commandes
 documentées de [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html).
