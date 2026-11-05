@@ -209,7 +209,7 @@ avec réponses simulées ou fixtures, sans appel réel au modèle.
 **Implémenté et vérifié dans [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), non fusionné :**
 historique paginé sous `/plans/imports`, sélection par `importJobId`, compte
 rendu accessible depuis le plan, reprise réservée à l'équipe et lecture
-indépendante du flag de lancement. Huit scénarios Playwright ont été validés
+indépendante du flag de lancement. Onze scénarios Playwright ont été validés
 sur une build locale, avec les lancements et reprises IA interceptés, ainsi
 que TypeScript (app et e2e), le lint ciblé et le build Next.js.
 
