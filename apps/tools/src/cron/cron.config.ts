@@ -70,11 +70,12 @@ export const JOBS_CONFIG = [
     data: {},
   },
   {
-    // Analyse antivirus des fichiers déposés : le backend ne fait que mettre
-    // un balayage en file, ignoré si le précédent n'est pas fini. Le débit se
+    // Filet de l'analyse antivirus : chaque dépôt met déjà son fichier en
+    // file, le balayage rattrape le reste (écriture directe dans un bucket,
+    // clamd indisponible) et supprime les infectés de l'audit. Le débit se
     // règle par FICHIER_SCAN_BATCH_SIZE côté backend.
     name: 'scan-fichiers',
-    cronExpression: CronExpression.EVERY_5_MINUTES,
+    cronExpression: CronExpression.EVERY_HOUR,
     data: {},
   },
   {

@@ -15,6 +15,7 @@ import * as mime from 'mime-types';
 import { BibliothequeFichierRepository } from '../bibliotheque-fichier.repository';
 import { CollectiviteBucketRepository } from '../collectivite-bucket.repository';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
+import { EnqueueScanFichierService } from '../scan-fichiers/enqueue-scan-fichier.service';
 import { StorageObjectRepository } from '../storage-object.repository';
 import { calculateDocumentHash } from './calculate-document-hash.utils';
 import {
@@ -37,7 +38,8 @@ export class StoreDocumentService {
     private readonly supabaseService: SupabaseService,
     private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
     private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
-    private readonly storageObjectRepository: StorageObjectRepository
+    private readonly storageObjectRepository: StorageObjectRepository,
+    private readonly enqueueScanFichier: EnqueueScanFichierService
   ) {}
 
   private async getCollectiviteBucketId(
@@ -249,6 +251,10 @@ export class StoreDocumentService {
         .returning();
 
       if (insertedDocument) {
+        await this.enqueueScanFichier.enqueue({
+          collectiviteId: document.collectiviteId,
+          hash: document.hash,
+        });
         return {
           success: true,
           data: insertedDocument as BibliothequeFichier,

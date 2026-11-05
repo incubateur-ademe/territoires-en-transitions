@@ -9,6 +9,7 @@ export const notifiedOnValues = [
   'demarches.pcaet.dossier_transmis_pour_avis',
   'demarches.pcaet.avis_recu',
   'demarches.pcaet.instruction_close',
+  'collectivites.documents.fichier_infecte_supprime',
 ] as const;
 
 export const NotifiedOnEnum = createEnumObject(notifiedOnValues);

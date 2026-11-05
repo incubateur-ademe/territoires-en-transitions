@@ -7,6 +7,7 @@ export const GetDownloadUrlSpecificErrors = [
   'DOCUMENT_NOT_FOUND',
   'COLLECTIVITE_BUCKET_NOT_FOUND',
   'SIGN_DOWNLOAD_ERROR',
+  'FICHIER_INFECTE',
 ] as const;
 
 type GetDownloadUrlSpecificError =
@@ -27,6 +28,11 @@ export const getDownloadUrlErrorConfig: TrpcErrorHandlerConfig<GetDownloadUrlSpe
         code: 'INTERNAL_SERVER_ERROR',
         message:
           'Une erreur est survenue lors de la préparation du téléchargement',
+      },
+      FICHIER_INFECTE: {
+        code: 'NOT_FOUND',
+        message:
+          'Ce fichier a été supprimé : notre antivirus y a détecté une menace',
       },
     },
   };
