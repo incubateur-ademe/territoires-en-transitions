@@ -252,11 +252,20 @@ export class DemarcheDocumentsRepository {
       index.set(documentId, substituts);
     }
 
+    // La table de substitution n'est pas ordonnée : l'ordre du catalogue rend
+    // stable la case qui nomme plusieurs documents.
+    const ordreById = new Map(definitions.map(({ id, ordre }) => [id, ordre]));
+    const byOrdre = (a: string, b: string) =>
+      (ordreById.get(a) ?? 0) - (ordreById.get(b) ?? 0);
+
     return definitions.map((definition) => ({
       ...definition,
-      substituts: substitutsByDocumentId.get(definition.id) ?? [],
-      substitutsDeclarables:
-        substitutsDeclarablesByDocumentId.get(definition.id) ?? [],
+      substituts: (substitutsByDocumentId.get(definition.id) ?? []).sort(
+        byOrdre
+      ),
+      substitutsDeclarables: (
+        substitutsDeclarablesByDocumentId.get(definition.id) ?? []
+      ).sort(byOrdre),
     }));
   }
 

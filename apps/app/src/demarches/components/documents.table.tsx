@@ -60,9 +60,12 @@ const SectionRequiredBadge = ({
 /** Couverture sans dépôt : la pièce est comprise dans une autre du dossier. */
 const CouvertureSansFichier = ({
   substitutNom,
+  inclusionNoms,
   isInclusionDeclaree = false,
 }: {
   substitutNom: string;
+  /** Documents nommés par la case, quand la pièce peut se répartir entre plusieurs. */
+  inclusionNoms?: string[];
   /** Déclarée par la collectivité : la mention reprend le libellé de sa case. */
   isInclusionDeclaree?: boolean;
 }): ReactElement => (
@@ -74,7 +77,9 @@ const CouvertureSansFichier = ({
     />
     <span className="text-sm">
       {isInclusionDeclaree
-        ? appLabels.demarcheDocumentsInclusDans({ nom: substitutNom })
+        ? appLabels.demarcheDocumentsInclusDansListe({
+            noms: inclusionNoms?.length ? inclusionNoms : [substitutNom],
+          })
         : appLabels.demarcheDocumentsCouvertPar({ nom: substitutNom })}
     </span>
   </div>
@@ -106,6 +111,7 @@ const SectionAnswer = ({
   documentOriginal,
   coverage,
   substitutDeclarable,
+  inclusionNoms,
   substitutCouvrantNom,
   isReadonly,
   isInclusionFigee,
@@ -131,6 +137,12 @@ const SectionAnswer = ({
    * s'il n'y en a pas : c'est ce qui fait apparaître la case d'inclusion.
    */
   substitutDeclarable: DemarcheDocumentDefinition | null;
+  /**
+   * Documents que la case nomme : tous ceux où la pièce peut être déclarée
+   * comprise quand il y en a plusieurs (le PLCF se répartit souvent entre
+   * diagnostic, stratégie et programme d'actions).
+   */
+  inclusionNoms: string[];
   /** Nom de la pièce qui couvre celle-ci, pour la mention sans case à cocher. */
   substitutCouvrantNom: string | undefined;
   isReadonly: boolean;
@@ -235,6 +247,7 @@ const SectionAnswer = ({
             ? appLabels.demarcheDocumentsDeposerFichierDedie
             : undefined
         }
+        inclusionNoms={inclusionNoms}
         isInclusionDeclaree
         onAddFichier={onAddFichier}
       />
@@ -250,8 +263,8 @@ const SectionAnswer = ({
           size="xs"
           checked={estDeclareInclus}
           disabled={isReadonly}
-          label={appLabels.demarcheDocumentsInclusDans({
-            nom: substitutDeclarable.nom,
+          label={appLabels.demarcheDocumentsInclusDansListe({
+            noms: inclusionNoms,
           })}
           onChange={(e) => onToggleCouverture(e.currentTarget.checked)}
           data-test={`demarches.pcaet.documents.inclusion.${definition.id}`}
@@ -294,6 +307,7 @@ const SectionFallback = ({
   documentId,
   coverage,
   substitutCouvrantNom,
+  inclusionNoms,
   isReadonly,
   label = appLabels.demarcheDocumentsTeleverser,
   isInclusionDeclaree,
@@ -304,6 +318,7 @@ const SectionFallback = ({
   documentId: string;
   coverage: DemarcheDocumentCoverage | undefined;
   substitutCouvrantNom: string | undefined;
+  inclusionNoms?: string[];
   isReadonly: boolean;
   label?: string;
   isInclusionDeclaree?: boolean;
@@ -313,6 +328,7 @@ const SectionFallback = ({
     {coverage?.origine === 'substitut' && substitutCouvrantNom && (
       <CouvertureSansFichier
         substitutNom={substitutCouvrantNom}
+        inclusionNoms={inclusionNoms}
         isInclusionDeclaree={isInclusionDeclaree}
       />
     )}
@@ -505,6 +521,24 @@ export const DemarcheDocumentsTable = ({
     () => new Map(definitions.map((definition) => [definition.id, definition])),
     [definitions]
   );
+  const substitutDeclarableDe = (definition: DemarcheDocumentDefinition) =>
+    definitionById.get(
+      findDemarcheDocumentSubstitutDepose(definition, documents) ?? ''
+    ) ?? null;
+  /**
+   * Une pièce qui peut se répartir entre plusieurs documents les nomme tous :
+   * la case atteste qu'elle s'y trouve, quel que soit celui qui est déposé.
+   */
+  const inclusionNomsDe = (definition: DemarcheDocumentDefinition) => {
+    if (definition.substitutsDeclarables.length > 1) {
+      return definition.substitutsDeclarables.flatMap((id) => {
+        const nom = definitionById.get(id)?.nom;
+        return nom ? [nom] : [];
+      });
+    }
+    const substitut = substitutDeclarableDe(definition);
+    return substitut ? [substitut.nom] : [];
+  };
 
   // Une pièce de portée `both` appartient aux deux temps : elle figure donc
   // dans les deux écrans, avec sa version propre à chacun.
@@ -619,14 +653,8 @@ export const DemarcheDocumentsTable = ({
                   definition.id
                 )}
                 coverage={coverageByDefinitionId.get(definition.id)}
-                substitutDeclarable={
-                  definitionById.get(
-                    findDemarcheDocumentSubstitutDepose(
-                      definition,
-                      documents
-                    ) ?? ''
-                  ) ?? null
-                }
+                substitutDeclarable={substitutDeclarableDe(definition)}
+                inclusionNoms={inclusionNomsDe(definition)}
                 substitutCouvrantNom={
                   definitionById.get(
                     coverageByDefinitionId.get(definition.id)?.substitutId ?? ''
