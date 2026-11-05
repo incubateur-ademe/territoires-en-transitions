@@ -2,6 +2,10 @@ import {
   ScoreIndicatifError,
   scoreIndicatifTrpcErrorEntries,
 } from '@tet/backend/referentiels/score-indicatif/score-indicatif.errors';
+import {
+  UpdateIndicateurError,
+  updateIndicateurTrpcErrorEntries,
+} from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.errors';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import {
@@ -15,7 +19,8 @@ import {
  */
 export type SetScoreFromIndicateurError =
   | ScoreIndicatifError
-  | UpdateActionStatutError;
+  | UpdateActionStatutError
+  | UpdateIndicateurError;
 
 type SpecificError = Exclude<SetScoreFromIndicateurError, CommonError>;
 
@@ -24,5 +29,6 @@ export const setScoreFromIndicateurErrorConfig: TrpcErrorHandlerConfig<SpecificE
     specificErrors: {
       ...scoreIndicatifTrpcErrorEntries,
       ...updateActionStatutTrpcErrorEntries,
+      ...updateIndicateurTrpcErrorEntries,
     },
   };

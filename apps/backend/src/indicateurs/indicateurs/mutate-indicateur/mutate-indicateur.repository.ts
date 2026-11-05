@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import type {
   Indicateur,
+  IndicateurInGroup,
   IndicateurNatureFields,
   IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
-import { and, eq, isNotNull } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, isNull, or } from 'drizzle-orm';
+import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
@@ -47,9 +50,29 @@ type UpdateIndicateurPersoFields = IndicateurPersoKey &
 
 @Injectable()
 export class MutateIndicateurRepository {
+  private readonly logger = new Logger(MutateIndicateurRepository.name);
+
   constructor(private readonly databaseService: DatabaseService) {}
 
   async createIndicateurPerso(
+    input: CreateIndicateurPerso,
+    tx: Transaction
+  ): Promise<Result<number, 'DATABASE_ERROR'>> {
+    try {
+      return success(await this.insertIndicateurPerso(input, tx));
+    } catch (error) {
+      this.logger.error(
+        `Erreur d'insertion de l'indicateur personnalisé pour la collectivité "${input.collectiviteId}"`,
+        error
+      );
+      return failure(
+        'DATABASE_ERROR',
+        error instanceof Error ? error : undefined
+      );
+    }
+  }
+
+  private async insertIndicateurPerso(
     input: CreateIndicateurPerso,
     tx: Transaction
   ): Promise<number> {
@@ -107,6 +130,107 @@ export class MutateIndicateurRepository {
       });
 
     return indicateur.id;
+  }
+
+  async getParentInGroup(
+    { parentId, collectiviteId }: { parentId: number; collectiviteId: number },
+    tx: Transaction
+  ): Promise<IndicateurInGroup | null> {
+    const [parent] = await tx
+      .select({
+        id: indicateurDefinitionTable.id,
+        collectiviteId: indicateurDefinitionTable.collectiviteId,
+        unite: indicateurDefinitionTable.unite,
+        periodicite: indicateurDefinitionTable.periodicite,
+      })
+      .from(indicateurDefinitionTable)
+      .where(
+        and(
+          eq(indicateurDefinitionTable.id, parentId),
+          or(
+            eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
+            isNull(indicateurDefinitionTable.collectiviteId)
+          )
+        )
+      )
+      .limit(1);
+
+    if (!parent) {
+      return null;
+    }
+
+    const [grandParent] = await tx
+      .select({ parent: indicateurGroupeTable.parent })
+      .from(indicateurGroupeTable)
+      .where(eq(indicateurGroupeTable.enfant, parentId))
+      .limit(1);
+
+    const [firstChild] = await tx
+      .select({ enfant: indicateurGroupeTable.enfant })
+      .from(indicateurGroupeTable)
+      .where(eq(indicateurGroupeTable.parent, parentId))
+      .limit(1);
+
+    return {
+      ...parent,
+      parentId: grandParent?.parent ?? null,
+      hasChildren: firstChild !== undefined,
+    };
+  }
+
+  async listSousIndicateurs(
+    { parentId, collectiviteId }: { parentId: number; collectiviteId: number },
+    tx?: Transaction
+  ): Promise<{ id: number; parentId: number }[]> {
+    const rows = await (tx ?? this.databaseService.db)
+      .select({ id: indicateurDefinitionTable.id })
+      .from(indicateurGroupeTable)
+      .innerJoin(
+        indicateurDefinitionTable,
+        eq(indicateurDefinitionTable.id, indicateurGroupeTable.enfant)
+      )
+      .where(
+        and(
+          eq(indicateurGroupeTable.parent, parentId),
+          eq(indicateurDefinitionTable.collectiviteId, collectiviteId)
+        )
+      );
+
+    return rows.map(({ id }) => ({ id, parentId }));
+  }
+
+  async updateSousIndicateursUnite(
+    {
+      parentId,
+      collectiviteId,
+      unite,
+    }: { parentId: number; collectiviteId: number; unite: string },
+    tx: Transaction
+  ): Promise<void> {
+    await tx
+      .update(indicateurDefinitionTable)
+      .set({ unite })
+      .where(
+        and(
+          eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
+          inArray(
+            indicateurDefinitionTable.id,
+            tx
+              .select({ id: indicateurGroupeTable.enfant })
+              .from(indicateurGroupeTable)
+              .where(eq(indicateurGroupeTable.parent, parentId))
+          )
+        )
+      );
+  }
+
+  async attachSousIndicateur(
+    { parentId, enfantId }: { parentId: number; enfantId: number },
+    tx: Transaction
+  ): Promise<void> {
+    await tx
+      .insert(indicateurGroupeTable)
+      .values({ parent: parentId, enfant: enfantId });
   }
 
   async getIndicateurNature(

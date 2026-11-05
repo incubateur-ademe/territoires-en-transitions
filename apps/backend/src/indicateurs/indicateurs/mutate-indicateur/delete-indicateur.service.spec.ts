@@ -49,4 +49,65 @@ describe('DeleteIndicateurService', () => {
       tx
     );
   });
+
+  describe('listSousIndicateursBecomingAutonomous', () => {
+    const user = {
+      id: '00000000-0000-0000-0000-000000000001',
+      role: AuthRole.AUTHENTICATED,
+    } as never;
+
+    const createService = ({ isAllowed }: { isAllowed: boolean }) => {
+      const repository = {
+        listSousIndicateurs: vi.fn(async () => [
+          { id: 7, parentId: 42 },
+          { id: 8, parentId: 42 },
+        ]),
+      };
+      const permissionService = {
+        isAllowed: vi
+          .fn()
+          .mockResolvedValue(
+            isAllowed
+              ? { success: true, data: undefined }
+              : { success: false, error: 'FORBIDDEN' }
+          ),
+      };
+      const service = new DeleteIndicateurService(
+        {} as never,
+        repository as never,
+        permissionService as never,
+        {} as never
+      );
+      return { service, repository };
+    };
+
+    it('renvoie les identifiants des sous-indicateurs du parent', async () => {
+      const { service, repository } = createService({ isAllowed: true });
+
+      await expect(
+        service.listSousIndicateursBecomingAutonomous(
+          { indicateurId: 42, collectiviteId: 1 },
+          { user }
+        )
+      ).resolves.toEqual({ success: true, data: [7, 8] });
+
+      expect(repository.listSousIndicateurs).toHaveBeenCalledWith(
+        { parentId: 42, collectiviteId: 1 },
+        undefined
+      );
+    });
+
+    it('refuse sans le droit de supprimer et ne lit rien', async () => {
+      const { service, repository } = createService({ isAllowed: false });
+
+      await expect(
+        service.listSousIndicateursBecomingAutonomous(
+          { indicateurId: 42, collectiviteId: 1 },
+          { user }
+        )
+      ).resolves.toEqual({ success: false, error: 'UNAUTHORIZED' });
+
+      expect(repository.listSousIndicateurs).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -10,8 +10,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
-import { describe, expect, test } from 'vitest';
+import { eq, inArray } from 'drizzle-orm';
+import { describe, expect, onTestFinished, test } from 'vitest';
 import { createIndicateurPerso } from '../indicateur-perso.test-fixture';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
@@ -71,6 +71,94 @@ describe('DeleteIndicateurRouter', () => {
       .limit(1);
 
     expect(deletedIndicateur).toHaveLength(0);
+  });
+
+  describe('suppression d’un parent', () => {
+    const createParentWithTwoChildren = async () => {
+      const caller = router.createCaller({ user: authenticatedUser });
+      const parentId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Déchets ménagers',
+        unite: 't',
+      });
+      const firstChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Ordures ménagères',
+        parentId,
+      });
+      const secondChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Tri sélectif',
+        parentId,
+      });
+      return { caller, parentId, firstChildId, secondChildId };
+    };
+
+    test('liste les sous-indicateurs qui redeviennent autonomes', async () => {
+      const { caller, parentId, firstChildId, secondChildId } =
+        await createParentWithTwoChildren();
+
+      const sousIndicateurIds =
+        await caller.indicateurs.indicateurs.listSousIndicateursBecomingAutonomous(
+          { indicateurId: parentId, collectiviteId: collectivite.id }
+        );
+
+      expect([...sousIndicateurIds].sort()).toEqual(
+        [firstChildId, secondChildId].sort()
+      );
+    });
+
+    test('renvoie une liste vide pour un indicateur sans enfant', async () => {
+      const { caller, firstChildId } = await createParentWithTwoChildren();
+
+      await expect(
+        caller.indicateurs.indicateurs.listSousIndicateursBecomingAutonomous({
+          indicateurId: firstChildId,
+          collectiviteId: collectivite.id,
+        })
+      ).resolves.toEqual([]);
+    });
+
+    test('conserve les enfants quand le parent est supprimé', async () => {
+      const { caller, parentId, firstChildId, secondChildId } =
+        await createParentWithTwoChildren();
+
+      await caller.indicateurs.indicateurs.delete({
+        indicateurId: parentId,
+        collectiviteId: collectivite.id,
+      });
+
+      const remaining = await databaseService.db
+        .select({ id: indicateurDefinitionTable.id })
+        .from(indicateurDefinitionTable)
+        .where(
+          inArray(indicateurDefinitionTable.id, [
+            parentId,
+            firstChildId,
+            secondChildId,
+          ])
+        );
+      expect(remaining.map(({ id }) => id).sort()).toEqual(
+        [firstChildId, secondChildId].sort()
+      );
+    });
+
+    test('refuse la lecture sans le droit de supprimer', async () => {
+      const { parentId } = await createParentWithTwoChildren();
+      const other = await addTestCollectiviteAndUser(databaseService, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      onTestFinished(other.cleanup);
+      const otherCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(other.user),
+      });
+
+      await expect(
+        otherCaller.indicateurs.indicateurs.listSousIndicateursBecomingAutonomous(
+          { indicateurId: parentId, collectiviteId: collectivite.id }
+        )
+      ).rejects.toThrow(/permissions nécessaires/);
+    });
   });
 
   test('should throw error when trying to delete non-existent indicator', async () => {

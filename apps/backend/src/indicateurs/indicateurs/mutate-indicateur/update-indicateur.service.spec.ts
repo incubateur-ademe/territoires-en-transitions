@@ -16,6 +16,10 @@ const user = {
   role: AuthRole.AUTHENTICATED,
 } as AuthenticatedUser;
 
+const indicateurLockRepository = {
+  lockForIndicateurMutation: vi.fn().mockResolvedValue(undefined),
+};
+
 function createAuthorizationDependencies() {
   return {
     getUserPermissionsService: {
@@ -49,7 +53,8 @@ describe('UpdateIndicateurService', () => {
       {} as never,
       {} as never,
       {} as never,
-      {} as never
+      {} as never,
+      indicateurLockRepository as never
     );
 
     await expect(
@@ -93,7 +98,8 @@ describe('UpdateIndicateurService', () => {
       {} as never,
       {} as never,
       {} as never,
-      {} as never
+      {} as never,
+      indicateurLockRepository as never
     );
 
     await expect(
@@ -153,7 +159,8 @@ describe('UpdateIndicateurService', () => {
         {} as never,
         {} as never,
         {} as never,
-        {} as never
+        {} as never,
+        indicateurLockRepository as never
       );
 
       await expect(
@@ -191,7 +198,8 @@ describe('UpdateIndicateurService', () => {
       {} as never,
       {} as never,
       {} as never,
-      {} as never
+      {} as never,
+      indicateurLockRepository as never
     );
 
     await expect(
@@ -234,7 +242,7 @@ describe('UpdateIndicateurService', () => {
     const { getUserPermissionsService, permissionService } =
       createAuthorizationDependencies();
     const upsertIndicateurFichesService = {
-      upsertIndicateurFiches: vi.fn().mockResolvedValue(undefined),
+      upsertIndicateurFiches: vi.fn().mockResolvedValue(success(undefined)),
     };
     const upsertIndicateurPilotesService = {
       upsertIndicateurPilotes: vi.fn().mockResolvedValue(undefined),
@@ -253,7 +261,8 @@ describe('UpdateIndicateurService', () => {
       upsertIndicateurFichesService as never,
       upsertIndicateurPilotesService as never,
       upsertIndicateurServicesService as never,
-      upsertIndicateurThematiquesService as never
+      upsertIndicateurThematiquesService as never,
+      indicateurLockRepository as never
     );
 
     await service.updateIndicateur(
@@ -335,7 +344,8 @@ describe('UpdateIndicateurService', () => {
         {} as never,
         {} as never,
         {} as never,
-        {} as never
+        {} as never,
+        indicateurLockRepository as never
       );
       await expect(
         service.updateIndicateur(
@@ -399,7 +409,7 @@ describe('UpdateIndicateurService — groupement', () => {
       }),
     };
     const fiches = {
-      upsertIndicateurFiches: vi.fn().mockResolvedValue(undefined),
+      upsertIndicateurFiches: vi.fn().mockResolvedValue(success(undefined)),
     };
     const pilotes = {
       listIndicateurPilotes: vi.fn().mockResolvedValue([{ userId: user.id }]),
@@ -419,7 +429,8 @@ describe('UpdateIndicateurService — groupement', () => {
       fiches as never,
       pilotes as never,
       services as never,
-      thematiques as never
+      thematiques as never,
+      indicateurLockRepository as never
     );
     const input = {
       indicateurId: 42,
@@ -587,5 +598,141 @@ describe('UpdateIndicateurService — groupement', () => {
       h.tx
     );
     expect(h.repository.upsertCollectiviteFields).toHaveBeenCalledOnce();
+  });
+});
+
+describe('UpdateIndicateurService — unité d’un groupe', () => {
+  function setup({
+    parentId = null,
+    hasChildren = false,
+  }: {
+    parentId?: number | null;
+    hasChildren?: boolean;
+  } = {}) {
+    const tx = { name: 'unite-tx' };
+    const events: string[] = [];
+    const indicateur = {
+      collectiviteId: 1,
+      identifiantReferentiel: null,
+      groupementId: null,
+    };
+    const transactionManager = {
+      executeSingle: vi.fn(
+        (operation: (transaction: typeof tx) => Promise<unknown>) =>
+          operation(tx)
+      ),
+    };
+    const repository = {
+      getIndicateurNature: vi.fn().mockResolvedValue(indicateur),
+      lockIndicateurNature: vi.fn(async () => {
+        events.push('lock-row');
+        return indicateur;
+      }),
+      getParentInGroup: vi.fn().mockResolvedValue({
+        id: 42,
+        collectiviteId: 1,
+        unite: 'kg',
+        periodicite: 'annuelle',
+        parentId,
+        hasChildren,
+      }),
+      updateIndicateurPerso: vi.fn().mockResolvedValue(true),
+      updateSousIndicateursUnite: vi.fn().mockResolvedValue(undefined),
+      touchIndicateurs: vi.fn().mockResolvedValue(undefined),
+    };
+    const lockRepository = {
+      lockForIndicateurMutation: vi.fn(async () => {
+        events.push('lock-graph');
+      }),
+    };
+    const { getUserPermissionsService, permissionService } =
+      createAuthorizationDependencies();
+    const service = new UpdateIndicateurService(
+      transactionManager as never,
+      repository as never,
+      getUserPermissionsService as never,
+      permissionService as never,
+      {} as never,
+      {} as never,
+      {} as never,
+      {} as never,
+      lockRepository as never
+    );
+    return { service, repository, lockRepository, events };
+  }
+
+  const changeUnite = (unite: string) => ({
+    indicateurId: 42,
+    collectiviteId: 1,
+    indicateurFields: { unite },
+  });
+
+  it('modifie l’unité d’un indicateur autonome après avoir verrouillé le graphe puis la ligne', async () => {
+    const { service, repository, events } = setup();
+
+    await expect(
+      service.updateIndicateur(changeUnite('t'), { user })
+    ).resolves.toEqual(success(undefined));
+
+    expect(events).toEqual(['lock-graph', 'lock-row']);
+    expect(repository.updateIndicateurPerso).toHaveBeenCalledOnce();
+  });
+
+  it('propage la nouvelle unité d’un parent à ses sous-indicateurs', async () => {
+    const { service, repository } = setup({ hasChildren: true });
+
+    await expect(
+      service.updateIndicateur(changeUnite('t'), { user })
+    ).resolves.toEqual(success(undefined));
+
+    expect(repository.updateIndicateurPerso).toHaveBeenCalledOnce();
+    expect(repository.updateSousIndicateursUnite).toHaveBeenCalledWith(
+      { parentId: 42, collectiviteId: 1, unite: 't' },
+      expect.anything()
+    );
+  });
+
+  it('ne propage rien pour un indicateur sans sous-indicateur', async () => {
+    const { service, repository } = setup();
+
+    await service.updateIndicateur(changeUnite('t'), { user });
+
+    expect(repository.updateSousIndicateursUnite).not.toHaveBeenCalled();
+  });
+
+  it('refuse de changer l’unité d’un sous-indicateur', async () => {
+    const { service, repository } = setup({ parentId: 7 });
+
+    await expect(
+      service.updateIndicateur(changeUnite('t'), { user })
+    ).resolves.toEqual(failure('SOUS_INDICATEUR_UNITE_LOCKED'));
+
+    expect(repository.updateIndicateurPerso).not.toHaveBeenCalled();
+    expect(repository.updateSousIndicateursUnite).not.toHaveBeenCalled();
+  });
+
+  it('accepte l’unité inchangée d’un sous-indicateur', async () => {
+    const { service, repository } = setup({ parentId: 7 });
+
+    await expect(
+      service.updateIndicateur(changeUnite('kg'), { user })
+    ).resolves.toEqual(success(undefined));
+
+    expect(repository.updateIndicateurPerso).toHaveBeenCalledOnce();
+  });
+
+  it('ne verrouille pas le graphe quand l’unité n’est pas modifiée', async () => {
+    const { service, lockRepository } = setup({ hasChildren: true });
+
+    await service.updateIndicateur(
+      {
+        indicateurId: 42,
+        collectiviteId: 1,
+        indicateurFields: { titre: 'Nouveau titre' },
+      },
+      { user }
+    );
+
+    expect(lockRepository.lockForIndicateurMutation).not.toHaveBeenCalled();
   });
 });

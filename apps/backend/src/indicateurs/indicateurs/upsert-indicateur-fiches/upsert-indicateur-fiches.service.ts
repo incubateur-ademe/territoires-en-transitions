@@ -1,13 +1,9 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
+import { UpsertIndicateurFichesError } from './upsert-indicateur-fiches.errors';
 import { UpsertIndicateurFichesRepository } from './upsert-indicateur-fiches.repository';
 
 @Injectable()
@@ -31,14 +27,14 @@ export class UpsertIndicateurFichesService {
       ficheIds: number[];
     },
     { user, tx }: ServiceSecondArg
-  ): Promise<void> {
+  ): Promise<Result<void, UpsertIndicateurFichesError>> {
     this.logger.log(
       `Mise à jour des fiches liées de l'indicateur dont l'id est ${indicateurId}`
     );
 
     const transactionResult = await this.transactionManager.executeSingle<
       void,
-      unknown
+      UpsertIndicateurFichesError | Error
     >(async (transaction) => {
       const fichesAreInScope =
         await this.repository.areFichesInCollectiviteScope(
@@ -47,9 +43,7 @@ export class UpsertIndicateurFichesService {
           transaction
         );
       if (!fichesAreInScope) {
-        throw new BadRequestException(
-          `Toutes les fiches doivent appartenir à la collectivité ${collectiviteId} ou être partagées avec elle`
-        );
+        return failure('FICHES_OUT_OF_SCOPE');
       }
 
       const existingFicheIds = new Set(
@@ -66,17 +60,18 @@ export class UpsertIndicateurFichesService {
         (ficheId) => !requestedFicheIds.has(ficheId)
       );
 
-      for (const ficheId of [...ficheIdsToLink, ...ficheIdsToUnlink]) {
-        const access = await this.ficheActionPermissionsService.canWriteFiche(
-          ficheId,
-          user,
-          transaction
-        );
-        if (!access) {
-          throw new ForbiddenException(
-            `Droits insuffisants pour modifier les indicateurs de la fiche ${ficheId}`
-          );
-        }
+      const accesses = await Promise.all(
+        [...ficheIdsToLink, ...ficheIdsToUnlink].map((ficheId) =>
+          this.ficheActionPermissionsService.canWriteFiche(
+            ficheId,
+            user,
+            transaction,
+            true
+          )
+        )
+      );
+      if (accesses.some((access) => !access)) {
+        return failure('UNAUTHORIZED');
       }
 
       await this.repository.upsertIndicateurFiches(
@@ -92,8 +87,12 @@ export class UpsertIndicateurFichesService {
       return success(undefined);
     }, tx);
 
-    if (!transactionResult.success) {
+    if (transactionResult.success) {
+      return success(undefined);
+    }
+    if (transactionResult.error instanceof Error) {
       throw transactionResult.cause ?? transactionResult.error;
     }
+    return failure(transactionResult.error, transactionResult.cause);
   }
 }

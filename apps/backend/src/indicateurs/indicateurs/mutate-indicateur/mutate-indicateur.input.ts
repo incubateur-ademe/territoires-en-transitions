@@ -9,16 +9,8 @@ import z from 'zod';
 import * as zm from 'zod/mini';
 import { upsertIndicateurPilotesInputSchema } from '../upsert-indicateur-pilotes/upsert-indicateur-pilotes.input';
 
-export const createIndicateurInputSchema = z.object({
+const createIndicateurCommonFieldsSchema = z.object({
   titre: indicateurCommonSchema.shape.titre,
-  unite: z.optional(indicateurCommonSchema.shape.unite),
-  // Compatibilité de l'API historique : l'absence de périodicité est
-  // interprétée une seule fois à la frontière d'entrée. Le service reçoit
-  // toujours une périodicité explicite.
-  periodicite: z
-    .enum(indicateurPeriodiciteValues)
-    .optional()
-    .default(IndicateurPeriodiciteEnum.ANNUELLE),
   isApplicable: z.boolean().optional().default(true),
   collectiviteId: z.number(),
   thematiques: z
@@ -50,6 +42,37 @@ export const createIndicateurInputSchema = z.object({
     .describe('Action à laquelle rattacher le nouvel indicateur'),
 });
 
+const createIndicateurPersoInputSchema =
+  createIndicateurCommonFieldsSchema.extend({
+    unite: z.optional(indicateurCommonSchema.shape.unite),
+    // Compatibilité de l'API historique : l'absence de périodicité est
+    // interprétée une seule fois à la frontière d'entrée. Le service reçoit
+    // toujours une périodicité explicite.
+    periodicite: z
+      .enum(indicateurPeriodiciteValues)
+      .optional()
+      .default(IndicateurPeriodiciteEnum.ANNUELLE),
+    parentId: z.never().optional(),
+  });
+
+const createSousIndicateurPersoInputSchema =
+  createIndicateurCommonFieldsSchema.extend({
+    parentId: z
+      .number()
+      .int()
+      .positive()
+      .describe(
+        "Indicateur personnalisé auquel rattacher le nouvel indicateur. L'unité et la périodicité sont reprises du parent."
+      ),
+    unite: z.never().optional(),
+    periodicite: z.never().optional(),
+  });
+
+export const createIndicateurInputSchema = z.union([
+  createIndicateurPersoInputSchema,
+  createSousIndicateurPersoInputSchema,
+]);
+
 export type CreateIndicateurInput = z.infer<typeof createIndicateurInputSchema>;
 
 export const updateIndicateurInputSchema = z.object({
@@ -57,15 +80,15 @@ export const updateIndicateurInputSchema = z.object({
   collectiviteId: z.number(),
   indicateurFields: z
     .object({
-      ...createIndicateurInputSchema.omit({
+      ...createIndicateurCommonFieldsSchema.omit({
         collectiviteId: true,
-        periodicite: true,
         ficheId: true,
         thematiques: true,
         estFavori: true,
         estConfidentiel: true,
         isApplicable: true,
       }).shape,
+      unite: z.optional(indicateurCommonSchema.shape.unite),
 
       // La périodicité appartient uniquement au contrat de création.
       // Refuser aussi sa présence dans un payload externe de mise à jour.
