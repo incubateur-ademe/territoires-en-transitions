@@ -8,8 +8,10 @@ import {
 import { validateFile } from '@/app/collectivites/documents/upload/validate-file';
 import {
   DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
+  PCAET_AVIS_PIECES_MAX,
   type PcaetAvisAuTitreDe,
 } from '@tet/domain/demarches';
+import type { DocumentHash } from '@tet/domain/collectivites';
 import { Alert, Button, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useEffect, useRef, useState } from 'react';
 import { useUploadAvisFile } from './data/use-upload-avis-file';
@@ -28,7 +30,7 @@ type Props = {
   onClose: () => void;
 };
 
-/** Rapport d'avis : un seul PDF, comme le dossier réglementaire PCAET. */
+/** Pièces d'un avis : des PDF, comme le dossier réglementaire PCAET. */
 const AVIS_FILE_CONSTRAINTS = toFileConstraints({
   ...DEMARCHE_DOCUMENTS_CONFIG_DEFAULT,
   formatsAutorises: ['pdf'],
@@ -41,7 +43,7 @@ export const FinaliserInstructionModal = ({
   onClose,
 }: Props) => {
   const [etape, setEtape] = useState<'rapport' | 'confirmation'>('rapport');
-  const [fichier, setFichier] = useState<File | null>(null);
+  const [fichiers, setFichiers] = useState<File[]>([]);
   const [erreurFichier, setErreurFichier] = useState(false);
   const [erreurDepot, setErreurDepot] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,37 +60,48 @@ export const FinaliserInstructionModal = ({
   const validerAvis = useValiderAvis(demandeAvisId);
 
   const selectFiles = (files: FileList | null) => {
-    const file = files?.[0];
-    if (!file) return;
-    if (validateFile(file, AVIS_FILE_CONSTRAINTS)) {
+    const ajouts = Array.from(files ?? []);
+    if (ajouts.length === 0) return;
+    if (
+      ajouts.some((file) => validateFile(file, AVIS_FILE_CONSTRAINTS)) ||
+      fichiers.length + ajouts.length > PCAET_AVIS_PIECES_MAX
+    ) {
       setErreurFichier(true);
       return;
     }
     setErreurFichier(false);
-    setFichier(file);
+    setFichiers([...fichiers, ...ajouts]);
   };
 
   const deposerEtValider = async () => {
-    if (!fichier) return;
+    if (fichiers.length === 0) return;
     const controller = new AbortController();
     depotAbortRef.current = controller;
     setIsSubmitting(true);
     setProgression(0);
     setErreurDepot(false);
     try {
-      const hash = await uploadAvisFile(fichier, {
-        signal: controller.signal,
-        onProgress: setProgression,
-      });
-      if (controller.signal.aborted) return;
-      if (!hash) {
-        setErreurDepot(true);
-        return;
+      // Une pièce après l'autre : la progression affichée couvre l'ensemble.
+      const hashes: DocumentHash[] = [];
+      for (const [rang, fichier] of fichiers.entries()) {
+        const hash = await uploadAvisFile(fichier, {
+          signal: controller.signal,
+          onProgress: (progress) =>
+            setProgression(
+              Math.round((rang * 100 + progress) / fichiers.length)
+            ),
+        });
+        if (controller.signal.aborted) return;
+        if (!hash) {
+          setErreurDepot(true);
+          return;
+        }
+        hashes.push(hash);
       }
       const avis = await upsertAvis.mutateAsync({
         demandeAvisId,
         auTitreDe,
-        fichierRef: hash,
+        fichierRefs: hashes,
       });
       if (controller.signal.aborted) return;
       const avisDepose = avis.find((a) => a.auTitreDe === auTitreDe);
@@ -141,36 +154,58 @@ export const FinaliserInstructionModal = ({
               <p className="m-0 text-sm text-grey-7">
                 {appLabels.instructionFinaliserAvisConsultatif}
               </p>
-              {fichier ? (
-                <div className="flex items-center gap-2">
+              <p className="m-0 text-sm text-grey-7">
+                {appLabels.instructionFinaliserPiecesAide({
+                  max: PCAET_AVIS_PIECES_MAX,
+                })}
+              </p>
+              {fichiers.map((fichier, rang) => (
+                <div
+                  key={`${rang}-${fichier.name}`}
+                  className="flex items-center gap-2"
+                >
                   <span className="text-sm text-grey-8">{fichier.name}</span>
-                  {isSubmitting ? (
-                    <span className="text-sm text-grey-7" role="status">
-                      {appLabels.progressionUpload({ progress: progression })}
-                    </span>
-                  ) : (
+                  {!isSubmitting && (
                     <Button
                       variant="grey"
                       size="xs"
                       icon="delete-bin-line"
-                      aria-label={appLabels.instructionFinaliserRetirerFichier}
-                      onClick={() => setFichier(null)}
+                      aria-label={appLabels.instructionFinaliserRetirerFichier({
+                        nom: fichier.name,
+                      })}
+                      onClick={() =>
+                        setFichiers(fichiers.filter((_, i) => i !== rang))
+                      }
                     />
                   )}
                 </div>
+              ))}
+              {isSubmitting ? (
+                <span className="text-sm text-grey-7" role="status">
+                  {appLabels.progressionUpload({ progress: progression })}
+                </span>
               ) : (
-                <Input
-                  type="file"
-                  displaySize="md"
-                  accept={toAcceptAttribute(AVIS_FILE_CONSTRAINTS)}
-                  state={erreurFichier ? 'error' : undefined}
-                  onDropFiles={selectFiles}
-                  onChange={(e) => selectFiles(e.currentTarget.files)}
-                />
+                fichiers.length < PCAET_AVIS_PIECES_MAX && (
+                  <Input
+                    type="file"
+                    multiple
+                    displaySize="md"
+                    accept={toAcceptAttribute(AVIS_FILE_CONSTRAINTS)}
+                    state={erreurFichier ? 'error' : undefined}
+                    onDropFiles={selectFiles}
+                    onChange={(e) => {
+                      selectFiles(e.currentTarget.files);
+                      // Sans cela, re-choisir un fichier retiré ne déclenche rien.
+                      e.currentTarget.value = '';
+                    }}
+                  />
+                )
               )}
               {erreurFichier && (
                 <p className="text-sm text-error-1 m-0">
-                  {appLabels.instructionFinaliserFichierRefuse}
+                  {appLabels.instructionFinaliserFichierRefuse({
+                    max: PCAET_AVIS_PIECES_MAX,
+                  })}
                 </p>
               )}
             </div>
@@ -203,7 +238,7 @@ export const FinaliserInstructionModal = ({
               children: appLabels.instructionFinaliserValider,
               icon: 'arrow-right-line',
               iconPosition: 'right',
-              disabled: !fichier || isSubmitting,
+              disabled: fichiers.length === 0 || isSubmitting,
               onClick: deposerEtValider,
             }}
           />

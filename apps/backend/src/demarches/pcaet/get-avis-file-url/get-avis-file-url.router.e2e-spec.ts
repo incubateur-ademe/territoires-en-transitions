@@ -98,7 +98,7 @@ describe('getAvisFileUrl', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: null,
+        fichierRefs: [],
       })
       .returning({ id: pcaetAvisTable.id });
     avisSansPieceId = avis.id;
@@ -191,7 +191,7 @@ describe('getAvisFileUrl', () => {
         demandeAvisId: demandeRegion.id,
         emetteurCollectiviteId: region.collectivite.id,
         auTitreDe: 'president_region',
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         valideLe: new Date().toISOString(),
       })
       .returning({ id: pcaetAvisTable.id });

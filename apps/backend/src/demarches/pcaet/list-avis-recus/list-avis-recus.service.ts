@@ -72,7 +72,7 @@ export class ListAvisRecusService {
         id: pcaetAvisTable.id,
         demandeAvisId: pcaetAvisTable.demandeAvisId,
         auTitreDe: pcaetAvisTable.auTitreDe,
-        fichierRef: pcaetAvisTable.fichierRef,
+        fichierRefs: pcaetAvisTable.fichierRefs,
         valideLe: pcaetAvisTable.valideLe,
         envoyeLe: pcaetAvisTable.envoyeLe,
         instructeurNom: collectiviteTable.nom,
@@ -101,7 +101,7 @@ export class ListAvisRecusService {
         id: row.id,
         demandeAvisId: row.demandeAvisId,
         auTitreDe: row.auTitreDe,
-        aUnRapport: row.fichierRef !== null,
+        nombrePieces: row.fichierRefs.length,
         // Non nul par le filtre ci-dessus.
         valideLe: (row.valideLe as unknown as string) ?? '',
         envoyeLe: (row.envoyeLe as unknown as string) ?? null,

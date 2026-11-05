@@ -1,7 +1,10 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { useDownloadAvisRapport } from '../data/use-download-demarche-document';
+import {
+  useDownloadAvisPieces,
+  useDownloadAvisRapport,
+} from '../data/use-download-demarche-document';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
 import { Button, cn } from '@tet/ui';
@@ -18,8 +21,8 @@ export type AvisAffiche = {
   id: string;
   demandeAvisId: number;
   auTitreDe: PcaetAvisAuTitreDe;
-  /** Un rapport est-il joint, donc téléchargeable ? */
-  aUnRapport: boolean;
+  /** Au-delà d'une, les pièces se téléchargent ensemble dans une archive. */
+  nombrePieces: number;
   /** Date de validation ; nulle tant que l'avis est un brouillon. */
   valideLe: string | null;
   /** Date de dépôt, qui datera le brouillon faute de validation. */
@@ -52,18 +55,9 @@ export const AvisDeposesList = ({
   titre?: string;
   className?: string;
 }) => {
-  const { mutate: downloadAvisRapportFile } = useDownloadAvisRapport();
-
   if (avis.length === 0) {
     return null;
   }
-
-  const downloadAvisRapport = (unAvis: AvisAffiche) => {
-    downloadAvisRapportFile({
-      demandeAvisId: unAvis.demandeAvisId ?? demandeAvisId,
-      avisId: unAvis.id,
-    });
-  };
 
   return (
     <section
@@ -99,24 +93,57 @@ export const AvisDeposesList = ({
 
             {/* Un brouillon peut n'avoir aucune pièce : le bouton n'apparaît
                 que s'il y a un rapport à télécharger. */}
-            {unAvis.aUnRapport && (
-              <Button
-                variant="outlined"
-                size="xs"
-                icon="download-line"
-                className="shrink-0"
-                dataTest={`demarches.pcaet.avis-telecharger-${unAvis.auTitreDe}`}
-                aria-label={appLabels.instructionDossierAvisTelechargerAria({
-                  titre,
-                })}
-                onClick={() => downloadAvisRapport(unAvis)}
-              >
-                {appLabels.instructionDossierAvisTelecharger}
-              </Button>
+            {unAvis.nombrePieces > 0 && (
+              <TelechargerAvisButton
+                avis={{
+                  demandeAvisId: unAvis.demandeAvisId ?? demandeAvisId,
+                  avisId: unAvis.id,
+                }}
+                nombrePieces={unAvis.nombrePieces}
+                auTitreDe={unAvis.auTitreDe}
+                titre={titre}
+              />
             )}
           </div>
         );
       })}
     </section>
+  );
+};
+
+/** Un seul bouton par avis : sa pièce, ou l'archive de toutes ses pièces. */
+const TelechargerAvisButton = ({
+  avis,
+  nombrePieces,
+  auTitreDe,
+  titre,
+}: {
+  avis: { demandeAvisId: number; avisId: string };
+  nombrePieces: number;
+  auTitreDe: PcaetAvisAuTitreDe;
+  titre: string;
+}) => {
+  const { mutate: downloadAvisRapport } = useDownloadAvisRapport();
+  const archiveDownload = useDownloadAvisPieces(avis);
+
+  return (
+    <Button
+      variant="outlined"
+      size="xs"
+      icon="download-line"
+      className="shrink-0"
+      disabled={archiveDownload.status === 'downloading'}
+      dataTest={`demarches.pcaet.avis-telecharger-${auTitreDe}`}
+      aria-label={appLabels.instructionDossierAvisTelechargerAria({ titre })}
+      onClick={() => {
+        if (nombrePieces === 1) {
+          downloadAvisRapport(avis);
+        } else if (archiveDownload.status === 'idle') {
+          archiveDownload.download();
+        }
+      }}
+    >
+      {appLabels.instructionDossierAvisTelecharger}
+    </Button>
   );
 };

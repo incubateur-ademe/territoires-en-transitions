@@ -15,7 +15,10 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
+import {
+  PCAET_AVIS_PIECES_MAX,
+  PcaetAvisAuTitreDe,
+} from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
@@ -102,7 +105,7 @@ describe('upsertAvis', () => {
     user: AuthenticatedUser,
     input: {
       auTitreDe: PcaetAvisAuTitreDe;
-      fichierRef: string | null;
+      fichierRefs: string[];
     }
   ) =>
     router.createCaller({ user }).demarches.pcaet.upsertAvis({
@@ -113,14 +116,14 @@ describe('upsertAvis', () => {
   it('dépose un brouillon sans pièce jointe', async () => {
     const avis = await upsert(camille, {
       auTitreDe: 'prefet_region',
-      fichierRef: null,
+      fichierRefs: [],
     });
 
     expect(avis).toHaveLength(1);
     expect(avis[0]).toMatchObject({
       demandeAvisId,
       auTitreDe: 'prefet_region',
-      fichierRef: null,
+      fichierRefs: [],
       valideLe: null,
       deposePar: camille.id,
       modifieLe: null,
@@ -136,13 +139,34 @@ describe('upsertAvis', () => {
   it("modifie l'avis du même titre sans créer de doublon", async () => {
     const avis = await upsert(camille, {
       auTitreDe: 'prefet_region',
-      fichierRef: AVIS_PREFET,
+      fichierRefs: [AVIS_PREFET],
     });
 
     expect(avis).toHaveLength(1);
-    expect(avis[0].fichierRef).toBe(AVIS_PREFET);
+    expect(avis[0].fichierRefs).toEqual([AVIS_PREFET]);
     expect(avis[0].deposePar).toBe(camille.id);
     expect(avis[0].modifieLe).not.toBeNull();
+  });
+
+  // Un courrier et son annexe : l'ordre du dépôt est celui du téléchargement.
+  it('dépose plusieurs pièces dans leur ordre', async () => {
+    const avis = await upsert(camille, {
+      auTitreDe: 'prefet_region',
+      fichierRefs: [AVIS_PREFET_V2, AVIS_PREFET],
+    });
+
+    expect(avis[0].fichierRefs).toEqual([AVIS_PREFET_V2, AVIS_PREFET]);
+  });
+
+  it('refuse plus de pièces que le maximum', async () => {
+    await expect(
+      upsert(camille, {
+        auTitreDe: 'prefet_region',
+        fichierRefs: Array.from({ length: PCAET_AVIS_PIECES_MAX + 1 }, () =>
+          buildRandomDocumentHash()
+        ),
+      })
+    ).rejects.toThrow();
   });
 
   // Un avis validé est un acte rendu : le réécrire changerait sa pièce en lui
@@ -162,7 +186,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        fichierRef: AVIS_PREFET_V2,
+        fichierRefs: [AVIS_PREFET_V3],
       })
     ).rejects.toThrow('Un avis validé ne peut plus être modifié');
 
@@ -170,7 +194,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        fichierRef: null,
+        fichierRefs: [],
       })
     ).rejects.toThrow('Un avis validé ne peut plus être modifié');
   });
@@ -184,7 +208,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'president_region',
-        fichierRef: null,
+        fichierRefs: [],
       })
     ).rejects.toThrow("Cet instructeur ne rend pas d'avis à ce titre");
   });
@@ -193,7 +217,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(marie, {
         auTitreDe: 'prefet_region',
-        fichierRef: null,
+        fichierRefs: [],
       })
     ).rejects.toThrow();
   });
@@ -209,7 +233,7 @@ describe('upsertAvis', () => {
     await expect(
       upsert(camille, {
         auTitreDe: 'prefet_region',
-        fichierRef: AVIS_PREFET_V3,
+        fichierRefs: [AVIS_PREFET_V3],
       })
     ).rejects.toThrow();
   });
@@ -308,7 +332,7 @@ describe('la pièce jointe d’un avis est confidentielle', () => {
       .demarches.pcaet.upsertAvis({
         demandeAvisId: demande.id,
         auTitreDe: 'president_region',
-        fichierRef: rapport.hash,
+        fichierRefs: [rapport.hash],
       });
 
     return {

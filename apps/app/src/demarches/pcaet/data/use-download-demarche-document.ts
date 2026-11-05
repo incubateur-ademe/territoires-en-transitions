@@ -1,3 +1,7 @@
+import {
+  useDownloadArchive,
+  type DownloadArchive,
+} from '@/app/utils/use-download-archive';
 import { useDownloadSignedFile } from '@/app/utils/use-download-signed-file';
 import { type UseMutationResult } from '@tanstack/react-query';
 import { RouterInput, useTRPCClient } from '@tet/api';
@@ -30,3 +34,11 @@ export const useDownloadAvisRapport = (): UseMutationResult<
     trpcClient.demarches.pcaet.getAvisFileUrl.query(input)
   );
 };
+
+/** Les pièces d'un avis qui en porte plusieurs, réunies dans une archive. */
+export const useDownloadAvisPieces = (avis: AvisRapportRef): DownloadArchive =>
+  useDownloadArchive({
+    mutationKey: ['download-avis-pieces', avis],
+    route: '/demarches/pcaet/avis/pieces/archive',
+    params: avis,
+  });

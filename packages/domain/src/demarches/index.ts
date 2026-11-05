@@ -19,6 +19,7 @@ export * from './pcaet/diagnostic/demarche-pcaet-vulnerabilite.rules';
 export * from './pcaet/diagnostic/demarche-pcaet-vulnerabilite.schema';
 export * from './pcaet/pcaet-assujettissement.rules';
 export * from './pcaet/pcaet-avis-au-titre-de.enum.schema';
+export * from './pcaet/pcaet-avis-pieces.rules';
 export * from './pcaet/pcaet-date-adoption.rules';
 export * from './pcaet/pcaet-demande-avis-etat.rules';
 export * from './pcaet/pcaet-depot-permissions.rules';

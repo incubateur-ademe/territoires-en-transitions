@@ -156,7 +156,7 @@ describe('listDossiersInstruction', () => {
         demandeAvisId: demande.id,
         emetteurCollectiviteId: drealId,
         auTitreDe: 'prefet_region',
-        fichierRef: avis.valide ? buildRandomDocumentHash() : null,
+        fichierRefs: avis.valide ? [buildRandomDocumentHash()] : [],
         valideLe: avis.valide ? new Date().toISOString() : null,
       });
     }

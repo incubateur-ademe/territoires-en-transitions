@@ -240,7 +240,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -308,7 +308,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -401,7 +401,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })
@@ -443,7 +443,7 @@ describe('getDossierInstruction', () => {
         demandeAvisId,
         emetteurCollectiviteId: instructeurCollectiviteId,
         auTitreDe: 'prefet_region',
-        fichierRef: buildRandomDocumentHash(),
+        fichierRefs: [buildRandomDocumentHash()],
         deposePar: camille.id,
         valideLe: new Date().toISOString(),
       })

@@ -101,7 +101,7 @@ export const DossierInstructionPage = ({
         id: unAvis.id,
         demandeAvisId: unAvis.demandeAvisId,
         auTitreDe: unAvis.auTitreDe,
-        aUnRapport: unAvis.fichierRef !== null,
+        nombrePieces: unAvis.fichierRefs.length,
         valideLe: unAvis.valideLe,
         deposeLe: unAvis.deposeLe,
       })),

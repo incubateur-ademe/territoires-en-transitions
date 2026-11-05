@@ -6,6 +6,7 @@ import {
 const specificErrors = [
   'AVIS_NOT_FOUND',
   'AVIS_SANS_PIECE_JOINTE',
+  'AVIS_PLUSIEURS_PIECES',
   'AVIS_FILE_URL_ERROR',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -20,6 +21,11 @@ export const getAvisFileUrlErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
       AVIS_SANS_PIECE_JOINTE: {
         code: 'NOT_FOUND',
         message: "Cet avis n'a pas de rapport joint",
+      },
+      AVIS_PLUSIEURS_PIECES: {
+        code: 'BAD_REQUEST',
+        message:
+          'Cet avis porte plusieurs pièces : elles se téléchargent ensemble dans une archive',
       },
       AVIS_FILE_URL_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

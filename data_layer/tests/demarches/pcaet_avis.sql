@@ -144,7 +144,7 @@ select throws_ok(
 );
 
 select throws_ok(
-    $$ update demarche_pcaet_avis set valide_le = now() where fichier_ref is null $$,
+    $$ update demarche_pcaet_avis set valide_le = now() where fichier_refs = '{}' $$,
     '23514',
     null,
     'valider un avis sans PJ est refusé'

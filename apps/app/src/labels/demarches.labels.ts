@@ -796,6 +796,8 @@ export const demarchesLabels = {
     'La fenêtre d’avis est fermée : l’instruction ne peut plus être finalisée.',
   instructionFinaliserTitre: 'Finaliser l’instruction',
   instructionFinaliserAjouterRapport: 'Ajouter l’avis',
+  instructionFinaliserPiecesAide: ({ max }: { max: number }) =>
+    `Jusqu’à ${max} fichiers PDF : le courrier et, si besoin, son annexe.`,
   /**
    * Ce que l'instructeur doit savoir de la portée de son acte : la
    * réglementation n'oblige pas la collectivité à suivre l'avis rendu.
@@ -805,9 +807,10 @@ export const demarchesLabels = {
   instructionFinaliserAvertissement:
     'Attention, une fois finalisée, l’instruction ne pourra plus être modifiée ou annulée !',
   instructionFinaliserValider: 'Valider',
-  instructionFinaliserRetirerFichier: 'Retirer le fichier',
-  instructionFinaliserFichierRefuse:
-    'Le fichier doit être un PDF de 20 Mo maximum.',
+  instructionFinaliserRetirerFichier: ({ nom }: { nom: string }) =>
+    `Retirer ${nom}`,
+  instructionFinaliserFichierRefuse: ({ max }: { max: number }) =>
+    `Chaque fichier doit être un PDF de 20 Mo maximum, ${max} fichiers au plus.`,
   instructionFinaliserErreur: 'Le dépôt de l’avis a échoué',
   instructionFinaliseeTitre: 'Le pilote du PCAET va être notifié !',
   instructionFinaliseeBravo:

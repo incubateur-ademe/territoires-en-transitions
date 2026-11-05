@@ -12,8 +12,8 @@ export const avisRecuSchema = z.object({
   id: z.string(),
   demandeAvisId: z.number().int(),
   auTitreDe: pcaetAvisAuTitreDeSchema,
-  /** Le rapport joint est-il disponible au téléchargement ? */
-  aUnRapport: z.boolean(),
+  /** Au-delà d'une, les pièces se téléchargent ensemble dans une archive. */
+  nombrePieces: z.number().int().nonnegative(),
   valideLe: z.string(),
   envoyeLe: z.string().nullable(),
   /** Nom de la collectivité instructrice qui a rendu l'avis. */
