@@ -68,6 +68,8 @@ export type DemarchePcaet = {
   /** Ce que le dossier accepte encore comme écriture, tranché côté serveur. */
   amontModifiable: boolean;
   avalModifiable: boolean;
+  /** Diagnostic, objectifs et programme d'actions : rouverts après les avis. */
+  contenuModifiable: boolean;
 };
 
 /**

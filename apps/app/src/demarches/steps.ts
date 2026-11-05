@@ -69,9 +69,9 @@ export const getDemarcheParcours = ({
  * le modèle en attend à ce temps-là), puis le plan.
  *
  * L'amont éclate le diagnostic en un item par topic : c'est là qu'on le
- * remplit, volet par volet. L'aval le garde entier — ce n'est plus qu'un rappel,
- * ses onglets restent à portée de main, et l'éclater mettrait la validation
- * finale six clics plus loin.
+ * remplit, volet par volet. L'aval le garde entier — on n'y reprend que ce que
+ * les avis demandent, ses onglets restent à portée de main, et l'éclater
+ * mettrait la validation finale six clics plus loin.
  */
 export const flattenSteps = ({
   etape,

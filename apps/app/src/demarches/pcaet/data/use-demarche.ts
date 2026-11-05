@@ -50,6 +50,7 @@ const toFrontDemarche = (
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,
+  contenuModifiable: server.contenuModifiable,
 });
 
 const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {

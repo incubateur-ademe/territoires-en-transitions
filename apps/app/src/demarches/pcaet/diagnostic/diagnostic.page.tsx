@@ -4,7 +4,6 @@ import { DemarcheShell } from '@/app/demarches/components/shell';
 import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { useGetPcaetDiagnostic } from '@/app/demarches/pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import { DiagnosticTabs } from '@/app/demarches/pcaet/diagnostic/diagnostic.tabs';
-import { getDemarcheParcours } from '@/app/demarches/steps';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -40,10 +39,9 @@ export const DemarchePcaetDiagnosticPage = () => {
     notFound();
   }
 
-  // Passée la clôture de l'instruction, l'écran ne sert plus à compléter le
-  // diagnostic mais à le relire pour répondre aux avis. Se lit sur l'amont : un
-  // dépôt hors plateforme a l'aval ouvert alors qu'il reste à le remplir.
-  const estRappel = !getDemarcheParcours(demarche).amontOuvert;
+  // Pendant la phase d'avis, l'écran ne sert qu'à relire le diagnostic tel
+  // qu'il a été transmis. Il se rouvre après les avis, pour le dépôt final.
+  const estRappel = !demarche.contenuModifiable;
 
   return (
     <DemarcheShell
@@ -61,7 +59,7 @@ export const DemarchePcaetDiagnosticPage = () => {
         isLoading={isDiagnosticLoading}
         isError={isDiagnosticError}
         onRetry={() => refetchDiagnostic()}
-        isReadonly={!demarche.amontModifiable}
+        isReadonly={!demarche.contenuModifiable}
         title={
           estRappel
             ? appLabels.demarcheAvanceRappelDiagnosticLabel

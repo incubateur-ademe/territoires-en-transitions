@@ -82,7 +82,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
         demarcheId,
       });
       const demarche = await queryClient.fetchQuery(demarcheQuery);
-      if (!demarche.amontModifiable || demarche.planActionIds.length > 0) {
+      if (!demarche.contenuModifiable || demarche.planActionIds.length > 0) {
         return;
       }
       const updated = await updateDemarche({

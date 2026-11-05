@@ -266,9 +266,8 @@ export const demarchesLabels = {
     'Renseigner les données de votre diagnostic et les objectifs de votre stratégie.',
   demarcheAvanceSectionPlanDescription:
     "Rattachez ou créez un plan d'actions dans la plateforme.",
-  // Les deux rappels de la finalisation. Ces libellés servent à la fois la
-  // sous-étape du stepper et le titre de l'écran qu'elle ouvre : c'est le même
-  // rappel, il ne doit pas changer de nom en cours de route.
+  // Titres des écrans diagnostic et programme d'actions quand ils ne se lisent
+  // plus qu'en rappel : pendant la phase d'avis, et après la publication.
   demarcheAvanceRappelDiagnosticLabel: 'Rappel du diagnostic et des objectifs',
   demarcheAvanceRappelDiagnosticDescription:
     'Relisez le diagnostic et les objectifs tels qu’ils ont été transmis.',
@@ -579,7 +578,7 @@ export const demarchesLabels = {
   demarcheProgrammeVerifierPlansDescription:
     'Ce plan a été importé avec l’aide de l’IA : certains éléments ont pu être manqués ou mal repérés. Consultez les actions et les secteurs réglementaires du plan lié depuis sa fiche, corrigez-les si besoin, puis marquez-le comme vérifié dans ce tableau.',
   demarcheProgrammeLectureSeule:
-    'La démarche n’est plus en élaboration : le programme d’actions n’est plus modifiable.',
+    'Le programme d’actions n’est pas modifiable pendant la phase d’avis, ni après la publication.',
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
     `Plan #${id}`,
   demarcheProgrammeNomPlanImporte: ({
