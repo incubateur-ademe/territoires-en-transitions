@@ -12,6 +12,8 @@ import { Alert, Button, Event, Modal, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { countBy } from 'es-toolkit';
 import { useState } from 'react';
+import { useQueryStates } from 'nuqs';
+import { aiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 
 type Props = {
   openState: OpenState;
@@ -25,7 +27,7 @@ type Props = {
    * La fin de l'import est traitée par l'appelant, qui reste monté : la
    * modale peut être fermée pendant l'import.
    */
-  onImportStarted: (jobId: string, planId: number) => void;
+  onImportStarted: (jobId: string, planId: number | null) => void;
 };
 
 type ModalStep = 'form' | 'progress' | 'done';
@@ -91,12 +93,18 @@ export const DemarcheImportPlanModal = ({
   onImportStarted,
 }: Props) => {
   const demarcheId = useDemarcheId();
+  const [, setImportQuery] = useQueryStates(aiImportQueryState);
   const tracker = useEventTracker();
   const [step, setStep] = useState<ModalStep>('form');
   const [createdPlanId, setCreatedPlanId] = useState<number | null>(null);
 
   const setIsOpen = (isOpen: boolean) => {
     if (!isOpen) {
+      if (createdPlanId !== null) {
+        // Le compte rendu reste dans l'historique ; la prochaine ouverture
+        // doit permettre un nouvel import.
+        void setImportQuery({ importJobId: null });
+      }
       setStep('form');
       setCreatedPlanId(null);
     }

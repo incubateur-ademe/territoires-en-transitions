@@ -1,19 +1,15 @@
 'use client';
 
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
-import { hasPermission } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { Event, useEventTracker } from '@tet/ui';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ReactElement, useEffect, useRef, useState } from 'react';
-import { AiImportProgress } from './ai-import-progress';
-import { toImportStageViews } from './ai-import-stages.model';
-import { AiImportStagesList } from './ai-import-stages';
-import { toImportStepViews } from './ai-import-steps.model';
+import { ErrorCard } from '@/app/utils/error/error.card';
+import { appLabels } from '@/app/labels/catalog';
+import { useQueryStates } from 'nuqs';
+import { ReactElement, useEffect, useState } from 'react';
+import { AiImportStatusView } from './ai-import-status.view';
+import { aiImportQueryState } from './ai-import.query-state';
 import {
   AiImportDefaults,
   AiImportForm,
@@ -23,9 +19,8 @@ import {
   useEnqueueAiImport,
   type AiImportOrigine,
 } from './data/use-enqueue-ai-import';
-import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
-import { useResumeAiImport } from './data/use-resume-ai-import';
+import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 
 const CheckingOngoingImport = () => (
   <div className="flex justify-center py-10">
@@ -57,7 +52,7 @@ export const AiImportFlow = ({
    * Import lancé depuis ce formulaire. Le formulaire est démonté à la
    * fermeture d'une modale : c'est au parent de s'en souvenir.
    */
-  onImportStarted?: (jobId: string, planId: number) => void;
+  onImportStarted?: (jobId: string, planId: number | null) => void;
   cancelButton: ReactElement;
   lockedPlanTypeId?: number;
   defaults?: AiImportDefaults;
@@ -74,50 +69,37 @@ export const AiImportFlow = ({
 }) => {
   const collectiviteId = useCollectiviteId();
   const { setToast } = useToastContext();
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const { data: currentImport, isFetchedAfterMount } =
-    useGetCurrentAiImport(collectiviteId);
-  // `undefined` tant que l'utilisateur n'a rien lancé ni abandonné : on suit
-  // alors l'import en cours de la collectivité, s'il y en a un.
-  const [chosenJobId, setJobId] = useState<string | null | undefined>();
-  // Le cache peut encore tenir un import terminé depuis : le reprendre
-  // rappellerait aussitôt onPlanCreated pour un plan déjà traité.
+  const [{ importJobId }, setImportQuery] = useQueryStates(aiImportQueryState);
+  const [followCurrentImport, setFollowCurrentImport] = useState(true);
+  const {
+    data: currentImport,
+    isFetchedAfterMount,
+    error,
+    refetch,
+  } = useGetCurrentAiImport(collectiviteId, {
+    enabled: importJobId === null && followCurrentImport,
+  });
+  const resumedJobId =
+    isFetchedAfterMount && followCurrentImport
+      ? currentImport?.jobId ?? null
+      : null;
+  const jobId = importJobId ?? resumedJobId;
+  const statusQuery = useGetAiImportStatus(jobId);
   const isCheckingOngoingImport =
-    chosenJobId === undefined && !isFetchedAfterMount;
-  const resumedJobId = isFetchedAfterMount
-    ? currentImport?.jobId ?? null
-    : null;
-  const jobId = chosenJobId === undefined ? resumedJobId : chosenJobId;
-  const isProgressVisible = !isCheckingOngoingImport && jobId !== null;
+    jobId === null && followCurrentImport && !isFetchedAfterMount;
+  const isProgressVisible = jobId !== null;
+
+  // Persister aussi les imports lancés depuis une autre page avant leur fin.
+  useEffect(() => {
+    if (importJobId === null && resumedJobId !== null) {
+      void setImportQuery({ importJobId: resumedJobId });
+    }
+  }, [importJobId, resumedJobId, setImportQuery]);
   useEffect(() => {
     onProgressVisibilityChange?.(isProgressVisible);
   }, [isProgressVisible, onProgressVisibilityChange]);
 
   const enqueue = useEnqueueAiImport();
-  const tracker = useEventTracker();
-  const { data: status } = useGetAiImportStatus(jobId);
-  const resume = useResumeAiImport();
-  const canResume =
-    hasPermission(useUser(), 'plans.fiches.import_resume') &&
-    status?.resumable === true;
-
-  const createdPlanId = status?.status === 'done' ? status.createdPlanId : null;
-  const notifiedPlanId = useRef<number | null>(null);
-  useEffect(() => {
-    if (
-      createdPlanId === null ||
-      jobId === null ||
-      notifiedPlanId.current === createdPlanId
-    ) {
-      return;
-    }
-    notifiedPlanId.current = createdPlanId;
-    queryClient.invalidateQueries({
-      queryKey: trpc.plans.plans.list.queryKey({ collectiviteId }),
-    });
-    onPlanCreated(createdPlanId, { jobId });
-  }, [createdPlanId, jobId, onPlanCreated, queryClient, trpc, collectiviteId]);
 
   const handleSubmit = async (values: AiImportSubmission) => {
     try {
@@ -133,50 +115,40 @@ export const AiImportFlow = ({
         origine,
         demarcheId,
       });
-      setJobId(newJobId);
+      await setImportQuery({ importJobId: newJobId });
       onImportStarted?.(newJobId, planId);
     } catch (error) {
       setToast('error', getErrorMessage(error));
     }
   };
 
-  if (isCheckingOngoingImport) {
-    return <CheckingOngoingImport />;
-  }
   if (jobId !== null) {
-    const failed = status?.status === 'failed';
-    if (renderStagesProgress && !failed) {
-      return renderStagesProgress(
-        <AiImportStagesList
-          stages={toImportStageViews(status?.stepStates)}
-          withSecteurs={status?.withSecteurs ?? false}
-        />
-      );
-    }
     return (
-      <AiImportProgress
-        failed={failed}
-        errorMessage={status?.error ?? null}
-        onRetry={() => {
-          tracker(Event.plans.importIa.reessayer, { origine, demarcheId });
-          setJobId(null);
+      <AiImportStatusView
+        key={jobId}
+        jobId={jobId}
+        statusQuery={statusQuery}
+        renderStagesProgress={renderStagesProgress}
+        origine={origine}
+        demarcheId={demarcheId}
+        onPlanCreated={onPlanCreated}
+        onNewImport={() => {
+          setFollowCurrentImport(false);
+          void setImportQuery({ importJobId: null });
         }}
-        onResume={
-          canResume
-            ? () => {
-                tracker(Event.plans.importIa.reprendre, {
-                  origine,
-                  demarcheId,
-                });
-                resume.mutate({ jobId });
-              }
-            : undefined
-        }
-        isResuming={resume.isPending}
-        steps={toImportStepViews(status?.stepStates, { failed })}
-        withSecteurs={status?.withSecteurs ?? false}
       />
     );
+  }
+  if (error && followCurrentImport) {
+    return (
+      <ErrorCard
+        title={appLabels.importPlanIaSuiviErreur}
+        retry={() => refetch()}
+      />
+    );
+  }
+  if (isCheckingOngoingImport) {
+    return <CheckingOngoingImport />;
   }
   return (
     <AiImportForm

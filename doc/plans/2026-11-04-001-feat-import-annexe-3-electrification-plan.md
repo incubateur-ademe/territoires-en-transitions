@@ -190,8 +190,21 @@ et point d'accès depuis la liste des plans.
   suivi après fermeture/rechargement. Donner accès aux imports récents et aux
   échecs ; `getCurrentAiImport`, limité aux jobs en cours, ne suffit pas.
 - [x] Supporter l'absence de plan dans les callbacks, le polling, les erreurs et
-  la reprise par job. Attendre `done` et un `createdPlanId` pour ouvrir le plan.
+  la reprise par job. Attendre `done` et un `createdPlanId` pour la redirection
+  automatique vers le plan.
   Garder le compte rendu accessible après la redirection.
+- [x] Utiliser le fil d'Ariane du design system pour naviguer entre les plans,
+  l'historique et le détail d'un import. Afficher "Ouvrir le plan" en style
+  outlined dans l'en-tête du détail, à gauche de "Nouvel import". L'activer dès
+  qu'un plan est associé, y compris pendant le traitement ou après un échec ;
+  sinon le désactiver avec une infobulle expliquant son indisponibilité.
+- [x] Ajouter "Détails de l’import" dans le menu du plan uniquement lorsqu'un
+  import IA lui est associé et que l'utilisateur peut le consulter. Retrouver
+  cet import avec le filtre `planId` de `listRecentAiImports`, sans dépendre
+  d'un paramètre d'URL ni du flag de lancement. Ne charger cette information
+  qu'à l'ouverture du menu. Placer cette section entre la génération de rapport
+  et les actions dupliquer/supprimer. Cet accès remplace le bouton de compte
+  rendu dans la vue du plan ; aucun paramètre de suivi n'est ajouté à son URL.
 - [x] Préserver le rattachement immédiat du plan générique dans
   [PCAET](../../apps/app/src/demarches/pcaet/import-programme/import-programme.context.tsx)
   et sa [modale](../../apps/app/src/demarches/components/import-plan.modal.tsx).
@@ -209,9 +222,12 @@ avec réponses simulées ou fixtures, sans appel réel au modèle.
 **Implémenté et vérifié dans [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), non fusionné :**
 historique paginé sous `/plans/imports`, sélection par `importJobId`, compte
 rendu accessible depuis le plan, reprise réservée à l'équipe et lecture
-indépendante du flag de lancement. Onze scénarios Playwright ont été validés
-sur une build locale, avec les lancements et reprises IA interceptés, ainsi
-que TypeScript (app et e2e), le lint ciblé et le build Next.js.
+indépendante du flag de lancement. Après rebase sur `main`, onze scénarios
+Playwright et dix-sept e2e tRPC ont été validés sur la stack locale, ainsi que
+TypeScript (backend, app et e2e), le lint ciblé et les builds Next.js et NestJS.
+Les tests couvrent notamment le filtre par plan, l'isolation des collectivités,
+le menu, la navigation desktop/mobile et le parcours PCAET. Les lancements et
+reprises IA sont simulés, sans appel réel au modèle.
 
 **Déploiement et arrêt possible :** après 1A ; améliore le suivi des imports
 actuels, même si aucune autre phase n'est livrée. L'annexe reste inaccessible.
