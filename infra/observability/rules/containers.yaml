@@ -1,0 +1,21 @@
+# Conteneurs Coolify : séries du job integrations/cadvisor, labels env / service / container.
+name: containers
+interval: 1m
+rules:
+  # Un redéploiement crée un nouveau conteneur (nouvelle série) : seul un
+  # redémarrage du même conteneur incrémente changes().
+  - alert: ContainerRestarting
+    expr: changes(container_start_time_seconds{env!=""}[15m]) > 2
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $labels.env }}/{{ $labels.service }} redémarre en boucle"
+      description: "{{ $value }} redémarrages en 15 min ({{ $labels.name }}). Logs : {env=\"{{ $labels.env }}\", service=\"{{ $labels.service }}\"}."
+
+  - alert: ContainerOOMKilled
+    expr: increase(container_oom_events_total{env!=""}[15m]) > 0
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.env }}/{{ $labels.service }} tué par manque de mémoire"
+      description: "Événement OOM sur {{ $labels.name }} dans les 15 dernières minutes."

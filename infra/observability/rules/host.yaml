@@ -1,0 +1,43 @@
+# Hôtes : séries du job integrations/unix (Alloy, prometheus.exporter.unix).
+name: host
+interval: 1m
+rules:
+  # absent() ne voit que l'absence totale : suffisant tant qu'un seul serveur
+  # pousse dans ce Cockpit (nonprod pour le projet principal, prod pour tet-prod).
+  # Au second, passer à une règle par serveur : Cockpit refuse les fenêtres
+  # de plus d'une heure, donc pas de « vu hier, absent aujourd'hui ».
+  - alert: ServerSilent
+    expr: absent(up{job="integrations/unix"})
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Plus aucune métrique d'hôte"
+      description: "Aucune série job=integrations/unix depuis 5 min : serveur arrêté, réseau coupé ou Alloy tombé."
+
+  - alert: DiskAlmostFull
+    expr: 1 - node_filesystem_avail_bytes / node_filesystem_size_bytes > 0.85
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Disque {{ $labels.mountpoint }} de {{ $labels.server }} plein à {{ $value | humanizePercentage }}"
+      description: "Au-delà de 85 % depuis 10 min. Piste habituelle : images Docker (docker system prune) ou logs."
+
+  - alert: MemoryPressure
+    expr: 1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes > 0.9
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Mémoire de {{ $labels.server }} utilisée à {{ $value | humanizePercentage }}"
+      description: "Au-delà de 90 % depuis 15 min."
+
+  - alert: ScrapeTargetDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Collecte {{ $labels.job }} en échec sur {{ $labels.server }}"
+      description: "Alloy n'arrive plus à lire {{ $labels.job }} ({{ $labels.instance }}) depuis 5 min : les alertes qui en dépendent sont aveugles."

@@ -1,0 +1,22 @@
+# Sondes HTTPS des URL publiques : séries des jobs integrations/blackbox/<nom>, labels env / service.
+# instance vaut prometheus.exporter.blackbox.probes pour toutes les sondes : inutilisable en annotation.
+name: probes
+interval: 1m
+rules:
+  - alert: EndpointDown
+    expr: probe_success == 0
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $labels.env }}/{{ $labels.service }} injoignable"
+      description: "La sonde {{ $labels.env }}/{{ $labels.service }} {{ $labels.container }} échoue depuis 3 min."
+
+  - alert: CertificateExpiringSoon
+    expr: probe_ssl_earliest_cert_expiry - time() < 14 * 86400
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "Certificat TLS de {{ $labels.env }}/{{ $labels.service }} {{ $labels.container }} expire dans {{ $value | humanizeDuration }}"
+      description: "Let's Encrypt renouvelle à 30 jours : à 14 jours, le renouvellement par Traefik a échoué."
