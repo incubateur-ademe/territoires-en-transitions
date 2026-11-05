@@ -77,6 +77,7 @@ export const SubactionIndicateurModal = ({
                 unite={unite}
                 indicateurId={indicateurId}
                 calcul={calcul}
+                indicateurUrl={indicateurURL}
               />
             </Tab>
           ) : undefined}

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   filterLignesFromAnneeReference,
   getAnneeReference,
+  getValeurReferenceManquante,
 } from './filter-lignes-from-annee-reference.utils';
 
 const progressionSnbc: CalculScoreIndicatif = {
@@ -50,6 +51,35 @@ describe('getAnneeReference', () => {
         cible: 10,
         seuil: 5,
       })
+    ).toBeNull();
+  });
+});
+
+describe('getValeurReferenceManquante', () => {
+  it("signale le résultat de départ manquant d'une réduction", () => {
+    expect(
+      getValeurReferenceManquante({ ...reduction, resultatDepart: null })
+    ).toEqual({ type: 'reduction', annee: 2019 });
+  });
+
+  it("signale l'objectif SNBC de départ manquant d'une progression_snbc", () => {
+    expect(
+      getValeurReferenceManquante({
+        ...progressionSnbc,
+        objectifSnbcDepart: null,
+      })
+    ).toEqual({ type: 'progression_snbc', annee: 2015 });
+  });
+
+  it('renvoie null si la valeur de départ est renseignée', () => {
+    expect(getValeurReferenceManquante(reduction)).toBeNull();
+    expect(getValeurReferenceManquante(progressionSnbc)).toBeNull();
+  });
+
+  it('renvoie null pour les autres types de calcul', () => {
+    expect(getValeurReferenceManquante(null)).toBeNull();
+    expect(
+      getValeurReferenceManquante({ type: 'presence_absence' })
     ).toBeNull();
   });
 });

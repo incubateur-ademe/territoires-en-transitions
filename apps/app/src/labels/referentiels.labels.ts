@@ -206,6 +206,11 @@ export const referentielsLabels = {
     `Objectif de réduction : -${reduction} % en ${annee}`,
   scoreIndicatifResultatsAnterieursNonPrisEnCompte: (annee: number): string =>
     `Les résultats antérieurs à l’année de référence ${annee} ne peuvent pas être pris en compte`,
+  scoreIndicatifValeurReferenceManquante: (annee: number): string =>
+    `Il manque la valeur de l’année de référence (${annee}) pour calculer la progression de cet indicateur. Ajoutez-la depuis l’indicateur.`,
+  scoreIndicatifTrajectoireSnbcManquante: (annee: number): string =>
+    `La trajectoire SNBC n’est pas disponible pour l’année de référence (${annee}) : la progression de cet indicateur ne peut pas être calculée, même en sélectionnant un résultat.`,
+  scoreIndicatifValeurReferenceManquanteLien: 'Cliquez ici',
 
   /** Libellés et saisie du score indicatif */
   scoreIndicatifFait: (percent: string): string =>

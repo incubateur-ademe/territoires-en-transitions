@@ -7,11 +7,12 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CalculScoreIndicatif } from '@tet/domain/referentiels';
-import { Checkbox, Divider } from '@tet/ui';
+import { Alert, Checkbox, Divider, InlineLink } from '@tet/ui';
 import { useGetValeursUtilisables } from '../../score-indicatif/use-get-valeurs-utilisables';
 import {
   filterLignesFromAnneeReference,
   getAnneeReference,
+  getValeurReferenceManquante,
 } from './filter-lignes-from-annee-reference.utils';
 import { LigneValeur } from './group-lignes-by-annee.utils';
 import { IndicateurResultatsTable } from './subaction.indicateur-modal-resultats.table';
@@ -27,6 +28,8 @@ type Props = {
   unite: string;
   indicateurId: number;
   calcul: CalculScoreIndicatif | null;
+  /** Page de l'indicateur, où saisir la valeur de l'année de référence */
+  indicateurUrl: string;
 };
 
 export const SubactionIndicateurModalResultats = (props: Props) => {
@@ -48,6 +51,7 @@ const SubactionIndicateurModalResultatsContent = ({
   unite,
   indicateurId,
   calcul,
+  indicateurUrl,
 }: Props) => {
   const { actionId } = action;
   const { collectiviteId, hasCollectivitePermission } =
@@ -72,6 +76,10 @@ const SubactionIndicateurModalResultatsContent = ({
   const selectionneeId = valeurSelectionnee?.id ?? null;
 
   const anneeReference = getAnneeReference(calcul);
+  const valeurReferenceManquante = getValeurReferenceManquante(calcul);
+  // sans valeur sur l'année de référence, aucun résultat ne permet de
+  // calculer la progression : la liste est grisée
+  const isCalculImpossible = valeurReferenceManquante !== null;
   const toutesLignes: LigneValeur[] = (
     valeursUtilisables?.sources ?? []
   ).flatMap((source) =>
@@ -140,6 +148,32 @@ const SubactionIndicateurModalResultatsContent = ({
         size="md"
       />
       <Divider className="my-4" />
+      {valeurReferenceManquante && (
+        <Alert
+          className="mb-4"
+          state="info"
+          description={
+            valeurReferenceManquante.type === 'reduction' ? (
+              <p className="mb-0 text-sm text-grey-9">
+                {appLabels.scoreIndicatifValeurReferenceManquante(
+                  valeurReferenceManquante.annee
+                )}{' '}
+                <InlineLink
+                  href={indicateurUrl}
+                  openInNewTab
+                  data-test="referentiels.score-indicatif.valeur-reference-manquante-lien"
+                >
+                  {appLabels.scoreIndicatifValeurReferenceManquanteLien}
+                </InlineLink>
+              </p>
+            ) : (
+              appLabels.scoreIndicatifTrajectoireSnbcManquante(
+                valeurReferenceManquante.annee
+              )
+            )
+          }
+        />
+      )}
       <Checkbox
         containerClassname="mb-4"
         label={appLabels.indicateurNonSuiviCheckboxLabel}
@@ -154,7 +188,7 @@ const SubactionIndicateurModalResultatsContent = ({
         hasResultatsAnterieursMasques={lignes.length < toutesLignes.length}
         selectionneeId={selectionneeId}
         isPending={isPending}
-        disabled={nonSuivi || isUpdatingNonSuivi}
+        disabled={nonSuivi || isUpdatingNonSuivi || isCalculImpossible}
         onSelect={handleSelect}
       />
     </div>
