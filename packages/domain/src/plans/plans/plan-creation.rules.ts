@@ -1,4 +1,7 @@
-import { ELECTRIFICATION_PLAN_TYPE, PlanType } from './plan-type.schema';
+import {
+  ELECTRIFICATION_PLAN_TYPE_KEY,
+  PlanType,
+} from './plan-type.schema';
 
 export const planCreationDisabledReasons = [
   'ELECTRIFICATION_CREATION_DISABLED',
@@ -9,10 +12,13 @@ export type PlanCreationDisabledReason =
 
 export class PlanCreationRules {
   static getDisabledReason(
-    planType: Pick<PlanType, 'type'> | null | undefined
+    planType: Pick<PlanType, 'categorie' | 'type'> | null | undefined
   ): PlanCreationDisabledReason | undefined {
     // La création reste suspendue jusqu'à l'import de l'annexe 3.
-    if (planType?.type === ELECTRIFICATION_PLAN_TYPE) {
+    if (
+      planType?.categorie === ELECTRIFICATION_PLAN_TYPE_KEY.categorie &&
+      planType.type === ELECTRIFICATION_PLAN_TYPE_KEY.type
+    ) {
       return 'ELECTRIFICATION_CREATION_DISABLED';
     }
     return undefined;
