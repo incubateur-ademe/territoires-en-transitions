@@ -219,7 +219,7 @@ export const DemarcheDocumentAdditionalRow = ({
         <div className="flex flex-wrap items-center gap-3 min-w-0">
           {fichier && (
             <FichierDepose
-              filename={fichier.filename}
+              fichier={fichier}
               onDownload={onDownload && (() => onDownload(documentAdditional))}
             />
           )}

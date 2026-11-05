@@ -40,11 +40,14 @@ export const useMutationToast = (
         ((status === 'success' && meta?.success) || status === 'error') &&
         !meta?.disableToast
       ) {
-        // L'API renvoie un code, pas une phrase : le libellé vient d'ici.
+        // L'API renvoie un code, pas une phrase : le libellé vient d'ici. Un
+        // code connu dit la cause, il prime sur le message générique de l'appel.
+        const apiMessage =
+          status === 'error' && errorKey
+            ? appLabels.erreursApi[errorKey]
+            : undefined;
         const message =
-          (meta?.[status] as string) ||
-          (errorKey ? appLabels.erreursApi[errorKey] : undefined) ||
-          DEFAULT_MESSAGE[status];
+          apiMessage || (meta?.[status] as string) || DEFAULT_MESSAGE[status];
         const hideDuration = (meta?.autoHideDuration as number) || undefined;
         setToast(status, message, hideDuration);
       }

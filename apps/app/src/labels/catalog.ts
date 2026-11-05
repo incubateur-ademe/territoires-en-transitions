@@ -471,6 +471,8 @@ export const appLabels = {
       'Un import est déjà en cours pour cette collectivité.',
     ACTION_DE_REFERENCE_CONFLICT:
       'Une action de référence identique existe déjà.',
+    FICHIER_INFECTE:
+      'Notre antivirus a détecté une menace dans ce fichier : il ne peut être ni déposé ni téléchargé.',
   } as Record<string, string | undefined>,
   indicateurValeurReferenceLigne: ({
     source,
