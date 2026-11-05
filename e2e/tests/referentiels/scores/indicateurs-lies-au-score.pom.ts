@@ -13,6 +13,7 @@ export class IndicateursLiesAuScorePom {
   readonly nonSuiviCheckbox: Locator;
   readonly aucunResultatMessage: Locator;
   readonly selectionnerResultatMessage: Locator;
+  readonly valeurReferenceManquanteLink: Locator;
 
   constructor(readonly page: Page) {
     this.modal = page.getByRole('dialog');
@@ -30,6 +31,23 @@ export class IndicateursLiesAuScorePom {
     );
     this.selectionnerResultatMessage = this.modal.getByText(
       'Sélectionnez un résultat ci-dessous pour activer le calcul du score lié à cet indicateur.'
+    );
+    this.valeurReferenceManquanteLink = this.modal.getByTestId(
+      'referentiels.score-indicatif.valeur-reference-manquante-lien'
+    );
+  }
+
+  /** Message affiché quand le résultat de l'année de départ de `reduction(...)` manque */
+  getValeurReferenceManquanteMessage(annee: number) {
+    return this.modal.getByText(
+      `Il manque la valeur de l’année de référence (${annee})`
+    );
+  }
+
+  /** Message affiché quand l'objectif SNBC de l'année de départ de `progression_snbc(...)` manque */
+  getTrajectoireSnbcManquanteMessage(annee: number) {
+    return this.modal.getByText(
+      `La trajectoire SNBC n’est pas disponible pour l’année de référence (${annee})`
     );
   }
 

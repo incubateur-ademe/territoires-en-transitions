@@ -15,6 +15,14 @@ const SOUS_MESURE_AVEC_TACHES = '2.3.1.5';
 
 const SOURCE_COLLECTIVITE = 'Données de la collectivité';
 
+/** Sous-mesure TE notée par `reduction(cae_14.ac, 2025, 2040, 0.25)` */
+const SOUS_MESURE_REDUCTION = '2.2.1.3';
+const INDICATEUR_REDUCTION = 'cae_14.ac';
+
+/** Tâche TE notée par `progression_snbc(cae_1.a, 2015)` */
+const TACHE_PROGRESSION_SNBC = '1.1.6.3.b';
+const INDICATEUR_PROGRESSION_SNBC = 'cae_1.a';
+
 const TE_WRITE: CollectiviteReferentielPreferences = {
   cae: { display: true, mode: 'write' },
   eci: { display: false, mode: 'archived' },
@@ -252,6 +260,65 @@ test.describe('Indicateurs liés au score (référentiel CR)', () => {
       await expect(
         pom.getSourceSelectionneeMessage(SOURCE_COLLECTIVITE, 2024)
       ).toBeVisible();
+    });
+
+    test("sans résultat sur l'année de référence d'une réduction, un message renvoie vers l'indicateur et la liste est désactivée", async ({
+      page,
+      indicateurs,
+      referentielScoresPom,
+      indicateursLiesAuScorePom: pom,
+    }) => {
+      await indicateurs.addResultats(user, {
+        collectiviteId,
+        identifiantReferentiel: INDICATEUR_REDUCTION,
+        valeurs: [{ dateValeur: '2026-01-01', resultat: 80 }],
+      });
+
+      await referentielScoresPom.goto('te');
+      await referentielScoresPom.goToActionPage('2.2.1');
+      await pom.openModal(SOUS_MESURE_REDUCTION);
+
+      await expect(pom.getValeurReferenceManquanteMessage(2025)).toBeVisible();
+      await expect(pom.valeurReferenceManquanteLink).toHaveAttribute(
+        'href',
+        new RegExp(`/indicateurs/.*${INDICATEUR_REDUCTION}`)
+      );
+      await expect(pom.resultatsTable).toHaveCSS('pointer-events', 'none');
+
+      // une fois le résultat de l'année de référence saisi, le message
+      // disparaît et la liste redevient sélectionnable
+      await indicateurs.addResultats(user, {
+        collectiviteId,
+        identifiantReferentiel: INDICATEUR_REDUCTION,
+        valeurs: [{ dateValeur: '2025-01-01', resultat: 100 }],
+      });
+      await page.reload();
+      await pom.openModal(SOUS_MESURE_REDUCTION);
+
+      await expect(pom.resultatsTable).toBeVisible();
+      await expect(pom.getValeurReferenceManquanteMessage(2025)).toHaveCount(0);
+      await expect(pom.resultatsTable).toHaveCSS('pointer-events', 'auto');
+    });
+
+    test("sans trajectoire SNBC sur l'année de référence, un message l'indique et la liste est désactivée", async ({
+      indicateurs,
+      referentielScoresPom,
+      indicateursLiesAuScorePom: pom,
+    }) => {
+      await indicateurs.addResultats(user, {
+        collectiviteId,
+        identifiantReferentiel: INDICATEUR_PROGRESSION_SNBC,
+        valeurs: [{ dateValeur: '2022-01-01', resultat: 500 }],
+      });
+
+      await referentielScoresPom.goto('te');
+      await referentielScoresPom.goToActionPage('1.1.6');
+      await pom.openModal(TACHE_PROGRESSION_SNBC);
+
+      await expect(pom.getTrajectoireSnbcManquanteMessage(2015)).toBeVisible();
+      // la collectivité n'a rien à saisir : pas de lien
+      await expect(pom.valeurReferenceManquanteLink).toHaveCount(0);
+      await expect(pom.resultatsTable).toHaveCSS('pointer-events', 'none');
     });
 
     test("un résultat saisi dans l'onglet de la fiche indicateur est sélectionnable sans recharger la page", async ({
