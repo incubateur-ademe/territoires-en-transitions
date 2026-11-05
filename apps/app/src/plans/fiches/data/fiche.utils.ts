@@ -35,6 +35,7 @@ export const ficheResumeFactory = ({
     priorite: null,
     plans: null,
     statut: null,
+    jauge: 0,
     titre: '',
     restreint: false,
     services: [],

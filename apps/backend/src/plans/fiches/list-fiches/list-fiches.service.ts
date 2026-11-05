@@ -42,6 +42,7 @@ import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.tabl
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { historiqueFicheActionTable } from '@tet/backend/plans/fiches/shared/models/historique-fiche-action.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -1102,6 +1103,10 @@ export default class ListFichesService {
       );
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
+    const historiqueJauge = aliasedTable(
+      historiqueFicheActionTable,
+      'historique_jauge'
+    );
 
     const query = (tx || this.databaseService.db)
       .select({
@@ -1144,6 +1149,16 @@ export default class ListFichesService {
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
         actionImpactId: actionImpactActionTable.actionImpactId,
+        jaugeModifiedAt: sql<string | null>`(
+          select ${sqlToDateTimeISO(sql`max(${historiqueJauge.modifiedAt})`)}
+          from ${historiqueFicheActionTable} ${sql.identifier(
+          'historique_jauge'
+        )}
+          where ${historiqueJauge.ficheId} = ${ficheActionTable.id}
+            and ${historiqueJauge.jauge} <> coalesce(${
+          historiqueJauge.previousJauge
+        }, 0)
+        )`,
       })
       .from(ficheActionTable)
       .leftJoin(

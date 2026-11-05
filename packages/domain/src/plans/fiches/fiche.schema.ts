@@ -73,6 +73,7 @@ export const ficheSchema = z.object({
     .nullable()
     .describe('Budget prévisionnel total'),
   statut: z.enum(statutEnumValues).nullable().describe('Statut'),
+  jauge: z.number().int().describe('Avancement'),
   priorite: z.enum(prioriteEnumValues).nullable().describe('Priorité'),
   dateDebut: z.string().nullable().describe('Date de début'),
   dateFin: z.string().nullable().describe('Date de fin prévisionnelle'),
@@ -252,6 +253,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe(`Budgets de l'action`),
   actionImpactId: z.number().nullish(),
+  jaugeModifiedAt: z.string().nullish(),
   completion: completionSchema.describe('Données de completion de la fiche'),
 });
 
