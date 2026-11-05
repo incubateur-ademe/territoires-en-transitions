@@ -47,6 +47,7 @@ describe("Notification de clôture sur délai d'avis échu", () => {
   let demarcheId: number;
   let piloteId: string;
   let adminId: string;
+  let drealAgentId: string;
 
   beforeAll(async () => {
     sendEmail.mockResolvedValue({ success: true, data: { messageId: 'test' } });
@@ -94,6 +95,7 @@ describe("Notification de clôture sur délai d'avis échu", () => {
         nom: 'DREAL test délai échu',
       },
     });
+    drealAgentId = dreal.user.id;
 
     await completeTestDossierPcaet(db, {
       collectiviteId: deposante.collectiviteId,
@@ -138,7 +140,7 @@ describe("Notification de clôture sur délai d'avis échu", () => {
     };
   });
 
-  it('prévient les pilotes et administrateurs, en disant que le délai est échu', async () => {
+  it('prévient les pilotes et administrateurs, DREAL en copie, en disant que le délai est échu', async () => {
     const notifications = await db.db
       .select({
         sendTo: notificationTable.sendTo,
@@ -157,7 +159,7 @@ describe("Notification de clôture sur délai d'avis échu", () => {
       );
 
     expect(notifications.map((n) => n.sendTo).sort()).toEqual(
-      [piloteId, adminId].sort()
+      [piloteId, adminId, drealAgentId].sort()
     );
     for (const notification of notifications) {
       expect(notification.notificationData).toMatchObject({
@@ -169,7 +171,7 @@ describe("Notification de clôture sur délai d'avis échu", () => {
   });
 
   it('rend le message et le marque envoyé', async () => {
-    const mesDestinataires = [piloteId, adminId];
+    const mesDestinataires = [piloteId, adminId, drealAgentId];
     await db.db
       .update(notificationTable)
       .set({ sendAfter: DateTime.now().minus({ hours: 1 }).toUTC().toSQL() })
@@ -188,7 +190,9 @@ describe("Notification de clôture sur délai d'avis échu", () => {
 
     // `sent` prouve que le générateur a produit le message : sans générateur
     // enregistré, la notification resterait « pending » sans erreur ni log.
-    expect(apres).toHaveLength(2);
+    // La DREAL a aussi reçu la transmission : sa copie de clôture en est la
+    // seconde notification.
+    expect(apres).toHaveLength(4);
     for (const notification of apres) {
       expect(notification.status).toBe(NotificationStatusEnum.SENT);
       expect(notification.errorMessage).toBeNull();

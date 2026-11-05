@@ -7,7 +7,8 @@ import * as React from 'react';
 import { NotifyInstructionCloseProps } from './notify-instruction-close.props';
 
 /**
- * La clôture de l'instruction, annoncée à la collectivité.
+ * La clôture de l'instruction, annoncée à la collectivité, et en copie à la
+ * DREAL : les DREAL tiennent à s'assurer que la collectivité a été prévenue.
  *
  * Le message dit pourquoi : « tous les avis rendus » laisse des avis à traiter
  * dans le mémoire de réponse, « délai échu » veut dire que des services n'ont
@@ -17,7 +18,44 @@ import { NotifyInstructionCloseProps } from './notify-instruction-close.props';
 export const NotifyInstructionCloseEmail = (
   props: NotifyInstructionCloseProps
 ): React.ReactNode => {
-  const { demarcheTitre, motif, documentsUrl, sendToEmail } = props;
+  const { demarcheTitre, motif, copie, url, sendToEmail } = props;
+
+  if (copie) {
+    return (
+      <EmailContainer>
+        <Text>Bonjour,</Text>
+
+        {motif === DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS ? (
+          <Text>
+            L&apos;instruction du projet de PCAET <b>{demarcheTitre}</b> de{' '}
+            {copie.collectiviteNom} est close : tous les avis attendus ont été
+            rendus.
+          </Text>
+        ) : (
+          <Text>
+            Le délai réglementaire pour déposer des avis sur le projet de PCAET{' '}
+            <b>{demarcheTitre}</b> de {copie.collectiviteNom} est terminé. Un
+            avis qui n&apos;a pas été rendu est réputé favorable.
+          </Text>
+        )}
+
+        <Text>
+          La collectivité en a été informée : il lui revient maintenant de
+          déposer le mémoire de réponse et la délibération d&apos;adoption, puis
+          de publier sa démarche.
+        </Text>
+
+        <Section className="my-8 text-center">
+          <CTAButton href={url}>Consulter le dossier →</CTAButton>
+        </Section>
+
+        <Footer
+          toEmail={sendToEmail}
+          raison={`Vous recevez ce message car vous êtes membre de ${copie.destinataireServiceNom} sur Territoiresentransitions.fr`}
+        />
+      </EmailContainer>
+    );
+  }
 
   return (
     <EmailContainer>
@@ -45,7 +83,7 @@ export const NotifyInstructionCloseEmail = (
       </Text>
 
       <Section className="my-8 text-center">
-        <CTAButton href={documentsUrl}>Finaliser la démarche →</CTAButton>
+        <CTAButton href={url}>Finaliser la démarche →</CTAButton>
       </Section>
 
       <Footer
@@ -60,7 +98,8 @@ export const NotifyInstructionCloseEmail = (
 NotifyInstructionCloseEmail.PreviewProps = {
   demarcheTitre: 'PCAET 2024-2030',
   motif: DemarchePcaetTransitionEnum.DELAI_AVIS_ECHU,
-  documentsUrl: 'https://app.territoiresentransitions.fr',
+  copie: null,
+  url: 'https://app.territoiresentransitions.fr',
   sendToEmail: 'pilote@collectivite.fr',
 };
 

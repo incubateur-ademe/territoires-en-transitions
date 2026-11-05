@@ -9,5 +9,16 @@ export interface NotifyAvisRecuProps extends NotificationTemplate {
    * avis dont le titre n'est pas renseigné.
    */
   auTitreDe: string | null;
-  documentsUrl: string;
+  /**
+   * Renseigné quand le destinataire est un service en copie — la DREAL, la
+   * DGEC — et non la collectivité : le message parle alors du projet *de* la
+   * collectivité, et mène au dossier d'instruction du service.
+   */
+  copie: {
+    collectiviteNom: string;
+    /** Le service dont le destinataire est membre. */
+    destinataireServiceNom: string;
+  } | null;
+  /** Les documents de la démarche, ou le dossier d'instruction en copie. */
+  url: string;
 }

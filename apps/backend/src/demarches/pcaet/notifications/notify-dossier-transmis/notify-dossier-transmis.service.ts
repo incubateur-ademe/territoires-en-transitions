@@ -13,6 +13,7 @@ import { render } from '@react-email/components';
 import {
   computeAvisEcheanceReglementaire,
   estInstructeurNational,
+  isDgec,
   peutDeposerAvisInstructeur,
   peutDeposerAvisSaisine,
   type DemarchePcaet,
@@ -84,7 +85,8 @@ export class NotifyDossierTransmisService {
    * transmission acquise.
    *
    * Les services nationaux sont écartés : ils voient passer tous les dossiers du
-   * pays, les notifier noierait leur boîte.
+   * pays, les notifier noierait leur boîte. Sauf la DGEC, qui a demandé à être
+   * en copie de chaque transmission.
    */
   async creerNotifications(
     {
@@ -94,7 +96,7 @@ export class NotifyDossierTransmisService {
     tx?: Transaction
   ): Promise<ServiceSansCompte[]> {
     const aNotifier = demandes.filter(
-      (demande) => !estInstructeurNational(demande.type)
+      (demande) => !estInstructeurNational(demande.type) || isDgec(demande)
     );
     if (aNotifier.length === 0) {
       return [];

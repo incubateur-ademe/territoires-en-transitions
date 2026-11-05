@@ -80,8 +80,8 @@ describe('Contenu des emails de démarches PCAET', () => {
       subject: "Consultez l'avis rendu sur votre projet de PCAET",
       demarcheTitre: 'PCAET 2024-2030',
       serviceNom: 'DREAL Bretagne',
-      documentsUrl:
-        'https://app.test/collectivite/1/demarche-pcaet/2/documents',
+      copie: null,
+      url: 'https://app.test/collectivite/1/demarche-pcaet/2/documents',
     };
 
     it("nomme l'émetteur et le titre au nom duquel il se prononce", async () => {
@@ -95,7 +95,8 @@ describe('Contenu des emails de démarches PCAET', () => {
       expect(html).toContain('a rendu son avis');
       expect(html).toContain('au titre de préfet de région');
       expect(html).toContain('PCAET 2024-2030');
-      expect(html).toContain(props.documentsUrl);
+      expect(html).toContain('votre');
+      expect(html).toContain(props.url);
     });
 
     it('se passe du titre quand il manque', async () => {
@@ -106,6 +107,29 @@ describe('Contenu des emails de démarches PCAET', () => {
       expect(html).toContain('a rendu son avis');
       expect(html).not.toContain('au titre de');
     });
+
+    it('parle du projet de la collectivité au service en copie', async () => {
+      const html = await render(
+        NotifyAvisRecuEmail({
+          ...props,
+          sendToEmail: 'agent@dgec.gouv.fr',
+          serviceNom: 'Région Bretagne',
+          auTitreDe: 'Président du conseil régional',
+          copie: {
+            collectiviteNom: 'Redon Agglomération',
+            destinataireServiceNom: 'DGEC',
+          },
+          url: 'https://app.test/collectivite/1/instruction/7',
+        })
+      );
+
+      expect(html).toContain('sur le projet de PCAET');
+      expect(html).toContain('Redon Agglomération');
+      expect(html).toContain('Consulter le dossier');
+      expect(html).toContain('vous êtes membre de DGEC');
+      expect(html).toContain('https://app.test/collectivite/1/instruction/7');
+      expect(html).not.toContain('votre');
+    });
   });
 
   describe('instruction close', () => {
@@ -113,8 +137,8 @@ describe('Contenu des emails de démarches PCAET', () => {
       sendToEmail: 'pilote@collectivite.fr',
       subject: 'Finalisez votre dépôt de PCAET',
       demarcheTitre: 'PCAET 2024-2030',
-      documentsUrl:
-        'https://app.test/collectivite/1/demarche-pcaet/2/documents',
+      copie: null,
+      url: 'https://app.test/collectivite/1/demarche-pcaet/2/documents',
     };
 
     it('dit que tous les avis ont été rendus', async () => {
@@ -130,7 +154,7 @@ describe('Contenu des emails de démarches PCAET', () => {
       expect(html).not.toContain('réputé favorable');
       // Neutre à dessein : sur un délai échu, il peut n'y avoir aucun avis.
       expect(html).not.toContain('consultez les avis');
-      expect(html).toContain(props.documentsUrl);
+      expect(html).toContain(props.url);
     });
 
     it('dit que le délai est échu et le projet réputé favorable', async () => {
@@ -145,6 +169,48 @@ describe('Contenu des emails de démarches PCAET', () => {
       expect(html).toContain('est réputé favorable');
       expect(html).toContain('publiez votre démarche');
       expect(html).not.toContain('tous les avis attendus ont été rendus');
+    });
+
+    describe('en copie à la DREAL', () => {
+      const copie = {
+        ...props,
+        sendToEmail: 'agent@dreal.gouv.fr',
+        copie: {
+          collectiviteNom: 'Redon Agglomération',
+          destinataireServiceNom: 'DREAL Bretagne',
+        },
+        url: 'https://app.test/collectivite/1/instruction/7',
+      };
+
+      it('dit que la collectivité a été prévenue, sans lui donner d’ordre', async () => {
+        const html = await render(
+          NotifyInstructionCloseEmail({
+            ...copie,
+            motif: DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS,
+          })
+        );
+
+        expect(html).toContain('tous les avis attendus ont été rendus');
+        expect(html).toContain('Redon Agglomération');
+        expect(html).toContain('La collectivité en a été informée');
+        expect(html).toContain('Consulter le dossier');
+        expect(html).toContain('vous êtes membre de DREAL Bretagne');
+        expect(html).toContain(copie.url);
+        expect(html).not.toContain('votre');
+      });
+
+      it('dit que le délai est échu', async () => {
+        const html = await render(
+          NotifyInstructionCloseEmail({
+            ...copie,
+            motif: DemarchePcaetTransitionEnum.DELAI_AVIS_ECHU,
+          })
+        );
+
+        expect(html).toContain('est terminé');
+        expect(html).toContain('réputé favorable');
+        expect(html).not.toContain('votre');
+      });
     });
   });
 });

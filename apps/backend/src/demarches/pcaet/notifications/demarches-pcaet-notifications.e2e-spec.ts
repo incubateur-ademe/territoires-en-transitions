@@ -6,6 +6,7 @@ import {
   addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import {
   getAuthUserFromUserCredentials,
@@ -21,7 +22,11 @@ import { notificationTable } from '@tet/backend/utils/notifications/models/notif
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
-import { DemarchePcaetTransitionEnum } from '@tet/domain/demarches';
+import {
+  DGEC_SIREN,
+  DemarchePcaetTransitionEnum,
+  PcaetAvisAuTitreDeEnum,
+} from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import {
   NotificationStatusEnum,
@@ -45,6 +50,10 @@ import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table
  * Les trois évènements s'enchaînent sur un même dossier plutôt que d'être
  * isolés : c'est ainsi qu'ils se produisent, et c'est le seul moyen de vérifier
  * qu'ils ne se marchent pas dessus.
+ *
+ * Le conseil régional se prononce le premier, la DREAL ensuite : son avis clôt
+ * l'instruction. L'ordre permet de voir la DREAL en copie de l'avis d'un autre,
+ * puis écartée de la copie du sien.
  */
 describe('Notifications des démarches PCAET', () => {
   let app: INestApplication;
@@ -56,13 +65,21 @@ describe('Notifications des démarches PCAET', () => {
   let demarcheId: number;
   let deposanteId: number;
   let drealId: number;
+  let regionId: number;
   let nationalId: number;
   let demandeDrealId: number;
+  let demandeRegionId: number;
   let demandeNationaleId: number;
-  let avisId: string;
+  let demandeDgecId: number;
+  let avisDrealId: string;
+  let avisRegionId: string;
   let piloteId: string;
   let deposanteAdminId: string;
+  let dgecMembreId: string;
+  let membresDrealIds: string[];
+  let regionAdminId: string;
   let drealCaller: ReturnType<TrpcRouter['createCaller']>;
+  let regionCaller: ReturnType<TrpcRouter['createCaller']>;
   const cleanups: Array<() => Promise<void>> = [];
   let ddtNom: string;
 
@@ -150,16 +167,54 @@ describe('Notifications des démarches PCAET', () => {
     });
     cleanups.push(lecteurCleanup);
 
-    // Le service national, saisi lui aussi mais qui ne doit rien recevoir.
+    // Le conseil régional, saisi pour l'avis du président de région.
+    const region = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        type: collectiviteTypeEnum.REGION,
+        regionCode,
+        nom: 'Région test notifications',
+      },
+    });
+    regionId = region.collectivite.id;
+    regionAdminId = region.user.id;
+    cleanups.push(region.cleanup);
+    regionCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(region.user),
+    });
+
+    // Un service national autre que la DGEC, saisi lui aussi mais qui ne doit
+    // rien recevoir.
     const national = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
       collectivite: {
         type: collectiviteTypeEnum.SERVICE_NATIONAL,
-        nom: 'DGEC test notifications',
+        nom: 'Service national test notifications',
       },
     });
     nationalId = national.collectivite.id;
     cleanups.push(national.cleanup);
+
+    // La DGEC est un singleton du seed : on y ajoute un agent à soi.
+    const [dgec] = await db.db
+      .select({ id: collectiviteTable.id })
+      .from(collectiviteTable)
+      .where(
+        and(
+          eq(collectiviteTable.type, collectiviteTypeEnum.SERVICE_NATIONAL),
+          eq(collectiviteTable.siren, DGEC_SIREN)
+        )
+      )
+      .limit(1);
+    if (!dgec) {
+      throw new Error('DGEC absente du seed');
+    }
+    const { user: dgecMembre, cleanup: dgecMembreCleanup } = await addTestUser(
+      db,
+      { collectiviteId: dgec.id, role: CollectiviteRole.LECTURE }
+    );
+    cleanups.push(dgecMembreCleanup);
+    dgecMembreId = dgecMembre.id;
 
     // Une DDT saisie dont aucun agent n'a de compte : personne à notifier, donc
     // le support doit l'apprendre.
@@ -201,19 +256,42 @@ describe('Notifications des démarches PCAET', () => {
       return demande.id;
     };
     demandeDrealId = demandeDe(drealId);
+    demandeRegionId = demandeDe(regionId);
     demandeNationaleId = demandeDe(nationalId);
+    demandeDgecId = demandeDe(dgec.id);
 
-    const [avis] = await db.db
+    const membresDreal = await db.db
+      .select({ userId: utilisateurCollectiviteAccessTable.userId })
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, drealId),
+          eq(utilisateurCollectiviteAccessTable.isActive, true)
+        )
+      );
+    membresDrealIds = membresDreal.map(({ userId }) => userId);
+
+    const [avisDreal, avisRegion] = await db.db
       .insert(pcaetAvisTable)
-      .values({
-        demandeAvisId: demandeDrealId,
-        emetteurCollectiviteId: drealId,
-        auTitreDe: 'prefet_region',
-        fichierRefs: [buildRandomDocumentHash()],
-        deposePar: dreal.user.id,
-      })
+      .values([
+        {
+          demandeAvisId: demandeDrealId,
+          emetteurCollectiviteId: drealId,
+          auTitreDe: PcaetAvisAuTitreDeEnum.PREFET_REGION,
+          fichierRefs: [buildRandomDocumentHash()],
+          deposePar: dreal.user.id,
+        },
+        {
+          demandeAvisId: demandeRegionId,
+          emetteurCollectiviteId: regionId,
+          auTitreDe: PcaetAvisAuTitreDeEnum.PRESIDENT_REGION,
+          fichierRefs: [buildRandomDocumentHash()],
+          deposePar: region.user.id,
+        },
+      ])
       .returning({ id: pcaetAvisTable.id });
-    avisId = avis.id;
+    avisDrealId = avisDreal.id;
+    avisRegionId = avisRegion.id;
 
     return async () => {
       // Rendre le code de région : l'index unique par DREAL le refuserait au
@@ -235,21 +313,21 @@ describe('Notifications des démarches PCAET', () => {
         String(demandeDrealId)
       );
 
-      const membres = await db.db
-        .select({ userId: utilisateurCollectiviteAccessTable.userId })
-        .from(utilisateurCollectiviteAccessTable)
-        .where(
-          and(
-            eq(utilisateurCollectiviteAccessTable.collectiviteId, drealId),
-            eq(utilisateurCollectiviteAccessTable.isActive, true)
-          )
-        );
-
       // L'administrateur et le lecteur : la notification ne suit pas le rôle.
-      expect(membres).toHaveLength(2);
+      expect(membresDrealIds).toHaveLength(2);
       expect(notifications.map((n) => n.sendTo).sort()).toEqual(
-        membres.map((m) => m.userId).sort()
+        [...membresDrealIds].sort()
       );
+    });
+
+    it('écrit à la DGEC, seul service national en copie des transmissions', async () => {
+      const notifications = await notificationsPour(
+        NotifiedOnEnum['DEMARCHES.PCAET.DOSSIER_TRANSMIS_POUR_AVIS'],
+        String(demandeDgecId)
+      );
+
+      // Le seed peut lui donner d'autres agents : on cherche le nôtre.
+      expect(notifications.map((n) => n.sendTo)).toContain(dgecMembreId);
     });
 
     it("prévient le support des services saisis que personne n'habite", async () => {
@@ -263,7 +341,7 @@ describe('Notifications des démarches PCAET', () => {
       expect(auSupport[0][0].subject).toContain('sans compte');
     });
 
-    it("n'écrit pas aux services nationaux, qui voient tous les dossiers du pays", async () => {
+    it("n'écrit pas aux autres services nationaux, qui voient tous les dossiers du pays", async () => {
       // Le service est bien saisi : c'est la notification qu'on lui épargne.
       expect(demandeNationaleId).toBeDefined();
       await expect(
@@ -277,76 +355,151 @@ describe('Notifications des démarches PCAET', () => {
 
   describe("à la validation d'un avis", () => {
     beforeAll(async () => {
+      await regionCaller.demarches.pcaet.validerAvis({
+        demandeAvisId: demandeRegionId,
+        avisId: avisRegionId,
+      });
       await drealCaller.demarches.pcaet.validerAvis({
         demandeAvisId: demandeDrealId,
-        avisId,
+        avisId: avisDrealId,
       });
     });
+
+    const copiesDe = (
+      notifications: Awaited<ReturnType<typeof notificationsPour>>
+    ) =>
+      notifications.filter(
+        (n) =>
+          (n.notificationData as { copieDemandeAvisId?: number })
+            .copieDemandeAvisId !== undefined
+      );
 
     it('prévient les pilotes et les administrateurs de la déposante', async () => {
       const notifications = await notificationsPour(
         NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
-        avisId
+        avisRegionId
       );
+      const copies = copiesDe(notifications);
 
-      expect(notifications.map((n) => n.sendTo).sort()).toEqual(
-        [piloteId, deposanteAdminId].sort()
+      expect(
+        notifications
+          .filter((n) => !copies.includes(n))
+          .map((n) => n.sendTo)
+          .sort()
+      ).toEqual([piloteId, deposanteAdminId].sort());
+    });
+
+    it('met la DREAL et la DGEC en copie, chacune vers son dossier', async () => {
+      const copies = copiesDe(
+        await notificationsPour(
+          NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
+          avisRegionId
+        )
       );
+      const copieDe = (userId: string) =>
+        copies.find((n) => n.sendTo === userId)?.notificationData;
+
+      for (const membreId of membresDrealIds) {
+        expect(copieDe(membreId)).toMatchObject({
+          copieDemandeAvisId: demandeDrealId,
+        });
+      }
+      expect(copieDe(dgecMembreId)).toMatchObject({
+        copieDemandeAvisId: demandeDgecId,
+      });
+      // Ni le conseil régional qui s'est prononcé, ni les autres services.
+      expect(copieDe(regionAdminId)).toBeUndefined();
+    });
+
+    it("n'écrit pas en copie au service qui vient de se prononcer", async () => {
+      const destinataires = copiesDe(
+        await notificationsPour(
+          NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
+          avisDrealId
+        )
+      ).map((n) => n.sendTo);
+
+      expect(destinataires).toContain(dgecMembreId);
+      for (const membreId of membresDrealIds) {
+        expect(destinataires).not.toContain(membreId);
+      }
     });
 
     it('ne peut pas être rejouée, donc ne renotifie pas', async () => {
-      // Le premier avis validé a clos l'instruction : la fenêtre d'avis est
-      // fermée et le dépôt refusé. La garde `valideLe === null` n'a même pas à
-      // jouer — mais si elle sautait, ce test le verrait au décompte.
+      const avant = await notificationsPour(
+        NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
+        avisDrealId
+      );
+
+      // L'avis de la DREAL a clos l'instruction : la fenêtre d'avis est fermée
+      // et le dépôt refusé. La garde `valideLe === null` n'a même pas à jouer —
+      // mais si elle sautait, ce test le verrait au décompte.
       await expect(
         drealCaller.demarches.pcaet.validerAvis({
           demandeAvisId: demandeDrealId,
-          avisId,
+          avisId: avisDrealId,
         })
       ).rejects.toThrow();
 
-      const notifications = await notificationsPour(
-        NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
-        avisId
-      );
-      expect(notifications).toHaveLength(2);
+      await expect(
+        notificationsPour(
+          NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
+          avisDrealId
+        )
+      ).resolves.toHaveLength(avant.length);
     });
   });
 
   describe("à la clôture de l'instruction", () => {
-    it('annonce le dossier instruit, en disant pourquoi', async () => {
-      // La DREAL était le seul service attendu : son avis validé a clos
+    it('annonce le dossier instruit, en disant pourquoi, avec la DREAL en copie', async () => {
+      // La DREAL était le dernier service attendu : son avis validé a clos
       // l'instruction dans la foulée.
       const notifications = await notificationsPour(
         NotifiedOnEnum['DEMARCHES.PCAET.INSTRUCTION_CLOSE'],
         String(demarcheId)
       );
 
-      expect(notifications.map((n) => n.sendTo).sort()).toEqual(
-        [piloteId, deposanteAdminId].sort()
+      expect(
+        notifications
+          .map((n) => ({
+            sendTo: n.sendTo,
+            copieDemandeAvisId: (
+              n.notificationData as { copieDemandeAvisId?: number }
+            ).copieDemandeAvisId,
+          }))
+          .sort((a, b) => a.sendTo.localeCompare(b.sendTo))
+      ).toEqual(
+        [
+          { sendTo: piloteId, copieDemandeAvisId: undefined },
+          { sendTo: deposanteAdminId, copieDemandeAvisId: undefined },
+          ...membresDrealIds.map((sendTo) => ({
+            sendTo,
+            copieDemandeAvisId: demandeDrealId,
+          })),
+        ].sort((a, b) => a.sendTo.localeCompare(b.sendTo))
       );
-      expect(notifications[0].notificationData).toMatchObject({
-        motif: DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS,
-      });
+      for (const notification of notifications) {
+        expect(notification.notificationData).toMatchObject({
+          motif: DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS,
+        });
+      }
     });
   });
 
   describe("à l'envoi", () => {
-    it('marque les six notifications envoyées', async () => {
+    it('marque envoyées toutes les notifications, copies comprises', async () => {
       // `sent` est la preuve que les générateurs sont enregistrés : sans eux,
       // `sendNotification` sort sans rien faire et la notification resterait
       // « pending » indéfiniment, sans erreur ni log.
       // Restreint à MES destinataires, et non aux `entityId` : ceux-ci sont des
       // entiers qu'un autre spec tournant en parallèle porte aussi, et on
       // enverrait alors ses notifications avant de les asserter.
-      const membresDreal = await db.db
-        .select({ userId: utilisateurCollectiviteAccessTable.userId })
-        .from(utilisateurCollectiviteAccessTable)
-        .where(eq(utilisateurCollectiviteAccessTable.collectiviteId, drealId));
       const mesDestinataires = [
         piloteId,
         deposanteAdminId,
-        ...membresDreal.map(({ userId }) => userId),
+        regionAdminId,
+        dgecMembreId,
+        ...membresDrealIds,
       ];
 
       await db.db
@@ -366,9 +519,12 @@ describe('Notifications des démarches PCAET', () => {
         .from(notificationTable)
         .where(inArray(notificationTable.sendTo, mesDestinataires));
 
-      // Deux agents DREAL prévenus de la transmission, puis le pilote et
-      // l'administrateur pour l'avis rendu comme pour la clôture.
-      expect(miennes).toHaveLength(6);
+      // Transmission : les deux agents DREAL, l'agent du conseil régional et
+      // celui de la DGEC (4). Avis du conseil régional : pilote et
+      // administrateur, copies aux deux agents DREAL et à la DGEC (5). Avis de
+      // la DREAL : pilote, administrateur, copie à la DGEC (3). Clôture :
+      // pilote, administrateur, copies aux deux agents DREAL (4).
+      expect(miennes).toHaveLength(16);
       for (const notification of miennes) {
         expect(notification.status).toBe(NotificationStatusEnum.SENT);
         expect(notification.sentToEmail).toBeTruthy();
