@@ -30,7 +30,6 @@ export const exportIndicateursRequestSchema = z
       mode: z.literal('all'),
       collectiviteId: z.int().describe('Identifiant de la collectivité'),
       filters: listDefinitionsInputFiltersSchema
-        .optional()
         .prefault({})
         .describe('Filtres de la liste des indicateurs'),
       sort: exportIndicateursSortSchema

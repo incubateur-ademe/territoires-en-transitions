@@ -46,8 +46,8 @@ const listDefinitionsInputQueryOptionsSchema = getPaginationSchema(
 
 export const listDefinitionsInputSchema = z.object({
   collectiviteId: z.number().optional(),
-  filters: listDefinitionsInputFiltersSchema.optional().prefault({}),
-  queryOptions: listDefinitionsInputQueryOptionsSchema.optional().prefault({
+  filters: listDefinitionsInputFiltersSchema.prefault({}),
+  queryOptions: listDefinitionsInputQueryOptionsSchema.prefault({
     page: PAGE_DEFAULT,
     limit: 50,
   }),
