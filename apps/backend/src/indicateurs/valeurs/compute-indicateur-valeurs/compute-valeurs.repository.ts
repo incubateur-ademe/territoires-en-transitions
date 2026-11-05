@@ -210,7 +210,22 @@ export class ComputeValeursRepository {
           indicateurSourceMetadonneeTable.id
         )
       )
-      .where(or(...conditions));
+      .where(
+        and(
+          // Implied by every branch below. Without it PostgreSQL cannot use an
+          // index through the OR, whose branches mix joined columns, and scans
+          // the whole table for each batch of conditions.
+          inArray(indicateurValeurTable.collectiviteId, [
+            ...new Set(queries.map(({ collectiviteId }) => collectiviteId)),
+          ]),
+          inArray(indicateurValeurTable.dateValeur, [
+            ...new Set(
+              queries.map(({ periode }) => IndicateurPeriodes.toDateValeur(periode))
+            ),
+          ]),
+          or(...conditions)
+        )
+      );
 
     return rows.map((valeur) => {
       if (!valeur.indicateurIdentifiant || !valeur.periodicite) {
