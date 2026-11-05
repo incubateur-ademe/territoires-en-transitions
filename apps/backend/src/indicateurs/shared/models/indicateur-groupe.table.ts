@@ -1,5 +1,11 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import {
+  check,
+  integer,
+  pgTable,
+  primaryKey,
+  unique,
+} from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
 
 export const indicateurGroupeTable = pgTable(
@@ -16,7 +22,14 @@ export const indicateurGroupeTable = pgTable(
       })
       .notNull(),
   },
-  (table) => [primaryKey({ columns: [table.parent, table.enfant] })]
+  (table) => [
+    primaryKey({ columns: [table.parent, table.enfant] }),
+    unique('indicateur_groupe_enfant_unique').on(table.enfant),
+    check(
+      'indicateur_groupe_parent_distinct_enfant',
+      sql`${table.parent} <> ${table.enfant}`
+    ),
+  ]
 );
 
 export type IndicateurGroupe = InferSelectModel<typeof indicateurGroupeTable>;

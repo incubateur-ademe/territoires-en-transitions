@@ -1150,3 +1150,4 @@ labellisation/action_critere_formulations_exigence [labellisation/prerequis] 202
 indicateur/periodicite-nettoyage [indicateur/periodicite_activation] 2026-11-02T09:00:00Z Emilien Escalle <emilien.escalle@escemi.com> # Retire definitivement les colonnes inutilisees et l archive temporaire de reparation
 @v5.0.0 2026-11-02T09:00:01Z Emilien Escalle <emilien.escalle@escemi.com> # Nouvelle limite de retour arriere CI apres le nettoyage definitif des periodicites
 indicateur/definition_nature_check 2026-11-03T14:24:08Z Gaël Servaud <servauga@gmail.com> # La base refuse un indicateur ni perso ni predefini : une collectivite sans identifiant referentiel ni groupement, ou un identifiant referentiel sans collectivite
+indicateur/groupe_integrite 2026-11-05T10:38:00Z Gaël Servaud <servauga@gmail.com> # Un sous-indicateur n a qu un parent et reste dans la collectivite de son parent
