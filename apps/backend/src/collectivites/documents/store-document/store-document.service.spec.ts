@@ -24,7 +24,8 @@ function buildServiceWithBucket(
     { saveInStorage } as never,
     {} as never,
     collectiviteBucketRepository as never,
-    {} as never
+    {} as never,
+    { enqueue: vi.fn() } as never
   );
 
   return { service, saveInStorage };

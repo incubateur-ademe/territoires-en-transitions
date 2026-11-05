@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BibliothequeFichierRepository } from '@tet/backend/collectivites/documents/bibliotheque-fichier.repository';
 import { CollectiviteBucketRepository } from '@tet/backend/collectivites/documents/collectivite-bucket.repository';
+import { IsFichierInfectedService } from '@tet/backend/collectivites/documents/scan-fichiers/is-fichier-infected.service';
 import { StorageObjectRepository } from '@tet/backend/collectivites/documents/storage-object.repository';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -24,7 +25,8 @@ export class CreateUploadTokenService {
     private readonly bibliothequeFichierRepository: BibliothequeFichierRepository,
     private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
     private readonly documentStorageService: DocumentStorageService,
-    private readonly storageObjectRepository: StorageObjectRepository
+    private readonly storageObjectRepository: StorageObjectRepository,
+    private readonly isFichierInfected: IsFichierInfectedService
   ) {}
 
   async createUploadToken(
@@ -48,6 +50,15 @@ export class CreateUploadTokenService {
     );
     if (bucketId === undefined) {
       return failure(CreateUploadTokenErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND);
+    }
+
+    // Avant la bibliothèque : rattacher une ligne existante redonnerait accès
+    // à un fichier supprimé.
+    if (await this.isFichierInfected.isInfected(hash)) {
+      this.logger.warn(
+        `Dépôt refusé pour la collectivité ${collectiviteId} : le contenu ${hash} est infecté`
+      );
+      return failure(CreateUploadTokenErrorEnum.FICHIER_INFECTE);
     }
 
     const fichier = await this.bibliothequeFichierRepository.findByHash(

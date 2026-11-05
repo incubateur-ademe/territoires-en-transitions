@@ -33,12 +33,14 @@ function buildService({
   documentExists = true,
   hasBucket = true,
   signatureFails = false,
+  isInfected = false,
 }: {
   access?: DocumentsAccess;
   document?: DocumentToDownload;
   documentExists?: boolean;
   hasBucket?: boolean;
   signatureFails?: boolean;
+  isInfected?: boolean;
 } = {}): ServiceUnderTest {
   const accessResult =
     access === 'unauthorized'
@@ -71,11 +73,16 @@ function buildService({
       ),
   };
 
+  const isFichierInfected = {
+    isInfected: vi.fn().mockResolvedValue(isInfected),
+  };
+
   const service = new GetDownloadUrlService(
     collectiviteDocumentsAccess as never,
     repository as never,
     collectiviteBucket as never,
-    documentStorage as never
+    documentStorage as never,
+    isFichierInfected as never
   );
 
   return { service, collectiviteDocumentsAccess, repository, documentStorage };
@@ -179,6 +186,18 @@ describe('GetDownloadUrlService', () => {
       success: false,
       error: 'COLLECTIVITE_BUCKET_NOT_FOUND',
     });
+    expect(documentStorage.createSignedDownloadUrl).not.toHaveBeenCalled();
+  });
+
+  it('rend FICHIER_INFECTE sans signer quand le contenu a ete juge infecte', async () => {
+    const { service, documentStorage } = buildService({ isInfected: true });
+
+    const result = await service.getDownloadUrl(
+      { collectiviteId: 1, fichierId: FICHIER_ID },
+      { user }
+    );
+
+    expect(result).toEqual({ success: false, error: 'FICHIER_INFECTE' });
     expect(documentStorage.createSignedDownloadUrl).not.toHaveBeenCalled();
   });
 

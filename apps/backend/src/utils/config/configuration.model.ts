@@ -194,6 +194,12 @@ export const backendConfigurationSchema = z
       .describe(
         'Objets analysés par balayage antivirus ; à relever le temps de résorber le stock existant'
       ),
+    FICHIER_SCAN_MODE: z
+      .enum(['audit', 'enforce'])
+      .prefault('audit')
+      .describe(
+        "audit : verdicts consignés, rien n'est supprimé. enforce : un fichier infecté est supprimé, ses administrateurs prévenus, son dépôt refusé"
+      ),
     TRAJECTOIRE_SNBC_SHEET_ID: z
       .string()
       .min(1)

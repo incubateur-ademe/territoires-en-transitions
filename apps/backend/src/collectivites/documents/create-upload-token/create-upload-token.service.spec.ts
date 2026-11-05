@@ -32,6 +32,7 @@ function buildService({
   hasBucket = true,
   fichier,
   hasStorageObject = false,
+  isInfected = false,
   signedUploadResult = success({
     token: 'jeton-signe',
     path: HASH,
@@ -41,6 +42,7 @@ function buildService({
   hasBucket?: boolean;
   fichier?: Pick<BibliothequeFichier, 'id' | 'filename'>;
   hasStorageObject?: boolean;
+  isInfected?: boolean;
   signedUploadResult?: SignedUploadResult;
 } = {}): ServiceUnderTest {
   const permissions = {
@@ -71,12 +73,17 @@ function buildService({
     existsInBucket: vi.fn().mockResolvedValue(hasStorageObject),
   };
 
+  const isFichierInfected = {
+    isInfected: vi.fn().mockResolvedValue(isInfected),
+  };
+
   const service = new CreateUploadTokenService(
     permissions as never,
     bibliothequeFichierRepository as never,
     collectiviteBucket as never,
     documentStorage as never,
-    storageObjectRepository as never
+    storageObjectRepository as never,
+    isFichierInfected as never
   );
 
   return { service, documentStorage, storageObjectRepository };
@@ -132,6 +139,21 @@ describe('CreateUploadTokenService', () => {
         filename: 'rapport.pdf',
       },
     });
+    expect(documentStorage.createSignedUpload).not.toHaveBeenCalled();
+  });
+
+  it('refuse un contenu juge infecte, meme deja en bibliotheque, sans signer', async () => {
+    const { service, documentStorage } = buildService({
+      isInfected: true,
+      fichier: { id: 42, filename: 'rapport.pdf' },
+    });
+
+    const result = await service.createUploadToken(
+      { collectiviteId: 1, hash: HASH },
+      { user }
+    );
+
+    expect(result).toEqual({ success: false, error: 'FICHIER_INFECTE' });
     expect(documentStorage.createSignedUpload).not.toHaveBeenCalled();
   });
 

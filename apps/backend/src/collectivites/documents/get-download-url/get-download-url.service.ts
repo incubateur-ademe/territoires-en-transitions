@@ -4,6 +4,7 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { CollectiviteBucketRepository } from '../collectivite-bucket.repository';
 import { CollectiviteDocumentsAccessService } from '../collectivite-documents-access.service';
+import { IsFichierInfectedService } from '../scan-fichiers/is-fichier-infected.service';
 import {
   GetDownloadUrlError,
   GetDownloadUrlErrorEnum,
@@ -20,7 +21,8 @@ export class GetDownloadUrlService {
     private readonly collectiviteDocumentsAccess: CollectiviteDocumentsAccessService,
     private readonly repository: GetDownloadUrlRepository,
     private readonly collectiviteBucketRepository: CollectiviteBucketRepository,
-    private readonly documentStorageService: DocumentStorageService
+    private readonly documentStorageService: DocumentStorageService,
+    private readonly isFichierInfected: IsFichierInfectedService
   ) {}
 
   async getDownloadUrl(
@@ -49,6 +51,10 @@ export class GetDownloadUrlService {
       document.confidentiel === true && !canReadConfidentiel;
     if (isDocumentOutOfReach) {
       return failure(GetDownloadUrlErrorEnum.DOCUMENT_NOT_FOUND);
+    }
+
+    if (await this.isFichierInfected.isInfected(document.hash)) {
+      return failure(GetDownloadUrlErrorEnum.FICHIER_INFECTE);
     }
 
     const bucketId = await this.collectiviteBucketRepository.findBucketId(

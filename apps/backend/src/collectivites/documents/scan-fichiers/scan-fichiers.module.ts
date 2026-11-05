@@ -1,7 +1,11 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { AntivirusScanner } from './antivirus-scanner';
 import { ClamdTcpScanner } from './clamd-tcp.scanner';
+import { EnqueueScanFichierService } from './enqueue-scan-fichier.service';
+import { IsFichierInfectedService } from './is-fichier-infected.service';
+import { NotifyFichierInfecteService } from './notify-fichier-infecte/notify-fichier-infecte.service';
 import {
   SCAN_FICHIERS_JOB_OPTIONS,
   SCAN_FICHIERS_QUEUE_NAME,
@@ -17,6 +21,7 @@ import { ScanFichiersWorker } from './scan-fichiers.worker';
       name: SCAN_FICHIERS_QUEUE_NAME,
       defaultJobOptions: SCAN_FICHIERS_JOB_OPTIONS,
     }),
+    NotificationsModule,
   ],
   providers: [
     { provide: AntivirusScanner, useClass: ClamdTcpScanner },
@@ -24,7 +29,15 @@ import { ScanFichiersWorker } from './scan-fichiers.worker';
     ScanFichiersService,
     ScanFichiersWorker,
     ScanFichiersRouter,
+    NotifyFichierInfecteService,
+    EnqueueScanFichierService,
+    IsFichierInfectedService,
   ],
-  exports: [ScanFichiersRouter, ScanFichiersService],
+  exports: [
+    ScanFichiersRouter,
+    ScanFichiersService,
+    EnqueueScanFichierService,
+    IsFichierInfectedService,
+  ],
 })
 export class ScanFichiersModule {}

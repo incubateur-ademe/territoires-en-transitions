@@ -6,6 +6,7 @@ import {
 export const CreateUploadTokenSpecificErrors = [
   'COLLECTIVITE_BUCKET_NOT_FOUND',
   'SIGN_UPLOAD_ERROR',
+  'FICHIER_INFECTE',
 ] as const;
 
 type CreateUploadTokenSpecificError =
@@ -22,6 +23,11 @@ export const createUploadTokenErrorConfig: TrpcErrorHandlerConfig<CreateUploadTo
         code: 'INTERNAL_SERVER_ERROR',
         message:
           'Une erreur est survenue lors de la préparation du dépôt du fichier',
+      },
+      FICHIER_INFECTE: {
+        code: 'BAD_REQUEST',
+        message:
+          'Ce fichier contient une menace détectée par notre antivirus : il ne peut pas être déposé',
       },
     },
   };
