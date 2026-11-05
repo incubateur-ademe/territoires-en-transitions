@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import type {
   PcaetDiagnostic,
   PcaetDiagnosticIndicateurParentConfig,
@@ -35,8 +36,15 @@ export const DiagnosticIndicateurTabContent = ({
     [config, indicateurs, valeurs]
   );
 
+  const descriptions: Partial<Record<string, string>> =
+    appLabels.demarcheDiagnosticIndicateurDescriptions;
+  const description = descriptions[config.code];
+
   return (
     <div className="flex flex-col gap-8">
+      {description !== undefined && (
+        <p className="text-sm text-primary-9 m-0">{description}</p>
+      )}
       {tables.map((table, index) => (
         <Fragment key={table.id}>
           {table.section !== null &&
