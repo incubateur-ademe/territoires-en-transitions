@@ -12,7 +12,7 @@ en incréments déployables séparément. Il couvre l'import complet, depuis le
 document jusqu'au plan et au suivi des cibles. Il ne reprend pas le
 provisionnement automatique ni le verrouillage des anciens plans de travail.
 
-**Sept phases : douze PR de code, puis une ouverture progressive.** Les budgets
+**Sept phases : treize PR de code, puis une ouverture progressive.** Les budgets
 et financements constituent une huitième phase facultative. Les numéros de PR
 ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
@@ -22,7 +22,8 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 1B — Suivi sans dépendre d'un plan : [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), implémentée et vérifiée, en revue.
 - [x] PR 2A — Réutilisation du modèle et identification du type existant : [#5722](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5722), implémentée et vérifiée, en revue.
 - [x] PR 2B1 — Catalogue des engagements, axes et cibles : [#5730](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5730), implémentée et vérifiée, en revue.
-- [ ] PR 2B2 — Références des fiches B et éligibilité.
+- [x] PR 2B2a — URL TeT existantes et éligibilité : [#5736](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5736), implémentée et vérifiée, en revue.
+- [ ] PR 2B2b — Codes et compléments des fiches B.
 - [ ] PR 3A — Lecture documentaire.
 - [ ] PR 3B — Extraction typée de l'annexe.
 - [ ] PR 4A — Axes et liens de fiches.
@@ -60,7 +61,7 @@ les engagements ou ignorerait les indicateurs des fiches B.
 | Phase | PR | Résultat autonome en production | Dépendances |
 | --- | --- | --- | --- |
 | 1. Contrats et suivi des jobs | 1A, 1B | Jobs historiques compatibles ; suivi retrouvable après fermeture ; admission annexe fermée côté serveur | Aucune phase suivante |
-| 2. Identification et références métier | 2A, 2B1, 2B2 | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 ; 2B2 réutilise 2B1 |
+| 2. Identification et références métier | 2A, 2B1, 2B2a, 2B2b | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 ; 2B2a/2B2b réutilisent 2B1 |
 | 3. Lecture et extraction de l'annexe | 3A, 3B | Document transformé en brouillon typé et validé, sans écriture métier | Phases 1 et 2 |
 | 4. Primitives de persistance | 4A, 4B, 4C | Création et liaison sous transaction, sans écraser les données existantes | Phases 1 et 2 |
 | 5. Import complet côté backend | 5 | Pipeline, reprise et transaction finale opérationnels ; admission toujours fermée | Phases 1 à 4 |
@@ -80,8 +81,10 @@ sur les valeurs. La PR 5 assemble des services déjà testés ; elle ne doit pas
 devenir la PR qui implémente toutes les écritures. Éviter les PR de types seuls
 ou de migrations inutilisables sans leur code associé.
 Le catalogue et la préparation des engagements (2B1) sont revus séparément
-des références de fiches et des droits d'accès associés (2B2). Les deux lots
-livrent des services internes complets, sans ouvrir l'import ni créer de données.
+des références de fiches et des droits d'accès associés (2B2). Le lot 2B2 est lui-même séparé
+entre les URL et l'éligibilité (2B2a), puis les
+codes et la complétion des fiches B (2B2b). Ces lots livrent des services internes
+complets, sans ouvrir l'import ni créer de données.
 
 ## Règles communes de déploiement
 
@@ -359,50 +362,91 @@ en attente des validations métier ; ce résultat ne qualifie pas un import rée
 aucune création de plan ni dépendance à 2B2 pour fonctionner. Les références
 des fiches B et l'éligibilité restent à livrer avant le pipeline complet.
 
-### PR 2B2 — Références des fiches B et éligibilité
+### PR 2B2a — URL TeT existantes et éligibilité
 
-**Périmètre :** étendre le catalogue et les contrats de 2B1 aux actions,
-sous-actions et indicateurs des fiches B ; contrôler les références et
-l'éligibilité, sans création de données métier ni nouvelle API publique.
+**Périmètre :** résoudre les URL de fiches actions et d'indicateurs dans le
+périmètre accessible à la collectivité cible ; vérifier son éligibilité au programme.
+Deux services internes sans nouvelle table, API publique ni écriture métier. Le
+résolveur réutilise `ListFichesService`, `FicheActionPermissionsService` et
+`ListIndicateursService` pour les lectures, droits et périmètres existants.
+L'éligibilité réutilise `PermissionService` et ajoute seulement la décision
+métier issue du mapping des lauréats ; elle reste distincte des feature flags.
 
-- Intégrer au catalogue versionné les correspondances Grist validées,
-  leurs unités principales, périodicités et numéros de sous-axes. Ne pas inventer les correspondances
-  encore absentes ; les codes `6-a`/`6-b` ne sont pas assimilés aux indicateurs
-  d'engagement `s_26`/`s_26.a` sans validation métier.
-- Résoudre codes, numéros d'axes/sous-axes et URL TeT reconnues, y compris UID
-  de fiches, vers des identités existantes et accessibles. Aucun appel réseau
-  vers les URL du document, aucun rapprochement par titre. Une fiche d'une
-  autre collectivité exige le partage et les permissions ordinaires.
-- Valider unités, périodes et cohérence des références. Une référence fournie
-  invalide bloque ; une référence vide désigne un objet personnalisé. Une
-  valeur sans unité ou période exploitable est signalée, sans en inventer.
-  Une fréquence "Ponctuelle" ne devient pas automatiquement annuelle.
-- Conserver les données existantes pour les objets désignés par URL : préparer
-  uniquement leurs liens et signaler les champs de l'annexe non appliqués.
-- Pour les nouvelles fiches de référence, appliquer les compléments prévus au
-  catalogue uniquement après les champs renseignés de l'annexe, qui priment.
-  Ne pas ajouter deux fois une sous-action présente dans les deux sources.
-- Brancher l'éligibilité sur le mapping lauréats → collectivités validé. Si un
-  fichier versionné suffit pour ce programme, garder ce format avec sa source ;
-  ne pas développer un outil de gestion des candidatures. Distinguer éligibilité
-  métier et sélection du premier groupe de déploiement.
-  Un mapping absent, obsolète ou ambigu rend le profil indisponible pour la
-  collectivité et bloque l'enfilement avec une erreur de configuration.
-  Conserver source et version de la décision, avec une validité vérifiable ;
-  les jobs admis enregistrent cette provenance. Distinguer ce cas d'une
-  non-éligibilité établie par un mapping valide.
-- Une configuration métier incomplète rend le profil indisponible sans empêcher
-  le backend de démarrer ni bloquer les imports génériques. Tester avec des
-  fixtures synthétiques tant que les données réelles ne sont pas prêtes.
+- [x] Reconnaître les URL de l'origine configurée et de l'app de production,
+  avec les routes de fiches actions actuelles et leurs redirections maintenues.
+  Les indicateurs sont résolus par ID d’indicateur personnalisé ou identifiant
+  de référentiel.
+  Aucun fetch, redirection HTTP ni rapprochement par titre.
+- [x] Contrôler les permissions ordinaires d'import. Une fiche action doit
+  appartenir à la collectivité cible ou lui être partagée, et être accessible en écriture
+  avec les règles existantes. Une lecture publique ne suffit pas. Vérifier
+  aussi que la collectivité de l'URL appartient à ce périmètre de partage.
+  Résoudre les indicateurs dans le catalogue visible de la cible, y compris
+  ses groupements ; aucune valeur de la collectivité de l'URL n'est lue.
+- [x] Retourner uniquement l'identité résolue ou un diagnostic bloquant.
+  Conserver les champs, valeurs, sous-actions et liens existants. Le compte
+  rendu des champs documentaires non appliqués sera produit avec les brouillons
+  des fiches B en 2B2b ; ce lot ne reçoit pas ces champs.
+- [x] Refuser explicitement les anciens UUID de fiches actions sans inventer
+  de mapping.
+  Le modèle actuel utilise des ID numériques malgré le nom `ficheUid` côté app.
+  Les URL historiques à ID numérique restent prises en charge.
+- [x] Placer le mapping versionné des lauréats dans le domaine `plans`, avec
+  source, version et bornes de validité. `null` signifie non livré ; une liste
+  complète valide permet une décision éligible ou non éligible. Une configuration
+  absente, inactive, invalide ou ambiguë reste une erreur distincte.
+  Le résultat conserve la provenance et la date de vérification. La sélection
+  du groupe de déploiement reste indépendante.
+- [x] Garder la configuration réelle des lauréats absente et l'admission fermée.
+  La vérification est différée à l'appel du service et ne bloque pas le démarrage.
+  Le raccordement aux capacités, à l'enfilement et à la provenance des jobs
+  intervient en phase 5, avec revalidation avant écriture.
 
-**Validation attendue :** références inexistantes/ambiguës, URL autorisée ou non,
-fiche partagée, absence de correspondance, unités doubles, périodes invalides,
-compléments sans écrasement ni sous-action dupliquée, catalogue indisponible,
-collectivité non éligible et mapping lauréat absent/obsolète/ambigu avec
-décision traçable.
+**Vérifications effectuées :** 61 e2e sur vraie base : 29 pour les
+URL, 18 pour l'éligibilité et 14 pour le parcours HTTP générique/PCAET avec
+faux LLM. Les tests couvrent la conservation des objets et valeurs, les droits,
+le partage puis son retrait, les groupements, les configurations invalides et
+le maintien de l'admission annexe fermée. Les 47 e2e des deux services
+réutilisent le `FakeLlmRepository` existant et vérifient explicitement l'absence
+d'appel à `complete` et `chat`. Builds domain et NestJS, TypeScript
+backend/tests, ESLint ciblé et 37 liens locaux vérifiés.
+Ces fixtures synthétiques valident le comportement technique ; elles ne
+valident ni la liste des lauréats ni les correspondances Grist. Aucun appel réel
+au modèle ni nouveau fichier de tests unitaires.
 
-**Déploiement et arrêt possible :** après 2B1, services internes seulement ;
-aucune création de plan. Les prérequis data peuvent avancer sans ouvrir l'import.
+**Déploiement et arrêt possible :** après 2B1, sans migration ni ouverture de
+profil. Aucun plan ni lien n'est créé ; le parcours générique reste disponible.
+Les codes et compléments des fiches B restent à livrer en 2B2b.
+
+### PR 2B2b — Codes et compléments des fiches B
+
+**Périmètre :** étendre la configuration et les contrats de 2B1 aux actions,
+sous-actions et indicateurs des fiches B, en réutilisant la résolution des URL
+livrée en 2B2a. Préparation sans écriture métier ni nouvelle API publique.
+
+- Intégrer les correspondances Grist validées, leurs unités principales,
+  périodicités et numéros de sous-axes. Ne pas inventer les correspondances
+  encore absentes ; `6-a`/`6-b` ne sont pas assimilés à `s_26`/`s_26.a` sans
+  validation métier. La configuration appartient au domaine `plans`.
+- Résoudre les codes et contrôler les axes/sous-axes. Une référence fournie
+  invalide bloque ; une référence vide désigne un objet personnalisé.
+  Valider unités, périodes et cohérence des références sans conversion implicite
+  de "Ponctuelle" en annuelle ni invention d'unité ou de date.
+- Pour les objets désignés par URL, préparer uniquement leurs liens et signaler
+  les champs de l'annexe non appliqués.
+- Pour les nouvelles fiches de référence, compléter uniquement les champs non
+  renseignés de l'annexe avec les valeurs prévues au catalogue. Ne pas ajouter
+  deux fois une sous-action présente dans les deux sources.
+- Une configuration incomplète produit un diagnostic de configuration et ne
+  bloque ni le démarrage ni les imports génériques. Tester avec des fixtures
+  synthétiques tant que les données métier restent à valider.
+
+**Validation attendue :** codes inexistants/ambigus, absence de correspondance,
+axes incohérents, unités doubles, périodes invalides, compléments sans écrasement
+ni sous-action dupliquée, diagnostics de données conservées pour les URL.
+
+**Déploiement et arrêt possible :** après 2B2a, services internes seulement ;
+aucune création de plan. Le pipeline complet reste fermé.
 
 ## Phase 3 — Du document au brouillon validé
 
@@ -444,7 +488,7 @@ de production branché sur ce profil.
 - Préparer les conversions oui/non et les actions E03/E12 prévues par l'ADR.
   Reprendre les champs non budgétaires, dont moyens humains lorsqu'ils sont
   renseignés. Ne pas créer de compte depuis un nom de pilote.
-- Utiliser les résolveurs 2B1/2B2 et leur compte rendu. Sérialiser un checkpoint
+- Utiliser les résolveurs 2B1/2B2a/2B2b et leur compte rendu. Sérialiser un checkpoint
   annexe validé et versionné, sans IDs fournis par le LLM. Une reprise revalidera les
   références et les permissions avant écriture, même si l'extraction est conservée.
 - Adapter le parcours d'évaluation existant pour sélectionner ce profil.
@@ -570,7 +614,7 @@ le comportement des saisies et imports ordinaires qui ne l'appellent pas.
 [worker et service](../../apps/backend/src/plans/ai-plan-import/generate-import-draft/),
 reprise et orchestration métier. Les primitives de stockage sont déjà livrées.
 
-- Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2.
+- Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2a/2B2b.
   Garder l'admission fermée par défaut ; contrôler droits, éligibilité, type
   stable et configuration avant upload/enfilement.
   Brancher le flag serveur dédié dans le contrôle de disponibilité partagé
@@ -738,13 +782,13 @@ au socle. Aucun chantier de reporting budgétaire n'est inclus.
 
 | Exigence de l'ADR | Implémentation | Vérification de bout en bout |
 | --- | --- | --- |
-| Profil explicite, droits, lauréats, aucun plan avant validation | 1A, 2B2, 5 | 5 et 7 |
+| Profil explicite, droits, lauréats, aucun plan avant validation | 1A, 2B2a, 5 | 5 et 7 |
 | Suivi durable, reprise et compatibilité des jobs | 1A, 1B, 3B, 5 | 5 et 6 |
-| A/B uniquement, hyperliens, clés stables, références bloquantes | 2B1, 2B2, 3A, 3B | 5 |
+| A/B uniquement, hyperliens, clés stables, références bloquantes | 2B1, 2B2a, 2B2b, 3A, 3B | 5 |
 | Axes explicites, E01/E02, axes libres et B sans engagement | 2B1, 4A, 5 | 5 et 6 |
 | Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B1, 4A, 4B, 4C, 5 | 5 et 6 |
 | Personnalisés, valeurs datées, oui/non et codes de référence | 3B, 4A, 4B, 4C, 5 | 5 |
-| URL : liens seuls ; codes : complétion sans écrasement | 2B2, 4A, 4B, 4C | 5 |
+| URL : liens seuls ; codes : complétion sans écrasement | 2B2a, 2B2b, 4A, 4B, 4C | 5 |
 | Liberté d'édition, titres communs, suppression et références | 4A, 4B, 6 | 6 |
 | Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 5 | 5 |
 | Compte rendu complet, activation et arrêt sans perte | 1A, 1B, 5, 6 | 7 |

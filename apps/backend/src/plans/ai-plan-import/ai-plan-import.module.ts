@@ -1,3 +1,5 @@
+import { FichesModule } from '../fiches/fiches.module';
+import { ResolveImportReferenceService } from './resolve-import-reference/resolve-import-reference.service';
 import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
@@ -36,6 +38,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
 
 @Module({
   imports: [
+    forwardRef(() => FichesModule),
     LlmModule,
     TransactionModule,
     PlanModule,
@@ -59,6 +62,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
       useValue: electrificationEngagementsConfig,
     },
     ResolveElectrificationEngagementsService,
+    ResolveImportReferenceService,
     AiPlanImportJobRepository,
     AiPlanImportStepRunRepository,
     EnqueueImportService,

@@ -2,7 +2,7 @@
 
 Date : 2026-11-03
 
-Dernière mise à jour : 2026-11-05
+Dernière mise à jour : 2026-11-09
 
 ## Statut
 
@@ -42,10 +42,15 @@ est de deux semaines ; il ne constitue pas une estimation technique validée.
 
 Le tableau A décrit 12 engagements, regroupés dans 11 axes. Seuls les
 engagements retenus sont initialisés, mais une fiche B peut aussi demander
-la création d'un axe numéroté sans engagement retenu. Les fiches peuvent décrire
-des actions de référence, des actions propres au territoire ou des actions
+la création d'un axe numéroté sans engagement retenu. Les fiches B peuvent
+décrire des actions de référence, des actions propres au territoire ou des actions
 existantes dans TeT. Le plan obtenu reste modifiable : aucun verrou métier
 n'est ajouté.
+
+Une "fiche B" désigne une partie du document source ; une "fiche action"
+désigne l'objet métier TeT (`Fiche`, `ficheId`). Une fiche B peut décrire une
+nouvelle fiche action ou référencer une fiche action existante. Une référence
+d'import peut aussi désigner un indicateur.
 
 L'import existant fournit déjà l'upload, la lecture documentaire, l'extraction,
 les jobs BullMQ, les checkpoints et la persistance transactionnelle. Il manque
@@ -166,8 +171,9 @@ Le LLM peut extraire les champs, mais ne choisit pas les identifiants TeT et
 ne rapproche pas les éléments par ressemblance. Une étape déterministe :
 
 - résout les codes dans un catalogue versionné et validé métier ;
-- résout les URL TeT reconnues, y compris les UID des fiches, dans le périmètre
-  autorisé de la collectivité cible ;
+- résout les URL TeT reconnues par ID de fiche action, ID d’indicateur
+  personnalisé ou identifiant de référentiel, dans le périmètre autorisé de
+  la collectivité cible ;
 - contrôle la cohérence axe/sous-axe, les unités et les dates ;
 - distingue une donnée absente de zéro, et un résultat "Oui" d'un objectif "Oui".
 
@@ -178,6 +184,22 @@ autorisé et désigne un élément personnalisé. Une cible d'engagement vide
 reste `null`, avec un avertissement non bloquant.
 Le champ "Code ou URL" accepte une référence unique ; plusieurs références
 contradictoires doivent être corrigées avant import.
+
+**Vérification du code le 5 novembre 2026.** La mention initiale des UID de
+fiches actions était incorrecte pour le modèle actuel : `fiche_action` ne
+possède plus cette colonne et le paramètre app `ficheUid` est converti en ID numérique.
+Le résolveur reconnaît les routes actuelles et les redirections maintenues
+à ID numérique, sans requête HTTP. Une URL avec un ancien UUID est refusée
+avec une demande de lien TeT actuel ; aucun mapping de remplacement n'est disponible.
+Les origines reconnues sont l'URL de l'app configurée pour l'environnement
+et `https://app.territoiresentransitions.fr`.
+
+Une fiche action externe doit être partagée avec la collectivité cible et
+accessible avec les permissions ordinaires ; sa seule visibilité publique ne suffit pas.
+La collectivité portée par son URL doit aussi être propriétaire ou bénéficiaire
+du partage. Pour les indicateurs, la définition est résolue dans le périmètre
+visible de la cible (global, propre ou groupement). Les valeurs de la
+collectivité portée par l'URL ne sont jamais importées.
 
 Les normalisations génériques ne doivent ni fusionner des fiches distinctes
 par leur titre, ni perdre des codes, ni retirer une sous-action identifiée.
@@ -508,6 +530,15 @@ par ressemblance. Conserver la source et la version du mapping utilisées pour
 la décision d'éligibilité ; les jobs admis les enregistrent dans leur provenance.
 Une non-éligibilité établie par un mapping valide reste distincte d'une
 configuration manquante.
+
+Le [mapping versionné](../../packages/domain/src/plans/plans/electrification-laureats.config.ts)
+représente la liste complète des lauréats, distincte du groupe de déploiement.
+Il déclare sa source, sa version et sa validité `[validFrom, validUntil)` ;
+le service ajoute `checkedAt` à la décision. Un même lauréat ou une même
+collectivité présent plusieurs fois rend le mapping ambigu. La configuration
+livrée reste `null` tant que la liste validée manque. Le service interne du
+lot 2B2a prépare ce contrôle ; le branchement à l'admission et aux jobs reste
+prévu en phase 5.
 
 **Étape supplémentaire facultative : budgets et financements.** Leur import
 est un "nice to have" distinct, confirmé pendant la rédaction. Le socle peut
