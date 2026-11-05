@@ -13,5 +13,16 @@ export interface NotifyInstructionCloseProps extends NotificationTemplate {
    * pas répondu.
    */
   motif: MotifCloture;
-  documentsUrl: string;
+  /**
+   * Renseigné quand le destinataire est la DREAL en copie, et non la
+   * collectivité : le message lui dit que la collectivité a été prévenue, et
+   * mène à son dossier d'instruction.
+   */
+  copie: {
+    collectiviteNom: string;
+    /** Le service dont le destinataire est membre. */
+    destinataireServiceNom: string;
+  } | null;
+  /** Les documents de la démarche, ou le dossier d'instruction en copie. */
+  url: string;
 }

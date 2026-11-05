@@ -46,6 +46,8 @@ export type InstructeurSaisi = {
 /** Une saisine inscrite, telle qu'on l'adresse. */
 export type DemandeAvisDestinataire = InstructeurSaisi & {
   demandeAvisId: number;
+  /** Ce qui distingue la DGEC de l'ADEME nationale, deux services nationaux. */
+  siren: string | null;
 };
 
 @Injectable()
@@ -242,6 +244,7 @@ export class PcaetInstructeursRepository {
         collectiviteId: collectiviteTable.id,
         nom: collectiviteTable.nom,
         type: collectiviteTable.type,
+        siren: collectiviteTable.siren,
         perimetre: pcaetDemandeAvisTable.perimetre,
       })
       .from(pcaetDemandeAvisTable)
@@ -253,5 +256,26 @@ export class PcaetInstructeursRepository {
         )
       )
       .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+  }
+
+  /** Le nom du service saisi par cette demande. */
+  async getServiceNom(
+    demandeAvisId: number,
+    tx?: Transaction
+  ): Promise<string | null> {
+    const [service] = await (tx ?? this.databaseService.db)
+      .select({ nom: collectiviteTable.nom })
+      .from(pcaetDemandeAvisTable)
+      .innerJoin(
+        collectiviteTable,
+        eq(
+          collectiviteTable.id,
+          pcaetDemandeAvisTable.instructeurCollectiviteId
+        )
+      )
+      .where(eq(pcaetDemandeAvisTable.id, demandeAvisId))
+      .limit(1);
+
+    return service?.nom ?? null;
   }
 }

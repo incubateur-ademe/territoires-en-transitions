@@ -6,7 +6,8 @@ import * as React from 'react';
 import { NotifyAvisRecuProps } from './notify-avis-recu.props';
 
 /**
- * L'avis rendu sur un dossier PCAET, annoncé à la collectivité qui l'a déposé.
+ * L'avis rendu sur un dossier PCAET, annoncé à la collectivité qui l'a déposé,
+ * et en copie aux services qui suivent l'instruction.
  *
  * Le message ne dit rien du contenu de l'avis : la pièce est confidentielle et
  * se lit sur la plateforme, pas dans une boîte mail.
@@ -14,31 +15,52 @@ import { NotifyAvisRecuProps } from './notify-avis-recu.props';
 export const NotifyAvisRecuEmail = (
   props: NotifyAvisRecuProps
 ): React.ReactNode => {
-  const { demarcheTitre, serviceNom, auTitreDe, documentsUrl, sendToEmail } =
+  const { demarcheTitre, serviceNom, auTitreDe, copie, url, sendToEmail } =
     props;
+  const titre = auTitreDe ? ` au titre de ${auTitreDe.toLowerCase()}` : '';
 
   return (
     <EmailContainer>
       <Text>Bonjour,</Text>
 
-      <Text>
-        {serviceNom} a rendu son avis
-        {auTitreDe ? ` au titre de ${auTitreDe.toLowerCase()}` : ''} sur votre
-        projet de PCAET <b>{demarcheTitre}</b>.
-      </Text>
+      {copie ? (
+        <>
+          <Text>
+            {serviceNom} a rendu son avis{titre} sur le projet de PCAET{' '}
+            <b>{demarcheTitre}</b> de {copie.collectiviteNom}.
+          </Text>
 
-      <Text>
-        L&apos;avis est consultable sur la plateforme, dans les documents de
-        votre démarche.
-      </Text>
+          <Text>
+            L&apos;avis est consultable sur la plateforme, dans le dossier.
+          </Text>
+        </>
+      ) : (
+        <>
+          <Text>
+            {serviceNom} a rendu son avis{titre} sur votre projet de PCAET{' '}
+            <b>{demarcheTitre}</b>.
+          </Text>
+
+          <Text>
+            L&apos;avis est consultable sur la plateforme, dans les documents de
+            votre démarche.
+          </Text>
+        </>
+      )}
 
       <Section className="my-8 text-center">
-        <CTAButton href={documentsUrl}>Consulter l&apos;avis →</CTAButton>
+        <CTAButton href={url}>
+          {copie ? 'Consulter le dossier →' : "Consulter l'avis →"}
+        </CTAButton>
       </Section>
 
       <Footer
         toEmail={sendToEmail}
-        raison="Vous recevez ce message car vous pilotez cette démarche ou administrez la collectivité sur Territoiresentransitions.fr"
+        raison={
+          copie
+            ? `Vous recevez ce message car vous êtes membre de ${copie.destinataireServiceNom} sur Territoiresentransitions.fr`
+            : 'Vous recevez ce message car vous pilotez cette démarche ou administrez la collectivité sur Territoiresentransitions.fr'
+        }
       />
     </EmailContainer>
   );
@@ -49,7 +71,8 @@ NotifyAvisRecuEmail.PreviewProps = {
   demarcheTitre: 'PCAET 2024-2030',
   serviceNom: 'DREAL Bretagne',
   auTitreDe: 'Préfet de région',
-  documentsUrl: 'https://app.territoiresentransitions.fr',
+  copie: null,
+  url: 'https://app.territoiresentransitions.fr',
   sendToEmail: 'pilote@collectivite.fr',
 };
 
