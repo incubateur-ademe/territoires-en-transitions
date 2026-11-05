@@ -21,7 +21,10 @@ import { IndicateurSourcesRepository } from '../sources/indicateur-sources.repos
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import { ComputeValeursRepository } from './compute-indicateur-valeurs/compute-valeurs.repository';
 import ComputeValeursService from './compute-indicateur-valeurs/compute-valeurs.service';
-import { IndicateurValeursRepository } from './indicateur-valeurs.repository';
+import {
+  IndicateurValeursRepository,
+  UPSERT_VALEURS_CHUNK_SIZE,
+} from './indicateur-valeurs.repository';
 import IndicateurExpressionService from './indicateur-expression.service';
 import { IndicateurValeurLockRepository } from './indicateur-valeur-lock.repository';
 import { indicateurValeurTable } from './indicateur-valeur.table';
@@ -378,5 +381,42 @@ describe('Protection des observations manuelles avec métadonnée (PostgreSQL)',
       calculAuto: true,
       metadonneeId: valeur.metadonneeId,
     });
+  });
+
+  it('écrit au-delà d’une tranche, et annule toutes les tranches si l’une échoue', async () => {
+    const serie = (valeur: IndicateurValeurCreate, metadonneeId: number | null) =>
+      Array.from({ length: count }, (_, index) => ({
+        ...valeur,
+        metadonneeId,
+        dateValeur: `${1000 + index}-01-01`,
+        resultat: index,
+      }));
+    // 13 paramètres par ligne : une requête unique dépasserait les 65 535
+    // paramètres acceptés par PostgreSQL.
+    const count = 6 * UPSERT_VALEURS_CHUNK_SIZE + 1;
+    const { valeur } = await fixture();
+
+    const withMetadata = await repository.upsertValeursWithMetadata(
+      serie(valeur, valeur.metadonneeId ?? null)
+    );
+    const withoutMetadata = await repository.upsertValeursWithoutMetadata(
+      serie(valeur, null)
+    );
+    expect(withMetadata).toHaveLength(count);
+    expect(withoutMetadata).toHaveLength(count);
+
+    // Sans transaction fournie, une tranche en échec annule les précédentes.
+    const { valeur: other } = await fixture();
+    const rejected = serie(other, null).map((row, index) =>
+      index === count - 1 ? { ...row, indicateurId: -1 } : row
+    );
+    await expect(
+      repository.upsertValeursWithoutMetadata(rejected)
+    ).rejects.toThrow();
+    const kept = await database.db
+      .select({ id: indicateurValeurTable.id })
+      .from(indicateurValeurTable)
+      .where(eq(indicateurValeurTable.collectiviteId, other.collectiviteId));
+    expect(kept).toEqual([]);
   });
 });
