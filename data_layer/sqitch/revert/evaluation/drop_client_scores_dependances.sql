@@ -121,9 +121,14 @@ WHERE is_service_role()
 ORDER BY c.collectivite_id;
 comment on view retool_completude is 'Completude computed from client scores';
 
-select cron.schedule('refresh_stats_completude',
-                     '0 0 * * *', -- every day
-                     $$refresh materialized view stats_tranche_completude$$);
+do $do$
+begin
+  if to_regclass('cron.job') is not null then
+    perform cron.schedule('refresh_stats_completude',
+                          '0 0 * * *', -- every day
+                          $$refresh materialized view stats_tranche_completude$$);
+  end if;
+end $do$;
 
 -- private.convert_client_scores n'existe plus : la fonction était déjà inutilisable.
 set local check_function_bodies = off;
