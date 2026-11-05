@@ -2,7 +2,7 @@
 
 Date : 2026-11-03
 
-Dernière mise à jour : 2026-11-04
+Dernière mise à jour : 2026-11-05
 
 ## Statut
 
@@ -479,16 +479,18 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
 
 ## Questions ouvertes et dépendances avant implémentation
 
-1. Valider avec l'équipe data et le métier les définitions de `v_particulier_elec`
-   et `autobus_autocar_elec` : formules, unités, périodicités, dépendances de calcul
-   et adéquation à E06/E08, notamment le périmètre autobus/autocars. Le passage
-   des immatriculations au parc et les identifiants sont confirmés ; cette
-   validation complète et l'intégration dans TeT conditionnent l'ouverture.
-2. Valider une version exploitable du catalogue et compléter le mapping
-   Grist vers TeT : codes, sous-axes, sous-actions, unités et liens d'aides.
-   Cela inclut l'éventuelle correspondance de `6-a`/`6-b` avec les indicateurs
-   E07, distincte du choix confirmé de `s_26`/`s_26.a` pour les engagements.
-   Le contournement envisagé pour les aides est leur ajout dans l'onglet
-   "Documents", à préciser avec le métier.
-3. Fournir la source maintenue des lauréats et son mapping vers les
-   collectivités TeT, avec une version et une validité vérifiables.
+1. **Indicateurs E06/E08.** Les identifiants de parc `v_particulier_elec` et
+   `autobus_autocar_elec` sont
+   [confirmés depuis le 4 novembre](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d&pvs=42#a087e5976bf84eb6b9c6e8ff5a9b4d07),
+   et leurs fiches indiquent l'unité "%". Émeline prévoit de calculer E08 à
+   partir de `autobus_elec` et `autocar_elec`. Restent à valider les formules,
+   périodicités et l'adéquation du périmètre autobus/autocars à l'annexe, puis
+   à vérifier les définitions et leurs dépendances dans TeT avant ouverture.
+2. **Catalogue Grist vers TeT.** Valider une version exploitable avec les codes,
+   sous-axes, sous-actions, unités et liens d'aides. Utiliser la colonne
+   "ID et Titre indicateur TeT v2" pour les correspondances d'engagement.
+   Pour E07, `s_26`/`s_26.a` sont confirmés ; la correspondance éventuelle avec
+   `6-a`/`6-b` reste à préciser. Confirmer aussi avec le métier l'ajout des aides
+   dans l'onglet "Documents".
+3. **Lauréats.** Fournir une source maintenue et son mapping vers les collectivités
+   TeT, avec une version et une validité vérifiables.

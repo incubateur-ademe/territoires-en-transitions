@@ -18,8 +18,8 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
 ## Avancement
 
-- [x] PR 1A — Contrats des profils et API de suivi : [#5702](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5702), implémentée et vérifiée, en revue.
-- [ ] PR 1B — Suivi sans dépendre d'un plan.
+- [x] PR 1A — Contrats des profils et API de suivi : [#5702](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5702), fusionnée le 4 novembre 2026 ; parcours générique vérifié en préproduction.
+- [x] PR 1B — Suivi sans dépendre d'un plan : [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), implémentée et vérifiée, en revue.
 - [ ] PR 2A — Stockage métier et lectures.
 - [ ] PR 2B — Catalogue et résolution déterministe.
 - [ ] PR 3A — Lecture documentaire.
@@ -34,6 +34,11 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
 Une case cochée signifie que le lot est implémenté et vérifié dans sa PR,
 pas qu'il est fusionné ou déployé. L'ouverture en production reste une étape distincte.
+
+La [revue des sources Notion du 5 novembre](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#questions-ouvertes-et-dépendances-avant-implémentation)
+n'a pas identifié de nouvel arbitrage modifiant ce découpage. Les validations
+des définitions E06/E08, du catalogue Grist vers TeT et du mapping des lauréats
+restent à obtenir avant ouverture ; aucun de ces prérequis n'est déclaré levé.
 
 Chaque PR contient son code, ses migrations éventuelles, ses tests et la mise
 à jour de sa documentation. Elle compile et fonctionne sans une PR suivante.
@@ -164,7 +169,8 @@ Typechecks du backend, de ses tests et de l'app, ESLint ciblé et liens locaux
 vérifiés. Aucun appel réel au modèle.
 Après rebase sur l'ADR fusionné, les 30 e2e et les 61 tests existants
 d'enfilement/génération passent, y compris le blocage de création Électrification.
-Le suivi dans l'app (1B) et le déploiement en production restent à faire.
+Le suivi dans l'app est implémenté dans la PR 1B, encore en revue.
+Le déploiement en production n'a pas été vérifié lors de cette revue.
 
 **Validation :** jobs historiques avec et sans plan provisoire ; checkpoint v1 ;
 format inconnu refusé ; accès inter-collectivités refusé ; admission fermée sans
@@ -180,24 +186,32 @@ ensuite, revenir d'abord à une app compatible avec l'ancienne API de suivi.
 [mutation d'enfilement](../../apps/app/src/plans/plans/import-plan/data/use-enqueue-ai-import.ts)
 et point d'accès depuis la liste des plans.
 
-- Conserver le `jobId` dans l'URL avec les outils existants et retrouver le
+- [x] Conserver le `jobId` dans l'URL avec les outils existants et retrouver le
   suivi après fermeture/rechargement. Donner accès aux imports récents et aux
   échecs ; `getCurrentAiImport`, limité aux jobs en cours, ne suffit pas.
-- Supporter l'absence de plan dans les callbacks, le polling, les erreurs et
+- [x] Supporter l'absence de plan dans les callbacks, le polling, les erreurs et
   la reprise par job. Attendre `done` et un `createdPlanId` pour ouvrir le plan.
   Garder le compte rendu accessible après la redirection.
-- Préserver le rattachement immédiat du plan générique dans
+- [x] Préserver le rattachement immédiat du plan générique dans
   [PCAET](../../apps/app/src/demarches/pcaet/import-programme/import-programme.context.tsx)
   et sa [modale](../../apps/app/src/demarches/components/import-plan.modal.tsx).
   Aucun sélecteur annexe ni nouveau comportement d'extraction dans cette PR.
-- Conditionner dès ce lot l'alerte actuelle qui promet l'import des axes,
-  actions et indicateurs depuis l'annexe : ne plus proposer ce parcours lorsque
-  la capacité serveur est indisponible. Conserver le blocage temporaire de
-  création Électrification, y compris pour le parcours ordinaire.
+- [x] Conserver le blocage temporaire de création Électrification, y compris pour
+  le parcours ordinaire. L'ancienne alerte promettant l'import des axes,
+  actions et indicateurs a déjà été remplacée par le message d'indisponibilité
+  de `PlanCreationRules` dans `main` : aucun parcours annexe à afficher ici.
+  Son ouverture ultérieure dépendra de la capacité serveur.
 
 **Validation :** rechargement pendant/après échec, accès refusé, job terminé,
 reprise, conservation du compte rendu et parcours PCAET. Scénarios sans plan
 avec réponses simulées ou fixtures, sans appel réel au modèle.
+
+**Implémenté et vérifié dans [#5709](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5709), non fusionné :**
+historique paginé sous `/plans/imports`, sélection par `importJobId`, compte
+rendu accessible depuis le plan, reprise réservée à l'équipe et lecture
+indépendante du flag de lancement. Huit scénarios Playwright ont été validés
+sur une build locale, avec les lancements et reprises IA interceptés, ainsi
+que TypeScript (app et e2e), le lint ciblé et le build Next.js.
 
 **Déploiement et arrêt possible :** après 1A ; améliore le suivi des imports
 actuels, même si aucune autre phase n'est livrée. L'annexe reste inaccessible.
@@ -257,8 +271,10 @@ de résolution sans création de plan. Aucune administration de catalogue à con
 - Distinguer la source Notion des indicateurs d'engagement de la source Grist
   des actions et indicateurs associés. Implémenter les correspondances validées
   de l'ADR, notamment E06, E07 et E08 ; ne pas inventer celles encore absentes.
-  Pour E06/E08, les identifiants sont confirmés ; les définitions, formules,
-  unités, périodicités, dépendances et l'adéquation métier restent à valider.
+  Pour E06/E08, les identifiants sont confirmés et l'unité "%" est renseignée.
+  Les composantes prévues pour E08 sont `autobus_elec` et `autocar_elec`.
+  Restent à valider les formules, périodicités et l'adéquation métier, puis à
+  vérifier les définitions et leurs dépendances dans l'environnement cible.
 - Livrer le contrat métier typé d'entrée/sortie du résolveur dans cette PR.
   L'extracteur de la phase 3 le produira ; le résolveur ne dépend pas de types
   ou d'exports laissés à une PR suivante.
@@ -376,7 +392,7 @@ sans activation annexe. Revenir au code précédent avant ouverture reste possib
 
 ### PR 4B — Indicateurs et liens sous transaction appelante
 
-**Périmètre :** [création de définition](../../apps/backend/src/indicateurs/definitions/mutate-definition/create-definition.service.ts),
+**Périmètre :** [création d'indicateur personnalisé](../../apps/backend/src/indicateurs/indicateurs/mutate-indicateur/create-indicateur.service.ts),
 liens axe/indicateur et fiche/indicateur.
 
 - Permettre à la création personnalisée de participer à la transaction fournie,
@@ -527,10 +543,11 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   des fiches B et traitement des liens d'aides dans "Documents" convenu.
 - Définitions et dépendances de calcul disponibles dans l'environnement cible,
   notamment `v_particulier_elec`, `autobus_autocar_elec`, `s_26` et `s_26.a`.
-  Pour E06/E08, définitions, formules, unités, périodicités, dépendances et
-  adéquation métier validées avec l'équipe data et le métier, notamment le
-  périmètre autobus/autocars. La présence d'un ID dans Notion ne prouve ni cette
-  validation ni l'intégration ; le profil reste fermé tant qu'elles manquent.
+  Pour E06/E08, formules, périodicités et adéquation métier validées avec
+  l'équipe data et le métier, notamment le périmètre autobus/autocars ;
+  définitions conformes à l'unité "%" renseignée dans Notion. La présence d'un
+  ID dans Notion ne prouve ni cette validation ni l'intégration ; le profil
+  reste fermé tant qu'elles manquent.
 - Mapping lauréats → collectivités validé et maintenu ; premier groupe choisi
   parmi ces lauréats. Aucun élargissement de droits par le ciblage du flag.
 - Migrations, backend/API, tous les workers et app compatibles déployés.
@@ -602,8 +619,9 @@ au socle. Aucun chantier de reporting budgétaire n'est inclus.
 Une PR est terminée lorsque ses checks ciblés passent, ses contrats restent
 compatibles avec la version précédente et son état de production peut être
 maintenu sans la suite. L'ouverture du profil nécessite toutes les phases du
-socle et les validations métier ci-dessus. Ce document décrit des travaux et
-des validations à réaliser ; il ne constate ni leur exécution ni un déploiement.
+socle et les validations métier ci-dessus. Les validations des lots non cochés
+restent à réaliser ; les résultats documentés pour 1A et 1B ne valent pas
+validation du profil annexe ni constat de son déploiement.
 
 Restent hors périmètre : dashboard ADEME, bibliothèque d'actions après import,
 groupements, export Word, modification des engagements, synchronisation par
