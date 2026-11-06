@@ -1,4 +1,4 @@
-import { profilAssistantPath } from '@/app/app/paths';
+import { adminPath, profilAssistantPath } from '@/app/app/paths';
 import {
   permissionsByRole,
   PlatformRole,
@@ -49,6 +49,20 @@ describe('makeSecondaryNav — menu utilisateur', () => {
       userMenuDataTests([PlatformRole.CONNECTED, PlatformRole.VERIFIED])
     ).toEqual([
       ['user-profile', '/profil'],
+      ['user-logout', '/'],
+    ]);
+  });
+
+  test("un compte du programme TETE, sans droits super-admin, atteint l'espace Administration", () => {
+    expect(
+      userMenuDataTests([
+        PlatformRole.CONNECTED,
+        PlatformRole.VERIFIED,
+        PlatformRole.TETE_ADMIN,
+      ])
+    ).toEqual([
+      ['user-profile', '/profil'],
+      ['user-admin', adminPath],
       ['user-logout', '/'],
     ]);
   });

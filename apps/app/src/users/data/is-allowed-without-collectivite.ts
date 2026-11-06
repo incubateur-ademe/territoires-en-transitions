@@ -19,6 +19,10 @@ import {
  * systématiquement à partir de l'URL réelle (cf. `proxy.ts`) : il n'est donc
  * pas falsifiable côté client. On retire query string / ancre avant
  * comparaison, pour qu'un `?x=/profil` ne puisse pas élargir la liste blanche.
+ *
+ * L'espace Administration et ses outils servent aussi à l'équipe du programme
+ * TETE, qui n'est membre d'aucune collectivité ; l'accès y est contrôlé par
+ * les permissions de chaque outil.
  */
 export function isAllowedWithoutCollectivite(pathname: string): boolean {
   const path = pathname.split(/[?#]/)[0];

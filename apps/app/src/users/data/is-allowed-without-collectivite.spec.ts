@@ -4,6 +4,7 @@ import {
   collectiviteBasePath,
   finaliserMonInscriptionUrl,
   invitationPath,
+  labellisationsAdminUrl,
   profilPath,
   rejoindreCollectivitePath,
   recherchesPath,
@@ -19,6 +20,9 @@ describe('isAllowedWithoutCollectivite', () => {
     );
     expect(isAllowedWithoutCollectivite(profilPath)).toBe(true);
     expect(isAllowedWithoutCollectivite(rejoindreCollectivitePath)).toBe(true);
+    expect(isAllowedWithoutCollectivite(`${labellisationsAdminUrl}/12`)).toBe(
+      true
+    );
     expect(isAllowedWithoutCollectivite(`${collectiviteBasePath}/1/plans`)).toBe(
       true
     );

@@ -475,6 +475,13 @@ export const appLabels = {
       'Une action de référence identique existe déjà.',
     FICHIER_INFECTE:
       'Notre antivirus a détecté une menace dans ce fichier : il ne peut être ni déposé ni téléchargé.',
+    NOT_AUDITEUR: "Cette personne n'a pas le rôle auditeur.",
+    AUDITEUR_EMAIL_NOT_FOUND: 'Aucun compte ne correspond à cet email.',
+    DOSSIER_CLOS: 'Le dossier est clos, il ne peut plus être modifié.',
+    DECISION_NOT_ALLOWED:
+      "Cette décision n'est pas possible au stade actuel du dossier.",
+    LABELLISATION_ALREADY_EXISTS:
+      'Une labellisation existe déjà pour cette collectivité, ce référentiel et cette année.',
   } as Record<string, string | undefined>,
   indicateurValeurReferenceLigne: ({
     source,

@@ -14,7 +14,8 @@ export const BackofficeView = () => {
   const outilsCollectivite = tools.filter(
     (tool) => tool.scope === 'collectivite'
   );
-  // Une seule section de plateforme : son titre n'apprendrait rien.
+  // Une seule section de plateforme : son titre n'apprendrait rien (cas du
+  // programme TETE).
   const showPlateformeTitle =
     outilsPlateforme.length > 0 && outilsCollectivite.length > 0;
 
