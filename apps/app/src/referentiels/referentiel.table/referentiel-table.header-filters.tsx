@@ -1,4 +1,7 @@
-import { avancementToLabel } from '@/app/app/labels';
+import {
+  avancementToLabel,
+  referentielLabelToShortName,
+} from '@/app/app/labels';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
@@ -8,7 +11,7 @@ import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
   ActionAdaptationNiveauEnum,
   ActionCategorieEnum,
-  ReferentielLabelEnum,
+  referentielLabelEnumValues,
   StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
@@ -36,10 +39,10 @@ const statutOptions = (
   label: avancementToLabel[value],
 }));
 
-const labelsOptions = [
-  { value: ReferentielLabelEnum.TE_CAE, label: 'CAE' },
-  { value: ReferentielLabelEnum.TE_ECI, label: 'ECi' },
-];
+const labelsOptions = referentielLabelEnumValues.map((value) => ({
+  value,
+  label: referentielLabelToShortName[value],
+}));
 
 const adaptationOptions = [
   {
