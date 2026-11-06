@@ -25,6 +25,13 @@
     "name": "ui",
     "tags": ["frontend"],
     "targets": {
+      "export-design-system": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node scripts/design-system-export/export.mts",
+          "cwd": "packages/ui"
+        }
+      },
       "chromatic": {
         "executor": "nx:run-commands",
         "options": {
