@@ -110,6 +110,8 @@ const BarChart = ({
   };
   const valueAxis = {
     type: 'value' as const,
+    // Sans borne, ECharts arrondit l'axe des pourcentages à 120
+    max: unit === '%' ? 100 : undefined,
     name: upperCaseFirstLetter(unit),
     nameLocation: 'middle' as const,
     nameGap: isIntoModal ? 45 : 30,
