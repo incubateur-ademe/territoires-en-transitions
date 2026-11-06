@@ -1,0 +1,28 @@
+# Trafic HTTP par service Traefik (proxy Coolify) : job traefik.
+# Le label service est le nom Traefik du service Coolify (UUID de l'application).
+name: traefik
+interval: 1m
+rules:
+  # Plancher de 0,1 req/s : quelques 5xx sur un service sans trafic ne disent rien.
+  - alert: High5xxRate
+    expr: |
+      sum by (server, service) (rate(traefik_service_requests_total{code=~"5.."}[5m]))
+        / sum by (server, service) (rate(traefik_service_requests_total[5m])) > 0.05
+      and sum by (server, service) (rate(traefik_service_requests_total[5m])) > 0.1
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $value | humanizePercentage }} de 5xx sur {{ $labels.service }}"
+      description: "Plus de 5 % de réponses 5xx depuis 10 min sur {{ $labels.server }}."
+
+  - alert: HighLatency
+    expr: |
+      histogram_quantile(0.95, sum by (server, service, le) (rate(traefik_service_request_duration_seconds_bucket[5m]))) > 2
+      and sum by (server, service) (rate(traefik_service_requests_total[5m])) > 0.1
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "p95 de {{ $value | humanizeDuration }} sur {{ $labels.service }}"
+      description: "Le 95e centile de latence dépasse 2 s depuis 10 min sur {{ $labels.server }}."
