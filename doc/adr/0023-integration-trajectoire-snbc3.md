@@ -1,7 +1,7 @@
 # 23. Intégration de la trajectoire SNBC3 territorialisée
 
 **Date :** 2026-10-12
-**Statut :** Proposition
+**Statut :** Accepté
 
 ## Contexte
 
@@ -219,11 +219,9 @@ tableur produit à la main par l'expert.
 2. **TeT** : import (§2), puis lecture et export derrière le feature flag,
    ouverture progressive et généralisation (§3 et §4). Pendant la transition qui
    suit la généralisation, les valeurs SNBC2 restent en base et affichées, et le
-   code Sheets est conservé jusqu'au retrait de la SNBC2.
-   
-   référence. Pendant la transition qui suit, les valeurs SNBC2 restent en base
-   et affichées ; leur calcul est arrêté, et le code Sheets est conservé jusqu'au
-   retrait de la SNBC2.
+   code Sheets est conservé jusqu'au retrait de la SNBC2. Le découpage en lots
+   est décrit dans le
+   [plan de mise en œuvre](../plans/2026-11-05-001-feat-trajectoire-snbc3-plan/README.md).
 3. **Conditionnel** : si le besoin interactif est confirmé, porter
    `territorialize.py` dans `packages/domain`, nourri par les tables de référence
    `snbc3`.
