@@ -189,9 +189,10 @@ describe('DownloadAvisPiecesController', () => {
     );
     expect(filename).toBe(`Avis ${DREAL_NOM} - PCAET ${DEPOSANTE_NOM}.zip`);
 
-    expect(await listArchiveEntries(response.body)).toEqual([
-      'courrier.pdf',
+    // Téléchargements parallèles : l'ordre des entrées n'est pas garanti.
+    expect((await listArchiveEntries(response.body)).sort()).toEqual([
       'annexe.pdf',
+      'courrier.pdf',
     ]);
   });
 
