@@ -1,6 +1,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { MembreFonction } from '@tet/domain/collectivites';
-import { ReferentielId, StatutAvancement } from '@tet/domain/referentiels';
+import {
+  ReferentielId,
+  ReferentielLabel,
+  StatutAvancement,
+} from '@tet/domain/referentiels';
 
 // Define all labels from app
 type ReferentielLabelKey = ReferentielId | 'crte';
@@ -10,6 +14,20 @@ export const referentielToName: Record<ReferentielLabelKey, string> = {
   crte: appLabels.referentielCrte,
   te: appLabels.referentielTe,
   'te-test': appLabels.referentielTeTest,
+};
+
+/** Nom court des référentiels */
+export const referentielToShortName: Record<ReferentielId, string> = {
+  cae: appLabels.referentielCaeCourt,
+  eci: appLabels.referentielEciCourt,
+  te: appLabels.referentielTeCourt,
+  'te-test': appLabels.referentielTeTestCourt,
+};
+
+/** Nom court des labels CAE / ECi portés par les mesures du référentiel CR */
+export const referentielLabelToShortName: Record<ReferentielLabel, string> = {
+  te_cae: appLabels.referentielCaeCourt,
+  te_eci: appLabels.referentielEciCourt,
 };
 
 export const avancementToLabel: Record<StatutAvancement, string> = {

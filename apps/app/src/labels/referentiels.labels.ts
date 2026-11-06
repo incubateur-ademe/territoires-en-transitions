@@ -9,6 +9,10 @@ export const referentielsLabels = {
   referentielCrte: 'Contrat Relance Transition Écologique',
   referentielTe: 'Climat Ressources',
   referentielTeTest: 'Climat Ressources (test)',
+  referentielCaeCourt: 'CAE',
+  referentielEciCourt: 'ECi',
+  referentielTeCourt: 'CR',
+  referentielTeTestCourt: 'CR (test)',
 
   /** Préférences d'affichage (écran super-admin) */
   choisirReferentielsAffichesEtatDesLieux:
