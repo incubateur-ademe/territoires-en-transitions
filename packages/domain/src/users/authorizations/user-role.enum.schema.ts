@@ -7,6 +7,8 @@ export const platformRoleEnumValues = [
   'SUPPORT',
   'SUPER_ADMIN',
   'ADEME',
+  'TETE_ADMIN',
+  'TETE_AUDITEUR',
 ] as const;
 
 export const PlatformRole = createEnumObject(platformRoleEnumValues);
