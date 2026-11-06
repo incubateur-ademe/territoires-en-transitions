@@ -190,6 +190,41 @@ describe('Dupliquer un plan', () => {
     expect(ficheAxeIds).not.toContain(axeB.id);
   });
 
+  test('copie la jauge des fiches du plan source', async () => {
+    const caller = buildEditorCaller();
+    const planIdsToCleanup: number[] = [];
+    cleanupPlans(planIdsToCleanup);
+
+    const sourcePlan = await caller.plans.plans.create({
+      nom: 'Plan source jauge',
+      collectiviteId: collectivite.id,
+    });
+    planIdsToCleanup.push(sourcePlan.id);
+    const sourceFiche = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Action jauge' },
+      ficheFields: { axes: [{ id: sourcePlan.id }] },
+    });
+    await caller.plans.fiches.update({
+      ficheId: sourceFiche.id,
+      ficheFields: { jauge: 35 },
+    });
+
+    const duplicated = await caller.plans.plans.duplicate({
+      planId: sourcePlan.id,
+      nom: 'Plan dupliqué jauge',
+    });
+    planIdsToCleanup.push(duplicated.planId);
+
+    const { data: newFiches } = await caller.plans.fiches.listFiches({
+      collectiviteId: collectivite.id,
+      filters: { planActionIds: [duplicated.planId] },
+      queryOptions: { limit: 'all' },
+    });
+    expect(newFiches).toEqual([
+      expect.objectContaining({ statut: 'En cours', jauge: 35 }),
+    ]);
+  });
+
   test('recrée les dates de début et de fin du plan source', async () => {
     const caller = buildEditorCaller();
     const planIdsToCleanup: number[] = [];

@@ -127,3 +127,12 @@ export const applyJaugeStatutChange = ({
     },
   };
 };
+
+export const getJaugeAtCreation = ({
+  statut,
+  isSousAction,
+}: {
+  statut: Statut | null | undefined;
+  isSousAction: boolean;
+}): number =>
+  !isSousAction && statut === StatutEnum.REALISE ? JAUGE_MAX : JAUGE_MIN;
