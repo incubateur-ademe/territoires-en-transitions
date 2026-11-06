@@ -91,6 +91,7 @@ export const demarchesLabels = {
   instructionListeAucunResultat: 'Aucun dossier ne correspond à ces filtres',
 
   instructionListeColonneRegion: 'Région',
+  instructionListeColonneDepartement: 'Département',
   /** Court : la colonne est étroite, et le service ne saisit pas cette date. */
   instructionListeColonneDateLancement: 'Date de lancement',
 

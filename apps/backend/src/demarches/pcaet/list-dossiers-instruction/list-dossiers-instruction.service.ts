@@ -25,6 +25,7 @@ import {
 } from './list-dossiers-instruction.repository';
 import {
   estRetenue,
+  listerDepartements,
   trierDossiers,
   trieSurLesPilotes,
 } from './list-dossiers-instruction.rules';
@@ -155,6 +156,7 @@ export class ListDossiersInstructionService {
       limit: input.limit,
       countByStatut,
       perimetreRegions,
+      perimetreDepartements: listerDepartements(lignes),
       stats,
     });
   }

@@ -53,6 +53,7 @@ const parsers = {
     parseAsStringLiteral(collectivitePcaetObligationValues)
   ).withDefault([]),
   regions: parseAsArrayOf(parseAsString).withDefault([]),
+  departements: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 /**
@@ -77,26 +78,30 @@ export type NbFiltresActifs = {
   statuts: number;
   obligations: number;
   regions: number;
+  departements: number;
 };
 
 export const useListDossiersInstruction = (serviceId: number) => {
   const trpc = useTRPC();
 
-  const [{ page, sort, direction, statuts, obligations, regions }, setParams] =
-    useQueryStates(parsers, {
-      urlKeys: {
-        page: '$p',
-        sort: '$s',
-        direction: '$d',
-        statuts: '$st',
-        obligations: '$ob',
-        regions: '$rg',
-      },
-      // Un tri, une page ou un filtre ne sont pas des étapes de navigation :
-      // les empiler obligerait à autant de retours en arrière pour quitter
-      // l'écran.
-      history: 'replace',
-    });
+  const [
+    { page, sort, direction, statuts, obligations, regions, departements },
+    setParams,
+  ] = useQueryStates(parsers, {
+    urlKeys: {
+      page: '$p',
+      sort: '$s',
+      direction: '$d',
+      statuts: '$st',
+      obligations: '$ob',
+      regions: '$rg',
+      departements: '$dp',
+    },
+    // Un tri, une page ou un filtre ne sont pas des étapes de navigation :
+    // les empiler obligerait à autant de retours en arrière pour quitter
+    // l'écran.
+    history: 'replace',
+  });
 
   const { data, isLoading, isError, refetch } = useQuery(
     trpc.demarches.pcaet.listDossiersInstruction.queryOptions(
@@ -111,6 +116,7 @@ export const useListDossiersInstruction = (serviceId: number) => {
         // répondre pour tout le périmètre.
         obligations: obligations.length > 0 ? obligations : undefined,
         regionCodes: regions.length > 0 ? regions : undefined,
+        departementCodes: departements.length > 0 ? departements : undefined,
       },
       {
         /**
@@ -152,6 +158,7 @@ export const useListDossiersInstruction = (serviceId: number) => {
     statuts?: PcaetStatutInstruction[];
     obligations?: CollectivitePcaetObligation[];
     regions?: string[];
+    departements?: string[];
   }) => setParams({ ...filtres, page: 1 });
 
   const reinitialiserFiltres = () =>
@@ -159,6 +166,7 @@ export const useListDossiersInstruction = (serviceId: number) => {
       statuts: null,
       obligations: null,
       regions: null,
+      departements: null,
       page: 1,
     });
 
@@ -171,11 +179,12 @@ export const useListDossiersInstruction = (serviceId: number) => {
     limit: LIMIT,
     sort,
     direction,
-    filtres: { statuts, obligations, regions },
+    filtres: { statuts, obligations, regions, departements },
     nbFiltresActifs: {
       statuts: estDefautStatuts(statuts) ? 0 : statuts.length,
       obligations: obligations.length,
       regions: regions.length,
+      departements: departements.length,
     } satisfies NbFiltresActifs,
     setFiltres,
     reinitialiserFiltres,

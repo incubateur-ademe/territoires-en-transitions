@@ -4,7 +4,7 @@ import { appLabels } from '@/app/labels/catalog';
 import type { CollectivitePcaetObligation } from '@tet/domain/demarches';
 import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
-import { Badge, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
+import { Badge, cn, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import {
   columnVisibilityFeature,
   createColumnHelper,
@@ -24,11 +24,13 @@ import {
   DateCell,
   DateSaisineCell,
   EcheanceCell,
+  DepartementCell,
   PiloteCell,
   RegionCell,
   type Dossier,
 } from './dossiers-instruction.cells';
 import {
+  DepartementHeaderFilter,
   ObligationHeaderFilter,
   RegionHeaderFilter,
   StatutHeaderFilter,
@@ -42,11 +44,13 @@ type Filtres = {
   statuts: PcaetStatutInstruction[];
   obligations: CollectivitePcaetObligation[];
   regions: string[];
+  departements: string[];
 };
 
 type Pilotage = {
   deposeAvis: boolean;
   regionsOptions: { code: string; libelle: string }[];
+  departementsOptions: { code: string; libelle: string }[];
   filtres: Filtres;
   nbFiltresActifs: NbFiltresActifs;
   setFiltres: (filtres: Partial<Filtres>) => void;
@@ -127,6 +131,26 @@ const RegionHeader = () => {
           options={regionsOptions}
           filterCount={nbFiltresActifs.regions}
           onChange={(regions) => setFiltres({ regions })}
+        />
+      }
+    />
+  );
+};
+
+const DepartementHeader = () => {
+  const { filtres, nbFiltresActifs, setFiltres, departementsOptions } =
+    usePilotage();
+
+  return (
+    <TableHeaderCell
+      className="w-40"
+      title={appLabels.instructionListeColonneDepartement}
+      filter={
+        <DepartementHeaderFilter
+          departements={filtres.departements}
+          options={departementsOptions}
+          filterCount={nbFiltresActifs.departements}
+          onChange={(departements) => setFiltres({ departements })}
         />
       }
     />
@@ -241,7 +265,7 @@ const columnHelper = createColumnHelper<typeof features, Dossier>();
  * En contrepartie, ces deux colonnes prennent ce qui reste : sur un écran
  * étroit, plus rien, et leurs en-têtes débordent sur les voisines. D'où la
  * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`,
- * ou de `2xl` avec la colonne Région — au-dessus, il tient, et l'en-tête reste
+ * ou de `2xl` avec la colonne Région ou Département — au-dessus, il tient, et l'en-tête reste
  * collant à la page.
  */
 const columns = [
@@ -261,6 +285,16 @@ const columns = [
     cell: ({ row }) => (
       <TableCell>
         <RegionCell dossier={row.original} />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'departement',
+    header: DepartementHeader,
+    cell: ({ row }) => (
+      <TableCell>
+        <DepartementCell dossier={row.original} />
       </TableCell>
     ),
   }),
@@ -353,6 +387,8 @@ export const DossiersInstructionTable = ({
   deposeAvis,
   afficherRegion,
   regionsOptions,
+  afficherDepartement,
+  departementsOptions,
   filtres,
   nbFiltresActifs,
   setFiltres,
@@ -378,6 +414,13 @@ export const DossiersInstructionTable = ({
    */
   afficherRegion: boolean;
   regionsOptions: { code: string; libelle: string }[];
+  /**
+   * Un service qui couvre plusieurs départements suit ses dossiers département
+   * par département. Pour une DDT mono-départementale, la colonne répéterait la
+   * même valeur.
+   */
+  afficherDepartement: boolean;
+  departementsOptions: { code: string; libelle: string }[];
   filtres: Filtres;
   /**
    * Ce que chaque filtre retient **une fois le défaut mis à part** : c'est le
@@ -402,6 +445,7 @@ export const DossiersInstructionTable = ({
     () => ({
       deposeAvis,
       regionsOptions,
+      departementsOptions,
       filtres,
       nbFiltresActifs,
       setFiltres,
@@ -412,6 +456,7 @@ export const DossiersInstructionTable = ({
     [
       deposeAvis,
       regionsOptions,
+      departementsOptions,
       filtres,
       nbFiltresActifs,
       setFiltres,
@@ -427,7 +472,12 @@ export const DossiersInstructionTable = ({
     data: dossiers,
     // La colonne se masque plutôt qu'elle ne disparaît de la définition : la
     // retirer changerait la liste des colonnes, donc l'identité des en-têtes.
-    state: { columnVisibility: { region: afficherRegion } },
+    state: {
+      columnVisibility: {
+        region: afficherRegion,
+        departement: afficherDepartement,
+      },
+    },
     // Le tri et le filtrage se font côté serveur, page par page : la clé d'une
     // ligne doit donc venir du dossier, et non de son rang dans la page.
     getRowId: getRowKey,
@@ -438,7 +488,9 @@ export const DossiersInstructionTable = ({
       {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
       <div
         className={
-          afficherRegion ? 'max-2xl:overflow-x-auto' : 'max-xl:overflow-x-auto'
+          afficherRegion || afficherDepartement
+            ? 'max-2xl:overflow-x-auto'
+            : 'max-xl:overflow-x-auto'
         }
         tabIndex={0}
         role="region"
@@ -447,7 +499,12 @@ export const DossiersInstructionTable = ({
         <ReactTable
           table={table}
           ariaLabel={appLabels.instructionListeTitre}
-          className={afficherRegion ? 'min-w-[83rem]' : 'min-w-[77rem]'}
+          className={cn({
+            'min-w-[77rem]': !afficherRegion && !afficherDepartement,
+            'min-w-[83rem]': afficherRegion && !afficherDepartement,
+            'min-w-[87rem]': !afficherRegion && afficherDepartement,
+            'min-w-[93rem]': afficherRegion && afficherDepartement,
+          })}
           isEmpty={dossiers.length === 0}
           emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
           getRowProps={(row) => ({

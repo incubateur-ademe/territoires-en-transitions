@@ -40,6 +40,11 @@ export const listDossiersInstructionInputSchema = z.object({
    * et son périmètre secondaire.
    */
   regionCodes: z.string().array().optional(),
+  /**
+   * Filtre par département du siège de la collectivité déposante : une DREAL
+   * suit ses dossiers département par département.
+   */
+  departementCodes: z.string().array().optional(),
   recherche: z.string().trim().min(1).optional(),
   /**
    * Par défaut, la priorité : les dossiers en instruction d'abord. Ce n'est le
