@@ -184,6 +184,7 @@ import { SiteRouter } from './site/site.router';
     StoreDocumentRouter,
     UpdateDocumentService,
     UpdateDocumentRouter,
+    GetDownloadUrlService,
     DocumentService,
     DocumentsRouter,
     ListCollectivitesService,

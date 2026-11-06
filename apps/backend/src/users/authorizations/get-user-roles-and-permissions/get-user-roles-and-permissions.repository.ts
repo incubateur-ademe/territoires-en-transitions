@@ -22,6 +22,8 @@ export type PlatformRolesRow = {
   isSupport: boolean;
   isSuperAdminRoleEnabled: boolean;
   isAdeme: boolean;
+  hasRoleTeteAdmin: boolean;
+  hasRoleTeteAuditeur: boolean;
 };
 
 export type CollectiviteRolesRow = {
@@ -60,6 +62,8 @@ export class GetUserRolesAndPermissionsRepository {
         isSupport: sql<boolean>`coalesce(${utilisateurSupportTable.isSupport}, false)`,
         isSuperAdminRoleEnabled: sql<boolean>`coalesce(${utilisateurSupportTable.isSuperAdminRoleEnabled}, false)`,
         isAdeme: sql<boolean>`coalesce(${dcpTable.email} LIKE '%@ademe.fr', false)`,
+        hasRoleTeteAdmin: sql<boolean>`coalesce(${utilisateurSupportTable.hasRoleTeteAdmin}, false)`,
+        hasRoleTeteAuditeur: sql<boolean>`coalesce(${utilisateurSupportTable.hasRoleTeteAuditeur}, false)`,
       })
       .from(dcpTable)
       .leftJoin(

@@ -133,6 +133,8 @@ export function toUserRolesAndPermissions({
     [platformRolesRow.isSupport, PlatformRole.SUPPORT],
     [platformRolesRow.isSuperAdminRoleEnabled, PlatformRole.SUPER_ADMIN],
     [platformRolesRow.isAdeme, PlatformRole.ADEME],
+    [platformRolesRow.hasRoleTeteAdmin, PlatformRole.TETE_ADMIN],
+    [platformRolesRow.hasRoleTeteAuditeur, PlatformRole.TETE_AUDITEUR],
   ] satisfies Array<[boolean, PlatformRole]>;
 
   const platformRoles = [
