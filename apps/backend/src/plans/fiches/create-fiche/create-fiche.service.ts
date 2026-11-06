@@ -105,11 +105,13 @@ export class CreateFicheService {
     authorization,
     fiche,
     ficheFields,
+    duplicatedJauge,
     tx,
   }: {
     authorization: FicheCreateAuthorization;
     fiche: FicheCreate;
     ficheFields?: UpdateFicheInput;
+    duplicatedJauge?: number;
     tx: Transaction;
   }): Promise<Result<{ id: number }, CreateFicheWithAuthorizationError>> {
     if (fiche.collectiviteId !== authorization.collectiviteId) {
@@ -132,6 +134,7 @@ export class CreateFicheService {
     const result = await this.ficheActionRepository.applyCreate({
       fiche,
       ficheFields,
+      duplicatedJauge,
       user: authorization.user,
       tx,
     });

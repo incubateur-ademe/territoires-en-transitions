@@ -52,6 +52,7 @@ export class FicheDuplicationService {
       authorization,
       fiche,
       ficheFields,
+      duplicatedJauge: source.jauge,
       tx,
     });
     if (!created.success) {

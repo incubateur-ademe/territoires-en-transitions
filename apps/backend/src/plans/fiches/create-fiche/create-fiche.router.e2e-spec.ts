@@ -12,6 +12,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
+import { StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 
@@ -77,6 +78,71 @@ describe('Create Fiche Action', () => {
           collectiviteId: collectivite.id,
         })
       );
+    });
+  });
+
+  describe('Create Fiche Action - Jauge', () => {
+    test.each([
+      { statut: StatutEnum.REALISE, jauge: 100 },
+      { statut: StatutEnum.EN_COURS, jauge: 0 },
+      { statut: StatutEnum.A_VENIR, jauge: 0 },
+      { statut: null, jauge: 0 },
+    ])(
+      'Une fiche créée au statut $statut démarre à la jauge $jauge',
+      async ({ statut, jauge }) => {
+        const caller = router.createCaller({ user: editorUser });
+
+        const { id: ficheId } = await caller.plans.fiches.create({
+          fiche: { collectiviteId: collectivite.id, statut, jauge: 40 },
+        });
+        onTestFinished(async () => {
+          await caller.plans.fiches.delete({ ficheId, deleteMode: 'hard' });
+        });
+
+        const fiche = await caller.plans.fiches.get({ id: ficheId });
+        expect(fiche).toMatchObject({ statut, jauge });
+      }
+    );
+
+    test('Une fiche créée avec le statut Réalisé dans ses champs démarre à 100 %', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const { id: ficheId } = await caller.plans.fiches.create({
+        fiche: { collectiviteId: collectivite.id },
+        ficheFields: { statut: StatutEnum.REALISE },
+      });
+      onTestFinished(async () => {
+        await caller.plans.fiches.delete({ ficheId, deleteMode: 'hard' });
+      });
+
+      const fiche = await caller.plans.fiches.get({ id: ficheId });
+      expect(fiche).toMatchObject({ statut: StatutEnum.REALISE, jauge: 100 });
+    });
+
+    test('Une sous-action créée Réalisé reste à 0 %', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const { id: parentId } = await caller.plans.fiches.create({
+        fiche: { collectiviteId: collectivite.id },
+      });
+      const { id: sousActionId } = await caller.plans.fiches.create({
+        fiche: {
+          collectiviteId: collectivite.id,
+          parentId,
+          statut: StatutEnum.REALISE,
+        },
+      });
+      onTestFinished(async () => {
+        for (const ficheId of [sousActionId, parentId]) {
+          await caller.plans.fiches.delete({ ficheId, deleteMode: 'hard' });
+        }
+      });
+
+      const sousAction = await caller.plans.fiches.get({ id: sousActionId });
+      expect(sousAction).toMatchObject({
+        statut: StatutEnum.REALISE,
+        jauge: 0,
+      });
     });
   });
 
