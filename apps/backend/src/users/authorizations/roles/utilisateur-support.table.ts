@@ -10,4 +10,8 @@ export const utilisateurSupportTable = pgTable('utilisateur_support', {
   isSuperAdminRoleEnabled: boolean('is_support_mode_enabled')
     .default(false)
     .notNull(),
+  hasRoleTeteAdmin: boolean('has_role_tete_admin').default(false).notNull(),
+  hasRoleTeteAuditeur: boolean('has_role_tete_auditeur')
+    .default(false)
+    .notNull(),
 });

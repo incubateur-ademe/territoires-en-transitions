@@ -1515,15 +1515,6 @@ values
     ('fonction', 'retool_patch_demande', 'edition', 'non', 'non', 'non', 'non'),
     ('fonction', 'retool_patch_demande', 'admin', 'non', 'non', 'non', 'non'),
     ('fonction', 'retool_patch_demande', 'auditeur', 'non', 'non', 'non', 'non'),
-    -- Fonction retool_update_audit
-    ('fonction', 'retool_update_audit', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'connecte', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'verifie', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'support', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'lecture', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'edition', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'admin', 'non', 'non', 'non', 'non'),
-    ('fonction', 'retool_update_audit', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Fonction retool_user_list
     ('fonction', 'retool_user_list', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'retool_user_list', 'connecte', 'non', 'non', 'non', 'non'),
