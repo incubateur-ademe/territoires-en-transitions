@@ -76,6 +76,9 @@ export const PermissionOperations = [
   // Utilisateurs
   'users.authorizations.mutate_super_admin_role',
 
+  // Labellisations (administration par le programme TETE)
+  'labellisations.admin',
+
   // Utils
   'utils.banner.mutate',
   'utils.mcp.read',

@@ -85,6 +85,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'collectivites.mutate',
     'plans.import.mutate',
     'plans.fiches.import_in_parallel',
+    'labellisations.admin',
     'plans.fiches.import_resume',
     'referentiels.labellisations.mutate_documents',
     'shared.actions-de-reference.mutate',
@@ -99,6 +100,8 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'indicateurs.indicateurs.read_confidentiel',
     'indicateurs.valeurs.read_confidentiel',
   ],
+  [PlatformRole.TETE_ADMIN]: ['labellisations.admin'],
+  [PlatformRole.TETE_AUDITEUR]: [],
   [CollectiviteRole.LECTURE]: [
     ...collectiviteLecturePermissions,
     'indicateurs.vues.read',
