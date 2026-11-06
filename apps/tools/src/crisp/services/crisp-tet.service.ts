@@ -40,11 +40,11 @@ export class CrispTetService {
     fingerprint: number
   ): Promise<void> {
     try {
-      const messages: CrispSessionMessage[] =
-        await this.crispClient.website.getMessagesInConversation(
+      const messages =
+        (await this.crispClient.website.getMessagesInConversation(
           websiteId,
           sessionId
-        );
+        )) as CrispSessionMessage[];
       const conversation = buildTetConversation(messages, fingerprint);
       const operatorId = conversation?.note.user?.user_id;
       if (!conversation || !operatorId) {
@@ -54,11 +54,10 @@ export class CrispTetService {
         return;
       }
 
-      const [operator, session]: [CrispOperatorIndo, CrispSession] =
-        await Promise.all([
-          this.crispClient.website.getWebsiteOperator(websiteId, operatorId),
-          this.crispClient.website.getConversation(websiteId, sessionId),
-        ]);
+      const [operator, session] = (await Promise.all([
+        this.crispClient.website.getWebsiteOperator(websiteId, operatorId),
+        this.crispClient.website.getConversation(websiteId, sessionId),
+      ])) as unknown as [CrispOperatorIndo, CrispSession];
       if (!operator?.email) {
         await this.sendNote(
           websiteId,
