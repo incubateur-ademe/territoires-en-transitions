@@ -36,7 +36,7 @@ export const Jauge = (): JSX.Element => {
   return (
     <DetailedAction.Section>
       <div className="flex flex-col gap-4" data-test="fiche.jauge">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <h2 className="mb-0 text-lg font-bold leading-4 text-primary-10">
             {appLabels.ficheJauge}
           </h2>
@@ -46,6 +46,13 @@ export const Jauge = (): JSX.Element => {
             variant={isDisabled ? 'grey' : isRealise ? 'success' : 'info'}
             type="outlined"
           />
+          {fiche.jaugeModifiedAt && (
+            <p className="mb-0 ml-auto text-xs font-light italic text-grey-7">
+              {appLabels.ficheJaugeMiseAJour(
+                format(new Date(fiche.jaugeModifiedAt), 'dd/MM/yyyy')
+              )}
+            </p>
+          )}
         </div>
 
         <Slider
@@ -92,14 +99,6 @@ export const Jauge = (): JSX.Element => {
               realisees: sousActionsRealisees,
               total: sousActions.list.length,
             })}
-          </p>
-        )}
-
-        {fiche.jaugeModifiedAt && (
-          <p className="mb-0 text-xs text-grey-7">
-            {appLabels.ficheJaugeMiseAJour(
-              format(new Date(fiche.jaugeModifiedAt), 'dd/MM/yyyy')
-            )}
           </p>
         )}
       </div>
