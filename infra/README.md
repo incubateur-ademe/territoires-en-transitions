@@ -4,7 +4,7 @@ Terraform qui décrit l'infrastructure TET sur Scaleway : la cible de la migrati
 Supabase Cloud + Koyeb (cf. [brainstorm de référence](../doc/plans/2026-05-15-001-migration-infra-supabase-koyeb-vers-scaleway-coolify.md)).
 
 **En bref** : une instance **Coolify** unique, sur son propre serveur, déploie les
-applications sur trois serveurs applicatifs (prod, nonprod, preview). Terraform crée les
+applications sur quatre serveurs applicatifs (prod, nonprod, preview, data). Terraform crée les
 serveurs, réseaux et bases, puis configure Coolify lui-même (« Coolify-as-code »). Les
 secrets vivent dans **Secret Manager**, jamais dans le state.
 
@@ -64,6 +64,7 @@ serveurs tirent leurs images de `ghcr.io`.
 | `tet-prod-apps`        | **`tet-prod`** | Applications de production.                              |
 | `tet-nonprod-apps`     | `tet`          | Mutualisé : preprod **et** staging.                      |
 | `tet-preview-apps`     | `tet`          | Previews éphémères, une par pull request.                |
+| `tet-data-apps`        | `tet`          | Stack d'analyse : stats, Streamlit, Metabase, MCP. arm64. |
 
 | Environnement | Postgres / Redis              |
 | ------------- | ----------------------------- |
@@ -71,6 +72,7 @@ serveurs tirent leurs images de `ghcr.io`.
 | preprod       | managés Scaleway (RDB, Redis) |
 | staging       | conteneurs Coolify            |
 | preview       | conteneurs Coolify, éphémères |
+| data          | RDB managé Scaleway (stats), sans Redis |
 
 Preprod est sur du managé pour rester **iso-prod** : l'admin RDB Scaleway n'est pas
 superuser, d'où `scaleway_rdb_user.supabase_auth_admin`, le rôle `postgres` NOLOGIN factice
@@ -86,10 +88,12 @@ l'agent Alloy. Pour l'instant, seule la preprod est ouverte (`application_enviro
 
 Deux VPC **sans aucun lien** : `tet` (projet principal, un Private Network par tier hors
 prod) et `tet-prod` (un seul Private Network avec serveur, Postgres et Redis de prod).
-`10.0.2.0/24` est libre : staging vit sur le serveur nonprod.
+Staging vit sur le serveur nonprod, sans Private Network propre. `10.0.2.0/24` est le
+Private Network du tier data (VM data, RDB stats) : la base de stats reçoit une copie des
+données staging, mais n'a aucune route vers nonprod.
 
 - Dans le VPC `tet`, les ACL (IPv4 **et** IPv6) n'autorisent qu'un flux inter-PN :
-  **TCP/22 du control plane vers nonprod et preview**.
+  **TCP/22 du control plane vers nonprod, preview et data**.
 - La prod n'a **aucune route** depuis ce VPC : Coolify la pilote en SSH sur son IP publique,
   que son security group n'ouvre qu'à l'IP publique du control plane (`coolify_public_ip`
   dans `prod/terraform.tfvars`). Une erreur d'ACL côté nonprod ou preview ne peut donc pas
@@ -118,11 +122,12 @@ flowchart LR
   nonprod["nonprod<br/>VM + RDB/Redis preprod,<br/>bucket Storage, Cockpit"]
   preview["preview<br/>VM"]
   prod["prod<br/>VPC tet-prod, VM,<br/>RDB/Redis prod"]
-  nonprod & preview & prod --> coolifys
+  data["data<br/>VM arm64, RDB stats"]
+  nonprod & preview & prod & data --> coolifys
   coolifys["coolify<br/>clés, serveurs, environnements,<br/>applications, env vars, S3, backup"]
 ```
 
-Ordre d'application : `platform → nonprod / prod / preview → coolify`.
+Ordre d'application : `platform → nonprod / prod / preview / data → coolify`.
 
 - **Un state par stack**, dans le bucket `tet-tfstate`, avec locking natif
   (`use_lockfile`, cf. [Bootstrap](#bootstrap-une-fois)).
@@ -138,6 +143,7 @@ infra/
 │                        redis, cockpit-dashboards
 ├── platform/            socle transverse
 ├── nonprod/ prod/ preview/   un stack par tier (nonprod porte aussi supabase-api/ et Cockpit)
+├── data/                serveur data (arm64) + RDB stats, rôles MCP (lecture seule) et Metabase
 ├── coolify/             Coolify-as-code
 ├── observability/       config Alloy + règles d'alerte
 └── scripts/             helpers à sourcer (tf-env.sh, coolify-env.sh) et scripts d'API Coolify
@@ -227,7 +233,7 @@ Pour le stack `coolify`, sourcer en plus `scripts/coolify-env.sh` (`COOLIFY_ENDP
 
 ```sh
 terraform fmt -recursive
-for d in platform nonprod prod preview coolify; do
+for d in platform nonprod prod preview data coolify; do
   terraform -chdir=$d init -backend=false && terraform -chdir=$d validate
 done
 tflint --recursive
@@ -248,7 +254,7 @@ plutôt que d'accepter la première clé présentée :
 ```sh
 {
   echo "$(terraform -chdir=infra/platform output -raw coolify_public_ip) $(terraform -chdir=infra/platform output -raw coolify_sshd_host_public_key)"
-  for t in nonprod preview; do
+  for t in nonprod preview data; do
     echo "$(terraform -chdir=infra/$t output -raw server_private_ip) $(terraform -chdir=infra/$t output -raw server_sshd_host_public_key)"
   done
   echo "$(terraform -chdir=infra/prod output -raw server_ssh_host) $(terraform -chdir=infra/prod output -raw server_sshd_host_public_key)"
