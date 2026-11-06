@@ -15,6 +15,9 @@ on:
           - preprod
           - staging
           - prod
+          # Coolify sur Scaleway, en parallèle de la preprod Koyeb le temps de la
+          # migration. Même environnement GitHub que preprod (secrets de build).
+          - preprod-scaleway
       is-test-backend:
         type: boolean
         description: Backend de test
@@ -26,7 +29,7 @@ on:
 jobs:
   build-backend:
     name: Build le backend
-    environment: ${{ github.event.inputs.target }}
+    environment: ${{ github.event.inputs.target == 'preprod-scaleway' && 'preprod' || github.event.inputs.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -81,7 +84,7 @@ jobs:
 
   deploy-backend:
     name: Déploie le backend
-    if: ${{ github.event.inputs.is-test-backend != 'true' }}
+    if: ${{ github.event.inputs.is-test-backend != 'true' && github.event.inputs.target != 'preprod-scaleway' }}
     needs: build-backend
     environment:
       name: ${{ github.event.inputs.target }}
@@ -156,7 +159,7 @@ jobs:
 
   deploy-test-backend:
     name: Déploie le backend de test
-    if: ${{ github.event.inputs.is-test-backend == 'true' }}
+    if: ${{ github.event.inputs.is-test-backend == 'true' && github.event.inputs.target != 'preprod-scaleway' }}
     needs: build-backend
     environment:
       name: ${{ github.event.inputs.target }}
@@ -224,3 +227,29 @@ jobs:
         uses: ./.github/actions/providers/koyeb/get-app-url
         with:
           app-name: test-${{ github.event.inputs.target }}-backend
+
+  deploy-coolify:
+    name: Déploie le backend sur Coolify (Scaleway)
+    # Pas de backend de test sur Coolify : une demande de test n'écrase pas preprod.
+    if: ${{ github.event.inputs.target == 'preprod-scaleway' && github.event.inputs.is-test-backend != 'true' }}
+    needs: build-backend
+    environment:
+      name: preprod
+      url: https://api.preprod.territoiresentransitions.fr
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      # Les variables d'environnement sont poussées par infra/coolify (Terraform),
+      # pas ici : la CD ne pose que le tag d'image et déclenche le déploiement.
+      - name: Déploie backend sur Coolify
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          APP_ID: preprod/backend
+          IMAGE: ${{ needs.build-backend.outputs.image }}
+        run: IMAGE_TAG="${IMAGE##*:}" infra/scripts/coolify-deploy.sh

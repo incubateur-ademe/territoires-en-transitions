@@ -9,9 +9,11 @@ BEGIN
         RAISE EXCEPTION 'Le schéma posthog existe encore';
     END IF;
 
-    IF EXISTS(SELECT FROM cron.job WHERE jobname = 'posthog_send_yesterday_events')
-    THEN
-        RAISE EXCEPTION 'Le cron posthog_send_yesterday_events existe encore';
+    IF to_regclass('cron.job') IS NOT NULL THEN
+        IF EXISTS(SELECT FROM cron.job WHERE jobname = 'posthog_send_yesterday_events')
+        THEN
+            RAISE EXCEPTION 'Le cron posthog_send_yesterday_events existe encore';
+        END IF;
     END IF;
 END $$;
 

@@ -15,6 +15,9 @@ on:
           - preprod
           - staging
           - prod
+          # Coolify sur Scaleway, en parallèle de la preprod Koyeb le temps de la
+          # migration. Même environnement GitHub que preprod (secrets de build).
+          - preprod-scaleway
       is-test-app:
         type: boolean
         description: Application de test
@@ -28,7 +31,7 @@ jobs:
     name: Build l'app
     # Pas de `if:` sur is-test-app : l'image ne dépend plus de l'environnement,
     # la même sert l'app déployée et les apps de test.
-    environment: ${{ github.event.inputs.target }}
+    environment: ${{ github.event.inputs.target == 'preprod-scaleway' && 'preprod' || github.event.inputs.target }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -96,7 +99,7 @@ jobs:
 
   deploy-app:
     name: Déploie l'app
-    if: ${{ github.event.inputs.is-test-app != 'true' }}
+    if: ${{ github.event.inputs.is-test-app != 'true' && github.event.inputs.target != 'preprod-scaleway' }}
     needs: build-app
     environment:
       name: ${{ github.event.inputs.target }}
@@ -152,7 +155,7 @@ jobs:
 
   deploy-test-app:
     name: Déploie l'app de test
-    if: ${{ github.event.inputs.is-test-app == 'true' }}
+    if: ${{ github.event.inputs.is-test-app == 'true' && github.event.inputs.target != 'preprod-scaleway' }}
     needs: build-app
     # `preprod` et non `preprod-koyeb` : les apps de test sont des artefacts
     # preprod (c'est déjà l'environnement utilisé par cd-test-app-destroy.yml
@@ -220,3 +223,29 @@ jobs:
         uses: ./.github/actions/providers/koyeb/get-app-url
         with:
           app-name: test-app-${{ steps.test-app-name.outputs.name }}
+
+  deploy-coolify:
+    name: Déploie l'app sur Coolify (Scaleway)
+    # Pas d'app de test sur Coolify : une demande de test n'écrase pas preprod.
+    if: ${{ github.event.inputs.target == 'preprod-scaleway' && github.event.inputs.is-test-app != 'true' }}
+    needs: build-app
+    environment:
+      name: preprod
+      url: https://app.preprod.territoiresentransitions.fr
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      # Les variables d'environnement sont poussées par infra/coolify (Terraform),
+      # pas ici : la CD ne pose que le tag d'image et déclenche le déploiement.
+      - name: Déploie app sur Coolify
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          APP_ID: preprod/app
+          IMAGE: ${{ needs.build-app.outputs.image }}
+        run: IMAGE_TAG="${IMAGE##*:}" infra/scripts/coolify-deploy.sh
