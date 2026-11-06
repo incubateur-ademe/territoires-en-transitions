@@ -269,7 +269,7 @@ export const ETAPES: {
     end: 22.8,
   },
   {
-    title: 'Transmis pour avis',
+    title: 'Transmission pour avis',
     description:
       'Consultations auprès du conseil régional et du préfet de région.',
     start: 22.8,
@@ -283,7 +283,7 @@ export const ETAPES: {
     end: ADOPTION_TIME,
   },
   {
-    title: 'Adoption',
+    title: 'Adoption, publication et mise en œuvre',
     description: 'PCAET adopté, publié et mis en œuvre.',
     start: ADOPTION_TIME,
     end: ADOPTION_TIME,

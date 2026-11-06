@@ -445,21 +445,6 @@ export const AvanceDemarcheSection = ({
 
   return (
     <div className="flex flex-col">
-      {/* Étape 0 : création de la démarche */}
-      <NumberedStep
-        step={{
-          label: appLabels.demarcheAvanceEtapeCreationLabel,
-          description: appLabels.demarcheAvanceEtapeCreationDescription({
-            type: typeLabels,
-          }),
-        }}
-        number={0}
-        isDone
-        isPast={!isPreview}
-        showConnector
-        connectorActive={!isPreview}
-      />
-
       {/* Étape 1 : en cours de dépôt. Un dépôt hors plateforme ne l'a pas
           franchie sur la plateforme : la marquer « faite » laisserait croire
           qu'elle y a eu lieu, alors qu'elle n'y a simplement pas eu lieu. */}
