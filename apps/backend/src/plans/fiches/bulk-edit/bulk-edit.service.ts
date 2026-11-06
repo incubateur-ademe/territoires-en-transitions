@@ -7,6 +7,8 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { applyJaugeStatutChange, Statut } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, inArray, or, sql } from 'drizzle-orm';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
@@ -113,14 +115,26 @@ export class BulkEditService {
         libreTags !== undefined ||
         Object.keys(plainValues).length > 0
       ) {
-        await tx
-          .update(ficheActionTable)
-          .set({
-            ...plainValues,
-            modifiedBy: user.id,
-            modifiedAt: new Date().toISOString(),
-          })
-          .where(inArray(ficheActionTable.id, actualFicheIds));
+        const updateGroups =
+          plainValues.statut === undefined
+            ? [{ ficheIds: actualFicheIds, jauge: undefined }]
+            : await this.groupFichesByJaugeAfterStatutChange(
+                actualFicheIds,
+                plainValues.statut,
+                tx
+              );
+
+        for (const group of updateGroups) {
+          await tx
+            .update(ficheActionTable)
+            .set({
+              ...plainValues,
+              ...(group.jauge !== undefined && { jauge: group.jauge }),
+              modifiedBy: user.id,
+              modifiedAt: new Date().toISOString(),
+            })
+            .where(inArray(ficheActionTable.id, group.ficheIds));
+        }
       }
 
       // Update external relation `pilotes`
@@ -311,5 +325,40 @@ export class BulkEditService {
         }
       }
     }
+  }
+
+  private async groupFichesByJaugeAfterStatutChange(
+    ficheIds: number[],
+    statut: Statut | null,
+    tx: Transaction
+  ): Promise<{ ficheIds: number[]; jauge: number | undefined }[]> {
+    const fiches = await tx
+      .select({
+        id: ficheActionTable.id,
+        statut: ficheActionTable.statut,
+        jauge: ficheActionTable.jauge,
+        parentId: ficheActionTable.parentId,
+      })
+      .from(ficheActionTable)
+      .where(inArray(ficheActionTable.id, ficheIds));
+
+    const ficheIdsByJauge = new Map<number, number[]>();
+    for (const fiche of fiches) {
+      const result = applyJaugeStatutChange({
+        before: { statut: fiche.statut, jauge: fiche.jauge },
+        change: { statut },
+        isSousAction: fiche.parentId !== null,
+      });
+      const jauge = result.success ? result.data.jauge : fiche.jauge;
+      ficheIdsByJauge.set(jauge, [
+        ...(ficheIdsByJauge.get(jauge) ?? []),
+        fiche.id,
+      ]);
+    }
+
+    return [...ficheIdsByJauge].map(([jauge, ids]) => ({
+      ficheIds: ids,
+      jauge,
+    }));
   }
 }
