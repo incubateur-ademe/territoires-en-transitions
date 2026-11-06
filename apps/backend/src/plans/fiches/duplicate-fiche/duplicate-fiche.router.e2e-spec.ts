@@ -345,6 +345,30 @@ describe('Dupliquer une fiche action', () => {
     expect(newSousActions[0].parentId).toBe(newFicheId);
   });
 
+  test('copie la jauge de la fiche source', async () => {
+    const caller = buildEditorCaller();
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan jauge',
+      collectiviteId: collectivite.id,
+    });
+    cleanupPlans([plan.id]);
+    const source = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Action jauge' },
+      ficheFields: { axes: [{ id: plan.id }] },
+    });
+    await caller.plans.fiches.update({
+      ficheId: source.id,
+      ficheFields: { jauge: 60 },
+    });
+
+    const { ficheId } = await caller.plans.fiches.duplicate({
+      ficheId: source.id,
+    });
+
+    const duplicated = await caller.plans.fiches.get({ id: ficheId });
+    expect(duplicated).toMatchObject({ statut: 'En cours', jauge: 60 });
+  });
+
   test('refuse la duplication inter-collectivités (IDOR)', async () => {
     const caller = buildEditorCaller();
     const plan = await caller.plans.plans.create({

@@ -343,6 +343,8 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
         titre: ficheActionTable.titre,
         description: ficheActionTable.description,
         parentId: ficheActionTable.parentId,
+        statut: ficheActionTable.statut,
+        jauge: ficheActionTable.jauge,
       })
       .from(ficheActionTable)
       .innerJoin(
@@ -828,6 +830,28 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
     const sousActions = await fichesByTitreInPlan(planId, 'Sous-action A');
     expect(sousActions).toHaveLength(0);
+  });
+
+  test('démarre à 100 % une action importée au statut Réalisé', async () => {
+    extractionAction.statut = 'Réalisé';
+    onTestFinished(() => {
+      extractionAction.statut = '';
+    });
+    const { jobId, planId } = await enqueue(
+      {
+        planName: 'Plan import IA réalisé',
+        withVerifications: 'false',
+        withSousActions: 'true',
+      },
+      { source: csvSource('realise') }
+    );
+
+    await app.get(GenerateImportDraftService).generate(jobId);
+
+    const [action] = await fichesByTitreInPlan(planId, 'Action 1.1.1');
+    expect(action).toMatchObject({ statut: 'Réalisé', jauge: 100 });
+    const [sousAction] = await fichesByTitreInPlan(planId, 'Sous-action A');
+    expect(sousAction).toMatchObject({ jauge: 0 });
   });
 
   test('demande confirmation avant de ré-importer un fichier dont le plan existe, dans la même collectivité seulement', async () => {
