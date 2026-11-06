@@ -278,17 +278,10 @@ export const demarchesLabels = {
   demarcheRappelPlanAucun:
     'Aucun programme d’actions n’est rattaché à cette démarche.',
   demarcheRappelPlanErreur: 'Le programme d’actions n’a pas pu être chargé.',
-  demarcheAvanceEtapeCreationLabel: 'Démarrage de la démarche de dépôt',
-  demarcheAvanceEtapeCreationDescription: ({
-    type,
-  }: {
-    type: DemarcheTypeLabels;
-  }) =>
-    `Renseigner l'intitulé, les pilotes et la date de lancement pour débuter le dépôt de votre projet de ${type.nom}.`,
   demarcheAvanceEtapeElaborationLabel: 'Élaboration',
   demarcheAvanceEtapeElaborationDescription:
     "Dépôt des données du projet de PCAET (diagnostic, objectifs de la stratégie, programme d’actions) et de ses différents documents, jusqu'à la transmission pour avis.",
-  demarcheAvanceEtapeTransmisLabel: 'Transmis pour avis',
+  demarcheAvanceEtapeTransmisLabel: 'Transmission pour avis',
   demarcheAvanceEtapeTransmisDescription:
     'Consultations auprès du préfet de région.',
   demarcheAvanceEtapeTransmisInfo:
@@ -299,14 +292,14 @@ export const demarchesLabels = {
     'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche',
   demarcheAvanceEtapeFinalisationHorsPlateformeDescription:
     'Renseignez les documents, les volets du diagnostic et le plan d’actions, déposez la délibération d’adoption, puis publiez votre démarche.',
-  demarcheAvanceEtapePublieLabel: 'Adopté, publié et en cours de mise en œuvre',
+  demarcheAvanceEtapePublieLabel: 'Adoption, publication et mise en œuvre',
   demarcheAvanceEtapePublieDescription: ({
     type,
   }: {
     type: DemarcheTypeLabels;
   }) =>
     `${type.nom} en vigueur jusqu’à sa révision et l’adoption du suivant. Il est accessible au public. Pilotez vos actions et renseignez vos indicateurs durant les 6 ans de mise en œuvre.`,
-  demarcheAvanceEtapeArchiveLabel: 'Archivé',
+  demarcheAvanceEtapeArchiveLabel: 'Archivage',
   demarcheAvanceEtapeArchiveDescription: ({
     type,
   }: {

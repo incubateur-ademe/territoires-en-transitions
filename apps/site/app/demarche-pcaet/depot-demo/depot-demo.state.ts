@@ -230,7 +230,7 @@ export const getDepotDemoState = (time: number) => {
     avis: {
       title:
         time < ETAPES[2].start
-          ? 'Transmis pour avis'
+          ? 'Transmission pour avis'
           : time < ADOPTION_TIME
           ? 'Prise en compte des avis et délibération'
           : 'Adoption',
