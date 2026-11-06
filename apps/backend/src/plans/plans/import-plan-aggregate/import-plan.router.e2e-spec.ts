@@ -94,6 +94,7 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
         titre: ficheActionTable.titre,
         description: ficheActionTable.description,
         statut: ficheActionTable.statut,
+        jauge: ficheActionTable.jauge,
         priorite: ficheActionTable.priorite,
         budgetPrevisionnel: ficheActionTable.budgetPrevisionnel,
         parentId: ficheActionTable.parentId,
@@ -438,6 +439,45 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
     const pilotes31 = await piloteNomsByFicheId(sousAction31[0].id);
     expect(pilotes31).toHaveLength(1);
     expect(pilotes31[0].nom).toBe('Pilote SA3.1');
+  });
+
+  test('Test import plan démarre les actions Réalisé à 100 %, les autres fiches à 0 %', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: testUser.id,
+    });
+
+    const input = await pathToInput({
+      pathName: './__fixtures__/plan_with_action_realisee.xlsx',
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    const { planId } = await caller.plans.plans.import(input);
+
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
+
+    const [actionRealisee] = await getFichesByTitreInPlan(
+      'Action normale',
+      planId
+    );
+    expect(actionRealisee).toMatchObject({ statut: 'Réalisé', jauge: 100 });
+
+    const [sousActionRealisee] = await getFichesByTitreInPlan(
+      'Sous-action 1.2',
+      planId
+    );
+    expect(sousActionRealisee).toMatchObject({ statut: 'Réalisé', jauge: 0 });
+
+    const [actionEnPause] = await getFichesByTitreInPlan(
+      'Sous-action 3.1',
+      planId
+    );
+    expect(actionEnPause).toMatchObject({ statut: 'En pause', jauge: 0 });
   });
 
   test('Test import plan avec actions en doublon dans le même axe échoue', async () => {
