@@ -122,7 +122,7 @@ export const TabsList = ({
   className?: string;
   children: ReactNode;
 }) => {
-  const { variant = 'pill' } = useTabsContext();
+  const { size = 'md', variant = 'pill' } = useTabsContext();
 
   const handleKeyDown = (event: KeyboardEvent<HTMLUListElement>) => {
     const tabs = getTabsInList(event.currentTarget);
@@ -163,8 +163,15 @@ export const TabsList = ({
         {
           'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6':
             variant === 'pill',
-          'flex flex-wrap items-stretch justify-start gap-4 p-0':
-            variant === 'card',
+          // Les cartes se partagent toute la largeur et passent à la ligne
+          // quand elles deviendraient plus étroites que leur largeur minimale.
+          'grid gap-4 p-0': variant === 'card',
+          'grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]':
+            variant === 'card' && size === 'md',
+          'grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))]':
+            variant === 'card' && size === 'sm',
+          'grid-cols-[repeat(auto-fit,minmax(6rem,1fr))]':
+            variant === 'card' && size === 'xs',
         },
         className
       )}
@@ -242,14 +249,14 @@ export const TabsTab = (props: TabProps) => {
   const className = isCard
     ? cn(
         // styles communs
-        'flex flex-col items-center justify-start text-center gap-2 w-full h-full p-4 bg-white bg-none after:hidden border border-solid rounded-lg transition',
+        'flex flex-col items-center justify-start text-center gap-2 w-full h-full px-2 py-4 bg-white bg-none after:hidden border border-solid rounded-lg transition',
         {
           // variante de taille
           'text-md': size === 'md' || size === undefined,
           'text-sm': size === 'sm',
           'text-xs': size === 'xs',
           // variante pour l'onglet actif
-          'border-2 border-primary-7 text-primary-9 font-bold p-[calc(theme(spacing.4)-1px)]':
+          'border-2 border-primary-7 text-primary-9 font-bold px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing.4)-1px)]':
             isTabActive,
           // variante pour les onglets inactifs
           'border-grey-3 text-primary-10 hover:border-grey-4': !isTabActive,
@@ -377,10 +384,7 @@ export const TabsTab = (props: TabProps) => {
       role="presentation"
       className={cn('p-0', props.actions && className, {
         'p-0 gap-0': props.actions,
-        'shrink-0': isCard || !!props.actions,
-        'w-48': isCard && size === 'md',
-        'w-40': isCard && size === 'sm',
-        'w-32': isCard && size === 'xs',
+        'shrink-0': !!props.actions,
       })}
     >
       {props.tooltip ? (
