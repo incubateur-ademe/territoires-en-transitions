@@ -387,4 +387,7 @@ export const utilisateursAndEntityLabels = {
     "Choisir les référentiels affichés et leur mode d'accès",
   administrationActionsDeReferenceDescription:
     'Consulter et modifier les actions de référence',
+  administrationGestionLabellisations: 'Gestion des labellisations',
+  administrationGestionLabellisationsDescription:
+    "Suivre les dossiers d'audit, de labellisation et les COT des collectivités",
 };

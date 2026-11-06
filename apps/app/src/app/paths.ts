@@ -88,6 +88,10 @@ export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const ajouterCollectiviteUrl = `${adminPath}/ajouter-collectivite`;
 export const importerPlanUrl = `${adminPath}/plans/import`;
 export const bannerInfoUrl = `${adminPath}/banniere`;
+export const labellisationsAdminUrl = `${adminPath}/labellisations`;
+export const labellisationsAdminEnCoursUrl = `${labellisationsAdminUrl}/en-cours`;
+export const labellisationsAdminClosUrl = `${labellisationsAdminUrl}/clos`;
+export const labellisationsAdminCotUrl = `${labellisationsAdminUrl}/cot`;
 
 const collectiviteParam = 'collectiviteId';
 const indicateurViewParam = 'vue';

@@ -255,4 +255,96 @@ export const referentielsLabels = {
     `Référentiel v${version}`,
   sauvegardeCreeePar: (nom: string): string => `Créée par ${nom}`,
   sauvegardeAutomatique: 'Sauvegarde automatique',
-};
+
+  /** Administration des labellisations (programme TETE) */
+  labellisationsAdminTitre: 'Labellisations',
+  labellisationsAdminOngletEnAttente: 'Dossiers en attente',
+  labellisationsAdminOngletEnCours: 'Dossiers en cours',
+  labellisationsAdminOngletClos: 'Dossiers clos',
+  labellisationsAdminOngletCot: 'COT',
+  labellisationsAdminRechercheCollectivite: 'Rechercher une collectivité',
+  labellisationsAdminRechercheNomOuId: 'Nom ou identifiant',
+  labellisationsAdminColonneCollectivite: 'Collectivité',
+  labellisationsAdminColonneReferentiel: 'Réf.',
+  labellisationsAdminColonneSujet: 'Sujet',
+  labellisationsAdminColonneEtoileDemandee: 'Étoile demandée',
+  labellisationsAdminColonneEtoile: 'Étoile',
+  labellisationsAdminColonneStatut: 'Statut',
+  labellisationsAdminColonneAuditeurs: 'Audité par',
+  labellisationsAdminColonneClotureAudit: 'Audit clôturé le',
+  labellisationsAdminAuditAttribueLe: 'Audit attribué le',
+  labellisationsAdminColonneLabelliseeLe: 'Labellisé le',
+  labellisationsAdminColonneActions: 'Actions',
+  labellisationsAdminSujet: {
+    labellisation: 'Labellisation',
+    labellisation_cot: 'Labellisation + COT',
+    cot: 'COT',
+  },
+  labellisationsAdminStatut: {
+    demande_envoyee: 'Demande envoyée',
+    premiere_etoile_a_valider: 'Demande 1ère étoile',
+    audit_en_cours: 'Audit en cours',
+    audit_valide: 'Audit validé',
+    clos: 'Clos',
+  },
+  labellisationsAdminPasDAudit: "Pas d'audit",
+  labellisationsAdminAActer: 'À acter',
+  labellisationsAdminAucunDossier:
+    'Aucun dossier ne correspond à cette recherche',
+  labellisationsAdminAucunDossierEnCours: 'Aucun dossier en cours',
+  labellisationsAdminAucunDossierClos: 'Aucun dossier clos',
+  labellisationsAdminAucunDossierEnAttente: "Aucun dossier en attente d'action",
+  labellisationsAdminAttribuerAuditeur: 'Attribuer un auditeur',
+
+  /** Fiche dossier */
+  labellisationsAdminSujetLabel: 'Sujet',
+  labellisationsAdminReferentiel: 'Référentiel',
+  labellisationsAdminEtoileDemandee: 'Étoile demandée',
+  labellisationsAdminEnvoyeeLe: 'Demande envoyée le',
+  labellisationsAdminDemandeur: 'Demandé par',
+  labellisationsAdminNonRenseigne: 'Non renseigné',
+  labellisationsAdminAuditeurs: 'Audité par',
+  labellisationsAdminAucunAuditeurAttribue: 'Aucun auditeur attribué',
+  labellisationsAdminAuditeurAjoute:
+    "L'auditeur a été ajouté : il voit le dossier dans son espace",
+  labellisationsAdminAjouterAuditeurParEmail: 'Ajouter un auditeur',
+  labellisationsAdminAjouterAuditeurParEmailDescription: (
+    email: string
+  ): string =>
+    `${email} n'a pas encore le rôle auditeur. En l'ajoutant à ce dossier, cette personne recevra ce rôle et sera proposée pour les prochains dossiers.`,
+  labellisationsAdminAjouter: 'Ajouter',
+  labellisationsAdminHistorique: 'Audits précédents de la collectivité',
+  labellisationsAdminHistoriqueVide: 'Aucun audit précédent sur ce référentiel',
+  labellisationsAdminLabellisee: 'Labellisée',
+  labellisationsAdminLabelliseeLe: (date: string): string =>
+    `labellisée le ${date}`,
+  labellisationsAdminDecision: 'Actions',
+  labellisationsAdminEtoileObtenue: 'Étoile obtenue',
+  labellisationsAdminDateCra: 'Date de la CRA',
+  labellisationsAdminLabelliser: 'Labelliser',
+  labellisationsAdminClore: 'Clore',
+  labellisationsAdminDossierClos: 'Dossier clos',
+  labellisationsAdminDossierCloture: 'Le dossier est clos',
+  labellisationsAdminConfirmerDescription:
+    'Le dossier sera clos : cette décision est définitive.',
+  labellisationsAdminConfirmer: 'Confirmer',
+  labellisationsAdminDemandeModifiee: 'La demande a été modifiée',
+
+  /** Fiche dossier : demande de 1ère étoile */
+  labellisationsAdminAVerifier: 'À vérifier',
+  labellisationsAdminActeEngagement: "Acte d'engagement",
+  labellisationsAdminVoirDocument: 'Voir le document',
+  labellisationsAdminAucunActeEngagement: "Aucun acte d'engagement joint",
+  labellisationsAdminRienAVerifierCot:
+    'Collectivité en COT : aucun document à fournir',
+  labellisationsAdminCollectiviteHorsCot: 'Collectivité hors COT',
+  labellisationsAdminDate: 'Date',
+  labellisationsAdminValiderPremiereEtoile: 'Valider la 1ère étoile',
+  labellisationsAdminRefuser: 'Refuser',
+
+  /** Onglet COT */
+  labellisationsAdminSignataire: 'Signataire',
+  labellisationsAdminCotActif: 'Actif',
+  labellisationsAdminAucunCot: 'Aucun COT ne correspond à cette recherche',
+  labellisationsAdminCotModifie: 'Le COT a été mis à jour',
+} as const;

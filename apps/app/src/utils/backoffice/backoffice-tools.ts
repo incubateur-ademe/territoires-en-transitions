@@ -2,6 +2,7 @@ import {
   ajouterCollectiviteUrl,
   bannerInfoUrl,
   importerPlanUrl,
+  labellisationsAdminUrl,
   makeCollectiviteActionsDeReferenceUrl,
   makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
@@ -21,7 +22,8 @@ export type BackofficeToolId =
   | 'modifier-collectivite'
   | 'affichage-referentiels'
   | 'banniere'
-  | 'actions-de-reference';
+  | 'actions-de-reference'
+  | 'labellisations';
 
 export type BackofficeTool = {
   id: BackofficeToolId;
@@ -102,6 +104,14 @@ const backofficeTools: (
     makeHref: (collectiviteId) =>
       makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
     permission: 'shared.actions-de-reference.mutate',
+  },
+  {
+    id: 'labellisations',
+    label: appLabels.administrationGestionLabellisations,
+    description: appLabels.administrationGestionLabellisationsDescription,
+    icon: 'award-line',
+    href: labellisationsAdminUrl,
+    permission: 'labellisations.admin',
   },
 ];
 

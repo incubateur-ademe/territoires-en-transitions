@@ -39,6 +39,7 @@ describe('listAllowedBackofficeTools', () => {
       'affichage-referentiels',
       'banniere',
       'actions-de-reference',
+      'labellisations',
     ]);
   });
 
@@ -65,6 +66,13 @@ describe('listAllowedBackofficeTools', () => {
       'importer-plan',
       'ajouter-collectivite',
       'banniere',
+      'labellisations',
+    ]);
+  });
+
+  it('ne rend que la gestion des labellisations au programme TETE', () => {
+    expect(toIds(toUser([PlatformRole.TETE_ADMIN]), epci)).toEqual([
+      'labellisations',
     ]);
   });
 
@@ -78,10 +86,11 @@ describe('listAllowedBackofficeTools', () => {
 });
 
 describe('isBackofficeToolAllowed', () => {
-  it("n'ouvre pas la bannière à un compte sans la permission", () => {
-    expect(
-      isBackofficeToolAllowed(toUser([PlatformRole.VERIFIED]), 'banniere')
-    ).toBe(false);
+  it('ouvre à un compte du programme TETE la gestion des labellisations, mais pas la bannière', () => {
+    const tete = toUser([PlatformRole.TETE_ADMIN]);
+
+    expect(isBackofficeToolAllowed(tete, 'labellisations')).toBe(true);
+    expect(isBackofficeToolAllowed(tete, 'banniere')).toBe(false);
   });
 
   it('ouvre la bannière au super admin', () => {
@@ -89,6 +98,6 @@ describe('isBackofficeToolAllowed', () => {
   });
 
   it("n'ouvre aucun outil sans compte", () => {
-    expect(isBackofficeToolAllowed(null, 'banniere')).toBe(false);
+    expect(isBackofficeToolAllowed(null, 'labellisations')).toBe(false);
   });
 });
