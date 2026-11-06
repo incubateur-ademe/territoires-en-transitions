@@ -1,4 +1,8 @@
-import type { PcaetDiagnosticIndicateur } from '@tet/domain/demarches';
+import {
+  isPcaetDiagnosticReferenceYear,
+  PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
+  type PcaetDiagnosticIndicateur,
+} from '@tet/domain/demarches';
 import {
   IndicateurPeriodes,
   type IndicateurValeur,
@@ -29,14 +33,11 @@ export const buildDiagnosticIndicateurTableRows = (
   }
 
   return table.rows.flatMap((row) => {
-    const indicateur = indicateurByIdentifiant.get(
-      row.indicateurDefinitionId
-    );
+    const indicateur = indicateurByIdentifiant.get(row.indicateurDefinitionId);
     if (indicateur === undefined) {
       return [];
     }
-    for (const valeur of valeursByIndicateurId.get(indicateur.id) ??
-      []) {
+    for (const valeur of valeursByIndicateurId.get(indicateur.id) ?? []) {
       IndicateurPeriodes.toAnnualYearFromHistoricalDate(
         valeur.periodicite,
         valeur.dateValeur,
@@ -47,13 +48,32 @@ export const buildDiagnosticIndicateurTableRows = (
       {
         indicateurId: indicateur.id,
         indicateurDefinition: indicateur,
-        indicateurValeurs:
-          valeursByIndicateurId.get(indicateur.id) ?? [],
+        indicateurValeurs: valeursByIndicateurId.get(indicateur.id) ?? [],
         indicateurLabel: row.label,
-        // Référence et horizons d'objectif sont tous requis : seules une ligne
-        // facultative ou non applicable sont libérées.
-        isValeurRequired: () =>
-          indicateur.isApplicable && !row.isOptional,
+        // Même règle que `isLeafComplet` : un constat sur l'année de
+        // référence (sauf ligne à référence facultative) et un objectif sur
+        // chaque horizon requis. Une ligne facultative ou non applicable ne
+        // réclame rien.
+        isValeurRequired: (periode) => {
+          if (!indicateur.isApplicable || row.isOptional) {
+            return false;
+          }
+          if (periode === null) {
+            return row.isReferenceResultatRequired;
+          }
+          const year = IndicateurPeriodes.toAnnualYear(
+            periode.periodicite,
+            periode.dateDebut,
+            'Diagnostic PCAET'
+          );
+          return (
+            PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.includes(
+              year
+            ) ||
+            (row.isReferenceResultatRequired &&
+              isPcaetDiagnosticReferenceYear(year))
+          );
+        },
         isApplicable: indicateur.isApplicable,
       },
     ];

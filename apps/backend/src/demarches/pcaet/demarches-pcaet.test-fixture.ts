@@ -23,7 +23,7 @@ import type { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import {
   DemarchePcaet,
-  listPcaetDiagnosticIndicateurRequiredLeafIds,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurParentConfig,
@@ -45,7 +45,11 @@ const DIAGNOSTIC_COMPLETION_REFERENTIEL_IDS = [
       PCAET_DIAGNOSTIC_INDICATEURS as readonly PcaetDiagnosticIndicateurParentConfig[]
     )
       .filter((topic) => topic.optional !== true)
-      .flatMap((topic) => listPcaetDiagnosticIndicateurRequiredLeafIds(topic))
+      .flatMap((topic) =>
+        listPcaetDiagnosticIndicateurRequiredLeaves(topic).map(
+          (leaf) => leaf.indicateurDefinitionId
+        )
+      )
   ),
 ];
 

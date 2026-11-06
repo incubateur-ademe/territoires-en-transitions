@@ -286,6 +286,41 @@ describe('isPcaetDiagnosticIndicateurComplet', () => {
     ).toBe(true);
   });
 
+  it('n’exige que les objectifs sur une ligne à référence facultative', () => {
+    const config = parentConfig({
+      children: [
+        {
+          label: 'Biomasse solide',
+          indicateurDefinitionId: 'conso_ENR_biomasse',
+          referenceResultatOptional: true,
+        },
+      ],
+    });
+    const objectifs = PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS.map(
+      (year) =>
+        valeur({
+          year,
+          identifiantReferentiel: 'conso_ENR_biomasse',
+          objectif: 8,
+        })
+    );
+
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
+        config,
+        indicateurs: objectifs,
+      })
+    ).toBe(true);
+    expect(
+      isPcaetDiagnosticIndicateurComplet({
+        definitions: [],
+        config,
+        indicateurs: objectifs.slice(1),
+      })
+    ).toBe(false);
+  });
+
   it('ignore une ligne facultative', () => {
     expect(
       isPcaetDiagnosticIndicateurComplet({

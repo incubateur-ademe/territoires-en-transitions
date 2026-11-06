@@ -1,6 +1,6 @@
 import {
   ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
-  listPcaetDiagnosticIndicateurRequiredLeafIds,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_VULNERABILITE,
 } from './demarche-pcaet-diagnostic.config';
@@ -32,8 +32,26 @@ describe('DEMARCHE_PCAET_DIAGNOSTIC_INDICATEURS', () => {
     expect('optional' in (sequestration ?? {})).toBe(false);
     expect(
       sequestration &&
-        listPcaetDiagnosticIndicateurRequiredLeafIds(sequestration)
+        listPcaetDiagnosticIndicateurRequiredLeaves(sequestration).map(
+          (leaf) => leaf.indicateurDefinitionId
+        )
     ).toEqual(['cae_63.b', 'cae_63.c', 'cae_63.e']);
+  });
+
+  it('n’exige pas le constat de référence pour la consommation d’ENR', () => {
+    const referenceOptionalIds = PCAET_DIAGNOSTIC_INDICATEURS.flatMap((topic) =>
+      listPcaetDiagnosticIndicateurRequiredLeaves(topic)
+        .filter((leaf) => !leaf.isReferenceResultatRequired)
+        .map((leaf) => leaf.indicateurDefinitionId)
+    );
+    expect(referenceOptionalIds).toEqual([
+      'conso_ENR_biomasse',
+      'conso_ENR_PAC',
+      'conso_ENR_geothermie',
+      'conso_ENR_solaire_th',
+      'conso_ENR_biogaz',
+      'conso_ENR_biocarburant',
+    ]);
   });
 
   it('liste des identifiants référentiel uniques', () => {
