@@ -469,6 +469,8 @@ export const appLabels = {
       'Cet import ne peut plus être repris : il n’est plus en échec, ou son point de reprise a expiré.',
     IN_FLIGHT_JOB_EXISTS:
       'Un import est déjà en cours pour cette collectivité.',
+    SECTEURS_A_RENSEIGNER:
+      'Renseignez le secteur réglementaire de chaque action avant de valider le plan.',
     ACTION_DE_REFERENCE_CONFLICT:
       'Une action de référence identique existe déjà.',
     FICHIER_INFECTE:

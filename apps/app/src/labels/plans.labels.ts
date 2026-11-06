@@ -118,7 +118,26 @@ export const plansLabels = {
   planSecteursEnregistrer: 'Enregistrer',
   planSecteursToutRenseigneTitre: 'Tout est traité',
   planSecteursToutRenseigne:
-    'Les secteurs réglementaires de toutes les actions de ce plan sont renseignés.',
+    'Toutes les actions ont maintenant un secteur réglementaire associé.',
+  planSecteursTousRenseignesToast:
+    'Tous les secteurs réglementaires du plan sont renseignés.',
+  planSecteurARenseignerPastille: 'Secteur à renseigner',
+  planSecteursManquantsTitre:
+    'Renseigner les secteurs réglementaires manquants',
+  planSecteursManquantsIa: ({ count }: { count: number }) =>
+    `L’IA n’a pas pu classer ${plural({ one: 'action', other: 'actions' })({
+      count,
+    })}. Choisissez leur secteur dans le panneau de droite.`,
+  planSecteursManquantsAutres: ({ count }: { count: number }) =>
+    `Notre IA n’a pas pu classer ${plural({ one: 'action', other: 'actions' })({
+      count,
+    })}. Choisissez leur secteur dans le panneau de droite.`,
+  planSecteursTousRenseignes:
+    'Toutes les actions ont un secteur réglementaire.',
+  planSecteursRenseignerManquants: ({ count }: { count: number }) =>
+    count > 1
+      ? `Renseigner les ${count} secteurs manquants`
+      : 'Renseigner le secteur manquant',
   planSecteursErreurChargement:
     'Impossible de charger les actions à renseigner',
   planSecteursLectureSeule: 'Vous ne pouvez pas modifier cette action',
@@ -293,6 +312,14 @@ export const plansLabels = {
     'Identification des secteurs et des effets attendus',
   importPlanIaEtapeEffetsAttendus: 'Identification des effets attendus',
   importPlanIaEtapesTitre: "Étapes de l'import",
+  importPlanIaEtapesSimplifiees: {
+    lecture: 'Lecture du document',
+    structure: 'Détection des axes et sous-axes',
+    actions: 'Création des actions',
+    secteurs: 'Attribution des secteurs réglementaires',
+  },
+  importPlanIaEtapeSimplifieeEffetsAttendus:
+    'Identification des effets attendus',
   importPlanIaEtapeTerminee: 'terminée',
   importPlanIaEtapeEnCours: 'en cours',
   importPlanIaEtapeEnAttente: 'en attente',
@@ -317,19 +344,21 @@ export const plansLabels = {
   importPlanIaRelancerQuandMeme: "Relancer l'import quand même",
   planImporteBeta:
     "Notre outil d'import est en version bêta. Pour toute question ou suggestion d'amélioration, contactez le support en ligne.",
-  planImporteBanniereTitre: "Votre plan d'action a bien été importé",
-  planImporteBanniereAVerifier: 'À vérifier',
-  planImporteBanniereDescription:
-    'À présent, vérifiez que la structure du plan (axes, sous-axes, fiches action) est fidèle à votre fichier initial, puis validez. Votre plan pourra toujours être modifié a posteriori sur la plateforme, dans le cadre du suivi.',
+  planImporteBandeauTitre: ({ etapes }: { etapes: number }) =>
+    etapes > 1
+      ? `Plan généré par l’IA : ${etapes} étapes avant de le valider`
+      : 'Plan généré par l’IA : vérifiez-le avant de le valider',
+  planImporteEtapeStructureTitre:
+    'Vérifier la structure globale du plan puis le valider',
+  planImporteEtapeStructureDescription:
+    'Vérifiez la structure globale de votre plan (axes et sous-axes), corrigez-la si besoin, puis validez le plan.',
   planImporteBanniereDemoAvant: 'Réservez un créneau pour suivre une',
   planImporteBanniereDemoLien: 'démo de prise en main',
   planImporteBanniereSupportAvant: 'ou prenez un',
   planImporteBanniereSupportLien: 'rendez-vous de support de 15 minutes',
   planImporteBanniereSupportApres: "s'il y a un problème avec l'import.",
   planImporteValider: 'Valider le plan',
-  planImporteValiderTitre: 'Valider le plan importé',
-  planImporteValiderDescription:
-    'Vérifiez que la structure du plan importé (axes, sous-axes, fiches action) est satisfaisante en comparaison avec votre fichier source. Dans tous les cas, vous gardez la main pour modifier vos actions sur la plateforme.',
-  planImporteValide: 'Plan validé',
+  planImporteValide: 'Plan validé.',
+  planRevenirALaDemarche: 'Revenir à la démarche',
   planImporteValidationErreur: 'La validation du plan a échoué',
 } as const;

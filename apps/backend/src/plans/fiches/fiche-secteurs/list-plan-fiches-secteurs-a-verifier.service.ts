@@ -23,7 +23,11 @@ export class ListPlanFichesSecteursAVerifierService {
   ) {}
 
   async listFiches(
-    { collectiviteId, planId }: ListPlanFichesSecteursAVerifierInput,
+    {
+      collectiviteId,
+      planId,
+      includeAttribues,
+    }: ListPlanFichesSecteursAVerifierInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<ListPlanFichesSecteursAVerifierOutput, CommonError>> {
     const isPrivate = await this.collectivitesService.isPrivate(collectiviteId);
@@ -49,7 +53,12 @@ export class ListPlanFichesSecteursAVerifierService {
     try {
       return success(
         await this.listPlanFichesSecteursAVerifierRepository.listFiches(
-          { collectiviteId, planId, includeFichesRestreintes },
+          {
+            collectiviteId,
+            planId,
+            includeFichesRestreintes,
+            includeAttribues,
+          },
           tx
         )
       );

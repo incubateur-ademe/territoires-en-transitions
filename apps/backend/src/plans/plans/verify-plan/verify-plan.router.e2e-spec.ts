@@ -9,10 +9,21 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { PlanSourceEnum, PlanStatusEnum } from '@tet/domain/plans';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
+import {
+  OrigineSecteursEnum,
+  PlanSourceEnum,
+  PlanStatusEnum,
+} from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
+import { onTestFinished, vi } from 'vitest';
+import { ficheActionSecteurAttributionTable } from '../../fiches/fiche-secteurs/fiche-action-secteur-attribution.table';
 import { axeTable } from '../../fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
+import { ficheActionTable } from '../../fiches/shared/models/fiche-action.table';
+import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
 
 describe('Valider un plan importé', () => {
   let app: INestApplication;
@@ -151,6 +162,63 @@ describe('Valider un plan importé', () => {
       router.createCaller({ user: reader }).plans.plans.verify({ planId })
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
     expect((await readVerification(planId)).verifiedAt).toBeNull();
+  });
+
+  test('refuse de valider un plan PCAET dont une action attend son secteur réglementaire', async () => {
+    const trackingService = app.get(TrackingService);
+    const isFeatureEnabled =
+      trackingService.isFeatureEnabled.bind(trackingService);
+    const spy = vi
+      .spyOn(trackingService, 'isFeatureEnabled')
+      .mockImplementation(async (feature, ...args) =>
+        feature === 'is-fiche-secteurs-enabled'
+          ? true
+          : isFeatureEnabled(feature, ...args)
+      );
+    onTestFinished(() => {
+      spy.mockRestore();
+    });
+
+    const planId = await createPlan({ imported: true });
+    const [pcaetType] = await db.db
+      .select({ id: planActionTypeTable.id })
+      .from(planActionTypeTable)
+      .where(
+        and(
+          eq(planActionTypeTable.categorie, PCAET_PLAN_TYPE_KEY.categorie),
+          eq(planActionTypeTable.type, PCAET_PLAN_TYPE_KEY.type)
+        )
+      );
+    await db.db
+      .update(axeTable)
+      .set({ typeId: pcaetType.id })
+      .where(eq(axeTable.id, planId));
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({ titre: 'Rénover les écoles', collectiviteId: collectivite.id })
+      .returning({ id: ficheActionTable.id });
+    await db.db
+      .insert(ficheActionAxeTable)
+      .values({ ficheId: fiche.id, axeId: planId, createdBy: editor.id });
+    await db.db.insert(ficheActionSecteurAttributionTable).values({
+      ficheId: fiche.id,
+      origine: OrigineSecteursEnum.INDISPONIBLE,
+      secteurs: [],
+    });
+
+    const caller = router.createCaller({ user: editor });
+    await expect(caller.plans.plans.verify({ planId })).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+      message: expect.stringContaining('secteur réglementaire'),
+    });
+    expect((await readVerification(planId)).verifiedAt).toBeNull();
+
+    await caller.plans.fiches.upsertSecteurs({
+      ficheId: fiche.id,
+      secteurs: ['residentiel'],
+    });
+    const result = await caller.plans.plans.verify({ planId });
+    expect(result.verifiedAt).toBeTruthy();
   });
 
   test("renvoie NOT_FOUND pour un plan qui n'existe pas", async () => {

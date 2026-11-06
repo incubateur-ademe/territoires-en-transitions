@@ -10,7 +10,9 @@ import { useDemarchePcaet } from '@/app/demarches/pcaet/data/use-demarche';
 import { AvisDeposesList } from '@/app/demarches/pcaet/components/avis-deposes.list';
 import { PROGRAMME_ACTIONS_DOCUMENT_ID } from '@/app/demarches/pcaet/constants';
 import { useImportProgramme } from '@/app/demarches/pcaet/import-programme/import-programme.context';
-import { ProposeImportProgrammeModal } from '@/app/demarches/pcaet/import-programme/propose-import-programme.modal';
+import { ProgrammeImportStatus } from '@/app/demarches/pcaet/import-programme/programme-import.status';
+import { useGetProgrammeActionsFichier } from '@/app/demarches/pcaet/data/use-get-programme-actions-fichier';
+import type { AddDocumentFollowUpChoice } from '@/app/collectivites/documents/add-document/follow-up.checkbox';
 import { useDemarchePcaetAvisRecus } from '@/app/demarches/pcaet/data/use-avis-recus';
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
@@ -30,11 +32,9 @@ import {
   DemarchePcaetStatusEnum,
   isPublieDemarchePcaetStatus,
 } from '@tet/domain/demarches';
-import { useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
 import { AutosaveBadge, EmptyCard } from '@tet/ui';
 import { notFound } from 'next/navigation';
-import { ComponentProps, useState } from 'react';
+import { ComponentProps } from 'react';
 
 export const DemarchePcaetDocumentsPage = () => {
   const demarcheId = useDemarcheId();
@@ -86,14 +86,13 @@ export const DemarchePcaetDocumentsPage = () => {
   });
 
   const { mutate: downloadDocument } = useDownloadDocument();
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const programmeFichier = useGetProgrammeActionsFichier(demarcheId);
 
-  const { isEnabled: isImportEnabled, isOngoing: isImportOngoing } =
-    useImportProgramme();
-  const [importProposalFichierId, setImportProposalFichierId] = useState<
-    number | null
-  >(null);
+  const {
+    isEnabled: isImportEnabled,
+    isOngoing: isImportOngoing,
+    startProgrammeImport,
+  } = useImportProgramme();
 
   if (isLoading) {
     return (
@@ -138,43 +137,44 @@ export const DemarchePcaetDocumentsPage = () => {
     }
   };
 
-  // Le programme d'actions déposé est déjà la source de l'import : on le
-  // propose aussitôt, une fois le dépôt enregistré. Un import en cours
-  // l'emporte (un seul par collectivité), sans rattachement possible le plan
-  // importé n'aurait pas sa place dans la démarche, et un document déjà
-  // importé ne se re-propose pas.
+  // Le programme d'actions déposé est la source de l'import : la création du
+  // plan se propose dès le dépôt. Un import en cours l'emporte (un seul par
+  // collectivité).
+  const canCreatePlanFromProgramme =
+    isImportEnabled && !isImportOngoing && demarche.amontModifiable;
+
   const addFichier = (
     documentId: string,
     fichierId: number,
-    etape: DemarcheDocumentEtape
+    etape: DemarcheDocumentEtape,
+    choice?: AddDocumentFollowUpChoice
   ) =>
     addDocument(documentId, fichierId, etape, {
-      onSuccess: async (depose) => {
+      onSuccess: () => {
         if (
-          documentId !== PROGRAMME_ACTIONS_DOCUMENT_ID ||
-          !isImportEnabled ||
-          isImportOngoing ||
-          !demarche.amontModifiable ||
-          !depose.fichier ||
-          !isAiImportAcceptedFilename(depose.fichier.filename)
+          documentId === PROGRAMME_ACTIONS_DOCUMENT_ID &&
+          choice?.followUp &&
+          canCreatePlanFromProgramme
         ) {
-          return;
-        }
-        const previousImport = await queryClient
-          .fetchQuery(
-            trpc.plans.aiImport.findPreviousAiImport.queryOptions(
-              { collectiviteId, fichierId },
-              { staleTime: 0 }
-            )
-          )
-          // Recherche en échec : la modale refait la vérification et le
-          // serveur refuse un ré-import non confirmé.
-          .catch(() => null);
-        if (previousImport === null) {
-          setImportProposalFichierId(fichierId);
+          void startProgrammeImport(fichierId);
         }
       },
     });
+
+  const uploadOptionsByDocumentId = {
+    [PROGRAMME_ACTIONS_DOCUMENT_ID]: {
+      title: appLabels.demarcheProgrammeDeposerTitre,
+      followUp: canCreatePlanFromProgramme
+        ? {
+            label: appLabels.demarcheProgrammeCreerPlanIa,
+            description: appLabels.demarcheProgrammeCreerPlanIaAide,
+            submitLabel: appLabels.demarcheProgrammeAjouterEtCreerPlan,
+            defaultChecked: true,
+            isApplicable: isAiImportAcceptedFilename,
+          }
+        : undefined,
+    },
+  };
 
   const tableProps: ComponentProps<typeof DemarcheDocumentsTable> | null =
     snapshot
@@ -192,6 +192,7 @@ export const DemarchePcaetDocumentsPage = () => {
           // Adopté, le dossier ne se complète plus : il se lit.
           hideEmptyRows: isPublieDemarchePcaetStatus(demarche.statut),
           onAddFichier: addFichier,
+          uploadOptionsByDocumentId,
           onRemoveDocument: removeDocument,
           onToggleCouverture: setCouverture,
           onCreateAdditional: createDocumentAdditional,
@@ -308,18 +309,18 @@ export const DemarchePcaetDocumentsPage = () => {
                 </DocumentsBloc>
               </>
             ) : (
-              <DemarcheDocumentsTable {...tableProps} />
+              <>
+                <DemarcheDocumentsTable {...tableProps} />
+                <ProgrammeImportStatus
+                  demarcheId={demarcheId}
+                  programmeFichier={programmeFichier}
+                  isAmontModifiable={demarche.amontModifiable}
+                />
+              </>
             )}
           </div>
         )}
       </DemarcheSection>
-      {importProposalFichierId !== null && (
-        <ProposeImportProgrammeModal
-          fichierId={importProposalFichierId}
-          dateLancement={demarche.dateLancement}
-          onClose={() => setImportProposalFichierId(null)}
-        />
-      )}
     </DemarcheShell>
   );
 };

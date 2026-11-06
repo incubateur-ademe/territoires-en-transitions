@@ -240,6 +240,42 @@ describe('Fiches d’un plan dont les secteurs sont à vérifier', () => {
     ]);
   });
 
+  test('avec includeAttribues, liste aussi les fiches attribuées avec leurs secteurs', async () => {
+    const planId = await createPlan(pcaetTypeId);
+    const attribuee = await createFiche({ titre: 'Attribuée' });
+    const indisponible = await createFiche({ titre: 'Indisponible' });
+    await rangeFiche(attribuee, planId);
+    await rangeFiche(indisponible, planId);
+    await attribue(attribuee, 'automatique', ['dechets']);
+    await attribue(indisponible, 'indisponible');
+
+    expect(
+      await router
+        .createCaller({ user: membre })
+        .plans.fiches.listPlanFichesSecteursAVerifier({
+          collectiviteId,
+          planId,
+          includeAttribues: true,
+        })
+    ).toEqual([
+      {
+        ficheId: attribuee,
+        titre: 'Attribuée',
+        parentId: null,
+        parentTitre: null,
+        etat: 'attribue',
+        secteurs: ['dechets'],
+      },
+      {
+        ficheId: indisponible,
+        titre: 'Indisponible',
+        parentId: null,
+        parentTitre: null,
+        etat: 'a_renseigner',
+      },
+    ]);
+  });
+
   test('une fiche rangée dans plusieurs axes du même plan n’apparaît qu’une fois', async () => {
     const planId = await createPlan(pcaetTypeId);
     const axeA = await createAxe(planId);

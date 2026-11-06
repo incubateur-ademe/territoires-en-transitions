@@ -24,7 +24,14 @@ import {
   ConfidentielCheckbox,
 } from './confidentiel.checkbox';
 import { FileUploadItem } from './file-item';
+import {
+  AddDocumentFollowUp,
+  AddDocumentFollowUpChoice,
+  FollowUpCheckbox,
+  isFollowUpApplicable,
+} from './follow-up.checkbox';
 import { FileItemsList } from './file-items-list';
+import { SelectedFileCard } from './selected-file.card';
 import {
   DuplicatedPreuveType,
   OnDuplicatedDocumentsAdded,
@@ -33,7 +40,8 @@ import {
 import { useFileUploadList } from './use-file-upload-list';
 
 export type AddFileHandler = (
-  fichierId: number
+  fichierId: number,
+  choice?: AddDocumentFollowUpChoice
 ) => Promise<AddedDocumentResult | void> | AddedDocumentResult | void;
 
 const isDuplicatedPreuveType = (
@@ -53,6 +61,8 @@ export type AddFileProps = {
   initialSelection?: Array<FileUploadItem>;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
+  /** Suite proposée une fois le fichier choisi. */
+  followUp?: AddDocumentFollowUp;
   onAddFile: AddFileHandler;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;
   onClose: () => void;
@@ -63,12 +73,16 @@ export const AddFile = (props: AddFileProps) => {
     preuveType,
     initialSelection,
     fileConstraints = DEFAULT_FILE_CONSTRAINTS,
+    followUp,
     onAddFile,
     onDuplicatedDocumentsAdded,
     onClose,
   } = props;
   const [confidentiel, setConfidentiel] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFollowUpChecked, setIsFollowUpChecked] = useState(
+    followUp?.defaultChecked ?? false
+  );
 
   const collectiviteId = useCollectiviteId();
 
@@ -85,9 +99,27 @@ export const AddFile = (props: AddFileProps) => {
   });
 
   const submission = getFilesSubmission(currentSelection);
+
+  // Un seul fichier possible : une fois choisi, il remplace la zone de dépôt.
+  // Un échec la laisse en place, pour en choisir un autre.
+  const singleSelectedItem =
+    fileConstraints.maxFiles === 1 &&
+    currentSelection.length === 1 &&
+    currentSelection[0].status.code !== UploadStatusCode.failed
+      ? currentSelection[0]
+      : undefined;
   const isSubmitDisabled = !submission.canSubmit || isSubmitting;
 
   const canSetConfidentiel = canChooseConfidentiel(preuveType);
+
+  const selectedFilename = submission.canSubmit
+    ? submission.validFiles[0]?.file.name
+    : undefined;
+  const applicableFollowUp = isFollowUpApplicable(followUp, selectedFilename)
+    ? followUp
+    : undefined;
+  const isFollowUpChosen =
+    applicableFollowUp !== undefined && isFollowUpChecked;
 
   const submitValidFile = async ({
     file,
@@ -106,7 +138,9 @@ export const AddFile = (props: AddFileProps) => {
     return {
       file,
       status,
-      addedDocument: await onAddFile(status.fichierId),
+      addedDocument: await onAddFile(status.fichierId, {
+        followUp: isFollowUpChosen,
+      }),
     };
   };
 
@@ -155,28 +189,46 @@ export const AddFile = (props: AddFileProps) => {
         })}
         state="info"
       >
-        <Input
-          type="file"
-          accept={toAcceptAttribute(fileConstraints)}
-          displaySize="md"
-          multiple={fileConstraints.maxFiles !== 1}
-          onChange={(e) => onDropFiles(e.target.files)}
-          onDropFiles={(files) => onDropFiles(files)}
-        />
+        {singleSelectedItem ? (
+          <SelectedFileCard
+            item={singleSelectedItem}
+            onRemove={() => onDismissItem(singleSelectedItem.id)}
+          />
+        ) : (
+          <Input
+            type="file"
+            accept={toAcceptAttribute(fileConstraints)}
+            displaySize="md"
+            multiple={fileConstraints.maxFiles !== 1}
+            onChange={(e) => onDropFiles(e.target.files)}
+            onDropFiles={(files) => onDropFiles(files)}
+          />
+        )}
       </Field>
       <ConfidentielCheckbox
         preuveType={preuveType}
         confidentiel={confidentiel}
         setConfidentiel={setConfidentiel}
       />
-      <FileItemsList items={currentSelection} onDismissItem={onDismissItem} />
+      {!singleSelectedItem && (
+        <FileItemsList items={currentSelection} onDismissItem={onDismissItem} />
+      )}
+      {applicableFollowUp && (
+        <FollowUpCheckbox
+          followUp={applicableFollowUp}
+          checked={isFollowUpChecked}
+          onChange={setIsFollowUpChecked}
+        />
+      )}
 
       <div className="flex gap-4 ml-auto">
         <Button variant="outlined" onClick={onClose}>
           {appLabels.annuler}
         </Button>
         <Button onClick={onSubmit} disabled={isSubmitDisabled} data-test="ok">
-          {appLabels.ajouter}
+          {isFollowUpChosen
+            ? applicableFollowUp.submitLabel
+            : appLabels.ajouter}
         </Button>
       </div>
     </div>

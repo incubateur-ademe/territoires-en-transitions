@@ -1,7 +1,8 @@
 'use client';
 
 import { DemarcheBanner } from '@/app/demarches/components/banner';
-import { useIsDemarchePcaetBannerVisibleInPlan } from '@/app/demarches/pcaet/use-is-banner-visible';
+import { useDemarcheLinkedToPlan } from '@/app/demarches/pcaet/use-demarche-linked-to-plan';
+import { useListPlanSecteursCounts } from '@/app/plans/plans/secteurs-counts/data/use-list-plan-secteurs-counts';
 import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
@@ -12,6 +13,7 @@ import {
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { useUser } from '@tet/api/users';
 import {
+  countPlanSecteursARenseigner,
   isPlanNavigable,
   isPlanPendingVerification,
   Plan,
@@ -22,7 +24,10 @@ import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
 import { ResumeAiImportButton } from '@/app/plans/plans/import-plan/resume-ai-import.button';
-import { ImportedPlanBanner } from './imported-plan.banner';
+import {
+  ImportedPlanBanner,
+  SecteursManquantsBanner,
+} from './imported-plan.banner';
 import { FilteredResults } from './filters/filtered-results';
 import { FiltersMenuButton } from './filters/filters.button-menu';
 import {
@@ -111,26 +116,49 @@ const PlanViewContent = () => {
   const user = useUser();
 
   const canMutatePlans = collectivite.hasCollectivitePermission('plans.mutate');
-  const demarcheBannerIsVisible = useIsDemarchePcaetBannerVisibleInPlan({
+  const linkedDemarche = useDemarcheLinkedToPlan({
     planId: plan.id,
     canMutatePlans,
   });
   const isImportedPlanBannerVisible =
     canMutatePlans && isPlanPendingVerification(plan);
 
+  const { isEnabled: isSecteursEnabled, countsByPlanId } =
+    useListPlanSecteursCounts(collectivite.collectiviteId, [plan.id]);
+  const secteursCounts = countsByPlanId.get(plan.id);
+  const secteursARenseigner = secteursCounts
+    ? countPlanSecteursARenseigner(secteursCounts)
+    : 0;
+  // Hors import, seul un plan transmis avec la démarche doit avoir tous ses
+  // secteurs : c'est une condition du dépôt pour avis.
+  const isSecteursManquantsBannerVisible =
+    canMutatePlans &&
+    !isImportedPlanBannerVisible &&
+    linkedDemarche !== undefined &&
+    secteursARenseigner > 0;
+
   return (
     <div className="w-full">
-      {/* La validation de l'import prime : une seule bannière à la fois. */}
-      <VisibleWhen
-        condition={demarcheBannerIsVisible && !isImportedPlanBannerVisible}
-      >
+      <VisibleWhen condition={linkedDemarche !== undefined}>
         <div className="mb-6">
           <DemarcheBanner collectiviteId={collectivite.collectiviteId} />
         </div>
       </VisibleWhen>
       <VisibleWhen condition={isImportedPlanBannerVisible}>
         <div className="mb-6">
-          <ImportedPlanBanner planId={plan.id} />
+          <ImportedPlanBanner
+            planId={plan.id}
+            isSecteursConcerne={
+              isSecteursEnabled && secteursCounts !== undefined
+            }
+            secteursARenseigner={secteursARenseigner}
+            demarcheUrl={linkedDemarche?.planActionsUrl}
+          />
+        </div>
+      </VisibleWhen>
+      <VisibleWhen condition={isSecteursManquantsBannerVisible}>
+        <div className="mb-6">
+          <SecteursManquantsBanner secteursARenseigner={secteursARenseigner} />
         </div>
       </VisibleWhen>
       <PlanHeader />

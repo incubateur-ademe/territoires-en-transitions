@@ -533,22 +533,28 @@ export const makeCollectiviteActionUrl = ({
 
 export const OPEN_AXES_KEY_SEARCH_PARAMETER = 'openAxes';
 export const PLAN_DISPLAY_OPTIONS_PARAMETER = 'options';
+/** Panneau de vérification des secteurs ouvert sur la page du plan. */
+export const PLAN_SECTEURS_PARAMETER = 'secteurs';
+export const PLAN_SECTEURS_LISTE = 'liste';
 export const makeCollectivitePlanActionUrl = ({
   collectiviteId,
   planActionUid,
   openAxes,
   options,
+  openSecteurs,
 }: {
   collectiviteId: number;
   planActionUid: string;
   openAxes?: number[];
   options?: string[];
+  openSecteurs?: boolean;
 }) => {
   const params = new URLSearchParams();
   if (openAxes?.length)
     params.set(OPEN_AXES_KEY_SEARCH_PARAMETER, openAxes.join(','));
   if (options?.length)
     params.set(PLAN_DISPLAY_OPTIONS_PARAMETER, options.join(','));
+  if (openSecteurs) params.set(PLAN_SECTEURS_PARAMETER, PLAN_SECTEURS_LISTE);
   const queryString = params.toString();
 
   return collectivitePlanActionPath

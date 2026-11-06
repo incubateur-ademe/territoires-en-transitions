@@ -31,6 +31,7 @@ import {
   FicheSecteursAVerifier,
   useListPlanFichesSecteursAVerifier,
 } from './data/use-list-plan-fiches-secteurs-a-verifier';
+import { isFicheSecteursARenseigner } from './fiche-secteurs.utils';
 import {
   DescriptionSkeleton,
   ListeFichesSkeleton,
@@ -43,9 +44,6 @@ import {
 const NON_ATTRIBUABLE = 'non_attribuable';
 
 type Selection = SecteurReglementaire[] | typeof NON_ATTRIBUABLE;
-
-const isARenseigner = (fiche: FicheSecteursAVerifier) =>
-  fiche.etat === 'a_renseigner' || fiche.etat === 'non_attribuable';
 
 export const PlanSecteursVerificationPanel = ({
   collectiviteId,
@@ -60,7 +58,7 @@ export const PlanSecteursVerificationPanel = ({
     isPending,
     isError,
   } = useListPlanFichesSecteursAVerifier(collectiviteId, planId);
-  const fiches = toutesLesFiches.filter(isARenseigner);
+  const fiches = toutesLesFiches.filter(isFicheSecteursARenseigner);
   const index = fiches.findIndex(({ ficheId }) => String(ficheId) === vue);
   const ouvrir = (fiche: FicheSecteursAVerifier | undefined) =>
     void setVue(fiche ? String(fiche.ficheId) : PLAN_SECTEURS_LISTE);

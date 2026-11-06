@@ -197,8 +197,65 @@ describe('AddFile', () => {
     checkConfidentiel();
     await submitModal();
 
-    expect(onAddFile).toHaveBeenCalledExactlyOnceWith(UPLOADED_FICHIER_ID);
+    expect(onAddFile).toHaveBeenCalledExactlyOnceWith(UPLOADED_FICHIER_ID, {
+      followUp: false,
+    });
     expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  describe('suite proposée au dépôt', () => {
+    const followUp = {
+      label: 'Créer le plan',
+      submitLabel: 'Ajouter et créer',
+      defaultChecked: true,
+      isApplicable: (filename: string) => filename.endsWith('.pdf'),
+    };
+
+    const renderWithFollowUp = () =>
+      render(
+        <AddFile followUp={followUp} onAddFile={onAddFile} onClose={onClose} />
+      );
+
+    it('cochée par défaut, elle change le bouton et accompagne le rattachement', async () => {
+      renderWithFollowUp();
+
+      expect(
+        (
+          screen.getByRole('checkbox', {
+            name: followUp.label,
+          }) as HTMLInputElement
+        ).checked
+      ).toBe(true);
+      await act(async () => {
+        fireEvent.click(
+          screen.getByRole('button', { name: followUp.submitLabel })
+        );
+      });
+
+      expect(onAddFile).toHaveBeenCalledExactlyOnceWith(UPLOADED_FICHIER_ID, {
+        followUp: true,
+      });
+    });
+
+    it('décochée, le dépôt se fait seul', async () => {
+      renderWithFollowUp();
+
+      fireEvent.click(screen.getByRole('checkbox', { name: followUp.label }));
+      await submitModal();
+
+      expect(onAddFile).toHaveBeenCalledExactlyOnceWith(UPLOADED_FICHIER_ID, {
+        followUp: false,
+      });
+    });
+
+    it("n'est pas proposée pour un fichier qui ne s'y prête pas", () => {
+      items.current = [{ ...uploadedFichier, file: toFile('rapport.docx') }];
+      renderWithFollowUp();
+
+      expect(
+        screen.queryByRole('checkbox', { name: followUp.label })
+      ).toBeNull();
+    });
   });
 
   it('ne rattache pas le fichier et laisse la modale ouverte quand la confidentialité échoue', async () => {
@@ -223,6 +280,48 @@ describe('AddFile', () => {
     expect(
       screen.queryByText(appLabels.ajouterFichiers({ plural: true }))
     ).toBeNull();
+  });
+
+  describe('pièce à un seul fichier', () => {
+    const singleFile = { ...DEFAULT_FILE_CONSTRAINTS, maxFiles: 1 };
+
+    it('le fichier choisi remplace la zone de dépôt', () => {
+      const { container } = renderAddFile({ fileConstraints: singleFile });
+
+      expect(
+        container.querySelector('[data-test="selected-file"]')
+      ).not.toBeNull();
+      expect(screen.getByText('rapport.pdf')).toBeTruthy();
+      expect(container.querySelector('input[type="file"]')).toBeNull();
+      expect(
+        screen.getByRole('button', { name: appLabels.fichierRetirerSelection })
+      ).toBeTruthy();
+    });
+
+    it('un fichier déjà dans la bibliothèque le dit sur la carte', () => {
+      items.current = [duplicatedFichier];
+      const { container } = renderAddFile({ fileConstraints: singleFile });
+
+      expect(
+        container.querySelector('[data-test="selected-file"]')
+      ).not.toBeNull();
+      expect(
+        screen.getByText(
+          appLabels.fichierDupliqueNomConserve({
+            nomFichier: 'existant.pdf',
+            nomEnregistre: 'existant.pdf',
+          })
+        )
+      ).toBeTruthy();
+    });
+
+    it('sans fichier, la zone de dépôt reste affichée', () => {
+      items.current = [];
+      const { container } = renderAddFile({ fileConstraints: singleFile });
+
+      expect(container.querySelector('[data-test="selected-file"]')).toBeNull();
+      expect(container.querySelector('input[type="file"]')).not.toBeNull();
+    });
   });
 
   it('annonce plusieurs fichiers quand la sélection n’est pas limitée', () => {

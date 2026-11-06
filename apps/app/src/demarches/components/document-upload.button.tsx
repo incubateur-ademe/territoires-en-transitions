@@ -2,6 +2,10 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { AddDocumentTabs } from '@/app/collectivites/documents/add-document/add-document.tabs';
+import type {
+  AddDocumentFollowUp,
+  AddDocumentFollowUpChoice,
+} from '@/app/collectivites/documents/add-document/follow-up.checkbox';
 import {
   MAX_UPLOAD_SIZE_MB,
   type FileConstraints,
@@ -14,13 +18,22 @@ import { JSX, ReactElement, useState } from 'react';
  * pièce se signale pareil partout dans l'application. */
 const UPLOAD_ICON = 'file-add-line';
 
+/** Dépôt propre à une pièce du dossier. */
+export type DemarcheDocumentUploadOptions = {
+  /** Titre de la modale, à la place du titre générique du dossier. */
+  title?: string;
+  /** Suite proposée une fois le fichier choisi. */
+  followUp?: AddDocumentFollowUp;
+};
+
 type UploadProps = {
   /** Type de démarche : les libellés affichés en dépendent. */
   demarcheType: DemarcheType;
   /** Formats acceptés par le dossier, tels que son type les déclare. */
   fileConstraints: FileConstraints;
+  uploadOptions?: DemarcheDocumentUploadOptions;
   /** Rattache le fichier choisi (téléversé ou pris dans la bibliothèque). */
-  onAddFichier: (fichierId: number) => void;
+  onAddFichier: (fichierId: number, choice?: AddDocumentFollowUpChoice) => void;
 };
 
 /**
@@ -39,6 +52,7 @@ type UploadProps = {
 const DemarcheDocumentUploadModal = ({
   demarcheType,
   fileConstraints,
+  uploadOptions,
   onAddFichier,
   openState,
   children,
@@ -48,9 +62,12 @@ const DemarcheDocumentUploadModal = ({
 }): ReactElement => (
   <Modal
     size="lg"
-    title={appLabels.demarcheDocumentsModaleTitre({
-      type: appLabels.demarcheTypeLabels[demarcheType],
-    })}
+    title={
+      uploadOptions?.title ??
+      appLabels.demarcheDocumentsModaleTitre({
+        type: appLabels.demarcheTypeLabels[demarcheType],
+      })
+    }
     subTitle={appLabels.aideUploadFichier({
       tailleMaxMo: MAX_UPLOAD_SIZE_MB,
       formats: fileConstraints.formats,
@@ -59,8 +76,11 @@ const DemarcheDocumentUploadModal = ({
     render={({ close }) => (
       <AddDocumentTabs
         fileConstraints={fileConstraints}
+        followUp={uploadOptions?.followUp}
         onClose={close}
-        handlers={{ addFile: (fichierId) => onAddFichier(fichierId) }}
+        handlers={{
+          addFile: (fichierId, choice) => onAddFichier(fichierId, choice),
+        }}
       />
     )}
   >
