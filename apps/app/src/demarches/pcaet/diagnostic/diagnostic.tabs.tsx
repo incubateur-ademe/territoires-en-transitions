@@ -82,8 +82,12 @@ export const DiagnosticTabs = ({
           variant="card"
           size="sm"
           dataTest="demarches.pcaet.diagnostic.topics"
+          className="[container-type:inline-size]"
         >
-          <TabsList>
+          {/* Les six volets tiennent sur une ligne dès que la colonne le permet
+              (6 cartes de 7,5rem + 5 gouttières), sinon ils passent sur deux
+              lignes de trois plutôt que de laisser une carte seule. */}
+          <TabsList className="grid-cols-2 [@container(min-width:24.5rem)]:grid-cols-3 [@container(min-width:50rem)]:grid-cols-6">
             {tabs.map((tab) => {
               const config = diagnostic.indicateurParentConfigs.find(
                 (topic) => topic.code === tab.code

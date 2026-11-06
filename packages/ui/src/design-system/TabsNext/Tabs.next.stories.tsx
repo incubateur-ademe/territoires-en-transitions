@@ -121,7 +121,7 @@ export const All: Story = {
 
       <StoryWrapper
         title="Variante carte"
-        description="Icône au-dessus du libellé, badge en dessous. La largeur des cartes suit la taille : md / sm / xs."
+        description="Icône au-dessus du libellé, badge en dessous. Les cartes se partagent toute la largeur et passent à la ligne sous leur largeur minimale, qui suit la taille : md / sm / xs."
       >
         <div className="flex flex-col gap-8 w-full">
           {cardSizes.map((size) => (
