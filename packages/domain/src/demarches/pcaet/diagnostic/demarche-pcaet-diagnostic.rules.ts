@@ -3,7 +3,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../../../indicateurs';
 import {
-  listPcaetDiagnosticIndicateurRequiredLeafIds,
+  listPcaetDiagnosticIndicateurRequiredLeaves,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
 } from './demarche-pcaet-diagnostic.config';
 import type {
@@ -62,16 +62,19 @@ const getAnnualYear = ({
   );
 
 const isLeafComplet = (
-  valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[]
+  valeurs: readonly IndicateurValeurAvecMetadonnesDefinition[],
+  isReferenceResultatRequired: boolean
 ): boolean => {
-  const hasReferenceResultat = valeurs.some((valeur) => {
-    const { indicateurValeur } = valeur;
-    const year = getAnnualYear(valeur);
-    return (
-      isPcaetDiagnosticReferenceYear(year) && indicateurValeur.resultat !== null
-    );
-  });
-  if (!hasReferenceResultat) {
+  const hasReferenceResultat = () =>
+    valeurs.some((valeur) => {
+      const { indicateurValeur } = valeur;
+      const year = getAnnualYear(valeur);
+      return (
+        isPcaetDiagnosticReferenceYear(year) &&
+        indicateurValeur.resultat !== null
+      );
+    });
+  if (isReferenceResultatRequired && !hasReferenceResultat()) {
     return false;
   }
 
@@ -106,7 +109,8 @@ const listPcaetDiagnosticIdentifiantsNonApplicables = (
  * Un topic indicateur est complet quand chacune de ses lignes requises porte un
  * constat et une cible : un résultat sur l'année de comptabilisation et un
  * objectif sur chaque horizon requis. Les années ajoutées
- * ouvrent des colonnes sans rien exiger. Un topic optionnel, ou sans aucune
+ * ouvrent des colonnes sans rien exiger. Une ligne `referenceResultatOptional`
+ * n'exige que ses objectifs. Un topic optionnel, ou sans aucune
  * ligne exigée, est complet — sinon il retiendrait le dossier sur une saisie
  * qu'on ne lui demande pas.
  */
@@ -128,9 +132,9 @@ export const isPcaetDiagnosticIndicateurComplet = ({
 
   // Une ligne déclarée non applicable n'est plus réclamée : elle sort du socle
   // exigé, comme le fait `non_concerne` pour une thématique de vulnérabilité.
-  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeafIds(
+  const requiredLeaves = listPcaetDiagnosticIndicateurRequiredLeaves(
     config
-  ).filter((leafId) => !nonApplicables.has(leafId));
+  ).filter((leaf) => !nonApplicables.has(leaf.indicateurDefinitionId));
   if (requiredLeaves.length === 0) {
     return true;
   }
@@ -152,8 +156,11 @@ export const isPcaetDiagnosticIndicateurComplet = ({
     valeursByIdentifiant.set(identifiant, bucket);
   }
 
-  return requiredLeaves.every((leafId) =>
-    isLeafComplet(valeursByIdentifiant.get(leafId) ?? [])
+  return requiredLeaves.every((leaf) =>
+    isLeafComplet(
+      valeursByIdentifiant.get(leaf.indicateurDefinitionId) ?? [],
+      leaf.isReferenceResultatRequired
+    )
   );
 };
 

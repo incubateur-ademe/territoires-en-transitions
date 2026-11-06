@@ -24,6 +24,11 @@ const pcaetDiagnosticIndicateurChildLeafSchema = z.object({
   indicateurDefinitionId: z.string(),
   /** Ligne facultative : rien n'est exigé pour la complétude. */
   optional: z.optional(z.boolean()),
+  /**
+   * Seuls les objectifs aux horizons sont exigés : le constat sur l'année de
+   * référence reste facultatif (ex. consommation d'ENR).
+   */
+  referenceResultatOptional: z.optional(z.boolean()),
 });
 
 export type PcaetDiagnosticIndicateurChildLeaf = z.infer<

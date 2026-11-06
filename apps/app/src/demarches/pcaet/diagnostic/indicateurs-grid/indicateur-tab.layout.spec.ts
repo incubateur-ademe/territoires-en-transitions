@@ -141,11 +141,17 @@ describe('buildIndicateurValeursTables', () => {
 describe('obligations des valeurs du diagnostic PCAET', () => {
   const periode = (year: number) =>
     IndicateurPeriodes.parse(IndicateurPeriodiciteEnum.ANNUELLE, String(year));
-  const buildRow = (
+  const buildRow = ({
     isOptional = false,
     isApplicable = true,
-    periodicite: IndicateurPeriodicite = IndicateurPeriodiciteEnum.ANNUELLE
-  ) => {
+    periodicite = IndicateurPeriodiciteEnum.ANNUELLE,
+    isReferenceResultatRequired = true,
+  }: {
+    isOptional?: boolean;
+    isApplicable?: boolean;
+    periodicite?: IndicateurPeriodicite;
+    isReferenceResultatRequired?: boolean;
+  } = {}) => {
     const fixture = fakeRow({
       indicateurId: 12,
       indicateurLabel: 'Résidentiel',
@@ -160,6 +166,7 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
           label: 'Résidentiel',
           indicateurDefinitionId: 'cae_63.b',
           isOptional,
+          isReferenceResultatRequired,
         },
       ],
       indicateurDefinitions: [
@@ -180,7 +187,7 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     IndicateurPeriodiciteEnum.TRIMESTRIELLE,
     IndicateurPeriodiciteEnum.SEMESTRIELLE,
   ])('refuse une définition %s dans le diagnostic annuel', (periodicite) => {
-    expect(() => buildRow(false, true, periodicite)).toThrow(
+    expect(() => buildRow({ periodicite })).toThrow(
       'INDICATEUR_ANNUAL_PERIODICITE_REQUIRED'
     );
   });
@@ -193,17 +200,33 @@ describe('obligations des valeurs du diagnostic PCAET', () => {
     expect(buildRow().isValeurRequired(null)).toBe(true);
   });
 
+  it('réclame le constat sur une année de référence, pas sur un horizon libre', () => {
+    expect(buildRow().isValeurRequired(periode(2021))).toBe(true);
+    expect(buildRow().isValeurRequired(periode(2040))).toBe(false);
+  });
+
+  it('ne réclame que les horizons d’objectif sur une ligne à référence facultative', () => {
+    const row = buildRow({ isReferenceResultatRequired: false });
+    expect(row.isValeurRequired(null)).toBe(false);
+    expect(row.isValeurRequired(periode(2021))).toBe(false);
+    expect(row.isValeurRequired(periode(2030))).toBe(true);
+  });
+
   it.each([periode(2030), null])(
     'ne réclame aucune valeur pour une ligne facultative',
     (periode) => {
-      expect(buildRow(true).isValeurRequired(periode)).toBe(false);
+      expect(buildRow({ isOptional: true }).isValeurRequired(periode)).toBe(
+        false
+      );
     }
   );
 
   it.each([periode(2030), null])(
     'ne réclame aucune valeur pour un indicateur non applicable',
     (periode) => {
-      expect(buildRow(false, false).isValeurRequired(periode)).toBe(false);
+      expect(buildRow({ isApplicable: false }).isValeurRequired(periode)).toBe(
+        false
+      );
     }
   );
 });

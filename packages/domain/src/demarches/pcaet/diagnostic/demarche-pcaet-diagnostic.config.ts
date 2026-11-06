@@ -479,36 +479,42 @@ const PRODUCTION_ENR = {
       label: 'Biomasse solide',
       indicateurDefinitionId: 'conso_ENR_biomasse',
       section: "Consommation d'énergie",
+      referenceResultatOptional: true,
       groupBy: 'Chaleur',
     },
     {
       label: 'Pompes à chaleur',
       indicateurDefinitionId: 'conso_ENR_PAC',
       section: "Consommation d'énergie",
+      referenceResultatOptional: true,
       groupBy: 'Chaleur',
     },
     {
       label: 'Géothermie',
       indicateurDefinitionId: 'conso_ENR_geothermie',
       section: "Consommation d'énergie",
+      referenceResultatOptional: true,
       groupBy: 'Chaleur',
     },
     {
       label: 'Solaire thermique',
       indicateurDefinitionId: 'conso_ENR_solaire_th',
       section: "Consommation d'énergie",
+      referenceResultatOptional: true,
       groupBy: 'Chaleur',
     },
     {
       label: 'Biogaz',
       indicateurDefinitionId: 'conso_ENR_biogaz',
       section: "Consommation d'énergie",
+      referenceResultatOptional: true,
       groupBy: 'Chaleur',
     },
     {
       label: 'Biocarburants',
       indicateurDefinitionId: 'conso_ENR_biocarburant',
       section: "Consommation d'énergie",
+      referenceResultatOptional: true,
       groupBy: 'Autres',
     },
     {
@@ -557,21 +563,31 @@ export const listPcaetDiagnosticIndicateurIds = (
   config: PcaetDiagnosticIndicateurParentConfig
 ): string[] => [...new Set(collectIndicateurDefinitionIds(config))];
 
+export type PcaetDiagnosticIndicateurRequiredLeaf = {
+  indicateurDefinitionId: string;
+  /** `false` quand seuls les objectifs aux horizons sont exigés. */
+  isReferenceResultatRequired: boolean;
+};
+
 /**
- * Identifiants des feuilles saisissables qui retiennent la complétude : pas
- * les agrégats parents, pas les lignes `optional`.
+ * Feuilles saisissables qui retiennent la complétude : pas les agrégats
+ * parents, pas les lignes `optional`.
  */
-export const listPcaetDiagnosticIndicateurRequiredLeafIds = (
+export const listPcaetDiagnosticIndicateurRequiredLeaves = (
   config: PcaetDiagnosticIndicateurParentConfig
-): string[] => {
-  const leaves: string[] = [];
+): PcaetDiagnosticIndicateurRequiredLeaf[] => {
+  const leaves: PcaetDiagnosticIndicateurRequiredLeaf[] = [];
 
   const pushLeaf = (node: {
     indicateurDefinitionId: string;
     optional?: boolean;
+    referenceResultatOptional?: boolean;
   }) => {
     if (node.indicateurDefinitionId.length > 0 && node.optional !== true) {
-      leaves.push(node.indicateurDefinitionId);
+      leaves.push({
+        indicateurDefinitionId: node.indicateurDefinitionId,
+        isReferenceResultatRequired: node.referenceResultatOptional !== true,
+      });
     }
   };
 

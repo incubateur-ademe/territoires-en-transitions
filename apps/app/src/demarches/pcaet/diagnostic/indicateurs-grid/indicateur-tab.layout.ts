@@ -7,6 +7,8 @@ type DiagnosticTableRow = {
   label: string;
   indicateurDefinitionId: string;
   isOptional: boolean;
+  /** `false` quand seuls les objectifs aux horizons sont exigés. */
+  isReferenceResultatRequired: boolean;
 };
 
 type DiagnosticIndicateurTableLayout = {
@@ -80,6 +82,7 @@ const toTableRow = (child: ChildConfig): DiagnosticTableRow | null => {
     label: child.label,
     indicateurDefinitionId,
     isOptional: child.optional ?? false,
+    isReferenceResultatRequired: child.referenceResultatOptional !== true,
   };
 };
 
