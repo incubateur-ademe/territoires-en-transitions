@@ -152,24 +152,35 @@ export async function addUserRoleSupport({
   userId,
   isSupport = true,
   isSuperAdminRoleEnabled = false,
+  hasRoleTeteAdmin = false,
+  hasRoleTeteAuditeur = false,
 }: {
   databaseService: DatabaseServiceInterface;
   userId: string;
   isSupport?: boolean;
   isSuperAdminRoleEnabled?: boolean;
+  hasRoleTeteAdmin?: boolean;
+  hasRoleTeteAuditeur?: boolean;
 }) {
   await databaseService.db
     .update(utilisateurSupportTable)
     .set({
       isSupport: isSupport || false,
       isSuperAdminRoleEnabled: isSuperAdminRoleEnabled || false,
+      hasRoleTeteAdmin,
+      hasRoleTeteAuditeur,
     })
     .where(eq(utilisateurSupportTable.userId, userId));
 
   const cleanup = async () => {
     await databaseService.db
       .update(utilisateurSupportTable)
-      .set({ isSupport: false, isSuperAdminRoleEnabled: false })
+      .set({
+        isSupport: false,
+        isSuperAdminRoleEnabled: false,
+        hasRoleTeteAdmin: false,
+        hasRoleTeteAuditeur: false,
+      })
       .where(eq(utilisateurSupportTable.userId, userId));
   };
 

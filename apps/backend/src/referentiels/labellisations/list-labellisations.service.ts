@@ -80,6 +80,31 @@ export class ListLabellisationsService {
 
     const labellisations = await labellisationsQuery;
 
+    // It seems that there are still some old labellisations for which there is no score
+    // Or for the  1st star, no score computed too
+    // TODO:  find a better way to handle this
+
+    const oldLabellisations: (LabellisationRecord & {
+      auditId: number | null;
+    })[] = await this.databaseService.db
+      .select({
+        ...getTableColumns(labellisationTable),
+        obtenueLe: sqlToDateTimeISO(labellisationTable.obtenueLe),
+      })
+      .from(labellisationTable)
+      .where(inArray(labellisationTable.collectiviteId, collectiviteIds))
+      .orderBy(desc(labellisationTable.obtenueLe));
+
+    // Une labellisation actée par le programme TETE porte l'étoile décidée en
+    // CRA, qui prime sur l'étoile calculée dans le snapshot du même audit.
+    const actedAuditKeys = new Set(
+      oldLabellisations
+        .filter((labellisation) => labellisation.auditId)
+        .map(
+          (labellisation) =>
+            `${labellisation.auditId}-${labellisation.collectiviteId}`
+        )
+    );
     const labelisationRecords = labellisations
       .map((labellisation) => {
         if (!labellisation.etoiles || !labellisation.auditId) {
@@ -108,33 +133,24 @@ export class ListLabellisationsService {
               )
             : 0,
         };
-        if (labellisation.associatedCollectiviteId) {
-          return [
-            labellisationrecord,
-            {
-              ...labellisationrecord,
-              collectiviteId: labellisation.associatedCollectiviteId,
-            },
-          ];
-        }
-        return [labellisationrecord];
+        const records = labellisation.associatedCollectiviteId
+          ? [
+              labellisationrecord,
+              {
+                ...labellisationrecord,
+                collectiviteId: labellisation.associatedCollectiviteId,
+              },
+            ]
+          : [labellisationrecord];
+        return records.filter(
+          (record) =>
+            !actedAuditKeys.has(
+              `${labellisation.auditId}-${record.collectiviteId}`
+            )
+        );
       })
       .flat()
       .filter((labellisation) => labellisation !== null);
-
-    // It seems that there are still some old labellisations for which there is no score
-    // Or for the  1st star, no score computed too
-    // TODO:  find a better way to handle this
-
-    const oldLabellisations: LabellisationRecord[] =
-      await this.databaseService.db
-        .select({
-          ...getTableColumns(labellisationTable),
-          obtenueLe: sqlToDateTimeISO(labellisationTable.obtenueLe),
-        })
-        .from(labellisationTable)
-        .where(inArray(labellisationTable.collectiviteId, collectiviteIds))
-        .orderBy(desc(labellisationTable.obtenueLe));
 
     const labelisationRecordsToAdd: LabellisationRecord[] = [];
     oldLabellisations.forEach((oldLabellisation) => {

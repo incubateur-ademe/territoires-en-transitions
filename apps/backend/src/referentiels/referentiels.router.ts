@@ -20,6 +20,7 @@ import { RequestLabellisationRouter } from './labellisations/request-labellisati
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { UpdateAuditReportRouter } from './labellisations/update-audit-report/update-audit-report.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
+import { DossiersLabellisationRouter } from './labellisations/dossiers-labellisation/dossiers-labellisation.router';
 import { ListActionDefinitionsRouter } from './list-actions/list-action-definitions.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { GetPreuvesArchiveRouter } from './preuves-archive/get-preuves-archive/get-preuves-archive.router';
@@ -50,6 +51,7 @@ export class ReferentielsRouter {
     private readonly requestLabellisation: RequestLabellisationRouter,
     private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
+    private readonly dossiersLabellisation: DossiersLabellisationRouter,
     private readonly listDocumentsAuditRouter: ListDocumentsAuditRouter,
     private readonly listDocumentsDemandeLabellisationRouter: ListDocumentsDemandeLabellisationRouter,
     private readonly listDocumentsReferentielRouter: ListDocumentsReferentielRouter,
@@ -104,7 +106,8 @@ export class ReferentielsRouter {
       this.getLabellisation.router,
       this.handleMesureAuditStatutRouter.router,
       this.updateAuditReport.router,
-      this.addAuditDocument.router
+      this.addAuditDocument.router,
+      this.dossiersLabellisation.router
     ),
 
     documents: this.trpc.mergeRouters(

@@ -37,8 +37,24 @@ export class GetDownloadUrlService {
     if (!accessResult.success) {
       return failure(GetDownloadUrlErrorEnum.UNAUTHORIZED);
     }
-    const { canReadConfidentiel } = accessResult.data;
+    return this.createDownloadUrl({
+      collectiviteId,
+      fichierId,
+      canReadConfidentiel: accessResult.data.canReadConfidentiel,
+    });
+  }
 
+  /**
+   * Signe l'URL sans contrôler l'accès à la collectivité : l'appelant doit
+   * l'avoir autorisé (ex. programme TETE sur l'acte d'engagement d'un dossier).
+   */
+  async createDownloadUrl({
+    collectiviteId,
+    fichierId,
+    canReadConfidentiel,
+  }: GetDownloadUrlInput & { canReadConfidentiel: boolean }): Promise<
+    Result<GetDownloadUrlOutput, GetDownloadUrlError>
+  > {
     const document = await this.repository.findDocument({
       collectiviteId,
       fichierId,
