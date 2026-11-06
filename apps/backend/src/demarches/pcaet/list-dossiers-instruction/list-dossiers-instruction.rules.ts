@@ -3,11 +3,14 @@ import {
   pcaetStatutInstructionValues,
 } from '@tet/domain/demarches';
 import type { ListDossiersInstructionInput } from './list-dossiers-instruction.input';
-import type { DossierInstructionLigne } from './list-dossiers-instruction.output';
+import type {
+  DossierInstructionLigne,
+  PerimetreDepartement,
+} from './list-dossiers-instruction.output';
 
 type Filtres = Pick<
   ListDossiersInstructionInput,
-  'statuts' | 'obligations' | 'regionCodes' | 'recherche'
+  'statuts' | 'obligations' | 'regionCodes' | 'departementCodes' | 'recherche'
 >;
 
 /**
@@ -31,7 +34,7 @@ const filtrePose = <T>(
  */
 export const estRetenue = (
   ligne: DossierInstructionLigne,
-  { statuts, obligations, regionCodes, recherche }: Filtres
+  { statuts, obligations, regionCodes, departementCodes, recherche }: Filtres
 ): boolean => {
   if (filtrePose(statuts) && !statuts.includes(ligne.statut)) {
     return false;
@@ -50,6 +53,13 @@ export const estRetenue = (
     return false;
   }
   if (
+    filtrePose(departementCodes) &&
+    (ligne.collectivite.departementCode === null ||
+      !departementCodes.includes(ligne.collectivite.departementCode))
+  ) {
+    return false;
+  }
+  if (
     recherche &&
     !ligne.collectivite.nom
       .toLocaleLowerCase('fr')
@@ -58,6 +68,24 @@ export const estRetenue = (
     return false;
   }
   return true;
+};
+
+/** Les départements des collectivités listées, une fois chacun, par code. */
+export const listerDepartements = (
+  lignes: DossierInstructionLigne[]
+): PerimetreDepartement[] => {
+  const parCode = new Map<string, string>();
+  for (const { collectivite } of lignes) {
+    if (collectivite.departementCode !== null) {
+      parCode.set(
+        collectivite.departementCode,
+        collectivite.departementLibelle ?? collectivite.departementCode
+      );
+    }
+  }
+  return [...parCode]
+    .map(([code, libelle]) => ({ code, libelle }))
+    .sort((a, b) => a.code.localeCompare(b.code));
 };
 
 /** Le tri porte-t-il sur une donnée que seuls les pilotes apportent ? */

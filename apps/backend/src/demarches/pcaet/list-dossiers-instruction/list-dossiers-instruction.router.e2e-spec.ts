@@ -915,6 +915,33 @@ describe('listDossiersInstruction', () => {
     });
   });
 
+  describe('départements', () => {
+    it('propose les départements des collectivités listées, filtres ignorés', async () => {
+      const result = await appeler(camille, { departementCodes: ['54'] });
+
+      expect(result.perimetreDepartements).toEqual(
+        expect.arrayContaining([
+          { code: '54', libelle: 'Meurthe-et-Moselle' },
+          { code: '67', libelle: 'Bas-Rhin' },
+        ])
+      );
+    });
+
+    it('filtre par département du siège de la déposante', async () => {
+      const result = await appeler(camille, {
+        statuts: TOUS_STATUTS,
+        departementCodes: ['54'],
+      });
+
+      expect(result.items.map((item) => item.collectivite.nom)).toEqual([
+        'Zitrone Agglo',
+      ]);
+      expect(result.items[0].collectivite.departementLibelle).toBe(
+        'Meurthe-et-Moselle'
+      );
+    });
+  });
+
   describe('service national', () => {
     const listerNational = (input: Record<string, unknown> = {}) =>
       router

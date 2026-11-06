@@ -58,6 +58,7 @@ export const dossierInstructionLigneSchema = z.object({
     id: z.number().int(),
     nom: z.string(),
     departementCode: z.string().nullable(),
+    departementLibelle: z.string().nullable(),
     regionCode: z.string().nullable(),
     regionLibelle: z.string().nullable(),
   }),
@@ -106,6 +107,13 @@ export const perimetreRegionSchema = z.object({
 
 export type PerimetreRegion = z.infer<typeof perimetreRegionSchema>;
 
+export const perimetreDepartementSchema = z.object({
+  code: z.string(),
+  libelle: z.string(),
+});
+
+export type PerimetreDepartement = z.infer<typeof perimetreDepartementSchema>;
+
 export const listDossiersInstructionOutputSchema = z.object({
   items: dossierInstructionLigneSchema.array(),
   /** Nombre de lignes après filtrage, ce que pagine l'écran. */
@@ -133,6 +141,13 @@ export const listDossiersInstructionOutputSchema = z.object({
    * filtre.
    */
   perimetreRegions: perimetreRegionSchema.array(),
+  /**
+   * Les départements des collectivités listées, filtres ignorés, par code. Lus
+   * sur les dossiers et non sur le périmètre : un EPCI voisin qui déborde chez
+   * le service a son siège ailleurs, et doit rester filtrable. Décide de la
+   * colonne « Département » et alimente son filtre.
+   */
+  perimetreDepartements: perimetreDepartementSchema.array(),
   stats: dossiersInstructionStatsSchema,
 });
 

@@ -5,7 +5,11 @@ import {
 } from '@tet/domain/demarches';
 import { describe, expect, it } from 'vitest';
 import type { DossierInstructionLigne } from './list-dossiers-instruction.output';
-import { estRetenue, trierDossiers } from './list-dossiers-instruction.rules';
+import {
+  estRetenue,
+  listerDepartements,
+  trierDossiers,
+} from './list-dossiers-instruction.rules';
 
 const ligne = (
   attributs: Partial<DossierInstructionLigne> & { nom?: string } = {}
@@ -26,6 +30,7 @@ const ligne = (
       id: 1,
       nom,
       departementCode: '54',
+      departementLibelle: 'Meurthe-et-Moselle',
       regionCode: '44',
       regionLibelle: 'Grand Est',
     },
@@ -46,6 +51,7 @@ const AUCUN_FILTRE = {
   statuts: [...STATUTS_INSTRUCTION_PAR_DEFAUT],
   obligations: undefined,
   regionCodes: undefined,
+  departementCodes: undefined,
   recherche: undefined,
 };
 
@@ -88,6 +94,7 @@ describe('estRetenue', () => {
         statuts: [],
         obligations: [],
         regionCodes: [],
+        departementCodes: [],
         recherche: undefined,
       })
     ).toBe(true);
@@ -157,6 +164,28 @@ describe('estRetenue', () => {
     ).toBe(false);
   });
 
+  it('filtre par département, et écarte une collectivité sans département', () => {
+    const filtres = { ...AUCUN_FILTRE, departementCodes: ['54', '57'] };
+
+    expect(estRetenue(ligne(), filtres)).toBe(true);
+    expect(
+      estRetenue(
+        ligne({
+          collectivite: { ...ligne().collectivite, departementCode: '88' },
+        }),
+        filtres
+      )
+    ).toBe(false);
+    expect(
+      estRetenue(
+        ligne({
+          collectivite: { ...ligne().collectivite, departementCode: null },
+        }),
+        filtres
+      )
+    ).toBe(false);
+  });
+
   it('cherche dans le nom de la collectivité, sans égard à la casse', () => {
     expect(
       estRetenue(ligne({ nom: 'Nancy Métropole' }), {
@@ -170,6 +199,31 @@ describe('estRetenue', () => {
         recherche: 'metz',
       })
     ).toBe(false);
+  });
+});
+
+describe('listerDepartements', () => {
+  it('rend chaque département une fois, par code, sans les collectivités qui n’en ont pas', () => {
+    const avec = (departementCode: string | null, departementLibelle: string) =>
+      ligne({
+        collectivite: {
+          ...ligne().collectivite,
+          departementCode,
+          departementLibelle,
+        },
+      });
+
+    expect(
+      listerDepartements([
+        avec('71', 'Saône-et-Loire'),
+        avec('01', 'Ain'),
+        avec('71', 'Saône-et-Loire'),
+        avec(null, ''),
+      ])
+    ).toEqual([
+      { code: '01', libelle: 'Ain' },
+      { code: '71', libelle: 'Saône-et-Loire' },
+    ]);
   });
 });
 

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { departementTable } from '@tet/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
@@ -78,6 +79,7 @@ export type DossierInstructionRow = {
   collectiviteId: number;
   collectiviteNom: string;
   collectiviteDepartementCode: string | null;
+  collectiviteDepartementLibelle: string | null;
   collectiviteRegionCode: string | null;
   collectiviteRegionLibelle: string | null;
   collectiviteNatureInsee: CollectiviteNatureType | null;
@@ -259,6 +261,7 @@ export class ListDossiersInstructionRepository {
           collectiviteId: collectiviteTable.id,
           collectiviteNom: collectiviteTable.nom,
           collectiviteDepartementCode: collectiviteTable.departementCode,
+          collectiviteDepartementLibelle: departementTable.libelle,
           collectiviteRegionCode: collectiviteTable.regionCode,
           collectiviteRegionLibelle: regionTable.libelle,
           collectiviteNatureInsee: collectiviteTable.natureInsee,
@@ -294,6 +297,10 @@ export class ListDossiersInstructionRepository {
         .leftJoin(
           regionTable,
           eq(regionTable.code, collectiviteTable.regionCode)
+        )
+        .leftJoin(
+          departementTable,
+          eq(departementTable.code, collectiviteTable.departementCode)
         )
         .where(and(filtrePerimetre, dansLAssiette));
 

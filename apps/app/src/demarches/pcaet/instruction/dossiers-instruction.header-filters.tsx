@@ -108,6 +108,41 @@ export const ObligationHeaderFilter = ({
 );
 
 /**
+ * Les départements couverts par le service, par code : c'est ainsi qu'une
+ * DREAL range ses dossiers.
+ */
+export const DepartementHeaderFilter = ({
+  departements,
+  options,
+  filterCount,
+  onChange,
+}: {
+  departements: string[];
+  options: { code: string; libelle: string }[];
+  filterCount: number;
+  onChange: (departements: string[]) => void;
+}) => (
+  <SelectFilter
+    dataTest="demarches.pcaet.instruction.filtre-departement"
+    dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER}
+    options={options.map(({ code, libelle }) => ({
+      value: code,
+      label: `${code} – ${libelle}`,
+    }))}
+    values={departements}
+    onChange={({ values }) => onChange((values ?? []) as string[])}
+    placeholder={appLabels.filtrer}
+    small
+    isSearcheable={options.length > 10}
+    custom={{
+      triggerButton: {
+        button: <HeaderFilterButton filterCount={filterCount} />,
+      },
+    }}
+  />
+);
+
+/**
  * Les régions couvertes par le service. N'apparaît que là où la colonne le
  * fait : un service qui n'en couvre qu'une n'a rien à trier.
  */

@@ -50,6 +50,7 @@ export const toDossierInstructionLigne = (
       id: row.collectiviteId,
       nom: row.collectiviteNom,
       departementCode: row.collectiviteDepartementCode,
+      departementLibelle: row.collectiviteDepartementLibelle,
       regionCode: row.collectiviteRegionCode,
       regionLibelle: row.collectiviteRegionLibelle,
     },

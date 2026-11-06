@@ -297,3 +297,9 @@ export const RegionCell = ({ dossier }: { dossier: Dossier }) => (
     {dossier.collectivite.regionLibelle ?? '—'}
   </span>
 );
+
+export const DepartementCell = ({ dossier }: { dossier: Dossier }) => (
+  <span className="text-primary-9">
+    {dossier.collectivite.departementLibelle ?? '—'}
+  </span>
+);
