@@ -1,6 +1,6 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { DonutData } from '@/app/ui/charts/Donut/DonutChart';
-import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';
+import { defaultColors, extendedColors } from '@/app/ui/charts/chartsTheme';
 
 /**
  * Définition des titres des axes pour les graphes
@@ -19,7 +19,7 @@ export const getIndexTitles = (
   return indexTitles;
 };
 
-/** Renvoi la couleur de la data si définie, sinon utilise les couleurs de nivo */
+/** Renvoie la couleur de la data si définie, sinon une couleur de la palette */
 export const getDataColor = (
   data: DonutData,
   dataLength: number,
@@ -31,5 +31,5 @@ export const getDataColor = (
   if (dataLength <= defaultColors.length) {
     return defaultColors[index % defaultColors.length];
   }
-  return nivoColorsSet[index % nivoColorsSet.length];
+  return extendedColors[index % extendedColors.length];
 };

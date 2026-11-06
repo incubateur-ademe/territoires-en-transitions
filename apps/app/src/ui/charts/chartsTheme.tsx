@@ -48,7 +48,7 @@ export const defaultColors = [
   '#FFB7AE',
 ];
 
-export const nivoColorsSet = [
+export const extendedColors = [
   '#8dd3c7',
   '#ffffb3',
   '#bebada',

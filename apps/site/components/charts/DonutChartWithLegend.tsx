@@ -13,7 +13,6 @@ type DonutChartWithLegendProps = {
   decimals?: number;
   customMargin?: { top: number; right: number; bottom: number; left: number };
   zoomEffect?: boolean;
-  displayPercentageValue?: boolean;
 };
 
 const DonutChartWithLegend = ({

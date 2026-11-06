@@ -1,84 +1,54 @@
-import {
-  BarDatum,
-  BarTooltipProps,
-  ComputedDatum,
-  ResponsiveBar,
-} from '@nivo/bar';
-import { defaultColors } from '../chartsTheme';
 import { appLabels } from '@/app/labels/catalog';
+import { ReactECharts, type EChartsOption } from '@/app/ui/charts/echarts';
+import { CHART_FONT_FAMILY } from '@/app/ui/charts/echarts/constants';
+import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { Colon } from '@/app/ui/colon';
+import { defaultColors } from '../chartsTheme';
 
-const getCustomColor = ({
-  id,
-  data,
+/** Une ligne du graphe : la valeur d'index, une valeur par clé, et
+ * optionnellement `${clé}_color` et `clickable` ('true' | 'false') */
+export type BarDatum = Record<string, string | number | null>;
+
+const upperCaseFirstLetter = (value: string): string =>
+  `${value.slice(0, 1).toUpperCase()}${value.slice(1).toLowerCase()}`;
+
+const isClickable = (d: BarDatum | undefined) =>
+  !!d && (!('clickable' in d) || d.clickable === 'true');
+
+const BarTooltip = ({
+  title,
+  serieName,
+  value,
+  color,
+  unit,
+  clickable,
 }: {
-  id: string | number;
-  data: BarDatum;
-}): string => `${data[`${id}_color`]}`;
-
-const upperCaseFirstLetter = (value: string): string => {
-  return `${value.slice(0, 1).toUpperCase()}${value.slice(1).toLowerCase()}`;
-};
-
-const getLabel = (d: ComputedDatum<object>) => {
-  if (d.value) {
-    const roundedValue = Math.round(d.value);
-    if (roundedValue !== 0) return roundedValue.toString();
-  }
-  return '';
-};
-
-const getTooltip = (
-  { id, value, index, indexValue, color }: BarTooltipProps<object>,
-  localIndexTitles: string[],
-  unit: string,
-  clickable: boolean
-) => {
-  return (
-    <div
-      style={{
-        fontFamily: '"Marianne", arial, sans-serif',
-        fontSize: 14,
-        background: '#fff',
-        padding: '9px 12px',
-        border: '1px solid #ccc',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'start',
-      }}
-    >
-      <div>
-        {localIndexTitles.length ? localIndexTitles[index] : indexValue}
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: color,
-            width: '12px',
-            height: '12px',
-            marginRight: '7px',
-          }}
-        ></div>
-        <span>
-          {id}
-          <Colon />
-          <strong>
-            {Math.round(value * 10) / 10} {unit}
-          </strong>
-        </span>
-      </div>
-      {clickable && (
-        <div className="text-[#929292] pt-4">{appLabels.cliquezPourVoirDetail}</div>
-      )}
+  title: string;
+  serieName: string;
+  value: number;
+  color: string;
+  unit: string;
+  clickable: boolean;
+}) => (
+  <div className="flex flex-col items-start text-sm">
+    <div>{title}</div>
+    <div className="flex items-center">
+      <div className="w-3 h-3 mr-2" style={{ backgroundColor: color }} />
+      <span>
+        {serieName}
+        <Colon />
+        <strong>
+          {Math.round(value * 10) / 10} {unit}
+        </strong>
+      </span>
     </div>
-  );
-};
+    {clickable && (
+      <div className="text-[#929292] pt-4">
+        {appLabels.cliquezPourVoirDetail}
+      </div>
+    )}
+  </div>
+);
 
 export type BarChartProps = {
   data: BarDatum[];
@@ -95,144 +65,129 @@ export type BarChartProps = {
 };
 
 /**
- * Graphe bar générique à partir du composant nivo/bar
+ * Graphe bar générique (ECharts)
  *
  * @param data - tableau de données à afficher
  * @param indexBy string - élément de data utilisé pour indexer les autres données
  * @param keys string[] - éléments utilisés pour déterminer chaque série de données
  * @param indexTitles string[] (optionnel) - permet d'afficher des valeurs différentes de indexBy dans la tooltip
  * @param layout 'horizontal' | 'vertical' (optionnel) - orientation du graphe, par défaut vertical
- * @param groupMode 'grouped' | 'stacked' (optionnel)
+ * @param groupMode 'grouped' | 'stacked' (optionnel) - par défaut stacked
  * @param inverted boolean (optionnel) - inverse l'ordre d'affichage des valeurs sur l'axe indexBy
- * @param customColors boolean (optionnel) - signale la présence de couleurs custom dans le tableau data
+ * @param customColors boolean (optionnel) - signale la présence de couleurs custom (`${clé}_color`) dans data
  * @param unit string (optionnel) - unité des éléments listés dans keys
  * @param onSelectIndex renvoie l'index de l'élément sur lequel on a cliqué
  */
-
 const BarChart = ({
   data,
   indexBy,
   keys,
   indexTitles = [],
-  layout,
-  groupMode,
+  layout = 'vertical',
+  groupMode = 'stacked',
   inverted = false,
   customColors = false,
   unit = '',
   isIntoModal,
   onSelectIndex,
 }: BarChartProps) => {
-  let localData = [];
-  let localIndexTitles: string[] = [];
+  const localData = inverted ? [...data].reverse() : data;
+  const localIndexTitles = inverted ? [...indexTitles].reverse() : indexTitles;
+  const isHorizontal = layout === 'horizontal';
 
-  if (inverted) {
-    for (let i = data.length - 1; i >= 0; i--) {
-      localData.push(data[i]);
-      if (indexTitles) localIndexTitles.push(indexTitles[i]);
-    }
-  } else {
-    localData = [...data];
-    localIndexTitles = [...indexTitles];
-  }
+  const fontSizes = isIntoModal
+    ? { label: 22, tick: 18, axisName: 20 }
+    : { label: 14, tick: 13, axisName: 14 };
+
+  const categoryAxis = {
+    type: 'category' as const,
+    data: localData.map((d) => String(d[indexBy])),
+    name: upperCaseFirstLetter(indexBy),
+    nameLocation: 'middle' as const,
+    nameGap: isIntoModal ? 50 : 35,
+    nameTextStyle: { fontSize: fontSizes.axisName },
+    axisLabel: { fontSize: fontSizes.tick, fontWeight: 'bold' as const },
+  };
+  const valueAxis = {
+    type: 'value' as const,
+    name: upperCaseFirstLetter(unit),
+    nameLocation: 'middle' as const,
+    nameGap: isIntoModal ? 45 : 30,
+    nameTextStyle: { fontSize: fontSizes.axisName },
+    axisLabel: { fontSize: fontSizes.tick },
+  };
+
+  const option: EChartsOption = {
+    textStyle: { fontFamily: CHART_FONT_FAMILY },
+    animation: false,
+    grid: {
+      top: isHorizontal ? 20 : 40,
+      right: 40,
+      bottom: isIntoModal ? 70 : 50,
+      left: isIntoModal ? 80 : 60,
+    },
+    xAxis: isHorizontal ? valueAxis : categoryAxis,
+    yAxis: isHorizontal ? categoryAxis : valueAxis,
+    tooltip: {
+      trigger: 'item',
+      formatter: (params) => {
+        if (Array.isArray(params)) return '';
+        const { dataIndex, name, seriesName, value, color } = params;
+        return renderToString(
+          <BarTooltip
+            title={localIndexTitles[dataIndex] ?? name}
+            serieName={seriesName ?? ''}
+            value={Number(value)}
+            color={String(color)}
+            unit={unit}
+            clickable={!!onSelectIndex && isClickable(localData[dataIndex])}
+          />
+        );
+      },
+    },
+    series: keys.map((key, i) => ({
+      type: 'bar' as const,
+      name: key,
+      stack: groupMode === 'stacked' ? 'total' : undefined,
+      barCategoryGap: isHorizontal ? '10%' : '50%',
+      barGap: groupMode === 'grouped' ? '5%' : undefined,
+      cursor: onSelectIndex ? 'pointer' : 'default',
+      color: customColors
+        ? String(localData[0]?.[`${key}_color`] ?? '')
+        : defaultColors[i % defaultColors.length],
+      label: {
+        show: true,
+        fontSize: fontSizes.label,
+        fontWeight: 'bold' as const,
+        color: '#2A2A62',
+        formatter: ({ value }) => {
+          const rounded = Math.round(Number(value));
+          return rounded === 0 ? '' : String(rounded);
+        },
+      },
+      labelLayout: { hideOverlap: true },
+      data: localData.map((d) => Number(d[key] ?? 0)),
+    })),
+  };
 
   return (
-    <ResponsiveBar
-      data={localData}
-      keys={keys}
-      indexBy={indexBy}
-      theme={
-        isIntoModal
-          ? {
-              labels: { text: { fontSize: 30, fontWeight: 'bold' } },
-              axis: {
-                ticks: { text: { fontSize: 22 } },
-                legend: { text: { fontSize: 20 } },
-              },
-            }
-          : {
-              labels: { text: { fontSize: 14 } },
-              axis: { ticks: { text: { fontSize: 13 } } },
-            }
-      }
-      margin={{
-        top: layout === 'horizontal' ? 20 : 85,
-        right: 60,
-        bottom: layout === 'horizontal' ? 80 : 70,
-        left: isIntoModal ? 90 : 70,
-      }}
-      padding={layout === 'horizontal' ? 0.1 : 0.5}
-      innerPadding={groupMode === 'grouped' ? 2 : 0}
-      layout={layout}
-      groupMode={groupMode}
-      colors={
-        customColors
-          ? ({ id, data }) => getCustomColor({ id, data })
-          : defaultColors
-      }
-      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-      axisTop={null}
-      axisRight={null}
-      axisBottom={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend:
-          layout === 'horizontal'
-            ? upperCaseFirstLetter(unit)
-            : upperCaseFirstLetter(indexBy),
-        legendPosition: 'middle',
-        legendOffset: isIntoModal ? 60 : 45,
-      }}
-      axisLeft={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: -45,
-        legend:
-          layout === 'horizontal'
-            ? upperCaseFirstLetter(indexBy)
-            : upperCaseFirstLetter(unit),
-        legendPosition: 'middle',
-        legendOffset: isIntoModal ? -70 : -50,
-      }}
-      label={getLabel}
-      enableGridX={layout === 'horizontal'}
-      enableGridY={layout !== 'horizontal'}
-      labelSkipWidth={layout === 'horizontal' ? 10 : 0}
-      labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
-      tooltip={(d) =>
-        getTooltip(
-          d,
-          localIndexTitles,
-          unit,
-          onSelectIndex !== undefined &&
-            ((Object.prototype.hasOwnProperty.call(d.data, 'clickable') &&
-              d.data.clickable === 'true') ||
-              !Object.prototype.hasOwnProperty.call(d.data, 'clickable'))
-        )
-      }
-      onClick={({ indexValue }) => {
-        if (onSelectIndex) onSelectIndex(indexValue);
-      }}
-      onMouseEnter={(value) => {
-        if (
-          onSelectIndex &&
-          ((Object.prototype.hasOwnProperty.call(value.data, 'clickable') &&
-            value.data.clickable === 'true') ||
-            !Object.prototype.hasOwnProperty.call(value.data, 'clickable'))
-        ) {
-          (document.body as HTMLInputElement).style.cursor = 'pointer';
+    <div className="w-full h-full min-h-0 flex-1">
+      <ReactECharts
+        option={option}
+        style={{ height: '100%' }}
+        onEvents={
+          onSelectIndex
+            ? {
+                click: ({ event }) => {
+                  if (!('dataIndex' in event)) return;
+                  const d = localData[event.dataIndex];
+                  if (isClickable(d)) onSelectIndex(String(d[indexBy]));
+                },
+              }
+            : undefined
         }
-      }}
-      onMouseLeave={(value) => {
-        if (
-          onSelectIndex &&
-          ((Object.prototype.hasOwnProperty.call(value.data, 'clickable') &&
-            value.data.clickable === 'true') ||
-            !Object.prototype.hasOwnProperty.call(value.data, 'clickable'))
-        )
-          (document.body as HTMLInputElement).style.cursor = 'default';
-      }}
-    />
+      />
+    </div>
   );
 };
 

@@ -79,11 +79,6 @@ updates:
           - "@nestjs/*"
         update-types:
           - major
-      workspace-nivo:
-        patterns:
-          - "@nivo/*"
-        update-types:
-          - major
       workspace-opentelemetry:
         patterns:
           - "@opentelemetry/*"
