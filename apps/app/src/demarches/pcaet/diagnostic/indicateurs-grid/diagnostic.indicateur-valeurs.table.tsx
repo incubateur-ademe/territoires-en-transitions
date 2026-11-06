@@ -4,6 +4,7 @@ import { JSX, useMemo } from 'react';
 import { IndicateurValeursTable } from '../../../../indicateurs/valeurs/grid';
 import type { GridMaxHeight } from '../../../../indicateurs/valeurs/grid/types';
 import { demarchePcaetAutosaveKeys } from '../../data/autosave-keys';
+import { DiagnosticIndicateurStickyTitle } from './diagnostic-indicateur-sticky-title';
 import type { DiagnosticIndicateurTable } from './indicateur-tab.layout';
 import { buildDiagnosticIndicateurPeriodeColumns } from './diagnostic-indicateur-periode.columns';
 import { useDiagnosticIndicateurValeursTable } from './use-diagnostic-indicateur-valeurs-table';
@@ -54,17 +55,19 @@ export const DiagnosticIndicateurValeursTable = ({
   );
 
   return (
-    <IndicateurValeursTable
-      autosaveKey={autosaveKey}
-      rows={rows}
-      periodeColumns={periodeColumns}
-      updateIndicateurValeurs={updateIndicateurValeurs}
-      setIndicateurApplicable={setIndicateurApplicable}
-      title={table.title}
-      unit={unit}
-      isReadonly={isReadonly}
-      isRequired={!table.isOptional}
-      maxHeight={maxHeight}
-    />
+    <DiagnosticIndicateurStickyTitle title={table.title} unit={unit}>
+      <IndicateurValeursTable
+        autosaveKey={autosaveKey}
+        rows={rows}
+        periodeColumns={periodeColumns}
+        updateIndicateurValeurs={updateIndicateurValeurs}
+        setIndicateurApplicable={setIndicateurApplicable}
+        title={table.title}
+        unit={unit}
+        isReadonly={isReadonly}
+        isRequired={!table.isOptional}
+        maxHeight={maxHeight}
+      />
+    </DiagnosticIndicateurStickyTitle>
   );
 };
