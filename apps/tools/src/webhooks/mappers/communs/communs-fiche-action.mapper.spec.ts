@@ -33,6 +33,7 @@ const baseFicheAction: FicheWithRelationsAndCollectivite = {
     'Agents',
   ],
   statut: 'En retard',
+  jauge: 30,
   dateFin: '2021-07-01 00:00:00+00',
   pilotes: [
     {

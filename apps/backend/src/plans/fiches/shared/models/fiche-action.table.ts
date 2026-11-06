@@ -76,6 +76,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   statut: varchar('statut', { length: 30, enum: statutEnumValues }).default(
     StatutEnum.A_VENIR
   ),
+  jauge: integer('jauge').notNull().default(0),
   priorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
   dateFin: timestamp('date_fin_provisoire', TIMESTAMP_OPTIONS),
