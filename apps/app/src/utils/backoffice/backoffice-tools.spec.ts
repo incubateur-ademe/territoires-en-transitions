@@ -54,6 +54,17 @@ describe('listAllowedBackofficeTools', () => {
     });
   });
 
+  it('range les actions de référence dans les outils de plateforme', () => {
+    const actions = listAllowedBackofficeTools(superAdmin, epci).find(
+      (tool) => tool.id === 'actions-de-reference'
+    );
+
+    expect(actions).toMatchObject({
+      href: '/collectivite/20/actions-reference',
+      scope: 'plateforme',
+    });
+  });
+
   it.each([
     ['sans collectivité', null],
     [

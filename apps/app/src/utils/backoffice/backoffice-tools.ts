@@ -43,9 +43,14 @@ type BackofficeCollectivite = Pick<
 
 type PlateformeBackofficeTool = Omit<BackofficeTool, 'scope'>;
 
-/** Outil qui agit sur la collectivité en cours. */
+/**
+ * Outil dont l'URL passe par la collectivité en cours. `scope: 'plateforme'`
+ * le range malgré tout dans les outils de plateforme quand ses données n'en
+ * dépendent pas.
+ */
 type CollectiviteBackofficeTool = Omit<BackofficeTool, 'href' | 'scope'> & {
   makeHref: (collectiviteId: number) => string;
+  scope?: 'plateforme';
 };
 
 const backofficeTools: (
@@ -103,6 +108,9 @@ const backofficeTools: (
     icon: 'book-open-line',
     makeHref: (collectiviteId) =>
       makeCollectiviteActionsDeReferenceUrl({ collectiviteId }),
+    // Les actions de référence sont communes à toutes les collectivités : seule
+    // l'URL de la page passe par l'une d'elles.
+    scope: 'plateforme',
     permission: 'shared.actions-de-reference.mutate',
   },
   {
@@ -139,12 +147,12 @@ export const listAllowedBackofficeTools = (
       if (!isCollectiviteStandard(collectivite)) {
         return [];
       }
-      const { makeHref, ...rest } = tool;
+      const { makeHref, scope = 'collectivite', ...rest } = tool;
       return [
         {
           ...rest,
           href: makeHref(collectivite.collectiviteId),
-          scope: 'collectivite',
+          scope,
         },
       ];
     });
