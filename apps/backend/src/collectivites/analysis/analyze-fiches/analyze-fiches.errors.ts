@@ -19,6 +19,12 @@ export const FicheTextErrorEnum = createEnumObject(ficheTextErrorValues);
 
 export type FicheTextError = (typeof ficheTextErrorValues)[number];
 
+const ficheAxePathErrorValues = ['LIST_FICHE_AXE_PATHS_ERROR'] as const;
+
+export const FicheAxePathErrorEnum = createEnumObject(ficheAxePathErrorValues);
+
+export type FicheAxePathError = (typeof ficheAxePathErrorValues)[number];
+
 const ficheAnalysisStatusErrorValues = [
   'LIST_FICHE_ANALYSES_ERROR',
   'UPSERT_FICHE_ANALYSES_ERROR',
