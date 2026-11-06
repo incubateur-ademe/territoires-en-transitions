@@ -1,36 +1,3 @@
-export const theme = {
-  fontFamily: '"Marianne", arial, sans-serif',
-  fontSize: 12,
-  axis: {
-    legend: {
-      text: {
-        fontFamily: '"Marianne", arial, sans-serif',
-        fontSize: 14,
-      },
-    },
-  },
-  legends: {
-    text: {
-      fontSize: 14,
-    },
-  },
-  tooltip: {
-    container: {
-      fontSize: 14,
-      background: '#fff',
-      padding: '9px 12px',
-      border: '1px solid #ccc',
-    },
-  },
-  labels: {
-    text: {
-      fontFamily: '"Marianne", arial, sans-serif',
-      fontWeight: 'bold',
-      color: '#2A2A62',
-    },
-  },
-} as const;
-
 export const defaultColors = [
   '#3F007D',
   '#54278F',

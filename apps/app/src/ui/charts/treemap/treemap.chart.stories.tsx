@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { nivoColorsSet } from '../chartsTheme';
+import { extendedColors } from '../chartsTheme';
 import { Caption } from '../matrix/caption';
 import type { TreemapGroup } from './treemap-group';
 import { TreemapChart } from './treemap.chart';
@@ -132,7 +132,7 @@ const toGroups = (): TreemapGroup<Mobilisation>[] =>
   LEVIERS.map(([label, sousLeviers], index) => ({
     id: label,
     label,
-    color: nivoColorsSet[index % nivoColorsSet.length],
+    color: extendedColors[index % extendedColors.length],
     tiles: sousLeviers.map(([sousLevier, value, intensity]) => ({
       id: `${label}/${sousLevier}`,
       label: sousLevier,

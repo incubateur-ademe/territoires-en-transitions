@@ -136,7 +136,6 @@ const ChartCardModalContent = ({
 };
 
 type ChartCardProps = {
-  chartType: 'bar';
   chartProps: BarChartProps;
   chartInfo?: {
     title?: string;
@@ -159,15 +158,13 @@ type ChartCardProps = {
 /**
  * Carte affichant un graphe custom
  *
- * @param chartType 'bar'
- * @param chartProps BarChartProps | DonutChartProps |
+ * @param chartProps BarChartProps
  * @param chartInfo title, legend, expandable, downloadFileName, additionalInfo
  * @param topElement JSX.Element (affiché entre le titre et le graphe)
  * @param customStyle React.CSSProperties
  */
 
 const ChartCard = ({
-  chartType,
   chartProps,
   chartInfo,
   topElement,
@@ -179,20 +176,7 @@ const ChartCard = ({
   // Etat d'ouverture de la modale "zoom", disponible si chartInfo.expandable === true
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Initialisation du graphe en fonction des props
-  let chart: JSX.Element = <></>;
-  switch (chartType) {
-    case 'bar':
-      chart = (
-        <BarChart
-          {...(chartProps as BarChartProps)}
-          isIntoModal={isModalOpen}
-        />
-      );
-      break;
-    default:
-      break;
-  }
+  const chart = <BarChart {...chartProps} />;
 
   return (
     <div
@@ -228,7 +212,7 @@ const ChartCard = ({
             }}
             render={() => (
               <ChartCardModalContent
-                chart={chart}
+                chart={<BarChart {...chartProps} isIntoModal />}
                 chartInfo={chartInfo}
                 topElement={topElement}
                 onDownload={onDownload}

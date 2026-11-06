@@ -1,17 +1,12 @@
-import { DatumId, ResponsivePie } from '@nivo/pie';
-
+import { ReactECharts, type EChartsOption } from '@/app/ui/charts/echarts';
+import { CHART_FONT_FAMILY } from '@/app/ui/charts/echarts/constants';
+import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { getDataColor } from '@/app/ui/charts/utils';
 import classNames from 'classnames';
 import ChartLegend, { ChartLegendProps } from '../ChartLegend';
-import { theme } from '../chartsTheme';
-import { getDonutTooltip } from './DonutTooltip';
-import {
-  generateDonutLegendItems,
-  getPercentage,
-  skipArcLinkLabel,
-} from './utils';
+import { DonutTooltip } from './DonutTooltip';
+import { generateDonutLegendItems, getPercentage } from './utils';
 
-/** Format de données du composant Pie de nivo*/
 export type DonutData = {
   id: string;
   value: number;
@@ -32,18 +27,16 @@ export type DonutChartProps = {
   /** affichage d'un élément au centre du donut */
   centeredElement?: React.ReactNode;
   /** Clique sur un arc */
-  onClick?: (id: DatumId) => void;
+  onClick?: (id: string) => void;
   /** Permet d'afficher et configurer la légende */
   legend?: ChartLegendProps;
   /** Classname du container, permet notamment de donner la hauteur du graphe.*/
   className?: string;
 };
 
-/**
- * Graphe donut générique à partir du composant nivo/pie
- *
- * https://nivo.rocks/pie/
- */
+const NO_DATA_COLOR = '#ccc';
+
+/** Graphe donut générique (ECharts) */
 const DonutChart = ({
   data,
   unit,
@@ -54,80 +47,100 @@ const DonutChart = ({
   className,
   legend,
 }: DonutChartProps) => {
-  /** Vérifie si le tableau de données est vide */
-  const hasNoData =
-    data.length === 0 || data.filter((d) => d.value !== 0).length === 0;
+  const hasNoData = data.every((d) => d.value === 0);
 
-  /** Valeur par défault si le tableau de données est vide */
-  const defaultData = [{ id: 'NA', value: 1, color: '#ccc' }];
-
-  /** Ajoute des couleurs si aucune n'est définie */
   const localData = data.map((d, index) => ({
     ...d,
     color: getDataColor(d, data.length, index),
   }));
+  const values = localData.map((d) => d.value);
+
+  const formatValue = (value: number) =>
+    displayPercentageValue
+      ? `${getPercentage(value, values)} %`
+      : `${Math.round(value)}`;
+
+  const option: EChartsOption = {
+    textStyle: { fontFamily: CHART_FONT_FAMILY },
+    tooltip: {
+      show: !hasNoData,
+      trigger: 'item',
+      formatter: (params) => {
+        if (Array.isArray(params) || typeof params.value !== 'number') {
+          return '';
+        }
+        return renderToString(
+          <DonutTooltip
+            id={params.name}
+            value={params.value}
+            color={String(params.color)}
+            values={values}
+            unit={unit}
+          />
+        );
+      },
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '80%'],
+        padAngle: 1,
+        cursor: onClick ? 'pointer' : 'default',
+        itemStyle: { borderRadius: 4 },
+        emphasis: { scale: !hasNoData, scaleSize: 8 },
+        labelLayout: { hideOverlap: true },
+        minShowLabelAngle: 12,
+        label: hasNoData
+          ? { show: false }
+          : displayOutsideLabel
+            ? {
+                position: 'outside',
+                fontSize: 14,
+                fontWeight: 500,
+                color: '#333',
+                formatter: ({ name, value }) =>
+                  `${name} : ${formatValue(Number(value))}`,
+              }
+            : {
+                position: 'inside',
+                fontSize: 14,
+                fontWeight: 500,
+                formatter: ({ value }) => formatValue(Number(value)),
+              },
+        labelLine: { length: 12, length2: 6, lineStyle: { width: 2 } },
+        data: hasNoData
+          ? [{ name: 'NA', value: 1, itemStyle: { color: NO_DATA_COLOR } }]
+          : localData.map((d) => ({
+              name: d.id,
+              value: d.value,
+              itemStyle: { color: d.color },
+            })),
+      },
+    ],
+  };
 
   return (
     <div className="flex flex-col">
-      {/** Chart */}
       <div className={classNames('relative h-64', className)}>
-        {/** Élement central */}
+        <ReactECharts
+          option={option}
+          style={{ height: '100%' }}
+          onEvents={
+            onClick && !hasNoData
+              ? {
+                  click: ({ event }) => {
+                    if ('name' in event) onClick(event.name);
+                  },
+                }
+              : undefined
+          }
+        />
         {!!centeredElement && (
-          <div className="absolute inset-0 flex">
+          <div className="absolute inset-0 flex pointer-events-none">
             <div className="m-auto text-center">{centeredElement}</div>
           </div>
         )}
-        <ResponsivePie
-          data={hasNoData ? defaultData : localData}
-          valueFormat={(value) =>
-            displayPercentageValue
-              ? `${getPercentage(
-                  value,
-                  localData.map((d) => d.value)
-                )} %`
-              : `${Math.round(value)}`
-          }
-          tooltip={(datum) =>
-            !hasNoData && getDonutTooltip(datum, localData, unit)
-          }
-          onClick={({ id }) => onClick?.(id)}
-          enableArcLinkLabels={
-            (displayOutsideLabel || hasNoData) && !skipArcLinkLabel(data)
-          }
-          enableArcLabels={hasNoData ? false : true}
-          /** Styles */
-          theme={{
-            ...theme,
-            labels: { text: { fontSize: 14, fontWeight: 500 } },
-          }}
-          colors={{ datum: 'data.color' }}
-          onMouseEnter={(_datum, event) => {
-            if (onClick) {
-              event.currentTarget.style.cursor = 'pointer';
-            }
-          }}
-          animate={true}
-          margin={{ top: 24, right: 24, bottom: 24, left: 24 }}
-          // Taille du rond vide central
-          innerRadius={0.5}
-          // Distance entre les arcs
-          padAngle={1}
-          /** Styles des arcs */
-          cornerRadius={4}
-          // Agrandissement de l'arc au hover
-          activeOuterRadiusOffset={!hasNoData ? 8 : undefined}
-          borderWidth={1}
-          borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-          arcLinkLabelsDiagonalLength={12}
-          arcLinkLabelsStraightLength={6}
-          arcLinkLabelsTextColor="#333"
-          arcLinkLabelsThickness={2}
-          arcLinkLabelsColor={{ from: 'color' }}
-          arcLabelsSkipAngle={12}
-          arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-        />
       </div>
-      {/** Légende */}
       {legend?.isOpen && (
         <ChartLegend {...legend} items={generateDonutLegendItems(data)} />
       )}

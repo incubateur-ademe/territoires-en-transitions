@@ -80,7 +80,6 @@ const IndicateurCard = ({
               unit={unit}
               unitSingular={unitSingular}
               decimals={decimals}
-              displayPercentageValue={true}
             />
           </div>
         </>

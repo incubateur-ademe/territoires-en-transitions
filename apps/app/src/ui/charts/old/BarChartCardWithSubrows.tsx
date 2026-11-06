@@ -1,6 +1,5 @@
 import { appLabels } from '@/app/labels/catalog';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Breadcrumbs, Button, Event, useEventTracker } from '@tet/ui';
@@ -182,11 +181,7 @@ const BarChartCardWithSubrows = ({
 
   return (
     <ChartCard
-      chartType="bar"
-      chartProps={{
-        ...localChartProps,
-        data: localChartProps.data as BarDatum[],
-      }}
+      chartProps={localChartProps}
       chartInfo={localChartInfo}
       topElement={() => (
         <div className="flex flex-col gap-4 w-full">
