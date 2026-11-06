@@ -13,6 +13,7 @@ import { JSX, useState } from 'react';
 import { getJaugeColors } from '@/app/plans/shared/jauge/get-jauge-colors';
 import { useFicheContext } from '../../../context/fiche-context';
 import { JaugeFigeeAlert } from './jauge-figee.alert';
+import { SousActionsRealiseesSkeleton } from './sous-actions-realisees.skeleton';
 
 export const Jauge = (): JSX.Element => {
   const { fiche, isReadonly, update, sousActions } = useFicheContext();
@@ -86,18 +87,7 @@ export const Jauge = (): JSX.Element => {
 
         {isFigee && <JaugeFigeeAlert statut={statut} />}
 
-        {sousActions.isLoading && (
-          <p
-            aria-hidden
-            className="mb-0 w-fit animate-pulse select-none rounded-md bg-grey-3 text-sm text-transparent"
-            data-test="fiche.jauge.sous-actions-skeleton"
-          >
-            {appLabels.ficheJaugeSousActionsRealisees({
-              realisees: 0,
-              total: 0,
-            })}
-          </p>
-        )}
+        {sousActions.isLoading && <SousActionsRealiseesSkeleton />}
 
         {!sousActions.isLoading && sousActions.list.length > 0 && (
           <p className="mb-0 text-sm text-grey-8">
