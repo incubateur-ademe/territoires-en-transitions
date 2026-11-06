@@ -3,9 +3,10 @@ import { Badge, type BadgeProps } from '@tet/ui';
 import { JSX } from 'react';
 import type { DemarcheCompletionStatut } from '../types';
 
+// Badges pleins : en teinte pâle, « À compléter » passait inaperçu.
 const badgeByStatut: Record<
   DemarcheCompletionStatut,
-  { title: string; variant: BadgeProps['variant']; icon: BadgeProps['icon'] }
+  { title: string; variant: BadgeProps['variant']; icon?: BadgeProps['icon'] }
 > = {
   complete: {
     title: appLabels.demarcheCompletionComplete,
@@ -15,14 +16,12 @@ const badgeByStatut: Record<
   incomplete: {
     title: appLabels.demarcheCompletionAComplete,
     variant: 'warning',
-    icon: 'time-line',
   },
   // Volet sans exigence : un badge neutre, qui ne se lise ni comme un travail
   // fait ni comme un retard.
   optional: {
     title: appLabels.demarcheCompletionOptionnel,
     variant: 'grey',
-    icon: 'information-line',
   },
 };
 
@@ -33,15 +32,20 @@ const badgeByStatut: Record<
 export const getDemarcheCompletionBadgeProps = (
   statut: DemarcheCompletionStatut,
   { withIcon = true }: { withIcon?: boolean } = {}
-): Pick<BadgeProps, 'title' | 'variant' | 'icon'> => {
+): Pick<BadgeProps, 'title' | 'variant' | 'type' | 'icon' | 'iconPosition'> => {
   const { title, variant, icon } = badgeByStatut[statut];
-  return { title, variant, icon: withIcon ? icon : undefined };
+  return {
+    title,
+    variant,
+    type: 'inverted',
+    icon: withIcon ? icon : undefined,
+    iconPosition: 'left',
+  };
 };
 
 type Props = {
   statut: DemarcheCompletionStatut;
   size?: 'xs' | 'sm';
-  /** Le stepper porte déjà un rond d'icône : la répéter dans le badge fait doublon. */
   withIcon?: boolean;
   /** `false` laisse le badge sur une seule ligne quand la place manque. */
   trim?: boolean;

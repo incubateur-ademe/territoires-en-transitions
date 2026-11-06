@@ -11,7 +11,7 @@ import type {
   DemarchePcaetTransitionEvaluations,
 } from '@tet/domain/demarches';
 import { getTransitionBlocageLabel } from '../transitions';
-import { Alert, Button, cn, Icon, InfoTooltip, Tooltip } from '@tet/ui';
+import { Alert, Button, cn, InfoTooltip, Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import { useState, type ReactNode } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
@@ -80,7 +80,7 @@ type SectionStep = {
 
 const sectionStepCardClassName = (isActive: boolean, isPreview: boolean) =>
   [
-    'flex gap-3 rounded-lg border p-3 text-sm transition-colors',
+    'flex rounded-lg border p-3 text-sm transition-colors',
     isActive
       ? 'border-primary-7 border-2 bg-primary-0 p-[calc(0.75rem-1px)]'
       : 'border-grey-3 bg-white',
@@ -90,61 +90,20 @@ const sectionStepCardClassName = (isActive: boolean, isPreview: boolean) =>
     .filter(Boolean)
     .join(' ');
 
-const SectionStepContent = ({
-  step,
-  isComplete,
-}: {
-  step: SectionStep;
-  isComplete: boolean;
-}) => {
-  // Une sous-étape à relire ne se mesure pas : ni pastille, ni marque de
-  // complétude, mais la même pastille ronde pour rester alignée avec les
-  // sous-étapes voisines.
-  const estConsultation = step.status === null;
-
-  return (
-    <>
-      <div
-        className={[
-          'flex items-center justify-center rounded-full w-8 h-8 shrink-0',
-          estConsultation
-            ? 'bg-primary-1 text-primary-9'
-            : isComplete
-            ? 'bg-success text-white'
-            : 'bg-warning-2 text-warning-1',
-        ].join(' ')}
-      >
-        <Icon
-          icon={
-            estConsultation
-              ? 'eye-line'
-              : isComplete
-              ? 'check-line'
-              : 'close-line'
-          }
-          size="sm"
-        />
-      </div>
-      <div className="flex flex-col gap-1 min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-2">
-          <span className="font-medium text-primary-9 min-w-0">
-            {step.label}
-          </span>
-          {step.status !== null && (
-            <DemarcheCompletionBadge
-              className="shrink-0"
-              statut={step.status}
-              size="xs"
-              withIcon={false}
-              trim={false}
-            />
-          )}
-        </div>
-        <span className="leading-relaxed text-grey-7">{step.description}</span>
-      </div>
-    </>
-  );
-};
+const SectionStepContent = ({ step }: { step: SectionStep }) => (
+  <div className="flex flex-col gap-2 min-w-0 flex-1">
+    {step.status !== null && (
+      <DemarcheCompletionBadge
+        className="self-start"
+        statut={step.status}
+        size="xs"
+        trim={false}
+      />
+    )}
+    <span className="font-medium text-primary-9">{step.label}</span>
+    <span className="leading-relaxed text-grey-7">{step.description}</span>
+  </div>
+);
 
 const SectionStepRow = ({
   step,
@@ -155,8 +114,6 @@ const SectionStepRow = ({
   isActive: boolean;
   isPreview?: boolean;
 }) => {
-  const isComplete = step.status === 'complete';
-
   return (
     <div className="pb-3">
       {isPreview ? (
@@ -164,7 +121,7 @@ const SectionStepRow = ({
           data-test={`demarches.avance.etape-${step.key}`}
           className={sectionStepCardClassName(isActive, isPreview)}
         >
-          <SectionStepContent step={step} isComplete={isComplete} />
+          <SectionStepContent step={step} />
         </div>
       ) : (
         <Link
@@ -172,7 +129,7 @@ const SectionStepRow = ({
           data-test={`demarches.avance.etape-${step.key}`}
           className={sectionStepCardClassName(isActive, isPreview)}
         >
-          <SectionStepContent step={step} isComplete={isComplete} />
+          <SectionStepContent step={step} />
         </Link>
       )}
     </div>
