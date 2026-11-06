@@ -149,6 +149,77 @@ describe('BulkEditRouter', () => {
     }
   });
 
+  test('bulk edit `statut` applique la règle jauge et statut à chaque fiche', async () => {
+    const caller = router.createCaller({ user: testUser });
+    const insertFiche = async (
+      fiche: Pick<typeof ficheActionTable.$inferInsert, 'statut' | 'jauge'>
+    ) => {
+      const [{ id }] = await db.db
+        .insert(ficheActionTable)
+        .values({ collectiviteId: COLLECTIVITE_ID, titre: 'Action', ...fiche })
+        .returning({ id: ficheActionTable.id });
+      return id;
+    };
+
+    const enCoursId = await insertFiche({
+      statut: StatutEnum.EN_COURS,
+      jauge: 60,
+    });
+    const realiseId = await insertFiche({
+      statut: StatutEnum.REALISE,
+      jauge: 100,
+    });
+    const aVenirId = await insertFiche({
+      statut: StatutEnum.A_VENIR,
+      jauge: 0,
+    });
+    const ficheIds = [enCoursId, realiseId, aVenirId];
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionTable)
+        .where(inArray(ficheActionTable.id, ficheIds));
+    });
+
+    const getFiches = async () =>
+      Object.fromEntries(
+        (await fetchFiches(db, ficheIds)).map((fiche) => [
+          fiche.id,
+          { statut: fiche.statut, jauge: fiche.jauge },
+        ])
+      );
+
+    await caller.plans.fiches.bulkEdit({
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds,
+      statut: StatutEnum.REALISE,
+    });
+    expect(await getFiches()).toEqual({
+      [enCoursId]: { statut: StatutEnum.REALISE, jauge: 100 },
+      [realiseId]: { statut: StatutEnum.REALISE, jauge: 100 },
+      [aVenirId]: { statut: StatutEnum.REALISE, jauge: 100 },
+    });
+
+    await caller.plans.fiches.bulkEdit({
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds: [enCoursId, realiseId],
+      statut: StatutEnum.EN_RETARD,
+    });
+    expect(await getFiches()).toMatchObject({
+      [enCoursId]: { statut: StatutEnum.EN_RETARD, jauge: 95 },
+      [realiseId]: { statut: StatutEnum.EN_RETARD, jauge: 95 },
+    });
+
+    await caller.plans.fiches.bulkEdit({
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds: [enCoursId, realiseId],
+      statut: StatutEnum.A_VENIR,
+    });
+    expect(await getFiches()).toMatchObject({
+      [enCoursId]: { statut: StatutEnum.A_VENIR, jauge: 0 },
+      [realiseId]: { statut: StatutEnum.A_VENIR, jauge: 0 },
+    });
+  });
+
   test('authenticated, bulk edit `personnePilotes`', async () => {
     const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
