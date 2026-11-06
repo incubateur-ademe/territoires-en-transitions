@@ -293,7 +293,8 @@ export const demarchesLabels = {
     'Consultations auprès du préfet de région.',
   demarcheAvanceEtapeTransmisInfo:
     'Vous recevrez l’avis de ces instructeurs directement sur cette plateforme ou hors plateforme (par exemple par email).',
-  demarcheAvanceEtapeFinalisationLabel: 'Prise en compte des avis et délibération',
+  demarcheAvanceEtapeFinalisationLabel:
+    'Prise en compte des avis et délibération',
   demarcheAvanceEtapeFinalisationDescription:
     'Consultez les avis rendus, déposez le mémoire de réponse et la délibération d’adoption, puis publiez votre démarche',
   demarcheAvanceEtapeFinalisationHorsPlateformeDescription:
@@ -572,11 +573,7 @@ export const demarchesLabels = {
     `Aucun plan de type « ${typeLabel} » trouvé pour cette collectivité.`,
   demarcheProgrammeRattachementIntro:
     'Associer un plan existant pour le transmettre comme programme d’actions, ou créer un plan pour l’associer.',
-  demarcheProgrammeDetacher: 'Détacher',
-  demarcheProgrammeVerifierPlansTitre:
-    'Vérifiez votre plan associé avant de valider le dépôt',
-  demarcheProgrammeVerifierPlansDescription:
-    'Ce plan a été importé avec l’aide de l’IA : certains éléments ont pu être manqués ou mal repérés. Consultez les actions et les secteurs réglementaires du plan lié depuis sa fiche, corrigez-les si besoin, puis marquez-le comme vérifié dans ce tableau.',
+  demarcheProgrammeDissocier: 'Dissocier',
   demarcheProgrammeLectureSeule:
     'Le programme d’actions n’est pas modifiable pendant la phase d’avis, ni après la publication.',
   demarcheProgrammePlanParDefaut: ({ id }: { id: number }): string =>
@@ -592,7 +589,6 @@ export const demarchesLabels = {
       ? `Plan d'actions - PCAET ${annee} - ${collectiviteNom}`
       : `Plan d'actions - PCAET - ${collectiviteNom}`,
   demarcheProgrammeLierCePlan: 'Associer ce plan',
-  demarcheProgrammePlanAVerifier: 'À vérifier',
   demarcheProgrammePlanDejaRattache: ({ titre }: { titre: string }): string =>
     `Déjà rattaché à la démarche « ${titre} »`,
   demarchePlanCree: 'Plan d’action créé',
@@ -600,27 +596,63 @@ export const demarchesLabels = {
   demarcheProgrammeCreerPlan: 'Créer un plan',
   demarcheProgrammeImporterPlan: 'Importer un plan',
   demarcheProgrammeColonneNom: 'Nom du plan',
-  demarcheProgrammeColonneNombreActions: 'Nombre d’actions',
+  demarcheProgrammeColonneNombreActions: 'Actions',
+  demarcheProgrammeColonneActionsAFaire: 'Actions à faire',
+  demarcheProgrammeGenereDepuisPdf: 'Généré depuis votre PDF',
+  demarcheProgrammeAVerifierEtValider: 'À vérifier et valider',
+  demarcheProgrammeSecteursARenseigner: plural({
+    one: 'secteur à renseigner',
+    other: 'secteurs à renseigner',
+  }),
+  demarcheProgrammeImportEnCoursLigne: 'Import en cours…',
+  demarcheProgrammeAucuneActionAFaire: 'Aucune',
+  demarcheProgrammeSansActionAFaire: '—',
+  demarcheProgrammeVerifierEtCompleter: 'Vérifier et compléter',
+  demarcheProgrammeCompleter: 'Compléter',
   demarcheProgrammeNombreActions: plural({
     zero: 'Aucune action',
     one: 'action',
     other: 'actions',
   }),
   demarcheProgrammeCreerNouveauPlanFromZero: 'Créer un plan manuellement',
-  demarcheProgrammeImportTitre:
-    'Importer le programme d’actions sur la plateforme',
-  demarcheProgrammeImportDescription:
-    'Vous venez de déposer votre programme d’actions au format pdf. Lancez maintenant la conversion de votre programme d’actions en format numérique pour :',
-  demarcheProgrammeImportAvantageTemps:
-    'Gagner du temps à l’étape 3 du dépôt, qui nécessite de saisir les actions dans un format structuré (pilotes, secteurs, échéances, etc).',
-  demarcheProgrammeImportAvantageSuivi:
-    'Suivre le plan dans le volet « Plans & Actions » de la plateforme, et bénéficier ainsi de toutes les fonctionnalités utiles au pilotage opérationnel après le dépôt.',
-  demarcheProgrammeImportFichierErreur:
-    'Le fichier déposé n’a pas pu être récupéré. Vous pourrez lancer l’import depuis l’étape Programme d’actions.',
+  demarcheProgrammeDeposerTitre: 'Déposer le programme d’actions',
+  demarcheProgrammeCreerPlanIa:
+    'Créer mon plan pilotable à partir de ce PDF, grâce à l’IA',
+  demarcheProgrammeCreerPlanIaAide:
+    'Notre IA crée les axes, sous-axes et actions dans la plateforme : ce plan est nécessaire à l’étape « Renseigner le programme d’actions ». Elle peut se tromper : vous vérifierez la structure globale du plan avant de le valider. La création se fait en arrière-plan, vous pourrez continuer à naviguer.',
+  demarcheProgrammeAjouterEtCreerPlan: 'Ajouter et créer le plan',
+  demarcheProgrammeProposerTitre:
+    'Programme d’actions déposé : créer votre plan pilotable ?',
+  demarcheProgrammeProposerDescription:
+    'Notre IA crée les axes, sous-axes et actions de votre programme. Elle peut se tromper : vous vérifierez la structure globale du plan avant de le valider. Ce plan est nécessaire à l’étape suivante, « Renseigner le programme d’actions ».',
   demarcheProgrammeImportPlusTard: 'Plus tard',
-  demarcheProgrammeImportLancer: 'Lancer l’import',
-  demarcheProgrammeImportLance:
-    'Import lancé : le plan apparaîtra à l’étape Programme d’actions.',
+  demarcheProgrammeProposerCreer: 'Créer le plan',
+  demarcheProgrammeCreationEnCours: ({ etape }: { etape: string }) =>
+    `Création du plan en cours · ${etape}`,
+  demarcheProgrammeCreationArrierePlan:
+    'La création se fait en arrière-plan : vous pouvez continuer à naviguer sur la plateforme. Vous retrouverez votre plan pilotable, prêt à être relu, à l’étape « Renseigner le programme d’actions ».',
+  demarcheProgrammePlanCree: ({ nom }: { nom: string }) =>
+    `Plan « ${nom} » créé. Vous vérifierez sa structure globale et le compléterez à l’étape suivante.`,
+  demarcheProgrammeImportModaleEnCours:
+    'Création de votre plan pilotable en cours…',
+  demarcheProgrammeImportModalePret: 'Votre plan pilotable est prêt.',
+  demarcheProgrammeImportModaleArrierePlan:
+    'La création se fait en arrière-plan : vous pouvez fermer cette fenêtre et continuer à naviguer.',
+  demarcheProgrammeContinuerArrierePlan: 'Continuer en arrière-plan',
+  demarcheProgrammeImportModaleCree: ({
+    nom,
+    contenu,
+    isAssocie,
+  }: {
+    nom: string;
+    contenu: string;
+    isAssocie: boolean;
+  }) =>
+    isAssocie
+      ? `Plan « ${nom} » créé et associé à votre démarche : ${contenu}. Il vous reste à vérifier sa structure globale, compléter les secteurs manquants et le valider.`
+      : `Plan « ${nom} » créé : ${contenu}. Associez-le à votre démarche, puis vérifiez sa structure globale, complétez les secteurs manquants et validez-le.`,
+  demarcheProgrammeAxes: plural({ one: 'axe', other: 'axes' }),
+  demarcheProgrammeSousAxes: plural({ one: 'sous-axe', other: 'sous-axes' }),
   demarcheProgrammeImportTermine:
     'Programme d’actions importé : retrouvez le plan à l’étape Programme d’actions.',
   demarcheHeaderDateLancement: 'Date de lancement (délibération)',

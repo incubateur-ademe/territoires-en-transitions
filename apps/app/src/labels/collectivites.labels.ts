@@ -59,6 +59,7 @@ export const collectivitesLabels = {
   visiteLectureSeule: ', en lecture seule',
   visiteBadge: 'Visite',
 
+  fichierRetirerSelection: 'Retirer ce fichier',
   fichierErreurTeleversement:
     "L'ajout de ce fichier n'a pas pu être terminé. Fermez cette fenêtre, puis rouvrez-la et sélectionnez le même fichier pour réessayer.",
 

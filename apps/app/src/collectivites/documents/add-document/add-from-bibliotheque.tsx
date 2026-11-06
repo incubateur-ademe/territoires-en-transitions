@@ -10,12 +10,19 @@ import {
 } from '../bibliotheque/use-fichiers';
 import { FileConstraints, keepWithinMaxFiles } from '../upload/constants';
 import { AddFileHandler } from './add-file';
+import {
+  AddDocumentFollowUp,
+  FollowUpCheckbox,
+  isFollowUpApplicable,
+} from './follow-up.checkbox';
 
 export type AddFromBibliothequeProps = {
   items: BibliothequeFichierListItem[];
   onSearch: (search: string) => void;
   /** Formats acceptés (par défaut : tous ceux de la bibliothèque). */
   fileConstraints?: FileConstraints;
+  /** Suite proposée une fois le fichier choisi. */
+  followUp?: AddDocumentFollowUp;
   onAddFile: AddFileHandler;
   onClose: () => void;
 };
@@ -44,6 +51,7 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
   const {
     items: fichiers,
     fileConstraints,
+    followUp,
     onAddFile,
     onClose,
     onSearch,
@@ -51,6 +59,15 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
 
   const [selectedFiles, setSelectedFiles] = useState<Option[] | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFollowUpChecked, setIsFollowUpChecked] = useState(
+    followUp?.defaultChecked ?? false
+  );
+  const selectedFilename = selectedFiles?.[0]?.label;
+  const applicableFollowUp = isFollowUpApplicable(followUp, selectedFilename)
+    ? followUp
+    : undefined;
+  const isFollowUpChosen =
+    applicableFollowUp !== undefined && isFollowUpChecked;
 
   const availableOptions = fichiers
     .filter((f) => !(selectedFiles ?? []).some((file) => file.value === f.id))
@@ -69,7 +86,9 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
     setIsSubmitting(true);
     const results = await Promise.allSettled(
       (selectedFiles ?? []).map((file) =>
-        Promise.resolve(onAddFile(file.value as number))
+        Promise.resolve(
+          onAddFile(file.value as number, { followUp: isFollowUpChosen })
+        )
       )
     );
     setIsSubmitting(false);
@@ -118,6 +137,13 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
           isSearcheable
         />
       </Field>
+      {applicableFollowUp && (
+        <FollowUpCheckbox
+          followUp={applicableFollowUp}
+          checked={isFollowUpChecked}
+          onChange={setIsFollowUpChecked}
+        />
+      )}
 
       <div className="flex gap-4 ml-auto">
         <Button variant="outlined" onClick={onClose}>
@@ -127,7 +153,9 @@ export const AddFromBibliotheque = (props: AddFromBibliothequeProps) => {
           disabled={!selectedFiles || !selectedFiles.length || isSubmitting}
           onClick={onSubmit}
         >
-          {appLabels.ajouter}
+          {isFollowUpChosen
+            ? applicableFollowUp.submitLabel
+            : appLabels.ajouter}
         </Button>
       </div>
     </div>

@@ -25,19 +25,12 @@ import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
-import {
-  Alert,
-  Badge,
-  Button,
-  cn,
-  Icon,
-  SplitButton,
-  TableHeaderCell,
-} from '@tet/ui';
+import { Badge, Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
 import {
   countPlanSecteursARenseigner,
   isPlanNavigable,
   isPlanPendingVerification,
+  PlanSourceEnum,
   planStatusValues,
   PlanStatusEnum,
 } from '@tet/domain/plans';
@@ -77,10 +70,15 @@ type Props = {
   importDefaults?: AiImportDefaults;
 };
 
-const makePlanUrl = (collectiviteId: number, planId: number) =>
+const makePlanUrl = (
+  collectiviteId: number,
+  planId: number,
+  { openSecteurs = false }: { openSecteurs?: boolean } = {}
+) =>
   makeCollectivitePlanActionUrl({
     collectiviteId,
     planActionUid: planId.toString(),
+    openSecteurs,
   });
 
 const ProgrammeActionsColumn = ({ children }: { children: ReactNode }) => (
@@ -104,7 +102,7 @@ const ProgrammeActionsPlanRow = ({
   collectiviteId,
   isLinked,
   heldByTitre,
-  hasSecteursARenseigner,
+  secteursARenseigner,
   isReadonly,
   onLinkPlan,
   onUnlinkPlan,
@@ -112,7 +110,8 @@ const ProgrammeActionsPlanRow = ({
   plan: PlanListItem;
   collectiviteId: number;
   isLinked: boolean;
-  hasSecteursARenseigner: boolean;
+  /** Actions du plan dont le secteur réglementaire reste à renseigner. */
+  secteursARenseigner: number;
   /** Titre de l'autre démarche active qui tient déjà ce plan. */
   heldByTitre?: string;
   isReadonly: boolean;
@@ -122,6 +121,11 @@ const ProgrammeActionsPlanRow = ({
   const planUrl = makePlanUrl(collectiviteId, plan.id);
   const nom =
     plan.nom ?? appLabels.demarcheProgrammePlanParDefaut({ id: plan.id });
+  const isImporting = plan.status === PlanStatusEnum.IMPORTING;
+  // Seul un plan associé à la démarche a quelque chose à faire avant le dépôt.
+  const isAVerifier = isLinked && isPlanPendingVerification(plan);
+  const hasSecteursARenseigner = isLinked && secteursARenseigner > 0;
+  const hasActionsAFaire = isAVerifier || hasSecteursARenseigner;
 
   return (
     <tr
@@ -133,55 +137,95 @@ const ProgrammeActionsPlanRow = ({
       data-linked={isLinked}
     >
       <td className="px-4 py-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Nouvel onglet : le rattachement se fait ici, aller voir le plan ne
-              doit pas faire perdre le fil du dépôt. L'icône l'annonçait déjà. */}
-          {isPlanNavigable(plan) ? (
-            <Link
-              href={planUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-9 hover:underline"
-              data-test="demarches.plan.ouvrir-plan-link"
-            >
-              {nom}
-              <Icon icon="external-link-line" className="ml-2" />
-            </Link>
-          ) : (
-            <span className="text-grey-8" data-test="demarches.plan.nom">
-              {nom}
-            </span>
-          )}
-          <PlanImportStatusBadge status={plan.status} />
-          {/* Seul le plan rattaché à la démarche porte le badge : un import pas
-              encore relu ou des secteurs à compléter le rendent à vérifier. */}
-          {isLinked &&
-            (isPlanPendingVerification(plan) || hasSecteursARenseigner) && (
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Nouvel onglet : le rattachement se fait ici, aller voir le plan
+                ne doit pas faire perdre le fil du dépôt. L'icône l'annonce. */}
+            {isPlanNavigable(plan) ? (
               <Link
                 href={planUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-test="demarches.plan.a-verifier-badge"
+                className="text-primary-9 hover:underline"
+                data-test="demarches.plan.ouvrir-plan-link"
               >
-                <Badge
-                  title={appLabels.demarcheProgrammePlanAVerifier}
-                  variant="warning"
-                  size="sm"
-                />
+                {nom}
+                <Icon icon="external-link-line" className="ml-2" />
               </Link>
+            ) : (
+              <span className="text-grey-8" data-test="demarches.plan.nom">
+                {nom}
+              </span>
             )}
+            {plan.status === PlanStatusEnum.FAILED && (
+              <PlanImportStatusBadge status={plan.status} />
+            )}
+          </div>
+          {plan.source === PlanSourceEnum.IMPORT_IA && (
+            <span className="text-xs text-grey-7">
+              {appLabels.demarcheProgrammeGenereDepuisPdf}
+            </span>
+          )}
         </div>
       </td>
       <td className="px-4 py-3 text-grey-7">
-        {plan.status !== PlanStatusEnum.IMPORTING &&
-          appLabels.demarcheProgrammeNombreActions({
-            count: plan.totalFiches ?? 0,
-          })}
+        {!isImporting && (plan.totalFiches ?? 0)}
+      </td>
+      <td className="px-4 py-3" data-test="demarches.plan.actions-a-faire">
+        {isImporting ? (
+          <span className="inline-flex items-center gap-2 text-sm text-grey-7">
+            <SpinnerLoader className="w-4 h-4" />
+            {appLabels.demarcheProgrammeImportEnCoursLigne}
+          </span>
+        ) : hasActionsAFaire ? (
+          <div className="flex flex-col items-start gap-1">
+            {isAVerifier && (
+              <Badge
+                title={appLabels.demarcheProgrammeAVerifierEtValider}
+                variant="warning"
+                size="sm"
+                dataTest="demarches.plan.a-verifier-badge"
+              />
+            )}
+            {hasSecteursARenseigner && (
+              <Badge
+                title={appLabels.demarcheProgrammeSecteursARenseigner({
+                  count: secteursARenseigner,
+                })}
+                variant="warning"
+                size="sm"
+                dataTest="demarches.plan.secteurs-badge"
+              />
+            )}
+          </div>
+        ) : (
+          <span className="text-sm text-grey-7">
+            {isLinked
+              ? appLabels.demarcheProgrammeAucuneActionAFaire
+              : appLabels.demarcheProgrammeSansActionAFaire}
+          </span>
+        )}
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-2">
           {plan.status === PlanStatusEnum.FAILED && !isReadonly && (
             <DeleteFailedImportPlanButton planId={plan.id} />
+          )}
+          {hasActionsAFaire && !isReadonly && (
+            <Button
+              size="xs"
+              icon="arrow-right-line"
+              iconPosition="right"
+              className="whitespace-nowrap"
+              href={makePlanUrl(collectiviteId, plan.id, {
+                openSecteurs: hasSecteursARenseigner,
+              })}
+              dataTest="demarches.plan.completer-button"
+            >
+              {isAVerifier
+                ? appLabels.demarcheProgrammeVerifierEtCompleter
+                : appLabels.demarcheProgrammeCompleter}
+            </Button>
           )}
           {isLinked ? (
             <Button
@@ -190,9 +234,9 @@ const ProgrammeActionsPlanRow = ({
               icon="link-unlink"
               onClick={() => onUnlinkPlan(plan.id)}
               disabled={isReadonly}
-              dataTest="demarches.plan.detacher-button"
+              dataTest="demarches.plan.dissocier-button"
             >
-              {appLabels.demarcheProgrammeDetacher}
+              {appLabels.demarcheProgrammeDissocier}
             </Button>
           ) : heldByTitre !== undefined ? (
             <div className="flex flex-col items-end gap-1">
@@ -245,9 +289,11 @@ const useCreatePlanAction = ({
   isReadonly,
   onCreatePlan,
   importDefaults,
+  linkedPlanIds,
 }: {
   /** Type pré-sélectionné dans la modale de création. */
   planTypeId: number | undefined;
+  linkedPlanIds: number[];
   isReadonly: boolean;
   importDefaults?: AiImportDefaults;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
@@ -317,6 +363,7 @@ const useCreatePlanAction = ({
       <DemarcheImportPlanModal
         planTypeId={planTypeId}
         importDefaults={importDefaults}
+        linkedPlanIds={linkedPlanIds}
         openState={{
           isOpen: isImportPlanModalOpen,
           setIsOpen: setIsImportPlanModalOpen,
@@ -360,16 +407,13 @@ const ListEligiblePlansTable = ({
   footerAction?: ReactNode;
 }) => {
   const hasPlans = plans.length > 0;
-  const hasLinkedPlanPendingVerification = plans.some(
-    (plan) => linkedPlanIds.includes(plan.id) && isPlanPendingVerification(plan)
-  );
   const { countsByPlanId } = useListPlanSecteursCounts(
     collectiviteId,
     plans.map((plan) => plan.id)
   );
-  const hasSecteursARenseigner = (planId: number) => {
+  const secteursARenseignerDe = (planId: number) => {
     const counts = countsByPlanId.get(planId);
-    return counts !== undefined && countPlanSecteursARenseigner(counts) > 0;
+    return counts === undefined ? 0 : countPlanSecteursARenseigner(counts);
   };
 
   return (
@@ -396,9 +440,13 @@ const ListEligiblePlansTable = ({
                 />
                 <TableHeaderCell
                   title={appLabels.demarcheProgrammeColonneNombreActions}
-                  className="w-48"
+                  className="w-24"
                 />
-                <TableHeaderCell className="w-48" />
+                <TableHeaderCell
+                  title={appLabels.demarcheProgrammeColonneActionsAFaire}
+                  className="w-56"
+                />
+                <TableHeaderCell className="w-72" />
               </tr>
             </thead>
             <tbody>
@@ -410,7 +458,7 @@ const ListEligiblePlansTable = ({
                     collectiviteId={collectiviteId}
                     isLinked={linkedPlanIds.includes(plan.id)}
                     heldByTitre={heldTitresByPlanId.get(plan.id)}
-                    hasSecteursARenseigner={hasSecteursARenseigner(plan.id)}
+                    secteursARenseigner={secteursARenseignerDe(plan.id)}
                     isReadonly={isReadonly}
                     onLinkPlan={onLinkPlan}
                     onUnlinkPlan={onUnlinkPlan}
@@ -418,7 +466,7 @@ const ListEligiblePlansTable = ({
                 ))
               ) : (
                 <tr data-test="demarches.plan.table-empty">
-                  <td colSpan={3} className="px-4 py-10 text-center">
+                  <td colSpan={4} className="px-4 py-10 text-center">
                     <p className="m-0 text-sm font-medium text-grey-8">
                       {appLabels.demarcheProgrammeNoPlanIntro({
                         typeLabel: planTypeLabel,
@@ -431,15 +479,6 @@ const ListEligiblePlansTable = ({
           </table>
         </div>
         {footerAction && <div className="flex">{footerAction}</div>}
-        {!isReadonly && hasLinkedPlanPendingVerification && (
-          <div data-test="demarches.plan.verifier-plans-info">
-            <Alert
-              state="warning"
-              title={appLabels.demarcheProgrammeVerifierPlansTitre}
-              description={appLabels.demarcheProgrammeVerifierPlansDescription}
-            />
-          </div>
-        )}
       </div>
     </ProgrammeActionsColumn>
   );
@@ -470,7 +509,7 @@ export const ProgrammeActionsSection = ({
   // Plans déjà tenus par une autre démarche active : rattachement désactivé.
   // Une démarche adoptée/archivée libère son plan, donc ne bloque pas ici —
   // c'est en revanche exactement ce lien-là que le bandeau du plan doit
-  // continuer d'afficher (cf. useIsDemarchePcaetBannerVisibleInPlan).
+  // continuer d'afficher (cf. useDemarcheLinkedToPlan).
   const { links: planLinks } = useListDemarchePlanLinks(collectiviteId);
   const heldTitresByPlanId = new Map(
     planLinks
@@ -523,6 +562,7 @@ export const ProgrammeActionsSection = ({
       isReadonly,
       onCreatePlan,
       importDefaults,
+      linkedPlanIds,
     });
 
   const renderContent = () => {

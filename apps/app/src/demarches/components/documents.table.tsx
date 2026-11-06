@@ -36,7 +36,9 @@ import {
 import {
   DemarcheDocumentUploadButton,
   DemarcheDocumentUploadSplitButton,
+  type DemarcheDocumentUploadOptions,
 } from './document-upload.button';
+import type { AddDocumentFollowUpChoice } from '@/app/collectivites/documents/add-document/follow-up.checkbox';
 import { FichierDepose, isFichierIndisponible } from './fichier-depose';
 
 const SectionRequiredBadge = ({
@@ -106,6 +108,7 @@ const DefinitionLabel = ({
 const SectionAnswer = ({
   demarcheType,
   fileConstraints,
+  uploadOptions,
   definition,
   document,
   documentOriginal,
@@ -152,7 +155,8 @@ const SectionAnswer = ({
    * fichier dédié, qui devient la version de cette pièce après les avis.
    */
   isInclusionFigee: boolean;
-  onAddFichier: (fichierId: number) => void;
+  uploadOptions?: DemarcheDocumentUploadOptions;
+  onAddFichier: (fichierId: number, choice?: AddDocumentFollowUpChoice) => void;
   onRemove: () => void;
   onToggleCouverture: (couvert: boolean) => void;
   onDownload?: (document: DemarcheDocumentDepose) => void;
@@ -212,6 +216,7 @@ const SectionAnswer = ({
             <DemarcheDocumentUploadSplitButton
               demarcheType={demarcheType}
               fileConstraints={fileConstraints}
+              uploadOptions={uploadOptions}
               label={label}
               dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
               menuDataTest={`demarches.pcaet.documents.actions.${definition.id}`}
@@ -222,6 +227,7 @@ const SectionAnswer = ({
             <DemarcheDocumentUploadButton
               demarcheType={demarcheType}
               fileConstraints={fileConstraints}
+              uploadOptions={uploadOptions}
               label={label}
               variant="outlined"
               dataTest={`demarches.pcaet.documents.remplacer.${definition.id}`}
@@ -241,6 +247,7 @@ const SectionAnswer = ({
       <SectionFallback
         demarcheType={demarcheType}
         fileConstraints={fileConstraints}
+        uploadOptions={uploadOptions}
         documentId={definition.id}
         coverage={coverage}
         substitutCouvrantNom={substitutCouvrantNom}
@@ -276,6 +283,7 @@ const SectionAnswer = ({
           <SectionFallback
             demarcheType={demarcheType}
             fileConstraints={fileConstraints}
+            uploadOptions={uploadOptions}
             documentId={definition.id}
             coverage={coverage}
             substitutCouvrantNom={substitutCouvrantNom}
@@ -291,6 +299,7 @@ const SectionAnswer = ({
     <SectionFallback
       demarcheType={demarcheType}
       fileConstraints={fileConstraints}
+      uploadOptions={uploadOptions}
       documentId={definition.id}
       coverage={coverage}
       substitutCouvrantNom={substitutCouvrantNom}
@@ -307,6 +316,7 @@ const SectionAnswer = ({
 const SectionFallback = ({
   demarcheType,
   fileConstraints,
+  uploadOptions,
   documentId,
   coverage,
   substitutCouvrantNom,
@@ -325,7 +335,8 @@ const SectionFallback = ({
   isReadonly: boolean;
   label?: string;
   isInclusionDeclaree?: boolean;
-  onAddFichier: (fichierId: number) => void;
+  uploadOptions?: DemarcheDocumentUploadOptions;
+  onAddFichier: (fichierId: number, choice?: AddDocumentFollowUpChoice) => void;
 }): ReactElement => (
   <div className="flex flex-wrap items-center gap-3 min-w-0">
     {coverage?.origine === 'substitut' && substitutCouvrantNom && (
@@ -339,6 +350,7 @@ const SectionFallback = ({
       <DemarcheDocumentUploadButton
         demarcheType={demarcheType}
         fileConstraints={fileConstraints}
+        uploadOptions={uploadOptions}
         variant="outlined"
         label={label}
         dataTest={`demarches.pcaet.documents.televerser.${documentId}`}
@@ -409,8 +421,13 @@ type Props = {
   onAddFichier: (
     documentId: string,
     fichierId: number,
-    etape: DemarcheDocumentEtape
+    etape: DemarcheDocumentEtape,
+    choice?: AddDocumentFollowUpChoice
   ) => void;
+  /** Dépôt propre à certaines pièces : titre de la modale, suite proposée. */
+  uploadOptionsByDocumentId?: Partial<
+    Record<string, DemarcheDocumentUploadOptions>
+  >;
   onRemoveDocument: (documentId: string, etape: DemarcheDocumentEtape) => void;
   onToggleCouverture: (documentId: string, couvert: boolean) => void;
   onCreateAdditional: (etape: DemarcheDocumentEtape) => void;
@@ -452,6 +469,7 @@ export const DemarcheDocumentsTable = ({
   section: sectionDemandee,
   hideEmptyRows = false,
   onAddFichier,
+  uploadOptionsByDocumentId,
   onRemoveDocument,
   onToggleCouverture,
   onCreateAdditional,
@@ -650,6 +668,7 @@ export const DemarcheDocumentsTable = ({
               <SectionAnswer
                 demarcheType={demarcheType}
                 fileConstraints={fileConstraintsDe(definition)}
+                uploadOptions={uploadOptionsByDocumentId?.[definition.id]}
                 definition={definition}
                 document={documentDe(definition)}
                 documentOriginal={documentOriginalByDefinitionId.get(
@@ -665,8 +684,13 @@ export const DemarcheDocumentsTable = ({
                 }
                 isReadonly={isDefinitionReadonly(definition)}
                 isInclusionFigee={!mergeEtapes && etape === 'aval'}
-                onAddFichier={(fichierId) =>
-                  onAddFichier(definition.id, fichierId, etapeDe(definition))
+                onAddFichier={(fichierId, choice) =>
+                  onAddFichier(
+                    definition.id,
+                    fichierId,
+                    etapeDe(definition),
+                    choice
+                  )
                 }
                 onRemove={() =>
                   onRemoveDocument(definition.id, etapeDe(definition))

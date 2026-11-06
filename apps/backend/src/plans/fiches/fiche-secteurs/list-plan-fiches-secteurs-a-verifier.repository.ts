@@ -19,10 +19,12 @@ export class ListPlanFichesSecteursAVerifierRepository {
       collectiviteId,
       planId,
       includeFichesRestreintes,
+      includeAttribues = false,
     }: {
       collectiviteId: number;
       planId: number;
       includeFichesRestreintes: boolean;
+      includeAttribues?: boolean;
     },
     tx?: Transaction
   ): Promise<FicheSecteursAVerifier[]> {
@@ -40,22 +42,31 @@ export class ListPlanFichesSecteursAVerifierRepository {
         parentId: planFiches.parentId,
         parentTitre: parentTable.titre,
         etat: planFiches.etat,
+        secteurs: planFiches.secteurs,
       })
       .from(planFiches)
       .leftJoin(parentTable, eq(parentTable.id, planFiches.parentId))
       .where(
         and(
           isNotNull(planFiches.ficheId),
-          ne(planFiches.etat, 'attribue'),
+          includeAttribues ? undefined : ne(planFiches.etat, 'attribue'),
           includeFichesRestreintes ? undefined : eq(planFiches.restreint, false)
         )
       )
       .orderBy(asc(planFiches.ficheId));
 
-    return rows.flatMap(({ ficheId, etat, ...fiche }) =>
-      ficheId === null || etat === 'attribue'
-        ? []
-        : [{ ficheId, etat, ...fiche }]
+    return rows.flatMap(
+      ({ ficheId, etat, secteurs, ...fiche }): FicheSecteursAVerifier[] => {
+        if (ficheId === null) {
+          return [];
+        }
+        if (etat !== 'attribue') {
+          return [{ ficheId, etat, ...fiche }];
+        }
+        return includeAttribues
+          ? [{ ficheId, etat, ...fiche, secteurs: secteurs ?? [] }]
+          : [];
+      }
     );
   }
 }

@@ -5,6 +5,8 @@ import {
   isFicheEditableByCollectiviteUser,
   isFicheSharedWithCollectivite,
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { FicheSecteursBadge } from '@/app/plans/plans/secteurs-counts/fiche-secteurs.badge';
+import { useListPlanFichesSecteursAVerifier } from '@/app/plans/plans/secteurs-counts/data/use-list-plan-fiches-secteurs-a-verifier';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
@@ -23,6 +25,14 @@ export const FichesList = ({
   collectivite,
 }: Props) => {
   const user = useUser();
+  const { fiches: fichesSecteurs } = useListPlanFichesSecteursAVerifier(
+    collectivite.collectiviteId,
+    planId ?? 0,
+    { enabled: planId !== undefined }
+  );
+  const secteursByFicheId = new Map(
+    fichesSecteurs.map((fiche) => [fiche.ficheId, fiche])
+  );
   const { fiches } = useListFiches(collectivite.collectiviteId, {
     filters: {
       axesId: [axeId],
@@ -46,6 +56,7 @@ export const FichesList = ({
         const isReadonly =
           !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
           isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
+        const ficheSecteurs = secteursByFicheId.get(fiche.id);
         return (
           <FicheCard
             currentCollectivite={collectivite}
@@ -56,6 +67,9 @@ export const FichesList = ({
             isMoveable
             planId={planId}
             axeId={axeId}
+            bottomBadge={
+              ficheSecteurs && <FicheSecteursBadge fiche={ficheSecteurs} />
+            }
             link={
               fiche.id
                 ? makeCollectiviteActionUrl({

@@ -10,6 +10,8 @@ import { getErrorMessage } from '@tet/domain/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { AiImportProgress } from './ai-import-progress';
+import { toImportStageViews } from './ai-import-stages.model';
+import { AiImportStagesList } from './ai-import-stages';
 import { toImportStepViews } from './ai-import-steps.model';
 import {
   AiImportDefaults,
@@ -38,6 +40,7 @@ export const AiImportFlow = ({
   lockedPlanTypeId,
   defaults,
   onProgressVisibilityChange,
+  renderStagesProgress,
 }: {
   /**
    * `jobId` : l'import terminé, qu'il ait été lancé depuis ce formulaire ou
@@ -54,6 +57,11 @@ export const AiImportFlow = ({
   defaults?: AiImportDefaults;
   /** Le suivi tient dans une modale plus étroite que le formulaire. */
   onProgressVisibilityChange?: (isProgressVisible: boolean) => void;
+  /**
+   * Suivi grand public en quatre étapes, mis en page par l'appelant. Sans lui,
+   * le détail des étapes du pipeline s'affiche. Un échec garde le détail.
+   */
+  renderStagesProgress?: (stagesList: ReactElement) => ReactElement;
 }) => {
   const collectiviteId = useCollectiviteId();
   const { setToast } = useToastContext();
@@ -125,6 +133,14 @@ export const AiImportFlow = ({
   }
   if (jobId !== null) {
     const failed = status?.status === 'failed';
+    if (renderStagesProgress && !failed) {
+      return renderStagesProgress(
+        <AiImportStagesList
+          stages={toImportStageViews(status?.stepStates)}
+          withSecteurs={status?.withSecteurs ?? false}
+        />
+      );
+    }
     return (
       <AiImportProgress
         failed={failed}

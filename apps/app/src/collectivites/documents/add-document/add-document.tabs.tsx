@@ -7,6 +7,7 @@ import { FileConstraints } from '../upload/constants';
 import { AddFile, AddFileHandler } from './add-file';
 import AddFromBibliotheque from './add-from-bibliotheque';
 import { AddLink, AddLinkHandler } from './add-link';
+import { AddDocumentFollowUp } from './follow-up.checkbox';
 import { OnDuplicatedDocumentsAdded } from './types';
 
 export type AddDocumentTabsHandlers = {
@@ -21,6 +22,8 @@ export type AddDocumentTabsProps = {
   preuveType?: PreuveType;
   /** Formats et taille acceptés (par défaut : ceux de la bibliothèque) */
   fileConstraints?: FileConstraints;
+  /** Suite proposée une fois le fichier choisi (onglets Fichier et Bibliothèque). */
+  followUp?: AddDocumentFollowUp;
   /** Gestionnaires d'événements */
   handlers: AddDocumentTabsHandlers;
   onDuplicatedDocumentsAdded?: OnDuplicatedDocumentsAdded;

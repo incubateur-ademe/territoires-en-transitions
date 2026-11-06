@@ -7,17 +7,20 @@ export type FicheSecteursAVerifier =
 
 export const useListPlanFichesSecteursAVerifier = (
   collectiviteId: number,
-  planId: number
+  planId: number,
+  { enabled = true }: { enabled?: boolean } = {}
 ) => {
   const trpc = useTRPC();
   const isEnabled = useIsFeatureFlagEnabled('is-fiche-secteurs-enabled');
 
   const { data, isPending, isError } = useQuery(
     trpc.plans.fiches.listPlanFichesSecteursAVerifier.queryOptions(
-      { collectiviteId, planId },
-      { enabled: isEnabled }
+      // Les fiches attribuées aussi : les cartes du plan affichent leurs
+      // secteurs. Une seule requête, que le panneau rafraîchit en enregistrant.
+      { collectiviteId, planId, includeAttribues: true },
+      { enabled: isEnabled && enabled }
     )
   );
 
-  return { fiches: data ?? [], isPending, isError };
+  return { isEnabled, fiches: data ?? [], isPending, isError };
 };

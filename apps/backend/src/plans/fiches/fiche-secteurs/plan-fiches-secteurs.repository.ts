@@ -42,6 +42,7 @@ export class PlanFichesSecteursRepository {
           sql<boolean>`coalesce(${ficheActionTable.restreint}, false) or coalesce(${ficheRacineTable.restreint}, false)`.as(
             'fiche_restreinte'
           ),
+        secteurs: attribution.secteurs,
         etat: sql<PlanFicheSecteursEtat>`case
           when ${attribution.ficheId} is null then 'en_cours_de_calcul'
           when ${attribution.origine} = ${OrigineSecteursEnum.INDISPONIBLE} then 'a_renseigner'

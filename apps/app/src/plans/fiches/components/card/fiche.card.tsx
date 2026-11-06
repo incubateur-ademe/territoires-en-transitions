@@ -11,7 +11,7 @@ import { getModifiedSince } from '@/app/utils/formatUtils';
 import { generateTitle } from '@/app/utils/generate-title';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { ActionCard, Button, Checkbox, Tooltip } from '@tet/ui';
-import { JSX } from 'react';
+import { JSX, ReactNode } from 'react';
 import { FicheAccessBadges } from './fiche-access.badges';
 import { FicheCardHoverActions } from './fiche-card-hover.actions';
 import { FicheCardLinkAction } from './fiche-card-link.action';
@@ -47,6 +47,8 @@ type FicheCardBaseProps = {
   planId?: number;
   /** ID de l'axe pour la mise à jour optimiste de la suppression (optionnel) */
   axeId?: number;
+  /** Posé à cheval sur le bas de la carte, hors du lien qu'elle forme. */
+  bottomBadge?: ReactNode;
 };
 
 type FicheCardSelectionProps =
@@ -81,6 +83,7 @@ export const FicheCard = ({
   currentUserId,
   planId,
   axeId,
+  bottomBadge,
 }: FicheCardProps): JSX.Element => {
   const carteId = `fiche-${ficheAction.id}`;
 
@@ -222,6 +225,11 @@ export const FicheCard = ({
         ficheAction={ficheAction}
         collectiviteId={currentCollectivite.collectiviteId}
       />
+      {bottomBadge && (
+        <div className="absolute -bottom-3 right-5 z-10 flex items-center gap-1">
+          {bottomBadge}
+        </div>
+      )}
     </article>
   );
 };

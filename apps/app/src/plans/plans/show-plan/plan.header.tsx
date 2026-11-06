@@ -1,5 +1,6 @@
 'use client';
 
+import { isPlanPendingVerification } from '@tet/domain/plans';
 import { PageHeader } from '@tet/ui';
 import { PlanSecteursButton } from '../secteurs-counts/plan-secteurs.button';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
@@ -22,7 +23,11 @@ export const PlanHeader = () => {
       />
       <PageHeader.Actions>
         <div className="flex items-stretch gap-2">
-          <PlanSecteursButton collectiviteId={collectiviteId} planId={id} />
+          <PlanSecteursButton
+            collectiviteId={collectiviteId}
+            planId={id}
+            isPlanAVerifier={isPlanPendingVerification(plan)}
+          />
           <PlanMenuButton />
         </div>
       </PageHeader.Actions>
