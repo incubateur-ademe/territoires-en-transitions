@@ -65,6 +65,7 @@ export const toFicheFixture = (
     financements: null,
     budgetPrevisionnel: null,
     statut: null,
+    jauge: 0,
     priorite: null,
     dateDebut: null,
     dateFin: null,
