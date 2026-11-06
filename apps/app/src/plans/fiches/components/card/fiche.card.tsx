@@ -10,6 +10,7 @@ import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { generateTitle } from '@/app/utils/generate-title';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { StatutEnum } from '@tet/domain/plans';
 import { ActionCard, Button, Checkbox, Tooltip } from '@tet/ui';
 import { JSX, ReactNode } from 'react';
 import { FicheAccessBadges } from './fiche-access.badges';
@@ -17,6 +18,7 @@ import { FicheCardHoverActions } from './fiche-card-hover.actions';
 import { FicheCardLinkAction } from './fiche-card-link.action';
 import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
+import { FicheJauge } from './fiche.jauge';
 import { appLabels } from '@/app/labels/catalog';
 
 type FicheCardBaseProps = {
@@ -86,6 +88,9 @@ export const FicheCard = ({
   bottomBadge,
 }: FicheCardProps): JSX.Element => {
   const carteId = `fiche-${ficheAction.id}`;
+  const hasJauge =
+    ficheAction.parentId === null &&
+    ficheAction.statut !== StatutEnum.ABANDONNE;
 
   const collectivitePlans = getFicheActionPlanForCollectivite(
     ficheAction,
@@ -169,6 +174,13 @@ export const FicheCard = ({
               services={ficheAction.services}
               ameliorationContinue={ficheAction.ameliorationContinue}
             />
+
+            {hasJauge && (
+              <FicheJauge
+                jauge={ficheAction.jauge}
+                statut={ficheAction.statut}
+              />
+            )}
 
             {(ficheAction.modifiedAt || completion) && (
               <>
