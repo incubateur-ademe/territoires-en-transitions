@@ -1,20 +1,18 @@
-import { round } from 'es-toolkit';
-import { Injectable, Logger } from '@nestjs/common';
-import { FicheWithRelations, StatutEnum } from '@tet/domain/plans';
+import { Injectable } from '@nestjs/common';
+import { Fiche, StatutEnum } from '@tet/domain/plans';
+import { mean, round, uniqBy } from 'es-toolkit';
+
+type FicheForProgress = Pick<Fiche, 'id' | 'parentId' | 'statut' | 'jauge'>;
 
 @Injectable()
 export class PlanProgressRules {
-  private readonly logger = new Logger(PlanProgressRules.name);
+  computeProgress(fiches: FicheForProgress[]): number {
+    const jauges = uniqBy(fiches, (fiche) => fiche.id)
+      .filter(
+        (fiche) => !fiche.parentId && fiche.statut !== StatutEnum.ABANDONNE
+      )
+      .map((fiche) => fiche.jauge);
 
-  computeProgress(fiches: FicheWithRelations[]): number {
-    if (!fiches?.length) {
-      return 0;
-    }
-    // Will be complexified with fiche progress & subactions
-    const totalFiches = fiches.filter((fiche) => !fiche.parentId).length;
-    const fichesCompleted = fiches.filter(
-      (fiche) => !fiche.parentId && fiche.statut === StatutEnum.REALISE
-    ).length;
-    return round((fichesCompleted * 100) / totalFiches, 1);
+    return jauges.length ? round(mean(jauges), 1) : 0;
   }
 }
