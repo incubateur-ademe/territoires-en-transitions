@@ -70,6 +70,9 @@ import {
 } from './trajectoires/import-snbc3/snbc3-artifact.reader';
 import { TrajectoireSnbc3FeatureFlagService } from './trajectoires/trajectoire-snbc3-feature-flag.service';
 import { Snbc3SourceMetadonneeRepository } from './trajectoires/import-snbc3/snbc3-source-metadonnee.repository';
+import { TrajectoireSnbc3Repository } from './trajectoires/snbc3/trajectoire-snbc3.repository';
+import { TrajectoireSnbc3Router } from './trajectoires/snbc3/trajectoire-snbc3.router';
+import { TrajectoireSnbc3Service } from './trajectoires/snbc3/trajectoire-snbc3.service';
 import ConfigurationService from '../utils/config/configuration.service';
 import { IndicateursValeursController } from './valeurs/indicateur-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/indicateur-valeurs.router';
@@ -171,6 +174,9 @@ const DEFINITIONS_PROVIDERS = [
     Snbc3ReleaseStorageService,
     TrajectoireSnbc3FeatureFlagService,
     Snbc3SourceMetadonneeRepository,
+    TrajectoireSnbc3Repository,
+    TrajectoireSnbc3Service,
+    TrajectoireSnbc3Router,
     {
       provide: Snbc3ArtifactReader,
       inject: [ConfigurationService],

@@ -383,42 +383,15 @@ export default class TrajectoiresSpreadsheetService {
   }
 
   private inverseSigneSequestrations(result: CalculTrajectoireResult) {
-    // Il y a le cae_1.csc qui est une exception
-    result.trajectoire.emissionsGes.forEach((emissionGes) => {
-      if (
-        this.trajectoiresDataService.signeInversionSequestration(
-          emissionGes.definition.identifiantReferentiel
-        )
-      ) {
-        emissionGes.valeurs.forEach((valeur) => {
-          if (valeur.objectif) {
-            valeur.objectif = -1 * valeur.objectif;
-          }
-          if (valeur.resultat) {
-            // Normalement pas nécessaire car uniquement résultat
-            valeur.resultat = -1 * valeur.resultat;
-          }
-        });
-      }
-    });
-    // Normalement, fait pour tous les indicateurs de séquestration mais on réutilise signeInversionSequestration au cas où la logique change
-    result.trajectoire.sequestrations.forEach((sequestration) => {
-      if (
-        this.trajectoiresDataService.signeInversionSequestration(
-          sequestration.definition.identifiantReferentiel
-        )
-      ) {
-        sequestration.valeurs.forEach((valeur) => {
-          if (valeur.objectif) {
-            valeur.objectif = -1 * valeur.objectif;
-          }
-          if (valeur.resultat) {
-            // Normalement pas nécessaire car uniquement résultat
-            valeur.resultat = -1 * valeur.resultat;
-          }
-        });
-      }
-    });
+    // Il y a le cae_1.csc qui est une exception, parmi les émissions
+    result.trajectoire.emissionsGes =
+      this.trajectoiresDataService.inverseSigneSequestrations(
+        result.trajectoire.emissionsGes
+      );
+    result.trajectoire.sequestrations =
+      this.trajectoiresDataService.inverseSigneSequestrations(
+        result.trajectoire.sequestrations
+      );
   }
 
   private getIdentifiantReferentielParent(
