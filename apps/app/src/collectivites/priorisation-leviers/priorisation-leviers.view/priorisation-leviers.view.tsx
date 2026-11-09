@@ -392,7 +392,7 @@ const PriorisationContent = ({
 
 export const PriorisationLeviersView = (): JSX.Element => {
   const { collectiviteId } = useCurrentCollectivite();
-  const leviersQuery = useLeviersPriorisation(collectiviteId);
+  const leviersQuery = useLeviersPriorisation();
   const upsertPertinence = useUpsertPertinence();
   const preselection = usePreselection();
   const plansQuery = useListPlans(collectiviteId, { limit: 1 });

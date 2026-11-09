@@ -4,10 +4,17 @@ import { JSX, ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { useLeviersPriorisation } from './use-leviers-priorisation';
 
-const fakeApi = vi.hoisted(() => ({ isCommune: false }));
+const fakeApi = vi.hoisted(() => ({
+  isCommune: false,
+  getTrajectoire: vi.fn(() => ({ secteurs: [] })),
+}));
 
-const toTrpcError = (errorKey: string): Error =>
-  Object.assign(new Error(errorKey), { data: { errorKey } });
+vi.mock('@tet/api/collectivites', () => ({
+  useCurrentCollectivite: () => ({
+    collectiviteId: 1,
+    collectiviteType: fakeApi.isCommune ? 'commune' : 'epci',
+  }),
+}));
 
 vi.mock('@tet/api', () => ({
   useTRPC: () => ({
@@ -16,12 +23,7 @@ vi.mock('@tet/api', () => ({
         list: {
           queryOptions: () => ({
             queryKey: ['pertinences'],
-            queryFn: () => {
-              if (fakeApi.isCommune) {
-                throw toTrpcError('UNAUTHORIZED');
-              }
-              return { pertinences: [] };
-            },
+            queryFn: () => ({ pertinences: [] }),
           }),
         },
       },
@@ -41,12 +43,7 @@ vi.mock('@tet/api', () => ({
             queryOptions: (_input: unknown, options: object) => ({
               ...options,
               queryKey: ['trajectoire'],
-              queryFn: () => {
-                if (fakeApi.isCommune) {
-                  throw toTrpcError('COLLECTIVITE_NOT_EPCI');
-                }
-                return { secteurs: [] };
-              },
+              queryFn: fakeApi.getTrajectoire,
             }),
           },
         },
@@ -71,10 +68,11 @@ const toQueryClientWrapper = (
 describe('useLeviersPriorisation', () => {
   afterEach(() => {
     fakeApi.isCommune = false;
+    fakeApi.getTrajectoire.mockClear();
   });
 
   it("garde la même liste de leviers d'un rendu à l'autre tant que les données ne changent pas", async () => {
-    const { result, rerender } = renderHook(() => useLeviersPriorisation(1), {
+    const { result, rerender } = renderHook(() => useLeviersPriorisation(), {
       wrapper: toQueryClientWrapper(new QueryClient()),
     });
     await waitFor(() => expect(result.current.status).toBe('ready'));
@@ -89,9 +87,9 @@ describe('useLeviersPriorisation', () => {
     expect(leviersAfterRerender).toBe(leviersBeforeRerender);
   });
 
-  it("hors EPCI, signale la vue réservée aux EPCI plutôt qu'une erreur", async () => {
+  it('hors EPCI, signale la vue réservée aux EPCI sans demander la trajectoire', async () => {
     fakeApi.isCommune = true;
-    const { result } = renderHook(() => useLeviersPriorisation(1), {
+    const { result } = renderHook(() => useLeviersPriorisation(), {
       wrapper: toQueryClientWrapper(
         new QueryClient({ defaultOptions: { queries: { retry: false } } })
       ),
@@ -105,5 +103,6 @@ describe('useLeviersPriorisation', () => {
         access: 'reservedToEpci',
       })
     );
+    expect(fakeApi.getTrajectoire).not.toHaveBeenCalled();
   });
 });

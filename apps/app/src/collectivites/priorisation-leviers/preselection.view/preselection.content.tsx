@@ -101,7 +101,7 @@ const toMostImportantLevierActions = ({
 
 const EmptyPreselection = (): JSX.Element => {
   const { collectiviteId } = useCurrentCollectivite();
-  const leviersQuery = useLeviersPriorisation(collectiviteId);
+  const leviersQuery = useLeviersPriorisation();
   const { levierToPrioritizeId } = useLeviersPlaces(leviersQuery);
   return (
     <EmptyCard
