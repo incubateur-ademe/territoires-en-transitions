@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import CreateIndicateurService from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.service';
 import { MutateIndicateurRouter } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/mutate-indicateur.router';
@@ -53,7 +54,23 @@ import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsh
 import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
 import { TrajectoiresController } from './trajectoires/trajectoires.controller';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
+import { EnqueueImportTrajectoireSnbc3Service } from './trajectoires/import-snbc3/enqueue-import-trajectoire-snbc3.service';
+import {
+  IMPORT_TRAJECTOIRE_SNBC3_JOB_OPTIONS,
+  IMPORT_TRAJECTOIRE_SNBC3_QUEUE_NAME,
+} from './trajectoires/import-snbc3/import-trajectoire-snbc3.queue';
+import { ImportTrajectoireSnbc3Router } from './trajectoires/import-snbc3/import-trajectoire-snbc3.router';
+import { ImportTrajectoireSnbc3Service } from './trajectoires/import-snbc3/import-trajectoire-snbc3.service';
+import { ImportTrajectoireSnbc3Worker } from './trajectoires/import-snbc3/import-trajectoire-snbc3.worker';
+import { Snbc3ReleaseStorageService } from './trajectoires/import-snbc3/snbc3-release-storage.service';
+import {
+  GitlabSnbc3ArtifactReader,
+  LocalSnbc3ArtifactReader,
+  Snbc3ArtifactReader,
+} from './trajectoires/import-snbc3/snbc3-artifact.reader';
 import { TrajectoireSnbc3FeatureFlagService } from './trajectoires/trajectoire-snbc3-feature-flag.service';
+import { Snbc3SourceMetadonneeRepository } from './trajectoires/import-snbc3/snbc3-source-metadonnee.repository';
+import ConfigurationService from '../utils/config/configuration.service';
 import { IndicateursValeursController } from './valeurs/indicateur-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/indicateur-valeurs.router';
 import { IndicateurValeursRepository } from './valeurs/indicateur-valeurs.repository';
@@ -110,6 +127,10 @@ const DEFINITIONS_PROVIDERS = [
     FichesModule,
     ReferentielsCoreModule,
     ListCollectiviteIndicateursModule,
+    BullModule.registerQueue({
+      name: IMPORT_TRAJECTOIRE_SNBC3_QUEUE_NAME,
+      defaultJobOptions: IMPORT_TRAJECTOIRE_SNBC3_JOB_OPTIONS,
+    }),
   ],
   providers: [
     ExportIndicateursService,
@@ -143,7 +164,28 @@ const DEFINITIONS_PROVIDERS = [
     TrajectoiresRouter,
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
+    ImportTrajectoireSnbc3Router,
+    EnqueueImportTrajectoireSnbc3Service,
+    ImportTrajectoireSnbc3Service,
+    ImportTrajectoireSnbc3Worker,
+    Snbc3ReleaseStorageService,
     TrajectoireSnbc3FeatureFlagService,
+    Snbc3SourceMetadonneeRepository,
+    {
+      provide: Snbc3ArtifactReader,
+      inject: [ConfigurationService],
+      useFactory: (config: ConfigurationService) => {
+        const localRepository = config.get(
+          'TRAJECTOIRE_SNBC3_LOCAL_REPOSITORY'
+        );
+        return localRepository
+          ? new LocalSnbc3ArtifactReader(localRepository)
+          : new GitlabSnbc3ArtifactReader({
+              repositoryUrl: config.get('TRAJECTOIRE_SNBC3_REPOSITORY_URL'),
+              token: config.get('TRAJECTOIRE_SNBC3_GITLAB_TOKEN'),
+            });
+      },
+    },
 
     ComputeValeursService,
     ComputeValeursRepository,

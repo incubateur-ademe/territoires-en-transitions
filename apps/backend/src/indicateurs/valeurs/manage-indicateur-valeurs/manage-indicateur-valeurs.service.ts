@@ -1,12 +1,13 @@
-import { uniqBy } from 'es-toolkit';
+import { isNil, round, uniqBy } from 'es-toolkit';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { UpdateIndicateurService } from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/update-indicateur.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { success } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   IndicateurDetaille,
+  IndicateurPeriodiciteEnum,
   IndicateurPredefini,
   IndicateurValeur,
   IndicateurValeurCreate,
@@ -26,7 +27,11 @@ import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
-import { getIndicateurValeursDataOrThrow } from '../indicateur-valeurs.errors';
+import {
+  captureIndicateurValeursResult,
+  getIndicateurValeursDataOrThrow,
+  IndicateurValeursError,
+} from '../indicateur-valeurs.errors';
 import {
   deduplicateIndicateurValeursBySource,
   groupIndicateurValeurs,
@@ -193,6 +198,130 @@ export default class ManageIndicateurValeursService {
       await this.publishValeurUpsertedEvents(saved, context.user);
     }
     return saved;
+  }
+
+  /**
+   * Remplace, pour des collectivités, les valeurs importées d'une métadonnée,
+   * dans une seule transaction :
+   * - une valeur identique à celle en base (objectif arrondi à la précision de
+   *   l'indicateur, et commentaire) n'est pas réécrite, et ses totaux ne sont
+   *   donc pas recalculés ;
+   * - une valeur modifiée est mise à jour en place (son `id` est conservé) ;
+   * - une valeur importée absente de `valeurs` est supprimée ;
+   * - les totaux calculés suivent les écritures et les suppressions.
+   *
+   * Les compteurs ne portent que sur les valeurs importées : `deleted` ne
+   * compte pas les totaux supprimés à leur suite.
+   *
+   * Réservé aux imports de source déjà autorisés par l'appelant. Ne porte que
+   * sur les objectifs : les résultats ne sont pas comparés.
+   */
+  async replaceMetadonneeValeurs({
+    collectiviteIds,
+    metadonneeId,
+    valeurs,
+  }: {
+    collectiviteIds: number[];
+    metadonneeId: number;
+    valeurs: IndicateurValeurCreate[];
+  }): Promise<
+    Result<
+      { created: number; updated: number; unchanged: number; deleted: number },
+      IndicateurValeursError
+    >
+  > {
+    const scope = new Set(collectiviteIds);
+    const outOfScope = valeurs.filter(
+      (v) => !scope.has(v.collectiviteId) || v.metadonneeId !== metadonneeId
+    );
+    if (outOfScope.length) {
+      return failure(
+        'INVALID_VALUE',
+        new Error(
+          `${outOfScope.length} valeurs hors des collectivités ou de la métadonnée ${metadonneeId}`
+        )
+      );
+    }
+
+    return captureIndicateurValeursResult(() =>
+      this.executeTransaction(async (tx) => {
+        // Même ordre de verrous que `deleteIndicateurValeurs` : graphe, puis table.
+        await this.indicateurLockRepository.lockForValueWrite(tx);
+
+        const existing = await this.repository.listMetadonneeSourceValeurs(
+          { collectiviteIds, metadonneeId },
+          tx
+        );
+        const key = (
+          v: Pick<
+            IndicateurValeurCreate,
+            'collectiviteId' | 'indicateurId' | 'dateValeur' | 'periodicite'
+          >
+        ) =>
+          `${v.collectiviteId}:${v.indicateurId}:${v.dateValeur}:${
+            v.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE
+          }`;
+        const existingByKey = new Map(existing.map((v) => [key(v), v]));
+        const precisions = await this.repository.listPrecisions(
+          [...new Set(valeurs.map(({ indicateurId }) => indicateurId))],
+          tx
+        );
+
+        const keptIds = new Set<number>();
+        const toWrite: IndicateurValeurCreate[] = [];
+        let updated = 0;
+        for (const valeur of valeurs) {
+          const stored = existingByKey.get(key(valeur));
+          if (!stored) {
+            toWrite.push(valeur);
+            continue;
+          }
+          keptIds.add(stored.id);
+          const objectif = isNil(valeur.objectif)
+            ? null
+            : round(
+                valeur.objectif,
+                precisions.get(valeur.indicateurId) ??
+                  DEFAULT_ROUNDING_PRECISION
+              );
+          const unchanged =
+            stored.objectif === objectif &&
+            (stored.objectifCommentaire ?? null) ===
+              (valeur.objectifCommentaire ?? null);
+          if (!unchanged) {
+            toWrite.push(valeur);
+            updated++;
+          }
+        }
+
+        getIndicateurValeursDataOrThrow(
+          await this.reconciliation.upsert(toWrite, { isUserTrusted: true, tx })
+        );
+
+        const stale = existing.filter(({ id }) => !keptIds.has(id));
+        if (stale.length) {
+          await this.lockRepository.lock(stale, tx);
+          const deleted = await this.repository.deleteByIds(
+            stale.map(({ id }) => id),
+            tx
+          );
+          getIndicateurValeursDataOrThrow(
+            await this.reconciliation.propagateDeleted(deleted, {
+              isUserTrusted: true,
+              tx,
+            })
+          );
+        }
+
+        return {
+          created: toWrite.length - updated,
+          updated,
+          unchanged: valeurs.length - toWrite.length,
+          // `stale` exclut les totaux calculés (`listMetadonneeSourceValeurs`).
+          deleted: stale.length,
+        };
+      })
+    );
   }
 
   async reconcileCollectiviteCalculatedIndicateurValeurs(
