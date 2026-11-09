@@ -1,11 +1,14 @@
 set search_path to public;
 
--- Dépôts PCAET portés par un Supra : un seul compte pour dérouler tous les cas
--- en local, sur des Supras et des EPCI réels, reliés comme dans l'import de prod
+-- Dépôts PCAET portés par un Supra : deux comptes pour dérouler tous les cas en
+-- local, sur des Supras et des EPCI réels, reliés comme dans l'import de prod
 -- (collectivites.relations.importSyndicatEpciRelations).
 --
--- Compte : supra@dodo.com / yolododo. Un compte à part plutôt que Yolo, dont la
--- liste exacte des collectivités est figée par list-users.controller.spec.ts.
+-- Comptes (mot de passe yolododo), à part de Yolo, dont la liste exacte des
+-- collectivités est figée par list-users.controller.spec.ts :
+--   - supra@dodo.com : le Supra, qui dépose (tableau ci-dessous) ;
+--   - epci@dodo.com : l'EPCI couvert, qui consulte le dépôt du SICTOM en lecture
+--     seule. Un compte à part : membre du SICTOM, il le verrait en édition.
 --
 -- | Collectivité (droit)                          | Cas                                    |
 -- |-----------------------------------------------|----------------------------------------|
@@ -14,7 +17,7 @@ set search_path to public;
 -- |                                               | dépôt possible pour CC Carmausin-Ségala|
 -- | PETR du Pays Lauragais (admin)                | renouvellement : 3 CC pré-cochées      |
 -- | SM du Pays de la Haute Sarthe (admin)         | Supra sans EPCI membre connu           |
--- | CC Val 81 (édition)                           | EPCI couvert par le dépôt du SICTOM    |
+-- | CC Val 81 (édition, epci@dodo.com)            | EPCI couvert par le dépôt du SICTOM    |
 --
 -- Les 5 CC de l'Albigeois, à la création d'un dépôt :
 --   - CC du Cordais et du Causse : aucune élaboration ;
@@ -74,9 +77,19 @@ UPDATE utilisateur_verifie SET verifie = true WHERE user_id = '33333333-5a9a-4bf
 
 INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active)
 SELECT '33333333-5a9a-4bfc-a000-000000000001', id,
-       (CASE WHEN role = 'val_81' THEN 'edition' ELSE 'admin' END)::niveau_acces, TRUE
+       'admin', TRUE
 FROM supra_seed_id
-WHERE role IN ('albigeois', 'sictom', 'lauragais', 'haute_sarthe', 'val_81')
+WHERE role IN ('albigeois', 'sictom', 'lauragais', 'haute_sarthe')
+ON CONFLICT (user_id, collectivite_id) DO NOTHING;
+
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, invited_at, confirmation_token, confirmation_sent_at, recovery_token, recovery_sent_at, email_change_token_new, email_change, email_change_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, is_super_admin, created_at, updated_at, phone, phone_confirmed_at, phone_change, phone_change_token, phone_change_sent_at, email_change_token_current, email_change_confirm_status, banned_until, reauthentication_token, reauthentication_sent_at) VALUES ('00000000-0000-0000-0000-000000000000', '33333333-5a9a-4bfc-a000-000000000002', 'authenticated', 'authenticated', 'epci@dodo.com', '$2a$10$zHta6/ak2n7cONYwYodHJOJ0cmnhyXKUomwX0D4X0j3sQqWfXNs0C', now(), null, '', null, '', null, '', '', null, now(), '{"provider": "email", "providers": ["email"]}', '{}', null, now(), now(), null, null, '', '', null, '', 0, null, '', null) ON CONFLICT (id) DO NOTHING;
+UPDATE dcp SET prenom = 'Epci', nom = 'Dodo', cgu_acceptees_le = current_timestamp WHERE user_id = '33333333-5a9a-4bfc-a000-000000000002';
+UPDATE utilisateur_verifie SET verifie = true WHERE user_id = '33333333-5a9a-4bfc-a000-000000000002';
+
+INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active)
+SELECT '33333333-5a9a-4bfc-a000-000000000002', id, 'edition', TRUE
+FROM supra_seed_id
+WHERE role = 'val_81'
 ON CONFLICT (user_id, collectivite_id) DO NOTHING;
 
 -- Démarches propres des CC de l'Albigeois.
