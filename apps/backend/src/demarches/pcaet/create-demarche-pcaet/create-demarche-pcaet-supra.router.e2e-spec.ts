@@ -414,4 +414,99 @@ describe('Dépôt PCAET porté par un Supra', () => {
     });
     expect(demarche.collectiviteId).toBe(epci.porteur.id);
   });
+
+  it("mène un dépôt par groupe d'EPCI, plusieurs en même temps", async () => {
+    const { porteur, caller } = await addPorteur('PETR');
+    const epciA = await addMembre(porteur.id, {
+      nom: 'A – CC du premier groupe',
+      natureInsee: 'CC',
+    });
+    const epciB = await addMembre(porteur.id, {
+      nom: 'B – CC du second groupe',
+      natureInsee: 'CC',
+    });
+
+    await caller.demarches.pcaet.create({
+      collectiviteId: porteur.id,
+      launchedAt: '2026-01-05T00:00:00.000Z',
+      collectivitesCouvertesIds: [epciA.id],
+    });
+
+    const contexte = await caller.demarches.pcaet.getDepotContext({
+      collectiviteId: porteur.id,
+    });
+    expect(
+      contexte.epciCandidats.map(({ id, engagement }) => ({ id, engagement }))
+    ).toEqual([
+      {
+        id: epciA.id,
+        engagement: {
+          porteur: { id: porteur.id, nom: porteur.nom },
+          dateDebut: '2026-01-05',
+        },
+      },
+      { id: epciB.id, engagement: null },
+    ]);
+
+    // Un même EPCI n'entre pas dans deux de ses dépôts, et un dépôt sans
+    // périmètre ne se cumule pas avec un dépôt en cours.
+    await expect(
+      caller.demarches.pcaet.create({
+        collectiviteId: porteur.id,
+        collectivitesCouvertesIds: [epciA.id, epciB.id],
+      })
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+    await expect(
+      caller.demarches.pcaet.create({ collectiviteId: porteur.id })
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+
+    const second = await caller.demarches.pcaet.create({
+      collectiviteId: porteur.id,
+      collectivitesCouvertesIds: [epciB.id],
+    });
+    expect(second.collectivitesCouvertes.map(({ id }) => id)).toEqual([
+      epciB.id,
+    ]);
+
+    const demarches = await caller.demarches.pcaet.list({
+      collectiviteId: porteur.id,
+    });
+    expect(demarches).toHaveLength(2);
+  });
+
+  it('exige au moins un EPCI couvert dès que le Supra a des membres', async () => {
+    const { porteur, caller } = await addPorteur('PETR');
+    await addMembre(porteur.id, { nom: 'Membre', natureInsee: 'CC' });
+
+    await expect(
+      caller.demarches.pcaet.create({ collectiviteId: porteur.id })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+  });
+
+  it('un Supra sans membre connu ne mène qu’un dépôt à la fois', async () => {
+    const { porteur, caller } = await addPorteur('PETR');
+
+    await caller.demarches.pcaet.create({ collectiviteId: porteur.id });
+
+    await expect(
+      caller.demarches.pcaet.create({ collectiviteId: porteur.id })
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
+  it('deux créations simultanées pour une même collectivité : une seule passe', async () => {
+    const { porteur, caller } = await addPorteur('CC');
+
+    const resultats = await Promise.allSettled([
+      caller.demarches.pcaet.create({ collectiviteId: porteur.id }),
+      caller.demarches.pcaet.create({ collectiviteId: porteur.id }),
+    ]);
+
+    expect(resultats.map(({ status }) => status).sort()).toEqual([
+      'fulfilled',
+      'rejected',
+    ]);
+    expect(
+      resultats.find((resultat) => resultat.status === 'rejected')
+    ).toMatchObject({ reason: { code: 'CONFLICT' } });
+  });
 });

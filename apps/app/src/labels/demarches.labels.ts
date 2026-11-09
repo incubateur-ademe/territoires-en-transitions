@@ -224,14 +224,20 @@ export const demarchesLabels = {
   /** Raison pour laquelle un EPCI membre ne peut pas être coché. */
   demarcheEpciCandidatEngage: ({
     porteur,
+    parLePorteur,
     dateDebut,
   }: {
     porteur: string | null;
+    parLePorteur: boolean;
     dateDebut: string;
   }) =>
-    porteur
+    parLePorteur
+      ? `Déjà couvert par un autre de vos dépôts, en cours (commencé le ${dateDebut})`
+      : porteur
       ? `Une démarche PCAET portée par ${porteur} est déjà en cours (commencée le ${dateDebut})`
       : `Une démarche PCAET est déjà en cours (commencée le ${dateDebut})`,
+  demarcheCreationBloqueeTousEngages:
+    'Tous les EPCI membres de votre structure sont déjà engagés dans une démarche PCAET en cours : un nouveau dépôt sera possible quand l’un d’eux sera libre.',
   demarcheCreationBloqueeCouverture: ({
     porteur,
     dateDebut,

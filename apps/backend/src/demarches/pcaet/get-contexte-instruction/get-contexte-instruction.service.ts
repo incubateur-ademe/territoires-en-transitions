@@ -109,9 +109,7 @@ export class GetContexteInstructionService {
           demandeAvisId === undefined
             ? undefined
             : eq(pcaetDemandeAvisTable.id, demandeAvisId),
-          demarcheId === undefined
-            ? undefined
-            : eq(demarcheTable.id, demarcheId)
+          demarcheId === undefined ? undefined : eq(demarcheTable.id, demarcheId)
         )
       )
       // Plusieurs saisines peuvent répondre — un agent membre de la DREAL et de
@@ -157,10 +155,9 @@ export class GetContexteInstructionService {
   /**
    * Le dépôt en élaboration de la collectivité, lu au titre du périmètre.
    *
-   * Un seul au plus : `demarche_active_unique` interdit deux dossiers actifs par
-   * collectivité. Le filtre sur la démarche visée reste, pour la même raison que
-   * sur la saisine — l'URL ne doit pas afficher une démarche sous le nom d'une
-   * autre collectivité.
+   * Un seul par collectivité, sauf pour un Supra, qui peut en mener un par
+   * groupe d'EPCI : la démarche visée tranche, et protège aussi l'URL d'afficher
+   * une démarche sous le nom d'une autre collectivité. Sans elle, le plus récent.
    */
   private async findElaboration(
     { collectiviteId, demarcheId }: GetContexteInstructionInput,

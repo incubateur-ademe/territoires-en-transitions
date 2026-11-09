@@ -10,7 +10,8 @@ set search_path to public;
 -- | Collectivité (droit)                          | Cas                                    |
 -- |-----------------------------------------------|----------------------------------------|
 -- | Pôle territorial Albigeois et Bastides (admin)| premier dépôt : 5 CC, un état chacune  |
--- | SICTOM secteur Valence Valderiès (admin)      | dépôt en cours qui couvre CC Val 81    |
+-- | SICTOM secteur Valence Valderiès (admin)      | dépôt en cours sur CC Val 81, second   |
+-- |                                               | dépôt possible pour CC Carmausin-Ségala|
 -- | PETR du Pays Lauragais (admin)                | renouvellement : 3 CC pré-cochées      |
 -- | SM du Pays de la Haute Sarthe (admin)         | Supra sans EPCI membre connu           |
 -- | CC Val 81 (édition)                           | EPCI couvert par le dépôt du SICTOM    |

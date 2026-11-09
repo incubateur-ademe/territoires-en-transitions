@@ -12,9 +12,15 @@ export const useDeleteDemarchePcaet = () => {
   return useMutation(
     trpc.demarches.pcaet.delete.mutationOptions({
       onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.list.queryKey({ collectiviteId }),
+          }),
+          // Les EPCI que couvrait le dépôt supprimé redeviennent cochables.
+          queryClient.invalidateQueries({
+            queryKey: trpc.demarches.pcaet.getDepotContext.pathKey(),
+          }),
+        ]);
       },
     })
   );
