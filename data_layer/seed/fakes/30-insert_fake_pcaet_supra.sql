@@ -10,6 +10,11 @@ set search_path to public;
 --   - epci@dodo.com : l'EPCI couvert, qui consulte le dépôt du SICTOM en lecture
 --     seule. Un compte à part : membre du SICTOM, il le verrait en édition.
 --
+-- Côté État, camille@dreal.fr (25-insert_fake_dreal.sql) suit aussi la DDT de
+-- Haute-Garonne : elle y voit le dépôt du PETR du Pays Lauragais, dont le siège
+-- est dans l'Aude, par la CC des Terres du Lauragais qu'il couvre (sous-ligne) ;
+-- la CC Lauragais Revel Sorezois, non couverte, reste « aucun dépôt ».
+--
 -- | Collectivité (droit)                          | Cas                                    |
 -- |-----------------------------------------------|----------------------------------------|
 -- | Pôle territorial Albigeois et Bastides (admin)| premier dépôt : 5 CC, un état chacune  |
@@ -129,6 +134,12 @@ INSERT INTO demarche_pcaet_collectivite_couverte (demarche_id, collectivite_id, 
 SELECT depot.id, s.id, '33333333-5a9a-4bfc-a000-000000000001'
 FROM depot
 JOIN supra_seed_id s ON s.role IN ('piege', 'castelnaudary', 'terres_lauragais');
+
+INSERT INTO private_utilisateur_droit (user_id, collectivite_id, niveau_acces, active)
+SELECT '11111111-dea1-4bfc-a000-000000000001', id, 'edition', TRUE
+FROM collectivite
+WHERE type = 'ddt' AND departement_code = '31'
+ON CONFLICT (user_id, collectivite_id) DO NOTHING;
 
 DROP TABLE supra_seed_id;
 DROP TABLE supra_seed;
