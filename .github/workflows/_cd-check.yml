@@ -1,0 +1,85 @@
+# Verify the deployed backend/app identities and public frontends before reporting success.
+name: CD / Check
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: Stack environment
+        type: string
+        required: true
+      backend-image:
+        description: Backend image pinned by digest
+        type: string
+        required: true
+      app-image:
+        description: App image pinned by digest
+        type: string
+        required: true
+      backend-deployment:
+        description: Expected Koyeb backend deployment ID
+        type: string
+        required: true
+      app-deployment:
+        description: Expected Koyeb app deployment ID
+        type: string
+        required: true
+      commit:
+        description: Expected short Git SHA
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: ${{ inputs.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      # Site/tools startup must not hide a regression of the backend/app pair.
+      - parallel:
+          - name: Recheck backend before success
+            uses: ./.github/actions/providers/koyeb/wait-for-service
+            with:
+              service: ${{ inputs.target }}-backend/backend
+              deployment: ${{ inputs.backend-deployment }}
+              image: ${{ inputs.backend-image }}
+              url: ${{ vars.BACKEND_URL }}/version
+              commit: ${{ inputs.commit }}
+
+          - name: Recheck app before success
+            uses: ./.github/actions/providers/koyeb/wait-for-service
+            with:
+              service: ${{ inputs.target }}-app/front
+              deployment: ${{ inputs.app-deployment }}
+              image: ${{ inputs.app-image }}
+              url: ${{ vars.APP_URL }}/version
+              commit: ${{ inputs.commit }}
+
+      - name: Check the public frontends
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          set -euo pipefail
+          for url in "$APP_URL" "$SITE_URL"; do
+            curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+              --connect-timeout 5 --max-time 30 --output /dev/null "$url"
+          done
+          echo 'All expected services deployed and checked.' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report incomplete deployment
+        if: ${{ failure() || cancelled() }}
+        run: |
+          echo '::error::Deployment incomplete. No automatic database or application rollback was attempted. Inspect Sqitch and every Koyeb service before retrying; remote operations can outlive this job.'
+          echo 'Deployment incomplete. Inspect the deployment job operation IDs and the target database before any retry or restore.' >> "$GITHUB_STEP_SUMMARY"

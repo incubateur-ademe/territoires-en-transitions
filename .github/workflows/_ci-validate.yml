@@ -38,6 +38,9 @@ jobs:
         with:
           cache-key: ${{ inputs.pnpm-cache-key }}
 
+      - name: Test deployment readiness polling
+        run: node --test .github/actions/providers/koyeb/wait-for-service/action.test.mjs
+
       - parallel:
           - name: Setup app env
             uses: ./.github/actions/app/env
