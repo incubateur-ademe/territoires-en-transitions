@@ -840,6 +840,14 @@ export const demarchesLabels = {
   instructionDateSaisineErreur:
     "La date de saisine n'a pas pu être enregistrée",
   instructionListeColonneActions: 'Actions',
+  /** Badge de la ligne d'un Supra qui dépose pour plusieurs EPCI. */
+  instructionListeBadgeSupra: 'Supra',
+  instructionListeToutReplier: 'Tout replier',
+  instructionListeToutDeplier: 'Tout déplier',
+  instructionListeReplierGroupe: ({ porteur }: { porteur: string }) =>
+    `Replier les EPCI couverts par ${porteur}`,
+  instructionListeDeplierGroupe: ({ porteur }: { porteur: string }) =>
+    `Déplier les EPCI couverts par ${porteur}`,
   instructionListeConsulterProjet: 'Consulter le projet',
   instructionListeVoirPcaet: 'Voir le PCAET',
   instructionListeSansPilote: 'Aucun pilote renseigné',

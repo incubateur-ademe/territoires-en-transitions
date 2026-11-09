@@ -13,6 +13,7 @@ import { and, eq, inArray, ne, or, sql, SQL } from 'drizzle-orm';
 import {
   couvreLesCodesSql,
   perimetreCodesSql,
+  perimetreDepotCodesSql,
 } from './perimetre-instructeur.columns';
 import {
   pcaetDemandeAvisTable,
@@ -65,7 +66,12 @@ export class PcaetInstructeursRepository {
    */
   async listInstructeursCouvrants(
     collectiviteId: number,
-    tx?: Transaction
+    tx?: Transaction,
+    /**
+     * Le dépôt, quand il est connu : ses EPCI couverts, s'il est porté par un
+     * Supra, étendent le territoire à saisir. Le siège reste celui du porteur.
+     */
+    demarcheId?: number
   ): Promise<InstructeurSaisi[]> {
     const db = tx ?? this.databaseService.db;
 
@@ -75,8 +81,18 @@ export class PcaetInstructeursRepository {
     // de chacun, pas seulement par ceux de son siège.
     const deposantes = await db
       .select({
-        regionCodes: perimetreCodesSql(collectiviteTable, 'region'),
-        departementCodes: perimetreCodesSql(collectiviteTable, 'departement'),
+        regionCodes:
+          demarcheId === undefined
+            ? perimetreCodesSql(collectiviteTable, 'region')
+            : perimetreDepotCodesSql(collectiviteTable, demarcheId, 'region'),
+        departementCodes:
+          demarcheId === undefined
+            ? perimetreCodesSql(collectiviteTable, 'departement')
+            : perimetreDepotCodesSql(
+                collectiviteTable,
+                demarcheId,
+                'departement'
+              ),
         // Les codes du siège à part : ce sont eux qui départagent une saisine
         // principale d'une secondaire.
         regionPrincipale: collectiviteTable.regionCode,
@@ -195,7 +211,8 @@ export class PcaetInstructeursRepository {
 
     const instructeurs = await this.listInstructeursCouvrants(
       collectiviteId,
-      tx
+      tx,
+      demarcheId
     );
     if (instructeurs.length === 0) {
       this.logger.warn(

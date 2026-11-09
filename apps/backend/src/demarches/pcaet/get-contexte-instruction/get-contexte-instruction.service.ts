@@ -78,7 +78,11 @@ export class GetContexteInstructionService {
         instructeurNom: instructrice.nom,
         perimetre: pcaetDemandeAvisTable.perimetre,
         // Fournit `instructeurType`, dont dépend la famille du service.
-        ...perimetreInstructeurColumns(deposante, instructrice),
+        ...perimetreInstructeurColumns(
+          deposante,
+          instructrice,
+          demarcheTable.id
+        ),
       })
       .from(pcaetDemandeAvisTable)
       .innerJoin(
@@ -185,7 +189,8 @@ export class GetContexteInstructionService {
     const [service] = await this.depotPermissionsService.listServicesCouvrants(
       user.id,
       collectiviteId,
-      tx
+      tx,
+      demarche.id
     );
     if (!service) {
       return null;

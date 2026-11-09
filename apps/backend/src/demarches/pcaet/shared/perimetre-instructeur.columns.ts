@@ -1,5 +1,6 @@
 import { collectivitePerimetreSecondaireTable } from '@tet/backend/collectivites/shared/models/collectivite-perimetre-secondaire.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { demarchePcaetCollectiviteCouverteTable } from '@tet/backend/demarches/shared/models/demarche-pcaet-collectivite-couverte.table';
 import { getTableName, inArray, SQL, sql } from 'drizzle-orm';
 import type { alias, PgColumn } from 'drizzle-orm/pg-core';
 
@@ -77,6 +78,59 @@ export const perimetreCodesSql = (
 };
 
 /**
+ * La démarche dont on lit le périmètre : sa colonne dans la requête, ou son
+ * identifiant quand l'appelant le connaît déjà.
+ */
+type DemarcheRef = PgColumn | number;
+
+const demarcheRefSql = (demarche: DemarcheRef): SQL =>
+  typeof demarche === 'number' ? sql`${demarche}` : qualifie(demarche);
+
+/**
+ * Tous les codes géographiques d'un **dépôt** à une maille donnée : ceux du
+ * porteur (`perimetreCodesSql`), plus ceux des EPCI que couvre le dépôt d'un
+ * Supra, principaux et secondaires.
+ *
+ * Une DDT d'un département que le porteur n'atteint que par un EPCI membre voit
+ * ainsi le dépôt, et la transmission la saisit. Le siège, qui départage une
+ * saisine principale d'une secondaire, reste celui du porteur.
+ */
+export const perimetreDepotCodesSql = (
+  deposante: CollectiviteSource,
+  demarche: DemarcheRef,
+  maille: MaillePerimetre
+): SQL<string[]> => {
+  const colonne = maille === 'region' ? 'region_code' : 'departement_code';
+  const couverture = sql.identifier(
+    getTableName(demarchePcaetCollectiviteCouverteTable)
+  );
+  const collectivite = sql.identifier(getTableName(collectiviteTable));
+  const secondaire = sql.identifier(
+    getTableName(collectivitePerimetreSecondaireTable)
+  );
+  const demarcheId = demarcheRefSql(demarche);
+
+  return sql<string[]>`coalesce((
+    select array_agg(distinct codes.code)
+    from (
+      select unnest(${perimetreCodesSql(deposante, maille)}) as code
+      union all
+      select couverte.${sql.identifier(colonne)}
+      from ${couverture} as couverture
+      join ${collectivite} as couverte on couverte.id = couverture.collectivite_id
+      where couverture.demarche_id = ${demarcheId}
+      union all
+      select couverte_secondaire.${sql.identifier(colonne)}
+      from ${couverture} as couverture
+      join ${secondaire} as couverte_secondaire
+        on couverte_secondaire.collectivite_id = couverture.collectivite_id
+      where couverture.demarche_id = ${demarcheId}
+    ) as codes
+    where codes.code is not null
+  ), '{}')`;
+};
+
+/**
  * « Cette collectivité couvre-t-elle l'un de ces territoires ? », en SQL.
  *
  * Le pendant filtrant de `perimetreCodesSql` : là où celui-ci ramène les codes
@@ -132,11 +186,22 @@ export const couvreLesCodesSql = (
  */
 export const perimetreInstructeurColumns = (
   deposante: CollectiviteAlias,
-  instructrice: CollectiviteAlias
+  instructrice: CollectiviteAlias,
+  /**
+   * La démarche, quand elle est connue : son périmètre s'étend alors aux EPCI
+   * que couvre le dépôt d'un Supra. Sans elle, celui de la déposante seule.
+   */
+  demarche?: DemarcheRef
 ) => ({
   instructeurType: instructrice.type,
   instructeurRegionCodes: perimetreCodesSql(instructrice, 'region'),
   instructeurDepartementCodes: perimetreCodesSql(instructrice, 'departement'),
-  collectiviteRegionCodes: perimetreCodesSql(deposante, 'region'),
-  collectiviteDepartementCodes: perimetreCodesSql(deposante, 'departement'),
+  collectiviteRegionCodes:
+    demarche === undefined
+      ? perimetreCodesSql(deposante, 'region')
+      : perimetreDepotCodesSql(deposante, demarche, 'region'),
+  collectiviteDepartementCodes:
+    demarche === undefined
+      ? perimetreCodesSql(deposante, 'departement')
+      : perimetreDepotCodesSql(deposante, demarche, 'departement'),
 });
