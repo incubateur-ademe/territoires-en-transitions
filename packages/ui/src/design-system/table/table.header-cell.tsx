@@ -92,7 +92,9 @@ export const TableHeaderCell = ({
           {children}
           {sortFn && (
             <div
-              className="flex flex-col ml-auto cursor-pointer"
+              // En haut de la cellule : un titre sur plusieurs lignes ne fait
+              // pas descendre les chevrons.
+              className="flex flex-col self-start ml-auto cursor-pointer"
               onClick={sortFn}
             >
               <Icon

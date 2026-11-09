@@ -9,6 +9,7 @@ import {
   TableHeaderCell,
 } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
+import { ComponentProps } from 'react';
 import {
   columnVisibilityFeature,
   createColumnHelper,
@@ -25,7 +26,11 @@ import { Etoiles } from './labellisations-admin.etoiles';
 import { ReferentielBadge } from './labellisations-admin.referentiel-badge';
 import {
   CollectiviteHeaderFilter,
+  DossiersSort,
   DossiersView,
+  StatutHeaderFilter,
+  SujetHeaderFilter,
+  useFilterDossiersLabellisation,
 } from './dossiers-labellisation.header-filters';
 import {
   formatShortDate,
@@ -37,6 +42,24 @@ const columnHelper = createColumnHelper<
   typeof features,
   DossierLabellisation
 >();
+
+/** En-tête triable : le tri vit dans l'URL, comme les filtres. */
+const SortableHeaderCell = ({
+  sort,
+  ...props
+}: { sort: DossiersSort } & Omit<
+  ComponentProps<typeof TableHeaderCell>,
+  'sortFn' | 'sortDirection'
+>) => {
+  const { sortBy, sortDirection } = useFilterDossiersLabellisation();
+  return (
+    <TableHeaderCell
+      {...props}
+      sortFn={() => sortBy(sort)}
+      sortDirection={sortDirection(sort)}
+    />
+  );
+};
 
 const Empty = () => <span className="text-grey-6">{'—'}</span>;
 
@@ -57,7 +80,8 @@ const buildColumns = (view: DossiersView) => {
     columnHelper.display({
       id: 'envoyeeLe',
       header: () => (
-        <TableHeaderCell
+        <SortableHeaderCell
+          sort="envoyeeLe"
           className="w-28"
           title={appLabels.labellisationsAdminEnvoyeeLe}
         />
@@ -71,9 +95,11 @@ const buildColumns = (view: DossiersView) => {
     columnHelper.display({
       id: 'sujet',
       header: () => (
-        <TableHeaderCell
-          className="w-32"
+        <SortableHeaderCell
+          sort="sujet"
+          className="w-40"
           title={appLabels.labellisationsAdminColonneSujet}
+          filter={<SujetHeaderFilter />}
         />
       ),
       cell: ({ row }) => (
@@ -89,9 +115,11 @@ const buildColumns = (view: DossiersView) => {
     columnHelper.display({
       id: 'statut',
       header: () => (
-        <TableHeaderCell
-          className="w-48"
+        <SortableHeaderCell
+          sort="statut"
+          className="w-52"
           title={appLabels.labellisationsAdminColonneStatut}
+          filter={<StatutHeaderFilter />}
         />
       ),
       cell: ({ row }) => (
@@ -122,7 +150,8 @@ const buildColumns = (view: DossiersView) => {
     columnHelper.display({
       id: 'attribution',
       header: () => (
-        <TableHeaderCell
+        <SortableHeaderCell
+          sort="auditAttribueLe"
           className="w-32"
           title={appLabels.labellisationsAdminAuditAttribueLe}
         />
@@ -136,7 +165,8 @@ const buildColumns = (view: DossiersView) => {
     columnHelper.display({
       id: 'cloture',
       header: () => (
-        <TableHeaderCell
+        <SortableHeaderCell
+          sort="dateFin"
           className="w-32"
           title={appLabels.labellisationsAdminColonneClotureAudit}
         />
@@ -150,7 +180,8 @@ const buildColumns = (view: DossiersView) => {
     columnHelper.display({
       id: 'labellisation',
       header: () => (
-        <TableHeaderCell
+        <SortableHeaderCell
+          sort="labellisationObtenueLe"
           className="w-32"
           title={appLabels.labellisationsAdminColonneLabelliseeLe}
         />
@@ -186,7 +217,7 @@ const buildColumns = (view: DossiersView) => {
             dossier={row.original}
             size="xs"
             className="justify-end"
-            withAttribuerAuditeur
+            isTable
           />
         </TableCell>
       ),

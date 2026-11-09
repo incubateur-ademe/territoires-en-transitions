@@ -41,7 +41,7 @@ type CloseInput = Parameters<
 
 /**
  * Décision sur le dossier, qui le clôt :
- * - audit de labellisation validé → étoile obtenue + date de CRA ;
+ * - audit de labellisation validé → étoile obtenue + date de labellisation (courrier officiel) ;
  * - demande de 1ère étoile → valider ou refuser, sans audit ni score ;
  * - sinon (audit COT, abandon…) → clore.
  */
@@ -94,18 +94,19 @@ const getDecisions = (dossier: DossierLabellisation) => {
 /**
  * Boutons de décision, utilisés dans la fiche et dans le tableau des dossiers.
  * Le tableau propose aussi d'attribuer un auditeur, que la fiche gère déjà
- * dans son encart Auditeurs.
+ * dans son encart Auditeurs. Il ne propose pas de clore : une clôture sans
+ * labellisation se décide depuis la fiche, le dossier sous les yeux.
  */
 export const DossierLabellisationDecisionActions = ({
   dossier,
   size = 'sm',
   className,
-  withAttribuerAuditeur = false,
+  isTable = false,
 }: {
   dossier: DossierLabellisation;
   size?: ButtonSize;
   className?: string;
-  withAttribuerAuditeur?: boolean;
+  isTable?: boolean;
 }) => {
   // Le libellé du bouton cliqué sert de titre à la modale de confirmation.
   const [decision, setDecision] = useState<{
@@ -140,7 +141,7 @@ export const DossierLabellisationDecisionActions = ({
           }),
         label: appLabels.labellisationsAdminLabelliser,
         dataTest: 'referentiels.labellisations-admin.decision-labelliser',
-        secondaire: clore,
+        secondaire: isTable ? null : clore,
       }
     : canValiderPremiereEtoile
     ? {
@@ -162,18 +163,18 @@ export const DossierLabellisationDecisionActions = ({
             }),
         },
       }
-    : withAttribuerAuditeur && isAuditeurAAttribuer(dossier)
+    : isTable && isAuditeurAAttribuer(dossier)
     ? {
         onClick: () => setIsAttribuerOpen(true),
         label: appLabels.labellisationsAdminAttribuerAuditeur,
         dataTest: 'referentiels.labellisations-admin.attribuer-auditeur',
-        secondaire: clore,
+        secondaire: null,
       }
     : null;
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      {principale ? (
+      {principale?.secondaire ? (
         <SplitButton
           size={size}
           disabled={isPending}
@@ -184,7 +185,16 @@ export const DossierLabellisationDecisionActions = ({
         >
           {principale.label}
         </SplitButton>
-      ) : (
+      ) : principale ? (
+        <Button
+          size={size}
+          disabled={isPending}
+          dataTest={principale.dataTest}
+          onClick={principale.onClick}
+        >
+          {principale.label}
+        </Button>
+      ) : isTable ? null : (
         <Button
           size={size}
           variant="outlined"
@@ -300,7 +310,7 @@ const DecisionModal = ({
             <Field
               title={
                 decision === 'labelliser'
-                  ? appLabels.labellisationsAdminDateCra
+                  ? appLabels.labellisationsAdminDateLabellisation
                   : appLabels.labellisationsAdminDate
               }
               htmlFor={dateId}
