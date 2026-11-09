@@ -15,8 +15,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { LlmRepository } from '@tet/backend/utils/llm/repositories/llm.repository';
 import {
-  ElectrificationEngagementsConfig,
-  electrificationEngagementsConfig,
+  ElectrificationConfig,
+  electrificationConfig,
   Engagement,
   engagementSchema,
   StatutEnum,
@@ -35,7 +35,7 @@ import {
   test,
 } from 'vitest';
 import { GenerateImportDraftWorker } from '../../generate-import-draft/generate-import-draft.worker';
-import { ELECTRIFICATION_ENGAGEMENTS_CONFIG } from '../electrification.constants';
+import { ELECTRIFICATION_CONFIG } from '../electrification.constants';
 import {
   EngagementCibleImport,
   EngagementImport,
@@ -99,8 +99,8 @@ describe('Résolution des engagements Électrification', () => {
   let app: INestApplication;
   let db: DatabaseService;
   let service: ResolveElectrificationEngagementsService;
-  const catalogue = structuredClone(electrificationEngagementsConfig);
-  let fixture: ElectrificationEngagementsConfig;
+  const catalogue = structuredClone(electrificationConfig);
+  let fixture: ElectrificationConfig;
   let context: Awaited<ReturnType<typeof createContext>>;
   let input: ElectrificationEngagementsInput;
 
@@ -137,14 +137,12 @@ describe('Résolution des engagements Électrification', () => {
           .overrideProvider(LlmService)
           .useValue(new LlmService(new ReadOnlyLlmRepository()));
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
-        builder
-          .overrideProvider(ELECTRIFICATION_ENGAGEMENTS_CONFIG)
-          .useValue(catalogue);
+        builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
       },
     });
     db = await getTestDatabase(app);
     service = app.get(ResolveElectrificationEngagementsService);
-    fixture = structuredClone(electrificationEngagementsConfig);
+    fixture = structuredClone(electrificationConfig);
     fixture.sousAxes = [
       { numero: '1.1', axeNumero: 1, titre: 'Sous-axe catalogue' },
     ];
@@ -236,7 +234,7 @@ describe('Résolution des engagements Électrification', () => {
       { key: 'libre:libre-B', parentKey: null },
       { key: 'libre:libre-enfant-B', parentKey: 'libre:libre-B' },
     ]);
-    expect(result.data.fiches).toEqual(
+    expect(result.data.fichesEngagements).toEqual(
       ['E03', 'E12'].map((code) =>
         expect.objectContaining({
           engagementCode: code,
@@ -287,7 +285,7 @@ describe('Résolution des engagements Électrification', () => {
 
   test('résout E06/E08 par leurs références explicites, sans déduction depuis le titre', async () => {
     expect(
-      electrificationEngagementsConfig.engagements
+      electrificationConfig.engagements
         .filter(({ code }) => ['E06', 'E08'].includes(code))
         .map(({ cibles }) => cibles[0].identifiantReferentiel)
     ).toEqual(['v_particulier_elec', 'autobus_autocar_elec']);
@@ -476,9 +474,7 @@ describe('Résolution des engagements Électrification', () => {
     }
   );
 
-  test.each<
-    [string, string, (config: ElectrificationEngagementsConfig) => void]
-  >([
+  test.each<[string, string, (config: ElectrificationConfig) => void]>([
     [
       'numéro d’axe répété',
       'DUPLICATE_CATALOGUE_REFERENCE',
@@ -530,7 +526,7 @@ describe('Résolution des engagements Électrification', () => {
 
   test('la configuration livrée garde les définitions non validées bloquantes', async () => {
     expect(
-      electrificationEngagementsConfig.engagements
+      electrificationConfig.engagements
         .flatMap(({ cibles }) => cibles)
         .every(
           ({ validation, periodicite }) =>

@@ -1,8 +1,5 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  ElectrificationEngagementsConfig,
-  StatutEnum,
-} from '@tet/domain/plans';
+import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { ImportSource } from '../../models/import-source.schema';
 import {
   ElectrificationEngagementsErrorCode,
@@ -18,30 +15,28 @@ import {
 export class ResolveElectrificationStructureRules {
   static resolve(
     input: ElectrificationEngagementsInput,
-    catalogue: ElectrificationEngagementsConfig
+    catalogue: ElectrificationConfig
   ): Result<ResolvedElectrificationEngagements, ElectrificationIssue[]> {
     const issues = this.validateCatalogue(catalogue);
     if (issues.length) return failure(issues);
+    issues.push(...this.validateSources(input));
 
     const result: ResolvedElectrificationEngagements = {
       catalogueVersion: catalogue.version,
       axes: [],
       engagements: [],
-      fiches: [],
+      fichesEngagements: [],
       cibles: [],
       report: { issues: [], qualitativeReview: null },
     };
-    const sourceKeys = new Set<string>();
     const engagementCodes = new Set<string>();
     const axes = new Map<string, ResolvedElectrificationAxe>();
     for (const engagement of input.engagements) {
-      this.validateSource(engagement.source, sourceKeys, issues);
       const cibleKeys = new Set<string>();
       const reference = catalogue.engagements.find(
         ({ code }) => code === engagement.code
       );
       for (const cible of engagement.cibles) {
-        this.validateSource(cible.source, sourceKeys, issues);
         if (cibleKeys.has(cible.key)) {
           issues.push(
             this.issue('DUPLICATE_TARGET_KEY', cible.source.location)
@@ -80,7 +75,7 @@ export class ResolveElectrificationStructureRules {
         source: engagement.source,
       });
       if (reference.actionTitre !== null) {
-        result.fiches.push({
+        result.fichesEngagements.push({
           key: `engagement:${engagement.code}:action`,
           axeKey,
           engagementCode: engagement.code,
@@ -92,11 +87,6 @@ export class ResolveElectrificationStructureRules {
     }
 
     for (const axe of input.axes) {
-      this.validateSource(axe.source, sourceKeys, issues);
-      // Vérifier aussi les sources des enfants quand leur parent est invalide.
-      for (const sousAxe of axe.sousAxes) {
-        this.validateSource(sousAxe.source, sourceKeys, issues);
-      }
       let axeKey: string;
       if (axe.numero === null) {
         axeKey = `libre:${axe.source.key}`;
@@ -171,7 +161,7 @@ export class ResolveElectrificationStructureRules {
 
   private static addNumberedAxe(
     axes: Map<string, ResolvedElectrificationAxe>,
-    reference: ElectrificationEngagementsConfig['axes'][number],
+    reference: ElectrificationConfig['axes'][number],
     source: ImportSource
   ): string {
     const key = `axe:${reference.numero}`;
@@ -188,19 +178,35 @@ export class ResolveElectrificationStructureRules {
     return key;
   }
 
-  private static validateSource(
-    source: ImportSource,
-    sourceKeys: Set<string>,
-    issues: ElectrificationIssue[]
-  ): void {
-    if (sourceKeys.has(source.key)) {
-      issues.push(this.issue('DUPLICATE_SOURCE_KEY', source.location));
+  /** Inclure les enfants même si leur parent ne pourra pas être résolu. */
+  static validateSources(
+    input: ElectrificationEngagementsInput,
+    additionalSources: ImportSource[] = []
+  ): ElectrificationIssue[] {
+    const sources = [
+      ...input.engagements.flatMap((e) => [
+        e.source,
+        ...e.cibles.map((c) => c.source),
+      ]),
+      ...input.axes.flatMap((a) => [
+        a.source,
+        ...a.sousAxes.map((s) => s.source),
+      ]),
+      ...additionalSources,
+    ];
+    const sourceKeys = new Set<string>();
+    const issues: ElectrificationIssue[] = [];
+    for (const source of sources) {
+      if (sourceKeys.has(source.key)) {
+        issues.push(this.issue('DUPLICATE_SOURCE_KEY', source.location));
+      }
+      sourceKeys.add(source.key);
     }
-    sourceKeys.add(source.key);
+    return issues;
   }
 
   private static validateCatalogue(
-    catalogue: ElectrificationEngagementsConfig
+    catalogue: ElectrificationConfig
   ): ElectrificationIssue[] {
     const issues: ElectrificationIssue[] = [];
     const axeNumeros = new Set<number>();

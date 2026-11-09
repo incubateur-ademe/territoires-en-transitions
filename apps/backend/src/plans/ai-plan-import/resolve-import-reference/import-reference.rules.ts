@@ -19,6 +19,11 @@ type ImportReference =
 
 /** Interprète des liens TeT sans les ouvrir ni suivre de redirection HTTP. */
 export class ImportReferenceRules {
+  /** Oriente vers la résolution d'URL ; parse contrôle ensuite la validité du lien. */
+  static isUrlReference(reference: string | null | undefined): boolean {
+    return reference?.includes('://') ?? false;
+  }
+
   static parse(
     reference: string,
     appUrl: string

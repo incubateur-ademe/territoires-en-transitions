@@ -23,7 +23,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 2A — Réutilisation du modèle et identification du type existant : [#5722](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5722), implémentée et vérifiée, en revue.
 - [x] PR 2B1 — Catalogue des engagements, axes et cibles : [#5730](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5730), implémentée et vérifiée, en revue.
 - [x] PR 2B2a — URL TeT existantes et éligibilité : [#5736](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5736), implémentée et vérifiée, en revue.
-- [ ] PR 2B2b — Codes et compléments des fiches B.
+- [x] PR 2B2b — Codes et compléments des fiches actions : [#5756](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5756), implémentée et vérifiée, en revue ; correspondances métier réelles encore à livrer avant ouverture.
 - [ ] PR 3A — Lecture documentaire.
 - [ ] PR 3B — Extraction typée de l'annexe.
 - [ ] PR 4A — Axes et liens de fiches.
@@ -54,7 +54,7 @@ Pour les nouveaux comportements, privilégier les suites e2e existantes et
 un faux LLM.
 Les premières phases livrent des capacités complètes mais gardent l'import
 annexe fermé. Il n'y a pas d'ouverture intermédiaire qui importerait seulement
-les engagements ou ignorerait les indicateurs des fiches B.
+les engagements ou ignorerait les indicateurs des fiches actions.
 
 ## Découpage et ordre de livraison
 
@@ -83,7 +83,7 @@ ou de migrations inutilisables sans leur code associé.
 Le catalogue et la préparation des engagements (2B1) sont revus séparément
 des références de fiches et des droits d'accès associés (2B2). Le lot 2B2 est lui-même séparé
 entre les URL et l'éligibilité (2B2a), puis les
-codes et la complétion des fiches B (2B2b). Ces lots livrent des services internes
+codes et la complétion des fiches actions (2B2b). Ces lots livrent des services internes
 complets, sans ouvrir l'import ni créer de données.
 
 ## Règles communes de déploiement
@@ -308,7 +308,7 @@ et les définitions métier conservent leur emplacement partagé.
 - Utiliser le catalogue de correspondances versionné dans Git et les
   définitions d'indicateurs existantes de TeT. La configuration, son schéma
   et son type sont exportés par `@tet/domain/plans` depuis
-  `electrification-engagements.config.ts` ; le backend conserve le branchement
+  `electrification.config.ts` ; le backend conserve le branchement
   Nest et sa validation à la résolution. Les documents Notion et Grist
   éclairent les décisions conservées dans l'ADR ; leurs liens ne font pas
   partie du contrat du résolveur. Toute évolution du mapping nécessite une
@@ -318,7 +318,7 @@ et les définitions métier conservent leur emplacement partagé.
 - Calculer l'union des axes demandés par A et B : axe 1 commun à E01/E02,
   axe retenu sans fiche, axe demandé par B sans engagement implicite et axes
   libres. Utiliser des clés de parents stables ; le numéro d'axe fait foi
-  sur son intitulé. La résolution du contenu des fiches B reste en 2B2.
+  sur son intitulé. La résolution du contenu des fiches actions reste en 2B2.
 - Résoudre les indicateurs des cibles avec leurs unités et périodicités
   validées. E07 conserve deux cibles indépendantes ; zéro reste une valeur,
   une cible vide reste absente avec un avertissement. E03/E12 préparent des
@@ -360,7 +360,7 @@ en attente des validations métier ; ce résultat ne qualifie pas un import rée
 
 **Déploiement et arrêt possible :** après 2A, services internes sans migration ;
 aucune création de plan ni dépendance à 2B2 pour fonctionner. Les références
-des fiches B et l'éligibilité restent à livrer avant le pipeline complet.
+des fiches actions et l'éligibilité restent à livrer avant le pipeline complet.
 
 ### PR 2B2a — URL TeT existantes et éligibilité
 
@@ -386,7 +386,7 @@ métier issue du mapping des lauréats ; elle reste distincte des feature flags.
 - [x] Retourner uniquement l'identité résolue ou un diagnostic bloquant.
   Conserver les champs, valeurs, sous-actions et liens existants. Le compte
   rendu des champs documentaires non appliqués sera produit avec les brouillons
-  des fiches B en 2B2b ; ce lot ne reçoit pas ces champs.
+  des fiches actions en 2B2b ; ce lot ne reçoit pas ces champs.
 - [x] Refuser explicitement les anciens UUID de fiches actions sans inventer
   de mapping.
   Le modèle actuel utilise des ID numériques malgré le nom `ficheUid` côté app.
@@ -416,34 +416,84 @@ au modèle ni nouveau fichier de tests unitaires.
 
 **Déploiement et arrêt possible :** après 2B1, sans migration ni ouverture de
 profil. Aucun plan ni lien n'est créé ; le parcours générique reste disponible.
-Les codes et compléments des fiches B restent à livrer en 2B2b.
+Les codes et compléments des fiches actions restent à livrer en 2B2b.
 
-### PR 2B2b — Codes et compléments des fiches B
+### PR 2B2b — Codes et compléments des fiches actions
 
 **Périmètre :** étendre la configuration et les contrats de 2B1 aux actions,
-sous-actions et indicateurs des fiches B, en réutilisant la résolution des URL
+sous-actions et indicateurs des fiches actions, en réutilisant la résolution des URL
 livrée en 2B2a. Préparation sans écriture métier ni nouvelle API publique.
 
-- Intégrer les correspondances Grist validées, leurs unités principales,
+- [ ] Livrer les correspondances Grist validées, leurs unités principales,
   périodicités et numéros de sous-axes. Ne pas inventer les correspondances
   encore absentes ; `6-a`/`6-b` ne sont pas assimilés à `s_26`/`s_26.a` sans
   validation métier. La configuration appartient au domaine `plans`.
-- Résoudre les codes et contrôler les axes/sous-axes. Une référence fournie
+  Le contrat est livré ; les données réelles restent à valider avant ouverture.
+- [x] Résoudre les codes et contrôler les axes/sous-axes. Une référence fournie
   invalide bloque ; une référence vide désigne un objet personnalisé.
   Valider unités, périodes et cohérence des références sans conversion implicite
   de "Ponctuelle" en annuelle ni invention d'unité ou de date.
-- Pour les objets désignés par URL, préparer uniquement leurs liens et signaler
-  les champs de l'annexe non appliqués.
-- Pour les nouvelles fiches de référence, compléter uniquement les champs non
+- [x] Pour les objets désignés par URL, préparer uniquement leurs liens et signaler
+  les champs de l'annexe non appliqués. Un indicateur identifié à la fois par
+  code et par URL ne produit qu'un lien ; la conservation par URL prime.
+- [x] Pour les nouvelles fiches de référence, compléter uniquement les champs non
   renseignés de l'annexe avec les valeurs prévues au catalogue. Ne pas ajouter
-  deux fois une sous-action présente dans les deux sources.
-- Une configuration incomplète produit un diagnostic de configuration et ne
+  deux fois une sous-action présente dans les deux sources. Contrôler les dates
+  fusionnées. Les codes de sous-actions sont résolus dans leur action de référence ;
+  leur rattachement à une fiche libre reste à préciser avec le catalogue métier.
+- [x] Extraire le contrat et la préparation communs des fiches : fusion des champs,
+  validation des titres/dates et compléments de sous-actions sans doublon.
+  Réutiliser les contrôles de titre/date dans l'import Excel. Garder les codes,
+  axes, engagements et indicateurs dans l'orchestrateur Électrification.
+- [x] Auditer les nouveaux fichiers contre l'existant : réutiliser le contrôle des
+  sources, les règles de références URL, les schémas de champs/textes et le type
+  des valeurs d'indicateurs. Conserver les règles de fusion et de doublons propres
+  à la préparation documentaire, sans nouveau service.
+- [x] Préparer les résultats et objectifs numériques datés, sans confondre zéro
+  et absence. Respecter la périodicité du catalogue et garder son titre commun.
+  Convertir les indicateurs oui/non en sous-actions : seul le résultat "Oui"
+  donne "Réalisé" ; l'année d'objectif donne une échéance conventionnelle en fin
+  d'année. Garder la réponse et son année d'observation dans le résultat préparé.
+- [x] Une configuration incomplète produit un diagnostic de configuration et ne
   bloque ni le démarrage ni les imports génériques. Tester avec des fixtures
   synthétiques tant que les données métier restent à valider.
 
 **Validation attendue :** codes inexistants/ambigus, absence de correspondance,
 axes incohérents, unités doubles, périodes invalides, compléments sans écrasement
 ni sous-action dupliquée, diagnostics de données conservées pour les URL.
+
+**Implémentation :** contrat et configuration partagés dans `@tet/domain/plans`,
+orchestration par
+[`ResolveElectrificationFichesService`](../../apps/backend/src/plans/ai-plan-import/electrification/resolve-fiches/resolve-electrification-fiches.service.ts).
+Les traitements propres aux fiches actions, leurs contrats, règles, erreurs
+et e2e sont regroupés sous `ai-plan-import/electrification/resolve-fiches/`,
+à côté des engagements.
+Le résultat distingue `fiches`, préparées depuis les fiches actions du document,
+et `fichesEngagements`, issues des engagements E03/E12. Le repère "section B"
+reste dans les explications d'extraction et les localisations documentaires.
+Le [contrat documentaire commun](../../apps/backend/src/plans/ai-plan-import/prepare-fiche/prepare-fiche.schema.ts)
+et `PrepareFicheRules` restent dans `ai-plan-import/prepare-fiche/` : ils reçoivent
+des références et compléments déjà résolus, sans lire le catalogue ni la base.
+Les champs et `FicheImportRules` appartiennent au domaine ; l'import Excel partage
+les contrôles de titre/date tout en gardant ses erreurs. Aucun service Nest ajouté.
+Réutilisation des résolveurs d'engagements et d'URL, de `ListIndicateursService`,
+des contraintes de `ficheSchema` et de `IndicateurPeriodes`. Aucun nouveau modèle
+persistant, endpoint ou appel documentaire externe. La configuration est renommée
+`electrification.config.ts` pour couvrir A et B avec une seule version.
+Les correspondances des fiches actions et des sous-axes restent à `null` ; les
+fixtures de test ne valident pas le catalogue réel.
+
+**Vérifications effectuées le 9 novembre 2026 :** après le renommage du contrat,
+93 e2e passent : 54 pour les fiches actions et les règles communes, 39 pour les
+engagements. Un cas vérifie la conservation simultanée des fiches documentaires
+homonymes et des fiches issues d'E03/E12 dans leurs collections respectives.
+Les cas de collision entre sources des axes,
+fiches, sous-actions et indicateurs protègent le contrôle partagé. La suite
+des fiches actions vérifie aussi les compléments, les homonymes, la priorité
+aux URL, l'absence de mutation et d'écriture métier, ainsi que l'absence
+d'appel au faux LLM.
+TypeScript backend/tests, ESLint et formatage ciblés, ainsi que 41 liens locaux
+et ancres vérifiés. Aucun appel réel au modèle ni nouveau fichier de tests unitaires.
 
 **Déploiement et arrêt possible :** après 2B2a, services internes seulement ;
 aucune création de plan. Le pipeline complet reste fermé.
@@ -461,7 +511,7 @@ contrat documentaire, normalisation et découpage.
   une destination perdue dans un scan. Les métadonnées survivent au découpage.
 - Préserver le texte consommé par l'import générique ; le nouveau profil
   utilisera ces métadonnées explicitement. Préparer les fixtures de convention
-  avec A, fiches B renseignées, modèle vide et exemple fictif C.
+  avec le tableau A, la section B renseignée, le modèle vide et l'exemple fictif C.
 - Couvrir les formats déjà acceptés avec un diagnostic explicite lorsque
   l'annexe ou une référence n'est pas exploitable ; aucun fetch des URL.
 
@@ -476,9 +526,10 @@ aucun nouveau profil exécuté, aucun changement de persistance.
 **Périmètre :** extraction, adaptation et validation du brouillon, sans worker
 de production branché sur ce profil.
 
-- Lire seulement A et les fiches B renseignées. Produire engagements/cibles,
-  axes, fiches, sous-actions, codes/URL, unités et valeurs datées avec clés et
-  localisations de source. Exclure instructions et exemple C.
+- Lire seulement le tableau A et les fiches actions renseignées dans la section B.
+  Produire engagements/cibles, axes, fiches, sous-actions, codes/URL, unités
+  et valeurs datées avec clés et localisations de source. Exclure instructions
+  et exemple C.
 - Brancher le profil sur les stratégies LLM existantes, sans fournisseur ni
   moteur supplémentaire. Préserver les deux stratégies et les chemins tableur
   qui peuvent court-circuiter l'extraction générique.
@@ -638,7 +689,7 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   Si le lot crée des personnalisés, acquérir le verrou exclusif du graphe avant
   toute revalidation verrouillée des définitions, selon l'ordre défini en 4B.
 - E01/E02 partagent un axe ; la liste sur le plan conserve seulement les codes
-  retenus dans A, indépendamment des axes demandés par les fiches B.
+  retenus dans A, indépendamment des axes demandés par les fiches actions.
   E06/E08 utilisent les références confirmées une fois leurs définitions
   validées et intégrées, E07 deux objectifs indépendants sous la source du plan,
   E03/E12 des fiches "À venir". Aucun résultat ni achèvement n'est déduit d'un objectif.
@@ -718,7 +769,7 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
 
 - Correspondances métier validées et version de catalogue livrée, sans code
   fictif : unités principales, périodicités, sous-axes, sous-actions, références
-  des fiches B et traitement des liens d'aides dans "Documents" convenu.
+  des fiches actions et traitement des liens d'aides dans "Documents" convenu.
 - Définitions et dépendances de calcul disponibles dans l'environnement cible,
   notamment `v_particulier_elec`, `autobus_autocar_elec`, `s_26` et `s_26.a`.
   Pour E06/E08, formules, périodicités et adéquation métier validées avec

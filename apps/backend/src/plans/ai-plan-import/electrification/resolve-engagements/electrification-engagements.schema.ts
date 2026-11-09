@@ -12,7 +12,7 @@ export const resolveElectrificationEngagementsInputSchema = z.strictObject({
   collectiviteId: z.number().int().positive(),
   catalogueVersion: z.string().trim().min(1),
   engagements: z.array(engagementImportSchema),
-  /** Axes explicitement demandés par les fiches B, sans engagement implicite. */
+  /** Axes explicitement demandés par les fiches actions, sans engagement implicite. */
   axes: z.array(
     z.strictObject({
       source: importSourceSchema,
@@ -50,7 +50,7 @@ export type ResolvedElectrificationEngagements = {
     axeKey: string;
     source: ImportSource;
   }[];
-  fiches: {
+  fichesEngagements: {
     key: string;
     axeKey: string;
     engagementCode: string;

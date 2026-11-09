@@ -1,3 +1,5 @@
+import { ResolveElectrificationFichesService } from './electrification/resolve-fiches/resolve-electrification-fiches.service';
+import { ResolveElectrificationIndicateursService } from './electrification/resolve-fiches/resolve-electrification-indicateurs.service';
 import { FichesModule } from '../fiches/fiches.module';
 import { ResolveImportReferenceService } from './resolve-import-reference/resolve-import-reference.service';
 import { BullModule } from '@nestjs/bullmq';
@@ -10,13 +12,13 @@ import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
-import { electrificationEngagementsConfig } from '@tet/domain/plans';
+import { electrificationConfig } from '@tet/domain/plans';
 import { CompletePlanSecteursModule } from '../fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '../plans/plans.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from './ai-plan-import-step-run.repository';
-import { ELECTRIFICATION_ENGAGEMENTS_CONFIG } from './electrification/electrification.constants';
+import { ELECTRIFICATION_CONFIG } from './electrification/electrification.constants';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
   AI_PLAN_IMPORT_QUEUE_NAME,
@@ -58,10 +60,12 @@ import { ResumeImportService } from './resume-import/resume-import.service';
   controllers: [EnqueueImportController],
   providers: [
     {
-      provide: ELECTRIFICATION_ENGAGEMENTS_CONFIG,
-      useValue: electrificationEngagementsConfig,
+      provide: ELECTRIFICATION_CONFIG,
+      useValue: electrificationConfig,
     },
     ResolveElectrificationEngagementsService,
+    ResolveElectrificationFichesService,
+    ResolveElectrificationIndicateursService,
     ResolveImportReferenceService,
     AiPlanImportJobRepository,
     AiPlanImportStepRunRepository,

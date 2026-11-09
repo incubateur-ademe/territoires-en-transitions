@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
@@ -14,6 +15,8 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteRole } from '@tet/domain/users';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
+import ExcelJS from 'exceljs';
+import assert from 'node:assert';
 import * as fs from 'node:fs';
 import path from 'path';
 import { expect, onTestFinished } from 'vitest';
@@ -308,6 +311,80 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
     ).rejects.toThrowError(
       'La date de fin doit être postérieure ou égale à la date de début'
     );
+  });
+
+  test.each([
+    {
+      cas: 'un titre de fiche blanc',
+      titre: '   ',
+      dateDebut: new Date('2026-01-01T00:00:00Z'),
+      dateFin: new Date('2026-12-31T00:00:00Z'),
+      erreur: /titre/i,
+    },
+    {
+      cas: 'des dates de fiche inversées',
+      titre: 'Action invalide',
+      dateDebut: new Date('2026-12-31T00:00:00Z'),
+      dateFin: new Date('2026-01-01T00:00:00Z'),
+      erreur: /La date de fin doit être après la date de début/,
+    },
+    {
+      cas: 'des heures de fiche inversées le même jour',
+      titre: 'Action invalide',
+      dateDebut: new Date('2026-06-15T18:00:00Z'),
+      dateFin: new Date('2026-06-15T08:00:00Z'),
+      erreur: /La date de fin doit être après la date de début/,
+    },
+  ])('rejette $cas sans créer de plan ou de fiche', async (scenario) => {
+    const { collectivite, user } = await addTestCollectiviteAndUser(
+      databaseService,
+      { user: { role: CollectiviteRole.ADMIN } }
+    );
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: user.id,
+    });
+    onTestFinished(cleanup);
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(
+      path.resolve(__dirname, '__fixtures__/one_fiche_plan.xlsx')
+    );
+    const worksheet = workbook.worksheets.find(
+      (sheet) => sheet.getCell('A2').value === 'Axe (x)'
+    );
+    assert(worksheet);
+    worksheet.getCell('D4').value = scenario.titre;
+    worksheet.getCell('AA4').value = scenario.dateDebut;
+    worksheet.getCell('AB4').value = scenario.dateFin;
+    const file = Buffer.from(await workbook.xlsx.writeBuffer()).toString(
+      'base64'
+    );
+
+    await expect(
+      caller.plans.plans.import({
+        collectiviteId: collectivite.id,
+        planName: TEST_PLAN_NAME,
+        planType: 1,
+        file,
+      })
+    ).rejects.toThrowError(scenario.erreur);
+    const [axes, fiches] = await Promise.all([
+      databaseService.db
+        .select({ id: axeTable.id })
+        .from(axeTable)
+        .where(eq(axeTable.collectiviteId, collectivite.id)),
+      databaseService.db
+        .select({ id: ficheActionTable.id })
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.collectiviteId, collectivite.id)),
+    ]);
+    expect(axes).toEqual([]);
+    expect(fiches).toEqual([]);
   });
 
   test("Test import plan avec sous-actions échoue si l'action parente n'a pas de ligne dédiée", async () => {

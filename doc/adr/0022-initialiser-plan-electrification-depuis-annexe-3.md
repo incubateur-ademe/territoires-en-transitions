@@ -41,16 +41,16 @@ des identifiants permettant ensuite le reporting ADEME. L'appétit annoncé
 est de deux semaines ; il ne constitue pas une estimation technique validée.
 
 Le tableau A décrit 12 engagements, regroupés dans 11 axes. Seuls les
-engagements retenus sont initialisés, mais une fiche B peut aussi demander
-la création d'un axe numéroté sans engagement retenu. Les fiches B peuvent
+engagements retenus sont initialisés, mais une fiche action peut aussi demander
+la création d'un axe numéroté sans engagement retenu. Les fiches actions peuvent
 décrire des actions de référence, des actions propres au territoire ou des actions
 existantes dans TeT. Le plan obtenu reste modifiable : aucun verrou métier
 n'est ajouté.
 
-Une "fiche B" désigne une partie du document source ; une "fiche action"
-désigne l'objet métier TeT (`Fiche`, `ficheId`). Une fiche B peut décrire une
-nouvelle fiche action ou référencer une fiche action existante. Une référence
-d'import peut aussi désigner un indicateur.
+Le terme métier est "fiche action" (`Fiche`, `ficheId`). La section B du
+document décrit les fiches actions à créer ou à relier à des fiches actions
+existantes. Le repère B sert uniquement à l'extraction et aux localisations
+dans le document. Une référence d'import peut aussi désigner un indicateur.
 
 L'import existant fournit déjà l'upload, la lecture documentaire, l'extraction,
 les jobs BullMQ, les checkpoints et la persistance transactionnelle. Il manque
@@ -109,6 +109,24 @@ plan, de ses axes et de ses fiches restent dans `plans`, celles des indicateurs 
 Réutiliser les services et la queue existants ; aucun nouveau moteur de
 workflow, fournisseur d'IA ou domaine métier n'est nécessaire.
 
+Le [contrat des champs de fiche importée](../../packages/domain/src/plans/fiches/fiche-import.schema.ts)
+et les contrôles de titre et de dates appartiennent à `@tet/domain/plans`.
+L'import Excel utilise ces mêmes contrôles en conservant ses erreurs actuelles.
+La [préparation commune des fiches](../../apps/backend/src/plans/ai-plan-import/prepare-fiche/prepare-fiche.rules.ts)
+reçoit les références et les compléments déjà résolus : elle fusionne les champs,
+valide les dates et complète les sous-actions sans doublon de code. Les
+sous-actions libres homonymes restent distinctes. Son contrat documentaire et
+ses diagnostics restent dans l'import ; elle ne lit ni catalogue ni base.
+L'orchestrateur Électrification garde la résolution des codes, les axes et
+sous-axes, les engagements et les règles d'indicateurs. Aucun service Nest
+générique supplémentaire n'est nécessaire.
+
+Les deux résolutions partagent le contrôle des clés de source. La distinction
+entre code et URL appartient aux règles de références existantes, qui gardent
+la validation stricte des liens. Les résolveurs Excel qui créent des tags restent
+réservés à l'étape d'écriture. Les helpers de fusion par titre et de suppression
+silencieuse des doublons ne conviennent pas à la préparation par code et clé documentaire.
+
 Le [contrat métier des engagements](../../packages/domain/src/plans/plans/engagement.schema.ts)
 appartient au domaine `plans` et est exporté par `@tet/domain/plans`.
 `Engagement` décrit un code et ses cibles `EngagementCible` (clé, valeur,
@@ -159,13 +177,15 @@ les axes et sous-axes explicites, les fiches et leurs sous-actions, les codes
 ou URL, les indicateurs avec unité, résultat daté et objectif daté. Chaque
 élément garde une clé de source et sa localisation dans le document pour les
 erreurs et le rattachement parent-enfant. Ni le titre ni sa numérotation ne
-servent de clé technique.
+servent de clé technique. Dans le résultat préparé, `fiches` contient les
+fiches actions décrites dans le document ; `fichesEngagements` contient celles
+issues des engagements E03/E12.
 
-L'extraction lit uniquement le tableau A et les fiches B renseignées. Elle
-exclut le reste de la convention, les instructions du modèle et la fiche
-fictive de la section C. Elle préserve les destinations des hyperliens avant
-l'aplatissement du document. Une URL n'est jamais récupérée par une requête
-réseau : elle est analysée puis résolue par les services TeT.
+L'extraction lit uniquement le tableau A et les fiches actions renseignées
+dans la section B. Elle exclut le reste de la convention, les instructions du
+modèle et la fiche fictive de la section C. Elle préserve les destinations des
+hyperliens avant l'aplatissement du document. Une URL n'est jamais récupérée
+par une requête réseau : elle est analysée puis résolue par les services TeT.
 
 Le LLM peut extraire les champs, mais ne choisit pas les identifiants TeT et
 ne rapproche pas les éléments par ressemblance. Une étape déterministe :
@@ -214,7 +234,7 @@ Versionner un catalogue limité à ce besoin : axes, sous-axes, engagements,
 actions et sous-actions de référence, indicateurs ou jalons oui/non associés.
 Le fichier versionné dans Git fait référence pour les correspondances exécutées
 par l'import ; les définitions d'indicateurs font référence dans le catalogue TeT
-existant. La [configuration Électrification](../../packages/domain/src/plans/plans/electrification-engagements.config.ts),
+existant. La [configuration Électrification](../../packages/domain/src/plans/plans/electrification.config.ts),
 son schéma et son type appartiennent à `@tet/domain/plans`, comme la
 [configuration du diagnostic PCAET](../../packages/domain/src/demarches/pcaet/diagnostic/demarche-pcaet-diagnostic.config.ts).
 Ils sont réutilisables par les parcours du plan sans dépendre du backend
@@ -278,6 +298,12 @@ Un fichier de données validé et livré avec le backend suffit ; il ne s'agit
 pas de construire une bibliothèque de modèles administrable. Les définitions
 d'indicateurs restent dans le catalogue existant, alimenté par l'équipe data.
 Les associations sont explicites, sans appel à Grist ou Notion pendant un import.
+Le lot 2B2b étend cette configuration aux fiches actions sous la version
+`electrification-v2`, commune aux engagements et aux fiches. Les correspondances
+réelles d'actions, de sous-actions et d'indicateurs des fiches actions restent
+indisponibles (`null`) tant que leur validation métier n'est pas livrée.
+Une liste vide désigne au contraire un catalogue livré sans entrée. Le résolveur
+distingue ainsi une configuration manquante d'un code documentaire inconnu.
 Le mapping valide aussi les unités et périodicités : pour un indicateur à
 deux unités, seule l'unité principale retenue par le métier est importée,
 conformément à l'esquisse. Une fréquence "Ponctuelle" du catalogue ne devient
@@ -301,7 +327,7 @@ ne figurent pas dans le Word et ne sont pas affichés à la collectivité.
 | 11. Agriculture | E11 |
 
 Créer une seule fois chaque axe demandé par un engagement retenu ou par
-une fiche B. Un engagement retenu crée son axe même sans fiche ; une fiche
+une fiche action. Un engagement retenu crée son axe même sans fiche ; une fiche
 peut créer un axe numéroté même si aucun engagement de cet axe n'est retenu,
 conformément à l'[arbitrage du PM du 3 novembre](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d781f6a99c001c3befc4d7).
 Ce dernier cas est valide et ne demande pas de corriger l'annexe. Il ne crée
@@ -324,7 +350,7 @@ sans tables de provenance supplémentaires.
 
 Conserver les codes d'engagement sélectionnés dans A sur l'axe racine du plan.
 Cette liste distingue E01 et E02 malgré leur axe commun et n'est pas enrichie
-par les fiches B. Elle ne constitue pas un registre de convention : aucune
+par les fiches actions. Elle ne constitue pas un registre de convention : aucune
 table d'engagement, API d'édition ou lecture dédiée n'est créée. Les DTO publics
 ordinaires et les accès directs en base ne permettent pas d'attribuer ces
 références ; l'import les renseigne après résolution et contrôle des droits.
@@ -408,7 +434,7 @@ ni les valeurs des autres sources.
 Les codes Grist `6-a` et `6-b` désignent des "points de recharge", avec un seuil
 de 150 kW pour `6-b`. La confirmation des indicateurs TeT d'E07 ne valide pas
 leur équivalence avec ces codes : cette correspondance reste à établir pour
-les fiches B qui les citent. Ne pas convertir des points en bornes ni ajouter
+les fiches actions qui les citent. Ne pas convertir des points en bornes ni ajouter
 ce seuil aux cibles de l'annexe.
 
 Présenter la source et la cible de l'annexe à partir des lectures d'indicateurs
@@ -443,6 +469,9 @@ leur rétention ordinaire, sans garantie d'archivage permanent de la convention.
 
 Le compte rendu signale les données de l'annexe non appliquées aux objets
 désignés par URL, pour rendre cette conservation explicite.
+Si une URL et un code ou complément catalogue désignent le même indicateur
+dans une fiche action, conserver un seul lien, sans valeurs à appliquer. La résolution
+compare les identités TeT, pas seulement les chaînes de référence.
 
 Le profil importe les titres, descriptions, objectifs textuels, structures
 pilotes, partenaires, dates, statuts et sous-actions. Les données de l'annexe
@@ -451,6 +480,12 @@ Les codes identifient les sous-actions de référence ; une même sous-action
 n'est pas ajoutée deux fois depuis le catalogue et l'annexe. Les moyens humains
 ne sont repris que s'ils sont effectivement renseignés, sans les déduire du
 nom d'une structure pilote. Aucun compte utilisateur n'est créé depuis ces noms.
+Le contrat du lot 2B2b résout ces codes dans les sous-actions de l'action de
+référence. Le rattachement d'une sous-action codée à une fiche libre reste à
+préciser avec les associations du catalogue, avant ouverture ; aucune recherche
+globale par libellé n'est ajoutée. Vérifier les dates après fusion des champs
+documentaires et de référence : la date de début ne peut pas dépasser la date
+de fin.
 
 Pour les nouveaux indicateurs personnalisés, la V4 fournit un résultat avec
 son année et un objectif à 2030. Utiliser la périodicité annuelle de ces données ;
@@ -583,7 +618,7 @@ Ces critères décrivent les tests à réaliser pendant l'implémentation, pas d
 tests déjà exécutés :
 
 - Une convention V4 avec modèle vide et exemple fictif n'importe que les vraies
-  fiches B ; un axe retenu sans fiche est créé ; E01/E02 partagent un axe.
+  fiches actions ; un axe retenu sans fiche est créé ; E01/E02 partagent un axe.
 - Une fiche sous un axe numéroté sans engagement retenu crée cet axe sans
   erreur, engagement ni cible supplémentaires ; un axe non demandé reste absent.
 - Les codes, URL affichées ou masquées derrière un lien et clés de parent

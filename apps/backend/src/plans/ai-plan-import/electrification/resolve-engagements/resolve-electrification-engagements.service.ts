@@ -7,10 +7,10 @@ import {
   IndicateurDetaille,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import { electrificationEngagementsConfigSchema } from '@tet/domain/plans';
+import { electrificationConfigSchema } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'node:assert';
-import { ELECTRIFICATION_ENGAGEMENTS_CONFIG } from '../electrification.constants';
+import { ELECTRIFICATION_CONFIG } from '../electrification.constants';
 import {
   ElectrificationEngagementsErrorCode,
   electrificationEngagementsErrors,
@@ -31,7 +31,7 @@ export class ResolveElectrificationEngagementsService {
   );
 
   constructor(
-    @Inject(ELECTRIFICATION_ENGAGEMENTS_CONFIG)
+    @Inject(ELECTRIFICATION_CONFIG)
     private readonly catalogue: unknown,
     private readonly permissions: PermissionService,
     private readonly indicateurs: ListIndicateursService
@@ -71,9 +71,7 @@ export class ResolveElectrificationEngagementsService {
     }
 
     // Une configuration incomplète ne doit empêcher ni le démarrage ni l'import générique.
-    const catalogue = electrificationEngagementsConfigSchema.safeParse(
-      this.catalogue
-    );
+    const catalogue = electrificationConfigSchema.safeParse(this.catalogue);
     if (
       !catalogue.success ||
       catalogue.data.version !== draft.catalogueVersion
