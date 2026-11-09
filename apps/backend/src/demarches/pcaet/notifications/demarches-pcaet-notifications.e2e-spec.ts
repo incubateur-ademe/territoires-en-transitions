@@ -509,15 +509,36 @@ describe('Notifications des démarches PCAET', () => {
 
       await notificationsService.sendPendingNotifications();
 
-      const miennes = await db.db
-        .select({
-          id: notificationTable.id,
-          status: notificationTable.status,
-          sentToEmail: notificationTable.sentToEmail,
-          notifiedOn: notificationTable.notifiedOn,
-        })
-        .from(notificationTable)
-        .where(inArray(notificationTable.sendTo, mesDestinataires));
+      // La DGEC est unique : son agent reçoit aussi les transmissions des
+      // dossiers d'autres specs en parallèle. On ne compte que ce dossier-ci.
+      const mesDemandes = new Set([
+        demandeDrealId,
+        demandeRegionId,
+        demandeNationaleId,
+        demandeDgecId,
+      ]);
+      const miennes = (
+        await db.db
+          .select({
+            id: notificationTable.id,
+            status: notificationTable.status,
+            sentToEmail: notificationTable.sentToEmail,
+            notifiedOn: notificationTable.notifiedOn,
+            notificationData: notificationTable.notificationData,
+          })
+          .from(notificationTable)
+          .where(inArray(notificationTable.sendTo, mesDestinataires))
+      ).filter(({ notificationData }) => {
+        const data = notificationData as {
+          demandeAvisId?: number;
+          demarcheId?: number;
+        };
+        return (
+          data.demarcheId === demarcheId ||
+          (data.demandeAvisId !== undefined &&
+            mesDemandes.has(data.demandeAvisId))
+        );
+      });
 
       // Transmission : les deux agents DREAL, l'agent du conseil régional et
       // celui de la DGEC (4). Avis du conseil régional : pilote et

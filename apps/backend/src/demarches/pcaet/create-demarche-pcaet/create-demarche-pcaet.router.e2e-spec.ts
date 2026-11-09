@@ -1,5 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectiviteAndUser,
+  cleanupCollectiviteDemarches,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -18,6 +21,7 @@ import {
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
+import { onTestFinished } from 'vitest';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import {
@@ -290,6 +294,13 @@ describe('Créer une démarche PCAET', () => {
           regionCode,
           nom: 'DREAL test saisine hors plateforme',
         },
+      });
+      // Une DREAL par région : laissée en base, elle prendrait la région fixe
+      // d'un autre spec au run suivant.
+      onTestFinished(async () => {
+        await cleanupCollectiviteDemarches(db, fixture.collectivite.id);
+        await fixture.cleanup();
+        await dreal.cleanup();
       });
 
       const demarche = await caller.demarches.pcaet.create({
