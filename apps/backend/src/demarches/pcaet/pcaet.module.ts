@@ -129,6 +129,7 @@ import { CollectiviteContactsRepository } from './shared/collectivite-contacts.r
 import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
 import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
+import { DemarchePcaetPerimetreRepository } from './shared/demarche-pcaet-perimetre.repository';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
 import { DemarchePcaetSourceMetadonneeRepository } from './shared/demarche-pcaet-source-metadonnee.repository';
@@ -195,6 +196,7 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     DownloadAvisPiecesService,
     ListAvisPiecesService,
     DemarchePcaetPilotesRepository,
+    DemarchePcaetPerimetreRepository,
     DemarchePcaetGuardsService,
     DemarchePcaetTransitionService,
     DemarchePcaetTrackingService,

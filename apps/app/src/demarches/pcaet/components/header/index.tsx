@@ -12,6 +12,7 @@ import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { JSX, ReactNode } from 'react';
 import { PcaetContactsButton } from '../contacts.button';
+import { CollectivitesCouvertesItem } from './collectivites-couvertes-item';
 import { DateLancementField } from './date-lancement-field';
 import { DateModificationItem } from './date-modification-item';
 import { DepotDateItem } from './depot-date-item';
@@ -86,6 +87,11 @@ export const DemarchePcaetHeader = ({
               readOnly={!pilotesModifiables}
               onChange={(pilotes) => onUpdate({ pilotes })}
             />
+            {demarche.collectivitesCouvertes.length > 0 ? (
+              <CollectivitesCouvertesItem
+                collectivitesCouvertes={demarche.collectivitesCouvertes}
+              />
+            ) : null}
             <MetadataSeparator />
             <ObligationField
               obligation={demarche.obligation}

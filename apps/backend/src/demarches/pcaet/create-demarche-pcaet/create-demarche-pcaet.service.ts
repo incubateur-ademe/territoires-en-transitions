@@ -6,6 +6,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import {
   DEMARCHE_PCAET_DEFAULT_TITRE,
+  estNatureSupraPcaet,
   getDemarchePcaetInitialStatus,
   getObligationInitiale,
   type DemarchePcaet,
@@ -13,6 +14,7 @@ import {
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
 import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.service';
+import { DemarchePcaetPerimetreRepository } from '../shared/demarche-pcaet-perimetre.repository';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
@@ -41,6 +43,7 @@ export class CreateDemarchePcaetService {
     private readonly guardsService: DemarchePcaetGuardsService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
     private readonly instructeursRepository: PcaetInstructeursRepository,
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository,
     private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
@@ -75,6 +78,18 @@ export class CreateDemarchePcaetService {
         );
       }
 
+      const collectivitesCouvertesIds = input.collectivitesCouvertesIds ?? [];
+      if (
+        collectivitesCouvertesIds.length > 0 &&
+        !(await this.isPerimetreValide(
+          input.collectiviteId,
+          collectivitesCouvertesIds,
+          transaction
+        ))
+      ) {
+        return failure(CreateDemarchePcaetErrorEnum.PERIMETRE_INVALIDE);
+      }
+
       const obligation =
         input.obligation ??
         getObligationInitiale(
@@ -105,6 +120,15 @@ export class CreateDemarchePcaetService {
         return failure(CreateDemarchePcaetErrorEnum[insertResult.error]);
       }
       const demarcheId = insertResult.data.id;
+
+      await this.perimetreRepository.insertCollectivitesCouvertes(
+        {
+          demarcheId,
+          collectiviteIds: collectivitesCouvertesIds,
+          userId: user.id,
+        },
+        transaction
+      );
 
       // La démarche part avec la palette complète de thématiques de vulnérabilité :
       // le rattachement devient explicite, et en retirer un ne touche plus que
@@ -187,5 +211,29 @@ export class CreateDemarchePcaetService {
       });
     }
     return result;
+  }
+
+  /**
+   * Seul un Supra couvre des EPCI, et seulement ses membres d'après BANATIC :
+   * la liste à cocher est la seule source, sans ajout hors liste.
+   */
+  private async isPerimetreValide(
+    porteurId: number,
+    collectivitesCouvertesIds: number[],
+    tx: Transaction
+  ): Promise<boolean> {
+    const natureInsee = await this.perimetreRepository.getNatureInsee(
+      porteurId,
+      tx
+    );
+    if (!estNatureSupraPcaet(natureInsee)) {
+      return false;
+    }
+    const candidats = new Set(
+      (await this.perimetreRepository.listEpciCandidats(porteurId, tx)).map(
+        (candidat) => candidat.id
+      )
+    );
+    return collectivitesCouvertesIds.every((id) => candidats.has(id));
   }
 }
