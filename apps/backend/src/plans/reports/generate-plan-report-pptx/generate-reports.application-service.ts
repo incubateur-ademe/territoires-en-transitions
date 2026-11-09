@@ -306,6 +306,7 @@ export class GenerateReportsApplicationService {
           reportName,
           templateConfig,
           request,
+          userId,
         });
       if (!buildPresentationResult.success) {
         return this.handleReportGenerationError(

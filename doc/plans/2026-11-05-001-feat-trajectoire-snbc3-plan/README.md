@@ -21,7 +21,7 @@ kind: index
 6. [Généralisation](./lot-6-generalisation.md)
 7. [Retrait de la SNBC 2](./lot-7-retrait-snbc2.md)
 
-Indépendant des lots : [mise à jour des communes et des EPCI de TeT au COG 2026](./complement-mise-a-jour-collectivites-cog-2026.md).
+Indépendant des lots : [import du COG pour les communes et les EPCI de TeT](./complement-mise-a-jour-collectivites-cog-2026.md).
 
 Quand livrer chaque lot : voir « Ordre de livraison ».
 
@@ -81,9 +81,10 @@ L'année de référence passe de 2015 (SNBC 2) à 2021 (SNBC 3). Les données vi
 
 1. **Source `snbc3` distincte de `snbc`** (ADR, §2 ; détail au lot 1). La séparation rend la cohabitation explicite : pas d'ambiguïté de « dernier millésime » entre SNBC 2 et SNBC 3, et la SNBC 2 se retire par source.
 2. **Les lecteurs « trajectoire » basculent sur `snbc3`, et les traitements génériques traitent les deux sources de la même façon** (détail aux lots 1, 2 et 4).
-   - Lecteurs trajectoire (page Trajectoire, leviers, PPT, export, puis `progression_snbc` et score indicatif à la généralisation) : ils ne lisent que `snbc3`, qui n'a qu'un millésime en base (décision 6).
+   - Lecteurs trajectoire (page Trajectoire, leviers, export, puis `progression_snbc` et score indicatif à la généralisation) : ils ne lisent que `snbc3`, qui n'a qu'un millésime en base (décision 6).
    - Exclusions génériques (moyenne des collectivités, drapeau « open data ») : `snbc3` est exclue partout où `snbc` l'est déjà, au moyen d'une constante `SOURCES_TRAJECTOIRE = ['snbc', 'snbc3']`.
    - Fiches indicateurs : `snbc3` est une couche « trajectoire » à part entière, affichée à côté de `snbc` pendant la transition.
+   - Graphes des données territoriales du rapport PPT : comme les fiches indicateurs, ils montrent `snbc` et `snbc3` avec le flag (décidé le 10/11 : l'app et l'export présentent les mêmes données).
 3. **Correspondance et conventions d'import** : la table et les règles sont dans le plan du lot 1. Deux nouveaux indicateurs, `cae_1.ih` et `cae_2.kh` (construction), sont créés par le catalogue. `cae_2.m` sera traité à part, si le produit veut le garder sans sous-secteurs.
 4. **Export (décidé le 06/11, ADR §3)** : TeT sert le xlsx standalone du commit importé, tel quel ou ouvert sur le territoire (détail au lot 5).
 5. **Feature flag `is-trajectoire-snbc3-enabled` (décidé le 06/11, ADR §4)**. On s'appuie sur les flags PostHog existants : `useIsFeatureFlagEnabled` côté front, `TrackingService.isFeatureEnabled(clé, userId, collectiviteId)` côté back. Sans utilisateur (anonyme, API, service role), le flag vaut `false`.
@@ -126,7 +127,7 @@ L'année de référence passe de 2015 (SNBC 2) à 2021 (SNBC 3). Les données vi
 - [ ] Procédures `trajectoires.snbc3.checkStatus` et `trajectoires.snbc3.get`, réservées aux utilisateurs qui ont le flag.
 - [ ] Statuts de disponibilité (`disponible`, `absent_du_millesime`, `commune_non_supportee`, `supra_non_supporte`).
 - [ ] Leviers : chemin SNBC 3 avec le flag (base 2021 lue dans `snbc3`, sans `objectifCommentaire`) ; cas de Paris et des DROM.
-- [ ] Export PPT : source choisie selon le flag.
+- [ ] Export PPT : avec le flag, SNBC 2 et SNBC 3 sur les graphes des données territoriales, comme dans l'app ; sans le flag, SNBC 2 seule.
 
 ## Lot 3 : page Trajectoire
 

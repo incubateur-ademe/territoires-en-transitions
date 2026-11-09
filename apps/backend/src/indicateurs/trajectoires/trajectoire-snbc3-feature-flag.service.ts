@@ -23,24 +23,43 @@ export class TrajectoireSnbc3FeatureFlagService {
     user: AuthUser | null | undefined,
     collectiviteId: number
   ): Promise<boolean> {
-    return this.trackingService.isFeatureEnabled(
-      'is-trajectoire-snbc3-enabled',
+    return this.isTrajectoireSnbc3EnabledForUserId(
       user && isAuthenticatedUser(user) ? user.id : undefined,
       collectiviteId
     );
   }
 
-  /** Retire la source `snbc3` d'une liste quand le flag est inactif. */
+  /** Pour les traitements en arrière-plan, qui n'ont que l'id de l'utilisateur (rapport PPT). */
+  isTrajectoireSnbc3EnabledForUserId(
+    userId: string | undefined,
+    collectiviteId: number
+  ): Promise<boolean> {
+    return this.trackingService.isFeatureEnabled(
+      'is-trajectoire-snbc3-enabled',
+      userId,
+      collectiviteId
+    );
+  }
+
+  /**
+   * Retire la source `snbc3` d'une liste quand le flag est inactif.
+   * `isEnabled` remplace l'évaluation du flag quand l'appelant l'a déjà faite
+   * (traitement en arrière-plan sans utilisateur).
+   */
   async filterSourcesSnbc3<T>(
     elements: T[],
     getSourceId: (element: T) => string | null | undefined,
     user: AuthUser | null | undefined,
-    collectiviteId: number
+    collectiviteId: number,
+    isEnabled?: boolean
   ): Promise<T[]> {
     if (!elements.some((e) => getSourceId(e) === IndicateurSourceEnum.SNBC3)) {
       return elements;
     }
-    if (await this.isTrajectoireSnbc3Enabled(user, collectiviteId)) {
+    if (
+      isEnabled ??
+      (await this.isTrajectoireSnbc3Enabled(user, collectiviteId))
+    ) {
       return elements;
     }
     return elements.filter(

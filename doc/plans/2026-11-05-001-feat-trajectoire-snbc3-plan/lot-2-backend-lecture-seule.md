@@ -70,7 +70,10 @@ Dossier : `apps/backend/src/indicateurs/trajectoire-leviers/`. Avec le flag, `ge
 
 ## PPT
 
-`plans/reports/generate-plan-report-pptx/ppt-builder.service.ts` lit `IndicateurSourceEnum.SNBC3` si le flag est actif pour l'utilisateur et la collectivité du plan, et `SNBC` sinon.
+`plans/reports/generate-plan-report-pptx/ppt-builder.service.ts` : si le flag est actif pour l'auteur du rapport et la collectivité du plan, les graphes `cae_1.a` et `cae_2.a` montrent `SNBC` et `SNBC3`, comme les fiches indicateurs de l'app (lot 4) ; sinon, `SNBC` seule. Décidé le 10/11 : l'app et l'export présentent les mêmes données.
+
+- Le rapport est généré en arrière-plan, sans utilisateur : la décision du flag est transmise à la lecture des valeurs (`trajectoireSnbc3Enabled` du contexte de confiance), sinon `filterSourcesSnbc3` retirerait les valeurs `snbc3`.
+- Les deux séries sont distinguées par leur libellé (« SNBC 2 territorialisée » quand `snbc3` est sur le graphe, « SNBC 3 territorialisée ») et leur couleur.
 
 ## Hors de ce lot
 

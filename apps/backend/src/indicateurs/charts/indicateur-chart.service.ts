@@ -123,6 +123,11 @@ export class IndicateurChartService {
       collectiviteAvecType?: CollectiviteAvecType;
       personnalisationReponses?: PersonnalisationReponsesPayload;
       chartSize?: { width: number; height: number };
+      /**
+       * Décision du flag SNBC 3 prise par l'appelant (rapport PPT, sans
+       * utilisateur). Sans elle, les valeurs `snbc3` sont retirées.
+       */
+      trajectoireSnbc3Enabled?: boolean;
     },
     user?: AuthUser
   ): Promise<{
@@ -142,6 +147,7 @@ export class IndicateurChartService {
       includeMoyenne,
       includeSegmentation,
       chartSize,
+      trajectoireSnbc3Enabled,
     } = args;
 
     if (!indicateurId && !identifiantReferentiel) {
@@ -178,7 +184,7 @@ export class IndicateurChartService {
             indicateurIds: [indicateur.id],
             sources: sources?.map((s) => s.sourceId),
           },
-          { isUserTrusted: true }
+          { isUserTrusted: true, trajectoireSnbc3Enabled }
         )
         .then((result) => result.indicateurs[0]),
       // Conditionally fetch reference valeurs
