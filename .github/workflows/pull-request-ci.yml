@@ -62,3 +62,15 @@ jobs:
       contents: read
       packages: write # Prepared test database image.
     secrets: inherit
+
+  # "ci / status": skipped CI (stack covered by a descendant) passes, a failed
+  # or cancelled one fails. Not published when select-stack-tip is skipped
+  # (draft, title/body edit), so it never masks an earlier result.
+  ci-status:
+    name: ci
+    needs: [select-stack-tip, ci]
+    if: ${{ always() && needs.select-stack-tip.result != 'skipped' }}
+    uses: ./.github/workflows/_ci-status.yml
+    with:
+      failed: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+    permissions: {}

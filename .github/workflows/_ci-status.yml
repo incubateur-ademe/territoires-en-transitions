@@ -1,0 +1,23 @@
+# Single required check for the ruleset ("ci / status").
+# Lives in a reusable workflow so a skipped caller publishes no status check:
+# a skipped check would count as passing and could mask a failed one.
+name: _CI status
+
+permissions: {}
+
+on:
+  workflow_call:
+    inputs:
+      failed:
+        description: Whether a needed job failed or was cancelled
+        required: true
+        type: boolean
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - if: ${{ inputs.failed }}
+        run: exit 1
