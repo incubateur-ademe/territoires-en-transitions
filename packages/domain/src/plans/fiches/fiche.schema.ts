@@ -30,13 +30,18 @@ export const fichePlanSchema = z.object({
 
 export type FichePlan = z.infer<typeof fichePlanSchema>;
 
+export const FICHE_TITRE_MAX_LENGTH = 300;
+
 export const ficheSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
   parentId: z.number().nullable(),
   titre: z
     .string()
-    .max(300, 'Le titre ne doit pas dépasser 300 caractères')
+    .max(
+      FICHE_TITRE_MAX_LENGTH,
+      `Le titre ne doit pas dépasser ${FICHE_TITRE_MAX_LENGTH} caractères`
+    )
     .nullable()
     .describe('Titre'),
   description: z

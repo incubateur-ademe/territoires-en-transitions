@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { generateTitle } from '@/app/utils/generate-title';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { FICHE_TITRE_MAX_LENGTH, FicheWithRelations } from '@tet/domain/plans';
 import { cn, TableCell, TableCellTextarea } from '@tet/ui';
 import { isEqual } from 'es-toolkit';
 import { useCanEditSousAction } from '../../data/use-can-edit-sous-action';
@@ -40,6 +40,7 @@ export const SousActionTitleCell = ({ sousAction }: Props) => {
           <TableCellTextarea
             value={value ?? undefined}
             onChange={(e) => setValue(e.target.value)}
+            maxLength={FICHE_TITRE_MAX_LENGTH}
             closeEditing={() => openState.setIsOpen(false)}
             className="font-medium text-primary-9"
             placeholder="Saisir un titre"
