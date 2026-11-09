@@ -51,5 +51,5 @@ Ces tests utilisent uniquement des événements et résultats synthétiques,
 sans GitHub, base de données ou fournisseur LLM. Ils sont aussi exécutés
 au début du job `analyze-affected`.
 
-Voir la [décision et ses compromis](../adr/0023-ci-progressive-stacks-natives.md)
+Voir la [décision et ses compromis](../doc/adr/0023-ci-progressive-stacks-natives.md)
 et la [documentation GitHub](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/optimizing-ci-for-stacked-pull-requests).
