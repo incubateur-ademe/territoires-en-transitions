@@ -218,6 +218,25 @@ export const backendConfigurationSchema = z
       .describe(
         'Identifiant du dossier Google Drive pour le stockage des résultats de calcul de la trajectoire SNBC'
       ),
+    // Facultatives : seul l'import manuel de la trajectoire SNBC 3 s'en sert.
+    TRAJECTOIRE_SNBC3_REPOSITORY_URL: z
+      .url()
+      .optional()
+      .describe(
+        'URL du dépôt GitLab snbc3 dont l’import de la trajectoire SNBC 3 lit les releases'
+      ),
+    TRAJECTOIRE_SNBC3_GITLAB_TOKEN: z
+      .string()
+      .optional()
+      .describe(
+        'Jeton GitLab (read_repository) pour lire les releases du dépôt privé snbc3 lors de l’import de la trajectoire SNBC 3'
+      ),
+    TRAJECTOIRE_SNBC3_LOCAL_REPOSITORY: z
+      .string()
+      .optional()
+      .describe(
+        'Chemin d’un clone local du dépôt snbc3 ; s’il est défini, l’import SNBC 3 lit les releases dans ce clone plutôt que sur GitLab (dev)'
+      ),
     BREVO_API_KEY: z
       .string()
       .min(1)

@@ -447,6 +447,9 @@ importers:
       html2canvas:
         specifier: 1.4.1
         version: 1.4.1
+      hyparquet:
+        specifier: 1.31.5
+        version: 1.31.5
       image-size:
         specifier: ^2.0.4
         version: 2.0.4
@@ -841,6 +844,9 @@ importers:
       htm:
         specifier: 3.1.1
         version: 3.1.1
+      hyparquet-writer:
+        specifier: 0.17.0
+        version: 0.17.0
       ink:
         specifier: 7.1.0
         version: 7.1.0(@types/react@19.2.3)(react@19.2.3)
@@ -9930,6 +9936,12 @@ packages:
   human-signals@8.0.1:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
+
+  hyparquet-writer@0.17.0:
+    resolution: {integrity: sha512-GZ4QeopztjSli/Sz1dSOP/TrSKtwG2ydP2yuPMxeiZnho+PCXF7x+wx8OIVtpQn8rcv559IH1EJMHnTbv0sn+Q==}
+
+  hyparquet@1.31.5:
+    resolution: {integrity: sha512-KPVfaxW8xOiO2/4fjeiBfFNEXhGVw9tfcb9ha2iNZdJ3J/yBjEwIeAnTyyuhllFFTb9YO9wg0DfRAOnm6KCvBg==}
 
   hyphen@1.14.1:
     resolution: {integrity: sha512-kvL8xYl5QMTh+LwohVN72ciOxC0OEV79IPdJSTwEXok9y9QHebXGdFgrED4sWfiax/ODx++CAMk3hMy4XPJPOw==}
@@ -24819,6 +24831,12 @@ snapshots:
   human-signals@5.0.0: {}
 
   human-signals@8.0.1: {}
+
+  hyparquet-writer@0.17.0:
+    dependencies:
+      hyparquet: 1.31.5
+
+  hyparquet@1.31.5: {}
 
   hyphen@1.14.1: {}
 

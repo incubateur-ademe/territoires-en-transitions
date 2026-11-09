@@ -335,6 +335,53 @@ export class IndicateurValeursRepository {
       .where(and(...conditions));
   }
 
+  /**
+   * Valeurs saisies ou importées (hors totaux calculés) d'une métadonnée,
+   * réduites à ce qu'il faut pour les comparer à un import et supprimer celles
+   * qui n'y sont plus.
+   */
+  listMetadonneeSourceValeurs(
+    {
+      collectiviteIds,
+      metadonneeId,
+    }: { collectiviteIds: number[]; metadonneeId: number },
+    tx: Transaction
+  ) {
+    return tx
+      .select({
+        id: indicateurValeurTable.id,
+        collectiviteId: indicateurValeurTable.collectiviteId,
+        indicateurId: indicateurValeurTable.indicateurId,
+        dateValeur: indicateurValeurTable.dateValeur,
+        periodicite: indicateurValeurTable.periodicite,
+        objectif: indicateurValeurTable.objectif,
+        objectifCommentaire: indicateurValeurTable.objectifCommentaire,
+      })
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          inArray(indicateurValeurTable.collectiviteId, collectiviteIds),
+          eq(indicateurValeurTable.metadonneeId, metadonneeId),
+          eq(indicateurValeurTable.calculAuto, false)
+        )
+      );
+  }
+
+  async listPrecisions(
+    indicateurIds: number[],
+    tx: Transaction
+  ): Promise<Map<number, number>> {
+    if (!indicateurIds.length) return new Map();
+    const rows = await tx
+      .select({
+        id: indicateurDefinitionTable.id,
+        precision: indicateurDefinitionTable.precision,
+      })
+      .from(indicateurDefinitionTable)
+      .where(inArray(indicateurDefinitionTable.id, indicateurIds));
+    return new Map(rows.map(({ id, precision }) => [id, precision]));
+  }
+
   async deleteByIds(
     ids: number[],
     tx?: Transaction
