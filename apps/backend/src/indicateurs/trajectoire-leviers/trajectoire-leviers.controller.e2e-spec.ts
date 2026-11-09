@@ -4,6 +4,7 @@ import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import request from 'supertest';
 import { expect } from 'vitest';
+import { mockTrajectoireSnbc3Flag } from '../trajectoires/snbc3/trajectoire-snbc3.test-fixture';
 import { addTestTrajectoireLeviers } from './trajectoire-leviers.test-fixture';
 
 describe('Trajectoire Leviers Controller', () => {
@@ -12,9 +13,12 @@ describe('Trajectoire Leviers Controller', () => {
   let fixture: Awaited<ReturnType<typeof addTestTrajectoireLeviers>>;
   let epciSansTrajectoire: Awaited<ReturnType<typeof addTestCollectivite>>;
   let cleanupUser: () => Promise<void>;
+  let restoreFlag: () => void;
 
   beforeAll(async () => {
     app = await getTestApp();
+    // Chemin SNBC 2 : sans le flag SNBC 3.
+    restoreFlag = mockTrajectoireSnbc3Flag(app, false);
     const db = await getTestDatabase(app);
     const testUserResult = await addTestUser(db);
     cleanupUser = testUserResult.cleanup;
@@ -58,6 +62,7 @@ describe('Trajectoire Leviers Controller', () => {
   });
 
   afterAll(async () => {
+    restoreFlag?.();
     await fixture?.cleanup();
     await epciSansTrajectoire?.cleanup();
     await cleanupUser?.();

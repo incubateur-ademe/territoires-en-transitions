@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -18,7 +19,8 @@ describe('TrajectoireLeviersService', () => {
           token === ListCollectivitesService ||
           token === PermissionService ||
           token === ManageIndicateurValeursService ||
-          token === TrajectoiresDataService
+          token === TrajectoiresDataService ||
+          token === TrajectoireSnbc3FeatureFlagService
         ) {
           return {};
         }
