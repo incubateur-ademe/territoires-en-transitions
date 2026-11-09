@@ -115,6 +115,11 @@ export type DemarchePcaet = DemarcheBase & {
    * l'instruction. Calculé côté serveur, faux par défaut.
    */
   demo: boolean;
+  /**
+   * L'utilisateur lit la démarche sans pouvoir l'éditer : membre d'un EPCI que
+   * couvre le dépôt d'un Supra. Rien ne s'y écrit, aucune transition ne s'offre.
+   */
+  lectureSeule: boolean;
 };
 
 /**

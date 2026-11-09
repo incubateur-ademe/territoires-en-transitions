@@ -1,5 +1,9 @@
 import * as z from 'zod/mini';
 import type { CollectiviteNatureType } from '../../collectivites/collectivite-banatic-type.enum';
+import type {
+  DemarchePcaet,
+  DemarchePcaetPublic,
+} from './demarche-pcaet.schema';
 import { demarchePcaetStatusSchema } from './demarche-pcaet-status.enum.schema';
 
 /**
@@ -88,3 +92,39 @@ export type EpciCandidat = z.infer<typeof epciCandidatSchema>;
 
 /** Un EPCI couvert par le PCAET d'un Supra. */
 export type CollectiviteCouverte = { id: number; nom: string };
+
+/**
+ * Un dépôt de Supra vu par un EPCI qu'il couvre : ce que la liste de l'EPCI en
+ * affiche, et qui le porte.
+ */
+export type DemarchePcaetCouvrante = DemarchePcaetPublic & {
+  porteur: { id: number; nom: string; type: TypePorteurSupra | null };
+};
+
+/**
+ * La démarche telle que la lit un membre d'un EPCI couvert : aucune partie du
+ * dossier ne s'écrit, aucune transition n'est atteignable.
+ */
+export const toDemarchePcaetLectureSeule = (
+  demarche: DemarchePcaet
+): DemarchePcaet => {
+  const transitions = { ...demarche.transitions };
+  for (const transition of Object.keys(
+    transitions
+  ) as (keyof typeof transitions)[]) {
+    transitions[transition] = {
+      reachable: false,
+      enabled: false,
+      blockedBy: [],
+    };
+  }
+  return {
+    ...demarche,
+    amontModifiable: false,
+    avalModifiable: false,
+    contenuModifiable: false,
+    demo: false,
+    lectureSeule: true,
+    transitions,
+  };
+};

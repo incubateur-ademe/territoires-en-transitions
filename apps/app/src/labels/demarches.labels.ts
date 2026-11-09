@@ -9,6 +9,7 @@ import type {
   DemarchePcaetGuardId,
   DemarcheType,
   PCAET_DIAGNOSTIC_INDICATEURS,
+  TypePorteurSupra,
 } from '@tet/domain/demarches';
 import { plural } from '@tet/ui/labels/plural';
 
@@ -221,6 +222,19 @@ export const demarchesLabels = {
   demarcheCreerCollectivitesCouvertesAucune:
     'Aucun EPCI membre de votre structure n’est connu de la plateforme. Contactez le support pour compléter la liste.',
   demarcheEpciCandidatEnCours: 'Démarche en cours',
+  /** Badge d'un dépôt de Supra dans la liste d'un EPCI qu'il couvre. */
+  demarchePorteParType: {
+    petr: 'Porté par un PETR',
+    pole_metropolitain: 'Porté par un pôle métropolitain',
+    syndicat_mixte: 'Porté par un syndicat mixte',
+    syndicat_intercommunal: 'Porté par un syndicat intercommunal',
+  } satisfies Record<TypePorteurSupra, string>,
+  demarchePorteParAutreStructure: 'Porté par une autre structure',
+  demarcheConsulter: 'Consulter',
+  demarcheListePorteeParSupra: ({ porteur }: { porteur: string }) =>
+    `Votre PCAET est porté par ${porteur} : vous le consultez en lecture seule, ses pilotes le font avancer.`,
+  demarcheLectureSeulePorteePar: ({ porteur }: { porteur: string }) =>
+    `Ce PCAET est porté par ${porteur} pour le compte des EPCI qu’il couvre. Vous le consultez en lecture seule.`,
   /** Raison pour laquelle un EPCI membre ne peut pas être coché. */
   demarcheEpciCandidatEngage: ({
     porteur,
@@ -328,6 +342,12 @@ export const demarchesLabels = {
     `Rappel du programme d’actions ${type.nom}`,
   demarcheAvanceRappelPlanDescription:
     'Relisez le programme d’actions rattaché à la démarche.',
+  /** Titres des étapes lues en lecture seule, par un EPCI couvert. */
+  demarcheLectureDiagnosticLabel: 'Diagnostic et objectifs',
+  demarcheLectureDiagnosticDescription:
+    'Les données du diagnostic et les objectifs de la stratégie territoriale renseignés par le porteur.',
+  demarcheLecturePlanLabel: ({ type }: { type: DemarcheTypeLabels }) =>
+    `Programme d’actions ${type.nom}`,
   demarcheRappelPlanAucun:
     'Aucun programme d’actions n’est rattaché à cette démarche.',
   demarcheRappelPlanErreur: 'Le programme d’actions n’a pas pu être chargé.',

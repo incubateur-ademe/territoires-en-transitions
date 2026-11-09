@@ -19,6 +19,7 @@ import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossi
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
+import { ListDemarchesCouvrantesRouter } from './list-demarches-couvrantes/list-demarches-couvrantes.router';
 import { ListPublicDemarchesPcaetRouter } from './list-public-demarches-pcaet/list-public-demarches-pcaet.router';
 import { GetPublicDemarchePcaetRouter } from './get-public-demarche-pcaet/get-public-demarche-pcaet.router';
 import { GetPublicDiagnosticRouter } from './get-public-diagnostic/get-public-diagnostic.router';
@@ -39,6 +40,7 @@ export class PcaetRouter {
     private readonly trpc: TrpcService,
     private readonly listDemarchesPcaetRouter: ListDemarchesPcaetRouter,
     private readonly listPublicDemarchesPcaetRouter: ListPublicDemarchesPcaetRouter,
+    private readonly listDemarchesCouvrantesRouter: ListDemarchesCouvrantesRouter,
     private readonly getPublicDemarchePcaetRouter: GetPublicDemarchePcaetRouter,
     private readonly getPublicDiagnosticRouter: GetPublicDiagnosticRouter,
     private readonly listDossiersInstructionRouter: ListDossiersInstructionRouter,
@@ -74,6 +76,7 @@ export class PcaetRouter {
   router = this.trpc.mergeRouters(
     this.listDemarchesPcaetRouter.router,
     this.listPublicDemarchesPcaetRouter.router,
+    this.listDemarchesCouvrantesRouter.router,
     this.getPublicDemarchePcaetRouter.router,
     this.getPublicDiagnosticRouter.router,
     this.listDossiersInstructionRouter.router,

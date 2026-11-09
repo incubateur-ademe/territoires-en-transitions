@@ -107,6 +107,8 @@ import { ListDossiersInstructionRepository } from './list-dossiers-instruction/l
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDossiersInstructionService } from './list-dossiers-instruction/list-dossiers-instruction.service';
 import { ListDemarchesPcaetRepository } from './list-demarches-pcaet/list-demarches-pcaet.repository';
+import { ListDemarchesCouvrantesRouter } from './list-demarches-couvrantes/list-demarches-couvrantes.router';
+import { ListDemarchesCouvrantesService } from './list-demarches-couvrantes/list-demarches-couvrantes.service';
 import { ListPublicDemarchesPcaetRouter } from './list-public-demarches-pcaet/list-public-demarches-pcaet.router';
 import { ListPublicDemarchesPcaetService } from './list-public-demarches-pcaet/list-public-demarches-pcaet.service';
 import { GetPublicDemarchePcaetRouter } from './get-public-demarche-pcaet/get-public-demarche-pcaet.router';
@@ -129,6 +131,7 @@ import { CollectiviteContactsRepository } from './shared/collectivite-contacts.r
 import { DemarchePcaetAccessService } from './shared/demarche-pcaet-access.service';
 import { DemarchePcaetDiagnosticService } from './shared/demarche-pcaet-diagnostic.service';
 import { DemarchePcaetGuardsService } from './shared/demarche-pcaet-guards.service';
+import { DemarchePcaetLectureService } from './shared/demarche-pcaet-lecture.service';
 import { DemarchePcaetPerimetreRepository } from './shared/demarche-pcaet-perimetre.repository';
 import { DemarchePcaetPilotesRepository } from './shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetRefRepository } from './shared/demarche-pcaet-ref.repository';
@@ -197,6 +200,7 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     ListAvisPiecesService,
     DemarchePcaetPilotesRepository,
     DemarchePcaetPerimetreRepository,
+    DemarchePcaetLectureService,
     DemarchePcaetGuardsService,
     DemarchePcaetTransitionService,
     DemarchePcaetTrackingService,
@@ -249,6 +253,8 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     DemarchePcaetPublicAccessService,
     ListPublicDemarchesPcaetService,
     ListPublicDemarchesPcaetRouter,
+    ListDemarchesCouvrantesService,
+    ListDemarchesCouvrantesRouter,
     GetPublicDemarchePcaetService,
     GetPublicDemarchePcaetRouter,
     GetPublicDiagnosticService,

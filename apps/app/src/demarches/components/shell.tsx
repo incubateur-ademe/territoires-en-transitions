@@ -1,8 +1,9 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
-import { Event } from '@tet/ui';
+import { Alert, Event } from '@tet/ui';
 import { PropsWithChildren, useRef, useState } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
@@ -50,6 +51,9 @@ export const DemarcheShell = ({
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
   const contentRef = useRef<HTMLDivElement>(null);
   const parcours = getDemarcheParcours(demarche);
+  // Le dossier s'ouvre sous l'identifiant de son porteur : c'est la collectivité
+  // courante.
+  const { nom: porteur } = useCurrentCollectivite();
 
   const trackingSubject = toDemarcheTrackingSubject(demarche);
   const track = useDemarcheTracker(trackingSubject);
@@ -156,6 +160,13 @@ export const DemarcheShell = ({
 
       <DemarcheDetailLayout.Container>
         <DemarcheDetailLayout.Main>
+          {demarche.lectureSeule && (
+            <Alert
+              state="info"
+              title={appLabels.demarcheLectureSeulePorteePar({ porteur })}
+              className="mb-6"
+            />
+          )}
           <div ref={contentRef} className="contents">
             {children}
           </div>

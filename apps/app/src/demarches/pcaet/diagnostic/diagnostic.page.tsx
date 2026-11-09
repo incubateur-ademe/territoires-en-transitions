@@ -41,7 +41,8 @@ export const DemarchePcaetDiagnosticPage = () => {
 
   // Pendant la phase d'avis, l'écran ne sert qu'à relire le diagnostic tel
   // qu'il a été transmis. Il se rouvre après les avis, pour le dépôt final.
-  const estRappel = !demarche.contenuModifiable;
+  // Un EPCI couvert le lit, sans l'avoir transmis.
+  const estRappel = !demarche.contenuModifiable && !demarche.lectureSeule;
 
   return (
     <DemarcheShell
@@ -61,12 +62,16 @@ export const DemarchePcaetDiagnosticPage = () => {
         onRetry={() => refetchDiagnostic()}
         isReadonly={!demarche.contenuModifiable}
         title={
-          estRappel
+          demarche.lectureSeule
+            ? appLabels.demarcheLectureDiagnosticLabel
+            : estRappel
             ? appLabels.demarcheAvanceRappelDiagnosticLabel
             : appLabels.demarcheDiagnosticTitre
         }
         description={
-          estRappel
+          demarche.lectureSeule
+            ? appLabels.demarcheLectureDiagnosticDescription
+            : estRappel
             ? appLabels.demarcheAvanceRappelDiagnosticDescription
             : appLabels.demarcheDiagnosticDescription
         }

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { DemarchePcaetLectureService } from '../../shared/demarche-pcaet-lecture.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   DemarcheTypeEnum,
   type DemarcheDocumentsSnapshot,
 } from '@tet/domain/demarches';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
 import { DemarchePcaetRefRepository } from '../../shared/demarche-pcaet-ref.repository';
 import {
@@ -18,7 +17,7 @@ import { ListDemarchePcaetDocumentsInput } from './list-documents.input';
 @Injectable()
 export class ListDemarchePcaetDocumentsService {
   constructor(
-    private readonly permissionService: PermissionService,
+    private readonly lectureService: DemarchePcaetLectureService,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
   ) {}
@@ -45,14 +44,12 @@ export class ListDemarchePcaetDocumentsService {
       );
     }
 
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId: demarche.collectiviteId },
-      tx
+    // Qui édite la démarche, ou un membre d'un EPCI qu'elle couvre.
+    const lectureResult = await this.lectureService.canRead(
+      { collectiviteId: demarche.collectiviteId, demarcheId: demarche.id },
+      { user, tx }
     );
-    if (!permissionResult.success) {
+    if (!lectureResult.success) {
       return failure(ListDemarchePcaetDocumentsErrorEnum.UNAUTHORIZED);
     }
 

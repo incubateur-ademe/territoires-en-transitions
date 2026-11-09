@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { DemarchePcaetLectureService } from '../shared/demarche-pcaet-lecture.service';
 import { DemarchePlansContenuRepository } from '@tet/backend/demarches/shared/demarche-plans-contenu.repository';
 import type { DemarchePlanContenu } from '@tet/backend/demarches/shared/models/demarche-plan-contenu.dto';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';
 import { ListPlansInput } from './list-plans.input';
@@ -26,7 +25,7 @@ import { ListPlansInput } from './list-plans.input';
 export class ListPlansService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService,
+    private readonly lectureService: DemarchePcaetLectureService,
     private readonly plansContenuRepository: DemarchePlansContenuRepository
   ) {}
 
@@ -34,14 +33,12 @@ export class ListPlansService {
     { collectiviteId, demarcheId }: ListPlansInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePlanContenu[], ListPlansError>> {
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId },
-      tx
+    // Qui édite la démarche, ou un membre d'un EPCI qu'elle couvre.
+    const lectureResult = await this.lectureService.canRead(
+      { collectiviteId: collectiviteId, demarcheId: demarcheId },
+      { user, tx }
     );
-    if (!permissionResult.success) {
+    if (!lectureResult.success) {
       return failure(ListPlansErrorEnum.UNAUTHORIZED);
     }
 
