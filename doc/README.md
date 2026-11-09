@@ -2,7 +2,7 @@
 
 ## Développement
 
-- [CI des stacks GitHub natives](../.github/ci-stacks.md)
+- [CI des stacks GitHub natives](../.github/README.md#ci-des-stacks-github-natives)
 
 ## ADRs
 

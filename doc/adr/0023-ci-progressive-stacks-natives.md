@@ -61,4 +61,4 @@ partie de la recette avant activation ; les tests locaux ne la remplacent pas.
 - Un cache de runs complets demande de prouver l’identité du contenu,
   du scope et de l’environnement ; sa complexité n’est pas retenue ici.
 
-Le [guide CI](../../.github/ci-stacks.md) décrit le fonctionnement et la récupération.
+Le [guide CI](../../.github/README.md#ci-des-stacks-github-natives) décrit le fonctionnement et la récupération.
