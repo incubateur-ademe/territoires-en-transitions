@@ -21,7 +21,10 @@ type HeaderPatch = Omit<UpdateInput, 'collectiviteId' | 'demarcheId'>;
 
 const toFrontDemarche = (
   server: ServerDemarche,
-  { isFicheSecteursEnabled }: { isFicheSecteursEnabled: boolean }
+  {
+    isFicheSecteursEnabled,
+    isPcaetSupraEnabled,
+  }: { isFicheSecteursEnabled: boolean; isPcaetSupraEnabled: boolean }
 ): DemarchePcaet => ({
   id: server.id,
   collectiviteId: server.collectiviteId,
@@ -47,7 +50,9 @@ const toFrontDemarche = (
   secteursARenseignerPlanActionIds: isFicheSecteursEnabled
     ? server.secteursARenseignerPlanActionIds
     : [],
-  collectivitesCouvertes: server.collectivitesCouvertes,
+  collectivitesCouvertes: isPcaetSupraEnabled
+    ? server.collectivitesCouvertes
+    : [],
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,
@@ -106,12 +111,16 @@ export const useDemarchePcaet = (demarcheId: number) => {
   const isFicheSecteursEnabled = useIsFeatureFlagEnabled(
     'is-fiche-secteurs-enabled'
   );
+  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is_pcaet-supra_enabled');
   const demarche = useMemo(
     () =>
       serverDemarche
-        ? toFrontDemarche(serverDemarche, { isFicheSecteursEnabled })
+        ? toFrontDemarche(serverDemarche, {
+            isFicheSecteursEnabled,
+            isPcaetSupraEnabled,
+          })
         : null,
-    [serverDemarche, isFicheSecteursEnabled]
+    [serverDemarche, isFicheSecteursEnabled, isPcaetSupraEnabled]
   );
 
   const invalidateList = useCallback(

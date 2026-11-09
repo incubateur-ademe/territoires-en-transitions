@@ -12,12 +12,13 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { DemarchePcaetStatusEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
-import { onTestFinished } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
 describe('Dépôt PCAET porté par un Supra', () => {
   let app: INestApplication;
@@ -79,6 +80,23 @@ describe('Dépôt PCAET porté par un Supra', () => {
       .insert(collectiviteRelationsTable)
       .values({ id: collectivite.id, parentId: porteurId });
     return collectivite;
+  };
+
+  /** Le flag `is_pcaet-supra_enabled` est inactif pour la durée du test. */
+  const disablePcaetSupraFlag = () => {
+    const trackingService = app.get(TrackingService);
+    const isFeatureEnabled =
+      trackingService.isFeatureEnabled.bind(trackingService);
+    const spy = vi
+      .spyOn(trackingService, 'isFeatureEnabled')
+      .mockImplementation(async (feature, ...args) =>
+        feature === 'is_pcaet-supra_enabled'
+          ? false
+          : isFeatureEnabled(feature, ...args)
+      );
+    onTestFinished(() => {
+      spy.mockRestore();
+    });
   };
 
   it("ne propose aucun EPCI à une collectivité qui n'est pas un Supra", async () => {
@@ -253,5 +271,35 @@ describe('Dépôt PCAET porté par un Supra', () => {
     });
 
     expect(contexte.perimetrePrecedent).toEqual([]);
+  });
+
+  it('tant que le flag est inactif, un Supra dépose comme les autres', async () => {
+    disablePcaetSupraFlag();
+    const { porteur, caller } = await addPorteur('PETR');
+    const membre = await addMembre(porteur.id, {
+      nom: 'Membre',
+      natureInsee: 'CC',
+    });
+
+    const contexte = await caller.demarches.pcaet.getDepotContext({
+      collectiviteId: porteur.id,
+    });
+    expect(contexte).toMatchObject({
+      estSupra: false,
+      epciCandidats: [],
+      perimetrePrecedent: [],
+    });
+
+    await expect(
+      caller.demarches.pcaet.create({
+        collectiviteId: porteur.id,
+        collectivitesCouvertesIds: [membre.id],
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+
+    const demarche = await caller.demarches.pcaet.create({
+      collectiviteId: porteur.id,
+    });
+    expect(demarche.collectivitesCouvertes).toEqual([]);
   });
 });
