@@ -22,6 +22,7 @@ export * from './trajectoires/indicateur-source.enum';
 export * from './trajectoires/trajectoire-secteurs';
 export * from './trajectoires/trajectoires-carbon-sequestration-properties';
 export * from './trajectoires/types';
+export * from './trajectoires/verification-trajectoire-snbc3.rules';
 export * from './trajectoires/verification-trajectoire.rules';
 export * from './valeurs/indicateur-periodes';
 export * from './valeurs/indicateur-valeur-type.enum';
