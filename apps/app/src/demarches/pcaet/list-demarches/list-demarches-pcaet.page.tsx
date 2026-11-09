@@ -110,11 +110,16 @@ export const ListDemarchesPcaetPage = () => {
   }
 
   // La création est bloquée tant qu'une démarche est « en cours », la sienne
-  // ou le dépôt d'un Supra qui la couvre (même règle que le backend : 409).
+  // ou le dépôt d'un Supra qui la couvre (même règle que le backend : 409). Un
+  // Supra, lui, mène un dépôt par groupe d'EPCI, tant qu'un membre reste libre.
   const hasActiveDemarche = demarches.some((demarche) =>
     isDemarchePcaetEnCours(demarche.status)
   );
-  const creationBloquee = hasActiveDemarche || couvertureEnCours !== null;
+  const supraPeutDeposer =
+    depotContext?.estSupra === true &&
+    depotContext.epciCandidats.some(({ engagement }) => !engagement);
+  const creationBloquee =
+    couvertureEnCours !== null || (hasActiveDemarche && !supraPeutDeposer);
 
   return (
     <div className="flex flex-col gap-6">
@@ -134,9 +139,11 @@ export const ListDemarchesPcaetPage = () => {
                     'dd/MM/yyyy'
                   ),
                 })
-              : hasActiveDemarche
-              ? appLabels.demarcheListeCreationBloquee(PCAET_TYPE)
-              : undefined
+              : !creationBloquee
+              ? undefined
+              : depotContext?.estSupra && depotContext.epciCandidats.length > 0
+              ? appLabels.demarcheCreationBloqueeTousEngages
+              : appLabels.demarcheListeCreationBloquee(PCAET_TYPE)
           }
           onClick={() => {
             track(Event.demarches.pcaet.creerClic, { origine: 'liste' });

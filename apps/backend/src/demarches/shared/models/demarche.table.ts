@@ -13,7 +13,7 @@ import {
   type DemarchePcaetStatus,
   type DemarcheType,
 } from '@tet/domain/demarches';
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   date,
@@ -23,7 +23,6 @@ import {
   serial,
   text,
   timestamp,
-  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 /**
@@ -70,15 +69,7 @@ export const demarcheTable = pgTable(
     modifiedAt,
     modifiedBy,
   },
-  (table) => [
-    index('demarche_collectivite_id_idx').on(table.collectiviteId),
-    // Une seule démarche « en cours » par collectivité et par type.
-    uniqueIndex('demarche_active_unique')
-      .on(table.collectiviteId, table.type)
-      .where(
-        sql`status IN ('en_elaboration', 'transmis_pour_avis', 'instruit_hors_plateforme')`
-      ),
-  ]
+  (table) => [index('demarche_collectivite_id_idx').on(table.collectiviteId)]
 );
 
 export type DemarcheRow = InferSelectModel<typeof demarcheTable>;

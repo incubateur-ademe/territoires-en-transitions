@@ -12,7 +12,7 @@ import { useDemarcheAvanceSidePanel } from '@/app/demarches/components/use-avanc
 import { appLabels } from '@/app/labels/catalog';
 import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -65,15 +65,26 @@ export const CreateDemarchePcaetPage = () => {
   const { collectiviteId } = useCurrentCollectivite();
   const user = useUser();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const { mutateAsync: createDemarche } = useMutation(
-    trpc.demarches.pcaet.create.mutationOptions()
+    trpc.demarches.pcaet.create.mutationOptions({
+      // Les EPCI cochés ne le sont plus ailleurs.
+      onSuccess: () =>
+        queryClient.invalidateQueries({
+          queryKey: trpc.demarches.pcaet.getDepotContext.pathKey(),
+        }),
+    })
   );
 
   // Ce que la collectivité a le droit de déclarer : la question SCoT-AEC n'a de
   // sens que pour celles qui portent un SCoT.
+  // Toujours relu : qui est déjà engagé change avec les dépôts des autres.
   const { data: depotContext, isPending: contexteEnAttente } = useQuery(
-    trpc.demarches.pcaet.getDepotContext.queryOptions({ collectiviteId })
+    trpc.demarches.pcaet.getDepotContext.queryOptions(
+      { collectiviteId },
+      { staleTime: 0 }
+    )
   );
   const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
   // Même garde que le serveur : flag inactif, le Supra dépose sans périmètre.
@@ -83,9 +94,11 @@ export const CreateDemarchePcaetPage = () => {
     () => depotContext?.epciCandidats ?? [],
     [depotContext]
   );
-  // Un Supra sans membre disponible peut encore commencer son dépôt.
-  const perimetreRequis =
-    estSupra && epciCandidats.some(({ engagement }) => !engagement);
+  // Un Supra sans membre connu dépose comme les autres ; s'il en a, son dépôt
+  // en couvre au moins un, encore libre.
+  const perimetreRequis = estSupra && epciCandidats.length > 0;
+  const tousEngages =
+    perimetreRequis && epciCandidats.every(({ engagement }) => engagement);
   // Un EPCI couvert par le dépôt en cours d'un Supra ne commence pas le sien.
   const couvertureEnCours = isPcaetSupraEnabled
     ? depotContext?.couvertureEnCours ?? null
@@ -200,7 +213,7 @@ export const CreateDemarchePcaetPage = () => {
               </div>
               <DemarcheAvanceSidePanelButton isOpen={isOpen} onClick={toggle} />
             </div>
-            {!couvertureEnCours && (
+            {!couvertureEnCours && !tousEngages && (
               <p className="text-sm text-grey-7 mt-2">
                 {appLabels.demarcheCreerChampsObligatoiresLegende}
               </p>
@@ -217,6 +230,11 @@ export const CreateDemarchePcaetPage = () => {
                   ),
                 })}
               />
+            ) : tousEngages ? (
+              <Alert
+                state="info"
+                title={appLabels.demarcheCreationBloqueeTousEngages}
+              />
             ) : (
               <form
                 onSubmit={handleSubmit(onSubmit)}
@@ -228,6 +246,7 @@ export const CreateDemarchePcaetPage = () => {
                     name="collectivitesCouvertesIds"
                     render={({ field }) => (
                       <CollectivitesCouvertesField
+                        porteurId={collectiviteId}
                         candidats={epciCandidats}
                         value={field.value}
                         onChange={field.onChange}

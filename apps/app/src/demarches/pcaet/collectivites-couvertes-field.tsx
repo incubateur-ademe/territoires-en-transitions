@@ -62,6 +62,8 @@ const StatutDerniereDemarche = ({
 };
 
 type Props = {
+  /** Le Supra qui dépose : un membre déjà couvert par lui l'est par un autre de ses dépôts. */
+  porteurId: number;
   candidats: EpciCandidat[];
   value: number[];
   onChange: (ids: number[]) => void;
@@ -74,6 +76,7 @@ type Props = {
  * dans une démarche en cours est grisé, avec sa raison.
  */
 export const CollectivitesCouvertesField = ({
+  porteurId,
   candidats,
   value,
   onChange,
@@ -160,6 +163,8 @@ export const CollectivitesCouvertesField = ({
                       candidat.engagement
                         ? appLabels.demarcheEpciCandidatEngage({
                             porteur: candidat.engagement.porteur?.nom ?? null,
+                            parLePorteur:
+                              candidat.engagement.porteur?.id === porteurId,
                             dateDebut: formatDateDebut(
                               candidat.engagement.dateDebut
                             ),

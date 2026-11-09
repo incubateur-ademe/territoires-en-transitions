@@ -8,6 +8,7 @@ const specificErrors = [
   'DEMARCHE_EN_COURS_EXISTANTE',
   'EPCI_DEJA_ENGAGE',
   'PERIMETRE_INVALIDE',
+  'PERIMETRE_REQUIS',
   'SET_PILOTES_ERROR',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -28,6 +29,10 @@ export const createDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificErro
         code: 'BAD_REQUEST',
         message:
           'Seul un Supra couvre des EPCI, et seulement ceux qui en sont membres',
+      },
+      PERIMETRE_REQUIS: {
+        code: 'BAD_REQUEST',
+        message: 'Cochez au moins un EPCI couvert par ce PCAET',
       },
       CREATE_DEMARCHE_PCAET_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

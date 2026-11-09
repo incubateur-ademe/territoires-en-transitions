@@ -11,6 +11,7 @@ import {
   getDemarchePcaetInitialStatus,
   getObligationInitiale,
   type DemarchePcaet,
+  type EngagementPcaet,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
@@ -66,13 +67,11 @@ export class CreateDemarchePcaetService {
 
     const collectivitesCouvertesIds = input.collectivitesCouvertesIds ?? [];
     // Lu avant la transaction : un PostHog lent la garderait ouverte.
-    const isSupraEnabled =
-      collectivitesCouvertesIds.length > 0 &&
-      (await this.featureFlagService.isFeatureEnabled(
-        'is-pcaet-supra-enabled',
-        user.id,
-        input.collectiviteId
-      ));
+    const isSupraEnabled = await this.featureFlagService.isFeatureEnabled(
+      'is-pcaet-supra-enabled',
+      user.id,
+      input.collectiviteId
+    );
 
     const executeInTransaction = async (
       transaction: Transaction
@@ -82,33 +81,21 @@ export class CreateDemarchePcaetService {
         transaction
       );
 
-      // Une seule démarche « en cours » à la fois, la sienne ou celle d'un
-      // Supra qui la couvre : un nouveau dépôt n'est possible qu'une fois la
-      // précédente adoptée ou archivée.
       const engagements = await this.perimetreRepository.listEngagementsEnCours(
         [input.collectiviteId, ...collectivitesCouvertesIds],
         transaction
       );
-      if (engagements.has(input.collectiviteId)) {
-        return failure(
-          CreateDemarchePcaetErrorEnum.DEMARCHE_EN_COURS_EXISTANTE
-        );
-      }
-
-      if (collectivitesCouvertesIds.length > 0) {
-        if (
-          !(await this.isPerimetreValide(
-            input.collectiviteId,
-            collectivitesCouvertesIds,
-            isSupraEnabled,
-            transaction
-          ))
-        ) {
-          return failure(CreateDemarchePcaetErrorEnum.PERIMETRE_INVALIDE);
-        }
-        if (collectivitesCouvertesIds.some((id) => engagements.has(id))) {
-          return failure(CreateDemarchePcaetErrorEnum.EPCI_DEJA_ENGAGE);
-        }
+      const perimetreError = await this.checkPerimetre(
+        {
+          porteurId: input.collectiviteId,
+          collectivitesCouvertesIds,
+          engagements,
+        },
+        isSupraEnabled,
+        transaction
+      );
+      if (perimetreError) {
+        return failure(perimetreError);
       }
 
       const obligation =
@@ -235,31 +222,81 @@ export class CreateDemarchePcaetService {
   }
 
   /**
-   * Seul un Supra couvre des EPCI, et seulement ses membres d'après BANATIC :
-   * la liste à cocher est la seule source, sans ajout hors liste. Flag
-   * `is-pcaet-supra-enabled` inactif : aucun périmètre, même valide.
+   * Une seule démarche « en cours » à la fois, la sienne ou celle d'un Supra
+   * qui la couvre : un nouveau dépôt attend que la précédente soit adoptée ou
+   * archivée.
+   *
+   * Sauf pour un Supra qui a des EPCI membres : il mène un dépôt par groupe
+   * d'EPCI, autant qu'il veut, tant que chacun couvre au moins un membre que
+   * rien n'engage encore. Seuls ses membres d'après BANATIC se cochent, sans
+   * ajout hors liste. Un Supra sans membre connu dépose comme les autres.
    */
-  private async isPerimetreValide(
-    porteurId: number,
-    collectivitesCouvertesIds: number[],
+  private async checkPerimetre(
+    {
+      porteurId,
+      collectivitesCouvertesIds,
+      engagements,
+    }: {
+      porteurId: number;
+      collectivitesCouvertesIds: number[];
+      engagements: Map<number, EngagementPcaet>;
+    },
     isSupraEnabled: boolean,
     tx: Transaction
-  ): Promise<boolean> {
+  ): Promise<CreateDemarchePcaetError | null> {
+    const porteurEngage = engagements.has(porteurId);
+    const candidatIds = await this.listCandidatIdsDuSupra(
+      porteurId,
+      isSupraEnabled,
+      tx
+    );
+
+    if (candidatIds.size === 0) {
+      if (porteurEngage) {
+        return CreateDemarchePcaetErrorEnum.DEMARCHE_EN_COURS_EXISTANTE;
+      }
+      return collectivitesCouvertesIds.length > 0
+        ? CreateDemarchePcaetErrorEnum.PERIMETRE_INVALIDE
+        : null;
+    }
+
+    if (collectivitesCouvertesIds.length === 0) {
+      return porteurEngage
+        ? CreateDemarchePcaetErrorEnum.DEMARCHE_EN_COURS_EXISTANTE
+        : CreateDemarchePcaetErrorEnum.PERIMETRE_REQUIS;
+    }
+    if (!collectivitesCouvertesIds.every((id) => candidatIds.has(id))) {
+      return CreateDemarchePcaetErrorEnum.PERIMETRE_INVALIDE;
+    }
+    if (collectivitesCouvertesIds.some((id) => engagements.has(id))) {
+      return CreateDemarchePcaetErrorEnum.EPCI_DEJA_ENGAGE;
+    }
+    return null;
+  }
+
+  /**
+   * Les EPCI membres du porteur s'il est un Supra, vide sinon. Flag
+   * `is-pcaet-supra-enabled` inactif : vide, le Supra dépose comme les autres.
+   */
+  private async listCandidatIdsDuSupra(
+    porteurId: number,
+    isSupraEnabled: boolean,
+    tx: Transaction
+  ): Promise<Set<number>> {
     if (!isSupraEnabled) {
-      return false;
+      return new Set();
     }
     const natureInsee = await this.perimetreRepository.getNatureInsee(
       porteurId,
       tx
     );
     if (!estNatureSupraPcaet(natureInsee)) {
-      return false;
+      return new Set();
     }
-    const candidats = new Set(
-      (await this.perimetreRepository.listEpciCandidats(porteurId, tx)).map(
-        (candidat) => candidat.id
-      )
+    const candidats = await this.perimetreRepository.listEpciCandidats(
+      porteurId,
+      tx
     );
-    return collectivitesCouvertesIds.every((id) => candidats.has(id));
+    return new Set(candidats.map(({ id }) => id));
   }
 }

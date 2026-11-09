@@ -49,12 +49,7 @@ export class CreateDemarchePcaetRepository {
     values: InsertDemarchePcaetValues,
     userId: string,
     tx: Transaction
-  ): Promise<
-    Result<
-      { id: number },
-      'CREATE_DEMARCHE_PCAET_ERROR' | 'DEMARCHE_EN_COURS_EXISTANTE'
-    >
-  > {
+  ): Promise<Result<{ id: number }, 'CREATE_DEMARCHE_PCAET_ERROR'>> {
     try {
       const [inserted] = await tx
         .insert(demarcheTable)
@@ -74,11 +69,6 @@ export class CreateDemarchePcaetRepository {
         .returning({ id: demarcheTable.id });
       return success(inserted);
     } catch (error) {
-      // Course entre deux créations : l'index unique partiel
-      // demarche_active_unique tranche en dernier ressort.
-      if (String(error).includes('demarche_active_unique')) {
-        return failure('DEMARCHE_EN_COURS_EXISTANTE');
-      }
       this.logger.error(
         `Error creating demarche PCAET for collectivite ${values.collectiviteId}: ${error}`
       );
