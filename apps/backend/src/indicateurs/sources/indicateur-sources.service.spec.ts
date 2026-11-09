@@ -3,12 +3,18 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { TrajectoireSnbc3FeatureFlagService } from '../trajectoires/trajectoire-snbc3-feature-flag.service';
 import { IndicateurSourcesRepository } from './indicateur-sources.repository';
 import IndicateurSourcesService from './indicateur-sources.service';
 
 describe('IndicateurSourcesService', () => {
   const input = { collectiviteId: 42, indicateurId: 7 };
   const user = { id: 'user-id' } as AuthenticatedUser;
+  const featureFlag = (enabled = true) =>
+    new TrajectoireSnbc3FeatureFlagService({
+      isFeatureEnabled: vi.fn().mockResolvedValue(enabled),
+    } as unknown as TrackingService);
 
   it('authorizes the collectivity before loading available sources', async () => {
     const sources = [{ id: 'territoire', libelle: 'Territoire' }];
@@ -18,7 +24,11 @@ describe('IndicateurSourcesService', () => {
     const permissionService = {
       isAllowed: vi.fn().mockResolvedValue(success(undefined)),
     } as unknown as PermissionService;
-    const service = new IndicateurSourcesService(repository, permissionService);
+    const service = new IndicateurSourcesService(
+      repository,
+      permissionService,
+      featureFlag()
+    );
 
     await expect(service.getAvailableSources(input, { user })).resolves.toEqual(
       success(sources)
@@ -39,7 +49,11 @@ describe('IndicateurSourcesService', () => {
     const permissionService = {
       isAllowed: vi.fn().mockResolvedValue(failure('UNAUTHORIZED')),
     } as unknown as PermissionService;
-    const service = new IndicateurSourcesService(repository, permissionService);
+    const service = new IndicateurSourcesService(
+      repository,
+      permissionService,
+      featureFlag()
+    );
 
     await expect(service.getAvailableSources(input, { user })).resolves.toEqual(
       failure('UNAUTHORIZED')
@@ -54,7 +68,8 @@ describe('IndicateurSourcesService', () => {
     } as unknown as IndicateurSourcesRepository;
     const service = new IndicateurSourcesService(
       repository,
-      {} as PermissionService
+      {} as PermissionService,
+      featureFlag()
     );
 
     await service.getAllIndicateurSourceMetadonnees(tx);
@@ -74,7 +89,8 @@ describe('IndicateurSourcesService', () => {
     } as unknown as IndicateurSourcesRepository;
     const service = new IndicateurSourcesService(
       repository,
-      {} as PermissionService
+      {} as PermissionService,
+      featureFlag()
     );
     const metadonnee = { sourceId: 'insee', dateVersion: '2026' } as never;
     const source = { id: 'insee', libelle: 'INSEE' } as never;
@@ -94,5 +110,36 @@ describe('IndicateurSourcesService', () => {
     expect(repository.getMetadonnee).toHaveBeenCalledWith('insee', '2026');
     expect(repository.upsertSource).toHaveBeenCalledWith(source);
     expect(repository.listSources).toHaveBeenCalledOnce();
+  });
+
+  it('masque la source snbc3 sans le feature flag', async () => {
+    const sources = [
+      { id: 'snbc', libelle: 'SNBC' },
+      { id: 'snbc3', libelle: 'SNBC3' },
+    ];
+    const repository = {
+      listAvailableSources: vi.fn().mockResolvedValue(sources),
+    } as unknown as IndicateurSourcesRepository;
+    const permissionService = {
+      isAllowed: vi.fn().mockResolvedValue(success(undefined)),
+    } as unknown as PermissionService;
+
+    const sansFlag = new IndicateurSourcesService(
+      repository,
+      permissionService,
+      featureFlag(false)
+    );
+    await expect(
+      sansFlag.getAvailableSources(input, { user })
+    ).resolves.toEqual(success([sources[0]]));
+
+    const avecFlag = new IndicateurSourcesService(
+      repository,
+      permissionService,
+      featureFlag(true)
+    );
+    await expect(
+      avecFlag.getAvailableSources(input, { user })
+    ).resolves.toEqual(success(sources));
   });
 });

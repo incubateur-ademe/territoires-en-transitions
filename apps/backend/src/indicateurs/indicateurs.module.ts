@@ -53,6 +53,7 @@ import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsh
 import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
 import { TrajectoiresController } from './trajectoires/trajectoires.controller';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
+import { TrajectoireSnbc3FeatureFlagService } from './trajectoires/trajectoire-snbc3-feature-flag.service';
 import { IndicateursValeursController } from './valeurs/indicateur-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/indicateur-valeurs.router';
 import { IndicateurValeursRepository } from './valeurs/indicateur-valeurs.repository';
@@ -142,6 +143,7 @@ const DEFINITIONS_PROVIDERS = [
     TrajectoiresRouter,
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
+    TrajectoireSnbc3FeatureFlagService,
 
     ComputeValeursService,
     ComputeValeursRepository,

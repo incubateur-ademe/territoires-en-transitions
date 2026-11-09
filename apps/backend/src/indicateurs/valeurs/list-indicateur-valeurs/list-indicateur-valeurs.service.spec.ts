@@ -11,6 +11,7 @@ const makeService = (listIndicateurValeurs: ReturnType<typeof vi.fn>) =>
     { listIndicateurValeurs } as never,
     {} as never,
     {} as never,
+    {} as never,
     {} as never
   );
 
