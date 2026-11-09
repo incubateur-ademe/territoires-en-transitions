@@ -81,6 +81,7 @@ export const DemarchePcaetPlanActionsPage = () => {
           collectiviteId={collectiviteId}
           demarcheId={demarcheId}
           typeLabels={appLabels.demarcheTypeLabels[demarche.type]}
+          lectureSeule={demarche.lectureSeule}
         />
       ) : (
         <ProgrammeActionsSection

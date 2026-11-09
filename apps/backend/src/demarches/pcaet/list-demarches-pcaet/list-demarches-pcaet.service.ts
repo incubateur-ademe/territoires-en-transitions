@@ -41,8 +41,8 @@ export class ListDemarchesPcaetService {
       return listResult;
     }
     // Le workflow dit quels guards comptent pour chaque statut : seule une
-    // démarche en élaboration coûte les lectures de complétude, et l'index
-    // unique partiel en garantit au plus une par collectivité et par type.
+    // démarche en élaboration coûte les lectures de complétude, et il n'y en a
+    // qu'une par collectivité, sauf pour un Supra, une par groupe d'EPCI.
     return {
       success: true,
       data: await this.guardsService.enrichAll(listResult.data, user, tx),

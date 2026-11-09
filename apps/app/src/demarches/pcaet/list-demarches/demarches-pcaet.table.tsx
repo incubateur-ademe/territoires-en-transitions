@@ -139,12 +139,27 @@ const columnHelper = createColumnHelper<typeof features, DemarcheListItem>();
 const TitreCell = ({ demarche }: { demarche: DemarcheListItem }) => {
   const { getDetailUrl } = usePilotage();
   return (
-    <Link
-      href={getDetailUrl(demarche)}
-      className="font-bold text-primary-9 hover:underline"
-    >
-      {demarche.titre}
-    </Link>
+    <div className="flex flex-col items-start gap-1">
+      <Link
+        href={getDetailUrl(demarche)}
+        className="font-bold text-primary-9 hover:underline"
+      >
+        {demarche.titre}
+      </Link>
+      {demarche.porteur && (
+        <Badge
+          size="xs"
+          variant="info"
+          type="outlined"
+          title={
+            demarche.porteur.type
+              ? appLabels.demarchePorteParType[demarche.porteur.type]
+              : appLabels.demarchePorteParAutreStructure
+          }
+          trim={false}
+        />
+      )}
+    </div>
   );
 };
 

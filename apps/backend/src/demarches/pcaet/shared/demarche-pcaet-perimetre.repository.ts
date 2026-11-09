@@ -3,6 +3,7 @@ import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/mo
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarchePcaetCollectiviteCouverteTable } from '@tet/backend/demarches/shared/models/demarche-pcaet-collectivite-couverte.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -278,6 +279,115 @@ export class DemarchePcaetPerimetreRepository {
         eq(demarchePcaetCollectiviteCouverteTable.demarcheId, precedent.id)
       );
     return rows.map((row) => row.collectiviteId);
+  }
+
+  /**
+   * Les dépôts PCAET, quel que soit leur statut, qui couvrent la collectivité,
+   * avec leur porteur.
+   */
+  async listDemarchesCouvrantes(
+    collectiviteId: number,
+    tx?: Transaction
+  ): Promise<
+    {
+      demarcheId: number;
+      porteur: {
+        id: number;
+        nom: string;
+        natureInsee: CollectiviteNatureType | null;
+      };
+    }[]
+  > {
+    const db = tx ?? this.databaseService.db;
+    const rows = await db
+      .select({
+        demarcheId: demarcheTable.id,
+        porteurId: collectiviteTable.id,
+        porteurNom: collectiviteTable.nom,
+        porteurNature: collectiviteTable.natureInsee,
+      })
+      .from(demarchePcaetCollectiviteCouverteTable)
+      .innerJoin(
+        demarcheTable,
+        eq(demarcheTable.id, demarchePcaetCollectiviteCouverteTable.demarcheId)
+      )
+      .innerJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, demarcheTable.collectiviteId)
+      )
+      .where(
+        and(
+          eq(
+            demarchePcaetCollectiviteCouverteTable.collectiviteId,
+            collectiviteId
+          ),
+          eq(demarcheTable.type, DemarcheTypeEnum.PCAET)
+        )
+      );
+    return rows.map(({ demarcheId, porteurId, porteurNom, porteurNature }) => ({
+      demarcheId,
+      porteur: { id: porteurId, nom: porteurNom, natureInsee: porteurNature },
+    }));
+  }
+
+  /**
+   * L'utilisateur est-il membre actif d'un EPCI que couvre cette démarche de
+   * ce porteur ? Le porteur est dans la requête : une démarche d'une autre
+   * collectivité ne s'ouvre pas sous son identifiant.
+   */
+  async isMembreDUneCollectiviteCouverte(
+    {
+      demarcheId,
+      porteurId,
+      userId,
+    }: { demarcheId: number; porteurId: number; userId: string },
+    tx?: Transaction
+  ): Promise<boolean> {
+    const db = tx ?? this.databaseService.db;
+    const [row] = await db
+      .select({ id: demarcheTable.id })
+      .from(demarchePcaetCollectiviteCouverteTable)
+      .innerJoin(
+        demarcheTable,
+        eq(demarcheTable.id, demarchePcaetCollectiviteCouverteTable.demarcheId)
+      )
+      .innerJoin(
+        utilisateurCollectiviteAccessTable,
+        eq(
+          utilisateurCollectiviteAccessTable.collectiviteId,
+          demarchePcaetCollectiviteCouverteTable.collectiviteId
+        )
+      )
+      .where(
+        and(
+          eq(demarcheTable.id, demarcheId),
+          eq(demarcheTable.collectiviteId, porteurId),
+          eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
+          eq(utilisateurCollectiviteAccessTable.userId, userId),
+          eq(utilisateurCollectiviteAccessTable.isActive, true)
+        )
+      )
+      .limit(1);
+    return row !== undefined;
+  }
+
+  async isMembreActif(
+    { collectiviteId, userId }: { collectiviteId: number; userId: string },
+    tx?: Transaction
+  ): Promise<boolean> {
+    const db = tx ?? this.databaseService.db;
+    const [row] = await db
+      .select({ id: utilisateurCollectiviteAccessTable.id })
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId),
+          eq(utilisateurCollectiviteAccessTable.userId, userId),
+          eq(utilisateurCollectiviteAccessTable.isActive, true)
+        )
+      )
+      .limit(1);
+    return row !== undefined;
   }
 
   async insertCollectivitesCouvertes(

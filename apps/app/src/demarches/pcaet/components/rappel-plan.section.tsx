@@ -19,10 +19,13 @@ export const RappelPlanSection = ({
   collectiviteId,
   demarcheId,
   typeLabels,
+  lectureSeule = false,
 }: {
   collectiviteId: number;
   demarcheId: number;
   typeLabels: DemarcheTypeLabels;
+  /** Lu par un EPCI couvert, qui ne l'a pas transmis : pas un « rappel ». */
+  lectureSeule?: boolean;
 }) => {
   const { plans, isLoading, isError, refetch } = useDemarchePcaetPlans({
     collectiviteId,
@@ -31,7 +34,11 @@ export const RappelPlanSection = ({
 
   return (
     <DemarcheSection
-      title={appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels })}
+      title={
+        lectureSeule
+          ? appLabels.demarcheLecturePlanLabel({ type: typeLabels })
+          : appLabels.demarcheAvanceRappelPlanLabel({ type: typeLabels })
+      }
       description={appLabels.demarcheAvanceRappelPlanDescription}
     >
       {isError ? (

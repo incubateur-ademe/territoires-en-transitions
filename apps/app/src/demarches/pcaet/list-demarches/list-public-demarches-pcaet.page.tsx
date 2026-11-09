@@ -1,6 +1,10 @@
 'use client';
 
-import { makeCollectiviteDemarchePcaetConsultationUrl } from '@/app/app/paths';
+import {
+  makeCollectiviteDemarchePcaetConsultationUrl,
+  makeCollectiviteDemarchePcaetRootUrl,
+} from '@/app/app/paths';
+import { useListDemarchesCouvrantes } from '@/app/demarches/pcaet/data/use-list-demarches-couvrantes';
 import { useListPublicDemarchesPcaet } from '@/app/demarches/pcaet/data/use-list-public-demarches-pcaet';
 import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
@@ -8,11 +12,15 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import {
   DEMARCHE_PCAET_PUBLIC_STATUSES,
+  demarchePcaetStatusValues,
   DemarcheTypeEnum,
 } from '@tet/domain/demarches';
 import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
 import { EmptyCard, Event, PageHeader } from '@tet/ui';
+import { useMemo } from 'react';
+import { ConsulterDemarcheCouvranteButton } from './consulter-demarche-couvrante.button';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
+import { PorteParSupraAlert } from './porte-par-supra.alert';
 import {
   useFilterDemarchesPcaet,
   type DemarcheListItem,
@@ -22,11 +30,20 @@ const PCAET_TYPE = {
   type: appLabels.demarcheTypeLabels[DemarcheTypeEnum.PCAET],
 };
 
+// Le dépôt d'un Supra qui couvre la collectivité s'ouvre dans les écrans du
+// dossier, en lecture seule ; ses démarches publiques, dans la consultation.
 const getDetailUrl = (demarche: DemarcheListItem) =>
-  makeCollectiviteDemarchePcaetConsultationUrl({
+  (demarche.porteur
+    ? makeCollectiviteDemarchePcaetRootUrl
+    : makeCollectiviteDemarchePcaetConsultationUrl)({
     collectiviteId: demarche.collectiviteId,
     demarcheId: demarche.id,
   });
+
+const renderActions = (demarche: DemarcheListItem) =>
+  demarche.porteur ? (
+    <ConsulterDemarcheCouvranteButton demarche={demarche} />
+  ) : null;
 
 /**
  * Les démarches de la collectivité pour qui n'en édite pas : seulement celles
@@ -39,8 +56,14 @@ export const ListPublicDemarchesPcaetPage = () => {
     isError,
     refetch,
   } = useListPublicDemarchesPcaet();
+  const { data: couvrantes, isLoading: couvrantesEnAttente } =
+    useListDemarchesCouvrantes();
+  const lignes = useMemo<DemarcheListItem[] | undefined>(
+    () => demarches && [...(couvrantes ?? []), ...demarches],
+    [demarches, couvrantes]
+  );
   const { items, reinitialiserFiltres, ...pilotage } =
-    useFilterDemarchesPcaet(demarches);
+    useFilterDemarchesPcaet(lignes);
   useTrackDemarcheView(Event.demarches.pcaet.publicListeVue, {
     acteur: 'public',
     key: 'liste',
@@ -58,17 +81,18 @@ export const ListPublicDemarchesPcaetPage = () => {
           {appLabels.demarcheListePubliqueDescription}
         </PageHeader.Subtitle>
       </PageHeader>
+      <PorteParSupraAlert couvrantes={couvrantes} />
       <section className="rounded-xl border border-grey-3 bg-white p-6">
-        {isLoading ? (
+        {isLoading || couvrantesEnAttente ? (
           <div className="flex py-8">
             <SpinnerLoader className="m-auto" />
           </div>
-        ) : isError || !demarches ? (
+        ) : isError || !lignes ? (
           <ErrorCard
             title={appLabels.uneErreurEstSurvenue}
             retry={() => refetch()}
           />
-        ) : demarches.length === 0 ? (
+        ) : lignes.length === 0 ? (
           <EmptyCard
             picto={(props) => <PictoDashboard {...props} />}
             title={appLabels.demarcheListePubliqueAucune(PCAET_TYPE)}
@@ -78,8 +102,13 @@ export const ListPublicDemarchesPcaetPage = () => {
             ariaLabel={appLabels.demarcheListeTitre(PCAET_TYPE)}
             demarches={items}
             {...pilotage}
-            statutOptions={DEMARCHE_PCAET_PUBLIC_STATUSES}
+            statutOptions={
+              couvrantes?.length
+                ? demarchePcaetStatusValues
+                : DEMARCHE_PCAET_PUBLIC_STATUSES
+            }
             getDetailUrl={getDetailUrl}
+            renderActions={couvrantes?.length ? renderActions : undefined}
             etatVide={{
               picto: (props) => <PictoDashboard {...props} />,
               title: appLabels.demarcheListeAucunResultat,

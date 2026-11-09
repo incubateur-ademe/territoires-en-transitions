@@ -3,6 +3,7 @@
 import { RouterOutput } from '@tet/api';
 import {
   demarchePcaetStatusValues,
+  type DemarchePcaetCouvrante,
   type DemarchePcaetPublic,
   type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
@@ -25,7 +26,10 @@ export type DemarcheListItem = Pick<
   | 'launchedAt'
   | 'modifiedAt'
   | 'pilotes'
->;
+> & {
+  /** Présent pour le dépôt d'un Supra qui couvre la collectivité. */
+  porteur?: DemarchePcaetCouvrante['porteur'];
+};
 
 const SORT_VALUES = [
   'titre',

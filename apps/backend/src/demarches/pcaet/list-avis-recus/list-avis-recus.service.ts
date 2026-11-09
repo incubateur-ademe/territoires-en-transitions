@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { DemarchePcaetLectureService } from '../shared/demarche-pcaet-lecture.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DemarcheTypeEnum } from '@tet/domain/demarches';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, asc, eq, isNotNull } from 'drizzle-orm';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
@@ -29,21 +28,19 @@ import { AvisRecu } from './list-avis-recus.output';
 export class ListAvisRecusService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly lectureService: DemarchePcaetLectureService
   ) {}
 
   async listAvisRecus(
     { collectiviteId, demarcheId }: ListAvisRecusInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<AvisRecu[], ListAvisRecusError>> {
-    const permissionResult = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId },
-      tx
+    // Qui édite la démarche, ou un membre d'un EPCI qu'elle couvre.
+    const lectureResult = await this.lectureService.canRead(
+      { collectiviteId: collectiviteId, demarcheId: demarcheId },
+      { user, tx }
     );
-    if (!permissionResult.success) {
+    if (!lectureResult.success) {
       return failure(ListAvisRecusErrorEnum.UNAUTHORIZED);
     }
 

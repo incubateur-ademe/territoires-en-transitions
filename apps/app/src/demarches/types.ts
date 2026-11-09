@@ -75,6 +75,8 @@ export type DemarchePcaet = {
   contenuModifiable: boolean;
   /** Mode démo (collectivité de test et super admin), tranché côté serveur. */
   demo: boolean;
+  /** Lue par un membre d'un EPCI que couvre le dépôt d'un Supra : rien ne s'édite. */
+  lectureSeule: boolean;
 };
 
 /**

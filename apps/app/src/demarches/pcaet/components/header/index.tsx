@@ -46,10 +46,12 @@ export const DemarchePcaetHeader = ({
   // La collectivité porte-t-elle un SCoT ? Sans cela, une déclaration décochée
   // par erreur à l'étape 0 ne serait plus rattrapable : le badge ne s'affiche
   // que lorsqu'elle est à vrai.
+  // Le contexte ne se lit que par qui peut déposer, pas par un EPCI couvert.
   const { data: depotContext } = useQuery(
-    trpc.demarches.pcaet.getDepotContext.queryOptions({
-      collectiviteId: demarche.collectiviteId,
-    })
+    trpc.demarches.pcaet.getDepotContext.queryOptions(
+      { collectiviteId: demarche.collectiviteId },
+      { enabled: !demarche.lectureSeule }
+    )
   );
   const montreScotAec =
     demarche.isScotAec || (depotContext?.peutDeclarerScotAec ?? false);
@@ -75,7 +77,7 @@ export const DemarchePcaetHeader = ({
           <MetadataLine>
             <DateLancementField
               dateLancement={demarche.dateLancement}
-              disabled={isPublished}
+              disabled={isPublished || demarche.lectureSeule}
               onChange={(dateLancement) => onUpdate({ dateLancement })}
             />
             <DepotDateItem dateCreation={demarche.dateCreation} />
@@ -95,7 +97,7 @@ export const DemarchePcaetHeader = ({
             <MetadataSeparator />
             <ObligationField
               obligation={demarche.obligation}
-              readOnly={isPublished}
+              readOnly={isPublished || demarche.lectureSeule}
               onChange={(obligation) => onUpdate({ obligation })}
             />
             {montreScotAec ? (

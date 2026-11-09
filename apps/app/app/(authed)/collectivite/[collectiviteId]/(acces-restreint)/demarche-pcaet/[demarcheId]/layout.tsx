@@ -1,5 +1,5 @@
 import { DemarcheVisitProvider } from '@/app/demarches/components/avance-panel-visit.context';
-import { assertCanMutateDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate';
+import { assertCanReadDemarchePcaet } from '@/app/demarches/pcaet/assert-can-mutate';
 import { ImportProgrammeProvider } from '@/app/demarches/pcaet/import-programme/import-programme.context';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -25,7 +25,7 @@ export default async function Layout({
     notFound();
   }
 
-  await assertCanMutateDemarchePcaet(collectiviteId.data);
+  await assertCanReadDemarchePcaet(collectiviteId.data);
 
   // Le provider dure le temps de la visite de la démarche : il porte l'ouverture
   // du panneau d'avancée à l'arrivée, une seule fois. La `key` le remonte quand

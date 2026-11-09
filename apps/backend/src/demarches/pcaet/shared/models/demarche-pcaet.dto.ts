@@ -84,6 +84,7 @@ export const toDemarchePcaetDto = (
   avalModifiable: isDemarchePcaetAvalModifiable(row.status),
   contenuModifiable: isDemarchePcaetContenuModifiable(row.status),
   demo: false,
+  lectureSeule: false,
   createdAt: row.createdAt,
   modifiedAt: row.modifiedAt,
 });

@@ -4,6 +4,7 @@ import {
   makeCollectiviteDemarchePcaetNouveauUrl,
   makeCollectiviteDemarchePcaetRootUrl,
 } from '@/app/app/paths';
+import { useListDemarchesCouvrantes } from '@/app/demarches/pcaet/data/use-list-demarches-couvrantes';
 import { useListDemarchesPcaet } from '@/app/demarches/pcaet/data/use-list-demarches-pcaet';
 import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
@@ -15,6 +16,7 @@ import {
   DemarcheTypeEnum,
   demarchePcaetStatusValues,
   isDemarchePcaetEnCours,
+  type DemarchePcaetCouvrante,
 } from '@tet/domain/demarches';
 import {
   useDemarcheTracker,
@@ -23,9 +25,11 @@ import {
 import { Button, Event } from '@tet/ui';
 import { format, parseISO } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { ConsulterDemarcheCouvranteButton } from './consulter-demarche-couvrante.button';
 import { DemarchePcaetActionsButton } from './demarche-pcaet-actions.button';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
+import { PorteParSupraAlert } from './porte-par-supra.alert';
 import {
   useFilterDemarchesPcaet,
   type Demarche,
@@ -36,15 +40,26 @@ const PCAET_TYPE = {
   type: appLabels.demarcheTypeLabels[DemarcheTypeEnum.PCAET],
 };
 
-const getDetailUrl = (demarche: Demarche) =>
+/** Ses démarches, et les dépôts de Supra qui la couvrent. */
+type Ligne = Demarche | DemarchePcaetCouvrante;
+
+const isCouvrante = (ligne: Ligne): ligne is DemarchePcaetCouvrante =>
+  'porteur' in ligne;
+
+// Un dépôt couvrant s'ouvre sous l'identifiant de son porteur : celui de la
+// ligne, comme pour les démarches de la collectivité.
+const getDetailUrl = (ligne: Ligne) =>
   makeCollectiviteDemarchePcaetRootUrl({
-    collectiviteId: demarche.collectiviteId,
-    demarcheId: demarche.id,
+    collectiviteId: ligne.collectiviteId,
+    demarcheId: ligne.id,
   });
 
-const renderActions = (demarche: Demarche) => (
-  <DemarchePcaetActionsButton demarche={demarche} />
-);
+const renderActions = (ligne: Ligne) =>
+  isCouvrante(ligne) ? (
+    <ConsulterDemarcheCouvranteButton demarche={ligne} />
+  ) : (
+    <DemarchePcaetActionsButton demarche={ligne} />
+  );
 
 export const ListDemarchesPcaetPage = () => {
   const router = useRouter();
@@ -61,12 +76,19 @@ export const ListDemarchesPcaetPage = () => {
     )
   );
   const couvertureEnCours = depotContext?.couvertureEnCours ?? null;
+  const { data: couvrantes, isLoading: couvrantesEnAttente } =
+    useListDemarchesCouvrantes();
+  const lignes = useMemo<Ligne[] | undefined>(
+    () => demarches && [...(couvrantes ?? []), ...demarches],
+    [demarches, couvrantes]
+  );
   const { items, reinitialiserFiltres, ...pilotage } =
-    useFilterDemarchesPcaet(demarches);
+    useFilterDemarchesPcaet(lignes);
   const creationUrl = makeCollectiviteDemarchePcaetNouveauUrl({
     collectiviteId,
   });
-  const isEmpty = demarches?.length === 0;
+  const isEmpty =
+    demarches?.length === 0 && !couvrantesEnAttente && !couvrantes?.length;
 
   const track = useDemarcheTracker(null);
   useTrackDemarcheView(Event.demarches.pcaet.listeVue, {
@@ -81,14 +103,15 @@ export const ListDemarchesPcaetPage = () => {
     },
   });
 
-  // Sans démarche, la liste n'a rien à montrer : on va droit à la création.
+  // Sans démarche, ni dépôt d'un Supra qui la couvre, la liste n'a rien à
+  // montrer : on va droit à la création.
   useEffect(() => {
     if (isEmpty) {
       router.replace(creationUrl);
     }
   }, [isEmpty, creationUrl, router]);
 
-  if (isLoading || isEmpty) {
+  if (isLoading || couvrantesEnAttente || isEmpty) {
     return (
       <div className="flex grow items-center justify-center">
         <SpinnerLoader />
@@ -151,6 +174,7 @@ export const ListDemarchesPcaetPage = () => {
           {appLabels.demarcheListeCommencerDepot}
         </Button>
       </div>
+      <PorteParSupraAlert couvrantes={couvrantes} />
       <section className="rounded-xl border border-grey-3 bg-white p-6">
         <DemarchesPcaetTable
           ariaLabel={appLabels.demarcheListeTitre(PCAET_TYPE)}
