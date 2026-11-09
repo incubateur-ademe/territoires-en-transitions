@@ -2,6 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { useMemo } from 'react';
 import { hasMobilisation } from './to-levier-cards';
 import {
@@ -31,14 +33,19 @@ const UNAVAILABLE_POTENTIELS: PotentielsReduction = {
   status: 'indisponible',
 };
 
-export const useLeviersPriorisation = (
-  collectiviteId: number
-): LeviersPriorisationQuery => {
+export const useLeviersPriorisation = (): LeviersPriorisationQuery => {
   const trpc = useTRPC();
+  const { collectiviteId, collectiviteType } = useCurrentCollectivite();
+  // Même règle que le backend : hors EPCI, pertinences et trajectoire sont
+  // refusées, inutile de les demander.
+  const isEpci =
+    collectiviteType === collectiviteTypeEnum.EPCI ||
+    collectiviteType === collectiviteTypeEnum.TEST;
 
   const pertinencesQuery = useQuery(
     trpc.collectivites.pertinenceLeviers.list.queryOptions(
-      toPertinencesListInput(collectiviteId)
+      toPertinencesListInput(collectiviteId),
+      { enabled: isEpci }
     )
   );
   const mobilisationQuery = useQuery(
@@ -50,7 +57,7 @@ export const useLeviersPriorisation = (
   const trajectoireQuery = useQuery(
     trpc.indicateurs.trajectoires.leviers.getData.queryOptions(
       { collectiviteId },
-      { retry: false }
+      { retry: false, enabled: isEpci }
     )
   );
 
@@ -58,13 +65,15 @@ export const useLeviersPriorisation = (
   const mobilisation = mobilisationQuery.data;
   const trajectoire = trajectoireQuery.data;
   const trajectoireErrorKey = trajectoireQuery.error?.data?.errorKey;
-  const trajectoireState = toTrajectoireState({
-    hasTrajectoire: trajectoire !== undefined,
-    isLoadingError: trajectoireQuery.isLoadingError,
-    isTrajectoireNotComputed:
-      trajectoireErrorKey === 'TRAJECTOIRE_NOT_COMPUTED',
-    isCollectiviteNotEpci: trajectoireErrorKey === 'COLLECTIVITE_NOT_EPCI',
-  });
+  const trajectoireState = isEpci
+    ? toTrajectoireState({
+        hasTrajectoire: trajectoire !== undefined,
+        isLoadingError: trajectoireQuery.isLoadingError,
+        isTrajectoireNotComputed:
+          trajectoireErrorKey === 'TRAJECTOIRE_NOT_COMPUTED',
+        isCollectiviteNotEpci: trajectoireErrorKey === 'COLLECTIVITE_NOT_EPCI',
+      })
+    : 'reservedToEpci';
   const potentiels = useMemo(
     () =>
       trajectoire ? toPotentielsReduction(trajectoire) : UNAVAILABLE_POTENTIELS,

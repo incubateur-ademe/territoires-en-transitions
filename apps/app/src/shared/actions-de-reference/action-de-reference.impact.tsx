@@ -4,7 +4,6 @@ import { useLeviersPlaces } from '@/app/collectivites/priorisation-leviers/prior
 import { useLeviersPriorisation } from '@/app/collectivites/priorisation-leviers/priorisation-leviers.view/data/use-leviers-priorisation';
 import { appLabels } from '@/app/labels/catalog';
 import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import type { ActionDeReference } from '@tet/domain/shared';
 import { VisibleWhen } from '@tet/ui';
 import { JSX, useMemo } from 'react';
@@ -15,8 +14,7 @@ const ActionDeReferenceImpactInfo = ({
 }: {
   readonly action: ActionDeReference;
 }): JSX.Element => {
-  const { collectiviteId } = useCurrentCollectivite();
-  const leviersQuery = useLeviersPriorisation(collectiviteId);
+  const leviersQuery = useLeviersPriorisation();
   const { places } = useLeviersPlaces(leviersQuery);
   const lines = useMemo(
     () =>
