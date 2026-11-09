@@ -1,10 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import {
-  IMPORT_PLAN_DEMO_URL,
-  IMPORT_PLAN_SUPPORT_URL,
-} from '@/app/plans/plans/import-plan/import-plan-support.links';
+import { SupportChatLink } from '@/app/plans/plans/import-plan/support-chat.link';
 import {
   PLAN_SECTEURS_LISTE,
   usePlanSecteursVue,
@@ -64,15 +61,13 @@ const SecteursButton = ({ count }: { count: number }) => {
 
 const SupportLinks = () => (
   <p className="m-0 text-xs text-grey-7">
-    {appLabels.planImporteBeta} {appLabels.planImporteBanniereDemoAvant}{' '}
-    <InlineLink href={IMPORT_PLAN_DEMO_URL} openInNewTab>
-      {appLabels.planImporteBanniereDemoLien}
-    </InlineLink>{' '}
-    {appLabels.planImporteBanniereSupportAvant}{' '}
-    <InlineLink href={IMPORT_PLAN_SUPPORT_URL} openInNewTab>
-      {appLabels.planImporteBanniereSupportLien}
-    </InlineLink>{' '}
-    {appLabels.planImporteBanniereSupportApres}
+    {appLabels.planImporteSupportQuestion}{' '}
+    <SupportChatLink>{appLabels.planImporteSupportLien}</SupportChatLink>{' '}
+    {appLabels.planImporteSupportOuAdresse}{' '}
+    <InlineLink href={`mailto:${appLabels.importPlanSupportEmail}`}>
+      {appLabels.importPlanSupportEmail}
+    </InlineLink>
+    {appLabels.planImporteSupportFin}
   </p>
 );
 
