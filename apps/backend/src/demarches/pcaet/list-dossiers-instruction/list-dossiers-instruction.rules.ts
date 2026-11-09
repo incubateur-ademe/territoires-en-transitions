@@ -25,62 +25,91 @@ const filtrePose = <T>(
   valeurs: readonly T[] | undefined
 ): valeurs is readonly T[] => valeurs !== undefined && valeurs.length > 0;
 
+/** Ce que les filtres d'une ligne confrontent, porteur ou sous-ligne. */
+type Attributs = {
+  obligation: DossierInstructionLigne['obligation'];
+  regionCode: string | null;
+  departementCode: string | null;
+};
+
 /**
- * Cette ligne passe-t-elle les filtres ?
- *
  * Une ligne sans obligation connue — population inconnue, nature qui ne porte
  * pas de PCAET — est écartée dès qu'un filtre d'obligation est posé : elle ne
  * peut affirmer aucune des valeurs.
  */
+const attributsPassent = (
+  { obligation, regionCode, departementCode }: Attributs,
+  { obligations, regionCodes, departementCodes }: Filtres
+): boolean =>
+  !(
+    (filtrePose(obligations) &&
+      (obligation === null || !obligations.includes(obligation))) ||
+    (filtrePose(regionCodes) &&
+      (regionCode === null || !regionCodes.includes(regionCode))) ||
+    (filtrePose(departementCodes) &&
+      (departementCode === null || !departementCodes.includes(departementCode)))
+  );
+
+const nomPasse = (nom: string, recherche: string | undefined): boolean =>
+  !recherche ||
+  nom.toLocaleLowerCase('fr').includes(recherche.toLocaleLowerCase('fr'));
+
+/**
+ * La ligne telle qu'elle passe les filtres, `null` si elle n'en passe aucun.
+ *
+ * Le dépôt d'un Supra se filtre en groupe : il reste si le porteur ou l'un de
+ * ses EPCI couverts passe les filtres d'obligation, de territoire et de
+ * recherche, et ne garde que les sous-lignes qui les passent. Une recherche qui
+ * nomme le porteur garde toutes ses sous-lignes ; une qui nomme un EPCI ne
+ * garde que lui. Le statut est celui du dépôt, et ne se juge que sur lui.
+ */
+export const filtrerLigne = (
+  ligne: DossierInstructionLigne,
+  filtres: Filtres
+): DossierInstructionLigne | null => {
+  if (filtrePose(filtres.statuts) && !filtres.statuts.includes(ligne.statut)) {
+    return null;
+  }
+  const porteurNomme = nomPasse(ligne.collectivite.nom, filtres.recherche);
+  const porteurPasse =
+    porteurNomme &&
+    attributsPassent(
+      {
+        obligation: ligne.obligation,
+        regionCode: ligne.collectivite.regionCode,
+        departementCode: ligne.collectivite.departementCode,
+      },
+      filtres
+    );
+  const collectivitesCouvertes = ligne.collectivitesCouvertes.filter(
+    (couverte) =>
+      attributsPassent(couverte, filtres) &&
+      (porteurNomme || nomPasse(couverte.nom, filtres.recherche))
+  );
+  if (!porteurPasse && collectivitesCouvertes.length === 0) {
+    return null;
+  }
+  return { ...ligne, collectivitesCouvertes };
+};
+
+/** Cette ligne passe-t-elle les filtres ? Voir `filtrerLigne`. */
 export const estRetenue = (
   ligne: DossierInstructionLigne,
-  { statuts, obligations, regionCodes, departementCodes, recherche }: Filtres
-): boolean => {
-  if (filtrePose(statuts) && !statuts.includes(ligne.statut)) {
-    return false;
-  }
-  if (
-    filtrePose(obligations) &&
-    (ligne.obligation === null || !obligations.includes(ligne.obligation))
-  ) {
-    return false;
-  }
-  if (
-    filtrePose(regionCodes) &&
-    (ligne.collectivite.regionCode === null ||
-      !regionCodes.includes(ligne.collectivite.regionCode))
-  ) {
-    return false;
-  }
-  if (
-    filtrePose(departementCodes) &&
-    (ligne.collectivite.departementCode === null ||
-      !departementCodes.includes(ligne.collectivite.departementCode))
-  ) {
-    return false;
-  }
-  if (
-    recherche &&
-    !ligne.collectivite.nom
-      .toLocaleLowerCase('fr')
-      .includes(recherche.toLocaleLowerCase('fr'))
-  ) {
-    return false;
-  }
-  return true;
-};
+  filtres: Filtres
+): boolean => filtrerLigne(ligne, filtres) !== null;
 
 /** Les départements des collectivités listées, une fois chacun, par code. */
 export const listerDepartements = (
   lignes: DossierInstructionLigne[]
 ): PerimetreDepartement[] => {
   const parCode = new Map<string, string>();
-  for (const { collectivite } of lignes) {
-    if (collectivite.departementCode !== null) {
-      parCode.set(
-        collectivite.departementCode,
-        collectivite.departementLibelle ?? collectivite.departementCode
-      );
+  // Les EPCI couverts aussi : une DDT filtre sur le département d'une CC que
+  // porte un Supra d'ailleurs.
+  for (const { departementCode, departementLibelle } of lignes.flatMap(
+    (ligne) => [ligne.collectivite, ...ligne.collectivitesCouvertes]
+  )) {
+    if (departementCode !== null) {
+      parCode.set(departementCode, departementLibelle ?? departementCode);
     }
   }
   return [...parCode]

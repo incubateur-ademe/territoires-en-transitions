@@ -3,6 +3,7 @@ import {
   demarchePcaetStatusValues,
   pcaetStatutInstructionSchema,
   pcaetStatutInstructionValues,
+  TypePorteurSupraEnum,
   type PcaetStatutInstruction,
 } from '@tet/domain/demarches';
 import { z } from 'zod';
@@ -32,6 +33,26 @@ export type DossierInstructionPilote = z.infer<
  * pu se déclarer volontaire. L'écran doit pouvoir le dire plutôt que de
  * présenter les deux comme un même fait.
  */
+/**
+ * Un EPCI que couvre le dépôt d'un Supra : une sous-ligne de son porteur. Ni
+ * statut, ni dates, ni action — ce sont ceux du dépôt. Son obligation est la
+ * sienne, déduite de sa famille juridique et de sa population : une CC
+ * volontaire peut être couverte.
+ */
+export const dossierInstructionCollectiviteCouverteSchema = z.object({
+  id: z.number().int(),
+  nom: z.string(),
+  departementCode: z.string().nullable(),
+  departementLibelle: z.string().nullable(),
+  regionCode: z.string().nullable(),
+  regionLibelle: z.string().nullable(),
+  obligation: z.enum(collectivitePcaetObligationValues).nullable(),
+});
+
+export type DossierInstructionCollectiviteCouverte = z.infer<
+  typeof dossierInstructionCollectiviteCouverteSchema
+>;
+
 export const obligationSourceSchema = z.enum(['demarche', 'assujettissement']);
 
 export type ObligationSource = z.infer<typeof obligationSourceSchema>;
@@ -86,6 +107,15 @@ export const dossierInstructionLigneSchema = z.object({
   isScotAec: z.boolean(),
   nbAvisValides: z.number().int(),
   nbAvisBrouillons: z.number().int(),
+  /**
+   * Le type du Supra qui porte le dépôt pour plusieurs EPCI, `null` pour le
+   * dépôt d'une collectivité pour elle-même.
+   */
+  typePorteurSupra: z.enum(Object.values(TypePorteurSupraEnum)).nullable(),
+  /**
+   * Les EPCI que couvre le dépôt, qui passent les filtres. Vide hors Supra.
+   */
+  collectivitesCouvertes: dossierInstructionCollectiviteCouverteSchema.array(),
 });
 
 export type DossierInstructionLigne = z.infer<

@@ -24,7 +24,7 @@ import {
   ListDossiersInstructionRepository,
 } from './list-dossiers-instruction.repository';
 import {
-  estRetenue,
+  filtrerLigne,
   listerDepartements,
   trierDossiers,
   trieSurLesPilotes,
@@ -100,6 +100,14 @@ export class ListDossiersInstructionService {
       tx
     );
 
+    const couvertesParDemarche =
+      await this.listDossiersInstructionRepository.listCollectivitesCouvertesParDemarche(
+        rows.flatMap((row) =>
+          row.demarcheId === null ? [] : [row.demarcheId]
+        ),
+        tx
+      );
+
     const now = new Date();
     const dossiers = rows.map((row) => ({
       row,
@@ -109,6 +117,10 @@ export class ListDossiersInstructionService {
           row.demarcheId === null
             ? []
             : achevementParDemarche.get(row.demarcheId) ?? [],
+        couvertes:
+          row.demarcheId === null
+            ? []
+            : couvertesParDemarche.get(row.demarcheId) ?? [],
         now,
       }),
     }));
@@ -124,7 +136,12 @@ export class ListDossiersInstructionService {
       { serviceSePrononce: peutDeposerAvisInstructeur(instructeurType) }
     );
 
-    const filtrees = lignes.filter((ligne) => estRetenue(ligne, input));
+    // Un groupe — un Supra et ses EPCI couverts — compte pour une ligne : il se
+    // pagine d'un bloc, ses sous-lignes viennent avec lui.
+    const filtrees = lignes.flatMap((ligne) => {
+      const retenue = filtrerLigne(ligne, input);
+      return retenue === null ? [] : [retenue];
+    });
 
     // Trier par pilote demande de les connaître avant de paginer. Le coût est
     // assumé — il ne se paie que sur ce tri, et l'agent l'a demandé.

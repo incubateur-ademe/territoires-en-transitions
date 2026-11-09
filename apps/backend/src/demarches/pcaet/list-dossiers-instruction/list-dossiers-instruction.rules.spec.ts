@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import type { DossierInstructionLigne } from './list-dossiers-instruction.output';
 import {
   estRetenue,
+  filtrerLigne,
   listerDepartements,
   trierDossiers,
 } from './list-dossiers-instruction.rules';
@@ -42,6 +43,8 @@ const ligne = (
     isScotAec: false,
     nbAvisValides: 0,
     nbAvisBrouillons: 0,
+    typePorteurSupra: null,
+    collectivitesCouvertes: [],
     ...reste,
   };
 };
@@ -365,5 +368,85 @@ describe('trierDossiers', () => {
     trierDossiers(lignes, 'collectivite', 'asc');
 
     expect(noms(lignes)).toEqual(['Zitrone', 'Abricot']);
+  });
+});
+
+describe('filtrerLigne — le dépôt d’un Supra et ses EPCI couverts', () => {
+  const couverte = (
+    nom: string,
+    departementCode: string,
+    obligation: DossierInstructionLigne['obligation']
+  ) => ({
+    id: nom.length,
+    nom,
+    departementCode,
+    departementLibelle: departementCode,
+    regionCode: '76',
+    regionLibelle: 'Occitanie',
+    obligation,
+  });
+
+  const groupe = ligne({
+    nom: 'PETR du Pays Lauragais',
+    obligation: CollectivitePcaetObligationEnum.VOLONTAIRE,
+    typePorteurSupra: 'petr',
+    collectivitesCouvertes: [
+      couverte(
+        'CC Castelnaudary',
+        '11',
+        CollectivitePcaetObligationEnum.OBLIGATOIRE
+      ),
+      couverte('CC Revel', '31', CollectivitePcaetObligationEnum.VOLONTAIRE),
+    ],
+  });
+
+  it('garde le groupe si une seule sous-ligne passe, et seulement elle', () => {
+    const retenue = filtrerLigne(groupe, {
+      ...AUCUN_FILTRE,
+      departementCodes: ['31'],
+    });
+    expect(retenue?.collectivitesCouvertes.map(({ nom }) => nom)).toEqual([
+      'CC Revel',
+    ]);
+  });
+
+  it('juge l’obligation de chaque EPCI, pas celle du porteur', () => {
+    const retenue = filtrerLigne(groupe, {
+      ...AUCUN_FILTRE,
+      obligations: [CollectivitePcaetObligationEnum.OBLIGATOIRE],
+    });
+    expect(retenue?.collectivitesCouvertes.map(({ nom }) => nom)).toEqual([
+      'CC Castelnaudary',
+    ]);
+  });
+
+  it('écarte le groupe quand ni le porteur ni ses EPCI ne passent', () => {
+    expect(
+      filtrerLigne(groupe, { ...AUCUN_FILTRE, departementCodes: ['09'] })
+    ).toBeNull();
+  });
+
+  it('une recherche qui nomme le porteur garde toutes ses sous-lignes', () => {
+    expect(
+      filtrerLigne(groupe, { ...AUCUN_FILTRE, recherche: 'lauragais' })
+        ?.collectivitesCouvertes
+    ).toHaveLength(2);
+  });
+
+  it('une recherche qui nomme un EPCI ne garde que lui', () => {
+    expect(
+      filtrerLigne(groupe, {
+        ...AUCUN_FILTRE,
+        recherche: 'revel',
+      })?.collectivitesCouvertes.map(({ nom }) => nom)
+    ).toEqual(['CC Revel']);
+  });
+
+  it('liste aussi les départements des EPCI couverts', () => {
+    expect(listerDepartements([groupe]).map(({ code }) => code)).toEqual([
+      '11',
+      '31',
+      '54',
+    ]);
   });
 });

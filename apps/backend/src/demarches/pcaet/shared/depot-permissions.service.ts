@@ -202,7 +202,8 @@ export class DepotPermissionsService {
     const [service] = await this.listServicesCouvrants(
       user.id,
       demarche.collectiviteId,
-      tx
+      tx,
+      demarcheId
     );
     if (!service) {
       return failure(DepotPermissionsErrorEnum.UNAUTHORIZED);
@@ -230,7 +231,9 @@ export class DepotPermissionsService {
   async listServicesCouvrants(
     userId: string,
     collectiviteId: number,
-    tx?: Transaction
+    tx?: Transaction,
+    /** Le dépôt, quand il est connu : il couvre aussi les EPCI d'un Supra. */
+    demarcheId?: number
   ): Promise<ServiceCouvrant[]> {
     const deposante = alias(collectiviteTable, 'deposante');
     const instructrice = alias(collectiviteTable, 'instructrice');
@@ -243,7 +246,7 @@ export class DepotPermissionsService {
         // qui départage une saisine principale d'une secondaire.
         collectiviteRegionCode: deposante.regionCode,
         collectiviteDepartementCode: deposante.departementCode,
-        ...perimetreInstructeurColumns(deposante, instructrice),
+        ...perimetreInstructeurColumns(deposante, instructrice, demarcheId),
       })
       .from(utilisateurCollectiviteAccessTable)
       .innerJoin(
@@ -331,7 +334,11 @@ export class DepotPermissionsService {
     return (
       db
         .select({
-          ...perimetreInstructeurColumns(deposante, instructrice),
+          ...perimetreInstructeurColumns(
+            deposante,
+            instructrice,
+            demarcheTable.id
+          ),
         })
         .from(pcaetDemandeAvisTable)
         .innerJoin(
@@ -502,7 +509,11 @@ export class DepotPermissionsService {
         perimetre: pcaetDemandeAvisTable.perimetre,
         demarcheStatus: demarcheTable.status,
         avisDeadlineAt: demarcheTable.avisDeadlineAt,
-        ...perimetreInstructeurColumns(deposante, instructrice),
+        ...perimetreInstructeurColumns(
+          deposante,
+          instructrice,
+          demarcheTable.id
+        ),
       })
       .from(pcaetDemandeAvisTable)
       .innerJoin(

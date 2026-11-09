@@ -3,6 +3,7 @@ import { collectiviteTable } from '@tet/backend/collectivites/shared/models/coll
 import { departementTable } from '@tet/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { demarchePcaetCollectiviteCouverteTable } from '@tet/backend/demarches/shared/models/demarche-pcaet-collectivite-couverte.table';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -14,6 +15,7 @@ import type {
   CollectiviteType,
 } from '@tet/domain/collectivites';
 import {
+  DemarchePcaetStatusEnum,
   DemarcheTypeEnum,
   PcaetPerimetreSaisineEnum,
   type DemarchePcaetObligation,
@@ -25,12 +27,17 @@ import {
   asc,
   desc,
   eq,
+  exists,
   inArray,
   isNotNull,
+  isNull,
+  ne,
+  not,
   or,
   sql,
   type SQL,
 } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDateSaisineTable } from '../shared/models/pcaet-date-saisine.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
@@ -97,6 +104,18 @@ export type DossierInstructionRow = {
    * Avec `transmittedAt`, c'est ce qui mesure la durée d'une instruction.
    */
   dernierAvisValideLe: string | null;
+};
+
+/** Un EPCI que couvre le dépôt d'un Supra : une sous-ligne de son porteur. */
+export type CollectiviteCouverteRow = {
+  id: number;
+  nom: string;
+  departementCode: string | null;
+  departementLibelle: string | null;
+  regionCode: string | null;
+  regionLibelle: string | null;
+  natureInsee: CollectiviteNatureType | null;
+  population: number | null;
 };
 
 export type DossiersCouverts = {
@@ -170,7 +189,34 @@ export class ListDossiersInstructionRepository {
         }
         // `collectiviteTable` est ici la déposante : ses territoires — le
         // principal comme les secondaires — sont confrontés à ceux du service.
-        filtrePerimetre = couvreLesCodesSql(collectiviteTable, maille, codes);
+        // Le dépôt d'un Supra entre aussi par l'un des EPCI qu'il couvre : une
+        // DDT suit le PCAET qui couvre une CC de son département, même porté
+        // depuis un autre.
+        const couverte = alias(collectiviteTable, 'couverte_perimetre');
+        filtrePerimetre = or(
+          couvreLesCodesSql(collectiviteTable, maille, codes),
+          exists(
+            db
+              .select({ id: demarchePcaetCollectiviteCouverteTable.demarcheId })
+              .from(demarchePcaetCollectiviteCouverteTable)
+              .innerJoin(
+                couverte,
+                eq(
+                  couverte.id,
+                  demarchePcaetCollectiviteCouverteTable.collectiviteId
+                )
+              )
+              .where(
+                and(
+                  eq(
+                    demarchePcaetCollectiviteCouverteTable.demarcheId,
+                    demarcheTable.id
+                  ),
+                  couvreLesCodesSql(couverte, maille, codes)
+                )
+              )
+          )
+        );
       }
 
       const perimetreRegions =
@@ -243,6 +289,36 @@ export class ListDossiersInstructionRepository {
         inArray(collectiviteTable.natureInsee, [...NATURES_PORTEUSES_PCAET])
       );
 
+      // Un EPCI que couvre le dépôt d'un Supra — en cours ou publié — n'est pas
+      // « sans dépôt » : il apparaît en sous-ligne de son porteur, et non une
+      // seconde fois en tête. Ses propres dossiers passés restent des lignes.
+      const depotCouvrant = alias(demarcheTable, 'depot_couvrant');
+      const couverteParUnDepot = exists(
+        db
+          .select({ id: demarchePcaetCollectiviteCouverteTable.demarcheId })
+          .from(demarchePcaetCollectiviteCouverteTable)
+          .innerJoin(
+            depotCouvrant,
+            eq(
+              depotCouvrant.id,
+              demarchePcaetCollectiviteCouverteTable.demarcheId
+            )
+          )
+          .where(
+            and(
+              eq(
+                demarchePcaetCollectiviteCouverteTable.collectiviteId,
+                collectiviteTable.id
+              ),
+              ne(depotCouvrant.status, DemarchePcaetStatusEnum.ARCHIVE)
+            )
+          )
+      );
+      const sansDepotMaisCouverte = and(
+        isNull(demarcheTable.id),
+        couverteParUnDepot
+      ) as SQL;
+
       const rows = await db
         .select({
           demarcheId: demarcheTable.id,
@@ -302,7 +378,7 @@ export class ListDossiersInstructionRepository {
           departementTable,
           eq(departementTable.code, collectiviteTable.departementCode)
         )
-        .where(and(filtrePerimetre, dansLAssiette));
+        .where(and(filtrePerimetre, dansLAssiette, not(sansDepotMaisCouverte)));
 
       return success({
         instructeurType: instructeur.type,
@@ -317,6 +393,55 @@ export class ListDossiersInstructionRepository {
         ListDossiersInstructionErrorEnum.LIST_DOSSIERS_INSTRUCTION_ERROR
       );
     }
+  }
+
+  /** Les EPCI que couvre chaque dépôt de Supra, par nom. */
+  async listCollectivitesCouvertesParDemarche(
+    demarcheIds: number[],
+    tx?: Transaction
+  ): Promise<Map<number, CollectiviteCouverteRow[]>> {
+    const parDemarche = new Map<number, CollectiviteCouverteRow[]>();
+    if (demarcheIds.length === 0) {
+      return parDemarche;
+    }
+
+    const db = tx ?? this.databaseService.db;
+    const rows = await db
+      .select({
+        demarcheId: demarchePcaetCollectiviteCouverteTable.demarcheId,
+        id: collectiviteTable.id,
+        nom: collectiviteTable.nom,
+        departementCode: collectiviteTable.departementCode,
+        departementLibelle: departementTable.libelle,
+        regionCode: collectiviteTable.regionCode,
+        regionLibelle: regionTable.libelle,
+        natureInsee: collectiviteTable.natureInsee,
+        population: collectiviteTable.population,
+      })
+      .from(demarchePcaetCollectiviteCouverteTable)
+      .innerJoin(
+        collectiviteTable,
+        eq(
+          collectiviteTable.id,
+          demarchePcaetCollectiviteCouverteTable.collectiviteId
+        )
+      )
+      .leftJoin(regionTable, eq(regionTable.code, collectiviteTable.regionCode))
+      .leftJoin(
+        departementTable,
+        eq(departementTable.code, collectiviteTable.departementCode)
+      )
+      .where(
+        inArray(demarchePcaetCollectiviteCouverteTable.demarcheId, demarcheIds)
+      )
+      .orderBy(asc(collectiviteTable.nom));
+
+    for (const { demarcheId, ...couverte } of rows) {
+      const couvertes = parDemarche.get(demarcheId) ?? [];
+      couvertes.push(couverte);
+      parDemarche.set(demarcheId, couvertes);
+    }
+    return parDemarche;
   }
 
   /**

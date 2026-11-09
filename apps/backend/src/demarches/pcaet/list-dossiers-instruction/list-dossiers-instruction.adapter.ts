@@ -1,14 +1,21 @@
 import {
+  CollectivitePcaetObligationEnum,
   getObligationAssujettissement,
   getStatutInstruction,
+  getTypePorteurSupra,
   type DemandeAvisAchevement,
 } from '@tet/domain/demarches';
 import type { DossierInstructionLigne } from './list-dossiers-instruction.output';
-import type { DossierInstructionRow } from './list-dossiers-instruction.repository';
+import type {
+  CollectiviteCouverteRow,
+  DossierInstructionRow,
+} from './list-dossiers-instruction.repository';
 
 export type ContexteLigne = {
   deposeAvis: boolean;
   achevement: readonly DemandeAvisAchevement[];
+  /** Les EPCI que couvre le dépôt, s'il est porté par un Supra. */
+  couvertes?: readonly CollectiviteCouverteRow[];
   now: Date;
 };
 
@@ -17,9 +24,23 @@ export type ContexteLigne = {
  * page connue, pour ne pas interroger un millier de démarches dont on
  * n'affiche que la première vingtaine.
  */
+/**
+ * Obligatoire ou volontaire : un EPCI que la loi n'oblige pas, et que couvre
+ * pourtant le PCAET d'un Supra, y participe volontairement.
+ */
+const obligationCouverte = (couverte: CollectiviteCouverteRow) => {
+  const obligation = getObligationAssujettissement({
+    natureInsee: couverte.natureInsee,
+    population: couverte.population,
+  });
+  return obligation === CollectivitePcaetObligationEnum.NON_OBLIGE
+    ? CollectivitePcaetObligationEnum.VOLONTAIRE
+    : obligation;
+};
+
 export const toDossierInstructionLigne = (
   row: DossierInstructionRow,
-  { deposeAvis, achevement, now }: ContexteLigne
+  { deposeAvis, achevement, couvertes = [], now }: ContexteLigne
 ): DossierInstructionLigne => {
   // L'obligation déclarée sur le dépôt prime : elle vient de la collectivité
   // elle-même. La règle d'assujettissement ne parle que pour celles qui n'ont
@@ -79,5 +100,18 @@ export const toDossierInstructionLigne = (
     isScotAec: row.isScotAec ?? false,
     nbAvisValides: row.nbAvisValides,
     nbAvisBrouillons: row.nbAvisBrouillons,
+    typePorteurSupra:
+      couvertes.length > 0
+        ? getTypePorteurSupra(row.collectiviteNatureInsee)
+        : null,
+    collectivitesCouvertes: couvertes.map((couverte) => ({
+      id: couverte.id,
+      nom: couverte.nom,
+      departementCode: couverte.departementCode,
+      departementLibelle: couverte.departementLibelle,
+      regionCode: couverte.regionCode,
+      regionLibelle: couverte.regionLibelle,
+      obligation: obligationCouverte(couverte),
+    })),
   };
 };

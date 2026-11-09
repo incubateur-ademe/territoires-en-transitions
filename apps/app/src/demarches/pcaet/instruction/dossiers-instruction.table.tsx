@@ -4,14 +4,29 @@ import { appLabels } from '@/app/labels/catalog';
 import type { CollectivitePcaetObligation } from '@tet/domain/demarches';
 import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
-import { Badge, cn, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
+import {
+  Badge,
+  Button,
+  cn,
+  ReactTable,
+  TableCell,
+  TableHeaderCell,
+  TableRow,
+} from '@tet/ui';
 import {
   columnVisibilityFeature,
   createColumnHelper,
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { createContext, useContext, useMemo } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import type {
   ColonneTriable,
   DirectionTri,
@@ -21,6 +36,7 @@ import type {
 import {
   ActionsCell,
   CollectiviteCell,
+  CollectiviteCouverteCell,
   DateCell,
   DateSaisineCell,
   EcheanceCell,
@@ -88,6 +104,71 @@ const usePilotage = (): Pilotage => {
  * pas de démarche à nommer. La saisine passe en premier : c'est par elle que
  * les tests et les liens désignent un dossier.
  */
+/**
+ * Les groupes — un Supra et ses EPCI couverts — dépliés par défaut : on retient
+ * ceux que l'agent a repliés.
+ */
+type Groupes = {
+  estDeplie: (cle: string) => boolean;
+  basculer: (cle: string) => void;
+};
+
+const GroupesContext = createContext<Groupes | null>(null);
+
+const useGroupes = (): Groupes => {
+  const groupes = useContext(GroupesContext);
+  if (groupes === null) {
+    throw new Error(
+      'Les lignes de la liste d’instruction attendent un GroupesContext.'
+    );
+  }
+  return groupes;
+};
+
+const CollectiviteGroupeCell = ({ dossier }: { dossier: Dossier }) => {
+  const { estDeplie, basculer } = useGroupes();
+  const cle = getRowKey(dossier);
+  return (
+    <CollectiviteCell
+      dossier={dossier}
+      deplie={estDeplie(cle)}
+      basculer={() => basculer(cle)}
+    />
+  );
+};
+
+/**
+ * Ce qu'une sous-ligne montre dans chaque colonne : son nom et ses badges, son
+ * territoire. Le reste — statut, dates, action — appartient au dépôt.
+ */
+const contenuSousLigne = (
+  colonne: string,
+  couverte: Dossier['collectivitesCouvertes'][number],
+  dossier: Dossier
+): ReactNode => {
+  if (colonne === 'collectivite') {
+    return (
+      <CollectiviteCouverteCell
+        couverte={couverte}
+        typePorteurSupra={dossier.typePorteurSupra}
+      />
+    );
+  }
+  if (colonne === 'region') {
+    return (
+      <span className="text-primary-9">{couverte.regionLibelle ?? '—'}</span>
+    );
+  }
+  if (colonne === 'departement') {
+    return (
+      <span className="text-primary-9">
+        {couverte.departementLibelle ?? '—'}
+      </span>
+    );
+  }
+  return null;
+};
+
 const getRowKey = (dossier: Dossier): string => {
   if (dossier.demandeAvisId !== null) {
     return `demande-${dossier.demandeAvisId}`;
@@ -276,7 +357,7 @@ const columns = [
     header: CollectiviteHeader,
     cell: ({ row }) => (
       <TableCell>
-        <CollectiviteCell dossier={row.original} />
+        <CollectiviteGroupeCell dossier={row.original} />
       </TableCell>
     ),
   }),
@@ -485,38 +566,108 @@ export const DossiersInstructionTable = ({
     getRowId: getRowKey,
   });
 
+  const [replies, setReplies] = useState<ReadonlySet<string>>(new Set());
+  const basculer = useCallback(
+    (cle: string) =>
+      setReplies((courants) => {
+        const suivants = new Set(courants);
+        if (!suivants.delete(cle)) {
+          suivants.add(cle);
+        }
+        return suivants;
+      }),
+    []
+  );
+  const groupes = useMemo(
+    () => ({ estDeplie: (cle: string) => !replies.has(cle), basculer }),
+    [replies, basculer]
+  );
+  const clesDesGroupes = dossiers
+    .filter((dossier) => dossier.collectivitesCouvertes.length > 0)
+    .map(getRowKey);
+
   return (
     <PilotageContext.Provider value={pilotage}>
-      {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
-      <div
-        className={
-          afficherDepartement
-            ? // `max-[1600px]` inclurait 1600px (`max-width`) : même forme que `max-2xl`.
-              '[@media_not_all_and_(min-width:1600px)]:overflow-x-auto'
-            : afficherRegion
-            ? 'max-2xl:overflow-x-auto'
-            : 'max-xl:overflow-x-auto'
-        }
-        tabIndex={0}
-        role="region"
-        aria-label={appLabels.instructionListeTitre}
-      >
-        <ReactTable
-          table={table}
-          ariaLabel={appLabels.instructionListeTitre}
-          className={cn({
-            'min-w-[77rem]': !afficherRegion && !afficherDepartement,
-            'min-w-[83rem]': afficherRegion && !afficherDepartement,
-            'min-w-[87rem]': !afficherRegion && afficherDepartement,
-            'min-w-[93rem]': afficherRegion && afficherDepartement,
-          })}
-          isEmpty={dossiers.length === 0}
-          emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
-          getRowProps={(row) => ({
-            'data-test': `demarches.pcaet.instruction.ligne-${row.id}`,
-          })}
-        />
-      </div>
+      <GroupesContext.Provider value={groupes}>
+        {clesDesGroupes.length > 0 && (
+          <div className="flex justify-end mb-2">
+            <Button
+              size="xs"
+              variant="grey"
+              icon={
+                replies.size === 0
+                  ? 'contract-up-down-line'
+                  : 'expand-up-down-line'
+              }
+              onClick={() =>
+                setReplies(
+                  replies.size === 0 ? new Set(clesDesGroupes) : new Set()
+                )
+              }
+              dataTest="demarches.pcaet.instruction.basculer-tous-les-groupes"
+            >
+              {replies.size === 0
+                ? appLabels.instructionListeToutReplier
+                : appLabels.instructionListeToutDeplier}
+            </Button>
+          </div>
+        )}
+        {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
+        <div
+          className={
+            afficherDepartement
+              ? // `max-[1600px]` inclurait 1600px (`max-width`) : même forme que `max-2xl`.
+                '[@media_not_all_and_(min-width:1600px)]:overflow-x-auto'
+              : afficherRegion
+              ? 'max-2xl:overflow-x-auto'
+              : 'max-xl:overflow-x-auto'
+          }
+          tabIndex={0}
+          role="region"
+          aria-label={appLabels.instructionListeTitre}
+        >
+          <ReactTable
+            table={table}
+            ariaLabel={appLabels.instructionListeTitre}
+            className={cn({
+              'min-w-[77rem]': !afficherRegion && !afficherDepartement,
+              'min-w-[83rem]': afficherRegion && !afficherDepartement,
+              'min-w-[87rem]': !afficherRegion && afficherDepartement,
+              'min-w-[93rem]': afficherRegion && afficherDepartement,
+            })}
+            isEmpty={dossiers.length === 0}
+            emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
+            rowWrapper={({ row, children }) => (
+              <>
+                <TableRow
+                  className="text-sm"
+                  data-test={`demarches.pcaet.instruction.ligne-${row.id}`}
+                >
+                  {children}
+                </TableRow>
+                {groupes.estDeplie(row.id) &&
+                  row.original.collectivitesCouvertes.map((couverte) => (
+                    <TableRow
+                      key={couverte.id}
+                      className="text-sm"
+                      data-test={`demarches.pcaet.instruction.sous-ligne-${row.id}-${couverte.id}`}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.column.id}>
+                          {contenuSousLigne(
+                            cell.column.id,
+                            couverte,
+                            row.original
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+              </>
+            )}
+          />
+        </div>
+      </GroupesContext.Provider>
     </PilotageContext.Provider>
   );
 };

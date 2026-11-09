@@ -269,28 +269,109 @@ export const ActionsCell = ({ dossier }: { dossier: Dossier }) => {
   );
 };
 
-export const CollectiviteCell = ({ dossier }: { dossier: Dossier }) => {
+export const CollectiviteCell = ({
+  dossier,
+  deplie,
+  basculer,
+}: {
+  dossier: Dossier;
+  /** Les EPCI couverts sont-ils affichés ? Sans objet hors Supra. */
+  deplie?: boolean;
+  basculer?: () => void;
+}) => {
   const href = getDossierHref(dossier);
   const nom = (
     <span className="font-bold text-primary-9">{dossier.collectivite.nom}</span>
   );
+  const groupe = dossier.collectivitesCouvertes.length > 0 && basculer;
 
   return (
-    <div className="flex flex-col items-start gap-1">
-      {href === null ? (
-        nom
-      ) : (
-        <Link href={href} className="hover:underline">
-          {nom}
-        </Link>
+    <div className="flex items-start gap-1">
+      {groupe && (
+        <button
+          type="button"
+          onClick={basculer}
+          aria-expanded={deplie}
+          aria-label={
+            deplie
+              ? appLabels.instructionListeReplierGroupe({
+                  porteur: dossier.collectivite.nom,
+                })
+              : appLabels.instructionListeDeplierGroupe({
+                  porteur: dossier.collectivite.nom,
+                })
+          }
+          className="shrink-0 text-primary-9 hover:text-primary-7"
+          data-test="demarches.pcaet.instruction.basculer-groupe"
+        >
+          <Icon icon={deplie ? 'arrow-down-s-line' : 'arrow-right-s-line'} />
+        </button>
       )}
-      <div className="flex flex-wrap items-center gap-1">
-        <ObligationBadge dossier={dossier} />
-        <ScotAecBadge dossier={dossier} />
+      <div className="flex flex-col items-start gap-1">
+        {href === null ? (
+          nom
+        ) : (
+          <Link href={href} className="hover:underline">
+            {nom}
+          </Link>
+        )}
+        <div className="flex flex-wrap items-center gap-1">
+          {dossier.typePorteurSupra !== null && (
+            <Badge
+              title={appLabels.instructionListeBadgeSupra}
+              variant="new"
+              size="sm"
+              uppercase={false}
+            />
+          )}
+          <ObligationBadge dossier={dossier} />
+          <ScotAecBadge dossier={dossier} />
+        </div>
       </div>
     </div>
   );
 };
+
+type CollectiviteCouverte = Dossier['collectivitesCouvertes'][number];
+
+/**
+ * Un EPCI que couvre le dépôt d'un Supra, en sous-ligne de son porteur : son
+ * nom, son obligation propre et qui le porte. Ni statut, ni dates, ni action —
+ * ce sont ceux du dépôt, sur la ligne du porteur.
+ */
+export const CollectiviteCouverteCell = ({
+  couverte,
+  typePorteurSupra,
+}: {
+  couverte: CollectiviteCouverte;
+  typePorteurSupra: Dossier['typePorteurSupra'];
+}) => (
+  <div className="flex flex-col items-start gap-1 pl-6">
+    <span className="text-primary-9">{couverte.nom}</span>
+    <div className="flex flex-wrap items-center gap-1">
+      {couverte.obligation !== null && (
+        <Badge
+          title={OBLIGATION_LABELS[couverte.obligation]}
+          variant={OBLIGATION_VARIANTS[couverte.obligation]}
+          size="sm"
+          uppercase={false}
+        />
+      )}
+      <Badge
+        title={
+          typePorteurSupra
+            ? appLabels.demarchePorteParType[typePorteurSupra]
+            : appLabels.demarchePorteParAutreStructure
+        }
+        variant="grey"
+        type="outlined"
+        size="sm"
+        uppercase={false}
+        trim={false}
+      />
+    </div>
+  </div>
+);
 
 export const RegionCell = ({ dossier }: { dossier: Dossier }) => (
   <span className="text-primary-9">
