@@ -77,29 +77,38 @@ export class CreateDemarchePcaetService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, CreateDemarchePcaetError>> => {
-      // Une seule démarche « en cours » à la fois : un nouveau dépôt n'est
-      // possible qu'une fois la précédente adoptée ou archivée.
-      const hasActiveDemarche =
-        await this.createDemarchePcaetRepository.hasActiveDemarche(
-          input.collectiviteId,
-          transaction
-        );
-      if (hasActiveDemarche) {
+      await this.perimetreRepository.lockCollectivites(
+        [input.collectiviteId, ...collectivitesCouvertesIds],
+        transaction
+      );
+
+      // Une seule démarche « en cours » à la fois, la sienne ou celle d'un
+      // Supra qui la couvre : un nouveau dépôt n'est possible qu'une fois la
+      // précédente adoptée ou archivée.
+      const engagements = await this.perimetreRepository.listEngagementsEnCours(
+        [input.collectiviteId, ...collectivitesCouvertesIds],
+        transaction
+      );
+      if (engagements.has(input.collectiviteId)) {
         return failure(
           CreateDemarchePcaetErrorEnum.DEMARCHE_EN_COURS_EXISTANTE
         );
       }
 
-      if (
-        collectivitesCouvertesIds.length > 0 &&
-        !(await this.isPerimetreValide(
-          input.collectiviteId,
-          collectivitesCouvertesIds,
-          isSupraEnabled,
-          transaction
-        ))
-      ) {
-        return failure(CreateDemarchePcaetErrorEnum.PERIMETRE_INVALIDE);
+      if (collectivitesCouvertesIds.length > 0) {
+        if (
+          !(await this.isPerimetreValide(
+            input.collectiviteId,
+            collectivitesCouvertesIds,
+            isSupraEnabled,
+            transaction
+          ))
+        ) {
+          return failure(CreateDemarchePcaetErrorEnum.PERIMETRE_INVALIDE);
+        }
+        if (collectivitesCouvertesIds.some((id) => engagements.has(id))) {
+          return failure(CreateDemarchePcaetErrorEnum.EPCI_DEJA_ENGAGE);
+        }
       }
 
       const obligation =

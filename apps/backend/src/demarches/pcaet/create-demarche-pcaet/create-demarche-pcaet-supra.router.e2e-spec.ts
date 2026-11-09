@@ -148,6 +148,7 @@ describe('Dépôt PCAET porté par un Supra', () => {
         nom: epciA.nom,
         departementCode: '31',
         derniereDemarche: null,
+        engagement: null,
       },
       {
         id: epciB.id,
@@ -157,6 +158,7 @@ describe('Dépôt PCAET porté par un Supra', () => {
           status: DemarchePcaetStatusEnum.ARCHIVE,
           dateDebut: '2019-03-01',
         },
+        engagement: null,
       },
     ]);
     expect(contexte.perimetrePrecedent).toEqual([]);
@@ -301,5 +303,115 @@ describe('Dépôt PCAET porté par un Supra', () => {
       collectiviteId: porteur.id,
     });
     expect(demarche.collectivitesCouvertes).toEqual([]);
+  });
+
+  it("grise l'EPCI engagé dans sa propre démarche ou dans le dépôt en cours d'un autre Supra", async () => {
+    const { porteur, caller } = await addPorteur('PETR');
+    const autreSupra = await addPorteur('PETR');
+    const epciPropre = await addMembre(porteur.id, {
+      nom: 'A – CC avec sa démarche',
+      natureInsee: 'CC',
+    });
+    const epciCouvert = await addMembre(porteur.id, {
+      nom: 'B – CC couverte ailleurs',
+      natureInsee: 'CC',
+    });
+    const epciLibre = await addMembre(porteur.id, {
+      nom: 'C – CC libre',
+      natureInsee: 'CC',
+    });
+    await db.db.insert(demarcheTable).values({
+      collectiviteId: epciPropre.id,
+      type: 'pcaet',
+      titre: 'PCAET de A',
+      status: DemarchePcaetStatusEnum.EN_ELABORATION,
+      launchedAt: '2025-09-15T00:00:00Z',
+    });
+    await db.db
+      .insert(collectiviteRelationsTable)
+      .values({ id: epciCouvert.id, parentId: autreSupra.porteur.id });
+    await autreSupra.caller.demarches.pcaet.create({
+      collectiviteId: autreSupra.porteur.id,
+      launchedAt: '2026-03-02T00:00:00.000Z',
+      collectivitesCouvertesIds: [epciCouvert.id],
+    });
+
+    const contexte = await caller.demarches.pcaet.getDepotContext({
+      collectiviteId: porteur.id,
+    });
+    expect(
+      contexte.epciCandidats.map(({ id, engagement }) => ({ id, engagement }))
+    ).toEqual([
+      {
+        id: epciPropre.id,
+        engagement: { porteur: null, dateDebut: '2025-09-15' },
+      },
+      {
+        id: epciCouvert.id,
+        engagement: {
+          porteur: {
+            id: autreSupra.porteur.id,
+            nom: autreSupra.porteur.nom,
+          },
+          dateDebut: '2026-03-02',
+        },
+      },
+      { id: epciLibre.id, engagement: null },
+    ]);
+
+    for (const engage of [epciPropre, epciCouvert]) {
+      await expect(
+        caller.demarches.pcaet.create({
+          collectiviteId: porteur.id,
+          collectivitesCouvertesIds: [epciLibre.id, engage.id],
+        })
+      ).rejects.toMatchObject({ code: 'CONFLICT' });
+    }
+
+    const demarche = await caller.demarches.pcaet.create({
+      collectiviteId: porteur.id,
+      collectivitesCouvertesIds: [epciLibre.id],
+    });
+    expect(demarche.collectivitesCouvertes.map(({ id }) => id)).toEqual([
+      epciLibre.id,
+    ]);
+  });
+
+  it("un EPCI couvert par un dépôt en cours ne commence le sien qu'une fois ce dépôt abouti", async () => {
+    const supra = await addPorteur('PETR');
+    const epci = await addPorteur('CC');
+    await db.db
+      .insert(collectiviteRelationsTable)
+      .values({ id: epci.porteur.id, parentId: supra.porteur.id });
+    const depot = await supra.caller.demarches.pcaet.create({
+      collectiviteId: supra.porteur.id,
+      launchedAt: '2026-03-02T00:00:00.000Z',
+      collectivitesCouvertesIds: [epci.porteur.id],
+    });
+
+    const contexte = await epci.caller.demarches.pcaet.getDepotContext({
+      collectiviteId: epci.porteur.id,
+    });
+    expect(contexte.couvertureEnCours).toEqual({
+      porteur: { id: supra.porteur.id, nom: supra.porteur.nom },
+      dateDebut: '2026-03-02',
+    });
+    await expect(
+      epci.caller.demarches.pcaet.create({ collectiviteId: epci.porteur.id })
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+
+    await db.db
+      .update(demarcheTable)
+      .set({ status: DemarchePcaetStatusEnum.ARCHIVE })
+      .where(eq(demarcheTable.id, depot.id));
+
+    const apres = await epci.caller.demarches.pcaet.getDepotContext({
+      collectiviteId: epci.porteur.id,
+    });
+    expect(apres.couvertureEnCours).toBeNull();
+    const demarche = await epci.caller.demarches.pcaet.create({
+      collectiviteId: epci.porteur.id,
+    });
+    expect(demarche.collectiviteId).toBe(epci.porteur.id);
   });
 });

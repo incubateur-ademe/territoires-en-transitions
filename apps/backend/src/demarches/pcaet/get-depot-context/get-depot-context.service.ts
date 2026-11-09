@@ -65,13 +65,33 @@ export class GetDepotContextService {
         ),
       ]);
 
-    const estSupra = isSupraEnabled && estNatureSupraPcaet(natureInsee);
-    if (!estSupra) {
+    if (!isSupraEnabled) {
       return success({
         peutDeclarerScotAec,
-        estSupra,
+        estSupra: false,
         epciCandidats: [],
         perimetrePrecedent: [],
+        couvertureEnCours: null,
+      });
+    }
+
+    const engagement = (
+      await this.perimetreRepository.listEngagementsEnCours(
+        [input.collectiviteId],
+        tx
+      )
+    ).get(input.collectiviteId);
+    const couvertureEnCours = engagement?.porteur
+      ? { porteur: engagement.porteur, dateDebut: engagement.dateDebut }
+      : null;
+
+    if (!estNatureSupraPcaet(natureInsee)) {
+      return success({
+        peutDeclarerScotAec,
+        estSupra: false,
+        epciCandidats: [],
+        perimetrePrecedent: [],
+        couvertureEnCours,
       });
     }
 
@@ -82,9 +102,10 @@ export class GetDepotContextService {
 
     return success({
       peutDeclarerScotAec,
-      estSupra,
+      estSupra: true,
       epciCandidats,
       perimetrePrecedent,
+      couvertureEnCours,
     });
   }
 }

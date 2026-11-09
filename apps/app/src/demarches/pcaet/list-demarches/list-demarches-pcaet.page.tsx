@@ -6,8 +6,11 @@ import {
 } from '@/app/app/paths';
 import { useListDemarchesPcaet } from '@/app/demarches/pcaet/data/use-list-demarches-pcaet';
 import { appLabels } from '@/app/labels/catalog';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   DemarcheTypeEnum,
@@ -19,6 +22,7 @@ import {
   useTrackDemarcheView,
 } from '@/app/demarches/use-demarche-tracker';
 import { Button, Event } from '@tet/ui';
+import { format, parseISO } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { DemarchePcaetActionsButton } from './demarche-pcaet-actions.button';
@@ -45,8 +49,23 @@ const renderActions = (demarche: Demarche) => (
 
 export const ListDemarchesPcaetPage = () => {
   const router = useRouter();
-  const { collectiviteId } = useCurrentCollectivite();
+  const trpc = useTRPC();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { data: demarches, isLoading, isError } = useListDemarchesPcaet();
+  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is-pcaet-supra-enabled');
+  // Le contexte ne se lit que par qui peut déposer.
+  const { data: depotContext } = useQuery(
+    trpc.demarches.pcaet.getDepotContext.queryOptions(
+      { collectiviteId },
+      {
+        enabled:
+          isPcaetSupraEnabled &&
+          hasCollectivitePermission('demarches.pcaet.mutate'),
+      }
+    )
+  );
+  const couvertureEnCours = depotContext?.couvertureEnCours ?? null;
   const { items, reinitialiserFiltres, ...pilotage } =
     useFilterDemarchesPcaet(demarches);
   const creationUrl = makeCollectiviteDemarchePcaetNouveauUrl({
@@ -90,11 +109,12 @@ export const ListDemarchesPcaetPage = () => {
     );
   }
 
-  // La création est bloquée tant qu'une démarche est « en cours » (même règle
-  // que le backend : 409 + index unique partiel).
+  // La création est bloquée tant qu'une démarche est « en cours », la sienne
+  // ou le dépôt d'un Supra qui la couvre (même règle que le backend : 409).
   const hasActiveDemarche = demarches.some((demarche) =>
     isDemarchePcaetEnCours(demarche.status)
   );
+  const creationBloquee = hasActiveDemarche || couvertureEnCours !== null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -104,9 +124,17 @@ export const ListDemarchesPcaetPage = () => {
         </h1>
         <Button
           size="sm"
-          disabled={hasActiveDemarche}
+          disabled={creationBloquee}
           title={
-            hasActiveDemarche
+            couvertureEnCours
+              ? appLabels.demarcheCreationBloqueeCouverture({
+                  porteur: couvertureEnCours.porteur.nom,
+                  dateDebut: format(
+                    parseISO(couvertureEnCours.dateDebut),
+                    'dd/MM/yyyy'
+                  ),
+                })
+              : hasActiveDemarche
               ? appLabels.demarcheListeCreationBloquee(PCAET_TYPE)
               : undefined
           }

@@ -11,11 +11,14 @@ import {
 } from '@tet/domain/collectivites';
 import {
   DEMARCHE_PCAET_ABOUTIES_STATUSES,
+  DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
   estNaturePorteusePcaet,
   type CollectiviteCouverte,
+  type EngagementPcaet,
   type EpciCandidat,
 } from '@tet/domain/demarches';
+import { alias } from 'drizzle-orm/pg-core';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 
 const NATURES_EPCI_FP = collectiviteNature.filter(estNaturePorteusePcaet);
@@ -99,11 +102,109 @@ export class DemarchePcaetPerimetreRepository {
         derniere,
       ])
     );
+    const engagements = await this.listEngagementsEnCours(
+      epcis.map((epci) => epci.id),
+      tx
+    );
 
     return epcis.map((epci) => ({
       ...epci,
       derniereDemarche: derniereParEpci.get(epci.id) ?? null,
+      engagement: engagements.get(epci.id) ?? null,
     }));
+  }
+
+  /**
+   * La démarche PCAET en cours qui engage chaque collectivité : la sienne, ou
+   * le dépôt d'un Supra qui la couvre. Absente de la map si rien ne l'engage.
+   */
+  async listEngagementsEnCours(
+    collectiviteIds: number[],
+    tx?: Transaction
+  ): Promise<Map<number, EngagementPcaet>> {
+    const engagements = new Map<number, EngagementPcaet>();
+    if (collectiviteIds.length === 0) {
+      return engagements;
+    }
+    const db = tx ?? this.databaseService.db;
+    const enCours = and(
+      eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
+      inArray(demarcheTable.status, [...DEMARCHE_PCAET_EN_COURS_STATUSES])
+    );
+    const porteurTable = alias(collectiviteTable, 'porteur');
+
+    const [propres, couvertes] = await Promise.all([
+      db
+        .select({ collectiviteId: demarcheTable.collectiviteId, dateDebut })
+        .from(demarcheTable)
+        .where(
+          and(enCours, inArray(demarcheTable.collectiviteId, collectiviteIds))
+        ),
+      db
+        .select({
+          collectiviteId: demarchePcaetCollectiviteCouverteTable.collectiviteId,
+          porteurId: porteurTable.id,
+          porteurNom: porteurTable.nom,
+          dateDebut,
+        })
+        .from(demarchePcaetCollectiviteCouverteTable)
+        .innerJoin(
+          demarcheTable,
+          eq(
+            demarcheTable.id,
+            demarchePcaetCollectiviteCouverteTable.demarcheId
+          )
+        )
+        .innerJoin(
+          porteurTable,
+          eq(porteurTable.id, demarcheTable.collectiviteId)
+        )
+        .where(
+          and(
+            enCours,
+            inArray(
+              demarchePcaetCollectiviteCouverteTable.collectiviteId,
+              collectiviteIds
+            )
+          )
+        ),
+    ]);
+
+    for (const {
+      collectiviteId,
+      porteurId,
+      porteurNom,
+      dateDebut,
+    } of couvertes) {
+      engagements.set(collectiviteId, {
+        porteur: { id: porteurId, nom: porteurNom },
+        dateDebut,
+      });
+    }
+    for (const { collectiviteId, dateDebut } of propres) {
+      engagements.set(collectiviteId, { porteur: null, dateDebut });
+    }
+    return engagements;
+  }
+
+  /**
+   * Sérialise les créations qui touchent ces collectivités jusqu'à la fin de la
+   * transaction : sans ce verrou, un Supra et un EPCI membre qui déposent en
+   * même temps passeraient tous deux la vérification d'engagement.
+   *
+   * `FOR NO KEY UPDATE` ne bloque pas les insertions qui référencent ces
+   * collectivités par clé étrangère.
+   */
+  async lockCollectivites(
+    collectiviteIds: number[],
+    tx: Transaction
+  ): Promise<void> {
+    await tx
+      .select({ id: collectiviteTable.id })
+      .from(collectiviteTable)
+      .where(inArray(collectiviteTable.id, collectiviteIds))
+      .orderBy(asc(collectiviteTable.id))
+      .for('no key update');
   }
 
   /**

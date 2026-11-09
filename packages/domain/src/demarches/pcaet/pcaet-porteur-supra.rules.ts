@@ -49,8 +49,22 @@ export const estNatureSupraPcaet = (
 ): boolean => getTypePorteurSupra(natureInsee) !== null;
 
 /**
+ * La démarche PCAET en cours qui engage déjà un EPCI : la sienne, ou le dépôt
+ * d'un Supra qui le couvre. Un EPCI n'est engagé que dans une seule à la fois.
+ */
+export const engagementPcaetSchema = z.object({
+  /** Le Supra qui porte le dépôt ; `null` quand c'est la démarche de l'EPCI. */
+  porteur: z.nullable(z.object({ id: z.number(), nom: z.string() })),
+  /** Date de lancement saisie, ou à défaut date de création (AAAA-MM-JJ). */
+  dateDebut: z.string(),
+});
+
+export type EngagementPcaet = z.infer<typeof engagementPcaetSchema>;
+
+/**
  * Un EPCI que le Supra peut cocher en créant son dépôt : un de ses membres
- * d'après BANATIC. La liste ne fait que proposer ; c'est le Supra qui coche.
+ * d'après BANATIC. La liste ne fait que proposer ; c'est le Supra qui coche,
+ * sauf un EPCI déjà engagé (`engagement`), qu'il ne peut pas cocher.
  */
 export const epciCandidatSchema = z.object({
   id: z.number(),
@@ -64,6 +78,7 @@ export const epciCandidatSchema = z.object({
       dateDebut: z.string(),
     })
   ),
+  engagement: z.nullable(engagementPcaetSchema),
 });
 
 export type EpciCandidat = z.infer<typeof epciCandidatSchema>;
