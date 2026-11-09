@@ -14,6 +14,12 @@ export const trajectoireLevierSchema = z.object({
 });
 export type TrajectoireLevier = z.infer<typeof trajectoireLevierSchema>;
 
+/**
+ * Les noms `resultat2019` et `objectif2019` sont imposés par le package
+ * `mondrian-treemap` (TerriSTORY). Dans le chemin SNBC 3, l'année de référence
+ * est 2021 (`ANNEE_REFERENCE_SNBC_V3`) : `objectif2019` contient la valeur
+ * `snbc3` de 2021 et `resultat2019` est toujours `null`.
+ */
 const trajectoireDataSchema = z.object({
   resultat2019: z.number().describe('Valeur réelle 2019').nullable(),
   objectif2019: z.number().describe('Objectif 2019').nullable(),

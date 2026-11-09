@@ -8,24 +8,45 @@ import {
   TrajectoireSecteur,
 } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
 import {
+  isRegionSupportee,
   LevierConfiguration,
   RegionCode,
   SecteurConfiguration,
   TRAJECTOIRE_LEVIERS_CONFIGURATION,
   TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
 } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
+import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/list-indicateur-valeurs/get-indicateur-valeurs.response';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { CollectivitePublic } from '@tet/domain/collectivites';
+import {
+  ANNEE_REFERENCE_SNBC_V3,
+  IndicateurSourceEnum,
+} from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { isNil, round, sum, sumBy } from 'es-toolkit';
 import {
   TrajectoireLeviersError,
   TrajectoireLeviersErrorEnum,
 } from './trajectoire-leviers.errors';
+
+/** Valeurs lues pour une collectivité, communes aux secteurs et sous-secteurs. */
+type LeviersValeurs = {
+  /** Source de la trajectoire : `snbc`, ou `snbc3` avec le flag. */
+  trajectoireSourceId: string;
+  objectifsCible: GetIndicateursValeursResponse;
+  objectifsReference: GetIndicateursValeursResponse;
+  /**
+   * Émissions observées de l'année de référence. `null` dans le chemin
+   * SNBC 3 : la base est alors l'objectif de l'année de référence.
+   */
+  resultatsReference: GetIndicateursValeursResponse | null;
+  resultatSourcesByPriority: string[];
+};
 
 @Injectable()
 export class TrajectoireLeviersService {
@@ -38,7 +59,8 @@ export class TrajectoireLeviersService {
     private readonly collectiviteService: ListCollectivitesService,
     private readonly permissionService: PermissionService,
     private readonly indicateursService: ManageIndicateurValeursService,
-    private readonly trajectoiresDataService: TrajectoiresDataService
+    private readonly trajectoiresDataService: TrajectoiresDataService,
+    private readonly trajectoireSnbc3FeatureFlag: TrajectoireSnbc3FeatureFlagService
   ) {}
 
   private getLeviersByRegion(
@@ -91,50 +113,44 @@ export class TrajectoireLeviersService {
 
   private getTrajectoireDataForIdentifiants(
     identifiants: string[],
-    indicateurValeursObjectifs2030: GetIndicateursValeursResponse,
-    indicateurValeursObjectifs2019: GetIndicateursValeursResponse,
-    indicateurValeursResultats2019: GetIndicateursValeursResponse,
-    resultatSourcesByPriority: string[]
+    valeurs: LeviersValeurs
   ): {
     data: TrajectoireData;
     identifiantManquants: string[];
   } {
+    const { trajectoireSourceId, resultatsReference } = valeurs;
     const objectifs2030 = identifiants.map((identifiant) =>
       this.getTrajectoireObjectifOrResultatForIdentifiant(
         identifiant,
-        indicateurValeursObjectifs2030,
+        valeurs.objectifsCible,
         'objectif',
-        [this.trajectoiresDataService.SNBC_SOURCE.id]
+        [trajectoireSourceId]
       )
     );
     const objectifs2019 = identifiants.map((identifiant) =>
       this.getTrajectoireObjectifOrResultatForIdentifiant(
         identifiant,
-        indicateurValeursObjectifs2019,
+        valeurs.objectifsReference,
         'objectif',
-        [this.trajectoiresDataService.SNBC_SOURCE.id]
+        [trajectoireSourceId]
       )
     );
     const resultats2019 = identifiants.map((identifiant) =>
-      this.getTrajectoireObjectifOrResultatForIdentifiant(
-        identifiant,
-        indicateurValeursResultats2019,
-        'resultat',
-        resultatSourcesByPriority
-      )
+      resultatsReference
+        ? this.getTrajectoireObjectifOrResultatForIdentifiant(
+            identifiant,
+            resultatsReference,
+            'resultat',
+            valeurs.resultatSourcesByPriority
+          )
+        : null
     );
 
     const identifiantsWithMissingData = identifiants.filter(
-      (identifiant, index) => {
-        if (
-          isNil(resultats2019[index]) ||
-          isNil(objectifs2019[index]) ||
-          isNil(objectifs2030[index])
-        ) {
-          return true;
-        }
-        return false;
-      }
+      (identifiant, index) =>
+        (resultatsReference !== null && isNil(resultats2019[index])) ||
+        isNil(objectifs2019[index]) ||
+        isNil(objectifs2030[index])
     );
 
     const data: TrajectoireData = {
@@ -157,22 +173,13 @@ export class TrajectoireLeviersService {
   private getSecteurData(
     secteur: SecteurConfiguration,
     regionCode: RegionCode,
-    indicateurValeursObjectifs2030: GetIndicateursValeursResponse,
-    indicateurValeursObjectifs2019: GetIndicateursValeursResponse,
-    indicateurValeursResultats2019: GetIndicateursValeursResponse,
-    resultatSourcesByPriority: string[]
+    valeurs: LeviersValeurs
   ): {
     secteurData: TrajectoireSecteur;
     identifiantManquants: string[];
   } {
     const { data, identifiantManquants: secteurIdentifiantManquants } =
-      this.getTrajectoireDataForIdentifiants(
-        secteur.identifiants,
-        indicateurValeursObjectifs2030,
-        indicateurValeursObjectifs2019,
-        indicateurValeursResultats2019,
-        resultatSourcesByPriority
-      );
+      this.getTrajectoireDataForIdentifiants(secteur.identifiants, valeurs);
 
     const neededSousSecteurs = secteur.leviers.reduce((acc, levier) => {
       if (levier.sousSecteursIdentifiants) {
@@ -183,13 +190,7 @@ export class TrajectoireLeviersService {
 
     const neededSousSecteursData = neededSousSecteurs.map((sousSecteur) => ({
       identifiant: sousSecteur,
-      ...this.getTrajectoireDataForIdentifiants(
-        [sousSecteur],
-        indicateurValeursObjectifs2030,
-        indicateurValeursObjectifs2019,
-        indicateurValeursResultats2019,
-        resultatSourcesByPriority
-      ),
+      ...this.getTrajectoireDataForIdentifiants([sousSecteur], valeurs),
     }));
 
     const allIdentifiantManquants = [
@@ -206,7 +207,7 @@ export class TrajectoireLeviersService {
       ...data,
       sousSecteurs: neededSousSecteursData.map((data) => ({
         nom:
-          indicateurValeursObjectifs2030.indicateurs.find(
+          valeurs.objectifsCible.indicateurs.find(
             (ind) => ind.definition.identifiantReferentiel === data.identifiant
           )?.definition.titre || '',
         identifiant: data.identifiant,
@@ -220,13 +221,12 @@ export class TrajectoireLeviersService {
     };
   }
 
-  private hasSnbcValeurs(
-    indicateurValeurs: GetIndicateursValeursResponse
+  private hasSourceValeurs(
+    indicateurValeurs: GetIndicateursValeursResponse,
+    sourceId: string
   ): boolean {
     return indicateurValeurs.indicateurs.some(
-      (indicateur) =>
-        (indicateur.sources[this.trajectoiresDataService.SNBC_SOURCE.id]
-          ?.valeurs?.length ?? 0) > 0
+      (indicateur) => (indicateur.sources[sourceId]?.valeurs?.length ?? 0) > 0
     );
   }
 
@@ -277,6 +277,16 @@ export class TrajectoireLeviersService {
 
     const collectivite =
       await this.collectiviteService.getCollectiviteByAnyIdentifiant(input);
+
+    if (
+      await this.trajectoireSnbc3FeatureFlag.isTrajectoireSnbc3Enabled(
+        user,
+        collectivite.id
+      )
+    ) {
+      return this.getDataSnbc3(collectivite, user);
+    }
+
     if (collectivite.type !== 'epci' && collectivite.type !== 'test') {
       return failure(TrajectoireLeviersErrorEnum.COLLECTIVITE_NOT_EPCI);
     }
@@ -338,8 +348,9 @@ export class TrajectoireLeviersService {
         { user }
       );
 
-    const isTrajectoireComputed = this.hasSnbcValeurs(
-      indicateurValeursObjectifs2030
+    const isTrajectoireComputed = this.hasSourceValeurs(
+      indicateurValeursObjectifs2030,
+      this.trajectoiresDataService.SNBC_SOURCE.id
     );
     if (!isTrajectoireComputed) {
       return failure(TrajectoireLeviersErrorEnum.TRAJECTOIRE_NOT_COMPUTED);
@@ -377,30 +388,105 @@ export class TrajectoireLeviersService {
         { user }
       );
 
-    // On affecte les données aux secteurs à partir de la configuration
-    const regionCode = `${collectivite.regionCode}` as RegionCode;
+    return success(
+      this.buildResponse(
+        `${collectivite.regionCode}` as RegionCode,
+        {
+          trajectoireSourceId: this.trajectoiresDataService.SNBC_SOURCE.id,
+          objectifsCible: indicateurValeursObjectifs2030,
+          objectifsReference: indicateurValeursObjectifs2019,
+          resultatsReference: indicateurValeursResultats2019,
+          resultatSourcesByPriority:
+            getTrajectoireLeviersDataResponse.sourcesResultats,
+        }
+      )
+    );
+  }
+
+  /**
+   * Chemin SNBC 3 (avec le flag) : la base est la valeur `snbc3` de 2021. Le
+   * recalage la fait déjà coïncider avec l'OREC 2021 : on ne lit ni les
+   * émissions observées ni le commentaire des valeurs.
+   *
+   * Toute collectivité présente dans le millésime est acceptée, Paris compris.
+   */
+  private async getDataSnbc3(
+    collectivite: CollectivitePublic,
+    user: AuthUser
+  ): Promise<
+    Result<GetTrajectoireLeviersDataResponse, TrajectoireLeviersError>
+  > {
+    const permission = await this.permissionService.isAllowed(
+      user,
+      'indicateurs.valeurs.read',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: collectivite.id }
+    );
+    if (!permission.success) {
+      return failure(TrajectoireLeviersErrorEnum.UNAUTHORIZED);
+    }
+
+    const listObjectifs = (annee: number) =>
+      this.indicateursService.listIndicateurValeurs(
+        {
+          periodicite: 'annuelle',
+          collectiviteId: collectivite.id,
+          identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
+          sources: [IndicateurSourceEnum.SNBC3],
+          dateDebut: `${annee}-01-01`,
+          dateFin: `${annee}-12-31`,
+        },
+        { user }
+      );
+    const [objectifsCible, objectifsReference] = await Promise.all([
+      listObjectifs(this.TARGET_YEAR),
+      listObjectifs(ANNEE_REFERENCE_SNBC_V3),
+    ]);
+
+    if (!this.hasSourceValeurs(objectifsCible, IndicateurSourceEnum.SNBC3)) {
+      return failure(
+        collectivite.type === 'epci' || collectivite.type === 'test'
+          ? TrajectoireLeviersErrorEnum.TRAJECTOIRE_NON_DISPONIBLE
+          : TrajectoireLeviersErrorEnum.COLLECTIVITE_NOT_EPCI
+      );
+    }
+    if (!isRegionSupportee(collectivite.regionCode)) {
+      return failure(TrajectoireLeviersErrorEnum.REGION_NON_SUPPORTEE);
+    }
+
+    return success(
+      this.buildResponse(
+        collectivite.regionCode,
+        {
+          trajectoireSourceId: IndicateurSourceEnum.SNBC3,
+          objectifsCible,
+          objectifsReference,
+          resultatsReference: null,
+          resultatSourcesByPriority: [],
+        }
+      )
+    );
+  }
+
+  /** Affecte les données aux secteurs, puis calcule les réductions des leviers. */
+  private buildResponse(
+    regionCode: RegionCode,
+    valeurs: LeviersValeurs
+  ): GetTrajectoireLeviersDataResponse {
     const secteursData = TRAJECTOIRE_LEVIERS_CONFIGURATION.secteurs.map(
-      (secteur) =>
-        this.getSecteurData(
-          secteur,
-          regionCode,
-          indicateurValeursObjectifs2030,
-          indicateurValeursObjectifs2019,
-          indicateurValeursResultats2019,
-          getTrajectoireLeviersDataResponse.sourcesResultats
-        )
+      (secteur) => this.getSecteurData(secteur, regionCode, valeurs)
     );
-    getTrajectoireLeviersDataResponse.secteurs = secteursData.map(
-      (data) => data.secteurData
-    );
-    getTrajectoireLeviersDataResponse.identifiantManquants = [
-      ...new Set(secteursData.flatMap((data) => data.identifiantManquants)),
-    ];
+    const response: GetTrajectoireLeviersDataResponse = {
+      sourcesResultats: valeurs.resultatSourcesByPriority,
+      secteurs: secteursData.map((data) => data.secteurData),
+      identifiantManquants: [
+        ...new Set(secteursData.flatMap((data) => data.identifiantManquants)),
+      ],
+    };
 
     // On calcule les objectifs de réduction pour les leviers à partir des données des secteurs/sous-secteurs et des pourcentages régionaux
-    this.computeObjectifReduction(getTrajectoireLeviersDataResponse);
-
-    return success(getTrajectoireLeviersDataResponse);
+    this.computeObjectifReduction(response);
+    return response;
   }
 
   private getObjectifReduction(

@@ -24,6 +24,18 @@ export type RegionCode =
   (typeof REGIONS_FRANCAISES)[keyof typeof REGIONS_FRANCAISES]['code'];
 type PourcentagesRegionaux = Record<RegionCode, number>;
 
+/**
+ * Le SGPE ne fournit de pourcentages que pour les 13 régions de l'Hexagone :
+ * les EPCI des DROM n'ont pas de leviers.
+ */
+export function isRegionSupportee(
+  regionCode: string | null | undefined
+): regionCode is RegionCode {
+  return Object.values(REGIONS_FRANCAISES).some(
+    (region) => region.code === regionCode
+  );
+}
+
 export interface LevierConfiguration {
   nom: Levier;
   pourcentagesRegionaux: PourcentagesRegionaux;
