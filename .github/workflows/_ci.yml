@@ -151,3 +151,24 @@ jobs:
       nx-cloud-token-secret-type: ${{ needs.analyze-affected.outputs.nx-cloud-token-secret-type }}
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
+
+  # Single required check for the ruleset ("ci / status"): skipped jobs pass,
+  # any failed or cancelled job fails it.
+  status:
+    if: ${{ always() }}
+    needs:
+      [
+        analyze-affected,
+        validate-affected-projects,
+        storybook,
+        prepare-test-db,
+        test-db-deploy,
+        test-backend-api,
+        test-end-to-end,
+      ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
