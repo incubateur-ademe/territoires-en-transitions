@@ -342,8 +342,11 @@ export const plansLabels = {
   }) =>
     `Il a été importé le ${date} dans le plan « ${planNom} », toujours présent. Relancer l'import créera un second plan.`,
   importPlanIaRelancerQuandMeme: "Relancer l'import quand même",
-  planImporteBeta:
-    "Notre outil d'import est en version bêta. Pour toute question ou suggestion d'amélioration, contactez le support en ligne.",
+  planImporteSupportQuestion:
+    'Le plan proposé ne vous convient pas ? Vous avez besoin d’aide ? Contactez-nous via le',
+  planImporteSupportLien: 'support en ligne',
+  planImporteSupportOuAdresse: '(ou à l’adresse',
+  planImporteSupportFin: ').',
   planImporteBandeauTitre: ({ etapes }: { etapes: number }) =>
     etapes > 1
       ? `Plan généré par l’IA : ${etapes} étapes avant de le valider`
@@ -352,11 +355,6 @@ export const plansLabels = {
     'Vérifier la structure globale du plan puis le valider',
   planImporteEtapeStructureDescription:
     'Vérifiez la structure globale de votre plan (axes et sous-axes), corrigez-la si besoin, puis validez le plan.',
-  planImporteBanniereDemoAvant: 'Réservez un créneau pour suivre une',
-  planImporteBanniereDemoLien: 'démo de prise en main',
-  planImporteBanniereSupportAvant: 'ou prenez un',
-  planImporteBanniereSupportLien: 'rendez-vous de support de 15 minutes',
-  planImporteBanniereSupportApres: "s'il y a un problème avec l'import.",
   planImporteValider: 'Valider le plan',
   planImporteValide: 'Plan validé.',
   planRevenirALaDemarche: 'Revenir à la démarche',
