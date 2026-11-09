@@ -7,7 +7,10 @@ import {
   isDemarchePcaetAvalModifiable,
   isDemarchePcaetContenuModifiable,
 } from '@tet/domain/demarches';
-import type { DemarchePcaet } from '@tet/domain/demarches';
+import type {
+  CollectiviteCouverte,
+  DemarchePcaet,
+} from '@tet/domain/demarches';
 import { SQL, sql } from 'drizzle-orm';
 import type { PgColumn } from 'drizzle-orm/pg-core';
 import {
@@ -50,7 +53,8 @@ export const toDemarchePcaetDto = (
   pilotes: PersonneTagOrUser[],
   planActionIds: number[],
   unverifiedPlanActionIds: number[],
-  secteursARenseignerPlanActionIds: number[]
+  secteursARenseignerPlanActionIds: number[],
+  collectivitesCouvertes: CollectiviteCouverte[]
 ): DemarchePcaet => ({
   id: row.id,
   collectiviteId: row.collectiviteId,
@@ -71,6 +75,7 @@ export const toDemarchePcaetDto = (
   planActionIds,
   unverifiedPlanActionIds,
   secteursARenseignerPlanActionIds,
+  collectivitesCouvertes,
   pilotes,
   // Évaluations fail-closed par défaut (aucun guard renseigné) ;
   // DemarchePcaetGuardsService.enrich les remplace par celles de l'utilisateur.

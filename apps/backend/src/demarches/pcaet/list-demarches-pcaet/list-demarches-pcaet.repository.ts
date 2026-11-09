@@ -9,6 +9,7 @@ import {
 } from '@tet/domain/demarches';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { GetDemarchePcaetRepository } from '../get-demarche-pcaet/get-demarche-pcaet.repository';
+import { DemarchePcaetPerimetreRepository } from '../shared/demarche-pcaet-perimetre.repository';
 import {
   demarchePcaetSelectColumns,
   toDemarchePcaetDto,
@@ -27,7 +28,8 @@ export class ListDemarchesPcaetRepository {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
-    private readonly planActionsRepository: DemarchePlanActionsRepository
+    private readonly planActionsRepository: DemarchePlanActionsRepository,
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository
   ) {}
 
   async listDemarchesPcaet(
@@ -60,10 +62,12 @@ export class ListDemarchesPcaetRepository {
         pilotesByDemarcheId,
         planActionIdsByDemarcheId,
         unverifiedByDemarcheId,
+        couvertesParDemarche,
       ] = await Promise.all([
         this.getDemarchePcaetRepository.listPilotes(demarcheIds, tx),
         this.planActionsRepository.listByDemarcheIds(demarcheIds, tx),
         this.planActionsRepository.listUnverifiedByDemarcheIds(demarcheIds, tx),
+        this.perimetreRepository.listCollectivitesCouvertes(demarcheIds, tx),
       ]);
 
       // Un plan n'a qu'un état de secteurs, quelle que soit la démarche qui le
@@ -89,7 +93,8 @@ export class ListDemarchesPcaetRepository {
             unverifiedByDemarcheId.get(row.id) ?? [],
             secteursARenseignerPlanActionIds.filter((id) =>
               planActionIds.includes(id)
-            )
+            ),
+            couvertesParDemarche.get(row.id) ?? []
           );
         })
       );

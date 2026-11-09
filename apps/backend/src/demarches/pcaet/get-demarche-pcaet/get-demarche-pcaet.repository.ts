@@ -14,6 +14,7 @@ import {
 import { DemarchePlanActionsRepository } from '@tet/backend/demarches/shared/demarche-plan-actions.repository';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
+import { DemarchePcaetPerimetreRepository } from '../shared/demarche-pcaet-perimetre.repository';
 import {
   GetDemarchePcaetError,
   GetDemarchePcaetErrorEnum,
@@ -25,7 +26,8 @@ export class GetDemarchePcaetRepository {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly planActionsRepository: DemarchePlanActionsRepository
+    private readonly planActionsRepository: DemarchePlanActionsRepository,
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository
   ) {}
 
   async getDemarchePcaet(
@@ -53,15 +55,17 @@ export class GetDemarchePcaetRepository {
         return failure(GetDemarchePcaetErrorEnum.DEMARCHE_PCAET_NOT_FOUND);
       }
 
-      const [pilotesByDemarcheId, planActionIds, unverifiedPlanActionIds] =
-        await Promise.all([
-          this.listPilotes([demarcheId], tx),
-          this.planActionsRepository.listPlanActionIds(demarcheId, tx),
-          this.planActionsRepository.listUnverifiedPlanActionIds(
-            demarcheId,
-            tx
-          ),
-        ]);
+      const [
+        pilotesByDemarcheId,
+        planActionIds,
+        unverifiedPlanActionIds,
+        couvertesParDemarche,
+      ] = await Promise.all([
+        this.listPilotes([demarcheId], tx),
+        this.planActionsRepository.listPlanActionIds(demarcheId, tx),
+        this.planActionsRepository.listUnverifiedPlanActionIds(demarcheId, tx),
+        this.perimetreRepository.listCollectivitesCouvertes([demarcheId], tx),
+      ]);
       const secteursARenseignerPlanActionIds =
         await this.planActionsRepository.listSecteursARenseignerPlanActionIds(
           { collectiviteId, planActionIds },
@@ -73,7 +77,8 @@ export class GetDemarchePcaetRepository {
           pilotesByDemarcheId.get(demarcheId) ?? [],
           planActionIds,
           unverifiedPlanActionIds,
-          secteursARenseignerPlanActionIds
+          secteursARenseignerPlanActionIds,
+          couvertesParDemarche.get(demarcheId) ?? []
         )
       );
     } catch (error) {
