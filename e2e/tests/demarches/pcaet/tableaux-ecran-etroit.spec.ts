@@ -123,12 +123,12 @@ test.describe('Démarche PCAET - tableaux sur écran étroit', () => {
 });
 
 test.describe('Démarche PCAET - tableaux sur grand écran', () => {
-  test.use({ viewport: { width: 1440, height: 900 } });
+  test.use({ viewport: { width: 1600, height: 900 } });
 
   /**
-   * Le cas le plus large : un service national affiche en plus la colonne
-   * Région. Dès `2xl`, le tableau tient dans son cadre sans défiler, ce qui
-   * garde l'en-tête collant à la page.
+   * Le cas le plus large : un service national affiche en plus les colonnes
+   * Région et Département. Dès 1600px, le tableau tient dans son cadre sans
+   * défiler, ce qui garde l'en-tête collant à la page.
    */
   test('la liste nationale tient dans son cadre sans défiler', async ({
     collectivites,

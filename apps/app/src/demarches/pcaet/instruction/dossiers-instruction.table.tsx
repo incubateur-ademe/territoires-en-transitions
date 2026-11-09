@@ -265,8 +265,10 @@ const columnHelper = createColumnHelper<typeof features, Dossier>();
  * En contrepartie, ces deux colonnes prennent ce qui reste : sur un écran
  * étroit, plus rien, et leurs en-têtes débordent sur les voisines. D'où la
  * largeur minimale du tableau, qui défile dans son cadre en dessous de `xl`,
- * ou de `2xl` avec la colonne Région ou Département — au-dessus, il tient, et l'en-tête reste
- * collant à la page.
+ * de `2xl` avec la colonne Région, ou de 1600px avec la colonne Département
+ * (jusqu'à 93rem avec les deux) — au-dessus, il tient, et l'en-tête reste
+ * collant à la page. Avec Département, il ne tient que parce que la page élargit
+ * son cadre à partir de 1600px (voir `dossiers-instruction.page.tsx`).
  */
 const columns = [
   columnHelper.display({
@@ -488,7 +490,10 @@ export const DossiersInstructionTable = ({
       {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
       <div
         className={
-          afficherRegion || afficherDepartement
+          afficherDepartement
+            ? // `max-[1600px]` inclurait 1600px (`max-width`) : même forme que `max-2xl`.
+              '[@media_not_all_and_(min-width:1600px)]:overflow-x-auto'
+            : afficherRegion
             ? 'max-2xl:overflow-x-auto'
             : 'max-xl:overflow-x-auto'
         }
