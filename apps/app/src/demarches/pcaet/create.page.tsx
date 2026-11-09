@@ -10,6 +10,7 @@ import { CollectivitesCouvertesField } from '@/app/demarches/pcaet/collectivites
 import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
 import { useDemarcheAvanceSidePanel } from '@/app/demarches/components/use-avance-side-panel';
 import { appLabels } from '@/app/labels/catalog';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -74,7 +75,9 @@ export const CreateDemarchePcaetPage = () => {
     trpc.demarches.pcaet.getDepotContext.queryOptions({ collectiviteId })
   );
   const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
-  const estSupra = depotContext?.estSupra ?? false;
+  // Même garde que le serveur : flag inactif, le Supra dépose sans périmètre.
+  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is_pcaet-supra_enabled');
+  const estSupra = isPcaetSupraEnabled && (depotContext?.estSupra ?? false);
   const epciCandidats = useMemo(
     () => depotContext?.epciCandidats ?? [],
     [depotContext]

@@ -4,6 +4,7 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
   DEMARCHE_PCAET_DEFAULT_TITRE,
   estNatureSupraPcaet,
@@ -38,7 +39,8 @@ export class CreateDemarchePcaetService {
     private readonly guardsService: DemarchePcaetGuardsService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
     private readonly instructeursRepository: PcaetInstructeursRepository,
-    private readonly perimetreRepository: DemarchePcaetPerimetreRepository
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository,
+    private readonly trackingService: TrackingService
   ) {}
 
   async createDemarchePcaet(
@@ -78,6 +80,7 @@ export class CreateDemarchePcaetService {
         !(await this.isPerimetreValide(
           input.collectiviteId,
           collectivitesCouvertesIds,
+          user.id,
           transaction
         ))
       ) {
@@ -192,13 +195,23 @@ export class CreateDemarchePcaetService {
 
   /**
    * Seul un Supra couvre des EPCI, et seulement ses membres d'après BANATIC :
-   * la liste à cocher est la seule source, sans ajout hors liste.
+   * la liste à cocher est la seule source, sans ajout hors liste. Flag
+   * `is_pcaet-supra_enabled` inactif : aucun périmètre, même valide.
    */
   private async isPerimetreValide(
     porteurId: number,
     collectivitesCouvertesIds: number[],
+    userId: string,
     tx: Transaction
   ): Promise<boolean> {
+    const isSupraEnabled = await this.trackingService.isFeatureEnabled(
+      'is_pcaet-supra_enabled',
+      userId,
+      porteurId
+    );
+    if (!isSupraEnabled) {
+      return false;
+    }
     const natureInsee = await this.perimetreRepository.getNatureInsee(
       porteurId,
       tx
