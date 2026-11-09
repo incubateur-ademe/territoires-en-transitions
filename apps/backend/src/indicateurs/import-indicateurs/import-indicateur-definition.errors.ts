@@ -41,5 +41,9 @@ export function getImportResultOrThrow<T>(
     IMPORT_CONFLICT: HttpStatus.CONFLICT,
     DATABASE_ERROR: HttpStatus.INTERNAL_SERVER_ERROR,
   }[result.error];
-  throw new HttpException(result.cause?.message ?? result.error, status);
+  // La cause est chaînée : l'erreur Drizzle (« Failed query ») ne dit rien
+  // sans l'erreur PostgreSQL qu'elle enveloppe, comme « out of shared memory ».
+  throw new HttpException(result.cause?.message ?? result.error, status, {
+    cause: result.cause,
+  });
 }
