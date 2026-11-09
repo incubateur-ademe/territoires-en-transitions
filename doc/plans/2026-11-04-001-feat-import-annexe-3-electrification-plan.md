@@ -25,7 +25,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 2B2a — URL TeT existantes et éligibilité : [#5736](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5736), implémentée et vérifiée, en revue.
 - [x] PR 2B2b — Codes et compléments des fiches actions : [#5756](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5756), implémentée et vérifiée, en revue ; correspondances métier réelles encore à livrer avant ouverture.
 - [x] PR 3A — Lecture documentaire : [#5757](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5757), implémentée et vérifiée, en revue.
-- [ ] PR 3B — Extraction typée de l'annexe.
+- [x] PR 3B — Extraction du canevas DOCX V4 avec assistance IA ciblée : [#5759](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5759), implémentée et vérifiée, en revue. Profil de production toujours fermé.
 - [ ] PR 4A — Axes et liens de fiches.
 - [ ] PR 4B — Indicateurs et liens.
 - [ ] PR 4C — Valeurs sans écrasement et sources isolées par plan.
@@ -51,7 +51,11 @@ Chaque PR contient son code, ses migrations éventuelles, ses tests et la mise
 à jour de sa documentation. Elle compile et fonctionne sans une PR suivante.
 Pour les nouveaux comportements, privilégier les suites e2e existantes et
 éviter de créer des fichiers de tests unitaires. Les tests d'import utilisent
-un faux LLM.
+un faux LLM pour le parcours générique et l'assistance Électrification ciblée.
+Le profil Électrification est vérifié avec le vrai parser sur des DOCX synthétiques
+issus du canevas officiel V4 ; ces tests ne mesurent pas la fidélité du modèle réel.
+Aucun document réellement rempli n'est encore disponible ; cette limite de
+qualification reste explicite jusqu'aux premiers imports réels.
 Les premières phases livrent des capacités complètes mais gardent l'import
 annexe fermé. Il n'y a pas d'ouverture intermédiaire qui importerait seulement
 les engagements ou ignorerait les indicateurs des fiches actions.
@@ -111,12 +115,16 @@ complets, sans ouvrir l'import ni créer de données.
 - Avant ouverture, un retour à une API plus ancienne nécessite d'abord une
   app compatible avec ses routes et contrats. Ne pas retirer une lecture de
   suivi alors qu'une app déjà déployée l'utilise.
-- Les changements de schéma ou de catalogue ont une version propre au profil.
+- Électrification utilise une seule version technique de checkpoint :
+  `schemaVersion`, initialisée à `1`. La V4 du canevas et la version du catalogue
+  identifient le document officiel et les correspondances métier.
   Ne pas invalider les checkpoints génériques v1 par une hausse globale de
   version. Garder les versions nécessaires aux reprises autorisées et aligner
   les contrôles du worker avec ceux de l'API de reprise.
-  Comparer profil et versions contrat/catalogue entre job et checkpoint, y
-  compris après la dernière étape, et vérifier leur prise en charge par le worker.
+  Comparer profil, version technique et catalogue entre job et checkpoint,
+  y compris après la dernière étape, et vérifier la compatibilité du checkpoint
+  selon son profil.
+  Les contrôles de contrat et de schéma génériques déjà livrés restent inchangés.
   Une divergence ou un format inconnu bloque la reprise en conservant source
   et checkpoint selon leur rétention, sans ré-extraction automatique avec une
   autre version. Revalider les références et les droits avant écriture.
@@ -556,31 +564,193 @@ aucun nouveau profil exécuté, aucun changement de persistance.
 
 ### PR 3B — Extraction annexe et checkpoint typé
 
-**Périmètre :** extraction, adaptation et validation du brouillon, sans worker
-de production branché sur ce profil.
+**Périmètre :** parser déterministe du canevas officiel DOCX V4, assistance IA
+automatique limitée aux valeurs numériques en prose, adaptation et validation
+du brouillon, sans worker de production branché sur ce profil.
+La [révision de l'ADR du 9 novembre](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#statut)
+prévoit d'appeler l'IA lorsque le parser ne comprend pas une cible d'engagement
+ou une valeur numérique d'indicateur éligible, sans option d'activation. Les
+documents PDF, tableurs et structures libres ne font pas partie du contrat de ce profil ;
+l'import générique les conserve.
 
-- Lire seulement le tableau A et les fiches actions renseignées dans la section B.
-  Produire engagements/cibles, axes, fiches, sous-actions, codes/URL, unités
-  et valeurs datées avec clés et localisations de source. Exclure instructions
-  et exemple C.
-- Brancher le profil sur les stratégies LLM existantes, sans fournisseur ni
-  moteur supplémentaire. Préserver les deux stratégies et les chemins tableur
-  qui peuvent court-circuiter l'extraction générique.
-- Ne pas appliquer les fusions par titre ni les suppressions/enrichissements
-  génériques qui perdraient des références ou inventeraient des sous-actions.
-  Préserver les sous-actions même si les options génériques les désactivent.
-- Préparer les conversions oui/non et les actions E03/E12 prévues par l'ADR.
-  Reprendre les champs non budgétaires, dont moyens humains lorsqu'ils sont
-  renseignés. Ne pas créer de compte depuis un nom de pilote.
-- Utiliser les résolveurs 2B1/2B2a/2B2b et leur compte rendu. Sérialiser un checkpoint
-  annexe validé et versionné, sans IDs fournis par le LLM. Une reprise revalidera les
-  références et les permissions avant écriture, même si l'extraction est conservée.
-- Adapter le parcours d'évaluation existant pour sélectionner ce profil.
-  Les tests utilisent un faux LLM ; les essais réels restent lancés par un humain.
+- [x] Conserver les tableaux, cellules et liens DOCX avant aplatissement, puis
+      reconnaître les sections et libellés du canevas sans indices de ligne fixes.
+      Lire seulement A et les fiches renseignées dans B ; exclure textes d'aide
+      connus, modèle vide et exemple C. Refuser les structures inconnues et valeurs
+      invalides des champs contrôlés avec leur localisation, sans omission
+      silencieuse ni fallback général. Valider aussi les dates et statuts renseignés
+      d'une fiche désignée par URL : une valeur invalide bloque avant création du
+      plan ; les champs valides restent non appliqués et signalés au compte rendu.
+- [x] Regrouper les libellés, textes d'aide et correspondances des engagements
+      dans une définition explicite du format V4, séparée des règles d'extraction
+      et du catalogue métier, sans modifier le canevas officiel.
+- [x] Produire engagements/cibles, axes, fiches, sous-actions, codes/URL, unités
+      et valeurs datées avec clés et localisations de source. Copier les textes
+      libres sans reformulation. Préserver les homonymes et parents distincts.
+- [x] Conserver les conversions oui/non, E03/E12, E07 et les résolveurs existants.
+      Ne pas fusionner par titre ni appliquer les enrichissements génériques.
+      Reprendre les champs non budgétaires effectivement renseignés, sans créer
+      de compte depuis un nom de pilote.
+- [x] Sérialiser un checkpoint avec une seule version technique, `schemaVersion: 1`,
+      `templateVersion: "electrification-v4"`, `documentKind: "docx"` et catalogue
+      versionné, sans identité TeT résolue. Une reprise compatible conserve
+      l'extraction et revalide références et droits. Une version incompatible
+      bloque sans ré-extraction ni conversion automatique.
+- [x] Adapter l'évaluation locale : extraction DOCX, puis assistance automatique
+      seulement si des cellules sont éligibles ; formats et options incompatibles
+      refusés.
+      Le parcours générique conserve ses stratégies et son fournisseur configuré.
+- [x] Vérifier le parser sur des fixtures DOCX synthétiques issues du canevas
+      officiel, de la lecture aux résolveurs ; compléter les e2e existants et
+      vérifier les non-régressions génériques sans appel réel au modèle.
+- [x] Isoler les cellules numériques non comprises après reconnaissance
+      déterministe du formulaire. Réutiliser `LlmService` uniquement pour ces
+      candidates avec leur contexte, automatiquement. Ne lui confier
+      ni structure, descriptions, dates, statuts, Oui/Non, codes, URL ni résolution.
+- [x] Exiger nombres, unités, années et citations exactes de la source ; contrôler
+      côté serveur citations, emplacements attendus et conservation des nombres.
+      Réappliquer le parser et les validateurs existants. Une ambiguïté, une
+      information manquante ou une preuve insuffisante reste bloquante.
+- [x] Conserver sources originales, interprétations acceptées et tokens dans le
+      checkpoint. La reprise réutilise l'extraction sans rappeler le modèle.
+- [x] Garder zéro appel au modèle lorsque le parser suffit ou détecte une erreur
+      non éligible, l'admission de production fermée et les évaluations réelles
+      réservées aux humains. Aucun paramètre d'activation de l'assistance n'est ajouté.
+- [x] Compléter les e2e existants avec un faux LLM : candidats acceptés, preuves
+      invalides, données ambiguës, valeurs déjà reconnues et reprise sans appel.
 
-**Validation :** A sans fiche, axe demandé seulement par B, homonymes, sous-actions
-avec parents distincts, E03/E12, E07, zéro/vide, résultats/objectifs oui/non,
-source fictive C exclue, références conservées, reprise sans nouvelle extraction.
+**Implémentation :** l'[extracteur](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/extract-electrification-plan.ts)
+consomme les tableaux du lecteur DOCX et alimente le même contrat documentaire
+et les mêmes résolveurs. Les références sont extraites de leur cellule ; leurs
+textes et destinations restent vérifiables. Les transformations de valeurs
+sont contrôlées. Selon la convention confirmée le 9 novembre, les dates de
+fiche et de sous-action renseignées avec un mois et une année utilisent le
+premier jour du mois (`06/2028` ou `juin 2028` → `2028-06-01`). Une date
+complète conserve son jour ; une année seule ou une date invalide est signalée.
+Le lecteur textuel et les stratégies génériques restent disponibles pour les
+autres profils.
+
+L'[assistance ciblée](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/interpret-electrification-values.ts)
+réutilise `LlmService` uniquement pour les cellules numériques éligibles que le
+parser ne comprend pas. Le [contrat de réponse](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-value-interpretation.schema.ts)
+exige les littéraux et leurs citations ; l'extraction complète repasse ensuite
+dans le même parser. Aucun modèle n'est appelé lorsque celui-ci suffit ou
+détecte une erreur non éligible.
+
+La [lecture du formulaire](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-fiche-form.rules.ts)
+gère les sections et champs répétés à partir de la
+[définition du canevas officiel](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-document-template.constants.ts).
+Les titres d'axes du Word sont reconnus depuis cette définition, indépendamment
+des titres métier du catalogue. Le numéro assure le rattachement ; le titre
+du plan préparé vient du catalogue, même après un renommage métier.
+La [construction des fiches](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-fiches-document.rules.ts)
+valide leur rattachement et leurs valeurs, en réutilisant les conversions existantes.
+Les règles, le format V4 et le catalogue utilisent les noms métier de
+`ElectrificationEngagementCodeEnum` (par exemple `DECOMMISSIONNEMENT_RESEAU_GAZ`).
+Les identifiants E01 à E12 restent les valeurs sérialisées du contrat.
+Le profil utilise également un nom métier dans le code
+(`AiPlanImportProfileEnum.ELECTRIFICATION`) ; sa valeur sérialisée
+`annexe-3-electrification` reste inchangée pour le contrat API et les options des jobs.
+
+Le [checkpoint](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-extraction-checkpoint.schema.ts)
+porte `schemaVersion: 1`, les métadonnées de canevas et de catalogue, la réponse,
+les sources originales et les interprétations acceptées. Les tokens restent à
+zéro sans assistance et sont comptabilisés lorsqu'elle est utilisée. Cette
+première livraison
+utilise `ELECTRIFICATION_CHECKPOINT_VERSION` comme unique version technique ;
+la V4 du canevas reste une métadonnée de `electrificationDocumentTemplate`. La
+[préparation interne](../../apps/backend/src/plans/ai-plan-import/electrification/extract-plan/prepare-electrification-import.service.ts)
+vérifie les droits et la compatibilité du checkpoint, puis appelle les
+résolveurs existants, sans rappeler le modèle à la reprise. Son callback conserve
+l'extraction avant une erreur de
+résolution ; le raccordement au stockage des jobs et au worker reste en phase 5.
+Le catalogue reste `electrification-v2` ; les libellés du canevas appartiennent
+au parser. Ce changement ne valide aucune correspondance métier encore en attente.
+
+L'[évaluation locale](../../apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification)
+accepte `--profile annexe-3-electrification` et produit le checkpoint avec
+`referencesResolved: false`. L'assistance est automatique sur les seules cellules
+candidates que le parser ne comprend pas. Aucun appel au modèle n'est effectué
+si le parser suffit. Ce parcours pouvant appeler le modèle réel, son lancement
+est réservé à un humain. Les sources originales et les interprétations restent
+consultables.
+Elle ne résout pas les références en base et n'exécute aucune écriture métier.
+Les options génériques de comparaison et de normalisation restent incompatibles.
+Le CLI sépare validation des entrées, exécution du parcours et restitution des
+résultats. Le modèle n'est appelé que pour le parcours générique ou
+les cellules éligibles à l'assistance ; tout contexte Nest créé est fermé même
+si la lecture ou le pipeline lève une erreur.
+
+**Validation attendue :** DOCX V4 avec plusieurs tableaux B, A sans fiche,
+axe demandé seulement par B, homonymes, sous-actions, E03/E12, deux cibles E07,
+zéro/vide, résultats/objectifs oui/non, exclusion du modèle vide et de C,
+conservation des textes et des liens, dates complètes et mois/année convertis
+selon la convention, champs invalides localisés, formats et structures refusés,
+dates/statuts invalides refusés même pour une fiche désignée par URL,
+reprise sans extraction ni appel au modèle avec droits/catalogue actuels.
+Vérifier les valeurs attendues depuis les fichiers ; pour l'assistance seulement,
+simuler les réponses du LLM et vérifier les garde-fous avec le vrai parser.
+Refuser plages, nombres inventés ou omis, citations absentes et champs inattendus.
+Vérifier que les dates/statuts invalides restent bloquants, y compris avec une URL
+de fiche existante, et qu'un document reconnu par le parser conserve zéro appel au modèle.
+
+**Vérifications antérieures à la simplification du checkpoint, 9 novembre 2026 :**
+245 tests avaient réussi : 104 e2e
+extraction/résolution, 39 e2e engagements, 21 e2e du parcours générique,
+13 e2e indicateurs annuels, 18 tests du lecteur et 50 tests du pipeline générique.
+Les suites existantes ont été complétées, sans nouveau fichier de tests unitaires.
+Les exports PNG/SVG passent après l'extraction dans le même worker.
+Build backend, typechecks domain/backend/tests, ESLint, Prettier et 54 liens/ancres
+locaux vérifiés. Le CLI refuse les formats/options incompatibles sans modèle.
+Une copie du véritable DOCX V4, remplie avec des données synthétiques, conserve
+E03/E12, une fiche, une sous-action, un indicateur, leurs valeurs et les dates
+partielles converties au premier jour du mois ; C est exclu. Aucun appel au modèle.
+
+Après regroupement de la définition V4 et nommage des identifiants d'engagement,
+les 143 e2e avaient réussi (104 extraction/résolution des fiches et 39 engagements).
+Les JSON du catalogue et du format V4 sont strictement identiques avant/après
+nommage, y compris l'ordre des clés ; les fixtures restent indépendantes.
+Une comparaison temporaire de 2 063 variantes (1 119 fiches et 944 tableaux
+d'engagements) donne les mêmes données, sources et erreurs, dans le même ordre.
+Les 12 tests existants d'évaluation ont également réussi lors de la refactorisation du CLI.
+Les six cas CLI comparés conservent leurs sorties et codes de retour ; le
+DOCX synthétique et cinq résultats génériques conservent leur JSON, hors
+horodatage et durée. Ces comparaisons n'appellent aucun modèle et ne valident
+pas le changement ultérieur de version du checkpoint.
+
+**Vérification avant l'assistance ciblée, 9 novembre 2026 :** les 105 e2e
+d'extraction/résolution ont réussi, notamment les reprises compatibles et les refus
+de métadonnées incompatibles, ainsi que les dates et statuts invalides d'une fiche
+référencée par URL. Typecheck domain/backend/tests, ESLint, Prettier
+et 58 liens locaux/ancres vérifiés. Aucun appel au modèle. Ces résultats portent
+sur le socle déterministe avant l'assistance.
+
+**Vérification de l'extraction hybride, 10 novembre 2026 :** 129 e2e
+d'extraction/résolution réussis, dont 24 nouveaux cas, ainsi que les 21 e2e du
+parcours générique. Les tests utilisent des faux fournisseurs, sans appel payant.
+Build backend, typechecks domain/backend/tests, ESLint et Prettier du code
+vérifiés, ainsi que 61 liens locaux et ancres. Huit contrôles CLI réussis
+sans modèle : aide, profil inconnu, cinq options génériques incompatibles et
+refus du CSV. Ces vérifications couvrent le code et les garde-fous ; elles ne
+mesurent pas la fidélité d'un modèle réel.
+
+**Séparation des titres du canevas et du catalogue, 10 novembre 2026 :**
+133 e2e d'extraction/résolution réussis. Les quatre nouveaux cas vérifient le
+renommage métier avec une cellule fusionnée et une fiche B, le refus d'un titre
+Word remplacé par le nouveau titre métier, le refus d'un autre axe officiel et
+l'absence de l'axe dans le catalogue. Les 11 libellés du template correspondent
+à la fixture indépendante du canevas. Aucun appel IA réel.
+
+Aucun document réellement rempli n'est disponible ; les fixtures couvrent
+uniquement le canevas et les variantes explicitement testées. La comparaison
+des premiers documents réels à leurs résultats reste à effectuer.
+L'assistance doit être comparée au parser seul sur les mêmes documents annotés :
+mesurer les rejets injustifiés et les valeurs incorrectes acceptées, sans déduire
+un gain de fiabilité des seuls tests avec faux LLM. Ces résultats participent à
+la qualification du profil avant son ouverture en production.
+Toute variante supplémentaire doit être observée dans un document et couverte
+par les tests. Une instruction reformulée dans une cellule libre peut être
+importée comme une saisie ; la définition du format ne lève pas cette ambiguïté.
 
 **Déploiement et arrêt possible :** extraction utilisable en test/évaluation,
 aucune admission annexe en production et aucune écriture métier partielle.
@@ -699,11 +869,20 @@ le comportement des saisies et imports ordinaires qui ne l'appellent pas.
 reprise et orchestration métier. Les primitives de stockage sont déjà livrées.
 
 - Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2a/2B2b.
+  Refuser les formats autres que DOCX pour Électrification avant toute lecture
+  nécessitant un OCR. Le pipeline utilise le parser puis l'assistance automatique
+  sur les seules cellules éligibles, sans fallback générique ni option d'activation
+  supplémentaire. Préserver les interprétations et tokens lors de la reprise.
   Garder l'admission fermée par défaut ; contrôler droits, éligibilité, type
   stable et configuration avant upload/enfilement.
   Brancher le flag serveur dédié dans le contrôle de disponibilité partagé
   avec l'enfilement ; l'exclure de l'activation automatique PostHog en dev/test/CI.
   Le flag ne remplace aucun contrôle de droits ou de disponibilité métier.
+- Brancher la validation de `schemaVersion` du checkpoint Électrification dans
+  le worker et l'API de reprise, y compris après la dernière étape. Le job porte
+  cette même version technique. Contrôler le canevas et la concordance du profil,
+  de la version et du catalogue entre le job et le checkpoint.
+  Conserver les contrôles de contrat et de schéma propres au profil générique.
 - Pour l'annexe, créer le job sans plan provisoire. Adapter les échecs de stockage
   ou de queue sans suppression d'un plan inexistant ni job bloquant les quotas.
   Le service et le contrôleur retournent `planId: null` pour ce profil ; le
@@ -758,7 +937,8 @@ compte rendu. Réutiliser le suivi de la phase 1 et les lectures ordinaires
 des plans et indicateurs, avec les sources préparées en phase 4.
 
 - Proposer l'annexe à partir de la capacité serveur, des droits et de
-  l'éligibilité. Envoyer son profil explicite ; adapter consignes et options
+  l'éligibilité. Limiter ce profil au DOCX officiel V4 et rendre cette contrainte
+  visible dès le choix du fichier. Envoyer son profil explicite ; adapter consignes et options
   pour conserver les sous-actions et références nécessaires. Ne pas envoyer
   une annexe indisponible au pipeline générique. Remplacer aussi le blocage
   temporaire du parcours ordinaire côté interface et backend pour permettre
@@ -782,7 +962,7 @@ des plans et indicateurs, avec les sources préparées en phase 4.
 - Mettre les textes dans les labels existants et les URLs dans les builders.
   Mettre à jour le guide de parcours et de support avec ces comportements.
 
-**Validation :** parcours navigateur avec faux backend LLM/fixtures : upload,
+**Validation :** parcours navigateur avec fixtures DOCX et parser réel : upload,
 suivi sans plan, retour après fermeture, erreur/correction par nouvel import,
 reprise, succès et compte rendu. Vérifier les cibles E07, zéro/vide, axe sans
 fiche, axe B sans engagement, deux plans sans mélange de sources, données
@@ -815,16 +995,23 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
 - Migrations, backend/API, tous les workers et app compatibles déployés.
   Pas de message annexe en queue tant qu'un ancien worker peut le consommer.
 - Tests de chaque lot passés, non-régression générique/PCAET et full flow validés.
-  Qualification de documents représentatifs selon le
-  [guide d'évaluation](../../apps/backend/src/plans/ai-plan-import/eval/README.md),
-  lancée par un humain uniquement. Aucun agent ni test automatisé n'appelle le LLM réel.
+  Qualification du canevas et de ses variantes synthétiques selon le
+  [guide d'évaluation](../../apps/backend/src/plans/ai-plan-import/eval/README.md).
+  Comparer les premiers documents réellement remplis à leurs résultats dès
+  leur disponibilité ; les fixtures seules ne démontrent pas cette couverture.
+  Avant l'ouverture du profil Électrification, comparer l'extraction hybride au
+  parser seul sur un corpus annoté : rejets injustifiés et erreurs silencieuses.
+  Tout appel réel au modèle,
+  y compris pour cette évaluation, reste réservé à un lancement humain.
 
 **Ouverture :** valider le parcours complet en préproduction, puis ouvrir
 l'admission à un petit groupe identifié de collectivités. Les utilisateurs ou
 l'équipe lancent eux-mêmes les imports réels. Contrôler chaque import pilote :
 complétude A/B, cibles, conservation des données, erreurs et absence de doublon.
-Suivre durées, échecs par cause, reprises, volumes et consommation LLM avec
-l'instrumentation existante. Élargir seulement après validation métier des
+Suivre durées, échecs par cause, reprises et volumes avec l'instrumentation
+existante ; une extraction entièrement reconnue par le parser conserve zéro appel
+et zéro token LLM. Tracer les appels, tokens et valeurs interprétées lorsque
+l'assistance intervient. Élargir seulement après validation métier des
 résultats et de l'exploitation ; aucun taux de succès arbitraire n'est supposé validé.
 
 **Critères d'arrêt :** donnée existante écrasée, mauvais rattachement, plan
@@ -853,7 +1040,7 @@ unités/périodes, absence/zéro, persistance dans la transaction commune et com
 rendu. Les fiches désignées par URL restent strictement inchangées.
 
 Préserver les jobs/checkpoints du socle sans données budgétaires ; ne pas
-réinterpréter un import déjà réussi ni déclencher de nouvel appel au modèle
+réinterpréter un import déjà réussi ni déclencher une nouvelle extraction
 sur une reprise ancienne pour ajouter ce périmètre. Appliquer les mêmes règles
 de compatibilité avant de produire un nouveau format de checkpoint.
 

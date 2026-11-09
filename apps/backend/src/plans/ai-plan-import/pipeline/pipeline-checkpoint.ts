@@ -1,4 +1,7 @@
-import type { TokenUsage } from '@tet/backend/utils/llm/token-usage';
+import {
+  type TokenUsage,
+  tokenUsageSchema,
+} from '@tet/backend/utils/llm/token-usage';
 import { z } from 'zod';
 import {
   extractedActionSchema,
@@ -107,13 +110,7 @@ export const pipelineCheckpointSchema = genericImportContractSchema.extend({
   progress: z.object({
     actions: z.array(extractedActionSchema),
     review: z.string().nullable(),
-    tokens: z.object({
-      promptTokens: countSchema,
-      cachedTokens: countSchema,
-      candidatesTokens: countSchema,
-      thoughtsTokens: countSchema,
-      totalTokens: countSchema,
-    }),
+    tokens: tokenUsageSchema,
     stepStates: stepStatesSchema,
     warnings: z.array(z.string()),
   }),

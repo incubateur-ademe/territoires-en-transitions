@@ -358,7 +358,7 @@ gcloud: ## Lance gcloud (conteneur) sous le compte de service du backend : make 
 	$(COMPOSE) --profile gcloud run --rm $(if $(project),-e CLOUDSDK_CORE_PROJECT=$(project)) gcloud $(c)
 
 ## —— 🤖 Import IA ————————————————————————————————————————————————————————————
-# Appel réel au modèle : lancement humain uniquement (cf. CLAUDE.md racine).
+# Profil générique hors lecture seule : appel réel au modèle, lancement humain uniquement.
 ai-import-eval: preflight-env-keys ## Évalue l'import IA sur un document : make ai-import-eval f=plan.pdf [ref=ref.json] [out=res.json] [args="--no-sous-actions"]
 	@test -n "$(f)" || { echo "✗ indiquez le document : make ai-import-eval f=plan.pdf"; exit 1; }
 	@$(call decrypt_env,apps/backend/.env $(ENV_ROOT)) -- pnpm exec nx eval-ai-import backend -- \

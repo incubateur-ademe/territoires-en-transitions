@@ -1,3 +1,4 @@
+import { PrepareElectrificationImportService } from './electrification/extract-plan/prepare-electrification-import.service';
 import { ResolveElectrificationFichesService } from './electrification/resolve-fiches/resolve-electrification-fiches.service';
 import { ResolveElectrificationIndicateursService } from './electrification/resolve-fiches/resolve-electrification-indicateurs.service';
 import { FichesModule } from '../fiches/fiches.module';
@@ -64,6 +65,7 @@ import { ResumeImportService } from './resume-import/resume-import.service';
       useValue: electrificationConfig,
     },
     ResolveElectrificationEngagementsService,
+    PrepareElectrificationImportService,
     ResolveElectrificationFichesService,
     ResolveElectrificationIndicateursService,
     ResolveImportReferenceService,

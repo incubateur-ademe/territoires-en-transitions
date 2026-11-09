@@ -1,14 +1,15 @@
-import { createEnumObject } from '@tet/domain/utils';
 import { z } from 'zod';
 
-export const aiPlanImportProfileValues = [
-  'generic',
-  'annexe-3-electrification',
-] as const;
+export const AiPlanImportProfileEnum = {
+  GENERIC: 'generic',
+  // Valeur sérialisée conservée pour le contrat API et les options des jobs.
+  ELECTRIFICATION: 'annexe-3-electrification',
+} as const;
 
-export const AiPlanImportProfileEnum = createEnumObject(
-  aiPlanImportProfileValues
-);
+export const aiPlanImportProfileValues = [
+  AiPlanImportProfileEnum.GENERIC,
+  AiPlanImportProfileEnum.ELECTRIFICATION,
+] as const;
 
 export const aiPlanImportProfileSchema = z.enum(aiPlanImportProfileValues);
 
@@ -25,7 +26,7 @@ export function resolveImportProfile(
   return parsed.success ? parsed.data : null;
 }
 
-/** L'annexe reste fermée tant que son traitement complet n'est pas livré. */
+/** Le profil Électrification reste fermé tant que son traitement complet n'est pas livré. */
 export function isImportProfileImplemented(
   profile: AiPlanImportProfile
 ): boolean {

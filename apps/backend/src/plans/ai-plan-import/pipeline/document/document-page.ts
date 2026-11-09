@@ -6,6 +6,8 @@ export type DocumentLocation = {
   pageIndex: number;
   /** Ligne d'origine à partir de 0, jamais recalculée après normalisation. */
   lineIndex?: number;
+  /** Tableau Word d'origine, numéroté à partir de 0. */
+  tableIndex?: number;
   sheetName?: string;
   /** Cellule d'origine, numérotée à partir de 1. */
   row?: number;
@@ -21,6 +23,23 @@ export type DocumentLink = {
   kind: 'hyperlink' | 'text';
   location: DocumentLocation;
 };
+
+export type DocumentTableCell = {
+  text: string;
+  links: DocumentLink[];
+  location: DocumentLocation;
+};
+
+/** Structure d'origine, indépendante de la normalisation du texte des pages. */
+export type DocumentBlock =
+  | ({ type: 'paragraph' } & DocumentTableCell)
+  | {
+      type: 'table';
+      /** Une cellule fusionnée conserve sa position d'origine dans chaque case. */
+      rows: DocumentTableCell[][];
+      location: DocumentLocation;
+      unsupportedReason?: 'nested_table';
+    };
 
 export type PageLine = {
   text: string;
@@ -70,6 +89,8 @@ export type ReadDocument = {
    * la lecture et n'entre jamais dans le point de reprise.
    */
   workbook?: SheetGrid[];
+  /** Paragraphes et tableaux Word dans l'ordre du document. */
+  blocks?: DocumentBlock[];
 };
 
 export const buildPage = (
@@ -99,12 +120,14 @@ export const buildDocument = (
   kind: DocumentKind,
   pages: DocumentPage[],
   ocrFailures: ReadDocument['ocrFailures'] = [],
-  workbook?: SheetGrid[]
+  workbook?: SheetGrid[],
+  blocks?: DocumentBlock[]
 ): ReadDocument => ({
   kind,
   pages,
   ocrFailures,
   ...(workbook ? { workbook } : {}),
+  ...(blocks ? { blocks } : {}),
   stats: {
     pageCount: pages.length,
     textPages: pages.filter((page) => page.source === 'text').length,

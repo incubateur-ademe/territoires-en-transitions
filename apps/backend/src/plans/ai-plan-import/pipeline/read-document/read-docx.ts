@@ -1,11 +1,15 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
+import { JSDOM } from 'jsdom';
 import mammoth from 'mammoth';
 import { DocumentLinksRules } from '../document/document-links.rules';
 import {
   buildPage,
+  DocumentBlock,
   DocumentLink,
+  DocumentLocation,
   DocumentPage,
+  DocumentTableCell,
   PageLine,
 } from '../document/document-page';
 
@@ -35,21 +39,121 @@ export type ReadDocxError = { kind: 'parse_failed' } | { kind: 'timeout' };
  * et les titres rendus en Markdown (`## …`), que la détection de titres
  * reconnaît tels quels. Les tableaux gardent une ligne par rangée.
  */
-export const readDocxPages = async (
+export const readDocx = async (
   buffer: Buffer
-): Promise<Result<DocumentPage[], ReadDocxError>> => {
+): Promise<
+  Result<{ pages: DocumentPage[]; blocks: DocumentBlock[] }, ReadDocxError>
+> => {
   try {
     const { value: html } = await withTimeout(
       () => mammoth.convertToHtml({ buffer }, { styleMap: STYLE_MAP }),
       DOCX_TIMEOUT_MS
     );
-    return success(toPages(htmlToLines(html)));
+    return success({
+      pages: toPages(htmlToLines(html)),
+      blocks: readBlocks(html),
+    });
   } catch (error) {
     if (error instanceof TimeoutError) {
       return failure({ kind: 'timeout' });
     }
     return failure({ kind: 'parse_failed' });
   }
+};
+
+const readBlocks = (html: string): DocumentBlock[] => {
+  const fragment = JSDOM.fragment(html);
+  const blocks: DocumentBlock[] = [];
+  let pageIndex = -1;
+  let lineIndex = 0;
+  let tableIndex = 0;
+
+  for (const element of Array.from(fragment.children)) {
+    let location: DocumentLocation | undefined;
+    for (const line of htmlToLines(element.outerHTML)) {
+      if (pageIndex === -1 || /^# /.test(line.text)) {
+        pageIndex += 1;
+        lineIndex = 0;
+      }
+      location ??= { pageIndex, lineIndex };
+      if (line.text !== '') lineIndex += 1;
+    }
+    location ??= { pageIndex: Math.max(0, pageIndex), lineIndex };
+    if (element.tagName === 'TABLE') {
+      blocks.push(
+        readTable(element as HTMLTableElement, { ...location, tableIndex })
+      );
+      tableIndex += 1;
+    } else {
+      blocks.push({ type: 'paragraph', ...readCell(element, location) });
+    }
+  }
+  return blocks;
+};
+
+const readTable = (
+  table: HTMLTableElement,
+  location: DocumentLocation
+): Extract<DocumentBlock, { type: 'table' }> => {
+  if (table.querySelector('table')) {
+    return {
+      type: 'table',
+      rows: [],
+      location,
+      unsupportedReason: 'nested_table',
+    };
+  }
+
+  const rows: DocumentTableCell[][] = Array.from(table.rows, () => []);
+  Array.from(table.rows).forEach((row, rowIndex) => {
+    let colIndex = 0;
+    for (const element of Array.from(row.cells)) {
+      while (rows[rowIndex][colIndex]) colIndex += 1;
+      const cell = readCell(element, {
+        ...location,
+        row: rowIndex + 1,
+        col: colIndex + 1,
+      });
+      const rowEnd = Math.min(
+        rows.length,
+        element.rowSpan === 0 ? rows.length : rowIndex + element.rowSpan
+      );
+      for (let row = rowIndex; row < rowEnd; row += 1) {
+        for (let col = colIndex; col < colIndex + element.colSpan; col += 1) {
+          rows[row][col] = cell;
+        }
+      }
+      colIndex += element.colSpan;
+    }
+  });
+  return { type: 'table', rows, location };
+};
+
+const readCell = (
+  element: Element,
+  location: DocumentLocation
+): DocumentTableCell => {
+  const text = readText(element).trim();
+  const hyperlinks = Array.from(element.querySelectorAll('a[href]')).map(
+    (anchor): DocumentLink => ({
+      text: readText(anchor).trim(),
+      target: anchor.getAttribute('href') || null,
+      kind: 'hyperlink',
+      location,
+    })
+  );
+  return {
+    text,
+    links: DocumentLinksRules.withTextLinks(text, location, hyperlinks),
+    location,
+  };
+};
+
+const readText = (node: Node): string => {
+  if (node.nodeType === node.TEXT_NODE) return node.textContent ?? '';
+  if (node.nodeName === 'BR') return '\n';
+  const text = Array.from(node.childNodes).map(readText).join('');
+  return /^(P|LI|H[1-6])$/.test(node.nodeName) ? `${text}\n` : text;
 };
 
 // mammoth échappe le texte du document : il ne reste que ses propres balises,

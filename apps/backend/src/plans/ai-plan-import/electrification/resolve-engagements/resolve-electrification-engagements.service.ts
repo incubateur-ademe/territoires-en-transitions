@@ -7,7 +7,10 @@ import {
   IndicateurDetaille,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import { electrificationConfigSchema } from '@tet/domain/plans';
+import {
+  electrificationConfigSchema,
+  ElectrificationEngagementCodeEnum as EngagementCode,
+} from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'node:assert';
 import { ELECTRIFICATION_CONFIG } from '../electrification.constants';
@@ -195,9 +198,13 @@ export class ResolveElectrificationEngagementsService {
         source,
       });
     }
-    const e07 = draft.engagements.find(({ code }) => code === 'E07');
-    const total = e07?.cibles.find(({ key }) => key === 'total')?.valeur;
-    const rapides = e07?.cibles.find(({ key }) => key === 'rapides');
+    const bornesRecharge = draft.engagements.find(
+      ({ code }) => code === EngagementCode.BORNES_RECHARGE_PUBLIQUES
+    );
+    const total = bornesRecharge?.cibles.find(
+      ({ key }) => key === 'total'
+    )?.valeur;
+    const rapides = bornesRecharge?.cibles.find(({ key }) => key === 'rapides');
     if (total != null && rapides?.valeur != null && rapides.valeur > total) {
       issues.push({
         code: 'INCONSISTENT_E07_TARGETS',

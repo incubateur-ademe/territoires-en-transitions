@@ -279,6 +279,13 @@ export const runImportPipeline = async (
         maxInputTokens: llm.maxInputTokens,
       },
       ...state,
+      // Le contrat générique v1 reste textuel. Les coordonnées/liens du lecteur
+      // appartiennent au checkpoint documentaire du profil Électrification.
+      units:
+        state.units?.map((unit) => ({
+          ...unit,
+          lines: unit.lines.map(({ text, pageIndex }) => ({ text, pageIndex })),
+        })) ?? null,
       progress,
     }) ?? Promise.resolve();
 

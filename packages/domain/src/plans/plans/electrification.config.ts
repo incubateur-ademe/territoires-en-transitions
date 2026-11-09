@@ -3,6 +3,22 @@ import { electrificationFichesConfigSchema } from './electrification-fiches.conf
 import { indicateurPeriodiciteSchema } from '../../indicateurs/indicateur/indicateur-periodicite.schema';
 import { nonBlankTextSchema } from '../../shared/non-blank-text.schema';
 
+/** Identifiants internes stables du programme, indépendants des libellés du canevas. */
+export const ElectrificationEngagementCodeEnum = {
+  SORTIE_FIOUL_LOGEMENTS_PRIVES: 'E01',
+  SORTIE_GAZ_LOGEMENTS_PRIVES: 'E02',
+  DECOMMISSIONNEMENT_RESEAU_GAZ: 'E03',
+  SORTIE_GAZ_LOGEMENTS_SOCIAUX: 'E04',
+  SORTIE_GAZ_BATIMENTS_PUBLICS: 'E05',
+  ELECTRIFICATION_VEHICULES_PARTICULIERS: 'E06',
+  BORNES_RECHARGE_PUBLIQUES: 'E07',
+  ELECTRIFICATION_AUTOBUS: 'E08',
+  ELECTRIFICATION_ARTISANS: 'E09',
+  ELECTRIFICATION_INDUSTRIE: 'E10',
+  ELECTRIFICATION_AGRICULTURE: 'E11',
+  SITE_RECHARGE_POIDS_LOURDS: 'E12',
+} as const;
+
 export const electrificationConfigSchema = z.object({
   version: nonBlankTextSchema,
   fiches: electrificationFichesConfigSchema,
@@ -69,7 +85,7 @@ export const electrificationConfig: ElectrificationConfig = {
   sousAxes: null,
   engagements: [
     {
-      code: 'E01',
+      code: ElectrificationEngagementCodeEnum.SORTIE_FIOUL_LOGEMENTS_PRIVES,
       axeNumero: 1,
       actionTitre: null,
       cibles: [
@@ -83,7 +99,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E02',
+      code: ElectrificationEngagementCodeEnum.SORTIE_GAZ_LOGEMENTS_PRIVES,
       axeNumero: 1,
       actionTitre: null,
       cibles: [
@@ -97,14 +113,14 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E03',
+      code: ElectrificationEngagementCodeEnum.DECOMMISSIONNEMENT_RESEAU_GAZ,
       axeNumero: 4,
       actionTitre:
         'Travailler au décommissionnement de certaines portions du réseau de gaz',
       cibles: [],
     },
     {
-      code: 'E04',
+      code: ElectrificationEngagementCodeEnum.SORTIE_GAZ_LOGEMENTS_SOCIAUX,
       axeNumero: 2,
       actionTitre: null,
       cibles: [
@@ -118,7 +134,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E05',
+      code: ElectrificationEngagementCodeEnum.SORTIE_GAZ_BATIMENTS_PUBLICS,
       axeNumero: 3,
       actionTitre: null,
       cibles: [
@@ -132,7 +148,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E06',
+      code: ElectrificationEngagementCodeEnum.ELECTRIFICATION_VEHICULES_PARTICULIERS,
       axeNumero: 5,
       actionTitre: null,
       cibles: [
@@ -146,7 +162,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E07',
+      code: ElectrificationEngagementCodeEnum.BORNES_RECHARGE_PUBLIQUES,
       axeNumero: 6,
       actionTitre: null,
       cibles: [
@@ -167,7 +183,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E08',
+      code: ElectrificationEngagementCodeEnum.ELECTRIFICATION_AUTOBUS,
       axeNumero: 8,
       actionTitre: null,
       cibles: [
@@ -181,7 +197,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E09',
+      code: ElectrificationEngagementCodeEnum.ELECTRIFICATION_ARTISANS,
       axeNumero: 9,
       actionTitre: null,
       cibles: [
@@ -195,7 +211,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E10',
+      code: ElectrificationEngagementCodeEnum.ELECTRIFICATION_INDUSTRIE,
       axeNumero: 10,
       actionTitre: null,
       cibles: [
@@ -209,7 +225,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E11',
+      code: ElectrificationEngagementCodeEnum.ELECTRIFICATION_AGRICULTURE,
       axeNumero: 11,
       actionTitre: null,
       cibles: [
@@ -223,7 +239,7 @@ export const electrificationConfig: ElectrificationConfig = {
       ],
     },
     {
-      code: 'E12',
+      code: ElectrificationEngagementCodeEnum.SITE_RECHARGE_POIDS_LOURDS,
       axeNumero: 7,
       actionTitre:
         "Identifier un site clés en main pour l'installation de stations de recharge de poids lourds électriques",
