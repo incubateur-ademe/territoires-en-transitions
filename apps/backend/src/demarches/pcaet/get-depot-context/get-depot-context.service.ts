@@ -3,6 +3,7 @@ import { CollectiviteCompetencesRepository } from '@tet/backend/collectivites/sh
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
   COMPETENCE_BANATIC_SCOT,
   estNatureSupraPcaet,
@@ -27,7 +28,8 @@ export class GetDepotContextService {
   constructor(
     private readonly permissionService: PermissionService,
     private readonly competencesRepository: CollectiviteCompetencesRepository,
-    private readonly perimetreRepository: DemarchePcaetPerimetreRepository
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository,
+    private readonly trackingService: TrackingService
   ) {}
 
   async getDepotContext(
@@ -47,16 +49,23 @@ export class GetDepotContextService {
       return failure(GetDepotContextErrorEnum.UNAUTHORIZED);
     }
 
-    const [peutDeclarerScotAec, natureInsee] = await Promise.all([
-      this.competencesRepository.hasCompetence(
-        input.collectiviteId,
-        COMPETENCE_BANATIC_SCOT,
-        tx
-      ),
-      this.perimetreRepository.getNatureInsee(input.collectiviteId, tx),
-    ]);
+    const [peutDeclarerScotAec, natureInsee, isSupraEnabled] =
+      await Promise.all([
+        this.competencesRepository.hasCompetence(
+          input.collectiviteId,
+          COMPETENCE_BANATIC_SCOT,
+          tx
+        ),
+        this.perimetreRepository.getNatureInsee(input.collectiviteId, tx),
+        // Flag inactif : le Supra dépose comme toute collectivité, sans périmètre.
+        this.trackingService.isFeatureEnabled(
+          'is_pcaet-supra_enabled',
+          user.id,
+          input.collectiviteId
+        ),
+      ]);
 
-    const estSupra = estNatureSupraPcaet(natureInsee);
+    const estSupra = isSupraEnabled && estNatureSupraPcaet(natureInsee);
     if (!estSupra) {
       return success({
         peutDeclarerScotAec,
