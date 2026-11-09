@@ -6,6 +6,7 @@ import {
 const specificErrors = [
   'CREATE_DEMARCHE_PCAET_ERROR',
   'DEMARCHE_EN_COURS_EXISTANTE',
+  'PERIMETRE_INVALIDE',
   'SET_PILOTES_ERROR',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -16,6 +17,11 @@ export const createDemarchePcaetErrorConfig: TrpcErrorHandlerConfig<SpecificErro
       DEMARCHE_EN_COURS_EXISTANTE: {
         code: 'CONFLICT',
         message: 'Une démarche PCAET est déjà en cours pour cette collectivité',
+      },
+      PERIMETRE_INVALIDE: {
+        code: 'BAD_REQUEST',
+        message:
+          'Seul un Supra couvre des EPCI, et seulement ceux qui en sont membres',
       },
       CREATE_DEMARCHE_PCAET_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

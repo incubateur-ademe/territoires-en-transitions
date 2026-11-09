@@ -1,3 +1,4 @@
+import { epciCandidatSchema } from '@tet/domain/demarches';
 import { z } from 'zod';
 
 export const depotContextSchema = z.object({
@@ -10,6 +11,19 @@ export const depotContextSchema = z.object({
    * afficher.
    */
   peutDeclarerScotAec: z.boolean(),
+  /**
+   * La collectivité est un Supra (PETR, pôle métropolitain, syndicat) : elle
+   * dépose pour le compte d'EPCI à fiscalité propre, qu'elle coche à la
+   * création.
+   */
+  estSupra: z.boolean(),
+  /** Les EPCI membres du Supra, à cocher. Vide hors Supra. */
+  epciCandidats: z.array(epciCandidatSchema),
+  /**
+   * Les EPCI couverts par le dernier dépôt abouti du Supra : en renouvellement,
+   * ils sont pré-cochés. Vide pour un premier dépôt.
+   */
+  perimetrePrecedent: z.array(z.number()),
 });
 
 export type DepotContext = z.infer<typeof depotContextSchema>;

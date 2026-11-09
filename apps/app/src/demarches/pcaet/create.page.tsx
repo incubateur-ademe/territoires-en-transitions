@@ -6,6 +6,7 @@ import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { emptyDemarchePcaetCompletion } from '@/app/demarches/completion';
 import { DemarcheAvanceSidePanelButton } from '@/app/demarches/components/avance.side-panel-button';
 import { DemarcheDetailLayout } from '@/app/demarches/components/detail.layout';
+import { CollectivitesCouvertesField } from '@/app/demarches/pcaet/collectivites-couvertes-field';
 import { DemarchePilotesInfoTooltip } from '@/app/demarches/components/pilotes-info.tooltip';
 import { useDemarcheAvanceSidePanel } from '@/app/demarches/components/use-avance-side-panel';
 import { appLabels } from '@/app/labels/catalog';
@@ -21,6 +22,7 @@ import {
 } from '@tet/domain/demarches';
 import { Button, Checkbox, Field, Input } from '@tet/ui';
 import { useRouter } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -44,6 +46,11 @@ const createDemarchePcaetSchema = z.object({
    * compétence Banatic SCOT, et pré-rempli sur oui.
    */
   isScotAec: z.boolean(),
+  /**
+   * EPCI couverts, posés aux seuls Supra. Requis dès qu'un membre est proposé,
+   * ce que seul le contexte de dépôt dit : vérifié à l'envoi.
+   */
+  collectivitesCouvertesIds: z.array(z.number()),
 });
 
 type CreateDemarchePcaetForm = z.infer<typeof createDemarchePcaetSchema>;
@@ -67,11 +74,20 @@ export const CreateDemarchePcaetPage = () => {
     trpc.demarches.pcaet.getDepotContext.queryOptions({ collectiviteId })
   );
   const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
+  const estSupra = depotContext?.estSupra ?? false;
+  const epciCandidats = useMemo(
+    () => depotContext?.epciCandidats ?? [],
+    [depotContext]
+  );
+  // Un Supra sans membre connu peut encore commencer son dépôt.
+  const perimetreRequis = estSupra && epciCandidats.length > 0;
 
   const {
     register,
     control,
     handleSubmit,
+    setValue,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<CreateDemarchePcaetForm>({
     resolver: zodResolver(createDemarchePcaetSchema),
@@ -88,8 +104,21 @@ export const CreateDemarchePcaetPage = () => {
       dateLancement: '',
       transmisHorsPlateforme: false,
       isScotAec: true,
+      collectivitesCouvertesIds: [],
     },
   });
+
+  // Tout est décoché, sauf en renouvellement : le périmètre du dépôt précédent
+  // est repris, limité aux membres encore proposés.
+  useEffect(() => {
+    const candidatIds = new Set(epciCandidats.map(({ id }) => id));
+    setValue(
+      'collectivitesCouvertesIds',
+      (depotContext?.perimetrePrecedent ?? []).filter((id) =>
+        candidatIds.has(id)
+      )
+    );
+  }, [depotContext, epciCandidats, setValue]);
 
   // Le panneau d'avancement montre le parcours qui attend la collectivité :
   // cocher la case doit s'y voir tout de suite, avant même de créer.
@@ -111,6 +140,12 @@ export const CreateDemarchePcaetPage = () => {
   );
 
   const onSubmit = async (data: CreateDemarchePcaetForm) => {
+    if (perimetreRequis && data.collectivitesCouvertesIds.length === 0) {
+      setError('collectivitesCouvertesIds', {
+        message: appLabels.demarcheCreerCollectivitesCouvertesRequises,
+      });
+      return;
+    }
     const demarche = await createDemarche({
       collectiviteId,
       // L'intitulé n'est pas saisi ici : il se déduit de l'année du lancement,
@@ -127,6 +162,7 @@ export const CreateDemarchePcaetPage = () => {
       // Une collectivité à qui la question n'est pas posée ne déclare rien, quoi
       // que porte le formulaire.
       isScotAec: peutDeclarerScotAec ? data.isScotAec : false,
+      collectivitesCouvertesIds: estSupra ? data.collectivitesCouvertesIds : [],
     });
     router.push(
       makeCollectiviteDemarchePcaetRootUrl({
@@ -161,6 +197,21 @@ export const CreateDemarchePcaetPage = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-5"
             >
+              {estSupra && (
+                <Controller
+                  control={control}
+                  name="collectivitesCouvertesIds"
+                  render={({ field }) => (
+                    <CollectivitesCouvertesField
+                      candidats={epciCandidats}
+                      value={field.value}
+                      onChange={field.onChange}
+                      errorMessage={errors.collectivitesCouvertesIds?.message}
+                    />
+                  )}
+                />
+              )}
+
               <div className="flex flex-col gap-2">
                 <div
                   id={`${PILOTES_FIELD_ID}-label`}

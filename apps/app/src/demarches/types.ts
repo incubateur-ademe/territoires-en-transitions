@@ -1,6 +1,7 @@
 import type { PersonneTagOrUser } from '@tet/domain/collectivites';
-import type { DemarcheType } from '@tet/domain/demarches';
 import type {
+  CollectiviteCouverte,
+  DemarcheType,
   DemarchePcaetObligation as DomainObligation,
   DemarchePcaetStatus,
   DemarchePcaetTransitionEvaluations,
@@ -60,6 +61,8 @@ export type DemarchePcaet = {
   unverifiedPlanActionIds: number[];
   /** Parmi eux, les plans dont des actions ont leurs secteurs réglementaires à renseigner. */
   secteursARenseignerPlanActionIds: number[];
+  /** EPCI couverts, quand la collectivité est un Supra. Fixé à la création. */
+  collectivitesCouvertes: CollectiviteCouverte[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur.
    * Le front ne recompose aucune règle : il lit `enabled` et `blockedBy`.

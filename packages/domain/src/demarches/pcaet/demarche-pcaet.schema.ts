@@ -2,6 +2,7 @@ import type { DemarcheTypeEnum } from '../demarche-type.enum.schema';
 import type { DemarcheBase } from '../demarche.schema';
 import type { DemarchePcaetObligation } from './demarche-pcaet-obligation.enum.schema';
 import type { DemarchePcaetStatus } from './demarche-pcaet-status.enum.schema';
+import type { CollectiviteCouverte } from './pcaet-porteur-supra.rules';
 import type { DemarchePcaetTransitionEvaluations } from './workflow/demarche-pcaet-workflow.facade';
 
 /** Titre par défaut d'une nouvelle démarche (terme métier, partagé front/back). */
@@ -88,6 +89,11 @@ export type DemarchePcaet = DemarcheBase & {
    * vide (tant que le feature flag `is-fiche-secteurs-enabled` est actif).
    */
   secteursARenseignerPlanActionIds: number[];
+  /**
+   * EPCI à fiscalité propre couverts par le PCAET, quand la collectivité est un
+   * Supra qui dépose pour leur compte. Fixé à la création ; vide sinon.
+   */
+  collectivitesCouvertes: CollectiviteCouverte[];
   /**
    * État de chaque transition pour l'utilisateur courant, calculé côté serveur
    * (structure du workflow + guards) — le front l'affiche, sans recalculer :

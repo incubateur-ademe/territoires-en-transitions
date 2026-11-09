@@ -3,8 +3,12 @@ import { CollectiviteCompetencesRepository } from '@tet/backend/collectivites/sh
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { COMPETENCE_BANATIC_SCOT } from '@tet/domain/demarches';
+import {
+  COMPETENCE_BANATIC_SCOT,
+  estNatureSupraPcaet,
+} from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarchePcaetPerimetreRepository } from '../shared/demarche-pcaet-perimetre.repository';
 import {
   GetDepotContextError,
   GetDepotContextErrorEnum,
@@ -22,7 +26,8 @@ import { DepotContext } from './get-depot-context.output';
 export class GetDepotContextService {
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly competencesRepository: CollectiviteCompetencesRepository
+    private readonly competencesRepository: CollectiviteCompetencesRepository,
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository
   ) {}
 
   async getDepotContext(
@@ -42,12 +47,35 @@ export class GetDepotContextService {
       return failure(GetDepotContextErrorEnum.UNAUTHORIZED);
     }
 
-    const peutDeclarerScotAec = await this.competencesRepository.hasCompetence(
-      input.collectiviteId,
-      COMPETENCE_BANATIC_SCOT,
-      tx
-    );
+    const [peutDeclarerScotAec, natureInsee] = await Promise.all([
+      this.competencesRepository.hasCompetence(
+        input.collectiviteId,
+        COMPETENCE_BANATIC_SCOT,
+        tx
+      ),
+      this.perimetreRepository.getNatureInsee(input.collectiviteId, tx),
+    ]);
 
-    return success({ peutDeclarerScotAec });
+    const estSupra = estNatureSupraPcaet(natureInsee);
+    if (!estSupra) {
+      return success({
+        peutDeclarerScotAec,
+        estSupra,
+        epciCandidats: [],
+        perimetrePrecedent: [],
+      });
+    }
+
+    const [epciCandidats, perimetrePrecedent] = await Promise.all([
+      this.perimetreRepository.listEpciCandidats(input.collectiviteId, tx),
+      this.perimetreRepository.getPerimetrePrecedent(input.collectiviteId, tx),
+    ]);
+
+    return success({
+      peutDeclarerScotAec,
+      estSupra,
+      epciCandidats,
+      perimetrePrecedent,
+    });
   }
 }

@@ -47,6 +47,7 @@ const toFrontDemarche = (
   secteursARenseignerPlanActionIds: isFicheSecteursEnabled
     ? server.secteursARenseignerPlanActionIds
     : [],
+  collectivitesCouvertes: server.collectivitesCouvertes,
   transitions: server.transitions,
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,

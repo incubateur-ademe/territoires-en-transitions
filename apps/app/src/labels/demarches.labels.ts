@@ -23,6 +23,10 @@ export type DemarcheTypeLabels = {
 };
 
 const echeanceAvisJour = plural({ one: 'jour', other: 'jours' });
+const collectiviteCouverteSelectionnee = plural({
+  one: 'sélectionnée',
+  other: 'sélectionnées',
+});
 
 const demarcheVulnerabiliteSousThematiqueMot = plural({
   one: 'sous-thématique',
@@ -196,6 +200,29 @@ export const demarchesLabels = {
   demarcheCreerDateLancementRequise: 'La date de lancement est requise',
   demarcheCreerSoumettre: 'Commencer le dépôt',
   demarcheCreerPilotesRequis: 'Au moins un pilote est requis',
+  /** Posé aux seuls Supra (PETR, pôle métropolitain, syndicat mixte). */
+  demarcheCreerCollectivitesCouvertes: 'Collectivités couvertes par ce PCAET *',
+  demarcheCreerCollectivitesCouvertesDescription:
+    'Cochez les EPCI pour le compte desquels vous déposez ce PCAET. Ce choix est définitif.',
+  demarcheCreerCollectivitesCouvertesToutSelectionner: 'Tout sélectionner',
+  demarcheCreerCollectivitesCouvertesCompteur: ({
+    selectionnees,
+    total,
+  }: {
+    selectionnees: number;
+    total: number;
+  }) =>
+    `${collectiviteCouverteSelectionnee({
+      count: selectionnees,
+    })} sur ${total}`,
+  demarcheCreerCollectivitesCouvertesRequises:
+    'Cochez au moins une collectivité couverte',
+  /** La liste vient des relations BANATIC : un lien manquant se corrige par le support. */
+  demarcheCreerCollectivitesCouvertesAucune:
+    'Aucun EPCI membre de votre structure n’est connu de la plateforme. Contactez le support pour compléter la liste.',
+  demarcheEpciCandidatEnCours: 'Démarche en cours',
+  demarcheHeaderCouvre: 'Couvre',
+  demarcheHeaderCouvreValeur: (nombre: number) => `${nombre} EPCI`,
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
   /** Même écran à l'aval, mais il y montre d'abord les avis reçus. */
   demarcheDetailAvisEtDocumentsTitre: 'Avis reçus et documents attendus',

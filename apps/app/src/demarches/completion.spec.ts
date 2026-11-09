@@ -234,6 +234,7 @@ const completeDemarche: DemarchePcaet = {
   planActionIds: [42],
   unverifiedPlanActionIds: [],
   secteursARenseignerPlanActionIds: [],
+  collectivitesCouvertes: [],
 };
 
 describe('getDemarchePcaetCompletion', () => {
