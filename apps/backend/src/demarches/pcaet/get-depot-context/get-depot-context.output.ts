@@ -24,6 +24,17 @@ export const depotContextSchema = z.object({
    * ils sont pré-cochés. Vide pour un premier dépôt.
    */
   perimetrePrecedent: z.array(z.number()),
+  /**
+   * Le dépôt en cours d'un Supra qui couvre la collectivité : tant qu'il dure,
+   * elle ne peut pas commencer le sien.
+   */
+  couvertureEnCours: z.nullable(
+    z.object({
+      porteur: z.object({ id: z.number(), nom: z.string() }),
+      /** Date de lancement saisie, ou à défaut date de création (AAAA-MM-JJ). */
+      dateDebut: z.string(),
+    })
+  ),
 });
 
 export type DepotContext = z.infer<typeof depotContextSchema>;

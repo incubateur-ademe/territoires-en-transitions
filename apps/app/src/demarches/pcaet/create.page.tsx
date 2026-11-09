@@ -21,7 +21,8 @@ import {
   buildDemarchePcaetTitre,
   DemarcheTypeEnum,
 } from '@tet/domain/demarches';
-import { Button, Checkbox, Field, Input } from '@tet/ui';
+import { Alert, Button, Checkbox, Field, Input } from '@tet/ui';
+import { format, parseISO } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -82,8 +83,13 @@ export const CreateDemarchePcaetPage = () => {
     () => depotContext?.epciCandidats ?? [],
     [depotContext]
   );
-  // Un Supra sans membre connu peut encore commencer son dépôt.
-  const perimetreRequis = estSupra && epciCandidats.length > 0;
+  // Un Supra sans membre disponible peut encore commencer son dépôt.
+  const perimetreRequis =
+    estSupra && epciCandidats.some(({ engagement }) => !engagement);
+  // Un EPCI couvert par le dépôt en cours d'un Supra ne commence pas le sien.
+  const couvertureEnCours = isPcaetSupraEnabled
+    ? depotContext?.couvertureEnCours ?? null
+    : null;
 
   const {
     register,
@@ -112,9 +118,11 @@ export const CreateDemarchePcaetPage = () => {
   });
 
   // Tout est décoché, sauf en renouvellement : le périmètre du dépôt précédent
-  // est repris, limité aux membres encore proposés.
+  // est repris, limité aux membres encore proposés et disponibles.
   useEffect(() => {
-    const candidatIds = new Set(epciCandidats.map(({ id }) => id));
+    const candidatIds = new Set(
+      epciCandidats.filter(({ engagement }) => !engagement).map(({ id }) => id)
+    );
     setValue(
       'collectivitesCouvertesIds',
       (depotContext?.perimetrePrecedent ?? []).filter((id) =>
@@ -192,127 +200,144 @@ export const CreateDemarchePcaetPage = () => {
               </div>
               <DemarcheAvanceSidePanelButton isOpen={isOpen} onClick={toggle} />
             </div>
-            <p className="text-sm text-grey-7 mt-2">
-              {appLabels.demarcheCreerChampsObligatoiresLegende}
-            </p>
+            {!couvertureEnCours && (
+              <p className="text-sm text-grey-7 mt-2">
+                {appLabels.demarcheCreerChampsObligatoiresLegende}
+              </p>
+            )}
 
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-5"
-            >
-              {estSupra && (
-                <Controller
-                  control={control}
-                  name="collectivitesCouvertesIds"
-                  render={({ field }) => (
-                    <CollectivitesCouvertesField
-                      candidats={epciCandidats}
-                      value={field.value}
-                      onChange={field.onChange}
-                      errorMessage={errors.collectivitesCouvertesIds?.message}
-                    />
-                  )}
-                />
-              )}
-
-              <div className="flex flex-col gap-2">
-                <div
-                  id={`${PILOTES_FIELD_ID}-label`}
-                  className="flex items-center gap-2 text-primary-9"
-                >
-                  {appLabels.demarcheCreerPilotes}
-                  <DemarchePilotesInfoTooltip />
-                </div>
-                <Field
-                  state={errors.pilotes ? 'error' : 'default'}
-                  message={errors.pilotes?.message}
-                >
+            {couvertureEnCours ? (
+              <Alert
+                state="info"
+                title={appLabels.demarcheCreationBloqueeCouverture({
+                  porteur: couvertureEnCours.porteur.nom,
+                  dateDebut: format(
+                    parseISO(couvertureEnCours.dateDebut),
+                    'dd/MM/yyyy'
+                  ),
+                })}
+              />
+            ) : (
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-5"
+              >
+                {estSupra && (
                   <Controller
                     control={control}
-                    name="pilotes"
+                    name="collectivitesCouvertesIds"
                     render={({ field }) => (
-                      <PersonneTagDropdown
-                        aria-labelledby={`${PILOTES_FIELD_ID}-label`}
-                        aria-required="true"
-                        collectiviteIds={[collectiviteId]}
-                        values={field.value.map((p) => getPersonneStringId(p))}
-                        placeholder={appLabels.demarcheCreerRechercherPilote}
-                        onChange={({ personnes }) =>
-                          field.onChange(
-                            personnes.map((p) => ({ ...p, nom: p.nom ?? '' }))
-                          )
-                        }
+                      <CollectivitesCouvertesField
+                        candidats={epciCandidats}
+                        value={field.value}
+                        onChange={field.onChange}
+                        errorMessage={errors.collectivitesCouvertesIds?.message}
                       />
                     )}
                   />
-                </Field>
-              </div>
-
-              <Field
-                title={appLabels.demarcheCreerDateLancement}
-                htmlFor={DATE_LANCEMENT_FIELD_ID}
-                state={errors.dateLancement ? 'error' : 'default'}
-                message={errors.dateLancement?.message}
-              >
-                <Input
-                  id={DATE_LANCEMENT_FIELD_ID}
-                  type="date"
-                  min="1900-01-01"
-                  max="2100-01-01"
-                  aria-required="true"
-                  {...register('dateLancement')}
-                />
-              </Field>
-
-              <Controller
-                control={control}
-                name="transmisHorsPlateforme"
-                render={({ field }) => (
-                  <Checkbox
-                    variant="switch"
-                    label={appLabels.demarcheCreerHorsPlateforme}
-                    message={appLabels.demarcheCreerHorsPlateformeDescription}
-                    containerClassname="gap-3"
-                    data-test="demarches.creer.hors-plateforme"
-                    checked={field.value}
-                    onChange={() => field.onChange(!field.value)}
-                  />
                 )}
-              />
 
-              {peutDeclarerScotAec && (
+                <div className="flex flex-col gap-2">
+                  <div
+                    id={`${PILOTES_FIELD_ID}-label`}
+                    className="flex items-center gap-2 text-primary-9"
+                  >
+                    {appLabels.demarcheCreerPilotes}
+                    <DemarchePilotesInfoTooltip />
+                  </div>
+                  <Field
+                    state={errors.pilotes ? 'error' : 'default'}
+                    message={errors.pilotes?.message}
+                  >
+                    <Controller
+                      control={control}
+                      name="pilotes"
+                      render={({ field }) => (
+                        <PersonneTagDropdown
+                          aria-labelledby={`${PILOTES_FIELD_ID}-label`}
+                          aria-required="true"
+                          collectiviteIds={[collectiviteId]}
+                          values={field.value.map((p) =>
+                            getPersonneStringId(p)
+                          )}
+                          placeholder={appLabels.demarcheCreerRechercherPilote}
+                          onChange={({ personnes }) =>
+                            field.onChange(
+                              personnes.map((p) => ({ ...p, nom: p.nom ?? '' }))
+                            )
+                          }
+                        />
+                      )}
+                    />
+                  </Field>
+                </div>
+
+                <Field
+                  title={appLabels.demarcheCreerDateLancement}
+                  htmlFor={DATE_LANCEMENT_FIELD_ID}
+                  state={errors.dateLancement ? 'error' : 'default'}
+                  message={errors.dateLancement?.message}
+                >
+                  <Input
+                    id={DATE_LANCEMENT_FIELD_ID}
+                    type="date"
+                    min="1900-01-01"
+                    max="2100-01-01"
+                    aria-required="true"
+                    {...register('dateLancement')}
+                  />
+                </Field>
+
                 <Controller
                   control={control}
-                  name="isScotAec"
+                  name="transmisHorsPlateforme"
                   render={({ field }) => (
                     <Checkbox
                       variant="switch"
-                      label={appLabels.demarcheCreerScotAec}
-                      message={appLabels.demarcheCreerScotAecDescription}
+                      label={appLabels.demarcheCreerHorsPlateforme}
+                      message={appLabels.demarcheCreerHorsPlateformeDescription}
                       containerClassname="gap-3"
-                      data-test="demarches.creer.scot-aec"
+                      data-test="demarches.creer.hors-plateforme"
                       checked={field.value}
                       onChange={() => field.onChange(!field.value)}
                     />
                   )}
                 />
-              )}
 
-              <div className="flex justify-end gap-3">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  icon="arrow-right-line"
-                  iconPosition="right"
-                  // Tant que le contexte n'a pas répondu, la question SCoT-AEC
-                  // n'est pas affichée et sa réponse partirait à « non » — le
-                  // contraire de ce qu'annonce la coche pré-remplie.
-                  disabled={isSubmitting || contexteEnAttente}
-                >
-                  {appLabels.demarcheCreerSoumettre}
-                </Button>
-              </div>
-            </form>
+                {peutDeclarerScotAec && (
+                  <Controller
+                    control={control}
+                    name="isScotAec"
+                    render={({ field }) => (
+                      <Checkbox
+                        variant="switch"
+                        label={appLabels.demarcheCreerScotAec}
+                        message={appLabels.demarcheCreerScotAecDescription}
+                        containerClassname="gap-3"
+                        data-test="demarches.creer.scot-aec"
+                        checked={field.value}
+                        onChange={() => field.onChange(!field.value)}
+                      />
+                    )}
+                  />
+                )}
+
+                <div className="flex justify-end gap-3">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    icon="arrow-right-line"
+                    iconPosition="right"
+                    // Tant que le contexte n'a pas répondu, la question SCoT-AEC
+                    // n'est pas affichée et sa réponse partirait à « non » — le
+                    // contraire de ce qu'annonce la coche pré-remplie.
+                    disabled={isSubmitting || contexteEnAttente}
+                  >
+                    {appLabels.demarcheCreerSoumettre}
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
         </DemarcheDetailLayout.Main>
       </DemarcheDetailLayout.Container>

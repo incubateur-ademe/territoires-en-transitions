@@ -3,13 +3,12 @@ import { collectiviteTable } from '@tet/backend/collectivites/shared/models/coll
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
-  DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
   type AssujettissementEntree,
   type DemarchePcaetObligation,
   type DemarchePcaetStatus,
 } from '@tet/domain/demarches';
-import { and, eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 
 export type InsertDemarchePcaetValues = {
@@ -27,25 +26,6 @@ export type InsertDemarchePcaetValues = {
 @Injectable()
 export class CreateDemarchePcaetRepository {
   private readonly logger = new Logger(CreateDemarchePcaetRepository.name);
-
-  /** Une démarche « en cours » existe-t-elle déjà pour la collectivité ? */
-  async hasActiveDemarche(
-    collectiviteId: number,
-    tx: Transaction
-  ): Promise<boolean> {
-    const rows = await tx
-      .select({ id: demarcheTable.id })
-      .from(demarcheTable)
-      .where(
-        and(
-          eq(demarcheTable.collectiviteId, collectiviteId),
-          eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
-          inArray(demarcheTable.status, [...DEMARCHE_PCAET_EN_COURS_STATUSES])
-        )
-      )
-      .limit(1);
-    return rows.length > 0;
-  }
 
   async getAssujettissement(
     collectiviteId: number,

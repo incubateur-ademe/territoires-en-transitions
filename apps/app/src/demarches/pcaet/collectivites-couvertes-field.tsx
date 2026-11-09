@@ -5,13 +5,28 @@ import {
   type EpciCandidat,
 } from '@tet/domain/demarches';
 import { Badge, Checkbox, Field } from '@tet/ui';
+import { format, parseISO } from 'date-fns';
 import { JSX } from 'react';
 
 const FIELD_ID = 'create-demarche-pcaet-collectivites-couvertes';
 
+const formatDateDebut = (date: string): string =>
+  format(parseISO(date), 'dd/MM/yyyy');
+
 const StatutDerniereDemarche = ({
   derniereDemarche,
-}: Pick<EpciCandidat, 'derniereDemarche'>): JSX.Element => {
+  engagement,
+}: Pick<EpciCandidat, 'derniereDemarche' | 'engagement'>): JSX.Element => {
+  if (engagement) {
+    return (
+      <Badge
+        size="xs"
+        variant="info"
+        type="outlined"
+        title={appLabels.demarcheEpciCandidatEnCours}
+      />
+    );
+  }
   if (!derniereDemarche) {
     return (
       <Badge
@@ -55,7 +70,8 @@ type Props = {
 
 /**
  * Les EPCI membres du Supra, à cocher : le Supra dit lui-même lesquels son
- * PCAET couvre, la liste BANATIC ne fait que les proposer.
+ * PCAET couvre, la liste BANATIC ne fait que les proposer. Un EPCI déjà engagé
+ * dans une démarche en cours est grisé, avec sa raison.
  */
 export const CollectivitesCouvertesField = ({
   candidats,
@@ -64,8 +80,9 @@ export const CollectivitesCouvertesField = ({
   errorMessage,
 }: Props): JSX.Element => {
   const selection = new Set(value);
+  const disponibles = candidats.filter(({ engagement }) => !engagement);
   const toutSelectionne =
-    candidats.length > 0 && candidats.every(({ id }) => selection.has(id));
+    disponibles.length > 0 && disponibles.every(({ id }) => selection.has(id));
 
   const toggle = (id: number) =>
     onChange(
@@ -104,15 +121,18 @@ export const CollectivitesCouvertesField = ({
                   appLabels.demarcheCreerCollectivitesCouvertesToutSelectionner
                 }
                 checked={toutSelectionne}
+                disabled={disponibles.length === 0}
                 onChange={() =>
-                  onChange(toutSelectionne ? [] : candidats.map(({ id }) => id))
+                  onChange(
+                    toutSelectionne ? [] : disponibles.map(({ id }) => id)
+                  )
                 }
                 data-test="demarches.creer.collectivites-couvertes.tout"
               />
               <span className="text-sm text-grey-7">
                 {appLabels.demarcheCreerCollectivitesCouvertesCompteur({
                   selectionnees: selection.size,
-                  total: candidats.length,
+                  total: disponibles.length,
                 })}
               </span>
             </div>
@@ -135,11 +155,23 @@ export const CollectivitesCouvertesField = ({
                       </span>
                     }
                     checked={selection.has(candidat.id)}
+                    disabled={candidat.engagement !== null}
+                    message={
+                      candidat.engagement
+                        ? appLabels.demarcheEpciCandidatEngage({
+                            porteur: candidat.engagement.porteur?.nom ?? null,
+                            dateDebut: formatDateDebut(
+                              candidat.engagement.dateDebut
+                            ),
+                          })
+                        : undefined
+                    }
                     onChange={() => toggle(candidat.id)}
                     data-test={`demarches.creer.collectivites-couvertes.${candidat.id}`}
                   />
                   <StatutDerniereDemarche
                     derniereDemarche={candidat.derniereDemarche}
+                    engagement={candidat.engagement}
                   />
                 </li>
               ))}

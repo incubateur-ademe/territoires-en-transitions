@@ -221,6 +221,25 @@ export const demarchesLabels = {
   demarcheCreerCollectivitesCouvertesAucune:
     'Aucun EPCI membre de votre structure n’est connu de la plateforme. Contactez le support pour compléter la liste.',
   demarcheEpciCandidatEnCours: 'Démarche en cours',
+  /** Raison pour laquelle un EPCI membre ne peut pas être coché. */
+  demarcheEpciCandidatEngage: ({
+    porteur,
+    dateDebut,
+  }: {
+    porteur: string | null;
+    dateDebut: string;
+  }) =>
+    porteur
+      ? `Une démarche PCAET portée par ${porteur} est déjà en cours (commencée le ${dateDebut})`
+      : `Une démarche PCAET est déjà en cours (commencée le ${dateDebut})`,
+  demarcheCreationBloqueeCouverture: ({
+    porteur,
+    dateDebut,
+  }: {
+    porteur: string;
+    dateDebut: string;
+  }) =>
+    `Votre PCAET est porté par ${porteur}, dont le dépôt est en cours depuis le ${dateDebut} : un nouveau dépôt sera possible une fois ce PCAET adopté ou archivé`,
   demarcheHeaderCouvre: 'Couvre',
   demarcheHeaderCouvreValeur: (nombre: number) => `${nombre} EPCI`,
   demarcheDetailDocumentsTitre: 'Ajouter les documents attendus',
