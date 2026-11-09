@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { ErrorCard } from '@/app/utils/error/error.card';
@@ -10,7 +11,10 @@ import {
   DossiersView,
 } from './dossiers-labellisation.header-filters';
 import { DossiersLabellisationTable } from './dossiers-labellisation.table';
-import { isActionRequired } from './labellisations-admin.utils';
+import {
+  filterAndSortDossiers,
+  isActionRequired,
+} from './labellisations-admin.utils';
 
 const emptyTitleByView: Record<DossiersView, string> = {
   'en-attente': appLabels.labellisationsAdminAucunDossierEnAttente,
@@ -24,13 +28,34 @@ export const DossiersLabellisationView = ({ view }: { view: DossiersView }) => {
   const { data, isLoading, isError, refetch } = useListDossiersLabellisation(
     view === 'clos' ? { statuts: ['clos'], search } : { search }
   );
+  // Un dossier vu « en attente » y reste jusqu'au changement d'onglet : sinon
+  // la ligne (et sa modale d'attribution) disparaît dès le 1er auditeur, et on
+  // ne peut pas en attribuer un second.
+  // Retenus en état, ajustés au rendu (pas de ref lue pendant le rendu).
+  const [enAttenteIds, setEnAttenteIds] = useState<ReadonlySet<number>>(
+    new Set()
+  );
+  if (view === 'en-attente' && data) {
+    const nouveaux = data
+      .filter((d) => isActionRequired(d) && !enAttenteIds.has(d.auditId))
+      .map((d) => d.auditId);
+    if (nouveaux.length > 0) {
+      setEnAttenteIds(new Set([...enAttenteIds, ...nouveaux]));
+    }
+  }
   // Les dossiers ouverts se partagent entre « en attente » et « en cours ».
-  const dossiers =
+  const dossiersDeLaVue =
     view === 'clos'
       ? data
-      : data?.filter(
-          (dossier) => isActionRequired(dossier) === (view === 'en-attente')
-        );
+      : data?.filter((dossier) => {
+          const isEnAttente =
+            isActionRequired(dossier) ||
+            (dossier.statut !== 'clos' && enAttenteIds.has(dossier.auditId));
+          return isEnAttente === (view === 'en-attente');
+        });
+  const dossiers = filterAndSortDossiers(dossiersDeLaVue ?? [], filters);
+  const hasFilters =
+    !!search || filters.sujets.length > 0 || filters.statuts.length > 0;
 
   return (
     <>
@@ -42,15 +67,15 @@ export const DossiersLabellisationView = ({ view }: { view: DossiersView }) => {
         />
       ) : (
         <DossiersLabellisationTable
-          dossiers={dossiers ?? []}
+          dossiers={dossiers}
           isLoading={isLoading}
           view={view}
           emptyCard={{
             picto: (props) => <PictoDashboard {...props} />,
-            title: search
+            title: hasFilters
               ? appLabels.labellisationsAdminAucunDossier
               : emptyTitleByView[view],
-            actions: search
+            actions: hasFilters
               ? [
                   {
                     children: appLabels.reinitialiserLesFiltres,

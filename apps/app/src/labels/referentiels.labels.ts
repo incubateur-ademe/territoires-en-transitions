@@ -320,7 +320,8 @@ export const referentielsLabels = {
     `labellisée le ${date}`,
   labellisationsAdminDecision: 'Actions',
   labellisationsAdminEtoileObtenue: 'Étoile obtenue',
-  labellisationsAdminDateCra: 'Date de la CRA',
+  labellisationsAdminDateLabellisation:
+    'Date de labellisation (courrier officiel)',
   labellisationsAdminLabelliser: 'Labelliser',
   labellisationsAdminClore: 'Clore',
   labellisationsAdminDossierClos: 'Dossier clos',

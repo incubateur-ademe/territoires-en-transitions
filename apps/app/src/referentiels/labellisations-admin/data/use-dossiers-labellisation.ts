@@ -6,12 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useDownloadSignedFile } from '@/app/utils/use-download-signed-file';
-import {
-  RouterInput,
-  RouterOutput,
-  useTRPC,
-  useTRPCClient,
-} from '@tet/api';
+import { RouterInput, RouterOutput, useTRPC, useTRPCClient } from '@tet/api';
 
 export type ListDossiersLabellisationInput =
   RouterInput['referentiels']['labellisations']['admin']['listDossiers'];
