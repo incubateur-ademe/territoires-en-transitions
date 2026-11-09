@@ -68,6 +68,11 @@ export const INDICATEUR_CHART_LINE_STYLES_BY_SOURCE_ID: {
   snbc: {
     [IndicateurValeurTypeEnum.OBJECTIF]: { color: '#1E98C6' },
   },
+  // Distincte de la SNBC 2 : avec le flag, les deux trajectoires figurent sur
+  // le même graphe pendant la transition (fiches indicateurs, rapport PPT).
+  snbc3: {
+    [IndicateurValeurTypeEnum.OBJECTIF]: { color: '#009081' },
+  },
 };
 
 export type ChartSurfaceStyle = ChartLineStyle &

@@ -219,6 +219,7 @@ const DEFINITIONS_PROVIDERS = [
     IndicateursRouter,
     IndicateurChartBuilder,
     IndicateurChartService,
+    TrajectoireSnbc3FeatureFlagService,
   ],
   controllers: [
     IndicateursValeursController,

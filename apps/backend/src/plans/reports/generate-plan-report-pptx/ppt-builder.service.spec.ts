@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { PptBuilderService } from './ppt-builder.service';
 
@@ -38,7 +39,7 @@ describe('PptBuilderService', () => {
       expect(result.map((f: FicheWithRelations) => f.id)).toEqual([2, 3, 1]);
     });
 
-    it("place chaque sous-action juste après sa fiche parente, triées par date de création (pas par titre)", () => {
+    it('place chaque sous-action juste après sa fiche parente, triées par date de création (pas par titre)', () => {
       const fiches = [
         fiche({ id: 1, titre: 'Action A' }),
         fiche({ id: 2, titre: 'Action B' }),
@@ -74,5 +75,65 @@ describe('PptBuilderService', () => {
 
       expect(result.map((f: FicheWithRelations) => f.id)).toEqual([1, 99]);
     });
+  });
+
+  describe('données territoriales : source de la trajectoire', () => {
+    type ChartArgs = {
+      identifiantReferentiel: string;
+      sources: { sourceId: string }[];
+      trajectoireSnbc3Enabled?: boolean;
+    };
+
+    /** Arguments de chaque lecture de graphe des données territoriales. */
+    const chartCalls = async (isSnbc3Enabled: boolean) => {
+      const service = pptBuilderService as any;
+      const isEnabled = vi.fn().mockResolvedValue(isSnbc3Enabled);
+      service.trajectoireSnbc3FeatureFlag.isTrajectoireSnbc3EnabledForUserId =
+        isEnabled;
+      const getChartData = vi.fn().mockResolvedValue({ chartData: {} });
+      service.indicateurChartService.getIndicateurValeursAndChartData =
+        getChartData;
+      vi.spyOn(service, 'addSlide').mockImplementation(() => undefined);
+      vi.spyOn(service, 'addIndicateurTerritorialSlide').mockImplementation(
+        () => undefined
+      );
+
+      await service.addDonneesTerritorialesSlides({
+        collectivite: { id: 42 },
+        userId: 'user-id',
+      });
+
+      expect(isEnabled).toHaveBeenCalledWith('user-id', 42);
+      return getChartData.mock.calls.map(([args]) => args as ChartArgs);
+    };
+
+    it.each([
+      [true, [IndicateurSourceEnum.SNBC, IndicateurSourceEnum.SNBC3]],
+      [false, [IndicateurSourceEnum.SNBC]],
+    ])(
+      'flag %s : cae_1.a et cae_2.a montrent les trajectoires %j, comme les graphes de l’app',
+      async (isSnbc3Enabled, trajectoires) => {
+        const calls = await chartCalls(isSnbc3Enabled);
+        const trajectoiresParIndicateur = Object.fromEntries(
+          calls.map((c) => [
+            c.identifiantReferentiel,
+            c.sources
+              .map((s) => s.sourceId)
+              .filter((id) => id.startsWith(IndicateurSourceEnum.SNBC)),
+          ])
+        );
+
+        expect(trajectoiresParIndicateur).toEqual({
+          'cae_1.a': trajectoires,
+          'cae_2.a': trajectoires,
+          'cae_3.a': [],
+        });
+        // La lecture des valeurs n'a pas d'utilisateur : la décision du flag
+        // lui est transmise, sinon elle retirerait les valeurs snbc3.
+        for (const call of calls) {
+          expect(call.trajectoireSnbc3Enabled).toBe(isSnbc3Enabled);
+        }
+      }
+    );
   });
 });

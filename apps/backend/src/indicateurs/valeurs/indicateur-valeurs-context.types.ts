@@ -17,6 +17,12 @@ export type IndicateurValeursContext<User extends AuthUser = AuthUser> =
       isUserTrusted: true;
       user?: User;
       tx?: Transaction;
+      /**
+       * Décision du flag SNBC 3 déjà prise par l'appelant, pour un traitement
+       * en arrière-plan qui n'a pas d'utilisateur (rapport PPT). Sinon, le
+       * flag est évalué avec `user`.
+       */
+      trajectoireSnbc3Enabled?: boolean;
     }>;
 
 export type IndicateurValeursWriteContext = IndicateurValeursContext & {

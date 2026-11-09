@@ -6,6 +6,7 @@ import {
   IndicateurAvecValeursParSource,
   IndicateurPeriodicite,
   IndicateurPeriodes,
+  IndicateurSourceEnum,
   IndicateurValeurType,
   IndicateurValeurTypeEnum,
   IndicateurValeurWithoutReferenceType,
@@ -71,6 +72,7 @@ export class IndicateurChartBuilder {
   private readonly forcedSourceLabels: Record<string, string> = {
     collectivite: 'de la collectivité',
     snbc: 'SNBC territorialisée',
+    snbc3: 'SNBC 3 territorialisée',
   };
   private readonly bottomLegendLineHeight = 40;
   private readonly legendItemWidth = 300;
@@ -278,15 +280,32 @@ export class IndicateurChartBuilder {
     };
   }
 
+  /**
+   * Libellé forcé d'une source. Quand la SNBC 3 figure aussi sur le graphe
+   * (flag SNBC 3), la SNBC 2 est nommée comme telle pour les distinguer.
+   */
+  private getForcedSourceLabel(
+    sourceId: string,
+    indicateurAvecValeurs: IndicateurAvecValeursParSource
+  ): string | undefined {
+    if (
+      sourceId === IndicateurSourceEnum.SNBC &&
+      indicateurAvecValeurs.sources[IndicateurSourceEnum.SNBC3]?.valeurs.length
+    ) {
+      return 'SNBC 2 territorialisée';
+    }
+    return this.forcedSourceLabels[sourceId];
+  }
+
   private getDatasetLabel(
     type: IndicateurValeurType,
     sourceId: string,
     sourceLabel?: string,
-    segmentationLabel?: string
+    segmentationLabel?: string,
+    forcedSourceLabel = this.forcedSourceLabels[sourceId]
   ): string {
     const labelValeurType = INDICATEUR_VALEUR_TYPE_LABEL[type];
-    const resolvedSourceLabel =
-      this.forcedSourceLabels[sourceId] || sourceLabel || sourceId;
+    const resolvedSourceLabel = forcedSourceLabel || sourceLabel || sourceId;
     return `${labelValeurType}${
       segmentationLabel ? ` ${segmentationLabel}` : ''
     }${
@@ -365,6 +384,10 @@ export class IndicateurChartBuilder {
     const sourceLabel = source.metadonnees?.length
       ? source.metadonnees[0]?.producteur || source.libelle
       : source.libelle;
+    const forcedSourceLabel = this.getForcedSourceLabel(
+      sourceId,
+      indicateurAvecValeurs
+    );
     const valeurs = source.valeurs.toSorted((a, b) =>
       a.dateValeur.localeCompare(b.dateValeur)
     );
@@ -410,14 +433,15 @@ export class IndicateurChartBuilder {
         valeurType,
         sourceId,
         label,
-        showSourceCadence && this.forcedSourceLabels[sourceId]
+        showSourceCadence && forcedSourceLabel
           ? `${segmentationLabel ?? ''} (${group[0].periodicite}${
               metadonnee ? `, ${metadonnee.dateVersion}` : ''
             }${
               group[0].metadonneeId != null ? `, #${group[0].metadonneeId}` : ''
             })`.trim()
           : segmentationLabel,
-        groups.length > 1 ? identity : undefined
+        groups.length > 1 ? identity : undefined,
+        forcedSourceLabel
       );
       return datasetSeries
         ? [
@@ -439,7 +463,8 @@ export class IndicateurChartBuilder {
     sourceId: string,
     sourceLabel?: string,
     segmentationLabel?: string,
-    identitySuffix?: string
+    identitySuffix?: string,
+    forcedSourceLabel?: string
   ): LineDatasetSeries | null {
     const datasetId = `${indicateurId}-${valeurType}${
       sourceId ? `-${sourceId}` : ''
@@ -448,7 +473,8 @@ export class IndicateurChartBuilder {
       valeurType,
       sourceId,
       sourceLabel,
-      segmentationLabel
+      segmentationLabel,
+      forcedSourceLabel
     );
     const dataset: LineDatasetSeries['dataset'] = {
       id: datasetId,

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicateur-chart.service';
+import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
@@ -79,8 +80,25 @@ export class PptBuilderService {
     return Math.round(emu / this.EMU_PER_PX);
   }
 
-  private readonly DONNEES_TERRITORIALES_INDICATEURS: IndicateurTerritorialSlideConfiguration[] =
-    [
+  /**
+   * Graphes des données territoriales. Si le flag
+   * `is-trajectoire-snbc3-enabled` est actif pour l'auteur du rapport et la
+   * collectivité du plan, ils montrent la SNBC 2 et la SNBC 3, comme les
+   * graphes de l'app pendant la transition ; sinon, la SNBC 2 seule.
+   */
+  private getDonneesTerritorialesIndicateurs(
+    isSnbc3Enabled: boolean
+  ): IndicateurTerritorialSlideConfiguration[] {
+    const trajectoires = (
+      isSnbc3Enabled
+        ? [IndicateurSourceEnum.SNBC, IndicateurSourceEnum.SNBC3]
+        : [IndicateurSourceEnum.SNBC]
+    ).map((sourceId) => ({
+      sourceId,
+      valeurTypes: [IndicateurValeurTypeEnum.OBJECTIF],
+    }));
+
+    return [
       {
         imageId: ReportTemplateImagesEnum.IMG_EMISSION_GES_CHART,
         identifiantReferentiel: 'cae_1.a',
@@ -90,10 +108,7 @@ export class PptBuilderService {
             sourceId: IndicateurSourceEnum.RARE,
             valeurTypes: [IndicateurValeurTypeEnum.RESULTAT],
           },
-          {
-            sourceId: IndicateurSourceEnum.SNBC,
-            valeurTypes: [IndicateurValeurTypeEnum.OBJECTIF],
-          },
+          ...trajectoires,
           {
             sourceId: IndicateurSourceEnum.COLLECTIVITE,
             valeurTypes: [
@@ -116,10 +131,7 @@ export class PptBuilderService {
             sourceId: IndicateurSourceEnum.RARE,
             valeurTypes: [IndicateurValeurTypeEnum.RESULTAT],
           },
-          {
-            sourceId: IndicateurSourceEnum.SNBC,
-            valeurTypes: [IndicateurValeurTypeEnum.OBJECTIF],
-          },
+          ...trajectoires,
           {
             sourceId: IndicateurSourceEnum.COLLECTIVITE,
             valeurTypes: [
@@ -156,6 +168,7 @@ export class PptBuilderService {
         },
       },
     ];
+  }
 
   private readonly LOCALE = 'fr-FR';
   private readonly CHART_SCALE_FACTOR = 2;
@@ -199,7 +212,8 @@ export class PptBuilderService {
     private readonly planService: GetPlanService,
     private readonly collectiviteService: CollectivitesService,
     private readonly personnalisationsService: PersonnalisationsService,
-    private readonly fichesService: ListFichesService
+    private readonly fichesService: ListFichesService,
+    private readonly trajectoireSnbc3FeatureFlag: TrajectoireSnbc3FeatureFlagService
   ) {}
 
   async buildPresentation(args: {
@@ -208,6 +222,8 @@ export class PptBuilderService {
     reportName: string;
     templateConfig: ReportTemplateConfig;
     request: GenerateReportInput;
+    /** Auteur du rapport : le flag SNBC 3 est évalué pour lui. */
+    userId: string;
   }): Promise<
     Result<
       {
@@ -219,7 +235,8 @@ export class PptBuilderService {
       | typeof GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO
     >
   > {
-    const { mediaDir, outputDir, reportName, templateConfig, request } = args;
+    const { mediaDir, outputDir, reportName, templateConfig, request, userId } =
+      args;
     const planDataResult = await this.getPlanData(request.planId);
     if (!planDataResult.success) {
       return {
@@ -336,6 +353,7 @@ export class PptBuilderService {
           mediaDir,
           collectivite,
           personnalisationReponses,
+          userId,
         });
       }
 
@@ -1541,6 +1559,7 @@ export class PptBuilderService {
       mediaDir: string;
       collectivite: CollectiviteAvecType;
       personnalisationReponses: PersonnalisationReponsesPayload;
+      userId: string;
     }
   ) {
     this.addSlide({
@@ -1548,20 +1567,30 @@ export class PptBuilderService {
       slideType: 'donnees_territoriales_section_slide',
     });
 
+    const isSnbc3Enabled =
+      await this.trajectoireSnbc3FeatureFlag.isTrajectoireSnbc3EnabledForUserId(
+        args.userId,
+        args.collectivite.id
+      );
     const charts = await Promise.all(
-      this.DONNEES_TERRITORIALES_INDICATEURS.map(async (configuration) => {
-        const { chartData } =
-          await this.indicateurChartService.getIndicateurValeursAndChartData({
-            collectiviteId: args.collectivite.id,
-            identifiantReferentiel: configuration.identifiantReferentiel,
-            sources: configuration.sources,
-            includeSegmentation: configuration.segmentation,
-          });
-        return {
-          configuration,
-          chartData,
-        };
-      })
+      this.getDonneesTerritorialesIndicateurs(isSnbc3Enabled).map(
+        async (configuration) => {
+          const { chartData } =
+            await this.indicateurChartService.getIndicateurValeursAndChartData(
+              {
+                collectiviteId: args.collectivite.id,
+                identifiantReferentiel: configuration.identifiantReferentiel,
+                sources: configuration.sources,
+                includeSegmentation: configuration.segmentation,
+                trajectoireSnbc3Enabled: isSnbc3Enabled,
+              }
+            );
+          return {
+            configuration,
+            chartData,
+          };
+        }
+      )
     );
     this.logger.log(`Retrieved charts data for donnees territoriales`);
 

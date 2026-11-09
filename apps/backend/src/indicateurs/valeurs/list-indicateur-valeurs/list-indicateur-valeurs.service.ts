@@ -132,7 +132,8 @@ export class ListIndicateurValeursService {
         ),
         (v) => v.indicateurSourceMetadonnee?.sourceId,
         user,
-        collectiviteId
+        collectiviteId,
+        context.isUserTrusted ? context.trajectoireSnbc3Enabled : undefined
       );
 
     const indicateurValeursSeules = indicateurValeurs.map((v) => ({
