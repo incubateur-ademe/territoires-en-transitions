@@ -35,6 +35,13 @@ export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
   return httpErrorResponse;
 };
 
+/**
+ * Statuts imputables au client, comme `CLIENT_FAULT_ERROR_CODES` côté tRPC :
+ * la 404 couvre surtout les scanners de vulnérabilités (`/.env`,
+ * `/wp-login.php`…) qui sinon noient l'error tracking PostHog.
+ */
+const CLIENT_FAULT_STATUSES = new Set([401, 404, 429]);
+
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -53,16 +60,21 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 
     // Avant tout débouché : logs, PostHog et le message renvoyé au client.
     redactErrorChain(exception);
-    this.logger.error(getErrorMessage(exception));
-    this.logger.error(exception);
-
-    // remontée dans PostHog, avec le contexte de la requête
-    captureException(exception, this.contextStoreService.getContext());
 
     const httpErrorResponse = {
       ...getHttpErrorResponse(exception),
       path: request.url,
     };
+
+    if (CLIENT_FAULT_STATUSES.has(httpErrorResponse.status)) {
+      this.logger.warn(getErrorMessage(exception));
+    } else {
+      this.logger.error(getErrorMessage(exception));
+      this.logger.error(exception);
+
+      // remontée dans PostHog, avec le contexte de la requête
+      captureException(exception, this.contextStoreService.getContext());
+    }
 
     this.logger.log(`Response with status ${httpErrorResponse.status}`, {
       error_response: httpErrorResponse,
