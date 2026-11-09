@@ -8,7 +8,7 @@ import {
 import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
 import { verificationTrajectoireRequestSchema } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { ImportTrajectoireSnbc3Router } from './import-snbc3/import-trajectoire-snbc3.router';
+import { TrajectoireSnbc3Router } from './snbc3/trajectoire-snbc3.router';
 import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
 
 @Injectable()
@@ -18,13 +18,13 @@ export class TrajectoiresRouter {
     private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly trajectoireLeviersRouter: TrajectoireLeviersRouter,
-    private readonly importTrajectoireSnbc3Router: ImportTrajectoireSnbc3Router
+    private readonly trajectoireSnbc3Router: TrajectoireSnbc3Router
   ) {}
 
   router = this.trpc.router({
     leviers: this.trajectoireLeviersRouter.router,
 
-    snbc3: this.importTrajectoireSnbc3Router.router,
+    snbc3: this.trajectoireSnbc3Router.router,
 
     snbc: this.trpc.router({
       getOrCompute: this.trpc.authedOrServiceRoleProcedure

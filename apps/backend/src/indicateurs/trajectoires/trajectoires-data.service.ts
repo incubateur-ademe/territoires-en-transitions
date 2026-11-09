@@ -16,6 +16,7 @@ import {
   hasEnoughCarbonSequestrationDataFromSource,
   hasEnoughConsommationsFinalesDataFromSource,
   hasEnoughEmissionsGesDataFromSource,
+  IndicateurAvecValeurs,
   IndicateurSourceCreate,
   IndicateurSourceEnum,
   IndicateurSourceMetadonnee,
@@ -232,6 +233,29 @@ export default class TrajectoiresDataService {
       ) ||
       identifiantReferentiel ===
         this.CAPTURE_STOCKAGE_CARBONE_TECHNOLOGIQUE_IDENTIFIANT
+    );
+  }
+
+  /**
+   * Séquestration et captage sont stockés en positif : on les renvoie en
+   * négatif pour le bilan des émissions (SNBC 2 et SNBC 3).
+   */
+  inverseSigneSequestrations(
+    indicateurs: IndicateurAvecValeurs[]
+  ): IndicateurAvecValeurs[] {
+    return indicateurs.map((indicateur) =>
+      this.signeInversionSequestration(
+        indicateur.definition.identifiantReferentiel
+      )
+        ? {
+            ...indicateur,
+            valeurs: indicateur.valeurs.map((valeur) => ({
+              ...valeur,
+              objectif: valeur.objectif ? -valeur.objectif : valeur.objectif,
+              resultat: valeur.resultat ? -valeur.resultat : valeur.resultat,
+            })),
+          }
+        : indicateur
     );
   }
 
