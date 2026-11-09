@@ -49,6 +49,8 @@ type FicheCardBaseProps = {
   axeId?: number;
   /** Posé à cheval sur le bas de la carte, hors du lien qu'elle forme. */
   bottomBadge?: ReactNode;
+  /** Badges du pied de carte, sous les pilotes et avant la date de modification. */
+  footerBadges?: ReactNode;
 };
 
 type FicheCardSelectionProps =
@@ -84,6 +86,7 @@ export const FicheCard = ({
   planId,
   axeId,
   bottomBadge,
+  footerBadges,
 }: FicheCardProps): JSX.Element => {
   const carteId = `fiche-${ficheAction.id}`;
 
@@ -169,6 +172,8 @@ export const FicheCard = ({
               services={ficheAction.services}
               ameliorationContinue={ficheAction.ameliorationContinue}
             />
+
+            {footerBadges}
 
             {(ficheAction.modifiedAt || completion) && (
               <>

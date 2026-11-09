@@ -5,7 +5,10 @@ import {
   isFicheEditableByCollectiviteUser,
   isFicheSharedWithCollectivite,
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { FicheSecteursBadge } from '@/app/plans/plans/secteurs-counts/fiche-secteurs.badge';
+import {
+  FicheSecteurARenseignerBadge,
+  FicheSecteursBadges,
+} from '@/app/plans/plans/secteurs-counts/fiche-secteurs.badge';
 import { useListPlanFichesSecteursAVerifier } from '@/app/plans/plans/secteurs-counts/data/use-list-plan-fiches-secteurs-a-verifier';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -68,7 +71,12 @@ export const FichesList = ({
             planId={planId}
             axeId={axeId}
             bottomBadge={
-              ficheSecteurs && <FicheSecteursBadge fiche={ficheSecteurs} />
+              ficheSecteurs && (
+                <FicheSecteurARenseignerBadge fiche={ficheSecteurs} />
+              )
+            }
+            footerBadges={
+              ficheSecteurs && <FicheSecteursBadges fiche={ficheSecteurs} />
             }
             link={
               fiche.id
