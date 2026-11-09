@@ -59,6 +59,15 @@ id: 33333333-5a9a-4bfc-a000-000000000001
 droits: cf. 30-insert_fake_pcaet_supra.sql, qui détaille un cas par collectivité
 ```
 
+f. Utilisateur EPCI couvert par le dépôt d'un Supra
+
+```yaml
+email: epci@dodo.com
+password: yolododo
+id: 33333333-5a9a-4bfc-a000-000000000002
+droits: `edition` sur CC Val 81, couverte par le dépôt du SICTOM (lecture seule)
+```
+
 2. Statut action référentiel 
 ```yaml
 modified_by: Yolo Dodo (17440546-f389-4d4f-bfdb-b0c94a1bd0f9)
