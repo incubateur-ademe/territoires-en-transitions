@@ -6,7 +6,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
-import { Badge, EmptyCard, PageHeader, Pagination } from '@tet/ui';
+import { Badge, cn, EmptyCard, PageHeader, Pagination } from '@tet/ui';
 import { useListDossiersInstruction } from './data/use-list-dossiers-instruction';
 import { DossiersInstructionTable } from './dossiers-instruction.table';
 
@@ -49,6 +49,9 @@ export const DossiersInstructionPage = ({
     ? peutDeposerAvisInstructeur(typeDuService)
     : false;
 
+  const afficherRegion = (data?.perimetreRegions.length ?? 0) > 1;
+  const afficherDepartement = (data?.perimetreDepartements.length ?? 0) > 1;
+
   return (
     <div
       data-test="demarches.pcaet.instruction.demandes-avis"
@@ -76,7 +79,22 @@ export const DossiersInstructionPage = ({
         </PageHeader.Title>
       </PageHeader>
 
-      <section className="flex flex-col gap-4 rounded-xl border border-grey-3 bg-white p-6">
+      {/*
+        Avec la colonne Département, le tableau (87rem, 93rem avec la Région)
+        ne tient pas dans les 90rem de la page. Dès 1600px, le cadre en sort,
+        centré, à la largeur du tableau + `p-6` + bordure : le tableau ne
+        défile plus et son en-tête reste collant.
+      */}
+      <section
+        className={cn(
+          'flex flex-col gap-4 rounded-xl border border-grey-3 bg-white p-6',
+          afficherDepartement && 'min-[1600px]:self-center',
+          afficherDepartement &&
+            (afficherRegion
+              ? 'min-[1600px]:w-[calc(96rem+2px)]'
+              : 'min-[1600px]:w-[calc(90rem+2px)]')
+        )}
+      >
         {isLoading ? (
           <div className="flex py-12">
             <SpinnerLoader className="m-auto" />
@@ -101,9 +119,9 @@ export const DossiersInstructionPage = ({
             <DossiersInstructionTable
               dossiers={data.items}
               deposeAvis={deposeAvis}
-              afficherRegion={data.perimetreRegions.length > 1}
+              afficherRegion={afficherRegion}
               regionsOptions={data.perimetreRegions}
-              afficherDepartement={data.perimetreDepartements.length > 1}
+              afficherDepartement={afficherDepartement}
               departementsOptions={data.perimetreDepartements}
               filtres={filtres}
               nbFiltresActifs={nbFiltresActifs}
