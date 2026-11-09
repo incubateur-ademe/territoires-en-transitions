@@ -6,6 +6,7 @@ import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
+import { FICHE_TITRE_MAX_LENGTH } from '@tet/domain/plans';
 import {
   Checkbox,
   Event,
@@ -64,6 +65,7 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                 type="text"
                 value={fiche.titre ?? undefined}
                 onChange={(e) => setFiche({ ...fiche, titre: e.target.value })}
+                maxLength={FICHE_TITRE_MAX_LENGTH}
                 placeholder={appLabels.sansTitre}
                 autoFocus
               />
