@@ -1,0 +1,73 @@
+# Remove a branch's app previews when its PR closes, or on manual request.
+name: Suppression / app preview
+run-name: Suppression des previews de ${{ github.event.pull_request.head.ref || inputs.branch }}
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: string
+        description: Branche dont supprimer les previews staging et preprod
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-app-${{ github.event.pull_request.head.ref || inputs.branch }}
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  destroy:
+    # Forks cannot deploy previews and must not remove a same-named local branch's app.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [staging, preprod]
+    environment: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.repository.default_branch || github.sha }}
+          persist-credentials: false
+
+      - id: preview
+        uses: ./.github/actions/providers/koyeb/preview-app-name
+        with:
+          branch: ${{ github.event.pull_request.head.ref || inputs.branch }}
+          target: ${{ matrix.target }}
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Delete the preview app if present
+        env:
+          NAME: ${{ steps.preview.outputs.name }}
+        run: |
+          set -euo pipefail
+          apps=$(timeout --kill-after=5s 30s koyeb apps list --output json)
+          count=$(jq -er --arg name "$NAME" '.apps | map(select(.name == $name)) | length' <<< "$apps")
+          case "$count" in
+            0) echo 'No preview app to remove.'; exit 0 ;;
+            1) timeout --kill-after=5s 30s koyeb apps delete "$NAME" ;;
+            *) echo '::error::Ambiguous preview app name.'; exit 1 ;;
+          esac
+          # Hold the branch lock until deletion finishes, before another deployment can start.
+          deadline=$(($(date +%s) + 120))
+          while (( $(date +%s) < deadline )); do
+            apps=$(timeout --kill-after=5s 20s koyeb apps list --output json)
+            if jq -e --arg name "$NAME" '.apps | all(.name != $name)' <<< "$apps" >/dev/null; then
+              echo 'Preview app removed.'
+              exit 0
+            fi
+            sleep 2
+          done
+          echo '::error::Preview deletion still pending. Inspect Koyeb before retrying.'
+          exit 1

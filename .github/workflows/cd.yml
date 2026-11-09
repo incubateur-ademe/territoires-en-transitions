@@ -1,15 +1,20 @@
-# Dispatch a stack deployment; validate the target and require CI only for production.
-name: Déploiement groupé
-run-name: Déploiement de ${{ github.ref_name }} sur ${{ inputs.target }}
+# Dispatch a bundled stack deployment or an app preview; require CI only for production.
+name: Déploiement
+run-name: Déploiement de ${{ github.ref_name }} sur ${{ inputs.target == 'preview-app' && format('preview-app ({0})', inputs.preview-parent) || inputs.target }}
 
 on:
   workflow_dispatch:
     inputs:
       target:
         type: choice
-        description: Environnement de la stack complète
+        description: Cible de déploiement
         default: staging
-        options: [staging, preprod, prod]
+        options: [staging, preprod, prod, preview-app]
+      preview-parent:
+        type: choice
+        description: Backend et données pour preview-app uniquement
+        default: preprod
+        options: [staging, preprod]
       force-rebuild:
         type: boolean
         description: Reconstruire les images même si ce commit est déjà publié
@@ -17,6 +22,12 @@ on:
 
 permissions:
   contents: read
+
+# Preview builds and deployments share the cleanup lock; stack maintenance has its own lock.
+concurrency:
+  group: ${{ inputs.target == 'preview-app' && format('preview-app-{0}', github.ref_name) || format('cd-run-{0}', github.run_id) }}
+  cancel-in-progress: false
+  queue: max
 
 jobs:
   validate-request:
@@ -26,10 +37,12 @@ jobs:
       - name: Validate the source and target
         env:
           TARGET: ${{ inputs.target }}
+          PREVIEW_PARENT: ${{ inputs.preview-parent }}
         run: |
           set -euo pipefail
           case "$TARGET" in
             staging|preprod|prod) ;;
+            preview-app) [[ "$PREVIEW_PARENT" == staging || "$PREVIEW_PARENT" == preprod ]] ;;
             *) echo '::error::Unknown deployment target.'; exit 1 ;;
           esac
           [[ "$GITHUB_REF" == refs/heads/* ]]
@@ -52,7 +65,7 @@ jobs:
     needs: [validate-request, ci]
     # Non-production deliberately skips CI; failed or cancelled production CI still blocks builds.
     if: >-
-      ${{ !cancelled() && needs.validate-request.result == 'success' &&
+      ${{ !cancelled() && needs.validate-request.result == 'success' && inputs.target != 'preview-app' &&
           (needs.ci.result == 'success' ||
             (inputs.target != 'prod' && needs.ci.result == 'skipped')) }}
     uses: ./.github/workflows/_cd-build.yml
@@ -77,3 +90,112 @@ jobs:
       site-image: ${{ needs.build.outputs.site-image }}
       tools-image: ${{ needs.build.outputs.tools-image }}
     secrets: inherit
+
+  build-preview-app:
+    needs: validate-request
+    if: ${{ inputs.target == 'preview-app' }}
+    uses: ./.github/workflows/_cd-build-app.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    with:
+      target: ${{ inputs.preview-parent }}
+      force-rebuild: ${{ inputs.force-rebuild }}
+    secrets: inherit
+
+  deploy-preview-app:
+    needs: build-preview-app
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ inputs.preview-parent }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: preview
+        uses: ./.github/actions/providers/koyeb/preview-app-name
+        with:
+          branch: ${{ github.ref_name }}
+          target: ${{ inputs.preview-parent }}
+
+      - uses: ./.github/actions/providers/koyeb/cli
+        with:
+          api-key: ${{ secrets.KOYEB_API_KEY }}
+
+      - name: Create or update the preview app
+        id: deploy
+        env:
+          NAME: ${{ steps.preview.outputs.name }}
+          IMAGE: ${{ needs.build-preview-app.outputs.image }}
+          TARGET: ${{ inputs.preview-parent }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.ANON_KEY }}
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
+          CRISP_WEBSITE_ID: ${{ vars.CRISP_WEBSITE_ID }}
+        run: |
+          set -euo pipefail
+          [[ "$IMAGE" =~ ^ghcr\.io/incubateur-ademe/tet-app@sha256:[a-f0-9]{64}$ ]]
+          [[ "$BACKEND_URL" == https://* && "$SUPABASE_URL" == https://* ]]
+          : "${SUPABASE_ANON_KEY:?}"
+
+          # A failed API read must never be interpreted as an absent resource.
+          apps=$(timeout --kill-after=5s 30s koyeb apps list --output json)
+          count=$(jq -er --arg name "$NAME" '.apps | map(select(.name == $name)) | length' <<< "$apps")
+          case "$count" in
+            0) app=$(timeout --kill-after=5s 30s koyeb apps create "$NAME" --output json) ;;
+            1) app=$(timeout --kill-after=5s 30s koyeb apps get "$NAME" --output json) ;;
+            *) echo '::error::Ambiguous preview app name.'; exit 1 ;;
+          esac
+          domain=$(jq -er '.domains[].name | select(endswith(".koyeb.app"))' <<< "$app")
+          [[ "$domain" =~ ^[a-z0-9][a-z0-9.-]*\.koyeb\.app$ ]]
+          url="https://$domain"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          printf 'Preview: %s\nImage: `%s`\n' "$url" "$IMAGE" >> "$GITHUB_STEP_SUMMARY"
+
+          # An app left empty by a failed first deployment can be reused on retry.
+          services=$(timeout --kill-after=5s 30s koyeb services list --app "$NAME" --output json)
+          count=$(jq -er '.services | map(select(.name == "front")) | length' <<< "$services")
+          case "$count" in
+            0) command=(services create "$NAME/front" --type web --port 3000:http --route /:3000
+                 --regions par --instance-type nano --min-scale 1 --max-scale 1 --checks 3000:http:/version) ;;
+            1) command=(services update "$NAME/front") ;;
+            *) echo '::error::Ambiguous preview service.'; exit 1 ;;
+          esac
+          # APP_URL is the preview origin; API calls still reach the parent backend.
+          env_flags=(
+            --env PORT=3000
+            --env "ENV_NAME=$TARGET"
+            --env "DEPLOYMENT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            --env "SUPABASE_URL=$SUPABASE_URL"
+            --env "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY"
+            --env "BACKEND_URL=$BACKEND_URL"
+            --env "APP_URL=$url"
+            --env "CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID"
+            --env POSTHOG_HOST=@POSTHOG_HOST
+            --env POSTHOG_KEY=@POSTHOG_KEY
+          )
+          # No mutation retry: a lost response can still mean an accepted deployment.
+          service=$(timeout --kill-after=5s 30s koyeb "${command[@]}" \
+            --docker "$IMAGE" --docker-private-registry-secret ghcr --docker-skip-verify \
+            "${env_flags[@]}" --output json)
+          deployment=$(jq -er '.latest_deployment_id | select(test("^[a-zA-Z0-9-]+$"))' <<< "$service")
+          echo "deployment=$deployment" >> "$GITHUB_OUTPUT"
+          printf 'Deployment: `%s`\n' "$deployment" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check the preview deployment and commit
+        uses: ./.github/actions/providers/koyeb/wait-for-service
+        with:
+          service: ${{ steps.preview.outputs.name }}/front
+          deployment: ${{ steps.deploy.outputs.deployment }}
+          image: ${{ needs.build-preview-app.outputs.image }}
+          url: ${{ steps.deploy.outputs.url }}/version
+          commit: ${{ needs.build-preview-app.outputs.commit }}
+
+      - name: Report incomplete preview deployment
+        if: ${{ failure() || cancelled() }}
+        run: echo '::error::Preview incomplete. Inspect the Koyeb app and deployment before retrying; remote operations may still be running.'
