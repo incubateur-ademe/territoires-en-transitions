@@ -11,6 +11,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { GetAvailableSourcesRequestSchemaRequestType } from './get-available-sources.request';
+import { TrajectoireSnbc3FeatureFlagService } from '../trajectoires/trajectoire-snbc3-feature-flag.service';
 import { IndicateurSourcesRepository } from './indicateur-sources.repository';
 
 @Injectable()
@@ -19,7 +20,8 @@ export default class IndicateurSourcesService {
 
   constructor(
     private readonly repository: IndicateurSourcesRepository,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly trajectoireSnbc3FeatureFlag: TrajectoireSnbc3FeatureFlagService
   ) {}
 
   async createIndicateurSourceMetadonnee(
@@ -83,6 +85,13 @@ export default class IndicateurSourcesService {
     this.logger.log(
       `Liste les sources de données disponibles pour l'indicateur ${indicateurId} et la collectivité ${collectiviteId}`
     );
-    return success(await this.repository.listAvailableSources(input));
+    return success(
+      await this.trajectoireSnbc3FeatureFlag.filterSourcesSnbc3(
+        await this.repository.listAvailableSources(input),
+        (source) => source.id,
+        user,
+        collectiviteId
+      )
+    );
   }
 }

@@ -1,3 +1,5 @@
+import { TrajectoireSnbc3FeatureFlagService } from '@tet/backend/indicateurs/trajectoires/trajectoire-snbc3-feature-flag.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-indicateur-valeurs/compute-valeurs.service';
@@ -71,7 +73,11 @@ const createManageIndicateurValeursService = (
     repository,
     permissions,
     collectivites,
-    collectiviteIndicateurs
+    collectiviteIndicateurs,
+    // Flag actif : ces tests ne portent pas sur le masquage de la SNBC 3.
+    new TrajectoireSnbc3FeatureFlagService({
+      isFeatureEnabled: vi.fn().mockResolvedValue(true),
+    } as unknown as TrackingService)
   );
   const reconciliation = new ReconcileIndicateurValeursService(
     repository,

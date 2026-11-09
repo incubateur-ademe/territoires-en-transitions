@@ -7,6 +7,7 @@ import { Workbook } from 'exceljs';
 import CollectivitesService from '../../../collectivites/services/collectivites.service';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import IndicateurSourcesService from '../../sources/indicateur-sources.service';
+import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import ManageIndicateurValeursService from '../../valeurs/manage-indicateur-valeurs/manage-indicateur-valeurs.service';
 import { ListIndicateursService } from '../list-indicateurs/list-indicateurs.service';
 import { buildConsolidatedSheet } from './export-indicateurs.builder';
@@ -28,7 +29,8 @@ export default class ExportIndicateursService {
     private readonly valeursService: ManageIndicateurValeursService,
     private readonly collectiviteService: CollectivitesService,
     private readonly listIndicateursService: ListIndicateursService,
-    private readonly sourcesService: IndicateurSourcesService
+    private readonly sourcesService: IndicateurSourcesService,
+    private readonly trajectoireSnbc3FeatureFlag: TrajectoireSnbc3FeatureFlagService
   ) {}
 
   async exportXLSX(
@@ -158,10 +160,18 @@ export default class ExportIndicateursService {
       ...(p.enfants?.map((e) => e.id) ?? []),
     ]);
 
-    const indicateursValeurs = await this.valeursService.getIndicateursValeurs({
-      collectiviteId: options.collectiviteId,
-      indicateurIds: allIndicateurIds,
-    });
+    // Lecture interne non filtrée : la SNBC 3 en est retirée sans le flag,
+    // comme sur les fiches indicateurs.
+    const indicateursValeurs =
+      await this.trajectoireSnbc3FeatureFlag.filterSourcesSnbc3(
+        await this.valeursService.getIndicateursValeurs({
+          collectiviteId: options.collectiviteId,
+          indicateurIds: allIndicateurIds,
+        }),
+        (v) => v.indicateurSourceMetadonnee?.sourceId,
+        tokenInfo,
+        options.collectiviteId
+      );
 
     // Libellés des sources open-data (identifiant technique → libellé lisible)
     // pour nommer les lignes open-data dans l'export.

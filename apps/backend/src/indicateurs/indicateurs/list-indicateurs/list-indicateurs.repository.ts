@@ -13,6 +13,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { escapeLikePattern } from '@tet/backend/utils/database/like-pattern.utils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { SOURCES_TRAJECTOIRE } from '@tet/domain/indicateurs';
 import { normalizeIdentifiantReferentiel } from '@tet/domain/referentiels';
 import {
   aliasedTable,
@@ -25,6 +26,7 @@ import {
   inArray,
   isNotNull,
   isNull,
+  notInArray,
   or,
   SQL,
   sql,
@@ -208,10 +210,12 @@ export class ListIndicateursRepository {
     return this.databaseService.db
       .select({
         indicateurId: indicateurValeurTable.indicateurId,
-        hasOpenData:
-          sql<boolean>`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`.as(
-            'open_data'
-          ),
+        hasOpenData: sql<boolean>`bool_or(${
+          indicateurValeurTable.metadonneeId
+        } is not null and ${notInArray(
+          indicateurSourceMetadonneeTable.sourceId,
+          [...SOURCES_TRAJECTOIRE]
+        )})`.as('open_data'),
       })
       .from(indicateurValeurTable)
       .leftJoin(
