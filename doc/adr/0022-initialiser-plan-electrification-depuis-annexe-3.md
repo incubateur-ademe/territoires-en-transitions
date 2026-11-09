@@ -187,6 +187,15 @@ modèle et la fiche fictive de la section C. Elle préserve les destinations des
 hyperliens avant l'aplatissement du document. Une URL n'est jamais récupérée
 par une requête réseau : elle est analysée puis résolue par les services TeT.
 
+La lecture conserve le libellé, la destination et les coordonnées d'origine
+des liens séparément du texte générique. Les liens rattachables à une ligne
+la suivent pendant la normalisation et le découpage ; ceux sans contexte
+textuel restent dans le registre de leur page, sans attribution à une fiche
+voisine. L'extraction consulte les deux. Une destination illisible reste
+signalée comme telle ; elle n'est pas déduite du libellé et les formules du
+tableur ne sont pas exécutées. Le [lot 3A du plan](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md#pr-3a--préserver-les-liens-et-les-localisations)
+précise ce contrat documentaire.
+
 Le LLM peut extraire les champs, mais ne choisit pas les identifiants TeT et
 ne rapproche pas les éléments par ressemblance. Une étape déterministe :
 

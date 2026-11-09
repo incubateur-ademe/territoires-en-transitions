@@ -1,7 +1,13 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
 import mammoth from 'mammoth';
-import { buildPage, DocumentPage, PageLine } from '../document/document-page';
+import { DocumentLinksRules } from '../document/document-links.rules';
+import {
+  buildPage,
+  DocumentLink,
+  DocumentPage,
+  PageLine,
+} from '../document/document-page';
 
 const DOCX_TIMEOUT_MS = 30_000;
 
@@ -61,8 +67,23 @@ const stripTags = (html: string): string => {
   return text;
 };
 
-const htmlToLines = (html: string): PageLine[] => {
-  const lines: string[] = [];
+type DocxLink = Pick<DocumentLink, 'text' | 'target'>;
+type DocxLine = { text: string; hyperlinks: DocxLink[] };
+
+const htmlToLines = (html: string): DocxLine[] => {
+  // Le texte suit exactement le rendu existant. Une seconde passe repère
+  // les ancres : ses marqueurs ne doivent pas changer les espaces des cellules.
+  const textLines = renderBlocks(html)
+    .map(lineText)
+    .filter((text) => text.length > 0);
+  let textIndex = 0;
+  return readHyperlinks(html).map(({ text, hyperlinks }) => ({
+    text: text.length > 0 ? textLines[textIndex++] : '',
+    hyperlinks,
+  }));
+};
+
+const renderBlocks = (html: string): string[] => {
   const blocks = html
     .replace(/<tr[^>]*>/g, '\n<tr>')
     // Une cellule tient sur sa ligne, même si Word y met des paragraphes.
@@ -80,15 +101,58 @@ const htmlToLines = (html: string): PageLine[] => {
       (_, tag: string) => `\n${'#'.repeat(Number(tag[1]))} `
     )
     .replace(/<\/(p|h[1-4]|li|tr|table|ul|ol|div)>/g, '\n');
-  for (const block of stripTags(blocks).split('\n')) {
-    const text = decodeEntities(block)
-      .replace(/[ \t]+$/g, '')
-      .trim();
-    if (text.length > 0) {
-      lines.push(text);
+  return stripTags(blocks).split('\n');
+};
+
+const lineText = (block: string): string =>
+  decodeEntities(block)
+    .replace(/[ \t]+$/g, '')
+    .trim();
+
+const readHyperlinks = (html: string): DocxLine[] => {
+  const links: DocxLink[] = [];
+  // Ne peut pas entrer en collision avec un caractère déjà dans le document.
+  let prefix = '\uE000tet-link-';
+  while (html.includes(prefix)) prefix += '_';
+  const marked = html.replace(
+    /<a\b([^>]*)>([\s\S]*?)<\/a>/g,
+    (_, attributes: string, content: string) => {
+      // mammoth produit ses attributs entre guillemets doubles.
+      const href = /\bhref="([^"]*)"/.exec(attributes)?.[1];
+      // Les signets Word deviennent <a id="…"></a>, sans destination à lire.
+      if (href === undefined) return content;
+      const index = links.length;
+      links.push({
+        text: decodeEntities(stripTags(content.replace(/<br\s*\/?>/g, ' ')))
+          .replace(/\s+/g, ' ')
+          .trim(),
+        target: decodeEntities(href) || null,
+      });
+      return `${prefix}${index}:start\uE001${content}${prefix}${index}:end\uE001`;
+    }
+  );
+  const marker = new RegExp(`${prefix}(\\d+):(start|end)\uE001`, 'g');
+  const active = new Set<number>();
+  const lines: DocxLine[] = [];
+  for (const block of renderBlocks(marked)) {
+    const inLine = new Set(active);
+    const text = block.replace(marker, (_, id: string, boundary: string) => {
+      const index = Number(id);
+      inLine.add(index);
+      if (boundary === 'start') active.add(index);
+      else active.delete(index);
+      return '';
+    });
+    const value = lineText(text);
+    const hyperlinks = [...inLine]
+      .map((index) => links[index])
+      // Une image cliquable n'a pas de ligne de texte à laquelle se rattacher.
+      .filter((link) => value.length > 0 || link.text === '');
+    if (value.length > 0 || hyperlinks.length > 0) {
+      lines.push({ text: value, hyperlinks });
     }
   }
-  return lines.map((text) => ({ text }));
+  return lines;
 };
 
 const decodeEntities = (text: string): string =>
@@ -100,24 +164,59 @@ const decodeEntities = (text: string): string =>
       : entity
   );
 
-const toPages = (lines: PageLine[]): DocumentPage[] => {
-  const sections: { label?: string; lines: PageLine[] }[] = [];
+const toPages = (lines: DocxLine[]): DocumentPage[] => {
+  const sections: {
+    label?: string;
+    lines: DocxLine[];
+    unattachedLinks: DocxLink[];
+  }[] = [];
   for (const line of lines) {
     const isTopHeading = /^# /.test(line.text);
     if (isTopHeading || sections.length === 0) {
       sections.push({
         label: isTopHeading ? line.text.slice(2) : undefined,
-        lines: [line],
+        lines: [],
+        unattachedLinks: [],
       });
+    }
+    if (line.text === '') {
+      sections[sections.length - 1].unattachedLinks.push(...line.hyperlinks);
     } else {
       sections[sections.length - 1].lines.push(line);
     }
   }
-  return sections.map((section, index) =>
-    buildPage(
-      index,
-      section.lines,
-      section.label !== undefined ? { label: section.label } : {}
-    )
-  );
+  return sections.map((section, index) => {
+    const pageLines = section.lines.map((line, lineIndex): PageLine => {
+      const location = { pageIndex: index, lineIndex };
+      const hyperlinks: DocumentLink[] = line.hyperlinks.map((link) => ({
+        ...link,
+        kind: 'hyperlink',
+        location,
+      }));
+      const links = DocumentLinksRules.withTextLinks(
+        line.text,
+        location,
+        hyperlinks
+      );
+      return {
+        text: line.text,
+        locations: [location],
+        ...(links.length > 0 ? { links } : {}),
+      };
+    });
+    const unattachedLinks: DocumentLink[] = section.unattachedLinks.map(
+      (link) => ({ ...link, kind: 'hyperlink', location: { pageIndex: index } })
+    );
+    return buildPage(index, pageLines, {
+      ...(section.label !== undefined ? { label: section.label } : {}),
+      ...(unattachedLinks.length > 0
+        ? {
+            links: [
+              ...pageLines.flatMap((line) => line.links ?? []),
+              ...unattachedLinks,
+            ],
+          }
+        : {}),
+    });
+  });
 };

@@ -1,3 +1,5 @@
+import type { DocumentLink } from '../document/document-page';
+
 /** Rectangle de cellules, bornes comprises, en numéros d'origine (à partir de 1). */
 export type GridRange = {
   top: number;
@@ -34,6 +36,8 @@ export type GridCell = {
   formula?: string;
   /** Les autres onglets cités par la formule. */
   refsSheets?: string[];
+  /** Destinations lues, sur la cellule maître seulement en cas de fusion. */
+  links?: DocumentLink[];
 };
 
 export type SheetState = 'visible' | 'hidden' | 'veryHidden';

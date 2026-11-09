@@ -24,7 +24,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 2B1 — Catalogue des engagements, axes et cibles : [#5730](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5730), implémentée et vérifiée, en revue.
 - [x] PR 2B2a — URL TeT existantes et éligibilité : [#5736](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5736), implémentée et vérifiée, en revue.
 - [x] PR 2B2b — Codes et compléments des fiches actions : [#5756](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5756), implémentée et vérifiée, en revue ; correspondances métier réelles encore à livrer avant ouverture.
-- [ ] PR 3A — Lecture documentaire.
+- [x] PR 3A — Lecture documentaire : [#5757](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5757), implémentée et vérifiée, en revue.
 - [ ] PR 3B — Extraction typée de l'annexe.
 - [ ] PR 4A — Axes et liens de fiches.
 - [ ] PR 4B — Indicateurs et liens.
@@ -512,11 +512,44 @@ contrat documentaire, normalisation et découpage.
 - Préserver le texte consommé par l'import générique ; le nouveau profil
   utilisera ces métadonnées explicitement. Préparer les fixtures de convention
   avec le tableau A, la section B renseignée, le modèle vide et l'exemple fictif C.
-- Couvrir les formats déjà acceptés avec un diagnostic explicite lorsque
-  l'annexe ou une référence n'est pas exploitable ; aucun fetch des URL.
+- Couvrir les formats déjà acceptés avec un diagnostic technique lorsque
+  la destination d'un lien est illisible ; aucun fetch des URL. La validation
+  métier du contenu A/B et de ses références appartient au lot 3B.
+
+**Contrat de lecture :** les [liens et localisations](../../apps/backend/src/plans/ai-plan-import/pipeline/document/document-page.ts)
+complètent les pages, lignes et unités existantes. Les coordonnées désignent
+la source avant nettoyage : section logique/ligne pour Word, page/ligne et
+rectangle natif pour PDF, feuille/rangée/colonne pour les tableurs. Les
+cellules fusionnées citent leur cellule maître. Aucun offset dans le texte
+normalisé ne sert de localisation.
+
+Le texte générique reste inchangé. Les lignes fusionnées, les en-têtes
+tableur composés et les rappels de fusion conservent leurs sources lors du
+découpage. `page.links` garde aussi les liens sans libellé, les annotations
+PDF sans texte associé et les liens de marges retirées. Ils ne sont pas
+attribués à une unité voisine : le lot 3B doit consulter ce registre en plus
+des liens des unités. Une destination inaccessible à la lecture est `null`,
+notamment pour une formule `HYPERLINK` dynamique ; aucune formule n'est
+évaluée, aucune cible n'est déduite d'un libellé OCR. Les signets Word sans
+hyperlien ne sont pas des références.
+
+Les lecteurs utilisent mammoth, ExcelJS et le proxy PDF déjà présents. Le
+[contrat et les règles documentaires](../../apps/backend/src/plans/ai-plan-import/pipeline/document/document-links.rules.ts)
+sont communs aux profils ; le checkpoint générique et `SourceChunks` restent
+textuels. La fixture synthétique A/B/C prépare l'extraction du lot 3B ; elle
+ne valide pas encore la sélection des sections métier.
 
 **Validation :** liens masqués ou affichés, cellules fusionnées, plusieurs liens
 dans un champ, coordonnées après normalisation, régression des lecteurs génériques.
+
+**Vérification du lot 3A, 9 novembre 2026 :** 204 tests passent, dont les
+21 scénarios de l'e2e existant (7 nouveaux parcours documentaires) et
+183 tests existants des lecteurs, de la normalisation, des grilles et du
+découpage. Les fixtures couvrent les quatre formats, les liens sans libellé,
+les signets Word, les formules sans cache ou dynamiques, les césures, les
+marges et l'OCR factice. TypeScript backend/tests, ESLint et formatage ciblés,
+ainsi que 44 liens locaux et ancres vérifiés. Aucun appel réel au modèle ni
+nouveau fichier de tests unitaires.
 
 **Déploiement et arrêt possible :** enrichissement du contrat documentaire ;
 aucun nouveau profil exécuté, aucun changement de persistance.

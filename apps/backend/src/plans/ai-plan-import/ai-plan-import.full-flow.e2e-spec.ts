@@ -37,6 +37,7 @@ import { DocumentStorageService } from '@tet/backend/utils/supabase/document-sto
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, asc, count, eq, inArray } from 'drizzle-orm';
+import ExcelJS from 'exceljs';
 import request from 'supertest';
 import {
   afterAll,
@@ -73,6 +74,22 @@ import {
   effetsAttendusResponseSchema,
   secteursResponseSchema,
 } from './pipeline/classify-secteurs/classify-secteurs.schema';
+import {
+  buildTestConvention,
+  CONVENTION_FICHE_URL,
+  CONVENTION_INDICATEUR_URL,
+  CONVENTION_SOURCE_URL,
+} from './pipeline/__fixtures__/build-test-convention';
+import { buildTestPdf } from './pipeline/__fixtures__/build-test-pdf';
+import { buildHorizontalHierarchyWorkbook } from './pipeline/__fixtures__/build-test-workbook';
+import {
+  buildPage,
+  DocumentLink,
+  joinPages,
+} from './pipeline/document/document-page';
+import { readDocument } from './pipeline/read-document/read-document';
+import { segmentDocument } from './pipeline/segment-document/segment-document';
+import { renderUnit } from './pipeline/segment-document/render-unit';
 
 const QUALITATIVE_REVIEW_TEXT = 'Plan cohérent et bien structuré.';
 
@@ -1248,5 +1265,462 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       });
       await generate(next.jobId);
     });
+  });
+});
+
+// Lecture réelle des fichiers et découpage, sans application Nest ni fournisseur IA.
+describe('Lecture documentaire et découpage', () => {
+  const docxMime =
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const xlsxMime =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  const read = async (...args: Parameters<typeof readDocument>) => {
+    const result = await readDocument(...args);
+    if (!result.success) {
+      throw new Error(`Lecture impossible : ${result.error.kind}`);
+    }
+    return result.data;
+  };
+
+  test('conserve les sections de la convention et les destinations masquées de plusieurs liens Word', async () => {
+    const document = await read({
+      buffer: await buildTestConvention(),
+      mimeType: docxMime,
+    });
+
+    expect(document.pages.map(({ text }) => text)).toEqual([
+      '',
+      '# A. Engagements\nCode\tCible\nE01\t100',
+      [
+        '# B. Fiches action',
+        '## Fiche action renseignée',
+        'Intitulé\tÉlectrifier les bâtiments',
+        `Liens\tFiche existante ; Indicateur associé ; ${CONVENTION_SOURCE_URL}`,
+        '## Modèle de fiche à compléter',
+        'Intitulé\tÀ compléter',
+      ].join('\n'),
+      '# C. Financement\nExemple fictif : montant 5000 euros.',
+    ]);
+    const linkedLine = document.pages[2].lines[3];
+    expect(linkedLine.links).toEqual([
+      expect.objectContaining({
+        text: 'Fiche existante',
+        target: CONVENTION_FICHE_URL,
+        kind: 'hyperlink',
+        location: expect.objectContaining({ pageIndex: 2, lineIndex: 3 }),
+      }),
+      expect.objectContaining({
+        text: 'Indicateur associé',
+        target: CONVENTION_INDICATEUR_URL,
+        kind: 'hyperlink',
+        location: expect.objectContaining({ pageIndex: 2, lineIndex: 3 }),
+      }),
+      expect.objectContaining({
+        text: CONVENTION_SOURCE_URL,
+        target: CONVENTION_SOURCE_URL,
+        kind: 'text',
+        location: expect.objectContaining({ pageIndex: 2, lineIndex: 3 }),
+      }),
+    ]);
+    expect(document.pages[0]).toMatchObject({
+      source: 'empty',
+      lines: [],
+    });
+    expect(document.pages[0].links).toEqual([
+      {
+        text: '',
+        target: `${CONVENTION_SOURCE_URL}#preambule`,
+        kind: 'hyperlink',
+        location: { pageIndex: 0 },
+      },
+    ]);
+    expect(document.pages[2].links).toEqual([
+      ...(linkedLine.links ?? []),
+      {
+        text: '',
+        target: `${CONVENTION_SOURCE_URL}#section`,
+        kind: 'hyperlink',
+        location: { pageIndex: 2 },
+      },
+    ]);
+    expect(joinPages(document)).toBe(
+      document.pages
+        .slice(1)
+        .map(({ text }) => text)
+        .join('\n')
+    );
+    expect(joinPages(document)).not.toContain(CONVENTION_FICHE_URL);
+    expect(joinPages(document)).not.toContain(CONVENTION_INDICATEUR_URL);
+
+    const units = segmentDocument(document, {
+      minTokens: 0,
+      maxTokens: 40,
+      overlapTokens: 0,
+    });
+    const lineAfterChunking = units
+      .flatMap(({ lines }) => lines)
+      .find(({ text }) => text === linkedLine.text);
+    expect(lineAfterChunking).toMatchObject({
+      links: linkedLine.links,
+      locations: linkedLine.locations,
+    });
+    const rendered = units
+      .map((unit, index) => renderUnit(unit, { index, count: units.length }))
+      .join('\n');
+    expect(rendered).toContain('Modèle de fiche à compléter');
+    expect(rendered).toContain('Exemple fictif : montant 5000 euros.');
+    expect(rendered).not.toContain(CONVENTION_FICHE_URL);
+  });
+
+  test('lit les liens Excel natifs et les formules sans perdre les coordonnées des cellules fusionnées', async () => {
+    const workbook = new ExcelJS.Workbook();
+    workbook.addWorksheet('Notice').getCell('A1').value = 'Notice';
+    const sheet = workbook.addWorksheet('Actions');
+    sheet.addRow(['Code', 'Action', null, 'Sources']);
+    sheet.getCell('A3').value = '1';
+    sheet.getCell('B3').value = {
+      text: 'Ouvrir la fiche',
+      hyperlink: CONVENTION_FICHE_URL,
+    };
+    sheet.mergeCells('B3:C4');
+    sheet.getCell(
+      'D3'
+    ).value = `${CONVENTION_SOURCE_URL} ${CONVENTION_INDICATEUR_URL}`;
+    sheet.getCell('B6').value = {
+      formula: `HYPERLINK("${CONVENTION_INDICATEUR_URL}","Formule littérale")`,
+      result: 'Formule littérale',
+    };
+    sheet.getCell('B7').value = {
+      formula: 'HYPERLINK(D3,"Formule dynamique")',
+      result: 'Formule dynamique',
+    };
+    sheet.getCell('B9').value = { text: ' ', hyperlink: CONVENTION_SOURCE_URL };
+    const uncachedTarget = 'https://document.example.test/uncached';
+    sheet.getCell('E11').value = {
+      formula: `HYPERLINK("${uncachedTarget}","Sans résultat en cache")`,
+    };
+    const document = await read({
+      buffer: Buffer.from(await workbook.xlsx.writeBuffer()),
+      mimeType: xlsxMime,
+    });
+
+    expect(document.pages[1].text).toBe(
+      [
+        'Code\tAction\t\tSources',
+        `1\tOuvrir la fiche\t\t${CONVENTION_SOURCE_URL} ${CONVENTION_INDICATEUR_URL}`,
+        '\tFormule littérale',
+        '\tFormule dynamique',
+      ].join('\n')
+    );
+    const links = document.pages[1].links ?? [];
+    expect(links).toHaveLength(7);
+    expect(links).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          text: 'Ouvrir la fiche',
+          target: CONVENTION_FICHE_URL,
+          kind: 'hyperlink',
+          location: expect.objectContaining({
+            pageIndex: 1,
+            sheetName: 'Actions',
+            row: 3,
+            col: 2,
+          }),
+        }),
+        ...[CONVENTION_SOURCE_URL, CONVENTION_INDICATEUR_URL].map((target) =>
+          expect.objectContaining({
+            target,
+            kind: 'text',
+            location: expect.objectContaining({
+              pageIndex: 1,
+              sheetName: 'Actions',
+              row: 3,
+              col: 4,
+            }),
+          })
+        ),
+        expect.objectContaining({
+          text: 'Formule littérale',
+          target: CONVENTION_INDICATEUR_URL,
+          kind: 'hyperlink',
+          location: expect.objectContaining({ row: 6, col: 2 }),
+        }),
+        expect.objectContaining({
+          text: 'Formule dynamique',
+          target: null,
+          kind: 'hyperlink',
+          location: expect.objectContaining({ row: 7, col: 2 }),
+        }),
+        expect.objectContaining({
+          text: '',
+          target: CONVENTION_SOURCE_URL,
+          kind: 'hyperlink',
+          location: expect.objectContaining({ row: 9, col: 2 }),
+        }),
+        expect.objectContaining({
+          text: '',
+          target: uncachedTarget,
+          kind: 'hyperlink',
+          location: expect.objectContaining({ row: 11, col: 5 }),
+        }),
+      ])
+    );
+    expect(document.workbook?.[1].cells[2][1].links).toEqual([links[0]]);
+    expect(document.workbook?.[1].cells[3][2]).toMatchObject({
+      text: '',
+      isMergeSlave: true,
+      masterRow: 3,
+      masterCol: 2,
+    });
+    expect(document.workbook?.[1].cells[3][2].links ?? []).toEqual([]);
+    expect(
+      document.pages[1].lines
+        .flatMap(({ links }) => links ?? [])
+        .some(({ target }) => target === uncachedTarget)
+    ).toBe(false);
+    expect(document.workbook?.[1].cells[10][4].links).toEqual([
+      expect.objectContaining({ target: uncachedTarget }),
+    ]);
+    expect(joinPages(document)).toContain('[Onglet « Actions »]');
+    expect(joinPages(document)).not.toContain(CONVENTION_FICHE_URL);
+  });
+
+  test('garde les URL textuelles CSV et leurs cellules après une rangée vide et le découpage', async () => {
+    const sources = `(${CONVENTION_FICHE_URL}), ${CONVENTION_INDICATEUR_URL}.`;
+    const document = await read({
+      buffer: Buffer.from(
+        `Code;Action;Sources\n;;\n1;Électrifier;${sources}\n`
+      ),
+      mimeType: 'text/csv',
+    });
+    expect(document.pages[0].text).toBe(
+      `Code\tAction\tSources\n1\tÉlectrifier\t${sources}`
+    );
+    const links = document.pages[0].links ?? [];
+    expect(links).toEqual(
+      [CONVENTION_FICHE_URL, CONVENTION_INDICATEUR_URL].map((target) => ({
+        text: target,
+        target,
+        kind: 'text',
+        location: expect.objectContaining({ pageIndex: 0, row: 3, col: 3 }),
+      }))
+    );
+    const line = segmentDocument(document)[0].lines.find(({ text }) =>
+      text.includes('Électrifier')
+    );
+    expect(line?.links).toEqual(links);
+    expect(line?.locations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ pageIndex: 0, row: 3, col: 3 }),
+      ])
+    );
+  });
+
+  test('lit les annotations PDF liées au texte et garde les liens sans texte au niveau de la page', async () => {
+    const rect: [number, number, number, number] = [48, 697, 150, 714];
+    const orphanRect: [number, number, number, number] = [400, 100, 500, 120];
+    const document = await read({
+      buffer: buildTestPdf([
+        {
+          kind: 'text',
+          blocks: [
+            { text: 'Ouvrir la fiche', x: 50, y: 700 },
+            { text: CONVENTION_SOURCE_URL, x: 50, y: 660 },
+          ],
+          annotations: [
+            { target: CONVENTION_FICHE_URL, rect },
+            { target: CONVENTION_INDICATEUR_URL, rect: orphanRect },
+          ],
+        },
+      ]),
+      mimeType: 'application/pdf',
+    });
+
+    const page = document.pages[0];
+    expect(page.text).toBe(`Ouvrir la fiche\n${CONVENTION_SOURCE_URL}`);
+    expect(page.lines[0].links).toEqual([
+      {
+        text: 'Ouvrir la fiche',
+        target: CONVENTION_FICHE_URL,
+        kind: 'hyperlink',
+        location: expect.objectContaining({ pageIndex: 0, lineIndex: 0, rect }),
+      },
+    ]);
+    expect(page.links).toEqual([
+      ...(page.lines[0].links ?? []),
+      {
+        text: CONVENTION_SOURCE_URL,
+        target: CONVENTION_SOURCE_URL,
+        kind: 'text',
+        location: expect.objectContaining({ pageIndex: 0, lineIndex: 1 }),
+      },
+      {
+        text: '',
+        target: CONVENTION_INDICATEUR_URL,
+        kind: 'hyperlink',
+        location: { pageIndex: 0, rect: orphanRect },
+      },
+    ]);
+    expect(segmentDocument(document)[0].lines[0].links).toEqual(
+      page.lines[0].links
+    );
+  });
+
+  test('préserve les coordonnées avant normalisation et les liens des marges retirées', async () => {
+    const pages = Array.from({ length: 5 }, (_, pageIndex) => {
+      const location = (lineIndex: number) => ({ pageIndex, lineIndex });
+      const link: DocumentLink = {
+        text: 'ﬁche élec-',
+        target: CONVENTION_FICHE_URL,
+        kind: 'hyperlink',
+        location: location(1),
+      };
+      return buildPage(
+        pageIndex,
+        [
+          {
+            text: 'Convention de test',
+            y: 10,
+            locations: [location(0)],
+            links: [
+              { ...link, text: 'Convention de test', location: location(0) },
+            ],
+          },
+          {
+            text: 'ﬁche élec-',
+            y: 150,
+            locations: [location(1)],
+            links: [link],
+          },
+          {
+            text: 'trification des bâtiments',
+            y: 170,
+            locations: [location(2)],
+          },
+          { text: `Page ${pageIndex + 1}`, y: 980, locations: [location(3)] },
+        ],
+        { height: 1000 }
+      );
+    });
+    const document = await read(
+      {
+        buffer: Buffer.from('lecteur PDF injecté'),
+        mimeType: 'application/pdf',
+      },
+      { pdfReader: async () => pages }
+    );
+
+    for (const page of document.pages) {
+      expect(page.text).toBe('fiche électrification des bâtiments');
+      expect(page.lines[0].locations).toEqual([
+        { pageIndex: page.index, lineIndex: 1 },
+        { pageIndex: page.index, lineIndex: 2 },
+      ]);
+      expect(page.lines[0].links).toEqual(pages[page.index].lines[1].links);
+      expect(page.links).toEqual(pages[page.index].links);
+      expect(page.links).toHaveLength(2);
+    }
+    const units = segmentDocument(document, {
+      minTokens: 0,
+      maxTokens: 10,
+      overlapTokens: 0,
+    });
+    expect(units.length).toBeGreaterThan(1);
+    expect(
+      units.flatMap(({ lines }) => lines).map(({ locations }) => locations)
+    ).toEqual(
+      document.pages
+        .flatMap(({ lines }) => lines)
+        .map(({ locations }) => locations)
+    );
+  });
+
+  test('conserve les annotations après OCR sans inventer une destination à partir du libellé', async () => {
+    const annotation: DocumentLink = {
+      text: '',
+      target: CONVENTION_FICHE_URL,
+      kind: 'hyperlink',
+      location: { pageIndex: 0, rect: [50, 100, 200, 130] },
+    };
+    const ocrPage = vi.fn(async () =>
+      success('Fiche existante\nIndicateur associé')
+    );
+    const document = await read(
+      { buffer: Buffer.from('scan synthétique'), mimeType: 'application/pdf' },
+      {
+        pdfReader: async () => [buildPage(0, [], { links: [annotation] })],
+        renderPage: async (pageIndex) => ({
+          pageIndex,
+          mimeType: 'image/jpeg',
+          data: Buffer.from('image factice'),
+          width: 10,
+          height: 10,
+        }),
+        ocr: { ocrPage },
+      }
+    );
+
+    expect(ocrPage).toHaveBeenCalledTimes(1);
+    expect(document.pages[0]).toMatchObject({
+      source: 'ocr',
+      text: 'Fiche existante\nIndicateur associé',
+      links: [annotation],
+    });
+    expect(document.pages[0].lines.flatMap(({ links }) => links ?? [])).toEqual(
+      []
+    );
+  });
+
+  test('rattache les en-têtes reconstruits et les rappels de fusion aux cellules d’origine', async () => {
+    const document = await read({
+      buffer: await buildHorizontalHierarchyWorkbook(),
+      mimeType: xlsxMime,
+    });
+    const units = segmentDocument(document, {
+      minTokens: 0,
+      maxTokens: 90,
+      overlapTokens: 0,
+    }).filter(({ headingPath }) => headingPath[0] === 'Suivi');
+
+    expect(units.length).toBeGreaterThan(1);
+    for (const unit of units) {
+      const header = unit.lines.find(({ text }) =>
+        text.includes('CALENDRIER · 2021')
+      );
+      expect(header?.locations).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            pageIndex: 1,
+            sheetName: 'Suivi',
+            row: 3,
+            col: 8,
+          }),
+          expect.objectContaining({
+            pageIndex: 1,
+            sheetName: 'Suivi',
+            row: 4,
+            col: 8,
+          }),
+        ])
+      );
+    }
+    const continuation = units.find(
+      ({ continued, text }) =>
+        continued && text.includes('Calibrer les navettes')
+    );
+    const reminder = continuation?.lines.find(({ text }) =>
+      text.startsWith('[Suite de :')
+    );
+    expect(reminder?.text).toContain('Aménager deux pôles multimodaux');
+    expect(reminder?.locations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          pageIndex: 1,
+          sheetName: 'Suivi',
+          row: 6,
+          col: 6,
+        }),
+      ])
+    );
   });
 });
