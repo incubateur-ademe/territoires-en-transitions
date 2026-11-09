@@ -50,6 +50,15 @@ droits:
   - `auditeur` sur les EPCI #1, #2, #3, #4
 ```
 
+e. Utilisateur Supra (dépôts PCAET portés par un Supra)
+
+```yaml
+email: supra@dodo.com
+password: yolododo
+id: 33333333-5a9a-4bfc-a000-000000000001
+droits: cf. 30-insert_fake_pcaet_supra.sql, qui détaille un cas par collectivité
+```
+
 2. Statut action référentiel 
 ```yaml
 modified_by: Yolo Dodo (17440546-f389-4d4f-bfdb-b0c94a1bd0f9)
