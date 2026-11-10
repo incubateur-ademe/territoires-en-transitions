@@ -60,7 +60,9 @@ export class TransmettrePourAvisDemarchePcaetService {
             transaction
           )
         ) {
-          const services = await this.demoService.listServicesDemo(transaction);
+          const services = await this.demoService.ensureServicesDemo(
+            transaction
+          );
           saisines = await this.instructeursRepository.saisirServicesDemo(
             {
               demarcheId: demarche.id,
