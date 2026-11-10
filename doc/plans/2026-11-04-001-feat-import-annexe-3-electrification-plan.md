@@ -34,6 +34,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 5B — Pipeline complet et cycle de vie des jobs : [#5802](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5802), implémenté et vérifié, en revue après #5788. Admission fermée par défaut ; ouverture et parcours app restent en phases 6 et 7.
 - [x] PR 6 — Parcours et lecture dans l'app : [#5806](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5806), implémentés et vérifiés, en revue après #5802. Cibles et objectifs locaux distincts ; toutes les nouvelles créations Électrification protégées par un flag serveur. Qualification et ouverture restent en phase 7.
 - [ ] Phase 7 — Qualification et ouverture en production.
+- [x] PR 7A — Intégrer les données métier vérifiables : [#5811](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5811), 41 sous-axes et métadonnées E07, implémentés et vérifiés après #5806, sans ouverture du profil.
 - [ ] Phase 8 — Budgets et financements, facultatifs.
 
 Une case cochée signifie que le lot est implémenté et vérifié dans sa PR,
@@ -77,7 +78,7 @@ les engagements ou ignorerait les indicateurs des fiches actions.
 | 4. Primitives de persistance | 4A, 4B, 4C, 4D | Création, liaison et références durables sous transaction, avec lectures isolées par source | Phases 1 et 2 ; 4D réutilise 4A/4B/4C |
 | 5. Import complet côté backend | 5A, 5B | Persistance transactionnelle, puis worker, admission et reprise ; admission toujours fermée | Phases 1 à 4, y compris 4D |
 | 6. Parcours et lecture dans l'app | 6 | Parcours complet et cibles conventionnelles affichables ; ouverture toujours contrôlée | Phases 1 à 5 |
-| 7. Qualification et ouverture | Pas de PR artificielle d'activation | Ouverture à un premier groupe de lauréats, puis élargissement | Phase 6 et prérequis métier validés |
+| 7. Qualification et ouverture | 7A : données vérifiables, puis qualification et ouverture | Ouverture à un premier groupe de lauréats, puis élargissement | Phase 6 et prérequis métier validés |
 | 8. Budgets et financements, facultatif | 8 | Import budgétaire additionnel ; le socle reste utilisable sans lui | Socle complet des phases 1 à 6 |
 
 Les phases 3 et 4 peuvent être développées en parallèle après la phase 2.
@@ -705,8 +706,9 @@ vérifie les droits et la compatibilité du checkpoint, puis appelle les
 résolveurs existants, sans rappeler le modèle à la reprise. Son callback conserve
 l'extraction avant une erreur de
 résolution ; le raccordement au stockage des jobs et au worker reste en phase 5.
-Le catalogue reste `electrification-v2` ; les libellés du canevas appartiennent
-au parser. Ce changement ne valide aucune correspondance métier encore en attente.
+Le catalogue utilise `electrificationConfig.version` ; les libellés du canevas
+appartiennent au parser. Ce changement ne valide aucune correspondance métier
+encore en attente.
 
 L'[évaluation locale](../../apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification)
 accepte `--profile annexe-3-electrification` et produit le checkpoint avec
@@ -1280,6 +1282,53 @@ budgétaire ni dashboard n'est nécessaire pour ouvrir le socle.
 Cette phase est une opération de livraison, pas une PR vide pour changer un flag.
 Les corrections éventuelles rejoignent les lots concernés avec leur validation.
 
+### PR 7A — Intégrer les données métier vérifiables
+
+**Périmètre :** livrer dans `electrification-v1` les 41 sous-axes du Grist
+V1.3, avec leurs numéros, titres et rattachements explicites aux 11 axes.
+Valider les métadonnées des deux cibles E07 : `s_26` et `s_26.a`, unité
+"Nombre de bornes", périodicité annuelle explicitement publiée dans la source
+du catalogue TeT. Les définitions et dépendances E07 ont été retrouvées dans
+le dump local le 10 novembre ; cela ne vérifie pas les environnements cibles.
+Les sources et écarts constatés sont consignés dans
+[l'ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#3-un-catalogue-versionné-et-une-identité-indépendante-des-libellés).
+Cette première version interne est conservée jusqu'à la qualification initiale ;
+elle ne suit ni les numéros des lots de développement ni la version de Grist.
+
+Le catalogue d'actions/indicateurs et le mapping des lauréats restent `null`.
+Les neuf autres cibles restent non validées : leurs périodicités sont vides
+dans la source, la formule E08 additionne deux pourcentages de parcs distincts,
+et l'unité E09 diffère entre la source TeT et la traduction documentaire.
+Le fichier des 109 lauréats retrouvé dans TET-8065 est un croisement d'activité,
+avec des mauvais rattachements et des groupements réduits à un membre ; il
+ne permet pas d'attribuer les droits d'import.
+
+**Validation :** résolution des sous-axes publiés, homonymes sous des parents
+distincts, refus d'un sous-axe rattaché au mauvais axe, métadonnées E07
+et refus HTTP du catalogue incomplet malgré un flag ouvert et un lauréat.
+Réutiliser les e2e existants avec faux LLM et vérifier l'absence d'écriture.
+
+**Vérification du lot :** 67 tests e2e sont passés dans les suites de résolution
+des engagements et d'admission HTTP, avant l'alignement de la version sur v1.
+Les 41 sous-axes et leurs parents sont comparés aux données publiées par
+Grist ; les deux métadonnées E07, à la
+source du catalogue TeT. Compilation du domaine, typage des tests backend,
+ESLint et Prettier ciblés, liens locaux et `git diff --check` passent.
+Aucun appel à un modèle externe.
+
+Après l'alignement sur v1, un contrôle direct des règles vérifie le contrat
+et le checkpoint v1, le refus des autres versions et le catalogue toujours
+incomplet. Compilation du domaine, ESLint et Prettier ciblés passent à nouveau.
+
+**Déploiement :** aucune migration ni changement d'API ; aucun appel à Grist
+ou Notion pendant un import. L'admission reste indisponible. Les jobs portant
+une autre version conservent leur source et leurs checkpoints, mais ne
+reprennent pas automatiquement sous v1. Vérifier les éventuels jobs de
+préproduction et les traiter avec leur catalogue compatible avant bascule ;
+aucun job existant n'est réétiqueté.
+
+### Qualification et ouverture restantes
+
 **Prérequis avant ouverture :**
 
 - Correspondances métier validées et version de catalogue livrée, sans code
@@ -1287,6 +1336,8 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   des fiches actions et traitement des liens d'aides dans "Documents" convenu.
 - Définitions et dépendances de calcul disponibles dans l'environnement cible,
   notamment `v_particulier_elec`, `autobus_autocar_elec`, `s_26` et `s_26.a`.
+  Les 11 références chiffrées sont désormais présentes dans la source TeT ;
+  seules les périodicités E07 ont pu être validées en 7A.
   Pour E06/E08, formules, périodicités et adéquation métier validées avec
   l'équipe data et le métier, notamment le périmètre autobus/autocars ;
   définitions conformes aux unités validées dans le catalogue versionné.
@@ -1294,6 +1345,8 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   ni l'intégration ; le profil reste fermé tant qu'elles manquent.
 - Mapping lauréats → collectivités validé et maintenu ; premier groupe choisi
   parmi ces lauréats. Aucun élargissement de droits par le ciblage du flag.
+  Corriger les erreurs du croisement de septembre et faire valider le
+  périmètre des groupements avant de livrer ce mapping.
 - PR 4D livrée : identités ADEME et sélection de A durables, rattachement exact
   des sources au plan et lectures isolées vérifiés avec les opérations de 4C.
 - Migrations, backend/API, tous les workers et app compatibles déployés.

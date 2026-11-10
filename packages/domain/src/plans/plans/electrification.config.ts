@@ -64,7 +64,7 @@ export type ElectrificationConfig = z.infer<typeof electrificationConfigSchema>;
  * Les décisions et leur provenance documentaire sont conservées dans l'ADR 0022.
  */
 export const electrificationConfig: ElectrificationConfig = {
-  version: 'electrification-v2',
+  version: 'electrification-v1',
   fiches: { actions: null, indicateurs: null },
   axes: [
     { numero: 1, titre: 'Logements privés : sortie du fioul et du gaz' },
@@ -82,7 +82,224 @@ export const electrificationConfig: ElectrificationConfig = {
     { numero: 10, titre: 'Industrie' },
     { numero: 11, titre: 'Agriculture' },
   ],
-  sousAxes: null,
+  sousAxes: [
+    {
+      numero: '1.1',
+      axeNumero: 1,
+      titre:
+        'Connaître et cibler les logements privés chauffés au fioul et au gaz',
+    },
+    {
+      numero: '1.2',
+      axeNumero: 1,
+      titre:
+        'Aller au-devant des ménages et les orienter vers la pompe à chaleur ou les réseaux de chaleur',
+    },
+    {
+      numero: '1.3',
+      axeNumero: 1,
+      titre: 'Lever les freins techniques au changement de chauffage',
+    },
+    {
+      numero: '1.4',
+      axeNumero: 1,
+      titre: 'Mobiliser les professionnels et saisir les moments clés',
+    },
+    {
+      numero: '1.5',
+      axeNumero: 1,
+      titre: 'Développer les réseaux de chaleur et y raccorder les bâtiments',
+    },
+    {
+      numero: '2.1',
+      axeNumero: 2,
+      titre: "Établir l'état des lieux et prioriser",
+    },
+    {
+      numero: '2.2',
+      axeNumero: 2,
+      titre: 'Construire et accompagner les trajectoires avec les bailleurs',
+    },
+    {
+      numero: '2.3',
+      axeNumero: 2,
+      titre: "Assurer le suivi et l'essaimage des résultats",
+    },
+    {
+      numero: '3.1',
+      axeNumero: 3,
+      titre:
+        'Connaître et planifier la sortie du fioul et du gaz du patrimoine public',
+    },
+    {
+      numero: '3.2',
+      axeNumero: 3,
+      titre: 'Financer et conduire les opérations',
+    },
+    {
+      numero: '3.3',
+      axeNumero: 3,
+      titre: 'Faire des bâtiments publics des exemples',
+    },
+    {
+      numero: '4.1',
+      axeNumero: 4,
+      titre: 'Connaître les usages actuels du gaz et le réseau existant',
+    },
+    {
+      numero: '4.2',
+      axeNumero: 4,
+      titre: "Élaborer des scénarios locaux d'évolution des usages du gaz",
+    },
+    {
+      numero: '4.3',
+      axeNumero: 4,
+      titre: 'Décider des zones concernées et des réinvestissements à éviter',
+    },
+    {
+      numero: '4.4',
+      axeNumero: 4,
+      titre:
+        "Accompagner les usagers et préparer l'évolution du réseau dans les zones retenues",
+    },
+    {
+      numero: '5.1',
+      axeNumero: 5,
+      titre:
+        'Établir un diagnostic du parc local de véhicules à partir des données existantes',
+    },
+    {
+      numero: '5.2',
+      axeNumero: 5,
+      titre: "Informer, inciter et rendre attractif le passage à l'électrique",
+    },
+    {
+      numero: '5.3',
+      axeNumero: 5,
+      titre:
+        "Accompagner les particuliers dans la location ou l'achat d'un véhicule électrique",
+    },
+    {
+      numero: '5.4',
+      axeNumero: 5,
+      titre:
+        'Électrifier la flotte de la collectivité et des établissements publics',
+    },
+    {
+      numero: '5.5',
+      axeNumero: 5,
+      titre: 'Électrifier les flottes des employeurs du territoire',
+    },
+    {
+      numero: '6.1',
+      axeNumero: 6,
+      titre: 'Planifier le réseau de recharge',
+    },
+    {
+      numero: '6.2',
+      axeNumero: 6,
+      titre: "Développer l'itinérance rapide",
+    },
+    {
+      numero: '6.3',
+      axeNumero: 6,
+      titre: 'Assurer une couverture complète',
+    },
+    {
+      numero: '7.1',
+      axeNumero: 7,
+      titre: 'Établir le besoin actuel et à venir',
+    },
+    {
+      numero: '7.2',
+      axeNumero: 7,
+      titre:
+        "Analyser les potentiels fonciers et définir le(s) site(s) d'accueil",
+    },
+    {
+      numero: '7.3',
+      axeNumero: 7,
+      titre: "Assurer l'attractivité des stations de recharge",
+    },
+    {
+      numero: '8.1',
+      axeNumero: 8,
+      titre: "Établir l'état des lieux",
+    },
+    {
+      numero: '8.2',
+      axeNumero: 8,
+      titre: "Établir une stratégie pluriannuelle d'électrification",
+    },
+    {
+      numero: '8.3',
+      axeNumero: 8,
+      titre: 'Adapter le service et les infrastructures',
+    },
+    {
+      numero: '9.1',
+      axeNumero: 9,
+      titre: "Établir l'état des lieux",
+    },
+    {
+      numero: '9.2',
+      axeNumero: 9,
+      titre: "Faciliter l'accès des artisans aux équipements électriques",
+    },
+    {
+      numero: '9.3',
+      axeNumero: 9,
+      titre: 'Anticiper les besoins électriques des zones artisanales',
+    },
+    {
+      numero: '9.4',
+      axeNumero: 9,
+      titre:
+        "Mettre en place un environnement favorable à l'électrification des artisans",
+    },
+    {
+      numero: '9.5',
+      axeNumero: 9,
+      titre: "Électrifier le chauffage des locaux d'activité",
+    },
+    {
+      numero: '9.6',
+      axeNumero: 9,
+      titre: 'Électrifier les véhicules utilitaires des artisans',
+    },
+    {
+      numero: '10.1',
+      axeNumero: 10,
+      titre: "Établir l'état des lieux",
+    },
+    {
+      numero: '10.2',
+      axeNumero: 10,
+      titre:
+        "Faciliter et suivre l'accès des sites industriels aux équipements électriques",
+    },
+    {
+      numero: '10.3',
+      axeNumero: 10,
+      titre: "Favoriser la mutualisation dans les zones d'activités",
+    },
+    {
+      numero: '11.1',
+      axeNumero: 11,
+      titre: "Établir l'état des lieux",
+    },
+    {
+      numero: '11.2',
+      axeNumero: 11,
+      titre:
+        'Orienter les agriculteurs vers les solutions électriques adaptées à chaque usage',
+    },
+    {
+      numero: '11.3',
+      axeNumero: 11,
+      titre: "Accompagner l'électrification des engins agricoles",
+    },
+  ],
   engagements: [
     {
       code: ElectrificationEngagementCodeEnum.SORTIE_FIOUL_LOGEMENTS_PRIVES,
@@ -170,15 +387,15 @@ export const electrificationConfig: ElectrificationConfig = {
           key: 'total',
           identifiantReferentiel: 's_26',
           unite: 'Nombre de bornes',
-          periodicite: null,
-          validation: 'pending',
+          periodicite: 'annuelle',
+          validation: 'validated',
         },
         {
           key: 'rapides',
           identifiantReferentiel: 's_26.a',
           unite: 'Nombre de bornes',
-          periodicite: null,
-          validation: 'pending',
+          periodicite: 'annuelle',
+          validation: 'validated',
         },
       ],
     },

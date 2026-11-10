@@ -545,11 +545,18 @@ describe(
             eq(aiPlanImportJobTable.collectiviteId, fixture.collectivite.id)
           )
       ).toHaveLength(0);
+      expect(
+        await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.collectiviteId, fixture.collectivite.id))
+      ).toHaveLength(0);
     };
 
     it.each([
       'flag fermé',
       'évaluation du flag en erreur',
+      'catalogue livré malgré un flag ouvert et une collectivité lauréate',
       'catalogue incomplet',
       'engagements incomplets',
       'catalogue vide',
@@ -564,6 +571,11 @@ describe(
         vi.mocked(app.get(TrackingService).isFeatureEnabled).mockRejectedValue(
           new Error('PostHog indisponible')
         );
+      if (
+        reason ===
+        'catalogue livré malgré un flag ouvert et une collectivité lauréate'
+      )
+        Object.assign(catalogue, structuredClone(electrificationConfig));
       if (reason === 'catalogue incomplet') catalogue.fiches.actions = null;
       if (reason === 'engagements incomplets') catalogue.engagements.pop();
       if (reason === 'catalogue vide') {

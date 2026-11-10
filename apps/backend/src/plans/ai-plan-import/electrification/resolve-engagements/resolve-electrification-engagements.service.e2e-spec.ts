@@ -17,6 +17,7 @@ import { LlmRepository } from '@tet/backend/utils/llm/repositories/llm.repositor
 import {
   ElectrificationConfig,
   electrificationConfig,
+  ElectrificationEngagementCodeEnum as EngagementCode,
   Engagement,
   engagementSchema,
   StatutEnum,
@@ -146,18 +147,21 @@ describe('Résolution des engagements Électrification', () => {
     fixture.sousAxes = [
       { numero: '1.1', axeNumero: 1, titre: 'Sous-axe catalogue' },
     ];
-    for (const definition of fixture.engagements.flatMap(
-      ({ cibles }) => cibles
-    )) {
-      definition.identifiantReferentiel = `test-electrification-${randomUUID()}`;
-      definition.validation = 'validated';
-      definition.periodicite = 'annuelle';
-      await db.db.insert(indicateurDefinitionTable).values({
-        identifiantReferentiel: definition.identifiantReferentiel,
-        titre: 'Indicateur synthétique Électrification',
-        unite: definition.unite,
-        periodicite: 'annuelle',
-      });
+    for (const { code, cibles } of fixture.engagements) {
+      for (const definition of cibles) {
+        definition.identifiantReferentiel = `test-electrification-${randomUUID()}`;
+        // Les bornes conservent la validation et la périodicité du catalogue livré.
+        if (code !== EngagementCode.BORNES_RECHARGE_PUBLIQUES) {
+          definition.validation = 'validated';
+          definition.periodicite = 'annuelle';
+        }
+        await db.db.insert(indicateurDefinitionTable).values({
+          identifiantReferentiel: definition.identifiantReferentiel,
+          titre: 'Indicateur synthétique Électrification',
+          unite: definition.unite,
+          periodicite: 'annuelle',
+        });
+      }
     }
   });
   beforeEach(async () => {
@@ -249,6 +253,60 @@ describe('Résolution des engagements Électrification', () => {
       null,
     ]);
   });
+
+  test('résout les sous-axes livrés et conserve les homonymes sous leurs parents respectifs', async () => {
+    catalogue.sousAxes = structuredClone(electrificationConfig.sousAxes);
+    input.axes = [
+      axe(1, 'axe-1', [sousAxe('1.2')]),
+      axe(8, 'axe-8', [sousAxe('8.1')]),
+      axe(9, 'axe-9', [sousAxe('9.1')]),
+    ];
+
+    const result = await resolve();
+
+    assert(result.success);
+    expect(result.data.axes).toHaveLength(6);
+    expect(
+      result.data.axes.filter(({ parentKey }) => parentKey !== null)
+    ).toEqual([
+      {
+        key: 'sous-axe:1.2',
+        parentKey: 'axe:1',
+        numero: '1.2',
+        titre:
+          'Aller au-devant des ménages et les orienter vers la pompe à chaleur ou les réseaux de chaleur',
+        sources: [source('sous-axe-1.2')],
+      },
+      {
+        key: 'sous-axe:8.1',
+        parentKey: 'axe:8',
+        numero: '8.1',
+        titre: "Établir l'état des lieux",
+        sources: [source('sous-axe-8.1')],
+      },
+      {
+        key: 'sous-axe:9.1',
+        parentKey: 'axe:9',
+        numero: '9.1',
+        titre: "Établir l'état des lieux",
+        sources: [source('sous-axe-9.1')],
+      },
+    ]);
+  });
+
+  test.each([
+    ['1.2', 8],
+    ['8.1', 9],
+    ['9.1', 8],
+  ] as const)(
+    'refuse le sous-axe livré %s sous un autre parent %i',
+    async (numero, parent) => {
+      catalogue.sousAxes = structuredClone(electrificationConfig.sousAxes);
+      input.axes = [axe(parent, 'axe', [sousAxe(numero)])];
+
+      await expectIssue('INVALID_SUB_AXIS_PARENT');
+    }
+  );
 
   test('garde les deux cibles E07 distinctes et distingue zéro d’une cible vide', async () => {
     input.engagements = [
@@ -525,16 +583,22 @@ describe('Résolution des engagements Électrification', () => {
   });
 
   test('la configuration livrée garde les définitions non validées bloquantes', async () => {
+    const pendingCibles = electrificationConfig.engagements
+      .filter(({ code }) => code !== EngagementCode.BORNES_RECHARGE_PUBLIQUES)
+      .flatMap(({ cibles }) => cibles);
+    expect(pendingCibles.length).toBeGreaterThan(0);
     expect(
-      electrificationConfig.engagements
-        .flatMap(({ cibles }) => cibles)
-        .every(
-          ({ validation, periodicite }) =>
-            validation === 'pending' && periodicite === null
-        )
+      pendingCibles.every(
+        ({ validation, periodicite }) =>
+          validation === 'pending' && periodicite === null
+      )
     ).toBe(true);
-    mapping().validation = 'pending';
-    mapping().periodicite = null;
+    const definition = electrificationConfig.engagements.find(
+      ({ code }) => code === EngagementCode.SORTIE_FIOUL_LOGEMENTS_PRIVES
+    )?.cibles[0];
+    assert(definition);
+    mapping().validation = definition.validation;
+    mapping().periodicite = definition.periodicite;
     input.engagements = [engagement('E01', [cible()])];
     await expectIssue(
       'UNVALIDATED_ENGAGEMENT_INDICATEUR',

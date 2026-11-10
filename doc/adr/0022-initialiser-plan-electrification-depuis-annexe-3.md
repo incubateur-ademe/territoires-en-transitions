@@ -449,8 +449,9 @@ Un fichier de données validé et livré avec le backend suffit ; il ne s'agit
 pas de construire une bibliothèque de modèles administrable. Les définitions
 d'indicateurs restent dans le catalogue existant, alimenté par l'équipe data.
 Les associations sont explicites, sans appel à Grist ou Notion pendant un import.
-Le lot 2B2b a étendu cette configuration aux fiches actions sous la version
-`electrification-v2`, commune aux engagements et aux fiches. Les correspondances
+La version interne `electrification-v1` est commune aux engagements et aux
+fiches. Elle identifie les correspondances métier livrées avec l'import,
+indépendamment de la version du canevas ou de Grist. Les correspondances
 réelles d'actions, de sous-actions et d'indicateurs des fiches actions restent
 indisponibles (`null`) tant que leur validation métier n'est pas livrée.
 Une liste vide désigne au contraire un catalogue livré sans entrée. Le résolveur
@@ -459,6 +460,60 @@ Le mapping valide aussi les unités et périodicités : pour un indicateur à
 deux unités, seule l'unité principale retenue par le métier est importée,
 conformément à l'esquisse. Une fréquence "Ponctuelle" du catalogue ne devient
 pas automatiquement une périodicité annuelle dans TeT.
+
+**Qualification des données — 10 novembre 2026, lot 7A.** Le relevé du
+[Grist V1.3](https://grist.numerique.gouv.fr/o/100te/m4aC9Epwz7ot/Referentiel-dactions-feuilles-de-routes/p/86)
+contient 11 axes, 41 sous-axes, 109 actions, 58 sous-actions et 113 indicateurs.
+Les 41 numéros de sous-axe sont distincts et leurs références `Axe` désignent
+les 11 axes du canevas. Le catalogue `electrification-v1` reprend leurs numéros,
+titres et parents explicites. Les titres identiques sous des axes différents
+restent des sous-axes distincts. Aucun ID de ligne Grist ni numéro de parent
+déduit du titre n'est utilisé comme identité métier.
+
+La [source du catalogue TeT](https://docs.google.com/spreadsheets/d/1im08NvNBGsVb-xB2Lmh-3sgKO7Tje7jUAYQOCNixnuM/edit#gid=347181683),
+version déclarée 1.0.125 du 5 novembre, contient désormais les 11 références
+chiffrées d'engagement et les composantes `autobus_elec` et `autocar_elec`.
+Pour E07, `s_26` et `s_26.a` portent explicitement l'unité "Nombre de bornes"
+et la périodicité `annuelle` (lignes 563–564). Ces métadonnées sont également
+présentes dans le dump local, ainsi que les dépendances `s_26.b/c/d/e`.
+Les deux correspondances E07, déjà confirmées par Émeline, passent à
+`validated` dans le catalogue livré. Cela ne confirme pas leur déploiement
+actuel dans les environnements cibles ni une équivalence avec `6-a`/`6-b`.
+
+Les neuf autres cibles restent `pending`, avec une périodicité `null` :
+la colonne correspondante est vide dans la source. Le défaut annuel de
+l'importeur de définitions ne vaut pas validation métier. Deux écarts sont
+à résoudre avant ouverture :
+
+- E08 : la formule publiée `opt_val(autobus_elec)+opt_val(autocar_elec)`
+  additionne deux parts, chacune rapportée à son propre parc. Deux parcs à
+  50 % donnent ainsi 100 %, au lieu de 50 % pour le parc combiné. La formule,
+  ses dénominateurs et le périmètre autobus/autocars doivent être validés par
+  l'équipe data ; l'import ne les corrige pas.
+- E09 : la source TeT utilise `nb`, contre "Nombre" dans la correspondance
+  documentaire. Aligner l'unité canonique et sa traduction documentaire avant
+  validation ; ne pas accepter silencieusement deux unités différentes.
+
+Les correspondances Grist → TeT des indicateurs des fiches restent absentes.
+La table de sous-actions ne fournit toujours pas de code métier stable.
+Le catalogue d'actions et d'indicateurs reste donc `null` ; les numéros
+d'actions disponibles ne justifient pas d'omettre leurs liens ni leurs
+compléments. Cette livraison conserve l'admission fermée, même avec le flag
+ouvert et une collectivité éligible.
+
+**Décision du 10 novembre 2026 — première version du catalogue.** Les noms
+`electrification-v2` du lot 2B2b et `electrification-v3` initialement proposé
+en 7A reflétaient les étapes de développement, pas des versions métier
+publiées. Ils sont remplacés par `electrification-v1`, conservée jusqu'à la
+qualification initiale. Une fois cette référence qualifiée, les changements
+de correspondances nécessiteront une nouvelle version et une gestion explicite
+des imports en cours. Le contrôle de compatibilité reste strict : les jobs
+portant une autre version conservent leur source et leurs checkpoints, sans
+reprise automatique sous v1. Vérifier les éventuels jobs de préproduction
+avant déploiement ; aucun job n'est réétiqueté par ce changement.
+Le contrôle du dump local le 10 novembre n'a retrouvé que des fixtures e2e
+Électrification en échec, sans job v1 ni import en cours. La préproduction
+actuelle n'a pas été vérifiée.
 
 **Révision du 9 novembre 2026, lot 3B.** Le parser conserve le catalogue
 `electrification-v2`. Les libellés fixes du canevas appartiennent à l'adaptateur
@@ -1069,22 +1124,30 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
 
 ## Questions ouvertes et dépendances avant implémentation
 
-1. **Indicateurs E06/E08.** Les identifiants de parc `v_particulier_elec` et
-   `autobus_autocar_elec` sont
-   [confirmés depuis le 4 novembre](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d&pvs=42#a087e5976bf84eb6b9c6e8ff5a9b4d07),
-   et leurs fiches indiquent l'unité "%". Émeline prévoit de calculer E08 à
-   partir de `autobus_elec` et `autocar_elec`. Restent à valider les formules,
-   périodicités et l'adéquation du périmètre autobus/autocars à l'annexe, puis
-   à vérifier les définitions et leurs dépendances dans TeT avant ouverture.
-2. **Catalogue Grist vers TeT.** Valider une version exploitable avec les codes,
-   sous-axes, sous-actions, unités et liens d'aides. Utiliser la colonne
-   "ID et Titre indicateur TeT v2" pour les correspondances d'engagement.
-   Pour E07, `s_26`/`s_26.a` sont confirmés ; la correspondance éventuelle avec
-   `6-a`/`6-b` reste à préciser. Confirmer aussi avec le métier l'ajout des aides
-   dans l'onglet "Documents".
-3. **Lauréats.** Fournir une source maintenue et son mapping vers les collectivités
-   TeT, avec une version et une validité vérifiables.
-4. **Affichage des cibles — phase 6.** Brancher la lecture de la métadonnée
-   exacte du plan, livrée en 4D, dans l'app avant ouverture. Ne pas choisir la
-   dernière métadonnée par nom de source ; deux plans peuvent partager un
-   indicateur tout en ayant des cibles distinctes.
+1. **Indicateurs.** Quelle périodicité retenir explicitement pour les neuf
+   cibles hors E07 ? Quelle formule et quel périmètre valider pour E08, dont
+   la source additionne actuellement les pourcentages de deux parcs ?
+   Les définitions sont présentes dans la source TeT ; leur déploiement et
+   leurs dépendances restent à vérifier dans l'environnement cible.
+2. **Catalogue Grist vers TeT.** Fournir les correspondances des indicateurs
+   d'actions, les codes stables des sous-actions et les unités principales.
+   Les 41 sous-axes sont livrés en 7A. La correspondance éventuelle de
+   `6-a`/`6-b` avec `s_26`/`s_26.a` et l'ajout des aides dans "Documents"
+   restent à confirmer.
+3. **Lauréats.** Quel fichier maintenu fait foi pour autoriser l'import, avec
+   quelles dates de validité et quelle collectivité pour chaque groupement ?
+   Le [croisement d'activité TET-8065](https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9)
+   fournit deux fichiers de 109 lauréats, datés des 8 et 30 septembre.
+   La vérification du dump local le 10 novembre trouve 107 correspondances
+   pour 106 collectivités distinctes, mais révèle deux mauvais rattachements :
+   Libournais → Serre-Ponçon et Terre de Provence → Salon-de-Provence.
+   SCOT Périgord Vert et SIEDS restent sans correspondance ; plusieurs
+   groupements sont réduits à un seul membre pour les statistiques d'usage.
+   Ce croisement ne constitue pas une autorisation d'import. Corriger et
+   valider le mapping complet avant de remplacer la configuration `null`.
+4. **Unité E09.** Faut-il retenir `nb`, publié dans le catalogue TeT, et aligner
+   la traduction documentaire actuellement en "Nombre" ?
+
+L'affichage des cibles par métadonnée exacte est implémenté et vérifié en
+phase 6 (#5806) ; il n'est plus une question ouverte. La qualification en
+préproduction et l'ouverture restent à réaliser.
