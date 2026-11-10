@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { auditPreuvesArchiveStatusSchema } from '../models/audit-preuves-archive.table';
+import {
+  auditPreuvesArchiveErrorCodeSchema,
+  auditPreuvesArchiveStatusSchema,
+} from '../models/audit-preuves-archive.table';
 
 export const listPreuvesArchiveOutputSchema = z.array(
   z.object({
@@ -8,6 +11,7 @@ export const listPreuvesArchiveOutputSchema = z.array(
     totalFiles: z.number().int().nonnegative(),
     processedFiles: z.number().int().nonnegative(),
     createdAt: z.string(),
+    errorCode: auditPreuvesArchiveErrorCodeSchema.nullable(),
   })
 );
 

@@ -6,7 +6,18 @@ import {
   PREUVES_ARCHIVE_QUEUE_NAME,
   type PreuvesArchiveJobData,
 } from '../preuves-archive.queue';
+import {
+  auditPreuvesArchiveErrorCodeSchema,
+  type AuditPreuvesArchiveErrorCode,
+} from '../models/audit-preuves-archive.table';
 import { GeneratePreuvesArchiveService } from './generate-preuves-archive.service';
+
+function archiveErrorCodeOf(error: Error): AuditPreuvesArchiveErrorCode | null {
+  const parsed = auditPreuvesArchiveErrorCodeSchema.safeParse(
+    'archiveErrorCode' in error ? error.archiveErrorCode : undefined
+  );
+  return parsed.success ? parsed.data : null;
+}
 
 /**
  * Frontière BullMQ : seul endroit autorisé à `throw` (les services retournent
@@ -30,7 +41,10 @@ export class GeneratePreuvesArchiveWorker extends WorkerHost {
     if (result.error.retryable) {
       throw new Error(result.error.message);
     }
-    throw new UnrecoverableError(result.error.message);
+    // Le code voyage sur l'erreur jusqu'à `onJobFailed` (même process, même instance).
+    throw Object.assign(new UnrecoverableError(result.error.message), {
+      archiveErrorCode: result.error.code ?? null,
+    });
   }
 
   /**
@@ -51,7 +65,8 @@ export class GeneratePreuvesArchiveWorker extends WorkerHost {
     }
     await this.service.markFailed(
       job.data.archiveId,
-      `Génération interrompue: ${getErrorMessage(error)}`
+      `Génération interrompue: ${getErrorMessage(error)}`,
+      archiveErrorCodeOf(error)
     );
   }
 

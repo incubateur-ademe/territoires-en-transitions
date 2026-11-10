@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { describe, expect, it } from 'vitest';
 import {
   archiveOutputToDetailsState,
@@ -16,6 +17,7 @@ function makeItem(overrides: ItemOverrides = {}): PreuvesArchiveListItem {
     totalFiles: 10,
     processedFiles: 3,
     createdAt: '2026-06-16 08:00:00+00',
+    errorCode: null,
     ...overrides,
   } as unknown as PreuvesArchiveListItem;
 }
@@ -68,15 +70,32 @@ describe('archiveOutputToDetailsState', () => {
     expect(state).toEqual({ kind: 'ready', totalFiles: 12 });
   });
 
-  it('mappe failed vers error retryable', () => {
+  it('mappe failed sans cause connue vers error retryable', () => {
     const state = archiveOutputToDetailsState(makeItem({ status: 'failed' }));
 
     expect(state).toEqual({
       kind: 'error',
-      backendMessage: null,
+      message: null,
       retryable: true,
     });
   });
+
+  it.each([
+    ['TOO_MANY_FILES', appLabels.preuvesTelechargementErreurTropDeFichiers],
+    [
+      'ARCHIVE_TOO_LARGE',
+      appLabels.preuvesTelechargementErreurArchiveTropVolumineuse,
+    ],
+  ] as const)(
+    'mappe failed %s vers un message explicite, sans réessai',
+    (errorCode, message) => {
+      const state = archiveOutputToDetailsState(
+        makeItem({ status: 'failed', errorCode })
+      );
+
+      expect(state).toEqual({ kind: 'error', message, retryable: false });
+    }
+  );
 });
 
 describe('isArchiveInFlight', () => {

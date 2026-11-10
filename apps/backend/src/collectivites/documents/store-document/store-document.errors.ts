@@ -6,6 +6,7 @@ import {
 export const StoreDocumentSpecificErrors = [
   'COLLECTIVITE_BUCKET_NOT_FOUND',
   'UPLOAD_STORAGE_ERROR',
+  'FILE_TOO_LARGE',
   'STORE_DOCUMENT_ERROR',
   'STORAGE_OBJECT_NOT_FOUND',
   'INVALID_FILE',
@@ -27,6 +28,10 @@ export const storeDocumentErrorConfig: TrpcErrorHandlerConfig<StoreDocumentSpeci
       UPLOAD_STORAGE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "Une erreur est survenue lors de l'upload du fichier",
+      },
+      FILE_TOO_LARGE: {
+        code: 'PAYLOAD_TOO_LARGE',
+        message: 'Le fichier dépasse la taille maximale autorisée',
       },
       STORE_DOCUMENT_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',

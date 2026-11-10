@@ -195,7 +195,9 @@ export function generateArchiveFolderArborescence(
   const limitsCheck = checkArchiveLimits(collectedFiles);
   if (!limitsCheck.withinLimits) {
     return failure(
-      PreuvesArchiveErrorEnum.COLLECT_PREUVES_ERROR,
+      limitsCheck.exceeded === 'fileCount'
+        ? PreuvesArchiveErrorEnum.TOO_MANY_FILES
+        : PreuvesArchiveErrorEnum.ARCHIVE_TOO_LARGE,
       new Error(toLimitsExceededMessage(limitsCheck))
     );
   }

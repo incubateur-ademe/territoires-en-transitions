@@ -47,6 +47,16 @@ export const auditPreuvesArchiveDeletableStatuses: AuditPreuvesArchiveStatus[] =
   AuditPreuvesArchiveStatusEnum.FAILED,
 ];
 
+/** Causes d'échec affichables à l'utilisateur·ice ; les autres restent `null`. */
+export const auditPreuvesArchiveErrorCodeSchema = z.enum([
+  'TOO_MANY_FILES',
+  'ARCHIVE_TOO_LARGE',
+]);
+
+export type AuditPreuvesArchiveErrorCode = z.infer<
+  typeof auditPreuvesArchiveErrorCodeSchema
+>;
+
 export const auditPreuvesArchiveTable = pgTable(
   'audit_preuves_archive',
   {
@@ -66,6 +76,7 @@ export const auditPreuvesArchiveTable = pgTable(
     processedFiles: integer('processed_files').notNull().default(0),
     storagePath: text('storage_path'),
     errorMessage: text('error_message'),
+    errorCode: text('error_code').$type<AuditPreuvesArchiveErrorCode>(),
     createdAt,
     modifiedAt,
     expiresAt: timestamp('expires_at', TIMESTAMP_OPTIONS).notNull(),

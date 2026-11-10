@@ -84,7 +84,7 @@ describe('ArchiveDetails', () => {
         onRetry={onRetry}
         state={{
           kind: 'error',
-          backendMessage: 'Le stockage est indisponible.',
+          message: 'Le stockage est indisponible.',
           retryable: true,
         }}
       />
@@ -100,7 +100,7 @@ describe('ArchiveDetails', () => {
     render(
       <ArchiveDetails
         {...baseProps}
-        state={{ kind: 'error', backendMessage: null, retryable: false }}
+        state={{ kind: 'error', message: null, retryable: false }}
       />
     );
 

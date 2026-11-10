@@ -39,6 +39,7 @@ function makeArchive(
     processedFiles: 0,
     storagePath: null,
     errorMessage: null,
+    errorCode: null,
     createdAt: '2026-05-19T00:00:00.000Z',
     modifiedAt: '2026-05-19T00:00:00.000Z',
     expiresAt: '2026-05-26T00:00:00.000Z',
@@ -50,11 +51,13 @@ function buildService({
   initialArchive = makeArchive(),
   canReadReferentiel = true,
   buildSucceeds = true,
+  buildError,
   getByIdRawSucceeds = true,
 }: {
   initialArchive?: AuditPreuvesArchive;
   canReadReferentiel?: boolean;
   buildSucceeds?: boolean;
+  buildError?: string;
   getByIdRawSucceeds?: boolean;
 } = {}): {
   service: GeneratePreuvesArchiveService;
@@ -121,7 +124,7 @@ function buildService({
       buildSucceeds
         ? success({ totalFiles: 0 })
         : failure(
-            ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
+            buildError ?? ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
             new Error('upload KO')
           )
     );
@@ -216,6 +219,24 @@ describe('GeneratePreuvesArchiveService.generate', () => {
     expect(repository.markFailed).not.toHaveBeenCalled();
     expect(repository.markCompleted).not.toHaveBeenCalled();
   });
+
+  it('échec non-retryable avec code ARCHIVE_TOO_LARGE si le stockage refuse le zip (taille max)', async () => {
+    const { service } = buildService({
+      buildSucceeds: false,
+      buildError: ArchiveAssemblyErrorEnum.ARCHIVE_TOO_LARGE,
+    });
+
+    const result = await service.generate(archiveId);
+
+    expect(result).toEqual({
+      success: false,
+      error: {
+        message: expect.stringContaining('taille maximale'),
+        retryable: false,
+        code: 'ARCHIVE_TOO_LARGE',
+      },
+    });
+  });
 });
 
 describe('GeneratePreuvesArchiveService.markFailed', () => {
@@ -224,6 +245,6 @@ describe('GeneratePreuvesArchiveService.markFailed', () => {
 
     await service.markFailed(archiveId, 'boom');
 
-    expect(repository.markFailed).toHaveBeenCalledWith(archiveId, 'boom');
+    expect(repository.markFailed).toHaveBeenCalledWith(archiveId, 'boom', null);
   });
 });

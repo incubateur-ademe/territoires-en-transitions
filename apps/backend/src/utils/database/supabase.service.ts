@@ -43,7 +43,8 @@ export default class SupabaseService {
         path: string;
         fullPath: string;
       },
-      typeof StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR
+      | typeof StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR
+      | typeof StoreDocumentErrorEnum.FILE_TOO_LARGE
     >
   > {
     const { bucket, path, file, mimeType } = args;
@@ -57,7 +58,9 @@ export default class SupabaseService {
       this.logger.error(`Error saving file in storage: ${error.message}`);
       return {
         success: false,
-        error: 'UPLOAD_STORAGE_ERROR',
+        error: isFileTooLargeError(error)
+          ? 'FILE_TOO_LARGE'
+          : 'UPLOAD_STORAGE_ERROR',
       };
     }
     return {
@@ -65,4 +68,12 @@ export default class SupabaseService {
       data: data,
     };
   }
+}
+
+// Supabase Storage renvoie 413 quand l'objet dépasse la limite de taille du projet ou du bucket.
+function isFileTooLargeError(error: Error): boolean {
+  return (
+    ('statusCode' in error && String(error.statusCode) === '413') ||
+    ('status' in error && error.status === 413)
+  );
 }

@@ -56,7 +56,7 @@ export class GetPreuvesArchiveService {
 
     const permissionResult = await this.permissions.isAllowed(
       user,
-      'referentiels.read',
+      'referentiels.read_confidentiel',
       ResourceType.REFERENTIEL,
       {
         collectiviteId: archive.collectiviteId,
