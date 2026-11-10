@@ -2,7 +2,11 @@ import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { FeatureFlagKey } from '@tet/domain/utils';
 import { PostHog } from 'posthog-node';
-import { EventTracker, TrackedEvent } from './event-tracker.interface';
+import {
+  EventTracker,
+  FeatureFlagEvaluationOptions,
+  TrackedEvent,
+} from './event-tracker.interface';
 
 @Injectable()
 export class PostHogEventTracker
@@ -49,12 +53,11 @@ export class PostHogEventTracker
   async isFeatureEnabled(
     featureFlagKey: FeatureFlagKey,
     userId: string,
-    collectiviteId?: number
+    collectiviteId?: number,
+    options: FeatureFlagEvaluationOptions = {}
   ): Promise<boolean> {
-    // Le flag de bypass diagnostic PCAET est un contournement d'exception (démonstration) :
-    // il ne doit jamais être activé par défaut en dev/test/ci, mais piloté explicitement via PostHog.
     if (
-      featureFlagKey !== 'is-demarche-pcaet-bypass-diagnostic-enabled' &&
+      !options.requireExplicitActivation &&
       (process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
         process.env.ENV_NAME === 'dev' ||

@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
+import { Result } from '@tet/backend/utils/result.type';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
 import { ImportJobStats } from '../models/import-job-stats';
 import {
@@ -79,6 +80,17 @@ export class ImportJobTelemetry {
       error,
     });
     return result;
+  }
+
+  /** Lit le document en mesurant l'étape, avec le résumé d'étape standard. */
+  async measureDocument<E extends { kind: string }>(
+    read: () => Promise<Result<ReadDocument, E>>
+  ): Promise<Result<ReadDocument, E>> {
+    return this.measure('document', read, (result) =>
+      result.success
+        ? { status: 'ok', details: { ...result.data.stats } }
+        : { status: 'failed', error: result.error.kind }
+    );
   }
 
   setDocument(

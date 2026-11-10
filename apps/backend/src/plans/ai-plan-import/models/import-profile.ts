@@ -1,18 +1,15 @@
-import { createEnumObject } from '@tet/domain/utils';
-import { z } from 'zod';
+import {
+  AiPlanImportProfileEnum,
+  aiPlanImportProfileSchema,
+  type AiPlanImportProfile,
+} from '@tet/domain/plans';
 
-export const aiPlanImportProfileValues = [
-  'generic',
-  'annexe-3-electrification',
-] as const;
-
-export const AiPlanImportProfileEnum = createEnumObject(
-  aiPlanImportProfileValues
-);
-
-export const aiPlanImportProfileSchema = z.enum(aiPlanImportProfileValues);
-
-export type AiPlanImportProfile = z.infer<typeof aiPlanImportProfileSchema>;
+export {
+  AiPlanImportProfileEnum,
+  aiPlanImportProfileSchema,
+  aiPlanImportProfileValues,
+  type AiPlanImportProfile,
+} from '@tet/domain/plans';
 
 export const GENERIC_IMPORT_CONTRACT_VERSION = 1;
 

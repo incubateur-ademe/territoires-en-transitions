@@ -35,6 +35,12 @@ import { UpsertAxeService } from './upsert-axe/upsert-axe.service';
   // elle a besoin de la même traversée récursive (tri naturel, fiches
   // supprimées écartées) sans pouvoir passer par les routes `plans`, fermées à
   // l'instructeur.
-  exports: [AxesRouter, GetAxeService, GetAxeRepository, ListAxesRepository],
+  exports: [
+    AxesRouter,
+    GetAxeService,
+    GetAxeRepository,
+    ListAxesRepository,
+    UpsertAxeRepository,
+  ],
 })
 export class AxeModule {}

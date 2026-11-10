@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
-import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { UpsertIndicateurFichesService } from '../upsert-indicateur-fiches/upsert-indicateur-fiches.service';
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { CreateIndicateurInput } from './mutate-indicateur.input';
@@ -35,13 +35,14 @@ export default class CreateIndicateurService {
       isApplicable,
       ficheId,
     }: CreateIndicateurInput,
-    user: AuthenticatedUser
+    { user, tx }: ServiceSecondArg
   ) {
     await this.permissionService.assertAllowed(
       user,
       'indicateurs.indicateurs.create',
       ResourceType.COLLECTIVITE,
-      { collectiviteId }
+      { collectiviteId },
+      tx
     );
     this.logger.log(
       `Insère un indicateur personnalisé pour la collectivité "${collectiviteId}"`
@@ -50,11 +51,13 @@ export default class CreateIndicateurService {
     const transactionResult = await this.transactionManager.executeSingle<
       number,
       unknown
-    >(async (tx) => {
+    >(async (transaction) => {
       // PostgreSQL verrouille la table avant d'exécuter un trigger
       // statement-level. L'application doit donc prendre le verrou de
       // graphe explicitement pour conserver l'ordre graphe -> tables.
-      await this.indicateurLockRepository.lockForIndicateurMutation(tx);
+      await this.indicateurLockRepository.lockForIndicateurMutation(
+        transaction
+      );
 
       const indicateurId = await this.repository.createIndicateurPerso(
         {
@@ -69,7 +72,7 @@ export default class CreateIndicateurService {
           isApplicable,
           modifiedBy: user.id,
         },
-        tx
+        transaction
       );
 
       if (ficheId !== undefined) {
@@ -79,12 +82,12 @@ export default class CreateIndicateurService {
             collectiviteId,
             ficheIds: [ficheId],
           },
-          { user, tx }
+          { user, tx: transaction }
         );
       }
 
       return success(indicateurId);
-    });
+    }, tx);
 
     if (!transactionResult.success) {
       throw transactionResult.cause ?? transactionResult.error;
