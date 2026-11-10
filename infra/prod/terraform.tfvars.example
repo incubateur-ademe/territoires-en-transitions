@@ -1,0 +1,16 @@
+# Copier en terraform.tfvars (gitignoré) et compléter.
+# Ces deux valeurs se récupèrent après l'apply de infra/platform :
+#   terraform -chdir=../platform output -raw prod_project_id
+#   terraform -chdir=../platform output -raw coolify_public_ip
+
+project_id = "00000000-0000-0000-0000-000000000000"
+coolify_public_ip   = "203.0.113.20"
+
+server_ssh_authorized_keys = [
+  "ssh-ed25519 AAAA... prenom.nom@example.org",
+]
+
+# Avant la mise en service réelle de la production, revoir au minimum :
+#   server_instance_type          — dimensionner sur la charge mesurée
+#   pg_node_type / pg_is_ha_cluster — HA à activer
+#   pg_volume_size_in_gb          — taille réelle de la base + marge
