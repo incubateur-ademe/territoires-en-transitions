@@ -66,7 +66,7 @@ export const plansLabels = {
   ficheStatut: 'Statut',
   ficheJauge: 'Avancement',
   ficheJaugeNonRenseignee: '–\u00a0%',
-  ficheJaugeInfo: "À 100 %, l'action passe automatiquement au statut Réalisé",
+  ficheJaugeInfo: "À 100 %, l'action passe automatiquement au statut",
   ficheJaugeFigeeTitre: 'Avancement figé',
   ficheJaugeFigee: {
     Abandonné:
@@ -384,6 +384,7 @@ export const plansLabels = {
   planOngletPilotage: 'Pilotage Plan',
   planOngletSuivi: 'Suivi Avancement',
   suiviPlanACeJour: 'à ce jour',
+  planFiltreSuivi: 'Suivi',
   suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à ce bloc",
   suiviPlanThematiques: 'Thématiques',
   suiviPlanReinitialiserFiltres: 'Réinitialiser les filtres',
@@ -484,4 +485,37 @@ export const plansLabels = {
     'La date de début doit précéder la date de fin.',
   evolutionStatutsErreurChargement:
     "Impossible de charger l'évolution des statuts",
+  faireAvancerLePlanTitre: 'Fiabiliser le suivi',
+  faireAvancerLePlanDescription:
+    'Certaines actions pourraient impacter négativement le suivi. Les traiter rend les chiffres ci-dessus fiables avant votre prochain COPIL.',
+  faireAvancerLePlanNonExporte: "Non inclus dans l'export",
+  faireAvancerLePlanVoirLesActions: 'Voir les actions',
+  faireAvancerLePlanRenseignerAvancement: "Renseigner l'avancement",
+  renseignerAvancementSousTitre:
+    "Actions « En cours » dont la jauge n'a jamais été renseignée",
+  renseignerAvancementMiseAJour: (date: string): string =>
+    `dernière mise à jour le ${date}`,
+  renseignerAvancementAucuneAction: 'Aucune action à renseigner.',
+  renseignerAvancementJauge: (titre: string): string =>
+    `Avancement de ${titre}`,
+  faireAvancerLePlanEnCoursSansAvancement: (count: number): string =>
+    `${
+      count > 1 ? 'actions' : 'action'
+    } « En cours » sans avancement renseigné`,
+  faireAvancerLePlanEnCoursSansAvancementInfo:
+    "Elles comptent pour 0 % dans l'avancement du plan.",
+  faireAvancerLePlanNonModifiees: (count: number): string =>
+    `${count > 1 ? 'actions' : 'action'} sans mise à jour depuis plus d'un an`,
+  faireAvancerLePlanNonModifieesInfo:
+    "Elles n'ont peut-être plus un statut ou un avancement à jour. Hors actions réalisées, abandonnées, en pause ou bloquées.",
+  faireAvancerLePlanADecider: (count: number): string =>
+    `${count > 1 ? 'actions' : 'action'} en retard, ${
+      count > 1 ? 'bloquées' : 'bloquée'
+    } ou à discuter`,
+  faireAvancerLePlanADeciderInfo:
+    'Elles attendent une décision : trancher, replanifier ou débloquer.',
+  faireAvancerLePlanSansPilote: (count: number): string =>
+    `${count > 1 ? 'actions' : 'action'} sans personne pilote`,
+  faireAvancerLePlanSansPiloteInfo:
+    "Elles n'ont pas de responsable désigné pour les faire avancer.",
 } as const;
