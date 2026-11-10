@@ -2,7 +2,7 @@ import { ReactECharts, type EChartsOption } from '@/app/ui/charts/echarts';
 import { CHART_FONT_FAMILY } from '@/app/ui/charts/echarts/constants';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { getDataColor } from '@/app/ui/charts/utils';
-import classNames from 'classnames';
+import { cn } from '@tet/ui/utils/cn';
 import ChartLegend, { ChartLegendProps } from '../ChartLegend';
 import { DonutTooltip } from './DonutTooltip';
 import { generateDonutLegendItems, getPercentage } from './utils';
@@ -32,6 +32,7 @@ export type DonutChartProps = {
   legend?: ChartLegendProps;
   /** Classname du container, permet notamment de donner la hauteur du graphe.*/
   className?: string;
+  variant?: 'pie' | 'ring';
 };
 
 const NO_DATA_COLOR = '#ccc';
@@ -46,7 +47,9 @@ const DonutChart = ({
   onClick,
   className,
   legend,
+  variant = 'pie',
 }: DonutChartProps) => {
+  const isRing = variant === 'ring';
   const hasNoData = data.every((d) => d.value === 0);
 
   const localData = data.map((d, index) => ({
@@ -83,16 +86,27 @@ const DonutChart = ({
     series: [
       {
         type: 'pie',
-        radius: ['40%', '80%'],
-        padAngle: 1,
+        radius: isRing ? ['51%', '87%'] : ['40%', '80%'],
+        padAngle: isRing ? 0 : 1,
         cursor: onClick ? 'pointer' : 'default',
-        itemStyle: { borderRadius: 4 },
-        emphasis: { scale: !hasNoData, scaleSize: 8 },
+        itemStyle: { borderRadius: isRing ? 0 : 4 },
+        emphasis: isRing
+          ? {
+              scale: !hasNoData,
+              scaleSize: 4,
+              itemStyle: {
+                shadowBlur: 6,
+                shadowOffsetY: 2,
+                shadowColor: 'rgba(0, 0, 0, 0.25)',
+              },
+            }
+          : { scale: !hasNoData, scaleSize: 8 },
         labelLayout: { hideOverlap: true },
         minShowLabelAngle: 12,
-        label: hasNoData
-          ? { show: false }
-          : displayOutsideLabel
+        label:
+          hasNoData || isRing
+            ? { show: false }
+            : displayOutsideLabel
             ? {
                 position: 'outside',
                 fontSize: 14,
@@ -121,7 +135,7 @@ const DonutChart = ({
 
   return (
     <div className="flex flex-col">
-      <div className={classNames('relative h-64', className)}>
+      <div className={cn('relative h-64', className)}>
         <ReactECharts
           option={option}
           style={{ height: '100%' }}
