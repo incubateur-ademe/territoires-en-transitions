@@ -8,8 +8,10 @@ import {
 import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-children';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
+import { getPointFaitPlafonne } from '@/app/referentiels/scores/get-point-fait-plafonne';
+import { appLabels } from '@/app/labels/catalog';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { PageHeaderStickyHeightProvider } from '@tet/ui';
+import { Alert, Button, PageHeaderStickyHeightProvider } from '@tet/ui';
 
 import {
   getReferentielIdFromActionId,
@@ -22,6 +24,9 @@ import { SubactionsListContainer } from './components.new-referentiel/subactions
 import { SubActionCardsList } from './components.old-referentiel/subaction/subaction.cards-list';
 import { useDisplaySettings } from './display-settings.context';
 import { ActionHeader } from './header/action.header';
+
+const SCORE_PLAFONNE_HELP_LINK =
+  'https://aide.territoiresentransitions.fr/fr/article/referentiel-cae-pourquoi-la-jauge-de-la-mesure-335-reste-t-elle-en-partie-non-renseigne-1xbjdv5/';
 
 export const ActionView = ({ action }: { action: ActionListItem }) => {
   const referentielId = getReferentielIdFromActionId(action.actionId);
@@ -75,6 +80,23 @@ function ActionDetailContent({
     <section className="grow my-8">
       <div className="flex flex-col gap-6 mb-8">
         <ActionPersonnalisationInfo actionId={action.actionId} />
+        {getPointFaitPlafonne(action.score) > 0 && (
+          <Alert
+            state="info"
+            title={appLabels.scorePlafonneInfo}
+            footer={
+              <Button
+                external
+                variant="link"
+                size="sm"
+                href={SCORE_PLAFONNE_HELP_LINK}
+                dataTest="referentiels.action.score-plafonne-aide-link"
+              >
+                {appLabels.scorePlafonneLienAide}
+              </Button>
+            }
+          />
+        )}
         <ActionAuditDetail action={action} />
         {(!isMesureAlternativeASousMesureUnique(action) ||
           hasExplication(action)) && (
