@@ -48,6 +48,10 @@ export default class IndicateurSourcesService {
     return indicateurSourceMetadonnees;
   }
 
+  lockIndicateurSourceMetadonnee(metadonneeId: number, tx: Transaction) {
+    return this.repository.lockMetadonnee(metadonneeId, tx);
+  }
+
   async getIndicateurSourceMetadonnee(
     sourceId: string,
     dateVersion: string,

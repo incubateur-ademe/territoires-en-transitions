@@ -4,7 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PersonneId } from '@tet/domain/collectivites';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import { UpsertAxeBaseRepository } from '../../axes/upsert-axe/upsert-axe-base.repository';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
@@ -39,6 +39,25 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
 
   protected getUpdateError(): UpsertPlanError {
     return UpsertPlanErrorEnum.UPDATE_PLAN_ERROR;
+  }
+
+  async attachIndicateurSourceMetadonnee(
+    input: { planId: number; collectiviteId: number; metadonneeId: number },
+    tx: Transaction
+  ): Promise<boolean> {
+    const [plan] = await tx
+      .update(axeTable)
+      .set({ indicateurSourceMetadonneeId: input.metadonneeId })
+      .where(
+        and(
+          eq(axeTable.id, input.planId),
+          eq(axeTable.collectiviteId, input.collectiviteId),
+          isNull(axeTable.parent),
+          isNull(axeTable.indicateurSourceMetadonneeId)
+        )
+      )
+      .returning({ id: axeTable.id });
+    return plan !== undefined;
   }
 
   async findPlanType(typeId: number, tx: Transaction) {

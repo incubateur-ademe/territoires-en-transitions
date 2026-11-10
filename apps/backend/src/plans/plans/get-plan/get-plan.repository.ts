@@ -26,6 +26,22 @@ export class GetPlanRepository {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
+  /** Verrouille la racine et son identité interne dans la transaction appelante. */
+  async lockPlan(planId: number, mode: 'share' | 'update', tx: Transaction) {
+    const [plan] = await tx
+      .select({
+        id: axeTable.id,
+        collectiviteId: axeTable.collectiviteId,
+        referenceProgramme: axeTable.referenceProgramme,
+        engagementsCodes: axeTable.engagementsCodes,
+        indicateurSourceMetadonneeId: axeTable.indicateurSourceMetadonneeId,
+      })
+      .from(axeTable)
+      .where(and(eq(axeTable.id, planId), isNull(axeTable.parent)))
+      .for(mode);
+    return plan;
+  }
+
   async getPlan(
     { planId, collectiviteId }: { planId: number; collectiviteId?: number },
     tx?: Transaction

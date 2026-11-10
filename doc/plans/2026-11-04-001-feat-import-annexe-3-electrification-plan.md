@@ -29,7 +29,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 4A — Structure explicite, liens et effets après commit : [#5774](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5774), implémentée et vérifiée, en revue. Aucun changement de schéma ; profil de production toujours fermé.
 - [x] PR 4B — Indicateurs et liens : [#5775](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5775), implémentée et vérifiée, en revue. Création, sources et liens additifs sous transaction ; aucune migration ni ouverture du profil.
 - [x] PR 4C — Valeurs sans écrasement et isolation par métadonnée : [#5778](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5778), implémentée et vérifiée, en revue. Opération interne de complétion et calculs isolés ; rattachement durable et changements de schéma en 4D.
-- [ ] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources.
+- [x] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources : [#5780](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5780), implémentée et vérifiée, en revue. Migration additive et services internes ; admission Électrification toujours fermée.
 - [ ] PR 5 — Pipeline complet et cycle de vie.
 - [ ] PR 6 — Parcours et lecture dans l'app.
 - [ ] Phase 7 — Qualification et ouverture en production.
@@ -102,19 +102,26 @@ complets, sans ouvrir l'import ni créer de données.
 
 ## Livraison dédiée avant la phase 5 — PR 4D
 
-- [ ] **Identité ADEME et sélection des engagements :** définir et livrer en 4D la
+- [x] **Identité ADEME et sélection des engagements :** définir et livrer en 4D la
   conservation des identifiants attendus pour le reporting après renommage ou
   déplacement. Une duplication ordinaire ne doit pas copier l'identité d'annexe.
   Préserver séparément la sélection de A, notamment E01/E02,
-  sans la déduire des axes créés à la demande des fiches actions. Les IDs TeT
-  identifient les objets, mais ne définissent pas leur correspondance ADEME.
-- [ ] **Isolation des cibles :** définir et livrer en 4D le rattachement durable
+  sans la déduire des axes créés à la demande des fiches actions. Cette sélection
+  initiale reste conservée après modification ou suppression des axes et fiches.
+  Les IDs TeT identifient les objets, mais ne définissent pas leur correspondance
+  ADEME.
+- [x] **Isolation des cibles :** définir et livrer en 4D le rattachement durable
   de la métadonnée de source exacte d'un plan. Les écritures, lectures et calculs
   de deux plans doivent rester
   séparés, y compris pour le même indicateur et la même période.
 
-Le schéma précis reste à définir dans cette PR : réutiliser les tables
-existantes et justifier chaque adaptation par ses écritures et lectures.
+Le schéma retenu est décrit dans l'ADR, sections 3 et 4 : huit colonnes
+nullable sur `axe` et `fiche_action`, sans nouvelle table. Les numéros d'axes,
+codes d'engagements et identités de fiches restent distincts. Le code du parent
+catalogue conserve le rattachement exact de la sous-action au moment de l'import,
+même après déplacement dans TeT ou modification du catalogue. Il n'est pas
+recalculé depuis le parent courant. La racine porte le lien unique vers sa
+métadonnée de valeurs.
 Ne pas déplacer ces données métier dans le JSON d'un job : les checkpoints
 restent des données de reprise avec leur rétention technique. La PR 4D doit
 être utilisable et vérifiée sans attendre la phase 5 ; elle précède
@@ -930,6 +937,22 @@ le comportement des saisies et imports ordinaires qui ne l'appellent pas.
 
 ### PR 4D — Références durables et rattachement des sources
 
+**Livraison 4D :** l'agrégat attribue les références uniquement aux objets
+nouvellement créés, après résolution. `GetPlanReferencesService` les relit
+selon les liens et droits actuels, y compris ceux des parents des sous-actions.
+`ManagePlanIndicateurSourceService` crée ou retrouve la métadonnée exacte,
+lit les valeurs et appelle la complétion de 4C avec une autorisation interne
+issue du rattachement verrouillé. La collectivité est dérivée du plan stocké.
+Les services restent internes ; aucune route ni admission du profil n'est ajoutée.
+
+La migration `plan_action/references_programme_sources` protège les nouvelles
+colonnes contre les écritures publiques et les RPC `SECURITY DEFINER`.
+La suppression d'un plan conserve métadonnée et valeurs ; une duplication
+ordinaire ne copie ni référence, ni sélection, ni rattachement de source.
+Le revert refuse les colonnes renseignées : un rollback applicatif garde les
+données. Si la phase 5 crée des indicateurs, elle prend le verrou exclusif du
+graphe avant les opérations de source, conformément à 4B.
+
 **Périmètre :** adaptations minimales des tables existantes d'axes, de fiches
 et de sources, contrats et services internes qui écrivent et lisent ces
 références. Réutiliser l'agrégat de 4A et les opérations de 4B/4C. Le lot ne
@@ -939,7 +962,13 @@ crée aucune nouvelle entité métier d'engagement, de cible ou de convention.
   objets TeT. Justifier chaque champ et contrainte par ses usages.
 - Conserver la sélection explicite des engagements de A, distincte des axes
   demandés par les fiches actions et des objets libres. E01/E02 partagent un axe
-  sans perdre leur distinction. Préserver la référence des oui/non convertis.
+  sans perdre leur distinction. La sélection initiale reste conservée après
+  modification ou suppression des axes et fiches. Préserver la référence des
+  oui/non convertis.
+- [x] Conserver `reference_parent_code` pour le rattachement catalogue exact au
+  moment de l'import, indépendamment du parent TeT courant et des mises à jour
+  du catalogue. Cette provenance reste utile même avec un identifiant de
+  sous-action unique ; elle ne repose pas sur les collisions des fixtures.
 - Attribuer les références aux nouveaux objets après résolution, sous la
   transaction appelante et les droits ordinaires. Les objets liés par URL
   restent inchangés. Protéger l'attribution contre les DTO publics et les

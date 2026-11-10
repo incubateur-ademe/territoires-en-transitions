@@ -507,18 +507,64 @@ renommage ou déplacement, en distinguant une action de référence, une
 sous-action et un indicateur oui/non converti. Il faut aussi conserver la
 sélection explicite de A : E01 et E02 restent distincts malgré leur axe commun,
 et les axes demandés par les fiches actions n'ajoutent aucun engagement.
+**Décision confirmée en revue le 10 novembre 2026 :**
+cette sélection initiale reste conservée même après modification ou suppression
+des axes et fiches du plan. Elle ne décrit pas son contenu courant.
 Les IDs TeT identifient les objets, mais ne constituent pas à eux seuls cette
 correspondance au catalogue ADEME.
 
-**Livraison dédiée en PR 4D :** préciser les identifiants attendus, leur
-conservation durable et les évolutions minimales des tables existantes.
-La revue porte ensemble sur le schéma, ses contrats et les écritures/lectures
-internes qui le consomment. Le lot doit fonctionner sans attendre le pipeline
-de la phase 5 et ne développe pas le reporting ADEME. Les checkpoints et
-comptes rendus ont une rétention technique ; ils ne remplacent pas cette
-identité métier, qui ne doit pas être masquée dans le JSON d'un job.
+**Décision de stockage — lot 4D, 10 novembre 2026.** Les références sont
+attribuées aux nouveaux objets par `CreatePlanAggregateService`, sous la
+transaction de création. Elles restent hors des DTO publics et des projections
+de duplication. Aucune entité d'engagement, cible ou convention n'est ajoutée.
 
-La solution devra préserver ces règles : une édition ordinaire n'attribue pas
+| Table | Champs ajoutés | Usage |
+| --- | --- | --- |
+| `axe` | `reference_programme`, `reference_code` | Programme et numéro d'axe/sous-axe issus du catalogue ; indépendants du titre et de la position. |
+| `axe` racine | `engagements_codes` | Sélection explicite de A, avec E01/E02 distincts. Une sélection vide est distincte d'un plan ordinaire sans programme. |
+| `fiche_action` | `reference_programme`, `reference_kind`, `reference_code` | Identité d'action, sous-action, indicateur oui/non converti ou fiche d'engagement E03/E12. |
+| `fiche_action` | `reference_parent_code` | Code de l'action catalogue parente au moment de l'import, conservé après déplacement dans TeT ou modification du catalogue. |
+
+Le programme métier est distinct du profil technique d'import et de la source
+d'indicateurs. Les références sont déjà résolues avant l'attribution ; les
+codes ne sont pas reconstruits depuis les titres. Une fiche liée par URL garde
+ses références existantes. Plusieurs fiches locales peuvent reprendre la même
+action catalogue. Le contrat des sous-actions conserve leur code et celui de
+l'action catalogue d'origine. Ce dernier représente leur rattachement au moment
+de l'import, indépendamment de la portée de leur identifiant.
+
+**Vérification du catalogue — 10 novembre 2026.** Le
+[Grist lié dans la spécification](https://grist.numerique.gouv.fr/o/100te/m4aC9Epwz7ot/Referentiel-dactions-feuilles-de-routes/p/86)
+contient 109 actions avec un `Numero` distinct et 58 sous-actions réparties
+sur 25 actions. La table `V1_3_Sous_actions` ne possède pas de colonne de code
+métier : elle expose un ID de ligne, une référence `Action`, un `Ordre`, un titre
+et une description. L'ordre 1 apparaît sous 25 actions ; ce n'est pas une
+identité stable. L'ID de ligne est unique dans cette table, conformément à la
+[documentation Grist](https://support.getgrist.com/references-lookups/#reverse-lookups).
+Le catalogue livré dans le code reste incomplet (`fiches.actions: null`) ; les
+codes répétés des tests sont synthétiques. Ils ne démontrent pas un besoin
+d'identification par le parent.
+
+**Décision confirmée en revue le 10 novembre 2026 :** conserver le rattachement
+catalogue exact au moment de l'import. L'alternative envisagée, un seul code de
+sous-action complété par une lecture du catalogue courant, ne préserve pas ce
+rattachement si le catalogue évolue. `reference_parent_code` est donc conservé
+pour cette provenance historique, même si la sous-action possède un identifiant
+unique dans le catalogue. Il est attribué depuis le catalogue livré lors de
+l'import, puis relu tel quel : ni un déplacement dans TeT ni une mise à jour du
+catalogue ne le recalculent. Les codes catalogue doivent conserver leur sens et
+ne pas être réattribués à d'autres éléments. Cette décision ne fige pas les
+libellés ni l'intégralité du catalogue et n'ajoute aucun accès Grist à l'import.
+
+`GetPlanReferencesService` lit les identités depuis les objets actuellement
+rattachés au plan et applique leurs droits. Une sous-action suit sa parente
+actuelle ; une parente supprimée, détachée ou non lisible exclut ses enfants.
+La purge d'un job n'a aucun effet sur ces lectures. Les contraintes SQL vérifient
+la forme des références ; un trigger interdit leur attribution par les rôles
+publics, y compris via une fonction `SECURITY DEFINER`. Les éditions ordinaires
+conservent ces champs. Aucun dashboard ni moteur de reporting n'est ajouté.
+
+La solution préserve ces règles : une édition ordinaire n'attribue pas
 de référence, une duplication ordinaire ne copie pas l'identité d'annexe et
 un élément libre n'en reçoit pas du fait de sa position. Le reporting devra
 utiliser les objets et liens actuels, sans compter les éléments supprimés ou
@@ -537,13 +583,30 @@ même indicateur, la même collectivité et la même année. Les lectures doiven
 cibler la métadonnée exacte du plan, pas seulement le nom de source ou sa
 version la plus récente.
 
-**Livraison dédiée en PR 4D :** définir et livrer le rattachement durable de
-cette métadonnée au plan, avec les adaptations minimales des tables existantes
-et les contrôles de cohérence et de droits. Le stockage précis reste à revoir
-dans cette PR. Le lot fournit la lecture de la source exacte du plan ; il
-réutilise les opérations sur indicateurs de 4B et les valeurs isolées par
-métadonnée de 4C. La rétention du job ou de son checkpoint ne doit pas
-conditionner les lectures du plan.
+**Décision de stockage — lot 4D, 10 novembre 2026.** La racine du plan porte
+`axe.indicateur_source_metadonnee_id`, nullable, unique et lié par FK à
+`indicateur_source_metadonnee`. Ce lien est indépendant des références de
+programme. Une source peut ainsi être utilisée par une racine ordinaire, sans
+attribuer implicitement des engagements. Une métadonnée appartient au plus à
+un plan ; les axes enfants ne portent pas ce lien.
+
+`ManagePlanIndicateurSourceService` crée ou retrouve la métadonnée exacte sous
+verrou de la racine. Il réutilise les services de sources de 4B et les lectures
+et complétions de 4C. Les méthodes dérivent la collectivité et la métadonnée du
+plan stocké, vérifient la source et les droits ordinaires, puis conservent les
+verrous jusqu'au commit. L'autorisation `metadataAuthorization` reste interne
+à cette transaction. Aucun identifiant fourni dans les valeurs ne remplace
+ce périmètre. La lecture verrouillée de la racine et son rattachement à une
+source utilisent les repositories de plans existants ; les accès aux
+métadonnées restent dans le domaine indicateurs. Les droits de lecture sont
+ceux de `GetPlanService`, communs aux autres lectures de plans.
+
+La suppression du plan conserve sa métadonnée et ses valeurs. La FK interdit
+de supprimer une métadonnée encore rattachée ; la collectivité d'une racine
+sourcée ne peut pas être changée. Une duplication ordinaire ne copie pas le
+lien. La migration est additive ; un rollback applicatif garde le schéma et
+les données. Le revert SQL est réservé à un schéma encore inutilisé et refuse
+d'effacer des références ou rattachements déjà renseignés.
 
 Les écritures et les calculs doivent préserver cette isolation entre plans,
 ainsi que les sources existantes. Adapter les règles de regroupement et leurs
@@ -901,14 +964,7 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    dans l'onglet "Documents".
 3. **Lauréats.** Fournir une source maintenue et son mapping vers les collectivités
    TeT, avec une version et une validité vérifiables.
-4. **Identité ADEME et engagements retenus — PR 4D.** Préciser quels identifiants
-   doivent rester exploitables après édition et livrer leur correspondance
-   durable aux objets TeT ainsi que la sélection explicite de A. Revoir le
-   schéma minimal avec ses écritures et lectures dans cette PR dédiée ; les
-   sept colonnes initialement proposées ne constituent pas une solution arrêtée.
-   Les IDs TeT seuls et les checkpoints expirables ne couvrent pas ce besoin.
-5. **Cibles par source — PR 4D.** Livrer le rattachement durable de la métadonnée
-   au plan avant la phase 5, puis vérifier les lectures par plan à partir des
-   opérations de 4B/4C et l'affichage en phase 6. Deux plans partageant un
-   indicateur ne doivent pas partager leurs cibles par défaut. Les adaptations
-   des tables existantes sont revues en 4D, sans nouvelle entité métier.
+4. **Affichage des cibles — phase 6.** Brancher la lecture de la métadonnée
+   exacte du plan, livrée en 4D, dans l'app avant ouverture. Ne pas choisir la
+   dernière métadonnée par nom de source ; deux plans peuvent partager un
+   indicateur tout en ayant des cibles distinctes.

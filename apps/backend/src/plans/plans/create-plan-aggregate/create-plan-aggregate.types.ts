@@ -1,5 +1,10 @@
 import { SecteursProposes } from '@tet/backend/plans/fiches/fiche-secteurs/secteurs-proposes';
 import { PersonneId } from '@tet/domain/collectivites';
+import {
+  AxeReference,
+  FicheReference,
+  PlanEngagements,
+} from '@tet/domain/plans';
 import { UpdateFicheInput } from '../../fiches/update-fiche/update-fiche.input';
 
 export interface CreatePlanAggregateInput {
@@ -12,6 +17,8 @@ export interface CreatePlanAggregateInput {
   dateFin?: string | null;
   pilotes?: PersonneId[];
   referents?: PersonneId[];
+  /** Sélection résolue du programme, réservée à la création d'un nouveau plan. */
+  engagements?: PlanEngagements;
   /** Clés locales à la requête, indépendantes des libellés et des IDs en base. */
   axes: AggregateAxe[];
   fiches: AggregateFiche[];
@@ -22,6 +29,7 @@ export interface AggregateAxe {
   sourceKey: string;
   parentSourceKey?: string;
   nom: string;
+  reference?: AxeReference;
 }
 
 export interface AggregateFiche {
@@ -30,6 +38,7 @@ export interface AggregateFiche {
   parentSourceKey?: string;
   fiche: Omit<UpdateFicheInput, 'id' | 'collectiviteId' | 'parentId' | 'axes'>;
   secteursProposes?: SecteursProposes;
+  reference?: FicheReference;
 }
 
 /** Une fiche existante ne reçoit qu'un lien, jamais des champs à appliquer. */

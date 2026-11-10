@@ -1,13 +1,22 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { createPlanSchema } from '../upsert-plan/upsert-plan.input';
 import {
+  PlanAggregateReferences,
+  PreparedPlanReferences,
+} from './plan-aggregate-references.rules';
+import {
   AggregateAxe,
   AggregateExistingFiche,
   AggregateFiche,
   CreatePlanAggregateInput,
 } from './create-plan-aggregate.types';
 
-type OrderedPlanStructure = Pick<CreatePlanAggregateInput, 'axes' | 'fiches'>;
+type OrderedPlanStructure = Pick<
+  CreatePlanAggregateInput,
+  'axes' | 'fiches'
+> & {
+  references: PreparedPlanReferences;
+};
 type FicheToLink = AggregateFiche | AggregateExistingFiche;
 
 /** Vérifie les identités de la requête et ordonne les parents avant leurs enfants. */
@@ -17,6 +26,8 @@ export class PlanAggregateStructure {
   ): Result<OrderedPlanStructure, string> {
     const plan = this.validatePlan(input);
     if (!plan.success) return plan;
+    const references = PlanAggregateReferences.prepare(input);
+    if (!references.success) return references;
 
     const axes = this.orderByParent(input.axes);
     if (!axes.success) return axes;
@@ -34,13 +45,26 @@ export class PlanAggregateStructure {
     );
     if (!existingFiches.success) return existingFiches;
 
-    return success({ axes: axes.data, fiches: fiches.data });
+    return success({
+      axes: axes.data,
+      fiches: fiches.data,
+      references: references.data,
+    });
   }
 
   private static validatePlan(
     input: CreatePlanAggregateInput
   ): Result<void, string> {
-    const plan = createPlanSchema.safeParse(input);
+    // Les engagements appartiennent au contrat interne, pas au DTO public du plan.
+    const plan = createPlanSchema.safeParse({
+      collectiviteId: input.collectiviteId,
+      nom: input.nom,
+      typeId: input.typeId,
+      dateDebut: input.dateDebut,
+      dateFin: input.dateFin,
+      pilotes: input.pilotes,
+      referents: input.referents,
+    });
     if (!plan.success) return failure(plan.error.issues[0].message);
     if (!input.nom.trim())
       return failure('Le nom du plan ne peut pas être vide');

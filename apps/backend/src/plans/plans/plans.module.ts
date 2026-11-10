@@ -1,3 +1,6 @@
+import { GetPlanReferencesService } from './get-plan-references/get-plan-references.service';
+import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
+import { ManagePlanIndicateurSourceService } from './manage-plan-indicateur-source/manage-plan-indicateur-source.service';
 import { electrificationLaureatsConfig } from '@tet/domain/plans';
 import { CheckElectrificationEligibilityService } from './check-electrification-eligibility/check-electrification-eligibility.service';
 import { ELECTRIFICATION_LAUREATS_CONFIG } from './check-electrification-eligibility/electrification-eligibility.constants';
@@ -53,6 +56,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
   imports: [
     forwardRef(() => CollectivitesModule),
     forwardRef(() => FichesModule),
+    forwardRef(() => IndicateursModule),
     AxeModule,
     TrackingModule,
     TransactionModule,
@@ -97,6 +101,8 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     ComputeBudgetRules,
     PlanRouter,
     CreatePlanAggregateService,
+    GetPlanReferencesService,
+    ManagePlanIndicateurSourceService,
     ImportPlanService,
     ImportExcelPlanApplicationService,
     ImportPlanRouter,
@@ -106,6 +112,8 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     VerifyPlanRouter,
   ],
   exports: [
+    GetPlanReferencesService,
+    ManagePlanIndicateurSourceService,
     CheckElectrificationEligibilityService,
     PlanRouter,
     UpsertPlanService,

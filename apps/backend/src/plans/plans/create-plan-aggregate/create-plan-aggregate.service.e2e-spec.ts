@@ -21,7 +21,13 @@ import { failure } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, inArray, or } from 'drizzle-orm';
+import { eq, inArray, or, sql } from 'drizzle-orm';
+import {
+  ElectrificationEngagementCodeEnum,
+  FicheReferenceKindEnum,
+  PlanReferenceProgrammeEnum,
+} from '@tet/domain/plans';
+import { GetPlanReferencesService } from '../get-plan-references/get-plan-references.service';
 import assert from 'node:assert';
 import {
   afterAll,
@@ -150,6 +156,417 @@ describe('Création transactionnelle de la structure du plan', () => {
   });
   afterAll(async () => {
     await app.close();
+  });
+
+  const programme = PlanReferenceProgrammeEnum.ELECTRIFICATION;
+  const selectedCodes = [
+    ElectrificationEngagementCodeEnum.SORTIE_FIOUL_LOGEMENTS_PRIVES,
+    ElectrificationEngagementCodeEnum.SORTIE_GAZ_LOGEMENTS_PRIVES,
+    ElectrificationEngagementCodeEnum.DECOMMISSIONNEMENT_RESEAU_GAZ,
+  ];
+  const referencedInput = () =>
+    input({
+      engagements: { programme, codes: selectedCodes },
+      axes: [
+        {
+          sourceKey: 'logements',
+          nom: 'Logements',
+          reference: { programme, code: '1' },
+        },
+        {
+          sourceKey: 'bornes',
+          nom: 'Bornes',
+          reference: { programme, code: '6' },
+        },
+        { sourceKey: 'libre', nom: 'Libre' },
+      ],
+      fiches: [
+        {
+          sourceKey: 'action',
+          axeSourceKey: 'logements',
+          fiche: { titre: 'Action' },
+          reference: {
+            programme,
+            kind: FicheReferenceKindEnum.ACTION,
+            code: 'ACTION_TEST',
+          },
+        },
+        {
+          sourceKey: 'sous-action',
+          parentSourceKey: 'action',
+          fiche: { titre: 'Sous-action' },
+          reference: {
+            programme,
+            kind: FicheReferenceKindEnum.SOUS_ACTION,
+            code: 'SOUS_ACTION_TEST',
+            parentCode: 'ACTION_TEST',
+          },
+        },
+        {
+          sourceKey: 'booleen',
+          parentSourceKey: 'action',
+          fiche: { titre: 'Jalon' },
+          reference: {
+            programme,
+            kind: FicheReferenceKindEnum.INDICATEUR_BOOLEEN,
+            code: 'BOOLEEN_TEST',
+          },
+        },
+        {
+          sourceKey: 'engagement',
+          fiche: { titre: 'Décommissionnement' },
+          reference: {
+            programme,
+            kind: FicheReferenceKindEnum.ENGAGEMENT,
+            code: ElectrificationEngagementCodeEnum.DECOMMISSIONNEMENT_RESEAU_GAZ,
+          },
+        },
+      ],
+    });
+  const readReferences = (planId: number) =>
+    transactions.executeSingle((tx) =>
+      app
+        .get(GetPlanReferencesService)
+        .get({ planId }, { user: context.user, tx })
+    );
+
+  test('conserve les références après édition sans déduire la sélection des axes présents', async () => {
+    const created = await create(referencedInput());
+    assert(
+      created.success,
+      created.success ? undefined : created.cause?.message ?? created.error
+    );
+    const {
+      planId,
+      axeIdsBySourceKey: axes,
+      ficheIdsBySourceKey: fiches,
+    } = created.data;
+    const before = await readReferences(planId);
+    assert(before.success);
+    expect(before.data.engagements).toEqual({
+      programme,
+      codes: selectedCodes,
+    });
+    expect(before.data.axes).toHaveLength(2);
+    expect(before.data.fiches).toHaveLength(4);
+    expect((await loadAxe(getId(axes, 'libre'))).referenceCode).toBeNull();
+    await context.caller.plans.axes.update({
+      id: getId(axes, 'logements'),
+      collectiviteId: context.collectiviteId,
+      planId,
+      parent: getId(axes, 'libre'),
+      nom: 'Titre changé',
+    });
+    await context.caller.plans.fiches.update({
+      ficheId: getId(fiches, 'action'),
+      ficheFields: {
+        titre: 'Action renommée',
+        axes: [{ id: getId(axes, 'bornes') }],
+      },
+      isNotificationEnabled: false,
+    });
+    const edited = await readReferences(planId);
+    assert(edited.success);
+    expect(edited.data.engagements).toEqual(before.data.engagements);
+    expect(edited.data.axes).toHaveLength(before.data.axes.length);
+    expect(edited.data.axes).toEqual(expect.arrayContaining(before.data.axes));
+    expect(edited.data.fiches).toHaveLength(before.data.fiches.length);
+    expect(edited.data.fiches).toEqual(
+      expect.arrayContaining(before.data.fiches)
+    );
+    // Les sous-actions suivent leur parent, même sans lien d'axe propre.
+    await db.db
+      .delete(ficheActionAxeTable)
+      .where(eq(ficheActionAxeTable.ficheId, getId(fiches, 'sous-action')));
+    const withoutChildLink = await readReferences(planId);
+    assert(withoutChildLink.success);
+    expect(
+      withoutChildLink.data.fiches.map(({ ficheId }) => ficheId)
+    ).toContain(getId(fiches, 'sous-action'));
+    // Un lien propre résiduel ne doit pas retenir l'enfant si son parent est détaché.
+    await db.db
+      .insert(ficheActionAxeTable)
+      .values({
+        ficheId: getId(fiches, 'sous-action'),
+        axeId: planId,
+        createdBy: context.user.id,
+      });
+    await db.db
+      .update(ficheActionTable)
+      .set({ deleted: true })
+      .where(eq(ficheActionTable.id, getId(fiches, 'booleen')));
+    const after = await readReferences(planId);
+    assert(after.success);
+    expect(after.data.fiches.map(({ ficheId }) => ficheId)).not.toContain(
+      getId(fiches, 'booleen')
+    );
+    await db.db
+      .delete(ficheActionAxeTable)
+      .where(eq(ficheActionAxeTable.ficheId, getId(fiches, 'action')));
+    const detached = await readReferences(planId);
+    assert(detached.success);
+    expect(detached.data.fiches.map(({ ficheId }) => ficheId)).not.toContain(
+      getId(fiches, 'action')
+    );
+    expect(detached.data.fiches.map(({ ficheId }) => ficheId)).not.toContain(
+      getId(fiches, 'sous-action')
+    );
+  });
+
+  test('masque les références des enfants quand leur parent est restreint', async () => {
+    const created = await create(referencedInput());
+    assert(created.success);
+    const other = await createContext();
+    await db.db
+      .update(ficheActionTable)
+      .set({ restreint: true })
+      .where(
+        eq(
+          ficheActionTable.id,
+          getId(created.data.ficheIdsBySourceKey, 'action')
+        )
+      );
+    const result = await transactions.executeSingle((tx) =>
+      app
+        .get(GetPlanReferencesService)
+        .get({ planId: created.data.planId }, { user: other.user, tx })
+    );
+    assert(result.success);
+    expect(result.data.fiches.map(({ ficheId }) => ficheId)).toEqual([
+      getId(created.data.ficheIdsBySourceKey, 'engagement'),
+    ]);
+  });
+
+  test('conserve le parent catalogue des sous-actions après déplacement et autorise plusieurs fiches de même action', async () => {
+    const request = referencedInput();
+    request.fiches.push(
+      {
+        sourceKey: 'autre-parent',
+        fiche: { titre: 'Autre action' },
+        reference: {
+          programme,
+          kind: FicheReferenceKindEnum.ACTION,
+          code: 'AUTRE_ACTION',
+        },
+      },
+      {
+        sourceKey: 'autre-enfant',
+        parentSourceKey: 'autre-parent',
+        fiche: { titre: 'Même code local' },
+        reference: {
+          programme,
+          kind: FicheReferenceKindEnum.SOUS_ACTION,
+          code: 'SOUS_ACTION_TEST',
+          parentCode: 'AUTRE_ACTION',
+        },
+      },
+      {
+        sourceKey: 'action-repetee',
+        fiche: { titre: 'Autre mise en œuvre' },
+        reference: {
+          programme,
+          kind: FicheReferenceKindEnum.ACTION,
+          code: 'ACTION_TEST',
+        },
+      }
+    );
+    const result = await create(request);
+    assert(
+      result.success,
+      result.success ? undefined : result.cause?.message ?? result.error
+    );
+    const childId = getId(result.data.ficheIdsBySourceKey, 'sous-action');
+    const otherChildId = getId(result.data.ficheIdsBySourceKey, 'autre-enfant');
+    await db.db
+      .update(ficheActionTable)
+      .set({ parentId: getId(result.data.ficheIdsBySourceKey, 'autre-parent') })
+      .where(eq(ficheActionTable.id, childId));
+    const references = await readReferences(result.data.planId);
+    assert(references.success);
+    expect(references.data.fiches).toEqual(
+      expect.arrayContaining([
+        {
+          ficheId: childId,
+          reference: {
+            programme,
+            kind: FicheReferenceKindEnum.SOUS_ACTION,
+            code: 'SOUS_ACTION_TEST',
+            parentCode: 'ACTION_TEST',
+          },
+        },
+        {
+          ficheId: otherChildId,
+          reference: {
+            programme,
+            kind: FicheReferenceKindEnum.SOUS_ACTION,
+            code: 'SOUS_ACTION_TEST',
+            parentCode: 'AUTRE_ACTION',
+          },
+        },
+      ])
+    );
+    expect(
+      references.data.fiches.filter(
+        ({ reference }) =>
+          reference.kind === FicheReferenceKindEnum.ACTION &&
+          reference.code === 'ACTION_TEST'
+      )
+    ).toHaveLength(2);
+  });
+
+  test('une duplication ordinaire ne copie ni sélection ni références', async () => {
+    const created = await create(referencedInput());
+    assert(
+      created.success,
+      created.success ? undefined : created.cause?.message ?? created.error
+    );
+    const duplicate = await context.caller.plans.plans.duplicate({
+      planId: created.data.planId,
+      nom: 'Copie',
+    });
+    expect(await readReferences(duplicate.planId)).toMatchObject({
+      success: true,
+      data: { engagements: null, axes: [], fiches: [] },
+    });
+    expect((await readReferences(created.data.planId)).success).toBe(true);
+  });
+
+  test('annule structure et références avec la transaction appelante', async () => {
+    const result = await transactions.executeSingle(async (tx) => {
+      const created = await service.create(referencedInput(), {
+        user: context.user,
+        tx,
+      });
+      assert(
+        created.success,
+        created.success ? undefined : created.cause?.message ?? created.error
+      );
+      const refs = await app
+        .get(GetPlanReferencesService)
+        .get({ planId: created.data.planId }, { user: context.user, tx });
+      expect(refs).toMatchObject({
+        success: true,
+        data: { engagements: { codes: selectedCodes } },
+      });
+      return failure('ROLLBACK_TEST');
+    });
+    expect(result).toMatchObject({ success: false, error: 'ROLLBACK_TEST' });
+    expect(
+      await db.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.collectiviteId, context.collectiviteId))
+    ).toEqual([]);
+    expect(
+      await db.db
+        .select()
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.collectiviteId, context.collectiviteId))
+    ).toEqual([]);
+  });
+
+  test('refuse l’attribution par les routes publiques sans modifier les références', async () => {
+    const created = await create(referencedInput());
+    assert(
+      created.success,
+      created.success ? undefined : created.cause?.message ?? created.error
+    );
+    const before = await readReferences(created.data.planId);
+    await expect(
+      context.caller.plans.plans.update({
+        id: created.data.planId,
+        collectiviteId: context.collectiviteId,
+        engagementsCodes: [] as never,
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    await expect(
+      context.caller.plans.axes.update({
+        id: getId(created.data.axeIdsBySourceKey, 'logements'),
+        collectiviteId: context.collectiviteId,
+        referenceCode: 'autre' as never,
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    await expect(
+      context.caller.plans.fiches.update({
+        ficheId: getId(created.data.ficheIdsBySourceKey, 'action'),
+        ficheFields: { referenceCode: 'autre' as never },
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    expect(await readReferences(created.data.planId)).toEqual(before);
+  });
+
+  test('refuse une attribution SQL authentifiée et conserve les éditions ordinaires', async () => {
+    const created = await create(referencedInput());
+    assert(
+      created.success,
+      created.success ? undefined : created.cause?.message ?? created.error
+    );
+    const planId = created.data.planId;
+    const asUser = async (
+      tx: Parameters<Parameters<typeof db.db.transaction>[0]>[0]
+    ) => {
+      await tx.execute(
+        sql`SELECT set_config('request.jwt.claims', ${JSON.stringify({
+          sub: context.user.id,
+          role: 'authenticated',
+        })}, true)`
+      );
+      await tx.execute(sql`SET LOCAL ROLE authenticated`);
+    };
+    await db.db.transaction(async (tx) => {
+      await asUser(tx);
+      await tx
+        .update(axeTable)
+        .set({ nom: 'Titre SQL' })
+        .where(eq(axeTable.id, planId));
+    });
+    expect((await loadAxe(planId)).nom).toBe('Titre SQL');
+    await expect(
+      db.db.transaction(async (tx) => {
+        await asUser(tx);
+        await tx
+          .update(axeTable)
+          .set({ engagementsCodes: [] })
+          .where(eq(axeTable.id, planId));
+      })
+    ).rejects.toThrow();
+    expect((await loadAxe(planId)).engagementsCodes).toEqual(selectedCodes);
+    await expect(
+      db.db.transaction(async (tx) => {
+        await tx.execute(sql`
+        CREATE FUNCTION pg_temp.attempt_plan_reference(target_id integer)
+        RETURNS void LANGUAGE sql SECURITY DEFINER SET search_path = pg_catalog AS
+        'UPDATE public.axe SET engagements_codes = ARRAY[''FORGED''] WHERE id = target_id';
+      `);
+        await asUser(tx);
+        await tx.execute(sql`SELECT pg_temp.attempt_plan_reference(${planId})`);
+      })
+    ).rejects.toMatchObject({
+      cause: {
+        code: '42501',
+        message:
+          "L'attribution des références et sources est réservée aux services internes",
+      },
+    });
+
+    await expect(
+      db.db.transaction(async (tx) => {
+        await asUser(tx);
+        await tx
+          .update(ficheActionTable)
+          .set({ referenceCode: 'FORGED' })
+          .where(
+            eq(
+              ficheActionTable.id,
+              getId(created.data.ficheIdsBySourceKey, 'action')
+            )
+          );
+      })
+    ).rejects.toThrow();
+    expect(
+      (await loadFiche(getId(created.data.ficheIdsBySourceKey, 'action')))
+        .referenceCode
+    ).toBe('ACTION_TEST');
   });
 
   test('crée les axes vides et les homonymes avec leurs parents identifiés par clé', async () => {
@@ -446,7 +863,10 @@ describe('Création transactionnelle de la structure du plan', () => {
         }),
         { user: context.user, tx }
       );
-      assert(created.success);
+      assert(
+        created.success,
+        created.success ? undefined : created.cause?.message ?? created.error
+      );
       return failure('rollback demandé par le propriétaire');
     });
     expect(result.success).toBe(false);

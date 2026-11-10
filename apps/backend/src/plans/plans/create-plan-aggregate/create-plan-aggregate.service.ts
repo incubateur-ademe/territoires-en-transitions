@@ -12,12 +12,16 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { isFailedResult } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
+import { eq } from 'drizzle-orm';
+import { axeTable } from '../../fiches/shared/models/axe.table';
+import { ficheActionTable } from '../../fiches/shared/models/fiche-action.table';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
 import { PlanError, PlanErrorType } from '../plans.errors';
 import { UpsertPlanError } from '../upsert-plan/upsert-plan.errors';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
 import { PlanAggregateStructure } from './create-plan-aggregate.rules';
+import { PreparedPlanReferences } from './plan-aggregate-references.rules';
 import {
   AggregateAxe,
   AggregateFiche,
@@ -144,6 +148,8 @@ export class CreatePlanAggregateService {
         context.ficheIdsBySourceKey.set(fiche.sourceKey, fiche.ficheId);
       }
 
+      await this.saveCreatedReferences(structure.data.references, context);
+
       return success({
         planId: context.planId,
         axeIdsBySourceKey: context.axeIdsBySourceKey,
@@ -252,5 +258,44 @@ export class CreatePlanAggregateService {
     // La validation et l'ordre de création garantissent cette correspondance.
     if (axeId === undefined) throw new Error(`Axe non créé : ${sourceKey}`);
     return axeId;
+  }
+
+  private async saveCreatedReferences(
+    references: PreparedPlanReferences,
+    context: CreationContext
+  ): Promise<void> {
+    const { tx } = context;
+    if (references.engagements) {
+      await tx
+        .update(axeTable)
+        .set({
+          referenceProgramme: references.engagements.programme,
+          engagementsCodes: references.engagements.codes,
+        })
+        .where(eq(axeTable.id, context.planId));
+    }
+    for (const { sourceKey, reference } of references.axes) {
+      await tx
+        .update(axeTable)
+        .set({
+          referenceProgramme: reference.programme,
+          referenceCode: reference.code,
+        })
+        .where(eq(axeTable.id, this.resolveAxeId(sourceKey, context)));
+    }
+    for (const { sourceKey, reference } of references.fiches) {
+      const ficheId = context.ficheIdsBySourceKey.get(sourceKey);
+      if (ficheId === undefined)
+        throw new Error(`Fiche non créée : ${sourceKey}`);
+      await tx
+        .update(ficheActionTable)
+        .set({
+          referenceProgramme: reference.programme,
+          referenceCode: reference.code,
+          referenceKind: reference.kind,
+          referenceParentCode: reference.parentCode ?? null,
+        })
+        .where(eq(ficheActionTable.id, ficheId));
+    }
   }
 }
