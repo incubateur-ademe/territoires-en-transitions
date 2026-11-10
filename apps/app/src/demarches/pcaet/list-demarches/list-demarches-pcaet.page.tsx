@@ -14,7 +14,11 @@ import {
   demarchePcaetStatusValues,
   isDemarchePcaetEnCours,
 } from '@tet/domain/demarches';
-import { Button } from '@tet/ui';
+import {
+  useDemarcheTracker,
+  useTrackDemarcheView,
+} from '@/app/demarches/use-demarche-tracker';
+import { Button, Event } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { DemarchePcaetActionsButton } from './demarche-pcaet-actions.button';
@@ -49,6 +53,19 @@ export const ListDemarchesPcaetPage = () => {
     collectiviteId,
   });
   const isEmpty = demarches?.length === 0;
+
+  const track = useDemarcheTracker(null);
+  useTrackDemarcheView(Event.demarches.pcaet.listeVue, {
+    key: String(collectiviteId),
+    enabled: !!demarches && demarches.length > 0,
+    properties: {
+      nbDemarches: demarches?.length,
+      statuts: [...new Set(demarches?.map(({ status }) => status))].sort(),
+      aDemarcheEnCours: demarches?.some(({ status }) =>
+        isDemarchePcaetEnCours(status)
+      ),
+    },
+  });
 
   // Sans démarche, la liste n'a rien à montrer : on va droit à la création.
   useEffect(() => {
@@ -93,7 +110,10 @@ export const ListDemarchesPcaetPage = () => {
               ? appLabels.demarcheListeCreationBloquee(PCAET_TYPE)
               : undefined
           }
-          onClick={() => router.push(creationUrl)}
+          onClick={() => {
+            track(Event.demarches.pcaet.creerClic, { origine: 'liste' });
+            router.push(creationUrl);
+          }}
         >
           {appLabels.demarcheListeCommencerDepot}
         </Button>

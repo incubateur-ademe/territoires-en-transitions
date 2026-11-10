@@ -6,7 +6,16 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
-import { Badge, cn, EmptyCard, PageHeader, Pagination } from '@tet/ui';
+import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
+import {
+  Badge,
+  cn,
+  EmptyCard,
+  Event,
+  PageHeader,
+  Pagination,
+  useEventTracker,
+} from '@tet/ui';
 import { useListDossiersInstruction } from './data/use-list-dossiers-instruction';
 import { DossiersInstructionTable } from './dossiers-instruction.table';
 
@@ -48,6 +57,27 @@ export const DossiersInstructionPage = ({
   const deposeAvis = typeDuService
     ? peutDeposerAvisInstructeur(typeDuService)
     : false;
+
+  const tracker = useEventTracker();
+  useTrackDemarcheView(Event.demarches.pcaet.instructionListeVue, {
+    acteur: 'instructeur',
+    key: String(serviceId),
+    enabled: !!data,
+    properties: {
+      instructeurType: typeDuService,
+      deposeAvis,
+      nbDossiers: data?.totalPerimetre,
+      nbEnInstruction: data?.countByStatut.en_instruction,
+    },
+  });
+  const setFiltresTracked: typeof setFiltres = (nouveauxFiltres) => {
+    tracker(Event.demarches.pcaet.instructionFiltre, {
+      acteur: 'instructeur',
+      instructeurType: typeDuService,
+      filtres: Object.keys(nouveauxFiltres).sort(),
+    });
+    return setFiltres(nouveauxFiltres);
+  };
 
   const afficherRegion = (data?.perimetreRegions.length ?? 0) > 1;
   const afficherDepartement = (data?.perimetreDepartements.length ?? 0) > 1;
@@ -125,7 +155,7 @@ export const DossiersInstructionPage = ({
               departementsOptions={data.perimetreDepartements}
               filtres={filtres}
               nbFiltresActifs={nbFiltresActifs}
-              setFiltres={setFiltres}
+              setFiltres={setFiltresTracked}
               sort={sort}
               direction={direction}
               trierPar={trierPar}

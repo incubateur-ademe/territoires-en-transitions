@@ -16,6 +16,10 @@ import type { AddDocumentFollowUpChoice } from '@/app/collectivites/documents/ad
 import { useDemarchePcaetAvisRecus } from '@/app/demarches/pcaet/data/use-avis-recus';
 import { useDemarchePcaetDocuments } from '@/app/demarches/pcaet/data/use-documents';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
+import {
+  toDemarcheTrackingSubject,
+  useDemarcheTracker,
+} from '@/app/demarches/use-demarche-tracker';
 import { appLabels } from '@/app/labels/catalog';
 import { useDownloadDocument } from '@/app/collectivites/documents/data/use-download-document';
 import { isAiImportAcceptedFilename } from '@/app/plans/plans/import-plan/ai-import.form';
@@ -32,7 +36,7 @@ import {
   DemarchePcaetStatusEnum,
   isPublieDemarchePcaetStatus,
 } from '@tet/domain/demarches';
-import { AutosaveBadge, EmptyCard } from '@tet/ui';
+import { AutosaveBadge, EmptyCard, Event } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { ComponentProps } from 'react';
 
@@ -86,6 +90,9 @@ export const DemarchePcaetDocumentsPage = () => {
   });
 
   const { mutate: downloadDocument } = useDownloadDocument();
+  const track = useDemarcheTracker(
+    demarche ? toDemarcheTrackingSubject(demarche) : null
+  );
   const programmeFichier = useGetProgrammeActionsFichier(demarcheId);
 
   const {
@@ -129,10 +136,16 @@ export const DemarchePcaetDocumentsPage = () => {
   const montreLesAvisRecus =
     montreLesAvis || (enInstruction && avisRecus.length > 0);
 
-  const downloadDemarcheDocument = ({
-    fichier,
-  }: DemarcheDocumentDepose | DemarcheDocumentAdditional): void => {
+  const downloadDemarcheDocument = (
+    document: DemarcheDocumentDepose | DemarcheDocumentAdditional
+  ): void => {
+    const { fichier } = document;
     if (fichier) {
+      track(Event.demarches.pcaet.documentTelecharge, {
+        documentId: 'documentId' in document ? document.documentId : null,
+        etape: document.etape,
+        additionnel: !('documentId' in document),
+      });
       downloadDocument({ collectiviteId, fichierId: fichier.id });
     }
   };
@@ -151,6 +164,14 @@ export const DemarchePcaetDocumentsPage = () => {
   ) =>
     addDocument(documentId, fichierId, etape, {
       onSuccess: () => {
+        if (
+          documentId === PROGRAMME_ACTIONS_DOCUMENT_ID &&
+          canCreatePlanFromProgramme
+        ) {
+          track(Event.demarches.pcaet.importProgrammeChoix, {
+            choix: choice?.followUp ? 'creer_au_depot' : 'sans_import',
+          });
+        }
         if (
           documentId === PROGRAMME_ACTIONS_DOCUMENT_ID &&
           choice?.followUp &&

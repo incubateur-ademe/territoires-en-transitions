@@ -8,7 +8,7 @@ import { AiImportFlow } from '@/app/plans/plans/import-plan/ai-import.flow';
 import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
 import { useGetPlan } from '@/app/plans/plans/show-plan/data/use-get-plan';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Alert, Button, Modal } from '@tet/ui';
+import { Alert, Button, Event, Modal, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { countBy } from 'es-toolkit';
 import { useState } from 'react';
@@ -91,6 +91,7 @@ export const DemarcheImportPlanModal = ({
   onImportStarted,
 }: Props) => {
   const demarcheId = useDemarcheId();
+  const tracker = useEventTracker();
   const [step, setStep] = useState<ModalStep>('form');
   const [createdPlanId, setCreatedPlanId] = useState<number | null>(null);
 
@@ -151,7 +152,13 @@ export const DemarcheImportPlanModal = ({
                 <div className="flex justify-end">
                   <Button
                     variant="outlined"
-                    onClick={close}
+                    onClick={() => {
+                      tracker(Event.plans.importIa.arrierePlan, {
+                        origine: 'modale_demarche',
+                        demarcheId,
+                      });
+                      close();
+                    }}
                     dataTest="demarches.plan.import-arriere-plan"
                   >
                     {appLabels.demarcheProgrammeContinuerArrierePlan}

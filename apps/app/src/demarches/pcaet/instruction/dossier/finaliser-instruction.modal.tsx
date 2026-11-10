@@ -12,8 +12,16 @@ import {
   type PcaetAvisAuTitreDe,
 } from '@tet/domain/demarches';
 import type { DocumentHash } from '@tet/domain/collectivites';
-import { Alert, Button, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { useEffect, useRef, useState } from 'react';
+import {
+  Alert,
+  Button,
+  Event,
+  Input,
+  Modal,
+  ModalFooterOKCancel,
+  useEventTracker,
+} from '@tet/ui';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useUploadAvisFile } from './data/use-upload-avis-file';
 import { useUpsertAvis } from './data/use-upsert-avis';
 import { useValiderAvis } from './data/use-valider-avis';
@@ -54,6 +62,18 @@ export const FinaliserInstructionModal = ({
   // par valider l'avis dans le dos de l'instructeur qui y a renoncé.
   const abandonnerDepot = () => depotAbortRef.current?.abort();
   useEffect(() => abandonnerDepot, []);
+
+  const tracker = useEventTracker();
+  const trackModale = (etat: string, properties?: Record<string, unknown>) =>
+    tracker(Event.demarches.pcaet.finaliserModale, {
+      acteur: 'instructeur',
+      etat,
+      auTitreDe,
+      demandeAvisId,
+      ...properties,
+    });
+  const onOpened = useEffectEvent(() => trackModale('ouverte'));
+  useEffect(() => onOpened(), []);
 
   const uploadAvisFile = useUploadAvisFile();
   const upsertAvis = useUpsertAvis();
@@ -113,9 +133,11 @@ export const FinaliserInstructionModal = ({
         demandeAvisId,
         avisId: avisDepose.id,
       });
+      trackModale('confirmee', { nbPieces: hashes.length });
       setEtape('confirmation');
     } catch {
       if (controller.signal.aborted) return;
+      trackModale('erreur');
       setErreurDepot(true);
     } finally {
       if (depotAbortRef.current === controller) {
@@ -132,6 +154,7 @@ export const FinaliserInstructionModal = ({
         isOpen: true,
         setIsOpen: (isOpen) => {
           if (isOpen) return;
+          if (etape !== 'confirmation') trackModale('annulee');
           abandonnerDepot();
           onClose();
         },

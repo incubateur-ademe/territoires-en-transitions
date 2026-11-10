@@ -10,6 +10,8 @@ import {
   type DemarcheDocumentDepose,
   type DemarcheDocumentEtape,
 } from '@tet/domain/demarches';
+import { useDemarcheTracker } from '@/app/demarches/use-demarche-tracker';
+import { Event } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
 import { demarchePcaetAutosaveKeys } from './autosave-keys';
 
@@ -82,10 +84,21 @@ export const useDemarchePcaetDocuments = (demarcheId: number) => {
     demarchePcaetAutosaveKeys.documents(demarcheId)
   );
 
+  const track = useDemarcheTracker({ id: demarcheId });
   const { mutate: addDocument } = useMutation(
     trpc.demarches.pcaet.documents.add.mutationOptions({
       meta: { error: appLabels.demarcheDocumentsDeposeErreur, ...autosave },
       onSuccess: invalidate,
+      // Un dépôt refusé par le serveur (format, fichier introuvable…) : le
+      // code seul, jamais le nom du fichier.
+      onError: (error, { documentId, etape }) =>
+        track(Event.demarches.pcaet.documentDepotErreur, {
+          documentId,
+          etape,
+          raison:
+            (error as { data?: { errorKey?: string } }).data?.errorKey ??
+            'inconnue',
+        }),
     })
   );
 

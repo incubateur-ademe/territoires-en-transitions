@@ -7,7 +7,8 @@ import {
 } from '../data/use-download-demarche-document';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import type { PcaetAvisAuTitreDe } from '@tet/domain/demarches';
-import { Button, cn } from '@tet/ui';
+import { Button, cn, Event, useEventTracker } from '@tet/ui';
+import { usePathname } from 'next/navigation';
 
 /**
  * Un avis, tel que cette liste a besoin de le connaître.
@@ -125,6 +126,9 @@ const TelechargerAvisButton = ({
 }) => {
   const { mutate: downloadAvisRapport } = useDownloadAvisRapport();
   const archiveDownload = useDownloadAvisPieces(avis);
+  const tracker = useEventTracker();
+  // La liste sert aux deux côtés : la route dit qui télécharge.
+  const isInstruction = usePathname().includes('/instruction/');
 
   return (
     <Button
@@ -136,6 +140,13 @@ const TelechargerAvisButton = ({
       dataTest={`demarches.pcaet.avis-telecharger-${auTitreDe}`}
       aria-label={appLabels.instructionDossierAvisTelechargerAria({ titre })}
       onClick={() => {
+        tracker(Event.demarches.pcaet.avisTelecharge, {
+          acteur: isInstruction ? 'instructeur' : 'collectivite',
+          auTitreDe,
+          nbPieces: nombrePieces,
+          format: nombrePieces === 1 ? 'piece' : 'archive',
+          demandeAvisId: avis.demandeAvisId,
+        });
         if (nombrePieces === 1) {
           downloadAvisRapport(avis);
         } else if (archiveDownload.status === 'idle') {

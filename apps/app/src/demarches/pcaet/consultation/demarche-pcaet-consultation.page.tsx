@@ -19,7 +19,11 @@ import {
   type DemarcheDocumentAdditional,
   type DemarcheDocumentDepose,
 } from '@tet/domain/demarches';
-import { ButtonGroup } from '@tet/ui';
+import {
+  useDemarcheTracker,
+  useTrackDemarcheView,
+} from '@/app/demarches/use-demarche-tracker';
+import { ButtonGroup, Event } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { ComponentProps, useMemo } from 'react';
@@ -57,6 +61,25 @@ export const DemarchePcaetConsultationPage = ({
     'etape',
     parseAsStringLiteral(DEMARCHE_SECTION_KEYS).withDefault('diagnostic')
   );
+  const trackingSubject = data && {
+    id: data.demarche.id,
+    status: data.demarche.status,
+    obligation: data.demarche.obligation,
+    transmittedOffPlatform: data.demarche.transmittedOffPlatform,
+  };
+  useTrackDemarcheView(Event.demarches.pcaet.publicDossierVu, {
+    subject: trackingSubject,
+    acteur: 'public',
+    key: String(demarcheId),
+    enabled: !!data,
+  });
+  useTrackDemarcheView(Event.demarches.pcaet.publicEtapeVue, {
+    subject: trackingSubject,
+    acteur: 'public',
+    key: `${demarcheId}:${etape}`,
+    enabled: !!data,
+    properties: { etape },
+  });
 
   if (isLoading) {
     return (
@@ -159,15 +182,30 @@ const DocumentsSection = ({
   consultation: DemarchePcaetConsultation;
 }) => {
   const { mutate: downloadDocument } = useDownloadDocument();
+  const track = useDemarcheTracker(
+    {
+      id: demarche.id,
+      status: demarche.status,
+      obligation: demarche.obligation,
+      transmittedOffPlatform: demarche.transmittedOffPlatform,
+    },
+    'public'
+  );
   const coverage = useMemo(
     () => computeDemarcheDocumentsCoverage(documents),
     [documents]
   );
 
-  const download = ({
-    fichier,
-  }: DemarcheDocumentDepose | DemarcheDocumentAdditional) => {
+  const download = (
+    document: DemarcheDocumentDepose | DemarcheDocumentAdditional
+  ) => {
+    const { fichier } = document;
     if (fichier) {
+      track(Event.demarches.pcaet.documentTelecharge, {
+        documentId: 'documentId' in document ? document.documentId : null,
+        etape: document.etape,
+        additionnel: !('documentId' in document),
+      });
       downloadDocument({
         collectiviteId: demarche.collectiviteId,
         fichierId: fichier.id,

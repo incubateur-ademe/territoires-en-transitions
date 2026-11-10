@@ -9,6 +9,10 @@ import {
   DEMARCHE_PCAET_TRANSITION_ACTIONS,
   type DemarchePcaetMenuTransition,
 } from '@/app/demarches/pcaet/constants';
+import {
+  useDemarcheTracker,
+  useTrackedModal,
+} from '@/app/demarches/use-demarche-tracker';
 import { appLabels } from '@/app/labels/catalog';
 import { RouterOutput, useTRPC } from '@tet/api';
 import { canDeleteDemarchePcaet } from '@tet/domain/demarches';
@@ -18,6 +22,7 @@ import {
   Button,
   MenuAction,
   Modal,
+  Event,
   ModalFooterOKCancel,
   SplitButton,
 } from '@tet/ui';
@@ -52,6 +57,13 @@ export const DemarchePcaetActionsButton = ({
     demarcheId: demarche.id,
   };
 
+  const track = useDemarcheTracker(demarche);
+  const publierModale = useTrackedModal(
+    Event.demarches.pcaet.publierModale,
+    track,
+    { origine: 'liste' }
+  );
+
   /** L'entrée n'apparaît que si le serveur a armé la transition. */
   const transitionAction = (
     transition: DemarchePcaetMenuTransition,
@@ -63,13 +75,22 @@ export const DemarchePcaetActionsButton = ({
 
   const menuActions: MenuAction[] = [
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
-    ...transitionAction('publier', () => setIsPublicationOuverte(true)),
+    ...transitionAction('publier', () => {
+      publierModale.onOpen();
+      setIsPublicationOuverte(true);
+    }),
     ...(canDeleteDemarchePcaet(demarche)
       ? [
           {
             label: appLabels.demarcheActionSupprimer,
             icon: 'delete-bin-line',
-            onClick: () => setIsDeleteModalOpen(true),
+            onClick: () => {
+              track(Event.demarches.pcaet.listeAction, {
+                action: 'supprimer',
+                etat: 'ouverte',
+              });
+              setIsDeleteModalOpen(true);
+            },
           },
         ]
       : []),
@@ -94,8 +115,14 @@ export const DemarchePcaetActionsButton = ({
       {isPublicationOuverte && (
         <PublierDepotFinalModal
           demarcheType={demarche.type}
-          onConfirm={(dateAdoption) => publier.mutate({ ...ids, dateAdoption })}
-          onClose={() => setIsPublicationOuverte(false)}
+          onConfirm={(dateAdoption) => {
+            publierModale.onConfirm();
+            publier.mutate({ ...ids, dateAdoption });
+          }}
+          onClose={() => {
+            publierModale.onClose();
+            setIsPublicationOuverte(false);
+          }}
         />
       )}
       {isDeleteModalOpen && (
@@ -121,6 +148,10 @@ export const DemarchePcaetActionsButton = ({
               btnOKProps={{
                 children: appLabels.confirmer,
                 onClick: () => {
+                  track(Event.demarches.pcaet.listeAction, {
+                    action: 'supprimer',
+                    etat: 'confirmee',
+                  });
                   deleteDemarche({
                     collectiviteId: demarche.collectiviteId,
                     demarcheId: demarche.id,

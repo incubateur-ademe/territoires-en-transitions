@@ -9,6 +9,8 @@ import { DemarcheImportPlanModal } from '@/app/demarches/components/import-plan.
 import { DemarcheRequestPlanImportModal } from '@/app/demarches/components/request-plan-import.modal';
 import { useImportProgramme } from '@/app/demarches/pcaet/import-programme/import-programme.context';
 import type { DemarchePcaetUpdatePatch } from '@/app/demarches/types';
+import { useDemarcheId } from '@/app/demarches/use-demarche-id';
+import { useDemarcheTracker } from '@/app/demarches/use-demarche-tracker';
 import type { DemarchePcaet } from '@/app/demarches/types';
 import { appLabels } from '@/app/labels/catalog';
 import { useListDemarchePlanLinks } from '@/app/demarches/data/use-list-plan-links';
@@ -25,7 +27,15 @@ import { useQueries } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { isDemarchePcaetEnCours } from '@tet/domain/demarches';
-import { Badge, Button, cn, Icon, SplitButton, TableHeaderCell } from '@tet/ui';
+import {
+  Badge,
+  Button,
+  cn,
+  Event,
+  Icon,
+  SplitButton,
+  TableHeaderCell,
+} from '@tet/ui';
 import {
   countPlanSecteursARenseigner,
   isPlanNavigable,
@@ -298,6 +308,14 @@ const useCreatePlanAction = ({
   importDefaults?: AiImportDefaults;
   onCreatePlan: (payload: DemarcheCreatePlanPayload) => Promise<boolean>;
 }) => {
+  const track = useDemarcheTracker({ id: useDemarcheId() });
+  const openPlanModal = (
+    type: 'creer' | 'importer_ia' | 'demander_import',
+    open: (isOpen: boolean) => void
+  ) => {
+    track(Event.demarches.pcaet.planModale, { type, etat: 'ouverte' });
+    open(true);
+  };
   const [isCreatePlanModalOpen, setIsCreatePlanModalOpen] = useState(false);
   const [isImportPlanModalOpen, setIsImportPlanModalOpen] = useState(false);
   const [isRequestPlanImportModalOpen, setIsRequestPlanImportModalOpen] =
@@ -324,8 +342,8 @@ const useCreatePlanAction = ({
       icon={<Icon icon="import-line" />}
       onClick={() =>
         isAiPlanImportEnabled
-          ? setIsImportPlanModalOpen(true)
-          : setIsRequestPlanImportModalOpen(true)
+          ? openPlanModal('importer_ia', setIsImportPlanModalOpen)
+          : openPlanModal('demander_import', setIsRequestPlanImportModalOpen)
       }
       disabled={isReadonly}
       dataTest="demarches.plan.importer-plan-button"
@@ -334,7 +352,7 @@ const useCreatePlanAction = ({
         {
           icon: 'add-line',
           label: appLabels.demarcheProgrammeCreerPlan,
-          onClick: () => setIsCreatePlanModalOpen(true),
+          onClick: () => openPlanModal('creer', setIsCreatePlanModalOpen),
           disabled: isReadonly,
         },
       ]}
