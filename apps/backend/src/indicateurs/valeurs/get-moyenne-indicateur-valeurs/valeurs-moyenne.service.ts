@@ -1,4 +1,7 @@
-import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
+import {
+  IndicateurPeriodiciteEnum,
+  SOURCES_TRAJECTOIRE,
+} from '@tet/domain/indicateurs';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -12,6 +15,7 @@ import {
   isNotNull,
   max,
   ne,
+  notInArray,
   sql,
 } from 'drizzle-orm';
 import { DatabaseService } from '../../../utils/database/database.service';
@@ -117,9 +121,10 @@ export default class ValeursMoyenneService {
             sql`${typeCollectiviteExpr} IS NOT DISTINCT FROM ${typeCollectivite}`,
             isNotNull(iv.resultat),
             isNotNull(iv.metadonneeId),
-            // Sources hors moyenne nationale : SNBC (trajectoire) et PCAET
-            // collectivité (valeurs de démarche, pas une source ouverte partagée).
-            ne(ism.sourceId, 'snbc'),
+            // Sources hors moyenne nationale : trajectoires SNBC 2 et 3, et
+            // PCAET collectivité (valeurs de démarche, pas une source ouverte
+            // partagée).
+            notInArray(ism.sourceId, [...SOURCES_TRAJECTOIRE]),
             ne(ism.sourceId, PCAET_COLLECTIVITE_SOURCE_ID),
             eq(
               iv.periodicite,

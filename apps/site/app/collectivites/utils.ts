@@ -63,7 +63,15 @@ export type PageCollectivite = {
 
 const CODE_INSEE_COMMUNE_REGEX = /^(\d{5}|2[AB]\d{3})$/;
 
+// Borne de l'entrée `collectivites.site.getCollectivite` : au-delà, le code
+// vient d'une URL forgée (scanners) et le backend le rejette en BAD_REQUEST.
+const CODE_SIREN_INSEE_MAX_LENGTH = 20;
+
 export const fetchCollectivite = async (codeSirenInsee: string) => {
+  if (codeSirenInsee.length > CODE_SIREN_INSEE_MAX_LENGTH) {
+    return null;
+  }
+
   const collectivite =
     await getSiteTrpcClient().collectivites.site.getCollectivite.query({
       codeSirenInsee,

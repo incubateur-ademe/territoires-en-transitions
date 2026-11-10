@@ -16,6 +16,7 @@ import { ResourceType } from '@tet/domain/users';
 import { isNil } from 'es-toolkit';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 import { ListCollectiviteIndicateursRepository } from '../../indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.repository';
+import { TrajectoireSnbc3FeatureFlagService } from '../../trajectoires/trajectoire-snbc3-feature-flag.service';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { IndicateurValeursContext } from '../indicateur-valeurs-context.types';
@@ -37,7 +38,8 @@ export class ListIndicateurValeursService {
     private readonly repository: IndicateurValeursRepository,
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
-    private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository
+    private readonly listCollectiviteIndicateursRepository: ListCollectiviteIndicateursRepository,
+    private readonly trajectoireSnbc3FeatureFlag: TrajectoireSnbc3FeatureFlagService
   ) {}
 
   async get(
@@ -121,9 +123,17 @@ export class ListIndicateurValeursService {
       );
     }
 
-    const indicateurValeurs = getIndicateurValeursDataOrThrow(
-      await this.get(options, { isUserTrusted: true, tx })
-    );
+    // Point de passage des fiches indicateurs, du tRPC et de l'API publique :
+    // la SNBC 3 n'y apparaît qu'avec le feature flag.
+    const indicateurValeurs =
+      await this.trajectoireSnbc3FeatureFlag.filterSourcesSnbc3(
+        getIndicateurValeursDataOrThrow(
+          await this.get(options, { isUserTrusted: true, tx })
+        ),
+        (v) => v.indicateurSourceMetadonnee?.sourceId,
+        user,
+        collectiviteId
+      );
 
     const indicateurValeursSeules = indicateurValeurs.map((v) => ({
       ...v.indicateurValeur,

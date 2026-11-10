@@ -6,7 +6,7 @@ const SIDE_PANEL_WIDTH = '32rem';
 export default {
   presets: [preset],
   content: [
-    './**/*.{js,jsx,ts,tsx}',
+    './{app,src}/**/*.{js,jsx,ts,tsx}',
     '../../packages/ui/src/**/*.{js,jsx,ts,tsx}',
     '../../packages/design-tokens/src/**/*.{js,jsx,ts,tsx}',
   ],

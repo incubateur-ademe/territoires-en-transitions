@@ -28,6 +28,7 @@ import {
   collectiviteTypeEnum,
   servicesDeconcentresTypes,
 } from '@tet/domain/collectivites';
+import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
 import { navigablePlanStatuses } from '@tet/domain/plans';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole, hasRole, PlatformRole } from '@tet/domain/users';
@@ -132,6 +133,18 @@ export default class RecherchesService {
               WHERE ${
                 indicateurValeurTable.collectiviteId.name
               } = c.collectiviteId
+              -- La SNBC 3 n'est pas comptée, avec ou sans le feature flag
+              -- is-trajectoire-snbc3-enabled : volontairement indépendant du
+              -- flag (la recherche couvre toutes les collectivités) jusqu'à la
+              -- généralisation de la SNBC 3 (lot 6).
+              AND (
+                ${indicateurValeurTable.metadonneeId.name} IS NULL
+                OR ${indicateurValeurTable.metadonneeId.name} NOT IN (
+                  SELECT id FROM indicateur_source_metadonnee WHERE source_id = '${
+                    IndicateurSourceEnum.SNBC3
+                  }'
+                )
+              )
             ) AS "nbIndicateurs",
             (
               SELECT COUNT(*)

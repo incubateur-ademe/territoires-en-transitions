@@ -22,6 +22,9 @@ import {
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
+import { Snbc3SourceMetadonneeRepository } from '@tet/backend/indicateurs/trajectoires/import-snbc3/snbc3-source-metadonnee.repository';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { onTestFinished } from 'vitest';
 import { SQL_CURRENT_TIMESTAMP } from '../../utils/column.utils';
 
@@ -118,6 +121,48 @@ describe('Test recherches collectivite', () => {
       nom: "l'Arc'); DROP TABLE collectivite; --",
     });
     expect(injection.items.length).toEqual(0);
+  });
+
+  test('Test tab "Collectivités" ne compte pas les valeurs SNBC 3', async () => {
+    const nom = `Collectivité test recherche snbc3 ${Date.now()}`;
+    const setup = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: { nom },
+    });
+    onTestFinished(() => setup.cleanup());
+    const metadonneeId = await app
+      .get(Snbc3SourceMetadonneeRepository)
+      .findOrCreateMetadonnee({ dateVersion: '2026-11-08T09:00:00' });
+    const [indicateur] = await db.db
+      .select({ id: indicateurDefinitionTable.id })
+      .from(indicateurDefinitionTable)
+      .where(eq(indicateurDefinitionTable.identifiantReferentiel, 'cae_1.a'));
+    const valeur = {
+      collectiviteId: setup.collectivite.id,
+      indicateurId: indicateur.id,
+      dateValeur: '2030-01-01',
+      objectif: 42,
+    };
+    await db.db
+      .insert(indicateurValeurTable)
+      .values({ ...valeur, metadonneeId });
+
+    const caller = router.createCaller({ user: authenticatedUser });
+    const search = async () =>
+      (
+        await caller.collectivites.recherches.collectivites({
+          ...input,
+          nom,
+          nbCards: 50,
+        })
+      ).items.find((item) => item.collectiviteId === setup.collectivite.id);
+
+    // `COUNT` revient en chaîne (bigint).
+    expect(Number((await search())?.nbIndicateurs)).toBe(0);
+
+    // Témoin : une valeur saisie est comptée.
+    await db.db.insert(indicateurValeurTable).values(valeur);
+    expect(Number((await search())?.nbIndicateurs)).toBe(1);
   });
 
   /**

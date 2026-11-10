@@ -36,6 +36,8 @@ export default class SupabaseService {
     path: string;
     file: FileBody;
     mimeType?: string;
+    /** Métadonnées libres de l'objet stocké (ex. nom d'origine du fichier). */
+    metadata?: Record<string, string>;
   }): Promise<
     Result<
       {
@@ -47,12 +49,13 @@ export default class SupabaseService {
       | typeof StoreDocumentErrorEnum.FILE_TOO_LARGE
     >
   > {
-    const { bucket, path, file, mimeType } = args;
+    const { bucket, path, file, mimeType, metadata } = args;
     const { data, error } = await this.client.storage
       .from(bucket)
       .upload(path, file, {
         contentType: mimeType,
         upsert: true,
+        metadata,
       });
     if (error) {
       this.logger.error(`Error saving file in storage: ${error.message}`);
@@ -67,6 +70,31 @@ export default class SupabaseService {
       success: true,
       data: data,
     };
+  }
+
+  /**
+   * Crée le bucket privé s'il n'existe pas encore. Pour un bucket propre à un
+   * traitement backend, écrit et lu par le seul service role : pas besoin
+   * de migration ni de policy.
+   */
+  async ensurePrivateBucket(
+    bucket: string
+  ): Promise<Result<void, typeof StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR>> {
+    const existant = await this.client.storage.getBucket(bucket);
+    if (existant.data) {
+      return { success: true, data: undefined };
+    }
+    const { error } = await this.client.storage.createBucket(bucket, {
+      public: false,
+    });
+    // Deux imports concurrents : le second trouve le bucket déjà créé.
+    if (error && !/already exists/i.test(error.message)) {
+      this.logger.error(
+        `Error creating storage bucket ${bucket}: ${error.message}`
+      );
+      return { success: false, error: 'UPLOAD_STORAGE_ERROR' };
+    }
+    return { success: true, data: undefined };
   }
 }
 
