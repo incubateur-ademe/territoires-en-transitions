@@ -1,6 +1,6 @@
 import { IndicateurSourceEnum } from './indicateur-source.enum';
 import { TrajectoireSecteursType } from './trajectoire-secteurs';
-import { TrajectoirePropertiesType } from './types';
+import { addSousSecteur, TrajectoirePropertiesType } from './types';
 
 const EMISSIONS_GES_UNITE = 'kteq CO2';
 const EMISSIONS_GES_IDENTIFIANT = 'cae_1.a';
@@ -91,4 +91,18 @@ export const EMISSIONS_GES_PROPERTIES: TrajectoirePropertiesType<TrajectoireSect
     unite: EMISSIONS_GES_UNITE,
     sources: EMISSIONS_GES_SOURCES,
     secteurs: EMISSIONS_GES_SECTEURS,
+  };
+
+/**
+ * Variante SNBC 3 : l'industrie gagne le sous-secteur « Construction »
+ * (`cae_1.ih`), que la SNBC 2 ne renseigne pas. Remplacera
+ * `EMISSIONS_GES_PROPERTIES` à la généralisation (lot 6).
+ */
+export const EMISSIONS_GES_PROPERTIES_SNBC3: TrajectoirePropertiesType<TrajectoireSecteursType> =
+  {
+    ...EMISSIONS_GES_PROPERTIES,
+    secteurs: addSousSecteur(EMISSIONS_GES_SECTEURS, 'Industrie', {
+      nom: 'Construction',
+      identifiant: 'cae_1.ih',
+    }),
   };

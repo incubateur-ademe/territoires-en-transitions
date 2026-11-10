@@ -12,6 +12,8 @@ export const ANNEE_REFERENCE_SNBC_V3 = 2021;
  * constante : c'est la date du commit `snbc3` importé.
  */
 export const DATE_DEBUT_SNBC_V3 = '2020-01-01';
+/** Dernière année de la trajectoire SNBC 3 (même horizon que la SNBC 2). */
+export const DATE_FIN_SNBC_V3 = `${ANNEE_JALON2}-01-01`;
 
 const ALDO_ANNEE_REFERENCE = 2018;
 export const SNBC_ALDO_DATE_DEBUT_REFERENCE = `${ALDO_ANNEE_REFERENCE}-01-01`;
