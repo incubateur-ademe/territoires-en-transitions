@@ -160,6 +160,13 @@ export const Event = {
     selectSecteur: 'selection_secteur',
     downloadSnbcFile: 'indicateurs_trajectoire_snbc_file_download',
     triggerSnbcCalculation: 'indicateurs_trajectoire_snbc_calculation_trigger',
+    /** Page SNBC 3 (lot 3) : bandeau de transition et modale « Ce qui change ». */
+    snbc3: {
+      dismissBandeau: 'indicateurs:trajectoire_snbc3:bandeau_fermer',
+      /** `origine` : `bandeau` ou `lien_titre` */
+      openChangements: 'indicateurs:trajectoire_snbc3:changements_ouvrir',
+      voirTrajectoireEpci: 'indicateurs:trajectoire_snbc3:voir_epci_click',
+    },
   },
   tdb: {
     updateFiltresIndicateurs: 'tdb_modifier_filtres_indicateurs',

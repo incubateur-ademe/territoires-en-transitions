@@ -2,14 +2,9 @@ import { useDonneesSectorisees } from '@/app/app/pages/collectivite/Trajectoire/
 import { Methodologie } from '@/app/app/pages/collectivite/Trajectoire/Methodologie';
 import { GrapheSecteur } from '@/app/app/pages/collectivite/Trajectoire/graphes/GrapheSecteur';
 import { GrapheTousSecteurs } from '@/app/app/pages/collectivite/Trajectoire/graphes/GrapheTousSecteurs';
-import {
-  IndicateurViewParamOption,
-  makeCollectiviteIndicateursUrl,
-} from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { SgpeMondrian } from '@/app/indicateurs/trajectoire-leviers/sgpe-mondrian';
 import { TrajectoireReferenceAlert } from '@/app/indicateurs/trajectoires/trajectoire-reference.alert';
-import { Dataset } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
@@ -38,6 +33,7 @@ import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 import { DonneesPartiellementDisponibles } from './DonneesPartiellementDisponibles';
+import { LinksToIndicateurs } from './links-to-indicateurs';
 import { useIndicateurTrajectoire } from './use-indicateur-trajectoire';
 
 type Params = {
@@ -363,70 +359,6 @@ export const TrajectoireCalculee = () => {
         }}
         render={(props) => <DonneesCollectivite modalProps={props} />}
       />
-    </div>
-  );
-};
-
-type IndicateurWithId = Dataset & {
-  id: string;
-  name: string;
-};
-
-const LinksToIndicateurs = ({
-  indicateurData,
-  collectiviteId,
-  indicateurView,
-}: {
-  indicateurData: IndicateurWithId | IndicateurWithId[];
-  collectiviteId: number;
-  indicateurView: IndicateurViewParamOption | undefined;
-  className?: string;
-}) => {
-  const hasSingleIndicateur = !Array.isArray(indicateurData);
-
-  if (hasSingleIndicateur) {
-    return (
-      <Button
-        size="sm"
-        variant="underlined"
-        external
-        href={makeCollectiviteIndicateursUrl({
-          collectiviteId,
-          indicateurView,
-          identifiantReferentiel: indicateurData.id,
-        })}
-        aria-label={`Consulter la fiche de l'indicateur ${indicateurData.name}`}
-      >
-        {appLabels.voirFicheIndicateur}
-      </Button>
-    );
-  }
-
-  return (
-    <div className="flex gap-2 items-center">
-      <div className="text-primary-8 text-xs font-medium mb-1">
-        {appLabels.trajectoireVoirFichesIndicateurs}
-      </div>
-      <ul role="list" className="flex gap-4 items-end mb-0">
-        {indicateurData.map((indicateur) => (
-          <li key={indicateur.id}>
-            <Button
-              size="xs"
-              variant="underlined"
-              external
-              href={makeCollectiviteIndicateursUrl({
-                collectiviteId,
-                indicateurView,
-                identifiantReferentiel: indicateur.id,
-              })}
-              title={indicateur.name}
-              aria-label={`Consulter la fiche de l'indicateur ${indicateur.name}`}
-            >
-              {indicateur.name}
-            </Button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

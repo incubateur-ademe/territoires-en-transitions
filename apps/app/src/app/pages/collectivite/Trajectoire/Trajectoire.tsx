@@ -2,6 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useIsTrajectoireSnbc3Enabled } from './trajectoire-snbc3/data/use-is-trajectoire-snbc3-enabled';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -13,6 +14,7 @@ import DbErrorPicto from './db-error.svg';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 import { MethodologyNotApplicableCard } from './methodology-not-applicable.card';
 import TrajectoirePicto from './trajectoire.svg';
+import { TrajectoireSnbc3View } from './trajectoire-snbc3/trajectoire-snbc3.view';
 import { TrajectoireCalculee } from './TrajectoireCalculee';
 import { useGetStatutTrajectoire } from './use-get-statut-trajectoire';
 import { useGetTrajectoire } from './use-trajectoire';
@@ -203,9 +205,9 @@ const Presentation = () => {
 };
 
 /**
- * Point d'entrée
+ * Page SNBC 2 actuelle, inchangée sans le flag SNBC 3. Supprimée au lot 6.
  */
-const Trajectoire = () => {
+const TrajectoireSnbc2 = () => {
   const statutTrajectoire = useGetStatutTrajectoire();
 
   return (
@@ -214,5 +216,32 @@ const Trajectoire = () => {
     </div>
   );
 };
+
+/**
+ * Point d'entrée : la page SNBC 3 avec le flag, la page actuelle sinon. Tant
+ * que le flag n'est pas connu, on n'affiche aucune des deux, pour ne pas lancer
+ * le calcul SNBC 2 d'un utilisateur qui a le flag.
+ */
+const Trajectoire = () => {
+  const isSnbc3Enabled = useIsTrajectoireSnbc3Enabled();
+
+  if (isSnbc3Enabled === undefined) {
+    return <PageLoader />;
+  }
+
+  return isSnbc3Enabled ? (
+    <div className="flex flex-col gap-16">
+      <TrajectoireSnbc3View fallback={<TrajectoireSnbc2 />} />
+    </div>
+  ) : (
+    <TrajectoireSnbc2 />
+  );
+};
+
+const PageLoader = () => (
+  <div className="h-56 flex justify-center items-center">
+    <SpinnerLoader className="w-8 h-8 fill-primary-5" />
+  </div>
+);
 
 export default Trajectoire;

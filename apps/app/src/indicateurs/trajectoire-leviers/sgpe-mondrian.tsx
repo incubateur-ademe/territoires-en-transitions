@@ -8,6 +8,7 @@ import { Card, Event, preset, useEventTracker } from '@tet/ui';
 import { MondrianTreemap } from 'mondrian-treemap';
 import React from 'react';
 import { appLabels } from '@/app/labels/catalog';
+import { getSecteursNonRepresentes } from './secteurs-non-representes.utils';
 
 const { colors } = preset.theme.extend;
 
@@ -31,6 +32,12 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
       )?.nom
     : undefined;
 
+  // Les DROM n'ont pas de pourcentages SGPE (chemin SNBC 3, lot 2) : on masque
+  // le mondrian plutôt que d'afficher la carte d'erreur générique.
+  if (error?.data?.errorKey === 'REGION_NON_SUPPORTEE') {
+    return null;
+  }
+
   if (!trajectoireLeviers) {
     return (
       <Card>
@@ -53,6 +60,10 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
       </Card>
     );
   }
+
+  const secteursNonRepresentes = getSecteursNonRepresentes(
+    trajectoireLeviers.secteurs
+  );
 
   return (
     <Card>
@@ -106,6 +117,16 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
         }}
         style={{ height: '700px' }}
       />
+      {secteursNonRepresentes.length > 0 && (
+        <p
+          className="mb-0 text-sm text-grey-7"
+          data-test="indicateurs.trajectoires.leviers.secteurs-non-representes"
+        >
+          {appLabels.trajectoireLeviersSecteursNonRepresentes({
+            secteurs: secteursNonRepresentes.join(', '),
+          })}
+        </p>
+      )}
     </Card>
   );
 };
