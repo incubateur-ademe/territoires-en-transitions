@@ -1,10 +1,14 @@
-export type TokenUsage = {
-  promptTokens: number;
-  cachedTokens: number;
-  candidatesTokens: number;
-  thoughtsTokens: number;
-  totalTokens: number;
-};
+import { z } from 'zod';
+
+const countSchema = z.number().int().nonnegative();
+export const tokenUsageSchema = z.object({
+  promptTokens: countSchema,
+  cachedTokens: countSchema,
+  candidatesTokens: countSchema,
+  thoughtsTokens: countSchema,
+  totalTokens: countSchema,
+});
+export type TokenUsage = z.infer<typeof tokenUsageSchema>;
 
 export const emptyTokenUsage = (): TokenUsage => ({
   promptTokens: 0,

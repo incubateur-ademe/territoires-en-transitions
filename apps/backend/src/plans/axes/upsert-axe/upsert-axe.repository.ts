@@ -102,4 +102,26 @@ export class UpsertAxeRepository extends UpsertAxeBaseRepository<
       };
     }
   }
+
+  /** Ajoute les liens sans supprimer ni réécrire les relations existantes. */
+  async addAxeIndicateurs(
+    axeId: number,
+    indicateurIds: number[],
+    userId: string,
+    tx: Transaction
+  ): Promise<void> {
+    if (indicateurIds.length === 0) return;
+    await tx
+      .insert(axeIndicateurTable)
+      .values(
+        [...new Set(indicateurIds)]
+          .sort((a, b) => a - b)
+          .map((indicateurId) => ({
+            axeId,
+            indicateurId,
+            createdBy: userId,
+          }))
+      )
+      .onConflictDoNothing();
+  }
 }

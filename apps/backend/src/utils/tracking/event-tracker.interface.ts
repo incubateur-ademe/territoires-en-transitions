@@ -20,6 +20,11 @@ export type TrackedEvent = {
   groups?: Record<string, string>;
 };
 
+export type FeatureFlagEvaluationOptions = {
+  /** Exige un flag actif dans PostHog, sans activation automatique en dev/test/CI. */
+  requireExplicitActivation?: boolean;
+};
+
 export interface EventTracker {
   capture(params: TrackedEvent): void;
 
@@ -28,7 +33,8 @@ export interface EventTracker {
   isFeatureEnabled(
     featureFlagKey: FeatureFlagKey,
     userId: string,
-    collectiviteId?: number
+    collectiviteId?: number,
+    options?: FeatureFlagEvaluationOptions
   ): Promise<boolean>;
 
   shutdown(): Promise<void>;
