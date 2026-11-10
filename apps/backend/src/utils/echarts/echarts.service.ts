@@ -76,15 +76,15 @@ export class EchartsService {
   }
 
   getChartFileName(request: ChartRenderRequestType): string {
-    const chartOptions: EChartsOption = request.options;
+    const chartOptions: EChartsOption | undefined = request.options;
     if (request.name) {
       return request.name;
     }
-    if (chartOptions.title) {
+    if (chartOptions?.title) {
       const chartFirstTitle = Array.isArray(chartOptions.title)
         ? chartOptions.title[0]
         : chartOptions.title;
-      if (chartFirstTitle.text) {
+      if (chartFirstTitle?.text) {
         return chartFirstTitle.text;
       }
     }

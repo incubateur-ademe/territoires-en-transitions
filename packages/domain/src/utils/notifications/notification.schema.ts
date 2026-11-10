@@ -18,7 +18,7 @@ export const notificationSchema = z.object({
   createdBy: z.string().uuid().nullable(),
   createdAt: z.string().datetime(),
   notifiedOn: notifiedOnSchema,
-  notificationData: z.unknown(),
+  notificationData: z.unknown().optional(),
 });
 
 export type Notification = z.infer<typeof notificationSchema>;
