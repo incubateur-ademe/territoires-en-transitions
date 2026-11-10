@@ -182,7 +182,7 @@ const rawParseSchema = z.object({
   pilotes: listSchema,
   referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
-  indicateurs: z.any(),
+  indicateurs: z.any().optional(),
 });
 
 type RawParsedAction = z.infer<typeof rawParseSchema> & {

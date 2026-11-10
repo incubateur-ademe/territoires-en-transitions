@@ -236,7 +236,7 @@ importers:
         version: 0.26.28(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@google/genai':
         specifier: 2.8.0
-        version: 2.8.0(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.1.12))(supports-color@8.1.1)
+        version: 2.8.0(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.6.6))(supports-color@8.1.1)
       '@gouvfr/dsfr':
         specifier: 1.10.2
         version: 1.10.2
@@ -245,7 +245,7 @@ importers:
         version: 5.2.2(react-hook-form@7.61.1(react@19.2.3))
       '@modelcontextprotocol/sdk':
         specifier: 1.32.2
-        version: 1.32.2(supports-color@8.1.1)(zod@4.1.12)
+        version: 1.32.2(supports-color@8.1.1)(zod@4.6.6)
       '@napi-rs/canvas':
         specifier: 0.1.98
         version: 0.1.98
@@ -482,7 +482,7 @@ importers:
         version: 1.9.93(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       nestjs-zod:
         specifier: 5.0.1
-        version: 5.0.1(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/swagger@11.2.0(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14))(rxjs@7.8.2)(zod@4.1.12)
+        version: 5.0.1(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/swagger@11.2.0(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14))(rxjs@7.8.2)(zod@4.6.6)
       next:
         specifier: 16.4.5
         version: 16.4.5(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.105.0)
@@ -494,7 +494,7 @@ importers:
         version: 2.8.9(next@16.4.5(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.105.0))(react@19.2.3)
       openai:
         specifier: 7.23.0
-        version: 7.23.0(ws@8.21.3)(zod@4.1.12)
+        version: 7.23.0(ws@8.21.3)(zod@4.6.6)
       openid-client:
         specifier: ^6.8.8
         version: 6.8.8
@@ -622,8 +622,8 @@ importers:
         specifier: 1.4.4
         version: 1.4.4
       zod:
-        specifier: 4.1.12
-        version: 4.1.12
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 2.21.0
@@ -885,7 +885,7 @@ importers:
         version: 7.1.4(supports-color@8.1.1)
       trpc-ui:
         specifier: npm:trpc-ui-zod4@1.1.0
-        version: trpc-ui-zod4@1.1.0(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@trpc/server@11.8.1(@typescript/typescript6@6.0.2))(@types/react@19.2.3)(immer@9.0.21)(monaco-editor@0.52.2)(next@16.4.5(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.105.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(supports-color@8.1.1)(zod@4.1.12)
+        version: trpc-ui-zod4@1.1.0(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@trpc/server@11.8.1(@typescript/typescript6@6.0.2))(@types/react@19.2.3)(immer@9.0.21)(monaco-editor@0.52.2)(next@16.4.5(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.105.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(supports-color@8.1.1)(zod@4.6.6)
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
@@ -14697,8 +14697,8 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  zod@4.1.12:
-    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
 
   zrender@5.6.1:
     resolution: {integrity: sha512-OFXkDJKcrlx5su2XbzJvj/34Q3m6PvyCZkVPHGYpcCJ52ek4U/ymZyfuV1nKE23AyBJ51E/6Yr0mhZ7xGTO4ag==}
@@ -16459,14 +16459,14 @@ snapshots:
     dependencies:
       type-fest: 4.41.0
 
-  '@google/genai@2.8.0(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.1.12))(supports-color@8.1.1)':
+  '@google/genai@2.8.0(@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.6.6))(supports-color@8.1.1)':
     dependencies:
       google-auth-library: 10.9.1(supports-color@8.1.1)
       p-retry: 4.6.2
       protobufjs: 7.6.6
       ws: 8.21.3
     optionalDependencies:
-      '@modelcontextprotocol/sdk': 1.32.2(supports-color@8.1.1)(zod@4.1.12)
+      '@modelcontextprotocol/sdk': 1.32.2(supports-color@8.1.1)(zod@4.6.6)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -17095,7 +17095,7 @@ snapshots:
 
   '@microsoft/tsdoc@0.15.1': {}
 
-  '@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.1.12)':
+  '@modelcontextprotocol/sdk@1.32.2(supports-color@8.1.1)(zod@4.6.6)':
     dependencies:
       '@hono/node-server': 2.1.5(hono@4.13.14)
       ajv: 8.20.0
@@ -17112,8 +17112,8 @@ snapshots:
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
-      zod: 4.1.12
-      zod-to-json-schema: 3.25.2(zod@4.1.12)
+      zod: 4.6.6
+      zod-to-json-schema: 3.25.2(zod@4.6.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -23554,8 +23554,8 @@ snapshots:
       '@babel/parser': 7.29.9
       eslint: 9.39.2(jiti@2.7.0)(supports-color@8.1.1)
       hermes-parser: 0.25.1
-      zod: 4.1.12
-      zod-validation-error: 4.0.2(zod@4.1.12)
+      zod: 4.6.6
+      zod-validation-error: 4.0.2(zod@4.6.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -26968,12 +26968,12 @@ snapshots:
       type-is: 1.6.18
       uid: 2.0.2
 
-  nestjs-zod@5.0.1(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/swagger@11.2.0(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14))(rxjs@7.8.2)(zod@4.1.12):
+  nestjs-zod@5.0.1(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/swagger@11.2.0(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14))(rxjs@7.8.2)(zod@4.6.6):
     dependencies:
       '@nestjs/common': 11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1)
       deepmerge: 4.3.1
       rxjs: 7.8.2
-      zod: 4.1.12
+      zod: 4.6.6
     optionalDependencies:
       '@nestjs/swagger': 11.2.0(@nestjs/common@11.2.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)
 
@@ -27334,10 +27334,10 @@ snapshots:
       powershell-utils: 0.1.0
       wsl-utils: 0.3.1
 
-  openai@7.23.0(ws@8.21.3)(zod@4.1.12):
+  openai@7.23.0(ws@8.21.3)(zod@4.6.6):
     optionalDependencies:
       ws: 8.21.3
-      zod: 4.1.12
+      zod: 4.6.6
 
   opener@1.5.2: {}
 
@@ -29773,7 +29773,7 @@ snapshots:
 
   trough@2.2.0: {}
 
-  trpc-ui-zod4@1.1.0(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@trpc/server@11.8.1(@typescript/typescript6@6.0.2))(@types/react@19.2.3)(immer@9.0.21)(monaco-editor@0.52.2)(next@16.4.5(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.105.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(supports-color@8.1.1)(zod@4.1.12):
+  trpc-ui-zod4@1.1.0(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react@19.2.3)(supports-color@8.1.1))(@types/react@19.2.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@trpc/server@11.8.1(@typescript/typescript6@6.0.2))(@types/react@19.2.3)(immer@9.0.21)(monaco-editor@0.52.2)(next@16.4.5(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.1.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.105.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(supports-color@8.1.1)(zod@4.6.6):
     dependencies:
       '@monaco-editor/react': 4.7.0(monaco-editor@0.52.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@stoplight/json-schema-sampler': 0.3.0
@@ -29789,8 +29789,8 @@ snapshots:
       string-byte-length: 1.6.0
       tailwind-merge: 2.6.0
       url: 0.11.4
-      zod: 4.1.12
-      zod-to-json-schema: 3.25.2(zod@4.1.12)
+      zod: 4.6.6
+      zod-to-json-schema: 3.25.2(zod@4.6.6)
     transitivePeerDependencies:
       - '@emotion/react'
       - '@emotion/styled'
@@ -30711,15 +30711,15 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-to-json-schema@3.25.2(zod@4.1.12):
+  zod-to-json-schema@3.25.2(zod@4.6.6):
     dependencies:
-      zod: 4.1.12
+      zod: 4.6.6
 
-  zod-validation-error@4.0.2(zod@4.1.12):
+  zod-validation-error@4.0.2(zod@4.6.6):
     dependencies:
-      zod: 4.1.12
+      zod: 4.6.6
 
-  zod@4.1.12: {}
+  zod@4.6.6: {}
 
   zrender@5.6.1:
     dependencies:
