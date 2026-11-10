@@ -12,7 +12,7 @@ en incréments déployables séparément. Il couvre l'import complet, depuis le
 document jusqu'au plan et au suivi des cibles. Il ne reprend pas le
 provisionnement automatique ni le verrouillage des anciens plans de travail.
 
-**Sept phases : treize PR de code, puis une ouverture progressive.** Les budgets
+**Sept phases : quatorze PR de code, puis une ouverture progressive.** Les budgets
 et financements constituent une huitième phase facultative. Les numéros de PR
 ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
@@ -28,7 +28,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 3B — Extraction du canevas DOCX V4 avec assistance IA ciblée : [#5759](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5759), implémentée et vérifiée, en revue. Profil de production toujours fermé.
 - [x] PR 4A — Structure explicite, liens et effets après commit : [#5774](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5774), implémentée et vérifiée, en revue. Aucun changement de schéma ; profil de production toujours fermé.
 - [x] PR 4B — Indicateurs et liens : [#5775](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5775), implémentée et vérifiée, en revue. Création, sources et liens additifs sous transaction ; aucune migration ni ouverture du profil.
-- [ ] PR 4C — Valeurs sans écrasement et isolation par métadonnée.
+- [x] PR 4C — Valeurs sans écrasement et isolation par métadonnée : [#5778](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5778), implémentée et vérifiée, en revue. Opération interne de complétion et calculs isolés ; rattachement durable et changements de schéma en 4D.
 - [ ] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources.
 - [ ] PR 5 — Pipeline complet et cycle de vie.
 - [ ] PR 6 — Parcours et lecture dans l'app.
@@ -875,6 +875,26 @@ les saisies existantes et concurrentes ainsi que les valeurs des autres plans.
 Les opérations prennent un `metadonneeId` explicite et contrôlé ; elles ne
 dépendent pas du rattachement au plan livré en 4D.
 
+**Livraison 4C :** `ReconcileIndicateurValeursService.fillMissing` complète les
+cellules absentes et retourne les conflits conservés. Validation, lecture,
+comparaison, écriture et réconciliation partagent les verrous et la transaction.
+La normalisation est commune aux écritures ; elle ne réarrondit pas les valeurs
+historiques conservées. Une répétition identique ne réécrit pas leur audit.
+Une ligne enrichie devient manuelle selon les règles ordinaires, pour protéger
+ses cellules d'un recalcul ultérieur.
+
+Les lectures filtrent déjà par `metadonneeId`. Les calculs isolent la source
+`electrification` par métadonnée, comme PCAET, et un objectif seul n'alimente pas
+un résultat via une source externe. Cette restriction par champ est portée par
+la politique de source ; l'évaluateur commun ne connaît pas Électrification.
+Les compléments externes restent possibles selon les règles ordinaires pour
+PCAET et les autres sources. L'autorisation interne de métadonnée est
+bornée à sa source, sa collectivité et son ID ; le parcours de complétion garde
+un utilisateur authentifié et les droits ordinaires. Elle n'est pas un champ de
+requête. La PR 4D la produira depuis le rattachement vérifié au plan ; 4C
+n'autorise aucun rattachement à partir d'un ID seul. Le schéma et l'admission
+Électrification restent inchangés.
+
 - Lire, comparer et écrire sous le même verrou de valeurs et la même transaction.
   Préserver séparément résultat, objectif et métadonnées déjà présents, y compris
   zéro. Une ligne existante n'interdit pas de compléter une cellule absente.
@@ -928,6 +948,8 @@ crée aucune nouvelle entité métier d'engagement, de cible ou de convention.
   Contrôler cohérence, collectivité et permissions, sans donner de droits
   supplémentaires par ce rattachement. La suppression du plan conserve les
   valeurs de la collectivité.
+  Accorder le contexte interne `metadataAuthorization` de 4C après contrôle
+  des droits du plan et de son rattachement exact, verrouillé jusqu'au commit.
 - Livrer les lectures internes des références et de la source d'un plan,
   ainsi que leur branchement sur les lectures de valeurs de 4C. La purge du
   job n'efface pas ces informations. Les services sont exercés ensemble avant

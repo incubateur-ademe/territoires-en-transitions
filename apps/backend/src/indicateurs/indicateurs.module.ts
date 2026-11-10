@@ -207,6 +207,8 @@ const DEFINITIONS_PROVIDERS = [
     CreateIndicateurService,
     IndicateurLockRepository,
     IndicateurSourcesService,
+    ReconcileIndicateurValeursService,
+    ListIndicateurValeursService,
     ListIndicateursPredefinisService,
     ListIndicateursPredefinisRepository,
     ListIndicateursService,

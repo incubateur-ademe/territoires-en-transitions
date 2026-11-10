@@ -8,7 +8,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   IndicateurPeriode,
   IndicateurPeriodicite,
-  PCAET_COLLECTIVITE_SOURCE_ID,
+  INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
   IndicateurValeur,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
@@ -112,12 +112,14 @@ export class ComputeValeursRepository {
     >();
     for (const query of queries) {
       // Formulas sharing the same scope can load their identifiers together.
-      // PCAET metadata scopes and fallback-source policies must stay distinct.
+      // Dedicated metadata scopes and fallback-source policies must stay distinct.
       const key = JSON.stringify([
         query.collectiviteId,
         IndicateurPeriodes.key(query.periode),
         query.sourceId ?? null,
-        query.sourceId === PCAET_COLLECTIVITE_SOURCE_ID
+        INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(
+          query.sourceId ?? ''
+        )
           ? query.metadonneeId
           : null,
         [...new Set(query.extraSourceCalculIds)].sort(),
@@ -154,7 +156,7 @@ export class ComputeValeursRepository {
           ? or(
               and(
                 eq(indicateurSourceMetadonneeTable.sourceId, sourceId),
-                sourceId === PCAET_COLLECTIVITE_SOURCE_ID &&
+                INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(sourceId) &&
                   metadonneeId !== undefined &&
                   metadonneeId !== null &&
                   metadonneeId >= 0

@@ -21,6 +21,15 @@ const evaluateField = (
   group: CalculSourceGroup,
   evaluate: EvaluateExpression
 ): number | null => {
+  // Some sources allow external observations to complete a field only when
+  // that field already has a direct observation.
+  if (
+    group.requiresDirectValueForField &&
+    !group.valeurs.some(
+      (valeur) => valeur.sourceId === group.sourceId && !isNil(valeur[field])
+    )
+  )
+    return null;
   const values: Record<string, number | null> = {};
   for (const valeur of group.valeurs) {
     if (valeur.sourceId === group.sourceId)
@@ -81,17 +90,3 @@ export const evaluateCalculIndicateur = (
     ];
   });
 };
-
-export const getCalculatedValeurIdentity = (
-  valeur: Pick<
-    IndicateurValeurCreate,
-    | 'collectiviteId'
-    | 'indicateurId'
-    | 'periodicite'
-    | 'dateValeur'
-    | 'metadonneeId'
-  >
-): string =>
-  `${valeur.collectiviteId}:${valeur.indicateurId}:${valeur.periodicite}:${
-    valeur.dateValeur
-  }:${valeur.metadonneeId ?? 'collectivite'}`;
