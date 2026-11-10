@@ -65,6 +65,7 @@ export const plansLabels = {
 
   ficheStatut: 'Statut',
   ficheJauge: 'Avancement',
+  ficheJaugeNonRenseignee: '–\u00a0%',
   ficheJaugeInfo: "À 100 %, l'action passe automatiquement au statut Réalisé",
   ficheJaugeFigeeTitre: 'Avancement figé',
   ficheJaugeFigee: {
