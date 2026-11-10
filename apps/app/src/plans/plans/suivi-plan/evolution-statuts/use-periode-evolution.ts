@@ -1,3 +1,4 @@
+import { format, isValid, parseISO } from 'date-fns';
 import { createParser, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import {
   getAujourdhui,
@@ -8,7 +9,10 @@ import {
 } from './periode-evolution';
 
 const parseAsIsoDate = createParser({
-  parse: (value) => (/^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null),
+  parse: (value) => {
+    const date = parseISO(value);
+    return isValid(date) && format(date, 'yyyy-MM-dd') === value ? value : null;
+  },
   serialize: (value: string) => value,
 });
 

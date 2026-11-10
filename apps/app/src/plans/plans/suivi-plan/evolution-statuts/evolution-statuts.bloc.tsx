@@ -67,13 +67,14 @@ export const EvolutionStatutsBloc = ({
     setDateFin,
   } = usePeriodeEvolution(dateDebutPlan);
 
-  const { data, isPlaceholderData } = useGetEvolutionStatuts({
+  const { data, isPlaceholderData, isError } = useGetEvolutionStatuts({
     planId,
     thematiqueIds,
     dateDebut,
     dateFin,
     inclureActionsContinues,
   });
+  const isPeriodeInvalide = dateDebut > dateFin;
   const isLoading = data === undefined || isPlaceholderData;
 
   const isDateDebutRamenee = dateDebut < DEBUT_HISTORIQUE_STATUTS;
@@ -159,61 +160,75 @@ export const EvolutionStatutsBloc = ({
         />
       )}
 
-      <div className="grid gap-12 grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <div className="flex flex-col gap-6">
-          <StatutsBar
-            titre={appLabels.evolutionStatutsStatutsAu(dateDebutRetenue)}
-            legende={appLabels.evolutionStatutsExistaient(totaux[0])}
-            total={totaux[0]}
-            isLoading={isLoading}
-            statuts={rows.map(({ statut, debut }) => ({
-              statut,
-              count: debut,
-            }))}
-            dataTest="plans.suivi.evolution-statuts.barre-debut"
-          />
-          <StatutsBar
-            titre={appLabels.evolutionStatutsStatutsAu(dateFinAffichee)}
-            legende={appLabels.evolutionStatutsCreees({
-              total: totaux[1],
-              creees: data?.creeesDepuisDebut ?? 0,
-              date: dateDebutRetenue,
-            })}
-            total={totaux[1]}
-            isLoading={isLoading}
-            statuts={rows.map(({ statut, fin }) => ({ statut, count: fin }))}
-            dataTest="plans.suivi.evolution-statuts.barre-fin"
-          />
-          <div className="pt-6 border-t border-grey-3">
-            <Checkbox
-              label={appLabels.evolutionStatutsInclureActionsContinues}
-              message={
-                isLoading ? (
-                  <span className="inline-block w-80 h-4 rounded bg-grey-3 animate-pulse" />
-                ) : (
-                  appLabels.evolutionStatutsActionsContinuesInfo(
-                    data.actionsContinues
-                  )
-                )
-              }
-              checked={inclureActionsContinues}
-              onChange={(evt) => setInclureActionsContinues(evt.target.checked)}
-              data-test="plans.suivi.evolution-statuts.actions-continues"
-            />
-          </div>
-        </div>
-        <EvolutionStatutsTable
-          collectiviteId={collectiviteId}
-          planId={planId}
-          rows={rows}
-          totaux={totaux}
-          isLoading={isLoading}
-          libelles={[
-            dateDebutRetenue,
-            dateFinAffichee ?? appLabels.evolutionStatutsAujourdhui,
-          ]}
+      {isPeriodeInvalide ? (
+        <Alert
+          state="error"
+          title={appLabels.evolutionStatutsPeriodeInvalide}
         />
-      </div>
+      ) : isError ? (
+        <Alert
+          state="error"
+          title={appLabels.evolutionStatutsErreurChargement}
+        />
+      ) : (
+        <div className="grid gap-12 grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <div className="flex flex-col gap-6">
+            <StatutsBar
+              titre={appLabels.evolutionStatutsStatutsAu(dateDebutRetenue)}
+              legende={appLabels.evolutionStatutsExistaient(totaux[0])}
+              total={totaux[0]}
+              isLoading={isLoading}
+              statuts={rows.map(({ statut, debut }) => ({
+                statut,
+                count: debut,
+              }))}
+              dataTest="plans.suivi.evolution-statuts.barre-debut"
+            />
+            <StatutsBar
+              titre={appLabels.evolutionStatutsStatutsAu(dateFinAffichee)}
+              legende={appLabels.evolutionStatutsCreees({
+                total: totaux[1],
+                creees: data?.creeesDepuisDebut ?? 0,
+                date: dateDebutRetenue,
+              })}
+              total={totaux[1]}
+              isLoading={isLoading}
+              statuts={rows.map(({ statut, fin }) => ({ statut, count: fin }))}
+              dataTest="plans.suivi.evolution-statuts.barre-fin"
+            />
+            <div className="pt-6 border-t border-grey-3">
+              <Checkbox
+                label={appLabels.evolutionStatutsInclureActionsContinues}
+                message={
+                  isLoading ? (
+                    <span className="inline-block w-80 h-4 rounded bg-grey-3 animate-pulse" />
+                  ) : (
+                    appLabels.evolutionStatutsActionsContinuesInfo(
+                      data.actionsContinues
+                    )
+                  )
+                }
+                checked={inclureActionsContinues}
+                onChange={(evt) =>
+                  setInclureActionsContinues(evt.target.checked)
+                }
+                data-test="plans.suivi.evolution-statuts.actions-continues"
+              />
+            </div>
+          </div>
+          <EvolutionStatutsTable
+            collectiviteId={collectiviteId}
+            planId={planId}
+            rows={rows}
+            totaux={totaux}
+            isLoading={isLoading}
+            libelles={[
+              dateDebutRetenue,
+              dateFinAffichee ?? appLabels.evolutionStatutsAujourdhui,
+            ]}
+          />
+        </div>
+      )}
     </SuiviPlanBloc>
   );
 };
