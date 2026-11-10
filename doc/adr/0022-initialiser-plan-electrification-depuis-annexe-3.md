@@ -768,6 +768,30 @@ de source pour les parents. Composer les services de fiches, d'axes,
 d'indicateurs et de valeurs dans une même transaction, propagée à chacun.
 La création d'un indicateur personnalisé doit notamment accepter cette
 transaction, en conservant les protections existantes de son graphe de calcul.
+Le service commun `PersistPlanIndicateursService` traite un lot ordonné :
+revalidation des définitions sous verrou, création ou réutilisation des
+indicateurs, liens aux axes et fiches, source du plan et complétion des valeurs.
+Son contrat contient des clés de cible, des définitions ou IDs et des valeurs
+facultatives ; les conflits sont rattachés à ces clés. Il réutilise notamment
+`ManagePlanIndicateurSourceService` pour la source exacte du plan.
+Un adaptateur Électrification traduit le catalogue et les cibles A vers ce
+contrat, puis les diagnostics vers le compte rendu. Il ne réalise aucune
+écriture. Le point d'entrée métier conserve le checkpoint et l'éligibilité.
+
+**Découpage de livraison — 10 novembre 2026.** Le lot 5A compose ces écritures
+dans `PersistElectrificationImportService`, sans worker ni admission publique.
+Il consomme un checkpoint documentaire, revalide les références et préserve
+les valeurs existantes. Une autorisation interne lie la création du vrai type
+Électrification à l'utilisateur, à la collectivité et à la transaction après
+contrôle d'éligibilité. Elle ne permet ni conversion d'un plan existant ni
+contournement par les parcours ordinaires. Les services partagés consomment
+uniquement `PlanCreateAuthorization`, qui vérifie ce périmètre. Sa délivrance
+après contrôle d'éligibilité et sélection du type exact reste dans
+`ElectrificationImportAuthorization`, dans le dossier de l'import Électrification.
+Le lot 5B raccorde le pipeline,
+l'admission et la reprise ; il appelle la persistance avec sa transaction et
+y enregistre aussi le compte rendu et la réussite du job. La persistance seule
+ne constitue pas une opération de reprise idempotente.
 
 Vérifier les droits d'import, de création d'indicateurs et de liaison des
 objets résolus, puis les revérifier au moment des écritures. Une URL ne donne
@@ -781,8 +805,8 @@ Tout échec annule ces écritures. Conserver le contrôle `status`/`attempt`
 existant pour empêcher un ancien worker de valider après une reprise.
 Les notifications de réussite et autres effets externes ont lieu après le
 commit ; leur éventuel échec ne relance pas la création des données.
-Cela nécessite de différer les webhooks de l'agrégat, aujourd'hui émis dans
-sa transaction, jusqu'à la validation effective du job.
+Le lot 4A a séparé les webhooks de l'agrégat ; 5B les déclenche seulement
+après la validation effective du job.
 
 Une reprise technique réutilise le même job et les checkpoints compatibles ;
 elle ne crée pas un second plan. Un nouvel import n'est pas une mise à jour

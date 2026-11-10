@@ -8,6 +8,10 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { planActionTypeCategorieTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import {
   getAuthUserFromUserCredentials,
   getDisposableTestApp,
@@ -21,13 +25,19 @@ import { failure } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import {
+  ELECTRIFICATION_PLAN_TYPE_KEY,
   ElectrificationEngagementCodeEnum,
+  ElectrificationLaureatsConfig,
   FicheReferenceKindEnum,
   PlanReferenceProgrammeEnum,
 } from '@tet/domain/plans';
 import { GetPlanReferencesService } from '../get-plan-references/get-plan-references.service';
+import { CheckElectrificationEligibilityService } from '../check-electrification-eligibility/check-electrification-eligibility.service';
+import { ELECTRIFICATION_LAUREATS_CONFIG } from '../check-electrification-eligibility/electrification-eligibility.constants';
+import { ElectrificationImportAuthorization } from '@tet/backend/plans/ai-plan-import/electrification/persist-import/electrification-import-authorization';
+import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
 import assert from 'node:assert';
 import {
   afterAll,
@@ -49,6 +59,14 @@ describe('Création transactionnelle de la structure du plan', () => {
   let transactions: TransactionManager;
   let fixtures: Awaited<ReturnType<typeof addTestCollectiviteAndUser>>[];
   let context: Awaited<ReturnType<typeof createContext>>;
+  let electrificationTypeId: number;
+  const laureats: ElectrificationLaureatsConfig = {
+    source: 'Fixture synthétique',
+    version: 'test-autorisation',
+    validFrom: '2020-01-01T00:00:00.000Z',
+    validUntil: '2099-01-01T00:00:00.000Z',
+    laureats: [],
+  };
   const webhook = {
     sendWebhookNotification: vi.fn().mockResolvedValue(undefined),
     sendWebhookNotifications: vi.fn().mockResolvedValue(undefined),
@@ -101,15 +119,42 @@ describe('Création transactionnelle de la structure du plan', () => {
         builder.overrideProvider(LlmService).useValue(new LlmService(llm));
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
         builder.overrideProvider(WebhookService).useValue(webhook);
+        builder
+          .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
+          .useValue(laureats);
       },
     });
     db = await getTestDatabase(app);
     service = app.get(CreatePlanAggregateService);
     transactions = app.get(TransactionManager);
+    await db.db
+      .insert(planActionTypeCategorieTable)
+      .values({ categorie: ELECTRIFICATION_PLAN_TYPE_KEY.categorie })
+      .onConflictDoNothing();
+    await db.db
+      .insert(planActionTypeTable)
+      .values(ELECTRIFICATION_PLAN_TYPE_KEY)
+      .onConflictDoNothing();
+    const [type] = await db.db
+      .select()
+      .from(planActionTypeTable)
+      .where(
+        and(
+          eq(
+            planActionTypeTable.categorie,
+            ELECTRIFICATION_PLAN_TYPE_KEY.categorie
+          ),
+          eq(planActionTypeTable.type, ELECTRIFICATION_PLAN_TYPE_KEY.type)
+        )
+      );
+    electrificationTypeId = type.id;
   });
   beforeEach(async () => {
     fixtures = [];
     context = await createContext();
+    laureats.laureats = [
+      { reference: 'laureat-test', collectiviteId: context.collectiviteId },
+    ];
     webhook.sendWebhookNotifications.mockClear();
     vi.spyOn(llm, 'complete');
     vi.spyOn(llm, 'chat');
@@ -152,10 +197,189 @@ describe('Création transactionnelle de la structure du plan', () => {
       .where(
         inArray(indicateurDefinitionTable.collectiviteId, collectiviteIds)
       );
+    await db.db
+      .delete(utilisateurCollectiviteAccessTable)
+      .where(
+        inArray(
+          utilisateurCollectiviteAccessTable.collectiviteId,
+          collectiviteIds
+        )
+      );
     for (const fixture of fixtures.reverse()) await fixture.cleanup();
   });
   afterAll(async () => {
     await app.close();
+  });
+
+  test('autorise le vrai type Électrification uniquement dans le contexte interne de création', async () => {
+    expect(
+      await create(input({ typeId: electrificationTypeId }))
+    ).toMatchObject({
+      success: false,
+      error: 'ELECTRIFICATION_CREATION_DISABLED',
+    });
+    await expect(
+      context.caller.plans.plans.create({
+        collectiviteId: context.collectiviteId,
+        nom: 'Création ordinaire',
+        typeId: electrificationTypeId,
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+
+    const created = await transactions.executeSingle(async (tx) => {
+      const authorization =
+        await ElectrificationImportAuthorization.forCollectivite(
+          app.get(CheckElectrificationEligibilityService),
+          { collectiviteId: context.collectiviteId },
+          { user: context.user, tx }
+        );
+      assert(authorization.success);
+      expect(authorization.data.typeId).toBe(electrificationTypeId);
+      expect(
+        authorization.data.matches(
+          {
+            collectiviteId: context.collectiviteId,
+            typeId: electrificationTypeId + 1,
+          },
+          { user: context.user, tx }
+        )
+      ).toBe(false);
+      return service.create(input({ typeId: authorization.data.typeId }), {
+        user: context.user,
+        tx,
+        planCreateAuthorization: authorization.data,
+      });
+    });
+    assert(created.success);
+    expect((await loadAxe(created.data.planId)).typeId).toBe(
+      electrificationTypeId
+    );
+    await expect(
+      context.caller.plans.plans.duplicate({
+        planId: created.data.planId,
+        nom: 'Duplication ordinaire',
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+  });
+
+  test.each(['utilisateur', 'collectivité'] as const)(
+    "refuse de réutiliser l'autorisation pour un autre périmètre : %s",
+    async (scope) => {
+      const other = await createContext();
+      const user = scope === 'utilisateur' ? other.user : context.user;
+      const collectiviteId =
+        scope === 'collectivité'
+          ? other.collectiviteId
+          : context.collectiviteId;
+      await db.db.insert(utilisateurCollectiviteAccessTable).values({
+        userId: user.id,
+        collectiviteId,
+        role: CollectiviteRole.EDITION,
+        isActive: true,
+      });
+      const result = await transactions.executeSingle(async (tx) => {
+        const authorization =
+          await ElectrificationImportAuthorization.forCollectivite(
+            app.get(CheckElectrificationEligibilityService),
+            { collectiviteId: context.collectiviteId },
+            { user: context.user, tx }
+          );
+        assert(authorization.success);
+        return service.create(
+          input({ collectiviteId, typeId: authorization.data.typeId }),
+          {
+            user,
+            tx,
+            planCreateAuthorization: authorization.data,
+          }
+        );
+      });
+      expect(result).toMatchObject({
+        success: false,
+        error: 'ELECTRIFICATION_CREATION_DISABLED',
+      });
+      expect(
+        await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.collectiviteId, collectiviteId))
+      ).toEqual([]);
+    }
+  );
+
+  test("refuse de réutiliser l'autorisation dans une autre transaction", async () => {
+    const authorization = await transactions.executeSingle((tx) =>
+      ElectrificationImportAuthorization.forCollectivite(
+        app.get(CheckElectrificationEligibilityService),
+        { collectiviteId: context.collectiviteId },
+        { user: context.user, tx }
+      )
+    );
+    assert(authorization.success);
+    const result = await transactions.executeSingle((tx) =>
+      service.create(input({ typeId: authorization.data.typeId }), {
+        user: context.user,
+        tx,
+        planCreateAuthorization: authorization.data,
+      })
+    );
+    expect(result).toMatchObject({
+      success: false,
+      error: 'ELECTRIFICATION_CREATION_DISABLED',
+    });
+  });
+
+  test("l'autorisation ne permet pas de convertir un plan existant", async () => {
+    const ordinary = await create();
+    assert(ordinary.success);
+    const result = await transactions.executeSingle(async (tx) => {
+      const authorization =
+        await ElectrificationImportAuthorization.forCollectivite(
+          app.get(CheckElectrificationEligibilityService),
+          { collectiviteId: context.collectiviteId },
+          { user: context.user, tx }
+        );
+      assert(authorization.success);
+      return app.get(UpsertPlanService).upsertPlan(
+        {
+          id: ordinary.data.planId,
+          collectiviteId: context.collectiviteId,
+          typeId: authorization.data.typeId,
+        },
+        {
+          user: context.user,
+          tx,
+          planCreateAuthorization: authorization.data,
+        }
+      );
+    });
+    expect(result).toMatchObject({
+      success: false,
+      error: 'ELECTRIFICATION_CREATION_DISABLED',
+    });
+    expect((await loadAxe(ordinary.data.planId)).typeId).toBeNull();
+  });
+
+  test.each([
+    ['non lauréat', 'UNAUTHORIZED'],
+    ['configuration absente', 'ELECTRIFICATION_LAUREATS_UNAVAILABLE'],
+  ] as const)("ne délivre pas d'autorisation : %s", async (scenario, error) => {
+    laureats.laureats = [];
+    const eligibility =
+      scenario === 'configuration absente'
+        ? new CheckElectrificationEligibilityService(
+            null,
+            app.get(PermissionService)
+          )
+        : app.get(CheckElectrificationEligibilityService);
+    const result = await transactions.executeSingle((tx) =>
+      ElectrificationImportAuthorization.forCollectivite(
+        eligibility,
+        { collectiviteId: context.collectiviteId },
+        { user: context.user, tx }
+      )
+    );
+    expect(result).toMatchObject({ success: false, error });
   });
 
   const programme = PlanReferenceProgrammeEnum.ELECTRIFICATION;
@@ -284,13 +508,11 @@ describe('Création transactionnelle de la structure du plan', () => {
       withoutChildLink.data.fiches.map(({ ficheId }) => ficheId)
     ).toContain(getId(fiches, 'sous-action'));
     // Un lien propre résiduel ne doit pas retenir l'enfant si son parent est détaché.
-    await db.db
-      .insert(ficheActionAxeTable)
-      .values({
-        ficheId: getId(fiches, 'sous-action'),
-        axeId: planId,
-        createdBy: context.user.id,
-      });
+    await db.db.insert(ficheActionAxeTable).values({
+      ficheId: getId(fiches, 'sous-action'),
+      axeId: planId,
+      createdBy: context.user.id,
+    });
     await db.db
       .update(ficheActionTable)
       .set({ deleted: true })

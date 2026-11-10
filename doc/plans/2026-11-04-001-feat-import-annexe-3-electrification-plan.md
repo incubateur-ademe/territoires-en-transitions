@@ -12,7 +12,7 @@ en incréments déployables séparément. Il couvre l'import complet, depuis le
 document jusqu'au plan et au suivi des cibles. Il ne reprend pas le
 provisionnement automatique ni le verrouillage des anciens plans de travail.
 
-**Sept phases : quatorze PR de code, puis une ouverture progressive.** Les budgets
+**Sept phases : quinze PR de code, puis une ouverture progressive.** Les budgets
 et financements constituent une huitième phase facultative. Les numéros de PR
 ci-dessous désignent les lots ; leur avancement est suivi séparément.
 
@@ -30,7 +30,8 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 4B — Indicateurs et liens : [#5775](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5775), implémentée et vérifiée, en revue. Création, sources et liens additifs sous transaction ; aucune migration ni ouverture du profil.
 - [x] PR 4C — Valeurs sans écrasement et isolation par métadonnée : [#5778](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5778), implémentée et vérifiée, en revue. Opération interne de complétion et calculs isolés ; rattachement durable et changements de schéma en 4D.
 - [x] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources : [#5780](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5780), implémentée et vérifiée, en revue. Migration additive et services internes ; admission Électrification toujours fermée.
-- [ ] PR 5 — Pipeline complet et cycle de vie.
+- [x] PR 5A — Assemblage transactionnel du plan Électrification : [#5788](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5788), implémenté et vérifié, en revue. Admission publique fermée ; raccordement des jobs et effets après commit en 5B.
+- [ ] PR 5B — Pipeline complet et cycle de vie des jobs.
 - [ ] PR 6 — Parcours et lecture dans l'app.
 - [ ] Phase 7 — Qualification et ouverture en production.
 - [ ] Phase 8 — Budgets et financements, facultatifs.
@@ -74,7 +75,7 @@ les engagements ou ignorerait les indicateurs des fiches actions.
 | 2. Identification et références métier | 2A, 2B1, 2B2a, 2B2b | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 ; 2B2a/2B2b réutilisent 2B1 |
 | 3. Lecture et extraction de l'annexe | 3A, 3B | Document transformé en brouillon typé et validé, sans écriture métier | Phases 1 et 2 |
 | 4. Primitives de persistance | 4A, 4B, 4C, 4D | Création, liaison et références durables sous transaction, avec lectures isolées par source | Phases 1 et 2 ; 4D réutilise 4A/4B/4C |
-| 5. Import complet côté backend | 5 | Pipeline, reprise et transaction finale opérationnels ; admission toujours fermée | Phases 1 à 4, y compris 4D |
+| 5. Import complet côté backend | 5A, 5B | Persistance transactionnelle, puis worker, admission et reprise ; admission toujours fermée | Phases 1 à 4, y compris 4D |
 | 6. Parcours et lecture dans l'app | 6 | Parcours complet et cibles conventionnelles affichables ; ouverture toujours contrôlée | Phases 1 à 5 |
 | 7. Qualification et ouverture | Pas de PR artificielle d'activation | Ouverture à un premier groupe de lauréats, puis élargissement | Phase 6 et prérequis métier validés |
 | 8. Budgets et financements, facultatif | 8 | Import budgétaire additionnel ; le socle reste utilisable sans lui | Socle complet des phases 1 à 6 |
@@ -90,7 +91,7 @@ produit de deux semaines ne vaut pas engagement sur ces travaux.
 
 Le découpage sépare les revues qui demandent des raisonnements différents :
 contrats de jobs, extraction documentaire, intégrité des liens, concurrence
-sur les valeurs. La PR 5 assemble des services déjà testés ; elle ne doit pas
+sur les valeurs. La phase 5 assemble des services déjà testés ; elle ne doit pas
 devenir la PR qui implémente toutes les écritures. La PR 4D isole la revue du
 schéma et de ses usages, sans ajouter de reporting ou de parcours utilisateur.
 Éviter les PR de types seuls ou de migrations sans comportement utilisable.
@@ -186,7 +187,7 @@ les phases 5 et 6, sans ouvrir le profil annexe avant la phase 7.
 
 **Livraison 1A :** le contrôle partagé `isImportProfileImplemented` interdit
 l'annexe dans tous les environnements. Le flag de déploiement est branché en
-PR 5, lorsque le pipeline existe ; aucun flag actuel ni mode super-admin ne
+PR 5B, lorsque le pipeline existe ; aucun flag actuel ni mode super-admin ne
 peut ouvrir ce profil en 1A. Aucune migration n'est nécessaire pour ce lot.
 Le blocage temporaire de création Électrification livré dans #5673 est conservé.
 
@@ -195,7 +196,7 @@ Le suivi expose `getAiImportStatus`, `getCurrentAiImport`,
 Le compte rendu générique est dérivé de l'erreur et de la revue existantes :
 une erreur non classée reste `processing-error`, une revue n'est pas transformée
 en avertissement. La persistance des diagnostics annexe arrive avec leur
-production en PR 5. Aucun texte extrait ni chemin de stockage n'est ajouté aux réponses.
+production en PR 5B. Aucun texte extrait ni chemin de stockage n'est ajouté aux réponses.
 Les messages d'incompatibilité du contrat et du point de reprise sont partagés
 entre les erreurs API et les échecs des jobs affichés dans l'app.
 
@@ -812,7 +813,7 @@ créés ; elles n'ajoutent pas d'identité métier persistante. Le schéma et le
 privilèges SQL restent inchangés.
 Les notifications sont déclenchées par le propriétaire de la transaction après
 le commit, y compris après l'enregistrement du job IA terminé. Leur échec
-n'invalide pas le plan créé. L'assemblage du pipeline Électrification reste en PR 5.
+n'invalide pas le plan créé. L'assemblage du pipeline Électrification reste en PR 5B.
 
 - Accepter des axes explicites, y compris sans fiche, et des clés
   `sourceKey`/`parentSourceKey`. Retourner les correspondances clés → IDs.
@@ -1001,15 +1002,60 @@ l'admission Électrification reste fermée.
 
 ## Phase 5 — Import complet dans une transaction
 
-### PR 5 — Assembler le pipeline et le cycle de vie
+### PR 5A — Assembler les écritures dans une transaction
+
+**Périmètre :** service interne de persistance sous
+[`electrification/persist-import`](../../apps/backend/src/plans/ai-plan-import/electrification/persist-import/).
+Le lot compose les primitives 4A/4B/4C/4D et garde l'enfilement, le worker et
+la reprise publique pour 5B. Aucune migration supplémentaire.
+
+- Valider et résoudre à nouveau le checkpoint documentaire sans appel au modèle.
+  Revalider sous verrou les définitions d'indicateurs avant toute création,
+  avec le verrou exclusif du graphe si un indicateur personnalisé est créé.
+- Réutiliser le résolveur d'entités, l'agrégat, les liens additifs et la
+  complétion des valeurs. Utiliser les clés source pour les parents, même si
+  plusieurs fiches portent le même titre ; conserver les axes vides.
+- Vérifier les droits, l'éligibilité et le type exact. Une autorisation interne
+  limitée à l'utilisateur, à la collectivité, au type et à la transaction
+  permet la création Électrification ; les DTO publics, l'import générique,
+  la conversion d'un plan existant et la duplication n'en disposent pas.
+  Les services partagés acceptent `PlanCreateAuthorization` ; seule sa
+  délivrance dépend des règles de l'import Électrification, dans son dossier.
+- Conserver les engagements de A, les références et le parent catalogue
+  d'origine. Créer les fiches d'engagement et les sous-actions oui/non ;
+  conserver la réponse et son année dans le compte rendu.
+- Enregistrer les cibles A dans la source exacte du plan. Compléter les valeurs
+  ordinaires des indicateurs des fiches sans écrasement et signaler les conflits.
+  Les objets désignés par URL reçoivent uniquement des liens.
+  Le service commun
+  [`PersistPlanIndicateursService`](../../apps/backend/src/plans/plans/persist-plan-indicateurs/persist-plan-indicateurs.service.ts)
+  traite le lot : verrous, revalidation des définitions, liens aux axes/fiches,
+  source du plan et valeurs. Un adaptateur pur traduit le catalogue, les cibles
+  A et les diagnostics Électrification. Le point d'entrée métier garde la
+  préparation du checkpoint et le contrôle d'éligibilité.
+- Accepter une transaction appelante pour que 5B ajoute le compte rendu et
+  `markDone` au même commit. Aucun job ni effet externe n'est déclenché ici ;
+  l'appelant utilisera les notifications existantes après commit.
+
+**Validation :** e2e avec vraie base et faux LLM : plan complet, isolement des
+cibles, préservation des objets existants, rollback de l'ensemble y compris
+les liens, références invalides, révocation des droits, changement d'unité ou
+d'identifiant catalogue entre résolution et verrouillage, autorisation non
+réutilisable sur un autre périmètre et création ordinaire toujours fermée.
+
+**Déploiement et arrêt possible :** services internes complets, admission
+publique fermée. La production peut rester à ce stade. Ce lot ne garantit pas
+l'idempotence d'un job : 5B associe ces écritures à sa transition atomique de
+réussite et protège les reprises contre les doublons.
+
+### PR 5B — Assembler le pipeline et le cycle de vie
 
 **Périmètre :** [enfilement](../../apps/backend/src/plans/ai-plan-import/enqueue-import/),
 [worker et service](../../apps/backend/src/plans/ai-plan-import/generate-import-draft/),
-reprise et orchestration métier. Les primitives de stockage sont déjà livrées.
+reprise et orchestration métier. La persistance transactionnelle est livrée en 5A.
 
-**Prérequis :** les lots 4A à 4D sont livrés et vérifiés, y compris les lectures
-des références durables et de la source exacte du plan. La phase 5 assemble
-ces capacités ; elle ne reporte pas leur implémentation ni leurs migrations.
+**Prérequis :** les lots 4A à 4D et 5A sont livrés et vérifiés, y compris les
+lectures des références durables et de la source exacte du plan.
 
 - Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2a/2B2b.
   Refuser les formats autres que DOCX pour Électrification avant toute lecture
@@ -1031,14 +1077,12 @@ ces capacités ; elle ne reporte pas leur implémentation ni leurs migrations.
   Le service et le contrôleur retournent `planId: null` pour ce profil ; le
   nettoyage n'appelle `deleteImportingPlan` que si un identifiant existe.
   Garder le plan provisoire du profil générique et son comportement PCAET.
-- Adapter le blocage temporaire de création Électrification dans les services
-  partagés pour permettre la transaction annexe uniquement après validation de
-  son admission. Aucun contournement par le type de plan, la duplication ou un
-  import générique ; le parcours ordinaire reste bloqué jusqu'à la phase 6.
+- Appeler la persistance 5A uniquement pour un job admis. Son autorisation
+  interne ne remplace pas l'admission du profil. Aucun contournement par le
+  type de plan, la duplication ou un import générique ; le parcours ordinaire
+  reste bloqué jusqu'à la phase 6.
 - Extraire/préparer hors transaction. Dans une transaction courte : revalider
-  droits et références, créer plan/axes/fiches, ajouter liens, créer les
-  personnalisés, utiliser les écritures de 4D pour les références,
-  les engagements et les sources, écrire les valeurs autorisées et le compte
+  droits et références via la persistance 5A, enregistrer son compte
   rendu, puis `markDone` avec le contrôle
   `status`/`attempt` existant.
   Un refus de `markDone` annule tout, comme une erreur métier ou une révocation de droit.
@@ -1200,18 +1244,18 @@ au socle. Aucun chantier de reporting budgétaire n'est inclus.
 
 | Exigence de l'ADR | Implémentation | Vérification de bout en bout |
 | --- | --- | --- |
-| Profil explicite, droits, lauréats, aucun plan avant validation | 1A, 2B2a, 5 | 5 et 7 |
-| Suivi durable, reprise et compatibilité des jobs | 1A, 1B, 3B, 5 | 5 et 6 |
-| A/B uniquement, hyperliens, clés stables, références bloquantes | 2B1, 2B2a, 2B2b, 3A, 3B | 5 |
-| Axes explicites, E01/E02, axes libres et B sans engagement | 2B1, 4A, 5 | 5 et 6 |
-| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B1, 4A, 4B, 4C, 4D, 5 | 5 et 6 |
-| Personnalisés, valeurs datées et oui/non | 3B, 4A, 4B, 4C, 5 | 5 |
-| Identités ADEME et sélection des engagements durables | 4D | 4D, puis 5 et 6 |
-| Rattachement durable des sources au plan | 4D, avec les primitives 4B/4C | 4D, puis 5 et 6 |
-| URL : liens seuls ; codes : complétion sans écrasement | 2B2a, 2B2b, 4A, 4B, 4C | 5 |
+| Profil explicite, droits, lauréats, aucun plan avant validation | 1A, 2B2a, 5A, 5B | 5A, 5B et 7 |
+| Suivi durable, reprise et compatibilité des jobs | 1A, 1B, 3B, 5B | 5B et 6 |
+| A/B uniquement, hyperliens, clés stables, références bloquantes | 2B1, 2B2a, 2B2b, 3A, 3B | 5A et 5B |
+| Axes explicites, E01/E02, axes libres et B sans engagement | 2B1, 4A, 5A | 5A, 5B et 6 |
+| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B1, 4A, 4B, 4C, 4D, 5A | 5A, 5B et 6 |
+| Personnalisés, valeurs datées et oui/non | 3B, 4A, 4B, 4C, 5A | 5A et 5B |
+| Identités ADEME et sélection des engagements durables | 4D, 5A | 4D, 5A, 5B et 6 |
+| Rattachement durable des sources au plan | 4D, avec les primitives 4B/4C, 5A | 4D, 5A, 5B et 6 |
+| URL : liens seuls ; codes : complétion sans écrasement | 2B2a, 2B2b, 4A, 4B, 4C, 5A | 5A et 5B |
 | Liberté d'édition, titres communs et suppression | 4A, 4B, 4D, 6 | 4D et 6 |
-| Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 4D, 5 | 5 |
-| Compte rendu complet, activation et arrêt sans perte | 1A, 1B, 5, 6 | 7 |
+| Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 4D, 5A, 5B | 5A et 5B |
+| Compte rendu complet, activation et arrêt sans perte | 1A, 1B, 5A, 5B, 6 | 7 |
 | Budgets facultatifs | 8 | 8, sans bloquer 7 |
 
 Une PR est terminée lorsque ses checks ciblés passent, ses contrats restent

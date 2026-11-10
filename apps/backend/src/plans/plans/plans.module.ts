@@ -38,6 +38,7 @@ import { ImportExcelPlanApplicationService } from './import-plan-aggregate/impor
 import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
 import { ImportPlanService } from './import-plan-aggregate/import-plan.service';
 import { ResolveEntityService } from './import-plan-aggregate/resolvers/resolve-entity.service';
+import { PersistPlanIndicateursService } from './persist-plan-indicateurs/persist-plan-indicateurs.service';
 import { ListPlanTypesRouter } from './list-plan-types/list-plan-types.router';
 import { ListPlanTypesService } from './list-plan-types/list-plan-types.service';
 import { ListPlansRepository } from './list-plans/list-plans.repository';
@@ -103,6 +104,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     CreatePlanAggregateService,
     GetPlanReferencesService,
     ManagePlanIndicateurSourceService,
+    PersistPlanIndicateursService,
     ImportPlanService,
     ImportExcelPlanApplicationService,
     ImportPlanRouter,
@@ -112,8 +114,11 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     VerifyPlanRouter,
   ],
   exports: [
+    CreatePlanAggregateService,
+    ResolveEntityService,
     GetPlanReferencesService,
     ManagePlanIndicateurSourceService,
+    PersistPlanIndicateursService,
     CheckElectrificationEligibilityService,
     PlanRouter,
     UpsertPlanService,

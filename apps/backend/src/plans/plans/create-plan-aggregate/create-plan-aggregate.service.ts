@@ -18,6 +18,7 @@ import { ficheActionTable } from '../../fiches/shared/models/fiche-action.table'
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
 import { PlanError, PlanErrorType } from '../plans.errors';
+import { PlanCreateAuthorization } from '../upsert-plan/plan-create-authorization';
 import { UpsertPlanError } from '../upsert-plan/upsert-plan.errors';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
 import { PlanAggregateStructure } from './create-plan-aggregate.rules';
@@ -67,13 +68,18 @@ export class CreatePlanAggregateService {
   /** Un échec doit faire annuler la transaction englobante par son propriétaire. */
   async create(
     request: CreatePlanAggregateInput,
-    { user, tx }: { user: AuthenticatedUser; tx: Transaction }
+    requestContext: {
+      user: AuthenticatedUser;
+      tx: Transaction;
+      planCreateAuthorization?: PlanCreateAuthorization;
+    }
   ): Promise<
     Result<
       CreatePlanAggregateOutput,
       PlanError | UpsertAxeError | UpsertPlanError
     >
   > {
+    const { user, tx } = requestContext;
     const structure = PlanAggregateStructure.validateAndSort(request);
     if (!structure.success) {
       return failure(PlanErrorType.INVALID_DATA, new Error(structure.error));
@@ -109,7 +115,7 @@ export class CreatePlanAggregateService {
           pilotes: request.pilotes,
           referents: request.referents,
         },
-        { user, tx }
+        requestContext
       );
       if (!plan.success) return plan;
 

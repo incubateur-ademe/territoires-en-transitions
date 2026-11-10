@@ -7,6 +7,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight, PlanCreationRules } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { PlanCreateAuthorization } from './plan-create-authorization';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
 import {
   baseCreatePlanSchema,
@@ -27,7 +28,13 @@ export class UpsertPlanService {
 
   async upsertPlan(
     plan: UpsertPlanInput,
-    { user, tx }: ServiceSecondArg
+    {
+      user,
+      tx,
+      planCreateAuthorization,
+    }: ServiceSecondArg & {
+      planCreateAuthorization?: PlanCreateAuthorization;
+    }
   ): Promise<Result<AxeLight, UpsertPlanError>> {
     const permissionResult = await this.permissionService.isAllowed(
       user,
@@ -68,7 +75,14 @@ export class UpsertPlanService {
           const isKeepingExistingPlanType =
             existingPlan?.typeId === planProps.typeId &&
             existingPlan.collectiviteId === plan.collectiviteId;
-          if (!isKeepingExistingPlanType) {
+          const isAuthorizedCreation = planCreateAuthorization?.matches(
+            planProps,
+            {
+              user,
+              tx: transaction,
+            }
+          );
+          if (!isKeepingExistingPlanType && !isAuthorizedCreation) {
             return {
               success: false,
               error: creationDisabledReason,
