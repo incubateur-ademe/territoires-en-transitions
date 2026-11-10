@@ -25,7 +25,9 @@ export class MutateIndicateurRouter {
     create: this.trpc.authedProcedure
       .input(createIndicateurInputSchema)
       .mutation(({ ctx, input }) => {
-        return this.createService.createIndicateurPerso(input, ctx.user);
+        return this.createService.createIndicateurPerso(input, {
+          user: ctx.user,
+        });
       }),
 
     update: this.trpc.authedProcedure

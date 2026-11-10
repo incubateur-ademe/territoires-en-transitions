@@ -1,17 +1,25 @@
 import { BullModule } from '@nestjs/bullmq';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
+import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { SharedModule } from '@tet/backend/shared/shared.module';
 import { UsersModule } from '@tet/backend/users/users.module';
 import { LlmModule } from '@tet/backend/utils/llm/llm.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { electrificationConfig } from '@tet/domain/plans';
+import { FichesModule } from '../fiches/fiches.module';
 import { CompletePlanSecteursModule } from '../fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.module';
 import { PlanModule } from '../plans/plans.module';
 import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from './ai-plan-import-step-run.repository';
+import { ELECTRIFICATION_CONFIG } from './electrification/electrification.constants';
+import { ResolveElectrificationEngagementsService } from './electrification/resolve-engagements/resolve-electrification-engagements.service';
+import { ResolveElectrificationFichesService } from './electrification/resolve-fiches/resolve-electrification-fiches.service';
+import { ResolveElectrificationIndicateursService } from './electrification/resolve-fiches/resolve-electrification-indicateurs.service';
+import { ResolveImportReferenceService } from './resolve-import-reference/resolve-import-reference.service';
 import {
   AI_PLAN_IMPORT_JOB_OPTIONS,
   AI_PLAN_IMPORT_QUEUE_NAME,
@@ -19,6 +27,8 @@ import {
 import { EnqueueImportController } from './enqueue-import/enqueue-import.controller';
 import { EnqueueImportService } from './enqueue-import/enqueue-import.service';
 import { GenerateImportDraftService } from './generate-import-draft/generate-import-draft.service';
+import { GenerateGenericImportService } from './generate-import-draft/generate-generic-import.service';
+import { CompletePlanImportService } from './generate-import-draft/complete-plan-import.service';
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
 import { FindPreviousImportRouter } from './find-previous-import/find-previous-import.router';
 import { FindPreviousImportService } from './find-previous-import/find-previous-import.service';
@@ -32,6 +42,8 @@ import { ResumeImportService } from './resume-import/resume-import.service';
 
 @Module({
   imports: [
+    forwardRef(() => FichesModule),
+    IndicateursModule,
     LlmModule,
     TransactionModule,
     PlanModule,
@@ -49,10 +61,20 @@ import { ResumeImportService } from './resume-import/resume-import.service';
   ],
   controllers: [EnqueueImportController],
   providers: [
+    {
+      provide: ELECTRIFICATION_CONFIG,
+      useValue: electrificationConfig,
+    },
+    ResolveElectrificationEngagementsService,
+    ResolveElectrificationFichesService,
+    ResolveElectrificationIndicateursService,
+    ResolveImportReferenceService,
     AiPlanImportJobRepository,
     AiPlanImportStepRunRepository,
     EnqueueImportService,
     GenerateImportDraftService,
+    GenerateGenericImportService,
+    CompletePlanImportService,
     GenerateImportDraftWorker,
     GetImportStatusService,
     GetImportStatusRouter,

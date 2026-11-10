@@ -106,9 +106,16 @@ describe('IndicateurSourcesService', () => {
     ).resolves.toBeUndefined();
     await expect(service.getAllSources()).resolves.toBe(sources);
 
-    expect(repository.createMetadonnee).toHaveBeenCalledWith(metadonnee);
-    expect(repository.getMetadonnee).toHaveBeenCalledWith('insee', '2026');
-    expect(repository.upsertSource).toHaveBeenCalledWith(source);
+    expect(repository.createMetadonnee).toHaveBeenCalledWith(
+      metadonnee,
+      undefined
+    );
+    expect(repository.getMetadonnee).toHaveBeenCalledWith(
+      'insee',
+      '2026',
+      undefined
+    );
+    expect(repository.upsertSource).toHaveBeenCalledWith(source, undefined);
     expect(repository.listSources).toHaveBeenCalledOnce();
   });
 

@@ -28,7 +28,9 @@ import {
   describe,
   expect,
   it,
+  MockInstance,
   onTestFinished,
+  vi,
 } from 'vitest';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from '../ai-plan-import.constants';
@@ -70,6 +72,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let cleanupFreshCollectivite: () => Promise<void>;
   let cleanupOtherCollectivite: () => Promise<void>;
   let disableSupport: () => Promise<void>;
+  let globalQuota: MockInstance;
 
   const deleteJobs = () =>
     db.db
@@ -114,6 +117,11 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
+    // Ces cas vérifient les quotas utilisateur/collectivité, indépendamment
+    // des jobs laissés dans la base par d'autres suites.
+    globalQuota = vi
+      .spyOn(app.get(AiPlanImportJobRepository), 'countInFlight')
+      .mockResolvedValue(success(0));
 
     const support = await addTestUser(db, {
       collectiviteId: TEST_COLLECTIVITE_ID,
@@ -172,6 +180,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   });
 
   afterAll(async () => {
+    globalQuota?.mockRestore();
     await deleteJobs();
     await cleanupFreshCollectivite();
     await cleanupOtherCollectivite();

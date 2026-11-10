@@ -287,6 +287,38 @@ export class FicheActionRepository
     }
   }
 
+  /**
+   * Ajoute des liens sans modifier la fiche ni ses relations existantes.
+   * L'appelant autorise la fiche et les axes dans leur collectivité cible,
+   * y compris le partage éventuel, sous cette même transaction.
+   */
+  async addAxeLinks(
+    ficheId: number,
+    axeIds: number[],
+    userId: string,
+    tx: Transaction
+  ): Promise<Result<void, FicheActionWriteError>> {
+    if (axeIds.length === 0) return success(undefined);
+
+    try {
+      await tx
+        .insert(ficheActionAxeTable)
+        .values(
+          [...new Set(axeIds)]
+            .sort((a, b) => a - b)
+            .map((axeId) => ({
+              ficheId,
+              axeId,
+              createdBy: userId,
+            }))
+        )
+        .onConflictDoNothing();
+      return success(undefined);
+    } catch (error) {
+      return this.toServerError(error);
+    }
+  }
+
   async applyUpdate({
     ficheId,
     ficheFields,

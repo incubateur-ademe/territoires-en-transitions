@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { electrificationLaureatsConfig } from '@tet/domain/plans';
 import { AxeModule } from '../axes/axe.module';
 import { DeleteAxeRepository } from '../axes/delete-axe/delete-axe.repository';
 import { DeleteAxeRouter } from '../axes/delete-axe/delete-axe.router';
@@ -16,6 +17,8 @@ import { UpsertAxeRepository } from '../axes/upsert-axe/upsert-axe.repository';
 import { UpsertAxeRouter } from '../axes/upsert-axe/upsert-axe.router';
 import { UpsertAxeService } from '../axes/upsert-axe/upsert-axe.service';
 import { FichesModule } from '../fiches/fiches.module';
+import { CheckElectrificationEligibilityService } from './electrification/check-electrification-eligibility/check-electrification-eligibility.service';
+import { ELECTRIFICATION_LAUREATS_CONFIG } from './electrification/check-electrification-eligibility/electrification-eligibility.constants';
 import { ComputeBudgetRules } from './compute-budget/compute-budget.rules';
 import { DeletePlanRepository } from './delete-plan/delete-plan.repository';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
@@ -55,6 +58,11 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     TransactionModule,
   ],
   providers: [
+    {
+      provide: ELECTRIFICATION_LAUREATS_CONFIG,
+      useValue: electrificationLaureatsConfig,
+    },
+    CheckElectrificationEligibilityService,
     GetPlanCompletionService,
     GetPlanCompletionRouter,
     DeleteAxeService,
