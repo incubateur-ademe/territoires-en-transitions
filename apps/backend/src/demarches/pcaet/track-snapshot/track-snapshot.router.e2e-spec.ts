@@ -10,6 +10,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { TrackedEvent } from '@tet/backend/utils/tracking/event-tracker.interface';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished, vi } from 'vitest';
 import { completeTestDossierPcaet } from '../demarches-pcaet.test-fixture';
@@ -87,6 +88,34 @@ describe('Photo quotidienne du stock PCAET', () => {
         enElaboration.id
       )?.properties
     ).toMatchObject({ bloque_par: [], nb_plans: 1, diagnostic_complet: true });
+  });
+
+  test('ignore les démarches des collectivités de test', async () => {
+    const spy = vi
+      .spyOn(app.get(TrackingService), 'capture')
+      .mockImplementation(() => undefined);
+    onTestFinished(() => spy.mockRestore());
+
+    const { collectivite, user } = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.EDITION },
+      collectivite: { type: collectiviteTypeEnum.TEST },
+    });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(user),
+    });
+    const demo = await caller.demarches.pcaet.create({
+      collectiviteId: collectivite.id,
+    });
+
+    const serviceRole = router.createCaller({ user: getServiceRoleUser() });
+    await serviceRole.demarches.pcaet.trackSnapshot({});
+
+    expect(
+      snapshotOf(
+        spy.mock.calls.map(([params]) => params),
+        demo.id
+      )
+    ).toBeUndefined();
   });
 
   test('réservée au service role', async () => {
