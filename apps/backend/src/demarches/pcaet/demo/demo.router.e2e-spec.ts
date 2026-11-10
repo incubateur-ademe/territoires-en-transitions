@@ -10,6 +10,10 @@ import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.t
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import {
+  DemarchePcaetStatusEnum,
+  DemarcheTypeEnum,
+} from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
@@ -167,6 +171,42 @@ describe('Mode démo du dépôt PCAET', () => {
     expect((await first.caller.demarches.pcaet.get(ref)).planActionIds).toEqual(
       [planDemo]
     );
+  });
+
+  it('crée un autre plan de démo quand une démarche en cours tient le premier', async () => {
+    const first = await freshDemarche();
+    await first.caller.demarches.pcaet.demo.completerEtape({
+      ...first.ref,
+      etape: 'plan',
+    });
+    const [planDemo] = (await first.caller.demarches.pcaet.get(first.ref))
+      .planActionIds;
+    // Deux démarches en cours à la fois (dépôts d'une supra, démarche hors
+    // plateforme…) : la création le refuse, la base le permet, `instruit`
+    // n'étant pas dans l'index d'unicité. Le plan reste tenu par la première.
+    await db.db
+      .update(demarcheTable)
+      .set({ status: DemarchePcaetStatusEnum.INSTRUIT })
+      .where(eq(demarcheTable.id, first.ref.demarcheId));
+    const [second] = await db.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: first.collectiviteId,
+        type: DemarcheTypeEnum.PCAET,
+        titre: 'PCAET',
+        status: DemarchePcaetStatusEnum.EN_ELABORATION,
+      })
+      .returning({ id: demarcheTable.id });
+    const ref = { collectiviteId: first.collectiviteId, demarcheId: second.id };
+    await first.caller.demarches.pcaet.demo.completerEtape({
+      ...ref,
+      etape: 'plan',
+    });
+
+    const planActionIds = (await first.caller.demarches.pcaet.get(ref))
+      .planActionIds;
+    expect(planActionIds).toHaveLength(1);
+    expect(planActionIds).not.toContain(planDemo);
   });
 
   it('« réputé favorable » passe en finalisation sans avis', async () => {

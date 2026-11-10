@@ -89,9 +89,16 @@ export class DemarchePcaetDemoFichiersService {
     collectiviteId: number,
     fichier: DemoFichier
   ): Promise<Result<BibliothequeFichier, 'DEMO_FICHIER_ERROR'>> {
-    const buffer = await readFile(
-      path.join(__dirname, 'assets', fichier.asset)
-    );
+    let buffer: Buffer;
+    try {
+      buffer = await readFile(path.join(__dirname, 'assets', fichier.asset));
+    } catch (error) {
+      // Un build sans la copie des PDF (assets de nest-cli.json).
+      this.logger.error(
+        `Fichier de démo ${fichier.asset} illisible : ${String(error)}`
+      );
+      return failure('DEMO_FICHIER_ERROR');
+    }
     const hash = calculateDocumentHash(buffer);
 
     const existant = await this.bibliothequeFichierRepository.findByHash({
