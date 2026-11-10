@@ -38,6 +38,11 @@ const blockedCardContents: Record<
       },
     ],
   },
+  trajectoireNotAvailable: {
+    title: appLabels.priorisationTrajectoireNonDisponibleTitre,
+    description: appLabels.priorisationTrajectoireNonDisponibleDescription,
+    toActions: () => [],
+  },
   missingActions: {
     title: appLabels.priorisationVueBloqueeTitre,
     description: appLabels.priorisationVueBloqueeDescription,

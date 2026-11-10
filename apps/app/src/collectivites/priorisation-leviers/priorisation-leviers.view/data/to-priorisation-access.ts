@@ -3,6 +3,7 @@ type TrajectoireState =
   | 'failed'
   | 'computed'
   | 'notComputed'
+  | 'notAvailable'
   | 'reservedToEpci';
 
 type SettledTrajectoireState = Exclude<TrajectoireState, 'loading' | 'failed'>;
@@ -10,6 +11,7 @@ type SettledTrajectoireState = Exclude<TrajectoireState, 'loading' | 'failed'>;
 export type BlockedPriorisationAccess =
   | 'reservedToEpci'
   | 'missingTrajectoire'
+  | 'trajectoireNotAvailable'
   | 'missingActions';
 
 export type PriorisationAccess = BlockedPriorisationAccess | 'open';
@@ -18,11 +20,14 @@ export const toTrajectoireState = ({
   hasTrajectoire,
   isLoadingError,
   isTrajectoireNotComputed,
+  isTrajectoireNotAvailable,
   isCollectiviteNotEpci,
 }: {
   hasTrajectoire: boolean;
   isLoadingError: boolean;
   isTrajectoireNotComputed: boolean;
+  /** SNBC 3 : EPCI absent du millésime importé, rien à calculer. */
+  isTrajectoireNotAvailable: boolean;
   isCollectiviteNotEpci: boolean;
 }): TrajectoireState => {
   if (hasTrajectoire) {
@@ -33,6 +38,9 @@ export const toTrajectoireState = ({
   }
   if (isTrajectoireNotComputed) {
     return 'notComputed';
+  }
+  if (isTrajectoireNotAvailable) {
+    return 'notAvailable';
   }
   if (isCollectiviteNotEpci) {
     return 'reservedToEpci';
@@ -52,6 +60,9 @@ export const toPriorisationAccess = ({
   }
   if (trajectoireState === 'notComputed') {
     return 'missingTrajectoire';
+  }
+  if (trajectoireState === 'notAvailable') {
+    return 'trajectoireNotAvailable';
   }
   if (!hasMobilisation) {
     return 'missingActions';

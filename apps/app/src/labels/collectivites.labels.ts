@@ -188,6 +188,10 @@ export const collectivitesLabels = {
   priorisationTrajectoireManquanteDescription:
     "L'aide à la priorisation s'appuie sur la trajectoire SNBC de votre collectivité : elle permet d'estimer le potentiel de réduction de GES de chaque levier. Sans trajectoire calculée, elle ne peut pas être affichée.",
   calculerMaTrajectoireSnbc: 'Calculer ma trajectoire SNBC',
+  priorisationTrajectoireNonDisponibleTitre:
+    "La trajectoire SNBC n'est pas disponible pour votre collectivité",
+  priorisationTrajectoireNonDisponibleDescription:
+    "L'aide à la priorisation s'appuie sur la trajectoire SNBC de votre collectivité pour estimer le potentiel de réduction de GES de chaque levier. Cette trajectoire n'a pas été produite pour votre territoire, par exemple à la suite d'une fusion récente d'EPCI : la vue ne peut pas être affichée.",
   priorisationReserveeAuxEpciTitre: 'Cette vue est réservée aux EPCI',
   priorisationReserveeAuxEpciDescription:
     "L'aide à la priorisation s'appuie sur la trajectoire SNBC, qui n'est calculée que pour les EPCI. Elle ne peut pas être affichée pour votre collectivité.",

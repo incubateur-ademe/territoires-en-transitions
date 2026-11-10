@@ -83,9 +83,9 @@ export class PriorisationLeviersPom {
     return this.page.getByText(/^Analyse de \d+ actions?\b/);
   }
 
-  get missingTrajectoireMessage(): Locator {
+  get trajectoireNonDisponibleMessage(): Locator {
     return this.page.getByText(
-      'Calculez votre trajectoire SNBC pour accéder à cette vue'
+      "La trajectoire SNBC n'est pas disponible pour votre collectivité"
     );
   }
 

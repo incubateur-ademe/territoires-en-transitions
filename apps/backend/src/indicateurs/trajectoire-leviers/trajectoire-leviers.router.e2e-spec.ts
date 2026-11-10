@@ -139,6 +139,7 @@ describe('Trajectoire Leviers avec le flag SNBC 3', () => {
     ReturnType<typeof addTestCollectivite>
   >['collectivite'];
   let commune: Awaited<ReturnType<typeof addTestCollectivite>>['collectivite'];
+  let petr: Awaited<ReturnType<typeof addTestCollectivite>>['collectivite'];
 
   /** Résidentiel : 120 en 2021, 70 en 2030. */
   const valeursResidentiel = [
@@ -179,6 +180,11 @@ describe('Trajectoire Leviers avec le flag SNBC 3', () => {
       regionCode: '44',
     });
     commune = await addCollectivite({ type: 'commune', regionCode: '44' });
+    petr = await addCollectivite({
+      type: 'epci',
+      natureInsee: 'PETR',
+      regionCode: '44',
+    });
 
     for (const collectivite of [epci, paris, epciDrom]) {
       const valeurs = await addTestTrajectoireSnbc3Valeurs(
@@ -267,6 +273,16 @@ describe('Trajectoire Leviers avec le flag SNBC 3', () => {
         .createCaller({ user: authenticatedUser })
         .indicateurs.trajectoires.leviers.getData({
           collectiviteId: commune.id,
+        })
+    ).rejects.toThrowError(/ doit être un epci/i);
+  });
+
+  test("un PETR absent du millésime n'est pas un EPCI", async () => {
+    await expect(
+      router
+        .createCaller({ user: authenticatedUser })
+        .indicateurs.trajectoires.leviers.getData({
+          collectiviteId: petr.id,
         })
     ).rejects.toThrowError(/ doit être un epci/i);
   });
