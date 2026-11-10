@@ -19,6 +19,7 @@ const JOBS_PROPRES = [
   'send-notifications',
   'clore-instructions-pcaet',
   'posthog-collectivites-group-sync',
+  'posthog-demarches-pcaet-snapshot',
   'scan-fichiers',
   'import-perimetres-epci',
 ] as const;

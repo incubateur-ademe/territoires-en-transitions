@@ -17,6 +17,7 @@ import { ConfigurationModule } from '../config/configuration.module';
 import { CronImportPerimetresEpciService } from '../collectivites/cron-import-perimetres-epci.service';
 import { CronScanFichiersService } from '../collectivites/cron-scan-fichiers.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
+import { CronTrackPcaetSnapshotService } from '../demarches/cron-track-pcaet-snapshot.service';
 import { CronNotificationsService } from './cron-notifications.service';
 import { CronService } from './cron.service';
 
@@ -44,6 +45,7 @@ import { CronService } from './cron.service';
     CronConsumerService,
     CronNotificationsService,
     CronCloreInstructionsService,
+    CronTrackPcaetSnapshotService,
     CronImportPerimetresEpciService,
     CronScanFichiersService,
   ],

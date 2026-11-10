@@ -29,6 +29,7 @@ import { ReferentsPcaetRouter } from './referents/referents-pcaet.router';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
+import { TrackSnapshotRouter } from './track-snapshot/track-snapshot.router';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
 
 @Injectable()
@@ -64,7 +65,8 @@ export class PcaetRouter {
     private readonly pcaetDiagnosticRouter: PcaetDiagnosticRouter,
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter,
     private readonly listContactsRouter: ListContactsRouter,
-    private readonly referentsPcaetRouter: ReferentsPcaetRouter
+    private readonly referentsPcaetRouter: ReferentsPcaetRouter,
+    private readonly trackSnapshotRouter: TrackSnapshotRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -95,6 +97,7 @@ export class PcaetRouter {
     this.cloreInstructionRouter.router,
     this.publierDemarchePcaetRouter.router,
     this.listContactsRouter.router,
+    this.trackSnapshotRouter.router,
 
     this.trpc.router({
       diagnostic: this.pcaetDiagnosticRouter.router,

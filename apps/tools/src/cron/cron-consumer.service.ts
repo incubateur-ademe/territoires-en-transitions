@@ -13,6 +13,7 @@ import { CronScanFichiersService } from '../collectivites/cron-scan-fichiers.ser
 import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
 import { CronCloreInstructionsService } from '../demarches/cron-clore-instructions.service';
+import { CronTrackPcaetSnapshotService } from '../demarches/cron-track-pcaet-snapshot.service';
 import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
 import { PostHogCollectivitesSyncService } from '../posthog/posthog-collectivites-sync.service';
 import { CronNotificationsService } from './cron-notifications.service';
@@ -28,6 +29,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly cronComputeTrajectoireService: CronComputeTrajectoireService,
     private readonly cronNotificationsService: CronNotificationsService,
     private readonly cronCloreInstructionsService: CronCloreInstructionsService,
+    private readonly cronTrackPcaetSnapshotService: CronTrackPcaetSnapshotService,
     private readonly airtableCrmSyncService: AirtableCrmSyncService,
     private readonly postHogCollectivitesSyncService: PostHogCollectivitesSyncService,
     private readonly cronImportPerimetresEpciService: CronImportPerimetresEpciService,
@@ -68,6 +70,9 @@ export class CronConsumerService extends WorkerHost {
           break;
         case 'posthog-collectivites-group-sync':
           result = await this.postHogCollectivitesSyncService.process();
+          break;
+        case 'posthog-demarches-pcaet-snapshot':
+          result = await this.cronTrackPcaetSnapshotService.trackSnapshot();
           break;
         case 'scan-fichiers':
           result = await this.cronScanFichiersService.scanFichiers();
