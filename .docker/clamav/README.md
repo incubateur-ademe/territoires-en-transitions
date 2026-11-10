@@ -48,8 +48,8 @@ Le service s'appelle `clamav` et vit dans l'app du backend (`<env>-backend`). Il
 5. **Repasser `FICHIER_SCAN_BATCH_SIZE` à sa valeur par défaut.**
 6. **Basculer en suppression**, une fois le rapport validé et le marquage des fichiers supprimés livré dans l'app : ajouter `--env FICHIER_SCAN_MODE=enforce` dans `cd-backend.yml`. Le balayage suivant supprime les infectés de l'audit et prévient leurs administrateurs.
 
-## Coolify (étape B, préparée)
+## Coolify (étape B)
 
-- **Backend déjà sur Coolify** : on déploie la même image dans la stack et on pointe `CLAMAV_HOST` sur le réseau Docker interne. Le code ne change pas.
+- **Backend déjà sur Coolify** (preprod) : `infra/coolify/applications.tf` déploie l'image officielle sur le serveur, sans domaine, sous l'alias réseau `clamav` ; le manifeste pose `CLAMAV_HOST=clamav` au backend. Après `terraform apply` : déployer `clamav` dans Coolify (bouton **Deploy**), attendre qu'il soit *healthy* (chargement des signatures, ~5 min), puis redéployer le backend.
 - **Backend encore sur Koyeb** : il ne faut pas exposer clamd sur Internet. Il faut d'abord ajouter un transport HTTPS authentifié derrière l'interface `AntivirusScanner`.
 - **Bascule** : staging puis prod, avec un test EICAR à chaque étape, puis suppression du service Koyeb. Les verdicts sont en base, donc rien n'est à rejouer.

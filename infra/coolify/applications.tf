@@ -125,3 +125,44 @@ resource "coolify_application_docker_image" "app" {
     ignore_changes = [docker_registry_image_tag]
   }
 }
+
+# --- ClamAV : analyse antivirus des fichiers déposés ---
+#
+# Un clamd par serveur, partagé par ses environnements (preprod, puis staging),
+# comme sur Koyeb. Aucun domaine : clamd n'a pas d'authentification, il n'est
+# joignable que sur le réseau Docker coolify, sous l'alias « clamav »
+# (CLAMAV_HOST du backend). Image officielle, configurée par variables (cf.
+# .docker/clamav/Dockerfile pour le local) : pas de build ni de CD, la version
+# se monte ici.
+#
+# La prod reste sur Koyeb tant que son backend y est (.docker/clamav/README.md).
+locals {
+  clamav_applications = {
+    for env in ["preprod"] : "${env}/clamav" => {
+      env    = env
+      app    = "clamav"
+      server = local.application_environments_catalog[env].server
+    } if contains(var.application_environments, env)
+  }
+}
+
+resource "coolify_application_docker_image" "clamav" {
+  for_each = local.clamav_applications
+
+  name             = "clamav"
+  description      = "clamd du serveur ${each.value.server}, réseau interne seulement. Géré par Terraform (infra/coolify/applications.tf). [tet-app:${each.key}]"
+  project_uuid     = coolify_project.tet.uuid
+  server_uuid      = coolify_server.app[each.value.server].uuid
+  environment_name = local.coolify_environment_names[each.value.env]
+
+  docker_image              = "clamav/clamav"
+  docker_registry_image_tag = "1.5.4"
+  ports_exposes             = "3310"
+  autogenerate_domain       = false
+  custom_network_aliases    = "clamav"
+  # HEALTHCHECK de l'image (clamdcheck.sh).
+  health_check_enabled = false
+  instant_deploy       = false
+
+  depends_on = [coolify_environment.env]
+}

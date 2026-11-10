@@ -134,6 +134,10 @@ locals {
         OTEL_EXPORTER_OTLP_ENDPOINT = { value = "https://eu.i.posthog.com/i" }
         OTEL_SERVICE_NAME           = { value = "backend" }
         OTEL_RESOURCE_ATTRIBUTES    = { value = "deployment.environment.name=preprod" }
+
+        # clamd du serveur (applications.tf), par son alias réseau. Port 3310 par
+        # défaut. Mode audit par défaut : rien n'est supprimé.
+        CLAMAV_HOST = { value = "clamav" }
       }
 
       # Toute la configuration du site est lue au runtime, comme pour l'app
@@ -208,6 +212,16 @@ locals {
         PROBE_STORAGE_URL = { value = "${local.coolify_env_settings.preprod.supabase_url}/storage/v1/status" }
       }
 
+      # Variables lues par l'entrypoint de l'image officielle.
+      clamav = {
+        # 25M par défaut, sous la limite de taille de Storage.
+        CLAMD_CONF_StreamMaxLength = { value = "60M" }
+        # Sans quoi clamd garde deux bases en mémoire pendant un rechargement,
+        # sur un serveur partagé. L'analyse attend la fin du rechargement.
+        CLAMD_CONF_ConcurrentDatabaseReload = { value = "no" }
+        FRESHCLAM_CHECKS                    = { value = "24" }
+      }
+
       # Application Git (git-applications.tf). HOSTNAME et PROTOCOL forment les
       # liens absolus des pages et des exports.
       aldo = {
@@ -265,6 +279,7 @@ locals {
       { for k, v in local.applications : k => merge(v, { resource = "applications" }) },
       { for k, v in local.services : k => merge(v, { resource = "services" }) },
       { for k, v in local.alloy_services : k => merge(v, { resource = "services" }) },
+      { for k, v in local.clamav_applications : k => merge(v, { resource = "applications" }) },
       { for k, v in local.git_applications : k => merge(v, { resource = "applications", git = true }) },
       ) : id => {
       env      = a.env
