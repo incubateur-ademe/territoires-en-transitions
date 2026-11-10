@@ -202,6 +202,18 @@ locals {
         PROBE_AUTH_URL    = { value = "${local.coolify_env_settings.preprod.supabase_url}/auth/v1/health" }
         PROBE_STORAGE_URL = { value = "${local.coolify_env_settings.preprod.supabase_url}/storage/v1/status" }
       }
+
+      # Application Git (git-applications.tf). HOSTNAME et PROTOCOL forment les
+      # liens absolus des pages et des exports.
+      aldo = {
+        HOSTNAME                  = { value = trimprefix(local.git_applications_catalog["preprod/aldo"].domains[0], "https://") }
+        PROTOCOL                  = { value = "https" }
+        ALDO_EMAIL                = { value = "aldo@ademe.fr" }
+        GOOGLE_SHEETS_ID          = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }
+        GOOGLE_SHEETS_CREDENTIALS = { secret = "aldo-google-sheets-credentials" }
+        SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
+        SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
+      }
     }
   }
 
@@ -213,10 +225,15 @@ locals {
       { for k, v in local.applications : k => merge(v, { resource = "applications" }) },
       { for k, v in local.services : k => merge(v, { resource = "services" }) },
       { for k, v in local.alloy_services : k => merge(v, { resource = "services" }) },
+      { for k, v in local.git_applications : k => merge(v, { resource = "applications", git = true }) },
       ) : id => {
-      env               = a.env
-      app               = a.app
-      resource          = a.resource
+      env      = a.env
+      app      = a.app
+      resource = a.resource
+      # Application construite depuis son dépôt (git-applications.tf) : les
+      # règles propres aux images TET (clés fournies par l'image, pas de
+      # NEXT_PUBLIC_*) ne s'appliquent pas.
+      git               = try(a.git, false)
       secret_project_id = local.coolify_env_settings[a.env].secret_project_id
       secret_path       = "/coolify-env/${a.env}"
       entries           = local.coolify_env_manifests[a.env][a.app]
@@ -230,13 +247,12 @@ locals {
     } if contains(keys(local.coolify_env_manifests), a.env)
   }
 
-  # Secrets saisis à la main, dont ce stack crée la coquille (env-secrets.tf).
+  # Secrets saisis à la main, dont ce stack crée la coquille (env-secrets.tf) :
+  # ceux des ressources déclarées.
   coolify_env_manual_secrets = toset(flatten([
-    for env, apps in local.coolify_env_manifests : [
-      for app, entries in apps : [
-        for key, e in entries : "${env}/${e.secret}"
-        if try(e.secret, null) != null && !contains(local.coolify_env_derived_secrets, try(e.secret, ""))
-      ]
-    ] if contains(var.application_environments, env)
+    for id, p in local.coolify_env_pushes : [
+      for key, e in p.entries : "${p.env}/${e.secret}"
+      if try(e.secret, null) != null && !contains(local.coolify_env_derived_secrets, try(e.secret, ""))
+    ]
   ]))
 }

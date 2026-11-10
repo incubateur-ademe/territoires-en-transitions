@@ -385,6 +385,31 @@ description : la CD n'a besoin d'aucun UUID. Les environnements s'ouvrent un par
 la supprime pas de Coolify. Feuille de route :
 [`doc/plans/2026-10-06-001-infra-applications-coolify-as-code-plan.md`](../doc/plans/2026-10-06-001-infra-applications-coolify-as-code-plan.md).
 
+### Applications Git (aldo, rencontres)
+
+Les produits voisins, chacun dans son dépôt public, sont déclarés dans
+[`coolify/git-applications.tf`](coolify/git-applications.tf) : Coolify clone la branche et
+construit l'image sur le serveur cible (Railpack). Ils ont leurs propres domaines, donc ne
+suivent pas `application_environments`. Variables : même manifeste que les autres
+(`env-manifest.tf`).
+
+Mise en service d'une entrée :
+
+1. `terraform apply`, déposer les secrets listés par `env_manual_secrets`
+   (`SECRET_PROJECT_ID=<projet tet-prod>` pour la prod), incrémenter `coolify_env_revision`,
+   réappliquer.
+2. Premier déploiement : bouton **Deploy** dans Coolify, ou
+   `curl -H "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/deploy?uuid=<uuid>"`
+   (`terraform output application_uuids`).
+3. Redéploiement au push : dans le dépôt GitHub, **Settings → Webhooks** →
+   `https://coolify.territoiresentransitions.fr/webhooks/source/github/events/manual`,
+   `application/json`, événement *push*, avec le secret de l'onglet **Webhooks** de
+   l'application dans Coolify. Retirer ensuite l'auto-deploy du service Koyeb.
+4. Domaine hors `*.preprod` : vérifier avant la bascule avec
+   `curl -k --resolve <nom>:443:<ip du serveur> https://<nom>/`, puis passer chez Cloudflare
+   le CNAME Koyeb en A vers le serveur (DNS only). Traefik émet le certificat dans la minute.
+   Mettre le service Koyeb en pause une fois le trafic basculé.
+
 ### Variables d'environnement (Secret Manager → Coolify)
 
 [`coolify/env-manifest.tf`](coolify/env-manifest.tf) liste, par environnement et par
