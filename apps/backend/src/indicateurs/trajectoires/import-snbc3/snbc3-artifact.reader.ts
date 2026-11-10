@@ -33,14 +33,16 @@ export type Snbc3Release = Snbc3Commit & {
   manifest: Uint8Array;
   parquet: Uint8Array;
   workbook: { name: string; content: Uint8Array };
+  /** PDF de méthodologie de la release, servi par la page Trajectoire. */
+  methodologie: { name: string; content: Uint8Array };
 };
 
 type ReadResult<T> = Result<T, ImportTrajectoireSnbc3Error>;
 
 /**
  * Lit une release publiée par commit dans le dépôt `snbc3` : son manifeste, le
- * parquet des résultats et le classeur standalone, vérifiés contre les tailles
- * et empreintes du manifeste.
+ * parquet des résultats, le classeur standalone et le PDF de méthodologie,
+ * vérifiés contre les tailles et empreintes du manifeste.
  *
  * Injectable sous ce jeton abstrait : le dépôt GitLab en prod, un clone local en
  * dev, un dépôt en mémoire dans les tests.
@@ -92,15 +94,18 @@ export abstract class Snbc3ArtifactReader {
     const workbookEntry = manifest.data.fichiers.find(({ nom }) =>
       nom.endsWith('.xlsx')
     );
-    if (!parquetEntry || !workbookEntry) {
+    const methodologieEntry = manifest.data.fichiers.find(({ nom }) =>
+      nom.toLowerCase().endsWith('.pdf')
+    );
+    if (!parquetEntry || !workbookEntry || !methodologieEntry) {
       this.logger.error(
-        `La release ${version} (${sha}) doit contenir le parquet et le classeur standalone`
+        `La release ${version} (${sha}) doit contenir le parquet, le classeur standalone et le PDF de méthodologie`
       );
       return failure('SNBC3_ARTIFACT_NOT_FOUND');
     }
 
     const contents: Uint8Array[] = [];
-    for (const entry of [parquetEntry, workbookEntry]) {
+    for (const entry of [parquetEntry, workbookEntry, methodologieEntry]) {
       const file = await this.readRequiredFile(
         sha,
         `${releasePath}/${entry.nom}`
@@ -123,6 +128,7 @@ export abstract class Snbc3ArtifactReader {
       manifest: manifestFile.data,
       parquet: contents[0],
       workbook: { name: workbookEntry.nom, content: contents[1] },
+      methodologie: { name: methodologieEntry.nom, content: contents[2] },
     });
   }
 

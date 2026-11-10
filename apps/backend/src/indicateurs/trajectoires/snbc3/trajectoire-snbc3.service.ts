@@ -11,6 +11,8 @@ import {
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { partition, uniq } from 'es-toolkit';
+import { Readable } from 'node:stream';
+import { Snbc3ReleaseStorageService } from '../import-snbc3/snbc3-release-storage.service';
 import { TrajectoireSnbc3FeatureFlagService } from '../trajectoire-snbc3-feature-flag.service';
 import TrajectoiresDataService from '../trajectoires-data.service';
 import {
@@ -41,8 +43,35 @@ export class TrajectoireSnbc3Service {
     private readonly permissionService: PermissionService,
     private readonly valeursService: ManageIndicateurValeursService,
     private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
-    private readonly trajectoiresDataService: TrajectoiresDataService
+    private readonly trajectoiresDataService: TrajectoiresDataService,
+    private readonly releaseStorage: Snbc3ReleaseStorageService
   ) {}
+
+  /**
+   * PDF de méthodologie de la release importée : le même millésime que les
+   * valeurs affichées. Réservé aux utilisateurs qui ont le flag ; le document
+   * est public, la collectivité ne sert qu'à évaluer le flag.
+   */
+  async getMethodologie(
+    { collectiviteId }: { collectiviteId: number },
+    { user }: ServiceSecondArg
+  ): Promise<
+    Result<{ stream: Readable; fileName: string }, TrajectoireSnbc3Error>
+  > {
+    if (
+      !(await this.featureFlag.isTrajectoireSnbc3Enabled(user, collectiviteId))
+    ) {
+      return failure(TrajectoireSnbc3ErrorEnum.TRAJECTOIRE_SNBC3_NON_OUVERTE);
+    }
+    const methodologie = await this.releaseStorage.getMethodologie();
+    if (!methodologie.success) {
+      return failure(TrajectoireSnbc3ErrorEnum.SERVER_ERROR);
+    }
+    if (!methodologie.data) {
+      return failure(TrajectoireSnbc3ErrorEnum.METHODOLOGIE_SNBC3_INDISPONIBLE);
+    }
+    return success(methodologie.data);
+  }
 
   async checkStatus(
     { collectiviteId }: { collectiviteId: number },

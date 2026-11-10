@@ -15,6 +15,7 @@ const SHA = 'a'.repeat(40);
 const VERSION = '2.1';
 const RELEASE_PATH = getSnbc3ReleasePath(VERSION);
 const WORKBOOK = 'standalone.xlsx';
+const METHODOLOGIE = 'methodologie.pdf';
 
 const sha256 = (content: Uint8Array) =>
   createHash('sha256').update(content).digest('hex');
@@ -34,11 +35,14 @@ class MemorySnbc3ArtifactReader extends Snbc3ArtifactReader {
   publish({
     parquet,
     declaredParquet = { octets: parquet.byteLength, sha256: sha256(parquet) },
+    withMethodologie = true,
   }: {
     parquet: Uint8Array;
     declaredParquet?: { octets: number; sha256: string };
+    withMethodologie?: boolean;
   }) {
     const workbook = new Uint8Array([1, 2, 3]);
+    const methodologie = new Uint8Array([4, 5, 6]);
     const manifest = {
       version: VERSION,
       fichiers: [
@@ -48,8 +52,18 @@ class MemorySnbc3ArtifactReader extends Snbc3ArtifactReader {
           octets: workbook.byteLength,
           sha256: sha256(workbook),
         },
+        ...(withMethodologie
+          ? [
+              {
+                nom: METHODOLOGIE,
+                octets: methodologie.byteLength,
+                sha256: sha256(methodologie),
+              },
+            ]
+          : []),
       ],
     };
+    this.files.set(`${RELEASE_PATH}/${METHODOLOGIE}`, methodologie);
     this.files.set(`${RELEASE_PATH}/${SNBC3_PARQUET_FILE}`, parquet);
     this.files.set(`${RELEASE_PATH}/${WORKBOOK}`, workbook);
     this.files.set(
@@ -68,7 +82,24 @@ describe('Snbc3ArtifactReader : vérification contre le manifeste', () => {
     const release = await reader.readRelease(SHA, VERSION);
     expect(release).toMatchObject({
       success: true,
-      data: { sha: SHA, version: VERSION, parquet },
+      data: {
+        sha: SHA,
+        version: VERSION,
+        parquet,
+        methodologie: {
+          name: METHODOLOGIE,
+          content: new Uint8Array([4, 5, 6]),
+        },
+      },
+    });
+  });
+
+  test('refuse une release sans PDF de méthodologie dans son manifeste', async () => {
+    const reader = new MemorySnbc3ArtifactReader();
+    reader.publish({ parquet, withMethodologie: false });
+    expect(await reader.readRelease(SHA, VERSION)).toEqual({
+      success: false,
+      error: 'SNBC3_ARTIFACT_NOT_FOUND',
     });
   });
 

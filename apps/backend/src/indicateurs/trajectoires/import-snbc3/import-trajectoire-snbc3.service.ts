@@ -228,8 +228,8 @@ export class ImportTrajectoireSnbc3Service {
       metadonneeId = await this.repository.findOrCreateMetadonnee({
         dateVersion: date,
       });
-      const { manifest, workbook } = release.data;
-      releaseFiles = { sha, version, manifest, workbook };
+      const { manifest, workbook, methodologie } = release.data;
+      releaseFiles = { sha, version, manifest, workbook, methodologie };
     }
 
     return success({
