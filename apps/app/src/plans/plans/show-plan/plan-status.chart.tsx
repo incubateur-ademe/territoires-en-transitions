@@ -43,6 +43,7 @@ export const PlanStatus = ({ planId }: { planId: number }) => {
       fichesCount={ficheActionTotal}
       display="row"
       isLoading={isLoading}
+      barClassName="h-2.5 mb-2"
     />
   );
 };
