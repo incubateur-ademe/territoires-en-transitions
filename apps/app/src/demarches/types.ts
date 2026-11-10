@@ -70,6 +70,8 @@ export type DemarchePcaet = {
   avalModifiable: boolean;
   /** Diagnostic, objectifs et programme d'actions : rouverts après les avis. */
   contenuModifiable: boolean;
+  /** Mode démo (collectivité de test et super admin), tranché côté serveur. */
+  demo: boolean;
 };
 
 /**

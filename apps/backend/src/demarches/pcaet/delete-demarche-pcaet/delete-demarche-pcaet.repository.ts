@@ -13,6 +13,15 @@ export class DeleteDemarchePcaetRepository {
   /** Suppression définitive : les FK en cascade nettoient pilotes et history. */
   async deleteDemarche(
     ref: Pick<DemarchePcaetRef, 'id' | 'collectiviteId'>,
+    {
+      avecSaisines,
+    }: {
+      /**
+       * Suppression forcée par un super admin : toutes les saisines partent,
+       * et leurs avis avec elles, en cascade.
+       */
+      avecSaisines: boolean;
+    },
     tx: Transaction
   ): Promise<Result<undefined, 'DATABASE_ERROR'>> {
     try {
@@ -27,7 +36,9 @@ export class DeleteDemarchePcaetRepository {
         .where(
           and(
             eq(pcaetDemandeAvisTable.demarcheId, ref.id),
-            eq(pcaetDemandeAvisTable.source, 'depot_hors_plateforme')
+            avecSaisines
+              ? undefined
+              : eq(pcaetDemandeAvisTable.source, 'depot_hors_plateforme')
           )
         );
 

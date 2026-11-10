@@ -228,6 +228,38 @@ export class PcaetInstructeursRepository {
   }
 
   /**
+   * Saisine du mode démo : les services fictifs, au périmètre principal,
+   * à la place des services qui couvrent réellement la collectivité.
+   */
+  async saisirServicesDemo(
+    {
+      demarcheId,
+      instructeurCollectiviteIds,
+    }: { demarcheId: number; instructeurCollectiviteIds: readonly number[] },
+    tx?: Transaction
+  ): Promise<DemandeAvisDestinataire[]> {
+    if (instructeurCollectiviteIds.length > 0) {
+      await (tx ?? this.databaseService.db)
+        .insert(pcaetDemandeAvisTable)
+        .values(
+          instructeurCollectiviteIds.map((instructeurCollectiviteId) => ({
+            demarcheId,
+            instructeurCollectiviteId,
+            source: 'transmission' as const,
+            perimetre: PcaetPerimetreSaisineEnum.PRINCIPAL,
+          }))
+        )
+        .onConflictDoNothing({
+          target: [
+            pcaetDemandeAvisTable.demarcheId,
+            pcaetDemandeAvisTable.instructeurCollectiviteId,
+          ],
+        });
+    }
+    return this.listDemandesAvisDuDossier(demarcheId, tx);
+  }
+
+  /**
    * Les saisines inscrites sur un dossier, avec de quoi écrire à chacune.
    *
    * Relire plutôt que se fier au `returning()` de l'insert : avec

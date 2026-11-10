@@ -694,6 +694,23 @@ export const demarchesLabels = {
   demarcheSupprimerModaleTitre: 'Supprimer la démarche',
   demarcheSupprimerModaleDescription: ({ titre }: { titre: string }) =>
     `La démarche « ${titre} » et l’ensemble de sa saisie seront définitivement supprimés.`,
+  /** Suppression par un super admin d'un dossier déjà engagé dans le circuit d'avis. */
+  demarcheSupprimerForceeModaleEffets: [
+    'Les demandes d’avis et les avis reçus sont supprimés : les services instructeurs perdent le dossier.',
+    'Les plans rattachés sont détachés, mais conservés.',
+    'Les fichiers déposés restent dans la bibliothèque de la collectivité.',
+    'Un PCAET précédent archivé par cette publication le reste.',
+    'Cette action est irréversible.',
+  ],
+  demarcheDemoSimulerAvis: 'Simuler les avis (démo)',
+  demarcheDemoSimulerAvisSucces:
+    'Avis simulés : le dossier passe en finalisation',
+  demarcheDemoReputerFavorable: 'Marquer comme réputé favorable (démo)',
+  demarcheDemoReputerFavorableSucces:
+    'Avis réputé favorable : le dossier passe en finalisation',
+  demarcheDemoCompleterEtape: 'Compléter l’étape (démo)',
+  demarcheDemoCompleterEtapeSucces: 'Étape complétée avec des données de démo',
+  demarcheDemoErreur: 'Le raccourci de démo a échoué',
   demarcheTransitionPublier: 'Valider le dépôt final',
   erreurAccesTitre: 'Accès non autorisé',
   erreurAccesMessage: 'Vous n’avez pas accès à cette page.',

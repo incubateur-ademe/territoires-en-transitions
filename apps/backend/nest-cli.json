@@ -15,7 +15,8 @@
       { "include": "**/*.csv", "outDir": "dist" },
       { "include": "**/*.xlsx", "outDir": "dist" },
       { "include": "**/*.pptx", "outDir": "dist" },
-      { "include": "**/*.ttf", "outDir": "dist" }
+      { "include": "**/*.ttf", "outDir": "dist" },
+      { "include": "demarches/pcaet/demo/assets/*.pdf", "outDir": "dist" }
     ]
   }
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   canDeleteDemarchePcaet,
+  isDemarchePcaetSuppressionForcee,
   getDemarchePcaetInitialStatus,
   getEtapeDemarchePcaet,
   isDemarchePcaetEnCours,
@@ -94,6 +95,23 @@ describe('suppression d’une démarche', () => {
     ] as const) {
       expect(canDeleteDemarchePcaet({ status })).toBe(false);
     }
+  });
+
+  it('le super admin supprime à tout statut', () => {
+    for (const status of [
+      'transmis_pour_avis',
+      'instruit',
+      'publie',
+      'archive',
+    ] as const) {
+      expect(canDeleteDemarchePcaet({ status }, { isSuperAdmin: true })).toBe(
+        true
+      );
+      expect(isDemarchePcaetSuppressionForcee({ status })).toBe(true);
+    }
+    expect(isDemarchePcaetSuppressionForcee({ status: 'en_elaboration' })).toBe(
+      false
+    );
   });
 });
 

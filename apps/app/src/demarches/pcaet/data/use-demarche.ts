@@ -51,6 +51,7 @@ const toFrontDemarche = (
   amontModifiable: server.amontModifiable,
   avalModifiable: server.avalModifiable,
   contenuModifiable: server.contenuModifiable,
+  demo: server.demo,
 });
 
 const toHeaderPatch = (patch: DemarchePcaetUpdatePatch) => {

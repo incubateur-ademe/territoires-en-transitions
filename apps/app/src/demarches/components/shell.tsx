@@ -3,7 +3,7 @@
 import { appLabels } from '@/app/labels/catalog';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
 import { Event } from '@tet/ui';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useRef, useState } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
 import { usePcaetDiagnosticTabQueryState } from '../pcaet/diagnostic/use-pcaet-diagnostic-tab-query-state';
@@ -48,6 +48,7 @@ export const DemarcheShell = ({
   children,
 }: Props) => {
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
+  const contentRef = useRef<HTMLDivElement>(null);
   const parcours = getDemarcheParcours(demarche);
 
   const trackingSubject = toDemarcheTrackingSubject(demarche);
@@ -154,7 +155,11 @@ export const DemarcheShell = ({
       </DemarcheDetailLayout.Header>
 
       <DemarcheDetailLayout.Container>
-        <DemarcheDetailLayout.Main>{children}</DemarcheDetailLayout.Main>
+        <DemarcheDetailLayout.Main>
+          <div ref={contentRef} className="contents">
+            {children}
+          </div>
+        </DemarcheDetailLayout.Main>
         {/* La barre d'étapes déroule le temps courant du dossier : les pièces,
             le diagnostic, le plan, puis l'acte qui le clôt. Un dépôt hors
             plateforme déroule l'amont — tout y reste à remplir — mais son acte
@@ -167,6 +172,7 @@ export const DemarcheShell = ({
           etape={parcours.etape}
           finalAction={finalAction}
           onOpenProgressPanel={open}
+          contentRef={contentRef}
         />
       </DemarcheDetailLayout.Container>
 

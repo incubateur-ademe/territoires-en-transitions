@@ -4,8 +4,12 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
-import { canDeleteDemarchePcaet } from '@tet/domain/demarches';
+import {
+  canDeleteDemarchePcaet,
+  isDemarchePcaetSuppressionForcee,
+} from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { DemarchePcaetDemoService } from '../demo/demarche-pcaet-demo.service';
 import {
   DemarchePcaetRefRepository,
   type DemarchePcaetRef,
@@ -31,7 +35,8 @@ export class DeleteDemarchePcaetService {
     private readonly transactionManager: TransactionManager,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
     private readonly deleteDemarchePcaetRepository: DeleteDemarchePcaetRepository,
-    private readonly trackingService: DemarchePcaetTrackingService
+    private readonly trackingService: DemarchePcaetTrackingService,
+    private readonly demoService: DemarchePcaetDemoService
   ) {}
 
   async deleteDemarchePcaet(
@@ -63,14 +68,20 @@ export class DeleteDemarchePcaetService {
       }
 
       // Passé l'élaboration, le dossier est engagé dans le circuit d'avis
-      // (demandes, instruction) : il ne se supprime plus.
-      if (!canDeleteDemarchePcaet(demarche)) {
+      // (demandes, instruction) : seul le super admin le supprime encore.
+      const isSuperAdmin = await this.demoService.isSuperAdmin(
+        user,
+        transaction
+      );
+      if (!canDeleteDemarchePcaet(demarche, { isSuperAdmin })) {
         return failure(DeleteDemarchePcaetErrorEnum.DEMARCHE_NON_SUPPRIMABLE);
       }
+      const isForcee = isDemarchePcaetSuppressionForcee(demarche);
 
       const deleteResult =
         await this.deleteDemarchePcaetRepository.deleteDemarche(
           demarche,
+          { avecSaisines: isForcee },
           transaction
         );
       if (!deleteResult.success) {
@@ -79,7 +90,9 @@ export class DeleteDemarchePcaetService {
 
       deleted = demarche;
       this.logger.log(
-        `Demarche PCAET ${demarche.id} deleted (statut ${demarche.status}) by user ${user.id}`
+        `Demarche PCAET ${demarche.id} deleted (statut ${demarche.status}${
+          isForcee ? ', suppression forcée par un super admin' : ''
+        }) by user ${user.id}`
       );
       return { success: true, data: undefined };
     };
