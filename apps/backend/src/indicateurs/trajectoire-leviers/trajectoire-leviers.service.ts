@@ -25,7 +25,9 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { CollectivitePublic } from '@tet/domain/collectivites';
 import {
   ANNEE_REFERENCE_SNBC_V3,
+  getStatutTrajectoireSnbc3,
   IndicateurSourceEnum,
+  StatutTrajectoireSnbc3,
 } from '@tet/domain/indicateurs';
 import { ResourceType } from '@tet/domain/users';
 import { isNil, round, sum, sumBy } from 'es-toolkit';
@@ -444,8 +446,18 @@ export class TrajectoireLeviersService {
     ]);
 
     if (!this.hasSourceValeurs(objectifsCible, IndicateurSourceEnum.SNBC3)) {
+      // Même règle que la page Trajectoire : seul un EPCI à fiscalité propre
+      // ou un EPT absent du millésime attend une trajectoire. Les autres ne
+      // sont pas couverts par la SNBC 3 : les communes (leur trajectoire est
+      // celle de leur EPCI) et tout le reste, régions, départements,
+      // syndicats, PETR… (maille supra).
+      const statut = getStatutTrajectoireSnbc3({
+        hasDroitsLecture: true,
+        isInMillesime: false,
+        collectivite,
+      });
       return failure(
-        collectivite.type === 'epci' || collectivite.type === 'test'
+        statut === StatutTrajectoireSnbc3.ABSENT_DU_MILLESIME
           ? TrajectoireLeviersErrorEnum.TRAJECTOIRE_NON_DISPONIBLE
           : TrajectoireLeviersErrorEnum.COLLECTIVITE_NOT_EPCI
       );

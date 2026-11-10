@@ -71,6 +71,8 @@ export const useLeviersPriorisation = (): LeviersPriorisationQuery => {
         isLoadingError: trajectoireQuery.isLoadingError,
         isTrajectoireNotComputed:
           trajectoireErrorKey === 'TRAJECTOIRE_NOT_COMPUTED',
+        isTrajectoireNotAvailable:
+          trajectoireErrorKey === 'TRAJECTOIRE_NON_DISPONIBLE',
         isCollectiviteNotEpci: trajectoireErrorKey === 'COLLECTIVITE_NOT_EPCI',
       })
     : 'reservedToEpci';

@@ -38,24 +38,38 @@ const toBiogazAction = (runToken: string): NewActionDeReference => ({
 });
 
 test.describe('Priorisation : matrice et volet', () => {
-  test('sans trajectoire SNBC, la vue invite à la calculer et mène à la page trajectoire', async ({
+  test('un EPCI absent du millésime SNBC 3 voit que sa trajectoire n’est pas disponible, sans invitation à la calculer', async ({
     collectivites,
     page,
   }) => {
     const { collectivite } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: { natureInsee: 'CC' },
       userArgs: { autoLogin: true },
     });
     await addMobilisationAvecFiche(collectivite.data.id);
     const pom = new PriorisationLeviersPom(page);
+
     await pom.gotoWithoutTrajectoire(collectivite.data.id);
-    await expect(pom.missingTrajectoireMessage).toBeVisible();
+
+    await expect(pom.trajectoireNonDisponibleMessage).toBeVisible();
     await expect(pom.missingMobilisationMessage).toHaveCount(0);
+    await expect(pom.computeTrajectoireLink).toHaveCount(0);
+  });
 
-    await pom.computeTrajectoireLink.click();
+  test('un syndicat ou un PETR voit que la vue est réservée aux EPCI, comme une commune', async ({
+    collectivites,
+    page,
+  }) => {
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      collectiviteArgs: { natureInsee: 'PETR' },
+      userArgs: { autoLogin: true },
+    });
+    const pom = new PriorisationLeviersPom(page);
 
-    await expect(page).toHaveURL(
-      new RegExp(`/collectivite/${collectivite.data.id}/trajectoire$`)
-    );
+    await pom.gotoWithoutTrajectoire(collectivite.data.id);
+
+    await expect(pom.reservedToEpciMessage).toBeVisible();
+    await expect(pom.computeTrajectoireLink).toHaveCount(0);
   });
 
   test('une commune voit que la vue est réservée aux EPCI, sans invitation à calculer de trajectoire', async ({

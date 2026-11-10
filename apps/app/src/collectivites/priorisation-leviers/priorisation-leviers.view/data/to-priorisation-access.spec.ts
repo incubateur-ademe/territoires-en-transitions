@@ -11,6 +11,7 @@ describe('toTrajectoireState', () => {
         hasTrajectoire: true,
         isLoadingError: false,
         isTrajectoireNotComputed: false,
+        isTrajectoireNotAvailable: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('computed');
@@ -22,6 +23,7 @@ describe('toTrajectoireState', () => {
         hasTrajectoire: false,
         isLoadingError: false,
         isTrajectoireNotComputed: false,
+        isTrajectoireNotAvailable: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('loading');
@@ -33,9 +35,22 @@ describe('toTrajectoireState', () => {
         hasTrajectoire: false,
         isLoadingError: true,
         isTrajectoireNotComputed: true,
+        isTrajectoireNotAvailable: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('notComputed');
+  });
+
+  it('reconnaît une trajectoire SNBC 3 non disponible', () => {
+    expect(
+      toTrajectoireState({
+        hasTrajectoire: false,
+        isLoadingError: true,
+        isTrajectoireNotComputed: false,
+        isTrajectoireNotAvailable: true,
+        isCollectiviteNotEpci: false,
+      })
+    ).toBe('notAvailable');
   });
 
   it('reconnaît une collectivité qui n’est pas un EPCI', () => {
@@ -44,6 +59,7 @@ describe('toTrajectoireState', () => {
         hasTrajectoire: false,
         isLoadingError: true,
         isTrajectoireNotComputed: false,
+        isTrajectoireNotAvailable: false,
         isCollectiviteNotEpci: true,
       })
     ).toBe('reservedToEpci');
@@ -55,6 +71,7 @@ describe('toTrajectoireState', () => {
         hasTrajectoire: false,
         isLoadingError: true,
         isTrajectoireNotComputed: false,
+        isTrajectoireNotAvailable: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('failed');
@@ -87,6 +104,15 @@ describe('toPriorisationAccess', () => {
         trajectoireState: 'notComputed',
       })
     ).toBe('missingTrajectoire');
+  });
+
+  it('signale une trajectoire SNBC 3 non disponible, même quand des actions existent', () => {
+    expect(
+      toPriorisationAccess({
+        hasMobilisation: true,
+        trajectoireState: 'notAvailable',
+      })
+    ).toBe('trajectoireNotAvailable');
   });
 
   it('demande des actions quand seule la trajectoire est calculée', () => {
