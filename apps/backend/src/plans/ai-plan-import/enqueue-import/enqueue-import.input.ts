@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { disableableFieldValues } from '../models/disableable-field';
+import { aiPlanImportOrigineValues } from '../models/ai-plan-import-job';
 import {
   AiPlanImportProfileEnum,
   aiPlanImportProfileSchema,
@@ -25,6 +26,8 @@ export const enqueueImportFormSchema = z.object({
   withVerifications: booleanFromString,
   withSousActions: booleanFromString,
   disabledFields: disabledFieldsFromForm,
+  origine: z.enum(aiPlanImportOrigineValues).optional(),
+  demarcheId: z.coerce.number().int().positive().optional(),
   /** Relance assumée de l'import d'un fichier déjà importé. */
   confirmReimport: z
     .enum(['true', 'false'])

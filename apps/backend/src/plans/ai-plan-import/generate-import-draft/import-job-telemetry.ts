@@ -40,11 +40,14 @@ export class ImportJobTelemetry {
     private readonly resumed: {
       attempt: number;
       previousLlm: LlmCallMetrics;
-    } = { attempt: 0, previousLlm: sumLlmCallMetrics([]) }
+    } = { attempt: 0, previousLlm: sumLlmCallMetrics([]) },
+    /** Chaque étape enregistrée, pipeline, lecture du document et persistance. */
+    private readonly onRecorded: (run: ImportStepRun) => void = () => undefined
   ) {}
 
   async record(run: ImportStepRun): Promise<void> {
     this.runs.push(run);
+    this.onRecorded(run);
     const saved = await this.stepRunRepository.insert(
       this.jobId,
       run,

@@ -4,11 +4,13 @@ import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { randomUUID } from 'node:crypto';
+import { EVENT_AI_PLAN_IMPORT_RESUME_REQUESTED } from '../ai-plan-import.constants';
 import {
   AiPlanImportErrorEnum,
   type AiPlanImportError,
@@ -39,6 +41,7 @@ export class ResumeImportService {
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly transactionManager: TransactionManager,
+    private readonly trackingService: TrackingService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -107,6 +110,18 @@ export class ResumeImportService {
     }
 
     this.logger.log(`Import ${jobId} repris par ${user.id}`);
+    this.trackingService.capture({
+      distinctId: user.id,
+      event: EVENT_AI_PLAN_IMPORT_RESUME_REQUESTED,
+      properties: {
+        collectiviteId: failed.data.collectiviteId,
+        jobId,
+        attempt: failed.data.attempt,
+        origine: failed.data.options.origine,
+        demarcheId: failed.data.options.demarcheId,
+      },
+      groups: { collectivite: String(failed.data.collectiviteId) },
+    });
     return success({ jobId });
   }
 

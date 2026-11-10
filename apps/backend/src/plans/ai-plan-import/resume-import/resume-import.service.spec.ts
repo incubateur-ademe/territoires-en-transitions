@@ -3,6 +3,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
@@ -83,6 +84,7 @@ const buildService = ({
     jobRepository as unknown as AiPlanImportJobRepository,
     planVerificationRepository as unknown as PlanVerificationRepository,
     transactionManager as unknown as TransactionManager,
+    { capture: vi.fn() } as unknown as TrackingService,
     queue as unknown as Queue
   );
   return {

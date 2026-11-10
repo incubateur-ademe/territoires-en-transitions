@@ -226,6 +226,8 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
           planType: pcaetPlanType?.id,
           withVerifications: isAiImportVerifiable(file),
           withSousActions: true,
+          origine: 'etape_documents',
+          demarcheId,
         });
         trackImport(jobId, planId);
       } catch (error) {

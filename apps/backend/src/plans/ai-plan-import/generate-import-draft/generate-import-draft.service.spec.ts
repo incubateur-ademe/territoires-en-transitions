@@ -33,6 +33,12 @@ import {
   sumLlmCallMetrics,
 } from '../pipeline/compute-import-metrics';
 
+/** Les événements du cycle de vie d'un import, sans le détail des étapes. */
+const lifecycleEvents = (capture: ReturnType<typeof vi.fn>): string[] =>
+  capture.mock.calls
+    .map(([params]) => params.event)
+    .filter((event) => event !== 'plans:import-ia:step_done');
+
 const job: AiPlanImportJob = {
   id: 'job-1',
   collectiviteId: 10,
@@ -317,7 +323,20 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markDone).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'job-1', createdPlanId: 7 })
     );
-    expect(mocks.capture).toHaveBeenCalledTimes(1);
+    expect(lifecycleEvents(mocks.capture)).toEqual([
+      'plans:import-ia:succeeded',
+    ]);
+    expect(mocks.capture).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'plans:import-ia:step_done',
+        properties: expect.objectContaining({
+          jobId: 'job-1',
+          step: 'persistence',
+          status: 'ok',
+        }),
+        groups: { collectivite: '10' },
+      })
+    );
     expect(mocks.capture).toHaveBeenCalledWith({
       distinctId: 'user-1',
       event: 'plans:import-ia:succeeded',
@@ -467,7 +486,7 @@ describe('GenerateImportDraftService', () => {
     expect(result).toMatchObject({ success: true });
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
     expect(mocks.notifyPlanImported).not.toHaveBeenCalled();
-    expect(mocks.capture).toHaveBeenCalledTimes(1);
+    expect(lifecycleEvents(mocks.capture)).toEqual(['plans:import-ia:failed']);
     expect(mocks.capture).toHaveBeenCalledWith(
       expect.objectContaining({
         event: 'plans:import-ia:failed',
@@ -655,7 +674,7 @@ describe('GenerateImportDraftService', () => {
       },
     });
     // Rien n'est enregistré : pas d'événement pour un échec qui n'existe pas en base.
-    expect(mocks.capture).not.toHaveBeenCalled();
+    expect(lifecycleEvents(mocks.capture)).toEqual([]);
   });
 
   it('passe le plan du job en échec quand le job échoue', async () => {
