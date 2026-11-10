@@ -41,7 +41,12 @@ export const Jauge = (): JSX.Element => {
           <h2 className="mb-0 text-lg font-bold leading-4 text-primary-10">
             {appLabels.ficheJauge}
           </h2>
-          <JaugeBadge value={jauge} isDisabled={isDisabled} isLarge />
+          <JaugeBadge
+            value={jauge}
+            statut={statut}
+            isDisabled={isDisabled}
+            isLarge
+          />
           {fiche.jaugeModifiedAt && (
             <p className="mb-0 ml-auto text-xs font-light italic text-grey-7">
               {appLabels.ficheJaugeMiseAJour(
