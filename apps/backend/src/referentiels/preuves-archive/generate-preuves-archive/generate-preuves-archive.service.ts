@@ -16,8 +16,10 @@ import { GetReferentielService } from '../../get-referentiel/get-referentiel.ser
 import { ArchiveAssemblyService } from '@tet/backend/utils/archive/archive-assembly.service';
 import { CollectAuditPreuvesService } from '../collect-audit-preuves/collect-audit-preuves.service';
 import {
+  auditPreuvesArchiveErrorCodeSchema,
   AuditPreuvesArchiveStatusEnum,
   type AuditPreuvesArchive,
+  type AuditPreuvesArchiveErrorCode,
 } from '../models/audit-preuves-archive.table';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
 import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
@@ -42,6 +44,8 @@ interface JobContext {
 export interface GenerateArchiveFailure {
   message: string;
   retryable: boolean;
+  /** Cause affichable à l'utilisateur·ice, persistée dans `error_code`. */
+  code?: AuditPreuvesArchiveErrorCode;
 }
 
 type GenerateArchiveResult = Result<undefined, GenerateArchiveFailure>;
@@ -53,9 +57,17 @@ function retryableFailure(
 }
 
 function nonRetryableFailure(
-  message: string
+  message: string,
+  code?: AuditPreuvesArchiveErrorCode
 ): Result<never, GenerateArchiveFailure> {
-  return failure({ message, retryable: false });
+  return failure({ message, retryable: false, code });
+}
+
+function limitErrorCode(
+  error: string
+): AuditPreuvesArchiveErrorCode | undefined {
+  const parsed = auditPreuvesArchiveErrorCodeSchema.safeParse(error);
+  return parsed.success ? parsed.data : undefined;
 }
 
 function parseReferentielId(
@@ -131,8 +143,12 @@ export class GeneratePreuvesArchiveService {
    * crash worker stalled). Libère l'index unique partiel pour que l'utilisateur
    * puisse relancer.
    */
-  async markFailed(archiveId: string, message: string): Promise<void> {
-    const result = await this.repository.markFailed(archiveId, message);
+  async markFailed(
+    archiveId: string,
+    message: string,
+    code: AuditPreuvesArchiveErrorCode | null = null
+  ): Promise<void> {
+    const result = await this.repository.markFailed(archiveId, message, code);
     if (!result.success) {
       this.logger.error(
         `Marquage failed échoué pour ${archiveId}: ${result.error}`
@@ -230,7 +246,8 @@ export class GeneratePreuvesArchiveService {
     if (!arborescenceResult.success) {
       // Arbre/préuves cohérents mais arborescence impossible : défaut de données.
       return nonRetryableFailure(
-        `Construction de l'arborescence échouée: ${arborescenceResult.error}`
+        `Construction de l'arborescence échouée: ${arborescenceResult.error}`,
+        limitErrorCode(arborescenceResult.error)
       );
     }
     return success(arborescenceResult.data);
@@ -276,6 +293,13 @@ export class GeneratePreuvesArchiveService {
       },
     });
     if (!buildResult.success) {
+      if (buildResult.error === 'ARCHIVE_TOO_LARGE') {
+        // Limite du stockage : relancer referait le même zip pour le même refus.
+        return nonRetryableFailure(
+          'Archive refusée par le stockage (taille maximale dépassée)',
+          'ARCHIVE_TOO_LARGE'
+        );
+      }
       return retryableFailure(
         `Construction de l'archive échouée: ${buildResult.error}`
       );

@@ -92,7 +92,9 @@ export class ArchiveAssemblyService {
       });
       if (!uploadResult.success) {
         return failure(
-          ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
+          uploadResult.error === 'FILE_TOO_LARGE'
+            ? ArchiveAssemblyErrorEnum.ARCHIVE_TOO_LARGE
+            : ArchiveAssemblyErrorEnum.ARCHIVE_ASSEMBLY_FAILED,
           uploadResult.cause
         );
       }

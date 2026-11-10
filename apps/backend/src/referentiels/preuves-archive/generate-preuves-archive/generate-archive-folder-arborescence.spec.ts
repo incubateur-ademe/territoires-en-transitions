@@ -288,7 +288,7 @@ describe('generateArchiveFolderArborescence', () => {
 
     expect(result.success).toBe(false);
     if (result.success) return;
-    expect(result.error).toBe('COLLECT_PREUVES_ERROR');
+    expect(result.error).toBe('TOO_MANY_FILES');
   });
 
   it('rejette au-dela de 2 Go au total', () => {
@@ -306,7 +306,7 @@ describe('generateArchiveFolderArborescence', () => {
 
     expect(result.success).toBe(false);
     if (result.success) return;
-    expect(result.error).toBe('COLLECT_PREUVES_ERROR');
+    expect(result.error).toBe('ARCHIVE_TOO_LARGE');
   });
 
   it('regroupe les preuves-lien par dossier', () => {

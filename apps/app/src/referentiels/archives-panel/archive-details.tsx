@@ -145,7 +145,7 @@ export function ArchiveDetails({
 
   const errorMessage =
     state.kind === 'error'
-      ? state.backendMessage ?? appLabels.preuvesTelechargementErreur
+      ? state.message ?? appLabels.preuvesTelechargementErreur
       : null;
 
   return (

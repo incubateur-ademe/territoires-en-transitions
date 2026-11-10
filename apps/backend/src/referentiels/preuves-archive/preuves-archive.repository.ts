@@ -5,6 +5,7 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { and, asc, eq, gt, inArray, lte } from 'drizzle-orm';
 import {
   AuditPreuvesArchive,
+  type AuditPreuvesArchiveErrorCode,
   auditPreuvesArchiveDeletableStatuses,
   auditPreuvesArchiveStatusSchema,
   AuditPreuvesArchiveStatus,
@@ -337,13 +338,15 @@ export class PreuvesArchiveRepository {
 
   async markFailed(
     id: string,
-    errorMessage: string
+    errorMessage: string,
+    errorCode: AuditPreuvesArchiveErrorCode | null = null
   ): Promise<Result<AuditPreuvesArchive, PreuvesArchiveError>> {
     return this.updateAndReturn(
       id,
       {
         status: AuditPreuvesArchiveStatusEnum.FAILED,
         errorMessage,
+        errorCode,
         modifiedAt: new Date().toISOString(),
       },
       [AuditPreuvesArchiveStatusEnum.PROCESSING]

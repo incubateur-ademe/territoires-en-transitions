@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { RouterOutput } from '@tet/api';
 import { match } from 'ts-pattern';
 
@@ -7,7 +8,15 @@ export type PreuvesArchiveListItem =
 export type ArchiveDetailsState =
   | { kind: 'preparing'; processed: number; total: number; indeterminate: boolean }
   | { kind: 'ready'; totalFiles: number }
-  | { kind: 'error'; backendMessage: string | null; retryable: boolean };
+  | { kind: 'error'; message: string | null; retryable: boolean };
+
+type ArchiveErrorCode = NonNullable<PreuvesArchiveListItem['errorCode']>;
+
+// Causes liées à une limite : relancer produirait le même échec.
+const messageByErrorCode: Record<ArchiveErrorCode, string> = {
+  TOO_MANY_FILES: appLabels.preuvesTelechargementErreurTropDeFichiers,
+  ARCHIVE_TOO_LARGE: appLabels.preuvesTelechargementErreurArchiveTropVolumineuse,
+};
 
 export function isArchiveInFlight(item: PreuvesArchiveListItem): boolean {
   return item.status === 'pending' || item.status === 'processing';
@@ -29,8 +38,8 @@ export function archiveOutputToDetailsState(
     }))
     .with('failed', () => ({
       kind: 'error' as const,
-      backendMessage: null,
-      retryable: true,
+      message: item.errorCode ? messageByErrorCode[item.errorCode] : null,
+      retryable: !item.errorCode,
     }))
     .exhaustive();
 }

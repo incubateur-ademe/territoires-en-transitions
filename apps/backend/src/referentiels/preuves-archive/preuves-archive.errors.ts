@@ -8,6 +8,8 @@ export const PreuvesArchiveSpecificErrors = [
   'AUDIT_NOT_FOUND',
   'ARCHIVE_STATUS_PARSE_ERROR',
   'COLLECT_PREUVES_ERROR',
+  'TOO_MANY_FILES',
+  'ARCHIVE_TOO_LARGE',
 ] as const;
 
 export type PreuvesArchiveSpecificError =

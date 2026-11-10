@@ -33,5 +33,13 @@ export const preuvesArchiveErrorConfig: TrpcErrorHandlerConfig<PreuvesArchiveSpe
         code: 'INTERNAL_SERVER_ERROR',
         message: 'La collecte des preuves a échoué',
       },
+      TOO_MANY_FILES: {
+        code: 'PAYLOAD_TOO_LARGE',
+        message: 'Trop de fichiers pour une seule archive',
+      },
+      ARCHIVE_TOO_LARGE: {
+        code: 'PAYLOAD_TOO_LARGE',
+        message: "L'archive dépasse la taille maximale autorisée",
+      },
     },
   };

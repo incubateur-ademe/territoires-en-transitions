@@ -82,7 +82,8 @@ describe('GeneratePreuvesArchiveWorker.onJobFailed', () => {
 
     expect(service.markFailed).toHaveBeenCalledWith(
       archiveId,
-      expect.stringContaining('boom')
+      expect.stringContaining('boom'),
+      null
     );
   });
 
@@ -97,7 +98,32 @@ describe('GeneratePreuvesArchiveWorker.onJobFailed', () => {
 
     expect(service.markFailed).toHaveBeenCalledWith(
       archiveId,
-      expect.stringContaining('définitif')
+      expect.stringContaining('définitif'),
+      null
+    );
+  });
+
+  it("persiste la cause affichable d'un échec non-retryable (ex. archive trop volumineuse)", async () => {
+    const service = {
+      generate: vi.fn().mockResolvedValue(
+        failure({
+          message: 'trop gros',
+          retryable: false,
+          code: 'ARCHIVE_TOO_LARGE',
+        })
+      ),
+      markFailed: vi.fn().mockResolvedValue(undefined),
+    };
+    const localWorker = new GeneratePreuvesArchiveWorker(service as never);
+    const job = makeJob({ attemptsMade: 1, attempts: 3 });
+
+    const error = await localWorker.process(job).catch((e: Error) => e);
+    await localWorker.onJobFailed(job, error as Error);
+
+    expect(service.markFailed).toHaveBeenCalledWith(
+      archiveId,
+      expect.stringContaining('trop gros'),
+      'ARCHIVE_TOO_LARGE'
     );
   });
 });

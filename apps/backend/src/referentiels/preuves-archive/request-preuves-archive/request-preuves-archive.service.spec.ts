@@ -31,6 +31,7 @@ function makeArchive(
     processedFiles: 0,
     storagePath: null,
     errorMessage: null,
+    errorCode: null,
     createdAt: '2026-05-19T00:00:00.000Z',
     modifiedAt: '2026-05-19T00:00:00.000Z',
     expiresAt: '2026-05-26T00:00:00.000Z',

@@ -27,6 +27,7 @@ function makeArchive(
     processedFiles: 0,
     storagePath: `${overrides.id}.zip`,
     errorMessage: null,
+    errorCode: null,
     createdAt: '2026-06-01T00:00:00.000Z',
     modifiedAt: '2026-06-01T00:00:00.000Z',
     expiresAt: '2999-01-01T00:00:00.000Z',

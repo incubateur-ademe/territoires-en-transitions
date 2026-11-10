@@ -98,7 +98,11 @@ export class DocumentStorageService {
         this.logger.error(
           `Upload du document ${bucketId}/${key} échoué: ${uploadResult.error}`
         );
-        return failure(DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR);
+        return failure(
+          uploadResult.error === 'FILE_TOO_LARGE'
+            ? DocumentStorageErrorEnum.FILE_TOO_LARGE
+            : DocumentStorageErrorEnum.WRITE_DOCUMENT_ERROR
+        );
       }
 
       return success({ key: uploadResult.data.path });

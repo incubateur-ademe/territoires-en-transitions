@@ -31,7 +31,7 @@ export class ListPreuvesArchiveService {
 
     const permissionResult = await this.permissions.isAllowed(
       user,
-      'referentiels.read',
+      'referentiels.read_confidentiel',
       ResourceType.REFERENTIEL,
       { collectiviteId, referentielId }
     );
@@ -39,7 +39,7 @@ export class ListPreuvesArchiveService {
       return failure(
         PreuvesArchiveErrorEnum.UNAUTHORIZED,
         new Error(
-          `L'utilisateur ${user.id} n'a pas le droit referentiels.read sur la collectivité ${collectiviteId}`
+          `L'utilisateur ${user.id} n'a pas le droit referentiels.read_confidentiel sur la collectivité ${collectiviteId}`
         )
       );
     }
@@ -60,6 +60,7 @@ export class ListPreuvesArchiveService {
         totalFiles: archive.totalFiles,
         processedFiles: archive.processedFiles,
         createdAt: archive.createdAt,
+        errorCode: archive.errorCode,
       }))
     );
   }

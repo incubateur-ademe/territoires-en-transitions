@@ -348,4 +348,9 @@ export const referentielsLabels = {
   labellisationsAdminCotActif: 'Actif',
   labellisationsAdminAucunCot: 'Aucun COT ne correspond à cette recherche',
   labellisationsAdminCotModifie: 'Le COT a été mis à jour',
+
+  preuvesTelechargementErreurTropDeFichiers:
+    'Trop de fichiers pour une seule archive (500 maximum). Contactez le support.',
+  preuvesTelechargementErreurArchiveTropVolumineuse:
+    "Les documents dépassent la taille maximale d'une archive (2 Go). Contactez le support.",
 } as const;
