@@ -3,7 +3,7 @@ import {
   TrajectoireSecteursEnum,
   TrajectoireSecteursType,
 } from './trajectoire-secteurs';
-import { TrajectoirePropertiesType } from './types';
+import { addSousSecteur, TrajectoirePropertiesType } from './types';
 
 const CONSOMMATIONS_FINALES_IDENTIFIANT = 'cae_2.a';
 const CONSOMMATIONS_FINALES_UNITE = 'GWh';
@@ -61,4 +61,19 @@ export const CONSOMMATIONS_FINALES_PROPERTIES: TrajectoirePropertiesType<Traject
     unite: CONSOMMATIONS_FINALES_UNITE,
     sources: CONSOMMATIONS_FINALES_SOURCES,
     secteurs: CONSOMMATIONS_FINALES_SECTEURS,
+  };
+
+/**
+ * Variante SNBC 3 : l'industrie gagne le sous-secteur « Construction »
+ * (`cae_2.kh`), que la SNBC 2 ne renseigne pas. Remplacera
+ * `CONSOMMATIONS_FINALES_PROPERTIES` à la généralisation (lot 6).
+ */
+export const CONSOMMATIONS_FINALES_PROPERTIES_SNBC3: TrajectoirePropertiesType<TrajectoireSecteursType> =
+  {
+    ...CONSOMMATIONS_FINALES_PROPERTIES,
+    secteurs: addSousSecteur(
+      CONSOMMATIONS_FINALES_SECTEURS,
+      TrajectoireSecteursEnum.INDUSTRIE,
+      { nom: 'Construction', identifiant: 'cae_2.kh' }
+    ),
   };
