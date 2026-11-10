@@ -2,6 +2,7 @@ import {
   actionThematiqueSgpeLabels,
   actionThematiqueSgpeValues,
   ActionTypeEnum,
+  getParentId,
 } from '@tet/domain/referentiels';
 import { useMemo } from 'react';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -66,6 +67,27 @@ function aggregateScoresFromChildren(childrenActions: ActionListItem[]) {
   };
 }
 
+/**
+ * Retire les actions dont un ancêtre est déjà dans la liste : elles sont
+ * affichées sous lui et seraient sinon comptées deux fois.
+ */
+export function listTopMostActions(
+  actions: ActionListItem[]
+): ActionListItem[] {
+  const actionIds = new Set(actions.map((action) => action.actionId));
+  const hasAncestorInList = (actionId: string) => {
+    for (
+      let parentId = getParentId({ actionId });
+      parentId;
+      parentId = getParentId({ actionId: parentId })
+    ) {
+      if (actionIds.has(parentId)) return true;
+    }
+    return false;
+  };
+  return actions.filter((action) => !hasAncestorInList(action.actionId));
+}
+
 export function useReferentielTableData({
   thematiqueView,
   actions,
@@ -79,9 +101,11 @@ export function useReferentielTableData({
 
     if (thematiqueView === 'sgpe') {
       return actionThematiqueSgpeValues.map((thematique, index) => {
-        const filteredActions = Object.values(actions)
-          .filter((action) => !!action.thematiqueSgpe)
-          .filter((action) => action.thematiqueSgpe === thematique);
+        const filteredActions = listTopMostActions(
+          Object.values(actions).filter(
+            (action) => action.thematiqueSgpe === thematique
+          )
+        );
         const actionId = `thematique-${thematique}`;
         const aggregatedScores = aggregateScoresFromChildren(filteredActions);
 
