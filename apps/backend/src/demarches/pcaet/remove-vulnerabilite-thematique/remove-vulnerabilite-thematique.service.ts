@@ -11,6 +11,12 @@ import {
   RemoveVulnerabiliteThematiqueErrorEnum,
 } from './remove-vulnerabilite-thematique.errors';
 import { RemoveVulnerabiliteThematiqueInput } from './remove-vulnerabilite-thematique.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class RemoveVulnerabiliteThematiqueService {
@@ -18,7 +24,8 @@ export class RemoveVulnerabiliteThematiqueService {
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
-    private readonly diagnosticService: DemarchePcaetDiagnosticService
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -36,55 +43,72 @@ export class RemoveVulnerabiliteThematiqueService {
     }: RemoveVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetDiagnostic, RemoveVulnerabiliteThematiqueError>> {
-    return this.transactionManager.executeSingle(async (transaction) => {
-      const access = await this.accessService.assertWritable(
-        { collectiviteId, demarcheId },
-        'contenu',
-        { user, tx: transaction }
-      );
-      if (!access.success) {
-        return failure(RemoveVulnerabiliteThematiqueErrorEnum[access.error]);
-      }
-
-      const thematique = await this.vulnerabiliteRepository.findThematique(
-        { thematiqueId, collectiviteId },
-        transaction
-      );
-      if (!thematique) {
-        return failure(
-          RemoveVulnerabiliteThematiqueErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+    let demarche: DemarchePcaetRef | undefined;
+    const result = await this.transactionManager.executeSingle(
+      async (transaction) => {
+        const access = await this.accessService.assertWritable(
+          { collectiviteId, demarcheId },
+          'contenu',
+          { user, tx: transaction }
         );
-      }
-      if (thematique.isSocle) {
-        return failure(
-          RemoveVulnerabiliteThematiqueErrorEnum.THEMATIQUE_SOCLE_NON_MODIFIABLE
-        );
-      }
+        if (!access.success) {
+          return failure(RemoveVulnerabiliteThematiqueErrorEnum[access.error]);
+        }
+        demarche = access.data;
 
-      await this.vulnerabiliteRepository.detachThematiqueEtEnfants(
-        { demarcheId, thematiqueId },
-        transaction
-      );
-
-      // Le rattachement se compte sur la parente : ses sous-thématiques la
-      // suivent, et le CASCADE de `parent_id` les emporte du catalogue.
-      const autresDemarches =
-        await this.vulnerabiliteRepository.countAutresDemarchesRattachees(
-          { demarcheId, thematiqueId },
-          transaction
-        );
-      if (autresDemarches === 0) {
-        await this.vulnerabiliteRepository.deleteThematique(
+        const thematique = await this.vulnerabiliteRepository.findThematique(
           { thematiqueId, collectiviteId },
           transaction
         );
-      }
+        if (!thematique) {
+          return failure(
+            RemoveVulnerabiliteThematiqueErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+          );
+        }
+        if (thematique.isSocle) {
+          return failure(
+            RemoveVulnerabiliteThematiqueErrorEnum.THEMATIQUE_SOCLE_NON_MODIFIABLE
+          );
+        }
 
-      const payload = await this.diagnosticService.loadPayload(
-        { demarcheId, collectiviteId },
-        transaction
+        await this.vulnerabiliteRepository.detachThematiqueEtEnfants(
+          { demarcheId, thematiqueId },
+          transaction
+        );
+
+        // Le rattachement se compte sur la parente : ses sous-thématiques la
+        // suivent, et le CASCADE de `parent_id` les emporte du catalogue.
+        const autresDemarches =
+          await this.vulnerabiliteRepository.countAutresDemarchesRattachees(
+            { demarcheId, thematiqueId },
+            transaction
+          );
+        if (autresDemarches === 0) {
+          await this.vulnerabiliteRepository.deleteThematique(
+            { thematiqueId, collectiviteId },
+            transaction
+          );
+        }
+
+        const payload = await this.diagnosticService.loadPayload(
+          { demarcheId, collectiviteId },
+          transaction
+        );
+        return success(payload);
+      },
+      tx
+    );
+    if (result.success && demarche) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.VULNERABILITE_THEMATIQUE_RETIREE,
+        demarche,
+        {
+          userId: user.id,
+          acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          properties: { thematiqueId },
+        }
       );
-      return success(payload);
-    }, tx);
+    }
+    return result;
   }
 }

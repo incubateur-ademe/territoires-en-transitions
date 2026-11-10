@@ -205,11 +205,20 @@ export class ReferentsPcaetRepository {
       .onConflictDoNothing();
   }
 
-  async delete(referentId: number, tx?: Transaction): Promise<boolean> {
-    const rows = await (tx ?? this.databaseService.db)
+  /** Rend le référent retiré, ou `null` s'il n'existait pas. */
+  async delete(
+    referentId: number,
+    tx?: Transaction
+  ): Promise<{ organismeId: number; avecCompte: boolean } | null> {
+    const [row] = await (tx ?? this.databaseService.db)
       .delete(pcaetReferentTable)
       .where(eq(pcaetReferentTable.id, referentId))
-      .returning({ id: pcaetReferentTable.id });
-    return rows.length > 0;
+      .returning({
+        organismeId: pcaetReferentTable.organismeCollectiviteId,
+        userId: pcaetReferentTable.userId,
+      });
+    return row
+      ? { organismeId: row.organismeId, avecCompte: row.userId !== null }
+      : null;
   }
 }

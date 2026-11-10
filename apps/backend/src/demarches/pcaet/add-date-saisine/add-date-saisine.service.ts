@@ -11,12 +11,15 @@ import { AddDateSaisineInput } from './add-date-saisine.input';
 import { AddDateSaisineRepository } from './add-date-saisine.repository';
 
 const DATE_SAISINE_MIN = '1900-01-01';
+import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class AddDateSaisineService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
-    private readonly addDateSaisineRepository: AddDateSaisineRepository
+    private readonly addDateSaisineRepository: AddDateSaisineRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async addDateSaisine(
@@ -24,10 +27,10 @@ export class AddDateSaisineService {
     { user, tx }: ServiceSecondArg
   ): Promise<Result<void, AddDateSaisineError>> {
     const permissionResult =
-      await this.depotPermissionsService.canModifierDateSaisine(
-        demandeAvisId,
-        { user, tx }
-      );
+      await this.depotPermissionsService.canModifierDateSaisine(demandeAvisId, {
+        user,
+        tx,
+      });
     if (!permissionResult.success) {
       return failure(permissionResult.error);
     }
@@ -54,6 +57,11 @@ export class AddDateSaisineService {
       tx
     );
 
+    this.trackingService.trackInstructeur(
+      DemarchePcaetEventEnum.SAISINE_DATE_AJOUTEE,
+      permissionResult.data,
+      { userId: user.id }
+    );
     return success(undefined);
   }
 }

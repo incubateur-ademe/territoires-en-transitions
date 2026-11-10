@@ -6,7 +6,15 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { canDeleteDemarchePcaet } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { DemarchePcaetRefRepository } from '../shared/demarche-pcaet-ref.repository';
+import {
+  DemarchePcaetRefRepository,
+  type DemarchePcaetRef,
+} from '../shared/demarche-pcaet-ref.repository';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 import {
   DeleteDemarchePcaetError,
   DeleteDemarchePcaetErrorEnum,
@@ -22,13 +30,15 @@ export class DeleteDemarchePcaetService {
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
     private readonly demarchePcaetRefRepository: DemarchePcaetRefRepository,
-    private readonly deleteDemarchePcaetRepository: DeleteDemarchePcaetRepository
+    private readonly deleteDemarchePcaetRepository: DeleteDemarchePcaetRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async deleteDemarchePcaet(
     input: DeleteDemarchePcaetInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<undefined, DeleteDemarchePcaetError>> {
+    let deleted: DemarchePcaetRef | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<undefined, DeleteDemarchePcaetError>> => {
@@ -67,12 +77,23 @@ export class DeleteDemarchePcaetService {
         return failure(DeleteDemarchePcaetErrorEnum.DATABASE_ERROR);
       }
 
+      deleted = demarche;
       this.logger.log(
         `Demarche PCAET ${demarche.id} deleted (statut ${demarche.status}) by user ${user.id}`
       );
       return { success: true, data: undefined };
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success && deleted) {
+      this.trackingService.track(DemarchePcaetEventEnum.SUPPRIMEE, deleted, {
+        userId: user.id,
+        acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+      });
+    }
+    return result;
   }
 }

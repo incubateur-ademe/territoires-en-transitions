@@ -8,12 +8,15 @@ import {
 } from '../referents-pcaet.errors';
 import { ReferentsPcaetRepository } from '../referents-pcaet.repository';
 import { RemoveReferentInput } from './remove-referent.input';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { DemarchePcaetEventEnum } from '../../shared/tracking/demarche-pcaet-tracking.constants';
 
 @Injectable()
 export class RemoveReferentService {
   constructor(
     private readonly permissionsService: ReferentsPcaetPermissionsService,
-    private readonly referentsRepository: ReferentsPcaetRepository
+    private readonly referentsRepository: ReferentsPcaetRepository,
+    private readonly trackingService: TrackingService
   ) {}
 
   async remove(
@@ -29,8 +32,19 @@ export class RemoveReferentService {
     }
 
     const deleted = await this.referentsRepository.delete(referentId, tx);
-    return deleted
-      ? success(undefined)
-      : failure(ReferentsPcaetErrorEnum.REFERENT_NOT_FOUND);
+    if (!deleted) {
+      return failure(ReferentsPcaetErrorEnum.REFERENT_NOT_FOUND);
+    }
+    // Pas une démarche : l'événement porte le groupe de l'organisme référent.
+    this.trackingService.capture({
+      distinctId: user.id,
+      event: DemarchePcaetEventEnum.REFERENT_RETIRE,
+      properties: {
+        organisme_id: deleted.organismeId,
+        avec_compte: deleted.avecCompte,
+      },
+      groups: { collectivite: String(deleted.organismeId) },
+    });
+    return success(undefined);
   }
 }

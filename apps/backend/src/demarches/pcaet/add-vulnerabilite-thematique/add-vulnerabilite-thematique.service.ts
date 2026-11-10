@@ -15,6 +15,12 @@ import {
   AddVulnerabiliteThematiqueErrorEnum,
 } from './add-vulnerabilite-thematique.errors';
 import { AddVulnerabiliteThematiqueInput } from './add-vulnerabilite-thematique.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class AddVulnerabiliteThematiqueService {
@@ -22,7 +28,8 @@ export class AddVulnerabiliteThematiqueService {
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
-    private readonly diagnosticService: DemarchePcaetDiagnosticService
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async addThematique(
@@ -34,96 +41,114 @@ export class AddVulnerabiliteThematiqueService {
     }: AddVulnerabiliteThematiqueInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetDiagnostic, AddVulnerabiliteThematiqueError>> {
-    return this.transactionManager.executeSingle(async (transaction) => {
-      const access = await this.accessService.assertWritable(
-        { collectiviteId, demarcheId },
-        'contenu',
-        { user, tx: transaction }
-      );
-      if (!access.success) {
-        return failure(AddVulnerabiliteThematiqueErrorEnum[access.error]);
-      }
-
-      if (parentId !== null) {
-        const parente = await this.vulnerabiliteRepository.findThematique(
-          { thematiqueId: parentId, collectiviteId },
-          transaction
+    let demarche: DemarchePcaetRef | undefined;
+    const result = await this.transactionManager.executeSingle(
+      async (transaction) => {
+        const access = await this.accessService.assertWritable(
+          { collectiviteId, demarcheId },
+          'contenu',
+          { user, tx: transaction }
         );
-        if (!parente) {
-          return failure(
-            AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_NON_ACCESSIBLE
-          );
+        if (!access.success) {
+          return failure(AddVulnerabiliteThematiqueErrorEnum[access.error]);
         }
-        if (!peutRecevoirSousThematique(parente)) {
-          // Le socle n'est pas modifiable — on n'y greffe pas davantage qu'on
-          // ne le renomme — et une sous-thématique n'en porte pas à son tour.
-          return failure(
-            parente.isSocle
-              ? AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_SOCLE
-              : AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_NON_RACINE
-          );
-        }
-      }
+        demarche = access.data;
 
-      // Le libellé peut déjà exister au catalogue de la collectivité sans être
-      // rattaché à cette démarche : on le rattache alors, plutôt que de forcer
-      // l'utilisateur à en inventer un autre. L'homonymie ne se juge que dans
-      // la fratrie visée.
-      const existant = await this.vulnerabiliteRepository.findThematiqueByLabel(
-        { collectiviteId, label, parentId },
-        transaction
-      );
-
-      if (existant) {
-        const dejaRattache =
-          existant.isSocle ||
-          (await this.vulnerabiliteRepository.isThematiqueRattache(
-            { demarcheId, thematiqueId: existant.id },
+        if (parentId !== null) {
+          const parente = await this.vulnerabiliteRepository.findThematique(
+            { thematiqueId: parentId, collectiviteId },
             transaction
-          ));
-        if (dejaRattache) {
-          return failure(
-            AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_DEJA_EXISTANT
           );
+          if (!parente) {
+            return failure(
+              AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_NON_ACCESSIBLE
+            );
+          }
+          if (!peutRecevoirSousThematique(parente)) {
+            // Le socle n'est pas modifiable — on n'y greffe pas davantage qu'on
+            // ne le renomme — et une sous-thématique n'en porte pas à son tour.
+            return failure(
+              parente.isSocle
+                ? AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_SOCLE
+                : AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_PARENT_NON_RACINE
+            );
+          }
         }
-        await this.vulnerabiliteRepository.attachThematique(
-          { demarcheId, thematiqueId: existant.id, userId: user.id },
-          transaction
-        );
-      } else {
-        try {
-          const cree = await this.vulnerabiliteRepository.insertThematique(
-            {
-              collectiviteId,
-              label,
-              parentId,
-              userId: user.id,
-            },
+
+        // Le libellé peut déjà exister au catalogue de la collectivité sans être
+        // rattaché à cette démarche : on le rattache alors, plutôt que de forcer
+        // l'utilisateur à en inventer un autre. L'homonymie ne se juge que dans
+        // la fratrie visée.
+        const existant =
+          await this.vulnerabiliteRepository.findThematiqueByLabel(
+            { collectiviteId, label, parentId },
             transaction
           );
-          await this.vulnerabiliteRepository.attachThematique(
-            { demarcheId, thematiqueId: cree.id, userId: user.id },
-            transaction
-          );
-        } catch (error) {
-          // Deux ajouts simultanés du même libellé passent tous deux la
-          // vérification applicative : c'est l'index d'unicité qui arbitre, et
-          // son rejet doit ressortir comme un conflit métier, pas comme une
-          // erreur serveur.
-          if (isUniqueViolation(error)) {
+
+        if (existant) {
+          const dejaRattache =
+            existant.isSocle ||
+            (await this.vulnerabiliteRepository.isThematiqueRattache(
+              { demarcheId, thematiqueId: existant.id },
+              transaction
+            ));
+          if (dejaRattache) {
             return failure(
               AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_DEJA_EXISTANT
             );
           }
-          throw error;
+          await this.vulnerabiliteRepository.attachThematique(
+            { demarcheId, thematiqueId: existant.id, userId: user.id },
+            transaction
+          );
+        } else {
+          try {
+            const cree = await this.vulnerabiliteRepository.insertThematique(
+              {
+                collectiviteId,
+                label,
+                parentId,
+                userId: user.id,
+              },
+              transaction
+            );
+            await this.vulnerabiliteRepository.attachThematique(
+              { demarcheId, thematiqueId: cree.id, userId: user.id },
+              transaction
+            );
+          } catch (error) {
+            // Deux ajouts simultanés du même libellé passent tous deux la
+            // vérification applicative : c'est l'index d'unicité qui arbitre, et
+            // son rejet doit ressortir comme un conflit métier, pas comme une
+            // erreur serveur.
+            if (isUniqueViolation(error)) {
+              return failure(
+                AddVulnerabiliteThematiqueErrorEnum.THEMATIQUE_DEJA_EXISTANT
+              );
+            }
+            throw error;
+          }
         }
-      }
 
-      const payload = await this.diagnosticService.loadPayload(
-        { demarcheId, collectiviteId },
-        transaction
+        const payload = await this.diagnosticService.loadPayload(
+          { demarcheId, collectiviteId },
+          transaction
+        );
+        return success(payload);
+      },
+      tx
+    );
+    if (result.success && demarche) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.VULNERABILITE_THEMATIQUE_AJOUTEE,
+        demarche,
+        {
+          userId: user.id,
+          acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          properties: { sousThematique: parentId !== null },
+        }
       );
-      return success(payload);
-    }, tx);
+    }
+    return result;
   }
 }

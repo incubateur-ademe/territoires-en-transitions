@@ -10,6 +10,8 @@ import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { ValiderAvisError, ValiderAvisErrorEnum } from './valider-avis.errors';
 import { ValiderAvisInput } from './valider-avis.input';
+import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class ValiderAvisService {
@@ -20,7 +22,8 @@ export class ValiderAvisService {
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository,
     private readonly cloreInstructionService: CloreInstructionService,
-    private readonly notifyAvisRecuService: NotifyAvisRecuService
+    private readonly notifyAvisRecuService: NotifyAvisRecuService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -34,15 +37,36 @@ export class ValiderAvisService {
     input: ValiderAvisInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetAvis[], ValiderAvisError>> {
-    return this.transactionManager.executeSingle(
-      (transaction) => this.valider(input, { user, tx: transaction }),
+    let onSuccess: (() => void) | undefined;
+    const result = await this.transactionManager.executeSingle(
+      (transaction) =>
+        this.valider(input, {
+          user,
+          tx: transaction,
+          onValidated: (track) => {
+            onSuccess = track;
+          },
+        }),
       tx
     );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 
   private async valider(
     { demandeAvisId, avisId }: ValiderAvisInput,
-    { user, tx }: { user: ServiceSecondArg['user']; tx: Transaction }
+    {
+      user,
+      tx,
+      onValidated,
+    }: {
+      user: ServiceSecondArg['user'];
+      tx: Transaction;
+      /** Reçoit la capture à émettre, une fois la transaction validée. */
+      onValidated: (track: () => void) => void;
+    }
   ): Promise<Result<PcaetAvis[], ValiderAvisError>> {
     const permissionResult = await this.depotPermissionsService.canDeposerAvis(
       demandeAvisId,
@@ -71,7 +95,25 @@ export class ValiderAvisService {
         { demandeAvisId, avisId, createdBy: user.id },
         tx
       );
-      await this.cloreInstructionSiAchevee(demandeAvisId, tx);
+      const instructionClose = await this.cloreInstructionSiAchevee(
+        demandeAvisId,
+        tx
+      );
+      const contexte = permissionResult.data;
+      onValidated(() =>
+        this.trackingService.trackInstructeur(
+          DemarchePcaetEventEnum.AVIS_VALIDE,
+          contexte,
+          {
+            userId: user.id,
+            properties: {
+              auTitreDe: avis.auTitreDe,
+              nbPieces: avis.fichierRefs.length,
+              instructionClose,
+            },
+          }
+        )
+      );
     }
 
     return success(
@@ -89,13 +131,13 @@ export class ValiderAvisService {
   private async cloreInstructionSiAchevee(
     demandeAvisId: number,
     tx: Transaction
-  ): Promise<void> {
+  ): Promise<boolean> {
     const cible = await this.pcaetAvisRepository.getDemarcheCible(
       demandeAvisId,
       tx
     );
     if (!cible) {
-      return;
+      return false;
     }
 
     const result = await this.cloreInstructionService.clore(cible, { tx });
@@ -103,12 +145,13 @@ export class ValiderAvisService {
       this.logger.warn(
         `Avis validé sur la demande ${demandeAvisId}, mais clôture de l'instruction en échec sur la démarche ${cible.demarcheId} : ${result.error}`
       );
-      return;
+      return false;
     }
     if (result.data) {
       this.logger.log(
         `Instruction close sur la démarche PCAET ${cible.demarcheId} : tous les avis attendus sont rendus`
       );
     }
+    return result.data !== null;
   }
 }

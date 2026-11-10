@@ -15,6 +15,11 @@ import {
   UpdateDemarchePcaetDocumentAdditionalErrorEnum,
 } from './update-document-additional.errors';
 import { UpdateDemarchePcaetDocumentAdditionalInput } from './update-document-additional.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class UpdateDemarchePcaetDocumentAdditionalService {
@@ -25,7 +30,8 @@ export class UpdateDemarchePcaetDocumentAdditionalService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -42,6 +48,7 @@ export class UpdateDemarchePcaetDocumentAdditionalService {
       UpdateDemarchePcaetDocumentAdditionalError
     >
   > {
+    let onSuccess: (() => void) | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -122,9 +129,30 @@ export class UpdateDemarchePcaetDocumentAdditionalService {
       this.logger.log(
         `Free document ${input.documentAdditionalId} updated on demarche PCAET ${demarche.id} by user ${user.id}`
       );
+      onSuccess = () =>
+        this.trackingService.track(
+          DemarchePcaetEventEnum.DOCUMENT_ADDITIONNEL_MODIFIE,
+          demarche,
+          {
+            userId: user.id,
+            acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+            properties: {
+              etape: documentAdditional.etape,
+              titreModifie: input.titre !== undefined,
+              fichierJoint: input.fichierId !== undefined,
+            },
+          }
+        );
       return success(documentAdditional);
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 }

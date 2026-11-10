@@ -10,6 +10,11 @@ import {
   RemoveDemarchePcaetDocumentAdditionalErrorEnum,
 } from './remove-document-additional.errors';
 import { RemoveDemarchePcaetDocumentAdditionalInput } from './remove-document-additional.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class RemoveDemarchePcaetDocumentAdditionalService {
@@ -20,7 +25,8 @@ export class RemoveDemarchePcaetDocumentAdditionalService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -37,6 +43,7 @@ export class RemoveDemarchePcaetDocumentAdditionalService {
       RemoveDemarchePcaetDocumentAdditionalError
     >
   > {
+    let onSuccess: (() => void) | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -85,9 +92,25 @@ export class RemoveDemarchePcaetDocumentAdditionalService {
       this.logger.log(
         `Free document ${input.documentAdditionalId} removed from demarche PCAET ${demarche.id} by user ${user.id}`
       );
+      onSuccess = () =>
+        this.trackingService.track(
+          DemarchePcaetEventEnum.DOCUMENT_ADDITIONNEL_RETIRE,
+          demarche,
+          {
+            userId: user.id,
+            acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          }
+        );
       return success({ documentAdditionalId: input.documentAdditionalId });
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 }

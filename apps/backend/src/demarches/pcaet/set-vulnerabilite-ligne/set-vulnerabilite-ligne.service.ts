@@ -14,6 +14,12 @@ import {
   SetVulnerabiliteLigneErrorEnum,
 } from './set-vulnerabilite-ligne.errors';
 import { SetVulnerabiliteLigneInput } from './set-vulnerabilite-ligne.input';
+import type { DemarchePcaetRef } from '../shared/demarche-pcaet-ref.repository';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 /** Un objectif vidé par l'utilisateur redevient une absence de saisie. */
 const toObjectif = (texte: string | null | undefined) => {
@@ -30,7 +36,8 @@ export class SetVulnerabiliteLigneService {
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
-    private readonly diagnosticService: DemarchePcaetDiagnosticService
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async setLigne(
@@ -39,62 +46,92 @@ export class SetVulnerabiliteLigneService {
   ): Promise<Result<PcaetDiagnostic, SetVulnerabiliteLigneError>> {
     const { collectiviteId, demarcheId, thematiqueId } = input;
 
-    return this.transactionManager.executeSingle(async (transaction) => {
-      const access = await this.accessService.assertWritable(
-        { collectiviteId, demarcheId },
-        'contenu',
-        { user, tx: transaction }
-      );
-      if (!access.success) {
-        return failure(SetVulnerabiliteLigneErrorEnum[access.error]);
-      }
-
-      // Le socle et les thématiques de la collectivité, rien d'autre : une thématique
-      // ajouté par une autre collectivité n'est pas adressable.
-      const thematique = await this.vulnerabiliteRepository.findThematique(
-        { thematiqueId, collectiviteId },
-        transaction
-      );
-      if (!thematique) {
-        return failure(
-          SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+    let demarche: DemarchePcaetRef | undefined;
+    const result = await this.transactionManager.executeSingle(
+      async (transaction) => {
+        const access = await this.accessService.assertWritable(
+          { collectiviteId, demarcheId },
+          'contenu',
+          { user, tx: transaction }
         );
-      }
+        if (!access.success) {
+          return failure(SetVulnerabiliteLigneErrorEnum[access.error]);
+        }
+        demarche = access.data;
 
-      // Une thématique ajoutée doit être rattachée à cette démarche pour y être
-      // saisi ; le socle s'y impose sans rattachement préalable.
-      if (
-        !thematique.isSocle &&
-        !(await this.vulnerabiliteRepository.isThematiqueRattache(
-          { demarcheId, thematiqueId },
+        // Le socle et les thématiques de la collectivité, rien d'autre : une thématique
+        // ajouté par une autre collectivité n'est pas adressable.
+        const thematique = await this.vulnerabiliteRepository.findThematique(
+          { thematiqueId, collectiviteId },
           transaction
-        ))
-      ) {
-        return failure(
-          SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE
         );
-      }
+        if (!thematique) {
+          return failure(
+            SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+          );
+        }
 
-      const patch: VulnerabiliteLignePatch = {
-        ...(input.niveau ? { niveau: input.niveau } : {}),
-        ...(input.objectifs2050 !== undefined
-          ? { objectifs2050: toObjectif(input.objectifs2050) }
-          : {}),
-        ...(input.objectifs2100 !== undefined
-          ? { objectifs2100: toObjectif(input.objectifs2100) }
-          : {}),
-      };
+        // Une thématique ajoutée doit être rattachée à cette démarche pour y être
+        // saisi ; le socle s'y impose sans rattachement préalable.
+        if (
+          !thematique.isSocle &&
+          !(await this.vulnerabiliteRepository.isThematiqueRattache(
+            { demarcheId, thematiqueId },
+            transaction
+          ))
+        ) {
+          return failure(
+            SetVulnerabiliteLigneErrorEnum.THEMATIQUE_NON_ACCESSIBLE
+          );
+        }
 
-      await this.vulnerabiliteRepository.patchLigne(
-        { demarcheId, thematiqueId, patch, userId: user.id },
-        transaction
+        const patch: VulnerabiliteLignePatch = {
+          ...(input.niveau ? { niveau: input.niveau } : {}),
+          ...(input.objectifs2050 !== undefined
+            ? { objectifs2050: toObjectif(input.objectifs2050) }
+            : {}),
+          ...(input.objectifs2100 !== undefined
+            ? { objectifs2100: toObjectif(input.objectifs2100) }
+            : {}),
+        };
+
+        await this.vulnerabiliteRepository.patchLigne(
+          { demarcheId, thematiqueId, patch, userId: user.id },
+          transaction
+        );
+
+        const payload = await this.diagnosticService.loadPayload(
+          { demarcheId, collectiviteId },
+          transaction
+        );
+        return success(payload);
+      },
+      tx
+    );
+    if (result.success && demarche) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.VULNERABILITE_LIGNE_SAISIE,
+        demarche,
+        {
+          userId: user.id,
+          acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          properties: {
+            thematiqueId,
+            champ: input.niveau
+              ? 'niveau'
+              : input.objectifs2050 !== undefined
+              ? 'objectifs_2050'
+              : 'objectifs_2100',
+            horizon: input.niveau?.horizon,
+            niveau: input.niveau?.valeur,
+            efface:
+              input.niveau?.valeur === null ||
+              input.objectifs2050 === null ||
+              input.objectifs2100 === null,
+          },
+        }
       );
-
-      const payload = await this.diagnosticService.loadPayload(
-        { demarcheId, collectiviteId },
-        transaction
-      );
-      return success(payload);
-    }, tx);
+    }
+    return result;
   }
 }

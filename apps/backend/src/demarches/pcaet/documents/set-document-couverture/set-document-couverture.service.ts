@@ -15,6 +15,11 @@ import {
   SetDemarchePcaetDocumentCouvertureErrorEnum,
 } from './set-document-couverture.errors';
 import { SetDemarchePcaetDocumentCouvertureInput } from './set-document-couverture.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 type SetCouvertureResult = { documentId: string; couvert: boolean };
 
@@ -28,7 +33,8 @@ export class SetDemarchePcaetDocumentCouvertureService {
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -47,6 +53,7 @@ export class SetDemarchePcaetDocumentCouvertureService {
   ): Promise<
     Result<SetCouvertureResult, SetDemarchePcaetDocumentCouvertureError>
   > {
+    let onSuccess: (() => void) | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -108,9 +115,30 @@ export class SetDemarchePcaetDocumentCouvertureService {
           definition.id
         } on demarche PCAET ${demarche.id} by user ${user.id}`
       );
+      onSuccess = () =>
+        this.trackingService.track(
+          DemarchePcaetEventEnum.DOCUMENT_INCLUSION_DECLAREE,
+          demarche,
+          {
+            userId: user.id,
+            acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+            properties: {
+              documentId: definition.id,
+              couvert: input.couvert,
+              requis: definition.requis,
+            },
+          }
+        );
       return success({ documentId: definition.id, couvert: input.couvert });
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 }

@@ -25,6 +25,11 @@ import {
   CreateAndLinkPlanErrorEnum,
 } from './create-and-link-plan.errors';
 import { CreateAndLinkPlanInput } from './create-and-link-plan.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 /**
  * `TransactionManager` relance un échec en exception (au lieu de le
@@ -62,7 +67,8 @@ export class CreateAndLinkPlanService {
     private readonly upsertPlanService: UpsertPlanService,
     private readonly updateDemarchePcaetService: UpdateDemarchePcaetService,
     private readonly getDemarchePcaetService: GetDemarchePcaetService,
-    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async createAndLinkPlan(
@@ -208,6 +214,26 @@ export class CreateAndLinkPlanService {
       executeInTransaction,
       tx
     );
+    if (
+      result.success &&
+      createdPlan &&
+      result.data.planActionIds.includes(createdPlan.id)
+    ) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.PLAN_RATTACHE,
+        result.data,
+        {
+          userId: user.id,
+          acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          properties: {
+            planId: createdPlan.id,
+            source: 'cree',
+            aVerifier: false,
+            nbPlansApres: result.data.planActionIds.length,
+          },
+        }
+      );
+    }
     if (result.success && !tx && createdPlan) {
       void this.enqueueCompletePlanSecteursService.enqueue({
         planIds: [createdPlan.id],

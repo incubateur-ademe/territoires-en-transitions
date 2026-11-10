@@ -15,6 +15,12 @@ import { CloreInstructionError } from './clore-instruction.errors';
 import { NotifyInstructionCloseService } from '../notifications/notify-instruction-close/notify-instruction-close.service';
 import { MotifCloture } from '../notifications/notify-instruction-close/notify-instruction-close.props';
 import { CloreInstructionRepository } from './clore-instruction.repository';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { daysBetween } from '../shared/tracking/demarche-pcaet-tracking.rules';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 /** Ce qu'une passe de clôture a produit sur un lot de dossiers. */
 export type CloreInstructionsResult = {
@@ -32,7 +38,8 @@ export class CloreInstructionService {
     private readonly refRepository: DemarchePcaetRefRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
     private readonly repository: CloreInstructionRepository,
-    private readonly notifyInstructionCloseService: NotifyInstructionCloseService
+    private readonly notifyInstructionCloseService: NotifyInstructionCloseService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -78,6 +85,18 @@ export class CloreInstructionService {
           motif: transition,
         },
         tx
+      );
+      this.trackingService.track(
+        DemarchePcaetEventEnum.INSTRUCTION_CLOSE,
+        result.data,
+        {
+          userId: null,
+          acteur: DemarchePcaetActeurEnum.SYSTEME,
+          properties: {
+            raison: transition,
+            joursDepuisTransmission: daysBetween(result.data.transmittedAt),
+          },
+        }
       );
     }
 

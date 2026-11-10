@@ -12,6 +12,12 @@ import { ArchiverDemarchePcaetService } from '../archiver-demarche/archiver-dema
 import { DemarchePcaetSuivantRepository } from '../shared/demarche-pcaet-suivant.repository';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { daysBetween } from '../shared/tracking/demarche-pcaet-tracking.rules';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
+import {
   PublierDemarchePcaetError,
   PublierDemarchePcaetErrorEnum,
 } from './publier-demarche.errors';
@@ -23,7 +29,8 @@ export class PublierDemarchePcaetService {
     private readonly transactionManager: TransactionManager,
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly archiverService: ArchiverDemarchePcaetService,
-    private readonly suivantRepository: DemarchePcaetSuivantRepository
+    private readonly suivantRepository: DemarchePcaetSuivantRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -52,39 +59,69 @@ export class PublierDemarchePcaetService {
       return failure(PublierDemarchePcaetErrorEnum.DATE_ADOPTION_FUTURE);
     }
 
-    return this.transactionManager.executeSingle(async (transaction) => {
-      await this.suivantRepository.lockSuccession(
-        { collectiviteId: input.collectiviteId },
-        transaction
-      );
+    let nbPrecedentesArchivees = 0;
+    const result = await this.transactionManager.executeSingle(
+      async (transaction) => {
+        await this.suivantRepository.lockSuccession(
+          { collectiviteId: input.collectiviteId },
+          transaction
+        );
 
-      const publication = await this.transitionService.apply(
-        input,
-        DemarchePcaetTransitionEnum.PUBLIER,
-        { user, tx: transaction },
-        () => ({
-          publishedAt: new Date().toISOString(),
-          adoptedAt: input.dateAdoption,
-        })
-      );
-      if (!publication.success) {
-        return publication;
-      }
+        const publication = await this.transitionService.apply(
+          input,
+          DemarchePcaetTransitionEnum.PUBLIER,
+          { user, tx: transaction },
+          () => ({
+            publishedAt: new Date().toISOString(),
+            adoptedAt: input.dateAdoption,
+          })
+        );
+        if (!publication.success) {
+          return publication;
+        }
 
-      const archivage = await this.archiverService.archiverRemplacees(
-        { collectiviteId: publication.data.collectiviteId },
-        { tx: transaction }
-      );
-      if (!archivage.success) {
-        return archivage;
-      }
+        const archivage = await this.archiverService.archiverRemplacees(
+          { collectiviteId: publication.data.collectiviteId },
+          { tx: transaction }
+        );
+        if (!archivage.success) {
+          return archivage;
+        }
 
-      // Une date d'adoption antérieure à celle d'un PCAET déjà publié fait de
-      // ce dépôt le précédent : c'est lui que la passe vient d'archiver.
-      const publiee = archivage.data.find(
-        (demarche) => demarche.id === publication.data.id
-      );
-      return success(publiee ?? publication.data);
-    }, tx);
+        // Une date d'adoption antérieure à celle d'un PCAET déjà publié fait de
+        // ce dépôt le précédent : c'est lui que la passe vient d'archiver.
+        const publiee = archivage.data.find(
+          (demarche) => demarche.id === publication.data.id
+        );
+        nbPrecedentesArchivees = archivage.data.filter(
+          (demarche) => demarche.id !== publication.data.id
+        ).length;
+        return success(publiee ?? publication.data);
+      },
+      tx
+    );
+
+    if (result.success) {
+      const demarche = result.data;
+      this.trackingService.track(DemarchePcaetEventEnum.PUBLIEE, demarche, {
+        userId: user.id,
+        acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+        properties: {
+          adoptedYear: demarche.adoptedAt
+            ? Number(demarche.adoptedAt.slice(0, 4))
+            : null,
+          joursDepuisCreation: daysBetween(demarche.createdAt),
+          joursDepuisTransmission: daysBetween(demarche.transmittedAt),
+          joursEntreAdoptionEtPublication: daysBetween(
+            demarche.adoptedAt,
+            demarche.publishedAt ?? new Date()
+          ),
+          nbPlans: demarche.planActionIds.length,
+          nbPrecedentesArchivees,
+          publieeArchivee: demarche.status === 'archive',
+        },
+      });
+    }
+    return result;
   }
 }

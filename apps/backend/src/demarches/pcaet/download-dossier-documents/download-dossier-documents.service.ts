@@ -18,6 +18,8 @@ import {
   toDossierArchiveArborescence,
   toDossierArchiveFilename,
 } from './to-dossier-archive-arborescence';
+import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 /** Mêmes bornes que l'archive d'une mesure : l'archive se construit en direct. */
 const SYNCHRONOUS_ARCHIVE_LIMITS = {
@@ -40,7 +42,8 @@ export class DownloadDossierDocumentsService {
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
     private readonly collectivitesService: CollectivitesService,
-    private readonly archiveAssemblyService: ArchiveAssemblyService
+    private readonly archiveAssemblyService: ArchiveAssemblyService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -97,6 +100,17 @@ export class DownloadDossierDocumentsService {
       tx
     );
 
+    this.trackingService.trackDossierInstruction(
+      DemarchePcaetEventEnum.DOSSIER_TELECHARGE,
+      consultableResult.data,
+      {
+        userId: user.id,
+        properties: {
+          type: 'dossier_zip',
+          nbFichiers: arborescence.files.length,
+        },
+      }
+    );
     return success({
       filename: toDossierArchiveFilename(collectivite.nom),
       writeTo: (destination: Writable) =>
