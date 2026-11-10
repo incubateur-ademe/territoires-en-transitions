@@ -412,9 +412,12 @@ describe('Import des correspondants de service', () => {
       const dreal = await creerDreal();
       const valide = `correspondant.valide.${Date.now()}@example.com`;
 
+      // Un code figé (lettre puis chiffre) qu'aucune spec ne crée : un code à
+      // deux lettres peut être tiré par `pickFreeRegionCode` dans une spec
+      // voisine, et la ligne trouverait alors son service.
       const rapport = await importer(
         csv(
-          'dreal;ZZ;;;;service.introuvable@example.com;',
+          'dreal;Z9;;;;service.introuvable@example.com;',
           'ddt;53;;;;deux.cles@example.com;',
           `dreal;${dreal.regionCode};;;;${valide};`
         ),
