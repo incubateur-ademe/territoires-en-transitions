@@ -153,6 +153,7 @@ const PlanViewContent = ({ tab }: { tab: PlanTab }) => {
             <SuiviPlanView
               collectiviteId={collectivite.collectiviteId}
               planId={plan.id}
+              dateDebutPlan={plan.dateDebut ?? plan.createdAt}
             />
           )}
         </PlanTabs>

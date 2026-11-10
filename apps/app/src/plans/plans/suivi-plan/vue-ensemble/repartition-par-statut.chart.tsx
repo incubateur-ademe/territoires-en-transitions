@@ -1,26 +1,17 @@
 'use client';
 
-import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import DonutChart from '@/app/ui/charts/Donut/DonutChart';
 import { SANS_STATUT_LABEL, Statut, StatutEnum } from '@tet/domain/plans';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { COULEURS_SUIVI_BY_STATUT } from '../statut-suivi-colors';
+import { makePilotageParStatutUrl } from '../make-pilotage-par-statut-url';
+import {
+  COULEURS_SUIVI_BY_STATUT,
+  ORDRE_STATUTS,
+} from '../statut-suivi-colors';
 
 type RepartitionItem = { statut: Statut | null; count: number };
-
-const ORDRE_STATUTS: (Statut | null)[] = [
-  StatutEnum.A_VENIR,
-  StatutEnum.A_DISCUTER,
-  StatutEnum.EN_COURS,
-  StatutEnum.REALISE,
-  StatutEnum.EN_RETARD,
-  StatutEnum.EN_PAUSE,
-  StatutEnum.BLOQUE,
-  StatutEnum.ABANDONNE,
-  null,
-];
 
 const ACTION_PAR_STATUT: Partial<Record<Statut, string>> = {
   [StatutEnum.A_DISCUTER]: appLabels.vueEnsembleTrancher,
@@ -46,11 +37,7 @@ export const RepartitionParStatut = ({
   })).filter(({ count }) => count > 0);
 
   const makePilotageUrl = (statut: Statut | null) =>
-    makeCollectivitePlanActionUrl({
-      collectiviteId,
-      planActionUid: planId.toString(),
-      filters: statut ? { statuts: [statut] } : { noStatut: true },
-    });
+    makePilotageParStatutUrl({ collectiviteId, planId, statut });
 
   return (
     <div className="flex flex-wrap items-center gap-6">

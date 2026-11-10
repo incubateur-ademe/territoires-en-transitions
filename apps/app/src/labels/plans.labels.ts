@@ -433,4 +433,51 @@ export const plansLabels = {
     `Voir plus (${count} ${count > 1 ? 'axes' : 'axe'})`,
   avancementParAxeVoirMoins: 'Voir moins',
   avancementParAxeAucunAxe: "Ce plan n'a pas encore d'axe.",
+  evolutionStatutsTitre: 'Évolution des statuts sur la période',
+  evolutionStatutsPeriodeTitre: ({
+    debut,
+    fin,
+  }: {
+    debut: string;
+    fin: string | null;
+  }): string => `${debut} → ${fin ?? "aujourd'hui"}`,
+  evolutionStatutsPeriode: 'Période',
+  evolutionStatutsDebutAnnee: "Depuis le début de l'année",
+  evolutionStatutsDernierMois: 'Dernier mois',
+  evolutionStatutsDerniersMois: (count: number): string =>
+    `${count} derniers mois`,
+  evolutionStatutsDernieresAnnees: (count: number): string =>
+    `${count} dernières années`,
+  evolutionStatutsDebutPlan: 'Depuis le début du plan',
+  evolutionStatutsPersonnalisee: 'Période personnalisée',
+  evolutionStatutsDu: 'Du',
+  evolutionStatutsAu: 'Au',
+  evolutionStatutsAujourdhui: "Aujourd'hui",
+  evolutionStatutsStatutsAu: (date: string | null): string =>
+    date ? `Statuts au ${date}` : "Statuts aujourd'hui",
+  evolutionStatutsExistaient: (total: number): string =>
+    `${total} ${
+      total > 1 ? 'actions existaient' : 'action existait'
+    } à cette date`,
+  evolutionStatutsCreees: ({
+    total,
+    creees,
+    date,
+  }: {
+    total: number;
+    creees: number;
+    date: string;
+  }): string =>
+    `${total} ${
+      total > 1 ? 'actions' : 'action'
+    } (+${creees} créée(s) depuis le ${date})`,
+  evolutionStatutsHistoriqueRamene:
+    'Historique disponible depuis décembre 2023 : la comparaison part du 11/12/2023.',
+  evolutionStatutsInclureActionsContinues:
+    'Inclure les actions continues (qui se répètent chaque année)',
+  evolutionStatutsActionsContinuesInfo: (count: number): string =>
+    `${count} action(s) continue(s) dans le plan. Leur statut reste souvent « En cours » par nature : les exclure évite de fausser l'évolution.`,
+  evolutionStatutsStatut: 'Statut',
+  evolutionStatutsEvolution: 'Évolution',
+  evolutionStatutsTotal: 'Total',
 } as const;
