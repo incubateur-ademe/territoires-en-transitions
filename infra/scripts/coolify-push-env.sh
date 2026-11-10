@@ -24,7 +24,8 @@
 #   COOLIFY_ENDPOINT    URL de base (…/api/v1)
 #   COOLIFY_TOKEN       token Bearer (via scripts/coolify-env.sh)
 #   APP_ID              ex. preprod/backend ; marqueur [tet-app:<APP_ID>]
-#                       (applications) ou [tet-service:<APP_ID>] (services)
+#                       ou (tet-app=<APP_ID>) (applications), [tet-service:<APP_ID>]
+#                       (services)
 #   RESOURCE            (optionnel) applications (défaut) ou services
 #   SECRET_PROJECT_ID   projet Scaleway des secrets de l'environnement
 #   SECRET_PATH         path Secret Manager, ex. /coolify-env/preprod
@@ -56,7 +57,9 @@ done
 
 _resource="${RESOURCE:-applications}"
 case "$_resource" in
-applications) _marker="[tet-app:${APP_ID}]" ;;
+# Coolify ≥ 4.7 refuse « [ ] : » dans une description : les applications
+# créées depuis portent (tet-app=…) (git-applications.tf).
+applications) _marker="[tet-app:${APP_ID}]" _marker_alt="(tet-app=${APP_ID})" ;;
 services) _marker="[tet-service:${APP_ID}]" ;;
 *)
   echo "✗ RESOURCE invalide : ${_resource} (applications ou services)." >&2
@@ -98,10 +101,10 @@ jq -e 'type == "array" and all(.[]; (.key | type == "string")
 
 echo "→ ${APP_ID} : résolution de $(jq length "$_tmp/manifest.json") variables…"
 
-app_uuid="$(api GET "/${_resource}" | jq -r --arg m "$_marker" \
-  '[.[] | select((.description // "") | contains($m))] | first | .uuid // empty')"
+app_uuid="$(api GET "/${_resource}" | jq -r --arg m "$_marker" --arg m2 "${_marker_alt:-$_marker}" \
+  '[.[] | select((.description // "") | contains($m) or contains($m2))] | first | .uuid // empty')"
 if [ -z "$app_uuid" ]; then
-  echo "✗ Aucune ressource ${_resource} ne porte ${_marker}. Appliquer d'abord infra/coolify." >&2
+  echo "✗ Aucune ressource ${_resource} ne porte ${_marker}${_marker_alt:+ ni ${_marker_alt}}. Appliquer d'abord infra/coolify." >&2
   exit 1
 fi
 
@@ -147,15 +150,20 @@ api GET "/${_resource}/${app_uuid}/envs" \
 _created=0 _updated=0 _unchanged=0 _deleted=0
 while IFS=$'\t' read -r _key _multiline; do
   # Les services n'ont pas de previews : pas de is_preview pour eux.
+  # Applications : runtime seulement. Coolify met is_buildtime à true par
+  # défaut, ce qui passe chaque variable, secrets compris, au build Railpack
+  # d'une application Git ; aucune n'en a besoin au build.
   jq -n --arg k "$_key" --rawfile v "$_tmp/values/$_key" --argjson ml "$_multiline" \
     --arg r "$_resource" \
     '{key: $k, value: $v, is_literal: true, is_multiline: $ml, is_shown_once: false}
-      + (if $r == "applications" then {is_preview: false} else {} end)' >"$_tmp/payload.json"
+      + (if $r == "applications" then {is_preview: false, is_buildtime: false, is_runtime: true} else {} end)' >"$_tmp/payload.json"
 
-  _state="$(jq -r --arg k "$_key" --rawfile v "$_tmp/values/$_key" --argjson ml "$_multiline" '
+  _state="$(jq -r --arg k "$_key" --rawfile v "$_tmp/values/$_key" --argjson ml "$_multiline" \
+    --arg r "$_resource" '
     [.[] | select(.key == $k)] | first
     | if . == null then "absent"
       elif .value == $v and (.is_multiline // false) == $ml and (.is_literal // false)
+        and ($r != "applications" or (.is_buildtime == false and .is_runtime != false))
         then "identique"
       else "different" end' "$_tmp/current.json")"
 

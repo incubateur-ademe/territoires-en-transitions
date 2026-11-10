@@ -21,6 +21,7 @@ resource "terraform_data" "env_push" {
       { for k, v in coolify_application_docker_image.app : k => v.uuid },
       { for k, v in coolify_service.supabase_api : k => v.uuid },
       { for k, v in coolify_service.alloy : k => v.uuid },
+      { for k, v in coolify_application.git : k => v.uuid },
     )[each.key],
   ]
 
@@ -31,13 +32,15 @@ resource "terraform_data" "env_push" {
 
   lifecycle {
     precondition {
-      condition     = length(setintersection(keys(each.value.entries), toset(local.coolify_env_image_provided_keys))) == 0
-      error_message = "${each.key} : clé fournie par l'image Docker ou par le déploiement (${join(", ", local.coolify_env_image_provided_keys)}). La retirer du manifeste."
+      # Une application Git a besoin de HOSTNAME (liens absolus d'aldo), que
+      # Railpack ne fournit pas ; PORT, NODE_ENV & co restent interdits.
+      condition     = length(setintersection(keys(each.value.entries), setsubtract(local.coolify_env_image_provided_keys, each.value.git ? ["HOSTNAME"] : []))) == 0
+      error_message = "${each.key} : clé fournie par l'image Docker ou par le déploiement (${join(", ", setsubtract(local.coolify_env_image_provided_keys, each.value.git ? ["HOSTNAME"] : []))}). La retirer du manifeste."
     }
     precondition {
       # Le repli NEXT_PUBLIC_* de public-env.ts n'existe que pour la
       # compatibilité : en poser réintroduirait le couplage image ↔ environnement.
-      condition     = alltrue([for k in keys(each.value.entries) : !startswith(k, "NEXT_PUBLIC_")])
+      condition     = each.value.git || alltrue([for k in keys(each.value.entries) : !startswith(k, "NEXT_PUBLIC_")])
       error_message = "${each.key} : pas de NEXT_PUBLIC_*, la configuration runtime se lit sans préfixe."
     }
     precondition {
