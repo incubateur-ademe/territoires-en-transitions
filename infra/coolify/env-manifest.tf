@@ -231,6 +231,23 @@ locals {
         SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
         SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
       }
+
+      # Base Postgres et Storage restent sur leur projet Supabase Cloud.
+      rencontres = {
+        WEBSITE_URL              = { value = local.git_applications_catalog["prod/rencontres"].domains[0] }
+        NEXT_PUBLIC_SUPABASE_URL = { value = "https://eazuwwpllqueujyivlce.supabase.com" }
+        DATABASE_URL             = { secret = "rencontres-database-url" }
+        SUPABASE_KEY             = { secret = "rencontres-supabase-key" }
+        JWT_SECRET               = { secret = "rencontres-jwt-secret" }
+        BREVO_KEY                = { secret = "rencontres-brevo-key" }
+        # La même clé des deux côtés : le client l'envoie à l'API admin.
+        ADMIN_API_KEY         = { secret = "rencontres-admin-api-key" }
+        NEXT_PUBLIC_ADMIN_KEY = { secret = "rencontres-admin-api-key" }
+        # Relances par email planifiées dans le process (lib/cron.js) : coupées
+        # tant que Koyeb tourne, sinon chaque relance part deux fois. À passer
+        # à true à la bascule, Koyeb en pause.
+        CRON_ENABLED = { value = "false" }
+      }
     }
   }
 

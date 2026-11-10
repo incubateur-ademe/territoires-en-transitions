@@ -21,6 +21,13 @@ locals {
       repository = "https://github.com/incubateur-ademe/aldo"
       port       = 8080
     }
+    # Next.js derrière un serveur Express (server.js), PORT ou 3000. Les
+    # NEXT_PUBLIC_* sont figées au build : Coolify passe aussi les variables
+    # au build.
+    rencontres = {
+      repository = "https://github.com/incubateur-ademe/rencontres-tete"
+      port       = 3000
+    }
   }
 
   git_applications_catalog = {
@@ -31,6 +38,10 @@ locals {
     "prod/aldo" = {
       branch  = "main"
       domains = ["https://aldo.territoiresentransitions.fr"]
+    }
+    "prod/rencontres" = {
+      branch  = "main"
+      domains = ["https://rencontres.territoiresentransitions.fr"]
     }
   }
 
