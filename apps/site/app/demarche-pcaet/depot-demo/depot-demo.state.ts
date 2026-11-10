@@ -5,21 +5,23 @@ import {
   isBetween,
 } from '@/site/components/animated-demo/timeline';
 import {
-  ADOPT_BUTTON,
   ADOPTION_TIME,
   AVIS,
   CLICK_DURATION,
   CLICKS,
+  COMPACT_DOCUMENT_CARDS,
   CONFETTI,
+  DELIBERATION_ADOPTION,
   DOCUMENTS,
   ELABORATION_SUB_STEPS,
   ETAPES,
+  GES_INPUT,
   GES_VALUES,
-  INCLUSIONS,
   MAIL,
+  OBJECTIF_HORIZONS,
   PROGRAMME_IMPORT,
+  PUBLISH_BUTTON,
   SCREENS,
-  SECTORS,
   VOLETS,
   VULNERABILITE,
   getNiveauInputTime,
@@ -28,7 +30,8 @@ import {
 
 export type UploadPhase = 'empty' | 'flying' | 'uploading' | 'uploaded';
 export type ImportPhase = 'idle' | 'flying' | 'loading' | 'done';
-export type VoletStatus = 'complete' | 'todo' | 'optional';
+/** Même vocabulaire que les badges de complétude de l'app. */
+export type CompletionStatut = 'complete' | 'incomplete';
 export type EtapeStatus = 'done' | 'active' | 'upcoming';
 
 /** Temps de vol puis d'envoi d'un document déposé. */
@@ -41,6 +44,11 @@ const getUploadPhase = (time: number, at: number): UploadPhase => {
   if (time < at + FLY_DURATION + UPLOAD_DURATION) return 'uploading';
   return 'uploaded';
 };
+
+const getUpload = (time: number, at: number) => ({
+  phase: getUploadPhase(time, at),
+  progress: getProgress(time, at + FLY_DURATION, UPLOAD_DURATION),
+});
 
 const getImportPhase = (time: number): ImportPhase => {
   if (time < PROGRAMME_IMPORT.flyAt) return 'idle';
@@ -60,10 +68,10 @@ const scramble = (value: number, seed: number, time: number) =>
   ).join('');
 
 /** Valeurs plausibles des volets autres que GES, déterministes. */
-const getVoletValues = (voletIndex: number) =>
+const getVoletValues = (voletIndex: number, rowCount: number) =>
   voletIndex === 0
     ? GES_VALUES
-    : SECTORS.map((_, row) => {
+    : Array.from({ length: rowCount }, (_, row) => {
         const base = 40 + (((row + 3) * 131 * (voletIndex + 1)) % 900);
         return [
           base,
@@ -79,12 +87,8 @@ const getDiagnostic = (time: number) => {
     0
   );
   const volets = VOLETS.map((volet, index) => {
-    const status: VoletStatus =
-      time >= volet.completedAt
-        ? 'complete'
-        : volet.optional
-        ? 'optional'
-        : 'todo';
+    const status: CompletionStatut =
+      time >= volet.completedAt ? 'complete' : 'incomplete';
     return { ...volet, isActive: index === activeIndex, status };
   });
   const activeVolet = volets[activeIndex];
@@ -92,14 +96,14 @@ const getDiagnostic = (time: number) => {
   // Le premier volet se saisit lentement, ligne par ligne ; les suivants d'un coup.
   const isFirstVolet = activeIndex === 0;
   const inputDuration = isFirstVolet ? 0.25 : 0.12;
-  const values = getVoletValues(activeIndex);
-  const rows = SECTORS.map((sector, row) => {
+  const values = getVoletValues(activeIndex, activeVolet.rows.length);
+  const rows = activeVolet.rows.map((label, row) => {
     const revealAt = (column: number) =>
       isFirstVolet
-        ? 7.0 + row * 0.22 + column * 0.05
+        ? GES_INPUT.start + row * GES_INPUT.rowStep + column * 0.05
         : activeVolet.openAt + 0.05 + row * 0.02 + column * 0.01;
     return {
-      sector,
+      label,
       isActive: time >= revealAt(0),
       cells: values[row].map((value, column) => {
         const start = revealAt(column);
@@ -119,47 +123,65 @@ const getDiagnostic = (time: number) => {
 
   const vulnerabilite =
     activeVolet.kind === 'vulnerabilite'
-      ? VULNERABILITE.thematiques.map(({ name, niveaux }, row) => {
-          const typing = getObjectifTyping(row);
-          return {
-            name,
-            niveaux: niveaux.map((niveau, column) =>
-              time >= getNiveauInputTime(row, column) ? niveau : null
-            ),
-            objectifProgress: getProgress(time, typing.start, typing.duration),
-          };
-        })
+      ? VULNERABILITE.thematiques.map(({ name, niveaux }, row) => ({
+          name,
+          niveaux: niveaux.map((niveau, column) =>
+            time >= getNiveauInputTime(row, column) ? niveau : null
+          ),
+          // Un horizon « non concerné » n'attend pas d'objectif, comme dans l'app.
+          objectifs: OBJECTIF_HORIZONS.map((_, horizon) => {
+            if (niveaux[horizon + 1] === 'non_concerne') return null;
+            const typing = getObjectifTyping(row, horizon);
+            return getProgress(time, typing.start, typing.duration);
+          }),
+        }))
       : null;
 
   return { volets, activeVolet, rows, vulnerabilite };
 };
 
 const getDocuments = (time: number) => {
-  let inclusionRank = 0;
+  const uploadedNames = new Set(
+    DOCUMENTS.filter(
+      ({ upload }) =>
+        upload && getUploadPhase(time, upload.at) === 'uploaded'
+    ).map(({ name }) => name)
+  );
   const documents = DOCUMENTS.map((document) => {
     if (document.upload) {
       return {
         ...document,
-        phase: getUploadPhase(time, document.upload.at),
-        progress: getProgress(
-          time,
-          document.upload.at + FLY_DURATION,
-          UPLOAD_DURATION
-        ),
+        ...getUpload(time, document.upload.at),
+        isInclusionDeclarable: false,
         isIncluded: false,
       };
     }
-    const isIncluded =
-      time >= INCLUSIONS.start + inclusionRank * INCLUSIONS.step;
-    inclusionRank += 1;
-    return { ...document, phase: null, progress: 0, isIncluded };
+    // La case d'inclusion n'apparaît qu'une fois l'une des pièces d'accueil
+    // déposée : sans elle, il n'y aurait rien à cocher.
+    const isInclusionDeclarable =
+      document.inclusion !== undefined &&
+      document.inclusion.in.some((name) => uploadedNames.has(name));
+    return {
+      ...document,
+      phase: 'empty' as UploadPhase,
+      progress: 0,
+      isInclusionDeclarable,
+      isIncluded:
+        isInclusionDeclarable &&
+        document.inclusion !== undefined &&
+        time >= document.inclusion.at,
+    };
   });
-  const inclusions = documents.filter(({ upload }) => !upload);
+  // Les pièces obligatoires que la scène compacte ne détaille pas.
+  const others = documents.filter(
+    ({ required, name, inclusion }) =>
+      required && !inclusion && !COMPACT_DOCUMENT_CARDS.includes(name)
+  );
   return {
     documents,
-    inclusions: {
-      done: inclusions.filter(({ isIncluded }) => isIncluded).length,
-      total: inclusions.length,
+    otherRequired: {
+      done: others.filter(({ phase }) => phase === 'uploaded').length,
+      total: others.length,
     },
   };
 };
@@ -183,10 +205,18 @@ export const getDepotDemoState = (time: number) => {
 
   const importPhase = getImportPhase(time);
   const canValidate = time >= PROGRAMME_IMPORT.validatedAt;
-  const canAdopt = isBetween(time, ADOPT_BUTTON.appearsAt, ADOPTION_TIME);
+
+  const deliberation = getUpload(time, DELIBERATION_ADOPTION.uploadAt);
+  const canPublish = deliberation.phase === 'uploaded';
+  const isPublishButtonVisible = isBetween(
+    time,
+    PUBLISH_BUTTON.appearsAt,
+    ADOPTION_TIME
+  );
+  const isAdopted = time >= ADOPTION_TIME;
 
   const primaryButton =
-    screen === 'documents' || screen === 'diagnostic'
+    screen === 'diagnostic' || screen === 'documents'
       ? { label: 'Étape suivante', enabled: true, visible: true }
       : screen === 'programme'
       ? {
@@ -194,7 +224,11 @@ export const getDepotDemoState = (time: number) => {
           enabled: canValidate,
           visible: true,
         }
-      : { label: 'Adopter le PCAET', enabled: true, visible: canAdopt };
+      : {
+          label: 'Valider le dépôt final',
+          enabled: canPublish,
+          visible: isPublishButtonVisible,
+        };
 
   return {
     screen,
@@ -205,7 +239,8 @@ export const getDepotDemoState = (time: number) => {
     ...getDiagnostic(time),
     programme: {
       importPhase,
-      isPlanLinked: importPhase === 'done',
+      planName: PROGRAMME_IMPORT.planName,
+      hasPlan: importPhase === 'loading' || importPhase === 'done',
       actionCount: clamp(
         Math.round(
           ((time - PROGRAMME_IMPORT.doneAt) / 0.5) *
@@ -214,7 +249,6 @@ export const getDepotDemoState = (time: number) => {
         0,
         PROGRAMME_IMPORT.actionCount
       ),
-      isVerified: time >= PROGRAMME_IMPORT.verifiedAt,
       canValidate,
     },
     etapes,
@@ -222,24 +256,27 @@ export const getDepotDemoState = (time: number) => {
       etapes.find(({ status }) => status === 'active') ??
       etapes[etapes.length - 1],
     isElaborating: etapes[0].status === 'active',
+    isFinalisation: etapes[2].status === 'active',
     subSteps: ELABORATION_SUB_STEPS.map((subStep) => ({
       ...subStep,
-      isDone: time >= subStep.completedAt,
+      status: (time >= subStep.completedAt
+        ? 'complete'
+        : 'incomplete') as CompletionStatut,
       isCurrent: subStep.screen === screen,
     })),
     avis: {
       title:
         time < ETAPES[2].start
           ? 'Transmission pour avis'
-          : time < ADOPTION_TIME
-          ? 'Prise en compte des avis et délibération'
-          : 'Adoption',
+          : isAdopted
+          ? 'Démarche adoptée'
+          : 'Avis reçus et documents attendus',
       subtitle:
         time < ETAPES[2].start
-          ? 'Votre dossier a été transmis au conseil régional et au préfet de région.'
-          : time < ADOPTION_TIME
-          ? 'Les avis sont arrivés. Consultez-les, puis adoptez votre plan.'
-          : 'Votre plan est adopté. Place au pilotage de vos actions.',
+          ? 'Votre dossier a été transmis au préfet de région et au conseil régional.'
+          : isAdopted
+          ? 'Le dossier est adopté : il passe en lecture seule et devient consultable par le public.'
+          : 'Consultez les avis reçus et déposez ou mettez à jour les pièces réglementaires du dossier.',
       mailArrived: time >= MAIL.arrivesAt,
       mailOpened: time >= MAIL.opensAt,
       outgoingReport: AVIS.find(({ outAt, receivedAt }) =>
@@ -249,8 +286,12 @@ export const getDepotDemoState = (time: number) => {
         ...avis,
         isReceived: time >= avis.receivedAt,
       })),
-      canAdopt,
-      isAdopted: time >= ADOPTION_TIME,
+      // Les pièces de l'adoption n'ont de sens qu'une fois les avis rendus.
+      showAdoptionPieces: time >= ETAPES[2].start,
+      deliberation,
+      canPublish,
+      isPublishButtonVisible,
+      isAdopted,
     },
     primaryButton,
     showConfetti: isBetween(time, CONFETTI.start, CONFETTI.end),

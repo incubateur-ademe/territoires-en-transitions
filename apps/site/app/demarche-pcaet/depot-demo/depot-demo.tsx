@@ -13,7 +13,7 @@ import {
 import { getDepotDemoState } from './depot-demo.state';
 
 const DESCRIPTION =
-  "Démonstration animée du parcours de dépôt d'un PCAET dans Territoires en Transitions : ajout des documents, saisie du diagnostic par volet, import du programme d'actions depuis un PDF, transmission pour avis, réception des rapports de la DREAL et de la Région, puis adoption du plan.";
+  "Démonstration animée du parcours de dépôt d'un PCAET dans Territoires en Transitions : saisie du diagnostic par volet, ajout des documents, import du programme d'actions depuis le PDF déposé, transmission pour avis, réception des avis du préfet de région et du conseil régional, dépôt de la délibération d'adoption, puis validation du dépôt final.";
 
 const CHAPTERS = SCREENS.map(({ chapter, start }) => ({
   label: chapter,

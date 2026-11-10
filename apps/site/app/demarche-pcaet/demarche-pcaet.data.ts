@@ -33,9 +33,9 @@ export const DEPOT_ETAPES: DepotEtape[] = [
     detail:
       "Vous constituez votre dossier directement dans la plateforme. Il est enregistré au fil de l'eau : vous pouvez le compléter en plusieurs fois et à plusieurs.",
     actions: [
-      'Ajouter les documents attendus',
       'Compléter les données du diagnostic et de la stratégie',
-      "Renseigner le programme d'actions, ou l'importer depuis un PDF, un Word ou un Excel",
+      'Ajouter les documents attendus',
+      "Associer ou créer le programme d'actions détaillé, ou l'importer depuis un PDF, un Word ou un Excel",
     ],
     stakeholders: ['Collectivité', 'Équipes projet'],
   },
