@@ -12,6 +12,7 @@ jobs:
   analyze-affected:
     runs-on: ubuntu-latest
     outputs:
+      ci-mode: ${{ steps.ci-mode.outputs.mode }}
       cache-key: ${{ steps.deps-metadata.outputs.cache-key }}
       nx-cloud-token-secret-type: ${{ steps.scope.outputs.nx-cloud-token-secret-type }}
       nx-base: ${{ steps.scope.outputs.nx-base }}
@@ -31,6 +32,13 @@ jobs:
           fetch-depth: 0
           filter: tree:0
           persist-credentials: false
+
+      - name: Test CI policy
+        run: node --test .github/actions/ci/native-stack-policy/*.spec.mjs
+
+      - name: Select native stack CI mode
+        id: ci-mode
+        run: node .github/actions/ci/native-stack-policy/select-ci-mode.mjs
 
       - name: Compute dependency cache key
         id: deps-metadata
@@ -84,7 +92,7 @@ jobs:
     secrets: inherit
 
   storybook:
-    if: ${{ needs.analyze-affected.outputs.run-ui-storybook == 'true' || needs.analyze-affected.outputs.run-app-storybook == 'true' }}
+    if: ${{ needs.analyze-affected.outputs.ci-mode == 'full' && (needs.analyze-affected.outputs.run-ui-storybook == 'true' || needs.analyze-affected.outputs.run-app-storybook == 'true') }}
     needs: [analyze-affected]
     permissions:
       contents: read
@@ -97,7 +105,7 @@ jobs:
     secrets: inherit
 
   prepare-test-db:
-    if: ${{ needs.analyze-affected.outputs.run-prepare-test-db == 'true' }}
+    if: ${{ needs.analyze-affected.outputs.ci-mode == 'full' && needs.analyze-affected.outputs.run-prepare-test-db == 'true' }}
     needs: [analyze-affected]
     permissions:
       contents: read
@@ -109,7 +117,7 @@ jobs:
     secrets: inherit
 
   test-db-deploy:
-    if: ${{ needs.analyze-affected.outputs.run-db-deploy == 'true' }}
+    if: ${{ needs.analyze-affected.outputs.ci-mode == 'full' && needs.analyze-affected.outputs.run-db-deploy == 'true' }}
     needs: [analyze-affected, prepare-test-db]
     permissions:
       contents: read
@@ -118,7 +126,7 @@ jobs:
     secrets: inherit
 
   test-backend-api:
-    if: ${{ needs.analyze-affected.outputs.run-backend-api == 'true' }}
+    if: ${{ needs.analyze-affected.outputs.ci-mode == 'full' && needs.analyze-affected.outputs.run-backend-api == 'true' }}
     needs: [analyze-affected, prepare-test-db]
     permissions:
       actions: read
@@ -133,7 +141,7 @@ jobs:
     secrets: inherit
 
   test-end-to-end:
-    if: ${{ needs.analyze-affected.outputs.run-e2e == 'true' }}
+    if: ${{ needs.analyze-affected.outputs.ci-mode == 'full' && needs.analyze-affected.outputs.run-e2e == 'true' }}
     needs: [analyze-affected, prepare-test-db]
     permissions:
       actions: read
@@ -145,8 +153,8 @@ jobs:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
 
-  # Single required check for the ruleset ("ci / status"): skipped jobs pass,
-  # any failed or cancelled job fails it.
+  # Always publish "ci / status". Deferred validation and unexpected skips
+  # block merging; only checks outside the affected scope may be skipped.
   status:
     if: ${{ always() }}
     needs:
@@ -161,7 +169,15 @@ jobs:
       ]
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    permissions: {}
+    permissions:
+      contents: read
     steps:
-      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
-        run: exit 1
+      - uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: .github/actions/ci/native-stack-policy
+          persist-credentials: false
+
+      - name: Check required CI results
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: node .github/actions/ci/native-stack-policy/check-ci-status.mjs
