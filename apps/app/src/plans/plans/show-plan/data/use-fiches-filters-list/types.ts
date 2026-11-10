@@ -3,7 +3,7 @@ import {
   StatutOrNot,
 } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import {
-  listFichesRequestFiltersSchema,
+  listFichesRequestFiltersObjectSchema,
   Priorite,
   SANS_PILOTE_LABEL,
   SANS_REFERENT_LABEL,
@@ -38,7 +38,7 @@ export type FormFilters = {
 type ReferentOrNot = string | typeof SANS_REFERENT_LABEL;
 type PiloteOrNot = string | typeof SANS_PILOTE_LABEL;
 
-export const queryPayloadSchema = listFichesRequestFiltersSchema.pick({
+export const queryPayloadSchema = listFichesRequestFiltersObjectSchema.pick({
   noPilote: true,
   noReferent: true,
   noStatut: true,

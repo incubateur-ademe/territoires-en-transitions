@@ -2,7 +2,7 @@ import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { listFichesRequestFiltersSchema } from '@tet/domain/plans';
+import { listFichesRequestFiltersObjectSchema } from '@tet/domain/plans';
 import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
 import { Filters, FormFilters } from './types';
@@ -14,7 +14,7 @@ type Args = {
   };
 };
 
-const searchParametersSchema = listFichesRequestFiltersSchema.pick({
+const searchParametersSchema = listFichesRequestFiltersObjectSchema.pick({
   noPilote: true,
   noReferent: true,
   noStatut: true,

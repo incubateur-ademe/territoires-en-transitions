@@ -43,7 +43,7 @@ const upsertPlanWithoutFileBaseSchema = z.object({
   pilotes: z.array(personneIdSchema).nullable(),
   dateDebut: optionalPlanDateSchema,
   dateFin: optionalPlanDateSchema,
-  file: z.undefined(),
+  file: z.undefined().optional(),
 });
 
 const upsertPlanWithFileBaseSchema = z.object({

@@ -1,9 +1,9 @@
 {
   "promptVersion": "ff9ed7eacd97",
-  "toolsetVersion": "fbe3deb65664",
+  "toolsetVersion": "a1769011351a",
   "lastEval": {
-    "date": "2026-11-03",
-    "albert": "gpt-oss-120b : 03/11 soir, scénarios support + crisp 12/12 après ajout de list_user_support_conversations (support-resume repasse) ; run complet précédent 20/25, échecs hors périmètre : activation-par-categorie et catalogue-requetes (instables depuis le 30/10).",
+    "date": "2026-11-09",
+    "albert": "gpt-oss-120b : 09/11, relancée après zod 4.6 (sérialisation JSON Schema des outils), 10/12 sur les scénarios exécutés, 15/27 plafonnés (capped, non exécutés : support, crisp, app, esquisse, catalogue-requetes, pages-consultees). Échecs : activation-par-categorie et plans-actifs-52-semaines (run_sql_query au lieu de run_named_query). Précédent : 03/11, support + crisp 12/12, run complet 20/25.",
     "gemini": "gemini-3.5-flash : 8/9 le 29/10, avant les scénarios support et sans base analytique"
   }
 }
