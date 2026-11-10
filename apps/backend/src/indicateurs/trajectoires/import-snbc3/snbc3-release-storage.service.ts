@@ -3,6 +3,8 @@ import { storageObjectTable } from '@tet/backend/collectivites/documents/models/
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { Readable } from 'node:stream';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { ImportTrajectoireSnbc3Error } from './import-trajectoire-snbc3.errors';
@@ -11,12 +13,15 @@ import { Snbc3Release } from './snbc3-artifact.reader';
 
 /**
  * Bucket privé de la release importée : le classeur standalone, servi par
- * l'export (lot 5), son manifeste et le suivi du dernier import. Créé par
+ * l'export (lot 5), le PDF de méthodologie, servi par la page Trajectoire,
+ * le manifeste et le suivi du dernier import. Créé par
  * l'import s'il n'existe pas : seul le service role y accède. Chemins fixes :
  * chaque import complet écrase les fichiers du précédent.
  */
 export const SNBC3_BUCKET = 'trajectoires-snbc3';
 export const SNBC3_WORKBOOK_PATH = 'standalone.xlsx';
+/** PDF de méthodologie de la release ; son nom d'origine est dans les métadonnées. */
+export const SNBC3_METHODOLOGIE_PATH = 'methodologie.pdf';
 /**
  * `manifest.json` de la release importée, copié tel quel. Ses métadonnées
  * d'objet (`commit`, `version`) désignent la release en base.
@@ -31,6 +36,7 @@ export const SNBC3_PENDING_RELEASE_PATH = 'pending-release.json';
 /** Statut et rapport du dernier import (`Snbc3LastImport`). */
 export const SNBC3_LAST_IMPORT_PATH = 'last-import.json';
 const JSON_MIME_TYPE = 'application/json';
+const PDF_MIME_TYPE = 'application/pdf';
 const XLSX_MIME_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
@@ -41,10 +47,10 @@ const importedReleaseSchema = z.object({
 
 export type Snbc3ImportedRelease = z.infer<typeof importedReleaseSchema>;
 
-/** Ce que le bucket garde d'une release : ni le parquet, ni le PDF. */
+/** Ce que le bucket garde d'une release : tout sauf le parquet. */
 export type Snbc3ReleaseFiles = Pick<
   Snbc3Release,
-  'sha' | 'version' | 'manifest' | 'workbook'
+  'sha' | 'version' | 'manifest' | 'workbook' | 'methodologie'
 >;
 
 /** Fichiers de la release importée et suivi de l'import, dans le bucket. */
@@ -54,10 +60,11 @@ export class Snbc3ReleaseStorageService {
 
   constructor(
     private readonly supabaseService: SupabaseService,
-    private readonly databaseService: DatabaseService
+    private readonly databaseService: DatabaseService,
+    private readonly documentStorageService: DocumentStorageService
   ) {}
 
-  /** Classeur standalone et manifeste de la release, à côté l'un de l'autre. */
+  /** Classeur standalone, PDF de méthodologie et manifeste de la release, côte à côte. */
   async storeReleaseFiles(
     release: Snbc3ReleaseFiles
   ): Promise<Result<void, ImportTrajectoireSnbc3Error>> {
@@ -71,6 +78,12 @@ export class Snbc3ReleaseStorageService {
         content: release.workbook.content,
         mimeType: XLSX_MIME_TYPE,
         metadata: { ...metadata, name: release.workbook.name },
+      },
+      {
+        path: SNBC3_METHODOLOGIE_PATH,
+        content: release.methodologie.content,
+        mimeType: PDF_MIME_TYPE,
+        metadata: { ...metadata, name: release.methodologie.name },
       },
       // En dernier : le manifeste désigne la release importée, une fois le
       // classeur en place.
@@ -146,6 +159,40 @@ export class Snbc3ReleaseStorageService {
       return null;
     }
     return imported;
+  }
+
+  /**
+   * PDF de méthodologie de la release importée, en flux, avec son nom
+   * d'origine. `null` avant le premier import qui l'a stocké.
+   */
+  async getMethodologie(): Promise<
+    Result<{ stream: Readable; fileName: string } | null, 'READ_DOCUMENT_ERROR'>
+  > {
+    const [object] = await this.databaseService.db
+      .select({ userMetadata: storageObjectTable.userMetadata })
+      .from(storageObjectTable)
+      .where(
+        and(
+          eq(storageObjectTable.bucketId, SNBC3_BUCKET),
+          eq(storageObjectTable.name, SNBC3_METHODOLOGIE_PATH)
+        )
+      );
+    if (!object) {
+      return success(null);
+    }
+    const name = z.object({ name: z.string() }).safeParse(object.userMetadata);
+
+    const stream = await this.documentStorageService.getDocumentStream({
+      bucketId: SNBC3_BUCKET,
+      key: SNBC3_METHODOLOGIE_PATH,
+    });
+    if (!stream.success) {
+      return failure('READ_DOCUMENT_ERROR');
+    }
+    return success({
+      stream: stream.data,
+      fileName: name.success ? name.data.name : SNBC3_METHODOLOGIE_PATH,
+    });
   }
 
   private async readReleaseMetadata(

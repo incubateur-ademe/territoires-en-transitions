@@ -6,7 +6,8 @@ Importe une release du dépôt `snbc3` comme source d'indicateur `snbc3`
 - Une release est un dossier `releases/V<version>/` committé dans `snbc3` : `manifest.json`,
   `resultats_territorialises.parquet`, le classeur standalone (`.xlsx`) et le PDF de
   méthodologie. La date du commit sert de millésime (`date_version` de la métadonnée).
-- Le parquet et le classeur sont vérifiés contre les tailles et les sha256 du manifeste.
+- Le parquet, le classeur et le PDF de méthodologie sont vérifiés contre les tailles et les sha256 du
+  manifeste. Une release sans l'un des trois est refusée.
 - Les colonnes lues du parquet doivent exister avec leur type physique (`BYTE_ARRAY` pour les
   chaînes, `INT64` ou `INT32` pour `annee`, `DOUBLE` pour `valeur_recalee`).
 - Une seule métadonnée `snbc3` existe : chaque import la met à jour et remplace les valeurs en
@@ -16,13 +17,15 @@ Importe une release du dépôt `snbc3` comme source d'indicateur `snbc3`
   importée, chaque import complet écrasant le précédent :
   - `standalone.xlsx` : le classeur standalone, servi par l'export ; son nom d'origine, le commit et
     la version sont dans les métadonnées de l'objet ;
+  - `methodologie.pdf` : le PDF de méthodologie, servi par `GET /trajectoires/snbc3/methodologie`
+    (page Trajectoire) ; son nom d'origine, le commit et la version sont dans les métadonnées ;
   - `manifest.json` : le manifeste de la release, copié tel quel ; le commit et la version de ses
     métadonnées désignent la release en base ;
   - `pending-release.json` : le commit et la version (métadonnées de l'objet) du dernier import
     complet commencé, écrits avant de toucher aux valeurs ;
   - `last-import.json` : statut du dernier import (`running`, `done`, `done_with_errors` ou
     `failed`), dates, collectivités d'un rejeu partiel et rapport.
-- Le bucket (`standalone.xlsx`, `manifest.json`) et la date de la métadonnée ne sont mis à jour
+- Le bucket (`standalone.xlsx`, `methodologie.pdf`, `manifest.json`) et la date de la métadonnée ne sont mis à jour
   qu'une fois toutes les valeurs remplacées : après un import interrompu ou en échec, ils désignent
   encore la release précédente.
 - La métadonnée s'appelle simplement « SNBC3 » : le front n'affiche ni version ni commit.

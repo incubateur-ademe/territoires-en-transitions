@@ -22,9 +22,11 @@ import {
   SNBC3_BUCKET,
   SNBC3_LAST_IMPORT_PATH,
   SNBC3_MANIFEST_PATH,
+  SNBC3_METHODOLOGIE_PATH,
   SNBC3_WORKBOOK_PATH,
   Snbc3ReleaseStorageService,
 } from './snbc3-release-storage.service';
+import { SNBC3_FIXTURE_METHODOLOGIE } from './snbc3-release.test-fixture';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { getQueueToken } from '@nestjs/bullmq';
 import { failure } from '@tet/backend/utils/result.type';
@@ -168,17 +170,18 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       (v) => v.identifiant === identifiant && v.dateValeur === `${annee}-01-01`
     );
 
-  const getStoredWorkbook = async () => {
+  const getStoredObject = async (path: string) => {
     const {
       rows: [object],
     } = await database.db.execute<{
       user_metadata: Record<string, string> | null;
       updated_at: string;
     }>(
-      sql`select user_metadata, updated_at from storage.objects where bucket_id = ${SNBC3_BUCKET} and name = ${SNBC3_WORKBOOK_PATH}`
+      sql`select user_metadata, updated_at from storage.objects where bucket_id = ${SNBC3_BUCKET} and name = ${path}`
     );
     return object;
   };
+  const getStoredWorkbook = () => getStoredObject(SNBC3_WORKBOOK_PATH);
 
   const downloadJson = async (path: string) => {
     const { data, error } = await app
@@ -851,6 +854,13 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     expect((await getStoredWorkbook())?.user_metadata).toMatchObject({
       commit: full.sha,
       version: '2.1',
+    });
+    expect(
+      (await getStoredObject(SNBC3_METHODOLOGIE_PATH))?.user_metadata
+    ).toMatchObject({
+      commit: full.sha,
+      version: '2.1',
+      name: SNBC3_FIXTURE_METHODOLOGIE,
     });
     expect(await downloadJson(SNBC3_MANIFEST_PATH)).toMatchObject({
       version: '2.1',

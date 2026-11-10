@@ -6,6 +6,7 @@ import {
 const trajectoireSnbc3SpecificErrors = [
   'TRAJECTOIRE_SNBC3_NON_OUVERTE',
   'COLLECTIVITE_NOT_FOUND',
+  'METHODOLOGIE_SNBC3_INDISPONIBLE',
 ] as const;
 
 type TrajectoireSnbc3SpecificError =
@@ -22,6 +23,11 @@ export const trajectoireSnbc3ErrorConfig: TrpcErrorHandlerConfig<TrajectoireSnbc
       COLLECTIVITE_NOT_FOUND: {
         code: 'NOT_FOUND',
         message: 'Collectivité introuvable',
+      },
+      METHODOLOGIE_SNBC3_INDISPONIBLE: {
+        code: 'NOT_FOUND',
+        message:
+          "La méthodologie de la trajectoire SNBC 3 n'a pas encore été importée",
       },
     },
   };

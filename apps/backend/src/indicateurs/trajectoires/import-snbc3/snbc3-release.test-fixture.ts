@@ -107,6 +107,8 @@ export function buildSnbc3Parquet(
 export const randomSnbc3Sha = () => randomBytes(20).toString('hex');
 
 export const SNBC3_FIXTURE_WORKBOOK = 'Trajectoire GES de référence-V2.xlsx';
+export const SNBC3_FIXTURE_METHODOLOGIE =
+  'ADEME-Methodo-Outil-trajectoire-référence-V2.pdf';
 
 /** Dépôt `snbc3` en mémoire : chaque `publish` ajoute un commit. */
 export class FixtureSnbc3ArtifactReader extends Snbc3ArtifactReader {
@@ -122,6 +124,8 @@ export class FixtureSnbc3ArtifactReader extends Snbc3ArtifactReader {
     parquet,
     workbook = new Uint8Array(randomBytes(64)),
     withWorkbook = true,
+    methodologie = new Uint8Array(randomBytes(64)),
+    withMethodologie = true,
   }: {
     sha?: string;
     date?: string;
@@ -129,12 +133,17 @@ export class FixtureSnbc3ArtifactReader extends Snbc3ArtifactReader {
     parquet: Uint8Array;
     workbook?: Uint8Array;
     withWorkbook?: boolean;
+    methodologie?: Uint8Array;
+    withMethodologie?: boolean;
   }) {
     const releasePath = getSnbc3ReleasePath(version);
     const contents: [string, Uint8Array][] = [
       [SNBC3_PARQUET_FILE, parquet],
       ...(withWorkbook
         ? [[SNBC3_FIXTURE_WORKBOOK, workbook] as [string, Uint8Array]]
+        : []),
+      ...(withMethodologie
+        ? [[SNBC3_FIXTURE_METHODOLOGIE, methodologie] as [string, Uint8Array]]
         : []),
     ];
     // Champs du `manifest.json` de `snbc3`.

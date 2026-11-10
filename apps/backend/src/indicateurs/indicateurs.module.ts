@@ -71,6 +71,7 @@ import {
 import { TrajectoireSnbc3FeatureFlagService } from './trajectoires/trajectoire-snbc3-feature-flag.service';
 import { Snbc3SourceMetadonneeRepository } from './trajectoires/import-snbc3/snbc3-source-metadonnee.repository';
 import { TrajectoireSnbc3Repository } from './trajectoires/snbc3/trajectoire-snbc3.repository';
+import { TrajectoireSnbc3Controller } from './trajectoires/snbc3/trajectoire-snbc3.controller';
 import { TrajectoireSnbc3Router } from './trajectoires/snbc3/trajectoire-snbc3.router';
 import { TrajectoireSnbc3Service } from './trajectoires/snbc3/trajectoire-snbc3.service';
 import ConfigurationService from '../utils/config/configuration.service';
@@ -228,6 +229,7 @@ const DEFINITIONS_PROVIDERS = [
     ImportIndicateurDefinitionController,
     ExportIndicateursController,
     TrajectoiresController,
+    TrajectoireSnbc3Controller,
     TrajectoireLeviersController,
   ],
 })
