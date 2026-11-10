@@ -20,6 +20,9 @@ export const SANS_SOUS_THEMATIQUE_LABEL = 'Sans sous-thématique';
 export const SANS_STRUCTURE_TAG_LABEL = 'Sans structure pilote';
 export const SANS_THEMATIQUE_LABEL = 'Sans thématique';
 export const SANS_PILOTE_LABEL = 'Sans pilote' as const;
+export const EN_COURS_SANS_AVANCEMENT_LABEL = 'En cours à jauge 0 %' as const;
+export const NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL =
+  "Non modifiée depuis plus d'un an" as const;
 export const SANS_CIBLE_LABEL = 'Sans cible';
 export const SANS_PARTICIPATION_CITOYENNE_LABEL = 'Non défini';
 export const SANS_RESULTATS_ATTENDUS_LABEL = 'Non défini';

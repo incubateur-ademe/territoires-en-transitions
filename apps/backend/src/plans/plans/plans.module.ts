@@ -43,6 +43,8 @@ import { GetAvancementParAxeRouter } from './suivi-plan/get-avancement-par-axe/g
 import { GetAvancementParAxeService } from './suivi-plan/get-avancement-par-axe/get-avancement-par-axe.service';
 import { GetEvolutionStatutsRouter } from './suivi-plan/get-evolution-statuts/get-evolution-statuts.router';
 import { GetEvolutionStatutsService } from './suivi-plan/get-evolution-statuts/get-evolution-statuts.service';
+import { GetFaireAvancerLePlanRouter } from './suivi-plan/get-faire-avancer-le-plan/get-faire-avancer-le-plan.router';
+import { GetFaireAvancerLePlanService } from './suivi-plan/get-faire-avancer-le-plan/get-faire-avancer-le-plan.service';
 import { GetVueEnsembleRouter } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.router';
 import { GetVueEnsembleService } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.service';
 import { ListSuiviPlanFichesService } from './suivi-plan/list-suivi-plan-fiches.service';
@@ -111,6 +113,8 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     GetAvancementParAxeRouter,
     GetEvolutionStatutsService,
     GetEvolutionStatutsRouter,
+    GetFaireAvancerLePlanService,
+    GetFaireAvancerLePlanRouter,
     SuiviPlanRouter,
   ],
   exports: [
