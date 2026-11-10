@@ -160,9 +160,9 @@ services:
       # sql/003 fait ce travail, politiques RLS service_role comprises.
       DB_INSTALL_ROLES: "false"
 
-      FILE_SIZE_LIMIT: 52428800
-      UPLOAD_FILE_SIZE_LIMIT: 52428800
-      UPLOAD_FILE_SIZE_LIMIT_STANDARD: 52428800
+      FILE_SIZE_LIMIT: 2147483648
+      UPLOAD_FILE_SIZE_LIMIT: 2147483648
+      UPLOAD_FILE_SIZE_LIMIT_STANDARD: 2147483648
 
       # Backend S3 → Scaleway Object Storage (région PAR).
       STORAGE_BACKEND: s3

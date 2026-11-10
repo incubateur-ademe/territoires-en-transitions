@@ -199,7 +199,7 @@ services:
       SERVICE_KEY: *service-role-key
       AUTH_JWT_SECRET: *jwt-secret
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD:-postgres}@db:5432/postgres
-      FILE_SIZE_LIMIT: '52428800' # 50MiB (supabase/config.toml)
+      FILE_SIZE_LIMIT: '2147483648' # 2GiB (supabase/config.toml)
       STORAGE_BACKEND: file
       FILE_STORAGE_BACKEND_PATH: /var/lib/storage
       TENANT_ID: stub
