@@ -10,6 +10,7 @@ const FEATURE_FLAGS = [
   'is-fiche-secteurs-enabled',
   'is-priorisation-enabled',
   'is-trajectoire-snbc3-enabled',
+  'is-plan-suivi-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);

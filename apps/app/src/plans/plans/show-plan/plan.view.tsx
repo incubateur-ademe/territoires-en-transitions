@@ -37,12 +37,16 @@ import {
 import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
 import { PlanTree } from './plan-arborescence.view/plan-tree';
 import { PlanHeader } from './plan.header';
+import { PlanTab, PlanTabs } from './plan.tabs';
+import { SuiviPlanView } from '@/app/plans/plans/suivi-plan/suivi-plan.view';
+import { useIsPlanSuiviEnabled } from '@/app/plans/plans/suivi-plan/use-is-plan-suivi-enabled';
 
 type Props = {
   plan: Plan;
+  tab: PlanTab;
 };
 
-export const PlanView = ({ plan: initialPlanData }: Props) => {
+export const PlanView = ({ plan: initialPlanData, tab }: Props) => {
   const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,
   });
@@ -81,39 +85,14 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
 
   return (
     <PlanAxesProvider plan={plan} rootAxe={rootAxe}>
-      <PlanViewContent />
+      <PlanViewContent tab={tab} />
     </PlanAxesProvider>
   );
 };
 
-const PlanViewContent = () => {
-  const {
-    collectivite,
-    isReadOnly,
-    areAllClosed,
-    toggleAll,
-    isActionsVisible,
-    plan,
-    rootAxe,
-    axeHasFiches,
-    hasAxesToExpand,
-    isPlanEmpty,
-    isFiltered,
-  } = usePlanAxesContext();
-
-  const { mutate: addAxe } = useCreateAxe({
-    collectiviteId: collectivite.collectiviteId,
-    parentAxe: { id: plan.id, depth: 0 },
-    planId: plan.id,
-  });
-
-  const { mutate: createFiche } = useCreateFicheResume({
-    collectiviteId: collectivite.collectiviteId,
-    axeId: plan.id,
-    planId: plan.id,
-  });
-
-  const user = useUser();
+const PlanViewContent = ({ tab }: { tab: PlanTab }) => {
+  const { collectivite, plan } = usePlanAxesContext();
+  const isSuiviEnabled = useIsPlanSuiviEnabled();
 
   const canMutatePlans = collectivite.hasCollectivitePermission('plans.mutate');
   const linkedDemarche = useDemarcheLinkedToPlan({
@@ -162,6 +141,59 @@ const PlanViewContent = () => {
         </div>
       </VisibleWhen>
       <PlanHeader />
+      {isSuiviEnabled ? (
+        <PlanTabs
+          collectiviteId={collectivite.collectiviteId}
+          planId={plan.id}
+          activeTab={tab}
+        >
+          {tab === 'pilotage' ? (
+            <PlanPilotage />
+          ) : (
+            <SuiviPlanView
+              collectiviteId={collectivite.collectiviteId}
+              planId={plan.id}
+            />
+          )}
+        </PlanTabs>
+      ) : (
+        tab === 'pilotage' && <PlanPilotage />
+      )}
+    </div>
+  );
+};
+
+const PlanPilotage = () => {
+  const {
+    collectivite,
+    isReadOnly,
+    areAllClosed,
+    toggleAll,
+    isActionsVisible,
+    plan,
+    rootAxe,
+    axeHasFiches,
+    hasAxesToExpand,
+    isPlanEmpty,
+    isFiltered,
+  } = usePlanAxesContext();
+
+  const { mutate: addAxe } = useCreateAxe({
+    collectiviteId: collectivite.collectiviteId,
+    parentAxe: { id: plan.id, depth: 0 },
+    planId: plan.id,
+  });
+
+  const { mutate: createFiche } = useCreateFicheResume({
+    collectiviteId: collectivite.collectiviteId,
+    axeId: plan.id,
+    planId: plan.id,
+  });
+
+  const user = useUser();
+
+  return (
+    <>
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">
           <EmptyPlanView currentCollectivite={collectivite} plan={rootAxe} />
@@ -232,6 +264,6 @@ const PlanViewContent = () => {
         <Spacer height={2} />
         <ScrollTopButton />
       </VisibleWhen>
-    </div>
+    </>
   );
 };
