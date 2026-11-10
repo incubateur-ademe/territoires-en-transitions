@@ -13,6 +13,7 @@ import {
 } from '@tet/domain/demarches';
 import {
   IndicateurPeriodes,
+  PCAET_COLLECTIVITE_SOURCE_ID,
   type IndicateurValeurCreate,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -127,7 +128,11 @@ export class UpdateDiagnosticIndicateursValeursService {
     await this.crudValeursService.upsertIndicateurValeurs(upsertRecords, {
       user,
       tx,
-      pcaetMetadataAuthorization: { collectiviteId, metadonneeId },
+      metadataAuthorization: {
+        collectiviteId,
+        metadonneeId,
+        sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+      },
     });
 
     const payload = await this.diagnosticService.loadPayload(

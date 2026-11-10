@@ -46,21 +46,6 @@ const save = (service: ImportPlanService) =>
   service.save({ planInput, collectiviteId: 1, user: {} as AuthenticatedUser });
 
 describe('ImportPlanService', () => {
-  it('explique le refus d’un import de plan Électrification', async () => {
-    const result = await save(
-      serviceFailingWith(
-        'ELECTRIFICATION_CREATION_DISABLED',
-        new Error('blocked')
-      )
-    );
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.message).toContain(
-        'La création d’un plan Électrification est temporairement indisponible.'
-      );
-    }
-  });
-
   it("garde la cause Postgres d'une création en échec hors du message montré à l'utilisateur", async () => {
     const pgError = new Error('value too long for type character varying(255)');
 

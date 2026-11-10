@@ -10,7 +10,8 @@ import { VerifyPlanError, VerifyPlanErrorEnum } from './verify-plan.errors';
 
 /**
  * Origine, statut et vérification humaine d'un plan, portés par son axe
- * racine : importing → to_verify (ou failed) → active.
+ * racine : importing → to_verify (ou failed) → active, ou active directement
+ * quand le parcours ne demande pas de vérification humaine.
  */
 @Injectable()
 export class PlanVerificationRepository {
@@ -34,14 +35,22 @@ export class PlanVerificationRepository {
   }
 
   async markAsImportedByAi(
-    planId: number,
+    {
+      planId,
+      requiresVerification = true,
+    }: {
+      planId: number;
+      requiresVerification?: boolean;
+    },
     tx?: Transaction
   ): Promise<Result<void, VerifyPlanError>> {
     return this.setStatus({
       planId,
       set: {
         source: PlanSourceEnum.IMPORT_IA,
-        status: PlanStatusEnum.TO_VERIFY,
+        status: requiresVerification
+          ? PlanStatusEnum.TO_VERIFY
+          : PlanStatusEnum.ACTIVE,
       },
       fromStatus: PlanStatusEnum.IMPORTING,
       tx,

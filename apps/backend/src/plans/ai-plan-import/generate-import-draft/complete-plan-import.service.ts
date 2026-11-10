@@ -7,14 +7,17 @@ import { aiPlanImportJobErrorMessages } from '../ai-plan-import.errors';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import { ImportJobStats } from '../models/import-job-stats';
 import { PlanDraft } from '../models/plan-draft';
+import { ImportReport } from '../models/import-report';
 import { StepStates } from '../pipeline/run-import-pipeline';
 
 type CompletePlanImportInput = {
   job: AiPlanImportJob;
   planId: number;
-  draft: PlanDraft;
+  draft?: PlanDraft;
+  report?: ImportReport;
   stepStates: StepStates;
   stats: ImportJobStats;
+  requiresVerification?: boolean;
 };
 
 /** Finalise le plan et son job dans la transaction de création de l'appelant. */
@@ -26,14 +29,21 @@ export class CompletePlanImportService {
   ) {}
 
   async complete(
-    { job, planId, draft, stepStates, stats }: CompletePlanImportInput,
+    {
+      job,
+      planId,
+      draft,
+      report,
+      stepStates,
+      stats,
+      requiresVerification = true,
+    }: CompletePlanImportInput,
     tx: Transaction
   ): Promise<Result<number, string>> {
-    // Job lancé avant que le plan ne soit créé à l'enfilement.
-    if (job.createdPlanId === null) {
-      await this.verification.markAsImporting(planId, tx);
-    }
-    const marked = await this.verification.markAsImportedByAi(planId, tx);
+    const marked = await this.verification.markAsImportedByAi(
+      { planId, requiresVerification },
+      tx
+    );
     if (!marked.success) {
       return failure(aiPlanImportJobErrorMessages.PLAN_MARK_FAILED);
     }
@@ -41,6 +51,7 @@ export class CompletePlanImportService {
       id: job.id,
       attempt: job.attempt,
       draft,
+      report,
       stepStates,
       createdPlanId: planId,
       stats,

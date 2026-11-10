@@ -173,11 +173,13 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.fiches.length).toBe(2);
-      expect(result.data.fiches[0].axisPath).toEqual(
+      expect(result.data.fiches[0].axeSourceKey).toEqual(
         actionWithoutAxis.axisPath
       );
       expect(result.data.fiches[0].fiche.titre).toBe('Action sans axe');
-      expect(result.data.fiches[1].axisPath).toEqual(actionWithAxis.axisPath);
+      expect(result.data.fiches[1].axeSourceKey).toEqual(
+        actionWithAxis.axisPath?.join('::')
+      );
       expect(result.data.fiches[1].fiche.titre).toBe(actionWithAxis.titre);
     }
   });
@@ -232,7 +234,7 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     }
   });
 
-  it('should use titre as the fiche title and parentActionTitre for sous-actions', () => {
+  it('should resolve the parent title to a source key for sous-actions', () => {
     const sousAction: ImportSousActionInput = {
       axisPath: ['Axe 1'],
       titre: 'Sous-action 1.1',
@@ -246,10 +248,19 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     } as unknown as ImportSousActionInput;
 
     const planImport = createImportPlanInput({
-      actions: [sousAction],
+      actions: [
+        {
+          ...sousAction,
+          titre: 'Action parente',
+          parentActionTitre: undefined,
+        } as ImportActionInput,
+        sousAction,
+      ],
     });
 
-    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
+    const resolvedEntities = planImport.actions.map(() =>
+      createResolvedEntities({ axisPath: ['Axe 1'] })
+    );
 
     const result = importPlanInputToCreatePlanAggregateInput(
       planImport,
@@ -259,13 +270,13 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
 
     expect(result.success).toBe(true);
     if (result.success) {
-      const fiche = result.data.fiches[0];
+      const fiche = result.data.fiches[1];
       expect(fiche.fiche.titre).toBe('Sous-action 1.1');
-      expect(fiche.parentActionTitre).toBe('Action parente');
+      expect(fiche.parentSourceKey).toBe(result.data.fiches[0].sourceKey);
     }
   });
 
-  it('should not set parentActionTitre for normal actions', () => {
+  it('should not set parentSourceKey for normal actions', () => {
     const normalAction: ImportActionInput = {
       axisPath: ['Axe 1'],
       titre: 'Action normale',
@@ -281,7 +292,9 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
       actions: [normalAction],
     });
 
-    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
+    const resolvedEntities = planImport.actions.map(() =>
+      createResolvedEntities({ axisPath: ['Axe 1'] })
+    );
 
     const result = importPlanInputToCreatePlanAggregateInput(
       planImport,
@@ -293,7 +306,7 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     if (result.success) {
       const fiche = result.data.fiches[0];
       expect(fiche.fiche.titre).toBe('Action normale');
-      expect(fiche.parentActionTitre).toBeUndefined();
+      expect(fiche.parentSourceKey).toBeUndefined();
     }
   });
 

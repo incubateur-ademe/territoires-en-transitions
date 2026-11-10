@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { failure, Result } from '@tet/backend/utils/result.type';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { PersonneId } from '@tet/domain/collectivites';
 import { createImportPlanInput } from './factories/create-plan-import-input.factory';
 import { ImportPlanService } from './import-plan.service';
@@ -47,10 +47,15 @@ export class ImportExcelPlanApplicationService {
     }
 
     // 3. Persist (validation + transaction)
-    return this.importPlanService.save({
+    const imported = await this.importPlanService.save({
       planInput: planResult.data,
       collectiviteId,
       user,
+    });
+    if (!imported.success) return imported;
+    return success({
+      planId: imported.data.planId,
+      fichesCount: imported.data.fichesCount,
     });
   }
 }

@@ -9,12 +9,14 @@ import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import { GENERATE_IMPORT_DRAFT_JOB_NAME } from '../ai-plan-import.queue';
 import {
   AiPlanImportJob,
   AiPlanImportJobStatusEnum,
 } from '../models/ai-plan-import-job';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
+import { isSupportedGenericImport } from '../models/import-checkpoint';
 import { ResumeImportService } from './resume-import.service';
 
 const user = { id: 'super-admin' } as AuthenticatedUser;
@@ -61,6 +63,7 @@ const buildService = ({
   add?: ReturnType<typeof vi.fn>;
 } = {}) => {
   const jobRepository = {
+    isSupportedImport: isSupportedGenericImport,
     getById: vi.fn(async () => success(job)),
     resumeFailed: vi.fn(async () => resumed),
     markFailed: vi.fn(async () => success(job)),
@@ -78,6 +81,9 @@ const buildService = ({
   const transactionManager = {
     executeSingle: vi.fn(async (operation) => operation({} as Transaction)),
   };
+  const capabilities = {
+    authorizeExistingImport: vi.fn(async () => success(undefined)),
+  };
   const queue = { add };
   const service = new ResumeImportService(
     permissions as unknown as PermissionService,
@@ -85,6 +91,7 @@ const buildService = ({
     planVerificationRepository as unknown as PlanVerificationRepository,
     transactionManager as unknown as TransactionManager,
     { capture: vi.fn() } as unknown as TrackingService,
+    capabilities as unknown as ValidateImportProfileService,
     queue as unknown as Queue
   );
   return {
@@ -92,6 +99,7 @@ const buildService = ({
     jobRepository,
     planVerificationRepository,
     permissions,
+    capabilities,
     queue,
   };
 };
@@ -126,18 +134,23 @@ describe('ResumeImportService', () => {
   );
 
   it('remet le job en file sous un identifiant BullMQ neuf et repasse son plan en import', async () => {
-    const { service, queue, planVerificationRepository } = buildService();
+    const { service, queue, planVerificationRepository, capabilities } =
+      buildService();
 
     const result = await service.resume({ jobId: 'job-1' }, { user });
 
     expect(result).toEqual(success({ jobId: 'job-1' }));
+    expect(capabilities.authorizeExistingImport).toHaveBeenCalledWith(
+      { collectiviteId: failedJob.collectiviteId, options: failedJob.options },
+      { user: expect.objectContaining({ id: failedJob.createdBy }) }
+    );
     expect(planVerificationRepository.markAsImporting).toHaveBeenCalledWith(
       7,
       {}
     );
     expect(queue.add).toHaveBeenCalledWith(
       GENERATE_IMPORT_DRAFT_JOB_NAME,
-      { jobId: 'job-1' },
+      { jobId: 'job-1', executionAttempt: 1 },
       { jobId: expect.stringMatching(/^job-1-reprise-/) }
     );
   });
@@ -187,6 +200,7 @@ describe('ResumeImportService', () => {
     expect(result).toEqual(failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR));
     expect(jobRepository.markFailed).toHaveBeenCalledWith({
       id: 'job-1',
+      attempt: 1,
       error: 'Étape scoring en échec (api_error)',
     });
     expect(planVerificationRepository.markAsImportFailed).toHaveBeenCalledWith(

@@ -1,8 +1,10 @@
 import {
   cibleEnumValues,
+  FicheReferenceKind,
   participationCitoyenneEnumValues,
   piliersEciEnumValues,
   PrioriteEnum,
+  PlanReferenceProgramme,
   StatutEnum,
   statutEnumValues,
 } from '@tet/domain/plans';
@@ -59,6 +61,12 @@ export const prioritePgEnum = pgEnum(
 export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
   parentId: integer('parent_id'),
+  referenceProgramme: text(
+    'reference_programme'
+  ).$type<PlanReferenceProgramme>(),
+  referenceKind: text('reference_kind').$type<FicheReferenceKind>(),
+  referenceCode: text('reference_code'),
+  referenceParentCode: text('reference_parent_code'),
   titre: varchar('titre', { length: 300 }).default('Nouvelle action'),
   description: varchar('description', { length: 20000 }),
   piliersEci: varchar('piliers_eci', {

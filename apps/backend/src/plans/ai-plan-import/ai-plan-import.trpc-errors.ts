@@ -1,4 +1,3 @@
-import { planCreationErrorConfig } from '../plans/plan-creation.errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from './ai-plan-import.constants';
 import {
@@ -9,7 +8,11 @@ import {
 export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecificError> =
   {
     specificErrors: {
-      ...planCreationErrorConfig,
+      ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT: {
+        code: 'BAD_REQUEST',
+        message:
+          "Utilisez le parcours d'import Électrification pour importer ce type de plan",
+      },
       CREATE_JOB_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "La création du job d'import a échoué",
@@ -45,7 +48,12 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       },
       UNSUPPORTED_FILE_TYPE: {
         code: 'BAD_REQUEST',
-        message: 'Type de fichier non supporté (PDF, CSV ou Excel attendus)',
+        message:
+          'Type de fichier non supporté (PDF, DOCX, CSV ou Excel attendus)',
+      },
+      ELECTRIFICATION_REQUIRES_DOCX: {
+        code: 'BAD_REQUEST',
+        message: "L'import Électrification nécessite un document DOCX",
       },
       FILE_TOO_LARGE: {
         code: 'PAYLOAD_TOO_LARGE',
@@ -58,6 +66,11 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       UNKNOWN_IMPORT_PROFILE: {
         code: 'BAD_REQUEST',
         message: "Profil d'import inconnu",
+      },
+      IMPORT_PROFILE_PLAN_TYPE_MISMATCH: {
+        code: 'BAD_REQUEST',
+        message:
+          "Le type de plan ne correspond pas au profil d'import sélectionné",
       },
       IMPORT_PROFILE_UNAVAILABLE: {
         code: 'PRECONDITION_FAILED',

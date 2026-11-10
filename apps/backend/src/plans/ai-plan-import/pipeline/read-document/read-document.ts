@@ -1,6 +1,7 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   buildDocument,
+  DocumentBlock,
   DocumentKind,
   DocumentPage,
   ReadDocument,
@@ -10,7 +11,7 @@ import { normalizePages } from '../normalize-text/normalize-pages';
 import { decideOcr, DEFAULT_OCR_POLICY, OcrPolicy } from './decide-ocr';
 import { OcrPageFn } from './llm-ocr-page';
 import { ocrPages, OcrPagesResult } from './ocr-pages';
-import { readDocxPages } from './read-docx';
+import { readDocx } from './read-docx';
 import { PdfReader, readPdf } from './read-pdf';
 import { readCsvPages, readXlsxPages } from './read-tabular';
 import { openPdfPageRenderer, RenderPage } from './render-page-image';
@@ -71,7 +72,9 @@ export const readDocument = async (
     buildDocument(
       kind,
       normalizePages(transcribed.data.pages),
-      transcribed.data.failures
+      transcribed.data.failures,
+      undefined,
+      read.data.blocks
     )
   );
 };
@@ -85,7 +88,11 @@ const validateDocument = (
   return success(document);
 };
 
-type ReadPages = { pages: DocumentPage[]; workbook?: SheetGrid[] };
+type ReadPages = {
+  pages: DocumentPage[];
+  workbook?: SheetGrid[];
+  blocks?: DocumentBlock[];
+};
 
 const readPages = async (
   kind: DocumentKind,
@@ -96,7 +103,7 @@ const readPages = async (
     case 'pdf':
       return withPages(await readPdf(buffer, options.pdfReader));
     case 'docx':
-      return withPages(await readDocxPages(buffer));
+      return readDocx(buffer);
     case 'xlsx':
       return readXlsxPages(buffer);
     case 'csv':

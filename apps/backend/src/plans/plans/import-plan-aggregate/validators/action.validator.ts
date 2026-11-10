@@ -1,4 +1,5 @@
 import { Result, failure, success } from '@tet/backend/utils/result.type';
+import { FicheImportRules } from '@tet/domain/plans';
 import { isNil } from 'es-toolkit';
 import {
   ImportErrors,
@@ -11,11 +12,16 @@ import { ImportActionOrSousAction } from '../schemas/import-action.input';
 export function validateAction(
   action: ImportActionOrSousAction
 ): Result<true, ImportErrors> {
-  if (!action.titre?.trim()) {
+  const errors = FicheImportRules.validateFields(action);
+  if (errors.includes('MISSING_FICHE_TITLE')) {
     return failure(new InvalidActionTitre(action.titre || ''));
   }
 
-  if (action.dateDebut && action.dateFin && action.dateDebut > action.dateFin) {
+  if (
+    errors.includes('INVALID_FICHE_DATES') &&
+    action.dateDebut &&
+    action.dateFin
+  ) {
     return failure(new InvalidDateRange(action.dateDebut, action.dateFin));
   }
 

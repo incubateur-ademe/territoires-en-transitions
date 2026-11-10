@@ -10,13 +10,15 @@ import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicate
 import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/write-indicateur-valeurs/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,
+  getAuthUserFromUserCredentials,
   getServiceRoleUser,
   getIndicateurIdByIdentifiant,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
   signTestAuthToken,
 } from '@tet/backend/test';
 import { AuthRole } from '@tet/backend/users/models/auth.models';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import {
   addTestUser,
   setUserCollectiviteRole,
@@ -24,7 +26,13 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { CollectiviteRole } from '@tet/domain/users';
-import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
+import {
+  ELECTRIFICATION_SOURCE_ID,
+  PCAET_COLLECTIVITE_SOURCE_ID,
+} from '@tet/domain/indicateurs';
+import { GenerateImportDraftWorker } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.worker';
+import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { randomUUID } from 'node:crypto';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
@@ -47,7 +55,14 @@ describe('Indicateurs', () => {
   const cleanupFixtures: Array<() => Promise<void>> = [];
 
   beforeAll(async () => {
-    app = await getTestApp();
+    app = await getDisposableTestApp({
+      overrides: (builder) => {
+        builder
+          .overrideProvider(LlmService)
+          .useValue(new LlmService(new FakeLlmRepository()));
+        builder.overrideProvider(GenerateImportDraftWorker).useValue({});
+      },
+    });
     databaseService = await getTestDatabase(app);
     serviceRoleToken = signTestAuthToken(
       { role: AuthRole.SERVICE_ROLE },
@@ -840,15 +855,16 @@ describe('Indicateurs', () => {
 
   async function createCalculationFixture(
     dates: [string, string],
-    pcaet = false
+    metadataSourceId?: string
   ) {
     const fixture = await addTestCollectivite(databaseService);
     const prefix = `calcul_${randomUUID().replaceAll('-', '')}`;
-    const sourceId = pcaet ? PCAET_COLLECTIVITE_SOURCE_ID : prefix;
-    await databaseService.db
+    const sourceId = metadataSourceId ?? prefix;
+    const createdSources = await databaseService.db
       .insert(indicateurSourceTable)
       .values({ id: sourceId, libelle: sourceId })
-      .onConflictDoNothing();
+      .onConflictDoNothing()
+      .returning();
     const metadonnees = await databaseService.db
       .insert(indicateurSourceMetadonneeTable)
       .values([
@@ -873,7 +889,7 @@ describe('Indicateurs', () => {
           identifiantReferentiel: `${prefix}_target`,
           titre: prefix,
           unite: 'u',
-          valeurCalcule: pcaet
+          valeurCalcule: metadataSourceId
             ? `val(${prefix}_source) + val(${prefix}_shared)`
             : `val(${prefix}_source) * 2`,
         },
@@ -902,10 +918,18 @@ describe('Indicateurs', () => {
           metadonnees.map(({ id }) => id)
         )
       );
-      if (!pcaet)
+      if (createdSources.length > 0)
         await databaseService.db
           .delete(indicateurSourceTable)
           .where(eq(indicateurSourceTable.id, sourceId));
+      await databaseService.db
+        .delete(utilisateurCollectiviteAccessTable)
+        .where(
+          eq(
+            utilisateurCollectiviteAccessTable.collectiviteId,
+            fixture.collectivite.id
+          )
+        );
       await fixture.cleanup();
     });
     const caller = app
@@ -915,7 +939,8 @@ describe('Indicateurs', () => {
       valeurs: {
         indicateurId: number;
         metadonneeId: number;
-        resultat: number;
+        resultat?: number;
+        objectif?: number;
       }[]
     ) =>
       request(app.getHttpServer())
@@ -1031,76 +1056,216 @@ describe('Indicateurs', () => {
     }
   );
 
-  it('isole les calculs de deux démarches PCAET lors des imports, mises à jour et suppressions', async () => {
-    const fixture = await createCalculationFixture(
-      ['2026-01-01', '2026-02-01'],
-      true
-    );
-    const {
-      source,
-      shared,
-      target,
-      downstream,
-      metadonnees: [first, second, insee],
-      importValeurs,
-      readCalculated,
-      caller,
-    } = fixture;
-    await importValeurs([
-      { indicateurId: shared.id, metadonneeId: insee.id, resultat: 5 },
-      { indicateurId: source.id, metadonneeId: first.id, resultat: 10 },
-      { indicateurId: source.id, metadonneeId: second.id, resultat: 100 },
-    ]);
-    const expected = (firstResult: number, secondResult: number) => [
-      {
-        indicateurId: target.id,
-        metadonneeId: first.id,
-        resultat: firstResult,
-      },
-      {
-        indicateurId: target.id,
-        metadonneeId: second.id,
-        resultat: secondResult,
-      },
-      {
-        indicateurId: downstream.id,
-        metadonneeId: first.id,
-        resultat: firstResult * 2,
-      },
-      {
-        indicateurId: downstream.id,
-        metadonneeId: second.id,
-        resultat: secondResult * 2,
-      },
-    ];
-    expect(await readCalculated()).toMatchObject(expected(15, 105));
-    await importValeurs([
-      { indicateurId: source.id, metadonneeId: first.id, resultat: 20 },
-    ]);
-    expect(await readCalculated()).toMatchObject(expected(25, 105));
-    await importValeurs([
-      { indicateurId: shared.id, metadonneeId: insee.id, resultat: 7 },
-    ]);
-    expect(await readCalculated()).toMatchObject(expected(27, 107));
-    await caller.indicateurs.valeurs.recompute({
-      collectiviteId: fixture.collectiviteId,
-    });
-    expect(await readCalculated()).toMatchObject(expected(27, 107));
+  it.each([
+    {
+      sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+      dates: ['2026-01-01', '2026-02-01'] as [string, string],
+    },
+    {
+      sourceId: ELECTRIFICATION_SOURCE_ID,
+      dates: ['2026-01-01', '2026-01-01'] as [string, string],
+    },
+  ])(
+    'isole les métadonnées $sourceId lors des imports, mises à jour et suppressions',
+    async ({ sourceId, dates }) => {
+      const fixture = await createCalculationFixture(dates, sourceId);
+      const {
+        source,
+        shared,
+        target,
+        downstream,
+        metadonnees: [first, second, insee],
+        importValeurs,
+        readCalculated,
+        caller,
+      } = fixture;
+      await importValeurs([
+        { indicateurId: shared.id, metadonneeId: insee.id, resultat: 5 },
+        { indicateurId: source.id, metadonneeId: first.id, resultat: 10 },
+        { indicateurId: source.id, metadonneeId: second.id, resultat: 100 },
+      ]);
+      const expected = (firstResult: number, secondResult: number) => [
+        {
+          indicateurId: target.id,
+          metadonneeId: first.id,
+          resultat: firstResult,
+        },
+        {
+          indicateurId: target.id,
+          metadonneeId: second.id,
+          resultat: secondResult,
+        },
+        {
+          indicateurId: downstream.id,
+          metadonneeId: first.id,
+          resultat: firstResult * 2,
+        },
+        {
+          indicateurId: downstream.id,
+          metadonneeId: second.id,
+          resultat: secondResult * 2,
+        },
+      ];
+      expect(await readCalculated()).toMatchObject(expected(15, 105));
+      for (const [metadata, resultat] of [
+        [first, 15],
+        [second, 105],
+      ] as const) {
+        const listed = await caller.indicateurs.valeurs.list({
+          collectiviteId: fixture.collectiviteId,
+          indicateurIds: [target.id],
+          metadonneeId: metadata.id,
+        });
+        expect(listed.indicateurs[0].sources[sourceId].valeurs).toMatchObject([
+          { metadonneeId: metadata.id, resultat },
+        ]);
+        expect(listed.indicateurs[0].sources[sourceId].valeurs).toHaveLength(1);
+      }
+      await importValeurs([
+        { indicateurId: source.id, metadonneeId: first.id, resultat: 20 },
+      ]);
+      expect(await readCalculated()).toMatchObject(expected(25, 105));
+      await importValeurs([
+        { indicateurId: shared.id, metadonneeId: insee.id, resultat: 7 },
+      ]);
+      expect(await readCalculated()).toMatchObject(expected(27, 107));
+      await caller.indicateurs.valeurs.recompute({
+        collectiviteId: fixture.collectiviteId,
+      });
+      expect(await readCalculated()).toMatchObject(expected(27, 107));
 
-    // Internal source deletion has no public endpoint; use its real application service.
-    await app.get(ManageIndicateurValeursService).deleteIndicateurValeurs({
-      collectiviteId: fixture.collectiviteId,
-      indicateurId: source.id,
-      metadonneeId: first.id,
-    });
-    const remaining = [
-      { indicateurId: target.id, metadonneeId: second.id, resultat: 107 },
-      { indicateurId: downstream.id, metadonneeId: second.id, resultat: 214 },
-    ];
-    expect(await readCalculated()).toMatchObject(remaining);
-    await caller.indicateurs.valeurs.recompute({
-      collectiviteId: fixture.collectiviteId,
-    });
-    expect(await readCalculated()).toMatchObject(remaining);
+      // Internal source deletion has no public endpoint; use its real application service.
+      await app.get(ManageIndicateurValeursService).deleteIndicateurValeurs({
+        collectiviteId: fixture.collectiviteId,
+        indicateurId: source.id,
+        metadonneeId: first.id,
+      });
+      const remaining = [
+        { indicateurId: target.id, metadonneeId: second.id, resultat: 107 },
+        { indicateurId: downstream.id, metadonneeId: second.id, resultat: 214 },
+      ];
+      expect(await readCalculated()).toMatchObject(remaining);
+      await caller.indicateurs.valeurs.recompute({
+        collectiviteId: fixture.collectiviteId,
+      });
+      expect(await readCalculated()).toMatchObject(remaining);
+    }
+  );
+
+  describe.each([
+    {
+      source: 'Électrification',
+      sourceId: ELECTRIFICATION_SOURCE_ID,
+      expectedExternalValue: null,
+    },
+    {
+      source: 'PCAET',
+      sourceId: PCAET_COLLECTIVITE_SOURCE_ID,
+      expectedExternalValue: 105,
+    },
+    {
+      source: 'externe',
+      sourceId: `calcul_${randomUUID().replaceAll('-', '')}`,
+      expectedExternalValue: 105,
+    },
+  ])('Source $source', ({ sourceId, expectedExternalValue }) => {
+    it.each(['objectif', 'resultat'] as const)(
+      'respecte la politique de complément externe avec seulement %s renseigné',
+      async (field) => {
+        const fixture = await createCalculationFixture(
+          ['2026-01-01', '2026-01-01'],
+          sourceId
+        );
+        const {
+          source,
+          shared,
+          target,
+          downstream,
+          metadonnees: [plan, , insee],
+        } = fixture;
+        await fixture.importValeurs([
+          {
+            indicateurId: source.id,
+            metadonneeId: insee.id,
+            resultat: 100,
+            objectif: 100,
+          },
+          {
+            indicateurId: shared.id,
+            metadonneeId: insee.id,
+            resultat: 5,
+            objectif: 5,
+          },
+          { indicateurId: source.id, metadonneeId: plan.id, [field]: 0 },
+        ]);
+        const otherField = field === 'objectif' ? 'resultat' : 'objectif';
+        const expected = [
+          {
+            indicateurId: target.id,
+            metadonneeId: plan.id,
+            [field]: 5,
+            [otherField]: expectedExternalValue,
+          },
+          {
+            indicateurId: downstream.id,
+            metadonneeId: plan.id,
+            [field]: 10,
+            [otherField]:
+              expectedExternalValue === null ? null : expectedExternalValue * 2,
+          },
+        ];
+        const readPlan = async () =>
+          (await fixture.readCalculated()).filter(
+            (valeur) => valeur.metadonneeId === plan.id
+          );
+        expect(await readPlan()).toMatchObject(expected);
+        await fixture.caller.indicateurs.valeurs.recompute({
+          collectiviteId: fixture.collectiviteId,
+        });
+        expect(await readPlan()).toMatchObject(expected);
+      }
+    );
   });
+
+  it.each([PCAET_COLLECTIVITE_SOURCE_ID, ELECTRIFICATION_SOURCE_ID])(
+    'exclut les valeurs %s de la moyenne nationale',
+    async (sourceId) => {
+      const fixture = await createCalculationFixture(
+        ['2026-01-01', '2026-01-01'],
+        sourceId
+      );
+      const [metadata, , insee] = fixture.metadonnees;
+      await fixture.importValeurs([
+        {
+          indicateurId: fixture.source.id,
+          metadonneeId: metadata.id,
+          resultat: 100,
+        },
+      ]);
+      await setUserCollectiviteRole(databaseService, {
+        userId: testUserId,
+        collectiviteId: fixture.collectiviteId,
+        role: CollectiviteRole.LECTURE,
+      });
+      const reader = app.get(TrpcRouter).createCaller({
+        user: getAuthUserFromUserCredentials({ id: testUserId, email: null }),
+      });
+      const average = () =>
+        reader.indicateurs.valeurs.average({
+          collectiviteId: fixture.collectiviteId,
+          indicateurId: fixture.source.id,
+        });
+      expect(await average()).toMatchObject({ valeurs: [] });
+      await fixture.importValeurs([
+        {
+          indicateurId: fixture.source.id,
+          metadonneeId: insee.id,
+          resultat: 10,
+        },
+      ]);
+      expect(await average()).toMatchObject({
+        valeurs: [{ dateValeur: '2025-01-01', valeur: 10 }],
+      });
+    }
+  );
 });

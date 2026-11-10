@@ -10,7 +10,7 @@ import {
   IndicateurPeriodiciteEnum,
   IndicateurValeurCreate,
   isIndicateurPerso,
-  PCAET_COLLECTIVITE_SOURCE_ID,
+  INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
 } from '@tet/domain/indicateurs';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { isNil, isNotNil, keyBy } from 'es-toolkit';
@@ -52,7 +52,8 @@ export class ValidateIndicateurValeursWriteService {
               user,
               PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
               ResourceType.COLLECTIVITE,
-              { collectiviteId }
+              { collectiviteId },
+              context.tx
             );
           }
         } else if (!isUserTrusted) {
@@ -109,21 +110,25 @@ export class ValidateIndicateurValeursWriteService {
       const metadataSources = metadataIds.length
         ? await this.repository.listMetadataSources(metadataIds, tx)
         : [];
-      const localMetadataIds = new Set(
+      const localSourceByMetadataId = new Map(
         metadataSources
-          .filter(({ sourceId }) => sourceId === PCAET_COLLECTIVITE_SOURCE_ID)
-          .map(({ id }) => id)
+          .filter(({ sourceId }) =>
+            INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(sourceId)
+          )
+          .map(({ id, sourceId }) => [id, sourceId])
       );
       for (const valeur of input.valeurs) {
         const indicateur = indicateursById[valeur.indicateurId];
         if (enforceUserRules && valeur.metadonneeId != null) {
           const authorization = !context.isUserTrusted
-            ? context.pcaetMetadataAuthorization
+            ? context.metadataAuthorization
             : undefined;
           if (
-            !localMetadataIds.has(valeur.metadonneeId) ||
+            !localSourceByMetadataId.has(valeur.metadonneeId) ||
             authorization?.collectiviteId !== valeur.collectiviteId ||
-            authorization?.metadonneeId !== valeur.metadonneeId
+            authorization?.metadonneeId !== valeur.metadonneeId ||
+            authorization?.sourceId !==
+              localSourceByMetadataId.get(valeur.metadonneeId)
           ) {
             throw new ForbiddenException(
               "L'écriture sous une métadonnée nécessite une autorisation interne dédiée"
@@ -132,7 +137,7 @@ export class ValidateIndicateurValeursWriteService {
         }
         if (
           (valeur.metadonneeId == null ||
-            localMetadataIds.has(valeur.metadonneeId)) &&
+            localSourceByMetadataId.has(valeur.metadonneeId)) &&
           indicateur.periodicite !==
             (valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE)
         ) {

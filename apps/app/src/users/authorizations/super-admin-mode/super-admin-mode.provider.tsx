@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useUser } from '@tet/api/users';
 import { hasRole, PlatformRole } from '@tet/domain/users';
@@ -39,6 +39,7 @@ export function SuperAdminModeProvider({
 }) {
   const user = useUser();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const isSuperAdminRoleEnabled = hasRole(user, PlatformRole.SUPER_ADMIN);
@@ -46,6 +47,8 @@ export function SuperAdminModeProvider({
   const { mutate: toggleSuperAdminRole, isPending } = useMutation(
     trpc.users.authorizations.toggleSuperAdminRole.mutationOptions({
       onSuccess: () => {
+        // Les droits ont changé : recalculer aussi les capacités mises en cache.
+        void queryClient.invalidateQueries();
         router.refresh();
       },
     })

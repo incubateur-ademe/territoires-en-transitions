@@ -4,9 +4,9 @@ import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Icon, VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { ImportStepName, ImportStepView } from './ai-import-steps.model';
+import { ImportStepView } from './ai-import-steps.model';
 
-const STEP_LABELS: Record<ImportStepName, string> = {
+const STEP_LABELS: Record<ImportStepView['name'], string> = {
   reading: appLabels.importPlanIaEtapeLecture,
   scouting: appLabels.importPlanIaEtapeReperage,
   extraction: appLabels.importPlanIaEtapeExtraction,
@@ -16,10 +16,11 @@ const STEP_LABELS: Record<ImportStepName, string> = {
   enrichment: appLabels.importPlanIaEtapeEnrichissement,
   secteurs: appLabels.importPlanIaEtapeSecteurs,
   qualitativeReview: appLabels.importPlanIaEtapeRevue,
+  persistence: appLabels.importPlanIaEtapeCreation,
 };
 
 // Hors PCAET, l'étape ne propose que les effets attendus.
-const stepLabelsFor = (withSecteurs: boolean): Record<ImportStepName, string> =>
+const stepLabelsFor = (withSecteurs: boolean): typeof STEP_LABELS =>
   withSecteurs
     ? STEP_LABELS
     : { ...STEP_LABELS, secteurs: appLabels.importPlanIaEtapeEffetsAttendus };
@@ -145,6 +146,7 @@ const ImportStepList = ({
 
 type AiImportProgressProps = {
   failed: boolean;
+  pending?: boolean;
   errorMessage: string | null;
   onRetry: () => void;
   /** Reprise depuis la dernière étape terminée : réservée à l'équipe. */
@@ -157,6 +159,7 @@ type AiImportProgressProps = {
 
 export const AiImportProgress = ({
   failed,
+  pending = false,
   errorMessage,
   onRetry,
   onResume,
@@ -165,7 +168,21 @@ export const AiImportProgress = ({
   withSecteurs = false,
 }: AiImportProgressProps) => (
   <div className="flex flex-col gap-8 py-10">
-    <ImportStepList steps={steps} withSecteurs={withSecteurs} />
+    {!failed && (
+      <div
+        role="status"
+        className="flex items-center gap-3 text-primary-9"
+        data-test="plans.import-ia.chargement"
+      >
+        <SpinnerLoader className="w-8 h-8 shrink-0" />
+        <p className="mb-0 font-bold">
+          {pending
+            ? appLabels.importPlanIaEnAttente
+            : appLabels.importPlanIaEnCoursCourt}
+        </p>
+      </div>
+    )}
+    {!failed && <ImportStepList steps={steps} withSecteurs={withSecteurs} />}
     <VisibleWhen condition={failed}>
       <ImportFailedAlert
         errorMessage={errorMessage}

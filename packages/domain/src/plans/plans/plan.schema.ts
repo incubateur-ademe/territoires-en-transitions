@@ -19,6 +19,8 @@ export type Plan = {
   budget?: BudgetWithTotal;
   totalFiches?: number;
   source?: PlanSource | null;
+  /** Métadonnée exacte des objectifs propres à ce plan. */
+  indicateurSource?: { id: number; sourceId: string } | null;
   verifiedAt?: string | null;
   status: PlanStatus;
 };

@@ -2,23 +2,22 @@ import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
-import { planCreationDisabledReasons } from '@tet/domain/plans';
-import { planCreationErrorConfig } from '../plan-creation.errors';
+import { planCreationDisabledError } from '../check-plan-creation/check-plan-creation.errors';
 
 const specificErrors = [
-  ...planCreationDisabledReasons,
   'CREATE_PLAN_ERROR',
   'UPDATE_PLAN_ERROR',
   'UPDATE_REFERENTS_ERROR',
   'UPDATE_PILOTES_ERROR',
   'PLAN_NOT_FOUND',
   'NOT_A_PLAN',
+  'PLAN_CREATION_DISABLED',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
-    ...planCreationErrorConfig,
+    PLAN_CREATION_DISABLED: planCreationDisabledError,
     CREATE_PLAN_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
       message: 'La création du plan a échoué',

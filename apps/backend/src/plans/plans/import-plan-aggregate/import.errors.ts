@@ -8,6 +8,7 @@
  */
 
 import { ImportSousActionInput } from './schemas/import-action.input';
+import { planCreationDisabledError } from '../check-plan-creation/check-plan-creation.errors';
 
 /**
  * Base class for all import errors
@@ -142,6 +143,13 @@ export class PlanCreationError extends ImportError {
   }
 }
 
+export class PlanCreationDisabledError extends ImportError {
+  readonly _tag = 'PlanCreationDisabledError' as const;
+  constructor() {
+    super(planCreationDisabledError.message);
+  }
+}
+
 export class TransactionError extends ImportError {
   readonly _tag = 'TransactionError' as const;
   constructor(public readonly cause: unknown) {
@@ -177,6 +185,7 @@ export type ImportErrors =
   | ParentActionNotFound
   | EntityResolutionError
   | PlanCreationError
+  | PlanCreationDisabledError
   | TransactionError
   | TransformationError;
 
@@ -202,6 +211,7 @@ export function isClientError(error: ImportErrors): boolean {
     case 'ParentActionNotFound':
     case 'TransformationError':
     case 'PlanCreationError':
+    case 'PlanCreationDisabledError':
       return true;
 
     case 'EntityResolutionError':

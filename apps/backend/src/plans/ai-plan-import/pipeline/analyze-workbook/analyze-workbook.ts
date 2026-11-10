@@ -87,7 +87,7 @@ export const analyzeWorkbook = (
       warnings.push(
         `${sheetLabel(plan.name)} : ${
           layout.uncoveredRows
-        } rangées sans titre de fiche ignorées.`
+        } rangées sans titre d'action ignorées.`
       );
     }
     const built = buildTabularActions(sheet, {
@@ -221,7 +221,7 @@ const readAllComplementLines = (
       layout.columns.find(({ role }) => role === 'cible')?.col ?? null;
     if (indicatorCol === null) {
       warnings.push(
-        `${sheetLabel(complement.name)} : il complète les fiches de « ${
+        `${sheetLabel(complement.name)} : il complète les actions de « ${
           plan.name
         } » sans colonne d'indicateurs ; son contenu n'est pas importé.`
       );
@@ -264,7 +264,7 @@ const readAllComplementLines = (
     });
     if (unmatched.length > 0) {
       warnings.push(
-        `${sheetLabel(complement.name)} : fiches introuvables dans « ${
+        `${sheetLabel(complement.name)} : actions introuvables dans « ${
           plan.name
         } », leurs indicateurs ne sont pas importés : ${unmatched.join(', ')}.`
       );
@@ -273,7 +273,7 @@ const readAllComplementLines = (
       warnings.push(
         `${sheetLabel(
           complement.name
-        )} : fiches rattachées par leur seul n°, leur titre diffère de celui de « ${
+        )} : actions rattachées par leur seul n°, leur titre diffère de celui de « ${
           plan.name
         } » : ${matchedByNumero.join(', ')}.`
       );

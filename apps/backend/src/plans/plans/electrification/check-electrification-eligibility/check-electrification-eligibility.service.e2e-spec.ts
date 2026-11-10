@@ -1,4 +1,6 @@
+import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { INestApplication } from '@nestjs/common';
+import { addUserRoleSupport } from '@tet/backend/users/users/users.test-fixture';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { GenerateImportDraftWorker } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.worker';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -26,6 +28,7 @@ import {
   beforeEach,
   describe,
   expect,
+  onTestFinished,
   test,
   vi,
 } from 'vitest';
@@ -139,6 +142,63 @@ describe('Éligibilité au programme Électrification', () => {
     });
   });
 
+  test.each([true, false])(
+    'autorise un non-lauréat seulement lorsque le mode super-admin est actif (%s)',
+    async (isSuperAdminRoleEnabled) => {
+      config.laureats = [];
+      const { cleanup } = await addUserRoleSupport({
+        databaseService: db,
+        userId: context.user.id,
+        isSuperAdminRoleEnabled,
+      });
+      onTestFinished(cleanup);
+
+      expect(await check()).toMatchObject({
+        success: true,
+        data: {
+          eligible: isSuperAdminRoleEnabled,
+          laureatReference: null,
+          provenance: { version: config.version },
+        },
+      });
+      expect(config.laureats).toEqual([]);
+    }
+  );
+
+  test.each([
+    { client_id: 'test-client' },
+    { permissions: ['plans.fiches.import'] },
+  ])('ne donne pas l’exception aux jetons limités (%j)', async (claims) => {
+    config.laureats = [];
+    const { cleanup } = await addUserRoleSupport({
+      databaseService: db,
+      userId: context.user.id,
+      isSuperAdminRoleEnabled: true,
+    });
+    onTestFinished(cleanup);
+    context.user.jwtPayload = { ...context.user.jwtPayload, ...claims };
+
+    expect(await check()).toMatchObject({
+      success: true,
+      data: { eligible: false, laureatReference: null },
+    });
+  });
+
+  test('un super-admin reste soumis à la validité de la liste publiée', async () => {
+    config.source = '';
+    const { cleanup } = await addUserRoleSupport({
+      databaseService: db,
+      userId: context.user.id,
+      isSuperAdminRoleEnabled: true,
+    });
+    onTestFinished(cleanup);
+
+    expect(await check()).toMatchObject({
+      success: false,
+      error: 'INVALID_ELECTRIFICATION_LAUREATS_CONFIG',
+    });
+  });
+
   test('une liste vide peut établir la non-éligibilité', async () => {
     config.laureats = [];
     expect(await check()).toMatchObject({
@@ -150,7 +210,8 @@ describe('Éligibilité au programme Électrification', () => {
   test('une configuration non livrée reste indisponible', async () => {
     const unavailable = new CheckElectrificationEligibilityService(
       null,
-      app.get(PermissionService)
+      app.get(PermissionService),
+      app.get(GetUserRolesAndPermissionsService)
     );
     expect(
       await unavailable.check(
@@ -171,6 +232,7 @@ describe('Éligibilité au programme Électrification', () => {
       expect.arrayContaining([
         { reference: '200070092', collectiviteId: 4323 }, // CA du Libournais
         { reference: '200035087', collectiviteId: 3980 }, // CA Terre de Provence
+        { reference: 'demo-5460', collectiviteId: 5460 }, // Candidat de recette
       ])
     );
     expect(

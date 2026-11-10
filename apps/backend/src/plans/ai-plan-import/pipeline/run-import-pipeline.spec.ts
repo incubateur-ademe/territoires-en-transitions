@@ -1483,7 +1483,7 @@ describe('runImportPipeline', () => {
         expect(outcome.warnings).toEqual(
           expect.arrayContaining([
             expect.stringMatching(/« Synthèse » ignoré/),
-            "Les consignes et les vérifications ne s'appliquent pas aux 6 fiches lues sans le modèle (« Suivi »).",
+            "Les consignes et les vérifications ne s'appliquent pas aux 6 actions lues sans le modèle (« Suivi »).",
           ])
         );
         expect(runs.find(({ step }) => step === 'reading')?.details).toEqual({

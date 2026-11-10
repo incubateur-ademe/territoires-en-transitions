@@ -1,6 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { recordLlmCalls } from '@tet/backend/utils/llm/llm-call-recorder';
 import { Result } from '@tet/backend/utils/result.type';
+import {
+  emptyTokenUsage,
+  TokenUsage,
+} from '@tet/backend/utils/llm/token-usage';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
 import { ImportJobStats } from '../models/import-job-stats';
 import {
@@ -32,6 +36,7 @@ export class ImportJobTelemetry {
   private document: ImportJobStats['document'] = null;
   private content: ImportJobStats['content'] = null;
   private warnings = 0;
+  private restoredTokens = emptyTokenUsage();
 
   constructor(
     private readonly jobId: string,
@@ -112,6 +117,14 @@ export class ImportJobTelemetry {
     this.document = document;
   }
 
+  /**
+   * Un checkpoint peut précéder les métriques de son étape. Il garantit un
+   * minimum de tokens connus, sans inventer les appels ni les modèles manquants.
+   */
+  restoreTokens(tokens: TokenUsage): void {
+    this.restoredTokens = tokens;
+  }
+
   documentStats(): ImportJobStats['document'] {
     return this.document;
   }
@@ -140,7 +153,30 @@ export class ImportJobTelemetry {
         calls,
         failedCalls,
         rateLimited,
-        tokens,
+        // Les appels déjà enregistrés incluent normalement ces tokens. Un arrêt
+        // entre checkpoint et métriques ne doit ni les perdre ni les compter deux fois.
+        tokens: {
+          promptTokens: Math.max(
+            tokens.promptTokens,
+            this.restoredTokens.promptTokens
+          ),
+          cachedTokens: Math.max(
+            tokens.cachedTokens,
+            this.restoredTokens.cachedTokens
+          ),
+          candidatesTokens: Math.max(
+            tokens.candidatesTokens,
+            this.restoredTokens.candidatesTokens
+          ),
+          thoughtsTokens: Math.max(
+            tokens.thoughtsTokens,
+            this.restoredTokens.thoughtsTokens
+          ),
+          totalTokens: Math.max(
+            tokens.totalTokens,
+            this.restoredTokens.totalTokens
+          ),
+        },
       },
       warnings: this.warnings,
       resumes: this.resumed.attempt,

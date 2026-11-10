@@ -80,7 +80,15 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   }
 
   return (
-    <PlanAxesProvider plan={plan} rootAxe={rootAxe}>
+    <PlanAxesProvider
+      plan={plan}
+      rootAxe={rootAxe}
+      indicateurCardOptions={{
+        excludedSources: plan.indicateurSource
+          ? [plan.indicateurSource.sourceId]
+          : undefined,
+      }}
+    >
       <PlanViewContent />
     </PlanAxesProvider>
   );

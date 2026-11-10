@@ -1,3 +1,4 @@
+import { ENV } from '@tet/api/environmentVariables';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { useParams } from 'next/navigation';
@@ -19,6 +20,7 @@ export function useGetDefaultEventProperties() {
   }
 
   const defaultProperties = {
+    environment: ENV.application_env || 'local',
     ...params,
     ...(collectiviteId !== undefined && { collectiviteId }),
     ...(role !== undefined && { niveauAcces: role }),

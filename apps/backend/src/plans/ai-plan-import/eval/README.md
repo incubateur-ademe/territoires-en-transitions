@@ -1,12 +1,14 @@
 # Évaluation de l'import IA
 
-Fait tourner le pipeline d'import sur un document local, avec le fournisseur
-configuré dans `apps/backend/.env` (`LLM_PROVIDER`, `ALBERT_MODEL`,
-`GEMINI_MODEL`…), et mesure le résultat.
+Évalue l'extraction d'un document local selon son profil. Le profil générique
+utilise le fournisseur configuré dans `apps/backend/.env` (`LLM_PROVIDER`,
+`ALBERT_MODEL`, `GEMINI_MODEL`…). Le profil Électrification lit le canevas
+DOCX V4 de façon déterministe, puis sollicite automatiquement une aide IA
+ciblée si certaines valeurs restent incomprises.
 
-**Chaque exécution appelle le modèle pour de vrai.** Le script est réservé à
-un lancement humain, jamais par un agent (cf. « Paid external AI calls » dans
-le `CLAUDE.md` racine).
+**Un appel réel au modèle reste réservé à un lancement humain**, jamais par
+un agent (cf. "Paid external AI calls" dans le `CLAUDE.md` racine). Cela
+concerne les profils générique et Électrification, hors `--lecture-seule`.
 
 ```sh
 make ai-import-eval f=chemin/vers/plan.pdf
@@ -17,6 +19,65 @@ make ai-import-eval f=plan.xlsx out=apps/backend/eval-out/essai.json args="--no-
 La cible compile le backend (`nest build`) puis lance
 `dist/plans/ai-plan-import/eval/run-ai-import-eval.js` sous dotenvx. Le
 résultat est écrit dans `apps/backend/eval-out/` (ignoré par git).
+
+## Profil Électrification
+
+Le profil par défaut est `generic`. Pour extraire les engagements du tableau A
+et les fiches renseignées de la section B d'une convention Électrification :
+
+```sh
+make ai-import-eval f=convention.docx args="--profile annexe-3-electrification"
+```
+
+Ce profil accepte uniquement le canevas officiel V4 au format DOCX. Il lit
+les tableaux et leurs libellés, conserve les sources et références
+documentaires, les homonymes et les sous-actions. Nest et le fournisseur de
+modèle sont initialisés uniquement si une valeur nécessite une interprétation.
+Aucun OCR n'est exécuté. Aucun plan ni indicateur n'est créé.
+Un autre format ou une structure non reconnue est refusé explicitement ;
+aucun fallback IA ou générique n'est lancé pour ces erreurs.
+
+Le JSON contient `checkpoint` (extraction typée, sources, versions et tokens),
+`report.issues` (erreurs documentaires ou de traitement) et la durée.
+Quand aucun appel n'est nécessaire, `provider: "deterministic"`,
+`metrics.calls: 0` et les tokens à zéro identifient une extraction sans modèle.
+`schemaVersion: 1` est l'unique
+version technique du checkpoint. `templateVersion: "electrification-v4"`
+identifie le canevas officiel ; `catalogueVersion` identifie les correspondances métier.
+`stage: "extraction"` et `referencesResolved: false` indiquent que les codes,
+URL, correspondances du catalogue et permissions restent à vérifier par le
+résolveur. Un statut `done` signifie seulement que l'extraction a réussi ;
+il ne qualifie pas un import ni les correspondances métier encore en attente.
+
+L'aide IA concerne les cibles et résultats numériques non reconnus. Elle
+utilise le fournisseur configuré et conserve la lecture déterministe de la
+structure et les validations métier. Elle ne corrige pas les dates, statuts ou
+références invalides. Les sources originales et les
+interprétations retenues sont conservées dans `checkpoint.sources` et
+`checkpoint.interpretations`, avec les extraits et valeurs littérales retenus.
+`provider`, `model` et `metrics` rendent compte du fournisseur, des tentatives
+d'appel et des tokens consommés, y compris en cas d'échec. Un document déjà
+compris termine sans aucun appel.
+
+Cette évaluation n'active pas le profil dans l'application.
+Comparer chaque interprétation à sa source : mesurer les rejets évités et
+les valeurs erronées acceptées, pas seulement le nombre d'extractions réussies.
+Un statut `done` ne remplace pas cette vérification humaine.
+
+Les options `--ref`, `--instructions`, `--no-verifications`,
+`--no-sous-actions` et `--lecture-seule` sont réservées au profil générique.
+Leur utilisation avec Électrification est refusée avant la lecture du document.
+La comparaison par titre et les métriques génériques ci-dessous ne s'appliquent
+pas à ce profil. Le checkpoint peut être conservé pour une reprise interne
+sans nouvelle extraction ; l'évaluation CLI n'expose pas de commande de reprise.
+
+Pour vérifier le résultat, comparer les engagements retenus, les fiches et
+chaque valeur à la source, y compris les absences et les zéros. Pour les fiches
+et sous-actions, un mois et une année donnent par convention le premier jour
+du mois (`06/2028` ou `juin 2028` → `2028-06-01`) ; une année seule ne suffit pas.
+Les fixtures
+synthétiques du canevas couvrent les variantes testées ; elles ne remplacent
+pas la qualification des premiers documents réellement remplis.
 
 ## Lecture seule d'un tableur
 
@@ -33,7 +94,7 @@ choix, puis l'arbre des axes et des fiches et les avertissements. Un onglet
 `modele` serait confié au modèle lors d'un vrai import. C'est la façon, sans
 coût, d'essayer les heuristiques sur un nouveau classeur réel.
 
-## Ce que mesure le JSON
+## Ce que mesure le JSON générique
 
 - `metrics` : nombre d'actions, d'axes et de sous-axes distincts, profondeur
   du plus long chemin d'axes, nombre de sous-actions ; taux de remplissage par

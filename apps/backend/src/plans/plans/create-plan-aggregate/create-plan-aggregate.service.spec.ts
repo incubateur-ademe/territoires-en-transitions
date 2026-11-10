@@ -5,700 +5,390 @@ import {
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
+import assert from 'node:assert';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlanErrorType } from '../plans.errors';
 import { CreatePlanAggregateService } from './create-plan-aggregate.service';
 import { CreatePlanAggregateInput } from './create-plan-aggregate.types';
 
 describe('CreatePlanAggregateService', () => {
+  const mocks = {
+    axes: { upsertAxe: vi.fn() },
+    plans: { upsertPlan: vi.fn() },
+    createFiches: { createFicheWithAuthorization: vi.fn() },
+    listFiches: { listFichesQuery: vi.fn() },
+    permissions: { assertAllowed: vi.fn() },
+    webhooks: { sendWebhookNotifications: vi.fn() },
+    secteurs: { createFromImportIa: vi.fn() },
+    fichePermissions: { canLinkFicheToCollectivite: vi.fn() },
+    fiches: { addAxeLinks: vi.fn() },
+    annexes: { insertAnnexes: vi.fn() },
+  };
+  const user: AuthenticatedUser = {
+    id: 'user-123',
+    role: AuthRole.AUTHENTICATED,
+    isAnonymous: false,
+    jwtPayload: { role: AuthRole.AUTHENTICATED },
+  };
+  const tx = {} as Transaction;
   let service: CreatePlanAggregateService;
-  let mockUpsertAxeService: any;
-  let mockUpsertPlanService: any;
-  let mockCreateFicheService: any;
-  let mockListFichesService: any;
-  let mockPermissionService: any;
-  let mockWebhookService: any;
-  let mockFicheSecteursAttributionRepository: any;
-  let mockTransaction: Transaction;
-  let mockUser: AuthenticatedUser;
-  let nextFicheId: number;
+
+  const createRequest = (): CreatePlanAggregateInput => ({
+    collectiviteId: 1,
+    nom: 'Mon Plan Test',
+    typeId: 1,
+    pilotes: [{ userId: 'pilot-1', tagId: null }],
+    referents: [{ userId: null, tagId: 100 }],
+    axes: [
+      { sourceKey: 'axe', nom: 'Axe 1' },
+      { sourceKey: 'sous-axe', parentSourceKey: 'axe', nom: 'Sous-axe 1' },
+    ],
+    fiches: [
+      {
+        sourceKey: 'fiche-1',
+        axeSourceKey: 'axe',
+        fiche: { titre: 'Fiche 1' },
+      },
+      {
+        sourceKey: 'fiche-2',
+        axeSourceKey: 'sous-axe',
+        fiche: { titre: 'Fiche 2' },
+      },
+    ],
+  });
 
   beforeEach(() => {
-    nextFicheId = 100;
+    vi.resetAllMocks();
+    let nextAxeId = 10;
+    let nextFicheId = 101;
+    mocks.plans.upsertPlan.mockResolvedValue(success({ id: 1 }));
+    mocks.axes.upsertAxe.mockImplementation(async () =>
+      success({ id: nextAxeId++ })
+    );
+    mocks.createFiches.createFicheWithAuthorization.mockImplementation(
+      async () => success({ id: nextFicheId++ })
+    );
+    mocks.listFiches.listFichesQuery.mockResolvedValue({ data: [], count: 0 });
+    mocks.permissions.assertAllowed.mockResolvedValue(undefined);
+    mocks.webhooks.sendWebhookNotifications.mockResolvedValue(undefined);
+    mocks.secteurs.createFromImportIa.mockResolvedValue(null);
+    mocks.fichePermissions.canLinkFicheToCollectivite.mockResolvedValue(true);
+    mocks.fiches.addAxeLinks.mockResolvedValue(success(undefined));
 
-    mockUpsertAxeService = {
-      upsertAxe: vi.fn(),
+    const dependencies = [
+      mocks.axes,
+      mocks.plans,
+      mocks.createFiches,
+      mocks.listFiches,
+      mocks.permissions,
+      mocks.webhooks,
+      mocks.secteurs,
+      mocks.fichePermissions,
+      mocks.fiches,
+      mocks.annexes,
+    ] as unknown as ConstructorParameters<typeof CreatePlanAggregateService>;
+    service = new CreatePlanAggregateService(...dependencies);
+  });
+
+  it('renvoie les IDs associés aux clés de source sans envoyer de webhook', async () => {
+    const result = await service.create(createRequest(), { user, tx });
+
+    expect(result).toEqual(
+      success({
+        planId: 1,
+        axeIdsBySourceKey: new Map([
+          ['axe', 10],
+          ['sous-axe', 11],
+        ]),
+        ficheIdsBySourceKey: new Map([
+          ['fiche-1', 101],
+          ['fiche-2', 102],
+        ]),
+        createdFicheIds: [101, 102],
+      })
+    );
+    expect(mocks.permissions.assertAllowed).toHaveBeenCalledTimes(1);
+    expect(mocks.webhooks.sendWebhookNotifications).not.toHaveBeenCalled();
+    expect(mocks.listFiches.listFichesQuery).not.toHaveBeenCalled();
+  });
+
+  it("enregistre les secteurs proposés par l'import avec la fiche créée", async () => {
+    const request = createRequest();
+    request.fiches[0].secteursProposes = {
+      secteurs: ['residentiel'],
+      justification: 'Rénovation des logements.',
     };
 
-    mockUpsertPlanService = {
-      upsertPlan: vi.fn(),
-    };
+    const result = await service.create(request, { user, tx });
 
-    mockCreateFicheService = {
-      createFicheWithAuthorization: vi.fn().mockImplementation(async () => {
-        nextFicheId += 1;
-        return success({ id: nextFicheId });
-      }),
-    };
-
-    mockListFichesService = {
-      listFichesQuery: vi.fn().mockResolvedValue({ data: [], count: 0 }),
-    };
-
-    mockPermissionService = {
-      assertAllowed: vi.fn().mockResolvedValue(undefined),
-    };
-
-    mockWebhookService = {
-      sendWebhookNotifications: vi.fn().mockResolvedValue(undefined),
-    };
-
-    mockFicheSecteursAttributionRepository = {
-      createFromImportIa: vi.fn().mockResolvedValue(null),
-    };
-
-    mockTransaction = {} as Transaction;
-
-    mockUser = {
-      id: 'user-123',
-      role: AuthRole.AUTHENTICATED,
-      isAnonymous: false,
-      jwtPayload: { role: AuthRole.AUTHENTICATED },
-    };
-
-    service = new CreatePlanAggregateService(
-      mockUpsertAxeService,
-      mockUpsertPlanService,
-      mockCreateFicheService,
-      mockListFichesService,
-      mockPermissionService,
-      mockWebhookService,
-      mockFicheSecteursAttributionRepository
+    expect(result.success).toBe(true);
+    expect(mocks.secteurs.createFromImportIa).toHaveBeenCalledExactlyOnceWith(
+      {
+        ficheId: 101,
+        secteurs: ['residentiel'],
+        justification: 'Rénovation des logements.',
+        modifiedBy: user.id,
+      },
+      tx
     );
   });
 
-  describe('create', () => {
-    const createValidRequest = (): CreatePlanAggregateInput => ({
-      collectiviteId: 1,
-      nom: 'Mon Plan Test',
-      typeId: 1,
-      pilotes: [{ userId: 'pilot-1', tagId: null }],
-      referents: [{ userId: null, tagId: 100 }],
-      fiches: [
-        {
-          axisPath: ['Axe 1'],
-          fiche: {
-            titre: 'Fiche 1',
-            pilotes: [],
-            referents: [],
-          },
-        },
-        {
-          axisPath: ['Axe 1', 'Sous-Axe 1'],
-          fiche: {
-            titre: 'Fiche 2',
-            pilotes: [],
-            referents: [],
-          },
-        },
-      ],
-    });
+  it('crée les parents avant leurs enfants même si les axes sont fournis dans le désordre', async () => {
+    const request = createRequest();
+    request.axes.reverse();
 
-    it('should successfully create a complete plan with axes and fiches', async () => {
-      const request = createValidRequest();
+    const result = await service.create(request, { user, tx });
 
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({ id: 1, nom: 'Mon Plan Test' })
-      );
+    expect(result.success).toBe(true);
+    expect(mocks.axes.upsertAxe).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ nom: 'Axe 1', parent: 1, planId: 1 }),
+      { user, tx }
+    );
+    expect(mocks.axes.upsertAxe).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ nom: 'Sous-axe 1', parent: 10, planId: 1 }),
+      { user, tx }
+    );
+  });
 
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+  it('crée un axe explicite sans fiche', async () => {
+    const request = createRequest();
+    request.fiches = [];
 
-      const result = await service.create(request, mockUser, mockTransaction);
+    const result = await service.create(request, { user, tx });
 
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data).toBe(1);
-      }
+    assert(result.success);
+    expect(result.data.axeIdsBySourceKey.size).toBe(2);
+    expect(result.data.createdFicheIds).toEqual([]);
+    expect(
+      mocks.createFiches.createFicheWithAuthorization
+    ).not.toHaveBeenCalled();
+  });
 
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(2);
-      expect(mockUpsertPlanService.upsertPlan).toHaveBeenCalledTimes(1);
-      expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
-      expect(mockPermissionService.assertAllowed).toHaveBeenCalledTimes(1);
-    });
+  it('conserve deux axes homonymes avec des clés différentes', async () => {
+    const request = createRequest();
+    request.axes = [
+      { sourceKey: 'axe', nom: 'Même titre' },
+      { sourceKey: 'sous-axe', nom: 'Même titre' },
+    ];
 
-    it("enregistre les secteurs proposés par l'import IA avec la fiche créée", async () => {
-      const request = createValidRequest();
-      request.fiches[0].secteursProposes = {
-        secteurs: ['residentiel'],
-        justification: 'Rénovation des logements.',
-      };
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({ id: 1, nom: 'Mon Plan Test' })
-      );
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+    const result = await service.create(request, { user, tx });
 
-      await service.create(request, mockUser, mockTransaction);
+    assert(result.success);
+    expect(result.data.axeIdsBySourceKey.get('axe')).not.toBe(
+      result.data.axeIdsBySourceKey.get('sous-axe')
+    );
+  });
 
-      expect(
-        mockFicheSecteursAttributionRepository.createFromImportIa
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        mockFicheSecteursAttributionRepository.createFromImportIa
-      ).toHaveBeenCalledWith(
-        {
-          ficheId: expect.any(Number),
-          secteurs: ['residentiel'],
-          justification: 'Rénovation des logements.',
-          modifiedBy: 'user-123',
-        },
-        mockTransaction
-      );
-    });
+  it('transmet les paramètres du plan et la transaction appelante', async () => {
+    const request = createRequest();
+    request.planId = 42;
+    request.dateDebut = '2026-01-01';
 
-    it('should create axes in correct hierarchical order (parents before children)', async () => {
-      const request = createValidRequest();
+    await service.create(request, { user, tx });
 
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Test' })
-      );
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
-
-      await service.create(request, mockUser, mockTransaction);
-
-      const firstCall = mockUpsertAxeService.upsertAxe.mock.calls[0];
-      const secondCall = mockUpsertAxeService.upsertAxe.mock.calls[1];
-
-      expect(firstCall[0].nom).toBe('Axe 1');
-      expect(firstCall[0].parent).toBe(1);
-
-      expect(secondCall[0].nom).toBe('Sous-Axe 1');
-      expect(secondCall[0].parent).toBe(10);
-    });
-
-    it('should fail when fiche creation fails', async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Test' })
-      );
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
-
-      mockCreateFicheService.createFicheWithAuthorization.mockReset();
-      mockCreateFicheService.createFicheWithAuthorization
-        .mockResolvedValueOnce(success({ id: 101 }))
-        .mockResolvedValueOnce(failure('SERVER_ERROR'));
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
-      }
-    });
-
-    it("remonte l'erreur Postgres comme cause quand la création d'une fiche échoue", async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Test' })
-      );
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
-
-      const pgError = new Error('value too long for type character varying');
-      const drizzleError = new Error('Failed query: insert … params: …', {
-        cause: pgError,
-      });
-      mockCreateFicheService.createFicheWithAuthorization.mockReset();
-      mockCreateFicheService.createFicheWithAuthorization
-        .mockResolvedValueOnce(success({ id: 101 }))
-        .mockResolvedValueOnce(failure('SERVER_ERROR', drizzleError));
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result).toMatchObject({
-        success: false,
-        error: PlanErrorType.DATABASE_ERROR,
-        cause: pgError,
-      });
-    });
-
-    it("remonte l'exception comme cause quand la création lève", async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockRejectedValue(
-        new Error('connexion perdue')
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result).toMatchObject({
-        success: false,
-        error: PlanErrorType.DATABASE_ERROR,
-        cause: expect.objectContaining({ message: 'connexion perdue' }),
-      });
-    });
-
-    it('should fail when plan creation fails', async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        failure(PlanErrorType.DATABASE_ERROR)
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
-      }
-
-      expect(mockUpsertAxeService.upsertAxe).not.toHaveBeenCalled();
-      expect(mockCreateFicheService.createFicheWithAuthorization).not.toHaveBeenCalled();
-    });
-
-    it('should fail when axe creation fails', async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Test' })
-      );
-      mockUpsertAxeService.upsertAxe.mockResolvedValue(
-        failure(PlanErrorType.DATABASE_ERROR)
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
-      }
-    });
-
-    it('should handle complex multi-level hierarchy', async () => {
-      const request: CreatePlanAggregateInput = {
+    expect(mocks.plans.upsertPlan).toHaveBeenCalledWith(
+      {
+        id: 42,
         collectiviteId: 1,
-        nom: 'Complex Plan',
-        fiches: [
-          {
-            axisPath: ['A'],
-            fiche: { titre: 'F1', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['A', 'A1'],
-            fiche: { titre: 'F2', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['A', 'A1', 'A1a'],
-            fiche: { titre: 'F3', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['A', 'A2'],
-            fiche: { titre: 'F4', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['B'],
-            fiche: { titre: 'F5', pilotes: [], referents: [] },
-          },
-        ],
-      };
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Complex Plan' })
-      );
-
-      let axeIdCounter = 10;
-      mockUpsertAxeService.upsertAxe.mockImplementation(async () =>
-        success({ id: axeIdCounter++, nom: 'Test' })
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(true);
-
-      // Should create 5 axes: A, A1, A1a, A2, B
-      expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(5);
-
-      // Verify hierarchy: A before A1, A1 before A1a
-      const axeCalls = mockUpsertAxeService.upsertAxe.mock.calls;
-      expect(axeCalls[0][0].nom).toBe('A');
-      expect(axeCalls[1][0].nom).toBe('B');
-      expect(axeCalls[2][0].nom).toBe('A1');
-      expect(axeCalls[3][0].nom).toBe('A2');
-      expect(axeCalls[4][0].nom).toBe('A1a');
-    });
-
-    it('should handle duplicate axis paths correctly', async () => {
-      const request: CreatePlanAggregateInput = {
-        collectiviteId: 1,
-        nom: 'Plan with Duplicates',
-        fiches: [
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'F1', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'F2', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1', 'Sous-Axe 1'],
-            fiche: { titre: 'F3', pilotes: [], referents: [] },
-          },
-        ],
-      };
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Test' })
-      );
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(true);
-
-      // Should only create 2 unique axes (not 3)
-      expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
-    });
-
-    it('should pass correct parameters to plan creation', async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValue(
-        success({ id: 1, nom: 'Test' })
-      );
-      mockUpsertAxeService.upsertAxe.mockResolvedValue(
-        success({ id: 10, nom: 'Test' })
-      );
-
-      await service.create(request, mockUser, mockTransaction);
-
-      expect(mockUpsertPlanService.upsertPlan).toHaveBeenCalledWith(
-        {
-          collectiviteId: 1,
-          nom: 'Mon Plan Test',
-          typeId: 1,
-          pilotes: [{ userId: 'pilot-1', tagId: null }],
-          referents: [{ userId: null, tagId: 100 }],
-        },
-        { user: mockUser, tx: mockTransaction }
-      );
-    });
-
-    it('should catch and handle unexpected errors', async () => {
-      const request = createValidRequest();
-
-      mockUpsertPlanService.upsertPlan.mockRejectedValue(
-        new Error('Unexpected error')
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
-      }
-    });
-
-    it('should create sous-actions with parentId in two passes', async () => {
-      const request: CreatePlanAggregateInput = {
-        collectiviteId: 1,
-        nom: 'Plan avec sous-actions',
-        fiches: [
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Action normale', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
-            parentActionTitre: 'Action parente',
-          },
-        ],
-      };
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({ id: 1, nom: 'Plan avec sous-actions' })
-      );
-      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
-        success({ id: 10, nom: 'Axe 1' })
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(true);
-      // 3 fiches total: 1 normal + 1 parent (dedicated) + 1 sous-action
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(3);
-
-      // Le mock alloue les ids dans l'ordre d'appel à createFicheWithAuthorization :
-      // 101 (Action normale), 102 (Action parente), 103 (Sous-action 1.1).
-      // La sous-action doit pointer sur l'id de "Action parente" = 102.
-      const sousActionCall =
-        mockCreateFicheService.createFicheWithAuthorization.mock.calls[2][0];
-      expect(sousActionCall.fiche.parentId).toBe(102);
-    });
-
-    it('should create sous-actions referencing a dedicated parent fiche', async () => {
-      const request: CreatePlanAggregateInput = {
-        collectiviteId: 1,
-        nom: 'Plan dédup',
-        fiches: [
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
-            parentActionTitre: 'Action parente',
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Sous-action 1.2', pilotes: [], referents: [] },
-            parentActionTitre: 'Action parente',
-          },
-        ],
-      };
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({ id: 1, nom: 'Plan dédup' })
-      );
-      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
-        success({ id: 10, nom: 'Axe 1' })
-      );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(true);
-      // 3 fiches: 1 parent + 2 sous-actions
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(3);
-
-      // Le mock alloue : 101 (Action parente), 102 (Sous 1.1), 103 (Sous 1.2).
-      // Les 2 sous-actions pointent sur la même parente = 101.
-      const calls = mockCreateFicheService.createFicheWithAuthorization.mock.calls;
-      expect(calls[1][0].fiche.parentId).toBe(101);
-      expect(calls[2][0].fiche.parentId).toBe(101);
-    });
-
-    it('should create separate parent fiches for sous-actions sharing the same title but in different axis paths', async () => {
-      const request: CreatePlanAggregateInput = {
-        collectiviteId: 1,
-        nom: 'Plan multi-axes',
-        fiches: [
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 2'],
-            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Sous-action A', pilotes: [], referents: [] },
-            parentActionTitre: 'Action parente',
-          },
-          {
-            axisPath: ['Axe 2'],
-            fiche: { titre: 'Sous-action B', pilotes: [], referents: [] },
-            parentActionTitre: 'Action parente',
-          },
-        ],
-      };
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({ id: 1, nom: 'Plan multi-axes' })
-      );
-      mockUpsertAxeService.upsertAxe
-        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-        .mockResolvedValueOnce(success({ id: 11, nom: 'Axe 2' }));
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(true);
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(4);
-
-      // Le mock alloue : 101 (Action parente Axe 1), 102 (Action parente Axe 2),
-      // 103 (Sous-action A → axe 1), 104 (Sous-action B → axe 2).
-      const calls = mockCreateFicheService.createFicheWithAuthorization.mock.calls;
-      expect(calls[2][0].fiche.parentId).toBe(101);
-      expect(calls[3][0].fiche.parentId).toBe(102);
-    });
-
-    it('should return DATABASE_ERROR when a sous-action creation fails in pass 2', async () => {
-      const request: CreatePlanAggregateInput = {
-        collectiviteId: 1,
-        nom: 'Plan',
-        fiches: [
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
-          },
-          {
-            axisPath: ['Axe 1'],
-            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
-            parentActionTitre: 'Action parente',
-          },
-        ],
-      };
-
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({ id: 1, nom: 'Plan' })
-      );
-      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
-        success({ id: 10, nom: 'Axe 1' })
-      );
-
-      mockCreateFicheService.createFicheWithAuthorization.mockReset();
-      mockCreateFicheService.createFicheWithAuthorization
-        .mockResolvedValueOnce(success({ id: 100 }))
-        .mockResolvedValueOnce(failure('SERVER_ERROR'));
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
-      }
-    });
-
-    it('should attach multiple fiches without axes to the plan root without creating any axes', async () => {
-      const request: CreatePlanAggregateInput = {
-        collectiviteId: 1,
-        nom: 'Mon Plan Test',
+        nom: request.nom,
         typeId: 1,
-        pilotes: [{ userId: 'pilot-1', tagId: null }],
-        referents: [{ userId: null, tagId: 100 }],
-        fiches: [
-          {
-            axisPath: undefined, // Fiche without axe
-            fiche: {
-              titre: 'Fiche 1 sans axe',
-              pilotes: [],
-              referents: [],
-            },
-          },
-          {
-            axisPath: undefined, // Another fiche without axe
-            fiche: {
-              titre: 'Fiche 2 sans axe',
-              pilotes: [],
-              referents: [],
-            },
-          },
-          {
-            axisPath: undefined, // Third fiche without axe
-            fiche: {
-              titre: 'Fiche 3 sans axe',
-              pilotes: [],
-              referents: [],
-            },
-          },
-          {
-            axisPath: ['Axe 1'], // Fiche with axe
-            fiche: {
-              titre: 'Fiche 4 avec axe',
-              pilotes: [],
-              referents: [],
-            },
-          },
-        ],
-      };
+        dateDebut: '2026-01-01',
+        dateFin: undefined,
+        pilotes: request.pilotes,
+        referents: request.referents,
+      },
+      { user, tx }
+    );
+  });
 
-      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
-        success({
-          id: 100,
-          nom: 'Mon Plan Test',
-          collectiviteId: 1,
+  it('rattache les sous-actions à leur parent par clé malgré des titres identiques', async () => {
+    const request = createRequest();
+    request.fiches = [
+      {
+        sourceKey: 'parent-a',
+        axeSourceKey: 'axe',
+        fiche: { titre: 'Parent' },
+      },
+      {
+        sourceKey: 'parent-b',
+        axeSourceKey: 'axe',
+        fiche: { titre: 'Parent' },
+      },
+      {
+        sourceKey: 'enfant-a',
+        parentSourceKey: 'parent-a',
+        axeSourceKey: 'axe',
+        fiche: { titre: 'Enfant A' },
+      },
+      {
+        sourceKey: 'enfant-b',
+        parentSourceKey: 'parent-b',
+        axeSourceKey: 'axe',
+        fiche: { titre: 'Enfant B' },
+      },
+    ];
+
+    const result = await service.create(request, { user, tx });
+
+    assert(result.success);
+    for (const [titre, parentSourceKey] of [
+      ['Enfant A', 'parent-a'],
+      ['Enfant B', 'parent-b'],
+    ]) {
+      expect(
+        mocks.createFiches.createFicheWithAuthorization
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fiche: expect.objectContaining({
+            titre,
+            parentId: result.data.ficheIdsBySourceKey.get(parentSourceKey),
+          }),
+          tx,
         })
       );
+    }
+  });
 
-      // Mock axe creation for "Axe 1"
-      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
-        success({ id: 201, nom: 'Axe 1' })
+  it('rattache les fiches sans axe à la racine du plan', async () => {
+    const request = createRequest();
+    request.axes = [];
+    request.fiches = [{ sourceKey: 'fiche', fiche: { titre: 'Sans axe' } }];
+
+    const result = await service.create(request, { user, tx });
+
+    expect(result.success).toBe(true);
+    expect(mocks.axes.upsertAxe).not.toHaveBeenCalled();
+    expect(
+      mocks.createFiches.createFicheWithAuthorization
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fiche: expect.objectContaining({ parentId: null }),
+        ficheFields: expect.objectContaining({ axes: [{ id: 1 }] }),
+      })
+    );
+  });
+
+  it('arrête la création si le plan échoue', async () => {
+    mocks.plans.upsertPlan.mockResolvedValue(
+      failure(PlanErrorType.DATABASE_ERROR)
+    );
+
+    const result = await service.create(createRequest(), { user, tx });
+
+    expect(result).toEqual(failure(PlanErrorType.DATABASE_ERROR));
+    expect(mocks.axes.upsertAxe).not.toHaveBeenCalled();
+    expect(
+      mocks.createFiches.createFicheWithAuthorization
+    ).not.toHaveBeenCalled();
+  });
+
+  it('arrête la création si un axe échoue', async () => {
+    mocks.axes.upsertAxe.mockResolvedValue(
+      failure(PlanErrorType.DATABASE_ERROR)
+    );
+
+    const result = await service.create(createRequest(), { user, tx });
+
+    expect(result).toEqual(failure(PlanErrorType.DATABASE_ERROR));
+    expect(
+      mocks.createFiches.createFicheWithAuthorization
+    ).not.toHaveBeenCalled();
+  });
+
+  it('remonte une erreur de création de fiche', async () => {
+    mocks.createFiches.createFicheWithAuthorization.mockResolvedValueOnce(
+      failure('SERVER_ERROR')
+    );
+
+    const result = await service.create(createRequest(), { user, tx });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: PlanErrorType.DATABASE_ERROR,
+    });
+  });
+
+  it('remonte la cause Postgres sans la requête Drizzle', async () => {
+    const cause = new Error('value too long for type character varying');
+    mocks.createFiches.createFicheWithAuthorization.mockResolvedValueOnce(
+      failure(
+        'SERVER_ERROR',
+        new Error('Failed query: insert … params: …', { cause })
+      )
+    );
+
+    const result = await service.create(createRequest(), { user, tx });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: PlanErrorType.DATABASE_ERROR,
+      cause,
+    });
+  });
+
+  it('remonte une exception comme cause', async () => {
+    const cause = new Error('connexion perdue');
+    mocks.plans.upsertPlan.mockRejectedValue(cause);
+
+    const result = await service.create(createRequest(), { user, tx });
+
+    expect(result).toMatchObject({
+      success: false,
+      error: PlanErrorType.DATABASE_ERROR,
+      cause,
+    });
+  });
+
+  describe('notifyCreatedFiches', () => {
+    it('recharge les fiches après commit et envoie un seul webhook batché', async () => {
+      const fiches = [
+        { id: 101, titre: 'Fiche 1' },
+        { id: 102, titre: 'Fiche 2' },
+      ];
+      mocks.listFiches.listFichesQuery.mockResolvedValue({
+        data: fiches,
+        count: 2,
+      });
+
+      await service.notifyCreatedFiches({
+        createdFicheIds: [101, 102],
+        planId: 1,
+      });
+
+      expect(mocks.listFiches.listFichesQuery).toHaveBeenCalledExactlyOnceWith(
+        null,
+        { ficheIds: [101, 102], withChildren: true }
       );
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(true);
-
-      // One axe should be created for "Axe 1"
-      expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(1);
-
-      expect(mockCreateFicheService.createFicheWithAuthorization).toHaveBeenCalledTimes(4);
+      expect(
+        mocks.webhooks.sendWebhookNotifications
+      ).toHaveBeenCalledExactlyOnceWith(
+        ApplicationSousScopesEnum.FICHES,
+        fiches.map((fiche) => ({ entityId: String(fiche.id), payload: fiche }))
+      );
     });
 
-    describe('webhook batching', () => {
-      it('envoie un seul webhook batché pour toutes les fiches créées', async () => {
-        const request = createValidRequest();
+    it('ne relance pas la création si le webhook échoue', async () => {
+      mocks.webhooks.sendWebhookNotifications.mockRejectedValue(
+        new Error('webhook endpoint down')
+      );
 
-        mockUpsertPlanService.upsertPlan.mockResolvedValue(
-          success({ id: 1, nom: 'Mon Plan Test' })
-        );
-        mockUpsertAxeService.upsertAxe
-          .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-          .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
+      await expect(
+        service.notifyCreatedFiches({ createdFicheIds: [101], planId: 1 })
+      ).resolves.toBeUndefined();
 
-        const refetchedFiches = [
-          { id: 101, titre: 'Fiche 1' },
-          { id: 102, titre: 'Fiche 2' },
-        ];
-        mockListFichesService.listFichesQuery.mockResolvedValueOnce({
-          data: refetchedFiches,
-          count: refetchedFiches.length,
-        });
+      expect(mocks.plans.upsertPlan).not.toHaveBeenCalled();
+      expect(
+        mocks.createFiches.createFicheWithAuthorization
+      ).not.toHaveBeenCalled();
+    });
 
-        const result = await service.create(request, mockUser, mockTransaction);
+    it("n'envoie rien si aucune fiche n'a été créée", async () => {
+      await service.notifyCreatedFiches({ createdFicheIds: [], planId: 1 });
 
-        expect(result.success).toBe(true);
-        expect(
-          mockWebhookService.sendWebhookNotifications
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          mockWebhookService.sendWebhookNotifications
-        ).toHaveBeenCalledWith(ApplicationSousScopesEnum.FICHES, [
-          { entityId: '101', payload: refetchedFiches[0] },
-          { entityId: '102', payload: refetchedFiches[1] },
-        ]);
-      });
-
-      it("ne casse pas l'import si l'envoi du webhook échoue", async () => {
-        const request = createValidRequest();
-
-        mockUpsertPlanService.upsertPlan.mockResolvedValue(
-          success({ id: 1, nom: 'Mon Plan Test' })
-        );
-        mockUpsertAxeService.upsertAxe
-          .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
-          .mockResolvedValueOnce(success({ id: 11, nom: 'Sous-Axe 1' }));
-
-        mockListFichesService.listFichesQuery.mockResolvedValueOnce({
-          data: [{ id: 101, titre: 'Fiche 1' }],
-          count: 1,
-        });
-        mockWebhookService.sendWebhookNotifications.mockRejectedValueOnce(
-          new Error('webhook endpoint down')
-        );
-
-        const result = await service.create(request, mockUser, mockTransaction);
-
-        expect(result.success).toBe(true);
-      });
+      expect(mocks.listFiches.listFichesQuery).not.toHaveBeenCalled();
+      expect(mocks.webhooks.sendWebhookNotifications).not.toHaveBeenCalled();
     });
   });
 });

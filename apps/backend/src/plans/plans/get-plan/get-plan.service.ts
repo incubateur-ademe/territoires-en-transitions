@@ -153,17 +153,20 @@ export class GetPlanService {
 
   async checkPermission(
     collectiviteId: number,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    tx?: Transaction
   ): Promise<boolean> {
     const collectivitePrivate = await this.collectivite.isPrivate(
-      collectiviteId
+      collectiviteId,
+      tx
     );
 
     const permissionResult = await this.permissionService.isAllowed(
       user,
       collectivitePrivate ? 'plans.read_confidentiel' : 'plans.read',
       ResourceType.COLLECTIVITE,
-      { collectiviteId }
+      { collectiviteId },
+      tx
     );
 
     if (!permissionResult.success) {

@@ -8,27 +8,27 @@ export const electrificationFichesErrors = {
   ...prepareFicheErrors,
   INVALID_FICHES_INPUT: {
     kind: 'document-error',
-    message: 'Les fiches actions extraites sont incomplètes ou invalides.',
+    message: 'Les actions extraites sont incomplètes ou invalides.',
   },
   INVALID_FICHES_CONFIG: {
     kind: 'configuration-error',
     message:
-      'Les correspondances des fiches actions Électrification sont incohérentes.',
+      'Les correspondances des actions Électrification sont incohérentes.',
   },
   FICHES_CONFIG_UNAVAILABLE: {
     kind: 'configuration-error',
     message:
-      'Les correspondances de cette référence restent à livrer ou à valider.',
+      "Cette référence est incomplète ou non validée dans le catalogue. Contactez le support TeT pour la vérifier, puis relancez l'import avec le même document.",
   },
   UNKNOWN_FICHE_REFERENCE: {
     kind: 'document-error',
     message:
-      'Cette référence ne figure pas dans le catalogue des fiches actions Électrification.',
+      'Cette référence ne figure pas dans le catalogue des actions Électrification.',
   },
   INVALID_FICHE_AXIS: {
     kind: 'document-error',
     message:
-      "L'axe ou le sous-axe ne correspond pas à la référence de la fiche action.",
+      "L'axe ou le sous-axe ne correspond pas à la référence de l'action.",
   },
   EXISTING_INDICATEUR_PRESERVED: {
     kind: 'preserved-data',
@@ -47,7 +47,17 @@ export const electrificationFichesErrors = {
   INVALID_INDICATEUR_PERIOD: {
     kind: 'document-error',
     message:
-      "La périodicité ou la période de la valeur est absente ou incompatible avec l'indicateur.",
+      "La période de cette valeur est absente ou incompatible avec l'indicateur. Renseignez une année pour un indicateur annuel.",
+  },
+  INVALID_INDICATEUR_PERIODICITY: {
+    kind: 'document-error',
+    message:
+      "La périodicité renseignée ne correspond pas à celle de l'indicateur.",
+  },
+  MISSING_INDICATEUR_YEAR: {
+    kind: 'document-error',
+    message:
+      'L\'année de référence de cette valeur est absente. Ajoutez-la après la valeur, par exemple "12 (2025)" ou "Oui (2025)".',
   },
   MISSING_INDICATEUR_UNIT: {
     kind: 'document-error',
@@ -56,7 +66,12 @@ export const electrificationFichesErrors = {
   MISSING_FICHE_INDICATEUR: {
     kind: 'configuration-error',
     message:
-      'La définition attendue est absente, ambiguë, inaccessible ou incompatible avec la correspondance validée.',
+      "La définition de cet indicateur est absente ou incompatible avec le catalogue. Contactez le support TeT pour la vérifier, puis relancez l'import avec le même document.",
+  },
+  AIDE_WITHOUT_URL_IGNORED: {
+    kind: 'warning',
+    message:
+      "Le catalogue ne fournit pas de lien pour cette aide. Elle n'a pas été ajoutée aux documents ; l'action peut être importée. Aucune correction du document n'est nécessaire pour cet avertissement.",
   },
   EMPTY_BOOLEAN_RESULT: {
     kind: 'warning',
@@ -65,7 +80,7 @@ export const electrificationFichesErrors = {
   FICHE_RESOLUTION_FAILED: {
     kind: 'processing-error',
     message:
-      "Les références des fiches actions n'ont pas pu être vérifiées. Réessayez plus tard.",
+      "Les références des actions n'ont pas pu être vérifiées. Réessayez plus tard.",
   },
 } as const satisfies Record<
   string,

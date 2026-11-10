@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { ElectrificationExtractionCheckpoint } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
 import {
   documentKindSchema,
   genericImportContractSchema,
@@ -14,6 +15,10 @@ import type { ImportJobStats } from './import-job-stats';
 export type ImportCheckpoint = PipelineCheckpoint & {
   documentStats: ImportJobStats['document'];
 };
+
+export type StoredImportCheckpoint =
+  | ImportCheckpoint
+  | ElectrificationExtractionCheckpoint;
 
 const countSchema = z.number().int().nonnegative();
 
@@ -57,11 +62,3 @@ export const parseImportCheckpoint = (value: unknown) =>
 
 export const isSupportedGenericImport = (options: unknown): boolean =>
   genericImportContractSchema.safeParse(options).success;
-
-/** L'éligibilité à la reprise et le worker utilisent le même contrat. */
-export const isImportCheckpointSupported = (
-  checkpoint: unknown,
-  options: unknown
-): boolean =>
-  isSupportedGenericImport(options) &&
-  parseImportCheckpoint(checkpoint).success;

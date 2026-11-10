@@ -78,7 +78,7 @@ export const cutUnits = (
 
   for (const page of pages) {
     page.lines.forEach((line, lineIndex) => {
-      const unitLine: UnitLine = { text: line.text, pageIndex: page.index };
+      const unitLine: UnitLine = { ...line, pageIndex: page.index };
       const heading = headingAt.get(`${page.index}:${lineIndex}`);
       if (heading && heading.level === SECTION_LEVEL) {
         // Le nom de la partie repris en bandeau n'ouvre rien.

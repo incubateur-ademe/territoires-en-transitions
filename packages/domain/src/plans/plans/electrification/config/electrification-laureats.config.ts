@@ -22,12 +22,14 @@ export type ElectrificationLaureatsConfig = z.infer<
  * Liste provisoire du 30 septembre, rapprochée des collectivités TeT.
  * Les porteurs de groupements sont repris provisoirement du fichier source.
  * Les corrections et les quatre exclusions sont documentées dans l'ADR 0022.
+ * La collectivité de démo est ajoutée pour la recette, hors liste officielle.
  * null indique un mapping non livré ; validUntil null le conserve jusqu'à remplacement.
  */
 export const electrificationLaureatsConfig: ElectrificationLaureatsConfig | null =
   {
-    source: '20260930_Territoires_electrification_activite_TET.xlsx',
-    version: '2026-09-30-revision-2026-11-11',
+    source:
+      '20260930_Territoires_electrification_activite_TET.xlsx + collectivité de démo (recette)',
+    version: '2026-09-30-revision-2026-11-11-demo',
     validFrom: '2026-09-30T00:00:00.000Z',
     validUntil: null,
     laureats: [
@@ -241,5 +243,7 @@ export const electrificationLaureatsConfig: ElectrificationLaureatsConfig | null
       { reference: 'grp-08897031d9a1', collectiviteId: 5490 },
       // Syndicat d'Énergie Vauclusien (SEV) SIREN 200035913 — porteur provisoire : Syndicat d'énergie Vauclusien
       { reference: 'grp-973e6fce8957', collectiviteId: 13137 },
+      // Collectivité Démo (sans PA) : candidat synthétique pour la recette.
+      { reference: 'demo-5460', collectiviteId: 5460 },
     ],
   };

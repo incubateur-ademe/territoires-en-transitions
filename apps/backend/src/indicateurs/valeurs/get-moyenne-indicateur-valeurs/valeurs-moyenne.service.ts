@@ -1,4 +1,5 @@
 import {
+  INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
   IndicateurPeriodiciteEnum,
   SOURCES_TRAJECTOIRE,
 } from '@tet/domain/indicateurs';
@@ -14,13 +15,11 @@ import {
   eq,
   isNotNull,
   max,
-  ne,
   notInArray,
   sql,
 } from 'drizzle-orm';
 import { DatabaseService } from '../../../utils/database/database.service';
 
-import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/backend/demarches/pcaet/shared/demarche-pcaet-source-metadonnee.repository';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
@@ -121,11 +120,12 @@ export default class ValeursMoyenneService {
             sql`${typeCollectiviteExpr} IS NOT DISTINCT FROM ${typeCollectivite}`,
             isNotNull(iv.resultat),
             isNotNull(iv.metadonneeId),
-            // Sources hors moyenne nationale : trajectoires SNBC 2 et 3, et
-            // PCAET collectivité (valeurs de démarche, pas une source ouverte
-            // partagée).
-            notInArray(ism.sourceId, [...SOURCES_TRAJECTOIRE]),
-            ne(ism.sourceId, PCAET_COLLECTIVITE_SOURCE_ID),
+            // Trajectoires and values owned by a démarche or plan do not
+            // contribute to the national average of shared sources.
+            notInArray(ism.sourceId, [
+              ...SOURCES_TRAJECTOIRE,
+              ...INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
+            ]),
             eq(
               iv.periodicite,
               options.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE
