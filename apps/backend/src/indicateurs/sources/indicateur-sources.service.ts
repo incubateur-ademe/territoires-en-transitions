@@ -25,12 +25,13 @@ export default class IndicateurSourcesService {
   ) {}
 
   async createIndicateurSourceMetadonnee(
-    indicateurSourceMetadonneeType: IndicateurSourceMetadonneeCreate
+    indicateurSourceMetadonneeType: IndicateurSourceMetadonneeCreate,
+    tx?: Transaction
   ) {
     this.logger.log(
       `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.sourceId} et la date ${indicateurSourceMetadonneeType.dateVersion}`
     );
-    return this.repository.createMetadonnee(indicateurSourceMetadonneeType);
+    return this.repository.createMetadonnee(indicateurSourceMetadonneeType, tx);
   }
 
   async getAllIndicateurSourceMetadonnees(
@@ -49,17 +50,21 @@ export default class IndicateurSourcesService {
 
   async getIndicateurSourceMetadonnee(
     sourceId: string,
-    dateVersion: string
+    dateVersion: string,
+    tx?: Transaction
   ): Promise<IndicateurSourceMetadonnee | null> {
     this.logger.log(
       `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion}`
     );
-    return this.repository.getMetadonnee(sourceId, dateVersion);
+    return this.repository.getMetadonnee(sourceId, dateVersion, tx);
   }
 
-  async upsertIndicateurSource(indicateurSource: IndicateurSourceCreate) {
+  async upsertIndicateurSource(
+    indicateurSource: IndicateurSourceCreate,
+    tx?: Transaction
+  ) {
     this.logger.log(`Upsert de la source d'indicateur ${indicateurSource.id}`);
-    return this.repository.upsertSource(indicateurSource);
+    return this.repository.upsertSource(indicateurSource, tx);
   }
 
   async getAllSources() {

@@ -110,13 +110,30 @@ export class UpsertIndicateurFichesRepository {
         );
     }
 
-    if (ficheIds.length > 0) {
-      await writeDb
-        .insert(ficheActionIndicateurTable)
-        .values(
-          ficheIds.map((ficheId) => ({ ficheId, indicateurId, createdBy }))
-        )
-        .onConflictDoNothing();
-    }
+    await this.addIndicateurFiches({ indicateurId, ficheIds, createdBy }, tx);
+  }
+
+  /** Ajoute les liens sans supprimer ni réécrire les relations existantes. */
+  async addIndicateurFiches(
+    {
+      indicateurId,
+      ficheIds,
+      createdBy,
+    }: Pick<UpsertIndicateurFiches, 'indicateurId' | 'ficheIds' | 'createdBy'>,
+    tx?: Transaction
+  ): Promise<void> {
+    if (ficheIds.length === 0) return;
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionIndicateurTable)
+      .values(
+        [...new Set(ficheIds)]
+          .sort((a, b) => a - b)
+          .map((ficheId) => ({
+            ficheId,
+            indicateurId,
+            createdBy,
+          }))
+      )
+      .onConflictDoNothing();
   }
 }

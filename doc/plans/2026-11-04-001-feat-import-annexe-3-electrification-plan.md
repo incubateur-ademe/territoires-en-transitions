@@ -27,7 +27,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 3A — Lecture documentaire : [#5757](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5757), implémentée et vérifiée, en revue.
 - [x] PR 3B — Extraction du canevas DOCX V4 avec assistance IA ciblée : [#5759](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5759), implémentée et vérifiée, en revue. Profil de production toujours fermé.
 - [x] PR 4A — Structure explicite, liens et effets après commit : [#5774](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5774), implémentée et vérifiée, en revue. Aucun changement de schéma ; profil de production toujours fermé.
-- [ ] PR 4B — Indicateurs et liens.
+- [x] PR 4B — Indicateurs et liens : [#5775](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5775), implémentée et vérifiée, en revue. Création, sources et liens additifs sous transaction ; aucune migration ni ouverture du profil.
 - [ ] PR 4C — Valeurs sans écrasement et isolation par métadonnée.
 - [ ] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources.
 - [ ] PR 5 — Pipeline complet et cycle de vie.
@@ -831,6 +831,17 @@ reste possible.
 
 **Périmètre :** [création d'indicateur personnalisé](../../apps/backend/src/indicateurs/indicateurs/mutate-indicateur/create-indicateur.service.ts),
 liens axe/indicateur et fiche/indicateur.
+
+**Livraison 4B :** la création personnalisée accepte le contexte `{ user, tx? }`.
+Le service commun `AddIndicateurLinksService` ajoute les liens aux axes et aux
+fiches sous la transaction obligatoire de l'appelant, après contrôle des droits,
+de la collectivité et des partages. Les repositories existants fournissent les
+insertions additives ; leurs setters conservent leur comportement de remplacement.
+Un lot qui crée aussi des indicateurs prend le verrou exclusif du graphe avant
+ses premières lectures verrouillées. Les services de sources transmettent la
+transaction aux opérations existantes et renvoient l'ID exact de la métadonnée
+créée, y compris si plusieurs métadonnées partagent une source et une date.
+Le schéma reste inchangé et le profil Électrification reste fermé.
 
 - Permettre à la création personnalisée de participer à la transaction fournie,
   tout en conservant sa transaction propre pour les appels ordinaires.

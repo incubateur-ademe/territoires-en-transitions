@@ -80,18 +80,7 @@ export class UpsertAxeRepository extends UpsertAxeBaseRepository<
           );
       }
 
-      if (indicateurIdsToInsert.length > 0) {
-        await tx
-          .insert(axeIndicateurTable)
-          .values(
-            indicateurIdsToInsert.map((indicateurId) => ({
-              axeId,
-              indicateurId,
-              createdBy: userId,
-            }))
-          )
-          .returning();
-      }
+      await this.addAxeIndicateurs(axeId, indicateurIdsToInsert, userId, tx);
 
       return { success: true, data: undefined };
     } catch (error) {
@@ -101,5 +90,27 @@ export class UpsertAxeRepository extends UpsertAxeBaseRepository<
         error: UpsertAxeErrorEnum.UPDATE_INDICATEURS_ERROR,
       };
     }
+  }
+
+  /** Ajoute les liens sans supprimer ni réécrire les relations existantes. */
+  async addAxeIndicateurs(
+    axeId: number,
+    indicateurIds: number[],
+    userId: string,
+    tx: Transaction
+  ): Promise<void> {
+    if (indicateurIds.length === 0) return;
+    await tx
+      .insert(axeIndicateurTable)
+      .values(
+        [...new Set(indicateurIds)]
+          .sort((a, b) => a - b)
+          .map((indicateurId) => ({
+            axeId,
+            indicateurId,
+            createdBy: userId,
+          }))
+      )
+      .onConflictDoNothing();
   }
 }
