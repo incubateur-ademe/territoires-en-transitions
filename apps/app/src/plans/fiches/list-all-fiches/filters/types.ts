@@ -27,6 +27,8 @@ const NON_UI_FILTER_KEYS = [
   'onlyChildren',
   'withChildren',
   'withAxesAncestors',
+  'enCoursSansAvancement',
+  'notModifiedForOverAYear',
 ] as const;
 
 export type Filters = Omit<

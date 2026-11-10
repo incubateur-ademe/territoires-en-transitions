@@ -1,4 +1,6 @@
 import {
+  EN_COURS_SANS_AVANCEMENT_LABEL,
+  NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
@@ -27,6 +29,13 @@ export const toFilters = (filters: Filters): FormFilters => {
     ...(filters.noPilote ? [SANS_PILOTE_LABEL] : []),
   ];
 
+  const suivi = [
+    ...(filters.enCoursSansAvancement ? [EN_COURS_SANS_AVANCEMENT_LABEL] : []),
+    ...(filters.notModifiedForOverAYear
+      ? [NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL]
+      : []),
+  ];
+
   return {
     collectiviteId: filters.collectiviteId,
     axes: filters.axes ?? [],
@@ -34,12 +43,20 @@ export const toFilters = (filters: Filters): FormFilters => {
     ...(statuts.length > 0 && { statuts }),
     ...(referents.length > 0 && { referents }),
     ...(pilotes.length > 0 && { pilotes }),
+    ...(suivi.length > 0 && { suivi }),
   };
 };
 
 export const splitReferentsAndPilotesIds = (filters: FormFilters): Filters => {
-  const { collectiviteId, axes, priorites, statuts, referents, pilotes } =
-    filters;
+  const {
+    collectiviteId,
+    axes,
+    priorites,
+    statuts,
+    referents,
+    pilotes,
+    suivi,
+  } = filters;
 
   const withNoPriorite = priorites?.includes(SANS_PRIORITE_LABEL);
   const prioritesValues = priorites?.filter((p) => p !== SANS_PRIORITE_LABEL);
@@ -73,6 +90,12 @@ export const splitReferentsAndPilotesIds = (filters: FormFilters): Filters => {
     ...(pilotesValues &&
       pilotesValues.length > 0 && { pilotes: pilotesValues }),
     ...(withNoPilote && { noPilote: true }),
+    ...(suivi?.includes(EN_COURS_SANS_AVANCEMENT_LABEL) && {
+      enCoursSansAvancement: true,
+    }),
+    ...(suivi?.includes(NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL) && {
+      notModifiedForOverAYear: true,
+    }),
   };
 };
 

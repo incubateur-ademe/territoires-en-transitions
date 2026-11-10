@@ -24,6 +24,8 @@ const searchParametersSchema = listFichesRequestFiltersObjectSchema.pick({
   personneReferenteIds: true,
   statuts: true,
   priorites: true,
+  enCoursSansAvancement: true,
+  notModifiedForOverAYear: true,
 });
 
 const countActiveFilters = (formattedFilters: FormFilters): number => {
@@ -32,6 +34,7 @@ const countActiveFilters = (formattedFilters: FormFilters): number => {
     'referents',
     'statuts',
     'priorites',
+    'suivi',
   ] as const;
 
   return filterKeysToConsider.filter((key) => {
