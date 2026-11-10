@@ -231,9 +231,8 @@ locals {
       env      = a.env
       app      = a.app
       resource = a.resource
-      # Application construite depuis son dépôt (git-applications.tf) : les
-      # règles propres aux images TET (clés fournies par l'image, pas de
-      # NEXT_PUBLIC_*) ne s'appliquent pas.
+      # Application construite depuis son dépôt (git-applications.tf) : elle
+      # peut poser HOSTNAME, que Railpack ne fournit pas.
       git               = try(a.git, false)
       secret_project_id = local.coolify_env_settings[a.env].secret_project_id
       secret_path       = "/coolify-env/${a.env}"

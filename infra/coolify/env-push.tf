@@ -40,7 +40,9 @@ resource "terraform_data" "env_push" {
     precondition {
       # Le repli NEXT_PUBLIC_* de public-env.ts n'existe que pour la
       # compatibilité : en poser réintroduirait le couplage image ↔ environnement.
-      condition     = each.value.git || alltrue([for k in keys(each.value.entries) : !startswith(k, "NEXT_PUBLIC_")])
+      # Vaut aussi pour les applications Git : coolify-push-env.sh pousse tout
+      # en runtime seulement, un NEXT_PUBLIC_* n'atteindrait pas le build.
+      condition     = alltrue([for k in keys(each.value.entries) : !startswith(k, "NEXT_PUBLIC_")])
       error_message = "${each.key} : pas de NEXT_PUBLIC_*, la configuration runtime se lit sans préfixe."
     }
     precondition {

@@ -88,7 +88,7 @@ resource "coolify_server" "app" {
   for_each = var.app_servers
 
   name             = each.value.name
-  description      = "Tier ${each.key}. Géré par Terraform (infra/${each.key}). [tet-server:${each.key}]"
+  description      = "Tier ${each.key}. Géré par Terraform (infra/${each.key}). (tet-server=${each.key})"
   ip               = each.value.ssh_host
   user             = "root"
   port             = 22

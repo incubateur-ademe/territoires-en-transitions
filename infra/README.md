@@ -379,12 +379,11 @@ pas le tag d'image** : il ne le pose qu'à la création, puis l'ignore. C'est la
 APP_ID=preprod/app IMAGE_TAG=<sha> infra/scripts/coolify-deploy.sh
 ```
 
-Les scripts retrouvent chaque application par le marqueur `[tet-app:<env>/<app>]` de sa
-description : la CD n'a besoin d'aucun UUID. Coolify ≥ 4.7 refusant `[ ] :` dans une
-description, les applications créées depuis (applications Git) portent `(tet-app=<env>/<app>)`,
-que `coolify-push-env.sh` accepte aussi. Les environnements s'ouvrent un par un via
-`application_environments` (défaut `["preprod"]`). Retirer une application du catalogue ne
-la supprime pas de Coolify. Feuille de route :
+Les scripts retrouvent chaque application par le marqueur `(tet-app=<env>/<app>)` de sa
+description (`(tet-service=…)` pour un service, `(tet-server=…)` pour un serveur) : la CD
+n'a besoin d'aucun UUID. Coolify ≥ 4.7 refuse `[ ] :` dans une description, d'où ce format.
+Les environnements s'ouvrent un par un via `application_environments` (défaut
+`["preprod"]`). Retirer une application du catalogue ne la supprime pas de Coolify. Feuille de route :
 [`doc/plans/2026-10-06-001-infra-applications-coolify-as-code-plan.md`](../doc/plans/2026-10-06-001-infra-applications-coolify-as-code-plan.md).
 
 ### Applications Git (aldo, rencontres)
@@ -442,7 +441,8 @@ jq -c . sa.json | infra/scripts/coolify-env-secret-set.sh preprod gcloud-service
 - **Interdits**, bloqués par des préconditions : les clés fournies par l'image
   (`GIT_SHORT_HASH`, `APPLICATION_VERSION`, `NODE_ENV`, `PORT`, `HOSTNAME`…), les
   `NEXT_PUBLIC_*`, et une valeur en clair sur une clé au nom sensible. Une application
-  Git (`git-applications.tf`) peut poser `HOSTNAME` et des `NEXT_PUBLIC_*`.
+  Git (`git-applications.tf`) peut poser `HOSTNAME`. Toutes les variables sont poussées en
+  runtime seulement : un `NEXT_PUBLIC_*` n'atteindrait pas le build.
 - **Pousser ne redéploie pas** : redéployer avec `coolify-deploy.sh`.
 - **Ajouter une clé** : une ligne dans le manifeste. Pour un secret, l'`apply` crée sa
   coquille puis échoue en la signalant vide : déposer la valeur, réappliquer.

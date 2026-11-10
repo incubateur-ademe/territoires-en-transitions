@@ -31,7 +31,7 @@ locals {
     prod    = { server = "prod", supabase_api_host = "supabase-api.territoiresentransitions.fr" }
   }
 
-  # Clé « env/service » : identifiant du marqueur [tet-service:env/service].
+  # Clé « env/service » : identifiant du marqueur (tet-service=env/service).
   services = {
     for env, e in local.service_environments_catalog : "${env}/supabase-api" => {
       env               = env
@@ -51,7 +51,7 @@ resource "coolify_service" "supabase_api" {
   for_each = local.services
 
   name             = "supabase-api"
-  description      = "GoTrue + Storage API ${each.value.env}. Géré par Terraform (infra/coolify/services.tf). [tet-service:${each.key}]"
+  description      = "GoTrue + Storage API ${each.value.env}. Géré par Terraform (infra/coolify/services.tf). (tet-service=${each.key})"
   project_uuid     = coolify_project.tet.uuid
   server_uuid      = coolify_server.app[each.value.server].uuid
   environment_name = local.coolify_environment_names[each.value.env]
@@ -112,7 +112,7 @@ resource "coolify_service" "alloy" {
   for_each = local.alloy_services
 
   name             = "alloy"
-  description      = "Agent Grafana Alloy du serveur ${each.value.server}, vers Cockpit. Géré par Terraform (infra/coolify/services.tf). [tet-service:${each.key}]"
+  description      = "Agent Grafana Alloy du serveur ${each.value.server}, vers Cockpit. Géré par Terraform (infra/coolify/services.tf). (tet-service=${each.key})"
   project_uuid     = coolify_project.tet.uuid
   server_uuid      = coolify_server.app[each.value.server].uuid
   environment_name = local.coolify_environment_names[each.value.env]

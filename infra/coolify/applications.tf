@@ -73,7 +73,7 @@ locals {
   }
 
   # Une entrée par couple environnement/application activé, clé « env/app » :
-  # c'est aussi l'identifiant du marqueur [tet-app:env/app] dans Coolify.
+  # c'est aussi l'identifiant du marqueur (tet-app=env/app) dans Coolify.
   applications = merge([
     for env, e in local.application_environments_catalog : {
       for app, domains in e.domains : "${env}/${app}" => merge(local.application_catalog[app], {
@@ -86,14 +86,15 @@ locals {
   ]...)
 }
 
-# Le marqueur [tet-app:env/app] de la description est la clé que
+# Le marqueur (tet-app=env/app) de la description est la clé que
 # coolify-push-env.sh et coolify-deploy.sh utilisent pour retrouver
-# l'application : il ne bouge pas.
+# l'application : il ne bouge pas. Coolify ≥ 4.7 refuse « [ ] : » dans une
+# description, d'où ce format pour tous les marqueurs (tet-<type>=<id>).
 resource "coolify_application_docker_image" "app" {
   for_each = local.applications
 
   name             = each.value.app
-  description      = "${each.value.app} ${each.value.env}. Géré par Terraform (infra/coolify/applications.tf). [tet-app:${each.key}]"
+  description      = "${each.value.app} ${each.value.env}. Géré par Terraform (infra/coolify/applications.tf). (tet-app=${each.key})"
   project_uuid     = coolify_project.tet.uuid
   server_uuid      = coolify_server.app[each.value.server].uuid
   environment_name = local.coolify_environment_names[each.value.env]

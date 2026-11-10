@@ -6,7 +6,7 @@
 # Idempotent : POST /servers si absent, PATCH /servers/{uuid} sinon.
 #
 # Le serveur est retrouvé par un marqueur stable posé dans sa description,
-# [tet-server:<SERVER_ID>], puis, à défaut, par son nom, puis par son IP. Le nom
+# (tet-server=<SERVER_ID>), puis, à défaut, par son nom, puis par son IP. Le nom
 # seul ne suffit pas : renommer un serveur dans Terraform en créait un second à
 # la même IP. Les deux replis servent aux serveurs enregistrés avant le
 # marqueur, qui le reçoivent au passage.
@@ -52,7 +52,7 @@ _description="${SERVER_DESCRIPTION:-Géré par Terraform (infra/coolify).}"
 if [ "$_match_localhost" != "true" ]; then
   : "${SERVER_IP:?SERVER_IP non défini (requis hors MATCH_LOCALHOST)}"
   : "${SERVER_ID:?SERVER_ID non défini (requis hors MATCH_LOCALHOST)}"
-  _marker="[tet-server:${SERVER_ID}]"
+  _marker="(tet-server=${SERVER_ID})"
   _description="${_description} ${_marker}"
 fi
 
@@ -93,9 +93,9 @@ else
   srv_uuid="$(printf '%s' "$servers" | jq -r \
     --arg m "$_marker" --arg n "$SERVER_NAME" --arg ip "$SERVER_IP" '
     ([.[] | select((.description // "") | contains($m))] +
-     [.[] | select((.description // "") | test("\\[tet-server:") | not)
+     [.[] | select((.description // "") | contains("(tet-server=") | not)
           | select(.name == $n)] +
-     [.[] | select((.description // "") | test("\\[tet-server:") | not)
+     [.[] | select((.description // "") | contains("(tet-server=") | not)
           | select((.ip // .ip_address) == $ip)])
     | first | .uuid // empty')"
 fi
