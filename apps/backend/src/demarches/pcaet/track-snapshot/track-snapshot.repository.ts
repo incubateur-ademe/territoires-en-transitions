@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import {
   DemarchePcaetStatusEnum,
   DemarcheTypeEnum,
@@ -31,7 +33,9 @@ export class TrackSnapshotRepository {
 
   /**
    * Les démarches dont le stock se suit : toutes sauf les archivées, que l'on
-   * garde encore le temps de voir leur archivage dans les courbes.
+   * garde encore le temps de voir leur archivage dans les courbes, et sauf
+   * celles des collectivités de test, où le mode démo enchaîne des dossiers
+   * fictifs.
    */
   async listDemarchesSuivies(
     archiveesDepuis: Date
@@ -50,9 +54,14 @@ export class TrackSnapshotRepository {
         publishedAt: sqlToNullableDateTimeISO(demarcheTable.publishedAt),
       })
       .from(demarcheTable)
+      .innerJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, demarcheTable.collectiviteId)
+      )
       .where(
         and(
           eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
+          ne(collectiviteTable.type, collectiviteTypeEnum.TEST),
           or(
             ne(demarcheTable.status, DemarchePcaetStatusEnum.ARCHIVE),
             gte(demarcheTable.modifiedAt, archiveesDepuis.toISOString())
