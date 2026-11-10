@@ -19,3 +19,15 @@ export const COULEURS_SUIVI_BY_STATUT: Record<
   [StatutEnum.ABANDONNE]: grey[6],
   [SANS_STATUT_LABEL]: statutFicheActionToColor[SANS_STATUT_LABEL],
 };
+
+export const ORDRE_STATUTS: (Statut | null)[] = [
+  StatutEnum.A_VENIR,
+  StatutEnum.A_DISCUTER,
+  StatutEnum.EN_COURS,
+  StatutEnum.REALISE,
+  StatutEnum.EN_RETARD,
+  StatutEnum.EN_PAUSE,
+  StatutEnum.BLOQUE,
+  StatutEnum.ABANDONNE,
+  null,
+];
