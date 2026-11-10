@@ -22,6 +22,12 @@ export const SNBC3_WORKBOOK_PATH = 'standalone.xlsx';
  * d'objet (`commit`, `version`) désignent la release en base.
  */
 export const SNBC3_MANIFEST_PATH = 'manifest.json';
+/**
+ * Release du dernier import complet commencé, dans ses métadonnées d'objet :
+ * écrite avant le remplacement des valeurs. Tant qu'elle diffère de celle du
+ * manifeste, les valeurs mélangent deux releases (import inachevé).
+ */
+export const SNBC3_PENDING_RELEASE_PATH = 'pending-release.json';
 /** Statut et rapport du dernier import (`Snbc3LastImport`). */
 export const SNBC3_LAST_IMPORT_PATH = 'last-import.json';
 const JSON_MIME_TYPE = 'application/json';
@@ -88,17 +94,70 @@ export class Snbc3ReleaseStorageService {
   }
 
   /**
+   * Marque le début du remplacement des valeurs d'un import complet. Tant que
+   * `storeReleaseFiles` n'a pas enregistré cette même release, les rejeux
+   * partiels sont refusés (cf. `getPendingRelease`).
+   */
+  async markReleasePending(
+    release: Pick<Snbc3ReleaseFiles, 'sha' | 'version'>
+  ): Promise<Result<void, ImportTrajectoireSnbc3Error>> {
+    const bucket = await this.supabaseService.ensurePrivateBucket(SNBC3_BUCKET);
+    if (!bucket.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
+    const metadata = { commit: release.sha, version: release.version };
+    const saved = await this.supabaseService.saveInStorage({
+      bucket: SNBC3_BUCKET,
+      path: SNBC3_PENDING_RELEASE_PATH,
+      file: JSON.stringify(metadata),
+      mimeType: JSON_MIME_TYPE,
+      metadata,
+    });
+    if (!saved.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
+    return success(undefined);
+  }
+
+  /**
    * Release du dernier import complet, lue dans les métadonnées de
    * `manifest.json` ; `null` avant le premier.
    */
-  async getImportedRelease(): Promise<Snbc3ImportedRelease | null> {
+  getImportedRelease(): Promise<Snbc3ImportedRelease | null> {
+    return this.readReleaseMetadata(SNBC3_MANIFEST_PATH);
+  }
+
+  /**
+   * Release que les rejeux partiels peuvent cibler : celle du dernier import
+   * complet, sauf si un import complet commencé depuis (`pending-release.json`)
+   * n'est pas allé au bout. Les valeurs peuvent alors mélanger deux releases :
+   * `null` jusqu'à un import complet réussi.
+   */
+  async getReplayableRelease(): Promise<Snbc3ImportedRelease | null> {
+    const [imported, pending] = await Promise.all([
+      this.getImportedRelease(),
+      this.readReleaseMetadata(SNBC3_PENDING_RELEASE_PATH),
+    ]);
+    if (
+      imported &&
+      pending &&
+      (pending.commit !== imported.commit ||
+        pending.version !== imported.version)
+    ) {
+      this.logger.warn(
+        `L'import complet de ${pending.version}@${pending.commit} n'est pas allé au bout : relancer un import complet avant tout rejeu partiel`
+      );
+      return null;
+    }
+    return imported;
+  }
+
+  private async readReleaseMetadata(
+    path: string
+  ): Promise<Snbc3ImportedRelease | null> {
     const [object] = await this.databaseService.db
       .select({ userMetadata: storageObjectTable.userMetadata })
       .from(storageObjectTable)
       .where(
         and(
           eq(storageObjectTable.bucketId, SNBC3_BUCKET),
-          eq(storageObjectTable.name, SNBC3_MANIFEST_PATH)
+          eq(storageObjectTable.name, path)
         )
       );
     const parsed = importedReleaseSchema.safeParse(object?.userMetadata);

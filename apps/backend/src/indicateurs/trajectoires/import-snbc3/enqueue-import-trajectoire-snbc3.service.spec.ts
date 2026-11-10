@@ -17,7 +17,7 @@ const noPendingJobs = {
 
 const buildService = (queue: Partial<Record<keyof Queue, unknown>>) => {
   const storage = {
-    getImportedRelease: vi.fn(),
+    getReplayableRelease: vi.fn(),
   } as unknown as Snbc3ReleaseStorageService;
   return new EnqueueImportTrajectoireSnbc3Service(
     queue as unknown as Queue<ImportTrajectoireSnbc3JobData>,

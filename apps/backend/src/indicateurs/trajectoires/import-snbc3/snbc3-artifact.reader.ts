@@ -175,8 +175,9 @@ export class GitlabSnbc3ArtifactReader extends Snbc3ArtifactReader {
       return;
     }
     const url = new URL(repositoryUrl);
+    // URL de clone acceptée : `https://gitlab…/groupe/snbc3.git`.
     this.api = `${url.origin}/api/v4/projects/${encodeURIComponent(
-      url.pathname.replace(/^\/|\/$/g, '')
+      url.pathname.replace(/^\/|\/$/g, '').replace(/\.git$/, '')
     )}`;
   }
 

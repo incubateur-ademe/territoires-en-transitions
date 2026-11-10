@@ -116,9 +116,10 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
   }) => {
     const release = await snbc3Repository.readRelease(sha, version);
     if (!release.success) throw new Error(release.error);
-    const stored = await app
-      .get(Snbc3ReleaseStorageService)
-      .storeReleaseFiles(release.data);
+    const storage = app.get(Snbc3ReleaseStorageService);
+    const marked = await storage.markReleasePending(release.data);
+    if (!marked.success) throw new Error(marked.error);
+    const stored = await storage.storeReleaseFiles(release.data);
     if (!stored.success) throw new Error(stored.error);
     await app
       .get(Snbc3SourceMetadonneeRepository)
@@ -629,6 +630,10 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
               .from(indicateurSourceMetadonneeTable)
               .where(eq(indicateurSourceMetadonneeTable.id, metadonneeId))
           )[0]?.dateVersion;
+    const previous = snbc3Repository.publish({
+      parquet: buildSnbc3Parquet(territoires),
+    });
+    await markAsImported(previous);
     const importedBefore = await storage.getImportedRelease();
     const dateVersionBefore = await getDateVersion();
 
@@ -654,6 +659,17 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     // Le bucket et la métadonnée désignent toujours la release précédente.
     expect(await storage.getImportedRelease()).toEqual(importedBefore);
     expect(await getDateVersion()).toEqual(dateVersionBefore);
+    // Les valeurs mélangent deux releases : pas de rejeu partiel de la
+    // précédente avant un import complet.
+    await expect(
+      router
+        .createCaller({ user: getServiceRoleUser() })
+        .indicateurs.trajectoires.snbc3.import({
+          commit: previous.sha,
+          version: previous.version,
+          collectiviteIds: collectiviteIds(),
+        })
+    ).rejects.toMatchObject({ code: 'PRECONDITION_FAILED' });
   });
 
   describe('sans le feature flag', () => {
