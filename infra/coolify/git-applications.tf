@@ -17,7 +17,7 @@
 # Ces applications ont leurs propres domaines : elles ne dépendent pas de la
 # bascule DNS de TET, d'où une liste à part, hors var.application_environments.
 # Une entrée par couple environnement/application, clé « env/app » : c'est
-# aussi le marqueur (tet-app=env/app) de coolify-push-env.sh.
+# aussi le marqueur (tet-app=env/app) des scripts.
 locals {
   git_application_catalog = {
     # Écoute sur PORT, 8080 par défaut. Build et démarrage délèguent aux
@@ -59,9 +59,7 @@ resource "coolify_application" "git" {
   for_each = local.git_applications
 
   name = each.value.app
-  # Coolify ≥ 4.7 refuse « [ ] : » dans une description : pas d'URL, et le
-  # marqueur prend la forme (tet-app=env/app), que coolify-push-env.sh accepte
-  # comme [tet-app:env/app].
+  # Coolify ≥ 4.7 refuse « [ ] : » dans une description : pas d'URL.
   description      = "${each.value.app} ${each.value.env}, construit depuis ${trimprefix(each.value.repository, "https://github.com/")}. Géré par Terraform (infra/coolify/git-applications.tf). (tet-app=${each.key})"
   project_uuid     = coolify_project.tet.uuid
   server_uuid      = coolify_server.app[each.value.server].uuid

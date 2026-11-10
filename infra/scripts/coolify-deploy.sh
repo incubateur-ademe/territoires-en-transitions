@@ -2,7 +2,7 @@
 # Déploie une version d'image d'une application Coolify et attend l'issue.
 #
 # Remplace `koyeb services update` dans la CD. Utilisable aussi à la main.
-# L'application est retrouvée par le marqueur [tet-app:<APP_ID>] posé par
+# L'application est retrouvée par le marqueur (tet-app=<APP_ID>) posé par
 # infra/coolify/applications.tf : la CD n'a besoin d'aucun UUID.
 #
 # C'est la CD qui possède la version : elle pose le tag par PATCH puis
@@ -34,7 +34,7 @@ case "$-" in *x*)
 esac
 
 _timeout="${DEPLOY_TIMEOUT:-900}"
-_marker="[tet-app:${APP_ID}]"
+_marker="(tet-app=${APP_ID})"
 
 umask 077
 _tmp="$(mktemp -d)"
