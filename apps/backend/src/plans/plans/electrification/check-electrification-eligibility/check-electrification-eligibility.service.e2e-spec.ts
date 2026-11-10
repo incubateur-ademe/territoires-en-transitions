@@ -171,6 +171,7 @@ describe('Éligibilité au programme Électrification', () => {
       expect.arrayContaining([
         { reference: '200070092', collectiviteId: 4323 }, // CA du Libournais
         { reference: '200035087', collectiviteId: 3980 }, // CA Terre de Provence
+        { reference: 'demo-5460', collectiviteId: 5460 }, // Candidat de recette
       ])
     );
     expect(

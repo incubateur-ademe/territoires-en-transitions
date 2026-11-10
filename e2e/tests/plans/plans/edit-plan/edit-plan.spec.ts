@@ -1,6 +1,119 @@
+import { expect } from '@playwright/test';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
+import assert from 'node:assert/strict';
 import { test } from 'tests/main.fixture';
 
 test.describe("Édition d'un plan d'action", () => {
+  test('Conserver le type existant et son édition après fermeture de la création', async ({
+    page,
+    collectivites,
+    plans,
+    editPlanPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const types = await user.getTrpcClient().plans.plans.listTypes.query();
+    // Les capacités UI sont communes aux types ; le flag serveur est testé en backend.
+    const type = types.find(
+      (type) =>
+        type.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
+        type.type === PCAET_PLAN_TYPE_KEY.type
+    );
+    assert(type);
+    const planId = await plans.create(user, {
+      collectiviteId: collectivite.data.id,
+      nom: 'Plan existant',
+      typeId: type.id,
+    });
+    await page.route('**/trpc/plans.plans.getCreationCapabilities*', (route) =>
+      route.fulfill({
+        json: { result: { data: { unavailableTypeIds: [type.id] } } },
+      })
+    );
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await editPlanPom.editPlanNom('Plan toujours modifiable');
+    await editPlanPom.expectPlanTitle('Plan toujours modifiable');
+    await editPlanPom.expectPlanType(type.type);
+    await page.getByTestId('plan-header-type').click();
+    await expect(page.getByTestId(String(type.id))).toBeEnabled();
+    await page.keyboard.press('Escape');
+    await editPlanPom.expectPlanType(type.type);
+    await page.getByTestId('plans.plan.menu').click();
+    const duplicate = page.getByRole('button', {
+      name: 'Dupliquer le plan',
+      exact: true,
+    });
+    await expect(duplicate).toBeDisabled();
+    await duplicate.hover({ force: true });
+    await expect(page.getByRole('tooltip')).toContainText(
+      'La création de plans de ce type est temporairement désactivée.'
+    );
+    await page.keyboard.press('Escape');
+
+    await editPlanPom.editPlanType('Plan Mobilité');
+    await editPlanPom.expectPlanType('Plan Mobilité');
+    await page.getByTestId('plan-header-type').click();
+    await expect(page.getByTestId(String(type.id))).toBeDisabled();
+  });
+
+  test('Bloquer la duplication si la création ferme pendant la saisie, puis permettre sa réouverture', async ({
+    page,
+    collectivites,
+    plans,
+    editPlanPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const types = await user.getTrpcClient().plans.plans.listTypes.query();
+    const type = types.find(
+      (type) =>
+        type.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
+        type.type === PCAET_PLAN_TYPE_KEY.type
+    );
+    assert(type);
+    const planId = await plans.create(user, {
+      collectiviteId: collectivite.data.id,
+      nom: 'Plan à dupliquer',
+      typeId: type.id,
+    });
+    let unavailableTypeIds: number[] = [];
+    await page.route('**/trpc/plans.plans.getCreationCapabilities*', (route) =>
+      route.fulfill({ json: { result: { data: { unavailableTypeIds } } } })
+    );
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await page.getByTestId('plans.plan.menu').click();
+    await page
+      .getByRole('button', { name: 'Dupliquer le plan', exact: true })
+      .click();
+    const dialog = page.getByRole('dialog', { name: 'Dupliquer le plan' });
+    const duplicate = dialog.getByRole('button', {
+      name: 'Dupliquer',
+      exact: true,
+    });
+    await expect(duplicate).toBeEnabled();
+
+    unavailableTypeIds = [type.id];
+    await page.evaluate(() =>
+      window.dispatchEvent(new Event('visibilitychange'))
+    );
+    await expect(duplicate).toBeDisabled();
+    await duplicate.hover({ force: true });
+    await expect(page.getByRole('tooltip')).toContainText(
+      'La création de plans de ce type est temporairement désactivée.'
+    );
+
+    unavailableTypeIds = [];
+    await page.evaluate(() =>
+      window.dispatchEvent(new Event('visibilitychange'))
+    );
+    await expect(duplicate).toBeEnabled();
+    await duplicate.click();
+    await expect(page).not.toHaveURL(new RegExp(`/plans/${planId}$`));
+    await editPlanPom.expectPlanType(type.type);
+  });
+
   test("Éditer le nom d'un plan", async ({
     collectivites,
     plans,

@@ -1,6 +1,20 @@
 import { plural } from '@tet/ui/labels/plural';
 
 export const indicateursLabels = {
+  indicateurObjectifCollectivite: 'Objectif de la collectivité',
+  electrificationCibleAnnexe: "Cible de l'annexe 3",
+  indicateurCibleAbsente: 'Non renseignée',
+  indicateurObjectifsLectureErreur: 'Impossible de charger les objectifs.',
+  indicateurObjectifValeur: ({
+    valeur,
+    unite,
+    periode,
+  }: {
+    valeur: string;
+    unite: string;
+    periode: string;
+  }) => `${valeur}${unite ? ` ${unite}` : ''} en ${periode}`,
+
   indicateurPeriodiciteScoreTooltip:
     'Cet indicateur doit être suivi à la maille annuelle : il participe au score du programme TETE. Sa périodicité ne peut pas être modifiée.',
   indicateurPeriodiciteTooltip: (periodicite: string) =>

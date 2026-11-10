@@ -3,6 +3,7 @@ import { mapWithConcurrency } from '@tet/backend/utils/map-with-concurrency';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
 import { buildPage, DocumentPage } from '../document/document-page';
+import { DocumentLinksRules } from '../document/document-links.rules';
 import { OcrPageFn } from './llm-ocr-page';
 import { RenderPage } from './render-page-image';
 
@@ -171,13 +172,25 @@ const transcribePage = async ({
       if (text.length === 0 || text.length <= page.text.trim().length) {
         return { kind: 'blank' };
       }
+      const lines = text.split('\n').map((line, lineIndex) => {
+        const location = { pageIndex: page.index, lineIndex };
+        return {
+          text: line.trimEnd(),
+          locations: [location],
+          links: DocumentLinksRules.textLinks(line, location),
+        };
+      });
       return {
         kind: 'transcribed',
-        page: buildPage(
-          page.index,
-          text.split('\n').map((line) => ({ text: line.trimEnd() })),
-          { source: 'ocr', width: page.width, height: page.height }
-        ),
+        page: buildPage(page.index, lines, {
+          source: 'ocr',
+          width: page.width,
+          height: page.height,
+          links: [
+            ...(page.links ?? []),
+            ...lines.flatMap((line) => line.links),
+          ],
+        }),
       };
     }, pageTimeoutMs);
   } catch (error) {

@@ -1,6 +1,71 @@
+import { expect } from '@playwright/test';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
+import assert from 'node:assert/strict';
 import { test } from 'tests/main.fixture';
 
 test.describe("Création d'un plan d'action", () => {
+  test('Appliquer les capacités de création, y compris après une erreur et une réouverture', async ({
+    page,
+    collectivites,
+    createPlanPom,
+    editPlanPom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+    const types = await user.getTrpcClient().plans.plans.listTypes.query();
+    // Les capacités UI sont communes aux types ; le flag serveur est testé en backend.
+    const type = types.find(
+      (type) =>
+        type.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
+        type.type === PCAET_PLAN_TYPE_KEY.type
+    );
+    assert(type);
+    let state: 'closed' | 'error' | 'open' = 'closed';
+    await page.route(
+      '**/trpc/plans.plans.getCreationCapabilities*',
+      async (route) => {
+        if (state === 'error') {
+          await route.fulfill({
+            status: 500,
+            json: { error: { message: 'Indisponible' } },
+          });
+          return;
+        }
+        await route.fulfill({
+          json: {
+            result: {
+              data: { unavailableTypeIds: state === 'closed' ? [type.id] : [] },
+            },
+          },
+        });
+      }
+    );
+    await createPlanPom.goto(collectivite.data.id);
+    await createPlanPom.typeSelect.click();
+    await expect(page.getByTestId(String(type.id))).toBeDisabled();
+    await expect(
+      page.getByRole('button', {
+        name: 'Plan Mobilité',
+        exact: true,
+      })
+    ).toBeEnabled();
+
+    state = 'error';
+    await page.reload();
+    await createPlanPom.typeSelect.click();
+    await expect(page.getByTestId(String(type.id))).toBeDisabled();
+
+    state = 'open';
+    await page.reload();
+    await createPlanPom.fillNom('Plan après ouverture de la création');
+    await createPlanPom.typeSelect.click();
+    await page.getByTestId(String(type.id)).click();
+    await createPlanPom.submit();
+    await createPlanPom.expectSuccess(collectivite.data.id);
+    await editPlanPom.expectPlanType(type.type);
+  });
+
   test('Créer un plan avec uniquement un nom', async ({
     collectivites,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

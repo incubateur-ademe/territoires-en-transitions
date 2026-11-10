@@ -1,5 +1,6 @@
 import { parse } from 'csv-parse/sync';
 import { countBy, maxBy } from 'es-toolkit';
+import { DocumentLinksRules } from '../document/document-links.rules';
 import { cleanText } from '../normalize-text/clean-text';
 import { buildTextGrid, GridCellKind, SheetGrid } from './sheet-grid';
 
@@ -13,13 +14,29 @@ const SAMPLE_LINES = 50;
 export const readCsvGrid = (buffer: Buffer): SheetGrid => {
   const text = decodeCsv(buffer);
   const delimiter = detectDelimiter(text);
-  return buildTextGrid(
+  const rows = parseRows(text, delimiter);
+  const grid = buildTextGrid(
     '',
-    parseRows(text, delimiter).map((row) =>
+    rows.map((row) =>
       row.map((value) => cleanText(value.replace(/\r\n?/g, '\n')).trim())
     ),
     csvKindOf
   );
+  for (const cells of grid.cells) {
+    for (const cell of cells) {
+      const links = DocumentLinksRules.textLinks(
+        rows[cell.row - 1]?.[cell.col - 1] ?? '',
+        {
+          pageIndex: 0,
+          sheetName: '',
+          row: cell.row,
+          col: cell.col,
+        }
+      );
+      if (links.length > 0) cell.links = links;
+    }
+  }
+  return grid;
 };
 
 // Un CSV exporté d'Excel sous Windows est en windows-1252 : décodé en UTF-8,

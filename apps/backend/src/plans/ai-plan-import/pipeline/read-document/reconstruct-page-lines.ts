@@ -1,4 +1,4 @@
-import { PageLine } from '../document/document-page';
+import { DocumentLink, PageLine } from '../document/document-page';
 
 /** Ce que pdf.js rend pour un fragment de texte (`TextItem`). */
 export type TextItemLike = {
@@ -7,6 +7,8 @@ export type TextItemLike = {
   transform: number[];
   width: number;
   height: number;
+  /** Annotations qui recouvrent ce fragment, attribuées par le lecteur PDF. */
+  links?: DocumentLink[];
 };
 
 type PositionedItem = {
@@ -15,6 +17,7 @@ type PositionedItem = {
   right: number;
   y: number;
   fontSize: number;
+  links?: DocumentLink[];
 };
 
 // Deux fragments sont sur la même ligne si leurs ordonnées diffèrent de moins
@@ -40,7 +43,8 @@ const COLUMN_MIN_LETTERS = 10;
  */
 export const reconstructPageLines = (
   items: TextItemLike[],
-  pageHeight: number
+  pageHeight: number,
+  pageIndex?: number
 ): PageLine[] => {
   const positioned = items
     .filter((item) => item.str.length > 0)
@@ -66,7 +70,23 @@ export const reconstructPageLines = (
     .map((line) => dropOverprints(line.sort((a, b) => a.x - b.x)))
     .flatMap(splitColumns)
     .map(toPageLine)
-    .filter((line) => line.text.length > 0);
+    .filter((line) => line.text.length > 0)
+    .map((line, lineIndex) =>
+      pageIndex === undefined
+        ? line
+        : {
+            ...line,
+            locations: [{ pageIndex, lineIndex }],
+            ...(line.links
+              ? {
+                  links: line.links.map((link) => ({
+                    ...link,
+                    location: { ...link.location, lineIndex },
+                  })),
+                }
+              : {}),
+          }
+    );
 };
 
 const toPositionedItem =
@@ -80,6 +100,7 @@ const toPositionedItem =
       right: x + item.width,
       y: pageHeight - y,
       fontSize,
+      ...(item.links ? { links: item.links } : {}),
     };
   };
 
@@ -148,10 +169,12 @@ const toPageLine = (items: PositionedItem[]): PageLine => {
     }
     previous = item;
   }
+  const links = [...new Set(items.flatMap((item) => item.links ?? []))];
   return {
     text: text.replace(/\s+/g, ' ').trim(),
     fontSize: median(items.map((item) => item.fontSize)),
     y: items[0].y,
+    ...(links.length > 0 ? { links } : {}),
   };
 };
 

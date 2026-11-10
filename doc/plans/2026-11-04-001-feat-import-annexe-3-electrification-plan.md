@@ -17,12 +17,21 @@ Les deux PRs suivent le périmètre élargi : A reprend aussi les refactorings
 actifs sans changement de comportement ; B garde les évolutions fonctionnelles.
 L'import Électrification n'est pas qualifié pour une ouverture en production.
 
+La publication des configurations sans déploiement fait l'objet de la
+[PR #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815),
+distincte et basée sur B : `feat/electrification-data-publication`. B conserve
+ses données embarquées et reste déployable sans cette évolution.
+
+Les [retours de recette TT-67 du 11 novembre][retours-tt67] sont intégrés au
+périmètre de B. Leur validation locale est décrite ci-dessous ; la recette
+de la version déployée reste à effectuer.
+
 ## Livraisons et avancement
 
-| Livraison                           | Base → branche                               | État                                                                                      |
-| ----------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [PR A — Fondations][pr-foundations] | `main` → `refactor/plans-import-foundations` | Builds et tests ciblés passés ; CI des ajustements du 11 novembre à vérifier ; un commit ; non fusionnée.    |
-| [PR B — Import complet][pr-import]  | A → `feat/electrification-plan-import`       | Reconstruite sur A élargie ; draft ; un commit ; qualification finale et métier restante. |
+| Livraison                           | Base → branche                               | État                                                                                                      |
+| ----------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [PR A — Fondations][pr-foundations] | `main` → `refactor/plans-import-foundations` | Builds et tests ciblés passés ; CI des ajustements du 11 novembre à vérifier ; un commit ; non fusionnée. |
+| [PR B — Import complet][pr-import]  | A → `feat/electrification-plan-import`       | Reconstruite sur A élargie ; draft ; un commit ; qualification finale et métier restante.                 |
 
 - [x] Fixer la séparation entre refactorings sans changement utilisateur et évolutions fonctionnelles.
 - [x] Intégrer les données vérifiables : 41 sous-axes et métadonnées E07.
@@ -116,7 +125,6 @@ du frontend, du SQL, des lecteurs de documents et des calculs d'indicateurs.
 Aucun modèle externe réel n'a été appelé. Les 187 e2e du premier découpage
 restent une preuve historique distincte dans l'ADR.
 
-
 **Vérification des périodes, unités et aides — 11 novembre 2026.** A seule passe ses
 105 e2e de résolution (45 engagements, 60 fiches), les builds domaine/backend,
 le typage des specs et le lint ciblé. Frontend, SQL, lecteurs et calculs restent
@@ -133,7 +141,7 @@ ont été comparées aux six tables Grist. Les 111 e2e de A passent (66 fiches,
 45 engagements), avec les actions réelles et les correspondances incomplètes.
 Builds domaine/backend, typage des specs, lint ciblé et liens locaux passent.
 Les tests utilisent une base isolée sans snapshots de scores et un modèle
-simulé ; l'admission publique reste fermée.
+simulé ; l'admission publique était encore fermée à ce stade.
 Après rebase, les 148 e2e de fiches/extraction de B, son build backend et le
 typage des specs passent également. La recette navigateur reste à effectuer.
 
@@ -164,6 +172,10 @@ services qui la consomment. Les champs durables ne sont pas déplacés dans le
 JSON des jobs et ne sont pas abandonnés. Les décisions détaillées restent
 celles de l'ADR, sections 3 et 4.
 
+Une migration de données fournit aussi le type "Plan Électrification" sur
+une base neuve. Elle conserve son ID s'il existe déjà et ne supprime pas ce
+type au rollback. Les tests utilisent cette donnée livrée par la migration.
+
 Les fichiers de B qui ne sont pas livrés dans A sont consultables sur la
 [branche d'implémentation](https://github.com/incubateur-ademe/territoires-en-transitions/tree/feat/electrification-plan-import).
 
@@ -188,7 +200,76 @@ Les fichiers de B qui ne sont pas livrés dans A sont consultables sur la
       ré-extraction ni réattribution de version automatique.
 - [x] Flag fermé côté backend : nouveaux parcours Électrification bloqués,
       plans existants accessibles/modifiables, imports admis capables de terminer.
+- [x] Admission avec un catalogue partiellement validé : les références non
+      utilisées ne bloquent pas ; une référence utilisée incomplète, y compris
+      un complément automatique, échoue avant création. Un catalogue incohérent
+      reste refusé dès l'admission.
 - [ ] Checks de la PR sur son commit final et recette de la version intégrée.
+
+**Exception de quota pour la recette et le support — dans B :**
+
+- [x] Vérifier dans les e2e existants qu'un super-admin actif peut dépasser
+      le quota journalier, sans suppression de l'historique. Les profils
+      générique, PCAET et Électrification partagent cette règle d'admission.
+- [x] Vérifier le maintien du quota pour un éditeur et pour le support sans
+      mode super-admin actif, y compris après des imports échoués, ainsi que
+      des limites de concurrence globale et par collectivité.
+- [ ] Reporter la correction dans #5815, redéployer en préproduction et
+      reprendre la recette TT-67 sur la démo 5460 en mode super-admin.
+      Chaque import réel est lancé par un humain.
+
+Validation locale du 12 novembre : 29 e2e HTTP d'admission, 33 tests du service
+et 13 tests de permissions réussis. Queue et LLM simulés ; typage
+domaine/backend/specs et lint ciblé réussis. La recette préproduction reste
+à reprendre après redéploiement.
+
+**Ajustements après la recette produit du 11 novembre :**
+
+- [x] Vérifier le texte d'upload "Annexe 3 de la convention signée sur Word",
+      sans modifier les contrôles DOCX/taille, et l'usage d'"action" dans
+      l'interface et les étapes de progression de l'import.
+- [x] Vérifier qu'une relance après correction conserve titre, type et options,
+      permet de remplacer le fichier et crée un nouvel import ; une reprise
+      du même job conserve sa source et ses checkpoints.
+- [x] Vérifier l'affichage unique des erreurs, leurs localisations métier
+      (action, engagement, indicateur, sous-action) et une correction concrète,
+      notamment pour un sous-axe inconnu ou une année de référence manquante.
+- [x] Vérifier qu'une configuration manquante est à traiter par l'équipe,
+      sans demander à la collectivité de modifier un document valide.
+- [x] Vérifier l'omission d'une aide sans URL avec un avertissement, sans
+      blocage de l'action ; une URL renseignée mais invalide reste bloquante.
+
+Les quatre premiers points viennent de [TT-67][retours-tt67] ; le dernier
+applique la [réponse de Clément du 11 novembre à 11:19 UTC][decision-aides].
+Afficher toutes les erreurs du document en une fois reste une piste produit,
+sans engagement de validation exhaustive dans ce lot. Les questions E08,
+recharge ≥150 kW, unités et indicateurs ponctuels restent ouvertes ; l'avis
+sur des périodes mensuelles/trimestrielles ne les résout pas.
+
+**Validation locale de ces ajustements — 11 novembre 2026.** 199 e2e backend
+réussis (149 extraction/résolution, 19 parcours complets, 31 suivi/historique),
+16 tests frontend existants et cinq scénarios Playwright : DOCX/libellé,
+relance après rechargement avec fichier remplacé et options conservées,
+relance depuis l'historique et nouvel import vierge, import PCAET depuis les
+documents, fermeture/réouverture de la modale PCAET. Une nouvelle erreur
+technique reste affichée même si un ancien rapport existe. IA simulée et
+requêtes d'import navigateur interceptées ; aucun appel payant. Build backend,
+typage domaine/backend/specs/app et lint ciblé réussis. Le typage global e2e
+reste bloqué par deux erreurs `TS2883` dans les fixtures de mobilisation
+existantes, hors fichiers modifiés. Ces contrôles locaux sous Node 26 ne
+remplacent pas la CI sur la version supportée ni la recette préproduction.
+
+L'harmonisation des messages exposés par le pipeline générique vers "actions"
+est également vérifiée : 98 tests existants passent, sans nouveau fichier de
+tests ni modification des titres importés.
+
+**Vérification de l'admission ciblée — 11 novembre 2026.** 187 e2e passent
+(148 fiches/extraction, 14 parcours complets, 25 admission HTTP). Le catalogue
+livré permet E03/E12 et `1.4.1` ; une cible ou un complément indicateur utilisé
+encore en attente bloque sans écriture métier. Les tests HTTP utilisent le
+stockage simulé et des JWT signés localement, avec les guards et quotas réels.
+Build backend et dépendances, typage des specs, lint/formatage ciblés et liens
+locaux passent. La recette de préproduction et l'ouverture du flag restent à faire.
 
 **Vérification de B reconstruite — 10 novembre 2026.** 404 tests backend
 passent sur 14 suites (386 e2e et 18 tests du lecteur documentaire), dont
@@ -218,7 +299,6 @@ du modèle réel ni la couverture de documents réellement remplis, encore
 indisponibles lors de la conception. Privilégier les e2e existants ; aucun
 nouveau fichier de test unitaire n'est requis pour ce regroupement.
 
-
 **Vérification des ajustements du 11 novembre 2026.** Les 245 e2e ciblés
 (engagements, fiches/extraction, agrégat, persistance, parcours complet) et les
 16 tests unitaires existants de l'agrégat passent sur B. Builds domaine/backend,
@@ -234,23 +314,33 @@ Le flag Électrification ne protège pas cette évolution PCAET. Un retour vers 
 nécessite d'arrêter les nouvelles admissions et de laisser terminer les jobs
 `pcaet` déjà admis avec les workers de B ; ne pas les réétiqueter `generic`.
 
+## PR dédiée — Publication des données sans déploiement
+
+Séparer l'administration du catalogue et des lauréats dans
+`feat/electrification-data-publication`, basée sur B
+([#5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815)). Cette PR porte la
+publication, le chargement des données publiées, les tests et la procédure
+de bascule. Ses critères et preuves figurent dans le plan de cette branche.
+La première publication des données est un prérequis de cette livraison,
+pas de B.
+
 ## Dépendances métier avant ouverture
 
 Les constats détaillés et leurs sources figurent dans
 [l'ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#questions-ouvertes-et-dépendances-avant-ouverture).
 
-| Dépendance                   | État et action restante                                                                                                                                                                                    |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sous-axes                    | 41 numéros, titres et parents vérifiés dans Grist ; repris dans A.                                                                                                                                         |
-| E07                          | Deux références confirmées, unité "Nombre de bornes" et périodicité annuelle validées dans la source TeT et le dump local ; vérifier les définitions/dépendances déployées.                                |
-| Autres cibles                | Neuf périodes annuelles intégrées, sans lever les statuts `pending`. Vérifier les 11 références et leurs dépendances dans l'environnement cible.                                                           |
-| E08                          | Faire valider formule, dénominateurs et périmètre autobus/autocars : la formule publiée additionne deux pourcentages de parcs différents.                                                                  |
-| E09                          | Unité canonique `nb` intégrée dans A ; traduction documentaire ciblée dans B, également appliquée aux checkpoints lors d'une reprise.                                                                       |
-| Actions et sous-actions      | 109 actions et 58 sous-actions intégrées, avec identités internes fixes, rattachements principaux, 89 liens d'indicateurs et 354 liens vers 107 ressources partagées. Le parent exact reste conservé à l'import. |
-| Indicateurs Grist             | 113 codes et métadonnées explicites intégrés, correspondances TeT `pending`. Faire préciser ces correspondances, le seuil ≥150 kW de `6-b`, les unités principales de `1-a`/`1-b`/`1-c` et la période des deux comptes "Ponctuelle". |
-| Aides                        | Contrat et résolution des liens dans A ; persistance transactionnelle dans "Documents" dans B. Faire préciser le traitement des ressources sans URL avant d'importer une action qui en utilise une.       |
-| Lauréats                     | Liste du 30 septembre intégrée pour 105 lauréats : 77 correspondances vérifiées et 28 porteurs provisoires. Quatre groupements restent exclus. Confirmer les porteurs et le responsable des mises à jour ; vérifier les IDs en préproduction. |
-| Préproduction                | Vérifier les jobs présents et leurs versions, déployer les définitions et qualifier le parcours complet. Le dump local ne prouve pas l'état actuel de la préproduction.                                    |
+| Dépendance              | État et action restante                                                                                                                                                                                                                       |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sous-axes               | 41 numéros, titres et parents vérifiés dans Grist ; repris dans A.                                                                                                                                                                            |
+| E07                     | Deux références confirmées, unité "Nombre de bornes" et périodicité annuelle validées dans la source TeT et le dump local ; vérifier les définitions/dépendances déployées.                                                                   |
+| Autres cibles           | Neuf périodes annuelles intégrées, sans lever les statuts `pending`. Vérifier les 11 références et leurs dépendances dans l'environnement cible.                                                                                              |
+| E08                     | Faire valider formule, dénominateurs et périmètre autobus/autocars : la formule publiée additionne deux pourcentages de parcs différents.                                                                                                     |
+| E09                     | Unité canonique `nb` intégrée dans A ; traduction documentaire ciblée dans B, également appliquée aux checkpoints lors d'une reprise.                                                                                                         |
+| Actions et sous-actions | 109 actions et 58 sous-actions intégrées, avec identités internes fixes, rattachements principaux, 89 liens d'indicateurs et 354 liens vers 107 ressources partagées. Le parent exact reste conservé à l'import.                              |
+| Indicateurs Grist       | 113 codes et métadonnées explicites intégrés, correspondances TeT `pending`. Faire préciser ces correspondances, le seuil ≥150 kW de `6-b`, les unités principales de `1-a`/`1-b`/`1-c` et la période des deux comptes "Ponctuelle".          |
+| Aides                   | Liens valides ajoutés dans "Documents". Réponse du 11 novembre : omettre les aides sans URL avec un avertissement, sans bloquer l'action. Vérifier cette évolution dans B ; une URL renseignée mais invalide reste bloquante.                 |
+| Lauréats                | Liste du 30 septembre intégrée pour 105 lauréats : 77 correspondances vérifiées et 28 porteurs provisoires. Quatre groupements restent exclus. Confirmer les porteurs et le responsable des mises à jour ; vérifier les IDs en préproduction. |
+| Préproduction           | Vérifier les jobs présents et leurs versions, déployer les définitions et qualifier le parcours complet. Le dump local ne prouve pas l'état actuel de la préproduction.                                                                       |
 
 Aucune correspondance n'est déduite d'un titre par le code ou l'IA. Aucun accès
 à Notion ou Grist n'a lieu pendant l'import. Les données validées sont livrées
@@ -275,17 +365,54 @@ dans Git et les définitions restent dans le catalogue TeT.
       quatre groupements sans correspondance fiable en attente.
 - [x] Autoriser l'absence d'expiration quand la source n'en prévoit pas ;
       préserver le contrôle des mappings qui ont une borne de fin.
+- [x] Ajouter dans B l'admission de la collectivité de démonstration `5460`
+      avec la référence synthétique `demo-5460`, distincte des 105 lauréats.
+- [x] Configurer le flag PostHog pour la seule collectivité `5460` ; ciblage
+      vérifié le 11 novembre sur le flag créé par Émilien.
+- [x] Vérifier dans le navigateur l'accès au formulaire Électrification sur
+      `5460` sans mode super-admin, la restriction DOCX et l'admission du job.
+- [x] Vérifier la mise à jour du backend de test préprod, responsable du
+      premier échec, vers une version compatible avec l'import dédié.
+- [x] Recetter E03/E12 et `1.4.1` : plan créé, six fiches dont trois sous-actions,
+      compte rendu sans anomalie et navigation entre plan et import.
+- [x] Recetter un DOCX à quatre fiches : cibles E07 120/30 en 2030, indicateur
+      propre avec résultat zéro, dates partielles, champs libres, sous-actions
+      et préservation d'une fiche existante liée par hyperlien Word.
+- [x] Vérifier le refus d'une date réduite à l'année, avec erreur localisée
+      et aucun plan associé à l'import.
+- [ ] Étendre la recette aux références inconnues/inaccessibles, reprises,
+      droits et autres correspondances métier ; qualifier l'assistance IA.
 - [ ] Corriger les quatre groupements exclus, confirmer les porteurs provisoires
       et la maintenance de la liste.
 - [ ] Compléter les correspondances et la formule E08 après réponse ; vérifier
       les définitions et les rattachements réellement déployés.
 
-Les ajustements du 11 novembre ne lèvent pas l'admission : le catalogue
-reste incomplet. L'éligibilité est désormais vérifiable pour 105 collectivités.
-Le contrôle global des correspondances est
-une politique technique actuelle, pas une règle explicitement imposée par les
-specs. Une aide sans URL bloque seulement l'action concernée à la résolution,
-sans créer un nouveau blocage global pour les actions non sélectionnées.
+**Décision du 11 novembre :** dans B, l'admission et la reprise contrôlent
+l'intégrité du catalogue ; les résolveurs exigent des correspondances complètes
+uniquement pour les références utilisées, compléments automatiques inclus. Une
+entrée `pending` non utilisée ne bloque plus un import ; une référence inconnue,
+incomplète ou inaccessible utilisée bloque avant toute création. Après la
+[réponse de Clément][decision-aides], une aide sans URL est omise avec un
+avertissement et ne bloque plus l'action ; une URL renseignée mais invalide
+reste bloquante. Le flag, les droits et l'éligibilité
+restent requis ; 105 collectivités ont une correspondance métier livrée.
+
+**Décision du 11 novembre — collectivité de démonstration :** B ajoute `5460`
+avec la référence synthétique `demo-5460` pour la recette. Cette entrée ne
+provient pas de la liste officielle et ne constitue pas une attribution du
+programme. A conserve ses 105 correspondances ; B en contient 105 métier et
+une de démonstration, soumise aux mêmes contrôles d'admission.
+
+Les scénarios E03/E12 et `1.4.1` (réseau de chauffagistes), puis E07 avec ses
+deux cibles et un indicateur personnalisé, sont recettés sur cette collectivité.
+Les définitions `s_26` et `s_26.a` sont vérifiées en préproduction avec l'unité
+et la périodicité attendues. Les autres correspondances restent à qualifier.
+
+La seconde recette du 11 novembre réussit après mise à jour du backend de test
+préprod : le plan `59229` contient les éléments attendus du scénario sans cible
+chiffrée. Le plan `59234` valide ensuite le document plus complet ; sa variante
+avec une date invalide est refusée sans créer de plan. Les preuves sont consignées dans
+[l'ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#recette-navigateur-du-11-novembre-2026).
 
 ## Déploiement de B et ouverture
 
@@ -295,16 +422,44 @@ sans créer un nouveau blocage global pour les actions non sélectionnées.
 2. Appliquer la migration additive, puis déployer les API, tous les workers et
    l'app compatibles. Aucun job d'un nouveau profil public ne doit être admis
    pendant qu'un ancien worker peut encore consommer la queue commune. Les
-   anciens jobs PCAET `generic` gardent leurs contrats de reprise.
+   backends de test utilisant le même Redis sont également des consommateurs
+   à vérifier. Les anciens jobs PCAET `generic` gardent leurs contrats de reprise.
 3. Vérifier les éventuels jobs de préproduction et traiter les versions non
    compatibles avec leur code/catalogue d'origine. Ne pas réétiqueter les jobs.
-4. Compléter les dépendances métier, qualifier les documents et comparer
-   parser seul et assistance sur un corpus annoté dès que des documents remplis
-   sont disponibles. Mesurer aussi les valeurs incorrectes acceptées, pas
-   seulement les rejets. Tout appel réel à un modèle reste lancé par un humain.
-5. Recetter le parcours complet en préproduction, puis ouvrir un pilote de
+4. Activer le flag pour la collectivité de démonstration `5460`, puis les autres
+   collectivités de recette retenues, et tester d'abord un DOCX synthétique
+   avec des références résolubles (E03/E12 et
+   `1.4.1`). Vérifier aussi le refus d'une action avec un indicateur `pending`,
+   sans plan ni fiche créés. Tout appel réel à un modèle reste lancé par un humain.
+5. Compléter les dépendances métier pour les scénarios restants, qualifier les
+   documents et comparer parser seul et assistance sur un corpus annoté dès
+   que des documents remplis sont disponibles. Mesurer aussi les valeurs
+   incorrectes acceptées, pas seulement les rejets.
+6. Recetter le parcours complet en préproduction, puis ouvrir un pilote de
    lauréats validés. L'ouverture du flag ne remplace ni l'éligibilité ni les
-   droits et ne contourne pas une configuration incomplète.
+   droits et ne contourne pas les références utilisées incomplètes.
+
+**Configuration PostHog de la recette :** dans le
+[projet TeT](https://eu.posthog.com/project/12975/feature_flags), utiliser le flag
+booléen `is-electrification-plan-creation-enabled` avec une évaluation par
+groupe `collectivite`. Reprendre le principe du
+[contournement du diagnostic PCAET](https://eu.posthog.com/project/12975/feature_flags/275614),
+avec une règle `collectivite_id` contenant `5460`, puis les autres collectivités
+retenues pour cette recette, et un déploiement à 100 % de ce groupe ciblé.
+Ne pas reprendre automatiquement la liste du flag PCAET ni ajouter de règle
+ouverte à tous. Conserver le runtime `all`, sans contexte d'environnement.
+**Vérification du 11 novembre :** le
+[flag créé par Émilien](https://eu.posthog.com/project/12975/feature_flags/355720)
+est actif, ciblé à 100 % sur le groupe `collectivite` dont `collectivite_id`
+vaut `5460`, avec le runtime `all` et aucun contexte d'environnement. Aucune
+autre collectivité n'est ciblée par cette configuration.
+
+Le ciblage s'applique aux mêmes collectivités en préproduction et en production
+avec le code compatible. Le serveur évalue déjà le flag avec la collectivité
+courante et l'app lit ses capacités. Après déploiement de B, l'import dédié
+peut être testé sur la collectivité de démonstration `5460`, explicitement
+admise dans le mapping, ou sur une collectivité lauréate. Ni le flag ni le mode
+super-admin ne remplacent cette éligibilité.
 
 Le flag couvre création manuelle, import Excel, duplication, changement vers
 le type Électrification et nouveaux imports dédiés. Son activation explicite
@@ -337,3 +492,5 @@ existants.
 
 [pr-foundations]: https://github.com/incubateur-ademe/territoires-en-transitions/pull/5812
 [pr-import]: https://github.com/incubateur-ademe/territoires-en-transitions/pull/5813
+[retours-tt67]: https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893
+[decision-aides]: https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=4146523d57d781b891ed001cee19a898

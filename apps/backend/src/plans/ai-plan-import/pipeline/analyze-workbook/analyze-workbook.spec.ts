@@ -134,7 +134,7 @@ describe('analyzeWorkbook', () => {
       expect(warnings).toEqual(
         expect.arrayContaining([
           expect.stringMatching(
-            /« Mobilité » : fiches rattachées par leur seul n°.*n°3 « Créer une vélostation »/
+            /« Mobilité » : actions rattachées par leur seul n°.*n°3 « Créer une vélostation »/
           ),
           expect.stringMatching(
             /« Mobilité » : colonnes non reconnues, reprises avec les indicateurs : G « Relevé 2022 »/
@@ -664,7 +664,7 @@ describe('analyzeWorkbook', () => {
 
       expect(analysis.actions).toHaveLength(5);
       expect(analysis.warnings).toContain(
-        'Onglet « Plan » : la somme des budgets des fiches (15\u202f000) diffère du total E7 (6\u202f000).'
+        'Onglet « Plan » : la somme des budgets des actions (15\u202f000) diffère du total E7 (6\u202f000).'
       );
     });
 

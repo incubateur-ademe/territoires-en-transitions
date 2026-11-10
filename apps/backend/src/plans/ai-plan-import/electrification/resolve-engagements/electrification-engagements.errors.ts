@@ -39,19 +39,23 @@ export const electrificationEngagementsErrors = {
   },
   UNKNOWN_AXIS: {
     kind: 'document-error',
-    message: "Le numéro d'axe ne figure pas dans le catalogue.",
+    message:
+      "Le numéro d'axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Axe de l'action à partir du référentiel fourni avec le canevas.",
   },
   SUB_AXES_CATALOGUE_UNAVAILABLE: {
     kind: 'configuration-error',
-    message: "La correspondance des sous-axes n'est pas encore disponible.",
+    message:
+      "L'équipe doit compléter la correspondance des sous-axes dans le catalogue. Aucune correction du document n'est attendue.",
   },
   UNKNOWN_SUB_AXIS: {
     kind: 'document-error',
-    message: 'Le numéro de sous-axe ne figure pas dans le catalogue.',
+    message:
+      "Le numéro de sous-axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Sous-axe de l'action à partir du référentiel fourni avec le canevas.",
   },
   INVALID_SUB_AXIS_PARENT: {
     kind: 'document-error',
-    message: "Le sous-axe ne dépend pas de l'axe indiqué dans le document.",
+    message:
+      "Le sous-axe ne dépend pas de l'axe indiqué dans le document. Vérifiez le rattachement des champs Axe et Sous-axe de l'action à partir du référentiel fourni avec le canevas.",
   },
   INVALID_ELECTRIFICATION_INPUT: {
     kind: 'document-error',
@@ -63,7 +67,8 @@ export const electrificationEngagementsErrors = {
   },
   UNSUPPORTED_ELECTRIFICATION_CATALOGUE: {
     kind: 'configuration-error',
-    message: 'La version du catalogue Électrification est indisponible.',
+    message:
+      "Cette version du catalogue Électrification est indisponible. L'équipe doit la rendre accessible pour reprendre l'import.",
   },
   INDICATEUR_RESOLUTION_FAILED: {
     kind: 'processing-error',
@@ -77,12 +82,12 @@ export const electrificationEngagementsErrors = {
   UNVALIDATED_ENGAGEMENT_INDICATEUR: {
     kind: 'configuration-error',
     message:
-      "La définition et la périodicité de cet indicateur d'engagement restent à valider par l'équipe.",
+      "La définition et la périodicité de cet indicateur d'engagement restent à valider par l'équipe. Aucune correction du document n'est attendue.",
   },
   INCOMPATIBLE_ENGAGEMENT_INDICATEUR: {
     kind: 'configuration-error',
     message:
-      "L'unité ou la périodicité de l'indicateur ne correspond pas à la cible annuelle de l'annexe.",
+      "L'équipe doit corriger l'unité ou la périodicité de cet indicateur dans le catalogue. Aucune correction du document n'est attendue.",
   },
   INVALID_ENGAGEMENT_UNIT: {
     kind: 'document-error',

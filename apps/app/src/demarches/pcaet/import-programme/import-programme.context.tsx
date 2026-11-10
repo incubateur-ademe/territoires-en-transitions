@@ -5,18 +5,20 @@ import {
   findPcaetPlanType,
   makeProgrammeActionsPlanName,
 } from '@/app/demarches/pcaet/constants';
+import { useQueryStates } from 'nuqs';
+import { aiImportQueryState } from '@/app/plans/plans/import-plan/ai-import.query-state';
 import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { appLabels } from '@/app/labels/catalog';
 import { isAiImportVerifiable } from '@/app/plans/plans/import-plan/ai-import.form';
 import { useEnqueueAiImport } from '@/app/plans/plans/import-plan/data/use-enqueue-ai-import';
 import { useGetOngoingAiImport } from '@/app/plans/plans/import-plan/data/use-get-ongoing-ai-import';
 import { useIsAiPlanImportEnabled } from '@/app/plans/plans/import-plan/use-is-ai-plan-import-enabled';
-import { useListPlanTypes } from '@/app/plans/plans/use-list-plan-types';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterOutput, useTRPC, useTRPCClient } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { AiPlanImportProfileEnum } from '@tet/domain/plans';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
   createContext,
@@ -46,7 +48,7 @@ type ImportProgrammeContextValue = {
    * À appeler dès l'import lancé depuis la démarche : le plan, créé au
    * lancement, y est rattaché d'office, et la fin de l'import est suivie.
    */
-  trackImport: (jobId: string, planId: number) => void;
+  trackImport: (jobId: string, planId: number | null) => void;
   /** Le suivi de l'import est affiché : son échec s'y lit déjà. */
   setIsProgressDisplayed: (isDisplayed: boolean) => void;
 };
@@ -74,8 +76,6 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   const demarcheId = useDemarcheId();
   const trpc = useTRPC();
   const trpcClient = useTRPCClient();
-  const { data: planTypes } = useListPlanTypes();
-  const pcaetPlanType = findPcaetPlanType(planTypes);
   const { mutateAsync: enqueue } = useEnqueueAiImport();
   const [isStarting, setIsStarting] = useState(false);
   const queryClient = useQueryClient();
@@ -92,6 +92,7 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     isOngoing,
   } = useGetOngoingAiImport(collectiviteId, { enabled: isEnabled });
 
+  const [, setImportQuery] = useQueryStates(aiImportQueryState);
   const [startedJobId, setStartedJobId] = useState<string | null>(null);
   // L'issue traitée, pas seulement le job : un import repris par l'équipe
   // aboutit après avoir échoué, sous le même identifiant.
@@ -180,14 +181,17 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
   ]);
 
   const trackImport = useCallback(
-    (jobId: string, planId: number) => {
+    (jobId: string, planId: number | null) => {
       setStartedJobId(jobId);
+      void setImportQuery({ importJobId: jobId, retryJobId: null });
       // Le rattachement peut échouer sans compromettre l'import : la ligne du
       // tableau dit si le plan est rattaché, le toast d'erreur global dit
       // pourquoi.
-      linkIfFirstPlan(planId).catch(() => undefined);
+      if (planId !== null) {
+        linkIfFirstPlan(planId).catch(() => undefined);
+      }
     },
-    [linkIfFirstPlan]
+    [linkIfFirstPlan, setImportQuery]
   );
 
   const startProgrammeImport = useCallback(
@@ -210,20 +214,26 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
           );
           return;
         }
-        const [file, demarche] = await Promise.all([
+        const [file, demarche, planTypes] = await Promise.all([
           queryClient.fetchQuery(
             documentFileQueryOptions(trpcClient, { collectiviteId, fichierId })
           ),
           queryClient.fetchQuery(demarcheQueryOptions),
+          queryClient.fetchQuery(trpc.plans.plans.listTypes.queryOptions()),
         ]);
+        const pcaetPlanType = findPcaetPlanType(planTypes);
+        if (!pcaetPlanType) {
+          throw new Error(appLabels.planCreationVerificationIndisponible);
+        }
         const { jobId, planId } = await enqueue({
           collectiviteId,
+          profile: AiPlanImportProfileEnum.PCAET,
           file,
           planName: makeProgrammeActionsPlanName({
             dateLancement: demarche.launchedAt,
             collectiviteNom,
           }),
-          planType: pcaetPlanType?.id,
+          planType: pcaetPlanType.id,
           withVerifications: isAiImportVerifiable(file),
           withSousActions: true,
           origine: 'etape_documents',
@@ -239,9 +249,9 @@ export const ImportProgrammeProvider = ({ children }: PropsWithChildren) => {
     [
       collectiviteId,
       collectiviteNom,
+      demarcheId,
       demarcheQueryOptions,
       enqueue,
-      pcaetPlanType,
       queryClient,
       setToast,
       trackImport,

@@ -277,7 +277,7 @@ const MenuActionItem = ({
     variant === 'destructive'
       ? 'text-error-1 hover:bg-error-2'
       : 'text-primary-9 hover:bg-primary-1',
-    disabled && 'opacity-60 hover:bg-transparent pointer-events-none'
+    disabled && 'opacity-60 hover:bg-transparent'
   );
 
   const content = (

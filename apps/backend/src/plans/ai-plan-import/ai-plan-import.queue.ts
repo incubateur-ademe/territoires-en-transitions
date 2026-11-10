@@ -20,4 +20,6 @@ export const AI_PLAN_IMPORT_JOB_OPTIONS: JobsOptions = {
 
 export type AiPlanImportJobData = {
   jobId: string;
+  /** Passage réellement pris par le worker ; protège des événements tardifs. */
+  executionAttempt?: number;
 };

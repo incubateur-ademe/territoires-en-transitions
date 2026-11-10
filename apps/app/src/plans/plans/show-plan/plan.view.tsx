@@ -6,6 +6,7 @@ import { useListPlanSecteursCounts } from '@/app/plans/plans/secteurs-counts/dat
 import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
+import { getElectrificationCibleDisplay } from '@/app/plans/plans/electrification/show-plan/electrification-cible.view';
 import {
   PlanAxesProvider,
   usePlanAxesContext,
@@ -80,7 +81,18 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   }
 
   return (
-    <PlanAxesProvider plan={plan} rootAxe={rootAxe}>
+    <PlanAxesProvider
+      plan={plan}
+      rootAxe={rootAxe}
+      getIndicateurCardOptions={(indicateur) =>
+        getElectrificationCibleDisplay({
+          source: plan.indicateurSource,
+          collectiviteId: plan.collectiviteId,
+          indicateurId: indicateur.id,
+          unite: indicateur.unite,
+        })
+      }
+    >
       <PlanViewContent />
     </PlanAxesProvider>
   );

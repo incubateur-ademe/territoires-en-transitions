@@ -15,8 +15,8 @@ import { ElectrificationFichesErrors as Errors } from './electrification-fiches.
 import { ResolveElectrificationStructureRules } from '../resolve-engagements/resolve-electrification-structure.rules';
 
 export class ResolveElectrificationFichesRules {
-  /** L'admission requiert toutes les correspondances, même celles absentes du document. */
-  static isCatalogueReady(config: ElectrificationConfig): boolean {
+  /** Les correspondances sont vérifiées lors de la résolution des références utilisées. */
+  static isCatalogueValid(config: ElectrificationConfig): boolean {
     const expectedEngagements = Object.values(
       ElectrificationEngagementCodeEnum
     );
@@ -27,23 +27,6 @@ export class ResolveElectrificationFichesRules {
       config.engagements.length === expectedEngagements.length &&
       expectedEngagements.every((code) =>
         config.engagements.some((engagement) => engagement.code === code)
-      ) &&
-      config.engagements.every(({ cibles }) =>
-        cibles.every(
-          ({ validation, periodicite }) =>
-            validation === 'validated' && periodicite !== null
-        )
-      ) &&
-      config.fiches.actions.every(
-        ({ validation }) => validation === 'validated'
-      ) &&
-      config.fiches.indicateurs.every(
-        (indicateur) =>
-          indicateur.validation === 'validated' &&
-          (indicateur.type === 'booleen' ||
-            (indicateur.identifiantReferentiel !== null &&
-              indicateur.unite !== null &&
-              indicateur.periodicite !== null))
       ) &&
       ResolveElectrificationStructureRules.validateCatalogue(config).length ===
         0 &&
@@ -115,14 +98,22 @@ export class ResolveElectrificationFichesRules {
       ElectrificationConfig['fiches']['actions']
     >[number]['aides'],
     location: string
-  ): Result<Lien[], ElectrificationIssue[]> {
+  ): { documents: Lien[]; issues: ElectrificationIssue[] } {
     const documents: Lien[] = [];
+    const issues: ElectrificationIssue[] = [];
     for (const { titre, url } of aides) {
-      if (url === null)
-        return failure([Errors.issue('FICHES_CONFIG_UNAVAILABLE', location)]);
+      if (url === null) {
+        issues.push(
+          Errors.issue(
+            'AIDE_WITHOUT_URL_IGNORED',
+            `${location} — Aide "${titre}"`
+          )
+        );
+        continue;
+      }
       documents.push({ titre, url });
     }
-    return success(documents);
+    return { documents, issues };
   }
 
   /** Le profil décide de la validité du code avant la préparation commune. */

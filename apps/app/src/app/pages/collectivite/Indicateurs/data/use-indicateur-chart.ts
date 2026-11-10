@@ -64,9 +64,11 @@ export type IndicateurChartInfo = {
 export const useIndicateurChartInfo = ({
   indicateur,
   externalCollectiviteId,
+  excludedSources,
 }: {
   indicateur?: IndicateurDetaille;
   externalCollectiviteId?: number;
+  excludedSources?: string[];
 }): IndicateurChartInfo => {
   const {
     id: indicateurId,
@@ -90,6 +92,7 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds: indicateurId ? [indicateurId] : undefined,
         sources: sourceFilter.sources,
+        excludedSources,
       },
       {
         enabled: !!indicateurId && periodicite !== undefined,
@@ -109,6 +112,7 @@ export const useIndicateurChartInfo = ({
         collectiviteId: dataCollectiviteId,
         indicateurIds,
         sources: sourceFilter.sources,
+        excludedSources,
       },
       {
         enabled: !!indicateurIds?.length && periodicite !== undefined,

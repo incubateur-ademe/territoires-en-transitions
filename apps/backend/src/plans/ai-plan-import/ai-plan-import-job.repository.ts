@@ -23,13 +23,14 @@ import {
   sql,
 } from 'drizzle-orm';
 import { PgUpdateSetSource } from 'drizzle-orm/pg-core';
-import { resolveImportProfile } from './models/import-profile';
 import {
-  ImportCheckpoint,
-  isImportCheckpointSupported,
-  parseImportCheckpoint,
-} from './models/import-checkpoint';
-import { PIPELINE_CHECKPOINT_SCHEMA_VERSION } from './pipeline/pipeline-checkpoint';
+  AiPlanImportProfile,
+  AiPlanImportProfileEnum,
+  resolveImportProfile,
+} from './models/import-profile';
+import { StoredImportCheckpoint } from './models/import-checkpoint';
+import { ValidateImportProfileService } from './validate-import-profile/validate-import-profile.service';
+import { ImportReport, importReportSchema } from './models/import-report';
 import { ImportJobStats } from './models/import-job-stats';
 import { PlanDraft } from './models/plan-draft';
 import {
@@ -40,6 +41,7 @@ import {
   AiPlanImportJobStatusEnum,
   AiPlanImportJobStatusView,
   PreviousAiImport,
+  importRetryDefaultsSchema,
 } from './models/ai-plan-import-job';
 import { aiPlanImportJobTable } from './models/ai-plan-import-job.table';
 import {
@@ -80,13 +82,7 @@ const { checkpoint: _checkpoint, ...jobColumns } =
  * Préfiltre SQL : le profil et le contenu du checkpoint sont aussi validés
  * avant d'annoncer ou d'effectuer une reprise.
  */
-const isResumable = sql<boolean>`${aiPlanImportJobTable.status} = ${
-  AiPlanImportJobStatusEnum.FAILED
-} AND ${aiPlanImportJobTable.checkpoint} ->> 'schemaVersion' = ${String(
-  PIPELINE_CHECKPOINT_SCHEMA_VERSION
-)} AND ${
-  aiPlanImportJobTable.modifiedAt
-} > now() - make_interval(days => ${AI_PLAN_IMPORT_CHECKPOINT_RETENTION_DAYS})`;
+const isResumable = sql<boolean>`${aiPlanImportJobTable.status} = ${AiPlanImportJobStatusEnum.FAILED} AND ${aiPlanImportJobTable.checkpoint} IS NOT NULL AND ${aiPlanImportJobTable.modifiedAt} > now() - make_interval(days => ${AI_PLAN_IMPORT_CHECKPOINT_RETENTION_DAYS})`;
 
 const statusViewProjection = {
   id: aiPlanImportJobTable.id,
@@ -104,27 +100,23 @@ const statusViewProjection = {
   qualitativeReview: sql<
     string | null
   >`${aiPlanImportJobTable.draft} ->> 'qualitativeReview'`,
+  report: sql<unknown>`${aiPlanImportJobTable.draft} -> 'report'`,
   resumable: sql<boolean>`coalesce(${isResumable}, false)`,
   withSecteurs: sql<boolean>`coalesce((${aiPlanImportJobTable.options} ->> 'withSecteurs')::boolean, false)`,
 };
 
-type StoredStatusView = Omit<AiPlanImportJobStatusView, 'profile'> & {
+type StoredStatusView = Omit<
+  AiPlanImportJobStatusView,
+  'profile' | 'report'
+> & {
   options: AiPlanImportJobOptions;
   checkpoint: unknown;
+  report: unknown;
 };
-
-const toStatusView = ({
-  options,
-  checkpoint,
-  ...view
-}: StoredStatusView): AiPlanImportJobStatusView => ({
-  ...view,
-  profile: resolveImportProfile(options.profile),
-  resumable: view.resumable && isImportCheckpointSupported(checkpoint, options),
-});
 
 export type ListRecentAiImportsInput = {
   collectiviteId: number;
+  planId?: number;
   limit: number;
   cursor?: string;
 };
@@ -139,22 +131,51 @@ export class AiPlanImportJobRepository {
   private readonly db = this.database.db;
   private readonly logger = new Logger(AiPlanImportJobRepository.name);
 
-  constructor(private readonly database: DatabaseService) {}
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly profiles: ValidateImportProfileService
+  ) {}
+
+  isSupportedImport(options: AiPlanImportJobOptions): boolean {
+    return this.profiles.isSupportedImport(options);
+  }
+
+  private toStatusView({
+    options,
+    checkpoint,
+    report,
+    ...view
+  }: StoredStatusView): AiPlanImportJobStatusView {
+    const parsedReport = importReportSchema.safeParse(report);
+    const retryDefaults = importRetryDefaultsSchema.safeParse(options);
+    return {
+      ...view,
+      profile: resolveImportProfile(options.profile),
+      report: parsedReport.success ? parsedReport.data : undefined,
+      retryDefaults: retryDefaults.success ? retryDefaults.data : null,
+      resumable:
+        view.resumable &&
+        this.profiles.parseCheckpoint(checkpoint, options).success,
+    };
+  }
 
   /**
    * Crée le job si l'utilisateur n'a aucun autre import en cours (sauf
    * `limitUserInFlight: false`), si la collectivité reste sous son quota sur
-   * 24 heures glissantes et si elle n'a pas déjà un import en cours.
+   * 24 heures glissantes (sauf `limitDailyImports: false`) et si elle n'a pas
+   * déjà un import en cours.
    */
   async createWithinQuotas<E>(
     input: CreateJobInput,
     {
       limitUserInFlight,
+      limitDailyImports,
       createPlan,
     }: {
       limitUserInFlight: boolean;
+      limitDailyImports: boolean;
       /** Crée le plan vide du job, dans la même transaction. */
-      createPlan: (tx: Transaction) => Promise<Result<number, E>>;
+      createPlan?: (tx: Transaction) => Promise<Result<number, E>>;
     }
   ): Promise<Result<AiPlanImportJob, AiPlanImportError | E>> {
     try {
@@ -187,20 +208,24 @@ export class AiPlanImportJobRepository {
           }
         }
 
-        const [lastDay] = await tx
-          .select({ value: count() })
-          .from(aiPlanImportJobTable)
-          .where(
-            and(
-              eq(aiPlanImportJobTable.collectiviteId, input.collectiviteId),
-              gt(
-                aiPlanImportJobTable.createdAt,
-                sql`now() - interval '24 hours'`
+        if (limitDailyImports) {
+          const [lastDay] = await tx
+            .select({ value: count() })
+            .from(aiPlanImportJobTable)
+            .where(
+              and(
+                eq(aiPlanImportJobTable.collectiviteId, input.collectiviteId),
+                gt(
+                  aiPlanImportJobTable.createdAt,
+                  sql`now() - interval '24 hours'`
+                )
               )
-            )
-          );
-        if (lastDay.value >= AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY) {
-          return failure(AiPlanImportErrorEnum.DAILY_QUOTA_EXCEEDED);
+            );
+          if (
+            lastDay.value >= AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY
+          ) {
+            return failure(AiPlanImportErrorEnum.DAILY_QUOTA_EXCEEDED);
+          }
         }
 
         const [created] = await tx
@@ -215,11 +240,13 @@ export class AiPlanImportJobRepository {
             stepStates: initialStepStates(),
           })
           .onConflictDoNothing()
-          .returning({ id: aiPlanImportJobTable.id });
+          .returning(jobColumns);
 
         if (!created) {
           return failure(AiPlanImportErrorEnum.IN_FLIGHT_JOB_EXISTS);
         }
+
+        if (!createPlan) return success(created);
 
         const plan = await createPlan(tx);
         if (!plan.success) {
@@ -328,7 +355,7 @@ export class AiPlanImportJobRepository {
         return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
       }
 
-      return success(toStatusView(row));
+      return success(this.toStatusView(row));
     } catch (error) {
       this.logger.error(
         `Lecture du statut du job ${id}: ${getErrorMessage(error)}`
@@ -356,7 +383,7 @@ export class AiPlanImportJobRepository {
         .orderBy(desc(aiPlanImportJobTable.createdAt))
         .limit(1);
 
-      return success(row ? toStatusView(row) : null);
+      return success(row ? this.toStatusView(row) : null);
     } catch (error) {
       this.logger.error(
         `Reading in-flight job for collectivité ${collectiviteId}: ${getErrorMessage(
@@ -369,23 +396,25 @@ export class AiPlanImportJobRepository {
 
   async listRecentByCollectivite({
     collectiviteId,
+    planId,
     limit,
     cursor,
   }: ListRecentAiImportsInput): Promise<
     Result<ListRecentAiImportsResult, AiPlanImportError>
   > {
     try {
+      const scope = and(
+        eq(aiPlanImportJobTable.collectiviteId, collectiviteId),
+        planId !== undefined
+          ? eq(aiPlanImportJobTable.createdPlanId, planId)
+          : undefined
+      );
       let cursorCreatedAt: string | undefined;
       if (cursor !== undefined) {
         const [cursorJob] = await this.db
           .select({ createdAt: aiPlanImportJobTable.createdAt })
           .from(aiPlanImportJobTable)
-          .where(
-            and(
-              eq(aiPlanImportJobTable.id, cursor),
-              eq(aiPlanImportJobTable.collectiviteId, collectiviteId)
-            )
-          )
+          .where(and(eq(aiPlanImportJobTable.id, cursor), scope))
           .limit(1);
         if (!cursorJob) return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
         cursorCreatedAt = cursorJob.createdAt;
@@ -396,7 +425,7 @@ export class AiPlanImportJobRepository {
         .from(aiPlanImportJobTable)
         .where(
           and(
-            eq(aiPlanImportJobTable.collectiviteId, collectiviteId),
+            scope,
             cursor !== undefined && cursorCreatedAt !== undefined
               ? or(
                   lt(aiPlanImportJobTable.createdAt, cursorCreatedAt),
@@ -414,7 +443,7 @@ export class AiPlanImportJobRepository {
         )
         .limit(limit + 1);
 
-      const items = rows.slice(0, limit).map(toStatusView);
+      const items = rows.slice(0, limit).map((row) => this.toStatusView(row));
       return success({
         items,
         nextCursor: rows.length > limit ? items[items.length - 1].id : null,
@@ -470,7 +499,7 @@ export class AiPlanImportJobRepository {
   async saveCheckpoint(
     id: string,
     attempt: number,
-    checkpoint: ImportCheckpoint
+    checkpoint: StoredImportCheckpoint
   ): Promise<Result<undefined, AiPlanImportError>> {
     const saved = await this.updateAndReturn({
       id,
@@ -482,20 +511,27 @@ export class AiPlanImportJobRepository {
   }
 
   async getCheckpoint(
-    id: string
-  ): Promise<Result<ImportCheckpoint | null, AiPlanImportError>> {
+    id: string,
+    profile: AiPlanImportProfile = AiPlanImportProfileEnum.GENERIC
+  ): Promise<Result<StoredImportCheckpoint | null, AiPlanImportError>> {
     try {
       const [row] = await this.db
-        .select({ checkpoint: aiPlanImportJobTable.checkpoint })
+        .select({
+          checkpoint: aiPlanImportJobTable.checkpoint,
+          options: aiPlanImportJobTable.options,
+        })
         .from(aiPlanImportJobTable)
         .where(eq(aiPlanImportJobTable.id, id))
         .limit(1);
       if (!row) return failure(AiPlanImportErrorEnum.JOB_NOT_FOUND);
+      if (
+        resolveImportProfile(row.options.profile) !== profile ||
+        !this.isSupportedImport(row.options)
+      ) {
+        return failure(AiPlanImportErrorEnum.INVALID_CHECKPOINT);
+      }
       if (row.checkpoint === null) return success(null);
-      const parsed = parseImportCheckpoint(row.checkpoint);
-      return parsed.success
-        ? success(parsed.data)
-        : failure(AiPlanImportErrorEnum.INVALID_CHECKPOINT);
+      return this.profiles.parseCheckpoint(row.checkpoint, row.options);
     } catch (error) {
       this.logger.error(
         `Lecture du point de reprise du job ${id}: ${getErrorMessage(error)}`
@@ -520,7 +556,8 @@ export class AiPlanImportJobRepository {
         .orderBy(desc(aiPlanImportJobTable.createdAt))
         .limit(1);
       return success(
-        row && isImportCheckpointSupported(row.checkpoint, row.options)
+        row &&
+          this.profiles.parseCheckpoint(row.checkpoint, row.options).success
           ? { jobId: row.jobId }
           : null
       );
@@ -554,7 +591,8 @@ export class AiPlanImportJobRepository {
         .for('update');
       if (
         !candidate ||
-        !isImportCheckpointSupported(candidate.checkpoint, candidate.options)
+        !this.profiles.parseCheckpoint(candidate.checkpoint, candidate.options)
+          .success
       ) {
         return failure(AiPlanImportErrorEnum.JOB_NOT_RESUMABLE);
       }
@@ -636,7 +674,8 @@ export class AiPlanImportJobRepository {
   async markDone(input: {
     id: string;
     attempt: number;
-    draft: PlanDraft;
+    draft?: PlanDraft;
+    report?: ImportReport;
     stepStates: StepStates;
     createdPlanId: number;
     stats?: ImportJobStats;
@@ -647,7 +686,7 @@ export class AiPlanImportJobRepository {
       attempt: input.attempt,
       patch: {
         status: AiPlanImportJobStatusEnum.DONE,
-        draft: input.draft,
+        draft: this.withReport(input.draft, input.report),
         stepStates: input.stepStates,
         createdPlanId: input.createdPlanId,
         stats: input.stats,
@@ -668,6 +707,7 @@ export class AiPlanImportJobRepository {
     /** Absent : l'avancement en base reste celui de la dernière étape. */
     stepStates?: StepStates;
     draft?: PlanDraft;
+    report?: ImportReport;
     stats?: ImportJobStats;
     /** Point de reprise devenu inutilisable : l'import n'est plus reprenable. */
     dropCheckpoint?: boolean;
@@ -679,7 +719,7 @@ export class AiPlanImportJobRepository {
         status: AiPlanImportJobStatusEnum.FAILED,
         error: input.error,
         stepStates: input.stepStates,
-        draft: input.draft,
+        draft: this.withReport(input.draft, input.report),
         stats: input.stats,
         ...(input.dropCheckpoint ? { checkpoint: null } : {}),
         finishedAt: new Date().toISOString(),
@@ -711,6 +751,20 @@ export class AiPlanImportJobRepository {
       );
       return failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR, toError(error));
     }
+  }
+
+  private withReport(
+    draft: PlanDraft | undefined,
+    report: ImportReport | undefined
+  ) {
+    if (report === undefined) return draft;
+    return {
+      ...(draft ?? {
+        actions: [],
+        qualitativeReview: report.qualitativeReview,
+      }),
+      report,
+    };
   }
 
   /**

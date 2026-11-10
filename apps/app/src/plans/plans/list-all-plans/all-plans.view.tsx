@@ -1,4 +1,5 @@
 'use client';
+import { makeCollectivitePlanImportsUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
@@ -7,7 +8,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { planStatusValues } from '@tet/domain/plans';
-import { PageHeader, Spacer, VisibleWhen } from '@tet/ui';
+import { Button, PageHeader, Spacer, VisibleWhen } from '@tet/ui';
 import { isNotNil } from 'es-toolkit';
 import { useQueryStates } from 'nuqs';
 import { useState } from 'react';
@@ -41,11 +42,22 @@ export const AllPlansView = () => {
     <>
       <PageHeader>
         <PageHeader.Title>{appLabels.plans}</PageHeader.Title>
-        {plansAvailable && hasCollectivitePermission('plans.mutate') && (
-          <PageHeader.Actions>
-            <CreatePlanButton collectiviteId={collectiviteId} />
-          </PageHeader.Actions>
-        )}
+        <PageHeader.Actions>
+          <div className="flex flex-wrap items-center gap-2">
+            {plansAvailable && hasCollectivitePermission('plans.mutate') && (
+              <CreatePlanButton collectiviteId={collectiviteId} />
+            )}
+            {hasCollectivitePermission('plans.fiches.import') && (
+              <Button
+                size="sm"
+                variant="outlined"
+                href={makeCollectivitePlanImportsUrl({ collectiviteId })}
+              >
+                {appLabels.importPlanIaHistorique}
+              </Button>
+            )}
+          </div>
+        </PageHeader.Actions>
         {plansAvailable && (
           <PageHeader.Metadata>
             <Filters

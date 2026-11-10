@@ -1,9 +1,4 @@
-import {
-  PLAN_CREATION_DISABLED_MESSAGES,
-  PlanCreationDisabledReason,
-  OrigineSecteurs,
-  SecteurReglementaire,
-} from '@tet/domain/plans';
+import { OrigineSecteurs, SecteurReglementaire } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
 type PlanBudgetCalculArgs = {
@@ -24,8 +19,10 @@ export const plansLabels = {
   nomPlanRequis: 'Le nom du plan est requis',
   nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   typePlan: 'Type de plan',
-  planCreationDisabled: (reason: PlanCreationDisabledReason): string =>
-    PLAN_CREATION_DISABLED_MESSAGES[reason],
+  planCreationTypeIndisponible:
+    'La création de plans de ce type est temporairement désactivée.',
+  planCreationVerificationIndisponible:
+    'Impossible de vérifier les types de plans disponibles. Réessayez plus tard.',
   type: 'Type',
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
@@ -295,10 +292,20 @@ export const plansLabels = {
   importPlanSupportEmail: 'contact@territoiresentransitions.fr',
   importPlanSupportPriseEnCharge:
     'Notre équipe se chargera de l’importer pour vous sur la plateforme.',
+  importPlanIaDescription:
+    'À partir de votre fichier, nous importons la structure de votre plan et ses actions. Notre outil détecte automatiquement : axes, sous-axes, titres des actions, description, statut, pilotes, dates, objectifs…',
+  importPlanIaEtapeReperage: 'Repérage des actions',
   importPlanIaContact:
     'L’import ne vous convient pas ? Contactez-nous via le live chat en joignant votre fichier et quelques mots de contexte, cela nous aide à l’améliorer.',
   importPlanIaFormatsAcceptes:
     'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
+  importElectrificationFormat: 'Annexe 3 de la convention signée sur Word',
+  importElectrificationFormatErreur:
+    'Utilisez le canevas officiel V4 au format Word (.docx).',
+  importElectrificationDescription:
+    'Importez l’annexe 3 remplie de votre convention Électrification. Le plan sera créé après validation du document. Les sous-actions sont conservées et les actions référencées par un lien TeT sont rattachées sans modifier leurs données.',
+  importPlanIaProfilIndisponible:
+    'L’import n’est pas disponible pour ce type de plan. Vous pouvez créer un plan directement sur la plateforme.',
   importPlanIaFichierSuggere:
     "Programme d'actions déposé à l'étape Documents, pré-sélectionné pour vous.",
   importPlanIaFichierSuggereChargement:
@@ -325,6 +332,29 @@ export const plansLabels = {
   importPlanIaEtapeEnAttente: 'en attente',
   importPlanIaEtapeEnEchec: 'en échec',
   importPlanIaEchecCourt: "Échec de l'import",
+  importPlanIaHistorique: 'Historique des imports',
+  importPlanIaNavigation: 'Navigation des imports de plans',
+  importPlanIaDetails: 'Détails de l’import',
+  importPlanIaHistoriqueVide: 'Aucun import pour cette collectivité.',
+  importPlanIaHistoriqueErreur: 'Impossible de charger les imports.',
+  importPlanIaVoirPlus: 'Voir les imports précédents',
+  importPlanIaSansNom: 'Import sans nom',
+  importPlanIaEnAttente: 'Import en attente',
+  importPlanIaTermine: 'Import terminé',
+  importPlanIaNouveau: 'Nouvel import',
+  importPlanIaOuvrirPlan: 'Ouvrir le plan',
+  importPlanIaRapport: 'Compte rendu de l’import',
+  importPlanIaRapportSansRemarque: 'Aucune remarque signalée.',
+  importPlanIaDocumentErreur: 'Document à corriger',
+  importPlanIaConfigurationErreur: 'Configuration à corriger par notre équipe',
+  importPlanIaAvertissementRapport: 'Point d’attention',
+  importPlanIaDonneesConservees: 'Données existantes conservées',
+  importPlanIaSuiviIndisponible:
+    'Cet import est introuvable ou vous n’y avez pas accès.',
+  importPlanIaSuiviErreur: 'Impossible de charger le suivi de cet import.',
+  importPlanIaSuiviRetrouvable:
+    'Vous pouvez quitter cette page et retrouver le suivi dans l’historique des imports.',
+  importPlanIaPlanIndisponible: 'Aucun plan n’est associé à cet import.',
   importPlanIaReprendre: "Reprendre l'import",
   importPlanIaRepriseLancee: 'Import repris depuis sa dernière étape terminée',
   importPlanIaEchecDescription:

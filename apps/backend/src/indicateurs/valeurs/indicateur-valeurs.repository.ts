@@ -38,12 +38,14 @@ import {
   isNotNull,
   isNull,
   lte,
+  notInArray,
   or,
   sql,
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { chunk, omit } from 'es-toolkit';
+import { chunk, omit, partition } from 'es-toolkit';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { validateNature } from '../indicateur/indicateur.adapter';
 import { indicateurValeurTable } from './indicateur-valeur.table';
 
@@ -56,6 +58,7 @@ type ListIndicateurValeursQuery = Readonly<{
   indicateurIds?: number[];
   identifiantsReferentiel?: string[];
   sources?: string[];
+  excludedSources?: string[];
   metadonneeId?: number;
   periodicite?: IndicateurPeriodicite;
   dateDebut?: string;
@@ -170,6 +173,14 @@ export class IndicateurValeursRepository {
           inArray(indicateurSourceMetadonneeTable.sourceId, options.sources)
         );
       }
+    }
+    if (options.excludedSources?.length) {
+      conditions.push(
+        notInArray(
+          sql`coalesce(${indicateurSourceMetadonneeTable.sourceId}, ${COLLECTIVITE_SOURCE_ID})`,
+          options.excludedSources
+        )
+      );
     }
     if (options.metadonneeId !== undefined) {
       conditions.push(
@@ -484,109 +495,109 @@ export class IndicateurValeursRepository {
     return rows[0];
   }
 
-  async upsertValeursWithoutMetadata(
+  upsertValeursWithoutMetadata(
     valeurs: IndicateurValeurCreate[],
     tx?: Transaction
-  ): Promise<IndicateurValeur[]> {
-    return this.inChunks(valeurs, UPSERT_VALEURS_CHUNK_SIZE, tx, (part, db) =>
-      this.upsertChunkWithoutMetadata(part, db)
+  ) {
+    return this.upsertValeurs(
+      valeurs,
+      { withMetadata: false, mode: 'replace' },
+      tx
     );
   }
 
-  private upsertChunkWithoutMetadata(
-    valeurs: IndicateurValeurCreate[],
-    db: Transaction | DatabaseService['db']
-  ): Promise<IndicateurValeur[]> {
-    return db
-      .insert(indicateurValeurTable)
-      .values(valeurs)
-      .onConflictDoUpdate({
-        target: [
-          indicateurValeurTable.indicateurId,
-          indicateurValeurTable.collectiviteId,
-          indicateurValeurTable.dateValeur,
-          indicateurValeurTable.periodicite,
-        ],
-        targetWhere: isNull(indicateurValeurTable.metadonneeId),
-        set: {
-          resultat: sql.raw(`excluded.${indicateurValeurTable.resultat.name}`),
-          resultatCommentaire: sql.raw(
-            `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-          ),
-          objectif: sql.raw(`excluded.${indicateurValeurTable.objectif.name}`),
-          objectifCommentaire: sql.raw(
-            `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-          ),
-          calculAuto: sql.raw(
-            `excluded.${indicateurValeurTable.calculAuto.name}`
-          ),
-          calculAutoIdentifiantsManquants: sql.raw(
-            `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
-          ),
-          modifiedBy: sql.raw(
-            `excluded.${indicateurValeurTable.modifiedBy.name}`
-          ),
-        },
-        setWhere: sql`
-          excluded.calcul_auto IS NOT TRUE
-          OR ${indicateurValeurTable.calculAuto} IS TRUE
-        `,
-      })
-      .returning();
-  }
-
-  async upsertValeursWithMetadata(
+  upsertValeursWithMetadata(
     valeurs: IndicateurValeurCreate[],
     tx?: Transaction
-  ): Promise<IndicateurValeur[]> {
-    return this.inChunks(valeurs, UPSERT_VALEURS_CHUNK_SIZE, tx, (part, db) =>
-      this.upsertChunkWithMetadata(part, db)
+  ) {
+    return this.upsertValeurs(
+      valeurs,
+      { withMetadata: true, mode: 'replace' },
+      tx
     );
   }
 
-  private upsertChunkWithMetadata(
+  async fillMissingValeurs(valeurs: IndicateurValeurCreate[], tx: Transaction) {
+    const [withMetadata, withoutMetadata] = partition(
+      valeurs,
+      (valeur) => valeur.metadonneeId != null
+    );
+    return [
+      ...(await this.upsertValeurs(
+        withMetadata,
+        { withMetadata: true, mode: 'fill-missing' },
+        tx
+      )),
+      ...(await this.upsertValeurs(
+        withoutMetadata,
+        { withMetadata: false, mode: 'fill-missing' },
+        tx
+      )),
+    ];
+  }
+
+  private async upsertValeurs(
     valeurs: IndicateurValeurCreate[],
-    db: Transaction | DatabaseService['db']
+    {
+      withMetadata,
+      mode,
+    }: { withMetadata: boolean; mode: 'replace' | 'fill-missing' },
+    tx?: Transaction
   ): Promise<IndicateurValeur[]> {
-    return db
-      .insert(indicateurValeurTable)
-      .values(valeurs)
-      .onConflictDoUpdate({
-        target: [
-          indicateurValeurTable.indicateurId,
-          indicateurValeurTable.collectiviteId,
-          indicateurValeurTable.dateValeur,
-          indicateurValeurTable.periodicite,
-          indicateurValeurTable.metadonneeId,
-        ],
-        targetWhere: isNotNull(indicateurValeurTable.metadonneeId),
-        set: {
-          resultat: sql.raw(`excluded.${indicateurValeurTable.resultat.name}`),
-          resultatCommentaire: sql.raw(
-            `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-          ),
-          objectif: sql.raw(`excluded.${indicateurValeurTable.objectif.name}`),
-          objectifCommentaire: sql.raw(
-            `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-          ),
-          calculAuto: sql.raw(
-            `excluded.${indicateurValeurTable.calculAuto.name}`
-          ),
-          calculAutoIdentifiantsManquants: sql.raw(
-            `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
-          ),
-          modifiedBy: sql.raw(
-            `excluded.${indicateurValeurTable.modifiedBy.name}`
-          ),
-        },
-        // Rechecked by PostgreSQL after waiting for a concurrent row writer.
-        // Manual observations also exist under the PCAET metadata source.
-        setWhere: sql`
-          excluded.calcul_auto IS NOT TRUE
-          OR ${indicateurValeurTable.calculAuto} IS TRUE
-        `,
-      })
-      .returning();
+    if (valeurs.length === 0) return [];
+    const set = buildConflictUpdateColumns(indicateurValeurTable, [
+      'resultat',
+      'resultatCommentaire',
+      'objectif',
+      'objectifCommentaire',
+      'calculAuto',
+      'calculAutoIdentifiantsManquants',
+      'modifiedBy',
+    ]);
+    if (mode === 'fill-missing') {
+      for (const field of [
+        'resultat',
+        'resultatCommentaire',
+        'objectif',
+        'objectifCommentaire',
+      ] as const) {
+        set[
+          field
+        ] = sql`coalesce(${indicateurValeurTable[field]}, ${set[field]})`;
+      }
+    }
+    return this.inChunks(valeurs, UPSERT_VALEURS_CHUNK_SIZE, tx, (part, db) =>
+      db
+        .insert(indicateurValeurTable)
+        .values(
+          mode === 'fill-missing'
+            ? part.map((valeur) => omit(valeur, ['id']))
+            : part
+        )
+        .onConflictDoUpdate({
+          target: [
+            indicateurValeurTable.indicateurId,
+            indicateurValeurTable.collectiviteId,
+            indicateurValeurTable.dateValeur,
+            indicateurValeurTable.periodicite,
+            ...(withMetadata ? [indicateurValeurTable.metadonneeId] : []),
+          ],
+          targetWhere: withMetadata
+            ? isNotNull(indicateurValeurTable.metadonneeId)
+            : isNull(indicateurValeurTable.metadonneeId),
+          set: {
+            ...set,
+            ...(mode === 'fill-missing'
+              ? {
+                  estimation: sql`coalesce(${indicateurValeurTable.estimation}, excluded.estimation)`,
+                }
+              : {}),
+          },
+          // Les calculs ne remplacent jamais une observation manuelle.
+          setWhere: sql`excluded.calcul_auto IS NOT TRUE OR ${indicateurValeurTable.calculAuto} IS TRUE`,
+        })
+        .returning()
+    );
   }
 
   async deleteAutomaticValeurs(

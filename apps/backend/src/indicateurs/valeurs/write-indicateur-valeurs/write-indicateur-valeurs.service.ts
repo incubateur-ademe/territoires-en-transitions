@@ -3,17 +3,24 @@ import {
   Indicateur,
   IndicateurPeriodicite,
   IndicateurPeriodiciteEnum,
-  IndicateurPeriodes,
   IndicateurValeur,
   IndicateurValeurWithIdentifiant,
+  IndicateurValeurCreate,
+  COLLECTIVITE_SOURCE_ID,
 } from '@tet/domain/indicateurs';
-import { isNil, partition, round } from 'es-toolkit';
+import { groupBy, isNil, partition, round } from 'es-toolkit';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { IndicateurValeursRules } from '../indicateur-valeurs.rules';
+import { FillMissingIndicateurValeursRules } from './fill-missing-indicateur-valeurs.rules';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { IndicateurLockRepository } from '../../indicateur/indicateur-lock.repository';
 import { IndicateurValeursRepository } from '../indicateur-valeurs.repository';
 import { IndicateurValeurLockRepository } from '../indicateur-valeur-lock.repository';
 import { IndicateurValeursWriteContext } from '../indicateur-valeurs-context.types';
-import { captureIndicateurValeursResult } from '../indicateur-valeurs.errors';
+import {
+  captureIndicateurValeursResult,
+  getIndicateurValeursDataOrThrow,
+} from '../indicateur-valeurs.errors';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 import { assertUserIndicateurValeursAllowed } from './user-indicateur-valeur.rules';
 import {
@@ -32,75 +39,122 @@ export class WriteIndicateurValeursService {
     private readonly lockRepository: IndicateurValeurLockRepository
   ) {}
 
-  async saveBatch(
+  saveBatch(
     input: PreparedIndicateurValeurs,
     context: IndicateurValeursWriteContext
   ) {
-    const validation = await this.validationService.validate(input, context);
-    if (!validation.success) return validation;
-    return captureIndicateurValeursResult(
-      async (): Promise<IndicateurValeurWithIdentifiant[]> => {
-        const valeurs = input.valeurs.map((valeur) => {
-          const indicateur = validation.data[valeur.indicateurId];
-          const periodicite =
-            valeur.periodicite ?? IndicateurPeriodiciteEnum.ANNUELLE;
-          return {
-            ...valeur,
-            periodicite,
-            dateValeur: this.getCanonicalDateValeur(valeur.dateValeur, {
-              id: indicateur.id,
-              periodicite,
-            }),
-            resultat: !isNil(valeur.resultat)
-              ? round(valeur.resultat, indicateur.precision)
-              : null,
-            objectif: !isNil(valeur.objectif)
-              ? round(valeur.objectif, indicateur.precision)
-              : null,
-          };
-        });
-        await this.lockRepository.lock(valeurs, context.tx);
-        const [withMetadata, withoutMetadata] = partition(valeurs, (valeur) =>
-          Boolean(valeur.metadonneeId)
+    return captureIndicateurValeursResult(async () => {
+      const { valeurs, indicateurs } = await this.prepareBatch(input, context);
+      return this.persist(valeurs, indicateurs, context.tx);
+    });
+  }
+
+  fillMissing(
+    input: PreparedIndicateurValeurs,
+    context: IndicateurValeursWriteContext
+  ) {
+    return captureIndicateurValeursResult(async () => {
+      const { valeurs, indicateurs } = await this.prepareBatch(input, context);
+      const stored: IndicateurValeur[] = [];
+      const scopes = groupBy(
+        valeurs,
+        (v) => `${v.collectiviteId}:${v.metadonneeId ?? 'collectivite'}`
+      );
+      for (const scope of Object.values(scopes)) {
+        const first = scope[0];
+        const dates = scope.map(({ dateValeur }) => dateValeur).sort();
+        const listing = getIndicateurValeursDataOrThrow(
+          await this.repository.listIndicateurValeurs(
+            {
+              collectiviteId: first.collectiviteId,
+              indicateurIds: [
+                ...new Set(scope.map(({ indicateurId }) => indicateurId)),
+              ],
+              ...(first.metadonneeId == null
+                ? { sources: [COLLECTIVITE_SOURCE_ID] }
+                : { metadonneeId: first.metadonneeId }),
+              dateDebut: dates[0],
+              dateFin: dates[dates.length - 1],
+            },
+            context.tx
+          )
         );
-        const saved: IndicateurValeurWithIdentifiant[] = [
-          ...(withMetadata.length
-            ? await this.repository.upsertValeursWithMetadata(
-                withMetadata,
-                context.tx
-              )
-            : []),
-          ...(withoutMetadata.length
-            ? await this.repository.upsertValeursWithoutMetadata(
-                withoutMetadata,
-                context.tx
-              )
-            : []),
-        ];
-        const metadataIds = [
-          ...new Set(
-            saved.flatMap(({ metadonneeId }) =>
-              metadonneeId == null ? [] : [metadonneeId]
-            )
-          ),
-        ];
-        const metadataSources = metadataIds.length
-          ? await this.repository.listMetadataSources(metadataIds, context.tx)
-          : [];
-        const sourceIdByMetadataId = new Map(
-          metadataSources.map(({ id, sourceId }) => [id, sourceId])
-        );
-        return saved.map((valeur) => ({
-          ...valeur,
-          ...(valeur.metadonneeId == null
-            ? {}
-            : { sourceId: sourceIdByMetadataId.get(valeur.metadonneeId) }),
-          indicateurIdentifiant:
-            valeur.indicateurIdentifiant ||
-            validation.data[valeur.indicateurId]?.identifiantReferentiel,
-        }));
+        stored.push(...listing.map(({ indicateurValeur }) => indicateurValeur));
       }
+      const merged = FillMissingIndicateurValeursRules.merge(valeurs, stored);
+      return {
+        valeurs: await this.persist(
+          merged.valeurs,
+          indicateurs,
+          context.tx,
+          'fill-missing'
+        ),
+        conflits: merged.conflits,
+      };
+    });
+  }
+
+  private async prepareBatch(
+    input: PreparedIndicateurValeurs,
+    context: IndicateurValeursWriteContext
+  ) {
+    const indicateurs = getIndicateurValeursDataOrThrow(
+      await this.validationService.validate(input, context)
     );
+    const valeurs = input.valeurs.map((valeur) =>
+      IndicateurValeursRules.normalize(valeur, indicateurs[valeur.indicateurId])
+    );
+    await this.lockRepository.lock(valeurs, context.tx);
+    return { valeurs, indicateurs };
+  }
+
+  private async persist(
+    valeurs: IndicateurValeurCreate[],
+    indicateurs: Record<number, Indicateur>,
+    tx: Transaction,
+    mode: 'replace' | 'fill-missing' = 'replace'
+  ): Promise<IndicateurValeurWithIdentifiant[]> {
+    const [withMetadata, withoutMetadata] = partition(valeurs, (valeur) =>
+      Boolean(valeur.metadonneeId)
+    );
+    const saved =
+      mode === 'fill-missing'
+        ? await this.repository.fillMissingValeurs(valeurs, tx)
+        : [
+            ...(withMetadata.length
+              ? await this.repository.upsertValeursWithMetadata(
+                  withMetadata,
+                  tx
+                )
+              : []),
+            ...(withoutMetadata.length
+              ? await this.repository.upsertValeursWithoutMetadata(
+                  withoutMetadata,
+                  tx
+                )
+              : []),
+          ];
+    const metadataIds = [
+      ...new Set(
+        saved.flatMap(({ metadonneeId }) =>
+          metadonneeId == null ? [] : [metadonneeId]
+        )
+      ),
+    ];
+    const metadataSources = metadataIds.length
+      ? await this.repository.listMetadataSources(metadataIds, tx)
+      : [];
+    const sourceIdByMetadataId = new Map(
+      metadataSources.map(({ id, sourceId }) => [id, sourceId])
+    );
+    return saved.map((valeur) => ({
+      ...valeur,
+      ...(valeur.metadonneeId == null
+        ? {}
+        : { sourceId: sourceIdByMetadataId.get(valeur.metadonneeId) }),
+      indicateurIdentifiant:
+        indicateurs[valeur.indicateurId]?.identifiantReferentiel,
+    }));
   }
 
   saveSingle(
@@ -126,7 +180,7 @@ export class WriteIndicateurValeursService {
         const dateValeur =
           data.dateValeur === undefined
             ? undefined
-            : this.getCanonicalDateValeur(data.dateValeur, {
+            : IndicateurValeursRules.getCanonicalDateValeur(data.dateValeur, {
                 id: indicateurId,
                 periodicite,
               });
@@ -193,26 +247,6 @@ export class WriteIndicateurValeursService {
     if (indicateur.periodicite !== periodicite) {
       throw new BadRequestException(
         'La valeur doit respecter la périodicité de déclaration'
-      );
-    }
-  }
-  private getCanonicalDateValeur(
-    dateValeur: string,
-    indicateur: Pick<Indicateur, 'id' | 'periodicite'>
-  ): string {
-    try {
-      // The annual API accepts any date in the year; storage uses its first day.
-      const periode =
-        indicateur.periodicite === IndicateurPeriodiciteEnum.ANNUELLE
-          ? IndicateurPeriodes.containing(indicateur.periodicite, dateValeur)
-          : IndicateurPeriodes.fromDateValeur(
-              indicateur.periodicite,
-              dateValeur
-            );
-      return IndicateurPeriodes.toDateValeur(periode);
-    } catch {
-      throw new BadRequestException(
-        `Date de valeur ${dateValeur} non canonique pour l'indicateur ${indicateur.id} (${indicateur.periodicite})`
       );
     }
   }
