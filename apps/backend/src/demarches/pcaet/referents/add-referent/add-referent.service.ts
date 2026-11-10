@@ -9,13 +9,16 @@ import {
 } from '../referents-pcaet.errors';
 import { ReferentsPcaetRepository } from '../referents-pcaet.repository';
 import { AddReferentInput } from './add-referent.input';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { DemarchePcaetEventEnum } from '../../shared/tracking/demarche-pcaet-tracking.constants';
 
 /** Désigner un référent n'envoie aucune notification. */
 @Injectable()
 export class AddReferentService {
   constructor(
     private readonly permissionsService: ReferentsPcaetPermissionsService,
-    private readonly referentsRepository: ReferentsPcaetRepository
+    private readonly referentsRepository: ReferentsPcaetRepository,
+    private readonly trackingService: TrackingService
   ) {}
 
   async add(
@@ -50,6 +53,18 @@ export class AddReferentService {
     }
 
     await this.referentsRepository.insert(organismeId, referent, user.id, tx);
+    // Pas une démarche : l'événement porte le groupe de l'organisme référent.
+    this.trackingService.capture({
+      distinctId: user.id,
+      event: DemarchePcaetEventEnum.REFERENT_AJOUTE,
+      properties: {
+        organisme_id: organismeId,
+        organisme_type: organisme.type,
+        departement_code: organisme.departementCode,
+        avec_compte: 'userId' in referent,
+      },
+      groups: { collectivite: String(organismeId) },
+    });
     return success(undefined);
   }
 }

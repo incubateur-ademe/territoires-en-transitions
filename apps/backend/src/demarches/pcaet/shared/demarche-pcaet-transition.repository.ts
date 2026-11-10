@@ -5,7 +5,7 @@ import type {
   DemarchePcaetStatus,
   DemarchePcaetTransition,
 } from '@tet/domain/demarches';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import type { DemarchePcaetRef } from './demarche-pcaet-ref.repository';
 import type { DemarchePcaetTransitionStamps } from './demarche-pcaet-transition.service';
 import { demarcheStatusHistoryTable } from '@tet/backend/demarches/shared/models/demarche-status-history.table';
@@ -63,5 +63,28 @@ export class DemarchePcaetTransitionRepository {
       );
       return failure('DATABASE_ERROR');
     }
+  }
+
+  /**
+   * Quand la démarche est entrée dans ce statut, d'après le journal. Nul pour
+   * le statut initial, qu'aucune transition n'a écrit.
+   */
+  async findStatusEnteredAt(
+    demarcheId: number,
+    status: DemarchePcaetStatus,
+    tx: Transaction
+  ): Promise<string | null> {
+    const [row] = await tx
+      .select({ createdAt: demarcheStatusHistoryTable.createdAt })
+      .from(demarcheStatusHistoryTable)
+      .where(
+        and(
+          eq(demarcheStatusHistoryTable.demarcheId, demarcheId),
+          eq(demarcheStatusHistoryTable.toStatus, status)
+        )
+      )
+      .orderBy(desc(demarcheStatusHistoryTable.createdAt))
+      .limit(1);
+    return row?.createdAt ?? null;
   }
 }

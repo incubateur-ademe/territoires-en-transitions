@@ -12,6 +12,11 @@ import { DemarchePcaetGuardsService } from '../shared/demarche-pcaet-guards.serv
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import { DemarchePcaetAccessService } from '../shared/demarche-pcaet-access.service';
 import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
+import {
   UpdateDemarchePcaetError,
   UpdateDemarchePcaetErrorEnum,
 } from './update-demarche-pcaet.errors';
@@ -38,7 +43,8 @@ export class UpdateDemarchePcaetService {
     private readonly planActionsRepository: DemarchePlanActionsRepository,
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
-    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async updateDemarchePcaet(
@@ -46,6 +52,7 @@ export class UpdateDemarchePcaetService {
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaet, UpdateDemarchePcaetError>> {
     let addedPlanIds: number[] = [];
+    let removedPlanIds: number[] = [];
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, UpdateDemarchePcaetError>> => {
@@ -112,6 +119,13 @@ export class UpdateDemarchePcaetService {
       }
 
       if (input.planActionIds !== undefined) {
+        const before = await this.planActionsRepository.listPlanActionIds(
+          demarche.id,
+          transaction
+        );
+        removedPlanIds = before.filter(
+          (id) => !input.planActionIds?.includes(id)
+        );
         const planActionsResult =
           await this.planActionsRepository.setPlanActions(
             demarche.id,
@@ -171,6 +185,59 @@ export class UpdateDemarchePcaetService {
         userId: user.id,
       });
     }
+    // Appelée dans la transaction d'une autre opération (création d'un plan
+    // rattaché), c'est cette opération qui dit ce qui s'est passé.
+    if (result.success && !tx) {
+      this.trackUpdate(input, result.data, user.id, {
+        addedPlanIds,
+        removedPlanIds,
+      });
+    }
     return result;
+  }
+
+  private trackUpdate(
+    { collectiviteId, demarcheId, ...champs }: UpdateDemarchePcaetInput,
+    demarche: DemarchePcaet,
+    userId: string,
+    {
+      addedPlanIds,
+      removedPlanIds,
+    }: { addedPlanIds: number[]; removedPlanIds: number[] }
+  ) {
+    const context = { userId, acteur: DemarchePcaetActeurEnum.COLLECTIVITE };
+    this.trackingService.track(DemarchePcaetEventEnum.MODIFIEE, demarche, {
+      ...context,
+      properties: {
+        champsModifies: Object.entries(champs)
+          .filter(([, value]) => value !== undefined)
+          .map(([key]) => key),
+      },
+    });
+    for (const planId of addedPlanIds) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.PLAN_RATTACHE,
+        demarche,
+        {
+          ...context,
+          properties: {
+            planId,
+            source: 'existant',
+            aVerifier: demarche.unverifiedPlanActionIds.includes(planId),
+            nbPlansApres: demarche.planActionIds.length,
+          },
+        }
+      );
+    }
+    for (const planId of removedPlanIds) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.PLAN_DISSOCIE,
+        demarche,
+        {
+          ...context,
+          properties: { planId, nbPlansApres: demarche.planActionIds.length },
+        }
+      );
+    }
   }
 }

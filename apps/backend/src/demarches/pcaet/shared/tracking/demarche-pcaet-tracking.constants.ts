@@ -39,9 +39,7 @@ export const DemarchePcaetEventEnum = {
   INSTRUCTION_CLOSE: 'demarches:pcaet:instruction:close',
   REFERENT_AJOUTE: 'demarches:pcaet:referent:ajoute',
   REFERENT_RETIRE: 'demarches:pcaet:referent:retire',
-  NOTIFICATION_ENVOYEE: 'demarches:pcaet:notification:envoyee',
   DOSSIER_TELECHARGE: 'demarches:pcaet:dossier:telecharge',
-  PUBLIC_CONSULTEE: 'demarches:pcaet:public:consultee',
   SNAPSHOT: 'demarches:pcaet:snapshot',
 } as const;
 

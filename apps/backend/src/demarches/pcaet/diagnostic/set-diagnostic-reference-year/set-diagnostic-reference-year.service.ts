@@ -14,6 +14,12 @@ import {
 } from './set-diagnostic-reference-year.errors';
 import type { SetDiagnosticReferenceYearInput } from './set-diagnostic-reference-year.input';
 import { SetDiagnosticReferenceYearRepository } from './set-diagnostic-reference-year.repository';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import type { DemarchePcaetRef } from '../../shared/demarche-pcaet-ref.repository';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 /**
  * L'année de référence n'est pas stockée : elle se déduit des années des
@@ -29,62 +35,84 @@ export class SetDiagnosticReferenceYearService {
     private readonly accessService: DemarchePcaetAccessService,
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository,
     private readonly repository: SetDiagnosticReferenceYearRepository,
-    private readonly diagnosticService: DemarchePcaetDiagnosticService
+    private readonly diagnosticService: DemarchePcaetDiagnosticService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async setReferenceYear(
     input: SetDiagnosticReferenceYearInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<PcaetDiagnostic, SetDiagnosticReferenceYearError>> {
+    let demarche: DemarchePcaetRef | undefined;
     const { collectiviteId, demarcheId, indicateurIds, fromYear, toYear } =
       input;
 
-    return this.transactionManager.executeSingle(async (transaction) => {
-      const access = await this.accessService.assertWritable(
-        { collectiviteId, demarcheId },
-        'contenu',
-        { user, tx: transaction }
-      );
-      if (!access.success) {
-        return failure(SetDiagnosticReferenceYearErrorEnum[access.error]);
-      }
+    const result = await this.transactionManager.executeSingle(
+      async (transaction) => {
+        const access = await this.accessService.assertWritable(
+          { collectiviteId, demarcheId },
+          'contenu',
+          { user, tx: transaction }
+        );
+        if (!access.success) {
+          return failure(SetDiagnosticReferenceYearErrorEnum[access.error]);
+        }
+        demarche = access.data;
 
-      const valeursPermission = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
-        ResourceType.COLLECTIVITE,
-        { collectiviteId },
-        transaction
-      );
-      if (!valeursPermission.success) {
-        return failure(SetDiagnosticReferenceYearErrorEnum.UNAUTHORIZED);
-      }
+        const valeursPermission = await this.permissionService.isAllowed(
+          user,
+          PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
+          ResourceType.COLLECTIVITE,
+          { collectiviteId },
+          transaction
+        );
+        if (!valeursPermission.success) {
+          return failure(SetDiagnosticReferenceYearErrorEnum.UNAUTHORIZED);
+        }
 
-      const metadonneeId =
-        await this.sourceMetadonneeRepository.findMetadonneeId(
+        const metadonneeId =
+          await this.sourceMetadonneeRepository.findMetadonneeId(
+            { demarcheId, collectiviteId },
+            transaction
+          );
+
+        if (fromYear !== null && fromYear !== toYear && metadonneeId !== null) {
+          await this.repository.moveValeursToYear(
+            {
+              collectiviteId,
+              metadonneeId,
+              indicateurIds,
+              fromYear,
+              toYear,
+              userId: user.id,
+            },
+            transaction
+          );
+        }
+
+        const payload = await this.diagnosticService.loadPayload(
           { demarcheId, collectiviteId },
           transaction
         );
-
-      if (fromYear !== null && fromYear !== toYear && metadonneeId !== null) {
-        await this.repository.moveValeursToYear(
-          {
-            collectiviteId,
-            metadonneeId,
-            indicateurIds,
-            fromYear,
-            toYear,
-            userId: user.id,
+        return success(payload);
+      },
+      tx
+    );
+    if (result.success && demarche) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.DIAGNOSTIC_ANNEE_REFERENCE_DEFINIE,
+        demarche,
+        {
+          userId: user.id,
+          acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          properties: {
+            annee: toYear,
+            changement: fromYear !== null && fromYear !== toYear,
+            nbIndicateurs: indicateurIds.length,
           },
-          transaction
-        );
-      }
-
-      const payload = await this.diagnosticService.loadPayload(
-        { demarcheId, collectiviteId },
-        transaction
+        }
       );
-      return success(payload);
-    }, tx);
+    }
+    return result;
   }
 }

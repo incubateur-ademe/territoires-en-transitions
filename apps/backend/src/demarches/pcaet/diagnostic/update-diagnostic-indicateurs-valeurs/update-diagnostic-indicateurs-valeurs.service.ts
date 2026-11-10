@@ -25,6 +25,11 @@ import {
   type UpdateDiagnosticIndicateursValeursError,
 } from './update-diagnostic-indicateurs-valeurs.errors';
 import type { UpdateDiagnosticIndicateursValeursInput } from './update-diagnostic-indicateurs-valeurs.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 const dateValeurForYear = (year: number): string => `${year}-01-01`;
 
@@ -37,7 +42,8 @@ export class UpdateDiagnosticIndicateursValeursService {
     private readonly sourceMetadonneeRepository: DemarchePcaetSourceMetadonneeRepository,
     private readonly diagnosticService: DemarchePcaetDiagnosticService,
     private readonly crudValeursService: ManageIndicateurValeursService,
-    private readonly listIndicateursPredefinisService: ListIndicateursPredefinisService
+    private readonly listIndicateursPredefinisService: ListIndicateursPredefinisService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async updateValeurs(
@@ -129,6 +135,22 @@ export class UpdateDiagnosticIndicateursValeursService {
       tx
     );
 
+    this.trackingService.track(
+      DemarchePcaetEventEnum.DIAGNOSTIC_VALEURS_SAISIES,
+      ref,
+      {
+        userId: user.id,
+        acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+        properties: {
+          nbValeurs: valeurs.length,
+          nbValeursEffacees: valeurs.filter(({ value }) => value === null)
+            .length,
+          nbIndicateurs: indicateurIds.length,
+          champs: [...new Set(valeurs.map(({ field }) => field))].sort(),
+          annees: [...new Set(valeurs.map(({ year }) => String(year)))].sort(),
+        },
+      }
+    );
     return success(payload);
   }
 

@@ -12,6 +12,8 @@ import {
 } from './get-dossier-document-url.errors';
 import { GetDossierDocumentUrlInput } from './get-dossier-document-url.input';
 import { DossierDocumentUrl } from './get-dossier-document-url.output';
+import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 const DOWNLOAD_URL_TTL_SECONDS = 60;
 
@@ -20,7 +22,8 @@ export class GetDossierDocumentUrlService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
-    private readonly documentStorageService: DocumentStorageService
+    private readonly documentStorageService: DocumentStorageService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async getDossierDocumentUrl(
@@ -79,6 +82,18 @@ export class GetDossierDocumentUrlService {
       return failure(GetDossierDocumentUrlErrorEnum.DOCUMENT_URL_ERROR);
     }
 
+    this.trackingService.trackDossierInstruction(
+      DemarchePcaetEventEnum.DOSSIER_TELECHARGE,
+      consultableResult.data,
+      {
+        userId: user.id,
+        properties: {
+          type: 'document_unitaire',
+          documentId: input.documentId,
+          etape: document?.etape,
+        },
+      }
+    );
     return success({
       url: signedUrlResult.data.signedUrl,
       filename: fichier.filename,

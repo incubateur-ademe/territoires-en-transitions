@@ -17,6 +17,11 @@ import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes
 import { DemarchePcaetVulnerabiliteRepository } from '../shared/demarche-pcaet-vulnerabilite.repository';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
+import {
   CreateDemarchePcaetError,
   CreateDemarchePcaetErrorEnum,
 } from './create-demarche-pcaet.errors';
@@ -35,7 +40,8 @@ export class CreateDemarchePcaetService {
     private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
     private readonly vulnerabiliteRepository: DemarchePcaetVulnerabiliteRepository,
-    private readonly instructeursRepository: PcaetInstructeursRepository
+    private readonly instructeursRepository: PcaetInstructeursRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async createDemarchePcaet(
@@ -163,6 +169,23 @@ export class CreateDemarchePcaetService {
       };
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      this.trackingService.track(DemarchePcaetEventEnum.CREEE, result.data, {
+        userId: user.id,
+        acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+        properties: {
+          launchedYear: result.data.launchedAt
+            ? Number(result.data.launchedAt.slice(0, 4))
+            : null,
+          nbPilotes: input.pilotes?.length ?? 0,
+          obligationSaisie: input.obligation !== undefined,
+        },
+      });
+    }
+    return result;
   }
 }

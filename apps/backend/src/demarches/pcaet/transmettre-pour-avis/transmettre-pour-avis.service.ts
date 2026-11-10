@@ -12,13 +12,19 @@ import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transitio
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 import { TransmettrePourAvisDemarchePcaetError } from './transmettre-pour-avis.errors';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class TransmettrePourAvisDemarchePcaetService {
   constructor(
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly instructeursRepository: PcaetInstructeursRepository,
-    private readonly notifyDossierTransmisService: NotifyDossierTransmisService
+    private readonly notifyDossierTransmisService: NotifyDossierTransmisService,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -35,6 +41,7 @@ export class TransmettrePourAvisDemarchePcaetService {
     // Recueilli dans la transaction, exploité après : le mail au support ne se
     // rejoue pas à l'envers, il attend que la transmission soit acquise.
     let servicesSansCompte: ServiceSansCompte[] = [];
+    let saisines: { type: string; perimetre: string }[] = [];
 
     const result = await this.transitionService.apply(
       input,
@@ -52,6 +59,7 @@ export class TransmettrePourAvisDemarchePcaetService {
           },
           transaction
         );
+        saisines = demandes;
 
         servicesSansCompte =
           await this.notifyDossierTransmisService.creerNotifications(
@@ -74,6 +82,22 @@ export class TransmettrePourAvisDemarchePcaetService {
         demarche: result.data,
         services: servicesSansCompte,
       });
+      this.trackingService.track(
+        DemarchePcaetEventEnum.TRANSMISE,
+        result.data,
+        {
+          userId: user.id,
+          acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+          properties: {
+            nbSaisines: saisines.length,
+            nbSaisinesSecondaires: saisines.filter(
+              ({ perimetre }) => perimetre === 'secondaire'
+            ).length,
+            typesSaisis: [...new Set(saisines.map(({ type }) => type))].sort(),
+            nbServicesSansCompte: servicesSansCompte.length,
+          },
+        }
+      );
     }
 
     return result;

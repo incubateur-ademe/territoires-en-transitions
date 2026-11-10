@@ -15,6 +15,11 @@ import {
   RemoveDemarchePcaetDocumentErrorEnum,
 } from './remove-document.errors';
 import { RemoveDemarchePcaetDocumentInput } from './remove-document.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class RemoveDemarchePcaetDocumentService {
@@ -24,7 +29,8 @@ export class RemoveDemarchePcaetDocumentService {
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -39,6 +45,7 @@ export class RemoveDemarchePcaetDocumentService {
     input: RemoveDemarchePcaetDocumentInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<{ documentId: string }, RemoveDemarchePcaetDocumentError>> {
+    let onSuccess: (() => void) | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -91,9 +98,30 @@ export class RemoveDemarchePcaetDocumentService {
           pruned.length > 0 ? `, inclusions dropped: ${pruned.join(', ')}` : ''
         }`
       );
+      onSuccess = () =>
+        this.trackingService.track(
+          DemarchePcaetEventEnum.DOCUMENT_RETIRE,
+          demarche,
+          {
+            userId: user.id,
+            acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+            properties: {
+              documentId: input.documentId,
+              etape,
+              requis: definition.requis,
+            },
+          }
+        );
       return success({ documentId: input.documentId });
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 }

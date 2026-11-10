@@ -7,12 +7,15 @@ import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { UpsertAvisError, UpsertAvisErrorEnum } from './upsert-avis.errors';
 import { UpsertAvisInput } from './upsert-avis.input';
+import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class UpsertAvisService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
-    private readonly pcaetAvisRepository: PcaetAvisRepository
+    private readonly pcaetAvisRepository: PcaetAvisRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async upsertAvis(
@@ -77,6 +80,18 @@ export class UpsertAvisService {
       );
     }
 
+    this.trackingService.trackInstructeur(
+      DemarchePcaetEventEnum.AVIS_BROUILLON,
+      permissionResult.data,
+      {
+        userId: user.id,
+        properties: {
+          auTitreDe,
+          nbPieces: fichierRefs.length,
+          premierDepot: avisExistant === undefined || avisExistant === null,
+        },
+      }
+    );
     return success(
       await this.pcaetAvisRepository.listByDemande(demandeAvisId, tx)
     );

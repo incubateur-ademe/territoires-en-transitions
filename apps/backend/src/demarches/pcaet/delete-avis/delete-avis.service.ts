@@ -6,12 +6,15 @@ import { PcaetAvis } from '../shared/models/pcaet-avis.dto';
 import { PcaetAvisRepository } from '../shared/pcaet-avis.repository';
 import { DeleteAvisError, DeleteAvisErrorEnum } from './delete-avis.errors';
 import { DeleteAvisInput } from './delete-avis.input';
+import { DemarchePcaetEventEnum } from '../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class DeleteAvisService {
   constructor(
     private readonly depotPermissionsService: DepotPermissionsService,
-    private readonly pcaetAvisRepository: PcaetAvisRepository
+    private readonly pcaetAvisRepository: PcaetAvisRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async deleteAvis(
@@ -39,6 +42,17 @@ export class DeleteAvisService {
     }
 
     await this.pcaetAvisRepository.delete({ demandeAvisId, avisId }, tx);
+    this.trackingService.trackInstructeur(
+      DemarchePcaetEventEnum.AVIS_SUPPRIME,
+      permissionResult.data,
+      {
+        userId: user.id,
+        properties: {
+          auTitreDe: avis.auTitreDe,
+          nbPieces: avis.fichierRefs.length,
+        },
+      }
+    );
 
     return success(
       await this.pcaetAvisRepository.listByDemande(demandeAvisId, tx)

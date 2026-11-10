@@ -8,6 +8,7 @@ import { TransactionManager } from '@tet/backend/utils/transaction/transaction-m
 import {
   applyTransition,
   type DemarchePcaet,
+  type DemarchePcaetGuardId,
   type DemarchePcaetTransition,
 } from '@tet/domain/demarches';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -27,6 +28,25 @@ import {
 } from './demarche-pcaet-transition.errors';
 import { DemarchePcaetTransitionInput } from './demarche-pcaet-transition.input';
 import { DemarchePcaetTransitionRepository } from './demarche-pcaet-transition.repository';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from './tracking/demarche-pcaet-tracking.constants';
+import { daysBetween } from './tracking/demarche-pcaet-tracking.rules';
+import { DemarchePcaetTrackingService } from './tracking/demarche-pcaet-tracking.service';
+
+/** Ce que la transition a constaté, pour l'événement émis une fois acquise. */
+type TransitionOutcome =
+  | {
+      applied: true;
+      fromStatus: DemarchePcaetRef['status'];
+      statusEnteredAt: string | null;
+    }
+  | {
+      applied: false;
+      demarche: DemarchePcaetRef;
+      blockedBy: DemarchePcaetGuardId[];
+    };
 
 /** Ce qu'une transition écrit sur la démarche en plus de son statut. */
 export type DemarchePcaetTransitionStamps = {
@@ -74,7 +94,8 @@ export class DemarchePcaetTransitionService {
     private readonly refRepository: DemarchePcaetRefRepository,
     private readonly guardsService: DemarchePcaetGuardsService,
     private readonly transitionRepository: DemarchePcaetTransitionRepository,
-    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository
+    private readonly getDemarchePcaetRepository: GetDemarchePcaetRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   async apply(
@@ -112,6 +133,7 @@ export class DemarchePcaetTransitionService {
     tx: Transaction | undefined,
     effects?: DemarchePcaetTransitionEffects
   ): Promise<DemarchePcaetTransitionResult> {
+    let outcome: TransitionOutcome | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<DemarchePcaetTransitionResult> => {
@@ -156,6 +178,11 @@ export class DemarchePcaetTransitionService {
         ),
       });
       if (!transitionResult.success) {
+        outcome = {
+          applied: false,
+          demarche,
+          blockedBy: transitionResult.blockedBy,
+        };
         return failure(toDemarchePcaetTransitionError(transitionResult));
       }
       const { toStatus } = transitionResult.data;
@@ -166,6 +193,16 @@ export class DemarchePcaetTransitionService {
         effects && user
           ? await effects({ demarche, guardContext, user, transaction })
           : {};
+
+      outcome = {
+        applied: true,
+        fromStatus: demarche.status,
+        statusEnteredAt: await this.transitionRepository.findStatusEnteredAt(
+          demarche.id,
+          demarche.status,
+          transaction
+        ),
+      };
 
       const persistResult = await this.transitionRepository.persistTransition(
         demarche,
@@ -204,6 +241,53 @@ export class DemarchePcaetTransitionService {
       };
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    this.trackOutcome(transition, user, outcome, result);
+    return result;
+  }
+
+  private trackOutcome(
+    transition: DemarchePcaetTransition,
+    user: AuthenticatedUser | null,
+    outcome: TransitionOutcome | undefined,
+    result: DemarchePcaetTransitionResult
+  ) {
+    const context = {
+      userId: user?.id,
+      acteur: user
+        ? DemarchePcaetActeurEnum.COLLECTIVITE
+        : DemarchePcaetActeurEnum.SYSTEME,
+    };
+    if (outcome?.applied && result.success) {
+      const demarche = result.data;
+      this.trackingService.track(DemarchePcaetEventEnum.TRANSITION, demarche, {
+        ...context,
+        properties: {
+          transition,
+          fromStatus: outcome.fromStatus,
+          toStatus: demarche.status,
+          joursDepuisCreation: daysBetween(demarche.createdAt),
+          joursDansStatutPrecedent: daysBetween(
+            outcome.statusEnteredAt ?? demarche.createdAt
+          ),
+        },
+      });
+    } else if (outcome && !outcome.applied) {
+      this.trackingService.track(
+        DemarchePcaetEventEnum.TRANSITION_REFUSEE,
+        outcome.demarche,
+        {
+          ...context,
+          properties: {
+            transition,
+            blockedBy: outcome.blockedBy[0] ?? 'transition_not_allowed',
+            blockedByAll: outcome.blockedBy,
+          },
+        }
+      );
+    }
   }
 }

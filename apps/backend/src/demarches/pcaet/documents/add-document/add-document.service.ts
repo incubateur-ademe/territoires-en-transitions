@@ -20,6 +20,11 @@ import {
   AddDemarchePcaetDocumentErrorEnum,
 } from './add-document.errors';
 import { AddDemarchePcaetDocumentInput } from './add-document.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class AddDemarchePcaetDocumentService {
@@ -29,7 +34,8 @@ export class AddDemarchePcaetDocumentService {
     private readonly permissionService: PermissionService,
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -44,6 +50,7 @@ export class AddDemarchePcaetDocumentService {
     input: AddDemarchePcaetDocumentInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarcheDocumentDepose, AddDemarchePcaetDocumentError>> {
+    let onSuccess: (() => void) | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -173,9 +180,38 @@ export class AddDemarchePcaetDocumentService {
             : ''
         }`
       );
+      onSuccess = () =>
+        this.trackingService.track(
+          DemarchePcaetEventEnum.DOCUMENT_DEPOSE,
+          demarche,
+          {
+            userId: user.id,
+            acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+            properties: {
+              documentId: definition.id,
+              etape,
+              requis: definition.requis,
+              reprise:
+                etape !== getEtapeExigeanteDemarcheDocument(definition.etape),
+              mimeType: fichier.mimeType,
+              tailleKo:
+                fichier.filesize === null
+                  ? null
+                  : Math.round(fichier.filesize / 1024),
+              nbInclusionsParDefaut: defaultInclusions.length,
+            },
+          }
+        );
       return success(document);
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 }

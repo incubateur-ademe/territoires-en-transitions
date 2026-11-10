@@ -15,6 +15,11 @@ import {
   CreateDemarchePcaetDocumentAdditionalErrorEnum,
 } from './create-document-additional.errors';
 import { CreateDemarchePcaetDocumentAdditionalInput } from './create-document-additional.input';
+import {
+  DemarchePcaetActeurEnum,
+  DemarchePcaetEventEnum,
+} from '../../shared/tracking/demarche-pcaet-tracking.constants';
+import { DemarchePcaetTrackingService } from '../../shared/tracking/demarche-pcaet-tracking.service';
 
 @Injectable()
 export class CreateDemarchePcaetDocumentAdditionalService {
@@ -25,7 +30,8 @@ export class CreateDemarchePcaetDocumentAdditionalService {
   constructor(
     private readonly transactionManager: TransactionManager,
     private readonly accessService: DemarchePcaetAccessService,
-    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository
+    private readonly demarcheDocumentsRepository: DemarcheDocumentsRepository,
+    private readonly trackingService: DemarchePcaetTrackingService
   ) {}
 
   /**
@@ -41,6 +47,7 @@ export class CreateDemarchePcaetDocumentAdditionalService {
       CreateDemarchePcaetDocumentAdditionalError
     >
   > {
+    let onSuccess: (() => void) | undefined;
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
@@ -93,9 +100,26 @@ export class CreateDemarchePcaetDocumentAdditionalService {
       this.logger.log(
         `Free document ${documentAdditional.id} created on demarche PCAET ${demarche.id} (${input.etape}) by user ${user.id}`
       );
+      onSuccess = () =>
+        this.trackingService.track(
+          DemarchePcaetEventEnum.DOCUMENT_ADDITIONNEL_AJOUTE,
+          demarche,
+          {
+            userId: user.id,
+            acteur: DemarchePcaetActeurEnum.COLLECTIVITE,
+            properties: { etape: input.etape },
+          }
+        );
       return success(documentAdditional);
     };
 
-    return this.transactionManager.executeSingle(executeInTransaction, tx);
+    const result = await this.transactionManager.executeSingle(
+      executeInTransaction,
+      tx
+    );
+    if (result.success) {
+      onSuccess?.();
+    }
+    return result;
   }
 }
