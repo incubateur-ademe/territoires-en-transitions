@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -6,7 +7,7 @@ import {
   ElectrificationLaureatsConfig,
   electrificationLaureatsConfigSchema,
 } from '@tet/domain/plans';
-import { ResourceType } from '@tet/domain/users';
+import { hasRole, PlatformRole, ResourceType } from '@tet/domain/users';
 import z from 'zod';
 import { CheckElectrificationEligibilityError } from './check-electrification-eligibility.errors';
 import { ELECTRIFICATION_LAUREATS_CONFIG } from '../config/electrification-eligibility.constants';
@@ -28,7 +29,8 @@ export class CheckElectrificationEligibilityService {
   constructor(
     @Inject(ELECTRIFICATION_LAUREATS_CONFIG)
     private readonly config: unknown,
-    private readonly permissions: PermissionService
+    private readonly permissions: PermissionService,
+    private readonly roles: GetUserRolesAndPermissionsService
   ) {}
 
   async check(
@@ -84,7 +86,8 @@ export class CheckElectrificationEligibilityService {
       ({ collectiviteId }) => collectiviteId === parsed.data.collectiviteId
     );
     return success({
-      eligible: laureat !== undefined,
+      eligible:
+        laureat !== undefined || (await this.canImportNonLaureat({ user, tx })),
       laureatReference: laureat?.reference ?? null,
       provenance: {
         source,
@@ -94,5 +97,19 @@ export class CheckElectrificationEligibilityService {
         checkedAt: new Date(checkedAt).toISOString(),
       },
     });
+  }
+  /** Exception de recette : ne transforme pas la collectivité en lauréate. */
+  private async canImportNonLaureat({ user, tx }: ServiceSecondArg) {
+    if (
+      user.jwtPayload.client_id !== undefined ||
+      user.jwtPayload.permissions !== undefined
+    ) {
+      return false;
+    }
+    const roles = await this.roles.getUserRolesAndPermissions({
+      userId: user.id,
+      tx,
+    });
+    return roles.success && hasRole(roles.data, PlatformRole.SUPER_ADMIN);
   }
 }

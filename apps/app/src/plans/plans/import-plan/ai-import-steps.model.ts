@@ -15,11 +15,10 @@ export const importStepDisplayStatusValues = [
   'failed',
 ] as const;
 
-type ImportStepDisplayStatus =
-  (typeof importStepDisplayStatusValues)[number];
+type ImportStepDisplayStatus = (typeof importStepDisplayStatusValues)[number];
 
 export type ImportStepView = {
-  name: ImportStepName;
+  name: ImportStepName | 'persistence';
   status: ImportStepDisplayStatus;
 };
 
@@ -51,7 +50,13 @@ const STARTS_WITH: Partial<Record<ImportStepName, ImportStepName>> = {
 // cours quand l'import est tombé.
 export const toImportStepViews = (
   stepStates?: ImportStepStates,
-  { failed = false }: { failed?: boolean } = {}
+  {
+    failed = false,
+    jobStatus,
+  }: {
+    failed?: boolean;
+    jobStatus?: RouterOutput['plans']['aiImport']['getAiImportStatus']['status'];
+  } = {}
 ): ImportStepView[] => {
   const isPending = (name: ImportStepName) =>
     stateOf(stepStates, name) === 'pending';
@@ -69,10 +74,29 @@ export const toImportStepViews = (
       : isPending(name) && STEP_RANK[startsWith] <= currentRank;
   };
 
-  return STEP_ORDER.map((name) => ({
+  const steps: ImportStepView[] = STEP_ORDER.map((name) => ({
     name,
-    status: toDisplayStatus(stateOf(stepStates, name), isCurrent(name), failed),
+    status: toDisplayStatus(
+      stateOf(stepStates, name),
+      jobStatus !== 'pending' && isCurrent(name),
+      failed
+    ),
   }));
+  // La création suit l'extraction et reste en cours jusqu'au commit du job.
+  // Les anciens checkpoints n'ont pas besoin d'une nouvelle étape persistée.
+  if (jobStatus) {
+    let status: ImportStepDisplayStatus = 'waiting';
+    if (jobStatus === 'done') {
+      status = 'done';
+    } else if (
+      jobStatus !== 'pending' &&
+      steps.every(({ status }) => status === 'done' || status === 'skipped')
+    ) {
+      status = failed ? 'failed' : 'current';
+    }
+    steps.push({ name: 'persistence', status });
+  }
+  return steps;
 };
 
 const stateOf = (

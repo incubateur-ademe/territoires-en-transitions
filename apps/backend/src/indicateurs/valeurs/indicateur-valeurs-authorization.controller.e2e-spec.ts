@@ -7,9 +7,10 @@ import {
 import { createGroupement } from '@tet/backend/collectivites/shared/models/groupement.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { GenerateImportDraftWorker } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.worker';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
   signTestAuthToken,
 } from '@tet/backend/test';
@@ -19,8 +20,14 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { PCAET_COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
+import {
+  ELECTRIFICATION_SOURCE_ID,
+  INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
+  PCAET_COLLECTIVITE_SOURCE_ID,
+} from '@tet/domain/indicateurs';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import request from 'supertest';
@@ -39,7 +46,14 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
   let cleanupCollectiviteAndUser: () => Promise<void>;
 
   beforeAll(async () => {
-    app = await getTestApp();
+    app = await getDisposableTestApp({
+      overrides: (builder) => {
+        builder
+          .overrideProvider(LlmService)
+          .useValue(new LlmService(new FakeLlmRepository()));
+        builder.overrideProvider(GenerateImportDraftWorker).useValue({});
+      },
+    });
     databaseService = await getTestDatabase(app);
     router = app.get(TrpcRouter);
     const fixture = await addTestCollectiviteAndUser(databaseService, {
@@ -308,7 +322,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
   });
 
   const createMetadataFixture = async (
-    options: { pcaet?: boolean; sansValeurUtilisateur?: boolean } = {}
+    options: { sourceId?: string; sansValeurUtilisateur?: boolean } = {}
   ) => {
     const [indicateur] = await databaseService.db
       .insert(indicateurDefinitionTable)
@@ -320,9 +334,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         sansValeurUtilisateur: options.sansValeurUtilisateur ?? false,
       })
       .returning();
-    const sourceId = options.pcaet
-      ? PCAET_COLLECTIVITE_SOURCE_ID
-      : `authorization-${indicateur.id}`;
+    const sourceId = options.sourceId ?? `authorization-${indicateur.id}`;
     await databaseService.db
       .insert(indicateurSourceTable)
       .values({ id: sourceId, libelle: 'Source de contrôle de provenance' })
@@ -341,7 +353,7 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
       await databaseService.db
         .delete(indicateurSourceMetadonneeTable)
         .where(eq(indicateurSourceMetadonneeTable.id, metadata.id));
-      if (!options.pcaet) {
+      if (!options.sourceId) {
         await databaseService.db
           .delete(indicateurSourceTable)
           .where(eq(indicateurSourceTable.id, sourceId));
@@ -359,22 +371,28 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
         .select()
         .from(indicateurValeurTable)
         .where(eq(indicateurValeurTable.indicateurId, indicateur.id));
-    return { valeur, readValeurs };
+    return { valeur, readValeurs, sourceId };
   };
 
-  it.each(['externe', 'PCAET', 'contexte falsifié'])(
+  it.each(['externe', 'PCAET', 'Électrification', 'contexte falsifié'])(
     'refuse la création REST authentifiée sous métadonnée %s',
     async (scenario) => {
       const { valeur, readValeurs } = await createMetadataFixture({
-        pcaet: scenario !== 'externe',
+        sourceId:
+          scenario === 'externe'
+            ? undefined
+            : scenario === 'PCAET'
+            ? PCAET_COLLECTIVITE_SOURCE_ID
+            : ELECTRIFICATION_SOURCE_ID,
       });
       const spoofedContext =
         scenario === 'contexte falsifié'
           ? {
               isUserTrusted: true,
-              pcaetMetadataAuthorization: {
+              metadataAuthorization: {
                 collectiviteId,
                 metadonneeId: valeur.metadonneeId,
+                sourceId: ELECTRIFICATION_SOURCE_ID,
               },
             }
           : {};
@@ -497,45 +515,107 @@ describe("Autorisation REST des valeurs d'indicateur", () => {
     ]);
   });
 
-  it.each(['collectivité', 'métadonnée', 'source externe'])(
-    'borne la capacité PCAET interne : %s',
-    async (scope) => {
-      const { valeur, readValeurs } = await createMetadataFixture({
-        pcaet: scope !== 'source externe',
-      });
-      await expect(
-        app
+  describe.each(INDICATEUR_SOURCES_WITH_DEDICATED_METADATA)(
+    'Autorisation interne de la source %s',
+    (sourceId) => {
+      it.each(['collectivité', 'métadonnée', 'source', 'source externe'])(
+        'refuse un périmètre différent : %s',
+        async (scope) => {
+          const {
+            valeur,
+            readValeurs,
+            sourceId: actualSourceId,
+          } = await createMetadataFixture({
+            sourceId: scope === 'source externe' ? undefined : sourceId,
+          });
+          await expect(
+            app
+              .get(ManageIndicateurValeursService)
+              .upsertIndicateurValeurs([valeur], {
+                user: authenticatedUser,
+                metadataAuthorization: {
+                  collectiviteId:
+                    collectiviteId + (scope === 'collectivité' ? 1 : 0),
+                  metadonneeId:
+                    valeur.metadonneeId + (scope === 'métadonnée' ? 1 : 0),
+                  sourceId:
+                    scope === 'source'
+                      ? sourceId === PCAET_COLLECTIVITE_SOURCE_ID
+                        ? ELECTRIFICATION_SOURCE_ID
+                        : PCAET_COLLECTIVITE_SOURCE_ID
+                      : actualSourceId,
+                },
+              })
+          ).rejects.toThrow('une autorisation interne dédiée');
+          await expect(readValeurs()).resolves.toEqual([]);
+        }
+      );
+
+      it('enregistre sous la métadonnée autorisée en conservant l’auteur', async () => {
+        const { valeur, readValeurs } = await createMetadataFixture({
+          sourceId,
+        });
+        await app
           .get(ManageIndicateurValeursService)
-          .upsertIndicateurValeurs([valeur], {
+          .upsertIndicateurValeurs([{ ...valeur, calculAuto: true }], {
             user: authenticatedUser,
-            pcaetMetadataAuthorization: {
-              collectiviteId:
-                collectiviteId + (scope === 'collectivité' ? 1 : 0),
-              metadonneeId:
-                valeur.metadonneeId + (scope === 'métadonnée' ? 1 : 0),
+            metadataAuthorization: {
+              collectiviteId,
+              metadonneeId: valeur.metadonneeId,
+              sourceId,
             },
-          })
-      ).rejects.toThrow('une autorisation interne dédiée');
-      await expect(readValeurs()).resolves.toEqual([]);
+          });
+        expect(await readValeurs()).toEqual([
+          expect.objectContaining({
+            ...valeur,
+            calculAuto: false,
+            createdBy: authenticatedUser.id,
+            modifiedBy: authenticatedUser.id,
+          }),
+        ]);
+      });
+
+      it('conserve la protection des indicateurs sans valeur utilisateur', async () => {
+        const { valeur, readValeurs } = await createMetadataFixture({
+          sourceId,
+          sansValeurUtilisateur: true,
+        });
+        await expect(
+          app
+            .get(ManageIndicateurValeursService)
+            .upsertIndicateurValeurs([valeur], {
+              user: authenticatedUser,
+              metadataAuthorization: {
+                collectiviteId,
+                metadonneeId: valeur.metadonneeId,
+                sourceId,
+              },
+            })
+        ).rejects.toThrow("n'acceptent pas de valeur utilisateur");
+        await expect(readValeurs()).resolves.toEqual([]);
+      });
+
+      it('contrôle la périodicité sous métadonnée', async () => {
+        const { valeur, readValeurs } = await createMetadataFixture({
+          sourceId,
+        });
+        await expect(
+          app
+            .get(ManageIndicateurValeursService)
+            .upsertIndicateurValeurs(
+              [{ ...valeur, periodicite: 'mensuelle' }],
+              {
+                user: authenticatedUser,
+                metadataAuthorization: {
+                  collectiviteId,
+                  metadonneeId: valeur.metadonneeId,
+                  sourceId,
+                },
+              }
+            )
+        ).rejects.toThrow('respecter la périodicité');
+        await expect(readValeurs()).resolves.toEqual([]);
+      });
     }
   );
-
-  it('conserve les règles utilisateur avec une capacité PCAET interne valide', async () => {
-    const { valeur, readValeurs } = await createMetadataFixture({
-      pcaet: true,
-      sansValeurUtilisateur: true,
-    });
-    await expect(
-      app
-        .get(ManageIndicateurValeursService)
-        .upsertIndicateurValeurs([valeur], {
-          user: authenticatedUser,
-          pcaetMetadataAuthorization: {
-            collectiviteId,
-            metadonneeId: valeur.metadonneeId,
-          },
-        })
-    ).rejects.toThrow("n'acceptent pas de valeur utilisateur");
-    await expect(readValeurs()).resolves.toEqual([]);
-  });
 });

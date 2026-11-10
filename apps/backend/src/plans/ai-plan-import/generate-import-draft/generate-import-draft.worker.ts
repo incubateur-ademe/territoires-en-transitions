@@ -23,7 +23,9 @@ export class GenerateImportDraftWorker extends WorkerHost {
   }
 
   async process(job: Job<AiPlanImportJobData>): Promise<void> {
-    const result = await this.service.generate(job.data.jobId);
+    const result = await this.service.generate(job.data.jobId, (attempt) =>
+      job.updateData({ ...job.data, executionAttempt: attempt })
+    );
     if (!result.success) {
       throw new UnrecoverableError(
         ImportGenerationErrors.forWorker(result.error)
@@ -44,7 +46,8 @@ export class GenerateImportDraftWorker extends WorkerHost {
     }
     await this.service.recordTerminalFailure(
       job.data.jobId,
-      ImportGenerationErrors.interrupted(error)
+      ImportGenerationErrors.interrupted(error),
+      job.data.executionAttempt ?? 0
     );
   }
 

@@ -18,6 +18,13 @@ vi.mock('../use-list-plan-types', () => ({
   }),
 }));
 
+vi.mock('../use-plan-creation-capabilities', () => ({
+  usePlanCreationCapabilities: () => ({
+    canCreateType: () => true,
+    getDisabledReason: () => undefined,
+  }),
+}));
+
 vi.mock('./plan-calendar.inline-editable-field', () => ({
   PlanCalendarInlineEditableField: () => null,
 }));

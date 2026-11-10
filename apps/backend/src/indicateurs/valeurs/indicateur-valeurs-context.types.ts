@@ -6,10 +6,14 @@ export type IndicateurValeursContext<User extends AuthUser = AuthUser> =
       user: User;
       isUserTrusted?: false;
       tx?: Transaction;
-      /** Granted internally after authorizing the PCAET démarche; never a request field. */
-      pcaetMetadataAuthorization?: Readonly<{
+      /**
+       * Granted by the owning workflow after checking its rights and exact
+       * metadata association. Never built from request fields alone.
+       */
+      metadataAuthorization?: Readonly<{
         collectiviteId: number;
         metadonneeId: number;
+        sourceId: string;
       }>;
     }>
   | Readonly<{

@@ -1,0 +1,662 @@
+{
+  "source": {
+    "filename": "20231103_Trame_Feuille_de_Route_100TE_MJ_Annexe_3_v4.docx",
+    "sha256": "825b6a96e00eef611601b4a301f4a9a06212bceef7f40306e049608877e96fb9",
+    "url": "https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90#40d6523d57d780f38027d5d46fd19af5"
+  },
+  "sections": [
+    {
+      "heading": "A. Engagements retenus par le territoire",
+      "rows": [
+        [
+          {
+            "text": "Axe du plan d'action (Référentiel)"
+          },
+          {
+            "text": "Engagement du programme"
+          },
+          {
+            "text": "Engagement retenu (oui / non)"
+          },
+          {
+            "text": "Valeur chiffrée de l'engagement (à la place des « ___ »)"
+          }
+        ],
+        [
+          {
+            "text": "Axe 1. Logements privés : sortie du fioul et du gaz\n",
+            "rowSpan": 2
+          },
+          {
+            "text": "Le territoire s'engage à la sortie de l'usage du fioul domestique pour ___ % des bâtiments actuellement chauffés au fioul d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Le territoire s'engage à la sortie de l'usage du gaz pour ___ % des bâtiments usant du gaz d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 2. Logements sociaux : sortie du gaz"
+          },
+          {
+            "text": "Le territoire s'engage à accélérer fortement la sortie du gaz des logements sociaux, pour ___ % des logements sociaux actuellement chauffés au gaz d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 3. Bâtiments publics : sortie du fioul et du gaz"
+          },
+          {
+            "text": "Le territoire s'engage à accélérer fortement la sortie du gaz des bâtiments publics, pour ___ % des bâtiments actuellement chauffés au gaz d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 4. Réseau de gaz : décommissionnement de certaines portions"
+          },
+          {
+            "text": "Le territoire s'engage à travailler à un décommissionnement de certaines portions du réseau de gaz."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 5. Véhicules particuliers électriques"
+          },
+          {
+            "text": "Le territoire s'engage pour accélérer fortement l'électrification des véhicules particuliers, afin d'atteindre un parc de véhicules y étant immatriculés de ___ % d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 6. Bornes de recharge"
+          },
+          {
+            "text": "Le territoire s'engage à renforcer le schéma des infrastructures de recharge pour véhicules électriques, avec l'objectif d'installer ___ bornes publiques dont ___ rapides d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 7. Recharge des poids lourds"
+          },
+          {
+            "text": "Le territoire s'engage à identifier un site clés en main pour l'installation de stations de recharge de poids lourds électriques."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 8. Autobus électriques"
+          },
+          {
+            "text": "Le territoire s'engage à disposer d'un parc d'autobus électrique représentant ___ % du parc total d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 9. Artisans"
+          },
+          {
+            "text": "Le territoire s'engage à accompagner ___ artisans dans leur électrification, avec l'objectif de remplacer des équipements carbonés (ex : four à pain au gaz) d'ici 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 10. Industrie"
+          },
+          {
+            "text": "Le territoire s'engage à accompagner les industriels dans leur électrification, avec l'objectif de conduire des projets pour une consommation de ___ MWh en 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ],
+        [
+          {
+            "text": "Axe 11. Agriculture"
+          },
+          {
+            "text": "Le territoire s'engage à accompagner les agriculteurs dans leur électrification avec l'objectif de conduire des projets pour une consommation de ___ MWh en 2030."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ]
+      ]
+    },
+    {
+      "heading": "B. Fiche action (modèle vide, un tableau par action)",
+      "rows": [
+        [
+          {
+            "text": "Rattachement",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Axe"
+          },
+          {
+            "text": "Axe de rattachement : n° d'un axe du Référentiel, de préférence celui d'un engagement retenu au tableau A (ex : 1), ou intitulé d'un axe propre au territoire (sans n°)",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Sous-axe (facultatif)"
+          },
+          {
+            "text": "Sous-axe de rattachement : n° d'un sous-axe du Référentiel (ex : 1.1), ou intitulé d'un sous-axe propre au territoire (sans n°)",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Description de l'action",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Code de l'action de référence ou URL de l'action (facultatif)"
+          },
+          {
+            "text": "Code de l'action dans le Référentiel, ou URL de l'action déjà présente sur la plateforme Territoires en Transitions, si connu",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Intitulé de l'action"
+          },
+          {
+            "text": "Intitulé de l'action",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Description de l'action"
+          },
+          {
+            "text": "Contenu de l'action : ce qui sera fait, comment, sur quel périmètre",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Objectif(s) de l'action"
+          },
+          {
+            "text": "Résultat visé par l'action, de préférence chiffré",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Pilotage",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Structure pilote (facultatif)"
+          },
+          {
+            "text": "Structure(s) pilote(s) de l'action",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Partenaire(s) (parties prenantes) (facultatif)"
+          },
+          {
+            "text": "Structures partenaires de l'action (cf. Annexe 2) : services de l'Etat, ADEME, opérateurs, bailleurs, entreprises, associations...",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Calendrier et avancement",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Date de début prévisionnelle"
+          },
+          {
+            "text": "JJ/MM/AAAA (ou mois et année)",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Date de fin prévisionnelle"
+          },
+          {
+            "text": "JJ/MM/AAAA (ou mois et année)",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "État d'avancement au moment de la signature"
+          },
+          {
+            "text": "À venir / À discuter / En cours / Réalisé / En retard / En pause / Abandonné / Bloqué (ne conserver qu'une mention)",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Moyens et besoins d'accompagnement",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Budget prévisionnel en € HT (facultatif)"
+          },
+          {
+            "text": "Investissement : ",
+            "columnSpan": 2
+          },
+          {
+            "text": "Fonctionnement : ",
+            "columnSpan": 2
+          }
+        ],
+        [
+          {
+            "text": "Sous-actions (facultatif)",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Intitulé de la sous-action",
+            "columnSpan": 2
+          },
+          {
+            "text": "Date de fin",
+            "columnSpan": 3
+          }
+        ],
+        [
+          {
+            "text": "Une ligne par sous-action (ajouter lignes si besoin)",
+            "columnSpan": 2
+          },
+          {
+            "text": "JJ/MM/AAAA",
+            "columnSpan": 3
+          }
+        ],
+        [
+          {
+            "text": "",
+            "columnSpan": 2
+          },
+          {
+            "text": "",
+            "columnSpan": 3
+          }
+        ],
+        [
+          {
+            "text": "Indicateurs de suivi",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Code ou URL de l'indicateur (facultatif)"
+          },
+          {
+            "text": "Intitulé de l'indicateur",
+            "columnSpan": 2
+          },
+          {
+            "text": "Valeur de résultat (avec son année de référence)"
+          },
+          {
+            "text": "Valeur d'objectif à 2030"
+          }
+        ],
+        [
+          {
+            "text": "Code de l'indicateur du Référentiel, ou URL de l'indicateur déjà présent sur la plateforme Territoires en Transitions (laisser vide pour un indicateur propre au territoire)"
+          },
+          {
+            "text": "Si ni code ni URL : intitulé et unité de l'indicateur (ex : nombre de boulangeries ayant remplacé leur four au gaz)",
+            "columnSpan": 2
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ]
+      ]
+    },
+    {
+      "heading": "C. Exemple de fiche remplie (fictif, à titre indicatif)",
+      "rows": [
+        [
+          {
+            "text": "Rattachement",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Axe"
+          },
+          {
+            "text": "1. Logements privés : sortie du fioul et du gaz",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Sous-axe (facultatif)"
+          },
+          {
+            "text": "1.2 Aller au-devant des ménages et les orienter vers la pompe à chaleur",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Description de l'action",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Code de l'action de référence ou URL de l'action (facultatif)"
+          },
+          {
+            "text": "X.X.X",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Intitulé de l'action"
+          },
+          {
+            "text": "Accompagner les ménages utilisant encore des chaudières au fioul jusqu'au changement de mode de chauffage.",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Description de l'action"
+          },
+          {
+            "text": "Porte-à-porte ou prise de contact directe, en s'appuyant sur les relais d'aller-vers. Chaque ménage est ensuite pris en charge dans un parcours dédié avec l'espace conseil France Rénov' : conseil, devis, montage des demandes d'aide, jusqu’à la fin des travaux.",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Objectif(s) de l'action"
+          },
+          {
+            "text": "Accompagner tous les ménages du territoire et prioritairement ceux en situation de précarité et vulnérabilité énergétique vers le remplacement de leur chaudière fioul ou gaz d'ici 2030.",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Pilotage",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Structure pilote (facultatif)"
+          },
+          {
+            "text": "Agence locale de l'énergie",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Partenaire(s) (parties prenantes) (facultatif)"
+          },
+          {
+            "text": "Espace conseil France Rénov', La Poste, communes membres, DDT",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Calendrier et avancement",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Date de début prévisionnelle"
+          },
+          {
+            "text": "01/01/2027",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Date de fin prévisionnelle"
+          },
+          {
+            "text": "31/12/2029",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "État d'avancement au moment de la signature"
+          },
+          {
+            "text": "À venir",
+            "columnSpan": 4
+          }
+        ],
+        [
+          {
+            "text": "Moyens et besoins d'accompagnement",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Budget prévisionnel en € HT (facultatif)"
+          },
+          {
+            "text": "Investissement : ",
+            "columnSpan": 2
+          },
+          {
+            "text": "Fonctionnement : 120 000",
+            "columnSpan": 2
+          }
+        ],
+        [
+          {
+            "text": "Sous-actions (facultatif)",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Intitulé de la sous-action",
+            "columnSpan": 2
+          },
+          {
+            "text": "Date de fin",
+            "columnSpan": 3
+          }
+        ],
+        [
+          {
+            "text": "Prendre contact directement avec les ménages repérés (porte-à-porte, téléphone)",
+            "columnSpan": 2
+          },
+          {
+            "text": "31/12/2030",
+            "columnSpan": 3
+          }
+        ],
+        [
+          {
+            "text": "Suivre chaque ménage dans le parcours dédié avec l'espace conseil France Rénov'",
+            "columnSpan": 2
+          },
+          {
+            "text": "31/12/2030",
+            "columnSpan": 3
+          }
+        ],
+        [
+          {
+            "text": "Indicateurs de suivi",
+            "columnSpan": 5
+          }
+        ],
+        [
+          {
+            "text": "Code ou URL de l'indicateur (facultatif)"
+          },
+          {
+            "text": "Intitulé de l'indicateur",
+            "columnSpan": 2
+          },
+          {
+            "text": "Valeur de résultat (avec son année de référence)"
+          },
+          {
+            "text": "Valeur d'objectif à 2030"
+          }
+        ],
+        [
+          {
+            "text": "X.X"
+          },
+          {
+            "text": "",
+            "columnSpan": 2
+          },
+          {
+            "text": "0 (2026)"
+          },
+          {
+            "text": "300"
+          }
+        ],
+        [
+          {
+            "text": "Y.Y"
+          },
+          {
+            "text": "",
+            "columnSpan": 2
+          },
+          {
+            "text": "0 (2026)"
+          },
+          {
+            "text": "150"
+          }
+        ],
+        [
+          {
+            "text": ""
+          },
+          {
+            "text": "Nombre de ménages contactés en porte-à-porte",
+            "columnSpan": 2
+          },
+          {
+            "text": "0 (2026)"
+          },
+          {
+            "text": "1 500"
+          }
+        ]
+      ]
+    }
+  ]
+}

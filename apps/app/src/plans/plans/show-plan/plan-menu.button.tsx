@@ -1,10 +1,21 @@
 import { appLabels } from '@/app/labels/catalog';
-import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
+import {
+  makeCollectivitePlanImportsUrl,
+  makeCollectivitePlansActionsListUrl,
+} from '@/app/app/paths';
 import { useDemarcheLinkedToPlan } from '@/app/demarches/pcaet/use-demarche-linked-to-plan';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { PlanCreationRules } from '@tet/domain/plans';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ButtonMenu, Icon, MenuAction, MenuSeparator } from '@tet/ui';
+import { useTRPC } from '@tet/api';
+import { useQuery } from '@tanstack/react-query';
+import {
+  ButtonMenu,
+  Event,
+  Icon,
+  MenuAction,
+  MenuSeparator,
+  useEventTracker,
+} from '@tet/ui';
 import { useState } from 'react';
 import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
 import { useIsPendingReport } from '../../reports/generate-plan-report-pptx/use-is-pending-report';
@@ -14,15 +25,31 @@ import RestreindreFichesModal from './actions/update-fiche-visibility.modal';
 import { useDuplicatePlan } from './data/use-duplicate-plan';
 import { useExportPlanAction } from './data/use-export-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
+import { usePlanCreationCapabilities } from '../use-plan-creation-capabilities';
 
 type RestreindreFicheState = 'closed' | 'private' | 'public';
 
 export const PlanMenuButton = () => {
+  const tracker = useEventTracker();
   const { plan, axeHasFiches } = usePlanAxesContext();
+  const { getDisabledReason } = usePlanCreationCapabilities();
+  const duplicateDisabledReason = getDisabledReason(plan.type?.id);
   const { mutate: exportPlanAction, isPending } = useExportPlanAction(plan.id);
   const { mutateAsync: duplicatePlan, isPending: isDuplicating } =
     useDuplicatePlan(plan.id);
   const { hasCollectivitePermission } = useCurrentCollectivite();
+  const trpc = useTRPC();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const canReadImport = hasCollectivitePermission('plans.fiches.import');
+  const { data: imports } = useQuery(
+    trpc.plans.aiImport.listRecentAiImports.queryOptions(
+      { collectiviteId: plan.collectiviteId, planId: plan.id, limit: 1 },
+      { enabled: isMenuOpen && canReadImport, retry: false }
+    )
+  );
+  const importJob = canReadImport
+    ? imports?.items.find((item) => item.createdPlanId === plan.id)
+    : undefined;
 
   const [restreindreFiche, setRestreindreFiche] =
     useState<RestreindreFicheState>('closed');
@@ -42,7 +69,7 @@ export const PlanMenuButton = () => {
       canMutatePlans: canMutatePlan,
     }) !== undefined;
 
-  if (!canMutatePlan && !canExportPlan) {
+  if (!canMutatePlan && !canExportPlan && !canReadImport) {
     return null;
   }
 
@@ -101,11 +128,32 @@ export const PlanMenuButton = () => {
           },
         }
       : null,
-    canMutatePlan ? MenuSeparator : null,
+    canExportPlan && importJob ? MenuSeparator : null,
+    importJob
+      ? {
+          label: appLabels.importPlanIaDetails,
+          onClick: () =>
+            tracker(Event.plans.importIa.details, {
+              origine: 'menu_plan',
+              jobId: importJob.jobId,
+              planId: plan.id,
+              profile: importJob.profile,
+              status: importJob.status,
+            }),
+          icon: 'file-text-line',
+          href: makeCollectivitePlanImportsUrl({
+            collectiviteId: plan.collectiviteId,
+            importJobId: importJob.jobId,
+          }),
+        }
+      : null,
+    canMutatePlan && (canExportPlan || importJob) ? MenuSeparator : null,
     canMutatePlan
       ? {
           label: appLabels.dupliquerPlan,
           icon: 'file-copy-line',
+          disabled: !!duplicateDisabledReason,
+          tooltip: duplicateDisabledReason,
           onClick: () => {
             setIsOpenDuplicateModal(true);
           },
@@ -137,11 +185,13 @@ export const PlanMenuButton = () => {
         </div>
       )}
       <ButtonMenu
+        dataTest="plans.plan.menu"
         title={appLabels.editerPlan}
         icon="more-line"
         variant="grey"
         size="xs"
         menu={{
+          openState: { isOpen: isMenuOpen, setIsOpen: setIsMenuOpen },
           className: 'max-w-96',
           actions: menuActions,
         }}
@@ -174,9 +224,7 @@ export const PlanMenuButton = () => {
         <DuplicatePlanModal
           planNom={plan.nom}
           isPending={isDuplicating}
-          creationDisabledReason={PlanCreationRules.getDisabledReason(
-            plan.type
-          )}
+          disabledReason={duplicateDisabledReason}
           onDuplicate={async (nom) => {
             await duplicatePlan({ nom });
           }}

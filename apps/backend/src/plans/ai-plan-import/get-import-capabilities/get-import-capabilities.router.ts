@@ -4,13 +4,13 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { z } from 'zod';
 import { aiPlanImportErrorConfig } from '../ai-plan-import.trpc-errors';
 import { getImportCapabilitiesOutputSchema } from './get-import-capabilities.output';
-import { GetImportCapabilitiesService } from './get-import-capabilities.service';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 
 @Injectable()
 export class GetImportCapabilitiesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly capabilities: GetImportCapabilitiesService
+    private readonly capabilities: ValidateImportProfileService
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(

@@ -1,23 +1,26 @@
 import { describe, expect, it } from 'vitest';
-import { validatePlanAggregate } from './create-plan-aggregate.rules';
 import {
   FicheWithRelationsAndAxisPath,
-  PlanCreationData,
-} from './create-plan-aggregate.types';
+  ImportPlanHierarchy,
+} from './import-plan-hierarchy.rules';
 
-const validPlanData: PlanCreationData = {
-  collectiviteId: 1,
-  nom: 'Plan test',
-};
+const validPlanName = 'Plan test';
 
-describe('validatePlanAggregate', () => {
+describe('ImportPlanHierarchy.validate', () => {
+  it('refuse un chemin sérialisé dont le parent est absent', () => {
+    const result = ImportPlanHierarchy.validate(validPlanName, [
+      { axisPath: ['A::B'], fiche: { titre: 'Action' } },
+    ]);
+
+    expect(result).toEqual({
+      isValid: false,
+      errors: ['Axes parents manquants : A'],
+    });
+  });
+
   describe('plan name', () => {
     it('should fail when plan name is empty', () => {
-      const result = validatePlanAggregate(
-        { ...validPlanData, nom: '' },
-        [],
-        []
-      );
+      const result = ImportPlanHierarchy.validate('', []);
 
       expect(result.isValid).toBe(false);
       expect(result.errors[0]).toContain(
@@ -40,7 +43,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(validPlanData, [['Axe 1']], fiches);
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(false);
       expect(result.errors[0]).toContain('Sous-actions sans action parente');
@@ -60,7 +63,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(validPlanData, [['Axe 1']], fiches);
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -77,7 +80,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(validPlanData, [], fiches);
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -95,7 +98,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(validPlanData, [['Axe 1']], fiches);
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(false);
       expect(result.errors[0]).toContain('Sous-actions sans action parente');
@@ -114,11 +117,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(
-        validPlanData,
-        [['Axe 1'], ['Axe 2']],
-        fiches
-      );
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(false);
       expect(result.errors[0]).toContain('Sous-actions sans action parente');
@@ -138,7 +137,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(validPlanData, [['Axe 1']], fiches);
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(false);
       expect(result.errors[0]).toContain("Titres d'actions en doublon");
@@ -156,11 +155,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(
-        validPlanData,
-        [['Axe 1'], ['Axe 2']],
-        fiches
-      );
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(true);
     });
@@ -178,7 +173,7 @@ describe('validatePlanAggregate', () => {
         },
       ];
 
-      const result = validatePlanAggregate(validPlanData, [['Axe 1']], fiches);
+      const result = ImportPlanHierarchy.validate(validPlanName, fiches);
 
       expect(result.isValid).toBe(true);
     });

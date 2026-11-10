@@ -184,7 +184,7 @@ describe('buildTabularActions', () => {
       'Onglet « Plan » : avancements non reconnus, laissés sans statut : « À voir avec la Région ».',
       "Onglet « Plan », colonne G « Budget consommé » : le budget consommé n'est pas importé.",
       // Le séparateur de milliers est une espace fine insécable.
-      'Onglet « Plan » : la somme des budgets des fiches (635\u202f000) diffère du total F6 (600\u202f000).',
+      'Onglet « Plan » : la somme des budgets des actions (635\u202f000) diffère du total F6 (600\u202f000).',
     ]);
   });
 

@@ -1,4 +1,4 @@
-import { getActionKey } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.rules';
+import { ImportPlanHierarchy } from '@tet/backend/plans/plans/import-plan-aggregate/validators/import-plan-hierarchy.rules';
 import {
   ImportActionInput,
   ImportActionOrSousAction,
@@ -45,7 +45,9 @@ export const countOverlongTitles = (actions: ExtractedAction[]): number =>
 export const dedupeExtractedActions = (
   actions: ExtractedAction[]
 ): ExtractedAction[] =>
-  uniqBy(actions, (action) => getActionKey(action.titre, toAxisPath(action)));
+  uniqBy(actions, (action) =>
+    ImportPlanHierarchy.getActionKey(action.titre, toAxisPath(action))
+  );
 
 export type NormalizedExtractedActions = {
   actions: ExtractedAction[];

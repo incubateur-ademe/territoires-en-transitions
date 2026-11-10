@@ -50,7 +50,7 @@ describe('AiImportProgress', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
-  it("garde la liste avec l'alerte quand l'import a echoue", () => {
+  it("masque les etapes et conserve l'alerte et la relance apres un echec", () => {
     renderProgress(
       [
         { name: 'reading', status: 'done' },
@@ -59,17 +59,13 @@ describe('AiImportProgress', () => {
       true
     );
 
-    expect(listedSteps()).toEqual([
-      [
-        `${appLabels.importPlanIaEtapeLecture} (${appLabels.importPlanIaEtapeTerminee})`,
-        'done',
-      ],
-      [
-        `${appLabels.importPlanIaEtapeExtraction} (${appLabels.importPlanIaEtapeEnEchec})`,
-        'failed',
-      ],
-    ]);
+    expect(
+      screen.queryByRole('list', { name: appLabels.importPlanIaEtapesTitre })
+    ).toBeNull();
     expect(screen.getByRole('alert')).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: appLabels.reessayer })
+    ).toBeTruthy();
   });
 
   it.each([

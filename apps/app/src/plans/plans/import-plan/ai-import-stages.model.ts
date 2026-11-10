@@ -1,5 +1,4 @@
 import {
-  ImportStepName,
   ImportStepStates,
   ImportStepView,
   toImportStepViews,
@@ -18,7 +17,7 @@ export const importStageValues = [
 
 export type ImportStage = (typeof importStageValues)[number];
 
-const STAGE_OF: Record<ImportStepName, ImportStage> = {
+const STAGE_OF: Record<ImportStepView['name'], ImportStage> = {
   reading: 'lecture',
   scouting: 'structure',
   extraction: 'actions',
@@ -28,6 +27,7 @@ const STAGE_OF: Record<ImportStepName, ImportStage> = {
   enrichment: 'actions',
   secteurs: 'secteurs',
   qualitativeReview: 'secteurs',
+  persistence: 'actions',
 };
 
 export type ImportStageView = {

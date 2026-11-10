@@ -27,6 +27,11 @@ export const listIndicateurValeursInputSchema = z
       .describe(
         'Liste des sources. `collectivite` pour les valeurs renseignées par la collectivité'
       ),
+    excludedSources: z
+      .string()
+      .array()
+      .optional()
+      .describe('Sources présentées séparément et exclues de cette lecture'),
     metadonneeId: z
       .int()
       .optional()

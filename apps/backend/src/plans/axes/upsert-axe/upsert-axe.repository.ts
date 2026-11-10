@@ -80,18 +80,7 @@ export class UpsertAxeRepository extends UpsertAxeBaseRepository<
           );
       }
 
-      if (indicateurIdsToInsert.length > 0) {
-        await tx
-          .insert(axeIndicateurTable)
-          .values(
-            indicateurIdsToInsert.map((indicateurId) => ({
-              axeId,
-              indicateurId,
-              createdBy: userId,
-            }))
-          )
-          .returning();
-      }
+      await this.addAxeIndicateurs(axeId, indicateurIdsToInsert, userId, tx);
 
       return { success: true, data: undefined };
     } catch (error) {

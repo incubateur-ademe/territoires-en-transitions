@@ -49,7 +49,7 @@ export class ImportGenerationErrors {
       case 'wrong_document_tome':
         return `Ce document semble être ${WRONG_TOME_LABELS[error.tome]} (« ${
           error.evidence
-        } »), pas un programme d'actions : déposez le document qui contient les fiches actions`;
+        } »), pas un programme d'actions : déposez le document qui contient les actions`;
       default:
         return `Étape ${failedStep} en échec (${describePipelineError(error)})`;
     }

@@ -120,14 +120,11 @@ export class ResolveElectrificationFichesService {
           issue('INVALID_FICHE_AXIS');
           continue;
         }
-        const documents = Rules.resolveDocuments(
+        const resolvedDocuments = Rules.resolveDocuments(
           mapping?.aides ?? [],
           fiche.source.location
         );
-        if (!documents.success) {
-          issues.push(...documents.error);
-          continue;
-        }
+        issues.push(...resolvedDocuments.issues);
         const sousActions = Rules.resolveSousActions(
           fiche,
           mapping,
@@ -153,7 +150,7 @@ export class ResolveElectrificationFichesService {
         const prepared: PreparedElectrificationFiche & { mode: 'create' } = {
           ...preparation.data,
           indicateurs: [],
-          documents: documents.data,
+          documents: resolvedDocuments.documents,
         };
         const seen = new Set<string>();
         const indicateurs = [...fiche.indicateurs];

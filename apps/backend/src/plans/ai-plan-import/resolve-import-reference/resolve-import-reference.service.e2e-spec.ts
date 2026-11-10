@@ -449,11 +449,13 @@ describe('Résolution des liens TeT pour un import', () => {
           },
           { timeout: 5000, interval: 20 }
         );
-        await tx.insert(ficheActionAxeTable).values({
-          ficheId: fiche.id,
-          axeId: axe.id,
-          createdBy: context.user.id,
-        });
+        expect(
+          (
+            await app
+              .get(FicheActionRepository)
+              .addAxeLinks(fiche.id, [axe.id], context.user.id, tx)
+          ).success
+        ).toBe(true);
       });
     } finally {
       await revocation;

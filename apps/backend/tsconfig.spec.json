@@ -15,7 +15,7 @@
 
     "paths": {
       "@tet/backend/*": ["./src/*"],
-      "@tet/backend/test": ["./test/index.ts"],
+      "@tet/backend/test": ["./test/index.ts"]
     }
   },
   "include": [
@@ -26,8 +26,9 @@
     "src/**/*.e2e-spec.ts",
     "src/**/*.live-spec.ts",
     "src/utils/assistant/eval/baseline.json",
+    "src/plans/ai-plan-import/electrification/extract-plan/__fixtures__/electrification-v4.template.json",
     "test/**/*.d.ts",
-    "test/**/*.ts",
+    "test/**/*.ts"
   ],
   "references": [
     {

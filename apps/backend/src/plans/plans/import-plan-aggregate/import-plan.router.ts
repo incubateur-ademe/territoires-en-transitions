@@ -29,6 +29,13 @@ export class ImportPlanRouter {
         );
 
         if (!result.success) {
+          if (result.error._tag === 'PlanCreationDisabledError') {
+            throw new TRPCError({
+              code: 'FORBIDDEN',
+              message: result.error.message,
+              cause: new Error('PLAN_CREATION_DISABLED'),
+            });
+          }
           throw new TRPCError({
             code: isClientError(result.error)
               ? 'BAD_REQUEST'

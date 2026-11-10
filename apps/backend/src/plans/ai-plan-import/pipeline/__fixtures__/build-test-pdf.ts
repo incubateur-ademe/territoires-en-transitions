@@ -3,13 +3,17 @@
  * Helvetica posé où on veut, ou une page qui n'est qu'une image JPEG (page
  * « scannée »). Rien à committer en binaire, tout est déterministe.
  */
-export type TestPdfPage =
+export type TestPdfPage = (
   | {
       kind: 'text';
       /** Lignes posées de haut en bas, une par bloc. */
       blocks: { text: string; x?: number; y?: number; size?: number }[];
     }
-  | { kind: 'image'; jpeg: Buffer; width: number; height: number };
+  | { kind: 'image'; jpeg: Buffer; width: number; height: number }
+) & {
+  /** Coordonnées PDF natives, depuis le coin inférieur gauche. */
+  annotations?: { target: string; rect: [number, number, number, number] }[];
+};
 
 const PAGE_WIDTH = 595;
 const PAGE_HEIGHT = 842;
@@ -28,16 +32,27 @@ export const buildTestPdf = (pages: TestPdfPage[]): Buffer => {
   );
 
   const pageIds = pages.map((page) => {
+    const annotations = (page.annotations ?? []).map(({ target, rect }) =>
+      add(
+        `<< /Type /Annot /Subtype /Link /Rect [${rect.join(
+          ' '
+        )}] /Border [0 0 0] /A << /S /URI /URI (${escapeString(target)}) >> >>`
+      )
+    );
+    const annotationReferences =
+      annotations.length > 0
+        ? `/Annots [${annotations.map((id) => `${id} 0 R`).join(' ')}]`
+        : '';
     if (page.kind === 'text') {
       const content = page.blocks
         .map(({ text, x = 50, y = PAGE_HEIGHT - 80, size = 12 }) => {
-          const escaped = text.replace(/[\\()]/g, (c) => `\\${c}`);
+          const escaped = escapeString(text);
           return `BT /F1 ${size} Tf ${x} ${y} Td (${escaped}) Tj ET`;
         })
         .join('\n');
       const contentId = add(stream(Buffer.from(content, 'latin1')));
       return add(
-        `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}] /Resources << /Font << /F1 ${fontId} 0 R >> >> /Contents ${contentId} 0 R >>`
+        `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}] /Resources << /Font << /F1 ${fontId} 0 R >> >> /Contents ${contentId} 0 R ${annotationReferences} >>`
       );
     }
     const imageId = add(
@@ -59,7 +74,7 @@ export const buildTestPdf = (pages: TestPdfPage[]): Buffer => {
       )
     );
     return add(
-      `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}] /Resources << /XObject << /Im1 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>`
+      `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}] /Resources << /XObject << /Im1 ${imageId} 0 R >> >> /Contents ${contentId} 0 R ${annotationReferences} >>`
     );
   });
 
@@ -95,6 +110,9 @@ export const buildTestPdf = (pages: TestPdfPage[]): Buffer => {
   parts.push(Buffer.from(xref, 'latin1'));
   return Buffer.concat(parts);
 };
+
+const escapeString = (text: string): string =>
+  text.replace(/[\\()]/g, (character) => `\\${character}`);
 
 const stream = (content: Buffer): Buffer =>
   Buffer.concat([

@@ -36,6 +36,11 @@ const financeurWithMontantSchema = z.object({
 });
 
 export const updateFicheInputSchema = ficheSchemaUpdate.extend({
+  referenceProgramme: z.never().optional(),
+  referenceKind: z.never().optional(),
+  referenceCode: z.never().optional(),
+  referenceParentCode: z.never().optional(),
+  reference: z.never().optional(),
   budgetPrevisionnel: z
     .string()
     .transform((val) => val.toString())

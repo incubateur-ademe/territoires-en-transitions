@@ -9,6 +9,7 @@ export const getCurrentImportInputSchema = z.object({
 });
 
 export const listRecentImportsInputSchema = getCurrentImportInputSchema.extend({
+  planId: z.number().int().positive().optional(),
   limit: z.number().int().min(1).max(50).default(20),
   cursor: z.string().uuid().optional(),
 });

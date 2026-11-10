@@ -1,4 +1,5 @@
 import { buildPage, DocumentPage } from '../document/document-page';
+import { DocumentLinksRules } from '../document/document-links.rules';
 import { cleanText } from './clean-text';
 
 // Une ligne d'en-tête ou de pied de page revient sur une bonne part des pages,
@@ -120,6 +121,7 @@ const dehyphenate = (lines: DocumentPage['lines']): DocumentPage['lines'] => {
       result[result.length - 1] = {
         ...previous,
         text: previous.text.slice(0, -1) + line.text,
+        ...DocumentLinksRules.combine([previous, line]),
       };
     } else {
       result.push(line);

@@ -1,4 +1,5 @@
 import type { TrackedEventPropertyValue } from '@tet/backend/utils/tracking/event-tracker.interface';
+import { resolveImportProfile } from '../models/import-profile';
 import type { AiPlanImportJob } from '../models/ai-plan-import-job';
 import type { ImportJobStats } from '../models/import-job-stats';
 import type { ImportStepRun } from '../models/import-step-run';
@@ -13,9 +14,16 @@ type Properties = Record<string, TrackedEventPropertyValue>;
 export const jobTrackingProperties = (job: AiPlanImportJob): Properties => ({
   collectiviteId: job.collectiviteId,
   jobId: job.id,
+  planId: job.createdPlanId ?? undefined,
+  profile: resolveImportProfile(job.options.profile),
+  contractVersion: job.options.contractVersion,
+  schemaVersion: job.options.schemaVersion,
+  catalogueVersion: job.options.catalogueVersion ?? undefined,
   attempt: job.attempt,
   planType: job.options.planType,
   withVerifications: job.options.withVerifications,
+  withSousActions: job.options.withSousActions,
+  withSecteurs: job.options.withSecteurs,
   origine: job.options.origine,
   demarcheId: job.options.demarcheId,
 });
