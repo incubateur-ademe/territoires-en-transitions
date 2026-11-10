@@ -65,6 +65,14 @@ export const listFichesRequestFiltersObjectSchema = z.object({
     .optional()
     .describe(`Action mutualisée avec d'autres collectivités`),
   noStatut: z.coerce.boolean().optional().describe(`Aucun statut`),
+  enCoursSansAvancement: z.coerce
+    .boolean()
+    .optional()
+    .describe(`Action En cours dont la jauge est à 0 %`),
+  notModifiedForOverAYear: z.coerce
+    .boolean()
+    .optional()
+    .describe(`Action non modifiée depuis plus d'un an`),
   noTag: z.coerce.boolean().optional().describe(`Aucun tag personnalisés`),
   statuts: z
     .array(statutEnumSchema)

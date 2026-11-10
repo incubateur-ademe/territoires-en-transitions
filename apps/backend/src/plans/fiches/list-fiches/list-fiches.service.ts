@@ -59,6 +59,7 @@ import {
   FicheWithRelationsAndCollectivite,
   Financeur,
   ListFichesRequestFilters,
+  StatutEnum,
   TypePeriodeEnum,
 } from '@tet/domain/plans';
 import {
@@ -83,6 +84,7 @@ import {
   inArray,
   isNotNull,
   isNull,
+  lt,
   lte,
   notExists,
   or,
@@ -92,6 +94,7 @@ import {
   Table,
 } from 'drizzle-orm';
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
+import { subYears } from 'date-fns';
 import { isNil } from 'es-toolkit';
 import { Result } from '../../../utils/result.type';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
@@ -1696,6 +1699,19 @@ export default class ListFichesService {
 
     if (filters.cibles?.length) {
       conditions.push(arrayOverlaps(ficheActionTable.cibles, filters.cibles));
+    }
+    if (filters.enCoursSansAvancement) {
+      conditions.push(
+        and(
+          eq(ficheActionTable.statut, StatutEnum.EN_COURS),
+          eq(ficheActionTable.jauge, 0)
+        )
+      );
+    }
+    if (filters.notModifiedForOverAYear) {
+      conditions.push(
+        lt(ficheActionTable.modifiedAt, subYears(new Date(), 1).toISOString())
+      );
     }
     if (filters.modifiedSince) {
       const modifiedSinceDate = getModifiedSinceDate(filters.modifiedSince);
