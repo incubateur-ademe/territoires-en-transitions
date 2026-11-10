@@ -1,5 +1,7 @@
+import FicheStatutBadge from '@/app/plans/fiches/show-fiche/components/fiche-statut.badge';
 import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
-import { Tooltip } from '@tet/ui';
+import { cn, Tooltip } from '@tet/ui';
+import Link from 'next/link';
 import { COULEURS_SUIVI_BY_STATUT } from '../statut-suivi-colors';
 
 const PART_MIN_AVEC_LIBELLE = 0.05;
@@ -10,6 +12,7 @@ export const StatutsBar = ({
   total,
   statuts,
   isLoading,
+  getHref,
   dataTest,
 }: {
   titre: string;
@@ -17,6 +20,7 @@ export const StatutsBar = ({
   total: number;
   statuts: { statut: Statut | null; count: number }[];
   isLoading: boolean;
+  getHref?: (statut: Statut | null) => string;
   dataTest?: string;
 }) => (
   <div className="flex flex-col gap-2" data-test={dataTest}>
@@ -33,21 +37,32 @@ export const StatutsBar = ({
             .filter(({ count }) => count > 0)
             .map(({ statut, count }) => {
               const libelle = statut ?? SANS_STATUT_LABEL;
+              const segmentProps = {
+                className: cn(
+                  'flex items-center justify-center h-full text-xs font-bold text-white',
+                  getHref && 'bg-none hover:opacity-80'
+                ),
+                style: {
+                  width: `${(count / total) * 100}%`,
+                  backgroundColor: COULEURS_SUIVI_BY_STATUT[libelle],
+                },
+                children: count / total >= PART_MIN_AVEC_LIBELLE ? count : null,
+              };
               return (
                 <Tooltip
                   key={libelle}
                   openingDelay={0}
-                  label={`${libelle} : ${count}`}
+                  label={<FicheStatutBadge statut={statut} count={count} />}
                 >
-                  <span
-                    className="flex items-center justify-center h-full text-xs font-bold text-white"
-                    style={{
-                      width: `${(count / total) * 100}%`,
-                      backgroundColor: COULEURS_SUIVI_BY_STATUT[libelle],
-                    }}
-                  >
-                    {count / total >= PART_MIN_AVEC_LIBELLE ? count : null}
-                  </span>
+                  {getHref ? (
+                    <Link
+                      href={getHref(statut)}
+                      data-test="plans.suivi.evolution-statuts.segment-statut"
+                      {...segmentProps}
+                    />
+                  ) : (
+                    <span {...segmentProps} />
+                  )}
                 </Tooltip>
               );
             })}

@@ -85,6 +85,7 @@ export const FilteredResults = ({
     statuts: filters.statuts,
     priorites: filters.priorites,
     pilotes: filters.pilotes,
+    suivi: filters.suivi,
   };
   const hasFilteredContent = filteredResults.length > 0;
 

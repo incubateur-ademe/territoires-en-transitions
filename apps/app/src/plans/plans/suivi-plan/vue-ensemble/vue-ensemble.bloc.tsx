@@ -3,7 +3,7 @@
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { JaugeBar } from '@/app/plans/shared/jauge/jauge.bar';
-import { StatutEnum } from '@tet/domain/plans';
+import { faireAvancerLePlanFilters } from '@tet/domain/plans';
 import { Alert, Icon, InlineLink } from '@tet/ui';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import { AvancementInfoTooltip } from '../avancement-info.tooltip';
@@ -72,7 +72,8 @@ export const VueEnsembleBloc = ({
                       href={makeCollectivitePlanActionUrl({
                         collectiviteId,
                         planActionUid: planId.toString(),
-                        filters: { statuts: [StatutEnum.EN_COURS] },
+                        filters:
+                          faireAvancerLePlanFilters.enCoursSansAvancement,
                       })}
                       className="font-medium text-primary-9 underline-offset-2"
                     >

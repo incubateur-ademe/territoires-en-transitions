@@ -2,6 +2,7 @@
 
 import { AvancementParAxeBloc } from './avancement-par-axe/avancement-par-axe.bloc';
 import { EvolutionStatutsBloc } from './evolution-statuts/evolution-statuts.bloc';
+import { FaireAvancerLePlanBloc } from './faire-avancer-le-plan/faire-avancer-le-plan.bloc';
 import { VueEnsembleBloc } from './vue-ensemble/vue-ensemble.bloc';
 
 export const SuiviPlanView = ({
@@ -21,5 +22,6 @@ export const SuiviPlanView = ({
       planId={planId}
       dateDebutPlan={dateDebutPlan}
     />
+    <FaireAvancerLePlanBloc collectiviteId={collectiviteId} planId={planId} />
   </div>
 );

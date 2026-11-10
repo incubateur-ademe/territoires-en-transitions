@@ -15,7 +15,10 @@ import { capitalize } from '@tet/ui/labels/plural';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
-import { FormFilters } from '../data/use-fiches-filters-list/types';
+import {
+  FormFilters,
+  SuiviOption,
+} from '../data/use-fiches-filters-list/types';
 type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 
@@ -54,6 +57,7 @@ const filterLabels: Record<keyof FormFilters, string> = {
   statuts: capitalize(appLabels.ficheStatut),
   referents: appLabels.personneElue(),
   pilotes: appLabels.personnePilote(),
+  suivi: appLabels.planFiltreSuivi,
   collectiviteId: capitalize(appLabels.collectivite()),
   axes: capitalize(appLabels.axe()),
 };
@@ -120,7 +124,10 @@ export const PlanFiltersProvider = ({
         const newValues = without(currentValues, valueToActuallyDelete);
         updatedFilters[k] =
           newValues.length > 0
-            ? (newValues as PrioriteOrNot[] & StatutOrNot[] & string[])
+            ? (newValues as PrioriteOrNot[] &
+                StatutOrNot[] &
+                SuiviOption[] &
+                string[])
             : undefined;
       }
     });
