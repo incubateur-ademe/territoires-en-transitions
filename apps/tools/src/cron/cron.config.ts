@@ -70,6 +70,13 @@ export const JOBS_CONFIG = [
     data: {},
   },
   {
+    // Photo du stock des démarches PCAET dans PostHog, après la synchro du
+    // groupe collectivité : une ligne par démarche, quelques centaines au plus.
+    name: 'posthog-demarches-pcaet-snapshot',
+    cronExpression: '30 2 * * *',
+    data: {},
+  },
+  {
     // Filet de l'analyse antivirus : chaque dépôt met déjà son fichier en
     // file, le balayage rattrape le reste (écriture directe dans un bucket,
     // clamd indisponible) et supprime les infectés de l'audit. Le débit se
