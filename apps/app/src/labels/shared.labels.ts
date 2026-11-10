@@ -72,6 +72,7 @@ export const sharedLabels = {
   placeholderRecherchezIntitule: 'Rechercher par intitulé',
 
   preferences: 'Préférences',
+  documentation: 'Documentation',
 
   vueListe: 'Liste',
 
