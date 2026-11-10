@@ -7,20 +7,28 @@ import classNames from 'classnames';
 import { ReactNode } from 'react';
 import {
   AdoptedBanner,
+  AvisDownloadButton,
   Check,
+  Checkbox,
+  CompletionBadge,
   DocumentTypeBadge,
+  DocumentUpload,
   Envelope,
   EtapeBullet,
   FakeButton,
-  ImportDropzone,
+  ImportSplitButton,
   NiveauVulnerabilite,
   PdfIcon,
-  PlanVerification,
-  ReceivedBadge,
   Toggle,
-  VoletStatusBadge,
 } from './depot-demo.elements';
-import { CURSOR, DIAGNOSTIC_YEARS, VULNERABILITE } from './depot-demo.scenario';
+import {
+  COMPACT_DOCUMENT_CARDS,
+  CURSOR,
+  DELIBERATION_ADOPTION,
+  DIAGNOSTIC_YEARS,
+  PROGRAMME_IMPORT,
+  VULNERABILITE,
+} from './depot-demo.scenario';
 import { DepotDemoState } from './depot-demo.state';
 
 export const COMPACT_SCENE = { width: 360, height: 580 };
@@ -29,7 +37,7 @@ export const COMPACT_SCENE = { width: 360, height: 580 };
 const VISIBLE_YEARS = [0, DIAGNOSTIC_YEARS.length - 1];
 const VISIBLE_HORIZONS = [0, VULNERABILITE.horizons.length - 1];
 const INDICATEURS_GRID = 'grid grid-cols-[minmax(0,1fr)_62px_62px]';
-const VULNERABILITE_GRID = 'grid grid-cols-[minmax(0,1fr)_88px_88px]';
+const VULNERABILITE_GRID = 'grid grid-cols-[minmax(0,1fr)_96px_96px]';
 
 type ScreenProps = { state: DepotDemoState };
 
@@ -46,7 +54,9 @@ const Screen = ({
       styles.fade
     )}
   >
-    <h3 className="m-0 text-base font-bold text-primary-9">{title}</h3>
+    <h3 className="m-0 text-base font-bold leading-snug text-primary-9">
+      {title}
+    </h3>
     {children}
   </div>
 );
@@ -68,86 +78,14 @@ const Card = ({
   </div>
 );
 
-const DocumentsScreen = ({ state }: ScreenProps) => {
-  const allIncluded = state.inclusions.done === state.inclusions.total;
-  return (
-    <Screen title="Ajouter les documents attendus">
-      {state.documents
-        .filter(({ upload }) => upload)
-        .map((document) => (
-          <Card
-            key={document.name}
-            className="flex flex-col gap-2 min-h-[62px] px-3 py-2.5"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[13px] font-bold text-primary-9 line-clamp-1">
-                {document.name}
-              </span>
-              <DocumentTypeBadge required={document.required} size="xs" />
-            </div>
-            {document.phase === 'empty' && (
-              <span className="self-start px-2 py-[3px] border border-primary-9 rounded text-[11px] font-bold text-primary-9">
-                + Déposer un document
-              </span>
-            )}
-            {document.phase === 'flying' && (
-              <span
-                className={classNames(
-                  'self-start flex items-center gap-1.5 px-2 py-[3px] bg-white border border-primary-3 rounded-md shadow-[0_8px_18px_rgba(64,64,146,0.2)] text-[11px]',
-                  styles.fly
-                )}
-              >
-                <PdfIcon className="w-3 h-[15px] text-[4px]" />
-                {document.upload?.file}
-              </span>
-            )}
-            {document.phase === 'uploading' && (
-              <span className="flex h-1 overflow-hidden rounded-sm bg-primary-2">
-                <span
-                  className="h-full bg-primary-7"
-                  style={{ width: `${document.progress * 100}%` }}
-                />
-              </span>
-            )}
-            {document.phase === 'uploaded' && (
-              <span className="flex items-center gap-1.5 text-xs text-primary-9">
-                <Check className="size-[13px]" />
-                <span className="underline">{document.upload?.file}</span>
-              </span>
-            )}
-          </Card>
-        ))}
-      <Card className="flex items-center justify-between gap-2 px-3 py-2.5">
-        <span className="flex flex-col">
-          <span className="text-[13px] font-bold text-primary-9">
-            Pièces obligatoires
-          </span>
-          <span className="text-[11px] text-grey-8">
-            Incluses dans « PCAET global »
-          </span>
-        </span>
-        <span
-          className={classNames(
-            'flex items-center gap-1.5 text-[13px] font-bold tabular-nums',
-            allIncluded ? 'text-success-1' : 'text-primary-9'
-          )}
-        >
-          {state.inclusions.done}/{state.inclusions.total}
-          {allIncluded && <Check className="size-4" />}
-        </span>
-      </Card>
-    </Screen>
-  );
-};
-
 const DiagnosticScreen = ({ state }: ScreenProps) => (
-  <Screen title="Diagnostic et objectifs">
+  <Screen title="Diagnostic et stratégie">
     <div className="grid grid-cols-3 gap-1.5">
       {state.volets.map((volet) => (
         <div
           key={volet.name}
           className={classNames(
-            'flex flex-col items-center justify-between h-[52px] px-1 py-[5px] text-center bg-white rounded-md',
+            'flex flex-col items-center justify-between h-[46px] px-1 py-1 text-center bg-white rounded-md',
             volet.isActive
               ? 'border-2 border-primary-9'
               : 'border border-primary-3'
@@ -161,7 +99,7 @@ const DiagnosticScreen = ({ state }: ScreenProps) => (
           >
             {volet.shortName}
           </span>
-          <VoletStatusBadge status={volet.status} size="xs" />
+          <CompletionBadge statut={volet.status} size="xs" withIcon={false} />
         </div>
       ))}
     </div>
@@ -185,7 +123,7 @@ const IndicateursTable = ({
       )}
     >
       <span className="px-2.5 truncate text-primary-9">
-        {activeVolet.shortName} ({activeVolet.unit})
+        {activeVolet.tableTitle ?? activeVolet.shortName} ({activeVolet.unit})
       </span>
       {VISIBLE_YEARS.map((index) => (
         <span key={index} className="px-2">
@@ -195,14 +133,14 @@ const IndicateursTable = ({
     </div>
     {rows.map((row) => (
       <div
-        key={row.sector}
+        key={row.label}
         className={classNames(
           INDICATEURS_GRID,
           'items-center h-6 text-[11px] border-t border-primary-1'
         )}
       >
         <span className="flex items-center justify-between gap-1.5 px-2.5 overflow-hidden whitespace-nowrap">
-          <span className="truncate">{row.sector}</span>
+          <span className="truncate">{row.label}</span>
           <Toggle isOn={row.isActive} className="w-6 h-3.5" />
         </span>
         {VISIBLE_YEARS.map((index) => {
@@ -246,7 +184,7 @@ const VulnerabiliteTable = ({
         key={thematique.name}
         className={classNames(
           VULNERABILITE_GRID,
-          'items-center h-6 text-[11px] border-t border-primary-1 [&>span]:px-2.5'
+          'items-center h-[22px] text-[11px] border-t border-primary-1 [&>span]:px-2'
         )}
       >
         <span className="font-medium text-primary-9 truncate">
@@ -262,80 +200,194 @@ const VulnerabiliteTable = ({
   </Card>
 );
 
-const ProgrammeScreen = ({ state }: ScreenProps) => (
-  <Screen title="Programme d'actions">
-    <ImportDropzone phase={state.programme.importPhase} compact />
-    {state.programme.isPlanLinked ? (
-      <Card className={classNames('flex flex-col gap-2 p-3', styles.slideIn)}>
-        <span className="text-[13px] font-bold text-primary-9">
-          Programme d&apos;actions – PCAET
-        </span>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-grey-8 tabular-nums">
-            {state.programme.actionCount} actions
-          </span>
-          <span
-            className={classNames(
-              'flex items-center gap-1.5 text-[11px] font-bold',
-              state.programme.isVerified ? 'text-success-1' : 'text-grey-8'
-            )}
+const DocumentsScreen = ({ state }: ScreenProps) => {
+  const { otherRequired } = state;
+  const allDone = otherRequired.done === otherRequired.total;
+  return (
+    <Screen title="Ajouter les documents attendus">
+      {state.documents
+        .filter(({ name }) => COMPACT_DOCUMENT_CARDS.includes(name))
+        .map((document) => (
+          <Card
+            key={document.name}
+            className="flex flex-col gap-2 min-h-[62px] px-3 py-2.5"
           >
-            <PlanVerification isVerified={state.programme.isVerified} />
-            Plan vérifié
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[13px] font-bold text-primary-9 line-clamp-1">
+                {document.name}
+              </span>
+              <DocumentTypeBadge required={document.required} size="xs" />
+            </div>
+            <DocumentUpload
+              phase={document.phase}
+              progress={document.progress}
+              file={document.upload?.file ?? ''}
+              size="xs"
+            />
+          </Card>
+        ))}
+      {state.documents
+        .filter(({ inclusion }) => inclusion)
+        .map((document) => (
+          <Card
+            key={document.name}
+            className="flex flex-col gap-2 px-3 py-2.5"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[13px] font-bold text-primary-9 line-clamp-1">
+                {document.name}
+              </span>
+              <DocumentTypeBadge required={document.required} size="xs" />
+            </div>
+            {document.isInclusionDeclarable ? (
+              <span className="flex items-center gap-2 text-[11px] leading-snug text-primary-9">
+                <Checkbox checked={document.isIncluded} className="size-4" />
+                Inclus dans le diagnostic, la stratégie et/ou le programme
+              </span>
+            ) : (
+              <DocumentUpload phase="empty" progress={0} file="" size="xs" />
+            )}
+          </Card>
+        ))}
+      <Card className="flex items-center justify-between gap-2 px-3 py-2.5">
+        <span className="flex flex-col">
+          <span className="text-[13px] font-bold text-primary-9">
+            Autres pièces obligatoires
           </span>
-        </div>
-      </Card>
-    ) : (
-      <Card className="px-3 py-3.5 text-xs text-grey-8">
-        Aucun plan rattaché pour le moment.
-      </Card>
-    )}
-  </Screen>
-);
-
-const AvisScreen = ({ state }: ScreenProps) => (
-  <Screen title={state.avis.title}>
-    <p className="m-0 text-xs text-grey-8">{state.avis.subtitle}</p>
-    <Card className="relative flex-none h-[130px] overflow-hidden rounded-[10px]">
-      {state.avis.mailArrived && (
-        <Envelope
-          isOpen={state.avis.mailOpened}
-          report={state.avis.outgoingReport?.report}
-          compact
-        />
-      )}
-    </Card>
-    {state.avis.received.map((avis) =>
-      avis.isReceived ? (
-        <Card
-          key={avis.file}
+          <span className="text-[11px] text-grey-8">
+            Suivi-évaluation, EES, délibération d&apos;arrêt
+          </span>
+        </span>
+        <span
           className={classNames(
-            'flex flex-none items-center gap-2.5 h-12 px-3',
-            styles.slideIn
+            'flex items-center gap-1.5 text-[13px] font-bold tabular-nums',
+            allDone ? 'text-success-1' : 'text-primary-9'
           )}
         >
-          <PdfIcon className="w-4 h-5 text-[5px]" />
-          <span className="flex-1 text-[13px] font-bold text-primary-9">
-            {avis.file}
+          {otherRequired.done}/{otherRequired.total}
+          {allDone && <Check className="size-4" />}
+        </span>
+      </Card>
+    </Screen>
+  );
+};
+
+const ProgrammeScreen = ({ state }: ScreenProps) => {
+  const { programme } = state;
+  return (
+    <Screen title="Programme d'actions détaillé">
+      <ImportSplitButton
+        variant={programme.hasPlan ? 'secondary' : 'primary'}
+        isLoading={programme.importPhase === 'loading'}
+        className="h-10"
+      />
+      {programme.hasPlan ? (
+        <Card className={classNames('flex flex-col gap-2 p-3', styles.slideIn)}>
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[13px] font-bold text-primary-9">
+              {programme.planName}
+            </span>
+            {programme.importPhase === 'done' && (
+              <span className="text-[11px] text-grey-8">
+                Généré depuis votre PDF
+              </span>
+            )}
           </span>
-          <ReceivedBadge size="xs" />
+          <span className="text-xs text-grey-8 tabular-nums">
+            {programme.importPhase === 'loading'
+              ? 'Import en cours…'
+              : `${programme.actionCount} actions`}
+          </span>
         </Card>
       ) : (
-        <div
-          key={avis.file}
-          className="flex flex-none items-center h-12 px-3 text-xs text-grey-8 border border-dashed border-primary-4 rounded-lg"
+        <Card className="flex items-center justify-center min-h-[52px] px-3 py-3.5 text-center text-xs text-grey-8">
+          {programme.importPhase === 'flying' ? (
+            <span
+              className={classNames(
+                'flex items-center gap-1.5 px-2 py-1 bg-white border border-primary-3 rounded-md shadow-[0_8px_18px_rgba(64,64,146,0.2)] text-[11px] font-medium text-primary-10',
+                styles.fly
+              )}
+            >
+              <PdfIcon className="w-3 h-[15px] text-[4px]" />
+              {PROGRAMME_IMPORT.file}
+            </span>
+          ) : (
+            'Aucun plan de type PCAET pour cette collectivité.'
+          )}
+        </Card>
+      )}
+    </Screen>
+  );
+};
+
+const AvisScreen = ({ state }: ScreenProps) => {
+  const { avis } = state;
+  return (
+    <Screen title={avis.title}>
+      <p className="m-0 text-xs text-grey-8 line-clamp-2">{avis.subtitle}</p>
+      <Card className="relative flex-none h-[110px] overflow-hidden rounded-[10px]">
+        {avis.mailArrived && (
+          <Envelope
+            isOpen={avis.mailOpened}
+            report={avis.outgoingReport?.report}
+            compact
+          />
+        )}
+      </Card>
+      {avis.received.map((unAvis) =>
+        unAvis.isReceived ? (
+          <Card
+            key={unAvis.auTitreDe}
+            className={classNames(
+              'flex flex-none items-center gap-2.5 h-11 px-3 bg-grey-1 border-grey-3',
+              styles.slideIn
+            )}
+          >
+            <span className="flex flex-col flex-1 min-w-0">
+              <span className="text-xs font-bold text-primary-9 truncate">
+                {unAvis.auTitreDe}
+              </span>
+              <span className="text-[10px] text-grey-8">
+                Avis rendu le {unAvis.renduLe}
+              </span>
+            </span>
+            <AvisDownloadButton size="xs" />
+          </Card>
+        ) : (
+          <div
+            key={unAvis.auTitreDe}
+            className="flex flex-none items-center h-11 px-3 text-xs text-grey-8 border border-dashed border-primary-4 rounded-lg"
+          >
+            En attente de l&apos;avis {unAvis.emitter}…
+          </div>
+        )
+      )}
+      {avis.showAdoptionPieces && !avis.isAdopted && (
+        <Card
+          className={classNames(
+            'flex flex-none items-center gap-2 h-12 px-3',
+            styles.fade
+          )}
         >
-          En attente de l&apos;avis de {avis.emitter}…
-        </div>
-      )
-    )}
-    {state.avis.isAdopted && <AdoptedBanner compact />}
-  </Screen>
-);
+          <span className="flex-1 text-xs font-bold leading-tight text-primary-9">
+            {DELIBERATION_ADOPTION.name}
+          </span>
+          <DocumentUpload
+            phase={avis.deliberation.phase}
+            progress={avis.deliberation.progress}
+            file={DELIBERATION_ADOPTION.file}
+            size="xs"
+          />
+        </Card>
+      )}
+      {avis.isAdopted && <AdoptedBanner compact />}
+    </Screen>
+  );
+};
 
 const COMPACT_SCREENS = {
-  documents: DocumentsScreen,
   diagnostic: DiagnosticScreen,
+  documents: DocumentsScreen,
   programme: ProgrammeScreen,
   avis: AvisScreen,
 };
@@ -363,7 +415,7 @@ const ProgressHeader = ({ state }: ScreenProps) => (
               <span
                 className={classNames(
                   'flex-1 h-0.5 mx-1.5 transition-colors duration-300',
-                  etape.status === 'done' ? 'bg-success-1' : 'bg-primary-3'
+                  etape.status === 'done' ? 'bg-primary-7' : 'bg-grey-3'
                 )}
               />
             )}
@@ -372,21 +424,21 @@ const ProgressHeader = ({ state }: ScreenProps) => (
       })}
     </div>
     <div className="flex items-center justify-between gap-2">
-      <span className="text-[13px] font-bold text-primary-9">
+      <span className="text-[13px] font-bold text-primary-9 truncate">
         {state.currentEtape.title}
       </span>
       {state.isElaborating && (
-        <div className="flex gap-1">
+        <div className="flex flex-none gap-1">
           {state.subSteps.map((subStep) => (
             <span
               key={subStep.shortTitle}
               className={classNames(
                 'px-1.5 py-0.5 rounded-lg border text-[9px] font-bold transition-colors duration-200',
-                subStep.isDone
-                  ? 'border-success-1 bg-success-2 text-success-1'
+                subStep.status === 'complete'
+                  ? 'border-success-1 bg-success-1 text-white'
                   : subStep.isCurrent
-                  ? 'border-primary-9 bg-primary-2 text-primary-9'
-                  : 'border-primary-4 bg-white text-primary-9'
+                  ? 'border-primary-7 bg-primary-0 text-primary-9'
+                  : 'border-grey-3 bg-white text-primary-9'
               )}
             >
               {subStep.shortTitle}

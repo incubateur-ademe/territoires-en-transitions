@@ -10,7 +10,7 @@ const delay = (seconds: number): CSSProperties => ({
   animationDelay: `${seconds}s`,
 });
 
-const FILES = ['Documents', 'Diagnostic', "Programme d'actions"];
+const FILES = ['Diagnostic', 'Documents', "Programme d'actions"];
 const RECIPIENTS = ['DREAL', 'DDT', 'Région', 'ADEME'];
 const GES_BAR_HEIGHTS = [100, 86, 72, 58, 46, 34];
 const MEMBERS = [

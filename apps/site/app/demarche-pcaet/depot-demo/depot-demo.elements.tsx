@@ -3,8 +3,7 @@ import type { DemarchePcaetVulnerabiliteNiveau } from '@tet/domain/demarches';
 import { Badge, BadgeProps, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { ReactNode } from 'react';
-import { PROGRAMME_IMPORT } from './depot-demo.scenario';
-import { EtapeStatus, ImportPhase, VoletStatus } from './depot-demo.state';
+import { CompletionStatut, EtapeStatus, UploadPhase } from './depot-demo.state';
 
 /**
  * Éléments partagés par les scènes large et compacte de la démo. Ils imitent
@@ -75,6 +74,10 @@ export const PdfIcon = ({ className }: { className?: string }) => (
   </span>
 );
 
+/**
+ * Puce numérotée du stepper de l'app : pleine dès que l'étape est atteinte,
+ * blanche tant qu'elle est à venir.
+ */
 export const EtapeBullet = ({
   status,
   number,
@@ -83,39 +86,39 @@ export const EtapeBullet = ({
   status: EtapeStatus;
   number: number;
   className?: string;
-}) =>
-  status === 'done' ? (
-    <Check className={className} />
-  ) : (
-    <span
-      className={classNames(
-        'flex flex-none items-center justify-center rounded-full font-bold',
-        status === 'active'
-          ? 'bg-primary-7 text-white shadow-[0_0_0_4px_theme(colors.primary.3)]'
-          : 'bg-white border border-primary-4 text-primary-9',
-        className
-      )}
-    >
-      {number}
-    </span>
-  );
+}) => (
+  <span
+    className={classNames(
+      'flex flex-none items-center justify-center rounded-full border-2 font-bold transition-colors duration-300',
+      status === 'upcoming'
+        ? 'bg-white border-grey-3 text-grey-10'
+        : 'bg-primary-7 border-primary-7 text-white',
+      className
+    )}
+  >
+    {number}
+  </span>
+);
 
-const VOLET_STATUS_BADGES = {
-  complete: { title: 'Complété', variant: 'success' },
-  todo: { title: 'À compléter', variant: 'warning' },
-  optional: { title: 'Optionnel', variant: 'grey' },
-} as const;
-
-export const VoletStatusBadge = ({
-  status,
+/**
+ * Complétude d'une étape, comme `DemarcheCompletionBadge` dans l'app : badge
+ * plein, coche sur « Complété » sauf là où l'icône du volet est déjà au-dessus.
+ */
+export const CompletionBadge = ({
+  statut,
   size = 'sm',
+  withIcon = true,
 }: {
-  status: VoletStatus;
+  statut: CompletionStatut;
   size?: BadgeSize;
+  withIcon?: boolean;
 }) => (
   <Badge
-    title={VOLET_STATUS_BADGES[status].title}
-    variant={VOLET_STATUS_BADGES[status].variant}
+    title={statut === 'complete' ? 'Complété' : 'À compléter'}
+    variant={statut === 'complete' ? 'success' : 'warning'}
+    type="inverted"
+    icon={withIcon && statut === 'complete' ? 'check-line' : undefined}
+    iconPosition="left"
     size={size}
     trim={false}
     className="flex-none"
@@ -131,16 +134,13 @@ export const DocumentTypeBadge = ({
 }) => (
   <Badge
     title={required ? 'Obligatoire' : 'Optionnel'}
-    variant={required ? 'standard' : 'grey'}
+    variant={required ? 'info' : 'grey'}
+    type="solid"
     size={size}
     uppercase={false}
     trim={false}
     className="flex-none"
   />
-);
-
-export const ReceivedBadge = ({ size = 'sm' }: { size?: BadgeSize }) => (
-  <Badge title="Reçu" variant="success" size={size} className="flex-none" />
 );
 
 /**
@@ -171,6 +171,7 @@ export const NiveauVulnerabilite = ({
         title={NIVEAU_BADGES[niveau].label}
         variant={NIVEAU_BADGES[niveau].variant}
         size={size}
+        uppercase
         trim={false}
         className="whitespace-nowrap"
       />
@@ -204,7 +205,7 @@ export const FakeButton = ({
     className={classNames(
       'flex items-center justify-center gap-2 rounded-md font-bold transition-colors duration-200',
       variant === 'secondary'
-        ? 'border border-primary-9 text-primary-9'
+        ? 'border border-primary-9 bg-white text-primary-9'
         : {
             'bg-primary-3 text-primary-6': !enabled,
             'bg-primary-10 text-white': enabled && pressed,
@@ -217,88 +218,139 @@ export const FakeButton = ({
   </span>
 );
 
-/** Zone de dépôt du programme d'actions, au fil de l'import. */
-export const ImportDropzone = ({
-  phase,
-  compact,
+/**
+ * Bouton scindé « Importer un plan » de l'app : l'import est l'action
+ * principale, la création manuelle est rangée derrière la flèche.
+ */
+export const ImportSplitButton = ({
+  variant,
+  isLoading,
+  className,
 }: {
-  phase: ImportPhase;
-  compact: boolean;
+  variant: 'primary' | 'secondary';
+  isLoading: boolean;
+  className?: string;
 }) => (
-  <div
-    className={classNames(
-      'relative flex flex-none items-center justify-center px-3 text-center border-2 border-dashed rounded-[10px] transition-colors duration-200',
-      compact ? 'h-[104px]' : 'h-[118px]',
-      {
-        'border-primary-4 bg-primary-0': phase === 'idle',
-        'border-primary-7 bg-primary-2':
-          phase === 'flying' || phase === 'loading',
-        'border-success-1 bg-success-2': phase === 'done',
-      }
-    )}
+  <FakeButton
+    variant={variant}
+    className={classNames('px-3.5 py-[9px] text-[13px]', className)}
   >
-    {phase === 'idle' && (
-      <div className="flex flex-col items-center gap-1 text-primary-9">
-        <Icon icon="upload-2-line" size={compact ? 'md' : 'lg'} />
+    {isLoading ? (
+      <>
+        Import en cours…
         <span
           className={classNames(
-            'font-bold',
-            compact ? 'text-[13px]' : 'text-sm'
-          )}
-        >
-          {compact
-            ? 'Importer un programme existant'
-            : "Importer un programme d'actions existant"}
-        </span>
-        <span className="text-xs text-grey-8">PDF, Word ou Excel</span>
-      </div>
-    )}
-    {phase === 'flying' && (
-      <span
-        className={classNames(
-          'flex items-center gap-2 px-3 py-2 bg-white border border-primary-3 rounded-lg shadow-[0_10px_24px_rgba(64,64,146,0.22)] text-[13px] font-medium',
-          styles.fly
-        )}
-      >
-        <PdfIcon className="w-[18px] h-[22px] text-[6px]" />
-        {PROGRAMME_IMPORT.file}
-      </span>
-    )}
-    {phase === 'loading' && (
-      <div className="flex items-center gap-3 text-primary-9">
-        <span
-          className={classNames(
-            'size-5 rounded-full border-[3px] border-primary-3 border-t-primary-7',
+            'size-3.5 rounded-full border-2 border-current border-t-transparent opacity-70',
             styles.spin
           )}
         />
-        <span className="flex flex-col text-left">
-          <span className="text-sm font-bold">Import en cours…</span>
-          {!compact && (
-            <span className="text-xs text-grey-8">
-              Extraction des actions de « {PROGRAMME_IMPORT.file} »
-            </span>
-          )}
-        </span>
-      </div>
+      </>
+    ) : (
+      <>
+        <Icon icon="import-line" size="sm" />
+        Importer un plan
+      </>
     )}
-    {phase === 'done' && (
-      <div
-        className={classNames(
-          'flex items-center gap-2.5 text-sm font-bold text-success-1',
-          styles.pop
-        )}
-      >
-        <Check className="size-5" />
-        {compact
-          ? 'Programme importé'
-          : `Programme importé depuis « ${PROGRAMME_IMPORT.file} »`}
-      </div>
-    )}
-  </div>
+    <span
+      className={classNames(
+        'pl-2 border-l',
+        variant === 'secondary' ? 'border-primary-9/30' : 'border-white/40'
+      )}
+    >
+      ▾
+    </span>
+  </FakeButton>
 );
 
-/** Enveloppe qui s'ouvre et laisse sortir les rapports d'avis. */
+/** Bouton « Avis » de l'app : chaque avis reçu se télécharge. */
+export const AvisDownloadButton = ({ size = 'sm' }: { size?: BadgeSize }) => (
+  <FakeButton
+    variant="secondary"
+    className={classNames(
+      'flex-none',
+      size === 'xs' ? 'px-2 py-1 text-[11px]' : 'px-2.5 py-1.5 text-xs'
+    )}
+  >
+    <Icon icon="download-line" size="xs" />
+    Avis
+  </FakeButton>
+);
+
+/**
+ * Dépôt d'un fichier dans une ligne de pièce : bouton, vol du fichier, barre
+ * d'envoi, puis fichier déposé — comme la colonne « Documents liés » de l'app.
+ */
+export const DocumentUpload = ({
+  phase,
+  progress,
+  file,
+  size = 'sm',
+}: {
+  phase: UploadPhase;
+  progress: number;
+  file: string;
+  size?: BadgeSize;
+}) => {
+  const isCompact = size === 'xs';
+  switch (phase) {
+    case 'empty':
+      return (
+        <FakeButton
+          variant="secondary"
+          className={classNames(
+            'self-start',
+            isCompact ? 'px-2 py-[3px] text-[11px]' : 'px-2.5 py-1 text-xs'
+          )}
+        >
+          Déposer un document
+        </FakeButton>
+      );
+    case 'flying':
+      return (
+        <span
+          className={classNames(
+            'self-start flex items-center gap-1.5 bg-white border border-primary-3 rounded-md shadow-[0_8px_18px_rgba(64,64,146,0.2)] font-medium',
+            isCompact ? 'px-2 py-[3px] text-[11px]' : 'px-2 py-1 text-xs',
+            styles.fly
+          )}
+        >
+          <PdfIcon
+            className={
+              isCompact ? 'w-3 h-[15px] text-[4px]' : 'w-3.5 h-[18px] text-[5px]'
+            }
+          />
+          {file}
+        </span>
+      );
+    case 'uploading':
+      return (
+        <span className="flex flex-col flex-1 gap-1">
+          {!isCompact && <span className="text-xs text-primary-10">{file}</span>}
+          <span className="flex h-1 overflow-hidden rounded-sm bg-primary-2">
+            <span
+              className="h-full bg-primary-7"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </span>
+        </span>
+      );
+    default:
+      return (
+        <span
+          className={classNames(
+            'flex items-center gap-2 text-primary-9',
+            isCompact ? 'text-xs' : 'text-[13px]',
+            styles.fade
+          )}
+        >
+          <Check className="size-[13px]" />
+          <span className="underline">{file}</span>
+        </span>
+      );
+  }
+};
+
+/** Enveloppe qui s'ouvre et laisse sortir les avis rendus. */
 export const Envelope = ({
   isOpen,
   report,
@@ -312,8 +364,8 @@ export const Envelope = ({
     className={classNames(
       'absolute',
       compact
-        ? 'left-[111px] top-11 w-[110px] h-[72px]'
-        : 'left-[100px] top-[170px] w-40 h-[104px]',
+        ? 'left-[111px] top-9 w-[110px] h-[72px]'
+        : 'left-[70px] top-[170px] w-40 h-[104px]',
       styles.drop
     )}
   >
@@ -373,29 +425,16 @@ export const Toggle = ({
   </span>
 );
 
-export const PlanVerification = ({ isVerified }: { isVerified: boolean }) =>
-  isVerified ? (
-    <span
-      className={classNames(
-        'flex items-center justify-center size-4 rounded-[3px] bg-success-1 text-white',
-        styles.pop
-      )}
-    >
-      <Icon icon="check-line" size="2xs" />
-    </span>
-  ) : (
-    <span className="size-4 rounded-[3px] border border-primary-4 bg-white" />
-  );
-
+/** Alerte « Démarche adoptée » de l'app, une fois le dépôt final validé. */
 export const AdoptedBanner = ({ compact = false }: { compact?: boolean }) => (
   <div
     className={classNames(
       'flex items-center gap-2.5 bg-success-2 border border-success-1 rounded-lg font-bold text-success-1',
-      compact ? 'px-3 py-2.5 text-sm' : 'mt-2 px-4 py-3.5 text-[15px]',
+      compact ? 'px-3 py-2.5 text-sm' : 'px-4 py-3.5 text-[15px]',
       styles.pop
     )}
   >
     <Check className={compact ? 'size-5' : 'size-[22px]'} />
-    PCAET adopté et publié
+    Démarche adoptée
   </div>
 );
