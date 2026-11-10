@@ -1,5 +1,4 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
-import { getErrorMessage } from '@tet/domain/utils';
 import { Job, UnrecoverableError } from 'bullmq';
 import {
   AI_PLAN_IMPORT_LOCK_DURATION_MS,
@@ -7,10 +6,8 @@ import {
   AI_PLAN_IMPORT_QUEUE_NAME,
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
-import {
-  GenerateImportDraftError,
-  GenerateImportDraftService,
-} from './generate-import-draft.service';
+import { GenerateImportDraftService } from './generate-import-draft.service';
+import { ImportGenerationErrors } from './generate-import.errors';
 
 // Un processus arrêté en cours d'import (redémarrage, déploiement) laisse son
 // job sans verrou : BullMQ le redistribue, et l'import reprend à son dernier
@@ -28,7 +25,9 @@ export class GenerateImportDraftWorker extends WorkerHost {
   async process(job: Job<AiPlanImportJobData>): Promise<void> {
     const result = await this.service.generate(job.data.jobId);
     if (!result.success) {
-      throw new UnrecoverableError(toErrorMessage(result.error));
+      throw new UnrecoverableError(
+        ImportGenerationErrors.forWorker(result.error)
+      );
     }
   }
 
@@ -45,7 +44,7 @@ export class GenerateImportDraftWorker extends WorkerHost {
     }
     await this.service.recordTerminalFailure(
       job.data.jobId,
-      `Import interrompu: ${getErrorMessage(error)}`
+      ImportGenerationErrors.interrupted(error)
     );
   }
 
@@ -60,14 +59,3 @@ export class GenerateImportDraftWorker extends WorkerHost {
     return job.attemptsMade >= maxAttempts;
   }
 }
-
-const toErrorMessage = (error: GenerateImportDraftError): string => {
-  switch (error.kind) {
-    case 'transition_failed':
-      return `Transition du job ${error.jobId} impossible (${error.cause})`;
-    case 'failure_record_failed':
-      return `Enregistrement de l'échec du job ${error.jobId} impossible (${error.cause})`;
-    case 'interrupted':
-      return error.message;
-  }
-};

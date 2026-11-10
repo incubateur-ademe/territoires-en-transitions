@@ -11,7 +11,6 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import { PlanCreationRules } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -49,6 +48,7 @@ import {
   XLSX_MIME,
 } from './detect-source-mime-type';
 import { validateOoxmlArchive } from './validate-ooxml-archive';
+import { PcaetImportRules } from '../pcaet/pcaet-import.rules';
 
 export type EnqueueImportInput = {
   collectiviteId: number;
@@ -137,9 +137,7 @@ export class EnqueueImportService {
       if (creationDisabledReason) {
         return failure(creationDisabledReason);
       }
-      withSecteurs =
-        planType.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
-        planType.type === PCAET_PLAN_TYPE_KEY.type;
+      withSecteurs = PcaetImportRules.appliesTo(planType);
     }
 
     if (file.size > AI_PLAN_IMPORT_MAX_SOURCE_BYTES) {

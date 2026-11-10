@@ -8,7 +8,7 @@ export const enqueueImportOutputSchema = z.discriminatedUnion('profile', [
     planId: z.number().int().positive(),
   }),
   z.object({
-    profile: z.literal(AiPlanImportProfileEnum['ANNEXE-3-ELECTRIFICATION']),
+    profile: z.literal(AiPlanImportProfileEnum.ELECTRIFICATION),
     jobId: z.string().uuid(),
     planId: z.null(),
   }),

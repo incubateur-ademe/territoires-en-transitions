@@ -36,6 +36,17 @@ export const aiPlanImportErrorMessages = {
     'Le point de reprise de cet import est invalide ou incompatible',
 } as const satisfies Partial<Record<AiPlanImportSpecificError, string>>;
 
+/** Échecs des jobs affichés à l'utilisateur. */
+export const aiPlanImportJobErrorMessages = {
+  CHECKPOINT_UNREADABLE:
+    "Lecture du point de reprise impossible : l'import n'a pas pu reprendre",
+  CHECKPOINT_UNUSABLE:
+    "Ce point de reprise ne correspond plus au modèle configuré : relancez l'import",
+  SOURCE_UNREADABLE: 'Document source illisible depuis le stockage',
+  PLAN_MARK_FAILED: 'Marquage du plan importé impossible',
+  JOB_COMPLETION_FAILED: 'Enregistrement du job terminé impossible',
+} as const;
+
 export const AiPlanImportErrorEnum = createErrorsEnum(
   AiPlanImportSpecificErrors
 );

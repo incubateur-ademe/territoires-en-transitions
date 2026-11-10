@@ -1,13 +1,18 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { GenerateImportDraftWorker } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.worker';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import {
   getAuthUserFromUserCredentials,
-  getTestApp,
+  getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
@@ -18,6 +23,7 @@ import z from 'zod';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
 import { indicateurDefinitionTable } from '../../indicateur/indicateur-definition.table';
+import CreateIndicateurService from './create-indicateur.service';
 import { createIndicateurInputSchema } from './mutate-indicateur.input';
 import { IndicateurPeriodiciteEnum } from '@tet/domain/indicateurs';
 
@@ -30,11 +36,43 @@ describe('createIndicateurPerso', () => {
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let collectivite: Collectivite;
+  let createService: CreateIndicateurService;
+
+  const loadIndicateurRows = (
+    indicateurId: number,
+    db: DatabaseService['db'] | Transaction = databaseService.db
+  ) =>
+    Promise.all([
+      db
+        .select()
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, indicateurId)),
+      db
+        .select()
+        .from(indicateurThematiqueTable)
+        .where(eq(indicateurThematiqueTable.indicateurId, indicateurId)),
+      db
+        .select()
+        .from(indicateurCollectiviteTable)
+        .where(eq(indicateurCollectiviteTable.indicateurId, indicateurId)),
+      db
+        .select()
+        .from(ficheActionIndicateurTable)
+        .where(eq(ficheActionIndicateurTable.indicateurId, indicateurId)),
+    ]);
 
   beforeAll(async () => {
-    app = await getTestApp();
+    app = await getDisposableTestApp({
+      overrides: (builder) => {
+        builder
+          .overrideProvider(LlmService)
+          .useValue(new LlmService(new FakeLlmRepository()));
+        builder.overrideProvider(GenerateImportDraftWorker).useValue({});
+      },
+    });
     router = app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
+    createService = app.get(CreateIndicateurService);
 
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
@@ -333,5 +371,103 @@ describe('createIndicateurPerso', () => {
       .from(indicateurDefinitionTable)
       .where(eq(indicateurDefinitionTable.titre, titre));
     expect(indicateurs).toHaveLength(0);
+  });
+  test('annule la définition, les thématiques, les préférences et le lien fiche si la transaction appelante échoue', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+    const ficheId = await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: collectivite.id,
+        titre: 'Fiche conservée après annulation',
+      },
+    });
+    const input = createIndicateurInputSchema.parse({
+      collectiviteId: collectivite.id,
+      titre: 'Indicateur annulé avec la transaction appelante',
+      unite: 'kg',
+      thematiques: [{ id: 1 }, { id: 2 }],
+      commentaire: 'Préférences à annuler',
+      estFavori: true,
+      estConfidentiel: true,
+      ficheId,
+    });
+    let indicateurId = 0;
+    const outerError = new Error('Échec après la création de l’indicateur');
+
+    await expect(
+      databaseService.db.transaction(async (tx) => {
+        indicateurId = await createService.createIndicateurPerso(input, {
+          user: authenticatedUser,
+          tx,
+        });
+        const rows = await loadIndicateurRows(indicateurId, tx);
+        expect(rows.map((tableRows) => tableRows.length)).toEqual([1, 2, 1, 1]);
+        throw outerError;
+      })
+    ).rejects.toBe(outerError);
+
+    const rows = await loadIndicateurRows(indicateurId);
+    expect(rows.map((tableRows) => tableRows.length)).toEqual([0, 0, 0, 0]);
+    const fiche = await databaseService.db
+      .select({ id: ficheActionTable.id })
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheId));
+    expect(fiche).toEqual([{ id: ficheId }]);
+  });
+
+  test('persiste l’indicateur uniquement au commit de la transaction appelante', async () => {
+    const input = createIndicateurInputSchema.parse({
+      collectiviteId: collectivite.id,
+      titre: 'Indicateur créé dans une transaction partagée',
+    });
+
+    const indicateurId = await databaseService.db.transaction(async (tx) => {
+      const createdId = await createService.createIndicateurPerso(input, {
+        user: authenticatedUser,
+        tx,
+      });
+      const rowsBeforeCommit = await loadIndicateurRows(createdId);
+      expect(rowsBeforeCommit.map((rows) => rows.length)).toEqual([0, 0, 0, 0]);
+      return createdId;
+    });
+
+    const [definitions, , preferences] = await loadIndicateurRows(indicateurId);
+    expect(definitions).toEqual([
+      expect.objectContaining({
+        titre: input.titre,
+        collectiviteId: collectivite.id,
+      }),
+    ]);
+    expect(preferences).toEqual([
+      expect.objectContaining({ modifiedBy: authenticatedUser.id }),
+    ]);
+  });
+
+  test('refuse la création en lecture seule même avec une transaction appelante', async () => {
+    const fixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.LECTURE },
+    });
+    onTestFinished(fixture.cleanup);
+    const input = createIndicateurInputSchema.parse({
+      collectiviteId: fixture.collectivite.id,
+      titre: 'Indicateur non autorisé dans une transaction partagée',
+    });
+
+    await expect(
+      databaseService.db.transaction((tx) =>
+        createService.createIndicateurPerso(input, {
+          user: getAuthUserFromUserCredentials(fixture.user),
+          tx,
+        })
+      )
+    ).rejects.toThrow(/Droits insuffisants/);
+
+    const definitions = await databaseService.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(
+        eq(indicateurDefinitionTable.collectiviteId, fixture.collectivite.id)
+      );
+    expect(definitions).toEqual([]);
   });
 });

@@ -119,4 +119,28 @@ export class UpsertIndicateurFichesRepository {
         .onConflictDoNothing();
     }
   }
+
+  /** Ajoute les liens sans supprimer ni réécrire les relations existantes. */
+  async addIndicateurFiches(
+    {
+      indicateurId,
+      ficheIds,
+      createdBy,
+    }: Pick<UpsertIndicateurFiches, 'indicateurId' | 'ficheIds' | 'createdBy'>,
+    tx?: Transaction
+  ): Promise<void> {
+    if (ficheIds.length === 0) return;
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionIndicateurTable)
+      .values(
+        [...new Set(ficheIds)]
+          .sort((a, b) => a - b)
+          .map((ficheId) => ({
+            ficheId,
+            indicateurId,
+            createdBy,
+          }))
+      )
+      .onConflictDoNothing();
+  }
 }
