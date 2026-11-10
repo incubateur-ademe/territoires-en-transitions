@@ -20,6 +20,7 @@ type Props = {
   fichesCount: number;
   isLoading?: boolean;
   display: PlanCardDisplay;
+  barClassName?: string;
 };
 
 const getStatutsChartOption = (
@@ -53,6 +54,7 @@ export const Statuts = ({
   fichesCount,
   display,
   isLoading,
+  barClassName,
 }: Props) => {
   if (display === 'circular') {
     const option = getStatutsChartOption(statuts, fichesCount);
@@ -66,7 +68,12 @@ export const Statuts = ({
 
   if (isLoading) {
     return (
-      <PlanStatutsBar className="bg-grey-3 animate-pulse border border-grey-4" />
+      <PlanStatutsBar
+        className={cn(
+          'bg-grey-3 animate-pulse border border-grey-4',
+          barClassName
+        )}
+      />
     );
   }
 
@@ -78,7 +85,9 @@ export const Statuts = ({
           <div className="font-normal">{appLabels.aucuneActionDansCePlan}</div>
         }
       >
-        <PlanStatutsBar className="bg-grey-1 border border-grey-4" />
+        <PlanStatutsBar
+          className={cn('bg-grey-1 border border-grey-4', barClassName)}
+        />
       </Tooltip>
     );
   }
@@ -109,6 +118,7 @@ export const Statuts = ({
       }
     >
       <PlanStatutsBar
+        className={barClassName}
         statuts={Object.entries(statuts).map(([, { count, value }]) => ({
           width: `${(count / fichesCount) * 100}%`,
           backgroundColor: statutFicheActionToColor[value || SANS_STATUT_LABEL],
