@@ -150,6 +150,7 @@ import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
 import { UpsertAvisService } from './upsert-avis/upsert-avis.service';
 import { ValiderAvisRouter } from './valider-avis/valider-avis.router';
 import { ValiderAvisService } from './valider-avis/valider-avis.service';
+import { DemarchePcaetTrackingService } from './shared/tracking/demarche-pcaet-tracking.service';
 
 @Module({
   imports: [
@@ -178,6 +179,7 @@ import { ValiderAvisService } from './valider-avis/valider-avis.service';
     DemarchePcaetPilotesRepository,
     DemarchePcaetGuardsService,
     DemarchePcaetTransitionService,
+    DemarchePcaetTrackingService,
     DemarchePcaetTransitionRepository,
     TransmettrePourAvisDemarchePcaetService,
     TransmettrePourAvisDemarchePcaetRouter,

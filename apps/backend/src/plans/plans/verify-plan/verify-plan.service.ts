@@ -110,6 +110,7 @@ export class VerifyPlanService {
           collectiviteId: plan.data.collectiviteId,
           planId,
         },
+        groups: { collectivite: String(plan.data.collectiviteId) },
       });
       return success(verified.data);
     }

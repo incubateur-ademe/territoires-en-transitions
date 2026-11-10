@@ -207,14 +207,9 @@ export const Event = {
   showNps: 'show_nps',
 } as const;
 
-type DeepValues<T> = {
-  [K in keyof T]: T[K] extends Record<string, unknown>
-    ? {
-        [SubK in keyof T[K]]: T[K][SubK] extends Record<string, unknown>
-          ? T[K][SubK][keyof T[K][SubK]]
-          : T[K][SubK];
-      }[keyof T[K]]
-    : T[K];
-}[keyof T];
+/** Les noms d'événements du catalogue, à toute profondeur d'imbrication. */
+type DeepValues<T> = T extends string
+  ? T
+  : { [K in keyof T]: DeepValues<T[K]> }[keyof T];
 
 export type EventName = DeepValues<typeof Event>;
