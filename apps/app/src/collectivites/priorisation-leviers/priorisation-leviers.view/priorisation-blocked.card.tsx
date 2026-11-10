@@ -43,6 +43,11 @@ const blockedCardContents: Record<
     description: appLabels.priorisationTrajectoireNonDisponibleDescription,
     toActions: () => [],
   },
+  regionNotSupported: {
+    title: appLabels.priorisationRegionNonSupporteeTitre,
+    description: appLabels.priorisationRegionNonSupporteeDescription,
+    toActions: () => [],
+  },
   missingActions: {
     title: appLabels.priorisationVueBloqueeTitre,
     description: appLabels.priorisationVueBloqueeDescription,

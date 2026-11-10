@@ -12,6 +12,7 @@ describe('toTrajectoireState', () => {
         isLoadingError: false,
         isTrajectoireNotComputed: false,
         isTrajectoireNotAvailable: false,
+        isRegionNotSupported: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('computed');
@@ -24,6 +25,7 @@ describe('toTrajectoireState', () => {
         isLoadingError: false,
         isTrajectoireNotComputed: false,
         isTrajectoireNotAvailable: false,
+        isRegionNotSupported: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('loading');
@@ -36,6 +38,7 @@ describe('toTrajectoireState', () => {
         isLoadingError: true,
         isTrajectoireNotComputed: true,
         isTrajectoireNotAvailable: false,
+        isRegionNotSupported: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('notComputed');
@@ -48,9 +51,23 @@ describe('toTrajectoireState', () => {
         isLoadingError: true,
         isTrajectoireNotComputed: false,
         isTrajectoireNotAvailable: true,
+        isRegionNotSupported: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('notAvailable');
+  });
+
+  it('reconnaît un EPCI des DROM, sans leviers SGPE', () => {
+    expect(
+      toTrajectoireState({
+        hasTrajectoire: false,
+        isLoadingError: true,
+        isTrajectoireNotComputed: false,
+        isTrajectoireNotAvailable: false,
+        isRegionNotSupported: true,
+        isCollectiviteNotEpci: false,
+      })
+    ).toBe('regionNotSupported');
   });
 
   it('reconnaît une collectivité qui n’est pas un EPCI', () => {
@@ -60,6 +77,7 @@ describe('toTrajectoireState', () => {
         isLoadingError: true,
         isTrajectoireNotComputed: false,
         isTrajectoireNotAvailable: false,
+        isRegionNotSupported: false,
         isCollectiviteNotEpci: true,
       })
     ).toBe('reservedToEpci');
@@ -72,6 +90,7 @@ describe('toTrajectoireState', () => {
         isLoadingError: true,
         isTrajectoireNotComputed: false,
         isTrajectoireNotAvailable: false,
+        isRegionNotSupported: false,
         isCollectiviteNotEpci: false,
       })
     ).toBe('failed');
@@ -113,6 +132,15 @@ describe('toPriorisationAccess', () => {
         trajectoireState: 'notAvailable',
       })
     ).toBe('trajectoireNotAvailable');
+  });
+
+  it('signale les leviers SGPE indisponibles en outre-mer, même quand des actions existent', () => {
+    expect(
+      toPriorisationAccess({
+        hasMobilisation: true,
+        trajectoireState: 'regionNotSupported',
+      })
+    ).toBe('regionNotSupported');
   });
 
   it('demande des actions quand seule la trajectoire est calculée', () => {
