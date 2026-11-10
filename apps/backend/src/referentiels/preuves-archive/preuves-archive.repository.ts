@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -204,36 +203,6 @@ export class PreuvesArchiveRepository {
     } catch (error) {
       this.logger.error(
         `Liste des archives à supprimer (audit ${input.auditId}, user ${input.requestedBy}): ${getErrorMessage(
-          error
-        )}`
-      );
-      return failure(
-        PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
-        error instanceof Error ? error : new Error(getErrorMessage(error))
-      );
-    }
-  }
-
-  async getAuditeurMembership(input: {
-    auditId: number;
-    userId: string;
-  }): Promise<Result<boolean, PreuvesArchiveError>> {
-    try {
-      const [row] = await this.db
-        .select({ auditId: auditeurTable.auditId })
-        .from(auditeurTable)
-        .where(
-          and(
-            eq(auditeurTable.auditId, input.auditId),
-            eq(auditeurTable.auditeur, input.userId)
-          )
-        )
-        .limit(1);
-
-      return success(row !== undefined);
-    } catch (error) {
-      this.logger.error(
-        `Lecture du rôle auditeur (user ${input.userId}, audit ${input.auditId}): ${getErrorMessage(
           error
         )}`
       );

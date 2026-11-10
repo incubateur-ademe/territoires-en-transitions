@@ -34,6 +34,7 @@ describe('Archive de preuves - tRPC', () => {
   let adminUser: AuthenticatedUser;
   let unauthorizedUser: AuthenticatedUser;
   let readerNonAuditeur: AuthenticatedUser;
+  let visiteur: AuthenticatedUser;
   let auditeurCleanup: () => Promise<void>;
   let auditId: number;
 
@@ -78,6 +79,9 @@ describe('Archive de preuves - tRPC', () => {
     readerNonAuditeur = getAuthUserFromUserCredentials(
       readerNonAuditeurResult.user
     );
+
+    const visiteurResult = await addTestUser(db);
+    visiteur = getAuthUserFromUserCredentials(visiteurResult.user);
 
     const [audit] = await db.db
       .insert(auditTable)
@@ -169,8 +173,8 @@ describe('Archive de preuves - tRPC', () => {
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
-    test("request refuse un utilisateur ayant referentiels.read mais non-auditeur de l'audit en cours", async () => {
-      const caller = router.createCaller({ user: readerNonAuditeur });
+    test('request refuse un visiteur (referentiels.read sans être membre)', async () => {
+      const caller = router.createCaller({ user: visiteur });
 
       await expect(
         caller.referentiels.preuvesArchive.request({
@@ -178,6 +182,17 @@ describe('Archive de preuves - tRPC', () => {
           referentielId: 'cae',
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+
+    test("request accepte un membre de la collectivité non auditeur de l'audit en cours", async () => {
+      const caller = router.createCaller({ user: readerNonAuditeur });
+
+      const result = await caller.referentiels.preuvesArchive.request({
+        collectiviteId: collectivite.id,
+        referentielId: 'cae',
+      });
+
+      expect(result.status).toBe('pending');
     });
 
     test('get renvoie NOT_FOUND pour une archive appartenant à un·e autre utilisateur·ice', async () => {
