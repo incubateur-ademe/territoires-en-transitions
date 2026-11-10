@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CollectivitesCoreModule } from '@tet/backend/collectivites/collectivites-core.module';
+import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { PersonnalisationsModule } from '@tet/backend/collectivites/personnalisations/personnalisations.module';
 import { DemarcheDocumentApplicabiliteService } from '@tet/backend/demarches/shared/demarche-document-applicabilite.service';
 import { DemarcheDocumentsRepository } from '@tet/backend/demarches/shared/demarche-documents.repository';
@@ -40,6 +41,12 @@ import { ListDatesSaisineRepository } from './list-dates-saisine/list-dates-sais
 import { ListDatesSaisineRouter } from './list-dates-saisine/list-dates-saisine.router';
 import { ListDatesSaisineService } from './list-dates-saisine/list-dates-saisine.service';
 import { DeleteAvisRouter } from './delete-avis/delete-avis.router';
+import { CompleterEtapeDemoService } from './demo/completer-etape-demo.service';
+import { DemarchePcaetDemoFichiersService } from './demo/demarche-pcaet-demo-fichiers.service';
+import { DemarchePcaetDemoRepository } from './demo/demarche-pcaet-demo.repository';
+import { DemarchePcaetDemoService } from './demo/demarche-pcaet-demo.service';
+import { DemarchePcaetDemoRouter } from './demo/demo.router';
+import { SimulerInstructionDemoService } from './demo/simuler-instruction-demo.service';
 import { DeleteAvisService } from './delete-avis/delete-avis.service';
 import { DeleteDemarchePcaetRepository } from './delete-demarche-pcaet/delete-demarche-pcaet.repository';
 import { DeleteDemarchePcaetRouter } from './delete-demarche-pcaet/delete-demarche-pcaet.router';
@@ -161,6 +168,8 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     // Le catalogue documentaire est conditionné à l'identité de la collectivité
     // et à ses réponses de personnalisation.
     CollectivitesCoreModule,
+    // Le mode démo range ses documents dans la bibliothèque (StoreDocumentService).
+    CollectivitesModule,
     PersonnalisationsModule,
     TransactionModule,
     IndicateursModule,
@@ -176,6 +185,12 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     DownloadAvisPiecesController,
   ],
   providers: [
+    DemarchePcaetDemoService,
+    DemarchePcaetDemoFichiersService,
+    DemarchePcaetDemoRepository,
+    CompleterEtapeDemoService,
+    SimulerInstructionDemoService,
+    DemarchePcaetDemoRouter,
     DownloadDossierDocumentsService,
     DownloadAvisPiecesService,
     ListAvisPiecesService,

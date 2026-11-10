@@ -24,6 +24,7 @@ import {
   type DemarchePcaetStatus,
   type PcaetDiagnostic,
 } from '@tet/domain/demarches';
+import { DemarchePcaetDemoService } from '../demo/demarche-pcaet-demo.service';
 import { DemarchePcaetDiagnosticService } from './demarche-pcaet-diagnostic.service';
 import { DemarchePcaetPilotesRepository } from './demarche-pcaet-pilotes.repository';
 import { DemarchePcaetSuivantRepository } from './demarche-pcaet-suivant.repository';
@@ -64,6 +65,11 @@ export type DemarchePcaetGuardContext = DemarchePcaetGuardTarget & {
    * Faux partout ailleurs.
    */
   isDiagnosticBypassed?: boolean;
+  /**
+   * Mode démo (collectivité de test et super admin) : le super admin qui
+   * présente le parcours n'a pas à se nommer pilote pour transmettre ou publier.
+   */
+  isDemo?: boolean;
   /** Pièces amont requises couvertes, au sens de la règle documentaire. */
   documentsComplets?: boolean;
   /** Diagnostic tel qu'il est en base ; sert aussi aux photos figées. */
@@ -93,7 +99,10 @@ type GuardEvaluator = (
  */
 const GUARD_EVALUATORS: Record<DemarchePcaetGuardId, GuardEvaluator> = {
   estPilote: (context, user) =>
-    user ? isDemarchePcaetPilote(user.id, context.pilotes) : undefined,
+    user
+      ? context.isDemo === true ||
+        isDemarchePcaetPilote(user.id, context.pilotes)
+      : undefined,
 
   // Un dossier complet, c'est l'ensemble des pièces requises couvertes, le
   // diagnostic renseigné ET un programme d'actions rattaché, vérifié, dont
@@ -163,7 +172,8 @@ export class DemarchePcaetGuardsService {
     private readonly avisRepository: PcaetAvisRepository,
     private readonly suivantRepository: DemarchePcaetSuivantRepository,
     private readonly trackingService: TrackingService,
-    private readonly configurationService: ConfigurationService
+    private readonly configurationService: ConfigurationService,
+    private readonly demoService: DemarchePcaetDemoService
   ) {}
 
   /**
@@ -314,6 +324,7 @@ export class DemarchePcaetGuardsService {
       isDiagnosticBypassed: needsDossier
         ? await this.isDiagnosticBypassed(user, demarche.collectiviteId)
         : false,
+      isDemo: await this.demoService.isDemo(user, demarche.collectiviteId, tx),
       diagnostic,
       documentsComplets:
         needsDocumentsAmont && documentsSnapshot
@@ -346,7 +357,11 @@ export class DemarchePcaetGuardsService {
     user: AuthenticatedUser | null
   ): Pick<
     DemarchePcaet,
-    'transitions' | 'amontModifiable' | 'avalModifiable' | 'contenuModifiable'
+    | 'transitions'
+    | 'amontModifiable'
+    | 'avalModifiable'
+    | 'contenuModifiable'
+    | 'demo'
   > {
     return {
       transitions: evaluateTransitions(
@@ -356,6 +371,7 @@ export class DemarchePcaetGuardsService {
       amontModifiable: isDemarchePcaetAmontModifiable(context.status),
       avalModifiable: isDemarchePcaetAvalModifiable(context.status),
       contenuModifiable: isDemarchePcaetContenuModifiable(context.status),
+      demo: context.isDemo === true,
     };
   }
 

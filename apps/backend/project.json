@@ -41,7 +41,8 @@
         "{projectRoot}/dist/**/*.csv",
         "{projectRoot}/dist/**/*.xlsx",
         "{projectRoot}/dist/**/*.pptx",
-        "{projectRoot}/dist/**/*.ttf"
+        "{projectRoot}/dist/**/*.ttf",
+        "{projectRoot}/dist/**/*.pdf"
       ],
       "options": {
         "cwd": "apps/backend"

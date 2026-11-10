@@ -5,6 +5,10 @@ import { PublierDepotFinalModal } from '@/app/demarches/components/publier-depot
 import { useDemarchePcaetTransitionOptions } from '@/app/demarches/pcaet/data/use-transition-options';
 import { useDeleteDemarchePcaet } from '@/app/demarches/pcaet/data/use-delete-demarche-pcaet';
 import {
+  useReputerFavorableDemo,
+  useSimulerAvisDemo,
+} from '@/app/demarches/pcaet/demo/data/use-demo-mutations';
+import {
   DEMARCHE_PCAET_OUVERTURE_ACTIONS,
   DEMARCHE_PCAET_TRANSITION_ACTIONS,
   type DemarchePcaetMenuTransition,
@@ -14,8 +18,13 @@ import {
   useTrackedModal,
 } from '@/app/demarches/use-demarche-tracker';
 import { appLabels } from '@/app/labels/catalog';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { RouterOutput, useTRPC } from '@tet/api';
-import { canDeleteDemarchePcaet } from '@tet/domain/demarches';
+import {
+  canDeleteDemarchePcaet,
+  DemarchePcaetStatusEnum,
+  isDemarchePcaetSuppressionForcee,
+} from '@tet/domain/demarches';
 import { useMutation } from '@tanstack/react-query';
 import {
   Alert,
@@ -45,6 +54,12 @@ export const DemarchePcaetActionsButton = ({
   // confirmation, et même saisie de la date d'adoption.
   const [isPublicationOuverte, setIsPublicationOuverte] = useState(false);
   const { mutate: deleteDemarche } = useDeleteDemarchePcaet();
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
+  const simulerAvis = useSimulerAvisDemo();
+  const reputerFavorable = useReputerFavorableDemo();
+  // Un super admin supprime à tout statut, mais la confirmation dit alors ce
+  // qui part avec le dossier.
+  const isSuppressionForcee = isDemarchePcaetSuppressionForcee(demarche);
 
   const trpc = useTRPC();
   const transitionOptions = useDemarchePcaetTransitionOptions();
@@ -73,13 +88,34 @@ export const DemarchePcaetActionsButton = ({
       ? [{ ...DEMARCHE_PCAET_TRANSITION_ACTIONS[transition], onClick: run }]
       : [];
 
+  // Mode démo : l'instruction se simule depuis la liste, sans instructeur.
+  const demoInstructionActions: MenuAction[] =
+    demarche.demo &&
+    demarche.status === DemarchePcaetStatusEnum.TRANSMIS_POUR_AVIS
+      ? [
+          {
+            label: appLabels.demarcheDemoSimulerAvis,
+            icon: 'chat-check-line',
+            onClick: () => simulerAvis.mutate(ids),
+          },
+          {
+            label: appLabels.demarcheDemoReputerFavorable,
+            icon: 'thumb-up-line',
+            onClick: () => reputerFavorable.mutate(ids),
+          },
+        ]
+      : [];
+
   const menuActions: MenuAction[] = [
     // Les guards sont évalués côté serveur : le menu ne fait que suivre.
     ...transitionAction('publier', () => {
       publierModale.onOpen();
       setIsPublicationOuverte(true);
     }),
-    ...(canDeleteDemarchePcaet(demarche)
+    ...demoInstructionActions,
+    ...(canDeleteDemarchePcaet(demarche, {
+      isSuperAdmin: isSuperAdminRoleEnabled,
+    })
       ? [
           {
             label: appLabels.demarcheActionSupprimer,
@@ -135,10 +171,29 @@ export const DemarchePcaetActionsButton = ({
           render={() => (
             <Alert
               title={appLabels.demarcheSupprimerModaleTitre}
-              description={appLabels.demarcheSupprimerModaleDescription({
-                titre: demarche.titre,
-              })}
-              state="warning"
+              description={
+                isSuppressionForcee ? (
+                  <>
+                    <p className="mb-2">
+                      {appLabels.demarcheSupprimerModaleDescription({
+                        titre: demarche.titre,
+                      })}
+                    </p>
+                    <ul className="mb-0 list-disc pl-4">
+                      {appLabels.demarcheSupprimerForceeModaleEffets.map(
+                        (effet) => (
+                          <li key={effet}>{effet}</li>
+                        )
+                      )}
+                    </ul>
+                  </>
+                ) : (
+                  appLabels.demarcheSupprimerModaleDescription({
+                    titre: demarche.titre,
+                  })
+                )
+              }
+              state={isSuppressionForcee ? 'error' : 'warning'}
               className="mt-4 py-2"
             />
           )}

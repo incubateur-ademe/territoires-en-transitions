@@ -26,6 +26,7 @@ import { ListContactsRouter } from './list-contacts/list-contacts.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { PublierDemarchePcaetRouter } from './publier-demarche/publier-demarche.router';
 import { ReferentsPcaetRouter } from './referents/referents-pcaet.router';
+import { DemarchePcaetDemoRouter } from './demo/demo.router';
 import { TransmettrePourAvisDemarchePcaetRouter } from './transmettre-pour-avis/transmettre-pour-avis.router';
 import { UpdateDemarchePcaetRouter } from './update-demarche-pcaet/update-demarche-pcaet.router';
 import { UpsertAvisRouter } from './upsert-avis/upsert-avis.router';
@@ -66,7 +67,8 @@ export class PcaetRouter {
     private readonly pcaetDocumentsRouter: PcaetDocumentsRouter,
     private readonly listContactsRouter: ListContactsRouter,
     private readonly referentsPcaetRouter: ReferentsPcaetRouter,
-    private readonly trackSnapshotRouter: TrackSnapshotRouter
+    private readonly trackSnapshotRouter: TrackSnapshotRouter,
+    private readonly demoRouter: DemarchePcaetDemoRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -103,6 +105,7 @@ export class PcaetRouter {
       diagnostic: this.pcaetDiagnosticRouter.router,
       documents: this.pcaetDocumentsRouter.router,
       referents: this.referentsPcaetRouter.router,
+      demo: this.demoRouter.router,
     })
   );
 }

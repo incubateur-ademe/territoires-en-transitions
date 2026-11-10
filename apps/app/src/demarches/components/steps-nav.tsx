@@ -3,7 +3,10 @@
 import { appLabels } from '@/app/labels/catalog';
 import { type DemarchePcaetTransitionEvaluation } from '@tet/domain/demarches';
 import { Button, Event, Tooltip } from '@tet/ui';
+import type { RefObject } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
+import { useCompleterEtapeDemo } from '../pcaet/demo/data/use-demo-mutations';
+import { sweepRows } from '../pcaet/demo/sweep-rows';
 import { useGetPcaetDiagnostic } from '../pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import {
   serializePcaetDiagnosticTabQueryState,
@@ -48,7 +51,33 @@ type Props = {
   finalAction: FinalAction | null;
   /** Ouvre le panneau « Étapes » quand on franchit une sous-étape. */
   onOpenProgressPanel: () => void;
+  /** Contenu de la page, que le remplissage de démo balaie une fois écrit. */
+  contentRef?: RefObject<HTMLDivElement | null>;
 };
+
+type DemoEtape = 'documents' | 'documentsAval' | 'diagnostic' | 'plan';
+
+/** La sous-étape affichée, telle que le raccourci de démo la complète. */
+const getDemoEtape = (
+  activeSection: DemarcheSectionKey,
+  etape: DemarcheParcoursEtape
+): DemoEtape =>
+  activeSection === 'documents'
+    ? etape === 'aval'
+      ? 'documentsAval'
+      : 'documents'
+    : activeSection;
+
+/** Le raccourci n'écrit que là où le dossier accepte encore l'écriture. */
+const isDemoEtapeModifiable = (
+  demarche: DemarchePcaet,
+  demoEtape: DemoEtape
+): boolean =>
+  demoEtape === 'documents'
+    ? demarche.amontModifiable
+    : demoEtape === 'documentsAval'
+    ? demarche.avalModifiable
+    : demarche.contenuModifiable;
 
 /**
  * Barre « Étape précédente | Étape suivante » d'un temps du dossier : traverse
@@ -63,8 +92,10 @@ export const DemarcheStepsNav = ({
   etape,
   finalAction,
   onOpenProgressPanel,
+  contentRef,
 }: Props) => {
   const { tabs } = useGetPcaetDiagnostic(demarche.id);
+  const completerEtape = useCompleterEtapeDemo();
   const [topicParam] = usePcaetDiagnosticTabQueryState();
 
   const { prev, next, isLastStep } = getStepsNavModel({
@@ -101,7 +132,15 @@ export const DemarcheStepsNav = ({
       section: activeSection,
     });
 
-  if (!prev && !next && !showFinalAction) return null;
+  // Mode démo : la saisie de l'étape affichée se remplit d'un clic, et les
+  // vraies règles de complétude la passent au vert.
+  const demoEtape = getDemoEtape(activeSection, etape);
+  const showDemoCompleter =
+    demarche.demo &&
+    completion[demoEtape] === 'incomplete' &&
+    isDemoEtapeModifiable(demarche, demoEtape);
+
+  if (!prev && !next && !showFinalAction && !showDemoCompleter) return null;
 
   const ids = { collectiviteId, demarcheId: demarche.id };
   const hrefOf = (item: DemarcheStepItem) =>
@@ -142,47 +181,69 @@ export const DemarcheStepsNav = ({
         </Button>
       )}
 
-      {showFinalAction && finalAction ? (
-        <Tooltip
-          label={getTransitionBlocageLabel(finalAction.transition)}
-          activatedBy="hover"
-        >
-          <span className="block ml-auto">
+      <div className="ml-auto flex items-center gap-4">
+        {showDemoCompleter && (
+          <Button
+            dataTest="demarches.steps-nav.demo-completer"
+            variant="outlined"
+            size="sm"
+            icon="magic-line"
+            iconPosition="left"
+            loading={completerEtape.isPending}
+            disabled={completerEtape.isPending}
+            onClick={() =>
+              // Le balayage part une fois les données relues : l'invalidation
+              // du hook est attendue avant ce rappel.
+              completerEtape.mutate(
+                { ...ids, etape: demoEtape },
+                { onSuccess: () => sweepRows(contentRef?.current ?? null) }
+              )
+            }
+          >
+            {appLabels.demarcheDemoCompleterEtape}
+          </Button>
+        )}
+        {showFinalAction && finalAction ? (
+          <Tooltip
+            label={getTransitionBlocageLabel(finalAction.transition)}
+            activatedBy="hover"
+          >
+            <span className="block">
+              <Button
+                dataTest={finalAction.dataTest}
+                variant={finalAction.transition.enabled ? 'primary' : 'grey'}
+                size="sm"
+                icon="arrow-right-line"
+                iconPosition="right"
+                disabled={!finalAction.transition.enabled}
+                onClick={() => {
+                  onOpenProgressPanel();
+                  finalAction.onClick();
+                }}
+              >
+                {finalAction.label}
+              </Button>
+            </span>
+          </Tooltip>
+        ) : (
+          next && (
             <Button
-              dataTest={finalAction.dataTest}
-              variant={finalAction.transition.enabled ? 'primary' : 'grey'}
+              dataTest="demarches.steps-nav.next"
+              variant="primary"
               size="sm"
               icon="arrow-right-line"
               iconPosition="right"
-              disabled={!finalAction.transition.enabled}
+              href={hrefOf(next)}
               onClick={() => {
-                onOpenProgressPanel();
-                finalAction.onClick();
+                trackNavigation('suivant');
+                if (crossesSection(next)) onOpenProgressPanel();
               }}
             >
-              {finalAction.label}
+              {appLabels.demarcheStepsNavNext}
             </Button>
-          </span>
-        </Tooltip>
-      ) : (
-        next && (
-          <Button
-            dataTest="demarches.steps-nav.next"
-            className="ml-auto"
-            variant="primary"
-            size="sm"
-            icon="arrow-right-line"
-            iconPosition="right"
-            href={hrefOf(next)}
-            onClick={() => {
-              trackNavigation('suivant');
-              if (crossesSection(next)) onOpenProgressPanel();
-            }}
-          >
-            {appLabels.demarcheStepsNavNext}
-          </Button>
-        )
-      )}
+          )
+        )}
+      </div>
     </nav>
   );
 };

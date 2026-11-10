@@ -230,6 +230,7 @@ const completeDemarche: DemarchePcaet = {
   amontModifiable: true,
   avalModifiable: false,
   contenuModifiable: true,
+  demo: false,
   pilotes: [],
   planActionIds: [42],
   unverifiedPlanActionIds: [],

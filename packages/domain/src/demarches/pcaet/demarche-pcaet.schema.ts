@@ -103,6 +103,12 @@ export type DemarchePcaet = DemarcheBase & {
   avalModifiable: boolean;
   /** Diagnostic, objectifs et programme d'actions : rouverts après les avis. */
   contenuModifiable: boolean;
+  /**
+   * Mode démo pour l'utilisateur courant (collectivité de test et super
+   * admin) : le front propose alors de compléter les étapes et de simuler
+   * l'instruction. Calculé côté serveur, faux par défaut.
+   */
+  demo: boolean;
 };
 
 /**

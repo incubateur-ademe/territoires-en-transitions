@@ -11,6 +11,7 @@ import type { ServiceSansCompte } from '../notifications/notify-dossier-transmis
 import { DemarchePcaetTransitionInput } from '../shared/demarche-pcaet-transition.input';
 import { DemarchePcaetTransitionService } from '../shared/demarche-pcaet-transition.service';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
+import { DemarchePcaetDemoService } from '../demo/demarche-pcaet-demo.service';
 import { TransmettrePourAvisDemarchePcaetError } from './transmettre-pour-avis.errors';
 import {
   DemarchePcaetActeurEnum,
@@ -24,7 +25,8 @@ export class TransmettrePourAvisDemarchePcaetService {
     private readonly transitionService: DemarchePcaetTransitionService,
     private readonly instructeursRepository: PcaetInstructeursRepository,
     private readonly notifyDossierTransmisService: NotifyDossierTransmisService,
-    private readonly trackingService: DemarchePcaetTrackingService
+    private readonly trackingService: DemarchePcaetTrackingService,
+    private readonly demoService: DemarchePcaetDemoService
   ) {}
 
   /**
@@ -48,24 +50,44 @@ export class TransmettrePourAvisDemarchePcaetService {
       DemarchePcaetTransitionEnum.TRANSMETTRE_POUR_AVIS,
       { user, tx },
       async ({ demarche, transaction }) => {
-        // Transmettre, c'est saisir : sans cette ligne le dossier n'atteindrait
-        // aucun tableau d'instructeur. Dans la transaction de la transition,
-        // donc un dossier ne peut pas passer `transmis_pour_avis` en laissant
-        // ses destinataires derrière lui.
-        const demandes = await this.instructeursRepository.saisirInstructeurs(
-          {
-            demarcheId: demarche.id,
-            collectiviteId: demarche.collectiviteId,
-          },
-          transaction
-        );
-        saisines = demandes;
-
-        servicesSansCompte =
-          await this.notifyDossierTransmisService.creerNotifications(
-            { demandes, createdBy: user.id },
+        // En démo, ce sont les services fictifs qui sont saisis, et personne
+        // n'est prévenu : une démonstration ne doit rien envoyer à une vraie
+        // DREAL ni à un vrai conseil régional.
+        if (
+          await this.demoService.isDemo(
+            user,
+            demarche.collectiviteId,
+            transaction
+          )
+        ) {
+          const services = await this.demoService.listServicesDemo(transaction);
+          saisines = await this.instructeursRepository.saisirServicesDemo(
+            {
+              demarcheId: demarche.id,
+              instructeurCollectiviteIds: services.map(({ id }) => id),
+            },
             transaction
           );
+        } else {
+          // Transmettre, c'est saisir : sans cette ligne le dossier
+          // n'atteindrait aucun tableau d'instructeur. Dans la transaction de
+          // la transition, donc un dossier ne peut pas passer
+          // `transmis_pour_avis` en laissant ses destinataires derrière lui.
+          const demandes = await this.instructeursRepository.saisirInstructeurs(
+            {
+              demarcheId: demarche.id,
+              collectiviteId: demarche.collectiviteId,
+            },
+            transaction
+          );
+          saisines = demandes;
+
+          servicesSansCompte =
+            await this.notifyDossierTransmisService.creerNotifications(
+              { demandes, createdBy: user.id },
+              transaction
+            );
+        }
 
         // L'échéance est figée maintenant : si le délai légal change, les
         // dossiers déjà transmis gardent celle qui s'appliquait à eux.

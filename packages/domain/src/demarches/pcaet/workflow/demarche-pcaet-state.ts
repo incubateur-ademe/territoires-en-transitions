@@ -175,9 +175,20 @@ export const DEMARCHE_PCAET_SUPPRIMABLES_STATUSES = [
   DemarchePcaetStatusEnum.INSTRUIT_HORS_PLATEFORME,
 ] as const satisfies readonly DemarchePcaetStatus[];
 
-export const canDeleteDemarchePcaet = (demarche: {
+/**
+ * Le super admin supprime à tout statut : nettoyer une démo ou une erreur de
+ * saisie. Les demandes d'avis et les avis partent avec la démarche, d'où la
+ * confirmation dédiée côté front (`isDemarchePcaetSuppressionForcee`).
+ */
+export const canDeleteDemarchePcaet = (
+  demarche: { status: DemarchePcaetStatus },
+  { isSuperAdmin = false }: { isSuperAdmin?: boolean } = {}
+): boolean => isSuperAdmin || !isDemarchePcaetSuppressionForcee(demarche);
+
+/** Supprimer à ce statut défait ce qui a été engagé au dehors : avis, saisines. */
+export const isDemarchePcaetSuppressionForcee = (demarche: {
   status: DemarchePcaetStatus;
 }): boolean =>
-  (
+  !(
     DEMARCHE_PCAET_SUPPRIMABLES_STATUSES as readonly DemarchePcaetStatus[]
   ).includes(demarche.status);
