@@ -485,18 +485,30 @@ describe('EnqueueImportService', () => {
   });
 
   it('mappe un xlsx déclarant plus de 100 Mo décompressés sur FILE_TOO_LARGE', async () => {
-    const { service } = buildService();
+    const { service, capture } = buildService();
 
     const result = await service.enqueue({
       collectiviteId: 10,
       user,
       file: toXlsxBomb(),
-      options,
+      options: { ...options, origine: 'etape_documents', demarcheId: 42 },
     });
 
     expect(result).toEqual({
       success: false,
       error: AiPlanImportErrorEnum.FILE_TOO_LARGE,
+    });
+    // Le refus est capté, avec son code et son origine, jamais le nom du fichier.
+    expect(capture).toHaveBeenCalledWith({
+      distinctId: user.id,
+      event: 'plans:import-ia:refused',
+      properties: expect.objectContaining({
+        collectiviteId: 10,
+        reason: AiPlanImportErrorEnum.FILE_TOO_LARGE,
+        origine: 'etape_documents',
+        demarcheId: 42,
+      }),
+      groups: { collectivite: '10' },
     });
   });
 
@@ -597,7 +609,10 @@ describe('EnqueueImportService', () => {
     expect(removeDocument.mock.invocationCallOrder[0]).toBeLessThan(
       deleteIfPending.mock.invocationCallOrder[0]
     );
-    expect(capture).not.toHaveBeenCalled();
+    // Pas de lancement annoncé : seul le refus est capté.
+    expect(capture.mock.calls.map(([params]) => params.event)).toEqual([
+      'plans:import-ia:refused',
+    ]);
   });
 
   it('range le fichier dans la bibliothèque et rattache sa ligne au job', async () => {

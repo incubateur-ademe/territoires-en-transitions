@@ -27,6 +27,19 @@ export const aiPlanImportJobInFlightStatuses: AiPlanImportJobStatus[] = [
   AiPlanImportJobStatusEnum.RUNNING,
 ];
 
+/**
+ * D'où l'import est lancé, pour le suivi seulement : la page de création d'un
+ * plan, la modale du programme d'actions d'une démarche, ou l'étape Documents
+ * d'une démarche.
+ */
+export const aiPlanImportOrigineValues = [
+  'page',
+  'modale_demarche',
+  'etape_documents',
+] as const;
+
+export type AiPlanImportOrigine = (typeof aiPlanImportOrigineValues)[number];
+
 export type AiPlanImportJobOptions = {
   /** Absents sur les jobs historiques, qui restent des imports génériques v1. */
   profile?: AiPlanImportProfile;
@@ -40,6 +53,12 @@ export type AiPlanImportJobOptions = {
   /** Plan PCAET : l'import propose les secteurs réglementaires des actions. */
   withSecteurs?: boolean;
   disabledFields: DisableableField[];
+  /**
+   * Suivi seulement, déclarés par le client : ni vérifiés ni utilisés pour
+   * autoriser quoi que ce soit. Absents sur les jobs antérieurs.
+   */
+  origine?: AiPlanImportOrigine;
+  demarcheId?: number;
 };
 
 export type AiPlanImportJob = {

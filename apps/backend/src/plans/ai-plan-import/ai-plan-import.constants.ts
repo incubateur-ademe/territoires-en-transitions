@@ -26,3 +26,12 @@ export const EVENT_AI_PLAN_IMPORT_SUCCEEDED = 'plans:import-ia:succeeded';
 export const EVENT_AI_PLAN_IMPORT_FAILED = 'plans:import-ia:failed';
 /** Le plan importé a été relu et validé par un utilisateur. */
 export const EVENT_AI_PLAN_IMPORT_VERIFIED = 'plans:import-ia:verified';
+/** Lancement refusé avant toute mise en file (droits, fichier, quotas…). */
+export const EVENT_AI_PLAN_IMPORT_REFUSED = 'plans:import-ia:refused';
+/** Reprise demandée par l'équipe sur un import en échec. */
+export const EVENT_AI_PLAN_IMPORT_RESUME_REQUESTED =
+  'plans:import-ia:resume_requested';
+/** Un passage du worker qui n'est pas le premier : reprise manuelle ou automatique. */
+export const EVENT_AI_PLAN_IMPORT_RESUMED = 'plans:import-ia:resumed';
+/** Fin d'une étape du pipeline, réussie, sautée ou en échec. */
+export const EVENT_AI_PLAN_IMPORT_STEP_DONE = 'plans:import-ia:step_done';

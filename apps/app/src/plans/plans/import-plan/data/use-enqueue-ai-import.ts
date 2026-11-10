@@ -7,6 +7,13 @@ import {
 } from '@tanstack/react-query';
 import { z } from 'zod';
 
+/**
+ * D'où l'import est lancé, pour le suivi : la page de création d'un plan, la
+ * modale du programme d'actions d'une démarche, ou l'étape Documents d'une
+ * démarche (import du programme déposé).
+ */
+export type AiImportOrigine = 'page' | 'modale_demarche' | 'etape_documents';
+
 export type AiImportEnqueueInput = {
   collectiviteId: number;
   file: File;
@@ -17,6 +24,9 @@ export type AiImportEnqueueInput = {
   withSousActions: boolean;
   /** Relance assumée de l'import d'un fichier déjà importé. */
   confirmReimport?: boolean;
+  origine: AiImportOrigine;
+  /** La démarche depuis laquelle l'import est lancé, s'il y en a une. */
+  demarcheId?: number;
 };
 
 const enqueueResponseSchema = z.object({
@@ -52,6 +62,10 @@ export const useEnqueueAiImport = (): UseMutationResult<
       formData.append('withSousActions', String(input.withSousActions));
       if (input.confirmReimport) {
         formData.append('confirmReimport', 'true');
+      }
+      formData.append('origine', input.origine);
+      if (input.demarcheId !== undefined) {
+        formData.append('demarcheId', String(input.demarcheId));
       }
 
       const response = await apiClient.postFormData({

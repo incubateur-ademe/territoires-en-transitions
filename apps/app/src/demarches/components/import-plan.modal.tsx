@@ -3,6 +3,7 @@
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { BetaLabel } from '@/app/ui/beta.label';
+import { useDemarcheId } from '@/app/demarches/use-demarche-id';
 import { AiImportFlow } from '@/app/plans/plans/import-plan/ai-import.flow';
 import type { AiImportDefaults } from '@/app/plans/plans/import-plan/ai-import.form';
 import { useGetPlan } from '@/app/plans/plans/show-plan/data/use-get-plan';
@@ -89,6 +90,7 @@ export const DemarcheImportPlanModal = ({
   linkedPlanIds,
   onImportStarted,
 }: Props) => {
+  const demarcheId = useDemarcheId();
   const [step, setStep] = useState<ModalStep>('form');
   const [createdPlanId, setCreatedPlanId] = useState<number | null>(null);
 
@@ -122,6 +124,8 @@ export const DemarcheImportPlanModal = ({
           />
         ) : (
           <AiImportFlow
+            origine="modale_demarche"
+            demarcheId={demarcheId}
             lockedPlanTypeId={planTypeId}
             defaults={importDefaults}
             onImportStarted={onImportStarted}

@@ -22,6 +22,7 @@ import {
   AI_PLAN_IMPORT_MAX_SOURCE_BYTES,
   AI_PLAN_IMPORT_MAX_UNCOMPRESSED_BYTES,
   AI_PLAN_IMPORT_SOURCE_BUCKET,
+  EVENT_AI_PLAN_IMPORT_REFUSED,
   EVENT_AI_PLAN_IMPORT_STARTED,
 } from '../ai-plan-import.constants';
 import {
@@ -76,6 +77,30 @@ export class EnqueueImportService {
   ) {}
 
   async enqueue(
+    input: EnqueueImportInput
+  ): Promise<Result<EnqueueImportOutput, AiPlanImportError>> {
+    const result = await this.enqueueJob(input);
+    if (!result.success) {
+      // Un refus n'a ni job ni plan : sans cet événement, il serait invisible.
+      this.trackingService.capture({
+        distinctId: input.user.id,
+        event: EVENT_AI_PLAN_IMPORT_REFUSED,
+        properties: {
+          collectiviteId: input.collectiviteId,
+          reason: result.error,
+          declaredMimeType: input.file.mimeType,
+          fileSizeBytes: input.file.size,
+          planType: input.options.planType,
+          origine: input.options.origine,
+          demarcheId: input.options.demarcheId,
+        },
+        groups: { collectivite: String(input.collectiviteId) },
+      });
+    }
+    return result;
+  }
+
+  private async enqueueJob(
     input: EnqueueImportInput
   ): Promise<Result<EnqueueImportOutput, AiPlanImportError>> {
     const { collectiviteId, user, file, options, confirmReimport } = input;
@@ -268,6 +293,10 @@ export class EnqueueImportService {
         planType: options.planType,
         withVerifications: options.withVerifications,
         withSousActions: options.withSousActions,
+        withSecteurs,
+        profile,
+        origine: options.origine,
+        demarcheId: options.demarcheId,
       },
       groups: { collectivite: String(collectiviteId) },
     });

@@ -18,7 +18,10 @@ import {
   AiImportForm,
   AiImportSubmission,
 } from './ai-import.form';
-import { useEnqueueAiImport } from './data/use-enqueue-ai-import';
+import {
+  useEnqueueAiImport,
+  type AiImportOrigine,
+} from './data/use-enqueue-ai-import';
 import { useGetAiImportStatus } from './data/use-get-ai-import-status';
 import { useGetCurrentAiImport } from './data/use-get-current-ai-import';
 import { useResumeAiImport } from './data/use-resume-ai-import';
@@ -41,6 +44,8 @@ export const AiImportFlow = ({
   defaults,
   onProgressVisibilityChange,
   renderStagesProgress,
+  origine = 'page',
+  demarcheId,
 }: {
   /**
    * `jobId` : l'import terminé, qu'il ait été lancé depuis ce formulaire ou
@@ -62,6 +67,9 @@ export const AiImportFlow = ({
    * le détail des étapes du pipeline s'affiche. Un échec garde le détail.
    */
   renderStagesProgress?: (stagesList: ReactElement) => ReactElement;
+  /** D'où l'import est lancé, transmis au serveur pour le suivi. */
+  origine?: AiImportOrigine;
+  demarcheId?: number;
 }) => {
   const collectiviteId = useCollectiviteId();
   const { setToast } = useToastContext();
@@ -120,6 +128,8 @@ export const AiImportFlow = ({
         withVerifications: values.withVerifications,
         withSousActions: values.withSousActions,
         confirmReimport: values.confirmReimport,
+        origine,
+        demarcheId,
       });
       setJobId(newJobId);
       onImportStarted?.(newJobId, planId);

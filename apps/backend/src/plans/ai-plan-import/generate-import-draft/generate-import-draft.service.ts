@@ -27,6 +27,8 @@ import { getErrorMessage } from '@tet/domain/utils';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
   EVENT_AI_PLAN_IMPORT_FAILED,
+  EVENT_AI_PLAN_IMPORT_RESUMED,
+  EVENT_AI_PLAN_IMPORT_STEP_DONE,
   EVENT_AI_PLAN_IMPORT_SUCCEEDED,
 } from '../ai-plan-import.constants';
 import {
@@ -42,6 +44,11 @@ import {
   sumLlmCallMetrics,
 } from '../pipeline/compute-import-metrics';
 import { ImportJobTelemetry } from './import-job-telemetry';
+import {
+  jobTrackingProperties,
+  statsTrackingProperties,
+  stepRunTrackingProperties,
+} from './import-job-tracking';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import {
   ImportCheckpoint,
@@ -117,6 +124,14 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       });
     }
     const job = running.data;
+    if (job.attempt > 0) {
+      this.trackingService.capture({
+        distinctId: job.createdBy,
+        event: EVENT_AI_PLAN_IMPORT_RESUMED,
+        properties: jobTrackingProperties(job),
+        groups: { collectivite: String(job.collectiviteId) },
+      });
+    }
 
     if (!isSupportedGenericImport(job.options)) {
       // Un autre déploiement peut savoir le traiter : ni repli générique,
@@ -213,6 +228,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         distinctId: marked.data.createdBy,
         event: EVENT_AI_PLAN_IMPORT_FAILED,
         properties: {
+          ...jobTrackingProperties(marked.data),
+          ...statsTrackingProperties(stats),
           collectiviteId: marked.data.collectiviteId,
           jobId,
           failedStep,
@@ -395,7 +412,17 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         previousLlm: previousLlm?.success
           ? previousLlm.data
           : sumLlmCallMetrics([]),
-      }
+      },
+      (run) =>
+        this.trackingService.capture({
+          distinctId: job.createdBy,
+          event: EVENT_AI_PLAN_IMPORT_STEP_DONE,
+          properties: {
+            ...jobTrackingProperties(job),
+            ...stepRunTrackingProperties(run),
+          },
+          groups: { collectivite: String(job.collectiviteId) },
+        })
     );
   }
 
@@ -504,6 +531,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       distinctId: job.createdBy,
       event: EVENT_AI_PLAN_IMPORT_SUCCEEDED,
       properties: {
+        ...jobTrackingProperties(job),
+        ...statsTrackingProperties(stats),
         collectiviteId: job.collectiviteId,
         jobId: job.id,
         planId: created.data,
