@@ -42,6 +42,13 @@ locals {
     # projet tet-prod, celui du serveur.
     prod = {
       secret_project_id = local.server_key_project_ids.prod
+      env_name          = "prod"
+      app_url           = local.application_environments_catalog.prod.domains.app[0]
+      backend_url       = local.application_environments_catalog.prod.domains.backend[0]
+      site_url          = local.application_environments_catalog.prod.domains.site[0]
+      crisp_website_id  = "582ff50a-5ac4-4f38-a8bc-62f51beeef89"
+      axeptio_id        = "65ef34473dcae5d0c7a47699"
+      strapi_url        = "https://phenomenal-trust-ee3da2c906.strapiapp.com"
     }
   }
 
@@ -255,6 +262,22 @@ locals {
     }
 
     prod = {
+      # Comme preprod. app et backend restent sur Koyeb, sous les mêmes noms.
+      site = {
+        ENV_NAME         = { value = local.coolify_env_settings.prod.env_name }
+        APP_URL          = { value = local.coolify_env_settings.prod.app_url }
+        BACKEND_URL      = { value = local.coolify_env_settings.prod.backend_url }
+        SITE_URL         = { value = local.coolify_env_settings.prod.site_url }
+        CRISP_WEBSITE_ID = { value = local.coolify_env_settings.prod.crisp_website_id }
+        AXEPTIO_ID       = { value = local.coolify_env_settings.prod.axeptio_id }
+        STRAPI_URL       = { value = local.coolify_env_settings.prod.strapi_url }
+        STRAPI_KEY       = { secret = "strapi-key" }
+        POSTHOG_HOST     = { value = local.coolify_env_posthog_host }
+        POSTHOG_KEY      = { secret = "posthog-key" }
+        PCAET_LAUNCHED   = { value = "true" }
+        DB_STATS_URL     = { secret = "db-stats-url" }
+      }
+
       aldo = {
         HOSTNAME                  = { value = trimprefix(local.git_applications_catalog["prod/aldo"].domains[0], "https://") }
         PROTOCOL                  = { value = "https" }

@@ -67,10 +67,15 @@ locals {
       domains = {
         app     = ["https://app.territoiresentransitions.fr"]
         backend = ["https://api.territoiresentransitions.fr", "https://app.territoiresentransitions.fr/api"]
-        site    = ["https://territoiresentransitions.fr", "https://www.territoiresentransitions.fr"]
+        # www d'abord : nom canonique (SITE_URL), l'apex y redirige.
+        site = ["https://www.territoiresentransitions.fr", "https://territoiresentransitions.fr"]
       }
     }
   }
+
+  # Applications ouvertes avant leur environnement : le site de prod n'a besoin
+  # ni de la base ni du backend de prod, il précède la bascule de l'app.
+  early_applications = ["prod/site"]
 
   # Une entrée par couple environnement/application activé, clé « env/app » :
   # c'est aussi l'identifiant du marqueur [tet-app:env/app] dans Coolify.
@@ -81,8 +86,8 @@ locals {
         app     = app
         server  = e.server
         domains = domains
-      })
-    } if contains(var.application_environments, env)
+      }) if contains(var.application_environments, env) || contains(local.early_applications, "${env}/${app}")
+    }
   ]...)
 }
 
@@ -104,8 +109,9 @@ resource "coolify_application_docker_image" "app" {
   docker_registry_image_tag = var.application_initial_image_tag
   ports_exposes             = tostring(each.value.port)
   domains                   = join(",", each.value.domains)
-  redirect                  = "both"
-  is_force_https_enabled    = true
+  # Le site de prod garde www comme nom canonique, comme aujourd'hui.
+  redirect               = each.key == "prod/site" ? "www" : "both"
+  is_force_https_enabled = true
   # Chemin conservé tel quel pour app.…/api (cf. ci-dessus).
   is_stripprefix_enabled = false
   # Hors prod, X-Robots-Tag: noindex, nofollow sur tous les domaines : le site

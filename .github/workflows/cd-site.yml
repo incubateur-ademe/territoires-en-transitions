@@ -116,11 +116,12 @@ jobs:
 
       # Les variables d'environnement sont poussées par infra/coolify (Terraform),
       # pas ici : la CD ne pose que le tag d'image et déclenche le déploiement.
+      # La prod part sur Koyeb et sur Coolify jusqu'à la bascule DNS du site.
       - name: Déploie le site sur Coolify (Scaleway)
-        if: ${{ github.event.inputs.target == 'preprod-scaleway' }}
+        if: ${{ contains(fromJSON('["preprod-scaleway", "prod"]'), github.event.inputs.target) }}
         env:
           COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
-          APP_ID: preprod/site
+          APP_ID: ${{ github.event.inputs.target == 'prod' && 'prod/site' || 'preprod/site' }}
           IMAGE: ${{ steps.image.outputs.path }}
         run: IMAGE_TAG="${IMAGE##*:}" infra/scripts/coolify-deploy.sh
