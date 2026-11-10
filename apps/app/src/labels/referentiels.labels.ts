@@ -69,6 +69,10 @@ export const referentielsLabels = {
   avancementDetailleALaTache: 'Détaillé à la tâche',
   avancementProgramme: 'Programmé',
   avancementNonConcerne: 'Non concerné',
+  avancementFaitPlafonne: 'Fait non comptabilisé (plafonné par la 1.2.3)',
+  scorePlafonneInfo:
+    'Le score de cette mesure est plafonné au pourcentage réalisé de la mesure 1.2.3 : une partie des points faits n’est pas comptabilisée.',
+  scorePlafonneLienAide: 'En savoir plus',
 
   /** Types */
   actionTypeReferentiel: 'référentiel',

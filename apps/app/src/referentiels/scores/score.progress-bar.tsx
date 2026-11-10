@@ -1,5 +1,7 @@
 import { avancementToLabel } from '@/app/app/labels';
-import { actionAvancementColors } from '@/app/app/theme';
+import { actionAvancementColors, faitPlafonneColor } from '@/app/app/theme';
+import { appLabels } from '@/app/labels/catalog';
+import { getPointFaitPlafonne } from './get-point-fait-plafonne';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -33,7 +35,6 @@ export function ScoreProgressBar({
   }
 
   const isTache = action.actionType === ActionTypeEnum.TACHE;
-
   const progressScore = [
     {
       label: avancementToLabel.fait,
@@ -42,6 +43,11 @@ export function ScoreProgressBar({
           ? score.faitTachesAvancement
           : score.pointFait,
       color: actionAvancementColors.fait,
+    },
+    {
+      label: appLabels.avancementFaitPlafonne,
+      value: isTache || isReglementaire ? 0 : getPointFaitPlafonne(score),
+      color: faitPlafonneColor,
     },
     {
       label: avancementToLabel.programme,

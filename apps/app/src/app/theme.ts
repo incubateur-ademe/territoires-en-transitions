@@ -9,3 +9,6 @@ export const actionAvancementColors: Record<StatutAvancementCreate, string> = {
   detaille_a_la_tache: '#000091',
   fait: '#34CB6A',
 };
+
+/** Points faits retirés par une règle de plafonnement (ex. CAE 3.3.5 ≤ 1.2.3) */
+export const faitPlafonneColor = '#B3EBC6';
