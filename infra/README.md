@@ -451,6 +451,7 @@ et, là où il ne convient pas, des scripts d'API dans `scripts/` :
 | ------------------------------------------ | --------------------------------------------------------------------------------- |
 | Clés SSH, serveurs, projet, environnements | ressources natives (`plan` détecte le drift de l'UI)                              |
 | Applications `app`, `backend`, `site`      | `coolify_application_docker_image` ([`applications.tf`](coolify/applications.tf)) |
+| Outils internes (`mailpit`)                | idem, sans CD : à redéployer à la main (cf. ci-dessous)                           |
 | Services `supabase-api` et Alloy           | `coolify_service` ([`services.tf`](coolify/services.tf))                          |
 | Variables d'environnement                  | script `coolify-push-env.sh`                                                      |
 | Login GHCR sur les serveurs                | script `coolify-ghcr-docker-login.sh`                                             |
@@ -482,6 +483,10 @@ attestation et déployée par digest (tag Coolify `sha256-<hex>`). À la main :
 ```sh
 APP_ID=preprod/app IMAGE_TAG=<sha> infra/scripts/coolify-deploy.sh
 ```
+
+Les outils internes (`mailpit`) n'ont pas de CD et Terraform ne les déploie pas : après
+leur création, un changement de tag ou de variables, lancer
+`APP_ID=preprod/mailpit infra/scripts/coolify-deploy.sh`.
 
 Les scripts retrouvent chaque application par le marqueur `(tet-app=<env>/<app>)` de sa
 description (`(tet-service=…)` pour un service, `(tet-server=…)` pour un serveur) : la CD
