@@ -60,9 +60,19 @@ class CollectingObserver extends LlmObserver {
 }
 
 // La pause qui suit un 429 et les relances se jouent sous horloge factice.
+// On avance timer par timer jusqu'à ce que l'appel aboutisse, sans vider toute
+// l'horloge : le projet `shared-app` tourne sans isolation, et les specs jouées
+// avant dans le même worker laissent des timers récurrents (pools, files) que
+// `runAllTimersAsync` déroulerait jusqu'à sa limite de 10 000.
 const settleWithFakeTimers = async <T>(promise: Promise<T>): Promise<T> => {
-  await vi.runAllTimersAsync();
-  return promise;
+  let settled = false;
+  const tracked = promise.finally(() => {
+    settled = true;
+  });
+  while (!settled) {
+    await vi.advanceTimersToNextTimerAsync();
+  }
+  return tracked;
 };
 
 describe('LlmService', () => {
@@ -164,8 +174,7 @@ describe('LlmService', () => {
       prompt: 'p',
       schema: z.object({}),
     });
-    await vi.runAllTimersAsync();
-    const result = await pending;
+    const result = await settleWithFakeTimers(pending);
     vi.useRealTimers();
 
     expect(result).toEqual(failure({ kind: 'api_error', httpStatus: null }));
@@ -184,8 +193,7 @@ describe('LlmService', () => {
       prompt: 'p',
       schema: z.object({}),
     });
-    await vi.runAllTimersAsync();
-    await pending;
+    await settleWithFakeTimers(pending);
     vi.useRealTimers();
 
     expect(repository.complete).toHaveBeenCalledTimes(7);
