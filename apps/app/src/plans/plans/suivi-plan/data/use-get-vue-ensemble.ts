@@ -10,6 +10,9 @@ export const useGetVueEnsemble = ({
 }) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.plans.suivi.getVueEnsemble.queryOptions({ planId, thematiqueIds })
+    trpc.plans.suivi.getVueEnsemble.queryOptions(
+      { planId, thematiqueIds },
+      { staleTime: 0 }
+    )
   );
 };
