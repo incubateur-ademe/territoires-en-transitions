@@ -48,6 +48,10 @@ import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
 import { PlanRouter } from './plans.router';
 import { PlanProgressRules } from './progress/plan-progress.rules';
+import { GetVueEnsembleRouter } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.router';
+import { GetVueEnsembleService } from './suivi-plan/get-vue-ensemble/get-vue-ensemble.service';
+import { ListSuiviPlanFichesService } from './suivi-plan/list-suivi-plan-fiches.service';
+import { SuiviPlanRouter } from './suivi-plan/suivi-plan.router';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
@@ -114,6 +118,10 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     PlanVerificationRepository,
     VerifyPlanService,
     VerifyPlanRouter,
+    ListSuiviPlanFichesService,
+    GetVueEnsembleService,
+    GetVueEnsembleRouter,
+    SuiviPlanRouter,
   ],
   exports: [
     CreatePlanAggregateService,
@@ -124,6 +132,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     CheckElectrificationEligibilityService,
     CheckElectrificationCreationService,
     PlanRouter,
+    SuiviPlanRouter,
     UpsertPlanService,
     UpsertAxeService,
     ListPlansService,

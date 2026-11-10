@@ -17,6 +17,7 @@ import {
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
+import type { Statut } from '@tet/domain/plans';
 import type { LevierId } from '@tet/domain/shared';
 import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
@@ -162,6 +163,7 @@ const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath
 const collectivitePlansActionsImporterIaPath = `${collectivitePlansActionsBasePath}/importer-ia`;
 const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
 const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
+const collectivitePlanSuiviPath = `${collectivitePlanActionPath}/suivi`;
 const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
 const collectiviteActionPath = `${collectiviteActionsPath}/:${ficheParam}/:content`;
 
@@ -563,18 +565,21 @@ export const PLAN_DISPLAY_OPTIONS_PARAMETER = 'options';
 /** Panneau de vérification des secteurs ouvert sur la page du plan. */
 export const PLAN_SECTEURS_PARAMETER = 'secteurs';
 export const PLAN_SECTEURS_LISTE = 'liste';
+export const PLAN_FILTERS_PARAMETER = 'filters';
 export const makeCollectivitePlanActionUrl = ({
   collectiviteId,
   planActionUid,
   openAxes,
   options,
   openSecteurs,
+  filters,
 }: {
   collectiviteId: number;
   planActionUid: string;
   openAxes?: number[];
   options?: string[];
   openSecteurs?: boolean;
+  filters?: { statuts?: Statut[]; noStatut?: boolean };
 }) => {
   const params = new URLSearchParams();
   if (openAxes?.length)
@@ -582,6 +587,7 @@ export const makeCollectivitePlanActionUrl = ({
   if (options?.length)
     params.set(PLAN_DISPLAY_OPTIONS_PARAMETER, options.join(','));
   if (openSecteurs) params.set(PLAN_SECTEURS_PARAMETER, PLAN_SECTEURS_LISTE);
+  if (filters) params.set(PLAN_FILTERS_PARAMETER, JSON.stringify(filters));
   const queryString = params.toString();
 
   return collectivitePlanActionPath
@@ -589,6 +595,17 @@ export const makeCollectivitePlanActionUrl = ({
     .replace(`:${planParam}`, planActionUid)
     .concat(queryString ? `?${queryString}` : '');
 };
+
+export const makeCollectivitePlanSuiviUrl = ({
+  collectiviteId,
+  planActionUid,
+}: {
+  collectiviteId: number;
+  planActionUid: string;
+}) =>
+  collectivitePlanSuiviPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${planParam}`, planActionUid);
 
 export const makeCollectiviteUsersUrl = ({
   collectiviteId,
