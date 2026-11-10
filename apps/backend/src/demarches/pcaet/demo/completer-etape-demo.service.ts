@@ -240,7 +240,11 @@ export class CompleterEtapeDemoService {
       }
 
       const planDemoId = await this.demoRepository.findPlanDemo(
-        { collectiviteId: ref.collectiviteId, nom: DEMO_PLAN_NOM },
+        {
+          collectiviteId: ref.collectiviteId,
+          demarcheId: ref.demarcheId,
+          nom: DEMO_PLAN_NOM,
+        },
         tx
       );
       if (planDemoId !== null) {
