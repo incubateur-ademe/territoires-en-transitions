@@ -73,6 +73,7 @@ export const useLeviersPriorisation = (): LeviersPriorisationQuery => {
           trajectoireErrorKey === 'TRAJECTOIRE_NOT_COMPUTED',
         isTrajectoireNotAvailable:
           trajectoireErrorKey === 'TRAJECTOIRE_NON_DISPONIBLE',
+        isRegionNotSupported: trajectoireErrorKey === 'REGION_NON_SUPPORTEE',
         isCollectiviteNotEpci: trajectoireErrorKey === 'COLLECTIVITE_NOT_EPCI',
       })
     : 'reservedToEpci';
