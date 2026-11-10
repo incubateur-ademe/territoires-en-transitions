@@ -44,6 +44,10 @@ locals {
       branch  = "next"
       domains = ["https://aldo.preprod.territoiresentransitions.fr"]
     }
+    "prod/aldo" = {
+      branch  = "main"
+      domains = ["http://aldo.territoiresentransitions.fr"]
+    }
   }
 
   git_applications = {
