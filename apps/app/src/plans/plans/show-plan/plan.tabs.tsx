@@ -29,7 +29,7 @@ export const PlanTabs = ({
   const planActionUid = planId.toString();
   return (
     <TabsUI>
-      <TabsList className="flex justify-start gap-2 m-0 p-0">
+      <TabsList className="flex justify-start gap-2 md:gap-2 m-0 p-0 [&_[role=tab]]:px-5 [&_[role=tab]]:py-2.5 [&_[role=tab]]:rounded-md [&_[role=tab]:hover]:shadow-none [&_[aria-selected=true]]:border-0 [&_[aria-selected=true]]:ring-1 [&_[aria-selected=true]]:ring-inset [&_[aria-selected=true]]:ring-grey-3 [&_[aria-selected=true]]:shadow-button [&_[aria-selected=true]:hover]:shadow-button">
         <TabsTab
           label={appLabels.planOngletPilotage}
           href={makeCollectivitePlanActionUrl({
