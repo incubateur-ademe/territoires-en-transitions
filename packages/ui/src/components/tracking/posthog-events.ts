@@ -98,6 +98,15 @@ export const Event = {
       lancer: 'plans:import:lancer',
       resultat: 'plans:import:resultat',
     },
+    /**
+     * Gestes autour d'un import IA (`origine`, `demarche_id`). Son cycle de
+     * vie est émis par le serveur (`plans:import-ia:started|succeeded|…`).
+     */
+    importIa: {
+      arrierePlan: 'plans:import-ia:arriere_plan_clic',
+      reessayer: 'plans:import-ia:reessayer_clic',
+      reprendre: 'plans:import-ia:reprendre_clic',
+    },
   },
   fiches: {
     updatePilote: {
@@ -202,6 +211,53 @@ export const Event = {
   },
   viewGraphZoom: 'zoom_graph',
   downloadGraph: 'export_graph',
+  /**
+   * Dépôt PCAET, côté client : intentions et interactions seulement. Les faits
+   * métier (création, transitions, dépôts, avis) sont émis par le serveur
+   * (`DemarchePcaetEventEnum`), avec les mêmes propriétés communes — cf.
+   * `useDemarcheTracker` dans l'app.
+   */
+  demarches: {
+    pcaet: {
+      listeVue: 'demarches:pcaet:liste_vue',
+      creerClic: 'demarches:pcaet:creer_clic',
+      /** Action du menu d'une ligne de la liste (`action`). */
+      listeAction: 'demarches:pcaet:liste_action',
+      /** Section du parcours affichée (`section`, `topic`, `etape`). */
+      sectionVue: 'demarches:pcaet:section_vue',
+      /** « Étape précédente / suivante » (`direction`). */
+      navigation: 'demarches:pcaet:navigation',
+      avancementOuvert: 'demarches:pcaet:avancement_ouvert',
+      contactsOuverts: 'demarches:pcaet:contacts_ouverts',
+      /** Acte de clôture affiché désarmé (`transition`, `blocked_by`). */
+      transitionBloqueeVue: 'demarches:pcaet:transition_bloquee_vue',
+      /** Modales de transmission et de publication (`etat`). */
+      transmettreModale: 'demarches:pcaet:transmettre_modale',
+      publierModale: 'demarches:pcaet:publier_modale',
+      /** Dépôt de fichier refusé avant l'envoi (`raison`). */
+      documentDepotErreur: 'demarches:pcaet:document:depot_erreur',
+      documentTelecharge: 'demarches:pcaet:document:telecharge',
+      /** Proposition d'import du programme déposé (`choix`). */
+      importProgrammeChoix: 'demarches:pcaet:import_programme:choix',
+      /** Modales du programme d'actions (`type`, `etat`). */
+      planModale: 'demarches:pcaet:plan:modale',
+      /** Un avis téléchargé, pièce unique ou archive (`format`). */
+      avisTelecharge: 'demarches:pcaet:avis:telecharge',
+      instructionListeVue: 'demarches:pcaet:instruction:liste_vue',
+      instructionFiltre: 'demarches:pcaet:instruction:filtre',
+      instructionDossierVu: 'demarches:pcaet:instruction:dossier_vu',
+      instructionEtapeVue: 'demarches:pcaet:instruction:etape_vue',
+      instructionToutTelecharger:
+        'demarches:pcaet:instruction:tout_telecharger',
+      /** Modale « Finaliser l'instruction » (`etat`). */
+      finaliserModale: 'demarches:pcaet:instruction:finaliser_modale',
+      publicListeVue: 'demarches:pcaet:public:liste_vue',
+      publicDossierVu: 'demarches:pcaet:public:dossier_vu',
+      publicEtapeVue: 'demarches:pcaet:public:etape_vue',
+      referentsVue: 'demarches:pcaet:referents:vue',
+      accesRefuse: 'demarches:pcaet:acces_refuse',
+    },
+  },
   togglePanel: 'panneau_lateral_toggle',
   toggleNavigationLaterale: 'navigation_laterale_toggle',
   showNps: 'show_nps',

@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button } from '@tet/ui';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import { useDownloadDossierDocuments } from '../data/use-download-dossier-documents';
 import type { DossierInstructionRef } from '../dossier-instruction-ref';
 
@@ -15,6 +15,7 @@ export const DownloadDossierDocumentsButton = ({
   disabled: boolean;
 }) => {
   const archiveDownload = useDownloadDossierDocuments(dossierRef);
+  const tracker = useEventTracker();
 
   if (archiveDownload.status === 'downloading') {
     return (
@@ -39,7 +40,13 @@ export const DownloadDossierDocumentsButton = ({
       icon="download-line"
       size="sm"
       disabled={disabled}
-      onClick={archiveDownload.download}
+      onClick={() => {
+        tracker(Event.demarches.pcaet.instructionToutTelecharger, {
+          acteur: 'instructeur',
+          parSaisine: 'demandeAvisId' in dossierRef,
+        });
+        archiveDownload.download();
+      }}
       dataTest="demarches.pcaet.instruction.documents.tout-telecharger"
     >
       {appLabels.instructionDossierToutTelecharger}

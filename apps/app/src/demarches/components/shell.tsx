@@ -2,11 +2,19 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { isPublieDemarchePcaetStatus } from '@tet/domain/demarches';
+import { Event } from '@tet/ui';
 import { PropsWithChildren, useState } from 'react';
 import type { DemarchePcaetCompletion } from '../completion';
 import { DemarchePcaetHeader } from '../pcaet/components/header';
+import { usePcaetDiagnosticTabQueryState } from '../pcaet/diagnostic/use-pcaet-diagnostic-tab-query-state';
 import { getDemarcheParcours, type DemarcheSectionKey } from '../steps';
 import type { DemarchePcaet, DemarchePcaetUpdatePatch } from '../types';
+import {
+  toDemarcheTrackingSubject,
+  useDemarcheTracker,
+  useTrackDemarcheView,
+  useTrackedModal,
+} from '../use-demarche-tracker';
 import { DemarcheAvanceSidePanelButton } from './avance.side-panel-button';
 import { DemarcheDetailLayout } from './detail.layout';
 import { PublierDepotFinalModal } from './publier-depot-final.modal';
@@ -42,17 +50,47 @@ export const DemarcheShell = ({
   const isPublished = isPublieDemarchePcaetStatus(demarche.statut);
   const parcours = getDemarcheParcours(demarche);
 
+  const trackingSubject = toDemarcheTrackingSubject(demarche);
+  const track = useDemarcheTracker(trackingSubject);
+  const [topicParam] = usePcaetDiagnosticTabQueryState();
+  const topic = activeSection === 'diagnostic' ? topicParam : null;
+  useTrackDemarcheView(Event.demarches.pcaet.sectionVue, {
+    subject: trackingSubject,
+    key: `${demarche.id}:${activeSection}:${topic}`,
+    properties: {
+      section: activeSection,
+      topic,
+      etape: parcours.etape,
+      horsPlateforme: parcours.horsPlateforme,
+      contenuModifiable: demarche.contenuModifiable,
+    },
+  });
+  const transmettreModale = useTrackedModal(
+    Event.demarches.pcaet.transmettreModale,
+    track
+  );
+  const publierModale = useTrackedModal(
+    Event.demarches.pcaet.publierModale,
+    track
+  );
+
   // La transmission ferme le dossier d'élaboration sans retour possible : elle
   // passe par une confirmation, d'où que vienne le clic — la barre d'étapes ou
   // le panneau d'avancement.
   const [isConfirmationOuverte, setIsConfirmationOuverte] = useState(false);
-  const demanderConfirmation = () => setIsConfirmationOuverte(true);
+  const demanderConfirmation = () => {
+    transmettreModale.onOpen();
+    setIsConfirmationOuverte(true);
+  };
 
   // La validation du dépôt final publie le dossier sans retour possible, et
   // recueille au passage la date de la délibération d'adoption : même chemin de
   // confirmation, d'où que vienne le clic.
   const [isPublicationOuverte, setIsPublicationOuverte] = useState(false);
-  const demanderPublication = () => setIsPublicationOuverte(true);
+  const demanderPublication = () => {
+    publierModale.onOpen();
+    setIsPublicationOuverte(true);
+  };
 
   // L'acte qui clôt le temps parcouru. Un dossier transmis ou publié n'en a
   // plus : sa dernière sous-étape reste consultable, mais tout est validé.
@@ -61,6 +99,7 @@ export const DemarcheShell = ({
       ? null
       : {
           transition: demarche.transitions.publier,
+          transitionName: 'publier',
           label: appLabels.demarcheTransitionPublier,
           dataTest: 'demarches.steps-nav.publier',
           onClick: demanderPublication,
@@ -68,6 +107,7 @@ export const DemarcheShell = ({
     : parcours.amontOuvert
     ? {
         transition: demarche.transitions.transmettre_pour_avis,
+        transitionName: 'transmettre_pour_avis',
         label: appLabels.demarcheAvanceValiderDepot,
         dataTest: 'demarches.steps-nav.transmettre',
         onClick: demanderConfirmation,
@@ -102,7 +142,13 @@ export const DemarcheShell = ({
           demarche={demarche}
           onUpdate={onUpdate}
           sidePanelAction={
-            <DemarcheAvanceSidePanelButton isOpen={isOpen} onClick={toggle} />
+            <DemarcheAvanceSidePanelButton
+              isOpen={isOpen}
+              onClick={() => {
+                if (!isOpen) track(Event.demarches.pcaet.avancementOuvert);
+                toggle();
+              }}
+            />
           }
         />
       </DemarcheDetailLayout.Header>
@@ -126,16 +172,28 @@ export const DemarcheShell = ({
 
       {isConfirmationOuverte && (
         <TransmettrePourAvisModal
-          onConfirm={onTransmettre}
-          onClose={() => setIsConfirmationOuverte(false)}
+          onConfirm={() => {
+            transmettreModale.onConfirm();
+            onTransmettre();
+          }}
+          onClose={() => {
+            transmettreModale.onClose();
+            setIsConfirmationOuverte(false);
+          }}
         />
       )}
 
       {isPublicationOuverte && (
         <PublierDepotFinalModal
           demarcheType={demarche.type}
-          onConfirm={onPublish}
-          onClose={() => setIsPublicationOuverte(false)}
+          onConfirm={(dateAdoption) => {
+            publierModale.onConfirm();
+            onPublish(dateAdoption);
+          }}
+          onClose={() => {
+            publierModale.onClose();
+            setIsPublicationOuverte(false);
+          }}
         />
       )}
     </DemarcheDetailLayout.Root>

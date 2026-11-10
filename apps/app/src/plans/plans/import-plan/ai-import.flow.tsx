@@ -7,6 +7,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { hasPermission } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
+import { Event, useEventTracker } from '@tet/ui';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { AiImportProgress } from './ai-import-progress';
@@ -94,6 +95,7 @@ export const AiImportFlow = ({
   }, [isProgressVisible, onProgressVisibilityChange]);
 
   const enqueue = useEnqueueAiImport();
+  const tracker = useEventTracker();
   const { data: status } = useGetAiImportStatus(jobId);
   const resume = useResumeAiImport();
   const canResume =
@@ -155,8 +157,21 @@ export const AiImportFlow = ({
       <AiImportProgress
         failed={failed}
         errorMessage={status?.error ?? null}
-        onRetry={() => setJobId(null)}
-        onResume={canResume ? () => resume.mutate({ jobId }) : undefined}
+        onRetry={() => {
+          tracker(Event.plans.importIa.reessayer, { origine, demarcheId });
+          setJobId(null);
+        }}
+        onResume={
+          canResume
+            ? () => {
+                tracker(Event.plans.importIa.reprendre, {
+                  origine,
+                  demarcheId,
+                });
+                resume.mutate({ jobId });
+              }
+            : undefined
+        }
         isResuming={resume.isPending}
         steps={toImportStepViews(status?.stepStates, { failed })}
         withSecteurs={status?.withSecteurs ?? false}

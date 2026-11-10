@@ -1,7 +1,7 @@
 'use client';
 
 import { appLabels } from '@/app/labels/catalog';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker, Event } from '@tet/ui';
 import { JSX, useState } from 'react';
 import { PcaetContactsModal } from './contacts.modal';
 
@@ -11,6 +11,7 @@ export const PcaetContactsButton = ({
   collectiviteId: number;
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
+  const tracker = useEventTracker();
 
   return (
     <>
@@ -19,7 +20,10 @@ export const PcaetContactsButton = ({
         size="xs"
         icon="mail-line"
         dataTest="demarches.pcaet.voir-contacts-button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          tracker(Event.demarches.pcaet.contactsOuverts);
+          setIsOpen(true);
+        }}
       >
         {appLabels.voirContacts}
       </Button>

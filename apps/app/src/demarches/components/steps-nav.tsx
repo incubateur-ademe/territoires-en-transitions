@@ -2,7 +2,7 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { type DemarchePcaetTransitionEvaluation } from '@tet/domain/demarches';
-import { Button, Tooltip } from '@tet/ui';
+import { Button, Event, Tooltip } from '@tet/ui';
 import type { DemarchePcaetCompletion } from '../completion';
 import { useGetPcaetDiagnostic } from '../pcaet/diagnostic/data/use-get-pcaet-diagnostic';
 import {
@@ -18,6 +18,11 @@ import {
 } from '../steps';
 import { getTransitionBlocageLabel } from '../transitions';
 import type { DemarchePcaet } from '../types';
+import {
+  toDemarcheTrackingSubject,
+  useDemarcheTracker,
+  useTrackDemarcheView,
+} from '../use-demarche-tracker';
 
 /**
  * L'acte qui clôt le temps parcouru, proposé à la place d'« Étape suivante » sur
@@ -28,6 +33,7 @@ import type { DemarchePcaet } from '../types';
 type FinalAction = {
   /** État serveur de la transition : arme le bouton et explique son blocage. */
   transition: DemarchePcaetTransitionEvaluation;
+  transitionName: string;
   label: string;
   dataTest: string;
   onClick: () => void;
@@ -75,6 +81,26 @@ export const DemarcheStepsNav = ({
   // Le dernier item n'a pas de « suivant » : il n'a que son acte de clôture,
   // et sans lui la barre n'y garde que le retour en arrière.
   const showFinalAction = isLastStep && finalAction !== null;
+
+  const trackingSubject = toDemarcheTrackingSubject(demarche);
+  const track = useDemarcheTracker(trackingSubject);
+  const blockedBy = finalAction?.transition.blockedBy ?? [];
+  useTrackDemarcheView(Event.demarches.pcaet.transitionBloqueeVue, {
+    subject: trackingSubject,
+    enabled: showFinalAction && !finalAction?.transition.enabled,
+    key: `${demarche.id}:${finalAction?.transitionName}:${blockedBy.join(',')}`,
+    properties: {
+      transition: finalAction?.transitionName,
+      blockedBy: blockedBy[0],
+      blockedByAll: blockedBy,
+    },
+  });
+  const trackNavigation = (direction: 'precedent' | 'suivant') =>
+    track(Event.demarches.pcaet.navigation, {
+      direction,
+      section: activeSection,
+    });
+
   if (!prev && !next && !showFinalAction) return null;
 
   const ids = { collectiviteId, demarcheId: demarche.id };
@@ -107,7 +133,10 @@ export const DemarcheStepsNav = ({
           icon="arrow-left-line"
           iconPosition="left"
           href={hrefOf(prev)}
-          onClick={crossesSection(prev) ? onOpenProgressPanel : undefined}
+          onClick={() => {
+            trackNavigation('precedent');
+            if (crossesSection(prev)) onOpenProgressPanel();
+          }}
         >
           {appLabels.demarcheStepsNavPrevious}
         </Button>
@@ -145,7 +174,10 @@ export const DemarcheStepsNav = ({
             icon="arrow-right-line"
             iconPosition="right"
             href={hrefOf(next)}
-            onClick={crossesSection(next) ? onOpenProgressPanel : undefined}
+            onClick={() => {
+              trackNavigation('suivant');
+              if (crossesSection(next)) onOpenProgressPanel();
+            }}
           >
             {appLabels.demarcheStepsNavNext}
           </Button>

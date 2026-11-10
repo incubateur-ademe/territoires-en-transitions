@@ -10,7 +10,8 @@ import {
   DEMARCHE_PCAET_PUBLIC_STATUSES,
   DemarcheTypeEnum,
 } from '@tet/domain/demarches';
-import { EmptyCard, PageHeader } from '@tet/ui';
+import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
+import { EmptyCard, Event, PageHeader } from '@tet/ui';
 import { DemarchesPcaetTable } from './demarches-pcaet.table';
 import {
   useFilterDemarchesPcaet,
@@ -40,6 +41,12 @@ export const ListPublicDemarchesPcaetPage = () => {
   } = useListPublicDemarchesPcaet();
   const { items, reinitialiserFiltres, ...pilotage } =
     useFilterDemarchesPcaet(demarches);
+  useTrackDemarcheView(Event.demarches.pcaet.publicListeVue, {
+    acteur: 'public',
+    key: 'liste',
+    enabled: demarches !== undefined,
+    properties: { nbDemarches: demarches?.length },
+  });
 
   return (
     <div className="flex flex-col gap-6">

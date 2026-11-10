@@ -5,7 +5,8 @@ import { ErreurAccesPage } from '@/app/demarches/pcaet/erreur-acces/erreur-acces
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
-import { PageHeader, Select } from '@tet/ui';
+import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
+import { Event, PageHeader, Select } from '@tet/ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { JSX } from 'react';
 import { useListReferentsOrganismes } from './data/use-list-referents-organismes';
@@ -40,6 +41,12 @@ export const ReferentsPcaetPage = ({
     collectiviteId,
     regionCode,
     enabled: access.canRead,
+  });
+
+  useTrackDemarcheView(Event.demarches.pcaet.referentsVue, {
+    key: `${collectiviteId}:${regionCode}`,
+    enabled: access.canRead,
+    properties: { regionCode, canMutate: access.canMutate },
   });
 
   if (access.isLoading) {

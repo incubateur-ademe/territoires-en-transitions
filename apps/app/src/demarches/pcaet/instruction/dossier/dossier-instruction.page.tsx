@@ -12,7 +12,8 @@ import {
   pcaetInstructionPartieValues,
   type PcaetInstructionPartie,
 } from '@tet/domain/demarches';
-import { Button, cn } from '@tet/ui';
+import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
+import { Button, cn, Event } from '@tet/ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import type { DossierInstructionRef } from '../dossier-instruction-ref';
 import { useDossierInstruction } from './data/use-dossier-instruction';
@@ -53,6 +54,31 @@ export const DossierInstructionPage = ({
       PcaetInstructionPartieEnum.DIAGNOSTIC
     )
   );
+
+  const trackingSubject = dossier && {
+    id: dossier.demarcheId,
+    status: dossier.status,
+    isScotAec: dossier.isScotAec,
+  };
+  const trackingProperties = dossier && {
+    etatSaisine: dossier.etat,
+    parSaisine: dossier.demandeAvisId !== null,
+    peutDeposerAvis: dossier.titresDeposables.length > 0,
+  };
+  useTrackDemarcheView(Event.demarches.pcaet.instructionDossierVu, {
+    subject: trackingSubject,
+    acteur: 'instructeur',
+    key: String(dossier?.demarcheId),
+    enabled: !!dossier,
+    properties: trackingProperties,
+  });
+  useTrackDemarcheView(Event.demarches.pcaet.instructionEtapeVue, {
+    subject: trackingSubject,
+    acteur: 'instructeur',
+    key: `${dossier?.demarcheId}:${etape}`,
+    enabled: !!dossier,
+    properties: { ...trackingProperties, etape },
+  });
 
   const etapes: EtapeInstruction[] = pcaetInstructionPartieValues.map(
     (key) => ({

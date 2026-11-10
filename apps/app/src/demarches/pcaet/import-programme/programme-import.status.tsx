@@ -14,7 +14,8 @@ import {
 import { useFindPreviousAiImport } from '@/app/plans/plans/import-plan/data/use-find-previous-ai-import';
 import { PlanStatusEnum } from '@tet/domain/plans';
 import type { DemarcheDocumentFichier } from '@tet/domain/demarches';
-import { Alert, Button } from '@tet/ui';
+import { useDemarcheTracker } from '@/app/demarches/use-demarche-tracker';
+import { Alert, Button, Event } from '@tet/ui';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { useImportProgramme } from './import-programme.context';
 
@@ -114,6 +115,9 @@ export const ProgrammeImportStatus = ({
   const { previousImport, isLoading } = useFindPreviousAiImport({
     fichierId: programmeFichier?.id,
   });
+  // Le statut de la démarche n'est pas connu ici : l'identifiant suffit à
+  // croiser le choix avec les autres événements de la démarche.
+  const track = useDemarcheTracker({ id: demarcheId });
   const [dismissedFichierId, setDismissedFichierId] = useLocalStorage<string>(
     makeDismissKey(demarcheId),
     undefined,
@@ -162,8 +166,16 @@ export const ProgrammeImportStatus = ({
   return (
     <ProposeImportCard
       isStarting={isStarting}
-      onLater={() => setDismissedFichierId(String(programmeFichier.id))}
-      onStart={() => startProgrammeImport(programmeFichier.id)}
+      onLater={() => {
+        track(Event.demarches.pcaet.importProgrammeChoix, {
+          choix: 'plus_tard',
+        });
+        setDismissedFichierId(String(programmeFichier.id));
+      }}
+      onStart={() => {
+        track(Event.demarches.pcaet.importProgrammeChoix, { choix: 'creer' });
+        startProgrammeImport(programmeFichier.id);
+      }}
     />
   );
 };
