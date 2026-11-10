@@ -56,9 +56,10 @@ export class RequestPreuvesArchiveService {
   ): Promise<Result<RequestPreuvesArchiveResult, PreuvesArchiveError>> {
     const { collectiviteId, referentielId, user } = input;
 
+    // Membres de la collectivité et auditeurs ; exclut visiteurs et ADEME.
     const permissionResult = await this.permissions.isAllowed(
       user,
-      'referentiels.read',
+      'referentiels.read_confidentiel',
       ResourceType.REFERENTIEL,
       { collectiviteId, referentielId }
     );
@@ -66,7 +67,7 @@ export class RequestPreuvesArchiveService {
       return failure(
         PreuvesArchiveErrorEnum.UNAUTHORIZED,
         new Error(
-          `L'utilisateur ${user.id} n'a pas le droit referentiels.read sur la collectivité ${collectiviteId}`
+          `L'utilisateur ${user.id} n'a pas le droit referentiels.read_confidentiel sur la collectivité ${collectiviteId}`
         )
       );
     }
@@ -79,22 +80,6 @@ export class RequestPreuvesArchiveService {
       return auditIdResult;
     }
     const auditId = auditIdResult.data;
-
-    const auditeurMembership = await this.repository.getAuditeurMembership({
-      auditId,
-      userId: user.id,
-    });
-    if (!auditeurMembership.success) {
-      return auditeurMembership;
-    }
-    if (!auditeurMembership.data) {
-      return failure(
-        PreuvesArchiveErrorEnum.UNAUTHORIZED,
-        new Error(
-          `L'utilisateur ${user.id} n'est pas auditeur de l'audit ${auditId} en cours pour la collectivité ${collectiviteId}`
-        )
-      );
-    }
 
     const expiresAt = new Date(Date.now() + ARCHIVE_TTL_MS).toISOString();
     const createResult = await this.repository.createOrGetInFlight({

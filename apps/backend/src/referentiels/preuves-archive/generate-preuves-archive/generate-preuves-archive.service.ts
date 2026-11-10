@@ -153,7 +153,7 @@ export class GeneratePreuvesArchiveService {
 
     const permissionResult = await this.permissions.isAllowed(
       user,
-      'referentiels.read',
+      'referentiels.read_confidentiel',
       ResourceType.REFERENTIEL,
       {
         collectiviteId: archive.collectiviteId,
@@ -162,7 +162,7 @@ export class GeneratePreuvesArchiveService {
     );
     if (!permissionResult.success) {
       return nonRetryableFailure(
-        `L'utilisateur ${archive.requestedBy} n'a plus le droit referentiels.read sur la collectivité ${archive.collectiviteId}`
+        `L'utilisateur ${archive.requestedBy} n'a plus le droit referentiels.read_confidentiel sur la collectivité ${archive.collectiviteId}`
       );
     }
 

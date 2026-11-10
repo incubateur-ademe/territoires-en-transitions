@@ -185,7 +185,7 @@ describe('GeneratePreuvesArchiveService.generate', () => {
     expect(repository.markFailed).not.toHaveBeenCalled();
   });
 
-  it("échec non-retryable si l'utilisateur a perdu referentiels.read, sans écrire failed", async () => {
+  it("échec non-retryable si l'utilisateur a perdu referentiels.read_confidentiel, sans écrire failed", async () => {
     const { service, repository } = buildService({ canReadReferentiel: false });
 
     const result = await service.generate(archiveId);
@@ -193,7 +193,7 @@ describe('GeneratePreuvesArchiveService.generate', () => {
     expect(result).toEqual({
       success: false,
       error: {
-        message: expect.stringContaining("n'a plus le droit referentiels.read"),
+        message: expect.stringContaining("n'a plus le droit referentiels.read_confidentiel"),
         retryable: false,
       },
     });

@@ -26,8 +26,8 @@ export const ReferentielMenuButton = ({
   const checklist = useOptionalChecklist();
   const canAccessArchives =
     checklist !== null &&
-    checklist.cycle.isAuditeur &&
-    isAuditActif(checklist.cycle);
+    isAuditActif(checklist.cycle) &&
+    hasReferentielPermission('referentiels.read_confidentiel', referentielId);
   const { openPanel } = useArchivesPanel();
 
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
