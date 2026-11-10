@@ -2,6 +2,8 @@
 
 import { RouterOutput } from '@tet/api';
 import {
+  getPeriodicitesAvecVersionsEnConflit,
+  getSerieKey,
   IndicateurPeriode,
   IndicateurPeriodes,
   IndicateurPeriodiciteEnum,
@@ -73,10 +75,13 @@ export const prepareData = (
     (sourceData) => {
       if (!data) return [];
       const groups = new Map<string, IndicateurSourceValeur[]>();
+      const periodicitesEnConflit = getPeriodicitesAvecVersionsEnConflit(
+        sourceData.valeurs
+      );
       for (const value of sourceData.valeurs.toSorted((a, b) =>
         a.dateValeur.localeCompare(b.dateValeur)
       )) {
-        const key = `${value.periodicite}:${value.metadonneeId ?? 'local'}`;
+        const key = getSerieKey(value, periodicitesEnConflit);
         const group = groups.get(key);
         if (group) group.push(value);
         else groups.set(key, [value]);

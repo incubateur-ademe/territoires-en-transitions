@@ -3,6 +3,8 @@ import { makeLegendData } from '@tet/backend/utils/echarts/chart-legend.utils';
 import { CHART_FONT_FAMILY } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import {
   INDICATEUR_VALEUR_TYPE_LABEL,
+  getPeriodicitesAvecVersionsEnConflit,
+  getSerieKey,
   IndicateurAvecValeursParSource,
   IndicateurPeriodicite,
   IndicateurPeriodes,
@@ -45,6 +47,10 @@ type DatasetSeries = Readonly<{
   stackId?: string;
 }>;
 
+type SegmentSeries = Readonly<{
+  periodicitesEnConflit: ReadonlySet<string>;
+  datesBySerieKey: ReadonlyMap<string, ReadonlySet<string>>;
+}>;
 type ChartPoint = { dateValeur: string; valeur: number | null };
 type LineDatasetSeries = DatasetSeries & {
   dataset: { source: ChartPoint[] };
@@ -146,21 +152,25 @@ export class IndicateurChartBuilder {
       );
     });
 
-    // ECharts stacks by index: align dates within each cadence/source version.
-    const segmentDatesByIdentity = new Map<string, Set<string>>();
-    if (segmentation) {
-      for (const indicateur of segmentation.indicateursEnfantValeurs ?? []) {
-        for (const valeur of indicateur.sources[segmentation.source]?.valeurs ??
-          []) {
-          const identity = `${valeur.periodicite}-${
-            valeur.metadonneeId ?? 'local'
-          }`;
-          const dates =
-            segmentDatesByIdentity.get(identity) ?? new Set<string>();
-          dates.add(valeur.dateValeur);
-          segmentDatesByIdentity.set(identity, dates);
-        }
-      }
+    // ECharts stacks by index: align dates within each serie (cadence, and
+    // source version when versions overlap) across all segments.
+    const segmentValeurs = (segmentation?.indicateursEnfantValeurs ?? []).map(
+      (indicateur) =>
+        indicateur.sources[segmentation?.source ?? '']?.valeurs ?? []
+    );
+    const segmentSeries = {
+      periodicitesEnConflit: new Set(
+        segmentValeurs.flatMap((valeurs) => [
+          ...getPeriodicitesAvecVersionsEnConflit(valeurs),
+        ])
+      ),
+      datesBySerieKey: new Map<string, Set<string>>(),
+    };
+    for (const valeur of segmentValeurs.flat()) {
+      const key = getSerieKey(valeur, segmentSeries.periodicitesEnConflit);
+      const dates = segmentSeries.datesBySerieKey.get(key) ?? new Set<string>();
+      dates.add(valeur.dateValeur);
+      segmentSeries.datesBySerieKey.set(key, dates);
     }
     const segmentDatasetsAndSeries = segmentation?.indicateursEnfantValeurs
       ? segmentation.indicateursEnfantValeurs
@@ -172,7 +182,7 @@ export class IndicateurChartBuilder {
               segmentation.valeurType,
               PALETTE_LIGHT,
               periodicite,
-              segmentDatesByIdentity
+              segmentSeries
             )
           )
           .filter((datasetSeries): datasetSeries is DatasetSeries =>
@@ -324,7 +334,7 @@ export class IndicateurChartBuilder {
     valeurType: IndicateurValeurWithoutReferenceType,
     palette: string[],
     periodicite: IndicateurPeriodicite,
-    datesByIdentity: ReadonlyMap<string, ReadonlySet<string>>
+    segmentSeries: SegmentSeries
   ): DatasetSeries[] {
     return this.makeIndicateurDatasetSeries(
       indicateurAvecValeurs,
@@ -333,7 +343,7 @@ export class IndicateurChartBuilder {
       periodicite,
       indicateurAvecValeurs.definition.titreCourt ??
         indicateurAvecValeurs.definition.titre,
-      datesByIdentity
+      segmentSeries
     ).map(({ dataset, serie, stackId }) => ({
       dataset,
       serie: {
@@ -357,7 +367,7 @@ export class IndicateurChartBuilder {
     valeurType: IndicateurValeurWithoutReferenceType,
     periodicite: IndicateurPeriodicite,
     segmentationLabel?: string,
-    datesByIdentity?: ReadonlyMap<string, ReadonlySet<string>>
+    segmentSeries?: SegmentSeries
   ): LineDatasetSeries[] {
     const source = indicateurAvecValeurs.sources[sourceId];
     if (!source) return [];
@@ -368,11 +378,11 @@ export class IndicateurChartBuilder {
     const valeurs = source.valeurs.toSorted((a, b) =>
       a.dateValeur.localeCompare(b.dateValeur)
     );
+    const periodicitesEnConflit =
+      segmentSeries?.periodicitesEnConflit ??
+      getPeriodicitesAvecVersionsEnConflit(valeurs);
     const groups = Object.entries(
-      groupBy(
-        valeurs,
-        (valeur) => `${valeur.periodicite}-${valeur.metadonneeId ?? 'local'}`
-      )
+      groupBy(valeurs, (valeur) => getSerieKey(valeur, periodicitesEnConflit))
     );
     return groups.flatMap(([identity, group]) => {
       const sourcePoints = group.map((valeur) => ({
@@ -382,7 +392,7 @@ export class IndicateurChartBuilder {
       const pointsByDate = new Map(
         sourcePoints.map((point) => [point.dateValeur, point])
       );
-      const dates = datesByIdentity?.get(identity);
+      const dates = segmentSeries?.datesBySerieKey.get(identity);
       const points = dates
         ? [...dates]
             .sort()
@@ -423,9 +433,7 @@ export class IndicateurChartBuilder {
         ? [
             {
               ...datasetSeries,
-              stackId: `${sourceId}:${group[0].periodicite}:${
-                group[0].metadonneeId ?? 'local'
-              }`,
+              stackId: `${sourceId}:${identity}`,
             },
           ]
         : [];

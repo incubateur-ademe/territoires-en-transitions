@@ -189,7 +189,7 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
     expect(saved.indicateurs[0].sources.collectivite.valeurs).toHaveLength(2);
   });
 
-  test('Le graphique sépare les versions annuelles retenues et leurs trous sans perdre les zéros', async () => {
+  test('Le graphique fusionne les versions annuelles retenues sans perdre les trous ni les zéros', async () => {
     const sourceId = `test-versions-${randomUUID()}`;
     await databaseService.db.insert(indicateurSourceTable).values({
       id: sourceId,
@@ -265,47 +265,36 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       sourceId
     );
     const series = renderChart(chartData).getSeries();
-    expect(series).toHaveLength(4);
-    for (const { version, observations } of [
-      {
-        version: ancienneVersion,
-        observations: [
-          { dateValeur: '2024-01-01', valeur: 0 },
-          { dateValeur: '2025-01-01', valeur: null },
-          { dateValeur: '2026-01-01', valeur: 3 },
-        ],
-      },
-      {
-        version: nouvelleVersion,
-        observations: [
-          { dateValeur: '2027-01-01', valeur: 100 },
-          { dateValeur: '2028-01-01', valeur: null },
-        ],
-      },
-    ]) {
-      const stack = `${sourceId}:annuelle:${version.id}`;
-      const versionSeries = series.filter(
-        (serie) => (serie.option as LineSeriesOption).stack === stack
+    // Les versions retenues ne se chevauchent pas : une seule série par segment.
+    expect(series).toHaveLength(2);
+    for (const serie of series) {
+      expect((serie.option as LineSeriesOption).stack).toBe(
+        `${sourceId}:annuelle`
       );
-      expect(versionSeries).toHaveLength(2);
-      const firstSegment = versionSeries.find(
-        (serie) =>
-          (serie.option as LineSeriesOption).datasetId ===
-          `${enfantIds[0]}-resultat-${sourceId}-annuelle-${version.id}`
-      );
-      assert.isDefined(firstSegment);
-      expect(firstSegment.option).toMatchObject({ connectNulls: false });
-      const data = firstSegment.getData();
-      expect(
-        Array.from({ length: data.count() }, (_, index) =>
-          data.getRawDataItem(index)
-        )
-      ).toEqual(observations);
-      // Le zéro et le point de la seconde version sont effectivement dessinés.
-      const point = data.getItemGraphicEl(0).getBoundingRect();
-      expect(point.width).toBeGreaterThan(0);
-      expect(point.height).toBeGreaterThan(0);
     }
+    const firstSegment = series.find(
+      (serie) =>
+        (serie.option as LineSeriesOption).datasetId ===
+        `${enfantIds[0]}-resultat-${sourceId}`
+    );
+    assert.isDefined(firstSegment);
+    expect(firstSegment.option).toMatchObject({ connectNulls: false });
+    const data = firstSegment.getData();
+    expect(
+      Array.from({ length: data.count() }, (_, index) =>
+        data.getRawDataItem(index)
+      )
+    ).toEqual([
+      { dateValeur: '2024-01-01', valeur: 0 },
+      { dateValeur: '2025-01-01', valeur: null },
+      { dateValeur: '2026-01-01', valeur: 3 },
+      { dateValeur: '2027-01-01', valeur: 100 },
+      { dateValeur: '2028-01-01', valeur: null },
+    ]);
+    // Le zéro est effectivement dessiné.
+    const point = data.getItemGraphicEl(0).getBoundingRect();
+    expect(point.width).toBeGreaterThan(0);
+    expect(point.height).toBeGreaterThan(0);
     const saved = await router
       .createCaller({ user: authenticatedUser })
       .indicateurs.valeurs.list({
