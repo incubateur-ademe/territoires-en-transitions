@@ -3,6 +3,7 @@ import IndicateurSourcesService from '@tet/backend/indicateurs/sources/indicateu
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
+  INDICATEUR_SOURCES_REQUIRING_DIRECT_VALUE_PER_FIELD,
   IndicateurPredefini,
   IndicateurValeur,
   IndicateurPeriodes,
@@ -17,10 +18,8 @@ import type {
   SourceCalculPolicy,
 } from './calcul-indicateur.types';
 import { ComputeValeursRepository } from './compute-valeurs.repository';
-import {
-  evaluateCalculIndicateur,
-  getCalculatedValeurIdentity,
-} from './evaluate-calcul-indicateur.rules';
+import { evaluateCalculIndicateur } from './evaluate-calcul-indicateur.rules';
+import { IndicateurValeursRules } from '../indicateur-valeurs.rules';
 import {
   fillCalculSourceGroups,
   getCalculSourceGroupKey,
@@ -52,6 +51,10 @@ export default class ComputeValeursService {
     return [
       ...stored.map(({ sourceId, sourceCalculIds }) => ({
         sourceId,
+        requiresDirectValueForField:
+          INDICATEUR_SOURCES_REQUIRING_DIRECT_VALUE_PER_FIELD.includes(
+            sourceId
+          ),
         sourceCalculIds: [
           ...new Set([
             ...(sourceCalculIds?.filter(Boolean) ?? []),
@@ -63,6 +66,7 @@ export default class ComputeValeursService {
       })),
       {
         sourceId: COLLECTIVITE_SOURCE_ID,
+        requiresDirectValueForField: false,
         sourceCalculIds: ComputeValeursService.DEFAULT_SOURCE_CALCUL_IDS,
       },
     ];
@@ -125,7 +129,9 @@ export default class ComputeValeursService {
       },
       tx
     );
-    const expected = new Set(valeursToUpsert.map(getCalculatedValeurIdentity));
+    const expected = new Set(
+      valeursToUpsert.map(IndicateurValeursRules.getIdentity)
+    );
     const valeurIdsToDelete = stored.flatMap((valeur) => {
       if (!valeur.periodicite) return [];
       const periode = IndicateurPeriodes.fromDateValeur(
@@ -139,7 +145,7 @@ export default class ComputeValeursService {
         valeur.metadonneeId
       );
       return groupsByIndicateur.get(valeur.indicateurId)?.[key] &&
-        !expected.has(getCalculatedValeurIdentity(valeur))
+        !expected.has(IndicateurValeursRules.getIdentity(valeur))
         ? [valeur.id]
         : [];
     });
@@ -303,7 +309,9 @@ export default class ComputeValeursService {
     const valeursToUpsert = formulas.flatMap((formula) =>
       this.evaluate(formula, fillCalculSourceGroups(formula, sources, policies))
     );
-    const expected = new Set(valeursToUpsert.map(getCalculatedValeurIdentity));
+    const expected = new Set(
+      valeursToUpsert.map(IndicateurValeursRules.getIdentity)
+    );
     const targetIds = new Set(indicateurIds);
     return {
       valeursToUpsert,
@@ -312,7 +320,7 @@ export default class ComputeValeursService {
           (valeur) =>
             targetIds.has(valeur.indicateurId) &&
             valeur.calculAuto === true &&
-            !expected.has(getCalculatedValeurIdentity(valeur))
+            !expected.has(IndicateurValeursRules.getIdentity(valeur))
         )
         .map(({ id }) => id),
       indicateurIdentifiants: targetIndicateurs.flatMap(

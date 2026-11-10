@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ChartRenderRequestType } from '@tet/domain/utils';
-import { createCanvas, registerFont } from 'canvas';
+import { createCanvas, DOMMatrix, registerFont } from 'canvas';
 import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';
 import { NextFunction, Response } from 'express';
 import path from 'node:path';
@@ -126,29 +126,33 @@ export class EchartsService {
   ): Promise<Buffer> {
     const echarts = await this.getEcharts();
     const canvas = createCanvas(request.width, request.height);
-
-    // ECharts can use the Canvas instance created by node-canvas as a container directly
-    let chart: ECharts | null = echarts.init(canvas, null, {
-      width: request.width,
-      height: request.height,
-      devicePixelRatio: this.DEVICE_PIXEL_RATIO,
-      renderer: 'canvas',
-    });
-
-    // setOption as normal
-    chart?.setOption({
-      ...request.options,
-      animation: false,
-      textStyle: { fontSize: this.DEFAULT_FONT_SIZE },
-    });
-
-    const buffer = canvas.toBuffer('image/png');
-
-    // If chart is no longer useful, consider disposing it to release memory.
-    chart?.dispose();
-    chart = null;
-
-    return buffer;
+    const previousDOMMatrix = globalThis.DOMMatrix;
+    const hadDOMMatrix = Object.hasOwn(globalThis, 'DOMMatrix');
+    // unpdf peut installer son stub ou le constructeur d'un autre moteur canvas.
+    // Les motifs node-canvas exigent son propre DOMMatrix. Ce bloc reste synchrone.
+    globalThis.DOMMatrix = DOMMatrix as unknown as typeof globalThis.DOMMatrix;
+    let chart: ECharts | null = null;
+    try {
+      chart = echarts.init(canvas, null, {
+        width: request.width,
+        height: request.height,
+        devicePixelRatio: this.DEVICE_PIXEL_RATIO,
+        renderer: 'canvas',
+      });
+      chart?.setOption({
+        ...request.options,
+        animation: false,
+        textStyle: { fontSize: this.DEFAULT_FONT_SIZE },
+      });
+      return canvas.toBuffer('image/png');
+    } finally {
+      try {
+        chart?.dispose();
+      } finally {
+        if (hadDOMMatrix) globalThis.DOMMatrix = previousDOMMatrix;
+        else Reflect.deleteProperty(globalThis, 'DOMMatrix');
+      }
+    }
   }
 
   async renderToSvg(request: ChartRenderRequestType, res: Response) {

@@ -241,13 +241,12 @@ export default class FicheActionPermissionsService {
 
     // Vérifie d'abord la permission directe de suppression au niveau
     // collectivité.
-    const directDeletePermissionResult =
-      await this.permissionService.isAllowed(
-        user,
-        operation,
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: fiche.collectiviteId }
-      );
+    const directDeletePermissionResult = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: fiche.collectiviteId }
+    );
     if (directDeletePermissionResult.success) {
       return true;
     }

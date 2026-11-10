@@ -1,4 +1,14 @@
-import { mergeTests } from '@playwright/test';
+import { expect, mergeTests } from '@playwright/test';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import {
+  COLLECTIVITE_SOURCE_ID,
+  ELECTRIFICATION_SOURCE_ID,
+} from '@tet/domain/indicateurs';
+import { eq, inArray } from 'drizzle-orm';
+import { databaseService } from 'tests/shared/database.service';
 import { testWithIndicateurs } from 'tests/indicateurs/indicateurs.fixture';
 import { FicheCardPom } from '../fiches/list-fiches/fiche-card.pom';
 import { testWithPlans } from '../plans/plans.fixture';
@@ -395,4 +405,194 @@ test.describe("Édition d'axes dans un plan d'action", () => {
     });
     await ficheCardPlan.expectVisible();
   });
+});
+
+test('Les cartes restent compactes et les objectifs sont conservés sur la page indicateur', async ({
+  page,
+  collectivites,
+  plans,
+  indicateurs,
+  editPlanPom,
+  editAxePom,
+}) => {
+  await page.addLocatorHandler(
+    page
+      .getByRole('dialog')
+      .filter({ hasText: 'Rattachez ProConnect à votre compte' }),
+    async (dialog) => {
+      await dialog.getByRole('button', { name: 'Plus tard' }).click();
+    }
+  );
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const collectiviteId = collectivite.data.id;
+  const client = user.getTrpcClient();
+  const indicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Points de recharge',
+    unite: 'points',
+  });
+  const emptyIndicateurId = await indicateurs.create(user, {
+    collectiviteId,
+    titre: 'Points de recharge rapide',
+    unite: 'points',
+  });
+  const planIds: number[] = [];
+  const metadataIds: number[] = [];
+  const insertedSources = await databaseService.db
+    .insert(indicateurSourceTable)
+    .values({
+      id: ELECTRIFICATION_SOURCE_ID,
+      libelle: '100 territoires d’électrification',
+    })
+    .onConflictDoNothing()
+    .returning();
+  try {
+    for (const objectif of [0, 60]) {
+      const planId = await plans.create(user, {
+        collectiviteId,
+        nom: `Plan cible ${objectif}`,
+      });
+      planIds.push(planId);
+      await plans.createAxe(user, {
+        collectiviteId,
+        planId,
+        parent: planId,
+        nom: 'Mobilité électrique',
+        indicateurs: [{ id: indicateurId }, { id: emptyIndicateurId }],
+      });
+      const [metadata] = await databaseService.db
+        .insert(indicateurSourceMetadonneeTable)
+        .values({
+          sourceId: ELECTRIFICATION_SOURCE_ID,
+          dateVersion: '2026-11-01',
+          nomDonnees: 'Engagement pris dans votre convention',
+        })
+        .returning();
+      metadataIds.push(metadata.id);
+      await databaseService.db
+        .update(axeTable)
+        .set({
+          indicateurSourceMetadonneeId: metadata.id,
+          source: 'import_ia',
+          status: 'active',
+        })
+        .where(eq(axeTable.id, planId));
+      await databaseService.db.insert(indicateurValeurTable).values({
+        collectiviteId,
+        indicateurId,
+        metadonneeId: metadata.id,
+        dateValeur: '2030-01-01',
+        periodicite: 'annuelle',
+        objectif,
+      });
+    }
+    await databaseService.db.insert(indicateurValeurTable).values([
+      {
+        collectiviteId,
+        indicateurId,
+        dateValeur: '2030-01-01',
+        periodicite: 'annuelle',
+        objectif: 100,
+      },
+      {
+        collectiviteId,
+        indicateurId: emptyIndicateurId,
+        dateValeur: '2030-01-01',
+        periodicite: 'annuelle',
+        objectif: 0,
+      },
+    ]);
+
+    for (const index of planIds.keys()) {
+      const graphRequest = page.waitForRequest((request) => {
+        if (!request.url().includes('indicateurs.valeurs.list')) return false;
+        const input = new URL(request.url()).searchParams.get('input');
+        return (
+          !!input &&
+          input.includes(`"indicateurIds":[${indicateurId}]`) &&
+          input.includes(`"excludedSources":["${ELECTRIFICATION_SOURCE_ID}"]`)
+        );
+      });
+      await editPlanPom.goto(collectiviteId, planIds[index]);
+      await expect(
+        page.getByRole('button', { name: 'Valider le plan', exact: true })
+      ).toHaveCount(0);
+      await editAxePom.expandAxe('Mobilité électrique');
+      const card = page.getByTestId(`chart-${indicateurId}`);
+      await card.scrollIntoViewIfNeeded();
+      await expect(card).toBeVisible();
+      await graphRequest;
+      await expect(card.getByText("Cible de l'annexe 3")).toHaveCount(0);
+      await expect(
+        card.getByText('Objectif de la collectivité', { exact: true })
+      ).toHaveCount(0);
+      await expect(
+        page.getByTestId(`chart-${emptyIndicateurId}`)
+      ).toBeVisible();
+    }
+
+    // La dissociation ordinaire enlève l'affichage, sans restaurer le lien.
+    await editAxePom.openLinkIndicateurPanel('Mobilité électrique');
+    await editAxePom.filterIndicateursPerso();
+    const checkbox = editAxePom.getIndicateursPanel().getByRole('checkbox', {
+      name: 'Points de recharge',
+      exact: true,
+    });
+    await expect(checkbox).toBeChecked();
+    const updated = page.waitForResponse((response) =>
+      response.url().includes('plans.axes.update')
+    );
+    await checkbox.click();
+    expect((await updated).ok()).toBe(true);
+    await expect(
+      page.getByTestId('axe-detail').getByTestId(`chart-${indicateurId}`)
+    ).toBeHidden();
+    await page.reload();
+    await expect(page.getByTestId(`chart-${emptyIndicateurId}`)).toBeVisible();
+    await expect(page.getByTestId(`chart-${indicateurId}`)).toBeHidden();
+    const local = await client.indicateurs.valeurs.list.query({
+      collectiviteId,
+      indicateurIds: [indicateurId, emptyIndicateurId],
+      sources: [COLLECTIVITE_SOURCE_ID],
+    });
+    expect(
+      local.indicateurs.find(({ definition }) => definition.id === indicateurId)
+        ?.sources[COLLECTIVITE_SOURCE_ID].valeurs
+    ).toMatchObject([{ objectif: 100 }]);
+    expect(
+      local.indicateurs.find(
+        ({ definition }) => definition.id === emptyIndicateurId
+      )?.sources[COLLECTIVITE_SOURCE_ID].valeurs
+    ).toMatchObject([{ objectif: 0 }]);
+    await page.goto(
+      `/collectivite/${collectiviteId}/indicateurs/perso/${indicateurId}`
+    );
+    const source = page.getByRole('rowheader', {
+      name: /Objectifs 100 territoires d’électrification/,
+    });
+    await expect(source.first()).toBeVisible();
+    await source.first().locator('.ri-information-line').hover();
+    await expect(
+      page
+        .getByText('Engagement pris dans votre convention', { exact: true })
+        .last()
+    ).toBeVisible();
+  } finally {
+    // Les sources de plan ne sont pas éditables par l'API utilisateur.
+    await plans.cleanupByCollectiviteId(collectiviteId);
+    if (metadataIds.length) {
+      await databaseService.db
+        .delete(indicateurValeurTable)
+        .where(inArray(indicateurValeurTable.metadonneeId, metadataIds));
+      await databaseService.db
+        .delete(indicateurSourceMetadonneeTable)
+        .where(inArray(indicateurSourceMetadonneeTable.id, metadataIds));
+    }
+    if (insertedSources.length)
+      await databaseService.db
+        .delete(indicateurSourceTable)
+        .where(eq(indicateurSourceTable.id, ELECTRIFICATION_SOURCE_ID));
+  }
 });

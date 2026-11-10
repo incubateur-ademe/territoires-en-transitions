@@ -7,7 +7,7 @@ import {
 } from '@/app/app/paths';
 import { Event, useEventTracker } from '@tet/ui';
 import { BetaLabel } from '@/app/ui/beta.label';
-import { useIsAiPlanImportEnabled } from '../../../import-plan/use-is-ai-plan-import-enabled';
+import { useAvailableAiImportProfiles } from '../../../import-plan/data/use-available-ai-import-profiles';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';
 import { Link } from './link';
@@ -18,7 +18,7 @@ export const CreatePlanOptionLinksList = ({
   collectiviteId: number;
 }) => {
   const tracker = useEventTracker();
-  const isAiPlanImportEnabled = useIsAiPlanImportEnabled();
+  const { profiles } = useAvailableAiImportProfiles();
   return (
     <div data-test="choix-creation-plan" className="flex gap-4">
       <Link
@@ -33,7 +33,7 @@ export const CreatePlanOptionLinksList = ({
           tracker(Event.plans.createPlan);
         }}
       />
-      {isAiPlanImportEnabled ? (
+      {profiles.length > 0 ? (
         <Link
           dataTest="choix-creation-plan.importer-ia"
           title={<BetaLabel>{appLabels.importPlanIaTitre}</BetaLabel>}

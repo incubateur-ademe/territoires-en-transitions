@@ -1,8 +1,11 @@
 import { estimateTokenCount } from '@tet/backend/utils/llm/estimate-token-count';
+import type { PageLine } from '../document/document-page';
 
 export type UnitKind = 'fiche' | 'section' | 'table' | 'unknown';
 
-export type UnitLine = { text: string; pageIndex: number };
+export type UnitLine = Pick<PageLine, 'text' | 'locations' | 'links'> & {
+  pageIndex: number;
+};
 
 /**
  * Un morceau du document de la taille d'une fiche action, avec sa place dans

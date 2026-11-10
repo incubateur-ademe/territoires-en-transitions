@@ -36,7 +36,13 @@ export class PostHogEventTracker
       return;
     }
 
-    this.posthog.capture(params);
+    this.posthog.capture({
+      ...params,
+      properties: {
+        ...params.properties,
+        environment: this.configurationService.get('ENV_NAME') || 'local',
+      },
+    });
   }
 
   isEnabled(): boolean {

@@ -833,8 +833,6 @@ export const appLabels = {
   importerUnPlan: 'Importer un plan',
   importPlanIaTitre: 'Importer un plan',
   importPlanIaSousTitre: 'depuis un fichier PDF, Word ou Excel',
-  importPlanIaDescription:
-    'À partir de votre fichier, nous importons la structure de votre plan et ses fiches actions. Notre outil détecte automatiquement : axes, sous-axes, titres des actions, description, statut, pilotes, dates, objectifs…',
   importPlanIaAvertissement:
     'Cet outil est en phase d’amélioration : le résultat peut contenir des erreurs, pensez à relire votre plan, vous pourrez le modifier ensuite.',
   importPlanIaChampFichier: 'Document à importer',
@@ -851,7 +849,6 @@ export const appLabels = {
   importPlanIaErreur: "L'import a échoué",
   importPlanIaReessayer: 'Réessayer',
   importPlanIaEtapeLecture: 'Lecture du document',
-  importPlanIaEtapeReperage: 'Repérage des fiches action',
   importPlanIaEtapeExtraction: 'Extraction des actions',
   importPlanIaEtapeHierarchie: 'Mise en cohérence des axes',
   importPlanIaEtapeVerification: 'Contrôle des actions identifiées',

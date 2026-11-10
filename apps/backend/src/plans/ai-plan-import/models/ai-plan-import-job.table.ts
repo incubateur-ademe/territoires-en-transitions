@@ -20,11 +20,11 @@ import {
 import { StepStates } from '../pipeline/run-import-pipeline';
 import {
   AiPlanImportJobOptions,
+  AiPlanImportJobDraft,
   aiPlanImportJobStatusValues,
 } from './ai-plan-import-job';
-import { ImportCheckpoint } from './import-checkpoint';
+import { StoredImportCheckpoint } from './import-checkpoint';
 import { ImportJobStats } from './import-job-stats';
-import { PlanDraft } from './plan-draft';
 
 export const aiPlanImportJobTable = pgTable(
   'ai_plan_import_job',
@@ -40,7 +40,7 @@ export const aiPlanImportJobTable = pgTable(
     options: jsonb('options').notNull().$type<AiPlanImportJobOptions>(),
     stepStates: jsonb('step_states').notNull().$type<StepStates>(),
     sourcePath: text('source_path').notNull(),
-    draft: jsonb('draft').$type<PlanDraft>(),
+    draft: jsonb('draft').$type<AiPlanImportJobDraft>(),
     error: text('error'),
     createdPlanId: integer('created_plan_id').references(() => axeTable.id, {
       onDelete: 'set null',
@@ -52,7 +52,7 @@ export const aiPlanImportJobTable = pgTable(
     startedAt: timestamp('started_at', TIMESTAMP_OPTIONS),
     finishedAt: timestamp('finished_at', TIMESTAMP_OPTIONS),
     stats: jsonb('stats').$type<ImportJobStats>(),
-    checkpoint: jsonb('checkpoint').$type<ImportCheckpoint>(),
+    checkpoint: jsonb('checkpoint').$type<StoredImportCheckpoint>(),
     attempt: integer('attempt').notNull().default(0),
     createdAt,
     modifiedAt,

@@ -239,7 +239,7 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     await expect(pom.levierPanel(LEVIER_TO_PRIORITIZE)).toHaveCount(0);
   });
 
-  test('pendant la visite, le champ de pertinence du levier ouvert ne reçoit pas les clics', async ({
+  test('pendant l’étape du détail, le champ de pertinence du levier reste cliquable', async ({
     collectivites,
     page,
   }) => {
@@ -255,16 +255,10 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     });
     await openLevierFromTour(pom);
 
-    const receivesClicks = await pom
+    await pom
       .pertinenceButton(LEVIER_TO_PRIORITIZE, 'Levier non pertinent')
-      .evaluate((button) => {
-        const { x, y, width, height } = button.getBoundingClientRect();
-        return button.contains(
-          document.elementFromPoint(x + width / 2, y + height / 2)
-        );
-      });
-
-    expect(receivesClicks).toBe(false);
+      .click({ trial: true });
+    await expect(pom.tourStep(LEVIER_STEP)).toBeVisible();
   });
 });
 

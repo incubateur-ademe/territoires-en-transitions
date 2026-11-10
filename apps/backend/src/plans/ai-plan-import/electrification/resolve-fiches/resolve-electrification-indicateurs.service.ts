@@ -8,6 +8,7 @@ import {
 } from '@tet/domain/indicateurs';
 import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { ElectrificationIssue } from '../electrification-issue';
+import { ElectrificationImportLocations as Locations } from '../electrification-import-locations';
 import { ImportReferenceRules } from '../../resolve-import-reference/import-reference.rules';
 import { ResolveImportReferenceService } from '../../resolve-import-reference/resolve-import-reference.service';
 import { ElectrificationFichesErrors as Errors } from './electrification-fiches.errors';
@@ -105,8 +106,8 @@ export class ResolveElectrificationIndicateursService {
       ElectrificationIssue[]
     >
   > {
-    const issue = (code: Parameters<typeof Errors.issue>[0]) =>
-      Errors.issue(code, input.source.location);
+    const issue = (code: Parameters<typeof Errors.issue>[0], field?: string) =>
+      Errors.issue(code, Locations.field(input.source.location, field));
     if (
       input.reference &&
       ImportReferenceRules.isUrlReference(input.reference)
@@ -148,11 +149,10 @@ export class ResolveElectrificationIndicateursService {
       const titre =
         input.titre ?? (mapping?.type === 'booleen' ? mapping.titre : null);
       if (!titre) return failure([issue('MISSING_FICHE_TITLE')]);
-      if (
-        (input.resultat !== null && input.anneeResultat === null) ||
-        (input.objectif !== null && input.anneeObjectif === null)
-      )
-        return failure([issue('INVALID_INDICATEUR_PERIOD')]);
+      if (input.resultat !== null && input.anneeResultat === null)
+        return failure([issue('MISSING_INDICATEUR_YEAR', 'Résultat')]);
+      if (input.objectif !== null && input.anneeObjectif === null)
+        return failure([issue('MISSING_INDICATEUR_YEAR', 'Objectif')]);
       return success({
         indicateur: {
           mode: 'sous-action',
@@ -220,17 +220,30 @@ export class ResolveElectrificationIndicateursService {
     if (input.unite !== null && input.unite !== unite)
       return failure([issue('INVALID_INDICATEUR_UNIT')]);
     if (input.periodicite !== null && input.periodicite !== periodicite)
-      return failure([issue('INVALID_INDICATEUR_PERIOD')]);
+      return failure([issue('INVALID_INDICATEUR_PERIODICITY', 'Périodicité')]);
     const valeurs = new Map<string, PreparedElectrificationIndicateurValeur>();
     for (const field of ['resultat', 'objectif'] as const) {
       const valeur = input[field];
+      const fieldLabel = field === 'resultat' ? 'Résultat' : 'Objectif';
       if (valeur.valeur === null) continue;
       if (input.unite === null)
-        return failure([issue('MISSING_INDICATEUR_UNIT')]);
-      if (input.periodicite === null || valeur.periode === null)
-        return failure([issue('INVALID_INDICATEUR_PERIOD')]);
+        return failure([issue('MISSING_INDICATEUR_UNIT', fieldLabel)]);
+      if (valeur.periode === null)
+        return failure([
+          issue(
+            periodicite === 'annuelle'
+              ? 'MISSING_INDICATEUR_YEAR'
+              : 'INVALID_INDICATEUR_PERIOD',
+            fieldLabel
+          ),
+        ]);
+      if (input.periodicite === null)
+        return failure([
+          issue('INVALID_INDICATEUR_PERIODICITY', 'Périodicité'),
+        ]);
       const periode = IndicateurPeriodes.tryParse(periodicite, valeur.periode);
-      if (!periode) return failure([issue('INVALID_INDICATEUR_PERIOD')]);
+      if (!periode)
+        return failure([issue('INVALID_INDICATEUR_PERIOD', fieldLabel)]);
       const dateValeur = IndicateurPeriodes.toDateValeur(periode);
       const existing = valeurs.get(dateValeur) ?? {
         dateValeur,

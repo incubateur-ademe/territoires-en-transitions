@@ -39,19 +39,23 @@ export const electrificationEngagementsErrors = {
   },
   UNKNOWN_AXIS: {
     kind: 'document-error',
-    message: "Le numéro d'axe ne figure pas dans le catalogue.",
+    message:
+      "Le numéro d'axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Axe de l'action à partir du référentiel fourni avec le canevas.",
   },
   SUB_AXES_CATALOGUE_UNAVAILABLE: {
     kind: 'configuration-error',
-    message: "La correspondance des sous-axes n'est pas encore disponible.",
+    message:
+      "La correspondance des sous-axes manque dans le catalogue. Contactez le support TeT pour le compléter, puis relancez l'import avec le même document.",
   },
   UNKNOWN_SUB_AXIS: {
     kind: 'document-error',
-    message: 'Le numéro de sous-axe ne figure pas dans le catalogue.',
+    message:
+      "Le numéro de sous-axe ne figure pas dans le catalogue. Vérifiez le numéro dans le champ Sous-axe de l'action à partir du référentiel fourni avec le canevas.",
   },
   INVALID_SUB_AXIS_PARENT: {
     kind: 'document-error',
-    message: "Le sous-axe ne dépend pas de l'axe indiqué dans le document.",
+    message:
+      "Le sous-axe ne dépend pas de l'axe indiqué dans le document. Vérifiez le rattachement des champs Axe et Sous-axe de l'action à partir du référentiel fourni avec le canevas.",
   },
   INVALID_ELECTRIFICATION_INPUT: {
     kind: 'document-error',
@@ -63,7 +67,8 @@ export const electrificationEngagementsErrors = {
   },
   UNSUPPORTED_ELECTRIFICATION_CATALOGUE: {
     kind: 'configuration-error',
-    message: 'La version du catalogue Électrification est indisponible.',
+    message:
+      "Cette version du catalogue Électrification est indisponible. Contactez le support TeT pour rétablir son accès, puis relancez l'import avec le même document.",
   },
   INDICATEUR_RESOLUTION_FAILED: {
     kind: 'processing-error',
@@ -72,17 +77,17 @@ export const electrificationEngagementsErrors = {
   MISSING_ENGAGEMENT_INDICATEUR: {
     kind: 'configuration-error',
     message:
-      "Un indicateur d'engagement attendu est absent ou inaccessible. L'équipe doit compléter le catalogue.",
+      "Un indicateur d'engagement attendu est absent ou inaccessible dans le catalogue. Contactez le support TeT pour le vérifier, puis relancez l'import avec le même document.",
   },
   UNVALIDATED_ENGAGEMENT_INDICATEUR: {
     kind: 'configuration-error',
     message:
-      "La définition et la périodicité de cet indicateur d'engagement restent à valider par l'équipe.",
+      "La correspondance de cet indicateur d'engagement n'est pas encore validée dans le catalogue. Contactez le support TeT pour la faire valider, puis relancez l'import avec le même document.",
   },
   INCOMPATIBLE_ENGAGEMENT_INDICATEUR: {
     kind: 'configuration-error',
     message:
-      "L'unité ou la périodicité de l'indicateur ne correspond pas à la cible annuelle de l'annexe.",
+      "L'unité ou la périodicité de cet indicateur est incohérente dans le catalogue. Contactez le support TeT pour la corriger, puis relancez l'import avec le même document.",
   },
   INVALID_ENGAGEMENT_UNIT: {
     kind: 'document-error',

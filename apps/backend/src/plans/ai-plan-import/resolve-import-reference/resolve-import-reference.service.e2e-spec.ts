@@ -5,6 +5,7 @@ import { groupementTable } from '@tet/backend/collectivites/shared/models/groupe
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -448,11 +449,13 @@ describe('Résolution des liens TeT pour un import', () => {
           },
           { timeout: 5000, interval: 20 }
         );
-        await tx.insert(ficheActionAxeTable).values({
-          ficheId: fiche.id,
-          axeId: axe.id,
-          createdBy: context.user.id,
-        });
+        expect(
+          (
+            await app
+              .get(FicheActionRepository)
+              .addAxeLinks(fiche.id, [axe.id], context.user.id, tx)
+          ).success
+        ).toBe(true);
       });
     } finally {
       await revocation;

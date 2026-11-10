@@ -134,7 +134,7 @@ export const buildTabularActions = (
     Math.abs(budgetCheck.total - budgetCheck.expected) > BUDGET_TOLERANCE
   ) {
     warnings.push(
-      `${sheetLabel(name)} : la somme des budgets des fiches (${formatAmount(
+      `${sheetLabel(name)} : la somme des budgets des actions (${formatAmount(
         budgetCheck.total
       )}) diffère du total ${budgetCheck.cell} (${formatAmount(
         budgetCheck.expected

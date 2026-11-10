@@ -8,13 +8,14 @@ import {
   MetadataLine,
 } from '@/app/ui/metadata-line';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { AggregatedBudget, Plan, PlanCreationRules } from '@tet/domain/plans';
+import { AggregatedBudget, Plan } from '@tet/domain/plans';
 import { InlineEditWrapper, Select, Tooltip } from '@tet/ui';
 import { plural } from '@tet/ui/labels/plural';
 import { countBy } from 'es-toolkit';
 import FranceIcon from '../components/france-icon.svg';
 import { planTypesToOptions } from '../plan-types-to-options';
 import { useListPlanTypes } from '../use-list-plan-types';
+import { usePlanCreationCapabilities } from '../use-plan-creation-capabilities';
 import { useUpdatePlan } from './data/use-update-plan';
 import { PlanCalendarInlineEditableField } from './plan-calendar.inline-editable-field';
 
@@ -32,14 +33,15 @@ export const PlanMetadata = ({
   updatePlan,
 }: PlanMetadataProps) => {
   const { data: planTypes } = useListPlanTypes();
-  const planTypesOptions = planTypesToOptions(
-    planTypes.filter((planType) => {
-      const isCurrentPlanType = planType.id === plan.type?.id;
-      const isPlanCreationDisabled =
-        PlanCreationRules.getDisabledReason(planType) !== undefined;
-      return isCurrentPlanType || !isPlanCreationDisabled;
-    })
-  );
+  const { canCreateType } = usePlanCreationCapabilities();
+  const planTypesOptions = planTypesToOptions(planTypes).map((section) => ({
+    ...section,
+    options: section.options.map((option) => ({
+      ...option,
+      disabled:
+        option.value !== plan.type?.id && !canCreateType(Number(option.value)),
+    })),
+  }));
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canReadFichesRestreintes = hasCollectivitePermission(
     'plans.fiches.read_confidentiel'
@@ -62,10 +64,12 @@ export const PlanMetadata = ({
               options={planTypesOptions ?? []}
               values={plan.type?.id ?? undefined}
               onChange={(value) => {
+                const typeId = value == null ? null : Number(value);
+                if (typeId !== plan.type?.id && !canCreateType(typeId)) return;
                 updatePlan({
                   id,
                   collectiviteId,
-                  typeId: value ? (value as number) : null,
+                  typeId,
                 });
               }}
               openState={openState}

@@ -4,14 +4,14 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
-import { PlanCreationRules } from '@tet/domain/plans';
-import { Alert, Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
+import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 import { JSX } from 'react';
 
 import { capitalize } from '@tet/ui/labels/plural';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
+import { usePlanCreationCapabilities } from '../use-plan-creation-capabilities';
 
 /**
  * Validation croisée des dates : `dateFin >= dateDebut` uniquement quand les
@@ -114,11 +114,9 @@ export function UpsertPlanForm({
     | ((data: UpsertPlanWithFilePayload) => Promise<boolean>);
   includeFileUpload?: boolean;
 }) {
-  const {
-    data: planTypes,
-    options: planTypesOptions,
-    isLoading: isLoadingPlanTypes,
-  } = useListPlanTypes();
+  const { options: planTypesOptions, isLoading: isLoadingPlanTypes } =
+    useListPlanTypes();
+  const { canCreateType, getDisabledReason } = usePlanCreationCapabilities();
 
   const schema = includeFileUpload
     ? upsertPlanWithFileSchema
@@ -128,6 +126,7 @@ export function UpsertPlanForm({
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<UpsertPlanPayload>({
     resolver: zodResolver(schema),
@@ -142,21 +141,15 @@ export function UpsertPlanForm({
     },
   });
 
-  const selectedPlanTypeId = useWatch({ control, name: 'typeId' });
-  const selectedPlanType = planTypes.find(
-    ({ id }) => id === selectedPlanTypeId
-  );
-  const creationDisabledReason =
-    PlanCreationRules.getDisabledReason(selectedPlanType);
-  const isPlanCreationDisabled =
-    isLoadingPlanTypes || creationDisabledReason !== undefined;
-  const isSubmitDisabled = isSubmitting || isPlanCreationDisabled;
+  const disabledReason = getDisabledReason(watch('typeId'));
+  const isSubmitDisabled =
+    isSubmitting || isLoadingPlanTypes || !!disabledReason;
 
   return (
     <form
       id={formId}
       onSubmit={handleSubmit(async (data) => {
-        if (isPlanCreationDisabled) return;
+        if (isLoadingPlanTypes || !canCreateType(data.typeId)) return;
         const submit = onSubmit as (
           data: UpsertPlanWithoutFilePayload | UpsertPlanWithFilePayload
         ) => Promise<boolean>;
@@ -190,7 +183,11 @@ export function UpsertPlanForm({
       >
         <Input data-test="PlanNomInput" type="text" {...register('nom')} />
       </Field>
-      <Field title={appLabels.typePlan}>
+      <Field
+        title={appLabels.typePlan}
+        state={disabledReason ? 'error' : 'default'}
+        message={disabledReason}
+      >
         <Controller
           control={control}
           name="typeId"
@@ -198,7 +195,13 @@ export function UpsertPlanForm({
             return (
               <Select
                 dataTest="Type"
-                options={planTypesOptions ?? []}
+                options={planTypesOptions.map((section) => ({
+                  ...section,
+                  options: section.options.map((option) => ({
+                    ...option,
+                    disabled: !canCreateType(Number(option.value)),
+                  })),
+                }))}
                 values={field.value ?? undefined}
                 onChange={(value) => {
                   field.onChange(value ?? null);
@@ -208,12 +211,6 @@ export function UpsertPlanForm({
           }}
         />
       </Field>
-      {creationDisabledReason && (
-        <Alert
-          state="info"
-          description={appLabels.planCreationDisabled(creationDisabledReason)}
-        />
-      )}
       <div className="flex gap-6">
         <Field title={appLabels.dateDebut} className="grow">
           <Input

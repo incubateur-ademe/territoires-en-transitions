@@ -1,6 +1,8 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TimeoutError, withTimeout } from 'es-toolkit';
 import ExcelJS from 'exceljs';
+import { DocumentLinksRules } from '../document/document-links.rules';
+import type { DocumentLink } from '../document/document-page';
 import { cleanText } from '../normalize-text/clean-text';
 import {
   GridCell,
@@ -12,6 +14,7 @@ import {
 } from './sheet-grid';
 
 const EXCEL_TIMEOUT_MS = 30_000;
+const HYPERLINK_FORMULA = /^HYPERLINK\s*\(/i;
 // Bien au-delà d'un plan d'actions ; une valeur égarée en XFD1048576
 // allouerait sinon des milliards de cellules.
 export const MAX_GRID_ROWS = 5_000;
@@ -29,11 +32,19 @@ export const readWorkbookGrids = async (
       () => workbook.xlsx.load(buffer as unknown as ArrayBuffer),
       EXCEL_TIMEOUT_MS
     );
-    return success(
-      workbook.worksheets
-        .map(worksheetToGrid)
-        .filter((grid) => grid.cells.some((row) => !isBlankGridRow(row)))
-    );
+    const grids: SheetGrid[] = [];
+    for (const worksheet of workbook.worksheets) {
+      const grid = worksheetToGrid(worksheet, grids.length);
+      if (
+        grid.cells.some(
+          (row) =>
+            !isBlankGridRow(row) || row.some((cell) => cell.links?.length)
+        )
+      ) {
+        grids.push(grid);
+      }
+    }
+    return success(grids);
   } catch (error) {
     if (error instanceof TimeoutError) {
       return failure({ kind: 'timeout' });
@@ -42,7 +53,10 @@ export const readWorkbookGrids = async (
   }
 };
 
-export const worksheetToGrid = (worksheet: ExcelJS.Worksheet): SheetGrid => {
+export const worksheetToGrid = (
+  worksheet: ExcelJS.Worksheet,
+  pageIndex = 0
+): SheetGrid => {
   const allMerges = (worksheet.model.merges ?? []).map(parseRange);
   const extent = contentExtent(worksheet, allMerges);
   const rowCount = Math.min(extent.rowCount, MAX_GRID_ROWS);
@@ -57,7 +71,8 @@ export const worksheetToGrid = (worksheet: ExcelJS.Worksheet): SheetGrid => {
         rowIndex + 1,
         colIndex + 1,
         mergeAt.get(`${rowIndex + 1}:${colIndex + 1}`),
-        worksheet.name
+        worksheet.name,
+        pageIndex
       )
     );
   });
@@ -92,7 +107,8 @@ const toGridCell = (
   row: number,
   col: number,
   merge: GridRange | undefined,
-  sheetName: string
+  sheetName: string,
+  pageIndex: number
 ): GridCell => {
   const isMergeSlave =
     merge !== undefined && (merge.top !== row || merge.left !== col);
@@ -117,12 +133,33 @@ const toGridCell = (
       : cleanText(cellToString(value).replace(/\r\n?/g, '\n')).trim();
   const formula = formulaOf(cell);
   const refsSheets = formula ? referencedSheets(formula, sheetName) : [];
+  const location = { pageIndex, sheetName, row, col };
+  const hyperlinks: DocumentLink[] = [];
+  // Les liens OOXML et les formules littérales sont lus sans évaluer le classeur.
+  if (cell.type === ExcelJS.ValueType.Hyperlink) {
+    hyperlinks.push({
+      text,
+      target: cell.hyperlink || null,
+      location,
+      kind: 'hyperlink',
+    });
+  } else if (formula && HYPERLINK_FORMULA.test(formula)) {
+    const literal = /^HYPERLINK\s*\(\s*"((?:[^"]|"")*)"\s*[,;)]/i.exec(formula);
+    hyperlinks.push({
+      text,
+      target: literal?.[1].replace(/""/g, '"') || null,
+      location,
+      kind: 'hyperlink',
+    });
+  }
+  const links = DocumentLinksRules.withTextLinks(text, location, hyperlinks);
   return {
     ...base,
     text,
     kind: text === '' && kind !== 'error' ? 'empty' : kind,
     ...(formula ? { formula } : {}),
     ...(refsSheets.length > 0 ? { refsSheets } : {}),
+    ...(links.length > 0 ? { links } : {}),
   };
 };
 
@@ -254,7 +291,11 @@ const contentExtent = (
   let colCount = 0;
   worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
     row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
-      if (cellToString(cell.value).trim() !== '') {
+      if (
+        cellToString(cell.value).trim() !== '' ||
+        cell.type === ExcelJS.ValueType.Hyperlink ||
+        HYPERLINK_FORMULA.test(formulaOf(cell) ?? '')
+      ) {
         rowCount = Math.max(rowCount, rowNumber);
         colCount = Math.max(colCount, colNumber);
       }

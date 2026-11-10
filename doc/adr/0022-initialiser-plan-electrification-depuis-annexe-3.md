@@ -4,6 +4,11 @@ Date : 2026-11-03
 
 Dernière mise à jour : 2026-11-11
 
+**Décision du 11 novembre :** la publication du catalogue et des lauréats
+sans déploiement est isolée dans la [PR #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815), basée sur B
+(`feat/electrification-data-publication`). B conserve ses configurations
+embarquées et ne dépend pas de cette évolution pour son déploiement.
+
 ## Statut
 
 Proposé, à relire par l'équipe. Les deux PRs ci-dessous appliquent le
@@ -15,6 +20,12 @@ contrôles locaux décrits dans le plan, avec un échec navigateur intermittent
 à qualifier. Les résultats antérieurs restent
 historiques. La qualification intégrée et les données métier manquantes
 empêchent encore l'ouverture en production.
+
+Les [retours de recette TT-67 du 11 novembre][retours-tt67] et la réponse sur
+les aides sans URL sont pris en compte dans B. Validation locale : 199 e2e
+backend, cinq scénarios navigateur ciblés et 16 tests frontend réussis avec
+une IA simulée. La recette de la version déployée reste à effectuer ; les
+preuves antérieures ci-dessous conservent leur date et leur périmètre.
 
 **Décision du 10 novembre 2026 : deux livraisons.** Le
 [plan d'implémentation](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md)
@@ -38,8 +49,11 @@ sous-actions et les 113 codes d'indicateurs Grist. Les correspondances TeT
 de ces indicateurs restent `pending`, avec une référence `null`.
 Le mapping lauréats contient 105 correspondances : 77 vérifiées et
 28 porteurs de groupements repris provisoirement ; 4 cas restent en attente.
-B refuse encore l'admission Électrification
-tant que ces correspondances restent incomplètes, même avec le flag ouvert.
+Dans B, la collectivité de démonstration `5460` s'ajoute avec la référence
+synthétique `demo-5460`, réservée à la recette et distincte des 105 lauréats.
+Dans B, les correspondances incomplètes bloquent seulement les imports qui
+les utilisent, y compris comme compléments automatiques. L'admission contrôle
+l'intégrité du catalogue ; le flag, les droits et l'éligibilité restent requis.
 La relecture des specs du 10 novembre est intégrée au code le 11 novembre :
 périodicités annuelles dans A, unité canonique E09 `nb` dans A et adaptation
 documentaire dans B. Les définitions déployées restent à vérifier.
@@ -149,6 +163,31 @@ vers A doit donc attendre la fin des jobs PCAET admis avec B. Les anciens jobs
 `generic` restent compatibles dans les deux versions. Le flag Électrification
 ne constitue pas un garde-fou pour ce changement PCAET.
 
+**Décision du 11 novembre 2026 — quota de recette et de support.** Dans B,
+la permission `plans.fiches.import_without_daily_quota`, réservée au mode
+super-admin actif, dispense du quota de 10 imports par collectivité sur
+24 heures glissantes. Elle s'applique aux profils générique, PCAET et
+Électrification. Les autres utilisateurs, y compris le support sans ce mode
+actif, restent soumis au quota ; les imports échoués continuent d'y compter.
+L'exception existante de concurrence par utilisateur reste distincte. Le
+plafond global d'imports simultanés et l'unicité d'un import en cours par
+collectivité restent applicables. Aucun historique n'est supprimé et cette
+permission ne contourne ni le flag, ni l'éligibilité, ni la validation du
+catalogue ou du document. Le lancement d'un import réel reste humain.
+
+**Décision du 13 novembre 2026 — recette hors liste des lauréats.** Dans B,
+une session avec le mode super-admin actif peut importer un plan Électrification
+pour une collectivité absente de la liste. Le contrôle commun applique cette
+exception à l'affichage du profil, à l'admission et à la création finale ;
+`laureatReference` reste nul et aucune entrée n'est ajoutée à la liste.
+Un changement de mode invalide les requêtes du frontend pour recalculer les
+capacités du formulaire. Le support sans mode actif et les jetons clients
+ou à permissions limitées ne bénéficient pas de cette exception. Le flag doit rester actif à l'admission,
+la liste doit être valide et le catalogue et le document restent contrôlés.
+Le worker et la reprise revérifient les droits du demandeur initial : désactiver
+son mode super-admin avant la création retire l'exception. Cette décision
+complète la dispense de quota sans ouvrir l'import aux non-lauréats ordinaires.
+
 Les règles propres au programme utilisent le nom `Electrification` ; "annexe 3"
 désigne la section du document officiel. L'identifiant de profil déjà livré
 reste inchangé pour préserver les contrats des jobs et de l'API.
@@ -160,6 +199,8 @@ est `("Plans thématiques", "Plan Électrification")`. Le titre du plan reste li
 ni lui ni le choix d'un type ne donnent une autorisation. Les types sont
 accessibles en lecture seule aux collectivités ; toute modification technique
 de leur couple doit rester cohérente avec les règles qui l'utilisent.
+Une migration de données idempotente crée ce type s'il manque, sans modifier
+son ID s'il existe déjà. Son rollback conserve la ligne et les plans associés.
 Conserver le profil et la version du catalogue dans le job et ses checkpoints.
 Le checkpoint Électrification porte une seule version technique : `schemaVersion`.
 Le lot 5B enregistre cette même version dans le job, avec le canevas reconnu,
@@ -284,7 +325,7 @@ les fiches vierges et l'exemple fictif C sont exclus. Des tableaux B dupliqués
 représentent des fiches distinctes, même lorsque leurs titres sont identiques.
 
 Le canevas officiel ne peut pas être modifié : il constitue le contrat d'entrée.
-La [définition du canevas officiel](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-plan-import/apps/backend/src/plans/ai-plan-import/electrification/extract-plan/electrification-document-template.constants.ts)
+La [définition du canevas officiel](../../apps/backend/src/plans/plans/electrification/config/electrification-document-template.constants.ts)
 regroupe ses libellés, textes d'aide et correspondances entre les lignes du
 tableau A et les codes d'engagement. Ces repères documentaires restent séparés
 des règles d'extraction et du catalogue métier. Une variante supplémentaire
@@ -528,10 +569,11 @@ nécessite pas que le métier en invente : une identité interne stable peut êt
 attribuée dans le catalogue livré et conservée lors de ses mises à jour.
 Le catalogue d'actions et d'indicateurs était alors `null` ; les numéros
 d'actions disponibles ne justifient pas d'omettre leurs liens ni leurs compléments.
-Cette livraison conserve l'admission fermée, même avec le flag ouvert et une
-collectivité éligible. L'exigence actuelle d'un catalogue entièrement prêt,
-même pour les références non utilisées par un document, est un choix de
-l'admission ; les specs ne l'imposent pas explicitement.
+Lors de ce relevé, l'admission restait fermée, même avec le flag ouvert et une
+collectivité éligible. L'exigence d'un catalogue entièrement prêt, même pour
+les références non utilisées par un document, était un choix technique ;
+les specs ne l'imposent pas explicitement. La décision du 11 novembre
+ci-dessous remplace ce contrôle global.
 
 **Relecture des specs et commentaires — 10 novembre 2026.** La
 [spec d'import des périodicités du 15 octobre](https://app.notion.com/p/3fa6523d57d7803b950dfbd4bc82e13a)
@@ -539,6 +581,16 @@ prévoit explicitement `annuelle` pour une cellule vide du Google Sheets des
 définitions. Les neuf périodicités sont donc résolues par ce contrat ; cela
 ne valide ni la formule E08 ni la présence des définitions en base. Ce défaut
 ne s'applique pas aux deux fréquences explicitement "Ponctuelle" du Grist.
+
+**Suivi annuel confirmé — 12 novembre 2026 (Paris).** Dans le
+[fil TT-67 sur les indicateurs d'engagement](https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893?d=4156523d57d781408015001cc3cbcce5),
+Émeline indique à 16:06 avoir laissé leur périodicité vide dans le Sheets et
+propose `annuelle`, sous réserve d'un besoin de reporting plus fréquent.
+Clément confirme à 17:28 que le suivi annuel suffit. Cette question est close ;
+le défaut annuel déjà implémenté est conservé. Cet accord ne vaut pas validation
+des correspondances, unités ou de la formule E08.
+Vérifier les définitions effectivement publiées dans l'environnement cible ;
+les correspondances `pending` ne sont pas validées automatiquement.
 
 La [tâche de récolte des indicateurs](https://app.notion.com/p/3d66523d57d780d394f6e52a9cd4c9b6)
 et le [second Grist Ecolab](https://grist.numerique.gouv.fr/o/ecolabservicesdonnees/49SPrgL9jgVv/Referentiel-dindicateurs/p/264)
@@ -550,8 +602,8 @@ Les unités "% et nb" de `1-a`, `1-b`, `1-c` restent sans unité principale
 désignée. Les deux indicateurs ponctuels `9.1.1-a` et `11.1.1-a` sont des nombres,
 pas des jalons oui/non à convertir en sous-actions.
 
-L'esquisse prévoit déjà les aides dans "Documents" : seule la gestion des
-ressources sans URL reste ouverte. Parmi les 118 ressources Grist, 16 n'ont
+Lors de cette relecture, l'esquisse prévoyait déjà les aides dans "Documents" ;
+la gestion des ressources sans URL restait ouverte. Parmi les 118 ressources Grist, 16 n'ont
 pas d'URL ; 15 de celles-ci sont liées à 28 actions distinctes (31 liens).
 Les questions restantes
 ont été publiées dans les discussions correspondantes, liées en fin d'ADR.
@@ -570,14 +622,23 @@ du plan. L'agrégat utilise un contrat générique de documents et déduplique l
 URL par fiche ; aucune nouvelle table ni service de documents n'est créé.
 Une fiche existante liée par URL ne reçoit aucune aide supplémentaire.
 
+**Décision du 11 novembre 2026 — aides sans URL.** Dans sa
+[réponse à 11:19 UTC][decision-aides], Clément propose de ne pas importer les
+ressources sans lien. B omet donc ces aides, sans bloquer l'action, et signale
+leur omission dans le compte rendu. Leur nom ou description n'est pas ajouté
+dans un autre champ pour contourner l'absence de lien. Une URL renseignée mais
+invalide reste bloquante et doit être corrigée dans le catalogue par l'équipe.
+Cette règle remplace le blocage provisoire décrit dans les relevés ci-dessous.
+
 **Intégration du catalogue d'actions — 11 novembre 2026.** Les six tables
 V1.3 ont été relues via l'API publique Grist ; leurs données sont inchangées
 depuis le relevé du 10 novembre. Le catalogue livré contient les 109 actions
 avec leurs titres, descriptions et rattachements principaux explicites, leurs
 58 sous-actions, 89 liens vers 86 indicateurs et 354 liens vers 107 ressources.
 Les ressources partagées sont définies une seule fois (titre et URL), puis
-réutilisées par les actions. Les 15 ressources liées sans URL restent explicites
-et bloquent seulement la résolution des actions concernées. Le décompte de
+réutilisées par les actions. Lors de cette intégration, les 15 ressources liées
+sans URL restaient explicites et bloquaient la résolution des actions concernées.
+La décision ci-dessus remplace ce comportement dans B. Le décompte de
 31 actions mentionné lors du premier audit était un nombre de liens ; il concerne
 28 actions distinctes.
 
@@ -596,12 +657,32 @@ quantitatifs, avec leurs unités non ambiguës et leurs fréquences explicites :
 des trois codes `1-a`, `1-b`, `1-c` reste `null`. Les 113 correspondances restent
 `pending`, sans identifiant TeT inventé ; ces données ne créent aucune définition
 d'indicateur. Une action dont un complément utilise une correspondance incomplète
-échoue en erreur de configuration plutôt que d'omettre cet indicateur. Le contrôle
-global d'admission reste fermé. La version interne demeure `electrification-v1` :
+échoue en erreur de configuration plutôt que d'omettre cet indicateur. La version
+interne demeure `electrification-v1` :
 ce catalogue n'a pas encore été ouvert aux imports publics.
-Dans l'attente de la décision sur les aides sans URL, une action sélectionnée
-qui en référence une produit un diagnostic de configuration avant création.
-Cette absence ne bloque pas les imports qui n'utilisent pas l'action concernée.
+Avant la réponse de Clément, une action sélectionnée avec une aide sans URL
+produisait un diagnostic de configuration avant création. Ce blocage ne
+s'applique plus dans B ; l'omission est signalée sans empêcher l'import.
+
+**Décision du 11 novembre 2026 — validation des références utilisées.** Dans B,
+l'admission et la reprise contrôlent l'intégrité du catalogue livré : structure,
+identités uniques et rattachements cohérents. Elles n'exigent plus que toutes les
+correspondances d'indicateurs et cibles soient validées. Les résolveurs vérifient
+chaque référence effectivement utilisée avant la création du plan, y compris
+les cibles des engagements retenus et les compléments automatiques des actions.
+Une référence inconnue, une correspondance `pending`, une définition TeT absente
+ou des métadonnées requises manquantes restent bloquantes ; aucun complément
+d'indicateur n'est omis pour rendre l'import possible. Les aides sans URL
+sont omises avec un avertissement selon la décision ci-dessus ; une URL
+renseignée mais invalide reste bloquante.
+
+Ce changement permet une recette limitée aux références résolubles, par exemple
+les engagements de décommissionnement du réseau de gaz et d'identification
+d'un site de recharge pour poids lourds (E03/E12), avec l'action d'animation
+du réseau des chauffagistes (`1.4.1`). Il ne vaut pas validation des indicateurs
+encore en attente. Le flag de création, les droits, l'éligibilité, le type de
+plan et la compatibilité des checkpoints sont inchangés. A conserve son
+comportement utilisateur actuel ; cet assouplissement appartient à B.
 
 **Décision du 12 novembre 2026 — recensements annuels.** La
 [réponse d'Émeline][question-mapping] retient un suivi annuel pour le nombre
@@ -743,8 +824,8 @@ support. Aucun moteur de restauration ou registre conventionnel n'est ajouté.
 
 ### 4. Conserver les cibles avec les sources de valeurs existantes
 
-Les cibles du tableau A sont des objectifs datés de la source "Annexe 3
-Électrification" dans `indicateur_valeur`. Elles coexistent avec les objectifs
+Les cibles du tableau A sont des objectifs datés de la source
+"100 territoires d’électrification" dans `indicateur_valeur`. Elles coexistent avec les objectifs
 déjà saisis par la collectivité et les autres sources, sans les modifier.
 Réutiliser `indicateur_source` et `indicateur_source_metadonnee`. Le besoin
 reste d'isoler les cibles de chaque plan, même si deux plans concernent le
@@ -970,11 +1051,22 @@ désactivation ferment ces parcours, y compris en dev/test/CI et pour le
 super-admin. Cette clé remplace `is-electrification-plan-import-enabled` sans
 repli : une ouverture PostHog doit cibler la nouvelle clé.
 
+**Décision du 11 novembre 2026 — ciblage de la recette.** Réutiliser le
+ciblage par groupe `collectivite` du flag de contournement du diagnostic
+PCAET : une liste explicite de `collectivite_id`, sans contexte d'environnement.
+Le serveur transmet déjà la collectivité à l'évaluation et l'interface utilise
+ses capacités ; aucun changement du tracker commun n'est nécessaire.
+Le projet PostHog étant partagé, une collectivité ciblée l'est en préproduction
+et en production dès que ce code y est déployé. Cette ouverture limitée ne
+vaut pas ouverture générale et conserve les contrôles de droits, d'éligibilité
+et de catalogue. Le réglage opérationnel est décrit dans le
+[plan de déploiement](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md#déploiement-de-b-et-ouverture).
+
 Lorsque le flag est ouvert, les droits ordinaires permettent de créer un plan
 Électrification, y compris pour une collectivité non lauréate, sans initialiser
 d’engagements ni de cibles de convention. L’import dédié exige en plus
-l’éligibilité et une configuration métier complète ; le profil IA générique
-continue de refuser ce type.
+l'éligibilité, l'intégrité du catalogue et des correspondances complètes pour
+les références utilisées ; le profil IA générique continue de refuser ce type.
 
 La fermeture préserve la lecture, l’édition et la suppression des plans
 existants, y compris une sauvegarde qui conserve leur type Électrification.
@@ -999,14 +1091,12 @@ ce choix. Le suivi et le compte rendu ajoutés dans B restent accessibles après
 fermeture de l’admission.
 
 La lecture ordinaire du plan expose sa métadonnée de source exacte. Les cartes
-d’indicateurs d’axe montrent la cible de l’annexe séparément de l’objectif
-local, avec son unité et son échéance. Elles ne prennent aucune cible d’une
-autre métadonnée et suivent les liens actuellement présents dans le plan.
-L’affichage spécifique reste dans les composants Électrification. `PlanView`
-le compose via le contexte existant : les axes et le graphique reçoivent
-uniquement des options d’affichage neutres. Le formulaire commun applique
-les options d’extraction fournies par la configuration du profil ; leurs
-valeurs imposées restent dans le module Électrification.
+d'indicateurs d'axe conservent le graphique ordinaire et excluent la source
+dédiée du plan, sans blocs supplémentaires d'objectifs ou de cibles. Les valeurs
+restent consultables sur la page indicateur et les liens suivent l'arborescence
+actuelle. `PlanView` fournit une option d'affichage neutre au contexte existant,
+sans composant Électrification dans les cartes génériques. Le formulaire commun
+applique les options d'extraction fournies par la configuration du profil.
 L’ouverture en production reste conditionnée à la
 qualification complète décrite dans le plan.
 
@@ -1022,6 +1112,93 @@ les fichiers `.errors.ts` concernés, avec leur formatage lorsqu'ils comportent
 des paramètres. Les services réutilisent ces définitions ; les codes de
 diagnostic et les motifs de télémétrie restent distincts des textes affichés.
 
+**Retours de recette du 11 novembre 2026 — [TT-67][retours-tt67].** Simplifier
+le texte d'upload vers "Annexe 3 de la convention signée sur Word". Le format
+DOCX et la limite de taille restent contrôlés ; ce libellé ne signifie pas que
+l'import vérifie une signature. Employer "action" dans l'interface d'import,
+y compris les étapes de progression, sans renommer les entités techniques
+`Fiche` du domaine.
+
+Une relance destinée à corriger le document conserve le titre, le type et les
+options du formulaire, puis permet de remplacer le fichier. Elle crée un nouvel
+import ; la reprise d'un même job conserve sa source, ses options et ses
+checkpoints selon le contrat existant.
+
+Dans le détail d'import, afficher une erreur une seule fois, avec une correction
+concrète : numéro à vérifier, année de référence à renseigner ou champ à
+compléter. Localiser les diagnostics avec l'action, l'engagement, l'indicateur
+ou la sous-action concernés plutôt qu'avec les coordonnées internes d'un
+tableau Word. Une configuration manquante ou non validée relève de l'équipe ;
+le message ne doit pas demander à la collectivité de corriger son document
+quand celui-ci n'est pas en cause.
+
+La suggestion d'afficher toutes les erreurs du document en une fois reste
+une piste produit à préciser. Ce lot améliore la restitution des diagnostics
+disponibles et ne promet pas une validation exhaustive en un seul passage.
+
+**Retours de recette du 12 novembre 2026 — [TT-67][retours-tt67].** Cette
+réponse produit remplace l'affichage détaillé des cibles dans les cartes retenu
+au lot 6 : ces blocs sont retirés, les valeurs conservées. La page indicateur
+affiche les objectifs de la source "100 territoires d’électrification" et l'infobulle "Engagement
+pris dans votre convention". L'identité technique et les rattachements exacts
+aux métadonnées ne changent pas.
+
+Le plan Électrification termine directement au statut `active`, avec la source
+`import_ia` et sans renseigner `verifiedAt`/`verifiedBy`. Cette décision remplace
+la validation humaine commune initialement retenue pour ce profil. Les imports
+génériques et PCAET conservent `to_verify`. Les plans Électrification
+créés pendant la recette initiale peuvent être recréés : aucun rattrapage des
+statuts ou des métadonnées existants n'est prévu, conformément au choix du
+12 novembre. Aucun changement de schéma n'est nécessaire.
+
+Le formulaire annonce que budgets et financements ne sont pas importés. Les
+titres du compte rendu deviennent "Erreur" et "Avertissement", en conservant
+les codes et explications qui distinguent document et configuration.
+
+Dès l'admission, seules les étapes réellement exécutées sont annoncées pour
+Électrification : lecture, extraction, puis création du plan. La création reste
+visible et en cours jusqu'à la finalisation du job. Elle est dérivée de l'état
+du job, sans nouveau checkpoint ni changement de schéma. Les coches et loaders
+existants sont réutilisés ; un loader global reste visible pendant le
+traitement. La reprise réinitialise la progression avant de relire la source.
+
+Le signalement "ChargeFrance" correspond à une aide du catalogue sans URL,
+pas à une référence d'action inconnue. L'avertissement précise que l'action
+peut être importée et qu'aucune correction du document n'est nécessaire pour
+ce point. Aucun lien n'est inventé. Le document réel joint à TT-67 reste à
+rejouer en préproduction ; le scénario automatisé utilise un DOCX synthétique.
+Clément considère l'affichage actuel des erreurs acceptable pour cette
+livraison ; leur détection exhaustive en un passage reste une piste ultérieure.
+
+Le [retour d'Ugo à 15:52 (Paris)](https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893?d=4156523d57d78155988c001ccc7ff90f)
+signale l'ambiguïté de "Aucune correction n'est attendue". Les erreurs de
+configuration concernées précisent désormais la marche à suivre : contacter
+le support TeT pour corriger ou valider le catalogue, puis relancer l'import
+avec le même document. Le message ne promet ni signalement automatique au
+support ni correction en cours. Les erreurs du document continuent à demander
+une correction du Word ; une aide sans URL reste un avertissement non bloquant.
+La proposition de refonte des cartes reste facultative pour cette livraison.
+
+Le [retour de Clément à 17:28 (Paris)](https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893?d=4156523d57d78155988c001ccc7ff90f)
+propose de retirer les étapes "Lecture du document" et "Extraction des actions".
+Ce retour étant formulé dans le fil sur les erreurs, le périmètre retenu est
+l'écran d'échec : la liste des étapes y est masquée pour tous les profils.
+Le compte rendu, les diagnostics et les boutons de relance/reprise restent
+accessibles. Pendant l'attente, le traitement et après une reprise, la
+progression reste visible. Les checkpoints et le suivi technique sont conservés.
+
+Vérification ciblée de ces précisions le 12 novembre : 194 e2e existants de
+résolution des engagements et fiches réussis avec un faux LLM, typage backend,
+lint ciblé et liens locaux vérifiés. La recette des nouveaux messages en
+préproduction reste à effectuer après déploiement.
+
+Validation locale de ces retours le 12 novembre : 200 e2e backend, 16 tests
+frontend existants et 5 scénarios navigateur réussis. Le cas d'aide sans URL
+conserve l'action résolue par code, ses sous-actions et ses documents liés.
+Les scénarios couvrent aussi les capacités absentes/désactivées, la progression
+jusqu'à la création, les valeurs conservées et l'infobulle sur la page
+indicateur. Faux LLM et lancements navigateur interceptés ; aucun appel IA réel.
+
 `ValidateImportProfileService` porte les droits communs et le dispatch des
 profils. Les règles métier sont regroupées dans
 `ValidateElectrificationImportService`, sous `electrification/validate-import/` :
@@ -1033,7 +1210,8 @@ L'enfilement consomme les options validées et la décision de créer un plan
 provisoire ; il ne connaît pas les règles Électrification. La reprise et le
 worker réutilisent la même autorisation métier.
 L'admission exige le flag serveur de création, fermé par défaut, les droits ordinaires,
-l'éligibilité, le type exact et une configuration métier complète. Ce flag
+l'éligibilité, le type exact et un catalogue structurellement valide. Les
+correspondances utilisées sont ensuite contrôlées avant toute création. Ce flag
 n'hérite ni de l'activation automatique en dev/test/CI ni d'un contournement
 super-admin. Sa fermeture empêche toutes les nouvelles créations du type
 Électrification, dont les nouveaux imports ; les jobs admis et
@@ -1079,6 +1257,40 @@ importés et ne pas proposer de fusion ou de synchronisation. Un document
 corrigé après validation métier passe par un nouvel import explicitement
 distingué d'une reprise ; le remplacement d'un plan existant relève du support.
 
+### 7. Mesurer l'usage des imports dans PostHog
+
+Les profils `generic`, `pcaet` et `electrification` réutilisent les événements
+existants du cycle de vie, émis par le serveur même lorsque l'utilisateur
+ferme la page. Le suivi passe par `TrackingService` côté backend et
+`useEventTracker` côté frontend, sans nouveau service propre à Électrification.
+
+| Mesure                  | Événements et interprétation                                                                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adoption                | `plans:import-ia:started` : jobs admis et collectivités distincts, par profil.                                                                                                                        |
+| Résultat                | `plans:import-ia:succeeded` et `failed` : résultat d'une tentative ; rapprocher les événements par `jobId` et `attempt`, car un échec suivi d'une reprise réussie concerne le même import.            |
+| Refus                   | `plans:import-ia:refused` : refus du service d'admission, avec profil demandé et code `reason`. Les rejets HTTP antérieurs à ce service ne sont pas couverts.                                         |
+| Reprises et performance | `resume_requested`, `resumed` et `step_done`, avec le même préfixe : demande, passage du worker et durée/résultat des étapes. Les métriques existantes incluent les appels et tokens IA.              |
+| Validation humaine      | `plans:import-ia:verified` : rapprocher son `planId` de l'import réussi pour retrouver le profil.                                                                                                     |
+| Navigation              | `plans:import-ia:historique_clic`, `details_clic` et `ouvrir_plan_clic` : accès depuis la liste/formulaire, l'historique/menu du plan et le détail d'import. Ce sont des clics, pas des vues de page. |
+
+Les événements d'un job partagent ses identifiants, son profil normalisé,
+sa tentative, ses options techniques et ses versions de contrat/catalogue
+lorsqu'elles existent. Le groupe `collectivite` existant est conservé.
+Les clics de reprise et de nouvel essai sont également rattachés au job et au
+profil concernés. Les noms et formats des événements existants restent stables :
+propriétés serveur en camelCase, propriétés navigateur en snake_case.
+
+Les deux trackers communs ajoutent `environment`, issu de `ENV_NAME` (`local`
+si absent), pour séparer production, préproduction et staging dans le projet
+PostHog partagé. Filtrer explicitement cette propriété ; son absence sur les
+anciens événements ne signifie pas qu'ils proviennent de la production.
+
+Ces ajouts ne transmettent ni nom du plan, ni nom/contenu du document, ni
+instructions, ni message d'erreur libre. Les erreurs d'import restent décrites
+par les codes et catégories existants. Un échec de capture serveur ne bloque
+pas l'import. La recette doit encore vérifier la réception des événements dans
+PostHog après déploiement ; les tests locaux interceptent la capture.
+
 ## Périmètre et dépendances
 
 La livraison principale comprend l'import, les identités de référence,
@@ -1111,7 +1323,8 @@ Cela ne conclut pas qu'elle n'est pas lauréate : son rattachement peut encore
 
 Le [mapping versionné](../../packages/domain/src/plans/plans/electrification/config/electrification-laureats.config.ts)
 représente les correspondances utilisables de la dernière liste disponible,
-distinctes du groupe de déploiement. Il déclare sa source, sa version et
+distinctes du groupe de déploiement. B y ajoute l'entrée de démonstration
+explicitée ci-dessous. Il déclare sa source, sa version et
 `validFrom` ; `validUntil: null` signifie qu'aucune expiration n'est prévue.
 Une borne de fin renseignée reste exclusive et contrôlée. Le service ajoute
 `checkedAt` à la décision. Les jobs conservent cette provenance et une reprise
@@ -1150,6 +1363,22 @@ Cette décision remplace l'exigence précédente de conserver tout le mapping
 automatique. Elle reste révisable, et la
 vérification du dump ne remplace pas celle de l'environnement cible. Les
 questions sur le responsable de la liste et les porteurs restent ouvertes.
+
+**Décision du 11 novembre 2026 — collectivité de démonstration.** Émilien
+autorise l'import dédié pour la collectivité `5460` afin de préparer la recette.
+B ajoute la référence synthétique `demo-5460` au mapping existant : 105
+correspondances métier et une entrée de démonstration. Cette dernière ne
+provient pas de la liste officielle et ne constitue pas une attribution du
+programme ; A conserve ses 105 correspondances. Les droits, le flag ciblé
+et les contrôles du document restent requis. L'admission de cette collectivité
+devient possible après déploiement de B et configuration du flag.
+Le 11 novembre, le [flag créé par Émilien](https://eu.posthog.com/project/12975/feature_flags/355720)
+est vérifié actif pour la seule collectivité `5460`, selon le ciblage par
+groupe prévu. La [recette navigateur](#recette-navigateur-du-11-novembre-2026)
+réussit après mise à jour d'un ancien worker, puis couvre E07, un indicateur
+personnalisé, une fiche existante et le refus d'une date invalide.
+Le ciblage partagé entre
+préproduction et production décrit plus haut s'applique aussi à cette entrée.
 
 **Étape supplémentaire facultative : budgets et financements.** Leur import
 est un "nice to have" distinct, confirmé pendant la rédaction. Le socle peut
@@ -1367,7 +1596,6 @@ ce scénario a ensuite passé cinq relances tracées sans modification.
 La cause reste non démontrée et le test conserve ses attentes. La CI et la
 recette de préproduction de B restent requises. Aucun modèle réel n'a été appelé.
 
-
 **Vérifications des périodes, unités et aides — 11 novembre 2026.** A seule passe ses
 105 e2e de résolution (45 engagements, 60 fiches), ses builds domaine/backend,
 le typage des specs et le lint ciblé. La comparaison avec `main` confirme
@@ -1405,6 +1633,102 @@ Après rebase de B, les 148 e2e de fiches/extraction passent également, ainsi
 que le build backend et le typage des specs. Les ajouts de tests propres à B
 sont conservés ; aucune recette navigateur n'a été relancée pour ce lot de données.
 
+**Vérification de l'admission ciblée — 11 novembre 2026.** Les 148 e2e de
+fiches/extraction et les 14 tests du parcours complet passent, dont l'import
+E03/E12 et `1.4.1` avec le catalogue livré. Un complément indicateur `pending`
+ou une cible sélectionnée non validée échoue sans créer de plan, fiche ou valeur.
+Les 25 e2e HTTP d'admission passent après isolation du stockage dans leur fixture :
+les trois cas de quotas génériques nécessitaient le stockage Supabase local,
+arrêté pour cette validation. Les JWT de test sont signés localement ; les guards,
+permissions et quotas utilisent leur code réel. Le build backend et ses dépendances,
+le typage des specs, le lint/formatage ciblés et les liens locaux passent.
+L'exécution utilise la base isolée, une IA simulée et des workers désactivés.
+Aucun test navigateur, déploiement ni changement de flag n'est effectué.
+
+### Recette navigateur du 11 novembre 2026
+
+Sur la collectivité de démonstration `5460`, un administrateur sans mode
+super-admin accède au formulaire Électrification, limité aux fichiers DOCX.
+Les formulaires générique et PCAET proposent toujours les quatre formats
+attendus et le choix d'import des sous-actions. Le DOCX synthétique contient
+E03/E12 et l'action `1.4.1`, sans cible chiffrée ; le résultat attendu est
+un plan avec six fiches, dont les trois sous-actions du catalogue.
+
+Émilien lance manuellement le
+[job de recette](https://preprod-app.territoiresentransitions.fr/collectivite/5460/plans/importer-ia?importJobId=00333f4b-32b3-45af-bc5e-1d575c6e846c),
+admis avec le profil `annexe-3-electrification`. Il termine en échec à
+01:19:38 UTC, avec `createdPlanId: null`, après avoir suivi le pipeline générique.
+Le message indique que la création d'un plan Électrification est indisponible.
+
+Les [logs PostHog](https://eu.posthog.com/project/12975/logs) du job identifient
+le worker `bf829f91d`, alors que les endpoints `/version` de l'app et de l'API
+préprod annoncent `053f01f78`. Le
+[backend de test préprod](https://test-preprod-backend.koyeb.app/version)
+annonce précisément `bf829f91d`, déployé le 5 novembre. Le workflow backend
+configure ce service avec les mêmes DB et Redis que le backend préprod normal,
+sans préfixe de queue distinct. Un ancien worker a donc consommé le nouveau
+profil. Cette exécution ne valide pas l'extraction ni la persistance dédiées.
+
+Avant une nouvelle recette, mettre à jour ou arrêter les anciens consommateurs
+de la queue, y compris les backends de test. Aucun nouvel import n'a été lancé
+automatiquement et aucune modification d'infrastructure n'a été effectuée.
+
+**Second essai après mise à jour du backend de test.** Son endpoint `/version`
+annonce désormais `3edd5f2c5`, déployé à 01:27:04 UTC ; ce commit ne diffère
+de `053f01f78` que par l'ADR et le plan. Émilien relance manuellement le même
+DOCX. Le [nouveau job](https://preprod-app.territoiresentransitions.fr/collectivite/5460/plans/imports?importJobId=cb91819f-f119-4707-b858-4dad3a969004)
+termine avec le statut `done` à 01:30:32 UTC et crée le
+[plan `59229`](https://preprod-app.territoiresentransitions.fr/collectivite/5460/plans/59229).
+Les étapes lecture/extraction sont `ok` et les étapes génériques `skipped` ;
+le compte rendu ne signale aucune anomalie.
+
+Le navigateur confirme les trois axes attendus, le sous-axe 1.4, les deux
+engagements et l'action `TEST — Réseau de chauffagistes`, avec sa description
+catalogue et ses trois sous-actions. L'action n'a aucun indicateur associé.
+Le lien "Détails de l'import" du menu et le retour "Ouvrir le plan" fonctionnent.
+Le plan reste en attente de validation utilisateur. Ce scénario valide
+l'extraction et la création sans cible chiffrée ; les indicateurs, les liens
+vers des fiches existantes et les rejets documentaires restent à recetter.
+
+**Recette plus complète.** Un DOCX synthétique comportant E03/E07/E12 et quatre
+fiches est vérifié hors ligne avec le lecteur et l'extracteur réels, puis lancé
+manuellement par Émilien. Le [job](https://preprod-app.territoiresentransitions.fr/collectivite/5460/plans/imports?importJobId=38a2baf1-2950-45fb-b087-3f6af5b5e8ea)
+crée le [plan `59234`](https://preprod-app.territoiresentransitions.fr/collectivite/5460/plans/59234).
+Le navigateur confirme quatre axes, deux sous-axes et onze fiches comptées :
+six principales et cinq sous-actions nouvelles. Les descriptions, objectifs,
+statuts, structures et partenaires sont conformes ; les dates mois/année sont
+normalisées au premier jour du mois. Les trois sous-actions catalogue et les
+deux sous-actions saisies sont présentes avec les échéances attendues.
+
+Les définitions E07 `s_26` et `s_26.a` existent avec l'unité et la périodicité
+attendues. L'axe recharge affiche les cibles 120 et 30 pour 2030 ; les objectifs
+de la collectivité restent non renseignés. L'indicateur personnalisé `88541`
+conserve le résultat zéro en 2025 et l'objectif 10 en 2030. La fiche existante
+`160210`, référencée par un hyperlien Word, conserve titre, description,
+objectifs, statut, calendrier et trois sous-actions, comparés avant/après.
+Ces trois sous-actions restent consultables via leur parent mais ne reçoivent
+pas de nouveau lien axe et n'entrent pas dans le compteur du nouveau plan.
+Le compte rendu signale cette préservation avec `EXISTING_FICHE_PRESERVED`.
+
+Une variante du même DOCX contient la date "2026". Son
+[import](https://preprod-app.territoiresentransitions.fr/collectivite/5460/plans/importer-ia?importJobId=910af4cc-037b-487d-9a59-f0c5e25e03e7)
+échoue avec `INVALID_ELECTRIFICATION_DATE`, tableau 2, ligne 13, cellule 2,
+et `createdPlanId: null`. Ces scénarios ne qualifient pas les autres
+correspondances métier, les références inaccessibles, la reprise ni
+l'assistance IA : les données du document valide sont reconnues sans
+interprétation lors de la vérification hors ligne.
+
+**12 novembre 2026 — Suivi d'usage PostHog.** Le suivi commun aux trois profils
+est intégré à la [PR B #5813](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5813),
+avec les profils et la navigation mesurés. La publication des données #5815
+en hérite, sans changement de son périmètre. Les 128 tests
+backend ciblés passent (83 e2e et 45 tests existants de génération/reprise), ainsi
+que les trois parcours navigateur de navigation historique/détail/plan. Build
+backend, typages backend/app/specs, lint ciblé et liens locaux passent. Les
+imports des tests sont simulés ; aucun modèle IA payant n'est appelé. Cette
+validation ne démontre pas encore la réception des événements dans le projet
+PostHog déployé.
+
 ## Validation attendue
 
 Ces critères décrivent la validation attendue de l'implémentation complète.
@@ -1440,8 +1764,17 @@ La composition A/B élargie doit être vérifiée séparément avant fusion :
   erreur, engagement ni cible supplémentaires ; un axe non demandé reste absent.
 - Les codes, URL affichées ou masquées derrière un lien et clés de parent
   survivent au pipeline ; deux fiches homonymes restent distinctes.
-- Une référence inconnue, incohérente ou inaccessible bloque sans création
+- Un catalogue partiellement validé permet un import dont toutes les références
+  utilisées sont résolubles. Une référence inconnue, incohérente, inaccessible
+  ou `pending`, y compris dans un complément automatique, bloque sans création
   de plan ; une cible absente reste vide ; aucune valeur n'est inventée.
+- Une aide sans URL est omise avec un avertissement sans empêcher la création
+  de l'action ; une URL d'aide renseignée mais invalide reste bloquante.
+- L'interface utilise "action" et un libellé d'upload compréhensible. Une
+  relance après correction conserve titre, type et options, accepte le fichier
+  remplacé et crée un nouveau job sans modifier l'ancien. Le détail affiche
+  chaque erreur une seule fois, avec une localisation métier et la correction
+  attendue ; une erreur de configuration est attribuée à l'équipe.
 - Une URL réutilise le même objet et conserve champs, valeurs et autres liens.
   Une cible annexe coexiste avec un objectif 2030 déjà renseigné grâce à sa
   source distincte. Deux plans de la même collectivité ne mélangent ni leurs
@@ -1517,17 +1850,21 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    28 porteurs repris provisoirement à la demande d'Émilien. Les deux erreurs
    des EPCI sont corrigées. Quatre groupements restent exclus et les porteurs
    provisoires restent à confirmer.
-4. **Aides sans URL.** [Conserver leur nom et description dans la fiche, ou
-   les omettre ?][question-aides] L'ajout des aides disposant d'un lien dans
-   "Documents" est déjà prévu par la spec.
+
+La question des aides sans URL est fermée par la
+[réponse du 11 novembre][decision-aides] : elles sont omises avec un
+avertissement, sans bloquer l'action. La réponse d'Émeline du 12 novembre
+ferme le choix de périodicité des deux recensements : `9.1.1-a` et `11.1.1-a`
+sont annuels. Les unités et correspondances encore ouvertes restent à préciser.
 
 Les neuf périodicités annuelles et la traduction E09 "Nombre" → `nb` sont
 intégrées. Les actions/sous-actions, leurs identifiants stables et leurs liens
 sont livrés ; les 113 correspondances TeT des indicateurs restent à compléter.
 Le mapping
 lauréats est livré pour 105 correspondances, dont 28 porteurs provisoires ;
-4 groupements restent à résoudre. Vérifier les définitions, unités, périodes et rattachements
-dans l'environnement cible. Les cibles et correspondances d'indicateurs
+4 groupements restent à résoudre. B ajoute séparément la collectivité de
+démonstration `5460` pour la recette. Vérifier les définitions, unités, périodes
+et rattachements dans l'environnement cible. Les cibles et correspondances d'indicateurs
 `pending` restent bloquantes ; ces ajustements n'ouvrent pas l'admission.
 
 L'affichage des cibles par métadonnée exacte, préparé dans #5806, est repris
@@ -1542,4 +1879,5 @@ composition, la préproduction et l'ouverture restent à qualifier.
 [question-recharge]: https://app.notion.com/p/3d66523d57d78028a8b8f67932311e86?d=4146523d57d781a18ee2001c1badc5f7
 [question-laureats]: https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9?d=37b6523d57d783a1b1d9038c7c02dfd8
 [question-rattachements]: https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9?d=4146523d57d7818fbfa6001c9406d183
-[question-aides]: https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=4146523d57d781b891ed001cee19a898
+[decision-aides]: https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=4146523d57d781b891ed001cee19a898
+[retours-tt67]: https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893

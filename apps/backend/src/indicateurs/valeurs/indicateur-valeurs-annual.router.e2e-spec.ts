@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
+import { buildTestPdf } from '@tet/backend/plans/ai-plan-import/pipeline/__fixtures__/build-test-pdf';
 import { getAuthUserFromUserCredentials, getTestApp } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -13,6 +14,7 @@ import { init, type LineSeriesOption, type SeriesModel } from 'echarts';
 import type { EChartsOption } from 'echarts/types/dist/echarts';
 import { randomUUID } from 'node:crypto';
 import request from 'supertest';
+import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf';
 import { IndicateurChartService } from '../charts/indicateur-chart.service';
 import { indicateurCategorieTagTable } from '../indicateur/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '../indicateur/indicateur-definition.table';
@@ -49,6 +51,43 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       await app?.close();
     }
   });
+
+  const preparePdf = async (usage: 'lecture' | 'rendu') => {
+    const previousDOMMatrix = Object.getOwnPropertyDescriptor(
+      globalThis,
+      'DOMMatrix'
+    );
+    onTestFinished(() => {
+      if (previousDOMMatrix)
+        Object.defineProperty(globalThis, 'DOMMatrix', previousDOMMatrix);
+      else Reflect.deleteProperty(globalThis, 'DOMMatrix');
+    });
+    // Rejoue le démarrage d'unpdf quel que soit l'ordre des specs shared-app.
+    Reflect.deleteProperty(globalThis, 'DOMMatrix');
+    await definePDFJSModule(() => import('unpdf/pdfjs'));
+    const pdf = await getDocumentProxy(
+      new Uint8Array(
+        buildTestPdf([
+          {
+            kind: 'text',
+            blocks: [{ text: 'Document avant export graphique' }],
+          },
+        ])
+      )
+    );
+    onTestFinished(() => pdf.loadingTask.destroy());
+    if (usage === 'rendu') {
+      await renderPageAsImage(pdf, 1, {
+        scale: 0.1,
+        canvasImport: () => import('@napi-rs/canvas'),
+      });
+    } else {
+      const page = await pdf.getPage(1);
+      expect((await page.getTextContent()).items.length).toBeGreaterThan(0);
+      page.cleanup();
+    }
+    return globalThis.DOMMatrix;
+  };
 
   const insertAnnualIndicateur = async ({
     sansValeurUtilisateur = false,
@@ -454,9 +493,15 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
     expect(absent.chartData.series).toEqual([]);
   });
 
-  test.each(['png', 'svg'] as const)(
-    'Exporte par HTTP les objectifs segmentés avec leurs motifs au format %s',
-    async (format) => {
+  test.each([
+    { format: 'png', pdfUsage: 'lecture' },
+    { format: 'svg', pdfUsage: 'lecture' },
+    { format: 'png', pdfUsage: 'rendu' },
+    { format: 'svg', pdfUsage: 'rendu' },
+  ] as const)(
+    'Exporte par HTTP les objectifs segmentés avec leurs motifs au format $format après $pdfUsage PDF',
+    async ({ format, pdfUsage }) => {
+      const pdfDOMMatrix = await preparePdf(pdfUsage);
       const { chartData, indicateurSegmentation } = await createSegmentedChart([
         [
           { dateValeur: '2025-01-01', objectif: 10 },
@@ -485,6 +530,8 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
         )
         .responseType('blob');
 
+      expect(globalThis.DOMMatrix).toBe(pdfDOMMatrix);
+
       if (format === 'png') {
         expect(response.body.subarray(0, 8)).toEqual(
           Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
@@ -501,6 +548,27 @@ describe('Régressions de la saisie annuelle des indicateurs', () => {
       }
     }
   );
+
+  test('restaure le DOMMatrix PDF même si le rendu PNG échoue', async () => {
+    const pdfDOMMatrix = await preparePdf('lecture');
+
+    await request(app.getHttpServer())
+      .post('/charts/render')
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .send({
+        format: 'png',
+        width: 320,
+        height: 200,
+        options: {
+          xAxis: {},
+          yAxis: {},
+          series: [{ type: 'bar', xAxisIndex: 999, data: [10] }],
+        },
+      })
+      .expect(500);
+
+    expect(globalThis.DOMMatrix).toBe(pdfDOMMatrix);
+  });
 
   test("L'upsert historique applique aussi l'interdiction de saisie utilisateur", async () => {
     const protectedIndicateurId = await insertAnnualIndicateur({

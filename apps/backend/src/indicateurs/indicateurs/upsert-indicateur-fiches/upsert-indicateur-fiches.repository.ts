@@ -110,14 +110,7 @@ export class UpsertIndicateurFichesRepository {
         );
     }
 
-    if (ficheIds.length > 0) {
-      await writeDb
-        .insert(ficheActionIndicateurTable)
-        .values(
-          ficheIds.map((ficheId) => ({ ficheId, indicateurId, createdBy }))
-        )
-        .onConflictDoNothing();
-    }
+    await this.addIndicateurFiches({ indicateurId, ficheIds, createdBy }, tx);
   }
 
   /** Ajoute les liens sans supprimer ni réécrire les relations existantes. */

@@ -21,6 +21,7 @@ export type IndicateurFormula = {
 export type SourceCalculPolicy = {
   sourceId: string;
   sourceCalculIds: string[];
+  requiresDirectValueForField: boolean;
 };
 
 export type CalculSourceGroup = {
@@ -29,6 +30,7 @@ export type CalculSourceGroup = {
   sourceId: string | null;
   metadonneeId: number | null;
   valeurs: CalculSourceValeur[];
+  requiresDirectValueForField: boolean;
 };
 
 export type CalculSourceGroups = Record<string, CalculSourceGroup>;

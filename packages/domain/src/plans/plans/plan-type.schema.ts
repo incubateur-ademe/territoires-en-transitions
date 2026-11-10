@@ -1,7 +1,10 @@
 import * as z from 'zod/mini';
 
-// Les identifiants des types varient selon l’environnement.
-export const ELECTRIFICATION_PLAN_TYPE = 'Plan Électrification';
+// Le couple (categorie, type) est unique en base ; les IDs dépendent de l'environnement.
+export const ELECTRIFICATION_PLAN_TYPE_KEY = {
+  categorie: 'Plans thématiques',
+  type: 'Plan Électrification',
+} as const;
 
 export const planTypeSchema = z.object({
   id: z.number(),

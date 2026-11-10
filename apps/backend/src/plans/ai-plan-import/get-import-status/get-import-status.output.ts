@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { stepStatesSchema } from '../pipeline/run-import-pipeline';
-import { aiPlanImportJobStatusSchema } from '../models/ai-plan-import-job';
+import {
+  aiPlanImportJobStatusSchema,
+  importRetryDefaultsSchema,
+} from '../models/ai-plan-import-job';
 import { aiPlanImportProfileSchema } from '../models/import-profile';
 import { importReportSchema } from '../models/import-report';
 
@@ -20,6 +23,8 @@ export const getImportStatusOutputSchema = z.object({
   /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */
   withSecteurs: z.boolean(),
   report: importReportSchema,
+  /** Disponible sur le détail uniquement, pas dans la liste des imports. */
+  retryDefaults: importRetryDefaultsSchema.nullable().optional(),
 });
 
 export type GetImportStatusOutput = z.output<

@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
+import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { failure, success, Result } from '@tet/backend/utils/result.type';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
@@ -16,26 +16,29 @@ import {
   AiPlanImportErrorEnum,
   aiPlanImportErrorMessages,
   aiPlanImportJobErrorMessages,
-  AiPlanImportError,
+  type AiPlanImportError,
 } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
-import { AiPlanImportJob } from '../models/ai-plan-import-job';
-import {
-  ImportCheckpoint,
-  isSupportedGenericImport,
-} from '../models/import-checkpoint';
-import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { sumLlmCallMetrics } from '../pipeline/compute-import-metrics';
-import { GeneratedImport, ImportFailureOptions } from './generate-import.types';
-import { GenerateGenericImportService } from './generate-generic-import.service';
-import { ImportGenerationErrors } from './generate-import.errors';
 import { ImportJobTelemetry } from './import-job-telemetry';
 import {
   jobTrackingProperties,
   statsTrackingProperties,
   stepRunTrackingProperties,
 } from './import-job-tracking';
+import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import { StoredImportCheckpoint } from '../models/import-checkpoint';
+import { AiPlanImportProfileEnum } from '../models/import-profile';
+import { GenerateElectrificationImportService } from '../electrification/generate-import/generate-electrification-import.service';
+import { GenerateGenericImportService } from './generate-generic-import.service';
+import {
+  GeneratedImport,
+  ImportFailureOptions,
+  ImportGenerator,
+} from './generate-import.types';
+import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
+import { ImportGenerationErrors } from './generate-import.errors';
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
@@ -50,12 +53,13 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
     private readonly llm: LlmService,
+    private readonly importPlanService: ImportPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly notifyPlanImportedService: NotifyPlanImportedService,
     private readonly trackingService: TrackingService,
-    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
-    private readonly generic: GenerateGenericImportService
+    private readonly generic: GenerateGenericImportService,
+    private readonly electrification: GenerateElectrificationImportService
   ) {}
 
   /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
@@ -64,7 +68,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
   }
 
   async generate(
-    jobId: string
+    jobId: string,
+    onStarted?: (attempt: number) => Promise<void>
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const running = await this.jobRepository.transitionToRunning(jobId);
     if (!running.success) {
@@ -83,8 +88,18 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         groups: { collectivite: String(job.collectiviteId) },
       });
     }
+    try {
+      await onStarted?.(job.attempt);
+    } catch {
+      return this.recordFailure(
+        jobId,
+        aiPlanImportJobErrorMessages.WORKER_ATTEMPT_UNRECORDED,
+        'worker_attempt_unrecorded',
+        { attempt: job.attempt }
+      );
+    }
 
-    if (!isSupportedGenericImport(job.options)) {
+    if (!this.jobRepository.isSupportedImport(job.options)) {
       // Un autre déploiement peut savoir le traiter : ni repli générique,
       // ni destruction de sa source ou de son point de reprise.
       return this.recordFailure(
@@ -94,7 +109,10 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         { attempt: job.attempt }
       );
     }
-    const checkpoint = await this.jobRepository.getCheckpoint(job.id);
+    const checkpoint = await this.jobRepository.getCheckpoint(
+      job.id,
+      job.options.profile
+    );
     if (
       !checkpoint.success &&
       checkpoint.error === AiPlanImportErrorEnum.INVALID_CHECKPOINT
@@ -108,7 +126,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     }
 
     try {
-      return await this.runPipeline(job, checkpoint);
+      return await this.runProfile(job, checkpoint);
     } catch (error) {
       const message = ImportGenerationErrors.interrupted(error);
       await this.markFailed(jobId, message, 'interrupted', {
@@ -116,24 +134,64 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       });
       return failure({ kind: 'interrupted', jobId, message });
     } finally {
-      await this.documentStorage.removeDocument({
-        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
-        key: job.sourcePath,
-      });
+      await this.removeSourceForAttempt(job);
     }
   }
 
-  async recordTerminalFailure(jobId: string, message: string): Promise<void> {
-    const job = await this.jobRepository.getById(jobId);
-    await this.markFailed(jobId, message, 'terminal_failure');
-    if (job.success && isSupportedGenericImport(job.data.options)) {
-      const checkpoint = await this.jobRepository.getCheckpoint(jobId);
+  async recordTerminalFailure(
+    jobId: string,
+    message: string,
+    attempt = 0
+  ): Promise<void> {
+    const job = await this.markFailed(jobId, message, 'terminal_failure', {
+      attempt,
+    });
+    if (job.success && this.jobRepository.isSupportedImport(job.data.options)) {
+      const checkpoint = await this.jobRepository.getCheckpoint(
+        jobId,
+        job.data.options.profile
+      );
       if (!checkpoint.success) return;
-      await this.documentStorage.removeDocument({
-        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
-        key: job.data.sourcePath,
+      await this.removeSourceForAttempt(job.data);
+    }
+  }
+
+  private async removeSourceForAttempt(job: AiPlanImportJob): Promise<void> {
+    const current = await this.jobRepository.getById(job.id);
+    if (!current.success || current.data.attempt !== job.attempt) return;
+    await this.documentStorage.removeDocument({
+      bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+      key: job.sourcePath,
+    });
+  }
+
+  private async runProfile(
+    job: AiPlanImportJob,
+    checkpoint: Result<StoredImportCheckpoint | null, AiPlanImportError>
+  ): Promise<Result<undefined, GenerateImportDraftError>> {
+    if (!checkpoint.success) {
+      return this.recordFailure(
+        job.id,
+        aiPlanImportJobErrorMessages.CHECKPOINT_UNREADABLE,
+        'checkpoint_unreadable',
+        { attempt: job.attempt }
+      );
+    }
+    const telemetry = await this.buildTelemetry(job);
+    const generator: ImportGenerator =
+      job.options.profile === AiPlanImportProfileEnum.ELECTRIFICATION
+        ? this.electrification
+        : this.generic;
+    const imported = await generator.generate(job, checkpoint.data, telemetry);
+    if (!imported.success) {
+      const { message, reason, ...options } = imported.error;
+      return this.recordFailure(job.id, message, reason, {
+        ...options,
+        attempt: job.attempt,
       });
     }
+    await this.afterCommit(job, imported.data);
+    return success(undefined);
   }
 
   /**
@@ -151,6 +209,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       failedStep,
       stats,
       dropCheckpoint,
+      report,
     }: ImportFailureOptions = {}
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     const marked = await this.jobRepository.markFailed({
@@ -161,6 +220,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       draft,
       stats,
       dropCheckpoint,
+      report,
     });
     if (marked.success) {
       if (marked.data.createdPlanId !== null) {
@@ -185,6 +245,9 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
           jobId,
           failedStep,
           reason,
+          issueKinds: report
+            ? [...new Set(report.issues.map((issue) => issue.kind))].join(',')
+            : undefined,
           durationSeconds: secondsSince(marked.data.createdAt),
           llmCalls: stats?.llm.calls,
           totalTokens: stats?.llm.tokens.totalTokens,
@@ -194,32 +257,6 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       });
     }
     return marked;
-  }
-
-  private async runPipeline(
-    job: AiPlanImportJob,
-    checkpoint: Result<ImportCheckpoint | null, AiPlanImportError>
-  ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const telemetry = await this.buildTelemetry(job);
-    if (!checkpoint.success) {
-      return this.recordFailure(
-        job.id,
-        aiPlanImportJobErrorMessages.CHECKPOINT_UNREADABLE,
-        'checkpoint_unreadable',
-        { attempt: job.attempt }
-      );
-    }
-    const imported = await this.generic.generate(
-      job,
-      checkpoint.data,
-      telemetry
-    );
-    if (!imported.success) {
-      const { message, reason, ...options } = imported.error;
-      return this.recordFailure(job.id, message, reason, options);
-    }
-    await this.afterCommit(job, imported.data);
-    return success(undefined);
   }
 
   /** Les passages précédents d'un import repris comptent dans son résumé. */
@@ -263,7 +300,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     job: AiPlanImportJob,
     created: GeneratedImport
   ): Promise<void> {
-    const { planId, recap, stats } = created;
+    const { recap, stats } = created;
     this.trackingService.capture({
       distinctId: job.createdBy,
       event: EVENT_AI_PLAN_IMPORT_SUCCEEDED,
@@ -272,7 +309,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         ...statsTrackingProperties(stats),
         collectiviteId: job.collectiviteId,
         jobId: job.id,
-        planId,
+        planId: created.planId,
         ...recap,
         durationSeconds: secondsSince(job.createdAt),
         processingSeconds: job.startedAt
@@ -286,18 +323,25 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     });
 
     // Hors transaction : un envoi manqué ne défait pas le plan créé.
-    await this.notifyPlanImportedService.notifyPlanImported({
-      createdBy: job.createdBy,
-      collectiviteId: job.collectiviteId,
-      planId,
-      planName: job.options.planName,
-      recap,
-    });
-    await this.enqueueCompletePlanSecteursService.enqueue({
-      planIds: [planId],
-      collectiviteId: job.collectiviteId,
-      userId: job.createdBy,
-    });
+    try {
+      await this.importPlanService.notifyCreatedFiches(created);
+    } catch (error) {
+      this.logger.error(`Import ${job.id}: webhooks impossibles`, error);
+    }
+    try {
+      await this.notifyPlanImportedService.notifyPlanImported({
+        createdBy: job.createdBy,
+        collectiviteId: job.collectiviteId,
+        planId: created.planId,
+        planName: job.options.planName,
+        recap,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Import ${job.id}: notification du plan ${created.planId} impossible`,
+        error
+      );
+    }
   }
 
   private async recordFailure(

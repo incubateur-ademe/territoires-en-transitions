@@ -1,7 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlanCreationDisabledReason } from '@tet/domain/plans';
-import { Alert, Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Button, Field, Input, Modal, ModalFooter, Tooltip } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -20,7 +19,7 @@ type Props = {
   planNom: string | null;
   openState: OpenState;
   isPending: boolean;
-  creationDisabledReason?: PlanCreationDisabledReason;
+  disabledReason?: string;
   onDuplicate: (nom: string) => Promise<void>;
 };
 
@@ -28,7 +27,7 @@ export const DuplicatePlanModal = ({
   planNom,
   openState,
   isPending,
-  creationDisabledReason,
+  disabledReason,
   onDuplicate,
 }: Props) => {
   const {
@@ -41,11 +40,10 @@ export const DuplicatePlanModal = ({
     defaultValues: { nom: appLabels.nomCopiePlan({ nom: planNom }) },
   });
 
-  const isPlanCreationDisabled = creationDisabledReason !== undefined;
-  const isSubmitDisabled = isPending || !isValid || isPlanCreationDisabled;
+  const isSubmitDisabled = isPending || !isValid || !!disabledReason;
 
   const onValid = async ({ nom }: DuplicatePlanFormValues): Promise<void> => {
-    if (isPlanCreationDisabled) return;
+    if (isSubmitDisabled) return;
     await onDuplicate(nom);
   };
 
@@ -56,14 +54,6 @@ export const DuplicatePlanModal = ({
       openState={openState}
       render={() => (
         <form onSubmit={handleSubmit(onValid)} className="flex flex-col gap-4">
-          {creationDisabledReason && (
-            <Alert
-              state="info"
-              description={appLabels.planCreationDisabled(
-                creationDisabledReason
-              )}
-            />
-          )}
           <Field
             title={appLabels.nomPlan}
             state={errors.nom ? 'error' : 'default'}
@@ -77,14 +67,20 @@ export const DuplicatePlanModal = ({
         </form>
       )}
       renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            children: appLabels.dupliquer,
-            onClick: handleSubmit(onValid),
-            disabled: isSubmitDisabled,
-          }}
-        />
+        <ModalFooter variant="right">
+          <Button variant="outlined" size="xs" onClick={close}>
+            {appLabels.annuler}
+          </Button>
+          <Tooltip label={disabledReason}>
+            <Button
+              size="xs"
+              onClick={handleSubmit(onValid)}
+              disabled={isSubmitDisabled}
+            >
+              {appLabels.dupliquer}
+            </Button>
+          </Tooltip>
+        </ModalFooter>
       )}
     />
   );

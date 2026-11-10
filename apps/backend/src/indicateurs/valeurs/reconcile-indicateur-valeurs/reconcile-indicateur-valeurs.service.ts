@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { chunk } from 'es-toolkit';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
@@ -23,6 +24,7 @@ import {
   IndicateurValeursError,
 } from '../indicateur-valeurs.errors';
 import { ValidateIndicateurValeursWriteService } from '../write-indicateur-valeurs/validate-indicateur-valeurs-write.service';
+import { IndicateurValeurConflict } from '../write-indicateur-valeurs/fill-missing-indicateur-valeurs.rules';
 import { WriteIndicateurValeursService } from '../write-indicateur-valeurs/write-indicateur-valeurs.service';
 import { getIndicateurDataOrThrow } from '../../indicateur/indicateur-nature.utils';
 
@@ -65,18 +67,62 @@ export class ReconcileIndicateurValeursService {
           tx,
         });
         if (!written.success) return written;
-        const calculated = written.data.length
-          ? await this.computeValeursService.updateCalculatedIndicateurValeurs(
-              written.data,
-              tx
-            )
-          : [];
-        const dependent = await this.upsert(calculated, {
-          isUserTrusted: true,
-          tx,
-        });
+        const dependent = written.data.length
+          ? await this.propagateUpdated(written.data, { ...context, tx })
+          : success([]);
         if (!dependent.success) return dependent;
         return success([...written.data, ...dependent.data]);
+      }, context.tx);
+      return getIndicateurValeursDataOrThrow(result);
+    });
+  }
+
+  /**
+   * Complète les cellules absentes sous les verrous ordinaires.
+   * L'autorisation de métadonnée est accordée par l'orchestration propriétaire
+   * du plan ou de la démarche, jamais à partir d'un identifiant de requête seul.
+   */
+  async fillMissing(
+    valeurs: IndicateurValeurCreate[],
+    context: Extract<
+      IndicateurValeursContext<AuthenticatedUser>,
+      { user: AuthenticatedUser }
+    >
+  ): Promise<
+    Result<
+      {
+        valeurs: IndicateurValeurWithIdentifiant[];
+        conflits: IndicateurValeurConflict[];
+      },
+      IndicateurValeursError
+    >
+  > {
+    if (valeurs.length === 0) return success({ valeurs: [], conflits: [] });
+    return captureIndicateurValeursResult(async () => {
+      const result = await this.transactionManager.executeSingle(async (tx) => {
+        const writeContext = {
+          user: context.user,
+          metadataAuthorization: context.metadataAuthorization,
+          tx,
+        };
+        const prepared = await this.validationService.prepare(
+          valeurs,
+          writeContext
+        );
+        if (!prepared.success) return prepared;
+        const written = await this.writer.fillMissing(
+          prepared.data,
+          writeContext
+        );
+        if (!written.success) return written;
+        const dependent = written.data.valeurs.length
+          ? await this.propagateUpdated(written.data.valeurs, writeContext)
+          : success([]);
+        if (!dependent.success) return dependent;
+        return success({
+          valeurs: [...written.data.valeurs, ...dependent.data],
+          conflits: written.data.conflits,
+        });
       }, context.tx);
       return getIndicateurValeursDataOrThrow(result);
     });

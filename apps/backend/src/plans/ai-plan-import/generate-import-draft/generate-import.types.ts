@@ -1,20 +1,21 @@
 import { Result } from '@tet/backend/utils/result.type';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
-import { ImportCheckpoint } from '../models/import-checkpoint';
+import { StoredImportCheckpoint } from '../models/import-checkpoint';
 import { ImportJobStats } from '../models/import-job-stats';
+import { ImportReport } from '../models/import-report';
 import { PlanDraft } from '../models/plan-draft';
 import { PlanRecap } from '../notify-plan-imported/plan-recap';
 import { StepName, StepStates } from '../pipeline/run-import-pipeline';
 import { ImportJobTelemetry } from './import-job-telemetry';
 
 export type ImportFailureOptions = {
-  /** Passage de l'exécution : une exécution remplacée n'écrit plus rien. */
   attempt?: number;
   draft?: PlanDraft;
   stepStates?: StepStates;
   failedStep?: StepName;
   stats?: ImportJobStats;
   dropCheckpoint?: boolean;
+  report?: ImportReport;
 };
 
 export type ImportGenerationFailure = ImportFailureOptions & {
@@ -24,11 +25,12 @@ export type ImportGenerationFailure = ImportFailureOptions & {
 
 export type GeneratedImport = {
   planId: number;
+  createdFicheIds: number[];
   recap: PlanRecap;
   stats: ImportJobStats;
 };
 
-export interface ImportGenerator<Checkpoint = ImportCheckpoint> {
+export interface ImportGenerator<Checkpoint = StoredImportCheckpoint> {
   generate(
     job: AiPlanImportJob,
     checkpoint: Checkpoint | null,

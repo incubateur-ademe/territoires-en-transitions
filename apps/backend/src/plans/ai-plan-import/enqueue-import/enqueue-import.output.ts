@@ -3,7 +3,10 @@ import { AiPlanImportProfileEnum } from '../models/import-profile';
 
 export const enqueueImportOutputSchema = z.discriminatedUnion('profile', [
   z.object({
-    profile: z.literal(AiPlanImportProfileEnum.GENERIC),
+    profile: z.enum([
+      AiPlanImportProfileEnum.GENERIC,
+      AiPlanImportProfileEnum.PCAET,
+    ]),
     jobId: z.string().uuid(),
     planId: z.number().int().positive(),
   }),

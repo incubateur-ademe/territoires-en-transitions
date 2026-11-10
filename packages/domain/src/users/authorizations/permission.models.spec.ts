@@ -15,9 +15,7 @@ describe('permissionsByRole', () => {
 
   it("n'accorde l'outil d'import de plan qu'au super admin", () => {
     const rolesGranting = Object.entries(permissionsByRole)
-      .filter(([, permissions]) =>
-        permissions.includes('plans.import.mutate')
-      )
+      .filter(([, permissions]) => permissions.includes('plans.import.mutate'))
       .map(([role]) => role);
 
     expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
@@ -48,6 +46,16 @@ describe('permissionsByRole', () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>
         permissions.includes('plans.fiches.import_resume')
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([PlatformRole.SUPER_ADMIN]);
+  });
+
+  it("n'exempte que le super admin du quota journalier d'import IA", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes('plans.fiches.import_without_daily_quota')
       )
       .map(([role]) => role);
 
