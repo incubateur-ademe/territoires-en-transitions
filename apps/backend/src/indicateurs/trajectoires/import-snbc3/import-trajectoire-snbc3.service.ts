@@ -56,7 +56,9 @@ export class ImportTrajectoireSnbc3Service {
    * la date de la métadonnée et enregistre la release dans le bucket : tant
    * que l'import n'est pas allé au bout, l'un et l'autre désignent encore la
    * release précédente. Un rejeu partiel n'y touche pas, et n'est accepté que
-   * pour la release du dernier import complet.
+   * pour la release du dernier import complet, tant qu'aucun import complet
+   * commencé depuis n'a échoué (`pending-release.json`, écrit avant de
+   * toucher aux valeurs) : il faut alors relancer un import complet.
    *
    * Le statut et le rapport sont écrits dans `last-import.json`.
    */
@@ -86,6 +88,21 @@ export class ImportTrajectoireSnbc3Service {
       return prepared;
     }
     const { table, metadonneeId, report, releaseFiles } = prepared.data;
+
+    if (releaseFiles) {
+      // Avant toute écriture : jusqu'à l'enregistrement de cette release, les
+      // valeurs peuvent mélanger deux releases, et les rejeux partiels sont
+      // refusés.
+      const marked = await this.storage.markReleasePending(releaseFiles);
+      if (!marked.success) {
+        await this.storage.writeLastImport({
+          ...tracking,
+          status: 'failed',
+          error: marked.error,
+        });
+        return marked;
+      }
+    }
 
     await this.storage.writeLastImport({
       ...tracking,
@@ -181,17 +198,16 @@ export class ImportTrajectoireSnbc3Service {
     const { sha, date } = release.data;
 
     const isPartial = collectiviteIds !== undefined;
-    const imported = isPartial ? await this.storage.getImportedRelease() : null;
-    if (
-      isPartial &&
-      (imported?.commit !== sha || imported.version !== version)
-    ) {
-      this.logger.error(
-        `Rejeu partiel refusé : la release ${version}@${sha} n'est pas la dernière importée (${
-          imported ? `${imported.version}@${imported.commit}` : 'aucune'
-        })`
-      );
-      return failure('SNBC3_PARTIAL_IMPORT_RELEASE_MISMATCH');
+    if (isPartial) {
+      const imported = await this.storage.getReplayableRelease();
+      if (imported?.commit !== sha || imported.version !== version) {
+        this.logger.error(
+          `Rejeu partiel refusé : la release ${version}@${sha} n'est pas la dernière importée (${
+            imported ? `${imported.version}@${imported.commit}` : 'aucune'
+          })`
+        );
+        return failure('SNBC3_PARTIAL_IMPORT_RELEASE_MISMATCH');
+      }
     }
 
     const parsed = await readSnbc3Parquet(release.data.parquet);

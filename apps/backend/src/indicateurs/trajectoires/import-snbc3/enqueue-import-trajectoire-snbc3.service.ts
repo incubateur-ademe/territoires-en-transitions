@@ -62,7 +62,7 @@ export class EnqueueImportTrajectoireSnbc3Service implements OnModuleInit {
       }
 
       if (input.collectiviteIds) {
-        const imported = await this.storage.getImportedRelease();
+        const imported = await this.storage.getReplayableRelease();
         if (
           !imported ||
           !imported.commit.startsWith(input.commit) ||

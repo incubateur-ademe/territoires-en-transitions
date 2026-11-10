@@ -18,6 +18,8 @@ Importe une release du dépôt `snbc3` comme source d'indicateur `snbc3`
     la version sont dans les métadonnées de l'objet ;
   - `manifest.json` : le manifeste de la release, copié tel quel ; le commit et la version de ses
     métadonnées désignent la release en base ;
+  - `pending-release.json` : le commit et la version (métadonnées de l'objet) du dernier import
+    complet commencé, écrits avant de toucher aux valeurs ;
   - `last-import.json` : statut du dernier import (`running`, `done`, `done_with_errors` ou
     `failed`), dates, collectivités d'un rejeu partiel et rapport.
 - Le bucket (`standalone.xlsx`, `manifest.json`) et la date de la métadonnée ne sont mis à jour
@@ -74,7 +76,9 @@ La correspondance des codes SNBC 3 vers les indicateurs TeT est dans
      plus tard, après expiration de son verrou (10 min) ; l’import est idempotent.
    - `collectiviteIds` (facultatif) rejoue l'import pour quelques collectivités, par exemple
      après des erreurs. Ce rejeu n'est accepté que pour la release du dernier import complet
-     (commit et version du `manifest.json` du bucket, `PRECONDITION_FAILED` sinon). Il ne
+     (commit et version du `manifest.json` du bucket, `PRECONDITION_FAILED` sinon), et refusé
+     tant qu'un import complet commencé depuis (`pending-release.json`) n'est pas allé au bout :
+     les valeurs mélangent alors deux releases, relancer un import complet. Il ne
      réécrit ni le classeur ni la date de la métadonnée. Sans ce filtre, les collectivités
      absentes de la release perdent leurs valeurs `snbc3`.
    - Le rapport liste les territoires non rattachés, EPCI sans données, valeurs créées,
