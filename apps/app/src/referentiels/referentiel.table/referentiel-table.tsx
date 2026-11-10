@@ -3,6 +3,7 @@ import {
   ColumnFiltersState,
   ColumnVisibilityState,
   FlexRender,
+  Row,
   Table as ReactTable,
   useTable,
 } from '@tanstack/react-table';
@@ -38,6 +39,7 @@ import { useCycleLabellisation } from '../labellisations/useCycleLabellisation';
 import { useReferentielId } from '../referentiel-context';
 import { AuditColumnsScope, getAuditColumnsScope } from './audit-columns-scope';
 import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
+import { listTotalRows } from './list-total-rows';
 import { getTextFilterFn } from './referentiel-table.filters.utils';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
 import { removeStalePendingDetailleALaTache } from './remove-stale-pending-detaille-a-la-tache';
@@ -394,7 +396,7 @@ function TableContent({
               ))}
             </TableRow>
           ))}
-          <TableTotalRow table={table} />
+          <TableTotalRow table={table} rows={rows} />
         </>
       )}
     </TableWrapper>
@@ -416,27 +418,24 @@ type SummableColumnId = (typeof SUMMABLE_COLUMN_IDS)[number];
 
 function TableTotalRow({
   table,
+  rows,
 }: {
   table: ReactTable<ReferentielTableFeatures, ActionListItem>;
+  rows: Row<ReferentielTableFeatures, ActionListItem>[];
 }) {
-  // On somme uniquement les lignes de premier niveau (axes) du modèle filtré :
-  // leurs scores sont déjà agrégés sur toute la descendance, ce qui évite
-  // tout double comptage via les sous-lignes dépliées.
-  const topLevelRows = table.getFilteredRowModel().rows;
-
   const totals = useMemo(() => {
     const initial = Object.fromEntries(
       SUMMABLE_COLUMN_IDS.map((id) => [id, 0])
     ) as Record<SummableColumnId, number>;
 
-    return topLevelRows.reduce((acc, row) => {
+    return listTotalRows(rows).reduce((acc, row) => {
       const score = row.original.score;
       for (const id of SUMMABLE_COLUMN_IDS) {
         acc[id] += score[id] ?? 0;
       }
       return acc;
     }, initial);
-  }, [topLevelRows]);
+  }, [rows]);
 
   const valuesById: Record<string, { value: number; percentage?: boolean }> = {
     pointPotentiel: { value: totals.pointPotentiel },
