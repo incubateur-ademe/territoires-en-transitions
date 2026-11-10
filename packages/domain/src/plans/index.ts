@@ -37,5 +37,6 @@ export * from './plans/plan-status.enum.schema';
 export * from './plans/plan-type.schema';
 export * from './plans/plan-import-profile.enum.schema';
 export * from './plans/plan.schema';
+export * from './plans/suivi-plan.constants';
 
 export * from './plans/electrification/config/electrification-laureats.config';
