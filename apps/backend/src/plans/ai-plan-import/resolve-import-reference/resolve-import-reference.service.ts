@@ -64,17 +64,14 @@ export class ResolveImportReferenceService {
         ...(fiche.sharedWithCollectivites ?? []).map(({ id }) => id),
       ];
       // Une lecture publique ou des droits sur une autre collectivité ne suffisent pas.
-      if (
-        !scopes.includes(collectiviteId) ||
-        !scopes.includes(parsed.data.collectiviteId)
-      ) {
+      if (!scopes.includes(parsed.data.collectiviteId)) {
         return this.reject('FICHE_REFERENCE_UNAVAILABLE');
       }
-      const access = await this.fichePermissions.canWriteFiche(
+      const access = await this.fichePermissions.canLinkFicheToCollectivite(
         fiche.id,
+        collectiviteId,
         user,
-        tx,
-        true
+        tx
       );
       return access
         ? success({ ficheId: fiche.id })

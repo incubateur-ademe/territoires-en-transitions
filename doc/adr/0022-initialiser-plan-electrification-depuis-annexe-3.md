@@ -11,6 +11,9 @@ Le choix des indicateurs d'E07 est confirmé par l'équipe data. Pour E06 et
 E08, les identifiants des indicateurs de parc sont confirmés ; leurs définitions,
 leur adéquation métier et leur disponibilité restent à valider avant ouverture.
 Les correspondances restant à valider sont détaillées en fin de document.
+La conservation durable des références ADEME et le rattachement des sources
+de cibles aux plans sont prévus dans une PR dédiée, le lot 4D, avant
+l'intégration complète.
 
 Le [plan d'implémentation](../plans/2026-11-04-001-feat-import-annexe-3-electrification-plan.md)
 découpe ces décisions en incréments déployables séparément.
@@ -62,6 +65,23 @@ livraison, les versions techniques de contrat et de schéma proposées pour
 la reprise contre un changement incompatible de format ou d'interprétation.
 La V4 identifie le canevas officiel ; la version du catalogue identifie les
 correspondances métier. Les contrats génériques déjà livrés restent inchangés.
+
+**Révision du 10 novembre 2026 : séparer la revue de la persistance.** La proposition
+de sept colonnes de référence sur `axe` et `fiche_action`, préparée dans la
+[PR #5774](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5774),
+est retirée de cette PR avant fusion. Le lot 4A reste centré sur la structure,
+les liens et les effets après commit, sans migration. Les identités ADEME,
+les engagements retenus et le rattachement plan–source sont regroupés dans
+une PR 4D dédiée, avec les évolutions minimales du schéma existant qui seront
+justifiées par leurs usages. Les sept colonnes initiales et la proposition de
+lien plan–métadonnée ne sont pas automatiquement reconduites.
+Le refus général de modification du schéma, formulé dans une révision
+intermédiaire de cet ADR, est remplacé par ce découpage pour faciliter la revue.
+La contrainte reste de ne pas créer de nouvelle entité métier d'engagement,
+de cible ou de convention. Le lot 4D livre ses migrations éventuelles avec
+les écritures, lectures et validations qui les utilisent, avant la phase 5.
+Les vérifications de la version initiale de #5774 ne valident pas cette
+future livraison.
 
 ## Contexte
 
@@ -476,43 +496,54 @@ par le champ prévu dans l'annexe, sans leur attribuer de code d'engagement.
 Les quatre familles ADEME sont une correspondance de reporting, pas un
 niveau de l'arbre.
 
-Réutiliser `axe`, `fiche_action` et leurs relations. Ajouter seulement les
-champs de référence nécessaires sur les axes et fiches créés depuis le
-catalogue : code, nature et version du catalogue. La nature distingue notamment
-une action de référence, une sous-action et un indicateur oui/non converti.
-Pour les indicateurs prédéfinis, conserver leur `identifiantReferentiel` et leur
-ID existants. Ces champs sont livrés avec les écritures qui les utilisent,
-sans tables de provenance supplémentaires.
+Réutiliser `axe`, `fiche_action` et leurs relations, sans nouvelle entité métier.
+Les clés de source et les correspondances vers les IDs TeT suffisent à créer
+la structure et les liens dans la transaction ; le lot 4A ne modifie pas le
+schéma. Pour les indicateurs prédéfinis,
+conserver leur `identifiantReferentiel` et leur ID existants.
 
-Conserver les codes d'engagement sélectionnés dans A sur l'axe racine du plan.
-Cette liste distingue E01 et E02 malgré leur axe commun et n'est pas enrichie
-par les fiches actions. Elle ne constitue pas un registre de convention : aucune
-table d'engagement, API d'édition ou lecture dédiée n'est créée. Les DTO publics
-ordinaires et les accès directs en base ne permettent pas d'attribuer ces
-références ; l'import les renseigne après résolution et contrôle des droits.
-La duplication ordinaire ne copie pas cette identité d'annexe sur le nouveau
-plan ni sur les nouveaux objets.
+Le besoin métier reste de retrouver la correspondance ADEME d'un objet après
+renommage ou déplacement, en distinguant une action de référence, une
+sous-action et un indicateur oui/non converti. Il faut aussi conserver la
+sélection explicite de A : E01 et E02 restent distincts malgré leur axe commun,
+et les axes demandés par les fiches actions n'ajoutent aucun engagement.
+Les IDs TeT identifient les objets, mais ne constituent pas à eux seuls cette
+correspondance au catalogue ADEME.
 
-Un code reste attaché à l'objet survivant lors d'un renommage ou déplacement.
-Un élément libre n'en reçoit pas du fait de sa position. Le reporting utilise
-les identifiants et les liens actuels : les éléments supprimés ou sortis du
-plan ne sont pas comptés et une action de l'axe 1 n'est pas comptée deux fois
-pour E01 et E02. Les écarts avec la convention sont traités manuellement par
-l'ADEME et le support, comme prévu dans l'esquisse. Aucun mécanisme de
-détection des liens manquants, de restauration ou d'historisation métier
-indépendante des objets n'est ajouté.
+**Livraison dédiée en PR 4D :** préciser les identifiants attendus, leur
+conservation durable et les évolutions minimales des tables existantes.
+La revue porte ensemble sur le schéma, ses contrats et les écritures/lectures
+internes qui le consomment. Le lot doit fonctionner sans attendre le pipeline
+de la phase 5 et ne développe pas le reporting ADEME. Les checkpoints et
+comptes rendus ont une rétention technique ; ils ne remplacent pas cette
+identité métier, qui ne doit pas être masquée dans le JSON d'un job.
+
+La solution devra préserver ces règles : une édition ordinaire n'attribue pas
+de référence, une duplication ordinaire ne copie pas l'identité d'annexe et
+un élément libre n'en reçoit pas du fait de sa position. Le reporting devra
+utiliser les objets et liens actuels, sans compter les éléments supprimés ou
+sortis du plan ni compter deux fois une action de l'axe 1 pour E01 et E02.
+Les écarts avec la convention restent traités manuellement par l'ADEME et le
+support. Aucun moteur de restauration ou registre conventionnel n'est ajouté.
 
 ### 4. Conserver les cibles avec les sources de valeurs existantes
 
 Les cibles du tableau A sont des objectifs datés de la source "Annexe 3
 Électrification" dans `indicateur_valeur`. Elles coexistent avec les objectifs
 déjà saisis par la collectivité et les autres sources, sans les modifier.
-Réutiliser `indicateur_source` et `indicateur_source_metadonnee` ; ajouter à
-l'axe racine du plan un lien nullable vers sa métadonnée pour identifier les
-données issues de son import. Chaque plan importé a sa propre métadonnée,
-même si deux plans concernent le même indicateur, la même collectivité et
-la même année. Les lectures utilisent son `metadonneeId` exact, pas seulement
-le nom de la source ou la version la plus récente de cette source.
+Réutiliser `indicateur_source` et `indicateur_source_metadonnee`. Le besoin
+reste d'isoler les cibles de chaque plan, même si deux plans concernent le
+même indicateur, la même collectivité et la même année. Les lectures doivent
+cibler la métadonnée exacte du plan, pas seulement le nom de source ou sa
+version la plus récente.
+
+**Livraison dédiée en PR 4D :** définir et livrer le rattachement durable de
+cette métadonnée au plan, avec les adaptations minimales des tables existantes
+et les contrôles de cohérence et de droits. Le stockage précis reste à revoir
+dans cette PR. Le lot fournit la lecture de la source exacte du plan ; il
+réutilise les opérations sur indicateurs de 4B et les valeurs isolées par
+métadonnée de 4C. La rétention du job ou de son checkpoint ne doit pas
+conditionner les lectures du plan.
 
 Les écritures et les calculs doivent préserver cette isolation entre plans,
 ainsi que les sources existantes. Adapter les règles de regroupement et leurs
@@ -581,13 +612,14 @@ zéro reste une valeur. Aucun écran de gestion des engagements ni nouvelle
 API de registre conventionnel n'est ajouté. La modification de la convention
 ne fait pas partie de cette livraison.
 
-Pour E03 et E12, créer une fiche ordinaire sous l'axe concerné, avec une
-référence d'engagement et un statut initial "À venir". "Engagement retenu :
-Oui" ne signifie pas "Réalisé". Le suivi utilise ensuite le statut de la fiche.
+Pour E03 et E12, créer une fiche ordinaire sous l'axe concerné avec un statut
+initial "À venir". Son identification durable par engagement est livrée en
+4D, comme décrit en section 3. "Engagement retenu : Oui" ne
+signifie pas "Réalisé". Le suivi utilise ensuite le statut de la fiche.
 
 Supprimer, déplacer ou dissocier les objets reste possible avec les droits
 ordinaires. La suppression du plan ne supprime pas les valeurs d'indicateurs
-de la collectivité : seul son lien vers la métadonnée disparaît avec lui. Une fiche
+de la collectivité, quel que soit le rattachement de source retenu. Une fiche
 supprimée logiquement est exclue du suivi ordinaire. Le support s'appuie sur
 la convention d'origine pour les écarts ; le job et son compte rendu gardent
 leur rétention ordinaire, sans garantie d'archivage permanent de la convention.
@@ -596,7 +628,7 @@ leur rétention ordinaire, sans garantie d'archivage permanent de la convention.
 
 | Référence dans l'annexe | Comportement |
 | --- | --- |
-| Code d'action connu | Créer une fiche avec ses champs de référence ; reprendre les champs renseignés de l'annexe et les compléments du catalogue prévus pour cette référence. |
+| Code d'action connu | Créer une fiche à partir de la référence résolue ; reprendre les champs renseignés de l'annexe et les compléments du catalogue prévus pour cette référence. |
 | URL de fiche existante | Ajouter son rattachement au plan, sans copier la fiche, déplacer ses autres liens ou modifier son contenu, ses sous-actions et ses indicateurs. |
 | Action sans code ni URL | Créer une fiche libre sous l'axe/sous-axe indiqué. |
 | Code d'indicateur connu | Lier la définition du catalogue ; ne pas recréer l'indicateur ni écraser des valeurs locales. |
@@ -648,7 +680,8 @@ existante. Le chemin URL reste strictement limité aux liens, même si un champ
 de l'indicateur est vide.
 
 Un indicateur oui/non devient une sous-action de `fiche_action`, reliée par
-`parentId`, avec son titre et sa référence conservés. Un résultat "Oui" donne
+`parentId`, avec son titre conservé. Sa référence devra rester identifiable
+selon la solution durable livrée en 4D. Un résultat "Oui" donne
 le statut "Réalisé" ; "Non" donne "À venir". Une réponse vide est signalée
 et ne constitue pas une réalisation. L'année d'objectif devient une échéance
 en fin d'année, explicitement conventionnelle, sans inventer de date réelle
@@ -699,6 +732,11 @@ distingué d'une reprise ; le remplacement d'un plan existant relève du support
 
 La livraison principale comprend l'import, les identités de référence,
 les engagements, les indicateurs et le respect des données existantes.
+Elle réutilise les entités existantes. La conservation durable des identités
+ADEME, de la sélection de A et du rattachement des sources au plan est livrée
+en 4D, avec les adaptations minimales du schéma, avant l'intégration de la
+phase 5. Les primitives de structure, de liaison et de transaction peuvent
+être livrées indépendamment.
 Les documents de travail sont identifiés : Grist pour les références d'actions
 et leurs indicateurs, la table Notion pour les propositions de correspondances
 d'engagement. Seules les correspondances validées et livrées dans le catalogue
@@ -763,10 +801,11 @@ Les plans existants ne sont ni migrés ni supprimés automatiquement.
 - **Verrouiller le plan ou développer un moteur générique de modèles** ajoute
   un fonctionnement que le cadrage actuel ne demande plus.
 
-Le choix réutilise l'infrastructure d'import et les modèles métier existants.
-Des champs de référence et un lien de métadonnée restent nécessaires, avec des
-évolutions de contrats, de lecteurs et d'affichage. L'isolation des sources par
-plan demande une validation explicite, notamment pour les calculs. La liberté
+Le choix réutilise l'infrastructure d'import et les entités existantes. Les
+évolutions du schéma pour les références durables et le rattachement de source
+sont revues dans une PR dédiée, avec leur code consommateur. Elles ne créent
+pas de registre métier dans le stockage technique des jobs. L'isolation des
+sources par plan demande une validation, notamment pour les calculs. La liberté
 d'édition rend possibles les écarts au plan initial ; leur contrôle relève
 de l'ADEME et du support à partir des conventions, sans nouveau registre.
 
@@ -811,11 +850,12 @@ tests déjà exécutés :
 - Les personnalisés reçoivent leurs valeurs datées ; les oui/non deviennent
   des sous-actions ; un objectif "Oui" ne vaut pas résultat "Oui".
 - Renommer les axes, fiches et indicateurs personnalisés, déplacer ou retirer
-  les liens reste possible ; les références survivantes restent lisibles et
-  les éléments libres ne deviennent pas des références. Le titre d'un indicateur
+  les liens reste possible avec les droits ordinaires. Le titre d'un indicateur
   prédéfini reste celui du catalogue, sans renommage local ni global par l'import.
-  Une duplication ordinaire ne copie pas l'identité annexe ; les écritures
-  publiques ne permettent pas d'attribuer les codes réservés à l'import.
+- En 4D, vérifier que les références restent lisibles après édition,
+  qu'un élément libre ne devient pas une référence et
+  qu'une duplication ordinaire ne copie pas l'identité d'annexe. Les écritures
+  publiques ne doivent pas permettre d'attribuer les codes réservés à l'import.
 - Les erreurs d'écriture et workers concurrents ne laissent aucun agrégat
   partiel ni doublon ; tester la création d'indicateurs dans le rollback.
 - Les imports génériques conservent leur comportement. Tester le parcours
@@ -861,8 +901,14 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    dans l'onglet "Documents".
 3. **Lauréats.** Fournir une source maintenue et son mapping vers les collectivités
    TeT, avec une version et une validité vérifiables.
-4. **Cibles par source.** Vérifier l'isolation par métadonnée dans les écritures,
-   lectures et calculs de la phase 4, puis adapter la sélection et l'affichage
-   des sources en phase 6. La présence du mécanisme de sources ne garantit pas
-   encore la bonne lecture de deux plans partageant un indicateur. Cette
-   validation technique précède l'ouverture du profil.
+4. **Identité ADEME et engagements retenus — PR 4D.** Préciser quels identifiants
+   doivent rester exploitables après édition et livrer leur correspondance
+   durable aux objets TeT ainsi que la sélection explicite de A. Revoir le
+   schéma minimal avec ses écritures et lectures dans cette PR dédiée ; les
+   sept colonnes initialement proposées ne constituent pas une solution arrêtée.
+   Les IDs TeT seuls et les checkpoints expirables ne couvrent pas ce besoin.
+5. **Cibles par source — PR 4D.** Livrer le rattachement durable de la métadonnée
+   au plan avant la phase 5, puis vérifier les lectures par plan à partir des
+   opérations de 4B/4C et l'affichage en phase 6. Deux plans partageant un
+   indicateur ne doivent pas partager leurs cibles par défaut. Les adaptations
+   des tables existantes sont revues en 4D, sans nouvelle entité métier.

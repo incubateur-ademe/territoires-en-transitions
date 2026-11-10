@@ -20,6 +20,12 @@ import {
 import { ResolveEntityService } from './resolvers/resolve-entity.service';
 import { validateImportPlanInput } from './validators/plan.rules';
 
+export type ImportPlanOutput = {
+  planId: number;
+  fichesCount: number;
+  createdFicheIds: number[];
+};
+
 @Injectable()
 export class ImportPlanService {
   private readonly logger = new Logger(ImportPlanService.name);
@@ -37,7 +43,7 @@ export class ImportPlanService {
     /** Plan déjà créé (vide) à remplir ; un nouveau plan sinon. */
     planId?: number;
     tx?: Transaction;
-  }): Promise<Result<{ planId: number; fichesCount: number }, ImportErrors>> {
+  }): Promise<Result<ImportPlanOutput, ImportErrors>> {
     const { planInput, collectiviteId, user, planId, tx } = args;
 
     // 1. Validate business rules
@@ -50,7 +56,7 @@ export class ImportPlanService {
 
     // 2. Execute import in transaction
     const saveResult = await this.transactionManager.executeSingle<
-      { planId: number; fichesCount: number },
+      ImportPlanOutput,
       ImportErrors
     >(async (transaction) => {
       try {
@@ -87,8 +93,7 @@ export class ImportPlanService {
         // 2c. Create plan aggregate
         const planCreationResult = await this.planAggregate.create(
           { ...planCreationRequest.data, planId },
-          user,
-          transaction
+          { user, tx: transaction }
         );
 
         // Le message est montré à l'utilisateur : seul le détail d'une
@@ -111,7 +116,11 @@ export class ImportPlanService {
           );
         }
 
-        return success({ planId: planCreationResult.data, fichesCount });
+        return success({
+          planId: planCreationResult.data.planId,
+          createdFicheIds: planCreationResult.data.createdFicheIds,
+          fichesCount,
+        });
       } catch (error) {
         this.logger.error('Error during import transaction:', error);
         return failure(new TransactionError(error));
@@ -122,7 +131,18 @@ export class ImportPlanService {
       this.logger.error('Error saving import data:', saveResult.error);
       return saveResult;
     }
+    // Avec une transaction externe, seul son propriétaire connaît le commit.
+    if (!tx) {
+      await this.notifyCreatedFiches(saveResult.data);
+    }
     this.logger.log(`Import completed successfully`);
     return saveResult;
+  }
+
+  /** À appeler par le propriétaire de la transaction après son commit. */
+  async notifyCreatedFiches(
+    importedPlan: Pick<ImportPlanOutput, 'planId' | 'createdFicheIds'>
+  ): Promise<void> {
+    await this.planAggregate.notifyCreatedFiches(importedPlan);
   }
 }

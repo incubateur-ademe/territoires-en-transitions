@@ -10,7 +10,10 @@ import {
   isClientError,
   isImportError,
 } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
-import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import {
+  ImportPlanOutput,
+  ImportPlanService,
+} from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
@@ -480,38 +483,39 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     const stats = telemetry.stats();
 
     const persist = () =>
-      this.transactionManager.executeSingle<number, string>(async (tx) => {
-        const planId = await this.createPlan(planInput, job, tx);
-        if (!planId.success) {
-          return planId;
+      this.transactionManager.executeSingle<ImportPlanOutput, string>(
+        async (tx) => {
+          const imported = await this.createPlan(planInput, job, tx);
+          if (!imported.success) {
+            return imported;
+          }
+          const { planId } = imported.data;
+          // Job lancé avant que le plan ne soit créé à l'enfilement.
+          if (job.createdPlanId === null) {
+            await this.planVerificationRepository.markAsImporting(planId, tx);
+          }
+          const marked =
+            await this.planVerificationRepository.markAsImportedByAi(
+              planId,
+              tx
+            );
+          if (!marked.success) {
+            return failure('Marquage du plan importé impossible');
+          }
+          const done = await this.jobRepository.markDone({
+            id: job.id,
+            attempt: job.attempt,
+            draft: normalizedDraft,
+            stepStates,
+            createdPlanId: planId,
+            stats,
+            tx,
+          });
+          return done.success
+            ? success(imported.data)
+            : failure('Enregistrement du job terminé impossible');
         }
-        // Job lancé avant que le plan ne soit créé à l'enfilement.
-        if (job.createdPlanId === null) {
-          await this.planVerificationRepository.markAsImporting(
-            planId.data,
-            tx
-          );
-        }
-        const marked = await this.planVerificationRepository.markAsImportedByAi(
-          planId.data,
-          tx
-        );
-        if (!marked.success) {
-          return failure('Marquage du plan importé impossible');
-        }
-        const done = await this.jobRepository.markDone({
-          id: job.id,
-          attempt: job.attempt,
-          draft: normalizedDraft,
-          stepStates,
-          createdPlanId: planId.data,
-          stats,
-          tx,
-        });
-        return done.success
-          ? success(planId.data)
-          : failure('Enregistrement du job terminé impossible');
-      });
+      );
     const created = await telemetry.measure('persistence', persist, (result) =>
       result.success
         ? { status: 'ok', details: { fichesCreated: planInput.actions.length } }
@@ -535,7 +539,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         ...statsTrackingProperties(stats),
         collectiviteId: job.collectiviteId,
         jobId: job.id,
-        planId: created.data,
+        planId: created.data.planId,
         ...recap,
         durationSeconds: secondsSince(job.createdAt),
         processingSeconds: job.startedAt
@@ -549,15 +553,23 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     });
 
     // Hors transaction : un envoi manqué ne défait pas le plan créé.
-    await this.notifyPlanImportedService.notifyPlanImported({
-      createdBy: job.createdBy,
-      collectiviteId: job.collectiviteId,
-      planId: created.data,
-      planName: job.options.planName,
-      recap,
-    });
+    await this.importPlanService.notifyCreatedFiches(created.data);
+    try {
+      await this.notifyPlanImportedService.notifyPlanImported({
+        createdBy: job.createdBy,
+        collectiviteId: job.collectiviteId,
+        planId: created.data.planId,
+        planName: job.options.planName,
+        recap,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Import ${job.id}: notification du plan ${created.data.planId} impossible`,
+        error
+      );
+    }
     await this.enqueueCompletePlanSecteursService.enqueue({
-      planIds: [created.data],
+      planIds: [created.data.planId],
       collectiviteId: job.collectiviteId,
       userId: job.createdBy,
     });
@@ -568,7 +580,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     planInput: ImportPlanInput,
     job: AiPlanImportJob,
     tx: Transaction
-  ): Promise<Result<number, string>> {
+  ): Promise<Result<ImportPlanOutput, string>> {
     try {
       const saved = await this.importPlanService.save({
         planInput,
@@ -578,7 +590,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         tx,
       });
       return saved.success
-        ? success(saved.data.planId)
+        ? success(saved.data)
         : this.planCreationFailed(job.id, saved.error, saved.cause);
     } catch (error) {
       // Avec `tx` partagé, le TransactionManager relance son échec en

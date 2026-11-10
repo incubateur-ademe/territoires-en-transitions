@@ -1,5 +1,8 @@
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
-import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import {
+  ImportPlanOutput,
+  ImportPlanService,
+} from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanCreationError } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
@@ -98,7 +101,7 @@ type MockOverrides = {
   sourceContent?: string;
   maxInputTokens?: number;
   generateStructured?: () => Promise<unknown>;
-  save?: () => Promise<Result<{ planId: number; fichesCount: number }, never>>;
+  save?: () => Promise<Result<ImportPlanOutput, never>>;
   markDone?: () => Promise<Result<AiPlanImportJob, string>>;
   markFailed?: () => Promise<Result<AiPlanImportJob, string>>;
   getById?: () => Promise<Result<AiPlanImportJob, string>>;
@@ -171,9 +174,15 @@ const buildMocks = (overrides: MockOverrides = {}) => {
   } as unknown as LlmService;
 
   const save = vi.fn(
-    overrides.save ?? (async () => success({ planId: 7, fichesCount: 1 }))
+    overrides.save ??
+      (async () =>
+        success({ planId: 7, fichesCount: 1, createdFicheIds: [10] }))
   );
-  const importPlanService = { save } as unknown as ImportPlanService;
+  const notifyCreatedFiches = vi.fn(async () => undefined);
+  const importPlanService = {
+    save,
+    notifyCreatedFiches,
+  } as unknown as ImportPlanService;
 
   const markAsImportedByAi = vi.fn(async () => success(undefined));
   const markAsImporting = vi.fn(async () => success(undefined));

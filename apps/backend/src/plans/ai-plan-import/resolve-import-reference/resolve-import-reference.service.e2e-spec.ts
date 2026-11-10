@@ -4,6 +4,9 @@ import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/m
 import { groupementTable } from '@tet/backend/collectivites/shared/models/groupement.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
+import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
@@ -19,7 +22,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import assert from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import {
@@ -320,6 +323,156 @@ describe('Résolution des liens TeT pour un import', () => {
       await resolveIndicateur(indicateurUrl(indicateur.id)),
       'IMPORT_REFERENCE_UNAUTHORIZED'
     );
+  });
+
+  test('refuse la liaison à une collectivité non destinataire du partage, même avec les droits sur la fiche', async () => {
+    const fiche = await createFiche();
+    const autre = await createContext();
+    const permissions = app.get(FicheActionPermissionsService);
+    const canLink = () =>
+      permissions.canLinkFicheToCollectivite(
+        fiche.id,
+        autre.collectiviteId,
+        context.user
+      );
+
+    expect(
+      await permissions.canWriteFiche(fiche.id, context.user)
+    ).not.toBeNull();
+    expect(await canLink()).toBe(false);
+
+    await db.db.insert(ficheActionSharingTable).values({
+      ficheId: fiche.id,
+      collectiviteId: autre.collectiviteId,
+    });
+    expect(await canLink()).toBe(true);
+
+    await db.db
+      .delete(ficheActionSharingTable)
+      .where(eq(ficheActionSharingTable.ficheId, fiche.id));
+    expect(await canLink()).toBe(false);
+  });
+
+  test('refuse la liaison interne des fiches absentes ou supprimées', async () => {
+    const permissions = app.get(FicheActionPermissionsService);
+    const fiche = await createFiche({ deleted: true });
+
+    for (const ficheId of [fiche.id, 2147483647]) {
+      expect(
+        await permissions.canLinkFicheToCollectivite(
+          ficheId,
+          context.collectiviteId,
+          context.user
+        )
+      ).toBe(false);
+    }
+  });
+
+  test('refuse la liaison interne sans droits de modification de la fiche', async () => {
+    context = await createContext(CollectiviteRole.LECTURE);
+    const fiche = await createFiche();
+
+    expect(
+      await app
+        .get(FicheActionPermissionsService)
+        .canLinkFicheToCollectivite(
+          fiche.id,
+          context.collectiviteId,
+          context.user
+        )
+    ).toBe(false);
+  });
+
+  test('une révocation concurrente attend le commit de la liaison puis retire son lien', async () => {
+    const owner = await createContext();
+    const fiche = await createFiche({ collectiviteId: owner.collectiviteId });
+    await db.db.insert(ficheActionSharingTable).values({
+      ficheId: fiche.id,
+      collectiviteId: context.collectiviteId,
+    });
+    const [axe] = await db.db
+      .insert(axeTable)
+      .values({ collectiviteId: context.collectiviteId, nom: 'Plan cible' })
+      .returning();
+    let startRevocation!: (pid: number) => void;
+    let failRevocation!: (error: unknown) => void;
+    const revocationStarted = new Promise<number>((resolve, reject) => {
+      startRevocation = resolve;
+      failRevocation = reject;
+    });
+    let revocation = Promise.resolve();
+
+    try {
+      await db.db.transaction(async (tx) => {
+        const { rows: importRows } = await tx.execute<{ pid: number }>(
+          sql`SELECT pg_backend_pid() AS pid`
+        );
+        expect(
+          await app
+            .get(FicheActionPermissionsService)
+            .canLinkFicheToCollectivite(
+              fiche.id,
+              context.collectiviteId,
+              context.user,
+              tx
+            )
+        ).toBe(true);
+
+        revocation = db.db
+          .transaction(async (revocationTx) => {
+            const { rows } = await revocationTx.execute<{ pid: number }>(
+              sql`SELECT pg_backend_pid() AS pid`
+            );
+            startRevocation(rows[0].pid);
+            await app
+              .get(ShareFicheService)
+              .bulkShareFiches(
+                [fiche.id],
+                [],
+                [context.collectiviteId],
+                owner.user.id,
+                revocationTx
+              );
+          })
+          .catch((error) => {
+            failRevocation(error);
+            throw error;
+          });
+
+        const revocationPid = await revocationStarted;
+        await vi.waitFor(
+          async () => {
+            const { rows } = await db.db.execute<{ blockers: number[] }>(
+              sql`SELECT pg_blocking_pids(${revocationPid}) AS blockers`
+            );
+            expect(rows[0].blockers).toContain(importRows[0].pid);
+          },
+          { timeout: 5000, interval: 20 }
+        );
+        expect(
+          (
+            await app
+              .get(FicheActionRepository)
+              .addAxeLinks(fiche.id, [axe.id], context.user.id, tx)
+          ).success
+        ).toBe(true);
+      });
+    } finally {
+      await revocation;
+    }
+
+    expect(
+      await db.db
+        .select()
+        .from(ficheActionSharingTable)
+        .where(eq(ficheActionSharingTable.ficheId, fiche.id))
+    ).toEqual([]);
+    expect(
+      await db.db
+        .select()
+        .from(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.ficheId, fiche.id))
+    ).toEqual([]);
   });
 
   test('résout un indicateur personnalisé sans changer sa périodicité ni ses valeurs', async () => {

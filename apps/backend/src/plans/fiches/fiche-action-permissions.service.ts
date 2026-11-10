@@ -24,6 +24,7 @@ import {
 import { and, eq, getTableColumns, isNotNull, sql } from 'drizzle-orm';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { AuthenticatedUser, AuthUser } from '../../users/models/auth.models';
+import { ficheActionSharingTable } from './share-fiches/fiche-action-sharing.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import { ficheActionTable } from './shared/models/fiche-action.table';
 
@@ -240,13 +241,12 @@ export default class FicheActionPermissionsService {
 
     // Vérifie d'abord la permission directe de suppression au niveau
     // collectivité.
-    const directDeletePermissionResult =
-      await this.permissionService.isAllowed(
-        user,
-        operation,
-        ResourceType.COLLECTIVITE,
-        { collectiviteId: fiche.collectiviteId }
-      );
+    const directDeletePermissionResult = await this.permissionService.isAllowed(
+      user,
+      operation,
+      ResourceType.COLLECTIVITE,
+      { collectiviteId: fiche.collectiviteId }
+    );
     if (directDeletePermissionResult.success) {
       return true;
     }
@@ -364,5 +364,37 @@ export default class FicheActionPermissionsService {
       tx,
       doNotThrow
     );
+  }
+
+  /** Le droit d'écriture ne suffit pas à rattacher une fiche à une autre collectivité. */
+  async canLinkFicheToCollectivite(
+    ficheId: number,
+    collectiviteId: number,
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<boolean> {
+    const ficheQuery = (tx ?? this.databaseService.db)
+      .select()
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheId));
+    // Une suppression ou révocation concurrente attend la fin de la liaison.
+    const [fiche] = await (tx ? ficheQuery.for('share') : ficheQuery);
+    if (!fiche || fiche.deleted) return false;
+
+    if (fiche.collectiviteId !== collectiviteId) {
+      const sharingQuery = (tx ?? this.databaseService.db)
+        .select({ ficheId: ficheActionSharingTable.ficheId })
+        .from(ficheActionSharingTable)
+        .where(
+          and(
+            eq(ficheActionSharingTable.ficheId, ficheId),
+            eq(ficheActionSharingTable.collectiviteId, collectiviteId)
+          )
+        );
+      const [sharing] = await (tx ? sharingQuery.for('share') : sharingQuery);
+      if (!sharing) return false;
+    }
+
+    return (await this.canWriteFiche(ficheId, user, tx, true)) !== null;
   }
 }

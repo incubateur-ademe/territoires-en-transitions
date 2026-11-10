@@ -26,9 +26,10 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 2B2b — Codes et compléments des fiches actions : [#5756](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5756), implémentée et vérifiée, en revue ; correspondances métier réelles encore à livrer avant ouverture.
 - [x] PR 3A — Lecture documentaire : [#5757](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5757), implémentée et vérifiée, en revue.
 - [x] PR 3B — Extraction du canevas DOCX V4 avec assistance IA ciblée : [#5759](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5759), implémentée et vérifiée, en revue. Profil de production toujours fermé.
-- [ ] PR 4A — Axes et liens de fiches.
+- [x] PR 4A — Structure explicite, liens et effets après commit : [#5774](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5774), implémentée et vérifiée, en revue. Aucun changement de schéma ; profil de production toujours fermé.
 - [ ] PR 4B — Indicateurs et liens.
-- [ ] PR 4C — Valeurs sans écrasement et sources isolées par plan.
+- [ ] PR 4C — Valeurs sans écrasement et isolation par métadonnée.
+- [ ] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources.
 - [ ] PR 5 — Pipeline complet et cycle de vie.
 - [ ] PR 6 — Parcours et lecture dans l'app.
 - [ ] Phase 7 — Qualification et ouverture en production.
@@ -37,17 +38,22 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 Une case cochée signifie que le lot est implémenté et vérifié dans sa PR,
 pas qu'il est fusionné ou déployé. L'ouverture en production reste une étape distincte.
 
-La [révision de l'ADR du 5 novembre](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#statut)
-retire les cinq tables proposées dans la première version de #5722. Les
-engagements sont représentés par les axes, fiches et indicateurs existants ;
-les cibles utilisent les sources de valeurs, avec une métadonnée par plan.
+Le cadrage réutilise les entités existantes, sans nouveau modèle métier
+d'engagement, de cible ou de convention. Les évolutions minimales de schéma
+pour les références durables et le rattachement des sources sont revues dans
+la PR 4D dédiée ; la PR 4A reste sans migration. Les engagements sont représentés
+par les axes, fiches et indicateurs existants ; les cibles utilisent les sources
+de valeurs.
 Le type de plan est identifié par son couple existant `(categorie, type)`,
 comme le PCAET, sans ajouter de colonne d'identification.
-Les champs nécessaires sont livrés avec leurs écritures et lectures dans
-les phases 4 à 6. Les validations des définitions E06/E08, du catalogue Grist
-vers TeT et du mapping des lauréats restent à obtenir avant ouverture.
+La conservation durable des identités ADEME, de la sélection des engagements
+et du rattachement des sources aux plans est livrée en 4D avant la phase 5.
+Ces besoins demeurent requis pour l'import et le futur reporting ; les clés
+techniques de création ne les résolvent pas. Les validations des définitions
+E06/E08, du catalogue Grist vers TeT et du mapping des lauréats restent à obtenir
+avant ouverture.
 
-Chaque PR contient son code, ses migrations éventuelles, ses tests et la mise
+Chaque PR contient son code, ses éventuelles migrations, ses tests et la mise
 à jour de sa documentation. Elle compile et fonctionne sans une PR suivante.
 Pour les nouveaux comportements, privilégier les suites e2e existantes et
 éviter de créer des fichiers de tests unitaires. Les tests d'import utilisent
@@ -67,28 +73,53 @@ les engagements ou ignorerait les indicateurs des fiches actions.
 | 1. Contrats et suivi des jobs | 1A, 1B | Jobs historiques compatibles ; suivi retrouvable après fermeture ; admission annexe fermée côté serveur | Aucune phase suivante |
 | 2. Identification et références métier | 2A, 2B1, 2B2a, 2B2b | Modèle existant réutilisé ; type identifié par catégorie et libellé ; résolution des références testable sans import | Phase 1 ; 2B2a/2B2b réutilisent 2B1 |
 | 3. Lecture et extraction de l'annexe | 3A, 3B | Document transformé en brouillon typé et validé, sans écriture métier | Phases 1 et 2 |
-| 4. Primitives de persistance | 4A, 4B, 4C | Création et liaison sous transaction, sans écraser les données existantes | Phases 1 et 2 |
-| 5. Import complet côté backend | 5 | Pipeline, reprise et transaction finale opérationnels ; admission toujours fermée | Phases 1 à 4 |
+| 4. Primitives de persistance | 4A, 4B, 4C, 4D | Création, liaison et références durables sous transaction, avec lectures isolées par source | Phases 1 et 2 ; 4D réutilise 4A/4B/4C |
+| 5. Import complet côté backend | 5 | Pipeline, reprise et transaction finale opérationnels ; admission toujours fermée | Phases 1 à 4, y compris 4D |
 | 6. Parcours et lecture dans l'app | 6 | Parcours complet et cibles conventionnelles affichables ; ouverture toujours contrôlée | Phases 1 à 5 |
 | 7. Qualification et ouverture | Pas de PR artificielle d'activation | Ouverture à un premier groupe de lauréats, puis élargissement | Phase 6 et prérequis métier validés |
 | 8. Budgets et financements, facultatif | 8 | Import budgétaire additionnel ; le socle reste utilisable sans lui | Socle complet des phases 1 à 6 |
 
 Les phases 3 et 4 peuvent être développées en parallèle après la phase 2.
 À l'intérieur d'une phase, chaque PR peut être fusionnée et déployée avant la
-suivante. Une phase terminée reste un état de production supporté si le travail
+suivante. En phase 4, 4B fournit les opérations d'indicateurs et de sources,
+4C travaille avec un identifiant de métadonnée explicite et 4D livre son
+rattachement durable au plan avec les références ADEME. Une phase terminée
+reste un état de production supporté si le travail
 s'arrête là. Le nombre de PR n'est pas une estimation de délai : l'appétit
 produit de deux semaines ne vaut pas engagement sur ces travaux.
 
 Le découpage sépare les revues qui demandent des raisonnements différents :
 contrats de jobs, extraction documentaire, intégrité des liens, concurrence
 sur les valeurs. La PR 5 assemble des services déjà testés ; elle ne doit pas
-devenir la PR qui implémente toutes les écritures. Éviter les PR de types seuls
-ou de migrations inutilisables sans leur code associé.
+devenir la PR qui implémente toutes les écritures. La PR 4D isole la revue du
+schéma et de ses usages, sans ajouter de reporting ou de parcours utilisateur.
+Éviter les PR de types seuls ou de migrations sans comportement utilisable.
 Le catalogue et la préparation des engagements (2B1) sont revus séparément
 des références de fiches et des droits d'accès associés (2B2). Le lot 2B2 est lui-même séparé
 entre les URL et l'éligibilité (2B2a), puis les
 codes et la complétion des fiches actions (2B2b). Ces lots livrent des services internes
 complets, sans ouvrir l'import ni créer de données.
+
+## Livraison dédiée avant la phase 5 — PR 4D
+
+- [ ] **Identité ADEME et sélection des engagements :** définir et livrer en 4D la
+  conservation des identifiants attendus pour le reporting après renommage ou
+  déplacement. Une duplication ordinaire ne doit pas copier l'identité d'annexe.
+  Préserver séparément la sélection de A, notamment E01/E02,
+  sans la déduire des axes créés à la demande des fiches actions. Les IDs TeT
+  identifient les objets, mais ne définissent pas leur correspondance ADEME.
+- [ ] **Isolation des cibles :** définir et livrer en 4D le rattachement durable
+  de la métadonnée de source exacte d'un plan. Les écritures, lectures et calculs
+  de deux plans doivent rester
+  séparés, y compris pour le même indicateur et la même période.
+
+Le schéma précis reste à définir dans cette PR : réutiliser les tables
+existantes et justifier chaque adaptation par ses écritures et lectures.
+Ne pas déplacer ces données métier dans le JSON d'un job : les checkpoints
+restent des données de reprise avec leur rétention technique. La PR 4D doit
+être utilisable et vérifiée sans attendre la phase 5 ; elle précède
+l'intégration complète et la qualification pour le reporting. Elle ne comprend
+ni dashboard ni moteur de reporting.
 
 ## Règles communes de déploiement
 
@@ -107,8 +138,9 @@ complets, sans ouvrir l'import ni créer de données.
 - Fermer l'admission interdit les nouveaux imports annexe. Cela ne supprime
   aucun plan et ne masque ni le suivi, ni le compte rendu, ni la reprise des
   jobs déjà admis. Les consommateurs continuent à comprendre leur profil.
-- Les migrations sont additives et passent avant le code qui les utilise.
-  Un rollback applicatif garde les tables et les données. Après ouverture,
+- Les migrations additives de 4D sont livrées avec leurs usages et passent
+  avant le code qui les utilise. Un rollback applicatif garde les données.
+  Après ouverture,
   conserver un backend au moins aussi capable que celui de la phase 5 et une
   app capable de lire les jobs et les sources de valeurs de la phase 6. Revenir au
   worker générique initial n'est pas un rollback sûr.
@@ -266,8 +298,9 @@ utilisée par le backend et l'app, sans nouvelle table ni migration.
   l'admission annexe fermée. L'identification d'un type ne vaut ni autorisation
   d'import ni contrôle d'éligibilité.
 - Réviser l'ADR et le découpage pour utiliser les axes, fiches, indicateurs et
-  sources existants. Les champs de référence sont livrés en 4A, les métadonnées
-  et valeurs en 4B/4C, avec les services qui les consomment. Aucune nouvelle
+  sources existants. Les écritures et liens sont livrés en 4A/4B/4C ; les
+  références durables et le rattachement des sources sont livrés en 4D avant
+  la phase 5. Aucune nouvelle
   lecture d'engagements ni API d'édition n'est exposée dans ce lot.
 
 **Validation attendue :** suites e2e existantes pour la lecture des types,
@@ -762,17 +795,21 @@ aucune admission annexe en production et aucune écriture métier partielle.
 **Périmètre :** [création d'agrégat](../../apps/backend/src/plans/plans/create-plan-aggregate/),
 adaptateurs existants et liaison des fiches aux axes.
 
+**Livraison 4A :** l'agrégat reçoit des axes et fiches identifiés par clé, y
+compris les axes vides, et retourne les correspondances vers les IDs créés.
+L'adaptateur Excel/IA générique conserve ses entrées par chemins et titres.
+Les liens de fiches existantes sont ajoutés sous transaction, sans mutation de
+leur contenu. Le contrôle de portée et de partage est commun au résolveur
+et à l'écriture. Les clés locales à la requête servent à relier les objets
+créés ; elles n'ajoutent pas d'identité métier persistante. Le schéma et les
+privilèges SQL restent inchangés.
+Les notifications sont déclenchées par le propriétaire de la transaction après
+le commit, y compris après l'enregistrement du job IA terminé. Leur échec
+n'invalide pas le plan créé. L'assemblage du pipeline Électrification reste en PR 5.
+
 - Accepter des axes explicites, y compris sans fiche, et des clés
   `sourceKey`/`parentSourceKey`. Retourner les correspondances clés → IDs.
   Garder l'adaptateur générique fonctionnel et ses entrées actuelles.
-- Ajouter sur les axes et fiches existants les champs de référence nécessaires :
-  code, nature et version du catalogue. Conserver sur le plan racine la liste
-  des codes d'engagement retenus dans A, sans la déduire des axes demandés par B.
-  Le service interne les écrit après résolution, sous la transaction appelante.
-  Livrer ces champs avec leurs écritures, sans tables de provenance ni snapshots
-  répétés du fichier ou du job. Une duplication ordinaire ne les copie pas sur
-  les nouveaux objets. Les DTO publics et les accès directs en base ne permettent
-  pas de forger ces références ; vérifier les droits/RLS applicables.
 - Ajouter les liens de fiches existantes aux axes sans copier leur contenu,
   remplacer leurs autres liens ou modifier leurs sous-actions/indicateurs.
   Conserver les permissions ordinaires, y compris le partage entre collectivités.
@@ -782,13 +819,13 @@ adaptateurs existants et liaison des fiches aux axes.
   d'effet externe émise avant que la transaction englobante ait réussi.
 
 **Validation :** axe vide, homonymes, parents corrects, rollback, liens existants
-conservés, partage et droits, import générique, codes après renommage/déplacement,
-duplication sans identité annexe et refus d'attribution par les écritures publiques.
+conservés, partage et droits, import générique et validation des clés locales.
 Aucun webhook après rollback ;
 un échec de notification ne provoque pas une seconde création.
 
 **Déploiement et arrêt possible :** amélioration complète de l'agrégat existant,
-sans activation annexe. Revenir au code précédent avant ouverture reste possible.
+sans migration ni activation annexe. Revenir au code précédent avant ouverture
+reste possible.
 
 ### PR 4B — Indicateurs et liens sous transaction appelante
 
@@ -805,29 +842,27 @@ liens axe/indicateur et fiche/indicateur.
   Ne pas utiliser les setters qui remplacent toutes les relations, notamment
   `setAxeIndicateurs` et `upsertIndicateurFiches`, comme des opérations d'ajout.
   Ne modifier ni définition, ni valeurs, ni liens préexistants sur le chemin URL.
-- Réutiliser les sources et métadonnées d'indicateurs. Ajouter au plan racine
-  un lien nullable vers sa métadonnée. La suppression du plan retire ce lien,
-  sans supprimer les valeurs de la collectivité. Créer une métadonnée de source
-  "Annexe 3 Électrification" distincte par plan, sous la transaction commune,
-  sans créer de table d'engagement ou de cible. Contrôler la cohérence plan,
-  collectivité, unicité et permissions ; les écritures ordinaires ne peuvent pas
-  attribuer librement ce lien. La PR 4C consommera cet identifiant exact
-  pour les écritures et les lectures de valeurs.
+- Réutiliser la création de sources et métadonnées d'indicateurs sous la
+  transaction commune, en conservant leurs contrôles. Retourner l'identifiant
+  exact utilisable par 4C. Le rattachement durable au plan et ses lectures
+  appartiennent à 4D ; 4B reste utilisable sans ce rattachement.
 
 **Validation :** création ordinaire inchangée ; rollback de toutes les données
 de l'indicateur ; liens préservés ; droits refusés ; ordre des verrous ; titres
-prédéfinis inchangés ; métadonnées de deux plans distinctes ; suppression d'un
-plan sans perte des valeurs. Les appels autorisés n'utilisent pas de contournement des droits.
+prédéfinis inchangés ; création de métadonnées distinctes et rollback commun.
+Les appels autorisés n'utilisent pas de contournement des droits.
 
 **Déploiement et arrêt possible :** nouvelles opérations internes complètes,
 API ordinaires conservées, aucune écriture issue d'une annexe.
 
-### PR 4C — Écrire les valeurs sans écrasement et isoler les sources par plan
+### PR 4C — Écrire les valeurs sans écrasement et isoler les métadonnées
 
 **Périmètre :** [écriture des valeurs](../../apps/backend/src/indicateurs/valeurs/write-indicateur-valeurs/),
 lectures et calculs par métadonnée, compte rendu des conflits. Ces règles
 méritent une revue séparée de la création des définitions : elles protègent
 les saisies existantes et concurrentes ainsi que les valeurs des autres plans.
+Les opérations prennent un `metadonneeId` explicite et contrôlé ; elles ne
+dépendent pas du rattachement au plan livré en 4D.
 
 - Lire, comparer et écrire sous le même verrou de valeurs et la même transaction.
   Préserver séparément résultat, objectif et métadonnées déjà présents, y compris
@@ -841,7 +876,8 @@ les saisies existantes et concurrentes ainsi que les valeurs des autres plans.
 - Écrire les cibles de A comme objectifs datés sous la métadonnée propre au
   plan, sans toucher à l'objectif de la collectivité ni aux autres sources.
   Zéro est une valeur ; une cible absente n'invente ni résultat ni objectif.
-  Réutiliser les lectures de valeurs en ciblant le `metadonneeId` exact du plan.
+  Réutiliser les lectures de valeurs en ciblant le `metadonneeId` fourni.
+  La résolution durable de cet identifiant depuis le plan est livrée en 4D.
   Deux plans partageant un indicateur ne doivent pas lire la dernière valeur
   disponible sous le seul nom de source.
 - Adapter l'isolation des calculs par métadonnée, à partir du mécanisme PCAET
@@ -852,13 +888,54 @@ les saisies existantes et concurrentes ainsi que les valeurs des autres plans.
 
 **Validation :** résultat présent/objectif absent et inverse ; zéro ; données
 externes ; écritures concurrentes ; périodes invalides ; rollback ; chemin URL
-strictement sans modification ; deux plans de la même collectivité, même
-indicateur et même période avec cibles distinctes ; lectures et calculs isolés
-par métadonnée ; absence d'effet sur les sources collectivité et PCAET.
+strictement sans modification ; deux métadonnées pour la même collectivité,
+le même indicateur et la même période avec cibles distinctes ; lectures et
+calculs isolés par métadonnée ; absence d'effet sur les sources collectivité et
+PCAET.
 Préserver l'ordre de verrouillage définitions → valeurs.
 
 **Déploiement et arrêt possible :** opération interne testée, sans modifier
 le comportement des saisies et imports ordinaires qui ne l'appellent pas.
+
+### PR 4D — Références durables et rattachement des sources
+
+**Périmètre :** adaptations minimales des tables existantes d'axes, de fiches
+et de sources, contrats et services internes qui écrivent et lisent ces
+références. Réutiliser l'agrégat de 4A et les opérations de 4B/4C. Le lot ne
+crée aucune nouvelle entité métier d'engagement, de cible ou de convention.
+
+- Définir les identifiants ADEME à conserver et leur correspondance avec les
+  objets TeT. Justifier chaque champ et contrainte par ses usages.
+- Conserver la sélection explicite des engagements de A, distincte des axes
+  demandés par les fiches actions et des objets libres. E01/E02 partagent un axe
+  sans perdre leur distinction. Préserver la référence des oui/non convertis.
+- Attribuer les références aux nouveaux objets après résolution, sous la
+  transaction appelante et les droits ordinaires. Les objets liés par URL
+  restent inchangés. Protéger l'attribution contre les DTO publics et les
+  écritures directes en base ; une duplication ordinaire ne la copie pas.
+- Créer et retrouver la source exacte d'un plan sous la même transaction.
+  Contrôler cohérence, collectivité et permissions, sans donner de droits
+  supplémentaires par ce rattachement. La suppression du plan conserve les
+  valeurs de la collectivité.
+- Livrer les lectures internes des références et de la source d'un plan,
+  ainsi que leur branchement sur les lectures de valeurs de 4C. La purge du
+  job n'efface pas ces informations. Les services sont exercés ensemble avant
+  leur assemblage dans le worker en phase 5.
+- Livrer les migrations additives, contrats, écritures, lectures et tests dans
+  cette PR. Préserver les objets ordinaires et leur duplication ; ne pas créer
+  de dashboard, de registre de convention ou de moteur de reporting.
+
+**Validation :** attribution puis lecture sous transaction ; renommage et
+déplacement sans perte d'identité ; E01/E02 distincts ; axe libre sans référence
+implicite ; duplication sans identité d'annexe ; rejet des attributions
+publiques ; permissions ; rollback complet. Deux plans de la même collectivité
+partageant un indicateur gardent leurs sources et cibles distinctes à la
+lecture ; la suppression d'un plan conserve les valeurs. Vérifier les
+migrations et la compatibilité du code précédent.
+
+**Déploiement et arrêt possible :** schéma et usages internes complets,
+déployables sans la phase 5. Les parcours ordinaires restent fonctionnels et
+l'admission Électrification reste fermée.
 
 ## Phase 5 — Import complet dans une transaction
 
@@ -867,6 +944,10 @@ le comportement des saisies et imports ordinaires qui ne l'appellent pas.
 **Périmètre :** [enfilement](../../apps/backend/src/plans/ai-plan-import/enqueue-import/),
 [worker et service](../../apps/backend/src/plans/ai-plan-import/generate-import-draft/),
 reprise et orchestration métier. Les primitives de stockage sont déjà livrées.
+
+**Prérequis :** les lots 4A à 4D sont livrés et vérifiés, y compris les lectures
+des références durables et de la source exacte du plan. La phase 5 assemble
+ces capacités ; elle ne reporte pas leur implémentation ni leurs migrations.
 
 - Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2a/2B2b.
   Refuser les formats autres que DOCX pour Électrification avant toute lecture
@@ -894,14 +975,16 @@ reprise et orchestration métier. Les primitives de stockage sont déjà livrée
   import générique ; le parcours ordinaire reste bloqué jusqu'à la phase 6.
 - Extraire/préparer hors transaction. Dans une transaction courte : revalider
   droits et références, créer plan/axes/fiches, ajouter liens, créer les
-  personnalisés, écrire les codes de référence, la métadonnée du plan, les
-  valeurs autorisées et le compte rendu, puis `markDone` avec le contrôle
+  personnalisés, utiliser les écritures de 4D pour les références,
+  les engagements et les sources, écrire les valeurs autorisées et le compte
+  rendu, puis `markDone` avec le contrôle
   `status`/`attempt` existant.
   Un refus de `markDone` annule tout, comme une erreur métier ou une révocation de droit.
   Si le lot crée des personnalisés, acquérir le verrou exclusif du graphe avant
   toute revalidation verrouillée des définitions, selon l'ordre défini en 4B.
-- E01/E02 partagent un axe ; la liste sur le plan conserve seulement les codes
-  retenus dans A, indépendamment des axes demandés par les fiches actions.
+- E01/E02 partagent un axe ; la sélection durable conserve seulement les codes
+  retenus dans A selon le contrat livré en 4D, indépendamment des axes demandés
+  par les fiches actions.
   E06/E08 utilisent les références confirmées une fois leurs définitions
   validées et intégrées, E07 deux objectifs indépendants sous la source du plan,
   E03/E12 des fiches "À venir". Aucun résultat ni achèvement n'est déduit d'un objectif.
@@ -992,6 +1075,8 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   ni l'intégration ; le profil reste fermé tant qu'elles manquent.
 - Mapping lauréats → collectivités validé et maintenu ; premier groupe choisi
   parmi ces lauréats. Aucun élargissement de droits par le ciblage du flag.
+- PR 4D livrée : identités ADEME et sélection de A durables, rattachement exact
+  des sources au plan et lectures isolées vérifiés avec les opérations de 4C.
 - Migrations, backend/API, tous les workers et app compatibles déployés.
   Pas de message annexe en queue tant qu'un ancien worker peut le consommer.
 - Tests de chaque lot passés, non-régression générique/PCAET et full flow validés.
@@ -1057,18 +1142,21 @@ au socle. Aucun chantier de reporting budgétaire n'est inclus.
 | Suivi durable, reprise et compatibilité des jobs | 1A, 1B, 3B, 5 | 5 et 6 |
 | A/B uniquement, hyperliens, clés stables, références bloquantes | 2B1, 2B2a, 2B2b, 3A, 3B | 5 |
 | Axes explicites, E01/E02, axes libres et B sans engagement | 2B1, 4A, 5 | 5 et 6 |
-| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B1, 4A, 4B, 4C, 5 | 5 et 6 |
-| Personnalisés, valeurs datées, oui/non et codes de référence | 3B, 4A, 4B, 4C, 5 | 5 |
+| Cibles par source, E06/E08, deux cibles E07, actions E03/E12 | 2B1, 4A, 4B, 4C, 4D, 5 | 5 et 6 |
+| Personnalisés, valeurs datées et oui/non | 3B, 4A, 4B, 4C, 5 | 5 |
+| Identités ADEME et sélection des engagements durables | 4D | 4D, puis 5 et 6 |
+| Rattachement durable des sources au plan | 4D, avec les primitives 4B/4C | 4D, puis 5 et 6 |
 | URL : liens seuls ; codes : complétion sans écrasement | 2B2a, 2B2b, 4A, 4B, 4C | 5 |
-| Liberté d'édition, titres communs, suppression et références | 4A, 4B, 6 | 6 |
-| Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 5 | 5 |
+| Liberté d'édition, titres communs et suppression | 4A, 4B, 4D, 6 | 4D et 6 |
+| Transaction totale, concurrence, effets après commit | 4A, 4B, 4C, 4D, 5 | 5 |
 | Compte rendu complet, activation et arrêt sans perte | 1A, 1B, 5, 6 | 7 |
 | Budgets facultatifs | 8 | 8, sans bloquer 7 |
 
 Une PR est terminée lorsque ses checks ciblés passent, ses contrats restent
 compatibles avec la version précédente et son état de production peut être
 maintenu sans la suite. L'ouverture du profil nécessite toutes les phases du
-socle et les validations métier ci-dessus. Les validations des lots non cochés
+socle, y compris la PR 4D, et les validations métier ci-dessus.
+Les validations des lots non cochés
 restent à réaliser ; les résultats documentés pour 1A et 1B ne valent pas
 validation du profil annexe ni constat de son déploiement.
 

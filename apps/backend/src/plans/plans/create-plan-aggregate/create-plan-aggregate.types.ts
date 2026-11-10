@@ -1,54 +1,6 @@
 import { SecteursProposes } from '@tet/backend/plans/fiches/fiche-secteurs/secteurs-proposes';
-import { z } from 'zod';
+import { PersonneId } from '@tet/domain/collectivites';
 import { UpdateFicheInput } from '../../fiches/update-fiche/update-fiche.input';
-
-export const PlanParticipantSchema = z
-  .object({
-    tagId: z.number().nullable(),
-    userId: z.string().nullable(),
-  })
-  .refine((data) => data.tagId !== null || data.userId !== null, {
-    message: 'Au moins tagId ou userId doit être non-null',
-  });
-
-const _AxisPathSchema = z.array(z.string().min(1));
-
-export type AxisPath = z.infer<typeof _AxisPathSchema>;
-
-export const PlanCreationDataSchema = z.object({
-  collectiviteId: z.number().int().positive(),
-  nom: z.string().min(1, 'Le nom du plan ne peut pas être vide').max(300),
-  typeId: z.number().int().positive().optional(),
-  pilotes: z.array(PlanParticipantSchema).optional(),
-  referents: z.array(PlanParticipantSchema).optional(),
-});
-
-export type PlanCreationData = z.infer<typeof PlanCreationDataSchema>;
-
-export interface AxeWithPath {
-  path: string[];
-  nom: string;
-  collectiviteId: number;
-  planId: number;
-}
-
-export interface CreatePlanAggregateValidation {
-  isValid: boolean;
-  errors: string[];
-}
-
-export interface AxeHierarchyValidation {
-  isValid: boolean;
-  missingParents: string[][];
-  orphanedPaths: string[][];
-}
-
-export interface UniqueAxe {
-  path: string[];
-  fullPath: string;
-  depth: number;
-  parentPath?: string[];
-}
 
 export interface CreatePlanAggregateInput {
   /** Plan déjà créé (vide) à remplir, plutôt qu'un nouveau plan. */
@@ -58,25 +10,38 @@ export interface CreatePlanAggregateInput {
   typeId?: number;
   dateDebut?: string | null;
   dateFin?: string | null;
-  pilotes?: Array<{ tagId: number | null; userId: string | null }>;
-  referents?: Array<{ tagId: number | null; userId: string | null }>;
-  fiches: FicheWithRelationsAndAxisPath[];
+  pilotes?: PersonneId[];
+  referents?: PersonneId[];
+  /** Clés locales à la requête, indépendantes des libellés et des IDs en base. */
+  axes: AggregateAxe[];
+  fiches: AggregateFiche[];
+  existingFiches?: AggregateExistingFiche[];
 }
 
-/**
- * A fiche with its axis path for hierarchical organization.
- * When `parentActionTitre` is set, this fiche is a sous-action whose parent
- * is the action with that title (within the same axisPath).
- */
-export interface FicheWithRelationsAndAxisPath {
-  axisPath?: string[];
-  fiche: Omit<UpdateFicheInput, 'collectiviteId'>;
-  parentActionTitre?: string;
-  /** Secteurs réglementaires proposés par l'import IA, enregistrés avec la fiche. */
+export interface AggregateAxe {
+  sourceKey: string;
+  parentSourceKey?: string;
+  nom: string;
+}
+
+export interface AggregateFiche {
+  sourceKey: string;
+  axeSourceKey?: string;
+  parentSourceKey?: string;
+  fiche: Omit<UpdateFicheInput, 'id' | 'collectiviteId' | 'parentId' | 'axes'>;
   secteursProposes?: SecteursProposes;
 }
 
-export const isSousAction = (
-  f: FicheWithRelationsAndAxisPath
-): f is FicheWithRelationsAndAxisPath & { parentActionTitre: string } =>
-  Boolean(f.parentActionTitre);
+/** Une fiche existante ne reçoit qu'un lien, jamais des champs à appliquer. */
+export interface AggregateExistingFiche {
+  sourceKey: string;
+  axeSourceKey?: string;
+  ficheId: number;
+}
+
+export interface CreatePlanAggregateOutput {
+  planId: number;
+  axeIdsBySourceKey: Map<string, number>;
+  ficheIdsBySourceKey: Map<string, number>;
+  createdFicheIds: number[];
+}

@@ -24,6 +24,9 @@ import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.tab
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { DocumentHash } from '@tet/domain/collectivites';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
+import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { LlmError } from '@tet/backend/utils/llm/llm.errors';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import {
@@ -53,6 +56,9 @@ import { NotifiedOnEnum } from '@tet/domain/utils';
 import { COMPLETE_PLAN_SECTEURS_QUEUE_NAME } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.queue';
 import { CompletePlanSecteursWorker } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/complete-plan-secteurs.worker';
 import { AiPlanImportJobRepository } from './ai-plan-import-job.repository';
+import { AiPlanImportErrorEnum } from './ai-plan-import.errors';
+import { AI_PLAN_IMPORT_SOURCE_BUCKET } from './ai-plan-import.constants';
+import { initialStepStates } from './pipeline/run-import-pipeline';
 import {
   AI_PLAN_IMPORT_QUEUE_NAME,
   GENERATE_IMPORT_DRAFT_JOB_NAME,
@@ -67,6 +73,8 @@ import { consolidationResponseSchema } from './pipeline/consolidate-actions/cons
 import { enrichmentResponseSchema } from './pipeline/enrich-sous-actions/enrich-sous-actions.schema';
 import { extractionResponseSchema } from './pipeline/extract-actions/extract-actions.schema';
 import { GenerateImportDraftService } from './generate-import-draft/generate-import-draft.service';
+import { draftToImportPlanInput } from './generate-import-draft/draft-to-import-plan-input';
+import { createEmptyExtractedAction } from './models/extracted-action';
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
 import { qualitativeReviewResponseSchema } from './pipeline/qualitative-review/qualitative-review.schema';
 import { scoringResponseSchema } from './pipeline/score-actions/score-actions.schema';
@@ -1265,6 +1273,181 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       });
       await generate(next.jobId);
     });
+  });
+
+  describe('effets après commit', () => {
+    test('notifie après commit quand le service d’import possède la transaction', async () => {
+      let visibleFicheIds: number[] = [];
+      const webhook = vi
+        .spyOn(app.get(WebhookService), 'sendWebhookNotifications')
+        .mockImplementation(async (_type, items) => {
+          visibleFicheIds = (
+            await db.db
+              .select({ id: ficheActionTable.id })
+              .from(ficheActionTable)
+              .where(
+                inArray(
+                  ficheActionTable.id,
+                  items.map(({ entityId }) => Number(entityId))
+                )
+              )
+          ).map(({ id }) => id);
+        });
+      onTestFinished(() => webhook.mockRestore());
+
+      const imported = await app.get(ImportPlanService).save({
+        planInput: draftToImportPlanInput({
+          planName: 'Plan avec transaction interne',
+          actions: [createEmptyExtractedAction({ titre: 'Action simple' })],
+        }),
+        collectiviteId,
+        user,
+      });
+
+      expect(imported.success).toBe(true);
+      if (!imported.success) throw imported.error;
+      createdPlanIds.push(imported.data.planId);
+      expect(webhook).toHaveBeenCalledOnce();
+      expect(visibleFicheIds).toEqual(imported.data.createdFicheIds);
+      expect(visibleFicheIds).toHaveLength(1);
+    });
+
+    // Ces tests ciblent le worker : le job et son plan vide sont déjà admis.
+    const preparePendingJob = async (planName: string) => {
+      const plan = await router
+        .createCaller({ user })
+        .plans.plans.create({ collectiviteId, nom: planName });
+      createdPlanIds.push(plan.id);
+      await app.get(PlanVerificationRepository).markAsImporting(plan.id);
+      const sourcePath = `${collectiviteId}/${plan.id}.csv`;
+      await app.get(DocumentStorageService).storeDocument({
+        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+        key: sourcePath,
+        content: csvSource(planName),
+        contentType: 'text/csv',
+      });
+      const [job] = await db.db
+        .insert(aiPlanImportJobTable)
+        .values({
+          collectiviteId,
+          createdBy: user.id,
+          createdPlanId: plan.id,
+          sourcePath,
+          status: 'pending',
+          stepStates: initialStepStates(),
+          options: {
+            planName,
+            instructions: '',
+            withVerifications: false,
+            withSousActions: false,
+            disabledFields: [],
+          },
+        })
+        .returning();
+      createdJobIds.push(job.id);
+      return { jobId: job.id, planId: plan.id };
+    };
+
+    test('émet les webhooks une fois le job et les fiches visibles hors transaction', async () => {
+      const { jobId, planId } = await preparePendingJob('Plan après commit');
+      let visibleJob: Awaited<ReturnType<typeof readJob>> | undefined;
+      let visibleFicheIds: number[] = [];
+      const webhook = vi
+        .spyOn(app.get(WebhookService), 'sendWebhookNotifications')
+        .mockImplementation(async () => {
+          visibleJob = await readJob(jobId);
+          visibleFicheIds = (
+            await fichesByTitreInPlan(planId, 'Action 1.1.1')
+          ).map(({ id }) => id);
+        });
+      onTestFinished(() => webhook.mockRestore());
+
+      expect(await app.get(GenerateImportDraftService).generate(jobId)).toEqual(
+        { success: true }
+      );
+
+      expect(webhook).toHaveBeenCalledTimes(1);
+      expect(visibleJob).toMatchObject({
+        status: 'done',
+        createdPlanId: planId,
+      });
+      expect(visibleFicheIds).toHaveLength(1);
+      expect(webhook.mock.calls[0][1].map(({ entityId }) => entityId)).toEqual(
+        visibleFicheIds.map(String)
+      );
+    });
+
+    test('n’émet aucun effet si la transaction englobante échoue après la création des fiches', async () => {
+      const { jobId, planId } = await preparePendingJob('Plan annulé');
+      const markDone = vi
+        .spyOn(app.get(AiPlanImportJobRepository), 'markDone')
+        .mockResolvedValueOnce(failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR));
+      const webhook = vi
+        .spyOn(app.get(WebhookService), 'sendWebhookNotifications')
+        .mockResolvedValue(undefined);
+      const notification = vi.spyOn(
+        app.get(NotifyPlanImportedService),
+        'notifyPlanImported'
+      );
+      onTestFinished(() => {
+        markDone.mockRestore();
+        webhook.mockRestore();
+        notification.mockRestore();
+      });
+
+      await app.get(GenerateImportDraftService).generate(jobId);
+
+      expect(markDone).toHaveBeenCalledOnce();
+      expect(await readJob(jobId)).toMatchObject({ status: 'failed' });
+      expect(await fichesByTitreInPlan(planId, 'Action 1.1.1')).toEqual([]);
+      expect(webhook).not.toHaveBeenCalled();
+      expect(notification).not.toHaveBeenCalled();
+      expect(completePlanSecteursJobs).not.toContainEqual(
+        expect.objectContaining({ planId })
+      );
+    });
+
+    test.each(['webhook', 'notification'] as const)(
+      'conserve le succès après un échec de %s, sans recréer les fiches',
+      async (failedEffect) => {
+        const { jobId, planId } = await preparePendingJob(
+          `Plan avec échec de ${failedEffect}`
+        );
+        const webhook = vi
+          .spyOn(app.get(WebhookService), 'sendWebhookNotifications')
+          .mockImplementation(async () => {
+            if (failedEffect === 'webhook')
+              throw new Error('Webhook indisponible');
+          });
+        const notification = vi.spyOn(
+          app.get(NotifyPlanImportedService),
+          'notifyPlanImported'
+        );
+        if (failedEffect === 'notification') {
+          notification.mockRejectedValueOnce(
+            new Error('Notification indisponible')
+          );
+        }
+        onTestFinished(() => {
+          webhook.mockRestore();
+          notification.mockRestore();
+        });
+
+        const service = app.get(GenerateImportDraftService);
+        expect(await service.generate(jobId)).toEqual({ success: true });
+        expect(await readJob(jobId)).toMatchObject({ status: 'done' });
+        expect(await readPlan(planId)).toMatchObject({ status: 'to_verify' });
+        const fiches = await fichesByTitreInPlan(planId, 'Action 1.1.1');
+        expect(fiches).toHaveLength(1);
+
+        expect(await service.generate(jobId)).toMatchObject({ success: false });
+        expect(await fichesByTitreInPlan(planId, 'Action 1.1.1')).toEqual(
+          fiches
+        );
+        expect(webhook).toHaveBeenCalledOnce();
+        expect(notification).toHaveBeenCalledOnce();
+      }
+    );
   });
 });
 
