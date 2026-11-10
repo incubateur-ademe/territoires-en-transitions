@@ -38,6 +38,11 @@ locals {
       axeptio_id                = "65ef34473dcae5d0c7a47699"
       strapi_url                = "https://phenomenal-trust-ee3da2c906.strapiapp.com"
     }
+    # Pour l'instant, seules les applications Git y tournent. Secrets dans le
+    # projet tet-prod, celui du serveur.
+    prod = {
+      secret_project_id = local.server_key_project_ids.prod
+    }
   }
 
   coolify_env_posthog_host = "https://p.territoiresentransitions.fr"
@@ -207,6 +212,18 @@ locals {
       # liens absolus des pages et des exports.
       aldo = {
         HOSTNAME                  = { value = trimprefix(local.git_applications_catalog["preprod/aldo"].domains[0], "https://") }
+        PROTOCOL                  = { value = "https" }
+        ALDO_EMAIL                = { value = "aldo@ademe.fr" }
+        GOOGLE_SHEETS_ID          = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }
+        GOOGLE_SHEETS_CREDENTIALS = { secret = "aldo-google-sheets-credentials" }
+        SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
+        SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
+      }
+    }
+
+    prod = {
+      aldo = {
+        HOSTNAME                  = { value = trimprefix(local.git_applications_catalog["prod/aldo"].domains[0], "https://") }
         PROTOCOL                  = { value = "https" }
         ALDO_EMAIL                = { value = "aldo@ademe.fr" }
         GOOGLE_SHEETS_ID          = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }

@@ -28,6 +28,10 @@ locals {
       branch  = "next"
       domains = ["https://aldo.preprod.territoiresentransitions.fr"]
     }
+    "prod/aldo" = {
+      branch  = "main"
+      domains = ["https://aldo.territoiresentransitions.fr"]
+    }
   }
 
   git_applications = {
