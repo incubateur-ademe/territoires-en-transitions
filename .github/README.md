@@ -55,8 +55,11 @@ mais sauté, échoué ou annulé bloque également le merge.
 
 Le merge de la PR parente provoque la promotion de l’étage suivant. Le
 workflow traite les pushes et changements de branche cible pour lancer sa
-validation complète. Les modifications du titre ou de la description ne
-doivent pas annuler une validation en cours.
+validation complète. Tous les événements `edited` des PR hors brouillon
+exécutent également la CI pour publier leur propre `ci / status`. Une
+modification du titre ou de la description attend la fin d’une validation
+en cours ; elle ne l’annule pas. Ce choix peut ajouter un run après un edit
+de description, y compris lorsqu’il provient d’un bot.
 
 Le fonctionnement par défaut implique un merge étage par étage, avec une
 attente de CI entre les merges. Les résultats d’une PR ne valident jamais

@@ -34,6 +34,10 @@ GitHub. Il ne nécessite ni label à gérer ni merge queue.
   constitue pas une validation.
 - Traiter les changements de base et l’entrée dans une stack, sans laisser
   les modifications de titre ou description annuler un run utile.
+- Appeler `_ci.yml` pour tous les événements `edited` des PR hors brouillon :
+  sauter cet appel ne publie que `ci`, sans le check requis `ci / status`.
+  Les edits de titre ou description attendent le run actif ; ils peuvent
+  ajouter une exécution, y compris lorsqu’un bot édite la PR.
 - Donner à "Re-run all jobs" le sens d’une validation complète, même pour
   un étage supérieur. Aucun résultat n’est transféré entre PR.
 

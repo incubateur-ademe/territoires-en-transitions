@@ -1,6 +1,6 @@
 # Validate non-draft PRs; native upper stack layers defer expensive checks.
 # No paths-ignore: the required "ci / status" check must be published on every
-# PR, including Markdown-only ones (affected scope is then empty and fast).
+# non-draft PR, including Markdown-only ones (affected scope is then empty and fast).
 name: Pull request CI
 
 on:
@@ -11,14 +11,14 @@ permissions: {}
 
 jobs:
   ci:
-    if: >-
-      !github.event.pull_request.draft &&
-      (github.event.action != 'edited' || github.event.changes.base != null)
-    # Evaluate the condition before entering concurrency: title/body edits
-    # must not cancel a useful run or replace a pending one.
+    # Every subscribed event must call _ci.yml for a non-draft PR: skipping
+    # this reusable workflow publishes only "ci", without "ci / status".
+    if: ${{ !github.event.pull_request.draft }}
+    # Title/body edits still publish their own verdict, but wait for an active
+    # run instead of cancelling it. Pushes and base changes supersede it.
     concurrency:
       group: pull-request-${{ github.ref }}
-      cancel-in-progress: true
+      cancel-in-progress: ${{ github.event.action != 'edited' || github.event.changes.base != null }}
     uses: ./.github/workflows/_ci.yml
     permissions:
       actions: read
