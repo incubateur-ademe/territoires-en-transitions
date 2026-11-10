@@ -45,7 +45,12 @@ export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecifi
       },
       UNSUPPORTED_FILE_TYPE: {
         code: 'BAD_REQUEST',
-        message: 'Type de fichier non supporté (PDF, CSV ou Excel attendus)',
+        message:
+          'Type de fichier non supporté (PDF, DOCX, CSV ou Excel attendus)',
+      },
+      ELECTRIFICATION_REQUIRES_DOCX: {
+        code: 'BAD_REQUEST',
+        message: "L'import Électrification nécessite un document DOCX",
       },
       FILE_TOO_LARGE: {
         code: 'PAYLOAD_TOO_LARGE',

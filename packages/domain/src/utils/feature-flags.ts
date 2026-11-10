@@ -6,6 +6,7 @@ const FEATURE_FLAGS = [
   'is-demarche-pcaet-enabled',
   'is-demarche-pcaet-bypass-diagnostic-enabled',
   'is-ai-plan-import-enabled',
+  'is-electrification-plan-import-enabled',
   'is-score-indicateur-enabled',
   'is-fiche-secteurs-enabled',
   'is-priorisation-enabled',

@@ -88,6 +88,7 @@ import {
   CONVENTION_INDICATEUR_URL,
   CONVENTION_SOURCE_URL,
 } from './pipeline/__fixtures__/build-test-convention';
+import { buildInMemoryDocumentStorage } from './pipeline/__fixtures__/in-memory-document-storage';
 import { buildTestPdf } from './pipeline/__fixtures__/build-test-pdf';
 import { buildHorizontalHierarchyWorkbook } from './pipeline/__fixtures__/build-test-workbook';
 import {
@@ -249,38 +250,6 @@ const buildFakeLlm = (): LlmService => {
   }
 
   return new LlmService(new FakeLlmRepository());
-};
-
-const buildInMemoryDocumentStorage = (): DocumentStorageService => {
-  const store = new Map<string, { buffer: Buffer; mimeType: string }>();
-  const locationKey = (input: { bucketId: string; key: string }): string =>
-    `${input.bucketId}/${input.key}`;
-
-  return {
-    storeDocument: async (input: {
-      bucketId: string;
-      key: string;
-      content: Buffer;
-      contentType: string;
-    }) => {
-      store.set(locationKey(input), {
-        buffer: input.content,
-        mimeType: input.contentType,
-      });
-      return { success: true, data: { key: input.key } };
-    },
-    downloadDocument: async (input: { bucketId: string; key: string }) => {
-      const stored = store.get(locationKey(input));
-      if (stored === undefined) {
-        return { success: false, error: 'READ_DOCUMENT_ERROR' };
-      }
-      return { success: true, data: stored };
-    },
-    removeDocument: async (input: { bucketId: string; key: string }) => {
-      store.delete(locationKey(input));
-      return { success: true, data: undefined };
-    },
-  } as unknown as DocumentStorageService;
 };
 
 /** Le suffixe varie le contenu, donc le hash : chaque test a son fichier. */
@@ -626,6 +595,8 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     const { jobId, planId: createdAtEnqueue } = await enqueue(
       {
         planName: 'Plan import IA complet',
+        origine: 'etape_documents',
+        demarcheId: '42',
         withVerifications: 'true',
         withSousActions: 'true',
       },
@@ -656,6 +627,8 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       profile: 'generic',
       contractVersion: 1,
       catalogueVersion: null,
+      origine: 'etape_documents',
+      demarcheId: 42,
     });
     expect(job.createdPlanId).toBe(createdAtEnqueue);
     expect(job.fichierId).not.toBeNull();
@@ -1067,7 +1040,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
       const failed = await readJob(jobId);
       expect(failed).toMatchObject({ status: 'failed' });
-      expect(failed.checkpoint?.completedStep).toBe('hierarchy');
+      expect(failed.checkpoint).toMatchObject({ completedStep: 'hierarchy' });
       expect(failed.stepStates).toMatchObject({
         extraction: 'ok',
         scoring: 'pending',
@@ -1107,7 +1080,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
       const failed = await readJob(jobId);
       expect(failed).toMatchObject({ status: 'failed' });
-      expect(failed.checkpoint?.completedStep).toBe('scouting');
+      expect(failed.checkpoint).toMatchObject({ completedStep: 'scouting' });
       // L'avancement reste celui de la dernière étape, pas remis à zéro.
       expect(failed.stepStates).toMatchObject({
         reading: 'ok',

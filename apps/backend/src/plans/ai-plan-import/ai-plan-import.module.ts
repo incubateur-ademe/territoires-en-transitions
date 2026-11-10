@@ -1,5 +1,7 @@
 import { PrepareElectrificationImportService } from './electrification/extract-plan/prepare-electrification-import.service';
 import { PersistElectrificationImportService } from './electrification/persist-import/persist-electrification-import.service';
+import { GenerateElectrificationImportService } from './electrification/generate-import/generate-electrification-import.service';
+import { ValidateElectrificationImportService } from './electrification/validate-import/validate-electrification-import.service';
 import { ResolveElectrificationFichesService } from './electrification/resolve-fiches/resolve-electrification-fiches.service';
 import { ResolveElectrificationIndicateursService } from './electrification/resolve-fiches/resolve-electrification-indicateurs.service';
 import { FichesModule } from '../fiches/fiches.module';
@@ -28,13 +30,14 @@ import {
 import { EnqueueImportController } from './enqueue-import/enqueue-import.controller';
 import { EnqueueImportService } from './enqueue-import/enqueue-import.service';
 import { GenerateImportDraftService } from './generate-import-draft/generate-import-draft.service';
+import { GenerateGenericImportService } from './generate-import-draft/generate-generic-import.service';
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
 import { FindPreviousImportRouter } from './find-previous-import/find-previous-import.router';
 import { FindPreviousImportService } from './find-previous-import/find-previous-import.service';
 import { GetImportStatusRouter } from './get-import-status/get-import-status.router';
 import { GetImportStatusService } from './get-import-status/get-import-status.service';
 import { GetImportCapabilitiesRouter } from './get-import-capabilities/get-import-capabilities.router';
-import { GetImportCapabilitiesService } from './get-import-capabilities/get-import-capabilities.service';
+import { ValidateImportProfileService } from './validate-import-profile/validate-import-profile.service';
 import { NotifyPlanImportedService } from './notify-plan-imported/notify-plan-imported.service';
 import { ResumeImportRouter } from './resume-import/resume-import.router';
 import { ResolveElectrificationEngagementsService } from './electrification/resolve-engagements/resolve-electrification-engagements.service';
@@ -68,6 +71,8 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     ResolveElectrificationEngagementsService,
     PrepareElectrificationImportService,
     PersistElectrificationImportService,
+    GenerateElectrificationImportService,
+    ValidateElectrificationImportService,
     ResolveElectrificationFichesService,
     ResolveElectrificationIndicateursService,
     ResolveImportReferenceService,
@@ -75,10 +80,11 @@ import { ResumeImportService } from './resume-import/resume-import.service';
     AiPlanImportStepRunRepository,
     EnqueueImportService,
     GenerateImportDraftService,
+    GenerateGenericImportService,
     GenerateImportDraftWorker,
     GetImportStatusService,
     GetImportStatusRouter,
-    GetImportCapabilitiesService,
+    ValidateImportProfileService,
     GetImportCapabilitiesRouter,
     FindPreviousImportService,
     FindPreviousImportRouter,

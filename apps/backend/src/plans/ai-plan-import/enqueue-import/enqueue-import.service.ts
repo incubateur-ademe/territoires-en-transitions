@@ -2,7 +2,6 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { calculateDocumentHash } from '@tet/backend/collectivites/documents/store-document/calculate-document-hash.utils';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
-import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
 import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -11,8 +10,6 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
-import { PlanCreationRules } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
@@ -35,14 +32,12 @@ import {
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
 import {
-  AiPlanImportProfileEnum,
-  GENERIC_IMPORT_CONTRACT_VERSION,
-  isImportProfileImplemented,
-  resolveImportProfile,
-} from '../models/import-profile';
-import type { EnqueueImportOutput } from './enqueue-import.output';
+  EnqueueImportOutput,
+  enqueueImportOutputSchema,
+} from './enqueue-import.output';
 import {
   detectSourceMimeType,
   DOCX_MIME,
@@ -67,11 +62,11 @@ export class EnqueueImportService {
     private readonly permissions: PermissionService,
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
-    private readonly listPlanTypesService: ListPlanTypesService,
     private readonly trackingService: TrackingService,
     private readonly storeDocumentService: StoreDocumentService,
     private readonly upsertPlanService: UpsertPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
+    private readonly capabilities: ValidateImportProfileService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -105,42 +100,13 @@ export class EnqueueImportService {
   ): Promise<Result<EnqueueImportOutput, AiPlanImportError>> {
     const { collectiviteId, user, file, options, confirmReimport } = input;
 
-    const permissionResult = await this.permissions.isAllowed(
-      user,
-      'plans.fiches.import',
-      ResourceType.COLLECTIVITE,
-      { collectiviteId }
+    const admission = await this.capabilities.authorizeAdmission(
+      { collectiviteId, options },
+      { user }
     );
-    if (!permissionResult.success) {
-      return failure(AiPlanImportErrorEnum.UNAUTHORIZED);
-    }
-
-    const profile = resolveImportProfile(options.profile);
-    if (profile === null) {
-      return failure(AiPlanImportErrorEnum.UNKNOWN_IMPORT_PROFILE);
-    }
-    // Aucun upload, plan ou job tant que le profil n'a pas de pipeline complet.
-    // Un flag UI ou le mode super-admin ne peuvent pas lever cette restriction.
-    if (!isImportProfileImplemented(profile)) {
-      return failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE);
-    }
-
-    let withSecteurs = false;
-    if (options.planType !== undefined) {
-      const planTypes = await this.listPlanTypesService.listPlanTypes();
-      const planType = planTypes.find(({ id }) => id === options.planType);
-      if (!planType) {
-        return failure(AiPlanImportErrorEnum.UNKNOWN_PLAN_TYPE);
-      }
-      const creationDisabledReason =
-        PlanCreationRules.getDisabledReason(planType);
-      if (creationDisabledReason) {
-        return failure(creationDisabledReason);
-      }
-      withSecteurs =
-        planType.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
-        planType.type === PCAET_PLAN_TYPE_KEY.type;
-    }
+    if (!admission.success) return admission;
+    const { options: admittedOptions, createProvisionalPlan } = admission.data;
+    const profile = admittedOptions.profile;
 
     if (file.size > AI_PLAN_IMPORT_MAX_SOURCE_BYTES) {
       return failure(AiPlanImportErrorEnum.FILE_TOO_LARGE);
@@ -150,6 +116,11 @@ export class EnqueueImportService {
     if (mimeType === null) {
       return failure(AiPlanImportErrorEnum.UNSUPPORTED_FILE_TYPE);
     }
+    const sourceValidation = this.capabilities.validateSource(
+      profile,
+      mimeType
+    );
+    if (!sourceValidation.success) return sourceValidation;
 
     if (mimeType === XLSX_MIME || mimeType === DOCX_MIME) {
       const archive = validateOoxmlArchive(
@@ -221,24 +192,24 @@ export class EnqueueImportService {
         createdBy: user.id,
         sourcePath,
         fichierId: fichier.data.id,
-        options: {
-          ...options,
-          profile: AiPlanImportProfileEnum.GENERIC,
-          contractVersion: GENERIC_IMPORT_CONTRACT_VERSION,
-          catalogueVersion: null,
-          withSecteurs,
-        },
+        options: admittedOptions,
       },
       {
         limitUserInFlight: !canImportInParallel.success,
-        createPlan: (tx) => this.createImportingPlan(input, tx),
+        createPlan: createProvisionalPlan
+          ? (tx) =>
+              this.createImportingPlan(
+                { ...input, options: admittedOptions },
+                tx
+              )
+          : undefined,
       }
     );
     if (!created.success) {
       return created;
     }
     const jobId = created.data.id;
-    const planId = created.data.createdPlanId as number;
+    const planId = created.data.createdPlanId;
 
     const stored = await this.documentStorage.storeDocument({
       bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
@@ -290,17 +261,19 @@ export class EnqueueImportService {
         jobId,
         mimeType,
         fileSizeBytes: file.size,
-        planType: options.planType,
+        planType: created.data.options.planType,
         withVerifications: options.withVerifications,
         withSousActions: options.withSousActions,
-        withSecteurs,
+        withSecteurs: admittedOptions.withSecteurs,
         profile,
         origine: options.origine,
         demarcheId: options.demarcheId,
+        schemaVersion: created.data.options.schemaVersion,
+        catalogueVersion: created.data.options.catalogueVersion ?? undefined,
       },
       groups: { collectivite: String(collectiviteId) },
     });
-    return success({ profile: AiPlanImportProfileEnum.GENERIC, jobId, planId });
+    return success(enqueueImportOutputSchema.parse({ profile, jobId, planId }));
   }
 
   /**
@@ -334,7 +307,7 @@ export class EnqueueImportService {
 
   private async cleanupPendingJob(
     jobId: string,
-    planId: number
+    planId: number | null
   ): Promise<void> {
     const cleanup = await this.jobRepository.deleteIfPending(jobId);
     if (!cleanup.success) {
@@ -342,6 +315,7 @@ export class EnqueueImportService {
         `Nettoyage de la ligne pending ${jobId} après échec de mise en file d'attente: ${cleanup.error} — la collectivité reste bloquée jusqu'à intervention`
       );
     }
+    if (planId === null) return;
     const planCleanup =
       await this.planVerificationRepository.deleteImportingPlan(planId);
     if (!planCleanup.success) {

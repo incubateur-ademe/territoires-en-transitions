@@ -25,10 +25,3 @@ export function resolveImportProfile(
   const parsed = aiPlanImportProfileSchema.safeParse(profile);
   return parsed.success ? parsed.data : null;
 }
-
-/** Le profil Électrification reste fermé tant que son traitement complet n'est pas livré. */
-export function isImportProfileImplemented(
-  profile: AiPlanImportProfile
-): boolean {
-  return profile === AiPlanImportProfileEnum.GENERIC;
-}

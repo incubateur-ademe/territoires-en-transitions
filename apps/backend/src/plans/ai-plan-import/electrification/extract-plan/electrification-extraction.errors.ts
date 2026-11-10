@@ -1,6 +1,11 @@
 import type { ElectrificationIssue } from '../resolve-engagements/electrification-engagements.schema';
+import { aiPlanImportJobErrorMessages } from '../../ai-plan-import.errors';
 
 const extractionErrors = {
+  SOURCE_UNREADABLE: {
+    kind: 'processing-error',
+    message: aiPlanImportJobErrorMessages.SOURCE_UNREADABLE,
+  },
   AI_VALUE_INTERPRETATION_FAILED: {
     kind: 'processing-error',
     message:

@@ -24,10 +24,13 @@ import {
   AiPlanImportJobStatusEnum,
 } from '../models/ai-plan-import-job';
 import { GenerateImportDraftService } from './generate-import-draft.service';
+import { GenerateGenericImportService } from './generate-generic-import.service';
+import { GenerateElectrificationImportService } from '../electrification/generate-import/generate-electrification-import.service';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
 import {
   ImportCheckpoint,
+  isSupportedGenericImport,
   parseImportCheckpoint,
 } from '../models/import-checkpoint';
 import { ImportStepRun } from '../models/import-step-run';
@@ -115,7 +118,9 @@ type MockOverrides = {
 
 const buildMocks = (overrides: MockOverrides = {}) => {
   const markDone = vi.fn(overrides.markDone ?? (async () => success(job)));
-  const markFailed = vi.fn(overrides.markFailed ?? (async () => success(job)));
+  const markFailed = vi.fn(
+    overrides.markFailed ?? (async () => success(runningJob))
+  );
   const updateStepStates = vi.fn(async () => success(job));
   const runningJob = {
     ...job,
@@ -123,6 +128,7 @@ const buildMocks = (overrides: MockOverrides = {}) => {
     attempt: overrides.attempt ?? 0,
   };
   const jobRepository = {
+    isSupportedImport: (options: unknown) => isSupportedGenericImport(options),
     transitionToRunning: vi.fn(async () => success(runningJob)),
     markFailed,
     markDone,
@@ -254,11 +260,19 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.importPlanService,
     mocks.planVerificationRepository,
     mocks.notifyPlanImportedService,
-    mocks.transactionManager,
     mocks.trackingService,
-    mocks.enqueueCompletePlanSecteursService,
     mocks.stepRunRepository,
-    mocks.effetAttenduService
+    new GenerateGenericImportService(
+      mocks.jobRepository,
+      mocks.documentStorage,
+      mocks.llm,
+      mocks.importPlanService,
+      mocks.planVerificationRepository,
+      mocks.transactionManager,
+      mocks.effetAttenduService,
+      mocks.enqueueCompletePlanSecteursService
+    ),
+    {} as GenerateElectrificationImportService
   );
 
 describe('GenerateImportDraftService', () => {
@@ -295,7 +309,11 @@ describe('GenerateImportDraftService', () => {
 
   it('conserve la source en cas d’échec terminal d’un contrat non pris en charge', async () => {
     const mocks = buildMocks({
-      options: { ...job.options, profile: 'annexe-3-electrification' },
+      options: {
+        ...job.options,
+        profile: 'annexe-3-electrification',
+        contractVersion: undefined,
+      },
     });
 
     await buildService(mocks).recordTerminalFailure(
@@ -346,6 +364,13 @@ describe('GenerateImportDraftService', () => {
         groups: { collectivite: '10' },
       })
     );
+    expect(
+      mocks.enqueueCompletePlanSecteursService.enqueue
+    ).toHaveBeenCalledWith({
+      planIds: [7],
+      collectiviteId: 10,
+      userId: 'user-1',
+    });
     expect(mocks.capture).toHaveBeenCalledWith({
       distinctId: 'user-1',
       event: 'plans:import-ia:succeeded',
@@ -496,6 +521,9 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markDone).not.toHaveBeenCalled();
     expect(mocks.notifyPlanImported).not.toHaveBeenCalled();
     expect(lifecycleEvents(mocks.capture)).toEqual(['plans:import-ia:failed']);
+    expect(
+      mocks.enqueueCompletePlanSecteursService.enqueue
+    ).not.toHaveBeenCalled();
     expect(mocks.capture).toHaveBeenCalledWith(
       expect.objectContaining({
         event: 'plans:import-ia:failed',
@@ -645,6 +673,7 @@ describe('GenerateImportDraftService', () => {
     expect(mocks.jobRepository.markFailed).toHaveBeenCalledWith({
       id: 'job-1',
       error: 'Import interrompu: stall',
+      attempt: 0,
     });
     expect(mocks.removeDocument).toHaveBeenCalledWith({
       bucketId: 'ai-plan-import-sources',

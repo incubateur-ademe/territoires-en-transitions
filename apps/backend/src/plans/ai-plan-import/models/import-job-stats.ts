@@ -5,7 +5,7 @@ import { ContentMetrics } from '../pipeline/compute-import-metrics';
 /** Résumé chiffré d'un import, gardé sur le job pour les statistiques. */
 export type ImportJobStats = {
   schemaVersion: 1;
-  /** Absent quand l'import a échoué avant l'extraction. */
+  /** Mesures du brouillon générique ; absentes avant extraction ou pour les autres profils. */
   content:
     | (ContentMetrics & {
         /** Actions extraites, avant l'écart des doublons. */

@@ -31,7 +31,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 4C — Valeurs sans écrasement et isolation par métadonnée : [#5778](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5778), implémentée et vérifiée, en revue. Opération interne de complétion et calculs isolés ; rattachement durable et changements de schéma en 4D.
 - [x] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources : [#5780](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5780), implémentée et vérifiée, en revue. Migration additive et services internes ; admission Électrification toujours fermée.
 - [x] PR 5A — Assemblage transactionnel du plan Électrification : [#5788](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5788), implémenté et vérifié, en revue. Admission publique fermée ; raccordement des jobs et effets après commit en 5B.
-- [ ] PR 5B — Pipeline complet et cycle de vie des jobs.
+- [x] PR 5B — Pipeline complet et cycle de vie des jobs : [#5802](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5802), implémenté et vérifié, en revue après #5788. Admission fermée par défaut ; ouverture et parcours app restent en phases 6 et 7.
 - [ ] PR 6 — Parcours et lecture dans l'app.
 - [ ] Phase 7 — Qualification et ouverture en production.
 - [ ] Phase 8 — Budgets et financements, facultatifs.
@@ -1057,6 +1057,14 @@ reprise et orchestration métier. La persistance transactionnelle est livrée en
 **Prérequis :** les lots 4A à 4D et 5A sont livrés et vérifiés, y compris les
 lectures des références durables et de la source exacte du plan.
 
+**Implémentation vérifiée le 10 novembre 2026 :** le cycle de vie du job,
+les notifications et le tracking après commit restent communs. Chaque profil
+utilise son traitement
+documentaire ; Électrification compose la préparation 3B et la persistance 5A.
+Les générateurs exposent le même contrat de résultat et d'échec ; chacun traduit
+ses diagnostics. La complétion des secteurs reste propre au générateur générique.
+La queue existante est conservée, sans nouveau registre de stratégies ni migration.
+
 - Brancher le dispatch par profil sur l'extraction 3B et les résolutions 2B1/2B2a/2B2b.
   Refuser les formats autres que DOCX pour Électrification avant toute lecture
   nécessitant un OCR. Le pipeline utilise le parser puis l'assistance automatique
@@ -1067,11 +1075,29 @@ lectures des références durables et de la source exacte du plan.
   Brancher le flag serveur dédié dans le contrôle de disponibilité partagé
   avec l'enfilement ; l'exclure de l'activation automatique PostHog en dev/test/CI.
   Le flag ne remplace aucun contrôle de droits ou de disponibilité métier.
+  `ValidateImportProfileService` porte les droits communs et le dispatch.
+  Les règles Électrification restent dans `ValidateElectrificationImportService`,
+  sous `electrification/`, partagées entre disponibilité, admission, reprise et
+  worker. L'enfilement consomme les options validées et la décision de créer
+  un plan provisoire, sans branche métier Électrification.
+  La décision d'éligibilité et la provenance de
+  son mapping sont enregistrées dans les options du job. Le worker et la reprise
+  revérifient les droits du demandeur initial, l'éligibilité, le catalogue et
+  le type, sans réappliquer le flag d'admission aux jobs déjà admis.
+  Le service métier exige un flag actif via `requireExplicitActivation: true`,
+  y compris en dev/test/CI ; le tracker n'a aucune exception par nom de
+  fonctionnalité.
 - Brancher la validation de `schemaVersion` du checkpoint Électrification dans
   le worker et l'API de reprise, y compris après la dernière étape. Le job porte
   cette même version technique. Contrôler le canevas et la concordance du profil,
   de la version et du catalogue entre le job et le checkpoint.
   Conserver les contrôles de contrat et de schéma propres au profil générique.
+  La lecture du checkpoint, l'annonce de reprise et la remise en file utilisent
+  le même contrôle de compatibilité. Un catalogue périmé bloque sans supprimer
+  le checkpoint ni relancer une extraction.
+  Le repository délègue cette validation au validateur de profils, y compris
+  dans la transaction de reprise. Les règles de catalogue/canevas restent sous
+  `electrification/validate-import/` ; les types communs composent les contrats.
 - Pour l'annexe, créer le job sans plan provisoire. Adapter les échecs de stockage
   ou de queue sans suppression d'un plan inexistant ni job bloquant les quotas.
   Le service et le contrôleur retournent `planId: null` pour ce profil ; le
@@ -1105,6 +1131,14 @@ lectures des références durables et de la source exacte du plan.
   Persister les diagnostics structurés produits par l'annexe, distincts de
   l'erreur technique et du checkpoint ; les exposer via le contrat de compte
   rendu livré en 1A.
+  Le compte rendu est enregistré dans `draft.report`, dans la colonne JSON
+  existante du job, puis exposé séparément par l'API. Le brouillon générique
+  reste compatible et la purge de `checkpoint` conserve le compte rendu.
+  Les messages utilisateurs et leur formatage restent dans les fichiers
+  `.errors.ts`, réutilisés par les générateurs et le worker. Les logs techniques
+  ne servent pas de catalogue de messages.
+  BullMQ conserve le `executionAttempt` du passage pour qu'un événement d'échec
+  tardif ne puisse pas annuler la reprise suivante.
 
 **Validation :** étendre le
 [full flow avec faux LLM](../../apps/backend/src/plans/ai-plan-import/ai-plan-import.full-flow.e2e-spec.ts)
@@ -1112,6 +1146,37 @@ et vraie base : référence invalide sans plan ; annulation de toutes les écrit
 y compris ajout de liens aux objets existants ; retry sans doublon ; révocation
 de droit ; worker périmé ; failure upload/queue ; admission fermée pendant un job
 déjà admis ; imports génériques inchangés. Utiliser l'ouverture simulée du flag en test.
+La suite de suivi vérifie également la concordance profil/version/canevas/catalogue
+et la conservation du compte rendu après purge.
+
+**Vérifications exécutées le 10 novembre 2026 :** 79 e2e passent sur vraie base
+avec fournisseur IA factice : 20 pour l'admission HTTP, 8 pour le parcours
+Électrification, 26 pour le parcours générique/PCAET et 25 pour le suivi.
+Les reprises couvrent aussi l'arrêt entre la sauvegarde du checkpoint et celle
+des métriques : les tokens connus sont conservés, sans inventer d'appels au modèle.
+Les 78 tests existants du worker, de l'orchestration, de l'enfilement et de la
+reprise passent également, ainsi que les vérifications TypeScript du backend
+et de ses tests, ESLint ciblé et les liens locaux de l'ADR et du plan. Aucun appel IA
+externe ni essai sur une convention réellement remplie.
+
+**Vérification des frontières entre profils — 10 novembre 2026 :**
+83 e2e d'import passent avec vraie base et faux LLM (20 admission HTTP,
+10 parcours Électrification, 26 générique/PCAET, 27 suivi), ainsi que le cas
+PCAET de bypass du diagnostic et les 79 tests unitaires d'orchestration,
+worker, enfilement et reprise. TypeScript backend/tests, ESLint et les liens
+locaux passent. Les cas ajoutés vérifient les métadonnées serveur, la
+normalisation générique/PCAET, le refus d'un type enregistré absent ou différent,
+la politique du flag et l'isolation d'un catalogue invalide : il bloque la
+reprise Électrification sans bloquer le générique. Aucun nouveau fichier de
+test unitaire ni appel IA externe.
+
+**Vérification des messages — 10 novembre 2026 :** après regroupement des
+textes et formateurs dans les fichiers d'erreurs, 37 e2e des parcours
+Électrification et générique/PCAET, ainsi que 42 tests existants d'orchestration
+et de worker, passent. Le cas ajouté vérifie qu'une source disparue produit
+un message lisible et le diagnostic `SOURCE_UNREADABLE` dans le suivi, sans
+créer de plan ni appeler le modèle. TypeScript backend/tests, ESLint et les
+liens locaux passent.
 
 **Déploiement et arrêt possible :** backend complet mais fermé aux utilisateurs.
 La production peut rester à ce stade. Aucun import pilote avant la lecture des

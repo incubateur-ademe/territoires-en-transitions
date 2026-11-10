@@ -8,6 +8,7 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
 import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
@@ -17,6 +18,8 @@ import {
 } from '../ai-plan-import-job.repository';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobData } from '../ai-plan-import.queue';
+import { ValidateElectrificationImportService } from '../electrification/validate-import/validate-electrification-import.service';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import {
   AiPlanImportJob,
   AiPlanImportJobOptions,
@@ -24,6 +27,8 @@ import {
 } from '../models/ai-plan-import-job';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
+
+const jobId = '9d760311-40ad-4d81-b1f7-1bd5666b09d2';
 
 const user = { id: 'user-1' } as AuthenticatedUser;
 
@@ -36,7 +41,7 @@ const options: AiPlanImportJobOptions = {
 };
 
 const job: AiPlanImportJob = {
-  id: 'job-1',
+  id: jobId,
   collectiviteId: 10,
   createdBy: 'user-1',
   status: AiPlanImportJobStatusEnum.PENDING,
@@ -196,16 +201,25 @@ const buildService = (overrides: MockOverrides = {}) => {
 
   const capture = vi.fn();
   const trackingService = { capture } as unknown as TrackingService;
+  const capabilities = new ValidateImportProfileService(
+    permissions,
+    listPlanTypesService,
+    {
+      authorizeAdmission: vi.fn(async () =>
+        failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE)
+      ),
+    } as unknown as ValidateElectrificationImportService
+  );
 
   const service = new EnqueueImportService(
     permissions,
     jobRepository,
     documentStorage,
-    listPlanTypesService,
     trackingService,
     storeDocumentService,
     {} as UpsertPlanService,
     planVerificationRepository,
+    capabilities,
     queue
   );
 
@@ -282,7 +296,17 @@ describe('EnqueueImportService', () => {
         collectiviteId: 10,
         user,
         file: toCsvFile(),
-        options: { ...options, profile },
+        options: {
+          ...options,
+          profile,
+          contractVersion: 999,
+          catalogueVersion: 'catalogue-client',
+          schemaVersion: 999,
+          templateVersion: 'canevas-client',
+          withSecteurs: true,
+          origine: 'etape_documents',
+          demarcheId: 42,
+        } as unknown as AiPlanImportJobOptions,
       });
 
       expect(result).toMatchObject({ success: true, data: { planId: 42 } });
@@ -290,7 +314,16 @@ describe('EnqueueImportService', () => {
         profile: 'generic',
         contractVersion: 1,
         catalogueVersion: null,
+        withSecteurs: false,
+        origine: 'etape_documents',
+        demarcheId: 42,
       });
+      expect(
+        createWithinQuotas.mock.calls[0][0].options.schemaVersion
+      ).toBeUndefined();
+      expect(
+        createWithinQuotas.mock.calls[0][0].options.templateVersion
+      ).toBeUndefined();
     }
   );
 
@@ -306,12 +339,12 @@ describe('EnqueueImportService', () => {
 
     expect(result).toEqual({
       success: true,
-      data: { profile: 'generic', jobId: 'job-1', planId: 42 },
+      data: { profile: 'generic', jobId, planId: 42 },
     });
     expect(add).toHaveBeenCalledWith(
       'generate-import-draft',
-      { jobId: 'job-1' },
-      { jobId: 'job-1' }
+      { jobId },
+      { jobId }
     );
   });
 
@@ -330,7 +363,7 @@ describe('EnqueueImportService', () => {
       event: 'plans:import-ia:started',
       properties: expect.objectContaining({
         collectiviteId: 10,
-        jobId: 'job-1',
+        jobId,
         mimeType: 'text/csv',
         fileSizeBytes: expect.any(Number),
       }),
@@ -383,19 +416,30 @@ describe('EnqueueImportService', () => {
     expect(add).not.toHaveBeenCalled();
   });
 
-  it('accepte un type de plan existant', async () => {
-    const { service, add } = buildService({ planTypes: [{ id: 4 }] });
+  it.each([
+    { planType: { id: 4 }, withSecteurs: false },
+    { planType: { id: 4, ...PCAET_PLAN_TYPE_KEY }, withSecteurs: true },
+  ])(
+    'accepte un type de plan existant et résout les secteurs ($withSecteurs)',
+    async ({ planType, withSecteurs }) => {
+      const { service, add, createWithinQuotas } = buildService({
+        planTypes: [planType],
+      });
 
-    const result = await service.enqueue({
-      collectiviteId: 10,
-      user,
-      file: toCsvFile(),
-      options: { ...options, planType: 4 },
-    });
+      const result = await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options: { ...options, planType: 4, withSecteurs: !withSecteurs },
+      });
 
-    expect(result).toMatchObject({ success: true });
-    expect(add).toHaveBeenCalled();
-  });
+      expect(result).toMatchObject({ success: true });
+      expect(add).toHaveBeenCalled();
+      expect(createWithinQuotas.mock.calls[0][0].options.withSecteurs).toBe(
+        withSecteurs
+      );
+    }
+  );
 
   it('écrit le même sourcePath dans la ligne du job et dans le storage', async () => {
     const { service, createWithinQuotas, storeDocument } = buildService();
@@ -576,7 +620,7 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.STORAGE_ERROR,
     });
-    expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(deleteIfPending).toHaveBeenCalledWith(jobId);
     expect(deleteImportingPlan).toHaveBeenCalledWith(42);
     expect(removeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
@@ -606,7 +650,7 @@ describe('EnqueueImportService', () => {
       bucketId: 'ai-plan-import-sources',
       key: storedKey,
     });
-    expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(deleteIfPending).toHaveBeenCalledWith(jobId);
     expect(removeDocument.mock.invocationCallOrder[0]).toBeLessThan(
       deleteIfPending.mock.invocationCallOrder[0]
     );

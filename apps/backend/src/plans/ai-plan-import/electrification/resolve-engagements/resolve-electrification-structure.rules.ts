@@ -205,7 +205,7 @@ export class ResolveElectrificationStructureRules {
     return issues;
   }
 
-  private static validateCatalogue(
+  static validateCatalogue(
     catalogue: ElectrificationConfig
   ): ElectrificationIssue[] {
     const issues: ElectrificationIssue[] = [];

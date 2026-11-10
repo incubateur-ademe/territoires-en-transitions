@@ -143,7 +143,8 @@ accessibles en lecture seule aux collectivités ; toute modification technique
 de leur couple doit rester cohérente avec les règles qui l'utilisent.
 Conserver le profil et la version du catalogue dans le job et ses checkpoints.
 Le checkpoint Électrification porte une seule version technique : `schemaVersion`.
-En phase 5, le job enregistre cette même version pour contrôler leur concordance.
+Le lot 5B enregistre cette même version dans le job, avec le canevas reconnu,
+pour contrôler leur concordance.
 
 Avant toute reprise, l'API et le worker vérifient la compatibilité du checkpoint
 selon son profil, ainsi que la concordance du profil et du catalogue avec le job.
@@ -321,7 +322,8 @@ actuelles. Une reprise compatible réutilise l'extraction et ses interprétation
 sans appel au modèle ; un format incompatible bloque explicitement, sans
 conversion ni nouvelle extraction automatique.
 Le profil n'a pas encore été ouvert en production.
-Le branchement au worker et au stockage des jobs reste en phase 5.
+Le lot 5B branche cette préparation au worker et au stockage des jobs ;
+l'ouverture reste conditionnée aux phases 6 et 7.
 
 L'[évaluation locale](../../apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification)
 sélectionne ce profil avec `--profile annexe-3-electrification` et utilise la même
@@ -793,6 +795,46 @@ l'admission et la reprise ; il appelle la persistance avec sa transaction et
 y enregistre aussi le compte rendu et la réussite du job. La persistance seule
 ne constitue pas une opération de reprise idempotente.
 
+**Décision de stockage du compte rendu — lot 5B, 10 novembre 2026.**
+Réutiliser la colonne JSON `draft` du job avec un membre `report`, sans nouvelle
+colonne ni table. Le compte rendu structuré est exposé séparément par l'API ;
+les jobs génériques historiques conservent leur restitution actuelle. La purge
+des checkpoints techniques ne touche pas ce compte rendu. Le checkpoint
+documentaire reste exclu des projections de suivi.
+
+Les messages affichés dans l'historique et le compte rendu sont définis dans
+les fichiers `.errors.ts` concernés, avec leur formatage lorsqu'ils comportent
+des paramètres. Les services réutilisent ces définitions ; les codes de
+diagnostic et les motifs de télémétrie restent distincts des textes affichés.
+
+`ValidateImportProfileService` porte les droits communs et le dispatch des
+profils. Les règles métier sont regroupées dans
+`ValidateElectrificationImportService`, sous `electrification/validate-import/` :
+disponibilité, admission, format DOCX et revalidation des jobs existants.
+Les règles de compatibilité du catalogue, du canevas et du checkpoint restent
+dans ce même dossier. Le repository appelle le validateur de profils, y compris
+sur la ligne verrouillée avant reprise ; il ne connaît ni catalogue ni schéma métier.
+L'enfilement consomme les options validées et la décision de créer un plan
+provisoire ; il ne connaît pas les règles Électrification. La reprise et le
+worker réutilisent la même autorisation métier.
+L'admission exige le flag serveur dédié, fermé par défaut, les droits ordinaires,
+l'éligibilité, le type exact et une configuration métier complète. Ce flag
+n'hérite ni de l'activation automatique en dev/test/CI ni d'un contournement
+super-admin. Sa fermeture empêche les nouveaux imports ; les jobs admis et
+leurs reprises continuent, sous réserve de droits, d'éligibilité et de contrats
+toujours valides. Le support relance le job au nom de son demandeur initial.
+Le service métier demande une évaluation explicite du flag via l'option commune
+`requireExplicitActivation: true`, y compris en dev/test/CI. Le tracker ne
+contient aucune exception par nom de fonctionnalité ; le bypass PCAET utilise
+la même option.
+
+Les deux générateurs retournent le même contrat de résultat et d'échec.
+Le générateur Électrification traduit ses diagnostics vers ce contrat ;
+l'orchestrateur commun sélectionne le profil et gère le cycle de vie.
+La complétion des secteurs appartient au générateur générique après son commit.
+Les types communs composent les options et checkpoints des profils sans définir
+les règles métier Électrification ni modifier leur représentation JSON.
+
 Vérifier les droits d'import, de création d'indicateurs et de liaison des
 objets résolus, puis les revérifier au moment des écritures. Une URL ne donne
 aucun droit supplémentaire : une fiche d'une autre collectivité nécessite
@@ -803,6 +845,9 @@ Le plan, ses axes, les nouvelles fiches, les liens, les indicateurs créés,
 leurs valeurs et la métadonnée de source sont enregistrés avec la réussite du job.
 Tout échec annule ces écritures. Conserver le contrôle `status`/`attempt`
 existant pour empêcher un ancien worker de valider après une reprise.
+Le passage est aussi conservé dans les données du job BullMQ : un événement
+d'échec tardif reste limité à son `attempt` et ne peut pas modifier le passage
+suivant.
 Les notifications de réussite et autres effets externes ont lieu après le
 commit ; leur éventuel échec ne relance pas la création des données.
 Le lot 4A a séparé les webhooks de l'agrégat ; 5B les déclenche seulement
@@ -848,8 +893,9 @@ Il déclare sa source, sa version et sa validité `[validFrom, validUntil)` ;
 le service ajoute `checkedAt` à la décision. Un même lauréat ou une même
 collectivité présent plusieurs fois rend le mapping ambigu. La configuration
 livrée reste `null` tant que la liste validée manque. Le service interne du
-lot 2B2a prépare ce contrôle ; le branchement à l'admission et aux jobs reste
-prévu en phase 5.
+lot 2B2a prépare ce contrôle ; le lot 5B le branche à l'admission et conserve
+la décision et sa provenance dans les options du job. Une reprise revérifie
+l'éligibilité courante sans remplacer la décision d'admission d'origine.
 
 **Étape supplémentaire facultative : budgets et financements.** Leur import
 est un "nice to have" distinct, confirmé pendant la rédaction. Le socle peut

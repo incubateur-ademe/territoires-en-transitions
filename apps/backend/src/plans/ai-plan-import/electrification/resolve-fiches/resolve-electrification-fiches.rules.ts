@@ -1,6 +1,9 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ResolvedSousActionImport } from '../../prepare-fiche/prepare-fiche.schema';
-import { ElectrificationConfig } from '@tet/domain/plans';
+import {
+  ElectrificationConfig,
+  ElectrificationEngagementCodeEnum,
+} from '@tet/domain/plans';
 import {
   ElectrificationIssue,
   ResolvedElectrificationAxe,
@@ -13,6 +16,39 @@ import { ElectrificationFichesErrors as Errors } from './electrification-fiches.
 import { ResolveElectrificationStructureRules } from '../resolve-engagements/resolve-electrification-structure.rules';
 
 export class ResolveElectrificationFichesRules {
+  /** L'admission requiert toutes les correspondances, même celles absentes du document. */
+  static isCatalogueReady(config: ElectrificationConfig): boolean {
+    const expectedEngagements = Object.values(
+      ElectrificationEngagementCodeEnum
+    );
+    return (
+      config.sousAxes !== null &&
+      config.fiches.actions !== null &&
+      config.fiches.indicateurs !== null &&
+      config.engagements.length === expectedEngagements.length &&
+      expectedEngagements.every((code) =>
+        config.engagements.some((engagement) => engagement.code === code)
+      ) &&
+      config.engagements.every(({ cibles }) =>
+        cibles.every(
+          ({ validation, periodicite }) =>
+            validation === 'validated' && periodicite !== null
+        )
+      ) &&
+      config.fiches.actions.every(
+        ({ validation }) => validation === 'validated'
+      ) &&
+      config.fiches.indicateurs.every(
+        (indicateur) =>
+          indicateur.validation === 'validated' &&
+          (indicateur.type === 'booleen' || indicateur.periodicite !== null)
+      ) &&
+      ResolveElectrificationStructureRules.validateCatalogue(config).length ===
+        0 &&
+      this.validateConfig(config).length === 0
+    );
+  }
+
   static validateConfig(config: ElectrificationConfig): ElectrificationIssue[] {
     const invalid = () => [Errors.issue('INVALID_FICHES_CONFIG')];
     const actions = config.fiches.actions ?? [];

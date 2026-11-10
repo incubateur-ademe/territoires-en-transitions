@@ -1,7 +1,9 @@
 import { INestApplication } from '@nestjs/common';
+import { getQueueToken } from '@nestjs/bullmq';
 import {
   addTestCollectivite,
   addTestCollectiviteAndUsers,
+  addTestCollectiviteAndUser,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthToken,
@@ -9,26 +11,49 @@ import {
   getTestApp,
   getTestDatabase,
   getTestRouter,
+  getDisposableTestApp,
 } from '@tet/backend/test';
 import {
   addAndEnableUserSuperAdminMode,
   addTestUser,
 } from '@tet/backend/users/users/users.test-fixture';
 import { seedTestDocument } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
+import { planActionTypeCategorieTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
+import { ELECTRIFICATION_LAUREATS_CONFIG } from '@tet/backend/plans/plans/check-electrification-eligibility/electrification-eligibility.constants';
+import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { success } from '@tet/backend/utils/result.type';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { LlmService } from '@tet/backend/utils/llm/llm.service';
+import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
+import { failure, success } from '@tet/backend/utils/result.type';
+import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { PostHogEventTracker } from '@tet/backend/utils/tracking/posthog-event-tracker';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, sql, SQL } from 'drizzle-orm';
+import {
+  ELECTRIFICATION_PLAN_TYPE_KEY,
+  electrificationConfig,
+  ElectrificationLaureatsConfig,
+} from '@tet/domain/plans';
+import { FeatureFlagEnum } from '@tet/domain/utils';
+import { and, eq, sql, SQL } from 'drizzle-orm';
 import request from 'supertest';
 import {
   afterAll,
+  afterEach,
   beforeAll,
+  beforeEach,
   describe,
   expect,
   it,
   onTestFinished,
+  vi,
+  MockInstance,
 } from 'vitest';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from '../ai-plan-import.constants';
@@ -39,6 +64,15 @@ import {
 } from '../models/ai-plan-import-job';
 import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
+import { AI_PLAN_IMPORT_QUEUE_NAME } from '../ai-plan-import.queue';
+import { ELECTRIFICATION_CONFIG } from '../electrification/electrification.constants';
+import { buildElectrificationDocument } from '../electrification/extract-plan/__fixtures__/electrification-document.test-fixture';
+import { electrificationDocumentTemplate } from '../electrification/extract-plan/electrification-document-template.constants';
+import { ELECTRIFICATION_CHECKPOINT_VERSION } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
+import { GenerateImportDraftWorker } from '../generate-import-draft/generate-import-draft.worker';
+import { AiPlanImportProfileEnum } from '../models/import-profile';
+import { buildInMemoryDocumentStorage } from '../pipeline/__fixtures__/in-memory-document-storage';
+import { DOCX_MIME } from './detect-source-mime-type';
 
 const TEST_COLLECTIVITE_ID = 1;
 const makeEnqueueUrl = (collectiviteId: number) =>
@@ -70,6 +104,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   let cleanupFreshCollectivite: () => Promise<void>;
   let cleanupOtherCollectivite: () => Promise<void>;
   let disableSupport: () => Promise<void>;
+  let globalQuota: MockInstance;
 
   const deleteJobs = () =>
     db.db
@@ -114,6 +149,11 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
+    // Ces cas vérifient les quotas utilisateur/collectivité, indépendamment
+    // des jobs laissés dans la base par d'autres suites.
+    globalQuota = vi
+      .spyOn(app.get(AiPlanImportJobRepository), 'countInFlight')
+      .mockResolvedValue(success(0));
 
     const support = await addTestUser(db, {
       collectiviteId: TEST_COLLECTIVITE_ID,
@@ -172,6 +212,7 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
   });
 
   afterAll(async () => {
+    globalQuota?.mockRestore();
     await deleteJobs();
     await cleanupFreshCollectivite();
     await cleanupOtherCollectivite();
@@ -358,3 +399,292 @@ describe('Enqueue import IA (controller)', { timeout: 30_000 }, () => {
     expect(created.success).toBe(true);
   });
 });
+
+describe(
+  'Admission HTTP du profil Électrification',
+  { timeout: 30_000 },
+  () => {
+    const catalogue = structuredClone(electrificationConfig);
+    const laureats: ElectrificationLaureatsConfig = {
+      source: 'Mapping synthétique pour les e2e',
+      version: 'test-laureats',
+      validFrom: '2000-01-01T00:00:00.000Z',
+      validUntil: '2100-01-01T00:00:00.000Z',
+      laureats: [],
+    };
+    const storage = buildInMemoryDocumentStorage();
+    const addToQueue = vi.fn().mockResolvedValue({});
+    let app: INestApplication;
+    let db: DatabaseService;
+    let fixture: Awaited<ReturnType<typeof addTestCollectiviteAndUser>>;
+    let token: string;
+    let typeId: number;
+    let docx: Buffer;
+    let uploadBuffer: MockInstance<StoreDocumentService['uploadBuffer']>;
+    let deleteImportingPlan: MockInstance<
+      PlanVerificationRepository['deleteImportingPlan']
+    >;
+
+    beforeAll(async () => {
+      app = await getDisposableTestApp({
+        overrides: (builder) => {
+          builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
+          builder
+            .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
+            .useValue(laureats);
+          builder
+            .overrideProvider(LlmService)
+            .useValue(new LlmService(new FakeLlmRepository()));
+          builder.overrideProvider(GenerateImportDraftWorker).useValue({});
+          builder
+            .overrideProvider(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME))
+            .useValue({ add: addToQueue });
+          builder.overrideProvider(DocumentStorageService).useValue(storage);
+        },
+      });
+      db = await getTestDatabase(app);
+      let [type] = await db.db
+        .select()
+        .from(planActionTypeTable)
+        .where(
+          and(
+            eq(
+              planActionTypeTable.categorie,
+              ELECTRIFICATION_PLAN_TYPE_KEY.categorie
+            ),
+            eq(planActionTypeTable.type, ELECTRIFICATION_PLAN_TYPE_KEY.type)
+          )
+        );
+      if (!type) {
+        await db.db
+          .insert(planActionTypeCategorieTable)
+          .values({ categorie: ELECTRIFICATION_PLAN_TYPE_KEY.categorie })
+          .onConflictDoNothing();
+        [type] = await db.db
+          .insert(planActionTypeTable)
+          .values(ELECTRIFICATION_PLAN_TYPE_KEY)
+          .returning();
+      }
+      typeId = type.id;
+      docx = await buildElectrificationDocument();
+    });
+
+    beforeEach(async () => {
+      Object.assign(catalogue, structuredClone(electrificationConfig));
+      catalogue.sousAxes = [];
+      catalogue.fiches = { actions: [], indicateurs: [] };
+      catalogue.engagements.forEach(({ cibles }) =>
+        cibles.forEach((cible) => {
+          cible.validation = 'validated';
+          cible.periodicite = 'annuelle';
+        })
+      );
+      fixture = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      laureats.laureats = [
+        { collectiviteId: fixture.collectivite.id, reference: 'laureat-test' },
+      ];
+      token = await getAuthToken({
+        email: fixture.user.email ?? '',
+        password: fixture.user.password,
+      });
+      vi.spyOn(app.get(TrackingService), 'isFeatureEnabled').mockResolvedValue(
+        true
+      );
+      uploadBuffer = vi
+        .spyOn(app.get(StoreDocumentService), 'uploadBuffer')
+        .mockImplementation(async () =>
+          success(
+            await seedTestDocument({
+              databaseService: db,
+              collectiviteId: fixture.collectivite.id,
+              filename: 'convention.docx',
+              withStorageObject: false,
+            })
+          )
+        );
+      deleteImportingPlan = vi.spyOn(
+        app.get(PlanVerificationRepository),
+        'deleteImportingPlan'
+      );
+      addToQueue.mockReset().mockResolvedValue({});
+    });
+
+    afterEach(async () => {
+      vi.restoreAllMocks();
+      await db.db
+        .delete(aiPlanImportJobTable)
+        .where(
+          eq(aiPlanImportJobTable.collectiviteId, fixture.collectivite.id)
+        );
+      await fixture.cleanup();
+    });
+    afterAll(async () => app.close());
+
+    const enqueue = (buffer = docx, planType?: number) => {
+      const req = request(app.getHttpServer())
+        .post(makeEnqueueUrl(fixture.collectivite.id))
+        .set('Authorization', `Bearer ${token}`)
+        .field('profile', AiPlanImportProfileEnum.ELECTRIFICATION)
+        .field('planName', 'Plan Électrification');
+      if (planType !== undefined) req.field('planType', String(planType));
+      return req.attach('file', buffer, {
+        filename: 'convention.docx',
+        contentType: DOCX_MIME,
+      });
+    };
+    const expectNoWrites = async () => {
+      expect(uploadBuffer).not.toHaveBeenCalled();
+      expect(addToQueue).not.toHaveBeenCalled();
+      expect(
+        await db.db
+          .select()
+          .from(aiPlanImportJobTable)
+          .where(
+            eq(aiPlanImportJobTable.collectiviteId, fixture.collectivite.id)
+          )
+      ).toHaveLength(0);
+    };
+
+    it.each([
+      'flag fermé',
+      'catalogue incomplet',
+      'engagements incomplets',
+      'catalogue vide',
+      'non lauréat',
+      'type absent',
+    ])('publie et applique le même refus avant upload : %s', async (reason) => {
+      if (reason === 'flag fermé')
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
+          false
+        );
+      if (reason === 'catalogue incomplet') catalogue.fiches.actions = null;
+      if (reason === 'engagements incomplets') catalogue.engagements.pop();
+      if (reason === 'catalogue vide') {
+        catalogue.axes = [];
+        catalogue.engagements = [];
+      }
+      if (reason === 'non lauréat') laureats.laureats = [];
+      if (reason === 'type absent')
+        vi.spyOn(
+          app.get(ListPlanTypesService),
+          'listPlanTypes'
+        ).mockResolvedValue([]);
+      const caller = (await getTestRouter(app)).createCaller({
+        user: getAuthUserFromUserCredentials(fixture.user),
+      });
+      const capabilities = await caller.plans.aiImport.getAiImportCapabilities({
+        collectiviteId: fixture.collectivite.id,
+      });
+      expect(capabilities.profiles).toContainEqual({
+        profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+        available: false,
+      });
+      expect((await enqueue()).status).toBe(412);
+      await expectNoWrites();
+    });
+
+    it('refuse un CSV déclaré DOCX et un autre type de plan avant upload', async () => {
+      expect((await enqueue(csvFile())).status).toBe(400);
+      expect((await enqueue(docx, typeId + 100000)).status).toBe(400);
+      await expectNoWrites();
+    });
+
+    it('enfile sans plan provisoire avec le type et les métadonnées serveur, indépendamment des champs du client', async () => {
+      const response = await enqueue()
+        .field('schemaVersion', '999')
+        .field('catalogueVersion', 'catalogue-client')
+        .field('templateVersion', 'canevas-client')
+        .field('contractVersion', '999')
+        .field('withSecteurs', 'true')
+        .field('eligibility', JSON.stringify({ eligible: false }));
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({
+        profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+        planId: null,
+      });
+      const [job] = await db.db
+        .select()
+        .from(aiPlanImportJobTable)
+        .where(eq(aiPlanImportJobTable.id, response.body.jobId));
+      expect(job.createdPlanId).toBeNull();
+      expect(job.options).toMatchObject({
+        profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+        schemaVersion: ELECTRIFICATION_CHECKPOINT_VERSION,
+        catalogueVersion: catalogue.version,
+        templateVersion: electrificationDocumentTemplate.version,
+        withSecteurs: false,
+        planType: typeId,
+        eligibility: {
+          eligible: true,
+          laureatReference: 'laureat-test',
+          provenance: {
+            source: laureats.source,
+            version: laureats.version,
+            validFrom: laureats.validFrom,
+            validUntil: laureats.validUntil,
+          },
+        },
+      });
+      expect(job.options.contractVersion).toBeUndefined();
+      expect(
+        await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.collectiviteId, fixture.collectivite.id))
+      ).toHaveLength(0);
+      expect(addToQueue).toHaveBeenCalledOnce();
+    });
+
+    it.each(['storage', 'queue'])(
+      'libère le quota après un échec %s sans supprimer de plan',
+      async (failureStep) => {
+        if (failureStep === 'storage')
+          vi.spyOn(storage, 'storeDocument').mockResolvedValue(
+            failure('WRITE_DOCUMENT_ERROR')
+          );
+        else addToQueue.mockRejectedValue(new Error('Queue indisponible'));
+        expect((await enqueue()).status).toBe(500);
+        expect(
+          await db.db
+            .select()
+            .from(aiPlanImportJobTable)
+            .where(
+              eq(aiPlanImportJobTable.collectiviteId, fixture.collectivite.id)
+            )
+        ).toHaveLength(0);
+        expect(deleteImportingPlan).not.toHaveBeenCalled();
+      }
+    );
+
+    it('ne rend pas le flag serveur actif par défaut dans le runtime de test', async () => {
+      const tracker = new PostHogEventTracker({
+        get: () => undefined,
+      } as unknown as ConfigurationService);
+      const trackingService = new TrackingService(tracker);
+      vi.mocked(app.get(TrackingService).isFeatureEnabled).mockImplementation(
+        trackingService.isFeatureEnabled.bind(trackingService)
+      );
+      expect(
+        await trackingService.isFeatureEnabled(
+          FeatureFlagEnum['IS-AI-PLAN-IMPORT-ENABLED'],
+          fixture.user.id,
+          fixture.collectivite.id
+        )
+      ).toBe(true);
+      const caller = (await getTestRouter(app)).createCaller({
+        user: getAuthUserFromUserCredentials(fixture.user),
+      });
+      const capabilities = await caller.plans.aiImport.getAiImportCapabilities({
+        collectiviteId: fixture.collectivite.id,
+      });
+      expect(capabilities.profiles).toContainEqual({
+        profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+        available: false,
+      });
+      expect((await enqueue()).status).toBe(412);
+      await expectNoWrites();
+    });
+  }
+);

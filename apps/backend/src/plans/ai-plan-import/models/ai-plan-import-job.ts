@@ -4,8 +4,10 @@ import { z } from 'zod';
 import { StepStates } from '../pipeline/run-import-pipeline';
 import { DisableableField } from './disableable-field';
 import { ImportJobStats } from './import-job-stats';
-import { AiPlanImportProfile } from './import-profile';
+import { AiPlanImportProfile, AiPlanImportProfileEnum } from './import-profile';
 import { PlanDraft } from './plan-draft';
+import { ImportReport } from './import-report';
+import type { ElectrificationImportOptions } from '../electrification/electrification-import-options';
 
 export const aiPlanImportJobStatusValues = [
   'pending',
@@ -40,11 +42,17 @@ export const aiPlanImportOrigineValues = [
 
 export type AiPlanImportOrigine = (typeof aiPlanImportOrigineValues)[number];
 
-export type AiPlanImportJobOptions = {
+type GenericImportOptions = {
   /** Absents sur les jobs historiques, qui restent des imports génériques v1. */
-  profile?: AiPlanImportProfile;
+  profile?: typeof AiPlanImportProfileEnum.GENERIC;
   contractVersion?: number;
-  catalogueVersion?: string | null;
+  catalogueVersion?: null;
+  schemaVersion?: never;
+  templateVersion?: never;
+  eligibility?: never;
+};
+
+export type AiPlanImportJobOptions = {
   instructions: string;
   planName: string;
   planType?: number;
@@ -59,7 +67,10 @@ export type AiPlanImportJobOptions = {
    */
   origine?: AiPlanImportOrigine;
   demarcheId?: number;
-};
+} & (GenericImportOptions | ElectrificationImportOptions);
+
+/** Le compte rendu est durable ; il ne fait pas partie du checkpoint purgé. */
+export type AiPlanImportJobDraft = PlanDraft & { report?: ImportReport };
 
 export type AiPlanImportJob = {
   id: string;
@@ -69,7 +80,7 @@ export type AiPlanImportJob = {
   options: AiPlanImportJobOptions;
   stepStates: StepStates;
   sourcePath: string;
-  draft: PlanDraft | null;
+  draft: AiPlanImportJobDraft | null;
   error: string | null;
   createdPlanId: number | null;
   fichierId: number | null;
@@ -102,6 +113,7 @@ export type AiPlanImportJobStatusView = {
   error: string | null;
   createdPlanId: number | null;
   qualitativeReview: string | null;
+  report?: ImportReport;
   /** En échec, avec un point de reprise : l'équipe peut le reprendre. */
   resumable: boolean;
   /** Plan PCAET : l'étape des secteurs propose aussi les secteurs réglementaires. */

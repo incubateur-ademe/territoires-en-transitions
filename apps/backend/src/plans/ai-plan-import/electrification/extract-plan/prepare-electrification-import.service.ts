@@ -33,7 +33,7 @@ type PrepareInput = {
   | { document?: never; resumeFrom: unknown }
 );
 
-/** Préparation sans écriture métier. Le worker de production reste fermé à ce profil. */
+/** Préparation sans écriture métier, réutilisée à la reprise et avant persistance. */
 @Injectable()
 export class PrepareElectrificationImportService {
   constructor(

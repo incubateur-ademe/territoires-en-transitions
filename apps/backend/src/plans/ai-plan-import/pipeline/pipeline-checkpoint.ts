@@ -69,7 +69,7 @@ export type PipelineCheckpoint = PipelineState & {
   };
 };
 
-/** Seul le contrat générique est exécutable ; aucun format annexe implicite. */
+/** Contrat du pipeline générique ; les autres profils sont validés séparément. */
 export const genericImportContractSchema = z.object({
   profile: z.literal(AiPlanImportProfileEnum.GENERIC).optional(),
   contractVersion: z.literal(GENERIC_IMPORT_CONTRACT_VERSION).optional(),

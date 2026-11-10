@@ -204,7 +204,8 @@ export class DemarchePcaetGuardsService {
     const isBypassed = await this.trackingService.isFeatureEnabled(
       'is-demarche-pcaet-bypass-diagnostic-enabled',
       user.id,
-      collectiviteId
+      collectiviteId,
+      { requireExplicitActivation: true }
     );
     if (isBypassed) {
       this.logger.warn(
