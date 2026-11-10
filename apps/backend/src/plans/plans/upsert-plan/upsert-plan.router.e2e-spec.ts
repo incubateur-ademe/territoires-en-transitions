@@ -9,12 +9,15 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { PostHogEventTracker } from '@tet/backend/utils/tracking/posthog-event-tracker';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
-import { onTestFinished } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '../../fiches/shared/models/fiche-action.table';
@@ -121,8 +124,6 @@ describe('Créer ou modifier un plan', () => {
     let electrificationTypeId: number;
     let otherTypeId: number;
     let sameLabelTypeId: number;
-    const creationDisabledMessage =
-      'La création d’un plan Électrification est temporairement indisponible. L’import depuis l’annexe 3 est en cours de préparation.';
 
     beforeAll(async () => {
       let [electrificationType] = await db.db
@@ -162,15 +163,131 @@ describe('Créer ou modifier un plan', () => {
       sameLabelTypeId = sameLabelType.id;
     });
 
-    const getPlans = () =>
-      db.db
-        .select()
-        .from(axeTable)
-        .where(eq(axeTable.collectiviteId, collectivite.id))
-        .orderBy(axeTable.id);
+    beforeEach(() => {
+      vi.spyOn(app.get(TrackingService), 'isFeatureEnabled').mockResolvedValue(
+        false
+      );
+    });
+
+    afterEach(() => vi.restoreAllMocks());
+
+    const openCreation = () =>
+      vi
+        .mocked(app.get(TrackingService).isFeatureEnabled)
+        .mockResolvedValue(true);
+
+    test.each(['fermé', 'absent', 'en erreur'] as const)(
+      'Masque et refuse la création avec un flag %s sans écrire de plan',
+      async (state) => {
+        const tracking = app.get(TrackingService);
+        if (state === 'absent') {
+          const tracker = new PostHogEventTracker({
+            get: () => undefined,
+          } as unknown as ConfigurationService);
+          const strictTracking = new TrackingService(tracker);
+          vi.mocked(tracking.isFeatureEnabled).mockImplementation(
+            strictTracking.isFeatureEnabled.bind(strictTracking)
+          );
+        }
+        if (state === 'en erreur') {
+          vi.mocked(tracking.isFeatureEnabled).mockRejectedValue(
+            new Error('PostHog indisponible')
+          );
+        }
+        const caller = router.createCaller({ user: editorUser });
+        const before = await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.collectiviteId, collectivite.id));
+        expect(
+          await caller.plans.plans.getCreationCapabilities({
+            collectiviteId: collectivite.id,
+          })
+        ).toEqual({ unavailableTypeIds: [electrificationTypeId] });
+        await expect(
+          caller.plans.plans.create({
+            collectiviteId: collectivite.id,
+            nom: 'Création fermée',
+            typeId: electrificationTypeId,
+          })
+        ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+        expect(
+          await db.db
+            .select()
+            .from(axeTable)
+            .where(eq(axeTable.collectiviteId, collectivite.id))
+        ).toEqual(before);
+        expect(tracking.isFeatureEnabled).toHaveBeenCalledWith(
+          'is-electrification-plan-creation-enabled',
+          editorUser.id,
+          collectivite.id,
+          { requireExplicitActivation: true }
+        );
+      }
+    );
+
+    test('Expose la disponibilité lorsque la création est ouverte', async () => {
+      openCreation();
+      const caller = router.createCaller({ user: editorUser });
+      expect(
+        await caller.plans.plans.getCreationCapabilities({
+          collectiviteId: collectivite.id,
+        })
+      ).toEqual({ unavailableTypeIds: [] });
+    });
+
+    test.each([false, true])(
+      'Refuse les capacités sans droit de création, même avec le flag ouvert : %s',
+      async (enabled) => {
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
+          enabled
+        );
+        const fixture = await addTestCollectiviteAndUser(db, {
+          user: { role: CollectiviteRole.LECTURE },
+        });
+        onTestFinished(fixture.cleanup);
+        const reader = router.createCaller({
+          user: getAuthUserFromUserCredentials(fixture.user),
+        });
+        await expect(
+          reader.plans.plans.getCreationCapabilities({
+            collectiviteId: fixture.collectivite.id,
+          })
+        ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+        const outsider = router.createCaller({ user: noAccessUser });
+        await expect(
+          outsider.plans.plans.getCreationCapabilities({
+            collectiviteId: collectivite.id,
+          })
+        ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      }
+    );
+
+    test.each([false, true])(
+      'Refuse le passage vers Électrification depuis un type existant : %s',
+      async (hasType) => {
+        const caller = router.createCaller({ user: editorUser });
+        const plan = await caller.plans.plans.create({
+          collectiviteId: collectivite.id,
+          nom: 'Plan ordinaire',
+          typeId: hasType ? otherTypeId : undefined,
+        });
+        await expect(
+          caller.plans.plans.update({
+            id: plan.id,
+            collectiviteId: collectivite.id,
+            typeId: electrificationTypeId,
+          })
+        ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+        const [stored] = await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.id, plan.id));
+        expect(stored.typeId).toBe(hasType ? otherTypeId : null);
+      }
+    );
 
     const createExistingElectrificationPlan = async () => {
-      // Un plan antérieur à la suspension reste consultable et modifiable.
       const [plan] = await db.db
         .insert(axeTable)
         .values({
@@ -182,22 +299,25 @@ describe('Créer ou modifier un plan', () => {
       return plan;
     };
 
-    test('Refuse la création sans persister de plan', async () => {
+    test('Crée un plan Électrification ordinaire sans initialisation conventionnelle', async () => {
+      openCreation();
       const caller = router.createCaller({ user: editorUser });
-      const plansBefore = await getPlans();
-
-      await expect(
-        caller.plans.plans.create({
-          collectiviteId: collectivite.id,
-          nom: 'Plan Électrification refusé',
-          typeId: electrificationTypeId,
-        })
-      ).rejects.toMatchObject({
-        code: 'BAD_REQUEST',
-        message: creationDisabledMessage,
+      const created = await caller.plans.plans.create({
+        collectiviteId: collectivite.id,
+        nom: 'Plan Électrification ordinaire',
+        typeId: electrificationTypeId,
       });
-
-      expect(await getPlans()).toEqual(plansBefore);
+      const [stored] = await db.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.id, created.id));
+      expect(stored).toMatchObject({
+        typeId: electrificationTypeId,
+        referenceProgramme: null,
+        referenceCode: null,
+        engagementsCodes: null,
+        indicateurSourceMetadonneeId: null,
+      });
     });
 
     test('Autorise un type portant le même libellé dans une autre catégorie', async () => {
@@ -212,35 +332,28 @@ describe('Créer ou modifier un plan', () => {
     });
 
     test.each([false, true])(
-      'Refuse de convertir un plan avec un type existant : %s',
+      'Permet de choisir le type Électrification pour un plan avec un type existant : %s',
       async (hasType) => {
+        openCreation();
         const caller = router.createCaller({ user: editorUser });
-        const typeId = hasType ? otherTypeId : undefined;
         const plan = await caller.plans.plans.create({
           collectiviteId: collectivite.id,
-          nom: 'Plan à conserver',
-          typeId,
+          nom: 'Plan ordinaire',
+          typeId: hasType ? otherTypeId : undefined,
         });
-
-        await expect(
-          caller.plans.plans.update({
-            id: plan.id,
-            collectiviteId: collectivite.id,
-            nom: 'Modification refusée',
-            typeId: electrificationTypeId,
-          })
-        ).rejects.toMatchObject({
-          code: 'BAD_REQUEST',
-          message: creationDisabledMessage,
+        await caller.plans.plans.update({
+          id: plan.id,
+          collectiviteId: collectivite.id,
+          typeId: electrificationTypeId,
         });
-
-        const [storedPlan] = await db.db
+        const [stored] = await db.db
           .select()
           .from(axeTable)
           .where(eq(axeTable.id, plan.id));
-        expect(storedPlan).toMatchObject({
-          nom: 'Plan à conserver',
-          typeId: typeId ?? null,
+        expect(stored).toMatchObject({
+          typeId: electrificationTypeId,
+          referenceProgramme: null,
+          indicateurSourceMetadonneeId: null,
         });
       }
     );
@@ -314,22 +427,48 @@ describe('Créer ou modifier un plan', () => {
       }
     );
 
-    test('Refuse la duplication dans une transaction sans altérer le plan source', async () => {
+    test('Refuse la duplication lorsque le flag est fermé sans altérer le plan source', async () => {
       const caller = router.createCaller({ user: editorUser });
-      const plan = await createExistingElectrificationPlan();
-      const plansBefore = await getPlans();
-
+      const source = await createExistingElectrificationPlan();
+      const before = await db.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.collectiviteId, collectivite.id));
       await expect(
         caller.plans.plans.duplicate({
-          planId: plan.id,
+          planId: source.id,
           nom: 'Copie refusée',
         })
-      ).rejects.toMatchObject({
-        code: 'BAD_REQUEST',
-        message: creationDisabledMessage,
-      });
+      ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      expect(
+        await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.collectiviteId, collectivite.id))
+      ).toEqual(before);
+    });
 
-      expect(await getPlans()).toEqual(plansBefore);
+    test('Permet la duplication ordinaire sans altérer le plan source', async () => {
+      openCreation();
+      const caller = router.createCaller({ user: editorUser });
+      const source = await createExistingElectrificationPlan();
+      const copied = await caller.plans.plans.duplicate({
+        planId: source.id,
+        nom: 'Copie ordinaire',
+      });
+      const [stored] = await db.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.id, copied.planId));
+      expect(stored).toMatchObject({
+        nom: 'Copie ordinaire',
+        typeId: electrificationTypeId,
+        referenceProgramme: null,
+        indicateurSourceMetadonneeId: null,
+      });
+      expect(
+        await db.db.select().from(axeTable).where(eq(axeTable.id, source.id))
+      ).toEqual([source]);
     });
   });
 

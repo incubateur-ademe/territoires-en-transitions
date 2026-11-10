@@ -1,4 +1,3 @@
-import { planCreationErrorConfig } from '../plans/plan-creation.errors';
 import { TrpcErrorHandlerConfig } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { AI_PLAN_IMPORT_MAX_JOBS_PER_COLLECTIVITE_PER_DAY } from './ai-plan-import.constants';
 import {
@@ -9,7 +8,11 @@ import {
 export const aiPlanImportErrorConfig: TrpcErrorHandlerConfig<AiPlanImportSpecificError> =
   {
     specificErrors: {
-      ...planCreationErrorConfig,
+      ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT: {
+        code: 'BAD_REQUEST',
+        message:
+          "Utilisez le parcours d'import Électrification pour importer ce type de plan",
+      },
       CREATE_JOB_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "La création du job d'import a échoué",

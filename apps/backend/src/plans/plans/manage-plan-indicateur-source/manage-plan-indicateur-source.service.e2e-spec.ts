@@ -18,6 +18,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { failure, success } from '@tet/backend/utils/result.type';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   ELECTRIFICATION_SOURCE_ID,
@@ -180,6 +181,9 @@ describe('Source de valeurs propre au plan', () => {
     const f = await fixture();
     const first = await f.createPlan();
     const second = await f.createPlan();
+    const empty = await f.createPlan();
+    const emptyMetadata = await f.createSource(empty);
+    const caller = app.get(TrpcRouter).createCaller({ user: f.reader });
     const firstMetadata = await f.createSource(first);
     const secondMetadata = await f.createSource(second);
     expect(firstMetadata.id).not.toBe(secondMetadata.id);
@@ -208,7 +212,43 @@ describe('Source de valeurs propre au plan', () => {
       expect(valeurs).toMatchObject([{ metadonneeId, objectif }]);
       expect(valeurs).toHaveLength(1);
       expect(valeurs[0].resultat).toBeUndefined();
+
+      // Le parcours ordinaire transmet l'identité exacte à la lecture existante.
+      const plan = await caller.plans.plans.get({ planId });
+      expect(plan.indicateurSource).toEqual({
+        id: metadonneeId,
+        sourceId: source.id,
+      });
+      assert(plan.indicateurSource);
+      const displayed = await caller.indicateurs.valeurs.list({
+        collectiviteId: plan.collectiviteId,
+        indicateurIds: [f.valeur.indicateurId],
+        metadonneeId: plan.indicateurSource.id,
+      });
+      expect(displayed.indicateurs[0].sources[source.id].valeurs).toMatchObject(
+        [{ metadonneeId, objectif }]
+      );
     }
+    const emptyPlan = await caller.plans.plans.get({ planId: empty });
+    expect(emptyPlan.indicateurSource).toEqual({
+      id: emptyMetadata.id,
+      sourceId: source.id,
+    });
+    const absent = await caller.indicateurs.valeurs.list({
+      collectiviteId: f.collectiviteId,
+      indicateurIds: [f.valeur.indicateurId],
+      metadonneeId: emptyMetadata.id,
+    });
+    expect(absent.indicateurs[0].sources[source.id]).toBeUndefined();
+    const chart = await caller.indicateurs.valeurs.list({
+      collectiviteId: f.collectiviteId,
+      indicateurIds: [f.valeur.indicateurId],
+      excludedSources: [source.id],
+    });
+    expect(chart.indicateurs[0].sources[source.id]).toBeUndefined();
+    expect(chart.indicateurs[0].sources.collectivite.valeurs).toMatchObject([
+      { resultat: 10, objectif: 100 },
+    ]);
     expect(await f.read()).toMatchObject([
       { metadonneeId: null, resultat: 10, objectif: 100 },
       { metadonneeId: firstMetadata.id, resultat: null, objectif: 0 },

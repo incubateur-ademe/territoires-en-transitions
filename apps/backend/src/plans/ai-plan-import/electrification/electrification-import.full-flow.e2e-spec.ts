@@ -246,7 +246,7 @@ describe(
       );
       vi.spyOn(app.get(TrackingService), 'isFeatureEnabled').mockImplementation(
         async (key) =>
-          key === 'is-electrification-plan-import-enabled' && flagEnabled
+          key === 'is-electrification-plan-creation-enabled' && flagEnabled
       );
       vi.spyOn(
         app.get(ImportPlanService),

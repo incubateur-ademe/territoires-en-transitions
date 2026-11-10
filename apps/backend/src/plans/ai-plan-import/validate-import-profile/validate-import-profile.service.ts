@@ -4,8 +4,11 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
-import { PlanCreationRules } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
+import {
+  AiPlanImportProfile,
+  AiPlanImportProfileEnum,
+} from '@tet/domain/plans';
 import { AiPlanImportError } from '../ai-plan-import.errors';
 import { ValidateElectrificationImportService } from '../electrification/validate-import/validate-electrification-import.service';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
@@ -15,8 +18,6 @@ import {
   StoredImportCheckpoint,
 } from '../models/import-checkpoint';
 import {
-  AiPlanImportProfile,
-  AiPlanImportProfileEnum,
   GENERIC_IMPORT_CONTRACT_VERSION,
   resolveImportProfile,
 } from '../models/import-profile';
@@ -123,9 +124,9 @@ export class ValidateImportProfileService {
       const planTypes = await this.listPlanTypes.listPlanTypes();
       const planType = planTypes.find(({ id }) => id === options.planType);
       if (!planType) return failure('UNKNOWN_PLAN_TYPE');
-      const creationDisabledReason =
-        PlanCreationRules.getDisabledReason(planType);
-      if (creationDisabledReason) return failure(creationDisabledReason);
+      const planTypeValidation =
+        this.electrification.validateGenericPlanType(planType);
+      if (!planTypeValidation.success) return planTypeValidation;
       withSecteurs =
         planType.categorie === PCAET_PLAN_TYPE_KEY.categorie &&
         planType.type === PCAET_PLAN_TYPE_KEY.type;

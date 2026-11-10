@@ -1,6 +1,10 @@
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useTRPC } from '@tet/api';
 import {
+  AiPlanImportProfileEnum,
+  type AiPlanImportProfile,
+} from '@tet/domain/plans';
+import {
   useMutation,
   useQueryClient,
   UseMutationResult,
@@ -17,6 +21,7 @@ export type AiImportOrigine = 'page' | 'modale_demarche' | 'etape_documents';
 export type AiImportEnqueueInput = {
   collectiviteId: number;
   file: File;
+  profile?: AiPlanImportProfile;
   planName: string;
   planType?: number;
   instructions?: string;
@@ -51,6 +56,10 @@ export const useEnqueueAiImport = (): UseMutationResult<
     mutationFn: async (input: AiImportEnqueueInput) => {
       const formData = new FormData();
       formData.append('file', input.file);
+      formData.append(
+        'profile',
+        input.profile ?? AiPlanImportProfileEnum.GENERIC
+      );
       formData.append('planName', input.planName);
       if (input.planType !== undefined) {
         formData.append('planType', String(input.planType));

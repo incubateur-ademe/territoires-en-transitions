@@ -795,6 +795,55 @@ l'admission et la reprise ; il appelle la persistance avec sa transaction et
 y enregistre aussi le compte rendu et la réussite du job. La persistance seule
 ne constitue pas une opération de reprise idempotente.
 
+**Livraison du parcours app — lot 6, 10 novembre 2026.** Le blocage temporaire
+est remplacé par le flag serveur `is-electrification-plan-creation-enabled`.
+Il couvre la création manuelle, l’import Excel, la duplication, le passage d’un
+autre type vers Électrification et l’admission de nouveaux imports dédiés.
+Son activation explicite est obligatoire ; absence, erreur d’évaluation et
+désactivation ferment ces parcours, y compris en dev/test/CI et pour le
+super-admin. Cette clé remplace `is-electrification-plan-import-enabled` sans
+repli : une ouverture PostHog doit cibler la nouvelle clé.
+
+Lorsque le flag est ouvert, les droits ordinaires permettent de créer un plan
+Électrification, y compris pour une collectivité non lauréate, sans initialiser
+d’engagements ni de cibles de convention. L’import dédié exige en plus
+l’éligibilité et une configuration métier complète ; le profil IA générique
+continue de refuser ce type.
+
+La fermeture préserve la lecture, l’édition et la suppression des plans
+existants, y compris une sauvegarde qui conserve leur type Électrification.
+Les imports déjà admis peuvent terminer et reprendre. Leur autorisation
+interne `PlanCreateAuthorization` est conservée, liée à l’utilisateur, à la
+collectivité, au type exact et à la transaction ; elle n’est pas une option
+des API publiques. `ElectrificationImportAuthorization` garde le contrôle
+d’éligibilité et le verrou du type exact. Le contrôle commun de création
+consomme cette autorisation sans connaître les règles du programme.
+
+L’interface lit les capacités de création du serveur et ne connaît que les
+identifiants de types indisponibles. La liste complète des types reste
+accessible pour lire les plans existants. Aucun contrôle du navigateur ne
+remplace le refus côté serveur.
+
+Le contrat public des profils est partagé dans `@tet/domain/plans`. L’app
+sélectionne le profil selon le type exact, affiche le DOCX officiel V4 comme
+seul format pour Électrification et impose la conservation des sous-actions.
+La capacité serveur positive reste obligatoire, indépendamment du flag UI
+historique et du mode super-admin. Une API sans cette capacité n’affiche pas
+ce choix. Le suivi et le compte rendu déjà livrés restent accessibles après
+fermeture de l’admission.
+
+La lecture ordinaire du plan expose sa métadonnée de source exacte. Les cartes
+d’indicateurs d’axe montrent la cible de l’annexe séparément de l’objectif
+local, avec son unité et son échéance. Elles ne prennent aucune cible d’une
+autre métadonnée et suivent les liens actuellement présents dans le plan.
+L’affichage spécifique reste dans les composants Électrification. `PlanView`
+le compose via le contexte existant : les axes et le graphique reçoivent
+uniquement des options d’affichage neutres. Le formulaire commun applique
+les options d’extraction fournies par la configuration du profil ; leurs
+valeurs imposées restent dans le module Électrification.
+L’ouverture en production reste conditionnée à la
+qualification de la phase 7.
+
 **Décision de stockage du compte rendu — lot 5B, 10 novembre 2026.**
 Réutiliser la colonne JSON `draft` du job avec un membre `report`, sans nouvelle
 colonne ni table. Le compte rendu structuré est exposé séparément par l'API ;
@@ -817,10 +866,11 @@ sur la ligne verrouillée avant reprise ; il ne connaît ni catalogue ni schéma
 L'enfilement consomme les options validées et la décision de créer un plan
 provisoire ; il ne connaît pas les règles Électrification. La reprise et le
 worker réutilisent la même autorisation métier.
-L'admission exige le flag serveur dédié, fermé par défaut, les droits ordinaires,
+L'admission exige le flag serveur de création, fermé par défaut, les droits ordinaires,
 l'éligibilité, le type exact et une configuration métier complète. Ce flag
 n'hérite ni de l'activation automatique en dev/test/CI ni d'un contournement
-super-admin. Sa fermeture empêche les nouveaux imports ; les jobs admis et
+super-admin. Sa fermeture empêche toutes les nouvelles créations du type
+Électrification, dont les nouveaux imports ; les jobs admis et
 leurs reprises continuent, sous réserve de droits, d'éligibilité et de contrats
 toujours valides. Le support relance le job au nom de son demandeur initial.
 Le service métier demande une évaluation explicite du flag via l'option commune

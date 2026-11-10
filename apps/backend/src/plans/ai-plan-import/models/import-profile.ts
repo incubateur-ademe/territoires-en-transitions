@@ -1,19 +1,15 @@
-import { z } from 'zod';
+import {
+  AiPlanImportProfileEnum,
+  aiPlanImportProfileSchema,
+  type AiPlanImportProfile,
+} from '@tet/domain/plans';
 
-export const AiPlanImportProfileEnum = {
-  GENERIC: 'generic',
-  // Valeur sérialisée conservée pour le contrat API et les options des jobs.
-  ELECTRIFICATION: 'annexe-3-electrification',
-} as const;
-
-export const aiPlanImportProfileValues = [
-  AiPlanImportProfileEnum.GENERIC,
-  AiPlanImportProfileEnum.ELECTRIFICATION,
-] as const;
-
-export const aiPlanImportProfileSchema = z.enum(aiPlanImportProfileValues);
-
-export type AiPlanImportProfile = z.infer<typeof aiPlanImportProfileSchema>;
+export {
+  AiPlanImportProfileEnum,
+  aiPlanImportProfileSchema,
+  aiPlanImportProfileValues,
+  type AiPlanImportProfile,
+} from '@tet/domain/plans';
 
 export const GENERIC_IMPORT_CONTRACT_VERSION = 1;
 

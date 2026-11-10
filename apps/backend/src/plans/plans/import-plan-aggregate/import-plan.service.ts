@@ -1,7 +1,3 @@
-import {
-  PLAN_CREATION_DISABLED_MESSAGES,
-  PlanCreationRules,
-} from '@tet/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
 import { CreatePlanAggregateService } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.service';
 import { PlanErrorType } from '@tet/backend/plans/plans/plans.errors';
@@ -15,6 +11,7 @@ import {
   EntityResolutionError,
   ImportErrors,
   PlanCreationError,
+  PlanCreationDisabledError,
   TransactionError,
 } from './import.errors';
 import { ResolveEntityService } from './resolvers/resolve-entity.service';
@@ -101,10 +98,8 @@ export class ImportPlanService {
         // contraintes, elle suit à part pour les journaux.
         if (!planCreationResult.success) {
           const { error, cause } = planCreationResult;
-          if (PlanCreationRules.isDisabledReason(error)) {
-            return failure(
-              new PlanCreationError(PLAN_CREATION_DISABLED_MESSAGES[error])
-            );
+          if (error === 'PLAN_CREATION_DISABLED') {
+            return failure(new PlanCreationDisabledError());
           }
           return failure(
             new PlanCreationError(

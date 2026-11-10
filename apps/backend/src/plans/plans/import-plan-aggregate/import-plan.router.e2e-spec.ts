@@ -4,6 +4,8 @@ import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/pers
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { planActionTypeCategorieTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUserFromUserCredentials,
@@ -12,6 +14,8 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
@@ -19,7 +23,7 @@ import ExcelJS from 'exceljs';
 import assert from 'node:assert';
 import * as fs from 'node:fs';
 import path from 'path';
-import { expect, onTestFinished } from 'vitest';
+import { expect, onTestFinished, vi } from 'vitest';
 import z from 'zod';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '../../../users/users/users.test-fixture';
@@ -153,6 +157,67 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test('refuse un import Excel Électrification lorsque la création est fermée sans créer de plan ou de fiche', async () => {
+    const fixture = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    const caller = router.createCaller({
+      user: getAuthUserFromUserCredentials(fixture.user),
+    });
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: fixture.user.id,
+    });
+    const flag = vi
+      .spyOn(app.get(TrackingService), 'isFeatureEnabled')
+      .mockResolvedValue(false);
+    onTestFinished(async () => {
+      flag.mockRestore();
+      await cleanup();
+      await fixture.cleanup();
+    });
+    await databaseService.db
+      .insert(planActionTypeCategorieTable)
+      .values({ categorie: ELECTRIFICATION_PLAN_TYPE_KEY.categorie })
+      .onConflictDoNothing();
+    await databaseService.db
+      .insert(planActionTypeTable)
+      .values(ELECTRIFICATION_PLAN_TYPE_KEY)
+      .onConflictDoNothing();
+    const [type] = await databaseService.db
+      .select()
+      .from(planActionTypeTable)
+      .where(
+        and(
+          eq(
+            planActionTypeTable.categorie,
+            ELECTRIFICATION_PLAN_TYPE_KEY.categorie
+          ),
+          eq(planActionTypeTable.type, ELECTRIFICATION_PLAN_TYPE_KEY.type)
+        )
+      );
+    const input = await pathToInput({
+      pathName: './__fixtures__/one_fiche_plan.xlsx',
+      collectiviteId: fixture.collectivite.id,
+    });
+    await expect(
+      caller.plans.plans.import({ ...input, planType: type.id })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    expect(
+      await databaseService.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.collectiviteId, fixture.collectivite.id))
+    ).toEqual([]);
+    expect(
+      await databaseService.db
+        .select()
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.collectiviteId, fixture.collectivite.id))
+    ).toEqual([]);
   });
 
   test('Test utilisateur non support', async () => {

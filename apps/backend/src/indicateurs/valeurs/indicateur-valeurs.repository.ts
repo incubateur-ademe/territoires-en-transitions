@@ -38,6 +38,7 @@ import {
   isNotNull,
   isNull,
   lte,
+  notInArray,
   or,
   sql,
   SQL,
@@ -57,6 +58,7 @@ type ListIndicateurValeursQuery = Readonly<{
   indicateurIds?: number[];
   identifiantsReferentiel?: string[];
   sources?: string[];
+  excludedSources?: string[];
   metadonneeId?: number;
   periodicite?: IndicateurPeriodicite;
   dateDebut?: string;
@@ -171,6 +173,14 @@ export class IndicateurValeursRepository {
           inArray(indicateurSourceMetadonneeTable.sourceId, options.sources)
         );
       }
+    }
+    if (options.excludedSources?.length) {
+      conditions.push(
+        notInArray(
+          sql`coalesce(${indicateurSourceMetadonneeTable.sourceId}, ${COLLECTIVITE_SOURCE_ID})`,
+          options.excludedSources
+        )
+      );
     }
     if (options.metadonneeId !== undefined) {
       conditions.push(

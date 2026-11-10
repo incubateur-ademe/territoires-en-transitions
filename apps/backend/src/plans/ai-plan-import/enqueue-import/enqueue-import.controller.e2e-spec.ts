@@ -549,6 +549,7 @@ describe(
 
     it.each([
       'flag fermé',
+      'évaluation du flag en erreur',
       'catalogue incomplet',
       'engagements incomplets',
       'catalogue vide',
@@ -558,6 +559,10 @@ describe(
       if (reason === 'flag fermé')
         vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
           false
+        );
+      if (reason === 'évaluation du flag en erreur')
+        vi.mocked(app.get(TrackingService).isFeatureEnabled).mockRejectedValue(
+          new Error('PostHog indisponible')
         );
       if (reason === 'catalogue incomplet') catalogue.fiches.actions = null;
       if (reason === 'engagements incomplets') catalogue.engagements.pop();
@@ -584,6 +589,27 @@ describe(
       expect((await enqueue()).status).toBe(412);
       await expectNoWrites();
     });
+
+    it.each([undefined, AiPlanImportProfileEnum.GENERIC])(
+      'refuse le type Électrification sans son profil dédié : %s',
+      async (profile) => {
+        const req = request(app.getHttpServer())
+          .post(makeEnqueueUrl(fixture.collectivite.id))
+          .set('Authorization', `Bearer ${token}`)
+          .field('planName', 'Plan Électrification')
+          .field('planType', String(typeId));
+        if (profile) req.field('profile', profile);
+        const response = await req.attach('file', docx, {
+          filename: 'convention.docx',
+          contentType: DOCX_MIME,
+        });
+        expect(response.status).toBe(400);
+        expect(response.body.message).toContain(
+          "parcours d'import Électrification"
+        );
+        await expectNoWrites();
+      }
+    );
 
     it('refuse un CSV déclaré DOCX et un autre type de plan avant upload', async () => {
       expect((await enqueue(csvFile())).status).toBe(400);

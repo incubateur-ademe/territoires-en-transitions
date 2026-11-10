@@ -1,9 +1,4 @@
-import {
-  PLAN_CREATION_DISABLED_MESSAGES,
-  PlanCreationDisabledReason,
-  OrigineSecteurs,
-  SecteurReglementaire,
-} from '@tet/domain/plans';
+import { OrigineSecteurs, SecteurReglementaire } from '@tet/domain/plans';
 import { plural } from '@tet/ui/labels/plural';
 
 type PlanBudgetCalculArgs = {
@@ -24,8 +19,10 @@ export const plansLabels = {
   nomPlanRequis: 'Le nom du plan est requis',
   nomPlanTropLong: 'Le nom du plan ne doit pas dépasser 300 caractères',
   typePlan: 'Type de plan',
-  planCreationDisabled: (reason: PlanCreationDisabledReason): string =>
-    PLAN_CREATION_DISABLED_MESSAGES[reason],
+  planCreationTypeIndisponible:
+    'La création de plans de ce type est temporairement désactivée.',
+  planCreationVerificationIndisponible:
+    'Impossible de vérifier les types de plans disponibles. Réessayez plus tard.',
   type: 'Type',
   axe: plural({ one: 'axe', other: 'axes' }),
   sousAxe: plural({ one: 'sous-axe', other: 'sous-axes' }),
@@ -299,6 +296,14 @@ export const plansLabels = {
     'L’import ne vous convient pas ? Contactez-nous via le live chat en joignant votre fichier et quelques mots de contexte, cela nous aide à l’améliorer.',
   importPlanIaFormatsAcceptes:
     'PDF, Word (.docx), Excel (.xlsx) ou CSV, 25 Mo maximum',
+  importElectrificationFormat:
+    'Annexe 3 de la convention Électrification, canevas officiel V4 au format Word (.docx), 25 Mo maximum',
+  importElectrificationFormatErreur:
+    'Utilisez le canevas officiel V4 au format Word (.docx).',
+  importElectrificationDescription:
+    'Importez l’annexe 3 remplie de votre convention Électrification. Le plan sera créé après validation du document. Les sous-actions sont conservées et les actions référencées par un lien TeT sont rattachées sans modifier leurs données.',
+  importPlanIaProfilIndisponible:
+    'L’import n’est pas disponible pour ce type de plan. Vous pouvez créer un plan directement sur la plateforme.',
   importPlanIaFichierSuggere:
     "Programme d'actions déposé à l'étape Documents, pré-sélectionné pour vous.",
   importPlanIaFichierSuggereChargement:

@@ -32,7 +32,7 @@ ci-dessous désignent les lots ; leur avancement est suivi séparément.
 - [x] PR 4D — Références ADEME durables, engagements retenus et rattachement des sources : [#5780](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5780), implémentée et vérifiée, en revue. Migration additive et services internes ; admission Électrification toujours fermée.
 - [x] PR 5A — Assemblage transactionnel du plan Électrification : [#5788](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5788), implémenté et vérifié, en revue. Admission publique fermée ; raccordement des jobs et effets après commit en 5B.
 - [x] PR 5B — Pipeline complet et cycle de vie des jobs : [#5802](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5802), implémenté et vérifié, en revue après #5788. Admission fermée par défaut ; ouverture et parcours app restent en phases 6 et 7.
-- [ ] PR 6 — Parcours et lecture dans l'app.
+- [x] PR 6 — Parcours et lecture dans l'app : [#5806](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5806), implémentés et vérifiés, en revue après #5802. Cibles et objectifs locaux distincts ; toutes les nouvelles créations Électrification protégées par un flag serveur. Qualification et ouverture restent en phase 7.
 - [ ] Phase 7 — Qualification et ouverture en production.
 - [ ] Phase 8 — Budgets et financements, facultatifs.
 
@@ -1186,6 +1186,34 @@ cibles et le parcours de la phase 6.
 
 ### PR 6 — Exposer le parcours préparé
 
+**Livraison :** le profil est choisi à partir du type exact du plan et de la
+capacité serveur. Les règles documentaires et l’affichage de la cible restent
+isolés sous `electrification/`. Le suivi et les diagnostics réutilisent le lot
+1B ; aucun second écran de compte rendu n’est ajouté. Les profils partagent
+leur enum et leur schéma entre le backend et l’app.
+
+`PlanView` assemble l’affichage spécialisé via le contexte existant ; les
+composants d’axes ne dépendent d’aucun programme. Les options d’extraction
+imposées sont définies par le profil, puis appliquées par le formulaire commun.
+
+Le flag unique `is-electrification-plan-creation-enabled` protège la création
+manuelle, l’import Excel, la duplication, le passage vers le type
+Électrification et l’admission de nouveaux imports dédiés. Il remplace
+`is-electrification-plan-import-enabled` sans repli sur l’ancienne clé.
+L’activation explicite reste obligatoire côté serveur, y compris en
+dev/test/CI ; les interfaces consomment des capacités neutres par type.
+
+Les plans existants restent consultables et modifiables après fermeture.
+Les imports déjà admis peuvent terminer et reprendre grâce à leur autorisation
+interne liée au type, à l’utilisateur, à la collectivité et à la transaction.
+Une fois le flag ouvert, la création ordinaire n’initialise aucune convention
+et n’exige pas d’être lauréat. Les contrôles supplémentaires de l’import dédié
+restent obligatoires ; le profil IA générique refuse ce type.
+
+La lecture du plan expose sa source exacte pour lire les cibles des indicateurs
+encore liés aux axes. L’objectif local reste visible ; zéro est une valeur,
+pas une absence. La suppression d’un lien ne recrée rien.
+
 **Périmètre :** formulaire d'import, affichage des engagements, erreurs et
 compte rendu. Réutiliser le suivi de la phase 1 et les lectures ordinaires
 des plans et indicateurs, avec les sources préparées en phase 4.
@@ -1195,9 +1223,10 @@ des plans et indicateurs, avec les sources préparées en phase 4.
   visible dès le choix du fichier. Envoyer son profil explicite ; adapter consignes et options
   pour conserver les sous-actions et références nécessaires. Ne pas envoyer
   une annexe indisponible au pipeline générique. Remplacer aussi le blocage
-  temporaire du parcours ordinaire côté interface et backend pour permettre
-  aux non-lauréats de créer un plan Électrification sans initialisation
-  conventionnelle. Cela n'ouvre pas le profil annexe.
+  temporaire du parcours ordinaire par le flag de création, côté interface
+  et backend. Après activation, les non-lauréats peuvent créer un plan
+  Électrification sans initialisation conventionnelle. Cela ne les rend pas
+  éligibles à l’import de l’annexe.
 - Présenter "Cible de l'annexe 3" séparément de l'objectif courant, avec unité
   et échéance, notamment dans les
   [indicateurs d'axe](../../apps/app/src/plans/plans/show-plan/plan-arborescence.view/axe/axe-indicateurs.tsx).
@@ -1214,17 +1243,36 @@ des plans et indicateurs, avec les sources préparées en phase 4.
   du document d'origine, sans API de détection des liens manquants. Ne proposer
   aucun renommage local des indicateurs prédéfinis ni édition des engagements.
 - Mettre les textes dans les labels existants et les URLs dans les builders.
-  Mettre à jour le guide de parcours et de support avec ces comportements.
 
-**Validation :** parcours navigateur avec fixtures DOCX et parser réel : upload,
-suivi sans plan, retour après fermeture, erreur/correction par nouvel import,
-reprise, succès et compte rendu. Vérifier les cibles E07, zéro/vide, axe sans
+**Validation :** parcours navigateur pour l'upload et le suivi ; suites backend
+avec fixtures DOCX, parser réel et fournisseur IA factice pour l'extraction et
+la persistance. Couvrir suivi sans plan, retour après fermeture,
+erreur/correction par nouvel import, reprise, succès et compte rendu. Vérifier les cibles E07, zéro/vide, axe sans
 fiche, axe B sans engagement, deux plans sans mélange de sources, données
 existantes préservées et comportement ordinaire après retrait d'un lien.
 Les tests de l'ancien import support ne constituent pas cette couverture.
 
-**Déploiement et arrêt possible :** backend de phase 5 puis app, admission encore
-fermée. Les lecteurs restent accessibles indépendamment du flag. Aucune phase
+**Vérification initiale — 10 novembre 2026 :** 118 e2e backend et 29 tests unitaires
+existants passent : création ordinaire et permissions, admission dédiée,
+persistance, extraction DOCX avec parser réel et faux LLM, lecture par
+métadonnée exacte et préservation des valeurs locales. Les 16 scénarios
+navigateur passent : capacités, format, multipart et suivi avec une réponse
+d'import simulée ; lecture de deux plans avec cibles distinctes, zéro/vide,
+objectifs locaux et dissociation avec l'API réelle. TypeScript, ESLint et
+Prettier passent. Aucun nouveau fichier de test unitaire ni appel à un modèle
+externe. Ces vérifications ne remplacent pas la qualification de la phase 7.
+
+**Vérification du flag de création — 10 novembre 2026 :** 137 e2e backend et
+29 tests unitaires existants passent. Ils couvrent les refus de création,
+conversion, duplication et import Excel, les permissions, l'édition des plans
+existants et la finalisation d'un import déjà admis après fermeture du flag.
+Les 19 scénarios navigateur passent, dont l'indisponibilité des types,
+l'erreur de chargement des capacités, la fermeture pendant une duplication
+et sa réouverture. Les infobulles des actions de menu désactivées restent
+accessibles au survol. Aucun appel à un modèle externe.
+
+**Déploiement et arrêt possible :** backend de phase 5 puis app, flag de création
+encore fermé. Les lecteurs restent accessibles indépendamment du flag. Aucune phase
 budgétaire ni dashboard n'est nécessaire pour ouvrir le socle.
 
 ## Phase 7 — Qualifier puis ouvrir progressivement
@@ -1261,7 +1309,9 @@ Les corrections éventuelles rejoignent les lots concernés avec leur validation
   y compris pour cette évaluation, reste réservé à un lancement humain.
 
 **Ouverture :** valider le parcours complet en préproduction, puis ouvrir
-l'admission à un petit groupe identifié de collectivités. Les utilisateurs ou
+l’admission à un petit groupe identifié de collectivités via
+`is-electrification-plan-creation-enabled`. L’ancienne clé d’import n’ouvre
+plus aucun parcours. Les utilisateurs ou
 l'équipe lancent eux-mêmes les imports réels. Contrôler chaque import pilote :
 complétude A/B, cibles, conservation des données, erreurs et absence de doublon.
 Suivre durées, échecs par cause, reprises et volumes avec l'instrumentation

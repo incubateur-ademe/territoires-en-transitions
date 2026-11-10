@@ -106,6 +106,7 @@ export const AiImportFlow = ({
       const { jobId: newJobId, planId } = await enqueue.mutateAsync({
         collectiviteId,
         file: values.file,
+        profile: values.profile,
         planName: values.planName,
         planType: values.planType ?? undefined,
         instructions: values.instructions.trim() || undefined,

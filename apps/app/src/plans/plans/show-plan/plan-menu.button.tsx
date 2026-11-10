@@ -4,7 +4,6 @@ import {
   makeCollectivitePlansActionsListUrl,
 } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { PlanCreationRules } from '@tet/domain/plans';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useTRPC } from '@tet/api';
 import { useQuery } from '@tanstack/react-query';
@@ -18,11 +17,14 @@ import RestreindreFichesModal from './actions/update-fiche-visibility.modal';
 import { useDuplicatePlan } from './data/use-duplicate-plan';
 import { useExportPlanAction } from './data/use-export-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
+import { usePlanCreationCapabilities } from '../use-plan-creation-capabilities';
 
 type RestreindreFicheState = 'closed' | 'private' | 'public';
 
 export const PlanMenuButton = () => {
   const { plan, axeHasFiches } = usePlanAxesContext();
+  const { getDisabledReason } = usePlanCreationCapabilities();
+  const duplicateDisabledReason = getDisabledReason(plan.type?.id);
   const { mutate: exportPlanAction, isPending } = useExportPlanAction(plan.id);
   const { mutateAsync: duplicatePlan, isPending: isDuplicating } =
     useDuplicatePlan(plan.id);
@@ -128,6 +130,8 @@ export const PlanMenuButton = () => {
       ? {
           label: appLabels.dupliquerPlan,
           icon: 'file-copy-line',
+          disabled: !!duplicateDisabledReason,
+          tooltip: duplicateDisabledReason,
           onClick: () => {
             setIsOpenDuplicateModal(true);
           },
@@ -195,9 +199,7 @@ export const PlanMenuButton = () => {
         <DuplicatePlanModal
           planNom={plan.nom}
           isPending={isDuplicating}
-          creationDisabledReason={PlanCreationRules.getDisabledReason(
-            plan.type
-          )}
+          disabledReason={duplicateDisabledReason}
           onDuplicate={async (nom) => {
             await duplicatePlan({ nom });
           }}

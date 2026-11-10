@@ -4,19 +4,18 @@ import {
   ElectrificationEligibilityDecision,
 } from '@tet/backend/plans/plans/check-electrification-eligibility/check-electrification-eligibility.service';
 import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
+import { CheckElectrificationCreationService } from '@tet/backend/plans/plans/electrification/check-electrification-creation.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import {
-  ELECTRIFICATION_PLAN_TYPE_KEY,
+  AiPlanImportProfileEnum,
   electrificationConfigSchema,
+  PlanType,
 } from '@tet/domain/plans';
-import { FeatureFlagEnum } from '@tet/domain/utils';
 import { AiPlanImportError } from '../../ai-plan-import.errors';
 import { DOCX_MIME } from '../../enqueue-import/detect-source-mime-type';
 import { ImportAdmission } from '../../validate-import-profile/import-admission.types';
 import { AiPlanImportJobOptions } from '../../models/ai-plan-import-job';
-import { AiPlanImportProfileEnum } from '../../models/import-profile';
 import { ELECTRIFICATION_CONFIG } from '../electrification.constants';
 import {
   ELECTRIFICATION_CHECKPOINT_VERSION,
@@ -41,7 +40,7 @@ type ImportInput = { collectiviteId: number; options: AiPlanImportJobOptions };
 @Injectable()
 export class ValidateElectrificationImportService {
   constructor(
-    private readonly tracking: TrackingService,
+    private readonly creation: CheckElectrificationCreationService,
     private readonly eligibility: CheckElectrificationEligibilityService,
     private readonly listPlanTypes: ListPlanTypesService,
     @Inject(ELECTRIFICATION_CONFIG) private readonly catalogue: unknown
@@ -71,14 +70,7 @@ export class ValidateElectrificationImportService {
   ): Promise<Result<ElectrificationImportConfiguration, AiPlanImportError>> {
     const configuration = await this.getConfiguration(input, context);
     if (!configuration.success) return configuration;
-    const enabled = await this.tracking
-      .isFeatureEnabled(
-        FeatureFlagEnum['IS-ELECTRIFICATION-PLAN-IMPORT-ENABLED'],
-        context.user.id,
-        input.collectiviteId,
-        { requireExplicitActivation: true }
-      )
-      .catch(() => false);
+    const enabled = await this.creation.isEnabled(input, context);
     return enabled ? configuration : failure('IMPORT_PROFILE_UNAVAILABLE');
   }
 
@@ -106,6 +98,12 @@ export class ValidateElectrificationImportService {
       },
       createProvisionalPlan: false,
     });
+  }
+
+  validateGenericPlanType(planType: PlanType): Result<void, AiPlanImportError> {
+    return this.creation.appliesTo(planType)
+      ? failure('ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT')
+      : success(undefined);
   }
 
   validateSource(mimeType: string): Result<void, AiPlanImportError> {
@@ -154,10 +152,8 @@ export class ValidateElectrificationImportService {
       return failure('IMPORT_PROFILE_UNAVAILABLE');
     }
     const planTypes = await this.listPlanTypes.listPlanTypes();
-    const matchingTypes = planTypes.filter(
-      ({ categorie, type }) =>
-        categorie === ELECTRIFICATION_PLAN_TYPE_KEY.categorie &&
-        type === ELECTRIFICATION_PLAN_TYPE_KEY.type
+    const matchingTypes = planTypes.filter((planType) =>
+      this.creation.appliesTo(planType)
     );
     if (matchingTypes.length !== 1)
       return failure('IMPORT_PROFILE_UNAVAILABLE');

@@ -1,4 +1,5 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
+import { ELECTRIFICATION_PLAN_TYPE_KEY } from '@tet/domain/plans';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test } from 'tests/main.fixture';
@@ -15,6 +16,185 @@ const supportUser = {
   isSuperAdminRoleEnabled: true,
 } as const;
 
+function electrificationOption(page: Page) {
+  return page
+    .getByTestId('ai-import.plan-type-options')
+    .getByText(ELECTRIFICATION_PLAN_TYPE_KEY.categorie, { exact: true })
+    .locator('..')
+    .getByRole('button', {
+      name: ELECTRIFICATION_PLAN_TYPE_KEY.type,
+      exact: true,
+    });
+}
+
+async function selectElectrification(page: Page) {
+  await page.getByTestId('ai-import.plan-type').click();
+  await electrificationOption(page).click();
+}
+
+for (const capability of ['disabled', 'missing'] as const) {
+  test(`ne propose pas le type Électrification si sa capacité est ${
+    capability === 'disabled' ? 'désactivée' : 'absente'
+  }`, async ({ page, collectivites }) => {
+    const mock = new AiImportFixture();
+    if (capability === 'missing') {
+      mock.capabilities.profiles = [{ profile: 'generic', available: true }];
+    }
+    await mock.install(page);
+    const { collectivite } = await collectivites.addCollectiviteAndUser({
+      userArgs: supportUser,
+    });
+    await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
+    await page.getByTestId('ai-import.plan-type').click();
+    await expect(
+      page.getByRole('button', { name: 'Plan Climat Air Énergie Territorial' })
+    ).toBeVisible();
+    await expect(electrificationOption(page)).toHaveCount(0);
+    await expect(page).not.toHaveURL(/importJobId=/);
+    expect(mock.enqueueCalls).toBe(0);
+  });
+}
+
+test('importe le DOCX avec le profil Électrification et conserve le rapport après fermeture de son accès', async ({
+  page,
+  collectivites,
+}) => {
+  const mock = new AiImportFixture();
+  mock.status.profile = 'annexe-3-electrification';
+  mock.capabilities.profiles = [
+    { profile: 'generic', available: true },
+    { profile: 'annexe-3-electrification', available: true },
+  ];
+  await mock.install(page);
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: supportUser,
+  });
+  const types = await user.getTrpcClient().plans.plans.listTypes.query();
+  const electrificationType = types.find(
+    ({ categorie, type }) =>
+      categorie === ELECTRIFICATION_PLAN_TYPE_KEY.categorie &&
+      type === ELECTRIFICATION_PLAN_TYPE_KEY.type
+  );
+  assert(electrificationType);
+  await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
+  await page.getByRole('textbox', { name: 'Nom du plan' }).fill('Plan de test');
+  const instructions = page.getByRole('textbox', {
+    name: "Précisions pour l'IA (facultatif)",
+  });
+  await instructions.fill('Consigne réservée à un import générique.');
+  await page
+    .getByRole('checkbox', { name: 'Mon document contient des sous-actions' })
+    .uncheck();
+  await selectElectrification(page);
+  await expect(instructions).toHaveCount(0);
+  await expect(page.locator('input[type="file"]')).toHaveAttribute(
+    'accept',
+    '.docx'
+  );
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'plan.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from('Axe,Action\nMobilité,Piste cyclable'),
+  });
+  await page.getByTestId('ai-import.lancer').click();
+  await expect(
+    page.getByText('Utilisez le canevas officiel V4 au format Word (.docx).')
+  ).toBeVisible();
+  await expect(page).not.toHaveURL(/importJobId=/);
+  expect(mock.enqueueCalls).toBe(0);
+  await page.getByTestId('ai-import.retirer-fichier').click();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'plan-electrification.docx',
+    mimeType:
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    buffer: Buffer.from('Document synthétique, requête interceptée.'),
+  });
+  await page.getByTestId('ai-import.lancer').click();
+  await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
+  await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
+  await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
+  expect(mock.enqueueCalls).toBe(1);
+  const form = mock.enqueuedForms[0];
+  expect(form.get('profile')).toBe('annexe-3-electrification');
+  expect(form.get('planType')).toBe(String(electrificationType.id));
+  expect(form.get('withSousActions')).toBe('true');
+  expect(form.get('withVerifications')).toBe('false');
+  expect(form.get('instructions')).toBeNull();
+  expect(form.get('file')).toHaveProperty('name', 'plan-electrification.docx');
+
+  mock.capabilities.profiles = [{ profile: 'generic', available: true }];
+  await page.reload();
+  await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
+  mock.status = {
+    ...mock.status,
+    status: 'failed',
+    error: 'Référence inconnue',
+    report: {
+      issues: [
+        {
+          kind: 'document-error',
+          code: 'UNKNOWN_REFERENCE',
+          message: 'Corriger la référence de la fiche.',
+          location: 'Tableau B, ligne 2',
+        },
+      ],
+      qualitativeReview: null,
+    },
+  };
+  mock.current = null;
+  await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
+    'Corriger la référence de la fiche.'
+  );
+  await page.reload();
+  await expect(page.getByTestId('plans.import-ia.rapport')).toContainText(
+    'Tableau B, ligne 2'
+  );
+  expect(mock.enqueueCalls).toBe(1);
+});
+
+test('ouvre le plan Électrification terminé quand seul ce profil est disponible', async ({
+  page,
+  collectivites,
+  plans,
+}) => {
+  const mock = new AiImportFixture();
+  mock.status.profile = 'annexe-3-electrification';
+  mock.capabilities.profiles = [
+    { profile: 'generic', available: false },
+    { profile: 'annexe-3-electrification', available: true },
+  ];
+  await mock.install(page);
+  const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+    userArgs: { autoLogin: true },
+  });
+  const planId = await plans.create(user, {
+    collectiviteId: collectivite.data.id,
+    nom: 'Plan importé',
+  });
+  await page.goto(`/collectivite/${collectivite.data.id}/plans`);
+  await page
+    .getByRole('button', { name: 'Ajouter un plan', exact: true })
+    .click();
+  await page.getByTestId('choix-creation-plan.importer-ia').click();
+  await page.getByRole('textbox', { name: 'Nom du plan' }).fill('Plan de test');
+  await selectElectrification(page);
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'plan-electrification.docx',
+    mimeType:
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    buffer: Buffer.from('Document synthétique, requête interceptée.'),
+  });
+  await page.getByTestId('ai-import.lancer').click();
+  await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
+  await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
+  mock.status = { ...mock.status, status: 'done', createdPlanId: planId };
+  mock.current = null;
+  mock.recent = [mock.status];
+  await expect(page).toHaveURL(new RegExp(`/plans/${planId}$`));
+  expect(mock.enqueueCalls).toBe(1);
+  expect(mock.enqueuedForms[0].get('profile')).toBe('annexe-3-electrification');
+});
+
 test('conserve le suivi sans plan au rechargement et affiche le rapport après échec', async ({
   page,
   collectivites,
@@ -27,6 +207,7 @@ test('conserve le suivi sans plan au rechargement et affiche le rapport après �
   await page.goto(`/collectivite/${collectivite.data.id}/plans/importer-ia`);
   await submitImport(page);
   await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
+  expect(mock.enqueuedForms[0].get('profile')).toBe('generic');
   await expect(page.getByTestId('plans.import-ia.suivi')).toBeVisible();
   await expect(page.getByTestId('plans.import-ia.ouvrir-plan')).toHaveCount(0);
   await page.reload();
@@ -447,6 +628,7 @@ test('rattache immédiatement le plan générique au PCAET et retrouve le suivi 
   mock.status = { ...mock.status, profile: 'generic', createdPlanId: planId };
   await submitImport(page);
   await expect(page).toHaveURL(new RegExp(`importJobId=${mock.status.jobId}`));
+  expect(mock.enqueuedForms[0].get('profile')).toBe('generic');
   const modal = page.getByTestId('demarches.plan.import-plan-modal');
   await expect(
     modal.getByTestId('plans.import-ia.etapes-simplifiees')

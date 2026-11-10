@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
@@ -8,7 +9,6 @@ import { and, eq, isNull, sql } from 'drizzle-orm';
 import { UpsertAxeBaseRepository } from '../../axes/upsert-axe/upsert-axe-base.repository';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
-import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
@@ -60,20 +60,12 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
     return plan !== undefined;
   }
 
-  async findPlanType(typeId: number, tx: Transaction) {
-    const [planType] = await tx
-      .select()
-      .from(planActionTypeTable)
-      .where(eq(planActionTypeTable.id, typeId))
-      .limit(1);
-    return planType;
-  }
-
   async findPlanAxe(
     planId: number,
-    tx?: Transaction
+    tx?: Transaction,
+    lock?: 'update'
   ): Promise<PlanAxeLookup | null> {
-    const [row] = await (tx ?? this.databaseService.db)
+    const query = (tx ?? this.databaseService.db)
       .select({
         id: axeTable.id,
         parent: axeTable.parent,
@@ -83,7 +75,17 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
       .from(axeTable)
       .where(eq(axeTable.id, planId))
       .limit(1);
+    const [row] = await (lock ? query.for(lock) : query);
     return row ?? null;
+  }
+
+  async findPlanType(typeId: number, tx?: Transaction) {
+    const [type] = await (tx ?? this.databaseService.db)
+      .select()
+      .from(planActionTypeTable)
+      .where(eq(planActionTypeTable.id, typeId))
+      .limit(1);
+    return type ?? null;
   }
 
   // modifiedBy/modifiedAt positionnés ici car le trigger SQL

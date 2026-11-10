@@ -38,6 +38,10 @@ export type IndicateurCardProps = {
    * Id de la collectivité pour laquelle on veut voir les valeurs, si non défini, on utilise la collectivité courante
    */
   externalCollectiviteId?: number;
+  /** Sources affichées séparément, exclues de ce graphique. */
+  excludedSources?: string[];
+  /** Complément sous le graphique, sans remplacer les valeurs ordinaires. */
+  additionalContent?: React.ReactNode;
 
   /** Permet de sélectionner ou dissocier l'indicateur */
   selectState?: {
@@ -72,6 +76,7 @@ export type IndicateurCardProps = {
 const IndicateurCard = ({
   indicateur,
   externalCollectiviteId,
+  excludedSources,
   selectState,
   href,
   ...props
@@ -87,6 +92,7 @@ const IndicateurCard = ({
   const chartInfo = useIndicateurChartInfo({
     indicateur,
     externalCollectiviteId,
+    excludedSources,
   });
 
   if (chartInfo.isLoading) {
@@ -128,6 +134,7 @@ export const IndicateurCardBase = ({
   otherMenuActions,
   card,
   readonly,
+  additionalContent,
 }: IndicateurCardBaseProps) => {
   const [isDownloadChartOpen, setIsDownloadChartOpen] = useState(false);
 
@@ -240,6 +247,8 @@ export const IndicateurCardBase = ({
               )}
             </div>
           )}
+
+          {additionalContent}
 
           {/** Partie sous le séparateur horizontal */}
           <div

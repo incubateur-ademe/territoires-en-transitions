@@ -1,6 +1,7 @@
 'use client';
 
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
+import type { IndicateurCardProps } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {
   CollectiviteCurrent,
   useCurrentCollectivite,
@@ -36,11 +37,18 @@ type PlanAxesContextValue = {
   isFiltered: boolean;
   isPlanEmpty: boolean;
   axeHasFiches: boolean;
+  /** Options d'affichage fournies par le parcours qui compose le plan. */
+  getIndicateurCardOptions?: (
+    indicateur: Pick<IndicateurCardProps['indicateur'], 'id' | 'unite'>
+  ) => Pick<IndicateurCardProps, 'excludedSources' | 'additionalContent'>;
 };
 
 const PlanAxesContext = createContext<PlanAxesContextValue | null>(null);
 
-type PlanAxesProviderProps = {
+type PlanAxesProviderProps = Pick<
+  PlanAxesContextValue,
+  'getIndicateurCardOptions'
+> & {
   children: React.ReactNode;
   plan: Plan;
   rootAxe: PlanNode;
@@ -50,6 +58,7 @@ export const PlanAxesProvider = ({
   children,
   plan,
   rootAxe,
+  getIndicateurCardOptions,
 }: PlanAxesProviderProps) => {
   const collectivite = useCurrentCollectivite();
   const { mutate: updatePlan } = useUpdatePlan({
@@ -149,6 +158,7 @@ export const PlanAxesProvider = ({
     isFiltered,
     isPlanEmpty,
     axeHasFiches,
+    getIndicateurCardOptions,
   };
 
   return (

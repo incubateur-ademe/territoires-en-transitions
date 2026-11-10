@@ -2,11 +2,13 @@ import { expect, Page } from '@playwright/test';
 import type { RouterOutput } from '@tet/api';
 
 type ImportStatus = RouterOutput['plans']['aiImport']['getAiImportStatus'];
+type ImportCapabilities =
+  RouterOutput['plans']['aiImport']['getAiImportCapabilities'];
 
 export const importStatus: ImportStatus = {
   jobId: 'e7c7e95e-1785-4aab-a498-40323e452247',
   planName: 'Plan de test',
-  profile: 'annexe-3-electrification',
+  profile: 'generic',
   createdAt: '2026-01-01T10:00:00Z',
   finishedAt: null,
   status: 'running',
@@ -32,12 +34,19 @@ export const importStatus: ImportStatus = {
 /** Toutes les écritures IA sont interceptées : aucun job ni appel au modèle. */
 export class AiImportFixture {
   status = structuredClone(importStatus);
+  capabilities: ImportCapabilities = {
+    profiles: [
+      { profile: 'generic', available: true },
+      { profile: 'annexe-3-electrification', available: false },
+    ],
+  };
   current: ImportStatus | null = null;
   recent: ImportStatus[] = [];
   cursors: Array<string | undefined> = [];
   queriedPlanIds: number[] = [];
   resumeCalls = 0;
   enqueueCalls = 0;
+  enqueuedForms: FormData[] = [];
   statusCalls = 0;
   statusNotFound = false;
 
@@ -55,6 +64,11 @@ export class AiImportFixture {
     });
     await page.route('**/collectivites/*/plans/import-ia', async (route) => {
       this.enqueueCalls++;
+      const request = route.request();
+      const multipartBody = new Response(request.postData(), {
+        headers: { 'content-type': request.headers()['content-type'] },
+      });
+      this.enqueuedForms.push(await multipartBody.formData());
       this.current = this.status;
       await route.fulfill({
         status: 201,
@@ -70,6 +84,9 @@ export class AiImportFixture {
       const procedure = url.pathname.split('.').at(-1);
       let data: unknown;
       switch (procedure) {
+        case 'getAiImportCapabilities':
+          data = this.capabilities;
+          break;
         case 'getCurrentAiImport':
           data = this.current;
           break;
@@ -110,9 +127,7 @@ export class AiImportFixture {
           data = {
             items,
             nextCursor:
-              start + items.length < recent.length
-                ? items.at(-1)?.jobId
-                : null,
+              start + items.length < recent.length ? items.at(-1)?.jobId : null,
           };
           break;
         }

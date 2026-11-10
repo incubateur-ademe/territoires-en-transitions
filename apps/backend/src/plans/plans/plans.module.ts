@@ -3,6 +3,9 @@ import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { ManagePlanIndicateurSourceService } from './manage-plan-indicateur-source/manage-plan-indicateur-source.service';
 import { electrificationLaureatsConfig } from '@tet/domain/plans';
 import { CheckElectrificationEligibilityService } from './check-electrification-eligibility/check-electrification-eligibility.service';
+import { CheckElectrificationCreationService } from './electrification/check-electrification-creation.service';
+import { CheckPlanCreationService } from './check-plan-creation/check-plan-creation.service';
+import { CheckPlanCreationRouter } from './check-plan-creation/check-plan-creation.router';
 import { ELECTRIFICATION_LAUREATS_CONFIG } from './check-electrification-eligibility/electrification-eligibility.constants';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
@@ -68,6 +71,9 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
       useValue: electrificationLaureatsConfig,
     },
     CheckElectrificationEligibilityService,
+    CheckElectrificationCreationService,
+    CheckPlanCreationService,
+    CheckPlanCreationRouter,
     GetPlanCompletionService,
     GetPlanCompletionRouter,
     DeleteAxeService,
@@ -120,6 +126,7 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     ManagePlanIndicateurSourceService,
     PersistPlanIndicateursService,
     CheckElectrificationEligibilityService,
+    CheckElectrificationCreationService,
     PlanRouter,
     UpsertPlanService,
     UpsertAxeService,

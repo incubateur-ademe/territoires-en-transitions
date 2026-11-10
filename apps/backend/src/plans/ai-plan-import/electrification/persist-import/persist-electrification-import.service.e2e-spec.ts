@@ -12,7 +12,6 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { planActionTypeCategorieTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { ELECTRIFICATION_LAUREATS_CONFIG } from '@tet/backend/plans/plans/check-electrification-eligibility/electrification-eligibility.constants';
-import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-plan.service';
 import {
   getAuthUserFromUserCredentials,
   getDisposableTestApp,
@@ -847,16 +846,20 @@ describe('Persistance atomique du plan Électrification', () => {
     }
   );
 
-  test('garde la création ordinaire Électrification fermée pour les lauréats', async () => {
-    const result = await app.get(UpsertPlanService).upsertPlan(
-      {
-        collectiviteId: context.collectiviteId,
-        nom: 'Création ordinaire',
-        typeId,
-      },
-      { user: context.user }
+  test("refuse l'initialisation conventionnelle si la collectivité n'est plus lauréate", async () => {
+    const preparation = app.get(PrepareElectrificationImportService);
+    const original = preparation.prepare.bind(preparation);
+    vi.spyOn(preparation, 'prepare').mockImplementationOnce(async (...args) => {
+      const prepared = await original(...args);
+      assert(prepared.success, JSON.stringify(prepared));
+      laureats.laureats = [];
+      return prepared;
+    });
+    const result = await persist();
+    assert(!result.success);
+    expect(result.error).toContainEqual(
+      expect.objectContaining({ code: 'ELECTRIFICATION_IMPORT_NOT_ALLOWED' })
     );
-    expect(result.success).toBe(false);
     await expectNoWrites();
   });
 });

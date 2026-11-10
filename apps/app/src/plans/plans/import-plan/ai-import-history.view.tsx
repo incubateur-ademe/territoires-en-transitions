@@ -22,7 +22,7 @@ import {
   isInaccessibleAiImportError,
   useGetAiImportStatus,
 } from './data/use-get-ai-import-status';
-import { useIsAiPlanImportEnabled } from './use-is-ai-plan-import-enabled';
+import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
 
 export const AiImportHistoryView = () => {
   const collectiviteId = useCollectiviteId();
@@ -31,7 +31,8 @@ export const AiImportHistoryView = () => {
   const [{ importJobId }, setImportQuery] = useQueryStates(aiImportQueryState, {
     history: 'push',
   });
-  const canStartImport = useIsAiPlanImportEnabled();
+  const { profiles } = useAvailableAiImportProfiles();
+  const canStartImport = profiles.length > 0;
   const statusQuery = useGetAiImportStatus(importJobId);
   const planId = statusQuery.data?.createdPlanId;
   const openPlanDisabledReason = statusQuery.error

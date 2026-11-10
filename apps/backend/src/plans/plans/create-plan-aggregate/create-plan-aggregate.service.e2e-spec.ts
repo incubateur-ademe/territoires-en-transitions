@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
+import { ElectrificationImportAuthorization } from '@tet/backend/plans/ai-plan-import/electrification/persist-import/electrification-import-authorization';
 import { GenerateImportDraftWorker } from '@tet/backend/plans/ai-plan-import/generate-import-draft/generate-import-draft.worker';
 import { FicheActionRepository } from '@tet/backend/plans/fiches/fiche-action.repository';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
@@ -10,7 +11,6 @@ import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/mod
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeCategorieTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import {
   getAuthUserFromUserCredentials,
@@ -22,6 +22,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
 import { failure } from '@tet/backend/utils/result.type';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -33,11 +34,10 @@ import {
   FicheReferenceKindEnum,
   PlanReferenceProgrammeEnum,
 } from '@tet/domain/plans';
-import { GetPlanReferencesService } from '../get-plan-references/get-plan-references.service';
 import { CheckElectrificationEligibilityService } from '../check-electrification-eligibility/check-electrification-eligibility.service';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '../check-electrification-eligibility/electrification-eligibility.constants';
-import { ElectrificationImportAuthorization } from '@tet/backend/plans/ai-plan-import/electrification/persist-import/electrification-import-authorization';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
+import { GetPlanReferencesService } from '../get-plan-references/get-plan-references.service';
+import { ELECTRIFICATION_LAUREATS_CONFIG } from '../check-electrification-eligibility/electrification-eligibility.constants';
 import assert from 'node:assert';
 import {
   afterAll,
@@ -155,6 +155,9 @@ describe('Création transactionnelle de la structure du plan', () => {
     laureats.laureats = [
       { reference: 'laureat-test', collectiviteId: context.collectiviteId },
     ];
+    vi.spyOn(app.get(TrackingService), 'isFeatureEnabled').mockResolvedValue(
+      false
+    );
     webhook.sendWebhookNotifications.mockClear();
     vi.spyOn(llm, 'complete');
     vi.spyOn(llm, 'chat');
@@ -211,22 +214,68 @@ describe('Création transactionnelle de la structure du plan', () => {
     await app.close();
   });
 
-  test('autorise le vrai type Électrification uniquement dans le contexte interne de création', async () => {
+  test('crée un plan Électrification ordinaire pour un non-lauréat sans données conventionnelles', async () => {
+    laureats.laureats = [];
+    vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
+      true
+    );
+    const created = await create(input({ typeId: electrificationTypeId }));
+    assert(created.success);
+    expect(await loadAxe(created.data.planId)).toMatchObject({
+      typeId: electrificationTypeId,
+      referenceProgramme: null,
+      referenceCode: null,
+      engagementsCodes: null,
+      indicateurSourceMetadonneeId: null,
+    });
+    expect(created.data.createdFicheIds).toEqual([]);
+    expect(created.data.axeIdsBySourceKey.size).toBe(0);
+  });
+
+  test.each([
+    CollectiviteRole.LECTURE,
+    CollectiviteRole.EDITION_FICHES_INDICATEURS,
+  ])(
+    'conserve les droits de création du plan Électrification pour le rôle %s',
+    async (role) => {
+      context = await createContext(role);
+      laureats.laureats = [];
+      vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
+        true
+      );
+      expect(
+        await create(input({ typeId: electrificationTypeId }))
+      ).toMatchObject({
+        success: false,
+        error: 'UNAUTHORIZED',
+      });
+      expect(
+        await db.db
+          .select()
+          .from(axeTable)
+          .where(eq(axeTable.collectiviteId, context.collectiviteId))
+      ).toEqual([]);
+    }
+  );
+
+  test('refuse la création agrégée lorsque le flag est fermé, sans écriture', async () => {
     expect(
       await create(input({ typeId: electrificationTypeId }))
     ).toMatchObject({
       success: false,
-      error: 'ELECTRIFICATION_CREATION_DISABLED',
+      error: 'PLAN_CREATION_DISABLED',
     });
-    await expect(
-      context.caller.plans.plans.create({
-        collectiviteId: context.collectiviteId,
-        nom: 'Création ordinaire',
-        typeId: electrificationTypeId,
-      })
-    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    expect(
+      await db.db
+        .select()
+        .from(axeTable)
+        .where(eq(axeTable.collectiviteId, context.collectiviteId))
+    ).toEqual([]);
+    expect(webhook.sendWebhookNotifications).not.toHaveBeenCalled();
+  });
 
-    const created = await transactions.executeSingle(async (tx) => {
+  test('permet la finalisation autorisée après fermeture du flag uniquement pour le type admis', async () => {
+    const result = await transactions.executeSingle(async (tx) => {
       const authorization =
         await ElectrificationImportAuthorization.forCollectivite(
           app.get(CheckElectrificationEligibilityService),
@@ -234,7 +283,6 @@ describe('Création transactionnelle de la structure du plan', () => {
           { user: context.user, tx }
         );
       assert(authorization.success);
-      expect(authorization.data.typeId).toBe(electrificationTypeId);
       expect(
         authorization.data.matches(
           {
@@ -250,16 +298,10 @@ describe('Création transactionnelle de la structure du plan', () => {
         planCreateAuthorization: authorization.data,
       });
     });
-    assert(created.success);
-    expect((await loadAxe(created.data.planId)).typeId).toBe(
+    assert(result.success);
+    expect((await loadAxe(result.data.planId)).typeId).toBe(
       electrificationTypeId
     );
-    await expect(
-      context.caller.plans.plans.duplicate({
-        planId: created.data.planId,
-        nom: 'Duplication ordinaire',
-      })
-    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
   });
 
   test.each(['utilisateur', 'collectivité'] as const)(
@@ -296,7 +338,7 @@ describe('Création transactionnelle de la structure du plan', () => {
       });
       expect(result).toMatchObject({
         success: false,
-        error: 'ELECTRIFICATION_CREATION_DISABLED',
+        error: 'PLAN_CREATION_DISABLED',
       });
       expect(
         await db.db
@@ -325,7 +367,7 @@ describe('Création transactionnelle de la structure du plan', () => {
     );
     expect(result).toMatchObject({
       success: false,
-      error: 'ELECTRIFICATION_CREATION_DISABLED',
+      error: 'PLAN_CREATION_DISABLED',
     });
   });
 
@@ -355,31 +397,9 @@ describe('Création transactionnelle de la structure du plan', () => {
     });
     expect(result).toMatchObject({
       success: false,
-      error: 'ELECTRIFICATION_CREATION_DISABLED',
+      error: 'PLAN_CREATION_DISABLED',
     });
     expect((await loadAxe(ordinary.data.planId)).typeId).toBeNull();
-  });
-
-  test.each([
-    ['non lauréat', 'UNAUTHORIZED'],
-    ['configuration absente', 'ELECTRIFICATION_LAUREATS_UNAVAILABLE'],
-  ] as const)("ne délivre pas d'autorisation : %s", async (scenario, error) => {
-    laureats.laureats = [];
-    const eligibility =
-      scenario === 'configuration absente'
-        ? new CheckElectrificationEligibilityService(
-            null,
-            app.get(PermissionService)
-          )
-        : app.get(CheckElectrificationEligibilityService);
-    const result = await transactions.executeSingle((tx) =>
-      ElectrificationImportAuthorization.forCollectivite(
-        eligibility,
-        { collectiviteId: context.collectiviteId },
-        { user: context.user, tx }
-      )
-    );
-    expect(result).toMatchObject({ success: false, error });
   });
 
   const programme = PlanReferenceProgrammeEnum.ELECTRIFICATION;

@@ -9,7 +9,7 @@ import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.uti
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Personne, PersonneId } from '@tet/domain/collectivites';
-import { FicheWithRelations, Plan, PlanCreationRules } from '@tet/domain/plans';
+import { FicheWithRelations, Plan } from '@tet/domain/plans';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
 import { GetPlanError, GetPlanErrorEnum } from '../get-plan/get-plan.errors';
 import { GetPlanService } from '../get-plan/get-plan.service';
@@ -109,8 +109,10 @@ export class DuplicatePlanService {
         { user, tx: transaction }
       );
       if (!newPlanResult.success) {
-        if (PlanCreationRules.isDisabledReason(newPlanResult.error)) {
-          return failure(newPlanResult.error);
+        if (
+          newPlanResult.error === UpsertPlanErrorEnum.PLAN_CREATION_DISABLED
+        ) {
+          return failure(DuplicatePlanErrorEnum.PLAN_CREATION_DISABLED);
         }
         return failure(
           newPlanResult.error === UpsertPlanErrorEnum.UNAUTHORIZED

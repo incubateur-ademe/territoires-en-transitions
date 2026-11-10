@@ -3,6 +3,8 @@ import IndicateurCard, {
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
+import { usePlanAxesContext } from '../plan-axes.context';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { Button } from '@tet/ui';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
@@ -68,6 +70,7 @@ const IndicateurChartContainer = (
   }
 ) => {
   const { ref, entry } = useIntersectionObserver();
+  const { getIndicateurCardOptions } = usePlanAxesContext();
 
   const {
     indicateur,
@@ -88,6 +91,7 @@ const IndicateurChartContainer = (
           indicateur={indicateur}
           externalCollectiviteId={collectiviteId}
           hideChart={hideChart}
+          {...getIndicateurCardOptions?.(indicateur)}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId,
             indicateurView: getIndicateurGroup(
@@ -105,7 +109,7 @@ const IndicateurChartContainer = (
                     key={indicateur.id}
                     onClick={() => selectState?.setSelected(indicateur)}
                     icon="link-unlink"
-                    title="Dissocier l'indicateur"
+                    title={appLabels.dissocierIndicateur}
                     size="xs"
                     variant="grey"
                   />,

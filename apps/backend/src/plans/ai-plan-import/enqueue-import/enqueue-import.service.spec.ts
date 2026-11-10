@@ -1,3 +1,5 @@
+import { CheckElectrificationCreationService } from '@tet/backend/plans/plans/electrification/check-electrification-creation.service';
+import { CheckElectrificationEligibilityService } from '@tet/backend/plans/plans/check-electrification-eligibility/check-electrification-eligibility.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
@@ -201,14 +203,19 @@ const buildService = (overrides: MockOverrides = {}) => {
 
   const capture = vi.fn();
   const trackingService = { capture } as unknown as TrackingService;
+  const electrification = new ValidateElectrificationImportService(
+    new CheckElectrificationCreationService(trackingService),
+    {} as CheckElectrificationEligibilityService,
+    listPlanTypesService,
+    null
+  );
+  vi.spyOn(electrification, 'authorizeAdmission').mockResolvedValue(
+    failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE)
+  );
   const capabilities = new ValidateImportProfileService(
     permissions,
     listPlanTypesService,
-    {
-      authorizeAdmission: vi.fn(async () =>
-        failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE)
-      ),
-    } as unknown as ValidateElectrificationImportService
+    electrification
   );
 
   const service = new EnqueueImportService(
@@ -253,7 +260,7 @@ describe('EnqueueImportService', () => {
     });
 
     expect(result).toEqual(
-      failure(AiPlanImportErrorEnum.ELECTRIFICATION_CREATION_DISABLED)
+      failure(AiPlanImportErrorEnum.ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT)
     );
     expect(uploadBuffer).not.toHaveBeenCalled();
     expect(storeDocument).not.toHaveBeenCalled();
