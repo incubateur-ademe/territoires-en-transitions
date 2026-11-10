@@ -21,6 +21,7 @@ resource "terraform_data" "env_push" {
       { for k, v in coolify_application_docker_image.app : k => v.uuid },
       { for k, v in coolify_service.supabase_api : k => v.uuid },
       { for k, v in coolify_service.alloy : k => v.uuid },
+      { for k, v in coolify_application_docker_image.tool : k => v.uuid },
     )[each.key],
   ]
 
