@@ -1,12 +1,16 @@
+import { appLabels } from '@/app/labels/catalog';
+import { Statut, StatutEnum } from '@tet/domain/plans';
 import { cn } from '@tet/ui/utils/cn';
 import { JSX } from 'react';
 
 export const JaugeBadge = ({
   value,
+  statut,
   isDisabled = false,
   isLarge = false,
 }: {
   value: number;
+  statut?: Statut | null;
   isDisabled?: boolean;
   isLarge?: boolean;
 }): JSX.Element => (
@@ -19,6 +23,11 @@ export const JaugeBadge = ({
       { 'min-w-14': isLarge }
     )}
   >
-    {`${value} %`}
+    {statut !== undefined &&
+    statut !== StatutEnum.A_VENIR &&
+    statut !== StatutEnum.REALISE &&
+    value === 0
+      ? appLabels.ficheJaugeNonRenseignee
+      : `${value} %`}
   </span>
 );

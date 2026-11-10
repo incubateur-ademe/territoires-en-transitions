@@ -1,11 +1,12 @@
 import { appLabels } from '@/app/labels/catalog';
-import { JAUGE_MAX, JAUGE_MIN } from '@tet/domain/plans';
+import { JAUGE_MAX, JAUGE_MIN, Statut } from '@tet/domain/plans';
 import { JSX } from 'react';
 import { getJaugeColors } from './get-jauge-colors';
 import { JaugeBadge } from './jauge.badge';
 
 type JaugeBarProps = {
   value: number;
+  statut?: Statut | null;
   isDisabled?: boolean;
   hideBadge?: boolean;
   isBadgeLarge?: boolean;
@@ -14,6 +15,7 @@ type JaugeBarProps = {
 
 export const JaugeBar = ({
   value,
+  statut,
   isDisabled = false,
   hideBadge = false,
   isBadgeLarge = false,
@@ -26,6 +28,7 @@ export const JaugeBar = ({
       {!hideBadge && (
         <JaugeBadge
           value={value}
+          statut={statut}
           isDisabled={isDisabled}
           isLarge={isBadgeLarge}
         />
