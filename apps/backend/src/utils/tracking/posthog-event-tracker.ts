@@ -2,7 +2,7 @@ import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { FeatureFlagKey } from '@tet/domain/utils';
 import { PostHog } from 'posthog-node';
-import { EventTracker } from './event-tracker.interface';
+import { EventTracker, TrackedEvent } from './event-tracker.interface';
 
 @Injectable()
 export class PostHogEventTracker
@@ -27,11 +27,7 @@ export class PostHogEventTracker
     }
   }
 
-  capture(params: {
-    distinctId: string;
-    event: string;
-    properties?: Record<string, string | number | boolean | undefined>;
-  }) {
+  capture(params: TrackedEvent) {
     if (!this.posthog) {
       return;
     }

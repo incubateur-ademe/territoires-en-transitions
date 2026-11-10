@@ -333,6 +333,7 @@ describe('EnqueueImportService', () => {
         mimeType: 'text/csv',
         fileSizeBytes: expect.any(Number),
       }),
+      groups: { collectivite: '10' },
     });
   });
 

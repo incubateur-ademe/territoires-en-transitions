@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { FeatureFlagKey } from '@tet/domain/utils';
-import type { EventTracker } from './event-tracker.interface';
+import type { EventTracker, TrackedEvent } from './event-tracker.interface';
 
 @Injectable()
 export class TrackingService {
@@ -10,11 +10,7 @@ export class TrackingService {
     @Inject('EventTracker') private readonly eventTracker: EventTracker
   ) {}
 
-  capture(params: {
-    distinctId: string;
-    event: string;
-    properties?: Record<string, string | number | boolean | undefined>;
-  }) {
+  capture(params: TrackedEvent) {
     if (!this.eventTracker.isEnabled()) {
       return;
     }

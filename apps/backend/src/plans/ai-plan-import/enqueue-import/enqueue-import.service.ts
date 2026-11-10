@@ -269,6 +269,7 @@ export class EnqueueImportService {
         withVerifications: options.withVerifications,
         withSousActions: options.withSousActions,
       },
+      groups: { collectivite: String(collectiviteId) },
     });
     return success({ profile: AiPlanImportProfileEnum.GENERIC, jobId, planId });
   }

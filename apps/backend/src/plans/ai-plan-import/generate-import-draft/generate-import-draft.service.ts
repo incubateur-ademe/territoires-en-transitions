@@ -222,6 +222,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
           totalTokens: stats?.llm.tokens.totalTokens,
           models: stats?.llm.models.join(','),
         },
+        groups: { collectivite: String(marked.data.collectiviteId) },
       });
     }
     return marked;
@@ -515,6 +516,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         totalTokens: stats.llm.tokens.totalTokens,
         models: stats.llm.models.join(','),
       },
+      groups: { collectivite: String(job.collectiviteId) },
     });
 
     // Hors transaction : un envoi manqué ne défait pas le plan créé.

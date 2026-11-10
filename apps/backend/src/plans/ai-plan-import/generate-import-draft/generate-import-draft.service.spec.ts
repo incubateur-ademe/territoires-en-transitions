@@ -330,6 +330,7 @@ describe('GenerateImportDraftService', () => {
         fichesCount: 1,
         durationSeconds: expect.any(Number),
       }),
+      groups: { collectivite: '10' },
     });
     expect(mocks.jobRepository.updateStepStates).toHaveBeenLastCalledWith(
       'job-1',
@@ -451,6 +452,7 @@ describe('GenerateImportDraftService', () => {
         failedStep: 'reading',
         reason: 'document_too_long',
       }),
+      groups: { collectivite: '10' },
     });
   });
 
