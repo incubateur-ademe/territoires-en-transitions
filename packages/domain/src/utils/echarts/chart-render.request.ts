@@ -5,7 +5,7 @@ export const chartRenderRequestSchema = z.object({
   format: z.enum(['png', 'svg']).default('png'),
   width: z.number().int().default(800),
   height: z.number().int().default(600),
-  options: z.any(),
+  options: z.any().optional(),
 });
 
 export type ChartRenderRequestType = z.infer<typeof chartRenderRequestSchema>;

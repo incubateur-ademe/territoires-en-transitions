@@ -43,7 +43,6 @@ const upsertPlanWithoutFileBaseSchema = z.object({
   pilotes: z.array(personneIdSchema).nullable(),
   dateDebut: optionalPlanDateSchema,
   dateFin: optionalPlanDateSchema,
-  file: z.undefined().optional(),
 });
 
 const upsertPlanWithFileBaseSchema = z.object({
@@ -61,9 +60,9 @@ const upsertPlanWithFileSchema =
 
 type UpsertPlanWithoutFilePayload = z.infer<typeof upsertPlanWithoutFileSchema>;
 type UpsertPlanWithFilePayload = z.infer<typeof upsertPlanWithFileSchema>;
-type UpsertPlanPayload =
-  | UpsertPlanWithoutFilePayload
-  | UpsertPlanWithFilePayload;
+// `file` n'existe que dans le schéma avec fichier ; le formulaire le porte
+// toujours, optionnel.
+type UpsertPlanPayload = UpsertPlanWithoutFilePayload & { file?: File };
 const isWithFilePayload = (
   payload: object
 ): payload is UpsertPlanWithFilePayload => {
@@ -169,13 +168,14 @@ export function UpsertPlanForm({
           pilotes: data.pilotes ?? null,
           dateDebut: data.dateDebut || null,
           dateFin: data.dateFin || null,
-          file: undefined,
         };
 
         const file =
           includeFileUpload && isWithFilePayload(data) ? data.file : undefined;
 
-        const result = await submit({ ...basePayload, file });
+        const result = await submit(
+          file ? { ...basePayload, file } : basePayload
+        );
         if (result) {
           reset();
         }
