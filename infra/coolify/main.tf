@@ -65,6 +65,11 @@ locals {
       sshd_host_public_key = nonsensitive(base64decode(data.scaleway_secret_version.sshd_host_public_key[tier].data))
     }
   }
+
+  # IPv4 du Private Network de tet-nonprod-apps : pour joindre un port publié
+  # sur l'hôte depuis un conteneur du même serveur (Mailpit, env-manifest.tf).
+  # Un index invalide ici : le serveur n'a pas d'IPv4 privée.
+  nonprod_private_ip = [for ip in local.app_server.nonprod.private_ips : ip.address if !strcontains(ip.address, ":")][0]
 }
 
 # --- Serveurs applicatifs ---
