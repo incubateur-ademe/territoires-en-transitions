@@ -5,7 +5,7 @@ import { appLabels } from '@/app/labels/catalog';
 import { JaugeBar } from '@/app/plans/shared/jauge/jauge.bar';
 import { StatutEnum } from '@tet/domain/plans';
 import { Alert, Icon, InfoTooltip, InlineLink } from '@tet/ui';
-import { useState } from 'react';
+import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import { useGetVueEnsemble } from '../data/use-get-vue-ensemble';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
 import { ThematiquesFilterButton } from '../thematiques-filter.button';
@@ -18,7 +18,10 @@ export const VueEnsembleBloc = ({
   collectiviteId: number;
   planId: number;
 }) => {
-  const [thematiqueIds, setThematiqueIds] = useState<number[]>([]);
+  const [thematiqueIds, setThematiqueIds] = useQueryState(
+    'vueEnsembleThematiques',
+    parseAsArrayOf(parseAsInteger).withDefault([])
+  );
   const { data } = useGetVueEnsemble({ planId, thematiqueIds });
 
   return (
