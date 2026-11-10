@@ -17,7 +17,7 @@ import {
   type ActionType,
   type ReferentielId,
 } from '@tet/domain/referentiels';
-import type { Statut } from '@tet/domain/plans';
+import type { ListFichesRequestFilters } from '@tet/domain/plans';
 import type { LevierId } from '@tet/domain/shared';
 import type { UserRolesAndPermissions } from '@tet/domain/users';
 import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
@@ -579,7 +579,14 @@ export const makeCollectivitePlanActionUrl = ({
   openAxes?: number[];
   options?: string[];
   openSecteurs?: boolean;
-  filters?: { statuts?: Statut[]; noStatut?: boolean };
+  filters?: Pick<
+    ListFichesRequestFilters,
+    | 'statuts'
+    | 'noStatut'
+    | 'noPilote'
+    | 'enCoursSansAvancement'
+    | 'notModifiedForOverAYear'
+  >;
 }) => {
   const params = new URLSearchParams();
   if (openAxes?.length)
