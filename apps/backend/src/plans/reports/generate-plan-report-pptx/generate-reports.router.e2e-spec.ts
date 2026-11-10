@@ -202,7 +202,9 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     const avancementDuSlide = (marqueur: string) =>
       slides
         .filter((texte) => texte.includes(marqueur))
-        .map((texte) => texte.match(/Taux d’actions terminées :\s*([\d.]+)%/))
+        .map((texte) =>
+          texte.match(/Taux d’actions terminées :\s*([\d.]+)\s*%/)
+        )
         .find(Boolean)?.[1];
 
     expect(avancementDuSlide('Synthèse du plan')).toBe('50');
