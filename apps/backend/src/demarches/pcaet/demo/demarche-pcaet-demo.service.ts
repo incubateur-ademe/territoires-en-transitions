@@ -4,15 +4,19 @@ import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizat
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import {
+  collectiviteTypeEnum,
+  defaultCollectivitePreferences,
+} from '@tet/domain/collectivites';
 import { isDemarchePcaetDemo } from '@tet/domain/demarches';
 import { hasRole, PlatformRole } from '@tet/domain/users';
 import { and, eq, isNull, or } from 'drizzle-orm';
 
 /**
- * Services instructeurs fictifs, créés par la migration
- * `demarche/pcaet_services_demo` : sans territoire, aucune vraie transmission
- * ne les atteint.
+ * Services instructeurs fictifs, créés à la première transmission de démo :
+ * sans territoire, aucune vraie transmission ne les atteint. Pas de migration :
+ * jouée sur une base vide, elle prendrait les premiers ids, que les seeds
+ * attendent pour leurs collectivités.
  */
 export const SERVICES_DEMO = [
   { nom: 'DREAL (démonstration)', type: collectiviteTypeEnum.DREAL },
@@ -61,11 +65,47 @@ export class DemarchePcaetDemoService {
     });
   }
 
-  async listServicesDemo(
+  /** Les services fictifs, créés au passage s'ils n'existent pas encore. */
+  async ensureServicesDemo(
     tx?: Transaction
   ): Promise<{ id: number; type: string }[]> {
+    const db = tx ?? this.databaseService.db;
+    const existants = await this.listServicesDemo(tx);
+    const manquants = SERVICES_DEMO.filter(
+      (service) =>
+        !existants.some(
+          (existant) =>
+            existant.nom === service.nom && existant.type === service.type
+        )
+    );
+    if (manquants.length === 0) {
+      return existants;
+    }
+    const crees = await db
+      .insert(collectiviteTable)
+      .values(
+        manquants.map((service) => ({
+          ...service,
+          preferences: defaultCollectivitePreferences,
+        }))
+      )
+      .returning({
+        id: collectiviteTable.id,
+        nom: collectiviteTable.nom,
+        type: collectiviteTable.type,
+      });
+    return [...existants, ...crees];
+  }
+
+  async listServicesDemo(
+    tx?: Transaction
+  ): Promise<{ id: number; nom: string; type: string }[]> {
     return (tx ?? this.databaseService.db)
-      .select({ id: collectiviteTable.id, type: collectiviteTable.type })
+      .select({
+        id: collectiviteTable.id,
+        nom: collectiviteTable.nom,
+        type: collectiviteTable.type,
+      })
       .from(collectiviteTable)
       .where(
         and(
