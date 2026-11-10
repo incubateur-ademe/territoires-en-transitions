@@ -241,6 +241,12 @@ locals {
         JWT_SECRET               = { secret = "rencontres-jwt-secret" }
         BREVO_KEY                = { secret = "rencontres-brevo-key" }
         # La même clé des deux côtés : le client l'envoie à l'API admin.
+        # FAILLE connue de rencontres-tete, reprise telle quelle de Koyeb :
+        # NEXT_PUBLIC_* est inlinée dans le bundle navigateur, la clé admin est
+        # donc publique. Correctif dans rencontres-tete (contrôle côté serveur
+        # par session/JWT, ou route serveur qui ajoute la clé), puis retirer
+        # NEXT_PUBLIC_ADMIN_KEY ici. Nouvelle valeur à la bascule : l'ancienne
+        # a fuité.
         ADMIN_API_KEY         = { secret = "rencontres-admin-api-key" }
         NEXT_PUBLIC_ADMIN_KEY = { secret = "rencontres-admin-api-key" }
         # Relances par email planifiées dans le process (lib/cron.js) : coupées
