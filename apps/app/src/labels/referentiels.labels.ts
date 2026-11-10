@@ -69,6 +69,7 @@ export const referentielsLabels = {
   avancementDetailleALaTache: 'Détaillé à la tâche',
   avancementProgramme: 'Programmé',
   avancementNonConcerne: 'Non concerné',
+  avancementFaitPlafonne: 'Fait non comptabilisé (plafonnement)',
 
   /** Types */
   actionTypeReferentiel: 'référentiel',
