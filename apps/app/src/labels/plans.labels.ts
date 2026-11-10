@@ -480,4 +480,8 @@ export const plansLabels = {
   evolutionStatutsStatut: 'Statut',
   evolutionStatutsEvolution: 'Évolution',
   evolutionStatutsTotal: 'Total',
+  evolutionStatutsPeriodeInvalide:
+    'La date de début doit précéder la date de fin.',
+  evolutionStatutsErreurChargement:
+    "Impossible de charger l'évolution des statuts",
 } as const;
