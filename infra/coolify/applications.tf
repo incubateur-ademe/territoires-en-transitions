@@ -125,3 +125,63 @@ resource "coolify_application_docker_image" "app" {
     ignore_changes = [docker_registry_image_tag]
   }
 }
+
+# --- Outils internes ---
+#
+# Images publiques, configurées par variables (manifeste) : pas de build ni de
+# CD, la version se monte ici. Un outil par serveur, partagé par ses
+# environnements, rattaché à l'environnement Coolify de preprod. Leur
+# HEALTHCHECK d'image suffit.
+#
+# mailpit : boîte de réception des emails hors prod (backend, GoTrue). SMTP
+# publié sur le port 1025 de l'hôte, joint par l'IP privée du serveur : GoTrue
+# n'est pas sur le réseau coolify, et les previews (autre Private Network,
+# moyennant une règle d'ACL du VPC) s'y brancheront aussi. Le security group
+# ne laisse entrer que 22/80/443 en public. Interface web derrière MP_UI_AUTH.
+locals {
+  tool_catalog = {
+    mailpit = {
+      image   = "axllent/mailpit"
+      tag     = "v1.33.1"
+      port    = 8025
+      alias   = "mailpit"
+      ports   = "1025:1025"
+      domains = { preprod = ["https://mailpit.preprod.territoiresentransitions.fr"] }
+    }
+  }
+
+  tool_applications = merge([
+    for env in ["preprod"] : {
+      for tool, t in local.tool_catalog : "${env}/${tool}" => merge(t, {
+        env     = env
+        app     = tool
+        server  = local.application_environments_catalog[env].server
+        domains = lookup(t.domains, env, [])
+      })
+    } if contains(var.application_environments, env)
+  ]...)
+}
+
+resource "coolify_application_docker_image" "tool" {
+  for_each = local.tool_applications
+
+  name             = each.value.app
+  description      = "${each.value.app} du serveur ${each.value.server}. Géré par Terraform (infra/coolify/applications.tf). [tet-app:${each.key}]"
+  project_uuid     = coolify_project.tet.uuid
+  server_uuid      = coolify_server.app[each.value.server].uuid
+  environment_name = local.coolify_environment_names[each.value.env]
+
+  docker_image              = each.value.image
+  docker_registry_image_tag = each.value.tag
+  ports_exposes             = tostring(each.value.port)
+  ports_mappings            = each.value.ports
+  custom_network_aliases    = each.value.alias
+  autogenerate_domain       = false
+  domains                   = length(each.value.domains) > 0 ? join(",", each.value.domains) : null
+  is_force_https_enabled    = length(each.value.domains) > 0
+  noindex_domains           = each.value.domains
+  health_check_enabled      = false
+  instant_deploy            = false
+
+  depends_on = [coolify_environment.env]
+}

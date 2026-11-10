@@ -129,6 +129,12 @@ locals {
         OTEL_EXPORTER_OTLP_ENDPOINT = { value = "https://eu.i.posthog.com/i" }
         OTEL_SERVICE_NAME           = { value = "backend" }
         OTEL_RESOURCE_ATTRIBUTES    = { value = "deployment.environment.name=preprod" }
+
+        # Emails vers le Mailpit du serveur (applications.tf), par son alias
+        # réseau. Le mot de passe est celui de mailpit-auth.
+        SMTP_URL  = { value = "smtp://tet@mailpit:1025" }
+        SMTP_KEY  = { secret = "mailpit-password" }
+        SMTP_FROM = { value = "Territoires en Transitions <notifications@territoiresentransitions.fr>" }
       }
 
       # Toute la configuration du site est lue au runtime, comme pour l'app
@@ -172,13 +178,15 @@ locals {
         STORAGE_DB_DATABASE_URL  = { secret = "storage-db-database-url" }
         STORAGE_DB_SSL_ROOT_CERT = { secret = "postgres-tls-ca", multiline = true }
 
-        # 2525 tant que Scaleway n'a pas débloqué 25/465/587 sur le projet.
-        BREVO_SMTP_HOST         = { value = "smtp-relay.brevo.com" }
-        BREVO_SMTP_PORT         = { value = "2525" }
-        BREVO_SMTP_USER         = { secret = "brevo-smtp-user" }
-        BREVO_SMTP_PASS         = { secret = "brevo-smtp-pass" }
-        BREVO_SMTP_SENDER_EMAIL = { value = "notifications@territoiresentransitions.fr" }
-        BREVO_SMTP_SENDER_NAME  = { value = "Territoires en Transitions (${local.coolify_env_settings.preprod.env_name})" }
+        # Mailpit du serveur (applications.tf), par l'IP privée : GoTrue n'est
+        # pas sur le réseau coolify. En prod : Brevo (smtp-relay.brevo.com,
+        # port 2525 tant que Scaleway bloque 25/465/587).
+        SMTP_HOST         = { value = var.app_servers.nonprod.ssh_host }
+        SMTP_PORT         = { value = "1025" }
+        SMTP_USER         = { value = "tet" }
+        SMTP_PASS         = { secret = "mailpit-password" }
+        SMTP_SENDER_EMAIL = { value = "notifications@territoiresentransitions.fr" }
+        SMTP_SENDER_NAME  = { value = "Territoires en Transitions (${local.coolify_env_settings.preprod.env_name})" }
 
         # Bucket de infra/nonprod/storage.tf, clé IAM de storage.tf, rangée à la main.
         SCW_S3_BUCKET         = { value = "tet-preprod-storage" }
@@ -202,6 +210,17 @@ locals {
         PROBE_AUTH_URL    = { value = "${local.coolify_env_settings.preprod.supabase_url}/auth/v1/health" }
         PROBE_STORAGE_URL = { value = "${local.coolify_env_settings.preprod.supabase_url}/storage/v1/status" }
       }
+
+      # MP_*_AUTH : « tet:<mot de passe> », même mot de passe que
+      # mailpit-password (lu par les expéditeurs). Les deux secrets changent
+      # ensemble.
+      mailpit = {
+        MP_SMTP_AUTH                = { secret = "mailpit-auth" }
+        MP_SMTP_AUTH_ALLOW_INSECURE = { value = "true" }
+        MP_UI_AUTH                  = { secret = "mailpit-auth" }
+        # Volume non persistant : la boîte se vide au redéploiement.
+        MP_MAX_MESSAGES = { value = "5000" }
+      }
     }
   }
 
@@ -213,6 +232,7 @@ locals {
       { for k, v in local.applications : k => merge(v, { resource = "applications" }) },
       { for k, v in local.services : k => merge(v, { resource = "services" }) },
       { for k, v in local.alloy_services : k => merge(v, { resource = "services" }) },
+      { for k, v in local.tool_applications : k => merge(v, { resource = "applications" }) },
       ) : id => {
       env               = a.env
       app               = a.app
