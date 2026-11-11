@@ -2,8 +2,12 @@ import { SIMULATEUR_TERRITORIAL_URL } from '@/app/indicateurs/trajectoires/traje
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { useTelechargementMethodologieSnbc3 } from './data/use-telechargement-methodologie-snbc3';
-import { useTelechargementOutilSnbc3 } from './data/use-telechargement-outil-snbc3';
+import {
+  IS_OUTIL_SNBC3_DISPONIBLE,
+  useTelechargementOutilSnbc3,
+} from './data/use-telechargement-outil-snbc3';
 
 /**
  * « Aller plus loin » de la page SNBC 3. Le lot 5 y ajoute « Mes données
@@ -17,25 +21,31 @@ export const AllerPlusLoinSnbc3 = () => {
 
   return (
     <div>
-      <h6 className="mb-4 text-base">
-        {appLabels.trajectoireSnbc3AllerPlusLoinOutil}
-      </h6>
-      <Button
-        size="sm"
-        variant="outlined"
-        onClick={() => downloadOutil()}
-        disabled={isDownloading}
-      >
-        {isDownloading ? (
-          <>
-            {appLabels.telechargementEnCours} <SpinnerLoader />
-          </>
-        ) : (
-          appLabels.trajectoireSnbc3TelechargerOutil
-        )}
-      </Button>
+      {IS_OUTIL_SNBC3_DISPONIBLE && (
+        <>
+          <h6 className="mb-4 text-base">
+            {appLabels.trajectoireSnbc3AllerPlusLoinOutil}
+          </h6>
+          <Button
+            size="sm"
+            variant="outlined"
+            onClick={() => downloadOutil()}
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <>
+                {appLabels.telechargementEnCours} <SpinnerLoader />
+              </>
+            ) : (
+              appLabels.trajectoireSnbc3TelechargerOutil
+            )}
+          </Button>
+        </>
+      )}
 
-      <h6 className="mt-8 mb-4 text-base">{appLabels.documentation}</h6>
+      <h6 className={cn('mb-4 text-base', IS_OUTIL_SNBC3_DISPONIBLE && 'mt-8')}>
+        {appLabels.documentation}
+      </h6>
       <div className="flex gap-4">
         <Button
           size="sm"
