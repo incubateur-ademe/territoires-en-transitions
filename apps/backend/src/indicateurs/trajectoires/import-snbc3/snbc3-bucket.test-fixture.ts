@@ -22,6 +22,10 @@ type SavedObject = {
  * release de test remplacerait le classeur et le PDF de méthodologie de
  * l'import réel en local (servis ensuite par la page Trajectoire et les
  * fiches indicateurs).
+ *
+ * Si la métadonnée n'existait pas, la restauration supprime celle créée par la
+ * spec, avec ses valeurs (cascade) : l'appeler après le nettoyage des
+ * collectivités de test.
  */
 export const backupSnbc3Release = async (
   app: INestApplication
@@ -91,6 +95,16 @@ export const backupSnbc3Release = async (
 
     if (metadonneeId && metadonnee) {
       await metadonneeRepository.updateMetadonnee(metadonneeId, metadonnee);
+      return;
+    }
+
+    // Métadonnée créée par la spec : appelé après le nettoyage de ses valeurs,
+    // pour ne pas laisser en base une métadonnée sans import réel derrière.
+    const createdId = await metadonneeRepository.findMetadonneeId();
+    if (createdId !== null) {
+      await db
+        .delete(indicateurSourceMetadonneeTable)
+        .where(eq(indicateurSourceMetadonneeTable.id, createdId));
     }
   };
 };
