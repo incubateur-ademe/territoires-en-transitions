@@ -5,6 +5,12 @@ import { useMutation } from '@tanstack/react-query';
 import { Event, useEventTracker } from '@tet/ui';
 
 /**
+ * La route `snbc3/outil` n'existe pas encore côté backend : les boutons de
+ * téléchargement restent masqués jusqu'au lot 5, qui passe ce drapeau à `true`.
+ */
+export const IS_OUTIL_SNBC3_DISPONIBLE = false;
+
+/**
  * Télécharge l'outil Excel SNBC 3, tel qu'il est publié. La route
  * `snbc3/outil` est livrée par le lot 5 (export xlsx).
  */
