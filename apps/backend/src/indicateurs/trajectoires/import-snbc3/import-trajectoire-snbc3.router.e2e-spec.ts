@@ -122,7 +122,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     const storage = app.get(Snbc3ReleaseStorageService);
     const marked = await storage.markReleasePending(release.data);
     if (!marked.success) throw new Error(marked.error);
-    const stored = await storage.storeReleaseFiles(release.data);
+    const stored = await storage.storeReleaseFiles(release.data, marked.data);
     if (!stored.success) throw new Error(stored.error);
     await app
       .get(Snbc3SourceMetadonneeRepository)

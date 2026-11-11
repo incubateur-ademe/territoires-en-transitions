@@ -89,6 +89,7 @@ export class ImportTrajectoireSnbc3Service {
     }
     const { table, metadonneeId, report, releaseFiles } = prepared.data;
 
+    let importId: string | undefined;
     if (releaseFiles) {
       // Avant toute écriture : jusqu'à l'enregistrement de cette release, les
       // valeurs peuvent mélanger deux releases, et les rejeux partiels sont
@@ -102,6 +103,7 @@ export class ImportTrajectoireSnbc3Service {
         });
         return marked;
       }
+      importId = marked.data;
     }
 
     await this.storage.writeLastImport({
@@ -114,12 +116,15 @@ export class ImportTrajectoireSnbc3Service {
         { table, collectiviteIds, metadonneeId, startedAt },
         report
       );
-      if (releaseFiles) {
+      if (releaseFiles && importId) {
         await this.repository.updateMetadonnee(metadonneeId, {
           dateVersion: report.dateVersion,
         });
         // En dernier : le manifeste désigne alors la release en base.
-        const stored = await this.storage.storeReleaseFiles(releaseFiles);
+        const stored = await this.storage.storeReleaseFiles(
+          releaseFiles,
+          importId
+        );
         if (!stored.success) {
           this.logger.error(
             `Import SNBC 3 : valeurs remplacées, mais release non enregistrée (${stored.error})`
