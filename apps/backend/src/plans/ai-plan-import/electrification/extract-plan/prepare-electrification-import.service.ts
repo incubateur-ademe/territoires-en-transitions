@@ -1,11 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { electrificationConfigSchema } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import { ReadDocument } from '../../pipeline/document/document-page';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import { electrificationEngagementsErrors } from '../resolve-engagements/electrification-engagements.errors';
 import { ElectrificationIssue } from '../electrification-issue';
 import {
@@ -24,6 +23,7 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 
 type PrepareInput = {
   collectiviteId: number;
+  catalogueVersion: string;
   onCheckpoint?: (
     checkpoint: ElectrificationExtractionCheckpoint
   ) => Promise<void>;
@@ -37,7 +37,7 @@ type PrepareInput = {
 @Injectable()
 export class PrepareElectrificationImportService {
   constructor(
-    @Inject(ELECTRIFICATION_CONFIG) private readonly config: unknown,
+    private readonly data: ElectrificationDataService,
     private readonly resolver: ResolveElectrificationFichesService,
     private readonly permissions: PermissionService,
     private readonly llm: LlmService
@@ -56,6 +56,8 @@ export class PrepareElectrificationImportService {
     >
   > {
     if (
+      typeof input.catalogueVersion !== 'string' ||
+      !input.catalogueVersion.trim() ||
       !resolveElectrificationFichesInputSchema.shape.collectiviteId.safeParse(
         input.collectiviteId
       ).success
@@ -82,7 +84,7 @@ export class PrepareElectrificationImportService {
           ...electrificationEngagementsErrors.UNAUTHORIZED,
         },
       ]);
-    const catalogue = electrificationConfigSchema.safeParse(this.config);
+    const catalogue = await this.data.getCatalogue(input.catalogueVersion);
     if (!catalogue.success)
       return failure([
         {

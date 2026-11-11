@@ -1,3 +1,4 @@
+import { IndicateurReferenceExterneRepository } from '@tet/backend/indicateurs/indicateur/indicateur-reference-externe.repository';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import CreateIndicateurService from '@tet/backend/indicateurs/indicateurs/mutate-indicateur/create-indicateur.service';
@@ -140,6 +141,7 @@ const DEFINITIONS_PROVIDERS = [
     }),
   ],
   providers: [
+    IndicateurReferenceExterneRepository,
     ExportIndicateursService,
     IndicateurSourcesService,
     IndicateurSourcesRepository,

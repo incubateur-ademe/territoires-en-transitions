@@ -1,3 +1,8 @@
+import {
+  electrificationCatalogueFixture as electrificationConfig,
+  buildInMemoryElectrificationData,
+} from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/indicateur/indicateur-definition.table';
@@ -28,7 +33,6 @@ import {
 } from 'docx';
 import {
   ElectrificationConfig,
-  electrificationConfig,
   ElectrificationEngagementCodeEnum as EngagementCode,
   StatutEnum,
 } from '@tet/domain/plans';
@@ -47,7 +51,6 @@ import {
   test,
   vi,
 } from 'vitest';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import templateData from '../extract-plan/__fixtures__/electrification-v4.template.json';
 import { PrepareElectrificationImportService } from '../extract-plan/prepare-electrification-import.service';
 import { ReadDocument } from '../../pipeline/document/document-page';
@@ -103,6 +106,7 @@ describe('Résolution des fiches actions Électrification', () => {
   let fixture: ElectrificationConfig;
   let expectedCounts: number[];
   const config = structuredClone(electrificationConfig);
+  const data = buildInMemoryElectrificationData({ catalogue: () => config });
   const createContext = async (
     role: CollectiviteRole = CollectiviteRole.EDITION
   ) => {
@@ -150,7 +154,7 @@ describe('Résolution des fiches actions Électrification', () => {
       overrides: (builder) => {
         builder.overrideProvider(LlmService).useValue(new LlmService(llm));
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
-        builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(config);
+        builder.overrideProvider(ElectrificationDataService).useValue(data);
       },
     });
     db = await getTestDatabase(app);
@@ -511,7 +515,7 @@ describe('Résolution des fiches actions Électrification', () => {
     ]);
   });
 
-  test('reprend les sous-actions et aides livrées pour le réseau des chauffagistes en conservant le titre documentaire', async () => {
+  test('reprend les sous-actions et aides du catalogue en conservant le titre documentaire', async () => {
     Object.assign(config, structuredClone(electrificationConfig));
     input.axes[0].sousAxes = [
       {
@@ -533,14 +537,14 @@ describe('Résolution des fiches actions Électrification', () => {
     );
     expect(result.champs.description).toEqual(expect.any(String));
     expect(result.sousActions.map(({ code }) => code)).toEqual([
-      'sous-action-011',
-      'sous-action-012',
-      'sous-action-013',
+      'sous-action-test-1',
+      'sous-action-test-2',
+      'sous-action-test-3',
     ]);
     expect(result.documents).toEqual(
       expect.arrayContaining([
-        { titre: 'CEPAC', url: 'https://cepac-experts.org/' },
-        { titre: 'Anah', url: 'https://www.anah.gouv.fr/' },
+        { titre: 'Aide de test', url: 'https://example.com/aide' },
+        { titre: 'Guide de test', url: 'https://example.com/guide' },
       ])
     );
     expect(result.indicateurs).toEqual([]);
@@ -552,7 +556,7 @@ describe('Résolution des fiches actions Électrification', () => {
     );
   });
 
-  test('conserve le lien livré vers un indicateur non validé et bloque son complément', async () => {
+  test('conserve le lien vers un indicateur non validé et bloque son complément', async () => {
     Object.assign(config, structuredClone(electrificationConfig));
     input.axes[0].sousAxes = [
       {
@@ -1293,7 +1297,11 @@ describe('Résolution des fiches actions Électrification', () => {
     };
     const prepare = () =>
       prepareService.prepare(
-        { collectiviteId: context.collectiviteId, document },
+        {
+          catalogueVersion: config.version,
+          collectiviteId: context.collectiviteId,
+          document,
+        },
         { user: context.user }
       );
     const prepared = async () => {
@@ -1576,7 +1584,12 @@ describe('Résolution des fiches actions Électrification', () => {
       await useForm({ fiches: [] });
       const onCheckpoint = vi.fn();
       const result = await prepareService.prepare(
-        { collectiviteId: context.collectiviteId, document, onCheckpoint },
+        {
+          catalogueVersion: config.version,
+          collectiviteId: context.collectiviteId,
+          document,
+          onCheckpoint,
+        },
         { user: context.user }
       );
       assert(!result.success, JSON.stringify(result));
@@ -1671,7 +1684,12 @@ describe('Résolution des fiches actions Électrification', () => {
         });
         const onCheckpoint = vi.fn();
         const result = await prepareService.prepare(
-          { collectiviteId: context.collectiviteId, document, onCheckpoint },
+          {
+            catalogueVersion: config.version,
+            collectiviteId: context.collectiviteId,
+            document,
+            onCheckpoint,
+          },
           { user: context.user }
         );
         assert(!result.success, JSON.stringify(result));
@@ -1732,6 +1750,7 @@ describe('Résolution des fiches actions Électrification', () => {
       expectedCounts[1] = 0;
       const resumed = await prepareService.prepare(
         {
+          catalogueVersion: config.version,
           collectiviteId: context.collectiviteId,
           resumeFrom: result.checkpoint,
         },
@@ -1754,7 +1773,12 @@ describe('Résolution des fiches actions Électrification', () => {
       });
       const onCheckpoint = vi.fn();
       const result = await prepareService.prepare(
-        { collectiviteId: context.collectiviteId, document, onCheckpoint },
+        {
+          catalogueVersion: config.version,
+          collectiviteId: context.collectiviteId,
+          document,
+          onCheckpoint,
+        },
         { user: context.user }
       );
       assert(!result.success, JSON.stringify(result));
@@ -1779,6 +1803,7 @@ describe('Résolution des fiches actions Électrification', () => {
       const result = await prepared();
       const resumed = await prepareService.prepare(
         {
+          catalogueVersion: config.version,
           collectiviteId: context.collectiviteId,
           resumeFrom: result.checkpoint,
         },
@@ -1788,6 +1813,7 @@ describe('Résolution des fiches actions Électrification', () => {
       action().validation = 'pending';
       const changed = await prepareService.prepare(
         {
+          catalogueVersion: config.version,
           collectiviteId: context.collectiviteId,
           resumeFrom: result.checkpoint,
         },
@@ -1804,6 +1830,7 @@ describe('Résolution des fiches actions Électrification', () => {
       const other = await createContext();
       const resumed = await prepareService.prepare(
         {
+          catalogueVersion: config.version,
           collectiviteId: context.collectiviteId,
           resumeFrom: result.checkpoint,
         },
@@ -1827,7 +1854,11 @@ describe('Résolution des fiches actions Électrification', () => {
         [field]: typeof checkpoint[field] === 'number' ? 999 : 'incompatible',
       };
       const result = await prepareService.prepare(
-        { collectiviteId: context.collectiviteId, resumeFrom: incompatible },
+        {
+          catalogueVersion: config.version,
+          collectiviteId: context.collectiviteId,
+          resumeFrom: incompatible,
+        },
         { user: context.user }
       );
       assert(!result.success, JSON.stringify(result));
@@ -1842,7 +1873,11 @@ describe('Résolution des fiches actions Électrification', () => {
       const { checkpoint } = await prepared();
       checkpoint.response.fiches[0].source = 'source-inventée';
       const result = await prepareService.prepare(
-        { collectiviteId: context.collectiviteId, resumeFrom: checkpoint },
+        {
+          catalogueVersion: config.version,
+          collectiviteId: context.collectiviteId,
+          resumeFrom: checkpoint,
+        },
         { user: context.user }
       );
       assert(!result.success, JSON.stringify(result));
@@ -1859,6 +1894,7 @@ describe('Résolution des fiches actions Électrification', () => {
             cible.identifiantReferentiel = `test-document-${randomUUID()}`;
             cible.validation = 'validated';
             cible.periodicite = 'annuelle';
+            assert(cible.unite);
             return {
               identifiantReferentiel: cible.identifiantReferentiel,
               titre: `${engagement.code} ${cible.key}`,
@@ -1956,6 +1992,7 @@ describe('Résolution des fiches actions Électrification', () => {
 
         const resumed = await prepareService.prepare(
           {
+            catalogueVersion: config.version,
             collectiviteId: context.collectiviteId,
             resumeFrom: result.checkpoint,
           },
@@ -2138,6 +2175,7 @@ describe('Résolution des fiches actions Électrification', () => {
 
           const result = await prepareService.prepare(
             {
+              catalogueVersion: config.version,
               collectiviteId: context.collectiviteId,
               document,
               onCheckpoint,
@@ -2202,6 +2240,7 @@ describe('Résolution des fiches actions Électrification', () => {
 
         const result = await prepareService.prepare(
           {
+            catalogueVersion: config.version,
             collectiviteId: context.collectiviteId,
             resumeFrom: checkpoint,
             onCheckpoint,
@@ -2227,6 +2266,7 @@ describe('Résolution des fiches actions Électrification', () => {
         await expect(
           prepareService.prepare(
             {
+              catalogueVersion: config.version,
               collectiviteId: context.collectiviteId,
               document,
               signal: controller.signal,
@@ -2261,6 +2301,7 @@ describe('Résolution des fiches actions Électrification', () => {
 
         const result = await prepareService.prepare(
           {
+            catalogueVersion: config.version,
             collectiviteId: context.collectiviteId,
             document,
             onCheckpoint,
@@ -2377,6 +2418,7 @@ describe('Résolution des fiches actions Électrification', () => {
 
       const resumed = await prepareService.prepare(
         {
+          catalogueVersion: config.version,
           collectiviteId: context.collectiviteId,
           resumeFrom: result.checkpoint,
         },
@@ -2411,7 +2453,11 @@ describe('Résolution des fiches actions Électrification', () => {
         checkpoint.response.engagements[0].cibles[0].unite = unite;
 
         const result = await prepareService.prepare(
-          { collectiviteId: context.collectiviteId, resumeFrom: checkpoint },
+          {
+            catalogueVersion: config.version,
+            collectiviteId: context.collectiviteId,
+            resumeFrom: checkpoint,
+          },
           { user: context.user }
         );
 

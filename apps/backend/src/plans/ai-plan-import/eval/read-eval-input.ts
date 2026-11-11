@@ -1,3 +1,7 @@
+import {
+  ElectrificationConfig,
+  electrificationConfigSchema,
+} from '@tet/domain/plans';
 import { readFile } from 'node:fs/promises';
 import { extname } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -20,8 +24,8 @@ const DECLARED_MIME_BY_EXTENSION: Record<string, string> = {
 
 const USAGE = `Usage : run-ai-import-eval --file <pdf|docx|xlsx|csv> [--out <json>] [--ref <json>]
   [--instructions "<consignes>"] [--no-verifications] [--no-sous-actions]
-  [--profile generic|pcaet|annexe-3-electrification]
-       --profile annexe-3-electrification : DOCX V4, aide IA ciblée si nécessaire, références non résolues
+  [--profile generic|pcaet|annexe-3-electrification] [--catalogue <json>]
+       --profile annexe-3-electrification --catalogue <json> : DOCX V4, aide IA ciblée si nécessaire, références non résolues
        (appels réels possibles : lancement humain uniquement)
        (incompatible avec --ref, --instructions, --no-verifications, --no-sous-actions et --lecture-seule)
        run-ai-import-eval --file <xlsx|csv> --lecture-seule   (aucun appel au modèle)`;
@@ -49,7 +53,7 @@ export type GenericEvalInput = EvalFile & {
 
 export type EvalInput =
   | GenericEvalInput
-  | (EvalFile & { mode: 'electrification' })
+  | (EvalFile & { mode: 'electrification'; catalogue: ElectrificationConfig })
   | (EvalFile & { mode: 'workbook' });
 
 type EvalExit = { mode: 'exit'; code: number; message: string };
@@ -60,6 +64,7 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
     options: {
       file: { type: 'string' },
       out: { type: 'string' },
+      catalogue: { type: 'string' },
       ref: { type: 'string' },
       profile: { type: 'string', default: AiPlanImportProfileEnum.GENERIC },
       instructions: { type: 'string', default: '' },
@@ -94,10 +99,23 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
       mode: 'exit',
       code: 1,
       message:
-        '✗ Le profil Électrification accepte seulement --file, --out et --profile ; les options du parcours générique ne sont pas applicables.',
+        '✗ Le profil Électrification accepte seulement --file, --out, --catalogue et --profile ; les options du parcours générique ne sont pas applicables.',
     };
   }
 
+  if (electrification !== Boolean(values.catalogue)) {
+    return {
+      mode: 'exit',
+      code: 1,
+      message:
+        '✗ --catalogue <json> est obligatoire pour Électrification et réservé à ce profil.',
+    };
+  }
+  const catalogue = values.catalogue
+    ? electrificationConfigSchema.parse(
+        JSON.parse(await readFile(values.catalogue, 'utf-8'))
+      )
+    : null;
   const buffer = await readFile(values.file);
   const declaredMime =
     DECLARED_MIME_BY_EXTENSION[extname(values.file).toLowerCase()] ?? '';
@@ -111,8 +129,12 @@ export const readEvalInput = async (): Promise<EvalInput | EvalExit> => {
   }
   const source = { file: values.file, out: values.out, buffer, mimeType };
   if (profile.data === AiPlanImportProfileEnum.ELECTRIFICATION) {
-    return mimeType === DOCX_MIME
-      ? { ...source, mode: 'electrification' }
+    return mimeType === DOCX_MIME && catalogue
+      ? {
+          ...source,
+          mode: 'electrification',
+          catalogue,
+        }
       : {
           mode: 'exit',
           code: 1,

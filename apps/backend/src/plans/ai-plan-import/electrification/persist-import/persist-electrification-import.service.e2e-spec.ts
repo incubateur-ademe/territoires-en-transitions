@@ -1,3 +1,8 @@
+import {
+  electrificationCatalogueFixture as electrificationConfig,
+  buildInMemoryElectrificationData,
+} from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
@@ -10,7 +15,6 @@ import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fic
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification-eligibility.constants';
 import {
   getAuthUserFromUserCredentials,
   getDisposableTestApp,
@@ -27,7 +31,6 @@ import { ELECTRIFICATION_SOURCE_ID } from '@tet/domain/indicateurs';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
   ElectrificationConfig,
-  electrificationConfig,
   ElectrificationEngagementCodeEnum as EngagementCode,
   ElectrificationLaureatsConfig,
   PlanReferenceProgrammeEnum,
@@ -49,7 +52,6 @@ import {
 } from 'vitest';
 import { GenerateImportDraftWorker } from '../../generate-import-draft/generate-import-draft.worker';
 import { AiPlanImportProfileEnum } from '../../models/import-profile';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import {
   ELECTRIFICATION_CHECKPOINT_VERSION,
@@ -83,6 +85,10 @@ const ficheFields = (
 describe('Persistance atomique du plan Électrification', () => {
   const llm = new FakeLlmRepository();
   const catalogue = structuredClone(electrificationConfig);
+  const data = buildInMemoryElectrificationData({
+    catalogue: () => catalogue,
+    laureats: () => laureats,
+  });
   const laureats: ElectrificationLaureatsConfig = {
     source: 'Liste synthétique complète pour les e2e',
     version: 'test-laureats',
@@ -102,10 +108,7 @@ describe('Persistance atomique du plan Électrification', () => {
       overrides: (builder) => {
         builder.overrideProvider(LlmService).useValue(new LlmService(llm));
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
-        builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
-        builder
-          .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
-          .useValue(laureats);
+        builder.overrideProvider(ElectrificationDataService).useValue(data);
       },
     });
     db = await getTestDatabase(app);
@@ -141,6 +144,7 @@ describe('Persistance atomique du plan Électrification', () => {
         cible.identifiantReferentiel = `persist-test-${randomUUID()}`;
         cible.periodicite = 'annuelle';
         cible.validation = 'validated';
+        assert(cible.unite);
         const [definition] = await db.db
           .insert(indicateurDefinitionTable)
           .values({
@@ -394,18 +398,21 @@ describe('Persistance atomique du plan Électrification', () => {
   });
 
   const input = () => ({
+    catalogueVersion: catalogue.version,
     collectiviteId: context.collectiviteId,
     nom: `Import synthétique ${context.collectiviteId}`,
     checkpoint,
   });
   const persist = () => service.persist(input(), { user: context.user });
   const prepare = () =>
-    app
-      .get(PrepareElectrificationImportService)
-      .prepare(
-        { collectiviteId: context.collectiviteId, resumeFrom: checkpoint },
-        { user: context.user }
-      );
+    app.get(PrepareElectrificationImportService).prepare(
+      {
+        collectiviteId: context.collectiviteId,
+        catalogueVersion: catalogue.version,
+        resumeFrom: checkpoint,
+      },
+      { user: context.user }
+    );
   const checkpointSource = (sourceId: string) => {
     const source = checkpoint.sources.find(({ id }) => id === sourceId);
     assert(source, `Source documentaire absente : ${sourceId}`);

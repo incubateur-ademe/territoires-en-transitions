@@ -26,8 +26,12 @@ Le profil par défaut est `generic`. Pour extraire les engagements du tableau A
 et les fiches renseignées de la section B d'une convention Électrification :
 
 ```sh
-make ai-import-eval f=convention.docx args="--profile annexe-3-electrification"
+make ai-import-eval f=convention.docx args="--profile annexe-3-electrification --catalogue /chemin/absolu/catalogue.json"
 ```
+
+Le fichier `--catalogue` contient une publication du catalogue à qualifier ; il
+est obligatoire et validé avant tout appel au modèle. Aucun catalogue intégré
+au code ne sert de valeur par défaut.
 
 Ce profil accepte uniquement le canevas officiel V4 au format DOCX. Il lit
 les tableaux et leurs libellés, conserve les sources et références

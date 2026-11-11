@@ -88,20 +88,14 @@ export class GenerateElectrificationImportService implements ImportGenerator {
     );
     if (!initialized.success) return this.persistenceFailed();
     const context = { user: buildRequesterUser(job.createdBy) };
-    const allowed = await this.authorization.authorizeExistingImport(
-      {
-        collectiviteId: job.collectiviteId,
-        options: job.options,
-      },
-      context
-    );
-    if (!allowed.success) {
+    if (!job.options.catalogueVersion) {
       return failure([
         ElectrificationPersistenceErrors.issue(
           'ELECTRIFICATION_IMPORT_NOT_ALLOWED'
         ),
       ]);
     }
+    const catalogueVersion = job.options.catalogueVersion;
     const start = checkpoint
       ? success({ resumeFrom: checkpoint })
       : await this.readSource(job, telemetry);
@@ -124,6 +118,7 @@ export class GenerateElectrificationImportService implements ImportGenerator {
         this.preparation.prepare(
           {
             ...start.data,
+            catalogueVersion,
             collectiviteId: job.collectiviteId,
             onCheckpoint: async (extracted) => {
               const saved = await this.jobs.saveCheckpoint(
@@ -162,6 +157,7 @@ export class GenerateElectrificationImportService implements ImportGenerator {
             {
               collectiviteId: job.collectiviteId,
               nom: job.options.planName,
+              catalogueVersion,
               checkpoint: prepared.data.checkpoint,
             },
             { ...context, tx }

@@ -1,4 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { ListIndicateursService } from '@tet/backend/indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
@@ -7,13 +8,9 @@ import {
   IndicateurDetaille,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
-import {
-  electrificationConfigSchema,
-  ElectrificationEngagementCodeEnum as EngagementCode,
-} from '@tet/domain/plans';
+import { ElectrificationEngagementCodeEnum as EngagementCode } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
 import assert from 'node:assert';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import {
   ElectrificationEngagementsErrorCode,
   electrificationEngagementsIssue,
@@ -34,8 +31,7 @@ export class ResolveElectrificationEngagementsService {
   );
 
   constructor(
-    @Inject(ELECTRIFICATION_CONFIG)
-    private readonly catalogue: unknown,
+    private readonly data: ElectrificationDataService,
     private readonly permissions: PermissionService,
     private readonly indicateurs: ListIndicateursService
   ) {}
@@ -70,7 +66,7 @@ export class ResolveElectrificationEngagementsService {
     }
 
     // Une configuration incomplète ne doit empêcher ni le démarrage ni l'import générique.
-    const catalogue = electrificationConfigSchema.safeParse(this.catalogue);
+    const catalogue = await this.data.getCatalogue(draft.catalogueVersion);
     if (
       !catalogue.success ||
       catalogue.data.version !== draft.catalogueVersion
@@ -99,17 +95,25 @@ export class ResolveElectrificationEngagementsService {
     let definitions: IndicateurDetaille[];
     try {
       const identifiantsReferentiel = [
-        ...new Set(expected.map(({ cible }) => cible.identifiantReferentiel)),
+        ...new Set(
+          expected.flatMap(({ cible }) =>
+            cible.identifiantReferentiel === null
+              ? []
+              : [cible.identifiantReferentiel]
+          )
+        ),
       ];
-      const result = await this.indicateurs.listIndicateurs(
-        {
-          collectiviteId: draft.collectiviteId,
-          filters: { identifiantsReferentiel },
-          queryOptions: { page: 1, limit: identifiantsReferentiel.length },
-        },
-        user
-      );
-      definitions = result.data;
+      const result = identifiantsReferentiel.length
+        ? await this.indicateurs.listIndicateurs(
+            {
+              collectiviteId: draft.collectiviteId,
+              filters: { identifiantsReferentiel },
+              queryOptions: { page: 1, limit: identifiantsReferentiel.length },
+            },
+            user
+          )
+        : null;
+      definitions = result?.data ?? [];
     } catch (error) {
       this.logger.error(
         'Impossible de résoudre les indicateurs des engagements Électrification',
@@ -126,6 +130,15 @@ export class ResolveElectrificationEngagementsService {
       const source = extracted?.source ?? engagement.source;
       const issue = (code: ElectrificationEngagementsErrorCode) =>
         issues.push(electrificationEngagementsIssue(code, source.location));
+      if (
+        cible.validation !== 'validated' ||
+        cible.periodicite === null ||
+        cible.identifiantReferentiel === null ||
+        cible.unite === null
+      ) {
+        issue('UNVALIDATED_ENGAGEMENT_INDICATEUR');
+        continue;
+      }
       const matches = definitions.filter(
         ({ identifiantReferentiel }) =>
           identifiantReferentiel === cible.identifiantReferentiel
@@ -133,10 +146,6 @@ export class ResolveElectrificationEngagementsService {
       const definition = matches[0];
       if (matches.length !== 1) {
         issue('MISSING_ENGAGEMENT_INDICATEUR');
-        continue;
-      }
-      if (cible.validation !== 'validated' || cible.periodicite === null) {
-        issue('UNVALIDATED_ENGAGEMENT_INDICATEUR');
         continue;
       }
       if (

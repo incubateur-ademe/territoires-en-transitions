@@ -1,3 +1,4 @@
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
 import {
   ImportPlanOutput,
@@ -277,7 +278,10 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
         mocks.planVerificationRepository
       )
     ),
-    {} as GenerateElectrificationImportService
+    {} as GenerateElectrificationImportService,
+    {
+      authorizeExistingImport: async () => success(undefined),
+    } as unknown as ValidateImportProfileService
   );
 
 describe('GenerateImportDraftService', () => {

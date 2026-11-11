@@ -38,7 +38,8 @@ import {
 import { CheckElectrificationEligibilityService } from '../electrification/check-electrification-eligibility/check-electrification-eligibility.service';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
 import { GetPlanReferencesService } from '../get-plan-references/get-plan-references.service';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '../electrification/config/electrification-eligibility.constants';
+import { ElectrificationDataService } from '../electrification/publish-electrification-data/electrification-data.service';
+import { buildInMemoryElectrificationData } from '../electrification/publish-electrification-data/electrification-data.test-fixture';
 import assert from 'node:assert';
 import {
   afterAll,
@@ -121,8 +122,10 @@ describe('Création transactionnelle de la structure du plan', () => {
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
         builder.overrideProvider(WebhookService).useValue(webhook);
         builder
-          .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
-          .useValue(laureats);
+          .overrideProvider(ElectrificationDataService)
+          .useValue(
+            buildInMemoryElectrificationData({ laureats: () => laureats })
+          );
       },
     });
     db = await getTestDatabase(app);

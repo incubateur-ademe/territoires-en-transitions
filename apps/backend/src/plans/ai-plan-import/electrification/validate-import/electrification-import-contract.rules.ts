@@ -1,5 +1,4 @@
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { electrificationConfigSchema } from '@tet/domain/plans';
 import { z } from 'zod';
 import { AiPlanImportError } from '../../ai-plan-import.errors';
 import { AiPlanImportProfileEnum } from '../../models/import-profile';
@@ -18,18 +17,17 @@ const electrificationImportContractSchema = z.object({
   contractVersion: z.never().optional(),
 });
 
-/** Un job et son checkpoint doivent rester compatibles avec le catalogue livré. */
+/** Le checkpoint utilise exactement le contrat et la révision admis pour ce job. */
 export class ElectrificationImportContractRules {
-  static isSupportedImport(options: unknown, catalogue: unknown): boolean {
-    return this.getSupportedContract(options, catalogue) !== null;
+  static isSupportedImport(options: unknown): boolean {
+    return this.getSupportedContract(options) !== null;
   }
 
   static parseCheckpoint(
     checkpoint: unknown,
-    options: unknown,
-    catalogue: unknown
+    options: unknown
   ): Result<ElectrificationExtractionCheckpoint, AiPlanImportError> {
-    const contract = this.getSupportedContract(options, catalogue);
+    const contract = this.getSupportedContract(options);
     const parsed =
       electrificationExtractionCheckpointSchema.safeParse(checkpoint);
     if (
@@ -44,13 +42,8 @@ export class ElectrificationImportContractRules {
     return success(parsed.data);
   }
 
-  private static getSupportedContract(options: unknown, catalogue: unknown) {
+  private static getSupportedContract(options: unknown) {
     const contract = electrificationImportContractSchema.safeParse(options);
-    const config = electrificationConfigSchema.safeParse(catalogue);
-    return contract.success &&
-      config.success &&
-      contract.data.catalogueVersion === config.data.version
-      ? contract.data
-      : null;
+    return contract.success ? contract.data : null;
   }
 }

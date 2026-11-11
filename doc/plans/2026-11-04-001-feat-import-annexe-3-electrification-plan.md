@@ -9,18 +9,18 @@ date: 2026-11-04
 
 Dernière mise à jour : 2026-11-13.
 
-Ce plan applique l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md).
-Il remplace le découpage en quinze PRs par deux livraisons. Les décisions,
+Ce plan applique l'[ADR 0022](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md)
+et l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md)
+pour la publication des données métier sans déploiement.
+Le découpage initial en quinze PRs est remplacé par les livraisons A et B.
+La publication des configurations sans déploiement fait l'objet de la
+[PR C dédiée — #5815][pr-publication], basée sur B : `feat/electrification-data-publication`. B conserve
+ses données embarquées et reste déployable sans cette évolution. Les décisions,
 sources et preuves des anciens lots restent dans
 [l'historique de l'ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#historique-des-décisions-et-des-prs).
-Les deux PRs suivent le périmètre élargi : A reprend aussi les refactorings
+Les PRs A et B suivent le périmètre élargi : A reprend aussi les refactorings
 actifs sans changement de comportement ; B garde les évolutions fonctionnelles.
 L'import Électrification n'est pas qualifié pour une ouverture en production.
-
-La publication des configurations sans déploiement fait l'objet de la
-[PR #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815),
-distincte et basée sur B : `feat/electrification-data-publication`. B conserve
-ses données embarquées et reste déployable sans cette évolution.
 
 Les [retours de recette TT-67 du 11 novembre][retours-tt67] sont intégrés au
 périmètre de B. Leur validation locale est décrite ci-dessous ; la recette
@@ -28,20 +28,22 @@ de la version déployée reste à effectuer.
 
 ## Livraisons et avancement
 
-| Livraison                           | Base → branche                               | État                                                                                                      |
-| ----------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| [PR A — Fondations][pr-foundations] | `main` → `refactor/plans-import-foundations` | Builds et tests ciblés passés ; CI des ajustements du 11 novembre à vérifier ; un commit ; non fusionnée. |
-| [PR B — Import complet][pr-import]  | A → `feat/electrification-plan-import`       | Reconstruite sur A élargie ; draft ; un commit ; qualification finale et métier restante.                 |
+| Livraison                                        | Base → branche                               | État                                                                                                                   |
+| ------------------------------------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [PR A — Fondations][pr-foundations]              | `main` → `refactor/plans-import-foundations` | Builds et tests ciblés passés ; CI des ajustements du 11 novembre à vérifier ; un commit ; non fusionnée.              |
+| [PR B — Import complet][pr-import]               | A → `feat/electrification-plan-import`       | Reconstruite sur A élargie ; draft ; un commit ; qualification finale et métier restante.                              |
+| [PR C — Publication des données][pr-publication] | B → `feat/electrification-data-publication`  | Données initiales publiées en préproduction ; reprise de la recette TT-67 et qualification avant production restantes. |
 
 - [x] Fixer la séparation entre refactorings sans changement utilisateur et évolutions fonctionnelles.
 - [x] Intégrer les données vérifiables : 41 sous-axes et métadonnées E07.
 - [ ] Valider puis fusionner A sans changement de comportement utilisateur.
 - [ ] Valider B sur A, y compris les chemins générique, PCAET et Excel.
+- [ ] Valider C sur B et publier ses jeux initiaux dans chaque environnement cible.
 - [ ] Compléter les données métier et vérifier leur déploiement.
 - [ ] Qualifier le parcours complet en préproduction, puis ouvrir un pilote.
 
 Une case cochée décrit une étape réalisée, pas un déploiement. Les vérifications
-des anciennes PRs ne remplacent pas celles des deux nouvelles compositions.
+des anciennes PRs ne remplacent pas celles des compositions A, B et C.
 Le socle de contrats et d'API de suivi #5702 est déjà dans `main`.
 
 ## PR A — Fondations sans changement utilisateur
@@ -232,14 +234,21 @@ Les fichiers de B qui ne sont pas livrés dans A sont consultables sur la
 - [x] Vérifier le maintien du quota pour un éditeur et pour le support sans
       mode super-admin actif, y compris après des imports échoués, ainsi que
       des limites de concurrence globale et par collectivité.
-- [ ] Reporter la correction dans #5815, redéployer en préproduction et
-      reprendre la recette TT-67 sur la démo 5460 en mode super-admin.
+- [x] Reporter la correction dans #5815.
+- [x] Redéployer en préproduction et reprendre la recette TT-67 sur la
+      démo 5460 en mode super-admin.
       Chaque import réel est lancé par un humain.
 
 Validation locale du 12 novembre : 29 e2e HTTP d'admission, 33 tests du service
 et 13 tests de permissions réussis. Queue et LLM simulés ; typage
-domaine/backend/specs et lint ciblé réussis. La recette préproduction reste
-à reprendre après redéploiement.
+domaine/backend/specs et lint ciblé réussis. Sur la préproduction au commit
+`f9e07058a`, le lancement humain en mode super-admin a créé le job
+`a9b0a5d6-eb8e-49f0-bdc8-882d0856e0c9` malgré le quota atteint. Le document
+original TT-67 est refusé avec `MISSING_INDICATEUR_YEAR`, une localisation
+par action/indicateur/champ et un seul message de correction, sans plan associé.
+L'historique, les champs conservés après "Réessayer" et rechargement, le
+remplacement du fichier et le formulaire vierge de "Nouvel import" sont
+également vérifiés dans le navigateur. Les autres cas de recette restent ouverts.
 
 **Ajustements après la recette produit du 11 novembre :**
 
@@ -431,15 +440,280 @@ Le contrat des événements et leur interprétation figurent dans
       Filtrer la production explicitement ; ne pas compter une reprise comme un
       nouvel import ni un clic comme une consultation effective.
 
-## PR dédiée — Publication des données sans déploiement
+## PR C — Publication des données sans déploiement
 
-Séparer l'administration du catalogue et des lauréats dans
-`feat/electrification-data-publication`, basée sur B
-([#5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815)). Cette PR porte la
-publication, le chargement des données publiées, les tests et la procédure
-de bascule. Ses critères et preuves figurent dans le plan de cette branche.
-La première publication des données est un prérequis de cette livraison,
-pas de B.
+**Base :** B (`feat/electrification-plan-import`) →
+`feat/electrification-data-publication`.
+
+C remplace les constantes runtime du catalogue et des lauréats par des données
+publiées. Les contrats et règles restent en code. Grist fournit les contenus ;
+les références d’indicateurs sont publiées depuis Sheets dans une table générique,
+avec la migration `indicateur/references-externes`. Les 12 engagements viennent
+des colonnes existantes des axes Grist ; leurs cibles utilisent aussi les
+références publiées. Réutiliser le stockage Supabase, l'authentification
+tRPC et les validations existantes. A et B conservent leurs périmètres ; B reste déployable
+avec ses données embarquées sans attendre C.
+
+- [x] Regrouper les correspondances TeT initiales et les paramètres Grist/stockage
+      dans le dossier `config/` Électrification du backend. Reprendre les
+      déplacements de A et B ; préserver les identités Grist, les versions
+      publiées, les clés de stockage et les imports publics du domaine.
+      Validation du regroupement le 12 novembre : 343 e2e réussis (36 publication,
+      307 import/éligibilité), typage domaine/backend/API/frontend et specs,
+      build Nest, CLI compilée (`--help`), lint et 52 liens/ancres locaux vérifiés.
+      Aucun appel IA réel ni publication de données dans un environnement distant.
+- [x] Retirer les copies JSON du catalogue et des lauréats du dépôt, ainsi que
+      leur configuration de build. Utiliser des fixtures synthétiques et conserver
+      les versions immuables dans le stockage privé pour les reprises.
+      Validation du 12 novembre : 343 e2e réussis (36 publication, 307 résolution,
+      admission, persistance, parcours complet, historique et éligibilité), build,
+      typages backend/specs et lint ciblé. Sources et IA simulées, stockage local.
+- [x] Vérifier les endpoints admin d'export, vérification et publication,
+      avec contrôle `SUPER_ADMIN` en base et refus des accès non autorisés.
+- [x] Préparer le catalogue depuis le Grist ADEME sans activation ; préserver
+      les identités des sous-actions. Résoudre les indicateurs
+      depuis les références externes publiées dans la cible.
+- [x] Limiter l'entrée de l'adaptateur aux données utilisées : Grist, références
+      publiées et actions précédentes éventuelles. Vérifier la première
+      publication et la conservation des compléments TeT lors d'une mise à jour.
+      Validation ciblée le 12 novembre : 37 e2e de publication/synchronisation,
+      typages backend/specs et lint ciblé réussis ; 45 liens/ancres des ADR et
+      du plan vérifiés. Sources simulées, base et stockage locaux uniquement.
+- [x] Lire les colonnes existantes de l'annuaire Grist et résoudre les communes
+      par code INSEE et les EPCI par SIREN, sans mapping métier codé en dur,
+      modification de Grist ou repli sur les anciens porteurs. Compter les
+      exclusions ; partager l'accès HTTP et la résolution des libellés de colonnes.
+- [x] Livrer le workflow GitHub manuel uniquement (`workflow_dispatch`), avec
+      choix staging/préprod/prod, jeu et vérification ou publication uniquement.
+      Aucun cron ni déclenchement au déploiement.
+- [x] Calculer la version depuis le contenu validé, mappings TeT compris ; dater
+      automatiquement la première publication des lauréats. Conserver version,
+      date et audit si le contenu actif est inchangé, y compris après un retry.
+      Vérifier les reprises concurrentes et réactivations d'un ancien contenu.
+- [x] Partager préparation, validation et stockage avec l'administration
+      existante ; exécuter un module de maintenance sans worker ni IA.
+- [x] Retirer le connecteur Sheets des lauréats et ses boutons ; conserver l'API/CLI admin
+      pour inspection, corrections TeT, première publication et restauration.
+- [x] Vérifier le moteur du workflow avec sources simulées, base et stockage
+      locaux : vérification sans écriture, publication, rerun, conflits,
+      première publication, version active corrompue et erreurs de source.
+      Les 36 e2e passent après automatisation des métadonnées le 12 novembre.
+      Contrôler aussi le YAML et la CLI compilée ; la recette GitHub réelle reste ouverte.
+- [x] Comparer les trois extractions partagées par Nicolas le 12 novembre aux
+      105 correspondances et 4 exclusions : 76 identifiants publics concordants,
+      un écart commune/agglomération pour Saint-Quentin et 32 groupements
+      rapprochés par leurs libellés, sans porteur TeT désigné ; voir
+      l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md#annuaire-des-lauréats--12-novembre-2026).
+- [ ] Pour couvrir 100 % des 109 territoires : faire désigner les porteurs des
+      32 groupements dans la source métier avec un identifiant public exploitable,
+      puis adapter le lecteur au contrat validé. D'ici là, ces groupements sont
+      exclus ; les 28 anciens porteurs provisoires ne sont pas repris.
+- [ ] Confirmer le choix de la CA du Saint-Quentinois désignée dans Grist et
+      vérifier les correspondances uniques dans chaque base cible. Les exports
+      contiennent 77 identifiants publics, sans garantie de 77 correspondances
+      dans tous les environnements.
+- [ ] Configurer les accès Grist et secrets DB/Storage propres à chaque
+      environnement GitHub, puis qualifier un lancement manuel en préprod.
+      Aucun changement du fichier Sheets des indicateurs.
+- [x] Qualifier la publication administrative du catalogue en préprod le
+      13 novembre : migrations appliquées, 1 004 définitions publiées sans
+      recalcul, préparation Grist valide et relecture du catalogue publié
+      identique. Les trois rapprochements d'indicateurs restent à confirmer
+      et les 11 cibles sont en attente ; voir les preuves dans l'ADR 0024.
+- [x] Configurer la variable du document des lauréats dans GitHub `preprod`.
+- [x] Raccorder la préparation administrative au déploiement Koyeb normal et de
+      test : secret Grist existant et identifiant du document issu de la variable
+      GitHub commune au workflow de synchronisation. Sans cette configuration,
+      retirer les variables du service sans empêcher le déploiement du backend.
+      Validation locale : 24 scénarios shell avec CLI Koyeb simulée, autres
+      arguments conservés, lint et formatage des workflows.
+- [ ] Qualifier ce déploiement et la lecture authentifiée des lauréats en préprod.
+      Le workflow manuel reste dans C ; vérifier ses secrets, exécuter `verify`
+      puis `publish` après sa livraison et contrôler les exclusions. L'ancienne
+      liste contenant la démo reste active tant que sa publication n'a pas réussi.
+- [x] Vérifier structure, doublons, rattachements, définitions d'indicateurs
+      validées et IDs de collectivités ; les références `pending` restent explicites.
+- [x] Vérifier l'immuabilité, la réactivation d'une version antérieure et
+      l'absence de changement actif après un échec d'enregistrement.
+- [x] Vérifier la correction de concurrence révélée par la CI du 12 novembre :
+      une seule écriture de version pour deux publications concurrentes de
+      contenus différents, pour le catalogue et les lauréats ; l'autre appel
+      reçoit un conflit et la version active correspond au contenu accepté.
+- [x] Vérifier qu'un job admis avant publication continue et reprend avec
+      son catalogue d'origine ; l'éligibilité utilise la liste courante.
+      Utiliser une correction de catalogue nécessite un nouvel import.
+- [x] Vérifier l'indisponibilité Électrification sans données publiées et
+      l'indépendance des parcours générique/PCAET.
+- [x] Publier et réexporter les deux jeux initiaux en préproduction : catalogue
+      `electrification-v1`, lauréats `2026-09-30-revision-2026-11-11-demo`.
+- [ ] Publier les deux jeux initiaux en production avant
+      d'admettre des imports ; conserver les versions nécessaires aux reprises.
+
+**Validation du 13 novembre — source des lauréats :** 55 e2e de publication et
+synchronisation réussis sur la base et le stockage locaux, Grist simulé. Les
+contrats des colonnes, la résolution par identifiant public, les exclusions,
+les erreurs et la non-conservation des anciens porteurs sont vérifiés. L'accès
+API privé et le lancement GitHub réel restent ouverts. Après rebase de B,
+les 104 e2e (publication, éligibilité et import complet) passent, avec typages
+backend/specs, lint ciblé et 55 liens/ancres locaux vérifiés.
+
+La [procédure d'administration](../development/publish-electrification-data.md)
+décrit le workflow manuel Grist et la CLI administrative de reprise. Les deux
+sources sont lues uniquement lors d'une demande explicite ; aucun changement
+Grist ne déclenche de publication et aucun import ne dépend de son accès réseau.
+Les vérifications des constantes et la recette de B ne
+constituent pas une preuve de ce nouveau mécanisme.
+
+Le 12 novembre, 25 e2e de publication et l'e2e existant du catalogue indicateurs
+passent après ajout des sources, avec base/stockage locaux et sources simulées.
+La lecture seule du Grist réel reproduit le catalogue initial. La CLI et les
+boutons étaient vérifiés avec des API simulées avant le choix de Grist pour les
+lauréats et du workflow manuel. Ces preuves historiques ne valident pas le
+nouveau parcours. Détail dans
+l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md#vérification-des-sources--12-novembre-2026).
+
+**Rebase sur les retours de recette du 12 novembre.** Les corrections de B
+sont reprises dans C, sans modification de la synchronisation Grist. Après
+résolution des imports et du tableau de dépendances : 92 e2e réussis (36
+publication, 23 parcours Électrification et 33 admission HTTP), typages
+domaine/backend/API/frontend et specs backend, lint et 52 liens/ancres locaux
+vérifiés. Le frontend et ses tests navigateur sont identiques à B. Aucune
+publication distante ni migration de rattrapage des anciens plans de recette.
+
+**Qualification Grist/workflow — 12 novembre.** Les 33 e2e de publication
+passent avec sources simulées, base et stockage locaux. Le module interne du
+workflow est exécuté dans ces tests, sans worker ni LLM réel. Build backend,
+typage backend/specs, lint, formatage, YAML/Bash du workflow et arguments de
+la CLI compilée sont vérifiés. Le workflow n'a pas été lancé sur GitHub et
+aucune source ni version distante n'a été modifiée.
+
+La première publication préproduction du 11 novembre est décrite dans
+l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md#première-publication-en-préproduction--11-novembre-2026).
+Les exports actifs sont conformes aux fichiers publiés. La recette TT-67,
+initialement arrêtée au quota, a repris avec l'exception super-admin : le
+cas de l'année manquante est vérifié ci-dessus. Après le reset quotidien,
+contrôler et republier les données si les métadonnées de publication ont disparu.
+
+**Correction de concurrence — 12 novembre 2026.** 73 tests ciblés d'admission
+et de publication, puis 212 e2e de résolution, parcours complet, historique et
+publication passent localement. Faux LLM, stockage et base locaux ; build
+TypeScript domaine/backend, typage des specs et lint ciblé réussis. La CI et
+le déploiement de ce verrou restent à vérifier sur le nouveau commit.
+
+**Qualification locale du mécanisme — 11 novembre 2026.** 449 tests ciblés
+réussis avant la séparation de C en PR dédiée : 10 nouveaux e2e de publication sur le stockage et la base locaux,
+373 tests de parcours/résolution/reprise et 66 tests existants d'admission et
+de traitement. Les appels IA sont simulés. Build backend, typage du domaine,
+du backend et des specs, lint et formatage ciblés réussis. La CLI compilée et
+ses opérations ont été vérifiées avec un serveur HTTP de test. La publication
+dans les environnements cibles et la recette navigateur restent à faire pour
+ce mécanisme ; voir les limites et preuves dans l'[ADR 0024](../adr/0024-publier-donnees-electrification-sans-deploiement.md).
+
+**Validation après rebase sur les retours TT-67 — 11 novembre 2026.** 211 e2e
+backend réussis : 149 fiches/extraction, 22 parcours complets, 30 suivi/historique
+et 10 publication. Build backend, typage domaine/backend/specs, lint et
+formatage ciblés réussis. Cette vérification de C complète les preuves
+historiques ci-dessus ; elle ne remplace pas la recette de l'environnement
+déployé.
+
+### Références externes des indicateurs dans C
+
+- [x] Ajouter le contrat générique `identifiantReferentiel / source / codeExterne / lienSource`
+      dans l’import Sheets existant, sans gestion du WIP.
+- [x] Publier les références et leur version dans la même transaction que les
+      définitions, relations, objectifs et recalculs. Garantir l’unicité en base.
+- [x] Refuser les doublons, les identifiants absents des définitions et les
+      en-têtes manquants ; laisser les correspondances sans identifiant en attente.
+- [x] Résoudre les codes Grist depuis la base cible, avec unités et périodicités
+      TeT ; retirer les exceptions annuelles et les mappings de fiches initiaux.
+- [x] Vérifier localement les doublons, lignes incomplètes, suppressions, isolation
+      des sources, version, rollback et résolution Grist : 40 e2e et 33 tests
+      existants réussis. Typage backend/specs et lint ciblé réussis. Déploiement,
+      vérification et rollback SQL testés directement ; le cycle Sqitch complet
+      reste à vérifier en CI, l’historique local ayant un ancien identifiant
+      de `plan_action/type_electrification`. Aucune publication distante.
+- [ ] Appliquer la migration et qualifier le cycle Sheets → base cible →
+      synchronisation Grist en préproduction. Les trois rapprochements préremplis
+      nécessitent une validation métier ; ne pas les publier automatiquement.
+- [x] Construire les engagements depuis `Code_signe` et `Parametre_signe` de
+      `V1_3_Axes`, sans modification de Grist ni nouvel onglet. Scinder `E01+E02`
+      et refuser les codes inconnus, dupliqués ou manquants.
+- [x] Résoudre les 11 cibles via la source `engagements-electrification` de
+      l'onglet existant, avec les unités et périodicités TeT. Retirer
+      `electrification-initial-mappings.config.ts` ; conserver seulement le
+      contrat du canevas en code. Ne pas réutiliser un mapping supprimé.
+- [x] Utiliser le titre d'axe "Recharge des poids lourds" pour l'action E12,
+      dont le paramètre Grist comporte un blanc à remplir.
+- [x] Supprimer les copies de libellé, unité et périodicité dans "Références
+      externes". Conserver les mappings, observations et liens des 113 lignes,
+      puis aligner le lecteur sur A:F. Les sources métier restent inchangées.
+- [x] Auditer les sources par champ et retirer le fallback d'unité/périodicité
+      Grist pour les indicateurs sans référence TeT. Les colonnes documentaires
+      `observation` et `lienDefinitionTeT` sont ignorées ; les métadonnées absentes restent `null`.
+      Documenter séparément le contrat Word et les compléments TeT du catalogue
+      dans la [répartition des sources](../development/publish-electrification-data.md#source-faisant-autorité-pour-chaque-donnée).
+      Validation ciblée : 49 e2e de publication et d'import des références
+      réussis le 12 novembre, sans écriture distante ni appel IA.
+- [x] Vérifier la reconstruction des engagements, l'isolation des sources de
+      références, leur suppression, les cibles annuelles et les versions
+      immuables : 396 e2e réussis le 12 novembre (46 publication, 46 engagements,
+      2 import des références et 302 parcours connexes), avec sources et LLM
+      simulés. Typages backend/specs, lint, formatage et liens locaux vérifiés.
+- [x] Publier `lienSource`, y compris sur les références en attente, dans la
+      table existante. Résoudre le document catalogue depuis ces liens ; retirer
+      les IDs Grist codés en dur. Accepter plusieurs pages d'un document,
+      refuser les sources incohérentes et conserver la publication active en cas d'échec.
+- [x] Configurer le document des lauréats via `ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID`,
+      en réutilisant la configuration d'environnement et le workflow manuel.
+- [x] Vérifier le changement de document, les liens vers plusieurs pages, les
+      sources absentes/incohérentes, les références en attente et le rollback
+      d'un import partiel : 53 e2e et 33 tests existants réussis le 12 novembre,
+      avec sources simulées. Aucune publication distante.
+- [ ] Renseigner cette variable par cible, puis qualifier le changement d'adresse
+      Sheets → publication des indicateurs → vérification/publication Grist.
+      Les liens des deux espaces de références doivent désigner le même document.
+- [ ] Renseigner et valider les 11 correspondances de cibles dans "Références
+      externes", puis les publier dans l'environnement cible. Elles ne sont
+      pas déduites des indicateurs rattachés au même axe. Une cible non publiée
+      bloque seulement les imports qui l'utilisent.
+- [x] Adapter le contrat de lecture aux trois colonnes présentes dans les exports
+      de l'annuaire, sans modifier Grist. Résoudre les identifiants publics et
+      compter les exclusions ; retirer l'attente de colonnes TeT supplémentaires.
+- [ ] Qualifier ces colonnes via l'API authentifiée de l'annuaire et désigner
+      les porteurs des groupements pour couvrir les 109 territoires.
+
+### Déploiement de C
+
+1. Fermer temporairement le flag de création Électrification et laisser les
+   workers de B terminer les jobs en attente, en cours et leurs retries.
+   Conserver les jobs échoués et sauvegarder leurs versions exactes de catalogue
+   depuis le commit B réellement déployé, ou par export si C est déjà déployée.
+   Ne pas reconstruire ces versions depuis Grist ni relancer un échec pendant
+   la bascule.
+2. Appliquer `indicateur/references-externes`, puis déployer les API et tous les workers de C. L'API de publication devient
+   disponible après ce déploiement ; aucune publication préalable n'est requise
+   pour déployer B seule.
+3. Publier les définitions et références Sheets dans la cible. Vérifier puis
+   publier les anciennes versions nécessaires aux reprises,
+   le catalogue souhaité pour les nouveaux imports en dernier parmi les
+   catalogues, puis la liste courante des lauréats. Exporter les jeux actifs,
+   contrôler leurs versions et les vérifier.
+4. Rouvrir le flag pour le périmètre prévu. Les jobs échoués peuvent reprendre
+   avec leur catalogue d'origine ; une correction de catalogue nécessite
+   un nouvel import.
+
+**Validation du 13 novembre — source des lauréats :** 55 e2e de publication et
+synchronisation réussis sur la base et le stockage locaux, Grist simulé. Les
+contrats des colonnes, la résolution par identifiant public, les exclusions,
+les erreurs et la non-conservation des anciens porteurs sont vérifiés. L'accès
+API privé et le lancement GitHub réel restent ouverts. Après rebase de B,
+les 104 e2e (publication, éligibilité et import complet) passent, avec typages
+backend/specs, lint ciblé et 55 liens/ancres locaux vérifiés.
+
+La [procédure d'administration](../development/publish-electrification-data.md)
+précise les commandes et contrôles. C n'utilise aucun fallback sur les données
+embarquées de B. La publication ne nécessite pas de suspendre les imports
+génériques ou PCAET.
 
 ## Dépendances métier avant ouverture
 
@@ -455,13 +729,16 @@ Les constats détaillés et leurs sources figurent dans
 | E09                     | Unité canonique `nb` intégrée dans A ; traduction documentaire ciblée dans B, également appliquée aux checkpoints lors d'une reprise.                                                                                                                                     |
 | Actions et sous-actions | 109 actions et 58 sous-actions intégrées, avec identités internes fixes, rattachements principaux, 89 liens d'indicateurs et 354 liens vers 107 ressources partagées. Le parent exact reste conservé à l'import.                                                          |
 | Indicateurs Grist       | 113 codes et métadonnées explicites intégrés, correspondances TeT `pending`. Faire préciser ces correspondances, le seuil ≥150 kW de `6-b`, les unités principales de `1-a`/`1-b`/`1-c`. Les recensements `9.1.1-a` et `11.1.1-a` sont annuels (décision du 12 novembre). |
-| Aides                   | Liens valides ajoutés dans "Documents". Réponse du 11 novembre : omettre les aides sans URL avec un avertissement, sans bloquer l'action. Vérifier cette évolution dans B ; une URL renseignée mais invalide reste bloquante.                                             |
-| Lauréats                | Liste du 30 septembre intégrée pour 105 lauréats : 77 correspondances vérifiées et 28 porteurs provisoires. Quatre groupements restent exclus. Confirmer les porteurs et le responsable des mises à jour ; vérifier les IDs en préproduction.                             |
+| Aides                   | Liens valides ajoutés dans "Documents". Réponse du 11 novembre : omettre les aides sans URL avec un avertissement, sans bloquer l'action. Évolution vérifiée localement dans B ; une URL renseignée mais invalide reste bloquante.                                        |
+| Lauréats                | A/B : 105 correspondances initiales. C : résolution des 77 identifiants publics Grist dans TeT ; 32 groupements exclus faute de porteur explicite. Aucun repli sur les porteurs provisoires ; choix Saint-Quentin à confirmer.                                           |
 | Préproduction           | Vérifier les jobs présents et leurs versions, déployer les définitions et qualifier le parcours complet. Le dump local ne prouve pas l'état actuel de la préproduction.                                                                                                   |
 
 Aucune correspondance n'est déduite d'un titre par le code ou l'IA. Aucun accès
-à Notion ou Grist n'a lieu pendant l'import. Les données validées sont livrées
-dans Git et les définitions restent dans le catalogue TeT.
+à Notion ou Grist n'a lieu pendant l'import. B conserve ses données validées
+dans Git. À partir de C, elles sont synchronisées depuis Grist et publiées
+sans copie complète dans le dépôt. Les indicateurs des fiches utilisent les
+références Sheets publiées, comme les cibles d'engagement. Les engagements et
+leurs rattachements viennent de Grist ; aucune copie initiale ne reste dans C.
 
 **Réponse métier du 12 novembre intégrée :**
 
@@ -469,7 +746,12 @@ dans Git et les définitions restent dans le catalogue TeT.
       exploitations (`11.1.1-a`) en suivi annuel dans la configuration, en
       conservant le type quantitatif, l'unité `nb` et les correspondances TeT
       `pending`. Le choix de périodicité est clos ; les identifiants restent à
-      confirmer (voir la décision du 12 novembre dans l'ADR).
+      confirmer (voir la décision du 12 novembre dans l'ADR). La même décision est
+      portée dans C par les définitions TeT publiées et leurs références externes.
+      B conserve sa configuration embarquée.
+- [ ] Faire créer ou confirmer les définitions annuelles des deux recensements,
+      compléter leurs références dans Sheets, publier dans la cible puis
+      synchroniser Grist. Aucune exception par code ne remplace cette publication.
 
 **Suite de la relecture du 10 novembre :**
 
@@ -485,7 +767,7 @@ dans Git et les définitions restent dans le catalogue TeT.
       descriptions, parents et liens vers les indicateurs et ressources.
 - [x] Conserver les 113 codes d'indicateurs connus avec leurs métadonnées
       explicites et des correspondances TeT `pending`, sans définition inventée.
-- [x] Intégrer la dernière liste lauréats pour 105 correspondances, dont 28
+- [x] Intégrer la liste lauréats du 30 septembre pour 105 correspondances, dont 28
       porteurs provisoires, avec les deux corrections sourcées ; garder les
       quatre groupements sans correspondance fiable en attente.
 - [x] Autoriser l'absence d'expiration quand la source n'en prévoit pas ;
@@ -507,8 +789,8 @@ dans Git et les définitions restent dans le catalogue TeT.
       et aucun plan associé à l'import.
 - [ ] Étendre la recette aux références inconnues/inaccessibles, reprises,
       droits et autres correspondances métier ; qualifier l'assistance IA.
-- [ ] Corriger les quatre groupements exclus, confirmer les porteurs provisoires
-      et la maintenance de la liste.
+- [ ] Compléter dans la source les porteurs des 32 groupements actuellement
+      exclus de la synchronisation et qualifier leur résolution ; voir la phase C.
 - [ ] Compléter les correspondances et la formule E08 après réponse ; vérifier
       les définitions et les rattachements réellement déployés.
 
@@ -619,5 +901,6 @@ existants.
 
 [pr-foundations]: https://github.com/incubateur-ademe/territoires-en-transitions/pull/5812
 [pr-import]: https://github.com/incubateur-ademe/territoires-en-transitions/pull/5813
+[pr-publication]: https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815
 [retours-tt67]: https://app.notion.com/p/4156523d57d780a9bf20ec12b9bae893
 [decision-aides]: https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=4146523d57d781b891ed001cee19a898

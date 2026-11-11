@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -40,6 +41,12 @@ import {
   validateObjectifIdentifiants,
 } from './validate-indicateur-definitions.rules';
 import { UpsertIndicateurDefinitionsService } from './upsert-indicateur-definitions.service';
+import {
+  ImportIndicateurReference,
+  importIndicateurReferenceSchema,
+  indicateurReferencesSheet,
+} from './import-indicateur-reference.dto';
+import { IndicateurReferencesRules } from './indicateur-references.rules';
 
 /**
  * Les questions sont lues en base : les indicateurs doivent être importés
@@ -133,11 +140,13 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     // publier une nouvelle version du catalogue si la feuille des objectifs
     // est illisible ou invalide.
     const importedObjectifs = await this.readObjectifs();
+    const references = await this.readReferences();
 
     const { definitions, identifiantsRecalcules } =
       await this.upsertIndicateurDefinitions(
         indicateurDefinitionsData.data,
-        importedObjectifs
+        importedObjectifs,
+        references
       );
 
     return { definitions, identifiantsRecalcules };
@@ -184,6 +193,12 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     getImportResultOrThrow(
       validateObjectifIdentifiants(objectifs, indicateurDefinitionsData.data)
     );
+    getImportResultOrThrow(
+      IndicateurReferencesRules.validate(
+        await this.readReferences(),
+        indicateurDefinitionsData.data
+      )
+    );
     return { ok: true };
   }
 
@@ -191,6 +206,27 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return getImportResultOrThrow(
       mapIndicateurObjectifs(await this.readObjectifs(), definitions)
     );
+  }
+
+  private async readReferences(): Promise<ImportIndicateurReference[]> {
+    const { data, header } =
+      await this.sheetService.getDataFromSheet<ImportIndicateurReference>(
+        this.getSpreadsheetId(),
+        importIndicateurReferenceSchema,
+        indicateurReferencesSheet.range
+      );
+    const columns = header?.map((value) => value.trim().toLowerCase()) ?? [];
+    if (
+      indicateurReferencesSheet.headers.some(
+        (key) =>
+          columns.filter((column) => column === key.toLowerCase()).length !== 1
+      )
+    ) {
+      throw new BadRequestException(
+        'La feuille "Références externes" doit contenir une seule colonne identifiantReferentiel, source, codeExterne et lienSource.'
+      );
+    }
+    return data;
   }
 
   private async readObjectifs(): Promise<ImportObjectifType[]> {
@@ -289,12 +325,13 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
   async upsertIndicateurDefinitions(
     definitions: ImportIndicateurDefinitionType[],
-    objectifs: ImportObjectifType[] = []
+    objectifs: ImportObjectifType[] = [],
+    references?: ImportIndicateurReference[]
   ): Promise<UpsertIndicateurDefinitionsResult> {
     await this.checkIndicateurDefinitions(definitions);
     return getImportResultOrThrow(
       await this.upsertService.upsert(
-        { definitions, objectifs },
+        { definitions, objectifs, references },
         // Only configured spreadsheet data and internal seed fixtures reach this entrypoint.
         { user: null, isUserTrusted: true }
       )
