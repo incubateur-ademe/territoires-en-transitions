@@ -70,11 +70,13 @@ export const TrajectoireSnbc3View = ({
       <TrajectoireSnbc3IndisponibleCard
         title={appLabels.trajectoireSnbc3CommuneTitre}
         description={
-          data.epciParent
-            ? appLabels.trajectoireSnbc3CommuneAvecEpciDescription
+          data.collectiviteRattachement
+            ? appLabels.trajectoireSnbc3CommuneAvecRattachementDescription({
+                nom: data.collectiviteRattachement.nom,
+              })
             : appLabels.trajectoireSnbc3CommuneDescription
         }
-        epciParent={data.epciParent}
+        collectiviteRattachement={data.collectiviteRattachement}
         dataTest="indicateurs.trajectoires.snbc3.commune-non-supportee"
       />
     ))

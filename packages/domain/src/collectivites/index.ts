@@ -1,3 +1,4 @@
+export * from './arrondissement-municipal.rules';
 export * from './auto-attachment.rules';
 export * from './can-mutate-referentiel.rules';
 export * from './categorie-tag.schema';

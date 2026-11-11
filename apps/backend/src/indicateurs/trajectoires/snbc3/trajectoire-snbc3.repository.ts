@@ -8,6 +8,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   CollectiviteNatureType,
   CollectiviteType,
+  collectiviteTypeEnum,
 } from '@tet/domain/collectivites';
 import {
   EPCI_FISCALITE_PROPRE_NATURES,
@@ -27,6 +28,7 @@ export type Snbc3Collectivite = {
   type: CollectiviteType;
   natureInsee: CollectiviteNatureType | null;
   regionCode: string | null;
+  communeCode: string | null;
 };
 
 /** Lectures de la trajectoire SNBC 3 importée (lot 2 du plan SNBC 3). */
@@ -80,6 +82,7 @@ export class TrajectoireSnbc3Repository {
         type: collectiviteTable.type,
         natureInsee: collectiviteTable.natureInsee,
         regionCode: collectiviteTable.regionCode,
+        communeCode: collectiviteTable.communeCode,
       })
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, collectiviteId));
@@ -112,5 +115,27 @@ export class TrajectoireSnbc3Repository {
       .orderBy(asc(collectiviteTable.nom))
       .limit(1);
     return parent ?? null;
+  }
+
+  /**
+   * Commune d'après son code INSEE
+   */
+  async findCommuneByCode(
+    communeCode: string
+  ): Promise<{ id: number; nom: string } | null> {
+    const [commune] = await this.databaseService.db
+      .select({ id: collectiviteTable.id, nom: collectiviteTable.nom })
+      .from(collectiviteTable)
+      .where(
+        and(
+          eq(collectiviteTable.communeCode, communeCode),
+          eq(collectiviteTable.type, collectiviteTypeEnum.COMMUNE)
+        )
+      )
+      // commune_code n'est pas unique en base : pas de doublon connu à ce jour
+      // mais le tri par id rend le résultat stable.
+      .orderBy(asc(collectiviteTable.id))
+      .limit(1);
+    return commune ?? null;
   }
 }

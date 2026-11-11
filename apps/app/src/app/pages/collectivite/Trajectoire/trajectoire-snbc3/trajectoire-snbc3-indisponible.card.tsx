@@ -10,17 +10,18 @@ import { useTelechargementOutilSnbc3 } from './data/use-telechargement-outil-snb
  * Carte d'état vide de la page SNBC 3, construite sur le modèle de
  * `methodology-not-applicable.card.tsx` (qui reste pour l'ancienne page). Elle
  * propose l'outil Excel SNBC 3 et la méthodologie, et, pour une commune,
- * la trajectoire de son EPCI.
+ * la trajectoire de sa collectivité de rattachement (son EPCI, ou Paris pour
+ * un arrondissement parisien).
  */
 export const TrajectoireSnbc3IndisponibleCard = ({
   title,
   description,
-  epciParent,
+  collectiviteRattachement,
   dataTest,
 }: {
   title: string;
   description: string;
-  epciParent?: { id: number; nom: string };
+  collectiviteRattachement?: { id: number; nom: string };
   dataTest: string;
 }) => {
   const { mutate: downloadOutil, isPending: isDownloading } =
@@ -51,18 +52,19 @@ export const TrajectoireSnbc3IndisponibleCard = ({
     },
   ];
 
-  if (epciParent) {
+  if (collectiviteRattachement) {
     actions.unshift({
-      children: appLabels.trajectoireSnbc3VoirTrajectoireEpci,
-      title: appLabels.trajectoireSnbc3VoirTrajectoireEpciNom({
-        nom: epciParent.nom,
+      children: appLabels.trajectoireSnbc3VoirTrajectoireDe({
+        nom: collectiviteRattachement.nom,
       }),
-      href: makeCollectiviteTrajectoirelUrl({ collectiviteId: epciParent.id }),
+      href: makeCollectiviteTrajectoirelUrl({
+        collectiviteId: collectiviteRattachement.id,
+      }),
       onClick: () =>
-        trackEvent(Event.trajectoire.snbc3.voirTrajectoireEpci, {
-          epciId: epciParent.id,
+        trackEvent(Event.trajectoire.snbc3.voirTrajectoireRattachement, {
+          collectiviteRattachementId: collectiviteRattachement.id,
         }),
-      dataTest: 'indicateurs.trajectoires.snbc3.voir-epci',
+      dataTest: 'indicateurs.trajectoires.snbc3.voir-rattachement',
     });
   }
 

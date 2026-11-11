@@ -11,8 +11,8 @@ export class TrajectoireSnbc3Pom {
   readonly changementsModal: Locator;
   readonly secteurNonDisponible: Locator;
   readonly communeCard: Locator;
-  readonly voirEpciButton: Locator;
-  readonly consulterEpciText: Locator;
+  readonly voirRattachementButton: Locator;
+  readonly consulterRattachementText: Locator;
 
   constructor(readonly browserPage: Page) {
     this.page = browserPage.getByTestId('indicateurs.trajectoires.snbc3.page');
@@ -41,11 +41,11 @@ export class TrajectoireSnbc3Pom {
     this.communeCard = browserPage.getByTestId(
       'indicateurs.trajectoires.snbc3.commune-non-supportee'
     );
-    this.voirEpciButton = browserPage.getByTestId(
-      'indicateurs.trajectoires.snbc3.voir-epci'
+    this.voirRattachementButton = browserPage.getByTestId(
+      'indicateurs.trajectoires.snbc3.voir-rattachement'
     );
-    this.consulterEpciText = this.communeCard.getByText(
-      'Vous pouvez consulter la trajectoire de votre EPCI.'
+    this.consulterRattachementText = this.communeCard.getByText(
+      /Vous pouvez consulter la trajectoire de /
     );
   }
 

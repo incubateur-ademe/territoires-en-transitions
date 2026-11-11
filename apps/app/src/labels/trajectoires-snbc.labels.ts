@@ -49,16 +49,19 @@ export const trajectoiresSnbcLabels = {
     "La trajectoire SNBC 3 est calculée à l'échelle de l'EPCI",
   trajectoireSnbc3CommuneDescription:
     "La territorialisation de la SNBC 3 s'appuie sur les EPCI à fiscalité propre : les données nécessaires ne sont pas disponibles à l'échelle de la commune.",
-  trajectoireSnbc3CommuneAvecEpciDescription:
-    "La territorialisation de la SNBC 3 s'appuie sur les EPCI à fiscalité propre : les données nécessaires ne sont pas disponibles à l'échelle de la commune. Vous pouvez consulter la trajectoire de votre EPCI.",
+  trajectoireSnbc3CommuneAvecRattachementDescription: ({
+    nom,
+  }: {
+    nom: string;
+  }): string =>
+    `La territorialisation de la SNBC 3 s'appuie sur les EPCI à fiscalité propre : les données nécessaires ne sont pas disponibles à l'échelle de la commune. Vous pouvez consulter la trajectoire de ${nom}.`,
   trajectoireSnbc3SupraTitre:
     "Trajectoire SNBC 3 non disponible à l'échelle de votre collectivité",
   trajectoireSnbc3SupraDescription:
     "La territorialisation de la SNBC 3 s'appuie sur le découpage du territoire en EPCI à fiscalité propre. Le périmètre de votre collectivité ne correspond pas à ce découpage.",
   trajectoireSnbc3OutilSousTitre:
     "L'outil Excel SNBC 3 contient la trajectoire de chaque EPCI, et la méthodologie en détaille le calcul.",
-  trajectoireSnbc3VoirTrajectoireEpci: 'Voir la trajectoire de mon EPCI',
-  trajectoireSnbc3VoirTrajectoireEpciNom: ({ nom }: { nom: string }): string =>
+  trajectoireSnbc3VoirTrajectoireDe: ({ nom }: { nom: string }): string =>
     `Voir la trajectoire de ${nom}`,
   trajectoireSnbc3TelechargerOutil: "Télécharger l'outil Excel SNBC 3",
   trajectoireSnbc3ConsulterMethodologie:
