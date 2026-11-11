@@ -1,13 +1,10 @@
 import { makeCollectiviteTrajectoirelUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { EmptyCard, EmptyCardAction, Event, useEventTracker } from '@tet/ui';
 import DbErrorPicto from '../db-error.svg';
 import { useTelechargementMethodologieSnbc3 } from './data/use-telechargement-methodologie-snbc3';
-import {
-  IS_OUTIL_SNBC3_DISPONIBLE,
-  useTelechargementOutilSnbc3,
-} from './data/use-telechargement-outil-snbc3';
+import { useTelechargementOutilSnbc3 } from './data/use-telechargement-outil-snbc3';
+import { DownloadLabel } from './download-label';
 
 /**
  * Carte d'état vide de la page SNBC 3, construite sur le modèle de
@@ -34,22 +31,16 @@ export const TrajectoireSnbc3IndisponibleCard = ({
   const trackEvent = useEventTracker();
 
   const actions: EmptyCardAction[] = [
-    ...(IS_OUTIL_SNBC3_DISPONIBLE
-      ? [
-          {
-            children: isDownloading ? (
-              <>
-                {appLabels.telechargementEnCours} <SpinnerLoader />
-              </>
-            ) : (
-              appLabels.trajectoireSnbc3TelechargerOutil
-            ),
-            onClick: () => downloadOutil(),
-            disabled: isDownloading,
-            dataTest: 'indicateurs.trajectoires.snbc3.telecharger-outil',
-          },
-        ]
-      : []),
+    {
+      children: (
+        <DownloadLabel isPending={isDownloading}>
+          {appLabels.trajectoireSnbc3TelechargerOutil}
+        </DownloadLabel>
+      ),
+      onClick: () => downloadOutil(),
+      disabled: isDownloading,
+      dataTest: 'indicateurs.trajectoires.snbc3.telecharger-outil',
+    },
     {
       children: appLabels.trajectoireSnbc3ConsulterMethodologie,
       variant: 'outlined',
@@ -81,11 +72,7 @@ export const TrajectoireSnbc3IndisponibleCard = ({
       picto={(props) => <DbErrorPicto {...props} />}
       title={title}
       description={description}
-      subTitle={
-        IS_OUTIL_SNBC3_DISPONIBLE
-          ? appLabels.trajectoireSnbc3OutilSousTitre
-          : undefined
-      }
+      subTitle={appLabels.trajectoireSnbc3OutilSousTitre}
       actions={actions}
       dataTest={dataTest}
     />

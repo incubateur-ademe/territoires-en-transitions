@@ -201,6 +201,7 @@ export const trajectoiresSnbcLabels = {
   trajectoireSnbc3VoirTrajectoireDe: ({ nom }: { nom: string }): string =>
     `Voir la trajectoire de ${nom}`,
   trajectoireSnbc3TelechargerOutil: "Télécharger l'outil Excel SNBC 3",
+  trajectoireSnbc3TelechargerDonnees: 'Mes données (.xlsx)',
   trajectoireSnbc3ConsulterMethodologie:
     'Télécharger la méthodologie SNBC 3 (.pdf)',
 
