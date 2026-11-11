@@ -96,6 +96,7 @@ export const TrajectoireCalculee = () => {
     valeursSecteur,
     valeursSousSecteurs,
     isLoadingObjectifsResultats,
+    isErrorObjectifsResultats,
     isLoadingTrajectoire,
     emissionsNettes,
   } = useIndicateurTrajectoire({ indicateur, secteurIdx: selectedSecteurIdx });
@@ -134,6 +135,7 @@ export const TrajectoireCalculee = () => {
 
   const comparezLaTrajectoireIsVisible =
     !isLoadingObjectifsResultats &&
+    !isErrorObjectifsResultats &&
     (objectifs.source.length === 0 || resultats.source.length === 0);
 
   if (!collectiviteId) {

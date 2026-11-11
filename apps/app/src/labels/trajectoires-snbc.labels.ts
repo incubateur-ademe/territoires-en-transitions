@@ -237,6 +237,8 @@ export const trajectoiresSnbcLabels = {
   },
   trajectoireSnbc3MethodologiePrecisions: 'Dans Territoires en Transitions',
   trajectoireSnbc3MethodologieParSecteur: methodologieParSecteurSnbc3,
+  trajectoireErreurChargementObjectifsResultats:
+    'Erreur lors du chargement des objectifs et résultats de la collectivité',
   trajectoireSnbc3AllerPlusLoinOutil:
     "Rejouer le calcul avec vos propres données d'inventaire.",
 
