@@ -19,6 +19,7 @@ export type ImportFailureOptions = {
 };
 
 export type ImportGenerationFailure = ImportFailureOptions & {
+  preserveSource?: boolean;
   message: string;
   reason: string;
 };

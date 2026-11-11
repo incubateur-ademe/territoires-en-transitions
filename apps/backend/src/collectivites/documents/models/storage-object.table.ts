@@ -1,7 +1,6 @@
 import { createdAt } from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import {
-  integer,
   jsonb,
   pgSchema,
   primaryKey,
@@ -31,7 +30,6 @@ export const storageObjectTable = storageSchema.table(
     version: text('version'),
     ownerId: text('owner_id'),
     userMetadata: jsonb('user_metadata'),
-    level: integer('level'),
   },
   (table) => [primaryKey({ columns: [table.id], name: 'objects_pkey' })]
 );

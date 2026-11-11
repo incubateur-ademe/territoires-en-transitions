@@ -23,6 +23,14 @@ const specsAlreadyRunByInitDbSeed = [
   'src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts',
 ];
 
+// Ces suites remplacent les références externes globales : aucune autre suite
+// ne doit lire ou modifier ces données pendant leurs scénarios.
+const globalCatalogueSpecs = [
+  'src/indicateurs/import-indicateurs/import-indicateur-catalogue.controller.e2e-spec.ts',
+  'src/indicateurs/import-indicateurs/import-indicateur-definition-atomicity.controller.e2e-spec.ts',
+  'src/plans/plans/electrification/publish-electrification-data/publish-electrification-data.router.e2e-spec.ts',
+];
+
 /**
  * Joue les specs de peuplement dans l'ordre déclaré ci-dessus. Partout ailleurs
  * l'ordre par défaut s'applique — il répartit la charge entre les workers, on
@@ -93,7 +101,20 @@ export default defineConfig(({ mode }) => ({
           name: 'shared-app',
           isolate: false,
           include: ['src/**/*.{test,spec,e2e-spec}.{ts,mts,cts}'],
-          exclude: [...configDefaults.exclude, ...specsAlreadyRunByInitDbSeed],
+          exclude: [
+            ...configDefaults.exclude,
+            ...specsAlreadyRunByInitDbSeed,
+            ...globalCatalogueSpecs,
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'global-catalogues',
+          include: globalCatalogueSpecs,
+          fileParallelism: false,
+          sequence: { groupOrder: 1 },
         },
       },
       {

@@ -1,4 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { CheckElectrificationEligibilityService } from '@tet/backend/plans/plans/electrification/check-electrification-eligibility/check-electrification-eligibility.service';
 import { CreatePlanAggregateService } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.service';
 import { CreatePlanAggregateOutput } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.types';
@@ -11,8 +12,6 @@ import {
   TransactionManager,
 } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ImportReport } from '../../models/import-report';
-import type { ElectrificationConfig } from '@tet/domain/plans';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import { PrepareElectrificationImportService } from '../extract-plan/prepare-electrification-import.service';
 import { ElectrificationIssue } from '../electrification-issue';
 import { ResolvedElectrificationFiches } from '../resolve-fiches/electrification-fiches.schema';
@@ -23,6 +22,7 @@ import { ElectrificationIndicateursAdapter } from './electrification-indicateurs
 
 type PersistInput = {
   collectiviteId: number;
+  catalogueVersion: string;
   nom: string;
   checkpoint: unknown;
 };
@@ -39,8 +39,7 @@ export class PersistElectrificationImportService {
   );
 
   constructor(
-    @Inject(ELECTRIFICATION_CONFIG)
-    private readonly catalogue: ElectrificationConfig,
+    private readonly data: ElectrificationDataService,
     private readonly preparation: PrepareElectrificationImportService,
     private readonly eligibility: CheckElectrificationEligibilityService,
     private readonly entities: ResolveEntityService,
@@ -50,7 +49,7 @@ export class PersistElectrificationImportService {
   ) {}
 
   async persist(
-    { collectiviteId, nom, checkpoint }: PersistInput,
+    { collectiviteId, nom, checkpoint, catalogueVersion }: PersistInput,
     context: ServiceSecondArg
   ): Promise<Result<PersistOutput, ElectrificationIssue[]>> {
     if (typeof nom !== 'string' || !nom.trim()) {
@@ -58,14 +57,17 @@ export class PersistElectrificationImportService {
     }
     // Le checkpoint documentaire est validé et résolu à nouveau, sans nouvel appel IA.
     const preparation = await this.preparation.prepare(
-      { collectiviteId, resumeFrom: checkpoint },
+      { collectiviteId, catalogueVersion, resumeFrom: checkpoint },
       context
     );
     if (!preparation.success) return preparation;
     const { prepared } = preparation.data;
+    const catalogue = await this.data.getCatalogue(catalogueVersion);
+    if (!catalogue.success)
+      return failure([Errors.issue('ELECTRIFICATION_IMPORT_NOT_ALLOWED')]);
     const adapted = ElectrificationIndicateursAdapter.toPersistence(
       prepared,
-      this.catalogue,
+      catalogue.data,
       { collectiviteId, dateVersion: new Date().toISOString() }
     );
     if (!adapted.success) return adapted;

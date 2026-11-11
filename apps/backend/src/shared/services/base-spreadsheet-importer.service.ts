@@ -14,6 +14,22 @@ export default abstract class BaseSpreadsheetImporterService {
     currentVersion: string | null,
     allowVersionOverwrite?: boolean
   ): Promise<string> {
+    const { version: lastVersion } = await this.readLastVersion(spreadsheetId);
+    if (currentVersion && !semver.gt(lastVersion, currentVersion)) {
+      if (allowVersionOverwrite) {
+        this.logger.log(`Ecrasement de la version actuelle (${lastVersion})`);
+      } else {
+        throw new UnprocessableEntityException(
+          `Version ${lastVersion} is not greater than current version ${currentVersion}, please add a new version in the changelog`
+        );
+      }
+    }
+    return lastVersion;
+  }
+
+  protected async readLastVersion(
+    spreadsheetId: string
+  ): Promise<ChangelogType> {
     let changeLogVersions: ChangelogType[] = [];
     try {
       const changelogData =
@@ -33,25 +49,13 @@ export default abstract class BaseSpreadsheetImporterService {
     if (!changeLogVersions.length) {
       throw new UnprocessableEntityException(`No version found in changelog`);
     }
-    let lastVersion = changeLogVersions[0].version;
+    let lastVersion = changeLogVersions[0];
     changeLogVersions.forEach((version) => {
-      if (semver.gt(version.version, lastVersion)) {
-        lastVersion = version.version;
+      if (semver.gt(version.version, lastVersion.version)) {
+        lastVersion = version;
       }
     });
-    this.logger.log(`Last version found in changelog: ${lastVersion}`);
-
-    if (currentVersion && !semver.gt(lastVersion, currentVersion)) {
-      if (allowVersionOverwrite) {
-        this.logger.log(`Ecrasement de la version actuelle (${lastVersion})`);
-      } else {
-        throw new UnprocessableEntityException(
-          `Version ${lastVersion} is not greater than current version ${currentVersion}, please add a new version in the changelog`
-        );
-      }
-    }
-
-    // Return last version
+    this.logger.log(`Last version found in changelog: ${lastVersion.version}`);
     return lastVersion;
   }
 }

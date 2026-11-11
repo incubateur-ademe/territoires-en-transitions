@@ -24,7 +24,7 @@ port = 54323
 
 # Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
 # are monitored, and you can view the emails that would have been sent from the web interface.
-[inbucket]
+[local_smtp]
 # Port to use for the email testing server web interface.
 port = 54324
 smtp_port = 54325
@@ -35,6 +35,8 @@ pop3_port = 54326
 file_size_limit = "2GiB"
 
 [auth]
+# Keep the symmetric JWT contract used by TeT; Auth uses jwt_secret with no asymmetric keys.
+signing_keys_path = "./jwt-signing-keys.json"
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
 site_url = "http://localhost:3000"
@@ -47,8 +49,8 @@ jwt_expiry = 3600
 enable_signup = true
 
 [auth.email]
-# Allow/disallow new user signups via email to your project.
-enable_signup = true
+# Enable email authentication; signups are controlled by auth.enable_signup.
+enabled = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = false

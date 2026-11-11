@@ -1,8 +1,7 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import { electrificationConfigSchema } from '@tet/domain/plans';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import { ElectrificationIssue } from '../electrification-issue';
 import { ResolveElectrificationEngagementsService } from '../resolve-engagements/resolve-electrification-engagements.service';
 import { ResolveImportReferenceService } from '../../resolve-import-reference/resolve-import-reference.service';
@@ -26,7 +25,7 @@ export class ResolveElectrificationFichesService {
     ResolveElectrificationFichesService.name
   );
   constructor(
-    @Inject(ELECTRIFICATION_CONFIG) private readonly config: unknown,
+    private readonly data: ElectrificationDataService,
     private readonly engagements: ResolveElectrificationEngagementsService,
     private readonly references: ResolveImportReferenceService,
     private readonly indicateurs: ResolveElectrificationIndicateursService
@@ -47,7 +46,7 @@ export class ResolveElectrificationFichesService {
     // Ce service valide aussi les droits, le catalogue/version et la structure A/B.
     const structure = await this.engagements.resolve(draft, context);
     if (!structure.success) return structure;
-    const config = electrificationConfigSchema.safeParse(this.config);
+    const config = await this.data.getCatalogue(draft.catalogueVersion);
     if (!config.success)
       return failure([Errors.issue('INVALID_FICHES_CONFIG')]);
     const issues = [

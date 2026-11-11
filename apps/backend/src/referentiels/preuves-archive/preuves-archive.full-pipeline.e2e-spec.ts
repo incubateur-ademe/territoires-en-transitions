@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  buildRandomDocumentHash,
+  deleteSyntheticStorageObjects,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
@@ -133,14 +136,13 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
     // Nettoie uniquement les objects qu'on a seedés (suffixés par l'id de la
     // collectivité) — le bucket `preuves-archives` peut contenir d'autres
     // archives d'autres tests.
-    await db.db
-      .delete(storageObjectTable)
-      .where(
-        and(
-          eq(storageObjectTable.bucketId, BUCKET_ID),
-          like(storageObjectTable.name, `%${collectivite.id}`)
-        )
-      );
+    await deleteSyntheticStorageObjects(
+      db,
+      and(
+        eq(storageObjectTable.bucketId, BUCKET_ID),
+        like(storageObjectTable.name, `%${collectivite.id}`)
+      )
+    );
     if (auditeurCleanup) {
       await auditeurCleanup();
     }
@@ -151,9 +153,13 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
       .delete(labellisationDemandeTable)
       .where(eq(labellisationDemandeTable.collectiviteId, collectivite.id));
     await cleanupCollectivite();
-    await db.db.execute(
-      sql`DELETE FROM storage.buckets WHERE id = ${EMPTY_BUCKET_ID}`
-    );
+    await db.db.transaction(async (tx) => {
+      // Bucket synthétique vide, créé directement en SQL par cette fixture.
+      await tx.execute(sql`set local storage.allow_delete_query = 'true'`);
+      await tx.execute(
+        sql`DELETE FROM storage.buckets WHERE id = ${EMPTY_BUCKET_ID}`
+      );
+    });
 
     await rm(capturedZipDir, { recursive: true, force: true });
     await app.close();
@@ -259,7 +265,9 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
     });
     const entries = listing.trim().split('\n');
 
-    expect(entries).toContain('cycle-labellisation/demande/rapport-demande.pdf');
+    expect(entries).toContain(
+      'cycle-labellisation/demande/rapport-demande.pdf'
+    );
     expect(entries).toContain('cycle-labellisation/audit/rapport-audit.pdf');
     expect(
       entries.some(

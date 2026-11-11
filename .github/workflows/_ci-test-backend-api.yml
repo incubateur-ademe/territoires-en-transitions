@@ -90,7 +90,7 @@ jobs:
       - run: node -e "console.log('CPU cores:', require('os').cpus().length)"
 
       - parallel:
-          - name: Run backend shared app tests
+          - name: Run backend tests
             if: ${{ inputs.run-backend }}
             env:
               NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_API_URL }}
@@ -98,7 +98,7 @@ jobs:
               SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
             # Sortie streamée via pnpm-prepare pour conserver le résumé Vitest
             # et les tests en échec dans les logs GitHub.
-            run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app
+            run: pnpm nx run backend:test --excludeTaskDependencies -- --project shared-app --project global-catalogues
 
           - name: Run api tests
             if: ${{ inputs.run-api }}

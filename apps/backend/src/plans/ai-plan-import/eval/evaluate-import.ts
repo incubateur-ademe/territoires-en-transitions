@@ -4,7 +4,6 @@ import ConfigurationService from '@tet/backend/utils/config/configuration.servic
 import { initGoogleCloudCredentials } from '@tet/backend/utils/google-sheets/gcloud.helper';
 import { LlmCallEvent, LlmObserver } from '@tet/backend/utils/llm/llm-observer';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { electrificationConfig } from '@tet/domain/plans';
 import { basename } from 'node:path';
 import { InterpretElectrificationValues } from '../electrification/extract-plan/interpret-electrification-values';
 import { AiPlanImportProfileEnum } from '../models/import-profile';
@@ -191,7 +190,7 @@ const evaluateElectrification = async (
   try {
     result = await InterpretElectrificationValues.run({
       document: document.data,
-      catalogue: electrificationConfig,
+      catalogue: input.catalogue,
       llm: {
         generateStructured: async (args) => {
           contextPromise ??= createEvalLlm();

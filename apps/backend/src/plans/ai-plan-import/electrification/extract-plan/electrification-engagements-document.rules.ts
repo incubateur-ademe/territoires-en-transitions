@@ -175,10 +175,9 @@ export class ElectrificationEngagementsDocumentRules {
       failure([
         Errors.issue('INVALID_ELECTRIFICATION_TARGET', source.location),
       ]);
-    if (
-      code === EngagementCode.DECOMMISSIONNEMENT_RESEAU_GAZ ||
-      code === EngagementCode.SITE_RECHARGE_POIDS_LOURDS
-    )
+    const { actionCodes, targetKeys } =
+      electrificationDocumentTemplate.engagements;
+    if (actionCodes.some((actionCode) => code === actionCode))
       return source.text.trim() ? invalid() : success([]);
     const bornes = code === EngagementCode.BORNES_RECHARGE_PUBLIQUES;
     const unite = bornes
@@ -195,7 +194,7 @@ export class ElectrificationEngagementsDocumentRules {
       label,
       unit: unite,
       year: 2030,
-      keys: bornes ? ['total', 'rapides'] : ['principale'],
+      keys: [...(bornes ? targetKeys.recharge : targetKeys.single)],
     };
     const text = Interpretation.text(request, context)
       .normalize('NFKC')
