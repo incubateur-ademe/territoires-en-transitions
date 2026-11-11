@@ -22,8 +22,11 @@ const posthogMock = vi.hoisted(() => {
     flag: undefined as boolean | undefined,
     flagsLoaded: false,
   };
+  /** état interne de rechargement lu par `isFlagsReloadPending` */
+  const featureFlags = { _additionalReloadRequested: false };
   const client = {
     __loaded: true,
+    featureFlags,
     getGroups: () => state.groups,
     onFeatureFlags: (handler: () => void) => {
       handlers.add(handler);
@@ -37,7 +40,7 @@ const posthogMock = vi.hoisted(() => {
     state.flagsLoaded = true;
     handlers.forEach((handler) => handler());
   };
-  return { state, client, handlers, loadFlags };
+  return { state, client, featureFlags, handlers, loadFlags };
 });
 vi.mock('posthog-js/react', () => ({
   usePostHog: () => posthogMock.state.client,
@@ -50,6 +53,7 @@ const otherGroup = { collectivite: '1' };
 beforeEach(() => {
   env.application_env = 'prod';
   posthogMock.handlers.clear();
+  posthogMock.featureFlags._additionalReloadRequested = false;
   Object.assign(posthogMock.state, {
     client: posthogMock.client,
     groups: {},
@@ -88,6 +92,21 @@ describe('useIsTrajectoireSnbc3Enabled', () => {
     const { result } = renderHook(() => useIsTrajectoireSnbc3Enabled());
     expect(result.current).toBeUndefined();
 
+    act(() => posthogMock.loadFlags(currentGroup, true));
+    expect(result.current).toBe(true);
+  });
+
+  it("ignore la réponse de l'ancien groupe reçue après le changement de groupe", () => {
+    posthogMock.loadFlags(otherGroup, false);
+    const { result } = renderHook(() => useIsTrajectoireSnbc3Enabled());
+
+    // `posthog.group` pendant une requête : PostHog relancera après la réponse,
+    // qui arrive alors avec le nouveau groupe et les flags de l'ancien
+    posthogMock.featureFlags._additionalReloadRequested = true;
+    act(() => posthogMock.loadFlags(currentGroup, false));
+    expect(result.current).toBeUndefined();
+
+    posthogMock.featureFlags._additionalReloadRequested = false;
     act(() => posthogMock.loadFlags(currentGroup, true));
     expect(result.current).toBe(true);
   });
