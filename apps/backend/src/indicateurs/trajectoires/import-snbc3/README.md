@@ -68,7 +68,9 @@ La correspondance des codes SNBC 3 vers les indicateurs TeT est dans
      l'import SNBC 3 ») :
      - `done` : toutes les valeurs sont importées ;
      - `done_with_errors` : l'import est allé au bout, mais des territoires sont en erreur
-       (`report.errors`) ; les rejouer avec `collectiviteIds` ;
+       (`report.errors`) ; les rejouer avec `collectiviteIds`. Lors d'un import complet, ces
+       territoires perdent leurs valeurs `snbc3` (`report.clearedCollectiviteIds`) plutôt que de
+       garder celles de la release précédente ;
      - `failed` : l'import s'est arrêté (release invalide, panne de la base ou du stockage), avec
        le code ou le message d'erreur. Les valeurs déjà écrites restent ; relancer l'import.
    - Un seul import à la fois, toutes instances confondues : le job a un id fixe
