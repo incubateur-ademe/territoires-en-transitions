@@ -66,3 +66,45 @@ describe('Snbc3ReleaseStorageService.getMethodologie', () => {
     );
   });
 });
+
+describe('Snbc3ReleaseStorageService.hasUnfinishedImport', () => {
+  // métadonnées de `pending-release.json` ; celles du manifeste sont simulées
+  // par `getImportedRelease`
+  const where = vi.fn();
+  const service = new Snbc3ReleaseStorageService(
+    {} as never,
+    { db: { select: () => ({ from: () => ({ where }) }) } } as never,
+    {} as never
+  );
+  const release = { commit: 'abc123', version: 'V2.2' };
+
+  const withReleases = (
+    imported: typeof release | null,
+    pending: typeof release | null
+  ) => {
+    vi.spyOn(service, 'getImportedRelease').mockResolvedValue(imported);
+    where.mockResolvedValue(pending ? [{ userMetadata: pending }] : []);
+  };
+
+  it.each([
+    ['aucun import commencé', null, null, false],
+    ['dernier import complet allé au bout', release, release, false],
+    ['manifeste antérieur au suivi des imports', release, null, false],
+    ['premier import en cours', null, release, true],
+    [
+      'import d’une autre version en cours ou en échec',
+      release,
+      { ...release, version: 'V2.3' },
+      true,
+    ],
+    [
+      'import d’un autre commit en cours ou en échec',
+      release,
+      { ...release, commit: 'def456' },
+      true,
+    ],
+  ])('%s', async (_, imported, pending, attendu) => {
+    withReleases(imported, pending);
+    expect(await service.hasUnfinishedImport()).toBe(attendu);
+  });
+});
