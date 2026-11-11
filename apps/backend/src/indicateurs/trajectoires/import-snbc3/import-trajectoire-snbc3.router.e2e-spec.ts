@@ -875,7 +875,11 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     });
     expect(
       await app.get(Snbc3ReleaseStorageService).getImportedRelease()
-    ).toEqual({ commit: full.sha, version: '2.1' });
+    ).toEqual({
+      commit: full.sha,
+      version: '2.1',
+      importId: expect.any(String),
+    });
     const [metadonnee] = await database.db
       .select()
       .from(indicateurSourceMetadonneeTable)
