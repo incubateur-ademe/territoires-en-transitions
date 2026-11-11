@@ -2,13 +2,11 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import SupabaseService from '@tet/backend/utils/database/supabase.service';
+import { success } from '@tet/backend/utils/result.type';
 import { randomBytes } from 'crypto';
+import { Readable } from 'node:stream';
 import request from 'supertest';
-import {
-  SNBC3_BUCKET,
-  SNBC3_METHODOLOGIE_PATH,
-} from '../import-snbc3/snbc3-release-storage.service';
+import { Snbc3ReleaseStorageService } from '../import-snbc3/snbc3-release-storage.service';
 import { mockTrajectoireSnbc3Flag } from './trajectoire-snbc3.test-fixture';
 
 const METHODOLOGIE_NAME = 'ADEME-Methodo-Outil-trajectoire-référence-V2.pdf';
@@ -30,18 +28,17 @@ describe('GET /trajectoires/snbc3/methodologie', () => {
     const { collectivite } = await addTestCollectivite(db, { type: 'epci' });
     collectiviteId = collectivite.id;
 
-    // Seul le PDF est écrit : `manifest.json` reste celui des autres specs.
-    await app.get(SupabaseService).ensurePrivateBucket(SNBC3_BUCKET);
-    const saved = await app.get(SupabaseService).saveInStorage({
-      bucket: SNBC3_BUCKET,
-      path: SNBC3_METHODOLOGIE_PATH,
-      file: pdf,
-      mimeType: 'application/pdf',
-      metadata: { name: METHODOLOGIE_NAME },
-    });
-    if (!saved.success) throw new Error(saved.error);
+    // Le stockage est simulé : le bucket `trajectoires-snbc3` est celui de
+    // l'app, une spec qui y écrirait remplacerait le PDF de l'import local.
+    // La lecture du bucket est testée par snbc3-release-storage.service.spec.
+    const spy = vi
+      .spyOn(app.get(Snbc3ReleaseStorageService), 'getMethodologie')
+      .mockImplementation(async () =>
+        success({ stream: Readable.from([pdf]), fileName: METHODOLOGIE_NAME })
+      );
 
     return async () => {
+      spy.mockRestore();
       await app.close();
     };
   }, 30000);
@@ -59,6 +56,17 @@ describe('GET /trajectoires/snbc3/methodologie', () => {
       `filename="${METHODOLOGIE_NAME}"`
     );
     expect(Buffer.compare(response.body as Buffer, pdf)).toBe(0);
+  });
+
+  test('répond 404 tant qu’aucun import n’a stocké la méthodologie', async () => {
+    vi.mocked(
+      app.get(Snbc3ReleaseStorageService).getMethodologie
+    ).mockResolvedValueOnce(success(null));
+
+    await request(app.getHttpServer())
+      .get(`/trajectoires/snbc3/methodologie?collectiviteId=${collectiviteId}`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .expect(404);
   });
 
   test('refuse sans le flag SNBC 3', async () => {
