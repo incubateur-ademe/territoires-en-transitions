@@ -1,7 +1,29 @@
 import { IndicateurTrajectoire } from '@/app/indicateurs/trajectoires/trajectoire-constants';
-import { DATE_DEBUT_SNBC_V3, DATE_FIN_SNBC_V3 } from '@tet/domain/indicateurs';
+import {
+  DATE_DEBUT_SNBC_V3,
+  DATE_FIN_SNBC_V3,
+  IndicateurAvecValeurs,
+} from '@tet/domain/indicateurs';
+import { mapValues } from 'es-toolkit';
 import { useIndicateurTrajectoireDatasets } from '../../use-indicateur-trajectoire-datasets';
 import { useGetTrajectoireSnbc3 } from './use-get-trajectoire-snbc3';
+
+/**
+ * Garde les années 2020 à 2050 incluses : la release importée peut en contenir
+ * d'autres, que ni les graphes ni la méthodologie ne doivent montrer.
+ */
+export const bornerTrajectoireSnbc3 = (
+  trajectoireParCategorie: Record<string, IndicateurAvecValeurs[]>
+): Record<string, IndicateurAvecValeurs[]> =>
+  mapValues(trajectoireParCategorie, (indicateurs) =>
+    indicateurs.map((indicateur) => ({
+      ...indicateur,
+      valeurs: indicateur.valeurs.filter(
+        (v) =>
+          v.dateValeur >= DATE_DEBUT_SNBC_V3 && v.dateValeur <= DATE_FIN_SNBC_V3
+      ),
+    }))
+  );
 
 /**
  * Charge la trajectoire SNBC 3 d'un indicateur et la compare aux objectifs et
@@ -20,7 +42,8 @@ export const useIndicateurTrajectoireSnbc3 = ({
   const datasets = useIndicateurTrajectoireDatasets({
     indicateur,
     secteurIdx,
-    trajectoireParCategorie: data?.trajectoire,
+    trajectoireParCategorie:
+      data?.trajectoire && bornerTrajectoireSnbc3(data.trajectoire),
     isLoadingTrajectoire: isLoading,
     dateDebut: DATE_DEBUT_SNBC_V3,
     dateFin: DATE_FIN_SNBC_V3,
