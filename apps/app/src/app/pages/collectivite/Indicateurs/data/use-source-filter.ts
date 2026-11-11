@@ -14,6 +14,7 @@ import {
 
 const FILTRES_SOURCE = [
   'snbc',
+  'snbc3',
   'pcaet',
   'opendata',
   'collectivite',
@@ -24,10 +25,17 @@ const FILTRES_SOURCE = [
 
 export type FiltresSource = (typeof FILTRES_SOURCE)[number];
 
-const filtreToLabel = (filtre: FiltresSource): string => {
+const FILTRES_TRAJECTOIRE: readonly FiltresSource[] = ['snbc', 'snbc3'];
+
+export const filtreSourceToLabel = (
+  filtre: FiltresSource,
+  avecSnbc3: boolean
+): string => {
   switch (filtre) {
     case 'snbc':
-      return appLabels.sourceSnbc;
+      return avecSnbc3 ? appLabels.sourceSnbc2 : appLabels.sourceSnbc;
+    case 'snbc3':
+      return appLabels.sourceSnbc3;
     case 'pcaet':
       return appLabels.sourcePcaet;
     case 'opendata':
@@ -43,6 +51,26 @@ const filtreToLabel = (filtre: FiltresSource): string => {
   }
 };
 
+/**
+ * Filtres proposés à partir des sources disponibles de l'indicateur (hors
+ * collectivité, moyenne et références, ajoutées ensuite).
+ * Le backend ne sert `snbc3` qu'aux utilisateurs qui ont le flag SNBC 3.
+ */
+export const getFiltresSourceDisponibles = (sourceIds: string[]) => {
+  const avecSnbc3 = sourceIds.includes('snbc3');
+  const options: FiltresSource[] = [];
+  if (sourceIds.length) {
+    if (sourceIds.includes('snbc')) options.push('snbc');
+    if (avecSnbc3) options.push('snbc3');
+    if (sourceIds.includes('pcaet')) options.push('pcaet');
+    if (sourceIds.length > options.length) options.push('opendata');
+  }
+  return { avecSnbc3, options };
+};
+
+/** Une seule source de trajectoire sélectionnée : ses secteurs s'affichent. */
+export const isSeuleTrajectoireSelectionnee = (filtres: FiltresSource[]) =>
+  filtres.length === 1 && FILTRES_TRAJECTOIRE.includes(filtres[0]);
 export const useSourceFilter = (
   input: GetAvailableSourcesInput & { periodicite?: IndicateurPeriodicite }
 ) => {
@@ -60,14 +88,9 @@ export const useSourceFilter = (
   return useMemo(() => {
     const avecValeurCible = hasValeurCible(references);
     const avecValeurSeuil = hasValeurSeuil(references);
-    const options: FiltresSource[] = [];
-
-    if (data?.length) {
-      const availableSourceIds = data.map((source) => source.id);
-      if (availableSourceIds.includes('snbc')) options.push('snbc');
-      if (availableSourceIds.includes('pcaet')) options.push('pcaet');
-      if (availableSourceIds.length > options.length) options.push('opendata');
-    }
+    const { avecSnbc3, options } = getFiltresSourceDisponibles(
+      data?.map((source) => source.id) ?? []
+    );
     options.push('collectivite');
     if (moyenne?.valeurs?.length) options.push('moyenne');
     if (avecValeurCible) options.push('cible');
@@ -93,15 +116,15 @@ export const useSourceFilter = (
       isLoading: isLoadingSources || isLoadingMoyenne || isLoadingReference,
       availableOptions: options.map((value) => ({
         value,
-        label: filtreToLabel(value),
+        label: filtreSourceToLabel(value, avecSnbc3),
       })),
       filtresSource,
       setFiltresSource,
       sources: sources.length ? sources : undefined,
       avecDonneesCollectivite:
         !sources.length || sources.includes('collectivite'),
-      avecSecteursSNBC:
-        filtresSource.length === 1 && filtresSource[0] === 'snbc',
+      avecSnbc3,
+      avecSecteursSNBC: isSeuleTrajectoireSelectionnee(filtresSource),
       moyenne:
         !filtresSource.length || filtresSource.includes('moyenne')
           ? moyenne

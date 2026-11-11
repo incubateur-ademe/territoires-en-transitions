@@ -16,6 +16,7 @@ import {
   PreparedData,
 } from './prepare-data';
 import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
+import { isSourceTrajectoire } from './use-indicateur-sources';
 import { type SourceFilter, useSourceFilter } from './use-source-filter';
 
 export const SEGMENTATIONS = [
@@ -349,9 +350,9 @@ function prepareEnfantsParSegmentation(
       .find(
         (s) =>
           s.valeurs.some((value) => value.valeur != null) &&
-          // et on n'affiche pas les objectifs de la SNBC à part si le filtre
-          // SNBC est le seul sélectionné
-          (s.source !== 'snbc' || avecSecteursSNBC)
+          // et on n'affiche les objectifs d'une trajectoire SNBC que si son
+          // filtre est le seul sélectionné
+          (!isSourceTrajectoire(s.source) || avecSecteursSNBC)
       );
 
     if (sourceValeursEnfant) {

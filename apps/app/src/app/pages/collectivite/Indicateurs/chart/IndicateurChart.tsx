@@ -69,7 +69,8 @@ type IndicateurDataset = Dataset & {
 const prepareDataset = (
   data: IndicateurChartInfo['data'],
   type: SourceType,
-  getColorBySourceId: GetColorBySourceId
+  getColorBySourceId: GetColorBySourceId,
+  avecSnbc3: boolean
 ): IndicateurDataset[] =>
   data.valeurs[`${type}s`].sources
     // Une période incomplète reste un trou dans la courbe.
@@ -87,7 +88,8 @@ const prepareDataset = (
         const label = getSourceLabel(
           source,
           metadonnee?.producteur || libelle,
-          type
+          type,
+          { avecSnbc3 }
         );
         return {
           color: getColorBySourceId(source, type),
@@ -398,11 +400,12 @@ const IndicateurChart = ({
   const { data } = chartInfo;
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
-  const getColorBySourceId = useGetColorBySourceId();
+  const { avecSnbc3 } = chartInfo.sourceFilter;
+  const getColorBySourceId = useGetColorBySourceId({ avecSnbc3 });
   const preparedDatasets = useMemo(() => {
     const donneesResultatObjectif = [
-      ...prepareDataset(data, 'resultat', getColorBySourceId),
-      ...prepareDataset(data, 'objectif', getColorBySourceId),
+      ...prepareDataset(data, 'resultat', getColorBySourceId, avecSnbc3),
+      ...prepareDataset(data, 'objectif', getColorBySourceId, avecSnbc3),
     ];
     const donneesSegments = prepareSegmentsDataset(chartInfo);
     const references = prepareReferenceDataset(chartInfo);
@@ -415,7 +418,7 @@ const IndicateurChart = ({
         donneesSegments.length +
         references.length,
     };
-  }, [chartInfo, data, getColorBySourceId]);
+  }, [avecSnbc3, chartInfo, data, getColorBySourceId]);
 
   useResizeGraphOnContainerSizeUpdate({
     containerRef: chartContainerRef,

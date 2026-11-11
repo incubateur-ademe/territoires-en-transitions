@@ -18,6 +18,7 @@ type Props = {
   periodicite: IndicateurPeriode['periodicite'];
   showAddPeriodeColumn: boolean;
   getColorBySourceId: GetColorBySourceId;
+  avecSnbc3: boolean;
   onSave: (
     periode: IndicateurPeriode,
     type: SourceType,
@@ -32,6 +33,7 @@ export const IndicateurValeursTableSourceRow = ({
   periodicite,
   showAddPeriodeColumn,
   getColorBySourceId,
+  avecSnbc3,
   onSave,
 }: Props) => {
   const isLocal = row.source.source === 'collectivite';
@@ -42,6 +44,7 @@ export const IndicateurValeursTableSourceRow = ({
         source={row.source}
         type={row.resultats ? 'resultat' : 'objectif'}
         getColorBySourceId={getColorBySourceId}
+        avecSnbc3={avecSnbc3}
       />
       {periodes.map((periode) => {
         const key = IndicateurPeriodes.key(periode);

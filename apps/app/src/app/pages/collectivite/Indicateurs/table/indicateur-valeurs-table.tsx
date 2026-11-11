@@ -25,6 +25,8 @@ type Props = {
   addPeriode?: ReactNode;
   periodeToReveal?: IndicateurPeriode;
   getColorBySourceId: GetColorBySourceId;
+  /** La source `snbc3` est servie : la SNBC 2 s'affiche « SNBC2 ». */
+  avecSnbc3?: boolean;
   onSave: (
     periode: IndicateurPeriode,
     type: SourceType,
@@ -44,6 +46,7 @@ export const IndicateurValeursTable = ({
   addPeriode,
   periodeToReveal,
   getColorBySourceId,
+  avecSnbc3 = false,
   onSave,
   onDelete,
   onComment,
@@ -95,6 +98,7 @@ export const IndicateurValeursTable = ({
                 periodicite={indicateur.periodicite}
                 showAddPeriodeColumn={showAddPeriodeColumn}
                 getColorBySourceId={getColorBySourceId}
+                avecSnbc3={avecSnbc3}
                 onSave={onSave}
               />
             ))

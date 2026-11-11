@@ -13,10 +13,12 @@ export const CellSourceName = ({
   source,
   type,
   getColorBySourceId,
+  avecSnbc3 = false,
 }: {
   source: Omit<PreparedData['sources'][number], 'valeurs'>;
   type: SourceType;
   getColorBySourceId: GetColorBySourceId;
+  avecSnbc3?: boolean;
 }) => {
   const metadonnee = source.metadonnees?.[0];
   const color = getColorBySourceId(source.source, type);
@@ -26,7 +28,8 @@ export const CellSourceName = ({
     : getSourceLabel(
         source.source,
         metadonnee?.producteur || source.libelle,
-        type
+        type,
+        { avecSnbc3 }
       );
 
   return (
