@@ -37,6 +37,32 @@ export function getTrajectoireSnbc3FlagState({
 }
 
 /**
+ * Vrai si PostHog va renvoyer d'autres flags : rechargement planifié, requête
+ * en cours, ou rechargement demandé pendant une requête. Dans ce dernier cas,
+ * la réponse qui arrive a été calculée pour l'ancien groupe alors que
+ * `getGroups()` renvoie déjà le nouveau : il faut attendre la suivante.
+ *
+ * Lit l'état interne de `posthog.featureFlags` (`@posthog/browser-common`),
+ * faute d'API publique. Si ces champs disparaissent, renvoie `false` : on
+ * retombe sur la seule comparaison des groupes.
+ */
+export function isFlagsReloadPending(featureFlags: unknown): boolean {
+  if (typeof featureFlags !== 'object' || featureFlags === null) {
+    return false;
+  }
+  const state = featureFlags as {
+    _reloadDebouncer?: unknown;
+    _requestInFlight?: unknown;
+    _additionalReloadRequested?: unknown;
+  };
+  return Boolean(
+    state._reloadDebouncer ||
+      state._requestInFlight ||
+      state._additionalReloadRequested
+  );
+}
+
+/**
  * Flag SNBC 3 de la page Trajectoire, avec un état « pas encore connu »
  * (`undefined`). `useIsFeatureFlagEnabled` renvoie `false` tant que PostHog
  * n'a pas chargé les flags : l'ancienne page s'afficherait un instant et
@@ -49,8 +75,9 @@ export function getTrajectoireSnbc3FlagState({
  * ait renvoyé ceux de la collectivité courante. L'abonnement se fait dans un
  * `useLayoutEffect`, avant l'effet de `PostHogPageView` du même rendu : le
  * rappel immédiat d'`onFeatureFlags` voit encore l'ancien groupe et ne compte
- * pas. Reste un cas non couvert : un montage après le changement de groupe
- * mais avant la réponse de PostHog verrait les anciens flags un instant.
+ * pas. Un rappel reçu alors qu'un rechargement est en attente
+ * (`isFlagsReloadPending`) ne compte pas non plus : ses flags peuvent valoir
+ * pour l'ancien groupe.
  *
  * Réservé aux pages d'une collectivité (`useCollectiviteId` lève une erreur
  * sinon) : le groupe y est toujours posé, le chargement ne reste pas bloqué.
@@ -73,9 +100,11 @@ export function useIsTrajectoireSnbc3Enabled(): boolean | undefined {
     }
     // appelé tout de suite si les flags sont déjà chargés, y compris en échec,
     // puis à chaque rechargement (dont celui déclenché par `posthog.group`)
-    return posthog.onFeatureFlags(() =>
-      setFlagsEvaluatedFor(posthog.getGroups()?.collectivite)
-    );
+    return posthog.onFeatureFlags(() => {
+      if (!isFlagsReloadPending(posthog.featureFlags)) {
+        setFlagsEvaluatedFor(posthog.getGroups()?.collectivite);
+      }
+    });
   }, [posthog, isForced, hasClient]);
 
   return getTrajectoireSnbc3FlagState({
