@@ -37,7 +37,7 @@ export const SNBC3_PENDING_RELEASE_PATH = 'pending-release.json';
 export const SNBC3_LAST_IMPORT_PATH = 'last-import.json';
 const JSON_MIME_TYPE = 'application/json';
 const PDF_MIME_TYPE = 'application/pdf';
-const XLSX_MIME_TYPE =
+export const XLSX_MIME_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 const importedReleaseSchema = z.object({
@@ -46,6 +46,8 @@ const importedReleaseSchema = z.object({
 });
 
 export type Snbc3ImportedRelease = z.infer<typeof importedReleaseSchema>;
+
+const fileNameMetadataSchema = z.object({ name: z.string() });
 
 /** Ce que le bucket garde d'une release : tout sauf le parquet. */
 export type Snbc3ReleaseFiles = Pick<
@@ -162,25 +164,33 @@ export class Snbc3ReleaseStorageService {
   }
 
   /**
+   * Vrai si un import complet est commencé (`pending-release.json`) sans être
+   * allé au bout : en cours, ou en échec. Les valeurs en base peuvent alors
+   * venir d'une autre release que le classeur stocké, écrit en dernier.
+   */
+  async hasUnfinishedImport(): Promise<boolean> {
+    const [imported, pending] = await Promise.all([
+      this.getImportedRelease(),
+      this.readReleaseMetadata(SNBC3_PENDING_RELEASE_PATH),
+    ]);
+    return (
+      !!pending &&
+      (pending.commit !== imported?.commit ||
+        pending.version !== imported?.version)
+    );
+  }
+
+  /**
    * PDF de méthodologie de la release importée, en flux, avec son nom
    * d'origine. `null` avant le premier import qui l'a stocké.
    */
   async getMethodologie(): Promise<
     Result<{ stream: Readable; fileName: string } | null, 'READ_DOCUMENT_ERROR'>
   > {
-    const [object] = await this.databaseService.db
-      .select({ userMetadata: storageObjectTable.userMetadata })
-      .from(storageObjectTable)
-      .where(
-        and(
-          eq(storageObjectTable.bucketId, SNBC3_BUCKET),
-          eq(storageObjectTable.name, SNBC3_METHODOLOGIE_PATH)
-        )
-      );
+    const object = await this.getObject(SNBC3_METHODOLOGIE_PATH);
     if (!object) {
       return success(null);
     }
-    const name = z.object({ name: z.string() }).safeParse(object.userMetadata);
 
     const stream = await this.documentStorageService.getDocumentStream({
       bucketId: SNBC3_BUCKET,
@@ -191,15 +201,54 @@ export class Snbc3ReleaseStorageService {
     }
     return success({
       stream: stream.data,
-      fileName: name.success ? name.data.name : SNBC3_METHODOLOGIE_PATH,
+      fileName: object.name ?? SNBC3_METHODOLOGIE_PATH,
     });
+  }
+
+  /**
+   * Classeur standalone de la release importée : son nom d'origine et une
+   * version qui change à chaque écriture de l'objet (clé de cache). `null`
+   * avant le premier import qui l'a stocké.
+   */
+  async getWorkbookInfo(): Promise<{
+    fileName: string;
+    version: string;
+  } | null> {
+    const object = await this.getObject(SNBC3_WORKBOOK_PATH);
+    return object
+      ? {
+          fileName: object.name ?? SNBC3_WORKBOOK_PATH,
+          version: object.updatedAt?.toISOString() ?? '',
+        }
+      : null;
+  }
+
+  async downloadWorkbook(): Promise<Result<Buffer, 'READ_DOCUMENT_ERROR'>> {
+    const document = await this.documentStorageService.downloadDocument({
+      bucketId: SNBC3_BUCKET,
+      key: SNBC3_WORKBOOK_PATH,
+    });
+    return document.success
+      ? success(document.data.buffer)
+      : failure('READ_DOCUMENT_ERROR');
   }
 
   private async readReleaseMetadata(
     path: string
   ): Promise<Snbc3ImportedRelease | null> {
+    const parsed = importedReleaseSchema.safeParse(
+      (await this.getObject(path))?.userMetadata
+    );
+    return parsed.success ? parsed.data : null;
+  }
+
+  /** Objet du bucket, avec le nom d'origine du fichier s'il est en métadonnées. */
+  private async getObject(path: string) {
     const [object] = await this.databaseService.db
-      .select({ userMetadata: storageObjectTable.userMetadata })
+      .select({
+        updatedAt: storageObjectTable.updatedAt,
+        userMetadata: storageObjectTable.userMetadata,
+      })
       .from(storageObjectTable)
       .where(
         and(
@@ -207,8 +256,11 @@ export class Snbc3ReleaseStorageService {
           eq(storageObjectTable.name, path)
         )
       );
-    const parsed = importedReleaseSchema.safeParse(object?.userMetadata);
-    return parsed.success ? parsed.data : null;
+    if (!object) {
+      return null;
+    }
+    const metadata = fileNameMetadataSchema.safeParse(object.userMetadata);
+    return { ...object, name: metadata.success ? metadata.data.name : null };
   }
 
   /**

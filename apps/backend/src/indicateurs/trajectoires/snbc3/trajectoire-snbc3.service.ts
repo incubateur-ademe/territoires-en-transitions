@@ -79,6 +79,42 @@ export class TrajectoireSnbc3Service {
     { collectiviteId }: { collectiviteId: number },
     { user }: ServiceSecondArg
   ): Promise<Result<CheckStatusTrajectoireSnbc3Output, TrajectoireSnbc3Error>> {
+    const resolved = await this.resolveStatut({ collectiviteId }, { user });
+    if (!resolved.success) {
+      return resolved;
+    }
+    const { status, collectivite, millesime } = resolved.data;
+
+    const collectiviteRattachement =
+      status === StatutTrajectoireSnbc3.COMMUNE_NON_SUPPORTEE
+        ? await this.findCollectiviteRattachement(collectivite, millesime)
+        : null;
+
+    return success({
+      status,
+      millesime: this.toMillesimeOutput(millesime),
+      ...(collectiviteRattachement ? { collectiviteRattachement } : {}),
+    });
+  }
+
+  /**
+   * Flag, collectivité, droits de lecture et présence dans le millésime :
+   * partagé par `checkStatus` et l'export du classeur, qui suit les mêmes
+   * règles que la page Trajectoire.
+   */
+  async resolveStatut(
+    { collectiviteId }: { collectiviteId: number },
+    { user }: ServiceSecondArg
+  ): Promise<
+    Result<
+      {
+        status: StatutTrajectoireSnbc3;
+        collectivite: Snbc3Collectivite;
+        millesime: Snbc3Millesime | null;
+      },
+      TrajectoireSnbc3Error
+    >
+  > {
     if (
       !(await this.featureFlag.isTrajectoireSnbc3Enabled(user, collectiviteId))
     ) {
@@ -105,17 +141,7 @@ export class TrajectoireSnbc3Service {
       isInMillesime,
       collectivite,
     });
-
-    const collectiviteRattachement =
-      status === StatutTrajectoireSnbc3.COMMUNE_NON_SUPPORTEE
-        ? await this.findCollectiviteRattachement(collectivite, millesime)
-        : null;
-
-    return success({
-      status,
-      millesime: this.toMillesimeOutput(millesime),
-      ...(collectiviteRattachement ? { collectiviteRattachement } : {}),
-    });
+    return success({ status, collectivite, millesime });
   }
 
   /**

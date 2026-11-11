@@ -68,6 +68,7 @@ import {
   LocalSnbc3ArtifactReader,
   Snbc3ArtifactReader,
 } from './trajectoires/import-snbc3/snbc3-artifact.reader';
+import { ExportTrajectoireSnbc3Service } from './trajectoires/export-trajectoire-snbc3/export-trajectoire-snbc3.service';
 import { TrajectoireSnbc3FeatureFlagService } from './trajectoires/trajectoire-snbc3-feature-flag.service';
 import { Snbc3SourceMetadonneeRepository } from './trajectoires/import-snbc3/snbc3-source-metadonnee.repository';
 import { TrajectoireSnbc3Repository } from './trajectoires/snbc3/trajectoire-snbc3.repository';
@@ -177,6 +178,7 @@ const DEFINITIONS_PROVIDERS = [
     Snbc3SourceMetadonneeRepository,
     TrajectoireSnbc3Repository,
     TrajectoireSnbc3Service,
+    ExportTrajectoireSnbc3Service,
     TrajectoireSnbc3Router,
     {
       provide: Snbc3ArtifactReader,

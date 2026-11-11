@@ -25,6 +25,7 @@ export type Snbc3Millesime = {
 export type Snbc3Collectivite = {
   id: number;
   nom: string;
+  siren: string | null;
   type: CollectiviteType;
   natureInsee: CollectiviteNatureType | null;
   regionCode: string | null;
@@ -79,6 +80,7 @@ export class TrajectoireSnbc3Repository {
       .select({
         id: collectiviteTable.id,
         nom: collectiviteTable.nom,
+        siren: collectiviteTable.siren,
         type: collectiviteTable.type,
         natureInsee: collectiviteTable.natureInsee,
         regionCode: collectiviteTable.regionCode,

@@ -44,6 +44,7 @@ describe('TrajectoireSnbc3Service.checkStatus : collectivité de rattachement', 
   const commune = (communeCode: string | null): Snbc3Collectivite => ({
     id: 1,
     nom: 'Commune',
+    siren: null,
     type: 'commune',
     natureInsee: null,
     regionCode: '11',
