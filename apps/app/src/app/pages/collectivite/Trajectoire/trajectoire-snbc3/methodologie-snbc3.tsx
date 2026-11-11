@@ -1,7 +1,4 @@
-import {
-  IndicateurTrajectoireId,
-  METHODO_PAR_SECTEUR_SNBC3,
-} from '@/app/indicateurs/trajectoires/trajectoire-constants';
+import { IndicateurTrajectoireId } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { appLabels } from '@/app/labels/catalog';
 import {
   isTrajectoireSecteur,
@@ -35,7 +32,7 @@ export const MethodologieSnbc3 = ({
   const { mutate: downloadMethodologie, isPending: isDownloading } =
     useTelechargementMethodologieSnbc3();
   const methodo = isTrajectoireSecteur(secteur.nom)
-    ? METHODO_PAR_SECTEUR_SNBC3[secteur.nom]
+    ? appLabels.trajectoireSnbc3MethodologieParSecteur[secteur.nom]
     : undefined;
   const evolution = getEvolutionTrajectoire(valeursSecteur);
   const format = (valeur: number | null) =>
