@@ -430,4 +430,90 @@ describe('prepareData', () => {
       )
     ).toEqual(expect.arrayContaining([900, ...Array(12).fill(10)]));
   });
+
+  test('garde la SNBC 2 et la SNBC 3 comme deux séries d’objectifs distinctes', () => {
+    const avecTrajectoires = structuredClone(fixture.indicateurs[0]);
+    const trajectoire = (
+      source: 'snbc' | 'snbc3',
+      libelle: string,
+      valeurs: Array<[string, number]>,
+      premierId: number
+    ) => ({
+      source,
+      libelle,
+      ordreAffichage: null,
+      metadonnees: [],
+      valeurs: valeurs.map(([dateValeur, objectif], index) => ({
+        id: premierId + index,
+        collectiviteId: 1,
+        dateValeur,
+        objectif,
+        calculAuto: true,
+        periodicite: IndicateurPeriodiciteEnum.ANNUELLE,
+      })),
+    });
+    avecTrajectoires.sources = {
+      ...avecTrajectoires.sources,
+      snbc: trajectoire(
+        'snbc',
+        'SNBC',
+        [
+          ['2015-01-01', 100],
+          ['2030-01-01', 60],
+        ],
+        100
+      ),
+      snbc3: trajectoire(
+        'snbc3',
+        'SNBC 3',
+        [
+          ['2021-01-01', 90],
+          ['2030-01-01', 55],
+        ],
+        200
+      ),
+    } as typeof avecTrajectoires.sources;
+
+    const objectifs = prepareData(avecTrajectoires, 'objectif', false);
+    const trajectoires = objectifs.sources.filter(({ source }) =>
+      ['snbc', 'snbc3'].includes(source)
+    );
+    expect(
+      trajectoires.map(({ source, calculAuto, valeurs }) => ({
+        source,
+        calculAuto,
+        valeurs: valeurs.map(({ periodeLabel, valeur }) => [
+          periodeLabel,
+          valeur,
+        ]),
+      }))
+    ).toEqual([
+      {
+        source: 'snbc',
+        calculAuto: true,
+        valeurs: [
+          ['2015', 100],
+          ['2030', 60],
+        ],
+      },
+      {
+        source: 'snbc3',
+        calculAuto: true,
+        valeurs: [
+          ['2021', 90],
+          ['2030', 55],
+        ],
+      },
+    ]);
+    // chaque série garde sa propre clé : pas de fusion entre les deux
+    expect(trajectoires.every(({ seriesKey }) => seriesKey === undefined)).toBe(
+      true
+    );
+
+    // les trajectoires n'ont que des objectifs
+    const resultats = prepareData(avecTrajectoires, 'resultat', false);
+    expect(
+      resultats.sources.some(({ source }) => source.startsWith('snbc'))
+    ).toBe(false);
+  });
 });

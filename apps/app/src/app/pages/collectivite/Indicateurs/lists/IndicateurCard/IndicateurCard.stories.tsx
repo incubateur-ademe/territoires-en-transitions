@@ -75,6 +75,7 @@ const props = {
       setFiltresSource: () => undefined,
       sources: undefined,
       avecDonneesCollectivite: true,
+      avecSnbc3: false,
       avecSecteursSNBC: false,
       moyenne: {
         indicateurId: 768,

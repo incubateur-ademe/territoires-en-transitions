@@ -155,4 +155,9 @@ export const indicateursLabels = {
     'Novembre',
     'Décembre',
   ],
+  // filtre de sources quand la SNBC 3 est servie (flag SNBC 3)
+  sourceSnbc2: 'Trajectoire SNBC2',
+  sourceSnbc3: 'Trajectoire SNBC3',
+  indicateurMethodologieSnbc3Texte:
+    'Méthodologie SNBC 3 à télécharger depuis la page Trajectoire.',
 };
