@@ -901,4 +901,61 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       0
     );
   });
+
+  /** Même garde que le test précédent : l'import complet vide les absents. */
+  test('import complet : un territoire en échec perd ses valeurs, puis se rejoue', async (ctx) => {
+    const metadonnees = app.get(Snbc3SourceMetadonneeRepository);
+    const metadonneeId = await metadonnees.findMetadonneeId();
+    const others = metadonneeId
+      ? (await metadonnees.listCollectiviteIdsWithValeurs(metadonneeId)).filter(
+          (id) => !collectiviteIds().includes(id)
+        )
+      : [];
+    if (others.length) {
+      ctx.skip(
+        `${others.length} autres collectivités ont des valeurs snbc3 : un import complet les supprimerait`
+      );
+    }
+
+    const valeursService = app.get(ManageIndicateurValeursService);
+    const replace =
+      valeursService.replaceMetadonneeValeurs.bind(valeursService);
+    const spy = vi
+      .spyOn(valeursService, 'replaceMetadonneeValeurs')
+      .mockImplementation(async (input) => {
+        if (input.collectiviteIds.includes(paris.id)) {
+          return failure('INVALID_VALUE', new Error('échec simulé'));
+        }
+        return replace(input);
+      });
+    onTestFinished(() => spy.mockRestore());
+
+    const release = snbc3Repository.publish({
+      parquet: buildSnbc3Parquet(territoires),
+    });
+    const report = await runImport({
+      commit: release.sha,
+      version: release.version,
+    });
+
+    expect(report.errors.map((e) => e.collectiviteId)).toEqual([paris.id]);
+    expect(report.clearedCollectiviteIds).toContain(paris.id);
+    expect(await listSnbc3Valeurs(paris.id)).toEqual([]);
+    expect(
+      ((await downloadJson(SNBC3_LAST_IMPORT_PATH)) as Snbc3LastImport).status
+    ).toBe('done_with_errors');
+    // La release est enregistrée : le territoire en échec peut être rejoué.
+    expect(
+      await app.get(Snbc3ReleaseStorageService).getReplayableRelease()
+    ).toMatchObject({ commit: release.sha, version: release.version });
+
+    spy.mockRestore();
+    const replay = await runImport({
+      commit: release.sha,
+      version: release.version,
+      collectiviteIds: [paris.id],
+    });
+    expect(replay.errors).toEqual([]);
+    expect(await listSnbc3Valeurs(paris.id)).not.toHaveLength(0);
+  });
 });

@@ -300,9 +300,19 @@ export class ImportTrajectoireSnbc3Service {
     }
 
     if (!filter) {
+      // Un territoire en erreur garderait les valeurs de la release
+      // précédente sous celle qui va être enregistrée : il est vidé comme un
+      // absent, puis rejoué avec `collectiviteIds`.
+      const failed = new Set(
+        report.errors.map(({ collectiviteId }) => collectiviteId)
+      );
       await this.clearMissingCollectivites(
         metadonneeId,
-        new Set(matched.map(({ collectiviteId }) => collectiviteId)),
+        new Set(
+          matched
+            .map(({ collectiviteId }) => collectiviteId)
+            .filter((id) => !failed.has(id))
+        ),
         report
       );
     }
@@ -490,8 +500,8 @@ export class ImportTrajectoireSnbc3Service {
   }
 
   /**
-   * Un territoire absent du nouveau millésime perd sa trajectoire `snbc3`,
-   * totaux calculés compris. Comme pour `replaceMetadonneeValeurs`, le rapport
+   * Un territoire absent du nouveau millésime, ou en erreur, perd sa
+   * trajectoire `snbc3`, totaux calculés compris. Comme pour `replaceMetadonneeValeurs`, le rapport
    * ne compte que les valeurs importées supprimées.
    */
   private async clearMissingCollectivites(
