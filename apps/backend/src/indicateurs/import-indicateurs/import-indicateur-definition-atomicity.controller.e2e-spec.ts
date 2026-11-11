@@ -1,3 +1,4 @@
+import { indicateurReferencesSheet } from './import-indicateur-reference.dto';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
@@ -95,6 +96,8 @@ describe('import-indicateur-definition atomicity', () => {
         _idProperties?: (keyof T)[],
         templateData?: Partial<T>
       ): Promise<{ data: T[]; header: string[] | null }> => {
+        if (range === indicateurReferencesSheet.range)
+          return { data: [], header: [...indicateurReferencesSheet.headers] };
         if (range?.startsWith('Versions')) {
           return {
             data: [
@@ -207,8 +210,11 @@ describe('import-indicateur-definition atomicity', () => {
     const reconciliation = app.get(ReconcileIndicateurValeursService);
     const recompute = reconciliation.recomputeAll.bind(reconciliation);
     let recalculatedCollectiviteIds: number[] = [];
-    let heldLocks: { locktype: string; mode: string; relation: string | null }[] =
-      [];
+    let heldLocks: {
+      locktype: string;
+      mode: string;
+      relation: string | null;
+    }[] = [];
     const failureAfterRecompute = vi
       .spyOn(reconciliation, 'recomputeAll')
       .mockImplementation(async (...args) => {
@@ -218,9 +224,11 @@ describe('import-indicateur-definition atomicity', () => {
           ({ collectiviteId }) => collectiviteId
         );
         const tx = args[1].tx;
-        if (!tx) throw new Error('Catalogue recalculation must share its transaction');
+        if (!tx)
+          throw new Error('Catalogue recalculation must share its transaction');
         const periodeLockKeys = collectivites.map(
-          ({ collectivite }) => `indicateur-valeur:${collectivite.id}:2025-01-01`
+          ({ collectivite }) =>
+            `indicateur-valeur:${collectivite.id}:2025-01-01`
         );
         // A bigint advisory key is split into classid (high) and objid (low).
         const locks = await tx.execute<(typeof heldLocks)[number]>(sql`

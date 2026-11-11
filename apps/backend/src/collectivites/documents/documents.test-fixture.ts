@@ -9,11 +9,12 @@ import {
   toDocumentHash,
   toLegacyDocumentHash,
 } from '@tet/domain/collectivites';
-import { eq, sql } from 'drizzle-orm';
+import { eq, SQL, sql } from 'drizzle-orm';
 import fs from 'fs';
 import { createHash, randomUUID } from 'node:crypto';
 import path from 'path';
 import { bibliothequeFichierTable } from './models/bibliotheque-fichier.table';
+import { storageObjectTable } from './models/storage-object.table';
 import { StoreDocumentService } from './store-document/store-document.service';
 
 const PDF_SAMPLES_DIR = path.join(__dirname, './samples');
@@ -57,6 +58,19 @@ export type TestDocument = typeof bibliothequeFichierTable.$inferSelect;
 
 export const buildRandomDocumentHash = (): DocumentHash =>
   toDocumentHash(createHash('sha256').update(randomUUID()).digest('hex'));
+
+/** Seulement pour les métadonnées seedées sans fichier dans Storage. */
+export async function deleteSyntheticStorageObjects(
+  databaseService: DatabaseServiceInterface,
+  where: SQL | undefined
+) {
+  if (!where)
+    throw new Error('Un filtre est requis pour nettoyer les objets de test');
+  await databaseService.db.transaction(async (tx) => {
+    await tx.execute(sql`set local storage.allow_delete_query = 'true'`);
+    await tx.delete(storageObjectTable).where(where);
+  });
+}
 
 type SeedTestDocumentArgs = {
   databaseService: DatabaseServiceInterface;

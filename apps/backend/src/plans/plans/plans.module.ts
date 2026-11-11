@@ -1,12 +1,11 @@
 import { GetPlanReferencesService } from './get-plan-references/get-plan-references.service';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { ManagePlanIndicateurSourceService } from './manage-plan-indicateur-source/manage-plan-indicateur-source.service';
-import { electrificationLaureatsConfig } from '@tet/domain/plans';
+import { ElectrificationDataModule } from './electrification/publish-electrification-data/electrification-data.module';
 import { CheckElectrificationEligibilityService } from './electrification/check-electrification-eligibility/check-electrification-eligibility.service';
 import { CheckElectrificationCreationService } from './electrification/check-electrification-creation.service';
 import { CheckPlanCreationService } from './check-plan-creation/check-plan-creation.service';
 import { CheckPlanCreationRouter } from './check-plan-creation/check-plan-creation.router';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from './electrification/config/electrification-eligibility.constants';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
@@ -64,12 +63,9 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     AxeModule,
     TrackingModule,
     TransactionModule,
+    ElectrificationDataModule,
   ],
   providers: [
-    {
-      provide: ELECTRIFICATION_LAUREATS_CONFIG,
-      useValue: electrificationLaureatsConfig,
-    },
     CheckElectrificationEligibilityService,
     CheckElectrificationCreationService,
     CheckPlanCreationService,

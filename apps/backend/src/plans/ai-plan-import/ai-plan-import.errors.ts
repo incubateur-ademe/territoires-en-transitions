@@ -39,6 +39,8 @@ export const aiPlanImportErrorMessages = {
 
 /** Échecs des jobs affichés dans l'historique, distincts des erreurs de l'API. */
 export const aiPlanImportJobErrorMessages = {
+  IMPORT_NOT_ALLOWED:
+    'Les conditions requises pour poursuivre cet import ne sont plus remplies',
   WORKER_ATTEMPT_UNRECORDED: 'Le passage du worker ne peut pas être enregistré',
   CHECKPOINT_UNREADABLE:
     "Lecture du point de reprise impossible : l'import n'a pas pu reprendre",

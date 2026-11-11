@@ -39,6 +39,8 @@ import {
 } from './generate-import.types';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { ImportGenerationErrors } from './generate-import.errors';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
+import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
@@ -59,7 +61,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly trackingService: TrackingService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
     private readonly generic: GenerateGenericImportService,
-    private readonly electrification: GenerateElectrificationImportService
+    private readonly electrification: GenerateElectrificationImportService,
+    private readonly profiles: ValidateImportProfileService
   ) {}
 
   /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
@@ -109,6 +112,17 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         { attempt: job.attempt }
       );
     }
+    // Les dépendances publiées peuvent être temporairement indisponibles.
+    // Conserver alors source et checkpoint pour pouvoir reprendre ce même job.
+    const authorized = await this.authorizeExistingImport(job);
+    if (!authorized.success) {
+      return this.recordFailure(
+        jobId,
+        aiPlanImportJobErrorMessages.IMPORT_NOT_ALLOWED,
+        authorized.error,
+        { attempt: job.attempt }
+      );
+    }
     const checkpoint = await this.jobRepository.getCheckpoint(
       job.id,
       job.options.profile
@@ -133,8 +147,6 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         attempt: job.attempt,
       });
       return failure({ kind: 'interrupted', jobId, message });
-    } finally {
-      await this.removeSourceForAttempt(job);
     }
   }
 
@@ -147,6 +159,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       attempt,
     });
     if (job.success && this.jobRepository.isSupportedImport(job.data.options)) {
+      if (!(await this.authorizeExistingImport(job.data)).success) return;
       const checkpoint = await this.jobRepository.getCheckpoint(
         jobId,
         job.data.options.profile
@@ -154,6 +167,13 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       if (!checkpoint.success) return;
       await this.removeSourceForAttempt(job.data);
     }
+  }
+
+  private authorizeExistingImport(job: AiPlanImportJob) {
+    return this.profiles.authorizeExistingImport(
+      { collectiviteId: job.collectiviteId, options: job.options },
+      { user: buildRequesterUser(job.createdBy) }
+    );
   }
 
   private async removeSourceForAttempt(job: AiPlanImportJob): Promise<void> {
@@ -169,29 +189,44 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     job: AiPlanImportJob,
     checkpoint: Result<StoredImportCheckpoint | null, AiPlanImportError>
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    if (!checkpoint.success) {
-      return this.recordFailure(
-        job.id,
-        aiPlanImportJobErrorMessages.CHECKPOINT_UNREADABLE,
-        'checkpoint_unreadable',
-        { attempt: job.attempt }
+    let preserveSource = false;
+    try {
+      if (!checkpoint.success) {
+        return await this.recordFailure(
+          job.id,
+          aiPlanImportJobErrorMessages.CHECKPOINT_UNREADABLE,
+          'checkpoint_unreadable',
+          { attempt: job.attempt }
+        );
+      }
+      const telemetry = await this.buildTelemetry(job);
+      const generator: ImportGenerator =
+        job.options.profile === AiPlanImportProfileEnum.ELECTRIFICATION
+          ? this.electrification
+          : this.generic;
+      const imported = await generator.generate(
+        job,
+        checkpoint.data,
+        telemetry
       );
+      if (!imported.success) {
+        const {
+          message,
+          reason,
+          preserveSource: keepSource,
+          ...options
+        } = imported.error;
+        preserveSource = keepSource ?? false;
+        return await this.recordFailure(job.id, message, reason, {
+          ...options,
+          attempt: job.attempt,
+        });
+      }
+      await this.afterCommit(job, imported.data);
+      return success(undefined);
+    } finally {
+      if (!preserveSource) await this.removeSourceForAttempt(job);
     }
-    const telemetry = await this.buildTelemetry(job);
-    const generator: ImportGenerator =
-      job.options.profile === AiPlanImportProfileEnum.ELECTRIFICATION
-        ? this.electrification
-        : this.generic;
-    const imported = await generator.generate(job, checkpoint.data, telemetry);
-    if (!imported.success) {
-      const { message, reason, ...options } = imported.error;
-      return this.recordFailure(job.id, message, reason, {
-        ...options,
-        attempt: job.attempt,
-      });
-    }
-    await this.afterCommit(job, imported.data);
-    return success(undefined);
   }
 
   /**

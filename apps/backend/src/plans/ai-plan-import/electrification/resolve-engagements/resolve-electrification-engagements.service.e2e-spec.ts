@@ -1,3 +1,8 @@
+import {
+  electrificationCatalogueFixture as electrificationConfig,
+  buildInMemoryElectrificationData,
+} from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { groupementCollectiviteTable } from '@tet/backend/collectivites/shared/models/groupement-collectivite.table';
@@ -16,7 +21,6 @@ import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { LlmRepository } from '@tet/backend/utils/llm/repositories/llm.repository';
 import {
   ElectrificationConfig,
-  electrificationConfig,
   ElectrificationEngagementCodeEnum as EngagementCode,
   Engagement,
   engagementSchema,
@@ -36,7 +40,6 @@ import {
   test,
 } from 'vitest';
 import { GenerateImportDraftWorker } from '../../generate-import-draft/generate-import-draft.worker';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import {
   EngagementCibleImport,
   EngagementImport,
@@ -99,6 +102,7 @@ describe('Résolution des engagements Électrification', () => {
   let db: DatabaseService;
   let service: ResolveElectrificationEngagementsService;
   const catalogue = structuredClone(electrificationConfig);
+  const data = buildInMemoryElectrificationData({ catalogue: () => catalogue });
   let fixture: ElectrificationConfig;
   let context: Awaited<ReturnType<typeof createContext>>;
   let input: ElectrificationEngagementsInput;
@@ -136,7 +140,7 @@ describe('Résolution des engagements Électrification', () => {
           .overrideProvider(LlmService)
           .useValue(new LlmService(new ReadOnlyLlmRepository()));
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
-        builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
+        builder.overrideProvider(ElectrificationDataService).useValue(data);
       },
     });
     db = await getTestDatabase(app);
@@ -153,6 +157,7 @@ describe('Résolution des engagements Électrification', () => {
           definition.validation = 'validated';
           definition.periodicite = 'annuelle';
         }
+        assert(definition.unite);
         await db.db.insert(indicateurDefinitionTable).values({
           identifiantReferentiel: definition.identifiantReferentiel,
           titre: 'Indicateur synthétique Électrification',
@@ -252,7 +257,7 @@ describe('Résolution des engagements Électrification', () => {
     ]);
   });
 
-  test('résout les sous-axes livrés et conserve les homonymes sous leurs parents respectifs', async () => {
+  test('résout les sous-axes du catalogue et conserve les homonymes sous leurs parents respectifs', async () => {
     catalogue.sousAxes = structuredClone(electrificationConfig.sousAxes);
     input.axes = [
       axe(1, 'axe-1', [sousAxe('1.2')]),
@@ -271,22 +276,21 @@ describe('Résolution des engagements Électrification', () => {
         key: 'sous-axe:1.2',
         parentKey: 'axe:1',
         numero: '1.2',
-        titre:
-          'Aller au-devant des ménages et les orienter vers la pompe à chaleur ou les réseaux de chaleur',
+        titre: 'Accompagnement',
         sources: [source('sous-axe-1.2')],
       },
       {
         key: 'sous-axe:8.1',
         parentKey: 'axe:8',
         numero: '8.1',
-        titre: "Établir l'état des lieux",
+        titre: 'État des lieux',
         sources: [source('sous-axe-8.1')],
       },
       {
         key: 'sous-axe:9.1',
         parentKey: 'axe:9',
         numero: '9.1',
-        titre: "Établir l'état des lieux",
+        titre: 'État des lieux',
         sources: [source('sous-axe-9.1')],
       },
     ]);
@@ -297,7 +301,7 @@ describe('Résolution des engagements Électrification', () => {
     ['8.1', 9],
     ['9.1', 8],
   ] as const)(
-    'refuse le sous-axe livré %s sous un autre parent %i',
+    'refuse le sous-axe %s sous un autre parent %i',
     async (numero, parent) => {
       catalogue.sousAxes = structuredClone(electrificationConfig.sousAxes);
       input.axes = [axe(parent, 'axe', [sousAxe(numero)])];
@@ -344,7 +348,7 @@ describe('Résolution des engagements Électrification', () => {
       electrificationConfig.engagements
         .filter(({ code }) => ['E06', 'E08'].includes(code))
         .map(({ cibles }) => cibles[0].identifiantReferentiel)
-    ).toEqual(['v_particulier_elec', 'autobus_autocar_elec']);
+    ).toEqual(['test-E06-principale', 'test-E08-principale']);
     input.engagements = ['E06', 'E08'].map((code) =>
       engagement(code, [{ ...cible(), source: source(`${code}-cible`) }])
     );
@@ -611,22 +615,8 @@ describe('Résolution des engagements Électrification', () => {
   });
 
   test('garde les définitions non validées bloquantes malgré leur périodicité annuelle connue', async () => {
-    const pendingCibles = electrificationConfig.engagements
-      .filter(({ code }) => code !== EngagementCode.BORNES_RECHARGE_PUBLIQUES)
-      .flatMap(({ cibles }) => cibles);
-    expect(pendingCibles).toHaveLength(9);
-    expect(
-      pendingCibles.every(
-        ({ validation, periodicite }) =>
-          validation === 'pending' && periodicite === 'annuelle'
-      )
-    ).toBe(true);
-    const definition = electrificationConfig.engagements.find(
-      ({ code }) => code === EngagementCode.SORTIE_FIOUL_LOGEMENTS_PRIVES
-    )?.cibles[0];
-    assert(definition);
-    mapping().validation = definition.validation;
-    mapping().periodicite = definition.periodicite;
+    mapping().validation = 'pending';
+    mapping().periodicite = 'annuelle';
     input.engagements = [engagement('E01', [cible()])];
     await expectIssue(
       'UNVALIDATED_ENGAGEMENT_INDICATEUR',
@@ -659,6 +649,37 @@ describe('Résolution des engagements Électrification', () => {
         : 'INCOMPATIBLE_ENGAGEMENT_INDICATEUR',
       'configuration-error'
     );
+  });
+
+  test('bloque uniquement les engagements utilisés dont la référence TeT manque', async () => {
+    const bornes = catalogue.engagements.find(
+      ({ code }) => code === EngagementCode.BORNES_RECHARGE_PUBLIQUES
+    );
+    assert(bornes);
+    for (const cible of bornes.cibles) {
+      cible.validation = 'pending';
+      cible.identifiantReferentiel = null;
+      cible.unite = null;
+      cible.periodicite = null;
+    }
+    input.engagements = [engagement('E03')];
+    expect((await resolve()).success).toBe(true);
+    input.engagements = [
+      engagement('E07', [cible('total', 10, 'Nombre de bornes')]),
+    ];
+    const result = await resolve();
+    assert(!result.success);
+    expect(result.error).toHaveLength(2);
+    expect(result.error).toEqual([
+      expect.objectContaining({
+        code: 'UNVALIDATED_ENGAGEMENT_INDICATEUR',
+        kind: 'configuration-error',
+      }),
+      expect.objectContaining({
+        code: 'UNVALIDATED_ENGAGEMENT_INDICATEUR',
+        kind: 'configuration-error',
+      }),
+    ]);
   });
 
   test('ne résout pas un indicateur réservé à un autre groupement de collectivités', async () => {

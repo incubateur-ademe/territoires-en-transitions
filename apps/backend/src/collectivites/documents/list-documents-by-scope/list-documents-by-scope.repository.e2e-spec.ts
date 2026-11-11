@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
+import {
+  buildRandomDocumentHash,
+  deleteSyntheticStorageObjects,
+} from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
@@ -246,26 +249,24 @@ describe('ListDocumentsByScopeRepository - filtre confidentiel (SQL réel)', () 
       .where(
         eq(preuveReglementaireDefinitionTable.id, PREUVE_REGLEMENTAIRE_ID)
       );
-    await db.db
-      .delete(storageObjectTable)
-      .where(
-        and(
-          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
-          eq(storageObjectTable.name, otherCollectiviteHash)
-        )
-      );
+    await deleteSyntheticStorageObjects(
+      db,
+      and(
+        eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+        eq(storageObjectTable.name, otherCollectiviteHash)
+      )
+    );
     await db.db
       .delete(bibliothequeFichierTable)
       .where(eq(bibliothequeFichierTable.collectiviteId, otherCollectivite.id));
     await cleanupOtherCollectivite();
-    await db.db
-      .delete(storageObjectTable)
-      .where(
-        and(
-          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
-          inArray(storageObjectTable.name, [publicHash, confidentielHash])
-        )
-      );
+    await deleteSyntheticStorageObjects(
+      db,
+      and(
+        eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+        inArray(storageObjectTable.name, [publicHash, confidentielHash])
+      )
+    );
     await db.db
       .delete(bibliothequeFichierTable)
       .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
@@ -509,14 +510,13 @@ describe('ListDocumentsByScopeRepository - scope par référentiel (SQL réel)',
     await db.db
       .delete(preuveComplementaireTable)
       .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
-    await db.db
-      .delete(storageObjectTable)
-      .where(
-        and(
-          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
-          like(storageObjectTable.name, `%${collectivite.id}`)
-        )
-      );
+    await deleteSyntheticStorageObjects(
+      db,
+      and(
+        eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+        like(storageObjectTable.name, `%${collectivite.id}`)
+      )
+    );
     await db.db
       .delete(bibliothequeFichierTable)
       .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));
@@ -675,19 +675,18 @@ describe('ListDocumentsByScopeRepository - scope par mesure (SQL réel)', () => 
     await db.db
       .delete(preuveComplementaireTable)
       .where(eq(preuveComplementaireTable.collectiviteId, collectivite.id));
-    await db.db
-      .delete(storageObjectTable)
-      .where(
-        and(
-          eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
-          inArray(storageObjectTable.name, [
-            parentHash,
-            enfantHash,
-            voisineHash,
-            reglementaireHash,
-          ])
-        )
-      );
+    await deleteSyntheticStorageObjects(
+      db,
+      and(
+        eq(storageObjectTable.bucketId, PREUVES_ARCHIVES_BUCKET),
+        inArray(storageObjectTable.name, [
+          parentHash,
+          enfantHash,
+          voisineHash,
+          reglementaireHash,
+        ])
+      )
+    );
     await db.db
       .delete(bibliothequeFichierTable)
       .where(eq(bibliothequeFichierTable.collectiviteId, collectivite.id));

@@ -1,3 +1,4 @@
+import { ElectrificationCatalogueRules } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { ElectrificationConfig, StatutEnum } from '@tet/domain/plans';
 import { ImportSource } from '../../models/import-source.schema';
@@ -205,62 +206,9 @@ export class ResolveElectrificationStructureRules {
   static validateCatalogue(
     catalogue: ElectrificationConfig
   ): ElectrificationIssue[] {
-    const issues: ElectrificationIssue[] = [];
-    const axeNumeros = new Set<number>();
-    catalogue.axes.forEach((axe, index) => {
-      if (axeNumeros.has(axe.numero)) {
-        issues.push(
-          this.issue(
-            'DUPLICATE_CATALOGUE_REFERENCE',
-            `catalogue.axes[${index}]`
-          )
-        );
-      }
-      axeNumeros.add(axe.numero);
-    });
-    const sousAxeNumeros = new Set<string>();
-    catalogue.sousAxes?.forEach((sousAxe, index) => {
-      const location = `catalogue.sousAxes[${index}]`;
-      if (sousAxeNumeros.has(sousAxe.numero)) {
-        issues.push(this.issue('DUPLICATE_CATALOGUE_REFERENCE', location));
-      }
-      sousAxeNumeros.add(sousAxe.numero);
-      if (!axeNumeros.has(sousAxe.axeNumero)) {
-        issues.push(this.issue('INVALID_CATALOGUE_PARENT', location));
-      }
-    });
-    const codes = new Set<string>();
-    catalogue.engagements.forEach((engagement, index) => {
-      const location = `catalogue.engagements[${index}]`;
-      if (codes.has(engagement.code)) {
-        issues.push(this.issue('DUPLICATE_CATALOGUE_REFERENCE', location));
-      }
-      codes.add(engagement.code);
-      if (!axeNumeros.has(engagement.axeNumero)) {
-        issues.push(this.issue('INVALID_CATALOGUE_PARENT', location));
-      }
-      if ((engagement.actionTitre !== null) === engagement.cibles.length > 0) {
-        issues.push(this.issue('INVALID_ENGAGEMENT_MAPPING', location));
-      }
-      const cibleKeys = new Set<string>();
-      const indicateurReferences = new Set<string>();
-      engagement.cibles.forEach((cible, cibleIndex) => {
-        if (
-          cibleKeys.has(cible.key) ||
-          indicateurReferences.has(cible.identifiantReferentiel)
-        ) {
-          issues.push(
-            this.issue(
-              'DUPLICATE_CATALOGUE_REFERENCE',
-              `${location}.cibles[${cibleIndex}]`
-            )
-          );
-        }
-        cibleKeys.add(cible.key);
-        indicateurReferences.add(cible.identifiantReferentiel);
-      });
-    });
-    return issues;
+    return ElectrificationCatalogueRules.asConfigurationIssues(
+      ElectrificationCatalogueRules.validateStructure(catalogue)
+    );
   }
 
   private static issue = electrificationEngagementsIssue;

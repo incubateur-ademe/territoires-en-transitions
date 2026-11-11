@@ -1,16 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  ElectrificationLaureatsConfig,
-  electrificationLaureatsConfigSchema,
-} from '@tet/domain/plans';
+import { ElectrificationLaureatsConfig } from '@tet/domain/plans';
 import { hasRole, PlatformRole, ResourceType } from '@tet/domain/users';
 import z from 'zod';
 import { CheckElectrificationEligibilityError } from './check-electrification-eligibility.errors';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '../config/electrification-eligibility.constants';
+import { ElectrificationDataService } from '../publish-electrification-data/electrification-data.service';
+import { ElectrificationLaureatsRules } from '../publish-electrification-data/electrification-laureats.rules';
 
 const inputSchema = z.strictObject({ collectiviteId: z.int().positive() });
 
@@ -27,8 +25,7 @@ export type ElectrificationEligibilityDecision = {
 @Injectable()
 export class CheckElectrificationEligibilityService {
   constructor(
-    @Inject(ELECTRIFICATION_LAUREATS_CONFIG)
-    private readonly config: unknown,
+    private readonly data: ElectrificationDataService,
     private readonly permissions: PermissionService,
     private readonly roles: GetUserRolesAndPermissionsService
   ) {}
@@ -54,34 +51,25 @@ export class CheckElectrificationEligibilityService {
     );
     if (!permission.success) return failure('UNAUTHORIZED');
 
-    // La configuration manquante ne bloque ni le démarrage ni l'import générique.
-    if (this.config == null) {
-      return failure('ELECTRIFICATION_LAUREATS_UNAVAILABLE');
-    }
-    const config = electrificationLaureatsConfigSchema.safeParse(this.config);
+    // La publication manquante ne bloque ni le démarrage ni l'import générique.
+    const config = await this.data.getLaureats();
     if (!config.success) {
-      return failure('INVALID_ELECTRIFICATION_LAUREATS_CONFIG');
+      return failure(
+        config.error === 'INVALID_DATA'
+          ? 'INVALID_ELECTRIFICATION_LAUREATS_CONFIG'
+          : 'ELECTRIFICATION_LAUREATS_UNAVAILABLE'
+      );
     }
+    const invalid = ElectrificationLaureatsRules.validate(config.data);
+    if (invalid) return failure(invalid);
     const { source, version, validFrom, validUntil, laureats } = config.data;
     const from = Date.parse(validFrom);
     const until = validUntil === null ? null : Date.parse(validUntil);
-    if (until !== null && from >= until) {
-      return failure('INVALID_ELECTRIFICATION_LAUREATS_CONFIG');
-    }
     const checkedAt = Date.now();
     // Début inclus, fin exclue lorsqu'elle est définie.
     if (checkedAt < from || (until !== null && checkedAt >= until)) {
       return failure('INACTIVE_ELECTRIFICATION_LAUREATS_CONFIG');
     }
-    if (
-      new Set(laureats.map(({ reference }) => reference)).size !==
-        laureats.length ||
-      new Set(laureats.map(({ collectiviteId }) => collectiviteId)).size !==
-        laureats.length
-    ) {
-      return failure('AMBIGUOUS_ELECTRIFICATION_LAUREATS_CONFIG');
-    }
-
     const laureat = laureats.find(
       ({ collectiviteId }) => collectiviteId === parsed.data.collectiviteId
     );
@@ -98,6 +86,7 @@ export class CheckElectrificationEligibilityService {
       },
     });
   }
+
   /** Exception de recette : ne transforme pas la collectivité en lauréate. */
   private async canImportNonLaureat({ user, tx }: ServiceSecondArg) {
     if (
