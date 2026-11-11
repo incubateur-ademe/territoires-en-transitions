@@ -73,17 +73,20 @@ export const useIndicateurTrajectoireDatasets = ({
     prepareDonneesParSecteur(secteur.sousSecteurs || [], trajectoire);
 
   // charge les données objectifs/résultats de la collectivité et open data
-  const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
-    useListIndicateurValeurs({
-      identifiantsReferentiel: [identifiant],
-      ...(dateDebut ? { dateDebut } : {}),
-      dateFin,
-      sources: [
-        IndicateurSourceEnum.COLLECTIVITE,
-        IndicateurSourceEnum.RARE,
-        IndicateurSourceEnum.PCAET,
-      ],
-    });
+  const {
+    data: indicateursEtValeurs,
+    isLoading: isLoadingObjectifsResultats,
+    isError: isErrorObjectifsResultats,
+  } = useListIndicateurValeurs({
+    identifiantsReferentiel: [identifiant],
+    ...(dateDebut ? { dateDebut } : {}),
+    dateFin,
+    sources: [
+      IndicateurSourceEnum.COLLECTIVITE,
+      IndicateurSourceEnum.RARE,
+      IndicateurSourceEnum.PCAET,
+    ],
+  });
   // sépare les valeurs objectif & résultat
   const sources = indicateursEtValeurs?.indicateurs?.[0]?.sources;
   const objectifsEtResultats = separeObjectifsEtResultats(
@@ -167,6 +170,8 @@ export const useIndicateurTrajectoireDatasets = ({
     valeursSecteur,
     valeursSousSecteurs,
     isLoadingObjectifsResultats,
+    /** échec du chargement : à ne pas confondre avec une absence de valeurs */
+    isErrorObjectifsResultats,
     isLoadingTrajectoire,
   };
 };

@@ -86,6 +86,7 @@ export const TrajectoireSnbc3DisponibleView = ({
     valeursSecteur,
     valeursSousSecteurs,
     isLoadingObjectifsResultats,
+    isErrorObjectifsResultats,
     isLoadingTrajectoire,
     isErrorTrajectoire,
     emissionsNettes,
@@ -110,8 +111,10 @@ export const TrajectoireSnbc3DisponibleView = ({
   const canMutateValeurs = hasCollectivitePermission(
     'indicateurs.valeurs.mutate'
   );
+  // un échec n'est pas une absence de valeurs : pas d'invitation à les saisir
   const comparezLaTrajectoireIsVisible =
     !isLoadingObjectifsResultats &&
+    !isErrorObjectifsResultats &&
     (objectifs.source.length === 0 || resultats.source.length === 0);
 
   if (!collectiviteId) {
@@ -239,6 +242,18 @@ export const TrajectoireSnbc3DisponibleView = ({
             <Alert
               state="error"
               title={appLabels.trajectoireErreurChargementDonnees}
+              description={
+                appLabels.trajectoireErreurChargementDonneesDescription
+              }
+            />
+          </div>
+        </VisibleWhen>
+
+        <VisibleWhen condition={isErrorObjectifsResultats}>
+          <div data-test="indicateurs.trajectoires.snbc3.erreur-chargement-objectifs-resultats">
+            <Alert
+              state="error"
+              title={appLabels.trajectoireErreurChargementObjectifsResultats}
               description={
                 appLabels.trajectoireErreurChargementDonneesDescription
               }
