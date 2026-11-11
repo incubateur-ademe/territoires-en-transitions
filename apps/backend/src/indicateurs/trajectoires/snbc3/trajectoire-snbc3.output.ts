@@ -13,11 +13,11 @@ export const millesimeSnbc3Schema = z
 export const checkStatusTrajectoireSnbc3OutputSchema = z.object({
   status: z.enum(StatutTrajectoireSnbc3),
   millesime: millesimeSnbc3Schema.nullable(),
-  epciParent: z
+  collectiviteRattachement: z
     .object({ id: z.number(), nom: z.string() })
     .optional()
     .describe(
-      'EPCI à fiscalité propre de la commune, dont on peut consulter la trajectoire (statut `commune_non_supportee`)'
+      "Collectivité dont une commune peut consulter la trajectoire (statut `commune_non_supportee`) : son EPCI à fiscalité propre ; pour un arrondissement municipal, sa commune si elle est dans le millésime (Paris), sinon l'EPCI de sa commune"
     ),
 });
 export type CheckStatusTrajectoireSnbc3Output = z.infer<

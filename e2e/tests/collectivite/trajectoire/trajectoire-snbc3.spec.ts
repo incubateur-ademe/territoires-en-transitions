@@ -80,9 +80,9 @@ test.describe('Trajectoire SNBC 3', () => {
     await pom.goto(commune.data.id);
 
     await expect(pom.communeCard).toBeVisible();
-    await expect(pom.consulterEpciText).toBeVisible();
+    await expect(pom.consulterRattachementText).toBeVisible();
     await expect(pom.recalculerButton).toHaveCount(0);
-    await pom.voirEpciButton.click();
+    await pom.voirRattachementButton.click();
     await expect(page).toHaveURL(
       new RegExp(`/collectivite/${epci.data.id}/trajectoire$`)
     );
@@ -102,7 +102,7 @@ test.describe('Trajectoire SNBC 3', () => {
     await pom.goto(commune.data.id);
 
     await expect(pom.communeCard).toBeVisible();
-    await expect(pom.consulterEpciText).toHaveCount(0);
-    await expect(pom.voirEpciButton).toHaveCount(0);
+    await expect(pom.consulterRattachementText).toHaveCount(0);
+    await expect(pom.voirRattachementButton).toHaveCount(0);
   });
 });

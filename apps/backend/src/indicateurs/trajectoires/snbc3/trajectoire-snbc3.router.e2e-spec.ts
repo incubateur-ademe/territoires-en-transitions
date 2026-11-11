@@ -182,7 +182,7 @@ describe('Lecture de la trajectoire SNBC 3 (indicateurs.trajectoires.snbc3)', ()
         collectiviteId: getCollectivite().id,
       });
       expect(result.status).toBe(status);
-      expect(result.epciParent).toBeUndefined();
+      expect(result.collectiviteRattachement).toBeUndefined();
     });
 
     test('une commune absente renvoie son EPCI à fiscalité propre', async () => {
@@ -191,7 +191,7 @@ describe('Lecture de la trajectoire SNBC 3 (indicateurs.trajectoires.snbc3)', ()
       });
       expect(result).toMatchObject({
         status: StatutTrajectoireSnbc3.COMMUNE_NON_SUPPORTEE,
-        epciParent: { id: epciParent.id, nom: epciParent.nom },
+        collectiviteRattachement: { id: epciParent.id, nom: epciParent.nom },
       });
     });
 
@@ -250,13 +250,13 @@ describe('Lecture de la trajectoire SNBC 3 (indicateurs.trajectoires.snbc3)', ()
       ).rejects.toMatchObject({ code: 'NOT_FOUND' });
     });
 
-    test("une commune absente sans EPCI parent n'a pas de clé epciParent", async () => {
+    test("une commune absente sans EPCI parent n'a pas de clé collectiviteRattachement", async () => {
       const communeIsolee = await addCollectivite({ type: 'commune' });
       const result = await caller().indicateurs.trajectoires.snbc3.checkStatus({
         collectiviteId: communeIsolee.id,
       });
       expect(result.status).toBe(StatutTrajectoireSnbc3.COMMUNE_NON_SUPPORTEE);
-      expect(result).not.toHaveProperty('epciParent');
+      expect(result).not.toHaveProperty('collectiviteRattachement');
     });
 
     test('get renvoie une trajectoire vide hors du millésime', async () => {

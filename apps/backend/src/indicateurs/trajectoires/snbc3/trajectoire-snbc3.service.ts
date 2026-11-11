@@ -4,6 +4,7 @@ import ManageIndicateurValeursService from '@tet/backend/indicateurs/valeurs/man
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
+import { getCodeCommuneOfArrondissement } from '@tet/domain/collectivites';
 import {
   getStatutTrajectoireSnbc3,
   IndicateurSourceEnum,
@@ -24,6 +25,7 @@ import {
   GetTrajectoireSnbc3Output,
 } from './trajectoire-snbc3.output';
 import {
+  Snbc3Collectivite,
   Snbc3Millesime,
   TrajectoireSnbc3Repository,
 } from './trajectoire-snbc3.repository';
@@ -104,16 +106,44 @@ export class TrajectoireSnbc3Service {
       collectivite,
     });
 
-    const epciParent =
+    const collectiviteRattachement =
       status === StatutTrajectoireSnbc3.COMMUNE_NON_SUPPORTEE
-        ? await this.repository.findEpciParent(collectiviteId)
+        ? await this.findCollectiviteRattachement(collectivite, millesime)
         : null;
 
     return success({
       status,
       millesime: this.toMillesimeOutput(millesime),
-      ...(epciParent ? { epciParent } : {}),
+      ...(collectiviteRattachement ? { collectiviteRattachement } : {}),
     });
+  }
+
+  /**
+   * Trajectoire à proposer à une commune hors du millésime : celle de son EPCI
+   * à fiscalité propre. Un arrondissement municipal n'a pas de relation en
+   * base (Banatic ne connaît que la commune entière) : on passe par sa
+   * commune, qui a elle-même une trajectoire (Paris) ou un EPCI.
+   */
+  private async findCollectiviteRattachement(
+    collectivite: Snbc3Collectivite,
+    millesime: Snbc3Millesime | null
+  ): Promise<{ id: number; nom: string } | null> {
+    const codeCommune = getCodeCommuneOfArrondissement(
+      collectivite.communeCode
+    );
+    if (!codeCommune) {
+      return this.repository.findEpciParent(collectivite.id);
+    }
+    const commune = await this.repository.findCommuneByCode(codeCommune);
+    if (!commune) {
+      return null;
+    }
+    const isCommuneInMillesime = millesime
+      ? await this.repository.hasValeurs(commune.id, millesime.metadonneeId)
+      : false;
+    return isCommuneInMillesime
+      ? commune
+      : this.repository.findEpciParent(commune.id);
   }
 
   async get(

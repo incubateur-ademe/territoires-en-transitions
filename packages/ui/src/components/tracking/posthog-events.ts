@@ -165,7 +165,9 @@ export const Event = {
       dismissBandeau: 'indicateurs:trajectoire_snbc3:bandeau_fermer',
       /** `origine` : `bandeau` ou `lien_titre` */
       openChangements: 'indicateurs:trajectoire_snbc3:changements_ouvrir',
-      voirTrajectoireEpci: 'indicateurs:trajectoire_snbc3:voir_epci_click',
+      /** `collectiviteRattachementId` : EPCI de la commune, ou Paris pour un arrondissement */
+      voirTrajectoireRattachement:
+        'indicateurs:trajectoire_snbc3:voir_rattachement_click',
     },
   },
   tdb: {
