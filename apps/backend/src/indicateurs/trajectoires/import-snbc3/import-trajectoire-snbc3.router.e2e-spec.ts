@@ -26,6 +26,7 @@ import {
   SNBC3_WORKBOOK_PATH,
   Snbc3ReleaseStorageService,
 } from './snbc3-release-storage.service';
+import { backupSnbc3Release } from './snbc3-bucket.test-fixture';
 import { SNBC3_FIXTURE_METHODOLOGIE } from './snbc3-release.test-fixture';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { getQueueToken } from '@nestjs/bullmq';
@@ -196,6 +197,9 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     app = await getTestApp();
     router = await getTestRouter(app);
     database = await getTestDatabase(app);
+    // Les imports de cette spec écrivent dans le bucket et la métadonnée de
+    // l'app : on remet ceux de l'import local à la fin.
+    const restoreSnbc3Release = await backupSnbc3Release(app);
 
     const reader = app.get(Snbc3ArtifactReader);
     const spy = vi
@@ -234,6 +238,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     return async () => {
       spy.mockRestore();
       await Promise.all(created.map(({ cleanup }) => cleanup()));
+      await restoreSnbc3Release();
     };
   });
 
