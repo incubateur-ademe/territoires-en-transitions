@@ -4,6 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
+import { randomUUID } from 'node:crypto';
 import { Readable } from 'node:stream';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
@@ -28,9 +29,11 @@ export const SNBC3_METHODOLOGIE_PATH = 'methodologie.pdf';
  */
 export const SNBC3_MANIFEST_PATH = 'manifest.json';
 /**
- * Release du dernier import complet commencé, dans ses métadonnées d'objet :
- * écrite avant le remplacement des valeurs. Tant qu'elle diffère de celle du
- * manifeste, les valeurs mélangent deux releases (import inachevé).
+ * Release du dernier import complet commencé, dans ses métadonnées d'objet,
+ * avec un identifiant propre à cet import (`importId`) : écrite avant le
+ * remplacement des valeurs. Tant que le manifeste ne porte pas le même
+ * `importId`, l'import n'est pas allé au bout, même s'il réimporte la release
+ * du manifeste.
  */
 export const SNBC3_PENDING_RELEASE_PATH = 'pending-release.json';
 /** Statut et rapport du dernier import (`Snbc3LastImport`). */
@@ -43,6 +46,8 @@ export const XLSX_MIME_TYPE =
 const importedReleaseSchema = z.object({
   commit: z.string(),
   version: z.string(),
+  /** Absent des fichiers écrits avant l'ajout du marqueur d'import. */
+  importId: z.string().optional(),
 });
 
 export type Snbc3ImportedRelease = z.infer<typeof importedReleaseSchema>;
@@ -68,7 +73,9 @@ export class Snbc3ReleaseStorageService {
 
   /** Classeur standalone, PDF de méthodologie et manifeste de la release, côte à côte. */
   async storeReleaseFiles(
-    release: Snbc3ReleaseFiles
+    release: Snbc3ReleaseFiles,
+    /** Rendu par `markReleasePending` au début de cet import. */
+    importId: string
   ): Promise<Result<void, ImportTrajectoireSnbc3Error>> {
     const bucket = await this.supabaseService.ensurePrivateBucket(SNBC3_BUCKET);
     if (!bucket.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
@@ -88,12 +95,12 @@ export class Snbc3ReleaseStorageService {
         metadata: { ...metadata, name: release.methodologie.name },
       },
       // En dernier : le manifeste désigne la release importée, une fois le
-      // classeur en place.
+      // classeur en place, et marque la fin de l'import (`importId`).
       {
         path: SNBC3_MANIFEST_PATH,
         content: release.manifest,
         mimeType: JSON_MIME_TYPE,
-        metadata,
+        metadata: { ...metadata, importId },
       },
     ]) {
       const saved = await this.supabaseService.saveInStorage({
@@ -109,16 +116,22 @@ export class Snbc3ReleaseStorageService {
   }
 
   /**
-   * Marque le début du remplacement des valeurs d'un import complet. Tant que
-   * `storeReleaseFiles` n'a pas enregistré cette même release, les rejeux
-   * partiels sont refusés (cf. `getPendingRelease`).
+   * Marque le début du remplacement des valeurs d'un import complet, même
+   * s'il réimporte la release du manifeste, et rend l'identifiant de cet
+   * import. Tant que `storeReleaseFiles` ne l'a pas enregistré avec le
+   * manifeste, les rejeux partiels sont refusés (cf. `getReplayableRelease`).
    */
   async markReleasePending(
     release: Pick<Snbc3ReleaseFiles, 'sha' | 'version'>
-  ): Promise<Result<void, ImportTrajectoireSnbc3Error>> {
+  ): Promise<Result<string, ImportTrajectoireSnbc3Error>> {
     const bucket = await this.supabaseService.ensurePrivateBucket(SNBC3_BUCKET);
     if (!bucket.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
-    const metadata = { commit: release.sha, version: release.version };
+    const importId = randomUUID();
+    const metadata = {
+      commit: release.sha,
+      version: release.version,
+      importId,
+    };
     const saved = await this.supabaseService.saveInStorage({
       bucket: SNBC3_BUCKET,
       path: SNBC3_PENDING_RELEASE_PATH,
@@ -127,7 +140,7 @@ export class Snbc3ReleaseStorageService {
       metadata,
     });
     if (!saved.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
-    return success(undefined);
+    return success(importId);
   }
 
   /**
@@ -149,12 +162,7 @@ export class Snbc3ReleaseStorageService {
       this.getImportedRelease(),
       this.readReleaseMetadata(SNBC3_PENDING_RELEASE_PATH),
     ]);
-    if (
-      imported &&
-      pending &&
-      (pending.commit !== imported.commit ||
-        pending.version !== imported.version)
-    ) {
+    if (imported && isImportUnfinished(imported, pending)) {
       this.logger.warn(
         `L'import complet de ${pending.version}@${pending.commit} n'est pas allé au bout : relancer un import complet avant tout rejeu partiel`
       );
@@ -173,11 +181,7 @@ export class Snbc3ReleaseStorageService {
       this.getImportedRelease(),
       this.readReleaseMetadata(SNBC3_PENDING_RELEASE_PATH),
     ]);
-    return (
-      !!pending &&
-      (pending.commit !== imported?.commit ||
-        pending.version !== imported?.version)
-    );
+    return isImportUnfinished(imported, pending);
   }
 
   /**
@@ -289,4 +293,20 @@ export class Snbc3ReleaseStorageService {
       );
     }
   }
+}
+
+/**
+ * Import complet commencé (`pending`) que le manifeste (`imported`) n'a pas
+ * enregistré. Sans `importId` (fichier antérieur au marqueur), on compare les
+ * releases.
+ */
+function isImportUnfinished(
+  imported: Snbc3ImportedRelease | null,
+  pending: Snbc3ImportedRelease | null
+): pending is Snbc3ImportedRelease {
+  if (!pending) return false;
+  if (pending.importId) return pending.importId !== imported?.importId;
+  return (
+    pending.commit !== imported?.commit || pending.version !== imported?.version
+  );
 }

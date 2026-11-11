@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   SNBC3_BUCKET,
   SNBC3_METHODOLOGIE_PATH,
+  Snbc3ImportedRelease,
   Snbc3ReleaseStorageService,
 } from './snbc3-release-storage.service';
 
@@ -79,8 +80,8 @@ describe('Snbc3ReleaseStorageService.hasUnfinishedImport', () => {
   const release = { commit: 'abc123', version: 'V2.2' };
 
   const withReleases = (
-    imported: typeof release | null,
-    pending: typeof release | null
+    imported: Snbc3ImportedRelease | null,
+    pending: Snbc3ImportedRelease | null
   ) => {
     vi.spyOn(service, 'getImportedRelease').mockResolvedValue(imported);
     where.mockResolvedValue(pending ? [{ userMetadata: pending }] : []);
@@ -101,6 +102,24 @@ describe('Snbc3ReleaseStorageService.hasUnfinishedImport', () => {
       'import d’un autre commit en cours ou en échec',
       release,
       { ...release, commit: 'def456' },
+      true,
+    ],
+    [
+      'import marqué allé au bout',
+      { ...release, importId: 'import-1' },
+      { ...release, importId: 'import-1' },
+      false,
+    ],
+    [
+      'réimport de la release du manifeste en cours ou en échec',
+      { ...release, importId: 'import-1' },
+      { ...release, importId: 'import-2' },
+      true,
+    ],
+    [
+      'premier import marqué, manifeste antérieur au marqueur',
+      release,
+      { ...release, importId: 'import-2' },
       true,
     ],
   ])('%s', async (_, imported, pending, attendu) => {
