@@ -103,6 +103,9 @@ export const Event = {
      * vie est émis par le serveur (`plans:import-ia:started|succeeded|…`).
      */
     importIa: {
+      historique: 'plans:import-ia:historique_clic',
+      details: 'plans:import-ia:details_clic',
+      ouvrirPlan: 'plans:import-ia:ouvrir_plan_clic',
       arrierePlan: 'plans:import-ia:arriere_plan_clic',
       reessayer: 'plans:import-ia:reessayer_clic',
       reprendre: 'plans:import-ia:reprendre_clic',

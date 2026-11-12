@@ -10,6 +10,7 @@ import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
+import { jobTrackingProperties } from '../generate-import-draft/import-job-tracking';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { randomUUID } from 'node:crypto';
@@ -124,13 +125,7 @@ export class ResumeImportService {
     this.trackingService.capture({
       distinctId: user.id,
       event: EVENT_AI_PLAN_IMPORT_RESUME_REQUESTED,
-      properties: {
-        collectiviteId: failed.data.collectiviteId,
-        jobId,
-        attempt: failed.data.attempt,
-        origine: failed.data.options.origine,
-        demarcheId: failed.data.options.demarcheId,
-      },
+      properties: jobTrackingProperties(failed.data),
       groups: { collectivite: String(failed.data.collectiviteId) },
     });
     return success({ jobId });

@@ -245,11 +245,6 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
           jobId,
           failedStep,
           reason,
-          profile:
-            marked.data.options.profile ?? AiPlanImportProfileEnum.GENERIC,
-          schemaVersion: marked.data.options.schemaVersion,
-          contractVersion: marked.data.options.contractVersion,
-          catalogueVersion: marked.data.options.catalogueVersion ?? undefined,
           issueKinds: report
             ? [...new Set(report.issues.map((issue) => issue.kind))].join(',')
             : undefined,
@@ -315,10 +310,6 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         collectiviteId: job.collectiviteId,
         jobId: job.id,
         planId: created.planId,
-        profile: job.options.profile ?? AiPlanImportProfileEnum.GENERIC,
-        schemaVersion: job.options.schemaVersion,
-        contractVersion: job.options.contractVersion,
-        catalogueVersion: job.options.catalogueVersion ?? undefined,
         ...recap,
         durationSeconds: secondsSince(job.createdAt),
         processingSeconds: job.startedAt

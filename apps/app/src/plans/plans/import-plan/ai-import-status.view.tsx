@@ -119,13 +119,20 @@ export const AiImportStatusView = ({
           failed={failed}
           errorMessage={isErrorInReport ? null : status.error}
           onRetry={() => {
-            tracker(Event.plans.importIa.reessayer, { origine, demarcheId });
+            tracker(Event.plans.importIa.reessayer, {
+              origine,
+              demarcheId,
+              jobId,
+              profile: status.profile,
+            });
             onRetry();
           }}
           onResume={
             canResume && status.resumable
               ? () => {
                   tracker(Event.plans.importIa.reprendre, {
+                    jobId,
+                    profile: status.profile,
                     origine,
                     demarcheId,
                   });

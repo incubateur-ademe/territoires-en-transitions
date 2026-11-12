@@ -12,7 +12,15 @@ import { ErrorCard } from '@/app/utils/error/error.card';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Badge, Breadcrumbs, Button, PageHeader, Tooltip } from '@tet/ui';
+import {
+  Badge,
+  Breadcrumbs,
+  Button,
+  Event,
+  PageHeader,
+  Tooltip,
+  useEventTracker,
+} from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useQueryStates } from 'nuqs';
 import { AiImportStatusView } from './ai-import-status.view';
@@ -25,6 +33,7 @@ import {
 import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
 
 export const AiImportHistoryView = () => {
+  const tracker = useEventTracker();
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const router = useRouter();
@@ -107,6 +116,15 @@ export const AiImportHistoryView = () => {
                             })
                           : undefined
                       }
+                      onClick={() =>
+                        tracker(Event.plans.importIa.ouvrirPlan, {
+                          origine: 'detail_import',
+                          jobId: importJobId,
+                          planId,
+                          profile: statusQuery.data?.profile,
+                          status: statusQuery.data?.status,
+                        })
+                      }
                       dataTest="plans.import-ia.ouvrir-plan"
                     >
                       {appLabels.importPlanIaOuvrirPlan}
@@ -171,9 +189,16 @@ export const AiImportHistoryView = () => {
                   <div className="flex flex-col gap-1">
                     <Button
                       variant="underlined"
-                      onClick={() =>
-                        setImportQuery({ importJobId: item.jobId })
-                      }
+                      onClick={() => {
+                        tracker(Event.plans.importIa.details, {
+                          origine: 'historique',
+                          jobId: item.jobId,
+                          planId: item.createdPlanId,
+                          profile: item.profile,
+                          status: item.status,
+                        });
+                        void setImportQuery({ importJobId: item.jobId });
+                      }}
                     >
                       {item.planName ?? appLabels.importPlanIaSansNom}
                     </Button>

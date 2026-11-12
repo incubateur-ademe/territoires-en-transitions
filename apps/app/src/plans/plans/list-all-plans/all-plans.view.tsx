@@ -8,7 +8,14 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { planStatusValues } from '@tet/domain/plans';
-import { Button, PageHeader, Spacer, VisibleWhen } from '@tet/ui';
+import {
+  Button,
+  Event,
+  PageHeader,
+  Spacer,
+  useEventTracker,
+  VisibleWhen,
+} from '@tet/ui';
 import { isNotNil } from 'es-toolkit';
 import { useQueryStates } from 'nuqs';
 import { useState } from 'react';
@@ -20,6 +27,7 @@ import {
   sortURLParametersParser,
 } from './plan-card-with-filters.list/sorting-parameters';
 export const AllPlansView = () => {
+  const tracker = useEventTracker();
   const collectivite = useCurrentCollectivite();
   const { collectiviteId, hasCollectivitePermission } = collectivite;
 
@@ -52,6 +60,11 @@ export const AllPlansView = () => {
                 size="sm"
                 variant="outlined"
                 href={makeCollectivitePlanImportsUrl({ collectiviteId })}
+                onClick={() =>
+                  tracker(Event.plans.importIa.historique, {
+                    origine: 'liste_plans',
+                  })
+                }
               >
                 {appLabels.importPlanIaHistorique}
               </Button>

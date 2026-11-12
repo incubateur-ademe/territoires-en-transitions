@@ -6,7 +6,7 @@ import {
 } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Button, PageHeader } from '@tet/ui';
+import { Button, Event, PageHeader, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useQueryStates } from 'nuqs';
@@ -33,6 +33,7 @@ const BackButton = () => {
 };
 
 const AiImportContent = () => {
+  const tracker = useEventTracker();
   const router = useRouter();
   const collectiviteId = useCollectiviteId();
   const redirectToPlan = useCallback(
@@ -56,6 +57,11 @@ const AiImportContent = () => {
           <Button
             variant="outlined"
             href={makeCollectivitePlanImportsUrl({ collectiviteId })}
+            onClick={() =>
+              tracker(Event.plans.importIa.historique, {
+                origine: 'formulaire_import',
+              })
+            }
           >
             {appLabels.importPlanIaHistorique}
           </Button>

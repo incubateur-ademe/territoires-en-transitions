@@ -515,6 +515,24 @@ describe(
           createdPlanId: null,
           report: { issues: [{ kind: 'document-error', code, location }] },
         });
+        const capture = vi.mocked(app.get(TrackingService).capture);
+        const failureEvents = capture.mock.calls
+          .map(([event]) => event)
+          .filter(({ event }) => event === 'plans:import-ia:failed');
+        expect(failureEvents).toHaveLength(1);
+        expect(failureEvents[0]).toMatchObject({
+          properties: {
+            jobId,
+            profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+            catalogueVersion: catalogue.version,
+            issueKinds: 'document-error',
+          },
+          groups: { collectivite: String(collectiviteId()) },
+        });
+        expect(failureEvents[0].properties).not.toHaveProperty('error');
+        expect(JSON.stringify(failureEvents)).not.toContain(
+          failed.report.issues[0].message
+        );
         if (code === 'MISSING_INDICATEUR_YEAR') {
           expect(failed.report.issues[0].message).toContain(
             "L'année de référence de cette valeur est absente"
@@ -649,7 +667,13 @@ describe(
         expect(capture).toHaveBeenCalledWith({
           distinctId: user().id,
           event,
-          properties: expect.objectContaining({ jobId, origine: 'page' }),
+          properties: expect.objectContaining({
+            jobId,
+            origine: 'page',
+            profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+            catalogueVersion: catalogue.version,
+            attempt: 0,
+          }),
           groups: { collectivite: String(collectiviteId()) },
         });
       }
@@ -659,6 +683,8 @@ describe(
         properties: expect.objectContaining({
           jobId,
           origine: 'page',
+          profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+          catalogueVersion: catalogue.version,
           step: 'persistence',
           status: 'ok',
         }),
@@ -674,6 +700,18 @@ describe(
       expect(await readAxes()).toEqual(before);
       expect((await status(jobId)).report).toEqual(done.report);
       expect(notification).toHaveBeenCalledOnce();
+      const succeeded = capture.mock.calls
+        .map(([event]) => event)
+        .filter(({ event }) => event === 'plans:import-ia:succeeded');
+      expect(succeeded).toHaveLength(1);
+      expect(succeeded[0].properties).toMatchObject({
+        planId: done.createdPlanId,
+        llmCalls: 0,
+      });
+      for (const [event] of capture.mock.calls) {
+        expect(event.properties).not.toHaveProperty('planName');
+        expect(event.properties).not.toHaveProperty('instructions');
+      }
     });
 
     test.each([
@@ -809,6 +847,7 @@ describe(
           properties: expect.objectContaining({
             jobId,
             origine: 'page',
+            profile: AiPlanImportProfileEnum.ELECTRIFICATION,
             attempt: 0,
           }),
           groups: { collectivite: String(collectiviteId()) },
@@ -819,6 +858,7 @@ describe(
           properties: expect.objectContaining({
             jobId,
             origine: 'page',
+            profile: AiPlanImportProfileEnum.ELECTRIFICATION,
             attempt: 1,
           }),
           groups: { collectivite: String(collectiviteId()) },

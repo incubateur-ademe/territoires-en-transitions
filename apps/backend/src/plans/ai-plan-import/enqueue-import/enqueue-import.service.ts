@@ -33,6 +33,8 @@ import {
 } from '../ai-plan-import.queue';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
+import { jobTrackingProperties } from '../generate-import-draft/import-job-tracking';
+import { resolveImportProfile } from '../models/import-profile';
 import { AiPlanImportJobOptions } from '../models/ai-plan-import-job';
 import {
   EnqueueImportOutput,
@@ -83,6 +85,7 @@ export class EnqueueImportService {
         properties: {
           collectiviteId: input.collectiviteId,
           reason: result.error,
+          profile: resolveImportProfile(input.options.profile),
           declaredMimeType: input.file.mimeType,
           fileSizeBytes: input.file.size,
           planType: input.options.planType,
@@ -267,19 +270,9 @@ export class EnqueueImportService {
       distinctId: user.id,
       event: EVENT_AI_PLAN_IMPORT_STARTED,
       properties: {
-        collectiviteId,
-        jobId,
+        ...jobTrackingProperties(created.data),
         mimeType,
         fileSizeBytes: file.size,
-        planType: created.data.options.planType,
-        withVerifications: options.withVerifications,
-        withSousActions: options.withSousActions,
-        withSecteurs: admittedOptions.withSecteurs,
-        profile,
-        origine: options.origine,
-        demarcheId: options.demarcheId,
-        schemaVersion: created.data.options.schemaVersion,
-        catalogueVersion: created.data.options.catalogueVersion ?? undefined,
       },
       groups: { collectivite: String(collectiviteId) },
     });

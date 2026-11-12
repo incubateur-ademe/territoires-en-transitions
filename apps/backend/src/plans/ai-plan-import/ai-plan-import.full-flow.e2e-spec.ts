@@ -1,3 +1,4 @@
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { getQueueToken } from '@nestjs/bullmq';
 import { INestApplication } from '@nestjs/common';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -924,6 +925,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   test.each(['generic', 'pcaet'] as const)(
     'importe un PCAET avec le profil %s et conserve ses secteurs réglementaires',
     async (profile) => {
+      const capture = vi
+        .spyOn(app.get(TrackingService), 'capture')
+        .mockImplementation(() => undefined);
+      onTestFinished(() => capture.mockRestore());
       const [pcaetType] = await db.db
         .select({ id: planActionTypeTable.id })
         .from(planActionTypeTable)
@@ -953,6 +958,29 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
 
       await app.get(GenerateImportDraftService).generate(jobId);
 
+      const events = capture.mock.calls.map(([event]) => event);
+      for (const name of ['started', 'succeeded', 'step_done']) {
+        const matching = events.filter(
+          ({ event }) => event === `plans:import-ia:${name}`
+        );
+        expect(matching.length).toBeGreaterThan(0);
+        for (const event of matching) {
+          expect(event).toMatchObject({
+            properties: {
+              jobId,
+              planId,
+              profile,
+              contractVersion: 1,
+              attempt: 0,
+            },
+            groups: {
+              collectivite: String(
+                profile === 'pcaet' ? otherCollectiviteId : collectiviteId
+              ),
+            },
+          });
+        }
+      }
       expect(await getStatus(jobId)).toMatchObject({
         profile,
         stepStates: { secteurs: 'ok' },

@@ -1,3 +1,4 @@
+import { PostHog } from 'posthog-node';
 import { INestApplication } from '@nestjs/common';
 import { getQueueToken } from '@nestjs/bullmq';
 import {
@@ -658,6 +659,9 @@ describe(
       'non lauréat',
       'type absent',
     ])('publie et applique le même refus avant upload : %s', async (reason) => {
+      const capture = vi
+        .spyOn(app.get(TrackingService), 'capture')
+        .mockImplementation(() => undefined);
       if (reason === 'flag fermé')
         vi.mocked(app.get(TrackingService).isFeatureEnabled).mockResolvedValue(
           false
@@ -694,6 +698,15 @@ describe(
         available: false,
       });
       expect((await enqueue()).status).toBe(412);
+      expect(capture).toHaveBeenCalledWith({
+        distinctId: fixture.user.id,
+        event: 'plans:import-ia:refused',
+        properties: expect.objectContaining({
+          profile: AiPlanImportProfileEnum.ELECTRIFICATION,
+          reason: expect.any(String),
+        }),
+        groups: { collectivite: String(fixture.collectivite.id) },
+      });
       await expectNoWrites();
     });
 
@@ -831,3 +844,55 @@ describe(
     });
   }
 );
+
+describe('Contexte des événements PostHog serveur', () => {
+  it.each(['staging', 'preprod', 'prod', undefined])(
+    'transmet l’environnement %s pour les événements du worker, sans contexte HTTP',
+    async (environment) => {
+      // Aucun événement ni requête ne part vers PostHog : le SDK est intercepté.
+      const capture = vi
+        .spyOn(PostHog.prototype, 'capture')
+        .mockImplementation(() => undefined);
+      const config = {
+        POSTHOG_KEY: 'phc_synthetic_e2e',
+        POSTHOG_HOST: 'http://127.0.0.1:1',
+        ENV_NAME: environment,
+      };
+      const tracker = new PostHogEventTracker({
+        get: (key: keyof typeof config) => config[key],
+      } as unknown as ConfigurationService);
+      try {
+        const service = new TrackingService(tracker);
+        service.capture({
+          distinctId: 'synthetic-user',
+          event: 'plans:import-ia:started',
+          properties: { profile: 'generic', jobId: 'synthetic-job' },
+          groups: { collectivite: '123' },
+        });
+        expect(capture).toHaveBeenCalledOnce();
+        expect(capture).toHaveBeenCalledWith({
+          distinctId: 'synthetic-user',
+          event: 'plans:import-ia:started',
+          properties: {
+            profile: 'generic',
+            jobId: 'synthetic-job',
+            environment: environment ?? 'local',
+          },
+          groups: { collectivite: '123' },
+        });
+        capture.mockImplementation(() => {
+          throw new Error('PostHog indisponible');
+        });
+        expect(() =>
+          service.capture({
+            distinctId: 'synthetic-user',
+            event: 'plans:import-ia:succeeded',
+          })
+        ).not.toThrow();
+      } finally {
+        await tracker.shutdown();
+        capture.mockRestore();
+      }
+    }
+  );
+});

@@ -324,6 +324,30 @@ de bascule. Ses critères et preuves figurent dans le plan de cette branche.
 La première publication des données est un prérequis de cette livraison,
 pas de B.
 
+## PR dédiée — Mesure d'usage des imports
+
+La branche `feat/plan-import-usage-tracking`, basée sur B, complète les événements
+PostHog existants pour les trois profils. Elle reste indépendante de la
+publication des données de #5815 et ne modifie pas le parcours d'import.
+Le contrat des événements et leur interprétation figurent dans
+[l'ADR](../adr/0022-initialiser-plan-electrification-depuis-annexe-3.md#7-mesurer-lusage-des-imports-dans-posthog).
+
+- [x] Partager le profil, les identifiants, la tentative et les versions sur
+      les événements serveur ; qualifier les refus par profil demandé.
+- [x] Suivre les clics vers l'historique, le détail et le plan, et rattacher
+      les clics de reprise/nouvel essai au job concerné.
+- [x] Ajouter l'environnement aux captures frontend/backend pour distinguer
+      production, préproduction, staging et tests locaux.
+- [x] Vérifier les parcours générique/PCAET/Électrification, les échecs et
+      reprises avec les e2e existants et un faux LLM, sans capture PostHog réelle
+      pour les nouvelles assertions.
+- [ ] Après déploiement, vérifier la réception en préproduction des événements
+      serveur et des clics, leur profil, leur groupe collectivité et leur environnement.
+- [ ] Configurer les vues produit dans PostHog : adoption par profil/collectivité,
+      résultats par job/tentative, refus, reprises et accès aux comptes rendus.
+      Filtrer la production explicitement ; ne pas compter une reprise comme un
+      nouvel import ni un clic comme une consultation effective.
+
 ## Dépendances métier avant ouverture
 
 Les constats détaillés et leurs sources figurent dans

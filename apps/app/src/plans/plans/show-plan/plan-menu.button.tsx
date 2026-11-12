@@ -7,7 +7,14 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useTRPC } from '@tet/api';
 import { useQuery } from '@tanstack/react-query';
-import { ButtonMenu, Icon, MenuAction, MenuSeparator } from '@tet/ui';
+import {
+  ButtonMenu,
+  Event,
+  Icon,
+  MenuAction,
+  MenuSeparator,
+  useEventTracker,
+} from '@tet/ui';
 import { useState } from 'react';
 import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
 import { useIsPendingReport } from '../../reports/generate-plan-report-pptx/use-is-pending-report';
@@ -22,6 +29,7 @@ import { usePlanCreationCapabilities } from '../use-plan-creation-capabilities';
 type RestreindreFicheState = 'closed' | 'private' | 'public';
 
 export const PlanMenuButton = () => {
+  const tracker = useEventTracker();
   const { plan, axeHasFiches } = usePlanAxesContext();
   const { getDisabledReason } = usePlanCreationCapabilities();
   const duplicateDisabledReason = getDisabledReason(plan.type?.id);
@@ -118,6 +126,14 @@ export const PlanMenuButton = () => {
     importJob
       ? {
           label: appLabels.importPlanIaDetails,
+          onClick: () =>
+            tracker(Event.plans.importIa.details, {
+              origine: 'menu_plan',
+              jobId: importJob.jobId,
+              planId: plan.id,
+              profile: importJob.profile,
+              status: importJob.status,
+            }),
           icon: 'file-text-line',
           href: makeCollectivitePlanImportsUrl({
             collectiviteId: plan.collectiviteId,

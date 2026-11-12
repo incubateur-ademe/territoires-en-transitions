@@ -1163,6 +1163,40 @@ importés et ne pas proposer de fusion ou de synchronisation. Un document
 corrigé après validation métier passe par un nouvel import explicitement
 distingué d'une reprise ; le remplacement d'un plan existant relève du support.
 
+### 7. Mesurer l'usage des imports dans PostHog
+
+Les profils `generic`, `pcaet` et `electrification` réutilisent les événements
+existants du cycle de vie, émis par le serveur même lorsque l'utilisateur
+ferme la page. Le suivi passe par `TrackingService` côté backend et
+`useEventTracker` côté frontend, sans nouveau service propre à Électrification.
+
+| Mesure                  | Événements et interprétation                                                                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adoption                | `plans:import-ia:started` : jobs admis et collectivités distincts, par profil.                                                                                                                        |
+| Résultat                | `plans:import-ia:succeeded` et `failed` : résultat d'une tentative ; rapprocher les événements par `jobId` et `attempt`, car un échec suivi d'une reprise réussie concerne le même import.            |
+| Refus                   | `plans:import-ia:refused` : refus du service d'admission, avec profil demandé et code `reason`. Les rejets HTTP antérieurs à ce service ne sont pas couverts.                                         |
+| Reprises et performance | `resume_requested`, `resumed` et `step_done`, avec le même préfixe : demande, passage du worker et durée/résultat des étapes. Les métriques existantes incluent les appels et tokens IA.              |
+| Validation humaine      | `plans:import-ia:verified` : rapprocher son `planId` de l'import réussi pour retrouver le profil.                                                                                                     |
+| Navigation              | `plans:import-ia:historique_clic`, `details_clic` et `ouvrir_plan_clic` : accès depuis la liste/formulaire, l'historique/menu du plan et le détail d'import. Ce sont des clics, pas des vues de page. |
+
+Les événements d'un job partagent ses identifiants, son profil normalisé,
+sa tentative, ses options techniques et ses versions de contrat/catalogue
+lorsqu'elles existent. Le groupe `collectivite` existant est conservé.
+Les clics de reprise et de nouvel essai sont également rattachés au job et au
+profil concernés. Les noms et formats des événements existants restent stables :
+propriétés serveur en camelCase, propriétés navigateur en snake_case.
+
+Les deux trackers communs ajoutent `environment`, issu de `ENV_NAME` (`local`
+si absent), pour séparer production, préproduction et staging dans le projet
+PostHog partagé. Filtrer explicitement cette propriété ; son absence sur les
+anciens événements ne signifie pas qu'ils proviennent de la production.
+
+Ces ajouts ne transmettent ni nom du plan, ni nom/contenu du document, ni
+instructions, ni message d'erreur libre. Les erreurs d'import restent décrites
+par les codes et catégories existants. Un échec de capture serveur ne bloque
+pas l'import. La recette doit encore vérifier la réception des événements dans
+PostHog après déploiement ; les tests locaux interceptent la capture.
+
 ## Périmètre et dépendances
 
 La livraison principale comprend l'import, les identités de référence,
@@ -1577,6 +1611,15 @@ et `createdPlanId: null`. Ces scénarios ne qualifient pas les autres
 correspondances métier, les références inaccessibles, la reprise ni
 l'assistance IA : les données du document valide sont reconnues sans
 interprétation lors de la vérification hors ligne.
+
+**12 novembre 2026 — Suivi d'usage PostHog.** Le suivi commun aux trois profils
+est complété dans une PR distincte de la publication des données. Les 128 tests
+backend ciblés passent (83 e2e et 45 tests existants de génération/reprise), ainsi
+que les trois parcours navigateur de navigation historique/détail/plan. Build
+backend, typages backend/app/specs, lint ciblé et liens locaux passent. Les
+imports des tests sont simulés ; aucun modèle IA payant n'est appelé. Cette
+validation ne démontre pas encore la réception des événements dans le projet
+PostHog déployé.
 
 ## Validation attendue
 
