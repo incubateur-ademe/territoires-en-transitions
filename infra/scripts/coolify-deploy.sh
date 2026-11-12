@@ -15,7 +15,10 @@
 #   COOLIFY_TOKEN      token Bearer. En CI : un token « write » + « deploy »
 #                      (le PATCH du tag exige write), jamais « root »
 #   APP_ID             ex. preprod/app
-#   IMAGE_TAG          tag de l'image à déployer, ex. le short SHA du commit
+#   IMAGE_TAG          (optionnel) tag de l'image à déployer, ex. le short SHA
+#                      du commit. Sans lui, redéploie la configuration en place :
+#                      la tête de branche pour une application Git
+#                      (git-applications.tf)
 #   DEPLOY_TIMEOUT     (optionnel) secondes d'attente max, défaut 900
 #
 # Code de sortie non nul si le déploiement échoue, est annulé ou dépasse le
@@ -25,7 +28,12 @@ set -euo pipefail
 : "${COOLIFY_ENDPOINT:?COOLIFY_ENDPOINT non défini (ex: https://.../api/v1)}"
 : "${COOLIFY_TOKEN:?COOLIFY_TOKEN non défini}"
 : "${APP_ID:?APP_ID non défini (ex: preprod/app)}"
-: "${IMAGE_TAG:?IMAGE_TAG non défini}"
+# Défini mais vide : la CD n'a pas su calculer le tag. Échouer plutôt que
+# redéployer la version en place.
+if [ "${IMAGE_TAG-unset}" = "" ]; then
+  echo "✗ IMAGE_TAG est vide." >&2
+  exit 1
+fi
 
 case "$-" in *x*)
   echo "✗ Refus de tourner en mode trace (set -x) : le token apparaîtrait dans les logs." >&2
@@ -57,13 +65,16 @@ api() { # api <méthode> <chemin> [fichier corps]
 app_uuid="$(api GET /applications | jq -r --arg m "$_marker" \
   '[.[] | select((.description // "") | contains($m))] | first | .uuid // empty')"
 if [ -z "$app_uuid" ]; then
-  echo "✗ Aucune application ne porte ${_marker}. Est-elle déclarée dans infra/coolify/applications.tf ?" >&2
+  echo "✗ Aucune application ne porte ${_marker}. Est-elle déclarée dans infra/coolify ?" >&2
   exit 1
 fi
 
-echo "→ Déploiement de ${APP_ID} (uuid=${app_uuid}) en ${IMAGE_TAG}…"
-jq -n --arg tag "$IMAGE_TAG" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
-api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
+_version="${IMAGE_TAG:-configuration en place}"
+echo "→ Déploiement de ${APP_ID} (uuid=${app_uuid}) : ${_version}…"
+if [ -n "${IMAGE_TAG:-}" ]; then
+  jq -n --arg tag "$IMAGE_TAG" '{docker_registry_image_tag: $tag}' >"$_tmp/tag.json"
+  api PATCH "/applications/${app_uuid}" "$_tmp/tag.json" >/dev/null
+fi
 deployment_uuid="$(api POST "/deploy?uuid=${app_uuid}&force=false" \
   | jq -r '.deployments[0].deployment_uuid // empty')"
 if [ -z "$deployment_uuid" ]; then
@@ -79,7 +90,7 @@ while :; do
   [ "$status" != "$_last" ] && echo "  statut : ${status}" && _last="$status"
   case "$status" in
   finished)
-    echo "✓ ${APP_ID} déployée en ${IMAGE_TAG}."
+    echo "✓ ${APP_ID} déployée : ${_version}."
     exit 0
     ;;
   failed | cancelled-by-user | cancelled)
