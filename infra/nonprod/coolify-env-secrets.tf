@@ -54,15 +54,15 @@ locals {
     # ce stack et infra/coolify (pas de terraform_remote_state).
     "cockpit-token" = {
       description = "COCKPIT_TOKEN d'Alloy : token Cockpit en écriture seule (métriques et logs) du projet principal."
-      value       = scaleway_cockpit_token.alloy.secret_key
+      value       = module.cockpit.alloy_token
     }
     "cockpit-metrics-push-url" = {
       description = "COCKPIT_METRICS_PUSH_URL d'Alloy : remote write de la source de métriques custom du Cockpit."
-      value       = scaleway_cockpit_source.metrics.push_url
+      value       = module.cockpit.metrics_push_url
     }
     "cockpit-logs-push-url" = {
       description = "COCKPIT_LOGS_PUSH_URL d'Alloy : push Loki de la source de logs custom du Cockpit."
-      value       = scaleway_cockpit_source.logs.push_url
+      value       = module.cockpit.logs_push_url
     }
   }
 }

@@ -1,7 +1,7 @@
 # Cibles utilitaires pour la stack prod (à lancer depuis infra/prod).
 
 .DEFAULT_GOAL := help
-.PHONY: help restore-prod-db
+.PHONY: help restore-prod-db cockpit-rules
 
 help:
 	@echo "Cibles disponibles :"
@@ -9,6 +9,8 @@ help:
 	@echo "                        Bascule : remplace la base prod Scaleway par un dump complet"
 	@echo "                        de Supabase Cloud, sans anonymisation. list=true : tri du"
 	@echo "                        dump seulement. Runbook : infra/RUNBOOKS.md « Restauration complète de la base et bascule »."
+	@echo "  cockpit-rules         Pousse les règles d'alerte de ../observability/rules"
+	@echo "                        dans le Cockpit du projet tet-prod (API Mimir)."
 	@echo ""
 	@echo "Prérequis : psql et pg_restore 15+, terraform output disponible,"
 	@echo "et IP du poste dans pg_allowed_ips (terraform.tfvars)."
@@ -20,3 +22,7 @@ restore-prod-db: export TARGET = prod
 restore-prod-db:
 	@test -n "$(d)" || { echo "Usage : make restore-prod-db d=backup-AAAA-MM-JJ.dump [list=true]"; exit 1; }
 	@../scripts/restore-db.sh
+
+# Règles d'alerte : cf. ../scripts/cockpit-rules.sh.
+cockpit-rules:
+	@../scripts/cockpit-rules.sh

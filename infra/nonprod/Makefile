@@ -103,17 +103,6 @@ restore-preprod-db:
 	@test -n "$(d)" || { echo "Usage : make restore-preprod-db d=backup-AAAA-MM-JJ.dump [list=true]"; exit 1; }
 	@../scripts/restore-db.sh
 
-# Un groupe par fichier, tous dans le namespace « tet ». Un POST remplace le
-# groupe du même nom : la cible est idempotente. Un fichier supprimé laisse son
-# groupe en place : le retirer à la main (DELETE …/rules/tet/<groupe>).
-# Authentification : clé IAM de l'opérateur (scw config), pas un token Cockpit.
+# Règles d'alerte : cf. ../scripts/cockpit-rules.sh.
 cockpit-rules:
-	@url=$$(terraform output -raw cockpit_metrics_url); \
-	key=$${SCW_SECRET_KEY:-$$(scw config get secret-key)}; \
-	for f in ../observability/rules/*.yaml; do \
-		code=$$(curl -sS -o /dev/stderr -w '%{http_code}' -X POST \
-			-H "X-Auth-Token: $$key" -H "Content-Type: application/yaml" \
-			--data-binary "@$$f" "$$url/prometheus/config/v1/rules/tet"); \
-		[ "$${code:0:1}" = 2 ] || { echo "✗ $$f → HTTP $$code"; exit 1; }; \
-		echo "✓ $$f"; \
-	done
+	@../scripts/cockpit-rules.sh

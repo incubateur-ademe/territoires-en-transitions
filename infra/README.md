@@ -496,7 +496,9 @@ migration de la prod.
 ## Observabilité (Cockpit)
 
 Monitoring et alerting passent par **Cockpit** (Grafana/Mimir/Loki managés par Scaleway),
-porté par `nonprod/observability.tf` pour le projet principal. PostHog garde l'analytics
+un par projet Scaleway, défini une fois dans `modules/cockpit` : `nonprod/observability.tf`
+l'instancie pour le projet principal (preprod, staging, preview), `prod/observability.tf`
+pour tet-prod. Les données de la prod restent dans son projet. PostHog garde l'analytics
 produit, l'error tracking et les traces du backend.
 
 | Source                                    | Collecte          | Contenu                                             |
@@ -510,16 +512,32 @@ produit, l'error tracking et les traces du backend.
   manager et destinataires (`alert_emails`). Token et URL de push vont dans Secret Manager,
   d'où `coolify` les pousse.
 - **Alloy** ([`observability/alloy/`](observability/alloy/)) : un service Coolify par
-  serveur. `config.alloy` est déposé en file storage : après modification et apply,
+  serveur, qui pousse vers le Cockpit du projet de son serveur (labels `server`, `env`).
+  Sondes HTTPS : dérivées des applications et services déclarés (`alloy_probes`,
+  `coolify/services.tf`). Nouveau serveur : `alloy_environments`, même fichier.
+  `config.alloy` est déposé en file storage : après modification et apply,
   **redémarrer le service**.
 - **Règles d'alerte** ([`observability/rules/`](observability/rules/)) : hors Terraform,
-  poussées par `make -C infra/nonprod cockpit-rules`.
+  poussées dans chaque Cockpit par `make -C infra/nonprod cockpit-rules` et
+  `make -C infra/prod cockpit-rules` (`scripts/cockpit-rules.sh`).
 - **Dashboards** (dossier **TeT** dans Grafana) : définis dans `modules/cockpit-dashboards`.
   Les modifier là, pas dans Grafana, où un apply écraserait la modification. Le provider
   `grafana` demande un rôle Editor (permissions Cockpit complètes de l'IAM).
 
 Accès : console Scaleway > Cockpit > Open dashboards. Logs dans **Explore**, source
-`tet-custom-logs`, par exemple `{env="preprod", service="backend"}`.
+`tet-custom-logs`, par exemple `{env="preprod", service="backend"}` ou, dans le Cockpit de
+tet-prod, `{env="production", service="aldo"}`.
+
+### Alloy sur un nouveau serveur : ordre
+
+1. **Stack du tier** (`nonprod` ou `prod`) : crée le Cockpit et range token et URL de push
+   dans Secret Manager. Tant que ce n'est pas fait, le plan de `coolify` échoue sur la
+   lecture de `tet-<env>-cockpit-*` (garde de `coolify/env-secrets.tf`).
+2. `make cockpit-rules` dans ce stack.
+3. **Métriques Traefik** sur le serveur (ci-dessous) : sans elles, `ScrapeTargetDown` part
+   aux `alert_emails` cinq minutes après le démarrage d'Alloy.
+4. **Stack `coolify`** : crée le service, pousse ses variables. Puis déployer le service
+   dans Coolify.
 
 ### Métriques Traefik (une fois par serveur)
 

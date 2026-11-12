@@ -14,21 +14,26 @@ locals {
   # suffit (apps/app et apps/backend en portent un sur /version, apps/site sur
   # / — leur image n'a pas curl, et le wget de busybox vise localhost, résolu
   # en ::1 alors que Next n'écoute qu'en IPv4).
+  #
+  # probe_path : chemin que sonde Alloy sur le premier domaine (services.tf).
   application_catalog = {
     app = {
       image       = "ghcr.io/incubateur-ademe/tet-app"
       port        = 3000
       health_path = ""
+      probe_path  = ""
     }
     backend = {
       image       = "ghcr.io/incubateur-ademe/tet-backend"
       port        = 3000
       health_path = ""
+      probe_path  = "/version"
     }
     site = {
       image       = "ghcr.io/incubateur-ademe/tet-site"
       port        = 3000
       health_path = ""
+      probe_path  = ""
     }
   }
 

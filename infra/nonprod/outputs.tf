@@ -136,10 +136,10 @@ output "storage_s3_secret_keys" {
 
 output "cockpit_metrics_url" {
   description = "URL de la source de métriques custom du Cockpit. Cible de make cockpit-rules (API Mimir des règles)."
-  value       = scaleway_cockpit_source.metrics.url
+  value       = module.cockpit.metrics_url
 }
 
 output "grafana_dashboards_url" {
   description = "Dossier des dashboards dans le Grafana du Cockpit (connexion IAM)."
-  value       = module.cockpit_dashboards.folder_url
+  value       = module.cockpit.dashboards_folder_url
 }

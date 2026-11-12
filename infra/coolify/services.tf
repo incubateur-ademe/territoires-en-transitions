@@ -99,12 +99,56 @@ resource "terraform_data" "supabase_api_templates" {
 locals {
   alloy_dir = "${path.module}/../observability/alloy"
 
+  # Un par serveur, indépendamment de application_environments : aldo tourne
+  # sur le serveur prod avant les applications TET. Seule liste à compléter
+  # pour un nouveau serveur : service, variables et sondes en découlent.
+  alloy_environments = ["preprod", "prod"]
+
   alloy_services = {
-    for env in ["preprod"] : "${env}/alloy" => {
+    for env in local.alloy_environments : "${env}/alloy" => {
       env    = env
       app    = "alloy"
       server = local.service_environments_catalog[env].server
-    } if contains(var.application_environments, env)
+    }
+  }
+
+  # Sondes HTTPS : une par ressource déclarée, sur son premier domaine. Elles
+  # suivent donc les catalogues (une application ajoutée est sondée). Le nom
+  # porte l'environnement : blackbox veut des noms uniques, et un serveur peut
+  # héberger plusieurs environnements.
+  alloy_probes = concat(
+    [for id, a in local.applications : {
+      server  = a.server, env = a.env, name = "${a.env}-${a.app}", service = a.app
+      address = "${a.domains[0]}${a.probe_path}"
+    }],
+    flatten([for id, s in local.services : [
+      for name, c in { auth = { container = "gotrue", path = "/auth/v1/health" }, storage = { container = "storage", path = "/storage/v1/status" } } : {
+        server              = s.server, env = s.env, name = "${s.env}-${name}", service = s.app, container = c.container
+        address             = "https://${s.supabase_api_host}${c.path}"
+      }
+    ]]),
+    # Un domaine encore déclaré en http:// pointe vers l'ancien hébergeur
+    # (git-applications.tf) : pas de sonde avant la bascule DNS.
+    [for id, a in local.git_applications : {
+      server  = a.server, env = a.env, name = "${a.env}-${a.app}", service = a.app
+      address = "${a.domains[0]}${a.probe_path}"
+    } if startswith(a.domains[0], "https://")],
+  )
+
+  # Variables de chaque Alloy (compose infra/observability/alloy), par
+  # environnement : fusionnées dans coolify_env_manifests (env-manifest.tf).
+  # Dans PROBE_TARGETS, env vaut le nom de l'environnement Coolify, comme le
+  # label des conteneurs.
+  alloy_env_manifests = {
+    for id, s in local.alloy_services : s.env => merge(local.coolify_env_common.alloy, {
+      SERVER_NAME = { value = var.app_servers[s.server].name }
+      PROBE_TARGETS = { value = jsonencode([
+        for p in local.alloy_probes : merge(
+          { for k, v in p : k => v if k != "server" },
+          { module = "https_2xx", env = local.coolify_environment_names[p.env] },
+        ) if p.server == s.server
+      ]) }
+    })
   }
 }
 

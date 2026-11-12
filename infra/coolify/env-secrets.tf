@@ -28,3 +28,17 @@ resource "scaleway_secret" "coolify_env_manual" {
     prevent_destroy = true
   }
 }
+
+# --- Garde : secrets dérivés de l'infra ---
+#
+# Écrits par le stack du tier (infra/nonprod, infra/prod), qui doit donc être
+# appliqué avant celui-ci. Les lire ici (métadonnées seules, pas la valeur)
+# fait échouer le plan sur « secret introuvable », avant qu'un service soit
+# créé puis laissé sans variables par l'échec du push.
+data "scaleway_secret" "coolify_env_derived" {
+  for_each = local.coolify_env_derived_secret_refs
+
+  project_id = local.coolify_env_settings[split("/", each.key)[0]].secret_project_id
+  name       = "tet-${split("/", each.key)[0]}-${split("/", each.key)[1]}"
+  path       = "/coolify-env/${split("/", each.key)[0]}"
+}

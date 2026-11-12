@@ -118,43 +118,18 @@ prometheus.relabel "traefik" {
 
 // --- Sondes ---
 
+// Cibles propres au serveur, en JSON dans PROBE_TARGETS (poussé depuis
+// infra/coolify/env-manifest.tf) : [{name, address, module, env, service,
+// container?}]. Les clés autres que name, address et module deviennent des
+// labels.
+//
+// Repli sur une liste vide : ce fichier arrive sur le serveur à l'apply, la
+// variable au redéploiement suivant. Un conteneur relancé entre les deux doit
+// perdre ses sondes, pas toute sa configuration (le compose, lui, exige la
+// variable au déploiement).
 prometheus.exporter.blackbox "probes" {
-	config = "{ modules: { https_2xx: { prober: http, timeout: 10s, http: { preferred_ip_protocol: ip4, fail_if_not_ssl: true } } } }"
-
-	target {
-		name    = "app"
-		address = sys.env("PROBE_APP_URL")
-		module  = "https_2xx"
-		labels  = {"env" = sys.env("ENV_NAME"), "service" = "app"}
-	}
-
-	target {
-		name    = "backend"
-		address = sys.env("PROBE_BACKEND_URL")
-		module  = "https_2xx"
-		labels  = {"env" = sys.env("ENV_NAME"), "service" = "backend"}
-	}
-
-	target {
-		name    = "site"
-		address = sys.env("PROBE_SITE_URL")
-		module  = "https_2xx"
-		labels  = {"env" = sys.env("ENV_NAME"), "service" = "site"}
-	}
-
-	target {
-		name    = "auth"
-		address = sys.env("PROBE_AUTH_URL")
-		module  = "https_2xx"
-		labels  = {"env" = sys.env("ENV_NAME"), "service" = "supabase-api", "container" = "gotrue"}
-	}
-
-	target {
-		name    = "storage"
-		address = sys.env("PROBE_STORAGE_URL")
-		module  = "https_2xx"
-		labels  = {"env" = sys.env("ENV_NAME"), "service" = "supabase-api", "container" = "storage"}
-	}
+	config  = "{ modules: { https_2xx: { prober: http, timeout: 10s, http: { preferred_ip_protocol: ip4, fail_if_not_ssl: true } } } }"
+	targets = encoding.from_json(coalesce(sys.env("PROBE_TARGETS"), "[]"))
 }
 
 prometheus.scrape "probes" {

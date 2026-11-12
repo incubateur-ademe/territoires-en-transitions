@@ -117,3 +117,20 @@ variable "redis_cluster_size" {
   type        = number
   default     = 1
 }
+
+# --- Observabilité ---
+
+variable "scaleway_secret_key" {
+  description = "Clé secrète IAM de l'opérateur, pour le provider grafana. Exportée par scripts/tf-env.sh (TF_VAR_scaleway_secret_key)."
+  type        = string
+  sensitive   = true
+}
+
+variable "alert_emails" {
+  description = "Destinataires des alertes du Cockpit prod (alertes préconfigurées et règles de infra/observability/rules)."
+  type        = list(string)
+  validation {
+    condition     = length(var.alert_emails) > 0
+    error_message = "Au moins un destinataire : sans contact, les alertes ne partent nulle part."
+  }
+}

@@ -47,7 +47,7 @@ locals {
 
   coolify_env_posthog_host = "https://p.territoiresentransitions.fr"
 
-  # Secrets écrits par le stack du tier (infra/nonprod/coolify-env-secrets.tf) :
+  # Secrets écrits par le stack du tier (infra/<tier>/coolify-env-secrets.tf) :
   # ce stack ne crée pas leur coquille.
   coolify_env_derived_secrets = [
     "supabase-database-url", "gotrue-db-database-url", "storage-db-database-url",
@@ -76,9 +76,27 @@ locals {
       SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
       SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
     }
+
+    # Variables du compose infra/observability/alloy/docker-compose.yml,
+    # complétées par serveur dans services.tf (alloy_env_manifests).
+    # Token et URL de push : Cockpit du projet de l'environnement, écrits par
+    # le stack du tier (infra/nonprod ou infra/prod, observability.tf).
+    alloy = {
+      COCKPIT_TOKEN            = { secret = "cockpit-token" }
+      COCKPIT_METRICS_PUSH_URL = { secret = "cockpit-metrics-push-url" }
+      COCKPIT_LOGS_PUSH_URL    = { secret = "cockpit-logs-push-url" }
+    }
   }
 
-  coolify_env_manifests = {
+  # URL publique d'une application Git, toujours en https : même tant que le
+  # domaine est déclaré en http:// avant la bascule DNS.
+  git_application_urls = {
+    for id, a in local.git_applications_catalog : id => replace(a.domains[0], "/^https?:/", "https:")
+  }
+
+  # Manifestes écrits à la main. Ceux d'Alloy sont générés (services.tf) et
+  # fusionnés plus bas, dans coolify_env_manifests.
+  coolify_env_app_manifests = {
     preprod = {
       app = {
         ENV_NAME     = { value = local.coolify_env_settings.preprod.env_name }
@@ -205,34 +223,16 @@ locals {
         SCW_SECRET_ACCESS_KEY = { secret = "supabase-storage-s3-secret-access-key" }
       }
 
-      # Variables du compose infra/observability/alloy/docker-compose.yml.
-      # Token et URL de push : Cockpit du projet principal (infra/nonprod/observability.tf).
-      alloy = {
-        SERVER_NAME = { value = var.app_servers.nonprod.name }
-        ENV_NAME    = { value = local.coolify_env_settings.preprod.env_name }
-
-        COCKPIT_TOKEN            = { secret = "cockpit-token" }
-        COCKPIT_METRICS_PUSH_URL = { secret = "cockpit-metrics-push-url" }
-        COCKPIT_LOGS_PUSH_URL    = { secret = "cockpit-logs-push-url" }
-
-        PROBE_APP_URL     = { value = local.coolify_env_settings.preprod.app_url }
-        PROBE_BACKEND_URL = { value = "${local.coolify_env_settings.preprod.backend_url}/version" }
-        PROBE_SITE_URL    = { value = local.coolify_env_settings.preprod.site_url }
-        PROBE_AUTH_URL    = { value = "${local.coolify_env_settings.preprod.supabase_url}/auth/v1/health" }
-        PROBE_STORAGE_URL = { value = "${local.coolify_env_settings.preprod.supabase_url}/storage/v1/status" }
-      }
-
       # Application Git (git-applications.tf). BASE_URL forme les liens
-      # absolus du sitemap et de l'export Excel (aldo#215) : toujours en https,
-      # même tant que le domaine est déclaré en http:// avant la bascule DNS.
+      # absolus du sitemap et de l'export Excel (aldo#215).
       aldo = merge(local.coolify_env_common.aldo, {
-        BASE_URL = { value = replace(local.git_applications_catalog["preprod/aldo"].domains[0], "/^https?:/", "https:") }
+        BASE_URL = { value = local.git_application_urls["preprod/aldo"] }
       })
     }
 
     prod = {
       aldo = merge(local.coolify_env_common.aldo, {
-        BASE_URL = { value = replace(local.git_applications_catalog["prod/aldo"].domains[0], "/^https?:/", "https:") }
+        BASE_URL = { value = local.git_application_urls["prod/aldo"] }
       })
     }
   }
@@ -240,6 +240,13 @@ locals {
   # Une entrée par application (applications.tf) ou service (services.tf)
   # déclaré dont l'environnement a un manifeste. Les entrées sont mises sous la forme attendue par
   # scripts/coolify-push-env.sh, noms de secrets complets.
+  coolify_env_manifests = {
+    for env in setunion(keys(local.coolify_env_app_manifests), keys(local.alloy_env_manifests)) : env => merge(
+      try(local.coolify_env_app_manifests[env], {}),
+      try({ alloy = local.alloy_env_manifests[env] }, {}),
+    )
+  }
+
   coolify_env_pushes = {
     for id, a in merge(
       { for k, v in local.applications : k => merge(v, { resource = "applications" }) },
@@ -273,6 +280,15 @@ locals {
     for id, p in local.coolify_env_pushes : [
       for key, e in p.entries : "${p.env}/${e.secret}"
       if try(e.secret, null) != null && !contains(local.coolify_env_derived_secrets, try(e.secret, ""))
+    ]
+  ]))
+
+  # Secrets dérivés que les ressources déclarées référencent : le stack du
+  # tier doit les avoir écrits avant ce stack (env-secrets.tf).
+  coolify_env_derived_secret_refs = toset(flatten([
+    for id, p in local.coolify_env_pushes : [
+      for key, e in p.entries : "${p.env}/${e.secret}"
+      if contains(local.coolify_env_derived_secrets, try(e.secret, ""))
     ]
   ]))
 }
