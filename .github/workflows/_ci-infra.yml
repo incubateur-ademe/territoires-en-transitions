@@ -1,0 +1,85 @@
+# Static checks for infra/ (Terraform, scripts, observability config).
+# No cloud credentials: nothing here reads the remote state nor calls Scaleway.
+# Tools run from pinned Docker images, so no third-party action is needed.
+name: _CI / Infra
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+
+env:
+  TERRAFORM_IMAGE: hashicorp/terraform:1.16.7
+  TFLINT_IMAGE: ghcr.io/terraform-linters/tflint:v0.65.0
+  PROMETHEUS_IMAGE: prom/prometheus:v3.15.1
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check formatting
+        run: docker run --rm -v "$PWD/infra:/w" -w /w "$TERRAFORM_IMAGE" fmt -check -recursive -diff
+
+      # Providers come from registry.terraform.io and GitHub releases, which
+      # fail often enough to break unrelated PRs.
+      - uses: actions/cache@v6.1.0
+        with:
+          path: ${{ runner.temp }}/tf-plugins
+          key: tf-plugins-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('infra/*/.terraform.lock.hcl') }}
+
+      # Root stacks only (the directories holding a lock file): they pull every
+      # module in, so modules are validated through them. -lockfile=readonly
+      # fails when the committed lock file misses a provider or pins a version
+      # that providers.tf no longer accepts. A constraint that moves while still
+      # accepting the locked version goes unnoticed: init never rewrites the
+      # lock file for that alone.
+      - name: Validate root stacks
+        run: |
+          # The plugin cache is shared between stacks and must stay mounted for
+          # validate: .terraform/providers only holds symlinks into it.
+          mkdir -p "$RUNNER_TEMP/tf-plugins"
+          tf() { docker run --rm -v "$PWD/infra:/w" -v "$RUNNER_TEMP/tf-plugins:/plugins" \
+            -e TF_PLUGIN_CACHE_DIR=/plugins -w "/w/$stack" "$TERRAFORM_IMAGE" "$@"; }
+          for lock in infra/*/.terraform.lock.hcl; do
+            stack=$(basename "$(dirname "$lock")")
+            echo "::group::$stack"
+            tf init -backend=false -lockfile=readonly -input=false ||
+              { sleep 15; tf init -backend=false -lockfile=readonly -input=false; }
+            tf validate
+            echo "::endgroup::"
+          done
+
+      - name: Lint
+        run: docker run --rm -v "$PWD/infra:/data" -w /data "$TFLINT_IMAGE" --recursive
+
+  scripts-and-observability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Shellcheck
+        run: shellcheck --severity=warning infra/scripts/*.sh
+
+      # Each file is one rule group, all pushed to the same Cockpit (Mimir)
+      # namespace by `make cockpit-rules`. Merged into a single `groups:` list,
+      # as promtool wants, so that two files sharing a group name are caught.
+      - name: Check alert rules
+        run: |
+          yq ea '[.] | {"groups": .}' infra/observability/rules/*.yaml > "$RUNNER_TEMP/rules.yaml"
+          docker run --rm -v "$RUNNER_TEMP/rules.yaml:/rules.yaml" --entrypoint promtool "$PROMETHEUS_IMAGE" \
+            check rules /rules.yaml
+
+      # Same image as the deployed service, so CI accepts what the server loads.
+      - name: Validate Alloy config
+        run: |
+          image=$(yq '.services.alloy.image' infra/observability/alloy/docker-compose.yml)
+          docker run --rm -v "$PWD/infra/observability/alloy:/a" "$image" validate /a/config.alloy

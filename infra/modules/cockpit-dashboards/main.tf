@@ -7,6 +7,8 @@
 # Une métrique ajoutée à un panneau doit aussi passer les règles keep d'Alloy.
 
 terraform {
+  required_version = ">= 1.10.0"
+
   required_providers {
     grafana = {
       source  = "grafana/grafana"

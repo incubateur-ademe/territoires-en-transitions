@@ -22,6 +22,7 @@ Par exemple les images docker construites par les actions ne sont pas tirées ou
 | [\_ci-test-db.yml](./workflows/_ci-test-db.yml)                   | Tests des migrations, de la compatibilité des backups et des contraintes en base locale. |
 | [\_ci-test-backend-api.yml](./workflows/_ci-test-backend-api.yml) | Tests d'intégration backend et API avec Supabase et Redis.                               |
 | [\_ci-test-e2e.yml](./workflows/_ci-test-e2e.yml)                 | Shards Playwright et fusion des rapports E2E.                                            |
+| [\_ci-infra.yml](./workflows/_ci-infra.yml)                       | Validations statiques de `infra/` : Terraform, scripts, règles d'alerte et config Alloy. |
 | [\_prepare-test-db.yml](./workflows/_prepare-test-db.yml)         | Préparation de la base de test, partagée entre `_ci.yml` et `dev.yml`.                   |
 
 Les workflows internes portent le préfixe `_` et exposent seulement `workflow_call`. Les points d'entrée appellent `_ci.yml`, qui délègue chaque famille de validations à un sous-workflow `_ci-*.yml`. Ces sous-workflows séparent les responsabilités même lorsqu'ils n'ont qu'un seul appelant.
