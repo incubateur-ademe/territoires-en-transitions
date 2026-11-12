@@ -7,6 +7,7 @@ import { GetImportStatusRouter } from './ai-plan-import/get-import-status/get-im
 import { GetImportCapabilitiesRouter } from './ai-plan-import/get-import-capabilities/get-import-capabilities.router';
 import { ResumeImportRouter } from './ai-plan-import/resume-import/resume-import.router';
 import { PlanRouter } from './plans/plans.router';
+import { SuiviPlanRouter } from './plans/suivi-plan/suivi-plan.router';
 import { GenerateReportsRouter } from './reports/generate-plan-report-pptx/generate-reports.router';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class PlanMainRouter {
     private readonly trpc: TrpcService,
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
+    private readonly suiviPlanRouter: SuiviPlanRouter,
     private readonly axesRouter: AxesRouter,
     private readonly generateReportsRouter: GenerateReportsRouter,
     private readonly getImportStatusRouter: GetImportStatusRouter,
@@ -25,6 +27,7 @@ export class PlanMainRouter {
 
   router = this.trpc.router({
     plans: this.planRouter.router,
+    suivi: this.suiviPlanRouter.router,
     fiches: this.fichesRouter.router,
     axes: this.axesRouter.router,
     reports: this.generateReportsRouter.router,

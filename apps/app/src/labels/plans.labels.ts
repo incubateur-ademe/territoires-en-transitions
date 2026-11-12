@@ -379,4 +379,38 @@ export const plansLabels = {
   planImporteValide: 'Plan validé.',
   planRevenirALaDemarche: 'Revenir à la démarche',
   planImporteValidationErreur: 'La validation du plan a échoué',
+
+  planOngletPilotage: 'Pilotage Plan',
+  planOngletSuivi: 'Suivi Avancement',
+  suiviPlanACeJour: 'à ce jour',
+  suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à ce bloc",
+  suiviPlanThematiques: 'Thématiques',
+  suiviPlanReinitialiserFiltres: 'Réinitialiser les filtres',
+  suiviPlanNbActions: plural({ one: 'action', other: 'actions' }),
+  vueEnsembleTitre: "Vue d'ensemble",
+  vueEnsembleAvancement: 'Avancement du plan',
+  vueEnsembleAvancementInfo:
+    "Moyenne simple de l'avancement des actions, calculé à partir de leur statut et de leur jauge : Réalisé = 100 %, À venir = 0 %, autres statuts = valeur de la jauge (0 % si non renseignée). Les actions abandonnées sont exclues.",
+  vueEnsembleEnCoursSansAvancementInfo: (count: number): string =>
+    `${count} ${
+      count > 1 ? 'actions en cours ont' : 'action en cours a'
+    } encore une jauge à 0 %.`,
+  vueEnsembleBaseCalcul: ({
+    total,
+    abandonnees,
+  }: {
+    total: number;
+    abandonnees: number;
+  }): string =>
+    `Sur ${total - abandonnees} actions, hors ${abandonnees} abandonnée(s).`,
+  vueEnsembleEnCoursSansAvancement: (count: number): string =>
+    `${count} ${
+      count > 1
+        ? 'actions en cours sans avancement renseigné, comptées'
+        : 'action en cours sans avancement renseigné, comptée'
+    } à 0 %.`,
+  vueEnsembleRenseigner: 'Renseigner',
+  vueEnsembleRepartitionParStatut: 'Répartition par statut',
+  vueEnsembleRepartitionInfo:
+    'Cliquer sur un statut ouvre les actions concernées dans le pilotage.',
 } as const;
