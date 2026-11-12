@@ -143,6 +143,7 @@ _available_ext="$("${PSQL[@]}" -Atc 'select string_agg(name, $$ $$) from pg_avai
 
 pg_restore -l "$DUMP" >"$_work/full.toc"
 
+# shellcheck disable=SC1112 # apostrophes typographiques dans le programme awk, pas des quotes shell
 awk -v skip="$_skip_schemas" -v deny="$_deny_ext" -v avail="$_available_ext" \
   -v skipdata="$_skip_data" -v extra="${EXCLUDE_REGEX:-}" -v work="$_work" '
   BEGIN {
