@@ -99,10 +99,9 @@ export const CreateDemarchePcaetPage = () => {
   const perimetreRequis = estSupra && epciCandidats.length > 0;
   const tousEngages =
     perimetreRequis && epciCandidats.every(({ engagement }) => engagement);
-  // Un EPCI couvert par le dépôt en cours d'un Supra ne commence pas le sien.
-  const couvertureEnCours = isPcaetSupraEnabled
-    ? depotContext?.couvertureEnCours ?? null
-    : null;
+  // Un EPCI couvert par le dépôt en cours d'un Supra ne commence pas le sien,
+  // flag actif ou non : le serveur refuserait.
+  const couvertureEnCours = depotContext?.couvertureEnCours ?? null;
 
   const {
     register,
