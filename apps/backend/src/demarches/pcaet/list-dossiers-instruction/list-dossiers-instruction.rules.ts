@@ -207,9 +207,6 @@ export const trierDossiers = (
       }
       return sens * nomA.localeCompare(nomB, 'fr');
     }
-    if (sort === 'dateLancement') {
-      return parDate(a, b, (ligne) => ligne.launchedAt, sens);
-    }
     if (sort === 'dateSaisine') {
       return parDate(a, b, (ligne) => ligne.dateSaisine, sens);
     }

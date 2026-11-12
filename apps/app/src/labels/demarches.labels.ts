@@ -96,9 +96,8 @@ export const demarchesLabels = {
   instructionListeAucunResultat: 'Aucun dossier ne correspond à ces filtres',
 
   instructionListeColonneRegion: 'Région',
-  instructionListeColonneDepartement: 'Département',
-  /** Court : la colonne est étroite, et le service ne saisit pas cette date. */
-  instructionListeColonneDateLancement: 'Date de lancement',
+  /** Abrégé comme le numéro qu'elle affiche. */
+  instructionListeColonneDepartement: 'Dépt.',
 
   /**
    * Un dépôt qui n'a pas été transmis n'a pas d'échéance : elle se calcule à la
@@ -743,9 +742,9 @@ export const demarchesLabels = {
   demarcheListeColonneTitre: 'Titre',
   demarcheListeColonnePilotes: 'Pilotes',
   demarcheListeColonneStatut: 'Statut',
-  demarcheListeColonneCreation: 'Créée le',
-  demarcheListeColonneLancement: 'Date de lancement (délibération)',
-  demarcheListeColonneModification: 'Modifiée le',
+  demarcheListeColonneCreation: 'Création',
+  demarcheListeColonneLancement: 'Lancement',
+  demarcheListeColonneModification: 'Modification',
   demarcheListeColonneActions: 'Actions',
   demarcheListeAucunResultat: 'Aucune démarche ne correspond à ces filtres',
   demarcheListeReplierGroupe: ({ titre }: { titre: string }) =>
@@ -817,9 +816,10 @@ export const demarchesLabels = {
    */
   instructionListeColonnePilotes: 'Pilotes',
   instructionListeColonneStatut: 'Statut',
-  instructionListeColonneDateSaisine: 'Date de saisine',
-  instructionListeColonneDateAdoption: "Date d'adoption",
-  instructionListeColonneEcheance: 'Date limite de dépôt de l’avis',
+  instructionListeColonneDateSaisine: 'Saisine',
+  instructionListeColonneDateAdoption: 'Adoption',
+  instructionListeColonneEcheance: 'Échéance avis',
+  instructionDateSaisine: 'Date de saisine',
   echeanceAvisJoursRestantsInfo: ({ jours }: { jours: number }) =>
     `Il vous reste ${echeanceAvisJour({
       count: jours,

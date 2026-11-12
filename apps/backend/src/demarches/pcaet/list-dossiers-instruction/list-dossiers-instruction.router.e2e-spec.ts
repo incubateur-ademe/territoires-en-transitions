@@ -703,26 +703,6 @@ describe('listDossiersInstruction', () => {
       ]);
     });
 
-    it('trie par date de début dans les deux sens', async () => {
-      const asc = await appeler(camille, {
-        sort: 'dateLancement',
-        direction: 'asc',
-      });
-      const desc = await appeler(camille, {
-        sort: 'dateLancement',
-        direction: 'desc',
-      });
-
-      expect(asc.items.map((item) => item.collectivite.nom)).toEqual([
-        'Abricot Communaute',
-        'Zitrone Agglo',
-      ]);
-      expect(desc.items.map((item) => item.collectivite.nom)).toEqual([
-        'Zitrone Agglo',
-        'Abricot Communaute',
-      ]);
-    });
-
     it('laisse les lignes sans date en dernier, dans les deux sens', async () => {
       const dernierNom = async (direction: 'asc' | 'desc') => {
         const result = await appeler(camille, {
@@ -730,15 +710,15 @@ describe('listDossiersInstruction', () => {
             PcaetStatutInstructionEnum.AUCUN_DEPOT,
             PcaetStatutInstructionEnum.EN_INSTRUCTION,
           ],
-          sort: 'dateLancement',
+          sort: 'dateSaisine',
           direction,
           limit: 200,
         });
-        return result.items.at(-1)?.launchedAt;
+        return result.items.at(-1)?.dateSaisine;
       };
 
-      // Une collectivité sans dépôt n'a pas de date de début : la voir ouvrir
-      // un tri antéchronologique n'apprendrait rien.
+      // Une collectivité sans dépôt n'a pas de saisine : la voir ouvrir un tri
+      // antéchronologique n'apprendrait rien.
       expect(await dernierNom('asc')).toBeNull();
       expect(await dernierNom('desc')).toBeNull();
     });

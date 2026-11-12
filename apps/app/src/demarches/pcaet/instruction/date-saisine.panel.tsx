@@ -26,12 +26,15 @@ export const DateSaisinePanel = ({
 
   const enregistrer = () => {
     if (!date) return;
-    addDateSaisine({ demandeAvisId, dateSaisine: date }, { onSuccess: onSaved });
+    addDateSaisine(
+      { demandeAvisId, dateSaisine: date },
+      { onSuccess: onSaved }
+    );
   };
 
   return (
     <div className="flex flex-col gap-3 p-2">
-      <Field title={appLabels.instructionListeColonneDateSaisine} htmlFor={fieldId}>
+      <Field title={appLabels.instructionDateSaisine} htmlFor={fieldId}>
         <div className="flex items-center gap-2">
           <Input
             id={fieldId}
@@ -72,7 +75,9 @@ export const DateSaisinePanel = ({
                 className="flex flex-col p-0 text-sm"
               >
                 <span
-                  className={index === 0 ? 'font-bold text-primary-9' : 'text-primary-9'}
+                  className={
+                    index === 0 ? 'font-bold text-primary-9' : 'text-primary-9'
+                  }
                 >
                   {getTextFormattedDate({ date: ligne.dateSaisine })}
                 </span>

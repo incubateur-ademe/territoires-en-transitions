@@ -376,8 +376,16 @@ export const RegionCell = ({ dossier }: { dossier: Dossier }) => (
   </span>
 );
 
-export const DepartementCell = ({ dossier }: { dossier: Dossier }) => (
-  <span className="text-primary-9">
-    {dossier.collectivite.departementLibelle ?? '—'}
-  </span>
-);
+/** Le numéro, le nom au survol : la colonne est étroite. */
+export const DepartementCell = ({
+  departement,
+}: {
+  departement: { code: string | null; libelle: string | null };
+}) =>
+  departement.code === null ? (
+    <span className="text-grey-6">{'—'}</span>
+  ) : (
+    <span className="text-primary-9" title={departement.libelle ?? undefined}>
+      {departement.code}
+    </span>
+  );
