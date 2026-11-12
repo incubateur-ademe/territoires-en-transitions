@@ -1,7 +1,13 @@
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { FiltersGenericButtonMenu } from '@/app/ui/lists/filters.generic-button-menu';
-import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@tet/domain/plans';
+import {
+  EN_COURS_SANS_AVANCEMENT_LABEL,
+  NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
+  SANS_PILOTE_LABEL,
+  SANS_REFERENT_LABEL,
+} from '@tet/domain/plans';
+import { SuiviOption } from '../data/use-fiches-filters-list/types';
 import { Alert, Field, SelectFilter } from '@tet/ui';
 import { usePlanFilters } from './plan-filters.context';
 
@@ -80,6 +86,21 @@ const MenuContent = () => {
           <PrioritesFilterDropdown
             values={filters.priorites}
             onChange={(priorites) => setFilters({ ...filters, priorites })}
+          />
+        </Field>
+        <Field title={getFilterLabel('suivi')}>
+          <SelectFilter
+            values={filters.suivi ?? []}
+            options={[
+              EN_COURS_SANS_AVANCEMENT_LABEL,
+              NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
+            ].map((option) => ({ value: option, label: option }))}
+            onChange={({ values }) =>
+              setFilters({
+                ...filters,
+                suivi: Array.isArray(values) ? (values as SuiviOption[]) : [],
+              })
+            }
           />
         </Field>
       </div>

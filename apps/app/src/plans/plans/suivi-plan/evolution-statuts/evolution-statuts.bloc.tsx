@@ -21,6 +21,7 @@ import {
   PeriodeEvolution,
   periodeEvolutionOptions,
 } from './periode-evolution';
+import { makePilotageParStatutUrl } from '../make-pilotage-par-statut-url';
 import { StatutsBar } from './statuts.bar';
 import { usePeriodeEvolution } from './use-periode-evolution';
 
@@ -194,6 +195,9 @@ export const EvolutionStatutsBloc = ({
               total={totaux[1]}
               isLoading={isLoading}
               statuts={rows.map(({ statut, fin }) => ({ statut, count: fin }))}
+              getHref={(statut) =>
+                makePilotageParStatutUrl({ collectiviteId, planId, statut })
+              }
               dataTest="plans.suivi.evolution-statuts.barre-fin"
             />
             <div className="pt-6 border-t border-grey-3">

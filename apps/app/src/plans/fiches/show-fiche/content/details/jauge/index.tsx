@@ -4,14 +4,13 @@ import {
   isJaugeFigee,
   JAUGE_MAX,
   JAUGE_MIN,
-  JAUGE_STEP,
   StatutEnum,
 } from '@tet/domain/plans';
-import { cn, Icon, Slider, Tooltip } from '@tet/ui';
+import { Icon, Tooltip } from '@tet/ui';
 import { format } from 'date-fns';
 import { JSX, useState } from 'react';
-import { getJaugeColors } from '@/app/plans/shared/jauge/get-jauge-colors';
 import { JaugeBadge } from '@/app/plans/shared/jauge/jauge.badge';
+import { JaugeSlider } from '@/app/plans/shared/jauge/jauge.slider';
 import { useFicheContext } from '../../../context/fiche-context';
 import { JaugeFigeeAlert } from './jauge-figee.alert';
 import { SousActionsRealiseesSkeleton } from './sous-actions-realisees.skeleton';
@@ -29,7 +28,6 @@ export const Jauge = (): JSX.Element => {
   const statut = fiche.statut;
   const isFigee = isJaugeFigee(statut);
   const isDisabled = isReadonly || isFigee;
-  const colors = getJaugeColors({ jauge, isDisabled });
   const sousActionsRealisees = sousActions.list.filter(
     (sousAction) => sousAction.statut === StatutEnum.REALISE
   ).length;
@@ -48,7 +46,7 @@ export const Jauge = (): JSX.Element => {
             isLarge
           />
           {fiche.jaugeModifiedAt && (
-            <p className="mb-0 ml-auto text-xs font-light italic text-grey-7">
+            <p className="mb-0 ml-auto text-xs font-light text-grey-7">
               {appLabels.ficheJaugeMiseAJour(
                 format(new Date(fiche.jaugeModifiedAt), 'dd/MM/yyyy')
               )}
@@ -56,36 +54,28 @@ export const Jauge = (): JSX.Element => {
           )}
         </div>
 
-        <Slider
-          aria-label={appLabels.ficheJauge}
-          min={JAUGE_MIN}
-          max={JAUGE_MAX}
-          step={JAUGE_STEP}
-          value={[jauge]}
-          disabled={isDisabled}
-          rangeColors={[colors.fill, colors.track]}
-          className={cn(
-            'my-2 [&>span:first-child]:h-2 [&_[role=slider]]:border-2',
-            isDisabled
-              ? 'cursor-not-allowed [&_[role=slider]]:cursor-not-allowed [&_[role=slider]]:border-grey-5 [&_[role=slider]]:bg-grey-3'
-              : cn(
-                  '[&_[role=slider]]:ring-4 [&_[role=slider]]:shadow-md',
-                  jauge === JAUGE_MAX
-                    ? '[&_[role=slider]]:border-success-1 [&_[role=slider]]:ring-success-1/15'
-                    : '[&_[role=slider]]:border-primary-9 [&_[role=slider]]:ring-primary-9/15'
-                )
-          )}
-          onValueChange={([value]) => setJauge(value)}
-          onValueCommit={([value]) => {
+        <JaugeSlider
+          ariaLabel={appLabels.ficheJauge}
+          value={jauge}
+          isDisabled={isDisabled}
+          className="my-2"
+          onValueChange={setJauge}
+          onValueCommit={(value) => {
             if (value === fiche.jauge) return;
             update({ ficheId: fiche.id, ficheFields: { jauge: value } });
           }}
-          data-test="fiche.jauge.slider"
+          dataTest="fiche.jauge.slider"
         />
 
         <div className="flex justify-between text-xs leading-5 text-grey-7">
           <span>{`${JAUGE_MIN} %`}</span>
-          <Tooltip label={appLabels.ficheJaugeInfo}>
+          <Tooltip
+            label={
+              <p className="w-fit max-w-sm font-normal">
+                {appLabels.ficheJaugeInfo} <b>{StatutEnum.REALISE}</b>
+              </p>
+            }
+          >
             <span className="flex items-center gap-1">
               {`${JAUGE_MAX} %`}
               <Icon icon="information-line" size="xs" />

@@ -26,6 +26,8 @@ const visibleFilterKeys = new Set<ListFichesRequestFiltersKeys>([
   'sharedWithCollectivites',
   'noStatut',
   'statuts',
+  'enCoursSansAvancement',
+  'notModifiedForOverAYear',
   'noPriorite',
   'priorites',
   'ficheIds',
