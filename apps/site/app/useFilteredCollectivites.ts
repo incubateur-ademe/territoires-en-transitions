@@ -1,19 +1,22 @@
 import { getSiteTrpcClient } from '@/site/src/trpc/trpc-client';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 
 const trpcClient = getSiteTrpcClient();
 
 export const useFilteredCollectivites = (search: string) => {
-  return useSWR(`site-collectivites-filtered-${search}`, async () => {
-    const filteredCollectivites =
-      await trpcClient.collectivites.site.searchCollectivites.query({
-        search,
-      });
+  return useQuery({
+    queryKey: ['site-collectivites-filtered', search],
+    queryFn: async () => {
+      const filteredCollectivites =
+        await trpcClient.collectivites.site.searchCollectivites.query({
+          search,
+        });
 
-    if (!filteredCollectivites.length) {
-      return null;
-    }
+      if (!filteredCollectivites.length) {
+        return null;
+      }
 
-    return { filteredCollectivites };
+      return { filteredCollectivites };
+    },
   });
 };
