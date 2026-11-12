@@ -4,6 +4,7 @@ import NoResult from '@/site/components/info/NoResult';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
 import Temoignages from '../home/Temoignages';
+import { getConseillersCount } from './annuaire/utils';
 import Benefices from './Benefices';
 import CollectivitesEngagees from './CollectivitesEngagees';
 import Compte from './Compte';
@@ -32,7 +33,11 @@ export async function generateMetadata(
 }
 
 const Programme = async () => {
-  const data = await getStrapiData();
+  const [data, conseillersCount] = await Promise.all([
+    getStrapiData(),
+    // Le compteur est accessoire : en cas d'échec Strapi, on affiche « - ».
+    getConseillersCount().catch(() => undefined),
+  ]);
 
   if (!data) {
     return <NoResult />;
@@ -55,7 +60,10 @@ const Programme = async () => {
 
       <Benefices {...data.benefices} />
 
-      <CollectivitesEngagees {...data.collectivites} />
+      <CollectivitesEngagees
+        {...data.collectivites}
+        conseillersCount={conseillersCount}
+      />
 
       <Contact {...data.contact} />
 
