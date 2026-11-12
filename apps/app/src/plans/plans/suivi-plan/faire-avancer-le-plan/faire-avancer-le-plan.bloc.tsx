@@ -7,10 +7,9 @@ import {
   faireAvancerLePlanFilters,
 } from '@tet/domain/plans';
 import { Button, Icon, IconValue } from '@tet/ui';
-import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useGetFaireAvancerLePlan } from '../data/use-get-faire-avancer-le-plan';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
-import { RenseignerAvancementPanel } from './renseigner-avancement.panel';
+import { RenseignerAvancementButton } from './renseigner-avancement.side-panel';
 
 const lignes: {
   compte: FaireAvancerLePlanCompte;
@@ -52,19 +51,13 @@ export const FaireAvancerLePlanBloc = ({
   planId: number;
 }) => {
   const { data } = useGetFaireAvancerLePlan({ planId });
-  const { setPanel } = useSidePanel();
+  const lignesVisibles = data
+    ? lignes.filter(({ compte }) => data[compte] > 0)
+    : lignes;
 
-  const openRenseignerAvancement = () =>
-    setPanel({
-      type: 'open',
-      title: appLabels.faireAvancerLePlanRenseignerAvancement,
-      content: (
-        <RenseignerAvancementPanel
-          collectiviteId={collectiviteId}
-          planId={planId}
-        />
-      ),
-    });
+  if (lignesVisibles.length === 0) {
+    return null;
+  }
 
   return (
     <SuiviPlanBloc
@@ -81,7 +74,7 @@ export const FaireAvancerLePlanBloc = ({
         {appLabels.faireAvancerLePlanDescription}
       </p>
       <ul className="flex flex-col mb-0 p-0 list-none border-t border-grey-3">
-        {lignes.map(({ compte, icon, libelle, info }) => {
+        {lignesVisibles.map(({ compte, icon, libelle, info }) => {
           const count = data?.[compte];
           return (
             <li
@@ -104,17 +97,11 @@ export const FaireAvancerLePlanBloc = ({
                 <span className="text-xs text-grey-8">{info}</span>
               </div>
               {compte === 'enCoursSansAvancement' ? (
-                <Button
-                  variant="outlined"
-                  size="xs"
-                  className="gap-2 bg-white"
-                  icon="side-bar-line"
-                  iconPosition="right"
-                  onClick={openRenseignerAvancement}
+                <RenseignerAvancementButton
+                  collectiviteId={collectiviteId}
+                  planId={planId}
                   dataTest="plans.suivi.faire-avancer-le-plan.renseigner-avancement"
-                >
-                  {appLabels.faireAvancerLePlanRenseignerAvancement}
-                </Button>
+                />
               ) : (
                 <Button
                   variant="outlined"
