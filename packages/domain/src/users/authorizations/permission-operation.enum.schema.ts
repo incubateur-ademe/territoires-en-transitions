@@ -15,6 +15,8 @@ export const PermissionOperations = [
   // Membres
   'collectivites.membres.read',
   'collectivites.membres.mutate',
+  // Désigner les conseillers référents (champ estReferent) : édition et admin
+  'collectivites.membres.mutate_conseillers_referents',
   // Tags
   'collectivites.tags.read',
   'collectivites.tags.mutate',

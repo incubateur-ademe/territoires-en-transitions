@@ -15,6 +15,7 @@ import { mutateMembresErrorConfig } from './mutate-membres/mutate-membres.errors
 import {
   joinAsMembreInputSchema,
   removeMembreInputSchema,
+  updateConseillersReferentsInputSchema,
   updateMembreInputSchema,
 } from './mutate-membres/mutate-membres.input';
 import { MutateMembresService } from './mutate-membres/mutate-membres.service';
@@ -57,6 +58,17 @@ export class CollectiviteMembresRouter {
       .input(z.array(updateMembreInputSchema))
       .mutation(async ({ input, ctx }) => {
         const result = await this.mutateMembresService.update(input, ctx.user);
+        return this.getResultDataOrThrowError(result);
+      }),
+
+    updateConseillersReferents: this.trpc.authedProcedure
+      .input(updateConseillersReferentsInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        const result =
+          await this.mutateMembresService.updateConseillersReferents(
+            input,
+            { user: ctx.user }
+          );
         return this.getResultDataOrThrowError(result);
       }),
 

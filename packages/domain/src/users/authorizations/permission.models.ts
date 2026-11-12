@@ -42,6 +42,7 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   'collectivites.tableau-de-bord-personnel.mutate',
   'collectivites.tableau-de-bord.mutate',
   'collectivites.priorisation.read',
+  'collectivites.membres.mutate_conseillers_referents',
   'collectivites.tags.mutate',
   'collectivites.documents.mutate',
   'referentiels.mutate',
