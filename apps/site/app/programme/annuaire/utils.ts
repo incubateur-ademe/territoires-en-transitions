@@ -1,3 +1,7 @@
+'use server';
+
+// Server Action : STRAPI_KEY n'existe que côté serveur, un appel direct
+// depuis le navigateur partait sans clé (401) et l'annuaire restait vide.
 import { fetchCollection } from '@/site/src/strapi/strapi';
 import { StrapiMedia } from '@/site/src/strapi/types';
 
@@ -38,4 +42,12 @@ export const getData = async ({
     data: conseillers.data ?? [],
     pagination: conseillers.meta.pagination,
   };
+};
+
+export const getConseillersCount = async () => {
+  // Seul `meta.pagination.total` est lu : inutile de charger les lignes.
+  const conseillers = await fetchCollection<Conseiller>('conseillers', [
+    ['pagination[pageSize]', '1'],
+  ]);
+  return conseillers.meta.pagination.total;
 };
