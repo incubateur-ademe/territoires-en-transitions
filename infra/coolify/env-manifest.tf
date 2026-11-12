@@ -64,6 +64,20 @@ locals {
     "NODE_ENV", "PORT", "HOSTNAME", "LANG",
   ]
 
+  # Entrées identiques dans tous les environnements, par application, fusionnées
+  # (merge) dans chaque manifeste, qui garde la main en cas de clé en double.
+  # Un `secret` reste propre à l'environnement : tet-<env>-<nom>.
+  coolify_env_common = {
+    aldo = {
+      ALDO_EMAIL       = { value = "aldo@ademe.fr" }
+      GOOGLE_SHEETS_ID = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }
+      # Clé de compte de service : JSON indenté, tel que Google le fournit.
+      GOOGLE_SHEETS_CREDENTIALS = { secret = "aldo-google-sheets-credentials", multiline = true }
+      SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
+      SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
+    }
+  }
+
   coolify_env_manifests = {
     preprod = {
       app = {
@@ -211,26 +225,15 @@ locals {
       # Application Git (git-applications.tf). BASE_URL forme les liens
       # absolus du sitemap et de l'export Excel (aldo#215) : toujours en https,
       # même tant que le domaine est déclaré en http:// avant la bascule DNS.
-      aldo = {
-        BASE_URL         = { value = replace(local.git_applications_catalog["preprod/aldo"].domains[0], "/^https?:/", "https:") }
-        ALDO_EMAIL       = { value = "aldo@ademe.fr" }
-        GOOGLE_SHEETS_ID = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }
-        # Clé de compte de service : JSON indenté, tel que Google le fournit.
-        GOOGLE_SHEETS_CREDENTIALS = { secret = "aldo-google-sheets-credentials", multiline = true }
-        SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
-        SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
-      }
+      aldo = merge(local.coolify_env_common.aldo, {
+        BASE_URL = { value = replace(local.git_applications_catalog["preprod/aldo"].domains[0], "/^https?:/", "https:") }
+      })
     }
 
     prod = {
-      aldo = {
-        BASE_URL                  = { value = replace(local.git_applications_catalog["prod/aldo"].domains[0], "/^https?:/", "https:") }
-        ALDO_EMAIL                = { value = "aldo@ademe.fr" }
-        GOOGLE_SHEETS_ID          = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }
-        GOOGLE_SHEETS_CREDENTIALS = { secret = "aldo-google-sheets-credentials", multiline = true }
-        SIB_API_KEY               = { secret = "aldo-brevo-api-key" }
-        SLACK_COMMUNITY_URL       = { value = "https://join.slack.com/t/opencarbonpractice/shared_invite/zt-3gmnrmvcg-PNPWejQ8fLSHfIsQHtqoEQ" }
-      }
+      aldo = merge(local.coolify_env_common.aldo, {
+        BASE_URL = { value = replace(local.git_applications_catalog["prod/aldo"].domains[0], "/^https?:/", "https:") }
+      })
     }
   }
 
