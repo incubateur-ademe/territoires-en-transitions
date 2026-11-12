@@ -3,14 +3,13 @@ import { buildFilesizeSql } from '@tet/backend/collectivites/documents/file-info
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { storageObjectTable } from '@tet/backend/collectivites/documents/models/storage-object.table';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { createErrorsEnum } from '@tet/backend/utils/trpc/trpc-error-handler';
 import type { DocumentHash } from '@tet/domain/collectivites';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
+import { DemarchePcaetLectureService } from './demarche-pcaet-lecture.service';
 import { DepotPermissionsService } from './depot-permissions.service';
 import { PcaetAvis } from './models/pcaet-avis.dto';
 import { PcaetAvisRepository } from './pcaet-avis.repository';
@@ -42,7 +41,7 @@ export class ListAvisPiecesService {
     private readonly databaseService: DatabaseService,
     private readonly depotPermissionsService: DepotPermissionsService,
     private readonly pcaetAvisRepository: PcaetAvisRepository,
-    private readonly permissionService: PermissionService
+    private readonly lectureService: DemarchePcaetLectureService
   ) {}
 
   async listAvisPieces(
@@ -148,7 +147,8 @@ export class ListAvisPiecesService {
   //   déposer, et voit donc aussi ses propres brouillons ;
   // - un autre destinataire du même dossier, sur les avis **validés** : une
   //   DDT ou une DR ADEME suit l'instruction sans y prendre part ;
-  // - la collectivité déposante, sur les avis **validés** également.
+  // - qui lit la démarche déposante, sur les avis **validés** également : qui
+  //   l'édite, ou un membre d'un EPCI que couvre le dépôt d'un Supra.
   //
   // Le brouillon ne sort jamais de l'espace de son auteur : les deux dernières
   // barrières sont derrière le même test de validation.
@@ -179,21 +179,17 @@ export class ListAvisPiecesService {
       return true;
     }
 
-    const deposanteCollectiviteId =
-      await this.pcaetAvisRepository.getDeposanteCollectiviteId(
-        demandeAvisId,
-        tx
-      );
-    if (deposanteCollectiviteId === null) {
-      return false;
-    }
-    const cotéDeposante = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['DEMARCHES.PCAET.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      { collectiviteId: deposanteCollectiviteId },
+    const demarche = await this.pcaetAvisRepository.getDemarcheCible(
+      demandeAvisId,
       tx
     );
+    if (demarche === null) {
+      return false;
+    }
+    const cotéDeposante = await this.lectureService.canRead(demarche, {
+      user,
+      tx,
+    });
     return cotéDeposante.success;
   }
 }

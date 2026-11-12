@@ -56,8 +56,12 @@ export const ListPublicDemarchesPcaetPage = () => {
     isError,
     refetch,
   } = useListPublicDemarchesPcaet();
-  const { data: couvrantes, isLoading: couvrantesEnAttente } =
-    useListDemarchesCouvrantes();
+  const {
+    data: couvrantes,
+    isLoading: couvrantesEnAttente,
+    isError: couvrantesEnErreur,
+    refetch: refetchCouvrantes,
+  } = useListDemarchesCouvrantes();
   const lignes = useMemo<DemarcheListItem[] | undefined>(
     () => demarches && [...(couvrantes ?? []), ...demarches],
     [demarches, couvrantes]
@@ -87,10 +91,13 @@ export const ListPublicDemarchesPcaetPage = () => {
           <div className="flex py-8">
             <SpinnerLoader className="m-auto" />
           </div>
-        ) : isError || !lignes ? (
+        ) : isError || couvrantesEnErreur || !lignes ? (
           <ErrorCard
             title={appLabels.uneErreurEstSurvenue}
-            retry={() => refetch()}
+            retry={() => {
+              if (isError) refetch();
+              if (couvrantesEnErreur) refetchCouvrantes();
+            }}
           />
         ) : lignes.length === 0 ? (
           <EmptyCard

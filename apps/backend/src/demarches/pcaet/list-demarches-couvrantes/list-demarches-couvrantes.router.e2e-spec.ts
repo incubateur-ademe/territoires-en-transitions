@@ -11,9 +11,15 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { TypePorteurSupraEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq, inArray } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { attachTestPlanToDemarchePcaet } from '../demarches-pcaet.test-fixture';
 
 describe("L'EPCI couvert consulte le dépôt du Supra", () => {
   let app: INestApplication;
@@ -44,11 +50,11 @@ describe("L'EPCI couvert consulte le dépôt du Supra", () => {
       await cleanupCollectiviteDemarches(db, fixture.collectivite.id);
       await fixture.cleanup();
     });
+    const user = getAuthUserFromUserCredentials(fixture.user);
     return {
       collectivite: fixture.collectivite,
-      caller: router.createCaller({
-        user: getAuthUserFromUserCredentials(fixture.user),
-      }),
+      user,
+      caller: router.createCaller({ user }),
     };
   };
 
@@ -145,6 +151,76 @@ describe("L'EPCI couvert consulte le dépôt du Supra", () => {
         demarcheId: depot.id,
       })
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('refuse la lecture par couverture à une clé d’API sans lecture des démarches', async () => {
+    const { supra, epci, depot } = await addDepotCouvrant();
+    const cleRestreinte = router.createCaller({
+      user: {
+        ...epci.user,
+        jwtPayload: { ...epci.user.jwtPayload, permissions: ['plans.read'] },
+      },
+    });
+
+    await expect(
+      cleRestreinte.demarches.pcaet.listCouvrantes({
+        collectiviteId: epci.collectivite.id,
+      })
+    ).resolves.toEqual([]);
+    await expect(
+      cleRestreinte.demarches.pcaet.get({
+        collectiviteId: supra.collectivite.id,
+        demarcheId: depot.id,
+      })
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('cache au membre couvert les fiches restreintes du Supra', async () => {
+    const { supra, epci, depot } = await addDepotCouvrant();
+    const ref = { collectiviteId: supra.collectivite.id, demarcheId: depot.id };
+    const plan = await attachTestPlanToDemarchePcaet(db, ref);
+    const fiches = await db.db
+      .insert(ficheActionTable)
+      .values([
+        { collectiviteId: ref.collectiviteId, titre: 'Publique' },
+        {
+          collectiviteId: ref.collectiviteId,
+          titre: 'Restreinte',
+          restreint: true,
+        },
+      ])
+      .returning({ id: ficheActionTable.id });
+    // Avant la collectivité : le plan et ses fiches la retiennent.
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionAxeTable)
+        .where(eq(ficheActionAxeTable.axeId, plan.id));
+      await db.db.delete(ficheActionTable).where(
+        inArray(
+          ficheActionTable.id,
+          fiches.map(({ id }) => id)
+        )
+      );
+      await db.db
+        .delete(demarchePlanActionTable)
+        .where(eq(demarchePlanActionTable.planActionId, plan.id));
+      await db.db.delete(axeTable).where(eq(axeTable.id, plan.id));
+    });
+    await db.db.insert(ficheActionAxeTable).values(
+      fiches.map(({ id }) => ({
+        ficheId: id,
+        axeId: plan.id,
+        createdBy: supra.user.id,
+      }))
+    );
+
+    const titres = async (caller: typeof epci.caller) =>
+      (await caller.demarches.pcaet.listPlans(ref))
+        .flatMap((contenu) => contenu.fiches.map(({ titre }) => titre))
+        .sort();
+
+    expect(await titres(epci.caller)).toEqual(['Publique']);
+    expect(await titres(supra.caller)).toEqual(['Publique', 'Restreinte']);
   });
 
   it("n'ouvre pas une démarche sous l'identifiant d'une autre collectivité", async () => {
