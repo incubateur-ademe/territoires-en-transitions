@@ -76,7 +76,7 @@ export const CreateDemarchePcaetPage = () => {
   );
   const peutDeclarerScotAec = depotContext?.peutDeclarerScotAec ?? false;
   // Même garde que le serveur : flag inactif, le Supra dépose sans périmètre.
-  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is_pcaet-supra_enabled');
+  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is-pcaet-supra-enabled');
   const estSupra = isPcaetSupraEnabled && (depotContext?.estSupra ?? false);
   const epciCandidats = useMemo(
     () => depotContext?.epciCandidats ?? [],

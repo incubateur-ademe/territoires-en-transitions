@@ -111,7 +111,7 @@ export const useDemarchePcaet = (demarcheId: number) => {
   const isFicheSecteursEnabled = useIsFeatureFlagEnabled(
     'is-fiche-secteurs-enabled'
   );
-  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is_pcaet-supra_enabled');
+  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is-pcaet-supra-enabled');
   const demarche = useMemo(
     () =>
       serverDemarche

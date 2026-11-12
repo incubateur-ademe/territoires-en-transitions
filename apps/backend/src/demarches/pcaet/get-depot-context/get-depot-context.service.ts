@@ -59,7 +59,7 @@ export class GetDepotContextService {
         this.perimetreRepository.getNatureInsee(input.collectiviteId, tx),
         // Flag inactif : le Supra dépose comme toute collectivité, sans périmètre.
         this.trackingService.isFeatureEnabled(
-          'is_pcaet-supra_enabled',
+          'is-pcaet-supra-enabled',
           user.id,
           input.collectiviteId
         ),

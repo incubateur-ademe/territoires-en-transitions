@@ -64,6 +64,16 @@ export class CreateDemarchePcaetService {
       return failure(CreateDemarchePcaetErrorEnum.UNAUTHORIZED);
     }
 
+    const collectivitesCouvertesIds = input.collectivitesCouvertesIds ?? [];
+    // Lu avant la transaction : un PostHog lent la garderait ouverte.
+    const isSupraEnabled =
+      collectivitesCouvertesIds.length > 0 &&
+      (await this.featureFlagService.isFeatureEnabled(
+        'is-pcaet-supra-enabled',
+        user.id,
+        input.collectiviteId
+      ));
+
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<DemarchePcaet, CreateDemarchePcaetError>> => {
@@ -80,13 +90,12 @@ export class CreateDemarchePcaetService {
         );
       }
 
-      const collectivitesCouvertesIds = input.collectivitesCouvertesIds ?? [];
       if (
         collectivitesCouvertesIds.length > 0 &&
         !(await this.isPerimetreValide(
           input.collectiviteId,
           collectivitesCouvertesIds,
-          user.id,
+          isSupraEnabled,
           transaction
         ))
       ) {
@@ -219,19 +228,14 @@ export class CreateDemarchePcaetService {
   /**
    * Seul un Supra couvre des EPCI, et seulement ses membres d'après BANATIC :
    * la liste à cocher est la seule source, sans ajout hors liste. Flag
-   * `is_pcaet-supra_enabled` inactif : aucun périmètre, même valide.
+   * `is-pcaet-supra-enabled` inactif : aucun périmètre, même valide.
    */
   private async isPerimetreValide(
     porteurId: number,
     collectivitesCouvertesIds: number[],
-    userId: string,
+    isSupraEnabled: boolean,
     tx: Transaction
   ): Promise<boolean> {
-    const isSupraEnabled = await this.featureFlagService.isFeatureEnabled(
-      'is_pcaet-supra_enabled',
-      userId,
-      porteurId
-    );
     if (!isSupraEnabled) {
       return false;
     }

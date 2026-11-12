@@ -20,6 +20,8 @@ import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 
 const NATURES_EPCI_FP = collectiviteNature.filter(estNaturePorteusePcaet);
 
+const dateDebut = sql<string>`to_char(coalesce(${demarcheTable.launchedAt}, ${demarcheTable.createdAt}) at time zone 'Europe/Paris', 'YYYY-MM-DD')`;
+
 /**
  * Le périmètre du PCAET d'un Supra : les EPCI à fiscalité propre qu'il couvre.
  */
@@ -77,7 +79,7 @@ export class DemarchePcaetPerimetreRepository {
       .selectDistinctOn([demarcheTable.collectiviteId], {
         collectiviteId: demarcheTable.collectiviteId,
         status: demarcheTable.status,
-        dateDebut: sql<string>`coalesce(${demarcheTable.launchedAt}, ${demarcheTable.createdAt})`,
+        dateDebut,
       })
       .from(demarcheTable)
       .where(
