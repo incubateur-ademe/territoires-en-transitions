@@ -65,6 +65,7 @@ export const plansLabels = {
 
   ficheStatut: 'Statut',
   ficheJauge: 'Avancement',
+  ficheJaugeNonRenseignee: '–\u00a0%',
   ficheJaugeInfo: "À 100 %, l'action passe automatiquement au statut Réalisé",
   ficheJaugeFigeeTitre: 'Avancement figé',
   ficheJaugeFigee: {
@@ -387,14 +388,22 @@ export const plansLabels = {
   suiviPlanThematiques: 'Thématiques',
   suiviPlanReinitialiserFiltres: 'Réinitialiser les filtres',
   suiviPlanNbActions: plural({ one: 'action', other: 'actions' }),
+  suiviPlanAvancementInfoPlan:
+    "Moyenne de l'avancement de toutes les actions qui composent le plan, calculé à partir de leur statut et de leur jauge :",
+  suiviPlanAvancementInfoAxe:
+    "Moyenne de l'avancement de toutes les actions qui composent l'axe ou le sous-axe, calculé à partir de leur statut et de leur jauge :",
+  suiviPlanAvancementInfoRegles: [
+    { statut: 'Réalisé', valeur: ' = 100\u00a0%' },
+    { statut: 'À venir', valeur: ' = 0\u00a0%' },
+    {
+      statut: 'Autres statuts',
+      valeur: ' = valeur de la jauge (0\u00a0% si non renseignée).',
+    },
+  ],
+  suiviPlanAvancementInfoExclusions:
+    'Les actions abandonnées sont exclues. Les jauges peuvent être impactées par le fait que des actions soient récurrentes.',
   vueEnsembleTitre: "Vue d'ensemble",
   vueEnsembleAvancement: 'Avancement du plan',
-  vueEnsembleAvancementInfo:
-    "Moyenne simple de l'avancement des actions, calculé à partir de leur statut et de leur jauge : Réalisé = 100 %, À venir = 0 %, autres statuts = valeur de la jauge (0 % si non renseignée). Les actions abandonnées sont exclues.",
-  vueEnsembleEnCoursSansAvancementInfo: (count: number): string =>
-    `${count} ${
-      count > 1 ? 'actions en cours ont' : 'action en cours a'
-    } encore une jauge à 0 %.`,
   vueEnsembleBaseCalcul: ({
     total,
     abandonnees,
@@ -413,4 +422,15 @@ export const plansLabels = {
   vueEnsembleRepartitionParStatut: 'Répartition par statut',
   vueEnsembleRepartitionInfo:
     'Cliquer sur un statut ouvre les actions concernées dans le pilotage.',
+  vueEnsembleTrancher: 'Trancher',
+  vueEnsembleArbitrer: 'Arbitrer',
+  vueEnsembleDebloquer: 'Débloquer',
+  avancementParAxeTitre: 'Avancement par axe',
+  avancementParAxeRealisees: plural({ one: 'réalisée', other: 'réalisées' }),
+  avancementParAxeAfficherSousAxes: 'Afficher les sous-axes',
+  avancementParAxeMasquerSousAxes: 'Masquer les sous-axes',
+  avancementParAxeVoirPlus: (count: number): string =>
+    `Voir plus (${count} ${count > 1 ? 'axes' : 'axe'})`,
+  avancementParAxeVoirMoins: 'Voir moins',
+  avancementParAxeAucunAxe: "Ce plan n'a pas encore d'axe.",
 } as const;

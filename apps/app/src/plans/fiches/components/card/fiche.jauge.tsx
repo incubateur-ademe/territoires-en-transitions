@@ -14,7 +14,11 @@ export const FicheJauge = ({ jauge, statut }: FicheJaugeProps): JSX.Element => (
     label={`${appLabels.ficheStatut} : ${statut ?? appLabels.filtreNoStatut}`}
   >
     <div data-test="fiche.card.jauge">
-      <JaugeBar value={jauge} isDisabled={isJaugeFigee(statut)} />
+      <JaugeBar
+        value={jauge}
+        statut={statut}
+        isDisabled={isJaugeFigee(statut)}
+      />
     </div>
   </Tooltip>
 );

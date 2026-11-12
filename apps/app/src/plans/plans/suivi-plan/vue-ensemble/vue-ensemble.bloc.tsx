@@ -4,8 +4,9 @@ import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { JaugeBar } from '@/app/plans/shared/jauge/jauge.bar';
 import { StatutEnum } from '@tet/domain/plans';
-import { Alert, Icon, InfoTooltip, InlineLink } from '@tet/ui';
+import { Alert, Icon, InlineLink } from '@tet/ui';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
+import { AvancementInfoTooltip } from '../avancement-info.tooltip';
 import { useGetVueEnsemble } from '../data/use-get-vue-ensemble';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
 import { ThematiquesFilterButton } from '../thematiques-filter.button';
@@ -37,42 +38,33 @@ export const VueEnsembleBloc = ({
       }
     >
       {data ? (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="flex flex-col gap-3 p-6 border border-grey-3 rounded-lg">
-            <span className="text-4xl font-bold text-primary-9">
-              {`${data.avancement.toLocaleString('fr-FR')} %`}
-            </span>
-            <span className="flex items-center gap-1 text-sm text-primary-9">
-              {appLabels.vueEnsembleAvancement}
-              <InfoTooltip
-                label={
-                  <div className="max-w-sm font-normal">
-                    <p className="mb-2">
-                      {appLabels.vueEnsembleAvancementInfo}
-                    </p>
-                    <p className="mb-0">
-                      {appLabels.vueEnsembleEnCoursSansAvancementInfo(
-                        data.enCoursSansAvancement
-                      )}
-                    </p>
-                  </div>
-                }
-              />
-            </span>
-            <JaugeBar value={data.avancement} hideBadge />
-            <span className="text-xs text-grey-8">
-              {appLabels.vueEnsembleBaseCalcul({
-                total: data.total,
-                abandonnees: data.abandonnees,
-              })}
-            </span>
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          <div className="flex flex-col gap-3 p-6 rounded-lg bg-grey-1 ring-1 ring-inset ring-grey-3">
+            <div className="flex flex-col justify-center flex-1 gap-3">
+              <span className="text-4xl leading-10 font-bold text-primary-9">
+                {`${Math.round(data.avancement)} %`}
+              </span>
+              <span className="flex items-center gap-1.5 text-sm text-primary-9">
+                {appLabels.vueEnsembleAvancement}
+                <AvancementInfoTooltip
+                  intro={appLabels.suiviPlanAvancementInfoPlan}
+                />
+              </span>
+              <JaugeBar value={Math.round(data.avancement)} hideBadge />
+              <span className="text-xs text-grey-8">
+                {appLabels.vueEnsembleBaseCalcul({
+                  total: data.total,
+                  abandonnees: data.abandonnees,
+                })}
+              </span>
+            </div>
             {data.enCoursSansAvancement > 0 && (
               <Alert
-                className="mt-auto"
                 state="warning"
-                customIcon="time-line"
-                title={
-                  <span className="text-sm font-normal">
+                customIcon="progress-1-line"
+                className="gap-2.5 px-3 py-2.5 rounded-md ring-1 ring-inset ring-warning-3"
+                description={
+                  <span className="text-sm leading-5 text-grey-9">
                     {appLabels.vueEnsembleEnCoursSansAvancement(
                       data.enCoursSansAvancement
                     )}{' '}
@@ -82,6 +74,7 @@ export const VueEnsembleBloc = ({
                         planActionUid: planId.toString(),
                         filters: { statuts: [StatutEnum.EN_COURS] },
                       })}
+                      className="font-medium text-primary-9 underline-offset-2"
                     >
                       {appLabels.vueEnsembleRenseigner}
                     </InlineLink>
@@ -90,8 +83,8 @@ export const VueEnsembleBloc = ({
               />
             )}
           </div>
-          <div className="flex flex-col gap-3 p-6 border border-grey-3 rounded-lg">
-            <span className="text-sm font-bold text-primary-9">
+          <div className="flex flex-col gap-3 p-5 rounded-lg bg-grey-1 ring-1 ring-inset ring-grey-3">
+            <span className="text-sm font-medium text-primary-9">
               {appLabels.vueEnsembleRepartitionParStatut}
             </span>
             <RepartitionParStatut
@@ -100,7 +93,7 @@ export const VueEnsembleBloc = ({
               total={data.total}
               repartition={data.repartitionParStatut}
             />
-            <span className="mt-auto text-xs text-grey-8">
+            <span className="text-xs text-grey-8">
               {appLabels.vueEnsembleRepartitionInfo}
             </span>
           </div>

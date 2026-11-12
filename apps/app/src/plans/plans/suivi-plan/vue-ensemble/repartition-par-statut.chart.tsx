@@ -1,14 +1,32 @@
 'use client';
 
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
-import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
-import { ReactECharts } from '@/app/ui/charts/echarts';
-import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
+import { appLabels } from '@/app/labels/catalog';
+import DonutChart from '@/app/ui/charts/Donut/DonutChart';
+import { SANS_STATUT_LABEL, Statut, StatutEnum } from '@tet/domain/plans';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { COULEURS_SUIVI_BY_STATUT } from '../statut-suivi-colors';
 
 type RepartitionItem = { statut: Statut | null; count: number };
+
+const ORDRE_STATUTS: (Statut | null)[] = [
+  StatutEnum.A_VENIR,
+  StatutEnum.A_DISCUTER,
+  StatutEnum.EN_COURS,
+  StatutEnum.REALISE,
+  StatutEnum.EN_RETARD,
+  StatutEnum.EN_PAUSE,
+  StatutEnum.BLOQUE,
+  StatutEnum.ABANDONNE,
+  null,
+];
+
+const ACTION_PAR_STATUT: Partial<Record<Statut, string>> = {
+  [StatutEnum.A_DISCUTER]: appLabels.vueEnsembleTrancher,
+  [StatutEnum.EN_RETARD]: appLabels.vueEnsembleArbitrer,
+  [StatutEnum.BLOQUE]: appLabels.vueEnsembleDebloquer,
+};
 
 export const RepartitionParStatut = ({
   collectiviteId,
@@ -22,7 +40,10 @@ export const RepartitionParStatut = ({
   repartition: RepartitionItem[];
 }) => {
   const router = useRouter();
-  const items = repartition.filter(({ count }) => count > 0);
+  const items = ORDRE_STATUTS.map((statut) => ({
+    statut,
+    count: repartition.find((item) => item.statut === statut)?.count ?? 0,
+  })).filter(({ count }) => count > 0);
 
   const makePilotageUrl = (statut: Statut | null) =>
     makeCollectivitePlanActionUrl({
@@ -31,54 +52,72 @@ export const RepartitionParStatut = ({
       filters: statut ? { statuts: [statut] } : { noStatut: true },
     });
 
-  const option = getChartOption({
-    displayItemsLabel: false,
-    countByProperty: 'statut',
-    countByTotal: total,
-    countByResult: Object.fromEntries(
-      items.map(({ statut, count }) => [
-        statut ?? SANS_STATUT_LABEL,
-        { count, value: statut, label: statut ?? SANS_STATUT_LABEL },
-      ])
-    ),
-  });
-
   return (
-    <div className="flex flex-col items-center gap-4 sm:flex-row">
-      <div className="w-48 shrink-0">
-        <ReactECharts
-          option={option}
-          heightRatio={1}
-          onEvents={{
-            click: ({ event }) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const data = (event as any).data;
-              if (data) {
-                router.push(makePilotageUrl(data.name_id ?? null));
-              }
-            },
-          }}
+    <div className="flex flex-wrap items-center gap-6">
+      <div className="shrink-0 -m-3">
+        <DonutChart
+          variant="ring"
+          className="h-48 w-48"
+          data={items.map(({ statut, count }) => ({
+            id: statut ?? SANS_STATUT_LABEL,
+            value: count,
+            color: COULEURS_SUIVI_BY_STATUT[statut ?? SANS_STATUT_LABEL],
+          }))}
+          onClick={(id) =>
+            router.push(
+              makePilotageUrl(id === SANS_STATUT_LABEL ? null : (id as Statut))
+            )
+          }
+          centeredElement={
+            <div className="flex flex-col items-center justify-center w-24 h-24 rounded-full bg-grey-1 shadow-button">
+              <b className="text-2xl leading-7 text-primary-9">{total}</b>
+              <span className="text-xs text-grey-8">
+                {appLabels.suiviPlanNbActions({
+                  count: total,
+                  withoutCount: true,
+                })}
+              </span>
+            </div>
+          }
         />
       </div>
-      <ul className="flex flex-col gap-1 w-full mb-0 p-0 list-none">
-        {items.map(({ statut, count }) => (
-          <li key={statut ?? SANS_STATUT_LABEL} className="p-0">
-            <Link
-              href={makePilotageUrl(statut)}
-              className="flex items-center gap-2 text-sm text-primary-9 bg-none hover:underline"
+      <ul className="flex flex-col flex-1 gap-1.5 min-w-56 mb-0 p-0 list-none">
+        {items.map(({ statut, count }) => {
+          const action = statut ? ACTION_PAR_STATUT[statut] : undefined;
+          return (
+            <li
+              key={statut ?? SANS_STATUT_LABEL}
+              className="flex items-center gap-3 p-0"
             >
-              <span
-                className="h-3 w-3 rounded-sm"
-                style={{
-                  backgroundColor:
-                    statutFicheActionToColor[statut ?? SANS_STATUT_LABEL],
-                }}
-              />
-              <span className="grow">{statut ?? SANS_STATUT_LABEL}</span>
-              <span className="font-bold">{count}</span>
-            </Link>
-          </li>
-        ))}
+              <Link
+                href={makePilotageUrl(statut)}
+                className="flex flex-1 min-w-0 items-center gap-2 text-sm text-primary-9 bg-none hover:underline"
+              >
+                <span
+                  className="shrink-0 w-2.5 h-2.5 rounded-sm"
+                  style={{
+                    backgroundColor:
+                      COULEURS_SUIVI_BY_STATUT[statut ?? SANS_STATUT_LABEL],
+                  }}
+                />
+                {statut ?? SANS_STATUT_LABEL}
+              </Link>
+              {action ? (
+                <Link
+                  href={makePilotageUrl(statut)}
+                  className="text-xs font-medium text-right text-primary-9 underline underline-offset-2 whitespace-nowrap bg-none hover:text-primary-7"
+                >
+                  {action}
+                </Link>
+              ) : (
+                <span />
+              )}
+              <b className="w-7 shrink-0 text-sm text-right text-primary-9">
+                {count}
+              </b>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
