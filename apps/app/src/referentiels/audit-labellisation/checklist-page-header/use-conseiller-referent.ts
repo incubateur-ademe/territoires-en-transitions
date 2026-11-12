@@ -2,8 +2,10 @@ import {
   Membre,
   useListMembres,
 } from '@/app/collectivites/membres/list-membres/use-list-membres';
-import { useUpdateMembres } from '@/app/collectivites/membres/use-update-membres';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { groupeParFonction } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
@@ -18,28 +20,47 @@ export const useConseillerReferent = (): {
   saveConseillers: (userIds: string[]) => void;
 } => {
   const collectiviteId = useCollectiviteId();
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const isReadOnly = !hasCollectivitePermission('collectivites.membres.mutate');
+  const referentielId = useReferentielId();
+  const { hasCollectivitePermission, hasReferentielPermission } =
+    useCurrentCollectivite();
+  // Même règle d'affichage que l'élu et le référent technique voisins
+  // (référentiel archivé = lecture seule), plus le droit de désigner.
+  const isReadOnly = !(
+    hasCollectivitePermission(
+      'collectivites.membres.mutate_conseillers_referents'
+    ) && hasReferentielPermission('referentiels.mutate', referentielId)
+  );
 
   const { data: membres, isLoading: areConseillersLoading } = useListMembres();
   const conseillers = groupeParFonction(membres ?? [])?.conseiller ?? [];
   const referents = conseillers.filter((membre) => membre.estReferent);
 
-  const { mutate: updateMembres, isPending: isMutating } = useUpdateMembres();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { mutate: updateConseillersReferents, isPending: isMutating } =
+    useMutation(
+      trpc.collectivites.membres.updateConseillersReferents.mutationOptions({
+        // Aussi en cas d'erreur : la liste affichée peut être périmée
+        onSettled: () =>
+          queryClient.invalidateQueries({
+            queryKey: trpc.collectivites.membres.list.queryKey({
+              collectiviteId,
+            }),
+          }),
+      })
+    );
 
   const saveConseillers = (userIds: string[]): void => {
-    const toUpdate = conseillers
-      .filter(
-        (membre) => membre.estReferent !== userIds.includes(membre.userId)
-      )
-      .map((membre) => ({
-        userId: membre.userId,
-        estReferent: userIds.includes(membre.userId),
-        collectiviteId,
-      }));
-    if (toUpdate.length > 0) {
-      updateMembres(toUpdate);
+    const current = new Set(referents.map((membre) => membre.userId));
+    const next = new Set(userIds);
+    // Sélection inchangée : ni écriture, ni événement NPS
+    if (
+      next.size === current.size &&
+      [...next].every((id) => current.has(id))
+    ) {
+      return;
     }
+    updateConseillersReferents({ collectiviteId, userIds });
   };
 
   return {

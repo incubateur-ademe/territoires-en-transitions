@@ -3,6 +3,22 @@ import { permissionsByRole } from './permission.models';
 import { CollectiviteRole, PlatformRole } from './user-role.enum.schema';
 
 describe('permissionsByRole', () => {
+  it("n'accorde la désignation des conseillers référents qu'à l'édition et aux admins, pas aux auditeurs", () => {
+    const rolesGranting = Object.entries(permissionsByRole)
+      .filter(([, permissions]) =>
+        permissions.includes(
+          'collectivites.membres.mutate_conseillers_referents'
+        )
+      )
+      .map(([role]) => role);
+
+    expect(rolesGranting).toEqual([
+      PlatformRole.SUPER_ADMIN,
+      CollectiviteRole.EDITION,
+      CollectiviteRole.ADMIN,
+    ]);
+  });
+
   it("n'accorde la modification des documents de labellisation qu'au super admin", () => {
     const rolesGranting = Object.entries(permissionsByRole)
       .filter(([, permissions]) =>

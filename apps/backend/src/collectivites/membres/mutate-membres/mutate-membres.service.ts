@@ -3,16 +3,18 @@ import { collectiviteTable } from '@tet/backend/collectivites/shared/models/coll
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import {
   combineResults,
   failure,
   Result,
   success,
 } from '@tet/backend/utils/result.type';
+import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import { isServiceDeconcentre } from '@tet/domain/collectivites';
 import { CollectiviteRole, ResourceType } from '@tet/domain/users';
-import { and, count, eq, sql } from 'drizzle-orm';
+import { and, count, eq, inArray, notInArray, sql } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { ListMembresService } from '../list-membres/list-membres.service';
 import { membreTable } from '../membre.table';
@@ -23,6 +25,7 @@ import {
 import {
   JoinAsMembreInput,
   RemoveMembreInput,
+  UpdateConseillersReferentsInput,
   UpdateMembreInput,
 } from './mutate-membres.input';
 
@@ -31,7 +34,8 @@ export class MutateMembresService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionsService: PermissionService,
-    private readonly listMembresService: ListMembresService
+    private readonly listMembresService: ListMembresService,
+    private readonly transactionManager: TransactionManager
   ) {}
 
   async update(
@@ -40,34 +44,32 @@ export class MutateMembresService {
   ): Promise<Result<void[], MutateMembresError | CommonError>> {
     const results = await Promise.all(
       membres.map(async ({ collectiviteId, userId, role, ...other }) => {
-        let unauthorizedFailure: Result<void, CommonError> | undefined;
-
-        const permissionResult = await this.permissionsService.isAllowed(
-          user,
-          'collectivites.membres.mutate',
-          ResourceType.COLLECTIVITE,
-          { collectiviteId }
+        const unauthorizedFailure = failure(
+          MutateMembresErrorEnum.UNAUTHORIZED
         );
 
-        if (!permissionResult.success) {
-          unauthorizedFailure = failure(MutateMembresErrorEnum.UNAUTHORIZED);
+        const isAdmin = (
+          await this.permissionsService.isAllowed(
+            user,
+            'collectivites.membres.mutate',
+            ResourceType.COLLECTIVITE,
+            { collectiviteId }
+          )
+        ).success;
 
-          if (userId !== user.id) {
-            return unauthorizedFailure;
-          }
+        // Sans droit admin : uniquement ses propres
+        // fonction/detailsFonction/champIntervention (matrice: soi/oui),
+        // jamais le rôle. Contrôlé avant toute écriture.
+        if (!isAdmin && (userId !== user.id || role !== undefined)) {
+          return unauthorizedFailure;
         }
 
-        // fonction/detailsFonction/champIntervention: admin OR self (matrice: soi/oui)
-        const hasMembreFields = Object.values(other).some(
-          (v) => v !== undefined
-        );
-
-        if (hasMembreFields) {
-          // Self-update without admin rights: verify the user is already an
+        if (Object.values(other).some((v) => v !== undefined)) {
+          // Self-update without admin rights: the user must already be an
           // active member of this collectivité before upserting, otherwise any
           // authenticated user could insert a ghost row into membreTable for a
           // collectivité they don't belong to (IDOR — TET-7360).
-          if (unauthorizedFailure) {
+          if (!isAdmin) {
             const isMember = await this.listMembresService.isActiveMember({
               userId,
               collectiviteId,
@@ -90,12 +92,7 @@ export class MutateMembresService {
             });
         }
 
-        // role modification: admin only (collectivites.membres.mutate)
         if (role !== undefined) {
-          if (unauthorizedFailure) {
-            return unauthorizedFailure;
-          }
-
           await this.databaseService.db
             .update(utilisateurCollectiviteAccessTable)
             .set({ role })
@@ -115,6 +112,94 @@ export class MutateMembresService {
     );
 
     return combineResults(results);
+  }
+
+  /**
+   * Désigne les conseillers référents de la collectivité : `userIds` remplace
+   * la liste. Seuls des membres actifs de fonction « conseiller » peuvent être
+   * désignés ; tout ou rien.
+   *
+   * Les membres d'une autre fonction ne sont jamais modifiés : ils peuvent
+   * s'être déclarés « personne référente » en rejoignant la collectivité, et
+   * restent à ce titre contacts dans Recherches.
+   */
+  async updateConseillersReferents(
+    { collectiviteId, userIds }: UpdateConseillersReferentsInput,
+    { user, tx }: ServiceSecondArg
+  ): Promise<Result<void, MutateMembresError | CommonError>> {
+    const permission = await this.permissionsService.isAllowed(
+      user,
+      'collectivites.membres.mutate_conseillers_referents',
+      ResourceType.COLLECTIVITE,
+      { collectiviteId },
+      tx
+    );
+    if (!permission.success) {
+      return failure(MutateMembresErrorEnum.UNAUTHORIZED);
+    }
+
+    const referentIds = [...new Set(userIds)];
+    const isConseiller = and(
+      eq(membreTable.collectiviteId, collectiviteId),
+      eq(membreTable.fonction, 'conseiller')
+    );
+
+    return this.transactionManager.executeSingle(async (tx) => {
+      // Sérialise les désignations d'une même collectivité : sans ce verrou,
+      // deux enregistrements concurrents peuvent laisser les deux listes
+      // désignées, chaque remise à zéro ne voyant pas l'autre écriture.
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(hashtext('conseillers_referents'), ${collectiviteId})`
+      );
+
+      if (referentIds.length > 0) {
+        const designes = await tx
+          .update(membreTable)
+          .set({ estReferent: true })
+          .where(
+            and(
+              isConseiller,
+              inArray(membreTable.userId, referentIds),
+              inArray(
+                membreTable.userId,
+                tx
+                  .select({ userId: utilisateurCollectiviteAccessTable.userId })
+                  .from(utilisateurCollectiviteAccessTable)
+                  .where(
+                    and(
+                      eq(
+                        utilisateurCollectiviteAccessTable.collectiviteId,
+                        collectiviteId
+                      ),
+                      eq(utilisateurCollectiviteAccessTable.isActive, true)
+                    )
+                  )
+              )
+            )
+          )
+          .returning({ userId: membreTable.userId });
+
+        // Une cible refusée annule toute la transaction
+        if (designes.length !== referentIds.length) {
+          return failure(MutateMembresErrorEnum.MEMBER_NOT_FOUND);
+        }
+      }
+
+      await tx
+        .update(membreTable)
+        .set({ estReferent: false })
+        .where(
+          and(
+            isConseiller,
+            eq(membreTable.estReferent, true),
+            referentIds.length > 0
+              ? notInArray(membreTable.userId, referentIds)
+              : undefined
+          )
+        );
+
+      return success(undefined);
+    }, tx);
   }
 
   /**

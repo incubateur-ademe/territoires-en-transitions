@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { MembreFonctionEnum } from '@tet/domain/collectivites';
-import { CollectiviteRole } from '@tet/domain/users';
+import { CollectiviteRole, ResourceType } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -8,6 +8,11 @@ import {
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
+import {
+  addAuditeurPermission,
+  createAudit,
+} from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   addTestUser,
@@ -384,6 +389,130 @@ describe('CollectiviteMembresRouter mutate', () => {
         },
       ])
     ).rejects.toThrow();
+  });
+
+  describe('conseillers référents (TET-8000)', () => {
+    // Collectivité et membres dédiés : aucun état partagé avec les autres tests
+    let collectiviteId: number;
+    let editeur: AuthenticatedUser;
+    let lecteur: AuthenticatedUser;
+    let conseillerA: string;
+    let conseillerB: string;
+    let nonConseiller: string;
+
+    const addMembre = async (
+      role: CollectiviteRole,
+      fonction: 'conseiller' | 'politique'
+    ) => {
+      const { user } = await addTestUser(db, { collectiviteId, role });
+      await db.db
+        .insert(membreTable)
+        .values({ userId: user.id, collectiviteId, fonction });
+      return user;
+    };
+
+    beforeAll(async () => {
+      collectiviteId = (await addTestCollectivite(db)).collectivite.id;
+      editeur = getAuthUserFromUserCredentials(
+        await addMembre(CollectiviteRole.EDITION, 'conseiller')
+      );
+      lecteur = getAuthUserFromUserCredentials(
+        await addMembre(CollectiviteRole.LECTURE, 'conseiller')
+      );
+      conseillerA = editeur.id;
+      conseillerB = lecteur.id;
+      nonConseiller = (await addMembre(CollectiviteRole.LECTURE, 'politique'))
+        .id;
+    });
+
+    const getReferents = async () => {
+      const rows = await db.db
+        .select({ userId: membreTable.userId })
+        .from(membreTable)
+        .where(
+          and(
+            eq(membreTable.collectiviteId, collectiviteId),
+            eq(membreTable.estReferent, true)
+          )
+        );
+      return rows.map((r) => r.userId).sort();
+    };
+
+    const update = (user: AuthenticatedUser, userIds: string[]) =>
+      router
+        .createCaller({ user })
+        .collectivites.membres.updateConseillersReferents({
+          collectiviteId,
+          userIds,
+        });
+
+    test('edition remplace la liste, soi compris', async () => {
+      await update(editeur, [conseillerA, conseillerB]);
+      expect(await getReferents()).toEqual([conseillerA, conseillerB].sort());
+
+      await update(editeur, [conseillerB]);
+      expect(await getReferents()).toEqual([conseillerB]);
+
+      await update(editeur, []);
+      expect(await getReferents()).toEqual([]);
+    });
+
+    test('refuse un membre non conseiller ou un non-membre, sans écriture partielle', async () => {
+      await update(editeur, [conseillerA]);
+
+      for (const intrus of [nonConseiller, externalUser.id]) {
+        await expect(update(editeur, [conseillerB, intrus])).rejects.toThrow();
+        expect(await getReferents()).toEqual([conseillerA]);
+      }
+    });
+
+    test('lecture et utilisateur externe ne peuvent pas désigner', async () => {
+      await update(editeur, [conseillerA]);
+
+      await expect(update(lecteur, [lecteur.id])).rejects.toThrow();
+      await expect(update(externalUser, [conseillerB])).rejects.toThrow();
+      expect(await getReferents()).toEqual([conseillerA]);
+    });
+
+    test("auditeur d'un audit en cours ne peut pas désigner, bien qu'il ait referentiels.mutate", async () => {
+      const { user } = await addTestUser(db);
+      const auditeur = getAuthUserFromUserCredentials(user);
+      const { audit } = await createAudit({
+        databaseService: db,
+        collectiviteId,
+        referentielId: 'cae',
+      });
+      await addAuditeurPermission({
+        databaseService: db,
+        auditId: audit.id,
+        userId: user.id,
+      });
+
+      // Garde-fou : c'est bien un auditeur actif, pas un simple externe
+      const canMutateReferentiel = await app
+        .get(PermissionService)
+        .isAllowed(auditeur, 'referentiels.mutate', ResourceType.COLLECTIVITE, {
+          collectiviteId,
+        });
+      expect(canMutateReferentiel.success).toBe(true);
+
+      await update(editeur, [conseillerA]);
+      await expect(update(auditeur, [conseillerB])).rejects.toThrow();
+      expect(await getReferents()).toEqual([conseillerA]);
+    });
+
+    test('membres.update refuse estReferent au lieu de l’ignorer', async () => {
+      await expect(
+        router.createCaller({ user: editeur }).collectivites.membres.update([
+          // @ts-expect-error champ retiré du schéma, envoyé par un ancien client
+          { collectiviteId, userId: conseillerA, estReferent: true },
+        ])
+      ).rejects.toThrow();
+    });
+
+    test('userId non uuid : erreur de validation', async () => {
+      await expect(update(editeur, ['abc'])).rejects.toThrow();
+    });
   });
 
   test('lecture peut mettre à jour ses propres infos membre (soi)', async () => {

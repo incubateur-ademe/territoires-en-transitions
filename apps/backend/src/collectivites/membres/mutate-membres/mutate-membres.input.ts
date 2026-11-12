@@ -3,7 +3,9 @@ import { referentielIdEnumValues } from '@tet/domain/referentiels';
 import { collectiviteRoleEnumValues } from '@tet/domain/users';
 import z from 'zod';
 
-export const updateMembreInputSchema = z.object({
+// strict : `estReferent` passe par updateConseillersReferents ; un ancien
+// client qui l'envoie encore doit échouer, pas réussir sans rien écrire.
+export const updateMembreInputSchema = z.strictObject({
   collectiviteId: z.number(),
   userId: z.string(),
   fonction: z.nullable(membreFonctionEnumSchema).optional(),
@@ -12,11 +14,20 @@ export const updateMembreInputSchema = z.object({
     .array(z.enum(referentielIdEnumValues))
     .nullable()
     .optional(),
-  estReferent: z.boolean().nullable().optional(),
   role: z.enum(collectiviteRoleEnumValues).optional(),
 });
 
 export type UpdateMembreInput = z.infer<typeof updateMembreInputSchema>;
+
+export const updateConseillersReferentsInputSchema = z.object({
+  collectiviteId: z.number(),
+  /** Remplace la liste des conseillers référents de la collectivité */
+  userIds: z.array(z.uuid()),
+});
+
+export type UpdateConseillersReferentsInput = z.infer<
+  typeof updateConseillersReferentsInputSchema
+>;
 
 export const removeMembreInputSchema = z.object({
   collectiviteId: z.number(),
