@@ -6,6 +6,8 @@ export function useIsFeatureFlagEnabled(featureFlagKey: FeatureFlagKey) {
   return (
     useFeatureFlagEnabled(featureFlagKey) ||
     ENV.application_env === 'dev' ||
-    ENV.application_env === 'ci'
+    ENV.application_env === 'ci' ||
+    (featureFlagKey === 'is-plan-suivi-enabled' &&
+      ENV.application_env === 'staging')
   );
 }
