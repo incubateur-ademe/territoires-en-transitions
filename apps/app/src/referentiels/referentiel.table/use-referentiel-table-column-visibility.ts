@@ -18,7 +18,7 @@ const REFERENTIEL_TABLE_COLUMN_OPTIONS = [
   { id: 'pointPotentiel', label: 'Potentiel personnalisé', default: true },
   { id: 'pointReferentiel', label: 'Potentiel max', default: false },
   { id: 'progression', label: 'Progression', default: true },
-  { id: 'pointNonRenseigne', label: 'Points restants', default: false },
+  { id: 'pointRestant', label: 'Points restants', default: false },
   { id: 'pointFait', label: 'Points faits', default: true },
   { id: 'scoreRealise', label: '% fait', default: true },
   { id: 'pointProgramme', label: 'Points programmés', default: false },

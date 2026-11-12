@@ -57,6 +57,7 @@ import {
   useReferentielThematiqueView,
 } from './use-referentiel-thematique-view';
 import {
+  getPointRestant,
   referentielTableFeatures,
   ReferentielTableFeatures,
   ReferentielTableMeta,
@@ -408,7 +409,6 @@ function TableContent({
 const SUMMABLE_COLUMN_IDS = [
   'pointPotentiel',
   'pointReferentiel',
-  'pointNonRenseigne',
   'pointFait',
   'pointProgramme',
   'pointPasFait',
@@ -424,15 +424,18 @@ function TableTotalRow({
   rows: Row<ReferentielTableFeatures, ActionListItem>[];
 }) {
   const totals = useMemo(() => {
-    const initial = Object.fromEntries(
-      SUMMABLE_COLUMN_IDS.map((id) => [id, 0])
-    ) as Record<SummableColumnId, number>;
+    const initial = {
+      ...Object.fromEntries(SUMMABLE_COLUMN_IDS.map((id) => [id, 0])),
+      pointRestant: 0,
+    } as Record<SummableColumnId | 'pointRestant', number>;
 
     return listTotalRows(rows).reduce((acc, row) => {
       const score = row.original.score;
       for (const id of SUMMABLE_COLUMN_IDS) {
         acc[id] += score[id] ?? 0;
       }
+      // Somme des restes bornés ligne par ligne, comme dans les cellules
+      acc.pointRestant += getPointRestant(score);
       return acc;
     }, initial);
   }, [rows]);
@@ -440,7 +443,7 @@ function TableTotalRow({
   const valuesById: Record<string, { value: number; percentage?: boolean }> = {
     pointPotentiel: { value: totals.pointPotentiel },
     pointReferentiel: { value: totals.pointReferentiel },
-    pointNonRenseigne: { value: totals.pointNonRenseigne },
+    pointRestant: { value: totals.pointRestant },
     pointFait: { value: totals.pointFait },
     pointProgramme: { value: totals.pointProgramme },
     pointPasFait: { value: totals.pointPasFait },

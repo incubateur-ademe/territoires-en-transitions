@@ -95,6 +95,18 @@ export const canExpandReferentielTableRow = (
     isNewReferentiel(referentielId)
   );
 
+/**
+ * Points restants : potentiel moins points faits, soit les points
+ * programmés, pas faits et non renseignés réunis. Borné à 0 pour ne pas
+ * afficher « -0 » quand les arrondis flottants font passer la différence
+ * juste sous zéro.
+ */
+export const getPointRestant = ({
+  pointPotentiel,
+  pointFait,
+}: Pick<ActionListItem['score'], 'pointPotentiel' | 'pointFait'>): number =>
+  Math.max(0, pointPotentiel - pointFait);
+
 export const isAuditableMesure = (
   action: ActionListItem,
   auditStatut: MesureAuditStatutRow | undefined
