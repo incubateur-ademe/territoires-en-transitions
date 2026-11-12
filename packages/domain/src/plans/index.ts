@@ -30,3 +30,4 @@ export * from './plans/plan-creation.rules';
 export * from './plans/plan-status.enum.schema';
 export * from './plans/plan-type.schema';
 export * from './plans/plan.schema';
+export * from './plans/suivi-plan.constants';

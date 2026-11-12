@@ -1,0 +1,1 @@
+export const DEBUT_HISTORIQUE_STATUTS = '2023-12-11';
