@@ -33,6 +33,7 @@ import {
   FicheCreate,
   ficheSchemaUpdate,
   FicheWithRelations,
+  getJaugeAtCreation,
 } from '@tet/domain/plans';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
@@ -245,19 +246,34 @@ export class FicheActionRepository
   async applyCreate({
     fiche,
     ficheFields,
+    duplicatedJauge,
     user,
     tx,
   }: {
     fiche: FicheCreate;
     ficheFields?: UpdateFicheInput;
+    duplicatedJauge?: number;
     user: AuthenticatedUser;
     tx: Transaction;
   }): Promise<Result<{ id: number; fiche: Fiche }, FicheActionWriteError>> {
+    const { jauge: _ficheJauge, ...ficheValues } = fiche;
+    const { jauge: _ficheFieldsJauge, ...fieldsToApply } = ficheFields ?? {};
+    const jauge =
+      duplicatedJauge ??
+      getJaugeAtCreation({
+        statut:
+          fieldsToApply.statut !== undefined
+            ? fieldsToApply.statut
+            : ficheValues.statut,
+        isSousAction: (ficheValues.parentId ?? null) !== null,
+      });
+
     try {
       const [created] = await tx
         .insert(ficheActionTable)
         .values({
-          ...fiche,
+          ...ficheValues,
+          jauge,
           createdBy: user.id,
           modifiedBy: user.id,
         })
@@ -269,7 +285,7 @@ export class FicheActionRepository
       if (ficheFields) {
         const applyResult = await this.applyUpdate({
           ficheId: created.id,
-          ficheFields,
+          ficheFields: fieldsToApply,
           existingFiche: {
             id: created.id,
             collectiviteId: fiche.collectiviteId,
