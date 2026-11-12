@@ -54,7 +54,7 @@ import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
 import { ReferentielTableThematiquesCell } from './referentiel-table.thematiques.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
 import { ReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
-import { ReferentielTableFeatures } from './utils';
+import { getPointRestant, ReferentielTableFeatures } from './utils';
 
 const columnHelper = createColumnHelper<
   ReferentielTableFeatures,
@@ -285,8 +285,8 @@ const getColumns = ({
       ),
     }),
 
-    columnHelper.accessor((row) => row.score.pointNonRenseigne, {
-      id: 'pointNonRenseigne',
+    columnHelper.accessor((row) => getPointRestant(row.score), {
+      id: 'pointRestant',
       header: () => (
         <TableHeaderCell
           title="Points restants"
