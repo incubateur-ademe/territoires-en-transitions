@@ -39,6 +39,8 @@ import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
 import { PlanRouter } from './plans.router';
 import { PlanProgressRules } from './progress/plan-progress.rules';
+import { ExportSuiviPlanController } from './suivi-plan/export-suivi-plan/export-suivi-plan.controller';
+import { ExportSuiviPlanService } from './suivi-plan/export-suivi-plan/export-suivi-plan.service';
 import { GetAvancementParAxeRouter } from './suivi-plan/get-avancement-par-axe/get-avancement-par-axe.router';
 import { GetAvancementParAxeService } from './suivi-plan/get-avancement-par-axe/get-avancement-par-axe.service';
 import { GetEvolutionStatutsRouter } from './suivi-plan/get-evolution-statuts/get-evolution-statuts.router';
@@ -116,7 +118,9 @@ import { VerifyPlanService } from './verify-plan/verify-plan.service';
     GetFaireAvancerLePlanService,
     GetFaireAvancerLePlanRouter,
     SuiviPlanRouter,
+    ExportSuiviPlanService,
   ],
+  controllers: [ExportSuiviPlanController],
   exports: [
     PlanRouter,
     SuiviPlanRouter,

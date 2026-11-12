@@ -2,7 +2,6 @@
 
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
-import { appLabels } from '@/app/labels/catalog';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   PrioriteOrNot,
@@ -11,10 +10,10 @@ import {
 import { TOption } from '@/app/ui/shared/select/commons';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan } from '@tet/domain/plans';
-import { capitalize } from '@tet/ui/labels/plural';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
+import { planFilterLabels } from './plan-filters.fields';
 import {
   FormFilters,
   SuiviOption,
@@ -51,16 +50,6 @@ type PlanActionFiltersContextType = {
 const PlanFiltersContext = createContext<PlanActionFiltersContextType | null>(
   null
 );
-
-const filterLabels: Record<keyof FormFilters, string> = {
-  priorites: capitalize(appLabels.niveauPriorite),
-  statuts: capitalize(appLabels.ficheStatut),
-  referents: appLabels.personneElue(),
-  pilotes: appLabels.personnePilote(),
-  suivi: appLabels.planFiltreSuivi,
-  collectiviteId: capitalize(appLabels.collectivite()),
-  axes: capitalize(appLabels.axe()),
-};
 
 export const PlanFiltersProvider = ({
   plan,
@@ -151,9 +140,7 @@ export const PlanFiltersProvider = ({
     );
   };
 
-  const getFilterLabel = (key: keyof FormFilters) => {
-    return filterLabels[key];
-  };
+  const getFilterLabel = (key: CurrentFiltersKeys) => planFilterLabels[key];
 
   return (
     <PlanFiltersContext

@@ -69,7 +69,7 @@ export class ListSuiviPlanFichesService {
   }
 
   private async getPlanAndFilters(
-    { planId, thematiqueIds }: SuiviPlanBlocInput,
+    { planId, thematiqueIds, filters }: SuiviPlanBlocInput,
     { user, tx }: ServiceSecondArg
   ): Promise<
     Result<{ plan: Plan; filters: ListFichesRequestFilters }, GetPlanError>
@@ -94,6 +94,7 @@ export class ListSuiviPlanFichesService {
     return success({
       plan,
       filters: {
+        ...filters,
         planActionIds: [planId],
         thematiqueIds: thematiqueIds?.length ? thematiqueIds : undefined,
         restreint: canReadFichesRestreintes ? undefined : false,

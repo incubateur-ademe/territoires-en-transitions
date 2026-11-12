@@ -388,6 +388,9 @@ export const plansLabels = {
   suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à ce bloc",
   suiviPlanThematiques: 'Thématiques',
   suiviPlanReinitialiserFiltres: 'Réinitialiser les filtres',
+  suiviPlanExporterBloc: 'Exporter ce bloc (PNG ou Excel)',
+  suiviPlanExporterPng: 'Télécharger le graphe (PNG)',
+  suiviPlanExporterExcel: 'Télécharger les données (Excel)',
   suiviPlanNbActions: plural({ one: 'action', other: 'actions' }),
   suiviPlanAvancementInfoPlan:
     "Moyenne de l'avancement de toutes les actions qui composent le plan, calculé à partir de leur statut et de leur jauge :",
@@ -419,7 +422,6 @@ export const plansLabels = {
         ? 'actions en cours sans avancement renseigné, comptées'
         : 'action en cours sans avancement renseigné, comptée'
     } à 0 %.`,
-  vueEnsembleRenseigner: 'Renseigner',
   vueEnsembleRepartitionParStatut: 'Répartition par statut',
   vueEnsembleRepartitionInfo:
     'Cliquer sur un statut ouvre les actions concernées dans le pilotage.',

@@ -1,13 +1,12 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
 
-export const useGetEvolutionStatuts = (input: {
-  planId: number;
-  thematiqueIds: number[];
-  dateDebut: string;
-  dateFin: string;
-  inclureActionsContinues: boolean;
-}) => {
+export const useGetEvolutionStatuts = (
+  input: RouterInput['plans']['suivi']['getEvolutionStatuts'] & {
+    dateDebut: string;
+    dateFin: string;
+  }
+) => {
   const trpc = useTRPC();
   return useQuery({
     ...trpc.plans.suivi.getEvolutionStatuts.queryOptions(input, {
