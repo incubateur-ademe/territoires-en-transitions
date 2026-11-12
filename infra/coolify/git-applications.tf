@@ -28,6 +28,8 @@ locals {
       build_command        = "npm run build"
       start_command        = "npm start"
       health_check_command = "node healthcheck.ts"
+      # Chemin que sonde Alloy sur le premier domaine (services.tf).
+      probe_path = "/healthz"
       # ~450 Mo en régime établi sur Koyeb : une fuite ne peut pas affamer les
       # applications TET du serveur. Marge faible : à relever si le conteneur
       # est tué (OOM) au chargement des JSON.
@@ -102,7 +104,7 @@ resource "coolify_application" "git" {
       # Sans manifeste pour l'application, coolify_env_pushes l'ignore : elle
       # serait déployée sans ses variables.
       condition     = contains(keys(try(local.coolify_env_manifests[each.value.env], {})), each.value.app)
-      error_message = "${each.key} : pas de manifeste ${each.value.env}/${each.value.app} dans env-manifest.tf (coolify_env_manifests et coolify_env_settings)."
+      error_message = "${each.key} : pas de manifeste ${each.value.env}/${each.value.app} dans env-manifest.tf (coolify_env_app_manifests et coolify_env_settings)."
     }
   }
 }

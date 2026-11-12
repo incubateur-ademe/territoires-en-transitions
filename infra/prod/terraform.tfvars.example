@@ -14,3 +14,6 @@ server_ssh_authorized_keys = [
 #   server_instance_type          — dimensionner sur la charge mesurée
 #   pg_node_type / pg_is_ha_cluster — HA à activer
 #   pg_volume_size_in_gb          — taille réelle de la base + marge
+
+# Destinataires des alertes du Cockpit prod (observability.tf).
+alert_emails = ["equipe@example.org"]

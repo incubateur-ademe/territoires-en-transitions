@@ -28,7 +28,8 @@ resource "terraform_data" "env_push" {
   # Les coquilles doivent exister pour que le script distingue « secret
   # absent » (oubli dans le manifeste) de « secret sans version » (valeur à
   # déposer).
-  depends_on = [scaleway_secret.coolify_env_manual]
+  # Les secrets dérivés doivent déjà exister (garde de env-secrets.tf).
+  depends_on = [scaleway_secret.coolify_env_manual, data.scaleway_secret.coolify_env_derived]
 
   lifecycle {
     precondition {

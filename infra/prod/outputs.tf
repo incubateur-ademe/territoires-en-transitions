@@ -130,3 +130,15 @@ output "redis_private_connection_uri" {
   value       = module.redis.private_connection_uri
   sensitive   = true
 }
+
+# --- Observabilité ---
+
+output "cockpit_metrics_url" {
+  description = "URL de la source de métriques custom du Cockpit prod. Cible de make cockpit-rules (API Mimir des règles)."
+  value       = module.cockpit.metrics_url
+}
+
+output "grafana_dashboards_url" {
+  description = "Dossier des dashboards dans le Grafana du Cockpit prod (connexion IAM)."
+  value       = module.cockpit.dashboards_folder_url
+}
