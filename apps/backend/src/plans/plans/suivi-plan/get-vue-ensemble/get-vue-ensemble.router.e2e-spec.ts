@@ -72,7 +72,7 @@ describe('Suivi du plan : vue d’ensemble', () => {
     }: {
       axes?: number[];
       thematiques?: number[];
-      statuts?: Statut[];
+      statuts?: (Statut | null)[];
       jauge?: number;
       parentId?: number;
       restreint?: boolean;
@@ -121,7 +121,7 @@ describe('Suivi du plan : vue d’ensemble', () => {
       axes: [axeB],
       statuts: [StatutEnum.REALISE, StatutEnum.ABANDONNE],
     });
-    await createFiche({ axes: [axeB], jauge: 20 });
+    await createFiche({ axes: [axeB], statuts: [null], jauge: 20 });
     await createFiche({
       parentId: ficheEnCours,
       statuts: [StatutEnum.REALISE],
