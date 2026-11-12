@@ -70,7 +70,10 @@ export const epciCandidatSchema = z.object({
   id: z.number(),
   nom: z.string(),
   departementCode: z.nullable(z.string()),
-  /** La démarche PCAET propre la plus récente de l'EPCI, s'il en a une. */
+  /**
+   * La démarche PCAET la plus récente qui concerne l'EPCI : la sienne, ou le
+   * dépôt d'un Supra qui le couvre.
+   */
   derniereDemarche: z.nullable(
     z.object({
       status: demarchePcaetStatusSchema,
