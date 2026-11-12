@@ -7,7 +7,6 @@ import {
 } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import {
@@ -46,11 +45,7 @@ const DISPLAYABLE_INDICATEURS_TRAJECTOIRE: IndicateurTrajectoireId[] = [
  * résultats de la collectivité, et mondrian. Reprend `TrajectoireCalculee`,
  * sans « Recalculer » ni saisie de données.
  */
-export const TrajectoireSnbc3DisponibleView = ({
-  millesime,
-}: {
-  millesime: { dateVersion: string } | null;
-}) => {
+export const TrajectoireSnbc3DisponibleView = () => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const trackEvent = useEventTracker();
@@ -159,13 +154,6 @@ export const TrajectoireSnbc3DisponibleView = ({
             <Button size="sm" variant="underlined" external href={HELPDESK_URL}>
               {appLabels.trajectoireEnSavoirPlus}
             </Button>
-            {millesime && (
-              <span className="text-sm text-grey-7">
-                {appLabels.trajectoireSnbc3Millesime({
-                  date: getTextFormattedDate({ date: millesime.dateVersion }),
-                })}
-              </span>
-            )}
           </div>
         </PageHeader.Subtitle>
 

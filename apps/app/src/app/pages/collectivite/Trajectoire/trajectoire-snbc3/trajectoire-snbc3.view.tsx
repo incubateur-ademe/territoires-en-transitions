@@ -57,7 +57,7 @@ export const TrajectoireSnbc3View = ({
       />
     ))
     .with(StatutTrajectoireSnbc3.DISPONIBLE, () => (
-      <TrajectoireSnbc3DisponibleView millesime={data.millesime} />
+      <TrajectoireSnbc3DisponibleView />
     ))
     .with(StatutTrajectoireSnbc3.ABSENT_DU_MILLESIME, () => (
       <TrajectoireSnbc3IndisponibleCard
