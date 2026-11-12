@@ -415,6 +415,32 @@ describe('Dépôt PCAET porté par un Supra', () => {
     expect(demarche.collectiviteId).toBe(epci.porteur.id);
   });
 
+  it("l'EPCI couvert voit la couverture qui bloque son dépôt, même flag inactif", async () => {
+    const supra = await addPorteur('PETR');
+    const epci = await addPorteur('CC');
+    await db.db
+      .insert(collectiviteRelationsTable)
+      .values({ id: epci.porteur.id, parentId: supra.porteur.id });
+    await supra.caller.demarches.pcaet.create({
+      collectiviteId: supra.porteur.id,
+      launchedAt: '2026-03-02T00:00:00.000Z',
+      collectivitesCouvertesIds: [epci.porteur.id],
+    });
+
+    disablePcaetSupraFlag();
+
+    const contexte = await epci.caller.demarches.pcaet.getDepotContext({
+      collectiviteId: epci.porteur.id,
+    });
+    expect(contexte.couvertureEnCours).toEqual({
+      porteur: { id: supra.porteur.id, nom: supra.porteur.nom },
+      dateDebut: '2026-03-02',
+    });
+    await expect(
+      epci.caller.demarches.pcaet.create({ collectiviteId: epci.porteur.id })
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
   it("mène un dépôt par groupe d'EPCI, plusieurs en même temps", async () => {
     const { porteur, caller } = await addPorteur('PETR');
     const epciA = await addMembre(porteur.id, {

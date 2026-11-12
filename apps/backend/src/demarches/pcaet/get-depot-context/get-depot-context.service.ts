@@ -49,43 +49,35 @@ export class GetDepotContextService {
       return failure(GetDepotContextErrorEnum.UNAUTHORIZED);
     }
 
-    const [peutDeclarerScotAec, natureInsee, isSupraEnabled] =
-      await Promise.all([
-        this.competencesRepository.hasCompetence(
-          input.collectiviteId,
-          COMPETENCE_BANATIC_SCOT,
-          tx
-        ),
-        this.perimetreRepository.getNatureInsee(input.collectiviteId, tx),
-        // Flag inactif : le Supra dépose comme toute collectivité, sans périmètre.
-        this.trackingService.isFeatureEnabled(
-          'is-pcaet-supra-enabled',
-          user.id,
-          input.collectiviteId
-        ),
-      ]);
-
-    if (!isSupraEnabled) {
-      return success({
-        peutDeclarerScotAec,
-        estSupra: false,
-        epciCandidats: [],
-        perimetrePrecedent: [],
-        couvertureEnCours: null,
-      });
-    }
-
-    const engagement = (
-      await this.perimetreRepository.listEngagementsEnCours(
+    const [peutDeclarerScotAec, natureInsee, engagements] = await Promise.all([
+      this.competencesRepository.hasCompetence(
+        input.collectiviteId,
+        COMPETENCE_BANATIC_SCOT,
+        tx
+      ),
+      this.perimetreRepository.getNatureInsee(input.collectiviteId, tx),
+      this.perimetreRepository.listEngagementsEnCours(
         [input.collectiviteId],
         tx
-      )
-    ).get(input.collectiviteId);
+      ),
+    ]);
+
+    // Sans regarder le flag : la création refuse le dépôt d'un EPCI couvert
+    // quel que soit le flag, l'écran doit pouvoir dire pourquoi.
+    const engagement = engagements.get(input.collectiviteId);
     const couvertureEnCours = engagement?.porteur
       ? { porteur: engagement.porteur, dateDebut: engagement.dateDebut }
       : null;
 
-    if (!estNatureSupraPcaet(natureInsee)) {
+    // Flag inactif : le Supra dépose comme toute collectivité, sans périmètre.
+    const isSupraEnabled =
+      estNatureSupraPcaet(natureInsee) &&
+      (await this.trackingService.isFeatureEnabled(
+        'is-pcaet-supra-enabled',
+        user.id,
+        input.collectiviteId
+      ));
+    if (!isSupraEnabled) {
       return success({
         peutDeclarerScotAec,
         estSupra: false,

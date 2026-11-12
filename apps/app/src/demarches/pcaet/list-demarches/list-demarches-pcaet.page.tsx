@@ -6,7 +6,6 @@ import {
 } from '@/app/app/paths';
 import { useListDemarchesPcaet } from '@/app/demarches/pcaet/data/use-list-demarches-pcaet';
 import { appLabels } from '@/app/labels/catalog';
-import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useQuery } from '@tanstack/react-query';
@@ -53,16 +52,12 @@ export const ListDemarchesPcaetPage = () => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const { data: demarches, isLoading, isError } = useListDemarchesPcaet();
-  const isPcaetSupraEnabled = useIsFeatureFlagEnabled('is-pcaet-supra-enabled');
-  // Le contexte ne se lit que par qui peut déposer.
+  // Le contexte ne se lit que par qui peut déposer. Le serveur y applique le
+  // flag, sauf à la couverture en cours, qui bloque le dépôt dans tous les cas.
   const { data: depotContext } = useQuery(
     trpc.demarches.pcaet.getDepotContext.queryOptions(
       { collectiviteId },
-      {
-        enabled:
-          isPcaetSupraEnabled &&
-          hasCollectivitePermission('demarches.pcaet.mutate'),
-      }
+      { enabled: hasCollectivitePermission('demarches.pcaet.mutate') }
     )
   );
   const couvertureEnCours = depotContext?.couvertureEnCours ?? null;
@@ -115,11 +110,14 @@ export const ListDemarchesPcaetPage = () => {
   const hasActiveDemarche = demarches.some((demarche) =>
     isDemarchePcaetEnCours(demarche.status)
   );
+  const supraAvecMembres =
+    depotContext?.estSupra === true && depotContext.epciCandidats.length > 0;
   const supraPeutDeposer =
-    depotContext?.estSupra === true &&
+    supraAvecMembres &&
     depotContext.epciCandidats.some(({ engagement }) => !engagement);
   const creationBloquee =
-    couvertureEnCours !== null || (hasActiveDemarche && !supraPeutDeposer);
+    couvertureEnCours !== null ||
+    (supraAvecMembres ? !supraPeutDeposer : hasActiveDemarche);
 
   return (
     <div className="flex flex-col gap-6">
@@ -141,7 +139,7 @@ export const ListDemarchesPcaetPage = () => {
                 })
               : !creationBloquee
               ? undefined
-              : depotContext?.estSupra && depotContext.epciCandidats.length > 0
+              : supraAvecMembres
               ? appLabels.demarcheCreationBloqueeTousEngages
               : appLabels.demarcheListeCreationBloquee(PCAET_TYPE)
           }

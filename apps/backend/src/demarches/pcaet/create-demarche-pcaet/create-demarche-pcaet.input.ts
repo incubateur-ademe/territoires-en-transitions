@@ -2,6 +2,10 @@ import { personneIdSchema } from '@tet/domain/collectivites';
 import { demarchePcaetObligationValues } from '@tet/domain/demarches';
 import { z } from 'zod';
 
+// Large au-dessus des plus grands Supras (quelques dizaines de membres) : la
+// borne ne sert qu'à refuser une requête démesurée.
+const COLLECTIVITES_COUVERTES_MAX = 100;
+
 export const createDemarchePcaetInputSchema = z.object({
   collectiviteId: z.number().int().positive(),
   titre: z.string().optional(),
@@ -30,6 +34,7 @@ export const createDemarchePcaetInputSchema = z.object({
    */
   collectivitesCouvertesIds: z
     .array(z.number().int().positive())
+    .max(COLLECTIVITES_COUVERTES_MAX)
     .refine((ids) => new Set(ids).size === ids.length, {
       message: 'Une collectivité couverte apparaît deux fois',
     })
