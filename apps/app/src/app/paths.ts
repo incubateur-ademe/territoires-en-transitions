@@ -560,7 +560,12 @@ export const makeCollectivitePlanActionUrl = ({
     ListFichesRequestFilters,
     | 'statuts'
     | 'noStatut'
+    | 'priorites'
+    | 'noPriorite'
+    | 'personnePiloteIds'
     | 'noPilote'
+    | 'personneReferenteIds'
+    | 'noReferent'
     | 'enCoursSansAvancement'
     | 'notModifiedForOverAYear'
   >;

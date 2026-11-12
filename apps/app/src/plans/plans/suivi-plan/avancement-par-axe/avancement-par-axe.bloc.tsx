@@ -2,23 +2,26 @@
 
 import { appLabels } from '@/app/labels/catalog';
 import { Button, Icon } from '@tet/ui';
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AvancementInfoTooltip } from '../avancement-info.tooltip';
+import { useExportSuiviPlanBloc } from '../data/use-export-suivi-plan-bloc';
 import { useGetAvancementParAxe } from '../data/use-get-avancement-par-axe';
+import { ExportBlocButton } from '../export-bloc.button';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
-import { ThematiquesFilterButton } from '../thematiques-filter.button';
+import { SuiviPlanFiltersButton } from '../suivi-plan-filters.button';
+import { useSuiviPlanBlocFilters } from '../use-suivi-plan-bloc-filters';
 import { AvancementAxeRow } from './avancement-axe.row';
 
 const NB_AXES_VISIBLES = 5;
 
 export const AvancementParAxeBloc = ({ planId }: { planId: number }) => {
-  const [thematiqueIds, setThematiqueIds] = useQueryState(
-    'avancementParAxeThematiques',
-    parseAsArrayOf(parseAsInteger).withDefault([])
-  );
+  const filters = useSuiviPlanBlocFilters('avancementParAxeFiltres');
+  const input = { planId, ...filters.queryInput };
   const [isAllVisible, setIsAllVisible] = useState(false);
-  const { data: axes } = useGetAvancementParAxe({ planId, thematiqueIds });
+  const { data: axes } = useGetAvancementParAxe(input);
+  const blocRef = useRef<HTMLElement>(null);
+  const { mutate: exportExcel, isPending: isExportingExcel } =
+    useExportSuiviPlanBloc('avancement-par-axe');
 
   const axesVisibles =
     axes && !isAllVisible ? axes.slice(0, NB_AXES_VISIBLES) : axes;
@@ -33,12 +36,21 @@ export const AvancementParAxeBloc = ({ planId }: { planId: number }) => {
         </span>
       }
       dataTest="plans.suivi.avancement-par-axe"
+      ref={blocRef}
       actions={
-        <ThematiquesFilterButton
-          thematiqueIds={thematiqueIds}
-          onChange={setThematiqueIds}
-          dataTest="plans.suivi.avancement-par-axe.filtre-thematiques"
-        />
+        <>
+          <SuiviPlanFiltersButton
+            filters={filters}
+            dataTest="plans.suivi.avancement-par-axe.filtres"
+          />
+          <ExportBlocButton
+            blocRef={blocRef}
+            fileName={appLabels.avancementParAxeTitre}
+            onExportExcel={() => exportExcel(input)}
+            isExportingExcel={isExportingExcel}
+            dataTest="plans.suivi.avancement-par-axe.exporter"
+          />
+        </>
       }
     >
       {axes === undefined ? (
