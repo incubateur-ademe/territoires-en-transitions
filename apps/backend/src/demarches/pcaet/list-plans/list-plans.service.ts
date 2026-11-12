@@ -64,7 +64,13 @@ export class ListPlansService {
 
     return success(
       await this.plansContenuRepository.listPlansAvecContenu(
-        { demarcheId: demarche.id, collectiviteId },
+        {
+          demarcheId: demarche.id,
+          collectiviteId,
+          // Un membre couvert n'a aucun rôle sur le porteur : ses fiches
+          // restreintes lui restent cachées. Qui édite garde ce droit.
+          hideFichesRestreintes: lectureResult.data.lectureSeule,
+        },
         tx
       )
     );

@@ -32,12 +32,11 @@ export class ListDemarchesCouvrantesService {
     { collectiviteId }: ListDemarchesCouvrantesInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<DemarchePcaetCouvrante[], ListDemarchesCouvrantesError>> {
-    if (
-      !(await this.lectureService.canListCouvrants(collectiviteId, {
-        user,
-        tx,
-      }))
-    ) {
+    const lectureResult = await this.lectureService.canListCouvrants(
+      collectiviteId,
+      { user, tx }
+    );
+    if (!lectureResult.success) {
       return success([]);
     }
 

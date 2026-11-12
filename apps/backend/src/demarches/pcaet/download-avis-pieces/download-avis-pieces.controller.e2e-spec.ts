@@ -5,6 +5,7 @@ import {
   seedTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { demarchePcaetCollectiviteCouverteTable } from '@tet/backend/demarches/shared/models/demarche-pcaet-collectivite-couverte.table';
 import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import {
   getAuthToken,
@@ -40,6 +41,7 @@ describe('DownloadAvisPiecesController', () => {
   let instructrice: AuthenticatedUser;
   let demandeAvisId: number;
   let avisId: string;
+  let demarcheId: number;
 
   // Un code propre à cette spec, dans l'espace réservé aux codes figés — une
   // lettre puis un chiffre. Voir `pickFreeRegionCode` pour les trois espaces.
@@ -91,6 +93,7 @@ describe('DownloadAvisPiecesController', () => {
         ).toISOString(),
       })
       .returning({ id: demarcheTable.id });
+    demarcheId = demarche.id;
 
     const [demande] = await db.db
       .insert(pcaetDemandeAvisTable)
@@ -198,6 +201,35 @@ describe('DownloadAvisPiecesController', () => {
 
   it("remet l'archive d'un avis validé à la collectivité déposante", async () => {
     await downloadArchive({ demandeAvisId, avisId }, deposanteToken).expect(
+      200
+    );
+  });
+
+  it("remet l'archive d'un avis validé au membre d'un EPCI que couvre le dépôt", async () => {
+    const epci = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.LECTURE },
+      collectivite: { natureInsee: 'CC' },
+    });
+    await db.db
+      .insert(demarchePcaetCollectiviteCouverteTable)
+      .values({ demarcheId, collectiviteId: epci.collectivite.id });
+    onTestFinished(async () => {
+      await db.db
+        .delete(demarchePcaetCollectiviteCouverteTable)
+        .where(
+          eq(
+            demarchePcaetCollectiviteCouverteTable.collectiviteId,
+            epci.collectivite.id
+          )
+        );
+      await epci.cleanup();
+    });
+    const membreCouvertToken = await getAuthToken({
+      email: epci.user.email ?? '',
+      password: epci.user.password,
+    });
+
+    await downloadArchive({ demandeAvisId, avisId }, membreCouvertToken).expect(
       200
     );
   });

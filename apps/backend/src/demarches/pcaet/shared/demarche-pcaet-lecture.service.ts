@@ -54,14 +54,15 @@ export class DemarchePcaetLectureService {
   async canListCouvrants(
     collectiviteId: number,
     { user, tx }: ServiceSecondArg
-  ): Promise<boolean> {
-    return (
+  ): Promise<Result<void, 'UNAUTHORIZED'>> {
+    const autorise =
+      this.isLectureAutoriseeParCle(user) &&
       (await this.isSupraEnabled(user.id, collectiviteId)) &&
-      this.perimetreRepository.isMembreActif(
+      (await this.perimetreRepository.isMembreActif(
         { collectiviteId, userId: user.id },
         tx
-      )
-    );
+      ));
+    return autorise ? success(undefined) : failure('UNAUTHORIZED');
   }
 
   private async canReadParCouverture(
@@ -72,12 +73,25 @@ export class DemarchePcaetLectureService {
     { user, tx }: ServiceSecondArg
   ): Promise<boolean> {
     return (
+      this.isLectureAutoriseeParCle(user) &&
       (await this.isSupraEnabled(user.id, collectiviteId)) &&
       this.perimetreRepository.isMembreDUneCollectiviteCouverte(
         { demarcheId, porteurId: collectiviteId, userId: user.id },
         tx
       )
     );
+  }
+
+  /**
+   * Une clé d'API restreinte porte la liste de ses opérations : la lecture par
+   * couverture ne passe pas par `isAllowed`, qui la vérifierait. Sans rôle exigé
+   * sur le porteur, que les membres couverts n'ont pas.
+   */
+  private isLectureAutoriseeParCle(user: ServiceSecondArg['user']): boolean {
+    return this.permissionService.isApiKeyAllowed(
+      user,
+      PermissionOperationEnum['DEMARCHES.PCAET.READ']
+    ).success;
   }
 
   private isSupraEnabled(

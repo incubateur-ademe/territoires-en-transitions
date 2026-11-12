@@ -9,6 +9,7 @@ import { useListDemarchesPcaet } from '@/app/demarches/pcaet/data/use-list-demar
 import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ErrorCard } from '@/app/utils/error/error.card';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -66,7 +67,12 @@ export const ListDemarchesPcaetPage = () => {
   const trpc = useTRPC();
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
-  const { data: demarches, isLoading, isError } = useListDemarchesPcaet();
+  const {
+    data: demarches,
+    isLoading,
+    isError,
+    refetch,
+  } = useListDemarchesPcaet();
   // Le contexte ne se lit que par qui peut déposer. Le serveur y applique le
   // flag, sauf à la couverture en cours, qui bloque le dépôt dans tous les cas.
   const { data: depotContext } = useQuery(
@@ -76,8 +82,12 @@ export const ListDemarchesPcaetPage = () => {
     )
   );
   const couvertureEnCours = depotContext?.couvertureEnCours ?? null;
-  const { data: couvrantes, isLoading: couvrantesEnAttente } =
-    useListDemarchesCouvrantes();
+  const {
+    data: couvrantes,
+    isLoading: couvrantesEnAttente,
+    isError: couvrantesEnErreur,
+    refetch: refetchCouvrantes,
+  } = useListDemarchesCouvrantes();
   const lignes = useMemo<Ligne[] | undefined>(
     () => demarches && [...(couvrantes ?? []), ...demarches],
     [demarches, couvrantes]
@@ -87,8 +97,13 @@ export const ListDemarchesPcaetPage = () => {
   const creationUrl = makeCollectiviteDemarchePcaetNouveauUrl({
     collectiviteId,
   });
+  // Un échec des dépôts couvrants n'est pas une liste vide : rediriger vers la
+  // création cacherait le dépôt du Supra.
   const isEmpty =
-    demarches?.length === 0 && !couvrantesEnAttente && !couvrantes?.length;
+    demarches?.length === 0 &&
+    !couvrantesEnAttente &&
+    !couvrantesEnErreur &&
+    !couvrantes?.length;
 
   const track = useDemarcheTracker(null);
   useTrackDemarcheView(Event.demarches.pcaet.listeVue, {
@@ -119,11 +134,15 @@ export const ListDemarchesPcaetPage = () => {
     );
   }
 
-  if (isError || !demarches) {
+  if (isError || couvrantesEnErreur || !demarches) {
     return (
-      <div className="flex grow items-center justify-center text-grey-7">
-        {appLabels.uneErreurEstSurvenue}
-      </div>
+      <ErrorCard
+        title={appLabels.uneErreurEstSurvenue}
+        retry={() => {
+          if (isError) refetch();
+          if (couvrantesEnErreur) refetchCouvrantes();
+        }}
+      />
     );
   }
 
