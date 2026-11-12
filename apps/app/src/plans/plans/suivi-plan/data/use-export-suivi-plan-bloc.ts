@@ -2,16 +2,35 @@ import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/utils/save-blob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
-import { RouterInput } from '@tet/api';
+import { ListFichesRequestFilters } from '@tet/domain/plans';
 
 export type SuiviPlanBlocExporte =
   | 'vue-ensemble'
   | 'avancement-par-axe'
   | 'evolution-statuts';
 
-type ExportSuiviPlanBlocInput =
-  | RouterInput['plans']['suivi']['getVueEnsemble']
-  | RouterInput['plans']['suivi']['getEvolutionStatuts'];
+type ExportSuiviPlanBlocInput = {
+  planId: number;
+  thematiqueIds?: number[];
+  filters?: Pick<
+    ListFichesRequestFilters,
+    | 'statuts'
+    | 'noStatut'
+    | 'priorites'
+    | 'noPriorite'
+    | 'personnePiloteIds'
+    | 'utilisateurPiloteIds'
+    | 'noPilote'
+    | 'personneReferenteIds'
+    | 'utilisateurReferentIds'
+    | 'noReferent'
+    | 'enCoursSansAvancement'
+    | 'notModifiedForOverAYear'
+  >;
+  dateDebut?: string;
+  dateFin?: string;
+  inclureActionsContinues?: boolean;
+};
 
 export const useExportSuiviPlanBloc = (bloc: SuiviPlanBlocExporte) => {
   const apiClient = useApiClient();
