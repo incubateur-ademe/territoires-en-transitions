@@ -68,14 +68,14 @@ services:
       GOTRUE_RATE_LIMIT_TOKEN_REFRESH: 50
       GOTRUE_RATE_LIMIT_VERIFY: 50
 
-      # Port 2525 obligatoire tant que Scaleway n'a pas débloqué 25/465/587
-      # sur le projet hébergeant la VM (cf. brainstorm Risques opérationnels).
-      GOTRUE_SMTP_HOST: ${BREVO_SMTP_HOST}
-      GOTRUE_SMTP_PORT: ${BREVO_SMTP_PORT}
-      GOTRUE_SMTP_USER: ${BREVO_SMTP_USER}
-      GOTRUE_SMTP_PASS: ${BREVO_SMTP_PASS}
-      GOTRUE_SMTP_ADMIN_EMAIL: ${BREVO_SMTP_SENDER_EMAIL}
-      GOTRUE_SMTP_SENDER_NAME: ${BREVO_SMTP_SENDER_NAME}
+      # Brevo en prod (port 2525 tant que Scaleway bloque 25/465/587), Mailpit
+      # hors prod (cf. infra/coolify/env-manifest.tf).
+      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_SENDER_EMAIL}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
 
       # Templates : GoTrue ne lit que de l'HTTP (un chemin sans http est
       # préfixé par GOTRUE_SITE_URL), servis par le service templates.
