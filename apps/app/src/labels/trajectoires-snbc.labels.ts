@@ -148,8 +148,6 @@ export const trajectoiresSnbcLabels = {
    * « Ce qui change », états vides, secteurs non représentés).
    */
   trajectoireSnbc3EtObjectifs: 'Trajectoire SNBC 3 et objectifs',
-  trajectoireSnbc3Millesime: ({ date }: { date: string }): string =>
-    `Données SNBC 3 publiées le ${date}`,
   trajectoireSnbc3CeQuiChange: 'Ce qui change avec la SNBC 3',
 
   trajectoireSnbc3BandeauTitre: 'Votre trajectoire passe à la SNBC 3',
