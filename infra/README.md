@@ -439,9 +439,8 @@ jq -c . sa.json | infra/scripts/coolify-env-secret-set.sh preprod gcloud-service
   variable absente du manifeste, y compris celles ajoutées dans l'UI.
 - **Interdits**, bloqués par des préconditions : les clés fournies par l'image
   (`GIT_SHORT_HASH`, `APPLICATION_VERSION`, `NODE_ENV`, `PORT`, `HOSTNAME`…), les
-  `NEXT_PUBLIC_*`, et une valeur en clair sur une clé au nom sensible. Une application
-  Git (`git-applications.tf`) peut poser `HOSTNAME`. Toutes les variables sont poussées en
-  runtime seulement : un `NEXT_PUBLIC_*` n'atteindrait pas le build.
+  `NEXT_PUBLIC_*`, et une valeur en clair sur une clé au nom sensible. Toutes les variables
+  sont poussées en runtime seulement : un `NEXT_PUBLIC_*` n'atteindrait pas le build.
 - **Pousser ne redéploie pas** : redéployer avec `APP_ID=<env>/<app> coolify-deploy.sh`.
   Sans `IMAGE_TAG`, il redéploie la version en place : la même image pour une application
   « image Docker », la tête de branche pour une application Git.
