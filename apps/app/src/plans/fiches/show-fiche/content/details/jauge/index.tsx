@@ -7,13 +7,13 @@ import {
   JAUGE_STEP,
   StatutEnum,
 } from '@tet/domain/plans';
-import { Badge, cn, Icon, preset, Slider, Tooltip } from '@tet/ui';
+import { Badge, cn, Icon, Slider, Tooltip } from '@tet/ui';
 import { format } from 'date-fns';
 import { JSX, useState } from 'react';
+import { getJaugeColors } from '@/app/plans/shared/jauge/get-jauge-colors';
 import { useFicheContext } from '../../../context/fiche-context';
 import { JaugeFigeeAlert } from './jauge-figee.alert';
-
-const { grey, success } = preset.theme.extend.colors;
+import { SousActionsRealiseesSkeleton } from './sous-actions-realisees.skeleton';
 
 export const Jauge = (): JSX.Element => {
   const { fiche, isReadonly, update, sousActions } = useFicheContext();
@@ -28,7 +28,7 @@ export const Jauge = (): JSX.Element => {
   const statut = fiche.statut;
   const isFigee = isJaugeFigee(statut);
   const isDisabled = isReadonly || isFigee;
-  const isRealise = !isDisabled && jauge === JAUGE_MAX;
+  const colors = getJaugeColors({ jauge, isDisabled });
   const sousActionsRealisees = sousActions.list.filter(
     (sousAction) => sousAction.statut === StatutEnum.REALISE
   ).length;
@@ -43,7 +43,7 @@ export const Jauge = (): JSX.Element => {
           <Badge
             title={`${jauge} %`}
             size="sm"
-            variant={isDisabled ? 'grey' : isRealise ? 'success' : 'info'}
+            variant={colors.badgeVariant}
             type="outlined"
           />
           {fiche.jaugeModifiedAt && (
@@ -62,13 +62,7 @@ export const Jauge = (): JSX.Element => {
           step={JAUGE_STEP}
           value={[jauge]}
           disabled={isDisabled}
-          rangeColors={
-            isDisabled
-              ? [grey[5], grey[3]]
-              : isRealise
-              ? [success[1], success[1]]
-              : undefined
-          }
+          rangeColors={[colors.fill, colors.track]}
           className={cn(
             isDisabled &&
               'cursor-not-allowed [&_[role=slider]]:cursor-not-allowed [&_[role=slider]]:border-grey-5 [&_[role=slider]]:bg-grey-3'
@@ -93,7 +87,9 @@ export const Jauge = (): JSX.Element => {
 
         {isFigee && <JaugeFigeeAlert statut={statut} />}
 
-        {sousActions.list.length > 0 && (
+        {sousActions.isLoading && <SousActionsRealiseesSkeleton />}
+
+        {!sousActions.isLoading && sousActions.list.length > 0 && (
           <p className="mb-0 text-sm text-grey-8">
             {appLabels.ficheJaugeSousActionsRealisees({
               realisees: sousActionsRealisees,
