@@ -14,6 +14,7 @@ import {
   DEMARCHE_PCAET_EN_COURS_STATUSES,
   DemarcheTypeEnum,
   estNaturePorteusePcaet,
+  type DemarchePcaetStatus,
   type CollectiviteCouverte,
   type EngagementPcaet,
   type EpciCandidat,
@@ -22,6 +23,11 @@ import { alias } from 'drizzle-orm/pg-core';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 
 const NATURES_EPCI_FP = collectiviteNature.filter(estNaturePorteusePcaet);
+
+const toDerniereDemarche = (
+  demarche: { status: DemarchePcaetStatus; dateDebut: string } | undefined
+): EpciCandidat['derniereDemarche'] =>
+  demarche ? { status: demarche.status, dateDebut: demarche.dateDebut } : null;
 
 const dateDebut = sql<string>`to_char(coalesce(${demarcheTable.launchedAt}, ${demarcheTable.createdAt}) at time zone 'Europe/Paris', 'YYYY-MM-DD')`;
 
@@ -47,7 +53,8 @@ export class DemarchePcaetPerimetreRepository {
 
   /**
    * Les EPCI à fiscalité propre membres du Supra d'après les relations BANATIC
-   * (`collectivite_relations`), avec la dernière démarche PCAET de chacun.
+   * (`collectivite_relations`), avec la dernière démarche PCAET de chacun, la
+   * sienne ou le dépôt d'un Supra qui le couvre.
    */
   async listEpciCandidats(
     porteurId: number,
@@ -78,30 +85,57 @@ export class DemarchePcaetPerimetreRepository {
       return [];
     }
 
-    const dernieres = await db
-      .selectDistinctOn([demarcheTable.collectiviteId], {
-        collectiviteId: demarcheTable.collectiviteId,
-        status: demarcheTable.status,
-        dateDebut,
-      })
-      .from(demarcheTable)
-      .where(
-        and(
-          eq(demarcheTable.type, DemarcheTypeEnum.PCAET),
-          inArray(
-            demarcheTable.collectiviteId,
-            epcis.map((epci) => epci.id)
+    const epciIds = epcis.map(({ id }) => id);
+    const estPcaet = eq(demarcheTable.type, DemarcheTypeEnum.PCAET);
+    const colonnes = {
+      status: demarcheTable.status,
+      dateDebut,
+      creeLe:
+        sql<number>`extract(epoch from ${demarcheTable.createdAt})`.mapWith(
+          Number
+        ),
+    };
+    // Ses propres démarches et les dépôts de Supra qui le couvrent : la plus
+    // récente l'emporte.
+    const [propres, viaSupra] = await Promise.all([
+      db
+        .select({ collectiviteId: demarcheTable.collectiviteId, ...colonnes })
+        .from(demarcheTable)
+        .where(and(estPcaet, inArray(demarcheTable.collectiviteId, epciIds))),
+      db
+        .select({
+          collectiviteId: demarchePcaetCollectiviteCouverteTable.collectiviteId,
+          ...colonnes,
+        })
+        .from(demarchePcaetCollectiviteCouverteTable)
+        .innerJoin(
+          demarcheTable,
+          eq(
+            demarcheTable.id,
+            demarchePcaetCollectiviteCouverteTable.demarcheId
           )
         )
-      )
-      .orderBy(demarcheTable.collectiviteId, desc(demarcheTable.createdAt));
+        .where(
+          and(
+            estPcaet,
+            inArray(
+              demarchePcaetCollectiviteCouverteTable.collectiviteId,
+              epciIds
+            )
+          )
+        ),
+    ]);
 
-    const derniereParEpci = new Map(
-      dernieres.map(({ collectiviteId, ...derniere }) => [
-        collectiviteId,
-        derniere,
-      ])
-    );
+    const derniereParEpci = new Map<
+      number,
+      { status: DemarchePcaetStatus; dateDebut: string; creeLe: number }
+    >();
+    for (const { collectiviteId, ...demarche } of [...propres, ...viaSupra]) {
+      const retenue = derniereParEpci.get(collectiviteId);
+      if (!retenue || demarche.creeLe > retenue.creeLe) {
+        derniereParEpci.set(collectiviteId, demarche);
+      }
+    }
     const engagements = await this.listEngagementsEnCours(
       epcis.map((epci) => epci.id),
       tx
@@ -109,7 +143,7 @@ export class DemarchePcaetPerimetreRepository {
 
     return epcis.map((epci) => ({
       ...epci,
-      derniereDemarche: derniereParEpci.get(epci.id) ?? null,
+      derniereDemarche: toDerniereDemarche(derniereParEpci.get(epci.id)),
       engagement: engagements.get(epci.id) ?? null,
     }));
   }

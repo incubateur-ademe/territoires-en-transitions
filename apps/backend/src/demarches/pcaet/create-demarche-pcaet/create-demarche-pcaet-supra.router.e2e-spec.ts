@@ -236,7 +236,7 @@ describe('Dépôt PCAET porté par un Supra', () => {
       nom: 'A – CC Cœur Lauragais',
       natureInsee: 'CC',
     });
-    await addMembre(porteur.id, {
+    const epciB = await addMembre(porteur.id, {
       nom: 'B – CC du Lauragais',
       natureInsee: 'CC',
     });
@@ -255,6 +255,17 @@ describe('Dépôt PCAET porté par un Supra', () => {
     });
 
     expect(contexte.perimetrePrecedent).toEqual([epciA.id]);
+    // Le dernier PCAET qui concerne l'EPCI, le sien ou celui d'un Supra qui le
+    // couvre.
+    expect(
+      contexte.epciCandidats.map(({ id, derniereDemarche }) => ({
+        id,
+        status: derniereDemarche?.status ?? null,
+      }))
+    ).toEqual([
+      { id: epciA.id, status: DemarchePcaetStatusEnum.PUBLIE },
+      { id: epciB.id, status: null },
+    ]);
   });
 
   it('ne pré-coche rien tant que le premier dépôt est en cours', async () => {
