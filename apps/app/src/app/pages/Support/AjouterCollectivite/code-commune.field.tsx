@@ -4,16 +4,21 @@ import { Field, Input } from '@tet/ui';
 type Props = {
   value: string | undefined;
   onChange: (value: string) => void;
+  /** Erreur de saisie affichée sous le champ */
+  error?: string;
 };
 
-export const CodeCommuneField = ({ value, onChange }: Props) => {
+export const CodeCommuneField = ({ value, onChange, error }: Props) => {
   return (
     <Field
       title={appLabels.formCodeCommune}
       hint={appLabels.formCodeCommuneHint}
+      state={error ? 'error' : 'default'}
+      message={error}
     >
       <Input
         type="text"
+        aria-invalid={error ? true : undefined}
         maxLength={5}
         value={value}
         onChange={(e) => {

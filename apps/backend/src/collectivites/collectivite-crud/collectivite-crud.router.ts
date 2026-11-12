@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
   collectiviteUpdateNICSchema,
@@ -8,9 +9,14 @@ import {
 } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { z } from 'zod';
+import { collectiviteCrudErrorConfig } from './collectivite-crud.errors';
 
 @Injectable()
 export class CollectiviteCrudRouter {
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    collectiviteCrudErrorConfig
+  );
+
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: CollectiviteCrudService,
@@ -27,7 +33,7 @@ export class CollectiviteCrudRouter {
           ResourceType.PLATEFORME,
           null
         );
-        return this.service.upsert(input);
+        return this.getResultDataOrThrowError(await this.service.upsert(input));
       }),
     updateNIC: this.trpc.authedOrServiceRoleProcedure
       .input(collectiviteUpdateNICSchema)

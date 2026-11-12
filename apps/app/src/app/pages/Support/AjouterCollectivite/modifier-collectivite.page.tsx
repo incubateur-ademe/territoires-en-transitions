@@ -7,6 +7,8 @@ import {
   collectiviteType,
   CollectiviteTypeField,
 } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-type.field';
+import { isIncomplete } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-form.utils';
+import { getCollectiviteErrorMessage } from '@/app/app/pages/Support/AjouterCollectivite/get-collectivite-error-message';
 import { SirenField } from '@/app/app/pages/Support/AjouterCollectivite/siren.field';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
 import {
@@ -62,7 +64,9 @@ export const ModifierCollectivitePage = () => {
       },
       onError: (error) => {
         setMessage({
-          message: appLabels.formErreurModification({ error: error.message }),
+          message: appLabels.formErreurModification({
+            error: getCollectiviteErrorMessage(error),
+          }),
           ok: false,
         });
       },
@@ -76,6 +80,17 @@ export const ModifierCollectivitePage = () => {
   const isCollectiviteSansIdentifiant =
     collectivite.type === collectiviteType.Test ||
     collectivite.type === collectiviteType.StructureSansStatutJuridique;
+
+  // Seul l'identifiant affiché pour ce type bloque l'enregistrement : un champ
+  // masqué en erreur désactiverait le bouton sans explication.
+  const hasCodeCommune = collectivite.type === collectiviteType.Commune;
+  const hasSiren =
+    !isCollectiviteSansIdentifiant &&
+    !hasCodeCommune &&
+    collectivite.type !== collectiviteType.Dreal;
+  const isSirenIncomplete = hasSiren && isIncomplete(collectivite.siren, 9);
+  const isCodeCommuneIncomplete =
+    hasCodeCommune && isIncomplete(collectivite.communeCode, 5);
 
   return (
     <div className="space-y-6">
@@ -103,12 +118,22 @@ export const ModifierCollectivitePage = () => {
               <CodeCommuneField
                 value={collectivite.communeCode ?? ''}
                 onChange={(value) => updateCollectivite('communeCode', value)}
+                error={
+                  isCodeCommuneIncomplete
+                    ? appLabels.formCinqChiffresAttendus
+                    : undefined
+                }
               />
             ) : (
               collectivite.type !== collectiviteType.Dreal && (
                 <SirenField
                   value={collectivite.siren ?? ''}
                   onChange={(value) => updateCollectivite('siren', value)}
+                  error={
+                    isSirenIncomplete
+                      ? appLabels.formNeufChiffresAttendus
+                      : undefined
+                  }
                 />
               )
             )}
@@ -143,6 +168,8 @@ export const ModifierCollectivitePage = () => {
             className="self-end"
             disabled={
               !collectivite.nom ||
+              isSirenIncomplete ||
+              isCodeCommuneIncomplete ||
               (collectivite.type === collectiviteType.Commune &&
                 !collectivite.communeCode) ||
               (collectivite.type === collectiviteType.EPCI &&

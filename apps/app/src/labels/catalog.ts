@@ -482,6 +482,8 @@ export const appLabels = {
       "Cette décision n'est pas possible au stade actuel du dossier.",
     LABELLISATION_ALREADY_EXISTS:
       'Une labellisation existe déjà pour cette collectivité, ce référentiel et cette année.',
+    COLLECTIVITE_EXISTE_DEJA: collectivitesLabels.erreurCollectiviteExisteDeja,
+    SIREN_INVALIDE: collectivitesLabels.erreurSirenInvalide,
   } as Record<string, string | undefined>,
   indicateurValeurReferenceLigne: ({
     source,

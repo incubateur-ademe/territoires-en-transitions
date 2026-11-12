@@ -9,6 +9,11 @@ import {
 } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-type.field';
 import { NicField } from '@/app/app/pages/Support/AjouterCollectivite/nic.field';
 import { SirenField } from '@/app/app/pages/Support/AjouterCollectivite/siren.field';
+import { isIncomplete } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-form.utils';
+import {
+  getCollectiviteErrorMessage,
+  getErrorKey,
+} from '@/app/app/pages/Support/AjouterCollectivite/get-collectivite-error-message';
 import { useFindCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-find-collectivite';
 import {
   CollectiviteInput,
@@ -17,7 +22,7 @@ import {
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
 import { appLabels } from '@/app/labels/catalog';
 import { Button, Divider, Field, Input, InputNumber } from '@tet/ui';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const statusSearch = {
   none: 'none',
@@ -49,7 +54,17 @@ export const AjouterCollectivitePage = () => {
     { message: string; ok: boolean } | undefined
   >();
 
+  // Version de la saisie : une recherche lancée sur une version périmée ne doit
+  // pas modifier le statut.
+  const inputVersion = useRef(0);
+
   const updateCollectivite = (key: string, value: any, reset?: boolean) => {
+    inputVersion.current += 1;
+    // « Existe déjà » ne vaut que pour la saisie trouvée : toute modification
+    // l'invalide (la requête `find` change de clé et n'a plus de données).
+    setStatus((prev) =>
+      prev === statusSearch.DBFound ? statusSearch.none : prev
+    );
     setCollectivite((prev) => {
       setMessage(undefined);
       if (key === 'type') {
@@ -94,11 +109,22 @@ export const AjouterCollectivitePage = () => {
             ok: true,
           });
         },
-        onError: (error) => {
+        onError: async (error) => {
           setMessage({
-            message: appLabels.formErreurCreation({ error: String(error) }),
+            message: appLabels.formErreurCreation({
+              error: getCollectiviteErrorMessage(error),
+            }),
             ok: false,
           });
+          // La recherche n'a pas été lancée : on la relance pour afficher
+          // l'identifiant de la collectivité existante.
+          if (getErrorKey(error) === 'COLLECTIVITE_EXISTE_DEJA') {
+            const version = inputVersion.current;
+            const colDB = await searchDB();
+            if (version === inputVersion.current && colDB?.data?.nom) {
+              setStatus(statusSearch.DBFound);
+            }
+          }
         },
       });
     }
@@ -112,6 +138,10 @@ export const AjouterCollectivitePage = () => {
   const isCollectiviteSansCodesGeo =
     selectedType === collectiviteType.Test ||
     selectedType === collectiviteType.StructureSansStatutJuridique;
+
+  const isSirenIncomplete = isIncomplete(collectivite.siren, 9);
+  const isNicIncomplete = isIncomplete(collectivite.nic, 5);
+  const isCodeCommuneIncomplete = isIncomplete(collectivite.communeCode, 5);
 
   return (
     <div className="space-y-6">
@@ -202,9 +232,9 @@ export const AjouterCollectivitePage = () => {
         {status === statusSearch.none && !isCollectiviteSansRecherche && (
           <p className="text-blue-500">{appLabels.formLancezRecherche}</p>
         )}
-        {status === statusSearch.DBFound && (
+        {status === statusSearch.DBFound && dataDB && (
           <p className="text-red-500">
-            {appLabels.collectiviteExisteDeja({ id: Number(dataDB?.id) })}
+            {appLabels.collectiviteExisteDeja({ id: dataDB.id })}
           </p>
         )}
         {status === statusSearch.inseeFound && (
@@ -230,12 +260,22 @@ export const AjouterCollectivitePage = () => {
               <CodeCommuneField
                 value={collectivite.communeCode ?? ''}
                 onChange={(value) => updateCollectivite('communeCode', value)}
+                error={
+                  isCodeCommuneIncomplete
+                    ? appLabels.formCinqChiffresAttendus
+                    : undefined
+                }
               />
             ) : (
               selectedType !== collectiviteType.Dreal && (
                 <SirenField
                   value={collectivite.siren ?? ''}
                   onChange={(value) => updateCollectivite('siren', value)}
+                  error={
+                    isSirenIncomplete
+                      ? appLabels.formNeufChiffresAttendus
+                      : undefined
+                  }
                 />
               )
             )}
@@ -243,6 +283,11 @@ export const AjouterCollectivitePage = () => {
               <NicField
                 value={collectivite.nic ?? ''}
                 onChange={(value) => updateCollectivite('nic', value)}
+                error={
+                  isNicIncomplete
+                    ? appLabels.formCinqChiffresAttendus
+                    : undefined
+                }
               />
             )}
             {selectedType !== collectiviteType.Region &&
@@ -280,6 +325,9 @@ export const AjouterCollectivitePage = () => {
             className="self-end"
             disabled={
               !collectivite.nom ||
+              isSirenIncomplete ||
+              isNicIncomplete ||
+              isCodeCommuneIncomplete ||
               (selectedType === collectiviteType.Commune &&
                 !collectivite.communeCode) ||
               (selectedType === collectiviteType.EPCI && !collectivite.siren) ||

@@ -5,6 +5,13 @@ import { departementTable } from '@tet/backend/collectivites/shared/models/impor
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  getErrorCode,
+  isErrorWithCause,
+  isUniqueViolation,
+} from '@tet/backend/utils/nest/errors.utils';
+import { PgIntegrityConstraintViolation } from '@tet/backend/utils/postgresql-error-codes.enum';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
   Collectivite,
   CollectiviteNatureType,
   collectiviteTypeEnum,
@@ -14,6 +21,40 @@ import {
 } from '@tet/domain/collectivites';
 import { and, eq, inArray, sql, SQL } from 'drizzle-orm';
 import { collectiviteTable } from '../shared/models/collectivite.table';
+import {
+  CollectiviteCrudError,
+  CollectiviteCrudErrorEnum,
+} from './collectivite-crud.errors';
+
+/** Contrainte du domaine Postgres `siren` : 9 chiffres. */
+const SIREN_CHECK_CONSTRAINT = 'siren_check';
+
+/**
+ * Même règle que le domaine `siren`, vérifiée avant toute requête : un SIREN
+ * trop long dépasserait le varchar(9) (erreur 22001) avant d'atteindre la
+ * contrainte, et tomberait en erreur imprévue.
+ */
+const SIREN_PATTERN = /^\d{9}$/;
+
+/**
+ * Traduit le refus de la base en code d'erreur lisible, ou `null` si l'erreur
+ * n'est pas un refus attendu.
+ */
+function getExpectedUpsertError(error: unknown): CollectiviteCrudError | null {
+  if (
+    getErrorCode(error) === PgIntegrityConstraintViolation.CheckViolation &&
+    isErrorWithCause(error) &&
+    error.cause.constraint === SIREN_CHECK_CONSTRAINT
+  ) {
+    return CollectiviteCrudErrorEnum.SIREN_INVALIDE;
+  }
+  // Index uniques partiels (DREAL, DDT, DR ADEME, structure sans statut) :
+  // filet derrière `find()`.
+  if (isUniqueViolation(error)) {
+    return CollectiviteCrudErrorEnum.COLLECTIVITE_EXISTE_DEJA;
+  }
+  return null;
+}
 
 type colInfo = {
   nom: string | null;
@@ -29,32 +70,44 @@ export default class CollectiviteCrudService {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async upsert(collectivite: CollectiviteUpsert): Promise<Collectivite> {
+  async upsert(
+    collectivite: CollectiviteUpsert
+  ): Promise<Result<Collectivite, CollectiviteCrudError>> {
     const { id, modifiedAt, preferences, ...rest } = collectivite;
-    // Check if the "collectivité" to insert already exist
-    if (!id) {
-      const col = await this.find(collectivite);
-      if (col)
-        throw new Error(
-          `La collectivité ${col.nom} existe déjà sous l'identifiant ${col.id}`
-        );
+    if (collectivite.siren != null && !SIREN_PATTERN.test(collectivite.siren)) {
+      return failure(CollectiviteCrudErrorEnum.SIREN_INVALIDE);
     }
-    const [result] = (await this.databaseService.db
-      .insert(collectiviteTable)
-      .values({
-        ...collectivite,
-        nom: collectivite.nom ?? '',
-        preferences: preferences ?? defaultCollectivitePreferences,
-      })
-      .onConflictDoUpdate({
-        target: [collectiviteTable.id],
-        set: {
-          ...rest,
-          modifiedAt: new Date().toISOString(),
-        },
-      })
-      .returning()) as Collectivite[];
-    return result;
+    try {
+      // Check if the "collectivité" to insert already exist
+      if (!id) {
+        const col = await this.find(collectivite);
+        if (col)
+          return failure(CollectiviteCrudErrorEnum.COLLECTIVITE_EXISTE_DEJA);
+      }
+      const [result] = (await this.databaseService.db
+        .insert(collectiviteTable)
+        .values({
+          ...collectivite,
+          nom: collectivite.nom ?? '',
+          preferences: preferences ?? defaultCollectivitePreferences,
+        })
+        .onConflictDoUpdate({
+          target: [collectiviteTable.id],
+          set: {
+            ...rest,
+            modifiedAt: new Date().toISOString(),
+          },
+        })
+        .returning()) as Collectivite[];
+      return success(result);
+    } catch (error) {
+      const expectedError = getExpectedUpsertError(error);
+      if (expectedError) return failure(expectedError);
+      // Erreur imprévue : le détail reste dans les logs. Sans cause, le client
+      // ne reçoit que le code (`errorKey`), jamais le texte de la requête.
+      this.logger.error(error);
+      return failure(CollectiviteCrudErrorEnum.DATABASE_ERROR);
+    }
   }
 
   /**
