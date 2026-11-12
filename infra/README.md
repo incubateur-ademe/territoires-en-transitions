@@ -227,7 +227,8 @@ Pour le stack `coolify`, sourcer en plus `scripts/coolify-env.sh` (`COOLIFY_ENDP
 
 ```sh
 terraform fmt -recursive
-for d in platform nonprod prod preview coolify; do
+for lock in */.terraform.lock.hcl; do
+  d=$(dirname $lock)
   terraform -chdir=$d init -backend=false && terraform -chdir=$d validate
 done
 tflint --recursive

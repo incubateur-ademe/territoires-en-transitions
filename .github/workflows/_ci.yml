@@ -24,6 +24,7 @@ jobs:
       run-e2e: ${{ steps.scope.outputs.run-e2e }}
       run-ui-storybook: ${{ steps.scope.outputs.run-ui-storybook }}
       run-app-storybook: ${{ steps.scope.outputs.run-app-storybook }}
+      run-infra: ${{ steps.scope.outputs.run-infra }}
       run-prepare-test-db: ${{ steps.scope.outputs.run-prepare-test-db }}
     steps:
       - uses: actions/checkout@v7.0.1
@@ -145,6 +146,13 @@ jobs:
       pnpm-cache-key: ${{ needs.analyze-affected.outputs.cache-key }}
     secrets: inherit
 
+  infra:
+    if: ${{ needs.analyze-affected.outputs.run-infra == 'true' }}
+    needs: [analyze-affected]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_ci-infra.yml
+
   # Single required check for the ruleset ("ci / status"): skipped jobs pass,
   # any failed or cancelled job fails it.
   status:
@@ -158,6 +166,7 @@ jobs:
         test-db-deploy,
         test-backend-api,
         test-end-to-end,
+        infra,
       ]
     runs-on: ubuntu-latest
     timeout-minutes: 5
