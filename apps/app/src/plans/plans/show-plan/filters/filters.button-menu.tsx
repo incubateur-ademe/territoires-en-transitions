@@ -1,14 +1,6 @@
-import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
-import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import { FiltersGenericButtonMenu } from '@/app/ui/lists/filters.generic-button-menu';
-import {
-  EN_COURS_SANS_AVANCEMENT_LABEL,
-  NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
-  SANS_PILOTE_LABEL,
-  SANS_REFERENT_LABEL,
-} from '@tet/domain/plans';
-import { SuiviOption } from '../data/use-fiches-filters-list/types';
-import { Alert, Field, SelectFilter } from '@tet/ui';
+import { Alert } from '@tet/ui';
+import { PlanFiltersFields } from './plan-filters.fields';
 import { usePlanFilters } from './plan-filters.context';
 
 export const FiltersMenuButton = () => {
@@ -25,84 +17,16 @@ export const FiltersMenuButton = () => {
 };
 
 const MenuContent = () => {
-  const { filters, setFilters, personneOptions, getFilterLabel } =
-    usePlanFilters();
+  const { filters, setFilters, personneOptions } = usePlanFilters();
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <Alert title="Les filtres s'appliquent uniquement sur les actions" />
-        <Field title={getFilterLabel('pilotes')}>
-          <SelectFilter
-            values={filters.pilotes ?? []}
-            options={[
-              {
-                value: SANS_PILOTE_LABEL,
-                label: SANS_PILOTE_LABEL,
-              },
-              ...personneOptions,
-            ]}
-            onChange={({ values }) =>
-              setFilters({
-                ...filters,
-                pilotes: Array.isArray(values) ? (values as string[]) : [],
-              })
-            }
-            disabled={personneOptions.length === 0}
-            isSearcheable
-          />
-        </Field>
-        <Field title={getFilterLabel('statuts')}>
-          <StatutsFilterDropdown
-            values={filters.statuts}
-            onChange={(statuts) =>
-              setFilters({
-                ...filters,
-                statuts,
-              })
-            }
-          />
-        </Field>
-        <Field title={getFilterLabel('referents')}>
-          <SelectFilter
-            values={filters.referents ?? []}
-            options={[
-              {
-                value: SANS_REFERENT_LABEL,
-                label: SANS_REFERENT_LABEL,
-              },
-              ...personneOptions,
-            ]}
-            onChange={({ values }) =>
-              setFilters({
-                ...filters,
-                referents: Array.isArray(values) ? (values as string[]) : [],
-              })
-            }
-            disabled={personneOptions.length === 0}
-            isSearcheable
-          />
-        </Field>
-        <Field title={getFilterLabel('priorites')}>
-          <PrioritesFilterDropdown
-            values={filters.priorites}
-            onChange={(priorites) => setFilters({ ...filters, priorites })}
-          />
-        </Field>
-        <Field title={getFilterLabel('suivi')}>
-          <SelectFilter
-            values={filters.suivi ?? []}
-            options={[
-              EN_COURS_SANS_AVANCEMENT_LABEL,
-              NON_MODIFIEE_DEPUIS_PLUS_D_UN_AN_LABEL,
-            ].map((option) => ({ value: option, label: option }))}
-            onChange={({ values }) =>
-              setFilters({
-                ...filters,
-                suivi: Array.isArray(values) ? (values as SuiviOption[]) : [],
-              })
-            }
-          />
-        </Field>
+        <PlanFiltersFields
+          filters={filters}
+          setFilters={setFilters}
+          personneOptions={personneOptions}
+        />
       </div>
     </div>
   );

@@ -1,15 +1,17 @@
 'use client';
 
-import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { appLabels } from '@/app/labels/catalog';
 import { JaugeBar } from '@/app/plans/shared/jauge/jauge.bar';
-import { faireAvancerLePlanFilters } from '@tet/domain/plans';
-import { Alert, Icon, InlineLink } from '@tet/ui';
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
+import { Alert, Icon } from '@tet/ui';
+import { useRef } from 'react';
 import { AvancementInfoTooltip } from '../avancement-info.tooltip';
+import { useExportSuiviPlanBloc } from '../data/use-export-suivi-plan-bloc';
 import { useGetVueEnsemble } from '../data/use-get-vue-ensemble';
+import { ExportBlocButton } from '../export-bloc.button';
+import { RenseignerAvancementButton } from '../faire-avancer-le-plan/renseigner-avancement.side-panel';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
-import { ThematiquesFilterButton } from '../thematiques-filter.button';
+import { SuiviPlanFiltersButton } from '../suivi-plan-filters.button';
+import { useSuiviPlanBlocFilters } from '../use-suivi-plan-bloc-filters';
 import { RepartitionParStatut } from './repartition-par-statut.chart';
 
 export const VueEnsembleBloc = ({
@@ -19,22 +21,33 @@ export const VueEnsembleBloc = ({
   collectiviteId: number;
   planId: number;
 }) => {
-  const [thematiqueIds, setThematiqueIds] = useQueryState(
-    'vueEnsembleThematiques',
-    parseAsArrayOf(parseAsInteger).withDefault([])
-  );
-  const { data } = useGetVueEnsemble({ planId, thematiqueIds });
+  const filters = useSuiviPlanBlocFilters('vueEnsembleFiltres');
+  const input = { planId, ...filters.queryInput };
+  const { data } = useGetVueEnsemble(input);
+  const blocRef = useRef<HTMLElement>(null);
+  const { mutate: exportExcel, isPending: isExportingExcel } =
+    useExportSuiviPlanBloc('vue-ensemble');
 
   return (
     <SuiviPlanBloc
       titre={appLabels.vueEnsembleTitre}
       dataTest="plans.suivi.vue-ensemble"
+      ref={blocRef}
       actions={
-        <ThematiquesFilterButton
-          thematiqueIds={thematiqueIds}
-          onChange={setThematiqueIds}
-          dataTest="plans.suivi.vue-ensemble.filtre-thematiques"
-        />
+        <>
+          <SuiviPlanFiltersButton
+            filters={filters}
+            hiddenKeys={['statuts']}
+            dataTest="plans.suivi.vue-ensemble.filtres"
+          />
+          <ExportBlocButton
+            blocRef={blocRef}
+            fileName={appLabels.vueEnsembleTitre}
+            onExportExcel={() => exportExcel(input)}
+            isExportingExcel={isExportingExcel}
+            dataTest="plans.suivi.vue-ensemble.exporter"
+          />
+        </>
       }
     >
       {data ? (
@@ -67,19 +80,15 @@ export const VueEnsembleBloc = ({
                   <span className="text-sm leading-5 text-grey-9">
                     {appLabels.vueEnsembleEnCoursSansAvancement(
                       data.enCoursSansAvancement
-                    )}{' '}
-                    <InlineLink
-                      href={makeCollectivitePlanActionUrl({
-                        collectiviteId,
-                        planActionUid: planId.toString(),
-                        filters:
-                          faireAvancerLePlanFilters.enCoursSansAvancement,
-                      })}
-                      className="font-medium text-primary-9 underline-offset-2"
-                    >
-                      {appLabels.vueEnsembleRenseigner}
-                    </InlineLink>
+                    )}
                   </span>
+                }
+                action={
+                  <RenseignerAvancementButton
+                    collectiviteId={collectiviteId}
+                    planId={planId}
+                    dataTest="plans.suivi.vue-ensemble.renseigner-avancement"
+                  />
                 }
               />
             )}
@@ -92,6 +101,7 @@ export const VueEnsembleBloc = ({
               collectiviteId={collectiviteId}
               planId={planId}
               total={data.total}
+              pilotageFilters={filters.pilotageFilters}
               repartition={data.repartitionParStatut}
             />
             <span className="text-xs text-grey-8">

@@ -5,7 +5,10 @@ import DonutChart from '@/app/ui/charts/Donut/DonutChart';
 import { SANS_STATUT_LABEL, Statut, StatutEnum } from '@tet/domain/plans';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { makePilotageParStatutUrl } from '../make-pilotage-par-statut-url';
+import {
+  makePilotageParStatutUrl,
+  PilotageFilters,
+} from '../make-pilotage-par-statut-url';
 import {
   COULEURS_SUIVI_BY_STATUT,
   ORDRE_STATUTS,
@@ -24,11 +27,13 @@ export const RepartitionParStatut = ({
   planId,
   total,
   repartition,
+  pilotageFilters,
 }: {
   collectiviteId: number;
   planId: number;
   total: number;
   repartition: RepartitionItem[];
+  pilotageFilters: PilotageFilters;
 }) => {
   const router = useRouter();
   const items = ORDRE_STATUTS.map((statut) => ({
@@ -37,7 +42,12 @@ export const RepartitionParStatut = ({
   })).filter(({ count }) => count > 0);
 
   const makePilotageUrl = (statut: Statut | null) =>
-    makePilotageParStatutUrl({ collectiviteId, planId, statut });
+    makePilotageParStatutUrl({
+      collectiviteId,
+      planId,
+      statut,
+      filters: pilotageFilters,
+    });
 
   return (
     <div className="flex flex-wrap items-center gap-6">

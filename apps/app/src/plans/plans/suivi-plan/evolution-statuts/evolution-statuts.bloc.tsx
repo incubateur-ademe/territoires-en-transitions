@@ -4,17 +4,15 @@ import { appLabels } from '@/app/labels/catalog';
 import { DEBUT_HISTORIQUE_STATUTS } from '@tet/domain/plans';
 import { Alert, Checkbox, Input, Select } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
-import { ReactNode } from 'react';
-import {
-  parseAsArrayOf,
-  parseAsBoolean,
-  parseAsInteger,
-  useQueryState,
-} from 'nuqs';
+import { ReactNode, useRef } from 'react';
+import { parseAsBoolean, useQueryState } from 'nuqs';
+import { useExportSuiviPlanBloc } from '../data/use-export-suivi-plan-bloc';
 import { useGetEvolutionStatuts } from '../data/use-get-evolution-statuts';
+import { ExportBlocButton } from '../export-bloc.button';
 import { ORDRE_STATUTS } from '../statut-suivi-colors';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
-import { ThematiquesFilterButton } from '../thematiques-filter.button';
+import { SuiviPlanFiltersButton } from '../suivi-plan-filters.button';
+import { useSuiviPlanBlocFilters } from '../use-suivi-plan-bloc-filters';
 import { EvolutionStatutsTable } from './evolution-statuts.table';
 import {
   formatDateCourte,
@@ -49,10 +47,7 @@ export const EvolutionStatutsBloc = ({
   planId: number;
   dateDebutPlan: string;
 }) => {
-  const [thematiqueIds, setThematiqueIds] = useQueryState(
-    'evolutionStatutsThematiques',
-    parseAsArrayOf(parseAsInteger).withDefault([])
-  );
+  const filters = useSuiviPlanBlocFilters('evolutionStatutsFiltres');
   const [inclureActionsContinues, setInclureActionsContinues] = useQueryState(
     'evolutionActionsContinues',
     parseAsBoolean.withDefault(false)
@@ -68,13 +63,17 @@ export const EvolutionStatutsBloc = ({
     setDateFin,
   } = usePeriodeEvolution(dateDebutPlan);
 
-  const { data, isPlaceholderData, isError } = useGetEvolutionStatuts({
+  const input = {
     planId,
-    thematiqueIds,
+    ...filters.queryInput,
     dateDebut,
     dateFin,
     inclureActionsContinues,
-  });
+  };
+  const { data, isPlaceholderData, isError } = useGetEvolutionStatuts(input);
+  const blocRef = useRef<HTMLElement>(null);
+  const { mutate: exportExcel, isPending: isExportingExcel } =
+    useExportSuiviPlanBloc('evolution-statuts');
   const isPeriodeInvalide = dateDebut > dateFin;
   const isLoading = data === undefined || isPlaceholderData;
 
@@ -100,15 +99,25 @@ export const EvolutionStatutsBloc = ({
         fin: dateFinAffichee,
       })}
       dataTest="plans.suivi.evolution-statuts"
+      ref={blocRef}
       actions={
-        <ThematiquesFilterButton
-          thematiqueIds={thematiqueIds}
-          onChange={setThematiqueIds}
-          dataTest="plans.suivi.evolution-statuts.filtre-thematiques"
-        />
+        <>
+          <SuiviPlanFiltersButton
+            filters={filters}
+            hiddenKeys={['statuts']}
+            dataTest="plans.suivi.evolution-statuts.filtres"
+          />
+          <ExportBlocButton
+            blocRef={blocRef}
+            fileName={appLabels.evolutionStatutsTitre}
+            onExportExcel={() => exportExcel(input)}
+            isExportingExcel={isExportingExcel}
+            dataTest="plans.suivi.evolution-statuts.exporter"
+          />
+        </>
       }
     >
-      <div className="flex flex-wrap items-end gap-4">
+      <div className="flex flex-wrap items-end gap-4" data-html2canvas-ignore>
         <PeriodeField
           titre={appLabels.evolutionStatutsPeriode}
           className="w-72"
@@ -196,11 +205,19 @@ export const EvolutionStatutsBloc = ({
               isLoading={isLoading}
               statuts={rows.map(({ statut, fin }) => ({ statut, count: fin }))}
               getHref={(statut) =>
-                makePilotageParStatutUrl({ collectiviteId, planId, statut })
+                makePilotageParStatutUrl({
+                  collectiviteId,
+                  planId,
+                  statut,
+                  filters: filters.pilotageFilters,
+                })
               }
               dataTest="plans.suivi.evolution-statuts.barre-fin"
             />
-            <div className="pt-6 border-t border-grey-3">
+            <div
+              className="pt-6 border-t border-grey-3"
+              data-html2canvas-ignore
+            >
               <Checkbox
                 label={appLabels.evolutionStatutsInclureActionsContinues}
                 message={
@@ -223,6 +240,7 @@ export const EvolutionStatutsBloc = ({
           <EvolutionStatutsTable
             collectiviteId={collectiviteId}
             planId={planId}
+            pilotageFilters={filters.pilotageFilters}
             rows={rows}
             totaux={totaux}
             isLoading={isLoading}
