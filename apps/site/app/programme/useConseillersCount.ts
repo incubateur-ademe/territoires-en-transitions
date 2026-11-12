@@ -1,5 +1,5 @@
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 import { getConseillersCount } from './annuaire/utils';
 
 export const useConseillersCount = () =>
-  useSWR('conseillers-count', getConseillersCount);
+  useQuery({ queryKey: ['conseillers-count'], queryFn: getConseillersCount });
