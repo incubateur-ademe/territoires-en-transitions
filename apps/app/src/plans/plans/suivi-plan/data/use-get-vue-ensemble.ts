@@ -1,18 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
 
-export const useGetVueEnsemble = ({
-  planId,
-  thematiqueIds,
-}: {
-  planId: number;
-  thematiqueIds: number[];
-}) => {
+export const useGetVueEnsemble = (
+  input: RouterInput['plans']['suivi']['getVueEnsemble']
+) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.plans.suivi.getVueEnsemble.queryOptions(
-      { planId, thematiqueIds },
-      { staleTime: 0 }
-    )
+    trpc.plans.suivi.getVueEnsemble.queryOptions(input, { staleTime: 0 })
   );
 };

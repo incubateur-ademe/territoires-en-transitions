@@ -2,7 +2,10 @@ import { appLabels } from '@/app/labels/catalog';
 import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
 import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
-import { makePilotageParStatutUrl } from '../make-pilotage-par-statut-url';
+import {
+  makePilotageParStatutUrl,
+  PilotageFilters,
+} from '../make-pilotage-par-statut-url';
 import { COULEURS_SUIVI_BY_STATUT } from '../statut-suivi-colors';
 
 export type EvolutionStatutRow = {
@@ -48,9 +51,11 @@ export const EvolutionStatutsTable = ({
   totaux,
   libelles,
   isLoading,
+  pilotageFilters,
 }: {
   collectiviteId: number;
   planId: number;
+  pilotageFilters: PilotageFilters;
   rows: EvolutionStatutRow[];
   totaux: [number, number];
   libelles: [string, string];
@@ -84,6 +89,7 @@ export const EvolutionStatutsTable = ({
                 collectiviteId,
                 planId,
                 statut,
+                filters: pilotageFilters,
               })}
               className="flex items-center gap-2 text-primary-9 bg-none hover:underline"
               data-test="plans.suivi.evolution-statuts.lien-statut"

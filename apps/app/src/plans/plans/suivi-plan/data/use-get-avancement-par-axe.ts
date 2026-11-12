@@ -1,18 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
 
-export const useGetAvancementParAxe = ({
-  planId,
-  thematiqueIds,
-}: {
-  planId: number;
-  thematiqueIds: number[];
-}) => {
+export const useGetAvancementParAxe = (
+  input: RouterInput['plans']['suivi']['getAvancementParAxe']
+) => {
   const trpc = useTRPC();
   return useQuery(
-    trpc.plans.suivi.getAvancementParAxe.queryOptions(
-      { planId, thematiqueIds },
-      { staleTime: 0 }
-    )
+    trpc.plans.suivi.getAvancementParAxe.queryOptions(input, { staleTime: 0 })
   );
 };
