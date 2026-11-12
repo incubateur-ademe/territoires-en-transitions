@@ -12,10 +12,10 @@ const CollectiviteSearch = () => {
   const [search, setSearch] = useState('');
   const { data, isLoading } = useFilteredCollectivites(search);
 
-  const filteredCollectivites = (data?.filteredCollectivites.map((c) => ({
+  const filteredCollectivites = (data ?? []).map((c) => ({
     value: c.codeSirenInsee,
     label: c.nom,
-  })) ?? []) as { value: string; label: string }[];
+  })) as { value: string; label: string }[];
 
   return (
     <div className="mx-auto w-96 max-w-full">

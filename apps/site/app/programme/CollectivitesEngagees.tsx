@@ -1,6 +1,5 @@
 'use client';
 
-import { useConseillersCount } from '@/site/app/programme/useConseillersCount';
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
 import { Button } from '@tet/ui';
@@ -11,47 +10,42 @@ type CollectivitesEngageesProps = {
   titre: string;
   ctaCollectivites: string;
   ctaAnnuaire: string;
+  conseillersCount: number | undefined;
 };
 
 const CollectivitesEngagees = ({
   titre,
   ctaCollectivites,
   ctaAnnuaire,
+  conseillersCount,
 }: CollectivitesEngageesProps) => {
-  const { data: conseillersCount, isLoading: isConseillersCountLoading } =
-    useConseillersCount();
-
-  const displayData = !isConseillersCountLoading;
-
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
       <TitreSection>{titre}</TitreSection>
 
       {/* besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari */}
-      {displayData && (
-        <div>
-          <div className="grid grid-cols-4 max-md:grid-cols-1">
-            <ListElement
-              label="Territoires Engagés Transition Écologique"
-              value={'644'}
-              className="max-md:pt-0"
-            />
+      <div>
+        <div className="grid grid-cols-4 max-md:grid-cols-1">
+          <ListElement
+            label="Territoires Engagés Transition Écologique"
+            value={'644'}
+            className="max-md:pt-0"
+          />
 
-            <ListElement label="Collectivités labellisées" value={'481'} />
+          <ListElement label="Collectivités labellisées" value={'481'} />
 
-            <ListElement
-              label="Contrats d’Objectifs Territoriaux (COT)"
-              value={'370'}
-            />
+          <ListElement
+            label="Contrats d’Objectifs Territoriaux (COT)"
+            value={'370'}
+          />
 
-            <ListElement
-              label=" Conseillers⸱ères pour vous accompagner"
-              value={conseillersCount}
-              className="max-md:pb-0 border-none"
-            />
-          </div>
+          <ListElement
+            label=" Conseillers⸱ères pour vous accompagner"
+            value={conseillersCount}
+            className="max-md:pb-0 border-none"
+          />
         </div>
-      )}
+      </div>
 
       <div className="flex flex-wrap justify-center gap-4 mx-auto mt-12">
         <Button
