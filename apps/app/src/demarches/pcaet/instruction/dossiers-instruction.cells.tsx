@@ -4,6 +4,7 @@ import {
   makeDemarcheInstructionUrl,
   makeDossierInstructionUrl,
 } from '@/app/app/paths';
+import { BasculerGroupeButton } from '@/app/demarches/components/basculer-groupe.button';
 import { appLabels } from '@/app/labels/catalog';
 import { format } from 'date-fns';
 import type { RouterOutput } from '@tet/api';
@@ -288,11 +289,10 @@ export const CollectiviteCell = ({
   return (
     <div className="flex items-start gap-1">
       {groupe && (
-        <button
-          type="button"
+        <BasculerGroupeButton
+          deplie={deplie ?? true}
           onClick={basculer}
-          aria-expanded={deplie}
-          aria-label={
+          ariaLabel={
             deplie
               ? appLabels.instructionListeReplierGroupe({
                   porteur: dossier.collectivite.nom,
@@ -301,11 +301,8 @@ export const CollectiviteCell = ({
                   porteur: dossier.collectivite.nom,
                 })
           }
-          className="shrink-0 text-primary-9 hover:text-primary-7"
-          data-test="demarches.pcaet.instruction.basculer-groupe"
-        >
-          <Icon icon={deplie ? 'arrow-down-s-line' : 'arrow-right-s-line'} />
-        </button>
+          dataTest="demarches.pcaet.instruction.basculer-groupe"
+        />
       )}
       <div className="flex flex-col items-start gap-1">
         {href === null ? (

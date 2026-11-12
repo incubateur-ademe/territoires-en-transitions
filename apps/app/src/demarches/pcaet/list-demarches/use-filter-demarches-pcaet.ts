@@ -3,6 +3,7 @@
 import { RouterOutput } from '@tet/api';
 import {
   demarchePcaetStatusValues,
+  type CollectiviteCouverte,
   type DemarchePcaetCouvrante,
   type DemarchePcaetPublic,
   type DemarchePcaetStatus,
@@ -29,6 +30,8 @@ export type DemarcheListItem = Pick<
 > & {
   /** Présent pour le dépôt d'un Supra qui couvre la collectivité. */
   porteur?: DemarchePcaetCouvrante['porteur'];
+  /** Les EPCI que couvre le dépôt d'un Supra, affichés en sous-lignes. */
+  collectivitesCouvertes?: CollectiviteCouverte[];
 };
 
 const SORT_VALUES = [
