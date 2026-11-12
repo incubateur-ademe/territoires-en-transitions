@@ -60,7 +60,7 @@ export const epciCandidatSchema = z.object({
   derniereDemarche: z.nullable(
     z.object({
       status: demarchePcaetStatusSchema,
-      /** Date de lancement saisie, ou à défaut date de création (ISO 8601). */
+      /** Date de lancement saisie, ou à défaut date de création (AAAA-MM-JJ). */
       dateDebut: z.string(),
     })
   ),

@@ -82,7 +82,7 @@ describe('Dépôt PCAET porté par un Supra', () => {
     return collectivite;
   };
 
-  /** Le flag `is_pcaet-supra_enabled` est inactif pour la durée du test. */
+  /** Le flag `is-pcaet-supra-enabled` est inactif pour la durée du test. */
   const disablePcaetSupraFlag = () => {
     const trackingService = app.get(TrackingService);
     const isFeatureEnabled =
@@ -90,7 +90,7 @@ describe('Dépôt PCAET porté par un Supra', () => {
     const spy = vi
       .spyOn(trackingService, 'isFeatureEnabled')
       .mockImplementation(async (feature, ...args) =>
-        feature === 'is_pcaet-supra_enabled'
+        feature === 'is-pcaet-supra-enabled'
           ? false
           : isFeatureEnabled(feature, ...args)
       );
@@ -155,7 +155,7 @@ describe('Dépôt PCAET porté par un Supra', () => {
         departementCode: '31',
         derniereDemarche: {
           status: DemarchePcaetStatusEnum.ARCHIVE,
-          dateDebut: expect.stringMatching(/^2019-03-01/),
+          dateDebut: '2019-03-01',
         },
       },
     ]);

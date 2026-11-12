@@ -88,7 +88,7 @@ export const CollectivitesCouvertesField = ({
       </p>
 
       {candidats.length === 0 ? (
-        <p className="text-sm text-warning-1 m-0">
+        <p className="text-sm text-grey-8 m-0">
           {appLabels.demarcheCreerCollectivitesCouvertesAucune}
         </p>
       ) : (
