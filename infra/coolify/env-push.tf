@@ -32,10 +32,8 @@ resource "terraform_data" "env_push" {
 
   lifecycle {
     precondition {
-      # Une application Git a besoin de HOSTNAME (liens absolus d'aldo), que
-      # Railpack ne fournit pas ; PORT, NODE_ENV & co restent interdits.
-      condition     = length(setintersection(keys(each.value.entries), setsubtract(local.coolify_env_image_provided_keys, each.value.git ? ["HOSTNAME"] : []))) == 0
-      error_message = "${each.key} : clé fournie par l'image Docker ou par le déploiement (${join(", ", setsubtract(local.coolify_env_image_provided_keys, each.value.git ? ["HOSTNAME"] : []))}). La retirer du manifeste."
+      condition     = length(setintersection(keys(each.value.entries), local.coolify_env_image_provided_keys)) == 0
+      error_message = "${each.key} : clé fournie par l'image Docker ou par le déploiement (${join(", ", local.coolify_env_image_provided_keys)}). La retirer du manifeste."
     }
     precondition {
       # Le repli NEXT_PUBLIC_* de public-env.ts n'existe que pour la

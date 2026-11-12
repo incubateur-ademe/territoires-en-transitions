@@ -211,12 +211,8 @@ locals {
       # Application Git (git-applications.tf). BASE_URL forme les liens
       # absolus du sitemap et de l'export Excel (aldo#215) : toujours en https,
       # même tant que le domaine est déclaré en http:// avant la bascule DNS.
-      # ponytail: HOSTNAME et PROTOCOL restent tant que next n'a pas aldo#215,
-      # à retirer ensuite (avec l'exception HOSTNAME des applications Git).
       aldo = {
         BASE_URL         = { value = replace(local.git_applications_catalog["preprod/aldo"].domains[0], "/^https?:/", "https:") }
-        HOSTNAME         = { value = replace(local.git_applications_catalog["preprod/aldo"].domains[0], "/^https?:\\/\\//", "") }
-        PROTOCOL         = { value = "https" }
         ALDO_EMAIL       = { value = "aldo@ademe.fr" }
         GOOGLE_SHEETS_ID = { value = "1utt1PDrsTXpIpGPIxm5W4HPXH2EZNghAOsPpbZ67swU" }
         # Clé de compte de service : JSON indenté, tel que Google le fournit.
@@ -248,12 +244,9 @@ locals {
       { for k, v in local.alloy_services : k => merge(v, { resource = "services" }) },
       { for k, v in local.git_applications : k => merge(v, { resource = "applications", git = true }) },
       ) : id => {
-      env      = a.env
-      app      = a.app
-      resource = a.resource
-      # Application construite depuis son dépôt (git-applications.tf) : elle
-      # peut poser HOSTNAME, que Railpack ne fournit pas.
-      git               = try(a.git, false)
+      env               = a.env
+      app               = a.app
+      resource          = a.resource
       secret_project_id = local.coolify_env_settings[a.env].secret_project_id
       secret_path       = "/coolify-env/${a.env}"
       entries           = local.coolify_env_manifests[a.env][a.app]
