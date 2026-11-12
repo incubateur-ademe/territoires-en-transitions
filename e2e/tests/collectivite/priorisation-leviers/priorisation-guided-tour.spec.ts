@@ -255,16 +255,20 @@ test.describe('Priorisation : visite guidée avec un levier en angle mort', () =
     });
     await openLevierFromTour(pom);
 
-    const receivesClicks = await pom
-      .pertinenceButton(LEVIER_TO_PRIORITIZE, 'Levier non pertinent')
-      .evaluate((button) => {
-        const { x, y, width, height } = button.getBoundingClientRect();
-        return button.contains(
-          document.elementFromPoint(x + width / 2, y + height / 2)
-        );
-      });
-
-    expect(receivesClicks).toBe(false);
+    // Le volet du levier finit de s'ouvrir après l'affichage de l'étape : une
+    // lecture unique tombait parfois avant que la visite ne le recouvre.
+    await expect
+      .poll(() =>
+        pom
+          .pertinenceButton(LEVIER_TO_PRIORITIZE, 'Levier non pertinent')
+          .evaluate((button) => {
+            const { x, y, width, height } = button.getBoundingClientRect();
+            return button.contains(
+              document.elementFromPoint(x + width / 2, y + height / 2)
+            );
+          })
+      )
+      .toBe(false);
   });
 });
 
