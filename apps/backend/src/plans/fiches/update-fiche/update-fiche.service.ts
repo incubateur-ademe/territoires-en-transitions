@@ -10,7 +10,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { applyJaugeStatutChange, FicheWithRelations } from '@tet/domain/plans';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
 import {
   getReferentielIdFromActionId,
@@ -216,9 +216,27 @@ export default class UpdateFicheService {
         }
         const existingFicheAction = resultGetExistingFiche.data;
 
+        const jaugeStatutResult = applyJaugeStatutChange({
+          before: {
+            statut: existingFicheAction.statut,
+            jauge: existingFicheAction.jauge,
+          },
+          change: { statut: ficheFields.statut, jauge: ficheFields.jauge },
+          isSousAction:
+            (ficheFields.parentId !== undefined
+              ? ficheFields.parentId
+              : existingFicheAction.parentId) !== null,
+        });
+        if (!jaugeStatutResult.success) {
+          return failure(jaugeStatutResult.error);
+        }
+
         const applyResult = await this.ficheActionRepository.applyUpdate({
           ficheId,
-          ficheFields,
+          ficheFields:
+            ficheFields.statut === undefined && ficheFields.jauge === undefined
+              ? ficheFields
+              : { ...ficheFields, ...jaugeStatutResult.data },
           existingFiche: existingFicheAction,
           user,
           tx: transaction,

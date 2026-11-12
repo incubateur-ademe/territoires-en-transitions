@@ -6,6 +6,7 @@ import {
   referentielModeGuardSpecificErrors,
   referentielNotWritableTrpcErrorEntry,
 } from '@tet/backend/collectivites/collectivite-referentiel-mode/referentiel-mode-guard.errors';
+import { jaugeStatutErrors } from '@tet/domain/plans';
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
@@ -20,6 +21,7 @@ const specificErrors = [
   'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND',
   'RELATION_COLLECTIVITE_MISMATCH',
   'INVALID_ACTION_ID',
+  ...jaugeStatutErrors,
   ...referentielModeGuardSpecificErrors,
   ...collectivitePreferencesSpecificErrors,
 ] as const;
@@ -61,6 +63,20 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     INVALID_ACTION_ID: {
       code: 'BAD_REQUEST',
       message: "Un identifiant d'action référentiel est invalide",
+    },
+    JAUGE_INVALIDE: {
+      code: 'BAD_REQUEST',
+      message:
+        "L'avancement doit être compris entre 0 et 100 %, par pas de 5 %",
+    },
+    JAUGE_FIGEE: {
+      code: 'BAD_REQUEST',
+      message:
+        "L'avancement d'une action abandonnée, en pause ou bloquée ne peut pas être modifié",
+    },
+    SOUS_ACTION_SANS_JAUGE: {
+      code: 'BAD_REQUEST',
+      message: "Une sous-action n'a pas d'avancement",
     },
     ...referentielNotWritableTrpcErrorEntry,
     ...collectivitePreferencesTrpcErrorEntries,

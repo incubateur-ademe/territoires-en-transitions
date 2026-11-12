@@ -1,0 +1,107 @@
+import { appLabels } from '@/app/labels/catalog';
+import { DetailedAction } from '@/app/ui/detailed-action/detailed-action.layout';
+import {
+  isJaugeFigee,
+  JAUGE_MAX,
+  JAUGE_MIN,
+  JAUGE_STEP,
+  StatutEnum,
+} from '@tet/domain/plans';
+import { Badge, cn, Icon, preset, Slider, Tooltip } from '@tet/ui';
+import { format } from 'date-fns';
+import { JSX, useState } from 'react';
+import { useFicheContext } from '../../../context/fiche-context';
+import { JaugeFigeeAlert } from './jauge-figee.alert';
+
+const { grey, success } = preset.theme.extend.colors;
+
+export const Jauge = (): JSX.Element => {
+  const { fiche, isReadonly, update, sousActions } = useFicheContext();
+  const [jauge, setJauge] = useState(fiche.jauge);
+  const [savedJauge, setSavedJauge] = useState(fiche.jauge);
+
+  if (fiche.jauge !== savedJauge) {
+    setSavedJauge(fiche.jauge);
+    setJauge(fiche.jauge);
+  }
+
+  const statut = fiche.statut;
+  const isFigee = isJaugeFigee(statut);
+  const isDisabled = isReadonly || isFigee;
+  const isRealise = !isDisabled && jauge === JAUGE_MAX;
+  const sousActionsRealisees = sousActions.list.filter(
+    (sousAction) => sousAction.statut === StatutEnum.REALISE
+  ).length;
+
+  return (
+    <DetailedAction.Section>
+      <div className="flex flex-col gap-4" data-test="fiche.jauge">
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="mb-0 text-lg font-bold leading-4 text-primary-10">
+            {appLabels.ficheJauge}
+          </h2>
+          <Badge
+            title={`${jauge} %`}
+            size="sm"
+            variant={isDisabled ? 'grey' : isRealise ? 'success' : 'info'}
+            type="outlined"
+          />
+          {fiche.jaugeModifiedAt && (
+            <p className="mb-0 ml-auto text-xs font-light italic text-grey-7">
+              {appLabels.ficheJaugeMiseAJour(
+                format(new Date(fiche.jaugeModifiedAt), 'dd/MM/yyyy')
+              )}
+            </p>
+          )}
+        </div>
+
+        <Slider
+          aria-label={appLabels.ficheJauge}
+          min={JAUGE_MIN}
+          max={JAUGE_MAX}
+          step={JAUGE_STEP}
+          value={[jauge]}
+          disabled={isDisabled}
+          rangeColors={
+            isDisabled
+              ? [grey[5], grey[3]]
+              : isRealise
+              ? [success[1], success[1]]
+              : undefined
+          }
+          className={cn(
+            isDisabled &&
+              'cursor-not-allowed [&_[role=slider]]:cursor-not-allowed [&_[role=slider]]:border-grey-5 [&_[role=slider]]:bg-grey-3'
+          )}
+          onValueChange={([value]) => setJauge(value)}
+          onValueCommit={([value]) => {
+            if (value === fiche.jauge) return;
+            update({ ficheId: fiche.id, ficheFields: { jauge: value } });
+          }}
+          data-test="fiche.jauge.slider"
+        />
+
+        <div className="flex justify-between text-xs text-grey-7">
+          <span>{`${JAUGE_MIN} %`}</span>
+          <Tooltip label={appLabels.ficheJaugeInfo}>
+            <span className="flex items-center gap-1">
+              {`${JAUGE_MAX} %`}
+              <Icon icon="information-line" size="xs" />
+            </span>
+          </Tooltip>
+        </div>
+
+        {isFigee && <JaugeFigeeAlert statut={statut} />}
+
+        {sousActions.list.length > 0 && (
+          <p className="mb-0 text-sm text-grey-8">
+            {appLabels.ficheJaugeSousActionsRealisees({
+              realisees: sousActionsRealisees,
+              total: sousActions.list.length,
+            })}
+          </p>
+        )}
+      </div>
+    </DetailedAction.Section>
+  );
+};
