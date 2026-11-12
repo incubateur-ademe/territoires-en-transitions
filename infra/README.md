@@ -401,8 +401,7 @@ Mise en service d'une entrée :
    `env_manual_secrets` (`SECRET_PROJECT_ID=<projet tet-prod>` pour la prod), puis
    réappliquer : l'`env_push` en échec est rejoué, sans toucher à `coolify_env_revision`.
 2. Premier déploiement : bouton **Deploy** dans Coolify, ou
-   `curl -X POST -H "Authorization: Bearer $COOLIFY_TOKEN" "$COOLIFY_ENDPOINT/deploy?uuid=<uuid>"`
-   (`terraform output application_uuids`).
+   `APP_ID=<env>/<app> infra/scripts/coolify-deploy.sh` (sans `IMAGE_TAG` : tête de branche).
 3. Redéploiement au push : dans le dépôt GitHub, **Settings → Webhooks** →
    `https://coolify.territoiresentransitions.fr/webhooks/source/github/events/manual`,
    `application/json`, événement *push*, avec le secret de l'onglet **Webhooks** de
@@ -443,7 +442,9 @@ jq -c . sa.json | infra/scripts/coolify-env-secret-set.sh preprod gcloud-service
   `NEXT_PUBLIC_*`, et une valeur en clair sur une clé au nom sensible. Une application
   Git (`git-applications.tf`) peut poser `HOSTNAME`. Toutes les variables sont poussées en
   runtime seulement : un `NEXT_PUBLIC_*` n'atteindrait pas le build.
-- **Pousser ne redéploie pas** : redéployer avec `coolify-deploy.sh`.
+- **Pousser ne redéploie pas** : redéployer avec `APP_ID=<env>/<app> coolify-deploy.sh`.
+  Sans `IMAGE_TAG`, il redéploie la version en place : la même image pour une application
+  « image Docker », la tête de branche pour une application Git.
 - **Ajouter une clé** : une ligne dans le manifeste. Pour un secret, l'`apply` crée sa
   coquille puis échoue en la signalant vide : déposer la valeur, réappliquer.
 
