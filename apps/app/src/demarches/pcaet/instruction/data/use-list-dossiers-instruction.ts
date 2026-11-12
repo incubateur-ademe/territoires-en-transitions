@@ -21,7 +21,6 @@ import { useEffect } from 'react';
 const SORT_VALUES = [
   'priorite',
   'echeance',
-  'dateLancement',
   'dateSaisine',
   'dateAdoption',
   'collectivite',

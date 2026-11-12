@@ -130,9 +130,12 @@ const contenuSousLigne = (
   }
   if (colonne === 'departement') {
     return (
-      <span className="text-primary-9">
-        {couverte.departementLibelle ?? '—'}
-      </span>
+      <DepartementCell
+        departement={{
+          code: couverte.departementCode,
+          libelle: couverte.departementLibelle,
+        }}
+      />
     );
   }
   return null;
@@ -201,7 +204,7 @@ const DepartementHeader = () => {
 
   return (
     <TableHeaderCell
-      className="w-40"
+      className="w-24"
       title={appLabels.instructionListeColonneDepartement}
       filter={
         <DepartementHeaderFilter
@@ -252,19 +255,6 @@ const StatutHeader = () => {
           onChange={(statuts) => setFiltres({ statuts })}
         />
       }
-    />
-  );
-};
-
-const DateLancementHeader = () => {
-  const { sort, direction, trierPar } = usePilotage();
-
-  return (
-    <TableHeaderCell
-      className="w-32"
-      title={appLabels.instructionListeColonneDateLancement}
-      sortFn={() => trierPar('dateLancement')}
-      sortDirection={sort === 'dateLancement' ? direction : null}
     />
   );
 };
@@ -354,7 +344,12 @@ const columns = [
     header: DepartementHeader,
     cell: ({ row }) => (
       <TableCell>
-        <DepartementCell dossier={row.original} />
+        <DepartementCell
+          departement={{
+            code: row.original.collectivite.departementCode,
+            libelle: row.original.collectivite.departementLibelle,
+          }}
+        />
       </TableCell>
     ),
   }),
@@ -381,16 +376,6 @@ const columns = [
           variant={STATUT_INSTRUCTION_VARIANTS[row.original.statut]}
           size="sm"
         />
-      </TableCell>
-    ),
-  }),
-
-  columnHelper.display({
-    id: 'dateLancement',
-    header: DateLancementHeader,
-    cell: ({ row }) => (
-      <TableCell>
-        <DateCell date={row.original.launchedAt} />
       </TableCell>
     ),
   }),
@@ -577,10 +562,9 @@ export const DossiersInstructionTable = ({
             table={table}
             ariaLabel={appLabels.instructionListeTitre}
             className={cn({
-              'min-w-[77rem]': !afficherRegion && !afficherDepartement,
-              'min-w-[83rem]': afficherRegion && !afficherDepartement,
-              'min-w-[87rem]': !afficherRegion && afficherDepartement,
-              'min-w-[93rem]': afficherRegion && afficherDepartement,
+              'min-w-[69rem]': !afficherRegion && !afficherDepartement,
+              'min-w-[75rem]': afficherRegion !== afficherDepartement,
+              'min-w-[81rem]': afficherRegion && afficherDepartement,
             })}
             isEmpty={dossiers.length === 0}
             emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
