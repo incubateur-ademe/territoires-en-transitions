@@ -46,7 +46,7 @@ locals {
     }
     "prod/aldo" = {
       branch  = "main"
-      domains = ["http://aldo.territoiresentransitions.fr"]
+      domains = ["https://aldo.territoiresentransitions.fr"]
     }
   }
 
