@@ -748,6 +748,10 @@ export const demarchesLabels = {
   demarcheListeColonneModification: 'Modifiée le',
   demarcheListeColonneActions: 'Actions',
   demarcheListeAucunResultat: 'Aucune démarche ne correspond à ces filtres',
+  demarcheListeReplierGroupe: ({ titre }: { titre: string }) =>
+    `Replier les EPCI couverts par « ${titre} »`,
+  demarcheListeDeplierGroupe: ({ titre }: { titre: string }) =>
+    `Déplier les EPCI couverts par « ${titre} »`,
   /** Liste publique : ce que voit qui consulte la collectivité sans l'éditer. */
   demarcheListePubliqueDescription:
     'Les démarches adoptées ou archivées de la collectivité, en lecture seule.',

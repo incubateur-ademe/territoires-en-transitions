@@ -4,9 +4,14 @@ import { appLabels } from '@/app/labels/catalog';
 import type { CollectivitePcaetObligation } from '@tet/domain/demarches';
 import { type PcaetStatutInstruction } from '@tet/domain/demarches';
 import type { EmptyCardProps } from '@tet/ui';
+import { BasculerTousLesGroupesButton } from '@/app/demarches/components/basculer-groupe.button';
+import {
+  GroupesRepliablesProvider,
+  useEtatGroupesRepliables,
+  useGroupesRepliables,
+} from '@/app/demarches/components/groupes-repliables.context';
 import {
   Badge,
-  Button,
   cn,
   ReactTable,
   TableCell,
@@ -19,14 +24,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
 import type {
   ColonneTriable,
   DirectionTri,
@@ -96,37 +94,8 @@ const usePilotage = (): Pilotage => {
   return pilotage;
 };
 
-/**
- * La clé d'une ligne, du plus précis au plus général.
- *
- * Une collectivité peut en porter plusieurs — un PCAET publié et son
- * renouvellement en cours sont deux dossiers — et celle qui n'a rien déposé n'a
- * pas de démarche à nommer. La saisine passe en premier : c'est par elle que
- * les tests et les liens désignent un dossier.
- */
-/**
- * Les groupes — un Supra et ses EPCI couverts — dépliés par défaut : on retient
- * ceux que l'agent a repliés.
- */
-type Groupes = {
-  estDeplie: (cle: string) => boolean;
-  basculer: (cle: string) => void;
-};
-
-const GroupesContext = createContext<Groupes | null>(null);
-
-const useGroupes = (): Groupes => {
-  const groupes = useContext(GroupesContext);
-  if (groupes === null) {
-    throw new Error(
-      'Les lignes de la liste d’instruction attendent un GroupesContext.'
-    );
-  }
-  return groupes;
-};
-
 const CollectiviteGroupeCell = ({ dossier }: { dossier: Dossier }) => {
-  const { estDeplie, basculer } = useGroupes();
+  const { estDeplie, basculer } = useGroupesRepliables();
   const cle = getRowKey(dossier);
   return (
     <CollectiviteCell
@@ -169,6 +138,14 @@ const contenuSousLigne = (
   return null;
 };
 
+/**
+ * La clé d'une ligne, du plus précis au plus général.
+ *
+ * Une collectivité peut en porter plusieurs — un PCAET publié et son
+ * renouvellement en cours sont deux dossiers — et celle qui n'a rien déposé n'a
+ * pas de démarche à nommer. La saisine passe en premier : c'est par elle que
+ * les tests et les liens désignent un dossier.
+ */
 const getRowKey = (dossier: Dossier): string => {
   if (dossier.demandeAvisId !== null) {
     return `demande-${dossier.demandeAvisId}`;
@@ -566,51 +543,21 @@ export const DossiersInstructionTable = ({
     getRowId: getRowKey,
   });
 
-  const [replies, setReplies] = useState<ReadonlySet<string>>(new Set());
-  const basculer = useCallback(
-    (cle: string) =>
-      setReplies((courants) => {
-        const suivants = new Set(courants);
-        if (!suivants.delete(cle)) {
-          suivants.add(cle);
-        }
-        return suivants;
-      }),
-    []
-  );
-  const groupes = useMemo(
-    () => ({ estDeplie: (cle: string) => !replies.has(cle), basculer }),
-    [replies, basculer]
-  );
   const clesDesGroupes = dossiers
     .filter((dossier) => dossier.collectivitesCouvertes.length > 0)
     .map(getRowKey);
+  const { groupes, toutDeplie, basculerTous } =
+    useEtatGroupesRepliables(clesDesGroupes);
 
   return (
     <PilotageContext.Provider value={pilotage}>
-      <GroupesContext.Provider value={groupes}>
+      <GroupesRepliablesProvider value={groupes}>
         {clesDesGroupes.length > 0 && (
-          <div className="flex justify-end mb-2">
-            <Button
-              size="xs"
-              variant="grey"
-              icon={
-                replies.size === 0
-                  ? 'contract-up-down-line'
-                  : 'expand-up-down-line'
-              }
-              onClick={() =>
-                setReplies(
-                  replies.size === 0 ? new Set(clesDesGroupes) : new Set()
-                )
-              }
-              dataTest="demarches.pcaet.instruction.basculer-tous-les-groupes"
-            >
-              {replies.size === 0
-                ? appLabels.instructionListeToutReplier
-                : appLabels.instructionListeToutDeplier}
-            </Button>
-          </div>
+          <BasculerTousLesGroupesButton
+            toutDeplie={toutDeplie}
+            onClick={basculerTous}
+            dataTest="demarches.pcaet.instruction.basculer-tous-les-groupes"
+          />
         )}
         {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
         <div
@@ -667,7 +614,7 @@ export const DossiersInstructionTable = ({
             )}
           />
         </div>
-      </GroupesContext.Provider>
+      </GroupesRepliablesProvider>
     </PilotageContext.Provider>
   );
 };

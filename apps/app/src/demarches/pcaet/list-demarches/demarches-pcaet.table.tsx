@@ -6,6 +6,15 @@ import {
 } from '@/app/demarches/pcaet/constants';
 import { appLabels } from '@/app/labels/catalog';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
+import {
+  BasculerGroupeButton,
+  BasculerTousLesGroupesButton,
+} from '@/app/demarches/components/basculer-groupe.button';
+import {
+  GroupesRepliablesProvider,
+  useEtatGroupesRepliables,
+  useGroupesRepliables,
+} from '@/app/demarches/components/groupes-repliables.context';
 import { HeaderFilterButton } from '@/app/demarches/components/header-filter.button';
 import { Z_INDEX_ABOVE_STICKY_HEADER } from '@tet/design-tokens';
 import { type DemarchePcaetStatus } from '@tet/domain/demarches';
@@ -16,6 +25,7 @@ import {
   SelectFilter,
   TableCell,
   TableHeaderCell,
+  TableRow,
 } from '@tet/ui';
 import {
   columnVisibilityFeature,
@@ -136,29 +146,53 @@ const features = tableFeatures({ columnVisibilityFeature });
 
 const columnHelper = createColumnHelper<typeof features, DemarcheListItem>();
 
+const getRowKey = (demarche: DemarcheListItem): string =>
+  demarche.id.toString();
+
+const aDesSousLignes = (demarche: DemarcheListItem): boolean =>
+  (demarche.collectivitesCouvertes?.length ?? 0) > 0;
+
 const TitreCell = ({ demarche }: { demarche: DemarcheListItem }) => {
   const { getDetailUrl } = usePilotage();
+  const { estDeplie, basculer } = useGroupesRepliables();
+  const cle = getRowKey(demarche);
+  const deplie = estDeplie(cle);
+
   return (
-    <div className="flex flex-col items-start gap-1">
-      <Link
-        href={getDetailUrl(demarche)}
-        className="font-bold text-primary-9 hover:underline"
-      >
-        {demarche.titre}
-      </Link>
-      {demarche.porteur && (
-        <Badge
-          size="xs"
-          variant="info"
-          type="outlined"
-          title={
-            demarche.porteur.type
-              ? appLabels.demarchePorteParType[demarche.porteur.type]
-              : appLabels.demarchePorteParAutreStructure
+    <div className="flex items-start gap-1">
+      {aDesSousLignes(demarche) && (
+        <BasculerGroupeButton
+          deplie={deplie}
+          onClick={() => basculer(cle)}
+          ariaLabel={
+            deplie
+              ? appLabels.demarcheListeReplierGroupe({ titre: demarche.titre })
+              : appLabels.demarcheListeDeplierGroupe({ titre: demarche.titre })
           }
-          trim={false}
+          dataTest="demarches.pcaet.liste.basculer-groupe"
         />
       )}
+      <div className="flex flex-col items-start gap-1">
+        <Link
+          href={getDetailUrl(demarche)}
+          className="font-bold text-primary-9 hover:underline"
+        >
+          {demarche.titre}
+        </Link>
+        {demarche.porteur && (
+          <Badge
+            size="xs"
+            variant="info"
+            type="outlined"
+            title={
+              demarche.porteur.type
+                ? appLabels.demarchePorteParType[demarche.porteur.type]
+                : appLabels.demarchePorteParAutreStructure
+            }
+            trim={false}
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -354,27 +388,70 @@ export const DemarchesPcaetTable = <T extends DemarcheListItem>({
     features,
     columns,
     data: demarches,
-    getRowId: (demarche) => demarche.id.toString(),
+    getRowId: getRowKey,
     state: { columnVisibility: { actions: renderActions !== undefined } },
   });
 
+  const clesDesGroupes = demarches.filter(aDesSousLignes).map(getRowKey);
+  const { groupes, toutDeplie, basculerTous } =
+    useEtatGroupesRepliables(clesDesGroupes);
+
   return (
     <PilotageContext.Provider value={pilotage}>
-      {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
-      <div
-        className="max-xl:overflow-x-auto"
-        tabIndex={0}
-        role="region"
-        aria-label={ariaLabel}
-      >
-        <ReactTable
-          table={table}
-          ariaLabel={ariaLabel}
-          className="min-w-[72rem]"
-          isEmpty={demarches.length === 0}
-          emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
-        />
-      </div>
+      <GroupesRepliablesProvider value={groupes}>
+        {clesDesGroupes.length > 0 && (
+          <BasculerTousLesGroupesButton
+            toutDeplie={toutDeplie}
+            onClick={basculerTous}
+            dataTest="demarches.pcaet.liste.basculer-tous-les-groupes"
+          />
+        )}
+        {/* Région défilante atteignable au clavier (WCAG 2.1.1). */}
+        <div
+          className="max-xl:overflow-x-auto"
+          tabIndex={0}
+          role="region"
+          aria-label={ariaLabel}
+        >
+          <ReactTable
+            table={table}
+            ariaLabel={ariaLabel}
+            className="min-w-[72rem]"
+            isEmpty={demarches.length === 0}
+            emptyCard={{ className: 'min-h-[12rem]', ...etatVide }}
+            // Sous le dépôt d'un Supra, les EPCI qu'il couvre : leur nom sous le
+            // titre, le reste — statut, dates, actions — appartient au dépôt.
+            rowWrapper={({ row, children }) => (
+              <>
+                <TableRow
+                  className="text-sm"
+                  data-test={`demarches.pcaet.liste.ligne-${row.id}`}
+                >
+                  {children}
+                </TableRow>
+                {groupes.estDeplie(row.id) &&
+                  row.original.collectivitesCouvertes?.map((couverte) => (
+                    <TableRow
+                      key={couverte.id}
+                      className="text-sm"
+                      data-test={`demarches.pcaet.liste.sous-ligne-${row.id}-${couverte.id}`}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.column.id}>
+                          {cell.column.id === 'titre' && (
+                            <span className="block pl-6 text-primary-9">
+                              {couverte.nom}
+                            </span>
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+              </>
+            )}
+          />
+        </div>
+      </GroupesRepliablesProvider>
     </PilotageContext.Provider>
   );
 };
