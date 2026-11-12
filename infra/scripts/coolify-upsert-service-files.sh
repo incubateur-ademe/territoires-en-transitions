@@ -59,6 +59,7 @@ fi
 api GET "/services/${SERVICE_UUID}/storages" >"$_tmp/storages.json"
 
 shopt -s nullglob
+# shellcheck disable=SC2206 # glob voulu : FILES_GLOB doit s'étendre
 _files=("${FILES_DIR}"/${FILES_GLOB:-*})
 [ "${#_files[@]}" -gt 0 ] || {
   echo "✗ Aucun fichier dans ${FILES_DIR}." >&2

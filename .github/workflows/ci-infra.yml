@@ -1,0 +1,82 @@
+# Static checks for infra/ (Terraform, scripts, observability config).
+# No cloud credentials: nothing here reads the remote state nor calls Scaleway.
+# Tools run from pinned Docker images, so no third-party action is needed.
+name: CI infra
+
+on:
+  pull_request:
+    paths: ['infra/**', '.github/workflows/ci-infra.yml']
+  push:
+    branches: [main]
+    paths: ['infra/**', '.github/workflows/ci-infra.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-infra-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TERRAFORM_IMAGE: hashicorp/terraform:1.16.7
+  TFLINT_IMAGE: ghcr.io/terraform-linters/tflint:v0.65.0
+  TRIVY_IMAGE: aquasec/trivy:0.76.1
+  PROMETHEUS_IMAGE: prom/prometheus:v3.15.1
+  ALLOY_IMAGE: grafana/alloy:v1.21.2
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check formatting
+        run: docker run --rm -v "$PWD/infra:/w" -w /w "$TERRAFORM_IMAGE" fmt -check -recursive -diff
+
+      # Root stacks only: they pull every module in, so modules are validated
+      # through them. -lockfile=readonly fails when a provider constraint moved
+      # without the committed .terraform.lock.hcl being updated.
+      - name: Validate root stacks
+        run: |
+          # The plugin cache is shared between stacks and must stay mounted for
+          # validate: .terraform/providers only holds symlinks into it.
+          tf() { docker run --rm -v "$PWD/infra:/w" -v "$RUNNER_TEMP/tf-plugins:/plugins" \
+            -e TF_PLUGIN_CACHE_DIR=/plugins -w "/w/$stack" "$TERRAFORM_IMAGE" "$@"; }
+          for stack in platform nonprod prod preview coolify; do
+            echo "::group::$stack"
+            tf init -backend=false -lockfile=readonly -input=false
+            tf validate
+            echo "::endgroup::"
+          done
+
+      - name: Lint
+        run: docker run --rm -v "$PWD/infra:/data" -w /data "$TFLINT_IMAGE" --recursive --config=/data/.tflint.hcl
+
+      - name: Scan misconfigurations
+        run: docker run --rm -v "$PWD/infra:/src" "$TRIVY_IMAGE" config --quiet --severity HIGH,CRITICAL --exit-code 1 /src
+
+  scripts-and-observability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Shellcheck
+        run: shellcheck --severity=warning infra/scripts/*.sh
+
+      # Each file is one rule group pushed to the Cockpit (Mimir) ruler API;
+      # promtool wants a `groups:` list, hence the wrapping.
+      - name: Check alert rules
+        run: |
+          mkdir -p "$RUNNER_TEMP/rules"
+          for f in infra/observability/rules/*.yaml; do
+            yq '{"groups": [.]}' "$f" > "$RUNNER_TEMP/rules/$(basename "$f")"
+          done
+          docker run --rm -v "$RUNNER_TEMP/rules:/r" --entrypoint sh "$PROMETHEUS_IMAGE" \
+            -c 'promtool check rules /r/*.yaml'
+
+      - name: Check Alloy config syntax
+        run: docker run --rm -v "$PWD/infra/observability/alloy:/a" "$ALLOY_IMAGE" fmt /a/config.alloy > /dev/null
