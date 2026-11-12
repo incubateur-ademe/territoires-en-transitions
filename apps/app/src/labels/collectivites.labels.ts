@@ -274,4 +274,10 @@ export const collectivitesLabels = {
   preselectionVide: "Aucune action sauvegardée pour l'instant",
   preselectionVideDescription:
     'Ouvrez un levier à prioriser dans la matrice, puis cliquez sur « Sauvegarder » pour retenir les actions à discuter avec vos élus. Elles apparaîtront ici.',
+  formErreurInattendue:
+    "Une erreur inattendue s'est produite. Si elle persiste, transmettez-la à l'équipe technique.",
+  formNeufChiffresAttendus: '9 chiffres attendus',
+  formCinqChiffresAttendus: '5 chiffres attendus',
+  erreurCollectiviteExisteDeja: 'Cette collectivité existe déjà.',
+  erreurSirenInvalide: 'Le SIREN doit comporter exactement 9 chiffres.',
 };

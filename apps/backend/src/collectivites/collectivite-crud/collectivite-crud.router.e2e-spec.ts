@@ -19,7 +19,7 @@ import {
   collectiviteTypeEnum,
   defaultCollectivitePreferences,
 } from '@tet/domain/collectivites';
-import { inferProcedureInput } from '@trpc/server';
+import { inferProcedureInput, TRPCError } from '@trpc/server';
 import { eq, ilike, inArray } from 'drizzle-orm';
 
 type UpsertInput = inferProcedureInput<
@@ -97,9 +97,7 @@ describe('Test upsert collectivite', () => {
     const colError: UpsertInput = { ...update, id: undefined };
     await expect(() =>
       caller.collectivites.collectivites.upsert(colError)
-    ).rejects.toThrowError(
-      `La collectivité Test2 existe déjà sous l'identifiant ${insert.id}`
-    );
+    ).rejects.toThrowError('COLLECTIVITE_EXISTE_DEJA');
 
     onTestFinished(async () => {
       try {
@@ -117,6 +115,42 @@ describe('Test upsert collectivite', () => {
         console.error('Erreur lors de la remise à zéro des données.', error);
       }
     });
+  });
+
+  test('Un SIREN qui ne fait pas 9 chiffres est refusé avec un code lisible', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const error = await caller.collectivites.collectivites
+      .upsert({
+        type: collectiviteTypeEnum.EPCI,
+        siren: '12345',
+        nom: 'EPCI au SIREN invalide',
+      })
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(TRPCError);
+    expect(error).toMatchObject({
+      code: 'BAD_REQUEST',
+      message: 'SIREN_INVALIDE',
+    });
+    expect((error as TRPCError).message).not.toContain('Failed query');
+
+    // Trop long : refusé avant d'atteindre la base (varchar(9)).
+    await expect(() =>
+      caller.collectivites.collectivites.upsert({
+        type: collectiviteTypeEnum.EPCI,
+        siren: '1234567890',
+        nom: 'EPCI au SIREN invalide',
+      })
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST', message: 'SIREN_INVALIDE' });
   });
 
   test('Test upsert structure sans statut juridique sans SIREN', async () => {
@@ -142,9 +176,7 @@ describe('Test upsert collectivite', () => {
 
     await expect(() =>
       caller.collectivites.collectivites.upsert(input)
-    ).rejects.toThrowError(
-      `La collectivité ${input.nom} existe déjà sous l'identifiant ${insert.id}`
-    );
+    ).rejects.toThrowError('COLLECTIVITE_EXISTE_DEJA');
 
     onTestFinished(async () => {
       try {
@@ -205,9 +237,7 @@ describe('Test upsert collectivite', () => {
         ...input,
         nom: input.nom.toLowerCase(),
       })
-    ).rejects.toThrowError(
-      `La collectivité ${input.nom} existe déjà sous l'identifiant ${insert.id}`
-    );
+    ).rejects.toThrowError('COLLECTIVITE_EXISTE_DEJA');
   });
 
   test('La base empêche deux structures sans statut juridique avec le même nom', async () => {
@@ -359,9 +389,7 @@ describe('Test upsert collectivite', () => {
         nom: nomDoublon,
         regionCode: regionA,
       })
-    ).rejects.toThrowError(
-      `La collectivité ${nomA} existe déjà sous l'identifiant ${insertA.id}`
-    );
+    ).rejects.toThrowError('COLLECTIVITE_EXISTE_DEJA');
   });
 
   test('La base empêche deux DREAL sur la même région', async () => {
@@ -404,6 +432,111 @@ describe('Test upsert collectivite', () => {
         nom: `${nom} bis`,
       })
     ).rejects.toThrowError();
+  });
+
+  test('Une mise à jour qui heurte un index unique est refusée comme doublon', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const nomA = 'DREAL index unique A test';
+    const nomB = 'DREAL index unique B test';
+    // Codes propres à ce test, dans l'espace « lettre + chiffre » des specs.
+    const regionA = 'C6';
+    const regionB = 'C7';
+
+    const cleanupCollectivites = async () => {
+      const rows = await databaseService.db
+        .select({ id: collectiviteTable.id })
+        .from(collectiviteTable)
+        .where(inArray(collectiviteTable.nom, [nomA, nomB]));
+      const ids = rows.map(({ id }) => id);
+
+      if (ids.length > 0) {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(inArray(collectiviteTable.id, ids));
+      }
+    };
+
+    await cleanupCollectivites();
+    onTestFinished(cleanupCollectivites);
+
+    await caller.collectivites.collectivites.upsert({
+      type: collectiviteTypeEnum.DREAL,
+      nom: nomA,
+      regionCode: regionA,
+    });
+    const insertB = await caller.collectivites.collectivites.upsert({
+      type: collectiviteTypeEnum.DREAL,
+      nom: nomB,
+      regionCode: regionB,
+    });
+
+    // Avec un id, find() n'est pas consulté : seul l'index unique refuse.
+    const error = await caller.collectivites.collectivites
+      .upsert({ ...insertB, regionCode: regionA })
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(TRPCError);
+    expect(error).toMatchObject({
+      code: 'CONFLICT',
+      message: 'COLLECTIVITE_EXISTE_DEJA',
+    });
+  });
+
+  test('Une erreur de base imprévue renvoie un code, jamais la requête', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: authenticatedUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const nom = 'Service public NIC trop long test';
+    onTestFinished(async () => {
+      const rows = await databaseService.db
+        .select({ id: collectiviteTable.id })
+        .from(collectiviteTable)
+        .where(eq(collectiviteTable.nom, nom));
+      const ids = rows.map(({ id }) => id);
+      if (ids.length > 0) {
+        await databaseService.db
+          .delete(collectiviteBucketTable)
+          .where(inArray(collectiviteBucketTable.collectiviteId, ids));
+        await databaseService.db
+          .delete(collectiviteTable)
+          .where(inArray(collectiviteTable.id, ids));
+      }
+    });
+
+    // Le NIC dépasse la colonne varchar(5) : erreur 22001, non prévue.
+    const error = await caller.collectivites.collectivites
+      .upsert({
+        type: collectiviteTypeEnum.SERVICE_PUBLIC,
+        nom,
+        siren: '999999998',
+        nic: '123456',
+      })
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(TRPCError);
+    expect(error).toMatchObject({ code: 'INTERNAL_SERVER_ERROR' });
+    // La cause fournit `data.errorKey` au client : le code, pas le SQL.
+    expect((error as TRPCError).cause?.message).toBe('DATABASE_ERROR');
+    expect((error as TRPCError).message).not.toContain('Failed query');
   });
 
   describe('Test getAdditionalInformation', async () => {
