@@ -1,0 +1,66 @@
+/** Les dossiers à saisir : les dossiers repris transmis pour avis, sur la plateforme ou hors d'elle ; jamais une élaboration, que la clôture de nuit passerait en instruit. */
+
+import { PoolClient } from 'pg';
+
+export type Dossier = {
+  tecId: number;
+  demarcheId: number;
+  collectiviteId: number;
+  collectivite: string;
+};
+
+type DossierRepris = Dossier & {
+  estTransmis: boolean;
+  estHorsPlateforme: boolean;
+  echeanceAvis: string | null;
+  aDejaUneSaisine: boolean;
+};
+
+export type Dossiers = Awaited<ReturnType<typeof loadDossiers>>;
+
+/** Tous les dossiers repris, par numéro T&C : deux runs écrivent dans le même ordre. */
+export const loadDossiers = async (client: PoolClient) => {
+  const { rows } = await client.query<DossierRepris>(`
+    select c.tec_id::int                     as "tecId",
+           d.id                              as "demarcheId",
+           d.collectivite_id                 as "collectiviteId",
+           co.nom                            as collectivite,
+           d.transmitted_at is not null      as "estTransmis",
+           d.transmitted_off_platform        as "estHorsPlateforme",
+           to_char(d.avis_deadline_at at time zone 'UTC', 'YYYY-MM-DD')
+                                             as "echeanceAvis",
+           exists (select from public.demarche_pcaet_demande_avis s
+                    where s.demarche_id = d.id) as "aDejaUneSaisine"
+      from reprise_tec.correspondance c
+      join public.demarche d on d.id = c.tet_id
+      join public.collectivite co on co.id = d.collectivite_id
+     where c.table_cible = 'demarche'
+     order by c.tec_id`);
+  const transmis = rows.filter(
+    (d) => d.estTransmis || d.estHorsPlateforme
+  );
+
+  return {
+    /** Les dossiers repris transmis pour avis, sur la plateforme ou hors d'elle, les seuls à saisir. */
+    transmis,
+
+    /** Garde, appelée par `gardes.ts` : aucun dossier repris, un dossier déjà saisi, ou un dossier transmis sans échéance d'avis. */
+    listCasBloquants: () => [
+      ...(rows.length === 0
+        ? [
+            "  aucun dossier repris : l'import des dossiers (import-demarches) n'a pas tourné",
+          ]
+        : []),
+      ...rows
+        .filter((d) => d.aDejaUneSaisine)
+        .map((d) => `  dossier qui a déjà une saisine : ${decrireDossier(d)}`),
+      ...transmis
+        .filter((d) => !d.estHorsPlateforme)
+        .filter((d) => d.echeanceAvis === null)
+        .map((d) => `  transmis sans échéance d'avis : ${decrireDossier(d)}`),
+    ],
+  };
+};
+
+export const decrireDossier = (d: Dossier) =>
+  `T&C ${d.tecId}, démarche ${d.demarcheId}, ${d.collectivite}`;
