@@ -4,6 +4,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { Result } from '@tet/backend/utils/result.type';
+import { PlanStatusEnum } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { DeleteFicheService } from '../../fiches/delete-fiche/delete-fiche.service';
 import { GetPlanErrorEnum } from '../get-plan/get-plan.errors';
@@ -65,6 +66,21 @@ export class DeletePlanService {
         return {
           success: false,
           error: DeletePlanErrorEnum.UNAUTHORIZED,
+        };
+      }
+
+      // Le plan vide d'un import échoué, même rattaché par l'import du
+      // programme, doit pouvoir être supprimé pour relancer l'import.
+      if (
+        plan.status !== PlanStatusEnum.FAILED &&
+        (await this.deletePlanRepository.isPlanRattacheADemarche(
+          input.planId,
+          transaction
+        ))
+      ) {
+        return {
+          success: false,
+          error: DeletePlanErrorEnum.PLAN_RATTACHE_A_DEMARCHE,
         };
       }
 
