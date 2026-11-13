@@ -21,12 +21,13 @@ export const importTrajectoireSnbc3ErrorConfig: TrpcErrorHandlerConfig<ImportTra
     specificErrors: {
       SNBC3_REPOSITORY_UNREACHABLE: {
         code: 'BAD_GATEWAY',
-        message: 'Le dépôt snbc3 ne répond pas, ou refuse l’accès',
+        message:
+          'GitHub ne répond pas, ou refuse l’accès au dépôt snbc3 (quota de l’API épuisé ?)',
       },
       SNBC3_ARTIFACT_NOT_FOUND: {
         code: 'NOT_FOUND',
         message:
-          'Le commit, la release ou un de ses fichiers est introuvable dans le dépôt snbc3',
+          'La release v<version>, ou un de ses fichiers, est introuvable dans le dépôt snbc3',
       },
       SNBC3_ARTIFACT_INVALID: {
         code: 'PRECONDITION_FAILED',

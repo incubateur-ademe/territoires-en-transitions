@@ -6,7 +6,7 @@ import {
 } from './import-trajectoire-snbc3.queue';
 import { Snbc3ReleaseStorageService } from './snbc3-release-storage.service';
 
-const input = { commit: 'a34a053', version: '2.1' };
+const input = { version: '2.1' };
 
 const noPendingJobs = {
   active: 0,
