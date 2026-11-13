@@ -6,7 +6,7 @@ export const millesimeSnbc3Schema = z
   .object({
     dateVersion: z.iso
       .datetime({ offset: true })
-      .describe('Date du commit snbc3 importé'),
+      .describe('Date de publication de la release snbc3 importée'),
   })
   .describe('Millésime SNBC 3 en base (un seul à la fois)');
 

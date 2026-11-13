@@ -1,10 +1,10 @@
-import { failure, success } from '@tet/backend/utils/result.type';
+import { success } from '@tet/backend/utils/result.type';
 import { createHash, randomBytes } from 'crypto';
 import { parquetWriteBuffer } from 'hyparquet-writer';
 import {
-  getSnbc3ReleasePath,
   Snbc3ArtifactReader,
-  Snbc3Commit,
+  Snbc3ReleaseSource,
+  SNBC3_MANIFEST_FILE,
   SNBC3_PARQUET_FILE,
 } from './snbc3-artifact.reader';
 import { SNBC3_MAPPING } from './snbc3-mapping';
@@ -110,33 +110,66 @@ export const SNBC3_FIXTURE_WORKBOOK = 'Trajectoire GES de référence-V2.xlsx';
 export const SNBC3_FIXTURE_METHODOLOGIE =
   'ADEME-Methodo-Outil-trajectoire-référence-V2.pdf';
 
-/** Dépôt `snbc3` en mémoire : chaque `publish` ajoute un commit. */
+export const sha256Hex = (content: Uint8Array) =>
+  createHash('sha256').update(content).digest('hex');
+
+/**
+ * `manifest.json` au format écrit par `main.py release` de `snbc3`, pour les
+ * fichiers donnés (champs lus par l'import seulement).
+ */
+export const buildSnbc3Manifest = ({
+  version,
+  commit,
+  datePublication,
+  fichiers,
+}: {
+  version: string;
+  commit: string;
+  datePublication: string;
+  fichiers: [string, Uint8Array][];
+}) => ({
+  version,
+  date_publication: datePublication,
+  code: { commit, branche: 'main', modifications_non_commitees: false },
+  fichiers: fichiers.map(([nom, content]) => ({
+    nom,
+    octets: content.byteLength,
+    sha256: sha256Hex(content),
+  })),
+});
+
+export type Snbc3PublishedRelease = {
+  version: string;
+  commit: string;
+  datePublication: string;
+};
+
+/**
+ * Releases `snbc3` en mémoire, par version : republier une version la
+ * remplace, comme une release GitHub réécrite.
+ */
 export class FixtureSnbc3ArtifactReader extends Snbc3ArtifactReader {
-  private readonly commits = new Map<
-    string,
-    { date: string; files: Map<string, Uint8Array> }
-  >();
+  private readonly releases = new Map<string, Map<string, Uint8Array>>();
 
   publish({
-    sha = randomSnbc3Sha(),
-    date = new Date().toISOString(),
     version = '2.1',
+    commit = randomSnbc3Sha(),
+    datePublication = new Date().toISOString(),
     parquet,
     workbook = new Uint8Array(randomBytes(64)),
     withWorkbook = true,
     methodologie = new Uint8Array(randomBytes(64)),
     withMethodologie = true,
   }: {
-    sha?: string;
-    date?: string;
     version?: string;
+    commit?: string;
+    datePublication?: string;
     parquet: Uint8Array;
     workbook?: Uint8Array;
     withWorkbook?: boolean;
     methodologie?: Uint8Array;
     withMethodologie?: boolean;
-  }) {
-    const releasePath = getSnbc3ReleasePath(version);
+  }): Snbc3PublishedRelease {
     const contents: [string, Uint8Array][] = [
       [SNBC3_PARQUET_FILE, parquet],
       ...(withWorkbook
@@ -146,36 +179,32 @@ export class FixtureSnbc3ArtifactReader extends Snbc3ArtifactReader {
         ? [[SNBC3_FIXTURE_METHODOLOGIE, methodologie] as [string, Uint8Array]]
         : []),
     ];
-    // Champs du `manifest.json` de `snbc3`.
-    const manifest = {
+    const manifest = buildSnbc3Manifest({
       version,
-      fichiers: contents.map(([nom, content]) => ({
-        nom,
-        octets: content.byteLength,
-        sha256: createHash('sha256').update(content).digest('hex'),
-      })),
+      commit,
+      datePublication,
+      fichiers: contents,
+    });
+    this.releases.set(
+      version,
+      new Map<string, Uint8Array>([
+        ...contents,
+        [
+          SNBC3_MANIFEST_FILE,
+          new Uint8Array(Buffer.from(JSON.stringify(manifest))),
+        ],
+      ])
+    );
+    return { version, commit, datePublication };
+  }
+
+  protected async openRelease(version: string) {
+    const files = this.releases.get(version);
+    if (!files) return success(null);
+    const source: Snbc3ReleaseSource = {
+      readManifest: async () => success(files.get(SNBC3_MANIFEST_FILE) ?? null),
+      readFile: async ({ nom }) => success(files.get(nom) ?? null),
     };
-    const files = new Map<string, Uint8Array>([
-      ...contents.map(
-        ([name, content]) => [`${releasePath}/${name}`, content] as const
-      ),
-      [
-        `${releasePath}/manifest.json`,
-        new Uint8Array(Buffer.from(JSON.stringify(manifest))),
-      ],
-    ]);
-    this.commits.set(sha, { date, files });
-    return { sha, date, version };
-  }
-
-  protected async resolveCommit(commit: string) {
-    const found = this.commits.get(commit);
-    return found
-      ? success<Snbc3Commit>({ sha: commit, date: found.date })
-      : failure('SNBC3_ARTIFACT_NOT_FOUND' as const);
-  }
-
-  protected async readFile(sha: string, path: string) {
-    return success(this.commits.get(sha)?.files.get(path) ?? null);
+    return success(source);
   }
 }

@@ -67,15 +67,14 @@ export class ImportTrajectoireSnbc3Service {
   ): Promise<
     Result<ImportTrajectoireSnbc3Report, ImportTrajectoireSnbc3Error>
   > {
-    const { commit, version, collectiviteIds } = input;
+    const { version, collectiviteIds } = input;
     const startedAt = Date.now();
     const tracking = {
       startedAt: new Date(startedAt).toISOString(),
-      commit,
       version,
       collectiviteIds,
     };
-    this.logger.log(`Import SNBC 3 : release ${version} du commit ${commit}`);
+    this.logger.log(`Import SNBC 3 : release ${version}`);
     await this.storage.writeLastImport({ ...tracking, status: 'running' });
 
     const prepared = await this.prepareImport(input);
@@ -161,13 +160,12 @@ export class ImportTrajectoireSnbc3Service {
 
   /** Échec survenu hors de `importRelease` (process mort pendant l'import). */
   async recordFailure(
-    { commit, version, collectiviteIds }: ImportTrajectoireSnbc3Input,
+    { version, collectiviteIds }: ImportTrajectoireSnbc3Input,
     error: string
   ) {
     await this.storage.writeLastImport({
       status: 'failed',
       startedAt: new Date().toISOString(),
-      commit,
       version,
       collectiviteIds,
       error,
@@ -183,7 +181,6 @@ export class ImportTrajectoireSnbc3Service {
    * parquet brut ne reste pas en mémoire pendant le remplacement des valeurs.
    */
   private async prepareImport({
-    commit,
     version,
     collectiviteIds,
   }: ImportTrajectoireSnbc3Input): Promise<
@@ -198,16 +195,22 @@ export class ImportTrajectoireSnbc3Service {
       ImportTrajectoireSnbc3Error
     >
   > {
-    const release = await this.reader.readRelease(commit, version);
+    const release = await this.reader.readRelease(version);
     if (!release.success) return release;
-    const { sha, date } = release.data;
+    const { commit, datePublication, parquetSha256 } = release.data;
 
     const isPartial = collectiviteIds !== undefined;
     if (isPartial) {
+      // Version, commit et parquet : une release republiée sous le même tag,
+      // même depuis le même commit, peut porter d'autres valeurs que la base.
       const imported = await this.storage.getReplayableRelease();
-      if (imported?.commit !== sha || imported.version !== version) {
+      if (
+        imported?.commit !== commit ||
+        imported.version !== version ||
+        imported.parquetSha256 !== parquetSha256
+      ) {
         this.logger.error(
-          `Rejeu partiel refusé : la release ${version}@${sha} n'est pas la dernière importée (${
+          `Rejeu partiel refusé : la release ${version}@${commit} n'est pas la dernière importée (${
             imported ? `${imported.version}@${imported.commit}` : 'aucune'
           })`
         );
@@ -231,10 +234,17 @@ export class ImportTrajectoireSnbc3Service {
     } else {
       // Le premier import a besoin d'un id pour écrire les valeurs.
       metadonneeId = await this.repository.findOrCreateMetadonnee({
-        dateVersion: date,
+        dateVersion: datePublication,
       });
       const { manifest, workbook, methodologie } = release.data;
-      releaseFiles = { sha, version, manifest, workbook, methodologie };
+      releaseFiles = {
+        commit,
+        version,
+        parquetSha256,
+        manifest,
+        workbook,
+        methodologie,
+      };
     }
 
     return success({
@@ -242,9 +252,9 @@ export class ImportTrajectoireSnbc3Service {
       metadonneeId,
       releaseFiles,
       report: {
-        commit: sha,
+        commit,
         version,
-        dateVersion: date,
+        dateVersion: datePublication,
         metadonneeId,
         territoireCount: parsed.data.territoires.length,
         unmatchedTerritoires: [],
