@@ -186,7 +186,7 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 
 # Bucket des dumps quotidiens de la BDD de prod (.github/workflows/backup-database.yml),
 # qui alimentent aussi les restaurations de staging et de preprod. Même verrou que
-# coolify_backups, mais dans son propre projet (var.db_backups_project_id) : les
+# coolify_backups, mais dans son propre projet (var.database_backups_project_id) : les
 # dumps ne sont pas chiffrés, la clé Coolify (sur le control plane) ne doit ni
 # les lire ni en déposer un faux, que restore.sh restaurerait.
 #
@@ -194,10 +194,10 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 # mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
 # des delete markers, purgés par la règle noncurrent-versions une fois le verrou
 # expiré.
-resource "scaleway_object_bucket" "db_backups" {
-  name       = var.db_backups_bucket_name
+resource "scaleway_object_bucket" "database_backups" {
+  name       = var.database_backups_bucket_name
   region     = var.scaleway_region
-  project_id = var.db_backups_project_id
+  project_id = var.database_backups_project_id
 
   object_lock_enabled = true
 
@@ -222,7 +222,7 @@ resource "scaleway_object_bucket" "db_backups" {
 
   tags = {
     tier       = "platform"
-    purpose    = "db-backups"
+    purpose    = "database-backups"
     managed_by = "terraform"
   }
 
@@ -231,10 +231,10 @@ resource "scaleway_object_bucket" "db_backups" {
   }
 }
 
-resource "scaleway_object_bucket_lock_configuration" "db_backups" {
-  bucket     = scaleway_object_bucket.db_backups.name
+resource "scaleway_object_bucket_lock_configuration" "database_backups" {
+  bucket     = scaleway_object_bucket.database_backups.name
   region     = var.scaleway_region
-  project_id = var.db_backups_project_id
+  project_id = var.database_backups_project_id
 
   rule {
     default_retention {

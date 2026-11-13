@@ -64,9 +64,9 @@ output "coolify_backups_bucket_name" {
   value       = scaleway_object_bucket.coolify_backups.name
 }
 
-output "db_backups_bucket_name" {
+output "database_backups_bucket_name" {
   description = "Nom du bucket des dumps de la BDD de prod. À reporter dans la variable BACKUP_BUCKET de l'environnement GitHub prod."
-  value       = scaleway_object_bucket.db_backups.name
+  value       = scaleway_object_bucket.database_backups.name
 }
 
 output "coolify_backups_s3_endpoint" {

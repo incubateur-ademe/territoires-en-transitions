@@ -119,10 +119,10 @@ variable "coolify_backups_bucket_name" {
   default     = "tet-coolify-backups"
 }
 
-variable "db_backups_bucket_name" {
+variable "database_backups_bucket_name" {
   description = "Nom du bucket Object Storage des dumps quotidiens de la BDD de prod. Doit être globalement unique."
   type        = string
-  default     = "tet-db-backups"
+  default     = "tet-database-backups"
 }
 
 variable "coolify_instance_backup_prefix" {
@@ -157,12 +157,12 @@ variable "coolify_backups_credentials_secret_name" {
 
 # --- Projets créés par l'admin de l'organisation ---
 
-variable "db_backups_project_id" {
-  description = "ID du projet Scaleway des dumps de la BDD de prod (tet-db-backups), créé par un admin de l'organisation. Séparé de tet-coolify-backups pour que la clé Coolify ne voie pas les dumps."
+variable "database_backups_project_id" {
+  description = "ID du projet Scaleway des dumps de la BDD de prod (tet-database-backups), créé par un admin de l'organisation. Séparé de tet-coolify-backups pour que la clé Coolify ne voie pas les dumps."
   type        = string
   validation {
-    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.db_backups_project_id))
-    error_message = "db_backups_project_id doit être un UUID de projet Scaleway."
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.database_backups_project_id))
+    error_message = "database_backups_project_id doit être un UUID de projet Scaleway."
   }
 }
 
