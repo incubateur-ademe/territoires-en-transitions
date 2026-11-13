@@ -417,6 +417,16 @@ Mise en service d'une entrée :
    `PROBE_TARGETS`, qui gagne la sonde HTTPS de l'application, qu'au démarrage. Mettre le
    service Koyeb en pause une fois le trafic basculé.
 
+### Buckets de `tet-prod` : une bucket policy par bucket
+
+Les permissions IAM Object Storage valent pour un projet entier. `tet-prod` héberge le bucket
+de rencontres ([`prod/rencontres.tf`](prod/rencontres.tf)), dont la clé applicative a les
+droits IAM de lecture et d'écriture d'objets sur le projet. **Tout bucket créé dans `tet-prod`
+porte donc sa propre bucket policy dès sa création** (son application + les opérateurs de
+`bucket_admin_principals`) : un bucket sans policy reste ouvert à toute clé IAM du projet.
+Une bucket policy fonctionne en liste blanche : l'identité qui lance `terraform apply` doit y
+figurer, sinon elle perd l'accès au bucket.
+
 ### Variables d'environnement (Secret Manager → Coolify)
 
 [`coolify/env-manifest.tf`](coolify/env-manifest.tf) liste, par environnement et par

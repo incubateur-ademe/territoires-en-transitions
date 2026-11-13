@@ -134,3 +134,16 @@ variable "alert_emails" {
     error_message = "Au moins un destinataire : sans contact, les alertes ne partent nulle part."
   }
 }
+
+# --- Object Storage ---
+
+variable "bucket_admin_principals" {
+  description = "Opérateurs autorisés par les bucket policies de tet-prod (rencontres.tf), sous la forme user_id:<uuid> ou application_id:<uuid>. Doit contenir l'identité qui lance terraform apply : une bucket policy refuse tout ce qu'elle ne liste pas."
+  type        = list(string)
+  validation {
+    condition = length(var.bucket_admin_principals) > 0 && alltrue([
+      for p in var.bucket_admin_principals : can(regex("^(user_id|application_id):[0-9a-f-]{36}$", p))
+    ])
+    error_message = "Au moins un principal, chacun sous la forme user_id:<uuid> ou application_id:<uuid>."
+  }
+}

@@ -235,14 +235,18 @@ locals {
         BASE_URL = { value = local.git_application_urls["prod/aldo"] }
       })
 
-      # Application Git (git-applications.tf). Base Postgres et Storage restent
-      # sur leur projet Supabase Cloud, dont l'URL est en dur dans le dépôt.
+      # Application Git (git-applications.tf). Fichiers dans le bucket
+      # tet-prod-rencontres, base sur le Postgres de prod (infra/prod/rencontres.tf).
       rencontres = {
         WEBSITE_URL  = { value = local.git_application_urls["prod/rencontres"] }
         DATABASE_URL = { secret = "rencontres-database-url" }
-        SUPABASE_KEY = { secret = "rencontres-supabase-key" }
-        JWT_SECRET   = { secret = "rencontres-jwt-secret" }
-        BREVO_KEY    = { secret = "rencontres-brevo-key" }
+        # À retirer avec le projet Supabase (retour arrière possible d'ici là).
+        SUPABASE_KEY         = { secret = "rencontres-supabase-key" }
+        S3_BUCKET            = { value = "tet-prod-rencontres" }
+        S3_ACCESS_KEY_ID     = { secret = "rencontres-s3-access-key-id" }
+        S3_SECRET_ACCESS_KEY = { secret = "rencontres-s3-secret-access-key" }
+        JWT_SECRET           = { secret = "rencontres-jwt-secret" }
+        BREVO_KEY            = { secret = "rencontres-brevo-key" }
         # Relances par email planifiées dans le process (lib/cron.js). Un seul
         # hébergement à la fois : sur un autre, les laisser coupées, sinon
         # chaque relance part deux fois.

@@ -17,3 +17,8 @@ server_ssh_authorized_keys = [
 
 # Destinataires des alertes du Cockpit prod (observability.tf).
 alert_emails = ["equipe@example.org"]
+
+# Opérateurs autorisés sur les buckets de tet-prod (rencontres.tf). Y mettre
+# au moins l'identité qui lance terraform apply :
+#   scw iam api-key get "$SCW_ACCESS_KEY" -o json | jq -r '.user_id // .application_id'
+bucket_admin_principals = ["user_id:00000000-0000-0000-0000-000000000000"]

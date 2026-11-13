@@ -142,3 +142,30 @@ output "grafana_dashboards_url" {
   description = "Dossier des dashboards dans le Grafana du Cockpit prod (connexion IAM)."
   value       = module.cockpit.dashboards_folder_url
 }
+
+# --- rencontres ---
+
+output "rencontres_s3_access_key_id" {
+  description = "Access key S3 de rencontres. À ranger dans le secret rencontres-s3-access-key-id (cf. rencontres.tf)."
+  value       = scaleway_iam_api_key.rencontres_storage.access_key
+}
+
+output "rencontres_s3_secret_key" {
+  description = "Secret key S3 de rencontres. À ranger dans le secret rencontres-s3-secret-access-key (cf. rencontres.tf)."
+  value       = scaleway_iam_api_key.rencontres_storage.secret_key
+  sensitive   = true
+}
+
+output "rencontres_db_password" {
+  description = "Mot de passe du rôle rencontres, pour la restauration par l'endpoint public (PGPASSWORD)."
+  value       = random_password.rencontres.result
+  sensitive   = true
+}
+
+output "rencontres_database_url" {
+  description = "DATABASE_URL de rencontres par le réseau privé. À ranger dans le secret rencontres-database-url à la bascule (cf. rencontres.tf). sslmode=require : Prisma chiffre sans vérifier le certificat auto-signé de RDB. connection_limit=5 : l'instance est partagée avec TET."
+  value = format("postgres://%s:%s@%s:%d/%s?sslmode=require&connection_limit=5",
+    scaleway_rdb_user.rencontres.name, random_password.rencontres.result,
+  module.postgres.private_endpoint_ip, module.postgres.private_endpoint_port, scaleway_rdb_database.rencontres.name)
+  sensitive = true
+}
