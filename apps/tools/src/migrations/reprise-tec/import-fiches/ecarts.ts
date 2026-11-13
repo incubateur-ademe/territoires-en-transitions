@@ -99,7 +99,7 @@ const satellite = (table: string, id: string, precision: string) => `
     from reprise_tec.staging_${table}`;
 
 /** Le motif pour lequel l'import des dossiers a écarté un dossier T&C, `null` s'il l'a repris ; arrête s'il n'a fait ni l'un ni l'autre. */
-const loadMotifsDossiers = async (client: PoolClient) => {
+export const loadMotifsDossiers = async (client: PoolClient) => {
   const { rows } = await client.query<{ tecId: number; motif: string | null }>(`
     select tec_id::int as "tecId", null as motif
       from reprise_tec.correspondance where table_cible = 'demarche'
