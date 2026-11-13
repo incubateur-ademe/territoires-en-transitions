@@ -54,6 +54,14 @@ const randomCode = (length: number) =>
     .toString()
     .slice(2, 2 + length - 1)}`;
 
+/**
+ * Un code commune qu'aucune commune réelle ne porte : le seed en compte des
+ * centaines en `9xxxx`, et l'import rattacherait le territoire à l'une d'elles
+ * plutôt qu'à la commune de test.
+ */
+const randomFakeCommuneCode = () =>
+  `Z${Math.random().toString().slice(2).padEnd(4, '0').slice(0, 4)}`;
+
 /** Valeur importée attendue d'un code : ×1000, arrondie à 2 décimales. */
 const toKilo = (code: string, annee: number) =>
   Math.round(getSnbc3DefaultValeur(code, annee) * 1000 * 100) / 100;
@@ -214,7 +222,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       create({ siren: randomCode(9), natureInsee: 'CC' }),
       create({ siren: randomCode(9), natureInsee: 'CA' }),
       create({ siren: randomCode(9), natureInsee: 'CC' }),
-      create({ type: 'commune', communeCode: randomCode(5) }),
+      create({ type: 'commune', communeCode: randomFakeCommuneCode() }),
     ]);
     [hexagoneEpci, epciWithoutAgriculture, dromEpci, paris] = created.map(
       ({ collectivite }) => collectivite
