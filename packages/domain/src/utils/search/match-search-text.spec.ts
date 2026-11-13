@@ -57,6 +57,14 @@ describe('matchSearchText', () => {
     }
   });
 
+  it('lit de même un texte composé ou décomposé', () => {
+    for (const text of ['Héricourt', 'He\u0301ricourt']) {
+      const match = matchSearchText('hericourt', text);
+      expect(match?.hasTypos).toBe(false);
+      expect(passages(text, match?.ranges ?? [])).toEqual([text]);
+    }
+  });
+
   it('ne répond pas à une recherche vide ou faite de ponctuation', () => {
     expect(matchSearchText('', 'Lyon')).toBeNull();
     expect(matchSearchText(' - ', 'Lyon')).toBeNull();
