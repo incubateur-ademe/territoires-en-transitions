@@ -1,3 +1,5 @@
+import { plural } from './plural';
+
 const uiLabels = {
   annuler: 'Annuler',
   confirmer: 'Confirmer',
@@ -7,6 +9,26 @@ const uiLabels = {
   fermer: 'Fermer',
   rechercher: 'Rechercher',
   rechercherParMotsCles: 'Rechercher par mots-clés',
+  rechercherLeTexte: ({ texte }: { texte: string }): string =>
+    `Rechercher « ${texte} »`,
+  suggestionsDeRecherche: 'Suggestions de recherche',
+  suggestionsTrouvees: plural({
+    zero: 'Aucune suggestion',
+    one: 'suggestion',
+    other: 'suggestions',
+  }),
+  suggestionsAffichees: ({
+    count,
+    total,
+  }: {
+    count: number;
+    total: number;
+  }): string => `${count} sur ${total}`,
+  optionSelectionnee: 'Sélectionné, choisir de nouveau pour retirer',
+  correspondanceApprochante: 'Approchant',
+  correspondanceApprochanteDetail: 'Reconnu à une faute de frappe près',
+  retirerLaSelection: ({ label }: { label: string }): string =>
+    `Retirer « ${label} »`,
   saisirLeTexte: 'Saisir le texte',
   texteTronque: 'Voir plus',
   saisirTexteRichTextEditor:
