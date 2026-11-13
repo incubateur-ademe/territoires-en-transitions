@@ -2,6 +2,7 @@ import {
   PcaetStatutInstructionEnum,
   pcaetStatutInstructionValues,
 } from '@tet/domain/demarches';
+import { matchSearchText, tokenizeSearchQuery } from '@tet/domain/utils';
 import type { ListDossiersInstructionInput } from './list-dossiers-instruction.input';
 import type {
   DossierInstructionLigne,
@@ -10,8 +11,18 @@ import type {
 
 type Filtres = Pick<
   ListDossiersInstructionInput,
-  'statuts' | 'obligations' | 'regionCodes' | 'departementCodes' | 'recherche'
+  | 'statuts'
+  | 'obligations'
+  | 'regionCodes'
+  | 'departementCodes'
+  | 'collectiviteIds'
+  | 'recherche'
 >;
+
+export type FiltrerLigneOptions = {
+  /** Tolérer des fautes de frappe dans la recherche. Voir `withTypoFallback`. */
+  allowTypos?: boolean;
+};
 
 /**
  * Un filtre est-il posé sur ce champ ?
@@ -50,9 +61,19 @@ const attributsPassent = (
       (departementCode === null || !departementCodes.includes(departementCode)))
   );
 
-const nomPasse = (nom: string, recherche: string | undefined): boolean =>
+const nomPasse = (
+  nom: string,
+  recherche: string | undefined,
+  { allowTypos }: FiltrerLigneOptions
+): boolean =>
   !recherche ||
-  nom.toLocaleLowerCase('fr').includes(recherche.toLocaleLowerCase('fr'));
+  tokenizeSearchQuery(recherche).length === 0 ||
+  matchSearchText(recherche, nom, { allowTypos }) !== null;
+
+const isSelectedCollectivite = (
+  id: number,
+  collectiviteIds: readonly number[] | undefined
+) => !filtrePose(collectiviteIds) || collectiviteIds.includes(id);
 
 /**
  * La ligne telle qu'elle passe les filtres, `null` si elle n'en passe aucun.
@@ -60,18 +81,29 @@ const nomPasse = (nom: string, recherche: string | undefined): boolean =>
  * Le dépôt d'un Supra se filtre en groupe : il reste si le porteur ou l'un de
  * ses EPCI couverts passe les filtres d'obligation, de territoire et de
  * recherche, et ne garde que les sous-lignes qui les passent. Une recherche qui
- * nomme le porteur garde toutes ses sous-lignes ; une qui nomme un EPCI ne
- * garde que lui. Le statut est celui du dépôt, et ne se juge que sur lui.
+ * nomme le porteur, ou le choix du porteur, garde toutes ses sous-lignes ; une
+ * qui nomme ou choisit un EPCI ne garde que lui. Le statut est celui du dépôt,
+ * et ne se juge que sur lui.
  */
 export const filtrerLigne = (
   ligne: DossierInstructionLigne,
-  filtres: Filtres
+  filtres: Filtres,
+  options: FiltrerLigneOptions = {}
 ): DossierInstructionLigne | null => {
   if (filtrePose(filtres.statuts) && !filtres.statuts.includes(ligne.statut)) {
     return null;
   }
-  const porteurNomme = nomPasse(ligne.collectivite.nom, filtres.recherche);
+  const porteurChoisi = isSelectedCollectivite(
+    ligne.collectivite.id,
+    filtres.collectiviteIds
+  );
+  const porteurNomme = nomPasse(
+    ligne.collectivite.nom,
+    filtres.recherche,
+    options
+  );
   const porteurPasse =
+    porteurChoisi &&
     porteurNomme &&
     attributsPassent(
       {
@@ -84,7 +116,9 @@ export const filtrerLigne = (
   const collectivitesCouvertes = ligne.collectivitesCouvertes.filter(
     (couverte) =>
       attributsPassent(couverte, filtres) &&
-      (porteurNomme || nomPasse(couverte.nom, filtres.recherche))
+      (porteurChoisi ||
+        isSelectedCollectivite(couverte.id, filtres.collectiviteIds)) &&
+      (porteurNomme || nomPasse(couverte.nom, filtres.recherche, options))
   );
   if (!porteurPasse && collectivitesCouvertes.length === 0) {
     return null;
@@ -92,22 +126,35 @@ export const filtrerLigne = (
   return { ...ligne, collectivitesCouvertes };
 };
 
+/**
+ * Le porteur ou l'un de ses EPCI couverts contient-il la recherche telle quelle,
+ * sans faute de frappe ? Les autres filtres sont ignorés.
+ */
+export const hasExactNameMatch = (
+  ligne: DossierInstructionLigne,
+  recherche: string
+): boolean =>
+  [ligne.collectivite, ...ligne.collectivitesCouvertes].some(({ nom }) =>
+    nomPasse(nom, recherche, { allowTypos: false })
+  );
+
 /** Cette ligne passe-t-elle les filtres ? Voir `filtrerLigne`. */
 export const estRetenue = (
   ligne: DossierInstructionLigne,
   filtres: Filtres
 ): boolean => filtrerLigne(ligne, filtres) !== null;
 
-/** Les départements des collectivités listées, une fois chacun, par code. */
-export const listerDepartements = (
-  lignes: DossierInstructionLigne[]
+type AvecDepartement = {
+  departementCode: string | null;
+  departementLibelle: string | null;
+};
+
+/** Les départements de ces collectivités, une fois chacun, par code. */
+export const listDistinctDepartements = (
+  collectivites: Iterable<AvecDepartement>
 ): PerimetreDepartement[] => {
   const parCode = new Map<string, string>();
-  // Les EPCI couverts aussi : une DDT filtre sur le département d'une CC que
-  // porte un Supra d'ailleurs.
-  for (const { departementCode, departementLibelle } of lignes.flatMap(
-    (ligne) => [ligne.collectivite, ...ligne.collectivitesCouvertes]
-  )) {
+  for (const { departementCode, departementLibelle } of collectivites) {
     if (departementCode !== null) {
       parCode.set(departementCode, departementLibelle ?? departementCode);
     }
@@ -116,6 +163,19 @@ export const listerDepartements = (
     .map(([code, libelle]) => ({ code, libelle }))
     .sort((a, b) => a.code.localeCompare(b.code));
 };
+
+/** Les départements des collectivités listées, une fois chacun, par code. */
+export const listerDepartements = (
+  lignes: DossierInstructionLigne[]
+): PerimetreDepartement[] =>
+  // Les EPCI couverts aussi : une DDT filtre sur le département d'une CC que
+  // porte un Supra d'ailleurs.
+  listDistinctDepartements(
+    lignes.flatMap((ligne) => [
+      ligne.collectivite,
+      ...ligne.collectivitesCouvertes,
+    ])
+  );
 
 /** Le tri porte-t-il sur une donnée que seuls les pilotes apportent ? */
 export const trieSurLesPilotes = (

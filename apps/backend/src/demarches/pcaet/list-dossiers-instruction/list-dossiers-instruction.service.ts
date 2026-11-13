@@ -25,6 +25,7 @@ import {
 } from './list-dossiers-instruction.repository';
 import {
   filtrerLigne,
+  hasExactNameMatch,
   listerDepartements,
   trierDossiers,
   trieSurLesPilotes,
@@ -54,14 +55,15 @@ export class ListDossiersInstructionService {
     }
 
     const rowsResult =
-      await this.listDossiersInstructionRepository.listDossiersCouverts(
+      await this.listDossiersInstructionRepository.listDossiersCouvertsWithCollectivitesCouvertes(
         input.collectiviteId,
         tx
       );
     if (!rowsResult.success) {
       return rowsResult;
     }
-    const { instructeurType, rows, perimetreRegions } = rowsResult.data;
+    const { instructeurType, rows, perimetreRegions, couvertesParDemarche } =
+      rowsResult.data;
 
     // Un service qui dépose un avis lit où *il* en est, ligne par ligne. Un
     // destinataire en lecture — DDT, DR ADEME, service national — lit où en est
@@ -100,14 +102,6 @@ export class ListDossiersInstructionService {
       tx
     );
 
-    const couvertesParDemarche =
-      await this.listDossiersInstructionRepository.listCollectivitesCouvertesParDemarche(
-        rows.flatMap((row) =>
-          row.demarcheId === null ? [] : [row.demarcheId]
-        ),
-        tx
-      );
-
     const now = new Date();
     const dossiers = rows.map((row) => ({
       row,
@@ -136,12 +130,21 @@ export class ListDossiersInstructionService {
       { serviceSePrononce: peutDeposerAvisInstructeur(instructeurType) }
     );
 
+    // Les fautes de frappe ne sont tolérées que si aucun nom du territoire ne
+    // contient la recherche telle quelle — les autres filtres n'y sont pour
+    // rien : un nom exact écarté par le filtre de statut n'est pas une faute.
+    const { recherche } = input;
+    const allowTypos =
+      recherche !== undefined &&
+      !lignes.some((ligne) => hasExactNameMatch(ligne, recherche));
+
     // Un groupe — un Supra et ses EPCI couverts — compte pour une ligne : il se
     // pagine d'un bloc, ses sous-lignes viennent avec lui.
     const filtrees = lignes.flatMap((ligne) => {
-      const retenue = filtrerLigne(ligne, input);
+      const retenue = filtrerLigne(ligne, input, { allowTypos });
       return retenue === null ? [] : [retenue];
     });
+    const isRechercheApprochee = allowTypos && filtrees.length > 0;
 
     // Trier par pilote demande de les connaître avant de paginer. Le coût est
     // assumé — il ne se paie que sur ce tri, et l'agent l'a demandé.
@@ -168,6 +171,7 @@ export class ListDossiersInstructionService {
         ? affichees
         : await this.avecPilotes(affichees, tx),
       total: triees.length,
+      isRechercheApprochee,
       totalPerimetre: lignes.length,
       page,
       limit: input.limit,

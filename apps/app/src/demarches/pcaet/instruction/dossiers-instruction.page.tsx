@@ -8,6 +8,7 @@ import { useUser } from '@tet/api/users';
 import { peutDeposerAvisInstructeur } from '@tet/domain/demarches';
 import { useTrackDemarcheView } from '@/app/demarches/use-demarche-tracker';
 import {
+  Alert,
   Badge,
   cn,
   EmptyCard,
@@ -16,8 +17,13 @@ import {
   Pagination,
   useEventTracker,
 } from '@tet/ui';
+import { useDebouncedCallback } from 'use-debounce';
+import { useListCollectivitesSuivies } from './data/use-list-collectivites-suivies';
 import { useListDossiersInstruction } from './data/use-list-dossiers-instruction';
 import { DossiersInstructionTable } from './dossiers-instruction.table';
+import { SearchDossiersCombobox } from './search-dossiers.combobox';
+
+const TRACK_RECHERCHE_DELAY_MS = 2000;
 
 /**
  * @param serviceId Le service dont on liste les dossiers, pris dans l'URL et non
@@ -32,6 +38,7 @@ export const DossiersInstructionPage = ({
   const user = useUser();
   const {
     data,
+    isPlaceholderData,
     isLoading,
     isError,
     refetch,
@@ -42,10 +49,14 @@ export const DossiersInstructionPage = ({
     filtres,
     nbFiltresActifs,
     setFiltres,
+    recherche,
+    setRecherche,
     reinitialiserFiltres,
     setPage,
     trierPar,
   } = useListDossiersInstruction(serviceId);
+  // Chargées en même temps que la liste, et non une fois le champ affiché.
+  const { data: collectivitesSuivies } = useListCollectivitesSuivies(serviceId);
 
   // La famille du service est lue sur l'accès désigné par l'URL, pour la même
   // raison que la requête : le store est en retard d'un rendu quand on arrive
@@ -70,6 +81,17 @@ export const DossiersInstructionPage = ({
       nbEnInstruction: data?.countByStatut.en_instruction,
     },
   });
+  // Une recherche s'applique à chaque pause dans la frappe : on n'en compte
+  // qu'une par recherche posée, et non une par pause.
+  const trackRecherche = useDebouncedCallback(
+    () =>
+      tracker(Event.demarches.pcaet.instructionFiltre, {
+        acteur: 'instructeur',
+        instructeurType: typeDuService,
+        filtres: ['recherche'],
+      }),
+    TRACK_RECHERCHE_DELAY_MS
+  );
   const setFiltresTracked: typeof setFiltres = (nouveauxFiltres) => {
     tracker(Event.demarches.pcaet.instructionFiltre, {
       acteur: 'instructeur',
@@ -146,6 +168,32 @@ export const DossiersInstructionPage = ({
           />
         ) : (
           <>
+            <SearchDossiersCombobox
+              collectivitesSuivies={collectivitesSuivies}
+              recherche={recherche}
+              filtres={filtres}
+              onFiltresChange={setFiltresTracked}
+              onSearch={(valeur) => {
+                if (valeur.trim()) {
+                  trackRecherche();
+                } else {
+                  trackRecherche.cancel();
+                }
+                setRecherche(valeur);
+              }}
+            />
+            {/*
+              Pendant le rechargement, `data` répond encore à la recherche
+              précédente : le bandeau citerait la nouvelle à tort.
+            */}
+            {!isPlaceholderData && data.isRechercheApprochee && (
+              <Alert
+                state="warning"
+                title={appLabels.instructionListeRechercheApprochee({
+                  recherche,
+                })}
+              />
+            )}
             <DossiersInstructionTable
               dossiers={data.items}
               deposeAvis={deposeAvis}

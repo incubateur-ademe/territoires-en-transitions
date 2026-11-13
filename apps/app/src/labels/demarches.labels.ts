@@ -846,6 +846,20 @@ export const demarchesLabels = {
   instructionListeColonneActions: 'Actions',
   /** Badge de la ligne d'un Supra qui dépose pour plusieurs EPCI. */
   instructionListeBadgeSupra: 'Supra',
+  instructionListeRecherche: 'Rechercher un PCAET',
+  instructionListeRechercheCollectivites:
+    'Collectivités et structures porteuses',
+  instructionListeRechercheDepartements: 'Départements',
+  instructionListeRechercheRegions: 'Régions',
+  instructionListeRechercheCouvertePar: ({ porteur }: { porteur: string }) =>
+    `Couverte par ${porteur}`,
+  instructionListeRechercheNbCollectivites: plural({
+    one: 'collectivité',
+    other: 'collectivités',
+  }),
+  instructionListeRechercheCollectiviteSansNom: 'Collectivité choisie',
+  instructionListeRechercheApprochee: ({ recherche }: { recherche: string }) =>
+    `Aucun nom ne contient « ${recherche} ». Voici les noms les plus proches.`,
   instructionListeToutReplier: 'Tout replier',
   instructionListeToutDeplier: 'Tout déplier',
   instructionListeReplierGroupe: ({ porteur }: { porteur: string }) =>
