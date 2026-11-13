@@ -41,6 +41,11 @@ const instructionCloseNotificationDataSchema = z.object({
    * quand il écrit à la collectivité. C'est elle qui mène à son dossier.
    */
   copieDemandeAvisId: z.number().int().positive().optional(),
+  /**
+   * L'EPCI couvert par le dépôt d'un Supra dont le destinataire est
+   * administrateur — absent quand il écrit au porteur.
+   */
+  couverteCollectiviteId: z.number().int().positive().optional(),
 });
 
 type InstructionCloseNotificationData = z.infer<
@@ -73,8 +78,8 @@ export class NotifyInstructionCloseService {
   }
 
   /**
-   * Prévient la collectivité que son dossier est instruit, et met la DREAL en
-   * copie.
+   * Prévient la collectivité que son dossier est instruit, les EPCI que couvre
+   * son dépôt si c'est un Supra, et met la DREAL en copie.
    *
    * N'est appelée que lorsque la bascule a bien eu lieu : la clôture est tentée
    * à chaque avis validé et ne produit rien la plupart du temps.
@@ -105,8 +110,9 @@ export class NotifyInstructionCloseService {
     }: { demarcheId: number; collectiviteId: number; motif: MotifCloture },
     tx?: Transaction
   ): Promise<void> {
-    const [destinataires, enCopie] = await Promise.all([
+    const [destinataires, couverts, enCopie] = await Promise.all([
       this.listDestinatairesService.list({ demarcheId, collectiviteId }, tx),
+      this.listDestinatairesService.listCouverts({ demarcheId }, tx),
       this.listDestinatairesService.listEnCopie(
         { demarcheId, services: ['dreal'] },
         tx
@@ -115,28 +121,33 @@ export class NotifyInstructionCloseService {
 
     const notification = (
       sendTo: string,
-      copieDemandeAvisId?: number
+      destination: Pick<
+        InstructionCloseNotificationData,
+        'copieDemandeAvisId' | 'couverteCollectiviteId'
+      > = {}
     ): InstructionCloseNotificationInsert => ({
       entityId: String(demarcheId),
       status: NotificationStatusEnum.PENDING,
       sendTo,
       notifiedOn: NotifiedOnEnum['DEMARCHES.PCAET.INSTRUCTION_CLOSE'],
-      notificationData: {
-        demarcheId,
-        collectiviteId,
-        motif,
-        copieDemandeAvisId,
-      },
+      notificationData: { demarcheId, collectiviteId, motif, ...destination },
     });
-    // Un agent qui reçoit déjà le message de la collectivité n'a pas à le
-    // recevoir une seconde fois en copie.
+    // Un seul message par personne : celui du porteur d'abord, puis celui de
+    // l'EPCI couvert, enfin la copie.
     const dejaNotifies = new Set(destinataires.map(({ userId }) => userId));
+    const couvertsANotifier = couverts.filter(
+      ({ userId }) => !dejaNotifies.has(userId)
+    );
+    couvertsANotifier.forEach(({ userId }) => dejaNotifies.add(userId));
     const notifications = [
       ...destinataires.map(({ userId }) => notification(userId)),
+      ...couvertsANotifier.map(({ userId, collectiviteCouverteId }) =>
+        notification(userId, { couverteCollectiviteId: collectiviteCouverteId })
+      ),
       ...enCopie
         .filter(({ userId }) => !dejaNotifies.has(userId))
         .map(({ userId, demandeAvisId }) =>
-          notification(userId, demandeAvisId)
+          notification(userId, { copieDemandeAvisId: demandeAvisId })
         ),
     ];
     if (notifications.length === 0) {
@@ -164,8 +175,13 @@ export class NotifyInstructionCloseService {
     if (!parsed.success) {
       return { success: false, error: 'PARSING_NOTIFICATION_DATA_ERROR' };
     }
-    const { demarcheId, collectiviteId, motif, copieDemandeAvisId } =
-      parsed.data;
+    const {
+      demarcheId,
+      collectiviteId,
+      motif,
+      copieDemandeAvisId,
+      couverteCollectiviteId,
+    } = parsed.data;
 
     const [demarche] = await this.databaseService.db
       .select({
@@ -190,6 +206,22 @@ export class NotifyInstructionCloseService {
       return { success: false, error: 'USER_NOT_FOUND' };
     }
 
+    let couverture: NotifyInstructionCloseProps['couverture'] = null;
+    if (couverteCollectiviteId !== undefined) {
+      const collectiviteCouverteNom =
+        await this.listDestinatairesService.getCollectiviteCouverteNom({
+          demarcheId,
+          collectiviteId: couverteCollectiviteId,
+        });
+      if (collectiviteCouverteNom === null) {
+        return { success: false, error: 'COLLECTIVITE_COUVERTE_NOT_FOUND' };
+      }
+      couverture = {
+        porteurNom: demarche.collectiviteNom,
+        collectiviteCouverteNom,
+      };
+    }
+
     let copie: NotifyInstructionCloseProps['copie'] = null;
     if (copieDemandeAvisId !== undefined) {
       const destinataireServiceNom =
@@ -207,20 +239,19 @@ export class NotifyInstructionCloseService {
       sendToEmail: destinataire.email,
       subject: copie
         ? `Le projet de PCAET de ${copie.collectiviteNom} est instruit`
+        : couverture
+        ? `Le projet de PCAET porté par ${couverture.porteurNom} est instruit`
         : 'Finalisez votre dépôt de PCAET',
       demarcheTitre: demarche.titre,
       motif,
       copie,
-      url:
-        copieDemandeAvisId === undefined
-          ? this.getDemarcheUrlService.getDemarchePcaetDocumentsUrl({
-              collectiviteId,
-              demarcheId,
-            })
-          : this.getDemarcheUrlService.getDossierInstructionUrl({
-              collectiviteInstruiteId: collectiviteId,
-              demandeAvisId: copieDemandeAvisId,
-            }),
+      couverture,
+      url: this.getUrl({
+        collectiviteId,
+        demarcheId,
+        copieDemandeAvisId,
+        couverteCollectiviteId,
+      }),
     };
 
     return {
@@ -231,5 +262,34 @@ export class NotifyInstructionCloseService {
         content: NotifyInstructionCloseEmail(props),
       },
     };
+  }
+
+  /**
+   * Le service en copie va à son dossier d'instruction ; l'EPCI couvert au
+   * dépôt en lecture seule, sous l'identifiant du porteur ; le porteur aux
+   * documents, où il finalise.
+   */
+  private getUrl({
+    collectiviteId,
+    demarcheId,
+    copieDemandeAvisId,
+    couverteCollectiviteId,
+  }: Omit<InstructionCloseNotificationData, 'motif'>): string {
+    if (copieDemandeAvisId !== undefined) {
+      return this.getDemarcheUrlService.getDossierInstructionUrl({
+        collectiviteInstruiteId: collectiviteId,
+        demandeAvisId: copieDemandeAvisId,
+      });
+    }
+    if (couverteCollectiviteId !== undefined) {
+      return this.getDemarcheUrlService.getDemarchePcaetUrl({
+        collectiviteId,
+        demarcheId,
+      });
+    }
+    return this.getDemarcheUrlService.getDemarchePcaetDocumentsUrl({
+      collectiviteId,
+      demarcheId,
+    });
   }
 }

@@ -81,6 +81,7 @@ describe('Contenu des emails de démarches PCAET', () => {
       demarcheTitre: 'PCAET 2024-2030',
       serviceNom: 'DREAL Bretagne',
       copie: null,
+      couverture: null,
       url: 'https://app.test/collectivite/1/demarche-pcaet/2/documents',
     };
 
@@ -130,6 +131,29 @@ describe('Contenu des emails de démarches PCAET', () => {
       expect(html).toContain('https://app.test/collectivite/1/instruction/7');
       expect(html).not.toContain('votre');
     });
+
+    it("nomme le porteur à l'EPCI couvert et le mène au dépôt en lecture seule", async () => {
+      const html = await render(
+        NotifyAvisRecuEmail({
+          ...props,
+          sendToEmail: 'admin@epci.fr',
+          auTitreDe: 'Préfet de région',
+          couverture: {
+            porteurNom: 'PETR du Pays de Redon',
+            collectiviteCouverteNom: 'Redon Agglomération',
+          },
+        })
+      );
+
+      expect(html).toContain('PETR du Pays de Redon');
+      expect(html).toContain('pour le territoire de');
+      expect(html).toContain('Redon Agglomération');
+      expect(html).toContain('en lecture seule');
+      expect(html).toContain('Consulter l&#x27;avis');
+      expect(html).toContain('dont le territoire est couvert par ce PCAET');
+      expect(html).toContain(props.url);
+      expect(html).not.toContain('votre');
+    });
   });
 
   describe('instruction close', () => {
@@ -138,6 +162,7 @@ describe('Contenu des emails de démarches PCAET', () => {
       subject: 'Finalisez votre dépôt de PCAET',
       demarcheTitre: 'PCAET 2024-2030',
       copie: null,
+      couverture: null,
       url: 'https://app.test/collectivite/1/demarche-pcaet/2/documents',
     };
 
@@ -203,6 +228,50 @@ describe('Contenu des emails de démarches PCAET', () => {
         const html = await render(
           NotifyInstructionCloseEmail({
             ...copie,
+            motif: DemarchePcaetTransitionEnum.DELAI_AVIS_ECHU,
+          })
+        );
+
+        expect(html).toContain('est terminé');
+        expect(html).toContain('réputé favorable');
+        expect(html).not.toContain('votre');
+      });
+    });
+
+    describe('à un EPCI couvert par le dépôt d’un Supra', () => {
+      const couvert = {
+        ...props,
+        sendToEmail: 'admin@epci.fr',
+        couverture: {
+          porteurNom: 'PETR du Pays de Redon',
+          collectiviteCouverteNom: 'Redon Agglomération',
+        },
+        url: 'https://app.test/collectivite/1/demarche-pcaet/2',
+      };
+
+      it('dit que la suite revient au porteur, sans lui proposer de finaliser', async () => {
+        const html = await render(
+          NotifyInstructionCloseEmail({
+            ...couvert,
+            motif: DemarchePcaetTransitionEnum.AVIS_TOUS_RENDUS,
+          })
+        );
+
+        expect(html).toContain('tous les avis attendus ont été rendus');
+        expect(html).toContain('Redon Agglomération');
+        expect(html).toContain('Il revient maintenant à');
+        expect(html).toContain('PETR du Pays de Redon');
+        expect(html).toContain('Consulter le dépôt');
+        expect(html).toContain('dont le territoire est couvert par ce PCAET');
+        expect(html).toContain(couvert.url);
+        expect(html).not.toContain('Finaliser');
+        expect(html).not.toContain('votre');
+      });
+
+      it('dit que le délai est échu', async () => {
+        const html = await render(
+          NotifyInstructionCloseEmail({
+            ...couvert,
             motif: DemarchePcaetTransitionEnum.DELAI_AVIS_ECHU,
           })
         );

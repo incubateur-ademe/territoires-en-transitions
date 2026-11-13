@@ -19,6 +19,14 @@ export interface NotifyAvisRecuProps extends NotificationTemplate {
     /** Le service dont le destinataire est membre. */
     destinataireServiceNom: string;
   } | null;
+  /**
+   * Renseigné quand le destinataire administre un EPCI couvert par le dépôt
+   * d'un Supra : le message nomme le porteur et mène au dépôt en lecture seule.
+   */
+  couverture: {
+    porteurNom: string;
+    collectiviteCouverteNom: string;
+  } | null;
   /** Les documents de la démarche, ou le dossier d'instruction en copie. */
   url: string;
 }

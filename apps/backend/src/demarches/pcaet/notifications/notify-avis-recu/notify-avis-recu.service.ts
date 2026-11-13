@@ -37,6 +37,11 @@ const avisRecuNotificationDataSchema = z.object({
    * quand il écrit à la collectivité. C'est elle qui mène à son dossier.
    */
   copieDemandeAvisId: z.number().int().positive().optional(),
+  /**
+   * L'EPCI couvert par le dépôt d'un Supra dont le destinataire est
+   * administrateur — absent quand il écrit au porteur.
+   */
+  couverteCollectiviteId: z.number().int().positive().optional(),
 });
 
 type AvisRecuNotificationData = z.infer<typeof avisRecuNotificationDataSchema>;
@@ -76,9 +81,9 @@ export class NotifyAvisRecuService {
   }
 
   /**
-   * Prévient la collectivité qu'un avis vient d'être rendu sur son dossier, et
-   * met en copie la DREAL et la DGEC — sauf le service qui vient de se
-   * prononcer.
+   * Prévient la collectivité qu'un avis vient d'être rendu sur son dossier, les
+   * EPCI que couvre son dépôt si c'est un Supra, et met en copie la DREAL et la
+   * DGEC — sauf le service qui vient de se prononcer.
    *
    * Appelée dans la transaction qui valide l'avis : si la validation échoue, la
    * notification part avec elle plutôt que d'annoncer un avis qui n'existe pas.
@@ -114,8 +119,9 @@ export class NotifyAvisRecuService {
       return;
     }
 
-    const [destinataires, enCopie] = await Promise.all([
+    const [destinataires, couverts, enCopie] = await Promise.all([
       this.listDestinatairesService.list(cible, tx),
+      this.listDestinatairesService.listCouverts(cible, tx),
       this.listDestinatairesService.listEnCopie(
         {
           demarcheId: cible.demarcheId,
@@ -126,26 +132,36 @@ export class NotifyAvisRecuService {
       ),
     ]);
 
-    // Un agent qui reçoit déjà le message de la collectivité n'a pas à le
-    // recevoir une seconde fois en copie.
-    const dejaNotifies = new Set(destinataires.map(({ userId }) => userId));
     const notification = (
       sendTo: string,
-      copieDemandeAvisId?: number
+      destination: Pick<
+        AvisRecuNotificationData,
+        'copieDemandeAvisId' | 'couverteCollectiviteId'
+      > = {}
     ): AvisRecuNotificationInsert => ({
       createdBy,
       entityId: avisId,
       status: NotificationStatusEnum.PENDING,
       sendTo,
       notifiedOn: NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
-      notificationData: { demandeAvisId, avisId, copieDemandeAvisId },
+      notificationData: { demandeAvisId, avisId, ...destination },
     });
+    // Un seul message par personne : celui du porteur d'abord, puis celui de
+    // l'EPCI couvert, enfin la copie.
+    const dejaNotifies = new Set(destinataires.map(({ userId }) => userId));
+    const couvertsANotifier = couverts.filter(
+      ({ userId }) => !dejaNotifies.has(userId)
+    );
+    couvertsANotifier.forEach(({ userId }) => dejaNotifies.add(userId));
     const notifications = [
       ...destinataires.map(({ userId }) => notification(userId)),
+      ...couvertsANotifier.map(({ userId, collectiviteCouverteId }) =>
+        notification(userId, { couverteCollectiviteId: collectiviteCouverteId })
+      ),
       ...enCopie
         .filter(({ userId }) => !dejaNotifies.has(userId))
         .map(({ userId, demandeAvisId }) =>
-          notification(userId, demandeAvisId)
+          notification(userId, { copieDemandeAvisId: demandeAvisId })
         ),
     ];
     if (notifications.length === 0) {
@@ -188,7 +204,23 @@ export class NotifyAvisRecuService {
       return { success: false, error: 'USER_NOT_FOUND' };
     }
 
-    const { copieDemandeAvisId } = parsed.data;
+    const { copieDemandeAvisId, couverteCollectiviteId } = parsed.data;
+    let couverture: NotifyAvisRecuProps['couverture'] = null;
+    if (couverteCollectiviteId !== undefined) {
+      const collectiviteCouverteNom =
+        await this.listDestinatairesService.getCollectiviteCouverteNom({
+          demarcheId: avis.demarcheId,
+          collectiviteId: couverteCollectiviteId,
+        });
+      if (collectiviteCouverteNom === null) {
+        return { success: false, error: 'COLLECTIVITE_COUVERTE_NOT_FOUND' };
+      }
+      couverture = {
+        porteurNom: avis.collectiviteNom,
+        collectiviteCouverteNom,
+      };
+    }
+
     let copie: NotifyAvisRecuProps['copie'] = null;
     if (copieDemandeAvisId !== undefined) {
       const destinataireServiceNom =
@@ -203,11 +235,15 @@ export class NotifyAvisRecuService {
       sendToEmail: destinataire.email,
       subject: copie
         ? `Avis rendu par ${avis.serviceNom} sur le projet de PCAET de ${avis.collectiviteNom}`
+        : couverture
+        ? `Avis rendu sur le projet de PCAET porté par ${couverture.porteurNom}`
         : "Consultez l'avis rendu sur votre projet de PCAET",
       demarcheTitre: avis.demarcheTitre,
       serviceNom: avis.serviceNom,
       auTitreDe: libelleAuTitreDe[avis.auTitreDe] ?? null,
       copie,
+      couverture,
+      // L'EPCI couvert lit le dépôt sous l'identifiant du porteur, comme lui.
       url:
         copieDemandeAvisId === undefined
           ? this.getDemarcheUrlService.getDemarchePcaetDocumentsUrl({

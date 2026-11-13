@@ -7,7 +7,8 @@ import { NotifyAvisRecuProps } from './notify-avis-recu.props';
 
 /**
  * L'avis rendu sur un dossier PCAET, annoncé à la collectivité qui l'a déposé,
- * et en copie aux services qui suivent l'instruction.
+ * aux EPCI que couvre le dépôt d'un Supra, et en copie aux services qui suivent
+ * l'instruction.
  *
  * Le message ne dit rien du contenu de l'avis : la pièce est confidentielle et
  * se lit sur la plateforme, pas dans une boîte mail.
@@ -15,8 +16,15 @@ import { NotifyAvisRecuProps } from './notify-avis-recu.props';
 export const NotifyAvisRecuEmail = (
   props: NotifyAvisRecuProps
 ): React.ReactNode => {
-  const { demarcheTitre, serviceNom, auTitreDe, copie, url, sendToEmail } =
-    props;
+  const {
+    demarcheTitre,
+    serviceNom,
+    auTitreDe,
+    copie,
+    couverture,
+    url,
+    sendToEmail,
+  } = props;
   const titre = auTitreDe ? ` au titre de ${auTitreDe.toLowerCase()}` : '';
 
   return (
@@ -32,6 +40,18 @@ export const NotifyAvisRecuEmail = (
 
           <Text>
             L&apos;avis est consultable sur la plateforme, dans le dossier.
+          </Text>
+        </>
+      ) : couverture ? (
+        <>
+          <Text>
+            {serviceNom} a rendu son avis{titre} sur le projet de PCAET{' '}
+            <b>{demarcheTitre}</b>, porté par {couverture.porteurNom} pour le
+            territoire de {couverture.collectiviteCouverteNom}.
+          </Text>
+
+          <Text>
+            L&apos;avis est consultable sur la plateforme, en lecture seule.
           </Text>
         </>
       ) : (
@@ -59,6 +79,8 @@ export const NotifyAvisRecuEmail = (
         raison={
           copie
             ? `Vous recevez ce message car vous êtes membre de ${copie.destinataireServiceNom} sur Territoiresentransitions.fr`
+            : couverture
+            ? `Vous recevez ce message car vous administrez ${couverture.collectiviteCouverteNom}, dont le territoire est couvert par ce PCAET, sur Territoiresentransitions.fr`
             : 'Vous recevez ce message car vous pilotez cette démarche ou administrez la collectivité sur Territoiresentransitions.fr'
         }
       />
@@ -72,6 +94,7 @@ NotifyAvisRecuEmail.PreviewProps = {
   serviceNom: 'DREAL Bretagne',
   auTitreDe: 'Préfet de région',
   copie: null,
+  couverture: null,
   url: 'https://app.territoiresentransitions.fr',
   sendToEmail: 'pilote@collectivite.fr',
 };
