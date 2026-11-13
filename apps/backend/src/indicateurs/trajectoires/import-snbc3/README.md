@@ -3,11 +3,19 @@
 Importe une release du dépôt `snbc3` comme source d'indicateur `snbc3`
 ([ADR 0023](../../../../../../doc/adr/0023-integration-trajectoire-snbc3.md), plan du lot 1).
 
-- Une release est un dossier `releases/V<version>/` committé dans `snbc3` : `manifest.json`,
-  `resultats_territorialises.parquet`, le classeur standalone (`.xlsx`) et le PDF de
-  méthodologie. La date du commit sert de millésime (`date_version` de la métadonnée).
-- Le parquet, le classeur et le PDF de méthodologie sont vérifiés contre les tailles et les sha256 du
-  manifeste. Une release sans l'un des trois est refusée.
+- Une release est une _GitHub Release_ du dépôt public
+  [`incubateur-ademe/snbc3`](https://github.com/incubateur-ademe/snbc3), taguée `v<version>`
+  (ex. [`v2.3`](https://github.com/incubateur-ademe/snbc3/releases/tag/v2.3)). Ses assets sont le
+  paquet assemblé par `main.py release` : `manifest.json`, `resultats_territorialises.parquet`, le
+  classeur standalone (`.xlsx`) et le PDF de méthodologie. Le dossier `releases/` n'est pas
+  versionné dans `snbc3`.
+- Le manifeste porte la version, la date de publication et le commit : la date de publication sert
+  de millésime (`date_version` de la métadonnée), le commit de traçabilité (bucket, rapport).
+- GitHub renomme les assets (espaces en points, accents retirés) : chaque fichier du manifeste est
+  retrouvé par le `digest` sha256 que l'API GitHub donne pour chaque asset, puis vérifié contre la
+  taille et le sha256 du manifeste après téléchargement. Une release sans le parquet, le classeur
+  ou le PDF est refusée, comme une release dont un asset n'a pas d'empreinte. Les assets sont
+  téléchargés par l'API (`Accept: application/octet-stream`), qui accepte le jeton.
 - Les colonnes lues du parquet doivent exister avec leur type physique (`BYTE_ARRAY` pour les
   chaînes, `INT64` ou `INT32` pour `annee`, `DOUBLE` pour `valeur_recalee`).
 - Une seule métadonnée `snbc3` existe : chaque import la met à jour et remplace les valeurs en
@@ -38,11 +46,11 @@ La correspondance des codes SNBC 3 vers les indicateurs TeT est dans
 
 ## Configuration
 
-| Variable                             | Rôle                                                                                                                       |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `TRAJECTOIRE_SNBC3_REPOSITORY_URL`   | URL du dépôt GitLab `snbc3`. Requise en prod.             |
-| `TRAJECTOIRE_SNBC3_GITLAB_TOKEN`     | Jeton GitLab (`read_repository`) : le dépôt `snbc3` est privé. Requis en prod.                                             |
-| `TRAJECTOIRE_SNBC3_LOCAL_REPOSITORY` | Chemin d'un clone local de `snbc3`. S'il est défini, les releases y sont lues (`git show`) au lieu de GitLab. Pour le dev. |
+| Variable                           | Rôle                                                                                                                                                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `TRAJECTOIRE_SNBC3_REPOSITORY_URL` | URL du dépôt GitHub `snbc3`, sur `github.com` (vérifié au démarrage). Facultative : `https://github.com/incubateur-ademe/snbc3` par défaut.                                                                                    |
+| `TRAJECTOIRE_SNBC3_GITHUB_TOKEN`   | Jeton GitHub, facultatif : le dépôt est public. Il élargit le quota de l'API (60 requêtes par heure et par IP sans jeton ; un import en fait cinq : la release et ses quatre fichiers) et permet de lire un dépôt privé.       |
+| `TRAJECTOIRE_SNBC3_LOCAL_RELEASES` | Dossier de paquets `V<version>/` : le `releases/` d'un clone de `snbc3` après `main.py release`, ou les assets d'une release téléchargés sous leurs noms du manifeste. S'il est défini, les releases y sont lues. Pour le dev. |
 
 ## Mise en prod
 
@@ -56,7 +64,7 @@ La correspondance des codes SNBC 3 vers les indicateurs TeT est dans
    curl -X POST "$BACKEND_URL/trpc/indicateurs.trajectoires.snbc3.import" \
      -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
      -H 'Content-Type: application/json' \
-     -d '{"commit": "a34a053e82be5d577ec7ade727c005ea248b36e3", "version": "2.1"}'
+     -d '{"version": "2.3"}'
    ```
 
    - La mutation met l'import dans la file BullMQ `trajectoire_snbc3_import` et répond tout de
@@ -81,7 +89,9 @@ La correspondance des codes SNBC 3 vers les indicateurs TeT est dans
      plus tard, après expiration de son verrou (10 min) ; l’import est idempotent.
    - `collectiviteIds` (facultatif) rejoue l'import pour quelques collectivités, par exemple
      après des erreurs. Ce rejeu n'est accepté que pour la release du dernier import complet
-     (commit et version du `manifest.json` du bucket, `PRECONDITION_FAILED` sinon), et refusé
+     (version, commit et sha256 du parquet, en métadonnées du `manifest.json` du bucket : une
+     release republiée sous le même tag avec d'autres données, même depuis le même commit, est
+     refusée, `PRECONDITION_FAILED`), et refusé
      tant qu'un import complet commencé depuis (`pending-release.json`) n'est pas allé au bout :
      les valeurs mélangent alors deux releases, relancer un import complet. Il ne
      réécrit ni le classeur ni la date de la métadonnée. Sans ce filtre, les collectivités
@@ -91,7 +101,7 @@ La correspondance des codes SNBC 3 vers les indicateurs TeT est dans
      erreurs par territoire. Une valeur refusée n'arrête pas les autres territoires ; une panne
      de la base arrête l'import (`failed`).
 
-3. Pour revenir en arrière, réimporter un commit précédent.
+3. Pour revenir en arrière, réimporter une version précédente.
 
 ## Vérification
 

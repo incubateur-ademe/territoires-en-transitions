@@ -218,24 +218,29 @@ export const backendConfigurationSchema = z
       .describe(
         'Identifiant du dossier Google Drive pour le stockage des résultats de calcul de la trajectoire SNBC'
       ),
-    // Facultatives : seul l'import manuel de la trajectoire SNBC 3 s'en sert.
+    // Seul l'import manuel de la trajectoire SNBC 3 s'en sert : le dépôt est
+    // public, l'URL par défaut suffit et le jeton est facultatif.
     TRAJECTOIRE_SNBC3_REPOSITORY_URL: z
-      .url()
-      .optional()
+      .url({
+        hostname: /^github\.com$/,
+        error:
+          'Doit être l’URL d’un dépôt github.com : l’import SNBC 3 lit les releases GitHub',
+      })
+      .default('https://github.com/incubateur-ademe/snbc3')
       .describe(
-        'URL du dépôt GitLab snbc3 dont l’import de la trajectoire SNBC 3 lit les releases'
+        'URL du dépôt GitHub snbc3 (hôte github.com) dont l’import de la trajectoire SNBC 3 lit les releases (assets de la release taguée v<version>)'
       ),
-    TRAJECTOIRE_SNBC3_GITLAB_TOKEN: z
+    TRAJECTOIRE_SNBC3_GITHUB_TOKEN: z
       .string()
       .optional()
       .describe(
-        'Jeton GitLab (read_repository) pour lire les releases du dépôt privé snbc3 lors de l’import de la trajectoire SNBC 3'
+        'Jeton GitHub facultatif pour l’import de la trajectoire SNBC 3 : élargit le quota de l’API et permet de lire un dépôt privé'
       ),
-    TRAJECTOIRE_SNBC3_LOCAL_REPOSITORY: z
+    TRAJECTOIRE_SNBC3_LOCAL_RELEASES: z
       .string()
       .optional()
       .describe(
-        'Chemin d’un clone local du dépôt snbc3 ; s’il est défini, l’import SNBC 3 lit les releases dans ce clone plutôt que sur GitLab (dev)'
+        'Chemin d’un dossier de paquets V<version>/ de snbc3 (le releases/ d’un clone après main.py release) ; s’il est défini, l’import SNBC 3 y lit les releases plutôt que sur GitHub (dev)'
       ),
     BREVO_API_KEY: z
       .string()

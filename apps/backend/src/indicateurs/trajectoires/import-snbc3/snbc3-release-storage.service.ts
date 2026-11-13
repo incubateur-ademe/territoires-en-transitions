@@ -25,7 +25,7 @@ export const SNBC3_WORKBOOK_PATH = 'standalone.xlsx';
 export const SNBC3_METHODOLOGIE_PATH = 'methodologie.pdf';
 /**
  * `manifest.json` de la release importée, copié tel quel. Ses métadonnées
- * d'objet (`commit`, `version`) désignent la release en base.
+ * d'objet (`commit`, `version`, `parquetSha256`) désignent la release en base.
  */
 export const SNBC3_MANIFEST_PATH = 'manifest.json';
 /**
@@ -46,6 +46,11 @@ export const XLSX_MIME_TYPE =
 const importedReleaseSchema = z.object({
   commit: z.string(),
   version: z.string(),
+  /**
+   * Absent des imports antérieurs : un rejeu partiel exige alors un nouvel
+   * import complet.
+   */
+  parquetSha256: z.string().optional(),
   /** Absent des fichiers écrits avant l'ajout du marqueur d'import. */
   importId: z.string().optional(),
 });
@@ -57,7 +62,12 @@ const fileNameMetadataSchema = z.object({ name: z.string() });
 /** Ce que le bucket garde d'une release : tout sauf le parquet. */
 export type Snbc3ReleaseFiles = Pick<
   Snbc3Release,
-  'sha' | 'version' | 'manifest' | 'workbook' | 'methodologie'
+  | 'commit'
+  | 'version'
+  | 'parquetSha256'
+  | 'manifest'
+  | 'workbook'
+  | 'methodologie'
 >;
 
 /** Fichiers de la release importée et suivi de l'import, dans le bucket. */
@@ -80,7 +90,11 @@ export class Snbc3ReleaseStorageService {
     const bucket = await this.supabaseService.ensurePrivateBucket(SNBC3_BUCKET);
     if (!bucket.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
 
-    const metadata = { commit: release.sha, version: release.version };
+    const metadata = {
+      commit: release.commit,
+      version: release.version,
+      parquetSha256: release.parquetSha256,
+    };
     for (const file of [
       {
         path: SNBC3_WORKBOOK_PATH,
@@ -122,13 +136,13 @@ export class Snbc3ReleaseStorageService {
    * manifeste, les rejeux partiels sont refusés (cf. `getReplayableRelease`).
    */
   async markReleasePending(
-    release: Pick<Snbc3ReleaseFiles, 'sha' | 'version'>
+    release: Pick<Snbc3ReleaseFiles, 'commit' | 'version'>
   ): Promise<Result<string, ImportTrajectoireSnbc3Error>> {
     const bucket = await this.supabaseService.ensurePrivateBucket(SNBC3_BUCKET);
     if (!bucket.success) return failure('SNBC3_WORKBOOK_STORAGE_ERROR');
     const importId = randomUUID();
     const metadata = {
-      commit: release.sha,
+      commit: release.commit,
       version: release.version,
       importId,
     };

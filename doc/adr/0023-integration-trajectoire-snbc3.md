@@ -93,8 +93,9 @@ tRPC réservée au service role et appelée à la main à chaque nouveau millés
 
 - `snbc3` publie `resultats_territorialises` (parquet) et les autres fichiers de
   livrables associés (xlsx standalone avec toutes les données et pdf de méthodo
-  versionnée) sous forme de commit dans son dépôt. La date du commit est utilisée 
-  comme millésime.
+  versionnée) sous forme de commit dans son dépôt. La date du commit est utilisée
+  comme millésime (la date de publication de la release depuis l'évolution
+  ci-dessous).
 - La mutation, appelée à la main par un admin, reçoit l'id du commit (l'URL du
   dépôt est définie en constante). Elle télécharge le parquet du commit
   (`hyparquet`, JS pur), le rattache aux collectivités par SIREN (par code
@@ -108,13 +109,23 @@ tRPC réservée au service role et appelée à la main à chaque nouveau millés
   (date et commit) à chaque import. Les valeurs sont mises à jour en place, ce
   qui conserve leurs identifiants, et celles qui ne sont plus produites sont
   supprimées. L'historique des millésimes reste dans le dépôt `snbc3` : pour
-  revenir en arrière, on réimporte un ancien commit.
+  revenir en arrière, on réimporte un ancien commit (une version précédente
+  depuis l'évolution ci-dessous).
 - L'import stocke aussi le xlsx standalone du commit, qui sert à l'export
   (§3).
 - À la généralisation (§4), le chemin Google Sheets
   (`TrajectoiresSpreadsheetService`) est **retiré du calcul de la trajectoire de
   référence** : plus de copie de classeur par EPCI, plus de file
   `compute-trajectoire` sous contrainte de rate limiting, résultats immédiats.
+
+> **Évolution (2026-11-13).** Le dépôt `snbc3` est public sur GitHub
+> (`https://github.com/incubateur-ademe/snbc3`) et chaque livraison est une
+> *GitHub Release* taguée `v<version>`, dont les fichiers du paquet sont les
+> assets (le dossier `releases/` n'est plus versionné). La mutation reçoit la
+> version seule ; le commit et la date de publication, qui sert de millésime,
+> sont lus dans le `manifest.json` de la release. Les assets sont rattachés au
+> manifeste par leur empreinte sha256. Pour revenir en arrière, on réimporte une
+> version précédente. Détails : README de `import-snbc3/`.
 
 ### 3. Générer le fichier téléchargeable côté TeT
 

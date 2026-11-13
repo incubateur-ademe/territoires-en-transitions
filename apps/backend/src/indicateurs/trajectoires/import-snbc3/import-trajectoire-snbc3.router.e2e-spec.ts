@@ -78,7 +78,6 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
    * son rapport ; un job en échec lève son code d'erreur.
    */
   const runImport = async (input: {
-    commit: string;
     version: string;
     collectiviteIds?: number[];
   }) => {
@@ -110,14 +109,8 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
    * trajectoire des collectivités hors de ce fichier. Les rejeux partiels de
    * cette release sont alors acceptés.
    */
-  const markAsImported = async ({
-    sha,
-    version,
-  }: {
-    sha: string;
-    version: string;
-  }) => {
-    const release = await snbc3Repository.readRelease(sha, version);
+  const markAsImported = async ({ version }: { version: string }) => {
+    const release = await snbc3Repository.readRelease(version);
     if (!release.success) throw new Error(release.error);
     const storage = app.get(Snbc3ReleaseStorageService);
     const marked = await storage.markReleasePending(release.data);
@@ -126,11 +119,15 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     if (!stored.success) throw new Error(stored.error);
     await app
       .get(Snbc3SourceMetadonneeRepository)
-      .upsertMetadonnee({ dateVersion: release.data.date });
+      .upsertMetadonnee({ dateVersion: release.data.datePublication });
   };
 
   const collectiviteIds = () =>
     [hexagoneEpci, epciWithoutAgriculture, dromEpci, paris].map(({ id }) => id);
+
+  /** Une version par release publiée : le dépôt en mémoire les indexe ainsi. */
+  let lastMinor = 0;
+  const nextVersion = () => `2.${++lastMinor}`;
 
   const listSnbc3Valeurs = (collectiviteId: number) =>
     database.db
@@ -204,9 +201,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     const reader = app.get(Snbc3ArtifactReader);
     const spy = vi
       .spyOn(reader, 'readRelease')
-      .mockImplementation((commit, version) =>
-        snbc3Repository.readRelease(commit, version)
-      );
+      .mockImplementation((version) => snbc3Repository.readRelease(version));
 
     const create = async (args: Partial<Collectivite>) =>
       addTestCollectivite(database, args);
@@ -243,72 +238,106 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
   });
 
   test('refuse un appel hors service role', async () => {
-    const commit = snbc3Repository.publish({
+    const release = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
     });
     await expect(
       router
         .createCaller({ user: getAnonUser() })
-        .indicateurs.trajectoires.snbc3.import({
-          commit: commit.sha,
-          version: commit.version,
-        })
+        .indicateurs.trajectoires.snbc3.import({ version: release.version })
     ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
   });
 
   // Imports complets : ils échouent avant toute écriture.
   test('échoue sans classeur standalone dans la release', async () => {
-    const commit = snbc3Repository.publish({
+    const release = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
       withWorkbook: false,
     });
-    await expect(
-      runImport({ commit: commit.sha, version: commit.version })
-    ).rejects.toThrow('SNBC3_ARTIFACT_NOT_FOUND');
+    await expect(runImport({ version: release.version })).rejects.toThrow(
+      'SNBC3_ARTIFACT_NOT_FOUND'
+    );
     expect(await listSnbc3Valeurs(hexagoneEpci.id)).toEqual([]);
     expect(
       (await downloadJson(SNBC3_LAST_IMPORT_PATH)) as Snbc3LastImport
     ).toMatchObject({
       status: 'failed',
-      commit: commit.sha,
+      version: release.version,
       error: 'SNBC3_ARTIFACT_NOT_FOUND',
     });
   });
 
   test('échoue sur un parquet sans les colonnes du contrat', async () => {
-    const commit = snbc3Repository.publish({
+    const release = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires, { withoutColumn: 'qualite' }),
     });
-    await expect(
-      runImport({ commit: commit.sha, version: commit.version })
-    ).rejects.toThrow('SNBC3_PARQUET_SCHEMA_INVALID');
+    await expect(runImport({ version: release.version })).rejects.toThrow(
+      'SNBC3_PARQUET_SCHEMA_INVALID'
+    );
   });
 
   test('refuse un rejeu partiel sur une autre release que la dernière importée', async () => {
     const imported = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
     });
     await markAsImported(imported);
     const other = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
     });
     const caller = router.createCaller({ user: getServiceRoleUser() });
 
     await expect(
       caller.indicateurs.trajectoires.snbc3.import({
-        commit: other.sha,
         version: other.version,
         collectiviteIds: collectiviteIds(),
       })
     ).rejects.toMatchObject({ code: 'PRECONDITION_FAILED' });
-    // Même commit, autre version de release.
+    // Version jamais publiée.
     await expect(
       caller.indicateurs.trajectoires.snbc3.import({
-        commit: imported.sha,
         version: '9.9',
         collectiviteIds: collectiviteIds(),
       })
     ).rejects.toMatchObject({ code: 'PRECONDITION_FAILED' });
+    expect(await listSnbc3Valeurs(hexagoneEpci.id)).toEqual([]);
+  });
+
+  test('refuse un rejeu partiel d’une version republiée avec un autre commit', async () => {
+    const version = nextVersion();
+    const parquet = buildSnbc3Parquet(territoires);
+    snbc3Repository.publish({ version, parquet });
+    await markAsImported({ version });
+    // Même tag, autre commit : ce n'est plus la release des valeurs en base.
+    snbc3Repository.publish({ version, parquet });
+
+    await expect(
+      runImport({ version, collectiviteIds: collectiviteIds() })
+    ).rejects.toThrow('SNBC3_PARTIAL_IMPORT_RELEASE_MISMATCH');
+    expect(await listSnbc3Valeurs(hexagoneEpci.id)).toEqual([]);
+  });
+
+  test('refuse un rejeu partiel d’une version republiée depuis le même commit avec un autre parquet', async () => {
+    const version = nextVersion();
+    const { commit } = snbc3Repository.publish({
+      version,
+      parquet: buildSnbc3Parquet(territoires),
+    });
+    await markAsImported({ version });
+    // Même tag, même commit, autres données (modifications non commitées).
+    snbc3Repository.publish({
+      version,
+      commit,
+      parquet: buildSnbc3Parquet(territoires.slice(1)),
+    });
+
+    await expect(
+      runImport({ version, collectiviteIds: collectiviteIds() })
+    ).rejects.toThrow('SNBC3_PARTIAL_IMPORT_RELEASE_MISMATCH');
     expect(await listSnbc3Valeurs(hexagoneEpci.id)).toEqual([]);
   });
 
@@ -346,19 +375,19 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     });
 
     const v1 = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
-      date: '2026-11-06T12:24:49.000Z',
+      datePublication: '2026-11-06T12:24:49.000Z',
     });
     await markAsImported(v1);
     const workbookBefore = await getStoredWorkbook();
     const report = await runImport({
-      commit: v1.sha,
       version: v1.version,
       collectiviteIds: collectiviteIds(),
     });
 
     expect(report).toMatchObject({
-      commit: v1.sha,
+      commit: v1.commit,
       territoireCount: 5,
       unmatchedTerritoires: [unknownSiren],
       errors: [],
@@ -378,7 +407,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     // Celle de la release : un rejeu partiel n'y touche pas.
     // `date_version` est un timestamp sans fuseau, en UTC.
     expect(metadonnee.dateVersion.replace(' ', 'T').slice(0, 19)).toBe(
-      v1.date.slice(0, 19)
+      v1.datePublication.slice(0, 19)
     );
 
     // Sous-secteurs : ×1000, signes, construction.
@@ -448,9 +477,9 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     )) as Snbc3LastImport;
     expect(lastImport).toMatchObject({
       status: 'done',
-      commit: v1.sha,
+      version: v1.version,
       collectiviteIds: collectiviteIds(),
-      report: { commit: v1.sha, unmatchedTerritoires: [unknownSiren] },
+      report: { commit: v1.commit, unmatchedTerritoires: [unknownSiren] },
     });
     expect(lastImport.finishedAt).toBeDefined();
 
@@ -461,10 +490,9 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       .where(eq(indicateurValeurTable.id, snbc2Valeur.id));
     expect(snbc2ValeurAfter.objectif).toBe(4242);
 
-    // Réimport du même commit : idempotent.
+    // Réimport de la même release : idempotent.
     const before = await listSnbc3Valeurs(hexagoneEpci.id);
     const replay = await runImport({
-      commit: v1.sha,
       version: v1.version,
       collectiviteIds: collectiviteIds(),
     });
@@ -481,6 +509,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
 
     // Nouvelle livraison : la construction devient inconnue pour l'EPCI.
     const v2 = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(
         territoires.map((t) =>
           t.code === hexagoneEpci.siren
@@ -499,7 +528,6 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     });
     await markAsImported(v2);
     const report2 = await runImport({
-      commit: v2.sha,
       version: v2.version,
       collectiviteIds: collectiviteIds(),
     });
@@ -557,7 +585,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     expect(
       ((await downloadJson(SNBC3_LAST_IMPORT_PATH)) as Snbc3LastImport).report
         ?.commit
-    ).toBe(v2.sha);
+    ).toBe(v2.commit);
     expect(
       await database.db
         .select({ id: indicateurSourceMetadonneeTable.id })
@@ -581,11 +609,11 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     onTestFinished(() => spy.mockRestore());
 
     const release = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
     });
     await markAsImported(release);
     const report = await runImport({
-      commit: release.sha,
       version: release.version,
       collectiviteIds: collectiviteIds(),
     });
@@ -639,6 +667,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
               .where(eq(indicateurSourceMetadonneeTable.id, metadonneeId))
           )[0]?.dateVersion;
     const previous = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
     });
     await markAsImported(previous);
@@ -648,12 +677,13 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     // Import complet : la panne survient au premier lot, avant que les
     // collectivités absentes de la release ne soient vidées.
     const release = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
-      date: '2030-01-01T00:00:00.000Z',
+      datePublication: '2030-01-01T00:00:00.000Z',
     });
-    await expect(
-      runImport({ commit: release.sha, version: release.version })
-    ).rejects.toThrow('SERVER_ERROR');
+    await expect(runImport({ version: release.version })).rejects.toThrow(
+      'SERVER_ERROR'
+    );
 
     // Plus de rejeu territoire par territoire après la panne.
     expect(spy).toHaveBeenCalledTimes(1);
@@ -661,7 +691,7 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       (await downloadJson(SNBC3_LAST_IMPORT_PATH)) as Snbc3LastImport
     ).toMatchObject({
       status: 'failed',
-      commit: release.sha,
+      version: release.version,
       error: 'connexion perdue',
     });
     // Le bucket et la métadonnée désignent toujours la release précédente.
@@ -673,7 +703,6 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       router
         .createCaller({ user: getServiceRoleUser() })
         .indicateurs.trajectoires.snbc3.import({
-          commit: previous.sha,
           version: previous.version,
           collectiviteIds: collectiviteIds(),
         })
@@ -845,30 +874,31 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     }
 
     const full = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(
         territoires.filter((t) => t.code !== dromEpci.siren)
       ),
-      date: '2026-11-08T09:00:00.000Z',
+      datePublication: '2026-11-08T09:00:00.000Z',
     });
     const report = await runImport({
-      commit: full.sha,
       version: full.version,
     });
 
     // Release enregistrée et date de la métadonnée mise à jour.
     expect((await getStoredWorkbook())?.user_metadata).toMatchObject({
-      commit: full.sha,
-      version: '2.1',
+      commit: full.commit,
+      version: full.version,
     });
     expect(
       (await getStoredObject(SNBC3_METHODOLOGIE_PATH))?.user_metadata
     ).toMatchObject({
-      commit: full.sha,
-      version: '2.1',
+      commit: full.commit,
+      version: full.version,
       name: SNBC3_FIXTURE_METHODOLOGIE,
     });
     expect(await downloadJson(SNBC3_MANIFEST_PATH)).toMatchObject({
-      version: '2.1',
+      version: full.version,
+      code: { commit: full.commit },
       fichiers: expect.arrayContaining([
         expect.objectContaining({ nom: 'resultats_territorialises.parquet' }),
       ]),
@@ -876,8 +906,8 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     expect(
       await app.get(Snbc3ReleaseStorageService).getImportedRelease()
     ).toEqual({
-      commit: full.sha,
-      version: '2.1',
+      commit: full.commit,
+      version: full.version,
       importId: expect.any(String),
     });
     const [metadonnee] = await database.db
@@ -885,12 +915,16 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
       .from(indicateurSourceMetadonneeTable)
       .where(eq(indicateurSourceMetadonneeTable.id, report.metadonneeId));
     expect(metadonnee.dateVersion.replace(' ', 'T').slice(0, 19)).toBe(
-      full.date.slice(0, 19)
+      full.datePublication.slice(0, 19)
     );
     const lastImport = (await downloadJson(
       SNBC3_LAST_IMPORT_PATH
     )) as Snbc3LastImport;
-    expect(lastImport).toMatchObject({ status: 'done', commit: full.sha });
+    expect(lastImport).toMatchObject({
+      status: 'done',
+      version: full.version,
+      report: { commit: full.commit },
+    });
     expect(lastImport.collectiviteIds).toBeUndefined();
 
     expect(report.clearedCollectiviteIds).toContain(dromEpci.id);
@@ -931,10 +965,10 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     onTestFinished(() => spy.mockRestore());
 
     const release = snbc3Repository.publish({
+      version: nextVersion(),
       parquet: buildSnbc3Parquet(territoires),
     });
     const report = await runImport({
-      commit: release.sha,
       version: release.version,
     });
 
@@ -947,11 +981,10 @@ describe("Route d'import de la trajectoire SNBC 3", () => {
     // La release est enregistrée : le territoire en échec peut être rejoué.
     expect(
       await app.get(Snbc3ReleaseStorageService).getReplayableRelease()
-    ).toMatchObject({ commit: release.sha, version: release.version });
+    ).toMatchObject({ commit: release.commit, version: release.version });
 
     spy.mockRestore();
     const replay = await runImport({
-      commit: release.sha,
       version: release.version,
       collectiviteIds: [paris.id],
     });
