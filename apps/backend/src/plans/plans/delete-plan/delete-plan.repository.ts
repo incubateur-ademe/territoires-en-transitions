@@ -16,11 +16,22 @@ export class DeletePlanRepository {
   /**
    * Tout rattachement compte, quel que soit le statut de la démarche : un PCAET
    * adopté ou archivé garde son plan comme programme d'actions.
+   *
+   * Verrouille d'abord la ligne du plan jusqu'à la fin de la transaction : un
+   * rattachement concurrent (qui prend `FOR KEY SHARE` sur cette ligne par sa
+   * clé étrangère) est soit vu par le contrôle, soit mis en attente puis rejeté
+   * par la suppression — jamais emporté en cascade.
    */
-  async isPlanRattacheADemarche(
+  async lockAndCheckPlanRattacheADemarche(
     planId: number,
     tx: Transaction
   ): Promise<boolean> {
+    await tx
+      .select({ id: axeTable.id })
+      .from(axeTable)
+      .where(eq(axeTable.id, planId))
+      .for('update');
+
     const [link] = await tx
       .select({ demarcheId: demarchePlanActionTable.demarcheId })
       .from(demarchePlanActionTable)
