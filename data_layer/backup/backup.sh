@@ -25,6 +25,27 @@ fi
 export AWS_CONFIG_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/aws-config"
 unset AWS_PROFILE AWS_DEFAULT_PROFILE
 
+# put-object plutôt que `s3 cp` : le bucket est sous Object Lock, et un upload
+# vers un bucket verrouillé exige un Content-MD5 que `s3 cp` n'envoie pas
+# toujours. Limite d'un PUT simple : 5 Go.
+upload() {
+  local file="$1"
+  local size
+  size=$(wc -c < "$file" | tr -d " ")
+  if [ "$size" -ge 5000000000 ]; then
+    echo "$file fait $size octets, au-delà des 5 Go d'un PUT simple : passer à un upload multipart."
+    exit 1
+  fi
+  AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
+  AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
+  aws s3api put-object \
+    --bucket "$BACKUP_BUCKET" --key "$(basename "$file")" \
+    --body "$file" \
+    --content-md5 "$(openssl md5 -binary "$file" | base64)" \
+    --endpoint-url "$BACKUP_ENDPOINT_URL" \
+    --region "$BACKUP_REGION" > /dev/null
+}
+
 mkdir -p "$BACKUP_DIRECTORY"
 
 echo "Starting backup to $BACKUP_DIRECTORY/$BACKUP_FILE..."
@@ -49,12 +70,7 @@ pg_restore --list "$BACKUP_DIRECTORY/$BACKUP_FILE" > /dev/null
 echo "Backup verified. Uploading to S3..."
 
 # Upload vers S3
-AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-aws s3 cp "$BACKUP_DIRECTORY/$BACKUP_FILE" \
-  "s3://$BACKUP_BUCKET/$BACKUP_FILE" \
-  --endpoint-url "$BACKUP_ENDPOINT_URL" \
-  --region "$BACKUP_REGION"
+upload "$BACKUP_DIRECTORY/$BACKUP_FILE"
 
 echo "Backup uploaded to s3://$BACKUP_BUCKET/$BACKUP_FILE"
 
@@ -68,11 +84,6 @@ curl -sf "$BACKEND_URL/version" -o "$BACKUP_DIRECTORY/$METADATA_FILE"
 
 echo "Uploading metadata to S3..."
 
-AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
-AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
-aws s3 cp "$BACKUP_DIRECTORY/$METADATA_FILE" \
-  "s3://$BACKUP_BUCKET/$METADATA_FILE" \
-  --endpoint-url "$BACKUP_ENDPOINT_URL" \
-  --region "$BACKUP_REGION"
+upload "$BACKUP_DIRECTORY/$METADATA_FILE"
 
 echo "Metadata uploaded to s3://$BACKUP_BUCKET/$METADATA_FILE"

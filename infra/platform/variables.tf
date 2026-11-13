@@ -119,6 +119,12 @@ variable "coolify_backups_bucket_name" {
   default     = "tet-coolify-backups"
 }
 
+variable "db_backups_bucket_name" {
+  description = "Nom du bucket Object Storage des dumps quotidiens de la BDD de prod. Doit être globalement unique."
+  type        = string
+  default     = "tet-db-backups"
+}
+
 variable "coolify_instance_backup_prefix" {
   description = "Préfixe des backups de l'instance Coolify dans le bucket. Doit rester aligné sur instance_backup_prefix (infra/coolify)."
   type        = string

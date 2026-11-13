@@ -184,6 +184,64 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
   }
 }
 
+# Bucket des dumps quotidiens de la BDD de prod (.github/workflows/backup-database.yml),
+# qui alimentent aussi les restaurations de staging et de preprod. Même projet et
+# même verrou que coolify_backups.
+#
+# Pas de règle d'expiration : la rétention (60 jours, puis 1 par mois sur 24
+# mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
+# des delete markers, purgés par la règle noncurrent-versions une fois le verrou
+# expiré.
+resource "scaleway_object_bucket" "db_backups" {
+  name       = var.db_backups_bucket_name
+  region     = var.scaleway_region
+  project_id = var.backups_project_id
+
+  object_lock_enabled = true
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle_rule {
+    id      = "noncurrent-versions"
+    enabled = true
+
+    abort_incomplete_multipart_upload_days = 1
+
+    noncurrent_version_expiration {
+      noncurrent_days = var.backups_noncurrent_version_days
+    }
+
+    expiration {
+      expired_object_delete_marker = true
+    }
+  }
+
+  tags = {
+    tier       = "platform"
+    purpose    = "db-backups"
+    managed_by = "terraform"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "scaleway_object_bucket_lock_configuration" "db_backups" {
+  bucket     = scaleway_object_bucket.db_backups.name
+  region     = var.scaleway_region
+  project_id = var.backups_project_id
+
+  rule {
+    default_retention {
+      mode = "COMPLIANCE"
+      days = var.backups_lock_days
+    }
+  }
+}
+
 # Clé dédiée aux backups, utilisée par le S3 storage Coolify et par le backup
 # de l'instance. L'application IAM, sa politique (objets du projet backups
 # uniquement, sans droit sur le cycle de vie, le verrou ni la politique du
