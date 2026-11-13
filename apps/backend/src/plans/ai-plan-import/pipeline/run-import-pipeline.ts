@@ -108,6 +108,8 @@ export const MAX_DOCUMENT_UNITS = 300;
 const VERIFICATION_WINDOW_TOKENS = 12_000;
 
 export type RunImportPipelineInput = {
+  /** Profil public conservé dans les checkpoints du moteur commun. */
+  profile?: PipelineCheckpoint['profile'];
   instructions: string;
   disabledFields: DisableableField[];
   currentDate: string;
@@ -266,7 +268,7 @@ export const runImportPipeline = async (
     progress: Progress = state.progress
   ): Promise<void> =>
     input.onCheckpoint?.({
-      profile: AiPlanImportProfileEnum.GENERIC,
+      profile: input.profile ?? AiPlanImportProfileEnum.GENERIC,
       contractVersion: GENERIC_IMPORT_CONTRACT_VERSION,
       catalogueVersion: null,
       schemaVersion: PIPELINE_CHECKPOINT_SCHEMA_VERSION,
@@ -279,6 +281,13 @@ export const runImportPipeline = async (
         maxInputTokens: llm.maxInputTokens,
       },
       ...state,
+      // Le contrat générique v1 reste textuel. Les coordonnées/liens du lecteur
+      // appartiennent au checkpoint documentaire du profil Électrification.
+      units:
+        state.units?.map((unit) => ({
+          ...unit,
+          lines: unit.lines.map(({ text, pageIndex }) => ({ text, pageIndex })),
+        })) ?? null,
       progress,
     }) ?? Promise.resolve();
 
@@ -826,7 +835,7 @@ const readingWarnings = (
         ...analysis.warnings,
         `${upperFirst(ignored.join(' et '))} ne s'appliquent pas aux ${
           analysis.actions.length
-        } fiches lues sans le modèle (${planSheets.join(', ')}).`,
+        } actions lues sans le modèle (${planSheets.join(', ')}).`,
       ]
     : analysis.warnings;
 };

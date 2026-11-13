@@ -1,7 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
+import {
+  MAX_FICHE_TITLE_LENGTH,
+  normalizeExtractedActions,
+} from '../adapters/extracted-action-to-import-action';
 import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
 import { ImportErrors } from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
-import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import {
+  ImportPlanOutput,
+  ImportPlanService,
+} from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
 import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -14,60 +23,76 @@ import {
 } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
-  MAX_FICHE_TITLE_LENGTH,
-  normalizeExtractedActions,
-} from '../adapters/extracted-action-to-import-action';
-import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
   AI_PLAN_IMPORT_MAX_OCR_PAGES,
 } from '../ai-plan-import.constants';
-import { aiPlanImportJobErrorMessages } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
-import { AiPlanImportJob } from '../models/ai-plan-import-job';
-import { ImportCheckpoint } from '../models/import-checkpoint';
-import { PlanDraft } from '../models/plan-draft';
+import {
+  aiPlanImportErrorMessages,
+  aiPlanImportJobErrorMessages,
+} from '../ai-plan-import.errors';
 import { computeContentMetrics } from '../pipeline/compute-import-metrics';
-import { ReadDocument } from '../pipeline/document/document-page';
+import { ImportJobTelemetry } from './import-job-telemetry';
+import { AiPlanImportJob } from '../models/ai-plan-import-job';
+import {
+  ImportCheckpoint,
+  StoredImportCheckpoint,
+  parseImportCheckpoint,
+} from '../models/import-checkpoint';
+import { PlanDraft } from '../models/plan-draft';
+import { AiPlanImportProfileEnum } from '../models/import-profile';
+import { countPlanContent } from './count-plan-content';
+import { draftToImportPlanInput } from './draft-to-import-plan-input';
 import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
 import { readDocument } from '../pipeline/read-document/read-document';
+import { ReadDocument } from '../pipeline/document/document-page';
 import {
   isCheckpointUsableBy,
   runImportPipeline,
   StepStates,
 } from '../pipeline/run-import-pipeline';
-import { CompletePlanImportService } from './complete-plan-import.service';
-import { countPlanContent } from './count-plan-content';
-import { draftToImportPlanInput } from './draft-to-import-plan-input';
+import { ImportGenerationErrors } from './generate-import.errors';
 import {
   GeneratedImport,
   ImportFailureOptions,
   ImportGenerationFailure,
   ImportGenerator,
 } from './generate-import.types';
-import { ImportGenerationErrors } from './generate-import.errors';
-import { ImportJobTelemetry } from './import-job-telemetry';
+import { CompletePlanImportService } from './complete-plan-import.service';
 
-/** Extrait et persiste les plans libres, y compris les plans PCAET. */
+/** Pipeline générique et PCAET, avec son brouillon et ses étapes historiques. */
 @Injectable()
 export class GenerateGenericImportService implements ImportGenerator {
   private readonly logger = new Logger(GenerateGenericImportService.name);
-
   constructor(
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
     private readonly llm: LlmService,
     private readonly importPlanService: ImportPlanService,
+    private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly transactionManager: TransactionManager,
     private readonly effetAttenduService: EffetAttenduService,
+    private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
     private readonly completion: CompletePlanImportService
   ) {}
 
   async generate(
     job: AiPlanImportJob,
-    checkpoint: ImportCheckpoint | null,
+    storedCheckpoint: StoredImportCheckpoint | null,
     telemetry: ImportJobTelemetry
   ): Promise<Result<GeneratedImport, ImportGenerationFailure>> {
     const { attempt } = job;
+    const parsed = storedCheckpoint
+      ? parseImportCheckpoint(storedCheckpoint)
+      : null;
+    if (parsed && !parsed.success) {
+      return this.failed(
+        aiPlanImportErrorMessages.INVALID_CHECKPOINT,
+        'checkpoint_unsupported',
+        { attempt }
+      );
+    }
+    const checkpoint = parsed?.data ?? null;
     const usable =
       checkpoint && isCheckpointUsableBy(checkpoint, this.llm)
         ? checkpoint
@@ -139,6 +164,10 @@ export class GenerateGenericImportService implements ImportGenerator {
     const effetsAttendus = await this.effetAttenduService.getEffetAttendu();
     const outcome = await runImportPipeline(this.llm, {
       ...start,
+      profile:
+        job.options.profile === AiPlanImportProfileEnum.PCAET
+          ? AiPlanImportProfileEnum.PCAET
+          : AiPlanImportProfileEnum.GENERIC,
       instructions: job.options.instructions,
       disabledFields: job.options.disabledFields,
       withVerifications: job.options.withVerifications,
@@ -180,12 +209,27 @@ export class GenerateGenericImportService implements ImportGenerator {
       );
     }
 
-    return this.persistDraftAsPlan(
+    const imported = await this.persistDraftAsPlan(
       job,
       outcome.draft,
       outcome.stepStates,
       telemetry
     );
+    if (!imported.success) return imported;
+
+    try {
+      await this.enqueueCompletePlanSecteursService.enqueue({
+        planIds: [imported.data.planId],
+        collectiviteId: job.collectiviteId,
+        userId: job.createdBy,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Import ${job.id}: complétion des secteurs impossible`,
+        error
+      );
+    }
+    return imported;
   }
 
   private async persistDraftAsPlan(
@@ -242,22 +286,24 @@ export class GenerateGenericImportService implements ImportGenerator {
     const stats = telemetry.stats();
 
     const persist = () =>
-      this.transactionManager.executeSingle<number, string>(async (tx) => {
-        const planId = await this.createPlan(planInput, job, tx);
-        if (!planId.success) {
-          return planId;
+      this.transactionManager.executeSingle<ImportPlanOutput, string>(
+        async (tx) => {
+          const imported = await this.createPlan(planInput, job, tx);
+          if (!imported.success) {
+            return imported;
+          }
+          const { planId } = imported.data;
+          // Job lancé avant que le plan ne soit créé à l'enfilement.
+          if (job.createdPlanId === null) {
+            await this.planVerificationRepository.markAsImporting(planId, tx);
+          }
+          const completed = await this.completion.complete(
+            { job, planId, draft: normalizedDraft, stepStates, stats },
+            tx
+          );
+          return completed.success ? success(imported.data) : completed;
         }
-        return this.completion.complete(
-          {
-            job,
-            planId: planId.data,
-            draft: normalizedDraft,
-            stepStates,
-            stats,
-          },
-          tx
-        );
-      });
+      );
     const created = await telemetry.measure('persistence', persist, (result) =>
       result.success
         ? { status: 'ok', details: { fichesCreated: planInput.actions.length } }
@@ -273,7 +319,7 @@ export class GenerateGenericImportService implements ImportGenerator {
     }
 
     return success({
-      planId: created.data,
+      ...created.data,
       recap: countPlanContent(planInput),
       stats,
     });
@@ -283,7 +329,7 @@ export class GenerateGenericImportService implements ImportGenerator {
     planInput: ImportPlanInput,
     job: AiPlanImportJob,
     tx: Transaction
-  ): Promise<Result<number, string>> {
+  ): Promise<Result<ImportPlanOutput, string>> {
     try {
       const saved = await this.importPlanService.save({
         planInput,
@@ -293,7 +339,7 @@ export class GenerateGenericImportService implements ImportGenerator {
         tx,
       });
       return saved.success
-        ? success(saved.data.planId)
+        ? success(saved.data)
         : this.planCreationFailed(job.id, saved.error, saved.cause);
     } catch (error) {
       // Avec `tx` partagé, le TransactionManager relance son échec en

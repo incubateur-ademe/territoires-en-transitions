@@ -2,11 +2,15 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  buildRequesterUser,
+} from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { ResourceType } from '@tet/domain/users';
+import { jobTrackingProperties } from '../generate-import-draft/import-job-tracking';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { randomUUID } from 'node:crypto';
@@ -22,7 +26,7 @@ import {
   type AiPlanImportJobData,
 } from '../ai-plan-import.queue';
 import { AiPlanImportJob } from '../models/ai-plan-import-job';
-import { isSupportedGenericImport } from '../models/import-checkpoint';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import {
   FindResumableImportInput,
   ResumeImportInput,
@@ -42,6 +46,7 @@ export class ResumeImportService {
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly transactionManager: TransactionManager,
     private readonly trackingService: TrackingService,
+    private readonly capabilities: ValidateImportProfileService,
     @InjectQueue(AI_PLAN_IMPORT_QUEUE_NAME)
     private readonly queue: Queue<AiPlanImportJobData>
   ) {}
@@ -69,9 +74,16 @@ export class ResumeImportService {
     if (!failed.success) {
       return failed;
     }
-    if (!isSupportedGenericImport(failed.data.options)) {
+    const { options } = failed.data;
+    if (!this.jobRepository.isSupportedImport(options)) {
       return failure(AiPlanImportErrorEnum.UNSUPPORTED_IMPORT_CONTRACT);
     }
+    // La reprise conserve les règles du profil et les droits du demandeur initial.
+    const authorization = await this.capabilities.authorizeExistingImport(
+      { collectiviteId: failed.data.collectiviteId, options },
+      { user: buildRequesterUser(failed.data.createdBy) }
+    );
+    if (!authorization.success) return authorization;
 
     const resumed = await this.transactionManager.executeSingle<
       AiPlanImportJob,
@@ -98,14 +110,14 @@ export class ResumeImportService {
       // BullMQ garde le job en échec 24 h : le même identifiant serait ignoré.
       await this.queue.add(
         GENERATE_IMPORT_DRAFT_JOB_NAME,
-        { jobId },
+        { jobId, executionAttempt: resumed.data.attempt },
         { jobId: `${jobId}-reprise-${randomUUID()}` }
       );
     } catch (error) {
       this.logger.error(
         `Remise en file de l'import ${jobId}: ${getErrorMessage(error)}`
       );
-      await this.restoreFailure(failed.data);
+      await this.restoreFailure(failed.data, resumed.data.attempt);
       return failure(AiPlanImportErrorEnum.CREATE_JOB_ERROR);
     }
 
@@ -113,13 +125,7 @@ export class ResumeImportService {
     this.trackingService.capture({
       distinctId: user.id,
       event: EVENT_AI_PLAN_IMPORT_RESUME_REQUESTED,
-      properties: {
-        collectiviteId: failed.data.collectiviteId,
-        jobId,
-        attempt: failed.data.attempt,
-        origine: failed.data.options.origine,
-        demarcheId: failed.data.options.demarcheId,
-      },
+      properties: jobTrackingProperties(failed.data),
       groups: { collectivite: String(failed.data.collectiviteId) },
     });
     return success({ jobId });
@@ -135,12 +141,16 @@ export class ResumeImportService {
     return allowed.success;
   }
 
-  private async restoreFailure(job: AiPlanImportJob): Promise<void> {
-    await this.jobRepository.markFailed({
+  private async restoreFailure(
+    job: AiPlanImportJob,
+    attempt: number
+  ): Promise<void> {
+    const restored = await this.jobRepository.markFailed({
       id: job.id,
+      attempt,
       error: job.error ?? 'Reprise impossible',
     });
-    if (job.createdPlanId !== null) {
+    if (restored.success && job.createdPlanId !== null) {
       await this.planVerificationRepository.markAsImportFailed(
         job.createdPlanId
       );

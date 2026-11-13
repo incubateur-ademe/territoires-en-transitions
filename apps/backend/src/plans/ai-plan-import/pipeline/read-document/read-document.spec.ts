@@ -1,11 +1,13 @@
 import {
   Document,
+  ExternalHyperlink,
   HeadingLevel,
   Packer,
   Paragraph,
   Table,
   TableCell,
   TableRow,
+  TextRun,
 } from 'docx';
 import ExcelJS from 'exceljs';
 import * as fs from 'fs';
@@ -225,6 +227,154 @@ describe('readDocument', () => {
         '## Action 1.1.1 : Isoler',
         'Pilote\tService bâtiments',
       ]);
+      expect(result.data.blocks?.map((block) => block.type)).toEqual([
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'table',
+        'paragraph',
+      ]);
+      expect(result.data.blocks?.[3]).toMatchObject({
+        type: 'table',
+        location: { pageIndex: 0, tableIndex: 0 },
+        rows: [[{ text: 'Pilote' }, { text: 'Service bâtiments' }]],
+      });
+      expect(result.data.blocks?.[4]).toMatchObject({
+        text: 'Axe 2 : Mobilité',
+        location: { pageIndex: 1, lineIndex: 0 },
+      });
+    }
+  });
+
+  it('conserve les paragraphes, liens et cellules fusionnées des tableaux Word', async () => {
+    const target =
+      'https://app.territoiresentransitions.fr/collectivite/1/plans/fiches/2';
+    const buffer = await Packer.toBuffer(
+      new Document({
+        sections: [
+          {
+            children: [
+              new Table({
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        rowSpan: 2,
+                        children: [new Paragraph('Axe 1')],
+                      }),
+                      new TableCell({
+                        columnSpan: 2,
+                        children: [
+                          new Paragraph('Première partie.'),
+                          new Paragraph({
+                            children: [
+                              new ExternalHyperlink({
+                                link: target,
+                                children: [new TextRun('Action existante')],
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [new Paragraph('Engagement')],
+                      }),
+                      new TableCell({ children: [new Paragraph('Oui')] }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          },
+        ],
+      })
+    );
+
+    const result = await readDocument({ buffer, mimeType: DOCX_MIME });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const table = result.data.blocks?.[0];
+    expect(table?.type).toBe('table');
+    if (table?.type !== 'table') return;
+    expect(table.rows.map((row) => row.map((cell) => cell.text))).toEqual([
+      [
+        'Axe 1',
+        'Première partie.\nAction existante',
+        'Première partie.\nAction existante',
+      ],
+      ['Axe 1', 'Engagement', 'Oui'],
+    ]);
+    expect(table.rows[1][0]).toBe(table.rows[0][0]);
+    expect(table.rows[0][2]).toBe(table.rows[0][1]);
+    expect(table.rows[0][1].links).toEqual([
+      {
+        text: 'Action existante',
+        target,
+        kind: 'hyperlink',
+        location: { pageIndex: 0, lineIndex: 0, tableIndex: 0, row: 1, col: 2 },
+      },
+    ]);
+    expect(result.data.pages[0].text).toContain(
+      'Première partie. Action existante'
+    );
+  });
+
+  it('signale un tableau imbriqué sans empêcher la lecture du texte Word', async () => {
+    const buffer = await Packer.toBuffer(
+      new Document({
+        sections: [
+          {
+            children: [
+              new Table({
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph('Description'),
+                          new Table({
+                            rows: [
+                              new TableRow({
+                                children: [
+                                  new TableCell({
+                                    children: [
+                                      new Paragraph('Tableau imbriqué'),
+                                    ],
+                                  }),
+                                ],
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          },
+        ],
+      })
+    );
+
+    const result = await readDocument({ buffer, mimeType: DOCX_MIME });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.blocks).toEqual([
+        {
+          type: 'table',
+          rows: [],
+          unsupportedReason: 'nested_table',
+          location: { pageIndex: 0, lineIndex: 0, tableIndex: 0 },
+        },
+      ]);
+      expect(result.data.pages[0].text).toContain('Tableau imbriqué');
     }
   });
 

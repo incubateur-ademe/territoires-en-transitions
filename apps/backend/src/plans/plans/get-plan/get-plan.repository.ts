@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -16,6 +17,7 @@ import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 export type GetPlanOutput = AxeLight & {
   type: PlanType | null;
   source: PlanSource | null;
+  indicateurSource: { id: number; sourceId: string } | null;
   verifiedAt: string | null;
   status: PlanStatus;
 };
@@ -25,6 +27,22 @@ export class GetPlanRepository {
   private readonly logger = new Logger(GetPlanRepository.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
+
+  /** Verrouille la racine et son identité interne dans la transaction appelante. */
+  async lockPlan(planId: number, mode: 'share' | 'update', tx: Transaction) {
+    const [plan] = await tx
+      .select({
+        id: axeTable.id,
+        collectiviteId: axeTable.collectiviteId,
+        referenceProgramme: axeTable.referenceProgramme,
+        engagementsCodes: axeTable.engagementsCodes,
+        indicateurSourceMetadonneeId: axeTable.indicateurSourceMetadonneeId,
+      })
+      .from(axeTable)
+      .where(and(eq(axeTable.id, planId), isNull(axeTable.parent)))
+      .for(mode);
+    return plan;
+  }
 
   async getPlan(
     { planId, collectiviteId }: { planId: number; collectiviteId?: number },
@@ -51,6 +69,10 @@ export class GetPlanRepository {
           modifiedAt: axeTable.modifiedAt,
           modifiedBy: axeTable.modifiedBy,
           source: axeTable.source,
+          indicateurSource: {
+            id: indicateurSourceMetadonneeTable.id,
+            sourceId: indicateurSourceMetadonneeTable.sourceId,
+          },
           verifiedAt: axeTable.verifiedAt,
           status: axeTable.status,
           type: planActionTypeTable,
@@ -60,6 +82,13 @@ export class GetPlanRepository {
         .leftJoin(
           planActionTypeTable,
           eq(axeTable.typeId, planActionTypeTable.id)
+        )
+        .leftJoin(
+          indicateurSourceMetadonneeTable,
+          eq(
+            axeTable.indicateurSourceMetadonneeId,
+            indicateurSourceMetadonneeTable.id
+          )
         )
         .limit(1);
 

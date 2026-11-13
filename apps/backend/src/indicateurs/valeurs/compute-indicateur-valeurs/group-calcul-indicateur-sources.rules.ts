@@ -1,6 +1,6 @@
 import {
   COLLECTIVITE_SOURCE_ID,
-  PCAET_COLLECTIVITE_SOURCE_ID,
+  INDICATEUR_SOURCES_WITH_DEDICATED_METADATA,
   IndicateurPeriode,
   IndicateurPeriodes,
 } from '@tet/domain/indicateurs';
@@ -29,7 +29,9 @@ export const getCalculSourceGroupKey = (
   `${collectiviteId}_${IndicateurPeriodes.key(periode)}_${
     normalizeCalculSourceId(sourceId) ?? COLLECTIVITE_SOURCE_ID
   }${
-    sourceId === PCAET_COLLECTIVITE_SOURCE_ID ? `_${metadonneeId ?? -1}` : ''
+    INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(sourceId ?? '')
+      ? `_${metadonneeId ?? -1}`
+      : ''
   }`;
 
 const isMoreRecent = (
@@ -65,8 +67,9 @@ const addLatestSourceValeur = (
   else if (isMoreRecent(candidate, group.valeurs[index]))
     group.valeurs[index] = candidate;
 
-  // PCAET metadata identifies a démarche; it is not a source version.
-  if (group.sourceId === PCAET_COLLECTIVITE_SOURCE_ID) return;
+  // Dedicated metadata identifies a démarche or plan, not a source version.
+  if (INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(group.sourceId ?? ''))
+    return;
   if (group.sourceId === null) {
     group.metadonneeId = null;
     return;
@@ -124,26 +127,35 @@ export const fillCalculSourceGroups = (
         groupSourceId,
         -1
       );
-      const discoversPcaetGroup =
-        groupSourceId === PCAET_COLLECTIVITE_SOURCE_ID &&
+      const discoversMetadataGroup =
+        INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(
+          groupSourceId ?? ''
+        ) &&
         groupSourceId === sourceId &&
         Boolean(groups[discoveryKey]);
-      if (!groups[key] && (allowCreation || discoversPcaetGroup)) {
+      if (!groups[key] && (allowCreation || discoversMetadataGroup)) {
         groups[key] = {
           collectiviteId: valeur.collectiviteId,
           periode: valeur.periode,
           sourceId: groupSourceId,
           metadonneeId,
           valeurs: [],
+          requiresDirectValueForField:
+            policies.find(
+              (policy) =>
+                normalizeCalculSourceId(policy.sourceId) === groupSourceId
+            )?.requiresDirectValueForField ?? false,
         };
       }
     }
   }
   // Populate after discovering all groups: shared sources can precede the
-  // PCAET observations in an unordered SQL result.
+  // dedicated metadata observations in an unordered SQL result.
   const groupsByCollectivitePeriode = new Map<string, CalculSourceGroup[]>();
   for (const group of Object.values(groups)) {
-    const key = `${group.collectiviteId}_${IndicateurPeriodes.key(group.periode)}`;
+    const key = `${group.collectiviteId}_${IndicateurPeriodes.key(
+      group.periode
+    )}`;
     const periodGroups = groupsByCollectivitePeriode.get(key) ?? [];
     periodGroups.push(group);
     groupsByCollectivitePeriode.set(key, periodGroups);
@@ -152,12 +164,14 @@ export const fillCalculSourceGroups = (
     if (valeur.deleted || !neededIdentifiants.has(valeur.indicateurIdentifiant))
       continue;
     const sourceId = normalizeCalculSourceId(valeur.sourceId);
-    const key = `${valeur.collectiviteId}_${IndicateurPeriodes.key(valeur.periode)}`;
+    const key = `${valeur.collectiviteId}_${IndicateurPeriodes.key(
+      valeur.periode
+    )}`;
     for (const group of groupsByCollectivitePeriode.get(key) ?? []) {
       const isDirect = group.sourceId === sourceId;
       if (
         isDirect &&
-        sourceId === PCAET_COLLECTIVITE_SOURCE_ID &&
+        INDICATEUR_SOURCES_WITH_DEDICATED_METADATA.includes(sourceId ?? '') &&
         group.metadonneeId !== valeur.metadonneeId
       )
         continue;

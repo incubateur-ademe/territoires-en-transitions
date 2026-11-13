@@ -1,4 +1,7 @@
-import type { TokenUsage } from '@tet/backend/utils/llm/token-usage';
+import {
+  type TokenUsage,
+  tokenUsageSchema,
+} from '@tet/backend/utils/llm/token-usage';
 import { z } from 'zod';
 import {
   extractedActionSchema,
@@ -44,7 +47,9 @@ export const PIPELINE_CHECKPOINT_SCHEMA_VERSION = 1;
  */
 export type PipelineCheckpoint = PipelineState & {
   /** Absents des jobs génériques déjà en cours lors de l'ajout des profils. */
-  profile?: typeof AiPlanImportProfileEnum.GENERIC;
+  profile?:
+    | typeof AiPlanImportProfileEnum.GENERIC
+    | typeof AiPlanImportProfileEnum.PCAET;
   contractVersion?: typeof GENERIC_IMPORT_CONTRACT_VERSION;
   catalogueVersion?: null;
   schemaVersion: typeof PIPELINE_CHECKPOINT_SCHEMA_VERSION;
@@ -66,9 +71,11 @@ export type PipelineCheckpoint = PipelineState & {
   };
 };
 
-/** Seul le contrat générique est exécutable ; aucun format annexe implicite. */
+/** Contrat partagé du moteur générique/PCAET ; Électrification est validé séparément. */
 export const genericImportContractSchema = z.object({
-  profile: z.literal(AiPlanImportProfileEnum.GENERIC).optional(),
+  profile: z
+    .enum([AiPlanImportProfileEnum.GENERIC, AiPlanImportProfileEnum.PCAET])
+    .optional(),
   contractVersion: z.literal(GENERIC_IMPORT_CONTRACT_VERSION).optional(),
   catalogueVersion: z.null().optional(),
 });
@@ -107,13 +114,7 @@ export const pipelineCheckpointSchema = genericImportContractSchema.extend({
   progress: z.object({
     actions: z.array(extractedActionSchema),
     review: z.string().nullable(),
-    tokens: z.object({
-      promptTokens: countSchema,
-      cachedTokens: countSchema,
-      candidatesTokens: countSchema,
-      thoughtsTokens: countSchema,
-      totalTokens: countSchema,
-    }),
+    tokens: tokenUsageSchema,
     stepStates: stepStatesSchema,
     warnings: z.array(z.string()),
   }),

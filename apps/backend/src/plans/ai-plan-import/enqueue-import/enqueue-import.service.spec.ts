@@ -1,3 +1,5 @@
+import { CheckElectrificationCreationService } from '@tet/backend/plans/plans/electrification/check-electrification-creation.service';
+import { CheckElectrificationEligibilityService } from '@tet/backend/plans/plans/electrification/check-electrification-eligibility/check-electrification-eligibility.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
@@ -8,6 +10,11 @@ import { failure, success } from '@tet/backend/utils/result.type';
 import { DocumentStorageErrorEnum } from '@tet/backend/utils/supabase/document-storage.errors';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
+import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
+import {
+  AiPlanImportProfileEnum,
+  ELECTRIFICATION_PLAN_TYPE_KEY,
+} from '@tet/domain/plans';
 import { Queue } from 'bullmq';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -16,6 +23,8 @@ import {
 } from '../ai-plan-import-job.repository';
 import { AiPlanImportErrorEnum } from '../ai-plan-import.errors';
 import { AiPlanImportJobData } from '../ai-plan-import.queue';
+import { ValidateElectrificationImportService } from '../electrification/validate-import/validate-electrification-import.service';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
 import {
   AiPlanImportJob,
   AiPlanImportJobOptions,
@@ -23,6 +32,8 @@ import {
 } from '../models/ai-plan-import-job';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { EnqueueImportService } from './enqueue-import.service';
+
+const jobId = '9d760311-40ad-4d81-b1f7-1bd5666b09d2';
 
 const user = { id: 'user-1' } as AuthenticatedUser;
 
@@ -35,7 +46,7 @@ const options: AiPlanImportJobOptions = {
 };
 
 const job: AiPlanImportJob = {
-  id: 'job-1',
+  id: jobId,
   collectiviteId: 10,
   createdBy: 'user-1',
   status: AiPlanImportJobStatusEnum.PENDING,
@@ -127,8 +138,9 @@ const toXlsxBomb = () => {
 type MockOverrides = {
   isAllowed?: boolean;
   canImportInParallel?: boolean;
+  canImportWithoutDailyQuota?: boolean;
   countInFlight?: number;
-  planTypes?: { id: number; type?: string }[];
+  planTypes?: { id: number; categorie?: string; type?: string }[];
   createWithinQuotas?: () => Promise<unknown>;
   previousImport?: unknown;
   storeDocument?: () => Promise<unknown>;
@@ -140,6 +152,8 @@ const buildService = (overrides: MockOverrides = {}) => {
     (
       operation === 'plans.fiches.import_in_parallel'
         ? overrides.canImportInParallel ?? false
+        : operation === 'plans.fiches.import_without_daily_quota'
+        ? overrides.canImportWithoutDailyQuota ?? false
         : overrides.isAllowed ?? true
     )
       ? { success: true as const, data: undefined }
@@ -150,7 +164,7 @@ const buildService = (overrides: MockOverrides = {}) => {
   const createWithinQuotas = vi.fn<
     (
       input: CreateJobInput,
-      quotas: { limitUserInFlight: boolean }
+      quotas: { limitUserInFlight: boolean; limitDailyImports: boolean }
     ) => Promise<unknown>
   >(overrides.createWithinQuotas ?? (async () => success(job)));
   const deleteIfPending = vi.fn(async () => success(undefined));
@@ -195,16 +209,30 @@ const buildService = (overrides: MockOverrides = {}) => {
 
   const capture = vi.fn();
   const trackingService = { capture } as unknown as TrackingService;
+  const electrification = new ValidateElectrificationImportService(
+    new CheckElectrificationCreationService(trackingService),
+    {} as CheckElectrificationEligibilityService,
+    listPlanTypesService,
+    null
+  );
+  vi.spyOn(electrification, 'authorizeAdmission').mockResolvedValue(
+    failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE)
+  );
+  const capabilities = new ValidateImportProfileService(
+    permissions,
+    listPlanTypesService,
+    electrification
+  );
 
   const service = new EnqueueImportService(
     permissions,
     jobRepository,
     documentStorage,
-    listPlanTypesService,
     trackingService,
     storeDocumentService,
     {} as UpsertPlanService,
     planVerificationRepository,
+    capabilities,
     queue
   );
 
@@ -227,7 +255,7 @@ describe('EnqueueImportService', () => {
   it('refuse le type Électrification avant tout stockage ou mise en file', async () => {
     const { service, uploadBuffer, storeDocument, createWithinQuotas, add } =
       buildService({
-        planTypes: [{ id: 73, type: 'Plan Électrification' }],
+        planTypes: [{ id: 73, ...ELECTRIFICATION_PLAN_TYPE_KEY }],
       });
 
     const result = await service.enqueue({
@@ -238,7 +266,7 @@ describe('EnqueueImportService', () => {
     });
 
     expect(result).toEqual(
-      failure(AiPlanImportErrorEnum.ELECTRIFICATION_CREATION_DISABLED)
+      failure(AiPlanImportErrorEnum.ELECTRIFICATION_REQUIRES_DEDICATED_IMPORT)
     );
     expect(uploadBuffer).not.toHaveBeenCalled();
     expect(storeDocument).not.toHaveBeenCalled();
@@ -281,7 +309,17 @@ describe('EnqueueImportService', () => {
         collectiviteId: 10,
         user,
         file: toCsvFile(),
-        options: { ...options, profile },
+        options: {
+          ...options,
+          profile,
+          contractVersion: 999,
+          catalogueVersion: 'catalogue-client',
+          schemaVersion: 999,
+          templateVersion: 'canevas-client',
+          withSecteurs: true,
+          origine: 'etape_documents',
+          demarcheId: 42,
+        } as unknown as AiPlanImportJobOptions,
       });
 
       expect(result).toMatchObject({ success: true, data: { planId: 42 } });
@@ -289,7 +327,16 @@ describe('EnqueueImportService', () => {
         profile: 'generic',
         contractVersion: 1,
         catalogueVersion: null,
+        withSecteurs: false,
+        origine: 'etape_documents',
+        demarcheId: 42,
       });
+      expect(
+        createWithinQuotas.mock.calls[0][0].options.schemaVersion
+      ).toBeUndefined();
+      expect(
+        createWithinQuotas.mock.calls[0][0].options.templateVersion
+      ).toBeUndefined();
     }
   );
 
@@ -305,12 +352,12 @@ describe('EnqueueImportService', () => {
 
     expect(result).toEqual({
       success: true,
-      data: { profile: 'generic', jobId: 'job-1', planId: 42 },
+      data: { profile: 'generic', jobId, planId: 42 },
     });
     expect(add).toHaveBeenCalledWith(
       'generate-import-draft',
-      { jobId: 'job-1' },
-      { jobId: 'job-1' }
+      { jobId },
+      { jobId }
     );
   });
 
@@ -329,7 +376,7 @@ describe('EnqueueImportService', () => {
       event: 'plans:import-ia:started',
       properties: expect.objectContaining({
         collectiviteId: 10,
-        jobId: 'job-1',
+        jobId,
         mimeType: 'text/csv',
         fileSizeBytes: expect.any(Number),
       }),
@@ -338,13 +385,16 @@ describe('EnqueueImportService', () => {
   });
 
   it.each([
-    { canImportInParallel: false, limitUserInFlight: true },
-    { canImportInParallel: true, limitUserInFlight: false },
+    { canImportInParallel: false, canImportWithoutDailyQuota: false },
+    { canImportInParallel: true, canImportWithoutDailyQuota: false },
+    { canImportInParallel: false, canImportWithoutDailyQuota: true },
+    { canImportInParallel: true, canImportWithoutDailyQuota: true },
   ])(
-    'limite les imports en cours par utilisateur sauf permission import_in_parallel ($canImportInParallel)',
-    async ({ canImportInParallel, limitUserInFlight }) => {
+    'applique séparément les permissions de quota : parallèle=$canImportInParallel, sans quota journalier=$canImportWithoutDailyQuota',
+    async ({ canImportInParallel, canImportWithoutDailyQuota }) => {
       const { service, createWithinQuotas } = buildService({
         canImportInParallel,
+        canImportWithoutDailyQuota,
       });
 
       await service.enqueue({
@@ -355,7 +405,8 @@ describe('EnqueueImportService', () => {
       });
 
       expect(createWithinQuotas.mock.calls[0][1]).toEqual({
-        limitUserInFlight,
+        limitUserInFlight: !canImportInParallel,
+        limitDailyImports: !canImportWithoutDailyQuota,
         createPlan: expect.any(Function),
       });
     }
@@ -382,19 +433,91 @@ describe('EnqueueImportService', () => {
     expect(add).not.toHaveBeenCalled();
   });
 
-  it('accepte un type de plan existant', async () => {
-    const { service, add } = buildService({ planTypes: [{ id: 4 }] });
+  it.each([
+    { profile: undefined, planType: { id: 4 }, withSecteurs: false },
+    {
+      profile: undefined,
+      planType: { id: 4, ...PCAET_PLAN_TYPE_KEY },
+      withSecteurs: true,
+    },
+    {
+      profile: AiPlanImportProfileEnum.PCAET,
+      planType: { id: 4, ...PCAET_PLAN_TYPE_KEY },
+      withSecteurs: true,
+    },
+  ])(
+    'accepte un type de plan existant et résout les secteurs ($withSecteurs)',
+    async ({ profile, planType, withSecteurs }) => {
+      const { service, add, createWithinQuotas } = buildService({
+        planTypes: [planType],
+      });
 
-    const result = await service.enqueue({
-      collectiviteId: 10,
-      user,
-      file: toCsvFile(),
-      options: { ...options, planType: 4 },
-    });
+      const result = await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options: {
+          ...options,
+          profile,
+          planType: 4,
+          withSecteurs: !withSecteurs,
+        },
+      });
 
-    expect(result).toMatchObject({ success: true });
-    expect(add).toHaveBeenCalled();
-  });
+      expect(result).toMatchObject({ success: true });
+      expect(add).toHaveBeenCalled();
+      expect(createWithinQuotas.mock.calls[0][0].options).toMatchObject({
+        profile: profile ?? AiPlanImportProfileEnum.GENERIC,
+        withSecteurs,
+      });
+    }
+  );
+
+  it.each([
+    { name: 'type absent', planType: undefined },
+    {
+      name: 'catégorie différente',
+      planType: {
+        id: 4,
+        categorie: 'Autre catégorie',
+        type: PCAET_PLAN_TYPE_KEY.type,
+      },
+    },
+    {
+      name: 'type différent',
+      planType: {
+        id: 4,
+        categorie: PCAET_PLAN_TYPE_KEY.categorie,
+        type: 'Autre type',
+      },
+    },
+  ])(
+    'refuse le profil PCAET avant tout effet de bord : $name',
+    async ({ planType }) => {
+      const { service, createWithinQuotas, uploadBuffer, storeDocument, add } =
+        buildService({
+          planTypes: planType ? [planType] : [],
+        });
+      const result = await service.enqueue({
+        collectiviteId: 10,
+        user,
+        file: toCsvFile(),
+        options: {
+          ...options,
+          profile: AiPlanImportProfileEnum.PCAET,
+          planType: planType?.id,
+        },
+      });
+      expect(result).toEqual({
+        success: false,
+        error: AiPlanImportErrorEnum.IMPORT_PROFILE_PLAN_TYPE_MISMATCH,
+      });
+      expect(createWithinQuotas).not.toHaveBeenCalled();
+      expect(uploadBuffer).not.toHaveBeenCalled();
+      expect(storeDocument).not.toHaveBeenCalled();
+      expect(add).not.toHaveBeenCalled();
+    }
+  );
 
   it('écrit le même sourcePath dans la ligne du job et dans le storage', async () => {
     const { service, createWithinQuotas, storeDocument } = buildService();
@@ -575,7 +698,7 @@ describe('EnqueueImportService', () => {
       success: false,
       error: AiPlanImportErrorEnum.STORAGE_ERROR,
     });
-    expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(deleteIfPending).toHaveBeenCalledWith(jobId);
     expect(deleteImportingPlan).toHaveBeenCalledWith(42);
     expect(removeDocument).not.toHaveBeenCalled();
     expect(add).not.toHaveBeenCalled();
@@ -605,7 +728,7 @@ describe('EnqueueImportService', () => {
       bucketId: 'ai-plan-import-sources',
       key: storedKey,
     });
-    expect(deleteIfPending).toHaveBeenCalledWith('job-1');
+    expect(deleteIfPending).toHaveBeenCalledWith(jobId);
     expect(removeDocument.mock.invocationCallOrder[0]).toBeLessThan(
       deleteIfPending.mock.invocationCallOrder[0]
     );

@@ -6,34 +6,34 @@ import { Colon } from '@/app/ui/colon';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
-import { PlanCreationRules } from '@tet/domain/plans';
+import { type AiPlanImportProfile } from '@tet/domain/plans';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Checkbox, Field, Input, Select } from '@tet/ui';
 import { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { useListPlanTypes } from '../use-list-plan-types';
+import { planTypesToOptions } from '../plan-types-to-options';
+import {
+  getAiImportFormConfig,
+  genericImportConfig,
+} from './ai-import-form.config';
+import { useAvailableAiImportProfiles } from './data/use-available-ai-import-profiles';
 import { PreviousAiImportAlert } from './previous-ai-import.alert';
 import { useFindPreviousAiImport } from './data/use-find-previous-ai-import';
 
 // Filtre sur l'extension : le MIME d'un CSV varie selon l'OS (text/plain,
 // application/vnd.ms-excel sous Windows avec Excel…). Le serveur tranche
 // ensuite sur le contenu.
-const ACCEPTED_FILE_EXTENSIONS = ['.pdf', '.docx', '.csv', '.xlsx'];
-
-export const isAiImportAcceptedFilename = (filename: string) =>
-  ACCEPTED_FILE_EXTENSIONS.some((extension) =>
-    filename.toLowerCase().endsWith(extension)
-  );
+export const isAiImportAcceptedFilename = (
+  filename: string,
+  extensions = genericImportConfig.fileExtensions
+) => extensions.some((extension) => filename.toLowerCase().endsWith(extension));
 
 const isAcceptedFile = (file: File) => isAiImportAcceptedFilename(file.name);
 
 const aiImportFormSchema = z.object({
-  file: z
-    .file({ message: appLabels.importPlanIaFichierRequis })
-    .refine(isAcceptedFile, {
-      message: appLabels.importPlanIaFormatNonSupporte,
-    }),
+  file: z.file({ message: appLabels.importPlanIaFichierRequis }),
   planName: z.string().min(1, appLabels.importPlanIaNomRequis),
   planType: z.number().nullable(),
   instructions: z.string(),
@@ -48,6 +48,7 @@ export const isAiImportVerifiable = (file: File) => file.type === PDF_MIME_TYPE;
 export type AiImportFormValues = z.infer<typeof aiImportFormSchema>;
 
 export type AiImportSubmission = AiImportFormValues & {
+  profile: AiPlanImportProfile;
   /** Le fichier a déjà produit un plan : l'utilisateur relance en connaissance de cause. */
   confirmReimport: boolean;
 };
@@ -56,10 +57,9 @@ export type AiImportSubmission = AiImportFormValues & {
  * Valeurs proposées d'office quand l'appelant les connaît déjà (programme
  * d'actions PCAET) : l'utilisateur reste libre de les changer.
  */
-export type AiImportDefaults = {
+export type AiImportDefaults = Partial<Omit<AiImportFormValues, 'file'>> & {
   /** Fichier de la bibliothèque, pré-sélectionné comme document. */
   fichierId?: number;
-  planName?: string;
 };
 
 const FILE_INPUT_ID = 'input-file';
@@ -79,11 +79,25 @@ export const AiImportForm = ({
   defaults?: AiImportDefaults;
 }) => {
   const collectiviteId = useCollectiviteId();
-  const {
-    data: planTypes,
-    options: planTypesOptions,
-    isLoading: isLoadingPlanTypes,
-  } = useListPlanTypes();
+  const { data: planTypes, isLoading: isLoadingPlanTypes } = useListPlanTypes();
+  const { profiles } = useAvailableAiImportProfiles();
+  const planTypesOptions = planTypesToOptions(
+    planTypes.filter((type) =>
+      profiles.includes(getAiImportFormConfig(type).profile)
+    )
+  );
+  const getConfig = (planTypeId: number | null) =>
+    getAiImportFormConfig(planTypes.find(({ id }) => id === planTypeId));
+  const schema = aiImportFormSchema.superRefine((values, context) => {
+    const config = getConfig(values.planType);
+    if (!isAiImportAcceptedFilename(values.file.name, config.fileExtensions)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['file'],
+        message: config.formatError,
+      });
+    }
+  });
   const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   const {
     register,
@@ -92,16 +106,17 @@ export const AiImportForm = ({
     setValue,
     getValues,
     resetField,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<AiImportFormValues>({
-    resolver: zodResolver(aiImportFormSchema),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
       planName: defaults?.planName ?? '',
-      planType: lockedPlanTypeId ?? null,
-      instructions: '',
-      withVerifications: true,
-      withSousActions: true,
+      planType: lockedPlanTypeId ?? defaults?.planType ?? null,
+      instructions: defaults?.instructions ?? '',
+      withVerifications: defaults?.withVerifications ?? true,
+      withSousActions: defaults?.withSousActions ?? true,
     },
   });
 
@@ -111,9 +126,13 @@ export const AiImportForm = ({
         return;
       }
       setValue('file', selectedFile, { shouldValidate: true });
-      setValue('withVerifications', isAiImportVerifiable(selectedFile));
+      setValue(
+        'withVerifications',
+        isAiImportVerifiable(selectedFile) &&
+          (defaults?.withVerifications ?? true)
+      );
     },
-    [setValue]
+    [setValue, defaults?.withVerifications]
   );
 
   // Un document déjà importé n'est pas re-proposé : le relancer par erreur
@@ -131,17 +150,19 @@ export const AiImportForm = ({
 
   const selectedFile = useWatch({ control, name: 'file' });
   const selectedPlanTypeId = useWatch({ control, name: 'planType' });
-  const selectedPlanType = planTypes.find(
-    ({ id }) => id === selectedPlanTypeId
-  );
-  const creationDisabledReason =
-    PlanCreationRules.getDisabledReason(selectedPlanType);
-  const isPlanCreationDisabled =
-    isLoadingPlanTypes || creationDisabledReason !== undefined;
+  const config = getConfig(selectedPlanTypeId);
+  const isProfileAvailable = profiles.includes(config.profile);
   const { previousImport, isLoading: isCheckingSelectedFile } =
     useFindPreviousAiImport({ file: selectedFile });
   const isSubmitDisabled =
-    isSubmitting || isCheckingSelectedFile || isPlanCreationDisabled;
+    isSubmitting ||
+    isCheckingSelectedFile ||
+    isLoadingPlanTypes ||
+    !isProfileAvailable;
+
+  useEffect(() => {
+    if (getValues('file')) void trigger('file');
+  }, [config.profile, getValues, trigger]);
   // Une seule fois, et jamais par-dessus un fichier choisi pendant le
   // téléchargement : retiré, le fichier suggéré ne revient pas.
   const hasAppliedSuggestedFile = useRef(false);
@@ -158,9 +179,11 @@ export const AiImportForm = ({
   return (
     <form
       onSubmit={handleSubmit((values) => {
-        if (isPlanCreationDisabled) return;
+        if (isSubmitDisabled) return;
         return onSubmit({
           ...values,
+          ...config.fixedExtractionOptions,
+          profile: config.profile,
           confirmReimport: previousImport !== null,
         });
       })}
@@ -170,7 +193,7 @@ export const AiImportForm = ({
         state="info"
         description={
           <>
-            <p className="mb-2">{appLabels.importPlanIaDescription}</p>
+            <p className="mb-2">{config.description}</p>
             <p className="mb-2">{appLabels.importPlanIaAvertissement}</p>
             <p className="mb-0">{appLabels.importPlanIaContact}</p>
           </>
@@ -197,6 +220,7 @@ export const AiImportForm = ({
           name="planType"
           render={({ field }) => (
             <Select
+              dataTest="ai-import.plan-type"
               disabled={lockedPlanTypeId !== undefined}
               options={planTypesOptions ?? []}
               values={field.value ?? undefined}
@@ -207,15 +231,15 @@ export const AiImportForm = ({
           )}
         />
       </Field>
-      {creationDisabledReason && (
+      {!isLoadingPlanTypes && !isProfileAvailable && (
         <Alert
           state="info"
-          description={appLabels.planCreationDisabled(creationDisabledReason)}
+          description={appLabels.importPlanIaProfilIndisponible}
         />
       )}
       <Field
         title={appLabels.importPlanIaChampFichier}
-        hint={appLabels.importPlanIaFormatsAcceptes}
+        hint={config.fileHint}
         htmlFor={FILE_INPUT_ID}
         message={errors.file?.message}
         state={errors.file?.message ? 'error' : 'default'}
@@ -254,7 +278,7 @@ export const AiImportForm = ({
               <>
                 <Input
                   type="file"
-                  accept={ACCEPTED_FILE_EXTENSIONS.join(',')}
+                  accept={config.fileExtensions.join(',')}
                   displaySize="md"
                   onChange={(event) => selectFile(event.target.files?.[0])}
                   onDropFiles={(files) => selectFile(files[0])}
@@ -270,7 +294,7 @@ export const AiImportForm = ({
           }
         />
       </Field>
-      {isSuperAdminRoleEnabled && (
+      {!config.fixedExtractionOptions && isSuperAdminRoleEnabled && (
         <Field
           title={appLabels.importPlanIaChampInstructions}
           htmlFor={INSTRUCTIONS_INPUT_ID}
@@ -282,34 +306,36 @@ export const AiImportForm = ({
           />
         </Field>
       )}
-      <div className="flex flex-col gap-3">
-        {isSuperAdminRoleEnabled && (
+      {!config.fixedExtractionOptions && (
+        <div className="flex flex-col gap-3">
+          {isSuperAdminRoleEnabled && (
+            <Controller
+              control={control}
+              name="withVerifications"
+              render={({ field }) => (
+                <Checkbox
+                  variant="switch"
+                  label={appLabels.importPlanIaOptionVerifications}
+                  checked={field.value}
+                  onChange={(event) => field.onChange(event.target.checked)}
+                />
+              )}
+            />
+          )}
           <Controller
             control={control}
-            name="withVerifications"
+            name="withSousActions"
             render={({ field }) => (
               <Checkbox
                 variant="switch"
-                label={appLabels.importPlanIaOptionVerifications}
+                label={appLabels.importPlanIaOptionSousActions}
                 checked={field.value}
                 onChange={(event) => field.onChange(event.target.checked)}
               />
             )}
           />
-        )}
-        <Controller
-          control={control}
-          name="withSousActions"
-          render={({ field }) => (
-            <Checkbox
-              variant="switch"
-              label={appLabels.importPlanIaOptionSousActions}
-              checked={field.value}
-              onChange={(event) => field.onChange(event.target.checked)}
-            />
-          )}
-        />
-      </div>
+        </div>
+      )}
       {previousImport && (
         <PreviousAiImportAlert previousImport={previousImport} />
       )}

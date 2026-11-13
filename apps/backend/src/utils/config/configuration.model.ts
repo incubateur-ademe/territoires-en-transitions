@@ -373,6 +373,12 @@ export const backendConfigurationSchema = z
       .positive()
       .prefault(100)
       .describe('The throttle limit'),
+    ENV_NAME: z
+      .string()
+      .optional()
+      .describe(
+        'Environnement de déploiement (prod, preprod, staging, local, ci)'
+      ),
     POSTHOG_KEY: z.string().optional().describe('The PostHog key'),
     POSTHOG_HOST: z.string().optional().describe('The PostHog host'),
     // Lecture de l'API PostHog (requêtes HogQL du serveur MCP), distincte de

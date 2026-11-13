@@ -4,7 +4,7 @@ import {
   Result,
   success,
 } from '@tet/backend/utils/result.type';
-import { getActionKey } from '../../create-plan-aggregate/create-plan-aggregate.rules';
+import { ImportPlanHierarchy } from './import-plan-hierarchy.rules';
 import { ImportPlanInput } from '../import-plan.input';
 import {
   ImportErrors,
@@ -23,14 +23,16 @@ const validateParentActionsExist = (
   const normalActionKeys = new Set(
     actions
       .filter((a) => !isSousAction(a))
-      .map((a) => getActionKey(a.titre, a.axisPath))
+      .map((a) => ImportPlanHierarchy.getActionKey(a.titre, a.axisPath))
   );
 
   const missingSousActions = actions
     .filter(isSousAction)
     .filter(
       (a) =>
-        !normalActionKeys.has(getActionKey(a.parentActionTitre, a.axisPath))
+        !normalActionKeys.has(
+          ImportPlanHierarchy.getActionKey(a.parentActionTitre, a.axisPath)
+        )
     );
 
   if (missingSousActions.length > 0) {

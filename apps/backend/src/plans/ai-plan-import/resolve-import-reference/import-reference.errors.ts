@@ -4,17 +4,17 @@ export const importReferenceErrors = {
   INVALID_IMPORT_REFERENCE_URL: {
     kind: 'document-error',
     message:
-      'Le lien fourni ne désigne pas une fiche action ou un indicateur TeT reconnu.',
+      'Le lien fourni ne désigne pas une action ou un indicateur TeT reconnu.',
   },
   UNSUPPORTED_FICHE_UID: {
     kind: 'document-error',
     message:
-      'Cet ancien identifiant de fiche action ne peut pas être résolu. Utilisez son lien actuel dans TeT.',
+      "Cet ancien identifiant d'action ne peut pas être résolu. Utilisez son lien actuel dans TeT.",
   },
   FICHE_REFERENCE_UNAVAILABLE: {
     kind: 'document-error',
     message:
-      'La fiche action est absente ou ne peut pas être reliée à un plan de cette collectivité avec vos droits.',
+      "L'action est absente ou ne peut pas être reliée à un plan de cette collectivité avec vos droits.",
   },
   INDICATEUR_REFERENCE_UNAVAILABLE: {
     kind: 'document-error',

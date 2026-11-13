@@ -1,11 +1,16 @@
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import {
   createdAt,
   modifiedAt,
   modifiedBy,
   TIMESTAMP_OPTIONS,
 } from '@tet/backend/utils/column.utils';
-import { planSourceValues, planStatusValues } from '@tet/domain/plans';
+import {
+  PlanReferenceProgramme,
+  planSourceValues,
+  planStatusValues,
+} from '@tet/domain/plans';
 import {
   AnyPgColumn,
   date,
@@ -23,6 +28,16 @@ export const axeTable = pgTable('axe', {
   id: serial('id').primaryKey(),
   nom: text('nom'),
   description: text('description'),
+  referenceProgramme: text(
+    'reference_programme'
+  ).$type<PlanReferenceProgramme>(),
+  referenceCode: text('reference_code'),
+  engagementsCodes: text('engagements_codes').array(),
+  indicateurSourceMetadonneeId: integer('indicateur_source_metadonnee_id')
+    .unique()
+    .references(() => indicateurSourceMetadonneeTable.id, {
+      onDelete: 'restrict',
+    }),
   collectiviteId: integer('collectivite_id')
     .notNull()
     .references(() => collectiviteTable.id),

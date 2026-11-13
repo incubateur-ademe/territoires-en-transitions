@@ -3,7 +3,8 @@ import { createEnumObject } from '../../utils';
 
 /**
  * Cycle de vie d'un plan : `importing` pendant l'import IA, `to_verify` une
- * fois importé, `active` après vérification ou création à la main, `failed`
+ * fois importé si une vérification est requise, `active` sinon ou après
+ * vérification ou création à la main, `failed`
  * si l'import a échoué (le plan reste visible pour être supprimé).
  */
 export const planStatusValues = [
@@ -26,7 +27,7 @@ export const navigablePlanStatuses: PlanStatus[] = [
 export const isPlanNavigable = (plan: { status: PlanStatus }): boolean =>
   navigablePlanStatuses.includes(plan.status);
 
-/** Un plan importé par IA reste à vérifier tant qu'un humain ne l'a pas validé. */
+/** Le parcours demande une vérification humaine pour ce plan importé. */
 export const isPlanPendingVerification = (plan: {
   status: PlanStatus;
 }): boolean => plan.status === PlanStatusEnum.TO_VERIFY;

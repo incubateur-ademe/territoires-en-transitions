@@ -14,11 +14,14 @@ import {
   filledCellsOf,
   getCellValue,
   getCellValueAt,
+  getGridCell,
+  GridCell,
   isVerticalMergeSlave,
   renderGridRow,
   SheetGrid,
 } from '../analyze-workbook/sheet-grid';
 import { DocumentPage } from '../document/document-page';
+import { DocumentLinksRules } from '../document/document-links.rules';
 import { buildUnit, DocumentUnit, UnitLine } from './document-unit';
 
 // Une colonne de regroupement ne réemploie presque jamais une valeur d'un bloc
@@ -161,11 +164,22 @@ const cutGridUnits = (
     return [];
   }
   const toLine = (text: string): UnitLine => ({ text, pageIndex: page.index });
-  const rowLine = (row: number) =>
-    toLine(renderGridRow(grid.cells[row - 1] ?? []));
+  const rowLine = (row: number): UnitLine => ({
+    ...toLine(renderGridRow(grid.cells[row - 1] ?? [])),
+    ...DocumentLinksRules.cellMetadata(
+      grid.cells[row - 1] ?? [],
+      grid.name,
+      page.index
+    ),
+  });
   const headerLines =
     layout.headerRows.length > 0
-      ? [toLine(renderHeader(grid, layout.headerRows))]
+      ? [
+          {
+            ...toLine(renderHeader(grid, layout.headerRows)),
+            ...DocumentLinksRules.combine(layout.headerRows.map(rowLine)),
+          },
+        ]
       : [];
   const titleLines = layout.titleRows.map(rowLine);
   const headerTokens = headerLines.reduce(
@@ -187,13 +201,13 @@ const cutGridUnits = (
   };
   const flush = () => {
     if (hasContent()) {
-      const suite = renderSuiteDe(grid, body[0]);
+      const suite = renderSuiteDe(grid, body[0], page.index);
       units.push(
         buildUnit(
           [
             ...(units.length === 0 ? titleLines : []),
             ...headerLines,
-            ...(suite ? [toLine(suite)] : []),
+            ...(suite ? [suite] : []),
             ...body.map(rowLine),
           ],
           [...(page.label ? [page.label] : []), ...(banner ? [banner] : [])],
@@ -247,15 +261,30 @@ const renderHeader = (grid: SheetGrid, headerRows: number[]): string =>
  * l'extrait : sans elles, le modèle ne saurait pas à quel groupe la suite
  * appartient.
  */
-const renderSuiteDe = (grid: SheetGrid, row: number): string | null => {
+const renderSuiteDe = (
+  grid: SheetGrid,
+  row: number,
+  pageIndex: number
+): UnitLine | null => {
   const values: string[] = [];
+  const masters = new Set<GridCell>();
   for (const cell of grid.cells[row - 1] ?? []) {
     const value = isVerticalMergeSlave(cell) ? getCellValue(grid, cell) : '';
+    if (value !== '') {
+      const master = getGridCell(grid, cell.masterRow, cell.masterCol);
+      if (master) masters.add(master);
+    }
     if (value !== '' && values.at(-1) !== value) {
       values.push(value.replace(/\s*[\n\t]\s*/g, ' '));
     }
   }
-  return values.length > 0 ? `[Suite de : ${values.join(' > ')}]` : null;
+  return values.length > 0
+    ? {
+        text: `[Suite de : ${values.join(' > ')}]`,
+        pageIndex,
+        ...DocumentLinksRules.cellMetadata([...masters], grid.name, pageIndex),
+      }
+    : null;
 };
 
 /** Sans grille : la première ligne pour en-tête, coupe au volume. */
@@ -264,7 +293,7 @@ const cutLineUnits = (
   maxTokens: number
 ): DocumentUnit[] => {
   const [header, ...rows] = page.lines.map(
-    (line): UnitLine => ({ text: line.text, pageIndex: page.index })
+    (line): UnitLine => ({ ...line, pageIndex: page.index })
   );
   if (!header) {
     return [];
