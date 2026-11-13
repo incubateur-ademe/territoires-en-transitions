@@ -62,7 +62,7 @@ export default class PlanActionsService {
     );
 
     // peut lire les fiches et les axes (déclenche une exception sinon)
-    this.fichePermissionsService.hasReadFichePermission(
+    await this.fichePermissionsService.hasReadFichePermission(
       { collectiviteId, restreint: false },
       user
     );
