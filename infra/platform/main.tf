@@ -101,7 +101,7 @@ module "coolify" {
 # storage Coolify) et instance Coolify elle-même (infra/coolify,
 # terraform_data.instance_backup).
 #
-# Projet Scaleway dédié (var.backups_project_id) : les permissions IAM Object
+# Projet Scaleway dédié (var.coolify_backups_project_id) : les permissions IAM Object
 # Storage valent pour un projet entier, pas pour un bucket. Dans le projet
 # principal, la clé des backups pourrait aussi lire tet-tfstate, qui contient
 # les mots de passe et les clés SSH. Là, elle ne voit que ce bucket.
@@ -121,7 +121,7 @@ module "coolify" {
 resource "scaleway_object_bucket" "coolify_backups" {
   name       = var.coolify_backups_bucket_name
   region     = var.scaleway_region
-  project_id = var.backups_project_id
+  project_id = var.coolify_backups_project_id
 
   object_lock_enabled = true
 
@@ -174,7 +174,67 @@ resource "scaleway_object_bucket" "coolify_backups" {
 resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
   bucket     = scaleway_object_bucket.coolify_backups.name
   region     = var.scaleway_region
-  project_id = var.backups_project_id
+  project_id = var.coolify_backups_project_id
+
+  rule {
+    default_retention {
+      mode = "COMPLIANCE"
+      days = var.backups_lock_days
+    }
+  }
+}
+
+# Bucket des dumps quotidiens de la BDD de prod (.github/workflows/backup-database.yml),
+# qui alimentent aussi les restaurations de staging et de preprod. Même verrou que
+# coolify_backups, mais dans son propre projet (var.database_backups_project_id) : les
+# dumps ne sont pas chiffrés, la clé Coolify (sur le control plane) ne doit ni
+# les lire ni en déposer un faux, que restore.sh restaurerait.
+#
+# Pas de règle d'expiration : la rétention (60 jours, puis 1 par mois sur 24
+# mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
+# des delete markers, purgés par la règle noncurrent-versions une fois le verrou
+# expiré.
+resource "scaleway_object_bucket" "database_backups" {
+  name       = var.database_backups_bucket_name
+  region     = var.scaleway_region
+  project_id = var.database_backups_project_id
+
+  object_lock_enabled = true
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle_rule {
+    id      = "noncurrent-versions"
+    enabled = true
+
+    abort_incomplete_multipart_upload_days = 1
+
+    noncurrent_version_expiration {
+      noncurrent_days = var.backups_noncurrent_version_days
+    }
+
+    expiration {
+      expired_object_delete_marker = true
+    }
+  }
+
+  tags = {
+    tier       = "platform"
+    purpose    = "database-backups"
+    managed_by = "terraform"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "scaleway_object_bucket_lock_configuration" "database_backups" {
+  bucket     = scaleway_object_bucket.database_backups.name
+  region     = var.scaleway_region
+  project_id = var.database_backups_project_id
 
   rule {
     default_retention {

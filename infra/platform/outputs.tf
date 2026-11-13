@@ -64,14 +64,19 @@ output "coolify_backups_bucket_name" {
   value       = scaleway_object_bucket.coolify_backups.name
 }
 
+output "database_backups_bucket_name" {
+  description = "Nom du bucket des dumps de la BDD de prod. À reporter dans la variable BACKUP_BUCKET de l'environnement GitHub prod."
+  value       = scaleway_object_bucket.database_backups.name
+}
+
 output "coolify_backups_s3_endpoint" {
-  description = "Endpoint S3 régional (path-style), sans le nom du bucket."
+  description = "Endpoint S3 régional (path-style), sans le nom du bucket. Sert aussi de BACKUP_ENDPOINT_URL pour les dumps de la BDD."
   value       = "https://s3.${var.scaleway_region}.scw.cloud"
 }
 
-output "backups_project_id" {
-  description = "ID du projet Scaleway dédié aux backups."
-  value       = var.backups_project_id
+output "coolify_backups_project_id" {
+  description = "ID du projet Scaleway dédié aux backups Coolify."
+  value       = var.coolify_backups_project_id
 }
 
 output "coolify_backups_credentials_secret_name" {
