@@ -395,6 +395,21 @@ construit l'image sur le serveur cible (Railpack). Ils ont leurs propres domaine
 suivent pas `application_environments`. Variables : même manifeste que les autres
 (`env-manifest.tf`).
 
+Coolify les clone par une GitHub App installée sur `incubateur-ademe` : elle livre les push
+(pas de webhook à poser) et publie chaque déploiement dans **GitHub → Deployments**, avec
+le lien vers le log Coolify puis vers le domaine. L'app reste hors Terraform (sa clé privée
+et son client secret iraient dans le state). Création, une fois, par un admin de
+l'organisation :
+
+1. Coolify → **Sources** → **+ Add** → **GitHub App**, nom `incubateur-ademe`
+   (`coolify_github_app_name`), organisation `incubateur-ademe`, installation automatisée
+   avec **GitHub deployments** sur *Create GitHub deployments* (permission Deployments en
+   lecture/écriture). Sur une app existante : **Permissions → Update on GitHub**, accepter
+   côté GitHub, puis **Refetch**.
+2. Côté GitHub, limiter l'installation aux dépôts `aldo` et `rencontres-tete`.
+3. Retirer le webhook manuel `…/webhooks/source/github/events/manual` des deux dépôts
+   (**Settings → Webhooks**), sinon chaque push déclenche deux déploiements.
+
 Mise en service d'une entrée :
 
 1. `terraform apply` : il crée l'application et les coquilles de secrets, puis échoue sur
@@ -403,10 +418,8 @@ Mise en service d'une entrée :
    réappliquer : l'`env_push` en échec est rejoué, sans toucher à `coolify_env_revision`.
 2. Premier déploiement : bouton **Deploy** dans Coolify, ou
    `APP_ID=<env>/<app> infra/scripts/coolify-deploy.sh` (sans `IMAGE_TAG` : tête de branche).
-3. Redéploiement au push : dans le dépôt GitHub, **Settings → Webhooks** →
-   `https://coolify.territoiresentransitions.fr/webhooks/source/github/events/manual`,
-   `application/json`, événement *push*, avec le secret de l'onglet **Webhooks** de
-   l'application dans Coolify. Retirer ensuite l'auto-deploy du service Koyeb.
+3. Redéploiement au push : rien à faire si le dépôt est dans l'installation de la GitHub
+   App. Retirer l'auto-deploy du service Koyeb.
 4. Domaine hors `*.preprod` : le déclarer d'abord en `http://<nom>`. Avec `https://`,
    Traefik tenterait un certificat Let's Encrypt sur un nom qui pointe encore vers Koyeb, et
    les échecs répétés peuvent bloquer l'émission après la bascule. Vérifier avec

@@ -40,7 +40,7 @@ output "application_ids" {
 
 output "application_uuids" {
   description = "UUID Coolify des applications déclarées, indexés par env/app."
-  value       = merge({ for k, v in coolify_application_docker_image.app : k => v.uuid }, { for k, v in coolify_application.git : k => v.uuid })
+  value       = merge({ for k, v in coolify_application_docker_image.app : k => v.uuid }, { for k, v in coolify_application_github_app.git : k => v.uuid })
 }
 
 output "env_manifest" {

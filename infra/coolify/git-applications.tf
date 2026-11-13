@@ -3,8 +3,13 @@
 # Les produits voisins de TET, chacun dans son propre dépôt public (aldo,
 # rencontres) : Coolify clone la branche et construit l'image sur le serveur
 # cible avec Railpack, comme le faisait le buildpack de Koyeb. Pas d'image GHCR
-# ni de CD dans ce repo : un push sur la branche redéploie, via le webhook
-# GitHub du dépôt (cf. infra/README.md « Applications Git »).
+# ni de CD dans ce repo : un push sur la branche redéploie.
+#
+# Source : la GitHub App Coolify de l'organisation incubateur-ademe, créée à la
+# main (cf. infra/README.md « Applications Git »). Elle livre les push sans
+# webhook manuel et publie chaque déploiement dans GitHub Deployments, avec le
+# lien vers le log Coolify. Elle reste hors Terraform : sa clé privée et son
+# client secret entreraient dans le state (R4).
 #
 # Railpack plutôt que Nixpacks : aldo exige Node 24 (engines), que Nixpacks,
 # en maintenance, ne fournit pas.
@@ -81,7 +86,14 @@ locals {
   }
 }
 
-resource "coolify_application" "git" {
+data "coolify_github_apps" "incubateur_ademe" {
+  filter {
+    name   = "name"
+    values = [var.coolify_github_app_name]
+  }
+}
+
+resource "coolify_application_github_app" "git" {
   for_each = local.git_applications
 
   name = each.value.app
@@ -91,13 +103,15 @@ resource "coolify_application" "git" {
   server_uuid      = coolify_server.app[each.value.server].uuid
   environment_name = local.coolify_environment_names[each.value.env]
 
-  git_repository = each.value.repository
-  git_branch     = each.value.branch
-  build_pack     = "railpack"
-  build_command  = try(each.value.build_command, null)
-  start_command  = try(each.value.start_command, null)
-  ports_exposes  = tostring(each.value.port)
-  limits_memory  = try(each.value.limits_memory, null)
+  # Changer de GitHub App recrée l'application (create-only côté Coolify).
+  github_app_uuid = one(data.coolify_github_apps.incubateur_ademe.github_apps).uuid
+  git_repository  = each.value.repository
+  git_branch      = each.value.branch
+  build_pack      = "railpack"
+  build_command   = try(each.value.build_command, null)
+  start_command   = try(each.value.start_command, null)
+  ports_exposes   = tostring(each.value.port)
+  limits_memory   = try(each.value.limits_memory, null)
 
   domains                = join(",", each.value.domains)
   redirect               = "both"
@@ -110,10 +124,6 @@ resource "coolify_application" "git" {
   health_check_enabled = try(each.value.health_check_command, null) != null
   health_check_type    = "cmd"
   health_check_command = try(each.value.health_check_command, null)
-  # manual_webhook_secret_github, secret du webhook de l'étape 3 du README, est
-  # un attribut calculé : il entre dans le state. Ce n'est pas une exposition
-  # de plus, le state porte déjà les clés SSH root des serveurs (main.tf).
-  #
   # Rien n'est déployé à la création : les variables ne sont pas encore poussées.
   instant_deploy = false
 
