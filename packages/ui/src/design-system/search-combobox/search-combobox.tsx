@@ -6,7 +6,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { KeyboardEvent, useId, useMemo, useState } from 'react';
+import { KeyboardEvent, useEffect, useId, useMemo, useState } from 'react';
 import { uiLabels } from '../../labels/catalog';
 import { cn } from '../../utils/cn';
 import { Badge } from '../Badge';
@@ -112,6 +112,14 @@ export const SearchCombobox = ({
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const query = draft.trim();
+
+  // Une saisie nouvelle, tapée ou venue d'ailleurs, change la liste : l'option
+  // active n'y désignerait plus la même, ou plus rien.
+  const [activeQuery, setActiveQuery] = useState(query);
+  if (query !== activeQuery) {
+    setActiveQuery(query);
+    setActiveIndex(-1);
+  }
   const canSuggest = !!getSuggestions && query.length >= minQueryLength;
   const groups = useMemo(
     () => (canSuggest && isOpen ? getSuggestions(query) : []),
@@ -150,6 +158,15 @@ export const SearchCombobox = ({
     ],
   });
 
+  // La liste défile avec les flèches : l'option qu'Entrée choisira reste en vue.
+  useEffect(() => {
+    if (activeIndex >= 0) {
+      document
+        .getElementById(`${id}-option-${activeIndex}`)
+        ?.scrollIntoView?.({ block: 'nearest' });
+    }
+  }, [activeIndex, id]);
+
   const close = () => {
     setIsOpen(false);
     setActiveIndex(-1);
@@ -185,14 +202,13 @@ export const SearchCombobox = ({
         );
         return;
       }
-      case 'Enter':
+      case 'Enter': {
         event.preventDefault();
-        choose(
-          isExpanded && activeIndex >= 0
-            ? flatOptions[activeIndex]
-            : { kind: 'freeText' }
-        );
+        const active =
+          isExpanded && activeIndex >= 0 ? flatOptions[activeIndex] : undefined;
+        choose(active ?? { kind: 'freeText' });
         return;
+      }
       case 'Escape':
         if (isExpanded) {
           event.preventDefault();

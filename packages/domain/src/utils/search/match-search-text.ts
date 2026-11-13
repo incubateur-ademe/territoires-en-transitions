@@ -17,6 +17,7 @@ export type MatchSearchTextOptions = {
 
 /** Les diacritiques, que la décomposition NFD sépare de leur lettre. */
 const COMBINING_MARKS = /\p{M}/gu;
+const COMBINING_MARKS_TEST = /\p{M}/u;
 
 /** Les lettres que la décomposition NFD laisse entières. */
 const LIGATURES: Record<string, string> = {
@@ -30,6 +31,9 @@ const LIGATURES: Record<string, string> = {
 const TEXT_START_BONUS = 0.5;
 
 const foldChar = (char: string): string => {
+  // Un texte déjà décomposé (« He\u0301ricourt ») porte ses accents à part :
+  // les retirer sans laisser d'espace, qui couperait le mot.
+  if (COMBINING_MARKS_TEST.test(char)) return '';
   const ligature = LIGATURES[char];
   if (ligature) return ligature;
   const lower = char

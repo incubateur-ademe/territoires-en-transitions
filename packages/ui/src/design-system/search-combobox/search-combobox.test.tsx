@@ -135,6 +135,33 @@ describe('SearchCombobox', () => {
     expect(onSelectOption).not.toHaveBeenCalled();
   });
 
+  it('fait défiler la liste jusqu’à l’option active', () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const { input } = renderCombobox();
+    taper(input, 'mont');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    expect(scrollIntoView).toHaveBeenLastCalledWith({ block: 'nearest' });
+    expect(scrollIntoView.mock.contexts.at(-1)).toBe(
+      screen.getByRole('option', { name: 'CC du Pays de Lunel' })
+    );
+  });
+
+  it('cherche le texte sur Entrée quand la liste a changé sous l’option active', () => {
+    const { input, onSearch, rerender } = renderCombobox({ value: 'mont' });
+    taper(input, 'mont');
+    fireEvent.keyDown(input, { key: 'ArrowUp' }); // la dernière option
+
+    // La recherche change d'ailleurs, liste ouverte : l'option active disparaît.
+    rerender({ value: 'lunel', getSuggestions: () => [] });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(onSearch).toHaveBeenLastCalledWith('lunel');
+  });
+
   it('applique la saisie après le délai, une seule fois', () => {
     const { input, onSearch } = renderCombobox({ debounce: 300 });
     taper(input, 'mon');
