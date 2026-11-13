@@ -202,3 +202,9 @@ variable "coolify_env_prune" {
   type        = bool
   default     = true
 }
+
+variable "coolify_github_app_name" {
+  description = "Nom, dans Coolify (Sources), de la GitHub App installée sur incubateur-ademe qui clone les applications Git (cf. git-applications.tf). Créée à la main, hors Terraform."
+  type        = string
+  default     = "incubateur-ademe"
+}
