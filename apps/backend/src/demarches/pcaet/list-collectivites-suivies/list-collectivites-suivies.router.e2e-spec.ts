@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { addTestDepotSupraVoisin } from '../demarches-pcaet.test-fixture';
+import { addTestDepotSupraVoisin } from '../list-dossiers-instruction/list-dossiers-instruction.test-fixture';
 
 describe('Les collectivités qu’un service peut chercher dans sa liste', () => {
   let app: INestApplication;

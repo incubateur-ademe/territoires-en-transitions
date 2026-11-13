@@ -8,7 +8,7 @@ import {
   PcaetStatutInstructionEnum,
   TypePorteurSupraEnum,
 } from '@tet/domain/demarches';
-import { addTestDepotSupraVoisin } from '../demarches-pcaet.test-fixture';
+import { addTestDepotSupraVoisin } from './list-dossiers-instruction.test-fixture';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 
 describe('Les services de l’État voient le Supra et ses EPCI couverts', () => {

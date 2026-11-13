@@ -1,11 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  addTestCollectivite,
   addTestCollectiviteAndUser,
   addTestCommunesMembres,
-  cleanupCollectiviteDemarches,
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/models/collectivite-relations.table';
 import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
@@ -27,13 +24,11 @@ import { Collectivite, CollectiviteType } from '@tet/domain/collectivites';
 import {
   DemarchePcaet,
   listPcaetDiagnosticIndicateurRequiredLeaves,
-  SEUIL_POPULATION_PCAET,
   PCAET_DIAGNOSTIC_INDICATEURS,
   PCAET_DIAGNOSTIC_INDICATEURS_REQUIRED_OBJECTIF_YEARS,
   type PcaetDiagnosticIndicateurParentConfig,
 } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
-import { onTestFinished } from 'vitest';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
 import { CloreInstructionService } from './clore-instruction/clore-instruction.service';
@@ -558,84 +553,4 @@ export async function publierTestDemarchePcaet(
     demarcheId,
     dateAdoption: '2026-01-15',
   });
-}
-
-/**
- * Une DREAL, un Supra **hors** de sa région, et deux EPCI membres : l'un dans
- * la région de la DREAL, l'autre chez le Supra. Le dépôt du Supra couvre les
- * deux.
- */
-export async function addTestDepotSupraVoisin({
-  db,
-  router,
-}: {
-  db: DatabaseService;
-  router: TrpcRouter;
-}) {
-  const regionDreal = await pickFreeRegionCode(db, 'dreal');
-  const dreal = await addTestCollectiviteAndUser(db, {
-    user: { role: CollectiviteRole.ADMIN },
-    collectivite: {
-      type: 'dreal',
-      regionCode: regionDreal,
-      nom: 'DREAL test Supra voisin',
-    },
-  });
-  // La DREAL prend sa région : la suivante tirée est forcément une autre.
-  const regionSupra = await pickFreeRegionCode(db, 'dreal');
-
-  const supra = await addTestCollectiviteAndUser(db, {
-    user: { role: CollectiviteRole.ADMIN },
-    collectivite: {
-      natureInsee: 'PETR',
-      regionCode: regionSupra,
-      nom: 'PETR test du voisinage',
-    },
-  });
-  const epciChezLaDreal = await addTestCollectivite(db, {
-    nom: 'CC test chez la DREAL',
-    natureInsee: 'CC',
-    regionCode: regionDreal,
-    population: SEUIL_POPULATION_PCAET + 1,
-  });
-  const epciChezLeSupra = await addTestCollectivite(db, {
-    nom: 'CC test chez le Supra',
-    natureInsee: 'CC',
-    regionCode: regionSupra,
-    population: 1000,
-  });
-  onTestFinished(async () => {
-    // `demarche.created_by` retient l'utilisateur : les démarches partent
-    // avant lui.
-    await cleanupCollectiviteDemarches(db, supra.collectivite.id);
-    await supra.cleanup();
-    await epciChezLaDreal.cleanup();
-    await epciChezLeSupra.cleanup();
-    await dreal.cleanup();
-  });
-
-  await db.db.insert(collectiviteRelationsTable).values([
-    { id: epciChezLaDreal.collectivite.id, parentId: supra.collectivite.id },
-    { id: epciChezLeSupra.collectivite.id, parentId: supra.collectivite.id },
-  ]);
-  const depot = await router
-    .createCaller({ user: getAuthUserFromUserCredentials(supra.user) })
-    .demarches.pcaet.create({
-      collectiviteId: supra.collectivite.id,
-      collectivitesCouvertesIds: [
-        epciChezLaDreal.collectivite.id,
-        epciChezLeSupra.collectivite.id,
-      ],
-    });
-
-  return {
-    dreal,
-    drealCaller: router.createCaller({
-      user: getAuthUserFromUserCredentials(dreal.user),
-    }),
-    supra: supra.collectivite,
-    epciChezLaDreal: epciChezLaDreal.collectivite,
-    epciChezLeSupra: epciChezLeSupra.collectivite,
-    depot,
-  };
 }
