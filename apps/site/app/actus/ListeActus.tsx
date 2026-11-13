@@ -12,7 +12,7 @@ import {
   useQueryStates,
 } from 'nuqs';
 import { useMemo } from 'react';
-import { getData } from './utils';
+import { listActualites } from './list-actualites.action';
 
 const PAGINATION_LIMIT = 12;
 const actusSearchParams = {
@@ -50,7 +50,7 @@ const ListeActus = ({ categories, legacyCategoryIds }: ListeActusProps) => {
   } = useQuery({
     queryKey: ['actualites', selectedPage, categoriesFilter],
     queryFn: () =>
-      getData({
+      listActualites({
         page: selectedPage,
         limit: PAGINATION_LIMIT,
         categories: categoriesFilter,
