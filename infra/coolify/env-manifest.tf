@@ -234,6 +234,20 @@ locals {
       aldo = merge(local.coolify_env_common.aldo, {
         BASE_URL = { value = local.git_application_urls["prod/aldo"] }
       })
+
+      # Application Git (git-applications.tf). Base Postgres et Storage restent
+      # sur leur projet Supabase Cloud, dont l'URL est en dur dans le dépôt.
+      rencontres = {
+        WEBSITE_URL  = { value = local.git_application_urls["prod/rencontres"] }
+        DATABASE_URL = { secret = "rencontres-database-url" }
+        SUPABASE_KEY = { secret = "rencontres-supabase-key" }
+        JWT_SECRET   = { secret = "rencontres-jwt-secret" }
+        BREVO_KEY    = { secret = "rencontres-brevo-key" }
+        # Relances par email planifiées dans le process (lib/cron.js). Un seul
+        # hébergement à la fois : sur un autre, les laisser coupées, sinon
+        # chaque relance part deux fois.
+        CRON_ENABLED = { value = "true" }
+      }
     }
   }
 
