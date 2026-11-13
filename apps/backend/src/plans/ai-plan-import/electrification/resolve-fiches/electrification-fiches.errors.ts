@@ -1,3 +1,4 @@
+import { electrificationCatalogueErrors } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 import { prepareFicheErrors } from '../../prepare-fiche/prepare-fiche.errors';
 import {
   createIssueFactory,
@@ -12,8 +13,7 @@ export const electrificationFichesErrors = {
   },
   INVALID_FICHES_CONFIG: {
     kind: 'configuration-error',
-    message:
-      'Les correspondances des actions Électrification sont incohérentes.',
+    message: electrificationCatalogueErrors.INVALID_FICHES_CONFIG,
   },
   FICHES_CONFIG_UNAVAILABLE: {
     kind: 'configuration-error',

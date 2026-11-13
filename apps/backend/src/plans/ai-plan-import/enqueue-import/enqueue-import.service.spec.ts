@@ -1,3 +1,4 @@
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { CheckElectrificationCreationService } from '@tet/backend/plans/plans/electrification/check-electrification-creation.service';
 import { CheckElectrificationEligibilityService } from '@tet/backend/plans/plans/electrification/check-electrification-eligibility/check-electrification-eligibility.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -213,7 +214,7 @@ const buildService = (overrides: MockOverrides = {}) => {
     new CheckElectrificationCreationService(trackingService),
     {} as CheckElectrificationEligibilityService,
     listPlanTypesService,
-    null
+    {} as ElectrificationDataService
   );
   vi.spyOn(electrification, 'authorizeAdmission').mockResolvedValue(
     failure(AiPlanImportErrorEnum.IMPORT_PROFILE_UNAVAILABLE)

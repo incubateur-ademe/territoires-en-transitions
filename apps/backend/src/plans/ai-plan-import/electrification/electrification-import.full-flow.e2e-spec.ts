@@ -1,4 +1,9 @@
 import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
+import {
+  electrificationCatalogueFixture as electrificationConfig,
+  buildInMemoryElectrificationData,
+} from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { getQueueToken } from '@nestjs/bullmq';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -12,7 +17,6 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification-eligibility.constants';
 import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import {
   getAuthUserFromUserCredentials,
@@ -32,7 +36,6 @@ import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
-  electrificationConfig,
   ElectrificationConfig,
   ElectrificationEngagementCodeEnum as EngagementCode,
   ElectrificationLaureatsConfig,
@@ -65,7 +68,6 @@ import { aiPlanImportStepRunTable } from '../models/ai-plan-import-step-run.tabl
 import { AiPlanImportProfileEnum } from '../models/import-profile';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { buildInMemoryDocumentStorage } from '../pipeline/__fixtures__/in-memory-document-storage';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import { buildElectrificationDocument } from './extract-plan/__fixtures__/electrification-document.test-fixture';
 import { PrepareElectrificationImportService } from './extract-plan/prepare-electrification-import.service';
 
@@ -74,6 +76,10 @@ describe(
   { timeout: 60_000 },
   () => {
     const catalogue = structuredClone(electrificationConfig);
+    const data = buildInMemoryElectrificationData({
+      catalogue: () => catalogue,
+      laureats: () => laureats,
+    });
     const laureats: ElectrificationLaureatsConfig = {
       source: 'Liste synthétique pour le parcours e2e',
       version: 'full-flow-test',
@@ -175,10 +181,7 @@ describe(
             .overrideProvider(getQueueToken(AI_PLAN_IMPORT_QUEUE_NAME))
             .useValue(queue);
           builder.overrideProvider(DocumentStorageService).useValue(storage);
-          builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
-          builder
-            .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
-            .useValue(laureats);
+          builder.overrideProvider(ElectrificationDataService).useValue(data);
         },
       });
       db = await getTestDatabase(app);
@@ -204,6 +207,7 @@ describe(
           cible.identifiantReferentiel = `full-flow-${randomUUID()}`;
           cible.periodicite = 'annuelle';
           cible.validation = 'validated';
+          assert(cible.unite);
           const [definition] = await db.db
             .insert(indicateurDefinitionTable)
             .values({
@@ -274,6 +278,7 @@ describe(
         },
       ];
       Object.assign(catalogue, structuredClone(validatedCatalogue));
+      data.catalogues.clear();
       flagEnabled = true;
       queue.add.mockClear();
       vi.spyOn(app.get(TrackingService), 'capture').mockImplementation(
@@ -403,7 +408,7 @@ describe(
       expect(llm.chat).not.toHaveBeenCalled();
     });
 
-    test('importe les engagements sans cible et les compléments disponibles du catalogue livré malgré les autres correspondances en attente', async () => {
+    test('importe les engagements sans cible et les compléments disponibles du catalogue malgré les autres correspondances en attente', async () => {
       Object.assign(catalogue, structuredClone(electrificationConfig));
       const jobId = await enqueue({
         engagements: qualitativeEngagements,
@@ -438,13 +443,16 @@ describe(
               referenceCode: code,
             })
           ),
-          ...['sous-action-011', 'sous-action-012', 'sous-action-013'].map(
-            (code) =>
-              expect.objectContaining({
-                referenceKind: 'sous_action',
-                referenceCode: code,
-                referenceParentCode: '1.4.1',
-              })
+          ...[
+            'sous-action-test-1',
+            'sous-action-test-2',
+            'sous-action-test-3',
+          ].map((code) =>
+            expect.objectContaining({
+              referenceKind: 'sous_action',
+              referenceCode: code,
+              referenceParentCode: '1.4.1',
+            })
           ),
         ])
       );
@@ -848,7 +856,7 @@ describe(
       { metrics: 'conservées', missingMetrics: false },
       { metrics: 'perdues après le checkpoint', missingMetrics: true },
     ])(
-      'reprend sans source ni nouvel appel IA, avec les métriques $metrics',
+      'reprend avec la publication admise sans source ni nouvel appel IA, avec les métriques $metrics',
       async ({ missingMetrics }) => {
         const complete = vi.mocked(llm.complete).mockResolvedValue({
           success: true,
@@ -881,10 +889,28 @@ describe(
             },
           },
         });
+        catalogue.fiches = {
+          actions: [
+            {
+              code: 'action-publiee',
+              validation: 'validated',
+              axeNumero: 1,
+              sousAxeNumero: null,
+              champs: { titre: 'Action disponible' },
+              aides: [],
+              sousActions: [],
+              indicateurCodes: [],
+            },
+          ],
+          indicateurs: [],
+        };
+        vi.spyOn(repository, 'markDone').mockResolvedValueOnce(
+          failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR)
+        );
         const jobId = await enqueue({
           fields: {
             "Code de l'action de référence ou URL de l'action (facultatif)":
-              'action-manquante',
+              'action-publiee',
           },
           cibleRecharge: '20 bornes rapides sur un total de 100',
         });
@@ -900,8 +926,8 @@ describe(
           report: {
             issues: expect.arrayContaining([
               expect.objectContaining({
-                kind: 'document-error',
-                location: expect.any(String),
+                kind: 'processing-error',
+                code: 'ELECTRIFICATION_PERSISTENCE_FAILED',
               }),
             ]),
           },
@@ -943,21 +969,9 @@ describe(
             .set({ stats: null })
             .where(eq(aiPlanImportJobTable.id, jobId));
         }
-        catalogue.fiches = {
-          actions: [
-            {
-              code: 'action-manquante',
-              validation: 'validated',
-              axeNumero: 1,
-              sousAxeNumero: null,
-              champs: { titre: 'Action disponible' },
-              aides: [],
-              sousActions: [],
-              indicateurCodes: [],
-            },
-          ],
-          indicateurs: [],
-        };
+        data.catalogues.set(catalogue.version, structuredClone(catalogue));
+        catalogue.version = `${catalogue.version}-next`;
+        catalogue.fiches.actions = [];
         flagEnabled = false;
         await router
           .createCaller({ user: getAuthUserFromUserCredentials(support.user) })
@@ -1098,6 +1112,41 @@ describe(
       }
     );
 
+    test.each(['catalogue indisponible', 'lauréat retiré'])(
+      'refuse la reprise avant remise en file : %s',
+      async (cause) => {
+        const jobId = await enqueue({
+          fields: {
+            "Code de l'action de référence ou URL de l'action (facultatif)":
+              'action-inconnue',
+          },
+        });
+        await worker.generate(jobId);
+        const before = await readJob(jobId);
+        assert(before.checkpoint);
+        if (cause === 'catalogue indisponible') {
+          catalogue.version = `${catalogue.version}-next`;
+        } else {
+          laureats.laureats = [];
+        }
+        queue.add.mockClear();
+
+        await expect(
+          router
+            .createCaller({
+              user: getAuthUserFromUserCredentials(support.user),
+            })
+            .plans.aiImport.resumeAiImport({ jobId })
+        ).rejects.toMatchObject({ code: 'PRECONDITION_FAILED' });
+
+        expect(await readJob(jobId)).toEqual(before);
+        expect(await readAxes()).toEqual([]);
+        expect(queue.add).not.toHaveBeenCalled();
+        expect(llm.complete).not.toHaveBeenCalled();
+        expect(llm.chat).not.toHaveBeenCalled();
+      }
+    );
+
     test('revérifie les droits entre préparation et transaction', async () => {
       const jobId = await enqueue();
       const preparation = app.get(PrepareElectrificationImportService);
@@ -1191,7 +1240,80 @@ describe(
       expect(await readFiches()).toHaveLength(1);
     });
 
-    test('garde source et checkpoint si le catalogue déployé ne correspond plus au job admis', async () => {
+    test('conserve la publication admise après activation d’un autre catalogue', async () => {
+      const actionCode = 'action-publiee';
+      const sousActionCode = 'complement-catalogue';
+      const initialTitle = 'Complément de la publication admise';
+      const nextTitle = 'Complément de la publication suivante';
+      catalogue.fiches.actions = [
+        {
+          code: actionCode,
+          validation: 'validated',
+          axeNumero: 1,
+          sousAxeNumero: null,
+          champs: { titre: 'Action du catalogue' },
+          aides: [],
+          indicateurCodes: [],
+          sousActions: [
+            { code: sousActionCode, champs: { titre: initialTitle } },
+          ],
+        },
+      ];
+      const admitted = structuredClone(catalogue);
+      data.catalogues.set(admitted.version, admitted);
+      const document = {
+        fields: {
+          "Code de l'action de référence ou URL de l'action (facultatif)":
+            actionCode,
+        },
+      };
+      const jobId = await enqueue(document);
+      catalogue.version = `${admitted.version}-next`;
+      catalogue.fiches.actions[0].sousActions[0].champs.titre = nextTitle;
+
+      await worker.generate(jobId);
+
+      expect(await status(jobId)).toMatchObject({
+        status: 'done',
+        createdPlanId: expect.any(Number),
+      });
+      expect((await readJob(jobId)).options.catalogueVersion).toBe(
+        admitted.version
+      );
+      expect(await readFiches()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            referenceCode: sousActionCode,
+            referenceParentCode: actionCode,
+            titre: initialTitle,
+          }),
+        ])
+      );
+      expect(await readFiches()).not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ titre: nextTitle })])
+      );
+      const nextJobId = await enqueue({
+        fields: {
+          ...document.fields,
+          "Intitulé de l'action": 'Action du second import',
+        },
+      });
+      expect((await readJob(nextJobId)).options.catalogueVersion).toBe(
+        catalogue.version
+      );
+      await worker.generate(nextJobId);
+      expect(await status(nextJobId)).toMatchObject({ status: 'done' });
+      expect(
+        (await readFiches())
+          .filter(({ referenceCode }) => referenceCode === sousActionCode)
+          .map(({ titre }) => titre)
+          .sort()
+      ).toEqual([initialTitle, nextTitle].sort());
+      expect(llm.complete).not.toHaveBeenCalled();
+      expect(llm.chat).not.toHaveBeenCalled();
+    });
+
+    test('garde source et checkpoint si la publication admise est indisponible', async () => {
       const jobId = await enqueue({
         fields: {
           "Code de l'action de référence ou URL de l'action (facultatif)":
@@ -1213,7 +1335,7 @@ describe(
         content: source.data.buffer,
         contentType: source.data.mimeType,
       });
-      // Reprise déjà en file avant qu'une nouvelle version soit déployée.
+      // Reprise déjà en file ; la publication initiale devient indisponible.
       await db.db
         .update(aiPlanImportJobTable)
         .set({ status: 'pending', attempt: 1 })

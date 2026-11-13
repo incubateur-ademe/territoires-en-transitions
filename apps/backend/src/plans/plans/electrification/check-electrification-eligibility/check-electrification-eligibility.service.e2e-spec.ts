@@ -1,4 +1,3 @@
-import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { INestApplication } from '@nestjs/common';
 import { addUserRoleSupport } from '@tet/backend/users/users/users.test-fixture';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
@@ -10,15 +9,10 @@ import {
   getDisposableTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
 import { FakeLlmRepository } from '@tet/backend/utils/llm/repositories/fake/fake-llm.repository';
-import {
-  ElectrificationLaureatsConfig,
-  electrificationLaureatsConfig,
-  electrificationLaureatsConfigSchema,
-} from '@tet/domain/plans';
+import { ElectrificationLaureatsConfig } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { count, eq } from 'drizzle-orm';
 import {
@@ -33,7 +27,9 @@ import {
   vi,
 } from 'vitest';
 import { CheckElectrificationEligibilityService } from './check-electrification-eligibility.service';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '../config/electrification-eligibility.constants';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { buildInMemoryElectrificationData } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
+import { failure } from '@tet/backend/utils/result.type';
 
 describe('Éligibilité au programme Électrification', () => {
   const llm = new FakeLlmRepository();
@@ -49,6 +45,7 @@ describe('Éligibilité au programme Électrification', () => {
     laureats: [],
   } satisfies ElectrificationLaureatsConfig;
   const config: ElectrificationLaureatsConfig = structuredClone(fixture);
+  const data = buildInMemoryElectrificationData({ laureats: () => config });
   const checkedAt = '2026-06-01T12:00:00.000Z';
 
   const createContext = async (
@@ -74,9 +71,7 @@ describe('Éligibilité au programme Électrification', () => {
       overrides: (builder) => {
         builder.overrideProvider(LlmService).useValue(new LlmService(llm));
         builder.overrideProvider(GenerateImportDraftWorker).useValue({});
-        builder
-          .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
-          .useValue(config);
+        builder.overrideProvider(ElectrificationDataService).useValue(data);
       },
     });
     db = await getTestDatabase(app);
@@ -208,13 +203,11 @@ describe('Éligibilité au programme Électrification', () => {
   });
 
   test('une configuration non livrée reste indisponible', async () => {
-    const unavailable = new CheckElectrificationEligibilityService(
-      null,
-      app.get(PermissionService),
-      app.get(GetUserRolesAndPermissionsService)
+    vi.spyOn(data, 'getLaureats').mockResolvedValue(
+      failure('DATA_UNAVAILABLE')
     );
     expect(
-      await unavailable.check(
+      await service.check(
         { collectiviteId: context.collectiviteId },
         { user: context.user }
       )
@@ -222,37 +215,6 @@ describe('Éligibilité au programme Électrification', () => {
       success: false,
       error: 'ELECTRIFICATION_LAUREATS_UNAVAILABLE',
     });
-  });
-
-  test('le mapping livré conserve les identités corrigées et des rattachements uniques', () => {
-    const delivered = electrificationLaureatsConfigSchema.parse(
-      electrificationLaureatsConfig
-    );
-    expect(delivered.laureats).toEqual(
-      expect.arrayContaining([
-        { reference: '200070092', collectiviteId: 4323 }, // CA du Libournais
-        { reference: '200035087', collectiviteId: 3980 }, // CA Terre de Provence
-        { reference: 'demo-5460', collectiviteId: 5460 }, // Candidat de recette
-      ])
-    );
-    expect(
-      new Set(delivered.laureats.map(({ reference }) => reference)).size
-    ).toBe(delivered.laureats.length);
-    expect(
-      new Set(delivered.laureats.map(({ collectiviteId }) => collectiviteId))
-        .size
-    ).toBe(delivered.laureats.length);
-    const unresolvedReferences = new Set([
-      'grp-d59b5d2e4ffa', // PETR Pays Lédonien : correspondance erronée
-      'grp-068dc0193e5e', // PETR Pays-du-Bocage : correspondance erronée
-      'grp-e520acb2c2b0', // SCOT Périgord Vert : collectivité absente
-      'grp-0cd41611e76d', // SIEDS : collectivité absente
-    ]);
-    expect(
-      delivered.laureats.filter(({ reference }) =>
-        unresolvedReferences.has(reference)
-      )
-    ).toEqual([]);
   });
 
   test.each([

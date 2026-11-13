@@ -2,16 +2,26 @@
 
 Date : 2026-11-03
 
-Dernière mise à jour : 2026-11-11
+Dernière mise à jour : 2026-11-12
 
 **Décision du 11 novembre :** la publication du catalogue et des lauréats
-sans déploiement est isolée dans la [PR #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815), basée sur B
+sans déploiement est isolée dans la [PR C dédiée — #5815](https://github.com/incubateur-ademe/territoires-en-transitions/pull/5815), basée sur B
 (`feat/electrification-data-publication`). B conserve ses configurations
 embarquées et ne dépend pas de cette évolution pour son déploiement.
+La décision de livraison dans Git est remplacée à partir de C par
+l'[ADR 0024 — publication sans déploiement](0024-publier-donnees-electrification-sans-deploiement.md).
+**Décision du 12 novembre :** catalogue et lauréats seront synchronisés depuis
+Grist par un workflow GitHub déclenché uniquement à la main, avec validation
+et publication versionnée par environnement. Le choix précédent de Sheets
+pour les lauréats est remplacé ; les correspondances TeT de l’annuaire restent
+à renseigner. Les détails et la qualification sont suivis dans l’ADR 0024.
+
+Les décisions initiales et les preuves de recette ci-dessous restent datées ;
+elles ne valident pas le nouveau mécanisme de publication.
 
 ## Statut
 
-Proposé, à relire par l'équipe. Les deux PRs ci-dessous appliquent le
+Proposé, à relire par l'équipe. Les PRs A et B ci-dessous appliquent le
 périmètre élargi et restent non fusionnées. A reprend aussi les refactorings
 actifs qui préservent le comportement actuel ; B garde les changements
 fonctionnels, dont un profil public PCAET distinct. La CI de A du 10 novembre
@@ -47,8 +57,12 @@ métadonnées validées. Les neuf autres cibles restent `pending`, avec une
 périodicité `annuelle`. Le catalogue contient les 109 actions, leurs 58
 sous-actions et les 113 codes d'indicateurs Grist. Les correspondances TeT
 de ces indicateurs restent `pending`, avec une référence `null`.
-Le mapping lauréats contient 105 correspondances : 77 vérifiées et
-28 porteurs de groupements repris provisoirement ; 4 cas restent en attente.
+Le mapping lauréats contient 105 correspondances : 77 vérifiées sur les fichiers
+de septembre et 28 porteurs de groupements repris provisoirement ; 4 cas restent
+en attente.
+La comparaison du 12 novembre signale un écart commune/agglomération pour
+Saint-Quentin, à confirmer avant correction (voir les
+[questions ouvertes](#questions-ouvertes-et-dépendances-avant-ouverture)).
 Dans B, la collectivité de démonstration `5460` s'ajoute avec la référence
 synthétique `demo-5460`, réservée à la recette et distincte des 105 lauréats.
 Dans B, les correspondances incomplètes bloquent seulement les imports qui
@@ -387,7 +401,7 @@ Le profil n'a pas encore été ouvert en production.
 La PR B branche cette préparation au worker et au stockage des jobs ;
 l'ouverture reste conditionnée à la qualification complète.
 
-L'[évaluation locale](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-plan-import/apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification)
+L'[évaluation locale](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-data-publication/apps/backend/src/plans/ai-plan-import/eval/README.md#profil-électrification)
 sélectionne ce profil avec `--profile annexe-3-electrification` et utilise la même
 assistance automatique pour les cellules éligibles que le parser ne comprend pas.
 Si le parser suffit, aucun appel au modèle n'est effectué. Ce parcours pouvant
@@ -444,6 +458,18 @@ extraction. Il ne génère pas d'actions ou de sous-actions supplémentaires,
 
 ### 3. Un catalogue versionné et une identité indépendante des libellés
 
+**Décision pour la PR C — 11 novembre 2026.** Le catalogue et la liste des
+lauréats sont publiés séparément dans le stockage TeT, après validation,
+sans redéploiement. B conserve les données embarquées décrites ci-dessous et
+reste déployable seule. Dans C, les contrats restent dans `@tet/domain/plans`. Chaque
+job charge la version du catalogue conservée à son admission ; l'éligibilité
+reste vérifiée sur la liste courante. Une première publication explicite est
+requise par environnement, sans fallback sur des données embarquées. Voir
+l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md)
+pour le périmètre, la reprise et le retour arrière.
+
+**Décision de livraison de A/B, remplacée à partir de C par l'ADR 0024.**
+
 Versionner un catalogue limité à ce besoin : axes, sous-axes, engagements,
 actions et sous-actions de référence, indicateurs ou jalons oui/non associés.
 Le fichier versionné dans Git fait référence pour les correspondances exécutées
@@ -483,6 +509,33 @@ sont pas interchangeables : seuls certains indicateurs sont communs, selon sa
 [réponse](https://app.notion.com/p/3f16523d57d7808ab94ef5f8b79e4c90?d=40d6523d57d78177b5db001c7ef4622d).
 Les correspondances entre codes Grist et identifiants TeT restent à compléter
 et à valider ; ne pas les déduire des intitulés.
+
+**Décision du 12 novembre — références externes.** Dans C (#5815), les codes
+Grist sont rattachés aux identifiants TeT dans l’onglet générique "Références
+externes" du Sheets des définitions, sans gestion du WIP. Les références sont
+publiées avec les définitions dans la même transaction et sous la même version.
+La synchronisation du catalogue utilise uniquement les références présentes
+dans la base cible. Leur `lienSource` publié désigne le document Grist à lire,
+y compris sur les lignes sans identifiant TeT. Les deux espaces de références
+doivent désigner le même document ; une incohérence bloque la synchronisation,
+sans repli sur une adresse codée en dur. Elle reprend leur unité et périodicité TeT ; une référence
+retirée ne revient pas depuis le catalogue actif. Les exceptions annuelles de
+recensement disparaissent du code et doivent être portées par les définitions
+publiées. La relecture des colonnes existantes `Code_signe` et `Parametre_signe`
+de `V1_3_Axes` permet aussi de construire les engagements depuis Grist, sans
+modifier la source ni ajouter d'onglet. Leurs 11 correspondances de cibles
+utilisent le même onglet, sous la source distincte `engagements-electrification`
+et les codes `E01.principale`, `E07.total`, `E07.rapides`, etc. Elles restent à
+renseigner et valider. Les titres d'action viennent de Grist : lorsqu'un
+paramètre contient un blanc à remplir, reprendre le titre d'axe, notamment
+"Recharge des poids lourds" pour E12. C supprime les mappings initiaux en code ;
+une référence absente ou retirée reste `pending`, sans identifiant, unité ni
+périodicité inventés. Seul un import utilisant cette cible est bloqué.
+La table générique et les règles de publication sont détaillées dans
+l’[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md#références-externes-des-indicateurs--décision-du-12-novembre-2026).
+Les rapprochements documentaires préparés dans Sheets ne valent pas encore
+validation métier ni publication. Les comportements embarqués de A/B restent
+inchangés.
 
 **Relevé du 5 novembre 2026.** La colonne Notion "ID et Titre indicateur TeT v2"
 donne les références ci-dessous. Leur présence dans cette liste n'atteste
@@ -646,8 +699,11 @@ Les codes d'action et d'indicateur proviennent des colonnes `Numero` et `Code`.
 Les codes internes `sous-action-001` à `sous-action-058` sont attribués une fois
 dans les données livrées ; ils ne doivent jamais être recalculés lors d'un tri,
 d'un renommage ou d'un changement de parent. Le parent exact du catalogue
-continue d'être conservé sur chaque import. Aucun ID de ligne Grist n'est utilisé
-comme identité métier. Les thématiques et rattachements secondaires `Aussi_axes`
+continue d'être conservé sur chaque import. Dans ce premier chargement, aucun
+ID de ligne Grist n'est exposé comme identité métier. Le raccordement de la source
+dans C, décrit par l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md),
+conserve ces codes et explicite leur correspondance avec les identifiants de
+lignes vérifiés le 12 novembre. Les thématiques et rattachements secondaires `Aussi_axes`
 restent hors du contrat actuel ; ils ne changent pas le rattachement principal
 contrôlé par le résolveur. Les ressources Grist ne deviennent pas des moyens humains.
 
@@ -693,6 +749,11 @@ et 4 trimestriels. Ces deux recensements restent quantitatifs, en `nb`, avec
 une correspondance TeT `pending` et aucun identifiant inventé. Cette décision
 ne convertit pas automatiquement les autres fréquences "Ponctuelle" en
 annuelles et ne lève pas le blocage des correspondances manquantes.
+Dans C, cette décision est reprise dans les correspondances initiales utilisées
+lors de la première synchronisation Grist. Si un catalogue
+est déjà publié, une correction administrative doit créer une nouvelle version
+avec ces deux périodicités annuelles ; la synchronisation conserve les mappings
+actifs et les imports déjà lancés gardent leur version.
 
 **Décision du 10 novembre 2026 — première version du catalogue.** Les noms
 `electrification-v2` du lot 2B2b et `electrification-v3` initialement proposé
@@ -1321,10 +1382,12 @@ Une collectivité absente du mapping livré n'est pas autorisée à importer.
 Cela ne conclut pas qu'elle n'est pas lauréate : son rattachement peut encore
 être en attente. Ce refus reste distinct d'une configuration manquante.
 
-Le [mapping versionné](../../packages/domain/src/plans/plans/electrification/config/electrification-laureats.config.ts)
-représente les correspondances utilisables de la dernière liste disponible,
-distinctes du groupe de déploiement. B y ajoute l'entrée de démonstration
-explicitée ci-dessous. Il déclare sa source, sa version et
+Le [contrat du mapping](../../packages/domain/src/plans/plans/electrification/config/electrification-laureats.config.ts)
+décrit les correspondances utilisables de la liste, distinctes du groupe de
+déploiement. B embarque ses données ; à partir de C, leur publication suit
+l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md).
+Les données initiales de B comprennent l'entrée de démonstration explicitée
+ci-dessous. Le mapping déclare sa source, sa version et
 `validFrom` ; `validUntil: null` signifie qu'aucune expiration n'est prévue.
 Une borne de fin renseignée reste exclusive et contrôlée. Le service ajoute
 `checkedAt` à la décision. Les jobs conservent cette provenance et une reprise
@@ -1817,7 +1880,7 @@ synthétiques et un faux LLM pour l'assistance ciblée ; le parcours générique
 conserve également son faux LLM. Ces tests vérifient les garde-fous, pas la
 fidélité du modèle réel.
 Comparer les premiers documents réellement remplis à leurs extractions selon le
-[guide d'évaluation](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-plan-import/apps/backend/src/plans/ai-plan-import/eval/README.md)
+[guide d'évaluation](https://github.com/incubateur-ademe/territoires-en-transitions/blob/feat/electrification-data-publication/apps/backend/src/plans/ai-plan-import/eval/README.md)
 dès leur disponibilité. Les fixtures ne démontrent pas la couverture de ces
 usages encore inconnus. Comparer le parser seul et l'assistance sur les mêmes
 documents annotés, en comptant les rejets injustifiés et les valeurs incorrectes
@@ -1834,22 +1897,17 @@ Aucun test automatisé ni agent ne déclenche un appel réel au modèle.
    Pour la recharge, [quelle référence couvre le seuil ≥150 kW de `6-b` ?][question-recharge]
    La confirmation des références d'engagement E07 ne suffit pas à établir
    l'équivalence de périmètre des indicateurs Grist.
-3. **Lauréats.** [Quelle liste maintenue fait foi, et quelle collectivité TeT
-   porte le plan de chaque groupement ?][question-laureats]
-   Le [croisement d'activité TET-8065](https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9)
-   fournit deux fichiers de 109 lauréats, datés des 8 et 30 septembre.
-   La vérification du dump local le 10 novembre trouve 107 correspondances
-   pour 106 collectivités distinctes, mais révèle deux mauvais rattachements :
-   [Libournais → Serre-Ponçon et Terre de Provence → Salon-de-Provence][question-rattachements].
-   SCOT Périgord Vert et SIEDS restent sans correspondance ; plusieurs
-   groupements sont réduits à un seul membre pour les statistiques d'usage.
-   Les fichiers relus les 10 et 11 novembre sont inchangés. La
-   [discovery Haute-Corrèze](https://app.notion.com/p/3ff6523d57d78075bb9ce436a65d647c)
-   identifie un porteur pour ce cas, sans régler tous les groupements.
-   L'intégration du 11 novembre autorise 77 correspondances vérifiées et
-   28 porteurs repris provisoirement à la demande d'Émilien. Les deux erreurs
-   des EPCI sont corrigées. Quatre groupements restent exclus et les porteurs
-   provisoires restent à confirmer.
+3. **Lauréats.** La source est l'annuaire Grist partagé dans
+   [TET-8065](https://app.notion.com/p/3e96523d57d780beb6cffcd9e04b01a9).
+   Depuis la décision du 13 novembre, C utilise exclusivement ses identifiants
+   publics pour retrouver les collectivités TeT : 77 territoires possèdent
+   un identifiant, 32 groupements n'ont pas de porteur explicite et sont exclus.
+   Aucun ancien porteur provisoire n'est repris. Pour couvrir 100 %, la source
+   doit désigner ces porteurs ; vérifier ensuite leur correspondance unique
+   dans les bases cibles. Le choix de la CA du Saint-Quentinois dans Grist reste
+   à confirmer auprès du métier. Les droits de lecture et le workflow réel
+   restent à qualifier ; détail et historique dans
+   l'[ADR 0024](0024-publier-donnees-electrification-sans-deploiement.md#couverture-des-lauréats--décision-du-13-novembre-2026).
 
 La question des aides sans URL est fermée par la
 [réponse du 11 novembre][decision-aides] : elles sont omises avec un
@@ -1860,12 +1918,11 @@ sont annuels. Les unités et correspondances encore ouvertes restent à précise
 Les neuf périodicités annuelles et la traduction E09 "Nombre" → `nb` sont
 intégrées. Les actions/sous-actions, leurs identifiants stables et leurs liens
 sont livrés ; les 113 correspondances TeT des indicateurs restent à compléter.
-Le mapping
-lauréats est livré pour 105 correspondances, dont 28 porteurs provisoires ;
-4 groupements restent à résoudre. B ajoute séparément la collectivité de
-démonstration `5460` pour la recette. Vérifier les définitions, unités, périodes
-et rattachements dans l'environnement cible. Les cibles et correspondances d'indicateurs
-`pending` restent bloquantes ; ces ajustements n'ouvrent pas l'admission.
+A/B conservent leur liste initiale ; C la remplace par les seules correspondances
+résolues depuis Grist. Le mode super-admin actif permet la recette hors liste
+sans ajouter de faux lauréat. Vérifier les définitions, unités, périodes et
+rattachements dans l'environnement cible. Les cibles et correspondances
+`pending` utilisées restent bloquantes ; ces ajustements n'ouvrent pas le flag.
 
 L'affichage des cibles par métadonnée exacte, préparé dans #5806, est repris
 dans B ; il n'est plus une question ouverte de conception. La nouvelle

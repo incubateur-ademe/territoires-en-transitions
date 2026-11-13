@@ -1,3 +1,4 @@
+import { indicateurReferencesSheet } from './import-indicateur-reference.dto';
 import { INestApplication } from '@nestjs/common';
 import {
   getDisposableTestApp,
@@ -35,6 +36,8 @@ function createLocalSheetServiceMock(): Partial<SheetService> {
           templateData?: Partial<T>
         ): Promise<{ data: T[]; header: string[] | null }> => {
           // Changelog / Versions sheet
+          if (range === indicateurReferencesSheet.range)
+            return { data: [], header: [...indicateurReferencesSheet.headers] };
           if (range?.startsWith('Versions')) {
             const data = [
               { version: '1.0.1', date: '2026-04-01', description: 'Test' },

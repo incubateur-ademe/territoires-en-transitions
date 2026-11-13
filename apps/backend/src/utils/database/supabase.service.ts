@@ -38,6 +38,8 @@ export default class SupabaseService {
     mimeType?: string;
     /** Métadonnées libres de l'objet stocké (ex. nom d'origine du fichier). */
     metadata?: Record<string, string>;
+    /** false pour conserver un objet immuable ; les usages existants remplacent l'objet. */
+    upsert?: boolean;
   }): Promise<
     Result<
       {
@@ -49,12 +51,12 @@ export default class SupabaseService {
       | typeof StoreDocumentErrorEnum.FILE_TOO_LARGE
     >
   > {
-    const { bucket, path, file, mimeType, metadata } = args;
+    const { bucket, path, file, mimeType, metadata, upsert = true } = args;
     const { data, error } = await this.client.storage
       .from(bucket)
       .upload(path, file, {
         contentType: mimeType,
-        upsert: true,
+        upsert,
         metadata,
       });
     if (error) {

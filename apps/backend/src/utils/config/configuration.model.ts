@@ -265,6 +265,18 @@ export const backendConfigurationSchema = z
       .describe(
         "Identifiant de la feuille de calcul Google Sheets pour l'import des définitions d'indicateurs"
       ),
+    // Facultative : uniquement pour la lecture des sources Grist lors d'une publication.
+    GRIST_API_KEY: z
+      .string()
+      .optional()
+      .describe(
+        'Clé du compte Grist autorisé à lire les sources Électrification'
+      ),
+    // Facultative au boot ; requise uniquement pour préparer les lauréats depuis Grist.
+    ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID: z
+      .string()
+      .regex(/^[a-zA-Z0-9_-]+$/)
+      .optional(),
     PERSONNALISATION_QUESTIONS_SHEET_ID: z
       .string()
       .min(1)

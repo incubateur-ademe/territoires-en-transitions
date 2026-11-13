@@ -1,3 +1,4 @@
+import { electrificationCatalogueFixture as electrificationConfig } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -14,7 +15,6 @@ import { LlmRepository } from '@tet/backend/utils/llm/repositories/llm.repositor
 import { emptyTokenUsage } from '@tet/backend/utils/llm/token-usage';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { electrificationConfig } from '@tet/domain/plans';
 import { and, eq, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
@@ -29,7 +29,6 @@ import {
   ElectrificationExtractionCheckpoint,
 } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 
 /** Ces lectures ne doivent jamais déclencher un appel au fournisseur. */
 class ReadOnlyLlmRepository extends LlmRepository {
@@ -104,12 +103,10 @@ describe('Suivi des imports IA', () => {
   let app: INestApplication;
   let db: DatabaseService;
   let router: TrpcRouter;
-  const catalogue = structuredClone(electrificationConfig);
 
   beforeAll(async () => {
     app = await getDisposableTestApp({
       overrides: (builder) => {
-        builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
         builder
           .overrideProvider(LlmService)
           .useValue(new LlmService(new ReadOnlyLlmRepository()));
@@ -601,50 +598,36 @@ describe('Suivi des imports IA', () => {
     ).toEqual({ success: true, data: null });
   });
 
-  test('un catalogue invalide bloque la reprise Électrification sans bloquer un import générique', async () => {
+  test('la disponibilité des données métier ne modifie pas la compatibilité des checkpoints', async () => {
     const context = await createContext();
     const job = await insertJob(context);
-    const genericContext = await createContext();
-    const genericJob = await insertJob(genericContext, { checkpoint });
     await db.db
       .update(aiPlanImportJobTable)
       .set({
         options: {
           ...job.options,
           ...electrificationContract,
+          catalogueVersion: 'publication-precedente',
           contractVersion: undefined,
         },
-        checkpoint: electrificationCheckpoint,
+        checkpoint: {
+          ...electrificationCheckpoint,
+          catalogueVersion: 'publication-precedente',
+        },
       })
       .where(eq(aiPlanImportJobTable.id, job.id));
-    const repository = app.get(AiPlanImportJobRepository);
-    const before = await repository.getById(job.id);
-    const version = catalogue.version;
-    catalogue.version = '';
-    try {
-      expect(
-        await context.api.getAiImportStatus({ jobId: job.id })
-      ).toMatchObject({ resumable: false });
-      expect(
-        await repository.getCheckpoint(
-          job.id,
-          AiPlanImportProfileEnum.ELECTRIFICATION
-        )
-      ).toEqual({ success: false, error: 'INVALID_CHECKPOINT' });
-      expect(
-        await db.db.transaction((tx) => repository.resumeFailed(job.id, tx))
-      ).toEqual({ success: false, error: 'JOB_NOT_RESUMABLE' });
-      expect(await repository.getById(job.id)).toEqual(before);
-      expect(
-        await genericContext.api.getAiImportStatus({ jobId: genericJob.id })
-      ).toMatchObject({ resumable: true });
-      expect(await repository.getCheckpoint(genericJob.id)).toEqual({
-        success: true,
-        data: checkpoint,
-      });
-    } finally {
-      catalogue.version = version;
-    }
+
+    expect(
+      await context.api.getAiImportStatus({ jobId: job.id })
+    ).toMatchObject({ resumable: true });
+    expect(
+      await app
+        .get(AiPlanImportJobRepository)
+        .getCheckpoint(job.id, AiPlanImportProfileEnum.ELECTRIFICATION)
+    ).toMatchObject({
+      success: true,
+      data: { catalogueVersion: 'publication-precedente' },
+    });
   });
 
   test.each([
@@ -660,11 +643,6 @@ describe('Suivi des imports IA', () => {
     {
       name: 'catalogue différent',
       checkpointPatch: { catalogueVersion: 'other' },
-    },
-    {
-      name: 'catalogue périmé dans le job et le checkpoint',
-      checkpointPatch: { catalogueVersion: 'old' },
-      optionsPatch: { catalogueVersion: 'old' },
     },
     {
       name: 'version technique du job différente',

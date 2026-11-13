@@ -1,4 +1,9 @@
 import { PostHog } from 'posthog-node';
+import {
+  electrificationCatalogueFixture as electrificationConfig,
+  buildInMemoryElectrificationData,
+} from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.test-fixture';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
 import { INestApplication } from '@nestjs/common';
 import { getQueueToken } from '@nestjs/bullmq';
 import {
@@ -22,7 +27,6 @@ import { seedTestDocument } from '@tet/backend/collectivites/documents/documents
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
-import { ELECTRIFICATION_LAUREATS_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification-eligibility.constants';
 import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/list-plan-types.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -37,7 +41,6 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import {
   ELECTRIFICATION_PLAN_TYPE_KEY,
-  electrificationConfig,
   ElectrificationLaureatsConfig,
 } from '@tet/domain/plans';
 import { FeatureFlagEnum } from '@tet/domain/utils';
@@ -68,7 +71,6 @@ import {
 import { aiPlanImportJobTable } from '../models/ai-plan-import-job.table';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { AI_PLAN_IMPORT_QUEUE_NAME } from '../ai-plan-import.queue';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import { buildElectrificationDocument } from '../electrification/extract-plan/__fixtures__/electrification-document.test-fixture';
 import { electrificationDocumentTemplate } from '@tet/backend/plans/plans/electrification/config/electrification-document-template.constants';
 import { ELECTRIFICATION_CHECKPOINT_VERSION } from '../electrification/extract-plan/electrification-extraction-checkpoint.schema';
@@ -509,6 +511,10 @@ describe(
   { timeout: 30_000 },
   () => {
     const catalogue = structuredClone(electrificationConfig);
+    const data = buildInMemoryElectrificationData({
+      catalogue: () => catalogue,
+      laureats: () => laureats,
+    });
     const laureats: ElectrificationLaureatsConfig = {
       source: 'Mapping synthétique pour les e2e',
       version: 'test-laureats',
@@ -532,10 +538,7 @@ describe(
     beforeAll(async () => {
       app = await getDisposableTestApp({
         overrides: (builder) => {
-          builder.overrideProvider(ELECTRIFICATION_CONFIG).useValue(catalogue);
-          builder
-            .overrideProvider(ELECTRIFICATION_LAUREATS_CONFIG)
-            .useValue(laureats);
+          builder.overrideProvider(ElectrificationDataService).useValue(data);
           builder
             .overrideProvider(LlmService)
             .useValue(new LlmService(new FakeLlmRepository()));

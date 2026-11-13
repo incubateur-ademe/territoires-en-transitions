@@ -1,3 +1,5 @@
+import { IndicateurReferenceExterneRepository } from '../indicateur/indicateur-reference-externe.repository';
+import { indicateurReferencesSheet } from './import-indicateur-reference.dto';
 import { ReconcileIndicateurValeursService } from '../valeurs/reconcile-indicateur-valeurs/reconcile-indicateur-valeurs.service';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { ImportIndicateurRelationsService } from './import-indicateur-relations.service';
@@ -119,6 +121,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         if (token === ListIndicateursPredefinisRepository) {
           return listIndicateursPredefinisRepository;
         }
+        if (token === IndicateurReferenceExterneRepository)
+          return { replace: vi.fn(), list: vi.fn().mockResolvedValue([]) };
         if (token === ImportIndicateurDefinitionRepository) {
           return importRepository;
         }
@@ -387,7 +391,11 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       .mockResolvedValueOnce('2.0.0');
     sheetService.getDataFromSheet
       .mockResolvedValueOnce({ data: [definition] })
-      .mockResolvedValueOnce({ data: [] });
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce({
+        data: [],
+        header: [...indicateurReferencesSheet.headers],
+      });
     const upsert = vi
       .spyOn(importIndicateurDefinitionService, 'upsertIndicateurDefinitions')
       .mockResolvedValueOnce({

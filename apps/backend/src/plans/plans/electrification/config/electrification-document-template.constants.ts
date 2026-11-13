@@ -11,6 +11,15 @@ export const electrificationDocumentTemplate = {
   // Révision du canevas officiel, indépendante du format technique du checkpoint.
   version: 'electrification-v4',
   engagements: {
+    // Forme des cibles dans le canevas ; les correspondances TeT viennent du catalogue publié.
+    actionCodes: [
+      EngagementCode.DECOMMISSIONNEMENT_RESEAU_GAZ,
+      EngagementCode.SITE_RECHARGE_POIDS_LOURDS,
+    ],
+    targetKeys: {
+      single: ['principale'],
+      recharge: ['total', 'rapides'],
+    },
     // Titres du Word officiel, indépendants des titres métier utilisés dans le plan.
     axes: [
       {

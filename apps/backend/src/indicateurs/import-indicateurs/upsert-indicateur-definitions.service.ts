@@ -26,11 +26,16 @@ import {
   validateObjectifIdentifiants,
 } from './validate-indicateur-definitions.rules';
 
+import { IndicateurReferenceExterneRepository } from '../indicateur/indicateur-reference-externe.repository';
+import { ImportIndicateurReference } from './import-indicateur-reference.dto';
+import { IndicateurReferencesRules } from './indicateur-references.rules';
+
 /** Updates the catalogue and recalculates changed formulas in the same transaction. */
 @Injectable()
 export class UpsertIndicateurDefinitionsService {
   constructor(
     private readonly repository: ImportIndicateurDefinitionRepository,
+    private readonly referencesRepository: IndicateurReferenceExterneRepository,
     private readonly listIndicateursPredefinisRepository: ListIndicateursPredefinisRepository,
     private readonly transactionManager: TransactionManager,
     private readonly locks: IndicateurLockRepository,
@@ -44,9 +49,11 @@ export class UpsertIndicateurDefinitionsService {
     {
       definitions: imported,
       objectifs = [],
+      references,
     }: {
       definitions: ImportIndicateurDefinitionType[];
       objectifs?: ImportObjectifType[];
+      references?: ImportIndicateurReference[];
     },
     context: ImportIndicateurContext
   ): Promise<
@@ -62,6 +69,13 @@ export class UpsertIndicateurDefinitionsService {
       imported
     );
     if (!objectifsValidation.success) return objectifsValidation;
+    if (references) {
+      const referencesValidation = IndicateurReferencesRules.validate(
+        references,
+        imported
+      );
+      if (!referencesValidation.success) return referencesValidation;
+    }
 
     try {
       const identifiantsReferentiel = imported.map(
@@ -153,6 +167,39 @@ export class UpsertIndicateurDefinitionsService {
             { ...context, tx }
           );
           if (!relations.success) return relations;
+          if (references) {
+            const byIdentifier = new Map(
+              created.map((definition) => [
+                definition.identifiantReferentiel,
+                definition,
+              ])
+            );
+            await this.referencesRepository.replace(
+              created.map(({ id }) => id),
+              references.map(({ identifiantReferentiel, ...reference }) => {
+                const definition = identifiantReferentiel
+                  ? byIdentifier.get(identifiantReferentiel)
+                  : undefined;
+                if (identifiantReferentiel && !definition)
+                  throw new Error(
+                    `Définition publiée absente : ${identifiantReferentiel}`
+                  );
+                return {
+                  ...reference,
+                  indicateurId: definition?.id ?? null,
+                  version: imported[0].version,
+                };
+              }),
+              tx
+            );
+            const published = await this.referencesRepository.list(
+              [...new Set(references.map(({ source }) => source))],
+              tx
+            );
+            const sourcesValidation =
+              IndicateurReferencesRules.validateSources(published);
+            if (!sourcesValidation.success) return sourcesValidation;
+          }
 
           const definitionsResult =
             await this.listIndicateursPredefinisRepository.listIndicateursPredefinis(

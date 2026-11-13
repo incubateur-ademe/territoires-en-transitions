@@ -1,5 +1,6 @@
 import { electrificationImportStepStates } from '@tet/backend/plans/plans/electrification/config/electrification-import.config';
-import { Inject, Injectable } from '@nestjs/common';
+import { ElectrificationDataService } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-data.service';
+import { Injectable } from '@nestjs/common';
 import {
   CheckElectrificationEligibilityService,
   ElectrificationEligibilityDecision,
@@ -8,16 +9,11 @@ import { ListPlanTypesService } from '@tet/backend/plans/plans/list-plan-types/l
 import { CheckElectrificationCreationService } from '@tet/backend/plans/plans/electrification/check-electrification-creation.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
-import {
-  AiPlanImportProfileEnum,
-  electrificationConfigSchema,
-  PlanType,
-} from '@tet/domain/plans';
+import { AiPlanImportProfileEnum, PlanType } from '@tet/domain/plans';
 import { AiPlanImportError } from '../../ai-plan-import.errors';
 import { DOCX_MIME } from '../../enqueue-import/detect-source-mime-type';
 import { ImportAdmission } from '../../validate-import-profile/import-admission.types';
 import { AiPlanImportJobOptions } from '../../models/ai-plan-import-job';
-import { ELECTRIFICATION_CONFIG } from '@tet/backend/plans/plans/electrification/config/electrification.constants';
 import {
   ELECTRIFICATION_CHECKPOINT_VERSION,
   ElectrificationExtractionCheckpoint,
@@ -44,14 +40,11 @@ export class ValidateElectrificationImportService {
     private readonly creation: CheckElectrificationCreationService,
     private readonly eligibility: CheckElectrificationEligibilityService,
     private readonly listPlanTypes: ListPlanTypesService,
-    @Inject(ELECTRIFICATION_CONFIG) private readonly catalogue: unknown
+    private readonly data: ElectrificationDataService
   ) {}
 
   isSupportedImport(options: unknown): boolean {
-    return ElectrificationImportContractRules.isSupportedImport(
-      options,
-      this.catalogue
-    );
+    return ElectrificationImportContractRules.isSupportedImport(options);
   }
 
   parseCheckpoint(
@@ -60,8 +53,7 @@ export class ValidateElectrificationImportService {
   ): Result<ElectrificationExtractionCheckpoint, AiPlanImportError> {
     return ElectrificationImportContractRules.parseCheckpoint(
       checkpoint,
-      options,
-      this.catalogue
+      options
     );
   }
 
@@ -119,8 +111,13 @@ export class ValidateElectrificationImportService {
     { collectiviteId, options }: ImportInput,
     context: ServiceSecondArg
   ): Promise<Result<void, AiPlanImportError>> {
+    if (!this.isSupportedImport(options) || !options.catalogueVersion)
+      return failure('UNSUPPORTED_IMPORT_CONTRACT');
     const configuration = await this.getConfiguration(
-      { collectiviteId },
+      {
+        collectiviteId,
+        catalogueVersion: options.catalogueVersion,
+      },
       context
     );
     if (!configuration.success) return configuration;
@@ -130,7 +127,10 @@ export class ValidateElectrificationImportService {
   }
 
   private async getConfiguration(
-    { collectiviteId }: { collectiviteId: number },
+    {
+      collectiviteId,
+      catalogueVersion,
+    }: { collectiviteId: number; catalogueVersion?: string },
     context: ServiceSecondArg
   ): Promise<Result<ElectrificationImportConfiguration, AiPlanImportError>> {
     const eligibility = await this.eligibility.check(
@@ -146,7 +146,7 @@ export class ValidateElectrificationImportService {
     }
     if (!eligibility.data.eligible)
       return failure('IMPORT_PROFILE_UNAVAILABLE');
-    const catalogue = electrificationConfigSchema.safeParse(this.catalogue);
+    const catalogue = await this.data.getCatalogue(catalogueVersion);
     if (
       !catalogue.success ||
       !ResolveElectrificationFichesRules.isCatalogueValid(catalogue.data)

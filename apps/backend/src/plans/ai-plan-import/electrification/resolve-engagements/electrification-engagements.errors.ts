@@ -1,3 +1,4 @@
+import { electrificationCatalogueErrors } from '@tet/backend/plans/plans/electrification/publish-electrification-data/electrification-catalogue.rules';
 import {
   createIssueFactory,
   type ElectrificationIssue,
@@ -6,16 +7,15 @@ import {
 export const electrificationEngagementsErrors = {
   DUPLICATE_CATALOGUE_REFERENCE: {
     kind: 'configuration-error',
-    message: 'Une référence du catalogue est présente plusieurs fois.',
+    message: electrificationCatalogueErrors.DUPLICATE_CATALOGUE_REFERENCE,
   },
   INVALID_CATALOGUE_PARENT: {
     kind: 'configuration-error',
-    message: 'Une référence du catalogue désigne un axe inexistant.',
+    message: electrificationCatalogueErrors.INVALID_CATALOGUE_PARENT,
   },
   INVALID_ENGAGEMENT_MAPPING: {
     kind: 'configuration-error',
-    message:
-      'Un engagement du catalogue doit définir soit une action, soit des cibles.',
+    message: electrificationCatalogueErrors.INVALID_ENGAGEMENT_MAPPING,
   },
   DUPLICATE_SOURCE_KEY: {
     kind: 'document-error',

@@ -39,6 +39,8 @@ import {
 } from './generate-import.types';
 import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
 import { ImportGenerationErrors } from './generate-import.errors';
+import { ValidateImportProfileService } from '../validate-import-profile/validate-import-profile.service';
+import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
@@ -59,7 +61,8 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly trackingService: TrackingService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
     private readonly generic: GenerateGenericImportService,
-    private readonly electrification: GenerateElectrificationImportService
+    private readonly electrification: GenerateElectrificationImportService,
+    private readonly profiles: ValidateImportProfileService
   ) {}
 
   /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
@@ -109,6 +112,17 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         { attempt: job.attempt }
       );
     }
+    // Les dépendances publiées peuvent être temporairement indisponibles.
+    // Conserver alors source et checkpoint pour pouvoir reprendre ce même job.
+    const authorized = await this.authorizeExistingImport(job);
+    if (!authorized.success) {
+      return this.recordFailure(
+        jobId,
+        aiPlanImportJobErrorMessages.IMPORT_NOT_ALLOWED,
+        authorized.error,
+        { attempt: job.attempt }
+      );
+    }
     const checkpoint = await this.jobRepository.getCheckpoint(
       job.id,
       job.options.profile
@@ -147,6 +161,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       attempt,
     });
     if (job.success && this.jobRepository.isSupportedImport(job.data.options)) {
+      if (!(await this.authorizeExistingImport(job.data)).success) return;
       const checkpoint = await this.jobRepository.getCheckpoint(
         jobId,
         job.data.options.profile
@@ -154,6 +169,13 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       if (!checkpoint.success) return;
       await this.removeSourceForAttempt(job.data);
     }
+  }
+
+  private authorizeExistingImport(job: AiPlanImportJob) {
+    return this.profiles.authorizeExistingImport(
+      { collectiviteId: job.collectiviteId, options: job.options },
+      { user: buildRequesterUser(job.createdBy) }
+    );
   }
 
   private async removeSourceForAttempt(job: AiPlanImportJob): Promise<void> {
