@@ -25,3 +25,27 @@ create table if not exists reprise_tec.ecarts (
   ecarte_le    timestamptz not null default now(),
   primary key (table_source, tec_id)
 );
+
+-- Tranche 3 : une ligne T&C sans numéro, ou une partie seulement d'une ligne.
+alter table reprise_tec.ecarts
+  add column if not exists precision text not null default '';
+alter table reprise_tec.ecarts
+  drop constraint if exists ecarts_pkey,
+  add constraint ecarts_pkey primary key (table_source, tec_id, precision);
+
+comment on table reprise_tec.ecarts is
+  'Ce que la reprise n''a pas écrit dans TeT, et pourquoi : une ligne par ligne '
+  'de T&C laissée de côté (ou partie de ligne). Chaque motif est expliqué dans '
+  'le README du script qui l''écrit.';
+comment on column reprise_tec.ecarts.table_source is
+  'La table de T&C d''où vient la ligne (sans le préfixe staging_).';
+comment on column reprise_tec.ecarts.tec_id is
+  'Le numéro de la ligne dans T&C ; celui du dossier pour une table sans numéro.';
+comment on column reprise_tec.ecarts.precision is
+  'Vide pour une ligne entière. Sinon, ce qui la repère dans une table sans '
+  'numéro (« sol 2 », « periode 3 ») ou la partie écartée (« consommation », '
+  'une colonne de commentaire).';
+comment on column reprise_tec.ecarts.motif is
+  'Pourquoi la ligne n''est pas dans TeT (doublon, valeur_vide…), voir le README.';
+comment on column reprise_tec.ecarts.ecarte_le is
+  'Quand l''écart a été inscrit.';
