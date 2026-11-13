@@ -35,6 +35,21 @@ locals {
       # est tué (OOM) au chargement des JSON.
       limits_memory = "512m"
     }
+
+    # Next.js 14 derrière un serveur Express (server.js), PORT ou 3000. Aucun
+    # script de healthcheck dans le dépôt : pas de health check Coolify, comme
+    # sur Koyeb. /api/hello répond sans toucher à la base.
+    rencontres = {
+      repository    = "https://github.com/incubateur-ademe/rencontres-tete"
+      port          = 3000
+      build_command = "npm run build"
+      start_command = "npm start"
+      probe_path    = "/api/hello"
+      # Comme aldo : une fuite ne peut pas affamer les applications TET du
+      # serveur. À relever si le conteneur est tué (OOM), par exemple pendant
+      # un export (xlsx, zip, pdf).
+      limits_memory = "512m"
+    }
   }
 
   # Un domaine hors *.preprod se déclare d'abord en http:// : Traefik ne tente
@@ -49,6 +64,11 @@ locals {
     "prod/aldo" = {
       branch  = "main"
       domains = ["https://aldo.territoiresentransitions.fr"]
+    }
+    # Directement en prod, sans preprod. Base et Storage restent sur Supabase Cloud.
+    "prod/rencontres" = {
+      branch  = "main"
+      domains = ["https://rencontres.territoiresentransitions.fr"]
     }
   }
 

@@ -412,8 +412,10 @@ Mise en service d'une entrée :
    les échecs répétés peuvent bloquer l'émission après la bascule. Vérifier avec
    `curl --resolve <nom>:80:<ip du serveur> http://<nom>/`, passer chez Cloudflare le CNAME
    Koyeb en A vers le serveur (DNS only), puis déclarer `https://<nom>`, appliquer et
-   redéployer : Traefik émet le certificat dans la minute. Mettre le service Koyeb en pause
-   une fois le trafic basculé.
+   redéployer : Traefik émet le certificat dans la minute. Redéployer aussi le service
+   Alloy du serveur (`<env>/alloy`, bouton **Redeploy** dans Coolify) : il ne relit
+   `PROBE_TARGETS`, qui gagne la sonde HTTPS de l'application, qu'au démarrage. Mettre le
+   service Koyeb en pause une fois le trafic basculé.
 
 ### Variables d'environnement (Secret Manager → Coolify)
 
