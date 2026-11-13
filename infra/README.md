@@ -44,6 +44,9 @@ flowchart TB
 
   subgraph bk["Projet tet-backups"]
     bucket[(tet-coolify-backups<br/>Object Lock COMPLIANCE)]
+  end
+
+  subgraph dbk["Projet tet-db-backups"]
     dbbucket[(tet-db-backups<br/>Object Lock COMPLIANCE)]
   end
 
@@ -158,14 +161,15 @@ infra/
 Créer un projet ou une application IAM exige des droits d'organisation, que les
 credentials Terraform n'ont pas. Un admin crée donc, une fois :
 
-1. **Trois projets** : `tet` (principal), `tet-prod` et `tet-backups`. Leurs IDs vont dans
-   `main_project_id`, `prod_project_id` et `backups_project_id` de
+1. **Quatre projets** : `tet` (principal), `tet-prod`, `tet-backups` et `tet-db-backups`.
+   Leurs IDs vont dans `main_project_id`, `prod_project_id`, `backups_project_id` et
+   `db_backups_project_id` de
    `platform/terraform.tfvars`.
 2. **Les droits des opérateurs Terraform** sur ces projets :
    - `tet-prod` : serveur, VPC, IPAM, RDB, Redis, secrets et DNS. Le plus simple :
      `AllProductsFullAccess` limité à ce projet ;
-   - `tet-backups` : `ObjectStorageFullAccess` limité à ce projet. Le verrou COMPLIANCE
-     empêche quand même toute suppression de version avant l'échéance.
+   - `tet-backups` et `tet-db-backups` : `ObjectStorageFullAccess` limité à ces projets.
+     Le verrou COMPLIANCE empêche quand même toute suppression de version avant l'échéance.
 3. **L'application IAM `tet-coolify-backups`** :
    - une politique limitée à `tet-backups`, avec `ObjectStorageBucketsRead`,
      `ObjectStorageObjectsRead`, `ObjectStorageObjectsWrite` et
@@ -175,7 +179,8 @@ credentials Terraform n'ont pas. Un admin crée donc, une fois :
      buckets dans le projet par défaut de la clé), transmise par un canal sûr puis déposée
      dans Secret Manager (cf. [Secrets à déposer](#secrets-à-déposer-à-la-main)).
 4. **L'application IAM `tet-db-backups`**, pour les dumps de la BDD de prod faits par GitHub
-   Actions : même politique et même projet par défaut que `tet-coolify-backups`. Sa clé va
+   Actions : mêmes permissions que `tet-coolify-backups`, mais limitées au projet
+   `tet-db-backups`, qui est aussi le projet par défaut de sa clé. Sa clé va
    dans l'environnement GitHub `prod` (cf. [Backups de la BDD de prod](#backups-de-la-bdd-de-prod)).
 
 ### Bootstrap (une fois)
@@ -500,9 +505,9 @@ Variables et secrets de l'environnement GitHub `prod` :
 | `BACKUP_AWS_ACCESS_KEY_ID`     | variable | access key de l'application `tet-db-backups` |
 | `BACKUP_AWS_SECRET_ACCESS_KEY` | secret   | secret key de la même application            |
 
-La politique IAM vaut pour tout le projet `tet-backups` : cette clé voit aussi
-`tet-coolify-backups`, et inversement. Le verrou empêche l'une comme l'autre d'effacer
-l'historique.
+Le bucket a son propre projet, `tet-db-backups` : les permissions IAM Object Storage
+valent pour un projet entier, et les dumps ne sont pas chiffrés. Dans `tet-backups`, la clé
+Coolify pourrait les lire, ou déposer un faux dump que `restore.sh` restaurerait.
 
 ## DNS
 

@@ -157,6 +157,15 @@ variable "coolify_backups_credentials_secret_name" {
 
 # --- Projets créés par l'admin de l'organisation ---
 
+variable "db_backups_project_id" {
+  description = "ID du projet Scaleway des dumps de la BDD de prod (tet-db-backups), créé par un admin de l'organisation. Séparé de tet-backups pour que la clé Coolify ne voie pas les dumps."
+  type        = string
+  validation {
+    condition     = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.db_backups_project_id))
+    error_message = "db_backups_project_id doit être un UUID de projet Scaleway."
+  }
+}
+
 variable "prod_project_id" {
   description = "ID du projet Scaleway de production (tet-prod), créé par un admin de l'organisation. Relayé en output pour infra/prod."
   type        = string

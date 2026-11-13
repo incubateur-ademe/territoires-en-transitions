@@ -185,8 +185,10 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 }
 
 # Bucket des dumps quotidiens de la BDD de prod (.github/workflows/backup-database.yml),
-# qui alimentent aussi les restaurations de staging et de preprod. Même projet et
-# même verrou que coolify_backups.
+# qui alimentent aussi les restaurations de staging et de preprod. Même verrou que
+# coolify_backups, mais dans son propre projet (var.db_backups_project_id) : les
+# dumps ne sont pas chiffrés, la clé Coolify (sur le control plane) ne doit ni
+# les lire ni en déposer un faux, que restore.sh restaurerait.
 #
 # Pas de règle d'expiration : la rétention (60 jours, puis 1 par mois sur 24
 # mois) est appliquée par data_layer/backup/cleanup.sh. Ses suppressions posent
@@ -195,7 +197,7 @@ resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
 resource "scaleway_object_bucket" "db_backups" {
   name       = var.db_backups_bucket_name
   region     = var.scaleway_region
-  project_id = var.backups_project_id
+  project_id = var.db_backups_project_id
 
   object_lock_enabled = true
 
@@ -232,7 +234,7 @@ resource "scaleway_object_bucket" "db_backups" {
 resource "scaleway_object_bucket_lock_configuration" "db_backups" {
   bucket     = scaleway_object_bucket.db_backups.name
   region     = var.scaleway_region
-  project_id = var.backups_project_id
+  project_id = var.db_backups_project_id
 
   rule {
     default_retention {
