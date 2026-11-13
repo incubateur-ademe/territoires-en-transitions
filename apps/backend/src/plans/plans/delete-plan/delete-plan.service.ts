@@ -73,7 +73,7 @@ export class DeletePlanService {
       // programme, doit pouvoir être supprimé pour relancer l'import.
       if (
         plan.status !== PlanStatusEnum.FAILED &&
-        (await this.deletePlanRepository.isPlanRattacheADemarche(
+        (await this.deletePlanRepository.lockAndCheckPlanRattacheADemarche(
           input.planId,
           transaction
         ))
