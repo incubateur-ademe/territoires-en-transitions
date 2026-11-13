@@ -208,7 +208,22 @@ describe('Modification des secteurs d’une fiche', () => {
     expect(await getAttribution(ficheId)).toBeNull();
   });
 
-  test('seuls les 8 secteurs réglementaires sont acceptés', async () => {
+  test('une thématique s’enregistre comme un secteur d’activité', async () => {
+    const ficheId = await ficheHorsPlan();
+
+    expect(
+      await upsertSecteurs(ficheId, ['risques_naturels', 'branche_energie'])
+    ).toEqual({
+      etat: 'attribue',
+      secteurs: ['risques_naturels', 'branche_energie'],
+      origine: 'manuelle',
+    });
+    expect(await getAttribution(ficheId)).toMatchObject({
+      secteurs: ['risques_naturels', 'branche_energie'],
+    });
+  });
+
+  test('seuls les secteurs réglementaires de la liste sont acceptés', async () => {
     const ficheId = await ficheHorsPlan();
 
     await expect(

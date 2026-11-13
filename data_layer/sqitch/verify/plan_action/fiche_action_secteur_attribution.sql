@@ -9,13 +9,13 @@ $$
         origine_constraint  text;
     BEGIN
         ASSERT (
-            SELECT array_agg(enumlabel::text ORDER BY enumsortorder)
+            SELECT (array_agg(enumlabel::text ORDER BY enumsortorder))[1:8]
             FROM pg_enum
             WHERE enumtypid = 'public.secteur_reglementaire'::regtype
         ) = ARRAY [
             'residentiel', 'tertiaire', 'transport_routier', 'autres_transports',
             'agriculture', 'dechets', 'industrie_hors_branche_energie', 'branche_energie'
-        ], 'L enum secteur_reglementaire doit porter les 8 secteurs R. 229-52';
+        ], 'L enum secteur_reglementaire doit commencer par les 8 secteurs R. 229-52';
 
         SELECT string_agg(a.attname, ',') INTO primary_key_columns
         FROM pg_index i

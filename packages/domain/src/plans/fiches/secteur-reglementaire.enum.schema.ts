@@ -10,6 +10,13 @@ export const secteurReglementaireEnumValues = [
   'dechets',
   'industrie_hors_branche_energie',
   'branche_energie',
+  'amenagement',
+  'biodiversite',
+  'eau',
+  'foret_et_sols',
+  'economie',
+  'sante',
+  'risques_naturels',
 ] as const;
 
 export const SecteurReglementaireEnum = createEnumObject(
