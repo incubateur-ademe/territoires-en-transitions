@@ -12,7 +12,7 @@ import {
   useQueryStates,
 } from 'nuqs';
 import { useMemo } from 'react';
-import { getData } from './utils';
+import { getData } from './list-actus.action';
 
 const PAGINATION_LIMIT = 12;
 const actusSearchParams = {
