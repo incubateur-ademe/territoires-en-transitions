@@ -9,7 +9,7 @@ import { createHmac } from 'node:crypto';
  * appartient à l'instance Strapi Cloud distante → l'instance locale le rejette
  * en 401 et le site plante (data null). On (re)crée donc à chaque boot un
  * token dont la valeur en clair est fixe (STRAPI_LOCAL_READONLY_TOKEN), pour
- * que le site (NEXT_PUBLIC_STRAPI_KEY, même valeur dans apps/site/.env) puisse
+ * que le site (STRAPI_KEY, même valeur dans apps/site/.env) puisse
  * lire l'API locale sans manip manuelle.
  *
  * La variable n'est définie que dans la stack docker locale (docker-compose) :

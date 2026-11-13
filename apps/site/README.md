@@ -27,7 +27,7 @@ créer `apps/site/.env.local` (ignoré par git, prioritaire sur `apps/site/.env`
 
 ```
 NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
-NEXT_PUBLIC_STRAPI_KEY=local-dev-readonly-token
+STRAPI_KEY=local-dev-readonly-token
 ```
 
 Supprimer ce fichier pour revenir au Strapi distant. Voir `strapi/README.md`.
