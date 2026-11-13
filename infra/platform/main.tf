@@ -101,7 +101,7 @@ module "coolify" {
 # storage Coolify) et instance Coolify elle-même (infra/coolify,
 # terraform_data.instance_backup).
 #
-# Projet Scaleway dédié (var.backups_project_id) : les permissions IAM Object
+# Projet Scaleway dédié (var.coolify_backups_project_id) : les permissions IAM Object
 # Storage valent pour un projet entier, pas pour un bucket. Dans le projet
 # principal, la clé des backups pourrait aussi lire tet-tfstate, qui contient
 # les mots de passe et les clés SSH. Là, elle ne voit que ce bucket.
@@ -121,7 +121,7 @@ module "coolify" {
 resource "scaleway_object_bucket" "coolify_backups" {
   name       = var.coolify_backups_bucket_name
   region     = var.scaleway_region
-  project_id = var.backups_project_id
+  project_id = var.coolify_backups_project_id
 
   object_lock_enabled = true
 
@@ -174,7 +174,7 @@ resource "scaleway_object_bucket" "coolify_backups" {
 resource "scaleway_object_bucket_lock_configuration" "coolify_backups" {
   bucket     = scaleway_object_bucket.coolify_backups.name
   region     = var.scaleway_region
-  project_id = var.backups_project_id
+  project_id = var.coolify_backups_project_id
 
   rule {
     default_retention {

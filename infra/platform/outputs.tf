@@ -74,9 +74,9 @@ output "coolify_backups_s3_endpoint" {
   value       = "https://s3.${var.scaleway_region}.scw.cloud"
 }
 
-output "backups_project_id" {
-  description = "ID du projet Scaleway dédié aux backups."
-  value       = var.backups_project_id
+output "coolify_backups_project_id" {
+  description = "ID du projet Scaleway dédié aux backups Coolify."
+  value       = var.coolify_backups_project_id
 }
 
 output "coolify_backups_credentials_secret_name" {
