@@ -1,5 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
+import { useDemarcheLinkedToPlan } from '@/app/demarches/pcaet/use-demarche-linked-to-plan';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { PlanCreationRules } from '@tet/domain/plans';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -35,6 +36,11 @@ export const PlanMenuButton = () => {
 
   const canMutatePlan = hasCollectivitePermission('plans.mutate');
   const canExportPlan = hasCollectivitePermission('plans.export');
+  const isRattacheAPcaet =
+    useDemarcheLinkedToPlan({
+      planId: plan.id,
+      canMutatePlans: canMutatePlan,
+    }) !== undefined;
 
   if (!canMutatePlan && !canExportPlan) {
     return null;
@@ -110,7 +116,10 @@ export const PlanMenuButton = () => {
           label: appLabels.supprimerPlan,
           icon: 'delete-bin-6-line',
           variant: 'destructive',
-          disabled: isPending,
+          disabled: isPending || isRattacheAPcaet,
+          tooltip: isRattacheAPcaet
+            ? appLabels.supprimerPlanRattacheAPcaet
+            : undefined,
           onClick: () => {
             setIsOpenDeletePlanModal(true);
           },

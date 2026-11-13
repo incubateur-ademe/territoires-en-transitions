@@ -264,6 +264,8 @@ export const plansLabels = {
   /** Actions utilisateur */
   editerPlan: 'Éditer ce plan',
   supprimerPlan: 'Supprimer le plan',
+  supprimerPlanRattacheAPcaet:
+    'Ce plan est rattaché à un PCAET : il ne peut pas être supprimé.',
   dupliquerPlan: 'Dupliquer le plan',
 
   creerAxe: 'Créer un axe',

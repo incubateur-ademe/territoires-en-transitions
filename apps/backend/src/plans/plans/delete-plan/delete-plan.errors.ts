@@ -3,7 +3,11 @@ import {
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-const specificErrors = ['PLAN_NOT_FOUND', 'DELETE_PLAN_ERROR'] as const;
+const specificErrors = [
+  'PLAN_NOT_FOUND',
+  'PLAN_RATTACHE_A_DEMARCHE',
+  'DELETE_PLAN_ERROR',
+] as const;
 type SpecificError = (typeof specificErrors)[number];
 
 export const deletePlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
@@ -11,6 +15,11 @@ export const deletePlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
     PLAN_NOT_FOUND: {
       code: 'NOT_FOUND',
       message: "Le plan demandé n'a pas été trouvé",
+    },
+    PLAN_RATTACHE_A_DEMARCHE: {
+      code: 'PRECONDITION_FAILED',
+      message:
+        'Ce plan est rattaché à un PCAET : il ne peut pas être supprimé.',
     },
     DELETE_PLAN_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',

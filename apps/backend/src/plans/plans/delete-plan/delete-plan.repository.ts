@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { and, eq } from 'drizzle-orm';
@@ -11,6 +12,22 @@ import { DeletePlanError, DeletePlanErrorEnum } from './delete-plan.errors';
 @Injectable()
 export class DeletePlanRepository {
   private readonly logger = new Logger(DeletePlanRepository.name);
+
+  /**
+   * Tout rattachement compte, quel que soit le statut de la démarche : un PCAET
+   * adopté ou archivé garde son plan comme programme d'actions.
+   */
+  async isPlanRattacheADemarche(
+    planId: number,
+    tx: Transaction
+  ): Promise<boolean> {
+    const [link] = await tx
+      .select({ demarcheId: demarchePlanActionTable.demarcheId })
+      .from(demarchePlanActionTable)
+      .where(eq(demarchePlanActionTable.planActionId, planId))
+      .limit(1);
+    return link !== undefined;
+  }
 
   async deletePlanAndChildrenAxes(
     planId: number,

@@ -9,8 +9,11 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { Collectivite } from '@tet/domain/collectivites';
+import { PlanStatusEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
+import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 
 describe('Supprimer un plan', () => {
@@ -371,6 +374,72 @@ describe('Supprimer un plan', () => {
       await expect(
         limitedEditionCaller.plans.plans.delete({ planId: createdPlan.id })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+  });
+
+  describe('Supprimer un plan rattaché à un PCAET', () => {
+    const createPlanRattache = async () => {
+      const { collectivite, user } = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.ADMIN },
+      });
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(user),
+      });
+      const demarche = await caller.demarches.pcaet.create({
+        collectiviteId: collectivite.id,
+      });
+      const plan = await caller.plans.plans.create({
+        nom: 'Programme du PCAET',
+        collectiviteId: collectivite.id,
+      });
+      await caller.demarches.pcaet.update({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        planActionIds: [plan.id],
+      });
+      return { caller, collectivite, demarche, plan };
+    };
+
+    test('Refuser la suppression tant que le plan est rattaché', async () => {
+      const { caller, plan } = await createPlanRattache();
+
+      await expect(
+        caller.plans.plans.delete({ planId: plan.id })
+      ).rejects.toThrow('Ce plan est rattaché à un PCAET');
+
+      expect((await caller.plans.plans.get({ planId: plan.id })).id).toBe(
+        plan.id
+      );
+    });
+
+    test('Autoriser la suppression une fois le plan dissocié', async () => {
+      const { caller, collectivite, demarche, plan } =
+        await createPlanRattache();
+
+      await caller.demarches.pcaet.update({
+        collectiviteId: collectivite.id,
+        demarcheId: demarche.id,
+        planActionIds: [],
+      });
+      await caller.plans.plans.delete({ planId: plan.id });
+
+      await expect(caller.plans.plans.get({ planId: plan.id })).rejects.toThrow(
+        "Le plan demandé n'a pas été trouvé"
+      );
+    });
+
+    test("Autoriser la suppression du plan d'un import échoué, même rattaché", async () => {
+      const { caller, plan } = await createPlanRattache();
+      await db.db
+        .update(axeTable)
+        .set({ status: PlanStatusEnum.FAILED })
+        .where(eq(axeTable.id, plan.id));
+
+      await caller.plans.plans.delete({ planId: plan.id });
+
+      await expect(caller.plans.plans.get({ planId: plan.id })).rejects.toThrow(
+        "Le plan demandé n'a pas été trouvé"
+      );
     });
   });
 

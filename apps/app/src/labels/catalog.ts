@@ -478,6 +478,8 @@ export const appLabels = {
     NOT_AUDITEUR: "Cette personne n'a pas le rôle auditeur.",
     AUDITEUR_EMAIL_NOT_FOUND: 'Aucun compte ne correspond à cet email.',
     DOSSIER_CLOS: 'Le dossier est clos, il ne peut plus être modifié.',
+    PLAN_RATTACHE_A_DEMARCHE:
+      'Ce plan est rattaché à un PCAET : il ne peut pas être supprimé.',
     DECISION_NOT_ALLOWED:
       "Cette décision n'est pas possible au stade actuel du dossier.",
     LABELLISATION_ALREADY_EXISTS:
