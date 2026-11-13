@@ -4,6 +4,7 @@ import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { isDgec, PcaetPerimetreSaisineEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { CollectiviteContactsRepository } from '../shared/collectivite-contacts.repository';
+import { DemarchePcaetPerimetreRepository } from '../shared/demarche-pcaet-perimetre.repository';
 import { DemarchePcaetPilotesRepository } from '../shared/demarche-pcaet-pilotes.repository';
 import {
   PcaetInstructeursRepository,
@@ -13,6 +14,11 @@ import {
 export type DestinataireDemarche = {
   userId: string;
   email: string;
+};
+
+/** Un administrateur d'un EPCI couvert par le dépôt d'un Supra. */
+export type DestinataireCouvert = DestinataireDemarche & {
+  collectiviteCouverteId: number;
 };
 
 /** Un agent d'un service en copie, avec la saisine qui mène à son dossier. */
@@ -55,7 +61,8 @@ export class ListDestinatairesDemarcheService {
   constructor(
     private readonly pilotesRepository: DemarchePcaetPilotesRepository,
     private readonly collectiviteContactsRepository: CollectiviteContactsRepository,
-    private readonly instructeursRepository: PcaetInstructeursRepository
+    private readonly instructeursRepository: PcaetInstructeursRepository,
+    private readonly perimetreRepository: DemarchePcaetPerimetreRepository
   ) {}
 
   async list(
@@ -89,6 +96,64 @@ export class ListDestinatairesDemarcheService {
       );
     }
     return destinataires;
+  }
+
+  /**
+   * Les administrateurs des EPCI que couvre le dépôt d'un Supra : ils restent
+   * obligés et suivent le dépôt en lecture seule.
+   *
+   * Un administrateur de plusieurs EPCI couverts n'est notifié qu'une fois, au
+   * titre du premier par ordre de nom.
+   */
+  async listCouverts(
+    { demarcheId }: { demarcheId: number },
+    tx?: Transaction
+  ): Promise<DestinataireCouvert[]> {
+    const couvertes = (
+      await this.perimetreRepository.listCollectivitesCouvertes(
+        [demarcheId],
+        tx
+      )
+    ).get(demarcheId);
+    if (!couvertes) {
+      return [];
+    }
+
+    const adminsParCollectivite =
+      await this.collectiviteContactsRepository.listContactsParCollectivite(
+        couvertes.map(({ id }) => id),
+        {},
+        tx
+      );
+
+    const parUserId = new Map<string, DestinataireCouvert>();
+    for (const { id: collectiviteCouverteId } of couvertes) {
+      for (const { userId, email } of adminsParCollectivite.get(
+        collectiviteCouverteId
+      ) ?? []) {
+        if (!parUserId.has(userId)) {
+          parUserId.set(userId, { userId, email, collectiviteCouverteId });
+        }
+      }
+    }
+    return [...parUserId.values()];
+  }
+
+  /**
+   * Le nom de l'EPCI, relu à l'envoi. Nul s'il n'est plus couvert par la
+   * démarche : le message ne part pas.
+   */
+  async getCollectiviteCouverteNom({
+    demarcheId,
+    collectiviteId,
+  }: {
+    demarcheId: number;
+    collectiviteId: number;
+  }): Promise<string | null> {
+    const couvertes = (
+      await this.perimetreRepository.listCollectivitesCouvertes([demarcheId])
+    ).get(demarcheId);
+    return couvertes?.find(({ id }) => id === collectiviteId)?.nom ?? null;
   }
 
   /**

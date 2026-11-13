@@ -23,6 +23,18 @@ export interface NotifyInstructionCloseProps extends NotificationTemplate {
     /** Le service dont le destinataire est membre. */
     destinataireServiceNom: string;
   } | null;
-  /** Les documents de la démarche, ou le dossier d'instruction en copie. */
+  /**
+   * Renseigné quand le destinataire administre un EPCI couvert par le dépôt
+   * d'un Supra : le message nomme le porteur, à qui revient la suite, et mène
+   * au dépôt en lecture seule.
+   */
+  couverture: {
+    porteurNom: string;
+    collectiviteCouverteNom: string;
+  } | null;
+  /**
+   * Les documents de la démarche, le dépôt en lecture seule pour un EPCI
+   * couvert, ou le dossier d'instruction en copie.
+   */
   url: string;
 }

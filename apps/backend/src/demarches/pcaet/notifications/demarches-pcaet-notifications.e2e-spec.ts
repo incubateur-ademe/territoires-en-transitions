@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { render } from '@react-email/components';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@tet/backend/app.module';
 import {
@@ -7,6 +8,7 @@ import {
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { buildRandomDocumentHash } from '@tet/backend/collectivites/documents/documents.test-fixture';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { demarchePcaetCollectiviteCouverteTable } from '@tet/backend/demarches/shared/models/demarche-pcaet-collectivite-couverte.table';
 import { demarchePiloteTable } from '@tet/backend/demarches/shared/models/demarche-pilote.table';
 import {
   getAuthUserFromUserCredentials,
@@ -18,6 +20,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
+import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -43,6 +46,8 @@ import {
 } from '../demarches-pcaet.test-fixture';
 import { pcaetAvisTable } from '../shared/models/pcaet-avis.table';
 import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table';
+import { NotifyAvisRecuService } from './notify-avis-recu/notify-avis-recu.service';
+import { NotifyInstructionCloseService } from './notify-instruction-close/notify-instruction-close.service';
 
 /**
  * Le cycle d'un dossier, du point de vue de ce qui part en notification.
@@ -54,6 +59,9 @@ import { pcaetDemandeAvisTable } from '../shared/models/pcaet-demande-avis.table
  * Le conseil régional se prononce le premier, la DREAL ensuite : son avis clôt
  * l'instruction. L'ordre permet de voir la DREAL en copie de l'avis d'un autre,
  * puis écartée de la copie du sien.
+ *
+ * La déposante porte aussi le PCAET de deux EPCI, comme un Supra : leurs
+ * administrateurs suivent les mêmes étapes.
  */
 describe('Notifications des démarches PCAET', () => {
   let app: INestApplication;
@@ -82,6 +90,12 @@ describe('Notifications des démarches PCAET', () => {
   let regionCaller: ReturnType<TrpcRouter['createCaller']>;
   const cleanups: Array<() => Promise<void>> = [];
   let ddtNom: string;
+  let epciAId: number;
+  let epciBId: number;
+  let epciAAdminId: string;
+  let epciAEditeurId: string;
+  let epciBAdminId: string;
+  let adminDeuxEpciId: string;
 
   const notificationsPour = async (notifiedOn: NotifiedOn, entityId: string) =>
     db.db
@@ -93,6 +107,47 @@ describe('Notifications des démarches PCAET', () => {
           eq(notificationTable.entityId, entityId)
         )
       );
+
+  type Notifications = Awaited<ReturnType<typeof notificationsPour>>;
+
+  const destinationDe = (n: Notifications[number]) => {
+    const data = n.notificationData as {
+      copieDemandeAvisId?: number;
+      couverteCollectiviteId?: number;
+    };
+    if (data.copieDemandeAvisId !== undefined) {
+      return { type: 'copie' } as const;
+    }
+    if (data.couverteCollectiviteId !== undefined) {
+      return {
+        type: 'couvert',
+        collectiviteId: data.couverteCollectiviteId,
+      } as const;
+    }
+    return { type: 'porteur' } as const;
+  };
+
+  const couvertsDe = (notifications: Notifications) =>
+    notifications
+      .flatMap((n) => {
+        const destination = destinationDe(n);
+        return destination.type === 'couvert'
+          ? [{ sendTo: n.sendTo, collectiviteId: destination.collectiviteId }]
+          : [];
+      })
+      .sort((a, b) => a.sendTo.localeCompare(b.sendTo));
+
+  /**
+   * Ni l'administrateur de la déposante, déjà prévenu au titre du porteur, ni
+   * l'éditeur. L'administrateur des deux EPCI l'est au titre du premier par
+   * ordre de nom.
+   */
+  const couvertsAttendus = () =>
+    [
+      { sendTo: epciAAdminId, collectiviteId: epciAId },
+      { sendTo: adminDeuxEpciId, collectiviteId: epciAId },
+      { sendTo: epciBAdminId, collectiviteId: epciBId },
+    ].sort((a, b) => a.sendTo.localeCompare(b.sendTo));
 
   beforeAll(async () => {
     sendEmail.mockResolvedValue({
@@ -146,6 +201,65 @@ describe('Notifications des démarches PCAET', () => {
       { demarcheId, userId: piloteId, createdBy: deposanteAdminId },
       { demarcheId, userId: deposanteAdminId, createdBy: deposanteAdminId },
     ]);
+
+    // Deux EPCI couverts. L'administrateur de la déposante administre aussi le
+    // premier ; un autre administre les deux ; un éditeur n'est pas notifié.
+    const epciA = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        natureInsee: 'CC',
+        regionCode,
+        departementCode,
+        nom: 'CC A test notifications',
+      },
+    });
+    const epciB = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+      collectivite: {
+        natureInsee: 'CC',
+        regionCode,
+        departementCode,
+        nom: 'CC B test notifications',
+      },
+    });
+    cleanups.push(epciA.cleanup, epciB.cleanup);
+    epciAId = epciA.collectivite.id;
+    epciBId = epciB.collectivite.id;
+    epciAAdminId = epciA.user.id;
+    epciBAdminId = epciB.user.id;
+    const { user: adminDeuxEpci, cleanup: adminDeuxEpciCleanup } =
+      await addTestUser(db, {
+        collectiviteId: epciBId,
+        role: CollectiviteRole.ADMIN,
+      });
+    const { user: epciAEditeur, cleanup: epciAEditeurCleanup } =
+      await addTestUser(db, {
+        collectiviteId: epciAId,
+        role: CollectiviteRole.EDITION,
+      });
+    cleanups.push(adminDeuxEpciCleanup, epciAEditeurCleanup);
+    adminDeuxEpciId = adminDeuxEpci.id;
+    epciAEditeurId = epciAEditeur.id;
+    await db.db.insert(utilisateurCollectiviteAccessTable).values(
+      [deposanteAdminId, adminDeuxEpciId].map((userId) => ({
+        userId,
+        collectiviteId: epciAId,
+        isActive: true,
+        role: CollectiviteRole.ADMIN,
+      }))
+    );
+    cleanups.push(async () => {
+      await db.db
+        .delete(utilisateurCollectiviteAccessTable)
+        .where(eq(utilisateurCollectiviteAccessTable.collectiviteId, epciAId));
+    });
+    await db.db.insert(demarchePcaetCollectiviteCouverteTable).values(
+      [epciAId, epciBId].map((collectiviteId) => ({
+        demarcheId,
+        collectiviteId,
+        createdBy: deposanteAdminId,
+      }))
+    );
 
     // La DREAL couvrante : deux agents, dont un simple lecteur.
     const dreal = await addTestCollectiviteAndUser(db, {
@@ -379,14 +493,28 @@ describe('Notifications des démarches PCAET', () => {
         NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
         avisRegionId
       );
-      const copies = copiesDe(notifications);
 
       expect(
         notifications
-          .filter((n) => !copies.includes(n))
+          .filter((n) => destinationDe(n).type === 'porteur')
           .map((n) => n.sendTo)
           .sort()
       ).toEqual([piloteId, deposanteAdminId].sort());
+    });
+
+    it('prévient une fois chaque administrateur des EPCI couverts', async () => {
+      const notifications = await notificationsPour(
+        NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
+        avisRegionId
+      );
+
+      expect(couvertsDe(notifications)).toEqual(couvertsAttendus());
+      expect(notifications.map((n) => n.sendTo)).not.toContain(epciAEditeurId);
+      // L'administrateur commun au porteur et à un EPCI n'a que le message du
+      // porteur.
+      expect(
+        notifications.filter((n) => n.sendTo === deposanteAdminId)
+      ).toHaveLength(1);
     });
 
     it('met la DREAL et la DGEC en copie, chacune vers son dossier', async () => {
@@ -451,6 +579,17 @@ describe('Notifications des démarches PCAET', () => {
   });
 
   describe("à la clôture de l'instruction", () => {
+    it('prévient une fois chaque administrateur des EPCI couverts', async () => {
+      expect(
+        couvertsDe(
+          await notificationsPour(
+            NotifiedOnEnum['DEMARCHES.PCAET.INSTRUCTION_CLOSE'],
+            String(demarcheId)
+          )
+        )
+      ).toEqual(couvertsAttendus());
+    });
+
     it('annonce le dossier instruit, en disant pourquoi, avec la DREAL en copie', async () => {
       // La DREAL était le dernier service attendu : son avis validé a clos
       // l'instruction dans la foulée.
@@ -461,6 +600,7 @@ describe('Notifications des démarches PCAET', () => {
 
       expect(
         notifications
+          .filter((n) => destinationDe(n).type !== 'couvert')
           .map((n) => ({
             sendTo: n.sendTo,
             copieDemandeAvisId: (
@@ -486,6 +626,66 @@ describe('Notifications des démarches PCAET', () => {
     });
   });
 
+  describe("le message à l'EPCI couvert", () => {
+    // Le générateur appelé directement : l'envoi est global, un spec voisin
+    // pourrait servir ces notifications avant nous.
+    const htmlPour = async (
+      getContent: (
+        notification: Notifications[number]
+      ) => Promise<GetNotificationContentResult>,
+      notification: Notifications[number]
+    ) => {
+      const result = await getContent(notification);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return render(result.data.content);
+    };
+    const notificationDe = async (notifiedOn: NotifiedOn, entityId: string) => {
+      const notification = (await notificationsPour(notifiedOn, entityId)).find(
+        (n) => n.sendTo === epciBAdminId
+      );
+      if (!notification) {
+        throw new Error("L'EPCI couvert n'a pas été notifié");
+      }
+      return notification;
+    };
+
+    it("mène aux avis du dépôt, sous l'identifiant du porteur", async () => {
+      const service = app.get(NotifyAvisRecuService);
+      const html = await htmlPour(
+        (n) => service['getContent'](n),
+        await notificationDe(
+          NotifiedOnEnum['DEMARCHES.PCAET.AVIS_RECU'],
+          avisRegionId
+        )
+      );
+
+      expect(html).toContain(
+        `/collectivite/${deposanteId}/demarche-pcaet/${demarcheId}/documents`
+      );
+      expect(html).toContain('Agglo test notifications');
+      expect(html).toContain('CC B test notifications');
+    });
+
+    it("mène au dépôt en lecture seule, sous l'identifiant du porteur", async () => {
+      const service = app.get(NotifyInstructionCloseService);
+      const html = await htmlPour(
+        (n) => service['getContent'](n),
+        await notificationDe(
+          NotifiedOnEnum['DEMARCHES.PCAET.INSTRUCTION_CLOSE'],
+          String(demarcheId)
+        )
+      );
+
+      expect(html).toContain(
+        `/collectivite/${deposanteId}/demarche-pcaet/${demarcheId}"`
+      );
+      expect(html).toContain('Consulter le dépôt');
+      expect(html).toContain('CC B test notifications');
+    });
+  });
+
   describe("à l'envoi", () => {
     it('marque envoyées toutes les notifications, copies comprises', async () => {
       // `sent` est la preuve que les générateurs sont enregistrés : sans eux,
@@ -500,6 +700,9 @@ describe('Notifications des démarches PCAET', () => {
         regionAdminId,
         dgecMembreId,
         ...membresDrealIds,
+        epciAAdminId,
+        epciBAdminId,
+        adminDeuxEpciId,
       ];
 
       await db.db
@@ -544,8 +747,10 @@ describe('Notifications des démarches PCAET', () => {
       // celui de la DGEC (4). Avis du conseil régional : pilote et
       // administrateur, copies aux deux agents DREAL et à la DGEC (5). Avis de
       // la DREAL : pilote, administrateur, copie à la DGEC (3). Clôture :
-      // pilote, administrateur, copies aux deux agents DREAL (4).
-      expect(miennes).toHaveLength(16);
+      // pilote, administrateur, copies aux deux agents DREAL (4). Les trois
+      // administrateurs d'EPCI couverts reçoivent les deux avis et la clôture
+      // (9).
+      expect(miennes).toHaveLength(25);
       for (const notification of miennes) {
         expect(notification.status).toBe(NotificationStatusEnum.SENT);
         expect(notification.sentToEmail).toBeTruthy();
