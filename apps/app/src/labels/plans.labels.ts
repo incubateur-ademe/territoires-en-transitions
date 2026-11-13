@@ -156,6 +156,13 @@ export const plansLabels = {
     dechets: 'Déchets',
     industrie_hors_branche_energie: 'Industrie hors branche énergie',
     branche_energie: 'Branche énergie',
+    amenagement: 'Aménagement',
+    biodiversite: 'Biodiversité',
+    eau: 'Eau',
+    foret_et_sols: 'Forêt et sols',
+    economie: 'Économie',
+    sante: 'Santé',
+    risques_naturels: 'Risques naturels',
   } satisfies Record<SecteurReglementaire, string>,
   ficheInstanceGouvernance: plural({
     one: 'Instance de gouvernance',

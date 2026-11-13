@@ -68,7 +68,7 @@ export const buildSecteursPrompt = ({
       ? 'un plan climat-air-énergie territorial (PCAET)'
       : 'un plan d’action territorial',
     contexte: withSecteurs
-      ? 'Le programme d’actions d’un PCAET porte sur les secteurs d’activité définis par la réglementation (article R. 229-52 du code de l’environnement, arrêté du 4 août 2016). '
+      ? 'Le programme d’actions d’un PCAET porte sur les secteurs d’activité définis par la réglementation (article R. 229-52 du code de l’environnement, arrêté du 4 août 2016) et sur des thématiques d’aménagement, d’environnement, d’économie, de santé et de risques. '
       : '',
     objectif: objectifs.join(', ainsi que '),
     consignes: [
