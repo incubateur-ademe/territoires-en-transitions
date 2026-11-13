@@ -1,0 +1,83 @@
+name: Synchronisation Grist Électrification
+run-name: Électrification — ${{ inputs.mode }} ${{ inputs.kind }} sur ${{ inputs.target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Environnement cible
+        required: true
+        default: preprod
+        options: [staging, preprod, prod]
+      kind:
+        type: choice
+        description: Jeu de données à synchroniser
+        required: true
+        options: [catalogue, laureats]
+      mode:
+        type: choice
+        description: Vérifier seulement ou publier après vérification
+        required: true
+        default: verify
+        options: [verify, publish]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-electrification-data-${{ inputs.target }}
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  sync:
+    name: Vérification et publication des données
+    environment: ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Vérifier la révision sélectionnée
+        run: |
+          if [ ! -f apps/backend/src/plans/plans/electrification/sync-electrification-data/sync-electrification-data.script.ts ]; then
+            echo "::error::La révision sélectionnée ne contient pas la synchronisation Grist. Choisissez une branche qui la contient dans Run workflow."
+            exit 1
+          fi
+
+      - uses: ./.github/actions/node/pnpm-prepare
+        with:
+          bryntum-access-token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - name: Build du backend
+        run: pnpm nx build backend
+
+      - name: Synchronisation depuis Grist
+        env:
+          NODE_ENV: production
+          SUPABASE_DATABASE_URL: ${{ secrets.DB_URL }}
+          SUPABASE_DATABASE_SSL_ROOT_CERT: ${{ secrets.SUPABASE_DATABASE_SSL_ROOT_CERT }}
+          SUPABASE_URL: ${{ secrets.API_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GRIST_API_KEY: ${{ secrets.GRIST_API_KEY }}
+          ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID: ${{ vars.ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID }}
+          DATA_KIND: ${{ inputs.kind }}
+          SYNC_MODE: ${{ inputs.mode }}
+        run: |
+          for required in SUPABASE_DATABASE_URL SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY GRIST_API_KEY; do
+            if [ -z "${!required}" ]; then
+              echo "::error::Secret manquant dans l'environnement cible : $required"
+              exit 1
+            fi
+          done
+          if [ "$DATA_KIND" = "laureats" ] && [ -z "$ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID" ]; then
+            echo "::error::Variable manquante dans l'environnement cible : ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID"
+            exit 1
+          fi
+          node apps/backend/dist/plans/plans/electrification/sync-electrification-data/sync-electrification-data.script.js \
+            --kind "$DATA_KIND" --mode "$SYNC_MODE" \
+            --actor "$GITHUB_ACTOR" \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
