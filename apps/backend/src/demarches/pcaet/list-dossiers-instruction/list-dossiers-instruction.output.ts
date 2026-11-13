@@ -149,6 +149,11 @@ export const listDossiersInstructionOutputSchema = z.object({
   /** Nombre de lignes après filtrage, ce que pagine l'écran. */
   total: z.number().int(),
   /**
+   * Aucun nom ne contenait la recherche telle quelle : les lignes rendues la
+   * reconnaissent à quelques fautes de frappe près, ce que l'écran signale.
+   */
+  isRechercheApprochee: z.boolean(),
+  /**
    * Nombre de lignes du périmètre, filtres ignorés.
    *
    * Ce qui distingue « ce service n'a rien à instruire » de « ces filtres-ci ne

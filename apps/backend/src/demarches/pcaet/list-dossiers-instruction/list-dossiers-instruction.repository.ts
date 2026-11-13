@@ -124,6 +124,10 @@ export type DossiersCouverts = {
   perimetreRegions: PerimetreRegion[];
 };
 
+export type DossiersCouvertsWithCollectivitesCouvertes = DossiersCouverts & {
+  couvertesParDemarche: Map<number, CollectiviteCouverteRow[]>;
+};
+
 @Injectable()
 export class ListDossiersInstructionRepository {
   private readonly logger = new Logger(ListDossiersInstructionRepository.name);
@@ -393,6 +397,37 @@ export class ListDossiersInstructionRepository {
         ListDossiersInstructionErrorEnum.LIST_DOSSIERS_INSTRUCTION_ERROR
       );
     }
+  }
+
+  /**
+   * Le territoire d'un service et, pour chaque dépôt de Supra, les EPCI qu'il
+   * couvre : ce que partagent la liste d'instruction et sa recherche, qui ne
+   * doivent pas diverger sur ce qu'est un EPCI couvert.
+   */
+  async listDossiersCouvertsWithCollectivitesCouvertes(
+    instructeurCollectiviteId: number,
+    tx?: Transaction
+  ): Promise<
+    Result<
+      DossiersCouvertsWithCollectivitesCouvertes,
+      ListDossiersInstructionError
+    >
+  > {
+    const result = await this.listDossiersCouverts(
+      instructeurCollectiviteId,
+      tx
+    );
+    if (!result.success) {
+      return result;
+    }
+    const couvertesParDemarche =
+      await this.listCollectivitesCouvertesParDemarche(
+        result.data.rows.flatMap((row) =>
+          row.demarcheId === null ? [] : [row.demarcheId]
+        ),
+        tx
+      );
+    return success({ ...result.data, couvertesParDemarche });
   }
 
   /** Les EPCI que couvre chaque dépôt de Supra, par nom. */

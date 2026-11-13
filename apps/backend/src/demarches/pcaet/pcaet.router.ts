@@ -17,6 +17,7 @@ import { GetDiagnosticInstructionRouter } from './get-diagnostic-instruction/get
 import { GetDossierDocumentUrlRouter } from './get-dossier-document-url/get-dossier-document-url.router';
 import { GetDossierInstructionRouter } from './get-dossier-instruction/get-dossier-instruction.router';
 import { ListAvisRecusRouter } from './list-avis-recus/list-avis-recus.router';
+import { ListCollectivitesSuiviesRouter } from './list-collectivites-suivies/list-collectivites-suivies.router';
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDemarchesPcaetRouter } from './list-demarches-pcaet/list-demarches-pcaet.router';
 import { ListDemarchesCouvrantesRouter } from './list-demarches-couvrantes/list-demarches-couvrantes.router';
@@ -44,6 +45,7 @@ export class PcaetRouter {
     private readonly getPublicDemarchePcaetRouter: GetPublicDemarchePcaetRouter,
     private readonly getPublicDiagnosticRouter: GetPublicDiagnosticRouter,
     private readonly listDossiersInstructionRouter: ListDossiersInstructionRouter,
+    private readonly listCollectivitesSuiviesRouter: ListCollectivitesSuiviesRouter,
     private readonly getDossierInstructionRouter: GetDossierInstructionRouter,
     private readonly getContexteInstructionRouter: GetContexteInstructionRouter,
     private readonly getAvisFileUrlRouter: GetAvisFileUrlRouter,
@@ -80,6 +82,7 @@ export class PcaetRouter {
     this.getPublicDemarchePcaetRouter.router,
     this.getPublicDiagnosticRouter.router,
     this.listDossiersInstructionRouter.router,
+    this.listCollectivitesSuiviesRouter.router,
     this.getDossierInstructionRouter.router,
     this.getContexteInstructionRouter.router,
     this.getAvisFileUrlRouter.router,

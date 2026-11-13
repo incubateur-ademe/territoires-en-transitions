@@ -103,6 +103,8 @@ import { ReferentsPcaetRepository } from './referents/referents-pcaet.repository
 import { RemoveReferentRouter } from './referents/remove-referent/remove-referent.router';
 import { RemoveReferentService } from './referents/remove-referent/remove-referent.service';
 import { ListAvisRecusService } from './list-avis-recus/list-avis-recus.service';
+import { ListCollectivitesSuiviesRouter } from './list-collectivites-suivies/list-collectivites-suivies.router';
+import { ListCollectivitesSuiviesService } from './list-collectivites-suivies/list-collectivites-suivies.service';
 import { ListDossiersInstructionRepository } from './list-dossiers-instruction/list-dossiers-instruction.repository';
 import { ListDossiersInstructionRouter } from './list-dossiers-instruction/list-dossiers-instruction.router';
 import { ListDossiersInstructionService } from './list-dossiers-instruction/list-dossiers-instruction.service';
@@ -262,6 +264,8 @@ import { TrackSnapshotService } from './track-snapshot/track-snapshot.service';
     ListDossiersInstructionRepository,
     ListDossiersInstructionService,
     ListDossiersInstructionRouter,
+    ListCollectivitesSuiviesService,
+    ListCollectivitesSuiviesRouter,
     CollectiviteContactsRepository,
     GetDossierInstructionService,
     ListAvisRecusService,

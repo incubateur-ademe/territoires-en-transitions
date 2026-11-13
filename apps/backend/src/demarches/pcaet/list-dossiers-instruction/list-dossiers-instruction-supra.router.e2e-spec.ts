@@ -1,27 +1,14 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  addTestCollectivite,
-  addTestCollectiviteAndUser,
-  cleanupCollectiviteDemarches,
-} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/models/collectivite-relations.table';
-import {
-  getAuthUserFromUserCredentials,
-  getTestApp,
-  getTestDatabase,
-} from '@tet/backend/test';
+import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   CollectivitePcaetObligationEnum,
   PcaetPerimetreSaisineEnum,
   PcaetStatutInstructionEnum,
-  SEUIL_POPULATION_PCAET,
   TypePorteurSupraEnum,
 } from '@tet/domain/demarches';
-import { CollectiviteRole } from '@tet/domain/users';
-import { onTestFinished } from 'vitest';
-import { pickFreeRegionCode } from '../demarches-pcaet.test-fixture';
+import { addTestDepotSupraVoisin } from '../demarches-pcaet.test-fixture';
 import { PcaetInstructeursRepository } from '../shared/pcaet-instructeurs.repository';
 
 describe('Les services de l’État voient le Supra et ses EPCI couverts', () => {
@@ -39,83 +26,9 @@ describe('Les services de l’État voient le Supra et ses EPCI couverts', () =>
     };
   });
 
-  /**
-   * Une DREAL, un Supra **hors** de sa région, et deux EPCI membres : l'un dans
-   * la région de la DREAL, l'autre chez le Supra. Le dépôt du Supra couvre les
-   * deux.
-   */
-  const addDepotSupraVoisin = async () => {
-    const regionDreal = await pickFreeRegionCode(db, 'dreal');
-    const dreal = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
-      collectivite: {
-        type: 'dreal',
-        regionCode: regionDreal,
-        nom: 'DREAL test Supra voisin',
-      },
-    });
-    // La DREAL prend sa région : la suivante tirée est forcément une autre.
-    const regionSupra = await pickFreeRegionCode(db, 'dreal');
-
-    const supra = await addTestCollectiviteAndUser(db, {
-      user: { role: CollectiviteRole.ADMIN },
-      collectivite: {
-        natureInsee: 'PETR',
-        regionCode: regionSupra,
-        nom: 'PETR test du voisinage',
-      },
-    });
-    const epciChezLaDreal = await addTestCollectivite(db, {
-      nom: 'CC test chez la DREAL',
-      natureInsee: 'CC',
-      regionCode: regionDreal,
-      population: SEUIL_POPULATION_PCAET + 1,
-    });
-    const epciChezLeSupra = await addTestCollectivite(db, {
-      nom: 'CC test chez le Supra',
-      natureInsee: 'CC',
-      regionCode: regionSupra,
-      population: 1000,
-    });
-    onTestFinished(async () => {
-      // `demarche.created_by` retient l'utilisateur : les démarches partent
-      // avant lui.
-      await cleanupCollectiviteDemarches(db, supra.collectivite.id);
-      await supra.cleanup();
-      await epciChezLaDreal.cleanup();
-      await epciChezLeSupra.cleanup();
-      await dreal.cleanup();
-    });
-
-    await db.db.insert(collectiviteRelationsTable).values([
-      { id: epciChezLaDreal.collectivite.id, parentId: supra.collectivite.id },
-      { id: epciChezLeSupra.collectivite.id, parentId: supra.collectivite.id },
-    ]);
-    const depot = await router
-      .createCaller({ user: getAuthUserFromUserCredentials(supra.user) })
-      .demarches.pcaet.create({
-        collectiviteId: supra.collectivite.id,
-        collectivitesCouvertesIds: [
-          epciChezLaDreal.collectivite.id,
-          epciChezLeSupra.collectivite.id,
-        ],
-      });
-
-    return {
-      dreal,
-      drealCaller: router.createCaller({
-        user: getAuthUserFromUserCredentials(dreal.user),
-      }),
-      supra: supra.collectivite,
-      epciChezLaDreal: epciChezLaDreal.collectivite,
-      epciChezLeSupra: epciChezLeSupra.collectivite,
-      depot,
-    };
-  };
-
   it('montre le dépôt du Supra, ses EPCI en sous-lignes, et retire l’EPCI des lignes de tête', async () => {
     const { dreal, drealCaller, supra, epciChezLaDreal, epciChezLeSupra } =
-      await addDepotSupraVoisin();
+      await addTestDepotSupraVoisin({ db, router });
 
     const { items, countByStatut } =
       await drealCaller.demarches.pcaet.listDossiersInstruction({
@@ -150,7 +63,7 @@ describe('Les services de l’État voient le Supra et ses EPCI couverts', () =>
 
   it('filtre le groupe sur le département de ses EPCI couverts', async () => {
     const { dreal, drealCaller, supra, epciChezLaDreal } =
-      await addDepotSupraVoisin();
+      await addTestDepotSupraVoisin({ db, router });
 
     const { items } = await drealCaller.demarches.pcaet.listDossiersInstruction(
       {
@@ -168,8 +81,73 @@ describe('Les services de l’État voient le Supra et ses EPCI couverts', () =>
     ]);
   });
 
+  it('ramène le dépôt du Supra avec le seul EPCI couvert choisi', async () => {
+    const { dreal, drealCaller, supra, epciChezLeSupra } =
+      await addTestDepotSupraVoisin({ db, router });
+
+    const { items } = await drealCaller.demarches.pcaet.listDossiersInstruction(
+      {
+        collectiviteId: dreal.collectivite.id,
+        statuts: [],
+        collectiviteIds: [epciChezLeSupra.id],
+      }
+    );
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      collectivite: { id: supra.id },
+      collectivitesCouvertes: [{ id: epciChezLeSupra.id }],
+    });
+  });
+
+  it('tolère une faute de frappe à défaut de nom exact, et le signale', async () => {
+    const { dreal, drealCaller, supra } = await addTestDepotSupraVoisin({
+      db,
+      router,
+    });
+    const lister = (recherche: string) =>
+      drealCaller.demarches.pcaet.listDossiersInstruction({
+        collectiviteId: dreal.collectivite.id,
+        statuts: [],
+        recherche,
+      });
+
+    const exacte = await lister('voisinage');
+    expect(exacte.isRechercheApprochee).toBe(false);
+    expect(exacte.items.map(({ collectivite }) => collectivite.id)).toEqual([
+      supra.id,
+    ]);
+
+    // « voisinage » amputé d'une lettre : aucun nom ne le contient tel quel.
+    const approchee = await lister('voisnage');
+    expect(approchee.isRechercheApprochee).toBe(true);
+    expect(approchee.items.map(({ collectivite }) => collectivite.id)).toEqual([
+      supra.id,
+    ]);
+  });
+
+  it('ne se rabat pas sur l’approchant quand un nom exact est écarté par un autre filtre', async () => {
+    const { dreal, drealCaller } = await addTestDepotSupraVoisin({
+      db,
+      router,
+    });
+
+    // Le dépôt est en élaboration : le filtre « en instruction » l'écarte.
+    const result = await drealCaller.demarches.pcaet.listDossiersInstruction({
+      collectiviteId: dreal.collectivite.id,
+      statuts: [PcaetStatutInstructionEnum.EN_INSTRUCTION],
+      recherche: 'voisinage',
+    });
+
+    expect(result.items).toEqual([]);
+    expect(result.isRechercheApprochee).toBe(false);
+  });
+
   it('ouvre le dépôt en élaboration au service qui ne couvre qu’un EPCI membre', async () => {
-    const { drealCaller, depot } = await addDepotSupraVoisin();
+    const { drealCaller, depot } = await addTestDepotSupraVoisin({
+      db,
+      router,
+    });
 
     await expect(
       drealCaller.demarches.pcaet.getDossierInstruction({
@@ -179,7 +157,10 @@ describe('Les services de l’État voient le Supra et ses EPCI couverts', () =>
   });
 
   it('saisit à la transmission, en secondaire, le service d’un EPCI couvert', async () => {
-    const { dreal, supra, depot } = await addDepotSupraVoisin();
+    const { dreal, supra, depot } = await addTestDepotSupraVoisin({
+      db,
+      router,
+    });
     const instructeurs = app.get(PcaetInstructeursRepository);
 
     const sansLeDepot = await instructeurs.listInstructeursCouvrants(supra.id);

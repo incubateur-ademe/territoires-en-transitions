@@ -44,6 +44,17 @@ export const listDossiersInstructionInputSchema = z.object({
    * suit ses dossiers département par département.
    */
   departementCodes: z.string().array().optional(),
+  /**
+   * Les collectivités choisies parmi les suggestions de recherche. Un porteur
+   * choisi garde tout son groupe ; un EPCI couvert choisi ramène le dépôt de son
+   * Supra, avec lui seul en sous-ligne.
+   */
+  collectiviteIds: z.number().int().positive().array().optional(),
+  /**
+   * Nom, même partiel, d'une collectivité ou de la structure porteuse. Sans
+   * égard aux accents ni à la ponctuation ; à défaut de nom qui la contienne,
+   * avec quelques fautes de frappe tolérées — voir `isRechercheApprochee`.
+   */
   recherche: z.string().trim().min(1).optional(),
   /**
    * Par défaut, la priorité : les dossiers en instruction d'abord. Ce n'est le

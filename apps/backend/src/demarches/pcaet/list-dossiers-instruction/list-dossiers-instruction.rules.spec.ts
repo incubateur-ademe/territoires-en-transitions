@@ -8,6 +8,7 @@ import type { DossierInstructionLigne } from './list-dossiers-instruction.output
 import {
   estRetenue,
   filtrerLigne,
+  hasExactNameMatch,
   listerDepartements,
   trierDossiers,
 } from './list-dossiers-instruction.rules';
@@ -55,6 +56,7 @@ const AUCUN_FILTRE = {
   obligations: undefined,
   regionCodes: undefined,
   departementCodes: undefined,
+  collectiviteIds: undefined,
   recherche: undefined,
 };
 
@@ -98,6 +100,7 @@ describe('estRetenue', () => {
         obligations: [],
         regionCodes: [],
         departementCodes: [],
+        collectiviteIds: [],
         recherche: undefined,
       })
     ).toBe(true);
@@ -202,6 +205,29 @@ describe('estRetenue', () => {
         recherche: 'metz',
       })
     ).toBe(false);
+  });
+
+  it('trouve un nom partiel, sans égard aux accents ni à la ponctuation', () => {
+    const dossier = ligne({ nom: 'Saint-Étienne Métropole' });
+    for (const recherche of ['etienne', 'SAINT ETIENNE', 'saint-étienne mét']) {
+      expect(estRetenue(dossier, { ...AUCUN_FILTRE, recherche })).toBe(true);
+    }
+    expect(
+      estRetenue(dossier, { ...AUCUN_FILTRE, recherche: 'saint etiennes' })
+    ).toBe(false);
+  });
+
+  it('ne tolère les fautes de frappe que sur demande', () => {
+    const dossier = ligne({ nom: 'Montpellier Méditerranée Métropole' });
+    const filtres = { ...AUCUN_FILTRE, recherche: 'monpellier' };
+    expect(filtrerLigne(dossier, filtres)).toBeNull();
+    expect(filtrerLigne(dossier, filtres, { allowTypos: true })).not.toBeNull();
+  });
+
+  it('ne filtre rien sur une recherche faite de ponctuation', () => {
+    expect(estRetenue(ligne(), { ...AUCUN_FILTRE, recherche: ' - ' })).toBe(
+      true
+    );
   });
 });
 
@@ -440,6 +466,58 @@ describe('filtrerLigne — le dépôt d’un Supra et ses EPCI couverts', () => 
         recherche: 'revel',
       })?.collectivitesCouvertes.map(({ nom }) => nom)
     ).toEqual(['CC Revel']);
+  });
+
+  it('une recherche partielle trouve le porteur comme l’EPCI couvert', () => {
+    expect(
+      filtrerLigne(groupe, { ...AUCUN_FILTRE, recherche: 'pays laura' })
+        ?.collectivitesCouvertes
+    ).toHaveLength(2);
+    expect(
+      filtrerLigne(groupe, {
+        ...AUCUN_FILTRE,
+        recherche: 'castelnau',
+      })?.collectivitesCouvertes.map(({ nom }) => nom)
+    ).toEqual(['CC Castelnaudary']);
+  });
+
+  it('une recherche approchante trouve l’EPCI couvert', () => {
+    expect(
+      filtrerLigne(
+        groupe,
+        { ...AUCUN_FILTRE, recherche: 'castelnodary' },
+        { allowTypos: true }
+      )?.collectivitesCouvertes.map(({ nom }) => nom)
+    ).toEqual(['CC Castelnaudary']);
+  });
+
+  it('le choix du porteur garde tout le groupe', () => {
+    expect(
+      filtrerLigne(groupe, {
+        ...AUCUN_FILTRE,
+        collectiviteIds: [groupe.collectivite.id],
+      })?.collectivitesCouvertes
+    ).toHaveLength(2);
+  });
+
+  it('le choix d’un EPCI couvert ramène le dépôt avec lui seul', () => {
+    const revel = groupe.collectivitesCouvertes[1];
+    expect(
+      filtrerLigne(groupe, { ...AUCUN_FILTRE, collectiviteIds: [revel.id] })
+        ?.collectivitesCouvertes
+    ).toEqual([revel]);
+  });
+
+  it('écarte le dépôt quand ni le porteur ni ses EPCI ne sont choisis', () => {
+    expect(
+      filtrerLigne(groupe, { ...AUCUN_FILTRE, collectiviteIds: [999] })
+    ).toBeNull();
+  });
+
+  it('reconnaît un nom exact, porteur ou EPCI couvert, sans faute de frappe', () => {
+    expect(hasExactNameMatch(groupe, 'lauragais')).toBe(true);
+    expect(hasExactNameMatch(groupe, 'revel')).toBe(true);
+    expect(hasExactNameMatch(groupe, 'castelnodary')).toBe(false);
   });
 
   it('liste aussi les départements des EPCI couverts', () => {
