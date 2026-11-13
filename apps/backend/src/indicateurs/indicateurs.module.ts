@@ -64,7 +64,7 @@ import { ImportTrajectoireSnbc3Service } from './trajectoires/import-snbc3/impor
 import { ImportTrajectoireSnbc3Worker } from './trajectoires/import-snbc3/import-trajectoire-snbc3.worker';
 import { Snbc3ReleaseStorageService } from './trajectoires/import-snbc3/snbc3-release-storage.service';
 import {
-  GitlabSnbc3ArtifactReader,
+  GithubSnbc3ArtifactReader,
   LocalSnbc3ArtifactReader,
   Snbc3ArtifactReader,
 } from './trajectoires/import-snbc3/snbc3-artifact.reader';
@@ -184,14 +184,12 @@ const DEFINITIONS_PROVIDERS = [
       provide: Snbc3ArtifactReader,
       inject: [ConfigurationService],
       useFactory: (config: ConfigurationService) => {
-        const localRepository = config.get(
-          'TRAJECTOIRE_SNBC3_LOCAL_REPOSITORY'
-        );
-        return localRepository
-          ? new LocalSnbc3ArtifactReader(localRepository)
-          : new GitlabSnbc3ArtifactReader({
+        const localReleases = config.get('TRAJECTOIRE_SNBC3_LOCAL_RELEASES');
+        return localReleases
+          ? new LocalSnbc3ArtifactReader(localReleases)
+          : new GithubSnbc3ArtifactReader({
               repositoryUrl: config.get('TRAJECTOIRE_SNBC3_REPOSITORY_URL'),
-              token: config.get('TRAJECTOIRE_SNBC3_GITLAB_TOKEN'),
+              token: config.get('TRAJECTOIRE_SNBC3_GITHUB_TOKEN'),
             });
       },
     },

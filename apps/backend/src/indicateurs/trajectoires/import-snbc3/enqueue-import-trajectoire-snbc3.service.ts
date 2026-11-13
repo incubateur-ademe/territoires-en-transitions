@@ -62,15 +62,13 @@ export class EnqueueImportTrajectoireSnbc3Service implements OnModuleInit {
       }
 
       if (input.collectiviteIds) {
+        // Sur la version seulement : le commit n'est connu qu'une fois le
+        // manifeste lu, le worker le vérifie.
         const imported = await this.storage.getReplayableRelease();
-        if (
-          !imported ||
-          !imported.commit.startsWith(input.commit) ||
-          imported.version !== input.version
-        ) {
+        if (!imported || imported.version !== input.version) {
           this.logger.warn(
-            `Rejeu partiel refusé : la release ${input.version}@${
-              input.commit
+            `Rejeu partiel refusé : la release ${
+              input.version
             } n'est pas la dernière importée (${
               imported ? `${imported.version}@${imported.commit}` : 'aucune'
             })`
@@ -117,7 +115,7 @@ export class EnqueueImportTrajectoireSnbc3Service implements OnModuleInit {
         return failure('SNBC3_IMPORT_ALREADY_RUNNING');
       }
       this.logger.log(
-        `Import SNBC 3 en file (job ${job.id}) : release ${input.version} du commit ${input.commit}`
+        `Import SNBC 3 en file (job ${job.id}) : release ${input.version}`
       );
       return success({ jobId: job.id });
     } catch (error) {

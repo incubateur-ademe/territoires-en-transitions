@@ -18,7 +18,7 @@ import { and, asc, eq, inArray } from 'drizzle-orm';
 
 export type Snbc3Millesime = {
   metadonneeId: number;
-  /** Date du commit `snbc3` importé (ADR 0023, §2). */
+  /** Date de publication de la release `snbc3` importée (ADR 0023, §2). */
   dateVersion: string;
 };
 

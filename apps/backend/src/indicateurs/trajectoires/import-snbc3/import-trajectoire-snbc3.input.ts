@@ -1,17 +1,11 @@
 import { z } from 'zod';
 
 export const importTrajectoireSnbc3InputSchema = z.object({
-  commit: z
-    .string()
-    .regex(/^[0-9a-f]{7,40}$/)
-    .describe(
-      'Commit du dépôt snbc3 qui publie la release ; sa date sert de millésime'
-    ),
   version: z
     .string()
     .regex(/^\d+(\.\d+)*$/)
     .describe(
-      'Version de la release, lue dans `releases/V<version>/` (ex. 2.1)'
+      'Version de la release GitHub v<version> du dépôt snbc3 (ex. 2.3) ; la date de publication de son manifeste sert de millésime'
     ),
   collectiviteIds: z
     .array(z.number().int())
@@ -27,9 +21,10 @@ export type ImportTrajectoireSnbc3Input = z.infer<
 >;
 
 export type ImportTrajectoireSnbc3Report = {
-  /** SHA complet du commit importé. */
+  /** SHA complet du commit `snbc3` noté dans le manifeste de la release. */
   commit: string;
   version: string;
+  /** Date de publication de la release (ISO, UTC). */
   dateVersion: string;
   metadonneeId: number;
   /** Territoires du parquet. */
@@ -69,8 +64,7 @@ export type Snbc3LastImport = {
   status: 'running' | 'done' | 'done_with_errors' | 'failed';
   startedAt: string;
   finishedAt?: string;
-  /** Commit et version demandés. */
-  commit: string;
+  /** Version demandée ; le commit, lu dans le manifeste, est dans le rapport. */
   version: string;
   /** Rejeu partiel : seules ces collectivités ont été réimportées. */
   collectiviteIds?: number[];

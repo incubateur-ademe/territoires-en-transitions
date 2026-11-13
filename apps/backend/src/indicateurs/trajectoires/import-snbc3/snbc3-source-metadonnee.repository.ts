@@ -17,7 +17,7 @@ import { and, asc, eq, inArray, isNotNull, or, sql } from 'drizzle-orm';
 const SNBC3_SOURCE_LIBELLE = 'SNBC3';
 
 export type Snbc3MetadonneeVersion = {
-  /** Date du commit `snbc3` importé. */
+  /** Date de publication de la release `snbc3` importée. */
   dateVersion: string;
 };
 

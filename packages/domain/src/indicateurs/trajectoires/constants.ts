@@ -9,7 +9,7 @@ export const VERSION_SNBC = 2;
 export const ANNEE_REFERENCE_SNBC_V3 = 2021;
 /**
  * Première année de la trajectoire SNBC 3. La date de version n'est pas une
- * constante : c'est la date du commit `snbc3` importé.
+ * constante : c'est la date de publication de la release `snbc3` importée.
  */
 export const DATE_DEBUT_SNBC_V3 = '2020-01-01';
 /** Dernière année de la trajectoire SNBC 3 (même horizon que la SNBC 2). */
