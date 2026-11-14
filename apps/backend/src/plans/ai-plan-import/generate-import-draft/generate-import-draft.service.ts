@@ -1,29 +1,10 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import {
-  MAX_FICHE_TITLE_LENGTH,
-  normalizeExtractedActions,
-} from '../adapters/extracted-action-to-import-action';
 import { EnqueueCompletePlanSecteursService } from '@tet/backend/plans/fiches/fiche-secteurs/complete-plan-secteurs/enqueue-complete-plan-secteurs.service';
-import { ImportPlanInput } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.input';
-import {
-  ImportErrors,
-  isClientError,
-  isImportError,
-} from '@tet/backend/plans/plans/import-plan-aggregate/import.errors';
-import { ImportPlanService } from '@tet/backend/plans/plans/import-plan-aggregate/import-plan.service';
 import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
-import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
-import { buildRequesterUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { LlmService } from '@tet/backend/utils/llm/llm.service';
-import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import { failure, success, Result } from '@tet/backend/utils/result.type';
 import { DocumentStorageService } from '@tet/backend/utils/supabase/document-storage.service';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import {
-  isFailedResult,
-  TransactionManager,
-} from '@tet/backend/utils/transaction/transaction-manager.service';
-import { getErrorMessage } from '@tet/domain/utils';
 import {
   AI_PLAN_IMPORT_SOURCE_BUCKET,
   EVENT_AI_PLAN_IMPORT_FAILED,
@@ -34,55 +15,27 @@ import {
 import {
   AiPlanImportErrorEnum,
   aiPlanImportErrorMessages,
-  type AiPlanImportError,
+  aiPlanImportJobErrorMessages,
+  AiPlanImportError,
 } from '../ai-plan-import.errors';
 import { AiPlanImportJobRepository } from '../ai-plan-import-job.repository';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
-import { ImportJobStats } from '../models/import-job-stats';
+import { AiPlanImportJob } from '../models/ai-plan-import-job';
 import {
-  computeContentMetrics,
-  sumLlmCallMetrics,
-} from '../pipeline/compute-import-metrics';
+  ImportCheckpoint,
+  isSupportedGenericImport,
+} from '../models/import-checkpoint';
+import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
+import { sumLlmCallMetrics } from '../pipeline/compute-import-metrics';
+import { GeneratedImport, ImportFailureOptions } from './generate-import.types';
+import { GenerateGenericImportService } from './generate-generic-import.service';
+import { ImportGenerationErrors } from './generate-import.errors';
 import { ImportJobTelemetry } from './import-job-telemetry';
 import {
   jobTrackingProperties,
   statsTrackingProperties,
   stepRunTrackingProperties,
 } from './import-job-tracking';
-import { AiPlanImportJob } from '../models/ai-plan-import-job';
-import {
-  ImportCheckpoint,
-  isSupportedGenericImport,
-} from '../models/import-checkpoint';
-import { PlanDraft } from '../models/plan-draft';
-import { NotifyPlanImportedService } from '../notify-plan-imported/notify-plan-imported.service';
-import { countPlanContent } from './count-plan-content';
-import { draftToImportPlanInput } from './draft-to-import-plan-input';
-import { buildLlmOcrPage } from '../pipeline/read-document/llm-ocr-page';
-import {
-  readDocument,
-  ReadDocumentError,
-} from '../pipeline/read-document/read-document';
-import { AI_PLAN_IMPORT_MAX_OCR_PAGES } from '../ai-plan-import.constants';
-import { ReadDocument } from '../pipeline/document/document-page';
-import {
-  describePipelineError,
-  isCheckpointUsableBy,
-  PipelineError,
-  runImportPipeline,
-  StepName,
-  StepStates,
-} from '../pipeline/run-import-pipeline';
-
-type FailureOptions = {
-  /** Passage de l'exécution : une exécution remplacée n'écrit plus rien. */
-  attempt?: number;
-  draft?: PlanDraft;
-  stepStates?: StepStates;
-  failedStep?: StepName;
-  stats?: ImportJobStats;
-  dropCheckpoint?: boolean;
-};
 
 export type GenerateImportDraftError =
   | { kind: 'transition_failed'; jobId: string; cause: AiPlanImportError }
@@ -97,14 +50,12 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     private readonly jobRepository: AiPlanImportJobRepository,
     private readonly documentStorage: DocumentStorageService,
     private readonly llm: LlmService,
-    private readonly importPlanService: ImportPlanService,
     private readonly planVerificationRepository: PlanVerificationRepository,
     private readonly notifyPlanImportedService: NotifyPlanImportedService,
-    private readonly transactionManager: TransactionManager,
     private readonly trackingService: TrackingService,
     private readonly enqueueCompletePlanSecteursService: EnqueueCompletePlanSecteursService,
     private readonly stepRunRepository: AiPlanImportStepRunRepository,
-    private readonly effetAttenduService: EffetAttenduService
+    private readonly generic: GenerateGenericImportService
   ) {}
 
   /** Sans tâche planifiée, chaque démarrage purge les points de reprise expirés. */
@@ -159,7 +110,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     try {
       return await this.runPipeline(job, checkpoint);
     } catch (error) {
-      const message = `Import interrompu: ${getErrorMessage(error)}`;
+      const message = ImportGenerationErrors.interrupted(error);
       await this.markFailed(jobId, message, 'interrupted', {
         attempt: job.attempt,
       });
@@ -200,7 +151,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
       failedStep,
       stats,
       dropCheckpoint,
-    }: FailureOptions = {}
+    }: ImportFailureOptions = {}
   ): Promise<Result<AiPlanImportJob, AiPlanImportError>> {
     const marked = await this.jobRepository.markFailed({
       id: jobId,
@@ -249,144 +200,26 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     job: AiPlanImportJob,
     checkpoint: Result<ImportCheckpoint | null, AiPlanImportError>
   ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const { attempt } = job;
     const telemetry = await this.buildTelemetry(job);
     if (!checkpoint.success) {
       return this.recordFailure(
         job.id,
-        "Lecture du point de reprise impossible : l'import n'a pas pu reprendre",
+        aiPlanImportJobErrorMessages.CHECKPOINT_UNREADABLE,
         'checkpoint_unreadable',
-        { attempt }
+        { attempt: job.attempt }
       );
     }
-    const usable =
-      checkpoint.data && isCheckpointUsableBy(checkpoint.data, this.llm)
-        ? checkpoint.data
-        : null;
-
-    let start:
-      | { document: ReadDocument; currentDate: string }
-      | { resumeFrom: ImportCheckpoint; currentDate: string };
-    if (usable) {
-      this.logger.log(
-        `Import ${job.id}: reprise après l'étape ${usable.completedStep}`
-      );
-      telemetry.restoreDocument(usable.documentStats);
-      start = {
-        resumeFrom: {
-          ...usable,
-          documentKind: usable.documentKind ?? usable.documentStats?.kind,
-        },
-        currentDate: usable.currentDate,
-      };
-    } else {
-      const source = await this.tryDownloadSource(job.sourcePath);
-      if (source === null) {
-        // Le document est supprimé dès le premier échec : un point de reprise
-        // d'un autre format ou d'un autre modèle ne peut plus servir.
-        return checkpoint.data
-          ? this.recordFailure(
-              job.id,
-              "Ce point de reprise ne correspond plus au modèle configuré : relancez l'import",
-              'checkpoint_unusable',
-              { attempt, dropCheckpoint: true }
-            )
-          : this.recordFailure(
-              job.id,
-              'Document source illisible depuis le stockage',
-              'source_unreadable',
-              { attempt }
-            );
-      }
-      if (checkpoint.data) {
-        this.logger.warn(
-          `Import ${job.id}: point de reprise inutilisable par le modèle configuré, reprise du document`
-        );
-      }
-
-      const ocrPage = buildLlmOcrPage(this.llm);
-      const document = await telemetry.measure(
-        'document',
-        () =>
-          readDocument(source, {
-            ocr: ocrPage
-              ? {
-                  ocrPage,
-                  policy: { maxOcrPages: AI_PLAN_IMPORT_MAX_OCR_PAGES },
-                }
-              : undefined,
-          }),
-        (read) =>
-          read.success
-            ? { status: 'ok', details: { ...read.data.stats } }
-            : { status: 'failed', error: read.error.kind }
-      );
-      if (!document.success) {
-        return this.recordFailure(
-          job.id,
-          readDocumentErrorMessage(document.error),
-          document.error.kind,
-          { attempt, stats: telemetry.stats() }
-        );
-      }
-      telemetry.setDocument(source, document.data);
-      start = {
-        document: document.data,
-        currentDate: new Date().toISOString(),
-      };
-    }
-
-    const effetsAttendus = await this.effetAttenduService.getEffetAttendu();
-    const outcome = await runImportPipeline(this.llm, {
-      ...start,
-      instructions: job.options.instructions,
-      disabledFields: job.options.disabledFields,
-      withVerifications: job.options.withVerifications,
-      withSousActions: job.options.withSousActions,
-      withSecteurs: job.options.withSecteurs ?? false,
-      effetsAttendus,
-      onStepStatesChange: async (stepStates) => {
-        await this.jobRepository.updateStepStates(job.id, attempt, stepStates);
-      },
-      onStepRun: (run) => telemetry.record(run),
-      onCheckpoint: async (pipelineCheckpoint) => {
-        const saved = await this.jobRepository.saveCheckpoint(job.id, attempt, {
-          ...pipelineCheckpoint,
-          documentStats: telemetry.documentStats(),
-        });
-        if (!saved.success) {
-          // L'import continue, mais ne pourra pas reprendre à cette étape.
-          this.logger.error(
-            `Import ${job.id}: point de reprise après ${pipelineCheckpoint.completedStep} non enregistré (${saved.error})`
-          );
-        }
-      },
-    });
-    telemetry.addWarnings(outcome.warnings.length);
-
-    for (const warning of outcome.warnings) {
-      this.logger.warn(`Import ${job.id}: ${warning}`);
-    }
-    if (outcome.status === 'failed') {
-      return this.recordFailure(
-        job.id,
-        pipelineErrorMessage(outcome.failedStep, outcome.error),
-        outcome.error.kind,
-        {
-          attempt,
-          stepStates: outcome.stepStates,
-          failedStep: outcome.failedStep,
-          stats: telemetry.stats(),
-        }
-      );
-    }
-
-    return this.persistDraftAsPlan(
+    const imported = await this.generic.generate(
       job,
-      outcome.draft,
-      outcome.stepStates,
+      checkpoint.data,
       telemetry
     );
+    if (!imported.success) {
+      const { message, reason, ...options } = imported.error;
+      return this.recordFailure(job.id, message, reason, options);
+    }
+    await this.afterCommit(job, imported.data);
+    return success(undefined);
   }
 
   /** Les passages précédents d'un import repris comptent dans son résumé. */
@@ -426,107 +259,11 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     );
   }
 
-  private async persistDraftAsPlan(
+  private async afterCommit(
     job: AiPlanImportJob,
-    draft: PlanDraft,
-    stepStates: StepStates,
-    telemetry: ImportJobTelemetry
-  ): Promise<Result<undefined, GenerateImportDraftError>> {
-    const {
-      actions,
-      truncatedCount,
-      duplicateCount,
-      removedDescriptionLines,
-      removedObjectifSousActions,
-    } = normalizeExtractedActions(draft.actions);
-    if (truncatedCount > 0) {
-      this.logger.warn(
-        `Import ${job.id}: ${truncatedCount} title(s) truncated to ${MAX_FICHE_TITLE_LENGTH} chars before plan creation`
-      );
-    }
-    if (duplicateCount > 0) {
-      this.logger.warn(
-        `Import ${job.id}: ${duplicateCount} duplicate action(s) skipped before plan creation`
-      );
-    }
-    if (removedDescriptionLines > 0 || removedObjectifSousActions > 0) {
-      this.logger.warn(
-        `Import ${job.id}: ${removedDescriptionLines} description line(s) and ${removedObjectifSousActions} sous-action(s) repeating another field removed before plan creation`
-      );
-    }
-
-    const normalizedDraft: PlanDraft = {
-      actions,
-      qualitativeReview: draft.qualitativeReview,
-    };
-    const planInput = draftToImportPlanInput({
-      actions,
-      planName: job.options.planName,
-      planType: job.options.planType,
-    });
-
-    telemetry.setContent({
-      ...computeContentMetrics(actions),
-      extracted: draft.actions.length,
-      duplicates: duplicateCount,
-      truncatedTitles: truncatedCount,
-      removedDescriptionLines,
-      removedObjectifSousActions,
-      scored: actions.filter((action) => action.confidence !== null).length,
-      improved: actions.filter((action) => action.confidence?.amelioree).length,
-      fichesCreated: planInput.actions.length,
-      hasQualitativeReview: draft.qualitativeReview !== null,
-    });
-    const stats = telemetry.stats();
-
-    const persist = () =>
-      this.transactionManager.executeSingle<number, string>(async (tx) => {
-        const planId = await this.createPlan(planInput, job, tx);
-        if (!planId.success) {
-          return planId;
-        }
-        // Job lancé avant que le plan ne soit créé à l'enfilement.
-        if (job.createdPlanId === null) {
-          await this.planVerificationRepository.markAsImporting(
-            planId.data,
-            tx
-          );
-        }
-        const marked = await this.planVerificationRepository.markAsImportedByAi(
-          planId.data,
-          tx
-        );
-        if (!marked.success) {
-          return failure('Marquage du plan importé impossible');
-        }
-        const done = await this.jobRepository.markDone({
-          id: job.id,
-          attempt: job.attempt,
-          draft: normalizedDraft,
-          stepStates,
-          createdPlanId: planId.data,
-          stats,
-          tx,
-        });
-        return done.success
-          ? success(planId.data)
-          : failure('Enregistrement du job terminé impossible');
-      });
-    const created = await telemetry.measure('persistence', persist, (result) =>
-      result.success
-        ? { status: 'ok', details: { fichesCreated: planInput.actions.length } }
-        : { status: 'failed', error: 'plan_creation_failed' }
-    );
-
-    if (!created.success) {
-      return this.recordFailure(job.id, created.error, 'plan_creation_failed', {
-        attempt: job.attempt,
-        draft: normalizedDraft,
-        stats,
-      });
-    }
-
-    const recap = countPlanContent(planInput);
+    created: GeneratedImport
+  ): Promise<void> {
+    const { planId, recap, stats } = created;
     this.trackingService.capture({
       distinctId: job.createdBy,
       event: EVENT_AI_PLAN_IMPORT_SUCCEEDED,
@@ -535,7 +272,7 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
         ...statsTrackingProperties(stats),
         collectiviteId: job.collectiviteId,
         jobId: job.id,
-        planId: created.data,
+        planId,
         ...recap,
         durationSeconds: secondsSince(job.createdAt),
         processingSeconds: job.startedAt
@@ -552,139 +289,29 @@ export class GenerateImportDraftService implements OnApplicationBootstrap {
     await this.notifyPlanImportedService.notifyPlanImported({
       createdBy: job.createdBy,
       collectiviteId: job.collectiviteId,
-      planId: created.data,
+      planId,
       planName: job.options.planName,
       recap,
     });
     await this.enqueueCompletePlanSecteursService.enqueue({
-      planIds: [created.data],
+      planIds: [planId],
       collectiviteId: job.collectiviteId,
       userId: job.createdBy,
     });
-    return success(undefined);
-  }
-
-  private async createPlan(
-    planInput: ImportPlanInput,
-    job: AiPlanImportJob,
-    tx: Transaction
-  ): Promise<Result<number, string>> {
-    try {
-      const saved = await this.importPlanService.save({
-        planInput,
-        collectiviteId: job.collectiviteId,
-        user: buildRequesterUser(job.createdBy),
-        planId: job.createdPlanId ?? undefined,
-        tx,
-      });
-      return saved.success
-        ? success(saved.data.planId)
-        : this.planCreationFailed(job.id, saved.error, saved.cause);
-    } catch (error) {
-      // Avec `tx` partagé, le TransactionManager relance son échec en
-      // exception : un Result, sans `message`.
-      return isFailedResult<ImportErrors>(error)
-        ? this.planCreationFailed(job.id, error.error, error.cause)
-        : this.planCreationFailed(job.id, null, error);
-    }
-  }
-
-  /**
-   * Le message du job est montré à l'utilisateur : il reste métier. La cause
-   * technique, noms de tables et de contraintes compris, ne va qu'aux journaux.
-   */
-  private planCreationFailed(
-    jobId: string,
-    error: ImportErrors | null,
-    cause: unknown
-  ): Result<never, string> {
-    const message = `Création du plan impossible : ${
-      error === null
-        ? 'erreur inattendue'
-        : isImportError(error) && !isClientError(error)
-        ? error._tag
-        : error.message ?? String(error)
-    }`;
-    this.logger.error(
-      `Import ${jobId}: ${message} (${getErrorMessage(
-        rootCause(cause ?? error)
-      )})`
-    );
-    return failure(message);
   }
 
   private async recordFailure(
     jobId: string,
     message: string,
     reason: string,
-    options: FailureOptions = {}
+    options: ImportFailureOptions = {}
   ): Promise<Result<undefined, GenerateImportDraftError>> {
     const marked = await this.markFailed(jobId, message, reason, options);
     return marked.success
       ? success(undefined)
       : failure({ kind: 'failure_record_failed', jobId, cause: marked.error });
   }
-
-  private async tryDownloadSource(
-    sourcePath: string
-  ): Promise<{ buffer: Buffer; mimeType: string } | null> {
-    const downloaded = await this.documentStorage.downloadDocument({
-      bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
-      key: sourcePath,
-    });
-    return downloaded.success ? downloaded.data : null;
-  }
 }
-
-const readDocumentErrorMessage = (error: ReadDocumentError): string => {
-  switch (error.kind) {
-    case 'unsupported_mime':
-      return `Type de fichier non supporté (${error.mimeType})`;
-    case 'empty_text':
-      return 'Document vide ou probablement scanné (aucun texte extractible)';
-    case 'parse_failed':
-      return 'Lecture du document impossible';
-    case 'timeout':
-      return 'Lecture du document trop longue';
-    case 'scanned_too_long':
-      return `Document scanné de ${error.scannedPages} pages : l'import en lit au plus ${error.maxOcrPages}, exportez le programme d'actions seul`;
-    case 'ocr_failed':
-      return `Lecture des pages scannées impossible (${
-        error.failedPages.length
-      } page(s) en échec : ${error.reasons.join(', ')})`;
-  }
-};
-
-/** Sous une erreur Drizzle, qui cite la requête, l'erreur Postgres. */
-const rootCause = (error: unknown): unknown => {
-  let current = error;
-  while (current instanceof Error && current.cause instanceof Error) {
-    current = current.cause;
-  }
-  return current;
-};
 
 const secondsSince = (isoDate: string): number =>
   Math.max(0, Math.round((Date.now() - new Date(isoDate).getTime()) / 1000));
-
-const WRONG_TOME_LABELS: Record<string, string> = {
-  evaluation_environnementale:
-    'une évaluation environnementale stratégique (EES)',
-  diagnostic: 'un diagnostic',
-};
-
-const pipelineErrorMessage = (
-  failedStep: StepName,
-  error: PipelineError
-): string => {
-  switch (error.kind) {
-    case 'document_too_long':
-      return `Document trop long pour l'import (${error.chunks} parties à analyser, ${error.maxChunks} au maximum) : importez-le en plusieurs fois`;
-    case 'wrong_document_tome':
-      return `Ce document semble être ${WRONG_TOME_LABELS[error.tome]} (« ${
-        error.evidence
-      } »), pas un programme d'actions : déposez le document qui contient les fiches actions`;
-    default:
-      return `Étape ${failedStep} en échec (${describePipelineError(error)})`;
-  }
-};

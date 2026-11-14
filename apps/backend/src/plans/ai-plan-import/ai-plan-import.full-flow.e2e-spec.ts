@@ -43,6 +43,7 @@ import {
   beforeAll,
   describe,
   expect,
+  MockInstance,
   onTestFinished,
   test,
   vi,
@@ -67,6 +68,10 @@ import { enrichmentResponseSchema } from './pipeline/enrich-sous-actions/enrich-
 import { extractionResponseSchema } from './pipeline/extract-actions/extract-actions.schema';
 import { GenerateImportDraftService } from './generate-import-draft/generate-import-draft.service';
 import { GenerateImportDraftWorker } from './generate-import-draft/generate-import-draft.worker';
+import { PlanVerificationRepository } from '@tet/backend/plans/plans/verify-plan/plan-verification.repository';
+import { AI_PLAN_IMPORT_SOURCE_BUCKET } from './ai-plan-import.constants';
+import { AiPlanImportErrorEnum } from './ai-plan-import.errors';
+import { initialStepStates } from './pipeline/run-import-pipeline';
 import { qualitativeReviewResponseSchema } from './pipeline/qualitative-review/qualitative-review.schema';
 import { scoringResponseSchema } from './pipeline/score-actions/score-actions.schema';
 import {
@@ -267,6 +272,7 @@ const csvSource = (suffix: string): Buffer =>
 
 describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   let app: INestApplication;
+  let globalQuota: MockInstance;
   let db: DatabaseService;
   let router: TrpcRouter;
   let collectiviteId: number;
@@ -424,6 +430,10 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
     });
     db = await getTestDatabase(app);
     router = await getTestRouter(app);
+    // Le parcours ne dépend pas des jobs en cours hors de cette application de test.
+    globalQuota = vi
+      .spyOn(app.get(AiPlanImportJobRepository), 'countInFlight')
+      .mockResolvedValue(success(0));
 
     const testCollectivite = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
@@ -456,6 +466,7 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
   });
 
   afterAll(async () => {
+    globalQuota?.mockRestore();
     await db.db
       .delete(notificationTable)
       .where(
@@ -968,6 +979,73 @@ describe("Import IA d'un plan - parcours complet", { timeout: 60_000 }, () => {
       });
     }
   });
+
+  test.each(['plan', 'job'] as const)(
+    'annule les fiches et conserve le plan en échec si la finalisation du %s échoue',
+    async (failedStep) => {
+      const planName = `Plan avec échec de finalisation ${failedStep}`;
+      const plan = await router
+        .createCaller({ user })
+        .plans.plans.create({ collectiviteId, nom: planName });
+      createdPlanIds.push(plan.id);
+      const verification = app.get(PlanVerificationRepository);
+      await verification.markAsImporting(plan.id);
+      const sourcePath = `${collectiviteId}/${plan.id}.csv`;
+      await app.get(DocumentStorageService).storeDocument({
+        bucketId: AI_PLAN_IMPORT_SOURCE_BUCKET,
+        key: sourcePath,
+        content: csvSource(planName),
+        contentType: 'text/csv',
+      });
+      const [job] = await db.db
+        .insert(aiPlanImportJobTable)
+        .values({
+          collectiviteId,
+          createdBy: user.id,
+          createdPlanId: plan.id,
+          sourcePath,
+          status: 'pending',
+          stepStates: initialStepStates(),
+          options: {
+            planName,
+            instructions: '',
+            withVerifications: false,
+            withSousActions: false,
+            disabledFields: [],
+          },
+        })
+        .returning();
+      createdJobIds.push(job.id);
+      const finalization =
+        failedStep === 'plan'
+          ? vi
+              .spyOn(verification, 'markAsImportedByAi')
+              .mockResolvedValueOnce(failure('VERIFY_PLAN_ERROR'))
+          : vi
+              .spyOn(app.get(AiPlanImportJobRepository), 'markDone')
+              .mockResolvedValueOnce(
+                failure(AiPlanImportErrorEnum.UPDATE_JOB_ERROR)
+              );
+      const notification = vi.spyOn(
+        app.get(NotifyPlanImportedService),
+        'notifyPlanImported'
+      );
+      const secteurJobsBefore = completePlanSecteursJobs.length;
+      onTestFinished(() => {
+        finalization.mockRestore();
+        notification.mockRestore();
+      });
+
+      await app.get(GenerateImportDraftService).generate(job.id);
+
+      expect(finalization).toHaveBeenCalledOnce();
+      expect(await readJob(job.id)).toMatchObject({ status: 'failed' });
+      expect(await readPlan(plan.id)).toMatchObject({ status: 'failed' });
+      expect(await fichesByTitreInPlan(plan.id, 'Action 1.1.1')).toEqual([]);
+      expect(notification).not.toHaveBeenCalled();
+      expect(completePlanSecteursJobs).toHaveLength(secteurJobsBefore);
+    }
+  );
 
   describe('reprise', () => {
     // La collectivité principale a déjà consommé son quota quotidien : ces

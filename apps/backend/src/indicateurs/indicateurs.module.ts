@@ -9,6 +9,7 @@ import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-indi
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
+import { AxeModule } from '../plans/axes/axe.module';
 import { FichesModule } from '../plans/fiches/fiches.module';
 import { ReferentielsCoreModule } from '../referentiels/referentiels-core.module';
 import { UsersModule } from '../users/users.module';
@@ -18,6 +19,7 @@ import { TrackingModule } from '../utils/tracking/tracking.module';
 import { IndicateurChartBuilder } from './charts/indicateur-chart.builder';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { IndicateurLockRepository } from './indicateur/indicateur-lock.repository';
+import { AddIndicateurLinksService } from './indicateurs/add-indicateur-links/add-indicateur-links.service';
 import { ListCollectiviteIndicateursModule } from './indicateurs/list-collectivite-indicateurs/list-collectivite-indicateurs.module';
 import { ListIndicateursPredefinisController } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.controller';
 import { ListIndicateursPredefinisRepository } from './indicateurs/list-indicateurs-predefinis/list-indicateurs-predefinis.repository';
@@ -97,6 +99,7 @@ import { IndicateurVuesService } from './vues/indicateur-vues.service';
 
 // Sub-domain indicateurs.definitions
 const DEFINITIONS_PROVIDERS = [
+  AddIndicateurLinksService,
   ListIndicateursRepository,
   ListIndicateursService,
   ListIndicateursRouter,
@@ -123,6 +126,7 @@ const DEFINITIONS_PROVIDERS = [
 
 @Module({
   imports: [
+    AxeModule,
     UsersModule,
     CollectivitesModule,
     SheetModule,
@@ -208,6 +212,10 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
+    AddIndicateurLinksService,
+    CreateIndicateurService,
+    IndicateurLockRepository,
+    IndicateurSourcesService,
     ListIndicateursPredefinisService,
     ListIndicateursPredefinisRepository,
     ListIndicateursService,

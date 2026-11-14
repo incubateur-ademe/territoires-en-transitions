@@ -38,6 +38,15 @@ export class IndicateurSourcesRepository {
       .from(indicateurSourceMetadonneeTable);
   }
 
+  async lockMetadonnee(metadonneeId: number, tx: Transaction) {
+    const [metadonnee] = await tx
+      .select()
+      .from(indicateurSourceMetadonneeTable)
+      .where(eq(indicateurSourceMetadonneeTable.id, metadonneeId))
+      .for('share');
+    return metadonnee;
+  }
+
   async getMetadonnee(
     sourceId: string,
     dateVersion: string,

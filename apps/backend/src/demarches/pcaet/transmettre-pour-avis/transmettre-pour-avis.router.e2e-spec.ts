@@ -422,7 +422,7 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
   });
 
   test('Le contournement de démonstration dispense le dossier de son diagnostic', async () => {
-    const { caller, collectivite } = await freshEditor();
+    const { caller, collectivite, user } = await freshEditor();
     const created = await caller.demarches.pcaet.create({
       collectiviteId: collectivite.id,
     });
@@ -464,6 +464,12 @@ describe('Cycle de vie de la démarche PCAET (transitions)', () => {
     });
     expect(listEnabledTransitions(avecBypass.transitions)).toContain(
       'transmettre_pour_avis'
+    );
+    expect(spy).toHaveBeenCalledWith(
+      'is-demarche-pcaet-bypass-diagnostic-enabled',
+      user.id,
+      collectivite.id,
+      { requireExplicitActivation: true }
     );
     const transmise = await caller.demarches.pcaet.transmettrePourAvis({
       collectiviteId: collectivite.id,

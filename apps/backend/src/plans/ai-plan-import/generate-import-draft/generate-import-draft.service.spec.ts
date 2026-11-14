@@ -21,6 +21,8 @@ import {
   AiPlanImportJobStatusEnum,
 } from '../models/ai-plan-import-job';
 import { GenerateImportDraftService } from './generate-import-draft.service';
+import { GenerateGenericImportService } from './generate-generic-import.service';
+import { CompletePlanImportService } from './complete-plan-import.service';
 import { initialStepStates } from '../pipeline/run-import-pipeline';
 import { AiPlanImportStepRunRepository } from '../ai-plan-import-step-run.repository';
 import {
@@ -242,14 +244,23 @@ const buildService = (mocks: ReturnType<typeof buildMocks>) =>
     mocks.jobRepository,
     mocks.documentStorage,
     mocks.llm,
-    mocks.importPlanService,
     mocks.planVerificationRepository,
     mocks.notifyPlanImportedService,
-    mocks.transactionManager,
     mocks.trackingService,
     mocks.enqueueCompletePlanSecteursService,
     mocks.stepRunRepository,
-    mocks.effetAttenduService
+    new GenerateGenericImportService(
+      mocks.jobRepository,
+      mocks.documentStorage,
+      mocks.llm,
+      mocks.importPlanService,
+      mocks.transactionManager,
+      mocks.effetAttenduService,
+      new CompletePlanImportService(
+        mocks.jobRepository,
+        mocks.planVerificationRepository
+      )
+    )
   );
 
 describe('GenerateImportDraftService', () => {

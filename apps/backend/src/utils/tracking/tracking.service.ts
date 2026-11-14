@@ -1,6 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { FeatureFlagKey } from '@tet/domain/utils';
-import type { EventTracker, TrackedEvent } from './event-tracker.interface';
+import type {
+  EventTracker,
+  FeatureFlagEvaluationOptions,
+  TrackedEvent,
+} from './event-tracker.interface';
 
 @Injectable()
 export class TrackingService {
@@ -32,13 +36,15 @@ export class TrackingService {
   isFeatureEnabled(
     featureFlagKey: FeatureFlagKey,
     userId?: string,
-    collectiviteId?: number
+    collectiviteId?: number,
+    options?: FeatureFlagEvaluationOptions
   ): Promise<boolean> {
     return userId
       ? this.eventTracker.isFeatureEnabled(
           featureFlagKey,
           userId,
-          collectiviteId
+          collectiviteId,
+          options
         )
       : Promise.resolve(false);
   }
