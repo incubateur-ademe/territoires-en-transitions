@@ -198,32 +198,55 @@ describe('Mise à jour de la jauge et du statut d’une fiche', () => {
   });
 
   describe('Statut et jauge changés ensemble', () => {
-    test('le statut l’emporte : Réalisé avec une jauge à 40 % donne 100 %', async () => {
-      const ficheId = await insertFiche({
-        statut: StatutEnum.EN_COURS,
-        jauge: 20,
-      });
+    test.each([
+      {
+        cas: 'Réalisé impose 100 %',
+        avant: { statut: StatutEnum.EN_COURS, jauge: 20 },
+        change: { statut: StatutEnum.REALISE, jauge: 40 },
+        apres: { statut: StatutEnum.REALISE, jauge: 100 },
+      },
+      {
+        cas: 'À venir impose 0 %',
+        avant: { statut: StatutEnum.EN_COURS, jauge: 20 },
+        change: { statut: StatutEnum.A_VENIR, jauge: 30 },
+        apres: { statut: StatutEnum.A_VENIR, jauge: 0 },
+      },
+      {
+        cas: 'En retard garde la jauge envoyée',
+        avant: { statut: StatutEnum.EN_COURS, jauge: 20 },
+        change: { statut: StatutEnum.EN_RETARD, jauge: 60 },
+        apres: { statut: StatutEnum.EN_RETARD, jauge: 60 },
+      },
+      {
+        cas: 'Bloqué garde la jauge envoyée',
+        avant: { statut: StatutEnum.EN_COURS, jauge: 20 },
+        change: { statut: StatutEnum.BLOQUE, jauge: 40 },
+        apres: { statut: StatutEnum.BLOQUE, jauge: 40 },
+      },
+      {
+        cas: 'sortie de Réalisé garde la jauge envoyée',
+        avant: { statut: StatutEnum.REALISE, jauge: 100 },
+        change: { statut: StatutEnum.EN_COURS, jauge: 40 },
+        apres: { statut: StatutEnum.EN_COURS, jauge: 40 },
+      },
+      {
+        cas: 'une jauge à 100 % hors Réalisé est ignorée',
+        avant: { statut: StatutEnum.A_VENIR, jauge: 0 },
+        change: { statut: StatutEnum.EN_COURS, jauge: 100 },
+        apres: { statut: StatutEnum.EN_COURS, jauge: 0 },
+      },
+      {
+        cas: 'une jauge inchangée suit le statut',
+        avant: { statut: StatutEnum.REALISE, jauge: 100 },
+        change: { statut: StatutEnum.EN_RETARD, jauge: 100 },
+        apres: { statut: StatutEnum.EN_RETARD, jauge: 95 },
+      },
+    ])('$cas', async ({ avant, change, apres }) => {
+      const ficheId = await insertFiche(avant);
 
-      const fiche = await updateFiche(ficheId, {
-        statut: StatutEnum.REALISE,
-        jauge: 40,
-      });
+      const fiche = await updateFiche(ficheId, change);
 
-      expect(fiche).toMatchObject({ statut: StatutEnum.REALISE, jauge: 100 });
-    });
-
-    test('le statut l’emporte : En retard avec une jauge à 60 % garde la jauge', async () => {
-      const ficheId = await insertFiche({
-        statut: StatutEnum.EN_COURS,
-        jauge: 20,
-      });
-
-      const fiche = await updateFiche(ficheId, {
-        statut: StatutEnum.EN_RETARD,
-        jauge: 60,
-      });
-
-      expect(fiche).toMatchObject({ statut: StatutEnum.EN_RETARD, jauge: 20 });
+      expect(fiche).toMatchObject(apres);
     });
 
     test('un statut inchangé laisse la jauge s’appliquer', async () => {
