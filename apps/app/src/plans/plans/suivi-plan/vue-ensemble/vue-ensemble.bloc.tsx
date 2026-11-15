@@ -10,6 +10,7 @@ import { useGetVueEnsemble } from '../data/use-get-vue-ensemble';
 import { ExportBlocButton } from '../export-bloc.button';
 import { RenseignerAvancementButton } from '../faire-avancer-le-plan/renseigner-avancement.side-panel';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
+import { SuiviPlanFilterBadges } from '../suivi-plan-filter-badges';
 import { SuiviPlanFiltersButton } from '../suivi-plan-filters.button';
 import { useSuiviPlanBlocFilters } from '../use-suivi-plan-bloc-filters';
 import { RepartitionParStatut } from './repartition-par-statut.chart';
@@ -33,6 +34,7 @@ export const VueEnsembleBloc = ({
       titre={appLabels.vueEnsembleTitre}
       dataTest="plans.suivi.vue-ensemble"
       ref={blocRef}
+      filterBadges={<SuiviPlanFilterBadges filters={filters} />}
       actions={
         <>
           <SuiviPlanFiltersButton

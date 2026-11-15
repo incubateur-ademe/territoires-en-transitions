@@ -8,6 +8,7 @@ import { useExportSuiviPlanBloc } from '../data/use-export-suivi-plan-bloc';
 import { useGetAvancementParAxe } from '../data/use-get-avancement-par-axe';
 import { ExportBlocButton } from '../export-bloc.button';
 import { SuiviPlanBloc } from '../suivi-plan.bloc';
+import { SuiviPlanFilterBadges } from '../suivi-plan-filter-badges';
 import { SuiviPlanFiltersButton } from '../suivi-plan-filters.button';
 import { useSuiviPlanBlocFilters } from '../use-suivi-plan-bloc-filters';
 import { AvancementAxeRow } from './avancement-axe.row';
@@ -37,6 +38,7 @@ export const AvancementParAxeBloc = ({ planId }: { planId: number }) => {
       }
       dataTest="plans.suivi.avancement-par-axe"
       ref={blocRef}
+      filterBadges={<SuiviPlanFilterBadges filters={filters} />}
       actions={
         <>
           <SuiviPlanFiltersButton

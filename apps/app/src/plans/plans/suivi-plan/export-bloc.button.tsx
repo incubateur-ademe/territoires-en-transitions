@@ -19,8 +19,7 @@ export const ExportBlocButton = ({
   <ButtonMenu
     icon="download-line"
     variant="outlined"
-    size="xs"
-    className="h-8 w-8 rounded-md"
+    size="sm"
     title={appLabels.suiviPlanExporterBloc}
     dataTest={dataTest}
     menu={{
