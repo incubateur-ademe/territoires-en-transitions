@@ -24,9 +24,10 @@ export const ExportBlocButton = ({
     dataTest={dataTest}
     menu={{
       placement: 'bottom-end',
+      className: 'max-w-none whitespace-nowrap',
       actions: [
         {
-          label: appLabels.suiviPlanExporterPng,
+          label: appLabels.telechargerLeGraphiquePng,
           icon: 'image-line',
           onClick: () => {
             if (blocRef.current) {
