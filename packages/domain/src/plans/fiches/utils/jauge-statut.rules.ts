@@ -61,6 +61,15 @@ const getJaugeAfterStatutChange = (
   return before.jauge;
 };
 
+const isJaugeCompatibleWithStatut = (
+  statut: Statut | null,
+  jauge: number
+): boolean => {
+  if (statut === StatutEnum.A_VENIR) return jauge === JAUGE_MIN;
+  if (statut === StatutEnum.REALISE) return jauge === JAUGE_MAX;
+  return isJaugeFigee(statut) || jauge < JAUGE_MAX;
+};
+
 const getStatutAfterJaugeChange = (
   statut: Statut | null,
   jauge: number
@@ -106,7 +115,12 @@ export const applyJaugeStatutChange = ({
       success: true,
       data: {
         statut: change.statut,
-        jauge: getJaugeAfterStatutChange(before, change.statut),
+        jauge:
+          change.jauge !== undefined &&
+          isJaugeChanged &&
+          isJaugeCompatibleWithStatut(change.statut, change.jauge)
+            ? change.jauge
+            : getJaugeAfterStatutChange(before, change.statut),
       },
     };
   }
