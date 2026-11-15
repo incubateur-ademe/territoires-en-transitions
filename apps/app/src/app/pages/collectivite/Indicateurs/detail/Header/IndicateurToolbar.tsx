@@ -50,7 +50,7 @@ const IndicateurToolbar = ({
     {
       isVisible: !!chartInfo?.hasValeur,
       icon: 'image-line',
-      label: appLabels.indicateurTelechargerGraphiquePng,
+      label: appLabels.telechargerLeGraphiquePng,
       onClick: () => setIsExportingPng(true),
     },
     {

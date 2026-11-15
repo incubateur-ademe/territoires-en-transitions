@@ -21,6 +21,7 @@ export const sharedLabels = {
   rechercher: 'Rechercher',
   saisirLeTexte: 'Saisir le texte',
   telechargerLeGraphique: 'Télécharger le graphique',
+  telechargerLeGraphiquePng: 'Télécharger le graphique (PNG)',
 
   beta: 'Bêta',
 
