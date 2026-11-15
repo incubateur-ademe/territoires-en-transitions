@@ -410,11 +410,10 @@ export const plansLabels = {
   planOngletSuivi: 'Suivi Avancement',
   suiviPlanACeJour: 'à ce jour',
   planFiltreSuivi: 'Suivi',
-  suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à ce bloc",
+  suiviPlanFiltresBloc: "Les filtres s'appliquent uniquement à cette section",
   suiviPlanThematiques: 'Thématiques',
   suiviPlanReinitialiserFiltres: 'Réinitialiser les filtres',
   suiviPlanExporterBloc: 'Exporter ce bloc (PNG ou Excel)',
-  suiviPlanExporterPng: 'Télécharger le graphe (PNG)',
   suiviPlanExporterExcel: 'Télécharger les données (Excel)',
   suiviPlanNbActions: plural({ one: 'action', other: 'actions' }),
   suiviPlanAvancementInfoPlan:

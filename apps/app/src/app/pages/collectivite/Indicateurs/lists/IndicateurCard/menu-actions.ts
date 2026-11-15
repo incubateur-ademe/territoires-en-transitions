@@ -38,7 +38,7 @@ export const getIndicateurMenuActions = (args: {
     },
     {
       id: 'download-chart',
-      label: appLabels.indicateurTelechargerGraphiquePng,
+      label: appLabels.telechargerLeGraphiquePng,
       isVisible: isChartVisible,
     },
     {
