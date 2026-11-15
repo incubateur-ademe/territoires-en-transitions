@@ -476,7 +476,7 @@ export const plansLabels = {
   evolutionStatutsHistoriqueRamene:
     'Historique disponible depuis décembre 2023 : la comparaison part du 11/12/2023.',
   evolutionStatutsInclureActionsContinues:
-    'Inclure les actions continues (qui se répètent chaque année)',
+    'Inclure les actions continues (qui se répètent tous les ans)',
   evolutionStatutsActionsContinuesInfo: (count: number): string =>
     `${count} action(s) continue(s) dans le plan. Leur statut reste souvent « En cours » par nature : les exclure évite de fausser l'évolution.`,
   evolutionStatutsStatut: 'Statut',
@@ -488,7 +488,7 @@ export const plansLabels = {
     "Impossible de charger l'évolution des statuts",
   faireAvancerLePlanTitre: 'Fiabiliser le suivi',
   faireAvancerLePlanDescription:
-    'Certaines actions pourraient impacter négativement le suivi. Les traiter rend les chiffres ci-dessus fiables avant votre prochain COPIL.',
+    'Certaines actions pourraient impacter négativement le suivi. Les traiter rend les chiffres ci-dessus fiables',
   faireAvancerLePlanNonExporte: "Non inclus dans l'export",
   faireAvancerLePlanVoirLesActions: 'Voir les actions',
   faireAvancerLePlanRenseignerAvancement: "Renseigner l'avancement",
@@ -504,7 +504,7 @@ export const plansLabels = {
       count > 1 ? 'actions' : 'action'
     } « En cours » sans avancement renseigné`,
   faireAvancerLePlanEnCoursSansAvancementInfo:
-    "Elles comptent pour 0 % dans l'avancement du plan.",
+    "Une action « En cours » sans avancement compte pour 0 % dans l'avancement du plan.",
   faireAvancerLePlanNonModifiees: (count: number): string =>
     `${count > 1 ? 'actions' : 'action'} sans mise à jour depuis plus d'un an`,
   faireAvancerLePlanNonModifieesInfo:
