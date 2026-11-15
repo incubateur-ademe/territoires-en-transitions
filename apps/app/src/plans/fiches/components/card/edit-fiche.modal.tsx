@@ -2,11 +2,19 @@ import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown'
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { appLabels } from '@/app/labels/catalog';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { JaugeFigeeAlert } from '@/app/plans/fiches/show-fiche/content/details/jauge/jauge-figee.alert';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { JaugeBadge } from '@/app/plans/shared/jauge/jauge.badge';
+import { JaugeSlider } from '@/app/plans/shared/jauge/jauge.slider';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { FICHE_TITRE_MAX_LENGTH } from '@tet/domain/plans';
+import {
+  applyJaugeStatutChange,
+  FICHE_TITRE_MAX_LENGTH,
+  isJaugeFigee,
+  JaugeStatut,
+} from '@tet/domain/plans';
 import {
   Checkbox,
   Event,
@@ -41,6 +49,18 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
   const { mutate: updateFiche } = useUpdateFiche();
 
   const [fiche, setFiche] = useState(initialFiche);
+  const [jaugeEnCours, setJaugeEnCours] = useState<number | null>(null);
+
+  const isSousAction = initialFiche.parentId !== null;
+
+  const changeJaugeStatut = (change: Partial<JaugeStatut>) => {
+    const result = applyJaugeStatutChange({
+      before: { statut: fiche.statut, jauge: fiche.jauge },
+      change,
+      isSousAction,
+    });
+    if (result.success) setFiche({ ...fiche, ...result.data });
+  };
 
   const refDateDebut = useRef<HTMLInputElement>(null);
   const refDateFin = useRef<HTMLInputElement>(null);
@@ -57,6 +77,20 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
       onClose={() => setFiche(initialFiche)}
       title={appLabels.modifierAction}
       render={({ close }) => {
+        const prioriteField = (
+          <Field title={appLabels.niveauPriorite}>
+            <PrioritesSelectDropdown
+              values={fiche.priorite}
+              onChange={(priorite) =>
+                setFiche({
+                  ...fiche,
+                  priorite: priorite ?? null,
+                })
+              }
+            />
+          </Field>
+        );
+
         return (
           <div className="flex flex-col gap-6">
             <Field title={appLabels.champNomAction}>
@@ -75,25 +109,41 @@ export const EditFicheModal = ({ initialFiche, isOpen, setIsOpen }: Props) => {
                 <StatutsSelectDropdown
                   values={fiche.statut}
                   onChange={(statut) =>
-                    setFiche({
-                      ...fiche,
-                      statut: statut ?? null,
-                    })
+                    changeJaugeStatut({ statut: statut ?? null })
                   }
                 />
               </Field>
-              <Field title={appLabels.niveauPriorite}>
-                <PrioritesSelectDropdown
-                  values={fiche.priorite}
-                  onChange={(priorite) =>
-                    setFiche({
-                      ...fiche,
-                      priorite: priorite ?? null,
-                    })
-                  }
-                />
-              </Field>
+              {isSousAction ? (
+                prioriteField
+              ) : (
+                <Field title={appLabels.ficheJauge}>
+                  <div className="flex items-center gap-3 h-10">
+                    <JaugeBadge
+                      value={jaugeEnCours ?? fiche.jauge}
+                      statut={fiche.statut}
+                      isDisabled={isJaugeFigee(fiche.statut)}
+                      isLarge
+                    />
+                    <JaugeSlider
+                      ariaLabel={appLabels.ficheJauge}
+                      value={jaugeEnCours ?? fiche.jauge}
+                      isDisabled={isJaugeFigee(fiche.statut)}
+                      className="flex-1"
+                      onValueChange={setJaugeEnCours}
+                      onValueCommit={(jauge) => {
+                        setJaugeEnCours(null);
+                        changeJaugeStatut({ jauge });
+                      }}
+                      dataTest="ModifierFicheModale.jauge"
+                    />
+                  </div>
+                </Field>
+              )}
             </FormSectionGrid>
+            {!isSousAction && isJaugeFigee(fiche.statut) && (
+              <JaugeFigeeAlert statut={fiche.statut} />
+            )}
+            {!isSousAction && prioriteField}
             <Field title={appLabels.personnePilote()}>
               <PersonneTagDropdown
                 values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
