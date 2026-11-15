@@ -5,6 +5,7 @@ export const SuiviPlanBloc = ({
   titre,
   sousTitre = appLabels.suiviPlanACeJour,
   actions,
+  filterBadges,
   dataTest,
   ref,
   children,
@@ -12,6 +13,7 @@ export const SuiviPlanBloc = ({
   titre: ReactNode;
   sousTitre?: ReactNode;
   actions?: ReactNode;
+  filterBadges?: ReactNode;
   dataTest?: string;
   ref?: Ref<HTMLElement>;
   children: ReactNode;
@@ -32,6 +34,7 @@ export const SuiviPlanBloc = ({
         </div>
       )}
     </div>
+    {filterBadges}
     {children}
   </section>
 );
