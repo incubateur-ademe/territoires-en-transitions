@@ -10,17 +10,32 @@ const toSousIndicateur = (
   confidentiel = false
 ): SousIndicateurValeur => ({ valeur, confidentiel });
 
-const base = { cumul: true, reader: 'member', precision: 2 } as const;
+const base = {
+  totalEstCumulDesSousIndicateurs: true,
+  reader: 'member',
+  precision: 2,
+} as const;
 
 describe('calculateIndicateurTotal', () => {
-  it('ne calcule aucun total quand le cumul est décoché', () => {
+  it('ne calcule aucun total quand le total n’est pas le cumul des sous-indicateurs', () => {
     expect(
       calculateIndicateurTotal({
         ...base,
-        cumul: false,
+        totalEstCumulDesSousIndicateurs: false,
         sousIndicateurs: [toSousIndicateur(1), toSousIndicateur(2)],
       })
-    ).toEqual({ status: 'not-cumulative' });
+    ).toEqual({ status: 'not-additive' });
+  });
+
+  it('ne révèle rien à un visiteur quand le total n’est pas le cumul, même avec un sous-indicateur confidentiel et un sous-indicateur non renseigné', () => {
+    expect(
+      calculateIndicateurTotal({
+        ...base,
+        reader: 'visitor',
+        totalEstCumulDesSousIndicateurs: false,
+        sousIndicateurs: [toSousIndicateur(1, true), toSousIndicateur(null)],
+      })
+    ).toEqual({ status: 'not-additive' });
   });
 
   it('signale un groupe sans sous-indicateur', () => {
@@ -135,11 +150,13 @@ describe('calculateIndicateurTotalsByDate', () => {
   });
 
   const member = {
+    totalEstCumulDesSousIndicateurs: true,
     reader: 'member',
     precision: 2,
     parentConfidentiel: false,
   } as const;
   const visitor = {
+    totalEstCumulDesSousIndicateurs: true,
     reader: 'visitor',
     precision: 2,
     parentConfidentiel: false,
@@ -159,6 +176,75 @@ describe('calculateIndicateurTotalsByDate', () => {
     expect(
       calculateIndicateurTotalsByDate({ ...member, sousIndicateurs: [] })
     ).toEqual([]);
+  });
+
+  it('ne calcule aucun total, ni de résultat ni d’objectif, quand le total n’est pas le cumul des sous-indicateurs', () => {
+    expect(
+      calculateIndicateurTotalsByDate({
+        ...member,
+        totalEstCumulDesSousIndicateurs: false,
+        sousIndicateurs: [
+          toSerie({ '2022-01-01': { resultat: 10, objectif: 20 } }),
+          toSerie({ '2022-01-01': { resultat: 5, objectif: 8 } }),
+        ],
+      })
+    ).toEqual([
+      {
+        dateValeur: '2022-01-01',
+        resultat: { status: 'not-additive' },
+        objectif: { status: 'not-additive' },
+      },
+    ]);
+  });
+
+  it('renvoie le statut non additif à chaque date quand le total n’est pas le cumul des sous-indicateurs', () => {
+    expect(
+      calculateIndicateurTotalsByDate({
+        ...member,
+        totalEstCumulDesSousIndicateurs: false,
+        sousIndicateurs: [
+          toSerie({
+            '2022-01-01': { resultat: 10 },
+            '2023-01-01': { objectif: 4 },
+          }),
+          toSerie({ '2024-01-01': { resultat: 5 } }),
+        ],
+      })
+    ).toEqual(
+      ['2022-01-01', '2023-01-01', '2024-01-01'].map((dateValeur) => ({
+        dateValeur,
+        resultat: { status: 'not-additive' },
+        objectif: { status: 'not-additive' },
+      }))
+    );
+  });
+
+  it('masque à un visiteur le résultat de la dernière date d’un parent confidentiel même quand le total n’est pas le cumul', () => {
+    expect(
+      calculateIndicateurTotalsByDate({
+        ...visitor,
+        totalEstCumulDesSousIndicateurs: false,
+        parentConfidentiel: true,
+        sousIndicateurs: [
+          toSerie({
+            '2022-01-01': { resultat: 10 },
+            '2023-01-01': { resultat: 12 },
+          }),
+          toSerie({ '2023-01-01': { resultat: 5 } }, true),
+        ],
+      })
+    ).toEqual([
+      {
+        dateValeur: '2022-01-01',
+        resultat: { status: 'not-additive' },
+        objectif: { status: 'not-additive' },
+      },
+      {
+        dateValeur: '2023-01-01',
+        resultat: { status: 'hidden' },
+        objectif: { status: 'not-additive' },
+      },
+    ]);
   });
 
   it('calcule le total des résultats et celui des objectifs pour chaque date triée', () => {
