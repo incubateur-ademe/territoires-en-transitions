@@ -17,7 +17,7 @@ const base = {
 } as const;
 
 describe('calculateIndicateurTotal', () => {
-  it('ne calcule aucun total quand le total n’est pas le cumul des sous-indicateurs', () => {
+  it('ne calcule aucun total quand le total n’est pas le totalEstCumulDesSousIndicateurs des sous-indicateurs', () => {
     expect(
       calculateIndicateurTotal({
         ...base,
@@ -27,7 +27,7 @@ describe('calculateIndicateurTotal', () => {
     ).toEqual({ status: 'not-additive' });
   });
 
-  it('ne révèle rien à un visiteur quand le total n’est pas le cumul, même avec un sous-indicateur confidentiel et un sous-indicateur non renseigné', () => {
+  it('ne révèle rien à un visiteur quand le total n’est pas le totalEstCumulDesSousIndicateurs, même avec un sous-indicateur confidentiel et un sous-indicateur non renseigné', () => {
     expect(
       calculateIndicateurTotal({
         ...base,
@@ -147,6 +147,7 @@ describe('calculateIndicateurTotalsByDate', () => {
         objectif,
       })
     ),
+    sousIndicateurs: [],
   });
 
   const member = {
@@ -178,7 +179,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ).toEqual([]);
   });
 
-  it('ne calcule aucun total, ni de résultat ni d’objectif, quand le total n’est pas le cumul des sous-indicateurs', () => {
+  it('ne calcule aucun total, ni de résultat ni d’objectif, quand le total n’est pas le totalEstCumulDesSousIndicateurs des sous-indicateurs', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...member,
@@ -197,7 +198,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('renvoie le statut non additif à chaque date quand le total n’est pas le cumul des sous-indicateurs', () => {
+  it('renvoie le statut non additif à chaque date quand le total n’est pas le totalEstCumulDesSousIndicateurs des sous-indicateurs', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...member,
@@ -219,7 +220,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     );
   });
 
-  it('masque à un visiteur le résultat de la dernière date d’un parent confidentiel même quand le total n’est pas le cumul', () => {
+  it('masque à un visiteur le résultat de la dernière date d’un parent confidentiel même quand le total n’est pas le totalEstCumulDesSousIndicateurs', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...visitor,
@@ -322,7 +323,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ).toEqual([]);
   });
 
-  it('masque au visiteur le résultat de la date du dernier résultat d’un enfant confidentiel sans masquer l’objectif', () => {
+  it('masque au visiteur le résultat de la date du dernier résultat d’un sous-indicateur confidentiel sans masquer l’objectif', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...visitor,
@@ -354,7 +355,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('montre au membre le résultat de la date la plus récente malgré un enfant confidentiel', () => {
+  it('montre au membre le résultat de la date la plus récente malgré un sous-indicateur confidentiel', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...member,
@@ -372,7 +373,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('masque chaque enfant confidentiel à la date de son propre dernier résultat', () => {
+  it('masque chaque sous-indicateur confidentiel à la date de son propre dernier résultat', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...visitor,
@@ -402,7 +403,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('ne masque que la date du dernier résultat non nul d’un enfant confidentiel', () => {
+  it('ne masque que la date du dernier résultat non nul d’un sous-indicateur confidentiel', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...visitor,
@@ -430,7 +431,7 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
-  it('masque la date du dernier résultat de l’enfant confidentiel et signale l’enfant manquant à la date suivante', () => {
+  it('masque la date du dernier résultat du sous-indicateur confidentiel et signale le sous-indicateur manquant à la date suivante', () => {
     expect(
       calculateIndicateurTotalsByDate({
         ...visitor,
@@ -485,6 +486,69 @@ describe('calculateIndicateurTotalsByDate', () => {
     ]);
   });
 
+  it('masque au visiteur la dernière date avec un résultat d’un sous-indicateur d’un parent confidentiel même quand le total de cette date est incomplet', () => {
+    expect(
+      calculateIndicateurTotalsByDate({
+        ...visitor,
+        parentConfidentiel: true,
+        sousIndicateurs: [
+          toSerie({
+            '2022-01-01': { resultat: 1 },
+            '2023-01-01': { resultat: 2 },
+          }),
+          toSerie({ '2022-01-01': { resultat: 10 } }),
+        ],
+      })
+    ).toEqual([
+      {
+        dateValeur: '2022-01-01',
+        resultat: { status: 'complete', valeur: 11 },
+        objectif: noneOfTwo,
+      },
+      {
+        dateValeur: '2023-01-01',
+        resultat: { status: 'hidden' },
+        objectif: noneOfTwo,
+      },
+    ]);
+  });
+
+  it('ne masque que la dernière date avec un résultat d’un parent confidentiel quand plusieurs dates ont un résultat', () => {
+    const resultats = calculateIndicateurTotalsByDate({
+      ...visitor,
+      parentConfidentiel: true,
+      sousIndicateurs: [
+        toSerie({
+          '2021-01-01': { resultat: 1 },
+          '2022-01-01': { resultat: 2 },
+          '2023-01-01': { resultat: 3 },
+        }),
+        toSerie({
+          '2021-01-01': { resultat: 10 },
+          '2022-01-01': { resultat: 20 },
+        }),
+      ],
+    }).map(({ resultat }) => resultat);
+
+    expect(resultats).toEqual([
+      { status: 'complete', valeur: 11 },
+      { status: 'complete', valeur: 22 },
+      { status: 'hidden' },
+    ]);
+  });
+
+  it('ne rapproche jamais des dates décalées ni des périodicités différentes : le total reste incomplet', () => {
+    expect(
+      calculateIndicateurTotalsByDate({
+        ...member,
+        sousIndicateurs: [
+          toSerie({ '2022-01-01': { resultat: 1 } }),
+          toSerie({ '2022-06-01': { resultat: 2 } }),
+        ],
+      }).map(({ resultat }) => resultat)
+    ).toEqual([oneOfTwo, oneOfTwo]);
+  });
+
   it('montre au membre le total d’un parent confidentiel', () => {
     expect(
       calculateIndicateurTotalsByDate({
@@ -499,5 +563,296 @@ describe('calculateIndicateurTotalsByDate', () => {
         objectif: { status: 'incomplete', filledCount: 0, expectedCount: 1 },
       },
     ]);
+  });
+
+  describe('sous-indicateurs sur plusieurs niveaux', () => {
+    const toGroupe = (
+      sousIndicateurs: readonly SousIndicateurSerie[],
+      confidentiel = false
+    ): SousIndicateurSerie => ({ confidentiel, valeurs: [], sousIndicateurs });
+
+    const resultatAt2022 = (valeur: number) =>
+      toSerie({ '2022-01-01': { resultat: valeur } });
+
+    it('somme les sous-indicateurs de bas niveau d’un sous-indicateur intermédiaire dans le total du parent', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            resultatAt2022(120),
+            toGroupe([resultatAt2022(3), resultatAt2022(5)]),
+            resultatAt2022(80),
+          ],
+        })
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'complete', valeur: 208 },
+          objectif: {
+            status: 'incomplete',
+            filledCount: 0,
+            expectedCount: 3,
+          },
+        },
+      ]);
+    });
+
+    it('compte les sous-indicateurs directs du parent pour signaler un total incomplet', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            resultatAt2022(120),
+            toGroupe([resultatAt2022(3), resultatAt2022(5)]),
+            toSerie({}),
+          ],
+        })
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'incomplete', filledCount: 2, expectedCount: 3 },
+          objectif: { status: 'incomplete', filledCount: 0, expectedCount: 3 },
+        },
+      ]);
+    });
+
+    it('considère un sous-indicateur intermédiaire incomplet tant qu’une de ses sous-indicateurs de bas niveau manque', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            resultatAt2022(120),
+            toGroupe([resultatAt2022(3), toSerie({})]),
+          ],
+        })
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'incomplete', filledCount: 1, expectedCount: 2 },
+          objectif: { status: 'incomplete', filledCount: 0, expectedCount: 2 },
+        },
+      ]);
+    });
+
+    it('ne perd aucune date des sous-indicateurs profonds', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            toGroupe([
+              toGroupe([toSerie({ '2024-01-01': { resultat: 1 } })]),
+              toSerie({ '2023-01-01': { resultat: 2 } }),
+            ]),
+          ],
+        }).map(({ dateValeur }) => dateValeur)
+      ).toEqual(['2023-01-01', '2024-01-01']);
+    });
+
+    it('arrondit une seule fois, sur la somme des sous-indicateurs de bas niveau de tous les niveaux', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          precision: 0,
+          sousIndicateurs: [
+            toGroupe([resultatAt2022(0.4), resultatAt2022(0.4)]),
+            resultatAt2022(0.6),
+          ],
+        })[0].resultat
+      ).toEqual({ status: 'complete', valeur: 1 });
+    });
+
+    it('masque à un visiteur le total de la date du dernier résultat d’un sous-indicateur de bas niveau confidentielle profonde', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...visitor,
+          sousIndicateurs: [
+            toGroupe([
+              toSerie(
+                {
+                  '2022-01-01': { resultat: 1 },
+                  '2023-01-01': { resultat: 2 },
+                },
+                true
+              ),
+              toSerie({
+                '2022-01-01': { resultat: 10 },
+                '2023-01-01': { resultat: 20 },
+              }),
+            ]),
+          ],
+        }).map(({ dateValeur, resultat }) => ({ dateValeur, resultat }))
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'complete', valeur: 11 },
+        },
+        { dateValeur: '2023-01-01', resultat: { status: 'hidden' } },
+      ]);
+    });
+
+    it('masque à un visiteur le total de la date la plus récente d’un sous-indicateur intermédiaire confidentiel', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...visitor,
+          sousIndicateurs: [
+            resultatAt2022(100),
+            toGroupe(
+              [
+                toSerie({
+                  '2022-01-01': { resultat: 1 },
+                  '2023-01-01': { resultat: 2 },
+                }),
+                toSerie({
+                  '2022-01-01': { resultat: 10 },
+                  '2023-01-01': { resultat: 20 },
+                }),
+              ],
+              true
+            ),
+          ],
+        }).map(({ dateValeur, resultat }) => ({ dateValeur, resultat }))
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'complete', valeur: 111 },
+        },
+        {
+          dateValeur: '2023-01-01',
+          resultat: { status: 'hidden' },
+        },
+      ]);
+    });
+
+    it('ne masque jamais l’objectif à un visiteur, même avec un sous-indicateur confidentiel profond', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...visitor,
+          sousIndicateurs: [
+            toGroupe([
+              toSerie({ '2022-01-01': { resultat: 1, objectif: 5 } }, true),
+            ]),
+            toSerie({ '2022-01-01': { resultat: 10, objectif: 50 } }),
+          ],
+        })[0]
+      ).toEqual({
+        dateValeur: '2022-01-01',
+        resultat: { status: 'hidden' },
+        objectif: { status: 'complete', valeur: 55 },
+      });
+    });
+
+    it('ignore les valeurs propres d’un sous-indicateur qui a des sous-indicateurs', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            {
+              confidentiel: false,
+              valeurs: [
+                { dateValeur: '2022-01-01', resultat: 999, objectif: null },
+              ],
+              sousIndicateurs: [resultatAt2022(3), resultatAt2022(5)],
+            },
+          ],
+        })[0].resultat
+      ).toEqual({ status: 'complete', valeur: 8 });
+    });
+
+    it('montre à un visiteur la date antérieure au dernier résultat d’un sous-indicateur de bas niveau confidentiel et signale l’autre sous-indicateur manquant à la date suivante', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...visitor,
+          sousIndicateurs: [
+            toGroupe([
+              toSerie(
+                {
+                  '2022-01-01': { resultat: 1 },
+                  '2023-01-01': { resultat: 2 },
+                },
+                true
+              ),
+              toSerie({ '2022-01-01': { resultat: 10 } }),
+            ]),
+          ],
+        }).map(({ dateValeur, resultat }) => ({ dateValeur, resultat }))
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'complete', valeur: 11 },
+        },
+        { dateValeur: '2023-01-01', resultat: { status: 'hidden' } },
+      ]);
+    });
+
+    it('arrondit la somme exacte de demi-valeurs réparties sur trois niveaux', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          precision: 2,
+          sousIndicateurs: [
+            toGroupe([toGroupe([resultatAt2022(0.1)]), resultatAt2022(0.2)]),
+            resultatAt2022(0.005),
+          ],
+        })[0].resultat
+      ).toEqual({ status: 'complete', valeur: 0.31 });
+    });
+
+    it('signale incomplet un parent dont un sous-indicateur de bas niveau n’a aucune valeur à aucune date', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            resultatAt2022(10),
+            toGroupe([resultatAt2022(1), toSerie({})]),
+          ],
+        })[0].resultat
+      ).toEqual({ status: 'incomplete', filledCount: 1, expectedCount: 2 });
+    });
+
+    it('masque à un visiteur le total quand un sous-indicateur de bas niveau est confidentiel et qu’un autre sous-indicateur manque', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...visitor,
+          sousIndicateurs: [
+            toGroupe([
+              toSerie({ '2022-01-01': { resultat: 1 } }, true),
+              toSerie({}),
+            ]),
+            resultatAt2022(10),
+          ],
+        })[0].resultat
+      ).toEqual({ status: 'hidden' });
+    });
+
+    it('renvoie le statut non additif à chaque date même avec plusieurs niveaux', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          totalEstCumulDesSousIndicateurs: false,
+          sousIndicateurs: [
+            toGroupe([resultatAt2022(1), resultatAt2022(2)]),
+            resultatAt2022(10),
+          ],
+        })
+      ).toEqual([
+        {
+          dateValeur: '2022-01-01',
+          resultat: { status: 'not-additive' },
+          objectif: { status: 'not-additive' },
+        },
+      ]);
+    });
+
+    it('montre au membre le total malgré un sous-indicateur confidentiel profond', () => {
+      expect(
+        calculateIndicateurTotalsByDate({
+          ...member,
+          sousIndicateurs: [
+            toGroupe([toSerie({ '2022-01-01': { resultat: 1 } }, true)]),
+            resultatAt2022(10),
+          ],
+        })[0].resultat
+      ).toEqual({ status: 'complete', valeur: 11 });
+    });
   });
 });
