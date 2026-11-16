@@ -8,7 +8,7 @@ import {
   ServiceSecondArg,
   UnsafeServiceSecondArg,
 } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { Result, getDataOrThrow } from '@tet/backend/utils/result.type';
 import { TransactionOperation } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { Plan } from '@tet/domain/plans';
 import { ResourceType } from '@tet/domain/users';
@@ -156,14 +156,9 @@ export class GetPlanService {
     user: AuthenticatedUser,
     tx?: Transaction
   ): Promise<boolean> {
-    const collectivitePrivateResult = await this.collectivite.isPrivate(
-      collectiviteId,
-      tx
+    const collectivitePrivate = getDataOrThrow(
+      await this.collectivite.isPrivate(collectiviteId, tx)
     );
-    if (!collectivitePrivateResult.success) {
-      throw collectivitePrivateResult.cause;
-    }
-    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,

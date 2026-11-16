@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
@@ -41,13 +42,9 @@ export class ExportService {
     );
 
     // charge le nom de la collectivité pour l'inclure dans le nom du fichier
-    const collectiviteResult = await this.collectivitesService.getCollectivite(
-      collectiviteId
-    );
-    if (!collectiviteResult.success) {
-      throw collectiviteResult.cause;
-    }
-    const collectiviteName = collectiviteResult.data.collectivite.nom;
+    const collectiviteName = getDataOrThrow(
+      await this.collectivitesService.getCollectivite(collectiviteId)
+    ).collectivite.nom;
 
     const filename = unaccent(
       `Export_${collectiviteName}_${plan.root.nom || 'Sans titre'}_${formatDate(

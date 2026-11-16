@@ -246,7 +246,10 @@ export default class UpdateFicheService {
           transaction
         );
         if (!updatedFiche.success) {
-          return failure(UpdateFicheErrorEnum.FICHE_NOT_FOUND);
+          return failure(
+            UpdateFicheErrorEnum.FICHE_NOT_FOUND,
+            updatedFiche.cause
+          );
         }
 
         if (isNotificationEnabled ?? true) {

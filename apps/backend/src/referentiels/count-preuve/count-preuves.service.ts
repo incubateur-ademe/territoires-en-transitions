@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable } from '@nestjs/common';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
@@ -30,13 +31,9 @@ export class CountPreuvesService {
     const { collectiviteId, actionId } = input;
     const referentielId = getReferentielIdFromActionId(actionId);
 
-    const collectivitePrivateResult = await this.collectivitesService.isPrivate(
-      collectiviteId
+    const collectivitePrivate = getDataOrThrow(
+      await this.collectivitesService.isPrivate(collectiviteId)
     );
-    if (!collectivitePrivateResult.success) {
-      throw collectivitePrivateResult.cause;
-    }
-    const collectivitePrivate = collectivitePrivateResult.data;
 
     await this.permissions.assertAllowed(
       user,

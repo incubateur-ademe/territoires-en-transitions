@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  success,
+  type Result,
+  getDataOrThrow,
+} from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { ResourceType } from '@tet/domain/users';
 
@@ -40,13 +45,9 @@ export class CollectiviteDocumentsAccessService {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
 
-    const isAccesRestreintResult = await this.collectivitesService.isPrivate(
-      collectiviteId
+    const isAccesRestreint = getDataOrThrow(
+      await this.collectivitesService.isPrivate(collectiviteId)
     );
-    if (!isAccesRestreintResult.success) {
-      throw isAccesRestreintResult.cause;
-    }
-    const isAccesRestreint = isAccesRestreintResult.data;
 
     const canReachCollectivite = isAccesRestreint
       ? canReadConfidentiel

@@ -4,7 +4,12 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { failure, Result, success } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  Result,
+  success,
+  getDataOrThrow,
+} from '@tet/backend/utils/result.type';
 import {
   PersonnalisationQuestionReponse,
   PersonnalisationReponsesPayload,
@@ -181,12 +186,9 @@ export default class ListPersonnalisationQuestionsService {
         }
       );
 
-    const identiteCollectiviteResult =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    if (!identiteCollectiviteResult.success) {
-      throw identiteCollectiviteResult.cause;
-    }
-    const identiteCollectivite = identiteCollectiviteResult.data;
+    const identiteCollectivite = getDataOrThrow(
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+    );
 
     const regles =
       await this.personnalisationConsequencesService.getPersonnalisationRegles(

@@ -5,7 +5,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { Result, getDataOrThrow } from '@tet/backend/utils/result.type';
 import { ResourceType } from '@tet/domain/users';
 import { AxeLight } from '@tet/domain/plans';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
@@ -119,13 +119,9 @@ export class GetAxeService {
     collectiviteId: number,
     user: AuthenticatedUser
   ): Promise<boolean> {
-    const collectivitePrivateResult = await this.collectivite.isPrivate(
-      collectiviteId
+    const collectivitePrivate = getDataOrThrow(
+      await this.collectivite.isPrivate(collectiviteId)
     );
-    if (!collectivitePrivateResult.success) {
-      throw collectivitePrivateResult.cause;
-    }
-    const collectivitePrivate = collectivitePrivateResult.data;
 
     const permissionResult = await this.permissionService.isAllowed(
       user,

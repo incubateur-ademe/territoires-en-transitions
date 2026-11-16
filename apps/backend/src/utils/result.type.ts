@@ -30,3 +30,13 @@ export const combineResults = <Data, ServiceError>(
   }
   return success(results.filter(isSuccess).map((result) => result.data));
 };
+
+/** Pour les appelants qui ne renvoient pas (encore) un Result. */
+export const getDataOrThrow = <Data, ServiceError>(
+  result: Result<Data, ServiceError>
+): Data => {
+  if (!result.success) {
+    throw result.cause ?? new Error(String(result.error));
+  }
+  return result.data;
+};

@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger, PayloadTooLargeException } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ListIndicateursInputFilters } from '@tet/domain/indicateurs';
@@ -144,17 +145,11 @@ export default class ExportIndicateursService {
     }
 
     // Charge la collectivité
-    const collectiviteResult = await this.collectiviteService.getCollectivite(
-      options.collectiviteId
+    const { collectivite } = getDataOrThrow(
+      await this.collectiviteService.getCollectivite(options.collectiviteId)
     );
-    if (!collectiviteResult.success) {
-      throw collectiviteResult.cause;
-    }
 
-    const filename = this.getFilename(
-      parents,
-      collectiviteResult.data.collectivite.nom ?? ''
-    );
+    const filename = this.getFilename(parents, collectivite.nom ?? '');
     if (!filename) return null;
 
     // Charge les valeurs pour tous les indicateurs (parents + enfants).

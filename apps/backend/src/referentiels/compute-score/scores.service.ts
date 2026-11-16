@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
@@ -111,12 +112,9 @@ export default class ScoresService {
       referentielId
     );
 
-    const collectiviteResult =
-      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-    if (!collectiviteResult.success) {
-      throw collectiviteResult.cause;
-    }
-    return collectiviteResult.data;
+    return getDataOrThrow(
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+    );
   }
 
   private buildActionWithScore(
@@ -1081,12 +1079,9 @@ export default class ScoresService {
         niveauAccess
       );
     } else {
-      const collectiviteResult =
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-      if (!collectiviteResult.success) {
-        throw collectiviteResult.cause;
-      }
-      collectiviteInfo = collectiviteResult.data;
+      collectiviteInfo = getDataOrThrow(
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId)
+      );
     }
 
     if (!referentiel) {

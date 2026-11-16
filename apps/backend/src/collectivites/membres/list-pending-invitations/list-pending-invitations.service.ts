@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
@@ -32,13 +33,9 @@ export class ListPendingInvitationsService {
     if (user) {
       // Une invitation en attente, c'est une adresse en clair : même arbitrage
       // que la liste des membres, dont elle partage l'écran.
-      const accesRestreintResult = await this.collectivitesService.isPrivate(
-        collectiviteId
+      const accesRestreint = getDataOrThrow(
+        await this.collectivitesService.isPrivate(collectiviteId)
       );
-      if (!accesRestreintResult.success) {
-        throw accesRestreintResult.cause;
-      }
-      const accesRestreint = accesRestreintResult.data;
       await this.permissionService.assertAllowed(
         user,
         accesRestreint

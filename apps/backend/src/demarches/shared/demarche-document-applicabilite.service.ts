@@ -1,3 +1,4 @@
+import { getDataOrThrow } from '@tet/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { CollectiviteCommunesMembresRepository } from '@tet/backend/collectivites/shared/collectivite-communes-membres.repository';
@@ -82,10 +83,7 @@ export class DemarcheDocumentApplicabiliteService {
         tx
       ),
     ]);
-    if (!identiteResult.success) {
-      throw identiteResult.cause;
-    }
-    const identite = identiteResult.data;
+    const identite = getDataOrThrow(identiteResult);
     const identiteCollectivite: IdentiteCollectivite = {
       ...identite,
       communesMembresPopulationTags:
