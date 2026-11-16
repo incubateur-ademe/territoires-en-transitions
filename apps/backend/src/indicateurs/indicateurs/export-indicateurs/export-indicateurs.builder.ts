@@ -22,6 +22,8 @@ type RowData = EnfantRow & {
   pilotes: PersonneTagOrUser[];
   services: Tag[];
   commentaire: string | null;
+  /** Remplit la troisième colonne d'une ligne sans indicateur parent. */
+  categorie?: string;
 };
 
 export type ParentRow = RowData & {
@@ -38,12 +40,7 @@ type IndicateurValeurs = {
 /** Libellé de la colonne Source pour la ligne de saisie de la collectivité. */
 const SOURCE_COLLECTIVITE = 'Collectivité';
 
-const FIXED_HEADERS = [
-  'Identifiant',
-  "Nom de l'indicateur",
-  'Indicateur parent',
-  'Unité',
-] as const;
+const PARENT_COLUMN_HEADER = 'Indicateur parent';
 
 /** Colonnes de métadonnées, retirées quand `withMetaColumns` vaut `false`. */
 const META_HEADERS = [
@@ -71,13 +68,19 @@ type PeriodsByType = {
  *
  * `withMetaColumns: false` retire les colonnes Pilote, Direction, Commentaire
  * et Source : l'en-tête se limite aux colonnes A à D suivies des périodes.
+ *
+ * `parentColumnHeader` renomme la troisième colonne, pour un classeur qui y
+ * range la `categorie` de ses lignes plutôt qu'un indicateur parent.
  */
 export function buildConsolidatedSheet(
   workbook: Workbook,
   parents: ParentRow[],
   indicateursValeurs: IndicateurValeurAvecMetadonnesDefinition[],
   sourceLabels: Map<string, string> = new Map(),
-  { withMetaColumns = true }: { withMetaColumns?: boolean } = {}
+  {
+    withMetaColumns = true,
+    parentColumnHeader = PARENT_COLUMN_HEADER,
+  }: { withMetaColumns?: boolean; parentColumnHeader?: string } = {}
 ): void {
   const worksheet = workbook.addWorksheet('Indicateurs');
 
@@ -85,7 +88,7 @@ export function buildConsolidatedSheet(
   // par type : une colonne n'est créée que si elle contient au moins une valeur.
   const periods = collectPeriods(indicateursValeurs);
 
-  addHeaderRow(worksheet, periods, withMetaColumns);
+  addHeaderRow(worksheet, periods, { withMetaColumns, parentColumnHeader });
 
   // Index des valeurs par identifiant d'indicateur, séparant saisie
   // collectivité et sources open-data.
@@ -191,10 +194,16 @@ function indexValeurs(
 function addHeaderRow(
   worksheet: Worksheet,
   periods: PeriodsByType,
-  withMetaColumns: boolean
+  {
+    withMetaColumns,
+    parentColumnHeader,
+  }: { withMetaColumns: boolean; parentColumnHeader: string }
 ): void {
   worksheet.addRow([
-    ...FIXED_HEADERS,
+    'Identifiant',
+    "Nom de l'indicateur",
+    parentColumnHeader,
+    'Unité',
     ...(withMetaColumns ? META_HEADERS : []),
     ...periods.resultat.map(
       (period) => `${IndicateurPeriodes.format(period)} Résultat`
@@ -277,7 +286,7 @@ function addValeursRow(
   worksheet.addRow([
     indicator.identifiantReferentiel ?? String(indicator.id),
     titre,
-    parentTitre ?? '',
+    parentTitre ?? indicator.categorie ?? '',
     indicator.unite,
     ...(withMetaColumns
       ? [

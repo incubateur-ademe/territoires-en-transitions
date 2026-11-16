@@ -1,5 +1,6 @@
 import {
   ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS,
+  buildPcaetDiagnosticIndicateurTables,
   PCAET_DIAGNOSTIC_INDICATEURS,
   type PcaetDiagnostic,
   type PcaetDiagnosticIndicateur,
@@ -21,7 +22,7 @@ const makeDefinition = (
   } as PcaetDiagnosticIndicateur);
 
 const leaf = (indicateurDefinitionId: string) => ({
-  label: indicateurDefinitionId,
+  label: `Libellé ${indicateurDefinitionId}`,
   indicateurDefinitionId,
 });
 
@@ -38,7 +39,6 @@ const POLLUANTS: PcaetDiagnosticIndicateurParentConfig = {
   code: 'polluants',
   label: 'Polluants',
   icon: 'haze-2-line',
-  // Volet sans définition propre, comme `emission_polluants_atmo`.
   indicateurDefinitionId: 'polluants',
   referenceYearApplyLevel: 'child',
   children: [
@@ -76,48 +76,132 @@ const makeValeur = (indicateurId: number) =>
 
 const makeDiagnostic = (
   configs: PcaetDiagnosticIndicateurParentConfig[],
-  indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = []
+  indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[] = [],
+  indicateurDefinitions: PcaetDiagnosticIndicateur[] = definitions
 ) =>
   ({
     indicateurParentConfigs: configs,
-    indicateurDefinitions: definitions,
+    indicateurDefinitions,
     indicateurValeurs,
   } as unknown as PcaetDiagnostic);
 
+const realDiagnostic = {
+  indicateurParentConfigs: PCAET_DIAGNOSTIC_INDICATEURS,
+  indicateurDefinitions: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS.map((id, i) =>
+    makeDefinition(i + 1, id)
+  ),
+  indicateurValeurs: [],
+} as unknown as PcaetDiagnostic;
+
+const lignes = (
+  parents: { identifiantReferentiel: string | null; categorie?: string }[]
+) => parents.map((parent) => [parent.identifiantReferentiel, parent.categorie]);
+
 describe('toExportIndicateurs', () => {
-  it("suit l'ordre des volets, chaque ligne à sous-lignes devenant un parent", () => {
+  it("suit l'ordre des tables de l'écran, chaque ligne rangée sous leurs titres", () => {
     const { parents } = toExportIndicateurs(makeDiagnostic([POLLUANTS, GES]));
 
-    expect(
-      parents.map((parent) => ({
-        identifiant: parent.identifiantReferentiel,
-        enfants: parent.enfants.map((e) => e.identifiantReferentiel),
-      }))
-    ).toEqual([
-      { identifiant: 'nox', enfants: ['nox.a', 'nox.b'] },
-      { identifiant: 'pm10', enfants: ['pm10.a'] },
-      { identifiant: 'ges', enfants: ['ges.a', 'ges.b'] },
+    expect(lignes(parents)).toEqual([
+      ['nox.a', 'Polluants – Libellé nox'],
+      ['nox.b', 'Polluants – Libellé nox'],
+      ['pm10.a', 'Polluants – Libellé pm10'],
+      ['ges.a', 'GES'],
+      ['ges.b', 'GES'],
     ]);
     expect(parents[0]).toMatchObject({
-      titre: 'Titre nox',
+      titre: 'Libellé nox.a',
       unite: 'kt',
       pilotes: [],
       services: [],
       commentaire: null,
+      enfants: [],
     });
   });
 
-  it('exporte les lignes simples d’un volet sans définition comme des parents', () => {
-    const sansRacine = {
-      ...GES,
-      indicateurDefinitionId: 'inconnu',
-    };
-    const { parents } = toExportIndicateurs(makeDiagnostic([sansRacine]));
+  it("n'exporte ni les agrégats, absents de l'écran, ni leurs valeurs", () => {
+    const { parents, valeurs } = toExportIndicateurs(
+      makeDiagnostic(
+        [POLLUANTS, GES],
+        [makeValeur(10), makeValeur(1), makeValeur(2)]
+      )
+    );
 
-    expect(parents.map((p) => p.identifiantReferentiel)).toEqual([
+    expect(parents.map((parent) => parent.identifiantReferentiel)).toEqual([
+      'nox.a',
+      'nox.b',
+      'pm10.a',
       'ges.a',
       'ges.b',
     ]);
+    expect(valeurs.map((valeur) => valeur.indicateurDefinition?.id)).toEqual([
+      2,
+    ]);
+  });
+
+  it('range les lignes du volet ENR sous leur section et leur groupe', () => {
+    const { parents } = toExportIndicateurs(realDiagnostic);
+    const categories = new Map(lignes(parents).map(([id, c]) => [id, c]));
+
+    expect(categories.has('cae_3.a')).toBe(false);
+    expect(categories.get('cae_3.ad')).toBe(
+      "Énergies renouvelables – Production d'énergie – Électricité"
+    );
+    expect(categories.get('conso_ENR_biomasse')).toBe(
+      "Énergies renouvelables – Consommation d'énergie – Chaleur"
+    );
+    expect(categories.get('conso_ENR_biocarburant')).toBe(
+      "Énergies renouvelables – Consommation d'énergie – Autres"
+    );
+    expect(categories.get('pcaet_valo_stockage')).toBe(
+      "Énergies renouvelables – Valorisation des potentiels d'énergie – Récupération et stockage"
+    );
+  });
+
+  it('signale dans son libellé un indicateur déclaré non applicable', () => {
+    const { parents } = toExportIndicateurs(
+      makeDiagnostic(
+        [GES],
+        [],
+        definitions.map((definition) => ({
+          ...definition,
+          isApplicable: definition.identifiantReferentiel !== 'ges.b',
+        }))
+      )
+    );
+
+    expect(parents.map((parent) => parent.titre)).toEqual([
+      'Libellé ges.a',
+      'Libellé ges.b (non applicable)',
+    ]);
+  });
+
+  it("n'exporte pas les valeurs d'un indicateur non applicable, mais garde sa ligne", () => {
+    const { parents, valeurs } = toExportIndicateurs(
+      makeDiagnostic(
+        [GES],
+        [makeValeur(2), makeValeur(3)],
+        definitions.map((definition) => ({
+          ...definition,
+          isApplicable: definition.identifiantReferentiel !== 'ges.b',
+        }))
+      )
+    );
+
+    expect(lignes(parents)).toEqual([
+      ['ges.a', 'GES'],
+      ['ges.b', 'GES'],
+    ]);
+    expect(valeurs.map((valeur) => valeur.indicateurDefinition?.id)).toEqual([
+      2,
+    ]);
+  });
+
+  it("ignore une ligne dont la définition n'est pas servie", () => {
+    const { parents } = toExportIndicateurs(
+      makeDiagnostic([{ ...GES, children: [leaf('inconnu'), leaf('ges.b')] }])
+    );
+
+    expect(lignes(parents)).toEqual([['ges.b', 'GES']]);
   });
 
   it('retire la source des valeurs pour qu’elles tombent sur la ligne principale', () => {
@@ -130,21 +214,13 @@ describe('toExportIndicateurs', () => {
     expect(valeurs[0].indicateurValeur.resultat).toBe(1);
   });
 
-  it('exporte une fois chaque indicateur de la config réelle du diagnostic', () => {
-    const { parents } = toExportIndicateurs({
-      indicateurParentConfigs: PCAET_DIAGNOSTIC_INDICATEURS,
-      indicateurDefinitions: ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS.map((id, i) =>
-        makeDefinition(i + 1, id)
-      ),
-      indicateurValeurs: [],
-    } as unknown as PcaetDiagnostic);
+  it("exporte une fois chaque ligne saisissable de la config réelle, dans l'ordre de l'écran", () => {
+    const { parents } = toExportIndicateurs(realDiagnostic);
 
-    const exportes = parents.flatMap((parent) => [
-      parent.identifiantReferentiel,
-      ...parent.enfants.map((enfant) => enfant.identifiantReferentiel),
-    ]);
-    expect([...exportes].sort()).toEqual(
-      [...ALL_PCAET_DIAGNOSTIC_INDICATEUR_IDS].sort()
+    expect(parents.map((parent) => parent.identifiantReferentiel)).toEqual(
+      PCAET_DIAGNOSTIC_INDICATEURS.flatMap(buildPcaetDiagnosticIndicateurTables)
+        .flatMap((table) => table.rows)
+        .map((row) => row.indicateurDefinitionId)
     );
   });
 });
