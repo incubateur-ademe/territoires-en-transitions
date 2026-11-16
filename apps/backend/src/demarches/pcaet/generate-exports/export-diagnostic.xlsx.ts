@@ -31,7 +31,7 @@ const OBJECTIFS_COLUMN_WIDTH = 60;
 /**
  * Classeur des données de l'étape Diagnostic & Objectifs d'une démarche :
  * onglet « Indicateurs » (sans les colonnes de métadonnées, propres à la
- * fiche indicateur) et onglet « Vulnérabilité ».
+ * fiche indicateur ; la colonne « Catégorie » reprend les titres de l'écran) et onglet « Vulnérabilité ».
  */
 export const exportDiagnosticXLSX = async (diagnostic: PcaetDiagnostic) => {
   const workbook = new Workbook();
@@ -39,6 +39,7 @@ export const exportDiagnosticXLSX = async (diagnostic: PcaetDiagnostic) => {
   const { parents, valeurs } = toExportIndicateurs(diagnostic);
   buildConsolidatedSheet(workbook, parents, valeurs, new Map(), {
     withMetaColumns: false,
+    parentColumnHeader: 'Catégorie',
   });
 
   addVulnerabiliteWorksheet(workbook, diagnostic.vulnerabilite);
