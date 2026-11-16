@@ -3,10 +3,10 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 
 const PEERTUBE_ORIGIN = 'https://tube.numerique.gouv.fr';
-const PEERTUBE_VIDEO_ID = '9QfiUGr3fXiwHRCndgbwBt';
+const PEERTUBE_VIDEO_ID = 'tts1pqpvGQ3TUZCDXhvYeh';
 
 const PEERTUBE_DEMO_URL = `${PEERTUBE_ORIGIN}/w/${PEERTUBE_VIDEO_ID}`;
-const YOUTUBE_DEMO_URL = 'https://www.youtube.com/watch?v=fFyxb7M4Wio';
+const YOUTUBE_DEMO_URL = 'https://www.youtube.com/watch?v=WiCycyh1280';
 
 async function isPeertubeVideoAvailable(): Promise<boolean> {
   try {
