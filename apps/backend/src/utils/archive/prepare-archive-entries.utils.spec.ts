@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { ArchiveFile } from './archive-arborescence.types';
-import { prepareArchiveEntries } from './prepare-archive-entries.utils';
+import {
+  MAX_FILENAME_LENGTH,
+  prepareArchiveEntries,
+} from './prepare-archive-entries.utils';
 
 function makeFile(overrides: Partial<ArchiveFile> = {}): ArchiveFile {
   return {
@@ -123,7 +126,17 @@ describe('prepareArchiveEntries', () => {
     ]);
   });
 
-  it('préfixe par le rang quand la troncature à 255 octets efface le suffixe', () => {
+  it(`tronque à ${MAX_FILENAME_LENGTH} caractères un nom de fichier trop long, extension conservée`, () => {
+    const entries = prepareArchiveEntries(
+      [makeFile({ filename: `${'é'.repeat(300)}.pdf` })],
+      []
+    );
+
+    expect(entries[0].entryPath).toBe(`mesures/axe-1/${'é'.repeat(76)}.pdf`);
+    expect(entries[0].filename).toBe(`${'é'.repeat(300)}.pdf`);
+  });
+
+  it('suffixe après troncature deux fichiers au nom trop long identique', () => {
     const longFilename = `${'a'.repeat(300)}.pdf`;
     const files = [
       makeFile({ filename: longFilename, hash: 'a'.repeat(64) }),
@@ -133,26 +146,8 @@ describe('prepareArchiveEntries', () => {
     const entries = prepareArchiveEntries(files, []);
 
     expect(entries.map((entry) => entry.entryPath)).toEqual([
-      `mesures/axe-1/${'a'.repeat(251)}.pdf`,
-      `mesures/axe-1/2 ${'a'.repeat(249)}.pdf`,
-    ]);
-  });
-
-  it('distingue trois fichiers de même hash dont le nom dépasse 255 octets', () => {
-    const longFilename = `${'a'.repeat(300)}.pdf`;
-    const sameHash = 'a'.repeat(64);
-    const files = [
-      makeFile({ filename: longFilename, hash: sameHash }),
-      makeFile({ filename: longFilename, hash: sameHash }),
-      makeFile({ filename: longFilename, hash: sameHash }),
-    ];
-
-    const entries = prepareArchiveEntries(files, []);
-
-    expect(entries.map((entry) => entry.entryPath)).toEqual([
-      `mesures/axe-1/${'a'.repeat(251)}.pdf`,
-      `mesures/axe-1/2 ${'a'.repeat(249)}.pdf`,
-      `mesures/axe-1/3 ${'a'.repeat(249)}.pdf`,
+      `mesures/axe-1/${'a'.repeat(76)}.pdf`,
+      `mesures/axe-1/${'a'.repeat(76)} (2).pdf`,
     ]);
   });
 

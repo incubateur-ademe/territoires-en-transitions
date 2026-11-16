@@ -1,6 +1,11 @@
 import type { ArchiveFile } from './archive-arborescence.types';
 import { buildArchivePath } from './build-archive-path.utils';
 
+// L'extracteur ZIP de Windows refuse les chemins de plus de ~260 caractères,
+// dossier d'extraction compris : on borne le nom choisi par l'utilisateur.
+export const MAX_FILENAME_LENGTH = 80;
+const MAX_KEPT_EXTENSION_LENGTH = 10;
+
 export interface PreparedFileEntry {
   entryPath: string;
   bucketId: string;
@@ -34,7 +39,8 @@ function toFreeEntryPath(
   index: number,
   takenPaths: ReadonlySet<string>
 ): string {
-  const basePath = buildArchivePath([...file.folderSegments, file.filename]);
+  const filename = truncateFilename(file.filename);
+  const basePath = buildArchivePath([...file.folderSegments, filename]);
   if (!takenPaths.has(basePath)) {
     return basePath;
   }
@@ -42,7 +48,7 @@ function toFreeEntryPath(
   const suffixedPaths = Array.from({ length: takenPaths.size }, (_, rank) =>
     buildArchivePath([
       ...file.folderSegments,
-      suffixBasename(file.filename, rank + 2),
+      suffixBasename(filename, rank + 2),
     ])
   );
   const freePath = suffixedPaths.find(
@@ -52,10 +58,7 @@ function toFreeEntryPath(
     return freePath;
   }
 
-  return buildArchivePath([
-    ...file.folderSegments,
-    `${index + 1} ${file.filename}`,
-  ]);
+  return buildArchivePath([...file.folderSegments, `${index + 1} ${filename}`]);
 }
 
 function suffixBasename(filename: string, occurrence: number): string {
@@ -66,4 +69,22 @@ function suffixBasename(filename: string, occurrence: number): string {
   const name = filename.slice(0, lastDot);
   const extension = filename.slice(lastDot);
   return `${name} (${occurrence})${extension}`;
+}
+
+function truncateFilename(filename: string): string {
+  if (Array.from(filename).length <= MAX_FILENAME_LENGTH) {
+    return filename;
+  }
+  const lastDot = filename.lastIndexOf('.');
+  const extension =
+    lastDot > 0 && filename.length - lastDot <= MAX_KEPT_EXTENSION_LENGTH
+      ? filename.slice(lastDot)
+      : '';
+  const name = filename.slice(0, filename.length - extension.length);
+  return (
+    Array.from(name)
+      .slice(0, MAX_FILENAME_LENGTH - extension.length)
+      .join('')
+      .trimEnd() + extension
+  );
 }
