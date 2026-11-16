@@ -543,7 +543,7 @@ describe('createIndicateurPerso', () => {
       expect(created).toHaveLength(0);
     });
 
-    test('refuse un troisième niveau', async () => {
+    test('accepte un sous-indicateur sous un sous-indicateur, avec l’unité et la périodicité du parent', async () => {
       const caller = router.createCaller({ user: authenticatedUser });
       const parentId = await createParentMensuel();
       const childId = await caller.indicateurs.indicateurs.create({
@@ -552,13 +552,31 @@ describe('createIndicateurPerso', () => {
         parentId,
       });
 
-      await expect(
-        caller.indicateurs.indicateurs.create({
-          collectiviteId: collectivite.id,
-          titre: 'Verre',
-          parentId: childId,
+      const grandChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre',
+        parentId: childId,
+      });
+
+      const [indicateurGroupe] = await databaseService.db
+        .select()
+        .from(indicateurGroupeTable)
+        .where(eq(indicateurGroupeTable.enfant, grandChildId));
+      expect(indicateurGroupe).toMatchObject({
+        parent: childId,
+        enfant: grandChildId,
+      });
+      const [grandChildDefinition] = await databaseService.db
+        .select({
+          unite: indicateurDefinitionTable.unite,
+          periodicite: indicateurDefinitionTable.periodicite,
         })
-      ).rejects.toThrow(/deux niveaux maximum/);
+        .from(indicateurDefinitionTable)
+        .where(eq(indicateurDefinitionTable.id, grandChildId));
+      expect(grandChildDefinition).toEqual({
+        unite: 't',
+        periodicite: IndicateurPeriodiciteEnum.MENSUELLE,
+      });
     });
 
     test('ne révèle pas un indicateur d’une autre collectivité', async () => {

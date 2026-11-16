@@ -41,15 +41,6 @@ export const createIndicateurErrorConfig: TrpcErrorHandlerConfig<SpecificError> 
         message:
           'Le sous-indicateur et son parent doivent appartenir à la même collectivité',
       },
-      SOUS_INDICATEUR_PARENT_ALREADY_CHILD: {
-        code: 'BAD_REQUEST',
-        message: 'Le parent est déjà un sous-indicateur : deux niveaux maximum',
-      },
-      SOUS_INDICATEUR_CHILD_HAS_CHILDREN: {
-        code: 'BAD_REQUEST',
-        message:
-          'Le sous-indicateur a déjà des sous-indicateurs : deux niveaux maximum',
-      },
       SOUS_INDICATEUR_CHILD_ALREADY_ATTACHED: {
         code: 'BAD_REQUEST',
         message: 'Le sous-indicateur est déjà rattaché à un autre indicateur',

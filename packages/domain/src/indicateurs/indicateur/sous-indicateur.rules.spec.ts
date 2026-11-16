@@ -27,6 +27,24 @@ describe('validateSousIndicateurPerso', () => {
     });
   });
 
+  it('accepte un parent qui est déjà un sous-indicateur', () => {
+    expect(
+      validateSousIndicateurPerso({
+        parent: toIndicateurInGroup({ id: 1, parentId: 7 }),
+        child,
+      })
+    ).toEqual({ success: true });
+  });
+
+  it('accepte un parent qui a déjà des sous-indicateurs', () => {
+    expect(
+      validateSousIndicateurPerso({
+        parent: toIndicateurInGroup({ id: 1, hasChildren: true }),
+        child,
+      })
+    ).toEqual({ success: true });
+  });
+
   it.each([
     {
       label: 'un indicateur rattaché à lui-même',
@@ -51,18 +69,6 @@ describe('validateSousIndicateurPerso', () => {
       parent: toIndicateurInGroup({ id: 1, collectiviteId: null }),
       child,
       error: 'SOUS_INDICATEUR_PARENT_NOT_PERSO',
-    },
-    {
-      label: 'un parent qui est déjà un enfant',
-      parent: toIndicateurInGroup({ id: 1, parentId: 7 }),
-      child,
-      error: 'SOUS_INDICATEUR_PARENT_ALREADY_CHILD',
-    },
-    {
-      label: 'un enfant qui a déjà des enfants',
-      parent,
-      child: toIndicateurInGroup({ id: 2, hasChildren: true }),
-      error: 'SOUS_INDICATEUR_CHILD_HAS_CHILDREN',
     },
     {
       label: 'un enfant déjà rattaché à un autre parent',

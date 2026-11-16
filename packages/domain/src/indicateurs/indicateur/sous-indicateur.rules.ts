@@ -14,8 +14,6 @@ export const sousIndicateurPersoErrors = [
   'SOUS_INDICATEUR_PARENT_NOT_PERSO',
   'SOUS_INDICATEUR_CHILD_NOT_PERSO',
   'SOUS_INDICATEUR_DIFFERENT_COLLECTIVITE',
-  'SOUS_INDICATEUR_PARENT_ALREADY_CHILD',
-  'SOUS_INDICATEUR_CHILD_HAS_CHILDREN',
   'SOUS_INDICATEUR_CHILD_ALREADY_ATTACHED',
   'SOUS_INDICATEUR_DIFFERENT_UNITE',
   'SOUS_INDICATEUR_DIFFERENT_PERIODICITE',
@@ -53,12 +51,6 @@ export const validateSousIndicateurPerso = ({
   }
   if (parent.collectiviteId !== child.collectiviteId) {
     return refuse('SOUS_INDICATEUR_DIFFERENT_COLLECTIVITE');
-  }
-  if (parent.parentId !== null) {
-    return refuse('SOUS_INDICATEUR_PARENT_ALREADY_CHILD');
-  }
-  if (child.hasChildren) {
-    return refuse('SOUS_INDICATEUR_CHILD_HAS_CHILDREN');
   }
   if (child.parentId !== null) {
     return refuse('SOUS_INDICATEUR_CHILD_ALREADY_ATTACHED');

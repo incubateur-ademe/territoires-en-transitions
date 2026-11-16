@@ -11,7 +11,7 @@ import type {
   IndicateurNatureFields,
   IndicateurPeriodicite,
 } from '@tet/domain/indicateurs';
-import { and, eq, inArray, isNotNull, isNull, or } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, isNull, or, sql } from 'drizzle-orm';
 import { indicateurGroupeTable } from '../../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../../shared/models/indicateur-thematique.table';
 import { indicateurCollectiviteTable } from '../../indicateur/indicateur-collectivite.table';
@@ -202,27 +202,40 @@ export class MutateIndicateurRepository {
     return rows.map(({ id }) => ({ id, parentId }));
   }
 
-  async updateSousIndicateursUnite(
+  async updateDescendantsUnite(
     {
-      parentId,
+      indicateurId,
       collectiviteId,
       unite,
-    }: { parentId: number; collectiviteId: number; unite: string },
+    }: { indicateurId: number; collectiviteId: number; unite: string },
     tx: Transaction
   ): Promise<void> {
+    const descendantIdsQuery = sql`(
+      WITH RECURSIVE descendants AS (
+        SELECT ${indicateurGroupeTable.enfant} AS id
+        FROM ${indicateurGroupeTable}
+        INNER JOIN ${indicateurDefinitionTable}
+          ON ${indicateurDefinitionTable.id} = ${indicateurGroupeTable.enfant}
+        WHERE ${indicateurGroupeTable.parent} = ${indicateurId}
+          AND ${indicateurDefinitionTable.collectiviteId} = ${collectiviteId}
+        UNION
+        SELECT ${indicateurGroupeTable.enfant}
+        FROM ${indicateurGroupeTable}
+        INNER JOIN descendants ON ${indicateurGroupeTable.parent} = descendants.id
+        INNER JOIN ${indicateurDefinitionTable}
+          ON ${indicateurDefinitionTable.id} = ${indicateurGroupeTable.enfant}
+        WHERE ${indicateurDefinitionTable.collectiviteId} = ${collectiviteId}
+      )
+      SELECT id FROM descendants
+    )`;
+
     await tx
       .update(indicateurDefinitionTable)
       .set({ unite })
       .where(
         and(
           eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
-          inArray(
-            indicateurDefinitionTable.id,
-            tx
-              .select({ id: indicateurGroupeTable.enfant })
-              .from(indicateurGroupeTable)
-              .where(eq(indicateurGroupeTable.parent, parentId))
-          )
+          inArray(indicateurDefinitionTable.id, descendantIdsQuery)
         )
       );
   }
