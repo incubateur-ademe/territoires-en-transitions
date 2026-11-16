@@ -1,4 +1,6 @@
 import { INestApplication } from '@nestjs/common';
+import { demarchePlanActionTable } from '@tet/backend/demarches/shared/models/demarche-plan-action.table';
+import { demarcheTable } from '@tet/backend/demarches/shared/models/demarche.table';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -10,7 +12,11 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
-import { PCAET_PLAN_TYPE_KEY } from '@tet/domain/demarches';
+import {
+  DemarchePcaetStatusEnum,
+  DemarcheTypeEnum,
+  PCAET_PLAN_TYPE_KEY,
+} from '@tet/domain/demarches';
 import {
   OrigineSecteursEnum,
   PlanSourceEnum,
@@ -164,7 +170,7 @@ describe('Valider un plan importé', () => {
     expect((await readVerification(planId)).verifiedAt).toBeNull();
   });
 
-  test('refuse de valider un plan PCAET dont une action attend son secteur réglementaire', async () => {
+  const enableFicheSecteurs = () => {
     const trackingService = app.get(TrackingService);
     const isFeatureEnabled =
       trackingService.isFeatureEnabled.bind(trackingService);
@@ -178,8 +184,29 @@ describe('Valider un plan importé', () => {
     onTestFinished(() => {
       spy.mockRestore();
     });
+  };
 
+  /** Plan importé dont la seule action n'a pas pu être classée par l'IA. */
+  const createPlanAvecSecteurManquant = async () => {
     const planId = await createPlan({ imported: true });
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({ titre: 'Rénover les écoles', collectiviteId: collectivite.id })
+      .returning({ id: ficheActionTable.id });
+    await db.db
+      .insert(ficheActionAxeTable)
+      .values({ ficheId: fiche.id, axeId: planId, createdBy: editor.id });
+    await db.db.insert(ficheActionSecteurAttributionTable).values({
+      ficheId: fiche.id,
+      origine: OrigineSecteursEnum.INDISPONIBLE,
+      secteurs: [],
+    });
+    return { planId, ficheId: fiche.id };
+  };
+
+  test('valide un plan de type PCAET sans démarche, même si une action attend son secteur réglementaire', async () => {
+    enableFicheSecteurs();
+    const { planId } = await createPlanAvecSecteurManquant();
     const [pcaetType] = await db.db
       .select({ id: planActionTypeTable.id })
       .from(planActionTypeTable)
@@ -193,18 +220,29 @@ describe('Valider un plan importé', () => {
       .update(axeTable)
       .set({ typeId: pcaetType.id })
       .where(eq(axeTable.id, planId));
-    const [fiche] = await db.db
-      .insert(ficheActionTable)
-      .values({ titre: 'Rénover les écoles', collectiviteId: collectivite.id })
-      .returning({ id: ficheActionTable.id });
+
+    const result = await router
+      .createCaller({ user: editor })
+      .plans.plans.verify({ planId });
+
+    expect(result.verifiedAt).toBeTruthy();
+  });
+
+  test('refuse de valider un plan rattaché à une démarche PCAET dont une action attend son secteur réglementaire', async () => {
+    enableFicheSecteurs();
+    const { planId, ficheId } = await createPlanAvecSecteurManquant();
+    const [demarche] = await db.db
+      .insert(demarcheTable)
+      .values({
+        collectiviteId: collectivite.id,
+        type: DemarcheTypeEnum.PCAET,
+        titre: 'PCAET',
+        status: DemarchePcaetStatusEnum.EN_ELABORATION,
+      })
+      .returning({ id: demarcheTable.id });
     await db.db
-      .insert(ficheActionAxeTable)
-      .values({ ficheId: fiche.id, axeId: planId, createdBy: editor.id });
-    await db.db.insert(ficheActionSecteurAttributionTable).values({
-      ficheId: fiche.id,
-      origine: OrigineSecteursEnum.INDISPONIBLE,
-      secteurs: [],
-    });
+      .insert(demarchePlanActionTable)
+      .values({ demarcheId: demarche.id, planActionId: planId });
 
     const caller = router.createCaller({ user: editor });
     await expect(caller.plans.plans.verify({ planId })).rejects.toMatchObject({
@@ -214,7 +252,7 @@ describe('Valider un plan importé', () => {
     expect((await readVerification(planId)).verifiedAt).toBeNull();
 
     await caller.plans.fiches.upsertSecteurs({
-      ficheId: fiche.id,
+      ficheId,
       secteurs: ['residentiel'],
     });
     const result = await caller.plans.plans.verify({ planId });
