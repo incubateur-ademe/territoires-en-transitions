@@ -1,12 +1,10 @@
 'use client';
 
-import {
-  DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS,
-  DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS,
-} from '@/app/demarches/pcaet/constants';
+import { DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS } from '@/app/demarches/pcaet/constants';
 import { IndicateurValeurRequiseMarker } from '@/app/indicateurs/valeurs/grid/indicateur-valeur-requise.marker';
 import { appLabels } from '@/app/labels/catalog';
 import {
+  DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS,
   demarchePcaetVulnerabiliteNiveauValues,
   isVulnerabiliteObjectifRequis,
   OBJECTIFS_MAX_LENGTH,
