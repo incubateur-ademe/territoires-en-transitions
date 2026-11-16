@@ -21,7 +21,7 @@ import { DGEC_SIREN, PcaetAvisAuTitreDeEnum } from '@tet/domain/demarches';
 import { CollectiviteRole } from '@tet/domain/users';
 import { NotifiedOnEnum, type NotifiedOn } from '@tet/domain/utils';
 import { and, eq, inArray } from 'drizzle-orm';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   completeTestDossierPcaet,
   createDemarche,
@@ -190,18 +190,25 @@ describe("Notifications du dossier d'une collectivité de test", () => {
       demandeAvisId: demandeDrealId,
       avisId: avisDrealId,
     });
+  });
 
-    return async () => {
+  // Un `afterAll` plutôt qu'un retour du `beforeAll` : l'app se ferme même si la
+  // préparation échoue en route.
+  afterAll(async () => {
+    try {
       // Rendre le code de région : l'index unique par DREAL le refuserait au
       // prochain spec qui tirerait le même.
-      await db.db
-        .delete(pcaetDemandeAvisTable)
-        .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+      if (demarcheId !== undefined) {
+        await db.db
+          .delete(pcaetDemandeAvisTable)
+          .where(eq(pcaetDemandeAvisTable.demarcheId, demarcheId));
+      }
       for (const cleanup of cleanups.reverse()) {
         await cleanup();
       }
-      await app.close();
-    };
+    } finally {
+      await app?.close();
+    }
   });
 
   it('saisit les services sans leur écrire, ni à la transmission ni en copie', async () => {
@@ -209,17 +216,27 @@ describe("Notifications du dossier d'une collectivité de test", () => {
     expect(demandeDrAdemeId).toBeDefined();
     expect(demandeDgecId).toBeDefined();
 
-    // Des agents créés pour ce spec : tout ce qu'ils recevraient viendrait de
-    // ce dossier.
+    // Restreint aux notifications de ce dossier : l'agent ajouté à la DGEC du
+    // seed reçoit aussi les transmissions des specs lancés en parallèle.
+    // Transmission par demande, avis reçu par avis, clôture par démarche.
     const auxServices = await db.db
       .select()
       .from(notificationTable)
       .where(
-        inArray(notificationTable.sendTo, [
-          drealAdminId,
-          drAdemeAdminId,
-          dgecMembreId,
-        ])
+        and(
+          inArray(notificationTable.sendTo, [
+            drealAdminId,
+            drAdemeAdminId,
+            dgecMembreId,
+          ]),
+          inArray(notificationTable.entityId, [
+            String(demandeDrealId),
+            String(demandeDrAdemeId),
+            String(demandeDgecId),
+            avisDrealId,
+            String(demarcheId),
+          ])
+        )
       );
     expect(auxServices).toEqual([]);
   });
