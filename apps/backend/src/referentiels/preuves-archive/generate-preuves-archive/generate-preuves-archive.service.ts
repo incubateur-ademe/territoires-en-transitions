@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { GetLabellisationService } from '@tet/backend/referentiels/labellisations/get-labellisation.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
@@ -23,6 +24,7 @@ import {
 } from '../models/audit-preuves-archive.table';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
 import { PREUVES_ARCHIVES_BUCKET } from '../preuves-archive.constants';
+import { toPreuvesArchiveName } from '../to-preuves-archive-name';
 import type { ArchiveFolderArborescence } from '@tet/backend/utils/archive/archive-arborescence.types';
 import {
   generateArchiveFolderArborescence,
@@ -33,6 +35,7 @@ interface JobContext {
   user: AuthenticatedUser;
   demandeId: number;
   referentielId: ReferentielId;
+  archiveName: string;
 }
 
 /**
@@ -90,7 +93,8 @@ export class GeneratePreuvesArchiveService {
     private readonly getReferentielService: GetReferentielService,
     private readonly archiveAssemblyService: ArchiveAssemblyService,
     private readonly getLabellisationService: GetLabellisationService,
-    private readonly permissions: PermissionService
+    private readonly permissions: PermissionService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   /**
@@ -135,7 +139,11 @@ export class GeneratePreuvesArchiveService {
       return arborescenceResult;
     }
 
-    return this.uploadAndComplete(archiveId, arborescenceResult.data);
+    return this.uploadAndComplete(
+      archiveId,
+      arborescenceResult.data,
+      contextResult.data.archiveName
+    );
   }
 
   /**
@@ -187,11 +195,41 @@ export class GeneratePreuvesArchiveService {
       return demandeIdResult;
     }
 
+    const archiveNameResult = await this.resolveArchiveName(
+      archive.collectiviteId,
+      referentielId
+    );
+    if (!archiveNameResult.success) {
+      return archiveNameResult;
+    }
+
     return success({
       user,
       demandeId: demandeIdResult.data,
       referentielId,
+      archiveName: archiveNameResult.data,
     });
+  }
+
+  private async resolveArchiveName(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<Result<string, GenerateArchiveFailure>> {
+    try {
+      const { collectivite } = await this.collectivitesService.getCollectivite(
+        collectiviteId
+      );
+      return success(
+        toPreuvesArchiveName({
+          referentielId,
+          collectiviteNom: collectivite.nom,
+        })
+      );
+    } catch (error) {
+      return retryableFailure(
+        `Récupération de la collectivité échouée: ${getErrorMessage(error)}`
+      );
+    }
   }
 
   private async resolveDemandeId(
@@ -263,14 +301,17 @@ export class GeneratePreuvesArchiveService {
       return success(tree.itemsTree);
     } catch (error) {
       return retryableFailure(
-        `Récupération de l'arbre du référentiel échouée: ${getErrorMessage(error)}`
+        `Récupération de l'arbre du référentiel échouée: ${getErrorMessage(
+          error
+        )}`
       );
     }
   }
 
   private async uploadAndComplete(
     archiveId: string,
-    arborescence: ArchiveFolderArborescence
+    arborescence: ArchiveFolderArborescence,
+    archiveName: string
   ): Promise<GenerateArchiveResult> {
     const totalFiles = arborescence.files.length;
     const totalResult = await this.repository.updateProgress(archiveId, {
@@ -288,6 +329,7 @@ export class GeneratePreuvesArchiveService {
       arborescence,
       bucketId: PREUVES_ARCHIVES_BUCKET,
       key: storagePath,
+      rootFolder: archiveName,
       onProgress: (processedFiles) => {
         void this.persistProgress(archiveId, processedFiles, totalFiles);
       },

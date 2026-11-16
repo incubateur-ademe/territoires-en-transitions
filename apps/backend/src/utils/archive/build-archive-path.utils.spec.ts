@@ -24,6 +24,10 @@ describe('sanitizeSegment', () => {
     expect(sanitizeSegment('a\\b')).toBe('a_b');
   });
 
+  it('remplace les caractères interdits par Windows par un underscore', () => {
+    expect(sanitizeSegment('a<b>c:d"e|f?g*h')).toBe('a_b_c_d_e_f_g_h');
+  });
+
   it('supprime les caractères NUL et de contrôle', () => {
     expect(sanitizeSegment('a\x00b')).toBe('ab');
     expect(sanitizeSegment('a\tb\rc\nd')).toBe('abcd');

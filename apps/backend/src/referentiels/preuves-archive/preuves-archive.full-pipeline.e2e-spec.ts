@@ -263,7 +263,17 @@ describe('Archive de preuves - pipeline complet (ZIP réel)', () => {
     const listing = execSync(`unzip -Z1 "${capturedZipPath}"`, {
       encoding: 'utf8',
     });
-    const entries = listing.trim().split('\n');
+    const root = `documents_cae_${collectivite.nom}/`;
+    expect(
+      listing
+        .trim()
+        .split('\n')
+        .every((e) => e.startsWith(root))
+    ).toBe(true);
+    const entries = listing
+      .trim()
+      .split('\n')
+      .map((entry) => entry.slice(root.length));
 
     expect(entries).toContain(
       'cycle-labellisation/demande/rapport-demande.pdf'

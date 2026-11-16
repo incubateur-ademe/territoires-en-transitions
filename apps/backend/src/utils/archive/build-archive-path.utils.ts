@@ -9,16 +9,17 @@ const WINDOWS_RESERVED_NAMES = new Set<string>([
   ...Array.from({ length: 9 }, (_, i) => `lpt${i + 1}`),
 ]);
 
-const SEPARATOR_CODEPOINTS = new Set<number>([0x2f, 0x5c]);
+// Séparateurs `/` `\` et caractères interdits par Windows `< > : " | ? *`.
+const REPLACED_CHARS = new Set<string>('/\\<>:"|?*');
 
-function stripControlAndSeparators(input: string): string {
+function stripControlAndForbiddenChars(input: string): string {
   return Array.from(input)
     .flatMap((char) => {
       const codePoint = char.codePointAt(0) ?? 0;
       if (codePoint <= 0x1f || codePoint === 0x7f) {
         return [];
       }
-      return [SEPARATOR_CODEPOINTS.has(codePoint) ? '_' : char];
+      return [REPLACED_CHARS.has(char) ? '_' : char];
     })
     .join('');
 }
@@ -49,7 +50,7 @@ function truncateSegment(segment: string): string {
 }
 
 export function sanitizeSegment(raw: string): string {
-  let segment = stripControlAndSeparators(raw.normalize('NFC'));
+  let segment = stripControlAndForbiddenChars(raw.normalize('NFC'));
   segment = segment.trim();
   // Points et espaces de fin : problématiques sous Windows.
   segment = segment.replace(/[. ]+$/, '');
