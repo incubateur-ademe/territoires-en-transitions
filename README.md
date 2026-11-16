@@ -137,7 +137,7 @@ cause :
 | Surcharge | Parent qui épingle | Pourquoi |
 | --- | --- | --- |
 | `next` | `@react-email/preview-server` | tirait `next` 16.2.x (+ `postcss`, `sharp` anciens) |
-| `axios`, `brace-expansion@5` | `nx` | épinglages exacts |
+| `axios`, `brace-expansion@5`, `follow-redirects@1` | `nx` | épinglages exacts |
 | `handlebars` | `@hey-api/openapi-ts` | épinglage exact |
 | `undici@7` | `@module-federation/dts-plugin` | épinglage exact |
 | `svgo@3` | `@svgr/plugin-svgo` | **downgrade volontaire**, voir ci-dessous |
