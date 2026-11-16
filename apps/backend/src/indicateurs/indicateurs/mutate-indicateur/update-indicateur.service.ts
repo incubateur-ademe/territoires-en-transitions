@@ -48,6 +48,17 @@ const isInCollectiviteScope = (
   isIndicateurPredefini(indicateur) ||
   isOwnedByCollectivite(indicateur, collectiviteId);
 
+const hasChildrenToUpdate = ({
+  indicateurInGroup,
+  unite,
+}: {
+  indicateurInGroup: IndicateurInGroup | null;
+  unite: string;
+}): boolean =>
+  indicateurInGroup !== null &&
+  indicateurInGroup.hasChildren &&
+  indicateurInGroup.unite !== unite;
+
 const isUniteLocked = ({
   indicateurInGroup,
   unite,
@@ -331,9 +342,12 @@ export class UpdateIndicateurService {
         }
       }
 
-      if (unite !== undefined && indicateurInGroup?.hasChildren) {
-        await this.repository.updateSousIndicateursUnite(
-          { parentId: indicateurId, collectiviteId, unite },
+      if (
+        unite !== undefined &&
+        hasChildrenToUpdate({ indicateurInGroup, unite })
+      ) {
+        await this.repository.updateDescendantsUnite(
+          { indicateurId, collectiviteId, unite },
           tx
         );
       }

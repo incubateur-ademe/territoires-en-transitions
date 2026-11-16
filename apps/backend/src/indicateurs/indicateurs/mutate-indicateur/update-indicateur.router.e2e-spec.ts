@@ -95,6 +95,123 @@ describe('UpdateIndicateurRouter', () => {
       expect(await readUnite(childId)).toBe('kg');
     });
 
+    test('propage la nouvelle unité de la racine jusqu’au petit-enfant', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const grandChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre',
+        parentId: childId,
+      });
+      const { parentId: unrelatedParentId, childId: unrelatedChildId } =
+        await createParentWithChild();
+      expect(await readUnite(grandChildId)).toBe('t');
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      expect(await readUnite(childId)).toBe('kg');
+      expect(await readUnite(grandChildId)).toBe('kg');
+      expect(await readUnite(unrelatedParentId)).toBe('t');
+      expect(await readUnite(unrelatedChildId)).toBe('t');
+    });
+
+    test('propage la nouvelle unité à toutes les branches d’un arbre à quatre niveaux', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const siblingId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Biodéchets',
+        parentId,
+      });
+      const grandChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre',
+        parentId: childId,
+      });
+      const greatGrandChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre creux',
+        parentId: grandChildId,
+      });
+      const siblingChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Restes de repas',
+        parentId: siblingId,
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      expect(
+        await Promise.all(
+          [
+            childId,
+            siblingId,
+            grandChildId,
+            greatGrandChildId,
+            siblingChildId,
+          ].map(readUnite)
+        )
+      ).toEqual(['kg', 'kg', 'kg', 'kg', 'kg']);
+    });
+
+    test('ne modifie pas l’unité des indicateurs d’une autre collectivité', async () => {
+      const { caller, parentId } = await createParentWithChild();
+      const otherCollectiviteResult = await addTestCollectiviteAndUser(
+        databaseService,
+        { user: { role: CollectiviteRole.ADMIN } }
+      );
+      const otherCaller = router.createCaller({
+        user: getAuthUserFromUserCredentials(otherCollectiviteResult.user),
+      });
+      const otherParentId = await otherCaller.indicateurs.indicateurs.create({
+        collectiviteId: otherCollectiviteResult.collectivite.id,
+        titre: 'Déchets ménagers',
+        unite: 't',
+      });
+      const otherChildId = await otherCaller.indicateurs.indicateurs.create({
+        collectiviteId: otherCollectiviteResult.collectivite.id,
+        titre: 'Ordures ménagères',
+        parentId: otherParentId,
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: parentId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      expect(await readUnite(otherParentId)).toBe('t');
+      expect(await readUnite(otherChildId)).toBe('t');
+    });
+
+    test('rend modifiable l’unité du petit-enfant quand son parent intermédiaire est supprimé', async () => {
+      const { caller, parentId, childId } = await createParentWithChild();
+      const grandChildId = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Verre',
+        parentId: childId,
+      });
+      await caller.indicateurs.indicateurs.delete({
+        collectiviteId: collectivite.id,
+        indicateurId: childId,
+      });
+
+      await caller.indicateurs.indicateurs.update({
+        collectiviteId: collectivite.id,
+        indicateurId: grandChildId,
+        indicateurFields: { unite: 'kg' },
+      });
+
+      expect(await readUnite(grandChildId)).toBe('kg');
+      expect(await readUnite(parentId)).toBe('t');
+    });
+
     test('refuse de changer l’unité d’un sous-indicateur', async () => {
       const { caller, parentId, childId } = await createParentWithChild();
 

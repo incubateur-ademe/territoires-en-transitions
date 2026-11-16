@@ -638,7 +638,7 @@ describe('UpdateIndicateurService — unité d’un groupe', () => {
       }),
       upsertCollectiviteFields: vi.fn().mockResolvedValue(undefined),
       updateIndicateurPerso: vi.fn().mockResolvedValue(true),
-      updateSousIndicateursUnite: vi.fn().mockResolvedValue(undefined),
+      updateDescendantsUnite: vi.fn().mockResolvedValue(undefined),
       touchIndicateurs: vi.fn().mockResolvedValue(undefined),
     };
     const lockRepository = {
@@ -687,8 +687,8 @@ describe('UpdateIndicateurService — unité d’un groupe', () => {
     ).resolves.toEqual(success(undefined));
 
     expect(repository.updateIndicateurPerso).toHaveBeenCalledOnce();
-    expect(repository.updateSousIndicateursUnite).toHaveBeenCalledWith(
-      { parentId: 42, collectiviteId: 1, unite: 't' },
+    expect(repository.updateDescendantsUnite).toHaveBeenCalledWith(
+      { indicateurId: 42, collectiviteId: 1, unite: 't' },
       expect.anything()
     );
   });
@@ -698,7 +698,15 @@ describe('UpdateIndicateurService — unité d’un groupe', () => {
 
     await service.updateIndicateur(changeUnite('t'), { user });
 
-    expect(repository.updateSousIndicateursUnite).not.toHaveBeenCalled();
+    expect(repository.updateDescendantsUnite).not.toHaveBeenCalled();
+  });
+
+  it('ne propage rien quand l’unité du parent est inchangée', async () => {
+    const { service, repository } = setup({ hasChildren: true });
+
+    await service.updateIndicateur(changeUnite('kg'), { user });
+
+    expect(repository.updateDescendantsUnite).not.toHaveBeenCalled();
   });
 
   it('refuse de changer l’unité d’un sous-indicateur', async () => {
@@ -709,7 +717,7 @@ describe('UpdateIndicateurService — unité d’un groupe', () => {
     ).resolves.toEqual(failure('SOUS_INDICATEUR_UNITE_LOCKED'));
 
     expect(repository.updateIndicateurPerso).not.toHaveBeenCalled();
-    expect(repository.updateSousIndicateursUnite).not.toHaveBeenCalled();
+    expect(repository.updateDescendantsUnite).not.toHaveBeenCalled();
   });
 
   it('n’écrit aucun champ de collectivité quand l’unité d’un sous-indicateur est refusée', async () => {
