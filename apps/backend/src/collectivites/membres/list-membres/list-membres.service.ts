@@ -32,9 +32,13 @@ export class ListMembresService {
       // `dcp`. Sur une collectivité en accès restreint — ce que sont les
       // services de l'État — ces coordonnées ne relèvent pas du mode visite :
       // il faut y avoir un rôle. Même arbitrage que les documents et les tags.
-      const accesRestreint = await this.collectivitesService.isPrivate(
+      const accesRestreintResult = await this.collectivitesService.isPrivate(
         collectiviteId
       );
+      if (!accesRestreintResult.success) {
+        throw accesRestreintResult.cause;
+      }
+      const accesRestreint = accesRestreintResult.data;
       await this.permissionService.assertAllowed(
         user,
         accesRestreint

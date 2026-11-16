@@ -175,12 +175,13 @@ export class ListSnapshotsService {
   ): Promise<boolean> {
     // Une collectivité introuvable ne doit pas casser la liste : le nom est
     // simplement omis.
-    const accesRestreint = await this.collectivitesService
-      .isPrivate(collectiviteId)
-      .catch(() => null);
-    if (accesRestreint === null) {
+    const accesRestreintResult = await this.collectivitesService.isPrivate(
+      collectiviteId
+    );
+    if (!accesRestreintResult.success) {
       return false;
     }
+    const accesRestreint = accesRestreintResult.data;
     const permission = await this.permissionService.isAllowed(
       user,
       accesRestreint

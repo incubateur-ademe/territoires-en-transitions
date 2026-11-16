@@ -77,10 +77,12 @@ export class ListIndicateurValeursService {
     // Vérifie les droits
     let hasPermissionLecture;
     if (!isUserTrusted && user) {
-      const collectivitePrivate = await this.collectiviteService.isPrivate(
-        collectiviteId,
-        tx
-      );
+      const collectivitePrivateResult =
+        await this.collectiviteService.isPrivate(collectiviteId, tx);
+      if (!collectivitePrivateResult.success) {
+        throw collectivitePrivateResult.cause;
+      }
+      const collectivitePrivate = collectivitePrivateResult.data;
       const permissionLectureResult = await this.permissionService.isAllowed(
         user,
         'indicateurs.valeurs.read_confidentiel',

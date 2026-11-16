@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   CollectivitePreferencesErrorEnum,
   type CollectivitePreferencesError,
@@ -154,28 +154,25 @@ export class ResetDisplayPreferencesService {
   private async getEligibiliteType(
     collectiviteId: number
   ): Promise<Result<EligibiliteType, CollectivitePreferencesError>> {
-    try {
-      const collectivite =
-        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
-      return success(getEligibiliteType(collectivite));
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return failure(
-          CollectivitePreferencesErrorEnum.COLLECTIVITE_NOT_FOUND,
-          error
-        );
-      }
-      this.logger.error(
-        `Erreur inattendue lors de la lecture du type de la collectivité ${collectiviteId} : ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        error instanceof Error ? error.stack : undefined
-      );
+    const collectiviteResult =
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    if (collectiviteResult.success) {
+      return success(getEligibiliteType(collectiviteResult.data));
+    }
+    if (collectiviteResult.error === 'NOT_FOUND') {
       return failure(
-        CollectivitePreferencesErrorEnum.DATABASE_ERROR,
-        error as Error
+        CollectivitePreferencesErrorEnum.COLLECTIVITE_NOT_FOUND,
+        collectiviteResult.cause
       );
     }
+    this.logger.error(
+      `Erreur inattendue lors de la lecture du type de la collectivité ${collectiviteId} : ${collectiviteResult.cause?.message}`,
+      collectiviteResult.cause?.stack
+    );
+    return failure(
+      CollectivitePreferencesErrorEnum.DATABASE_ERROR,
+      collectiviteResult.cause
+    );
   }
 
   /**

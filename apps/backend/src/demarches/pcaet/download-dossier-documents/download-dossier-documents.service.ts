@@ -95,10 +95,14 @@ export class DownloadDossierDocumentsService {
       return failure(DownloadDossierDocumentsErrorEnum.ARCHIVE_TOO_LARGE);
     }
 
-    const { collectivite } = await this.collectivitesService.getCollectivite(
+    const collectiviteResult = await this.collectivitesService.getCollectivite(
       collectiviteId,
       tx
     );
+    if (!collectiviteResult.success) {
+      return failure(collectiviteResult.error, collectiviteResult.cause);
+    }
+    const { collectivite } = collectiviteResult.data;
 
     this.trackingService.trackDossierInstruction(
       DemarchePcaetEventEnum.DOSSIER_TELECHARGE,

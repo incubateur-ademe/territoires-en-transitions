@@ -30,7 +30,13 @@ export class ListPlanFichesSecteursAVerifierService {
     }: ListPlanFichesSecteursAVerifierInput,
     { user, tx }: ServiceSecondArg
   ): Promise<Result<ListPlanFichesSecteursAVerifierOutput, CommonError>> {
-    const isPrivate = await this.collectivitesService.isPrivate(collectiviteId);
+    const isPrivateResult = await this.collectivitesService.isPrivate(
+      collectiviteId
+    );
+    if (!isPrivateResult.success) {
+      return failure(isPrivateResult.error, isPrivateResult.cause);
+    }
+    const isPrivate = isPrivateResult.data;
     const permission = await this.permissionService.isAllowed(
       user,
       isPrivate ? 'plans.read_confidentiel' : 'plans.read',

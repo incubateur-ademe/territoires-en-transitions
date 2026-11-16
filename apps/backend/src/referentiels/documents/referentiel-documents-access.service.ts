@@ -20,9 +20,12 @@ export class ReferentielDocumentsAccessService {
     }: { collectiviteId: number; referentielId: ReferentielId },
     { user, tx }: ServiceSecondArg
   ): Promise<Result<{ canReadConfidentiel: boolean }, 'UNAUTHORIZED'>> {
-    const isCollectivitePrivate = await this.collectivitesService.isPrivate(
-      collectiviteId
-    );
+    const isCollectivitePrivateResult =
+      await this.collectivitesService.isPrivate(collectiviteId);
+    if (!isCollectivitePrivateResult.success) {
+      throw isCollectivitePrivateResult.cause;
+    }
+    const isCollectivitePrivate = isCollectivitePrivateResult.data;
 
     const [readResult, readConfidentielResult] = await Promise.all([
       this.permissions.isAllowed(

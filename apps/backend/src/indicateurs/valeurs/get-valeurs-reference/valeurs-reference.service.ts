@@ -92,9 +92,15 @@ export default class ValeursReferenceService {
     );
 
     // l'identité et la personnalisation de la collectivité
-    const collectiviteInfo =
-      collectiviteAvecType ||
-      (await this.collectivitesService.getCollectiviteAvecType(collectiviteId));
+    let collectiviteInfo = collectiviteAvecType;
+    if (!collectiviteInfo) {
+      const collectiviteResult =
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      if (!collectiviteResult.success) {
+        throw collectiviteResult.cause;
+      }
+      collectiviteInfo = collectiviteResult.data;
+    }
     const reponses =
       personnalisationReponses ||
       (await this.personnalisationsService.getPersonnalisationReponses(
@@ -155,9 +161,15 @@ export default class ValeursReferenceService {
     ]);
 
     // l'identité et la personnalisation de la collectivité
-    const collectiviteInfo =
-      collectiviteAvecType ||
-      (await this.collectivitesService.getCollectiviteAvecType(collectiviteId));
+    let collectiviteInfo = collectiviteAvecType;
+    if (!collectiviteInfo) {
+      const collectiviteResult =
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      if (!collectiviteResult.success) {
+        throw collectiviteResult.cause;
+      }
+      collectiviteInfo = collectiviteResult.data;
+    }
     const reponses =
       personnalisationReponses ||
       (await this.personnalisationsService.getPersonnalisationReponses(

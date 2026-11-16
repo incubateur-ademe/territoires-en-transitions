@@ -4,7 +4,7 @@ import { StoreDocumentService } from '@tet/backend/collectivites/documents/store
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import { failure, Result } from '@tet/backend/utils/result.type';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
   GenerateReportInput,
@@ -219,9 +219,14 @@ export class GenerateReportsApplicationService {
       };
     }
 
-    const collectivite = await this.collectiviteService.getCollectiviteAvecType(
-      plan.data.collectiviteId
-    );
+    const collectiviteResult =
+      await this.collectiviteService.getCollectiviteAvecType(
+        plan.data.collectiviteId
+      );
+    if (!collectiviteResult.success) {
+      return failure(collectiviteResult.error, collectiviteResult.cause);
+    }
+    const collectivite = collectiviteResult.data;
 
     const reportName = this.getReportName(collectivite, plan.data);
 

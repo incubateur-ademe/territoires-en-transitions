@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import { INestApplication } from '@nestjs/common';
 import {
   addTestCollectivite,
@@ -136,9 +137,11 @@ describe('Gestion des droits', () => {
     });
 
     test('Collectivité en accès restreint -> NOK', async () => {
-      const collectivitePrivate = await collectiviteService.isPrivate(
+      const collectivitePrivateResult = await collectiviteService.isPrivate(
         otherRestrictedCollectivite.id
       );
+      assert(collectivitePrivateResult.success);
+      const collectivitePrivate = collectivitePrivateResult.data;
       expect(
         (
           await permissionService.isAllowed(

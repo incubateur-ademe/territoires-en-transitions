@@ -31,14 +31,7 @@ import {
   scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
-import {
-  and,
-  count,
-  eq,
-  getTableColumns,
-  inArray,
-  sql,
-} from 'drizzle-orm';
+import { and, count, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import { ImportActionDefinitionCoremeasureType } from '../import-referentiel/import-action-definition.dto';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
 import { actionDepth } from '../models/action-depth.column';
@@ -75,9 +68,15 @@ export class ListActionsService {
   ): Promise<Result<ListActionsDynamicStateResult, ListActionsError>> {
     const { referentielId, collectiviteId } = input;
 
-    const collectiviteIsPrivate = await this.collectiviteService.isPrivate(
-      collectiviteId
-    );
+    const collectiviteIsPrivateResult =
+      await this.collectiviteService.isPrivate(collectiviteId);
+    if (!collectiviteIsPrivateResult.success) {
+      return failure(
+        collectiviteIsPrivateResult.error,
+        collectiviteIsPrivateResult.cause
+      );
+    }
+    const collectiviteIsPrivate = collectiviteIsPrivateResult.data;
 
     // CAE/ECI : toujours inclure les mesures désactivées (liste + navigation).
     // TE : exclure les mesures désactivées de la liste principale.

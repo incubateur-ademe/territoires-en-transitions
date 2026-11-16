@@ -84,7 +84,12 @@ export class SwitchToTeService {
         this.getLabellisationService.isCotActif(collectiviteId),
         this.collectivitesService
           .getCollectiviteAvecType(collectiviteId)
-          .then(getEligibiliteType),
+          .then((collectiviteResult) => {
+            if (!collectiviteResult.success) {
+              throw collectiviteResult.cause;
+            }
+            return getEligibiliteType(collectiviteResult.data);
+          }),
         Promise.all(
           referentielsToCheck.map(async (referentiel) => {
             const demandeEtAudit =

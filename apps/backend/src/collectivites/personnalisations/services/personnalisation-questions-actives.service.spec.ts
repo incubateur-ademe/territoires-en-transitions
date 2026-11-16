@@ -1,3 +1,4 @@
+import { success } from '@tet/backend/utils/result.type';
 import { Test } from '@nestjs/testing';
 import { ListPersonnalisationQuestionsRepository } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.repository';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
@@ -84,7 +85,7 @@ describe('PersonnalisationQuestionsActivesService', () => {
           {
             provide: CollectivitesService,
             useValue: {
-              getCollectiviteAvecType: async () => ({ type: 'commune' }),
+              getCollectiviteAvecType: async () => success({ type: 'commune' }),
             },
           },
         ],

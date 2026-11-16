@@ -80,8 +80,12 @@ export class PersonnalisationConsequencesService {
     }
 
     if (!collectiviteInfo) {
-      collectiviteInfo =
+      const collectiviteResult =
         await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      if (!collectiviteResult.success) {
+        throw collectiviteResult.cause;
+      }
+      collectiviteInfo = collectiviteResult.data;
     }
 
     const reponsesPourQuestionsActives =

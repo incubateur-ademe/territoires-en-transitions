@@ -41,10 +41,13 @@ export class ExportService {
     );
 
     // charge le nom de la collectivité pour l'inclure dans le nom du fichier
-    const collectivite = await this.collectivitesService.getCollectivite(
+    const collectiviteResult = await this.collectivitesService.getCollectivite(
       collectiviteId
     );
-    const collectiviteName = collectivite.collectivite.nom;
+    if (!collectiviteResult.success) {
+      throw collectiviteResult.cause;
+    }
+    const collectiviteName = collectiviteResult.data.collectivite.nom;
 
     const filename = unaccent(
       `Export_${collectiviteName}_${plan.root.nom || 'Sans titre'}_${formatDate(

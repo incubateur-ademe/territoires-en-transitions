@@ -2,6 +2,11 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { failure, success, type Result } from '@tet/backend/utils/result.type';
+import {
+  CommonErrorEnum,
+  type CommonError,
+} from '@tet/backend/utils/trpc/common-errors';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   CollectiviteAvecType,
@@ -16,6 +21,11 @@ import { and, eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 import { regionTable } from '../shared/models/imports-region.table';
+
+export type GetCollectiviteError = Extract<
+  CommonError,
+  'NOT_FOUND' | 'DATABASE_ERROR'
+>;
 
 @Injectable()
 export default class CollectivitesService {
@@ -62,8 +72,12 @@ export default class CollectivitesService {
 
   async getCollectiviteAvecType(
     collectiviteId: number
-  ): Promise<CollectiviteAvecType> {
-    const collectivite = await this.getCollectivite(collectiviteId);
+  ): Promise<Result<CollectiviteAvecType, GetCollectiviteError>> {
+    const collectiviteResult = await this.getCollectivite(collectiviteId);
+    if (!collectiviteResult.success) {
+      return collectiviteResult;
+    }
+    const collectivite = collectiviteResult.data;
 
     const collectivitePopulation: number | undefined =
       collectivite.collectivite.population ?? undefined;
@@ -74,7 +88,7 @@ export default class CollectivitesService {
     const collectiviteEPCI: boolean =
       collectivite.collectivite.type === collectiviteTypeEnum.EPCI;
 
-    return {
+    return success({
       ...collectivite.collectivite,
       // TODO "doublon" avec typeId
       type:
@@ -90,7 +104,7 @@ export default class CollectivitesService {
         collectivite.region?.drom ||
         (collectiviteTest && !collectiviteEPCI ? null : false),
       test: collectiviteTest,
-    };
+    });
   }
 
   async getCollectivite(collectiviteId: number, tx?: Transaction) {
@@ -98,23 +112,33 @@ export default class CollectivitesService {
       `Récupération de la collectivite avec l'identifiant ${collectiviteId}`
     );
 
-    const collectiviteByIdResult = await (tx || this.databaseService.db)
-      .select()
-      .from(collectiviteTable)
-      .leftJoin(
-        collectiviteBanaticTypeTable,
-        eq(collectiviteTable.natureInsee, collectiviteBanaticTypeTable.id)
-      )
-      .leftJoin(regionTable, eq(collectiviteTable.regionCode, regionTable.code))
-      .leftJoin(cotTable, eq(collectiviteTable.id, cotTable.collectiviteId))
-      .where(eq(collectiviteTable.id, collectiviteId));
+    try {
+      const [collectivite] = await (tx || this.databaseService.db)
+        .select()
+        .from(collectiviteTable)
+        .leftJoin(
+          collectiviteBanaticTypeTable,
+          eq(collectiviteTable.natureInsee, collectiviteBanaticTypeTable.id)
+        )
+        .leftJoin(
+          regionTable,
+          eq(collectiviteTable.regionCode, regionTable.code)
+        )
+        .leftJoin(cotTable, eq(collectiviteTable.id, cotTable.collectiviteId))
+        .where(eq(collectiviteTable.id, collectiviteId));
 
-    if (!collectiviteByIdResult?.length) {
-      throw new NotFoundException(
-        `Collectivité avec l'identifiant ${collectiviteId} introuvable`
-      );
+      if (!collectivite) {
+        return failure(
+          CommonErrorEnum.NOT_FOUND,
+          new NotFoundException(
+            `Collectivité avec l'identifiant ${collectiviteId} introuvable`
+          )
+        );
+      }
+      return success(collectivite);
+    } catch (error) {
+      return failure(CommonErrorEnum.DATABASE_ERROR, error as Error);
     }
-    return collectiviteByIdResult[0];
   }
 
   async getEpciByCollectiviteId(collectiviteId: number) {
@@ -158,8 +182,27 @@ export default class CollectivitesService {
     return epciBySirenResult[0];
   }
 
-  async isPrivate(collectiviteId: number, tx?: Transaction): Promise<boolean> {
-    const collectivite = await this.getCollectivite(collectiviteId, tx);
-    return collectivite.collectivite.accesRestreint || false;
+  async isPrivate(
+    collectiviteId: number,
+    tx?: Transaction
+  ): Promise<Result<boolean, GetCollectiviteError>> {
+    try {
+      const [collectivite] = await (tx || this.databaseService.db)
+        .select({ accesRestreint: collectiviteTable.accesRestreint })
+        .from(collectiviteTable)
+        .where(eq(collectiviteTable.id, collectiviteId));
+
+      if (!collectivite) {
+        return failure(
+          CommonErrorEnum.NOT_FOUND,
+          new NotFoundException(
+            `Collectivité avec l'identifiant ${collectiviteId} introuvable`
+          )
+        );
+      }
+      return success(collectivite.accesRestreint ?? false);
+    } catch (error) {
+      return failure(CommonErrorEnum.DATABASE_ERROR, error as Error);
+    }
   }
 }

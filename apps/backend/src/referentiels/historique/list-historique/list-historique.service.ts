@@ -105,9 +105,13 @@ export class ListHistoriqueService {
   ): Promise<ListHistoriqueOutput> {
     const { collectiviteId } = input;
 
-    const collectivitePrivate = await this.collectivites.isPrivate(
+    const collectivitePrivateResult = await this.collectivites.isPrivate(
       collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      throw collectivitePrivateResult.cause;
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
     await this.permissions.assertAllowed(
       user,
       collectivitePrivate

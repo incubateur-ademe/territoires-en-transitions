@@ -32,9 +32,13 @@ export class ListPendingInvitationsService {
     if (user) {
       // Une invitation en attente, c'est une adresse en clair : même arbitrage
       // que la liste des membres, dont elle partage l'écran.
-      const accesRestreint = await this.collectivitesService.isPrivate(
+      const accesRestreintResult = await this.collectivitesService.isPrivate(
         collectiviteId
       );
+      if (!accesRestreintResult.success) {
+        throw accesRestreintResult.cause;
+      }
+      const accesRestreint = accesRestreintResult.data;
       await this.permissionService.assertAllowed(
         user,
         accesRestreint

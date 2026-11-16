@@ -111,7 +111,12 @@ export default class ScoresService {
       referentielId
     );
 
-    return this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    const collectiviteResult =
+      await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+    if (!collectiviteResult.success) {
+      throw collectiviteResult.cause;
+    }
+    return collectiviteResult.data;
   }
 
   private buildActionWithScore(
@@ -1076,8 +1081,12 @@ export default class ScoresService {
         niveauAccess
       );
     } else {
-      collectiviteInfo =
+      const collectiviteResult =
         await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      if (!collectiviteResult.success) {
+        throw collectiviteResult.cause;
+      }
+      collectiviteInfo = collectiviteResult.data;
     }
 
     if (!referentiel) {

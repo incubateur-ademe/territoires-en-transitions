@@ -58,9 +58,16 @@ export class GetMobilisationService {
     { collectiviteId, enjeu }: GetMobilisationInput,
     { user }: { user: AuthenticatedUser }
   ): Promise<Result<Mobilisation, AnalysisJobError>> {
-    const isCollectivitePrivate = await this.collectivites.isPrivate(
+    const isCollectivitePrivateResult = await this.collectivites.isPrivate(
       collectiviteId
     );
+    if (!isCollectivitePrivateResult.success) {
+      return failure(
+        isCollectivitePrivateResult.error,
+        isCollectivitePrivateResult.cause
+      );
+    }
+    const isCollectivitePrivate = isCollectivitePrivateResult.data;
     const readFichesOperation = isCollectivitePrivate
       ? PermissionOperationEnum['PLANS.FICHES.READ_CONFIDENTIEL']
       : PermissionOperationEnum['PLANS.FICHES.READ'];

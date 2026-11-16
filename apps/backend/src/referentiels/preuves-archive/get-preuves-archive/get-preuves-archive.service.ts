@@ -78,9 +78,14 @@ export class GetPreuvesArchiveService {
       archive.storagePath !== null &&
       !isExpired
     ) {
-      const { collectivite } = await this.collectivitesService.getCollectivite(
-        archive.collectiviteId
-      );
+      const collectiviteResult =
+        await this.collectivitesService.getCollectivite(archive.collectiviteId);
+      if (!collectiviteResult.success) {
+        return failure(
+          PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,
+          collectiviteResult.cause
+        );
+      }
       const signedUrlResult =
         await this.documentStorage.createSignedDownloadUrl({
           bucketId: PREUVES_ARCHIVES_BUCKET,
@@ -88,7 +93,7 @@ export class GetPreuvesArchiveService {
           expiresInSeconds: ARCHIVE_DOWNLOAD_TTL_SECONDS,
           downloadFilename: `${toPreuvesArchiveName({
             referentielId: archive.referentielId,
-            collectiviteNom: collectivite.nom,
+            collectiviteNom: collectiviteResult.data.collectivite.nom,
           })}.zip`,
         });
       if (!signedUrlResult.success) {

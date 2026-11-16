@@ -230,6 +230,7 @@ export class PptBuilderService {
         reportPath: string;
       },
       | typeof GenerateReportErrorEnum.PLAN_NOT_FOUND
+      | typeof GenerateReportErrorEnum.NOT_FOUND
       | typeof GenerateReportErrorEnum.DATABASE_ERROR
       | typeof GenerateReportErrorEnum.PPT_BUILDER_ERROR
       | typeof GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO
@@ -648,6 +649,7 @@ export class PptBuilderService {
         personnalisationReponses: PersonnalisationReponsesPayload;
       },
       | typeof GenerateReportErrorEnum.PLAN_NOT_FOUND
+      | typeof GenerateReportErrorEnum.NOT_FOUND
       | typeof GenerateReportErrorEnum.DATABASE_ERROR
     >
   > {
@@ -662,10 +664,14 @@ export class PptBuilderService {
         };
       }
 
-      const collectivite =
+      const collectiviteResult =
         await this.collectiviteService.getCollectiviteAvecType(
           plan.data.collectiviteId
         );
+      if (!collectiviteResult.success) {
+        return failure(collectiviteResult.error, collectiviteResult.cause);
+      }
+      const collectivite = collectiviteResult.data;
 
       const personnalisationReponses =
         await this.personnalisationsService.getPersonnalisationReponses(
@@ -1576,15 +1582,13 @@ export class PptBuilderService {
       this.getDonneesTerritorialesIndicateurs(isSnbc3Enabled).map(
         async (configuration) => {
           const { chartData } =
-            await this.indicateurChartService.getIndicateurValeursAndChartData(
-              {
-                collectiviteId: args.collectivite.id,
-                identifiantReferentiel: configuration.identifiantReferentiel,
-                sources: configuration.sources,
-                includeSegmentation: configuration.segmentation,
-                trajectoireSnbc3Enabled: isSnbc3Enabled,
-              }
-            );
+            await this.indicateurChartService.getIndicateurValeursAndChartData({
+              collectiviteId: args.collectivite.id,
+              identifiantReferentiel: configuration.identifiantReferentiel,
+              sources: configuration.sources,
+              includeSegmentation: configuration.segmentation,
+              trajectoireSnbc3Enabled: isSnbc3Enabled,
+            });
           return {
             configuration,
             chartData,

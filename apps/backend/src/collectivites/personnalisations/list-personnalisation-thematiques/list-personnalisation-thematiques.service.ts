@@ -32,9 +32,16 @@ export class ListPersonnalisationThematiquesService {
   > {
     const { collectiviteId, actionIds, referentielIds, thematiqueIds } = input;
 
-    const collectivitePrivate = await this.collectiviteService.isPrivate(
+    const collectivitePrivateResult = await this.collectiviteService.isPrivate(
       collectiviteId
     );
+    if (!collectivitePrivateResult.success) {
+      return failure(
+        collectivitePrivateResult.error,
+        collectivitePrivateResult.cause
+      );
+    }
+    const collectivitePrivate = collectivitePrivateResult.data;
 
     await this.permissionService.assertAllowed(
       user,
