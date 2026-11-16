@@ -114,16 +114,6 @@ export type DemarchePcaetMenuTransition =
 // Vulnérabilité du territoire
 // ---------------------------------------------------------------------------
 
-export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_LABELS: Record<
-  DemarchePcaetVulnerabiliteNiveau,
-  string
-> = {
-  non_concerne: 'non concerné',
-  faible: 'faible',
-  moyen: 'moyen',
-  fort: 'fort',
-};
-
 export const DEMARCHE_PCAET_VULNERABILITE_NIVEAU_VARIANTS: Record<
   DemarchePcaetVulnerabiliteNiveau,
   ColorVariant
