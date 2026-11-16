@@ -70,6 +70,10 @@ jobs:
             echo "::error::Variable manquante dans l'environnement cible : ELECTRIFICATION_LAUREATS_GRIST_DOCUMENT_ID"
             exit 1
           fi
+          # GitHub expose un secret absent comme une chaine vide ; la CA est optionnelle.
+          if [ -z "$SUPABASE_DATABASE_SSL_ROOT_CERT" ]; then
+            unset SUPABASE_DATABASE_SSL_ROOT_CERT
+          fi
           node apps/backend/dist/plans/plans/electrification/sync-electrification-data/sync-electrification-data.script.js \
             --kind "$DATA_KIND" --mode "$SYNC_MODE" \
             --actor "$GITHUB_ACTOR" \
