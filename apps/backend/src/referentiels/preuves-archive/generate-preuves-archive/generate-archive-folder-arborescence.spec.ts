@@ -123,9 +123,9 @@ describe('generateArchiveFolderArborescence', () => {
       {
         folderSegments: [
           'mesures',
-          '1 Axe un',
-          '1.1 Sous-axe un',
-          '1.1.1 Mesure un',
+          '1',
+          '1.1',
+          '1.1.1',
         ],
         filename: 'a.pdf',
         bucketId: 'bucket-1',
@@ -176,9 +176,9 @@ describe('generateArchiveFolderArborescence', () => {
     if (!result.success) return;
     expect(result.data.files[0].folderSegments).toEqual([
       'mesures',
-      '1 Axe un',
-      '1.1 Sous-axe un',
-      '1.1.1 Mesure un',
+      '1',
+      '1.1',
+      '1.1.1',
     ]);
   });
 
@@ -203,7 +203,7 @@ describe('generateArchiveFolderArborescence', () => {
     expect(result.data.skippedFiles).toEqual([
       {
         filename: 'avis-technique.pdf',
-        emplacement: 'mesures/1 Axe un/1.1 Sous-axe un/1.1.1 Mesure un',
+        emplacement: 'mesures/1/1.1/1.1.1',
         raison: 'Fichier introuvable dans le stockage',
       },
     ]);
@@ -333,9 +333,9 @@ describe('generateArchiveFolderArborescence', () => {
       {
         folderSegments: [
           'mesures',
-          '1 Axe un',
-          '1.1 Sous-axe un',
-          '1.1.1 Mesure un',
+          '1',
+          '1.1',
+          '1.1.1',
         ],
         links: [
           { titre: 'Lien A', url: 'https://example.org', commentaire: '' },

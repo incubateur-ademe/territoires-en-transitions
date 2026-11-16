@@ -38,18 +38,22 @@ function makeArchive(
 function buildService({
   isAllowed = true,
   getByIdResult = success(makeArchive()),
-  signedUrlResult = success({ signedUrl: 'https://signed.example/archive.zip' }),
+  signedUrlResult = success({
+    signedUrl: 'https://signed.example/archive.zip',
+  }),
 }: {
   isAllowed?: boolean;
   getByIdResult?: Result<AuditPreuvesArchive, PreuvesArchiveError>;
   signedUrlResult?: Result<{ signedUrl: string }, PreuvesArchiveError>;
-} = {}): GetPreuvesArchiveService {
+} = {}) {
   const permissions = {
-    isAllowed: vi.fn().mockResolvedValue(
-      isAllowed
-        ? { success: true, data: undefined }
-        : { success: false, error: 'UNAUTHORIZED' }
-    ),
+    isAllowed: vi
+      .fn()
+      .mockResolvedValue(
+        isAllowed
+          ? { success: true, data: undefined }
+          : { success: false, error: 'UNAUTHORIZED' }
+      ),
   } as unknown;
 
   const repository = {
@@ -58,17 +62,27 @@ function buildService({
 
   const documentStorage = {
     createSignedDownloadUrl: vi.fn().mockResolvedValue(signedUrlResult),
-  } as unknown;
+  };
 
-  return new GetPreuvesArchiveService(
-    permissions as never,
-    repository as never,
-    documentStorage as never
+  const collectivitesService = {
+    getCollectivite: vi
+      .fn()
+      .mockResolvedValue({ collectivite: { nom: 'Ville de Test' } }),
+  };
+
+  return Object.assign(
+    new GetPreuvesArchiveService(
+      permissions as never,
+      repository as never,
+      documentStorage as never,
+      collectivitesService as never
+    ),
+    { createSignedDownloadUrl: documentStorage.createSignedDownloadUrl }
   );
 }
 
 describe('GetPreuvesArchiveService', () => {
-  it("renvoie NOT_FOUND quand getByIdForUser ne trouve pas la ligne (anti-énumération via filtre SQL `requestedBy`)", async () => {
+  it('renvoie NOT_FOUND quand getByIdForUser ne trouve pas la ligne (anti-énumération via filtre SQL `requestedBy`)', async () => {
     const service = buildService({
       getByIdResult: failure(
         PreuvesArchiveErrorEnum.ARCHIVE_NOT_FOUND,
@@ -86,7 +100,7 @@ describe('GetPreuvesArchiveService', () => {
     expect(result.error).toBe(PreuvesArchiveErrorEnum.ARCHIVE_NOT_FOUND);
   });
 
-  it("renvoie une downloadUrl fraîche quand le statut est completed", async () => {
+  it('renvoie une downloadUrl fraîche quand le statut est completed', async () => {
     const service = buildService({
       getByIdResult: success(
         makeArchive({
@@ -103,6 +117,11 @@ describe('GetPreuvesArchiveService', () => {
       user: owner,
     });
 
+    expect(service.createSignedDownloadUrl).toHaveBeenCalledWith(
+      expect.objectContaining({
+        downloadFilename: 'documents_cae_Ville de Test.zip',
+      })
+    );
     expect(result).toEqual(
       success({
         archiveId: 'archive-id',
@@ -174,7 +193,11 @@ describe('GetPreuvesArchiveService', () => {
   it("ne renvoie pas de downloadUrl tant que l'archive n'est pas completed", async () => {
     const service = buildService({
       getByIdResult: success(
-        makeArchive({ status: AuditPreuvesArchiveStatusEnum.PROCESSING, totalFiles: 4, processedFiles: 1 })
+        makeArchive({
+          status: AuditPreuvesArchiveStatusEnum.PROCESSING,
+          totalFiles: 4,
+          processedFiles: 1,
+        })
       ),
     });
 

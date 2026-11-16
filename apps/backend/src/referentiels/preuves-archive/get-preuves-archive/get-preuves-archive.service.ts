@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { failure, success, type Result } from '@tet/backend/utils/result.type';
@@ -16,6 +17,7 @@ import {
 import type { GetPreuvesArchiveOutput } from './get-preuves-archive.output';
 import { PreuvesArchiveRepository } from '../preuves-archive.repository';
 import { AuditPreuvesArchiveStatusEnum } from '../models/audit-preuves-archive.table';
+import { toPreuvesArchiveName } from '../to-preuves-archive-name';
 
 export interface GetPreuvesArchiveServiceInput {
   archiveId: string;
@@ -31,7 +33,8 @@ export class GetPreuvesArchiveService {
   constructor(
     private readonly permissions: PermissionService,
     private readonly repository: PreuvesArchiveRepository,
-    private readonly documentStorage: DocumentStorageService
+    private readonly documentStorage: DocumentStorageService,
+    private readonly collectivitesService: CollectivitesService
   ) {}
 
   async get(
@@ -75,11 +78,19 @@ export class GetPreuvesArchiveService {
       archive.storagePath !== null &&
       !isExpired
     ) {
-      const signedUrlResult = await this.documentStorage.createSignedDownloadUrl({
-        bucketId: PREUVES_ARCHIVES_BUCKET,
-        key: archive.storagePath,
-        expiresInSeconds: ARCHIVE_DOWNLOAD_TTL_SECONDS,
-      });
+      const { collectivite } = await this.collectivitesService.getCollectivite(
+        archive.collectiviteId
+      );
+      const signedUrlResult =
+        await this.documentStorage.createSignedDownloadUrl({
+          bucketId: PREUVES_ARCHIVES_BUCKET,
+          key: archive.storagePath,
+          expiresInSeconds: ARCHIVE_DOWNLOAD_TTL_SECONDS,
+          downloadFilename: `${toPreuvesArchiveName({
+            referentielId: archive.referentielId,
+            collectiviteNom: collectivite.nom,
+          })}.zip`,
+        });
       if (!signedUrlResult.success) {
         return failure(
           PreuvesArchiveErrorEnum.GET_ARCHIVE_ERROR,

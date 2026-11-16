@@ -61,6 +61,7 @@ function buildService({
   getByIdRawSucceeds?: boolean;
 } = {}): {
   service: GeneratePreuvesArchiveService;
+  assembleZipToStorage: ReturnType<typeof vi.fn>;
   repository: {
     getByIdRaw: ReturnType<typeof vi.fn>;
     transitionToProcessing: ReturnType<typeof vi.fn>;
@@ -77,30 +78,24 @@ function buildService({
           ? success(initialArchive)
           : failure('ARCHIVE_NOT_FOUND', new Error('not found'))
       ),
-    transitionToProcessing: vi
-      .fn()
-      .mockResolvedValue(
-        success({
-          ...initialArchive,
-          status: AuditPreuvesArchiveStatusEnum.PROCESSING,
-        })
-      ),
-    markCompleted: vi
-      .fn()
-      .mockResolvedValue(
-        success({
-          ...initialArchive,
-          status: AuditPreuvesArchiveStatusEnum.COMPLETED,
-        })
-      ),
-    markFailed: vi
-      .fn()
-      .mockResolvedValue(
-        success({
-          ...initialArchive,
-          status: AuditPreuvesArchiveStatusEnum.FAILED,
-        })
-      ),
+    transitionToProcessing: vi.fn().mockResolvedValue(
+      success({
+        ...initialArchive,
+        status: AuditPreuvesArchiveStatusEnum.PROCESSING,
+      })
+    ),
+    markCompleted: vi.fn().mockResolvedValue(
+      success({
+        ...initialArchive,
+        status: AuditPreuvesArchiveStatusEnum.COMPLETED,
+      })
+    ),
+    markFailed: vi.fn().mockResolvedValue(
+      success({
+        ...initialArchive,
+        status: AuditPreuvesArchiveStatusEnum.FAILED,
+      })
+    ),
     updateProgress: vi.fn().mockResolvedValue(success(initialArchive)),
   };
 
@@ -149,10 +144,15 @@ function buildService({
     getReferentielService as never,
     buildArchiveService as never,
     getLabellisationService as never,
-    permissions as never
+    permissions as never,
+    {
+      getCollectivite: vi
+        .fn()
+        .mockResolvedValue({ collectivite: { nom: 'Ville de Test' } }),
+    } as never
   );
 
-  return { service, repository };
+  return { service, repository, assembleZipToStorage };
 }
 
 // Le happy-path (processing → completed, vrai ZIP) est prouvé de bout en bout
@@ -196,12 +196,26 @@ describe('GeneratePreuvesArchiveService.generate', () => {
     expect(result).toEqual({
       success: false,
       error: {
-        message: expect.stringContaining("n'a plus le droit referentiels.read_confidentiel"),
+        message: expect.stringContaining(
+          "n'a plus le droit referentiels.read_confidentiel"
+        ),
         retryable: false,
       },
     });
     expect(repository.markFailed).not.toHaveBeenCalled();
     expect(repository.markCompleted).not.toHaveBeenCalled();
+  });
+
+  it("range le contenu sous un dossier racine nommé d'après le référentiel et la collectivité", async () => {
+    const { service, assembleZipToStorage } = buildService();
+
+    await service.generate(archiveId);
+
+    expect(assembleZipToStorage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        rootFolder: `documents_${makeArchive().referentielId}_Ville de Test`,
+      })
+    );
   });
 
   it('échec retryable si assembleZipToStorage échoue, sans écrire failed (BullMQ retentera)', async () => {

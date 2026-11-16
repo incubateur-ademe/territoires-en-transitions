@@ -84,10 +84,10 @@ function groupLinksByFolder(links: LinkWithFolder[]): ArchiveLinkFolder[] {
   }));
 }
 
+// Identifiant seul : les titres complets dépassent la limite de ~260
+// caractères de l'extracteur ZIP de Windows (cf. TET-8303).
 function nodeLabel(node: ReferentielTreeNode): string {
-  return [node.identifiant, node.nom]
-    .filter((part): part is string => Boolean(part))
-    .join(' ');
+  return node.identifiant || node.actionId;
 }
 
 function collectMesureFolders(

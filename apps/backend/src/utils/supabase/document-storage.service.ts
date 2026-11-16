@@ -24,6 +24,8 @@ export type StoreDocumentInput = DocumentLocation & {
 
 export type CreateSignedDownloadUrlInput = DocumentLocation & {
   expiresInSeconds: number;
+  /** Nom proposé au téléchargement, à la place de la clé de stockage. */
+  downloadFilename?: string;
 };
 
 @Injectable()
@@ -122,7 +124,7 @@ export class DocumentStorageService {
   async createSignedDownloadUrl(
     input: CreateSignedDownloadUrlInput
   ): Promise<Result<{ signedUrl: string }, DocumentStorageError>> {
-    const { bucketId, key, expiresInSeconds } = input;
+    const { bucketId, key, expiresInSeconds, downloadFilename } = input;
     try {
       const { data, error } = await this.supabase.client.storage
         .from(bucketId)
@@ -137,7 +139,13 @@ export class DocumentStorageService {
         return failure(DocumentStorageErrorEnum.READ_DOCUMENT_ERROR);
       }
 
-      return success({ signedUrl: data.signedUrl });
+      // Ajouté ici plutôt que via l'option `download` de storage-js, qui
+      // n'encode pas `&`, `#` ou `+` et tronquerait le nom de fichier.
+      const downloadParam =
+        downloadFilename === undefined
+          ? ''
+          : `&download=${encodeURIComponent(downloadFilename)}`;
+      return success({ signedUrl: `${data.signedUrl}${downloadParam}` });
     } catch (error) {
       this.logger.error(
         `Erreur de génération de signed URL pour ${bucketId}/${key}: ${getErrorMessage(

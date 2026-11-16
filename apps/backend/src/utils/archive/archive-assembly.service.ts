@@ -43,6 +43,8 @@ const toSettledError = (
 
 export type AssembleZipToStorageInput = DocumentLocation & {
   arborescence: ArchiveFolderArborescence;
+  /** Dossier racine qui contient toute l'archive une fois dézippée. */
+  rootFolder?: string;
   onProgress?: (processedFiles: number) => void;
 };
 
@@ -53,6 +55,7 @@ type DownloadOutcome =
 export interface AssembleZipInput {
   arborescence: ArchiveFolderArborescence;
   destination: Writable;
+  rootFolder?: string;
   onProgress?: (processedFiles: number) => void;
 }
 
@@ -66,6 +69,7 @@ export class ArchiveAssemblyService {
     arborescence,
     bucketId,
     key,
+    rootFolder,
     onProgress,
   }: AssembleZipToStorageInput): Promise<
     Result<{ totalFiles: number }, ArchiveAssemblyError>
@@ -78,6 +82,7 @@ export class ArchiveAssemblyService {
       const assembleResult = await this.assembleZip({
         arborescence,
         destination: createWriteStream(tempZipPath),
+        rootFolder,
         onProgress,
       });
       if (!assembleResult.success) {
@@ -120,6 +125,7 @@ export class ArchiveAssemblyService {
   async assembleZip({
     arborescence,
     destination,
+    rootFolder,
     onProgress,
   }: AssembleZipInput): Promise<
     Result<{ totalFiles: number }, ArchiveAssemblyError>
@@ -136,7 +142,7 @@ export class ArchiveAssemblyService {
       const outcomes = await mapWithConcurrency(
         preparedEntries,
         DOWNLOAD_CONCURRENCY,
-        (entry) => this.downloadAndAppendEntry({ entry, archive }),
+        (entry) => this.downloadAndAppendEntry({ entry, archive, rootFolder }),
         (processed) => onProgress?.(processed)
       );
       const failedDownloads = outcomes.flatMap((outcome) =>
@@ -147,7 +153,11 @@ export class ArchiveAssemblyService {
       ).length;
 
       buildArchiveManifests({ arborescence, failedDownloads }).forEach(
-        (entry) => archive.append(entry.content, { name: entry.name })
+        (entry) =>
+          archive.append(entry.content, {
+            name: entry.name,
+            prefix: rootFolder,
+          })
       );
 
       const finalizeOutcome = toSettledError(archive.finalize());
@@ -180,9 +190,11 @@ export class ArchiveAssemblyService {
   private async downloadAndAppendEntry({
     entry,
     archive,
+    rootFolder,
   }: {
     entry: PreparedFileEntry;
     archive: Archiver;
+    rootFolder?: string;
   }): Promise<DownloadOutcome> {
     const streamResult = await this.documentStorage.getDocumentStream({
       bucketId: entry.bucketId,
@@ -198,7 +210,10 @@ export class ArchiveAssemblyService {
         },
       };
     }
-    archive.append(streamResult.data, { name: entry.entryPath });
+    archive.append(streamResult.data, {
+      name: entry.entryPath,
+      prefix: rootFolder,
+    });
     return { kind: 'appended' };
   }
 }
